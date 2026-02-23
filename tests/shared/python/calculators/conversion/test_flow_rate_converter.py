@@ -36,8 +36,13 @@ class TestMolarToMolar:
             (1.0, "kmol/h", "mol/s", 1000.0 / 3600.0),
             (1.0, "lbmol/h", "mol/s", 453.59237 / 3600.0),
         ],
-        ids=["same-kmol/s", "same-mol/h", "mol/s-to-mol/h",
-             "kmol/h-to-mol/s", "lbmol/h-to-mol/s"],
+        ids=[
+            "same-kmol/s",
+            "same-mol/h",
+            "mol/s-to-mol/h",
+            "kmol/h-to-mol/s",
+            "lbmol/h-to-mol/s",
+        ],
     )
     def test_molar_conversions(self, value, from_unit, to_unit, expected):
         """Test molar flow rate unit conversions."""

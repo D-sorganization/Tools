@@ -27,14 +27,20 @@ class PackTabMixin:
 
         left_frame = ttk.Frame(tab)
         left_frame.pack(
-            side="left", fill="both", expand=True,
-            padx=PADDING_MEDIUM, pady=PADDING_MEDIUM,
+            side="left",
+            fill="both",
+            expand=True,
+            padx=PADDING_MEDIUM,
+            pady=PADDING_MEDIUM,
         )
 
         right_frame = ttk.Frame(tab)
         right_frame.pack(
-            side="right", fill="both", expand=True,
-            padx=PADDING_MEDIUM, pady=PADDING_MEDIUM,
+            side="right",
+            fill="both",
+            expand=True,
+            padx=PADDING_MEDIUM,
+            pady=PADDING_MEDIUM,
         )
 
         self._create_pack_left_column(left_frame)
@@ -43,7 +49,9 @@ class PackTabMixin:
     def _create_pack_left_column(self, parent: ttk.Frame) -> None:
         """Create the left column of the pack tab (source, output, stats, progress)."""
         header_label = ttk.Label(
-            parent, text="📦 Folder Packer Pro", font=("Segoe UI", 18, "bold"),
+            parent,
+            text="📦 Folder Packer Pro",
+            font=("Segoe UI", 18, "bold"),
         )
         header_label.pack(pady=(0, PADDING_MEDIUM))
 
@@ -62,16 +70,22 @@ class PackTabMixin:
 
         self.pack_source_entry = ttk.Entry(entry_frame)  # type: ignore[attr-defined]
         self.pack_source_entry.pack(  # type: ignore[attr-defined]
-            side="left", fill="x", expand=True, padx=(0, PADDING_SMALL),
+            side="left",
+            fill="x",
+            expand=True,
+            padx=(0, PADDING_SMALL),
         )
         ttk.Button(
-            entry_frame, text="Browse",
+            entry_frame,
+            text="Browse",
             command=self._browse_pack_source,  # type: ignore[attr-defined]
         ).pack(side="right")
 
     def _create_pack_output_section(self, parent: ttk.Frame) -> None:
         """Create the output package file input section."""
-        frame = ttk.LabelFrame(parent, text="Output Package File", padding=PADDING_MEDIUM)
+        frame = ttk.LabelFrame(
+            parent, text="Output Package File", padding=PADDING_MEDIUM
+        )
         frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         entry_frame = ttk.Frame(frame)
@@ -79,25 +93,36 @@ class PackTabMixin:
 
         self.pack_output_entry = ttk.Entry(entry_frame)  # type: ignore[attr-defined]
         self.pack_output_entry.pack(  # type: ignore[attr-defined]
-            side="left", fill="x", expand=True, padx=(0, PADDING_SMALL),
+            side="left",
+            fill="x",
+            expand=True,
+            padx=(0, PADDING_SMALL),
         )
         ttk.Button(
-            entry_frame, text="Browse",
+            entry_frame,
+            text="Browse",
             command=self._browse_pack_output,  # type: ignore[attr-defined]
         ).pack(side="right")
 
     def _create_pack_stats_section(self, parent: ttk.Frame) -> None:
         """Create the project statistics display section."""
-        frame = ttk.LabelFrame(parent, text="Project Statistics", padding=PADDING_MEDIUM)
+        frame = ttk.LabelFrame(
+            parent, text="Project Statistics", padding=PADDING_MEDIUM
+        )
         frame.pack(fill="both", expand=True, pady=(0, PADDING_MEDIUM))
 
         self.stats_text = scrolledtext.ScrolledText(  # type: ignore[attr-defined]
-            frame, height=10, wrap="word", font=("Consolas", 9), state="disabled",
+            frame,
+            height=10,
+            wrap="word",
+            font=("Consolas", 9),
+            state="disabled",
         )
         self.stats_text.pack(fill="both", expand=True)  # type: ignore[attr-defined]
 
         ttk.Button(
-            frame, text="🔄 Scan Folder",
+            frame,
+            text="🔄 Scan Folder",
             command=self._scan_folder,  # type: ignore[attr-defined]
         ).pack(pady=(PADDING_SMALL, 0))
 
@@ -108,13 +133,17 @@ class PackTabMixin:
 
         self.pack_progress_var = tk.DoubleVar()  # type: ignore[attr-defined]
         self.pack_progress_bar = ttk.Progressbar(  # type: ignore[attr-defined]
-            frame, variable=self.pack_progress_var,  # type: ignore[attr-defined]
-            maximum=100, mode="determinate",
+            frame,
+            variable=self.pack_progress_var,  # type: ignore[attr-defined]
+            maximum=100,
+            mode="determinate",
         )
         self.pack_progress_bar.pack(fill="x", pady=(0, PADDING_SMALL))  # type: ignore[attr-defined]
 
         self.pack_status_label = ttk.Label(  # type: ignore[attr-defined]
-            frame, text="Ready", font=("Segoe UI", 9),
+            frame,
+            text="Ready",
+            font=("Segoe UI", 9),
         )
         self.pack_status_label.pack(fill="x")  # type: ignore[attr-defined]
 
@@ -268,16 +297,22 @@ class UnpackTabMixin:
 
         self.unpack_source_entry = ttk.Entry(entry_frame)  # type: ignore[attr-defined]
         self.unpack_source_entry.pack(  # type: ignore[attr-defined]
-            side="left", fill="x", expand=True, padx=(0, PADDING_SMALL),
+            side="left",
+            fill="x",
+            expand=True,
+            padx=(0, PADDING_SMALL),
         )
         ttk.Button(
-            entry_frame, text="Browse",
+            entry_frame,
+            text="Browse",
             command=self._browse_unpack_source,  # type: ignore[attr-defined]
         ).pack(side="right")
 
     def _create_unpack_dest_section(self, parent: ttk.Frame) -> None:
         """Create the destination folder input section."""
-        frame = ttk.LabelFrame(parent, text="Destination Folder", padding=PADDING_MEDIUM)
+        frame = ttk.LabelFrame(
+            parent, text="Destination Folder", padding=PADDING_MEDIUM
+        )
         frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         entry_frame = ttk.Frame(frame)
@@ -285,10 +320,14 @@ class UnpackTabMixin:
 
         self.unpack_dest_entry = ttk.Entry(entry_frame)  # type: ignore[attr-defined]
         self.unpack_dest_entry.pack(  # type: ignore[attr-defined]
-            side="left", fill="x", expand=True, padx=(0, PADDING_SMALL),
+            side="left",
+            fill="x",
+            expand=True,
+            padx=(0, PADDING_SMALL),
         )
         ttk.Button(
-            entry_frame, text="Browse",
+            entry_frame,
+            text="Browse",
             command=self._browse_unpack_dest,  # type: ignore[attr-defined]
         ).pack(side="right")
 
@@ -299,7 +338,8 @@ class UnpackTabMixin:
 
         self.encrypted_var = tk.BooleanVar()  # type: ignore[attr-defined]
         ttk.Checkbutton(
-            frame, text="Package is encrypted",
+            frame,
+            text="Package is encrypted",
             variable=self.encrypted_var,  # type: ignore[attr-defined]
             command=self._on_encrypted_toggle,  # type: ignore[attr-defined]
         ).pack(anchor="w")
@@ -316,16 +356,23 @@ class UnpackTabMixin:
 
     def _create_unpack_info_section(self, parent: ttk.Frame) -> None:
         """Create the package information display section."""
-        frame = ttk.LabelFrame(parent, text="Package Information", padding=PADDING_MEDIUM)
+        frame = ttk.LabelFrame(
+            parent, text="Package Information", padding=PADDING_MEDIUM
+        )
         frame.pack(fill="both", expand=True, pady=(0, PADDING_MEDIUM))
 
         self.package_info_text = scrolledtext.ScrolledText(  # type: ignore[attr-defined]
-            frame, height=10, wrap="word", font=("Consolas", 9), state="disabled",
+            frame,
+            height=10,
+            wrap="word",
+            font=("Consolas", 9),
+            state="disabled",
         )
         self.package_info_text.pack(fill="both", expand=True)  # type: ignore[attr-defined]
 
         ttk.Button(
-            frame, text="🔍 Inspect Package",
+            frame,
+            text="🔍 Inspect Package",
             command=self._inspect_package,  # type: ignore[attr-defined]
         ).pack(pady=(PADDING_SMALL, 0))
 
@@ -336,13 +383,17 @@ class UnpackTabMixin:
 
         self.unpack_progress_var = tk.DoubleVar()  # type: ignore[attr-defined]
         self.unpack_progress_bar = ttk.Progressbar(  # type: ignore[attr-defined]
-            frame, variable=self.unpack_progress_var,  # type: ignore[attr-defined]
-            maximum=100, mode="determinate",
+            frame,
+            variable=self.unpack_progress_var,  # type: ignore[attr-defined]
+            maximum=100,
+            mode="determinate",
         )
         self.unpack_progress_bar.pack(fill="x", pady=(0, PADDING_SMALL))  # type: ignore[attr-defined]
 
         self.unpack_status_label = ttk.Label(  # type: ignore[attr-defined]
-            frame, text="Ready", font=("Segoe UI", 9),
+            frame,
+            text="Ready",
+            font=("Segoe UI", 9),
         )
         self.unpack_status_label.pack(fill="x")  # type: ignore[attr-defined]
 
@@ -352,16 +403,21 @@ class UnpackTabMixin:
         action_frame.pack(fill="x")
 
         self.unpack_btn = ttk.Button(  # type: ignore[attr-defined]
-            action_frame, text="📂 Extract Package",
+            action_frame,
+            text="📂 Extract Package",
             command=self._start_unpack,  # type: ignore[attr-defined]
             style="Accent.TButton",
         )
         self.unpack_btn.pack(  # type: ignore[attr-defined]
-            side="left", fill="x", expand=True, padx=(0, PADDING_SMALL),
+            side="left",
+            fill="x",
+            expand=True,
+            padx=(0, PADDING_SMALL),
         )
 
         self.unpack_cancel_btn = ttk.Button(  # type: ignore[attr-defined]
-            action_frame, text="⏹️ Cancel",
+            action_frame,
+            text="⏹️ Cancel",
             command=self._cancel_operation,  # type: ignore[attr-defined]
             state="disabled",
         )

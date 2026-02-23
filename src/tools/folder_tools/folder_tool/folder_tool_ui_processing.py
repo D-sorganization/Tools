@@ -178,9 +178,7 @@ class UIProcessingMixin:
         button_frame = ttk.Frame(dialog)
         button_frame.pack(fill=tk.X, padx=10, pady=(0, 10))
 
-        close_button = ttk.Button(
-            button_frame, text="Close", command=dialog.destroy
-        )
+        close_button = ttk.Button(button_frame, text="Close", command=dialog.destroy)
         close_button.pack(side="right")
 
         def copy_to_clipboard() -> None:

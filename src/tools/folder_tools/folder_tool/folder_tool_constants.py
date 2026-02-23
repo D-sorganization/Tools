@@ -250,10 +250,19 @@ _CONSTANTS_METADATA: dict[str, tuple[str, str]] = {
     "MAX_DIALOG_HEIGHT": ("pixels", "Prevents dialog overflow"),
     "MIN_DIALOG_WIDTH": ("pixels", "Ensures usability"),
     "MIN_DIALOG_HEIGHT": ("pixels", "Ensures usability"),
-    "MAX_TEXT_CONTENT_SIZE": ("characters", "Prevents performance issues in text dialogs"),
+    "MAX_TEXT_CONTENT_SIZE": (
+        "characters",
+        "Prevents performance issues in text dialogs",
+    ),
     "MAX_TITLE_LENGTH": ("characters", "Prevents window title truncation"),
-    "MAX_COUNTER_ATTEMPTS": ("attempts", "Prevents infinite loops in filename generation"),
-    "MAX_FALLBACK_CONTENT_SIZE": ("characters", "Prevents UI overflow in fallback dialogs"),
+    "MAX_COUNTER_ATTEMPTS": (
+        "attempts",
+        "Prevents infinite loops in filename generation",
+    ),
+    "MAX_FALLBACK_CONTENT_SIZE": (
+        "characters",
+        "Prevents UI overflow in fallback dialogs",
+    ),
     "PROGRESS_BACKUP_PERCENT": ("%", "UI progress tracking for backup operations"),
     "PROGRESS_MAIN_OP_PERCENT": ("%", "UI progress tracking for main operations"),
     "PROGRESS_ZIP_PERCENT": ("%", "UI progress tracking for ZIP creation"),

@@ -136,16 +136,12 @@ class AnalysisMixin:
             "",
             "FILE TYPES:",
         ]
-        for ext, count in sorted(
-            file_types.items(), key=lambda x: x[1], reverse=True
-        ):
+        for ext, count in sorted(file_types.items(), key=lambda x: x[1], reverse=True):
             size_mb = size_by_type[ext] / (1024 * 1024)
             report.append(f"  {ext}: {count} files, {size_mb:.1f} MB")
 
         report.extend(["", "LARGEST FILES:"])
-        for file_path, size in sorted(
-            largest_files, key=lambda x: x[1], reverse=True
-        ):
+        for file_path, size in sorted(largest_files, key=lambda x: x[1], reverse=True):
             report.append(f"  {Path(file_path).name}: {size / (1024 * 1024):.1f} MB")
 
         if analysis_errors:
@@ -193,10 +189,8 @@ class AnalysisMixin:
 
             report.append(f"Analyzing: {folder}")
             try:
-                folder_files, folder_size, folder_errors = (
-                    self._analyze_single_folder(
-                        folder, file_types, size_by_type, largest_files
-                    )
+                folder_files, folder_size, folder_errors = self._analyze_single_folder(
+                    folder, file_types, size_by_type, largest_files
                 )
                 total_files += folder_files
                 total_size += folder_size

@@ -170,15 +170,22 @@ class PCAAnalyzer:
 
         pc_labels = [f"PC{i+1}" for i in range(components.shape[0])]
         transformed_df = pd.DataFrame(
-            X_processed @ components.T, columns=pc_labels, index=data.index,
+            X_processed @ components.T,
+            columns=pc_labels,
+            index=data.index,
         )
         loading_matrix = pd.DataFrame(
-            components.T, index=feature_names, columns=pc_labels,
+            components.T,
+            index=feature_names,
+            columns=pc_labels,
         )
 
         component_list, cumulative_var = self._build_component_list(
-            components, explained_var, explained_var_ratio,
-            singular_values, feature_names,
+            components,
+            explained_var,
+            explained_var_ratio,
+            singular_values,
+            feature_names,
         )
 
         return PCAResult(

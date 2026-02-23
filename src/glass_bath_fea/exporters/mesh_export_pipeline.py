@@ -144,17 +144,22 @@ class MeshExportPipeline:
 
         format_handlers: dict[str, tuple[str, Any]] = {}
         if "msh" in formats:
-            format_handlers["msh"] = ("mesh.msh", lambda p: export_mesh_to_msh(
-                self.mesh_data, p, physical_names=physical_names
-            ))
+            format_handlers["msh"] = (
+                "mesh.msh",
+                lambda p: export_mesh_to_msh(
+                    self.mesh_data, p, physical_names=physical_names
+                ),
+            )
         if "mat" in formats:
-            format_handlers["mat"] = ("mesh.mat", lambda p: export_mesh_to_mat(
-                self.mesh_data, p
-            ))
+            format_handlers["mat"] = (
+                "mesh.mat",
+                lambda p: export_mesh_to_mat(self.mesh_data, p),
+            )
         if "json" in formats:
-            format_handlers["json"] = ("mesh_metadata.json", lambda p: self._export_json_metadata(
-                p, quality
-            ))
+            format_handlers["json"] = (
+                "mesh_metadata.json",
+                lambda p: self._export_json_metadata(p, quality),
+            )
 
         for fmt, (filename, handler) in format_handlers.items():
             try:
@@ -213,7 +218,10 @@ class MeshExportPipeline:
 
         output_path.mkdir(parents=True, exist_ok=True)
         exported_files, errors = self._export_formats(
-            output_path, formats, physical_names, quality,
+            output_path,
+            formats,
+            physical_names,
+            quality,
         )
 
         return MeshExportResult(

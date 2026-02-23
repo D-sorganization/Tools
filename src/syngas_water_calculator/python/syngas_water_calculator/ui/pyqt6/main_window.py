@@ -395,18 +395,14 @@ class SyngasWaterCalculatorWindow(BaseCalculatorWindow):
         self.risk_label.setStyleSheet(style)
         self.margin_label.setStyleSheet(style)
 
-        self.recommended_temp_label.setText(
-            f"{risk['recommended_temperature_c']:.1f}"
-        )
+        self.recommended_temp_label.setText(f"{risk['recommended_temperature_c']:.1f}")
 
     def _display_calculation_error(self, error: Exception) -> None:
         """Display error state in all result labels."""
         error_msg = f"Error: {error}"
         for label in self.result_labels.values():
             label.setText("--")
-            label.setStyleSheet(
-                f"color: {CATPPUCCIN_MOCHA['red']}; font-weight: bold;"
-            )
+            label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']}; font-weight: bold;")
         self.margin_label.setText(error_msg[:30])
         self.margin_label.setStyleSheet(
             f"color: {CATPPUCCIN_MOCHA['red']}; font-weight: bold;"

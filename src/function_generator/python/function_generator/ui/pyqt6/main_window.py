@@ -366,44 +366,69 @@ class FunctionGeneratorWidget(QWidget):
 
         if waveform == "Sinusoid":
             return SignalGenerator.sinusoid(
-                t, amplitude=amp, frequency=freq, phase=phase, offset=offset,
+                t,
+                amplitude=amp,
+                frequency=freq,
+                phase=phase,
+                offset=offset,
             )
         elif waveform == "Cosine":
             return SignalGenerator.cosine(
-                t, amplitude=amp, frequency=freq, phase=phase, offset=offset,
+                t,
+                amplitude=amp,
+                frequency=freq,
+                phase=phase,
+                offset=offset,
             )
         elif waveform == "Square Wave":
             return SignalGenerator.square(
-                t, frequency=freq, amplitude=amp,
-                duty_cycle=self.duty_cycle_spin.value(), offset=offset,
+                t,
+                frequency=freq,
+                amplitude=amp,
+                duty_cycle=self.duty_cycle_spin.value(),
+                offset=offset,
             )
         elif waveform == "Triangle Wave":
             return SignalGenerator.triangle(
-                t, frequency=freq, amplitude=amp, offset=offset,
+                t,
+                frequency=freq,
+                amplitude=amp,
+                offset=offset,
             )
         elif waveform == "Sawtooth":
             return SignalGenerator.sawtooth(
-                t, frequency=freq, amplitude=amp, offset=offset,
+                t,
+                frequency=freq,
+                amplitude=amp,
+                offset=offset,
             )
         elif waveform == "Pulse":
             return SignalGenerator.pulse(
-                t, start_time=self.pulse_start_spin.value(),
+                t,
+                start_time=self.pulse_start_spin.value(),
                 duration=self.pulse_duration_spin.value(),
-                amplitude=amp, baseline=offset,
+                amplitude=amp,
+                baseline=offset,
             )
         elif waveform == "Step":
             return SignalGenerator.step(
-                t, step_time=self.step_time_spin.value(),
-                step_value=amp, initial_value=offset,
+                t,
+                step_time=self.step_time_spin.value(),
+                step_value=amp,
+                initial_value=offset,
             )
         elif waveform == "Exponential":
             return SignalGenerator.exponential(
-                t, amplitude=amp, decay_rate=self.decay_rate_spin.value(),
+                t,
+                amplitude=amp,
+                decay_rate=self.decay_rate_spin.value(),
                 offset=offset,
             )
         elif waveform == "Linear":
             return SignalGenerator.linear(
-                t, slope=self.slope_spin.value(), intercept=self.intercept_spin.value(),
+                t,
+                slope=self.slope_spin.value(),
+                intercept=self.intercept_spin.value(),
             )
         elif waveform == "Polynomial":
             coeffs_text = self.poly_coeffs_edit.toPlainText()
@@ -413,8 +438,11 @@ class FunctionGeneratorWidget(QWidget):
             return SignalGenerator.polynomial(t, coeffs)
         elif waveform == "Chirp":
             return SignalGenerator.chirp(
-                t, f0=self.chirp_f0_spin.value(), f1=self.chirp_f1_spin.value(),
-                amplitude=amp, method=self.chirp_method_combo.currentText(),
+                t,
+                f0=self.chirp_f0_spin.value(),
+                f1=self.chirp_f1_spin.value(),
+                amplitude=amp,
+                method=self.chirp_method_combo.currentText(),
             )
         elif waveform == "Constant":
             return SignalGenerator.constant(t, value=self.constant_value_spin.value())

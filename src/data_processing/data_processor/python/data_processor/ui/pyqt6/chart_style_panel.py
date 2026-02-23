@@ -74,10 +74,18 @@ if PYQT6_AVAILABLE:
             form.addRow("Line Width:", self._line_width_spin)
 
             self._marker_combo = QComboBox()
-            self._marker_combo.addItems([
-                "none", "circle", "square", "triangle",
-                "diamond", "cross", "plus", "star",
-            ])
+            self._marker_combo.addItems(
+                [
+                    "none",
+                    "circle",
+                    "square",
+                    "triangle",
+                    "diamond",
+                    "cross",
+                    "plus",
+                    "star",
+                ]
+            )
             form.addRow("Marker:", self._marker_combo)
 
             self._marker_size_spin = QDoubleSpinBox()

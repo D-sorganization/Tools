@@ -69,6 +69,7 @@ F = TypeVar("F", bound=Callable[..., Any])
 # Module-level logger
 logger = logging.getLogger(__name__)
 
+
 # Debug mode holder (avoids mutable global + global keyword)
 class _DebugState:
     enabled: bool = os.environ.get("DEBUG", "").lower() in ("1", "true", "yes")

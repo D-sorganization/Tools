@@ -315,18 +315,18 @@ def calculate_flow_properties(inputs: PressureDropInputs) -> FlowProperties:
         ValueError: If calculations fail
     """
     # DbC preconditions
-    assert inputs.pipe_diameter > 0, (
-        f"Pipe diameter must be positive, got {inputs.pipe_diameter}"
-    )
-    assert inputs.mass_flow_rate > 0, (
-        f"Mass flow rate must be positive, got {inputs.mass_flow_rate}"
-    )
-    assert inputs.inlet_temperature > 0, (
-        f"Inlet temperature must be positive (K), got {inputs.inlet_temperature}"
-    )
-    assert inputs.inlet_pressure > 0, (
-        f"Inlet pressure must be positive, got {inputs.inlet_pressure}"
-    )
+    assert (
+        inputs.pipe_diameter > 0
+    ), f"Pipe diameter must be positive, got {inputs.pipe_diameter}"
+    assert (
+        inputs.mass_flow_rate > 0
+    ), f"Mass flow rate must be positive, got {inputs.mass_flow_rate}"
+    assert (
+        inputs.inlet_temperature > 0
+    ), f"Inlet temperature must be positive (K), got {inputs.inlet_temperature}"
+    assert (
+        inputs.inlet_pressure > 0
+    ), f"Inlet pressure must be positive, got {inputs.inlet_pressure}"
 
     # Calculate gas mixture properties (now includes gamma and speed of sound)
     gas_props = calculate_gas_properties(
@@ -347,9 +347,7 @@ def calculate_flow_properties(inputs: PressureDropInputs) -> FlowProperties:
     # DbC: intermediate invariants on physical properties
     assert density > 0, f"Gas density must be positive, got {density}"
     assert viscosity > 0, f"Gas viscosity must be positive, got {viscosity}"
-    assert speed_of_sound > 0, (
-        f"Speed of sound must be positive, got {speed_of_sound}"
-    )
+    assert speed_of_sound > 0, f"Speed of sound must be positive, got {speed_of_sound}"
 
     # Calculate flow velocity
     pipe_area = PI * (inputs.pipe_diameter**2) / 4.0
@@ -378,15 +376,15 @@ def calculate_flow_properties(inputs: PressureDropInputs) -> FlowProperties:
     )
 
     # DbC postconditions
-    assert flow_props.velocity > 0, (
-        f"Flow velocity must be positive, got {flow_props.velocity}"
-    )
-    assert flow_props.reynolds_number > 0, (
-        f"Reynolds number must be positive, got {flow_props.reynolds_number}"
-    )
-    assert 0 <= flow_props.mach_number < 50, (
-        f"Mach number out of physical range, got {flow_props.mach_number}"
-    )
+    assert (
+        flow_props.velocity > 0
+    ), f"Flow velocity must be positive, got {flow_props.velocity}"
+    assert (
+        flow_props.reynolds_number > 0
+    ), f"Reynolds number must be positive, got {flow_props.reynolds_number}"
+    assert (
+        0 <= flow_props.mach_number < 50
+    ), f"Mach number out of physical range, got {flow_props.mach_number}"
 
     logger.info("Flow properties calculated:")
     logger.info(f"  Velocity: {velocity:.2f} m/s")
@@ -451,7 +449,9 @@ def calculate_frictional_pressure_drop(
         Darcy, H. (1857), Weisbach, J. (1845): Pipe flow friction equation
     """
     # DbC preconditions
-    assert friction_factor > 0, f"friction_factor must be positive, got {friction_factor}"
+    assert (
+        friction_factor > 0
+    ), f"friction_factor must be positive, got {friction_factor}"
     assert length > 0, f"length must be positive, got {length}"
     assert diameter > 0, f"diameter must be positive, got {diameter}"
     assert density > 0, f"density must be positive, got {density}"
@@ -642,7 +642,9 @@ def calculate_compressible_flow_correction(
     # DbC preconditions
     assert diameter > 0, f"diameter must be positive, got {diameter}"
     assert temperature > 0, f"temperature must be positive (K), got {temperature}"
-    assert molecular_weight > 0, f"molecular_weight must be positive, got {molecular_weight}"
+    assert (
+        molecular_weight > 0
+    ), f"molecular_weight must be positive, got {molecular_weight}"
 
     area = PI * (diameter**2) / 4.0
     G = mass_flow_rate / area
@@ -653,7 +655,10 @@ def calculate_compressible_flow_correction(
     )
 
     P2, is_choked = _iterate_compressible_pressure(
-        inlet_pressure, outlet_pressure, coeff, resistance,
+        inlet_pressure,
+        outlet_pressure,
+        coeff,
+        resistance,
     )
 
     if is_choked:

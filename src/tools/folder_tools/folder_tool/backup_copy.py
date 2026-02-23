@@ -52,9 +52,7 @@ class BackupCopyMixin:
             raise ValueError("No valid source folders to backup")
         return valid
 
-    def _backup_single_folder(
-        self, folder: str, backup_base: Path
-    ) -> bool:
+    def _backup_single_folder(self, folder: str, backup_base: Path) -> bool:
         """Backup one folder into *backup_base*. Returns True on success."""
         if not Path(folder).exists():
             logger.warning(f"Source folder no longer exists: {folder}")
@@ -185,7 +183,9 @@ class BackupCopyMixin:
                 self._prepare_dest_directory(dest_path_obj)
                 shutil.copy2(source_path, dest_path)
 
-                if self._verify_copy(source_path_obj, dest_path_obj, source_path, dest_path):
+                if self._verify_copy(
+                    source_path_obj, dest_path_obj, source_path, dest_path
+                ):
                     return True
 
                 # Verification failed; clean up and potentially retry

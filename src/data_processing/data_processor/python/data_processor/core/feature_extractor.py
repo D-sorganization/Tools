@@ -62,9 +62,7 @@ class FeatureExtractor:
                 sample_names.extend(stat_names)
 
                 if self.config.compute_trend or self.config.compute_peaks:
-                    time_feats, time_names = self._extract_time_domain(
-                        series, col_name
-                    )
+                    time_feats, time_names = self._extract_time_domain(series, col_name)
                     sample_features.extend(time_feats)
                     sample_names.extend(time_names)
 
@@ -135,11 +133,14 @@ class FeatureExtractor:
 
         if data.ndim == 3:
             features_array, all_names = self._extract_time_series_features(
-                data, column_names, n_samples,
+                data,
+                column_names,
+                n_samples,
             )
         else:
             features_array, all_names = self._extract_tabular_features(
-                data, column_names,
+                data,
+                column_names,
             )
 
         categories: dict[str, list[str]] = {}

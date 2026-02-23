@@ -2,15 +2,17 @@
 labels: jules:assessment, needs-attention
 ---
 
-# Low Test Coverage (18%)
+# Issue: Low Score in Test Coverage
 
-Test coverage is significantly below industry standards.
+## Grade: 4.6/10
 
-- Only 119 test files for 646 source files.
-- Critical shared libraries in `src/shared` lack comprehensive unit tests.
+## Problem
+The assessment for **Test Coverage** returned a score below the acceptable threshold of 5.0.
 
-**Action Items**:
+## Justification
+Test file ratio: 23.1% (256/1109)
 
-- Enforce strict TDD for new features.
-- Add unit tests for `src/shared/python` utilities.
-- Target 60% file coverage ratio.
+## Action Items
+1. Review the generated assessment in `docs/assessments/Assessment_C_Test_Coverage.md`.
+2. Address the specific metrics highlighted in the justification.
+3. Run `scripts/generate_comprehensive_assessment.py` to verify improvements.

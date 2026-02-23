@@ -162,9 +162,12 @@ class PathsMixin:
             )
             if self.show_electrode_labels_checkbox.isChecked():
                 ax.text(
-                    tip[0], tip[1], tip[2],
+                    tip[0],
+                    tip[1],
+                    tip[2],
                     f"{pos['depth']:.1f}",
-                    color="k", fontsize=10,
+                    color="k",
+                    fontsize=10,
                 )
 
     def _draw_real_geometry_paths(
@@ -182,14 +185,21 @@ class PathsMixin:
         for phase in results["current_paths"]:
             i, j = int(phase[0]) - 1, int(phase[2]) - 1
             self.visualizer.draw_trapezoidal_prism(
-                ax, positions[i], positions[j],
-                bath_diameter / 2, glass_depth,
+                ax,
+                positions[i],
+                positions[j],
+                bath_diameter / 2,
+                glass_depth,
                 color="#4169E1",
                 alpha=self.path_alpha_slider.value() / 100,
             )
             self.visualizer.draw_via_metal_path(
-                ax, positions[i], positions[j],
-                bath_diameter / 2, metal_depth, glass_depth,
+                ax,
+                positions[i],
+                positions[j],
+                bath_diameter / 2,
+                metal_depth,
+                glass_depth,
                 color="#DC143C",
                 alpha=self.path_alpha_slider.value() / 100,
             )
@@ -265,9 +275,12 @@ class PathsMixin:
 
             direct_color = self._get_current_based_color("direct_glass", i)
             self._draw_correct_trapezoidal_path(
-                electrode_positions[i], electrode_positions[j],
-                conductive_height, bath_radius,
-                color=direct_color, alpha=path_alpha * 0.8,
+                electrode_positions[i],
+                electrode_positions[j],
+                conductive_height,
+                bath_radius,
+                color=direct_color,
+                alpha=path_alpha * 0.8,
                 label=f"Direct Glass {i + 1}-{j + 1}",
                 current_value=direct_current,
                 resistance_value=direct_resistance,
@@ -276,9 +289,13 @@ class PathsMixin:
             if metal_conductive:
                 metal_color = self._get_current_based_color("via_metal", i)
                 self._draw_correct_via_metal_path(
-                    electrode_positions[i], electrode_positions[j],
-                    metal_height, electrode_radius, bath_radius,
-                    color=metal_color, alpha=path_alpha * 0.6,
+                    electrode_positions[i],
+                    electrode_positions[j],
+                    metal_height,
+                    electrode_radius,
+                    bath_radius,
+                    color=metal_color,
+                    alpha=path_alpha * 0.6,
                     label=f"Via Metal {i + 1}-{j + 1}",
                     current_value=metal_current,
                     resistance_value=metal_resistance,
@@ -295,7 +312,9 @@ class PathsMixin:
         angles = [0, 120, 240]
         refractory_thickness = self.refractory_thickness_input.value()
         electrode_extension = self.electrode_extension_slider.value()
-        total_electrode_length = bath_radius + refractory_thickness + electrode_extension
+        total_electrode_length = (
+            bath_radius + refractory_thickness + electrode_extension
+        )
         electrode_positions: list[dict[str, Any]] = []
 
         for depth, angle in zip(depths, angles, strict=False):
@@ -305,12 +324,14 @@ class PathsMixin:
             y_tip = (bath_radius - depth) * np.sin(angle_rad)
             x_base = total_electrode_length * np.cos(angle_rad)
             y_base = total_electrode_length * np.sin(angle_rad)
-            electrode_positions.append({
-                "tip": np.array([x_tip, y_tip, electrode_z]),
-                "base": np.array([x_base, y_base, electrode_z]),
-                "angle": angle_rad,
-                "depth": depth,
-            })
+            electrode_positions.append(
+                {
+                    "tip": np.array([x_tip, y_tip, electrode_z]),
+                    "base": np.array([x_base, y_base, electrode_z]),
+                    "angle": angle_rad,
+                    "depth": depth,
+                }
+            )
         return electrode_positions
 
     def _get_phase_data(self) -> tuple[dict, dict]:
@@ -378,22 +399,51 @@ class PathsMixin:
         )
 
     def _annotate_path_value(
-        self, ax: Any, mid_x: float, mid_y: float, mid_z: float,
-        value: float, checkbox_name: str, fmt: str,
-        bg_color: str, text_color: str,
+        self,
+        ax: Any,
+        mid_x: float,
+        mid_y: float,
+        mid_z: float,
+        value: float,
+        checkbox_name: str,
+        fmt: str,
+        bg_color: str,
+        text_color: str,
     ) -> None:
         """Annotate a path with a formatted value label."""
         annotate_path_value(
-            self, ax, mid_x, mid_y, mid_z, value, checkbox_name, fmt, bg_color, text_color
+            self,
+            ax,
+            mid_x,
+            mid_y,
+            mid_z,
+            value,
+            checkbox_name,
+            fmt,
+            bg_color,
+            text_color,
         )
 
     def _annotate_resistance_value(
-        self, ax: Any, mid_x: float, mid_y: float,
-        electrode_z: float, resistance_value: float, current_value: float,
-        bg_color: str, text_color: str,
+        self,
+        ax: Any,
+        mid_x: float,
+        mid_y: float,
+        electrode_z: float,
+        resistance_value: float,
+        current_value: float,
+        bg_color: str,
+        text_color: str,
     ) -> None:
         """Annotate a path with resistance value."""
         annotate_resistance_value(
-            self, ax, mid_x, mid_y, electrode_z, resistance_value, current_value,
-            bg_color, text_color,
+            self,
+            ax,
+            mid_x,
+            mid_y,
+            electrode_z,
+            resistance_value,
+            current_value,
+            bg_color,
+            text_color,
         )

@@ -46,8 +46,18 @@ class ElectrodeLayersMixin:
         cyl_x, cyl_y, cyl_z = self._cylinder_mesh(theta, z_metal, radius)
 
         self._draw_three_surfaces(
-            ax, top_x, top_y, top_z, bot_x, bot_y, bot_z,
-            cyl_x, cyl_y, cyl_z, metal_color, metal_alpha,
+            ax,
+            top_x,
+            top_y,
+            top_z,
+            bot_x,
+            bot_y,
+            bot_z,
+            cyl_x,
+            cyl_y,
+            cyl_z,
+            metal_color,
+            metal_alpha,
         )
 
         # Edge lines
@@ -72,15 +82,37 @@ class ElectrodeLayersMixin:
         cyl_x, cyl_y, cyl_z = self._cylinder_mesh(theta, z_glass, radius)
 
         self._draw_three_surfaces(
-            ax, top_x, top_y, top_z, bot_x, bot_y, bot_z,
-            cyl_x, cyl_y, cyl_z, glass_color, glass_alpha,
+            ax,
+            top_x,
+            top_y,
+            top_z,
+            bot_x,
+            bot_y,
+            bot_z,
+            cyl_x,
+            cyl_y,
+            cyl_z,
+            glass_color,
+            glass_alpha,
         )
 
         self._draw_edge_circles(
-            ax, theta, radius, [total_height], "#FF6500", 2, 0.9,
+            ax,
+            theta,
+            radius,
+            [total_height],
+            "#FF6500",
+            2,
+            0.9,
         )
         self._draw_edge_circles(
-            ax, theta, radius, [metal_height], "#FF6500", 1.5, 0.7,
+            ax,
+            theta,
+            radius,
+            [metal_height],
+            "#FF6500",
+            1.5,
+            0.7,
         )
 
     def draw_3d_refractory_layer(
@@ -97,14 +129,23 @@ class ElectrodeLayersMixin:
             refractory_color = "#D2B48C"
 
             self._draw_annular_volume(
-                ax, inner_radius, outer_radius, total_height,
-                refractory_color, refractory_alpha,
+                ax,
+                inner_radius,
+                outer_radius,
+                total_height,
+                refractory_color,
+                refractory_alpha,
             )
 
             # Outer edge circles
             self._draw_edge_circles(
-                ax, np.linspace(0, 2 * np.pi, 30), outer_radius,
-                [total_height, 0.0], "#8B4513", 1.5, 0.8,
+                ax,
+                np.linspace(0, 2 * np.pi, 30),
+                outer_radius,
+                [total_height, 0.0],
+                "#8B4513",
+                1.5,
+                0.8,
             )
         except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             pass
@@ -125,13 +166,22 @@ class ElectrodeLayersMixin:
             shell_color = "#2F2F2F"
 
             self._draw_annular_volume(
-                ax, shell_inner_radius, shell_outer_radius, total_height,
-                shell_color, shell_alpha,
+                ax,
+                shell_inner_radius,
+                shell_outer_radius,
+                total_height,
+                shell_color,
+                shell_alpha,
             )
 
             self._draw_edge_circles(
-                ax, np.linspace(0, 2 * np.pi, 30), shell_outer_radius,
-                [total_height, 0.0], "#1C1C1C", 2, 0.9,
+                ax,
+                np.linspace(0, 2 * np.pi, 30),
+                shell_outer_radius,
+                [total_height, 0.0],
+                "#1C1C1C",
+                2,
+                0.9,
             )
         except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             pass
@@ -141,9 +191,7 @@ class ElectrodeLayersMixin:
     # ----------------------------------------------------------------
 
     @staticmethod
-    def _disk_mesh(
-        theta: Any, radius: float, z_value: float
-    ) -> tuple[Any, Any, Any]:
+    def _disk_mesh(theta: Any, radius: float, z_value: float) -> tuple[Any, Any, Any]:
         """Create a filled disk mesh at the given z height."""
         r = np.linspace(0, radius, 15)
         R, T = np.meshgrid(r, theta)
@@ -165,10 +213,17 @@ class ElectrodeLayersMixin:
     @staticmethod
     def _draw_three_surfaces(
         ax: Any,
-        top_x: Any, top_y: Any, top_z: Any,
-        bot_x: Any, bot_y: Any, bot_z: Any,
-        cyl_x: Any, cyl_y: Any, cyl_z: Any,
-        color: str, alpha: float,
+        top_x: Any,
+        top_y: Any,
+        top_z: Any,
+        bot_x: Any,
+        bot_y: Any,
+        bot_z: Any,
+        cyl_x: Any,
+        cyl_y: Any,
+        cyl_z: Any,
+        color: str,
+        alpha: float,
     ) -> None:
         """Draw top, bottom, and cylindrical surfaces."""
         if hasattr(ax, "plot_surface"):
@@ -235,6 +290,10 @@ class ElectrodeLayersMixin:
                 x_outer_line = [outer_radius * np.cos(theta[i])] * len(z_vals)
                 y_outer_line = [outer_radius * np.sin(theta[i])] * len(z_vals)
                 ax.plot(
-                    x_outer_line, y_outer_line, z_vals,
-                    color=color, alpha=alpha * 0.5, linewidth=1,
+                    x_outer_line,
+                    y_outer_line,
+                    z_vals,
+                    color=color,
+                    alpha=alpha * 0.5,
+                    linewidth=1,
                 )
