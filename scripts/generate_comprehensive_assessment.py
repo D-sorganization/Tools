@@ -434,7 +434,7 @@ def generate_comprehensive(grades: dict[str, tuple[float, str]]):
         score = grades[code][0]
         content += f"| {code} | {name} | {score}/10 |\n"
 
-    content += f"""
+    content += """
 ## Top 5 Recommendations
 
 1. **Address Critical Issues**: Review any categories with scores below 5.0 (check `docs/assessments/issues/`).
