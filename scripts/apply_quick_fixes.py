@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 REPO_ROOT = Path(__file__).parent.parent.resolve()
 
 
-def run_command(command: list[str], description: str):
+def run_command(command: list[str], description: str) -> None:
     logger.info(f"Running: {description}...")
     try:
         result = subprocess.run(command, cwd=REPO_ROOT, capture_output=True, text=True)
@@ -27,7 +27,7 @@ def run_command(command: list[str], description: str):
         logger.error(f"Failed to run {description}: {e}")
 
 
-def main():
+def main() -> None:
     logger.info("Starting Quick Fixes...")
 
     # 1. Ruff: Sort imports (I), Upgrade syntax (UP), Remove unused imports (F401)

@@ -103,6 +103,7 @@ class UnitConversionService:
         self.thermal_conductivity_factors = self.category_map["thermal_conductivity"]
         self.heat_transfer_coeff_factors = self.category_map["heat_transfer"]
         self.specific_heat_factors = self.category_map["specific_heat"]
+        self.specific_energy_factors = self.category_map["specific_energy"]
 
         self.heating_value_conversions = dict(HEATING_VALUE_CONVERSIONS)
         self.concentration_conversions = dict(CONCENTRATION_CONVERSIONS)

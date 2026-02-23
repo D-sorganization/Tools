@@ -104,7 +104,7 @@ def _compute_gradient_component(
         if not np.isfinite(fwd):
             return 0.0
         fwd_val = np.clip(current + step, lower, upper)
-        return (fwd - objective) / (fwd_val - current)
+        return float((fwd - objective) / (fwd_val - current))
 
     # Backward-only at upper bound
     if at_upper:
@@ -112,7 +112,7 @@ def _compute_gradient_component(
         if not np.isfinite(bwd):
             return 0.0
         bwd_val = np.clip(current - step, lower, upper)
-        return (objective - bwd) / (current - bwd_val)
+        return float((objective - bwd) / (current - bwd_val))
 
     # Central difference in interior
     plus_val = np.clip(current + step, lower, upper)
@@ -124,7 +124,7 @@ def _compute_gradient_component(
     bwd = _eval_at(-step)
     if not (np.isfinite(fwd) and np.isfinite(bwd)):
         return 0.0
-    return (fwd - bwd) / (plus_val - minus_val)
+    return float((fwd - bwd) / (plus_val - minus_val))
 
 
 @dataclass

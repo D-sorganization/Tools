@@ -60,8 +60,8 @@ try:
         ensure_utils_in_path()
     except ImportError:
         # Fallback if utils not available
-        find_env_file = None
-        load_env_file = None
+        find_env_file = None  # type: ignore[assignment]
+        load_env_file = None  # type: ignore[assignment]
 
     # Search for .env file in multiple locations
     # Use get_project_root_from_file for consistent path resolution
