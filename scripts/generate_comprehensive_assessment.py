@@ -346,7 +346,9 @@ def calculate_grades(stats: RepoStats) -> dict[str, tuple[float, str]]:
     return grades
 
 
-def generate_assessments(grades: dict[str, tuple[float, str]], stats: RepoStats) -> None:
+def generate_assessments(
+    grades: dict[str, tuple[float, str]], stats: RepoStats
+) -> None:
     for category, (score, justification) in grades.items():
         name = CATEGORIES[category]
         filename = (

@@ -551,7 +551,9 @@ class AcidGasDewpointCalculator:
         # 3. Overall dewpoint determination
         valid_dewpoints = {k: v for k, v in dewpoints.items() if not np.isnan(v)}
         if valid_dewpoints:
-            limiting_component = max(valid_dewpoints.keys(), key=lambda k: valid_dewpoints[k])
+            limiting_component = max(
+                valid_dewpoints.keys(), key=lambda k: valid_dewpoints[k]
+            )
             overall_dewpoint = valid_dewpoints[limiting_component]
         else:
             overall_dewpoint = np.nan

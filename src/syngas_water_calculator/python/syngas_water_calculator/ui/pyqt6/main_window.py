@@ -355,20 +355,14 @@ class SyngasWaterCalculatorWindow(BaseCalculatorWindow):
 
     def _display_water_content_results(self, result: Any) -> None:
         """Update result labels with calculated water content values."""
-        self.result_labels["mole_fraction"].setText(
-            f"{result.mole_fraction_water:.6f}"
-        )
-        self.result_labels["mg_nm3"].setText(
-            f"{result.water_content_mg_per_nm3:,.2f}"
-        )
+        self.result_labels["mole_fraction"].setText(f"{result.mole_fraction_water:.6f}")
+        self.result_labels["mg_nm3"].setText(f"{result.water_content_mg_per_nm3:,.2f}")
         self.result_labels["ppmv"].setText(f"{result.water_content_ppmv:,.1f}")
         self.result_labels["g_m3"].setText(f"{result.water_content_g_per_m3:,.4f}")
         self.result_labels["lb_mmscf"].setText(
             f"{result.water_content_lb_per_mmscf:,.2f}"
         )
-        self.result_labels["vapor_pressure"].setText(
-            f"{result.vapor_pressure_bar:.4f}"
-        )
+        self.result_labels["vapor_pressure"].setText(f"{result.vapor_pressure_bar:.4f}")
         self.result_labels["dew_point"].setText(f"{result.dew_point_c:.1f}")
 
         for key in self.result_labels:
