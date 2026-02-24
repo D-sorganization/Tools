@@ -24,6 +24,7 @@ from .routers import (
     flow_rate,
     ode_solver,
     pressure_drop,
+    rotation_converter,
     scrubber,
     syngas_water,
     thermal_profile,
@@ -61,6 +62,7 @@ app.include_router(flow_rate.router)
 app.include_router(syngas_water.router)
 app.include_router(thermal_profile.router)
 app.include_router(ode_solver.router)
+app.include_router(rotation_converter.router)
 
 
 # ---------------------------------------------------------------------------
@@ -90,5 +92,6 @@ def list_endpoints() -> dict[str, list[str]]:
             "POST /api/calc/syngas-water",
             "POST /api/calc/thermal-profile",
             "POST /api/calc/ode-solver",
+            "POST /api/calc/rotation-converter",
         ],
     }
