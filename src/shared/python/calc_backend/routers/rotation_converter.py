@@ -34,7 +34,7 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
             if not isinstance(val, list) or len(val) != 3:
                 raise ValueError("Euler angles must be a list of 3 floats.")
             rot = Rotation.from_euler(
-                float(val[0]), float(val[1]), float(val[2]), request.euler_convention
+                float(str(val[0])), float(str(val[1])), float(str(val[2])), request.euler_convention
             )
         elif request.type == "axis_angle":
             val = request.value
@@ -42,11 +42,11 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
                 raise ValueError(
                     "Axis-angle must be a list of 4 floats: [x, y, z, angle]."
                 )
-            axis = np.array([float(val[0]), float(val[1]), float(val[2])])
+            axis = np.array([float(str(val[0])), float(str(val[1])), float(str(val[2]))])
             norm = np.linalg.norm(axis)
             if norm > 1e-12:
                 axis = axis / norm
-            rot = Rotation.from_axis_angle(axis, float(val[3]))
+            rot = Rotation.from_axis_angle(axis, float(str(val[3])))
         elif request.type == "rodrigues":
             if not isinstance(request.value, list) or len(request.value) != 3:
                 raise ValueError("Rodrigues vector must be a list of 3 floats.")
