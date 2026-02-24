@@ -34,7 +34,10 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
             if not isinstance(val, list) or len(val) != 3:
                 raise ValueError("Euler angles must be a list of 3 floats.")
             rot = Rotation.from_euler(
-                float(str(val[0])), float(str(val[1])), float(str(val[2])), request.euler_convention
+                float(str(val[0])),
+                float(str(val[1])),
+                float(str(val[2])),
+                request.euler_convention,
             )
         elif request.type == "axis_angle":
             val = request.value
@@ -42,7 +45,9 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
                 raise ValueError(
                     "Axis-angle must be a list of 4 floats: [x, y, z, angle]."
                 )
-            axis = np.array([float(str(val[0])), float(str(val[1])), float(str(val[2]))])
+            axis = np.array(
+                [float(str(val[0])), float(str(val[1])), float(str(val[2]))]
+            )
             norm = np.linalg.norm(axis)
             if norm > 1e-12:
                 axis = axis / norm
