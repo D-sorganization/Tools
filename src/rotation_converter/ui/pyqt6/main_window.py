@@ -391,7 +391,7 @@ class RigidTransformTab(QWidget):
 
         self._tf_input = QTextEdit()
         self._tf_input.setPlaceholderText(
-            "Quaternion: w x y z tx ty tz\n" "(e.g. 1 0 0 0 1.0 2.0 3.0)"
+            "Quaternion: w x y z tx ty tz\n(e.g. 1 0 0 0 1.0 2.0 3.0)"
         )
         self._tf_input.setMaximumHeight(80)
         self._tf_input.setText("1 0 0 0 1.0 2.0 3.0")

@@ -367,8 +367,7 @@ _VALID_CONVENTIONS = {
 def _validate_euler_convention(convention: str) -> None:
     require(
         convention.lower() in _VALID_CONVENTIONS,
-        f"Unknown Euler convention '{convention}'. "
-        f"Valid: {sorted(_VALID_CONVENTIONS)}",
+        f"Unknown Euler convention '{convention}'. Valid: {sorted(_VALID_CONVENTIONS)}",
     )
 
 
