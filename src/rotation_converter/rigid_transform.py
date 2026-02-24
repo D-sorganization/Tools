@@ -1,3 +1,4 @@
+# mypy: disable-error-code="no-any-return"
 """Frame-aware rigid body transformation (SE(3) with source/target labels).
 
 Provides ``RigidTransform``, an immutable SE(3) wrapper that tracks which
@@ -360,7 +361,7 @@ class RigidTransform:
 
         For identity transform returns (zeros(6), 0.0).
         """
-        return homogeneous_to_twist_angle(self._T)  # type: ignore[no-any-return]
+        return homogeneous_to_twist_angle(self._T)
 
     def as_screw(self) -> dict[str, Any]:
         """Return screw axis parameters {axis, point, pitch, theta}.
@@ -378,7 +379,7 @@ class RigidTransform:
             }
         screw = twist_to_screw(twist)
         screw["theta"] = theta
-        return screw  # type: ignore[no-any-return]
+        return screw
 
     # ── Predicates ────────────────────────────────────────────────
 
@@ -455,7 +456,7 @@ class RigidTransform:
         point = np.asarray(point, dtype=float)
         require(point.shape == (3,), "point must have 3 elements", point.shape)
         require_finite(point, "point")
-        return self._T[:3, :3] @ point + self._T[:3, 3]  # type: ignore[no-any-return]
+        return self._T[:3, :3] @ point + self._T[:3, 3]
 
     def apply_vector(self, vector: Any) -> np.ndarray:
         """Transform a 3D direction vector: v_target = R @ v_source.
@@ -471,7 +472,7 @@ class RigidTransform:
         vector = np.asarray(vector, dtype=float)
         require(vector.shape == (3,), "vector must have 3 elements", vector.shape)
         require_finite(vector, "vector")
-        return self._T[:3, :3] @ vector  # type: ignore[no-any-return]
+        return self._T[:3, :3] @ vector
 
     def apply_points(self, points: Any) -> np.ndarray:
         """Transform a batch of 3D points (Nx3).
@@ -488,7 +489,7 @@ class RigidTransform:
             "points must be Nx3",
             points.shape,
         )
-        return (self._T[:3, :3] @ points.T).T + self._T[:3, 3]  # type: ignore[no-any-return]
+        return (self._T[:3, :3] @ points.T).T + self._T[:3, 3]
 
     def apply_vectors(self, vectors: Any) -> np.ndarray:
         """Transform a batch of 3D direction vectors (Nx3).
@@ -508,7 +509,7 @@ class RigidTransform:
             "vectors must be Nx3",
             vectors.shape,
         )
-        return (self._T[:3, :3] @ vectors.T).T  # type: ignore[no-any-return]
+        return (self._T[:3, :3] @ vectors.T).T
 
     def apply_homogeneous(self, ph: Any) -> np.ndarray:
         """Transform a 4-vector in homogeneous coordinates.
@@ -528,7 +529,7 @@ class RigidTransform:
         """
         ph = np.asarray(ph, dtype=float)
         require(ph.shape == (4,), "homogeneous vector must have 4 elements", ph.shape)
-        return self._T @ ph  # type: ignore[no-any-return]
+        return self._T @ ph
 
     def apply_homogeneous_batch(self, phs: Any) -> np.ndarray:
         """Transform a batch of 4-vectors in homogeneous coordinates (Nx4).
@@ -547,7 +548,7 @@ class RigidTransform:
             "homogeneous batch must be Nx4",
             phs.shape,
         )
-        return (self._T @ phs.T).T  # type: ignore[no-any-return]
+        return (self._T @ phs.T).T
 
     # ── Body / Space twist conversions ────────────────────────────
 
@@ -565,7 +566,7 @@ class RigidTransform:
         from rotation_converter.modern_robotics import MatrixLog6, se3ToVec
 
         se3_mat = MatrixLog6(self._T)
-        return se3ToVec(se3_mat)  # type: ignore[no-any-return]
+        return se3ToVec(se3_mat)
 
     def space_twist(self) -> np.ndarray:
         """Return the space-frame twist Vs such that T = exp([Vs]).
@@ -580,7 +581,7 @@ class RigidTransform:
         """
         Vb = self.body_twist()
         Ad = adjoint_representation(self._T)
-        return Ad @ Vb  # type: ignore[no-any-return]
+        return Ad @ Vb
 
     def body_to_space_twist(self, Vb: Any) -> np.ndarray:
         """Convert a twist from body frame to space frame.
@@ -596,7 +597,7 @@ class RigidTransform:
         Vb = np.asarray(Vb, dtype=float)
         require(Vb.shape == (6,), "body twist must have 6 elements", Vb.shape)
         Ad = adjoint_representation(self._T)
-        return Ad @ Vb  # type: ignore[no-any-return]
+        return Ad @ Vb
 
     def space_to_body_twist(self, Vs: Any) -> np.ndarray:
         """Convert a twist from space frame to body frame.
@@ -612,7 +613,7 @@ class RigidTransform:
         Vs = np.asarray(Vs, dtype=float)
         require(Vs.shape == (6,), "space twist must have 6 elements", Vs.shape)
         Ad_inv = adjoint_representation(self.inverse().as_matrix())
-        return Ad_inv @ Vs  # type: ignore[no-any-return]
+        return Ad_inv @ Vs
 
     # ── Batch twist conversions (motion data vectors) ─────────────
 
@@ -635,7 +636,7 @@ class RigidTransform:
             Vb_batch.shape,
         )
         Ad = adjoint_representation(self._T)
-        return (Ad @ Vb_batch.T).T  # type: ignore[no-any-return]
+        return (Ad @ Vb_batch.T).T
 
     def space_to_body_twists(self, Vs_batch: Any) -> np.ndarray:
         """Convert a batch of twists from space frame to body frame (Nx6).
@@ -656,7 +657,7 @@ class RigidTransform:
             Vs_batch.shape,
         )
         Ad_inv = adjoint_representation(self.inverse().as_matrix())
-        return (Ad_inv @ Vs_batch.T).T  # type: ignore[no-any-return]
+        return (Ad_inv @ Vs_batch.T).T
 
     # ── Wrench transformations (co-adjoint) ───────────────────────
 
@@ -675,7 +676,7 @@ class RigidTransform:
         Fb = np.asarray(Fb, dtype=float)
         require(Fb.shape == (6,), "body wrench must have 6 elements", Fb.shape)
         Ad_inv = adjoint_representation(self.inverse().as_matrix())
-        return Ad_inv.T @ Fb  # type: ignore[no-any-return]
+        return Ad_inv.T @ Fb
 
     def space_to_body_wrench(self, Fs: Any) -> np.ndarray:
         """Convert a wrench from space frame to body frame.
@@ -691,7 +692,7 @@ class RigidTransform:
         Fs = np.asarray(Fs, dtype=float)
         require(Fs.shape == (6,), "space wrench must have 6 elements", Fs.shape)
         Ad = adjoint_representation(self._T)
-        return Ad.T @ Fs  # type: ignore[no-any-return]
+        return Ad.T @ Fs
 
     # ── Batch wrench conversions (motion data vectors) ────────────
 
@@ -714,7 +715,7 @@ class RigidTransform:
             Fb_batch.shape,
         )
         Ad_inv = adjoint_representation(self.inverse().as_matrix())
-        return (Ad_inv.T @ Fb_batch.T).T  # type: ignore[no-any-return]
+        return (Ad_inv.T @ Fb_batch.T).T
 
     def space_to_body_wrenches(self, Fs_batch: Any) -> np.ndarray:
         """Convert a batch of wrenches from space frame to body frame (Nx6).
@@ -735,7 +736,7 @@ class RigidTransform:
             Fs_batch.shape,
         )
         Ad = adjoint_representation(self._T)
-        return (Ad.T @ Fs_batch.T).T  # type: ignore[no-any-return]
+        return (Ad.T @ Fs_batch.T).T
 
     # ── Dunder methods ────────────────────────────────────────────
 

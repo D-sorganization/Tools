@@ -1,3 +1,4 @@
+# mypy: disable-error-code="attr-defined, misc"
 """Rotation Converter Main Window — PyQt6 GUI.
 
 Tabbed interface providing:
@@ -112,7 +113,7 @@ def _get_plot_colors() -> dict[str, Any]:
         try:
             mgr = get_theme_manager()
             colors = mgr.get_current_colors()
-            _dark = is_dark_theme(colors)  # noqa: F841
+            _dark = is_dark_theme(colors.get("name", "dark"))  # noqa: F841
             return {
                 "bg": colors.get("bg", _DARK_BG),
                 "fg": colors.get("text", _DARK_FG),
@@ -342,10 +343,10 @@ class RotationConverterTab(QWidget):
 
         ax.set_xlim(-1.2, 1.2)
         ax.set_ylim(-1.2, 1.2)
-        ax.set_zlim(-1.2, 1.2)  # type: ignore[attr-defined]  # Axes3D
+        ax.set_zlim(-1.2, 1.2)  # Axes3D
         ax.set_xlabel("X")
         ax.set_ylabel("Y")
-        ax.set_zlabel("Z")  # type: ignore[attr-defined]  # Axes3D
+        ax.set_zlabel("Z")  # Axes3D
         ax.set_title("Body Frame (solid) vs World (dashed)", fontsize=9)
         ax.legend(fontsize=7, loc="upper left")
         self._fig.tight_layout()
@@ -391,7 +392,7 @@ class RigidTransformTab(QWidget):
 
         self._tf_input = QTextEdit()
         self._tf_input.setPlaceholderText(
-            "Quaternion: w x y z tx ty tz\n" "(e.g. 1 0 0 0 1.0 2.0 3.0)"
+            "Quaternion: w x y z tx ty tz\n(e.g. 1 0 0 0 1.0 2.0 3.0)"
         )
         self._tf_input.setMaximumHeight(80)
         self._tf_input.setText("1 0 0 0 1.0 2.0 3.0")
@@ -580,15 +581,15 @@ class RigidTransformTab(QWidget):
             linestyle=":",
         )
 
-        ax.scatter(*p, color=c["accent"], s=40, zorder=5)  # type: ignore[misc]  # Axes3D
+        ax.scatter(*p, color=c["accent"], s=40, zorder=5)  # Axes3D
 
         margin = max(float(np.linalg.norm(p)) * 1.3, 2.0)
         ax.set_xlim(-margin, margin)
         ax.set_ylim(-margin, margin)
-        ax.set_zlim(-margin, margin)  # type: ignore[attr-defined]  # Axes3D
+        ax.set_zlim(-margin, margin)  # Axes3D
         ax.set_xlabel("X")
         ax.set_ylabel("Y")
-        ax.set_zlabel("Z")  # type: ignore[attr-defined]  # Axes3D
+        ax.set_zlabel("Z")  # Axes3D
         ax.set_title(f"{T.source_frame} → {T.target_frame}", fontsize=9)
         ax.legend(fontsize=7, loc="upper left")
         self._tf_fig.tight_layout()
@@ -785,16 +786,16 @@ class TrajectoryPlotsTab(QWidget):
         ax1.grid(True, alpha=0.3)
 
         ax2.plot(pos[:, 0], pos[:, 1], pos[:, 2], color=c["accent"], linewidth=1.5)
-        ax2.scatter(  # type: ignore[misc]  # Axes3D
+        ax2.scatter(  # Axes3D
             pos[0, 0], pos[0, 1], pos[0, 2], color=c["axes"][1], s=40, label="Start"
         )
-        ax2.scatter(  # type: ignore[misc]  # Axes3D
+        ax2.scatter(  # Axes3D
             pos[-1, 0], pos[-1, 1], pos[-1, 2], color=c["axes"][0], s=40, label="End"
         )
         ax2.set_title("3D Trajectory", fontsize=10)
         ax2.set_xlabel("X")
         ax2.set_ylabel("Y")
-        ax2.set_zlabel("Z")  # type: ignore[attr-defined]  # Axes3D
+        ax2.set_zlabel("Z")  # Axes3D
         ax2.legend(fontsize=7)
 
     def _plot_angular_velocity(self) -> None:
