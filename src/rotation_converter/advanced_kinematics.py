@@ -1,3 +1,4 @@
+# mypy: disable-error-code="no-any-return"
 """Advanced Kinematics.
 
 Provides representations and operations for Denavit-Hartenberg parameters
@@ -101,7 +102,7 @@ def slerp(q1: np.ndarray, q2: np.ndarray, t: float) -> np.ndarray:
     # to avoid division by zero
     if dot > 0.9995:
         result = q1 + t * (q2 - q1)
-        return normalize_quaternion(result)  # type: ignore
+        return normalize_quaternion(result)
 
     # Standard slerp
     theta_0 = math.acos(dot)
@@ -112,7 +113,7 @@ def slerp(q1: np.ndarray, q2: np.ndarray, t: float) -> np.ndarray:
     s1 = math.cos(theta) - dot * sin_theta / sin_theta_0
     s2 = sin_theta / sin_theta_0
 
-    return normalize_quaternion((s1 * q1) + (s2 * q2))  # type: ignore
+    return normalize_quaternion((s1 * q1) + (s2 * q2))
 
 
 class DualQuaternion:
@@ -178,4 +179,4 @@ class DualQuaternion:
 
         qr_conj = quaternion_conjugate(self._qr)
         t_quat = 2.0 * quaternion_multiply(self._qd, qr_conj)
-        return t_quat[1:]  # type: ignore
+        return t_quat[1:]

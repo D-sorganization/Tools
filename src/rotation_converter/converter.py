@@ -1,3 +1,4 @@
+# mypy: disable-error-code="no-any-return"
 """Unified rotation converter API.
 
 Provides two main interfaces:
