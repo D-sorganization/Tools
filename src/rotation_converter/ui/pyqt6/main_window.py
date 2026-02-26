@@ -48,7 +48,6 @@ from rotation_converter.rigid_transform import RigidTransform
 _THEME_AVAILABLE = False
 try:
     from theme import (
-        create_theme_menu,
         get_theme_manager,
         is_dark_theme,
     )
@@ -111,6 +110,8 @@ def _get_plot_colors() -> dict[str, Any]:
     """Get current plot colours from theme or defaults."""
     if _THEME_AVAILABLE:
         try:
+            from theme.colors import CHART_COLORS
+
             mgr = get_theme_manager()
             colors = mgr.get_current_colors()
             _dark = is_dark_theme(colors.get("name", "dark"))  # noqa: F841
@@ -119,7 +120,7 @@ def _get_plot_colors() -> dict[str, Any]:
                 "fg": colors.get("text", _DARK_FG),
                 "accent": colors.get("accent", _DARK_ACCENT),
                 "surface": colors.get("group_bg", _DARK_SURFACE),
-                "axes": _AXIS_COLORS,
+                "axes": CHART_COLORS[:3] if CHART_COLORS else _AXIS_COLORS,
             }
         except Exception:
             pass
@@ -201,6 +202,28 @@ class RotationConverterTab(QWidget):
         # Right: Outputs + Plot
         right = QVBoxLayout()
 
+        target_group = QGroupBox("Main Output Extraction")
+        target_layout = QFormLayout(target_group)
+        self._target_repr = QComboBox()
+        self._target_repr.addItems(
+            [
+                "Quaternion (w,x,y,z)",
+                "Euler Angles (rad)",
+                "Axis-Angle",
+                "Rodrigues Vector",
+                "Rotation Matrix (row-major)",
+            ]
+        )
+        self._target_euler_conv = QComboBox()
+        self._target_euler_conv.addItems(EULER_CONVENTIONS)
+        target_layout.addRow("Convert To:", self._target_repr)
+        target_layout.addRow("Euler Convention:", self._target_euler_conv)
+        self._main_result = QLineEdit()
+        self._main_result.setReadOnly(True)
+        self._main_result.setStyleSheet("font-size: 16px; font-weight: bold;")
+        target_layout.addRow("Result:", self._main_result)
+        right.addWidget(target_group, 1)
+
         output_group = QGroupBox("All Representations")
         output_layout = QVBoxLayout(output_group)
         self._output_text = QTextEdit()
@@ -214,6 +237,9 @@ class RotationConverterTab(QWidget):
         plot_layout = QVBoxLayout(plot_group)
         self._fig = Figure(figsize=(4, 3), dpi=100)
         self._canvas = FigureCanvas(self._fig)
+        self._toolbar = NavigationToolbar(self._canvas, self)
+        self._toolbar.setMaximumHeight(30)
+        plot_layout.addWidget(self._toolbar)
         self._canvas.setSizePolicy(
             QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
         )
@@ -225,6 +251,8 @@ class RotationConverterTab(QWidget):
     def _connect_signals(self) -> None:
         self._convert_btn.clicked.connect(self._update_outputs)
         self._repr_combo.currentIndexChanged.connect(self._on_repr_changed)
+        self._target_repr.currentIndexChanged.connect(self._update_outputs)
+        self._target_euler_conv.currentIndexChanged.connect(self._update_outputs)
 
     def _on_repr_changed(self) -> None:
         idx = self._repr_combo.currentIndex()
@@ -273,7 +301,31 @@ class RotationConverterTab(QWidget):
             return
 
         self._display_all(rot, conv)
+        self._update_main_result(rot)
         self._draw_rotation(rot)
+
+    def _update_main_result(self, rot: Rotation) -> None:
+        idx = self._target_repr.currentIndex()
+        conv = self._target_euler_conv.currentText()
+        try:
+            self._target_euler_conv.setEnabled(idx == 1)
+            if idx == 0:
+                res = _fmt_vec(rot.as_quaternion())
+            elif idx == 1:
+                res = _fmt_vec(np.array(rot.as_euler(conv)))
+            elif idx == 2:
+                ax, ang = rot.as_axis_angle()
+                res = f"{_fmt_vec(ax)}  {ang:.6f}"
+            elif idx == 3:
+                res = _fmt_vec(rot.as_rodrigues())
+            elif idx == 4:
+                R = rot.as_rotation_matrix()
+                res = _fmt_vec(R.flatten())
+            else:
+                res = ""
+            self._main_result.setText(res)
+        except Exception as e:
+            self._main_result.setText(f"Error: {e}")
 
     def _display_all(self, rot: Rotation, conv: str) -> None:
         q = rot.as_quaternion()
@@ -417,6 +469,9 @@ class RigidTransformTab(QWidget):
         plot_layout = QVBoxLayout(plot_group)
         self._tf_fig = Figure(figsize=(4, 3), dpi=100)
         self._tf_canvas = FigureCanvas(self._tf_fig)
+        self._tf_toolbar = NavigationToolbar(self._tf_canvas, self)
+        self._tf_toolbar.setMaximumHeight(30)
+        plot_layout.addWidget(self._tf_toolbar)
         self._tf_canvas.setSizePolicy(
             QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
         )
@@ -1039,13 +1094,6 @@ class RotationConverterMainWindow(QMainWindow):
         quit_action.triggered.connect(self.close)
         file_menu.addAction(quit_action)
 
-        # Theme menu (if available)
-        if _THEME_AVAILABLE:
-            try:
-                create_theme_menu(self, menu_bar)
-            except Exception:
-                pass
-
         # Help menu
         help_menu = menu_bar.addMenu("&Help")
         assert help_menu is not None
@@ -1068,9 +1116,14 @@ class RotationConverterMainWindow(QMainWindow):
             tab = self._tabs.widget(i)
             if tab is None:
                 continue
-            # Trigger re-draw on visible canvases
-            for canvas in tab.findChildren(FigureCanvas):
-                canvas.draw()
+            if hasattr(tab, "_update_outputs"):
+                tab._update_outputs()
+            elif hasattr(tab, "_update"):
+                tab._update()
+            elif hasattr(tab, "_plot"):
+                tab._plot()
+            elif hasattr(tab, "_draw_frame"):
+                tab._draw_frame()
 
     def _show_about(self) -> None:
         from PyQt6.QtWidgets import QMessageBox
