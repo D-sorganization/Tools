@@ -10,7 +10,7 @@ labels: jules:assessment, needs-attention
 The assessment for **Test Coverage** returned a score below the acceptable threshold of 5.0.
 
 ## Justification
-Test file ratio: 23.1% (256/1109)
+Test file ratio: 23.2% (259/1116)
 
 ## Action Items
 1. Review the generated assessment in `docs/assessments/Assessment_C_Test_Coverage.md`.
