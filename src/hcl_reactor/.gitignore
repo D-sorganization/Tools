@@ -1,0 +1,4 @@
+# Windows alternate data stream metadata (Zone.Identifier, mshield, etc.)
+*:*
+# Backup files
+*.bak
