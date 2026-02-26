@@ -18,19 +18,13 @@ from typing import TypedDict
 REPO_ROOT = Path(__file__).parent.parent.resolve()
 DOCS_DIR = REPO_ROOT / "docs" / "assessments"
 COMPLETIST_REPORT = (
-    DOCS_DIR
-    / "completist"
-    / f"Completist_Report_{datetime.now().strftime('%Y-%m-%d')}.md"
+    DOCS_DIR / "completist" / f"Completist_Report_{datetime.now().strftime('%Y-%m-%d')}.md"
 )
 PRAGMATIC_JSON = (
-    DOCS_DIR
-    / "pragmatic_programmer"
-    / f"review_{datetime.now().strftime('%Y-%m-%d')}.json"
+    DOCS_DIR / "pragmatic_programmer" / f"review_{datetime.now().strftime('%Y-%m-%d')}.json"
 )
 PRAGMATIC_MD = (
-    DOCS_DIR
-    / "pragmatic_programmer"
-    / f"review_{datetime.now().strftime('%Y-%m-%d')}.md"
+    DOCS_DIR / "pragmatic_programmer" / f"review_{datetime.now().strftime('%Y-%m-%d')}.md"
 )
 
 # Configure logging
@@ -152,7 +146,7 @@ def analyze_codebase() -> RepoStats:
         re.compile(r"(?i)(api_key|secret_key|password|token)\s*=\s*['\"][^'\"]+['\"]"),
     ]
 
-    for root, dirs, files in os.walk(REPO_ROOT):
+    for root, _dirs, files in os.walk(REPO_ROOT):
         # Exclusions
         path_parts = Path(root).parts
         if (
@@ -202,9 +196,7 @@ def analyze_codebase() -> RepoStats:
                     try:
                         tree = ast.parse(content)
                         for node in ast.walk(tree):
-                            if isinstance(
-                                node, (ast.FunctionDef, ast.AsyncFunctionDef)
-                            ):
+                            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                                 stats["functions"] += 1
                                 if ast.get_docstring(node):
                                     stats["docstrings"] += 1
@@ -264,9 +256,10 @@ def parse_external_reports(stats: RepoStats):
                         stats["dry_violations"] += int(match.group(1))
                     else:
                         stats["dry_violations"] += 1
-                if issue.get(
-                    "principle"
-                ) == "ORTHOGONALITY" and "God function" in issue.get("title", ""):
+                if (
+                    issue.get("principle") == "ORTHOGONALITY"
+                    and "God function" in issue.get("title", "")
+                ):
                     stats["god_functions"] += 1
                     stats["god_functions_list"].append(issue.get("title", ""))
         except Exception as e:
@@ -330,9 +323,7 @@ def calculate_grades(stats: RepoStats) -> dict[str, tuple[float, str]]:
         score_a -= 1
         deductions_a.append(f"High DRY violations ({stats['dry_violations']})")
 
-    just_a = (
-        "Architecture seems sound." if not deductions_a else "; ".join(deductions_a)
-    )
+    just_a = "Architecture seems sound." if not deductions_a else "; ".join(deductions_a)
     grades["A"] = (max(0, round(score_a, 1)), just_a)
 
     # B: Code Quality & Hygiene
