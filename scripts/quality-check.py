@@ -41,7 +41,7 @@ except ImportError:
         )
     else:
         # Fallback for when running from elsewhere
-        print("Error: Could not locate tools package.", file=sys.stderr)
+        sys.stderr.write("Error: Could not locate tools package.\n")
         sys.exit(1)
 
 
