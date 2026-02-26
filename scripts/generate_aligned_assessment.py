@@ -250,7 +250,7 @@ def analyze_codebase() -> RepoStats:
     return stats
 
 
-def parse_external_reports(stats: RepoStats):
+def parse_external_reports(stats: RepoStats) -> None:
     # Pragmatic Programmer Review
     if PRAGMATIC_JSON.exists():
         try:
@@ -484,7 +484,7 @@ def calculate_grades(stats: RepoStats) -> dict[str, tuple[float, str]]:
     return grades
 
 
-def generate_reports(grades: dict[str, tuple[float, str]], stats: RepoStats):
+def generate_reports(grades: dict[str, tuple[float, str]], stats: RepoStats) -> None:
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
 
     # Generate individual reports
@@ -563,7 +563,7 @@ def generate_reports(grades: dict[str, tuple[float, str]], stats: RepoStats):
     )
 
 
-def main():
+def main() -> None:
     stats = analyze_codebase()
     parse_external_reports(stats)
     grades = calculate_grades(stats)
