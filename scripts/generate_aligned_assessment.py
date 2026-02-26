@@ -12,14 +12,26 @@ import os
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import TypedDict, Any
+from typing import TypedDict
 
 # Configuration
 REPO_ROOT = Path(__file__).parent.parent.resolve()
 DOCS_DIR = REPO_ROOT / "docs" / "assessments"
-COMPLETIST_REPORT = DOCS_DIR / "completist" / f"Completist_Report_{datetime.now().strftime('%Y-%m-%d')}.md"
-PRAGMATIC_JSON = DOCS_DIR / "pragmatic_programmer" / f"review_{datetime.now().strftime('%Y-%m-%d')}.json"
-PRAGMATIC_MD = DOCS_DIR / "pragmatic_programmer" / f"review_{datetime.now().strftime('%Y-%m-%d')}.md"
+COMPLETIST_REPORT = (
+    DOCS_DIR
+    / "completist"
+    / f"Completist_Report_{datetime.now().strftime('%Y-%m-%d')}.md"
+)
+PRAGMATIC_JSON = (
+    DOCS_DIR
+    / "pragmatic_programmer"
+    / f"review_{datetime.now().strftime('%Y-%m-%d')}.json"
+)
+PRAGMATIC_MD = (
+    DOCS_DIR
+    / "pragmatic_programmer"
+    / f"review_{datetime.now().strftime('%Y-%m-%d')}.md"
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -42,6 +54,7 @@ CATEGORIES = {
     "N": "Visualization & Export",
     "O": "CI/CD & DevOps",
 }
+
 
 class RepoStats(TypedDict):
     files: int
@@ -79,28 +92,51 @@ class RepoStats(TypedDict):
     god_functions_list: list[str]
     secrets_found: int
 
+
 def analyze_codebase() -> RepoStats:
     logger.info("Starting codebase analysis...")
     stats: RepoStats = {
-        "files": 0, "lines": 0, "py_files": 0, "test_files": 0,
-        "docstrings": 0, "functions": 0, "classes": 0,
-        "prints": 0, "loggings": 0, "evals": 0, "try_except": 0,
-        "imports": set(), "max_depth": 0, "dirs": 0,
-        "readme_exists": False, "contributing_exists": False,
-        "install_exists": False, "requirements_exists": False,
-        "setup_py_exists": False, "dockerfile_exists": False,
-        "cicd_exists": False, "env_files": 0,
-        "examples_dir": False, "docs_dir": False, "tests_dir": False,
-        "pyproject_exists": False, "pytest_ini_exists": False,
-        "todo_count": 0, "fixme_count": 0, "critical_gaps": 0,
-        "dry_violations": 0, "god_functions": 0,
+        "files": 0,
+        "lines": 0,
+        "py_files": 0,
+        "test_files": 0,
+        "docstrings": 0,
+        "functions": 0,
+        "classes": 0,
+        "prints": 0,
+        "loggings": 0,
+        "evals": 0,
+        "try_except": 0,
+        "imports": set(),
+        "max_depth": 0,
+        "dirs": 0,
+        "readme_exists": False,
+        "contributing_exists": False,
+        "install_exists": False,
+        "requirements_exists": False,
+        "setup_py_exists": False,
+        "dockerfile_exists": False,
+        "cicd_exists": False,
+        "env_files": 0,
+        "examples_dir": False,
+        "docs_dir": False,
+        "tests_dir": False,
+        "pyproject_exists": False,
+        "pytest_ini_exists": False,
+        "todo_count": 0,
+        "fixme_count": 0,
+        "critical_gaps": 0,
+        "dry_violations": 0,
+        "god_functions": 0,
         "god_functions_list": [],
-        "secrets_found": 0
+        "secrets_found": 0,
     }
 
     # Helper to check for file existence
     stats["readme_exists"] = (REPO_ROOT / "README.md").exists()
-    stats["contributing_exists"] = (REPO_ROOT / "CONTRIBUTING.md").exists() or (REPO_ROOT / "docs" / "CONTRIBUTING.md").exists()
+    stats["contributing_exists"] = (REPO_ROOT / "CONTRIBUTING.md").exists() or (
+        REPO_ROOT / "docs" / "CONTRIBUTING.md"
+    ).exists()
     stats["install_exists"] = (REPO_ROOT / "INSTALL.md").exists()
     stats["requirements_exists"] = (REPO_ROOT / "requirements.txt").exists()
     stats["setup_py_exists"] = (REPO_ROOT / "setup.py").exists()
@@ -108,7 +144,9 @@ def analyze_codebase() -> RepoStats:
     stats["pytest_ini_exists"] = (REPO_ROOT / "pytest.ini").exists()
     stats["examples_dir"] = (REPO_ROOT / "examples").exists()
     stats["docs_dir"] = (REPO_ROOT / "docs").exists()
-    stats["tests_dir"] = (REPO_ROOT / "tests").exists() or (REPO_ROOT / "src" / "tests").exists() # Heuristic
+    stats["tests_dir"] = (REPO_ROOT / "tests").exists() or (
+        REPO_ROOT / "src" / "tests"
+    ).exists()  # Heuristic
 
     secret_patterns = [
         re.compile(r"(?i)(api_key|secret_key|password|token)\s*=\s*['\"][^'\"]+['\"]"),
@@ -117,9 +155,12 @@ def analyze_codebase() -> RepoStats:
     for root, dirs, files in os.walk(REPO_ROOT):
         # Exclusions
         path_parts = Path(root).parts
-        if any(p.startswith(".") and p != ".github" for p in path_parts) or \
-           "venv" in path_parts or "node_modules" in path_parts or \
-           "__pycache__" in path_parts:
+        if (
+            any(p.startswith(".") and p != ".github" for p in path_parts)
+            or "venv" in path_parts
+            or "node_modules" in path_parts
+            or "__pycache__" in path_parts
+        ):
             continue
 
         current_depth = len(Path(root).relative_to(REPO_ROOT).parts)
@@ -127,8 +168,8 @@ def analyze_codebase() -> RepoStats:
         stats["dirs"] += 1
 
         if ".github" in str(Path(root)) and "workflows" in str(Path(root)):
-             if any(f.endswith((".yml", ".yaml")) for f in files):
-                 stats["cicd_exists"] = True
+            if any(f.endswith((".yml", ".yaml")) for f in files):
+                stats["cicd_exists"] = True
 
         for file in files:
             stats["files"] += 1
@@ -161,7 +202,9 @@ def analyze_codebase() -> RepoStats:
                     try:
                         tree = ast.parse(content)
                         for node in ast.walk(tree):
-                            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                            if isinstance(
+                                node, (ast.FunctionDef, ast.AsyncFunctionDef)
+                            ):
                                 stats["functions"] += 1
                                 if ast.get_docstring(node):
                                     stats["docstrings"] += 1
@@ -176,11 +219,20 @@ def analyze_codebase() -> RepoStats:
                                     elif node.func.id == "eval":
                                         stats["evals"] += 1
                                 elif isinstance(node.func, ast.Attribute):
-                                     if isinstance(node.func.value, ast.Name) and node.func.value.id == "logging":
-                                         stats["loggings"] += 1
-                                     # Heuristic for logger.info etc
-                                     elif node.func.attr in ["info", "debug", "warning", "error", "critical"]:
-                                         stats["loggings"] += 1
+                                    if (
+                                        isinstance(node.func.value, ast.Name)
+                                        and node.func.value.id == "logging"
+                                    ):
+                                        stats["loggings"] += 1
+                                    # Heuristic for logger.info etc
+                                    elif node.func.attr in [
+                                        "info",
+                                        "debug",
+                                        "warning",
+                                        "error",
+                                        "critical",
+                                    ]:
+                                        stats["loggings"] += 1
                             elif isinstance(node, ast.Import):
                                 for alias in node.names:
                                     stats["imports"].add(alias.name)
@@ -192,10 +244,11 @@ def analyze_codebase() -> RepoStats:
                     except SyntaxError:
                         pass
 
-            except Exception as e:
+            except Exception:
                 pass
 
     return stats
+
 
 def parse_external_reports(stats: RepoStats):
     # Pragmatic Programmer Review
@@ -210,8 +263,10 @@ def parse_external_reports(stats: RepoStats):
                     if match:
                         stats["dry_violations"] += int(match.group(1))
                     else:
-                         stats["dry_violations"] += 1
-                if issue.get("principle") == "ORTHOGONALITY" and "God function" in issue.get("title", ""):
+                        stats["dry_violations"] += 1
+                if issue.get(
+                    "principle"
+                ) == "ORTHOGONALITY" and "God function" in issue.get("title", ""):
                     stats["god_functions"] += 1
                     stats["god_functions_list"].append(issue.get("title", ""))
         except Exception as e:
@@ -226,9 +281,9 @@ def parse_external_reports(stats: RepoStats):
             stats["god_functions_list"] = god_funcs
             # Grep for DRY
             dry_matches = re.findall(r"\*\*DRY\*\*", content)
-            stats["dry_violations"] = len(dry_matches) * 2 # Estimate
+            stats["dry_violations"] = len(dry_matches) * 2  # Estimate
         except Exception as e:
-             logger.error(f"Failed to parse pragmatic report MD: {e}")
+            logger.error(f"Failed to parse pragmatic report MD: {e}")
     else:
         logger.warning(f"Pragmatic report not found: {PRAGMATIC_JSON}")
 
@@ -253,7 +308,8 @@ def parse_external_reports(stats: RepoStats):
         except Exception as e:
             logger.error(f"Failed to parse completist report: {e}")
     else:
-         logger.warning(f"Completist report not found: {COMPLETIST_REPORT}")
+        logger.warning(f"Completist report not found: {COMPLETIST_REPORT}")
+
 
 def calculate_grades(stats: RepoStats) -> dict[str, tuple[float, str]]:
     grades = {}
@@ -267,17 +323,22 @@ def calculate_grades(stats: RepoStats) -> dict[str, tuple[float, str]]:
     if stats["god_functions"] > 0:
         pen = min(3, stats["god_functions"] * 0.1)
         score_a -= pen
-        deductions_a.append(f"{stats['god_functions']} God Functions detected (e.g., {', '.join(stats['god_functions_list'][:3])}...)")
+        deductions_a.append(
+            f"{stats['god_functions']} God Functions detected (e.g., {', '.join(stats['god_functions_list'][:3])}...)"
+        )
     if stats["dry_violations"] > 20:
         score_a -= 1
         deductions_a.append(f"High DRY violations ({stats['dry_violations']})")
 
-    just_a = "Architecture seems sound." if not deductions_a else "; ".join(deductions_a)
+    just_a = (
+        "Architecture seems sound." if not deductions_a else "; ".join(deductions_a)
+    )
     grades["A"] = (max(0, round(score_a, 1)), just_a)
 
     # B: Code Quality & Hygiene
-    score_b = 8.0 # Baseline
-    if stats["pyproject_exists"]: score_b += 1
+    score_b = 8.0  # Baseline
+    if stats["pyproject_exists"]:
+        score_b += 1
     # Type hints heuristic (future improvement: count annotated args)
     just_b = f"Standard files present: {stats['pyproject_exists']}"
     grades["B"] = (score_b, just_b)
@@ -286,36 +347,62 @@ def calculate_grades(stats: RepoStats) -> dict[str, tuple[float, str]]:
     score_c = 0.0
     total_defs = max(1, stats["functions"] + stats["classes"])
     doc_cov = stats["docstrings"] / total_defs
-    score_c += doc_cov * 8 # Max 8 from docstrings
-    if stats["readme_exists"]: score_c += 1
-    if stats["contributing_exists"]: score_c += 1
-    grades["C"] = (round(score_c, 1), f"Docstring coverage: {doc_cov*100:.1f}%, README: {stats['readme_exists']}")
+    score_c += doc_cov * 8  # Max 8 from docstrings
+    if stats["readme_exists"]:
+        score_c += 1
+    if stats["contributing_exists"]:
+        score_c += 1
+    grades["C"] = (
+        round(score_c, 1),
+        f"Docstring coverage: {doc_cov*100:.1f}%, README: {stats['readme_exists']}",
+    )
 
     # D: User Experience & Developer Journey
-    score_d = 5.0 # Baseline
-    if stats["examples_dir"]: score_d += 2
-    if stats["install_exists"]: score_d += 2
-    if stats["readme_exists"]: score_d += 1
-    grades["D"] = (min(10, score_d), f"Examples: {stats['examples_dir']}, Install Doc: {stats['install_exists']}")
+    score_d = 5.0  # Baseline
+    if stats["examples_dir"]:
+        score_d += 2
+    if stats["install_exists"]:
+        score_d += 2
+    if stats["readme_exists"]:
+        score_d += 1
+    grades["D"] = (
+        min(10, score_d),
+        f"Examples: {stats['examples_dir']}, Install Doc: {stats['install_exists']}",
+    )
 
     # E: Performance & Scalability
     score_e = 9.0
-    if stats["prints"] > 100: score_e -= 2
-    if stats["prints"] > 500: score_e -= 2
-    grades["E"] = (max(0, score_e), f"Print statements: {stats['prints']} (Should use logging)")
+    if stats["prints"] > 100:
+        score_e -= 2
+    if stats["prints"] > 500:
+        score_e -= 2
+    grades["E"] = (
+        max(0, score_e),
+        f"Print statements: {stats['prints']} (Should use logging)",
+    )
 
     # F: Installation & Deployment
     score_f = 6.0
-    if stats["requirements_exists"]: score_f += 2
-    if stats["setup_py_exists"]: score_f += 1
-    if stats["dockerfile_exists"]: score_f += 1
-    grades["F"] = (min(10, score_f), f"Reqs: {stats['requirements_exists']}, Docker: {stats['dockerfile_exists']}")
+    if stats["requirements_exists"]:
+        score_f += 2
+    if stats["setup_py_exists"]:
+        score_f += 1
+    if stats["dockerfile_exists"]:
+        score_f += 1
+    grades["F"] = (
+        min(10, score_f),
+        f"Reqs: {stats['requirements_exists']}, Docker: {stats['dockerfile_exists']}",
+    )
 
     # G: Testing & Validation
     test_ratio = stats["test_files"] / max(1, stats["py_files"])
-    score_g = min(10, test_ratio * 20) # 0.5 ratio -> 10
-    if stats["pytest_ini_exists"]: score_g += 0.5
-    grades["G"] = (min(10, round(score_g, 1)), f"Test ratio: {test_ratio:.2f}, pytest.ini: {stats['pytest_ini_exists']}")
+    score_g = min(10, test_ratio * 20)  # 0.5 ratio -> 10
+    if stats["pytest_ini_exists"]:
+        score_g += 0.5
+    grades["G"] = (
+        min(10, round(score_g, 1)),
+        f"Test ratio: {test_ratio:.2f}, pytest.ini: {stats['pytest_ini_exists']}",
+    )
 
     # H: Error Handling & Debugging
     try_ratio = stats["try_except"] / max(1, stats["functions"])
@@ -324,48 +411,78 @@ def calculate_grades(stats: RepoStats) -> dict[str, tuple[float, str]]:
 
     # I: Security & Input Validation
     score_i = 10.0
-    if stats["evals"] > 0: score_i -= stats["evals"] * 2
-    if stats["env_files"] > 0: score_i -= 1 # .env in repo is bad
-    if stats["secrets_found"] > 0: score_i -= 2
-    grades["I"] = (max(0, score_i), f"Eval usage: {stats['evals']}, .env files: {stats['env_files']}, Possible Secrets: {stats['secrets_found']}")
+    if stats["evals"] > 0:
+        score_i -= stats["evals"] * 2
+    if stats["env_files"] > 0:
+        score_i -= 1  # .env in repo is bad
+    if stats["secrets_found"] > 0:
+        score_i -= 2
+    grades["I"] = (
+        max(0, score_i),
+        f"Eval usage: {stats['evals']}, .env files: {stats['env_files']}, Possible Secrets: {stats['secrets_found']}",
+    )
 
     # J: Extensibility & Plugin Architecture
-    score_j = 7.0 # Baseline
-    if stats["classes"] > 50: score_j += 1
+    score_j = 7.0  # Baseline
+    if stats["classes"] > 50:
+        score_j += 1
     grades["J"] = (score_j, f"Classes defined: {stats['classes']}")
 
     # K: Reproducibility & Provenance
     score_k = 6.0
-    if stats["requirements_exists"]: score_k += 2
-    if "numpy" in stats["imports"] or "pandas" in stats["imports"]: score_k += 1 # Scientific stack usually implies checking results
-    grades["K"] = (min(10, score_k), f"Standard deps used: {stats['requirements_exists']}")
+    if stats["requirements_exists"]:
+        score_k += 2
+    if "numpy" in stats["imports"] or "pandas" in stats["imports"]:
+        score_k += 1  # Scientific stack usually implies checking results
+    grades["K"] = (
+        min(10, score_k),
+        f"Standard deps used: {stats['requirements_exists']}",
+    )
 
     # L: Long-Term Maintainability
     score_l = 10.0
     debt = stats["todo_count"] + stats["fixme_count"]
-    if debt > 20: score_l -= 1
-    if debt > 50: score_l -= 2
-    if stats["dry_violations"] > 50: score_l -= 2
-    grades["L"] = (max(0, score_l), f"Debt (TODO+FIXME): {debt}, DRY Violations: {stats['dry_violations']}")
+    if debt > 20:
+        score_l -= 1
+    if debt > 50:
+        score_l -= 2
+    if stats["dry_violations"] > 50:
+        score_l -= 2
+    grades["L"] = (
+        max(0, score_l),
+        f"Debt (TODO+FIXME): {debt}, DRY Violations: {stats['dry_violations']}",
+    )
 
     # M: Educational Resources & Tutorials
     score_m = 4.0
-    if stats["docs_dir"]: score_m += 2
-    if stats["examples_dir"]: score_m += 2
-    grades["M"] = (score_m, f"Docs: {stats['docs_dir']}, Examples: {stats['examples_dir']}")
+    if stats["docs_dir"]:
+        score_m += 2
+    if stats["examples_dir"]:
+        score_m += 2
+    grades["M"] = (
+        score_m,
+        f"Docs: {stats['docs_dir']}, Examples: {stats['examples_dir']}",
+    )
 
     # N: Visualization & Export
     score_n = 5.0
-    if "matplotlib" in stats["imports"]: score_n += 2
-    if "seaborn" in stats["imports"]: score_n += 1
-    if "plotly" in stats["imports"]: score_n += 1
-    grades["N"] = (min(10, score_n), f"Plotting libs: {', '.join(i for i in ['matplotlib', 'seaborn', 'plotly'] if i in stats['imports'])}")
+    if "matplotlib" in stats["imports"]:
+        score_n += 2
+    if "seaborn" in stats["imports"]:
+        score_n += 1
+    if "plotly" in stats["imports"]:
+        score_n += 1
+    grades["N"] = (
+        min(10, score_n),
+        f"Plotting libs: {', '.join(i for i in ['matplotlib', 'seaborn', 'plotly'] if i in stats['imports'])}",
+    )
 
     # O: CI/CD & DevOps
     score_o = 10.0 if stats["cicd_exists"] else 0.0
     grades["O"] = (score_o, f"CI/CD Workflows: {stats['cicd_exists']}")
 
     return grades
+
 
 def generate_reports(grades: dict[str, tuple[float, str]], stats: RepoStats):
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
@@ -441,13 +558,17 @@ def generate_reports(grades: dict[str, tuple[float, str]], stats: RepoStats):
 
 """
     (DOCS_DIR / "Comprehensive_Assessment.md").write_text(comp_content)
-    logger.info(f"Generated Comprehensive Assessment: {DOCS_DIR / 'Comprehensive_Assessment.md'}")
+    logger.info(
+        f"Generated Comprehensive Assessment: {DOCS_DIR / 'Comprehensive_Assessment.md'}"
+    )
+
 
 def main():
     stats = analyze_codebase()
     parse_external_reports(stats)
     grades = calculate_grades(stats)
     generate_reports(grades, stats)
+
 
 if __name__ == "__main__":
     main()
