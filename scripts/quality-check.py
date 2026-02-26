@@ -21,11 +21,17 @@ except ImportError:
         current = current.parent
 
     if repo_root:
-        # Add src to path to resolve tools package
+        # Add src paths to resolve tools and utils packages
         src_path = repo_root / "src"
         if src_path.exists():
             sys.path.append(str(src_path))
-        else:
+
+        # Add src/python/src for utils package if it exists
+        python_src_path = repo_root / "src" / "python" / "src"
+        if python_src_path.exists():
+            sys.path.append(str(python_src_path))
+
+        if not src_path.exists() and not python_src_path.exists():
             # Fallback if src doesn't exist (unlikely in this repo structure)
             sys.path.append(str(repo_root))
 
@@ -35,7 +41,7 @@ except ImportError:
         )
     else:
         # Fallback for when running from elsewhere
-        print("Error: Could not locate tools package.", file=sys.stderr)
+        sys.stderr.write("Error: Could not locate tools package.\n")
         sys.exit(1)
 
 
