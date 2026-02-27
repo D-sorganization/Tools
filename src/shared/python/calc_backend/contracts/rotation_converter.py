@@ -118,7 +118,12 @@ class ReferenceFrameConversionRequest(BaseModel):
                 )
             if any(
                 value is not None
-                for value in (self.transform, self.twist, self.so3_vector, self.so3_matrix)
+                for value in (
+                    self.transform,
+                    self.twist,
+                    self.so3_vector,
+                    self.so3_matrix,
+                )
             ):
                 raise ValueError(
                     "homogeneous_transform does not accept transform, twist, "
@@ -136,7 +141,10 @@ class ReferenceFrameConversionRequest(BaseModel):
                 "so3_so3_maps requires exactly one of so3_vector, so3_matrix, "
                 "or rotation_matrix."
             )
-        if any(value is not None for value in (self.transform, self.twist, self.translation)):
+        if any(
+            value is not None
+            for value in (self.transform, self.twist, self.translation)
+        ):
             raise ValueError(
                 "so3_so3_maps does not accept transform, twist, or translation."
             )
