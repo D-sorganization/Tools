@@ -93,5 +93,6 @@ def list_endpoints() -> dict[str, list[str]]:
             "POST /api/calc/thermal-profile",
             "POST /api/calc/ode-solver",
             "POST /api/calc/rotation-converter",
+            "POST /api/calc/rotation-converter/reference-frame",
         ],
     }

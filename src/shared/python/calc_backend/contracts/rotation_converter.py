@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -52,4 +52,56 @@ class RotationConverterResponse(BaseModel):
 
     representations: RotationRepresentationsModel = Field(
         ..., description="All equivalent representations of the input rotation."
+    )
+
+
+class ReferenceFrameConversionRequest(BaseModel):
+    """Request model for reference-frame and Lie-group educational operations."""
+
+    operation: Literal[
+        "twist_frame_conversion",
+        "homogeneous_transform",
+        "so3_so3_maps",
+    ] = Field(..., description="Requested operation mode.")
+    transform: list[list[float]] | None = Field(
+        default=None,
+        description="4x4 homogeneous transform used for twist conversion.",
+    )
+    twist: list[float] | None = Field(
+        default=None,
+        description="Input twist [omega_x, omega_y, omega_z, v_x, v_y, v_z].",
+    )
+    rotation_matrix: list[list[float]] | None = Field(
+        default=None,
+        description="3x3 rotation matrix input for SE(3) construction or SO(3) log map.",
+    )
+    translation: list[float] | None = Field(
+        default=None,
+        description="3-vector translation used when constructing a homogeneous transform.",
+    )
+    so3_vector: list[float] | None = Field(
+        default=None,
+        description="3-vector in so(3) (axis-angle / rotation vector form).",
+    )
+    so3_matrix: list[list[float]] | None = Field(
+        default=None,
+        description="3x3 skew-symmetric matrix in so(3).",
+    )
+
+
+class ReferenceFrameConversionResponse(BaseModel):
+    """Response model for reference-frame and Lie-group operations."""
+
+    operation: str = Field(..., description="Echoed operation name.")
+    results: dict[str, Any] = Field(
+        ...,
+        description="Numeric outputs (matrices, vectors, transforms).",
+    )
+    explanation_markdown: str = Field(
+        ...,
+        description="Educational explanation rendered in markdown format.",
+    )
+    explanation_latex: str = Field(
+        ...,
+        description="Key formulas expressed in LaTeX form.",
     )

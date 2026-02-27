@@ -62,3 +62,63 @@ def test_rotation_converter_invalid_type() -> None:
     )
     # Pydantic Literal validation should fail before the endpoint logic
     assert response.status_code == 422
+
+
+def test_reference_frame_twist_conversion_identity() -> None:
+    """Identity transform should preserve the input twist."""
+    response = client.post(
+        "/api/calc/rotation-converter/reference-frame",
+        json={
+            "operation": "twist_frame_conversion",
+            "transform": [
+                [1.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0, 0.0],
+                [0.0, 0.0, 1.0, 0.0],
+                [0.0, 0.0, 0.0, 1.0],
+            ],
+            "twist": [0.1, 0.2, 0.3, 1.0, 2.0, 3.0],
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["operation"] == "twist_frame_conversion"
+    assert data["results"]["output_twist"] == [0.1, 0.2, 0.3, 1.0, 2.0, 3.0]
+
+
+def test_reference_frame_homogeneous_transform() -> None:
+    """Homogeneous construction endpoint should emit a valid 4x4 transform."""
+    response = client.post(
+        "/api/calc/rotation-converter/reference-frame",
+        json={
+            "operation": "homogeneous_transform",
+            "rotation_matrix": [
+                [1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, 0.0, 1.0],
+            ],
+            "translation": [1.0, 2.0, 3.0],
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["operation"] == "homogeneous_transform"
+    assert data["results"]["homogeneous_transform"][0][3] == 1.0
+    assert data["results"]["homogeneous_transform"][1][3] == 2.0
+    assert data["results"]["homogeneous_transform"][2][3] == 3.0
+    assert data["results"]["homogeneous_transform"][3] == [0.0, 0.0, 0.0, 1.0]
+
+
+def test_reference_frame_so3_so3_maps() -> None:
+    """so(3) mapping endpoint should produce exp/log compatible outputs."""
+    response = client.post(
+        "/api/calc/rotation-converter/reference-frame",
+        json={
+            "operation": "so3_so3_maps",
+            "so3_vector": [0.0, 0.0, 0.5],
+        },
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["operation"] == "so3_so3_maps"
+    assert len(data["results"]["so3_hat_matrix"]) == 3
+    assert len(data["results"]["so3_exponential_SO3"]) == 3
