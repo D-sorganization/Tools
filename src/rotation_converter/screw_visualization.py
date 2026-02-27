@@ -413,7 +413,7 @@ class ScrewAxisAnimator:
 
         if self.show_euler or self.show_quaternion:
             import rotation_converter.core as rc_core
-            from rotation_converter.core import Rotation
+            from rotation_converter.converter import Rotation
 
             rot = Rotation.from_rotation_matrix(frame["orientation"])
             if self.show_euler:
