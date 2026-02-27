@@ -342,7 +342,9 @@ class LauncherWindow(QMainWindow):
         """Launch a script with GNU Octave."""
         sanitized = str(target_path).replace("'", "''")
         script = f"run('{sanitized}');"
-        subprocess.Popen(["octave", "--quiet", "--eval", script], cwd=target_path.parent)
+        subprocess.Popen(
+            ["octave", "--quiet", "--eval", script], cwd=target_path.parent
+        )
 
 
 def run() -> None:
