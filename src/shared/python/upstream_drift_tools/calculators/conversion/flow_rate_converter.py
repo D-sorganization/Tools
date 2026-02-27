@@ -114,6 +114,24 @@ def _require_known_standard(standard: str) -> None:
         raise ValueError(f"Unknown standard condition: {standard}")
 
 
+def _normalize_prefixed_volume_unit(unit: str) -> str:
+    """Normalize optional N/S prefixed volumetric units."""
+    if unit.startswith(("N", "S")):
+        base = unit[1:]
+        if base in VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S:
+            return base
+    return unit
+
+
+def _volume_unit_to_m3_per_s(unit: str) -> float:
+    """Resolve volumetric unit factor to m³/s."""
+    normalized = _normalize_prefixed_volume_unit(unit)
+    _require_known_unit(
+        normalized, VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S, "volumetric flow"
+    )
+    return VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S[normalized]
+
+
 # ============================================================================
 # FLOW RATE CONVERSION FUNCTIONS
 # ============================================================================
@@ -401,47 +419,14 @@ def standard_volumetric_to_mass(
     _require_finite(vol_flow_std, "vol_flow_std")
     _require_positive_finite(molecular_weight, "molecular_weight")
     _require_known_unit(mass_unit, MASS_FLOW_CONVERSIONS, "mass flow")
-    if standard not in STANDARD_CONDITIONS:
-        raise ValueError(
-            f"Unknown standard condition: {standard}. Use one of {list(STANDARD_CONDITIONS.keys())}"
-        )
-
+    _require_known_standard(standard)
     T_std, P_std, _ = STANDARD_CONDITIONS[standard]
-
-    # Convert volumetric flow to m³/s at standard conditions
-    if vol_unit.startswith("N"):
-        # Normal conditions (0°C, 1 atm) - strip 'N' prefix
-        base_unit = vol_unit[1:]
-    elif vol_unit.startswith("S"):
-        # Standard conditions - strip 'S' prefix
-        base_unit = vol_unit[1:]
-    else:
-        base_unit = vol_unit
-
-    if base_unit not in VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S:
-        # Try with the unit as-is
-        base_unit = vol_unit
-
-    if base_unit not in VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S:
-        raise ValueError(f"Unknown volumetric flow unit: {vol_unit}")
-
-    m3_per_s_std = vol_flow_std * VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S[base_unit]
-
-    # Calculate density at standard conditions
-    # ρ = (P × MW) / (R × T)
-    rho_std = (P_std * molecular_weight) / (R_UNIVERSAL * T_std)
-
-    # Mass flow rate
-    kg_per_s = m3_per_s_std * rho_std
-
-    # Convert to target unit
-    result = kg_per_s / MASS_FLOW_CONVERSIONS[mass_unit]
+    m3_per_s_std = vol_flow_std * _volume_unit_to_m3_per_s(vol_unit)
+    kg_per_s = _standard_density(P_std, molecular_weight, T_std) * m3_per_s_std
+    result = _from_kg_per_s(kg_per_s, mass_unit)
 
     logger.debug(
         f"Std volumetric to mass: {vol_flow_std} {vol_unit} @ {standard} = {result:.6f} {mass_unit}"
-    )
-    logger.debug(
-        f"  Standard conditions: T={T_std}K, P={P_std}Pa, ρ={rho_std:.4f} kg/m³"
     )
 
     return result
@@ -479,34 +464,12 @@ def mass_to_standard_volumetric(
     _require_finite(mass_flow, "mass_flow")
     _require_positive_finite(molecular_weight, "molecular_weight")
     _require_known_unit(mass_unit, MASS_FLOW_CONVERSIONS, "mass flow")
-    if standard not in STANDARD_CONDITIONS:
-        raise ValueError(f"Unknown standard condition: {standard}")
-
+    _require_known_standard(standard)
     T_std, P_std, _ = STANDARD_CONDITIONS[standard]
-
-    # Convert to kg/s
     kg_per_s = mass_flow * MASS_FLOW_CONVERSIONS[mass_unit]
-
-    # Calculate density at standard conditions
-    rho_std = (P_std * molecular_weight) / (R_UNIVERSAL * T_std)
-
-    # Volumetric flow at standard conditions (m³/s)
+    rho_std = _standard_density(P_std, molecular_weight, T_std)
     m3_per_s_std = kg_per_s / rho_std
-
-    # Handle unit prefix
-    if vol_unit.startswith("N") or vol_unit.startswith("S"):
-        base_unit = vol_unit[1:]
-    else:
-        base_unit = vol_unit
-
-    if base_unit not in VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S:
-        base_unit = vol_unit
-
-    if base_unit not in VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S:
-        raise ValueError(f"Unknown volumetric flow unit: {vol_unit}")
-
-    # Convert to target unit
-    result = m3_per_s_std / VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S[base_unit]
+    result = m3_per_s_std / _volume_unit_to_m3_per_s(vol_unit)
 
     logger.debug(
         f"Mass to std volumetric: {mass_flow} {mass_unit} = {result:.6f} {vol_unit} @ {standard}"
@@ -620,35 +583,47 @@ def convert_flow_rate_to_mass(
         >>> print(f"{m_dot:.3f} kg/s")
     """
     _require_finite(value, "value")
-
-    # Check if it's a mass flow unit
     if from_unit in MASS_FLOW_CONVERSIONS:
         return value * MASS_FLOW_CONVERSIONS[from_unit]
-
-    # Check if it's a molar flow unit
     if from_unit in MOLAR_FLOW_CONVERSIONS:
         _require_positive_finite(molecular_weight, "molecular_weight")
         mol_per_s = value * MOLAR_FLOW_CONVERSIONS[from_unit]
         return (mol_per_s * molecular_weight) / 1000.0
-
-    # Check for standard volumetric units
-    if from_unit.upper() in ["SCFM", "NM3/H", "NM³/H", "SM3/H", "SM³/H"]:
+    if _is_standard_volumetric_unit(from_unit):
         return standard_volumetric_to_mass(
             value, from_unit, molecular_weight, standard, "kg/s"
         )
-
-    # Check for actual volumetric units
-    if (
-        from_unit.upper() in ["ACFM", "CFM"]
-        or from_unit in VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S
-    ):
+    if _is_actual_volumetric_unit(from_unit):
         if density is None:
             raise ValueError(
                 f"Density required for actual volumetric flow unit '{from_unit}'"
             )
         return volumetric_actual_to_mass(value, from_unit, density, "kg/s")
-
     raise ValueError(f"Unknown or unsupported flow rate unit: {from_unit}")
+
+
+def _is_standard_volumetric_unit(unit: str) -> bool:
+    """Return True when unit uses standard-condition volumetric notation."""
+    return unit.upper() in {"SCFM", "NM3/H", "NM³/H", "SM3/H", "SM³/H"}
+
+
+def _is_actual_volumetric_unit(unit: str) -> bool:
+    """Return True when unit is an actual-condition volumetric flow unit."""
+    return (
+        unit.upper() in {"ACFM", "CFM"} or unit in VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S
+    )
+
+
+def _standard_density(
+    pressure_pa: float, molecular_weight: float, temperature_k: float
+) -> float:
+    """Calculate standard density with ideal gas law."""
+    return (pressure_pa * molecular_weight) / (R_UNIVERSAL * temperature_k)
+
+
+def _from_kg_per_s(value_kg_per_s: float, mass_unit: str) -> float:
+    """Convert kg/s to a target mass flow unit."""
+    return value_kg_per_s / MASS_FLOW_CONVERSIONS[mass_unit]
 
 
 if __name__ == "__main__":

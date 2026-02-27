@@ -90,6 +90,13 @@ class UnitConversionService:
             msg = f"{name} must be positive and finite, got {value}"
             raise ValueError(msg)
 
+    @staticmethod
+    def _require_finite(value: float, name: str) -> None:
+        """Validate finite scalar values."""
+        if not math.isfinite(value):
+            msg = f"{name} must be finite, got {value}"
+            raise ValueError(msg)
+
     def _init_tables(self) -> None:
         """Initialize conversion tables from constants."""
         self.category_map = {
@@ -137,42 +144,87 @@ class UnitConversionService:
     def convert(
         self, value: float, from_unit: str, to_unit: str, **kwargs: Any
     ) -> ConversionResult:
+        self._validate_convert_value(value)
+        from_unit_norm = self._normalize_unit(from_unit)
+        to_unit_norm = self._normalize_unit(to_unit)
+        from_category, to_category = self._resolve_categories(
+            from_unit, to_unit, from_unit_norm, to_unit_norm
+        )
+        self._ensure_compatible_categories(
+            from_unit, to_unit, from_category, to_category
+        )
+        warnings = self._collect_conversion_warnings(
+            value, from_category, from_unit_norm
+        )
+        converted = self._dispatch_conversion(
+            value, from_unit_norm, to_unit_norm, from_category, kwargs
+        )
+        warnings.extend(
+            self._user_unit_warnings(
+                from_category, to_category, from_unit_norm, to_unit_norm
+            )
+        )
+        return ConversionResult(converted, from_unit, to_unit, warnings=warnings)
+
+    def _validate_convert_value(self, value: float) -> None:
+        """Validate top-level conversion input."""
         if not math.isfinite(value):
             msg = f"Conversion value must be finite, got {value}"
             raise InvalidValueError(msg)
 
-        from_unit_norm = self._normalize_unit(from_unit)
-        to_unit_norm = self._normalize_unit(to_unit)
-
+    def _resolve_categories(
+        self,
+        from_unit: str,
+        to_unit: str,
+        from_unit_norm: str,
+        to_unit_norm: str,
+    ) -> tuple[str, str]:
+        """Resolve and validate source/target unit categories."""
         from_category = self._get_category(from_unit_norm)
         to_category = self._get_category(to_unit_norm)
-
         if from_category is None:
             msg = f"Unknown unit: {from_unit}"
             raise UnknownUnitError(msg)
         if to_category is None:
             msg = f"Unknown unit: {to_unit}"
             raise UnknownUnitError(msg)
+        return from_category, to_category
 
+    def _ensure_compatible_categories(
+        self, from_unit: str, to_unit: str, from_category: str, to_category: str
+    ) -> None:
+        """Validate category compatibility for conversion."""
         if from_category != to_category and {from_category, to_category} != {
             "temperature"
         }:
             msg = f"Cannot convert from {from_unit} to {to_unit}"
             raise IncompatibleUnitsError(msg)
 
+    def _collect_conversion_warnings(
+        self, value: float, from_category: str, from_unit_norm: str
+    ) -> list[str]:
+        """Collect validation warnings for the conversion."""
         warnings: list[str] = []
-        if self.enable_validation and from_category:
+        if self.enable_validation:
             warnings.extend(self._validate_value(value, from_category, from_unit_norm))
+        return warnings
 
+    def _dispatch_conversion(
+        self,
+        value: float,
+        from_unit_norm: str,
+        to_unit_norm: str,
+        from_category: str,
+        kwargs: dict[str, Any],
+    ) -> float:
+        """Dispatch conversion to the appropriate category handler."""
         if from_category in self.category_map:
             factors = self.category_map[from_category]
-            converted = self._convert_via_table(
-                value, from_unit_norm, to_unit_norm, factors
-            )
-        elif from_category == "temperature":
-            converted = self._convert_temperature(value, from_unit_norm, to_unit_norm)
-        elif from_category == "gas_flow":
-            converted = self._convert_gas_flow(
+            return self._convert_via_table(value, from_unit_norm, to_unit_norm, factors)
+        if from_category == "temperature":
+            return self._convert_temperature(value, from_unit_norm, to_unit_norm)
+        if from_category == "gas_flow":
+            return self._convert_gas_flow(
                 value,
                 from_unit_norm,
                 to_unit_norm,
@@ -183,17 +235,8 @@ class UnitConversionService:
                     "standard_condition", StandardCondition.SCFM_60F
                 ),
             )
-        else:
-            msg = f"Unsupported unit category for {from_unit}"
-            raise UnknownUnitError(msg)
-
-        warnings.extend(
-            self._user_unit_warnings(
-                from_category, to_category, from_unit_norm, to_unit_norm
-            )
-        )
-
-        return ConversionResult(converted, from_unit, to_unit, warnings=warnings)
+        msg = f"Unsupported unit category for {from_unit_norm}"
+        raise UnknownUnitError(msg)
 
     def _normalize_unit(self, unit: str) -> str:
         """Normalize unit string to canonical form."""
@@ -337,62 +380,97 @@ class UnitConversionService:
     ) -> float:
         """Convert gas flow rate."""
         gas_props = GAS_DATABASE.get(gas_type.lower(), GAS_DATABASE["air"])
-        _std_temp, _std_pressure_pa, _ = standard_condition.value
+        self._ensure_acfm_inputs(from_unit, to_unit, temperature, pressure)
+        m3_hr_std = self._gas_flow_to_standard_m3h(
+            value,
+            from_unit,
+            gas_props.density_stp,
+            temperature,
+            pressure,
+            standard_condition,
+        )
+        return self._standard_m3h_to_gas_flow(
+            m3_hr_std,
+            to_unit,
+            gas_props.density_stp,
+            temperature,
+            pressure,
+            standard_condition,
+        )
 
+    def _ensure_acfm_inputs(
+        self,
+        from_unit: str,
+        to_unit: str,
+        temperature: float | None,
+        pressure: float | None,
+    ) -> None:
+        """Validate required inputs when ACFM is involved."""
         if (from_unit == "ACFM" or to_unit == "ACFM") and (
             temperature is None or pressure is None
         ):
             msg = "Temperature and pressure are required for ACFM conversions"
             raise ValueError(msg)
 
+    def _gas_flow_to_standard_m3h(
+        self,
+        value: float,
+        from_unit: str,
+        density_stp: float,
+        temperature: float | None,
+        pressure: float | None,
+        standard_condition: StandardCondition,
+    ) -> float:
+        """Convert gas flow value to STP-normalized m³/hr."""
         if from_unit == "SCFM":
-            m3_hr_std = scfm_to_standard_m3_per_hour(
+            return scfm_to_standard_m3_per_hour(
                 value, standard_condition, StandardCondition.STP
             )
-        elif from_unit == "ACFM":
+        if from_unit == "ACFM":
             assert temperature is not None
             assert pressure is not None
             scfm = actual_to_standard_flow(
                 value, temperature, pressure, standard_condition
             )
-            m3_hr_std = scfm_to_standard_m3_per_hour(
+            return scfm_to_standard_m3_per_hour(
                 scfm, standard_condition, StandardCondition.STP
             )
-        elif from_unit in {"Nm3/hr", "Nm³/hr"}:
-            m3_hr_std = value
-        elif from_unit in self.mass_flow_factors:
+        if from_unit in {"Nm3/hr", "Nm³/hr"}:
+            return value
+        if from_unit in self.mass_flow_factors:
             kg_s = value * self.mass_flow_factors[from_unit]
-            kg_hr = kg_s * 3600.0
-            m3_hr_std = kg_hr / gas_props.density_stp
-        else:
-            msg = f"Unknown gas flow unit: {from_unit}"
-            raise UnknownUnitError(msg)
+            return (kg_s * 3600.0) / density_stp
+        msg = f"Unknown gas flow unit: {from_unit}"
+        raise UnknownUnitError(msg)
 
+    def _standard_m3h_to_gas_flow(
+        self,
+        m3_hr_std: float,
+        to_unit: str,
+        density_stp: float,
+        temperature: float | None,
+        pressure: float | None,
+        standard_condition: StandardCondition,
+    ) -> float:
+        """Convert STP-normalized m³/hr to destination gas flow unit."""
         if to_unit == "SCFM":
-            # Convert m³/hr at STP to SCFM at the standard condition
             return standard_m3_per_hour_to_scfm(
                 m3_hr_std, StandardCondition.STP, standard_condition
             )
         if to_unit == "ACFM":
-            if temperature is None or pressure is None:
-                msg = "Temperature and pressure are required for ACFM conversions"
-                raise ValueError(msg)
-            # Convert m³/hr at STP to SCFM, then to ACFM
+            assert temperature is not None
+            assert pressure is not None
             scfm = standard_m3_per_hour_to_scfm(
                 m3_hr_std, StandardCondition.STP, standard_condition
             )
-            assert temperature is not None
-            assert pressure is not None
             return standard_to_actual_flow(
                 scfm, temperature, pressure, standard_condition
             )
         if to_unit in {"Nm3/hr", "Nm³/hr"}:
             return m3_hr_std
         if to_unit in self.mass_flow_factors:
-            kg_hr = m3_hr_std * gas_props.density_stp
-            kg_s = kg_hr / 3600.0
+            kg_s = (m3_hr_std * density_stp) / 3600.0
             return kg_s / self.mass_flow_factors[to_unit]
-
         msg = f"Unknown gas flow unit: {to_unit}"
         raise UnknownUnitError(msg)
 
@@ -472,61 +550,73 @@ class UnitConversionService:
         """Convert heating value."""
         if gas_density_stp is not None:
             self._require_positive_finite(gas_density_stp, "Gas density")
-
         from_key = from_unit.lower()
         to_key = to_unit.lower()
-        conversions = self.heating_value_conversions
-
         if from_key == to_key:
             return value
-        if from_key not in conversions:
-            msg = f"Unknown heating value unit: {from_unit}"
+        self._ensure_known_heating_unit(from_key, from_unit)
+        self._ensure_known_heating_unit(to_key, to_unit)
+        mj_per_kg = self._heating_to_mj_per_kg(
+            value, from_key, from_unit, gas_density_stp
+        )
+        return self._heating_from_mj_per_kg(mj_per_kg, to_key, to_unit, gas_density_stp)
+
+    def _ensure_known_heating_unit(self, unit_key: str, raw_unit: str) -> None:
+        """Validate heating value unit key."""
+        if unit_key not in self.heating_value_conversions:
+            msg = f"Unknown heating value unit: {raw_unit}"
             raise ValueError(msg)
 
-        if conversions[from_key] is not None:
-            factor = conversions[from_key]
-            assert factor is not None
-            mj_per_kg = value * factor
-        else:
-            if gas_density_stp is None:
-                msg = f"Gas density required for {from_unit} conversion"
-                raise ValueError(msg)
-            if from_key in {"mj/nm³", "mj/nm3"}:
-                mj_per_kg = value / gas_density_stp
-            elif from_key == "btu/scf":
-                mj_nm3 = value * 0.0372589
-                mj_per_kg = mj_nm3 / gas_density_stp
-            elif from_key in {"kwh/nm³", "kwh/nm3"}:
-                mj_nm3 = value * 3.6
-                mj_per_kg = mj_nm3 / gas_density_stp
-            else:
-                msg = f"Conversion from {from_unit} not implemented"
-                raise ValueError(msg)
+    def _heating_to_mj_per_kg(
+        self,
+        value: float,
+        from_key: str,
+        from_unit: str,
+        gas_density_stp: float | None,
+    ) -> float:
+        """Convert heating value from source unit to MJ/kg."""
+        factor = self.heating_value_conversions[from_key]
+        if factor is not None:
+            return value * factor
+        density = self._require_gas_density(gas_density_stp, from_unit)
+        if from_key in {"mj/nm³", "mj/nm3"}:
+            return value / density
+        if from_key == "btu/scf":
+            return (value * 0.0372589) / density
+        if from_key in {"kwh/nm³", "kwh/nm3"}:
+            return (value * 3.6) / density
+        msg = f"Conversion from {from_unit} not implemented"
+        raise ValueError(msg)
 
-        if to_key not in conversions:
-            msg = f"Unknown heating value unit: {to_unit}"
-            raise ValueError(msg)
-
-        if conversions[to_key] is not None:
-            factor = conversions[to_key]
-            assert factor is not None
+    def _heating_from_mj_per_kg(
+        self,
+        mj_per_kg: float,
+        to_key: str,
+        to_unit: str,
+        gas_density_stp: float | None,
+    ) -> float:
+        """Convert MJ/kg heating value to target unit."""
+        factor = self.heating_value_conversions[to_key]
+        if factor is not None:
             return mj_per_kg / factor
-
-        if gas_density_stp is None:
-            msg = f"Gas density required for {to_unit} conversion"
-            raise ValueError(msg)
-
+        density = self._require_gas_density(gas_density_stp, to_unit)
         if to_key in {"mj/nm³", "mj/nm3"}:
-            return mj_per_kg * gas_density_stp
+            return mj_per_kg * density
         if to_key == "btu/scf":
-            mj_nm3 = mj_per_kg * gas_density_stp
-            return mj_nm3 / 0.0372589
+            return (mj_per_kg * density) / 0.0372589
         if to_key in {"kwh/nm³", "kwh/nm3"}:
-            mj_nm3 = mj_per_kg * gas_density_stp
-            return mj_nm3 / 3.6
-
+            return (mj_per_kg * density) / 3.6
         msg = f"Conversion to {to_unit} not implemented"
         raise ValueError(msg)
+
+    def _require_gas_density(
+        self, gas_density_stp: float | None, unit_name: str
+    ) -> float:
+        """Require gas density for volumetric heating value conversions."""
+        if gas_density_stp is None:
+            msg = f"Gas density required for {unit_name} conversion"
+            raise ValueError(msg)
+        return gas_density_stp
 
     def tar_concentration(
         self,
@@ -538,6 +628,25 @@ class UnitConversionService:
         molecular_weight: float | None = None,
     ) -> float:
         """Convert tar concentration."""
+        self._validate_tar_inputs(temperature, pressure)
+        from_key = from_unit.lower()
+        to_key = to_unit.lower()
+        if from_key == to_key:
+            return value
+        molecular_weight = self._resolve_molecular_weight(
+            from_key, to_key, molecular_weight
+        )
+        self._ensure_known_concentration_unit(from_key, from_unit)
+        self._ensure_known_concentration_unit(to_key, to_unit)
+        mg_nm3_value = self._tar_to_mg_nm3(
+            value, from_key, from_unit, temperature, pressure, molecular_weight
+        )
+        return self._tar_from_mg_nm3(
+            mg_nm3_value, to_key, to_unit, temperature, pressure, molecular_weight
+        )
+
+    def _validate_tar_inputs(self, temperature: float, pressure: float) -> None:
+        """Validate temperature and pressure for tar concentration conversion."""
         if pressure <= 0:
             msg = f"pressure must be positive, got {pressure}"
             raise ValueError(msg)
@@ -545,49 +654,61 @@ class UnitConversionService:
             msg = f"temperature must be positive, got {temperature}"
             raise ValueError(msg)
 
-        from_key = from_unit.lower()
-        to_key = to_unit.lower()
-        if from_key == to_key:
-            return value
-
+    def _resolve_molecular_weight(
+        self, from_key: str, to_key: str, molecular_weight: float | None
+    ) -> float | None:
+        """Validate and return molecular weight when ppm conversions are used."""
         requires_molecular_weight = from_key == "ppm_mass" or to_key == "ppm_mass"
-        if requires_molecular_weight:
-            if molecular_weight is None:
-                msg = "Molecular weight required for ppm conversion"
-                raise ValueError(msg)
-            self._require_positive_finite(molecular_weight, "Molecular weight")
+        if not requires_molecular_weight:
+            return molecular_weight
+        if molecular_weight is None:
+            msg = "Molecular weight required for ppm conversion"
+            raise ValueError(msg)
+        self._require_positive_finite(molecular_weight, "Molecular weight")
+        return molecular_weight
 
-        conversions = self.concentration_conversions
-        if from_key not in conversions:
-            msg = f"Unknown concentration unit: {from_unit}"
+    def _ensure_known_concentration_unit(self, unit_key: str, raw_unit: str) -> None:
+        """Validate concentration unit key."""
+        if unit_key not in self.concentration_conversions:
+            msg = f"Unknown concentration unit: {raw_unit}"
             raise ValueError(msg)
 
-        if conversions[from_key] is not None:
-            factor = conversions[from_key]
-            assert factor is not None
-            mg_nm3_value = value * factor
-        elif from_key in {"mg/m³", "mg/m3"}:
-            mg_nm3_value = value * (temperature / 273.15) * (101.325 / pressure)
-        elif from_key in {"g/m³", "g/m3"}:
-            mg_nm3_value = (
-                value * 1000.0 * (temperature / 273.15) * (101.325 / pressure)
-            )
-        elif from_key == "ppm_mass":
+    def _tar_to_mg_nm3(
+        self,
+        value: float,
+        from_key: str,
+        from_unit: str,
+        temperature: float,
+        pressure: float,
+        molecular_weight: float | None,
+    ) -> float:
+        """Convert source concentration unit to mg/Nm3."""
+        factor = self.concentration_conversions[from_key]
+        if factor is not None:
+            return value * factor
+        if from_key in {"mg/m³", "mg/m3"}:
+            return value * (temperature / 273.15) * (101.325 / pressure)
+        if from_key in {"g/m³", "g/m3"}:
+            return value * 1000.0 * (temperature / 273.15) * (101.325 / pressure)
+        if from_key == "ppm_mass":
             assert molecular_weight is not None
-            mg_nm3_value = value * molecular_weight / 24.45
-        else:
-            msg = f"Conversion from {from_unit} not implemented"
-            raise ValueError(msg)
+            return value * molecular_weight / 24.45
+        msg = f"Conversion from {from_unit} not implemented"
+        raise ValueError(msg)
 
-        if to_key not in conversions:
-            msg = f"Unknown concentration unit: {to_unit}"
-            raise ValueError(msg)
-
-        if conversions[to_key] is not None:
-            factor = conversions[to_key]
-            assert factor is not None
+    def _tar_from_mg_nm3(
+        self,
+        mg_nm3_value: float,
+        to_key: str,
+        to_unit: str,
+        temperature: float,
+        pressure: float,
+        molecular_weight: float | None,
+    ) -> float:
+        """Convert mg/Nm3 concentration to target unit."""
+        factor = self.concentration_conversions[to_key]
+        if factor is not None:
             return mg_nm3_value / factor
-
         if to_key in {"mg/m³", "mg/m3"}:
             return mg_nm3_value * (273.15 / temperature) * (pressure / 101.325)
         if to_key in {"g/m³", "g/m3"}:
@@ -595,7 +716,6 @@ class UnitConversionService:
         if to_key == "ppm_mass":
             assert molecular_weight is not None
             return mg_nm3_value * 24.45 / molecular_weight
-
         msg = f"Conversion to {to_unit} not implemented"
         raise ValueError(msg)
 
@@ -672,6 +792,8 @@ class UnitConversionService:
         pressure: float,
     ) -> float:
         """Calculate compressibility factor."""
+        self._require_positive_finite(temperature, "temperature")
+        self._require_positive_finite(pressure, "pressure")
         gas_props = GAS_DATABASE.get(gas_type.lower(), GAS_DATABASE["air"])
         Tr = temperature / gas_props.critical_temp
         Pr = pressure / gas_props.critical_pressure
