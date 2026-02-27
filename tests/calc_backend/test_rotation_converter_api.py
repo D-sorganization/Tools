@@ -122,3 +122,38 @@ def test_reference_frame_so3_so3_maps() -> None:
     assert data["operation"] == "so3_so3_maps"
     assert len(data["results"]["so3_hat_matrix"]) == 3
     assert len(data["results"]["so3_exponential_SO3"]) == 3
+
+
+def test_reference_frame_homogeneous_transform_rejects_twist_payload() -> None:
+    """Homogeneous mode should reject fields belonging to other operations."""
+    response = client.post(
+        "/api/calc/rotation-converter/reference-frame",
+        json={
+            "operation": "homogeneous_transform",
+            "rotation_matrix": [
+                [1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, 0.0, 1.0],
+            ],
+            "translation": [0.0, 0.0, 0.0],
+            "twist": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        },
+    )
+    assert response.status_code == 422
+
+
+def test_reference_frame_so3_map_requires_single_input_variant() -> None:
+    """so(3)<->SO(3) mode should accept exactly one input source."""
+    response = client.post(
+        "/api/calc/rotation-converter/reference-frame",
+        json={
+            "operation": "so3_so3_maps",
+            "so3_vector": [0.0, 0.0, 0.5],
+            "so3_matrix": [
+                [0.0, -0.5, 0.0],
+                [0.5, 0.0, 0.0],
+                [0.0, 0.0, 0.0],
+            ],
+        },
+    )
+    assert response.status_code == 422

@@ -30,7 +30,7 @@ export function RotationConverter() {
 
     const handleCalculate = useCallback(async () => {
         setError(null);
-        let payloadValue: any;
+        let payloadValue: number[] = quaternion;
 
         if (inputType === 'quaternion') {
             payloadValue = quaternion;
@@ -61,8 +61,9 @@ export function RotationConverter() {
 
             const data: ConversionResponse = await response.json();
             setResults(data.representations);
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : 'Failed to convert rotation';
+            setError(message);
         }
     }, [inputType, quaternion, euler, eulerConvention, axisAngle, rodrigues]);
 
