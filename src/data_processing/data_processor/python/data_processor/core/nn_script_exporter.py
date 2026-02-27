@@ -25,6 +25,7 @@ from .nn_architecture import (
 )
 
 logger = logging.getLogger(__name__)
+DEFAULT_DATA_PATH = "data.csv"
 
 
 class NeuralNetworkScriptExporter:
@@ -58,46 +59,17 @@ class NeuralNetworkScriptExporter:
         include_training: bool = True,
         include_evaluation: bool = True,
     ) -> Path:
-        """Export training script for a specific framework.
-
-        Args:
-            config: Network configuration
-            output_path: Path for the output script
-            framework: Target ML framework
-            data_path: Path to data file (for data loading code)
-            include_data_loading: Include data loading code
-            include_training: Include training loop
-            include_evaluation: Include evaluation code
-
-        Returns:
-            Path to exported script
-        """
-        output_path = Path(output_path)
-
-        if framework == Framework.PYTORCH:
-            script = self._generate_pytorch_script(
-                config,
-                data_path,
-                include_data_loading,
-                include_training,
-                include_evaluation,
-            )
-        elif framework == Framework.TENSORFLOW:
-            script = self._generate_tensorflow_script(
-                config,
-                data_path,
-                include_data_loading,
-                include_training,
-                include_evaluation,
-            )
-        else:  # sklearn
-            script = self._generate_sklearn_script(
-                config,
-                data_path,
-                include_data_loading,
-                include_training,
-                include_evaluation,
-            )
+        """Export training script for a specific framework."""
+        output_path = self._validate_script_output_path(output_path)
+        validated_data_path = self._validate_data_path(data_path)
+        script = self._build_framework_script(
+            config=config,
+            framework=framework,
+            data_path=validated_data_path,
+            include_data_loading=include_data_loading,
+            include_training=include_training,
+            include_evaluation=include_evaluation,
+        )
 
         output_path.write_text(script)
         logger.info("Exported %s script to %s", framework.value, output_path)
@@ -109,7 +81,7 @@ class NeuralNetworkScriptExporter:
         output_path: Path | str,
     ) -> Path:
         """Export network configuration to JSON."""
-        output_path = Path(output_path)
+        output_path = self._validate_config_output_path(output_path)
         config_dict = config.to_dict()
         config_dict["normalization_params"] = {
             k: v.tolist() if isinstance(v, np.ndarray) else v
@@ -123,7 +95,11 @@ class NeuralNetworkScriptExporter:
 
     def import_config(self, config_path: Path | str) -> NetworkConfig:
         """Import network configuration from JSON."""
-        with open(config_path) as f:
+        path = Path(config_path)
+        if not path.exists():
+            msg = f"Configuration file does not exist: {path}"
+            raise FileNotFoundError(msg)
+        with open(path) as f:
             data = json.load(f)
 
         if "normalization_params" in data:
@@ -133,6 +109,64 @@ class NeuralNetworkScriptExporter:
             }
 
         return NetworkConfig.from_dict(data)
+
+    def _validate_script_output_path(self, output_path: Path | str) -> Path:
+        """Validate script output path preconditions."""
+        output = Path(output_path)
+        if not str(output).strip() or str(output) == ".":
+            raise ValueError("output_path must not be empty")
+        if output.suffix.lower() != ".py":
+            raise ValueError("output_path must end with .py")
+        return output
+
+    def _validate_config_output_path(self, output_path: Path | str) -> Path:
+        """Validate config output path preconditions."""
+        output = Path(output_path)
+        if not str(output).strip() or str(output) == ".":
+            raise ValueError("output_path must not be empty")
+        return output
+
+    def _validate_data_path(self, data_path: str | None) -> str | None:
+        """Validate optional data path argument."""
+        if data_path is None:
+            return None
+        if not data_path.strip():
+            raise ValueError("data_path must not be empty")
+        return data_path
+
+    def _build_framework_script(
+        self,
+        config: NetworkConfig,
+        framework: Framework,
+        data_path: str | None,
+        include_data_loading: bool,
+        include_training: bool,
+        include_evaluation: bool,
+    ) -> str:
+        """Dispatch framework-specific script generation."""
+        if framework == Framework.PYTORCH:
+            return self._generate_pytorch_script(
+                config,
+                data_path,
+                include_data_loading,
+                include_training,
+                include_evaluation,
+            )
+        if framework == Framework.TENSORFLOW:
+            return self._generate_tensorflow_script(
+                config,
+                data_path,
+                include_data_loading,
+                include_training,
+                include_evaluation,
+            )
+        return self._generate_sklearn_script(
+            config,
+            data_path,
+            include_data_loading,
+            include_training,
+            include_evaluation,
+        )
 
     # ------------------------------------------------------------------ #
     #  PyTorch script generation
@@ -220,7 +254,8 @@ class NeuralNetworkScriptExporter:
         self, config: NetworkConfig, data_path: str | None
     ) -> list[str]:
         """Generate PyTorch data loading and DataLoader creation."""
-        data_path_str = data_path or "data.csv"
+        data_path_str = data_path or DEFAULT_DATA_PATH
+        train_fraction = 1 - config.validation_split - 0.15
         lines = [
             "# Data Loading",
             f'data = pd.read_csv("{data_path_str}")',
@@ -232,7 +267,7 @@ class NeuralNetworkScriptExporter:
             "y = data[target_cols].values.astype(np.float32)",
             "",
             "# Train/val/test split",
-            f"train_size = int(len(X) * {1 - config.validation_split - 0.15})",
+            f"train_size = int(len(X) * {train_fraction})",
             f"val_size = int(len(X) * {config.validation_split})",
             "",
             "X_train, y_train = X[:train_size], y[:train_size]",
@@ -242,17 +277,7 @@ class NeuralNetworkScriptExporter:
         ]
 
         if config.normalize_inputs:
-            lines.extend(
-                [
-                    "# Normalization",
-                    "X_mean, X_std = X_train.mean(axis=0), X_train.std(axis=0)",
-                    "X_std[X_std == 0] = 1",
-                    "X_train = (X_train - X_mean) / X_std",
-                    "X_val = (X_val - X_mean) / X_std",
-                    "X_test = (X_test - X_mean) / X_std",
-                    "",
-                ]
-            )
+            lines.extend(self._pytorch_normalization_block())
 
         lines.extend(
             [
@@ -266,23 +291,50 @@ class NeuralNetworkScriptExporter:
         )
         return lines
 
+    def _pytorch_normalization_block(self) -> list[str]:
+        """Generate PyTorch input normalization block."""
+        return [
+            "# Normalization",
+            "X_mean, X_std = X_train.mean(axis=0), X_train.std(axis=0)",
+            "X_std[X_std == 0] = 1",
+            "X_train = (X_train - X_mean) / X_std",
+            "X_val = (X_val - X_mean) / X_std",
+            "X_test = (X_test - X_mean) / X_std",
+            "",
+        ]
+
     def _pytorch_training(self, config: NetworkConfig) -> list[str]:
         """Generate PyTorch training loop with early stopping."""
-        opt = self._pytorch_optimizer(config.optimizer)
-        loss = self._pytorch_loss(config.loss_function)
+        optimizer_name = self._pytorch_optimizer(config.optimizer)
+        loss_name = self._pytorch_loss(config.loss_function)
+        lines = self._pytorch_training_setup(config, optimizer_name, loss_name)
+        lines.extend(self._pytorch_training_loop(config))
+        return lines
 
+    def _pytorch_training_setup(
+        self, config: NetworkConfig, optimizer_name: str, loss_name: str
+    ) -> list[str]:
+        """Generate PyTorch setup block."""
         return [
             "# Training Setup",
             "device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')",  # noqa: E501
             f"model = NeuralNetwork(input_size={config.input_features}, output_size={config.output_features}).to(device)",  # noqa: E501
-            f"optimizer = {opt}(model.parameters(), lr={config.learning_rate})",
-            f"criterion = {loss}()",
+            (
+                "optimizer = "
+                f"{optimizer_name}(model.parameters(), lr={config.learning_rate})"
+            ),
+            f"criterion = {loss_name}()",
             "",
             "# Early stopping",
             "best_val_loss = float('inf')",
             "patience_counter = 0",
             f"patience = {config.early_stopping_patience}",
             "",
+        ]
+
+    def _pytorch_training_loop(self, config: NetworkConfig) -> list[str]:
+        """Generate PyTorch epoch loop block."""
+        return [
             "# Training Loop",
             f"for epoch in range({config.epochs}):",
             "    model.train()",
@@ -414,7 +466,8 @@ class NeuralNetworkScriptExporter:
         self, config: NetworkConfig, data_path: str | None
     ) -> list[str]:
         """Generate TensorFlow data loading code."""
-        data_path_str = data_path or "data.csv"
+        data_path_str = data_path or DEFAULT_DATA_PATH
+        train_fraction = 1 - config.validation_split - 0.15
         return [
             "# Data Loading",
             f'data = pd.read_csv("{data_path_str}")',
@@ -424,7 +477,7 @@ class NeuralNetworkScriptExporter:
             "X = data[feature_cols].values.astype(np.float32)",
             "y = data[target_cols].values.astype(np.float32)",
             "",
-            f"train_size = int(len(X) * {1 - config.validation_split - 0.15})",
+            f"train_size = int(len(X) * {train_fraction})",
             f"val_size = int(len(X) * {config.validation_split})",
             "",
             "X_train, y_train = X[:train_size], y[:train_size]",
@@ -536,7 +589,7 @@ class NeuralNetworkScriptExporter:
         self, config: NetworkConfig, data_path: str | None
     ) -> list[str]:
         """Generate scikit-learn data loading and split code."""
-        data_path_str = data_path or "data.csv"
+        data_path_str = data_path or DEFAULT_DATA_PATH
         lines = [
             "# Data Loading",
             f'data = pd.read_csv("{data_path_str}")',

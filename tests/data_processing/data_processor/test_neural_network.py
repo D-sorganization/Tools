@@ -566,6 +566,46 @@ class TestNeuralNetworkScriptExporter:
         assert "pd.read_csv" not in content
         path.unlink()
 
+    def test_export_script_empty_output_path_raises(
+        self,
+        exporter: NeuralNetworkScriptExporter,
+        mlp_config: NetworkConfig,
+    ) -> None:
+        with pytest.raises(ValueError, match="output_path must not be empty"):
+            exporter.export_script(mlp_config, "")
+
+    def test_export_script_non_python_output_suffix_raises(
+        self,
+        exporter: NeuralNetworkScriptExporter,
+        mlp_config: NetworkConfig,
+        tmp_path: Path,
+    ) -> None:
+        with pytest.raises(ValueError, match="output_path must end with .py"):
+            exporter.export_script(mlp_config, tmp_path / "model.txt")
+
+    def test_export_script_empty_data_path_raises(
+        self,
+        exporter: NeuralNetworkScriptExporter,
+        mlp_config: NetworkConfig,
+        tmp_path: Path,
+    ) -> None:
+        with pytest.raises(ValueError, match="data_path must not be empty"):
+            exporter.export_script(mlp_config, tmp_path / "train.py", data_path="  ")
+
+    def test_export_config_empty_output_path_raises(
+        self,
+        exporter: NeuralNetworkScriptExporter,
+        mlp_config: NetworkConfig,
+    ) -> None:
+        with pytest.raises(ValueError, match="output_path must not be empty"):
+            exporter.export_config(mlp_config, "")
+
+    def test_import_config_missing_file_raises(
+        self, exporter: NeuralNetworkScriptExporter, tmp_path: Path
+    ) -> None:
+        with pytest.raises(FileNotFoundError, match="does not exist"):
+            exporter.import_config(tmp_path / "missing_config.json")
+
 
 # ------------------------------------------------------------------ #
 #  Backward-compatibility tests
