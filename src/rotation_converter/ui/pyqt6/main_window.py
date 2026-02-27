@@ -43,6 +43,7 @@ from PyQt6.QtWidgets import (
 import rotation_converter as rc
 from rotation_converter.converter import Rotation
 from rotation_converter.rigid_transform import RigidTransform
+from rotation_converter.ui.pyqt6.reference_frame_tab import ReferenceFrameTab
 
 # ── Theme integration (optional — graceful fallback) ──────────────
 _THEME_AVAILABLE = False
@@ -1074,6 +1075,7 @@ class RotationConverterMainWindow(QMainWindow):
         self._tabs = QTabWidget()
         self._tabs.addTab(RotationConverterTab(), "Rotation Converter")
         self._tabs.addTab(RigidTransformTab(), "Rigid Transform")
+        self._tabs.addTab(ReferenceFrameTab(), "Reference Frames & Lie Groups")
         self._tabs.addTab(TrajectoryPlotsTab(), "Trajectory Plots")
         self._tabs.addTab(ScrewVisualiserTab(), "3D Screw Visualiser")
         layout.addWidget(self._tabs)
