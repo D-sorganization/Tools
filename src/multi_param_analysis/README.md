@@ -227,3 +227,22 @@ python launch_pyqt6.py
 - **1.0.0**: Initial release with PyQt6 GUI
 - **1.1.0**: Added parallel processing support
 - **1.2.0**: Integrated Catppuccin Mocha theme
+
+## Current Features
+
+- Purpose: Run multi-parameter sensitivity analysis with grid evaluation
+- Category: Analysis
+- Python files in tool path: 9
+- Surface support: PyQt6=implemented, Web manifest=no, Web implementation=missing
+- Test visibility: 2 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: No
+- Web surface implementation: Gap / Not present
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No structural gaps detected from manifest/surface scan.

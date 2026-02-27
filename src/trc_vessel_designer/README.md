@@ -256,3 +256,22 @@ A_total = A_cylinder + A_cone + A_top
 - ASTM C401: Classification of Alumina and Alumina-Silicate Castable Refractories
 - API Standard 560: Fired Heaters for General Refinery Service
 - NFPA 86: Standard for Ovens and Furnaces
+
+## Current Features
+
+- Purpose: Thermal Reaction Chamber vessel design tool
+- Category: Process Simulation
+- Python files in tool path: 11
+- Surface support: PyQt6=implemented, Web manifest=yes, Web implementation=present
+- Test visibility: 0 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: Yes
+- Web surface implementation: Implemented
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No name-matched tests detected in repository-level tests/.

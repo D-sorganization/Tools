@@ -225,3 +225,22 @@ Replacement_date = Current_date + Remaining_life
 - Tooley, F.V. "Handbook of Glass Manufacture"
 - IEEE Standard 519: Harmonic Control in Electrical Power Systems
 - NFPA 86: Standard for Ovens and Furnaces
+
+## Current Features
+
+- Purpose: AC Electrode Advancement Module for electrode system analysis
+- Category: Process Simulation
+- Python files in tool path: 44
+- Surface support: PyQt6=implemented, Web manifest=yes, Web implementation=present
+- Test visibility: 0 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: Yes
+- Web surface implementation: Implemented
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No name-matched tests detected in repository-level tests/.

@@ -214,3 +214,22 @@ If (y_H2O * P_total) > P_sat(T):
 - Ludwig, E.E. "Applied Process Design for Chemical and Petrochemical Plants"
 - GPSA Engineering Data Book, 14th Edition
 - API Standard 617: Axial and Centrifugal Compressors
+
+## Current Features
+
+- Purpose: Multi-stage compression analysis with water dropout calculations
+- Category: Process Simulation
+- Python files in tool path: 10
+- Surface support: PyQt6=implemented, Web manifest=yes, Web implementation=present
+- Test visibility: 2 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: Yes
+- Web surface implementation: Implemented
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No structural gaps detected from manifest/surface scan.

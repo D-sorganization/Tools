@@ -75,3 +75,22 @@ Folder Fix is a comprehensive Windows application for advanced folder processing
 ## Support
 
 This tool provides comprehensive logging and error handling. Check the generated log files for detailed operation information.
+
+## Current Features
+
+- Purpose: Directory Management Utility
+- Category: Development Tools
+- Python files in tool path: 15
+- Surface support: PyQt6=implemented, Web manifest=no, Web implementation=missing
+- Test visibility: 2 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: No
+- Web surface implementation: Gap / Not present
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No structural gaps detected from manifest/surface scan.

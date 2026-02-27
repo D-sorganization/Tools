@@ -330,3 +330,22 @@ year_n_price = base_price * (1 + escalation_rate) ** n
 - **1.2.0**: Web application (React/TypeScript)
 - **1.3.0**: Catppuccin Mocha theme integration
 - **1.4.0**: Added byproduct revenue modeling
+
+## Current Features
+
+- Purpose: Comprehensive financial modeling for plant operations
+- Category: Process Simulation
+- Python files in tool path: 10
+- Surface support: PyQt6=implemented, Web manifest=yes, Web implementation=present
+- Test visibility: 2 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: Yes
+- Web surface implementation: Implemented
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No structural gaps detected from manifest/surface scan.
