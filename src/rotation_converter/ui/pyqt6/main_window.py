@@ -23,6 +23,7 @@ from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QComboBox,
+    QDoubleSpinBox,
     QFormLayout,
     QGroupBox,
     QHBoxLayout,
@@ -678,14 +679,33 @@ class TrajectoryPlotsTab(QWidget):
 
         ctrl.addWidget(QLabel("Frames:"))
         self._n_frames = QSpinBox()
-        self._n_frames.setRange(5, 200)
+        self._n_frames.setRange(5, 500)
         self._n_frames.setValue(60)
         ctrl.addWidget(self._n_frames)
 
-        self._gen_btn = QPushButton("Generate Trajectory")
+        ctrl.addWidget(QLabel("Speed (m/s):"))
+        self._speed_input = QDoubleSpinBox()
+        self._speed_input.setRange(1.0, 100.0)
+        self._speed_input.setValue(20.0)
+        ctrl.addWidget(self._speed_input)
+
+        ctrl.addWidget(QLabel("Spin (rev/s):"))
+        self._spin_input = QDoubleSpinBox()
+        self._spin_input.setRange(-50.0, 50.0)
+        self._spin_input.setValue(10.0)
+        ctrl.addWidget(self._spin_input)
+
+        ctrl.addWidget(QLabel("Angle (deg):"))
+        self._angle_input = QDoubleSpinBox()
+        self._angle_input.setRange(-90.0, 90.0)
+        self._angle_input.setValue(35.0)
+        ctrl.addWidget(self._angle_input)
+
+        self._gen_btn = QPushButton("Generate")
         ctrl.addWidget(self._gen_btn)
 
-        ctrl.addWidget(QLabel("Plot:"))
+        ctrl2 = QHBoxLayout()
+        ctrl2.addWidget(QLabel("Plot:"))
         self._plot_combo = QComboBox()
         self._plot_combo.addItems(
             [
@@ -700,10 +720,11 @@ class TrajectoryPlotsTab(QWidget):
         ctrl.addWidget(self._plot_combo)
 
         self._plot_btn = QPushButton("Plot")
-        ctrl.addWidget(self._plot_btn)
-        ctrl.addStretch()
+        ctrl2.addWidget(self._plot_btn)
+        ctrl2.addStretch()
 
         layout.addLayout(ctrl)
+        layout.addLayout(ctrl2)
 
         # Plot area
         self._fig = Figure(figsize=(10, 5), dpi=100)
@@ -718,10 +739,22 @@ class TrajectoryPlotsTab(QWidget):
 
     def _generate(self) -> None:
         n = self._n_frames.value()
+        speed = self._speed_input.value()
+        spin = self._spin_input.value()
+        angle = self._angle_input.value()
+
         if self._example_combo.currentIndex() == 0:
-            self._traj = rc.football_spiral(n_frames=n)
+            self._traj = rc.football_spiral(
+                n_frames=n, speed=speed, spin_rate=spin, launch_angle_deg=angle
+            )
         else:
-            self._traj = rc.frisbee_flight(n_frames=n)
+            self._traj = rc.frisbee_flight(
+                n_frames=n,
+                speed=speed,
+                spin_rate=spin,
+                launch_angle_deg=angle,
+                tilt_deg=15.0,
+            )
         self._plot()
 
     def _plot(self) -> None:
@@ -964,26 +997,56 @@ class ScrewVisualiserTab(QWidget):
 
         ctrl.addWidget(QLabel("Frames:"))
         self._vis_frames = QSpinBox()
-        self._vis_frames.setRange(5, 200)
+        self._vis_frames.setRange(5, 500)
         self._vis_frames.setValue(60)
         ctrl.addWidget(self._vis_frames)
+
+        ctrl.addWidget(QLabel("Speed:"))
+        self._vis_speed = QDoubleSpinBox()
+        self._vis_speed.setRange(1.0, 100.0)
+        self._vis_speed.setValue(14.0)
+        ctrl.addWidget(self._vis_speed)
+
+        ctrl.addWidget(QLabel("Spin:"))
+        self._vis_spin = QDoubleSpinBox()
+        self._vis_spin.setRange(-50.0, 50.0)
+        self._vis_spin.setValue(7.0)
+        ctrl.addWidget(self._vis_spin)
+
+        ctrl.addWidget(QLabel("Angle:"))
+        self._vis_angle = QDoubleSpinBox()
+        self._vis_angle.setRange(-90.0, 90.0)
+        self._vis_angle.setValue(8.0)
+        ctrl.addWidget(self._vis_angle)
 
         self._vis_gen_btn = QPushButton("Generate")
         ctrl.addWidget(self._vis_gen_btn)
 
+        ctrl2 = QHBoxLayout()
         self._play_btn = QPushButton("Play")
         self._stop_btn = QPushButton("Stop")
         self._prev_btn = QPushButton("◀ Prev")
         self._next_btn = QPushButton("Next ▶")
-        ctrl.addWidget(self._play_btn)
-        ctrl.addWidget(self._stop_btn)
-        ctrl.addWidget(self._prev_btn)
-        ctrl.addWidget(self._next_btn)
+        ctrl2.addWidget(self._play_btn)
+        ctrl2.addWidget(self._stop_btn)
+        ctrl2.addWidget(self._prev_btn)
+        ctrl2.addWidget(self._next_btn)
+
+        from PyQt6.QtWidgets import QCheckBox
+
+        self._chk_screw = QCheckBox("Screw Axis")
+        self._chk_screw.setChecked(True)
+        self._chk_euler = QCheckBox("Euler")
+        self._chk_quat = QCheckBox("Quaternion")
+        ctrl2.addWidget(self._chk_screw)
+        ctrl2.addWidget(self._chk_euler)
+        ctrl2.addWidget(self._chk_quat)
 
         self._frame_label = QLabel("Frame: 0/0")
-        ctrl.addWidget(self._frame_label)
-        ctrl.addStretch()
+        ctrl2.addWidget(self._frame_label)
+        ctrl2.addStretch()
         layout.addLayout(ctrl)
+        layout.addLayout(ctrl2)
 
         self._fig = Figure(figsize=(10, 7), dpi=100)
         self._canvas = FigureCanvas(self._fig)
@@ -997,15 +1060,31 @@ class ScrewVisualiserTab(QWidget):
         self._stop_btn.clicked.connect(self._timer.stop)
         self._prev_btn.clicked.connect(self._prev_frame)
         self._next_btn.clicked.connect(self._advance_frame)
+        self._chk_screw.stateChanged.connect(self._draw_frame)
+        self._chk_euler.stateChanged.connect(self._draw_frame)
+        self._chk_quat.stateChanged.connect(self._draw_frame)
 
     def _generate(self) -> None:
         n = self._vis_frames.value()
+        speed = self._vis_speed.value()
+        spin = self._vis_spin.value()
+        angle = self._vis_angle.value()
+
         if self._vis_combo.currentIndex() == 0:
-            traj = rc.football_spiral(n_frames=n)
+            traj = rc.football_spiral(
+                n_frames=n, speed=speed, spin_rate=spin, launch_angle_deg=angle
+            )
             title = "Football Spiral"
         else:
-            traj = rc.frisbee_flight(n_frames=n)
+            traj = rc.frisbee_flight(
+                n_frames=n,
+                speed=speed,
+                spin_rate=spin,
+                launch_angle_deg=angle,
+                tilt_deg=15.0,
+            )
             title = "Frisbee Flight"
+
         self._animator = rc.ScrewAxisAnimator(traj, title=title)
         self._frame_idx = 0
         self._draw_frame()
@@ -1037,6 +1116,9 @@ class ScrewVisualiserTab(QWidget):
         ax.tick_params(colors=c["fg"], labelsize=7)
 
         # Delegate to the animator's draw method
+        self._animator.show_screw_axis = self._chk_screw.isChecked()
+        self._animator.show_euler = self._chk_euler.isChecked()
+        self._animator.show_quaternion = self._chk_quat.isChecked()
         self._animator._draw_frame(ax, self._frame_idx)
 
         # Override text colours with theme
