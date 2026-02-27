@@ -245,6 +245,18 @@ class TestNeuralNetworkTrainer:
         assert dense_layers[0].units == 32
         assert dense_layers[1].units == 16
 
+    def test_create_config_invalid_input_features_raises(
+        self, trainer: NeuralNetworkTrainer
+    ) -> None:
+        with pytest.raises(ValueError, match="input_features must be positive"):
+            trainer.create_config(input_features=0)
+
+    def test_create_config_invalid_dropout_rate_raises(
+        self, trainer: NeuralNetworkTrainer
+    ) -> None:
+        with pytest.raises(ValueError, match="dropout_rate must be in \\[0.0, 1.0\\)"):
+            trainer.create_config(input_features=4, dropout_rate=1.0)
+
     def test_prepare_data(
         self,
         trainer: NeuralNetworkTrainer,
@@ -274,6 +286,35 @@ class TestNeuralNetworkTrainer:
         )
         assert len(data["X_train"]) == 80
 
+    def test_prepare_data_missing_target_column_raises(
+        self, trainer: NeuralNetworkTrainer, sample_df: pd.DataFrame
+    ) -> None:
+        trainer.create_config(input_features=2, output_features=1)
+        with pytest.raises(ValueError, match="Unknown target columns"):
+            trainer.prepare_data(sample_df, target_columns=["missing_target"])
+
+    def test_prepare_data_invalid_split_ratio_raises(
+        self, trainer: NeuralNetworkTrainer, sample_df: pd.DataFrame
+    ) -> None:
+        trainer.create_config(input_features=2, output_features=1)
+        split = DataSplitConfig(train_ratio=0.8, val_ratio=0.3, test_ratio=0.1)
+        with pytest.raises(ValueError, match="sum to 1.0 or less"):
+            trainer.prepare_data(
+                sample_df,
+                target_columns=["target"],
+                split_config=split,
+            )
+
+    def test_prepare_data_no_valid_rows_after_dropna_raises(
+        self, trainer: NeuralNetworkTrainer
+    ) -> None:
+        trainer.create_config(input_features=2, output_features=1)
+        df = pd.DataFrame(
+            {"f1": [np.nan, np.nan], "f2": [np.nan, np.nan], "target": [1, 2]}
+        )
+        with pytest.raises(ValueError, match="No rows available"):
+            trainer.prepare_data(df, target_columns=["target"])
+
     def test_train_simple(
         self,
         trainer: NeuralNetworkTrainer,
@@ -302,6 +343,13 @@ class TestNeuralNetworkTrainer:
     ) -> None:
         with pytest.raises(ValueError, match="No network configuration"):
             trainer.train_simple({"X_train": np.zeros((10, 2))})
+
+    def test_train_simple_missing_required_data_keys_raises(
+        self, trainer: NeuralNetworkTrainer
+    ) -> None:
+        config = trainer.create_config(input_features=2, output_features=1)
+        with pytest.raises(ValueError, match="Missing required data keys"):
+            trainer.train_simple({"X_train": np.zeros((10, 2))}, config)
 
     def test_activation_relu(self, trainer: NeuralNetworkTrainer) -> None:
         z = np.array([-1.0, 0.0, 1.0])

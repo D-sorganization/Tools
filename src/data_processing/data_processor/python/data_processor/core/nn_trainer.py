@@ -25,6 +25,7 @@ from .nn_architecture import (
 )
 
 logger = logging.getLogger(__name__)
+DEFAULT_HIDDEN_LAYERS = [128, 64, 32]
 
 
 class NeuralNetworkTrainer:
@@ -79,91 +80,30 @@ class NeuralNetworkTrainer:
         Returns:
             Complete NetworkConfig
         """
-        if hidden_layers is None:
-            hidden_layers = [128, 64, 32]
-
-        # Build layers based on network type
-        layers: list[LayerConfig] = []
-
-        if network_type == NetworkType.MLP:
-            for units in hidden_layers:
-                layers.append(
-                    LayerConfig(
-                        layer_type="dense",
-                        units=units,
-                        activation=activation,
-                    )
-                )
-                if dropout_rate > 0:
-                    layers.append(
-                        LayerConfig(
-                            layer_type="dropout",
-                            dropout_rate=dropout_rate,
-                        )
-                    )
-
-        elif network_type in (NetworkType.LSTM, NetworkType.GRU):
-            layer_type = "lstm" if network_type == NetworkType.LSTM else "gru"
-            for i, units in enumerate(hidden_layers):
-                is_last = i == len(hidden_layers) - 1
-                layers.append(
-                    LayerConfig(
-                        layer_type=layer_type,
-                        units=units,
-                        return_sequences=not is_last,
-                    )
-                )
-                if dropout_rate > 0:
-                    layers.append(
-                        LayerConfig(
-                            layer_type="dropout",
-                            dropout_rate=dropout_rate,
-                        )
-                    )
-
-        elif network_type == NetworkType.CNN_1D:
-            filters = [32, 64, 128]
-            for f in filters:
-                layers.append(
-                    LayerConfig(
-                        layer_type="conv1d",
-                        units=f,
-                        kernel_size=3,
-                        activation=activation,
-                    )
-                )
-            layers.append(LayerConfig(layer_type="flatten"))
-            for units in hidden_layers:
-                layers.append(
-                    LayerConfig(
-                        layer_type="dense",
-                        units=units,
-                        activation=activation,
-                    )
-                )
-
-        # Output layer
-        output_activation = (
-            ActivationFunction.LINEAR
-            if kwargs.get("task_type", "regression") == "regression"
-            else ActivationFunction.SOFTMAX
+        validated_layers = self._validate_create_config_inputs(
+            input_features=input_features,
+            output_features=output_features,
+            hidden_layers=hidden_layers,
+            dropout_rate=dropout_rate,
         )
-        layers.append(
-            LayerConfig(
-                layer_type="dense",
-                units=output_features,
-                activation=output_activation,
-            )
+        layers = self._build_layers(
+            network_type=network_type,
+            hidden_layers=validated_layers,
+            activation=activation,
+            dropout_rate=dropout_rate,
+            output_features=output_features,
+            task_type=str(kwargs.get("task_type", "regression")),
         )
-
+        config_kwargs = {
+            key: value for key, value in kwargs.items() if hasattr(NetworkConfig, key)
+        }
         config = NetworkConfig(
             network_type=network_type,
             layers=layers,
             input_features=input_features,
             output_features=output_features,
-            **{k: v for k, v in kwargs.items() if hasattr(NetworkConfig, k)},
+            **config_kwargs,
         )
-
         self._config = config
         return config
 
@@ -186,51 +126,20 @@ class NeuralNetworkTrainer:
             Dictionary with X_train, y_train, X_val, y_val, X_test, y_test
         """
         split_config = split_config or DataSplitConfig()
-
-        # Select features
-        if feature_columns is None:
-            feature_columns = [c for c in df.columns if c not in target_columns]
-
-        # Extract data
-        data = df[feature_columns + target_columns].dropna()
-        X = data[feature_columns].values.astype(np.float32)
-        y = data[target_columns].values.astype(np.float32)
-
-        if y.shape[1] == 1:
-            y = y.ravel()
-
-        n = len(X)
-
-        # Shuffle if requested
-        if split_config.shuffle:
-            rng = np.random.default_rng(split_config.random_state)
-            indices = rng.permutation(n)
-            X = X[indices]
-            y = y[indices] if y.ndim == 1 else y[indices]
-
-        # Split data
-        n_train = int(n * split_config.train_ratio)
-        n_val = int(n * split_config.val_ratio)
-
-        X_train = X[:n_train]
-        y_train = y[:n_train] if y.ndim == 1 else y[:n_train]
-
-        X_val = X[n_train : n_train + n_val]
-        y_val = (
-            y[n_train : n_train + n_val]
-            if y.ndim == 1
-            else y[n_train : n_train + n_val]
+        feature_columns = self._validate_prepare_data_inputs(
+            df=df,
+            target_columns=target_columns,
+            feature_columns=feature_columns,
+            split_config=split_config,
         )
-
-        X_test = X[n_train + n_val :]
-        y_test = y[n_train + n_val :] if y.ndim == 1 else y[n_train + n_val :]
-
-        # Normalize
-        if self._config and self._config.normalize_inputs:
-            X_train, X_val, X_test = self._normalize_features(X_train, X_val, X_test)
-
-        if self._config and self._config.normalize_outputs and y.ndim > 0:
-            y_train, y_val, y_test = self._normalize_targets(y_train, y_val, y_test)
+        X, y = self._extract_model_arrays(df, feature_columns, target_columns)
+        X, y = self._maybe_shuffle_data(X, y, split_config)
+        X_train, y_train, X_val, y_val, X_test, y_test = self._split_data(
+            X, y, split_config
+        )
+        X_train, X_val, X_test, y_train, y_val, y_test = self._normalize_train_val_test(
+            X_train, X_val, X_test, y_train, y_val, y_test
+        )
 
         return {
             "X_train": X_train,
@@ -242,6 +151,218 @@ class NeuralNetworkTrainer:
             "feature_names": feature_columns,
             "target_names": target_columns,
         }
+
+    def _validate_create_config_inputs(
+        self,
+        input_features: int,
+        output_features: int,
+        hidden_layers: list[int] | None,
+        dropout_rate: float,
+    ) -> list[int]:
+        """Validate create_config preconditions and normalize hidden layers."""
+        if input_features <= 0:
+            raise ValueError("input_features must be positive")
+        if output_features <= 0:
+            raise ValueError("output_features must be positive")
+        if dropout_rate < 0.0 or dropout_rate >= 1.0:
+            raise ValueError("dropout_rate must be in [0.0, 1.0)")
+
+        normalized_layers = hidden_layers or DEFAULT_HIDDEN_LAYERS
+        if not normalized_layers or any(units <= 0 for units in normalized_layers):
+            raise ValueError("hidden_layers must contain positive integers")
+        return normalized_layers
+
+    def _build_layers(
+        self,
+        network_type: NetworkType,
+        hidden_layers: list[int],
+        activation: ActivationFunction,
+        dropout_rate: float,
+        output_features: int,
+        task_type: str,
+    ) -> list[LayerConfig]:
+        """Build hidden + output layers for requested architecture."""
+        layers: list[LayerConfig] = []
+        if network_type == NetworkType.MLP:
+            self._append_mlp_layers(layers, hidden_layers, activation, dropout_rate)
+        elif network_type in (NetworkType.LSTM, NetworkType.GRU):
+            self._append_rnn_layers(layers, network_type, hidden_layers, dropout_rate)
+        elif network_type == NetworkType.CNN_1D:
+            self._append_cnn_layers(layers, hidden_layers, activation)
+        output_activation = (
+            ActivationFunction.LINEAR
+            if task_type == "regression"
+            else ActivationFunction.SOFTMAX
+        )
+        layers.append(
+            LayerConfig(
+                layer_type="dense",
+                units=output_features,
+                activation=output_activation,
+            )
+        )
+        return layers
+
+    def _append_mlp_layers(
+        self,
+        layers: list[LayerConfig],
+        hidden_layers: list[int],
+        activation: ActivationFunction,
+        dropout_rate: float,
+    ) -> None:
+        """Append dense/dropout blocks for MLP configuration."""
+        for units in hidden_layers:
+            layers.append(
+                LayerConfig(layer_type="dense", units=units, activation=activation)
+            )
+            if dropout_rate > 0:
+                layers.append(
+                    LayerConfig(layer_type="dropout", dropout_rate=dropout_rate)
+                )
+
+    def _append_rnn_layers(
+        self,
+        layers: list[LayerConfig],
+        network_type: NetworkType,
+        hidden_layers: list[int],
+        dropout_rate: float,
+    ) -> None:
+        """Append recurrent/dropout blocks for LSTM/GRU configuration."""
+        layer_type = "lstm" if network_type == NetworkType.LSTM else "gru"
+        for index, units in enumerate(hidden_layers):
+            layers.append(
+                LayerConfig(
+                    layer_type=layer_type,
+                    units=units,
+                    return_sequences=index < len(hidden_layers) - 1,
+                )
+            )
+            if dropout_rate > 0:
+                layers.append(
+                    LayerConfig(layer_type="dropout", dropout_rate=dropout_rate)
+                )
+
+    def _append_cnn_layers(
+        self,
+        layers: list[LayerConfig],
+        hidden_layers: list[int],
+        activation: ActivationFunction,
+    ) -> None:
+        """Append convolution + dense blocks for 1D CNN configuration."""
+        for filters in (32, 64, 128):
+            layers.append(
+                LayerConfig(
+                    layer_type="conv1d",
+                    units=filters,
+                    kernel_size=3,
+                    activation=activation,
+                )
+            )
+        layers.append(LayerConfig(layer_type="flatten"))
+        for units in hidden_layers:
+            layers.append(
+                LayerConfig(layer_type="dense", units=units, activation=activation)
+            )
+
+    def _validate_prepare_data_inputs(
+        self,
+        df: pd.DataFrame,
+        target_columns: list[str],
+        feature_columns: list[str] | None,
+        split_config: DataSplitConfig,
+    ) -> list[str]:
+        """Validate prepare_data preconditions and resolve feature columns."""
+        if len(df) == 0:
+            raise ValueError("df must not be empty")
+        if not target_columns:
+            raise ValueError("target_columns must not be empty")
+
+        missing_targets = [
+            column for column in target_columns if column not in df.columns
+        ]
+        if missing_targets:
+            raise ValueError(f"Unknown target columns: {missing_targets}")
+        if split_config.train_ratio <= 0:
+            raise ValueError("train_ratio must be positive")
+        if split_config.val_ratio < 0 or split_config.test_ratio < 0:
+            raise ValueError("val_ratio and test_ratio must be non-negative")
+        ratio_sum = (
+            split_config.train_ratio + split_config.val_ratio + split_config.test_ratio
+        )
+        if ratio_sum > 1.0:
+            raise ValueError("split ratios must sum to 1.0 or less")
+
+        resolved_features = (
+            feature_columns
+            if feature_columns is not None
+            else [column for column in df.columns if column not in target_columns]
+        )
+        if not resolved_features:
+            raise ValueError("feature_columns must not be empty")
+        if set(resolved_features) & set(target_columns):
+            raise ValueError("feature_columns and target_columns must not overlap")
+        missing_features = [
+            column for column in resolved_features if column not in df.columns
+        ]
+        if missing_features:
+            raise ValueError(f"Unknown feature columns: {missing_features}")
+        return resolved_features
+
+    def _extract_model_arrays(
+        self, df: pd.DataFrame, feature_columns: list[str], target_columns: list[str]
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """Extract and sanitize feature/target arrays from DataFrame."""
+        data = df[feature_columns + target_columns].dropna()
+        if data.empty:
+            raise ValueError("No rows available after dropping missing values")
+        X = data[feature_columns].values.astype(np.float32)
+        y = data[target_columns].values.astype(np.float32)
+        if y.shape[1] == 1:
+            y = y.ravel()
+        return X, y
+
+    def _maybe_shuffle_data(
+        self, X: np.ndarray, y: np.ndarray, split_config: DataSplitConfig
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """Shuffle data using split config random seed when requested."""
+        if not split_config.shuffle:
+            return X, y
+        indices = np.random.default_rng(split_config.random_state).permutation(len(X))
+        return X[indices], y[indices]
+
+    def _split_data(
+        self, X: np.ndarray, y: np.ndarray, split_config: DataSplitConfig
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        """Split arrays into train/validation/test partitions."""
+        n = len(X)
+        n_train = int(n * split_config.train_ratio)
+        n_val = int(n * split_config.val_ratio)
+        split_1 = n_train
+        split_2 = n_train + n_val
+        return (
+            X[:split_1],
+            y[:split_1],
+            X[split_1:split_2],
+            y[split_1:split_2],
+            X[split_2:],
+            y[split_2:],
+        )
+
+    def _normalize_train_val_test(
+        self,
+        X_train: np.ndarray,
+        X_val: np.ndarray,
+        X_test: np.ndarray,
+        y_train: np.ndarray,
+        y_val: np.ndarray,
+        y_test: np.ndarray,
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        """Normalize train/val/test arrays according to active config."""
+        if self._config and self._config.normalize_inputs:
+            X_train, X_val, X_test = self._normalize_features(X_train, X_val, X_test)
+        if self._config and self._config.normalize_outputs:
+            y_train, y_val, y_test = self._normalize_targets(y_train, y_val, y_test)
+        return X_train, X_val, X_test, y_train, y_val, y_test
 
     def _normalize_features(
         self,
@@ -296,62 +417,27 @@ class NeuralNetworkTrainer:
         biases: list[np.ndarray | None],
         config: NetworkConfig,
     ) -> tuple[list[float], list[float], float, int, int, list, list]:
-        """Execute the mini-batch training loop with early stopping.
-
-        Args:
-            X_train: Training features
-            y_train: Training targets
-            X_val: Validation features
-            y_val: Validation targets
-            weights: Initial network weights
-            biases: Initial network biases
-            config: Network configuration
-
-        Returns:
-            Tuple of (train_losses, val_losses, best_val_loss, best_epoch,
-                       patience_counter, weights, biases)
-        """
-        train_losses: list[float] = []
-        val_losses: list[float] = []
-        best_val_loss = float("inf")
-        best_epoch = 0
-        patience_counter = 0
+        """Execute mini-batch training with early stopping."""
+        train_losses, val_losses, best_val_loss, best_epoch, patience_counter = (
+            self._initialize_training_state()
+        )
 
         for epoch in range(config.epochs):
-            indices = np.random.permutation(len(X_train))
-            batch_losses: list[float] = []
+            train_loss, weights, biases = self._run_epoch(
+                X_train, y_train, weights, biases, config
+            )
+            train_losses.append(train_loss)
 
-            for i in range(0, len(X_train), config.batch_size):
-                batch_idx = indices[i : i + config.batch_size]
-                X_batch = X_train[batch_idx]
-                y_batch = y_train[batch_idx]
-
-                activations = self._forward_pass(X_batch, weights, biases, config)
-                gradients = self._backward_pass(activations, y_batch, weights, config)
-                weights, biases = self._update_weights(
-                    weights, biases, gradients, config
-                )
-
-                y_pred = activations[-1]
-                batch_loss = float(
-                    np.mean((y_pred - y_batch.reshape(y_pred.shape)) ** 2)
-                )
-                batch_losses.append(batch_loss)
-
-            train_losses.append(float(np.mean(batch_losses)))
-
-            val_activations = self._forward_pass(X_val, weights, biases, config)
-            val_pred = val_activations[-1]
-            val_loss = float(np.mean((val_pred - y_val.reshape(val_pred.shape)) ** 2))
+            val_loss = self._calculate_validation_loss(
+                X_val, y_val, weights, biases, config
+            )
             val_losses.append(val_loss)
 
-            if val_loss < best_val_loss:
-                best_val_loss = val_loss
-                best_epoch = epoch
-                patience_counter = 0
-            else:
-                patience_counter += 1
-
+            best_val_loss, best_epoch, patience_counter = (
+                self._update_early_stopping_state(
+                    val_loss, epoch, best_val_loss, best_epoch, patience_counter
+                )
+            )
             if patience_counter >= config.early_stopping_patience:
                 logger.info("Early stopping at epoch %d", epoch)
                 break
@@ -365,6 +451,64 @@ class NeuralNetworkTrainer:
             weights,
             biases,
         )
+
+    def _initialize_training_state(
+        self,
+    ) -> tuple[list[float], list[float], float, int, int]:
+        """Initialize loss history and early-stopping state."""
+        return [], [], float("inf"), 0, 0
+
+    def _run_epoch(
+        self,
+        X_train: np.ndarray,
+        y_train: np.ndarray,
+        weights: list[np.ndarray | None],
+        biases: list[np.ndarray | None],
+        config: NetworkConfig,
+    ) -> tuple[float, list[np.ndarray | None], list[np.ndarray | None]]:
+        """Run one training epoch and return average batch loss."""
+        indices = np.random.permutation(len(X_train))
+        batch_losses: list[float] = []
+        for index in range(0, len(X_train), config.batch_size):
+            batch_idx = indices[index : index + config.batch_size]
+            X_batch = X_train[batch_idx]
+            y_batch = y_train[batch_idx]
+            activations = self._forward_pass(X_batch, weights, biases, config)
+            gradients = self._backward_pass(activations, y_batch, weights, config)
+            weights, biases = self._update_weights(weights, biases, gradients, config)
+            batch_losses.append(self._mean_squared_error(activations[-1], y_batch))
+        return float(np.mean(batch_losses)), weights, biases
+
+    def _calculate_validation_loss(
+        self,
+        X_val: np.ndarray,
+        y_val: np.ndarray,
+        weights: list[np.ndarray | None],
+        biases: list[np.ndarray | None],
+        config: NetworkConfig,
+    ) -> float:
+        """Calculate validation loss for current model parameters."""
+        activations = self._forward_pass(X_val, weights, biases, config)
+        return self._mean_squared_error(activations[-1], y_val)
+
+    def _mean_squared_error(
+        self, predictions: np.ndarray, targets: np.ndarray
+    ) -> float:
+        """Compute MSE loss with target shape aligned to predictions."""
+        return float(np.mean((predictions - targets.reshape(predictions.shape)) ** 2))
+
+    def _update_early_stopping_state(
+        self,
+        val_loss: float,
+        epoch: int,
+        best_val_loss: float,
+        best_epoch: int,
+        patience_counter: int,
+    ) -> tuple[float, int, int]:
+        """Update early-stopping state after a validation step."""
+        if val_loss < best_val_loss:
+            return val_loss, epoch, 0
+        return best_val_loss, best_epoch, patience_counter + 1
 
     def _evaluate_test_set(
         self,
@@ -409,12 +553,53 @@ class NeuralNetworkTrainer:
         Returns:
             Training results
         """
-        config = config or self._config
-        if not config:
+        resolved_config = config or self._config
+        if not resolved_config:
             raise ValueError("No network configuration provided")
+        self._validate_training_data(data)
+        training_state = self._execute_training(data, resolved_config)
+        test_loss, predictions, actual_values = self._evaluate_test_set(
+            data,
+            training_state["weights"],
+            training_state["biases"],
+            resolved_config,
+        )
 
+        return TrainingResult(
+            train_loss_history=training_state["train_losses"],
+            val_loss_history=training_state["val_losses"],
+            best_epoch=training_state["best_epoch"],
+            best_val_loss=training_state["best_val_loss"],
+            final_train_loss=(
+                training_state["train_losses"][-1]
+                if training_state["train_losses"]
+                else 0
+            ),
+            final_val_loss=(
+                training_state["val_losses"][-1] if training_state["val_losses"] else 0
+            ),
+            test_loss=test_loss,
+            training_time_seconds=training_state["training_time"],
+            stopped_early=(
+                training_state["patience_counter"]
+                >= resolved_config.early_stopping_patience
+            ),
+            predictions=predictions,
+            actual_values=actual_values,
+        )
+
+    def _validate_training_data(self, data: dict[str, np.ndarray]) -> None:
+        """Validate required training arrays before running optimization."""
+        required_keys = {"X_train", "y_train", "X_val", "y_val"}
+        missing_keys = sorted(required_keys - set(data.keys()))
+        if missing_keys:
+            raise ValueError(f"Missing required data keys: {missing_keys}")
+
+    def _execute_training(
+        self, data: dict[str, np.ndarray], config: NetworkConfig
+    ) -> dict[str, Any]:
+        """Run model training and return state needed for result construction."""
         weights, biases = self._initialize_weights(config, data["X_train"].shape[1])
-
         start_time = time.time()
         (
             train_losses,
@@ -433,25 +618,16 @@ class NeuralNetworkTrainer:
             biases,
             config,
         )
-        training_time = time.time() - start_time
-
-        test_loss, predictions, actual_values = self._evaluate_test_set(
-            data, weights, biases, config
-        )
-
-        return TrainingResult(
-            train_loss_history=train_losses,
-            val_loss_history=val_losses,
-            best_epoch=best_epoch,
-            best_val_loss=best_val_loss,
-            final_train_loss=train_losses[-1] if train_losses else 0,
-            final_val_loss=val_losses[-1] if val_losses else 0,
-            test_loss=test_loss,
-            training_time_seconds=training_time,
-            stopped_early=patience_counter >= config.early_stopping_patience,
-            predictions=predictions,
-            actual_values=actual_values,
-        )
+        return {
+            "train_losses": train_losses,
+            "val_losses": val_losses,
+            "best_val_loss": best_val_loss,
+            "best_epoch": best_epoch,
+            "patience_counter": patience_counter,
+            "weights": weights,
+            "biases": biases,
+            "training_time": time.time() - start_time,
+        }
 
     def _initialize_weights(
         self,
