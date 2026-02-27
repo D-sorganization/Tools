@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class RotationConverterRequest(BaseModel):
@@ -87,6 +87,68 @@ class ReferenceFrameConversionRequest(BaseModel):
         default=None,
         description="3x3 skew-symmetric matrix in so(3).",
     )
+
+    @model_validator(mode="after")
+    def validate_operation_payload(self) -> ReferenceFrameConversionRequest:
+        """Validate operation-specific preconditions (DbC at API boundary)."""
+        if self.operation == "twist_frame_conversion":
+            if self.transform is None or self.twist is None:
+                raise ValueError(
+                    "twist_frame_conversion requires transform and twist fields."
+                )
+            if any(
+                value is not None
+                for value in (
+                    self.rotation_matrix,
+                    self.translation,
+                    self.so3_vector,
+                    self.so3_matrix,
+                )
+            ):
+                raise ValueError(
+                    "twist_frame_conversion does not accept rotation_matrix, "
+                    "translation, so3_vector, or so3_matrix."
+                )
+            return self
+
+        if self.operation == "homogeneous_transform":
+            if self.rotation_matrix is None or self.translation is None:
+                raise ValueError(
+                    "homogeneous_transform requires rotation_matrix and translation."
+                )
+            if any(
+                value is not None
+                for value in (
+                    self.transform,
+                    self.twist,
+                    self.so3_vector,
+                    self.so3_matrix,
+                )
+            ):
+                raise ValueError(
+                    "homogeneous_transform does not accept transform, twist, "
+                    "so3_vector, or so3_matrix."
+                )
+            return self
+
+        so3_sources = (
+            self.so3_vector is not None,
+            self.so3_matrix is not None,
+            self.rotation_matrix is not None,
+        )
+        if sum(so3_sources) != 1:
+            raise ValueError(
+                "so3_so3_maps requires exactly one of so3_vector, so3_matrix, "
+                "or rotation_matrix."
+            )
+        if any(
+            value is not None
+            for value in (self.transform, self.twist, self.translation)
+        ):
+            raise ValueError(
+                "so3_so3_maps does not accept transform, twist, or translation."
+            )
+        return self
 
 
 class ReferenceFrameConversionResponse(BaseModel):
