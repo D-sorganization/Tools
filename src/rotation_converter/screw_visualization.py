@@ -229,6 +229,9 @@ class ScrewAxisAnimator:
         self._screw_axis_length = screw_axis_length
         self._trail_length = trail_length
         self._frames = build_animation_frames(trajectory)
+        self.show_screw_axis = True
+        self.show_euler = False
+        self.show_quaternion = False
 
     @property
     def n_frames(self) -> int:
@@ -336,7 +339,7 @@ class ScrewAxisAnimator:
 
         # Screw axis
         screw = frame.get("screw_axis")
-        if screw is not None and abs(screw["theta"]) > 1e-8:
+        if self.show_screw_axis and screw is not None and abs(screw["theta"]) > 1e-8:
             s_axis = screw["axis"]
             s_point = screw["point"]
             s_len = self._screw_axis_length
@@ -390,7 +393,8 @@ class ScrewAxisAnimator:
             color="white",
             fontsize=9,
         )
-        if screw is not None:
+        y_text = 0.90
+        if self.show_screw_axis and screw is not None:
             theta_deg = math.degrees(screw["theta"])
             pitch_str = (
                 "pitch=inf"
@@ -399,12 +403,41 @@ class ScrewAxisAnimator:
             )
             ax.text2D(
                 0.02,
-                0.90,
+                y_text,
                 f"theta={theta_deg:.1f} deg  {pitch_str}",
                 transform=ax.transAxes,
                 color="magenta",
                 fontsize=8,
             )
+            y_text -= 0.05
+
+        if self.show_euler or self.show_quaternion:
+            import rotation_converter.core as rc_core
+            from rotation_converter.converter import Rotation
+
+            rot = Rotation.from_rotation_matrix(frame["orientation"])
+            if self.show_euler:
+                eu = rot.as_euler("xyz")
+                ax.text2D(
+                    0.02,
+                    y_text,
+                    f"Euler (xyz): [{eu[0]:.2f}, {eu[1]:.2f}, {eu[2]:.2f}] rad",
+                    transform=ax.transAxes,
+                    color="cyan",
+                    fontsize=8,
+                )
+                y_text -= 0.05
+            if self.show_quaternion:
+                q = rc_core.rotation_matrix_to_quaternion(frame["orientation"])
+                ax.text2D(
+                    0.02,
+                    y_text,
+                    f"Quat (wxyz): [{q[0]:.2f}, {q[1]:.2f}, {q[2]:.2f}, {q[3]:.2f}]",
+                    transform=ax.transAxes,
+                    color="yellow",
+                    fontsize=8,
+                )
+                y_text -= 0.05
 
     def show(self, interval: int = 50) -> None:
         """Display the animation in an interactive matplotlib window.
