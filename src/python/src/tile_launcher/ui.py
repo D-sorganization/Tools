@@ -296,6 +296,8 @@ class LauncherWindow(QMainWindow):
                 webbrowser.open(target_path.as_uri())
             elif app.launch_type == LaunchType.FILE:
                 self._open_file(target_path)
+            elif app.launch_type == LaunchType.OCTAVE:
+                self._launch_octave(target_path)
             else:
                 QMessageBox.warning(
                     self,
@@ -334,6 +336,13 @@ class LauncherWindow(QMainWindow):
                 "Windows Script",
                 f"{app_name} is configured as a Windows batch file and can only run on Windows.",
             )
+
+    @staticmethod
+    def _launch_octave(target_path: Path) -> None:
+        """Launch a script with GNU Octave."""
+        sanitized = str(target_path).replace("'", "''")
+        script = f"run('{sanitized}');"
+        subprocess.Popen(["octave", "--quiet", "--eval", script], cwd=target_path.parent)
 
 
 def run() -> None:

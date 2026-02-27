@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 // Common interfaces mapping to the FastAPI Response/Request
 interface RotationRepresentations {

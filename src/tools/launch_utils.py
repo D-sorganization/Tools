@@ -186,6 +186,42 @@ def launch_matlab_tool(
             raise LaunchError(f"Could not open file in editor: {e}") from e
 
 
+def launch_octave_tool(
+    path: Path,
+    tool_name: str,
+    is_debug: bool = False,
+    log_func: Callable[[str], None] | None = None,
+) -> None:
+    """Launch an Octave tool."""
+    if log_func:
+        log_func(f"Launching Octave tool: {tool_name}")
+
+    sanitized_path = str(path).replace("'", "''")
+    octave_script = f"run('{sanitized_path}');"
+    octave_executable = os.environ.get("OCTAVE_EXECUTABLE", "octave")
+    cmd_list = [octave_executable, "--quiet", "--eval", octave_script]
+
+    try:
+        process = subprocess.Popen(
+            cmd_list,
+            cwd=path.parent,
+            stdout=subprocess.DEVNULL if not is_debug else None,
+            stderr=subprocess.DEVNULL if not is_debug else None,
+        )
+        if log_func:
+            log_func(f"✅ Octave command sent (PID: {process.pid})")
+    except FileNotFoundError:
+        if log_func:
+            log_func("⚠️ Octave not found, opening script in editor")
+        try:
+            if hasattr(os, "startfile"):
+                os.startfile(path)
+            else:
+                subprocess.Popen(["xdg-open", str(path)])
+        except (PermissionError, OSError) as e:
+            raise LaunchError(f"Could not open file in editor: {e}") from e
+
+
 def launch_browser_tool(
     path: Path, log_func: Callable[[str], None] | None = None
 ) -> None:
@@ -259,6 +295,8 @@ def launch_tool(
         launch_python_tool(path, name, is_debug, log_func)
     elif tool_type == "matlab":
         launch_matlab_tool(path, name, is_debug, log_func)
+    elif tool_type == "octave":
+        launch_octave_tool(path, name, is_debug, log_func)
     elif tool_type in ("web", "browser", "html"):
         launch_browser_tool(path, log_func)
     elif tool_type == "bat":

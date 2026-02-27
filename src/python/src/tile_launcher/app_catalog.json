@@ -54,5 +54,21 @@
     "launch_type": "python",
     "logo": "tools_icon_alt.ico",
     "description": "Directory management utility (replaces legacy replicant)."
+  },
+  {
+    "id": "rotation_converter_octave",
+    "name": "Rotation Converter (Octave)",
+    "relative_path": "matlab/launch_rotation_converter.m",
+    "launch_type": "octave",
+    "logo": "tools_icon_simple.ico",
+    "description": "Run the rotation converter MATLAB package with GNU Octave."
+  },
+  {
+    "id": "rotation_converter_web",
+    "name": "Rotation Converter (Web)",
+    "relative_path": "src/rotation_converter/launch_web.py",
+    "launch_type": "python",
+    "logo": "tools_icon.png",
+    "description": "Start the rotation converter web application."
   }
 ]

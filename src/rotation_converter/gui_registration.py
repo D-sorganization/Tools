@@ -20,6 +20,10 @@ GUI_INFO = {
         "settings_app": "RotationConverter",
         "min_size": [1200, 800],
     },
+    "web": {
+        "port": 5192,
+        "auto_open_browser": True,
+    },
 }
 
 
