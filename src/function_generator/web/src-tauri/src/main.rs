@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-  function_generator_lib::run();
+    function_generator_lib::run();
 }
