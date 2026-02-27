@@ -609,10 +609,14 @@ def _is_standard_volumetric_unit(unit: str) -> bool:
 
 def _is_actual_volumetric_unit(unit: str) -> bool:
     """Return True when unit is an actual-condition volumetric flow unit."""
-    return unit.upper() in {"ACFM", "CFM"} or unit in VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S
+    return (
+        unit.upper() in {"ACFM", "CFM"} or unit in VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S
+    )
 
 
-def _standard_density(pressure_pa: float, molecular_weight: float, temperature_k: float) -> float:
+def _standard_density(
+    pressure_pa: float, molecular_weight: float, temperature_k: float
+) -> float:
     """Calculate standard density with ideal gas law."""
     return (pressure_pa * molecular_weight) / (R_UNIVERSAL * temperature_k)
 

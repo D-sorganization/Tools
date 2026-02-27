@@ -150,8 +150,12 @@ class UnitConversionService:
         from_category, to_category = self._resolve_categories(
             from_unit, to_unit, from_unit_norm, to_unit_norm
         )
-        self._ensure_compatible_categories(from_unit, to_unit, from_category, to_category)
-        warnings = self._collect_conversion_warnings(value, from_category, from_unit_norm)
+        self._ensure_compatible_categories(
+            from_unit, to_unit, from_category, to_category
+        )
+        warnings = self._collect_conversion_warnings(
+            value, from_category, from_unit_norm
+        )
         converted = self._dispatch_conversion(
             value, from_unit_norm, to_unit_norm, from_category, kwargs
         )
@@ -216,9 +220,7 @@ class UnitConversionService:
         """Dispatch conversion to the appropriate category handler."""
         if from_category in self.category_map:
             factors = self.category_map[from_category]
-            return self._convert_via_table(
-                value, from_unit_norm, to_unit_norm, factors
-            )
+            return self._convert_via_table(value, from_unit_norm, to_unit_norm, factors)
         if from_category == "temperature":
             return self._convert_temperature(value, from_unit_norm, to_unit_norm)
         if from_category == "gas_flow":
@@ -554,7 +556,9 @@ class UnitConversionService:
             return value
         self._ensure_known_heating_unit(from_key, from_unit)
         self._ensure_known_heating_unit(to_key, to_unit)
-        mj_per_kg = self._heating_to_mj_per_kg(value, from_key, from_unit, gas_density_stp)
+        mj_per_kg = self._heating_to_mj_per_kg(
+            value, from_key, from_unit, gas_density_stp
+        )
         return self._heating_from_mj_per_kg(mj_per_kg, to_key, to_unit, gas_density_stp)
 
     def _ensure_known_heating_unit(self, unit_key: str, raw_unit: str) -> None:
@@ -629,7 +633,9 @@ class UnitConversionService:
         to_key = to_unit.lower()
         if from_key == to_key:
             return value
-        molecular_weight = self._resolve_molecular_weight(from_key, to_key, molecular_weight)
+        molecular_weight = self._resolve_molecular_weight(
+            from_key, to_key, molecular_weight
+        )
         self._ensure_known_concentration_unit(from_key, from_unit)
         self._ensure_known_concentration_unit(to_key, to_unit)
         mg_nm3_value = self._tar_to_mg_nm3(
