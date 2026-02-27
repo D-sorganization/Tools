@@ -139,6 +139,18 @@ class TestDataProcessorTransformations:
         dp.dropna()
         assert len(dp.dataframe) == 1  # Only first row has no NaN
 
+    def test_apply_filter_unknown_type_raises(self, dp: DataProcessor) -> None:
+        with pytest.raises(ValueError, match="Unknown filter type"):
+            dp.apply_filter("unknown_filter", columns=["signal"])
+
+    def test_apply_filter_nonpositive_window_raises(self, dp: DataProcessor) -> None:
+        with pytest.raises(ValueError, match="window_size must be positive"):
+            dp.apply_filter("moving_average", columns=["signal"], window_size=0)
+
+    def test_apply_filter_no_matching_columns_raises(self, dp: DataProcessor) -> None:
+        with pytest.raises(ValueError, match="No valid columns to filter"):
+            dp.apply_filter("moving_average", columns=["missing_col"])
+
 
 # ── Analysis Methods ─────────────────────────────────────────────────────
 
