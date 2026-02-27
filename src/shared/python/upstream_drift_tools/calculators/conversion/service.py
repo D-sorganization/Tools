@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import math
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -129,6 +130,10 @@ class UnitConversionService:
     def convert(
         self, value: float, from_unit: str, to_unit: str, **kwargs: Any
     ) -> ConversionResult:
+        if not math.isfinite(value):
+            msg = f"Conversion value must be finite, got {value}"
+            raise InvalidValueError(msg)
+
         from_unit_norm = self._normalize_unit(from_unit)
         to_unit_norm = self._normalize_unit(to_unit)
 
@@ -523,6 +528,13 @@ class UnitConversionService:
         molecular_weight: float | None = None,
     ) -> float:
         """Convert tar concentration."""
+        if pressure <= 0:
+            msg = f"pressure must be positive, got {pressure}"
+            raise ValueError(msg)
+        if temperature <= 0:
+            msg = f"temperature must be positive, got {temperature}"
+            raise ValueError(msg)
+
         from_key = from_unit.lower()
         to_key = to_unit.lower()
         if from_key == to_key:

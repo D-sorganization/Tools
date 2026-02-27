@@ -4,6 +4,7 @@
 import pytest
 from upstream_drift_tools.calculators.conversion.service import (
     IncompatibleUnitsError,
+    InvalidValueError,
     UnitConversionService,
     UnknownUnitError,
     convert,
@@ -30,6 +31,11 @@ def test_convert_length_returns_conversion_result(
 def test_convert_unknown_unit_raises(service: UnitConversionService) -> None:
     with pytest.raises(UnknownUnitError, match="Unknown unit"):
         service.convert(1.0, "not-a-unit", "m")
+
+
+def test_convert_non_finite_value_raises(service: UnitConversionService) -> None:
+    with pytest.raises(InvalidValueError, match="finite"):
+        service.convert(float("nan"), "m", "ft")
 
 
 def test_convert_incompatible_units_raises(service: UnitConversionService) -> None:
@@ -186,6 +192,13 @@ def test_tar_concentration_pressure_temperature_adjustment(
         pressure=95.0,
     )
     assert result > 0
+
+
+def test_tar_concentration_nonpositive_pressure_raises(
+    service: UnitConversionService,
+) -> None:
+    with pytest.raises(ValueError, match="pressure must be positive"):
+        service.tar_concentration(100.0, "mg/m3", "mg/nm3", pressure=0.0)
 
 
 def test_syngas_composition_conversions(service: UnitConversionService) -> None:

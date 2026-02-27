@@ -75,6 +75,16 @@ class TestMassToMolar:
         with pytest.raises(ValueError, match="molecular_weight must be positive"):
             mass_to_molar(100.0, "kg/s", 0.0, "mol/s")
 
+    def test_unknown_mass_unit_raises_error(self):
+        """Test unknown source unit fails with ValueError instead of KeyError."""
+        with pytest.raises(ValueError, match="Unknown mass flow unit"):
+            mass_to_molar(100.0, "bad_unit", 44.0, "mol/s")
+
+    def test_unknown_molar_target_unit_raises_error(self):
+        """Test unknown target unit fails with ValueError instead of KeyError."""
+        with pytest.raises(ValueError, match="Unknown molar flow unit"):
+            mass_to_molar(100.0, "kg/s", 44.0, "bad_unit")
+
 
 class TestMolarToMass:
     """Test molar to mass flow conversions."""
@@ -95,6 +105,16 @@ class TestMolarToMass:
         result = molar_to_mass(molar_flow_kmol_h, "kmol/h", mw_ch4, "lb/h")
         # Should be positive
         assert result > 0
+
+    def test_unknown_molar_source_unit_raises_error(self):
+        """Test unknown source unit fails with ValueError instead of KeyError."""
+        with pytest.raises(ValueError, match="Unknown molar flow unit"):
+            molar_to_mass(100.0, "bad_unit", 44.0, "kg/s")
+
+    def test_unknown_mass_target_unit_raises_error(self):
+        """Test unknown target unit fails with ValueError instead of KeyError."""
+        with pytest.raises(ValueError, match="Unknown mass flow unit"):
+            molar_to_mass(100.0, "mol/s", 44.0, "bad_unit")
 
 
 class TestVolumetricActualToMass:
@@ -190,6 +210,13 @@ class TestStandardVolumetricToMass:
         assert result_stp != result_ntp
         assert abs(result_stp - result_ntp) / result_stp < 0.1
 
+    def test_unknown_mass_target_unit_raises_error(self):
+        """Test unknown mass target unit reports domain error."""
+        with pytest.raises(ValueError, match="Unknown mass flow unit"):
+            standard_volumetric_to_mass(
+                100.0, "SCFM", 29.0, standard="STP", mass_unit="bad_unit"
+            )
+
 
 class TestMassToStandardVolumetric:
     """Test mass to standard volumetric flow conversions."""
@@ -216,6 +243,13 @@ class TestMassToStandardVolumetric:
         )
 
         assert mass_back == pytest.approx(mass_flow, rel=1e-8)
+
+    def test_unknown_mass_source_unit_raises_error(self):
+        """Test unknown source unit reports domain error."""
+        with pytest.raises(ValueError, match="Unknown mass flow unit"):
+            mass_to_standard_volumetric(
+                10.0, "bad_unit", 29.0, standard="STP", vol_unit="Nm3/h"
+            )
 
 
 class TestSCFMToACFM:

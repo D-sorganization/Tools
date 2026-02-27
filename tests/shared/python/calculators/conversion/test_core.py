@@ -129,6 +129,16 @@ class TestStandardToActualFlow:
         result = standard_to_actual_flow(scfm, std_temp, high_pressure, std)
         assert result == pytest.approx(scfm / 2)
 
+    def test_nonpositive_temperature_raises_value_error(self):
+        """Test contract validation for temperature."""
+        with pytest.raises(ValueError, match="temperature_k must be positive"):
+            standard_to_actual_flow(100.0, 0.0, 101325.0, StandardCondition.STP)
+
+    def test_nonpositive_pressure_raises_value_error(self):
+        """Test contract validation for pressure."""
+        with pytest.raises(ValueError, match="pressure_pa must be positive"):
+            standard_to_actual_flow(100.0, 300.0, 0.0, StandardCondition.STP)
+
 
 class TestActualToStandardFlow:
     """Test ACFM to SCFM conversion."""
@@ -158,6 +168,16 @@ class TestActualToStandardFlow:
         scfm = actual_to_standard_flow(acfm, temp_k, pressure_pa, std)
         # Effect should be (T/T_std) * (P_std/P) = 2 * 0.5 = 1
         assert scfm == pytest.approx(acfm)
+
+    def test_nonpositive_temperature_raises_value_error(self):
+        """Test contract validation for temperature."""
+        with pytest.raises(ValueError, match="temperature_k must be positive"):
+            actual_to_standard_flow(100.0, 0.0, 101325.0, StandardCondition.STP)
+
+    def test_nonpositive_pressure_raises_value_error(self):
+        """Test contract validation for pressure."""
+        with pytest.raises(ValueError, match="pressure_pa must be positive"):
+            actual_to_standard_flow(100.0, 300.0, 0.0, StandardCondition.STP)
 
 
 class TestSCFMToStandardM3PerHour:

@@ -90,6 +90,24 @@ VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S = {
 }
 
 
+def _require_finite(value: float, name: str) -> None:
+    """Ensure a scalar input is finite."""
+    if not math.isfinite(value):
+        raise ValueError(f"{name} must be finite, got {value}")
+
+
+def _require_positive_finite(value: float, name: str) -> None:
+    """Ensure a scalar input is positive and finite."""
+    if not math.isfinite(value) or value <= 0:
+        raise ValueError(f"{name} must be positive and finite, got {value}")
+
+
+def _require_known_unit(unit: str, units: dict[str, float], kind: str) -> None:
+    """Ensure a unit exists in a conversion table."""
+    if unit not in units:
+        raise ValueError(f"Unknown {kind} unit: {unit}")
+
+
 # ============================================================================
 # FLOW RATE CONVERSION FUNCTIONS
 # ============================================================================
@@ -185,12 +203,10 @@ def mass_to_molar(
         >>> n_dot = mass_to_molar(100, 'kg/h', 29.0, 'kmol/h')
         >>> print(f"{n_dot:.2f} kmol/h")
     """
-    if not math.isfinite(mass_flow):
-        raise ValueError(f"mass_flow must be finite, got {mass_flow}")
-    if not math.isfinite(molecular_weight) or molecular_weight <= 0:
-        raise ValueError(
-            f"molecular_weight must be positive and finite, got {molecular_weight}"
-        )
+    _require_finite(mass_flow, "mass_flow")
+    _require_positive_finite(molecular_weight, "molecular_weight")
+    _require_known_unit(mass_unit, MASS_FLOW_CONVERSIONS, "mass flow")
+    _require_known_unit(molar_unit, MOLAR_FLOW_CONVERSIONS, "molar flow")
     # Convert to kg/s
     kg_per_s = mass_flow * MASS_FLOW_CONVERSIONS[mass_unit]
 
@@ -230,12 +246,10 @@ def molar_to_mass(
         >>> m_dot = molar_to_mass(10, 'kmol/h', 44.0, 'kg/h')
         >>> print(f"{m_dot:.1f} kg/h")
     """
-    if not math.isfinite(molar_flow):
-        raise ValueError(f"molar_flow must be finite, got {molar_flow}")
-    if not math.isfinite(molecular_weight) or molecular_weight <= 0:
-        raise ValueError(
-            f"molecular_weight must be positive and finite, got {molecular_weight}"
-        )
+    _require_finite(molar_flow, "molar_flow")
+    _require_positive_finite(molecular_weight, "molecular_weight")
+    _require_known_unit(molar_unit, MOLAR_FLOW_CONVERSIONS, "molar flow")
+    _require_known_unit(mass_unit, MASS_FLOW_CONVERSIONS, "mass flow")
     # Convert to mol/s
     mol_per_s = molar_flow * MOLAR_FLOW_CONVERSIONS[molar_unit]
 
@@ -378,12 +392,9 @@ def standard_volumetric_to_mass(
         - Nm³/h refers to "Normal" m³/h at 0°C, 1 atm
         - The standard parameter specifies which reference conditions to use
     """
-    if not math.isfinite(vol_flow_std):
-        raise ValueError(f"vol_flow_std must be finite, got {vol_flow_std}")
-    if not math.isfinite(molecular_weight) or molecular_weight <= 0:
-        raise ValueError(
-            f"molecular_weight must be positive and finite, got {molecular_weight}"
-        )
+    _require_finite(vol_flow_std, "vol_flow_std")
+    _require_positive_finite(molecular_weight, "molecular_weight")
+    _require_known_unit(mass_unit, MASS_FLOW_CONVERSIONS, "mass flow")
     if standard not in STANDARD_CONDITIONS:
         raise ValueError(
             f"Unknown standard condition: {standard}. Use one of {list(STANDARD_CONDITIONS.keys())}"
@@ -459,12 +470,9 @@ def mass_to_standard_volumetric(
         >>> Q_std = mass_to_standard_volumetric(100, 'kg/h', 16.0, 'STP', 'Nm3/h')
         >>> print(f"{Q_std:.1f} Nm³/h")
     """
-    if not math.isfinite(mass_flow):
-        raise ValueError(f"mass_flow must be finite, got {mass_flow}")
-    if not math.isfinite(molecular_weight) or molecular_weight <= 0:
-        raise ValueError(
-            f"molecular_weight must be positive and finite, got {molecular_weight}"
-        )
+    _require_finite(mass_flow, "mass_flow")
+    _require_positive_finite(molecular_weight, "molecular_weight")
+    _require_known_unit(mass_unit, MASS_FLOW_CONVERSIONS, "mass flow")
     if standard not in STANDARD_CONDITIONS:
         raise ValueError(f"Unknown standard condition: {standard}")
 

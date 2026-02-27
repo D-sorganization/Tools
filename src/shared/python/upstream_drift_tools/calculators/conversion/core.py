@@ -6,6 +6,7 @@ the service class and tested independently.
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping
 
 from ...utils.unit_constants import (
@@ -14,6 +15,13 @@ from ...utils.unit_constants import (
     SCFM_TO_CU_METER_PER_HOUR_AT_60F,
 )
 from .tables import StandardCondition
+
+
+def _require_positive_finite(value: float, name: str) -> None:
+    """Validate physical scalar inputs used in flow conversions."""
+    if not math.isfinite(value) or value <= 0:
+        msg = f"{name} must be positive and finite, got {value}"
+        raise ValueError(msg)
 
 
 def convert_via_table(
@@ -65,7 +73,8 @@ def standard_to_actual_flow(
     standard: StandardCondition,
 ) -> float:
     """Translate a standard volumetric flow in SCFM to ACFM at the given conditions."""
-
+    _require_positive_finite(temperature_k, "temperature_k")
+    _require_positive_finite(pressure_pa, "pressure_pa")
     std_temp, std_pressure_pa, _ = standard.value
     return scfm_value * (std_pressure_pa / pressure_pa) * (temperature_k / std_temp)
 
@@ -77,7 +86,8 @@ def actual_to_standard_flow(
     standard: StandardCondition,
 ) -> float:
     """Translate an actual volumetric flow in ACFM back to SCFM at reference conditions."""
-
+    _require_positive_finite(temperature_k, "temperature_k")
+    _require_positive_finite(pressure_pa, "pressure_pa")
     std_temp, std_pressure_pa, _ = standard.value
     return acfm_value * (pressure_pa / std_pressure_pa) * (std_temp / temperature_k)
 
