@@ -20,4 +20,9 @@ fprintf("Demo quaternion (wxyz): [%.6f %.6f %.6f %.6f]\n", q);
 fprintf("Demo rotation matrix:\n");
 disp(r);
 
+demo_ref = rotation_converter.reference_frame_conversion( ...
+    "so3_so3_maps", "so3_vector", [0.0, 0.0, 0.5]);
+fprintf("Demo so(3)->SO(3) map rotation matrix:\n");
+disp(demo_ref.results.so3_exponential_SO3);
+
 fprintf("\nTip: run test_rotation_converter for full validation.\n");
