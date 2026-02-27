@@ -174,11 +174,25 @@ def test_heating_value_volumetric_roundtrip(service: UnitConversionService) -> N
     assert mj_per_nm3 == pytest.approx(20.0)
 
 
+def test_heating_value_nonpositive_density_raises(
+    service: UnitConversionService,
+) -> None:
+    with pytest.raises(ValueError, match="Gas density must be positive"):
+        service.heating_value(20.0, "mj/nm3", "mj/kg", gas_density_stp=0.0)
+
+
 def test_tar_concentration_ppm_requires_molecular_weight(
     service: UnitConversionService,
 ) -> None:
     with pytest.raises(ValueError, match="Molecular weight required"):
         service.tar_concentration(100.0, "ppm_mass", "mg/nm3")
+
+
+def test_tar_concentration_nonpositive_molecular_weight_raises(
+    service: UnitConversionService,
+) -> None:
+    with pytest.raises(ValueError, match="Molecular weight must be positive"):
+        service.tar_concentration(100.0, "ppm_mass", "mg/nm3", molecular_weight=0.0)
 
 
 def test_tar_concentration_pressure_temperature_adjustment(

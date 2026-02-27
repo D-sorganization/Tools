@@ -83,6 +83,13 @@ class UnitConversionService:
             .replace("_", "")
         )
 
+    @staticmethod
+    def _require_positive_finite(value: float, name: str) -> None:
+        """Validate positive scalar physical parameters."""
+        if not math.isfinite(value) or value <= 0:
+            msg = f"{name} must be positive and finite, got {value}"
+            raise ValueError(msg)
+
     def _init_tables(self) -> None:
         """Initialize conversion tables from constants."""
         self.category_map = {
@@ -463,6 +470,9 @@ class UnitConversionService:
         gas_density_stp: float | None = None,
     ) -> float:
         """Convert heating value."""
+        if gas_density_stp is not None:
+            self._require_positive_finite(gas_density_stp, "Gas density")
+
         from_key = from_unit.lower()
         to_key = to_unit.lower()
         conversions = self.heating_value_conversions
@@ -540,6 +550,13 @@ class UnitConversionService:
         if from_key == to_key:
             return value
 
+        requires_molecular_weight = from_key == "ppm_mass" or to_key == "ppm_mass"
+        if requires_molecular_weight:
+            if molecular_weight is None:
+                msg = "Molecular weight required for ppm conversion"
+                raise ValueError(msg)
+            self._require_positive_finite(molecular_weight, "Molecular weight")
+
         conversions = self.concentration_conversions
         if from_key not in conversions:
             msg = f"Unknown concentration unit: {from_unit}"
@@ -556,9 +573,7 @@ class UnitConversionService:
                 value * 1000.0 * (temperature / 273.15) * (101.325 / pressure)
             )
         elif from_key == "ppm_mass":
-            if molecular_weight is None:
-                msg = "Molecular weight required for ppm conversion"
-                raise ValueError(msg)
+            assert molecular_weight is not None
             mg_nm3_value = value * molecular_weight / 24.45
         else:
             msg = f"Conversion from {from_unit} not implemented"
@@ -578,9 +593,7 @@ class UnitConversionService:
         if to_key in {"g/m³", "g/m3"}:
             return mg_nm3_value / 1000.0 * (273.15 / temperature) * (pressure / 101.325)
         if to_key == "ppm_mass":
-            if molecular_weight is None:
-                msg = "Molecular weight required for ppm conversion"
-                raise ValueError(msg)
+            assert molecular_weight is not None
             return mg_nm3_value * 24.45 / molecular_weight
 
         msg = f"Conversion to {to_unit} not implemented"

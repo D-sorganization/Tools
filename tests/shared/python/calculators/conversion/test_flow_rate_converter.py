@@ -147,6 +147,11 @@ class TestVolumetricActualToMass:
 
         assert result_high == pytest.approx(result_low * 2.0, rel=0.01)
 
+    def test_unknown_mass_target_unit_raises_error(self):
+        """Test unknown mass target unit reports domain error."""
+        with pytest.raises(ValueError, match="Unknown mass flow unit"):
+            volumetric_actual_to_mass(10.0, "m3/s", 1.2, "bad_unit")
+
 
 class TestMassToVolumetricActual:
     """Test mass to actual volumetric flow conversions."""
@@ -168,6 +173,11 @@ class TestMassToVolumetricActual:
         mass_back = volumetric_actual_to_mass(vol_flow, "m3/s", density, "kg/s")
 
         assert mass_back == pytest.approx(mass_flow, rel=1e-10)
+
+    def test_unknown_mass_source_unit_raises_error(self):
+        """Test unknown mass source unit reports domain error."""
+        with pytest.raises(ValueError, match="Unknown mass flow unit"):
+            mass_to_volumetric_actual(10.0, "bad_unit", 1.2, "m3/s")
 
 
 class TestStandardVolumetricToMass:
@@ -289,6 +299,11 @@ class TestSCFMToACFM:
 
         assert acfm_high < acfm_low
 
+    def test_scfm_to_acfm_unknown_standard_raises_error(self):
+        """Test unknown standard condition reports domain error."""
+        with pytest.raises(ValueError, match="Unknown standard condition"):
+            scfm_to_acfm(100.0, 300.0, 101325.0, standard="BAD_STD")
+
 
 class TestACFMToSCFM:
     """Test ACFM to SCFM conversions."""
@@ -313,6 +328,11 @@ class TestACFMToSCFM:
         scfm = acfm_to_scfm(acfm, temp_k, pressure_pa, standard="STP")
         # Higher P and T partially cancel, but SCFM should be different from ACFM
         assert scfm != acfm
+
+    def test_acfm_to_scfm_unknown_standard_raises_error(self):
+        """Test unknown standard condition reports domain error."""
+        with pytest.raises(ValueError, match="Unknown standard condition"):
+            acfm_to_scfm(100.0, 300.0, 101325.0, standard="BAD_STD")
 
 
 class TestConvertFlowRateToMass:
@@ -345,6 +365,16 @@ class TestConvertFlowRateToMass:
             value=1000.0, from_unit="SCFM", molecular_weight=mw, standard="SCFM"
         )
         assert result > 0
+
+    def test_non_finite_value_raises_error(self):
+        """Test finite input contract for value."""
+        with pytest.raises(ValueError, match="value must be finite"):
+            convert_flow_rate_to_mass(float("nan"), "kg/s", 29.0)
+
+    def test_non_finite_molecular_weight_raises_error(self):
+        """Test finite molecular weight contract on molar path."""
+        with pytest.raises(ValueError, match="molecular_weight must be positive"):
+            convert_flow_rate_to_mass(10.0, "mol/s", float("inf"))
 
 
 class TestConstants:

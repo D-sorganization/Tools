@@ -108,6 +108,12 @@ def _require_known_unit(unit: str, units: dict[str, float], kind: str) -> None:
         raise ValueError(f"Unknown {kind} unit: {unit}")
 
 
+def _require_known_standard(standard: str) -> None:
+    """Ensure a standard condition label is supported."""
+    if standard not in STANDARD_CONDITIONS:
+        raise ValueError(f"Unknown standard condition: {standard}")
+
+
 # ============================================================================
 # FLOW RATE CONVERSION FUNCTIONS
 # ============================================================================
@@ -289,12 +295,12 @@ def volumetric_actual_to_mass(
         >>> m_dot = volumetric_actual_to_mass(1000, 'm3/h', 1.2, 'kg/h')
         >>> print(f"{m_dot:.1f} kg/h")
     """
-    if not math.isfinite(vol_flow):
-        raise ValueError(f"vol_flow must be finite, got {vol_flow}")
-    if not math.isfinite(density) or density <= 0:
-        raise ValueError(f"density must be positive and finite, got {density}")
-    if vol_unit not in VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S:
-        raise ValueError(f"Unknown volumetric flow unit: {vol_unit}")
+    _require_finite(vol_flow, "vol_flow")
+    _require_positive_finite(density, "density")
+    _require_known_unit(
+        vol_unit, VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S, "volumetric flow"
+    )
+    _require_known_unit(mass_unit, MASS_FLOW_CONVERSIONS, "mass flow")
 
     # Convert to m³/s
     m3_per_s = vol_flow * VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S[vol_unit]
@@ -335,12 +341,12 @@ def mass_to_volumetric_actual(
         >>> Q = mass_to_volumetric_actual(100, 'kg/h', 1.2, 'm3/h')
         >>> print(f"{Q:.1f} m³/h")
     """
-    if not math.isfinite(mass_flow):
-        raise ValueError(f"mass_flow must be finite, got {mass_flow}")
-    if not math.isfinite(density) or density <= 0:
-        raise ValueError(f"density must be positive and finite, got {density}")
-    if vol_unit not in VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S:
-        raise ValueError(f"Unknown volumetric flow unit: {vol_unit}")
+    _require_finite(mass_flow, "mass_flow")
+    _require_positive_finite(density, "density")
+    _require_known_unit(mass_unit, MASS_FLOW_CONVERSIONS, "mass flow")
+    _require_known_unit(
+        vol_unit, VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S, "volumetric flow"
+    )
 
     # Convert to kg/s
     kg_per_s = mass_flow * MASS_FLOW_CONVERSIONS[mass_unit]
@@ -533,12 +539,10 @@ def scfm_to_acfm(
         >>> acfm = scfm_to_acfm(1000, 533, 5e5, 'SCFM')
         >>> print(f"{acfm:.0f} ACFM")
     """
-    if not math.isfinite(scfm):
-        raise ValueError(f"scfm must be finite, got {scfm}")
-    if not math.isfinite(temperature) or temperature <= 0:
-        raise ValueError(f"temperature must be positive and finite, got {temperature}")
-    if not math.isfinite(pressure) or pressure <= 0:
-        raise ValueError(f"pressure must be positive and finite, got {pressure}")
+    _require_finite(scfm, "scfm")
+    _require_positive_finite(temperature, "temperature")
+    _require_positive_finite(pressure, "pressure")
+    _require_known_standard(standard)
     T_std, P_std, _ = STANDARD_CONDITIONS[standard]
 
     acfm = scfm * (temperature / T_std) * (P_std / pressure)
@@ -568,12 +572,10 @@ def acfm_to_scfm(
     Raises:
         ValueError: If temperature or pressure is not positive and finite.
     """
-    if not math.isfinite(acfm):
-        raise ValueError(f"acfm must be finite, got {acfm}")
-    if not math.isfinite(temperature) or temperature <= 0:
-        raise ValueError(f"temperature must be positive and finite, got {temperature}")
-    if not math.isfinite(pressure) or pressure <= 0:
-        raise ValueError(f"pressure must be positive and finite, got {pressure}")
+    _require_finite(acfm, "acfm")
+    _require_positive_finite(temperature, "temperature")
+    _require_positive_finite(pressure, "pressure")
+    _require_known_standard(standard)
     T_std, P_std, _ = STANDARD_CONDITIONS[standard]
 
     scfm = acfm * (T_std / temperature) * (pressure / P_std)
@@ -617,12 +619,15 @@ def convert_flow_rate_to_mass(
         >>> m_dot = convert_flow_rate_to_mass(1000, 'SCFM', 29.0, standard='SCFM')
         >>> print(f"{m_dot:.3f} kg/s")
     """
+    _require_finite(value, "value")
+
     # Check if it's a mass flow unit
     if from_unit in MASS_FLOW_CONVERSIONS:
         return value * MASS_FLOW_CONVERSIONS[from_unit]
 
     # Check if it's a molar flow unit
     if from_unit in MOLAR_FLOW_CONVERSIONS:
+        _require_positive_finite(molecular_weight, "molecular_weight")
         mol_per_s = value * MOLAR_FLOW_CONVERSIONS[from_unit]
         return (mol_per_s * molecular_weight) / 1000.0
 
