@@ -238,6 +238,20 @@ def test_compressibility_factor_regime(service: UnitConversionService) -> None:
     assert z_fallback == pytest.approx(0.1)
 
 
+def test_compressibility_factor_nonpositive_temperature_raises(
+    service: UnitConversionService,
+) -> None:
+    with pytest.raises(ValueError, match="temperature must be positive"):
+        service.compressibility_factor("air", temperature=0.0, pressure=101325.0)
+
+
+def test_compressibility_factor_nonpositive_pressure_raises(
+    service: UnitConversionService,
+) -> None:
+    with pytest.raises(ValueError, match="pressure must be positive"):
+        service.compressibility_factor("air", temperature=300.0, pressure=0.0)
+
+
 def test_get_supported_units_category_and_all(service: UnitConversionService) -> None:
     temperature_only = service.get_supported_units("temperature")
     assert temperature_only["temperature"] == ["K", "C", "F", "R"]
