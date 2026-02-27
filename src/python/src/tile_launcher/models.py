@@ -18,6 +18,7 @@ class LaunchType(StrEnum):
     BAT = "bat"
     HTML = "html"
     FILE = "file"
+    OCTAVE = "octave"
 
 
 @dataclass(frozen=True)

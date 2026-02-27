@@ -1,12 +1,13 @@
 # =============================================================================
 # Tauri Desktop Application Build Workflow
 # =============================================================================
-# Builds Tools desktop apps (Function Generator, Data Processor) using Tauri 2
+# Builds Tools desktop apps (Function Generator, Data Processor, Rotation Converter) using Tauri 2
 # Runs on: Pull requests (check only), Releases (build artifacts)
 #
 # Projects:
 # - src/function_generator/web/src-tauri
 # - src/data_processing/data_processor/web/src-tauri
+# - src/rotation_converter/web/src-tauri
 # =============================================================================
 
 name: Tauri Build
@@ -17,11 +18,13 @@ on:
     paths:
       - "src/function_generator/web/**"
       - "src/data_processing/data_processor/web/**"
+      - "src/rotation_converter/web/**"
       - ".github/workflows/tauri-build.yml"
   pull_request:
     paths:
       - "src/function_generator/web/**"
       - "src/data_processing/data_processor/web/**"
+      - "src/rotation_converter/web/**"
       - ".github/workflows/tauri-build.yml"
   release:
     types: [published]
@@ -47,6 +50,8 @@ jobs:
             path: src/function_generator/web
           - app: data-processor
             path: src/data_processing/data_processor/web
+          - app: rotation-converter
+            path: src/rotation_converter/web
     steps:
       - uses: actions/checkout@v4
 
@@ -100,6 +105,8 @@ jobs:
             path: src/function_generator/web
           - name: data-processor
             path: src/data_processing/data_processor/web
+          - name: rotation-converter
+            path: src/rotation_converter/web
         platform:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu

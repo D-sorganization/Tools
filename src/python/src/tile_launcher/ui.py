@@ -217,7 +217,7 @@ class LauncherWindow(QMainWindow):
         """Resolve the full path to the app's logo."""
         if not app.logo:
             return None
-        return self.manager.repository_root / app.logo  # type: ignore[no-any-return]
+        return Path(self.manager.repository_root) / str(app.logo)
 
     def _add_tile(self) -> None:
         """Show the dialog to add a new tile."""
@@ -296,12 +296,8 @@ class LauncherWindow(QMainWindow):
                 webbrowser.open(target_path.as_uri())
             elif app.launch_type == LaunchType.FILE:
                 self._open_file(target_path)
-            else:
-                QMessageBox.warning(
-                    self,
-                    "Unsupported",
-                    f"Unsupported launch type: {app.launch_type}",
-                )
+            elif app.launch_type == LaunchType.OCTAVE:
+                self._launch_octave(target_path)
         except (
             FileNotFoundError,
             PermissionError,
@@ -334,6 +330,15 @@ class LauncherWindow(QMainWindow):
                 "Windows Script",
                 f"{app_name} is configured as a Windows batch file and can only run on Windows.",
             )
+
+    @staticmethod
+    def _launch_octave(target_path: Path) -> None:
+        """Launch a script with GNU Octave."""
+        sanitized = str(target_path).replace("'", "''")
+        script = f"run('{sanitized}');"
+        subprocess.Popen(
+            ["octave", "--quiet", "--eval", script], cwd=target_path.parent
+        )
 
 
 def run() -> None:

@@ -9,12 +9,14 @@ use std::process::Command;
 /// cross-platform plots.
 
 #[derive(Debug, Serialize, Deserialize)]
+#[allow(dead_code)]
 struct PlotlyResult {
     data: serde_json::Value,
     layout: serde_json::Value,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[allow(dead_code)]
 struct TrendlineResult {
     trend_type: String,
     coefficients: Vec<f64>,

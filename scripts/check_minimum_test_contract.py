@@ -50,7 +50,7 @@ def has_tests(pkg_key: str) -> bool:
         if local_tests:
             return True
 
-    token = pkg_key.split("/")[-1]
+    token = Path(pkg_key.split("/")[-1]).stem
     global_tests = list((ROOT / "tests").rglob(f"*{token}*test*.py")) + list(
         (ROOT / "tests").rglob(f"test_*{token}*.py")
     )

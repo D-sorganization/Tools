@@ -198,7 +198,7 @@
       "category": "Robotics",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": true
       }
     },
     {
