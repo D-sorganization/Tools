@@ -17,6 +17,7 @@ from typing import Any
 import pandas as pd
 
 logger = logging.getLogger(__name__)
+SUPPORTED_FILTER_TYPES = {"butterworth", "moving_average", "median", "savgol"}
 
 
 @dataclass
@@ -226,50 +227,102 @@ class DataProcessor:
         window_size : int
             Window size for moving_average / median / savgol.
         """
+        self._validate_filter_contract(filter_type, window_size)
         df = self.dataframe
-        if columns is None:
-            columns = list(df.select_dtypes(include="number").columns)
-
-        try:
-            from scipy.signal import butter, filtfilt, medfilt, savgol_filter
-
-            for col in columns:
-                if col not in df.columns:
-                    continue
-                values = df[col].values.astype(float)
-                if filter_type == "butterworth":
-                    b, a = butter(order, cutoff, btype="low", fs=1000)
-                    df[col] = filtfilt(b, a, values)
-                elif filter_type == "moving_average":
-                    df[col] = (
-                        pd.Series(values)
-                        .rolling(window_size, center=True)
-                        .mean()
-                        .values
-                    )
-                elif filter_type == "median":
-                    kernel = window_size if window_size % 2 == 1 else window_size + 1
-                    df[col] = medfilt(values, kernel_size=kernel)
-                elif filter_type == "savgol":
-                    df[col] = savgol_filter(
-                        values, window_size, min(order, window_size - 1)
-                    )
-                else:
-                    raise ValueError(f"Unknown filter type: {filter_type}")
-        except ImportError:
-            # Minimal fallback: moving average only
-            for col in columns:
-                if col in df.columns:
-                    df[col] = (
-                        pd.Series(df[col])
-                        .rolling(window_size, center=True)
-                        .mean()
-                        .values
-                    )
-
+        selected_columns = self._resolve_filter_columns(df, columns)
+        self._apply_filter_impl(
+            df=df,
+            filter_type=filter_type,
+            columns=selected_columns,
+            cutoff=cutoff,
+            order=order,
+            window_size=window_size,
+        )
         self._df = df
-        self._history.append(f"Applied {filter_type} filter to {len(columns)} columns")
+        self._history.append(
+            f"Applied {filter_type} filter to {len(selected_columns)} columns"
+        )
         return self
+
+    def _validate_filter_contract(self, filter_type: str, window_size: int) -> None:
+        """Validate filter preconditions at API boundary."""
+        if filter_type not in SUPPORTED_FILTER_TYPES:
+            raise ValueError(f"Unknown filter type: {filter_type}")
+        if window_size <= 0:
+            raise ValueError("window_size must be positive")
+
+    def _resolve_filter_columns(
+        self, df: pd.DataFrame, columns: list[str] | None
+    ) -> list[str]:
+        """Resolve and validate target columns for filtering."""
+        selected_columns = (
+            list(df.select_dtypes(include="number").columns)
+            if columns is None
+            else [column for column in columns if column in df.columns]
+        )
+        if not selected_columns:
+            raise ValueError("No valid columns to filter")
+        return selected_columns
+
+    def _apply_filter_impl(
+        self,
+        df: pd.DataFrame,
+        filter_type: str,
+        columns: list[str],
+        cutoff: float,
+        order: int,
+        window_size: int,
+    ) -> None:
+        """Apply filter using SciPy implementation when available."""
+        try:
+            self._apply_filter_with_scipy(
+                df=df,
+                filter_type=filter_type,
+                columns=columns,
+                cutoff=cutoff,
+                order=order,
+                window_size=window_size,
+            )
+        except ImportError:
+            self._apply_filter_fallback(df=df, columns=columns, window_size=window_size)
+
+    def _apply_filter_with_scipy(
+        self,
+        df: pd.DataFrame,
+        filter_type: str,
+        columns: list[str],
+        cutoff: float,
+        order: int,
+        window_size: int,
+    ) -> None:
+        """Apply filter implementation backed by scipy.signal."""
+        from scipy.signal import butter, filtfilt, medfilt, savgol_filter
+
+        for column in columns:
+            values = df[column].values.astype(float)
+            if filter_type == "butterworth":
+                b, a = butter(order, cutoff, btype="low", fs=1000)
+                df[column] = filtfilt(b, a, values)
+            elif filter_type == "moving_average":
+                df[column] = (
+                    pd.Series(values).rolling(window_size, center=True).mean().values
+                )
+            elif filter_type == "median":
+                kernel = window_size if window_size % 2 == 1 else window_size + 1
+                df[column] = medfilt(values, kernel_size=kernel)
+            else:
+                df[column] = savgol_filter(
+                    values, window_size, min(order, window_size - 1)
+                )
+
+    def _apply_filter_fallback(
+        self, df: pd.DataFrame, columns: list[str], window_size: int
+    ) -> None:
+        """Fallback filter implementation (moving average) without SciPy."""
+        for column in columns:
+            df[column] = (
+                pd.Series(df[column]).rolling(window_size, center=True).mean().values
+            )
 
     def apply_formula(
         self,
@@ -333,7 +386,7 @@ class DataProcessor:
     def correlate(self, method: str = "pearson") -> pd.DataFrame:
         """Return correlation matrix."""
         result: pd.DataFrame = self.dataframe.select_dtypes(include="number").corr(
-            method=method  # type: ignore[arg-type]
+            method=method
         )
         return result
 
