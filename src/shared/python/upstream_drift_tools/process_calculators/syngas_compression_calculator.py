@@ -126,7 +126,7 @@ except ImportError:
 
     # Fallback to QWidget if BaseCalculatorWidget is not available
     class BaseCalculatorWidget(QWidget):  # type: ignore
-        def __init__(self, *args, **kwargs) -> None:
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
             QWidget.__init__(self, *args, **kwargs)
 
 

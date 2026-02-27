@@ -2,11 +2,30 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from fastapi import APIRouter, HTTPException
 
 from ..contracts.scrubber import ScrubberRequest, ScrubberResponse
 
 router = APIRouter(prefix="/api/calc/scrubber", tags=["scrubber"])
+
+
+def _as_float(value: Any, field_name: str) -> float:
+    """Convert calculator outputs to float for strict response contracts."""
+    if isinstance(value, (int, float)):
+        return float(value)
+    if isinstance(value, str):
+        try:
+            return float(value)
+        except ValueError as exc:
+            raise HTTPException(
+                status_code=422,
+                detail=f"Invalid numeric value for {field_name}: {value}",
+            ) from exc
+    raise HTTPException(
+        status_code=422, detail=f"Invalid type for {field_name}: {type(value).__name__}"
+    )
 
 
 @router.post("", response_model=ScrubberResponse)
@@ -71,9 +90,15 @@ def calculate_scrubber(request: ScrubberRequest) -> ScrubberResponse:
     return ScrubberResponse(
         gas_density_kg_m3=gas_density,
         flooding_velocity_m_s=flooding_velocity,
-        design_velocity_m_s=column_result.get("design_velocity_m_s", 0.0),
-        column_diameter_m=column_result.get("diameter_m", 0.0),
-        column_diameter_ft=column_result.get("diameter_ft", 0.0),
-        cross_section_m2=column_result.get("cross_section_m2", 0.0),
+        design_velocity_m_s=_as_float(
+            column_result.get("design_velocity_m_s", 0.0), "design_velocity_m_s"
+        ),
+        column_diameter_m=_as_float(column_result.get("diameter_m", 0.0), "diameter_m"),
+        column_diameter_ft=_as_float(
+            column_result.get("diameter_ft", 0.0), "diameter_ft"
+        ),
+        cross_section_m2=_as_float(
+            column_result.get("cross_section_m2", 0.0), "cross_section_m2"
+        ),
         caustic_requirement=caustic_result,
     )
