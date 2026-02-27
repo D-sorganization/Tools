@@ -226,3 +226,22 @@ Heat Duty = Feed Rate * X_CO * 41.2 / 3.6  (kW)
 - Newsome, D.S. "The Water-Gas Shift Reaction", Catalysis Reviews
 - Rase, H.F. "Chemical Reactor Design for Process Plants"
 - Smith, R.J.B. et al. "A Review of the Water Gas Shift Reaction Kinetics"
+
+## Current Features
+
+- Purpose: Water-Gas Shift reactor equilibrium and sizing calculations
+- Category: Process Simulation
+- Python files in tool path: 9
+- Surface support: PyQt6=implemented, Web manifest=yes, Web implementation=present
+- Test visibility: 0 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: Yes
+- Web surface implementation: Implemented
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No name-matched tests detected in repository-level tests/.

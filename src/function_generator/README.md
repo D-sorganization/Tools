@@ -339,3 +339,22 @@ View square wave harmonics:
 - Harris, F.J. (1978). On the Use of Windows for Harmonic Analysis with the DFT
 - Recharts Documentation: https://recharts.org/
 - Tauri Framework: https://tauri.app/
+
+## Current Features
+
+- Purpose: Generate and visualize various waveforms (sine, square, triangle, etc.)
+- Category: Signal Processing
+- Python files in tool path: 11
+- Surface support: PyQt6=implemented, Web manifest=yes, Web implementation=present
+- Test visibility: 0 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: Yes
+- Web surface implementation: Implemented
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No name-matched tests detected in repository-level tests/.

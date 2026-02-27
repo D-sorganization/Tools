@@ -277,3 +277,22 @@ Verify that:
 - Motion Analysis Corporation C3D Specification
 - Vicon Documentation: C3D File Format Reference
 - ISB Recommendations for Coordinate Systems
+
+## Current Features
+
+- Purpose: View and analyze C3D motion capture files
+- Category: Biomechanics
+- Python files in tool path: 9
+- Surface support: PyQt6=implemented, Web manifest=no, Web implementation=missing
+- Test visibility: 0 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: No
+- Web surface implementation: Gap / Not present
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No name-matched tests detected in repository-level tests/.

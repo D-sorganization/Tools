@@ -354,3 +354,22 @@ solution = solver.solve((0, 10), [0.5, 0])  # 0.5 rad initial angle
 | 1e-6      | Engineering calculations |
 | 1e-9      | Scientific accuracy      |
 | 1e-12     | High-precision work      |
+
+## Current Features
+
+- Purpose: Solve systems of ordinary differential equations symbolically
+- Category: Mathematics
+- Python files in tool path: 9
+- Surface support: PyQt6=implemented, Web manifest=no, Web implementation=present
+- Test visibility: 2 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: No
+- Web surface implementation: Implemented
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No structural gaps detected from manifest/surface scan.

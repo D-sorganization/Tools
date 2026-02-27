@@ -493,3 +493,22 @@ Choose from three naming conventions:
 - **Collision Handling**: Smart duplicate name resolution
 - **Permission Checking**: Validates file access before operations
 - **Rollback Capability**: Transaction logs enable operation reversal
+
+## Current Features
+
+- Purpose: Intelligent PDF File Renaming Tool
+- Category: Development Tools
+- Python files in tool path: 34
+- Surface support: PyQt6=implemented, Web manifest=no, Web implementation=missing
+- Test visibility: 0 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: No
+- Web surface implementation: Gap / Not present
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No name-matched tests detected in repository-level tests/.

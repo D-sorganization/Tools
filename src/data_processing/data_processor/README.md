@@ -480,3 +480,22 @@ data_processor/
 - **1.4.0**: Added Hampel and Z-Score filters
 - **1.5.0**: Multi-format export support
 - **1.6.0**: CLI interface with JSON configuration
+
+## Current Features
+
+- Purpose: Signal processing and time-series data analysis tool
+- Category: Data Processing
+- Python files in tool path: 106
+- Surface support: PyQt6=implemented, Web manifest=yes, Web implementation=present
+- Test visibility: 6 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: Yes
+- Web surface implementation: Implemented
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No structural gaps detected from manifest/surface scan.

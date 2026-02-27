@@ -276,3 +276,22 @@ print(f"Flow rate: {m3_h:.1f} m3/h")
 | ft3 to m3     | 0.0283168 | Cubic foot to cubic meter |
 | gal (US) to L | 3.78541   | US gallon to liter        |
 | lbmol to mol  | 453.59237 | Pound-mole to mole        |
+
+## Current Features
+
+- Purpose: Convert between mass, molar, and volumetric flow rate units
+- Category: Utilities
+- Python files in tool path: 9
+- Surface support: PyQt6=implemented, Web manifest=no, Web implementation=present
+- Test visibility: 2 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: No
+- Web surface implementation: Implemented
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No structural gaps detected from manifest/surface scan.

@@ -243,3 +243,22 @@ Ensure all required parameters are set and within valid ranges. Check that heigh
 - URDF Specification: http://wiki.ros.org/urdf/XML
 - de Leva, P. (1996). Adjustments to Zatsiorsky-Seluyanov's segment inertia parameters.
 - Winter, D.A. (2009). Biomechanics and Motor Control of Human Movement.
+
+## Current Features
+
+- Purpose: Generate parametric URDF models for robotics applications
+- Category: Robotics
+- Python files in tool path: 9
+- Surface support: PyQt6=implemented, Web manifest=no, Web implementation=missing
+- Test visibility: 0 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: No
+- Web surface implementation: Gap / Not present
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No name-matched tests detected in repository-level tests/.

@@ -269,3 +269,22 @@ result_exit_ideal = engine.calculate_properties_from_entropy(
 - IAPWS R7-97: Revised Release on the IAPWS Industrial Formulation 1997
 - CoolProp: Open-source thermophysical property library
 - Critical Point: T_c = 647.096 K, P_c = 22.064 MPa, rho_c = 322 kg/m3
+
+## Current Features
+
+- Purpose: Calculate thermodynamic properties of steam/water
+- Category: Thermodynamics
+- Python files in tool path: 9
+- Surface support: PyQt6=implemented, Web manifest=no, Web implementation=present
+- Test visibility: 0 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: No
+- Web surface implementation: Implemented
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No name-matched tests detected in repository-level tests/.

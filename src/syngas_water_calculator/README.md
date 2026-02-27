@@ -177,3 +177,22 @@ P_sat(T_dew) = y_water * P_total
 - IAPWS-IF97: Industrial Formulation for Water and Steam Properties
 - Perry's Chemical Engineers' Handbook, 9th Edition
 - GPSA Engineering Data Book, 14th Edition
+
+## Current Features
+
+- Purpose: Calculate water content and dew point in syngas systems
+- Category: Process Simulation
+- Python files in tool path: 9
+- Surface support: PyQt6=implemented, Web manifest=no, Web implementation=present
+- Test visibility: 2 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: No
+- Web surface implementation: Implemented
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No structural gaps detected from manifest/surface scan.

@@ -288,3 +288,22 @@ The default width/depth estimation (30%/25% of length) may not suit all segments
 - Winter, D.A. (2009). Biomechanics and Motor Control of Human Movement. 4th ed. Wiley.
 - Zatsiorsky, V.M. (2002). Kinetics of Human Motion. Human Kinetics.
 - Drillis, R., & Contini, R. (1966). Body Segment Parameters. NTIS Report.
+
+## Current Features
+
+- Purpose: Build parametric humanoid characters with anthropometric calculations
+- Category: Robotics
+- Python files in tool path: 9
+- Surface support: PyQt6=implemented, Web manifest=no, Web implementation=missing
+- Test visibility: 0 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: No
+- Web surface implementation: Gap / Not present
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No name-matched tests detected in repository-level tests/.

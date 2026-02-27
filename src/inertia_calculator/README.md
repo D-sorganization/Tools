@@ -206,3 +206,22 @@ For hollow cylinders, ensure the inner cavity radius is strictly smaller than th
 - Goldstein, H. (1980). Classical Mechanics. Addison-Wesley.
 - Craig, J.J. (2005). Introduction to Robotics. Pearson.
 - URDF Specification: http://wiki.ros.org/urdf/XML/link
+
+## Current Features
+
+- Purpose: Calculate and validate inertia tensors for rigid bodies
+- Category: Robotics
+- Python files in tool path: 9
+- Surface support: PyQt6=implemented, Web manifest=no, Web implementation=missing
+- Test visibility: 0 name-matched test files under tests/
+
+## Implementation State
+
+- PyQt6 launcher: Implemented
+- Web surface declared in manifest: No
+- Web surface implementation: Gap / Not present
+- README last reviewed: 2026-02-27
+
+## Implementation Gaps
+
+- No name-matched tests detected in repository-level tests/.
