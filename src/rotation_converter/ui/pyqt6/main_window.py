@@ -44,6 +44,7 @@ from PyQt6.QtWidgets import (
 import rotation_converter as rc
 from rotation_converter.converter import Rotation
 from rotation_converter.rigid_transform import RigidTransform
+from rotation_converter.ui.pyqt6.console_tab import CommandConsoleTab
 from rotation_converter.ui.pyqt6.reference_frame_tab import ReferenceFrameTab
 
 # ── Theme integration (optional — graceful fallback) ──────────────
@@ -1160,6 +1161,7 @@ class RotationConverterMainWindow(QMainWindow):
         self._tabs.addTab(ReferenceFrameTab(), "Reference Frames & Lie Groups")
         self._tabs.addTab(TrajectoryPlotsTab(), "Trajectory Plots")
         self._tabs.addTab(ScrewVisualiserTab(), "3D Screw Visualiser")
+        self._tabs.addTab(CommandConsoleTab(), "Python Console")
         layout.addWidget(self._tabs)
 
         self._status = QStatusBar()
