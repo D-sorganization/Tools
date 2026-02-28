@@ -2,12 +2,29 @@
 
 import contextlib
 import io
+import math
 import os
 import sys
 import traceback
 from typing import Any
 
 import numpy as np
+
+try:
+    import pandas as pd
+
+    HAS_PANDAS = True
+except ImportError:
+    pd = None  # type: ignore
+    HAS_PANDAS = False
+
+try:
+    import scipy
+
+    HAS_SCIPY = True
+except ImportError:
+    scipy = None  # type: ignore
+    HAS_SCIPY = False
 
 from rotation_converter import modern_robotics as mr
 from rotation_converter.converter import Rotation
@@ -31,6 +48,12 @@ class ConsoleEnvironment:
 
         # Add basic dependencies
         self.namespace["np"] = np
+        self.namespace["math"] = math
+        if HAS_PANDAS:
+            self.namespace["pd"] = pd
+        if HAS_SCIPY:
+            self.namespace["scipy"] = scipy
+
         self.namespace["mr"] = mr
         self.namespace["Rotation"] = Rotation
         self.namespace["RigidTransform"] = RigidTransform

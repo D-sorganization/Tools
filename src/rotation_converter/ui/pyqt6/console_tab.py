@@ -30,7 +30,7 @@ class CommandConsoleTab(QWidget):
 
         # Initial greeting
         self._print_output("Python Interactive Console (Rotation Converter)")
-        self._print_output("Loaded functions: mr.*, Rotation, RigidTransform, np.*")
+        self._print_output("Loaded functions: mr.*, Rotation, RigidTransform, np.*, math.*, pd.*, scipy.*")
         self._print_output("Type 'help(func)' or 'help(mr)' for documentation.\n")
 
     def _build_ui(self) -> None:
