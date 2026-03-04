@@ -413,10 +413,13 @@ class TestNoCrossCouplingInShared:
     # calc_backend routers depend on upstream_drift_tools calculators
     # plot_engine depends on plot_theme for colour palettes
     # model_generation.humanoid bridges to humanoid_character_builder
+    # upstream_drift_tools.theme is a deliberate re-export wrapper for
+    # the sibling `theme` package (PR #896 — intentional coupling)
     ALLOWED_DEPS: dict[str, set[str]] = {
         "calc_backend": {"upstream_drift_tools"},
         "plot_engine": {"plot_theme"},
         "model_generation": {"humanoid_character_builder"},
+        "upstream_drift_tools": {"theme"},
     }
 
     def test_no_unauthorized_cross_package_imports(self) -> None:
