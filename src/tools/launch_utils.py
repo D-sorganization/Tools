@@ -8,6 +8,8 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import IO, Any
 
+from src.shared.python.contracts import require
+
 
 def get_repo_root() -> Path:
     """Get the absolute path to the repository root.
@@ -65,6 +67,12 @@ def validate_and_sanitize_path(path_str: str, repo_root: Path) -> Path:
         SecurityError: If path is invalid or outside repository.
         ToolNotFoundError: If file does not exist.
     """
+    require(
+        isinstance(path_str, str) and path_str, "path_str must be a non-empty string"
+    )
+    require(isinstance(repo_root, Path), "repo_root must be a Path")
+    require(repo_root.is_absolute(), f"repo_root must be absolute, got: {repo_root}")
+
     try:
         path = Path(path_str)
     except (TypeError, ValueError) as e:
@@ -98,6 +106,10 @@ def launch_python_tool(
     log_func: Callable[[str], None] | None = None,
 ) -> None:
     """Launch a Python tool."""
+    require(isinstance(path, Path), "path must be a Path")
+    require(
+        isinstance(tool_name, str) and tool_name, "tool_name must be a non-empty string"
+    )
     if log_func:
         log_func(f"Launching Python tool: {tool_name}")
 
@@ -157,6 +169,10 @@ def launch_matlab_tool(
     log_func: Callable[[str], None] | None = None,
 ) -> None:
     """Launch a MATLAB tool."""
+    require(isinstance(path, Path), "path must be a Path")
+    require(
+        isinstance(tool_name, str) and tool_name, "tool_name must be a non-empty string"
+    )
     if log_func:
         log_func(f"Launching MATLAB tool: {tool_name}")
 
@@ -193,6 +209,10 @@ def launch_octave_tool(
     log_func: Callable[[str], None] | None = None,
 ) -> None:
     """Launch an Octave tool."""
+    require(isinstance(path, Path), "path must be a Path")
+    require(
+        isinstance(tool_name, str) and tool_name, "tool_name must be a non-empty string"
+    )
     if log_func:
         log_func(f"Launching Octave tool: {tool_name}")
 
@@ -226,6 +246,7 @@ def launch_browser_tool(
     path: Path, log_func: Callable[[str], None] | None = None
 ) -> None:
     """Launch a browser tool."""
+    require(isinstance(path, Path), "path must be a Path")
     try:
         uri = path.as_uri()
         webbrowser.open(uri)
@@ -242,6 +263,10 @@ def launch_batch_tool(
     log_func: Callable[[str], None] | None = None,
 ) -> None:
     """Launch a batch script."""
+    require(isinstance(path, Path), "path must be a Path")
+    require(
+        isinstance(tool_name, str) and tool_name, "tool_name must be a non-empty string"
+    )
     if sys.platform == "win32":
         if path.suffix.lower() not in [".bat", ".cmd"]:
             raise SecurityError("File must be .bat or .cmd to execute as batch script")
@@ -282,6 +307,9 @@ def launch_tool(
     Raises:
         LaunchError, ToolNotFoundError, SecurityError, PlatformError
     """
+    require(isinstance(tool_info, dict), "tool_info must be a dict")
+    require(isinstance(repo_root, Path), "repo_root must be a Path")
+
     name = tool_info.get("name", "Unknown")
     path_str = tool_info.get("path")
     tool_type = tool_info.get("type")
