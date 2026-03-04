@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from src.shared.python.contracts import require
+
 from .launcher import GUIType, LaunchConfig
 
 logger = logging.getLogger(__name__)
@@ -66,6 +68,23 @@ class GUIRegistry:
             icon: Optional path to icon file
             repository: Optional repository identifier
         """
+        require(
+            isinstance(tool_name, str) and tool_name,
+            "tool_name must be a non-empty string",
+        )
+        require(
+            isinstance(display_name, str) and display_name,
+            "display_name must be a non-empty string",
+        )
+        require(isinstance(description, str), "description must be a string")
+        require(
+            isinstance(gui_configs, dict) and gui_configs,
+            "gui_configs must be a non-empty dict",
+        )
+        require(
+            isinstance(category, str) and category,
+            "category must be a non-empty string",
+        )
         registration = GUIRegistration(
             tool_name=tool_name,
             display_name=display_name,
@@ -87,6 +106,10 @@ class GUIRegistry:
         Returns:
             True if the tool was found and removed
         """
+        require(
+            isinstance(tool_name, str) and tool_name,
+            "tool_name must be a non-empty string",
+        )
         if tool_name in self._registrations:
             del self._registrations[tool_name]
             return True
@@ -101,6 +124,10 @@ class GUIRegistry:
         Returns:
             GUIRegistration or None if not found
         """
+        require(
+            isinstance(tool_name, str) and tool_name,
+            "tool_name must be a non-empty string",
+        )
         return self._registrations.get(tool_name)
 
     def get_config(
@@ -117,6 +144,11 @@ class GUIRegistry:
         Returns:
             LaunchConfig or None if not found
         """
+        require(
+            isinstance(tool_name, str) and tool_name,
+            "tool_name must be a non-empty string",
+        )
+        require(isinstance(gui_type, GUIType), "gui_type must be a GUIType enum member")
         registration = self._registrations.get(tool_name)
         if registration:
             return registration.gui_configs.get(gui_type)
@@ -273,6 +305,7 @@ def auto_discover_guis(search_paths: list[Path]) -> int:
     Returns:
         Number of GUIs registered
     """
+    require(isinstance(search_paths, list), "search_paths must be a list of Paths")
     import importlib.util
 
     count = 0
