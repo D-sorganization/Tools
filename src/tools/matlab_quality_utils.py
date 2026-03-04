@@ -10,6 +10,8 @@ from datetime import datetime, timezone  # noqa: UP017
 from pathlib import Path
 from typing import Any
 
+from src.shared.python.contracts import require
+
 # Constants
 MATLAB_SCRIPT_TIMEOUT_SECONDS: int = 300
 
@@ -30,6 +32,11 @@ class MATLABQualityChecker:
 
     def __init__(self, project_root: Path) -> None:
         """Initialize the MATLAB quality checker."""
+        require(isinstance(project_root, Path), "project_root must be a Path")
+        require(
+            project_root.is_absolute(),
+            f"project_root must be absolute, got: {project_root}",
+        )
         self.project_root = project_root
         self.matlab_dir = project_root / "matlab"
         self.results: dict[str, Any] = {
@@ -260,6 +267,13 @@ class MATLABQualityChecker:
         issues: list[str],
     ) -> None:
         """Check for function docstring and arguments block."""
+        require(isinstance(file_path, Path), "file_path must be a Path")
+        require(isinstance(lines, list), "lines must be a list")
+        require(
+            isinstance(line_num, int) and line_num >= 1,
+            "line_num must be a positive integer",
+        )
+        require(isinstance(issues, list), "issues must be a list")
         has_docstring = False
         min_docstring_length = 3
         for j in range(line_num, min(line_num + 5, len(lines))):
@@ -298,6 +312,9 @@ class MATLABQualityChecker:
         issues: list[str],
     ) -> None:
         """Check for TODO, FIXME, HACK, XXX, and placeholders."""
+        require(isinstance(file_path, Path), "file_path must be a Path")
+        require(isinstance(line_stripped, str), "line_stripped must be a string")
+        require(isinstance(issues, list), "issues must be a list")
         banned = [
             (r"\bTODO\b", "TODO placeholder found"),
             (r"\bFIXME\b", "FIXME placeholder found"),
@@ -442,6 +459,9 @@ class MATLABQualityChecker:
         issues: list[str],
     ) -> None:
         """Check for clear all, clc, close all, addpath in functions."""
+        require(isinstance(file_path, Path), "file_path must be a Path")
+        require(isinstance(line_stripped, str), "line_stripped must be a string")
+        require(isinstance(issues, list), "issues must be a list")
         if not in_function:
             return
 
@@ -525,9 +545,7 @@ def run_matlab_quality_checks_cli() -> None:
     args = parser.parse_args()
 
     project_root = Path(args.project_root).resolve()
-    if not project_root.exists():
-        logger.error("Project root does not exist: %s", project_root)
-        sys.exit(1)
+    require(project_root.exists(), f"Project root does not exist: {project_root}")
 
     checker = MATLABQualityChecker(project_root)
     results = checker.run_all_checks()
