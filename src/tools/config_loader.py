@@ -39,12 +39,20 @@ def validate_tools_config(
     Returns:
         Validated dictionary with invalid entries removed.
     """
+    from src.shared.python.contracts import require
+
+    require(isinstance(tools_dict, dict), "tools_dict must be a dictionary")
+
     validated = {}
 
     # Resolve repo_root once for consistent comparison
     resolved_root = repo_root.resolve() if repo_root is not None else None
 
     for category, tools in tools_dict.items():
+        if not isinstance(tools, list):
+            # Log warning or skip invalid structure
+            continue
+
         valid_tools = []
         for tool in tools:
             # Runtime validation for JSON data that might not match the type hint
@@ -86,6 +94,10 @@ def load_tools_config(repo_root: Path) -> dict[str, list[Any]]:
     Returns:
         Dictionary mapping categories to lists of tools.
     """
+    from src.shared.python.contracts import require
+
+    require(isinstance(repo_root, Path), "repo_root must be a Path object")
+
     json_path = repo_root / "tools.json"
 
     config = safe_read_json(json_path, default={})
