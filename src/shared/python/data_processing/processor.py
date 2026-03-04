@@ -16,6 +16,8 @@ from typing import Any
 
 import pandas as pd
 
+from src.shared.python.contracts import require
+
 logger = logging.getLogger(__name__)
 SUPPORTED_FILTER_TYPES = {"butterworth", "moving_average", "median", "savgol"}
 
@@ -138,6 +140,8 @@ class DataProcessor:
 
     def load_dataframe(self, df: pd.DataFrame, name: str = "inline") -> DataProcessor:
         """Load from an existing DataFrame."""
+        require(isinstance(df, pd.DataFrame), "df must be a pandas DataFrame")
+        require(isinstance(name, str) and name, "name must be a non-empty string")
         self._df = df.copy()
         self._source_path = ""
         self._history = [
@@ -156,6 +160,9 @@ class DataProcessor:
         time_column: str | None = None,
     ) -> DataProcessor:
         """Trim data to a time range.  Auto-detects the time column if not given."""
+        require(isinstance(start, int | float), "start must be numeric")
+        require(isinstance(end, int | float), "end must be numeric")
+        require(end >= start, "end must be >= start")
         df = self.dataframe
         if time_column is None:
             time_column = self._detect_time_column(df)
@@ -174,7 +181,16 @@ class DataProcessor:
 
         Uses the core ``resample_data`` when available, else falls back to
         pandas interpolation.
+
+        Args:
+            target_rate: Target sample rate in Hz. Must be positive.
+            time_column: Column containing time values. Auto-detected if None.
+            method: Interpolation method ('linear', 'cubic', etc.).
         """
+        require(
+            isinstance(target_rate, int | float) and target_rate > 0,
+            "target_rate must be a positive number",
+        )
         df = self.dataframe
         if time_column is None:
             time_column = self._detect_time_column(df)
@@ -333,6 +349,14 @@ class DataProcessor:
 
         Example: ``dp.apply_formula("speed", "distance / time")``
         """
+        require(
+            isinstance(new_column, str) and new_column,
+            "new_column must be a non-empty string",
+        )
+        require(
+            isinstance(expression, str) and expression,
+            "expression must be a non-empty string",
+        )
         df = self.dataframe
         # pandas DataFrame.eval() is safe -- it only resolves column names
         # within the dataframe and does not execute arbitrary Python code.
@@ -342,18 +366,26 @@ class DataProcessor:
 
     def drop_columns(self, columns: list[str]) -> DataProcessor:
         """Drop specified columns."""
+        require(
+            isinstance(columns, list) and columns, "columns must be a non-empty list"
+        )
         self._df = self.dataframe.drop(columns=columns, errors="ignore")
         self._history.append(f"Dropped columns: {columns}")
         return self
 
     def rename_columns(self, mapping: dict[str, str]) -> DataProcessor:
         """Rename columns."""
+        require(
+            isinstance(mapping, dict) and mapping, "mapping must be a non-empty dict"
+        )
         self._df = self.dataframe.rename(columns=mapping)
         self._history.append(f"Renamed {len(mapping)} columns")
         return self
 
     def sort(self, by: str, ascending: bool = True) -> DataProcessor:
         """Sort by a column."""
+        require(isinstance(by, str) and by, "by must be a non-empty string")
+        require(isinstance(ascending, bool), "ascending must be a boolean")
         self._df = self.dataframe.sort_values(by=by, ascending=ascending).reset_index(
             drop=True
         )
@@ -385,6 +417,7 @@ class DataProcessor:
 
     def correlate(self, method: str = "pearson") -> pd.DataFrame:
         """Return correlation matrix."""
+        require(isinstance(method, str) and method, "method must be a non-empty string")
         result: pd.DataFrame = self.dataframe.select_dtypes(include="number").corr(
             method=method
         )

@@ -20,6 +20,8 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.shared.python.contracts import require
+
 # Default local-development origins used when CORS_ORIGINS env var is unset.
 DEFAULT_ORIGINS: list[str] = [
     "http://localhost:3000",
@@ -53,7 +55,14 @@ def add_cors_middleware(
         allow_headers: Allowed HTTP headers. Defaults to ``["*"]``.
         **kwargs: Extra keyword arguments forwarded to ``CORSMiddleware``.
     """
+    require(isinstance(app, FastAPI), "app must be a FastAPI instance")
+    require(
+        origins is None
+        or (isinstance(origins, list) and all(isinstance(o, str) for o in origins)),
+        "origins must be a list of strings or None",
+    )
     env_origins = os.environ.get("CORS_ORIGINS")
+
     resolved_origins: list[str]
     if env_origins:
         resolved_origins = [o.strip() for o in env_origins.split(",") if o.strip()]
