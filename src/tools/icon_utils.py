@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from PIL import Image
 
+from src.shared.python.contracts import require
+
 logger = logging.getLogger(__name__)
 
 
@@ -95,6 +97,10 @@ def create_resized_images(
     Returns:
         List of resized images.
     """
+    require(
+        isinstance(sizes, list) and len(sizes) > 0, "sizes must be a non-empty list"
+    )
+
     from PIL import Image
 
     # Pillow >= 9.1.0 uses Image.Resampling; older versions use Image.LANCZOS
@@ -115,6 +121,9 @@ def convert_png_to_ico(
     Returns:
         True if successful, False otherwise.
     """
+    require(isinstance(png_path, Path), "png_path must be a Path")
+    require(isinstance(ico_path, Path), "ico_path must be a Path")
+
     ensure_pil_installed()
     from PIL import Image  # Ensure import is available
 
