@@ -6,6 +6,8 @@ import sys
 from pathlib import Path
 from re import Pattern
 
+from src.shared.python.contracts import require
+
 
 # ANSI colors for terminal output
 class Colors:
@@ -79,6 +81,8 @@ MAGIC_NUMBERS: list[tuple[Pattern, str]] = [
 
 def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
     """Check if a pass statement is in a legitimate context."""
+    require(isinstance(lines, list), "lines must be a list")
+    require(isinstance(line_num, int), "line_num must be an integer")
     if line_num <= 0 or line_num > len(lines):
         return False
 
@@ -116,6 +120,7 @@ def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
 
 def is_legitimate_tkinter_binding(line: str) -> bool:
     """Check if a line contains legitimate Tkinter event bindings."""
+    require(isinstance(line, str), "line must be a string")
     # Common Tkinter event patterns
     tkinter_events = [
         r"<KeyRelease>",
@@ -146,6 +151,8 @@ def check_banned_patterns(
     filepath: Path,
 ) -> list[tuple[int, str, str]]:
     """Check for banned patterns in lines."""
+    require(isinstance(lines, list), "lines must be a list of strings")
+    require(isinstance(filepath, Path), "filepath must be a Path")
     issues: list[tuple[int, str, str]] = []
     # Skip checking files that contain placeholder detection patterns themselves
     excluded_files = {
@@ -187,6 +194,7 @@ def check_banned_patterns(
 
 def strip_comments_from_line(line: str) -> str:
     """Strip comments from a line, handling string literals correctly."""
+    require(isinstance(line, str), "line must be a string")
     in_single_quote = False
     in_double_quote = False
     in_triple_single = False
@@ -233,6 +241,8 @@ def strip_comments_from_line(line: str) -> str:
 
 def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str, str]]:
     """Check for magic numbers in lines."""
+    require(isinstance(lines, list), "lines must be a list of strings")
+    require(isinstance(filepath, Path), "filepath must be a Path")
     issues: list[tuple[int, str, str]] = []
     excluded_files = {
         "quality_check_script.py",
@@ -268,6 +278,9 @@ def check_ast_issues(content: str, filepath: Path) -> list[tuple[int, str, str]]
 
 def check_file(filepath: Path) -> list[tuple[int, str, str]]:
     """Check a Python file for quality issues."""
+    require(isinstance(filepath, Path), "filepath must be a Path")
+    require(filepath.exists(), f"File not found: {filepath}")
+    require(filepath.is_file(), f"Path is not a regular file: {filepath}")
     try:
         content = filepath.read_text(encoding="utf-8")
         lines = content.splitlines()
