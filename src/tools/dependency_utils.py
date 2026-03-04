@@ -16,6 +16,9 @@ def check_dependencies(packages: list[str]) -> list[str]:
     Returns:
         List of missing packages.
     """
+    from src.shared.python.contracts import require
+
+    require(isinstance(packages, list), "packages must be a list of strings")
     missing_packages = []
 
     for package in packages:
@@ -46,6 +49,10 @@ def install_packages(packages: list[str]) -> bool:
     Returns:
         True if all packages installed successfully, False otherwise.
     """
+    from src.shared.python.contracts import require
+
+    require(isinstance(packages, list), "packages must be a list of strings")
+
     if not packages:
         return True
 
