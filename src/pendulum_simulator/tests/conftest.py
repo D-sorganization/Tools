@@ -1,0 +1,42 @@
+"""Shared pytest fixtures for the test suite."""
+
+import numpy as np
+import pytest
+
+from double_pendulum_golf.physics import PendulumParams
+
+
+@pytest.fixture
+def default_params():
+    """Standard test parameters: golf-like arm + club."""
+    return PendulumParams(m1=5.0, m2=0.5, L1=0.6, L2=1.0)
+
+
+@pytest.fixture
+def equal_params():
+    """Equal-mass, equal-length pendulum for symmetry tests."""
+    return PendulumParams(m1=1.0, m2=1.0, L1=1.0, L2=1.0)
+
+
+@pytest.fixture
+def aligned_state():
+    """Both segments straight down, positive velocities."""
+    return np.array([0.0, 0.0, 2.0, 1.0])
+
+
+@pytest.fixture
+def cocked_state():
+    """Arm back, club cocked (golf backswing position)."""
+    return np.array([np.radians(120), np.radians(-90), 0.0, 0.0])
+
+
+@pytest.fixture
+def zero_torque():
+    """No applied torques."""
+    return lambda t: (0.0, 0.0)
+
+
+@pytest.fixture
+def constant_shoulder_torque():
+    """Constant shoulder torque, zero wrist."""
+    return lambda t: (-25.0, 0.0)
