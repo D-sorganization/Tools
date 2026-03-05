@@ -1,17 +1,21 @@
 # Assessment I: Code Style
 
 ## Executive Summary
-This is a detailed analysis based on the latest codebase metrics (2026-03-05).
-Code style is strictly enforced by `ruff` and `black` in CI, ensuring consistent formatting. Typing coverage is high (84.5%), though `mypy` configurations use some `type: ignore`. Variable naming and structure generally follow PEP 8. Score: 8.5/10.
+This assessment evaluates the repository's adherence to PEP 8, type hinting standards, and general Pythonic idioms.
+The codebase maintains a high level of stylistic consistency, enforced rigorously by automated tools (`ruff`, `black`). Type hint coverage is impressively high (84.5% of function returns are annotated). However, deeper analysis reveals "type hint cheating" where developers use `Any` or `# type: ignore` to bypass MyPy checks rather than defining proper `TypedDict` or `Protocol` interfaces, particularly when interfacing with third-party data libraries.
 
 ## Scorecard
-- Grade: 8.5/10
+- **Grade: 8.5/10**
 
 ## Findings Table
 | ID | Severity | Category | Location | Symptom | Root Cause | Fix | Effort |
 |----|----------|----------|----------|---------|------------|-----|--------|
-| I-001 | High | Code Style | Codebase | Type: ignore spam | Untyped 3rd party libs | Add stub files | M |
+| I-001 | Major | Typing | `src/tools/launch_utils.py` (and others) | Implicit `Any` / `# type: ignore` | Rushing strict mypy compliance | Replace `Any` with `Callable`, `IO`, or specific models | M |
+| I-002 | Medium | Typing | `src/shared/python/model_generation/` | Lack of DataFrame types | Using `pd.DataFrame` without column schemas | Adopt `pandera` or `pydantic` for dataframe schemas | L |
+| I-003 | Minor | Naming | Legacy tools (`Data_Processor_r0.py`) | PascalCase files (`Folders_Tool_r0.py`) | Legacy naming conventions | Rename to standard Python `snake_case.py` | S |
+| I-004 | Minor | Linting | Global | `T201 print found` suppressed | Debug statements left in | Remove suppressions and use `logging` | S |
 
 ## Refactoring Plan
-- Address I-001 by implementing the recommended fix (Add stub files).
-- Continue monitoring metrics via the `scripts/generate_fresh_assessments.py` CI step.
+- **Short Term**: Audit the codebase for `# type: ignore` comments and replace them with proper type definitions or stubs for third-party libraries (I-001). Address the PascalCase file naming inconsistencies (I-003).
+- **Medium Term**: Remove all `noqa: T201` suppressions from production code and replace those `print` calls with `logging` calls (I-004).
+- **Long Term**: Introduce data validation libraries like `pandera` to strongly type the expected schema of Pandas DataFrames passing between shared functions, rather than relying on untyped `pd.DataFrame` annotations (I-002).
