@@ -4,11 +4,11 @@ color-coded to distinguish diagonal (self-coupling) from off-diagonal
 (cross-coupling) terms.
 """
 
-from typing import Optional
+from __future__ import annotations
 
 import numpy as np
-from PyQt6.QtCore import Qt, QRectF
-from PyQt6.QtGui import QPainter, QPen, QBrush, QColor, QFont
+from PyQt6.QtCore import QRectF, Qt
+from PyQt6.QtGui import QBrush, QColor, QFont, QPainter, QPen
 from PyQt6.QtWidgets import QWidget
 
 from ..simulation_triple import TripleSimulationResult
@@ -28,8 +28,8 @@ class TripleMatrixWidget(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setMinimumSize(360, 520)
-        self._result: Optional[TripleSimulationResult] = None
+        self.setMinimumSize(200, 300)
+        self._result: TripleSimulationResult | None = None
         self._current_idx: int = 0
 
     def set_simulation(self, result: TripleSimulationResult) -> None:
@@ -56,8 +56,9 @@ class TripleMatrixWidget(QWidget):
         if self._result is None:
             painter.setPen(self.COLOR_LABEL)
             painter.setFont(QFont("Sans", 11))
-            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter,
-                             "No simulation loaded")
+            painter.drawText(
+                self.rect(), Qt.AlignmentFlag.AlignCenter, "No simulation loaded"
+            )
             painter.end()
             return
 
@@ -81,8 +82,7 @@ class TripleMatrixWidget(QWidget):
 
         painter.end()
 
-    def _draw_section_title(self, painter: QPainter, title: str,
-                            y: int) -> int:
+    def _draw_section_title(self, painter: QPainter, title: str, y: int) -> int:
         painter.setPen(self.COLOR_TEXT)
         painter.setFont(QFont("Sans", 11, QFont.Weight.Bold))
         painter.drawText(15, y + 16, title)
@@ -152,13 +152,18 @@ class TripleMatrixWidget(QWidget):
 
         return ly + 32
 
-    def _draw_coupling_ratio(self, painter: QPainter, mc: dict,
-                             y: int) -> int:
+    def _draw_coupling_ratio(self, painter: QPainter, mc: dict, y: int) -> int:
         diag = np.array([mc["M11"], mc["M22"], mc["M33"]])
-        off = np.array([
-            mc["M12"], mc["M13"], mc["M21"],
-            mc["M23"], mc["M31"], mc["M32"],
-        ])
+        off = np.array(
+            [
+                mc["M12"],
+                mc["M13"],
+                mc["M21"],
+                mc["M23"],
+                mc["M31"],
+                mc["M32"],
+            ]
+        )
         denom = np.mean(np.abs(diag)) if np.any(diag) else 1.0
         ratio = min(np.mean(np.abs(off)) / max(denom, 1e-12), 1.0)
 

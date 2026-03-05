@@ -7,12 +7,11 @@ Also displays Coriolis/centrifugal and gravity vectors, plus applied
 torques, giving a complete picture of the force balance at each instant.
 """
 
-from typing import Optional
+from __future__ import annotations
 
-import numpy as np
-from PyQt6.QtCore import Qt, QRectF
-from PyQt6.QtGui import QPainter, QPen, QBrush, QColor, QFont
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QGroupBox, QGridLayout
+from PyQt6.QtCore import QRectF, Qt
+from PyQt6.QtGui import QBrush, QColor, QFont, QPainter, QPen
+from PyQt6.QtWidgets import QWidget
 
 from ..simulation import SimulationResult
 
@@ -39,8 +38,8 @@ class MatrixWidget(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setMinimumSize(340, 500)
-        self._result: Optional[SimulationResult] = None
+        self.setMinimumSize(200, 300)
+        self._result: SimulationResult | None = None
         self._current_idx: int = 0
 
     def set_simulation(self, result: SimulationResult) -> None:
@@ -67,8 +66,9 @@ class MatrixWidget(QWidget):
         if self._result is None:
             painter.setPen(self.COLOR_LABEL)
             painter.setFont(QFont("Sans", 11))
-            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter,
-                             "No simulation loaded")
+            painter.drawText(
+                self.rect(), Qt.AlignmentFlag.AlignCenter, "No simulation loaded"
+            )
             painter.end()
             return
 
@@ -96,8 +96,7 @@ class MatrixWidget(QWidget):
     # Drawing helpers
     # ------------------------------------------------------------------
 
-    def _draw_section_title(self, painter: QPainter, title: str,
-                            y: int) -> int:
+    def _draw_section_title(self, painter: QPainter, title: str, y: int) -> int:
         """Draw a section title and return new y cursor."""
         painter.setPen(self.COLOR_TEXT)
         font = QFont("Sans", 11, QFont.Weight.Bold)
@@ -175,8 +174,7 @@ class MatrixWidget(QWidget):
 
         return ly + 32
 
-    def _draw_coupling_ratio(self, painter: QPainter, mc: dict,
-                             y: int) -> int:
+    def _draw_coupling_ratio(self, painter: QPainter, mc: dict, y: int) -> int:
         """Draw the ratio |M12/M11| as a bar and percentage."""
         ratio = abs(mc["M12"]) / mc["M11"] if mc["M11"] > 1e-12 else 0.0
         ratio = min(ratio, 1.0)
