@@ -167,10 +167,10 @@ jobs:
               BASE_SHA="${{ github.event.pull_request.base.sha }}"
             fi
             git diff --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt
-          elif [ -n "${{ github.event.before }}" ]; then
+          elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
             git diff --name-only "${{ github.event.before }}" HEAD -- 'tests/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt
           else
-            git diff --name-only HEAD~1 HEAD -- 'tests/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt
+            git diff --name-only HEAD~1 HEAD -- 'tests/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
           fi
           cat changed_test_files.txt
 
