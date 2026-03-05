@@ -2,12 +2,15 @@
 Shared simulation panel for double and triple pendulum tabs.
 """
 
+from __future__ import annotations
+
 import csv
 import os
 import shutil
 import subprocess
 import tempfile
 from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 import numpy as np
 from PyQt6.QtCore import Qt, QTimer
@@ -21,6 +24,10 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+if TYPE_CHECKING:
+    from .controls_widget import ControlsWidget
+    from .controls_widget_triple import ControlsWidgetTriple
+
 
 class SimulationPanel(QWidget):
     """Reusable panel that hosts controls, pendulum, and matrix widgets."""
@@ -29,7 +36,7 @@ class SimulationPanel(QWidget):
 
     def __init__(
         self,
-        controls: QWidget,
+        controls: ControlsWidget | ControlsWidgetTriple,
         pendulum: QWidget,
         matrix: QWidget,
         params_builder: Callable[[dict], object],
