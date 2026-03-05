@@ -6,6 +6,9 @@ Optimized for chemical plant data processing with:
 - Batch processing of multiple signals
 - Memory-efficient operations
 - Parallel processing support
+
+Design by Contract (DbC) guards are applied at the public API boundary
+(__init__ and apply_filter_batch). Issue #929.
 """
 
 from __future__ import annotations
@@ -84,6 +87,20 @@ try:
 except ImportError:
     _savgol_filter = None
 
+try:
+    from data_processor.contracts import require
+except ImportError:
+    try:
+        from contracts import require  # type: ignore[no-redef]
+    except ImportError:
+
+        def require(condition: bool, message: str, value: object = None) -> None:  # type: ignore[misc]
+            if not condition:
+                raise ValueError(
+                    f"[DbC pre-condition] {message}"
+                    + (f" (got: {value!r})" if value is not None else "")
+                )
+
 
 class VectorizedFilterEngine:
     """
@@ -103,10 +120,18 @@ class VectorizedFilterEngine:
         """
         Initialize the vectorized filter engine.
 
+        **Pre-conditions** (DbC):
+          - ``n_jobs`` must be -1 (auto) or a positive integer.
+
         Args:
             logger: Optional logging function. If None, uses print.
             n_jobs: Number of parallel jobs (-1 for all cores, 1 for sequential)
         """
+        require(
+            n_jobs == -1 or (isinstance(n_jobs, int) and n_jobs >= 1),
+            "n_jobs must be -1 (auto) or a positive integer",
+            n_jobs,
+        )
         self.logger = logger or print
         self.n_jobs = n_jobs if n_jobs != -1 else mp.cpu_count()
         self.filters = {
@@ -134,6 +159,11 @@ class VectorizedFilterEngine:
         """
         Apply filter to multiple signals in batch for maximum performance.
 
+        **Pre-conditions** (DbC):
+          - ``df`` must be a non-empty DataFrame.
+          - ``filter_type`` must be a non-empty string.
+          - ``params`` must be a dict.
+
         Args:
             df: DataFrame containing signals
             filter_type: Type of filter to apply
@@ -143,6 +173,16 @@ class VectorizedFilterEngine:
         Returns:
             DataFrame with filtered signals
         """
+        require(
+            isinstance(df, pd.DataFrame) and not df.empty,
+            "df must be a non-empty DataFrame",
+        )
+        require(
+            isinstance(filter_type, str) and bool(filter_type.strip()),
+            "filter_type must be a non-empty string",
+            filter_type,
+        )
+        require(isinstance(params, dict), "params must be a dict", type(params))
         if filter_type not in self.filters:
             self.logger(f"Warning: Unknown filter type '{filter_type}'")
             return df

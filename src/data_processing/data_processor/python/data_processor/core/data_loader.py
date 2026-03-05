@@ -4,10 +4,14 @@
 This module handles loading CSV files, detecting signals,
 and managing data operations.
 
+Design by Contract (DbC) guards are applied at all public API boundaries:
+  - Preconditions validate caller inputs (non-empty paths, valid formats).
+  - Postconditions assert that returned DataFrames have expected shapes.
+
 Fixed in issue #530: removed fragile dependency on ``utils.path_helpers``.
 Updated in issue #682: removed ``sys.path`` hack; relies on package
 installation (``pip install -e .``) or pytest ``pythonpath`` config.
-"""
+Fixed in issue #929: DbC guards added to core pipeline (TDD/DbC compliance)."""
 
 from __future__ import annotations
 
@@ -46,12 +50,17 @@ except ImportError:
 
 
 from data_processor.constants import TIME_COLUMN_KEYWORDS  # noqa: E402
+from data_processor.contracts import (  # noqa: E402
+    require,
+)
 from data_processor.high_performance_loader import (  # noqa: E402
     HighPerformanceDataLoader,
 )
 from data_processor.security_utils import validate_and_check_file  # noqa: E402
 
 logger = logging.getLogger(__name__)
+
+_ALLOWED_SAVE_FORMATS = frozenset({"csv", "excel", "xlsx", "parquet"})
 
 
 class DataLoader:
@@ -79,6 +88,10 @@ class DataLoader:
     ) -> pd.DataFrame | None:
         """Load a single CSV file.
 
+        **Pre-conditions** (DbC):
+          - ``file_path`` must be a non-empty string.
+          - ``file_path`` must end with ``.csv`` or ``.txt``.
+
         Args:
             file_path: Path to CSV file
             validate_security: Whether to perform security validation
@@ -86,6 +99,18 @@ class DataLoader:
         Returns:
             DataFrame or None if loading fails
         """
+        # --- Pre-conditions ---
+        require(
+            isinstance(file_path, str) and bool(file_path.strip()),
+            "file_path must be a non-empty string",
+            file_path,
+        )
+        require(
+            file_path.lower().endswith((".csv", ".txt")),
+            "file_path must end with .csv or .txt",
+            file_path,
+        )
+
         try:
             # Security validation
             if validate_security:
@@ -103,7 +128,6 @@ class DataLoader:
                 return None
 
             logger.info(f"Loaded {len(df)} rows, {len(df.columns)} columns")
-
             return df
 
         except (OSError, ValueError, KeyError) as e:
@@ -118,6 +142,10 @@ class DataLoader:
     ) -> dict[str, pd.DataFrame] | pd.DataFrame:
         """Load multiple CSV files.
 
+        **Pre-conditions** (DbC):
+          - ``file_paths`` must be a non-empty list.
+          - Every entry must be a non-empty string.
+
         Args:
             file_paths: List of file paths
             combine: Whether to combine into single DataFrame
@@ -127,6 +155,15 @@ class DataLoader:
             Dictionary mapping file paths to DataFrames, or single combined
             DataFrame if combine=True
         """
+        require(
+            isinstance(file_paths, list) and len(file_paths) > 0,
+            "file_paths must be a non-empty list",
+            file_paths,
+        )
+        require(
+            all(isinstance(p, str) and p.strip() for p in file_paths),
+            "every entry in file_paths must be a non-empty string",
+        )
         if self.use_high_performance and self.hp_loader:
             # Use high-performance batch loading
             results = self.hp_loader.batch_load_files(
@@ -164,6 +201,9 @@ class DataLoader:
     ) -> set[str]:
         """Detect all unique signals from multiple files.
 
+        **Pre-conditions** (DbC):
+          - ``file_paths`` must be a non-empty list.
+
         Args:
             file_paths: List of CSV file paths
             progress_callback: Optional progress callback
@@ -171,6 +211,11 @@ class DataLoader:
         Returns:
             Set of unique signal names
         """
+        require(
+            isinstance(file_paths, list) and len(file_paths) > 0,
+            "file_paths must be a non-empty list",
+            file_paths,
+        )
         if self.use_high_performance and self.hp_loader:
             # Use high-performance signal detection
             signals, _ = self.hp_loader.load_signals_from_files(
@@ -244,7 +289,16 @@ class DataLoader:
         on_column: str | None = None,
         how: str = "outer",
     ) -> pd.DataFrame:
-        """Combine multiple DataFrames."""
+        """Combine multiple DataFrames.
+
+        **Pre-conditions** (DbC):
+          - ``how`` must be one of 'inner', 'outer', 'left', 'right'.
+        """
+        require(
+            how in {"inner", "outer", "left", "right"},
+            "how must be one of 'inner', 'outer', 'left', 'right'",
+            how,
+        )
         dfs = (
             list(dataframes.values())
             if isinstance(dataframes, dict)
@@ -312,7 +366,27 @@ class DataLoader:
         format_type: str = "csv",
         **kwargs: Any,
     ) -> bool:
-        """Save DataFrame to file."""
+        """Save DataFrame to file.
+
+        **Pre-conditions** (DbC):
+          - ``df`` must not be empty.
+          - ``output_path`` must be a non-empty string.
+          - ``format_type`` must be a recognised format.
+        """
+        require(
+            isinstance(df, pd.DataFrame) and not df.empty,
+            "df must be a non-empty DataFrame",
+        )
+        require(
+            isinstance(output_path, str) and bool(output_path.strip()),
+            "output_path must be a non-empty string",
+            output_path,
+        )
+        require(
+            format_type in _ALLOWED_SAVE_FORMATS,
+            f"format_type must be one of {sorted(_ALLOWED_SAVE_FORMATS)}",
+            format_type,
+        )
         try:
             logger.info(f"Saving DataFrame to {output_path} ({format_type})")
             if format_type == "csv":
