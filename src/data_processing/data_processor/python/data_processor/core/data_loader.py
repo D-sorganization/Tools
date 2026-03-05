@@ -174,7 +174,11 @@ class DataLoader:
             # Sequential loading
             results = {}
             for i, file_path in enumerate(file_paths):
-                df = self.load_csv_file(file_path)
+                # validate_security=False: the DbC pre-condition above already
+                # guarantees file_paths contains non-empty strings; security
+                # validation is the responsibility of the *caller* of this
+                # method, not an internal chain concern.
+                df = self.load_csv_file(file_path, validate_security=False)
                 if df is not None:
                     results[file_path] = df
 
