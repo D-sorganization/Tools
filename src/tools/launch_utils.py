@@ -68,7 +68,8 @@ def validate_and_sanitize_path(path_str: str, repo_root: Path) -> Path:
         ToolNotFoundError: If file does not exist.
     """
     require(
-        isinstance(path_str, str) and path_str, "path_str must be a non-empty string"
+        bool(isinstance(path_str, str) and path_str),
+        "path_str must be a non-empty string",
     )
     require(isinstance(repo_root, Path), "repo_root must be a Path")
     require(repo_root.is_absolute(), f"repo_root must be absolute, got: {repo_root}")
