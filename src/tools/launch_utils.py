@@ -132,7 +132,8 @@ def launch_python_tool(
     """
     require(isinstance(path, Path), "path must be a Path")
     require(
-        isinstance(tool_name, str) and tool_name, "tool_name must be a non-empty string"
+        bool(isinstance(tool_name, str) and tool_name),
+        "tool_name must be a non-empty string",
     )
     if log_func:
         log_func(f"Launching Python tool: {tool_name}")
@@ -188,7 +189,8 @@ def launch_matlab_tool(
     """Launch a MATLAB tool."""
     require(isinstance(path, Path), "path must be a Path")
     require(
-        isinstance(tool_name, str) and tool_name, "tool_name must be a non-empty string"
+        bool(isinstance(tool_name, str) and tool_name),
+        "tool_name must be a non-empty string",
     )
     if log_func:
         log_func(f"Launching MATLAB tool: {tool_name}")
@@ -228,7 +230,8 @@ def launch_octave_tool(
     """Launch an Octave tool."""
     require(isinstance(path, Path), "path must be a Path")
     require(
-        isinstance(tool_name, str) and tool_name, "tool_name must be a non-empty string"
+        bool(isinstance(tool_name, str) and tool_name),
+        "tool_name must be a non-empty string",
     )
     if log_func:
         log_func(f"Launching Octave tool: {tool_name}")
@@ -282,7 +285,8 @@ def launch_batch_tool(
     """Launch a batch script."""
     require(isinstance(path, Path), "path must be a Path")
     require(
-        isinstance(tool_name, str) and tool_name, "tool_name must be a non-empty string"
+        bool(isinstance(tool_name, str) and tool_name),
+        "tool_name must be a non-empty string",
     )
     if sys.platform == "win32":
         if path.suffix.lower() not in [".bat", ".cmd"]:
