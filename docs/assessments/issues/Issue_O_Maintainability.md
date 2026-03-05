@@ -2,15 +2,17 @@
 labels: jules:assessment, needs-attention
 ---
 
-# High Technical Debt (445 TODOs)
+# Issue: Low Score in Maintainability
 
-The codebase has accumulated significant technical debt.
+## Grade: 2.0/10
 
-- 445 `TODO` markers.
-- 140 `FIXME` markers.
+## Problem
+The assessment for **Maintainability** returned a score below the acceptable threshold of 5.0.
 
-**Action Items**:
+## Justification
+Technical Debt (TODO+FIXME): 743
 
-- Audit all `FIXME` items and resolve high-priority ones.
-- Convert valid `TODO` items into GitHub Issues.
-- Remove obsolete code.
+## Action Items
+1. Review the generated assessment in `docs/assessments/Assessment_O_Maintainability.md`.
+2. Address the specific metrics highlighted in the justification.
+3. Run `scripts/generate_comprehensive_assessment.py` to verify improvements.
