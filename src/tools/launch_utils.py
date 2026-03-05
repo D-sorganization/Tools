@@ -68,7 +68,8 @@ def validate_and_sanitize_path(path_str: str, repo_root: Path) -> Path:
         ToolNotFoundError: If file does not exist.
     """
     require(
-        isinstance(path_str, str) and path_str, "path_str must be a non-empty string"
+        bool(isinstance(path_str, str) and path_str),
+        "path_str must be a non-empty string",
     )
     require(isinstance(repo_root, Path), "repo_root must be a Path")
     require(repo_root.is_absolute(), f"repo_root must be absolute, got: {repo_root}")
@@ -99,16 +100,41 @@ def validate_and_sanitize_path(path_str: str, repo_root: Path) -> Path:
     return full_path
 
 
+def _stream_reader(
+    stream: IO[str], prefix: str, log_func: Callable[[str], None]
+) -> None:
+    """Read lines from *stream* and forward them to *log_func* with *prefix*.
+
+    Extracted from ``launch_python_tool`` to satisfy SRP and enable unit testing.
+    Issue #930: decompose long orchestration functions in the tools package.
+    """
+    try:
+        for line in stream:
+            log_func(f"{prefix} {line.strip()}")
+    except (OSError, ValueError) as e:
+        log_func(f"Error reading stream: {e}")
+    finally:
+        stream.close()
+
+
 def launch_python_tool(
     path: Path,
     tool_name: str,
     is_debug: bool = False,
     log_func: Callable[[str], None] | None = None,
 ) -> None:
-    """Launch a Python tool."""
+    """Launch a Python tool.
+
+    In debug mode, stdout/stderr are piped and forwarded to *log_func* via
+    daemon threads.  In normal mode the subprocess is fire-and-forget.
+
+    Issue #930: the stream-reading closure has been extracted to the
+    module-level ``_stream_reader`` helper for testability.
+    """
     require(isinstance(path, Path), "path must be a Path")
     require(
-        isinstance(tool_name, str) and tool_name, "tool_name must be a non-empty string"
+        bool(isinstance(tool_name, str) and tool_name),
+        "tool_name must be a non-empty string",
     )
     if log_func:
         log_func(f"Launching Python tool: {tool_name}")
@@ -126,27 +152,20 @@ def launch_python_tool(
             if log_func:
                 log_func(f"✅ Process started (PID: {process.pid})")
 
-                # Create threads to read stdout/stderr to prevent deadlock and log output
                 import threading
 
-                def read_stream(stream: IO[str], prefix: str) -> None:
-                    try:
-                        for line in stream:
-                            if log_func is not None:
-                                log_func(f"{prefix} {line.strip()}")
-                    except (OSError, ValueError) as e:
-                        if log_func is not None:
-                            log_func(f"Error reading stream: {e}")
-                    finally:
-                        stream.close()
-
+                _logger: Callable[[str], None] = log_func  # capture for threads
                 if process.stdout:
                     threading.Thread(
-                        target=read_stream, args=(process.stdout, "[OUT]"), daemon=True
+                        target=_stream_reader,
+                        args=(process.stdout, "[OUT]", _logger),
+                        daemon=True,
                     ).start()
                 if process.stderr:
                     threading.Thread(
-                        target=read_stream, args=(process.stderr, "[ERR]"), daemon=True
+                        target=_stream_reader,
+                        args=(process.stderr, "[ERR]", _logger),
+                        daemon=True,
                     ).start()
         else:
             subprocess.Popen(
@@ -171,7 +190,8 @@ def launch_matlab_tool(
     """Launch a MATLAB tool."""
     require(isinstance(path, Path), "path must be a Path")
     require(
-        isinstance(tool_name, str) and tool_name, "tool_name must be a non-empty string"
+        bool(isinstance(tool_name, str) and tool_name),
+        "tool_name must be a non-empty string",
     )
     if log_func:
         log_func(f"Launching MATLAB tool: {tool_name}")
@@ -211,7 +231,8 @@ def launch_octave_tool(
     """Launch an Octave tool."""
     require(isinstance(path, Path), "path must be a Path")
     require(
-        isinstance(tool_name, str) and tool_name, "tool_name must be a non-empty string"
+        bool(isinstance(tool_name, str) and tool_name),
+        "tool_name must be a non-empty string",
     )
     if log_func:
         log_func(f"Launching Octave tool: {tool_name}")
@@ -265,7 +286,8 @@ def launch_batch_tool(
     """Launch a batch script."""
     require(isinstance(path, Path), "path must be a Path")
     require(
-        isinstance(tool_name, str) and tool_name, "tool_name must be a non-empty string"
+        bool(isinstance(tool_name, str) and tool_name),
+        "tool_name must be a non-empty string",
     )
     if sys.platform == "win32":
         if path.suffix.lower() not in [".bat", ".cmd"]:
