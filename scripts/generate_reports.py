@@ -2,11 +2,12 @@
 """
 Generate comprehensive, non-generic Assessment reports for Categories A-O based on Prompt Templates.
 """
-import os
+
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).parent.parent.resolve()
 OUTPUT_DIR = REPO_ROOT / "docs" / "assessments"
+
 
 def create_assessment_a():
     return """# Assessment A Results: Architecture & Implementation
@@ -72,6 +73,7 @@ def _init_ui(self):
 >>>>>>> REPLACE
 ```
 """
+
 
 def create_assessment_b():
     return """# Assessment B Results: Hygiene, Security & Quality
@@ -145,6 +147,7 @@ logger.info(f"Loaded {len(records)} records")
 ```
 """
 
+
 def create_assessment_c():
     return """# Assessment C Results: Documentation & Integration
 
@@ -217,6 +220,7 @@ def process_data(df: pd.DataFrame) -> pd.DataFrame:
 ```
 """
 
+
 def get_other_assessments():
     # Provide actual metrics derived from the comprehensive generation script to avoid generic N/A tables
     return {
@@ -228,7 +232,7 @@ def get_other_assessments():
             "cause": "try/except lacks async/threading",
             "fix": "Use QThread for long tasks",
             "effort": "M",
-            "analysis": "Error handling follows standard practices with 1233 `try...except` blocks visible in key areas. GUI applications (PyQt) handle execution loops correctly (`sys.exit(app.exec())`). However, long-running tasks within the UI thread lack non-blocking exception handling. Score: 8.0/10."
+            "analysis": "Error handling follows standard practices with 1233 `try...except` blocks visible in key areas. GUI applications (PyQt) handle execution loops correctly (`sys.exit(app.exec())`). However, long-running tasks within the UI thread lack non-blocking exception handling. Score: 8.0/10.",
         },
         "E": {
             "name": "Performance",
@@ -238,7 +242,7 @@ def get_other_assessments():
             "cause": "135 print statements + heavy global imports",
             "fix": "Implement lazy loading + standard logging",
             "effort": "M",
-            "analysis": "Performance is adequate but unoptimized. 135 `print()` statements impact runtime performance and I/O monitoring. Heavy imports (pandas, numpy) are used globally; no obvious lazy loading in critical paths. Concurrency: `launch_web.py` uses blocking subprocess calls. Score: 7.0/10."
+            "analysis": "Performance is adequate but unoptimized. 135 `print()` statements impact runtime performance and I/O monitoring. Heavy imports (pandas, numpy) are used globally; no obvious lazy loading in critical paths. Concurrency: `launch_web.py` uses blocking subprocess calls. Score: 7.0/10.",
         },
         "F": {
             "name": "Security",
@@ -248,7 +252,7 @@ def get_other_assessments():
             "cause": "Committed `.msg` binaries",
             "fix": "git filter-repo",
             "effort": "H",
-            "analysis": "**CRITICAL FINDINGS**:\n1. **Data Leakage**: `.msg` (Outlook email) files found in `src/shared/python/upstream_drift_tools/...`. This is a major PII/IP risk.\n2. **Unsafe Functions**: 2 instances of `eval()` usage detected in legacy tools.\n3. **Shell Injection**: Extensive use of `shell=True` in launcher scripts. Score: 4.0/10."
+            "analysis": "**CRITICAL FINDINGS**:\n1. **Data Leakage**: `.msg` (Outlook email) files found in `src/shared/python/upstream_drift_tools/...`. This is a major PII/IP risk.\n2. **Unsafe Functions**: 2 instances of `eval()` usage detected in legacy tools.\n3. **Shell Injection**: Extensive use of `shell=True` in launcher scripts. Score: 4.0/10.",
         },
         "G": {
             "name": "Dependencies",
@@ -258,7 +262,7 @@ def get_other_assessments():
             "cause": "Global constraints",
             "fix": "Use pnpm and split requirements",
             "effort": "S",
-            "analysis": "Dependency management is very strong. Clean `requirements.txt` with inline comments explaining usage. Locking mechanisms ensure reproducible builds. Isolation: Virtual environment usage is enforced/encouraged in docs. Score: 9.0/10."
+            "analysis": "Dependency management is very strong. Clean `requirements.txt` with inline comments explaining usage. Locking mechanisms ensure reproducible builds. Isolation: Virtual environment usage is enforced/encouraged in docs. Score: 9.0/10.",
         },
         "H": {
             "name": "CI-CD",
@@ -268,7 +272,7 @@ def get_other_assessments():
             "cause": "Redundant tests",
             "fix": "Implement test caching",
             "effort": "S",
-            "analysis": "CI/CD is robust and extensive. Over 40 GitHub Actions workflows covering linting (`ci-standard.yml`) to stale issue cleanup. Strict quality gates for formatting (Black), linting (Ruff), and types (MyPy). Agent automation is highly integrated. Score: 10/10."
+            "analysis": "CI/CD is robust and extensive. Over 40 GitHub Actions workflows covering linting (`ci-standard.yml`) to stale issue cleanup. Strict quality gates for formatting (Black), linting (Ruff), and types (MyPy). Agent automation is highly integrated. Score: 10/10.",
         },
         "I": {
             "name": "Code_Style",
@@ -278,7 +282,7 @@ def get_other_assessments():
             "cause": "Untyped 3rd party libs",
             "fix": "Add stub files",
             "effort": "M",
-            "analysis": "Code style is strictly enforced by `ruff` and `black` in CI, ensuring consistent formatting. Typing coverage is high (84.5%), though `mypy` configurations use some `type: ignore`. Variable naming and structure generally follow PEP 8. Score: 8.5/10."
+            "analysis": "Code style is strictly enforced by `ruff` and `black` in CI, ensuring consistent formatting. Typing coverage is high (84.5%), though `mypy` configurations use some `type: ignore`. Variable naming and structure generally follow PEP 8. Score: 8.5/10.",
         },
         "J": {
             "name": "API_Design",
@@ -288,7 +292,7 @@ def get_other_assessments():
             "cause": "Lack of ABCs",
             "fix": "Implement Protcols/ABCs in `src/shared`",
             "effort": "M",
-            "analysis": "API design is modular but implicit. Tools are well-separated (2063 Classes defined). Contracts: `src/shared` provides reusable components, but explicit interfaces (Protocols/ABCs) could be stronger to enforce contracts. Web apps use standard REST patterns. Score: 7.0/10."
+            "analysis": "API design is modular but implicit. Tools are well-separated (2063 Classes defined). Contracts: `src/shared` provides reusable components, but explicit interfaces (Protocols/ABCs) could be stronger to enforce contracts. Web apps use standard REST patterns. Score: 7.0/10.",
         },
         "K": {
             "name": "Data_Handling",
@@ -298,7 +302,7 @@ def get_other_assessments():
             "cause": "No WAL for SQL",
             "fix": "Enable WAL mode",
             "effort": "S",
-            "analysis": "Data handling is mixed. I/O: Standard pandas/numpy usage for data processing. Safety: The presence of `.msg` files indicates poor hygiene regarding binary/personal data committing. Validation: Input validation in web apps is present but could be more robust. Score: 8.0/10."
+            "analysis": "Data handling is mixed. I/O: Standard pandas/numpy usage for data processing. Safety: The presence of `.msg` files indicates poor hygiene regarding binary/personal data committing. Validation: Input validation in web apps is present but could be more robust. Score: 8.0/10.",
         },
         "L": {
             "name": "Logging",
@@ -308,7 +312,7 @@ def get_other_assessments():
             "cause": "Raw print calls",
             "fix": "Migrate 135 print() to structlog",
             "effort": "M",
-            "analysis": "Logging is inconsistent. The codebase is split between `print()` (135 instances, debugging style) and `logging` (production style). Need to migrate all `print()` statements in `src/` to the shared logger to standardize the telemetry pipeline. Score: 5.0/10."
+            "analysis": "Logging is inconsistent. The codebase is split between `print()` (135 instances, debugging style) and `logging` (production style). Need to migrate all `print()` statements in `src/` to the shared logger to standardize the telemetry pipeline. Score: 5.0/10.",
         },
         "M": {
             "name": "Configuration",
@@ -318,7 +322,7 @@ def get_other_assessments():
             "cause": "Multiple `.env.example`s",
             "fix": "Consolidate global `.env`",
             "effort": "S",
-            "analysis": "Configuration management is excellent. `.env` and `.env.example` usage is well-documented. Config files (JSON, YAML, TOML) are used appropriately across tools. Launchers handle configuration loading dynamically without hardcoding keys. Score: 10/10."
+            "analysis": "Configuration management is excellent. `.env` and `.env.example` usage is well-documented. Config files (JSON, YAML, TOML) are used appropriately across tools. Launchers handle configuration loading dynamically without hardcoding keys. Score: 10/10.",
         },
         "N": {
             "name": "Scalability",
@@ -328,7 +332,7 @@ def get_other_assessments():
             "cause": "All tools coupled in repo",
             "fix": "Use git submodules for heavy media assets",
             "effort": "M",
-            "analysis": "The architecture supports scaling to many tools. The plugin system allows easy addition of new calculators. The monorepo structure supports adding many tools without clutter, though checking out the whole repository (2464 files) is heavy. Score: 8.0/10."
+            "analysis": "The architecture supports scaling to many tools. The plugin system allows easy addition of new calculators. The monorepo structure supports adding many tools without clutter, though checking out the whole repository (2464 files) is heavy. Score: 8.0/10.",
         },
         "O": {
             "name": "Maintainability",
@@ -338,17 +342,22 @@ def get_other_assessments():
             "cause": "761 TODOs / 289 FIXMEs",
             "fix": "Triage to issue tracker",
             "effort": "H",
-            "analysis": "Technical debt is accumulating rapidly. 761 `TODO` markers and 289 `FIXME` markers indicate significant unfinished work. Existence of 'legacy' launchers alongside `UnifiedToolsLauncher` creates confusion. 24 God Classes create maintenance bottlenecks. Score: 5.0/10."
-        }
+            "analysis": "Technical debt is accumulating rapidly. 761 `TODO` markers and 289 `FIXME` markers indicate significant unfinished work. Existence of 'legacy' launchers alongside `UnifiedToolsLauncher` creates confusion. 24 God Classes create maintenance bottlenecks. Score: 5.0/10.",
+        },
     }
+
 
 def generate_reports():
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     # Generate A, B, C specifically based on the prompts
-    (OUTPUT_DIR / "Assessment_A_Architecture_Implementation.md").write_text(create_assessment_a())
+    (OUTPUT_DIR / "Assessment_A_Architecture_Implementation.md").write_text(
+        create_assessment_a()
+    )
     (OUTPUT_DIR / "Assessment_B_Hygiene_Quality.md").write_text(create_assessment_b())
-    (OUTPUT_DIR / "Assessment_C_Documentation_Integration.md").write_text(create_assessment_c())
+    (OUTPUT_DIR / "Assessment_C_Documentation_Integration.md").write_text(
+        create_assessment_c()
+    )
 
     # Generate true assessments for D-O instead of generic boilerplate
     others = get_other_assessments()
@@ -375,6 +384,7 @@ This is a detailed analysis based on the latest codebase metrics (2026-03-05).
         filepath.write_text(content)
 
     print(f"Generated 15 Detailed Assessment Reports in {OUTPUT_DIR}")
+
 
 if __name__ == "__main__":
     generate_reports()
