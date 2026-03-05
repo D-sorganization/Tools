@@ -10,6 +10,7 @@ Covers:
 All tests are parameterized where physics allows multiple cases.
 No Qt-dependent code is exercised here (UI tests stay in test_electrode_advisor_gui.py).
 """
+
 from __future__ import annotations
 
 import math
@@ -26,6 +27,7 @@ try:
         GlassPropertiesInterface,
         ThreePhaseElectricalModelEnhanced,
     )
+
     ELECTRICAL_AVAILABLE = True
 except ImportError:
     ELECTRICAL_AVAILABLE = False
@@ -38,6 +40,7 @@ try:
         build_trapezoidal_prism,
         compute_wall_position,
     )
+
     DRAWING_AVAILABLE = True
 except ImportError:
     DRAWING_AVAILABLE = False
@@ -46,6 +49,7 @@ except ImportError:
 
 try:
     from electrode_advisor.utils.visualization import ElectrodeVisualization
+
     VISUALIZATION_AVAILABLE = True
 except ImportError:
     VISUALIZATION_AVAILABLE = False
@@ -54,6 +58,7 @@ except ImportError:
 # ─────────────────────────────────────────────────────────────────────────────
 # Helpers
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def _make_electrode_pos(angle_deg: float = 0.0, z: float = 12.0) -> dict[str, Any]:
     """Create a standard electrode position dict."""
@@ -70,7 +75,10 @@ def _make_electrode_pos(angle_deg: float = 0.0, z: float = 12.0) -> dict[str, An
 # ElectrodeConfig — DbC / TDD
 # ─────────────────────────────────────────────────────────────────────────────
 
-@pytest.mark.skipif(not ELECTRICAL_AVAILABLE, reason="upstream_drift_tools not installed")
+
+@pytest.mark.skipif(
+    not ELECTRICAL_AVAILABLE, reason="upstream_drift_tools not installed"
+)
 class TestElectrodeConfigContracts:
     """Issue #931: DbC guards for ElectrodeConfig construction."""
 
@@ -88,11 +96,14 @@ class TestElectrodeConfigContracts:
         cfg = ElectrodeConfig()
         assert cfg.tip_diameter > 0, "tip_diameter must be positive"
 
-    @pytest.mark.parametrize("bath_d,tip_d", [
-        (120.0, 24.0),
-        (100.0, 20.0),
-        (200.0, 40.0),
-    ])
+    @pytest.mark.parametrize(
+        "bath_d,tip_d",
+        [
+            (120.0, 24.0),
+            (100.0, 20.0),
+            (200.0, 40.0),
+        ],
+    )
     def test_valid_diameter_combinations(self, bath_d: float, tip_d: float) -> None:
         cfg = ElectrodeConfig(bath_diameter=bath_d, tip_diameter=tip_d)
         assert cfg.bath_diameter == bath_d
@@ -103,7 +114,10 @@ class TestElectrodeConfigContracts:
 # ThreePhaseElectricalModelEnhanced — physics boundary tests
 # ─────────────────────────────────────────────────────────────────────────────
 
-@pytest.mark.skipif(not ELECTRICAL_AVAILABLE, reason="upstream_drift_tools not installed")
+
+@pytest.mark.skipif(
+    not ELECTRICAL_AVAILABLE, reason="upstream_drift_tools not installed"
+)
 class TestElectricalModelPhysics:
     """Issue #931: regression / TDD tests for three-phase electrical model."""
 
@@ -178,7 +192,10 @@ class TestElectricalModelPhysics:
 # Shared drawing — pure geometry functions (DbC-first tests)
 # ─────────────────────────────────────────────────────────────────────────────
 
-@pytest.mark.skipif(not DRAWING_AVAILABLE, reason="electrode_advisor package not on path")
+
+@pytest.mark.skipif(
+    not DRAWING_AVAILABLE, reason="electrode_advisor package not on path"
+)
 class TestComputeWallPosition:
     """Issue #931: contracts + behavior for compute_wall_position."""
 
@@ -195,28 +212,34 @@ class TestComputeWallPosition:
         bath_radius = 60.0
         wall = np.asarray(compute_wall_position(pos, bath_radius=bath_radius))
         magnitude = float(np.linalg.norm(wall[:2]))  # x-y only
-        assert magnitude <= bath_radius + 1e-6, (
-            f"Wall position {magnitude:.2f} > bath_radius {bath_radius}"
-        )
+        assert (
+            magnitude <= bath_radius + 1e-6
+        ), f"Wall position {magnitude:.2f} > bath_radius {bath_radius}"
 
     @pytest.mark.parametrize("angle_deg", [0, 60, 120, 180, 240, 300])
     def test_symmetric_electrodes_give_valid_wall_positions(
         self, angle_deg: float
     ) -> None:
         angle_rad = math.radians(angle_deg)
-        pos = {"x": 40.0 * math.cos(angle_rad), "y": 40.0 * math.sin(angle_rad), "z": 12.0}
+        pos = {
+            "x": 40.0 * math.cos(angle_rad),
+            "y": 40.0 * math.sin(angle_rad),
+            "z": 12.0,
+        }
         result = compute_wall_position(pos, bath_radius=60.0)
         assert result is not None
 
 
-@pytest.mark.skipif(not DRAWING_AVAILABLE, reason="electrode_advisor package not on path")
+@pytest.mark.skipif(
+    not DRAWING_AVAILABLE, reason="electrode_advisor package not on path"
+)
 class TestBuildTrapezoidalPrism:
     """Issue #931: contracts + regression for build_trapezoidal_prism."""
 
     def test_returns_six_faces(self) -> None:
         wall1 = np.array([60.0, 0.0])
-        tip1  = np.array([40.0, 0.0])
-        tip2  = np.array([-40.0, 0.0])
+        tip1 = np.array([40.0, 0.0])
+        tip2 = np.array([-40.0, 0.0])
         wall2 = np.array([-60.0, 0.0])
         result = build_trapezoidal_prism(
             wall1=wall1,
@@ -230,25 +253,31 @@ class TestBuildTrapezoidalPrism:
 
     def test_all_faces_have_array_vertices(self) -> None:
         wall1 = np.array([60.0, 0.0])
-        tip1  = np.array([40.0, 0.0])
-        tip2  = np.array([-40.0, 0.0])
+        tip1 = np.array([40.0, 0.0])
+        tip2 = np.array([-40.0, 0.0])
         wall2 = np.array([-60.0, 0.0])
         faces = build_trapezoidal_prism(
-            wall1=wall1, tip1=tip1, tip2=tip2, wall2=wall2,
-            electrode_z=12.0, effective_height=2.0,
+            wall1=wall1,
+            tip1=tip1,
+            tip2=tip2,
+            wall2=wall2,
+            electrode_z=12.0,
+            effective_height=2.0,
         )
         for i, face in enumerate(faces):
             arr = np.asarray(face)
             assert arr.ndim >= 2, f"Face {i} is not a 2-D array of vertices"
 
 
-@pytest.mark.skipif(not DRAWING_AVAILABLE, reason="electrode_advisor package not on path")
+@pytest.mark.skipif(
+    not DRAWING_AVAILABLE, reason="electrode_advisor package not on path"
+)
 class TestBuildExtrusionFaces:
     """Issue #931: contracts + regression for build_extrusion_faces."""
 
     def test_returns_six_faces(self) -> None:
-        wall_pos  = np.array([60.0, 0.0])
-        tip_pos   = np.array([40.0, 0.0])
+        wall_pos = np.array([60.0, 0.0])
+        tip_pos = np.array([40.0, 0.0])
         perp_scaled = np.array([0.0, 2.0])
         faces = build_extrusion_faces(
             wall_pos=wall_pos,
@@ -260,8 +289,8 @@ class TestBuildExtrusionFaces:
         assert len(faces) == 6, f"Expected 6 faces, got {len(faces)}"
 
     def test_z_range_reflected_in_vertices(self) -> None:
-        wall_pos    = np.array([60.0, 0.0])
-        tip_pos     = np.array([40.0, 0.0])
+        wall_pos = np.array([60.0, 0.0])
+        tip_pos = np.array([40.0, 0.0])
         perp_scaled = np.array([0.0, 2.0])
         z_start, z_end = 5.0, 15.0
         faces = build_extrusion_faces(
@@ -287,7 +316,10 @@ class TestBuildExtrusionFaces:
 # ElectrodeVisualization — interface tests (no display needed)
 # ─────────────────────────────────────────────────────────────────────────────
 
-@pytest.mark.skipif(not VISUALIZATION_AVAILABLE, reason="electrode_advisor package not on path")
+
+@pytest.mark.skipif(
+    not VISUALIZATION_AVAILABLE, reason="electrode_advisor package not on path"
+)
 class TestElectrodeVisualizationInterface:
     """Issue #931: TDD tests for ElectrodeVisualization public API."""
 
@@ -309,7 +341,9 @@ class TestElectrodeVisualizationInterface:
         """_electrode_wall_positions should be callable without an instance ax."""
         pos1 = _make_electrode_pos(0.0)
         pos2 = _make_electrode_pos(120.0)
-        result = ElectrodeVisualization._electrode_wall_positions(pos1, pos2, bath_radius=60.0)
+        result = ElectrodeVisualization._electrode_wall_positions(
+            pos1, pos2, bath_radius=60.0
+        )
         assert result is not None
         assert len(result) == 2, "Expected two wall positions"
 
@@ -317,6 +351,7 @@ class TestElectrodeVisualizationInterface:
 # ─────────────────────────────────────────────────────────────────────────────
 # DRY regression: confirm shared_drawing delegates are consistent
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 @pytest.mark.skipif(
     not (DRAWING_AVAILABLE and VISUALIZATION_AVAILABLE),
@@ -346,10 +381,14 @@ class TestSharedDrawingDRYConsistency:
         wp2_via = np.asarray(wall2_via)[:2]
 
         np.testing.assert_allclose(
-            wp1_direct[:2], wp1_via, rtol=1e-5,
+            wp1_direct[:2],
+            wp1_via,
+            rtol=1e-5,
             err_msg="compute_wall_position and _electrode_wall_positions disagree for pos1",
         )
         np.testing.assert_allclose(
-            wp2_direct[:2], wp2_via, rtol=1e-5,
+            wp2_direct[:2],
+            wp2_via,
+            rtol=1e-5,
             err_msg="compute_wall_position and _electrode_wall_positions disagree for pos2",
         )
