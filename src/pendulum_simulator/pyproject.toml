@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "double-pendulum-golf"
+version = "0.1.0"
+description = "Double pendulum golf swing dynamics simulator with PyQt6 GUI"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "PyQt6>=6.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+plots = [
+    "pyqtgraph>=0.13",
+]
+
+[project.scripts]
+pendulum-golf = "double_pendulum_golf.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.ruff]
+line-length = 95
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
