@@ -40,7 +40,7 @@ class PendulumWidget(QWidget):
 
     TRAIL_LENGTH = 200
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         # Responsive: no hard minimum — let the splitter govern size
         self.setMinimumSize(250, 300)
@@ -115,7 +115,7 @@ class PendulumWidget(QWidget):
     # Painting
     # ------------------------------------------------------------------
 
-    def paintEvent(self, event):
+    def paintEvent(self, event: object) -> None:
         # Recompute scale every paint so the pendulum fills the canvas at any size
         self._pixels_per_meter = self._compute_scale()
 
@@ -188,6 +188,7 @@ class PendulumWidget(QWidget):
 
     def _draw_pendulum(self, painter: QPainter) -> None:
         """Draw the segments and joint markers."""
+        assert self._result is not None  # only called after None guard in paintEvent
         pos = self._result.positions_at(self._current_idx)
         shoulder = self._world_to_pixel(*pos["shoulder"])
         tip = self._world_to_pixel(*pos["tip"])
@@ -245,6 +246,7 @@ class PendulumWidget(QWidget):
 
     def _draw_info(self, painter: QPainter) -> None:
         """Draw time and angle readout in the corner."""
+        assert self._result is not None  # only called after None guard in paintEvent
         t = self._result.t[self._current_idx]
         s = self._result.states[self._current_idx]
         theta1_deg = np.degrees(s[0])
@@ -290,7 +292,7 @@ class PendulumWidget(QWidget):
 
     def _draw_force_vectors(self, painter: QPainter, pos: dict) -> None:
         """Draw net force vectors at joints (proximal acting on distal)."""
-        if not hasattr(self._result, "joint_forces_at"):
+        if self._result is None or not hasattr(self._result, "joint_forces_at"):
             return
         forces = self._result.joint_forces_at(self._current_idx)
         if not forces:
@@ -309,15 +311,15 @@ class PendulumWidget(QWidget):
 
         painter.setPen(QPen(QColor(200, 240, 120), 2))
         for key, force in forces.items():
-            if key not in joint_map or joint_map[key] is None:
+            joint_pos = joint_map.get(key)
+            if joint_pos is None:
                 continue
             fx, fy = force
-            origin = joint_map[key]
             end = (
-                origin[0] + fx * scale / self._pixels_per_meter,
-                origin[1] + fy * scale / self._pixels_per_meter,
+                joint_pos[0] + fx * scale / self._pixels_per_meter,
+                joint_pos[1] + fy * scale / self._pixels_per_meter,
             )
-            self._draw_arrow(painter, origin, end)
+            self._draw_arrow(painter, joint_pos, end)
 
     def _draw_arrow(self, painter: QPainter, origin: tuple, end: tuple) -> None:
         """Draw an arrow from origin to end in world coordinates."""

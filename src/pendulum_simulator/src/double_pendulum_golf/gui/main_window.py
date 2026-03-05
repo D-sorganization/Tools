@@ -10,8 +10,12 @@ import numpy as np
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
-    QMainWindow, QWidget, QVBoxLayout,
-    QStatusBar, QLabel, QTabWidget,
+    QMainWindow,
+    QWidget,
+    QVBoxLayout,
+    QStatusBar,
+    QLabel,
+    QTabWidget,
 )
 
 from ..physics import PendulumParams
@@ -44,7 +48,8 @@ class MainWindow(QMainWindow):
     """
 
     WINDOW_TITLE = "Double Pendulum — Golf Swing Dynamics"
-    def __init__(self):
+
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle(self.WINDOW_TITLE)
         self.resize(1200, 700)
@@ -97,30 +102,38 @@ class MainWindow(QMainWindow):
 
         def build_params(p: dict) -> PendulumParams:
             return PendulumParams(
-                m1=p["m1"], m2=p["m2"],
-                L1=p["L1"], L2=p["L2"],
-                b1=p.get("b1", 0.0), b2=p.get("b2", 0.0),
-                mu1=p.get("mu1", 0.0), mu2=p.get("mu2", 0.0),
+                m1=p["m1"],
+                m2=p["m2"],
+                L1=p["L1"],
+                L2=p["L2"],
+                b1=p.get("b1", 0.0),
+                b2=p.get("b2", 0.0),
+                mu1=p.get("mu1", 0.0),
+                mu2=p.get("mu2", 0.0),
             )
 
         def build_state(p: dict) -> np.ndarray:
-            return np.array([
-                p["theta1_rad"], p["phi_rad"],
-                p["dtheta1"], p["dphi"],
-            ])
+            return np.array(
+                [
+                    p["theta1_rad"],
+                    p["phi_rad"],
+                    p["dtheta1"],
+                    p["dphi"],
+                ]
+            )
 
-        def build_torque(p: dict):
+        def build_torque(p: dict) -> object:
             return make_polynomial_torque(p["shoulder_coeffs"], p["wrist_coeffs"])
 
         return SimulationPanel(
             controls=controls,
-            pendulum=pendulum,
-            matrix=matrix,
+            pendulum=pendulum,  # type: ignore[arg-type]
+            matrix=matrix,  # type: ignore[arg-type]
             params_builder=build_params,
             torque_builder=build_torque,
             state_builder=build_state,
             run_simulation=run_simulation,
-            torque_history=torque_history,
+            torque_history=torque_history,  # type: ignore[arg-type]
         )
 
     def _build_triple_panel(self) -> SimulationPanel:
@@ -130,25 +143,35 @@ class MainWindow(QMainWindow):
 
         def build_params(p: dict) -> TriplePendulumParams:
             return TriplePendulumParams(
-                m1=p["m1"], m2=p["m2"], m3=p["m3"],
-                L1=p["L1"], L2=p["L2"], L3=p["L3"],
+                m1=p["m1"],
+                m2=p["m2"],
+                m3=p["m3"],
+                L1=p["L1"],
+                L2=p["L2"],
+                L3=p["L3"],
             )
 
         def build_state(p: dict) -> np.ndarray:
-            return np.array([
-                p["theta1_rad"], p["phi1_rad"], p["phi2_rad"],
-                p["dtheta1"], p["dphi1"], p["dphi2"],
-            ])
+            return np.array(
+                [
+                    p["theta1_rad"],
+                    p["phi1_rad"],
+                    p["phi2_rad"],
+                    p["dtheta1"],
+                    p["dphi1"],
+                    p["dphi2"],
+                ]
+            )
 
-        def build_torque(p: dict):
+        def build_torque(p: dict) -> object:
             return make_polynomial_torque_triple(
                 p["shoulder_coeffs"], p["elbow_coeffs"], p["wrist_coeffs"]
             )
 
         return SimulationPanel(
             controls=controls,
-            pendulum=pendulum,
-            matrix=matrix,
+            pendulum=pendulum,  # type: ignore[arg-type]
+            matrix=matrix,  # type: ignore[arg-type]
             params_builder=build_params,
             torque_builder=build_torque,
             state_builder=build_state,

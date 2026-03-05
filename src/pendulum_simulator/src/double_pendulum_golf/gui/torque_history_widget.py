@@ -29,12 +29,12 @@ except ImportError:
 # ---------------------------------------------------------------------------
 # Colour scheme
 # ---------------------------------------------------------------------------
-_COLOR_DRIVE_1 = (230, 120, 50)    # warm orange — shoulder drive
-_COLOR_DRIVE_2 = (120, 180, 230)   # cool blue   — wrist drive
-_COLOR_FRICTION_1 = (200, 80, 80)   # red         — shoulder friction
+_COLOR_DRIVE_1 = (230, 120, 50)  # warm orange — shoulder drive
+_COLOR_DRIVE_2 = (120, 180, 230)  # cool blue   — wrist drive
+_COLOR_FRICTION_1 = (200, 80, 80)  # red         — shoulder friction
 _COLOR_FRICTION_2 = (80, 160, 160)  # teal        — wrist friction
-_COLOR_TOTAL_1 = (255, 220, 80)     # gold        — shoulder total
-_COLOR_TOTAL_2 = (180, 255, 180)    # pale green  — wrist total
+_COLOR_TOTAL_1 = (255, 220, 80)  # gold        — shoulder total
+_COLOR_TOTAL_2 = (180, 255, 180)  # pale green  — wrist total
 
 
 class TorqueHistoryWidget(QWidget):
@@ -70,9 +70,7 @@ class TorqueHistoryWidget(QWidget):
 
         title = QLabel("Torque History")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setStyleSheet(
-            "color: #c0c0d8; font-size: 12px; font-weight: bold;"
-        )
+        title.setStyleSheet("color: #c0c0d8; font-size: 12px; font-weight: bold;")
         layout.addWidget(title)
 
         if not _HAS_PYQTGRAPH:
@@ -93,9 +91,7 @@ class TorqueHistoryWidget(QWidget):
             pw.getPlotItem().setLabel("bottom", "Time (s)")
             pw.getPlotItem().setLabel("left", "Torque (N·m)")
             pw.getPlotItem().addLegend(offset=(10, 10))
-            pw.setSizePolicy(
-                QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
-            )
+            pw.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
             layout.addWidget(pw)
 
         # Pre-create curve objects (hidden until data loaded)
@@ -106,7 +102,9 @@ class TorqueHistoryWidget(QWidget):
             ),
             "friction": self._plot_j1.plot(
                 name="Friction",
-                pen=pg.mkPen(*_COLOR_FRICTION_1, style=Qt.PenStyle.DashLine, **pen_kwargs),
+                pen=pg.mkPen(
+                    *_COLOR_FRICTION_1, style=Qt.PenStyle.DashLine, **pen_kwargs
+                ),
             ),
             "total": self._plot_j1.plot(
                 name="Total",
@@ -119,7 +117,9 @@ class TorqueHistoryWidget(QWidget):
             ),
             "friction": self._plot_j2.plot(
                 name="Friction",
-                pen=pg.mkPen(*_COLOR_FRICTION_2, style=Qt.PenStyle.DashLine, **pen_kwargs),
+                pen=pg.mkPen(
+                    *_COLOR_FRICTION_2, style=Qt.PenStyle.DashLine, **pen_kwargs
+                ),
             ),
             "total": self._plot_j2.plot(
                 name="Total",
@@ -128,10 +128,16 @@ class TorqueHistoryWidget(QWidget):
         }
 
         # Vertical time cursor (updates with animation frame)
-        self._cursor_j1 = pg.InfiniteLine(angle=90, movable=False,
-                                           pen=pg.mkPen("w", width=1, style=Qt.PenStyle.DashLine))
-        self._cursor_j2 = pg.InfiniteLine(angle=90, movable=False,
-                                           pen=pg.mkPen("w", width=1, style=Qt.PenStyle.DashLine))
+        self._cursor_j1 = pg.InfiniteLine(
+            angle=90,
+            movable=False,
+            pen=pg.mkPen("w", width=1, style=Qt.PenStyle.DashLine),
+        )
+        self._cursor_j2 = pg.InfiniteLine(
+            angle=90,
+            movable=False,
+            pen=pg.mkPen("w", width=1, style=Qt.PenStyle.DashLine),
+        )
         self._plot_j1.addItem(self._cursor_j1)
         self._plot_j2.addItem(self._cursor_j2)
 

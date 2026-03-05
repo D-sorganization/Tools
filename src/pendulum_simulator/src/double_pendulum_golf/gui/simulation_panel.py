@@ -10,7 +10,7 @@ import shutil
 import subprocess
 import tempfile
 from collections.abc import Callable
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Protocol, cast
 
 import numpy as np
 from PyQt6.QtCore import Qt, QTimer
@@ -29,6 +29,14 @@ if TYPE_CHECKING:
     from .controls_widget_triple import ControlsWidgetTriple
 
 
+class _SimViewer(Protocol):
+    """Structural typing for pendulum/matrix/torque_history widgets."""
+
+    def set_simulation(self, result: object) -> None: ...
+    def set_frame(self, idx: int) -> None: ...
+    def clear(self) -> None: ...
+
+
 class SimulationPanel(QWidget):
     """Reusable panel that hosts controls, pendulum, and matrix widgets."""
 
@@ -37,14 +45,14 @@ class SimulationPanel(QWidget):
     def __init__(
         self,
         controls: ControlsWidget | ControlsWidgetTriple,
-        pendulum: QWidget,
-        matrix: QWidget,
+        pendulum: _SimViewer,
+        matrix: _SimViewer,
         params_builder: Callable[[dict], object],
-        torque_builder: Callable[[dict], Callable],
+        torque_builder: Callable[[dict], Any],
         state_builder: Callable[[dict], np.ndarray],
         run_simulation: Callable,
-        torque_history: QWidget | None = None,
-        parent=None,
+        torque_history: _SimViewer | None = None,
+        parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
         self.controls = controls
@@ -56,7 +64,7 @@ class SimulationPanel(QWidget):
         self._state_builder = state_builder
         self._run_simulation = run_simulation
 
-        self._result = None
+        self._result: Any | None = None
         self._anim_idx = 0
         self._playback_speed = 1.0
 
@@ -80,8 +88,8 @@ class SimulationPanel(QWidget):
         scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
         splitter.addWidget(scroll)
 
-        splitter.addWidget(self.pendulum)
-        splitter.addWidget(self.matrix)
+        splitter.addWidget(cast(QWidget, self.pendulum))
+        splitter.addWidget(cast(QWidget, self.matrix))
 
         # Use proportional sizes: compute from available screen width
         screen = QApplication.primaryScreen()
@@ -90,7 +98,7 @@ class SimulationPanel(QWidget):
         matrix_w = min(280, int(sw * 0.18))
 
         if self.torque_history is not None:
-            splitter.addWidget(self.torque_history)
+            splitter.addWidget(cast(QWidget, self.torque_history))
             torque_w = min(260, int(sw * 0.16))
             pend_w = sw - ctrl_w - matrix_w - torque_w - 20
             splitter.setSizes([ctrl_w, pend_w, matrix_w, torque_w])
@@ -352,7 +360,7 @@ class SimulationPanel(QWidget):
             for i in range(self._result.n_steps):
                 self._display_frame(i)
                 QApplication.processEvents()
-                pix = self.pendulum.grab()
+                pix = cast(QWidget, self.pendulum).grab()
                 frame_path = os.path.join(tmp_dir, f"frame_{i:05d}.png")
                 pix.save(frame_path)
 

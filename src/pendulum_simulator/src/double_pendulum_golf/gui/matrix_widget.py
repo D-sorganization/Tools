@@ -36,7 +36,7 @@ class MatrixWidget(QWidget):
     COLOR_LABEL = QColor(160, 160, 180)
     COLOR_BRACKET = QColor(120, 120, 140)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setMinimumSize(200, 300)
         self._result: SimulationResult | None = None
@@ -58,7 +58,7 @@ class MatrixWidget(QWidget):
         self._current_idx = 0
         self.update()
 
-    def paintEvent(self, event):
+    def paintEvent(self, event: object) -> None:
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.fillRect(self.rect(), self.COLOR_BG)
@@ -205,6 +205,7 @@ class MatrixWidget(QWidget):
 
     def _draw_force_balance(self, painter: QPainter, y: int) -> int:
         """Draw the torque, Coriolis, and gravity vectors."""
+        assert self._result is not None  # only called after None guard in paintEvent
         idx = self._current_idx
         tau = self._result.torques_at(idx)
         C = self._result.coriolis_at(idx)
@@ -228,6 +229,7 @@ class MatrixWidget(QWidget):
 
     def _draw_energy(self, painter: QPainter, y: int) -> int:
         """Draw kinetic, potential, and total energy."""
+        assert self._result is not None  # only called after None guard in paintEvent
         e = self._result.energy_at(self._current_idx)
         painter.setFont(QFont("Monospace", 10))
         lines = [

@@ -7,8 +7,8 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 import numpy as np
-from PyQt6.QtCore import QRectF, Qt
-from PyQt6.QtGui import QColor, QFont, QPainter, QPen, QPointF
+from PyQt6.QtCore import QPointF, QRectF, Qt
+from PyQt6.QtGui import QColor, QFont, QPainter, QPen
 from PyQt6.QtWidgets import QWidget
 
 
@@ -19,7 +19,7 @@ class TorquePreviewWidget(QWidget):
     COLOR_GRID = QColor(50, 50, 65)
     COLOR_TEXT = QColor(180, 180, 200)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setMinimumHeight(140)
         self._profiles: list[tuple[str, list[float], QColor]] = []
@@ -35,7 +35,7 @@ class TorquePreviewWidget(QWidget):
         ]
         self.update()
 
-    def paintEvent(self, event):
+    def paintEvent(self, event: object) -> None:
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.fillRect(self.rect(), self.COLOR_BG)
