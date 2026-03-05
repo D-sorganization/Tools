@@ -74,7 +74,7 @@ class TestLoadCsvFileContracts:
     def test_rejects_non_csv_extension(self) -> None:
         loader = DataLoader(use_high_performance=False)
         with pytest.raises((PreconditionError, ValueError)):
-            loader.load_csv_file("/tmp/bad.exe", validate_security=False)
+            loader.load_csv_file("bad_file.exe", validate_security=False)
 
     def test_accepts_csv_extension(self, tmp_path) -> None:
         loader = DataLoader(use_high_performance=False)
