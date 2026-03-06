@@ -1,6 +1,10 @@
 """
-Control panel widget for triple pendulum inputs and playback.
+Control panel widget for triple pendulum inputs.
+
+Refactored: parse_float / parse_coeffs now imported from controls_utils (DRY).
 """
+
+from __future__ import annotations
 
 import numpy as np
 from PyQt6.QtCore import Qt, pyqtSignal
@@ -18,6 +22,12 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from .controls_utils import (
+    STYLE_GROUP,
+    parse_coeffs,
+    parse_coeffs_lenient,
+    parse_float,
+)
 from .controls_widget import LabeledInput
 from .torque_preview_widget import TorquePreviewWidget
 
@@ -87,13 +97,7 @@ class ControlsWidgetTriple(QWidget):
         main_layout.setContentsMargins(8, 8, 8, 8)
         main_layout.setSpacing(6)
 
-        style_group = (
-            "QGroupBox { color: #c0c0d8; border: 1px solid #404058;"
-            "border-radius: 5px; margin-top: 8px; padding-top: 14px;"
-            "font-weight: bold; }"
-            "QGroupBox::title { subcontrol-origin: margin;"
-            "left: 10px; padding: 0 4px; }"
-        )
+        style_group = STYLE_GROUP  # use canonical shared style
 
         preset_group = QGroupBox("Preset")
         preset_group.setStyleSheet(style_group)
@@ -346,28 +350,29 @@ class ControlsWidgetTriple(QWidget):
         self._update_torque_preview()
 
     def get_params(self) -> dict:
-        def parse_float(widget: LabeledInput, name: str) -> float:
-            try:
-                return float(widget.value)
-            except ValueError:
-                raise ValueError(f"Cannot parse '{name}': '{widget.value}'")
+        """Parse all inputs and return a simulation parameter dict.
 
-        def parse_coeffs(widget: LabeledInput, name: str) -> list:
-            try:
-                parts = widget.value.split(",")
-                return [float(p.strip()) for p in parts if p.strip()]
-            except ValueError:
-                raise ValueError(
-                    f"Cannot parse '{name}' coefficients: '{widget.value}'"
-                )
+        Raises
+        ------
+        ValueError  if any field cannot be parsed.
+        AssertionError  if any mass or length is non-positive.
+        """
+        m1 = parse_float(self.inp_m1, "m1")
+        m2 = parse_float(self.inp_m2, "m2")
+        m3 = parse_float(self.inp_m3, "m3")
+        L1 = parse_float(self.inp_L1, "L1")
+        L2 = parse_float(self.inp_L2, "L2")
+        L3 = parse_float(self.inp_L3, "L3")
+        assert m1 > 0 and m2 > 0 and m3 > 0, "All masses must be positive"
+        assert L1 > 0 and L2 > 0 and L3 > 0, "All lengths must be positive"
 
         return {
-            "m1": parse_float(self.inp_m1, "m1"),
-            "m2": parse_float(self.inp_m2, "m2"),
-            "m3": parse_float(self.inp_m3, "m3"),
-            "L1": parse_float(self.inp_L1, "L1"),
-            "L2": parse_float(self.inp_L2, "L2"),
-            "L3": parse_float(self.inp_L3, "L3"),
+            "m1": m1,
+            "m2": m2,
+            "m3": m3,
+            "L1": L1,
+            "L2": L2,
+            "L3": L3,
             "theta1_rad": np.radians(parse_float(self.inp_theta1, "theta1")),
             "phi1_rad": np.radians(parse_float(self.inp_phi1, "phi1")),
             "phi2_rad": np.radians(parse_float(self.inp_phi2, "phi2")),
@@ -387,29 +392,24 @@ class ControlsWidgetTriple(QWidget):
         except ValueError:
             t_end = 2.0
 
-        def parse_coeffs(widget: LabeledInput) -> list:
-            parts = widget.value.split(",")
-            coeffs = []
-            for part in parts:
-                part = part.strip()
-                if not part:
-                    continue
-                try:
-                    coeffs.append(float(part))
-                except ValueError:
-                    return []
-            return coeffs or [0.0]
-
-        shoulder = parse_coeffs(self.inp_tau_shoulder)
-        elbow = parse_coeffs(self.inp_tau_elbow)
-        wrist = parse_coeffs(self.inp_tau_wrist)
-
         self.torque_preview.set_duration(t_end)
         self.torque_preview.set_profiles(
             [
-                ("Shoulder", shoulder, QColor(230, 120, 50)),
-                ("Elbow", elbow, QColor(120, 200, 140)),
-                ("Wrist", wrist, QColor(120, 180, 230)),
+                (
+                    "Shoulder",
+                    parse_coeffs_lenient(self.inp_tau_shoulder),
+                    QColor(230, 120, 50),
+                ),
+                (
+                    "Elbow",
+                    parse_coeffs_lenient(self.inp_tau_elbow),
+                    QColor(120, 200, 140),
+                ),
+                (
+                    "Wrist",
+                    parse_coeffs_lenient(self.inp_tau_wrist),
+                    QColor(120, 180, 230),
+                ),
             ]
         )
 
