@@ -200,7 +200,7 @@ class SimulationResult:
         assert 0 <= idx < self.n_steps
         tau_drive = np.array(self.torque_func(self.t[idx]))
         tau_friction = self.friction_torques_at(idx)
-        return tau_drive + tau_friction
+        return np.asarray(tau_drive + tau_friction)
 
 
 # ---------------------------------------------------------------------------
@@ -251,7 +251,7 @@ def run_simulation(
 
     t_eval = np.arange(0.0, t_end, dt)
 
-    def ode_rhs(t, y):
+    def ode_rhs(t: float, y: np.ndarray) -> np.ndarray:
         return equations_of_motion(y, t, params, torque_func)
 
     sol = solve_ivp(

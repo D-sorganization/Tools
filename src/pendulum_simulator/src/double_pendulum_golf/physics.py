@@ -46,7 +46,7 @@ class PendulumParams:
     mu1: float = 0.0  # Coulomb friction at joint 1 (N·m, constant magnitude)
     mu2: float = 0.0  # Coulomb friction at joint 2 (N·m, constant magnitude)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         assert self.m1 > 0, f"m1 must be positive, got {self.m1}"
         assert self.m2 > 0, f"m2 must be positive, got {self.m2}"
         assert self.L1 > 0, f"L1 must be positive, got {self.L1}"
@@ -425,7 +425,7 @@ def kinetic_energy(state: State, params: PendulumParams) -> float:
     _, phi, dtheta1, dphi = state
     M = mass_matrix(phi, params)
     qdot = np.array([dtheta1, dphi])
-    return 0.5 * qdot @ M @ qdot
+    return float(0.5 * qdot @ M @ qdot)
 
 
 def potential_energy(state: State, params: PendulumParams) -> float:
@@ -435,7 +435,7 @@ def potential_energy(state: State, params: PendulumParams) -> float:
     abs_angle2 = theta1 + phi
 
     V = -(m1 + m2) * g * L1 * np.cos(theta1) - m2 * g * L2 * np.cos(abs_angle2)
-    return V
+    return float(V)
 
 
 def total_energy(state: State, params: PendulumParams) -> float:
