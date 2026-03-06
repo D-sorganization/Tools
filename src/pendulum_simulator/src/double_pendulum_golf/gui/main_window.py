@@ -15,6 +15,7 @@ from __future__ import annotations
 import logging
 import sys
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 from PyQt6.QtCore import QByteArray, QSettings
@@ -50,11 +51,14 @@ _SETTINGS_APP = "PendulumSimulator"
 
 # ── Try to import fleet ThemeManager ─────────────────────────────────────────
 _THEME_AVAILABLE = False
+ThemeManager: Any = None
+ThemeManagerDialog: Any = None
+create_theme_menu: Any = None
 try:
     _shared_root = Path(__file__).parents[7] / "shared" / "python"
     if str(_shared_root) not in sys.path and _shared_root.exists():
         sys.path.insert(0, str(_shared_root))
-    from theme import (
+    from theme import (  # type: ignore[no-redef]
         ThemeManager,
         ThemeManagerDialog,
         create_theme_menu,
@@ -62,9 +66,7 @@ try:
 
     _THEME_AVAILABLE = True
 except ImportError:
-    ThemeManager = None  # type: ignore[assignment]
-    ThemeManagerDialog = None  # type: ignore[assignment]
-    create_theme_menu = None  # type: ignore[assignment]
+    pass  # ThemeManager / ThemeManagerDialog / create_theme_menu remain None
 
 # ── Pendulum dark stylesheet (preserved regardless of theme system) ────────────
 _PENDULUM_DARK_STYLE = """
@@ -362,7 +364,7 @@ class MainWindow(QMainWindow):
                 "Use View → Pendulum Dark to reset to the default style.",
             )
             return
-        dlg = ThemeManagerDialog(self._theme_manager, self)  # type: ignore[call-arg]
+        dlg = ThemeManagerDialog(self._theme_manager, self)
         dlg.exec()
 
     def _apply_pendulum_dark(self) -> None:
