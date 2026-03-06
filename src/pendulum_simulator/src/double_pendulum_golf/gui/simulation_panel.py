@@ -13,11 +13,12 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, Protocol, cast
 
 import numpy as np
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import QByteArray, QObject, QSettings, Qt, QThread, QTimer, pyqtSignal
 from PyQt6.QtWidgets import (
     QApplication,
     QFileDialog,
     QHBoxLayout,
+    QLabel,
     QMessageBox,
     QScrollArea,
     QSplitter,
@@ -27,6 +28,39 @@ from PyQt6.QtWidgets import (
 if TYPE_CHECKING:
     from .controls_widget import ControlsWidget
     from .controls_widget_triple import ControlsWidgetTriple
+
+
+# ---------------------------------------------------------------------------
+# Background simulation worker
+# ---------------------------------------------------------------------------
+
+
+class _SimWorker(QObject):
+    """Runs the ODE integration on a background thread.
+
+    Emits ``finished`` with the result object on success,
+    or ``error`` with an error message string on failure.
+    """
+
+    finished = pyqtSignal(object)
+    error = pyqtSignal(str)
+
+    def __init__(
+        self,
+        run_fn: Any,
+        run_kwargs: dict,
+    ) -> None:
+        super().__init__()
+        self._run_fn = run_fn
+        self._run_kwargs = run_kwargs
+
+    def run(self) -> None:
+        """Called by QThread.started — executes the ODE integration."""
+        try:
+            result = self._run_fn(**self._run_kwargs)
+            self.finished.emit(result)
+        except Exception as exc:  # noqa: BLE001
+            self.error.emit(str(exc))
 
 
 class _SimViewer(Protocol):
@@ -41,6 +75,13 @@ class SimulationPanel(QWidget):
     """Reusable panel that hosts controls, pendulum, and matrix widgets."""
 
     ANIMATION_INTERVAL_MS = 16  # ~60 fps
+
+    #: Emitted when ODE integration starts (background thread launched)
+    sim_started = pyqtSignal()
+    #: Emitted when simulation finishes successfully or with an error
+    sim_finished = pyqtSignal()
+    #: Emitted each time the displayed frame changes (idx: int)
+    frame_changed = pyqtSignal(int)
 
     def __init__(
         self,
@@ -63,6 +104,8 @@ class SimulationPanel(QWidget):
         self._torque_builder = torque_builder
         self._state_builder = state_builder
         self._run_simulation = run_simulation
+
+        self._settings_key: str = "splitter_double"
 
         self._result: Any | None = None
         self._anim_idx = 0
@@ -88,8 +131,8 @@ class SimulationPanel(QWidget):
         scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
         splitter.addWidget(scroll)
 
-        splitter.addWidget(cast(QWidget, self.pendulum))
-        splitter.addWidget(cast(QWidget, self.matrix))
+        splitter.addWidget(cast("QWidget", self.pendulum))
+        splitter.addWidget(cast("QWidget", self.matrix))
 
         # Use proportional sizes: compute from available screen width
         screen = QApplication.primaryScreen()
@@ -98,7 +141,7 @@ class SimulationPanel(QWidget):
         matrix_w = min(280, int(sw * 0.18))
 
         if self.torque_history is not None:
-            splitter.addWidget(cast(QWidget, self.torque_history))
+            splitter.addWidget(cast("QWidget", self.torque_history))
             torque_w = min(260, int(sw * 0.16))
             pend_w = sw - ctrl_w - matrix_w - torque_w - 20
             splitter.setSizes([ctrl_w, pend_w, matrix_w, torque_w])
@@ -114,6 +157,18 @@ class SimulationPanel(QWidget):
             splitter.setStretchFactor(2, 1)
 
         main_layout.addWidget(splitter)
+        self._splitter = splitter  # keep reference for save/restore
+
+        # Restore saved splitter state
+        settings = QSettings("D-sorganization", "PendulumSimulator")
+        saved = settings.value(self._settings_key)
+        if isinstance(saved, QByteArray):
+            self._splitter.restoreState(saved)
+
+    def save_layout(self) -> None:
+        """Persist the current splitter positions to QSettings."""
+        settings = QSettings("D-sorganization", "PendulumSimulator")
+        settings.setValue(self._settings_key, self._splitter.saveState())
 
     def _connect_signals(self) -> None:
         self.controls.run_requested.connect(self._on_run)
@@ -123,6 +178,27 @@ class SimulationPanel(QWidget):
         self.controls.frame_changed.connect(self._on_frame_change)
         self.controls.export_data_requested.connect(self._on_export_data)
         self.controls.export_video_requested.connect(self._on_export_video)
+
+        # Wire new physics/display toggles if the pendulum widget supports them
+        if hasattr(self.controls, "gravity_changed") and hasattr(
+            self.pendulum,
+            "set_gravity_on",
+        ):
+            self.controls.gravity_changed.connect(self.pendulum.set_gravity_on)
+        if hasattr(self.controls, "forces_changed") and hasattr(
+            self.pendulum,
+            "set_show_forces",
+        ):
+            self.controls.forces_changed.connect(self.pendulum.set_show_forces)
+        if hasattr(self.controls, "force_scale_changed") and hasattr(
+            self.pendulum,
+            "set_force_scale",
+        ):
+            self.controls.force_scale_changed.connect(self.pendulum.set_force_scale)
+
+        # Persist splitter when it changes
+        if hasattr(self, "_splitter"):
+            self._splitter.splitterMoved.connect(lambda *_: self.save_layout())
 
     def _setup_timer(self) -> None:
         self._timer = QTimer(self)
@@ -150,34 +226,83 @@ class SimulationPanel(QWidget):
         torque_func = self._torque_builder(p)
 
         self.controls.btn_run.setEnabled(False)
+        self.controls.btn_reset.setEnabled(False)
+        self._show_busy(True)
+        self.sim_started.emit()
 
-        try:
-            result = self._run_simulation(
-                params=params,
-                initial_state=initial_state,
-                t_end=p["t_end"],
-                torque_func=torque_func,
-                dt=0.005,
-            )
-        except Exception as e:
-            QMessageBox.critical(self, "Simulation Error", str(e))
-            self.controls.btn_run.setEnabled(True)
-            return
+        # Build kwargs for the runner function
+        run_kwargs: dict = dict(
+            params=params,
+            initial_state=initial_state,
+            t_end=p["t_end"],
+            torque_func=torque_func,
+            dt=float(p.get("dt", 0.005)),
+        )
 
-        self._result = result
+        # Spin up background thread
+        self._sim_thread = QThread()
+        self._sim_worker = _SimWorker(self._run_simulation, run_kwargs)
+        self._sim_worker.moveToThread(self._sim_thread)
+        self._sim_thread.started.connect(self._sim_worker.run)
+        self._sim_worker.finished.connect(self._on_sim_done)
+        self._sim_worker.error.connect(self._on_sim_error)
+        self._sim_worker.finished.connect(self._sim_thread.quit)
+        self._sim_worker.error.connect(self._sim_thread.quit)
+        self._sim_thread.finished.connect(self._sim_thread.deleteLater)
+        self._sim_thread.start()
+
+    def _on_sim_done(self, result: object) -> None:
+        """Called on the main thread when simulation completes."""
+
+        res: Any = result  # pyqtSignal emits object; cast for attribute access
+
+        self._show_busy(False)
+        self.controls.btn_run.setEnabled(True)
+        self.controls.btn_reset.setEnabled(True)
+        self.sim_finished.emit()
+
+        self._result = res
         self._anim_idx = 0
 
-        self.pendulum.set_simulation(result)
-        self.matrix.set_simulation(result)
+        self.pendulum.set_simulation(res)
+        self.matrix.set_simulation(res)
         if self.torque_history is not None:
-            self.torque_history.set_simulation(result)
-        self.controls.set_slider_range(result.n_steps - 1)
+            self.torque_history.set_simulation(res)
+        self.controls.set_slider_range(res.n_steps - 1)
         self.controls.set_slider_value(0)
         self._display_frame(0)
-        self.controls.btn_run.setEnabled(True)
 
-        # Auto-play the simulation
+        # Auto-play
         self.controls.btn_play.setChecked(True)
+
+    def _on_sim_error(self, msg: str) -> None:
+        """Called on the main thread when simulation fails."""
+        self._show_busy(False)
+        self.controls.btn_run.setEnabled(True)
+        self.controls.btn_reset.setEnabled(True)
+        self.sim_finished.emit()
+        QMessageBox.critical(self, "Simulation Error", msg)
+
+    def _show_busy(self, busy: bool) -> None:
+        """Show / hide a 'Simulating…' indicator in the top-right."""
+        if not hasattr(self, "_busy_label"):
+            self._busy_label = QLabel("⏳  Simulating…", self)
+            self._busy_label.setStyleSheet(
+                "background: #202040; color: #b0b0e8; border: 1px solid #404070;"
+                "border-radius: 4px; padding: 4px 10px; font-size: 12px;"
+            )
+            self._busy_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        if busy:
+            # Position top-centre of this panel
+            self._busy_label.setFixedWidth(160)
+            self._busy_label.move(
+                (self.width() - 160) // 2,
+                8,
+            )
+            self._busy_label.raise_()
+            self._busy_label.show()
+        else:
+            self._busy_label.hide()
 
     def _on_reset(self) -> None:
         self._timer.stop()
@@ -212,12 +337,19 @@ class SimulationPanel(QWidget):
         self._anim_idx = frame
         if hasattr(self.pendulum, "_trail"):
             self.pendulum._trail.clear()
-            trail_start = max(0, frame - getattr(self.pendulum, "TRAIL_LENGTH", 0))
-            for i in range(trail_start, frame + 1):
-                pos = self._result.positions_at(i)
-                tip = pos.get("tip")
-                if tip is not None:
-                    self.pendulum._trail.append(tip)
+            trail_len = getattr(self.pendulum, "TRAIL_LENGTH", 200)
+            trail_start = max(0, frame - trail_len)
+            # Fast path: use vectorized cache if available
+            cache = getattr(self.pendulum, "_tip_positions_cache", None)
+            if cache is not None:
+                for i in range(trail_start, frame + 1):
+                    self.pendulum._trail.append(tuple(cache[i]))
+            else:
+                for i in range(trail_start, frame + 1):
+                    pos = self._result.positions_at(i)
+                    tip = pos.get("tip")
+                    if tip is not None:
+                        self.pendulum._trail.append(tip)
         self._display_frame(frame)
 
     def _advance_frame(self) -> None:
@@ -243,6 +375,22 @@ class SimulationPanel(QWidget):
         self.matrix.set_frame(idx)
         if self.torque_history is not None:
             self.torque_history.set_frame(idx)
+        self.frame_changed.emit(idx)
+
+    def scrub_to_frame(self, idx: int) -> None:
+        """Jump to a specific frame index (called by toolstrip slider)."""
+        if self._result is None:
+            return
+        idx = max(0, min(idx, self._result.n_steps - 1))
+        self._anim_idx = idx
+        self.controls.set_slider_value(idx)
+        self._display_frame(idx)
+
+    def current_n_steps(self) -> int:
+        """Return the number of frames in the current simulation (0 if none)."""
+        if self._result is None:
+            return 0
+        return int(self._result.n_steps)
 
     def _on_export_data(self) -> None:
         if self._result is None:
@@ -250,7 +398,10 @@ class SimulationPanel(QWidget):
             return
 
         path, _ = QFileDialog.getSaveFileName(
-            self, "Export Data", "", "CSV Files (*.csv)"
+            self,
+            "Export Data",
+            "",
+            "CSV Files (*.csv)",
         )
         if not path:
             return
@@ -346,7 +497,10 @@ class SimulationPanel(QWidget):
             return
 
         path, _ = QFileDialog.getSaveFileName(
-            self, "Export Video", "", "MP4 Video (*.mp4);;GIF (*.gif)"
+            self,
+            "Export Video",
+            "",
+            "MP4 Video (*.mp4);;GIF (*.gif)",
         )
         if not path:
             return
@@ -360,7 +514,7 @@ class SimulationPanel(QWidget):
             for i in range(self._result.n_steps):
                 self._display_frame(i)
                 QApplication.processEvents()
-                pix = cast(QWidget, self.pendulum).grab()
+                pix = cast("QWidget", self.pendulum).grab()
                 frame_path = os.path.join(tmp_dir, f"frame_{i:05d}.png")
                 pix.save(frame_path)
 
@@ -369,7 +523,8 @@ class SimulationPanel(QWidget):
                 os.makedirs(out_dir, exist_ok=True)
                 for name in os.listdir(tmp_dir):
                     shutil.move(
-                        os.path.join(tmp_dir, name), os.path.join(out_dir, name)
+                        os.path.join(tmp_dir, name),
+                        os.path.join(out_dir, name),
                     )
                 QMessageBox.warning(
                     self,

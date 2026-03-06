@@ -1,9 +1,15 @@
 """
 Custom QWidget that draws the double pendulum animation.
 
-Renders the two segments, joint markers, a tip trail, and
-optional ghosted past positions.  Coordinate mapping converts
-physics-frame meters into pixel space with configurable scale.
+Renders the two segments, joint markers, a tip trail, force vectors,
+and an interactive zoom/pan canvas.
+
+New in UI/UX upgrade:
+- Mouse-wheel zoom centered on cursor
+- Click-drag pan
+- Zoom toolbar overlay (zoom in / out / reset)
+- show_forces flag gated by external toggle
+- Gravity-off visual indicator
 """
 
 from __future__ import annotations
@@ -11,66 +17,140 @@ from __future__ import annotations
 from collections import deque
 
 import numpy as np
-from PyQt6.QtCore import QPointF, Qt
-from PyQt6.QtGui import QBrush, QColor, QFont, QPainter, QPen
+from PyQt6.QtCore import QPoint, QPointF, QRect, Qt
+from PyQt6.QtGui import QBrush, QColor, QFont, QMouseEvent, QPainter, QPen
 from PyQt6.QtWidgets import QWidget
 
+from ..jacobians import ellipsoids_double, ellipsoids_triple
 from ..simulation import SimulationResult
 
 
 class PendulumWidget(QWidget):
-    """Animated visualization of the double pendulum.
+    """Animated zoomable/pannable visualization of the double (or triple) pendulum.
 
-    Draws shoulder (fixed pivot), arm segment, wrist joint, club segment,
-    and club tip with a fading trail showing recent trajectory.
+    Controls
+    --------
+    Scroll wheel   : zoom in / out centred on cursor
+    Left drag      : pan the view
+    Double-click   : reset zoom & pan
     """
 
     # Color palette
-    COLOR_BG = QColor(20, 20, 30)
-    COLOR_ARM = QColor(70, 130, 230)
-    COLOR_CLUB = QColor(230, 120, 50)
-    COLOR_SHOULDER = QColor(200, 200, 200)
-    COLOR_WRIST = QColor(255, 220, 80)
-    COLOR_WRIST2 = QColor(120, 220, 180)
+    COLOR_BG = QColor(16, 16, 28)
+    COLOR_ARM = QColor(70, 140, 240)
+    COLOR_CLUB = QColor(240, 130, 50)
+    COLOR_SHOULDER = QColor(210, 210, 220)
+    COLOR_WRIST = QColor(255, 225, 80)
+    COLOR_WRIST2 = QColor(120, 225, 185)
     COLOR_TIP = QColor(255, 80, 80)
-    COLOR_TRAIL = QColor(255, 80, 80, 120)
-    COLOR_GRID = QColor(50, 50, 65)
-    COLOR_TEXT = QColor(180, 180, 200)
-    COLOR_GROUND = QColor(40, 100, 40, 80)
+    COLOR_TRAIL = QColor(255, 80, 80)
+    COLOR_GRID = QColor(40, 40, 58)
+    COLOR_GRID_MAJOR = QColor(55, 55, 75)
+    COLOR_TEXT = QColor(180, 180, 205)
+    COLOR_GROUND = QColor(40, 110, 40, 70)
+    COLOR_FORCE = QColor(200, 240, 120)
+    COLOR_OVERLAY_BG = QColor(25, 25, 42, 200)
+    COLOR_NO_GRAVITY = QColor(255, 180, 60)
 
-    TRAIL_LENGTH = 200
+    TRAIL_LENGTH = 300
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        # Responsive: no hard minimum — let the splitter govern size
         self.setMinimumSize(250, 300)
+        self.setMouseTracking(True)
+        self.setCursor(Qt.CursorShape.CrossCursor)
 
         self._result: SimulationResult | None = None
         self._current_idx: int = 0
         self._trail: deque = deque(maxlen=self.TRAIL_LENGTH)
-        self._pixels_per_meter: float = 120.0  # recomputed each paint
+        self._pixels_per_meter: float = 120.0
+
+        # Zoom & pan state
+        self._zoom: float = 1.0
+        self._pan_x: float = 0.0  # pixel offset
+        self._pan_y: float = 0.0
+        self._drag_start: QPoint | None = None
+        self._drag_pan_start: tuple[float, float] = (0.0, 0.0)
+
+        # Feature toggles
+        self._show_forces: bool = False
+        self._gravity_on: bool = True
+        self._force_scale: float = 1.0
+        self._show_mob_ellipsoids: bool = False
+        self._show_force_ellipsoids: bool = False
+
+        # Ellipsoid display scale (meters-per-unit of singlar value)
+        self._ellipsoid_scale: float = 0.3
+
+        # Perf: precomputed tip position cache (n_steps × 2)
+        self._tip_positions_cache: np.ndarray | None = None
 
     # ------------------------------------------------------------------
     # Public interface
     # ------------------------------------------------------------------
 
     def set_simulation(self, result: SimulationResult) -> None:
-        """Load a new simulation result and reset display."""
+        """Load a new simulation result, precompute position cache, and reset display."""
         assert result is not None
         self._result = result
         self._current_idx = 0
         self._trail.clear()
+
+        # Vectorized precomputation of tip positions for fast trail/scrubbing
+        self._tip_positions_cache = self._precompute_tips(result)
+
         self.update()
+
+    @staticmethod
+    def _precompute_tips(result: SimulationResult) -> np.ndarray:
+        """Vectorised forward kinematics for the tip joint across all frames.
+
+        Returns shape (n_steps, 2) float64 array of (x, y) world coords.
+        Bypasses the per-frame Python call overhead.
+        """
+        states = result.states  # (n, 4) or (n, 6)
+        params = result.params
+        L1 = params.L1
+        L2 = params.L2
+
+        theta1 = states[:, 0]
+        phi_or_1 = states[:, 1]
+
+        if states.shape[1] == 6:
+            # Triple pendulum: wrist2 is at arm+phi1+phi2
+            L3 = getattr(params, "L3", L2)
+            phi2 = states[:, 2]
+            # wrist1
+            wx1 = L1 * np.sin(theta1)
+            wy1 = -L1 * np.cos(theta1)
+            abs_phi1 = theta1 + phi_or_1
+            # wrist2
+            wx2 = wx1 + L2 * np.sin(abs_phi1)
+            wy2 = wy1 - L2 * np.cos(abs_phi1)
+            abs_phi2 = theta1 + phi_or_1 + phi2
+            tx = wx2 + L3 * np.sin(abs_phi2)
+            ty = wy2 - L3 * np.cos(abs_phi2)
+        else:
+            # Double pendulum
+            abs_angle2 = theta1 + phi_or_1
+            wx = L1 * np.sin(theta1)
+            wy = -L1 * np.cos(theta1)
+            tx = wx + L2 * np.sin(abs_angle2)
+            ty = wy - L2 * np.cos(abs_angle2)
+
+        return np.column_stack([tx, ty])
 
     def set_frame(self, idx: int) -> None:
         """Advance to frame idx and update the trail."""
         if self._result is None:
             return
         idx = max(0, min(idx, self._result.n_steps - 1))
-
-        # Build trail: add tip position
-        pos = self._result.positions_at(idx)
-        self._trail.append(pos["tip"])
+        # Use cached tip positions for O(1) trail append
+        if self._tip_positions_cache is not None:
+            self._trail.append(tuple(self._tip_positions_cache[idx]))
+        else:
+            pos = self._result.positions_at(idx)
+            self._trail.append(pos["tip"])
         self._current_idx = idx
         self.update()
 
@@ -81,34 +161,106 @@ class PendulumWidget(QWidget):
         self._trail.clear()
         self.update()
 
+    def set_show_forces(self, show: bool) -> None:
+        """Toggle force vector overlay."""
+        self._show_forces = show
+        self.update()
+
+    def set_gravity_on(self, on: bool) -> None:
+        """Toggle gravity indicator (visual only — physics uses g from params)."""
+        self._gravity_on = on
+        self.update()
+
+    def set_force_scale(self, scale: float) -> None:
+        """Set the display scale multiplier for force vectors."""
+        self._force_scale = max(0.01, float(scale))
+        self.update()
+
+    def set_show_mob_ellipsoids(self, show: bool) -> None:
+        """Toggle mobility ellipsoid overlay at segment endpoints."""
+        self._show_mob_ellipsoids = show
+        self.update()
+
+    def set_show_force_ellipsoids(self, show: bool) -> None:
+        """Toggle force ellipsoid overlay at segment endpoints."""
+        self._show_force_ellipsoids = show
+        self.update()
+
+    # ------------------------------------------------------------------
+    # Zoom / Pan — mouse events
+    # ------------------------------------------------------------------
+
+    def wheelEvent(self, event: object) -> None:
+        from PyQt6.QtGui import QWheelEvent
+
+        if not isinstance(event, QWheelEvent):
+            return
+        angle = event.angleDelta().y()
+        factor = 1.15 if angle > 0 else (1.0 / 1.15)
+
+        # Zoom centred on cursor position
+        cursor_x = event.position().x()
+        cursor_y = event.position().y()
+        self._pan_x = cursor_x - factor * (cursor_x - self._pan_x)
+        self._pan_y = cursor_y - factor * (cursor_y - self._pan_y)
+        self._zoom *= factor
+        self._zoom = max(0.1, min(20.0, self._zoom))
+        self.update()
+
+    def mousePressEvent(self, event: object) -> None:
+        if not isinstance(event, QMouseEvent):
+            return
+        if event.button() == Qt.MouseButton.LeftButton:
+            if self._handle_zoom_button_click(event.pos()):
+                return
+            self._drag_start = event.pos()
+            self._drag_pan_start = (self._pan_x, self._pan_y)
+            self.setCursor(Qt.CursorShape.ClosedHandCursor)
+
+    def mouseMoveEvent(self, event: object) -> None:
+        if not isinstance(event, QMouseEvent):
+            return
+        if self._drag_start is not None:
+            delta = event.pos() - self._drag_start
+            self._pan_x = self._drag_pan_start[0] + delta.x()
+            self._pan_y = self._drag_pan_start[1] + delta.y()
+            self.update()
+
+    def mouseReleaseEvent(self, event: object) -> None:
+        if not isinstance(event, QMouseEvent):
+            return
+        if event.button() == Qt.MouseButton.LeftButton:
+            self._drag_start = None
+            self.setCursor(Qt.CursorShape.CrossCursor)
+
+    def mouseDoubleClickEvent(self, event: object) -> None:
+        """Double-click resets zoom & pan to default."""
+        self._zoom = 1.0
+        self._pan_x = 0.0
+        self._pan_y = 0.0
+        self.update()
+
     # ------------------------------------------------------------------
     # Coordinate mapping
     # ------------------------------------------------------------------
 
-    def _compute_scale(self) -> float:
-        """Compute pixels_per_meter so the full pendulum extent fits the widget.
-
-        Uses actual widget width/height at call time — must be called at the
-        start of each paintEvent so the scale is always current.
-        """
+    def _compute_base_scale(self) -> float:
+        """Compute base pixels_per_meter ignoring user zoom."""
         if self._result is not None:
             total_len = self._result.params.L1 + self._result.params.L2
         else:
-            total_len = 2.0  # default for placeholder
-        # Leave 20% margin horizontally, 60% of height available below pivot
+            total_len = 2.0
         w_scale = self.width() * 0.40 / max(total_len, 1e-6)
         h_scale = self.height() * 0.60 / max(total_len, 1e-6)
         return max(30.0, min(w_scale, h_scale))
 
     def _world_to_pixel(self, x_world: float, y_world: float) -> QPointF:
-        """Convert physics (x_right, y_up) to widget pixel coords (x_right, y_down).
-
-        Origin (shoulder) is placed at top-center of the widget.
-        """
-        cx = self.width() / 2.0
-        cy = self.height() * 0.20  # shoulder 20% down from top
-        px = cx + x_world * self._pixels_per_meter
-        py = cy - y_world * self._pixels_per_meter  # flip y
+        """Convert physics coords to widget pixels, applying zoom and pan."""
+        base_ppm = self._pixels_per_meter  # already = _compute_base_scale() * zoom
+        cx = self.width() / 2.0 + self._pan_x
+        cy = self.height() * 0.20 + self._pan_y
+        px = cx + x_world * base_ppm
+        py = cy - y_world * base_ppm
         return QPointF(px, py)
 
     # ------------------------------------------------------------------
@@ -116,13 +268,11 @@ class PendulumWidget(QWidget):
     # ------------------------------------------------------------------
 
     def paintEvent(self, event: object) -> None:
-        # Recompute scale every paint so the pendulum fills the canvas at any size
-        self._pixels_per_meter = self._compute_scale()
+        base_scale = self._compute_base_scale()
+        self._pixels_per_meter = base_scale * self._zoom
 
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-
-        # Background
         painter.fillRect(self.rect(), self.COLOR_BG)
 
         self._draw_grid(painter)
@@ -130,54 +280,69 @@ class PendulumWidget(QWidget):
 
         if self._result is None:
             self._draw_placeholder(painter)
+            self._draw_zoom_controls(painter)
             painter.end()
             return
 
         self._draw_trail(painter)
         self._draw_pendulum(painter)
+
+        if self._show_forces:
+            pos = self._result.positions_at(self._current_idx)
+            self._draw_force_vectors(painter, pos)
+
+        if self._show_mob_ellipsoids or self._show_force_ellipsoids:
+            self._draw_ellipsoids_at_frame(painter)
+
         self._draw_info(painter)
+        self._draw_zoom_controls(painter)
+
+        if not self._gravity_on:
+            self._draw_no_gravity_badge(painter)
+
         painter.end()
 
     def _draw_grid(self, painter: QPainter) -> None:
-        """Draw subtle reference grid lines every 0.5m."""
-        pen = QPen(self.COLOR_GRID, 1, Qt.PenStyle.DotLine)
-        painter.setPen(pen)
+        """Draw subtle reference grid."""
+        max_range = 4.0
+        step_minor = 0.5
+        step_major = 1.0
 
-        max_range = 3.0  # meters
-        step = 0.5
-        r = max_range
-        while r > -max_range:
-            # Horizontal lines
+        r = -max_range
+        while r <= max_range:
+            is_major = abs(r % step_major) < 1e-9
+            color = self.COLOR_GRID_MAJOR if is_major else self.COLOR_GRID
+            pen = QPen(color, 1 if is_major else 0.5, Qt.PenStyle.SolidLine)
+            painter.setPen(pen)
             p1 = self._world_to_pixel(-max_range, r)
             p2 = self._world_to_pixel(max_range, r)
             painter.drawLine(p1, p2)
-            # Vertical lines
             p1 = self._world_to_pixel(r, max_range)
             p2 = self._world_to_pixel(r, -max_range)
             painter.drawLine(p1, p2)
-            r -= step
+            r += step_minor
 
     def _draw_ground_line(self, painter: QPainter) -> None:
-        """Draw a ground reference at y = -(L1+L2) to show full extension."""
         if self._result is None:
             return
         L_total = self._result.params.L1 + self._result.params.L2
-        p1 = self._world_to_pixel(-3.0, -L_total)
-        p2 = self._world_to_pixel(3.0, -L_total)
+        p1 = self._world_to_pixel(-3.5, -L_total)
+        p2 = self._world_to_pixel(3.5, -L_total)
         pen = QPen(self.COLOR_GROUND, 2, Qt.PenStyle.DashLine)
         painter.setPen(pen)
         painter.drawLine(p1, p2)
 
     def _draw_trail(self, painter: QPainter) -> None:
-        """Draw fading trail of the club tip."""
         n = len(self._trail)
         if n < 2:
             return
         for i in range(1, n):
-            alpha = int(40 + 160 * (i / n))
-            color = QColor(255, 80, 80, alpha)
-            width = 1.0 + 2.0 * (i / n)
+            alpha = int(30 + 180 * (i / n))
+            width = 1.0 + 2.5 * (i / n)
+            color = QColor(self.COLOR_TRAIL)
+            color.setAlpha(alpha)
             pen = QPen(color, width)
+            pen.setCapStyle(Qt.PenCapStyle.RoundCap)
             painter.setPen(pen)
             x0, y0 = self._trail[i - 1]
             x1, y1 = self._trail[i]
@@ -188,7 +353,7 @@ class PendulumWidget(QWidget):
 
     def _draw_pendulum(self, painter: QPainter) -> None:
         """Draw the segments and joint markers."""
-        assert self._result is not None  # only called after None guard in paintEvent
+        assert self._result is not None
         pos = self._result.positions_at(self._current_idx)
         shoulder = self._world_to_pixel(*pos["shoulder"])
         tip = self._world_to_pixel(*pos["tip"])
@@ -200,98 +365,85 @@ class PendulumWidget(QWidget):
         else:
             wrist1 = self._world_to_pixel(*pos["wrist"])
 
-        # Arm segment
-        pen = QPen(self.COLOR_ARM, 5, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap)
+        # Arm segment (shoulder → wrist)
+        pen = QPen(self.COLOR_ARM, 5)
+        pen.setCapStyle(Qt.PenCapStyle.RoundCap)
         painter.setPen(pen)
         painter.drawLine(shoulder, wrist1)
 
-        if wrist2 is None:
-            # Club segment
-            pen = QPen(
-                self.COLOR_CLUB, 4, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap
-            )
-            painter.setPen(pen)
-            painter.drawLine(wrist1, tip)
-        else:
-            # Segment 2
-            pen = QPen(
-                self.COLOR_CLUB, 4, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap
-            )
-            painter.setPen(pen)
-            painter.drawLine(wrist1, wrist2)
+        # Club segment 1 (wrist → wrist2 or tip)
+        pen = QPen(self.COLOR_CLUB, 4)
+        pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+        painter.setPen(pen)
+        painter.drawLine(wrist1, wrist2 if wrist2 is not None else tip)
 
-            # Segment 3
-            pen = QPen(
-                self.COLOR_TIP, 3, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap
-            )
-            painter.setPen(pen)
+        # Club segment 2 (wrist2 → tip) if triple
+        if wrist2 is not None:
+            pen2 = QPen(self.COLOR_WRIST2, 3)
+            pen2.setCapStyle(Qt.PenCapStyle.RoundCap)
+            painter.setPen(pen2)
             painter.drawLine(wrist2, tip)
 
-        # Joint markers
+        # Joints
         self._draw_joint(painter, shoulder, 8, self.COLOR_SHOULDER)
         self._draw_joint(painter, wrist1, 6, self.COLOR_WRIST)
         if wrist2 is not None:
             self._draw_joint(painter, wrist2, 5, self.COLOR_WRIST2)
         self._draw_joint(painter, tip, 5, self.COLOR_TIP)
 
-        self._draw_force_vectors(painter, pos)
-
     def _draw_joint(
-        self, painter: QPainter, pos: QPointF, radius: int, color: QColor
+        self, painter: QPainter, pos: QPointF, radius: float, color: QColor
     ) -> None:
-        """Draw a filled circle at a joint position."""
+        # Glow
+        glow = QColor(color)
+        glow.setAlpha(60)
         painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QBrush(glow))
+        painter.drawEllipse(pos, radius * 2, radius * 2)
+        # Core
         painter.setBrush(QBrush(color))
         painter.drawEllipse(pos, radius, radius)
 
     def _draw_info(self, painter: QPainter) -> None:
-        """Draw time and angle readout in the corner."""
-        assert self._result is not None  # only called after None guard in paintEvent
+        assert self._result is not None
         t = self._result.t[self._current_idx]
         s = self._result.states[self._current_idx]
         theta1_deg = np.degrees(s[0])
         phi_deg = np.degrees(s[1])
 
-        font = QFont("Monospace", 10)
-        painter.setFont(font)
+        painter.setFont(QFont("Monospace", 9))
         painter.setPen(self.COLOR_TEXT)
 
-        lines = [f"t = {t:.3f} s", f"\u03b81 = {theta1_deg:+.1f}\u00b0"]
-
+        lines = [
+            f"t = {t:.3f} s",
+            f"θ1 = {theta1_deg:+.1f}°",
+        ]
         if s.shape[0] >= 6:
             phi2_deg = np.degrees(s[2])
-            lines += [
-                f"\u03c61 = {phi_deg:+.1f}\u00b0",
-                f"\u03c62 = {phi2_deg:+.1f}\u00b0",
-                f"d\u03b81 = {s[3]:+.2f} rad/s",
-                f"d\u03c61 = {s[4]:+.2f} rad/s",
-                f"d\u03c62 = {s[5]:+.2f} rad/s",
-            ]
+            lines.append(f"φ1 = {phi_deg:+.1f}°")
+            lines.append(f"φ2 = {phi2_deg:+.1f}°")
         else:
-            lines += [
-                f"\u03c6  = {phi_deg:+.1f}\u00b0",
-                f"d\u03b81 = {s[2]:+.2f} rad/s",
-                f"d\u03c6  = {s[3]:+.2f} rad/s",
-            ]
+            lines.append(f"φ = {phi_deg:+.1f}°")
 
-        y = 20
+        lines.append(f"zoom {self._zoom:.1f}×")
+
+        y = 18
         for line in lines:
-            painter.drawText(10, y, line)
-            y += 18
+            painter.drawText(8, y, line)
+            y += 15
 
     def _draw_placeholder(self, painter: QPainter) -> None:
-        """Draw message when no simulation is loaded."""
-        font = QFont("Sans", 14)
-        painter.setFont(font)
-        painter.setPen(self.COLOR_TEXT)
+        painter.setPen(QColor(80, 80, 110))
+        painter.setFont(QFont("Sans", 12))
         painter.drawText(
             self.rect(),
             Qt.AlignmentFlag.AlignCenter,
-            "Configure parameters\nand click 'Run Simulation'",
+            "Configure parameters\nand click 'Run Simulation'\n\n"
+            "Scroll to zoom · Drag to pan · Double-click to reset",
         )
 
     def _draw_force_vectors(self, painter: QPainter, pos: dict) -> None:
-        """Draw net force vectors at joints (proximal acting on distal)."""
+        """Draw net force vectors at joints."""
         if self._result is None or not hasattr(self._result, "joint_forces_at"):
             return
         forces = self._result.joint_forces_at(self._current_idx)
@@ -300,7 +452,7 @@ class PendulumWidget(QWidget):
 
         magnitudes = [np.hypot(f[0], f[1]) for f in forces.values()]
         max_mag = max(1.0, max(magnitudes))
-        scale = 0.3 * self._pixels_per_meter / max_mag
+        scale = 0.4 * self._pixels_per_meter / max_mag
 
         joint_map = {
             "shoulder": pos.get("shoulder"),
@@ -309,7 +461,7 @@ class PendulumWidget(QWidget):
             "wrist2": pos.get("wrist2"),
         }
 
-        painter.setPen(QPen(QColor(200, 240, 120), 2))
+        painter.setPen(QPen(self.COLOR_FORCE, 2))
         for key, force in forces.items():
             joint_pos = joint_map.get(key)
             if joint_pos is None:
@@ -321,26 +473,221 @@ class PendulumWidget(QWidget):
             )
             self._draw_arrow(painter, joint_pos, end)
 
+    # ------------------------------------------------------------------
+    # Ellipsoid drawing
+    # ------------------------------------------------------------------
+
+    # Color constants for ellipsoids
+    COLOR_MOB_ELLIPSOID = QColor(100, 200, 255, 70)  # translucent cyan
+    COLOR_MOB_OUTLINE = QColor(100, 200, 255, 180)
+    COLOR_FORCE_ELLIPSOID = QColor(255, 160, 80, 60)  # translucent orange
+    COLOR_FORCE_OUTLINE = QColor(255, 160, 80, 180)
+
+    def _draw_ellipsoids_at_frame(self, painter: QPainter) -> None:
+        """Compute and draw mobility/force ellipsoids for the current frame."""
+        assert self._result is not None
+        state = self._result.states[self._current_idx]
+        params = self._result.params
+        ppm = self._pixels_per_meter
+        scale = self._ellipsoid_scale * ppm  # pixels per singular-value unit
+
+        if state.shape[0] >= 6:
+            # Triple pendulum
+            theta1, phi1, phi2 = float(state[0]), float(state[1]), float(state[2])
+            data = ellipsoids_triple(
+                theta1,
+                phi1,
+                phi2,
+                params.L1,
+                params.L2,
+                params.L3,  # type: ignore[attr-defined]
+            )
+            pos = self._result.positions_at(self._current_idx)
+            endpoint_map = {
+                "wrist1": pos.get("wrist1", pos.get("wrist", (0.0, 0.0))),
+                "wrist2": pos.get("wrist2", (0.0, 0.0)),
+                "tip": pos["tip"],
+            }
+        else:
+            # Double pendulum
+            theta1, phi = float(state[0]), float(state[1])
+            data = ellipsoids_double(theta1, phi, params.L1, params.L2)
+            pos = self._result.positions_at(self._current_idx)
+            endpoint_map = {
+                "wrist": pos.get("wrist", (0.0, 0.0)),
+                "tip": pos["tip"],
+            }
+
+        for name, ell in data.items():
+            world_pos = endpoint_map.get(name)
+            if world_pos is None:
+                continue
+            cx_px, cy_px = (
+                self._world_to_pixel(*world_pos).x(),
+                self._world_to_pixel(*world_pos).y(),
+            )
+
+            dirs = ell["directions"]  # (2,2), columns are principal axes
+            if self._show_mob_ellipsoids:
+                mob = ell["mob_semi_axes"]  # (2,) in physics units
+                self._draw_ellipse_axes(
+                    painter,
+                    cx_px,
+                    cy_px,
+                    dirs,
+                    mob * scale,
+                    fill=self.COLOR_MOB_ELLIPSOID,
+                    outline=self.COLOR_MOB_OUTLINE,
+                    label="M",
+                )
+            if self._show_force_ellipsoids and ell["force_semi_axes"] is not None:
+                force = ell["force_semi_axes"]  # (2,)
+                self._draw_ellipse_axes(
+                    painter,
+                    cx_px,
+                    cy_px,
+                    dirs,
+                    force * scale,
+                    fill=self.COLOR_FORCE_ELLIPSOID,
+                    outline=self.COLOR_FORCE_OUTLINE,
+                    label="F",
+                )
+
+    def _draw_ellipse_axes(
+        self,
+        painter: QPainter,
+        cx: float,
+        cy: float,
+        directions: np.ndarray,
+        semi_axes_px: np.ndarray,
+        fill: QColor,
+        outline: QColor,
+        label: str = "",
+    ) -> None:
+        """Draw a 2-D ellipse defined by principal axes and semi-axis lengths (pixels).
+
+        Contract
+        --------
+        directions : (2, 2) orthonormal matrix; columns are principal axes.
+        semi_axes_px : (2,) non-negative pixel semi-axis lengths.
+        """
+        assert directions.shape == (2, 2), "directions must be (2, 2)"
+        assert semi_axes_px.shape == (2,), "semi_axes_px must be (2,)"
+
+        a = float(semi_axes_px[0])  # major semi-axis (pixels)
+        b = float(semi_axes_px[1])  # minor semi-axis (pixels)
+
+        # Clamp to sensible display range
+        max_px = min(self.width(), self.height()) * 0.8
+        a = max(2.0, min(a, max_px))
+        b = max(2.0, min(b, max_px))
+
+        # Principal-axis direction (column 0 of U = major axis)
+        dx, dy = float(directions[0, 0]), float(directions[1, 0])
+        # In screen coords: y is flipped, so negate dy
+        angle_deg = float(np.degrees(np.arctan2(-dy, dx)))
+
+        painter.save()
+        painter.translate(cx, cy)
+        painter.rotate(angle_deg)
+        painter.setBrush(QBrush(fill))
+        painter.setPen(QPen(outline, 1.2))
+        # drawEllipse(x, y, w, h) where x,y is top-left corner
+        painter.drawEllipse(
+            QPointF(0.0, 0.0),
+            a,  # half-width  = major semi-axis
+            b,  # half-height = minor semi-axis
+        )
+        painter.restore()
+
+        # Small label at ellipse edge
+        if label:
+            lbl_x = cx + float(directions[0, 0]) * a + 4
+            lbl_y = cy - float(directions[1, 0]) * a
+            painter.setFont(QFont("Monospace", 7))
+            painter.setPen(outline)
+            painter.drawText(QPointF(lbl_x, lbl_y), label)
+
     def _draw_arrow(self, painter: QPainter, origin: tuple, end: tuple) -> None:
-        """Draw an arrow from origin to end in world coordinates."""
         p0 = self._world_to_pixel(origin[0], origin[1])
         p1 = self._world_to_pixel(end[0], end[1])
         painter.drawLine(p0, p1)
-
+        # Arrowhead
         dx = p1.x() - p0.x()
         dy = p1.y() - p0.y()
-        length = max(1.0, (dx * dx + dy * dy) ** 0.5)
-        ux = dx / length
-        uy = dy / length
-        size = 8.0
+        length = max(1.0, np.hypot(dx, dy))
+        ux, uy = dx / length, dy / length
+        arrow_len = 8.0
+        painter.drawLine(
+            p1,
+            QPointF(
+                p1.x() - arrow_len * (ux + 0.4 * uy),
+                p1.y() - arrow_len * (uy - 0.4 * ux),
+            ),
+        )
+        painter.drawLine(
+            p1,
+            QPointF(
+                p1.x() - arrow_len * (ux - 0.4 * uy),
+                p1.y() - arrow_len * (uy + 0.4 * ux),
+            ),
+        )
 
-        left = QPointF(
-            p1.x() - size * (ux * 0.7 + uy * 0.7),
-            p1.y() - size * (uy * 0.7 - ux * 0.7),
-        )
-        right = QPointF(
-            p1.x() - size * (ux * 0.7 - uy * 0.7),
-            p1.y() - size * (uy * 0.7 + ux * 0.7),
-        )
-        painter.drawLine(p1, left)
-        painter.drawLine(p1, right)
+    def _draw_zoom_controls(self, painter: QPainter) -> None:
+        """Draw a small zoom toolbar in the top-right corner."""
+        r = self.rect()
+        btn_size = 24
+        margin = 6
+        x = r.right() - btn_size - margin
+        y_start = margin
+
+        buttons = [("⊕", "Zoom in"), ("⊖", "Zoom out"), ("⤢", "Reset view")]
+        painter.setFont(QFont("Sans", 11))
+
+        for i, (icon, _) in enumerate(buttons):
+            bx = x
+            by = y_start + i * (btn_size + 3)
+            rect = QRect(bx, by, btn_size, btn_size)
+
+            # Background
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.setBrush(QBrush(self.COLOR_OVERLAY_BG))
+            painter.drawRoundedRect(rect, 4, 4)
+
+            # Icon
+            painter.setPen(QColor(180, 180, 210))
+            painter.drawText(rect, Qt.AlignmentFlag.AlignCenter, icon)
+
+        # Store rects for mouse click handling (stored as attribute)
+        self._zoom_btn_rects = [
+            QRect(x, y_start + i * (btn_size + 3), btn_size, btn_size)
+            for i in range(len(buttons))
+        ]
+
+    def _draw_no_gravity_badge(self, painter: QPainter) -> None:
+        badge_rect = QRect(8, self.height() - 28, 120, 22)
+        painter.setPen(Qt.PenStyle.NoPen)
+        bg = QColor(60, 40, 0, 180)
+        painter.setBrush(QBrush(bg))
+        painter.drawRoundedRect(badge_rect, 4, 4)
+        painter.setPen(self.COLOR_NO_GRAVITY)
+        painter.setFont(QFont("Sans", 9, QFont.Weight.Bold))
+        painter.drawText(badge_rect, Qt.AlignmentFlag.AlignCenter, "⚠ Gravity OFF")
+
+    # Handle zoom button clicks
+    def _handle_zoom_button_click(self, pos: QPoint) -> bool:
+        if not hasattr(self, "_zoom_btn_rects"):
+            return False
+        for i, rect in enumerate(self._zoom_btn_rects):
+            if rect.contains(pos):
+                if i == 0:
+                    self._zoom = min(20.0, self._zoom * 1.3)
+                elif i == 1:
+                    self._zoom = max(0.1, self._zoom / 1.3)
+                else:
+                    self._zoom = 1.0
+                    self._pan_x = 0.0
+                    self._pan_y = 0.0
+                self.update()
+                return True
+        return False

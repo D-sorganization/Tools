@@ -9,7 +9,6 @@ import pytest
 
 from double_pendulum_golf.physics import (
     PendulumParams,
-    equations_of_motion,
     friction_torque_vector,
 )
 from double_pendulum_golf.simulation import (
@@ -18,10 +17,10 @@ from double_pendulum_golf.simulation import (
     run_simulation,
 )
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def base_params() -> PendulumParams:
@@ -44,14 +43,21 @@ def frictional_params() -> PendulumParams:
 def combined_params() -> PendulumParams:
     """Params with both viscous damping and Coulomb friction."""
     return PendulumParams(
-        m1=5.0, m2=0.5, L1=0.6, L2=1.0,
-        b1=0.3, b2=0.1, mu1=0.05, mu2=0.02,
+        m1=5.0,
+        m2=0.5,
+        L1=0.6,
+        L2=1.0,
+        b1=0.3,
+        b2=0.1,
+        mu1=0.05,
+        mu2=0.02,
     )
 
 
 # ---------------------------------------------------------------------------
 # PendulumParams contract tests
 # ---------------------------------------------------------------------------
+
 
 class TestPendulumParamsContracts:
     """Verify new DbC constraints on damping/friction parameters."""
@@ -93,6 +99,7 @@ class TestPendulumParamsContracts:
 # friction_torque_vector tests
 # ---------------------------------------------------------------------------
 
+
 class TestFrictionTorqueVector:
     """Unit tests for the friction torque computation."""
 
@@ -122,9 +129,12 @@ class TestFrictionTorqueVector:
     ) -> None:
         """Coulomb friction magnitude is mu regardless of velocity magnitude."""
         for speed in [0.1, 1.0, 10.0, 100.0]:
-            tf = friction_torque_vector(dtheta1=speed, dphi=speed, params=frictional_params)
-            assert np.isclose(abs(tf[0]), frictional_params.mu1), \
-                f"Expected |tau_f1|={frictional_params.mu1}, got {abs(tf[0])} at speed={speed}"
+            tf = friction_torque_vector(
+                dtheta1=speed, dphi=speed, params=frictional_params
+            )
+            assert np.isclose(
+                abs(tf[0]), frictional_params.mu1
+            ), f"Expected |tau_f1|={frictional_params.mu1}, got {abs(tf[0])} at speed={speed}"
 
     def test_coulomb_zero_at_rest(self, frictional_params: PendulumParams) -> None:
         """np.sign(0) == 0, so Coulomb friction is zero when stationary."""
@@ -138,20 +148,14 @@ class TestFrictionTorqueVector:
         dtheta1, dphi = 1.5, -0.8
         tf = friction_torque_vector(dtheta1, dphi, combined_params)
 
-        expected_1 = (
-            -combined_params.b1 * dtheta1
-            - combined_params.mu1 * np.sign(dtheta1)
+        expected_1 = -combined_params.b1 * dtheta1 - combined_params.mu1 * np.sign(
+            dtheta1
         )
-        expected_2 = (
-            -combined_params.b2 * dphi
-            - combined_params.mu2 * np.sign(dphi)
-        )
+        expected_2 = -combined_params.b2 * dphi - combined_params.mu2 * np.sign(dphi)
         assert np.isclose(tf[0], expected_1)
         assert np.isclose(tf[1], expected_2)
 
-    def test_output_shape_and_finiteness(
-        self, combined_params: PendulumParams
-    ) -> None:
+    def test_output_shape_and_finiteness(self, combined_params: PendulumParams) -> None:
         tf = friction_torque_vector(dtheta1=5.0, dphi=3.0, params=combined_params)
         assert tf.shape == (2,)
         assert all(np.isfinite(tf))
@@ -160,6 +164,7 @@ class TestFrictionTorqueVector:
 # ---------------------------------------------------------------------------
 # EOM integration tests with dissipation
 # ---------------------------------------------------------------------------
+
 
 class TestEquationsOfMotionWithDissipation:
     """Verify that EOM correctly incorporates friction into dynamics."""
@@ -184,12 +189,11 @@ class TestEquationsOfMotionWithDissipation:
         e_start = total_energy(result.states[0], base_params)
         e_end = total_energy(result.states[-1], base_params)
         # Allow ~1% drift from numerical integration
-        assert abs(e_end - e_start) / max(abs(e_start), 1e-9) < 0.01, \
-            f"Energy drift too large: {e_start:.4f} → {e_end:.4f}"
+        assert (
+            abs(e_end - e_start) / max(abs(e_start), 1e-9) < 0.01
+        ), f"Energy drift too large: {e_start:.4f} → {e_end:.4f}"
 
-    def test_damped_pendulum_loses_energy(
-        self, damped_params: PendulumParams
-    ) -> None:
+    def test_damped_pendulum_loses_energy(self, damped_params: PendulumParams) -> None:
         """With viscous damping, total energy must decrease over time."""
         from double_pendulum_golf.physics import total_energy
 
@@ -206,12 +210,11 @@ class TestEquationsOfMotionWithDissipation:
 
         e_start = total_energy(result.states[0], damped_params)
         e_end = total_energy(result.states[-1], damped_params)
-        assert e_end < e_start, \
-            f"Damped pendulum energy should decrease: {e_start:.4f} → {e_end:.4f}"
+        assert (
+            e_end < e_start
+        ), f"Damped pendulum energy should decrease: {e_start:.4f} → {e_end:.4f}"
 
-    def test_friction_does_not_blow_up(
-        self, combined_params: PendulumParams
-    ) -> None:
+    def test_friction_does_not_blow_up(self, combined_params: PendulumParams) -> None:
         """Simulation with both friction types must remain numerically stable."""
         state0 = np.array([np.radians(120), np.radians(-90), 0.0, 0.0])
         torque_func = make_polynomial_torque([-25.0, 10.0], [0.0])
@@ -225,21 +228,21 @@ class TestEquationsOfMotionWithDissipation:
         )
 
         assert result.n_steps >= 2
-        assert all(np.isfinite(result.states.flatten())), \
-            "Simulation with combined friction/damping produced non-finite states"
+        assert all(
+            np.isfinite(result.states.flatten())
+        ), "Simulation with combined friction/damping produced non-finite states"
 
 
 # ---------------------------------------------------------------------------
 # SimulationResult friction accessor tests
 # ---------------------------------------------------------------------------
 
+
 class TestSimulationResultFrictionAccessors:
     """Verify friction_torques_at and total_torques_at methods."""
 
     @pytest.fixture
-    def friction_result(
-        self, combined_params: PendulumParams
-    ) -> SimulationResult:
+    def friction_result(self, combined_params: PendulumParams) -> SimulationResult:
         state0 = np.array([np.radians(90), 0.0, 0.5, 0.0])
         torque_func = make_polynomial_torque([5.0], [0.0])
         return run_simulation(
@@ -250,9 +253,7 @@ class TestSimulationResultFrictionAccessors:
             dt=0.005,
         )
 
-    def test_friction_torques_shape(
-        self, friction_result: SimulationResult
-    ) -> None:
+    def test_friction_torques_shape(self, friction_result: SimulationResult) -> None:
         tf = friction_result.friction_torques_at(0)
         assert tf.shape == (2,)
 
@@ -278,5 +279,6 @@ class TestSimulationResultFrictionAccessors:
         )
         for i in range(0, result.n_steps, 20):
             tf = result.friction_torques_at(i)
-            assert np.allclose(tf, [0.0, 0.0]), \
-                f"Expected zero friction torques at step {i}, got {tf}"
+            assert np.allclose(
+                tf, [0.0, 0.0]
+            ), f"Expected zero friction torques at step {i}, got {tf}"

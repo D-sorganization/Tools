@@ -11,7 +11,7 @@ from PyQt6.QtWidgets import QApplication
 from .gui import MainWindow
 
 
-def main():
+def main() -> None:
     app = QApplication(sys.argv)
     app.setStyle("Fusion")  # consistent cross-platform look
 

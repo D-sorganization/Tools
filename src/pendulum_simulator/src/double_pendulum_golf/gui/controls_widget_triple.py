@@ -6,15 +6,16 @@ import numpy as np
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import (
-    QWidget,
-    QVBoxLayout,
+    QCheckBox,
+    QComboBox,
+    QDoubleSpinBox,
+    QGroupBox,
     QHBoxLayout,
     QLabel,
     QPushButton,
     QSlider,
-    QGroupBox,
-    QComboBox,
-    QDoubleSpinBox,
+    QVBoxLayout,
+    QWidget,
 )
 
 from .controls_widget import LabeledInput
@@ -31,6 +32,8 @@ class ControlsWidgetTriple(QWidget):
     frame_changed = pyqtSignal(int)
     export_data_requested = pyqtSignal()
     export_video_requested = pyqtSignal()
+    gravity_changed = pyqtSignal(bool)
+    forces_changed = pyqtSignal(bool)
 
     PRESETS = {
         "Triple Swing": (
@@ -264,6 +267,37 @@ class ControlsWidgetTriple(QWidget):
         export_layout.addWidget(self.btn_export_video)
         main_layout.addWidget(export_group)
 
+        # ── Physics & Display toggles ─────────────────────────────
+        vis_group = QGroupBox("Physics & Display")
+        vis_group.setStyleSheet(
+            "QGroupBox { color: #c0c0d8; border: 1px solid #404058;"
+            "border-radius: 5px; margin-top: 8px; padding-top: 14px;"
+            "font-weight: bold; }"
+            "QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 4px; }"
+        )
+        vl = QVBoxLayout(vis_group)
+        vl.setSpacing(4)
+
+        _STYLE_CHECK = (
+            "QCheckBox { color: #c0c0d8; font-size: 11px; spacing: 5px; }"
+            "QCheckBox::indicator { width: 14px; height: 14px; border: 1px solid #505068;"
+            "border-radius: 3px; background: #2a2a38; }"
+            "QCheckBox::indicator:checked { background: #5060a0; border-color: #7080c0; }"
+        )
+        self.chk_gravity = QCheckBox("🌍  Gravity enabled")
+        self.chk_gravity.setChecked(True)
+        self.chk_gravity.setStyleSheet(_STYLE_CHECK)
+        self.chk_gravity.toggled.connect(self.gravity_changed.emit)
+
+        self.chk_forces = QCheckBox("↗  Show force vectors")
+        self.chk_forces.setChecked(False)
+        self.chk_forces.setStyleSheet(_STYLE_CHECK)
+        self.chk_forces.toggled.connect(self.forces_changed.emit)
+
+        vl.addWidget(self.chk_gravity)
+        vl.addWidget(self.chk_forces)
+        main_layout.addWidget(vis_group)
+
         main_layout.addStretch()
 
         self.inp_tau_shoulder.edit.textChanged.connect(self._update_torque_preview)
@@ -344,6 +378,7 @@ class ControlsWidgetTriple(QWidget):
             "elbow_coeffs": parse_coeffs(self.inp_tau_elbow, "Elbow torque"),
             "wrist_coeffs": parse_coeffs(self.inp_tau_wrist, "Wrist torque"),
             "t_end": parse_float(self.inp_tend, "Duration"),
+            "gravity_on": self.chk_gravity.isChecked(),
         }
 
     def _update_torque_preview(self) -> None:
