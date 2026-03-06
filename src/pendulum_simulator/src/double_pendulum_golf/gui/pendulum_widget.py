@@ -74,26 +74,77 @@ class PendulumWidget(QWidget):
         # Feature toggles
         self._show_forces: bool = False
         self._gravity_on: bool = True
+        self._force_scale: float = 1.0
+
+        # Perf: precomputed tip position cache (n_steps × 2)
+        self._tip_positions_cache: np.ndarray | None = None
 
     # ------------------------------------------------------------------
     # Public interface
     # ------------------------------------------------------------------
 
     def set_simulation(self, result: SimulationResult) -> None:
-        """Load a new simulation result and reset display."""
+        """Load a new simulation result, precompute position cache, and reset display."""
         assert result is not None
         self._result = result
         self._current_idx = 0
         self._trail.clear()
+
+        # Vectorized precomputation of tip positions for fast trail/scrubbing
+        self._tip_positions_cache = self._precompute_tips(result)
+
         self.update()
+
+    @staticmethod
+    def _precompute_tips(result: SimulationResult) -> np.ndarray:
+        """Vectorised forward kinematics for the tip joint across all frames.
+
+        Returns shape (n_steps, 2) float64 array of (x, y) world coords.
+        Bypasses the per-frame Python call overhead.
+        """
+        states = result.states  # (n, 4) or (n, 6)
+        params = result.params
+        L1 = params.L1
+        L2 = params.L2
+
+        theta1 = states[:, 0]
+        phi_or_1 = states[:, 1]
+
+        if states.shape[1] == 6:
+            # Triple pendulum: wrist2 is at arm+phi1+phi2
+            L3 = getattr(params, "L3", L2)
+            phi2 = states[:, 2]
+            # wrist1
+            wx1 = L1 * np.sin(theta1)
+            wy1 = -L1 * np.cos(theta1)
+            abs_phi1 = theta1 + phi_or_1
+            # wrist2
+            wx2 = wx1 + L2 * np.sin(abs_phi1)
+            wy2 = wy1 - L2 * np.cos(abs_phi1)
+            abs_phi2 = theta1 + phi_or_1 + phi2
+            tx = wx2 + L3 * np.sin(abs_phi2)
+            ty = wy2 - L3 * np.cos(abs_phi2)
+        else:
+            # Double pendulum
+            abs_angle2 = theta1 + phi_or_1
+            wx = L1 * np.sin(theta1)
+            wy = -L1 * np.cos(theta1)
+            tx = wx + L2 * np.sin(abs_angle2)
+            ty = wy - L2 * np.cos(abs_angle2)
+
+        return np.column_stack([tx, ty])
 
     def set_frame(self, idx: int) -> None:
         """Advance to frame idx and update the trail."""
         if self._result is None:
             return
         idx = max(0, min(idx, self._result.n_steps - 1))
-        pos = self._result.positions_at(idx)
-        self._trail.append(pos["tip"])
+        # Use cached tip positions for O(1) trail append
+        if self._tip_positions_cache is not None:
+            self._trail.append(tuple(self._tip_positions_cache[idx]))
+        else:
+            pos = self._result.positions_at(idx)
+            self._trail.append(pos["tip"])
         self._current_idx = idx
         self.update()
 
@@ -112,6 +163,11 @@ class PendulumWidget(QWidget):
     def set_gravity_on(self, on: bool) -> None:
         """Toggle gravity indicator (visual only — physics uses g from params)."""
         self._gravity_on = on
+        self.update()
+
+    def set_force_scale(self, scale: float) -> None:
+        """Set the display scale multiplier for force vectors."""
+        self._force_scale = max(0.01, float(scale))
         self.update()
 
     # ------------------------------------------------------------------

@@ -1,22 +1,28 @@
 """
 Main application window for the Double Pendulum Golf Swing Simulator.
 
-Orchestrates the three sub-widgets (PendulumWidget, MatrixWidget,
-ControlsWidget), manages the simulation lifecycle, and drives the
-animation timer.
+Orchestrates sub-widgets, manages simulation lifecycle, drives animation.
 
 New in UI/UX upgrade:
-- QSettings persistence for window geometry
-- gravity_on wired to physics g parameter (0.0 when off, 9.81 when on)
-- Polished dark chrome styling
+- QSettings persistence for window geometry + splitters
+- Gravity toggle wired to g=0/9.81 in params builders
+- Menu bar: View → Themes (fleet ThemeManager) + quick-switch submenu
+- Current dark style preserved as "Pendulum Dark" fallback
 """
 
+from __future__ import annotations
+
+import logging
+import sys
+from pathlib import Path
+
 import numpy as np
-from PyQt6.QtCore import QByteArray, QSettings, Qt
-from PyQt6.QtGui import QFont
+from PyQt6.QtCore import QByteArray, QSettings
+from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
-    QLabel,
     QMainWindow,
+    QMenu,
+    QMenuBar,
     QStatusBar,
     QTabWidget,
     QVBoxLayout,
@@ -36,86 +42,129 @@ from .pendulum_widget import PendulumWidget
 from .simulation_panel import SimulationPanel
 from .torque_history_widget import TorqueHistoryWidget
 
+logger = logging.getLogger(__name__)
+
 _SETTINGS_ORG = "D-sorganization"
 _SETTINGS_APP = "PendulumSimulator"
 
+# ── Try to import fleet ThemeManager ─────────────────────────────────────────
+_THEME_AVAILABLE = False
+try:
+    _shared_root = Path(__file__).parents[7] / "shared" / "python"
+    if str(_shared_root) not in sys.path and _shared_root.exists():
+        sys.path.insert(0, str(_shared_root))
+    from theme import (
+        ThemeManager,
+        ThemeManagerDialog,
+        create_theme_menu,
+    )
+
+    _THEME_AVAILABLE = True
+except ImportError:
+    ThemeManager = None
+    ThemeManagerDialog = None
+    create_theme_menu = None
+
+# ── Pendulum dark stylesheet (preserved regardless of theme system) ────────────
+_PENDULUM_DARK_STYLE = """
+    QMainWindow { background: #12121c; }
+    QStatusBar  { background: #12121c; color: #7878a0; font-size: 11px;
+                  border-top: 1px solid #282840; }
+    QTabWidget::pane { border: 1px solid #303050; background: #12121c; }
+    QTabBar::tab { background: #1e1e30; color: #9090b0; border: 1px solid #303050;
+                   padding: 7px 18px; margin-right: 2px; border-bottom: none;
+                   font-size: 12px; }
+    QTabBar::tab:selected { background: #282848; color: #d0d0f0;
+                            border-bottom: 2px solid #6070c0; }
+    QTabBar::tab:hover    { background: #222238; color: #c0c0e8; }
+    QSplitter::handle { background: #282848; width: 4px; }
+    QSplitter::handle:hover { background: #404068; }
+    QScrollBar:vertical { background: #1a1a2a; width: 10px; border: none; }
+    QScrollBar::handle:vertical { background: #404060; min-height: 20px;
+                                  border-radius: 5px; }
+    QScrollBar::handle:vertical:hover { background: #5060a0; }
+    QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
+    QScrollBar:horizontal { background: #1a1a2a; height: 10px; border: none; }
+    QScrollBar::handle:horizontal { background: #404060; min-width: 20px;
+                                    border-radius: 5px; }
+    QScrollBar::handle:horizontal:hover { background: #5060a0; }
+    QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0; }
+    QLabel { color: #c0c0d8; }
+    QMenuBar { background: #16162a; color: #b0b0d0; font-size: 11px; }
+    QMenuBar::item:selected { background: #282848; }
+    QMenu { background: #1e1e30; color: #c0c0d8; border: 1px solid #404060;
+            font-size: 11px; }
+    QMenu::item:selected { background: #383868; }
+"""
+
 
 class MainWindow(QMainWindow):
-    """Top-level window for the double pendulum simulator.
+    """Top-level window for the double pendulum simulator."""
 
-    Layout:
-        ┌───────────────────────────────────────────────────┐
-        │  Title Bar                                         │
-        ├──────────┬──────────────────┬─────────────────────┤
-        │ Controls │  Pendulum Canvas │  Mass Matrix Panel   │
-        │  (input  │  (animation)     │  (real-time values) │
-        │   panel) │                  │                      │
-        ├──────────┴──────────────────┴─────────────────────┤
-        │  Status Bar                                        │
-        └───────────────────────────────────────────────────┘
-    """
-
-    WINDOW_TITLE = "Double Pendulum — Golf Swing Dynamics"
+    WINDOW_TITLE = "Pendulums"
 
     def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle(self.WINDOW_TITLE)
         self.resize(1400, 800)
         self.setMinimumSize(900, 550)
-        self._set_dark_theme()
+
+        # Apply base dark style (always)
+        self.setStyleSheet(_PENDULUM_DARK_STYLE)
+
+        self._theme_manager: object | None = None
+        self._build_menu()
         self._build_ui()
+        self._setup_theme()
         self._restore_geometry()
+
+    # ------------------------------------------------------------------
+    # Menu bar
+    # ------------------------------------------------------------------
+
+    def _build_menu(self) -> None:
+        _mb = self.menuBar()
+        assert _mb is not None
+        menubar: QMenuBar = _mb
+
+        # View menu
+        _view = menubar.addMenu("&View")
+        assert _view is not None
+        view_menu: QMenu = _view
+
+        # Quick theme submenu
+        self._quick_theme_menu = view_menu.addMenu("🎨 Quick Theme")
+
+        # Full theme manager action
+        self._action_theme_mgr = QAction("Theme Manager…", self)
+        self._action_theme_mgr.setShortcut("Ctrl+Shift+T")
+        self._action_theme_mgr.triggered.connect(self._open_theme_manager)
+        view_menu.addAction(self._action_theme_mgr)
+
+        view_menu.addSeparator()
+
+        # Always-available "Pendulum Dark" built-in
+        action_pend_dark = QAction("Pendulum Dark (default)", self)
+        action_pend_dark.triggered.connect(self._apply_pendulum_dark)
+        view_menu.addAction(action_pend_dark)
+
+        # Help menu
+        _help = menubar.addMenu("&Help")
+        assert _help is not None
+        action_about = QAction("About…", self)
+        action_about.triggered.connect(self._show_about)
+        _help.addAction(action_about)
 
     # ------------------------------------------------------------------
     # UI construction
     # ------------------------------------------------------------------
 
-    def _set_dark_theme(self) -> None:
-        self.setStyleSheet("""
-            QMainWindow { background: #12121c; }
-            QStatusBar  { background: #12121c; color: #7878a0; font-size: 11px; border-top: 1px solid #282840; }
-            QTabWidget::pane { border: 1px solid #303050; background: #12121c; }
-            QTabBar::tab {
-                background: #1e1e30; color: #9090b0; border: 1px solid #303050;
-                padding: 7px 18px; margin-right: 2px; border-bottom: none;
-                font-size: 12px;
-            }
-            QTabBar::tab:selected { background: #282848; color: #d0d0f0; border-bottom: 2px solid #6070c0; }
-            QTabBar::tab:hover    { background: #222238; color: #c0c0e8; }
-            QSplitter::handle { background: #282848; width: 4px; }
-            QSplitter::handle:hover { background: #404068; }
-            QScrollBar:vertical {
-                background: #1a1a2a; width: 10px; border: none;
-            }
-            QScrollBar::handle:vertical {
-                background: #404060; min-height: 20px; border-radius: 5px;
-            }
-            QScrollBar::handle:vertical:hover { background: #5060a0; }
-            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
-            QScrollBar:horizontal {
-                background: #1a1a2a; height: 10px; border: none;
-            }
-            QScrollBar::handle:horizontal {
-                background: #404060; min-width: 20px; border-radius: 5px;
-            }
-            QScrollBar::handle:horizontal:hover { background: #5060a0; }
-            QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0; }
-            QLabel { color: #c0c0d8; }
-        """)
-
     def _build_ui(self) -> None:
         central = QWidget()
         self.setCentralWidget(central)
         main_layout = QVBoxLayout(central)
-        main_layout.setContentsMargins(6, 4, 6, 4)
-        main_layout.setSpacing(4)
-
-        # Title
-        title = QLabel(self.WINDOW_TITLE)
-        title.setFont(QFont("Sans", 15, QFont.Weight.Bold))
-        title.setStyleSheet("color: #c8c8f0; padding: 4px; letter-spacing: 0.5px;")
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        main_layout.addWidget(title)
+        main_layout.setContentsMargins(4, 2, 4, 2)
+        main_layout.setSpacing(2)
 
         self._tabs = QTabWidget()
         self._double_panel = self._build_double_panel()
@@ -124,11 +173,10 @@ class MainWindow(QMainWindow):
         self._tabs.addTab(self._triple_panel, "⚙ Triple Pendulum")
         main_layout.addWidget(self._tabs, stretch=1)
 
-        # Status bar
         self.status = QStatusBar()
         self.setStatusBar(self.status)
         self.status.showMessage(
-            "Ready  ·  Scroll to zoom  ·  Drag to pan  ·  Double-click to reset view"
+            "Ready  ·  Scroll=zoom  ·  Drag=pan  ·  Dbl-click=reset view",
         )
 
     def _build_double_panel(self) -> SimulationPanel:
@@ -196,12 +244,14 @@ class MainWindow(QMainWindow):
                     p["dtheta1"],
                     p["dphi1"],
                     p["dphi2"],
-                ]
+                ],
             )
 
         def build_torque(p: dict) -> object:
             return make_polynomial_torque_triple(
-                p["shoulder_coeffs"], p["elbow_coeffs"], p["wrist_coeffs"]
+                p["shoulder_coeffs"],
+                p["elbow_coeffs"],
+                p["wrist_coeffs"],
             )
 
         panel = SimulationPanel(
@@ -217,7 +267,79 @@ class MainWindow(QMainWindow):
         return panel
 
     # ------------------------------------------------------------------
-    # Window geometry persistence
+    # Theme management
+    # ------------------------------------------------------------------
+
+    def _setup_theme(self) -> None:
+        """Wire fleet ThemeManager if available; populate quick-theme menu."""
+        if not _THEME_AVAILABLE or ThemeManager is None:
+            logger.info("theme package unavailable — using Pendulum Dark built-in")
+            return
+
+        try:
+            self._theme_manager = ThemeManager.instance(
+                main_window=self,
+                app_context="PendulumSimulator",
+                settings_org=_SETTINGS_ORG,
+                settings_app=_SETTINGS_APP,
+            )
+            # Apply saved theme
+            self._theme_manager.apply_theme()  # type: ignore[union-attr]
+            self._theme_manager.themeChanged.connect(self._on_theme_changed)  # type: ignore[union-attr]
+
+            # Use shared helper to build a full theme submenu (window first, then parent)
+            assert self._quick_theme_menu is not None
+            if create_theme_menu is not None:
+                create_theme_menu(
+                    self,
+                    self._quick_theme_menu,
+                    show_custom_options=True,
+                )
+
+        except Exception:
+            logger.exception("Failed to initialise ThemeManager")
+            self._theme_manager = None
+
+    def _on_theme_changed(self, name: str) -> None:
+        self.status.showMessage(f"Theme changed to: {name}", 3000)
+
+    def _open_theme_manager(self) -> None:
+        if (
+            not _THEME_AVAILABLE
+            or self._theme_manager is None
+            or ThemeManagerDialog is None
+        ):
+            from PyQt6.QtWidgets import QMessageBox
+
+            QMessageBox.information(
+                self,
+                "Themes",
+                "The fleet theme package is not installed.\n\n"
+                "Use View → Pendulum Dark to reset to the default style.",
+            )
+            return
+        dlg = ThemeManagerDialog(self._theme_manager, self)
+        dlg.exec()
+
+    def _apply_pendulum_dark(self) -> None:
+        """Force-reset to the built-in pendulum dark stylesheet."""
+        self.setStyleSheet(_PENDULUM_DARK_STYLE)
+        self.status.showMessage("Theme: Pendulum Dark", 3000)
+
+    def _show_about(self) -> None:
+        from PyQt6.QtWidgets import QMessageBox
+
+        QMessageBox.about(
+            self,
+            "About",
+            "<b>Double Pendulum Golf Swing Simulator</b><br><br>"
+            "Interactive simulation of 2- and 3-segment pendulum dynamics.<br><br>"
+            "Built with PyQt6 · NumPy · SciPy<br>"
+            "D-sorganization Tools Repository",
+        )
+
+    # ------------------------------------------------------------------
+    # Geometry persistence
     # ------------------------------------------------------------------
 
     def _restore_geometry(self) -> None:
@@ -227,10 +349,8 @@ class MainWindow(QMainWindow):
             self.restoreGeometry(geom)
 
     def closeEvent(self, event: object) -> None:
-        """Save window geometry and splitter states on close."""
         settings = QSettings(_SETTINGS_ORG, _SETTINGS_APP)
         settings.setValue("window_geometry", self.saveGeometry())
-        # Also persist splitters
         self._double_panel.save_layout()
         self._triple_panel.save_layout()
         super().closeEvent(event)  # type: ignore[arg-type]

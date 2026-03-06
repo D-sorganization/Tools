@@ -131,9 +131,26 @@ def run_simulation(
     t_end: float,
     torque_func: TorqueFunc,
     dt: float = 0.005,
-    method: str = "RK45",
+    method: str = "DOP853",
+    rtol: float = 1e-6,
+    atol: float = 1e-8,
 ) -> TripleSimulationResult:
-    """Integrate the triple pendulum equations of motion."""
+    """Integrate the triple pendulum equations of motion.
+
+    Performance notes
+    -----------------
+    - ``DOP853`` is an 8th-order Runge-Kutta method that is fast for
+      non-stiff problems while being accurate enough for chaotic systems.
+    - ``max_step`` is intentionally NOT set here — letting the solver
+      choose an adaptive step is ~10-50x faster than forcing ``dt`` as
+      the maximum step size.
+    - The output is resampled to a uniform ``t_eval`` grid at spacing ``dt``
+      after integration, giving the GUI a predictable frame count without
+      slowing down the solver.
+    - Tolerances: ``rtol=1e-6`` / ``atol=1e-8`` are appropriate for
+      visualisation-quality results.  Use tighter values only when
+      quantitative energy conservation is required.
+    """
     assert initial_state.shape == (
         6,
     ), f"Initial state shape must be (6,), got {initial_state.shape}"
@@ -141,6 +158,7 @@ def run_simulation(
     assert t_end > 0, f"t_end must be positive, got {t_end}"
     assert 0 < dt < t_end, f"dt must be in (0, t_end), got {dt}"
 
+    # Uniform output grid — solver adapts its internal step freely
     t_eval = np.arange(0.0, t_end, dt)
 
     def ode_rhs(t: float, y: np.ndarray) -> np.ndarray:
@@ -152,9 +170,9 @@ def run_simulation(
         y0=initial_state,
         t_eval=t_eval,
         method=method,
-        rtol=1e-8,
-        atol=1e-10,
-        max_step=dt,
+        rtol=rtol,
+        atol=atol,
+        # max_step deliberately omitted — adaptive step is much faster
     )
 
     if not sol.success:
