@@ -13,7 +13,7 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, Protocol, cast
 
 import numpy as np
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import QByteArray, QSettings, Qt, QTimer
 from PyQt6.QtWidgets import (
     QApplication,
     QFileDialog,
@@ -63,6 +63,8 @@ class SimulationPanel(QWidget):
         self._torque_builder = torque_builder
         self._state_builder = state_builder
         self._run_simulation = run_simulation
+
+        self._settings_key: str = "splitter_double"
 
         self._result: Any | None = None
         self._anim_idx = 0
@@ -114,6 +116,18 @@ class SimulationPanel(QWidget):
             splitter.setStretchFactor(2, 1)
 
         main_layout.addWidget(splitter)
+        self._splitter = splitter  # keep reference for save/restore
+
+        # Restore saved splitter state
+        settings = QSettings("D-sorganization", "PendulumSimulator")
+        saved = settings.value(self._settings_key)
+        if isinstance(saved, QByteArray):
+            self._splitter.restoreState(saved)
+
+    def save_layout(self) -> None:
+        """Persist the current splitter positions to QSettings."""
+        settings = QSettings("D-sorganization", "PendulumSimulator")
+        settings.setValue(self._settings_key, self._splitter.saveState())
 
     def _connect_signals(self) -> None:
         self.controls.run_requested.connect(self._on_run)
@@ -123,6 +137,20 @@ class SimulationPanel(QWidget):
         self.controls.frame_changed.connect(self._on_frame_change)
         self.controls.export_data_requested.connect(self._on_export_data)
         self.controls.export_video_requested.connect(self._on_export_video)
+
+        # Wire new physics/display toggles if the pendulum widget supports them
+        if hasattr(self.controls, "gravity_changed") and hasattr(
+            self.pendulum, "set_gravity_on"
+        ):
+            self.controls.gravity_changed.connect(self.pendulum.set_gravity_on)
+        if hasattr(self.controls, "forces_changed") and hasattr(
+            self.pendulum, "set_show_forces"
+        ):
+            self.controls.forces_changed.connect(self.pendulum.set_show_forces)
+
+        # Persist splitter when it changes
+        if hasattr(self, "_splitter"):
+            self._splitter.splitterMoved.connect(lambda *_: self.save_layout())
 
     def _setup_timer(self) -> None:
         self._timer = QTimer(self)
