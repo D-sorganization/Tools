@@ -112,58 +112,27 @@ class ControlsWidget(QWidget):
     forces_changed = pyqtSignal(bool)
     force_scale_changed = pyqtSignal(float)
 
+    # Preset: (theta1°, phi°, dth, dph, tau_sh, tau_wr, tend, m1, m2, mClub, L1, L2)
     PRESETS = {
         "Golf Swing (passive wrist)": (
-            120.0,
-            -90.0,
-            0.0,
-            0.0,
-            "-25, 10",
-            "0",
-            2.0,
-            5.0,
-            0.5,
-            0.6,
-            1.0,
+            120.0, -90.0, 0.0, 0.0, "-25, 10", "0", 2.0,
+            5.0, 0.30, 0.20, 0.65, 1.10,
         ),
         "Golf Swing (active wrist)": (
-            120.0,
-            -90.0,
-            0.0,
-            0.0,
-            "-25, 10",
-            "-2, 3",
-            2.0,
-            5.0,
-            0.5,
-            0.6,
-            1.0,
+            120.0, -90.0, 0.0, 0.0, "-25, 10", "-2, 3", 2.0,
+            5.0, 0.30, 0.20, 0.65, 1.10,
+        ),
+        "Heavy Clubhead": (
+            120.0, -90.0, 0.0, 0.0, "-30, 12", "0", 2.0,
+            5.0, 0.30, 0.35, 0.65, 1.10,
         ),
         "Free Double Pendulum": (
-            90.0,
-            90.0,
-            0.0,
-            0.0,
-            "0",
-            "0",
-            5.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0,
+            90.0, 90.0, 0.0, 0.0, "0", "0", 5.0,
+            1.0, 1.0, 0.0, 1.0, 1.0,
         ),
         "Straight Drop": (
-            0.1,
-            0.1,
-            0.0,
-            0.0,
-            "0",
-            "0",
-            3.0,
-            1.0,
-            1.0,
-            0.8,
-            0.8,
+            0.1, 0.1, 0.0, 0.0, "0", "0", 3.0,
+            1.0, 1.0, 0.0, 0.8, 0.8,
         ),
     }
 
@@ -187,6 +156,8 @@ class ControlsWidget(QWidget):
 
         main_layout.addWidget(self._build_preset_section())
         main_layout.addWidget(self._build_physics_section())
+        main_layout.addWidget(self._build_joint_limits_section())
+        main_layout.addWidget(self._build_torque_clamp_section())
         main_layout.addWidget(self._build_ic_section())
         main_layout.addWidget(self._build_torque_section())
         main_layout.addWidget(self._build_sim_section())
@@ -221,17 +192,51 @@ class ControlsWidget(QWidget):
 
     def _build_physics_section(self) -> QGroupBox:
         lw = 56
-        box = QGroupBox("Physical Parameters")
+        box = QGroupBox("Arms & Shaft")
         box.setStyleSheet(STYLE_GROUP)
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(3)
-        self.inp_m1 = LabeledInput("m1 (kg)", "5.0", "Mass of arm segment", lw)
-        self.inp_m2 = LabeledInput("m2 (kg)", "0.5", "Mass of club segment", lw)
-        self.inp_L1 = LabeledInput("L1 (m)", "0.6", "Length of arm segment", lw)
-        self.inp_L2 = LabeledInput("L2 (m)", "1.0", "Length of club segment", lw)
+        self.inp_m1 = LabeledInput("m1 (kg)", "5.0", "Arms mass (kg)", lw)
+        self.inp_m2 = LabeledInput("m2 (kg)", "0.30", "Shaft mass (kg)", lw)
+        self.inp_mClub = LabeledInput("mC (kg)", "0.20", "Clubhead mass (kg)", lw)
+        self.inp_L1 = LabeledInput("L1 (m)", "0.65", "Arms length (m)", lw)
+        self.inp_L2 = LabeledInput("L2 (m)", "1.10", "Shaft length (m)", lw)
         layout.addLayout(_row(self.inp_m1, self.inp_m2))
         layout.addLayout(_row(self.inp_L1, self.inp_L2))
+        layout.addWidget(self.inp_mClub)
+        return box
+
+    def _build_joint_limits_section(self) -> QGroupBox:
+        lw = 56
+        box = QGroupBox("Joint Limits")
+        box.setStyleSheet(STYLE_GROUP)
+        layout = QVBoxLayout(box)
+        layout.setContentsMargins(4, 12, 4, 4)
+        layout.setSpacing(3)
+        self.chk_limits = QCheckBox("Enable wrist limits")
+        self.chk_limits.setStyleSheet(STYLE_CHECK)
+        layout.addWidget(self.chk_limits)
+        self.inp_phi_min = LabeledInput("φ min°", "-90", "Min wrist angle (deg)", lw)
+        self.inp_phi_max = LabeledInput("φ max°", "90", "Max wrist angle (deg)", lw)
+        self.inp_limit_k = LabeledInput("K", "500", "Penalty stiffness (N·m/rad)", lw)
+        layout.addLayout(_row(self.inp_phi_min, self.inp_phi_max))
+        layout.addWidget(self.inp_limit_k)
+        return box
+
+    def _build_torque_clamp_section(self) -> QGroupBox:
+        lw = 56
+        box = QGroupBox("Torque Saturation")
+        box.setStyleSheet(STYLE_GROUP)
+        layout = QVBoxLayout(box)
+        layout.setContentsMargins(4, 12, 4, 4)
+        layout.setSpacing(3)
+        self.chk_clamp = QCheckBox("Enable torque clamping")
+        self.chk_clamp.setStyleSheet(STYLE_CHECK)
+        layout.addWidget(self.chk_clamp)
+        self.inp_max_tau1 = LabeledInput("Max τ1", "50", "Max shoulder torque (N·m)", lw)
+        self.inp_max_tau2 = LabeledInput("Max τ2", "20", "Max wrist torque (N·m)", lw)
+        layout.addLayout(_row(self.inp_max_tau1, self.inp_max_tau2))
         return box
 
     def _build_ic_section(self) -> QGroupBox:
@@ -398,7 +403,7 @@ class ControlsWidget(QWidget):
     def _apply_preset(self, name: str) -> None:
         if name not in self.PRESETS:
             return
-        theta1, phi, dth, dph, tau_sh, tau_wr, tend, m1, m2, L1, L2 = self.PRESETS[name]
+        theta1, phi, dth, dph, tau_sh, tau_wr, tend, m1, m2, mClub, L1, L2 = self.PRESETS[name]
         self.inp_theta1.set_value(str(theta1))
         self.inp_phi.set_value(str(phi))
         self.inp_dtheta1.set_value(str(dth))
@@ -408,6 +413,7 @@ class ControlsWidget(QWidget):
         self.inp_tend.set_value(str(tend))
         self.inp_m1.set_value(str(m1))
         self.inp_m2.set_value(str(m2))
+        self.inp_mClub.set_value(str(mClub))
         self.inp_L1.set_value(str(L1))
         self.inp_L2.set_value(str(L2))
         self._update_torque_preview()
@@ -421,9 +427,11 @@ class ControlsWidget(QWidget):
 
         Returns
         -------
-        dict with keys: m1, m2, L1, L2, theta1_rad, phi_rad,
+        dict with keys: m1, m2, mClub, L1, L2, theta1_rad, phi_rad,
             dtheta1, dphi, shoulder_coeffs, wrist_coeffs, t_end,
-            dt, b1, b2, mu1, mu2, gravity_on
+            dt, b1, b2, mu1, mu2, gravity_on,
+            enable_limits, phi_min_rad, phi_max_rad, limit_stiffness,
+            enable_clamp, max_torque1, max_torque2
 
         Raises
         ------
@@ -433,16 +441,19 @@ class ControlsWidget(QWidget):
         dt = clamp_dt(dt_raw)
         m1 = parse_float(self.inp_m1, "m1")
         m2 = parse_float(self.inp_m2, "m2")
+        mClub = parse_float(self.inp_mClub, "mClub")
         L1 = parse_float(self.inp_L1, "L1")
         L2 = parse_float(self.inp_L2, "L2")
         assert m1 > 0, f"m1 must be positive, got {m1}"
         assert m2 > 0, f"m2 must be positive, got {m2}"
+        assert mClub >= 0, f"mClub must be non-negative, got {mClub}"
         assert L1 > 0, f"L1 must be positive, got {L1}"
         assert L2 > 0, f"L2 must be positive, got {L2}"
 
         return {
             "m1": m1,
             "m2": m2,
+            "mClub": mClub,
             "L1": L1,
             "L2": L2,
             "theta1_rad": np.radians(parse_float(self.inp_theta1, "θ1")),
@@ -458,6 +469,13 @@ class ControlsWidget(QWidget):
             "mu1": parse_float(self.inp_mu1, "μ1"),
             "mu2": parse_float(self.inp_mu2, "μ2"),
             "gravity_on": self.chk_gravity.isChecked(),
+            "enable_limits": self.chk_limits.isChecked(),
+            "phi_min_rad": np.radians(parse_float(self.inp_phi_min, "φ min")),
+            "phi_max_rad": np.radians(parse_float(self.inp_phi_max, "φ max")),
+            "limit_stiffness": parse_float(self.inp_limit_k, "Limit K"),
+            "enable_clamp": self.chk_clamp.isChecked(),
+            "max_torque1": parse_float(self.inp_max_tau1, "Max τ1"),
+            "max_torque2": parse_float(self.inp_max_tau2, "Max τ2"),
         }
 
     def _update_torque_preview(self) -> None:
