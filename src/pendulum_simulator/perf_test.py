@@ -8,16 +8,20 @@ from src.double_pendulum_golf.simulation import make_polynomial_torque, run_simu
 
 # Default preset params
 params = PendulumParams(
-    m1=5.0, m2=0.5,
-    L1=0.6, L2=1.0,
+    m1=5.0,
+    m2=0.5,
+    L1=0.6,
+    L2=1.0,
 )
 
-initial_state = np.array([
-    np.radians(120.0),
-    np.radians(-90.0),
-    0.0,
-    0.0,
-])
+initial_state = np.array(
+    [
+        np.radians(120.0),
+        np.radians(-90.0),
+        0.0,
+        0.0,
+    ]
+)
 
 torque_func = make_polynomial_torque([-25, 10], [0])
 

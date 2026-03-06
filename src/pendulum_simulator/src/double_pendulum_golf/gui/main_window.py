@@ -62,9 +62,9 @@ try:
 
     _THEME_AVAILABLE = True
 except ImportError:
-    ThemeManager = None
-    ThemeManagerDialog = None
-    create_theme_menu = None
+    ThemeManager = None  # type: ignore[assignment]
+    ThemeManagerDialog = None  # type: ignore[assignment]
+    create_theme_menu = None  # type: ignore[assignment]
 
 # ── Pendulum dark stylesheet (preserved regardless of theme system) ────────────
 _PENDULUM_DARK_STYLE = """
@@ -362,7 +362,7 @@ class MainWindow(QMainWindow):
                 "Use View → Pendulum Dark to reset to the default style.",
             )
             return
-        dlg = ThemeManagerDialog(self._theme_manager, self)
+        dlg = ThemeManagerDialog(self._theme_manager, self)  # type: ignore[call-arg]
         dlg.exec()
 
     def _apply_pendulum_dark(self) -> None:
