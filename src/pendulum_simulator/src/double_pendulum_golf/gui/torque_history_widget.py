@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from ..simulation import SimulationResult
 
 try:
-    import pyqtgraph as pg  # type: ignore[import-untyped]
+    import pyqtgraph as pg
 
     _HAS_PYQTGRAPH = True
 except ImportError:

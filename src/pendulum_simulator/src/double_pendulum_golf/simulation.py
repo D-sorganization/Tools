@@ -7,7 +7,7 @@ by the GUI and analysis code.
 """
 
 from dataclasses import dataclass, field
-from typing import Callable, Optional, Tuple
+from typing import Optional, Tuple
 
 import numpy as np
 from scipy.integrate import solve_ivp
@@ -23,16 +23,15 @@ from .physics import (
     gravity_vector,
     kinetic_energy,
     net_joint_forces,
-    mass_matrix,
     mass_matrix_components,
     potential_energy,
     total_energy,
 )
 
-
 # ---------------------------------------------------------------------------
 # Polynomial torque builder
 # ---------------------------------------------------------------------------
+
 
 def make_polynomial_torque(
     coeffs_shoulder: list[float],
@@ -77,6 +76,7 @@ def make_polynomial_torque(
 # Simulation result container
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class SimulationResult:
     """Stores the complete trajectory and derived quantities.
@@ -92,6 +92,7 @@ class SimulationResult:
     torque_func : TorqueFunc
         Torque function used.
     """
+
     t: np.ndarray
     states: np.ndarray
     params: PendulumParams
@@ -129,9 +130,7 @@ class SimulationResult:
     def positions_at(self, idx: int) -> dict:
         """Get joint positions at time index idx."""
         assert 0 <= idx < self.n_steps
-        return forward_kinematics(
-            self.states[idx, 0], self.states[idx, 1], self.params
-        )
+        return forward_kinematics(self.states[idx, 0], self.states[idx, 1], self.params)
 
     def torques_at(self, idx: int) -> Tuple[float, float]:
         """Get applied torques at time index idx."""
@@ -208,6 +207,7 @@ class SimulationResult:
 # Simulation runner
 # ---------------------------------------------------------------------------
 
+
 def run_simulation(
     params: PendulumParams,
     initial_state: State,
@@ -242,7 +242,9 @@ def run_simulation(
     -------
     SimulationResult
     """
-    assert initial_state.shape == (4,), f"Initial state shape must be (4,), got {initial_state.shape}"
+    assert initial_state.shape == (
+        4,
+    ), f"Initial state shape must be (4,), got {initial_state.shape}"
     assert all(np.isfinite(initial_state)), "Initial state must be finite"
     assert t_end > 0, f"t_end must be positive, got {t_end}"
     assert 0 < dt < t_end, f"dt must be in (0, t_end), got {dt}"

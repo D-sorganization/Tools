@@ -30,7 +30,9 @@ class LabeledInput(QWidget):
     DRY: This avoids repeating the label-edit pattern dozens of times.
     """
 
-    def __init__(self, label: str, default: str, tooltip: str = "", parent=None):
+    def __init__(
+        self, label: str, default: str, tooltip: str = "", parent: QWidget | None = None
+    ) -> None:
         super().__init__(parent)
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -135,7 +137,7 @@ class ControlsWidget(QWidget):
         ),
     }
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setMinimumWidth(300)
         self.setMaximumWidth(360)

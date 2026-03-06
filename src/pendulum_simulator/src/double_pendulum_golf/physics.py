@@ -19,10 +19,10 @@ from typing import Callable, Tuple
 
 import numpy as np
 
-
 # ---------------------------------------------------------------------------
 # Data structures
 # ---------------------------------------------------------------------------
+
 
 @dataclass(frozen=True)
 class PendulumParams:
@@ -34,14 +34,15 @@ class PendulumParams:
         - Damping coefficients b1, b2 must be non-negative  (N·m·s/rad).
         - Coulomb friction mu1, mu2 must be non-negative  (N·m peak magnitude).
     """
-    m1: float   # mass of segment 1 (kg)
-    m2: float   # mass of segment 2 (kg)
-    L1: float   # length of segment 1 (m)
-    L2: float   # length of segment 2 (m)
-    g: float = 9.81   # gravitational acceleration (m/s^2)
+
+    m1: float  # mass of segment 1 (kg)
+    m2: float  # mass of segment 2 (kg)
+    L1: float  # length of segment 1 (m)
+    L2: float  # length of segment 2 (m)
+    g: float = 9.81  # gravitational acceleration (m/s^2)
     # --- Dissipative parameters (default 0 = no losses) ---
-    b1: float = 0.0   # viscous damping at joint 1 (N·m·s/rad)
-    b2: float = 0.0   # viscous damping at joint 2 (N·m·s/rad)
+    b1: float = 0.0  # viscous damping at joint 1 (N·m·s/rad)
+    b2: float = 0.0  # viscous damping at joint 2 (N·m·s/rad)
     mu1: float = 0.0  # Coulomb friction at joint 1 (N·m, constant magnitude)
     mu2: float = 0.0  # Coulomb friction at joint 2 (N·m, constant magnitude)
 
@@ -67,6 +68,7 @@ TorqueFunc = Callable[[float], Tuple[float, float]]
 # ---------------------------------------------------------------------------
 # Mass matrix and its components
 # ---------------------------------------------------------------------------
+
 
 def mass_matrix(phi: float, params: PendulumParams) -> np.ndarray:
     """Compute the 2x2 mass (inertia) matrix M(q).
@@ -96,8 +98,7 @@ def mass_matrix(phi: float, params: PendulumParams) -> np.ndarray:
     M12 = m2 * L2**2 + m2 * L1 * L2 * cos_phi
     M22 = m2 * L2**2
 
-    M = np.array([[M11, M12],
-                   [M12, M22]])
+    M = np.array([[M11, M12], [M12, M22]])
 
     # Postcondition: symmetry
     assert np.isclose(M[0, 1], M[1, 0]), "Mass matrix must be symmetric"
@@ -135,8 +136,10 @@ def mass_matrix_components(phi: float, params: PendulumParams) -> dict:
 # Coriolis and centrifugal terms
 # ---------------------------------------------------------------------------
 
-def coriolis_vector(phi: float, dtheta1: float, dphi: float,
-                    params: PendulumParams) -> np.ndarray:
+
+def coriolis_vector(
+    phi: float, dtheta1: float, dphi: float, params: PendulumParams
+) -> np.ndarray:
     """Compute the Coriolis/centrifugal force vector C(q, qdot) * qdot.
 
     This vector captures velocity-dependent forces: centrifugal effects
@@ -159,8 +162,9 @@ def coriolis_vector(phi: float, dtheta1: float, dphi: float,
     -------
     C_qdot : np.ndarray, shape (2,)
     """
-    assert all(np.isfinite(v) for v in [phi, dtheta1, dphi]), \
-        "All velocity inputs must be finite"
+    assert all(
+        np.isfinite(v) for v in [phi, dtheta1, dphi]
+    ), "All velocity inputs must be finite"
     m2, L1, L2 = params.m2, params.L1, params.L2
     h = -m2 * L1 * L2 * np.sin(phi)
 
@@ -174,8 +178,8 @@ def coriolis_vector(phi: float, dtheta1: float, dphi: float,
 # Gravity vector
 # ---------------------------------------------------------------------------
 
-def gravity_vector(theta1: float, phi: float,
-                   params: PendulumParams) -> np.ndarray:
+
+def gravity_vector(theta1: float, phi: float, params: PendulumParams) -> np.ndarray:
     """Compute the gravitational torque vector G(q).
 
     Derived from potential energy V = -m1*g*L1*cos(theta1)
@@ -207,6 +211,7 @@ def gravity_vector(theta1: float, phi: float,
 # ---------------------------------------------------------------------------
 # Friction and damping
 # ---------------------------------------------------------------------------
+
 
 def friction_torque_vector(
     dtheta1: float, dphi: float, params: PendulumParams
@@ -254,8 +259,10 @@ def friction_torque_vector(
 # Equations of motion
 # ---------------------------------------------------------------------------
 
-def equations_of_motion(state: State, t: float, params: PendulumParams,
-                        torque_func: TorqueFunc) -> State:
+
+def equations_of_motion(
+    state: State, t: float, params: PendulumParams, torque_func: TorqueFunc
+) -> State:
     """Compute the state derivative: dx/dt = f(x, t).
 
     State vector x = [theta1, phi, dtheta1, dphi].
@@ -307,8 +314,9 @@ def equations_of_motion(state: State, t: float, params: PendulumParams,
 
     state_dot = np.array([dtheta1, dphi, qddot[0], qddot[1]])
 
-    assert all(np.isfinite(state_dot)), \
-        f"State derivative has non-finite values: {state_dot}"
+    assert all(
+        np.isfinite(state_dot)
+    ), f"State derivative has non-finite values: {state_dot}"
     return state_dot
 
 
@@ -316,8 +324,8 @@ def equations_of_motion(state: State, t: float, params: PendulumParams,
 # Forward kinematics (for visualization)
 # ---------------------------------------------------------------------------
 
-def forward_kinematics(theta1: float, phi: float,
-                       params: PendulumParams) -> dict:
+
+def forward_kinematics(theta1: float, phi: float, params: PendulumParams) -> dict:
     """Compute joint and tip positions in the world frame.
 
     Origin is at the shoulder (fixed pivot).
@@ -353,8 +361,9 @@ def forward_kinematics(theta1: float, phi: float,
     }
 
 
-def linear_accelerations(state: State, qddot: np.ndarray,
-                         params: PendulumParams) -> dict:
+def linear_accelerations(
+    state: State, qddot: np.ndarray, params: PendulumParams
+) -> dict:
     """Compute linear accelerations of joints in world coordinates.
 
     Returns
@@ -383,8 +392,7 @@ def linear_accelerations(state: State, qddot: np.ndarray,
     }
 
 
-def net_joint_forces(state: State, qddot: np.ndarray,
-                     params: PendulumParams) -> dict:
+def net_joint_forces(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
     """Compute net joint forces (proximal on distal) in world coordinates.
 
     Returns
@@ -410,6 +418,7 @@ def net_joint_forces(state: State, qddot: np.ndarray,
 # ---------------------------------------------------------------------------
 # Energy calculations (for verification / display)
 # ---------------------------------------------------------------------------
+
 
 def kinetic_energy(state: State, params: PendulumParams) -> float:
     """Compute total kinetic energy T = 0.5 * qdot^T M qdot."""

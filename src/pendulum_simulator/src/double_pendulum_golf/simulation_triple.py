@@ -7,7 +7,7 @@ by the GUI and analysis code.
 """
 
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import Tuple
 
 import numpy as np
 from scipy.integrate import solve_ivp
@@ -27,10 +27,10 @@ from .physics_triple import (
     total_energy,
 )
 
-
 # ---------------------------------------------------------------------------
 # Polynomial torque builder
 # ---------------------------------------------------------------------------
+
 
 def make_polynomial_torque(
     coeffs_shoulder: list[float],
@@ -61,6 +61,7 @@ def make_polynomial_torque(
 # ---------------------------------------------------------------------------
 # Simulation result container
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class TripleSimulationResult:
@@ -124,6 +125,7 @@ class TripleSimulationResult:
 # Simulation runner
 # ---------------------------------------------------------------------------
 
+
 def run_simulation(
     params: TriplePendulumParams,
     initial_state: State,
@@ -133,7 +135,9 @@ def run_simulation(
     method: str = "RK45",
 ) -> TripleSimulationResult:
     """Integrate the triple pendulum equations of motion."""
-    assert initial_state.shape == (6,), f"Initial state shape must be (6,), got {initial_state.shape}"
+    assert initial_state.shape == (
+        6,
+    ), f"Initial state shape must be (6,), got {initial_state.shape}"
     assert all(np.isfinite(initial_state)), "Initial state must be finite"
     assert t_end > 0, f"t_end must be positive, got {t_end}"
     assert 0 < dt < t_end, f"dt must be in (0, t_end), got {dt}"
