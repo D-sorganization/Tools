@@ -348,11 +348,11 @@ class ControlsWidget(QWidget):
         lbl_fs.setStyleSheet(_STYLE_LABEL)
         scale_row.addWidget(lbl_fs)
         self._force_scale_slider = QSlider(Qt.Orientation.Horizontal)
-        self._force_scale_slider.setRange(1, 100)  # 0.1× … 10×
+        self._force_scale_slider.setRange(1, 1000)  # 0.1× … 100×
         self._force_scale_slider.setValue(10)  # default 1.0×
         self._force_scale_slider.setStyleSheet(_STYLE_SLIDER)
         self._force_scale_slider.setToolTip(
-            "Scale force vector display lengths (0.1× – 10×)"
+            "Scale force vector display lengths (0.1× – 100×)"
         )
         self._force_scale_slider.valueChanged.connect(self._on_force_scale_changed)
         scale_row.addWidget(self._force_scale_slider, stretch=1)
@@ -459,8 +459,11 @@ class ControlsWidget(QWidget):
     # ------------------------------------------------------------------
 
     def _on_force_scale_changed(self, raw: int) -> None:
-        scale = raw / 10.0  # 1→0.1, 10→1.0, 100→10.0
-        self._lbl_force_scale.setText(f"{scale:.1f}×")
+        scale = raw / 10.0  # 1→0.1, 10→1.0, 1000→100.0
+        if scale < 10.0:
+            self._lbl_force_scale.setText(f"{scale:.1f}×")
+        else:
+            self._lbl_force_scale.setText(f"{scale:.0f}×")
         self.force_scale_changed.emit(scale)
 
     # ------------------------------------------------------------------

@@ -186,6 +186,13 @@ class PendulumWidget(QWidget):
         self._show_force_ellipsoids = show
         self.update()
 
+    def reset_view(self) -> None:
+        """Reset zoom and pan to default (also callable from toolstrip button)."""
+        self._zoom = 1.0
+        self._pan_x = 0.0
+        self._pan_y = 0.0
+        self.update()
+
     # ------------------------------------------------------------------
     # Zoom / Pan — mouse events
     # ------------------------------------------------------------------
@@ -245,20 +252,35 @@ class PendulumWidget(QWidget):
     # ------------------------------------------------------------------
 
     def _compute_base_scale(self) -> float:
-        """Compute base pixels_per_meter ignoring user zoom."""
+        """Compute base pixels_per_meter ignoring user zoom.
+
+        Shoulder is placed at 35% from the widget top.  The pendulum can swing
+        through a full circle of radius total_len, so we allow a 2*total_len
+        diameter to fit comfortably.  We use 45% of width and 55% of the
+        remaining height (below shoulder) so there is always room regardless
+        of how the pendulum is configured.
+        """
         if self._result is not None:
             total_len = self._result.params.L1 + self._result.params.L2
         else:
             total_len = 2.0
-        w_scale = self.width() * 0.40 / max(total_len, 1e-6)
-        h_scale = self.height() * 0.60 / max(total_len, 1e-6)
+        total_len = max(total_len, 1e-6)
+        # Available width/height for full swing circle (diameter = 2 * total_len)
+        usable_w = self.width() * 0.42
+        usable_h = self.height() * 0.55
+        w_scale = usable_w / total_len
+        h_scale = usable_h / total_len
         return max(30.0, min(w_scale, h_scale))
 
     def _world_to_pixel(self, x_world: float, y_world: float) -> QPointF:
-        """Convert physics coords to widget pixels, applying zoom and pan."""
-        base_ppm = self._pixels_per_meter  # already = _compute_base_scale() * zoom
+        """Convert physics coords to widget pixels, applying zoom and pan.
+
+        Shoulder is placed at horizontal centre and 35% from the top so
+        full-circle swings remain on-screen without the user needing to pan.
+        """
+        base_ppm = self._pixels_per_meter
         cx = self.width() / 2.0 + self._pan_x
-        cy = self.height() * 0.20 + self._pan_y
+        cy = self.height() * 0.35 + self._pan_y  # 35% from top (was 20%)
         px = cx + x_world * base_ppm
         py = cy - y_world * base_ppm
         return QPointF(px, py)

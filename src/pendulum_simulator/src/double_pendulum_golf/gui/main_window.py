@@ -225,6 +225,9 @@ class MainWindow(QMainWindow):
             # Sync toolstrip frame counter when animation advances
             panel.frame_changed.connect(lambda idx: ts.set_frame(idx))
 
+            # Reset view button → clear zoom/pan on the pendulum canvas
+            ts.reset_view_requested.connect(pw.reset_view)
+
     def _build_double_panel(self) -> SimulationPanel:
         controls = ControlsWidget()
         pendulum = PendulumWidget()

@@ -119,6 +119,8 @@ class ToolStrip(QWidget):
     forces_toggled = pyqtSignal(bool)
     mob_ellipsoid_toggled = pyqtSignal(bool)
     force_ellipsoid_toggled = pyqtSignal(bool)
+    # View controls
+    reset_view_requested = pyqtSignal()
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -266,6 +268,21 @@ class ToolStrip(QWidget):
         )
         self.chk_force_ell.toggled.connect(self.force_ellipsoid_toggled.emit)
         layout.addWidget(self.chk_force_ell)
+
+        layout.addWidget(_vline())
+
+        # Reset view button (always visible shortcut)
+        self.btn_reset_view = QPushButton("⤢ Reset View")
+        self.btn_reset_view.setStyleSheet(
+            "QPushButton{background:#1e2440;color:#9090c0;border:1px solid #303060;"
+            "border-radius:4px;padding:2px 8px;font-size:9px;}"
+            "QPushButton:hover{background:#252860;color:#b0b0e0;}"
+        )
+        self.btn_reset_view.setToolTip(
+            "Reset zoom & pan to default view\n(shortcut: double-click the canvas)"
+        )
+        self.btn_reset_view.clicked.connect(self.reset_view_requested.emit)
+        layout.addWidget(self.btn_reset_view)
 
         layout.addStretch()
 
