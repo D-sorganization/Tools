@@ -192,21 +192,36 @@ class MainWindow(QMainWindow):
 
         ts = self._toolstrip
 
-        # Run / Reset forwarded to active panel (both panels listen)
+        # Only forward Run/Reset/Play/Speed to the ACTIVE tab's panel
+        # (both panels subscribe; the hidden one just ignores it)
         for panel in (self._double_panel, self._triple_panel):
+            pw = cast(PendulumWidget, panel.pendulum)
+
+            # Simulation actions
             ts.run_requested.connect(panel.controls.run_requested.emit)
             ts.reset_requested.connect(panel.controls.reset_requested.emit)
             ts.play_toggled.connect(panel.controls.play_toggled.emit)
             ts.speed_changed.connect(panel.controls.speed_changed.emit)
 
-            # Ellipsoid toggles → pendulum widget (always a PendulumWidget at runtime)
-            pw = cast(PendulumWidget, panel.pendulum)
+            # Playback scrubbing via toolstrip slider
+            ts.frame_scrubbed.connect(panel.scrub_to_frame)
+
+            # Overlay toggles → pendulum widget
+            ts.forces_toggled.connect(pw.set_show_forces)
             ts.mob_ellipsoid_toggled.connect(pw.set_show_mob_ellipsoids)
             ts.force_ellipsoid_toggled.connect(pw.set_show_force_ellipsoids)
 
-            # Mirror busy state back to toolstrip
+            # Busy state
             panel.sim_started.connect(lambda: ts.set_running(True))
             panel.sim_finished.connect(lambda: ts.set_running(False))
+
+            # Sync toolstrip slider when simulation completes
+            panel.sim_finished.connect(
+                lambda p=panel: ts.set_frame_range(p.current_n_steps())
+            )
+
+            # Sync toolstrip frame counter when animation advances
+            panel.frame_changed.connect(lambda idx: ts.set_frame(idx))
 
     def _build_double_panel(self) -> SimulationPanel:
         controls = ControlsWidget()

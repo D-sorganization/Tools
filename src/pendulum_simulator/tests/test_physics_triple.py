@@ -4,22 +4,26 @@ Organized by property being tested, following TDD principles.
 Each test verifies a specific physical or mathematical property.
 """
 
+from __future__ import annotations
+
+from collections.abc import Callable
+
 import numpy as np
 import pytest
 
 from double_pendulum_golf.physics_triple import (
     TriplePendulumParams,
-    mass_matrix as mass_matrix_triple,
     coriolis_vector as coriolis_vector_triple,
-    gravity_vector as gravity_vector_triple,
     equations_of_motion as equations_of_motion_triple,
     forward_kinematics as forward_kinematics_triple,
+    gravity_vector as gravity_vector_triple,
+    mass_matrix as mass_matrix_triple,
     net_joint_forces as net_joint_forces_triple,
 )
 
 
 @pytest.fixture
-def triple_params():
+def triple_params() -> TriplePendulumParams:
     """Default parameters for triple pendulum."""
     return TriplePendulumParams(
         m1=5.0,
@@ -32,10 +36,10 @@ def triple_params():
 
 
 @pytest.fixture
-def triple_torque_func():
+def triple_torque_func() -> Callable[[float], tuple[float, float, float]]:
     """Simple constant torque function."""
 
-    def torque(t):
+    def torque(t: float) -> tuple[float, float, float]:
         return (0.0, 0.0, 0.0)
 
     return torque
@@ -44,7 +48,7 @@ def triple_torque_func():
 class TestTripleMassMatrixSymmetry:
     """The 3x3 mass matrix must be symmetric."""
 
-    def test_symmetric_at_zero(self, triple_params):
+    def test_symmetric_at_zero(self, triple_params: TriplePendulumParams) -> None:
         phi1, phi2 = 0.0, 0.0
         M = mass_matrix_triple(phi1, phi2, triple_params)
         assert M.shape == (3, 3)
@@ -53,7 +57,9 @@ class TestTripleMassMatrixSymmetry:
             for j in range(3):
                 assert np.isclose(M[i, j], M[j, i]), f"M[{i},{j}] != M[{j},{i}]"
 
-    def test_symmetric_at_arbitrary_angles(self, triple_params):
+    def test_symmetric_at_arbitrary_angles(
+        self, triple_params: TriplePendulumParams
+    ) -> None:
         for phi1 in np.linspace(-np.pi, np.pi, 10):
             for phi2 in np.linspace(-np.pi, np.pi, 10):
                 M = mass_matrix_triple(phi1, phi2, triple_params)
@@ -67,7 +73,9 @@ class TestTripleMassMatrixSymmetry:
 class TestTripleMassMatrixPositiveDefinite:
     """The 3x3 mass matrix must be positive definite."""
 
-    def test_positive_definite_at_various_angles(self, triple_params):
+    def test_positive_definite_at_various_angles(
+        self, triple_params: TriplePendulumParams
+    ) -> None:
         test_angles = list(np.linspace(-np.pi, np.pi, 15))
         for phi1 in test_angles:
             for phi2 in test_angles:
@@ -81,7 +89,7 @@ class TestTripleMassMatrixPositiveDefinite:
 class TestTripleCoriolisZeroAtRest:
     """Coriolis/centrifugal vector should be zero when velocities are zero."""
 
-    def test_zero_at_rest(self, triple_params):
+    def test_zero_at_rest(self, triple_params: TriplePendulumParams) -> None:
         phi1, phi2 = 0.5, -0.3
         dtheta1, dphi1, dphi2 = 0.0, 0.0, 0.0
         C = coriolis_vector_triple(phi1, phi2, dtheta1, dphi1, dphi2, triple_params)
@@ -92,7 +100,9 @@ class TestTripleCoriolisZeroAtRest:
 class TestTripleGravityVectorDirection:
     """Gravity should pull the system downward."""
 
-    def test_gravity_points_downward_at_rest(self, triple_params):
+    def test_gravity_points_downward_at_rest(
+        self, triple_params: TriplePendulumParams
+    ) -> None:
         # At theta1 = 0 (straight down), gravity should be zero
         theta1, phi1, phi2 = 0.0, 0.0, 0.0
         G = gravity_vector_triple(theta1, phi1, phi2, triple_params)
@@ -100,7 +110,9 @@ class TestTripleGravityVectorDirection:
         # At equilibrium (all pointing down), gravity torques should be zero
         assert np.allclose(G, 0.0, atol=1e-12)
 
-    def test_gravity_restores_from_lifted_position(self, triple_params):
+    def test_gravity_restores_from_lifted_position(
+        self, triple_params: TriplePendulumParams
+    ) -> None:
         # When lifted (theta1 = pi/2, pointing to the side),
         # gravity should create restoring torque
         theta1, phi1, phi2 = np.pi / 2, 0.0, 0.0
@@ -111,7 +123,7 @@ class TestTripleGravityVectorDirection:
 class TestTripleForwardKinematics:
     """Forward kinematics should give correct positions."""
 
-    def test_all_hanging_down(self, triple_params):
+    def test_all_hanging_down(self, triple_params: TriplePendulumParams) -> None:
         theta1, phi1, phi2 = 0.0, 0.0, 0.0
         pos = forward_kinematics_triple(theta1, phi1, phi2, triple_params)
 
@@ -128,7 +140,7 @@ class TestTripleForwardKinematics:
         assert pos["tip"][0] == 0.0
         assert pos["tip"][1] < 0
 
-    def test_all_horizontal(self, triple_params):
+    def test_all_horizontal(self, triple_params: TriplePendulumParams) -> None:
         theta1 = np.pi / 2
         phi1, phi2 = 0.0, 0.0
         pos = forward_kinematics_triple(theta1, phi1, phi2, triple_params)
@@ -143,8 +155,10 @@ class TestTripleEquationsOfMotion:
     """Equations of motion should produce valid accelerations."""
 
     def test_eom_produces_valid_state_derivative(
-        self, triple_params, triple_torque_func
-    ):
+        self,
+        triple_params: TriplePendulumParams,
+        triple_torque_func: Callable[[float], tuple[float, float, float]],
+    ) -> None:
         # State: [theta1, phi1, phi2, dtheta1, dphi1, dphi2]
         state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
         state_dot = equations_of_motion_triple(
@@ -154,7 +168,11 @@ class TestTripleEquationsOfMotion:
         assert state_dot.shape == (6,)
         assert all(np.isfinite(state_dot)), f"Invalid values: {state_dot}"
 
-    def test_eom_at_rest_at_equilibrium(self, triple_params, triple_torque_func):
+    def test_eom_at_rest_at_equilibrium(
+        self,
+        triple_params: TriplePendulumParams,
+        triple_torque_func: Callable[[float], tuple[float, float, float]],
+    ) -> None:
         # At equilibrium with zero velocity, acceleration should be zero
         state = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
         state_dot = equations_of_motion_triple(
@@ -172,15 +190,15 @@ class TestTripleEquationsOfMotion:
 class TestTripleParameterValidation:
     """Parameters must satisfy constraints."""
 
-    def test_negative_mass_rejected(self):
+    def test_negative_mass_rejected(self) -> None:
         with pytest.raises(AssertionError):
             TriplePendulumParams(m1=-1.0, m2=0.5, m3=0.2, L1=0.6, L2=0.6, L3=0.6)
 
-    def test_negative_length_rejected(self):
+    def test_negative_length_rejected(self) -> None:
         with pytest.raises(AssertionError):
             TriplePendulumParams(m1=1.0, m2=0.5, m3=0.2, L1=-0.6, L2=0.6, L3=0.6)
 
-    def test_zero_mass_rejected(self):
+    def test_zero_mass_rejected(self) -> None:
         with pytest.raises(AssertionError):
             TriplePendulumParams(m1=1.0, m2=0.0, m3=0.2, L1=0.6, L2=0.6, L3=0.6)
 
@@ -188,7 +206,9 @@ class TestTripleParameterValidation:
 class TestTripleMassMatrixDependenceOnAngles:
     """Mass matrix should depend on the coupling angles."""
 
-    def test_mass_matrix_different_at_different_angles(self, triple_params):
+    def test_mass_matrix_different_at_different_angles(
+        self, triple_params: TriplePendulumParams
+    ) -> None:
         M1 = mass_matrix_triple(0.0, 0.0, triple_params)
         M2 = mass_matrix_triple(np.pi / 4, 0.0, triple_params)
 
@@ -199,7 +219,9 @@ class TestTripleMassMatrixDependenceOnAngles:
 class TestTripleCoriolisNonlinearCoupling:
     """Coriolis vector should show nonlinear dependence on velocities."""
 
-    def test_coriolis_scales_with_velocity_squared(self, triple_params):
+    def test_coriolis_scales_with_velocity_squared(
+        self, triple_params: TriplePendulumParams
+    ) -> None:
         phi1, phi2 = 0.5, -0.3
 
         dtheta1_small = 0.1
@@ -221,7 +243,7 @@ class TestTripleCoriolisNonlinearCoupling:
 class TestTripleNetJointForces:
     """Net joint forces should balance gravity at rest."""
 
-    def test_forces_at_rest(self, triple_params):
+    def test_forces_at_rest(self, triple_params: TriplePendulumParams) -> None:
         state = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
         qddot = np.array([0.0, 0.0, 0.0])
         forces = net_joint_forces_triple(state, qddot, triple_params)

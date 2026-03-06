@@ -80,6 +80,8 @@ class SimulationPanel(QWidget):
     sim_started = pyqtSignal()
     #: Emitted when simulation finishes successfully or with an error
     sim_finished = pyqtSignal()
+    #: Emitted each time the displayed frame changes (idx: int)
+    frame_changed = pyqtSignal(int)
 
     def __init__(
         self,
@@ -373,6 +375,22 @@ class SimulationPanel(QWidget):
         self.matrix.set_frame(idx)
         if self.torque_history is not None:
             self.torque_history.set_frame(idx)
+        self.frame_changed.emit(idx)
+
+    def scrub_to_frame(self, idx: int) -> None:
+        """Jump to a specific frame index (called by toolstrip slider)."""
+        if self._result is None:
+            return
+        idx = max(0, min(idx, self._result.n_steps - 1))
+        self._anim_idx = idx
+        self.controls.set_slider_value(idx)
+        self._display_frame(idx)
+
+    def current_n_steps(self) -> int:
+        """Return the number of frames in the current simulation (0 if none)."""
+        if self._result is None:
+            return 0
+        return int(self._result.n_steps)
 
     def _on_export_data(self) -> None:
         if self._result is None:
