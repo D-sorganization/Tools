@@ -30,7 +30,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from ..physics import PendulumParams
+from ..physics import JointLimits, PendulumParams, TorqueClamp
 from ..physics_triple import TriplePendulumParams
 from ..simulation import make_polynomial_torque, run_simulation
 from ..simulation_triple import make_polynomial_torque as make_polynomial_torque_triple
@@ -254,6 +254,7 @@ class MainWindow(QMainWindow):
                 m2=p["m2"],
                 L1=p["L1"],
                 L2=p["L2"],
+                mClub=p.get("mClub", 0.0),
                 g=g,
                 b1=p.get("b1", 0.0),
                 b2=p.get("b2", 0.0),
@@ -267,6 +268,23 @@ class MainWindow(QMainWindow):
         def build_torque(p: dict) -> object:
             return make_polynomial_torque(p["shoulder_coeffs"], p["wrist_coeffs"])
 
+        def build_limits(p: dict):
+            if not p.get("enable_limits", False):
+                return None
+            return JointLimits(
+                phi_min=p.get("phi_min_rad", -np.pi / 2),
+                phi_max=p.get("phi_max_rad", np.pi / 2),
+                stiffness=p.get("limit_stiffness", 500.0),
+            )
+
+        def build_clamp(p: dict):
+            if not p.get("enable_clamp", False):
+                return None
+            return TorqueClamp(
+                max_torque1=p.get("max_torque1", 50.0),
+                max_torque2=p.get("max_torque2", 20.0),
+            )
+
         panel = SimulationPanel(
             controls=controls,
             pendulum=pendulum,  # type: ignore[arg-type]
@@ -276,6 +294,8 @@ class MainWindow(QMainWindow):
             state_builder=build_state,
             run_simulation=run_simulation,
             torque_history=torque_history,  # type: ignore[arg-type]
+            limits_builder=build_limits,
+            clamp_builder=build_clamp,
         )
         panel._settings_key = "splitter_double"
         return panel

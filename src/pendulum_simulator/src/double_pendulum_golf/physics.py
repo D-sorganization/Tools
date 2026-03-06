@@ -1,21 +1,24 @@
 """
-Double pendulum physics using Lagrangian formulation with relative coordinates.
+Double pendulum golf swing physics using Lagrangian formulation with relative coordinates.
+
+Model: 2-segment pendulum (arms + shaft) with clubhead point mass at tip.
 
 Coordinate convention:
-    q1 (theta1): Absolute angle of segment 1 from downward vertical,
+    q1 (theta1): Absolute angle of segment 1 (arms) from downward vertical,
                  positive counterclockwise.
-    q2 (phi):    Angle of segment 2 relative to segment 1,
+    q2 (phi):    Angle of segment 2 (shaft) relative to segment 1,
                  positive counterclockwise.
 
     When q1=0 and q2=0, both segments hang straight down (equilibrium).
 
-All segments modeled as uniform rods with mass concentrated at the tip
-(point-mass approximation) for clarity. Extend to distributed mass by
-replacing L with l_c and adding rotational inertia terms.
+Segments:
+    Segment 1 = "Arms" (shoulder to wrist)
+    Segment 2 = "Shaft" (wrist to clubhead)
+    Clubhead  = point mass at tip of shaft
 """
 
 from dataclasses import dataclass
-from typing import Callable, Tuple
+from typing import Callable, Optional, Tuple
 
 import numpy as np
 
@@ -26,31 +29,32 @@ import numpy as np
 
 @dataclass(frozen=True)
 class PendulumParams:
-    """Immutable physical parameters for the double pendulum.
+    """Immutable physical parameters for the double pendulum golf model.
 
     Contract:
-        - All lengths and masses must be strictly positive.
+        - All lengths and masses must be strictly positive (mClub >= 0).
         - Gravity must be non-negative.
         - Damping coefficients b1, b2 must be non-negative  (N·m·s/rad).
         - Coulomb friction mu1, mu2 must be non-negative  (N·m peak magnitude).
     """
 
-    m1: float  # mass of segment 1 (kg)
-    m2: float  # mass of segment 2 (kg)
-    L1: float  # length of segment 1 (m)
-    L2: float  # length of segment 2 (m)
-    g: float = 9.81  # gravitational acceleration (m/s^2)
-    # --- Dissipative parameters (default 0 = no losses) ---
-    b1: float = 0.0  # viscous damping at joint 1 (N·m·s/rad)
-    b2: float = 0.0  # viscous damping at joint 2 (N·m·s/rad)
-    mu1: float = 0.0  # Coulomb friction at joint 1 (N·m, constant magnitude)
-    mu2: float = 0.0  # Coulomb friction at joint 2 (N·m, constant magnitude)
+    m1: float  # mass of arms (kg), typical ~5.0
+    m2: float  # mass of shaft (kg), typical ~0.30
+    L1: float  # length of arms (m), typical ~0.65
+    L2: float  # length of shaft (m), typical ~1.10
+    mClub: float = 0.0  # clubhead mass (kg), typical ~0.20
+    g: float = 9.81  # gravitational acceleration (m/s²)
+    b1: float = 0.0  # viscous damping at shoulder (N·m·s/rad)
+    b2: float = 0.0  # viscous damping at wrist (N·m·s/rad)
+    mu1: float = 0.0  # Coulomb friction at shoulder (N·m)
+    mu2: float = 0.0  # Coulomb friction at wrist (N·m)
 
     def __post_init__(self) -> None:
         assert self.m1 > 0, f"m1 must be positive, got {self.m1}"
         assert self.m2 > 0, f"m2 must be positive, got {self.m2}"
         assert self.L1 > 0, f"L1 must be positive, got {self.L1}"
         assert self.L2 > 0, f"L2 must be positive, got {self.L2}"
+        assert self.mClub >= 0, f"mClub must be non-negative, got {self.mClub}"
         assert self.g >= 0, f"g must be non-negative, got {self.g}"
         assert self.b1 >= 0, f"b1 must be non-negative, got {self.b1}"
         assert self.b2 >= 0, f"b2 must be non-negative, got {self.b2}"
@@ -58,11 +62,55 @@ class PendulumParams:
         assert self.mu2 >= 0, f"mu2 must be non-negative, got {self.mu2}"
 
 
-# Type alias: state vector [theta1, phi, dtheta1, dphi]
-State = np.ndarray  # shape (4,)
+@dataclass(frozen=True)
+class JointLimits:
+    """Joint angle limits for the wrist (phi).
 
-# Torque function signature: (t) -> (tau1, tau2)
+    Contract:
+        - phiMin < phiMax.
+        - stiffness > 0, damping >= 0.
+    """
+
+    phi_min: float = -np.pi / 2  # rad
+    phi_max: float = np.pi / 2  # rad
+    stiffness: float = 500.0  # N·m/rad
+    damping: float = 20.0  # N·m·s/rad
+
+    def __post_init__(self) -> None:
+        assert self.phi_min < self.phi_max
+        assert self.stiffness > 0
+        assert self.damping >= 0
+
+
+@dataclass(frozen=True)
+class TorqueClamp:
+    """Torque saturation limits.
+
+    Contract:
+        - Both limits must be positive.
+    """
+
+    max_torque1: float = float("inf")  # N·m
+    max_torque2: float = float("inf")  # N·m
+
+    def __post_init__(self) -> None:
+        assert self.max_torque1 > 0
+        assert self.max_torque2 > 0
+
+
+# Type aliases
+State = np.ndarray  # shape (4,)
 TorqueFunc = Callable[[float], Tuple[float, float]]
+
+
+# ---------------------------------------------------------------------------
+# Effective mass helper (DRY)
+# ---------------------------------------------------------------------------
+
+
+def _m2eff(params: PendulumParams) -> float:
+    """Effective mass of segment 2: shaft + clubhead."""
+    return params.m2 + params.mClub
 
 
 # ---------------------------------------------------------------------------
@@ -73,55 +121,27 @@ TorqueFunc = Callable[[float], Tuple[float, float]]
 def mass_matrix(phi: float, params: PendulumParams) -> np.ndarray:
     """Compute the 2x2 mass (inertia) matrix M(q).
 
-    Preconditions:
-        - phi is a finite float.
-    Postconditions:
-        - Returns a 2x2 symmetric positive-definite matrix.
-        - M[0,1] == M[1,0]  (symmetry).
-        - M[1,1] > 0  (positive diagonal).
+    Clubhead is modeled as a point mass at the tip of the shaft.
 
-    Parameters
-    ----------
-    phi : float
-        Relative angle of segment 2 w.r.t. segment 1 (rad).
-    params : PendulumParams
-
-    Returns
-    -------
-    M : np.ndarray, shape (2, 2)
+    Pre: phi is finite.
+    Post: symmetric positive-definite 2x2 matrix.
     """
     assert np.isfinite(phi), f"phi must be finite, got {phi}"
-    m1, m2, L1, L2 = params.m1, params.m2, params.L1, params.L2
+    m1, L1, L2 = params.m1, params.L1, params.L2
+    me = _m2eff(params)
     cos_phi = np.cos(phi)
 
-    M11 = (m1 + m2) * L1**2 + m2 * L2**2 + 2.0 * m2 * L1 * L2 * cos_phi
-    M12 = m2 * L2**2 + m2 * L1 * L2 * cos_phi
-    M22 = m2 * L2**2
+    M11 = (m1 + me) * L1**2 + me * L2**2 + 2.0 * me * L1 * L2 * cos_phi
+    M12 = me * L2**2 + me * L1 * L2 * cos_phi
+    M22 = me * L2**2
 
     M = np.array([[M11, M12], [M12, M22]])
-
-    # Postcondition: symmetry
     assert np.isclose(M[0, 1], M[1, 0]), "Mass matrix must be symmetric"
     return M
 
 
 def mass_matrix_components(phi: float, params: PendulumParams) -> dict:
-    """Return individual diagonal and off-diagonal terms with physical labels.
-
-    This is the key decomposition: diagonal terms are 'self-coupling'
-    (each joint's torque acting on its own acceleration) and off-diagonal
-    terms are 'cross-coupling' (how one joint's torque accelerates the other).
-
-    Parameters
-    ----------
-    phi : float
-        Relative angle of segment 2 (rad).
-    params : PendulumParams
-
-    Returns
-    -------
-    dict with keys: 'M11', 'M12', 'M21', 'M22', 'M_full'
-    """
+    """Return individual terms with physical labels."""
     M = mass_matrix(phi, params)
     return {
         "M11": M[0, 0],
@@ -142,35 +162,13 @@ def coriolis_vector(
 ) -> np.ndarray:
     """Compute the Coriolis/centrifugal force vector C(q, qdot) * qdot.
 
-    This vector captures velocity-dependent forces: centrifugal effects
-    from rotation and Coriolis coupling between the two angular velocities.
-
-    Preconditions:
-        - All inputs are finite floats.
-
-    Parameters
-    ----------
-    phi : float
-        Relative angle (rad).
-    dtheta1 : float
-        Angular velocity of segment 1 (rad/s).
-    dphi : float
-        Relative angular velocity of segment 2 (rad/s).
-    params : PendulumParams
-
-    Returns
-    -------
-    C_qdot : np.ndarray, shape (2,)
+    Pre: all inputs finite.
     """
-    assert all(
-        np.isfinite(v) for v in [phi, dtheta1, dphi]
-    ), "All velocity inputs must be finite"
-    m2, L1, L2 = params.m2, params.L1, params.L2
-    h = -m2 * L1 * L2 * np.sin(phi)
-
+    assert all(np.isfinite(v) for v in [phi, dtheta1, dphi])
+    me = _m2eff(params)
+    h = -me * params.L1 * params.L2 * np.sin(phi)
     c1 = h * (2.0 * dtheta1 * dphi + dphi**2)
     c2 = -h * dtheta1**2
-
     return np.array([c1, c2])
 
 
@@ -180,31 +178,12 @@ def coriolis_vector(
 
 
 def gravity_vector(theta1: float, phi: float, params: PendulumParams) -> np.ndarray:
-    """Compute the gravitational torque vector G(q).
-
-    Derived from potential energy V = -m1*g*L1*cos(theta1)
-                                      - m2*g*(L1*cos(theta1) + L2*cos(theta1+phi))
-
-    G_i = dV/dq_i
-
-    Parameters
-    ----------
-    theta1 : float
-        Absolute angle of segment 1 (rad).
-    phi : float
-        Relative angle of segment 2 (rad).
-    params : PendulumParams
-
-    Returns
-    -------
-    G : np.ndarray, shape (2,)
-    """
-    m1, m2, L1, L2, g = params.m1, params.m2, params.L1, params.L2, params.g
+    """Compute the gravitational torque vector G(q)."""
+    me = _m2eff(params)
+    L1, L2, g = params.L1, params.L2, params.g
     abs_angle2 = theta1 + phi
-
-    G1 = (m1 + m2) * g * L1 * np.sin(theta1) + m2 * g * L2 * np.sin(abs_angle2)
-    G2 = m2 * g * L2 * np.sin(abs_angle2)
-
+    G1 = (params.m1 + me) * g * L1 * np.sin(theta1) + me * g * L2 * np.sin(abs_angle2)
+    G2 = me * g * L2 * np.sin(abs_angle2)
     return np.array([G1, G2])
 
 
@@ -216,43 +195,64 @@ def gravity_vector(theta1: float, phi: float, params: PendulumParams) -> np.ndar
 def friction_torque_vector(
     dtheta1: float, dphi: float, params: PendulumParams
 ) -> np.ndarray:
-    """Compute the total dissipative torque vector at the joints.
+    """Compute dissipative torque vector (viscous + Coulomb).
 
-    Combines viscous (linear) damping and Coulomb (constant) friction.
-    Both always oppose the direction of motion.
-
-    Model:
-        tau_friction_i = -b_i * qdot_i - mu_i * sign(qdot_i)
-
-    The sign() function is zero when the joint is stationary, so Coulomb
-    friction correctly does not apply a torque at rest.
-
-    Preconditions:
-        - dtheta1 and dphi are finite.
-    Postconditions:
-        - Returns shape (2,), both values finite.
-        - Each component has opposite sign to the corresponding velocity
-          (or is zero if both b_i and mu_i are zero).
-
-    Parameters
-    ----------
-    dtheta1 : float
-        Angular velocity of segment 1 (rad/s).
-    dphi : float
-        Relative angular velocity of segment 2 (rad/s).
-    params : PendulumParams
-
-    Returns
-    -------
-    tau_f : np.ndarray, shape (2,)  [N·m]
+    Pre: dtheta1, dphi finite.
+    Post: opposes motion direction.
     """
-    assert np.isfinite(dtheta1), f"dtheta1 must be finite, got {dtheta1}"
-    assert np.isfinite(dphi), f"dphi must be finite, got {dphi}"
-
+    assert np.isfinite(dtheta1) and np.isfinite(dphi)
     tau_f1 = -params.b1 * dtheta1 - params.mu1 * np.sign(dtheta1)
     tau_f2 = -params.b2 * dphi - params.mu2 * np.sign(dphi)
-
     return np.array([tau_f1, tau_f2])
+
+
+# ---------------------------------------------------------------------------
+# Joint limit penalty torque (smooth barrier)
+# ---------------------------------------------------------------------------
+
+
+def joint_limit_torque(phi: float, dphi: float, limits: JointLimits) -> np.ndarray:
+    """Smooth joint limit penalty using Hermite smoothstep.
+
+    Pre: phi, dphi finite.
+    Post: penalty is 0 when phi is within limits.
+    Returns shape (2,): [tau_penalty_shoulder, tau_penalty_wrist].
+    """
+    assert np.isfinite(phi) and np.isfinite(dphi)
+    tau2 = 0.0
+    transition = 0.05  # rad (~3 degrees)
+
+    if phi < limits.phi_min:
+        pen = limits.phi_min - phi
+        blend = min(1.0, pen / transition)
+        smooth = blend * blend * (3 - 2 * blend)
+        tau2 = smooth * (limits.stiffness * pen + limits.damping * max(0.0, -dphi))
+    elif phi > limits.phi_max:
+        pen = phi - limits.phi_max
+        blend = min(1.0, pen / transition)
+        smooth = blend * blend * (3 - 2 * blend)
+        tau2 = -smooth * (limits.stiffness * pen + limits.damping * max(0.0, dphi))
+
+    return np.array([0.0, tau2])
+
+
+# ---------------------------------------------------------------------------
+# Torque clamping
+# ---------------------------------------------------------------------------
+
+
+def clamp_torque(tau: np.ndarray, clamp: TorqueClamp) -> np.ndarray:
+    """Clamp torques to saturation limits.
+
+    Pre: tau shape (2,), clamp limits > 0.
+    Post: |result[i]| <= limit[i].
+    """
+    return np.array(
+        [
+            np.clip(tau[0], -clamp.max_torque1, clamp.max_torque1),
+            np.clip(tau[1], -clamp.max_torque2, clamp.max_torque2),
+        ]
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -261,120 +261,195 @@ def friction_torque_vector(
 
 
 def equations_of_motion(
-    state: State, t: float, params: PendulumParams, torque_func: TorqueFunc
+    state: State,
+    t: float,
+    params: PendulumParams,
+    torque_func: TorqueFunc,
+    limits: Optional[JointLimits] = None,
+    clamp: Optional[TorqueClamp] = None,
 ) -> State:
-    """Compute the state derivative: dx/dt = f(x, t).
+    """Compute state derivative: dx/dt = f(x, t).
 
-    State vector x = [theta1, phi, dtheta1, dphi].
+    M(q)·q̈ = τ_drive + τ_friction + τ_joint_limit − C − G
 
-    Full equations of motion:
-
-        M(q) * qddot = tau_drive(t) + tau_friction(qdot) - C(q,qdot)*qdot - G(q)
-
-    where:
-        tau_drive   = user-supplied driving torques (polynomial functions of t)
-        tau_friction = dissipative joint torques (viscous damping + Coulomb friction)
-                       These are NOT part of torque_func — they are computed from
-                       current velocity so they can be tracked separately for the
-                       total applied torque analysis.
-
-    Preconditions:
-        - state has shape (4,) with all finite values.
-        - torque_func returns a 2-tuple of finite floats.
-    Postconditions:
-        - Returns shape (4,) with all finite values.
-
-    Parameters
-    ----------
-    state : np.ndarray, shape (4,)
-    t : float
-    params : PendulumParams
-    torque_func : callable (t) -> (tau1, tau2)  — driving torques only
-
-    Returns
-    -------
-    state_dot : np.ndarray, shape (4,)
+    Pre: state shape (4,), all finite.
+    Post: state_dot shape (4,), all finite.
     """
-    assert state.shape == (4,), f"State must have shape (4,), got {state.shape}"
-    assert all(np.isfinite(state)), f"State values must be finite: {state}"
-
+    assert state.shape == (4,) and all(np.isfinite(state))
     theta1, phi, dtheta1, dphi = state
 
     M = mass_matrix(phi, params)
     C = coriolis_vector(phi, dtheta1, dphi, params)
     G = gravity_vector(theta1, phi, params)
 
-    tau1, tau2 = torque_func(t)
-    tau_drive = np.array([tau1, tau2])
+    tau_drive = np.array(torque_func(t))
+    if clamp is not None:
+        tau_drive = clamp_torque(tau_drive, clamp)
+
     tau_friction = friction_torque_vector(dtheta1, dphi, params)
 
-    # Solve: M * qddot = tau_drive + tau_friction - C - G
-    rhs = tau_drive + tau_friction - C - G
+    tau_limits = np.zeros(2)
+    if limits is not None:
+        tau_limits = joint_limit_torque(phi, dphi, limits)
+
+    rhs = tau_drive + tau_friction + tau_limits - C - G
     qddot = np.linalg.solve(M, rhs)
 
     state_dot = np.array([dtheta1, dphi, qddot[0], qddot[1]])
-
-    assert all(
-        np.isfinite(state_dot)
-    ), f"State derivative has non-finite values: {state_dot}"
+    assert all(np.isfinite(state_dot)), f"Non-finite state_dot: {state_dot}"
     return state_dot
 
 
 # ---------------------------------------------------------------------------
-# Forward kinematics (for visualization)
+# Forward kinematics
 # ---------------------------------------------------------------------------
 
 
 def forward_kinematics(theta1: float, phi: float, params: PendulumParams) -> dict:
-    """Compute joint and tip positions in the world frame.
-
-    Origin is at the shoulder (fixed pivot).
-    x-axis points right, y-axis points up.
-
-    Parameters
-    ----------
-    theta1 : float
-        Absolute angle of segment 1 from downward vertical (rad).
-    phi : float
-        Relative angle of segment 2 (rad).
-    params : PendulumParams
-
-    Returns
-    -------
-    dict with 'shoulder', 'wrist', 'tip' as (x, y) tuples.
-    """
+    """Compute joint positions in world frame. Origin at shoulder."""
     L1, L2 = params.L1, params.L2
     abs_angle2 = theta1 + phi
-
-    # Segment 1 endpoint (wrist / elbow joint)
     wx = L1 * np.sin(theta1)
     wy = -L1 * np.cos(theta1)
-
-    # Segment 2 endpoint (club tip)
     tx = wx + L2 * np.sin(abs_angle2)
     ty = wy - L2 * np.cos(abs_angle2)
+    return {"shoulder": (0.0, 0.0), "wrist": (wx, wy), "tip": (tx, ty)}
+
+
+# ---------------------------------------------------------------------------
+# Joint velocities (linear speed at each joint)
+# ---------------------------------------------------------------------------
+
+
+def joint_velocities(state: State, params: PendulumParams) -> dict:
+    """Compute linear velocities at each joint via Jacobian.
+
+    Returns dict with 'wrist_speed', 'tip_speed', 'wrist_vel', 'tip_vel'.
+    """
+    theta1, phi, dtheta1, dphi = state
+    abs_angle2 = theta1 + phi
+    dabs2 = dtheta1 + dphi
+
+    vwx = params.L1 * np.cos(theta1) * dtheta1
+    vwy = params.L1 * np.sin(theta1) * dtheta1
+    vtx = vwx + params.L2 * np.cos(abs_angle2) * dabs2
+    vty = vwy + params.L2 * np.sin(abs_angle2) * dabs2
 
     return {
-        "shoulder": (0.0, 0.0),
-        "wrist": (wx, wy),
-        "tip": (tx, ty),
+        "wrist_speed": float(np.sqrt(vwx**2 + vwy**2)),
+        "tip_speed": float(np.sqrt(vtx**2 + vty**2)),
+        "wrist_vel": (float(vwx), float(vwy)),
+        "tip_vel": (float(vtx), float(vty)),
     }
+
+
+# ---------------------------------------------------------------------------
+# Base (shoulder) reaction force
+# ---------------------------------------------------------------------------
+
+
+def base_force(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
+    """Compute reaction force at the shoulder pivot.
+
+    Returns dict with 'fx', 'fy', 'magnitude'.
+    """
+    theta1, phi, dtheta1, dphi = state
+    qdd1, qdd2 = qddot
+    abs_angle2 = theta1 + phi
+    dabs2 = dtheta1 + dphi
+    ddabs2 = qdd1 + qdd2
+    me = _m2eff(params)
+
+    # Arm COM acceleration (at L1/2)
+    ax1 = (params.L1 / 2) * (np.cos(theta1) * qdd1 - np.sin(theta1) * dtheta1**2)
+    ay1 = (params.L1 / 2) * (np.sin(theta1) * qdd1 + np.cos(theta1) * dtheta1**2)
+
+    # Wrist acceleration
+    awx = params.L1 * (np.cos(theta1) * qdd1 - np.sin(theta1) * dtheta1**2)
+    awy = params.L1 * (np.sin(theta1) * qdd1 + np.cos(theta1) * dtheta1**2)
+
+    # Tip acceleration (clubhead)
+    atx = awx + params.L2 * (
+        np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2
+    )
+    aty = awy + params.L2 * (
+        np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2
+    )
+
+    # Shaft COM at L2/2 from wrist
+    asx = awx + (params.L2 / 2) * (
+        np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2
+    )
+    asy = awy + (params.L2 / 2) * (
+        np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2
+    )
+
+    fx = params.m1 * ax1 + params.m2 * asx + params.mClub * atx
+    fy = (
+        params.m1 * ay1
+        + params.m2 * asy
+        + params.mClub * aty
+        - (params.m1 + me) * params.g
+    )
+
+    return {
+        "fx": float(fx),
+        "fy": float(fy),
+        "magnitude": float(np.sqrt(fx**2 + fy**2)),
+    }
+
+
+# ---------------------------------------------------------------------------
+# Zero-torque counterfactual
+# ---------------------------------------------------------------------------
+
+
+def ztcf_accelerations(
+    state: State,
+    params: PendulumParams,
+    limits: Optional[JointLimits] = None,
+) -> np.ndarray:
+    """Compute accelerations under zero driving torque."""
+    theta1, phi, dtheta1, dphi = state
+    M = mass_matrix(phi, params)
+    C = coriolis_vector(phi, dtheta1, dphi, params)
+    G = gravity_vector(theta1, phi, params)
+    tau_f = friction_torque_vector(dtheta1, dphi, params)
+    tau_lim = np.zeros(2) if limits is None else joint_limit_torque(phi, dphi, limits)
+    rhs = tau_f + tau_lim - C - G
+    return np.linalg.solve(M, rhs)
+
+
+def control_vector(
+    state: State,
+    qddot_actual: np.ndarray,
+    params: PendulumParams,
+    limits: Optional[JointLimits] = None,
+) -> dict:
+    """Control vector: difference between actual and ZTCF base forces.
+
+    Returns dict with 'cvx', 'cvy', 'magnitude'.
+    """
+    qddot_ztcf = ztcf_accelerations(state, params, limits)
+    f_actual = base_force(state, qddot_actual, params)
+    f_ztcf = base_force(state, qddot_ztcf, params)
+    cvx = f_actual["fx"] - f_ztcf["fx"]
+    cvy = f_actual["fy"] - f_ztcf["fy"]
+    return {"cvx": cvx, "cvy": cvy, "magnitude": np.sqrt(cvx**2 + cvy**2)}
+
+
+# ---------------------------------------------------------------------------
+# Linear accelerations and joint forces
+# ---------------------------------------------------------------------------
 
 
 def linear_accelerations(
     state: State, qddot: np.ndarray, params: PendulumParams
 ) -> dict:
-    """Compute linear accelerations of joints in world coordinates.
-
-    Returns
-    -------
-    dict with keys: 'wrist', 'tip' as (ax, ay) tuples.
-    """
-    assert state.shape == (4,), f"State must have shape (4,), got {state.shape}"
-    assert qddot.shape == (2,), f"qddot must have shape (2,), got {qddot.shape}"
+    """Compute linear accelerations of joints in world coordinates."""
+    assert state.shape == (4,) and qddot.shape == (2,)
     theta1, phi, dtheta1, dphi = state
     ddtheta1, ddphi = qddot
-
     L1, L2 = params.L1, params.L2
     abs_angle2 = theta1 + phi
     dabs2 = dtheta1 + dphi
@@ -382,32 +457,22 @@ def linear_accelerations(
 
     ax_w = L1 * (-np.sin(theta1) * dtheta1**2 + np.cos(theta1) * ddtheta1)
     ay_w = L1 * (np.cos(theta1) * dtheta1**2 + np.sin(theta1) * ddtheta1)
-
     ax_t = ax_w + L2 * (-np.sin(abs_angle2) * dabs2**2 + np.cos(abs_angle2) * ddabs2)
     ay_t = ay_w + L2 * (np.cos(abs_angle2) * dabs2**2 + np.sin(abs_angle2) * ddabs2)
 
-    return {
-        "wrist": (ax_w, ay_w),
-        "tip": (ax_t, ay_t),
-    }
+    return {"wrist": (ax_w, ay_w), "tip": (ax_t, ay_t)}
 
 
 def net_joint_forces(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
-    """Compute net joint forces (proximal on distal) in world coordinates.
-
-    Returns
-    -------
-    dict with keys: 'shoulder', 'wrist' as (fx, fy) tuples.
-    """
+    """Compute net joint forces (proximal on distal) in world coordinates."""
     acc = linear_accelerations(state, qddot, params)
     g_vec = np.array([0.0, -params.g])
+    me = _m2eff(params)
 
-    m1, m2 = params.m1, params.m2
     a_w = np.array(acc["wrist"])
     a_t = np.array(acc["tip"])
-
-    f_wrist = m2 * a_t - m2 * g_vec
-    f_shoulder = (m1 * a_w + m2 * a_t) - (m1 + m2) * g_vec
+    f_wrist = me * a_t - me * g_vec
+    f_shoulder = (params.m1 * a_w + me * a_t) - (params.m1 + me) * g_vec
 
     return {
         "shoulder": (float(f_shoulder[0]), float(f_shoulder[1])),
@@ -416,7 +481,7 @@ def net_joint_forces(state: State, qddot: np.ndarray, params: PendulumParams) ->
 
 
 # ---------------------------------------------------------------------------
-# Energy calculations (for verification / display)
+# Energy calculations
 # ---------------------------------------------------------------------------
 
 
@@ -431,10 +496,11 @@ def kinetic_energy(state: State, params: PendulumParams) -> float:
 def potential_energy(state: State, params: PendulumParams) -> float:
     """Compute gravitational potential energy (zero at shoulder height)."""
     theta1, phi = state[0], state[1]
-    m1, m2, L1, L2, g = params.m1, params.m2, params.L1, params.L2, params.g
+    me = _m2eff(params)
     abs_angle2 = theta1 + phi
-
-    V = -(m1 + m2) * g * L1 * np.cos(theta1) - m2 * g * L2 * np.cos(abs_angle2)
+    V = -(params.m1 + me) * params.g * params.L1 * np.cos(
+        theta1
+    ) - me * params.g * params.L2 * np.cos(abs_angle2)
     return float(V)
 
 

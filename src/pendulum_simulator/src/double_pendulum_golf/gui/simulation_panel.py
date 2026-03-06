@@ -93,6 +93,8 @@ class SimulationPanel(QWidget):
         state_builder: Callable[[dict], np.ndarray],
         run_simulation: Callable,
         torque_history: _SimViewer | None = None,
+        limits_builder: Callable[[dict], Any] | None = None,
+        clamp_builder: Callable[[dict], Any] | None = None,
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
@@ -104,6 +106,8 @@ class SimulationPanel(QWidget):
         self._torque_builder = torque_builder
         self._state_builder = state_builder
         self._run_simulation = run_simulation
+        self._limits_builder = limits_builder
+        self._clamp_builder = clamp_builder
 
         self._settings_key: str = "splitter_double"
 
@@ -230,6 +234,10 @@ class SimulationPanel(QWidget):
         self._show_busy(True)
         self.sim_started.emit()
 
+        # Build optional joint limits and torque clamp
+        limits = self._limits_builder(p) if self._limits_builder else None
+        clamp = self._clamp_builder(p) if self._clamp_builder else None
+
         # Build kwargs for the runner function
         run_kwargs: dict = dict(
             params=params,
@@ -238,6 +246,10 @@ class SimulationPanel(QWidget):
             torque_func=torque_func,
             dt=float(p.get("dt", 0.005)),
         )
+        if limits is not None:
+            run_kwargs["limits"] = limits
+        if clamp is not None:
+            run_kwargs["clamp"] = clamp
 
         # Spin up background thread
         self._sim_thread = QThread()
