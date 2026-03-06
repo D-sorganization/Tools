@@ -132,13 +132,18 @@ def _hline() -> QFrame:
     return sep
 
 
-def _make_scale_slider(style: str, default: int = 10) -> QSlider:
-    """Create a compact scale slider (1–1000, default 10 = 1.0×)."""
+def _make_scale_slider(style: str, default: int = 10, max_val: int = 1000) -> QSlider:
+    """Create a compact scale slider (1–max_val, default=10 → 1.0×).
+
+    max_val=1000 → 0.1×…100× (force vectors, which can be very large)
+    max_val=100  → 0.1×…10×  (ellipsoids, more subtle visual scaling)
+    """
     s = QSlider(Qt.Orientation.Horizontal)
-    s.setRange(1, 1000)
+    s.setRange(1, max_val)
     s.setValue(default)
     s.setStyleSheet(style)
     s.setFixedHeight(14)
+    s.setMaximumWidth(200)
     return s
 
 
@@ -164,6 +169,7 @@ class ToolStrip(QWidget):
 
     # Overlay toggles
     forces_toggled = pyqtSignal(bool)
+    zero_torque_toggled = pyqtSignal(bool)
     mob_ellipsoid_toggled = pyqtSignal(bool)
     force_ellipsoid_toggled = pyqtSignal(bool)
 
@@ -289,7 +295,7 @@ class ToolStrip(QWidget):
         layout.addWidget(self.btn_reset_view)
 
     def _build_row2(self, layout: QHBoxLayout) -> None:
-        """Force vectors row: ☑ Force Vectors [scale slider] value"""
+        """Force overlay row: ☑ Force Vectors [scale] | ☑ Zero-τ Forces"""
 
         self.chk_forces = QCheckBox("Force Vectors")
         self.chk_forces.setStyleSheet(_CHK_FORCE)
@@ -304,11 +310,28 @@ class ToolStrip(QWidget):
         self._sld_force = _make_scale_slider(_SLIDER_FORCE, default=10)
         self._sld_force.setToolTip("Force vector display scale (0.1× – 100×)")
         self._sld_force.valueChanged.connect(self._on_force_scale)
-        layout.addWidget(self._sld_force, stretch=1)
+        layout.addWidget(self._sld_force)
 
         self._lbl_force_scale = QLabel("1.0×")
         self._lbl_force_scale.setStyleSheet(_VAL_LBL)
         layout.addWidget(self._lbl_force_scale)
+
+        layout.addWidget(_vline())
+
+        self.chk_zero_torque = QCheckBox("Zero-τ Forces")
+        self.chk_zero_torque.setStyleSheet(
+            "QCheckBox{color:#d0a0e0;font-size:9px;spacing:3px;}"
+            "QCheckBox::indicator{width:12px;height:12px;border:1px solid #604080;"
+            "border-radius:3px;background:#1a1a2a;}"
+            "QCheckBox::indicator:checked{background:#602080;border-color:#a060c0;}"
+        )
+        self.chk_zero_torque.setToolTip(
+            "Show zero-torque counterfactual forces (dashed vectors).\n"
+            "These represent joint forces if all driving torques were removed—\n"
+            "the passive drift due to gravity and inertia alone."
+        )
+        self.chk_zero_torque.toggled.connect(self.zero_torque_toggled.emit)
+        layout.addWidget(self.chk_zero_torque)
 
         layout.addStretch()
 
@@ -325,8 +348,8 @@ class ToolStrip(QWidget):
         self.chk_mob.toggled.connect(self.mob_ellipsoid_toggled.emit)
         layout.addWidget(self.chk_mob)
 
-        self._sld_mob = _make_scale_slider(_SLIDER_MOB, default=10)
-        self._sld_mob.setToolTip("Mobility ellipsoid display scale (0.1× – 100×)")
+        self._sld_mob = _make_scale_slider(_SLIDER_MOB, default=10, max_val=100)
+        self._sld_mob.setToolTip("Mobility ellipsoid display scale (0.1× – 10×)")
         self._sld_mob.valueChanged.connect(self._on_mob_scale)
         layout.addWidget(self._sld_mob, stretch=1)
 
@@ -346,8 +369,8 @@ class ToolStrip(QWidget):
         self.chk_force_ell.toggled.connect(self.force_ellipsoid_toggled.emit)
         layout.addWidget(self.chk_force_ell)
 
-        self._sld_force_ell = _make_scale_slider(_SLIDER_FELL, default=10)
-        self._sld_force_ell.setToolTip("Force ellipsoid display scale (0.1× – 100×)")
+        self._sld_force_ell = _make_scale_slider(_SLIDER_FELL, default=10, max_val=100)
+        self._sld_force_ell.setToolTip("Force ellipsoid display scale (0.1× – 10×)")
         self._sld_force_ell.valueChanged.connect(self._on_force_ell_scale)
         layout.addWidget(self._sld_force_ell, stretch=1)
 

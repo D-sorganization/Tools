@@ -217,6 +217,7 @@ class MainWindow(QMainWindow):
 
             # Overlay toggles → pendulum widget
             ts.forces_toggled.connect(pw.set_show_forces)
+            ts.zero_torque_toggled.connect(pw.set_show_zero_torque_forces)
             ts.mob_ellipsoid_toggled.connect(pw.set_show_mob_ellipsoids)
             ts.force_ellipsoid_toggled.connect(pw.set_show_force_ellipsoids)
 

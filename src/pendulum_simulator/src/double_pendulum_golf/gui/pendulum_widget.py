@@ -74,6 +74,7 @@ class PendulumWidget(QWidget):
 
         # Feature toggles
         self._show_forces: bool = False
+        self._show_zero_torque_forces: bool = False
         self._gravity_on: bool = True
         self._force_scale: float = 1.0
         self._show_mob_ellipsoids: bool = False
@@ -83,6 +84,9 @@ class PendulumWidget(QWidget):
         self._mob_ellipsoid_scale: float = 1.0
         self._force_ellipsoid_scale: float = 1.0
 
+        # Pre-computed counterfactual forces (list[dict] or None)
+        self._zero_torque_forces: list[dict] | None = None
+
         # Perf: precomputed tip position cache (n_steps × 2)
         self._tip_positions_cache: np.ndarray | None = None
 
@@ -91,7 +95,7 @@ class PendulumWidget(QWidget):
     # ------------------------------------------------------------------
 
     def set_simulation(self, result: SimulationResult) -> None:
-        """Load a new simulation result, precompute position cache, and reset display."""
+        """Load a new simulation result, precompute caches, and reset display."""
         assert result is not None
         self._result = result
         self._current_idx = 0
@@ -99,6 +103,9 @@ class PendulumWidget(QWidget):
 
         # Vectorized precomputation of tip positions for fast trail/scrubbing
         self._tip_positions_cache = self._precompute_tips(result)
+
+        # Pre-compute zero-torque counterfactual forces for all frames
+        self._zero_torque_forces = self._precompute_zero_torque_forces(result)
 
         self.update()
 
@@ -141,6 +148,35 @@ class PendulumWidget(QWidget):
 
         return np.column_stack([tx, ty])
 
+    @staticmethod
+    def _precompute_zero_torque_forces(
+        result: SimulationResult,
+    ) -> list[dict]:
+        """Pre-compute zero-torque counterfactual joint forces for every frame.
+
+        Runs the passive dynamics at each state so rendering never calls it
+        per-frame during animation.  Uses vectorised loop over states.
+
+        Returns list of force dicts (one per step), same keys as joint_forces_at.
+        """
+        from ..counterfactual import (
+            zero_torque_joint_forces_double,
+            zero_torque_joint_forces_triple,
+        )
+
+        forces: list[dict] = []
+        params = result.params
+        for state in result.states:
+            try:
+                if state.shape[0] >= 6:
+                    forces.append(zero_torque_joint_forces_triple(state, params))  # type: ignore[arg-type]
+                else:
+                    forces.append(zero_torque_joint_forces_double(state, params))
+            except Exception:
+                # Fallback: empty dict so rendering skips gracefully
+                forces.append({})
+        return forces
+
     def set_frame(self, idx: int) -> None:
         """Advance to frame idx and update the trail."""
         if self._result is None:
@@ -165,6 +201,11 @@ class PendulumWidget(QWidget):
     def set_show_forces(self, show: bool) -> None:
         """Toggle force vector overlay."""
         self._show_forces = show
+        self.update()
+
+    def set_show_zero_torque_forces(self, show: bool) -> None:
+        """Toggle zero-torque counterfactual force vector overlay."""
+        self._show_zero_torque_forces = show
         self.update()
 
     def set_gravity_on(self, on: bool) -> None:
@@ -325,6 +366,10 @@ class PendulumWidget(QWidget):
         if self._show_forces:
             pos = self._result.positions_at(self._current_idx)
             self._draw_force_vectors(painter, pos)
+
+        if self._show_zero_torque_forces:
+            pos = self._result.positions_at(self._current_idx)
+            self._draw_zero_torque_force_vectors(painter, pos)
 
         if self._show_mob_ellipsoids or self._show_force_ellipsoids:
             self._draw_ellipsoids_at_frame(painter)
@@ -497,6 +542,48 @@ class PendulumWidget(QWidget):
         }
 
         painter.setPen(QPen(self.COLOR_FORCE, 2))
+        for key, force in forces.items():
+            joint_pos = joint_map.get(key)
+            if joint_pos is None:
+                continue
+            fx, fy = force
+            end = (
+                joint_pos[0] + fx * scale / self._pixels_per_meter,
+                joint_pos[1] + fy * scale / self._pixels_per_meter,
+            )
+            self._draw_arrow(painter, joint_pos, end)
+
+    # Colour for zero-torque (passive drift) force vectors — distinct from
+    # regular force vectors (COLOR_FORCE, typically yellow/orange)
+    COLOR_ZERO_TORQUE = QColor(210, 120, 255)  # violet/purple
+
+    def _draw_zero_torque_force_vectors(self, painter: QPainter, pos: dict) -> None:
+        """Draw zero-torque (passive drift) force vectors at each joint.
+
+        Dashed purple arrows show the joint forces that would exist if all
+        applied driving torques were zero at this instant.  The same force
+        scale factor as regular force vectors is used so magnitudes are
+        directly visually comparable.
+        """
+        if self._zero_torque_forces is None or not self._zero_torque_forces:
+            return
+        forces = self._zero_torque_forces[self._current_idx]
+        if not forces:
+            return
+
+        magnitudes = [np.hypot(f[0], f[1]) for f in forces.values()]
+        max_mag = max(1.0, max(magnitudes))
+        scale = 0.4 * self._pixels_per_meter * self._force_scale / max_mag
+
+        joint_map = {
+            "shoulder": pos.get("shoulder"),
+            "wrist": pos.get("wrist"),
+            "wrist1": pos.get("wrist1"),
+            "wrist2": pos.get("wrist2"),
+        }
+
+        pen = QPen(self.COLOR_ZERO_TORQUE, 2, Qt.PenStyle.DashLine)
+        painter.setPen(pen)
         for key, force in forces.items():
             joint_pos = joint_map.get(key)
             if joint_pos is None:
