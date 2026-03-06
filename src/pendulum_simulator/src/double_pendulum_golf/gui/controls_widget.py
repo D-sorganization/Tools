@@ -322,112 +322,40 @@ class ControlsWidget(QWidget):
         main_layout.addWidget(diss_group)
 
         # ── Physics & Display ─────────────────────────────────────────
-        vis_group = QGroupBox("Physics & Display")
+        # Gravity toggle (force vectors / scales are in the toolstrip)
+        vis_group = QGroupBox("Physics")
         vis_group.setStyleSheet(_STYLE_GROUP)
         vl = QVBoxLayout(vis_group)
         vl.setContentsMargins(4, 12, 4, 4)
         vl.setSpacing(4)
 
-        chk_row = QHBoxLayout()
-        self.chk_gravity = QCheckBox("🌍 Gravity")
+        self.chk_gravity = QCheckBox("🌍 Gravity on")
         self.chk_gravity.setChecked(True)
         self.chk_gravity.setStyleSheet(_STYLE_CHECK)
         self.chk_gravity.toggled.connect(self.gravity_changed.emit)
-        chk_row.addWidget(self.chk_gravity)
-
-        self.chk_forces = QCheckBox("↗ Forces")
-        self.chk_forces.setChecked(False)
-        self.chk_forces.setStyleSheet(_STYLE_CHECK)
-        self.chk_forces.toggled.connect(self.forces_changed.emit)
-        chk_row.addWidget(self.chk_forces)
-        vl.addLayout(chk_row)
-
-        # Force scale slider
-        scale_row = QHBoxLayout()
-        lbl_fs = QLabel("Force scale:")
-        lbl_fs.setStyleSheet(_STYLE_LABEL)
-        scale_row.addWidget(lbl_fs)
-        self._force_scale_slider = QSlider(Qt.Orientation.Horizontal)
-        self._force_scale_slider.setRange(1, 1000)  # 0.1× … 100×
-        self._force_scale_slider.setValue(10)  # default 1.0×
-        self._force_scale_slider.setStyleSheet(_STYLE_SLIDER)
-        self._force_scale_slider.setToolTip(
-            "Scale force vector display lengths (0.1× – 100×)"
-        )
-        self._force_scale_slider.valueChanged.connect(self._on_force_scale_changed)
-        scale_row.addWidget(self._force_scale_slider, stretch=1)
-        self._lbl_force_scale = QLabel("1.0×")
-        self._lbl_force_scale.setStyleSheet(_STYLE_LABEL)
-        self._lbl_force_scale.setFixedWidth(32)
-        scale_row.addWidget(self._lbl_force_scale)
-        vl.addLayout(scale_row)
+        vl.addWidget(self.chk_gravity)
         main_layout.addWidget(vis_group)
 
-        # ── Run / Reset ───────────────────────────────────────────────
-        btn_layout = QHBoxLayout()
-        self.btn_run = QPushButton("▶  Run Simulation")
-        self.btn_run.setStyleSheet(
-            "QPushButton { background: #2d6b3f; color: white; border: none;"
-            "border-radius: 5px; padding: 9px; font-size: 12px; font-weight: bold; }"
-            "QPushButton:hover { background: #3a8a52; }"
-            "QPushButton:pressed { background: #1f5030; }"
-        )
+        # Hidden but kept so existing signal wiring still works:
+        # btn_run, btn_reset, btn_play, speed_spin, slider, lbl_frame
+        # (all signals are emitted by toolstrip now)
+        self.btn_run = QPushButton()  # hidden
         self.btn_run.clicked.connect(self.run_requested.emit)
-
-        self.btn_reset = QPushButton("Reset")
-        self.btn_reset.setStyleSheet(
-            "QPushButton { background: #5a3030; color: white; border: none;"
-            "border-radius: 5px; padding: 9px; font-size: 12px; }"
-            "QPushButton:hover { background: #7a4040; }"
-        )
+        self.btn_reset = QPushButton()  # hidden
         self.btn_reset.clicked.connect(self.reset_requested.emit)
-        btn_layout.addWidget(self.btn_run, stretch=2)
-        btn_layout.addWidget(self.btn_reset, stretch=1)
-        main_layout.addLayout(btn_layout)
-
-        # ── Playback ──────────────────────────────────────────────────
-        play_group = QGroupBox("Playback")
-        play_group.setStyleSheet(_STYLE_GROUP)
-        pl6 = QVBoxLayout(play_group)
-        pl6.setContentsMargins(4, 12, 4, 4)
-        pl6.setSpacing(3)
-
-        ctrl_row = QHBoxLayout()
-        self.btn_play = QPushButton("▶ Play")
+        self.btn_play = QPushButton()  # hidden
         self.btn_play.setCheckable(True)
-        self.btn_play.setStyleSheet(
-            "QPushButton { background: #2a2a48; color: #c0c0e8; border: 1px solid #484870;"
-            "border-radius: 4px; padding: 5px 10px; font-size: 11px; }"
-            "QPushButton:checked { background: #50402a; color: #f0d080; border-color: #807050; }"
-            "QPushButton:hover { background: #383860; }"
-        )
         self.btn_play.toggled.connect(self._on_play_toggled)
-        ctrl_row.addWidget(self.btn_play)
-
-        spd_lbl = QLabel("Speed:")
-        spd_lbl.setStyleSheet(_STYLE_LABEL)
-        ctrl_row.addWidget(spd_lbl)
-        self.speed_spin = QDoubleSpinBox()
-        self.speed_spin.setRange(0.1, 10.0)
-        self.speed_spin.setSingleStep(0.1)
+        self.speed_spin = QDoubleSpinBox()  # hidden
+        self.speed_spin.setRange(0.05, 20.0)
         self.speed_spin.setValue(1.0)
-        self.speed_spin.setFixedWidth(55)
-        self.speed_spin.setStyleSheet(_STYLE_SPIN)
         self.speed_spin.valueChanged.connect(lambda v: self.speed_changed.emit(v))
-        ctrl_row.addWidget(self.speed_spin)
-        pl6.addLayout(ctrl_row)
-
-        self.slider = QSlider(Qt.Orientation.Horizontal)
+        self.slider = QSlider(Qt.Orientation.Horizontal)  # hidden
         self.slider.setRange(0, 100)
-        self.slider.setStyleSheet(_STYLE_SLIDER)
         self.slider.valueChanged.connect(self.frame_changed.emit)
-        pl6.addWidget(self.slider)
-
-        self.lbl_frame = QLabel("Frame: 0 / 0")
-        self.lbl_frame.setStyleSheet("color: #606080; font-size: 10px;")
-        self.lbl_frame.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        pl6.addWidget(self.lbl_frame)
-        main_layout.addWidget(play_group)
+        self.lbl_frame = QLabel("Frame: 0 / 0")  # hidden
+        self.chk_forces = QCheckBox()  # hidden
+        self.chk_forces.toggled.connect(self.forces_changed.emit)
 
         # ── Export ────────────────────────────────────────────────────
         export_group = QGroupBox("Export")
@@ -453,18 +381,6 @@ class ControlsWidget(QWidget):
         self.inp_tau_shoulder.edit.textChanged.connect(self._update_torque_preview)
         self.inp_tau_wrist.edit.textChanged.connect(self._update_torque_preview)
         self.inp_tend.edit.textChanged.connect(self._update_torque_preview)
-
-    # ------------------------------------------------------------------
-    # Force scale
-    # ------------------------------------------------------------------
-
-    def _on_force_scale_changed(self, raw: int) -> None:
-        scale = raw / 10.0  # 1→0.1, 10→1.0, 1000→100.0
-        if scale < 10.0:
-            self._lbl_force_scale.setText(f"{scale:.1f}×")
-        else:
-            self._lbl_force_scale.setText(f"{scale:.0f}×")
-        self.force_scale_changed.emit(scale)
 
     # ------------------------------------------------------------------
     # Function generator integration

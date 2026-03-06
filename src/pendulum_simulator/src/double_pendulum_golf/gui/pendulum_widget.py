@@ -79,8 +79,9 @@ class PendulumWidget(QWidget):
         self._show_mob_ellipsoids: bool = False
         self._show_force_ellipsoids: bool = False
 
-        # Ellipsoid display scale (meters-per-unit of singlar value)
-        self._ellipsoid_scale: float = 0.3
+        # Ellipsoid display scales (separate for mobility vs force)
+        self._mob_ellipsoid_scale: float = 1.0
+        self._force_ellipsoid_scale: float = 1.0
 
         # Perf: precomputed tip position cache (n_steps × 2)
         self._tip_positions_cache: np.ndarray | None = None
@@ -184,6 +185,18 @@ class PendulumWidget(QWidget):
     def set_show_force_ellipsoids(self, show: bool) -> None:
         """Toggle force ellipsoid overlay at segment endpoints."""
         self._show_force_ellipsoids = show
+        self.update()
+
+    def set_mob_ellipsoid_scale(self, scale: float) -> None:
+        """Set the display scale for mobility ellipsoids."""
+        assert scale > 0, "Ellipsoid scale must be positive"
+        self._mob_ellipsoid_scale = float(scale)
+        self.update()
+
+    def set_force_ellipsoid_scale(self, scale: float) -> None:
+        """Set the display scale for force ellipsoids."""
+        assert scale > 0, "Ellipsoid scale must be positive"
+        self._force_ellipsoid_scale = float(scale)
         self.update()
 
     def reset_view(self) -> None:
@@ -511,7 +524,6 @@ class PendulumWidget(QWidget):
         state = self._result.states[self._current_idx]
         params = self._result.params
         ppm = self._pixels_per_meter
-        scale = self._ellipsoid_scale * ppm  # pixels per singular-value unit
 
         if state.shape[0] >= 6:
             # Triple pendulum
@@ -552,24 +564,26 @@ class PendulumWidget(QWidget):
             dirs = ell["directions"]  # (2,2), columns are principal axes
             if self._show_mob_ellipsoids:
                 mob = ell["mob_semi_axes"]  # (2,) in physics units
+                mob_scale = self._mob_ellipsoid_scale * ppm * 0.3
                 self._draw_ellipse_axes(
                     painter,
                     cx_px,
                     cy_px,
                     dirs,
-                    mob * scale,
+                    mob * mob_scale,
                     fill=self.COLOR_MOB_ELLIPSOID,
                     outline=self.COLOR_MOB_OUTLINE,
                     label="M",
                 )
             if self._show_force_ellipsoids and ell["force_semi_axes"] is not None:
                 force = ell["force_semi_axes"]  # (2,)
+                force_scale = self._force_ellipsoid_scale * ppm * 0.3
                 self._draw_ellipse_axes(
                     painter,
                     cx_px,
                     cy_px,
                     dirs,
-                    force * scale,
+                    force * force_scale,
                     fill=self.COLOR_FORCE_ELLIPSOID,
                     outline=self.COLOR_FORCE_OUTLINE,
                     label="F",
