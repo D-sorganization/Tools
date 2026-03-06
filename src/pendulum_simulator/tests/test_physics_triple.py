@@ -22,16 +22,22 @@ from double_pendulum_golf.physics_triple import (
 def triple_params():
     """Default parameters for triple pendulum."""
     return TriplePendulumParams(
-        m1=5.0, m2=0.5, m3=0.2,
-        L1=0.6, L2=0.6, L3=0.6,
+        m1=5.0,
+        m2=0.5,
+        m3=0.2,
+        L1=0.6,
+        L2=0.6,
+        L3=0.6,
     )
 
 
 @pytest.fixture
 def triple_torque_func():
     """Simple constant torque function."""
+
     def torque(t):
         return (0.0, 0.0, 0.0)
+
     return torque
 
 
@@ -45,8 +51,7 @@ class TestTripleMassMatrixSymmetry:
         # Check symmetry: M[i,j] == M[j,i]
         for i in range(3):
             for j in range(3):
-                assert np.isclose(M[i, j], M[j, i]), \
-                    f"M[{i},{j}] != M[{j},{i}]"
+                assert np.isclose(M[i, j], M[j, i]), f"M[{i},{j}] != M[{j},{i}]"
 
     def test_symmetric_at_arbitrary_angles(self, triple_params):
         for phi1 in np.linspace(-np.pi, np.pi, 10):
@@ -54,8 +59,9 @@ class TestTripleMassMatrixSymmetry:
                 M = mass_matrix_triple(phi1, phi2, triple_params)
                 for i in range(3):
                     for j in range(3):
-                        assert np.isclose(M[i, j], M[j, i]), \
-                            f"Not symmetric at phi1={phi1}, phi2={phi2}"
+                        assert np.isclose(
+                            M[i, j], M[j, i]
+                        ), f"Not symmetric at phi1={phi1}, phi2={phi2}"
 
 
 class TestTripleMassMatrixPositiveDefinite:
@@ -67,8 +73,9 @@ class TestTripleMassMatrixPositiveDefinite:
             for phi2 in test_angles:
                 M = mass_matrix_triple(phi1, phi2, triple_params)
                 eigenvalues = np.linalg.eigvalsh(M)
-                assert all(ev > 0 for ev in eigenvalues), \
-                    f"Not positive definite at phi1={phi1}, phi2={phi2}"
+                assert all(
+                    ev > 0 for ev in eigenvalues
+                ), f"Not positive definite at phi1={phi1}, phi2={phi2}"
 
 
 class TestTripleCoriolisZeroAtRest:
@@ -107,17 +114,17 @@ class TestTripleForwardKinematics:
     def test_all_hanging_down(self, triple_params):
         theta1, phi1, phi2 = 0.0, 0.0, 0.0
         pos = forward_kinematics_triple(theta1, phi1, phi2, triple_params)
-        
+
         # Check keys
         assert set(pos.keys()) == {"shoulder", "wrist1", "wrist2", "tip"}
-        
+
         # Shoulder at origin
         assert np.allclose(pos["shoulder"], (0.0, 0.0))
-        
+
         # When straight down, positions should be at negative y
         assert pos["wrist1"][0] == 0.0  # x = 0
         assert pos["wrist1"][1] < 0  # y < 0
-        
+
         assert pos["tip"][0] == 0.0
         assert pos["tip"][1] < 0
 
@@ -125,7 +132,7 @@ class TestTripleForwardKinematics:
         theta1 = np.pi / 2
         phi1, phi2 = 0.0, 0.0
         pos = forward_kinematics_triple(theta1, phi1, phi2, triple_params)
-        
+
         # Wrist1 should be at (L1, 0)
         L1 = triple_params.L1
         assert np.isclose(pos["wrist1"][0], L1)
@@ -135,19 +142,25 @@ class TestTripleForwardKinematics:
 class TestTripleEquationsOfMotion:
     """Equations of motion should produce valid accelerations."""
 
-    def test_eom_produces_valid_state_derivative(self, triple_params, triple_torque_func):
+    def test_eom_produces_valid_state_derivative(
+        self, triple_params, triple_torque_func
+    ):
         # State: [theta1, phi1, phi2, dtheta1, dphi1, dphi2]
         state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
-        state_dot = equations_of_motion_triple(state, 0.0, triple_params, triple_torque_func)
-        
+        state_dot = equations_of_motion_triple(
+            state, 0.0, triple_params, triple_torque_func
+        )
+
         assert state_dot.shape == (6,)
         assert all(np.isfinite(state_dot)), f"Invalid values: {state_dot}"
 
     def test_eom_at_rest_at_equilibrium(self, triple_params, triple_torque_func):
         # At equilibrium with zero velocity, acceleration should be zero
         state = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-        state_dot = equations_of_motion_triple(state, 0.0, triple_params, triple_torque_func)
-        
+        state_dot = equations_of_motion_triple(
+            state, 0.0, triple_params, triple_torque_func
+        )
+
         # Velocities should match input (first 3 elements should be all zeros)
         assert np.isclose(state_dot[0], 0.0)  # dtheta1
         assert np.isclose(state_dot[1], 0.0)  # dphi1
@@ -177,8 +190,8 @@ class TestTripleMassMatrixDependenceOnAngles:
 
     def test_mass_matrix_different_at_different_angles(self, triple_params):
         M1 = mass_matrix_triple(0.0, 0.0, triple_params)
-        M2 = mass_matrix_triple(np.pi/4, 0.0, triple_params)
-        
+        M2 = mass_matrix_triple(np.pi / 4, 0.0, triple_params)
+
         # They should be different
         assert not np.allclose(M1, M2)
 
@@ -188,13 +201,17 @@ class TestTripleCoriolisNonlinearCoupling:
 
     def test_coriolis_scales_with_velocity_squared(self, triple_params):
         phi1, phi2 = 0.5, -0.3
-        
+
         dtheta1_small = 0.1
-        C_small = coriolis_vector_triple(phi1, phi2, dtheta1_small, 0.1, 0.1, triple_params)
-        
+        C_small = coriolis_vector_triple(
+            phi1, phi2, dtheta1_small, 0.1, 0.1, triple_params
+        )
+
         dtheta1_large = 0.2  # 2x larger
-        C_large = coriolis_vector_triple(phi1, phi2, dtheta1_large, 0.1, 0.1, triple_params)
-        
+        C_large = coriolis_vector_triple(
+            phi1, phi2, dtheta1_large, 0.1, 0.1, triple_params
+        )
+
         # The change should not be linear (quadratic in velocity)
         ratio = np.linalg.norm(C_large) / np.linalg.norm(C_small)
         # ratio should be approximately 4x (since velocity is 2x)

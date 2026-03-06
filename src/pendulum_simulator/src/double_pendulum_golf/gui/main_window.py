@@ -40,6 +40,7 @@ from .matrix_widget import MatrixWidget
 from .matrix_widget_triple import TripleMatrixWidget
 from .pendulum_widget import PendulumWidget
 from .simulation_panel import SimulationPanel
+from .toolstrip_widget import ToolStrip
 from .torque_history_widget import TorqueHistoryWidget
 
 logger = logging.getLogger(__name__)
@@ -163,8 +164,12 @@ class MainWindow(QMainWindow):
         central = QWidget()
         self.setCentralWidget(central)
         main_layout = QVBoxLayout(central)
-        main_layout.setContentsMargins(4, 2, 4, 2)
-        main_layout.setSpacing(2)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
+
+        # Persistent toolstrip — always visible, regardless of scroll
+        self._toolstrip = ToolStrip()
+        main_layout.addWidget(self._toolstrip)
 
         self._tabs = QTabWidget()
         self._double_panel = self._build_double_panel()
@@ -178,6 +183,30 @@ class MainWindow(QMainWindow):
         self.status.showMessage(
             "Ready  ·  Scroll=zoom  ·  Drag=pan  ·  Dbl-click=reset view",
         )
+
+        self._wire_toolstrip()
+
+    def _wire_toolstrip(self) -> None:
+        """Connect toolstrip signals to both pendulum panels."""
+        from typing import cast
+
+        ts = self._toolstrip
+
+        # Run / Reset forwarded to active panel (both panels listen)
+        for panel in (self._double_panel, self._triple_panel):
+            ts.run_requested.connect(panel.controls.run_requested.emit)
+            ts.reset_requested.connect(panel.controls.reset_requested.emit)
+            ts.play_toggled.connect(panel.controls.play_toggled.emit)
+            ts.speed_changed.connect(panel.controls.speed_changed.emit)
+
+            # Ellipsoid toggles → pendulum widget (always a PendulumWidget at runtime)
+            pw = cast(PendulumWidget, panel.pendulum)
+            ts.mob_ellipsoid_toggled.connect(pw.set_show_mob_ellipsoids)
+            ts.force_ellipsoid_toggled.connect(pw.set_show_force_ellipsoids)
+
+            # Mirror busy state back to toolstrip
+            panel.sim_started.connect(lambda: ts.set_running(True))
+            panel.sim_finished.connect(lambda: ts.set_running(False))
 
     def _build_double_panel(self) -> SimulationPanel:
         controls = ControlsWidget()

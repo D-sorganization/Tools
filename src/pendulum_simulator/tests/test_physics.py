@@ -16,16 +16,14 @@ from double_pendulum_golf.physics import (
     gravity_vector,
     kinetic_energy,
     mass_matrix,
-    mass_matrix_components,
     net_joint_forces,
     potential_energy,
-    total_energy,
 )
-
 
 # ======================================================================
 # Mass matrix properties
 # ======================================================================
+
 
 class TestMassMatrixSymmetry:
     """The mass matrix must be symmetric: M12 == M21."""
@@ -47,8 +45,9 @@ class TestMassMatrixPositiveDefinite:
         for phi in np.linspace(-np.pi, np.pi, 50):
             M = mass_matrix(phi, default_params)
             eigenvalues = np.linalg.eigvalsh(M)
-            assert all(ev > 0 for ev in eigenvalues), \
-                f"Not positive definite at phi={phi}: eigenvalues={eigenvalues}"
+            assert all(
+                ev > 0 for ev in eigenvalues
+            ), f"Not positive definite at phi={phi}: eigenvalues={eigenvalues}"
 
 
 class TestMassMatrixCouplingMaximum:
@@ -58,8 +57,9 @@ class TestMassMatrixCouplingMaximum:
         M12_at_zero = abs(mass_matrix(0.0, default_params)[0, 1])
         for phi in np.linspace(0.1, np.pi, 30):
             M12 = abs(mass_matrix(phi, default_params)[0, 1])
-            assert M12 <= M12_at_zero + 1e-10, \
-                f"|M12| at phi={phi:.2f} ({M12:.4f}) exceeds value at phi=0 ({M12_at_zero:.4f})"
+            assert (
+                M12 <= M12_at_zero + 1e-10
+            ), f"|M12| at phi={phi:.2f} ({M12:.4f}) exceeds value at phi=0 ({M12_at_zero:.4f})"
 
 
 class TestMassMatrixDiagonalConstant:
@@ -69,12 +69,13 @@ class TestMassMatrixDiagonalConstant:
         M22_ref = mass_matrix(0.0, default_params)[1, 1]
         for phi in np.linspace(-np.pi, np.pi, 30):
             M22 = mass_matrix(phi, default_params)[1, 1]
-            assert np.isclose(M22, M22_ref), \
-                f"M22 changed at phi={phi}: {M22} vs {M22_ref}"
+            assert np.isclose(
+                M22, M22_ref
+            ), f"M22 changed at phi={phi}: {M22} vs {M22_ref}"
 
     def test_m22_equals_expected(self, default_params):
         """M22 = m2 * L2^2 for point mass at tip."""
-        expected = default_params.m2 * default_params.L2 ** 2
+        expected = default_params.m2 * default_params.L2**2
         M22 = mass_matrix(0.0, default_params)[1, 1]
         assert np.isclose(M22, expected)
 
@@ -109,6 +110,7 @@ class TestMassMatrixKnownValues:
 # Coriolis / centrifugal
 # ======================================================================
 
+
 class TestCoriolisVector:
     """Tests for the Coriolis/centrifugal force computation."""
 
@@ -134,6 +136,7 @@ class TestCoriolisVector:
 # Gravity vector
 # ======================================================================
 
+
 class TestGravityVector:
     """Tests for gravitational torques."""
 
@@ -151,6 +154,7 @@ class TestGravityVector:
 # ======================================================================
 # Equations of motion
 # ======================================================================
+
 
 class TestEquationsOfMotion:
     """Tests for the complete EOM."""
@@ -176,6 +180,7 @@ class TestEquationsOfMotion:
 # ======================================================================
 # Forward kinematics
 # ======================================================================
+
 
 class TestForwardKinematics:
     """Tests for Cartesian position computation."""
@@ -204,6 +209,7 @@ class TestForwardKinematics:
 # Energy
 # ======================================================================
 
+
 class TestEnergy:
     """Tests for energy computations."""
 
@@ -226,6 +232,7 @@ class TestEnergy:
 # Net joint forces
 # ======================================================================
 
+
 class TestNetJointForces:
     """Net joint forces should balance gravity at rest."""
 
@@ -245,6 +252,7 @@ class TestNetJointForces:
 # Design by Contract: precondition violations
 # ======================================================================
 
+
 class TestDbCViolations:
     """Verify that precondition violations raise AssertionError."""
 
@@ -258,7 +266,7 @@ class TestDbCViolations:
 
     def test_nan_phi_rejected(self, default_params):
         with pytest.raises(AssertionError):
-            mass_matrix(float('nan'), default_params)
+            mass_matrix(float("nan"), default_params)
 
     def test_wrong_state_shape_rejected(self, default_params, zero_torque):
         with pytest.raises(AssertionError):

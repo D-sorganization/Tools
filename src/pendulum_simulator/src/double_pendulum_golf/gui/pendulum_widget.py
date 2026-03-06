@@ -21,6 +21,7 @@ from PyQt6.QtCore import QPoint, QPointF, QRect, Qt
 from PyQt6.QtGui import QBrush, QColor, QFont, QMouseEvent, QPainter, QPen
 from PyQt6.QtWidgets import QWidget
 
+from ..jacobians import ellipsoids_double, ellipsoids_triple
 from ..simulation import SimulationResult
 
 
@@ -75,6 +76,11 @@ class PendulumWidget(QWidget):
         self._show_forces: bool = False
         self._gravity_on: bool = True
         self._force_scale: float = 1.0
+        self._show_mob_ellipsoids: bool = False
+        self._show_force_ellipsoids: bool = False
+
+        # Ellipsoid display scale (meters-per-unit of singlar value)
+        self._ellipsoid_scale: float = 0.3
 
         # Perf: precomputed tip position cache (n_steps × 2)
         self._tip_positions_cache: np.ndarray | None = None
@@ -168,6 +174,16 @@ class PendulumWidget(QWidget):
     def set_force_scale(self, scale: float) -> None:
         """Set the display scale multiplier for force vectors."""
         self._force_scale = max(0.01, float(scale))
+        self.update()
+
+    def set_show_mob_ellipsoids(self, show: bool) -> None:
+        """Toggle mobility ellipsoid overlay at segment endpoints."""
+        self._show_mob_ellipsoids = show
+        self.update()
+
+    def set_show_force_ellipsoids(self, show: bool) -> None:
+        """Toggle force ellipsoid overlay at segment endpoints."""
+        self._show_force_ellipsoids = show
         self.update()
 
     # ------------------------------------------------------------------
@@ -274,6 +290,9 @@ class PendulumWidget(QWidget):
         if self._show_forces:
             pos = self._result.positions_at(self._current_idx)
             self._draw_force_vectors(painter, pos)
+
+        if self._show_mob_ellipsoids or self._show_force_ellipsoids:
+            self._draw_ellipsoids_at_frame(painter)
 
         self._draw_info(painter)
         self._draw_zoom_controls(painter)
@@ -453,6 +472,141 @@ class PendulumWidget(QWidget):
                 joint_pos[1] + fy * scale / self._pixels_per_meter,
             )
             self._draw_arrow(painter, joint_pos, end)
+
+    # ------------------------------------------------------------------
+    # Ellipsoid drawing
+    # ------------------------------------------------------------------
+
+    # Color constants for ellipsoids
+    COLOR_MOB_ELLIPSOID = QColor(100, 200, 255, 70)  # translucent cyan
+    COLOR_MOB_OUTLINE = QColor(100, 200, 255, 180)
+    COLOR_FORCE_ELLIPSOID = QColor(255, 160, 80, 60)  # translucent orange
+    COLOR_FORCE_OUTLINE = QColor(255, 160, 80, 180)
+
+    def _draw_ellipsoids_at_frame(self, painter: QPainter) -> None:
+        """Compute and draw mobility/force ellipsoids for the current frame."""
+        assert self._result is not None
+        state = self._result.states[self._current_idx]
+        params = self._result.params
+        ppm = self._pixels_per_meter
+        scale = self._ellipsoid_scale * ppm  # pixels per singular-value unit
+
+        if state.shape[0] >= 6:
+            # Triple pendulum
+            theta1, phi1, phi2 = float(state[0]), float(state[1]), float(state[2])
+            data = ellipsoids_triple(
+                theta1,
+                phi1,
+                phi2,
+                params.L1,
+                params.L2,
+                params.L3,  # type: ignore[attr-defined]
+            )
+            pos = self._result.positions_at(self._current_idx)
+            endpoint_map = {
+                "wrist1": pos.get("wrist1", pos.get("wrist", (0.0, 0.0))),
+                "wrist2": pos.get("wrist2", (0.0, 0.0)),
+                "tip": pos["tip"],
+            }
+        else:
+            # Double pendulum
+            theta1, phi = float(state[0]), float(state[1])
+            data = ellipsoids_double(theta1, phi, params.L1, params.L2)
+            pos = self._result.positions_at(self._current_idx)
+            endpoint_map = {
+                "wrist": pos.get("wrist", (0.0, 0.0)),
+                "tip": pos["tip"],
+            }
+
+        for name, ell in data.items():
+            world_pos = endpoint_map.get(name)
+            if world_pos is None:
+                continue
+            cx_px, cy_px = (
+                self._world_to_pixel(*world_pos).x(),
+                self._world_to_pixel(*world_pos).y(),
+            )
+
+            dirs = ell["directions"]  # (2,2), columns are principal axes
+            if self._show_mob_ellipsoids:
+                mob = ell["mob_semi_axes"]  # (2,) in physics units
+                self._draw_ellipse_axes(
+                    painter,
+                    cx_px,
+                    cy_px,
+                    dirs,
+                    mob * scale,
+                    fill=self.COLOR_MOB_ELLIPSOID,
+                    outline=self.COLOR_MOB_OUTLINE,
+                    label="M",
+                )
+            if self._show_force_ellipsoids and ell["force_semi_axes"] is not None:
+                force = ell["force_semi_axes"]  # (2,)
+                self._draw_ellipse_axes(
+                    painter,
+                    cx_px,
+                    cy_px,
+                    dirs,
+                    force * scale,
+                    fill=self.COLOR_FORCE_ELLIPSOID,
+                    outline=self.COLOR_FORCE_OUTLINE,
+                    label="F",
+                )
+
+    def _draw_ellipse_axes(
+        self,
+        painter: QPainter,
+        cx: float,
+        cy: float,
+        directions: np.ndarray,
+        semi_axes_px: np.ndarray,
+        fill: QColor,
+        outline: QColor,
+        label: str = "",
+    ) -> None:
+        """Draw a 2-D ellipse defined by principal axes and semi-axis lengths (pixels).
+
+        Contract
+        --------
+        directions : (2, 2) orthonormal matrix; columns are principal axes.
+        semi_axes_px : (2,) non-negative pixel semi-axis lengths.
+        """
+        assert directions.shape == (2, 2), "directions must be (2, 2)"
+        assert semi_axes_px.shape == (2,), "semi_axes_px must be (2,)"
+
+        a = float(semi_axes_px[0])  # major semi-axis (pixels)
+        b = float(semi_axes_px[1])  # minor semi-axis (pixels)
+
+        # Clamp to sensible display range
+        max_px = min(self.width(), self.height()) * 0.8
+        a = max(2.0, min(a, max_px))
+        b = max(2.0, min(b, max_px))
+
+        # Principal-axis direction (column 0 of U = major axis)
+        dx, dy = float(directions[0, 0]), float(directions[1, 0])
+        # In screen coords: y is flipped, so negate dy
+        angle_deg = float(np.degrees(np.arctan2(-dy, dx)))
+
+        painter.save()
+        painter.translate(cx, cy)
+        painter.rotate(angle_deg)
+        painter.setBrush(QBrush(fill))
+        painter.setPen(QPen(outline, 1.2))
+        # drawEllipse(x, y, w, h) where x,y is top-left corner
+        painter.drawEllipse(
+            QPointF(0.0, 0.0),
+            a,  # half-width  = major semi-axis
+            b,  # half-height = minor semi-axis
+        )
+        painter.restore()
+
+        # Small label at ellipse edge
+        if label:
+            lbl_x = cx + float(directions[0, 0]) * a + 4
+            lbl_y = cy - float(directions[1, 0]) * a
+            painter.setFont(QFont("Monospace", 7))
+            painter.setPen(outline)
+            painter.drawText(QPointF(lbl_x, lbl_y), label)
 
     def _draw_arrow(self, painter: QPainter, origin: tuple, end: tuple) -> None:
         p0 = self._world_to_pixel(origin[0], origin[1])

@@ -76,6 +76,11 @@ class SimulationPanel(QWidget):
 
     ANIMATION_INTERVAL_MS = 16  # ~60 fps
 
+    #: Emitted when ODE integration starts (background thread launched)
+    sim_started = pyqtSignal()
+    #: Emitted when simulation finishes successfully or with an error
+    sim_finished = pyqtSignal()
+
     def __init__(
         self,
         controls: ControlsWidget | ControlsWidgetTriple,
@@ -221,6 +226,7 @@ class SimulationPanel(QWidget):
         self.controls.btn_run.setEnabled(False)
         self.controls.btn_reset.setEnabled(False)
         self._show_busy(True)
+        self.sim_started.emit()
 
         # Build kwargs for the runner function
         run_kwargs: dict = dict(
@@ -251,6 +257,7 @@ class SimulationPanel(QWidget):
         self._show_busy(False)
         self.controls.btn_run.setEnabled(True)
         self.controls.btn_reset.setEnabled(True)
+        self.sim_finished.emit()
 
         self._result = res
         self._anim_idx = 0
@@ -271,6 +278,7 @@ class SimulationPanel(QWidget):
         self._show_busy(False)
         self.controls.btn_run.setEnabled(True)
         self.controls.btn_reset.setEnabled(True)
+        self.sim_finished.emit()
         QMessageBox.critical(self, "Simulation Error", msg)
 
     def _show_busy(self, busy: bool) -> None:
