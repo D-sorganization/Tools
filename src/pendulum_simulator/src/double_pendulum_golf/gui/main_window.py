@@ -115,6 +115,13 @@ class MainWindow(QMainWindow):
         # Apply base dark style (always)
         self.setStyleSheet(_PENDULUM_DARK_STYLE)
 
+        # Set app favicon
+        _icon_path = Path(__file__).parent / "pendulum_icon.png"
+        if _icon_path.exists():
+            from PyQt6.QtGui import QIcon
+
+            self.setWindowIcon(QIcon(str(_icon_path)))
+
         self._theme_manager: object | None = None
         self._build_menu()
         self._build_ui()
@@ -210,8 +217,14 @@ class MainWindow(QMainWindow):
 
             # Overlay toggles → pendulum widget
             ts.forces_toggled.connect(pw.set_show_forces)
+            ts.zero_torque_toggled.connect(pw.set_show_zero_torque_forces)
             ts.mob_ellipsoid_toggled.connect(pw.set_show_mob_ellipsoids)
             ts.force_ellipsoid_toggled.connect(pw.set_show_force_ellipsoids)
+
+            # Scale sliders → pendulum widget
+            ts.force_scale_changed.connect(pw.set_force_scale)
+            ts.mob_scale_changed.connect(pw.set_mob_ellipsoid_scale)
+            ts.force_ell_scale_changed.connect(pw.set_force_ellipsoid_scale)
 
             # Busy state
             panel.sim_started.connect(lambda: ts.set_running(True))
@@ -224,6 +237,9 @@ class MainWindow(QMainWindow):
 
             # Sync toolstrip frame counter when animation advances
             panel.frame_changed.connect(lambda idx: ts.set_frame(idx))
+
+            # Reset view button → clear zoom/pan on the pendulum canvas
+            ts.reset_view_requested.connect(pw.reset_view)
 
     def _build_double_panel(self) -> SimulationPanel:
         controls = ControlsWidget()

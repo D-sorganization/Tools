@@ -74,13 +74,18 @@ class PendulumWidget(QWidget):
 
         # Feature toggles
         self._show_forces: bool = False
+        self._show_zero_torque_forces: bool = False
         self._gravity_on: bool = True
         self._force_scale: float = 1.0
         self._show_mob_ellipsoids: bool = False
         self._show_force_ellipsoids: bool = False
 
-        # Ellipsoid display scale (meters-per-unit of singlar value)
-        self._ellipsoid_scale: float = 0.3
+        # Ellipsoid display scales (separate for mobility vs force)
+        self._mob_ellipsoid_scale: float = 1.0
+        self._force_ellipsoid_scale: float = 1.0
+
+        # Pre-computed counterfactual forces (list[dict] or None)
+        self._zero_torque_forces: list[dict] | None = None
 
         # Perf: precomputed tip position cache (n_steps × 2)
         self._tip_positions_cache: np.ndarray | None = None
@@ -90,7 +95,7 @@ class PendulumWidget(QWidget):
     # ------------------------------------------------------------------
 
     def set_simulation(self, result: SimulationResult) -> None:
-        """Load a new simulation result, precompute position cache, and reset display."""
+        """Load a new simulation result, precompute caches, and reset display."""
         assert result is not None
         self._result = result
         self._current_idx = 0
@@ -98,6 +103,9 @@ class PendulumWidget(QWidget):
 
         # Vectorized precomputation of tip positions for fast trail/scrubbing
         self._tip_positions_cache = self._precompute_tips(result)
+
+        # Pre-compute zero-torque counterfactual forces for all frames
+        self._zero_torque_forces = self._precompute_zero_torque_forces(result)
 
         self.update()
 
@@ -140,6 +148,35 @@ class PendulumWidget(QWidget):
 
         return np.column_stack([tx, ty])
 
+    @staticmethod
+    def _precompute_zero_torque_forces(
+        result: SimulationResult,
+    ) -> list[dict]:
+        """Pre-compute zero-torque counterfactual joint forces for every frame.
+
+        Runs the passive dynamics at each state so rendering never calls it
+        per-frame during animation.  Uses vectorised loop over states.
+
+        Returns list of force dicts (one per step), same keys as joint_forces_at.
+        """
+        from ..counterfactual import (
+            zero_torque_joint_forces_double,
+            zero_torque_joint_forces_triple,
+        )
+
+        forces: list[dict] = []
+        params = result.params
+        for state in result.states:
+            try:
+                if state.shape[0] >= 6:
+                    forces.append(zero_torque_joint_forces_triple(state, params))  # type: ignore[arg-type]
+                else:
+                    forces.append(zero_torque_joint_forces_double(state, params))
+            except Exception:
+                # Fallback: empty dict so rendering skips gracefully
+                forces.append({})
+        return forces
+
     def set_frame(self, idx: int) -> None:
         """Advance to frame idx and update the trail."""
         if self._result is None:
@@ -166,6 +203,11 @@ class PendulumWidget(QWidget):
         self._show_forces = show
         self.update()
 
+    def set_show_zero_torque_forces(self, show: bool) -> None:
+        """Toggle zero-torque counterfactual force vector overlay."""
+        self._show_zero_torque_forces = show
+        self.update()
+
     def set_gravity_on(self, on: bool) -> None:
         """Toggle gravity indicator (visual only — physics uses g from params)."""
         self._gravity_on = on
@@ -184,6 +226,25 @@ class PendulumWidget(QWidget):
     def set_show_force_ellipsoids(self, show: bool) -> None:
         """Toggle force ellipsoid overlay at segment endpoints."""
         self._show_force_ellipsoids = show
+        self.update()
+
+    def set_mob_ellipsoid_scale(self, scale: float) -> None:
+        """Set the display scale for mobility ellipsoids."""
+        assert scale > 0, "Ellipsoid scale must be positive"
+        self._mob_ellipsoid_scale = float(scale)
+        self.update()
+
+    def set_force_ellipsoid_scale(self, scale: float) -> None:
+        """Set the display scale for force ellipsoids."""
+        assert scale > 0, "Ellipsoid scale must be positive"
+        self._force_ellipsoid_scale = float(scale)
+        self.update()
+
+    def reset_view(self) -> None:
+        """Reset zoom and pan to default (also callable from toolstrip button)."""
+        self._zoom = 1.0
+        self._pan_x = 0.0
+        self._pan_y = 0.0
         self.update()
 
     # ------------------------------------------------------------------
@@ -245,20 +306,35 @@ class PendulumWidget(QWidget):
     # ------------------------------------------------------------------
 
     def _compute_base_scale(self) -> float:
-        """Compute base pixels_per_meter ignoring user zoom."""
+        """Compute base pixels_per_meter ignoring user zoom.
+
+        Shoulder is placed at 35% from the widget top.  The pendulum can swing
+        through a full circle of radius total_len, so we allow a 2*total_len
+        diameter to fit comfortably.  We use 45% of width and 55% of the
+        remaining height (below shoulder) so there is always room regardless
+        of how the pendulum is configured.
+        """
         if self._result is not None:
             total_len = self._result.params.L1 + self._result.params.L2
         else:
             total_len = 2.0
-        w_scale = self.width() * 0.40 / max(total_len, 1e-6)
-        h_scale = self.height() * 0.60 / max(total_len, 1e-6)
+        total_len = max(total_len, 1e-6)
+        # Available width/height for full swing circle (diameter = 2 * total_len)
+        usable_w = self.width() * 0.42
+        usable_h = self.height() * 0.55
+        w_scale = usable_w / total_len
+        h_scale = usable_h / total_len
         return max(30.0, min(w_scale, h_scale))
 
     def _world_to_pixel(self, x_world: float, y_world: float) -> QPointF:
-        """Convert physics coords to widget pixels, applying zoom and pan."""
-        base_ppm = self._pixels_per_meter  # already = _compute_base_scale() * zoom
+        """Convert physics coords to widget pixels, applying zoom and pan.
+
+        Shoulder is placed at horizontal centre and 35% from the top so
+        full-circle swings remain on-screen without the user needing to pan.
+        """
+        base_ppm = self._pixels_per_meter
         cx = self.width() / 2.0 + self._pan_x
-        cy = self.height() * 0.20 + self._pan_y
+        cy = self.height() * 0.35 + self._pan_y  # 35% from top (was 20%)
         px = cx + x_world * base_ppm
         py = cy - y_world * base_ppm
         return QPointF(px, py)
@@ -290,6 +366,10 @@ class PendulumWidget(QWidget):
         if self._show_forces:
             pos = self._result.positions_at(self._current_idx)
             self._draw_force_vectors(painter, pos)
+
+        if self._show_zero_torque_forces:
+            pos = self._result.positions_at(self._current_idx)
+            self._draw_zero_torque_force_vectors(painter, pos)
 
         if self._show_mob_ellipsoids or self._show_force_ellipsoids:
             self._draw_ellipsoids_at_frame(painter)
@@ -473,6 +553,48 @@ class PendulumWidget(QWidget):
             )
             self._draw_arrow(painter, joint_pos, end)
 
+    # Colour for zero-torque (passive drift) force vectors — distinct from
+    # regular force vectors (COLOR_FORCE, typically yellow/orange)
+    COLOR_ZERO_TORQUE = QColor(210, 120, 255)  # violet/purple
+
+    def _draw_zero_torque_force_vectors(self, painter: QPainter, pos: dict) -> None:
+        """Draw zero-torque (passive drift) force vectors at each joint.
+
+        Dashed purple arrows show the joint forces that would exist if all
+        applied driving torques were zero at this instant.  The same force
+        scale factor as regular force vectors is used so magnitudes are
+        directly visually comparable.
+        """
+        if self._zero_torque_forces is None or not self._zero_torque_forces:
+            return
+        forces = self._zero_torque_forces[self._current_idx]
+        if not forces:
+            return
+
+        magnitudes = [np.hypot(f[0], f[1]) for f in forces.values()]
+        max_mag = max(1.0, max(magnitudes))
+        scale = 0.4 * self._pixels_per_meter * self._force_scale / max_mag
+
+        joint_map = {
+            "shoulder": pos.get("shoulder"),
+            "wrist": pos.get("wrist"),
+            "wrist1": pos.get("wrist1"),
+            "wrist2": pos.get("wrist2"),
+        }
+
+        pen = QPen(self.COLOR_ZERO_TORQUE, 2, Qt.PenStyle.DashLine)
+        painter.setPen(pen)
+        for key, force in forces.items():
+            joint_pos = joint_map.get(key)
+            if joint_pos is None:
+                continue
+            fx, fy = force
+            end = (
+                joint_pos[0] + fx * scale / self._pixels_per_meter,
+                joint_pos[1] + fy * scale / self._pixels_per_meter,
+            )
+            self._draw_arrow(painter, joint_pos, end)
+
     # ------------------------------------------------------------------
     # Ellipsoid drawing
     # ------------------------------------------------------------------
@@ -489,7 +611,6 @@ class PendulumWidget(QWidget):
         state = self._result.states[self._current_idx]
         params = self._result.params
         ppm = self._pixels_per_meter
-        scale = self._ellipsoid_scale * ppm  # pixels per singular-value unit
 
         if state.shape[0] >= 6:
             # Triple pendulum
@@ -530,24 +651,26 @@ class PendulumWidget(QWidget):
             dirs = ell["directions"]  # (2,2), columns are principal axes
             if self._show_mob_ellipsoids:
                 mob = ell["mob_semi_axes"]  # (2,) in physics units
+                mob_scale = self._mob_ellipsoid_scale * ppm * 0.3
                 self._draw_ellipse_axes(
                     painter,
                     cx_px,
                     cy_px,
                     dirs,
-                    mob * scale,
+                    mob * mob_scale,
                     fill=self.COLOR_MOB_ELLIPSOID,
                     outline=self.COLOR_MOB_OUTLINE,
                     label="M",
                 )
             if self._show_force_ellipsoids and ell["force_semi_axes"] is not None:
                 force = ell["force_semi_axes"]  # (2,)
+                force_scale = self._force_ellipsoid_scale * ppm * 0.3
                 self._draw_ellipse_axes(
                     painter,
                     cx_px,
                     cy_px,
                     dirs,
-                    force * scale,
+                    force * force_scale,
                     fill=self.COLOR_FORCE_ELLIPSOID,
                     outline=self.COLOR_FORCE_OUTLINE,
                     label="F",
