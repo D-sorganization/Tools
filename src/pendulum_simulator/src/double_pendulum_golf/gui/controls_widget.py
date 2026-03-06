@@ -9,9 +9,16 @@ import numpy as np
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QGridLayout,
-    QLabel, QLineEdit, QPushButton, QSlider, QGroupBox,
-    QComboBox, QSpinBox, QDoubleSpinBox, QSizePolicy,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QSlider,
+    QGroupBox,
+    QComboBox,
+    QDoubleSpinBox,
 )
 
 from .torque_preview_widget import TorquePreviewWidget
@@ -23,8 +30,9 @@ class LabeledInput(QWidget):
     DRY: This avoids repeating the label-edit pattern dozens of times.
     """
 
-    def __init__(self, label: str, default: str, tooltip: str = "",
-                 parent=None):
+    def __init__(
+        self, label: str, default: str, tooltip: str = "", parent: QWidget | None = None
+    ) -> None:
         super().__init__(parent)
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -76,28 +84,60 @@ class ControlsWidget(QWidget):
     #           m1, m2, L1, L2)
     PRESETS = {
         "Golf Swing (passive wrist)": (
-            120.0, -90.0, 0.0, 0.0,
-            "-25, 10", "0",
-            2.0, 5.0, 0.5, 0.6, 1.0,
+            120.0,
+            -90.0,
+            0.0,
+            0.0,
+            "-25, 10",
+            "0",
+            2.0,
+            5.0,
+            0.5,
+            0.6,
+            1.0,
         ),
         "Golf Swing (active wrist)": (
-            120.0, -90.0, 0.0, 0.0,
-            "-25, 10", "-2, 3",
-            2.0, 5.0, 0.5, 0.6, 1.0,
+            120.0,
+            -90.0,
+            0.0,
+            0.0,
+            "-25, 10",
+            "-2, 3",
+            2.0,
+            5.0,
+            0.5,
+            0.6,
+            1.0,
         ),
         "Free Double Pendulum": (
-            90.0, 90.0, 0.0, 0.0,
-            "0", "0",
-            5.0, 1.0, 1.0, 1.0, 1.0,
+            90.0,
+            90.0,
+            0.0,
+            0.0,
+            "0",
+            "0",
+            5.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
         ),
         "Straight Drop": (
-            0.1, 0.1, 0.0, 0.0,
-            "0", "0",
-            3.0, 1.0, 1.0, 0.8, 0.8,
+            0.1,
+            0.1,
+            0.0,
+            0.0,
+            "0",
+            "0",
+            3.0,
+            1.0,
+            1.0,
+            0.8,
+            0.8,
         ),
     }
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setMinimumWidth(300)
         self.setMaximumWidth(360)
@@ -153,7 +193,9 @@ class ControlsWidget(QWidget):
         ic_group = QGroupBox("Initial Conditions")
         ic_group.setStyleSheet(style_group)
         pl3 = QVBoxLayout(ic_group)
-        self.inp_theta1 = LabeledInput("\u03b81 (deg)", "120", "Arm angle from vertical")
+        self.inp_theta1 = LabeledInput(
+            "\u03b81 (deg)", "120", "Arm angle from vertical"
+        )
         self.inp_phi = LabeledInput("\u03c6 (deg)", "-90", "Club angle relative to arm")
         self.inp_dtheta1 = LabeledInput("d\u03b81 (rad/s)", "0", "Arm angular velocity")
         self.inp_dphi = LabeledInput("d\u03c6 (rad/s)", "0", "Club angular velocity")
@@ -165,10 +207,16 @@ class ControlsWidget(QWidget):
         torque_group = QGroupBox("Torque Polynomials (c0, c1, c2, ...)")
         torque_group.setStyleSheet(style_group)
         pl4 = QVBoxLayout(torque_group)
-        self.inp_tau_shoulder = LabeledInput("Shoulder", "-25, 10",
-            "Polynomial coefficients: \u03c4(t) = c0 + c1*t + c2*t\u00b2 + ...")
-        self.inp_tau_wrist = LabeledInput("Wrist", "0",
-            "Polynomial coefficients: \u03c4(t) = c0 + c1*t + c2*t\u00b2 + ...")
+        self.inp_tau_shoulder = LabeledInput(
+            "Shoulder",
+            "-25, 10",
+            "Polynomial coefficients: \u03c4(t) = c0 + c1*t + c2*t\u00b2 + ...",
+        )
+        self.inp_tau_wrist = LabeledInput(
+            "Wrist",
+            "0",
+            "Polynomial coefficients: \u03c4(t) = c0 + c1*t + c2*t\u00b2 + ...",
+        )
         pl4.addWidget(self.inp_tau_shoulder)
         pl4.addWidget(self.inp_tau_wrist)
         main_layout.addWidget(torque_group)
@@ -193,20 +241,24 @@ class ControlsWidget(QWidget):
         diss_group.setStyleSheet(style_group)
         pl_diss = QVBoxLayout(diss_group)
         self.inp_b1 = LabeledInput(
-            "b1 (N·m·s)", "0.0",
-            "Viscous damping at joint 1 (shoulder) — proportional to angular velocity"
+            "b1 (N·m·s)",
+            "0.0",
+            "Viscous damping at joint 1 (shoulder) — proportional to angular velocity",
         )
         self.inp_b2 = LabeledInput(
-            "b2 (N·m·s)", "0.0",
-            "Viscous damping at joint 2 (wrist) — proportional to angular velocity"
+            "b2 (N·m·s)",
+            "0.0",
+            "Viscous damping at joint 2 (wrist) — proportional to angular velocity",
         )
         self.inp_mu1 = LabeledInput(
-            "\u03bc1 (N·m)", "0.0",
-            "Coulomb friction at joint 1 (shoulder) — constant magnitude opposing motion"
+            "\u03bc1 (N·m)",
+            "0.0",
+            "Coulomb friction at joint 1 (shoulder) — constant magnitude opposing motion",
         )
         self.inp_mu2 = LabeledInput(
-            "\u03bc2 (N·m)", "0.0",
-            "Coulomb friction at joint 2 (wrist) — constant magnitude opposing motion"
+            "\u03bc2 (N·m)",
+            "0.0",
+            "Coulomb friction at joint 2 (wrist) — constant magnitude opposing motion",
         )
         for w in [self.inp_b1, self.inp_b2, self.inp_mu1, self.inp_mu2]:
             pl_diss.addWidget(w)
@@ -260,9 +312,7 @@ class ControlsWidget(QWidget):
         self.speed_spin.setStyleSheet(
             "background: #2a2a38; color: #e0e0f0; border: 1px solid #505068;"
         )
-        self.speed_spin.valueChanged.connect(
-            lambda v: self.speed_changed.emit(v)
-        )
+        self.speed_spin.valueChanged.connect(lambda v: self.speed_changed.emit(v))
         ctrl_row.addWidget(self.speed_spin)
         pl6.addLayout(ctrl_row)
 
@@ -318,9 +368,7 @@ class ControlsWidget(QWidget):
         """Load a named preset into all input fields."""
         if name not in self.PRESETS:
             return
-        (theta1, phi, dth, dph,
-         tau_sh, tau_wr, tend,
-         m1, m2, L1, L2) = self.PRESETS[name]
+        theta1, phi, dth, dph, tau_sh, tau_wr, tend, m1, m2, L1, L2 = self.PRESETS[name]
 
         self.inp_theta1.set_value(str(theta1))
         self.inp_phi.set_value(str(phi))
@@ -351,6 +399,7 @@ class ControlsWidget(QWidget):
         ------
         ValueError if any input cannot be parsed.
         """
+
         def parse_float(widget: LabeledInput, name: str) -> float:
             try:
                 return float(widget.value)
@@ -407,10 +456,12 @@ class ControlsWidget(QWidget):
         wrist = parse_coeffs(self.inp_tau_wrist)
 
         self.torque_preview.set_duration(t_end)
-        self.torque_preview.set_profiles([
-            ("Shoulder", shoulder, QColor(230, 120, 50)),
-            ("Wrist", wrist, QColor(120, 180, 230)),
-        ])
+        self.torque_preview.set_profiles(
+            [
+                ("Shoulder", shoulder, QColor(230, 120, 50)),
+                ("Wrist", wrist, QColor(120, 180, 230)),
+            ]
+        )
 
     # ------------------------------------------------------------------
     # Playback

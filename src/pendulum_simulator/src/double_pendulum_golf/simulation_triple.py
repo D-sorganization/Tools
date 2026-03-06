@@ -7,7 +7,6 @@ by the GUI and analysis code.
 """
 
 from dataclasses import dataclass
-from typing import Optional, Tuple
 
 import numpy as np
 from scipy.integrate import solve_ivp
@@ -27,10 +26,10 @@ from .physics_triple import (
     total_energy,
 )
 
-
 # ---------------------------------------------------------------------------
 # Polynomial torque builder
 # ---------------------------------------------------------------------------
+
 
 def make_polynomial_torque(
     coeffs_shoulder: list[float],
@@ -49,7 +48,7 @@ def make_polynomial_torque(
     p_elbow = np.array(coeffs_elbow[::-1])
     p_wrist = np.array(coeffs_wrist[::-1])
 
-    def torque_func(t: float) -> Tuple[float, float, float]:
+    def torque_func(t: float) -> tuple[float, float, float]:
         tau1 = float(np.polyval(p_shoulder, t))
         tau2 = float(np.polyval(p_elbow, t))
         tau3 = float(np.polyval(p_wrist, t))
@@ -61,6 +60,7 @@ def make_polynomial_torque(
 # ---------------------------------------------------------------------------
 # Simulation result container
 # ---------------------------------------------------------------------------
+
 
 @dataclass
 class TripleSimulationResult:
@@ -85,7 +85,7 @@ class TripleSimulationResult:
         s = self.states[idx]
         return forward_kinematics(s[0], s[1], s[2], self.params)
 
-    def torques_at(self, idx: int) -> Tuple[float, float, float]:
+    def torques_at(self, idx: int) -> tuple[float, float, float]:
         assert 0 <= idx < self.n_steps
         return self.torque_func(self.t[idx])
 
@@ -124,6 +124,7 @@ class TripleSimulationResult:
 # Simulation runner
 # ---------------------------------------------------------------------------
 
+
 def run_simulation(
     params: TriplePendulumParams,
     initial_state: State,
@@ -133,14 +134,16 @@ def run_simulation(
     method: str = "RK45",
 ) -> TripleSimulationResult:
     """Integrate the triple pendulum equations of motion."""
-    assert initial_state.shape == (6,), f"Initial state shape must be (6,), got {initial_state.shape}"
+    assert initial_state.shape == (
+        6,
+    ), f"Initial state shape must be (6,), got {initial_state.shape}"
     assert all(np.isfinite(initial_state)), "Initial state must be finite"
     assert t_end > 0, f"t_end must be positive, got {t_end}"
     assert 0 < dt < t_end, f"dt must be in (0, t_end), got {dt}"
 
     t_eval = np.arange(0.0, t_end, dt)
 
-    def ode_rhs(t, y):
+    def ode_rhs(t: float, y: np.ndarray) -> np.ndarray:
         return equations_of_motion(y, t, params, torque_func)
 
     sol = solve_ivp(

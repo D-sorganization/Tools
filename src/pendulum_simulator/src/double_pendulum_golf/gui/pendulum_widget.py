@@ -6,11 +6,13 @@ optional ghosted past positions.  Coordinate mapping converts
 physics-frame meters into pixel space with configurable scale.
 """
 
-from collections import deque
-from typing import Optional
+from __future__ import annotations
 
-from PyQt6.QtCore import Qt, QPointF, QRectF
-from PyQt6.QtGui import QPainter, QPen, QBrush, QColor, QFont, QPainterPath
+from collections import deque
+
+import numpy as np
+from PyQt6.QtCore import QPointF, Qt
+from PyQt6.QtGui import QBrush, QColor, QFont, QPainter, QPen
 from PyQt6.QtWidgets import QWidget
 
 from ..simulation import SimulationResult
@@ -38,14 +40,15 @@ class PendulumWidget(QWidget):
 
     TRAIL_LENGTH = 200
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self.setMinimumSize(400, 500)
+        # Responsive: no hard minimum — let the splitter govern size
+        self.setMinimumSize(250, 300)
 
-        self._result: Optional[SimulationResult] = None
+        self._result: SimulationResult | None = None
         self._current_idx: int = 0
         self._trail: deque = deque(maxlen=self.TRAIL_LENGTH)
-        self._pixels_per_meter: float = 120.0
+        self._pixels_per_meter: float = 120.0  # recomputed each paint
 
     # ------------------------------------------------------------------
     # Public interface
@@ -82,13 +85,28 @@ class PendulumWidget(QWidget):
     # Coordinate mapping
     # ------------------------------------------------------------------
 
+    def _compute_scale(self) -> float:
+        """Compute pixels_per_meter so the full pendulum extent fits the widget.
+
+        Uses actual widget width/height at call time — must be called at the
+        start of each paintEvent so the scale is always current.
+        """
+        if self._result is not None:
+            total_len = self._result.params.L1 + self._result.params.L2
+        else:
+            total_len = 2.0  # default for placeholder
+        # Leave 20% margin horizontally, 60% of height available below pivot
+        w_scale = self.width() * 0.40 / max(total_len, 1e-6)
+        h_scale = self.height() * 0.60 / max(total_len, 1e-6)
+        return max(30.0, min(w_scale, h_scale))
+
     def _world_to_pixel(self, x_world: float, y_world: float) -> QPointF:
         """Convert physics (x_right, y_up) to widget pixel coords (x_right, y_down).
 
         Origin (shoulder) is placed at top-center of the widget.
         """
         cx = self.width() / 2.0
-        cy = self.height() * 0.2  # shoulder 20% down from top
+        cy = self.height() * 0.20  # shoulder 20% down from top
         px = cx + x_world * self._pixels_per_meter
         py = cy - y_world * self._pixels_per_meter  # flip y
         return QPointF(px, py)
@@ -97,7 +115,10 @@ class PendulumWidget(QWidget):
     # Painting
     # ------------------------------------------------------------------
 
-    def paintEvent(self, event):
+    def paintEvent(self, event: object) -> None:
+        # Recompute scale every paint so the pendulum fills the canvas at any size
+        self._pixels_per_meter = self._compute_scale()
+
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
@@ -167,6 +188,7 @@ class PendulumWidget(QWidget):
 
     def _draw_pendulum(self, painter: QPainter) -> None:
         """Draw the segments and joint markers."""
+        assert self._result is not None  # only called after None guard in paintEvent
         pos = self._result.positions_at(self._current_idx)
         shoulder = self._world_to_pixel(*pos["shoulder"])
         tip = self._world_to_pixel(*pos["tip"])
@@ -185,17 +207,23 @@ class PendulumWidget(QWidget):
 
         if wrist2 is None:
             # Club segment
-            pen = QPen(self.COLOR_CLUB, 4, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap)
+            pen = QPen(
+                self.COLOR_CLUB, 4, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap
+            )
             painter.setPen(pen)
             painter.drawLine(wrist1, tip)
         else:
             # Segment 2
-            pen = QPen(self.COLOR_CLUB, 4, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap)
+            pen = QPen(
+                self.COLOR_CLUB, 4, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap
+            )
             painter.setPen(pen)
             painter.drawLine(wrist1, wrist2)
 
             # Segment 3
-            pen = QPen(self.COLOR_TIP, 3, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap)
+            pen = QPen(
+                self.COLOR_TIP, 3, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap
+            )
             painter.setPen(pen)
             painter.drawLine(wrist2, tip)
 
@@ -208,8 +236,9 @@ class PendulumWidget(QWidget):
 
         self._draw_force_vectors(painter, pos)
 
-    def _draw_joint(self, painter: QPainter, pos: QPointF,
-                    radius: int, color: QColor) -> None:
+    def _draw_joint(
+        self, painter: QPainter, pos: QPointF, radius: int, color: QColor
+    ) -> None:
         """Draw a filled circle at a joint position."""
         painter.setPen(Qt.PenStyle.NoPen)
         painter.setBrush(QBrush(color))
@@ -217,6 +246,7 @@ class PendulumWidget(QWidget):
 
     def _draw_info(self, painter: QPainter) -> None:
         """Draw time and angle readout in the corner."""
+        assert self._result is not None  # only called after None guard in paintEvent
         t = self._result.t[self._current_idx]
         s = self._result.states[self._current_idx]
         theta1_deg = np.degrees(s[0])
@@ -255,13 +285,14 @@ class PendulumWidget(QWidget):
         painter.setFont(font)
         painter.setPen(self.COLOR_TEXT)
         painter.drawText(
-            self.rect(), Qt.AlignmentFlag.AlignCenter,
-            "Configure parameters\nand click 'Run Simulation'"
+            self.rect(),
+            Qt.AlignmentFlag.AlignCenter,
+            "Configure parameters\nand click 'Run Simulation'",
         )
 
     def _draw_force_vectors(self, painter: QPainter, pos: dict) -> None:
         """Draw net force vectors at joints (proximal acting on distal)."""
-        if not hasattr(self._result, "joint_forces_at"):
+        if self._result is None or not hasattr(self._result, "joint_forces_at"):
             return
         forces = self._result.joint_forces_at(self._current_idx)
         if not forces:
@@ -280,13 +311,15 @@ class PendulumWidget(QWidget):
 
         painter.setPen(QPen(QColor(200, 240, 120), 2))
         for key, force in forces.items():
-            if key not in joint_map or joint_map[key] is None:
+            joint_pos = joint_map.get(key)
+            if joint_pos is None:
                 continue
             fx, fy = force
-            origin = joint_map[key]
-            end = (origin[0] + fx * scale / self._pixels_per_meter,
-                   origin[1] + fy * scale / self._pixels_per_meter)
-            self._draw_arrow(painter, origin, end)
+            end = (
+                joint_pos[0] + fx * scale / self._pixels_per_meter,
+                joint_pos[1] + fy * scale / self._pixels_per_meter,
+            )
+            self._draw_arrow(painter, joint_pos, end)
 
     def _draw_arrow(self, painter: QPainter, origin: tuple, end: tuple) -> None:
         """Draw an arrow from origin to end in world coordinates."""
@@ -311,7 +344,3 @@ class PendulumWidget(QWidget):
         )
         painter.drawLine(p1, left)
         painter.drawLine(p1, right)
-
-
-# Need numpy for degrees conversion in _draw_info
-import numpy as np

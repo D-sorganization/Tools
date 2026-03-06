@@ -6,8 +6,15 @@ import numpy as np
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QSlider, QGroupBox, QComboBox, QDoubleSpinBox,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QSlider,
+    QGroupBox,
+    QComboBox,
+    QDoubleSpinBox,
 )
 
 from .controls_widget import LabeledInput
@@ -27,18 +34,44 @@ class ControlsWidgetTriple(QWidget):
 
     PRESETS = {
         "Triple Swing": (
-            120.0, -60.0, -30.0, 0.0, 0.0, 0.0,
-            "-25, 10", "0", "0",
-            2.0, 5.0, 0.5, 0.4, 0.6, 0.6, 0.3,
+            120.0,
+            -60.0,
+            -30.0,
+            0.0,
+            0.0,
+            0.0,
+            "-25, 10",
+            "0",
+            "0",
+            2.0,
+            5.0,
+            0.5,
+            0.4,
+            0.6,
+            0.6,
+            0.3,
         ),
         "Free Triple Pendulum": (
-            90.0, 60.0, -45.0, 0.0, 0.0, 0.0,
-            "0", "0", "0",
-            5.0, 1.0, 0.5, 0.2, 1.0, 1.0, 0.5,
+            90.0,
+            60.0,
+            -45.0,
+            0.0,
+            0.0,
+            0.0,
+            "0",
+            "0",
+            "0",
+            5.0,
+            1.0,
+            0.5,
+            0.2,
+            1.0,
+            1.0,
+            0.5,
         ),
     }
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setMinimumWidth(300)
         self.setMaximumWidth(360)
@@ -82,7 +115,14 @@ class ControlsWidgetTriple(QWidget):
         self.inp_L1 = LabeledInput("L1 (m)", "0.6", "Length of segment 1")
         self.inp_L2 = LabeledInput("L2 (m)", "0.6", "Length of segment 2")
         self.inp_L3 = LabeledInput("L3 (m)", "0.6", "Length of segment 3")
-        for w in [self.inp_m1, self.inp_m2, self.inp_m3, self.inp_L1, self.inp_L2, self.inp_L3]:
+        for w in [
+            self.inp_m1,
+            self.inp_m2,
+            self.inp_m3,
+            self.inp_L1,
+            self.inp_L2,
+            self.inp_L3,
+        ]:
             pl2.addWidget(w)
         main_layout.addWidget(phys_group)
 
@@ -95,19 +135,31 @@ class ControlsWidgetTriple(QWidget):
         self.inp_dtheta1 = LabeledInput("dtheta1 (rad/s)", "0", "Segment 1 velocity")
         self.inp_dphi1 = LabeledInput("dphi1 (rad/s)", "0", "Segment 2 velocity")
         self.inp_dphi2 = LabeledInput("dphi2 (rad/s)", "0", "Segment 3 velocity")
-        for w in [self.inp_theta1, self.inp_phi1, self.inp_phi2, self.inp_dtheta1, self.inp_dphi1, self.inp_dphi2]:
+        for w in [
+            self.inp_theta1,
+            self.inp_phi1,
+            self.inp_phi2,
+            self.inp_dtheta1,
+            self.inp_dphi1,
+            self.inp_dphi2,
+        ]:
             pl3.addWidget(w)
         main_layout.addWidget(ic_group)
 
         torque_group = QGroupBox("Torque Polynomials (c0, c1, c2, ...)")
         torque_group.setStyleSheet(style_group)
         pl4 = QVBoxLayout(torque_group)
-        self.inp_tau_shoulder = LabeledInput("Shoulder", "-25, 10",
-            "Polynomial coefficients: tau(t) = c0 + c1*t + c2*t^2 + ...")
-        self.inp_tau_elbow = LabeledInput("Elbow", "0",
-            "Polynomial coefficients: tau(t) = c0 + c1*t + c2*t^2 + ...")
-        self.inp_tau_wrist = LabeledInput("Wrist", "0",
-            "Polynomial coefficients: tau(t) = c0 + c1*t + c2*t^2 + ...")
+        self.inp_tau_shoulder = LabeledInput(
+            "Shoulder",
+            "-25, 10",
+            "Polynomial coefficients: tau(t) = c0 + c1*t + c2*t^2 + ...",
+        )
+        self.inp_tau_elbow = LabeledInput(
+            "Elbow", "0", "Polynomial coefficients: tau(t) = c0 + c1*t + c2*t^2 + ..."
+        )
+        self.inp_tau_wrist = LabeledInput(
+            "Wrist", "0", "Polynomial coefficients: tau(t) = c0 + c1*t + c2*t^2 + ..."
+        )
         pl4.addWidget(self.inp_tau_shoulder)
         pl4.addWidget(self.inp_tau_elbow)
         pl4.addWidget(self.inp_tau_wrist)
@@ -172,9 +224,7 @@ class ControlsWidgetTriple(QWidget):
         self.speed_spin.setStyleSheet(
             "background: #2a2a38; color: #e0e0f0; border: 1px solid #505068;"
         )
-        self.speed_spin.valueChanged.connect(
-            lambda v: self.speed_changed.emit(v)
-        )
+        self.speed_spin.valueChanged.connect(lambda v: self.speed_changed.emit(v))
         ctrl_row.addWidget(self.speed_spin)
         pl6.addLayout(ctrl_row)
 
@@ -224,9 +274,24 @@ class ControlsWidgetTriple(QWidget):
     def _apply_preset(self, name: str) -> None:
         if name not in self.PRESETS:
             return
-        (theta1, phi1, phi2, dth, dph1, dph2,
-         tau_sh, tau_el, tau_wr, tend,
-         m1, m2, m3, L1, L2, L3) = self.PRESETS[name]
+        (
+            theta1,
+            phi1,
+            phi2,
+            dth,
+            dph1,
+            dph2,
+            tau_sh,
+            tau_el,
+            tau_wr,
+            tend,
+            m1,
+            m2,
+            m3,
+            L1,
+            L2,
+            L3,
+        ) = self.PRESETS[name]
 
         self.inp_theta1.set_value(str(theta1))
         self.inp_phi1.set_value(str(phi1))
@@ -305,11 +370,13 @@ class ControlsWidgetTriple(QWidget):
         wrist = parse_coeffs(self.inp_tau_wrist)
 
         self.torque_preview.set_duration(t_end)
-        self.torque_preview.set_profiles([
-            ("Shoulder", shoulder, QColor(230, 120, 50)),
-            ("Elbow", elbow, QColor(120, 200, 140)),
-            ("Wrist", wrist, QColor(120, 180, 230)),
-        ])
+        self.torque_preview.set_profiles(
+            [
+                ("Shoulder", shoulder, QColor(230, 120, 50)),
+                ("Elbow", elbow, QColor(120, 200, 140)),
+                ("Wrist", wrist, QColor(120, 180, 230)),
+            ]
+        )
 
     def _on_play_toggled(self, checked: bool) -> None:
         self._is_playing = checked

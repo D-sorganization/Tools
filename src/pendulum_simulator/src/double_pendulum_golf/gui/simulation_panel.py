@@ -2,19 +2,39 @@
 Shared simulation panel for double and triple pendulum tabs.
 """
 
+from __future__ import annotations
+
 import csv
 import os
 import shutil
 import subprocess
 import tempfile
-from typing import Callable
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any, Protocol, cast
 
 import numpy as np
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import (
-    QWidget, QHBoxLayout, QMessageBox, QSplitter,
-    QFileDialog, QApplication,
+    QApplication,
+    QFileDialog,
+    QHBoxLayout,
+    QMessageBox,
+    QScrollArea,
+    QSplitter,
+    QWidget,
 )
+
+if TYPE_CHECKING:
+    from .controls_widget import ControlsWidget
+    from .controls_widget_triple import ControlsWidgetTriple
+
+
+class _SimViewer(Protocol):
+    """Structural typing for pendulum/matrix/torque_history widgets."""
+
+    def set_simulation(self, result: object) -> None: ...
+    def set_frame(self, idx: int) -> None: ...
+    def clear(self) -> None: ...
 
 
 class SimulationPanel(QWidget):
@@ -24,15 +44,15 @@ class SimulationPanel(QWidget):
 
     def __init__(
         self,
-        controls: QWidget,
-        pendulum: QWidget,
-        matrix: QWidget,
+        controls: ControlsWidget | ControlsWidgetTriple,
+        pendulum: _SimViewer,
+        matrix: _SimViewer,
         params_builder: Callable[[dict], object],
-        torque_builder: Callable[[dict], Callable],
+        torque_builder: Callable[[dict], Any],
         state_builder: Callable[[dict], np.ndarray],
         run_simulation: Callable,
-        torque_history: QWidget | None = None,
-        parent=None,
+        torque_history: _SimViewer | None = None,
+        parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
         self.controls = controls
@@ -44,7 +64,7 @@ class SimulationPanel(QWidget):
         self._state_builder = state_builder
         self._run_simulation = run_simulation
 
-        self._result = None
+        self._result: Any | None = None
         self._anim_idx = 0
         self._playback_speed = 1.0
 
@@ -57,19 +77,41 @@ class SimulationPanel(QWidget):
         main_layout.setContentsMargins(0, 0, 0, 0)
 
         splitter = QSplitter(Qt.Orientation.Horizontal)
-        splitter.addWidget(self.controls)
-        splitter.addWidget(self.pendulum)
-        splitter.addWidget(self.matrix)
-        splitter.setStretchFactor(0, 0)
-        splitter.setStretchFactor(1, 3)
-        splitter.setStretchFactor(2, 1)
+
+        # Wrap controls in a scroll area so it never clips on small heights
+        scroll = QScrollArea()
+        scroll.setWidget(self.controls)
+        scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll.setMinimumWidth(280)
+        scroll.setMaximumWidth(380)
+        scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
+        splitter.addWidget(scroll)
+
+        splitter.addWidget(cast(QWidget, self.pendulum))
+        splitter.addWidget(cast(QWidget, self.matrix))
+
+        # Use proportional sizes: compute from available screen width
+        screen = QApplication.primaryScreen()
+        sw = screen.availableGeometry().width() if screen else 1400
+        ctrl_w = min(320, int(sw * 0.20))
+        matrix_w = min(280, int(sw * 0.18))
 
         if self.torque_history is not None:
-            splitter.addWidget(self.torque_history)
+            splitter.addWidget(cast(QWidget, self.torque_history))
+            torque_w = min(260, int(sw * 0.16))
+            pend_w = sw - ctrl_w - matrix_w - torque_w - 20
+            splitter.setSizes([ctrl_w, pend_w, matrix_w, torque_w])
+            splitter.setStretchFactor(0, 0)
+            splitter.setStretchFactor(1, 3)
+            splitter.setStretchFactor(2, 1)
             splitter.setStretchFactor(3, 1)
-            splitter.setSizes([320, 520, 280, 280])
         else:
-            splitter.setSizes([320, 520, 360])
+            pend_w = sw - ctrl_w - matrix_w - 20
+            splitter.setSizes([ctrl_w, pend_w, matrix_w])
+            splitter.setStretchFactor(0, 0)
+            splitter.setStretchFactor(1, 3)
+            splitter.setStretchFactor(2, 1)
 
         main_layout.addWidget(splitter)
 
@@ -216,20 +258,34 @@ class SimulationPanel(QWidget):
         headers = ["t"]
         if self._result.states.shape[1] == 4:
             headers += [
-                "tau_drive_1", "tau_drive_2",
-                "tau_friction_1", "tau_friction_2",
-                "tau_total_1", "tau_total_2",
-                "shoulder_fx", "shoulder_fy",
-                "wrist_fx", "wrist_fy",
+                "tau_drive_1",
+                "tau_drive_2",
+                "tau_friction_1",
+                "tau_friction_2",
+                "tau_total_1",
+                "tau_total_2",
+                "shoulder_fx",
+                "shoulder_fy",
+                "wrist_fx",
+                "wrist_fy",
             ]
         else:
             headers += [
-                "tau_drive_1", "tau_drive_2", "tau_drive_3",
-                "tau_friction_1", "tau_friction_2", "tau_friction_3",
-                "tau_total_1", "tau_total_2", "tau_total_3",
-                "shoulder_fx", "shoulder_fy",
-                "wrist1_fx", "wrist1_fy",
-                "wrist2_fx", "wrist2_fy",
+                "tau_drive_1",
+                "tau_drive_2",
+                "tau_drive_3",
+                "tau_friction_1",
+                "tau_friction_2",
+                "tau_friction_3",
+                "tau_total_1",
+                "tau_total_2",
+                "tau_total_3",
+                "shoulder_fx",
+                "shoulder_fy",
+                "wrist1_fx",
+                "wrist1_fy",
+                "wrist2_fx",
+                "wrist2_fy",
             ]
 
         try:
@@ -246,21 +302,35 @@ class SimulationPanel(QWidget):
                         tau_total = self._result.total_torques_at(i)
                         row = [
                             t,
-                            tau_drive[0], tau_drive[1],
-                            tau_friction[0], tau_friction[1],
-                            tau_total[0], tau_total[1],
-                            forces["shoulder"][0], forces["shoulder"][1],
-                            forces["wrist"][0], forces["wrist"][1],
+                            tau_drive[0],
+                            tau_drive[1],
+                            tau_friction[0],
+                            tau_friction[1],
+                            tau_total[0],
+                            tau_total[1],
+                            forces["shoulder"][0],
+                            forces["shoulder"][1],
+                            forces["wrist"][0],
+                            forces["wrist"][1],
                         ]
                     else:
                         row = [
                             t,
-                            tau_drive[0], tau_drive[1], tau_drive[2],
-                            0.0, 0.0, 0.0,  # friction not yet in triple model
-                            tau_drive[0], tau_drive[1], tau_drive[2],
-                            forces["shoulder"][0], forces["shoulder"][1],
-                            forces["wrist1"][0], forces["wrist1"][1],
-                            forces["wrist2"][0], forces["wrist2"][1],
+                            tau_drive[0],
+                            tau_drive[1],
+                            tau_drive[2],
+                            0.0,
+                            0.0,
+                            0.0,  # friction not yet in triple model
+                            tau_drive[0],
+                            tau_drive[1],
+                            tau_drive[2],
+                            forces["shoulder"][0],
+                            forces["shoulder"][1],
+                            forces["wrist1"][0],
+                            forces["wrist1"][1],
+                            forces["wrist2"][0],
+                            forces["wrist2"][1],
                         ]
                     writer.writerow(row)
 
@@ -290,7 +360,7 @@ class SimulationPanel(QWidget):
             for i in range(self._result.n_steps):
                 self._display_frame(i)
                 QApplication.processEvents()
-                pix = self.pendulum.grab()
+                pix = cast(QWidget, self.pendulum).grab()
                 frame_path = os.path.join(tmp_dir, f"frame_{i:05d}.png")
                 pix.save(frame_path)
 
@@ -298,7 +368,9 @@ class SimulationPanel(QWidget):
                 out_dir = os.path.splitext(path)[0] + "_frames"
                 os.makedirs(out_dir, exist_ok=True)
                 for name in os.listdir(tmp_dir):
-                    shutil.move(os.path.join(tmp_dir, name), os.path.join(out_dir, name))
+                    shutil.move(
+                        os.path.join(tmp_dir, name), os.path.join(out_dir, name)
+                    )
                 QMessageBox.warning(
                     self,
                     "Export Video",
