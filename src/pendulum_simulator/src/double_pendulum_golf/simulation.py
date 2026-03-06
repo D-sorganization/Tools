@@ -32,7 +32,6 @@ from .physics import (
     net_joint_forces,
     potential_energy,
     total_energy,
-    ztcf_accelerations,
 )
 
 # ---------------------------------------------------------------------------
@@ -119,8 +118,12 @@ class SimulationResult:
     def accelerations_at(self, idx: int) -> np.ndarray:
         assert 0 <= idx < self.n_steps
         state_dot = equations_of_motion(
-            self.states[idx], self.t[idx], self.params, self.torque_func,
-            self.limits, self.clamp,
+            self.states[idx],
+            self.t[idx],
+            self.params,
+            self.torque_func,
+            self.limits,
+            self.clamp,
         )
         return state_dot[2:]
 

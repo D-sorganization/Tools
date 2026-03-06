@@ -38,16 +38,16 @@ class PendulumParams:
         - Coulomb friction mu1, mu2 must be non-negative  (N·m peak magnitude).
     """
 
-    m1: float       # mass of arms (kg), typical ~5.0
-    m2: float       # mass of shaft (kg), typical ~0.30
-    L1: float       # length of arms (m), typical ~0.65
-    L2: float       # length of shaft (m), typical ~1.10
+    m1: float  # mass of arms (kg), typical ~5.0
+    m2: float  # mass of shaft (kg), typical ~0.30
+    L1: float  # length of arms (m), typical ~0.65
+    L2: float  # length of shaft (m), typical ~1.10
     mClub: float = 0.0  # clubhead mass (kg), typical ~0.20
-    g: float = 9.81     # gravitational acceleration (m/s²)
-    b1: float = 0.0     # viscous damping at shoulder (N·m·s/rad)
-    b2: float = 0.0     # viscous damping at wrist (N·m·s/rad)
-    mu1: float = 0.0    # Coulomb friction at shoulder (N·m)
-    mu2: float = 0.0    # Coulomb friction at wrist (N·m)
+    g: float = 9.81  # gravitational acceleration (m/s²)
+    b1: float = 0.0  # viscous damping at shoulder (N·m·s/rad)
+    b2: float = 0.0  # viscous damping at wrist (N·m·s/rad)
+    mu1: float = 0.0  # Coulomb friction at shoulder (N·m)
+    mu2: float = 0.0  # Coulomb friction at wrist (N·m)
 
     def __post_init__(self) -> None:
         assert self.m1 > 0, f"m1 must be positive, got {self.m1}"
@@ -70,10 +70,11 @@ class JointLimits:
         - phiMin < phiMax.
         - stiffness > 0, damping >= 0.
     """
+
     phi_min: float = -np.pi / 2  # rad
-    phi_max: float = np.pi / 2   # rad
-    stiffness: float = 500.0     # N·m/rad
-    damping: float = 20.0        # N·m·s/rad
+    phi_max: float = np.pi / 2  # rad
+    stiffness: float = 500.0  # N·m/rad
+    damping: float = 20.0  # N·m·s/rad
 
     def __post_init__(self) -> None:
         assert self.phi_min < self.phi_max
@@ -88,8 +89,9 @@ class TorqueClamp:
     Contract:
         - Both limits must be positive.
     """
-    max_torque1: float = float('inf')  # N·m
-    max_torque2: float = float('inf')  # N·m
+
+    max_torque1: float = float("inf")  # N·m
+    max_torque2: float = float("inf")  # N·m
 
     def __post_init__(self) -> None:
         assert self.max_torque1 > 0
@@ -142,8 +144,10 @@ def mass_matrix_components(phi: float, params: PendulumParams) -> dict:
     """Return individual terms with physical labels."""
     M = mass_matrix(phi, params)
     return {
-        "M11": M[0, 0], "M12": M[0, 1],
-        "M21": M[1, 0], "M22": M[1, 1],
+        "M11": M[0, 0],
+        "M12": M[0, 1],
+        "M21": M[1, 0],
+        "M22": M[1, 1],
         "M_full": M,
     }
 
@@ -207,9 +211,7 @@ def friction_torque_vector(
 # ---------------------------------------------------------------------------
 
 
-def joint_limit_torque(
-    phi: float, dphi: float, limits: JointLimits
-) -> np.ndarray:
+def joint_limit_torque(phi: float, dphi: float, limits: JointLimits) -> np.ndarray:
     """Smooth joint limit penalty using Hermite smoothstep.
 
     Pre: phi, dphi finite.
@@ -239,18 +241,18 @@ def joint_limit_torque(
 # ---------------------------------------------------------------------------
 
 
-def clamp_torque(
-    tau: np.ndarray, clamp: TorqueClamp
-) -> np.ndarray:
+def clamp_torque(tau: np.ndarray, clamp: TorqueClamp) -> np.ndarray:
     """Clamp torques to saturation limits.
 
     Pre: tau shape (2,), clamp limits > 0.
     Post: |result[i]| <= limit[i].
     """
-    return np.array([
-        np.clip(tau[0], -clamp.max_torque1, clamp.max_torque1),
-        np.clip(tau[1], -clamp.max_torque2, clamp.max_torque2),
-    ])
+    return np.array(
+        [
+            np.clip(tau[0], -clamp.max_torque1, clamp.max_torque1),
+            np.clip(tau[1], -clamp.max_torque2, clamp.max_torque2),
+        ]
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -259,7 +261,10 @@ def clamp_torque(
 
 
 def equations_of_motion(
-    state: State, t: float, params: PendulumParams, torque_func: TorqueFunc,
+    state: State,
+    t: float,
+    params: PendulumParams,
+    torque_func: TorqueFunc,
     limits: Optional[JointLimits] = None,
     clamp: Optional[TorqueClamp] = None,
 ) -> State:
@@ -316,9 +321,7 @@ def forward_kinematics(theta1: float, phi: float, params: PendulumParams) -> dic
 # ---------------------------------------------------------------------------
 
 
-def joint_velocities(
-    state: State, params: PendulumParams
-) -> dict:
+def joint_velocities(state: State, params: PendulumParams) -> dict:
     """Compute linear velocities at each joint via Jacobian.
 
     Returns dict with 'wrist_speed', 'tip_speed', 'wrist_vel', 'tip_vel'.
@@ -345,9 +348,7 @@ def joint_velocities(
 # ---------------------------------------------------------------------------
 
 
-def base_force(
-    state: State, qddot: np.ndarray, params: PendulumParams
-) -> dict:
+def base_force(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
     """Compute reaction force at the shoulder pivot.
 
     Returns dict with 'fx', 'fy', 'magnitude'.
@@ -368,17 +369,34 @@ def base_force(
     awy = params.L1 * (np.sin(theta1) * qdd1 + np.cos(theta1) * dtheta1**2)
 
     # Tip acceleration (clubhead)
-    atx = awx + params.L2 * (np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2)
-    aty = awy + params.L2 * (np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2)
+    atx = awx + params.L2 * (
+        np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2
+    )
+    aty = awy + params.L2 * (
+        np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2
+    )
 
     # Shaft COM at L2/2 from wrist
-    asx = awx + (params.L2 / 2) * (np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2)
-    asy = awy + (params.L2 / 2) * (np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2)
+    asx = awx + (params.L2 / 2) * (
+        np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2
+    )
+    asy = awy + (params.L2 / 2) * (
+        np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2
+    )
 
     fx = params.m1 * ax1 + params.m2 * asx + params.mClub * atx
-    fy = params.m1 * ay1 + params.m2 * asy + params.mClub * aty - (params.m1 + me) * params.g
+    fy = (
+        params.m1 * ay1
+        + params.m2 * asy
+        + params.mClub * aty
+        - (params.m1 + me) * params.g
+    )
 
-    return {"fx": float(fx), "fy": float(fy), "magnitude": float(np.sqrt(fx**2 + fy**2))}
+    return {
+        "fx": float(fx),
+        "fy": float(fy),
+        "magnitude": float(np.sqrt(fx**2 + fy**2)),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -387,7 +405,8 @@ def base_force(
 
 
 def ztcf_accelerations(
-    state: State, params: PendulumParams,
+    state: State,
+    params: PendulumParams,
     limits: Optional[JointLimits] = None,
 ) -> np.ndarray:
     """Compute accelerations under zero driving torque."""
@@ -402,7 +421,9 @@ def ztcf_accelerations(
 
 
 def control_vector(
-    state: State, qddot_actual: np.ndarray, params: PendulumParams,
+    state: State,
+    qddot_actual: np.ndarray,
+    params: PendulumParams,
     limits: Optional[JointLimits] = None,
 ) -> dict:
     """Control vector: difference between actual and ZTCF base forces.
@@ -477,8 +498,9 @@ def potential_energy(state: State, params: PendulumParams) -> float:
     theta1, phi = state[0], state[1]
     me = _m2eff(params)
     abs_angle2 = theta1 + phi
-    V = -(params.m1 + me) * params.g * params.L1 * np.cos(theta1) \
-        - me * params.g * params.L2 * np.cos(abs_angle2)
+    V = -(params.m1 + me) * params.g * params.L1 * np.cos(
+        theta1
+    ) - me * params.g * params.L2 * np.cos(abs_angle2)
     return float(V)
 
 
