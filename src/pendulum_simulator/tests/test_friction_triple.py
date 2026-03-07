@@ -11,6 +11,8 @@ import pytest
 from double_pendulum_golf.physics_triple import (
     TriplePendulumParams,
     friction_torque_vector,
+    mass_matrix,
+    total_energy,
 )
 from double_pendulum_golf.simulation_triple import (
     TripleSimulationResult,
@@ -459,3 +461,107 @@ class TestTripleSimulationResultFrictionAccessors:
                 tf,
                 [0.0, 0.0, 0.0],
             ), f"Expected zero friction torques at step {i}, got {tf}"
+
+
+# ---------------------------------------------------------------------------
+# Mass matrix correctness tests
+# ---------------------------------------------------------------------------
+
+
+class TestMassMatrixCorrectness:
+    """Verify mass matrix structure and known identities."""
+
+    @pytest.fixture
+    def equal_params(self) -> TriplePendulumParams:
+        return TriplePendulumParams(m1=1.0, m2=1.0, m3=1.0, L1=1.0, L2=1.0, L3=1.0)
+
+    def test_symmetric_at_random_angles(
+        self, equal_params: TriplePendulumParams
+    ) -> None:
+        rng = np.random.default_rng(42)
+        for _ in range(20):
+            phi1, phi2 = rng.uniform(-np.pi, np.pi, size=2)
+            M = mass_matrix(phi1, phi2, equal_params)
+            assert np.allclose(M, M.T), f"Not symmetric at phi1={phi1}, phi2={phi2}"
+
+    def test_positive_definite_at_random_angles(
+        self, equal_params: TriplePendulumParams
+    ) -> None:
+        rng = np.random.default_rng(123)
+        for _ in range(20):
+            phi1, phi2 = rng.uniform(-np.pi, np.pi, size=2)
+            M = mass_matrix(phi1, phi2, equal_params)
+            eigvals = np.linalg.eigvalsh(M)
+            assert all(
+                eigvals > 0
+            ), f"Not positive definite at phi1={phi1}, phi2={phi2}"
+
+    def test_aligned_configuration_known_value(self) -> None:
+        """When phi1=phi2=0 (all segments aligned), M has a known closed form."""
+        p = TriplePendulumParams(m1=1.0, m2=1.0, m3=1.0, L1=1.0, L2=1.0, L3=1.0)
+        M = mass_matrix(0.0, 0.0, p)
+        # M11 = (1+1+1)*1 + (1+1)*1 + 1*1 + 2*(1+1)*1 + 2*1*1 + 2*1*1 = 3+2+1+4+2+2 = 14
+        assert np.isclose(M[0, 0], 14.0), f"M11 at aligned should be 14, got {M[0, 0]}"
+        # M12 = (1+1)*1 + 1*1 + (1+1)*1 + 1*1 + 2*1*1 = 2+1+2+1+2 = 8
+        assert np.isclose(M[0, 1], 8.0), f"M12 at aligned should be 8, got {M[0, 1]}"
+        # M13 = 1*1 + 1*1 + 1*1 = 3
+        assert np.isclose(M[0, 2], 3.0), f"M13 at aligned should be 3, got {M[0, 2]}"
+        # M22 = (1+1)*1 + 1*1 + 2*1*1 = 2+1+2 = 5
+        assert np.isclose(M[1, 1], 5.0), f"M22 at aligned should be 5, got {M[1, 1]}"
+        # M23 = 1*1 + 1*1 = 2
+        assert np.isclose(M[1, 2], 2.0), f"M23 at aligned should be 2, got {M[1, 2]}"
+        # M33 = 1*1 = 1
+        assert np.isclose(M[2, 2], 1.0), f"M33 at aligned should be 1, got {M[2, 2]}"
+
+    def test_perpendicular_configuration(self) -> None:
+        """phi1=pi/2, phi2=0: cos(phi1)=0, cos(phi2)=1, cos(phi1+phi2)=0."""
+        p = TriplePendulumParams(m1=1.0, m2=1.0, m3=1.0, L1=1.0, L2=1.0, L3=1.0)
+        M = mass_matrix(np.pi / 2, 0.0, p)
+        # c1=0, c2=1, c12=0
+        # M11 = 3+2+1+0+0+2 = 8
+        assert np.isclose(M[0, 0], 8.0), f"M11 expected 8, got {M[0, 0]}"
+        # M12 = 2+1+0+0+2 = 5
+        assert np.isclose(M[0, 1], 5.0), f"M12 expected 5, got {M[0, 1]}"
+        # M13 = 1+0+1 = 2
+        assert np.isclose(M[0, 2], 2.0), f"M13 expected 2, got {M[0, 2]}"
+
+
+# ---------------------------------------------------------------------------
+# Energy conservation with corrected mass matrix + Coriolis
+# ---------------------------------------------------------------------------
+
+
+class TestEnergyConservation:
+    """Verify M and C consistency via energy conservation in conservative systems."""
+
+    @pytest.mark.parametrize(
+        "state0",
+        [
+            np.array([0.3, 0.0, 0.0, 0.0, 0.0, 0.0]),
+            np.array([0.0, 0.5, -0.3, 0.0, 0.0, 0.0]),
+            np.array([0.2, -0.4, 0.3, 1.0, -0.5, 0.3]),
+            np.array([np.pi / 3, np.pi / 6, -np.pi / 4, 0.5, -0.3, 0.2]),
+        ],
+        ids=["tilt-only", "relative-only", "mixed-slow", "mixed-fast"],
+    )
+    def test_conservative_energy_conservation(self, state0: np.ndarray) -> None:
+        """Without friction or external torques, E = T + V must be conserved."""
+        params = TriplePendulumParams(m1=3.0, m2=2.0, m3=1.0, L1=0.5, L2=0.4, L3=0.3)
+        torque_func = make_polynomial_torque([0.0], [0.0], [0.0])
+        result = run_simulation(
+            params=params,
+            initial_state=state0,
+            t_end=2.0,
+            torque_func=torque_func,
+            dt=0.002,
+            rtol=1e-10,
+            atol=1e-12,
+        )
+        energies = [
+            total_energy(result.states[i], params) for i in range(result.n_steps)
+        ]
+        e0 = energies[0]
+        max_drift = max(abs(e - e0) for e in energies)
+        assert (
+            max_drift < 1e-6
+        ), f"Energy drift {max_drift:.2e} exceeds 1e-6 for state0={state0}"
