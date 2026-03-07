@@ -64,6 +64,9 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "**/Data_Processor_r0.py" = ["UP038"]
 # Compatibility shims intentionally use version checks for older Python support
 "tools/compatibility.py" = ["UP036", "UP017"]
+# Scripts use print() for CLI output - this is intentional and correct
+"scripts/**/*.py" = ["T201"]
+"scripts/*.py" = ["T201"]
 
 [lint.isort]
 # Tells Ruff how to group your own code vs. libraries

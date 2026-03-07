@@ -68,11 +68,11 @@ def load_tools_config() -> dict[str, list[Any]]:
                 fallback_config: dict[str, list[Any]] = json.load(f)
             return fallback_config
         except Exception as e:
-            print(f"Error loading tools.json: {e}", file=sys.stderr)
+            print(f"Error loading tools.json: {e}", file=sys.stderr)  # noqa: T201
             return {}
 
     except Exception as e:
-        print(f"Error loading tools.json: {e}", file=sys.stderr)
+        print(f"Error loading tools.json: {e}", file=sys.stderr)  # noqa: T201
         return {}
 
 

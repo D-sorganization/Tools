@@ -25,7 +25,7 @@ initial_state = np.array(
 
 torque_func = make_polynomial_torque([-25, 10], [0])
 
-print("Running simulation 10 times to measure performance...")
+print("Running simulation 10 times to measure performance...")  # noqa: T201
 times = []
 for i in range(10):
     start = time.time()
@@ -38,8 +38,8 @@ for i in range(10):
     )
     elapsed = time.time() - start
     times.append(elapsed)
-    print(f"  Run {i+1}: {elapsed:.3f}s")
+    print(f"  Run {i+1}: {elapsed:.3f}s")  # noqa: T201
 
-print(f"\nAverage: {np.mean(times):.3f}s")
-print(f"Min: {np.min(times):.3f}s")
-print(f"Max: {np.max(times):.3f}s")
+print(f"\nAverage: {np.mean(times):.3f}s")  # noqa: T201
+print(f"Min: {np.min(times):.3f}s")  # noqa: T201
+print(f"Max: {np.max(times):.3f}s")  # noqa: T201
