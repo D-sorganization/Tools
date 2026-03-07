@@ -4,6 +4,8 @@
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use tools_core::math;
+use tools_core::matrix3::Matrix3;
+use tools_core::quaternion::Quaternion;
 use tools_core::types::Vector3;
 
 fn bench_vector3_magnitude(c: &mut Criterion) {
@@ -28,15 +30,52 @@ fn bench_vector3_normalize(c: &mut Criterion) {
     });
 }
 
-fn bench_lerp(c: &mut Criterion) {
-    c.bench_function("lerp", |b| {
-        b.iter(|| math::lerp(black_box(0.0), black_box(100.0), black_box(0.5)))
+fn bench_quaternion_multiply(c: &mut Criterion) {
+    let q1 = Quaternion::new(1.0, 2.0, 3.0, 4.0).unwrap();
+    let q2 = Quaternion::new(4.0, 3.0, 2.0, 1.0).unwrap();
+    c.bench_function("Quaternion::multiply", |b| {
+        b.iter(|| black_box(q1).multiply(black_box(&q2)))
     });
 }
 
-fn bench_deg_to_rad(c: &mut Criterion) {
-    c.bench_function("deg_to_rad", |b| {
-        b.iter(|| math::deg_to_rad(black_box(45.0)))
+fn bench_quaternion_rotate_vector(c: &mut Criterion) {
+    let axis = Vector3::new(0.0, 0.0, 1.0);
+    let q = Quaternion::from_axis_angle(&axis, 0.5).unwrap();
+    let v = Vector3::new(1.0, 0.0, 0.0);
+    c.bench_function("Quaternion::rotate_vector", |b| {
+        b.iter(|| black_box(q).rotate_vector(black_box(&v)))
+    });
+}
+
+fn bench_quaternion_slerp(c: &mut Criterion) {
+    let q1 = Quaternion::identity();
+    let axis = Vector3::new(0.0, 0.0, 1.0);
+    let q2 = Quaternion::from_axis_angle(&axis, 1.5).unwrap();
+    c.bench_function("Quaternion::slerp", |b| {
+        b.iter(|| black_box(q1).slerp(black_box(&q2), black_box(0.5)))
+    });
+}
+
+fn bench_matrix3_mul_vec(c: &mut Criterion) {
+    let axis = Vector3::new(1.0, 1.0, 1.0);
+    let q = Quaternion::from_axis_angle(&axis, 1.0).unwrap();
+    let m = Matrix3::from_quaternion(&q);
+    let v = Vector3::new(1.0, 2.0, 3.0);
+    c.bench_function("Matrix3::mul_vec", |b| {
+        b.iter(|| black_box(m).mul_vec(black_box(&v)))
+    });
+}
+
+fn bench_matrix3_mul_mat(c: &mut Criterion) {
+    let m = Matrix3::new([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
+    c.bench_function("Matrix3::mul_mat", |b| {
+        b.iter(|| black_box(m).mul_mat(black_box(&m)))
+    });
+}
+
+fn bench_lerp(c: &mut Criterion) {
+    c.bench_function("lerp", |b| {
+        b.iter(|| math::lerp(black_box(0.0), black_box(100.0), black_box(0.5)))
     });
 }
 
@@ -45,7 +84,11 @@ criterion_group!(
     bench_vector3_magnitude,
     bench_vector3_cross,
     bench_vector3_normalize,
+    bench_quaternion_multiply,
+    bench_quaternion_rotate_vector,
+    bench_quaternion_slerp,
+    bench_matrix3_mul_vec,
+    bench_matrix3_mul_mat,
     bench_lerp,
-    bench_deg_to_rad,
 );
 criterion_main!(benches);
