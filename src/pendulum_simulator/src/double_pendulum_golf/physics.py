@@ -17,8 +17,10 @@ Segments:
     Clubhead  = point mass at tip of shaft
 """
 
+from __future__ import annotations
+
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable, Optional, Tuple
 
 import numpy as np
 
@@ -100,7 +102,7 @@ class TorqueClamp:
 
 # Type aliases
 State = np.ndarray  # shape (4,)
-TorqueFunc = Callable[[float], Tuple[float, float]]
+TorqueFunc = Callable[[float], tuple[float, float]]
 
 
 # ---------------------------------------------------------------------------
@@ -169,7 +171,9 @@ def coriolis_vector(
     h = -me * params.L1 * params.L2 * np.sin(phi)
     c1 = h * (2.0 * dtheta1 * dphi + dphi**2)
     c2 = -h * dtheta1**2
-    return np.array([c1, c2])
+    result = np.array([c1, c2])
+    assert all(np.isfinite(result)), f"Coriolis vector has non-finite values: {result}"
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -184,7 +188,10 @@ def gravity_vector(theta1: float, phi: float, params: PendulumParams) -> np.ndar
     abs_angle2 = theta1 + phi
     G1 = (params.m1 + me) * g * L1 * np.sin(theta1) + me * g * L2 * np.sin(abs_angle2)
     G2 = me * g * L2 * np.sin(abs_angle2)
-    return np.array([G1, G2])
+
+    result = np.array([G1, G2])
+    assert all(np.isfinite(result)), f"Gravity vector has non-finite values: {result}"
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -203,7 +210,9 @@ def friction_torque_vector(
     assert np.isfinite(dtheta1) and np.isfinite(dphi)
     tau_f1 = -params.b1 * dtheta1 - params.mu1 * np.sign(dtheta1)
     tau_f2 = -params.b2 * dphi - params.mu2 * np.sign(dphi)
-    return np.array([tau_f1, tau_f2])
+    result = np.array([tau_f1, tau_f2])
+    assert all(np.isfinite(result)), f"Friction torque has non-finite values: {result}"
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -265,8 +274,8 @@ def equations_of_motion(
     t: float,
     params: PendulumParams,
     torque_func: TorqueFunc,
-    limits: Optional[JointLimits] = None,
-    clamp: Optional[TorqueClamp] = None,
+    limits: JointLimits | None = None,
+    clamp: TorqueClamp | None = None,
 ) -> State:
     """Compute state derivative: dx/dt = f(x, t).
 
@@ -407,7 +416,7 @@ def base_force(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
 def ztcf_accelerations(
     state: State,
     params: PendulumParams,
-    limits: Optional[JointLimits] = None,
+    limits: JointLimits | None = None,
 ) -> np.ndarray:
     """Compute accelerations under zero driving torque."""
     theta1, phi, dtheta1, dphi = state
@@ -424,7 +433,7 @@ def control_vector(
     state: State,
     qddot_actual: np.ndarray,
     params: PendulumParams,
-    limits: Optional[JointLimits] = None,
+    limits: JointLimits | None = None,
 ) -> dict:
     """Control vector: difference between actual and ZTCF base forces.
 

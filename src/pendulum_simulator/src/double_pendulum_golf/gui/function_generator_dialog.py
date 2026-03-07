@@ -38,12 +38,23 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+# ── Import shared style constants ─────────────────────────────────────────────
+from .controls_utils import STYLE_LABEL, STYLE_EDIT, STYLE_BTN, STYLE_BTN_IMPORT
+
 # ── Try to import the shared Function Generator ───────────────────────────────
 _FUNCGEN_AVAILABLE = False
 try:
-    # The function_generator package lives at sibling level in the repo
-    _fg_root = Path(__file__).parents[7] / "function_generator" / "python"
-    if str(_fg_root) not in sys.path and _fg_root.exists():
+    # Walk up from this file to find the 'function_generator/python' directory
+    _fg_root = None
+    _p = Path(__file__).resolve().parent
+    for _ in range(10):
+        _candidate = _p / "function_generator" / "python"
+        if _candidate.exists():
+            _fg_root = _candidate
+            break
+        _p = _p.parent
+
+    if _fg_root is not None and str(_fg_root) not in sys.path:
         sys.path.insert(0, str(_fg_root))
     from function_generator.ui.pyqt6.main_window import (
         FunctionGeneratorWidget,
@@ -52,25 +63,6 @@ try:
     _FUNCGEN_AVAILABLE = True
 except ImportError:
     FunctionGeneratorWidget = None
-
-
-_STYLE_LABEL = "color: #9090b0; font-size: 11px;"
-_STYLE_EDIT = (
-    "background: #1e1e30; color: #e8e8f8; border: 1px solid #404060;"
-    "border-radius: 3px; padding: 3px 6px; font-family: monospace;"
-)
-_STYLE_BTN = (
-    "QPushButton { background: #282848; color: #c0c0e8; border: 1px solid #404068;"
-    "border-radius: 5px; padding: 6px 14px; font-size: 11px; }"
-    "QPushButton:hover { background: #30306a; color: #e0e0ff; }"
-    "QPushButton:pressed { background: #20204a; }"
-)
-_STYLE_BTN_IMPORT = (
-    "QPushButton { background: #1e4a2a; color: #a0e8b0; border: 1px solid #285a38;"
-    "border-radius: 5px; padding: 7px 14px; font-weight: bold; font-size: 11px; }"
-    "QPushButton:hover { background: #286038; }"
-    "QPushButton:pressed { background: #153820; }"
-)
 
 
 class _FallbackPolyWidget(QWidget):
@@ -91,11 +83,11 @@ class _FallbackPolyWidget(QWidget):
         layout.addWidget(note)
 
         coeff_lbl = QLabel("Coefficients (comma-separated):")
-        coeff_lbl.setStyleSheet(_STYLE_LABEL)
+        coeff_lbl.setStyleSheet(STYLE_LABEL)
         layout.addWidget(coeff_lbl)
 
         self.coeff_edit = QLineEdit("0, 0")
-        self.coeff_edit.setStyleSheet(_STYLE_EDIT)
+        self.coeff_edit.setStyleSheet(STYLE_EDIT)
         layout.addWidget(self.coeff_edit)
 
         layout.addStretch()
@@ -116,15 +108,15 @@ class _FallbackPolyWidget(QWidget):
 class FunctionGeneratorDialog(QDialog):
     """Modal dialog hosting the Function Generator widget.
 
-    After designing a waveform the user clicks
-    'Import as Shoulder Torque' or 'Import as Wrist Torque'.
+    After designing a waveform the user clicks one of:
+    'Import as Shoulder Torque', 'Import as Elbow Torque', or 'Import as Wrist Torque'.
     The dialog fits a polynomial of selected order to the signal
     and emits ``torque_imported(joint_name, coefficients_list)``.
 
     Signals
     -------
     torque_imported(str, list[float])
-        Joint name (``"shoulder"`` or ``"wrist"``) and the fitted poly coefficients.
+        Joint name (``"shoulder"``, ``"elbow"``, or ``"wrist"``) and the fitted poly coefficients.
     """
 
     torque_imported = pyqtSignal(str, object)
@@ -188,7 +180,7 @@ class FunctionGeneratorDialog(QDialog):
         fit_row.setSpacing(10)
 
         order_lbl = QLabel("Poly order:")
-        order_lbl.setStyleSheet(_STYLE_LABEL)
+        order_lbl.setStyleSheet(STYLE_LABEL)
         fit_row.addWidget(order_lbl)
 
         self._order_spin = QSpinBox()
@@ -209,11 +201,11 @@ class FunctionGeneratorDialog(QDialog):
         self._coeff_display = QLineEdit()
         self._coeff_display.setReadOnly(True)
         self._coeff_display.setPlaceholderText("Generate a waveform to fit…")
-        self._coeff_display.setStyleSheet(_STYLE_EDIT)
+        self._coeff_display.setStyleSheet(STYLE_EDIT)
         fit_row.addWidget(self._coeff_display, stretch=1)
 
         self._btn_refit = QPushButton("↺ Re-fit")
-        self._btn_refit.setStyleSheet(_STYLE_BTN)
+        self._btn_refit.setStyleSheet(STYLE_BTN)
         self._btn_refit.clicked.connect(self._refit)
         fit_row.addWidget(self._btn_refit)
 
@@ -224,15 +216,23 @@ class FunctionGeneratorDialog(QDialog):
         import_row.setSpacing(8)
 
         self._btn_import_shoulder = QPushButton("📥 Import → Shoulder Torque")
-        self._btn_import_shoulder.setStyleSheet(_STYLE_BTN_IMPORT)
+        self._btn_import_shoulder.setStyleSheet(STYLE_BTN_IMPORT)
         self._btn_import_shoulder.setToolTip(
             "Fit the displayed waveform to a polynomial and copy\n"
             "the coefficients to the Shoulder torque input.",
         )
         self._btn_import_shoulder.clicked.connect(lambda: self._import("shoulder"))
 
+        self._btn_import_elbow = QPushButton("📥 Import → Elbow Torque")
+        self._btn_import_elbow.setStyleSheet(STYLE_BTN_IMPORT)
+        self._btn_import_elbow.setToolTip(
+            "Fit the displayed waveform to a polynomial and copy\n"
+            "the coefficients to the Elbow torque input.",
+        )
+        self._btn_import_elbow.clicked.connect(lambda: self._import("elbow"))
+
         self._btn_import_wrist = QPushButton("📥 Import → Wrist Torque")
-        self._btn_import_wrist.setStyleSheet(_STYLE_BTN_IMPORT)
+        self._btn_import_wrist.setStyleSheet(STYLE_BTN_IMPORT)
         self._btn_import_wrist.setToolTip(
             "Fit the displayed waveform to a polynomial and copy\n"
             "the coefficients to the Wrist torque input.",
@@ -241,6 +241,7 @@ class FunctionGeneratorDialog(QDialog):
 
         import_row.addStretch()
         import_row.addWidget(self._btn_import_shoulder)
+        import_row.addWidget(self._btn_import_elbow)
         import_row.addWidget(self._btn_import_wrist)
 
         btn_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)

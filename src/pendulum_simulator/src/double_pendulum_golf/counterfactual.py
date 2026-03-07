@@ -117,7 +117,7 @@ def zero_torque_joint_forces_double(
         assert np.isfinite(fx) and np.isfinite(
             fy
         ), f"Non-finite zero-torque force at {key}: ({fx}, {fy})"
-    return forces  # type: ignore[return-value]
+    return forces
 
 
 # ---------------------------------------------------------------------------
@@ -179,4 +179,4 @@ def zero_torque_joint_forces_triple(
         assert np.isfinite(fx) and np.isfinite(
             fy
         ), f"Non-finite zero-torque force at {key}: ({fx}, {fy})"
-    return forces  # type: ignore[return-value]
+    return forces

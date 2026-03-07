@@ -18,6 +18,7 @@ from .physics_triple import (
     coriolis_vector,
     equations_of_motion,
     forward_kinematics,
+    friction_torque_vector,
     gravity_vector,
     kinetic_energy,
     mass_matrix_components,
@@ -118,6 +119,31 @@ class TripleSimulationResult:
             "potential": potential_energy(state, self.params),
             "total": total_energy(state, self.params),
         }
+
+    def friction_torques_at(self, idx: int) -> np.ndarray:
+        """Get dissipative friction torque vector at time idx.
+
+        Returns
+        -------
+        np.ndarray, shape (3,)  [N·m]
+        """
+        assert 0 <= idx < self.n_steps
+        s = self.states[idx]
+        return friction_torque_vector(s[3], s[4], s[5], self.params)
+
+    def total_torques_at(self, idx: int) -> np.ndarray:
+        """Get total applied torque at time idx.
+
+        Total = driving torque + friction torque.
+
+        Returns
+        -------
+        np.ndarray, shape (3,)  [N·m]
+        """
+        assert 0 <= idx < self.n_steps
+        tau_drive = np.array(self.torque_func(self.t[idx]))
+        tau_friction = self.friction_torques_at(idx)
+        return np.asarray(tau_drive + tau_friction)
 
 
 # ---------------------------------------------------------------------------

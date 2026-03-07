@@ -5,11 +5,19 @@ Displays the full time history of driving, friction, and total applied torques
 at each joint after the simulation completes. This provides a post-simulation
 analysis view showing how the frictional dissipation compares to the user-driven
 torque at each instant.
+
+Theme integration
+-----------------
+Background, axis, and text colours are sourced from the shared PlotThemeManager
+when available, falling back to hardcoded dark defaults.  The distinctive *trace*
+colours (warm orange, cool blue, red, teal, gold, pale green) are preserved
+regardless of theme — these are the signature look of the plots.
 """
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+import logging
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from PyQt6.QtCore import Qt
@@ -18,6 +26,8 @@ from PyQt6.QtWidgets import QLabel, QSizePolicy, QVBoxLayout, QWidget
 if TYPE_CHECKING:
     from ..simulation import SimulationResult
 
+logger = logging.getLogger(__name__)
+
 try:
     import pyqtgraph as pg
 
@@ -25,9 +35,33 @@ try:
 except ImportError:
     _HAS_PYQTGRAPH = False
 
+# ── Try to import shared PlotThemeManager ──────────────────────────────────
+_PLOT_THEME_AVAILABLE = False
+_get_plot_theme_manager: Any = None
+try:
+    import sys
+    from pathlib import Path
+
+    _shared_root = None
+    _p = Path(__file__).resolve().parent
+    for _ in range(10):
+        _candidate = _p / "shared" / "python"
+        if _candidate.exists():
+            _shared_root = _candidate
+            break
+        _p = _p.parent
+    if _shared_root is not None and str(_shared_root) not in sys.path:
+        sys.path.insert(0, str(_shared_root))
+
+    from plot_theme.manager import get_plot_theme_manager as _get_plot_theme_manager
+
+    _PLOT_THEME_AVAILABLE = True
+except ImportError:
+    pass
+
 
 # ---------------------------------------------------------------------------
-# Colour scheme
+# Trace colour scheme — PRESERVED across all themes (user's favourite part)
 # ---------------------------------------------------------------------------
 _COLOR_DRIVE_1 = (230, 120, 50)  # warm orange — shoulder drive
 _COLOR_DRIVE_2 = (120, 180, 230)  # cool blue   — wrist drive
@@ -35,6 +69,11 @@ _COLOR_FRICTION_1 = (200, 80, 80)  # red         — shoulder friction
 _COLOR_FRICTION_2 = (80, 160, 160)  # teal        — wrist friction
 _COLOR_TOTAL_1 = (255, 220, 80)  # gold        — shoulder total
 _COLOR_TOTAL_2 = (180, 255, 180)  # pale green  — wrist total
+
+# Default dark background/text when no theme system is available
+_DEFAULT_BG = "#1a1a28"
+_DEFAULT_TEXT = "#c0c0d8"
+_DEFAULT_GRID = "#303050"
 
 
 class TorqueHistoryWidget(QWidget):
@@ -57,7 +96,43 @@ class TorqueHistoryWidget(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._result: SimulationResult | None = None
+        self._bg_color = _DEFAULT_BG
+        self._text_color = _DEFAULT_TEXT
+        self._grid_color = _DEFAULT_GRID
+        self._load_theme_colors()
         self._build_ui()
+
+    # ------------------------------------------------------------------
+    # Theme integration
+    # ------------------------------------------------------------------
+
+    def _load_theme_colors(self) -> None:
+        """Load background/text/grid from PlotThemeManager if available."""
+        if not _PLOT_THEME_AVAILABLE or _get_plot_theme_manager is None:
+            return
+        try:
+            manager = _get_plot_theme_manager(settings_app="PendulumSimulator")
+            theme = manager.current_theme
+            self._bg_color = theme.axes_facecolor
+            self._text_color = theme.text_color
+            self._grid_color = theme.grid_color
+            # Register for future theme changes
+            manager.add_theme_change_callback(self._on_plot_theme_changed)
+        except Exception:
+            logger.debug("PlotThemeManager unavailable, using defaults")
+
+    def _on_plot_theme_changed(self, theme: object) -> None:
+        """Update backgrounds when the plot theme changes (trace colors stay)."""
+        if not _HAS_PYQTGRAPH:
+            return
+        try:
+            self._bg_color = theme.axes_facecolor  # type: ignore[attr-defined]
+            self._text_color = theme.text_color  # type: ignore[attr-defined]
+            self._grid_color = theme.grid_color  # type: ignore[attr-defined]
+            for pw in (self._plot_j1, self._plot_j2):
+                pw.setBackground(self._bg_color)
+        except Exception:
+            logger.debug("Could not update torque plot theme")
 
     # ------------------------------------------------------------------
     # UI construction
@@ -70,7 +145,9 @@ class TorqueHistoryWidget(QWidget):
 
         title = QLabel("Torque History")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setStyleSheet("color: #c0c0d8; font-size: 12px; font-weight: bold;")
+        title.setStyleSheet(
+            f"color: {self._text_color}; font-size: 12px; font-weight: bold;"
+        )
         layout.addWidget(title)
 
         if not _HAS_PYQTGRAPH:
@@ -87,7 +164,7 @@ class TorqueHistoryWidget(QWidget):
         self._plot_j2 = pg.PlotWidget(title="Joint 2 — Wrist")
 
         for pw in (self._plot_j1, self._plot_j2):
-            pw.setBackground("#1a1a28")
+            pw.setBackground(self._bg_color)
             pw.getPlotItem().setLabel("bottom", "Time (s)")
             pw.getPlotItem().setLabel("left", "Torque (N·m)")
             pw.getPlotItem().addLegend(offset=(10, 10))

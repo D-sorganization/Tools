@@ -6,8 +6,9 @@ stores results in a structured SimulationResult for easy access
 by the GUI and analysis code.
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import Optional, Tuple
 
 import numpy as np
 from scipy.integrate import solve_ivp
@@ -56,7 +57,7 @@ def make_polynomial_torque(
     p_shoulder = np.array(coeffs_shoulder[::-1])
     p_wrist = np.array(coeffs_wrist[::-1])
 
-    def torque_func(t: float) -> Tuple[float, float]:
+    def torque_func(t: float) -> tuple[float, float]:
         tau1 = float(np.polyval(p_shoulder, t))
         tau2 = float(np.polyval(p_wrist, t))
         return tau1, tau2
@@ -77,11 +78,12 @@ class SimulationResult:
     states: np.ndarray
     params: PendulumParams
     torque_func: TorqueFunc
-    limits: Optional[JointLimits] = None
-    clamp: Optional[TorqueClamp] = None
+    limits: JointLimits | None = None
+    clamp: TorqueClamp | None = None
 
-    _mass_matrices: Optional[np.ndarray] = field(default=None, repr=False)
-    _positions: Optional[list] = field(default=None, repr=False)
+    # Lazily computed caches
+    _mass_matrices: np.ndarray | None = field(default=None, repr=False)
+    _positions: list | None = field(default=None, repr=False)
 
     @property
     def n_steps(self) -> int:
@@ -111,7 +113,8 @@ class SimulationResult:
         assert 0 <= idx < self.n_steps
         return forward_kinematics(self.states[idx, 0], self.states[idx, 1], self.params)
 
-    def torques_at(self, idx: int) -> Tuple[float, float]:
+    def torques_at(self, idx: int) -> tuple[float, float]:
+        """Get applied torques at time index idx."""
         assert 0 <= idx < self.n_steps
         return self.torque_func(self.t[idx])
 
@@ -193,8 +196,8 @@ def run_simulation(
     torque_func: TorqueFunc,
     dt: float = 0.005,
     method: str = "RK45",
-    limits: Optional[JointLimits] = None,
-    clamp: Optional[TorqueClamp] = None,
+    limits: JointLimits | None = None,
+    clamp: TorqueClamp | None = None,
 ) -> SimulationResult:
     """Integrate the double pendulum equations of motion.
 

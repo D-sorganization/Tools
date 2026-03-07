@@ -32,6 +32,8 @@ class TriplePendulumParams:
     Contract:
         - All lengths and masses must be strictly positive.
         - Gravity must be non-negative.
+        - Damping coefficients b1, b2, b3 must be non-negative  (N·m·s/rad).
+        - Coulomb friction mu1, mu2, mu3 must be non-negative  (N·m peak magnitude).
     """
 
     m1: float  # mass of segment 1 (kg)
@@ -41,6 +43,13 @@ class TriplePendulumParams:
     L2: float  # length of segment 2 (m)
     L3: float  # length of segment 3 (m)
     g: float = 9.81  # gravitational acceleration (m/s^2)
+    # --- Dissipative parameters (default 0 = no losses) ---
+    b1: float = 0.0  # viscous damping at joint 1 (N·m·s/rad)
+    b2: float = 0.0  # viscous damping at joint 2 (N·m·s/rad)
+    b3: float = 0.0  # viscous damping at joint 3 (N·m·s/rad)
+    mu1: float = 0.0  # Coulomb friction at joint 1 (N·m, constant magnitude)
+    mu2: float = 0.0  # Coulomb friction at joint 2 (N·m, constant magnitude)
+    mu3: float = 0.0  # Coulomb friction at joint 3 (N·m, constant magnitude)
 
     def __post_init__(self) -> None:
         assert self.m1 > 0, f"m1 must be positive, got {self.m1}"
@@ -50,6 +59,12 @@ class TriplePendulumParams:
         assert self.L2 > 0, f"L2 must be positive, got {self.L2}"
         assert self.L3 > 0, f"L3 must be positive, got {self.L3}"
         assert self.g >= 0, f"g must be non-negative, got {self.g}"
+        assert self.b1 >= 0, f"b1 must be non-negative, got {self.b1}"
+        assert self.b2 >= 0, f"b2 must be non-negative, got {self.b2}"
+        assert self.b3 >= 0, f"b3 must be non-negative, got {self.b3}"
+        assert self.mu1 >= 0, f"mu1 must be non-negative, got {self.mu1}"
+        assert self.mu2 >= 0, f"mu2 must be non-negative, got {self.mu2}"
+        assert self.mu3 >= 0, f"mu3 must be non-negative, got {self.mu3}"
 
 
 # Type alias: state vector [theta1, phi1, phi2, dtheta1, dphi1, dphi2]
@@ -230,7 +245,9 @@ def coriolis_vector(
     )
     c3 = -h13 * dtheta1**2 - h23 * (dtheta1 + dphi1) ** 2
 
-    return np.array([c1, c2, c3])
+    result = np.array([c1, c2, c3])
+    assert all(np.isfinite(result)), f"Coriolis vector has non-finite values: {result}"
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -276,7 +293,45 @@ def gravity_vector(
 
     G3 = m3 * g * L3 * np.sin(abs_angle3)
 
-    return np.array([G1, G2, G3])
+    result = np.array([G1, G2, G3])
+    assert all(np.isfinite(result)), f"Gravity vector has non-finite values: {result}"
+    return result
+
+
+# ---------------------------------------------------------------------------
+# Friction and damping
+# ---------------------------------------------------------------------------
+
+
+def friction_torque_vector(
+    dtheta1: float, dphi1: float, dphi2: float, params: TriplePendulumParams
+) -> np.ndarray:
+    """Compute the total dissipative torque vector at the joints.
+
+    Combines viscous (linear) damping and Coulomb (constant) friction.
+    Both always oppose the direction of motion.
+
+    Model:
+        tau_friction_i = -b_i * qdot_i - mu_i * sign(qdot_i)
+
+    Preconditions:
+        - All velocities are finite.
+    Postconditions:
+        - Returns shape (3,), both values finite.
+
+    Returns
+    -------
+    tau_f : np.ndarray, shape (3,)  [N·m]
+    """
+    assert np.isfinite(dtheta1), f"dtheta1 must be finite, got {dtheta1}"
+    assert np.isfinite(dphi1), f"dphi1 must be finite, got {dphi1}"
+    assert np.isfinite(dphi2), f"dphi2 must be finite, got {dphi2}"
+
+    tau_f1 = -params.b1 * dtheta1 - params.mu1 * np.sign(dtheta1)
+    tau_f2 = -params.b2 * dphi1 - params.mu2 * np.sign(dphi1)
+    tau_f3 = -params.b3 * dphi2 - params.mu3 * np.sign(dphi2)
+
+    return np.array([tau_f1, tau_f2, tau_f3])
 
 
 # ---------------------------------------------------------------------------
@@ -322,8 +377,10 @@ def equations_of_motion(
     tau1, tau2, tau3 = torque_func(t)
     tau = np.array([tau1, tau2, tau3])
 
-    # Solve: M * qddot = tau - C - G
-    rhs = tau - C - G
+    tau_friction = friction_torque_vector(dtheta1, dphi1, dphi2, params)
+
+    # Solve: M * qddot = tau + tau_friction - C - G
+    rhs = tau + tau_friction - C - G
     qddot = np.linalg.solve(M, rhs)
 
     state_dot = np.array([dtheta1, dphi1, dphi2, qddot[0], qddot[1], qddot[2]])
