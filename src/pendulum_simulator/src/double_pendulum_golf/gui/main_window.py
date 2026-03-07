@@ -67,7 +67,7 @@ try:
 
     if _shared_root is not None and str(_shared_root) not in sys.path:
         sys.path.insert(0, str(_shared_root))
-    from theme import (  # type: ignore[no-redef]
+    from theme import (  # type: ignore[no-redef,import-not-found]
         ThemeManager,
         ThemeManagerDialog,
         create_theme_menu,
@@ -81,7 +81,7 @@ except ImportError:
 _PLOT_THEME_AVAILABLE = False
 create_plot_theme_menu: Any = None
 try:
-    from plot_theme.integration import create_plot_theme_menu  # type: ignore[no-redef]
+    from plot_theme.integration import create_plot_theme_menu  # type: ignore[no-redef,import-not-found]
 
     _PLOT_THEME_AVAILABLE = True
 except ImportError:
@@ -292,7 +292,7 @@ class MainWindow(QMainWindow):
         def build_torque(p: dict) -> object:
             return make_polynomial_torque(p["shoulder_coeffs"], p["wrist_coeffs"])
 
-        def build_limits(p: dict):
+        def build_limits(p: dict) -> JointLimits | None:
             if not p.get("enable_limits", False):
                 return None
             return JointLimits(
@@ -301,7 +301,7 @@ class MainWindow(QMainWindow):
                 stiffness=p.get("limit_stiffness", 500.0),
             )
 
-        def build_clamp(p: dict):
+        def build_clamp(p: dict) -> TorqueClamp | None:
             if not p.get("enable_clamp", False):
                 return None
             return TorqueClamp(

@@ -53,7 +53,7 @@ try:
     if _shared_root is not None and str(_shared_root) not in sys.path:
         sys.path.insert(0, str(_shared_root))
 
-    from plot_theme.manager import get_plot_theme_manager as _get_plot_theme_manager  # type: ignore[no-redef]
+    from plot_theme.manager import get_plot_theme_manager as _get_plot_theme_manager  # type: ignore[no-redef,import-not-found]
 
     _PLOT_THEME_AVAILABLE = True
 except ImportError:
