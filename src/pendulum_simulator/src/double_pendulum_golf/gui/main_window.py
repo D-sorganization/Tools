@@ -67,7 +67,7 @@ try:
 
     if _shared_root is not None and str(_shared_root) not in sys.path:
         sys.path.insert(0, str(_shared_root))
-    from theme import (  # type: ignore[no-redef,import-not-found]
+    from theme import (
         ThemeManager,
         ThemeManagerDialog,
         create_theme_menu,
@@ -81,7 +81,7 @@ except ImportError:
 _PLOT_THEME_AVAILABLE = False
 create_plot_theme_menu: Any = None
 try:
-    from plot_theme.integration import create_plot_theme_menu  # type: ignore[no-redef,import-not-found]
+    from plot_theme.integration import create_plot_theme_menu
 
     _PLOT_THEME_AVAILABLE = True
 except ImportError:
