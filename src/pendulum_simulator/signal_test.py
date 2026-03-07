@@ -34,7 +34,7 @@ class TestWindow(QMainWindow):
         self.run_requested.connect(self.on_run)
 
     def on_run(self):
-        print("[TEST] Signal received!")
+        print("[TEST] Signal received!")  # noqa: T201
         QMessageBox.information(self, "Success", "Signal was received!")
 
 

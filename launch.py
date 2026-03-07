@@ -52,19 +52,19 @@ def list_tools() -> None:
     registry = get_registry()
 
     if count == 0:
-        print("No tools found.")
+        print("No tools found.")  # noqa: T201
         return
 
-    print(f"Discovered {count} tool registrations.\n")
+    print(f"Discovered {count} tool registrations.\n")  # noqa: T201
 
     categories = registry.list_categories()
     for category in categories:
         tools = registry.list_tools(category=category)
         if tools:
-            print(f"  [{category}]")
+            print(f"  [{category}]")  # noqa: T201
             for tool in tools:
-                print(f"    {tool.tool_name:40s} {tool.display_name}")
-            print()
+                print(f"    {tool.tool_name:40s} {tool.display_name}")  # noqa: T201
+            print()  # noqa: T201
 
 
 def launch_tool(tool_identifier: str) -> int:
@@ -99,24 +99,24 @@ def launch_tool(tool_identifier: str) -> int:
         if len(matches) == 1:
             registration = matches[0]
         elif len(matches) > 1:
-            print(f"Ambiguous tool name '{tool_identifier}'. Matches:")
+            print(f"Ambiguous tool name '{tool_identifier}'. Matches:")  # noqa: T201
             for m in matches:
-                print(f"  - {m.tool_name} ({m.display_name})")
+                print(f"  - {m.tool_name} ({m.display_name})")  # noqa: T201
             return 1
 
     if registration is None:
-        print(f"Tool '{tool_identifier}' not found.")
-        print("\nUse --list to see all available tools.")
+        print(f"Tool '{tool_identifier}' not found.")  # noqa: T201
+        print("\nUse --list to see all available tools.")  # noqa: T201
         return 1
 
     from gui_launcher.launcher import GUIType
 
     config = registration.gui_configs.get(GUIType.PYQT6)
     if config is None:
-        print(f"Tool '{registration.display_name}' has no PyQt6 configuration.")
+        print(f"Tool '{registration.display_name}' has no PyQt6 configuration.")  # noqa: T201
         return 1
 
-    print(f"Launching: {registration.display_name}")
+    print(f"Launching: {registration.display_name}")  # noqa: T201
     return int(launch_pyqt6_app(config))
 
 

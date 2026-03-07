@@ -12,11 +12,11 @@ from pathlib import Path
 
 # Ensure Python 3.11+
 if sys.version_info < (3, 11):  # noqa: UP036
-    print(
+    print(  # noqa: T201
         "CRITICAL: UnifiedToolsLauncher requires Python 3.11 or higher.",
         file=sys.stderr,
     )
-    print(f"Current version: {sys.version}", file=sys.stderr)
+    print(f"Current version: {sys.version}", file=sys.stderr)  # noqa: T201
     sys.exit(1)
 
 from PyQt6.QtWidgets import QApplication
@@ -44,7 +44,7 @@ def main() -> None:
     except ImportError as e:
         logger.error(f"Failed to import GUI components: {e}")
         # Could show a simple Tkinter error box here if PyQt imports fail entirely
-        print(
+        print(  # noqa: T201
             f"CRITICAL ERROR: Failed to load launcher components: {e}", file=sys.stderr
         )
         sys.exit(1)
