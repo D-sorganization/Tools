@@ -78,6 +78,19 @@ pub fn py_clamp(value: f64, min_val: f64, max_val: f64) -> f64 {
     clamp(value, min_val, max_val)
 }
 
+#[cfg(feature = "python")]
+#[pyfunction]
+#[pyo3(name = "deg_to_rad")]
+pub fn py_deg_to_rad(degrees: f64) -> f64 {
+    deg_to_rad(degrees)
+}
+
+#[cfg(feature = "python")]
+#[pyfunction]
+#[pyo3(name = "rad_to_deg")]
+pub fn py_rad_to_deg(radians: f64) -> f64 {
+    rad_to_deg(radians)
+}
 // ── Tests (TDD — written before implementation was finalized) ────────────────
 
 #[cfg(test)]
