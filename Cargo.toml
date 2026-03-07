@@ -1,0 +1,36 @@
+# Root Cargo workspace for the Tools shared simulation kernel.
+#
+# This workspace houses all Rust crates that compile to:
+#   - Python wheels (via PyO3 / Maturin)
+#   - WebAssembly modules (via wasm-bindgen / wasm-pack)
+#
+# Usage:
+#   cargo build          — build all crates
+#   cargo test           — run all tests
+#   cargo clippy         — lint all crates
+#   cargo fmt --check    — format check all crates
+
+[workspace]
+resolver = "2"
+members = [
+    "rust_core/tools-core",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/D-sorganization/Tools"
+
+[workspace.dependencies]
+# Shared dependencies pinned at workspace level (DRY)
+pyo3 = { version = "0.24", features = ["extension-module"] }
+wasm-bindgen = "0.2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Testing
+proptest = "1"
+
+# Benchmarking
+criterion = { version = "0.5", features = ["html_reports"] }
