@@ -1,0 +1,32 @@
+[package]
+name = "pendulum-core"
+version = "0.1.0"
+edition = "2021"
+description = "Shared physics kernel for pendulum golf swing simulator"
+
+[lib]
+name = "pendulum_core"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+nalgebra = "0.33"
+serde = { version = "1", features = ["derive"], optional = true }
+
+[dependencies.pyo3]
+version = "0.22"
+features = ["extension-module"]
+optional = true
+
+[dependencies.wasm-bindgen]
+version = "0.2"
+optional = true
+
+[dependencies.js-sys]
+version = "0.3"
+optional = true
+
+[features]
+default = []
+python = ["pyo3"]
+wasm = ["wasm-bindgen", "js-sys"]
+serde = ["dep:serde"]

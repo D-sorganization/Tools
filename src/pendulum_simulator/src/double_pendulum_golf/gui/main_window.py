@@ -31,13 +31,23 @@ from PyQt6.QtWidgets import (
 )
 
 from ..physics import JointLimits, PendulumParams, TorqueClamp
+from ..physics_golfer import GolferParams
 from ..physics_triple import TriplePendulumParams
 from ..simulation import make_polynomial_torque, run_simulation
-from ..simulation_triple import make_polynomial_torque as make_polynomial_torque_triple
+from ..simulation_golfer import (
+    make_polynomial_torque as make_polynomial_torque_golfer,
+)
+from ..simulation_golfer import run_simulation as run_simulation_golfer
+from ..simulation_triple import (
+    make_polynomial_torque as make_polynomial_torque_triple,
+)
 from ..simulation_triple import run_simulation as run_simulation_triple
 from .controls_widget import ControlsWidget
+from .controls_widget_golfer import ControlsWidgetGolfer
 from .controls_widget_triple import ControlsWidgetTriple
+from .golfer_pendulum_widget import GolferPendulumWidget
 from .matrix_widget import MatrixWidget
+from .matrix_widget_golfer import GolferMatrixWidget
 from .matrix_widget_triple import TripleMatrixWidget
 from .pendulum_widget import PendulumWidget
 from .simulation_panel import SimulationPanel
@@ -207,8 +217,10 @@ class MainWindow(QMainWindow):
         self._tabs = QTabWidget()
         self._double_panel = self._build_double_panel()
         self._triple_panel = self._build_triple_panel()
+        self._golfer_panel = self._build_golfer_panel()
         self._tabs.addTab(self._double_panel, "⚙ Double Pendulum")
         self._tabs.addTab(self._triple_panel, "⚙ Triple Pendulum")
+        self._tabs.addTab(self._golfer_panel, "⚙ Golfer Upper Body")
         main_layout.addWidget(self._tabs, stretch=1)
 
         self.status = QStatusBar()
@@ -221,14 +233,17 @@ class MainWindow(QMainWindow):
 
     def _wire_toolstrip(self) -> None:
         """Connect toolstrip signals to both pendulum panels."""
-        from typing import cast
-
         ts = self._toolstrip
 
         # Only forward Run/Reset/Play/Speed to the ACTIVE tab's panel
         # (both panels subscribe; the hidden one just ignores it)
-        for panel in (self._double_panel, self._triple_panel):
-            pw = cast(PendulumWidget, panel.pendulum)
+        all_panels = (
+            self._double_panel,
+            self._triple_panel,
+            self._golfer_panel,
+        )
+        for panel in all_panels:
+            pw = panel.pendulum
 
             # Simulation actions
             ts.run_requested.connect(panel.controls.run_requested.emit)
@@ -255,9 +270,7 @@ class MainWindow(QMainWindow):
             panel.sim_finished.connect(lambda: ts.set_running(False))
 
             # Sync toolstrip slider when simulation completes
-            panel.sim_finished.connect(
-                lambda p=panel: ts.set_frame_range(p.current_n_steps())
-            )
+            panel.sim_finished.connect(lambda p=panel: ts.set_frame_range(p.current_n_steps()))
 
             # Sync toolstrip frame counter when animation advances
             panel.frame_changed.connect(lambda idx: ts.set_frame(idx))
@@ -378,6 +391,86 @@ class MainWindow(QMainWindow):
         panel._settings_key = "splitter_triple"
         return panel
 
+    def _build_golfer_panel(self) -> SimulationPanel:
+        controls = ControlsWidgetGolfer()
+        pendulum = GolferPendulumWidget()
+        matrix = GolferMatrixWidget()
+
+        def build_params(p: dict) -> GolferParams:
+            g = 9.81 if p.get("gravity_on", True) else 0.0
+            return GolferParams(
+                m_hub=p["m_hub"],
+                m_r_upper=p["m_r_upper"],
+                m_r_fore=p["m_r_fore"],
+                m_l_upper=p["m_l_upper"],
+                m_l_fore=p["m_l_fore"],
+                m_club=p["m_club"],
+                L_hub=p["L_hub"],
+                L_r_upper=p["L_r_upper"],
+                L_r_fore=p["L_r_fore"],
+                L_l_upper=p["L_l_upper"],
+                L_l_fore=p["L_l_fore"],
+                L_club=p["L_club"],
+                d_rs=p["d_rs"],
+                d_ls=p["d_ls"],
+                grip_right=p["grip_right"],
+                grip_left=p["grip_left"],
+                m_clubhead=p.get("m_clubhead", 0.2),
+                g=g,
+                b_hub=p.get("b_hub", 0.0),
+                b_rs=p.get("b_rs", 0.0),
+                b_re=p.get("b_re", 0.0),
+                b_rh=p.get("b_rh", 0.0),
+                b_ls=p.get("b_ls", 0.0),
+                b_le=p.get("b_le", 0.0),
+                b_lh=p.get("b_lh", 0.0),
+            )
+
+        def build_state(p: dict) -> np.ndarray:
+            return np.array(
+                [
+                    p["theta_hub_rad"],
+                    p["alpha_rs_rad"],
+                    p["alpha_re_rad"],
+                    p["alpha_rh_rad"],
+                    p["alpha_ls_rad"],
+                    p["alpha_le_rad"],
+                    p["alpha_lh_rad"],
+                    0.0,  # theta_club (computed by projection)
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,  # qdot (all zero)
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                ]
+            )
+
+        def build_torque(p: dict) -> object:
+            return make_polynomial_torque_golfer(
+                p["hub_coeffs"],
+                p["rs_coeffs"],
+                p["re_coeffs"],
+                p["rh_coeffs"],
+                p["ls_coeffs"],
+                p["le_coeffs"],
+                p["lh_coeffs"],
+            )
+
+        panel = SimulationPanel(
+            controls=controls,
+            pendulum=pendulum,  # type: ignore[arg-type]
+            matrix=matrix,  # type: ignore[arg-type]
+            params_builder=build_params,
+            torque_builder=build_torque,
+            state_builder=build_state,
+            run_simulation=run_simulation_golfer,
+        )
+        panel._settings_key = "splitter_golfer"
+        return panel
+
     # ------------------------------------------------------------------
     # Theme management
     # ------------------------------------------------------------------
@@ -416,11 +509,7 @@ class MainWindow(QMainWindow):
         self.status.showMessage(f"Theme changed to: {name}", 3000)
 
     def _open_theme_manager(self) -> None:
-        if (
-            not _THEME_AVAILABLE
-            or self._theme_manager is None
-            or ThemeManagerDialog is None
-        ):
+        if not _THEME_AVAILABLE or self._theme_manager is None or ThemeManagerDialog is None:
             from PyQt6.QtWidgets import QMessageBox
 
             QMessageBox.information(
@@ -445,7 +534,8 @@ class MainWindow(QMainWindow):
             self,
             "About",
             "<b>Double Pendulum Golf Swing Simulator</b><br><br>"
-            "Interactive simulation of 2- and 3-segment pendulum dynamics.<br><br>"
+            "Interactive simulation of 2-, 3-segment, and golfer"
+            " upper-body pendulum dynamics.<br><br>"
             "Built with PyQt6 · NumPy · SciPy<br>"
             "D-sorganization Tools Repository",
         )
@@ -465,4 +555,5 @@ class MainWindow(QMainWindow):
         settings.setValue("window_geometry", self.saveGeometry())
         self._double_panel.save_layout()
         self._triple_panel.save_layout()
+        self._golfer_panel.save_layout()
         super().closeEvent(event)  # type: ignore[arg-type]

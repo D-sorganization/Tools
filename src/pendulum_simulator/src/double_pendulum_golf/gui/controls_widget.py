@@ -284,9 +284,7 @@ class ControlsWidget(QWidget):
         self.chk_clamp = QCheckBox("Enable torque clamping")
         self.chk_clamp.setStyleSheet(STYLE_CHECK)
         layout.addWidget(self.chk_clamp)
-        self.inp_max_tau1 = LabeledInput(
-            "Max τ1", "50", "Max shoulder torque (N·m)", lw
-        )
+        self.inp_max_tau1 = LabeledInput("Max τ1", "50", "Max shoulder torque (N·m)", lw)
         self.inp_max_tau2 = LabeledInput("Max τ2", "20", "Max wrist torque (N·m)", lw)
         layout.addLayout(_row(self.inp_max_tau1, self.inp_max_tau2))
         return box
@@ -312,9 +310,7 @@ class ControlsWidget(QWidget):
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(3)
-        self.inp_tau_shoulder = LabeledInput(
-            "Shoulder", "-25, 10", "τ(t)=c0+c1·t+…", 56
-        )
+        self.inp_tau_shoulder = LabeledInput("Shoulder", "-25, 10", "τ(t)=c0+c1·t+…", 56)
         self.inp_tau_wrist = LabeledInput("Wrist", "0", "τ(t)=c0+c1·t+…", 56)
         layout.addWidget(self.inp_tau_shoulder)
         layout.addWidget(self.inp_tau_wrist)
@@ -455,9 +451,7 @@ class ControlsWidget(QWidget):
     def _apply_preset(self, name: str) -> None:
         if name not in self.PRESETS:
             return
-        theta1, phi, dth, dph, tau_sh, tau_wr, tend, m1, m2, mClub, L1, L2 = (
-            self.PRESETS[name]
-        )
+        theta1, phi, dth, dph, tau_sh, tau_wr, tend, m1, m2, mClub, L1, L2 = self.PRESETS[name]
         self.inp_theta1.set_value(str(theta1))
         self.inp_phi.set_value(str(phi))
         self.inp_dtheta1.set_value(str(dth))
