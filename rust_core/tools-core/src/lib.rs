@@ -15,6 +15,7 @@
 //!   via `debug_assert!` and return `Result<T, E>` instead of panicking.
 //! - **DRY**: Types and logic defined once here; Python/JS are thin wrappers.
 
+pub mod ball_flight;
 pub mod math;
 pub mod matrix3;
 pub mod quaternion;
@@ -38,6 +39,11 @@ fn tools_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<types::Vector3>()?;
     m.add_class::<quaternion::Quaternion>()?;
     m.add_class::<matrix3::Matrix3>()?;
+    m.add_class::<ball_flight::BallProperties>()?;
+    m.add_class::<ball_flight::LaunchConditions>()?;
+    m.add_class::<ball_flight::EnvironmentalConditions>()?;
+    m.add_class::<ball_flight::TrajectoryPoint>()?;
+    m.add_class::<ball_flight::TrajectoryAnalysis>()?;
     m.add_function(wrap_pyfunction!(math::py_lerp, m)?)?;
     m.add_function(wrap_pyfunction!(math::py_clamp, m)?)?;
     m.add_function(wrap_pyfunction!(math::py_deg_to_rad, m)?)?;
