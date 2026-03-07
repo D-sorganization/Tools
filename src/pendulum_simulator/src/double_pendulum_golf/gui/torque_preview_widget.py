@@ -30,9 +30,7 @@ class TorquePreviewWidget(QWidget):
         self.update()
 
     def set_profiles(self, profiles: Iterable[tuple[str, list[float], QColor]]) -> None:
-        self._profiles = [
-            (name, list(coeffs), color) for name, coeffs, color in profiles
-        ]
+        self._profiles = [(name, list(coeffs), color) for name, coeffs, color in profiles]
         self.update()
 
     def paintEvent(self, event: object) -> None:
@@ -46,9 +44,7 @@ class TorquePreviewWidget(QWidget):
         if not self._profiles:
             painter.setPen(self.COLOR_TEXT)
             painter.setFont(QFont("Sans", 9))
-            painter.drawText(
-                self.rect(), Qt.AlignmentFlag.AlignCenter, "Torque preview"
-            )
+            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "Torque preview")
             painter.end()
             return
 

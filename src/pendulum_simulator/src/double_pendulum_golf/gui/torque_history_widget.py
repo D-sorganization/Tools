@@ -145,15 +145,11 @@ class TorqueHistoryWidget(QWidget):
 
         title = QLabel("Torque History")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setStyleSheet(
-            f"color: {self._text_color}; font-size: 12px; font-weight: bold;"
-        )
+        title.setStyleSheet(f"color: {self._text_color}; font-size: 12px; font-weight: bold;")
         layout.addWidget(title)
 
         if not _HAS_PYQTGRAPH:
-            fallback = QLabel(
-                "Install pyqtgraph for torque plots:\n  pip install pyqtgraph"
-            )
+            fallback = QLabel("Install pyqtgraph for torque plots:\n  pip install pyqtgraph")
             fallback.setAlignment(Qt.AlignmentFlag.AlignCenter)
             fallback.setStyleSheet("color: #808090; font-size: 11px;")
             layout.addWidget(fallback)
@@ -179,9 +175,7 @@ class TorqueHistoryWidget(QWidget):
             ),
             "friction": self._plot_j1.plot(
                 name="Friction",
-                pen=pg.mkPen(
-                    *_COLOR_FRICTION_1, style=Qt.PenStyle.DashLine, **pen_kwargs
-                ),
+                pen=pg.mkPen(*_COLOR_FRICTION_1, style=Qt.PenStyle.DashLine, **pen_kwargs),
             ),
             "total": self._plot_j1.plot(
                 name="Total",
@@ -194,9 +188,7 @@ class TorqueHistoryWidget(QWidget):
             ),
             "friction": self._plot_j2.plot(
                 name="Friction",
-                pen=pg.mkPen(
-                    *_COLOR_FRICTION_2, style=Qt.PenStyle.DashLine, **pen_kwargs
-                ),
+                pen=pg.mkPen(*_COLOR_FRICTION_2, style=Qt.PenStyle.DashLine, **pen_kwargs),
             ),
             "total": self._plot_j2.plot(
                 name="Total",

@@ -30,9 +30,7 @@ from PyQt6.QtWidgets import (
 # Stylesheet constants
 # ---------------------------------------------------------------------------
 
-_STYLE_STRIP = (
-    "QWidget#toolstrip {" "background: #16162e;" "border-bottom: 1px solid #2a2a50;" "}"
-)
+_STYLE_STRIP = "QWidget#toolstrip {background: #16162e;border-bottom: 1px solid #2a2a50;}"
 _BTN_RUN = (
     "QPushButton{"
     "background:#1e5c30;color:#a8f0b8;border:none;border-radius:5px;"
@@ -110,10 +108,7 @@ _SEP_H_STYLE = "QFrame{color:#2a2a50;border:none;max-height:1px;}"
 _LABEL = "color:#606080;font-size:9px;"
 _VAL_LBL = "color:#8080b0;font-size:9px;font-family:monospace;min-width:32px;"
 _FRAME_LBL = "color:#6060a0;font-size:9px;font-family:monospace;"
-_TITLE = (
-    "color:#9090c8;font-size:11px;font-weight:bold;letter-spacing:1px;"
-    "padding-right:4px;"
-)
+_TITLE = "color:#9090c8;font-size:11px;font-weight:bold;letter-spacing:1px;padding-right:4px;"
 
 
 def _vline() -> QFrame:

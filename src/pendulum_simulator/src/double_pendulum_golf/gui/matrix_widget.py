@@ -66,9 +66,7 @@ class MatrixWidget(QWidget):
         if self._result is None:
             painter.setPen(self.COLOR_LABEL)
             painter.setFont(QFont("Sans", 11))
-            painter.drawText(
-                self.rect(), Qt.AlignmentFlag.AlignCenter, "No simulation loaded"
-            )
+            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "No simulation loaded")
             painter.end()
             return
 

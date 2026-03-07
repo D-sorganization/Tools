@@ -1,126 +1,285 @@
 # Double Pendulum Golf Swing Simulator
 
-A PyQt6-based visualization tool for exploring the dynamics of a **driven double pendulum** 
-modeled as a simplified golf swing. Uses **Lagrangian mechanics with relative (generalized) 
-coordinates** to show how off-diagonal mass matrix terms enable passive energy transfer in 
-kinematic chains.
+A multi-platform visualization and optimization tool for exploring the dynamics
+of multi-body kinematic chains, from simple double pendulums to a full golfer
+upper-body model with closed-loop constraints.
 
-## Key Concepts
+## Platforms
 
-This simulator demonstrates a fundamental insight about multi-body dynamics:
+- **PyQt6 Desktop** — Full-featured desktop app with real-time animation,
+  analysis suite, and matrix visualization
+- **React/Tauri Web** — Cross-platform web app with all three models,
+  canvas animation, and optimizer panel
+- **Rust Kernel** (`pendulum-core`) — Shared physics engine compiled to
+  native (PyO3 for Python) and WASM (wasm-bindgen for web)
+- **JAX/GPU** — GPU-accelerated batch simulation and gradient-based
+  torque profile optimization
 
-- **Diagonal mass matrix terms** (M11, M22) represent each joint's "self-inertia" — the 
-  resistance of each segment to its own angular acceleration.
-- **Off-diagonal terms** (M12 = M21) represent **cross-coupling** — how torque at one joint 
-  accelerates the other segment through the physical linkage.
+## Models
 
-In a golf swing, the off-diagonal coupling is what allows the arm's rotation to drive the 
-club's acceleration **without requiring wrist torque**. The coupling is maximized when the 
-segments are aligned (phi ≈ 0), which is exactly the configuration at impact.
+The simulator provides three models of increasing complexity:
 
-## Coordinates
+1. **Double Pendulum** — 2-DOF open chain (arm + club). Demonstrates passive
+   energy transfer via off-diagonal mass-matrix coupling.
+2. **Triple Pendulum** — 3-DOF open chain (shoulder, arm, club). Adds a
+   second joint for richer dynamics and energy cascading.
+3. **Golfer Upper Body** — 8-DOF closed kinematic loop. Two arm chains
+   (right and left) connect through a shared club, forming 4 holonomic
+   constraints that close the loop.
+
+## Golfer Upper-Body Model
 
 ```
-    Shoulder (fixed pivot)
-        |
-        | segment 1 (arm): angle θ₁ from vertical
-        |
-    Wrist (joint)
-        |
-        | segment 2 (club): angle φ relative to arm
-        |
-    Club tip
+           Origin (fixed)
+              |
+              | hub standoff (θ_hub)
+              |
+           [Hub]──────────────────┐
+           / shoulder bar         |
+         RS                       LS
+          |  (α_rs)                |  (α_ls)
+       R Upper                  L Upper
+          |  (α_re)                |  (α_le)
+       R Forearm                L Forearm
+          |  (α_rh)                |  (α_lh)
+         RH ─ ─ grip_right ─ ─ CLUB ─ ─ grip_left ─ ─ LH
+                               |
+                          [Clubhead]
+                          (θ_club)
 ```
 
-- `θ₁ = 0, φ = 0` → both segments hanging straight down (equilibrium)
-- Positive angles = counterclockwise
+Generalized coordinates (8 DOF):
+
+    [θ_hub, α_rs, α_re, α_rh, α_ls, α_le, α_lh, θ_club]
+
+The right and left hands must coincide with their respective grip positions
+on the club shaft, yielding 4 scalar constraint equations (2 per hand, x and
+y). The system is solved with an augmented Lagrangian (KKT) formulation and
+Baumgarte stabilization for numerical drift control.
+
+### Key Physics
+
+The constrained equations of motion are:
+
+```
+┌         ┐ ┌     ┐   ┌                        ┐
+│  M   Φ_qᵀ│ │ q̈  │   │ τ − C·q̇ − G − b·q̇   │
+│          │ │     │ = │                        │
+│ Φ_q  0   │ │ λ   │   │ −γ − 2αΦ̇ − β²Φ      │
+└         ┘ └     ┘   └                        ┘
+```
+
+where M is the 8×8 mass matrix, Φ_q the 4×8 constraint Jacobian, λ the
+Lagrange multipliers, and α,β the Baumgarte gains.
+
+### Analytical Derivatives (Phase 1 Optimization)
+
+All physics computations use closed-form analytical derivatives instead of
+numerical finite differences, achieving a **14.7x overall speedup**:
+
+| Operation          | Numerical | Analytical | Speedup |
+|--------------------|-----------|------------|---------|
+| Mass Matrix        | 40 ms     | 2 ms       | 23.6x   |
+| Gravity Vector     | 36 ms     | 1 ms       | 35.9x   |
+| Coriolis Forces    | 369 ms    | 26 ms      | 14.4x   |
+| Constraint Jacobian| 8 ms      | 3 ms       | 3.1x    |
+| **Total per RHS**  | **453 ms**| **31 ms**  | **14.7x**|
+
+The analytical FK Jacobians compute 2×8 position derivatives for each of
+7 mass points using direct chain-rule trig derivatives. The mass matrix is
+assembled as `M = Σ mᵢ Jᵢᵀ Jᵢ`, Coriolis via Christoffel symbols using
+`dJ/dq`, and gravity from `G_k = Σ mᵢ g dY_i/dq_k`.
+
+### Analysis Suite
+
+For every time step the simulator computes:
+
+- 8×8 mass matrix with configuration-dependent coupling
+- Coriolis/centrifugal torques (Christoffel symbols)
+- Gravitational torques (potential-energy gradient)
+- Constraint forces (Lagrange multipliers → physical joint reaction forces)
+- Constraint violation magnitude (loop closure error)
+- Task-space Jacobians for all endpoints
+- Manipulability ellipsoids (mobility and force, via SVD)
+- ZTCF matrix: (J M⁻¹ Jᵀ)⁻¹ J M⁻¹
+- Zero-torque counterfactual accelerations and forces
+- Kinetic, potential, and total energy
+- Viscous dissipation at every joint
 
 ## Installation
 
 ```bash
-# Clone or copy to your repo, then:
-cd double_pendulum_golf
+cd src/pendulum_simulator
 pip install -e ".[dev]"
+
+# Optional: GPU optimization support
+pip install -e ".[gpu]"   # requires JAX, diffrax, optax
 ```
 
 ## Usage
 
-```bash
-# Run the GUI
-python -m double_pendulum_golf
+### PyQt6 Desktop App
 
-# Or use the console script
+```bash
+python -m double_pendulum_golf
+# or
 pendulum-golf
 ```
 
-### GUI Layout
+### React/Tauri Web App
 
-| Panel | Description |
-|-------|-------------|
-| **Left** | Parameter inputs, initial conditions, torque polynomials, presets |
-| **Center** | Animated pendulum with tip trail |
-| **Right** | Real-time mass matrix display, force balance, energy |
+```bash
+cd pendulum-web
+npm install
+npm run dev        # development server
+npm run tauri dev  # Tauri desktop wrapper
+```
+
+### GPU Optimization (JAX)
+
+```python
+from double_pendulum_golf.optimizer_gpu import optimize_torque_profile
+from double_pendulum_golf.physics_golfer_jax import GolferParamsJAX
+
+params = GolferParamsJAX(...)
+result, history = optimize_torque_profile(
+    params, initial_state, t_end=2.0,
+    n_coeffs_per_joint=3, n_iterations=100
+)
+```
+
+### Rust Kernel (pendulum-core)
+
+```bash
+cd pendulum-core
+cargo build --lib                              # native library
+maturin develop -r --features python           # Python FFI via PyO3
+wasm-pack build --target web --features wasm   # WASM for React/Tauri
+```
 
 ### Torque Polynomials
 
-Torques are specified as polynomial coefficients: `c0, c1, c2, ...`
+All tabs accept polynomial torque coefficients: `c0, c1, c2, ...`
 
-This evaluates as: `τ(t) = c0 + c1·t + c2·t² + ...`
+Evaluates as: `τ(t) = c0 + c1·t + c2·t² + ...`
 
-Example: `-25, 10` gives `τ(t) = -25 + 10t` (strong initial torque that decreases)
-
-### Presets
-
-- **Golf Swing (passive wrist)**: Shoulder-driven swing with zero wrist torque — 
-  demonstrates passive release through coupling
-- **Golf Swing (active wrist)**: Adds small wrist torque for comparison
-- **Free Double Pendulum**: No torques, chaotic dynamics
-- **Straight Drop**: Near-vertical release
+Example: `-25, 10` gives `τ(t) = -25 + 10t`
 
 ## Running Tests
 
 ```bash
-pytest
+pytest                # 229 tests (203 core + 26 analytical validation)
 pytest --cov=double_pendulum_golf --cov-report=term-missing
+
+# JAX tests run when JAX is installed, skip gracefully otherwise
+pytest tests/test_physics_golfer_jax.py tests/test_optimizer_gpu.py
 ```
 
 ## Architecture
 
 ```
 src/double_pendulum_golf/
-├── physics.py          # Core EOM: mass matrix, Coriolis, gravity
-├── simulation.py       # Integration engine, polynomial torques
+├── physics.py                 # 2-DOF EOM (mass matrix, Coriolis, gravity)
+├── physics_triple.py          # 3-DOF EOM
+├── physics_golfer.py          # 8-DOF EOM — analytical Jacobians + numerical fallbacks
+├── physics_golfer_jax.py      # 8-DOF EOM — JAX/GPU pure-function reimplementation
+├── simulation.py              # 2-DOF integration engine
+├── simulation_triple.py       # 3-DOF integration engine
+├── simulation_golfer.py       # 8-DOF constrained integration (solve_ivp)
+├── simulation_golfer_gpu.py   # 8-DOF GPU batch simulation (diffrax + vmap)
+├── optimizer_gpu.py           # Gradient-based torque optimization (optax)
+├── constraint_solver.py       # KKT solver, Baumgarte stabilization, projection
+├── jacobians.py               # 2/3-DOF Jacobians + shared ellipsoid kernel
+├── jacobians_golfer.py        # 8-DOF task-space Jacobians, ZTCF, Delta
+├── counterfactual.py          # 2-DOF zero-torque analysis
+├── counterfactual_triple.py   # 3-DOF zero-torque analysis
+├── counterfactual_golfer.py   # 8-DOF zero-torque analysis
 ├── gui/
-│   ├── main_window.py      # Top-level orchestration
-│   ├── pendulum_widget.py  # Animation canvas
-│   ├── matrix_widget.py    # Real-time matrix display
-│   └── controls_widget.py  # Input panel with presets
+│   ├── main_window.py             # Tab orchestration, simulation panels
+│   ├── pendulum_widget.py         # 2/3-DOF animation canvas
+│   ├── golfer_pendulum_widget.py  # 8-DOF animation (branching topology)
+│   ├── matrix_widget.py           # 2-DOF real-time matrix/energy display
+│   ├── matrix_widget_triple.py    # 3-DOF matrix display
+│   ├── matrix_widget_golfer.py    # 8-DOF matrix + constraints display
+│   ├── controls_widget.py         # 2-DOF input panel
+│   ├── controls_widget_triple.py  # 3-DOF input panel
+│   ├── controls_widget_golfer.py  # 8-DOF input panel (scrollable)
+│   ├── controls_utils.py          # Shared parsing/styling utilities
+│   └── simulation_panel.py        # Panel builder + SimViewer protocol
+
+pendulum-core/                     # Shared Rust physics kernel
+├── Cargo.toml
+├── src/
+│   ├── lib.rs                     # Feature-gated PyO3 + WASM exports
+│   ├── types.rs                   # Parameter structs for all 3 models
+│   ├── double.rs                  # 2-DOF physics (mass matrix, Coriolis, gravity)
+│   ├── triple.rs                  # 3-DOF physics
+│   ├── golfer.rs                  # 8-DOF analytical physics (FK Jacobians)
+│   ├── golfer_constraints.rs      # KKT solver, Baumgarte stabilization
+│   └── integrator.rs              # RK45 adaptive ODE solver
+└── python/
+    └── physics_native.py          # Python wrapper (Rust FFI with numpy fallback)
+
+pendulum-web/                      # React/Tauri cross-platform web app
+├── src/
+│   ├── App.tsx / AppNew.tsx       # Main app — model selector + tabs
+│   ├── physics.ts                 # 2-DOF TypeScript physics
+│   ├── physics_triple.ts          # 3-DOF TypeScript physics
+│   ├── physics_golfer.ts          # 8-DOF TypeScript physics + KKT solver
+│   ├── optimizer.ts               # Nelder-Mead simplex optimizer
+│   ├── presets.ts                 # 2-DOF presets
+│   ├── presets_triple.ts          # 3-DOF presets
+│   ├── presets_golfer.ts          # 8-DOF presets
+│   ├── units.ts                   # Unit conversion utilities
+│   └── components/
+│       ├── PendulumCanvas.tsx     # 2-DOF animation canvas
+│       ├── TriplePendulumCanvas.tsx # 3-DOF animation canvas
+│       ├── GolferCanvas.tsx       # 8-DOF golfer animation canvas
+│       ├── AnalysisPlots.tsx      # Analysis charts
+│       ├── OptimizerPanel.tsx     # Optimization UI
+│       └── UnitSelector.tsx       # Unit picker
+
+tests/
+├── test_physics.py            # 2-DOF physics properties
+├── test_physics_triple.py     # 3-DOF physics properties
+├── test_physics_golfer.py     # 8-DOF physics (FK, mass matrix, energy)
+├── test_analytical_jacobians.py # Analytical vs numerical parity (26 tests)
+├── test_constraint_solver.py  # Constraint projection, KKT, Baumgarte
+├── test_simulation.py         # 2-DOF integration
+├── test_simulation_triple.py  # 3-DOF integration
+├── test_simulation_golfer.py  # 8-DOF constrained integration
+├── test_jacobians.py          # Jacobians and ellipsoids
+├── test_friction.py           # 2-DOF dissipation
+├── test_friction_triple.py    # 3-DOF dissipation
+├── test_counterfactual.py     # Zero-torque counterfactual
+├── test_physics_golfer_jax.py # JAX vs numpy parity (25 tests, skip w/o JAX)
+└── test_optimizer_gpu.py      # GPU optimizer validation (10 tests, skip w/o JAX)
 ```
 
 ### Design Principles
 
-- **DRY**: Common patterns extracted (LabeledInput widget, shared coordinate transforms)
-- **DbC** (Design by Contract): Preconditions/postconditions via assertions throughout physics code
-- **TDD**: Comprehensive test suite covering mass matrix properties, energy conservation, 
-  known analytical values, and contract violations
+- **TDD**: 229 tests covering mass-matrix symmetry/PSD, energy conservation,
+  constraint satisfaction, FK consistency, analytical vs numerical parity,
+  and contract violations
+- **DbC** (Design by Contract): Assertions as pre/post-conditions in all
+  physics functions — shape checks, finiteness, physical bounds
+- **DRY**: Shared ellipsoid kernel, common parsing utilities, protocol-based
+  widget interfaces; Rust kernel serves both Python and web platforms
+- **Orthogonal development**: Each model (2/3/8 DOF) is self-contained with
+  its own physics, simulation, GUI widgets, and tests
+- **Cross-platform parity**: Rust kernel ensures identical physics across
+  PyQt6 desktop, React/Tauri web, and Python scripting environments
 
-## Physics Reference
+## CI/CD
 
-### Mass Matrix (point masses at tips)
+Linting is configured in `pyproject.toml`:
 
-```
-M11 = (m1 + m2)·L1² + m2·L2² + 2·m2·L1·L2·cos(φ)
-M12 = M21 = m2·L2² + m2·L1·L2·cos(φ)
-M22 = m2·L2²
-```
+- **Ruff** — line length 95, Python 3.10 target
+- **Black** — line length 95
+- **Mypy** — strict return-type and unused-config warnings
+- **cargo clippy** — Rust linting (pendulum-core)
 
-### Equations of Motion
-
-```
-M(q)·q̈ = τ - C(q,q̇)·q̇ - G(q)
-```
-
-where C contains Coriolis/centrifugal terms and G contains gravitational torques.
+All files pass Ruff, Black, and Mypy with zero errors.
 
 ## License
 

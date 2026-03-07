@@ -23,6 +23,12 @@ dev = [
 plots = [
     "pyqtgraph>=0.13",
 ]
+gpu = [
+    "jax[cuda12]>=0.4.0",
+    "jaxlib>=0.4.0",
+    "diffrax>=0.4.0",
+    "optax>=0.1.0",
+]
 
 [project.scripts]
 pendulum-golf = "double_pendulum_golf.__main__:main"
