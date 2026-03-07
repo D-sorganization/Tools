@@ -170,6 +170,17 @@ class ControlsWidgetTriple(QWidget):
         pl4.addWidget(self.inp_tau_shoulder)
         pl4.addWidget(self.inp_tau_elbow)
         pl4.addWidget(self.inp_tau_wrist)
+
+        self.btn_funcgen = QPushButton("📈 Function Generator…")
+        self.btn_funcgen.setToolTip("Import a waveform as torque coefficients")
+        self.btn_funcgen.setStyleSheet(
+            "QPushButton{background:#282848;color:#b0b0e0;border:1px solid #404068;"
+            "border-radius:4px;padding:4px 8px;font-size:10px;}"
+            "QPushButton:hover{background:#32326a;}"
+        )
+        self.btn_funcgen.clicked.connect(self._open_function_generator)
+        pl4.addWidget(self.btn_funcgen)
+
         main_layout.addWidget(torque_group)
 
         preview_group = QGroupBox("Torque Preview")
@@ -185,6 +196,27 @@ class ControlsWidgetTriple(QWidget):
         self.inp_tend = LabeledInput("Duration (s)", "2.0", "Total simulation time")
         pl5.addWidget(self.inp_tend)
         main_layout.addWidget(time_group)
+
+        # ── Dissipation parameters ────────────────────────────────
+        diss_group = QGroupBox("Dissipation")
+        diss_group.setStyleSheet(style_group)
+        diss_layout = QVBoxLayout(diss_group)
+        self.inp_b1 = LabeledInput("b1", "0.0", "Viscous damping shoulder (N·m·s)")
+        self.inp_b2 = LabeledInput("b2", "0.0", "Viscous damping elbow (N·m·s)")
+        self.inp_b3 = LabeledInput("b3", "0.0", "Viscous damping wrist (N·m·s)")
+        self.inp_mu1 = LabeledInput("μ1", "0.0", "Coulomb friction shoulder (N·m)")
+        self.inp_mu2 = LabeledInput("μ2", "0.0", "Coulomb friction elbow (N·m)")
+        self.inp_mu3 = LabeledInput("μ3", "0.0", "Coulomb friction wrist (N·m)")
+        for w in [
+            self.inp_b1,
+            self.inp_b2,
+            self.inp_b3,
+            self.inp_mu1,
+            self.inp_mu2,
+            self.inp_mu3,
+        ]:
+            diss_layout.addWidget(w)
+        main_layout.addWidget(diss_group)
 
         btn_layout = QHBoxLayout()
         self.btn_run = QPushButton("Run Simulation")
@@ -384,6 +416,12 @@ class ControlsWidgetTriple(QWidget):
             "wrist_coeffs": parse_coeffs(self.inp_tau_wrist, "Wrist torque"),
             "t_end": parse_float(self.inp_tend, "Duration"),
             "gravity_on": self.chk_gravity.isChecked(),
+            "b1": parse_float(self.inp_b1, "b1"),
+            "b2": parse_float(self.inp_b2, "b2"),
+            "b3": parse_float(self.inp_b3, "b3"),
+            "mu1": parse_float(self.inp_mu1, "μ1"),
+            "mu2": parse_float(self.inp_mu2, "μ2"),
+            "mu3": parse_float(self.inp_mu3, "μ3"),
         }
 
     def _update_torque_preview(self) -> None:
@@ -412,6 +450,30 @@ class ControlsWidgetTriple(QWidget):
                 ),
             ]
         )
+
+    # ------------------------------------------------------------------
+    # Function generator integration
+    # ------------------------------------------------------------------
+
+    def _open_function_generator(self) -> None:
+        """Open Function Generator as a dialog for torque design."""
+        from .function_generator_dialog import FunctionGeneratorDialog
+
+        dlg = FunctionGeneratorDialog(self)
+        dlg.torque_imported.connect(self._on_torque_imported)
+        dlg.exec()
+
+    def _on_torque_imported(self, joint: str, coeffs: list[float]) -> None:
+        """Receive torque profile imported from Function Generator."""
+        coeffs_str = ", ".join(f"{c:.4g}" for c in coeffs)
+        joint_lower = joint.lower()
+        if joint_lower == "shoulder":
+            self.inp_tau_shoulder.set_value(coeffs_str)
+        elif joint_lower == "elbow":
+            self.inp_tau_elbow.set_value(coeffs_str)
+        else:
+            self.inp_tau_wrist.set_value(coeffs_str)
+        self._update_torque_preview()
 
     def _on_play_toggled(self, checked: bool) -> None:
         self._is_playing = checked

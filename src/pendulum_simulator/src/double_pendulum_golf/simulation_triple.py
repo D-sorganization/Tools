@@ -18,6 +18,7 @@ from .physics_triple import (
     coriolis_vector,
     equations_of_motion,
     forward_kinematics,
+    friction_torque_vector,
     gravity_vector,
     kinetic_energy,
     mass_matrix_components,
@@ -119,6 +120,31 @@ class TripleSimulationResult:
             "total": total_energy(state, self.params),
         }
 
+    def friction_torques_at(self, idx: int) -> np.ndarray:
+        """Get dissipative friction torque vector at time idx.
+
+        Returns
+        -------
+        np.ndarray, shape (3,)  [N·m]
+        """
+        assert 0 <= idx < self.n_steps
+        s = self.states[idx]
+        return friction_torque_vector(s[3], s[4], s[5], self.params)
+
+    def total_torques_at(self, idx: int) -> np.ndarray:
+        """Get total applied torque at time idx.
+
+        Total = driving torque + friction torque.
+
+        Returns
+        -------
+        np.ndarray, shape (3,)  [N·m]
+        """
+        assert 0 <= idx < self.n_steps
+        tau_drive = np.array(self.torque_func(self.t[idx]))
+        tau_friction = self.friction_torques_at(idx)
+        return np.asarray(tau_drive + tau_friction)
+
 
 # ---------------------------------------------------------------------------
 # Simulation runner
@@ -151,9 +177,9 @@ def run_simulation(
       visualisation-quality results.  Use tighter values only when
       quantitative energy conservation is required.
     """
-    assert initial_state.shape == (
-        6,
-    ), f"Initial state shape must be (6,), got {initial_state.shape}"
+    assert initial_state.shape == (6,), (
+        f"Initial state shape must be (6,), got {initial_state.shape}"
+    )
     assert all(np.isfinite(initial_state)), "Initial state must be finite"
     assert t_end > 0, f"t_end must be positive, got {t_end}"
     assert 0 < dt < t_end, f"dt must be in (0, t_end), got {dt}"

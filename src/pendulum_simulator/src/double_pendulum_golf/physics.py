@@ -17,8 +17,10 @@ Segments:
     Clubhead  = point mass at tip of shaft
 """
 
+from __future__ import annotations
+
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable, Optional, Tuple
 
 import numpy as np
 
@@ -100,7 +102,7 @@ class TorqueClamp:
 
 # Type aliases
 State = np.ndarray  # shape (4,)
-TorqueFunc = Callable[[float], Tuple[float, float]]
+TorqueFunc = Callable[[float], tuple[float, float]]
 
 
 # ---------------------------------------------------------------------------
@@ -169,7 +171,9 @@ def coriolis_vector(
     h = -me * params.L1 * params.L2 * np.sin(phi)
     c1 = h * (2.0 * dtheta1 * dphi + dphi**2)
     c2 = -h * dtheta1**2
-    return np.array([c1, c2])
+    result = np.array([c1, c2])
+    assert all(np.isfinite(result)), f"Coriolis vector has non-finite values: {result}"
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -184,7 +188,10 @@ def gravity_vector(theta1: float, phi: float, params: PendulumParams) -> np.ndar
     abs_angle2 = theta1 + phi
     G1 = (params.m1 + me) * g * L1 * np.sin(theta1) + me * g * L2 * np.sin(abs_angle2)
     G2 = me * g * L2 * np.sin(abs_angle2)
-    return np.array([G1, G2])
+
+    result = np.array([G1, G2])
+    assert all(np.isfinite(result)), f"Gravity vector has non-finite values: {result}"
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -192,9 +199,7 @@ def gravity_vector(theta1: float, phi: float, params: PendulumParams) -> np.ndar
 # ---------------------------------------------------------------------------
 
 
-def friction_torque_vector(
-    dtheta1: float, dphi: float, params: PendulumParams
-) -> np.ndarray:
+def friction_torque_vector(dtheta1: float, dphi: float, params: PendulumParams) -> np.ndarray:
     """Compute dissipative torque vector (viscous + Coulomb).
 
     Pre: dtheta1, dphi finite.
@@ -203,7 +208,9 @@ def friction_torque_vector(
     assert np.isfinite(dtheta1) and np.isfinite(dphi)
     tau_f1 = -params.b1 * dtheta1 - params.mu1 * np.sign(dtheta1)
     tau_f2 = -params.b2 * dphi - params.mu2 * np.sign(dphi)
-    return np.array([tau_f1, tau_f2])
+    result = np.array([tau_f1, tau_f2])
+    assert all(np.isfinite(result)), f"Friction torque has non-finite values: {result}"
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -265,8 +272,8 @@ def equations_of_motion(
     t: float,
     params: PendulumParams,
     torque_func: TorqueFunc,
-    limits: Optional[JointLimits] = None,
-    clamp: Optional[TorqueClamp] = None,
+    limits: JointLimits | None = None,
+    clamp: TorqueClamp | None = None,
 ) -> State:
     """Compute state derivative: dx/dt = f(x, t).
 
@@ -369,28 +376,15 @@ def base_force(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
     awy = params.L1 * (np.sin(theta1) * qdd1 + np.cos(theta1) * dtheta1**2)
 
     # Tip acceleration (clubhead)
-    atx = awx + params.L2 * (
-        np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2
-    )
-    aty = awy + params.L2 * (
-        np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2
-    )
+    atx = awx + params.L2 * (np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2)
+    aty = awy + params.L2 * (np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2)
 
     # Shaft COM at L2/2 from wrist
-    asx = awx + (params.L2 / 2) * (
-        np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2
-    )
-    asy = awy + (params.L2 / 2) * (
-        np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2
-    )
+    asx = awx + (params.L2 / 2) * (np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2)
+    asy = awy + (params.L2 / 2) * (np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2)
 
     fx = params.m1 * ax1 + params.m2 * asx + params.mClub * atx
-    fy = (
-        params.m1 * ay1
-        + params.m2 * asy
-        + params.mClub * aty
-        - (params.m1 + me) * params.g
-    )
+    fy = params.m1 * ay1 + params.m2 * asy + params.mClub * aty - (params.m1 + me) * params.g
 
     return {
         "fx": float(fx),
@@ -407,7 +401,7 @@ def base_force(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
 def ztcf_accelerations(
     state: State,
     params: PendulumParams,
-    limits: Optional[JointLimits] = None,
+    limits: JointLimits | None = None,
 ) -> np.ndarray:
     """Compute accelerations under zero driving torque."""
     theta1, phi, dtheta1, dphi = state
@@ -424,7 +418,7 @@ def control_vector(
     state: State,
     qddot_actual: np.ndarray,
     params: PendulumParams,
-    limits: Optional[JointLimits] = None,
+    limits: JointLimits | None = None,
 ) -> dict:
     """Control vector: difference between actual and ZTCF base forces.
 
@@ -443,9 +437,7 @@ def control_vector(
 # ---------------------------------------------------------------------------
 
 
-def linear_accelerations(
-    state: State, qddot: np.ndarray, params: PendulumParams
-) -> dict:
+def linear_accelerations(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
     """Compute linear accelerations of joints in world coordinates."""
     assert state.shape == (4,) and qddot.shape == (2,)
     theta1, phi, dtheta1, dphi = state

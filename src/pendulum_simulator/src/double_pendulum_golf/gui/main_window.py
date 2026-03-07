@@ -55,8 +55,17 @@ ThemeManager: Any = None
 ThemeManagerDialog: Any = None
 create_theme_menu: Any = None
 try:
-    _shared_root = Path(__file__).parents[7] / "shared" / "python"
-    if str(_shared_root) not in sys.path and _shared_root.exists():
+    # Walk up from this file to find the 'shared/python' directory
+    _shared_root = None
+    _p = Path(__file__).resolve().parent
+    for _ in range(10):
+        _candidate = _p / "shared" / "python"
+        if _candidate.exists():
+            _shared_root = _candidate
+            break
+        _p = _p.parent
+
+    if _shared_root is not None and str(_shared_root) not in sys.path:
         sys.path.insert(0, str(_shared_root))
     from theme import (  # type: ignore[no-redef]
         ThemeManager,
@@ -67,6 +76,16 @@ try:
     _THEME_AVAILABLE = True
 except ImportError:
     pass  # ThemeManager / ThemeManagerDialog / create_theme_menu remain None
+
+# ── Try to import shared PlotThemeManager ──────────────────────────────────
+_PLOT_THEME_AVAILABLE = False
+create_plot_theme_menu: Any = None
+try:
+    from plot_theme.integration import create_plot_theme_menu  # type: ignore[no-redef]
+
+    _PLOT_THEME_AVAILABLE = True
+except ImportError:
+    pass
 
 # ── Pendulum dark stylesheet (preserved regardless of theme system) ────────────
 _PENDULUM_DARK_STYLE = """
@@ -158,6 +177,11 @@ class MainWindow(QMainWindow):
         action_pend_dark.triggered.connect(self._apply_pendulum_dark)
         view_menu.addAction(action_pend_dark)
 
+        # Plot Theme submenu (for pyqtgraph / matplotlib colours)
+        if _PLOT_THEME_AVAILABLE and create_plot_theme_menu is not None:
+            view_menu.addSeparator()
+            create_plot_theme_menu(self, menubar)
+
         # Help menu
         _help = menubar.addMenu("&Help")
         assert _help is not None
@@ -231,9 +255,7 @@ class MainWindow(QMainWindow):
             panel.sim_finished.connect(lambda: ts.set_running(False))
 
             # Sync toolstrip slider when simulation completes
-            panel.sim_finished.connect(
-                lambda p=panel: ts.set_frame_range(p.current_n_steps())
-            )
+            panel.sim_finished.connect(lambda p=panel: ts.set_frame_range(p.current_n_steps()))
 
             # Sync toolstrip frame counter when animation advances
             panel.frame_changed.connect(lambda idx: ts.set_frame(idx))
@@ -315,6 +337,12 @@ class MainWindow(QMainWindow):
                 L2=p["L2"],
                 L3=p["L3"],
                 g=g,
+                b1=p.get("b1", 0.0),
+                b2=p.get("b2", 0.0),
+                b3=p.get("b3", 0.0),
+                mu1=p.get("mu1", 0.0),
+                mu2=p.get("mu2", 0.0),
+                mu3=p.get("mu3", 0.0),
             )
 
         def build_state(p: dict) -> np.ndarray:
@@ -386,11 +414,7 @@ class MainWindow(QMainWindow):
         self.status.showMessage(f"Theme changed to: {name}", 3000)
 
     def _open_theme_manager(self) -> None:
-        if (
-            not _THEME_AVAILABLE
-            or self._theme_manager is None
-            or ThemeManagerDialog is None
-        ):
+        if not _THEME_AVAILABLE or self._theme_manager is None or ThemeManagerDialog is None:
             from PyQt6.QtWidgets import QMessageBox
 
             QMessageBox.information(

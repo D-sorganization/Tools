@@ -49,6 +49,18 @@ STYLE_SLIDER = (
     "margin: -5px 0; border-radius: 7px; border: 1px solid #6070b0; }"
     "QSlider::handle:horizontal:hover { background: #a0b0f0; }"
 )
+STYLE_BTN = (
+    "QPushButton { background: #282848; color: #c0c0e8; border: 1px solid #404068;"
+    "border-radius: 5px; padding: 6px 14px; font-size: 11px; }"
+    "QPushButton:hover { background: #30306a; color: #e0e0ff; }"
+    "QPushButton:pressed { background: #20204a; }"
+)
+STYLE_BTN_IMPORT = (
+    "QPushButton { background: #1e4a2a; color: #a0e8b0; border: 1px solid #285a38;"
+    "border-radius: 5px; padding: 7px 14px; font-weight: bold; font-size: 11px; }"
+    "QPushButton:hover { background: #286038; }"
+    "QPushButton:pressed { background: #153820; }"
+)
 
 
 # ---------------------------------------------------------------------------
@@ -101,9 +113,7 @@ def parse_coeffs(widget: LabeledInput, name: str) -> list[float]:
         parts = widget.value.split(",")
         return [float(p.strip()) for p in parts if p.strip()]
     except ValueError:
-        raise ValueError(
-            f"Cannot parse '{name}' coefficients: '{widget.value}'"
-        ) from None
+        raise ValueError(f"Cannot parse '{name}' coefficients: '{widget.value}'") from None
 
 
 def parse_coeffs_lenient(widget: LabeledInput) -> list[float]:
