@@ -16,10 +16,14 @@
 //! - **DRY**: Types and logic defined once here; Python/JS are thin wrappers.
 
 pub mod math;
+pub mod matrix3;
+pub mod quaternion;
 pub mod types;
 
 // Re-export primary types at crate root for ergonomic imports.
 pub use math::{clamp, lerp};
+pub use matrix3::Matrix3;
+pub use quaternion::Quaternion;
 pub use types::Vector3;
 
 // ── Python bindings (feature-gated) ──────────────────────────────────────────
@@ -32,7 +36,11 @@ use pyo3::prelude::*;
 #[pymodule]
 fn tools_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<types::Vector3>()?;
+    m.add_class::<quaternion::Quaternion>()?;
+    m.add_class::<matrix3::Matrix3>()?;
     m.add_function(wrap_pyfunction!(math::py_lerp, m)?)?;
     m.add_function(wrap_pyfunction!(math::py_clamp, m)?)?;
+    m.add_function(wrap_pyfunction!(math::py_deg_to_rad, m)?)?;
+    m.add_function(wrap_pyfunction!(math::py_rad_to_deg, m)?)?;
     Ok(())
 }
