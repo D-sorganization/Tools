@@ -104,3 +104,15 @@ document_processing/pdf_renamer/.env
 /development_tools/
 /web_applications/calculator/
 /scientific_modeling/
+
+# ── Rust Build Artifacts ──
+/target/
+rust_core/tools-core/target/
+*.so
+*.dylib
+*.dll
+*.pyd
+Cargo.lock
+# WASM build output
+pkg/
+
