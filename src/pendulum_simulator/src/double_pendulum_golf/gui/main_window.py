@@ -255,7 +255,9 @@ class MainWindow(QMainWindow):
             panel.sim_finished.connect(lambda: ts.set_running(False))
 
             # Sync toolstrip slider when simulation completes
-            panel.sim_finished.connect(lambda p=panel: ts.set_frame_range(p.current_n_steps()))
+            panel.sim_finished.connect(
+                lambda p=panel: ts.set_frame_range(p.current_n_steps())
+            )
 
             # Sync toolstrip frame counter when animation advances
             panel.frame_changed.connect(lambda idx: ts.set_frame(idx))
@@ -414,7 +416,11 @@ class MainWindow(QMainWindow):
         self.status.showMessage(f"Theme changed to: {name}", 3000)
 
     def _open_theme_manager(self) -> None:
-        if not _THEME_AVAILABLE or self._theme_manager is None or ThemeManagerDialog is None:
+        if (
+            not _THEME_AVAILABLE
+            or self._theme_manager is None
+            or ThemeManagerDialog is None
+        ):
             from PyQt6.QtWidgets import QMessageBox
 
             QMessageBox.information(
