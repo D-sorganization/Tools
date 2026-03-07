@@ -118,18 +118,20 @@ def mass_matrix(phi1: float, phi2: float, params: TriplePendulumParams) -> np.nd
         + m3 * L3**2
         + 2.0 * (m2 + m3) * L1 * L2 * c1
         + 2.0 * m3 * L1 * L3 * c12
+        + 2.0 * m3 * L2 * L3 * c2
     )
 
     # M12: coupling between segments 1 and 2
     M12 = (
         (m2 + m3) * L2**2
         + m3 * L3**2
-        + m3 * L1 * L3 * np.cos(phi2)
         + (m2 + m3) * L1 * L2 * c1
+        + m3 * L1 * L3 * c12
+        + 2.0 * m3 * L2 * L3 * c2
     )
 
     # M13: coupling between segments 1 and 3
-    M13 = m3 * L3**2 + m3 * L1 * L3 * c12
+    M13 = m3 * L3**2 + m3 * L1 * L3 * c12 + m3 * L2 * L3 * c2
 
     # M22: self-coupling of segment 2
     M22 = (m2 + m3) * L2**2 + m3 * L3**2 + 2.0 * m3 * L2 * L3 * c2
@@ -231,19 +233,17 @@ def coriolis_vector(
     s2 = np.sin(phi2)
     s12 = np.sin(phi1 + phi2)
 
-    # Coupling terms
-    h12 = -m2 * L1 * L2 * s1 - m3 * L1 * L2 * s1
+    # Coupling terms (derivatives of mass matrix w.r.t. relative angles)
+    h12 = -(m2 + m3) * L1 * L2 * s1
     h13 = -m3 * L1 * L3 * s12
     h23 = -m3 * L2 * L3 * s2
 
-    # Centrifugal and Coriolis terms
-    c1 = h12 * (dtheta1 + dphi1) * dphi1 + h13 * (dtheta1 + dphi1 + dphi2) * dphi2
-    c2 = (
-        -h12 * dtheta1**2
-        + h23 * (dtheta1 + dphi1 + dphi2) * dphi2
-        - h23 * (dtheta1 + dphi1) * dphi2
-    )
-    c3 = -h13 * dtheta1**2 - h23 * (dtheta1 + dphi1) ** 2
+    # Coriolis/centrifugal terms from Christoffel symbols of M(q)
+    c1 = (h12 + h13) * (2.0 * dtheta1 + dphi1) * dphi1 + (h13 + h23) * (
+        2.0 * dtheta1 + 2.0 * dphi1 + dphi2
+    ) * dphi2
+    c2 = -(h12 + h13) * dtheta1**2 + h23 * (2.0 * dtheta1 + 2.0 * dphi1 + dphi2) * dphi2
+    c3 = -(h13 + h23) * dtheta1**2 - h23 * (2.0 * dtheta1 + dphi1) * dphi1
 
     result = np.array([c1, c2, c3])
     assert all(np.isfinite(result)), f"Coriolis vector has non-finite values: {result}"
@@ -317,7 +317,7 @@ def friction_torque_vector(
     Preconditions:
         - All velocities are finite.
     Postconditions:
-        - Returns shape (3,), both values finite.
+        - Returns shape (3,), all values finite.
 
     Returns
     -------
