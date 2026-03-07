@@ -262,6 +262,19 @@ jobs:
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: cargo test --all-features
 
+      - name: Build Python Wheel (Maturin)
+        if: steps.rust-changes.outputs.has_changes == 'true'
+        run: |
+          pip install maturin
+          cd rust_core/tools-core
+          maturin build --release
+
+      - name: Verify Python Wheel
+        if: steps.rust-changes.outputs.has_changes == 'true'
+        run: |
+          pip install target/wheels/*.whl --force-reinstall
+          python -c "import tools_core; v = tools_core.Vector3(1.0, 2.0, 3.0); assert v.magnitude() > 0; print('tools_core wheel verified')"
+
       - name: Rust Quality Gate Summary
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
@@ -269,3 +282,4 @@ jobs:
           echo "- ✅ rustfmt: formatted" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ clippy: no warnings" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ cargo test: all tests pass" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ maturin build: Python wheel built" >> $GITHUB_STEP_SUMMARY
