@@ -2,20 +2,12 @@
 
 from __future__ import annotations
 
-import sys
 from collections.abc import Callable
-from pathlib import Path
 
 import numpy as np
 import pytest
 
-# Ensure the src directory is on sys.path so that 'double_pendulum_golf' is importable
-# regardless of PYTHONPATH or working directory.
-_src_dir = str(Path(__file__).resolve().parent.parent / "src")
-if _src_dir not in sys.path:
-    sys.path.insert(0, _src_dir)
-
-from double_pendulum_golf.physics import PendulumParams  # noqa: E402
+from double_pendulum_golf.physics import PendulumParams
 
 
 @pytest.fixture
