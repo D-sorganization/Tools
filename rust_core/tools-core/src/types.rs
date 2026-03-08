@@ -345,3 +345,92 @@ mod tests {
         assert!(s.contains("1.000000"));
     }
 }
+
+// ── Property-Based Tests (proptest) ──────────────────────────────────────────
+
+#[cfg(test)]
+#[allow(clippy::needless_pass_by_value, clippy::float_cmp)]
+mod proptests {
+    use super::*;
+    use proptest::prelude::*;
+
+    /// Generate finite f64 values (no NaN/Inf) in a reasonable range.
+    fn finite_f64() -> impl Strategy<Value = f64> {
+        -1e6_f64..1e6_f64
+    }
+
+    /// Generate a Vector3 with finite components.
+    fn arb_vector3() -> impl Strategy<Value = Vector3> {
+        (finite_f64(), finite_f64(), finite_f64()).prop_map(|(x, y, z)| Vector3::new(x, y, z))
+    }
+
+    proptest! {
+        /// Magnitude is always non-negative.
+        #[test]
+        fn magnitude_is_non_negative(v in arb_vector3()) {
+            prop_assert!(v.magnitude() >= 0.0);
+        }
+
+        /// Addition is commutative: a + b == b + a.
+        #[test]
+        fn add_is_commutative(a in arb_vector3(), b in arb_vector3()) {
+            let ab = a.add(&b);
+            let ba = b.add(&a);
+            prop_assert!((ab.x - ba.x).abs() < 1e-10);
+            prop_assert!((ab.y - ba.y).abs() < 1e-10);
+            prop_assert!((ab.z - ba.z).abs() < 1e-10);
+        }
+
+        /// Dot product is commutative: a · b == b · a.
+        #[test]
+        fn dot_is_commutative(a in arb_vector3(), b in arb_vector3()) {
+            let ab = a.dot(&b);
+            let ba = b.dot(&a);
+            prop_assert!((ab - ba).abs() < 1e-6);
+        }
+
+        /// Cross product is anti-commutative: a × b == -(b × a).
+        #[test]
+        fn cross_is_anticommutative(a in arb_vector3(), b in arb_vector3()) {
+            let ab = a.cross(&b);
+            let ba = b.cross(&a);
+            prop_assert!((ab.x + ba.x).abs() < 1e-6);
+            prop_assert!((ab.y + ba.y).abs() < 1e-6);
+            prop_assert!((ab.z + ba.z).abs() < 1e-6);
+        }
+
+        /// Normalized vector has magnitude 1 (when non-zero).
+        #[test]
+        fn normalized_has_unit_length(v in arb_vector3()) {
+            if v.magnitude() > 1e-10 {
+                let n = v.normalized().unwrap();
+                prop_assert!((n.magnitude() - 1.0).abs() < 1e-10);
+            }
+        }
+
+        /// Scalar multiplication distributes: s * (a + b) == s*a + s*b.
+        #[test]
+        fn scale_distributes_over_add(
+            a in arb_vector3(),
+            b in arb_vector3(),
+            s in finite_f64()
+        ) {
+            let left = a.add(&b).scale(s);
+            let right = a.scale(s).add(&b.scale(s));
+            // Use relative tolerance: |diff| / max(|left|, |right|, 1) < eps
+            let tol = 1e-8;
+            let denom = left.magnitude().max(right.magnitude()).max(1.0);
+            prop_assert!((left.x - right.x).abs() / denom < tol);
+            prop_assert!((left.y - right.y).abs() / denom < tol);
+            prop_assert!((left.z - right.z).abs() / denom < tol);
+        }
+
+        /// Cross product with self is zero: v × v == 0.
+        #[test]
+        fn cross_self_is_zero(v in arb_vector3()) {
+            let c = v.cross(&v);
+            let denom = v.magnitude().max(1.0);
+            prop_assert!(c.magnitude() / denom < 1e-8);
+        }
+    }
+}

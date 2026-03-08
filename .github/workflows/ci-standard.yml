@@ -298,6 +298,23 @@ jobs:
           test -f rust_core/tools-core/pkg/package.json && echo "✅ package.json exists"
           test -f rust_core/tools-core/pkg/tools_core.js && echo "✅ JS glue exists"
 
+      - name: Run Benchmarks (Criterion)
+        if: steps.rust-changes.outputs.has_changes == 'true'
+        run: |
+          cargo bench --manifest-path rust_core/tools-core/Cargo.toml -- --output-format bencher 2>&1 | tee benchmark_results.txt
+          echo "## Benchmark Results" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat benchmark_results.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Benchmark Results
+        if: steps.rust-changes.outputs.has_changes == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-benchmarks
+          path: benchmark_results.txt
+          retention-days: 30
+
       - name: Rust Quality Gate Summary
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
