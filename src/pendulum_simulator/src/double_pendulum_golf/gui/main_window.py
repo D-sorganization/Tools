@@ -225,16 +225,23 @@ class MainWindow(QMainWindow):
             # Playback scrubbing via toolstrip slider
             ts.frame_scrubbed.connect(panel.scrub_to_frame)
 
-            # Overlay toggles → pendulum widget
-            ts.forces_toggled.connect(pw.set_show_forces)
-            ts.zero_torque_toggled.connect(pw.set_show_zero_torque_forces)
-            ts.mob_ellipsoid_toggled.connect(pw.set_show_mob_ellipsoids)
-            ts.force_ellipsoid_toggled.connect(pw.set_show_force_ellipsoids)
+            # Overlay toggles → pendulum widget (optional capability)
+            if hasattr(pw, "set_show_forces"):
+                ts.forces_toggled.connect(pw.set_show_forces)
+            if hasattr(pw, "set_show_zero_torque_forces"):
+                ts.zero_torque_toggled.connect(pw.set_show_zero_torque_forces)
+            if hasattr(pw, "set_show_mob_ellipsoids"):
+                ts.mob_ellipsoid_toggled.connect(pw.set_show_mob_ellipsoids)
+            if hasattr(pw, "set_show_force_ellipsoids"):
+                ts.force_ellipsoid_toggled.connect(pw.set_show_force_ellipsoids)
 
-            # Scale sliders → pendulum widget
-            ts.force_scale_changed.connect(pw.set_force_scale)
-            ts.mob_scale_changed.connect(pw.set_mob_ellipsoid_scale)
-            ts.force_ell_scale_changed.connect(pw.set_force_ellipsoid_scale)
+            # Scale sliders → pendulum widget (optional capability)
+            if hasattr(pw, "set_force_scale"):
+                ts.force_scale_changed.connect(pw.set_force_scale)
+            if hasattr(pw, "set_mob_ellipsoid_scale"):
+                ts.mob_scale_changed.connect(pw.set_mob_ellipsoid_scale)
+            if hasattr(pw, "set_force_ellipsoid_scale"):
+                ts.force_ell_scale_changed.connect(pw.set_force_ellipsoid_scale)
 
             # Busy state
             panel.sim_started.connect(lambda: ts.set_running(True))
@@ -249,7 +256,8 @@ class MainWindow(QMainWindow):
             panel.frame_changed.connect(lambda idx: ts.set_frame(idx))
 
             # Reset view button → clear zoom/pan on the pendulum canvas
-            ts.reset_view_requested.connect(pw.reset_view)
+            if hasattr(pw, "reset_view"):
+                ts.reset_view_requested.connect(pw.reset_view)
 
     def _build_double_panel(self) -> SimulationPanel:
         controls = ControlsWidget()
