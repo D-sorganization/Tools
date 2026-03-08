@@ -22,7 +22,7 @@ pub mod quaternion;
 pub mod types;
 
 // Re-export primary types at crate root for ergonomic imports.
-pub use math::{clamp, lerp};
+pub use math::{clamp, lerp, GRAVITY, R_GAS};
 pub use matrix3::Matrix3;
 pub use quaternion::Quaternion;
 pub use types::Vector3;
