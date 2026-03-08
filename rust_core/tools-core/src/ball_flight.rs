@@ -418,6 +418,7 @@ pub fn apply_spin_decay(omega: f64, decay_rate: f64, dt: f64) -> f64 {
 ///
 /// # Returns
 /// A vector of `TrajectoryPoint` values.
+#[must_use]
 pub fn simulate_trajectory(
     ball: &BallProperties,
     env: &EnvironmentalConditions,

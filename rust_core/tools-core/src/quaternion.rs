@@ -134,6 +134,7 @@ impl Quaternion {
     ///
     /// # Contracts (DbC)
     /// - Precondition: `t` in [0, 1].
+    #[must_use]
     pub fn slerp(&self, other: &Self, t: f64) -> Self {
         debug_assert!(
             (0.0..=1.0).contains(&t),
