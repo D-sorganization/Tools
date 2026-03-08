@@ -54,6 +54,9 @@ from .simulation_panel import SimulationPanel
 from .toolstrip_widget import ToolStrip
 from .torque_history_widget import TorqueHistoryWidget
 
+# TODO(#1042): Derive from fleet ThemeManager palette when it's a hard dep.
+from .controls_utils import PENDULUM_DARK_STYLE as _PENDULUM_DARK_STYLE
+
 logger = logging.getLogger(__name__)
 
 _SETTINGS_ORG = "D-sorganization"
@@ -96,38 +99,6 @@ try:
     _PLOT_THEME_AVAILABLE = True
 except ImportError:
     pass
-
-# ── Pendulum dark stylesheet (preserved regardless of theme system) ────────────
-_PENDULUM_DARK_STYLE = """
-    QMainWindow { background: #12121c; }
-    QStatusBar  { background: #12121c; color: #7878a0; font-size: 11px;
-                  border-top: 1px solid #282840; }
-    QTabWidget::pane { border: 1px solid #303050; background: #12121c; }
-    QTabBar::tab { background: #1e1e30; color: #9090b0; border: 1px solid #303050;
-                   padding: 7px 18px; margin-right: 2px; border-bottom: none;
-                   font-size: 12px; }
-    QTabBar::tab:selected { background: #282848; color: #d0d0f0;
-                            border-bottom: 2px solid #6070c0; }
-    QTabBar::tab:hover    { background: #222238; color: #c0c0e8; }
-    QSplitter::handle { background: #282848; width: 4px; }
-    QSplitter::handle:hover { background: #404068; }
-    QScrollBar:vertical { background: #1a1a2a; width: 10px; border: none; }
-    QScrollBar::handle:vertical { background: #404060; min-height: 20px;
-                                  border-radius: 5px; }
-    QScrollBar::handle:vertical:hover { background: #5060a0; }
-    QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
-    QScrollBar:horizontal { background: #1a1a2a; height: 10px; border: none; }
-    QScrollBar::handle:horizontal { background: #404060; min-width: 20px;
-                                    border-radius: 5px; }
-    QScrollBar::handle:horizontal:hover { background: #5060a0; }
-    QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0; }
-    QLabel { color: #c0c0d8; }
-    QMenuBar { background: #16162a; color: #b0b0d0; font-size: 11px; }
-    QMenuBar::item:selected { background: #282848; }
-    QMenu { background: #1e1e30; color: #c0c0d8; border: 1px solid #404060;
-            font-size: 11px; }
-    QMenu::item:selected { background: #383868; }
-"""
 
 
 class MainWindow(QMainWindow):
@@ -254,29 +225,39 @@ class MainWindow(QMainWindow):
             # Playback scrubbing via toolstrip slider
             ts.frame_scrubbed.connect(panel.scrub_to_frame)
 
-            # Overlay toggles → pendulum widget
-            ts.forces_toggled.connect(pw.set_show_forces)
-            ts.zero_torque_toggled.connect(pw.set_show_zero_torque_forces)
-            ts.mob_ellipsoid_toggled.connect(pw.set_show_mob_ellipsoids)
-            ts.force_ellipsoid_toggled.connect(pw.set_show_force_ellipsoids)
+            # Overlay toggles → pendulum widget (optional capability)
+            if hasattr(pw, "set_show_forces"):
+                ts.forces_toggled.connect(pw.set_show_forces)
+            if hasattr(pw, "set_show_zero_torque_forces"):
+                ts.zero_torque_toggled.connect(pw.set_show_zero_torque_forces)
+            if hasattr(pw, "set_show_mob_ellipsoids"):
+                ts.mob_ellipsoid_toggled.connect(pw.set_show_mob_ellipsoids)
+            if hasattr(pw, "set_show_force_ellipsoids"):
+                ts.force_ellipsoid_toggled.connect(pw.set_show_force_ellipsoids)
 
-            # Scale sliders → pendulum widget
-            ts.force_scale_changed.connect(pw.set_force_scale)
-            ts.mob_scale_changed.connect(pw.set_mob_ellipsoid_scale)
-            ts.force_ell_scale_changed.connect(pw.set_force_ellipsoid_scale)
+            # Scale sliders → pendulum widget (optional capability)
+            if hasattr(pw, "set_force_scale"):
+                ts.force_scale_changed.connect(pw.set_force_scale)
+            if hasattr(pw, "set_mob_ellipsoid_scale"):
+                ts.mob_scale_changed.connect(pw.set_mob_ellipsoid_scale)
+            if hasattr(pw, "set_force_ellipsoid_scale"):
+                ts.force_ell_scale_changed.connect(pw.set_force_ellipsoid_scale)
 
             # Busy state
             panel.sim_started.connect(lambda: ts.set_running(True))
             panel.sim_finished.connect(lambda: ts.set_running(False))
 
             # Sync toolstrip slider when simulation completes
-            panel.sim_finished.connect(lambda p=panel: ts.set_frame_range(p.current_n_steps()))
+            panel.sim_finished.connect(
+                lambda p=panel: ts.set_frame_range(p.current_n_steps())
+            )
 
             # Sync toolstrip frame counter when animation advances
             panel.frame_changed.connect(lambda idx: ts.set_frame(idx))
 
             # Reset view button → clear zoom/pan on the pendulum canvas
-            ts.reset_view_requested.connect(pw.reset_view)
+            if hasattr(pw, "reset_view"):
+                ts.reset_view_requested.connect(pw.reset_view)
 
     def _build_double_panel(self) -> SimulationPanel:
         controls = ControlsWidget()
@@ -509,7 +490,11 @@ class MainWindow(QMainWindow):
         self.status.showMessage(f"Theme changed to: {name}", 3000)
 
     def _open_theme_manager(self) -> None:
-        if not _THEME_AVAILABLE or self._theme_manager is None or ThemeManagerDialog is None:
+        if (
+            not _THEME_AVAILABLE
+            or self._theme_manager is None
+            or ThemeManagerDialog is None
+        ):
             from PyQt6.QtWidgets import QMessageBox
 
             QMessageBox.information(
