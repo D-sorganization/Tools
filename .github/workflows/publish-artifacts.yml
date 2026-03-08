@@ -85,7 +85,8 @@ jobs:
     if: >-
       github.event_name == 'release' ||
       (github.event_name == 'workflow_dispatch' && inputs.dry_run == 'false')
-    environment: pypi  # Requires PyPI trusted publishing configured
+    environment:
+      name: pypi  # GitHub environment with PyPI trusted publishing configured
     steps:
       - name: Download Wheel
         uses: actions/download-artifact@v4
