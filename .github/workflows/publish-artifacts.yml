@@ -1,0 +1,102 @@
+name: Publish Artifacts
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no actual publish)'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+permissions:
+  contents: read
+
+jobs:
+  build-python-wheel:
+    name: Build Python Wheel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Maturin
+        run: pip install maturin
+
+      - name: Build Wheel
+        run: |
+          cd rust_core/tools-core
+          maturin build --release --features python
+          echo "## Python Wheel Built" >> $GITHUB_STEP_SUMMARY
+          ls -la ../../target/wheels/
+
+      - name: Upload Wheel Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-wheel
+          path: target/wheels/*.whl
+          retention-days: 30
+
+  build-wasm-package:
+    name: Build WASM/NPM Package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Build WASM Package
+        run: |
+          cd rust_core/tools-core
+          wasm-pack build --target web --release -- --features wasm
+          echo "## WASM Package Built" >> $GITHUB_STEP_SUMMARY
+          ls -la pkg/
+
+      - name: Upload WASM Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm-package
+          path: rust_core/tools-core/pkg/
+          retention-days: 30
+
+  publish-summary:
+    name: Publish Summary
+    needs: [build-python-wheel, build-wasm-package]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Summary
+        run: |
+          echo "## Artifact Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Artifact | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Python Wheel (tools_core) | ✅ Built |" >> $GITHUB_STEP_SUMMARY
+          echo "| WASM/NPM Package (tools-core) | ✅ Built |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.event_name }}" == "release" ]; then
+            echo "### Release: ${{ github.event.release.tag_name }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### Manual run (dry_run=${{ inputs.dry_run }})" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Artifacts are available for download from this workflow run." >> $GITHUB_STEP_SUMMARY
+          echo "To publish to PyPI/NPM, download and upload manually, or configure" >> $GITHUB_STEP_SUMMARY
+          echo "repository secrets for automated publishing." >> $GITHUB_STEP_SUMMARY
