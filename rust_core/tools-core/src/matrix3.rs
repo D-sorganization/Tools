@@ -17,7 +17,8 @@ use crate::types::Vector3;
 /// Used for rotation matrices, inertia tensors, and Jacobians.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
-#[cfg_attr(feature = "wasm", wasm_bindgen::prelude::wasm_bindgen)]
+// NOTE: Matrix3 uses [f64; 9] which is not directly compatible with wasm_bindgen.
+// WASM support requires custom accessor methods (future work).
 pub struct Matrix3 {
     /// Row-major elements: `[m00, m01, m02, m10, m11, m12, m20, m21, m22]`
     pub data: [f64; 9],
