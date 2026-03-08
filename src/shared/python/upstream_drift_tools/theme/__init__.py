@@ -37,7 +37,6 @@ if str(_shared_python_dir) not in sys.path:
 
 # Dynamically import and re-export everything from shared.python.theme
 try:
-
     # Re-export all public symbols
     # Protocol re-exports (no PyQt6 dependency)
     from theme import (

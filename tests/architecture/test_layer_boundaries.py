@@ -379,10 +379,9 @@ class TestNoPrintInLibraryCode:
                     rel = filepath.relative_to(REPO_ROOT)
                     violations.append(f"  {rel}:{node.lineno} print()")
 
-        assert (
-            not violations
-        ), f"Shared library uses print() ({len(violations)} calls):\n" + "\n".join(
-            violations
+        assert not violations, (
+            f"Shared library uses print() ({len(violations)} calls):\n"
+            + "\n".join(violations)
         )
 
 
@@ -501,6 +500,6 @@ class TestExceptionHierarchyConsistency:
             TransformationError,
             UnsupportedOperationError,
         ):
-            assert issubclass(
-                exc_class, DataProcessingError
-            ), f"{exc_class.__name__} does not inherit DataProcessingError"
+            assert issubclass(exc_class, DataProcessingError), (
+                f"{exc_class.__name__} does not inherit DataProcessingError"
+            )
