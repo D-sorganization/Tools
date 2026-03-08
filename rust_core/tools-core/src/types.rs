@@ -356,7 +356,7 @@ mod proptests {
 
     /// Generate finite f64 values (no NaN/Inf) in a reasonable range.
     fn finite_f64() -> impl Strategy<Value = f64> {
-        (-1e6_f64..1e6_f64)
+        -1e6_f64..1e6_f64
     }
 
     /// Generate a Vector3 with finite components.
