@@ -38,7 +38,6 @@ from .physics import (
 # Re-export from shared utility for backwards compatibility (DRY — #1041)
 from .torque_utils import make_polynomial_torque  # noqa: F401
 
-
 # ---------------------------------------------------------------------------
 # Simulation result container
 # ---------------------------------------------------------------------------

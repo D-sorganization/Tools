@@ -30,7 +30,6 @@ from .physics_triple import (
 # Re-export from shared utility for backwards compatibility (DRY — #1041)
 from .torque_utils import make_polynomial_torque  # noqa: F401
 
-
 # ---------------------------------------------------------------------------
 # Simulation result container
 # ---------------------------------------------------------------------------
@@ -150,9 +149,9 @@ def run_simulation(
       visualisation-quality results.  Use tighter values only when
       quantitative energy conservation is required.
     """
-    assert initial_state.shape == (6,), (
-        f"Initial state shape must be (6,), got {initial_state.shape}"
-    )
+    assert initial_state.shape == (
+        6,
+    ), f"Initial state shape must be (6,), got {initial_state.shape}"
     assert all(np.isfinite(initial_state)), "Initial state must be finite"
     assert t_end > 0, f"t_end must be positive, got {t_end}"
     assert 0 < dt < t_end, f"dt must be in (0, t_end), got {dt}"
