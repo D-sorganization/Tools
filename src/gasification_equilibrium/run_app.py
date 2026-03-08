@@ -40,15 +40,15 @@ def main() -> None:
 
         print(f"\nFeed: {feed}")  # noqa: T201
         print(  # noqa: T201
-            f"T = {result.temperature:.0f} K, P = {result.pressure/101325:.1f} atm"
+            f"T = {result.temperature:.0f} K, P = {result.pressure / 101325:.1f} atm"
         )
         print(f"Converged: {result.converged}")  # noqa: T201
         print(f"H2/CO = {result.h2_co_ratio:.3f}")  # noqa: T201
-        print(f"Carbon Conversion = {result.carbon_conversion*100:.1f}%")  # noqa: T201
+        print(f"Carbon Conversion = {result.carbon_conversion * 100:.1f}%")  # noqa: T201
         print("\nEquilibrium Composition (mol%):")  # noqa: T201
         for sp, frac in sorted(result.composition_dict().items(), key=lambda x: -x[1]):
             if frac > 0.001:
-                print(f"  {sp:8s}: {frac*100:6.2f}%")  # noqa: T201
+                print(f"  {sp:8s}: {frac * 100:6.2f}%")  # noqa: T201
 
         # Demo sweep
         print(f"\n{'─' * 60}")  # noqa: T201

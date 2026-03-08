@@ -661,7 +661,7 @@ class GasificationApp:
         else:
             sp_idx = data["species"].index(sp_key)
             z_data = data["compositions"][:, :, sp_idx] * 100
-            z_label = f'{SPECIES_DB[sp_key]["formula"]} [mol%]'
+            z_label = f"{SPECIES_DB[sp_key]['formula']} [mol%]"
             cmap = "viridis"
 
         y_label = SURFACE_PARAM_LABELS.get(data["param_name"], data["param_name"])
