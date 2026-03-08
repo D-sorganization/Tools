@@ -36,43 +36,8 @@ from .physics_golfer import (
     total_energy,
 )
 
-# ---------------------------------------------------------------------------
-# Polynomial torque builder
-# ---------------------------------------------------------------------------
-
-
-def make_polynomial_torque(
-    coeffs_hub: list[float],
-    coeffs_rs: list[float],
-    coeffs_re: list[float],
-    coeffs_rh: list[float],
-    coeffs_ls: list[float],
-    coeffs_le: list[float],
-    coeffs_lh: list[float],
-) -> TorqueFunc:
-    """Create a torque function from polynomial coefficients for each joint.
-
-    tau_i(t) = c0 + c1*t + c2*t^2 + ...
-    """
-    polys = []
-    for name, coeffs in [
-        ("hub", coeffs_hub),
-        ("rs", coeffs_rs),
-        ("re", coeffs_re),
-        ("rh", coeffs_rh),
-        ("ls", coeffs_ls),
-        ("le", coeffs_le),
-        ("lh", coeffs_lh),
-    ]:
-        assert len(coeffs) >= 1, f"Need at least one coefficient for {name}"
-        polys.append(np.array(coeffs[::-1]))
-
-    def torque_func(
-        t: float,
-    ) -> tuple[float, float, float, float, float, float, float]:
-        return tuple(float(np.polyval(p, t)) for p in polys)  # type: ignore[return-value]
-
-    return torque_func
+# Re-export from shared utility for backwards compatibility (DRY — #1041)
+from .torque_utils import make_polynomial_torque  # noqa: F401
 
 
 # ---------------------------------------------------------------------------

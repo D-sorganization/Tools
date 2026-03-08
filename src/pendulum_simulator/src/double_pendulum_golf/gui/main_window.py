@@ -97,37 +97,10 @@ try:
 except ImportError:
     pass
 
-# ── Pendulum dark stylesheet (preserved regardless of theme system) ────────────
-_PENDULUM_DARK_STYLE = """
-    QMainWindow { background: #12121c; }
-    QStatusBar  { background: #12121c; color: #7878a0; font-size: 11px;
-                  border-top: 1px solid #282840; }
-    QTabWidget::pane { border: 1px solid #303050; background: #12121c; }
-    QTabBar::tab { background: #1e1e30; color: #9090b0; border: 1px solid #303050;
-                   padding: 7px 18px; margin-right: 2px; border-bottom: none;
-                   font-size: 12px; }
-    QTabBar::tab:selected { background: #282848; color: #d0d0f0;
-                            border-bottom: 2px solid #6070c0; }
-    QTabBar::tab:hover    { background: #222238; color: #c0c0e8; }
-    QSplitter::handle { background: #282848; width: 4px; }
-    QSplitter::handle:hover { background: #404068; }
-    QScrollBar:vertical { background: #1a1a2a; width: 10px; border: none; }
-    QScrollBar::handle:vertical { background: #404060; min-height: 20px;
-                                  border-radius: 5px; }
-    QScrollBar::handle:vertical:hover { background: #5060a0; }
-    QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
-    QScrollBar:horizontal { background: #1a1a2a; height: 10px; border: none; }
-    QScrollBar::handle:horizontal { background: #404060; min-width: 20px;
-                                    border-radius: 5px; }
-    QScrollBar::handle:horizontal:hover { background: #5060a0; }
-    QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0; }
-    QLabel { color: #c0c0d8; }
-    QMenuBar { background: #16162a; color: #b0b0d0; font-size: 11px; }
-    QMenuBar::item:selected { background: #282848; }
-    QMenu { background: #1e1e30; color: #c0c0d8; border: 1px solid #404060;
-            font-size: 11px; }
-    QMenu::item:selected { background: #383868; }
-"""
+# ── Pendulum dark stylesheet (standalone fallback when theme system unavailable)
+# TODO(#1042): Derive these colors from the fleet ThemeManager palette
+#              when the theme package is a hard dependency.
+from .controls_utils import PENDULUM_DARK_STYLE as _PENDULUM_DARK_STYLE
 
 
 class MainWindow(QMainWindow):

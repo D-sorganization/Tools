@@ -327,7 +327,9 @@ def friction_torque_vector(
     tau_f2 = -params.b2 * dphi1 - params.mu2 * np.sign(dphi1)
     tau_f3 = -params.b3 * dphi2 - params.mu3 * np.sign(dphi2)
 
-    return np.array([tau_f1, tau_f2, tau_f3])
+    result = np.array([tau_f1, tau_f2, tau_f3])
+    assert all(np.isfinite(result)), f"Friction torque has non-finite values: {result}"
+    return result
 
 
 # ---------------------------------------------------------------------------
