@@ -35,35 +35,8 @@ from .physics import (
     total_energy,
 )
 
-# ---------------------------------------------------------------------------
-# Polynomial torque builder
-# ---------------------------------------------------------------------------
-
-
-def make_polynomial_torque(
-    coeffs_shoulder: list[float],
-    coeffs_wrist: list[float],
-) -> TorqueFunc:
-    """Create a torque function from polynomial coefficients.
-
-    tau(t) = c0 + c1*t + c2*t^2 + ...
-
-    Pre: each list has >= 1 element.
-    Post: returned function produces finite values for finite t.
-    """
-    assert len(coeffs_shoulder) >= 1, "Need at least one coefficient for shoulder"
-    assert len(coeffs_wrist) >= 1, "Need at least one coefficient for wrist"
-
-    p_shoulder = np.array(coeffs_shoulder[::-1])
-    p_wrist = np.array(coeffs_wrist[::-1])
-
-    def torque_func(t: float) -> tuple[float, float]:
-        tau1 = float(np.polyval(p_shoulder, t))
-        tau2 = float(np.polyval(p_wrist, t))
-        return tau1, tau2
-
-    return torque_func
-
+# Re-export from shared utility for backwards compatibility (DRY — #1041)
+from .torque_utils import make_polynomial_torque  # noqa: F401
 
 # ---------------------------------------------------------------------------
 # Simulation result container

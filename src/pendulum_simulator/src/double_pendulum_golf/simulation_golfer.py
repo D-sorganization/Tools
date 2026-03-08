@@ -36,44 +36,8 @@ from .physics_golfer import (
     total_energy,
 )
 
-# ---------------------------------------------------------------------------
-# Polynomial torque builder
-# ---------------------------------------------------------------------------
-
-
-def make_polynomial_torque(
-    coeffs_hub: list[float],
-    coeffs_rs: list[float],
-    coeffs_re: list[float],
-    coeffs_rh: list[float],
-    coeffs_ls: list[float],
-    coeffs_le: list[float],
-    coeffs_lh: list[float],
-) -> TorqueFunc:
-    """Create a torque function from polynomial coefficients for each joint.
-
-    tau_i(t) = c0 + c1*t + c2*t^2 + ...
-    """
-    polys = []
-    for name, coeffs in [
-        ("hub", coeffs_hub),
-        ("rs", coeffs_rs),
-        ("re", coeffs_re),
-        ("rh", coeffs_rh),
-        ("ls", coeffs_ls),
-        ("le", coeffs_le),
-        ("lh", coeffs_lh),
-    ]:
-        assert len(coeffs) >= 1, f"Need at least one coefficient for {name}"
-        polys.append(np.array(coeffs[::-1]))
-
-    def torque_func(
-        t: float,
-    ) -> tuple[float, float, float, float, float, float, float]:
-        return tuple(float(np.polyval(p, t)) for p in polys)  # type: ignore[return-value]
-
-    return torque_func
-
+# Re-export from shared utility for backwards compatibility (DRY — #1041)
+from .torque_utils import make_polynomial_torque  # noqa: F401
 
 # ---------------------------------------------------------------------------
 # Simulation result container
@@ -113,7 +77,9 @@ class GolferSimulationResult:
         assert 0 <= idx < self.n_steps
         return forward_kinematics(self.q_at(idx), self.params)
 
-    def torques_at(self, idx: int) -> tuple[float, float, float, float, float, float, float]:
+    def torques_at(
+        self, idx: int
+    ) -> tuple[float, float, float, float, float, float, float]:
         """Applied driving torques at time index."""
         assert 0 <= idx < self.n_steps
         return self.torque_func(self.t[idx])
@@ -136,7 +102,9 @@ class GolferSimulationResult:
     def constraint_forces_at(self, idx: int) -> np.ndarray:
         """Lagrange multiplier (constraint) forces at time index."""
         assert 0 <= idx < self.n_steps
-        return constraint_forces(self.states[idx], self.t[idx], self.params, self.torque_func)
+        return constraint_forces(
+            self.states[idx], self.t[idx], self.params, self.torque_func
+        )
 
     def constraint_violation_at(self, idx: int) -> float:
         """Constraint violation magnitude at time index."""
@@ -211,9 +179,9 @@ def run_simulation(
     -------
     GolferSimulationResult
     """
-    assert initial_state.shape == (2 * N_DOF,), (
-        f"Initial state shape must be ({2 * N_DOF},), got {initial_state.shape}"
-    )
+    assert initial_state.shape == (
+        2 * N_DOF,
+    ), f"Initial state shape must be ({2 * N_DOF},), got {initial_state.shape}"
     assert np.all(np.isfinite(initial_state)), "Initial state must be finite"
     assert t_end > 0, f"t_end must be positive, got {t_end}"
     assert 0 < dt < t_end, f"dt must be in (0, t_end), got {dt}"

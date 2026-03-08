@@ -27,36 +27,8 @@ from .physics_triple import (
     total_energy,
 )
 
-# ---------------------------------------------------------------------------
-# Polynomial torque builder
-# ---------------------------------------------------------------------------
-
-
-def make_polynomial_torque(
-    coeffs_shoulder: list[float],
-    coeffs_elbow: list[float],
-    coeffs_wrist: list[float],
-) -> TorqueFunc:
-    """Create a torque function from polynomial coefficients.
-
-    tau(t) = c0 + c1*t + c2*t^2 + ...
-    """
-    assert len(coeffs_shoulder) >= 1, "Need at least one coefficient for shoulder"
-    assert len(coeffs_elbow) >= 1, "Need at least one coefficient for elbow"
-    assert len(coeffs_wrist) >= 1, "Need at least one coefficient for wrist"
-
-    p_shoulder = np.array(coeffs_shoulder[::-1])
-    p_elbow = np.array(coeffs_elbow[::-1])
-    p_wrist = np.array(coeffs_wrist[::-1])
-
-    def torque_func(t: float) -> tuple[float, float, float]:
-        tau1 = float(np.polyval(p_shoulder, t))
-        tau2 = float(np.polyval(p_elbow, t))
-        tau3 = float(np.polyval(p_wrist, t))
-        return tau1, tau2, tau3
-
-    return torque_func
-
+# Re-export from shared utility for backwards compatibility (DRY — #1041)
+from .torque_utils import make_polynomial_torque  # noqa: F401
 
 # ---------------------------------------------------------------------------
 # Simulation result container
@@ -177,9 +149,9 @@ def run_simulation(
       visualisation-quality results.  Use tighter values only when
       quantitative energy conservation is required.
     """
-    assert initial_state.shape == (6,), (
-        f"Initial state shape must be (6,), got {initial_state.shape}"
-    )
+    assert initial_state.shape == (
+        6,
+    ), f"Initial state shape must be (6,), got {initial_state.shape}"
     assert all(np.isfinite(initial_state)), "Initial state must be finite"
     assert t_end > 0, f"t_end must be positive, got {t_end}"
     assert 0 < dt < t_end, f"dt must be in (0, t_end), got {dt}"
