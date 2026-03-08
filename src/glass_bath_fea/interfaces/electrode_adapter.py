@@ -105,9 +105,9 @@ class ElectrodeAdapter:
             List of electrode position dictionaries.
         """
         # DbC preconditions
-        assert (
-            self.config.bath_diameter > 0
-        ), f"Bath diameter must be positive, got {self.config.bath_diameter}"
+        assert self.config.bath_diameter > 0, (
+            f"Bath diameter must be positive, got {self.config.bath_diameter}"
+        )
         if depths is not None:
             assert len(depths) > 0, "depths array must be non-empty"
             assert all(d >= 0 for d in depths), "All depths must be non-negative"

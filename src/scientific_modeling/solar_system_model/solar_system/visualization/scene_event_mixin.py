@@ -6,7 +6,7 @@ to reduce class size and improve single-responsibility adherence.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from ..core.constants import PLANET_ORDER
 
@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     pass
 
 try:
+    import pygame
     from pygame.locals import (
         K_0,
         K_1,
@@ -52,8 +53,6 @@ try:
         K_t,
         K_v,
     )
-
-    import pygame
 
     _PYGAME_AVAILABLE = True
 except ImportError:

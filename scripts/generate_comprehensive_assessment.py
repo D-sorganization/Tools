@@ -228,7 +228,7 @@ def calculate_grades(stats: RepoStats) -> dict[str, tuple[float, str]]:
         score_b = min(10, score_b + 2)
     grades["B"] = (
         round(score_b, 1),
-        f"Docstring coverage: {doc_coverage*100:.1f}%, README present: {stats['readme']}",
+        f"Docstring coverage: {doc_coverage * 100:.1f}%, README present: {stats['readme']}",
     )
 
     # C: Test Coverage
@@ -237,7 +237,7 @@ def calculate_grades(stats: RepoStats) -> dict[str, tuple[float, str]]:
     score_c = min(10, test_ratio * 20)  # 50% ratio = 10
     grades["C"] = (
         round(score_c, 1),
-        f"Test file ratio: {test_ratio*100:.1f}% ({stats['test_files']}/{stats['py_files']})",
+        f"Test file ratio: {test_ratio * 100:.1f}% ({stats['test_files']}/{stats['py_files']})",
     )
 
     # D: Error Handling
@@ -280,7 +280,7 @@ def calculate_grades(stats: RepoStats) -> dict[str, tuple[float, str]]:
     # Metric: Type hints
     type_coverage = stats["type_hints"] / max(1, stats["functions"])
     score_i = type_coverage * 10
-    grades["I"] = (round(score_i, 1), f"Type hint coverage: {type_coverage*100:.1f}%")
+    grades["I"] = (round(score_i, 1), f"Type hint coverage: {type_coverage * 100:.1f}%")
 
     # J: API Design
     # Metric: Classes present
@@ -364,8 +364,8 @@ def generate_assessments(
 {justification}
 
 ## Statistics
-- Total Python Files: {stats['py_files']}
-- Total Lines of Code: {stats['lines']}
+- Total Python Files: {stats["py_files"]}
+- Total Lines of Code: {stats["lines"]}
 - Analysis Date: {datetime.now().strftime("%Y-%m-%d")}
 """
         filepath.write_text(content)
@@ -394,7 +394,7 @@ The assessment for **{name}** returned a score below the acceptable threshold of
 {justification}
 
 ## Action Items
-1. Review the generated assessment in `docs/assessments/Assessment_{category}_{name.replace(' ', '_')}.md`.
+1. Review the generated assessment in `docs/assessments/Assessment_{category}_{name.replace(" ", "_")}.md`.
 2. Address the specific metrics highlighted in the justification.
 3. Run `scripts/generate_comprehensive_assessment.py` to verify improvements.
 """

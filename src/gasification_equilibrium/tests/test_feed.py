@@ -324,17 +324,17 @@ class TestFeedPresets:
 
     def test_all_presets_have_feed_data(self) -> None:
         for name, preset in FEED_PRESETS.items():
-            assert (
-                "mass_fractions" in preset or "elements" in preset
-            ), f"{name} needs 'mass_fractions' or 'elements'"
+            assert "mass_fractions" in preset or "elements" in preset, (
+                f"{name} needs 'mass_fractions' or 'elements'"
+            )
 
     def test_mass_fractions_sum_to_one(self) -> None:
         for name, preset in FEED_PRESETS.items():
             if "mass_fractions" in preset:
                 total = sum(preset["mass_fractions"].values())
-                assert (
-                    abs(total - 1.0) < 0.01
-                ), f"{name} mass fractions sum to {total}, expected ~1.0"
+                assert abs(total - 1.0) < 0.01, (
+                    f"{name} mass fractions sum to {total}, expected ~1.0"
+                )
 
     def test_feed_from_preset_bituminous(self) -> None:
         f = feed_from_preset("Bituminous Coal")

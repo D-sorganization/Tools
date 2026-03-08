@@ -220,8 +220,8 @@ class InputValidator:
         for species, fraction in composition.items():
             if fraction < 0:
                 raise ValueError(
-                    f"Composition fraction for '{species}' is negative: " f"{fraction}"
+                    f"Composition fraction for '{species}' is negative: {fraction}"
                 )
         total = math.fsum(composition.values())
         if abs(total - 1.0) > tolerance:
-            raise ValueError(f"Composition fractions must sum to 1.0 " f"(got {total})")
+            raise ValueError(f"Composition fractions must sum to 1.0 (got {total})")

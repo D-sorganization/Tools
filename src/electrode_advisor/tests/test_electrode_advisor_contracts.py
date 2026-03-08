@@ -212,9 +212,9 @@ class TestComputeWallPosition:
         bath_radius = 60.0
         wall = np.asarray(compute_wall_position(pos, bath_radius=bath_radius))
         magnitude = float(np.linalg.norm(wall[:2]))  # x-y only
-        assert (
-            magnitude <= bath_radius + 1e-6
-        ), f"Wall position {magnitude:.2f} > bath_radius {bath_radius}"
+        assert magnitude <= bath_radius + 1e-6, (
+            f"Wall position {magnitude:.2f} > bath_radius {bath_radius}"
+        )
 
     @pytest.mark.parametrize("angle_deg", [0, 60, 120, 180, 240, 300])
     def test_symmetric_electrodes_give_valid_wall_positions(
