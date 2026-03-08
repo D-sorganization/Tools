@@ -1,0 +1,102 @@
+# Cross-Repo Rust Integration
+# Builds tools-core together with all downstream Rust crates to catch
+# version conflicts (e.g., PyO3 mismatches) before they reach downstream repos.
+#
+# Triggered on: push/PR to main that touches Rust files, plus weekly schedule.
+
+name: Cross-Repo Rust Integration
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "rust_core/**"
+      - "Cargo.toml"
+      - "rust-toolchain.toml"
+  pull_request:
+    paths:
+      - "rust_core/**"
+      - "Cargo.toml"
+      - "rust-toolchain.toml"
+  schedule:
+    # Weekly Monday 06:00 UTC — catches external dependency drift
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: cross-repo-rust-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cross-repo-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        downstream:
+          - repo: D-sorganization/Gasification_Model
+            crate: thermo-solver
+            sparse: |
+              rust_core
+              Cargo.toml
+          - repo: D-sorganization/Golf_Modeling_Suite
+            crate: upstream-physics
+            sparse: |
+              rust_core
+              Cargo.toml
+
+    steps:
+      - name: Checkout Tools (tools-core hub)
+        uses: actions/checkout@v4
+
+      - name: Checkout ${{ matrix.downstream.repo }}
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.downstream.repo }}
+          path: _downstream
+          sparse-checkout: ${{ matrix.downstream.sparse }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Symlink for Cargo path resolution
+        run: |
+          # Downstream Cargo.toml references ../../Tools/rust_core/tools-core
+          ln -sfn "$GITHUB_WORKSPACE" "$GITHUB_WORKSPACE/../Tools"
+          # Map repo names to expected paths
+          REPO_NAME="${{ matrix.downstream.repo }}"
+          REPO_SHORT="${REPO_NAME#*/}"
+          ln -sfn "$GITHUB_WORKSPACE/_downstream" "$GITHUB_WORKSPACE/../$REPO_SHORT"
+
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            _downstream/target
+          key: cross-repo-${{ matrix.downstream.crate }}-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: cross-repo-${{ matrix.downstream.crate }}-
+
+      - name: Build downstream crate
+        working-directory: _downstream/rust_core
+        run: cargo build -p ${{ matrix.downstream.crate }}
+
+      - name: Test downstream crate
+        working-directory: _downstream/rust_core
+        run: cargo test -p ${{ matrix.downstream.crate }}
+
+      - name: Clippy downstream crate
+        working-directory: _downstream/rust_core
+        run: cargo clippy -p ${{ matrix.downstream.crate }} -- -D warnings
+
+      - name: Summary
+        run: |
+          echo "## Cross-Repo Integration: ${{ matrix.downstream.crate }}" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Build: success" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Tests: pass" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Clippy: clean" >> $GITHUB_STEP_SUMMARY
