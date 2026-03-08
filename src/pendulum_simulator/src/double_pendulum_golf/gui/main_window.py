@@ -54,6 +54,9 @@ from .simulation_panel import SimulationPanel
 from .toolstrip_widget import ToolStrip
 from .torque_history_widget import TorqueHistoryWidget
 
+# TODO(#1042): Derive from fleet ThemeManager palette when it's a hard dep.
+from .controls_utils import PENDULUM_DARK_STYLE as _PENDULUM_DARK_STYLE
+
 logger = logging.getLogger(__name__)
 
 _SETTINGS_ORG = "D-sorganization"
@@ -96,11 +99,6 @@ try:
     _PLOT_THEME_AVAILABLE = True
 except ImportError:
     pass
-
-# ── Pendulum dark stylesheet (standalone fallback when theme system unavailable)
-# TODO(#1042): Derive these colors from the fleet ThemeManager palette
-#              when the theme package is a hard dependency.
-from .controls_utils import PENDULUM_DARK_STYLE as _PENDULUM_DARK_STYLE
 
 
 class MainWindow(QMainWindow):
