@@ -349,6 +349,7 @@ mod tests {
 // ── Property-Based Tests (proptest) ──────────────────────────────────────────
 
 #[cfg(test)]
+#[allow(clippy::needless_pass_by_value, clippy::float_cmp)]
 mod proptests {
     use super::*;
     use proptest::prelude::*;
