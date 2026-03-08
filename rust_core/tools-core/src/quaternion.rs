@@ -107,14 +107,26 @@ impl Quaternion {
     }
 
     /// Hamilton product (quaternion multiplication).
+    ///
+    /// # Contracts (DbC)
+    /// - Postcondition: result has approximately unit magnitude.
     #[must_use]
     pub fn multiply(&self, other: &Self) -> Self {
-        Self {
+        let result = Self {
             w: self.w * other.w - self.x * other.x - self.y * other.y - self.z * other.z,
             x: self.w * other.x + self.x * other.w + self.y * other.z - self.z * other.y,
             y: self.w * other.y - self.x * other.z + self.y * other.w + self.z * other.x,
             z: self.w * other.z + self.x * other.y - self.y * other.x + self.z * other.w,
-        }
+        };
+        // Postcondition: unit × unit = unit (skip for embedded vectors in rotate_vector)
+        debug_assert!(
+            (self.magnitude_squared() - 1.0).abs() > 0.1
+                || (other.magnitude_squared() - 1.0).abs() > 0.1
+                || (result.magnitude_squared() - 1.0).abs() < 1e-6,
+            "DbC postcondition: unit quaternion product must be unit, got mag²={}",
+            result.magnitude_squared()
+        );
+        result
     }
 
     /// Rotate a vector by this quaternion: v' = q * v * q⁻¹
@@ -133,13 +145,16 @@ impl Quaternion {
     /// Spherical linear interpolation between two quaternions.
     ///
     /// # Contracts (DbC)
-    /// - Precondition: `t` in [0, 1].
+    /// - Precondition: `t` in [0, 1] (clamped in release mode for safety).
+    /// - Postcondition: result is a unit quaternion.
     #[must_use]
     pub fn slerp(&self, other: &Self, t: f64) -> Self {
         debug_assert!(
             (0.0..=1.0).contains(&t),
             "slerp: t must be in [0.0, 1.0], got {t}"
         );
+        // Clamp in release mode to prevent extrapolation
+        let t = t.clamp(0.0, 1.0);
 
         let mut dot = self.w * other.w + self.x * other.x + self.y * other.y + self.z * other.z;
 
