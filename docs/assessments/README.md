@@ -169,3 +169,4 @@ This document defines the comprehensive 16-point assessment framework (A-O + Hig
 ---
 
 _See individual Assessment_Prompt_X.md files for detailed prompts._
+| 3.0     | 2026-03 | Comprehensive Assessment Generation (Mar 08)   |
