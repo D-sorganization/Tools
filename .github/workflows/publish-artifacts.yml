@@ -16,6 +16,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write  # Required for PyPI trusted publishing
 
 jobs:
   build-python-wheel:
@@ -77,6 +78,72 @@ jobs:
           path: rust_core/tools-core/pkg/
           retention-days: 30
 
+  publish-pypi:
+    name: Publish to PyPI
+    needs: [build-python-wheel]
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'release' ||
+      (github.event_name == 'workflow_dispatch' && inputs.dry_run == 'false')
+    environment: pypi  # Requires PyPI trusted publishing configured
+    steps:
+      - name: Download Wheel
+        uses: actions/download-artifact@v4
+        with:
+          name: python-wheel
+          path: dist/
+
+      - name: Install twine
+        run: pip install twine
+
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          echo "## Publishing to PyPI" >> $GITHUB_STEP_SUMMARY
+          if [ -z "$TWINE_PASSWORD" ]; then
+            echo "⚠️ PYPI_API_TOKEN secret not configured. Skipping publish." >> $GITHUB_STEP_SUMMARY
+            echo "To enable publishing, add PYPI_API_TOKEN secret to the 'pypi' environment." >> $GITHUB_STEP_SUMMARY
+          else
+            twine upload dist/*.whl
+            echo "✅ Published to PyPI" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  publish-npm:
+    name: Publish to NPM
+    needs: [build-wasm-package]
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'release' ||
+      (github.event_name == 'workflow_dispatch' && inputs.dry_run == 'false')
+    steps:
+      - name: Download WASM Package
+        uses: actions/download-artifact@v4
+        with:
+          name: wasm-package
+          path: pkg/
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish to NPM
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "## Publishing to NPM" >> $GITHUB_STEP_SUMMARY
+          cd pkg
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "⚠️ NPM_TOKEN secret not configured. Skipping publish." >> $GITHUB_STEP_SUMMARY
+            echo "To enable publishing, add NPM_TOKEN secret to the repository." >> $GITHUB_STEP_SUMMARY
+          else
+            npm publish --access public
+            echo "✅ Published to NPM" >> $GITHUB_STEP_SUMMARY
+          fi
+
   publish-summary:
     name: Publish Summary
     needs: [build-python-wheel, build-wasm-package]
@@ -93,10 +160,11 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ github.event_name }}" == "release" ]; then
             echo "### Release: ${{ github.event.release.tag_name }}" >> $GITHUB_STEP_SUMMARY
+            echo "Publishing to PyPI and NPM triggered." >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ inputs.dry_run }}" == "false" ]; then
+            echo "### Manual publish (dry_run=false)" >> $GITHUB_STEP_SUMMARY
+            echo "Publishing to PyPI and NPM triggered." >> $GITHUB_STEP_SUMMARY
           else
-            echo "### Manual run (dry_run=${{ inputs.dry_run }})" >> $GITHUB_STEP_SUMMARY
+            echo "### Dry run — artifacts built but NOT published" >> $GITHUB_STEP_SUMMARY
+            echo "To publish, re-run with dry_run=false or create a release." >> $GITHUB_STEP_SUMMARY
           fi
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Artifacts are available for download from this workflow run." >> $GITHUB_STEP_SUMMARY
-          echo "To publish to PyPI/NPM, download and upload manually, or configure" >> $GITHUB_STEP_SUMMARY
-          echo "repository secrets for automated publishing." >> $GITHUB_STEP_SUMMARY
