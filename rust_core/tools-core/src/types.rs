@@ -417,16 +417,20 @@ mod proptests {
         ) {
             let left = a.add(&b).scale(s);
             let right = a.scale(s).add(&b.scale(s));
-            prop_assert!((left.x - right.x).abs() < 1e-4);
-            prop_assert!((left.y - right.y).abs() < 1e-4);
-            prop_assert!((left.z - right.z).abs() < 1e-4);
+            // Use relative tolerance: |diff| / max(|left|, |right|, 1) < eps
+            let tol = 1e-8;
+            let denom = left.magnitude().max(right.magnitude()).max(1.0);
+            prop_assert!((left.x - right.x).abs() / denom < tol);
+            prop_assert!((left.y - right.y).abs() / denom < tol);
+            prop_assert!((left.z - right.z).abs() / denom < tol);
         }
 
         /// Cross product with self is zero: v × v == 0.
         #[test]
         fn cross_self_is_zero(v in arb_vector3()) {
             let c = v.cross(&v);
-            prop_assert!(c.magnitude() < 1e-6);
+            let denom = v.magnitude().max(1.0);
+            prop_assert!(c.magnitude() / denom < 1e-8);
         }
     }
 }
