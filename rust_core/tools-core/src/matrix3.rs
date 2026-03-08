@@ -17,8 +17,8 @@ use crate::types::Vector3;
 /// Used for rotation matrices, inertia tensors, and Jacobians.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
-// NOTE: Matrix3 uses [f64; 9] which is not directly compatible with wasm_bindgen.
-// WASM support requires custom accessor methods (future work).
+// NOTE: Matrix3 uses [f64; 9] which requires custom wasm_bindgen accessors.
+// WASM support is implemented via individual element methods (see below).
 pub struct Matrix3 {
     /// Row-major elements: `[m00, m01, m02, m10, m11, m12, m20, m21, m22]`
     pub data: [f64; 9],
@@ -210,6 +210,87 @@ impl Matrix3 {
 
     fn __repr__(&self) -> String {
         format!("{self}")
+    }
+}
+
+// ── WASM bindings ────────────────────────────────────────────────────────────
+// wasm_bindgen cannot handle [f64; 9] directly, so we provide
+// individual element access and convenience constructors.
+
+#[cfg(feature = "wasm")]
+#[wasm_bindgen::prelude::wasm_bindgen]
+impl Matrix3 {
+    /// Create a Matrix3 from 9 row-major values.
+    #[wasm_bindgen(constructor)]
+    pub fn wasm_new(
+        m00: f64,
+        m01: f64,
+        m02: f64,
+        m10: f64,
+        m11: f64,
+        m12: f64,
+        m20: f64,
+        m21: f64,
+        m22: f64,
+    ) -> Self {
+        Self::new([m00, m01, m02, m10, m11, m12, m20, m21, m22])
+    }
+
+    /// Create the 3×3 identity matrix.
+    #[wasm_bindgen(js_name = "identity")]
+    pub fn wasm_identity() -> Self {
+        Self::identity()
+    }
+
+    /// Get element at (row, col), zero-indexed.
+    #[wasm_bindgen(js_name = "at")]
+    pub fn wasm_at(&self, row: usize, col: usize) -> f64 {
+        self.at(row, col)
+    }
+
+    /// Get row as a Vector3.
+    #[wasm_bindgen(js_name = "getRow")]
+    pub fn wasm_get_row(&self, row: usize) -> Vector3 {
+        debug_assert!(row < 3, "getRow: row must be < 3");
+        let i = row * 3;
+        Vector3::new(self.data[i], self.data[i + 1], self.data[i + 2])
+    }
+
+    /// Get column as a Vector3.
+    #[wasm_bindgen(js_name = "getCol")]
+    pub fn wasm_get_col(&self, col: usize) -> Vector3 {
+        debug_assert!(col < 3, "getCol: col must be < 3");
+        Vector3::new(self.data[col], self.data[3 + col], self.data[6 + col])
+    }
+
+    /// Compute the determinant.
+    #[wasm_bindgen(js_name = "determinant")]
+    pub fn wasm_determinant(&self) -> f64 {
+        self.determinant()
+    }
+
+    /// Compute the transpose.
+    #[wasm_bindgen(js_name = "transpose")]
+    pub fn wasm_transpose(&self) -> Self {
+        self.transpose()
+    }
+
+    /// Multiply this matrix by a vector.
+    #[wasm_bindgen(js_name = "mulVec")]
+    pub fn wasm_mul_vec(&self, v: &Vector3) -> Vector3 {
+        self.mul_vec(v)
+    }
+
+    /// Multiply this matrix by another matrix.
+    #[wasm_bindgen(js_name = "mulMat")]
+    pub fn wasm_mul_mat(&self, other: &Matrix3) -> Matrix3 {
+        self.mul_mat(other)
+    }
+
+    /// Scale all elements by a scalar.
+    #[wasm_bindgen(js_name = "scale")]
+    pub fn wasm_scale(&self, s: f64) -> Self {
+        self.scale(s)
     }
 }
 
