@@ -15,22 +15,21 @@ exclude = [
     "venv",
     ".env",
     "node_modules",
-    "*.ipynb",  # Jupyter notebooks often fail standard linting
-    "**/*.json",  # JSON files don't need Python linting
-    "python/src/tile_launcher/app_catalog.json",  # JSON config file
+    "*.ipynb",
+    "**/*.json",
     "**/archive",
     "**/legacy",
-    "replicants", # Enable linting for replicants
-    # Exclude directories with syntax errors that need major refactoring
-    "**/data_processing/**",
-    "**/tests/data_processor/**",
-    "**/calculator/tests/**",
-    "**/document_processing/**",
-    "**/scientific_modeling/**",
-    "**/tools/code_quality_check.py",
-    "**/folder_tools/**",
-    "**/python/tests/**",
+    "replicants",
+    # Exclude directories/files with syntax errors or intentional non-compliance
+    "src/data_processing",
+    "src/document_processing",
+    "src/scientific_modeling",
+    "src/tools/folder_tools",
+    "src/tools/code_quality_check.py",
     "src/pendulum_simulator",
+    "tests/data_processor",
+    "python/src/tile_launcher/app_catalog.json",
+    "python/tests",
 ]
 
 [lint]
