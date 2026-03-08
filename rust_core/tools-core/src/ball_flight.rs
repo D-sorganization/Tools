@@ -29,7 +29,8 @@ use crate::types::Vector3;
 // ── Physical Constants ───────────────────────────────────────────────────────
 
 /// Standard gravitational acceleration [m/s²].
-pub const GRAVITY: f64 = 9.81;
+/// Re-exported from `math` module for convenience (canonical value = 9.80665).
+pub use crate::math::GRAVITY;
 
 /// Air density at sea level, 15 °C [kg/m³].
 pub const AIR_DENSITY_SEA_LEVEL: f64 = 1.225;
@@ -51,6 +52,7 @@ pub const NUMERICAL_EPSILON: f64 = 1e-10;
 /// Physical properties of a golf ball.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 #[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
+#[cfg_attr(feature = "wasm", wasm_bindgen::prelude::wasm_bindgen)]
 pub struct BallProperties {
     /// Mass [kg].
     pub mass: f64,
@@ -115,6 +117,7 @@ impl BallProperties {
 /// Initial launch conditions.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 #[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
+#[cfg_attr(feature = "wasm", wasm_bindgen::prelude::wasm_bindgen)]
 pub struct LaunchConditions {
     /// Launch speed [m/s].
     pub velocity: f64,
@@ -193,6 +196,7 @@ impl TrajectoryPoint {
 /// Summary of a completed trajectory.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 #[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
+#[cfg_attr(feature = "wasm", wasm_bindgen::prelude::wasm_bindgen)]
 pub struct TrajectoryAnalysis {
     /// Total carry distance [m].
     pub carry_distance: f64,
@@ -657,6 +661,95 @@ impl TrajectoryAnalysis {
             "TrajectoryAnalysis(carry={:.1}m, height={:.1}m, time={:.2}s)",
             self.carry_distance, self.max_height, self.flight_time
         )
+    }
+}
+
+// ── WASM bindings ────────────────────────────────────────────────────────────
+// BallProperties and TrajectoryAnalysis have only f64 fields, so
+// wasm_bindgen auto-generates getters. LaunchConditions needs a custom
+// constructor since spin_axis (Vector3) is a wasm_bindgen type too.
+
+#[cfg(feature = "wasm")]
+#[wasm_bindgen::prelude::wasm_bindgen]
+impl BallProperties {
+    /// Create default golf ball properties.
+    #[wasm_bindgen(constructor)]
+    pub fn wasm_new() -> Self {
+        Self::default()
+    }
+
+    /// Ball radius [m].
+    #[wasm_bindgen(js_name = "radius")]
+    pub fn wasm_radius(&self) -> f64 {
+        self.radius()
+    }
+
+    /// Cross-sectional area [m²].
+    #[wasm_bindgen(js_name = "crossSectionalArea")]
+    pub fn wasm_cross_sectional_area(&self) -> f64 {
+        self.cross_sectional_area()
+    }
+
+    /// Drag coefficient for a given spin parameter.
+    #[wasm_bindgen(js_name = "calculateCd")]
+    pub fn wasm_calculate_cd(&self, s: f64) -> f64 {
+        self.calculate_cd(s)
+    }
+
+    /// Lift coefficient for a given spin parameter.
+    #[wasm_bindgen(js_name = "calculateCl")]
+    pub fn wasm_calculate_cl(&self, s: f64) -> f64 {
+        self.calculate_cl(s)
+    }
+}
+
+#[cfg(feature = "wasm")]
+#[wasm_bindgen::prelude::wasm_bindgen]
+impl LaunchConditions {
+    /// Create launch conditions.
+    #[wasm_bindgen(constructor)]
+    pub fn wasm_new(velocity: f64, launch_angle: f64, azimuth_angle: f64, spin_rate: f64) -> Self {
+        Self {
+            velocity,
+            launch_angle,
+            azimuth_angle,
+            spin_rate,
+            spin_axis: Vector3::new(0.0, -1.0, 0.0),
+        }
+    }
+
+    /// Get the spin axis as a Vector3.
+    #[wasm_bindgen(js_name = "spinAxis", getter)]
+    pub fn wasm_spin_axis(&self) -> Vector3 {
+        self.spin_axis
+    }
+}
+
+#[cfg(feature = "wasm")]
+#[wasm_bindgen::prelude::wasm_bindgen]
+impl TrajectoryAnalysis {
+    /// Carry distance [m].
+    #[wasm_bindgen(js_name = "carryDistance", getter)]
+    pub fn wasm_carry_distance(&self) -> f64 {
+        self.carry_distance
+    }
+
+    /// Maximum height [m].
+    #[wasm_bindgen(js_name = "maxHeight", getter)]
+    pub fn wasm_max_height(&self) -> f64 {
+        self.max_height
+    }
+
+    /// Total flight time [s].
+    #[wasm_bindgen(js_name = "flightTime", getter)]
+    pub fn wasm_flight_time(&self) -> f64 {
+        self.flight_time
+    }
+
+    /// Landing angle [degrees].
+    #[wasm_bindgen(js_name = "landingAngle", getter)]
+    pub fn wasm_landing_angle(&self) -> f64 {
+        self.landing_angle
     }
 }
 
