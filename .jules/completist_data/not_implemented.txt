@@ -1,13 +1,42 @@
-./scripts/analyze_completist_data.py:199:        "NotImplementedError": 4,
+./tests/test_phase1_quick_wins.py:5:- #627: NotImplementedError stub fixes
+./tests/test_phase1_quick_wins.py:50:# #627 - NotImplementedError stubs
+./tests/test_phase1_quick_wins.py:54:class TestNotImplementedErrorFixes:
+./tests/test_phase1_quick_wins.py:55:    """Verify NotImplementedError stubs are properly handled."""
+./tests/test_phase1_quick_wins.py:59:        not NotImplementedError, for unhandled internal format keys.
+./tests/test_phase1_quick_wins.py:66:        # NotImplementedError must not appear
+./tests/test_phase1_quick_wins.py:67:        assert "NotImplementedError" not in content
+./tests/test_phase1_quick_wins.py:83:        # Must use ValueError, not NotImplementedError (issue #664)
+./tests/test_phase1_quick_wins.py:85:        assert "NotImplementedError" not in content
+./tests/tools/test_matlab_quality_utils.py:367:            pass  # Just verify no crash on normal call
+./tests/shared/python/utils/test_logging.py:46:            pass  # Should not raise
+./tests/shared/python/signal_toolkit/test_signal_loader.py:3:Covers issue #664: resolve NotImplementedError-style stubs in
+./tests/shared/python/model_generation/test_format_utils.py:3:Covers issue #664: the former NotImplementedError in convert() has been
+./tests/shared/python/model_generation/test_format_utils.py:6:  - ValueError (not NotImplementedError) for unsupported pairs
+./tests/shared/python/model_generation/test_format_utils.py:23:    """Unsupported conversion pairs must raise ValueError, not NotImplementedError."""
+./tests/shared/python/model_generation/test_format_utils.py:50:        """Ensure NotImplementedError is never raised (issue #664)."""
+./tests/shared/python/model_generation/test_format_utils.py:54:        # If we got here, it means NotImplementedError was NOT raised
+./src/python/src/utils/integration_test_helpers.py:663:                pass  # Suppress logging
+./src/python/shared/performance_utils.py:83:                pass  # Skip inaccessible directories
+./src/pendulum_simulator/src/double_pendulum_golf/gui/main_window.py:88:    pass  # ThemeManager / ThemeManagerDialog / create_theme_menu remain None
+./src/pendulum_simulator/pendulum-core/python/physics_native.py:291:        raise NotImplementedError("NumPy fallback for golfer mass matrix not yet implemented")
+./src/pendulum_simulator/pendulum-core/python/physics_native.py:304:        raise NotImplementedError("NumPy fallback for golfer gravity not yet implemented")
+./src/pendulum_simulator/pendulum-core/python/physics_native.py:317:        raise NotImplementedError("NumPy fallback for golfer FK not yet implemented")
+./src/pendulum_simulator/pendulum-core/python/physics_native.py:330:        raise NotImplementedError("NumPy fallback for constraints not yet implemented")
+./src/pendulum_simulator/pendulum-core/python/physics_native.py:343:        raise NotImplementedError("NumPy fallback for constraint Jacobian not yet implemented")
 ./src/scientific_modeling/solar_system_model/solar_system/ui/widgets.py:393:            pass  # Invalid input, ignore
-./src/scientific_modeling/solar_system_model/solar_system/visualization/renderer.py:788:        pass  # UI Renderer handles panels now via render_sidebar or similar
-./src/scientific_modeling/solar_system_model/solar_system/visualization/scene.py:1198:            pass  # Placeholder for future hit testing logic
-./src/python/shared/performance_utils.py:82:                pass  # Skip inaccessible directories
-./src/python/shared/performance_utils.py:102:                        pass  # Skip failed directories
-./src/tools/quality_utils.py:37:    (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
-./src/shared/python/signal_toolkit/io.py:543:        raise NotImplementedError(msg)
+./src/scientific_modeling/solar_system_model/solar_system/visualization/renderer.py:825:        pass  # UI Renderer handles panels now via render_sidebar or similar
+./src/scientific_modeling/solar_system_model/solar_system/visualization/scene_event_mixin.py:276:            pass  # Placeholder for future hit testing logic
+./src/syngas_water_calculator/tests/test_syngas_water_calculator_gui.py:141:                    pass  # Some methods have limited ranges
+./src/data_processing/data_processor/python/benchmarks/performance_benchmark.py:515:                    pass  # Throughput data found, no action needed
+./src/data_processing/data_processor/python/data_processor/contracts.py:130:        pass  # Cannot mutate module-level _LEVEL in a closure-free stub
+./src/glass_bath_fea/ui/pyqt6/main_window.py:445:        pass  # theme system not installed
+./src/pressure_drop_calculator/python/pressure_drop_calculator/ui/pyqt6/main_window.py:288:        pass  # Roughness is looked up during calculation
+./src/document_processing/pdf_renamer/src/pdf_renamer/gui.py:951:        pass  # theme system not installed
+./src/tools/quality_utils.py:39:    (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
+./src/tools/folder_tools/folder_packer_pro/pack_engine.py:343:            pass  # Not compressed or already decompressed
+./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:381:                pass  # Fall back to Buck equation
+./src/shared/python/humanoid_character_builder/mesh/inertia_calculator.py:25:    pass  # For type hints without runtime import
+./src/shared/python/signal_toolkit/polynomial_generator.py:95:            pass  # Skip built-in theme; host app provides styling
 ./src/shared/python/model_generation/library/repository.py:303:            pass  # Meshes not found or not accessible
-./src/shared/python/model_generation/converters/format_utils.py:161:    raise NotImplementedError(
-./src/shared/python/humanoid_character_builder/mesh/inertia_calculator.py:24:    pass  # For type hints without runtime import
-./src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py:363:                pass  # Fall back to Buck equation
-./src/data_processing/data_processor/python/benchmarks/performance_benchmark.py:552:                    pass  # Throughput data found, no action needed
+./scripts/analyze_completist_data.py:199:        "NotImplementedError": 4,
+./scripts/legacy_tools/code_quality_check.py:37:    (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),

@@ -1,0 +1,6 @@
+./tests/tools/test_matlab_quality_utils.py:228:    """m-file with TODO must produce at least one issue."""
+./tests/tools/test_quality_utils.py:107:    lines = ["# TODO: fix this eventually"]
+./tests/tools/test_quality_utils.py:120:    lines = ["# TODO: something"]
+./tests/tools/test_quality_utils.py:192:    f.write_text("# TODO: clean me up\n", encoding="utf-8")
+./src/data_processing/data_processor/python/data_processor/core/script_generator.py:546:                f"{prefix}# TODO: Implement custom operation",
+./src/tools/matlab_quality_utils.py:314:        """Check for TODO, FIXME, HACK, XXX, and placeholders."""
