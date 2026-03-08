@@ -27,6 +27,7 @@ from PyQt6.QtWidgets import (
 
 if TYPE_CHECKING:
     from .controls_widget import ControlsWidget
+    from .controls_widget_golfer import ControlsWidgetGolfer
     from .controls_widget_triple import ControlsWidgetTriple
 
 
@@ -85,7 +86,7 @@ class SimulationPanel(QWidget):
 
     def __init__(
         self,
-        controls: ControlsWidget | ControlsWidgetTriple,
+        controls: ControlsWidget | ControlsWidgetTriple | ControlsWidgetGolfer,
         pendulum: _SimViewer,
         matrix: _SimViewer,
         params_builder: Callable[[dict], object],
