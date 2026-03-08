@@ -199,23 +199,29 @@ impl std::fmt::Display for Quaternion {
 #[cfg(feature = "python")]
 #[pyo3::prelude::pymethods]
 impl Quaternion {
+    /// Create a new unit quaternion (automatically normalized).
     #[new]
+    #[pyo3(text_signature = "(w, x, y, z)")]
     fn py_new(w: f64, x: f64, y: f64, z: f64) -> pyo3::PyResult<Self> {
         Self::new(w, x, y, z).map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
     }
 
+    /// Scalar component.
     #[getter]
     fn w(&self) -> f64 {
         self.w
     }
+    /// X imaginary component.
     #[getter]
     fn x(&self) -> f64 {
         self.x
     }
+    /// Y imaginary component.
     #[getter]
     fn y(&self) -> f64 {
         self.y
     }
+    /// Z imaginary component.
     #[getter]
     fn z(&self) -> f64 {
         self.z
@@ -225,23 +231,27 @@ impl Quaternion {
         format!("Quaternion({}, {}, {}, {})", self.w, self.x, self.y, self.z)
     }
 
-    #[pyo3(name = "conjugate")]
+    /// Return the conjugate (inverse for unit quaternions).
+    #[pyo3(name = "conjugate", text_signature = "($self)")]
     fn py_conjugate(&self) -> Self {
         self.conjugate()
     }
 
-    #[pyo3(name = "multiply")]
+    /// Hamilton product (quaternion multiplication).
+    #[pyo3(name = "multiply", text_signature = "($self, other)")]
     fn py_multiply(&self, other: &Self) -> Self {
         self.multiply(other)
     }
 
-    #[pyo3(name = "rotate_vector")]
+    /// Rotate a 3D vector by this quaternion: v' = q * v * q⁻¹.
+    #[pyo3(name = "rotate_vector", text_signature = "($self, v)")]
     fn py_rotate_vector(&self, v: &Vector3) -> Vector3 {
         self.rotate_vector(v)
     }
 
+    /// Create a quaternion from axis-angle representation.
     #[staticmethod]
-    #[pyo3(name = "from_axis_angle")]
+    #[pyo3(name = "from_axis_angle", text_signature = "(axis, angle_rad)")]
     fn py_from_axis_angle(axis: &Vector3, angle_rad: f64) -> pyo3::PyResult<Self> {
         Self::from_axis_angle(axis, angle_rad)
             .map_err(|e| pyo3::exceptions::PyValueError::new_err(e))

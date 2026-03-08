@@ -547,7 +547,9 @@ pub fn analyze_trajectory(trajectory: &[TrajectoryPoint]) -> TrajectoryAnalysis 
 #[cfg(feature = "python")]
 #[pyo3::prelude::pymethods]
 impl BallProperties {
+    /// Create default golf ball properties.
     #[new]
+    #[pyo3(text_signature = "()")]
     fn py_new() -> Self {
         Self::default()
     }
@@ -563,8 +565,12 @@ impl BallProperties {
 #[cfg(feature = "python")]
 #[pyo3::prelude::pymethods]
 impl LaunchConditions {
+    /// Create launch conditions for a golf shot.
     #[new]
     #[pyo3(signature = (velocity=70.0, launch_angle=12.0, azimuth_angle=0.0, spin_rate=2500.0))]
+    #[pyo3(
+        text_signature = "(velocity=70.0, launch_angle=12.0, azimuth_angle=0.0, spin_rate=2500.0)"
+    )]
     fn py_new(velocity: f64, launch_angle: f64, azimuth_angle: f64, spin_rate: f64) -> Self {
         Self {
             velocity,
@@ -586,7 +592,9 @@ impl LaunchConditions {
 #[cfg(feature = "python")]
 #[pyo3::prelude::pymethods]
 impl EnvironmentalConditions {
+    /// Create default environmental conditions (sea level, 15°C, no wind).
     #[new]
+    #[pyo3(text_signature = "()")]
     fn py_new() -> Self {
         Self::default()
     }
