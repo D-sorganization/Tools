@@ -111,6 +111,50 @@ impl std::fmt::Display for Vector3 {
     }
 }
 
+// ── Operator Overloading (idiomatic Rust arithmetic) ─────────────────────────
+
+impl std::ops::Add for Vector3 {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
+    }
+}
+
+impl std::ops::Sub for Vector3 {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
+    }
+}
+
+impl std::ops::Neg for Vector3 {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Self::new(-self.x, -self.y, -self.z)
+    }
+}
+
+/// Scalar multiplication: `vector * scalar`.
+impl std::ops::Mul<f64> for Vector3 {
+    type Output = Self;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        self.scale(rhs)
+    }
+}
+
+/// Scalar multiplication: `scalar * vector`.
+impl std::ops::Mul<Vector3> for f64 {
+    type Output = Vector3;
+
+    fn mul(self, rhs: Vector3) -> Self::Output {
+        rhs.scale(self)
+    }
+}
+
 // ── Python methods (feature-gated) ───────────────────────────────────────────
 
 #[cfg(feature = "python")]
@@ -323,6 +367,44 @@ mod tests {
     fn test_scale() {
         let v = Vector3::new(1.0, 2.0, 3.0);
         let s = v.scale(2.0);
+        assert_eq!(s, Vector3::new(2.0, 4.0, 6.0));
+    }
+    // ── Operator Overloading ──
+
+    #[test]
+    fn test_add_operator() {
+        let a = Vector3::new(1.0, 2.0, 3.0);
+        let b = Vector3::new(4.0, 5.0, 6.0);
+        let c = a + b;
+        assert_eq!(c, Vector3::new(5.0, 7.0, 9.0));
+    }
+
+    #[test]
+    fn test_sub_operator() {
+        let a = Vector3::new(4.0, 5.0, 6.0);
+        let b = Vector3::new(1.0, 2.0, 3.0);
+        let c = a - b;
+        assert_eq!(c, Vector3::new(3.0, 3.0, 3.0));
+    }
+
+    #[test]
+    fn test_neg_operator() {
+        let a = Vector3::new(1.0, -2.0, 3.0);
+        let b = -a;
+        assert_eq!(b, Vector3::new(-1.0, 2.0, -3.0));
+    }
+
+    #[test]
+    fn test_mul_scalar_right() {
+        let v = Vector3::new(1.0, 2.0, 3.0);
+        let s = v * 2.0;
+        assert_eq!(s, Vector3::new(2.0, 4.0, 6.0));
+    }
+
+    #[test]
+    fn test_mul_scalar_left() {
+        let v = Vector3::new(1.0, 2.0, 3.0);
+        let s = 2.0 * v;
         assert_eq!(s, Vector3::new(2.0, 4.0, 6.0));
     }
 
