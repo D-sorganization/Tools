@@ -385,9 +385,8 @@ class TestBodyParametersStrictValidation:
     def test_negative_height_raises(self):
         from humanoid_character_builder.core.body_parameters import BodyParameters
 
-        params = BodyParameters(height_m=-1.0, mass_kg=75.0)
         with pytest.raises(ValueError, match="height_m must be positive"):
-            params.validate_strict()
+            BodyParameters(height_m=-1.0, mass_kg=75.0)
 
     def test_extreme_height_raises(self):
         from humanoid_character_builder.core.body_parameters import BodyParameters
@@ -399,9 +398,8 @@ class TestBodyParametersStrictValidation:
     def test_negative_mass_raises(self):
         from humanoid_character_builder.core.body_parameters import BodyParameters
 
-        params = BodyParameters(height_m=1.75, mass_kg=-50.0)
         with pytest.raises(ValueError, match="mass_kg must be positive"):
-            params.validate_strict()
+            BodyParameters(height_m=1.75, mass_kg=-50.0)
 
     def test_extreme_factor_raises(self):
         from humanoid_character_builder.core.body_parameters import BodyParameters
