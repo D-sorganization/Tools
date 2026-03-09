@@ -305,7 +305,7 @@ jobs:
       - name: Run Benchmarks (Criterion)
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
-          cargo bench --manifest-path rust_core/tools-core/Cargo.toml -- --output-format bencher 2>&1 | tee benchmark_results.txt
+          cargo bench --manifest-path rust_core/tools-core/Cargo.toml --bench math_benchmarks 2>&1 | tee benchmark_results.txt
           echo "## Benchmark Results" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           cat benchmark_results.txt >> $GITHUB_STEP_SUMMARY
