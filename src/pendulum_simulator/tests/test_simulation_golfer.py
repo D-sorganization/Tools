@@ -128,6 +128,28 @@ class TestRunSimulation:
             assert v < 0.1, f"Constraint violation at step {i}: {v}"
 
 
+class TestGolferSimulationResultContracts:
+    """Trajectory-level DbC validation for GolferSimulationResult."""
+
+    def test_constructor_rejects_non_monotonic_time(self) -> None:
+        with pytest.raises(AssertionError, match="strictly increasing"):
+            GolferSimulationResult(
+                t=np.array([0.0, 0.0]),
+                states=np.zeros((2, 2 * N_DOF)),
+                params=_GOLFER_PARAMS,
+                torque_func=_zero_torque,
+            )
+
+    def test_constructor_rejects_wrong_state_width(self) -> None:
+        with pytest.raises(AssertionError, match="states must have width"):
+            GolferSimulationResult(
+                t=np.array([0.0, 0.01]),
+                states=np.zeros((2, 2 * N_DOF - 1)),
+                params=_GOLFER_PARAMS,
+                torque_func=_zero_torque,
+            )
+
+
 # ---------------------------------------------------------------------------
 # Result accessor methods
 # ---------------------------------------------------------------------------
@@ -155,3 +177,11 @@ class TestGolferSimulationResult:
     def test_mass_matrix_at(self, sim_result: GolferSimulationResult) -> None:
         M = sim_result.mass_matrix_at(0)
         assert M.shape == (N_DOF, N_DOF)
+
+    def test_all_positions_and_energies(self, sim_result: GolferSimulationResult) -> None:
+        positions = sim_result.all_positions()
+        energies = sim_result.all_energies()
+        assert len(positions) == sim_result.n_steps
+        assert energies["kinetic"].shape == (sim_result.n_steps,)
+        assert energies["potential"].shape == (sim_result.n_steps,)
+        assert energies["total"].shape == (sim_result.n_steps,)

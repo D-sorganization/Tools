@@ -44,15 +44,15 @@ DEFAULT_ALPHA = 5.0
 DEFAULT_BETA = 5.0
 
 
-def constrained_accelerations(
+def _solve_constrained_dynamics(
     state: State,
     t: float,
     params: GolferParams,
     torque_func: TorqueFunc,
     alpha: float = DEFAULT_ALPHA,
     beta: float = DEFAULT_BETA,
-) -> np.ndarray:
-    """Compute constrained accelerations using augmented Lagrangian method.
+) -> tuple[np.ndarray, np.ndarray]:
+    """Solve the augmented KKT system for accelerations and multipliers.
 
     Solves the KKT system:
         [M    Phi_q^T] [qddot ] = [tau + tau_f - C - G               ]
@@ -71,7 +71,8 @@ def constrained_accelerations(
 
     Returns
     -------
-    qddot : np.ndarray, shape (8,)
+    tuple[np.ndarray, np.ndarray]
+        Joint accelerations and constraint multipliers.
     """
     assert state.shape == (2 * N_DOF,), f"State shape must be ({2 * N_DOF},)"
     assert np.all(np.isfinite(state)), "State must be finite"
@@ -126,9 +127,25 @@ def constrained_accelerations(
         sol, _, _, _ = np.linalg.lstsq(KKT, rhs, rcond=None)
 
     qddot = sol[:n]
-    # lambda_forces = sol[n:]  # constraint forces (available for analysis)
+    lambda_forces = sol[n:]
 
     assert np.all(np.isfinite(qddot)), f"qddot has non-finite values: {qddot}"
+    assert np.all(np.isfinite(lambda_forces)), (
+        f"Constraint forces have non-finite values: {lambda_forces}"
+    )
+    return qddot, lambda_forces
+
+
+def constrained_accelerations(
+    state: State,
+    t: float,
+    params: GolferParams,
+    torque_func: TorqueFunc,
+    alpha: float = DEFAULT_ALPHA,
+    beta: float = DEFAULT_BETA,
+) -> np.ndarray:
+    """Compute constrained accelerations using augmented Lagrangian method."""
+    qddot, _ = _solve_constrained_dynamics(state, t, params, torque_func, alpha, beta)
     return qddot
 
 
@@ -146,46 +163,8 @@ def constraint_forces(
     -------
     lambda_vec : np.ndarray, shape (4,) — constraint forces
     """
-    assert state.shape == (2 * N_DOF,)
-
-    q = state[:N_DOF]
-    qdot = state[N_DOF:]
-
-    M = mass_matrix(q, params)
-    C = coriolis_matrix(q, qdot, params)
-    G = gravity_vector(q, params)
-
-    tau_tuple = torque_func(t)
-    tau = np.zeros(N_DOF)
-    tau[:7] = tau_tuple
-    tau_f = friction_torque_vector(qdot, params)
-
-    rhs_dyn = tau + tau_f - C - G
-
-    Phi = constraint_vector(q, params)
-    Phi_q = constraint_jacobian(q, params)
-    Phi_dot = Phi_q @ qdot
-    gamma = _constraint_acceleration_bias(q, qdot, params)
-
-    rhs_constraint = -gamma - 2.0 * alpha * Phi_dot - beta**2 * Phi
-
-    n = N_DOF
-    m = N_CONSTRAINTS
-    KKT = np.zeros((n + m, n + m))
-    KKT[:n, :n] = M
-    KKT[:n, n:] = Phi_q.T
-    KKT[n:, :n] = Phi_q
-
-    rhs = np.zeros(n + m)
-    rhs[:n] = rhs_dyn
-    rhs[n:] = rhs_constraint
-
-    try:
-        sol = np.linalg.solve(KKT, rhs)
-    except np.linalg.LinAlgError:
-        sol, _, _, _ = np.linalg.lstsq(KKT, rhs, rcond=None)
-
-    return sol[n:]
+    _, lambda_forces = _solve_constrained_dynamics(state, t, params, torque_func, alpha, beta)
+    return lambda_forces
 
 
 def _constraint_acceleration_bias(
@@ -206,28 +185,14 @@ def _constraint_acceleration_bias(
 def analytical_constraint_acceleration_bias(
     q: np.ndarray, qdot: np.ndarray, params: GolferParams
 ) -> np.ndarray:
-    """Compute gamma = d(Phi_q)/dq * qdot analytically.
+    """Backward-compatible alias for the constraint acceleration bias term.
 
-    This is the acceleration-level bias term from the constraint,
-    computed by differentiating the constraint Jacobian with respect
-    to configuration and contracting with generalized velocity.
-
-    Parameters
-    ----------
-    q : np.ndarray, shape (8,)
-    qdot : np.ndarray, shape (8,)
-    params : GolferParams
-
-    Returns
-    -------
-    gamma : np.ndarray, shape (4,)
+    Despite the historical name, the current implementation still uses a
+    numerical directional derivative of the constraint Jacobian. The public
+    symbol is kept for API compatibility while the solver delegates to the
+    shared bias helper above.
     """
-    eps = 1e-7
-    Phi_q_0 = constraint_jacobian(q, params)
-    Phi_q_dt = constraint_jacobian(q + eps * qdot, params)
-    Phi_q_dot = (Phi_q_dt - Phi_q_0) / eps
-    result: np.ndarray = Phi_q_dot @ qdot
-    return result
+    return _constraint_acceleration_bias(q, qdot, params)
 
 
 def equations_of_motion(
@@ -303,16 +268,26 @@ def project_to_constraints(
     -------
     q_projected : np.ndarray, shape (8,)
     """
+    assert q.shape == (N_DOF,), f"q must have shape ({N_DOF},), got {q.shape}"
+    assert np.all(np.isfinite(q)), "q must be finite"
+    assert max_iter > 0, f"max_iter must be positive, got {max_iter}"
+    assert tol > 0, f"tol must be positive, got {tol}"
+
     q = q.copy()
     for _ in range(max_iter):
         Phi = constraint_vector(q, params)
         if np.linalg.norm(Phi) < tol:
-            break
+            return q
         Phi_q = constraint_jacobian(q, params)
         # Use pseudoinverse for robustness
         dq = Phi_q.T @ np.linalg.solve(Phi_q @ Phi_q.T + 1e-12 * np.eye(N_CONSTRAINTS), Phi)
         q -= dq
-    return q
+
+    residual = float(np.linalg.norm(constraint_vector(q, params)))
+    raise RuntimeError(
+        "Constraint projection did not converge "
+        f"within {max_iter} iterations (residual={residual:.3e})"
+    )
 
 
 def project_velocity(

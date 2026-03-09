@@ -6,9 +6,12 @@ and velocity projection.
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 import numpy as np
 import pytest
 
+import double_pendulum_golf.constraint_solver as constraint_solver_module
 from double_pendulum_golf.constraint_solver import (
     constrained_accelerations,
     constraint_forces,
@@ -51,7 +54,7 @@ def golfer_params() -> GolferParams:
 
 
 @pytest.fixture
-def zero_torque():
+def zero_torque() -> Callable[[float], tuple[float, float, float, float, float, float, float]]:
     """Zero torque function for all joints."""
     return lambda t: (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
@@ -91,6 +94,27 @@ class TestProjectToConstraints:
         q2 = project_to_constraints(q1, golfer_params)
         assert np.allclose(q1, q2, atol=1e-8), "Projection should be idempotent"
 
+    def test_raises_when_projection_does_not_converge(
+        self,
+        golfer_params: GolferParams,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        def stuck_constraint(_q: np.ndarray, _params: GolferParams) -> np.ndarray:
+            return np.ones(N_CONSTRAINTS)
+
+        def constant_jacobian(_q: np.ndarray, _params: GolferParams) -> np.ndarray:
+            return np.eye(N_CONSTRAINTS, N_DOF)
+
+        monkeypatch.setattr(constraint_solver_module, "constraint_vector", stuck_constraint)
+        monkeypatch.setattr(
+            constraint_solver_module,
+            "constraint_jacobian",
+            constant_jacobian,
+        )
+
+        with pytest.raises(RuntimeError, match="did not converge"):
+            project_to_constraints(np.zeros(N_DOF), golfer_params, max_iter=2)
+
 
 class TestProjectVelocity:
     """Velocity projection must satisfy Phi_q * qdot = 0."""
@@ -115,13 +139,21 @@ class TestProjectVelocity:
 class TestConstrainedAccelerations:
     """Accelerations from KKT system must be finite and consistent."""
 
-    def test_finite_at_rest(self, golfer_params: GolferParams, zero_torque) -> None:
+    def test_finite_at_rest(
+        self,
+        golfer_params: GolferParams,
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
+    ) -> None:
         state = _make_consistent_state(golfer_params)
         qddot = constrained_accelerations(state, 0.0, golfer_params, zero_torque)
         assert qddot.shape == (N_DOF,)
         assert np.all(np.isfinite(qddot)), f"Non-finite accelerations: {qddot}"
 
-    def test_shape(self, golfer_params: GolferParams, zero_torque) -> None:
+    def test_shape(
+        self,
+        golfer_params: GolferParams,
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
+    ) -> None:
         state = _make_consistent_state(golfer_params)
         qddot = constrained_accelerations(state, 0.0, golfer_params, zero_torque)
         assert qddot.shape == (N_DOF,)
@@ -130,7 +162,11 @@ class TestConstrainedAccelerations:
 class TestConstraintForces:
     """Lagrange multipliers must have correct shape."""
 
-    def test_shape(self, golfer_params: GolferParams, zero_torque) -> None:
+    def test_shape(
+        self,
+        golfer_params: GolferParams,
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
+    ) -> None:
         state = _make_consistent_state(golfer_params)
         lam = constraint_forces(state, 0.0, golfer_params, zero_torque)
         assert lam.shape == (N_CONSTRAINTS,)
@@ -140,13 +176,21 @@ class TestConstraintForces:
 class TestEquationsOfMotion:
     """Full EOM must return proper state derivative."""
 
-    def test_shape(self, golfer_params: GolferParams, zero_torque) -> None:
+    def test_shape(
+        self,
+        golfer_params: GolferParams,
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
+    ) -> None:
         state = _make_consistent_state(golfer_params)
         state_dot = equations_of_motion(state, 0.0, golfer_params, zero_torque)
         assert state_dot.shape == (2 * N_DOF,)
         assert np.all(np.isfinite(state_dot))
 
-    def test_velocity_in_derivative(self, golfer_params: GolferParams, zero_torque) -> None:
+    def test_velocity_in_derivative(
+        self,
+        golfer_params: GolferParams,
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
+    ) -> None:
         state = _make_consistent_state(golfer_params)
         state_dot = equations_of_motion(state, 0.0, golfer_params, zero_torque)
         # First N_DOF of state_dot should be qdot

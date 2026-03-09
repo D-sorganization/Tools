@@ -35,6 +35,7 @@ from .physics_golfer import (
     potential_energy,
     total_energy,
 )
+from .simulation_result_base import TrajectoryResultMixin
 
 # Re-export from shared utility for backwards compatibility (DRY — #1041)
 from .torque_utils import make_polynomial_torque  # noqa: F401
@@ -45,7 +46,7 @@ from .torque_utils import make_polynomial_torque  # noqa: F401
 
 
 @dataclass
-class GolferSimulationResult:
+class GolferSimulationResult(TrajectoryResultMixin):
     """Stores the complete trajectory and provides derived-quantity accessors."""
 
     t: np.ndarray  # shape (n_steps,)
@@ -53,47 +54,46 @@ class GolferSimulationResult:
     params: GolferParams
     torque_func: TorqueFunc
 
-    @property
-    def n_steps(self) -> int:
-        return len(self.t)
+    def __post_init__(self) -> None:
+        self._validate_trajectory(expected_state_width=2 * N_DOF)
 
     def q_at(self, idx: int) -> np.ndarray:
         """Generalized coordinates at time index."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         return self.states[idx, :N_DOF]
 
     def qdot_at(self, idx: int) -> np.ndarray:
         """Generalized velocities at time index."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         return self.states[idx, N_DOF:]
 
     def mass_matrix_at(self, idx: int) -> np.ndarray:
         """8×8 mass matrix at time index."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         return mass_matrix(self.q_at(idx), self.params)
 
     def positions_at(self, idx: int) -> dict:
         """Forward kinematics at time index."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         return forward_kinematics(self.q_at(idx), self.params)
 
     def torques_at(
         self, idx: int
     ) -> tuple[float, float, float, float, float, float, float]:
         """Applied driving torques at time index."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         return self.torque_func(self.t[idx])
 
     def accelerations_at(self, idx: int) -> np.ndarray:
         """Joint accelerations at time index."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         return constrained_accelerations(
             self.states[idx], self.t[idx], self.params, self.torque_func
         )
 
     def joint_forces_at(self, idx: int) -> dict:
         """Net joint forces at time index."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         q = self.q_at(idx)
         qdot = self.qdot_at(idx)
         qddot = self.accelerations_at(idx)
@@ -101,28 +101,29 @@ class GolferSimulationResult:
 
     def constraint_forces_at(self, idx: int) -> np.ndarray:
         """Lagrange multiplier (constraint) forces at time index."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         return constraint_forces(
             self.states[idx], self.t[idx], self.params, self.torque_func
         )
 
     def constraint_violation_at(self, idx: int) -> float:
         """Constraint violation magnitude at time index."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         return constraint_violation(self.states[idx], self.params)
 
     def coriolis_at(self, idx: int) -> np.ndarray:
         """Coriolis/centrifugal torques at time index."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         return coriolis_matrix(self.q_at(idx), self.qdot_at(idx), self.params)
 
     def gravity_at(self, idx: int) -> np.ndarray:
         """Gravitational torques at time index."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         return gravity_vector(self.q_at(idx), self.params)
 
     def energy_at(self, idx: int) -> dict:
         """Energy decomposition at time index."""
+        self._check_idx(idx)
         state = self.states[idx]
         return {
             "kinetic": kinetic_energy(state[:N_DOF], state[N_DOF:], self.params),
@@ -132,12 +133,12 @@ class GolferSimulationResult:
 
     def friction_torques_at(self, idx: int) -> np.ndarray:
         """Friction torques at time index."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         return friction_torque_vector(self.qdot_at(idx), self.params)
 
     def total_torques_at(self, idx: int) -> np.ndarray:
         """Total applied torque (drive + friction) at time index."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         tau_drive = np.zeros(N_DOF)
         tau_drive[:7] = self.torque_func(self.t[idx])
         tau_friction = self.friction_torques_at(idx)

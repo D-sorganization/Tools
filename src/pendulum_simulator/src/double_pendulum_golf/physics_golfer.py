@@ -985,16 +985,9 @@ def analytical_coriolis(q: np.ndarray, qdot: np.ndarray, p: GolferParams) -> np.
         q_plus[k] += eps
         dM[:, :, k] = (analytical_mass_matrix(q_plus, p) - M0) / eps
 
-    # Compute Christoffel symbols and contract with qdot twice
-    C_qdot = np.zeros(N_DOF)
-    for i in range(N_DOF):
-        for j in range(N_DOF):
-            christoffel = 0.0
-            for k in range(N_DOF):
-                christoffel += 0.5 * (dM[i, j, k] + dM[i, k, j] - dM[j, k, i]) * qdot[k]
-            C_qdot[i] += christoffel * qdot[j]
-
-    return C_qdot
+    christoffel = 0.5 * (dM + dM.transpose(0, 2, 1) - dM.transpose(1, 2, 0))
+    result: np.ndarray = np.einsum("ijk,j,k->i", christoffel, qdot, qdot)
+    return result
 
 
 def analytical_gravity_vector(q: np.ndarray, p: GolferParams) -> np.ndarray:
