@@ -404,7 +404,7 @@ generate_human()
             presets_dir = self.makehuman_path / "exports"
 
         # Select preset based on build type
-        preset_name = params.build_type or "average"
+        preset_name = params.build_type.value
         gender = "male" if params.get_effective_gender_factor() > 0.5 else "female"
         preset_file = presets_dir / f"{gender}_{preset_name}.obj"
 

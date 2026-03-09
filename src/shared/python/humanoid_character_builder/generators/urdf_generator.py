@@ -12,7 +12,7 @@ import logging
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 from xml.dom import minidom
 
 from humanoid_character_builder.contracts import postcondition, precondition
@@ -295,7 +295,11 @@ class HumanoidURDFGenerator:
         seg_params = params.get_segment_params(segment_name)
 
         # Determine mass
-        final_mass = seg_params.mass_kg if seg_params.has_mass_override() else mass
+        final_mass = mass
+        if seg_params.has_mass_override():
+            override_mass = seg_params.mass_kg
+            if override_mass is not None:
+                final_mass = override_mass
 
         # Compute inertia
         inertia = self._compute_segment_inertia(
@@ -435,12 +439,7 @@ class HumanoidURDFGenerator:
                 "filename": geom_spec.mesh_path,
                 "scale": geom_spec.mesh_scale,
             }
-        else:
-            # Default to box
-            return {
-                "type": "box",
-                "size": (width, depth, length),
-            }
+        raise ValueError(f"Unsupported geometry type: {geom_spec.geometry_type}")
 
     def _generate_joint(
         self,
@@ -724,4 +723,4 @@ def generate_humanoid_urdf(
         URDF XML string
     """
     generator = HumanoidURDFGenerator(config)
-    return cast(str, generator.generate(params, output_path))
+    return generator.generate(params, output_path)
