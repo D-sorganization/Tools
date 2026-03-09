@@ -94,7 +94,7 @@ jobs:
   # Build - Full build on main/release
   # ===========================================================================
   build:
-    name: Build ${{ matrix.app }} (${{ matrix.platform }})
+    name: Build ${{ matrix.app.name }} (${{ matrix.platform.os }})
     needs: check
     if: github.event_name == 'release' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     strategy:

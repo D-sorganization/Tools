@@ -11,20 +11,31 @@ permissions:
 jobs:
   organize-docs:
     runs-on: ubuntu-latest
-    if: hashFiles('.github/WORKFLOWS_PAUSED') == ''
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Check workflow pause flag
+        id: pause
+        run: |
+          if [[ -f .github/WORKFLOWS_PAUSED ]]; then
+            echo "paused=true" >> "$GITHUB_OUTPUT"
+            echo "Workflows are paused; skipping documentation organization." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "paused=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Organize Docs
+        if: steps.pause.outputs.paused != 'true'
         run: |
           mkdir -p docs/maintenance
           echo "# Tools Repo Workflow Status" > docs/maintenance/WORKFLOWS.md
           echo "Automated cleanup and organization." >> docs/maintenance/WORKFLOWS.md
 
       - name: Commit Changes
+        if: steps.pause.outputs.paused != 'true'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "docs: nightly documentation organization"

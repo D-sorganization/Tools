@@ -104,14 +104,14 @@ jobs:
         if: steps.find.outputs.superseded_count != '0'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
           echo "Closing superseded Jules PRs..."
 
           COMMIT_SHA="${{ github.sha }}"
-          COMMIT_MSG="${{ github.event.head_commit.message }}"
 
           # Truncate commit message for display
-          COMMIT_MSG_SHORT=$(echo "$COMMIT_MSG" | head -n1 | cut -c1-60)
+          COMMIT_MSG_SHORT=$(printf '%s' "$COMMIT_MSG" | head -n1 | cut -c1-60)
 
           echo '${{ steps.find.outputs.superseded_prs }}' | jq -c '.[]' | while read -r pr_json; do
             PR_NUM=$(echo "$pr_json" | jq -r '.number')

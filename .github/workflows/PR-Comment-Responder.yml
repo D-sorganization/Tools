@@ -80,22 +80,25 @@ jobs:
       - name: Analyze Comment
         id: analyze
         if: steps.filter.outputs.is_bot != 'true' && steps.pr_state.outputs.should_skip != 'true'
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          COMMENT_PATH: ${{ github.event.comment.path }}
+          COMMENT_LINE: ${{ github.event.comment.line }}
         run: |
           # Get comment body
-          if [ "${{ github.event_name }}" = "pull_request_review_comment" ]; then
-            COMMENT_BODY="${{ github.event.comment.body }}"
-            COMMENT_PATH="${{ github.event.comment.path }}"
-            COMMENT_LINE="${{ github.event.comment.line }}"
+          ACTIVE_COMMENT_BODY="$COMMENT_BODY"
+          if [ "$GITHUB_EVENT_NAME" = "pull_request_review_comment" ]; then
+            ACTIVE_COMMENT_PATH="${COMMENT_PATH:-}"
+            ACTIVE_COMMENT_LINE="${COMMENT_LINE:-}"
             COMMENT_TYPE="review"
           else
-            COMMENT_BODY="${{ github.event.comment.body }}"
-            COMMENT_PATH=""
-            COMMENT_LINE=""
+            ACTIVE_COMMENT_PATH=""
+            ACTIVE_COMMENT_LINE=""
             COMMENT_TYPE="pr"
           fi
 
           # Check if comment is actionable (contains request-like words)
-          BODY_LOWER=$(echo "$COMMENT_BODY" | tr '[:upper:]' '[:lower:]')
+          BODY_LOWER=$(printf '%s' "$ACTIVE_COMMENT_BODY" | tr '[:upper:]' '[:lower:]')
 
           IS_ACTIONABLE=false
           for word in "please" "should" "could you" "can you" "fix" "change" "update" "add" "remove" "consider" "suggest" "recommend"; do
@@ -106,7 +109,7 @@ jobs:
           done
 
           # Also check for question marks (requests for clarification/changes)
-          if echo "$COMMENT_BODY" | grep -q "?"; then
+          if printf '%s' "$ACTIVE_COMMENT_BODY" | grep -q "?"; then
             IS_ACTIONABLE=true
           fi
 
@@ -123,6 +126,12 @@ jobs:
           steps.analyze.outputs.is_actionable == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          COMMENT_PATH: ${{ github.event.comment.path }}
+          COMMENT_LINE: ${{ github.event.comment.line }}
+          COMMENT_AUTHOR: ${{ github.event.comment.user.login }}
+          REPOSITORY: ${{ github.repository }}
         run: |
           mkdir -p .jules/pending
           QUEUE_FILE=".jules/pending/pr_comments.json"
@@ -136,28 +145,22 @@ jobs:
           TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           PR_NUMBER="${{ steps.pr_state.outputs.pr_number }}"
 
-          if [ "${{ github.event_name }}" = "pull_request_review_comment" ]; then
-            COMMENT_ID="${{ github.event.comment.id }}"
-            COMMENT_BODY=$(echo '${{ toJson(github.event.comment.body) }}')
-            COMMENT_PATH="${{ github.event.comment.path }}"
-            COMMENT_LINE="${{ github.event.comment.line }}"
+          if [ "$GITHUB_EVENT_NAME" = "pull_request_review_comment" ]; then
             COMMENT_TYPE="review"
-            COMMENT_AUTHOR="${{ github.event.comment.user.login }}"
           else
-            COMMENT_ID="${{ github.event.comment.id }}"
-            COMMENT_BODY=$(echo '${{ toJson(github.event.comment.body) }}')
             COMMENT_PATH=""
             COMMENT_LINE=""
             COMMENT_TYPE="pr"
-            COMMENT_AUTHOR="${{ github.event.comment.user.login }}"
           fi
 
+          export QUEUE_FILE TIMESTAMP PR_NUMBER COMMENT_TYPE COMMENT_PATH COMMENT_LINE
+
           # Use Python for safe JSON manipulation
-          python3 << PYEOF
+          python3 <<'PYEOF'
           import json
           import os
 
-          queue_file = "$QUEUE_FILE"
+          queue_file = os.environ["QUEUE_FILE"]
 
           # Load existing queue
           try:
@@ -167,7 +170,7 @@ jobs:
               queue = {"comments": []}
 
           # Check for duplicate (same comment ID)
-          comment_id = "$COMMENT_ID"
+          comment_id = os.environ["COMMENT_ID"]
           existing_ids = [c.get('comment_id') for c in queue.get('comments', [])]
 
           if comment_id in existing_ids:
@@ -176,14 +179,14 @@ jobs:
               # Add new comment
               new_comment = {
                   "comment_id": comment_id,
-                  "pr_number": int("$PR_NUMBER"),
-                  "type": "$COMMENT_TYPE",
-                  "author": "$COMMENT_AUTHOR",
-                  "body": $COMMENT_BODY,
-                  "path": "$COMMENT_PATH" if "$COMMENT_PATH" else None,
-                  "line": int("$COMMENT_LINE") if "$COMMENT_LINE" else None,
-                  "queued_at": "$TIMESTAMP",
-                  "repository": "${{ github.repository }}"
+                  "pr_number": int(os.environ["PR_NUMBER"]),
+                  "type": os.environ["COMMENT_TYPE"],
+                  "author": os.environ["COMMENT_AUTHOR"],
+                  "body": os.environ["COMMENT_BODY"],
+                  "path": os.environ.get("COMMENT_PATH") or None,
+                  "line": int(os.environ["COMMENT_LINE"]) if os.environ.get("COMMENT_LINE") else None,
+                  "queued_at": os.environ["TIMESTAMP"],
+                  "repository": os.environ["REPOSITORY"],
               }
 
               queue["comments"].append(new_comment)

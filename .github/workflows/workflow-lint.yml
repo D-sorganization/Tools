@@ -1,0 +1,47 @@
+name: Workflow Lint
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - ".github/workflows/**"
+      - "scripts/validate_workflows.py"
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+      - "scripts/validate_workflows.py"
+  workflow_dispatch:
+
+concurrency:
+  group: workflow-lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-workflows:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install workflow validation dependencies
+        run: |
+          pip install --upgrade pip
+          pip install PyYAML
+
+      - name: Validate workflow YAML structure
+        run: python3 scripts/validate_workflows.py
+
+      - name: Install actionlint
+        run: |
+          ACTIONLINT_VERSION=1.7.11
+          curl -sSL "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz" | tar -xz
+          sudo mv actionlint /usr/local/bin/actionlint
+
+      - name: Run actionlint
+        run: actionlint -color
