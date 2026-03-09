@@ -153,12 +153,16 @@ def mass_matrix(phi1: float, phi2: float, params: TriplePendulumParams) -> np.nd
     # Postcondition: symmetry
     for i in range(3):
         for j in range(3):
-            assert np.isclose(M[i, j], M[j, i]), f"Mass matrix not symmetric at [{i},{j}]"
+            assert np.isclose(
+                M[i, j], M[j, i]
+            ), f"Mass matrix not symmetric at [{i},{j}]"
 
     return M
 
 
-def mass_matrix_components(phi1: float, phi2: float, params: TriplePendulumParams) -> dict:
+def mass_matrix_components(
+    phi1: float, phi2: float, params: TriplePendulumParams
+) -> dict:
     """Return individual mass matrix terms with labels.
 
     Returns
@@ -218,9 +222,9 @@ def coriolis_vector(
     -------
     C_qdot : np.ndarray, shape (3,)
     """
-    assert all(np.isfinite(v) for v in [phi1, phi2, dtheta1, dphi1, dphi2]), (
-        "All inputs must be finite"
-    )
+    assert all(
+        np.isfinite(v) for v in [phi1, phi2, dtheta1, dphi1, dphi2]
+    ), "All inputs must be finite"
 
     m2, m3 = params.m2, params.m3
     L1, L2, L3 = params.L1, params.L2, params.L3
@@ -381,7 +385,9 @@ def equations_of_motion(
 
     state_dot = np.array([dtheta1, dphi1, dphi2, qddot[0], qddot[1], qddot[2]])
 
-    assert all(np.isfinite(state_dot)), f"State derivative has non-finite values: {state_dot}"
+    assert all(
+        np.isfinite(state_dot)
+    ), f"State derivative has non-finite values: {state_dot}"
     return state_dot
 
 
@@ -477,7 +483,9 @@ def linear_accelerations(
     }
 
 
-def net_joint_forces(state: State, qddot: np.ndarray, params: TriplePendulumParams) -> dict:
+def net_joint_forces(
+    state: State, qddot: np.ndarray, params: TriplePendulumParams
+) -> dict:
     """Compute net joint forces (proximal on distal) in world coordinates.
 
     Returns
@@ -531,7 +539,9 @@ def potential_energy(state: State, params: TriplePendulumParams) -> float:
     V = (
         -m1 * g * L1 * np.cos(theta1)
         - m2 * g * (L1 * np.cos(theta1) + L2 * np.cos(abs_angle2))
-        - m3 * g * (L1 * np.cos(theta1) + L2 * np.cos(abs_angle2) + L3 * np.cos(abs_angle3))
+        - m3
+        * g
+        * (L1 * np.cos(theta1) + L2 * np.cos(abs_angle2) + L3 * np.cos(abs_angle3))
     )
 
     return float(V)

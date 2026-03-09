@@ -72,18 +72,18 @@ class TestProjectToConstraints:
         q = np.zeros(N_DOF)
         q_proj = project_to_constraints(q, golfer_params)
         phi = constraint_vector(q_proj, golfer_params)
-        assert np.linalg.norm(phi) < 1e-6, (
-            f"Constraint violation after projection: {np.linalg.norm(phi)}"
-        )
+        assert (
+            np.linalg.norm(phi) < 1e-6
+        ), f"Constraint violation after projection: {np.linalg.norm(phi)}"
 
     def test_arbitrary_config_projects(self, golfer_params: GolferParams) -> None:
         rng = np.random.default_rng(123)
         q = rng.uniform(-0.5, 0.5, size=N_DOF)
         q_proj = project_to_constraints(q, golfer_params)
         phi = constraint_vector(q_proj, golfer_params)
-        assert np.linalg.norm(phi) < 1e-4, (
-            f"Constraint violation after projection: {np.linalg.norm(phi)}"
-        )
+        assert (
+            np.linalg.norm(phi) < 1e-4
+        ), f"Constraint violation after projection: {np.linalg.norm(phi)}"
 
     def test_idempotent(self, golfer_params: GolferParams) -> None:
         q = np.zeros(N_DOF)
@@ -107,9 +107,9 @@ class TestProjectVelocity:
         qdot_proj = project_velocity(q, qdot, golfer_params)
         Phi_q = constraint_jacobian(q, golfer_params)
         violation = Phi_q @ qdot_proj
-        assert np.linalg.norm(violation) < 1e-6, (
-            f"Velocity constraint violation: {np.linalg.norm(violation)}"
-        )
+        assert (
+            np.linalg.norm(violation) < 1e-6
+        ), f"Velocity constraint violation: {np.linalg.norm(violation)}"
 
 
 class TestConstrainedAccelerations:
@@ -146,7 +146,9 @@ class TestEquationsOfMotion:
         assert state_dot.shape == (2 * N_DOF,)
         assert np.all(np.isfinite(state_dot))
 
-    def test_velocity_in_derivative(self, golfer_params: GolferParams, zero_torque) -> None:
+    def test_velocity_in_derivative(
+        self, golfer_params: GolferParams, zero_torque
+    ) -> None:
         state = _make_consistent_state(golfer_params)
         state_dot = equations_of_motion(state, 0.0, golfer_params, zero_torque)
         # First N_DOF of state_dot should be qdot

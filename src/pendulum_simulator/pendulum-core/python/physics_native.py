@@ -63,7 +63,13 @@ class DoublePendulumParams:
         """Convert to Rust parameter object (if native available)."""
         if HAS_NATIVE:
             return pendulum_core.PyDoublePendulumParams(
-                self.m1, self.m2, self.l1, self.l2, self.g, self.friction1, self.friction2
+                self.m1,
+                self.m2,
+                self.l1,
+                self.l2,
+                self.g,
+                self.friction1,
+                self.friction2,
             )
         return self
 
@@ -79,11 +85,14 @@ class DoublePendulum:
         """Compute the 2x2 mass matrix M(q)."""
         if self.use_native:
             try:
-                result = pendulum_core.py_double_mass_matrix(q.tolist(), self.params.to_rust())
+                result = pendulum_core.py_double_mass_matrix(
+                    q.tolist(), self.params.to_rust()
+                )
                 return np.array(result, dtype=np.float64)
             except Exception as e:
                 print(
-                    f"Warning: Rust call failed: {e}, falling back to NumPy", file=sys.stderr
+                    f"Warning: Rust call failed: {e}, falling back to NumPy",
+                    file=sys.stderr,
                 )
 
         # NumPy fallback
@@ -109,7 +118,10 @@ class DoublePendulum:
         theta1 = q[0]
         theta2 = theta1 + q[1]
         g0 = (
-            (self.params.m1 + self.params.m2) * self.params.g * self.params.l1 * np.sin(theta1)
+            (self.params.m1 + self.params.m2)
+            * self.params.g
+            * self.params.l1
+            * np.sin(theta1)
         )
         g1 = self.params.m2 * self.params.g * self.params.l2 * np.sin(theta2)
         return np.array([g0, g1], dtype=np.float64)
@@ -280,15 +292,20 @@ class Golfer:
         """Compute the 8x8 mass matrix M(q)."""
         if self.use_native:
             try:
-                result = pendulum_core.py_golfer_mass_matrix(q.tolist(), self.params.to_rust())
+                result = pendulum_core.py_golfer_mass_matrix(
+                    q.tolist(), self.params.to_rust()
+                )
                 return np.array(result, dtype=np.float64)
             except Exception as e:
                 print(
-                    f"Warning: Rust call failed: {e}, falling back to NumPy", file=sys.stderr
+                    f"Warning: Rust call failed: {e}, falling back to NumPy",
+                    file=sys.stderr,
                 )
 
         # NumPy fallback would be implemented by porting the Rust analytical code
-        raise NotImplementedError("NumPy fallback for golfer mass matrix not yet implemented")
+        raise NotImplementedError(
+            "NumPy fallback for golfer mass matrix not yet implemented"
+        )
 
     def gravity_vector(self, q: np.ndarray) -> np.ndarray:
         """Compute the gravity vector G(q)."""
@@ -301,7 +318,9 @@ class Golfer:
             except Exception:
                 pass
 
-        raise NotImplementedError("NumPy fallback for golfer gravity not yet implemented")
+        raise NotImplementedError(
+            "NumPy fallback for golfer gravity not yet implemented"
+        )
 
     def forward_kinematics(self, q: np.ndarray) -> Dict[str, Tuple[float, float]]:
         """Compute forward kinematics."""
@@ -340,7 +359,9 @@ class Golfer:
             except Exception:
                 pass
 
-        raise NotImplementedError("NumPy fallback for constraint Jacobian not yet implemented")
+        raise NotImplementedError(
+            "NumPy fallback for constraint Jacobian not yet implemented"
+        )
 
 
 def get_native_info() -> Dict[str, object]:
@@ -348,9 +369,9 @@ def get_native_info() -> Dict[str, object]:
     return {
         "has_native": HAS_NATIVE,
         "error": NATIVE_ERROR,
-        "module_version": getattr(pendulum_core, "__version__", "unknown")
-        if HAS_NATIVE
-        else None,
+        "module_version": (
+            getattr(pendulum_core, "__version__", "unknown") if HAS_NATIVE else None
+        ),
     }
 
 

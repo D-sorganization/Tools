@@ -310,7 +310,9 @@ def project_to_constraints(
             break
         Phi_q = constraint_jacobian(q, params)
         # Use pseudoinverse for robustness
-        dq = Phi_q.T @ np.linalg.solve(Phi_q @ Phi_q.T + 1e-12 * np.eye(N_CONSTRAINTS), Phi)
+        dq = Phi_q.T @ np.linalg.solve(
+            Phi_q @ Phi_q.T + 1e-12 * np.eye(N_CONSTRAINTS), Phi
+        )
         q -= dq
     return q
 

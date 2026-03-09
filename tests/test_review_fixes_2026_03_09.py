@@ -9,14 +9,11 @@ This module covers:
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import numpy as np
-import pandas as pd
 import pytest
-
 
 # ──────────────────────────────────────────────────────────────────
 # C3D Reader Tests
@@ -58,9 +55,9 @@ class TestC3DReaderBoundsChecking:
             reader._metadata = None
             df = reader.points_dataframe(include_time=False)
             assert "residual" in df.columns
-            assert df["residual"].isna().all(), (
-                "Residuals should be NaN when only 3 channels present"
-            )
+            assert (
+                df["residual"].isna().all()
+            ), "Residuals should be NaN when only 3 channels present"
 
     def test_points_4_channels_has_residuals(self, reader):
         """When C3D has 4 channels, residuals are extracted normally."""
@@ -193,8 +190,20 @@ class TestURDFWriterGraphValidation:
         inertia = Inertia(ixx=1, iyy=1, izz=1, mass=1)
         links = [Link(name="A", inertia=inertia), Link(name="B", inertia=inertia)]
         joints = [
-            Joint(name="j1", joint_type=JointType.FIXED, parent="A", child="B", origin=Origin()),
-            Joint(name="j2", joint_type=JointType.FIXED, parent="B", child="A", origin=Origin()),
+            Joint(
+                name="j1",
+                joint_type=JointType.FIXED,
+                parent="A",
+                child="B",
+                origin=Origin(),
+            ),
+            Joint(
+                name="j2",
+                joint_type=JointType.FIXED,
+                parent="B",
+                child="A",
+                origin=Origin(),
+            ),
         ]
 
         writer = URDFWriter()
@@ -212,7 +221,13 @@ class TestURDFWriterGraphValidation:
             Link(name="child", inertia=inertia),
         ]
         joints = [
-            Joint(name="j1", joint_type=JointType.FIXED, parent="base", child="child", origin=Origin()),
+            Joint(
+                name="j1",
+                joint_type=JointType.FIXED,
+                parent="base",
+                child="child",
+                origin=Origin(),
+            ),
         ]
 
         writer = URDFWriter()
@@ -297,12 +312,15 @@ class TestURDFWriterMaterialCollision:
 _has_scipy = pytest.importorskip is not None  # placeholder
 try:
     import scipy  # noqa: F401
+
     _has_scipy = True
 except ImportError:
     _has_scipy = False
 
 
-@pytest.mark.skipif(not _has_scipy, reason="scipy required for humanoid_character_builder")
+@pytest.mark.skipif(
+    not _has_scipy, reason="scipy required for humanoid_character_builder"
+)
 class TestBodyParametersStrictValidation:
     """H-02: No bounds on anthropometric params."""
 
@@ -360,12 +378,15 @@ class TestBodyParametersStrictValidation:
 
 try:
     import defusedxml  # noqa: F401
+
     _has_defusedxml = True
 except ImportError:
     _has_defusedxml = False
 
 
-@pytest.mark.skipif(not _has_defusedxml, reason="defusedxml required for MJCF converter")
+@pytest.mark.skipif(
+    not _has_defusedxml, reason="defusedxml required for MJCF converter"
+)
 class TestMJCFCapsuleParsing:
     """H-14: MJCF capsule parsing IndexError."""
 
@@ -398,6 +419,7 @@ class TestMJCFCapsuleParsing:
         # Should fallback to sphere, not crash
         if geom_obj is not None:
             from model_generation.core.types import GeometryType
+
             assert geom_obj.geometry_type == GeometryType.SPHERE
 
     def test_capsule_valid_fromto(self):
@@ -412,4 +434,5 @@ class TestMJCFCapsuleParsing:
         geom_obj, origin = result
         assert geom_obj is not None
         from model_generation.core.types import GeometryType
+
         assert geom_obj.geometry_type == GeometryType.CAPSULE

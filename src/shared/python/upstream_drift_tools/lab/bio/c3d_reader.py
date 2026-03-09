@@ -33,6 +33,7 @@ from ...utils.logging import get_logger, log_execution_time
 try:
     from contracts import ensure, require
 except ImportError:  # pragma: no cover
+
     def require(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]
         if not condition:
             raise ValueError(f"[DbC pre-condition] {message} (got: {value!r})")
@@ -40,6 +41,7 @@ except ImportError:  # pragma: no cover
     def ensure(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]
         if not condition:
             raise ValueError(f"[DbC post-condition] {message} (got: {value!r})")
+
 
 logger = get_logger(__name__)
 
@@ -508,7 +510,11 @@ class C3DDataReader:
             PreconditionError: If *plate_number* is not positive.
         """
         if plate_number is not None:
-            require(plate_number > 0, "plate_number must be positive (1-indexed)", plate_number)
+            require(
+                plate_number > 0,
+                "plate_number must be positive (1-indexed)",
+                plate_number,
+            )
         plate_channels = self.get_force_plate_channels()
 
         if not plate_channels:
