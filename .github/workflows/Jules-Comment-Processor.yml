@@ -272,11 +272,13 @@ jobs:
         run: |
           # Archive processed comments
           mkdir -p .jules/processed
-          ARCHIVE_FILE=".jules/processed/comments_$(date +%Y%m%d_%H%M%S).json"
+          archive_timestamp="$(date +%Y%m%d_%H%M%S)"
+          cleared_at="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          ARCHIVE_FILE=".jules/processed/comments_${archive_timestamp}.json"
           cp .jules/pending/pr_comments.json "$ARCHIVE_FILE"
 
           # Clear the queue
-          echo '{"comments": [], "last_cleared": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}' > .jules/pending/pr_comments.json
+          printf '{"comments": [], "last_cleared": "%s"}\n' "$cleared_at" > .jules/pending/pr_comments.json
 
           echo "Archived processed comments to $ARCHIVE_FILE"
           echo "Queue cleared"

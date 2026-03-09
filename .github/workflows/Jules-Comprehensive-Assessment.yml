@@ -51,7 +51,7 @@ jobs:
             echo "Running Pragmatic Programmer Review..."
             mkdir -p docs/assessments/pragmatic_programmer
             python scripts/pragmatic_programmer_review.py \
-              --output docs/assessments/pragmatic_programmer/review_$(date +%Y-%m-%d).md \
+              --output "docs/assessments/pragmatic_programmer/review_$(date +%Y-%m-%d).md" \
               --json-output docs/assessments/pragmatic_programmer/review.json || echo "Script failed but continuing"
           else
             echo "Script not found, skipping."

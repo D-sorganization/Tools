@@ -108,8 +108,6 @@ jobs:
           REVIEW_LOG_PATH: ${{ env.REVIEW_LOG }}
           MODE: ${{ steps.scan.outputs.mode }}
         run: |
-          MAX_REVIEWS=5
-
           # Python script to select next article to work on
           python3 << 'PYEOF'
           import json
@@ -193,7 +191,6 @@ jobs:
           REVIEW_NUM: ${{ steps.select.outputs.current_review }}
         run: |
           set -e
-          DATE=$(date +%Y-%m-%d)
           REPO="${{ github.repository }}"
           API_BASE="https://jules.googleapis.com/v1alpha"
 
@@ -219,83 +216,96 @@ jobs:
           echo "Found source: $SOURCE_ID"
 
           # Create session prompt
-          PROMPT=$(cat << 'PROMPT_EOF'
-          '
-          You are the CRITICS COMMENTS WRITER for AffineDrift - a technical golf science website.
+          export MODE TARGET_FILE REVIEW_NUM
+          PROMPT=$(python3 <<'PYEOF'
+          import os
+          from textwrap import dedent
 
-          ## Current Task
-          - MODE: $MODE
-          - TARGET: $TARGET_FILE
-          - REVIEW: $REVIEW_NUM of 5
+          mode = os.environ["MODE"]
+          target_file = os.environ["TARGET_FILE"]
+          review_num = os.environ["REVIEW_NUM"]
 
-          ## Mode-Specific Instructions
+          print(
+              dedent(
+                  f"""\
+                  You are the CRITICS COMMENTS WRITER for AffineDrift - a technical golf science website.
 
-          ### If MODE = "create":
-          Add a NEW "Critics' Comments" section to the target article.
-          Follow the HTML structure exactly. Also add CSS if not present.
+                  ## Current Task
+                  - MODE: {mode}
+                  - TARGET: {target_file}
+                  - REVIEW: {review_num} of 5
 
-          ### If MODE = "refine":
-          IMPROVE the existing section. This is review $REVIEW_NUM:
-          - Review 1-2: Focus on FAIRNESS - ensure critiques are steel-manned
-          - Review 3: Focus on RESPONSES - make rebuttals more thoughtful
-          - Review 4: Focus on COMPLETENESS - add missing perspectives
-          - Review 5: Final POLISH - tone, clarity, academic rigor
+                  ## Mode-Specific Instructions
 
-          ## HTML Structure (MUST FOLLOW EXACTLY)
-          ```html
-          <section class="critics-comments">
-            <button class="critics-comments-header" aria-expanded="false">
-              <h2>Critics' Comments</h2>
-              <span class="critics-comments-icon">💬</span>
-            </button>
-            <div class="critics-comments-content">
-              <div class="critics-comments-inner">
-                <p class="critics-intro">
-                  Every theory faces scrutiny. Here's what skeptics and alternative perspectives say:
-                </p>
+                  ### If MODE = "create":
+                  Add a NEW "Critics' Comments" section to the target article.
+                  Follow the HTML structure exactly. Also add CSS if not present.
 
-                <div class="critic-item">
-                  <div class="critic-perspective">
-          <span class="critic-label">Alternative View:</span>
-          <h3>[Counterpoint Title]</h3>
-                  </div>
-                  <p class="critic-argument">[The counterargument or alternative interpretation]</p>
-                  <div class="author-response">
-          <strong>Our Response:</strong> [Brief rebuttal or acknowledgment]
-                  </div>
-                </div>
+                  ### If MODE = "refine":
+                  IMPROVE the existing section. This is review {review_num}:
+                  - Review 1-2: Focus on FAIRNESS - ensure critiques are steel-manned
+                  - Review 3: Focus on RESPONSES - make rebuttals more thoughtful
+                  - Review 4: Focus on COMPLETENESS - add missing perspectives
+                  - Review 5: Final POLISH - tone, clarity, academic rigor
 
-                <div class="academic-note">
-                  <strong>Note:</strong> Scientific discourse thrives on debate.
-                  These critiques strengthen our understanding.
-                </div>
-              </div>
-            </div>
-          </section>
-          ```
+                  ## HTML Structure (MUST FOLLOW EXACTLY)
+                  ```html
+                  <section class="critics-comments">
+                    <button class="critics-comments-header" aria-expanded="false">
+                      <h2>Critics' Comments</h2>
+                      <span class="critics-comments-icon">💬</span>
+                    </button>
+                    <div class="critics-comments-content">
+                      <div class="critics-comments-inner">
+                        <p class="critics-intro">
+                          Every theory faces scrutiny. Here's what skeptics and alternative perspectives say:
+                        </p>
 
-          ## Content Guidelines
-          1. Read the FULL article to understand the claims being made
-          2. Identify 2-4 points where reasonable people might disagree
-          3. Present LEGITIMATE academic counterarguments (STEEL-MAN, not strawmen)
-          4. Provide thoughtful responses that acknowledge valid concerns
-          5. Sources of critique can include:
-             - Alternative biomechanical theories
-             - Different physics interpretations
-             - Practical vs theoretical concerns
-             - Equipment manufacturer perspectives
-             - Traditional teaching method advocates
-          6. Place the section AFTER "In Layman's Terms", BEFORE references
+                        <div class="critic-item">
+                          <div class="critic-perspective">
+                            <span class="critic-label">Alternative View:</span>
+                            <h3>[Counterpoint Title]</h3>
+                          </div>
+                          <p class="critic-argument">[The counterargument or alternative interpretation]</p>
+                          <div class="author-response">
+                            <strong>Our Response:</strong> [Brief rebuttal or acknowledgment]
+                          </div>
+                        </div>
 
-          ## Quality Checks
-          - Critiques must be intellectually honest (steel-manned)
-          - Responses should be measured, not dismissive
-          - Maintain academic tone throughout
-          - Acknowledge uncertainty where appropriate
+                        <div class="academic-note">
+                          <strong>Note:</strong> Scientific discourse thrives on debate.
+                          These critiques strengthen our understanding.
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                  ```
 
-          IMPORTANT: You ARE authorized to modify .qmd files and styles.css.
-          ONLY modify the target file: $TARGET_FILE (and styles.css if CSS needed)
-          PROMPT_EOF
+                  ## Content Guidelines
+                  1. Read the FULL article to understand the claims being made
+                  2. Identify 2-4 points where reasonable people might disagree
+                  3. Present LEGITIMATE academic counterarguments (STEEL-MAN, not strawmen)
+                  4. Provide thoughtful responses that acknowledge valid concerns
+                  5. Sources of critique can include:
+                     - Alternative biomechanical theories
+                     - Different physics interpretations
+                     - Practical vs theoretical concerns
+                     - Equipment manufacturer perspectives
+                     - Traditional teaching method advocates
+                  6. Place the section AFTER "In Layman's Terms", BEFORE references
+
+                  ## Quality Checks
+                  - Critiques must be intellectually honest (steel-manned)
+                  - Responses should be measured, not dismissive
+                  - Maintain academic tone throughout
+                  - Acknowledge uncertainty where appropriate
+
+                  IMPORTANT: You ARE authorized to modify .qmd files and styles.css.
+                  ONLY modify the target file: {target_file} (and styles.css if CSS needed)
+                  """
+              )
+          )
+          PYEOF
           )
 
           echo "Creating Jules session..."

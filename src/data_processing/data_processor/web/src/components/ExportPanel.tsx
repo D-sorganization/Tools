@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Download, FileJson, FileSpreadsheet, FileText } from 'lucide-react';
 import Papa from 'papaparse';
 import type { DataRow, ExportFormat } from '../types';

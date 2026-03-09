@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Filter, Play, RotateCcw } from 'lucide-react';
 import type { FilterConfig, FilterType, FilterParameters } from '../types';
 

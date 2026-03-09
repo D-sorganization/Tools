@@ -107,9 +107,6 @@ jobs:
         env:
           MODE: ${{ steps.scan.outputs.mode }}
         run: |
-          REVIEW_LOG="${{ env.REVIEW_LOG }}"
-          MAX_REVIEWS=5
-
           # Python script to select next article to work on
           python3 << 'PYEOF'
           import json
@@ -193,7 +190,6 @@ jobs:
           REVIEW_NUM: ${{ steps.select.outputs.current_review }}
         run: |
           set -e
-          DATE=$(date +%Y-%m-%d)
           REPO="${{ github.repository }}"
           API_BASE="https://jules.googleapis.com/v1alpha"
 
@@ -219,74 +215,87 @@ jobs:
           echo "Found source: $SOURCE_ID"
 
           # Create session prompt
-          PROMPT=$(cat << 'PROMPT_EOF'
-          '
-          You are the LAYMAN'S TERMS WRITER for AffineDrift - a technical golf science website.
+          export MODE TARGET_FILE REVIEW_NUM
+          PROMPT=$(python3 <<'PYEOF'
+          import os
+          from textwrap import dedent
 
-          ## Current Task
-          - MODE: $MODE
-          - TARGET: $TARGET_FILE
-          - REVIEW: $REVIEW_NUM of 5
+          mode = os.environ["MODE"]
+          target_file = os.environ["TARGET_FILE"]
+          review_num = os.environ["REVIEW_NUM"]
 
-          ## Mode-Specific Instructions
+          print(
+              dedent(
+                  f"""\
+                  You are the LAYMAN'S TERMS WRITER for AffineDrift - a technical golf science website.
 
-          ### If MODE = "create":
-          Add a NEW "In Layman's Terms" section to the target article.
-          Follow the HTML template exactly.
+                  ## Current Task
+                  - MODE: {mode}
+                  - TARGET: {target_file}
+                  - REVIEW: {review_num} of 5
 
-          ### If MODE = "refine":
-          IMPROVE the existing section. This is review $REVIEW_NUM:
-          - Review 1-2: Focus on CLARITY - simplify complex explanations
-          - Review 3: Focus on ANALOGIES - make them more relatable
-          - Review 4: Focus on COMPLETENESS - ensure all key concepts covered
-          - Review 5: Final POLISH - grammar, flow, accessibility
+                  ## Mode-Specific Instructions
 
-          ## HTML Structure (MUST FOLLOW EXACTLY)
-          ```html
-          <section class="laymans-terms">
-            <button class="laymans-terms-header" aria-expanded="false">
-              <h2>In Layman's Terms</h2>
-              <span class="laymans-terms-icon">▼</span>
-            </button>
-            <div class="laymans-terms-content">
-              <div class="laymans-terms-inner">
-                <p class="laymans-terms-intro">
-                  [Brief intro about what you'll learn]
-                </p>
+                  ### If MODE = "create":
+                  Add a NEW "In Layman's Terms" section to the target article.
+                  Follow the HTML template exactly.
 
-                <div class="laymans-item">
-                  <h3>[Topic Title]</h3>
-                  <p>[Simple explanation - avoid jargon]</p>
-                  <div class="analogy">
-          <strong>Think of it like:</strong> [Relatable everyday analogy]
-                  </div>
-                </div>
+                  ### If MODE = "refine":
+                  IMPROVE the existing section. This is review {review_num}:
+                  - Review 1-2: Focus on CLARITY - simplify complex explanations
+                  - Review 3: Focus on ANALOGIES - make them more relatable
+                  - Review 4: Focus on COMPLETENESS - ensure all key concepts covered
+                  - Review 5: Final POLISH - grammar, flow, accessibility
 
-                <div class="key-takeaway">
-                  <strong>Key Takeaway:</strong> [One sentence summary]
-                </div>
-              </div>
-            </div>
-          </section>
-          ```
+                  ## HTML Structure (MUST FOLLOW EXACTLY)
+                  ```html
+                  <section class="laymans-terms">
+                    <button class="laymans-terms-header" aria-expanded="false">
+                      <h2>In Layman's Terms</h2>
+                      <span class="laymans-terms-icon">▼</span>
+                    </button>
+                    <div class="laymans-terms-content">
+                      <div class="laymans-terms-inner">
+                        <p class="laymans-terms-intro">
+                          [Brief intro about what you'll learn]
+                        </p>
 
-          ## Writing Guidelines
-          1. Read the FULL article to understand the technical content
-          2. Identify 3-5 key concepts that need simplification
-          3. Use everyday analogies (cooking, sports, driving, etc.)
-          4. Avoid ALL technical jargon in explanations
-          5. Make it accessible to someone with no golf or physics background
-          6. Place the section AFTER the main content, BEFORE any references
+                        <div class="laymans-item">
+                          <h3>[Topic Title]</h3>
+                          <p>[Simple explanation - avoid jargon]</p>
+                          <div class="analogy">
+                            <strong>Think of it like:</strong> [Relatable everyday analogy]
+                          </div>
+                        </div>
 
-          ## Quality Checks
-          - Every laymans-item MUST have an analogy
-          - Analogies should be relatable (not golf-specific)
-          - Key takeaway should be actionable or memorable
-          - Keep explanations under 3 sentences each
+                        <div class="key-takeaway">
+                          <strong>Key Takeaway:</strong> [One sentence summary]
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                  ```
 
-          IMPORTANT: You ARE authorized to modify .qmd files.
-          ONLY modify the target file: $TARGET_FILE
-          PROMPT_EOF
+                  ## Writing Guidelines
+                  1. Read the FULL article to understand the technical content
+                  2. Identify 3-5 key concepts that need simplification
+                  3. Use everyday analogies (cooking, sports, driving, etc.)
+                  4. Avoid ALL technical jargon in explanations
+                  5. Make it accessible to someone with no golf or physics background
+                  6. Place the section AFTER the main content, BEFORE any references
+
+                  ## Quality Checks
+                  - Every laymans-item MUST have an analogy
+                  - Analogies should be relatable (not golf-specific)
+                  - Key takeaway should be actionable or memorable
+                  - Keep explanations under 3 sentences each
+
+                  IMPORTANT: You ARE authorized to modify .qmd files.
+                  ONLY modify the target file: {target_file}
+                  """
+              )
+          )
+          PYEOF
           )
 
           echo "Creating Jules session..."

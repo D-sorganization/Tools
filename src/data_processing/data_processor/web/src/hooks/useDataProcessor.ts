@@ -1,14 +1,12 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import Papa from 'papaparse';
 import type {
   DataRow,
-  Signal,
   FilterConfig,
   Statistics,
   ProcessingResult,
   IntegrationConfig,
   DifferentiationConfig,
-  ResampleConfig,
   TimeRangeConfig,
   TrendlineConfig,
   TrendlineResult,

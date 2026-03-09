@@ -42,7 +42,6 @@ pub fn forward_kinematics(q: &[f64; 8], params: &GolferParams) -> GolferFKResult
     // Right arm absolute angles
     let theta_rs = theta_hub + q[1];
     let theta_re = theta_hub + q[1] + q[2];
-    let theta_rh = theta_hub + q[1] + q[2] + q[3];
 
     // Right arm kinematics
     let re = rs.add(Vec2::from_polar(params.l_r_upper, theta_rs));
@@ -51,7 +50,6 @@ pub fn forward_kinematics(q: &[f64; 8], params: &GolferParams) -> GolferFKResult
     // Left arm absolute angles
     let theta_ls = theta_hub + q[4];
     let theta_le = theta_hub + q[4] + q[5];
-    let theta_lh = theta_hub + q[4] + q[5] + q[6];
 
     // Left arm kinematics
     let le = ls.add(Vec2::from_polar(params.l_l_upper, theta_ls));
@@ -101,10 +99,8 @@ pub fn analytical_fk_jacobians(q: &[f64; 8], params: &GolferParams) -> HashMap<S
     let theta_hub = q[0];
     let theta_rs = theta_hub + q[1];
     let theta_re = theta_hub + q[1] + q[2];
-    let theta_rh = theta_hub + q[1] + q[2] + q[3];
     let theta_ls = theta_hub + q[4];
     let theta_le = theta_hub + q[4] + q[5];
-    let theta_lh = theta_hub + q[4] + q[5] + q[6];
     let theta_club = q[7];
 
     let hub_sin = theta_hub.sin();
@@ -184,8 +180,6 @@ pub fn analytical_fk_jacobians(q: &[f64; 8], params: &GolferParams) -> HashMap<S
     let mut j_club_com = SMatrix::<f64, 2, 8>::zeros();
     let club_sin = theta_club.sin();
     let club_cos = theta_club.cos();
-    let cos_rh = theta_rh.cos();
-    let sin_rh = theta_rh.sin();
     let half_club = params.l_club / 2.0;
 
     j_club_com[(0, 0)] = params.l_hub * hub_cos - params.d_rs * hub_sin
@@ -301,7 +295,7 @@ pub fn coriolis(q: &[f64; 8], qdot: &[f64; 8], params: &GolferParams) -> SVector
 
     let dm_dqdot = (m_plus - m_minus) / (2.0 * eps);
 
-    -dm_dqdot * SVector::from(qdot.as_slice().try_into().unwrap())
+    -dm_dqdot * SVector::<f64, 8>::from_row_slice(qdot)
 }
 
 /// Compute the gravity vector G(q).

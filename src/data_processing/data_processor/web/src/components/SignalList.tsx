@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Activity, Check, Search, Download, Upload } from 'lucide-react';
 
 interface SignalListProps {

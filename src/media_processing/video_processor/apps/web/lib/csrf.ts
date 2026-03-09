@@ -23,8 +23,8 @@ export function generateCsrfToken(): string {
 /**
  * Get CSRF token from cookies or generate a new one
  */
-export function getCsrfToken(): string {
-  const cookieStore = cookies();
+export async function getCsrfToken(): Promise<string> {
+  const cookieStore = await cookies();
   const existingToken = cookieStore.get(CSRF_COOKIE_NAME);
 
   if (existingToken?.value) {

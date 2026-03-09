@@ -6,6 +6,7 @@
 import {
   BodyAngles,
   Landmark,
+  PhaseTransition,
   PoseFrame,
   PoseLandmark,
   StanceDirection,
@@ -18,13 +19,7 @@ import {
   calculateDistance,
 } from './angleCalculator';
 
-export interface PhaseTransition {
-  phase: SwingPhase;
-  startFrame: number;
-  endFrame: number;
-  duration: number; // milliseconds
-  confidence: number;
-}
+export type { PhaseTransition } from './types';
 
 export interface PhaseDetectionResult {
   phases: PhaseTransition[];

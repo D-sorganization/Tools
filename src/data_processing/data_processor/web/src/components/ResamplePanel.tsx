@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Clock } from 'lucide-react';
 import type { ResampleMethod, ResampleConfig } from '../types';
 

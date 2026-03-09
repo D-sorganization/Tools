@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TrendingUp, LineChart, Save, Folder } from 'lucide-react';
 import type { TrendlineType, TrendlineConfig, TrendlineResult, PlotConfig } from '../types';
 
@@ -34,12 +34,12 @@ export function TrendlinePanel({
   const [selectedConfig, setSelectedConfig] = useState('');
 
   // Update xColumn when timeColumn changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (timeColumn) setXColumn(timeColumn);
   }, [timeColumn]);
 
   // Update yColumn when selectedSignals changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedSignals.length > 0) setYColumn(selectedSignals[0]);
   }, [selectedSignals]);
 

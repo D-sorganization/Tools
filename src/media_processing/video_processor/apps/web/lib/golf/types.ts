@@ -70,6 +70,14 @@ export enum SwingPhase {
   UNKNOWN = 'unknown',
 }
 
+export interface PhaseTransition {
+  phase: SwingPhase;
+  startFrame: number;
+  endFrame: number;
+  duration: number; // milliseconds
+  confidence: number;
+}
+
 // Golfer's stance direction
 export enum StanceDirection {
   RIGHT_HANDED = 'right_handed',
@@ -198,12 +206,7 @@ export interface SwingAnalysis {
   poseFrames: PoseFrame[];
 
   // Phase detection
-  phases: {
-    phase: SwingPhase;
-    startFrame: number;
-    endFrame: number;
-    duration: number;
-  }[];
+  phases: PhaseTransition[];
 
   // Metrics at key positions
   keyPositions: {

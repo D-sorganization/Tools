@@ -8,7 +8,7 @@
  *
  * See issue #607.
  */
-import React, { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   BarChart,
   Bar,

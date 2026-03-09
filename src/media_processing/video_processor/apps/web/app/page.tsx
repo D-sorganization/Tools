@@ -12,7 +12,7 @@ import VideoUploader from '@/components/video/VideoUploader';
 import { useVideoFrame } from '@/hooks/useVideoFrame';
 import { logger } from '@/lib/logger';
 import { AudioRecordingError, VideoProcessingError, getUserMessage } from '@/lib/errors';
-import { fabric } from 'fabric';
+import * as fabric from 'fabric';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 

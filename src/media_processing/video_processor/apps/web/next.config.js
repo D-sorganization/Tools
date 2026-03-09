@@ -1,9 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    serverActions: true,
-  },
   // Enable WebAssembly
   webpack: (config, { isServer }) => {
     config.experiments = {

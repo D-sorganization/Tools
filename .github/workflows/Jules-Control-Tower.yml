@@ -61,6 +61,7 @@ jobs:
         if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'failure'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAX_REPAIR_LIMIT: ${{ env.MAX_REPAIR_ITERATIONS }}
         run: |
           echo "Checking repair iteration limits..."
           BRANCH="${{ github.event.workflow_run.head_branch }}"
@@ -74,7 +75,7 @@ jobs:
             --jq "[.[] | select(.conclusion == \"failure\" and .createdAt > \"$HOURS_AGO\")] | length" \
             2>/dev/null || echo "0")
 
-          if [ "$FAILURE_COUNT" -ge "${{ env.MAX_REPAIR_ITERATIONS }}" ]; then
+          if [ "$FAILURE_COUNT" -ge "$MAX_REPAIR_LIMIT" ]; then
             echo "::error::Max repair iterations reached. Manual intervention required."
             echo "exceeded=true" >> $GITHUB_OUTPUT
           else

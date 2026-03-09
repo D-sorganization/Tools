@@ -4,6 +4,9 @@ use crate::golfer;
 use crate::types::GolferParams;
 use nalgebra::{SMatrix, SVector};
 
+const CONSTRAINT_REGULARIZATION: f64 = 1e-9;
+const MASS_REGULARIZATION: f64 = 1e-9;
+
 /// Baumgarte stabilization parameters.
 #[derive(Debug, Clone, Copy)]
 pub struct BaumgarteGains {
@@ -34,8 +37,6 @@ pub fn constraint_acceleration_bias(
 ) -> SVector<f64, 4> {
     let eps = 1e-7;
 
-    let j_q = golfer::constraint_jacobian(q, params);
-
     let mut q_plus = *q;
     let mut q_minus = *q;
 
@@ -49,7 +50,7 @@ pub fn constraint_acceleration_bias(
 
     let dj_dt = (j_plus - j_minus) / (2.0 * eps);
 
-    let qdot_vec = SVector::from(qdot.as_slice().try_into().unwrap());
+    let qdot_vec = SVector::<f64, 8>::from_row_slice(qdot);
 
     -dj_dt * qdot_vec
 }
@@ -79,63 +80,28 @@ pub fn constrained_accelerations(
     let j = golfer::constraint_jacobian(q, params);
     let gamma = constraint_acceleration_bias(q, qdot, params);
 
-    let tau_vec = SVector::from(tau.as_slice().try_into().unwrap());
-    let qdot_vec = SVector::from(qdot.as_slice().try_into().unwrap());
+    let tau_vec = SVector::<f64, 8>::from_row_slice(tau);
+    let qdot_vec = SVector::<f64, 8>::from_row_slice(qdot);
 
     // Right-hand side of KKT system:
     // rhs = [τ - C - G; -γ - α*J*qdot - β*Φ]
     let rhs_upper = tau_vec - c - g;
     let rhs_lower = -gamma - gains.alpha * j.clone() * qdot_vec - gains.beta * phi;
 
-    // Build the 12x12 KKT system:
-    // [M   J^T] [a] = [τ - C - G]
-    // [J    0 ] [λ]   [-γ - α*J*qdot - β*Φ]
-
-    let mut kkt = SMatrix::<f64, 12, 12>::zeros();
-    let mut rhs = SVector::<f64, 12>::zeros();
-
-    // M block
+    // Solve via the Schur complement J M^-1 J^T, which is numerically
+    // better behaved than factorizing the full indefinite KKT system.
+    let mut regularized_mass = m;
     for i in 0..8 {
-        for j in 0..8 {
-            kkt[(i, j)] = m[(i, j)];
-        }
+        regularized_mass[(i, i)] += MASS_REGULARIZATION;
     }
-
-    // J^T block
-    for i in 0..8 {
-        for j in 0..4 {
-            kkt[(i, 8 + j)] = j[(j, i)];
-        }
-    }
-
-    // J block
+    let m_inv = regularized_mass.try_inverse().expect("Mass matrix singular");
+    let mut schur = j * m_inv * j.transpose();
     for i in 0..4 {
-        for j in 0..8 {
-            kkt[(8 + i, j)] = j[(i, j)];
-        }
+        schur[(i, i)] += CONSTRAINT_REGULARIZATION;
     }
-
-    // RHS
-    for i in 0..8 {
-        rhs[i] = rhs_upper[i];
-    }
-    for i in 0..4 {
-        rhs[8 + i] = rhs_lower[i];
-    }
-
-    // Solve the KKT system via LU decomposition
-    let kkt_lu = kkt.lu();
-    let sol = kkt_lu.solve(&rhs).expect("KKT system singular");
-
-    let mut a = SVector::<f64, 8>::zeros();
-    let mut lambda = SVector::<f64, 4>::zeros();
-
-    for i in 0..8 {
-        a[i] = sol[i];
-    }
-    for i in 0..4 {
-        lambda[i] = sol[8 + i];
-    }
+    let schur_rhs = rhs_lower - j * m_inv * rhs_upper;
+    let lambda = schur.lu().solve(&schur_rhs).expect("Constraint system singular");
+    let a = m_inv * (rhs_upper + j.transpose() * lambda);
 
     (a, lambda)
 }
@@ -157,8 +123,7 @@ pub fn project_to_constraints(
         let j = golfer::constraint_jacobian(&q_proj, params);
 
         // Solve J * Δq = -Φ
-        let j_lu = j.lu();
-        let delta_q = -j_lu.solve(&phi).expect("Jacobian singular");
+        let delta_q = solve_minimum_norm_correction(&j, &(-phi)).expect("Jacobian singular");
 
         // Update
         for i in 0..8 {
@@ -197,12 +162,11 @@ pub fn project_velocity(
     let j_minus = golfer::constraint_jacobian(&q_minus, params);
 
     let dj_dt = (j_plus - j_minus) / (2.0 * eps);
-    let qdot_vec = SVector::from(qdot.as_slice().try_into().unwrap());
+    let qdot_vec = SVector::<f64, 8>::from_row_slice(qdot);
 
     // Solve: J * Δqdot = -dJ/dt * qdot
     let rhs = -dj_dt * qdot_vec;
-    let j_lu = j.lu();
-    let delta_qdot = j_lu.solve(&rhs).expect("Jacobian singular");
+    let delta_qdot = solve_minimum_norm_correction(&j, &rhs).expect("Jacobian singular");
 
     let mut qdot_proj = *qdot;
     for i in 0..8 {
@@ -210,6 +174,15 @@ pub fn project_velocity(
     }
 
     qdot_proj
+}
+
+fn solve_minimum_norm_correction(
+    jacobian: &SMatrix<f64, 4, 8>,
+    rhs: &SVector<f64, 4>,
+) -> Option<SVector<f64, 8>> {
+    let normal_matrix = jacobian * jacobian.transpose();
+    let lambda = normal_matrix.lu().solve(rhs)?;
+    Some(jacobian.transpose() * lambda)
 }
 
 #[cfg(test)]

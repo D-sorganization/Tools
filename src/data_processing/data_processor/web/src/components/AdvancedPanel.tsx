@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Calculator, TrendingUp, TrendingDown } from 'lucide-react';
 import type {
   IntegrationMethod,
@@ -19,7 +19,6 @@ interface AdvancedPanelProps {
 }
 
 export function AdvancedPanel({
-  signals,
   selectedSignals,
   timeColumn,
   disabled,

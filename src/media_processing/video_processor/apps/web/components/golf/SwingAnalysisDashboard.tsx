@@ -5,7 +5,6 @@ import { SwingAnalysis, PoseFrame, Landmark, SwingPhase } from '@/lib/golf/types
 import { analyzeSwing, quickAnalyze } from '@/lib/golf/swingAnalyzer';
 import { saveSession, getAllSessions } from '@/lib/golf/persistence';
 import { downloadHTMLReport, downloadCSVReport, downloadJSONExport } from '@/lib/golf/reportGenerator';
-import { v4 as uuidv4 } from 'uuid';
 import ScoreCard from './ScoreCard';
 import TempoChart from './TempoChart';
 import IssuesPanel from './IssuesPanel';
