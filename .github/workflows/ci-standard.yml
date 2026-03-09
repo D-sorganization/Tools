@@ -265,7 +265,11 @@ jobs:
 
       - name: Run Rust Tests
         if: steps.rust-changes.outputs.has_changes == 'true'
-        run: cargo test --all-features
+        run: |
+          # Features `python` and `wasm` use mutually-exclusive FFI systems
+          # (PyO3 vs wasm-bindgen), so we test them individually.
+          cargo test
+          cargo test --features python
 
       - name: Build Python Wheel (Maturin)
         if: steps.rust-changes.outputs.has_changes == 'true'

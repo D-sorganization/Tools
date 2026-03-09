@@ -36,6 +36,8 @@ from .controls_utils import (
     parse_coeffs,
     parse_coeffs_lenient,
     parse_float,
+    require_non_negative,
+    require_positive,
 )
 from .torque_preview_widget import TorquePreviewWidget
 
@@ -498,11 +500,15 @@ class ControlsWidget(QWidget):
         mClub = parse_float(self.inp_mClub, "mClub")
         L1 = parse_float(self.inp_L1, "L1")
         L2 = parse_float(self.inp_L2, "L2")
-        assert m1 > 0, f"m1 must be positive, got {m1}"
-        assert m2 > 0, f"m2 must be positive, got {m2}"
-        assert mClub >= 0, f"mClub must be non-negative, got {mClub}"
-        assert L1 > 0, f"L1 must be positive, got {L1}"
-        assert L2 > 0, f"L2 must be positive, got {L2}"
+        b1 = require_non_negative(parse_float(self.inp_b1, "b1"), "b1")
+        b2 = require_non_negative(parse_float(self.inp_b2, "b2"), "b2")
+        mu1 = require_non_negative(parse_float(self.inp_mu1, "μ1"), "μ1")
+        mu2 = require_non_negative(parse_float(self.inp_mu2, "μ2"), "μ2")
+        require_positive(m1, "m1")
+        require_positive(m2, "m2")
+        require_non_negative(mClub, "mClub")
+        require_positive(L1, "L1")
+        require_positive(L2, "L2")
 
         return {
             "m1": m1,
@@ -518,10 +524,10 @@ class ControlsWidget(QWidget):
             "wrist_coeffs": parse_coeffs(self.inp_tau_wrist, "Wrist torque"),
             "t_end": parse_float(self.inp_tend, "Duration"),
             "dt": dt,
-            "b1": parse_float(self.inp_b1, "b1"),
-            "b2": parse_float(self.inp_b2, "b2"),
-            "mu1": parse_float(self.inp_mu1, "μ1"),
-            "mu2": parse_float(self.inp_mu2, "μ2"),
+            "b1": b1,
+            "b2": b2,
+            "mu1": mu1,
+            "mu2": mu2,
             "gravity_on": self.chk_gravity.isChecked(),
             "enable_limits": self.chk_limits.isChecked(),
             "phi_min_rad": np.radians(parse_float(self.inp_phi_min, "φ min")),

@@ -26,37 +26,10 @@ from .physics_triple import (
     potential_energy,
     total_energy,
 )
+from .simulation_result_base import TrajectoryResultMixin
 
-# ---------------------------------------------------------------------------
-# Polynomial torque builder
-# ---------------------------------------------------------------------------
-
-
-def make_polynomial_torque(
-    coeffs_shoulder: list[float],
-    coeffs_elbow: list[float],
-    coeffs_wrist: list[float],
-) -> TorqueFunc:
-    """Create a torque function from polynomial coefficients.
-
-    tau(t) = c0 + c1*t + c2*t^2 + ...
-    """
-    assert len(coeffs_shoulder) >= 1, "Need at least one coefficient for shoulder"
-    assert len(coeffs_elbow) >= 1, "Need at least one coefficient for elbow"
-    assert len(coeffs_wrist) >= 1, "Need at least one coefficient for wrist"
-
-    p_shoulder = np.array(coeffs_shoulder[::-1])
-    p_elbow = np.array(coeffs_elbow[::-1])
-    p_wrist = np.array(coeffs_wrist[::-1])
-
-    def torque_func(t: float) -> tuple[float, float, float]:
-        tau1 = float(np.polyval(p_shoulder, t))
-        tau2 = float(np.polyval(p_elbow, t))
-        tau3 = float(np.polyval(p_wrist, t))
-        return tau1, tau2, tau3
-
-    return torque_func
-
+# Re-export from shared utility for backwards compatibility (DRY — #1041)
+from .torque_utils import make_polynomial_torque  # noqa: F401
 
 # ---------------------------------------------------------------------------
 # Simulation result container
@@ -64,7 +37,7 @@ def make_polynomial_torque(
 
 
 @dataclass
-class TripleSimulationResult:
+class TripleSimulationResult(TrajectoryResultMixin):
     """Stores the complete trajectory and derived quantities."""
 
     t: np.ndarray
@@ -72,47 +45,47 @@ class TripleSimulationResult:
     params: TriplePendulumParams
     torque_func: TorqueFunc
 
-    @property
-    def n_steps(self) -> int:
-        return len(self.t)
+    def __post_init__(self) -> None:
+        self._validate_trajectory(expected_state_width=6)
 
     def mass_matrix_at(self, idx: int) -> dict:
-        assert 0 <= idx < self.n_steps, f"Index {idx} out of range [0, {self.n_steps})"
+        self._check_idx(idx)
         s = self.states[idx]
         return mass_matrix_components(s[1], s[2], self.params)
 
     def positions_at(self, idx: int) -> dict:
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         s = self.states[idx]
         return forward_kinematics(s[0], s[1], s[2], self.params)
 
     def torques_at(self, idx: int) -> tuple[float, float, float]:
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         return self.torque_func(self.t[idx])
 
     def accelerations_at(self, idx: int) -> np.ndarray:
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         state_dot = equations_of_motion(
             self.states[idx], self.t[idx], self.params, self.torque_func
         )
         return state_dot[3:]
 
     def joint_forces_at(self, idx: int) -> dict:
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         qddot = self.accelerations_at(idx)
         return net_joint_forces(self.states[idx], qddot, self.params)
 
     def coriolis_at(self, idx: int) -> np.ndarray:
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         s = self.states[idx]
         return coriolis_vector(s[1], s[2], s[3], s[4], s[5], self.params)
 
     def gravity_at(self, idx: int) -> np.ndarray:
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         s = self.states[idx]
         return gravity_vector(s[0], s[1], s[2], self.params)
 
     def energy_at(self, idx: int) -> dict:
+        self._check_idx(idx)
         state = self.states[idx]
         return {
             "kinetic": kinetic_energy(state, self.params),
@@ -127,7 +100,7 @@ class TripleSimulationResult:
         -------
         np.ndarray, shape (3,)  [N·m]
         """
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         s = self.states[idx]
         return friction_torque_vector(s[3], s[4], s[5], self.params)
 
@@ -140,7 +113,7 @@ class TripleSimulationResult:
         -------
         np.ndarray, shape (3,)  [N·m]
         """
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         tau_drive = np.array(self.torque_func(self.t[idx]))
         tau_friction = self.friction_torques_at(idx)
         return np.asarray(tau_drive + tau_friction)

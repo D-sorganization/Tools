@@ -24,6 +24,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from . import native_backend as _native_backend
+
 # ---------------------------------------------------------------------------
 # Data structures
 # ---------------------------------------------------------------------------
@@ -129,6 +131,10 @@ def mass_matrix(phi: float, params: PendulumParams) -> np.ndarray:
     Post: symmetric positive-definite 2x2 matrix.
     """
     assert np.isfinite(phi), f"phi must be finite, got {phi}"
+    native_mass_matrix = _native_backend.double_mass_matrix(phi, params)
+    if native_mass_matrix is not None:
+        return native_mass_matrix
+
     m1, L1, L2 = params.m1, params.L1, params.L2
     me = _m2eff(params)
     cos_phi = np.cos(phi)
@@ -167,6 +173,10 @@ def coriolis_vector(
     Pre: all inputs finite.
     """
     assert all(np.isfinite(v) for v in [phi, dtheta1, dphi])
+    native_coriolis = _native_backend.double_coriolis_vector(phi, dtheta1, dphi, params)
+    if native_coriolis is not None:
+        return native_coriolis
+
     me = _m2eff(params)
     h = -me * params.L1 * params.L2 * np.sin(phi)
     c1 = h * (2.0 * dtheta1 * dphi + dphi**2)
@@ -183,6 +193,10 @@ def coriolis_vector(
 
 def gravity_vector(theta1: float, phi: float, params: PendulumParams) -> np.ndarray:
     """Compute the gravitational torque vector G(q)."""
+    native_gravity = _native_backend.double_gravity_vector(theta1, phi, params)
+    if native_gravity is not None:
+        return native_gravity
+
     me = _m2eff(params)
     L1, L2, g = params.L1, params.L2, params.g
     abs_angle2 = theta1 + phi
@@ -316,6 +330,10 @@ def equations_of_motion(
 
 def forward_kinematics(theta1: float, phi: float, params: PendulumParams) -> dict:
     """Compute joint positions in world frame. Origin at shoulder."""
+    native_positions = _native_backend.double_forward_kinematics(theta1, phi, params)
+    if native_positions is not None:
+        return native_positions
+
     L1, L2 = params.L1, params.L2
     abs_angle2 = theta1 + phi
     wx = L1 * np.sin(theta1)

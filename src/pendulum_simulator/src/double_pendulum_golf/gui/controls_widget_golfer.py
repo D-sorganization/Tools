@@ -24,9 +24,12 @@ from PyQt6.QtWidgets import (
 )
 
 from .controls_utils import (
+    STYLE_CHECK,
     STYLE_GROUP,
     parse_coeffs,
     parse_float,
+    require_non_negative,
+    require_positive,
 )
 from .controls_widget import LabeledInput
 
@@ -380,23 +383,16 @@ class ControlsWidgetGolfer(QWidget):
         main.addWidget(export_grp)
 
         # Physics & Display toggles
-        _STYLE_CHECK = (
-            "QCheckBox{color:#c0c0d8;font-size:11px;spacing:5px;}"
-            "QCheckBox::indicator{width:14px;height:14px;"
-            "border:1px solid #505068;border-radius:3px;background:#2a2a38;}"
-            "QCheckBox::indicator:checked{background:#5060a0;"
-            "border-color:#7080c0;}"
-        )
         vis_grp = QGroupBox("Physics & Display")
         vis_grp.setStyleSheet(style_group)
         vl = QVBoxLayout(vis_grp)
         self.chk_gravity = QCheckBox("Gravity enabled")
         self.chk_gravity.setChecked(True)
-        self.chk_gravity.setStyleSheet(_STYLE_CHECK)
+        self.chk_gravity.setStyleSheet(STYLE_CHECK)
         self.chk_gravity.toggled.connect(self.gravity_changed.emit)
         self.chk_forces = QCheckBox("Show force vectors")
         self.chk_forces.setChecked(False)
-        self.chk_forces.setStyleSheet(_STYLE_CHECK)
+        self.chk_forces.setStyleSheet(STYLE_CHECK)
         self.chk_forces.toggled.connect(self.forces_changed.emit)
         vl.addWidget(self.chk_gravity)
         vl.addWidget(self.chk_forces)
@@ -446,9 +442,9 @@ class ControlsWidgetGolfer(QWidget):
     def get_params(self) -> dict:
         """Parse all inputs into a simulation parameter dict.
 
-        Raises ValueError or AssertionError on invalid input.
+        Raises ValueError on invalid input.
         """
-        return {
+        params = {
             "m_hub": parse_float(self.inp_m_hub, "m_hub"),
             "m_r_upper": parse_float(self.inp_m_r_upper, "m_r_upper"),
             "m_r_fore": parse_float(self.inp_m_r_fore, "m_r_fore"),
@@ -490,6 +486,41 @@ class ControlsWidgetGolfer(QWidget):
             "b_le": parse_float(self.inp_b_le, "b_le"),
             "b_lh": parse_float(self.inp_b_lh, "b_lh"),
         }
+        for name in (
+            "m_hub",
+            "m_r_upper",
+            "m_r_fore",
+            "m_l_upper",
+            "m_l_fore",
+            "m_club",
+            "L_hub",
+            "L_r_upper",
+            "L_r_fore",
+            "L_l_upper",
+            "L_l_fore",
+            "L_club",
+        ):
+            require_positive(params[name], name)
+        for name in (
+            "m_clubhead",
+            "d_rs",
+            "d_ls",
+            "grip_right",
+            "grip_left",
+            "b_hub",
+            "b_rs",
+            "b_re",
+            "b_rh",
+            "b_ls",
+            "b_le",
+            "b_lh",
+        ):
+            require_non_negative(params[name], name)
+        if params["grip_right"] > params["L_club"]:
+            raise ValueError("grip_right must be ≤ L_club")
+        if params["grip_left"] > params["L_club"]:
+            raise ValueError("grip_left must be ≤ L_club")
+        return params
 
     def _on_play_toggled(self, checked: bool) -> None:
         self._is_playing = checked

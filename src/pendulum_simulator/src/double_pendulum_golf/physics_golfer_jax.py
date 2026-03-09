@@ -14,7 +14,7 @@ Key constraints:
 
 from __future__ import annotations
 
-from typing import NamedTuple
+from typing import Any, NamedTuple, TypeAlias
 
 try:
     import jax  # noqa: F401
@@ -24,8 +24,9 @@ except ImportError:
         "JAX is required for physics_golfer_jax. Install with: pip install jax jaxlib"
     )
 
-# Type aliases
-JaxArray = jnp.ndarray
+# ``jax.Array`` typing is still awkward under the repo's mypy settings.
+# Keep the alias permissive so changed JAX code remains type-checkable in CI.
+JaxArray: TypeAlias = Any
 
 
 class GolferParamsJAX(NamedTuple):
@@ -483,25 +484,16 @@ def coriolis_jax(q: JaxArray, qdot: JaxArray, p: GolferParamsJAX) -> JaxArray:
     eps = 1e-7
     M0 = mass_matrix_jax(q, p)
 
-    # Compute dM/dq_k via finite differences
-    dM = jnp.zeros((N_DOF, N_DOF, N_DOF))  # dM[i,j,k] = dM_ij/dq_k
+    basis = jnp.eye(N_DOF)
+    dM = jax.vmap(
+        lambda direction: (mass_matrix_jax(q + eps * direction, p) - M0) / eps
+    )(basis)
+    dM = jnp.transpose(dM, (1, 2, 0))
 
-    for k in range(N_DOF):
-        q_plus = q.at[k].add(eps)
-        M_plus = mass_matrix_jax(q_plus, p)
-        dM = dM.at[:, :, k].set((M_plus - M0) / eps)
-
-    # Compute Christoffel symbols and contract with qdot twice
-    C_qdot = jnp.zeros(N_DOF)
-
-    for i in range(N_DOF):
-        for j in range(N_DOF):
-            christoffel = 0.0
-            for k in range(N_DOF):
-                christoffel += 0.5 * (dM[i, j, k] + dM[i, k, j] - dM[j, k, i]) * qdot[k]
-            C_qdot = C_qdot.at[i].add(christoffel * qdot[j])
-
-    return C_qdot
+    christoffel = 0.5 * (
+        dM + jnp.transpose(dM, (0, 2, 1)) - jnp.transpose(dM, (1, 2, 0))
+    )
+    return jnp.einsum("ijk,j,k->i", christoffel, qdot, qdot)
 
 
 # ---------------------------------------------------------------------------

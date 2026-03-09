@@ -111,72 +111,117 @@ impl std::fmt::Display for Vector3 {
     }
 }
 
+// ── Operator Overloading (idiomatic Rust arithmetic) ─────────────────────────
+
+impl std::ops::Add for Vector3 {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
+    }
+}
+
+impl std::ops::Sub for Vector3 {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
+    }
+}
+
+impl std::ops::Neg for Vector3 {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Self::new(-self.x, -self.y, -self.z)
+    }
+}
+
+/// Scalar multiplication: `vector * scalar`.
+impl std::ops::Mul<f64> for Vector3 {
+    type Output = Self;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        self.scale(rhs)
+    }
+}
+
+/// Scalar multiplication: `scalar * vector`.
+impl std::ops::Mul<Vector3> for f64 {
+    type Output = Vector3;
+
+    fn mul(self, rhs: Vector3) -> Self::Output {
+        rhs.scale(self)
+    }
+}
+
 // ── Python methods (feature-gated) ───────────────────────────────────────────
 
 #[cfg(feature = "python")]
 #[pyo3::prelude::pymethods]
 impl Vector3 {
-    /// Python constructor: ``Vector3(x, y, z)``
+    /// Create a 3D vector with components (x, y, z).
     #[new]
+    #[pyo3(text_signature = "(x, y, z)")]
     fn py_new(x: f64, y: f64, z: f64) -> Self {
         Self::new(x, y, z)
     }
 
-    /// X component accessor.
+    /// X component of the vector.
     #[getter]
     fn x(&self) -> f64 {
         self.x
     }
 
-    /// Y component accessor.
+    /// Y component of the vector.
     #[getter]
     fn y(&self) -> f64 {
         self.y
     }
 
-    /// Z component accessor.
+    /// Z component of the vector.
     #[getter]
     fn z(&self) -> f64 {
         self.z
     }
 
-    /// Python repr: ``Vector3(1.0, 2.0, 3.0)``
     fn __repr__(&self) -> String {
         format!("Vector3({}, {}, {})", self.x, self.y, self.z)
     }
 
-    /// Python str: ``(1.000000, 2.000000, 3.000000)``
     fn __str__(&self) -> String {
         format!("{self}")
     }
 
-    /// Expose magnitude to Python.
-    #[pyo3(name = "magnitude")]
+    /// Return the Euclidean magnitude (length) of the vector.
+    #[pyo3(name = "magnitude", text_signature = "($self)")]
     fn py_magnitude(&self) -> f64 {
         self.magnitude()
     }
 
-    /// Expose dot product to Python.
-    #[pyo3(name = "dot")]
+    /// Compute the dot product with another Vector3.
+    #[pyo3(name = "dot", text_signature = "($self, other)")]
     fn py_dot(&self, other: &Self) -> f64 {
         self.dot(other)
     }
 
-    /// Expose cross product to Python.
-    #[pyo3(name = "cross")]
+    /// Compute the cross product with another Vector3.
+    #[pyo3(name = "cross", text_signature = "($self, other)")]
     fn py_cross(&self, other: &Self) -> Self {
         self.cross(other)
     }
 
-    /// Expose normalization to Python (raises ValueError on zero vector).
-    #[pyo3(name = "normalized")]
+    /// Return a unit vector in the same direction.
+    ///
+    /// Raises ValueError if the vector has zero magnitude.
+    #[pyo3(name = "normalized", text_signature = "($self)")]
     fn py_normalized(&self) -> pyo3::PyResult<Self> {
         self.normalized()
             .map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
     }
 
-    /// Expose scale to Python.
-    #[pyo3(name = "scale")]
+    /// Return a new vector scaled by the given factor.
+    #[pyo3(name = "scale", text_signature = "($self, s)")]
     fn py_scale(&self, s: f64) -> Self {
         self.scale(s)
     }
@@ -323,6 +368,44 @@ mod tests {
     fn test_scale() {
         let v = Vector3::new(1.0, 2.0, 3.0);
         let s = v.scale(2.0);
+        assert_eq!(s, Vector3::new(2.0, 4.0, 6.0));
+    }
+    // ── Operator Overloading ──
+
+    #[test]
+    fn test_add_operator() {
+        let a = Vector3::new(1.0, 2.0, 3.0);
+        let b = Vector3::new(4.0, 5.0, 6.0);
+        let c = a + b;
+        assert_eq!(c, Vector3::new(5.0, 7.0, 9.0));
+    }
+
+    #[test]
+    fn test_sub_operator() {
+        let a = Vector3::new(4.0, 5.0, 6.0);
+        let b = Vector3::new(1.0, 2.0, 3.0);
+        let c = a - b;
+        assert_eq!(c, Vector3::new(3.0, 3.0, 3.0));
+    }
+
+    #[test]
+    fn test_neg_operator() {
+        let a = Vector3::new(1.0, -2.0, 3.0);
+        let b = -a;
+        assert_eq!(b, Vector3::new(-1.0, 2.0, -3.0));
+    }
+
+    #[test]
+    fn test_mul_scalar_right() {
+        let v = Vector3::new(1.0, 2.0, 3.0);
+        let s = v * 2.0;
+        assert_eq!(s, Vector3::new(2.0, 4.0, 6.0));
+    }
+
+    #[test]
+    fn test_mul_scalar_left() {
+        let v = Vector3::new(1.0, 2.0, 3.0);
+        let s = 2.0 * v;
         assert_eq!(s, Vector3::new(2.0, 4.0, 6.0));
     }
 

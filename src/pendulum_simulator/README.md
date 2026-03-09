@@ -157,6 +157,33 @@ maturin develop -r --features python           # Python FFI via PyO3
 wasm-pack build --target web --features wasm   # WASM for React/Tauri
 ```
 
+### Optional Native Backends
+
+The desktop Python app can optionally delegate model kernels to the compiled
+Rust extension. Each model remains opt-in so the pure-Python implementation
+stays the default contract path.
+
+```bash
+cd pendulum-core
+maturin develop -r --features python
+
+export PENDULUM_DOUBLE_BACKEND=rust
+export PENDULUM_TRIPLE_BACKEND=rust
+export PENDULUM_GOLFER_BACKEND=rust
+python -m double_pendulum_golf
+```
+
+Notes:
+- Double and triple pendulum execution now have parity-validated Rust kernels
+  for mass matrix, gravity, Coriolis, and forward kinematics behind their
+  respective opt-in backend flags.
+- The golfer model remains the dominant performance hotspot from the deep
+  review, so it additionally exposes native constrained dynamics and
+  projection helpers.
+- Constraint projection also attempts the native path first, but falls back to
+  the Python implementation if the projected state does not satisfy the Python
+  constraint residual checks.
+
 ### Torque Polynomials
 
 All tabs accept polynomial torque coefficients: `c0, c1, c2, ...`

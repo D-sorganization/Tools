@@ -34,36 +34,10 @@ from .physics import (
     potential_energy,
     total_energy,
 )
+from .simulation_result_base import TrajectoryResultMixin
 
-# ---------------------------------------------------------------------------
-# Polynomial torque builder
-# ---------------------------------------------------------------------------
-
-
-def make_polynomial_torque(
-    coeffs_shoulder: list[float],
-    coeffs_wrist: list[float],
-) -> TorqueFunc:
-    """Create a torque function from polynomial coefficients.
-
-    tau(t) = c0 + c1*t + c2*t^2 + ...
-
-    Pre: each list has >= 1 element.
-    Post: returned function produces finite values for finite t.
-    """
-    assert len(coeffs_shoulder) >= 1, "Need at least one coefficient for shoulder"
-    assert len(coeffs_wrist) >= 1, "Need at least one coefficient for wrist"
-
-    p_shoulder = np.array(coeffs_shoulder[::-1])
-    p_wrist = np.array(coeffs_wrist[::-1])
-
-    def torque_func(t: float) -> tuple[float, float]:
-        tau1 = float(np.polyval(p_shoulder, t))
-        tau2 = float(np.polyval(p_wrist, t))
-        return tau1, tau2
-
-    return torque_func
-
+# Re-export from shared utility for backwards compatibility (DRY — #1041)
+from .torque_utils import make_polynomial_torque  # noqa: F401
 
 # ---------------------------------------------------------------------------
 # Simulation result container
@@ -71,7 +45,7 @@ def make_polynomial_torque(
 
 
 @dataclass
-class SimulationResult:
+class SimulationResult(TrajectoryResultMixin):
     """Stores the complete trajectory and derived quantities."""
 
     t: np.ndarray
@@ -85,9 +59,8 @@ class SimulationResult:
     _mass_matrices: np.ndarray | None = field(default=None, repr=False)
     _positions: list | None = field(default=None, repr=False)
 
-    @property
-    def n_steps(self) -> int:
-        return len(self.t)
+    def __post_init__(self) -> None:
+        self._validate_trajectory(expected_state_width=4)
 
     @property
     def theta1(self) -> np.ndarray:
@@ -106,20 +79,20 @@ class SimulationResult:
         return self.states[:, 3]
 
     def mass_matrix_at(self, idx: int) -> dict:
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         return mass_matrix_components(self.states[idx, 1], self.params)
 
     def positions_at(self, idx: int) -> dict:
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         return forward_kinematics(self.states[idx, 0], self.states[idx, 1], self.params)
 
     def torques_at(self, idx: int) -> tuple[float, float]:
         """Get applied torques at time index idx."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         return self.torque_func(self.t[idx])
 
     def accelerations_at(self, idx: int) -> np.ndarray:
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         state_dot = equations_of_motion(
             self.states[idx],
             self.t[idx],
@@ -131,28 +104,29 @@ class SimulationResult:
         return state_dot[2:]
 
     def joint_forces_at(self, idx: int) -> dict:
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         qddot = self.accelerations_at(idx)
         return net_joint_forces(self.states[idx], qddot, self.params)
 
     def joint_velocities_at(self, idx: int) -> dict:
         """Get linear joint velocities at time index idx."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         return joint_velocities(self.states[idx], self.params)
 
     def base_force_at(self, idx: int) -> dict:
         """Get base reaction force at time index idx."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         qddot = self.accelerations_at(idx)
         return base_force(self.states[idx], qddot, self.params)
 
     def control_vector_at(self, idx: int) -> dict:
         """Get control vector at time index idx."""
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         qddot = self.accelerations_at(idx)
         return control_vector(self.states[idx], qddot, self.params, self.limits)
 
     def energy_at(self, idx: int) -> dict:
+        self._check_idx(idx)
         state = self.states[idx]
         return {
             "kinetic": kinetic_energy(state, self.params),
@@ -161,22 +135,22 @@ class SimulationResult:
         }
 
     def coriolis_at(self, idx: int) -> np.ndarray:
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         s = self.states[idx]
         return coriolis_vector(s[1], s[2], s[3], self.params)
 
     def gravity_at(self, idx: int) -> np.ndarray:
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         s = self.states[idx]
         return gravity_vector(s[0], s[1], self.params)
 
     def friction_torques_at(self, idx: int) -> np.ndarray:
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         s = self.states[idx]
         return friction_torque_vector(s[2], s[3], self.params)
 
     def total_torques_at(self, idx: int) -> np.ndarray:
-        assert 0 <= idx < self.n_steps
+        self._check_idx(idx)
         tau_drive = np.array(self.torque_func(self.t[idx]))
         if self.clamp is not None:
             tau_drive = clamp_torque(tau_drive, self.clamp)

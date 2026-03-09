@@ -17,6 +17,8 @@ pub struct DoublePendulumParams {
     pub m1: f64,
     /// Mass of club segment (kg)
     pub m2: f64,
+    /// Point-mass clubhead contribution at the tip (kg)
+    pub m_clubhead: f64,
     /// Length of arm segment (m)
     pub l1: f64,
     /// Length of club segment (m)
@@ -37,6 +39,9 @@ impl DoublePendulumParams {
         }
         if self.m2 <= 0.0 {
             return Err("m2 must be positive".to_string());
+        }
+        if self.m_clubhead < 0.0 {
+            return Err("m_clubhead must be non-negative".to_string());
         }
         if self.l1 <= 0.0 {
             return Err("l1 must be positive".to_string());

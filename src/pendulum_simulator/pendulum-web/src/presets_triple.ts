@@ -8,7 +8,7 @@
  *   Clubhead: mClub = 0.20 kg
  */
 
-import type { TripleParams, TorqueFuncTriple, StateTriple } from './physics_triple';
+import type { TripleParams, TorqueFuncTriple } from './physics_triple';
 import { makeTripleParams, makePolynomialTorque3 } from './physics_triple';
 
 export interface PresetTriple {

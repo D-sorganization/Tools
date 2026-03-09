@@ -107,14 +107,26 @@ impl Quaternion {
     }
 
     /// Hamilton product (quaternion multiplication).
+    ///
+    /// # Contracts (DbC)
+    /// - Postcondition: result has approximately unit magnitude.
     #[must_use]
     pub fn multiply(&self, other: &Self) -> Self {
-        Self {
+        let result = Self {
             w: self.w * other.w - self.x * other.x - self.y * other.y - self.z * other.z,
             x: self.w * other.x + self.x * other.w + self.y * other.z - self.z * other.y,
             y: self.w * other.y - self.x * other.z + self.y * other.w + self.z * other.x,
             z: self.w * other.z + self.x * other.y - self.y * other.x + self.z * other.w,
-        }
+        };
+        // Postcondition: unit × unit = unit (skip for embedded vectors in rotate_vector)
+        debug_assert!(
+            (self.magnitude_squared() - 1.0).abs() > 0.1
+                || (other.magnitude_squared() - 1.0).abs() > 0.1
+                || (result.magnitude_squared() - 1.0).abs() < 1e-6,
+            "DbC postcondition: unit quaternion product must be unit, got mag²={}",
+            result.magnitude_squared()
+        );
+        result
     }
 
     /// Rotate a vector by this quaternion: v' = q * v * q⁻¹
@@ -133,12 +145,16 @@ impl Quaternion {
     /// Spherical linear interpolation between two quaternions.
     ///
     /// # Contracts (DbC)
-    /// - Precondition: `t` in [0, 1].
+    /// - Precondition: `t` in [0, 1] (clamped in release mode for safety).
+    /// - Postcondition: result is a unit quaternion.
+    #[must_use]
     pub fn slerp(&self, other: &Self, t: f64) -> Self {
         debug_assert!(
             (0.0..=1.0).contains(&t),
             "slerp: t must be in [0.0, 1.0], got {t}"
         );
+        // Clamp in release mode to prevent extrapolation
+        let t = t.clamp(0.0, 1.0);
 
         let mut dot = self.w * other.w + self.x * other.x + self.y * other.y + self.z * other.z;
 
@@ -198,23 +214,29 @@ impl std::fmt::Display for Quaternion {
 #[cfg(feature = "python")]
 #[pyo3::prelude::pymethods]
 impl Quaternion {
+    /// Create a new unit quaternion (automatically normalized).
     #[new]
+    #[pyo3(text_signature = "(w, x, y, z)")]
     fn py_new(w: f64, x: f64, y: f64, z: f64) -> pyo3::PyResult<Self> {
         Self::new(w, x, y, z).map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
     }
 
+    /// Scalar component.
     #[getter]
     fn w(&self) -> f64 {
         self.w
     }
+    /// X imaginary component.
     #[getter]
     fn x(&self) -> f64 {
         self.x
     }
+    /// Y imaginary component.
     #[getter]
     fn y(&self) -> f64 {
         self.y
     }
+    /// Z imaginary component.
     #[getter]
     fn z(&self) -> f64 {
         self.z
@@ -224,23 +246,27 @@ impl Quaternion {
         format!("Quaternion({}, {}, {}, {})", self.w, self.x, self.y, self.z)
     }
 
-    #[pyo3(name = "conjugate")]
+    /// Return the conjugate (inverse for unit quaternions).
+    #[pyo3(name = "conjugate", text_signature = "($self)")]
     fn py_conjugate(&self) -> Self {
         self.conjugate()
     }
 
-    #[pyo3(name = "multiply")]
+    /// Hamilton product (quaternion multiplication).
+    #[pyo3(name = "multiply", text_signature = "($self, other)")]
     fn py_multiply(&self, other: &Self) -> Self {
         self.multiply(other)
     }
 
-    #[pyo3(name = "rotate_vector")]
+    /// Rotate a 3D vector by this quaternion: v' = q * v * q⁻¹.
+    #[pyo3(name = "rotate_vector", text_signature = "($self, v)")]
     fn py_rotate_vector(&self, v: &Vector3) -> Vector3 {
         self.rotate_vector(v)
     }
 
+    /// Create a quaternion from axis-angle representation.
     #[staticmethod]
-    #[pyo3(name = "from_axis_angle")]
+    #[pyo3(name = "from_axis_angle", text_signature = "(axis, angle_rad)")]
     fn py_from_axis_angle(axis: &Vector3, angle_rad: f64) -> pyo3::PyResult<Self> {
         Self::from_axis_angle(axis, angle_rad)
             .map_err(|e| pyo3::exceptions::PyValueError::new_err(e))

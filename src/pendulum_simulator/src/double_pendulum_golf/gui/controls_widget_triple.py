@@ -23,10 +23,13 @@ from PyQt6.QtWidgets import (
 )
 
 from .controls_utils import (
+    STYLE_CHECK,
     STYLE_GROUP,
     parse_coeffs,
     parse_coeffs_lenient,
     parse_float,
+    require_non_negative,
+    require_positive,
 )
 from .controls_widget import LabeledInput
 from .torque_preview_widget import TorquePreviewWidget
@@ -314,20 +317,14 @@ class ControlsWidgetTriple(QWidget):
         vl = QVBoxLayout(vis_group)
         vl.setSpacing(4)
 
-        _STYLE_CHECK = (
-            "QCheckBox { color: #c0c0d8; font-size: 11px; spacing: 5px; }"
-            "QCheckBox::indicator { width: 14px; height: 14px; border: 1px solid #505068;"
-            "border-radius: 3px; background: #2a2a38; }"
-            "QCheckBox::indicator:checked { background: #5060a0; border-color: #7080c0; }"
-        )
         self.chk_gravity = QCheckBox("🌍  Gravity enabled")
         self.chk_gravity.setChecked(True)
-        self.chk_gravity.setStyleSheet(_STYLE_CHECK)
+        self.chk_gravity.setStyleSheet(STYLE_CHECK)
         self.chk_gravity.toggled.connect(self.gravity_changed.emit)
 
         self.chk_forces = QCheckBox("↗  Show force vectors")
         self.chk_forces.setChecked(False)
-        self.chk_forces.setStyleSheet(_STYLE_CHECK)
+        self.chk_forces.setStyleSheet(STYLE_CHECK)
         self.chk_forces.toggled.connect(self.forces_changed.emit)
 
         vl.addWidget(self.chk_gravity)
@@ -386,8 +383,7 @@ class ControlsWidgetTriple(QWidget):
 
         Raises
         ------
-        ValueError  if any field cannot be parsed.
-        AssertionError  if any mass or length is non-positive.
+        ValueError if any field cannot be parsed or violates input contracts.
         """
         m1 = parse_float(self.inp_m1, "m1")
         m2 = parse_float(self.inp_m2, "m2")
@@ -395,8 +391,18 @@ class ControlsWidgetTriple(QWidget):
         L1 = parse_float(self.inp_L1, "L1")
         L2 = parse_float(self.inp_L2, "L2")
         L3 = parse_float(self.inp_L3, "L3")
-        assert m1 > 0 and m2 > 0 and m3 > 0, "All masses must be positive"
-        assert L1 > 0 and L2 > 0 and L3 > 0, "All lengths must be positive"
+        b1 = require_non_negative(parse_float(self.inp_b1, "b1"), "b1")
+        b2 = require_non_negative(parse_float(self.inp_b2, "b2"), "b2")
+        b3 = require_non_negative(parse_float(self.inp_b3, "b3"), "b3")
+        mu1 = require_non_negative(parse_float(self.inp_mu1, "μ1"), "μ1")
+        mu2 = require_non_negative(parse_float(self.inp_mu2, "μ2"), "μ2")
+        mu3 = require_non_negative(parse_float(self.inp_mu3, "μ3"), "μ3")
+        require_positive(m1, "m1")
+        require_positive(m2, "m2")
+        require_positive(m3, "m3")
+        require_positive(L1, "L1")
+        require_positive(L2, "L2")
+        require_positive(L3, "L3")
 
         return {
             "m1": m1,
@@ -416,12 +422,12 @@ class ControlsWidgetTriple(QWidget):
             "wrist_coeffs": parse_coeffs(self.inp_tau_wrist, "Wrist torque"),
             "t_end": parse_float(self.inp_tend, "Duration"),
             "gravity_on": self.chk_gravity.isChecked(),
-            "b1": parse_float(self.inp_b1, "b1"),
-            "b2": parse_float(self.inp_b2, "b2"),
-            "b3": parse_float(self.inp_b3, "b3"),
-            "mu1": parse_float(self.inp_mu1, "μ1"),
-            "mu2": parse_float(self.inp_mu2, "μ2"),
-            "mu3": parse_float(self.inp_mu3, "μ3"),
+            "b1": b1,
+            "b2": b2,
+            "b3": b3,
+            "mu1": mu1,
+            "mu2": mu2,
+            "mu3": mu3,
         }
 
     def _update_torque_preview(self) -> None:

@@ -100,7 +100,7 @@ def main() -> None:
     print("🚀 AVAILABLE LAUNCHER FILES")
     print("=" * 60)
 
-    launcher_files = ["UnifiedToolsLauncher.py", "launch_tools_main.py"]
+    launcher_files = ["launch.py", "UnifiedToolsLauncher.py"]
     for launcher in launcher_files:
         _check_launcher_file(current_dir / launcher)
 

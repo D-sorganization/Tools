@@ -20,6 +20,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from . import native_backend as _native_backend
+
 # ---------------------------------------------------------------------------
 # Data structures
 # ---------------------------------------------------------------------------
@@ -103,6 +105,9 @@ def mass_matrix(phi1: float, phi2: float, params: TriplePendulumParams) -> np.nd
     """
     assert np.isfinite(phi1), f"phi1 must be finite, got {phi1}"
     assert np.isfinite(phi2), f"phi2 must be finite, got {phi2}"
+    native_mass_matrix = _native_backend.triple_mass_matrix(phi1, phi2, params)
+    if native_mass_matrix is not None:
+        return native_mass_matrix
 
     m1, m2, m3 = params.m1, params.m2, params.m3
     L1, L2, L3 = params.L1, params.L2, params.L3
@@ -225,6 +230,11 @@ def coriolis_vector(
     assert all(
         np.isfinite(v) for v in [phi1, phi2, dtheta1, dphi1, dphi2]
     ), "All inputs must be finite"
+    native_coriolis = _native_backend.triple_coriolis_vector(
+        phi1, phi2, dtheta1, dphi1, dphi2, params
+    )
+    if native_coriolis is not None:
+        return native_coriolis
 
     m2, m3 = params.m2, params.m3
     L1, L2, L3 = params.L1, params.L2, params.L3
@@ -276,6 +286,10 @@ def gravity_vector(
     -------
     G : np.ndarray, shape (3,)
     """
+    native_gravity = _native_backend.triple_gravity_vector(theta1, phi1, phi2, params)
+    if native_gravity is not None:
+        return native_gravity
+
     m1, m2, m3 = params.m1, params.m2, params.m3
     L1, L2, L3 = params.L1, params.L2, params.L3
     g = params.g
@@ -331,7 +345,9 @@ def friction_torque_vector(
     tau_f2 = -params.b2 * dphi1 - params.mu2 * np.sign(dphi1)
     tau_f3 = -params.b3 * dphi2 - params.mu3 * np.sign(dphi2)
 
-    return np.array([tau_f1, tau_f2, tau_f3])
+    result = np.array([tau_f1, tau_f2, tau_f3])
+    assert all(np.isfinite(result)), f"Friction torque has non-finite values: {result}"
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -418,6 +434,12 @@ def forward_kinematics(
     -------
     dict with 'shoulder', 'wrist1', 'wrist2', 'tip' as (x, y) tuples.
     """
+    native_positions = _native_backend.triple_forward_kinematics(
+        theta1, phi1, phi2, params
+    )
+    if native_positions is not None:
+        return native_positions
+
     L1, L2, L3 = params.L1, params.L2, params.L3
 
     abs_angle2 = theta1 + phi1
