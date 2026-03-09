@@ -579,16 +579,16 @@ class URDFWriter:
             candidate = normalized
 
         if any(part == ".." for part in PurePosixPath(candidate).parts):
-            raise ValueError(
-                f"Mesh filename '{mesh_filename}' contains path traversal"
-            )
+            raise ValueError(f"Mesh filename '{mesh_filename}' contains path traversal")
 
         return mesh_filename
 
     @staticmethod
     def _has_windows_drive_prefix(path: str) -> bool:
         """Return True when the path starts with a Windows drive prefix."""
-        return len(path) >= 3 and path[0].isalpha() and path[1] == ":" and path[2] == "/"
+        return (
+            len(path) >= 3 and path[0].isalpha() and path[1] == ":" and path[2] == "/"
+        )
 
     def _escape(self, text: str) -> str:
         """Escape special XML characters."""
