@@ -183,6 +183,82 @@ class TestConstraintForces:
         assert np.all(np.isfinite(lam))
 
 
+class TestNativeConstraintBackend:
+    """The solver should use the native backend when it satisfies contracts."""
+
+    def test_constrained_dynamics_prefers_native_backend(
+        self,
+        golfer_params: GolferParams,
+        zero_torque: Callable[
+            [float], tuple[float, float, float, float, float, float, float]
+        ],
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        native_qddot = np.full(N_DOF, 3.0)
+        native_lambda = np.full(N_CONSTRAINTS, -2.0)
+        monkeypatch.setattr(
+            constraint_solver_module._native_backend,
+            "golfer_constrained_dynamics",
+            lambda q, qdot, tau, params, alpha, beta: (
+                native_qddot.copy(),
+                native_lambda.copy(),
+            ),
+        )
+
+        state = np.zeros(2 * N_DOF)
+        qddot = constrained_accelerations(state, 0.0, golfer_params, zero_torque)
+        lam = constraint_forces(state, 0.0, golfer_params, zero_torque)
+
+        assert np.array_equal(qddot, native_qddot)
+        assert np.array_equal(lam, native_lambda)
+
+    def test_project_to_constraints_falls_back_when_native_residual_is_large(
+        self,
+        golfer_params: GolferParams,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        monkeypatch.setattr(
+            constraint_solver_module._native_backend,
+            "golfer_project_to_constraints",
+            lambda q, params, max_iter, tol: np.full(N_DOF, 0.5),
+        )
+
+        def fake_constraint_vector(q: np.ndarray, _params: GolferParams) -> np.ndarray:
+            if np.allclose(q, 0.5):
+                return np.ones(N_CONSTRAINTS)
+            return np.zeros(N_CONSTRAINTS)
+
+        monkeypatch.setattr(
+            constraint_solver_module, "constraint_vector", fake_constraint_vector
+        )
+        monkeypatch.setattr(
+            constraint_solver_module,
+            "constraint_jacobian",
+            lambda q, params: np.eye(N_CONSTRAINTS, N_DOF),
+        )
+
+        projected = project_to_constraints(np.zeros(N_DOF), golfer_params)
+        assert np.array_equal(projected, np.zeros(N_DOF))
+
+    def test_project_velocity_prefers_native_when_python_constraint_is_satisfied(
+        self,
+        golfer_params: GolferParams,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        native_qdot = np.zeros(N_DOF)
+        monkeypatch.setattr(
+            constraint_solver_module._native_backend,
+            "golfer_project_velocity",
+            lambda q, qdot, params: native_qdot.copy(),
+        )
+
+        q = np.zeros(N_DOF)
+        qdot = np.ones(N_DOF)
+        projected = project_velocity(q, qdot, golfer_params)
+
+        assert np.array_equal(projected, native_qdot)
+
+
 class TestEquationsOfMotion:
     """Full EOM must return proper state derivative."""
 

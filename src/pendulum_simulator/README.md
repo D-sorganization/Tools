@@ -160,7 +160,8 @@ wasm-pack build --target web --features wasm   # WASM for React/Tauri
 ### Optional Native Golfer Backend
 
 The desktop Python app can optionally delegate the golfer model's hottest
-physics kernels to the compiled Rust extension.
+physics kernels to the compiled Rust extension, including the constrained
+dynamics solve when the Python-side damping terms are zero.
 
 ```bash
 cd pendulum-core
@@ -175,6 +176,9 @@ Notes:
   performance hotspot from the deep review.
 - Double and triple pendulum execution remain on the Python path until their
   Rust kernels are parity-validated against the desktop models.
+- Constraint projection also attempts the native path first, but falls back to
+  the Python implementation if the projected state does not satisfy the Python
+  constraint residual checks.
 
 ### Torque Polynomials
 

@@ -58,6 +58,27 @@ def _truncate_q(q: np.ndarray) -> np.ndarray:
     return q_arr
 
 
+def _vector8(values: np.ndarray, name: str) -> np.ndarray:
+    """Normalize a vector argument to a finite length-8 array."""
+    arr = np.asarray(values, dtype=float)
+    assert arr.shape == (8,), f"{name} must have shape (8,), got {arr.shape}"
+    assert np.all(np.isfinite(arr)), f"{name} must be finite"
+    return arr
+
+
+def golfer_native_constraint_dynamics_supported(params: GolferParams) -> bool:
+    """Whether native constrained dynamics matches the Python model assumptions."""
+    return (
+        params.b_hub == 0.0
+        and params.b_rs == 0.0
+        and params.b_re == 0.0
+        and params.b_rh == 0.0
+        and params.b_ls == 0.0
+        and params.b_le == 0.0
+        and params.b_lh == 0.0
+    )
+
+
 def golfer_backend_mode() -> str:
     """Return the configured golfer backend mode."""
     mode = os.getenv(_GOLFER_BACKEND_ENV, "python").strip().lower()
@@ -81,6 +102,7 @@ def get_native_backend_info() -> dict[str, object]:
         "native_available": golfer_native_available(),
         "native_import_error": _NATIVE_IMPORT_ERROR,
         "supported_models": {"golfer": True, "double": False, "triple": False},
+        "supports_constraint_dynamics": True,
     }
 
 
@@ -182,3 +204,85 @@ def golfer_forward_kinematics(
         "grip_right": tuple(result["r_wrist"]),
         "grip_left": grip_left,
     }
+
+
+def golfer_constrained_dynamics(
+    q: np.ndarray,
+    qdot: np.ndarray,
+    tau: np.ndarray,
+    params: GolferParams,
+    alpha: float,
+    beta: float,
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Return native golfer accelerations and multipliers when supported."""
+    if not golfer_native_enabled() or not golfer_native_constraint_dynamics_supported(
+        params
+    ):
+        return None
+
+    try:
+        q_arr = _truncate_q(q)
+        qdot_arr = _vector8(qdot, "qdot")
+        tau_arr = _vector8(tau, "tau")
+        qddot, lambda_forces = _pendulum_core.py_golfer_constrained_dynamics(
+            q_arr.tolist(),
+            qdot_arr.tolist(),
+            tau_arr.tolist(),
+            _to_rust_golfer_params(params),
+            alpha,
+            beta,
+        )
+        return (
+            np.array(qddot, dtype=float),
+            np.array(lambda_forces, dtype=float),
+        )
+    except Exception as exc:  # pragma: no cover - exercised when extension exists
+        _warn_once("golfer_constrained_dynamics", exc)
+        return None
+
+
+def golfer_project_to_constraints(
+    q: np.ndarray,
+    params: GolferParams,
+    max_iters: int,
+    tol: float,
+) -> np.ndarray | None:
+    """Return native golfer position projection, or ``None`` if unavailable."""
+    if not golfer_native_enabled():
+        return None
+
+    try:
+        q_arr = _truncate_q(q)
+        result = _pendulum_core.py_golfer_project_to_constraints(
+            q_arr.tolist(),
+            _to_rust_golfer_params(params),
+            max_iters,
+            tol,
+        )
+        return np.array(result, dtype=float)
+    except Exception as exc:  # pragma: no cover - exercised when extension exists
+        _warn_once("golfer_project_to_constraints", exc)
+        return None
+
+
+def golfer_project_velocity(
+    q: np.ndarray,
+    qdot: np.ndarray,
+    params: GolferParams,
+) -> np.ndarray | None:
+    """Return native golfer velocity projection, or ``None`` if unavailable."""
+    if not golfer_native_enabled():
+        return None
+
+    try:
+        q_arr = _truncate_q(q)
+        qdot_arr = _vector8(qdot, "qdot")
+        result = _pendulum_core.py_golfer_project_velocity(
+            q_arr.tolist(),
+            qdot_arr.tolist(),
+            _to_rust_golfer_params(params),
+        )
+        return np.array(result, dtype=float)
+    except Exception as exc:  # pragma: no cover - exercised when extension exists
+        _warn_once("golfer_project_velocity", exc)
+        return None

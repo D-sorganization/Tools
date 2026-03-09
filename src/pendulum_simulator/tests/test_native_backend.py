@@ -51,6 +51,7 @@ def test_native_backend_info_defaults_to_python(
         "double": False,
         "triple": False,
     }
+    assert info["supports_constraint_dynamics"] is True
 
 
 def test_mass_matrix_prefers_native_backend(
@@ -140,3 +141,103 @@ def test_native_forward_kinematics_maps_rust_keys(
     assert mapped["rs"] == (0.2, -0.2)
     assert mapped["grip_right"] == (0.4, -0.4)
     assert mapped["club_tip"] == (0.5, -1.0)
+
+
+def test_native_constrained_dynamics_respects_damping_guard(
+    monkeypatch: pytest.MonkeyPatch, golfer_params: GolferParams
+) -> None:
+    monkeypatch.setenv("PENDULUM_GOLFER_BACKEND", "rust")
+    monkeypatch.setattr(native_backend, "_pendulum_core", object())
+    damped_params = GolferParams(**{**golfer_params.__dict__, "b_rs": 0.25})
+
+    result = native_backend.golfer_constrained_dynamics(
+        np.zeros(8),
+        np.zeros(8),
+        np.zeros(8),
+        damped_params,
+        alpha=5.0,
+        beta=5.0,
+    )
+
+    assert result is None
+
+
+def test_native_constrained_dynamics_maps_rust_outputs(
+    monkeypatch: pytest.MonkeyPatch, golfer_params: GolferParams
+) -> None:
+    class StubCore:
+        @staticmethod
+        def PyGolferParams(*args: float) -> tuple[float, ...]:
+            return args
+
+        @staticmethod
+        def py_golfer_constrained_dynamics(
+            q: list[float],
+            qdot: list[float],
+            tau: list[float],
+            params: tuple[float, ...],
+            alpha: float,
+            beta: float,
+        ) -> tuple[list[float], list[float]]:
+            del q, qdot, tau, params, alpha, beta
+            return ([1.0] * 8, [2.0] * 4)
+
+    monkeypatch.setenv("PENDULUM_GOLFER_BACKEND", "rust")
+    monkeypatch.setattr(native_backend, "_pendulum_core", StubCore)
+
+    result = native_backend.golfer_constrained_dynamics(
+        np.zeros(8),
+        np.zeros(8),
+        np.zeros(8),
+        golfer_params,
+        alpha=5.0,
+        beta=5.0,
+    )
+
+    assert result is not None
+    qddot, lambda_forces = result
+    assert np.array_equal(qddot, np.ones(8))
+    assert np.array_equal(lambda_forces, np.full(4, 2.0))
+
+
+def test_native_projection_wrappers_map_rust_outputs(
+    monkeypatch: pytest.MonkeyPatch, golfer_params: GolferParams
+) -> None:
+    class StubCore:
+        @staticmethod
+        def PyGolferParams(*args: float) -> tuple[float, ...]:
+            return args
+
+        @staticmethod
+        def py_golfer_project_to_constraints(
+            q: list[float],
+            params: tuple[float, ...],
+            max_iters: int,
+            tol: float,
+        ) -> list[float]:
+            del q, params, max_iters, tol
+            return [0.25] * 8
+
+        @staticmethod
+        def py_golfer_project_velocity(
+            q: list[float],
+            qdot: list[float],
+            params: tuple[float, ...],
+        ) -> list[float]:
+            del q, qdot, params
+            return [0.5] * 8
+
+    monkeypatch.setenv("PENDULUM_GOLFER_BACKEND", "rust")
+    monkeypatch.setattr(native_backend, "_pendulum_core", StubCore)
+
+    q_proj = native_backend.golfer_project_to_constraints(
+        np.zeros(8), golfer_params, max_iters=5, tol=1e-6
+    )
+    qdot_proj = native_backend.golfer_project_velocity(
+        np.zeros(8), np.zeros(8), golfer_params
+    )
+
+    assert q_proj is not None
+    assert qdot_proj is not None
+    assert np.array_equal(q_proj, np.full(8, 0.25))
+    assert np.array_equal(qdot_proj, np.full(8, 0.5))

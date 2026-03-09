@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import numpy as np
 
+from . import native_backend as _native_backend
 from .physics_golfer import (
     N_CONSTRAINTS,
     N_DOF,
@@ -80,15 +81,27 @@ def _solve_constrained_dynamics(
     q = state[:N_DOF]
     qdot = state[N_DOF:]
 
+    # Applied torques (7 joint torques, club DOF has no independent torque)
+    tau_tuple = torque_func(t)
+    tau = np.zeros(N_DOF)
+    tau[:7] = tau_tuple
+
+    native_result = _native_backend.golfer_constrained_dynamics(
+        q, qdot, tau, params, alpha, beta
+    )
+    if native_result is not None:
+        qddot, lambda_forces = native_result
+        assert np.all(np.isfinite(qddot)), f"qddot has non-finite values: {qddot}"
+        assert np.all(
+            np.isfinite(lambda_forces)
+        ), f"Constraint forces have non-finite values: {lambda_forces}"
+        return qddot, lambda_forces
+
     # Compute dynamic terms
     M = mass_matrix(q, params)
     C = coriolis_matrix(q, qdot, params)
     G = gravity_vector(q, params)
 
-    # Applied torques (7 joint torques, club DOF has no independent torque)
-    tau_tuple = torque_func(t)
-    tau = np.zeros(N_DOF)
-    tau[:7] = tau_tuple
     tau_f = friction_torque_vector(qdot, params)
 
     # Right-hand side of unconstrained EOM
@@ -275,6 +288,14 @@ def project_to_constraints(
     assert max_iter > 0, f"max_iter must be positive, got {max_iter}"
     assert tol > 0, f"tol must be positive, got {tol}"
 
+    native_projection = _native_backend.golfer_project_to_constraints(
+        q, params, max_iter, tol
+    )
+    if native_projection is not None:
+        residual = float(np.linalg.norm(constraint_vector(native_projection, params)))
+        if residual < tol:
+            return native_projection
+
     q = q.copy()
     for _ in range(max_iter):
         Phi = constraint_vector(q, params)
@@ -307,6 +328,12 @@ def project_velocity(
     -------
     qdot_projected : np.ndarray, shape (8,)
     """
+    native_projection = _native_backend.golfer_project_velocity(q, qdot, params)
+    if native_projection is not None:
+        native_violation = constraint_jacobian(q, params) @ native_projection
+        if np.linalg.norm(native_violation) < 1e-6:
+            return native_projection
+
     Phi_q = constraint_jacobian(q, params)
     violation = Phi_q @ qdot
     # Pseudoinverse correction

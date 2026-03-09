@@ -59,9 +59,20 @@ pub mod py_bindings {
 
     use crate::types::*;
     use crate::*;
+    use crate::golfer_constraints::{
+        constrained_accelerations as golfer_constrained_accelerations,
+        project_to_constraints as golfer_project_to_constraints,
+        project_velocity as golfer_project_velocity,
+        BaumgarteGains,
+    };
     use pyo3::prelude::*;
-    use pyo3::types::PyList;
     use std::collections::HashMap;
+
+    fn to_array_8(values: Vec<f64>, name: &str) -> PyResult<[f64; 8]> {
+        values.try_into().map_err(|_| {
+            pyo3::exceptions::PyValueError::new_err(format!("{name} must have length 8"))
+        })
+    }
 
     /// Python wrapper for DoublePendulumParams
     #[pyclass]
@@ -304,6 +315,112 @@ pub mod py_bindings {
         Ok(result)
     }
 
+    /// Golfer constrained accelerations and Lagrange multipliers.
+    #[pyfunction]
+    #[pyo3(signature = (q, qdot, tau, params, alpha=5.0, beta=5.0))]
+    pub fn py_golfer_constrained_dynamics(
+        q: Vec<f64>,
+        qdot: Vec<f64>,
+        tau: Vec<f64>,
+        params: &PyGolferParams,
+        alpha: f64,
+        beta: f64,
+    ) -> PyResult<(Vec<f64>, Vec<f64>)> {
+        if !(alpha.is_finite() && alpha >= 0.0) {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "alpha must be finite and non-negative",
+            ));
+        }
+        if !(beta.is_finite() && beta >= 0.0) {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "beta must be finite and non-negative",
+            ));
+        }
+
+        let q_arr = to_array_8(q, "q")?;
+        let qdot_arr = to_array_8(qdot, "qdot")?;
+        let tau_arr = to_array_8(tau, "tau")?;
+        let gains = BaumgarteGains { alpha, beta };
+
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            golfer_constrained_accelerations(
+                &q_arr,
+                &qdot_arr,
+                &tau_arr,
+                &params.inner,
+                &gains,
+            )
+        }));
+
+        match result {
+            Ok((qddot, lambda)) => Ok((qddot.as_slice().to_vec(), lambda.as_slice().to_vec())),
+            Err(_) => Err(pyo3::exceptions::PyRuntimeError::new_err(
+                "native golfer constrained dynamics failed",
+            )),
+        }
+    }
+
+    /// Project generalized coordinates to the golfer constraint manifold.
+    #[pyfunction]
+    #[pyo3(signature = (q, params, max_iters=20, tol=1e-8))]
+    pub fn py_golfer_project_to_constraints(
+        q: Vec<f64>,
+        params: &PyGolferParams,
+        max_iters: usize,
+        tol: f64,
+    ) -> PyResult<Vec<f64>> {
+        if !(tol.is_finite() && tol > 0.0) {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "tol must be finite and positive",
+            ));
+        }
+
+        let q_arr = to_array_8(q, "q")?;
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            golfer_project_to_constraints(&q_arr, &params.inner, max_iters, tol)
+        }));
+
+        let q_proj = match result {
+            Ok(projected) => projected,
+            Err(_) => {
+                return Err(pyo3::exceptions::PyRuntimeError::new_err(
+                    "native golfer constraint projection failed",
+                ))
+            }
+        };
+
+        let residual = constraint_vector(&q_proj, &params.inner).norm();
+        if residual > tol {
+            return Err(pyo3::exceptions::PyRuntimeError::new_err(format!(
+                "native golfer projection did not converge: residual={residual}"
+            )));
+        }
+
+        Ok(q_proj.to_vec())
+    }
+
+    /// Project generalized velocities onto the golfer velocity constraint surface.
+    #[pyfunction]
+    pub fn py_golfer_project_velocity(
+        q: Vec<f64>,
+        qdot: Vec<f64>,
+        params: &PyGolferParams,
+    ) -> PyResult<Vec<f64>> {
+        let q_arr = to_array_8(q, "q")?;
+        let qdot_arr = to_array_8(qdot, "qdot")?;
+
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            golfer_project_velocity(&q_arr, &qdot_arr, &params.inner)
+        }));
+
+        match result {
+            Ok(qdot_proj) => Ok(qdot_proj.to_vec()),
+            Err(_) => Err(pyo3::exceptions::PyRuntimeError::new_err(
+                "native golfer velocity projection failed",
+            )),
+        }
+    }
+
     /// Module initialization
     #[pymodule]
     pub fn pendulum_core(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
@@ -318,6 +435,9 @@ pub mod py_bindings {
         m.add_function(wrap_pyfunction!(py_golfer_forward_kinematics, m)?)?;
         m.add_function(wrap_pyfunction!(py_golfer_constraint_vector, m)?)?;
         m.add_function(wrap_pyfunction!(py_golfer_constraint_jacobian, m)?)?;
+        m.add_function(wrap_pyfunction!(py_golfer_constrained_dynamics, m)?)?;
+        m.add_function(wrap_pyfunction!(py_golfer_project_to_constraints, m)?)?;
+        m.add_function(wrap_pyfunction!(py_golfer_project_velocity, m)?)?;
         Ok(())
     }
 }
