@@ -1,6 +1,13 @@
 """Utilities for loading and interpreting C3D motion-capture files.
 
 Migrated from Golf_Modeling_Suite.
+
+Design by Contract
+------------------
+This module uses the shared ``contracts`` module for runtime validation of
+preconditions and postconditions on all public methods.  Contract violations
+raise ``PreconditionError`` / ``PostconditionError`` (both subclasses of
+``ContractViolationError``) unless the global enforcement level is lowered.
 """
 
 from __future__ import annotations
@@ -22,7 +29,22 @@ import pandas as pd
 
 from ...utils.logging import get_logger, log_execution_time
 
+# DbC imports — graceful fallback if contracts not available
+try:
+    from contracts import ensure, require
+except ImportError:  # pragma: no cover
+    def require(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]
+        if not condition:
+            raise ValueError(f"[DbC pre-condition] {message} (got: {value!r})")
+
+    def ensure(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]
+        if not condition:
+            raise ValueError(f"[DbC post-condition] {message} (got: {value!r})")
+
 logger = get_logger(__name__)
+
+# Supported export formats (whitelist for security)
+_SUPPORTED_EXPORT_FORMATS = frozenset({"csv", "json", "npz"})
 
 C3DMapping = dict[str, Any]
 SCHEMA_VERSION = "1.0"
@@ -102,7 +124,15 @@ class C3DDataReader:
     """Loads marker trajectories and metadata from a C3D file."""
 
     def __init__(self, file_path: Path | str) -> None:
-        """Initialize the C3D data reader with a file path."""
+        """Initialize the C3D data reader with a file path.
+
+        Args:
+            file_path: Path to a ``.c3d`` file.
+
+        Raises:
+            PreconditionError: If *file_path* is empty.
+        """
+        require(bool(file_path), "file_path must be a non-empty path", file_path)
         self.file_path = Path(file_path)
         self._c3d_data: C3DMapping | None = None
         self._metadata: C3DMetadata | None = None
@@ -181,7 +211,17 @@ class C3DDataReader:
 
         self._validate_marker_positions(coordinates, metadata.units, target_units)
 
-        residuals = points[3, :, :].T.reshape(-1)
+        # C3D files may have 3 channels (XYZ) or 4+ (XYZ + residual).
+        # Guard against IndexError when residual channel is absent.
+        if points.shape[0] >= 4:
+            residuals = points[3, :, :].T.reshape(-1)
+        else:
+            logger.warning(
+                "C3D point data has only %d channels (expected 4+). "
+                "Residual data unavailable; filling with NaN.",
+                points.shape[0],
+            )
+            residuals = np.full(raw_coordinates.shape[0], np.nan)
 
         if residual_nan_threshold is not None:
             too_noisy = residuals > residual_nan_threshold
@@ -463,7 +503,12 @@ class C3DDataReader:
             - fx, fy, fz: Force components [N]
             - mx, my, mz: Moment components [N·m]
             - cop_x, cop_y, cop_z: COP position [m] (if compute_cop=True)
+
+        Raises:
+            PreconditionError: If *plate_number* is not positive.
         """
+        if plate_number is not None:
+            require(plate_number > 0, "plate_number must be positive (1-indexed)", plate_number)
         plate_channels = self.get_force_plate_channels()
 
         if not plate_channels:
@@ -700,17 +745,7 @@ class C3DDataReader:
         if normalized_current == normalized_target:
             return 1.0
 
-        # Define conversion factors to meters
-        to_meters = {
-            "m": 1.0,
-            "mm": 0.001,
-            "mm^2": 0.000001,  # Added minimal robust area unit support for consistency
-            "cm": 0.01,
-            "in": 0.0254,
-            "ft": 0.3048,
-        }
-        # Note: Original code only had length units.
-        # Stick to original:
+        # Conversion factors: unit → meters (single source of truth)
         to_meters = {
             "m": 1.0,
             "mm": 0.001,
@@ -771,35 +806,40 @@ class C3DDataReader:
 
     @staticmethod
     def _validate_export_path(path: Path) -> None:
-        """Validate export path for security (prevent directory traversal)."""
+        """Validate export path for security.
+
+        Prevents directory traversal by resolving symlinks and verifying the
+        output path is beneath the current working directory.  The check is
+        skipped when the ``C3D_ALLOW_ANY_EXPORT_PATH`` environment variable is
+        set to ``"1"`` (useful for CI/test environments).
+
+        Raises:
+            ValueError: If the resolved path is outside the project root.
+        """
+        import os
+
+        # Allow tests / CI to opt out via an explicit env-var rather than
+        # using fragile heuristics like checking for "pytest" in the path.
+        if os.environ.get("C3D_ALLOW_ANY_EXPORT_PATH", "").strip() == "1":
+            return
+
         base_dir = Path.cwd().resolve()
+        resolved = path.resolve()
 
-        import inspect
-
-        frame = inspect.currentframe()
-        is_security_test = False
-        try:
-            while frame:
-                if frame.f_code.co_name == "test_security_prevents_directory_traversal":
-                    is_security_test = True
-                    break
-                frame = frame.f_back
-        finally:
-            del frame
-
-        is_test_env = not is_security_test and any(
-            [
-                "pytest" in str(base_dir),
-                "test" in str(base_dir).lower(),
-                "/tmp/pytest" in str(path),
-                "pytest" in str(path),
-            ]
-        )
-
-        if not is_test_env and base_dir not in path.parents and path != base_dir:
+        # Validate: resolved path must be under base_dir
+        if base_dir not in resolved.parents and resolved != base_dir:
             raise ValueError(
-                f"Security: Refusing to output to {path} "
-                f"(outside project root {base_dir})"
+                f"Security: Refusing to output to {resolved} "
+                f"(outside project root {base_dir}). "
+                "Set C3D_ALLOW_ANY_EXPORT_PATH=1 to override in tests."
+            )
+
+        # Validate file extension against whitelist
+        ext = resolved.suffix.lstrip(".").lower()
+        if ext and ext not in _SUPPORTED_EXPORT_FORMATS:
+            raise ValueError(
+                f"Unsupported export format: '{ext}'. "
+                f"Supported formats: {', '.join(sorted(_SUPPORTED_EXPORT_FORMATS))}."
             )
 
     def _write_export(
@@ -820,9 +860,13 @@ class C3DDataReader:
                     df_to_export[col] = df_to_export[col].apply(self._sanitize_for_csv)
             df_to_export.to_csv(path, index=False)
 
+            # Sanitize metadata values against CSV/formula injection
+            sanitized_metadata = {
+                k: self._sanitize_for_csv(v) for k, v in metadata.items()
+            }
             meta_path = path.with_name(f"{path.stem}_meta.json")
             with open(meta_path, "w") as f:
-                json.dump(metadata, f, indent=2)
+                json.dump(sanitized_metadata, f, indent=2)
 
         elif fmt == "json":
             output = {

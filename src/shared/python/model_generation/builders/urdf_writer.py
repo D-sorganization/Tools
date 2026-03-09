@@ -77,6 +77,10 @@ class URDFWriter:
             len(links),
             len(joints),
         )
+
+        # Validate link-joint graph structure
+        self._validate_graph(links, joints)
+
         lines: list[str] = []
 
         # XML declaration
@@ -256,9 +260,17 @@ class URDFWriter:
                 f'length="{geometry.dimensions[1]:.6g}"/>'
             )
         elif geometry.geometry_type == GeometryType.MESH:
+            mesh_filename = geometry.mesh_filename or ""
+            # Guard against directory traversal in mesh paths
+            if ".." in mesh_filename and not mesh_filename.startswith("package://"):
+                logger.warning(
+                    "Mesh filename '%s' contains '..' (potential path traversal). "
+                    "Only 'package://' URIs or relative paths without '..' are safe.",
+                    mesh_filename,
+                )
             scale = geometry.mesh_scale
             lines.append(
-                f'{indent2}<mesh filename="{self._escape(geometry.mesh_filename or "")}" '
+                f'{indent2}<mesh filename="{self._escape(mesh_filename)}" '
                 f'scale="{scale[0]:.6g} {scale[1]:.6g} {scale[2]:.6g}"/>'
             )
 
@@ -289,13 +301,34 @@ class URDFWriter:
     def _collect_materials(
         self, links: list[Link], extra_materials: dict[str, Any]
     ) -> dict[str, Material]:
-        """Collect all unique materials from links."""
+        """Collect all unique materials from links.
+
+        Detects and warns about material name collisions where two links
+        define different RGBA colors under the same material name.  The
+        first definition wins; subsequent conflicting definitions are
+        logged at WARNING level.
+        """
         materials: dict[str, Material] = {}
 
-        # Add materials from links
+        # Add materials from links — detect color collisions
         for link in links:
-            if link.visual_material and link.visual_material.name not in materials:
-                materials[link.visual_material.name] = link.visual_material
+            mat = link.visual_material
+            if mat is None:
+                continue
+            if mat.name in materials:
+                existing = materials[mat.name]
+                if existing.color != mat.color:
+                    logger.warning(
+                        "Material name collision: '%s' defined with color "
+                        "%s on link '%s' but already defined with color %s. "
+                        "The first definition will be used in the URDF.",
+                        mat.name,
+                        mat.color,
+                        link.name,
+                        existing.color,
+                    )
+            else:
+                materials[mat.name] = mat
 
         # Add extra materials
         for name, mat_data in extra_materials.items():
@@ -467,6 +500,58 @@ class URDFWriter:
             )
 
         return intermediate_links, revolute_joints
+
+    @staticmethod
+    def _validate_graph(links: list[Link], joints: list[Joint]) -> None:
+        """Validate that the link-joint graph forms a proper tree.
+
+        A valid URDF has exactly one root link (not a child of any joint)
+        and every link is reachable from the root via parent→child edges.
+        Cycles or disconnected sub-trees are rejected.
+
+        Raises:
+            ValueError: If the graph is cyclic, disconnected, or has
+                multiple roots.
+        """
+        link_names = {link.name for link in links}
+        children_set = {joint.child for joint in joints}
+        roots = link_names - children_set
+
+        if not roots:
+            raise ValueError(
+                "URDF graph has no root link (every link is a child of some "
+                "joint, indicating a cycle)."
+            )
+
+        if len(roots) > 1:
+            raise ValueError(
+                "URDF graph must have exactly one root link; "
+                f"found {len(roots)} roots: {sorted(roots)}"
+            )
+
+        root = next(iter(roots))
+
+        # BFS reachability check from the single root
+        adjacency: dict[str, list[str]] = {name: [] for name in link_names}
+        for joint in joints:
+            if joint.parent in adjacency:
+                adjacency[joint.parent].append(joint.child)
+
+        visited: set[str] = set()
+        queue = [root]
+        while queue:
+            node = queue.pop(0)
+            if node in visited:
+                continue
+            visited.add(node)
+            queue.extend(adjacency.get(node, []))
+
+        unreachable = link_names - visited
+        if unreachable:
+            raise ValueError(
+                "URDF graph contains unreachable links from root "
+                f"'{root}': {sorted(unreachable)}"
+            )
 
     def _escape(self, text: str) -> str:
         """Escape special XML characters."""
