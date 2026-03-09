@@ -3,8 +3,11 @@ Unit tests for inertia calculation modules.
 """
 
 import math
+import sys
+import types
 
 import numpy as np
+import pytest
 from humanoid_character_builder.mesh.inertia_calculator import (
     InertiaMode,
     InertiaResult,
@@ -252,3 +255,30 @@ class TestMeshInertiaCalculator:
         calc = MeshInertiaCalculator()
         # Just verify it doesn't crash
         _ = calc._trimesh_available
+
+    def test_compute_from_trimesh_rejects_non_positive_volume(self, monkeypatch):
+        """Degenerate meshes must fail instead of returning default inertia."""
+
+        class FakeTrimesh:
+            def __init__(self):
+                self.is_watertight = True
+                self.volume = 0.0
+                self.center_mass = np.zeros(3)
+                self.bounding_box = types.SimpleNamespace(
+                    volume=0.0,
+                    centroid=np.zeros(3),
+                )
+                self.moment_inertia = np.eye(3)
+
+        fake_trimesh = types.SimpleNamespace(Trimesh=FakeTrimesh)
+        monkeypatch.setitem(sys.modules, "trimesh", fake_trimesh)
+        monkeypatch.setattr(
+            MeshInertiaCalculator,
+            "_check_trimesh",
+            lambda self: True,
+        )
+
+        calc = MeshInertiaCalculator()
+
+        with pytest.raises(ValueError, match="volume"):
+            calc.compute_from_trimesh(FakeTrimesh())
