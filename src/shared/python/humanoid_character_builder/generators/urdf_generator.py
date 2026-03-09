@@ -13,8 +13,8 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-from xml.dom import minidom
 
+from defusedxml import minidom
 from humanoid_character_builder.contracts import postcondition, precondition
 from humanoid_character_builder.core.anthropometry import (
     estimate_segment_dimensions,
@@ -590,7 +590,7 @@ class HumanoidURDFGenerator:
 
         # Format XML
         if self.config.pretty_print:
-            xml_str = minidom.parseString(ET.tostring(root)).toprettyxml(
+            xml_str = minidom.parseString(ET.tostring(root, encoding="utf-8")).toprettyxml(
                 indent=self.config.indent
             )
             # Remove extra blank lines
