@@ -19,6 +19,32 @@
 | UI/UX         | B     | Inconsistent tab paradigms; no validation feedback; web behind   |
 | Changeable    | B-    | Adding a model requires ~3000 lines of boilerplate               |
 
+## Tracking Status (Updated 2026-03-09)
+
+The review findings that were already implemented have now been normalized into
+GitHub issue tracking, so every addressed pendulum follow-up item has a
+corresponding issue.
+
+| Review item | Issue | Status |
+|-------------|-------|--------|
+| Triple pendulum friction model and dissipation UI | #1048 | Closed |
+| TripleSimulationResult friction and total torque accessors | #1049 | Closed |
+| Generic `make_polynomial_torque` extraction | #1041 | Closed |
+| Elbow torque import support in `FunctionGeneratorDialog` | #1050 | Closed |
+| `PlotThemeManager` integration for torque history plots | #1051 | Closed |
+| Theme-derived pendulum styling cleanup | #1042 | Closed |
+| Typing import modernization in pendulum physics modules | #1043 | Closed |
+| DbC postconditions for gravity and friction helpers | #1044 | Closed |
+| Triple pendulum friction regression coverage | #1052 | Closed |
+| Repo-root discovery instead of fragile `sys.path` climbing | #1053 | Closed |
+| Function Generator button on triple pendulum controls | #1054 | Closed |
+| Removal of pendulum GUI `type: ignore` debt | #1045 | Closed |
+
+- `PR #982` implemented the main pendulum follow-up wave on `main`.
+- `PR #1046` performed cleanup and closed `#1041`, `#1042`, and `#1044`.
+- The PR description mirrors this tracker so issue coverage is visible both in
+  GitHub and in-repo.
+
 ---
 
 ## 1. Optimization — Grade: B+
