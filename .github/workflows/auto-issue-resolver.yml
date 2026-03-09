@@ -536,6 +536,7 @@ jobs:
           cat summary.md >> $GITHUB_STEP_SUMMARY
 
       - name: Create summary issue
+        if: github.event.inputs.mode != 'analysis-only'
         uses: actions/github-script@v7
         with:
           script: |
