@@ -261,6 +261,64 @@ class TestURDFWriterGraphValidation:
             writer.write("forest_robot", links, joints)
 
 
+class TestURDFWriterMeshPathValidation:
+    """H-05: Mesh path traversal must fail closed."""
+
+    @staticmethod
+    def _mesh_link(mesh_filename: str):
+        from model_generation.core.types import Geometry, Inertia, Link
+
+        return Link(
+            name="base",
+            inertia=Inertia(ixx=1, iyy=1, izz=1, mass=1),
+            visual_geometry=Geometry.mesh(mesh_filename),
+        )
+
+    def test_relative_traversal_raises(self):
+        """Relative mesh paths must not escape the asset tree."""
+        from model_generation.builders.urdf_writer import URDFWriter
+
+        writer = URDFWriter()
+
+        with pytest.raises(ValueError, match="path traversal"):
+            writer.write("unsafe_robot", [self._mesh_link("../../etc/passwd")], [])
+
+    def test_package_uri_traversal_raises(self):
+        """package:// URIs must also reject traversal segments."""
+        from model_generation.builders.urdf_writer import URDFWriter
+
+        writer = URDFWriter()
+
+        with pytest.raises(ValueError, match="path traversal"):
+            writer.write(
+                "unsafe_robot",
+                [self._mesh_link("package://robot/../secrets/base.stl")],
+                [],
+            )
+
+    def test_relative_mesh_path_allowed(self):
+        """Safe in-tree relative mesh paths should continue to serialize."""
+        from model_generation.builders.urdf_writer import URDFWriter
+
+        writer = URDFWriter()
+        result = writer.write("safe_robot", [self._mesh_link("meshes/base.stl")], [])
+
+        assert 'filename="meshes/base.stl"' in result
+
+    def test_package_uri_allowed(self):
+        """Safe package:// mesh URIs should continue to serialize."""
+        from model_generation.builders.urdf_writer import URDFWriter
+
+        writer = URDFWriter()
+        result = writer.write(
+            "safe_robot",
+            [self._mesh_link("package://robot_description/meshes/base.stl")],
+            [],
+        )
+
+        assert 'filename="package://robot_description/meshes/base.stl"' in result
+
+
 class TestURDFWriterXMLEscaping:
     """C-01: XML injection in URDF writer robot_name (already fixed)."""
 

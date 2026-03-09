@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from pathlib import PurePosixPath
 from typing import Any
 
 from model_generation.core.constants import (
@@ -260,14 +261,7 @@ class URDFWriter:
                 f'length="{geometry.dimensions[1]:.6g}"/>'
             )
         elif geometry.geometry_type == GeometryType.MESH:
-            mesh_filename = geometry.mesh_filename or ""
-            # Guard against directory traversal in mesh paths
-            if ".." in mesh_filename and not mesh_filename.startswith("package://"):
-                logger.warning(
-                    "Mesh filename '%s' contains '..' (potential path traversal). "
-                    "Only 'package://' URIs or relative paths without '..' are safe.",
-                    mesh_filename,
-                )
+            mesh_filename = self._validate_mesh_filename(geometry.mesh_filename or "")
             scale = geometry.mesh_scale
             lines.append(
                 f'{indent2}<mesh filename="{self._escape(mesh_filename)}" '
@@ -552,6 +546,49 @@ class URDFWriter:
                 "URDF graph contains unreachable links from root "
                 f"'{root}': {sorted(unreachable)}"
             )
+
+    @staticmethod
+    def _validate_mesh_filename(mesh_filename: str) -> str:
+        """Validate mesh references against traversal and unsupported URIs."""
+        if not mesh_filename:
+            raise ValueError("Mesh geometry requires a non-empty mesh filename")
+
+        normalized = mesh_filename.replace("\\", "/")
+        if normalized.startswith("package://"):
+            candidate = normalized[len("package://") :]
+            if not candidate or candidate.startswith("/"):
+                raise ValueError(
+                    f"Mesh filename '{mesh_filename}' must reference a package-relative asset"
+                )
+        else:
+            if "://" in normalized:
+                raise ValueError(
+                    f"Mesh filename '{mesh_filename}' uses an unsupported URI scheme"
+                )
+            if normalized.startswith("/") or URDFWriter._has_windows_drive_prefix(
+                normalized
+            ):
+                raise ValueError(
+                    f"Mesh filename '{mesh_filename}' must be relative or package://"
+                )
+            first_segment = normalized.split("/", 1)[0]
+            if ":" in first_segment:
+                raise ValueError(
+                    f"Mesh filename '{mesh_filename}' uses an unsupported URI scheme"
+                )
+            candidate = normalized
+
+        if any(part == ".." for part in PurePosixPath(candidate).parts):
+            raise ValueError(
+                f"Mesh filename '{mesh_filename}' contains path traversal"
+            )
+
+        return mesh_filename
+
+    @staticmethod
+    def _has_windows_drive_prefix(path: str) -> bool:
+        """Return True when the path starts with a Windows drive prefix."""
+        return len(path) >= 3 and path[0].isalpha() and path[1] == ":" and path[2] == "/"
 
     def _escape(self, text: str) -> str:
         """Escape special XML characters."""
