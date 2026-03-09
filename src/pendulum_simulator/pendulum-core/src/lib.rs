@@ -84,11 +84,22 @@ pub mod py_bindings {
     #[pymethods]
     impl PyDoublePendulumParams {
         #[new]
-        pub fn new(m1: f64, m2: f64, l1: f64, l2: f64, g: f64, friction1: f64, friction2: f64) -> Self {
+        #[pyo3(signature = (m1, m2, l1, l2, g=9.81, friction1=0.0, friction2=0.0, m_clubhead=0.0))]
+        pub fn new(
+            m1: f64,
+            m2: f64,
+            l1: f64,
+            l2: f64,
+            g: f64,
+            friction1: f64,
+            friction2: f64,
+            m_clubhead: f64,
+        ) -> Self {
             PyDoublePendulumParams {
                 inner: DoublePendulumParams {
                     m1,
                     m2,
+                    m_clubhead,
                     l1,
                     l2,
                     g,
@@ -155,6 +166,118 @@ pub mod py_bindings {
         result.insert("club_tip_y".to_string(), fk.club_tip.1);
         result.insert("theta1".to_string(), fk.theta1);
         result.insert("theta2".to_string(), fk.theta2);
+        Ok(result)
+    }
+
+    /// Python wrapper for TriplePendulumParams
+    #[pyclass]
+    #[derive(Clone)]
+    pub struct PyTriplePendulumParams {
+        pub inner: TriplePendulumParams,
+    }
+
+    #[pymethods]
+    impl PyTriplePendulumParams {
+        #[new]
+        #[pyo3(signature = (m1, m2, m3, l1, l2, l3, g=9.81, friction1=0.0, friction2=0.0, friction3=0.0))]
+        pub fn new(
+            m1: f64,
+            m2: f64,
+            m3: f64,
+            l1: f64,
+            l2: f64,
+            l3: f64,
+            g: f64,
+            friction1: f64,
+            friction2: f64,
+            friction3: f64,
+        ) -> Self {
+            PyTriplePendulumParams {
+                inner: TriplePendulumParams {
+                    masses: [m1, m2, m3],
+                    lengths: [l1, l2, l3],
+                    g,
+                    friction: [friction1, friction2, friction3],
+                },
+            }
+        }
+
+        pub fn validate(&self) -> PyResult<()> {
+            self.inner.validate().map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
+        }
+    }
+
+    /// Triple pendulum mass matrix
+    #[pyfunction]
+    pub fn py_triple_mass_matrix(
+        q: Vec<f64>,
+        params: &PyTriplePendulumParams,
+    ) -> PyResult<Vec<Vec<f64>>> {
+        if q.len() != 3 {
+            return Err(pyo3::exceptions::PyValueError::new_err("q must have length 3"));
+        }
+        let q_arr = [q[0], q[1], q[2]];
+        let m = triple_mass_matrix(&q_arr, &params.inner);
+        Ok(vec![
+            vec![m[(0, 0)], m[(0, 1)], m[(0, 2)]],
+            vec![m[(1, 0)], m[(1, 1)], m[(1, 2)]],
+            vec![m[(2, 0)], m[(2, 1)], m[(2, 2)]],
+        ])
+    }
+
+    /// Triple pendulum gravity vector
+    #[pyfunction]
+    pub fn py_triple_gravity_vector(
+        q: Vec<f64>,
+        params: &PyTriplePendulumParams,
+    ) -> PyResult<Vec<f64>> {
+        if q.len() != 3 {
+            return Err(pyo3::exceptions::PyValueError::new_err("q must have length 3"));
+        }
+        let q_arr = [q[0], q[1], q[2]];
+        let g = triple_gravity_vector(&q_arr, &params.inner);
+        Ok(g.as_slice().to_vec())
+    }
+
+    /// Triple pendulum Coriolis vector
+    #[pyfunction]
+    pub fn py_triple_coriolis(
+        q: Vec<f64>,
+        qdot: Vec<f64>,
+        params: &PyTriplePendulumParams,
+    ) -> PyResult<Vec<f64>> {
+        if q.len() != 3 || qdot.len() != 3 {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q and qdot must have length 3",
+            ));
+        }
+        let q_arr = [q[0], q[1], q[2]];
+        let qdot_arr = [qdot[0], qdot[1], qdot[2]];
+        let c = triple_coriolis(&q_arr, &qdot_arr, &params.inner);
+        Ok(c.as_slice().to_vec())
+    }
+
+    /// Triple pendulum forward kinematics
+    #[pyfunction]
+    pub fn py_triple_forward_kinematics(
+        q: Vec<f64>,
+        params: &PyTriplePendulumParams,
+    ) -> PyResult<HashMap<String, f64>> {
+        if q.len() != 3 {
+            return Err(pyo3::exceptions::PyValueError::new_err("q must have length 3"));
+        }
+        let q_arr = [q[0], q[1], q[2]];
+        let fk = triple_forward_kinematics(&q_arr, &params.inner);
+        let mut result = HashMap::new();
+        result.insert("joint1_x".to_string(), fk.joint1.0);
+        result.insert("joint1_y".to_string(), fk.joint1.1);
+        result.insert("joint2_x".to_string(), fk.joint2.0);
+        result.insert("joint2_y".to_string(), fk.joint2.1);
+        result.insert("joint3_x".to_string(), fk.joint3.0);
+        result.insert("joint3_y".to_string(), fk.joint3.1);
+        result.insert("theta1".to_string(), fk.angles[0]);
+        result.insert("theta2".to_string(), fk.angles[1]);
+        result.insert("theta3".to_string(), fk.angles[2]);
         Ok(result)
     }
 
@@ -425,11 +548,16 @@ pub mod py_bindings {
     #[pymodule]
     pub fn pendulum_core(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
         m.add_class::<PyDoublePendulumParams>()?;
+        m.add_class::<PyTriplePendulumParams>()?;
         m.add_class::<PyGolferParams>()?;
         m.add_function(wrap_pyfunction!(py_double_mass_matrix, m)?)?;
         m.add_function(wrap_pyfunction!(py_double_gravity_vector, m)?)?;
         m.add_function(wrap_pyfunction!(py_double_coriolis, m)?)?;
         m.add_function(wrap_pyfunction!(py_double_forward_kinematics, m)?)?;
+        m.add_function(wrap_pyfunction!(py_triple_mass_matrix, m)?)?;
+        m.add_function(wrap_pyfunction!(py_triple_gravity_vector, m)?)?;
+        m.add_function(wrap_pyfunction!(py_triple_coriolis, m)?)?;
+        m.add_function(wrap_pyfunction!(py_triple_forward_kinematics, m)?)?;
         m.add_function(wrap_pyfunction!(py_golfer_mass_matrix, m)?)?;
         m.add_function(wrap_pyfunction!(py_golfer_gravity_vector, m)?)?;
         m.add_function(wrap_pyfunction!(py_golfer_forward_kinematics, m)?)?;
@@ -464,6 +592,32 @@ pub mod wasm_bindings {
                 inner: DoublePendulumParams {
                     m1,
                     m2,
+                    m_clubhead: 0.0,
+                    l1,
+                    l2,
+                    g,
+                    friction1,
+                    friction2,
+                },
+            }
+        }
+
+        #[wasm_bindgen(js_name = withClubhead)]
+        pub fn with_clubhead(
+            m1: f64,
+            m2: f64,
+            l1: f64,
+            l2: f64,
+            g: f64,
+            friction1: f64,
+            friction2: f64,
+            m_clubhead: f64,
+        ) -> WasmDoublePendulumParams {
+            WasmDoublePendulumParams {
+                inner: DoublePendulumParams {
+                    m1,
+                    m2,
+                    m_clubhead,
                     l1,
                     l2,
                     g,

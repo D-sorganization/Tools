@@ -24,6 +24,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from . import native_backend as _native_backend
+
 # ---------------------------------------------------------------------------
 # Data structures
 # ---------------------------------------------------------------------------
@@ -129,6 +131,10 @@ def mass_matrix(phi: float, params: PendulumParams) -> np.ndarray:
     Post: symmetric positive-definite 2x2 matrix.
     """
     assert np.isfinite(phi), f"phi must be finite, got {phi}"
+    native_mass_matrix = _native_backend.double_mass_matrix(phi, params)
+    if native_mass_matrix is not None:
+        return native_mass_matrix
+
     m1, L1, L2 = params.m1, params.L1, params.L2
     me = _m2eff(params)
     cos_phi = np.cos(phi)
@@ -167,6 +173,10 @@ def coriolis_vector(
     Pre: all inputs finite.
     """
     assert all(np.isfinite(v) for v in [phi, dtheta1, dphi])
+    native_coriolis = _native_backend.double_coriolis_vector(phi, dtheta1, dphi, params)
+    if native_coriolis is not None:
+        return native_coriolis
+
     me = _m2eff(params)
     h = -me * params.L1 * params.L2 * np.sin(phi)
     c1 = h * (2.0 * dtheta1 * dphi + dphi**2)
@@ -183,6 +193,10 @@ def coriolis_vector(
 
 def gravity_vector(theta1: float, phi: float, params: PendulumParams) -> np.ndarray:
     """Compute the gravitational torque vector G(q)."""
+    native_gravity = _native_backend.double_gravity_vector(theta1, phi, params)
+    if native_gravity is not None:
+        return native_gravity
+
     me = _m2eff(params)
     L1, L2, g = params.L1, params.L2, params.g
     abs_angle2 = theta1 + phi
@@ -199,7 +213,9 @@ def gravity_vector(theta1: float, phi: float, params: PendulumParams) -> np.ndar
 # ---------------------------------------------------------------------------
 
 
-def friction_torque_vector(dtheta1: float, dphi: float, params: PendulumParams) -> np.ndarray:
+def friction_torque_vector(
+    dtheta1: float, dphi: float, params: PendulumParams
+) -> np.ndarray:
     """Compute dissipative torque vector (viscous + Coulomb).
 
     Pre: dtheta1, dphi finite.
@@ -314,6 +330,10 @@ def equations_of_motion(
 
 def forward_kinematics(theta1: float, phi: float, params: PendulumParams) -> dict:
     """Compute joint positions in world frame. Origin at shoulder."""
+    native_positions = _native_backend.double_forward_kinematics(theta1, phi, params)
+    if native_positions is not None:
+        return native_positions
+
     L1, L2 = params.L1, params.L2
     abs_angle2 = theta1 + phi
     wx = L1 * np.sin(theta1)
@@ -376,15 +396,28 @@ def base_force(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
     awy = params.L1 * (np.sin(theta1) * qdd1 + np.cos(theta1) * dtheta1**2)
 
     # Tip acceleration (clubhead)
-    atx = awx + params.L2 * (np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2)
-    aty = awy + params.L2 * (np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2)
+    atx = awx + params.L2 * (
+        np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2
+    )
+    aty = awy + params.L2 * (
+        np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2
+    )
 
     # Shaft COM at L2/2 from wrist
-    asx = awx + (params.L2 / 2) * (np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2)
-    asy = awy + (params.L2 / 2) * (np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2)
+    asx = awx + (params.L2 / 2) * (
+        np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2
+    )
+    asy = awy + (params.L2 / 2) * (
+        np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2
+    )
 
     fx = params.m1 * ax1 + params.m2 * asx + params.mClub * atx
-    fy = params.m1 * ay1 + params.m2 * asy + params.mClub * aty - (params.m1 + me) * params.g
+    fy = (
+        params.m1 * ay1
+        + params.m2 * asy
+        + params.mClub * aty
+        - (params.m1 + me) * params.g
+    )
 
     return {
         "fx": float(fx),
@@ -437,7 +470,9 @@ def control_vector(
 # ---------------------------------------------------------------------------
 
 
-def linear_accelerations(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
+def linear_accelerations(
+    state: State, qddot: np.ndarray, params: PendulumParams
+) -> dict:
     """Compute linear accelerations of joints in world coordinates."""
     assert state.shape == (4,) and qddot.shape == (2,)
     theta1, phi, dtheta1, dphi = state

@@ -1,14 +1,8 @@
 """Optional Rust-backed kernels for pendulum simulation.
 
-The existing ``pendulum_core`` extension already exposes several golfer-model
-physics kernels. This module provides a narrow adapter around those bindings so
-the Python desktop app can opt into the native implementation without changing
-its public API.
-
-The backend is intentionally opt-in. The golfer model is the primary
-performance hotspot identified in the deep review, while the double and triple
-models still need explicit parity validation before they should be promoted to
-native execution by default.
+This module adapts the compiled ``pendulum_core`` extension to the desktop
+Python APIs. Native execution is intentionally opt-in and model-specific so the
+pure-Python implementations remain the contract-preserving fallback path.
 """
 
 from __future__ import annotations
@@ -20,8 +14,12 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 
 if TYPE_CHECKING:
+    from .physics import PendulumParams
     from .physics_golfer import GolferParams
+    from .physics_triple import TriplePendulumParams
 
+_DOUBLE_BACKEND_ENV = "PENDULUM_DOUBLE_BACKEND"
+_TRIPLE_BACKEND_ENV = "PENDULUM_TRIPLE_BACKEND"
 _GOLFER_BACKEND_ENV = "PENDULUM_GOLFER_BACKEND"
 _WARNED_CALLS: set[str] = set()
 
@@ -66,6 +64,11 @@ def _vector8(values: np.ndarray, name: str) -> np.ndarray:
     return arr
 
 
+def _backend_mode(env_name: str) -> str:
+    mode = os.getenv(env_name, "python").strip().lower()
+    return mode if mode in {"python", "rust"} else "python"
+
+
 def golfer_native_constraint_dynamics_supported(params: GolferParams) -> bool:
     """Whether native constrained dynamics matches the Python model assumptions."""
     return (
@@ -81,8 +84,17 @@ def golfer_native_constraint_dynamics_supported(params: GolferParams) -> bool:
 
 def golfer_backend_mode() -> str:
     """Return the configured golfer backend mode."""
-    mode = os.getenv(_GOLFER_BACKEND_ENV, "python").strip().lower()
-    return mode if mode in {"python", "rust"} else "python"
+    return _backend_mode(_GOLFER_BACKEND_ENV)
+
+
+def double_backend_mode() -> str:
+    """Return the configured double-pendulum backend mode."""
+    return _backend_mode(_DOUBLE_BACKEND_ENV)
+
+
+def triple_backend_mode() -> str:
+    """Return the configured triple-pendulum backend mode."""
+    return _backend_mode(_TRIPLE_BACKEND_ENV)
 
 
 def golfer_native_available() -> bool:
@@ -95,15 +107,65 @@ def golfer_native_enabled() -> bool:
     return golfer_backend_mode() == "rust" and golfer_native_available()
 
 
+def double_native_enabled() -> bool:
+    """Whether double-pendulum kernels should use the Rust extension."""
+    return double_backend_mode() == "rust" and golfer_native_available()
+
+
+def triple_native_enabled() -> bool:
+    """Whether triple-pendulum kernels should use the Rust extension."""
+    return triple_backend_mode() == "rust" and golfer_native_available()
+
+
 def get_native_backend_info() -> dict[str, object]:
     """Return backend configuration and availability details."""
     return {
-        "configured_backend": golfer_backend_mode(),
+        "configured_backend": {
+            "double": double_backend_mode(),
+            "triple": triple_backend_mode(),
+            "golfer": golfer_backend_mode(),
+        },
         "native_available": golfer_native_available(),
         "native_import_error": _NATIVE_IMPORT_ERROR,
-        "supported_models": {"golfer": True, "double": False, "triple": False},
+        "supported_models": {"golfer": True, "double": True, "triple": True},
         "supports_constraint_dynamics": True,
     }
+
+
+def _to_rust_double_params(params: PendulumParams) -> Any:
+    """Convert the Python double-pendulum params dataclass to the PyO3 wrapper."""
+    if _pendulum_core is None:
+        raise RuntimeError("pendulum_core is not available")
+
+    return _pendulum_core.PyDoublePendulumParams(
+        params.m1,
+        params.m2,
+        params.L1,
+        params.L2,
+        params.g,
+        params.b1,
+        params.b2,
+        params.mClub,
+    )
+
+
+def _to_rust_triple_params(params: TriplePendulumParams) -> Any:
+    """Convert the Python triple-pendulum params dataclass to the PyO3 wrapper."""
+    if _pendulum_core is None:
+        raise RuntimeError("pendulum_core is not available")
+
+    return _pendulum_core.PyTriplePendulumParams(
+        params.m1,
+        params.m2,
+        params.m3,
+        params.L1,
+        params.L2,
+        params.L3,
+        params.g,
+        params.b1,
+        params.b2,
+        params.b3,
+    )
 
 
 def _to_rust_golfer_params(params: GolferParams) -> Any:
@@ -131,6 +193,176 @@ def _to_rust_golfer_params(params: GolferParams) -> Any:
         params.grip_left,
         params.g,
     )
+
+
+def double_mass_matrix(phi: float, params: PendulumParams) -> np.ndarray | None:
+    """Return the native double-pendulum mass matrix, or ``None`` if unavailable."""
+    if not double_native_enabled():
+        return None
+
+    try:
+        q_arr = np.array([0.0, phi], dtype=float)
+        result = _pendulum_core.py_double_mass_matrix(
+            q_arr.tolist(), _to_rust_double_params(params)
+        )
+        return np.array(result, dtype=float)
+    except Exception as exc:  # pragma: no cover - exercised when extension exists
+        _warn_once("double_mass_matrix", exc)
+        return None
+
+
+def double_gravity_vector(
+    theta1: float, phi: float, params: PendulumParams
+) -> np.ndarray | None:
+    """Return the native double-pendulum gravity vector, or ``None`` if unavailable."""
+    if not double_native_enabled():
+        return None
+
+    try:
+        q_arr = np.array([theta1, phi], dtype=float)
+        result = _pendulum_core.py_double_gravity_vector(
+            q_arr.tolist(), _to_rust_double_params(params)
+        )
+        return np.array(result, dtype=float)
+    except Exception as exc:  # pragma: no cover - exercised when extension exists
+        _warn_once("double_gravity_vector", exc)
+        return None
+
+
+def double_coriolis_vector(
+    phi: float,
+    dtheta1: float,
+    dphi: float,
+    params: PendulumParams,
+) -> np.ndarray | None:
+    """Return the native double-pendulum Coriolis vector, or ``None`` if unavailable."""
+    if not double_native_enabled():
+        return None
+
+    try:
+        q_arr = np.array([0.0, phi], dtype=float)
+        qdot_arr = np.array([dtheta1, dphi], dtype=float)
+        result = _pendulum_core.py_double_coriolis(
+            q_arr.tolist(),
+            qdot_arr.tolist(),
+            _to_rust_double_params(params),
+        )
+        return np.array(result, dtype=float)
+    except Exception as exc:  # pragma: no cover - exercised when extension exists
+        _warn_once("double_coriolis_vector", exc)
+        return None
+
+
+def double_forward_kinematics(
+    theta1: float, phi: float, params: PendulumParams
+) -> dict[str, tuple[float, float]] | None:
+    """Return native double-pendulum forward kinematics mapped to desktop keys."""
+    if not double_native_enabled():
+        return None
+
+    try:
+        q_arr = np.array([theta1, phi], dtype=float)
+        result = _pendulum_core.py_double_forward_kinematics(
+            q_arr.tolist(), _to_rust_double_params(params)
+        )
+    except Exception as exc:  # pragma: no cover - exercised when extension exists
+        _warn_once("double_forward_kinematics", exc)
+        return None
+
+    return {
+        "shoulder": (0.0, 0.0),
+        "wrist": (float(result["wrist_x"]), float(result["wrist_y"])),
+        "tip": (float(result["club_tip_x"]), float(result["club_tip_y"])),
+    }
+
+
+def triple_mass_matrix(
+    phi1: float, phi2: float, params: TriplePendulumParams
+) -> np.ndarray | None:
+    """Return the native triple-pendulum mass matrix, or ``None`` if unavailable."""
+    if not triple_native_enabled():
+        return None
+
+    try:
+        q_arr = np.array([0.0, phi1, phi2], dtype=float)
+        result = _pendulum_core.py_triple_mass_matrix(
+            q_arr.tolist(), _to_rust_triple_params(params)
+        )
+        return np.array(result, dtype=float)
+    except Exception as exc:  # pragma: no cover - exercised when extension exists
+        _warn_once("triple_mass_matrix", exc)
+        return None
+
+
+def triple_gravity_vector(
+    theta1: float, phi1: float, phi2: float, params: TriplePendulumParams
+) -> np.ndarray | None:
+    """Return the native triple-pendulum gravity vector, or ``None`` if unavailable."""
+    if not triple_native_enabled():
+        return None
+
+    try:
+        q_arr = np.array([theta1, phi1, phi2], dtype=float)
+        result = _pendulum_core.py_triple_gravity_vector(
+            q_arr.tolist(), _to_rust_triple_params(params)
+        )
+        return np.array(result, dtype=float)
+    except Exception as exc:  # pragma: no cover - exercised when extension exists
+        _warn_once("triple_gravity_vector", exc)
+        return None
+
+
+def triple_coriolis_vector(
+    phi1: float,
+    phi2: float,
+    dtheta1: float,
+    dphi1: float,
+    dphi2: float,
+    params: TriplePendulumParams,
+) -> np.ndarray | None:
+    """Return the native triple-pendulum Coriolis vector, or ``None`` if unavailable."""
+    if not triple_native_enabled():
+        return None
+
+    try:
+        q_arr = np.array([0.0, phi1, phi2], dtype=float)
+        qdot_arr = np.array([dtheta1, dphi1, dphi2], dtype=float)
+        result = _pendulum_core.py_triple_coriolis(
+            q_arr.tolist(),
+            qdot_arr.tolist(),
+            _to_rust_triple_params(params),
+        )
+        return np.array(result, dtype=float)
+    except Exception as exc:  # pragma: no cover - exercised when extension exists
+        _warn_once("triple_coriolis_vector", exc)
+        return None
+
+
+def triple_forward_kinematics(
+    theta1: float,
+    phi1: float,
+    phi2: float,
+    params: TriplePendulumParams,
+) -> dict[str, tuple[float, float]] | None:
+    """Return native triple-pendulum forward kinematics mapped to desktop keys."""
+    if not triple_native_enabled():
+        return None
+
+    try:
+        q_arr = np.array([theta1, phi1, phi2], dtype=float)
+        result = _pendulum_core.py_triple_forward_kinematics(
+            q_arr.tolist(), _to_rust_triple_params(params)
+        )
+    except Exception as exc:  # pragma: no cover - exercised when extension exists
+        _warn_once("triple_forward_kinematics", exc)
+        return None
+
+    return {
+        "shoulder": (0.0, 0.0),
+        "wrist1": (float(result["joint1_x"]), float(result["joint1_y"])),
+        "wrist2": (float(result["joint2_x"]), float(result["joint2_y"])),
+        "tip": (float(result["joint3_x"]), float(result["joint3_y"])),
+    }
 
 
 def golfer_mass_matrix(q: np.ndarray, params: GolferParams) -> np.ndarray | None:
