@@ -319,6 +319,74 @@ class TestURDFWriterMeshPathValidation:
         assert 'filename="package://robot_description/meshes/base.stl"' in result
 
 
+class TestURDFWriterCompositeJointValidation:
+    """H-06: Composite joint expansion should validate and normalize inputs."""
+
+    @staticmethod
+    def _links():
+        from model_generation.core.types import Inertia, Link
+
+        inertia = Inertia(ixx=1, iyy=1, izz=1, mass=1)
+        return [
+            Link(name="base", inertia=inertia),
+            Link(name="child", inertia=inertia),
+        ]
+
+    def test_missing_parent_raises_clear_error(self):
+        """Composite joints must reject missing parent references before serialization."""
+        from model_generation.builders.urdf_writer import URDFWriter
+        from model_generation.core.types import Joint, JointType, Origin
+
+        writer = URDFWriter()
+        joint = Joint(
+            name="shoulder",
+            joint_type=JointType.GIMBAL,
+            parent="",
+            child="child",
+            origin=Origin(),
+        )
+
+        with pytest.raises(ValueError, match="parent"):
+            writer.write("bad_robot", self._links(), [joint])
+
+    def test_missing_composite_axis_uses_default(self):
+        """Missing composite axes should fall back to the canonical default sequence."""
+        from model_generation.builders.urdf_writer import URDFWriter
+        from model_generation.core.types import Joint, JointType, Origin
+
+        writer = URDFWriter()
+        joint = Joint(
+            name="shoulder",
+            joint_type=JointType.GIMBAL,
+            parent="base",
+            child="child",
+            origin=Origin(),
+            composite_axes=[(0, 0, 1), None, (1, 0, 0)],
+        )
+
+        result = writer.write("axis_robot", self._links(), [joint])
+        assert 'axis xyz="0 1 0"' in result
+
+    def test_missing_composite_limits_use_defaults(self):
+        """Composite joints without explicit limits should emit default revolute limits."""
+        from model_generation.builders.urdf_writer import URDFWriter
+        from model_generation.core.types import Joint, JointType, Origin
+
+        writer = URDFWriter()
+        joint = Joint(
+            name="elbow",
+            joint_type=JointType.UNIVERSAL,
+            parent="base",
+            child="child",
+            origin=Origin(),
+            limits=None,
+            composite_limits=[None, None],
+        )
+
+        result = writer.write("limits_robot", self._links(), [joint])
+        assert result.count("<limit ") == 2
+
+
 class TestURDFWriterXMLEscaping:
     """C-01: XML injection in URDF writer robot_name (already fixed)."""
 

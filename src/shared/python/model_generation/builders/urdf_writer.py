@@ -403,8 +403,13 @@ class URDFWriter:
     def _expand_gimbal_joint(self, joint: Joint) -> tuple[list[Link], list[Joint]]:
         """Expand gimbal joint to 3 revolute joints."""
         # Default axes: Z-Y-X Euler sequence
-        axes = joint.composite_axes or [(0, 0, 1), (0, 1, 0), (1, 0, 0)]
-        limits = joint.composite_limits or [joint.limits] * 3
+        default_axes = [(0, 0, 1), (0, 1, 0), (1, 0, 0)]
+        axes = self._normalize_composite_axes(
+            joint.name, joint.composite_axes, default_axes
+        )
+        limits = self._normalize_composite_limits(
+            joint.composite_limits, joint.limits, 3
+        )
 
         intermediate_links: list[Link] = []
         revolute_joints: list[Joint] = []
@@ -455,8 +460,13 @@ class URDFWriter:
     def _expand_universal_joint(self, joint: Joint) -> tuple[list[Link], list[Joint]]:
         """Expand universal joint to 2 revolute joints."""
         # Default axes: perpendicular
-        axes = joint.composite_axes or [(1, 0, 0), (0, 1, 0)]
-        limits = joint.composite_limits or [joint.limits] * 2
+        default_axes = [(1, 0, 0), (0, 1, 0)]
+        axes = self._normalize_composite_axes(
+            joint.name, joint.composite_axes, default_axes
+        )
+        limits = self._normalize_composite_limits(
+            joint.composite_limits, joint.limits, 2
+        )
 
         intermediate_links: list[Link] = []
         revolute_joints: list[Joint] = []
@@ -508,6 +518,24 @@ class URDFWriter:
                 multiple roots.
         """
         link_names = {link.name for link in links}
+        for joint in joints:
+            if not isinstance(joint.parent, str) or not joint.parent.strip():
+                raise ValueError(
+                    f"Joint '{joint.name}' must define a non-empty parent link"
+                )
+            if not isinstance(joint.child, str) or not joint.child.strip():
+                raise ValueError(
+                    f"Joint '{joint.name}' must define a non-empty child link"
+                )
+            if joint.parent not in link_names:
+                raise ValueError(
+                    f"Joint '{joint.name}' references unknown parent link '{joint.parent}'"
+                )
+            if joint.child not in link_names:
+                raise ValueError(
+                    f"Joint '{joint.name}' references unknown child link '{joint.child}'"
+                )
+
         children_set = {joint.child for joint in joints}
         roots = link_names - children_set
 
@@ -546,6 +574,44 @@ class URDFWriter:
                 "URDF graph contains unreachable links from root "
                 f"'{root}': {sorted(unreachable)}"
             )
+
+    @staticmethod
+    def _normalize_composite_axes(
+        joint_name: str,
+        axes: list[tuple[float, float, float]] | None,
+        defaults: list[tuple[float, float, float]],
+    ) -> list[tuple[float, float, float]]:
+        """Return a full axis list, replacing missing entries with defaults."""
+        normalized: list[tuple[float, float, float]] = []
+        source = list(axes or [])
+
+        for index, default_axis in enumerate(defaults):
+            axis = source[index] if index < len(source) else default_axis
+            if axis is None:
+                axis = default_axis
+            if len(axis) != 3:
+                raise ValueError(
+                    f"Joint '{joint_name}' has invalid composite axis at DOF {index + 1}"
+                )
+            normalized.append((float(axis[0]), float(axis[1]), float(axis[2])))
+
+        return normalized
+
+    @staticmethod
+    def _normalize_composite_limits(
+        composite_limits: list[JointLimits] | None,
+        fallback_limit: JointLimits | None,
+        dof_count: int,
+    ) -> list[JointLimits]:
+        """Return a full limit list, replacing missing entries with defaults."""
+        normalized: list[JointLimits] = []
+        source = list(composite_limits or [])
+
+        for index in range(dof_count):
+            limit = source[index] if index < len(source) else fallback_limit
+            normalized.append(limit or JointLimits())
+
+        return normalized
 
     @staticmethod
     def _validate_mesh_filename(mesh_filename: str) -> str:
