@@ -163,11 +163,16 @@ jobs:
           PR_NUMBER: ${{ steps.branch.outputs.pr_number }}
           MAX_ITERATIONS: ${{ steps.limits.outputs.remaining_attempts }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
+          WAIT_TIMEOUT: ${{ env.CI_WAIT_TIMEOUT }}
+          POLL_INTERVAL: ${{ env.CI_POLL_INTERVAL }}
         run: |
+          : "${MAX_ITERATIONS:?MAX_ITERATIONS is required}"
+          : "${WAIT_TIMEOUT:?WAIT_TIMEOUT is required}"
+          : "${POLL_INTERVAL:?POLL_INTERVAL is required}"
           iteration=0
           ci_passed=false
 
-          while [ $iteration -lt $MAX_ITERATIONS ] && [ "$ci_passed" != "true" ]; do
+          while [ "$iteration" -lt "$MAX_ITERATIONS" ] && [ "$ci_passed" != "true" ]; do
             iteration=$((iteration + 1))
             echo ""
             echo "=========================================="
@@ -285,9 +290,9 @@ jobs:
               sleep 30
 
               # Wait for CI to complete
-              echo ">>> Waiting for CI to complete (timeout: ${{ env.CI_WAIT_TIMEOUT }}s)..."
+              echo ">>> Waiting for CI to complete (timeout: ${WAIT_TIMEOUT}s)..."
               wait_time=0
-              while [ $wait_time -lt ${{ env.CI_WAIT_TIMEOUT }} ]; do
+              while [ "$wait_time" -lt "$WAIT_TIMEOUT" ]; do
                 # Get the latest check run status
                 CHECK_STATUS=$(gh pr checks "$PR_NUMBER" --json name,state,conclusion \
                   --jq '.[] | select(.name == "quality-gate" or .name == "tests") | .state' 2>/dev/null | head -1)
@@ -307,12 +312,12 @@ jobs:
                   fi
                 fi
 
-                sleep ${{ env.CI_POLL_INTERVAL }}
-                wait_time=$((wait_time + ${{ env.CI_POLL_INTERVAL }}))
-                echo "  ... waiting ($wait_time/${{ env.CI_WAIT_TIMEOUT }}s)"
+                sleep "$POLL_INTERVAL"
+                wait_time=$((wait_time + POLL_INTERVAL))
+                echo "  ... waiting ($wait_time/${WAIT_TIMEOUT}s)"
               done
 
-              if [ $wait_time -ge ${{ env.CI_WAIT_TIMEOUT }} ]; then
+              if [ "$wait_time" -ge "$WAIT_TIMEOUT" ]; then
                 echo "⚠️ CI wait timeout reached, continuing with next iteration"
               fi
 

@@ -76,7 +76,7 @@ jobs:
         id: assessment_a
         run: |
           echo "Running Architecture Assessment..."
-          python scripts/run_assessment.py --assessment A --output docs/assessments/Assessment_A_Results_$(date +%Y-%m-%d).md
+          python scripts/run_assessment.py --assessment A --output "docs/assessments/Assessment_A_Results_$(date +%Y-%m-%d).md"
 
       - name: Run Assessment B (Hygiene & Quality)
         id: assessment_b
@@ -92,23 +92,23 @@ jobs:
           # Run mypy
           mypy python/ tests/ --junit-xml mypy_results.xml || true
 
-          python scripts/run_assessment.py --assessment B --output docs/assessments/Assessment_B_Results_$(date +%Y-%m-%d).md
+          python scripts/run_assessment.py --assessment B --output "docs/assessments/Assessment_B_Results_$(date +%Y-%m-%d).md"
 
       - name: Run Assessment C (Documentation)
         run: |
-          python scripts/run_assessment.py --assessment C --output docs/assessments/Assessment_C_Results_$(date +%Y-%m-%d).md
+          python scripts/run_assessment.py --assessment C --output "docs/assessments/Assessment_C_Results_$(date +%Y-%m-%d).md"
 
       - name: Run Assessment D (User Experience)
         run: |
-          python scripts/run_assessment.py --assessment D --output docs/assessments/Assessment_D_Results_$(date +%Y-%m-%d).md
+          python scripts/run_assessment.py --assessment D --output "docs/assessments/Assessment_D_Results_$(date +%Y-%m-%d).md"
 
       - name: Run Assessment E (Performance)
         run: |
-          python scripts/run_assessment.py --assessment E --output docs/assessments/Assessment_E_Results_$(date +%Y-%m-%d).md
+          python scripts/run_assessment.py --assessment E --output "docs/assessments/Assessment_E_Results_$(date +%Y-%m-%d).md"
 
       - name: Run Assessment F (Installation)
         run: |
-          python scripts/run_assessment.py --assessment F --output docs/assessments/Assessment_F_Results_$(date +%Y-%m-%d).md
+          python scripts/run_assessment.py --assessment F --output "docs/assessments/Assessment_F_Results_$(date +%Y-%m-%d).md"
 
       - name: Run Assessment G (Testing)
         id: assessment_g
@@ -118,11 +118,11 @@ jobs:
           COLLECTION_ERRORS=$(grep -c "ERROR" test_collection.log || echo "0")
           echo "collection_errors=$COLLECTION_ERRORS" >> $GITHUB_OUTPUT
 
-          python scripts/run_assessment.py --assessment G --output docs/assessments/Assessment_G_Results_$(date +%Y-%m-%d).md
+          python scripts/run_assessment.py --assessment G --output "docs/assessments/Assessment_G_Results_$(date +%Y-%m-%d).md"
 
       - name: Run Assessment H (Error Handling)
         run: |
-          python scripts/run_assessment.py --assessment H --output docs/assessments/Assessment_H_Results_$(date +%Y-%m-%d).md
+          python scripts/run_assessment.py --assessment H --output "docs/assessments/Assessment_H_Results_$(date +%Y-%m-%d).md"
 
       - name: Run Assessment I (Security)
         run: |
@@ -130,20 +130,20 @@ jobs:
           pip-audit --output security_audit.json --format json
           bandit -r python/ -f json -o bandit_results.json || true
 
-          python scripts/run_assessment.py --assessment I --output docs/assessments/Assessment_I_Results_$(date +%Y-%m-%d).md
+          python scripts/run_assessment.py --assessment I --output "docs/assessments/Assessment_I_Results_$(date +%Y-%m-%d).md"
 
       - name: Run Assessment J-O (Remaining)
         run: |
           for assessment in J K L M N O; do
-            python scripts/run_assessment.py --assessment $assessment --output docs/assessments/Assessment_${assessment}_Results_$(date +%Y-%m-%d).md
+            python scripts/run_assessment.py --assessment "$assessment" --output "docs/assessments/Assessment_${assessment}_Results_$(date +%Y-%m-%d).md"
           done
 
       - name: Generate Comprehensive Summary
         id: analyze
         run: |
           python scripts/generate_assessment_summary.py \
-            --input docs/assessments/Assessment_*_Results_$(date +%Y-%m-%d).md \
-            --output docs/assessments/COMPREHENSIVE_ASSESSMENT_SUMMARY_$(date +%Y-%m-%d).md \
+            --input "docs/assessments/Assessment_*_Results_$(date +%Y-%m-%d).md" \
+            --output "docs/assessments/COMPREHENSIVE_ASSESSMENT_SUMMARY_$(date +%Y-%m-%d).md" \
             --json-output assessment_summary.json
 
           # Extract critical metrics
@@ -188,9 +188,7 @@ jobs:
 
           PR_NUMBER=$(gh pr list --head "$ASSESSMENT_BRANCH" --state open --json number --jq '.[0].number')
           if [ -z "$PR_NUMBER" ]; then
-            gh pr create \
-              --title "[Jules/Assessment-AutoFix] docs(assessments): automated assessment reports" \
-              --body "$(cat <<'EOF'
+            cat > pr_body.md <<EOF
           ## Automated Assessment Reports
 
           - Overall Score: ${{ steps.analyze.outputs.score }}/10
@@ -198,7 +196,9 @@ jobs:
 
           These reports are generated by the Jules Assessment Auto-Fix workflow.
           EOF
-          )" \
+            gh pr create \
+              --title "[Jules/Assessment-AutoFix] docs(assessments): automated assessment reports" \
+              --body-file pr_body.md \
               --base main \
               --head "$ASSESSMENT_BRANCH"
           else

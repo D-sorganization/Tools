@@ -1,4 +1,3 @@
-import React from 'react';
 import { Calculator, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import type { Statistics } from '../types';
 

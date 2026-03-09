@@ -1,5 +1,5 @@
 # Locked dependency versions for reproducible builds
-# Generated: 2026-02-10
+# Generated: 2026-03-09
 # To regenerate: pip install -r requirements.txt && pip freeze > requirements-lock.txt
 
 # Core Scientific Computing
@@ -25,11 +25,11 @@ pygame==2.6.1
 PyOpenGL==3.1.9
 
 # Web Applications
-flask==3.1.1
+flask==3.1.3
 
 # Security & Utilities
-cryptography==45.0.5
+cryptography==46.0.5
 defusedxml==0.7.1
 PyYAML==6.0.2
-pillow==11.2.1
+pillow==12.1.1
 trimesh==4.11.1

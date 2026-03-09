@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import {
   LineChart,
   Line,
@@ -114,7 +114,7 @@ export function DataChart({ data, selectedSignals, title = 'Signal Plot' }: Data
             <YAxis
               tick={{ fill: '#8e8ea0', fontSize: 12 }}
               axisLine={{ stroke: '#4a4a5a' }}
-              tickFormatter={(value) => value.toFixed(2)}
+              tickFormatter={(value: number | string) => Number(value).toFixed(2)}
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend

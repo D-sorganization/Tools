@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { HelpCircle, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface HelpSection {

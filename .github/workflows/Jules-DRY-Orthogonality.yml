@@ -46,17 +46,19 @@ jobs:
 
       - name: Check for Bot Loop
         id: check-loop
+        env:
+          MAX_BOT_RUNS_LIMIT: ${{ env.MAX_BOT_RUNS }}
         run: |
           bot_count=0
-          for commit in $(git log --format="%ae" -n ${{ env.MAX_BOT_RUNS }}); do
+          while read -r commit; do
             if [[ "$commit" == *"bot"* ]] || [[ "$commit" == *"github-actions"* ]]; then
               ((bot_count++))
             else
               break
             fi
-          done
+          done < <(git log --format="%ae" -n "$MAX_BOT_RUNS_LIMIT")
 
-          if [ $bot_count -ge ${{ env.MAX_BOT_RUNS }} ]; then
+          if [ "$bot_count" -ge "$MAX_BOT_RUNS_LIMIT" ]; then
             echo "::warning::Loop prevention: $bot_count consecutive bot commits"
             echo "skip=true" >> $GITHUB_OUTPUT
           else

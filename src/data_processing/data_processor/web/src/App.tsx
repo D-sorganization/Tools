@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Database, Settings, BarChart3, Table, Calculator, Clock, Scissors, LineChart, HelpCircle, FlaskConical } from 'lucide-react';
 import {
   FileUpload,

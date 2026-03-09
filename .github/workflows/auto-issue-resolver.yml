@@ -394,6 +394,12 @@ jobs:
 
       - name: Commit changes
         id: commit
+        env:
+          ISSUE_NUM: ${{ matrix.issue.number }}
+          ISSUE_TITLE: ${{ matrix.issue.title }}
+          ISSUE_STRATEGIES: ${{ steps.generate-fix.outputs.strategies }}
+          ISSUE_SEVERITY: ${{ matrix.issue.severity }}
+          ISSUE_EFFORT_HOURS: ${{ matrix.issue.effort_hours }}
         run: |
           git add -A
 
@@ -401,20 +407,15 @@ jobs:
             echo "No changes to commit"
             echo "has_changes=false" >> $GITHUB_OUTPUT
           else
-            ISSUE_NUM="${{ matrix.issue.number }}"
-            cat > commit_message.txt <<EOF
-            fix: resolve issue #${ISSUE_NUM}
-
-            Automated fix for: ${{ matrix.issue.title }}
-
-            - Applied fix strategies: ${{ steps.generate-fix.outputs.strategies }}
-            - Severity: ${{ matrix.issue.severity }}
-            - Estimated effort: ${{ matrix.issue.effort_hours }}h
-
-            Closes #${ISSUE_NUM}
-
-            Co-Authored-By: GitHub Actions Bot <github-actions[bot]@users.noreply.github.com>
-            EOF
+            {
+              printf 'fix: resolve issue #%s\n\n' "$ISSUE_NUM"
+              printf 'Automated fix for: %s\n\n' "$ISSUE_TITLE"
+              printf -- '- Applied fix strategies: %s\n' "$ISSUE_STRATEGIES"
+              printf -- '- Severity: %s\n' "$ISSUE_SEVERITY"
+              printf -- '- Estimated effort: %sh\n\n' "$ISSUE_EFFORT_HOURS"
+              printf 'Closes #%s\n\n' "$ISSUE_NUM"
+              printf '%s\n' 'Co-Authored-By: GitHub Actions Bot <github-actions[bot]@users.noreply.github.com>'
+            } > commit_message.txt
 
             git commit -F commit_message.txt
 

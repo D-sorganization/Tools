@@ -57,7 +57,6 @@ jobs:
           JULES_API_KEY: ${{ secrets.JULES_API_KEY }}
         run: |
           set -e
-          DATE=$(date +%Y-%m-%d)
           REPO="${{ github.repository }}"
           API_BASE="https://jules.googleapis.com/v1alpha"
 
@@ -83,8 +82,7 @@ jobs:
           echo "Found source: $SOURCE_ID"
 
           # Create session prompt
-          PROMPT=$(cat << 'PROMPT_EOF'
-          '
+          PROMPT=$(cat <<PROMPT_EOF
           You are the SENTINEL security agent.
 
           Analyze the security audit reports in ./reports/ and document findings.

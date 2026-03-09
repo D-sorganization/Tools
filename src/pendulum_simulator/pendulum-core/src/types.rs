@@ -1,7 +1,5 @@
 //! Shared types and parameter structures for physics models.
 
-use nalgebra::{SMatrix, SVector};
-
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 

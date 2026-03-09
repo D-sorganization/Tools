@@ -6,7 +6,7 @@ import {
     exportAnnotationsToJSON,
     importAnnotationsFromJSON,
 } from '@/lib/video/annotationExporter';
-import { fabric } from 'fabric';
+import * as fabric from 'fabric';
 import { useRef } from 'react';
 
 interface AnnotationExportProps {
@@ -52,7 +52,7 @@ export default function AnnotationExportComponent({
     reader.onload = (e) => {
       try {
         const jsonData = JSON.parse(e.target?.result as string) as AnnotationExport;
-        importAnnotationsFromJSON(jsonData, canvas);
+        void importAnnotationsFromJSON(jsonData, canvas);
       } catch (error) {
         console.error('Failed to import annotations:', error);
         alert('Failed to import annotations. Please check the file format.');

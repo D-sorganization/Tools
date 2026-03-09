@@ -44,7 +44,9 @@ export default function SwingComparisonComponent({
       return;
     }
 
-    compareSwings(currentAnalysis.sessionId, selectedSessionId).then(setComparison);
+    compareSwings(currentAnalysis.sessionId, selectedSessionId).then((result) => {
+      setComparison(result ?? null);
+    });
   }, [selectedSessionId, currentAnalysis.sessionId]);
 
   // Draw overlay visualization

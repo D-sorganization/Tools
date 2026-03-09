@@ -5,10 +5,12 @@ on:
     branches: ["**"]
     paths:
       - ".github/workflows/**"
+      - "scripts/actionlint_shellcheck.sh"
       - "scripts/validate_workflows.py"
   pull_request:
     paths:
       - ".github/workflows/**"
+      - "scripts/actionlint_shellcheck.sh"
       - "scripts/validate_workflows.py"
   workflow_dispatch:
 
@@ -43,5 +45,8 @@ jobs:
           curl -sSL "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz" | tar -xz
           sudo mv actionlint /usr/local/bin/actionlint
 
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
       - name: Run actionlint
-        run: actionlint -color -shellcheck= -pyflakes=
+        run: actionlint -color -shellcheck ./scripts/actionlint_shellcheck.sh -pyflakes=

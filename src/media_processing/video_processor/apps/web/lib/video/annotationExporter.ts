@@ -1,4 +1,11 @@
-import { fabric } from 'fabric';
+import * as fabric from 'fabric';
+
+type AnnotationObject = fabric.Object & {
+  fill?: string;
+  name?: string;
+  stroke?: string;
+  strokeWidth?: number;
+};
 
 export interface AnnotationData {
   id: string;
@@ -25,17 +32,21 @@ export function exportAnnotationsToJSON(
   videoId?: string,
   totalFrames?: number
 ): AnnotationExport {
-  const annotationData: AnnotationData[] = annotations.map((obj, index) => ({
-    id: obj.name || `annotation-${index}`,
-    type: obj.type || 'unknown',
-    frame: currentFrame,
-    data: obj.toObject(['name', 'selectable', 'evented']),
-    style: {
-      stroke: (obj as fabric.Object & { stroke?: string }).stroke,
-      strokeWidth: (obj as fabric.Object & { strokeWidth?: number }).strokeWidth,
-      fill: (obj as fabric.Object & { fill?: string }).fill,
-    },
-  }));
+  const annotationData: AnnotationData[] = annotations.map((obj, index) => {
+    const annotationObject = obj as AnnotationObject;
+
+    return {
+      id: annotationObject.name || `annotation-${index}`,
+      type: annotationObject.type || 'unknown',
+      frame: currentFrame,
+      data: annotationObject.toObject(['name', 'selectable', 'evented']),
+      style: {
+        stroke: annotationObject.stroke,
+        strokeWidth: annotationObject.strokeWidth,
+        fill: annotationObject.fill,
+      },
+    };
+  });
 
   return {
     version: '1.0.0',
@@ -49,35 +60,36 @@ export function exportAnnotationsToJSON(
   };
 }
 
-export function importAnnotationsFromJSON(
+export async function importAnnotationsFromJSON(
   exportData: AnnotationExport,
   canvas: fabric.Canvas
-): void {
+): Promise<void> {
   canvas.clear();
 
-  exportData.annotations.forEach((annotation) => {
+  for (const annotation of exportData.annotations) {
     try {
-      fabric.util.enlivenObjects([annotation.data], (objects: fabric.Object[]) => {
-        objects.forEach((obj: fabric.Object) => {
-          if (annotation.style) {
-            if (annotation.style.stroke) {
-              (obj as fabric.Object & { stroke?: string }).stroke = annotation.style.stroke as string;
-            }
-            if (annotation.style.strokeWidth) {
-              (obj as fabric.Object & { strokeWidth?: number }).strokeWidth = annotation.style.strokeWidth as number;
-            }
-            if (annotation.style.fill) {
-              (obj as fabric.Object & { fill?: string }).fill = annotation.style.fill as string;
-            }
+      const objects = await fabric.util.enlivenObjects<fabric.Object>([annotation.data]);
+      objects.forEach((obj: fabric.Object) => {
+        const annotationObject = obj as AnnotationObject;
+        if (annotation.style) {
+          if (annotation.style.stroke) {
+            annotationObject.stroke = annotation.style.stroke as string;
           }
-          canvas.add(obj);
-        });
-        canvas.renderAll();
+          if (annotation.style.strokeWidth) {
+            annotationObject.strokeWidth = annotation.style.strokeWidth as number;
+          }
+          if (annotation.style.fill) {
+            annotationObject.fill = annotation.style.fill as string;
+          }
+        }
+        canvas.add(obj);
       });
     } catch (error) {
       console.error(`Failed to import annotation ${annotation.id}:`, error);
     }
-  });
+  }
+
+  canvas.renderAll();
 }
 
 export function downloadAnnotationJSON(exportData: AnnotationExport, filename?: string): void {

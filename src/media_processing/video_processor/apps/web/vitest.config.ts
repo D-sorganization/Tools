@@ -39,11 +39,7 @@ export default defineConfig({
     // Improve test output
     logHeapUsage: true,
     pool: 'threads',
-    poolOptions: {
-      threads: {
-        singleThread: true,
-      },
-    },
+    fileParallelism: false,
   },
   resolve: {
     alias: {

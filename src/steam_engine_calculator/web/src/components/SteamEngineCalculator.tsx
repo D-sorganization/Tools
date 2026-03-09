@@ -101,6 +101,7 @@ function calculateSteamPropertiesFallback(
     cv = 4186.0
   } else {
     phase = 'vapor'
+    quality = 1.0
     density = pressure / (R * temperature)
     // Python uses VAPOR_SPECIFIC_HEAT_CP = 1.9 kJ/kg-K -> 1900 J/kg-K
     cp = 1900.0

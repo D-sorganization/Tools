@@ -1,7 +1,5 @@
 //! Runge-Kutta 45 (Dormand-Prince) adaptive step ODE integrator.
 
-use nalgebra::{DVector, OVector};
-
 /// Configuration for the RK45 integrator.
 #[derive(Debug, Clone, Copy)]
 pub struct RK45Config {
@@ -152,7 +150,7 @@ where
         }
 
         // Compute error estimate
-        let mut error = 0.0;
+        let mut error: f64 = 0.0;
         for j in 0..N {
             let tol = config.atol + config.rtol * (y5[j].abs().max(y[j].abs()));
             let err_term = (y5[j] - y4[j]) / tol;
@@ -160,7 +158,7 @@ where
         }
 
         // Step acceptance and size control
-        let q = 0.84 * (1.0 / (error + 1e-10)).powf(0.25);
+        let q: f64 = 0.84 * (1.0 / (error + 1e-10)).powf(0.25);
         let h_new = h * q.min(4.0).max(0.1);
 
         if error <= 1.0 {

@@ -546,7 +546,7 @@ pub mod py_bindings {
 
     /// Module initialization
     #[pymodule]
-    pub fn pendulum_core(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
+    pub fn pendulum_core(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
         m.add_class::<PyDoublePendulumParams>()?;
         m.add_class::<PyTriplePendulumParams>()?;
         m.add_class::<PyGolferParams>()?;

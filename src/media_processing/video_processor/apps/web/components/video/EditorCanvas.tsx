@@ -1,6 +1,6 @@
 'use client';
 
-import { fabric } from 'fabric';
+import * as fabric from 'fabric';
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 interface EditorCanvasProps {
@@ -141,8 +141,14 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
       if (!canvas) return;
 
       canvas.isDrawingMode = currentTool === 'freehand';
-      canvas.freeDrawingBrush.width = strokeWidth;
-      canvas.freeDrawingBrush.color = currentColor;
+      if (canvas.isDrawingMode && !canvas.freeDrawingBrush) {
+        canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+      }
+
+      if (canvas.freeDrawingBrush) {
+        canvas.freeDrawingBrush.width = strokeWidth;
+        canvas.freeDrawingBrush.color = currentColor;
+      }
 
       if (currentTool === 'select') {
         canvas.selection = true;
@@ -168,21 +174,21 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
 
       let startPoint: { x: number; y: number } | null = null;
 
-      const handleMouseDown = (options: fabric.IEvent) => {
+      const handleMouseDown = (options: fabric.TPointerEventInfo) => {
         if (currentTool === 'line' || currentTool === 'arrow') {
-          const pointer = canvas.getPointer(options.e);
+          const pointer = canvas.getScenePoint(options.e);
           startPoint = { x: pointer.x, y: pointer.y };
           setIsDrawing(true);
         }
       };
 
-      const handleMouseMove = (options: fabric.IEvent) => {
+      const handleMouseMove = (options: fabric.TPointerEventInfo) => {
         if (
           (currentTool === 'line' || currentTool === 'arrow') &&
           isDrawing &&
           startPoint
         ) {
-          const pointer = canvas.getPointer(options.e);
+          const pointer = canvas.getScenePoint(options.e);
           const objects = canvas.getObjects();
           const existingLine = objects[objects.length - 1];
 
@@ -235,9 +241,9 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
       canvas.on('mouse:move', handleMouseMove);
       canvas.on('mouse:up', handleMouseUp);
 
-      const handleTextClick = (options: fabric.IEvent) => {
+      const handleTextClick = (options: fabric.TPointerEventInfo) => {
         if (currentTool === 'text') {
-          const pointer = canvas.getPointer(options.e);
+          const pointer = canvas.getScenePoint(options.e);
           const text = new fabric.IText('Double click to edit', {
             left: pointer.x,
             top: pointer.y,

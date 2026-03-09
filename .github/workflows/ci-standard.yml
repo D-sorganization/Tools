@@ -176,11 +176,16 @@ jobs:
 
       - name: Run Tests with Coverage (Python ${{ matrix.python-version }})
         run: |
-          SMOKE_TESTS="tests/test_path_helpers.py tests/test_error_handling.py tests/shared/python/notes/test_storage.py"
+          smoke_tests=(
+            "tests/test_path_helpers.py"
+            "tests/test_error_handling.py"
+            "tests/shared/python/notes/test_storage.py"
+          )
           if [ -s changed_test_files.txt ]; then
-            pytest $(cat changed_test_files.txt) $SMOKE_TESTS --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
+            mapfile -t changed_test_files < changed_test_files.txt
+            pytest "${changed_test_files[@]}" "${smoke_tests[@]}" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
           else
-            pytest $SMOKE_TESTS --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
+            pytest "${smoke_tests[@]}" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
           fi
 
       - name: Coverage Policy Gate
