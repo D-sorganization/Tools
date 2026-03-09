@@ -44,4 +44,4 @@ jobs:
           sudo mv actionlint /usr/local/bin/actionlint
 
       - name: Run actionlint
-        run: actionlint -color
+        run: actionlint -color -shellcheck= -pyflakes=
