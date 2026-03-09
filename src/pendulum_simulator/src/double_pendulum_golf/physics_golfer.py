@@ -59,6 +59,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from . import native_backend as _native_backend
+
 # ---------------------------------------------------------------------------
 # Data structures
 # ---------------------------------------------------------------------------
@@ -251,6 +253,10 @@ def forward_kinematics(
     dict with keys: 'hub', 'rs', 're', 'rh', 'ls', 'le', 'lh',
                     'club_base', 'club_tip', 'grip_right', 'grip_left'
     """
+    native_positions = _native_backend.golfer_forward_kinematics(q, p)
+    if native_positions is not None:
+        return native_positions
+
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
     assert q.shape == (N_DOF,), f"q must have shape ({N_DOF},), got {q.shape}"
@@ -961,6 +967,10 @@ def analytical_mass_matrix(q: np.ndarray, p: GolferParams) -> np.ndarray:
     -------
     M : np.ndarray, shape (8, 8) — symmetric positive semi-definite
     """
+    native_mass_matrix = _native_backend.golfer_mass_matrix(q, p)
+    if native_mass_matrix is not None:
+        return native_mass_matrix
+
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
 
@@ -1042,6 +1052,10 @@ def analytical_gravity_vector(q: np.ndarray, p: GolferParams) -> np.ndarray:
     -------
     G : np.ndarray, shape (8,)
     """
+    native_gravity = _native_backend.golfer_gravity_vector(q, p)
+    if native_gravity is not None:
+        return native_gravity
+
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
 
@@ -1161,3 +1175,8 @@ constraint_jacobian = analytical_constraint_jacobian
 mass_matrix = analytical_mass_matrix
 coriolis_matrix = analytical_coriolis
 gravity_vector = analytical_gravity_vector
+
+
+def get_native_backend_info() -> dict[str, object]:
+    """Expose the golfer native-backend configuration and availability."""
+    return _native_backend.get_native_backend_info()
