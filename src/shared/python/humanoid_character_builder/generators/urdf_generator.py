@@ -590,9 +590,9 @@ class HumanoidURDFGenerator:
 
         # Format XML
         if self.config.pretty_print:
-            xml_str = minidom.parseString(ET.tostring(root, encoding="utf-8")).toprettyxml(
-                indent=self.config.indent
-            )
+            xml_str = minidom.parseString(
+                ET.tostring(root, encoding="utf-8")
+            ).toprettyxml(indent=self.config.indent)
             # Remove extra blank lines
             lines = [line for line in xml_str.split("\n") if line.strip()]
             return "\n".join(lines)
