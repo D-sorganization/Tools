@@ -176,3 +176,17 @@ def clamp_dt(raw: float) -> float:
     """
     assert isinstance(raw, float), "dt must be a float"
     return max(1e-5, min(0.1, raw))
+
+
+def require_positive(value: float, name: str) -> float:
+    """Require a strictly positive input value."""
+    if value <= 0:
+        raise ValueError(f"{name} must be positive, got {value}")
+    return value
+
+
+def require_non_negative(value: float, name: str) -> float:
+    """Require a non-negative input value."""
+    if value < 0:
+        raise ValueError(f"{name} must be non-negative, got {value}")
+    return value

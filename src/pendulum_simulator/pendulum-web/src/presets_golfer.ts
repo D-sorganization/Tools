@@ -10,7 +10,7 @@
  *   Club: m_club = 0.30 kg, L_club = 1.10 m, m_clubhead = 0.20 kg
  */
 
-import type { GolferParams, TorqueFuncGolfer, StateGolfer } from './physics_golfer';
+import type { GolferParams, TorqueFuncGolfer } from './physics_golfer';
 import { makeGolferParams, makePolynomialTorque_golfer } from './physics_golfer';
 
 export interface PresetGolfer {

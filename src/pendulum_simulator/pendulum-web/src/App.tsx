@@ -1,30 +1,44 @@
+/**
+ * Multi-model pendulum app with Double, Triple, and Golfer modes.
+ */
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { PRESETS, Preset } from './presets';
+import { PRESETS_TRIPLE, PresetTriple } from './presets_triple';
+import { PRESETS_GOLFER, PresetGolfer } from './presets_golfer';
 import {
   makePendulumParams, makePolynomialTorque, runSimulation,
-  massMatrixComponents, PendulumParams,
-  jointVelocities, baseForce, computeAccelerations, controlVector,
-  kineticEnergy, potentialEnergy,
 } from './physics';
+import {
+  makeTripleParams, makePolynomialTorque3, runSimulation3,
+} from './physics_triple';
+import {
+  makeGolferParams, makePolynomialTorque_golfer, runSimulation_golfer,
+} from './physics_golfer';
 import type { SimulationResult, JointLimits, TorqueClamp } from './physics';
+import type { SimulationResult3 } from './physics_triple';
+import type { SimulationResult_golfer, StateGolfer } from './physics_golfer';
 import type { UnitPreferences } from './units';
 import {
   DEFAULT_UNITS,
   FORCE_UNITS, TORQUE_UNITS, SPEED_UNITS, ANGULAR_SPEED_UNITS, ENERGY_UNITS,
-  speedFromSI, forceFromSI, energyFromSI,
-  angularSpeedFromSI,
 } from './units';
 import type { TorqueUnit, ForceUnit, SpeedUnit, AngularSpeedUnit, EnergyUnit } from './units';
 import { PendulumCanvas } from './components/PendulumCanvas';
-import { AnalysisPlots, PLOT_IDS } from './components/AnalysisPlots';
-import { OptimizerPanel } from './components/OptimizerPanel';
+import { TriplePendulumCanvas } from './components/TriplePendulumCanvas';
+import { GolferCanvas } from './components/GolferCanvas';
 import { UnitSelector } from './components/UnitSelector';
+import {
+  isDoubleSimulationResult,
+  isGolferSimulationResult,
+  isTripleSimulationResult,
+} from './modelGuards';
 import './App.css';
 
 // ── Animation hook ────────────────────────────────────────────────────────────
 
 function useAnimationLoop(
-  result: SimulationResult | null,
+  result: SimulationResult | SimulationResult3 | SimulationResult_golfer | null,
   playing: boolean,
   speed: number,
 ) {
@@ -63,7 +77,7 @@ function useAnimationLoop(
   return frameIdx;
 }
 
-// ── Slider component (DRY) ────────────────────────────────────────────────────
+// ── Slider component ─────────────────────────────────────────────────────────
 
 const Slider: React.FC<{
   id: string; label: string; value: number; min: number; max: number; step: number;
@@ -85,9 +99,7 @@ const Slider: React.FC<{
   </div>
 );
 
-// ── Tab types ─────────────────────────────────────────────────────────────────
-
-type MainTab = 'animation' | 'analysis' | 'plots' | 'optimizer';
+type ModelType = 'double' | 'triple' | 'golfer';
 
 // ── Main App ──────────────────────────────────────────────────────────────────
 
@@ -97,11 +109,35 @@ function buildStateFromDeg(theta1Deg: number, phiDeg: number,
   return [theta1Deg * DEG, phiDeg * DEG, dtheta1, dphi] as [number, number, number, number];
 }
 
-export default function App() {
-  // ── Preset state ────────────────────────────────────────────────────
-  const [selectedPreset, setSelectedPreset] = useState<Preset>(PRESETS[0]);
+function buildStateFromDegTriple(theta1Deg: number, phi2Deg: number, phi3Deg: number,
+  dtheta1: number, dphi2: number, dphi3: number) {
+  const DEG = Math.PI / 180;
+  return [theta1Deg * DEG, phi2Deg * DEG, phi3Deg * DEG, dtheta1, dphi2, dphi3] as [number, number, number, number, number, number];
+}
 
-  // ── Physical params ─────────────────────────────────────────────────
+function buildStateFromDegGolfer(
+  theta_hub_deg: number,
+  alpha_rs_deg: number, alpha_re_deg: number, alpha_rh_deg: number,
+  alpha_ls_deg: number, alpha_le_deg: number, alpha_lh_deg: number,
+  theta_club_deg: number,
+  dtheta_hub: number, dalpha_rs: number, dalpha_re: number, dalpha_rh: number,
+  dalpha_ls: number, dalpha_le: number, dalpha_lh: number, dtheta_club: number
+) {
+  const DEG = Math.PI / 180;
+  return [
+    theta_hub_deg * DEG, alpha_rs_deg * DEG, alpha_re_deg * DEG, alpha_rh_deg * DEG,
+    alpha_ls_deg * DEG, alpha_le_deg * DEG, alpha_lh_deg * DEG, theta_club_deg * DEG,
+    dtheta_hub, dalpha_rs, dalpha_re, dalpha_rh,
+    dalpha_ls, dalpha_le, dalpha_lh, dtheta_club,
+  ] as StateGolfer;
+}
+
+export default function App() {
+  // ── Model selection ──────────────────────────────────────────────────
+  const [modelType, setModelType] = useState<ModelType>('double');
+
+  // ── DOUBLE PENDULUM STATE ────────────────────────────────────────────
+  const [selectedPreset, setSelectedPreset] = useState<Preset>(PRESETS[0]);
   const [m1, setM1] = useState(PRESETS[0].params.m1);
   const [m2, setM2] = useState(PRESETS[0].params.m2);
   const [mClub, setMClub] = useState(PRESETS[0].params.mClub);
@@ -111,49 +147,76 @@ export default function App() {
   const [b2, setB2] = useState(PRESETS[0].params.b2);
   const [mu1, setMu1] = useState(PRESETS[0].params.mu1);
   const [mu2, setMu2] = useState(PRESETS[0].params.mu2);
-
-  // ── Initial conditions ──────────────────────────────────────────────
   const [theta1Deg, setTheta1Deg] = useState(PRESETS[0].theta1Deg);
   const [phiDeg, setPhiDeg] = useState(PRESETS[0].phiDeg);
-  const [tEnd, setTEnd] = useState(PRESETS[0].tEnd);
-
-  // ── Torque coefficients ─────────────────────────────────────────────
   const [coeffsShoulder, setCoeffsShoulder] = useState(PRESETS[0].coeffsShoulder);
   const [coeffsWrist, setCoeffsWrist] = useState(PRESETS[0].coeffsWrist);
   const [shoulderStr, setShoulderStr] = useState(PRESETS[0].coeffsShoulder.join(', '));
   const [wristStr, setWristStr] = useState(PRESETS[0].coeffsWrist.join(', '));
 
-  // ── Joint limits ────────────────────────────────────────────────────
-  const [enableLimits, setEnableLimits] = useState(false);
-  const [phiMinDeg, setPhiMinDeg] = useState(-90);
-  const [phiMaxDeg, setPhiMaxDeg] = useState(90);
-  const [limitStiffness, setLimitStiffness] = useState(500);
+  // ── TRIPLE PENDULUM STATE ────────────────────────────────────────────
+  const [selectedPresetTriple, setSelectedPresetTriple] = useState<PresetTriple>(PRESETS_TRIPLE[0]);
+  const [m1_t, setM1_t] = useState(PRESETS_TRIPLE[0].params.m1);
+  const [m2_t, setM2_t] = useState(PRESETS_TRIPLE[0].params.m2);
+  const [m3_t, setM3_t] = useState(PRESETS_TRIPLE[0].params.m3);
+  const [mClub_t, setMClub_t] = useState(PRESETS_TRIPLE[0].params.mClub);
+  const [L1_t, setL1_t] = useState(PRESETS_TRIPLE[0].params.L1);
+  const [L2_t, setL2_t] = useState(PRESETS_TRIPLE[0].params.L2);
+  const [L3_t, setL3_t] = useState(PRESETS_TRIPLE[0].params.L3);
+  const [b1_t, setB1_t] = useState(PRESETS_TRIPLE[0].params.b1);
+  const [b2_t, setB2_t] = useState(PRESETS_TRIPLE[0].params.b2);
+  const [b3_t, setB3_t] = useState(PRESETS_TRIPLE[0].params.b3);
+  const [theta1Deg_t, setTheta1Deg_t] = useState(PRESETS_TRIPLE[0].theta1Deg);
+  const [phi2Deg_t, setPhi2Deg_t] = useState(PRESETS_TRIPLE[0].phi2Deg);
+  const [phi3Deg_t, setPhi3Deg_t] = useState(PRESETS_TRIPLE[0].phi3Deg);
+  const [coeffsShoulderT, setCoeffsShoulderT] = useState(PRESETS_TRIPLE[0].coeffsShoulder);
+  const [coeffsElbowT, setCoeffsElbowT] = useState(PRESETS_TRIPLE[0].coeffsElbow);
+  const [coeffsWristT, setCoeffsWristT] = useState(PRESETS_TRIPLE[0].coeffsWrist);
+  const [shoulderStrT, setShoulderStrT] = useState(PRESETS_TRIPLE[0].coeffsShoulder.join(', '));
+  const [elbowStrT, setElbowStrT] = useState(PRESETS_TRIPLE[0].coeffsElbow.join(', '));
+  const [wristStrT, setWristStrT] = useState(PRESETS_TRIPLE[0].coeffsWrist.join(', '));
 
-  // ── Torque clamping ─────────────────────────────────────────────────
-  const [enableClamp, setEnableClamp] = useState(false);
-  const [maxTorque1, setMaxTorque1] = useState(50);
-  const [maxTorque2, setMaxTorque2] = useState(20);
+  // ── GOLFER STATE ─────────────────────────────────────────────────────
+  const [selectedPresetGolfer, setSelectedPresetGolfer] = useState<PresetGolfer>(PRESETS_GOLFER[0]);
+  const [m_hub, setM_hub] = useState(PRESETS_GOLFER[0].params.m_hub);
+  const [m_r_upper, setM_r_upper] = useState(PRESETS_GOLFER[0].params.m_r_upper);
+  const [m_r_fore, setM_r_fore] = useState(PRESETS_GOLFER[0].params.m_r_fore);
+  const [m_l_upper, setM_l_upper] = useState(PRESETS_GOLFER[0].params.m_l_upper);
+  const [m_l_fore, setM_l_fore] = useState(PRESETS_GOLFER[0].params.m_l_fore);
+  const [m_club, setM_club] = useState(PRESETS_GOLFER[0].params.m_club);
+  const [theta_hub_deg_g, setTheta_hub_deg_g] = useState(PRESETS_GOLFER[0].theta_hub_deg);
+  const [alpha_rs_deg_g, setAlpha_rs_deg_g] = useState(PRESETS_GOLFER[0].alpha_rs_deg);
 
-  // ── Unit preferences ────────────────────────────────────────────────
-  const [units, setUnits] = useState<UnitPreferences>(DEFAULT_UNITS);
-
-  // ── Simulation/playback state ───────────────────────────────────────
+  // ── UI State ─────────────────────────────────────────────────────────
   const [speed, setSpeed] = useState(1.0);
-  const [result, setResult] = useState<SimulationResult | null>(null);
+  const [result, setResult] = useState<SimulationResult | SimulationResult3 | SimulationResult_golfer | null>(null);
   const [playing, setPlaying] = useState(false);
-  const [tab, setTab] = useState<MainTab>('animation');
-  const [detailPlot, setDetailPlot] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [status, setStatus] = useState('Ready — select a preset and run the simulation');
+  const [status, setStatus] = useState('Ready — select a preset and model');
+  const [tEnd, setTEnd] = useState(PRESETS[0].tEnd);
+  const [tEnd_t, setTEnd_t] = useState(PRESETS_TRIPLE[0].tEnd);
+  const [tEnd_g, setTEnd_g] = useState(PRESETS_GOLFER[0].tEnd);
+
+  // ── Joint limits & torque clamping ───────────────────────────────────
+  const [enableLimits] = useState(false);
+  const [phiMinDeg] = useState(-90);
+  const [phiMaxDeg] = useState(90);
+  const [limitStiffness] = useState(500);
+  const [enableClamp] = useState(false);
+  const [maxTorque1] = useState(50);
+  const [maxTorque2] = useState(20);
+
+  // ── Units ────────────────────────────────────────────────────────────
+  const [units, setUnits] = useState<UnitPreferences>(DEFAULT_UNITS);
 
   const frameIdx = useAnimationLoop(result, playing, speed);
 
-  // ── Unit updater (DRY) ──────────────────────────────────────────────
+  // ── Unit updater ─────────────────────────────────────────────────────
   const updateUnit = useCallback(<K extends keyof UnitPreferences>(key: K, val: UnitPreferences[K]) => {
     setUnits(prev => ({ ...prev, [key]: val }));
   }, []);
 
-  // ── Preset loading ──────────────────────────────────────────────────
+  // ── Preset loading ───────────────────────────────────────────────────
   const loadPreset = useCallback((p: Preset) => {
     setSelectedPreset(p);
     setM1(p.params.m1); setM2(p.params.m2); setMClub(p.params.mClub);
@@ -169,7 +232,35 @@ export default function App() {
     setResult(null); setPlaying(false); setError(null);
   }, []);
 
-  // ── Parse torque coefficients ───────────────────────────────────────
+  const loadPresetTriple = useCallback((p: PresetTriple) => {
+    setSelectedPresetTriple(p);
+    setM1_t(p.params.m1); setM2_t(p.params.m2); setM3_t(p.params.m3); setMClub_t(p.params.mClub);
+    setL1_t(p.params.L1); setL2_t(p.params.L2); setL3_t(p.params.L3);
+    setB1_t(p.params.b1); setB2_t(p.params.b2); setB3_t(p.params.b3);
+    setTheta1Deg_t(p.theta1Deg); setPhi2Deg_t(p.phi2Deg); setPhi3Deg_t(p.phi3Deg);
+    setTEnd_t(p.tEnd);
+    setCoeffsShoulderT(p.coeffsShoulder);
+    setCoeffsElbowT(p.coeffsElbow);
+    setCoeffsWristT(p.coeffsWrist);
+    setShoulderStrT(p.coeffsShoulder.join(', '));
+    setElbowStrT(p.coeffsElbow.join(', '));
+    setWristStrT(p.coeffsWrist.join(', '));
+    setResult(null); setPlaying(false); setError(null);
+  }, []);
+
+  const loadPresetGolfer = useCallback((p: PresetGolfer) => {
+    setSelectedPresetGolfer(p);
+    setM_hub(p.params.m_hub);
+    setM_r_upper(p.params.m_r_upper); setM_r_fore(p.params.m_r_fore);
+    setM_l_upper(p.params.m_l_upper); setM_l_fore(p.params.m_l_fore);
+    setM_club(p.params.m_club);
+    setTheta_hub_deg_g(p.theta_hub_deg);
+    setAlpha_rs_deg_g(p.alpha_rs_deg);
+    setTEnd_g(p.tEnd);
+    setResult(null); setPlaying(false); setError(null);
+  }, []);
+
+  // ── Parse torque coefficients ────────────────────────────────────────
   const parseCoeffs = (str: string): number[] | null => {
     try {
       const parts = str.split(',').map(s => parseFloat(s.trim()));
@@ -178,7 +269,7 @@ export default function App() {
     } catch { return null; }
   };
 
-  // ── Build sim config ────────────────────────────────────────────────
+  // ── Build limits ─────────────────────────────────────────────────────
   const buildLimits = (): JointLimits | undefined => {
     if (!enableLimits) return undefined;
     const DEG = Math.PI / 180;
@@ -195,8 +286,8 @@ export default function App() {
     return { maxTorque1, maxTorque2 };
   };
 
-  // ── Run simulation ──────────────────────────────────────────────────
-  const runSim = useCallback(() => {
+  // ── Run simulation (DOUBLE) ──────────────────────────────────────────
+  const runSimDouble = useCallback(() => {
     setError(null); setPlaying(false);
     try {
       const cShoulder = parseCoeffs(shoulderStr) ?? coeffsShoulder;
@@ -224,275 +315,366 @@ export default function App() {
       enableLimits, phiMinDeg, phiMaxDeg, limitStiffness,
       enableClamp, maxTorque1, maxTorque2]);
 
-  // ── Current frame data ──────────────────────────────────────────────
-  const mmc = result && frameIdx < result.states.length
-    ? massMatrixComponents(result.states[frameIdx][1], result.params)
-    : null;
+  // ── Run simulation (TRIPLE) ──────────────────────────────────────────
+  const runSimTriple = useCallback(() => {
+    setError(null); setPlaying(false);
+    try {
+      const cShoulder = parseCoeffs(shoulderStrT) ?? coeffsShoulderT;
+      const cElbow = parseCoeffs(elbowStrT) ?? coeffsElbowT;
+      const cWrist = parseCoeffs(wristStrT) ?? coeffsWristT;
 
-  const currentFrameData = result && frameIdx < result.states.length
-    ? (() => {
-        const state = result.states[frameIdx];
-        const t = result.t[frameIdx];
-        const jv = jointVelocities(state, result.params);
-        const qdd = computeAccelerations(state, t, result.params, result.torqueFunc, result.limits, result.clamp);
-        const bf = baseForce(state, qdd, result.params);
-        const cv = controlVector(state, qdd, result.params, result.limits);
-        const ke = kineticEnergy(state, result.params);
-        const pe = potentialEnergy(state, result.params);
-        return { state, t, jv, bf, cv, ke, pe };
-      })()
-    : null;
+      const params = makeTripleParams({
+        m1: m1_t, m2: m2_t, m3: m3_t, mClub: mClub_t,
+        L1: L1_t, L2: L2_t, L3: L3_t,
+        g: 9.81, b1: b1_t, b2: b2_t, b3: b3_t,
+      });
+      const init = buildStateFromDegTriple(theta1Deg_t, phi2Deg_t, phi3Deg_t, 0, 0, 0);
+      const tf = makePolynomialTorque3(cShoulder, cElbow, cWrist);
+      const r = runSimulation3(params, init, tEnd_t, tf, 0.005);
+      setResult(r);
+      setStatus(`Done: ${r.t.length} steps, t = 0…${r.t[r.t.length - 1].toFixed(2)} s`);
+      setPlaying(true);
+    } catch (e) {
+      setError(String(e));
+      setStatus('Simulation error');
+    }
+  }, [m1_t, m2_t, m3_t, mClub_t, L1_t, L2_t, L3_t, b1_t, b2_t, b3_t,
+      theta1Deg_t, phi2Deg_t, phi3Deg_t, tEnd_t,
+      shoulderStrT, elbowStrT, wristStrT, coeffsShoulderT, coeffsElbowT, coeffsWristT]);
 
-  // ── Optimizer callback ──────────────────────────────────────────────
-  const handleOptimized = useCallback((cShoulder: number[], cWrist: number[]) => {
-    setCoeffsShoulder(cShoulder);
-    setCoeffsWrist(cWrist);
-    setShoulderStr(cShoulder.map(c => c.toFixed(3)).join(', '));
-    setWristStr(cWrist.map(c => c.toFixed(3)).join(', '));
-  }, []);
-
-  const currentParams: PendulumParams = {
-    m1, m2, mClub, L1, L2, g: 9.81, b1, b2, mu1, mu2,
-  };
+  // ── Run simulation (GOLFER) ──────────────────────────────────────────
+  const runSimGolfer = useCallback(() => {
+    setError(null); setPlaying(false);
+    try {
+      const params = makeGolferParams({
+        m_hub, m_r_upper, m_r_fore, m_l_upper, m_l_fore, m_club,
+        L_hub: 0.25, L_r_upper: 0.30, L_r_fore: 0.25,
+        L_l_upper: 0.30, L_l_fore: 0.25, L_club: 1.10,
+        d_rs: 0.15, d_ls: 0.15, grip_right: 0.10, grip_left: 0.10,
+        m_clubhead: 0.20, g: 9.81,
+        b_hub: 0.1, b_rs: 0.08, b_re: 0.06, b_rh: 0.04,
+        b_ls: 0.08, b_le: 0.06, b_lh: 0.04,
+      });
+      const init = buildStateFromDegGolfer(
+        theta_hub_deg_g, alpha_rs_deg_g, -30, 0,
+        -35, 25, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0
+      );
+      const tf = makePolynomialTorque_golfer([0], [0], [0], [0], [0], [0], [0]);
+      const r = runSimulation_golfer(params, init, tEnd_g, tf, 0.005);
+      setResult(r);
+      setStatus(`Done: ${r.t.length} steps, t = 0…${r.t[r.t.length - 1].toFixed(2)} s`);
+      setPlaying(true);
+    } catch (e) {
+      setError(String(e));
+      setStatus('Simulation error');
+    }
+  }, [m_hub, m_r_upper, m_r_fore, m_l_upper, m_l_fore, m_club, theta_hub_deg_g, alpha_rs_deg_g, tEnd_g]);
 
   return (
     <div className="app">
       {/* ── Header ── */}
       <header className="app-header">
-        <span className="app-title">Double Pendulum — Golf Swing Dynamics</span>
+        <span className="app-title">Pendulum Models — Golf Swing Dynamics</span>
         <span className="app-status">{status}</span>
       </header>
 
       <div className="app-body">
-        {/* ── Left panel: controls ── */}
-        <aside className="controls-panel">
-          {/* Preset */}
-          <div className="panel-section">
-            <h3 className="section-title">Preset</h3>
-            <select
-              id="preset-select"
-              className="preset-select"
-              value={selectedPreset.name}
-              onChange={e => {
-                const p = PRESETS.find(pr => pr.name === e.target.value);
-                if (p) loadPreset(p);
-              }}
-            >
-              {PRESETS.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
-            </select>
-            <p className="preset-desc">{selectedPreset.description}</p>
-          </div>
-
-          {/* Arms (segment 1) */}
-          <div className="panel-section">
-            <h3 className="section-title">Arms (Segment 1)</h3>
-            <Slider id="m1" label="Mass" value={m1} min={1} max={10} step={0.1} onChange={setM1} unit="kg" />
-            <Slider id="L1" label="Length" value={L1} min={0.3} max={1.0} step={0.05} onChange={setL1} unit="m" />
-          </div>
-
-          {/* Shaft + Clubhead (segment 2) */}
-          <div className="panel-section">
-            <h3 className="section-title">Shaft (Segment 2)</h3>
-            <Slider id="m2" label="Shaft mass" value={m2} min={0.05} max={1.0} step={0.05} onChange={setM2} unit="kg" />
-            <Slider id="L2" label="Shaft len" value={L2} min={0.5} max={1.5} step={0.05} onChange={setL2} unit="m" />
-            <Slider id="mClub" label="Clubhead" value={mClub} min={0} max={0.5} step={0.01} onChange={setMClub} unit="kg" />
-          </div>
-
-          {/* Friction & Damping */}
-          <div className="panel-section">
-            <h3 className="section-title">Friction & Damping</h3>
-            <Slider id="b1" label="b₁ viscous" value={b1} min={0} max={2} step={0.01} onChange={setB1} unit="N·m·s" />
-            <Slider id="b2" label="b₂ viscous" value={b2} min={0} max={2} step={0.01} onChange={setB2} unit="N·m·s" />
-            <Slider id="mu1" label="μ₁ Coulomb" value={mu1} min={0} max={0.5} step={0.005} onChange={setMu1} unit="N·m" />
-            <Slider id="mu2" label="μ₂ Coulomb" value={mu2} min={0} max={0.5} step={0.005} onChange={setMu2} unit="N·m" />
-          </div>
-
-          {/* Joint Limits */}
-          <div className="panel-section">
-            <h3 className="section-title">Joint Limits</h3>
-            <div className="param-row">
-              <label className="param-label">Enable</label>
-              <input
-                type="checkbox"
-                checked={enableLimits}
-                onChange={e => setEnableLimits(e.target.checked)}
-              />
-            </div>
-            {enableLimits && (
-              <>
-                <Slider id="phiMin" label="φ min" value={phiMinDeg} min={-180} max={0} step={5} onChange={setPhiMinDeg} unit="deg" />
-                <Slider id="phiMax" label="φ max" value={phiMaxDeg} min={0} max={180} step={5} onChange={setPhiMaxDeg} unit="deg" />
-                <Slider id="limitK" label="Stiffness" value={limitStiffness} min={50} max={2000} step={50} onChange={setLimitStiffness} unit="N·m/rad" />
-              </>
-            )}
-          </div>
-
-          {/* Torque Clamping */}
-          <div className="panel-section">
-            <h3 className="section-title">Torque Saturation</h3>
-            <div className="param-row">
-              <label className="param-label">Enable</label>
-              <input
-                type="checkbox"
-                checked={enableClamp}
-                onChange={e => setEnableClamp(e.target.checked)}
-              />
-            </div>
-            {enableClamp && (
-              <>
-                <Slider id="maxT1" label="Max τ₁" value={maxTorque1} min={5} max={200} step={5} onChange={setMaxTorque1} unit="N·m" />
-                <Slider id="maxT2" label="Max τ₂" value={maxTorque2} min={1} max={100} step={1} onChange={setMaxTorque2} unit="N·m" />
-              </>
-            )}
-          </div>
-
-          {/* Initial Conditions & Torque */}
-          <div className="panel-section">
-            <h3 className="section-title">Initial Conditions</h3>
-            <Slider id="th1" label="θ₁₀ arms" value={theta1Deg} min={-180} max={180} step={1} onChange={setTheta1Deg} unit="deg" />
-            <Slider id="phi" label="φ₀ wrist" value={phiDeg} min={-180} max={180} step={1} onChange={setPhiDeg} unit="deg" />
-            <Slider id="tend" label="Duration" value={tEnd} min={0.5} max={10} step={0.5} onChange={setTEnd} unit="s" />
-          </div>
-
-          {/* Torque polynomials */}
-          <div className="panel-section">
-            <h3 className="section-title">Torque Polynomials</h3>
-            <div className="coeff-row">
-              <label className="param-label">Shoulder</label>
-              <input
-                className="coeff-input"
-                value={shoulderStr}
-                onChange={e => setShoulderStr(e.target.value)}
-                placeholder="-25, 10"
-              />
-            </div>
-            <div className="coeff-row">
-              <label className="param-label">Wrist</label>
-              <input
-                className="coeff-input"
-                value={wristStr}
-                onChange={e => setWristStr(e.target.value)}
-                placeholder="0"
-              />
-            </div>
-            <p className="preset-desc">Coefficients: c₀, c₁, c₂, … for τ(t) = c₀ + c₁t + c₂t² + …</p>
-          </div>
-
-          {/* Run button */}
-          <div className="panel-section">
-            <button id="btn-run" className="btn btn-primary" onClick={runSim}>Run Simulation</button>
-            {result && (
+        {/* ── Model selector tabs ── */}
+        <div style={{ padding: '10px', backgroundColor: '#222', borderBottom: '2px solid #444' }}>
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+            {(['double', 'triple', 'golfer'] as ModelType[]).map(m => (
               <button
-                id="btn-play-pause"
-                className="btn btn-secondary"
-                onClick={() => setPlaying(p => !p)}
+                key={m}
+                onClick={() => { setModelType(m); setResult(null); setPlaying(false); }}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: modelType === m ? '#0066cc' : '#333',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontWeight: modelType === m ? 'bold' : 'normal',
+                }}
               >
-                {playing ? 'Pause' : 'Play'}
+                {m === 'double' ? 'Double Pendulum (2-DOF)' :
+                 m === 'triple' ? 'Triple Pendulum (3-DOF)' : 'Golfer (8-DOF)'}
               </button>
-            )}
+            ))}
           </div>
+        </div>
+
+        {/* ── Left panel: controls (model-specific) ── */}
+        <aside className="controls-panel">
+          {modelType === 'double' && (
+            <>
+              {/* DOUBLE PENDULUM CONTROLS */}
+              <div className="panel-section">
+                <h3 className="section-title">Preset</h3>
+                <select
+                  id="preset-select"
+                  className="preset-select"
+                  value={selectedPreset.name}
+                  onChange={e => {
+                    const p = PRESETS.find(pr => pr.name === e.target.value);
+                    if (p) loadPreset(p);
+                  }}
+                >
+                  {PRESETS.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
+                </select>
+                <p className="preset-desc">{selectedPreset.description}</p>
+              </div>
+
+              <div className="panel-section">
+                <h3 className="section-title">Arms (Segment 1)</h3>
+                <Slider id="m1" label="Mass" value={m1} min={1} max={10} step={0.1} onChange={setM1} unit="kg" />
+                <Slider id="L1" label="Length" value={L1} min={0.3} max={1.0} step={0.05} onChange={setL1} unit="m" />
+              </div>
+
+              <div className="panel-section">
+                <h3 className="section-title">Shaft (Segment 2)</h3>
+                <Slider id="m2" label="Shaft mass" value={m2} min={0.05} max={1.0} step={0.05} onChange={setM2} unit="kg" />
+                <Slider id="L2" label="Shaft len" value={L2} min={0.5} max={1.5} step={0.05} onChange={setL2} unit="m" />
+                <Slider id="mClub" label="Clubhead" value={mClub} min={0} max={0.5} step={0.01} onChange={setMClub} unit="kg" />
+              </div>
+
+              <div className="panel-section">
+                <h3 className="section-title">Friction & Damping</h3>
+                <Slider id="b1" label="b₁ viscous" value={b1} min={0} max={2} step={0.01} onChange={setB1} unit="N·m·s" />
+                <Slider id="b2" label="b₂ viscous" value={b2} min={0} max={2} step={0.01} onChange={setB2} unit="N·m·s" />
+                <Slider id="mu1" label="μ₁ Coulomb" value={mu1} min={0} max={0.5} step={0.005} onChange={setMu1} unit="N·m" />
+                <Slider id="mu2" label="μ₂ Coulomb" value={mu2} min={0} max={0.5} step={0.005} onChange={setMu2} unit="N·m" />
+              </div>
+
+              <div className="panel-section">
+                <h3 className="section-title">Initial Conditions</h3>
+                <Slider id="th1" label="θ₁₀ arms" value={theta1Deg} min={-180} max={180} step={1} onChange={setTheta1Deg} unit="deg" />
+                <Slider id="phi" label="φ₀ wrist" value={phiDeg} min={-180} max={180} step={1} onChange={setPhiDeg} unit="deg" />
+                <Slider id="tend" label="Duration" value={tEnd} min={0.5} max={10} step={0.5} onChange={setTEnd} unit="s" />
+              </div>
+
+              <div className="panel-section">
+                <h3 className="section-title">Torque Polynomials</h3>
+                <div className="coeff-row">
+                  <label className="param-label">Shoulder</label>
+                  <input
+                    className="coeff-input"
+                    value={shoulderStr}
+                    onChange={e => setShoulderStr(e.target.value)}
+                    placeholder="-25, 10"
+                  />
+                </div>
+                <div className="coeff-row">
+                  <label className="param-label">Wrist</label>
+                  <input
+                    className="coeff-input"
+                    value={wristStr}
+                    onChange={e => setWristStr(e.target.value)}
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+
+              <div className="panel-section">
+                <button id="btn-run" className="btn btn-primary" onClick={runSimDouble}>Run Simulation</button>
+                {result && (
+                  <button
+                    id="btn-play-pause"
+                    className="btn btn-secondary"
+                    onClick={() => setPlaying(p => !p)}
+                  >
+                    {playing ? 'Pause' : 'Play'}
+                  </button>
+                )}
+              </div>
+            </>
+          )}
+
+          {modelType === 'triple' && (
+            <>
+              {/* TRIPLE PENDULUM CONTROLS */}
+              <div className="panel-section">
+                <h3 className="section-title">Preset</h3>
+                <select
+                  id="preset-select"
+                  className="preset-select"
+                  value={selectedPresetTriple.name}
+                  onChange={e => {
+                    const p = PRESETS_TRIPLE.find(pr => pr.name === e.target.value);
+                    if (p) loadPresetTriple(p);
+                  }}
+                >
+                  {PRESETS_TRIPLE.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
+                </select>
+                <p className="preset-desc">{selectedPresetTriple.description}</p>
+              </div>
+
+              <div className="panel-section">
+                <h3 className="section-title">Segment 1 (Shoulder–Elbow)</h3>
+                <Slider id="m1_t" label="Mass" value={m1_t} min={0.5} max={5} step={0.1} onChange={setM1_t} unit="kg" />
+                <Slider id="L1_t" label="Length" value={L1_t} min={0.1} max={0.5} step={0.05} onChange={setL1_t} unit="m" />
+              </div>
+
+              <div className="panel-section">
+                <h3 className="section-title">Segment 2 (Elbow–Wrist)</h3>
+                <Slider id="m2_t" label="Mass" value={m2_t} min={0.5} max={5} step={0.1} onChange={setM2_t} unit="kg" />
+                <Slider id="L2_t" label="Length" value={L2_t} min={0.1} max={0.5} step={0.05} onChange={setL2_t} unit="m" />
+              </div>
+
+              <div className="panel-section">
+                <h3 className="section-title">Segment 3 (Wrist–Tip)</h3>
+                <Slider id="m3_t" label="Mass" value={m3_t} min={0.1} max={2} step={0.1} onChange={setM3_t} unit="kg" />
+                <Slider id="L3_t" label="Length" value={L3_t} min={0.05} max={0.3} step={0.05} onChange={setL3_t} unit="m" />
+                <Slider id="mClub_t" label="Clubhead" value={mClub_t} min={0} max={0.5} step={0.01} onChange={setMClub_t} unit="kg" />
+              </div>
+
+              <div className="panel-section">
+                <h3 className="section-title">Damping</h3>
+                <Slider id="b1_t" label="b₁" value={b1_t} min={0} max={0.2} step={0.01} onChange={setB1_t} unit="N·m·s" />
+                <Slider id="b2_t" label="b₂" value={b2_t} min={0} max={0.2} step={0.01} onChange={setB2_t} unit="N·m·s" />
+                <Slider id="b3_t" label="b₃" value={b3_t} min={0} max={0.2} step={0.01} onChange={setB3_t} unit="N·m·s" />
+              </div>
+
+              <div className="panel-section">
+                <h3 className="section-title">Initial Conditions</h3>
+                <Slider id="th1_t" label="θ₁" value={theta1Deg_t} min={-180} max={180} step={1} onChange={setTheta1Deg_t} unit="deg" />
+                <Slider id="ph2_t" label="φ₂" value={phi2Deg_t} min={-180} max={180} step={1} onChange={setPhi2Deg_t} unit="deg" />
+                <Slider id="ph3_t" label="φ₃" value={phi3Deg_t} min={-180} max={180} step={1} onChange={setPhi3Deg_t} unit="deg" />
+                <Slider id="tend_t" label="Duration" value={tEnd_t} min={0.5} max={10} step={0.5} onChange={setTEnd_t} unit="s" />
+              </div>
+
+              <div className="panel-section">
+                <h3 className="section-title">Torques</h3>
+                <div className="coeff-row">
+                  <label className="param-label">Shoulder</label>
+                  <input className="coeff-input" value={shoulderStrT} onChange={e => setShoulderStrT(e.target.value)} />
+                </div>
+                <div className="coeff-row">
+                  <label className="param-label">Elbow</label>
+                  <input className="coeff-input" value={elbowStrT} onChange={e => setElbowStrT(e.target.value)} />
+                </div>
+                <div className="coeff-row">
+                  <label className="param-label">Wrist</label>
+                  <input className="coeff-input" value={wristStrT} onChange={e => setWristStrT(e.target.value)} />
+                </div>
+              </div>
+
+              <div className="panel-section">
+                <button id="btn-run" className="btn btn-primary" onClick={runSimTriple}>Run Simulation</button>
+                {result && (
+                  <button id="btn-play-pause" className="btn btn-secondary" onClick={() => setPlaying(p => !p)}>
+                    {playing ? 'Pause' : 'Play'}
+                  </button>
+                )}
+              </div>
+            </>
+          )}
+
+          {modelType === 'golfer' && (
+            <>
+              {/* GOLFER CONTROLS */}
+              <div className="panel-section">
+                <h3 className="section-title">Preset</h3>
+                <select
+                  id="preset-select-golfer"
+                  className="preset-select"
+                  value={selectedPresetGolfer.name}
+                  onChange={e => {
+                    const p = PRESETS_GOLFER.find(pr => pr.name === e.target.value);
+                    if (p) loadPresetGolfer(p);
+                  }}
+                >
+                  {PRESETS_GOLFER.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
+                </select>
+                <p className="preset-desc">{selectedPresetGolfer.description}</p>
+              </div>
+
+              <div className="panel-section">
+                <h3 className="section-title">Body & Arms</h3>
+                <Slider id="m_hub" label="Hub mass" value={m_hub} min={1} max={5} step={0.1} onChange={setM_hub} unit="kg" />
+                <Slider id="m_r_upper" label="R upper" value={m_r_upper} min={1} max={5} step={0.1} onChange={setM_r_upper} unit="kg" />
+                <Slider id="m_r_fore" label="R forearm" value={m_r_fore} min={0.5} max={3} step={0.1} onChange={setM_r_fore} unit="kg" />
+                <Slider id="m_l_upper" label="L upper" value={m_l_upper} min={1} max={5} step={0.1} onChange={setM_l_upper} unit="kg" />
+                <Slider id="m_l_fore" label="L forearm" value={m_l_fore} min={0.5} max={3} step={0.1} onChange={setM_l_fore} unit="kg" />
+                <Slider id="m_club" label="Club" value={m_club} min={0.1} max={1} step={0.05} onChange={setM_club} unit="kg" />
+              </div>
+
+              <div className="panel-section">
+                <h3 className="section-title">Initial Posture</h3>
+                <Slider id="th_hub_g" label="Hub angle" value={theta_hub_deg_g} min={-90} max={90} step={5} onChange={setTheta_hub_deg_g} unit="deg" />
+                <Slider id="alpha_rs_g" label="R shoulder" value={alpha_rs_deg_g} min={-90} max={90} step={5} onChange={setAlpha_rs_deg_g} unit="deg" />
+                <Slider id="tend_g" label="Duration" value={tEnd_g} min={0.5} max={10} step={0.5} onChange={setTEnd_g} unit="s" />
+              </div>
+
+              <div className="panel-section">
+                <p style={{ fontSize: '12px', color: '#aaa' }}>
+                  Full 8-DOF golfer model with constrained club grip (4 holonomic constraints).
+                </p>
+              </div>
+
+              <div className="panel-section">
+                <button id="btn-run-golfer" className="btn btn-primary" onClick={runSimGolfer}>Run Simulation</button>
+                {result && (
+                  <button id="btn-play-pause-golfer" className="btn btn-secondary" onClick={() => setPlaying(p => !p)}>
+                    {playing ? 'Pause' : 'Play'}
+                  </button>
+                )}
+              </div>
+            </>
+          )}
 
           {error && <div className="error-box">{error}</div>}
         </aside>
 
-        {/* ── Center: canvas/plots/optimizer ── */}
+        {/* ── Center: canvas ── */}
         <main className="center-panel">
-          <div className="tab-bar">
-            {(['animation', 'analysis', 'plots', 'optimizer'] as MainTab[]).map(t => (
-              <button
-                key={t}
-                id={`tab-${t}`}
-                className={`tab-btn ${tab === t ? 'active' : ''}`}
-                onClick={() => { setTab(t); if (t !== 'plots') setDetailPlot(null); }}
-              >
-                {t === 'animation' ? 'Animation' :
-                 t === 'analysis' ? 'Analysis' :
-                 t === 'plots' ? 'Plots' : 'Optimizer'}
-              </button>
-            ))}
-          </div>
-
-          {/* Animation tab */}
-          {tab === 'animation' && (
-            <div className="canvas-wrapper">
+          <div className="canvas-wrapper">
+            {modelType === 'double' && isDoubleSimulationResult(result) && (
               <PendulumCanvas
-                states={result ? result.states : []}
-                params={result ? result.params : currentParams}
+                states={result.states}
+                params={result.params}
                 currentIdx={frameIdx}
                 width={420}
                 height={460}
               />
-              {result && (
-                <div className="speed-row">
-                  <label className="param-label">Speed</label>
-                  <input
-                    type="range" min={0.25} max={4} step={0.25} value={speed}
-                    onChange={e => setSpeed(parseFloat(e.target.value))}
-                    className="param-slider"
-                  />
-                  <span className="param-value">{speed}x</span>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Analysis tab (all plots compact) */}
-          {tab === 'analysis' && result && (
-            <div className="analysis-scroll">
-              <AnalysisPlots result={result} units={units} />
-            </div>
-          )}
-          {tab === 'analysis' && !result && (
-            <div className="no-result">Run a simulation first to see analysis plots.</div>
-          )}
-
-          {/* Plots tab (single plot detail) */}
-          {tab === 'plots' && result && (
-            <div className="plots-detail-wrapper">
-              <div className="plot-selector-bar">
-                {PLOT_IDS.map(p => (
-                  <button
-                    key={p.id}
-                    className={`plot-select-btn ${detailPlot === p.id ? 'active' : ''}`}
-                    onClick={() => setDetailPlot(p.id)}
-                  >
-                    {p.label}
-                  </button>
-                ))}
-              </div>
-              {detailPlot ? (
-                <div className="detail-plot-area">
-                  <AnalysisPlots result={result} units={units} detailPlot={detailPlot} />
-                </div>
-              ) : (
-                <div className="no-result">Select a plot above to view in detail.</div>
-              )}
-            </div>
-          )}
-          {tab === 'plots' && !result && (
-            <div className="no-result">Run a simulation first to see detailed plots.</div>
-          )}
-
-          {/* Optimizer tab */}
-          {tab === 'optimizer' && (
-            <div className="optimizer-scroll">
-              <OptimizerPanel
-                params={currentParams}
-                initialState={buildStateFromDeg(theta1Deg, phiDeg, 0, 0)}
-                tEnd={tEnd}
-                limits={buildLimits()}
-                clamp={buildClamp()}
-                units={units}
-                currentCoeffs={{ shoulder: coeffsShoulder, wrist: coeffsWrist }}
-                onOptimized={handleOptimized}
+            )}
+            {modelType === 'triple' && isTripleSimulationResult(result) && (
+              <TriplePendulumCanvas
+                states={result.states}
+                params={result.params}
+                currentIdx={frameIdx}
+                width={420}
+                height={460}
               />
-            </div>
-          )}
+            )}
+            {modelType === 'golfer' && isGolferSimulationResult(result) && (
+              <GolferCanvas
+                states={result.states}
+                params={result.params}
+                currentIdx={frameIdx}
+                width={500}
+                height={500}
+              />
+            )}
+            {!result && (
+              <div className="no-result">Run a simulation to see animation.</div>
+            )}
+            {result && (
+              <div className="speed-row">
+                <label className="param-label">Speed</label>
+                <input
+                  type="range" min={0.25} max={4} step={0.25} value={speed}
+                  onChange={e => setSpeed(parseFloat(e.target.value))}
+                  className="param-slider"
+                />
+                <span className="param-value">{speed}x</span>
+              </div>
+            )}
+          </div>
         </main>
 
-        {/* ── Right panel: matrix + units + live data ── */}
+        {/* ── Right panel: units ── */}
         <aside className="matrix-panel">
-          {/* Units section */}
           <div className="panel-section compact-section">
             <h3 className="section-title">Units</h3>
             <UnitSelector label="Force" value={units.force} options={FORCE_UNITS} onChange={v => updateUnit('force', v as ForceUnit)} />
@@ -501,71 +683,8 @@ export default function App() {
             <UnitSelector label="Ang. Speed" value={units.angularSpeed} options={ANGULAR_SPEED_UNITS} onChange={v => updateUnit('angularSpeed', v as AngularSpeedUnit)} />
             <UnitSelector label="Energy" value={units.energy} options={ENERGY_UNITS} onChange={v => updateUnit('energy', v as EnergyUnit)} />
           </div>
-
-          {/* Mass Matrix */}
-          <h3 className="section-title">Mass Matrix M(q)</h3>
-          {mmc ? (
-            <>
-              <div className="matrix-grid">
-                {[
-                  ['M₁₁', mmc.M11, 'Arms self'],
-                  ['M₁₂', mmc.M12, 'Coupling'],
-                  ['M₂₁', mmc.M21, 'Coupling'],
-                  ['M₂₂', mmc.M22, 'Shaft self'],
-                ].map(([key, val, desc]) => (
-                  <div key={key as string} className="matrix-cell">
-                    <span className="matrix-key">{key}</span>
-                    <span className="matrix-val">{(val as number).toFixed(4)}</span>
-                    <span className="matrix-desc">{desc}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="coupling-bar-wrapper">
-                <div className="coupling-label">Coupling M₁₂/M₁₁</div>
-                <div className="coupling-bar-bg">
-                  <div
-                    className="coupling-bar-fill"
-                    style={{ width: `${Math.min(100, Math.abs(mmc.M12 / mmc.M11) * 100).toFixed(1)}%` }}
-                  />
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="no-result" style={{ fontSize: 12 }}>
-              Run simulation to see live matrix values.
-            </div>
-          )}
-
-          {/* Live frame data */}
-          {currentFrameData && (
-            <div className="live-data-section">
-              <h3 className="section-title">Live Data</h3>
-              <div className="live-data-grid">
-                <LiveRow label="Time" value={currentFrameData.t.toFixed(3)} unit="s" />
-                <LiveRow label="θ₁ arms" value={(currentFrameData.state[0] * 180 / Math.PI).toFixed(1)} unit="deg" />
-                <LiveRow label="φ wrist" value={(currentFrameData.state[1] * 180 / Math.PI).toFixed(1)} unit="deg" />
-                <LiveRow label="ω arms" value={angularSpeedFromSI(currentFrameData.state[2], units.angularSpeed).toFixed(1)} unit={units.angularSpeed} />
-                <LiveRow label="ω wrist" value={angularSpeedFromSI(currentFrameData.state[3], units.angularSpeed).toFixed(1)} unit={units.angularSpeed} />
-                <LiveRow label="Wrist spd" value={speedFromSI(currentFrameData.jv.wristSpeed, units.speed).toFixed(2)} unit={units.speed} />
-                <LiveRow label="Tip spd" value={speedFromSI(currentFrameData.jv.tipSpeed, units.speed).toFixed(2)} unit={units.speed} />
-                <LiveRow label="|F base|" value={forceFromSI(currentFrameData.bf.magnitude, units.force).toFixed(1)} unit={units.force} />
-                <LiveRow label="|CV|" value={forceFromSI(currentFrameData.cv.magnitude, units.force).toFixed(1)} unit={units.force} />
-                <LiveRow label="KE" value={energyFromSI(currentFrameData.ke, units.energy).toFixed(2)} unit={units.energy} />
-                <LiveRow label="PE" value={energyFromSI(currentFrameData.pe, units.energy).toFixed(2)} unit={units.energy} />
-              </div>
-            </div>
-          )}
         </aside>
       </div>
     </div>
   );
 }
-
-/** Small live data row component (DRY). */
-const LiveRow: React.FC<{ label: string; value: string; unit: string }> = ({ label, value, unit }) => (
-  <div className="live-row">
-    <span className="live-label">{label}</span>
-    <span className="live-value">{value}</span>
-    <span className="live-unit">{unit}</span>
-  </div>
-);

@@ -31,12 +31,12 @@ import type { PendulumParams, State } from '../src/physics';
 // ── Fixtures ──────────────────────────────────────────────────────────────────
 
 const stdParams: PendulumParams = makePendulumParams({
-    m1: 1.0, m2: 1.0, L1: 1.0, L2: 1.0, g: 9.81,
+    m1: 1.0, m2: 1.0, mClub: 0.0, L1: 1.0, L2: 1.0, g: 9.81,
     b1: 0.0, b2: 0.0, mu1: 0.0, mu2: 0.0,
 });
 
 const dampParams: PendulumParams = makePendulumParams({
-    m1: 1.0, m2: 1.0, L1: 1.0, L2: 1.0, g: 9.81,
+    m1: 1.0, m2: 1.0, mClub: 0.0, L1: 1.0, L2: 1.0, g: 9.81,
     b1: 0.5, b2: 0.3, mu1: 0.1, mu2: 0.05,
 });
 

@@ -142,36 +142,6 @@ impl AtmosphereProperties {
     }
 }
 
-// ── WASM bindings ────────────────────────────────────────────────────────────
-
-#[cfg(feature = "wasm")]
-#[wasm_bindgen::prelude::wasm_bindgen]
-impl AtmosphereProperties {
-    /// Temperature [K].
-    #[wasm_bindgen(js_name = "temperature", getter)]
-    pub fn wasm_temperature(&self) -> f64 {
-        self.temperature
-    }
-
-    /// Pressure [Pa].
-    #[wasm_bindgen(js_name = "pressure", getter)]
-    pub fn wasm_pressure(&self) -> f64 {
-        self.pressure
-    }
-
-    /// Density [kg/m³].
-    #[wasm_bindgen(js_name = "density", getter)]
-    pub fn wasm_density(&self) -> f64 {
-        self.density
-    }
-
-    /// Viscosity [Pa·s].
-    #[wasm_bindgen(js_name = "viscosity", getter)]
-    pub fn wasm_viscosity(&self) -> f64 {
-        self.viscosity
-    }
-}
-
 /// WASM-exposed atmosphere calculation.
 #[cfg(feature = "wasm")]
 #[wasm_bindgen::prelude::wasm_bindgen(js_name = "atmosphereAtAltitude")]

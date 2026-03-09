@@ -104,6 +104,34 @@ class TestSimulationBasics:
         assert all(np.diff(result.t) > 0)
 
 
+class TestSimulationResultContracts:
+    """Trajectory-level DbC validation for SimulationResult."""
+
+    def test_constructor_rejects_non_monotonic_time(
+        self,
+        default_params: PendulumParams,
+    ) -> None:
+        with pytest.raises(AssertionError, match="strictly increasing"):
+            SimulationResult(
+                t=np.array([0.0, 0.0]),
+                states=np.zeros((2, 4)),
+                params=default_params,
+                torque_func=lambda _t: (0.0, 0.0),
+            )
+
+    def test_constructor_rejects_wrong_state_width(
+        self,
+        default_params: PendulumParams,
+    ) -> None:
+        with pytest.raises(AssertionError, match="states must have width 4"):
+            SimulationResult(
+                t=np.array([0.0, 0.1]),
+                states=np.zeros((2, 3)),
+                params=default_params,
+                torque_func=lambda _t: (0.0, 0.0),
+            )
+
+
 class TestEnergyConservation:
     """For an undriven system (zero torque), total energy must be conserved."""
 
@@ -123,13 +151,16 @@ class TestEnergyConservation:
         )
         E0 = total_energy(result.states[0], equal_params)
         energies = np.array(
-            [total_energy(result.states[i], equal_params) for i in range(result.n_steps)]
+            [
+                total_energy(result.states[i], equal_params)
+                for i in range(result.n_steps)
+            ]
         )
         max_drift = np.max(np.abs(energies - E0))
         relative_drift = max_drift / abs(E0) if abs(E0) > 1e-10 else max_drift
-        assert relative_drift < 1e-3, (
-            f"Energy drift {relative_drift:.2e} exceeds 0.1% threshold"
-        )
+        assert (
+            relative_drift < 1e-3
+        ), f"Energy drift {relative_drift:.2e} exceeds 0.1% threshold"
 
 
 class TestSimulationAccessors:
@@ -171,6 +202,26 @@ class TestSimulationAccessors:
         assert "shoulder" in pos
         assert "wrist" in pos
         assert "tip" in pos
+
+    def test_all_positions_and_energies(
+        self,
+        default_params: PendulumParams,
+        zero_torque: Callable[[float], tuple[float, float]],
+        aligned_state: np.ndarray,
+    ) -> None:
+        result = run_simulation(
+            default_params,
+            aligned_state,
+            t_end=0.1,
+            torque_func=zero_torque,
+            dt=0.01,
+        )
+        positions = result.all_positions()
+        energies = result.all_energies()
+        assert len(positions) == result.n_steps
+        assert energies["kinetic"].shape == (result.n_steps,)
+        assert energies["potential"].shape == (result.n_steps,)
+        assert energies["total"].shape == (result.n_steps,)
 
     def test_out_of_range_index_rejected(
         self,

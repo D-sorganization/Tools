@@ -141,10 +141,8 @@ export function forwardKinematics_golfer(
     const theta_hub = q[0];
     const alpha_rs = q[1];
     const alpha_re = q[2];
-    const alpha_rh = q[3];
     const alpha_ls = q[4];
     const alpha_le = q[5];
-    const alpha_lh = q[6];
     const theta_club = q[7];
 
     const hub_x = p.L_hub * Math.sin(theta_hub);
@@ -161,8 +159,6 @@ export function forwardKinematics_golfer(
     // Right arm angles
     const theta_rs = theta_hub + alpha_rs;
     const theta_re = theta_rs + alpha_re;
-    const theta_rh = theta_re + alpha_rh;
-
     // Right elbow
     const re_x = rs_x + p.L_r_upper * Math.sin(theta_rs);
     const re_y = rs_y - p.L_r_upper * Math.cos(theta_rs);
@@ -174,8 +170,6 @@ export function forwardKinematics_golfer(
     // Left arm angles
     const theta_ls = theta_hub + alpha_ls;
     const theta_le = theta_ls + alpha_le;
-    const theta_lh = theta_le + alpha_lh;
-
     // Left elbow
     const le_x = ls_x + p.L_l_upper * Math.sin(theta_ls);
     const le_y = ls_y - p.L_l_upper * Math.cos(theta_ls);
@@ -242,27 +236,6 @@ export function constraintJacobian(
     const theta_le = theta_ls + alpha_le;
     const theta_lh = theta_le + alpha_lh;
 
-    const hub_x = p.L_hub * Math.sin(theta_hub);
-    const hub_y = -p.L_hub * Math.cos(theta_hub);
-
-    const rs_x = hub_x + p.d_rs * Math.cos(theta_hub);
-    const rs_y = hub_y + p.d_rs * Math.sin(theta_hub);
-
-    const ls_x = hub_x - p.d_ls * Math.cos(theta_hub);
-    const ls_y = hub_y - p.d_ls * Math.sin(theta_hub);
-
-    const re_x = rs_x + p.L_r_upper * Math.sin(theta_rs);
-    const re_y = rs_y - p.L_r_upper * Math.cos(theta_rs);
-
-    const rh_x = re_x + p.L_r_fore * Math.sin(theta_re);
-    const rh_y = re_y - p.L_r_fore * Math.cos(theta_re);
-
-    const le_x = ls_x + p.L_l_upper * Math.sin(theta_ls);
-    const le_y = ls_y - p.L_l_upper * Math.cos(theta_ls);
-
-    const lh_x = le_x + p.L_l_fore * Math.sin(theta_le);
-    const lh_y = le_y - p.L_l_fore * Math.cos(theta_le);
-
     // Jacobian for rh: ∂rh/∂q
     const Jrh = [
         [p.d_rs * (-Math.sin(theta_hub)) + p.L_r_upper * Math.cos(theta_rs) + p.L_r_fore * Math.cos(theta_re),
@@ -295,9 +268,6 @@ export function constraintJacobian(
     // Simplified: just enforce lh matches a point on club shaft
     // φ₃: lh_x = club_base_x + grip_left*sin(θ_club)
     // φ₄: lh_y = club_base_y - grip_left*cos(θ_club)
-
-    const club_base_x = rh_x - p.grip_right * Math.sin(theta_club);
-    const club_base_y = rh_y + p.grip_right * Math.cos(theta_club);
 
     // ∂club_base/∂q
     const dclub_x_q = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -334,30 +304,20 @@ export function constraintJacobian(
  *   7. Clubhead (m_clubhead) at club_tip
  */
 export function massMatrix_golfer(
-    q: [number, number, number, number, number, number, number, number],
+    _q: [number, number, number, number, number, number, number, number],
     p: GolferParams
 ): number[][] {
     const M: number[][] = Array(8).fill(null).map(() => Array(8).fill(0));
 
     // Simple approach: approximate each Jacobian numerically for now
     // In production, use analytical Jacobians
-    const eps = 1e-8;
-
     // For each DOF pair, compute ∂²KE/∂q_i∂q_j numerically
     // KE = 0.5 * Σ mᵢ * ||ṙᵢ||² = 0.5 * Σ mᵢ * ||Jᵢ * q̇||²
     // M_ij = Σ mᵢ * J_ik * J_ij
 
-    const fk = forwardKinematics_golfer(q, p);
-
     // Hub Jacobian (always identity for hub z-rotation)
     const J_hub = Array(8).fill(0);
     J_hub[0] = 1;
-
-    // Right shoulder position: rs
-    // rs = (hub_x + d_rs*cos(θ_hub), hub_y + d_rs*sin(θ_hub))
-    const dhub_dq = [p.L_hub * Math.cos(q[0]) - p.d_rs * Math.sin(q[0]), p.L_hub * Math.sin(q[0]) + p.d_rs * Math.cos(q[0])];
-    const J_rs = [dhub_dq[0], 0, 0, 0, 0, 0, 0, 0];
-    const J_rs_y = [dhub_dq[1], 0, 0, 0, 0, 0, 0, 0];
 
     // Accumulate contributions (simplified: just use FK + numerical Jacobian)
     // For full implementation, compute Jacobian for each mass point analytically
@@ -445,11 +405,8 @@ export function equationsOfMotion_golfer(
     const qdot: [number, number, number, number, number, number, number, number] =
         [state[8], state[9], state[10], state[11], state[12], state[13], state[14], state[15]];
 
-    // Gravity (simplified: just proportional to angle from vertical)
-    const gravity: [number, number, number, number, number, number, number, number] = [0, 0, 0, 0, 0, 0, 0, 0];
-
     // Friction
-    const [tf0, tf1, tf2, tf3, tf4, tf5, tf6, tf7] = frictionTorqueVector_golfer(qdot, p);
+    const [tf0, tf1, tf2, tf3, tf4, tf5, tf6] = frictionTorqueVector_golfer(qdot, p);
 
     // Torques
     const [tau0, tau1, tau2, tau3, tau4, tau5, tau6] = torqueFunc(t);

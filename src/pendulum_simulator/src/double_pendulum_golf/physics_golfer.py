@@ -59,6 +59,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from . import native_backend as _native_backend
+
 # ---------------------------------------------------------------------------
 # Data structures
 # ---------------------------------------------------------------------------
@@ -136,12 +138,18 @@ class GolferParams:
 
         assert self.d_rs >= 0, f"d_rs must be non-negative, got {self.d_rs}"
         assert self.d_ls >= 0, f"d_ls must be non-negative, got {self.d_ls}"
-        assert self.grip_right >= 0, f"grip_right must be non-negative, got {self.grip_right}"
-        assert self.grip_left >= 0, f"grip_left must be non-negative, got {self.grip_left}"
+        assert (
+            self.grip_right >= 0
+        ), f"grip_right must be non-negative, got {self.grip_right}"
+        assert (
+            self.grip_left >= 0
+        ), f"grip_left must be non-negative, got {self.grip_left}"
         assert self.grip_right <= self.L_club, "grip_right must be ≤ L_club"
         assert self.grip_left <= self.L_club, "grip_left must be ≤ L_club"
         assert self.g >= 0, f"g must be non-negative, got {self.g}"
-        assert self.m_clubhead >= 0, f"m_clubhead must be non-negative, got {self.m_clubhead}"
+        assert (
+            self.m_clubhead >= 0
+        ), f"m_clubhead must be non-negative, got {self.m_clubhead}"
 
         for name in ["b_hub", "b_rs", "b_re", "b_rh", "b_ls", "b_le", "b_lh"]:
             val = getattr(self, name)
@@ -229,7 +237,9 @@ def _absolute_angles(theta_hub: float, relative_angles: list[float]) -> list[flo
     return result
 
 
-def forward_kinematics(q: np.ndarray, p: GolferParams) -> dict[str, tuple[float, float]]:
+def forward_kinematics(
+    q: np.ndarray, p: GolferParams
+) -> dict[str, tuple[float, float]]:
     """Compute all joint positions in world frame.
 
     Parameters
@@ -243,6 +253,10 @@ def forward_kinematics(q: np.ndarray, p: GolferParams) -> dict[str, tuple[float,
     dict with keys: 'hub', 'rs', 're', 'rh', 'ls', 'le', 'lh',
                     'club_base', 'club_tip', 'grip_right', 'grip_left'
     """
+    native_positions = _native_backend.golfer_forward_kinematics(q, p)
+    if native_positions is not None:
+        return native_positions
+
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
     assert q.shape == (N_DOF,), f"q must have shape ({N_DOF},), got {q.shape}"
@@ -421,7 +435,9 @@ def numerical_mass_matrix(q: np.ndarray, p: GolferParams) -> np.ndarray:
     return M
 
 
-def _mass_point_positions(q: np.ndarray, p: GolferParams) -> list[tuple[float, Callable]]:
+def _mass_point_positions(
+    q: np.ndarray, p: GolferParams
+) -> list[tuple[float, Callable]]:
     """Return list of (mass, position_function) for all point masses."""
 
     def hub_pos(qq: np.ndarray) -> tuple[float, float]:
@@ -469,7 +485,9 @@ def _mass_point_positions(q: np.ndarray, p: GolferParams) -> list[tuple[float, C
 # ---------------------------------------------------------------------------
 
 
-def numerical_coriolis_matrix(q: np.ndarray, qdot: np.ndarray, p: GolferParams) -> np.ndarray:
+def numerical_coriolis_matrix(
+    q: np.ndarray, qdot: np.ndarray, p: GolferParams
+) -> np.ndarray:
     """Compute C(q, qdot) * qdot using finite differences of M(q).
 
     Uses Christoffel symbols: C_ij = sum_k (c_ijk * qdot_k)
@@ -773,10 +791,16 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     J_rh = np.zeros((2, N_DOF))
     # d/dq[0]
     J_rh[0, 0] = (
-        p.L_hub * cos_hub - p.d_rs * sin_hub + p.L_r_upper * cos_rs + p.L_r_fore * cos_re
+        p.L_hub * cos_hub
+        - p.d_rs * sin_hub
+        + p.L_r_upper * cos_rs
+        + p.L_r_fore * cos_re
     )
     J_rh[1, 0] = (
-        p.L_hub * sin_hub + p.d_rs * cos_hub + p.L_r_upper * sin_rs + p.L_r_fore * sin_re
+        p.L_hub * sin_hub
+        + p.d_rs * cos_hub
+        + p.L_r_upper * sin_rs
+        + p.L_r_fore * sin_re
     )
     # d/dq[1]
     J_rh[0, 1] = p.L_r_upper * cos_rs + p.L_r_fore * cos_re
@@ -820,10 +844,16 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     J_lh = np.zeros((2, N_DOF))
     # d/dq[0]
     J_lh[0, 0] = (
-        p.L_hub * cos_hub + p.d_ls * sin_hub + p.L_l_upper * cos_ls + p.L_l_fore * cos_le
+        p.L_hub * cos_hub
+        + p.d_ls * sin_hub
+        + p.L_l_upper * cos_ls
+        + p.L_l_fore * cos_le
     )
     J_lh[1, 0] = (
-        p.L_hub * sin_hub - p.d_ls * cos_hub + p.L_l_upper * sin_ls + p.L_l_fore * sin_le
+        p.L_hub * sin_hub
+        - p.d_ls * cos_hub
+        + p.L_l_upper * sin_ls
+        + p.L_l_fore * sin_le
     )
     # d/dq[4]
     J_lh[0, 4] = p.L_l_upper * cos_ls + p.L_l_fore * cos_le
@@ -857,10 +887,16 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     J_club_com = np.zeros((2, N_DOF))
     # d/dq[0], d/dq[1], d/dq[2], d/dq[3] from rh
     J_club_com[0, 0] = (
-        p.L_hub * cos_hub - p.d_rs * sin_hub + p.L_r_upper * cos_rs + p.L_r_fore * cos_re
+        p.L_hub * cos_hub
+        - p.d_rs * sin_hub
+        + p.L_r_upper * cos_rs
+        + p.L_r_fore * cos_re
     )
     J_club_com[1, 0] = (
-        p.L_hub * sin_hub + p.d_rs * cos_hub + p.L_r_upper * sin_rs + p.L_r_fore * sin_re
+        p.L_hub * sin_hub
+        + p.d_rs * cos_hub
+        + p.L_r_upper * sin_rs
+        + p.L_r_fore * sin_re
     )
     J_club_com[0, 1] = p.L_r_upper * cos_rs + p.L_r_fore * cos_re
     J_club_com[1, 1] = p.L_r_upper * sin_rs + p.L_r_fore * sin_re
@@ -893,10 +929,16 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     J_club_tip = np.zeros((2, N_DOF))
     # d/dq[0], d/dq[1], d/dq[2], d/dq[3] from rh (via club_base)
     J_club_tip[0, 0] = (
-        p.L_hub * cos_hub - p.d_rs * sin_hub + p.L_r_upper * cos_rs + p.L_r_fore * cos_re
+        p.L_hub * cos_hub
+        - p.d_rs * sin_hub
+        + p.L_r_upper * cos_rs
+        + p.L_r_fore * cos_re
     )
     J_club_tip[1, 0] = (
-        p.L_hub * sin_hub + p.d_rs * cos_hub + p.L_r_upper * sin_rs + p.L_r_fore * sin_re
+        p.L_hub * sin_hub
+        + p.d_rs * cos_hub
+        + p.L_r_upper * sin_rs
+        + p.L_r_fore * sin_re
     )
     J_club_tip[0, 1] = p.L_r_upper * cos_rs + p.L_r_fore * cos_re
     J_club_tip[1, 1] = p.L_r_upper * sin_rs + p.L_r_fore * sin_re
@@ -925,6 +967,10 @@ def analytical_mass_matrix(q: np.ndarray, p: GolferParams) -> np.ndarray:
     -------
     M : np.ndarray, shape (8, 8) — symmetric positive semi-definite
     """
+    native_mass_matrix = _native_backend.golfer_mass_matrix(q, p)
+    if native_mass_matrix is not None:
+        return native_mass_matrix
+
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
 
@@ -985,16 +1031,9 @@ def analytical_coriolis(q: np.ndarray, qdot: np.ndarray, p: GolferParams) -> np.
         q_plus[k] += eps
         dM[:, :, k] = (analytical_mass_matrix(q_plus, p) - M0) / eps
 
-    # Compute Christoffel symbols and contract with qdot twice
-    C_qdot = np.zeros(N_DOF)
-    for i in range(N_DOF):
-        for j in range(N_DOF):
-            christoffel = 0.0
-            for k in range(N_DOF):
-                christoffel += 0.5 * (dM[i, j, k] + dM[i, k, j] - dM[j, k, i]) * qdot[k]
-            C_qdot[i] += christoffel * qdot[j]
-
-    return C_qdot
+    christoffel = 0.5 * (dM + dM.transpose(0, 2, 1) - dM.transpose(1, 2, 0))
+    result: np.ndarray = np.einsum("ijk,j,k->i", christoffel, qdot, qdot)
+    return result
 
 
 def analytical_gravity_vector(q: np.ndarray, p: GolferParams) -> np.ndarray:
@@ -1013,6 +1052,10 @@ def analytical_gravity_vector(q: np.ndarray, p: GolferParams) -> np.ndarray:
     -------
     G : np.ndarray, shape (8,)
     """
+    native_gravity = _native_backend.golfer_gravity_vector(q, p)
+    if native_gravity is not None:
+        return native_gravity
+
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
 
@@ -1132,3 +1175,8 @@ constraint_jacobian = analytical_constraint_jacobian
 mass_matrix = analytical_mass_matrix
 coriolis_matrix = analytical_coriolis
 gravity_vector = analytical_gravity_vector
+
+
+def get_native_backend_info() -> dict[str, object]:
+    """Expose the golfer native-backend configuration and availability."""
+    return _native_backend.get_native_backend_info()

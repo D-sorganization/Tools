@@ -39,6 +39,7 @@ class DoublePendulumParams:
         g: float = 9.81,
         friction1: float = 0.0,
         friction2: float = 0.0,
+        m_clubhead: float = 0.0,
     ):
         """Initialize double pendulum parameters.
 
@@ -50,6 +51,7 @@ class DoublePendulumParams:
             g: Gravitational acceleration (m/s²)
             friction1: Friction coefficient for first joint
             friction2: Friction coefficient for second joint
+            m_clubhead: Clubhead point mass at the tip (kg)
         """
         self.m1 = m1
         self.m2 = m2
@@ -58,12 +60,20 @@ class DoublePendulumParams:
         self.g = g
         self.friction1 = friction1
         self.friction2 = friction2
+        self.m_clubhead = m_clubhead
 
     def to_rust(self):
         """Convert to Rust parameter object (if native available)."""
         if HAS_NATIVE:
             return pendulum_core.PyDoublePendulumParams(
-                self.m1, self.m2, self.l1, self.l2, self.g, self.friction1, self.friction2
+                self.m1,
+                self.m2,
+                self.l1,
+                self.l2,
+                self.g,
+                self.friction1,
+                self.friction2,
+                self.m_clubhead,
             )
         return self
 
@@ -71,27 +81,42 @@ class DoublePendulumParams:
 class DoublePendulum:
     """Double pendulum physics model (2-DOF)."""
 
-    def __init__(self, m1: float, m2: float, l1: float, l2: float, g: float = 9.81):
-        self.params = DoublePendulumParams(m1=m1, m2=m2, l1=l1, l2=l2, g=g)
+    def __init__(
+        self,
+        m1: float,
+        m2: float,
+        l1: float,
+        l2: float,
+        g: float = 9.81,
+        m_clubhead: float = 0.0,
+    ):
+        self.params = DoublePendulumParams(
+            m1=m1, m2=m2, l1=l1, l2=l2, g=g, m_clubhead=m_clubhead
+        )
         self.use_native = HAS_NATIVE
 
     def mass_matrix(self, q: np.ndarray) -> np.ndarray:
         """Compute the 2x2 mass matrix M(q)."""
         if self.use_native:
             try:
-                result = pendulum_core.py_double_mass_matrix(q.tolist(), self.params.to_rust())
+                result = pendulum_core.py_double_mass_matrix(
+                    q.tolist(), self.params.to_rust()
+                )
                 return np.array(result, dtype=np.float64)
             except Exception as e:
                 print(
-                    f"Warning: Rust call failed: {e}, falling back to NumPy", file=sys.stderr
+                    f"Warning: Rust call failed: {e}, falling back to NumPy",
+                    file=sys.stderr,
                 )
 
         # NumPy fallback
         phi = q[1]
         cos_phi = np.cos(phi)
-        m00 = (self.params.m1 + self.params.m2) * self.params.l1**2
-        m01 = self.params.m2 * self.params.l1 * self.params.l2 * cos_phi
-        m11 = self.params.m2 * self.params.l2**2
+        me = self.params.m2 + self.params.m_clubhead
+        m00 = (self.params.m1 + me) * self.params.l1**2 + me * self.params.l2**2
+        m00 += 2.0 * me * self.params.l1 * self.params.l2 * cos_phi
+        m01 = me * self.params.l2**2 + me * self.params.l1 * self.params.l2 * cos_phi
+        m11 = me * self.params.l2**2
         return np.array([[m00, m01], [m01, m11]], dtype=np.float64)
 
     def gravity_vector(self, q: np.ndarray) -> np.ndarray:
@@ -108,10 +133,11 @@ class DoublePendulum:
         # NumPy fallback
         theta1 = q[0]
         theta2 = theta1 + q[1]
-        g0 = (
-            (self.params.m1 + self.params.m2) * self.params.g * self.params.l1 * np.sin(theta1)
-        )
-        g1 = self.params.m2 * self.params.g * self.params.l2 * np.sin(theta2)
+        me = self.params.m2 + self.params.m_clubhead
+        g0 = (self.params.m1 + me) * self.params.g * self.params.l1 * np.sin(
+            theta1
+        ) + me * self.params.g * self.params.l2 * np.sin(theta2)
+        g1 = me * self.params.g * self.params.l2 * np.sin(theta2)
         return np.array([g0, g1], dtype=np.float64)
 
     def coriolis(self, q: np.ndarray, qdot: np.ndarray) -> np.ndarray:
@@ -127,10 +153,10 @@ class DoublePendulum:
 
         # NumPy fallback
         phi = q[1]
-        sin_phi = np.sin(phi)
-        c_term = self.params.m2 * self.params.l1 * self.params.l2 * sin_phi
-        c0 = -c_term * qdot[1] ** 2
-        c1 = c_term * qdot[0] ** 2
+        me = self.params.m2 + self.params.m_clubhead
+        h = -me * self.params.l1 * self.params.l2 * np.sin(phi)
+        c0 = h * (2.0 * qdot[0] * qdot[1] + qdot[1] ** 2)
+        c1 = -h * qdot[0] ** 2
         return np.array([c0, c1], dtype=np.float64)
 
     def forward_kinematics(self, q: np.ndarray) -> Dict[str, float]:
@@ -280,15 +306,20 @@ class Golfer:
         """Compute the 8x8 mass matrix M(q)."""
         if self.use_native:
             try:
-                result = pendulum_core.py_golfer_mass_matrix(q.tolist(), self.params.to_rust())
+                result = pendulum_core.py_golfer_mass_matrix(
+                    q.tolist(), self.params.to_rust()
+                )
                 return np.array(result, dtype=np.float64)
             except Exception as e:
                 print(
-                    f"Warning: Rust call failed: {e}, falling back to NumPy", file=sys.stderr
+                    f"Warning: Rust call failed: {e}, falling back to NumPy",
+                    file=sys.stderr,
                 )
 
         # NumPy fallback would be implemented by porting the Rust analytical code
-        raise NotImplementedError("NumPy fallback for golfer mass matrix not yet implemented")
+        raise NotImplementedError(
+            "NumPy fallback for golfer mass matrix not yet implemented"
+        )
 
     def gravity_vector(self, q: np.ndarray) -> np.ndarray:
         """Compute the gravity vector G(q)."""
@@ -301,7 +332,9 @@ class Golfer:
             except Exception:
                 pass
 
-        raise NotImplementedError("NumPy fallback for golfer gravity not yet implemented")
+        raise NotImplementedError(
+            "NumPy fallback for golfer gravity not yet implemented"
+        )
 
     def forward_kinematics(self, q: np.ndarray) -> Dict[str, Tuple[float, float]]:
         """Compute forward kinematics."""
@@ -340,7 +373,9 @@ class Golfer:
             except Exception:
                 pass
 
-        raise NotImplementedError("NumPy fallback for constraint Jacobian not yet implemented")
+        raise NotImplementedError(
+            "NumPy fallback for constraint Jacobian not yet implemented"
+        )
 
 
 def get_native_info() -> Dict[str, object]:
@@ -348,9 +383,9 @@ def get_native_info() -> Dict[str, object]:
     return {
         "has_native": HAS_NATIVE,
         "error": NATIVE_ERROR,
-        "module_version": getattr(pendulum_core, "__version__", "unknown")
-        if HAS_NATIVE
-        else None,
+        "module_version": (
+            getattr(pendulum_core, "__version__", "unknown") if HAS_NATIVE else None
+        ),
     }
 
 

@@ -99,7 +99,9 @@ class TestMakePolynomialTorque:
         assert result == (1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0)
 
     def test_linear_torque(self) -> None:
-        tf = make_polynomial_torque([0.0, 1.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0])
+        tf = make_polynomial_torque(
+            [0.0, 1.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0]
+        )
         result = tf(2.0)
         assert abs(result[0] - 2.0) < 1e-10
 
@@ -120,12 +122,36 @@ class TestRunSimulation:
         assert sim_result.states.shape[1] == 2 * N_DOF
 
     def test_time_monotonic(self, sim_result: GolferSimulationResult) -> None:
-        assert np.all(np.diff(sim_result.t) > 0), "Time must be monotonically increasing"
+        assert np.all(
+            np.diff(sim_result.t) > 0
+        ), "Time must be monotonically increasing"
 
     def test_constraint_bounded(self, sim_result: GolferSimulationResult) -> None:
         for i in range(sim_result.n_steps):
             v = constraint_violation(sim_result.states[i], _GOLFER_PARAMS)
             assert v < 0.1, f"Constraint violation at step {i}: {v}"
+
+
+class TestGolferSimulationResultContracts:
+    """Trajectory-level DbC validation for GolferSimulationResult."""
+
+    def test_constructor_rejects_non_monotonic_time(self) -> None:
+        with pytest.raises(AssertionError, match="strictly increasing"):
+            GolferSimulationResult(
+                t=np.array([0.0, 0.0]),
+                states=np.zeros((2, 2 * N_DOF)),
+                params=_GOLFER_PARAMS,
+                torque_func=_zero_torque,
+            )
+
+    def test_constructor_rejects_wrong_state_width(self) -> None:
+        with pytest.raises(AssertionError, match="states must have width"):
+            GolferSimulationResult(
+                t=np.array([0.0, 0.01]),
+                states=np.zeros((2, 2 * N_DOF - 1)),
+                params=_GOLFER_PARAMS,
+                torque_func=_zero_torque,
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -155,3 +181,13 @@ class TestGolferSimulationResult:
     def test_mass_matrix_at(self, sim_result: GolferSimulationResult) -> None:
         M = sim_result.mass_matrix_at(0)
         assert M.shape == (N_DOF, N_DOF)
+
+    def test_all_positions_and_energies(
+        self, sim_result: GolferSimulationResult
+    ) -> None:
+        positions = sim_result.all_positions()
+        energies = sim_result.all_energies()
+        assert len(positions) == sim_result.n_steps
+        assert energies["kinetic"].shape == (sim_result.n_steps,)
+        assert energies["potential"].shape == (sim_result.n_steps,)
+        assert energies["total"].shape == (sim_result.n_steps,)
