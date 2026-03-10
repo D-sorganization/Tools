@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from pathlib import PurePosixPath
 from typing import Any
 
 from model_generation.core.constants import (
@@ -77,6 +78,10 @@ class URDFWriter:
             len(links),
             len(joints),
         )
+
+        # Validate link-joint graph structure
+        self._validate_graph(links, joints)
+
         lines: list[str] = []
 
         # XML declaration
@@ -256,9 +261,10 @@ class URDFWriter:
                 f'length="{geometry.dimensions[1]:.6g}"/>'
             )
         elif geometry.geometry_type == GeometryType.MESH:
+            mesh_filename = self._validate_mesh_filename(geometry.mesh_filename or "")
             scale = geometry.mesh_scale
             lines.append(
-                f'{indent2}<mesh filename="{self._escape(geometry.mesh_filename or "")}" '
+                f'{indent2}<mesh filename="{self._escape(mesh_filename)}" '
                 f'scale="{scale[0]:.6g} {scale[1]:.6g} {scale[2]:.6g}"/>'
             )
 
@@ -289,13 +295,34 @@ class URDFWriter:
     def _collect_materials(
         self, links: list[Link], extra_materials: dict[str, Any]
     ) -> dict[str, Material]:
-        """Collect all unique materials from links."""
+        """Collect all unique materials from links.
+
+        Detects and warns about material name collisions where two links
+        define different RGBA colors under the same material name.  The
+        first definition wins; subsequent conflicting definitions are
+        logged at WARNING level.
+        """
         materials: dict[str, Material] = {}
 
-        # Add materials from links
+        # Add materials from links — detect color collisions
         for link in links:
-            if link.visual_material and link.visual_material.name not in materials:
-                materials[link.visual_material.name] = link.visual_material
+            mat = link.visual_material
+            if mat is None:
+                continue
+            if mat.name in materials:
+                existing = materials[mat.name]
+                if existing.color != mat.color:
+                    logger.warning(
+                        "Material name collision: '%s' defined with color "
+                        "%s on link '%s' but already defined with color %s. "
+                        "The first definition will be used in the URDF.",
+                        mat.name,
+                        mat.color,
+                        link.name,
+                        existing.color,
+                    )
+            else:
+                materials[mat.name] = mat
 
         # Add extra materials
         for name, mat_data in extra_materials.items():
@@ -376,8 +403,13 @@ class URDFWriter:
     def _expand_gimbal_joint(self, joint: Joint) -> tuple[list[Link], list[Joint]]:
         """Expand gimbal joint to 3 revolute joints."""
         # Default axes: Z-Y-X Euler sequence
-        axes = joint.composite_axes or [(0, 0, 1), (0, 1, 0), (1, 0, 0)]
-        limits = joint.composite_limits or [joint.limits] * 3
+        default_axes = [(0, 0, 1), (0, 1, 0), (1, 0, 0)]
+        axes = self._normalize_composite_axes(
+            joint.name, joint.composite_axes, default_axes
+        )
+        limits = self._normalize_composite_limits(
+            joint.composite_limits, joint.limits, 3
+        )
 
         intermediate_links: list[Link] = []
         revolute_joints: list[Joint] = []
@@ -428,8 +460,13 @@ class URDFWriter:
     def _expand_universal_joint(self, joint: Joint) -> tuple[list[Link], list[Joint]]:
         """Expand universal joint to 2 revolute joints."""
         # Default axes: perpendicular
-        axes = joint.composite_axes or [(1, 0, 0), (0, 1, 0)]
-        limits = joint.composite_limits or [joint.limits] * 2
+        default_axes = [(1, 0, 0), (0, 1, 0)]
+        axes = self._normalize_composite_axes(
+            joint.name, joint.composite_axes, default_axes
+        )
+        limits = self._normalize_composite_limits(
+            joint.composite_limits, joint.limits, 2
+        )
 
         intermediate_links: list[Link] = []
         revolute_joints: list[Joint] = []
@@ -467,6 +504,157 @@ class URDFWriter:
             )
 
         return intermediate_links, revolute_joints
+
+    @staticmethod
+    def _validate_graph(links: list[Link], joints: list[Joint]) -> None:
+        """Validate that the link-joint graph forms a proper tree.
+
+        A valid URDF has exactly one root link (not a child of any joint)
+        and every link is reachable from the root via parent→child edges.
+        Cycles or disconnected sub-trees are rejected.
+
+        Raises:
+            ValueError: If the graph is cyclic, disconnected, or has
+                multiple roots.
+        """
+        link_names = {link.name for link in links}
+        for joint in joints:
+            if not isinstance(joint.parent, str) or not joint.parent.strip():
+                raise ValueError(
+                    f"Joint '{joint.name}' must define a non-empty parent link"
+                )
+            if not isinstance(joint.child, str) or not joint.child.strip():
+                raise ValueError(
+                    f"Joint '{joint.name}' must define a non-empty child link"
+                )
+            if joint.parent not in link_names:
+                raise ValueError(
+                    f"Joint '{joint.name}' references unknown parent link '{joint.parent}'"
+                )
+            if joint.child not in link_names:
+                raise ValueError(
+                    f"Joint '{joint.name}' references unknown child link '{joint.child}'"
+                )
+
+        children_set = {joint.child for joint in joints}
+        roots = link_names - children_set
+
+        if not roots:
+            raise ValueError(
+                "URDF graph has no root link (every link is a child of some "
+                "joint, indicating a cycle)."
+            )
+
+        if len(roots) > 1:
+            raise ValueError(
+                "URDF graph must have exactly one root link; "
+                f"found {len(roots)} roots: {sorted(roots)}"
+            )
+
+        root = next(iter(roots))
+
+        # BFS reachability check from the single root
+        adjacency: dict[str, list[str]] = {name: [] for name in link_names}
+        for joint in joints:
+            if joint.parent in adjacency:
+                adjacency[joint.parent].append(joint.child)
+
+        visited: set[str] = set()
+        queue = [root]
+        while queue:
+            node = queue.pop(0)
+            if node in visited:
+                continue
+            visited.add(node)
+            queue.extend(adjacency.get(node, []))
+
+        unreachable = link_names - visited
+        if unreachable:
+            raise ValueError(
+                "URDF graph contains unreachable links from root "
+                f"'{root}': {sorted(unreachable)}"
+            )
+
+    @staticmethod
+    def _normalize_composite_axes(
+        joint_name: str,
+        axes: list[tuple[float, float, float]] | None,
+        defaults: list[tuple[float, float, float]],
+    ) -> list[tuple[float, float, float]]:
+        """Return a full axis list, replacing missing entries with defaults."""
+        normalized: list[tuple[float, float, float]] = []
+        source = list(axes or [])
+
+        for index, default_axis in enumerate(defaults):
+            axis = source[index] if index < len(source) else default_axis
+            if axis is None:
+                axis = default_axis
+            if len(axis) != 3:
+                raise ValueError(
+                    f"Joint '{joint_name}' has invalid composite axis at DOF {index + 1}"
+                )
+            normalized.append((float(axis[0]), float(axis[1]), float(axis[2])))
+
+        return normalized
+
+    @staticmethod
+    def _normalize_composite_limits(
+        composite_limits: list[JointLimits] | None,
+        fallback_limit: JointLimits | None,
+        dof_count: int,
+    ) -> list[JointLimits]:
+        """Return a full limit list, replacing missing entries with defaults."""
+        normalized: list[JointLimits] = []
+        source = list(composite_limits or [])
+
+        for index in range(dof_count):
+            limit = source[index] if index < len(source) else fallback_limit
+            normalized.append(limit or JointLimits())
+
+        return normalized
+
+    @staticmethod
+    def _validate_mesh_filename(mesh_filename: str) -> str:
+        """Validate mesh references against traversal and unsupported URIs."""
+        if not mesh_filename:
+            raise ValueError("Mesh geometry requires a non-empty mesh filename")
+
+        normalized = mesh_filename.replace("\\", "/")
+        if normalized.startswith("package://"):
+            candidate = normalized[len("package://") :]
+            if not candidate or candidate.startswith("/"):
+                raise ValueError(
+                    f"Mesh filename '{mesh_filename}' must reference a package-relative asset"
+                )
+        else:
+            if "://" in normalized:
+                raise ValueError(
+                    f"Mesh filename '{mesh_filename}' uses an unsupported URI scheme"
+                )
+            if normalized.startswith("/") or URDFWriter._has_windows_drive_prefix(
+                normalized
+            ):
+                raise ValueError(
+                    f"Mesh filename '{mesh_filename}' must be relative or package://"
+                )
+            first_segment = normalized.split("/", 1)[0]
+            if ":" in first_segment:
+                raise ValueError(
+                    f"Mesh filename '{mesh_filename}' uses an unsupported URI scheme"
+                )
+            candidate = normalized
+
+        if any(part == ".." for part in PurePosixPath(candidate).parts):
+            raise ValueError(f"Mesh filename '{mesh_filename}' contains path traversal")
+
+        return mesh_filename
+
+    @staticmethod
+    def _has_windows_drive_prefix(path: str) -> bool:
+        """Return True when the path starts with a Windows drive prefix."""
+        return (
+            len(path) >= 3 and path[0].isalpha() and path[1] == ":" and path[2] == "/"
+        )
 
     def _escape(self, text: str) -> str:
         """Escape special XML characters."""

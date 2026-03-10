@@ -591,7 +591,20 @@ class MJCFConverter:
             return Geometry.cylinder(sizes[0], sizes[1] * 2), origin
         elif geom_type == "capsule":
             if fromto_str:
-                vals = [float(v) for v in fromto_str.split()]
+                try:
+                    vals = [float(v) for v in fromto_str.split()]
+                except ValueError:
+                    logger.warning(
+                        "Ignoring capsule geom with non-numeric fromto='%s'",
+                        fromto_str,
+                    )
+                    return None, origin
+                if len(vals) != 6:
+                    logger.warning(
+                        "Ignoring capsule geom with malformed fromto='%s'",
+                        fromto_str,
+                    )
+                    return None, origin
                 dx = vals[3] - vals[0]
                 dy = vals[4] - vals[1]
                 dz = vals[5] - vals[2]
@@ -602,6 +615,8 @@ class MJCFConverter:
                     (vals[1] + vals[4]) / 2,
                     (vals[2] + vals[5]) / 2,
                 )
+                if length <= 1e-12:
+                    return Geometry.sphere(radius), Origin(xyz=midpoint)
                 return Geometry.capsule(radius, length), Origin(xyz=midpoint)
             elif len(sizes) >= 2:
                 return Geometry.capsule(sizes[0], sizes[1] * 2), origin

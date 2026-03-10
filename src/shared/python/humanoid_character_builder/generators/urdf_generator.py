@@ -12,9 +12,9 @@ import logging
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, cast
-from xml.dom import minidom
+from typing import Any
 
+from defusedxml import minidom
 from humanoid_character_builder.contracts import postcondition, precondition
 from humanoid_character_builder.core.anthropometry import (
     estimate_segment_dimensions,
@@ -295,7 +295,11 @@ class HumanoidURDFGenerator:
         seg_params = params.get_segment_params(segment_name)
 
         # Determine mass
-        final_mass = seg_params.mass_kg if seg_params.has_mass_override() else mass
+        final_mass = mass
+        if seg_params.has_mass_override():
+            override_mass = seg_params.mass_kg
+            if override_mass is not None:
+                final_mass = override_mass
 
         # Compute inertia
         inertia = self._compute_segment_inertia(
@@ -435,12 +439,7 @@ class HumanoidURDFGenerator:
                 "filename": geom_spec.mesh_path,
                 "scale": geom_spec.mesh_scale,
             }
-        else:
-            # Default to box
-            return {
-                "type": "box",
-                "size": (width, depth, length),
-            }
+        raise ValueError(f"Unsupported geometry type: {geom_spec.geometry_type}")
 
     def _generate_joint(
         self,
@@ -591,9 +590,9 @@ class HumanoidURDFGenerator:
 
         # Format XML
         if self.config.pretty_print:
-            xml_str = minidom.parseString(ET.tostring(root)).toprettyxml(
-                indent=self.config.indent
-            )
+            xml_str = minidom.parseString(
+                ET.tostring(root, encoding="utf-8")
+            ).toprettyxml(indent=self.config.indent)
             # Remove extra blank lines
             lines = [line for line in xml_str.split("\n") if line.strip()]
             return "\n".join(lines)
@@ -724,4 +723,4 @@ def generate_humanoid_urdf(
         URDF XML string
     """
     generator = HumanoidURDFGenerator(config)
-    return cast(str, generator.generate(params, output_path))
+    return generator.generate(params, output_path)

@@ -26,6 +26,8 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+MIN_MESH_VOLUME_M3 = 1e-10
+
 
 class InertiaMode(Enum):
     """Inertia calculation mode."""
@@ -270,7 +272,7 @@ class MeshInertiaCalculator:
 
         mesh_props = self._extract_mesh_mass_properties(mesh, mass)
         if mesh_props is None:
-            return InertiaResult.create_default(mass or 1.0)
+            raise ValueError("Failed to compute mesh mass properties")
 
         return self._create_inertia_result(
             mesh_props, mass, effective_density, was_watertight
@@ -301,18 +303,22 @@ class MeshInertiaCalculator:
             volume = mesh.volume
             center_mass = mesh.center_mass
 
-            if volume <= 0:
-                logger.warning("Mesh has non-positive volume. Using bounding box.")
-                volume = mesh.bounding_box.volume
-                center_mass = mesh.bounding_box.centroid
+            if volume <= MIN_MESH_VOLUME_M3:
+                raise ValueError(
+                    "Mesh volume "
+                    f"{volume:.3e} m^3 is below minimum threshold "
+                    f"{MIN_MESH_VOLUME_M3:.3e} m^3"
+                )
 
             return {
                 "volume": volume,
                 "center_mass": center_mass,
                 "inertia_unit": mesh.moment_inertia,
             }
-        except (ValueError, TypeError, AttributeError) as e:
-            logger.warning(f"Failed to compute mesh properties: {e}. Using defaults.")
+        except ValueError:
+            raise
+        except (TypeError, AttributeError) as e:
+            logger.warning("Failed to compute mesh properties: %s", e)
             return None
 
     def _create_inertia_result(
@@ -331,7 +337,7 @@ class MeshInertiaCalculator:
             inertia_unit, volume, mass, effective_density
         )
 
-        return InertiaResult(
+        result = InertiaResult(
             ixx=float(inertia[0, 0]),
             iyy=float(inertia[1, 1]),
             izz=float(inertia[2, 2]),
@@ -348,6 +354,19 @@ class MeshInertiaCalculator:
             was_watertight=was_watertight,
             mode=mode,
         )
+        self._validate_inertia_result(result)
+        return result
+
+    def _validate_inertia_result(self, result: InertiaResult) -> None:
+        """Reject inertia tensors that are not physically valid."""
+        if result.mass <= 0:
+            raise ValueError(
+                f"Computed inertia mass must be positive, got {result.mass:.3e}"
+            )
+        if not result.is_valid():
+            raise ValueError("Computed inertia tensor violates physical constraints")
+        if not result.validate_positive_definite():
+            raise ValueError("Computed inertia tensor must be positive definite")
 
     def _scale_inertia(
         self,
