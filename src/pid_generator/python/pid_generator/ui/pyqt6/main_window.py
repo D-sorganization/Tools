@@ -7,9 +7,10 @@ location, then delegates generation to the ``programmatic_pid`` library.
 from __future__ import annotations
 
 import logging
-import sys
 from pathlib import Path
 
+from programmatic_pid import PIDDocument
+from programmatic_pid.profiles import PROFILE_PRESETS
 from PyQt6.QtWidgets import (
     QApplication,
     QComboBox,
@@ -23,9 +24,6 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-
-from programmatic_pid import PIDDocument
-from programmatic_pid.profiles import PROFILE_PRESETS
 
 logger = logging.getLogger(__name__)
 
