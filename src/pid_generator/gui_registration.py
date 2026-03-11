@@ -9,8 +9,9 @@ GUI_INFO = {
     "category": "Engineering Drafting",
     "icon": "drafting",
     "pyqt6": {
-        "module": "pid_generator.launch_pyqt6",
-        "dependencies": ["ezdxf"],
+        "module": "pid_generator.ui.pyqt6.main_window",
+        "class": "PIDGeneratorMainWindow",
+        "dependencies": ["ezdxf", "PyQt6"],
         "settings_app": "PIDGenerator",
         "min_size": [800, 600],
     },
