@@ -175,9 +175,13 @@ N_CONSTRAINTS = 4
 
 
 def _hub_position(theta_hub: float, p: GolferParams) -> tuple[float, float]:
-    """Hub endpoint position (end of standoff from fixed origin)."""
-    x = p.L_hub * np.sin(theta_hub)
-    y = -p.L_hub * np.cos(theta_hub)
+    """Hub endpoint position (end of standoff from fixed origin).
+
+    Reversed direction (#1103): hub extends upward (inside the arm loop)
+    to simulate rotation around the combined center of mass.
+    """
+    x = -p.L_hub * np.sin(theta_hub)
+    y = p.L_hub * np.cos(theta_hub)
     return (x, y)
 
 
@@ -748,12 +752,12 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     jacobians = {}
 
     # -----------------------------------------------------------------------
-    # 1. HUB: position = (L_hub * sin(th_hub), -L_hub * cos(th_hub))
+    # 1. HUB: position = (-L_hub * sin(th_hub), L_hub * cos(th_hub))  (#1103)
     # Depends only on q[0]
     # -----------------------------------------------------------------------
     J_hub = np.zeros((2, N_DOF))
-    J_hub[0, 0] = p.L_hub * cos_hub
-    J_hub[1, 0] = p.L_hub * sin_hub
+    J_hub[0, 0] = -p.L_hub * cos_hub
+    J_hub[1, 0] = -p.L_hub * sin_hub
     jacobians["hub"] = J_hub
 
     # -----------------------------------------------------------------------
@@ -762,9 +766,9 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     # rs_y = hub_y + d_rs * sin(th_hub)
     # -----------------------------------------------------------------------
     J_rs = np.zeros((2, N_DOF))
-    # d/dq[0]: d(hub_x)/dq[0] + d(d_rs*cos)/dq[0]
-    J_rs[0, 0] = p.L_hub * cos_hub - p.d_rs * sin_hub
-    J_rs[1, 0] = p.L_hub * sin_hub + p.d_rs * cos_hub
+    # d/dq[0]: d(hub_x)/dq[0] + d(d_rs*cos)/dq[0)  (#1103 reversed hub)
+    J_rs[0, 0] = -p.L_hub * cos_hub - p.d_rs * sin_hub
+    J_rs[1, 0] = -p.L_hub * sin_hub + p.d_rs * cos_hub
     jacobians["rs"] = J_rs
 
     # -----------------------------------------------------------------------
@@ -774,9 +778,9 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     # Depends on q[0], q[1]
     # -----------------------------------------------------------------------
     J_re = np.zeros((2, N_DOF))
-    # d/dq[0]: d(rs)/dq[0] + d(L_r_upper*sin(th_rs_abs))/dq[0]
-    J_re[0, 0] = p.L_hub * cos_hub - p.d_rs * sin_hub + p.L_r_upper * cos_rs
-    J_re[1, 0] = p.L_hub * sin_hub + p.d_rs * cos_hub + p.L_r_upper * sin_rs
+    # d/dq[0]: d(rs)/dq[0] + d(L_r_upper*sin(th_rs_abs))/dq[0]  (#1103)
+    J_re[0, 0] = -p.L_hub * cos_hub - p.d_rs * sin_hub + p.L_r_upper * cos_rs
+    J_re[1, 0] = -p.L_hub * sin_hub + p.d_rs * cos_hub + p.L_r_upper * sin_rs
     # d/dq[1]: d(L_r_upper*sin(th_rs_abs))/dq[1]
     J_re[0, 1] = p.L_r_upper * cos_rs
     J_re[1, 1] = p.L_r_upper * sin_rs
@@ -789,15 +793,15 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     # Depends on q[0], q[1], q[2]
     # -----------------------------------------------------------------------
     J_rh = np.zeros((2, N_DOF))
-    # d/dq[0]
+    # d/dq[0]  (#1103 reversed hub)
     J_rh[0, 0] = (
-        p.L_hub * cos_hub
+        -p.L_hub * cos_hub
         - p.d_rs * sin_hub
         + p.L_r_upper * cos_rs
         + p.L_r_fore * cos_re
     )
     J_rh[1, 0] = (
-        p.L_hub * sin_hub
+        -p.L_hub * sin_hub
         + p.d_rs * cos_hub
         + p.L_r_upper * sin_rs
         + p.L_r_fore * sin_re
@@ -816,8 +820,8 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     # ls_y = hub_y - d_ls * sin(th_hub)
     # -----------------------------------------------------------------------
     J_ls = np.zeros((2, N_DOF))
-    J_ls[0, 0] = p.L_hub * cos_hub + p.d_ls * sin_hub
-    J_ls[1, 0] = p.L_hub * sin_hub - p.d_ls * cos_hub
+    J_ls[0, 0] = -p.L_hub * cos_hub + p.d_ls * sin_hub  # (#1103)
+    J_ls[1, 0] = -p.L_hub * sin_hub - p.d_ls * cos_hub
     jacobians["ls"] = J_ls
 
     # -----------------------------------------------------------------------
@@ -827,9 +831,9 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     # Depends on q[0], q[4]
     # -----------------------------------------------------------------------
     J_le = np.zeros((2, N_DOF))
-    # d/dq[0]
-    J_le[0, 0] = p.L_hub * cos_hub + p.d_ls * sin_hub + p.L_l_upper * cos_ls
-    J_le[1, 0] = p.L_hub * sin_hub - p.d_ls * cos_hub + p.L_l_upper * sin_ls
+    # d/dq[0]  (#1103)
+    J_le[0, 0] = -p.L_hub * cos_hub + p.d_ls * sin_hub + p.L_l_upper * cos_ls
+    J_le[1, 0] = -p.L_hub * sin_hub - p.d_ls * cos_hub + p.L_l_upper * sin_ls
     # d/dq[4]
     J_le[0, 4] = p.L_l_upper * cos_ls
     J_le[1, 4] = p.L_l_upper * sin_ls
@@ -842,15 +846,15 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     # Depends on q[0], q[4], q[5]
     # -----------------------------------------------------------------------
     J_lh = np.zeros((2, N_DOF))
-    # d/dq[0]
+    # d/dq[0]  (#1103)
     J_lh[0, 0] = (
-        p.L_hub * cos_hub
+        -p.L_hub * cos_hub
         + p.d_ls * sin_hub
         + p.L_l_upper * cos_ls
         + p.L_l_fore * cos_le
     )
     J_lh[1, 0] = (
-        p.L_hub * sin_hub
+        -p.L_hub * sin_hub
         - p.d_ls * cos_hub
         + p.L_l_upper * sin_ls
         + p.L_l_fore * sin_le
@@ -885,15 +889,15 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     coeff_club_y = -0.5 * (p.L_club - 2 * p.grip_right)  # = -0.5*L_club + grip_right
 
     J_club_com = np.zeros((2, N_DOF))
-    # d/dq[0], d/dq[1], d/dq[2], d/dq[3] from rh
+    # d/dq[0], d/dq[1], d/dq[2], d/dq[3] from rh  (#1103 reversed hub)
     J_club_com[0, 0] = (
-        p.L_hub * cos_hub
+        -p.L_hub * cos_hub
         - p.d_rs * sin_hub
         + p.L_r_upper * cos_rs
         + p.L_r_fore * cos_re
     )
     J_club_com[1, 0] = (
-        p.L_hub * sin_hub
+        -p.L_hub * sin_hub
         + p.d_rs * cos_hub
         + p.L_r_upper * sin_rs
         + p.L_r_fore * sin_re
@@ -927,15 +931,15 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     coeff_tip_y = -(p.L_club - p.grip_right)
 
     J_club_tip = np.zeros((2, N_DOF))
-    # d/dq[0], d/dq[1], d/dq[2], d/dq[3] from rh (via club_base)
+    # d/dq[0], d/dq[1], d/dq[2], d/dq[3] from rh (via club_base)  (#1103)
     J_club_tip[0, 0] = (
-        p.L_hub * cos_hub
+        -p.L_hub * cos_hub
         - p.d_rs * sin_hub
         + p.L_r_upper * cos_rs
         + p.L_r_fore * cos_re
     )
     J_club_tip[1, 0] = (
-        p.L_hub * sin_hub
+        -p.L_hub * sin_hub
         + p.d_rs * cos_hub
         + p.L_r_upper * sin_rs
         + p.L_r_fore * sin_re
