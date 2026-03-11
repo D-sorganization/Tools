@@ -357,10 +357,16 @@ class TestAdaptiveStepInterpolation:
 class TestPerSegmentVisibility:
     """Segment visibility filtering must work correctly."""
 
+    @staticmethod
+    def _filter_visible(
+        names: list[str], visible: set[str] | None
+    ) -> list[str]:
+        return [n for n in names if visible is None or n in visible]
+
     def test_none_means_all_visible(self) -> None:
-        visible = None
+        visible: set[str] | None = None
         joint_names = ["shoulder", "wrist", "tip"]
-        result = [name for name in joint_names if visible is None or name in visible]
+        result = self._filter_visible(joint_names, visible)
         assert result == joint_names
 
     def test_empty_set_means_nothing_visible(self) -> None:

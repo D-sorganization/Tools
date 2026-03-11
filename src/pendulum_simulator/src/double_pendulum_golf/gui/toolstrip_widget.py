@@ -556,11 +556,13 @@ class ToolStrip(QWidget):
         seg_item = overlay_layout.itemAt(overlay_layout.count() - 1)
         if seg_item is not None and seg_item.layout() is not None:
             seg_layout = seg_item.layout()
+            assert seg_layout is not None  # narrowing for mypy
             # Clear old widgets (keep "Segments:" label at position 0)
             while seg_layout.count() > 1:
                 item = seg_layout.takeAt(1)
-                if item is not None and item.widget() is not None:
-                    item.widget().deleteLater()
+                w = item.widget() if item is not None else None
+                if w is not None:
+                    w.deleteLater()
             # Add new checkboxes
             for name in names:
                 chk = QCheckBox(name[:6])
@@ -574,7 +576,8 @@ class ToolStrip(QWidget):
                 chk.toggled.connect(self._on_segment_toggled)
                 seg_layout.addWidget(chk)
                 self._segment_checks[name] = chk
-            seg_layout.addStretch()
+            if hasattr(seg_layout, "addStretch"):
+                seg_layout.addStretch()  # type: ignore[union-attr]
 
         # Emit all-visible since we just reset
         self.segment_visibility_changed.emit(None)

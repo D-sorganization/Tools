@@ -352,7 +352,7 @@ class MainWindow(QMainWindow):
                         params=params,
                         initial_state=initial_state,
                         t_end=t_end,
-                        torque_func=torque_func,
+                        torque_func=torque_func,  # type: ignore[arg-type]
                         limits=limits,
                         clamp=clamp,
                     )
