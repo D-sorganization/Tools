@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import importlib
-import sys
 
 import pytest
 
@@ -33,7 +32,8 @@ def test_get_gui_info_returns_gui_info():
 
 
 @pytest.mark.skipif(
-    importlib.util.find_spec("PyQt6") is None or importlib.util.find_spec("ezdxf") is None,
+    importlib.util.find_spec("PyQt6") is None
+    or importlib.util.find_spec("ezdxf") is None,
     reason="PyQt6 and ezdxf required",
 )
 def test_main_window_class_importable():
