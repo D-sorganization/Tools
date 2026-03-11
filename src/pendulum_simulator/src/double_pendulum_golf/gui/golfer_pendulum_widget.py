@@ -77,6 +77,9 @@ class GolferPendulumWidget(QWidget):
         # Per-segment overlay visibility (#1102)
         self._visible_segments: set[str] | None = None
 
+        # Swing plane tilt angle in radians (#1113)
+        self._tilt_angle: float = 0.0
+
     # ------------------------------------------------------------------
     # Public interface (_SimViewer protocol)
     # ------------------------------------------------------------------
@@ -153,6 +156,11 @@ class GolferPendulumWidget(QWidget):
         self._visible_segments = segments
         self.update()
 
+    def set_tilt_angle(self, angle_rad: float) -> None:
+        """Set swing plane tilt for display projection (#1113)."""
+        self._tilt_angle = float(angle_rad)
+        self.update()
+
     # ------------------------------------------------------------------
     # Zoom / Pan
     # ------------------------------------------------------------------
@@ -225,7 +233,8 @@ class GolferPendulumWidget(QWidget):
         ppm = self._pixels_per_meter
         cx = self.width() / 2.0 + self._pan_x
         cy = self.height() * 0.30 + self._pan_y
-        return QPointF(cx + x * ppm, cy - y * ppm)
+        y_proj = y * float(np.cos(self._tilt_angle))  # (#1113)
+        return QPointF(cx + x * ppm, cy - y_proj * ppm)
 
     # ------------------------------------------------------------------
     # Painting

@@ -283,14 +283,18 @@ class MainWindow(QMainWindow):
         torque_history = TorqueHistoryWidget()
 
         def build_params(p: dict) -> PendulumParams:
+            tilt_rad = np.radians(p.get("tilt_deg", 0.0))
             g = 9.81 if p.get("gravity_on", True) else 0.0
+            g_eff = g * float(np.cos(tilt_rad))  # (#1113) effective gravity on plane
+            # Update display tilt on next paint
+            pendulum.set_tilt_angle(tilt_rad)
             return PendulumParams(
                 m1=p["m1"],
                 m2=p["m2"],
                 L1=p["L1"],
                 L2=p["L2"],
                 mClub=p.get("mClub", 0.0),
-                g=g,
+                g=g_eff,
                 b1=p.get("b1", 0.0),
                 b2=p.get("b2", 0.0),
                 mu1=p.get("mu1", 0.0),
@@ -341,7 +345,10 @@ class MainWindow(QMainWindow):
         matrix = TripleMatrixWidget()
 
         def build_params(p: dict) -> TriplePendulumParams:
+            tilt_rad = np.radians(p.get("tilt_deg", 0.0))
             g = 9.81 if p.get("gravity_on", True) else 0.0
+            g_eff = g * float(np.cos(tilt_rad))  # (#1113)
+            pendulum.set_tilt_angle(tilt_rad)
             return TriplePendulumParams(
                 m1=p["m1"],
                 m2=p["m2"],
@@ -349,7 +356,7 @@ class MainWindow(QMainWindow):
                 L1=p["L1"],
                 L2=p["L2"],
                 L3=p["L3"],
-                g=g,
+                g=g_eff,
                 b1=p.get("b1", 0.0),
                 b2=p.get("b2", 0.0),
                 b3=p.get("b3", 0.0),
@@ -395,7 +402,10 @@ class MainWindow(QMainWindow):
         matrix = GolferMatrixWidget()
 
         def build_params(p: dict) -> GolferParams:
+            tilt_rad = np.radians(p.get("tilt_deg", 0.0))
             g = 9.81 if p.get("gravity_on", True) else 0.0
+            g_eff = g * float(np.cos(tilt_rad))  # (#1113)
+            pendulum.set_tilt_angle(tilt_rad)
             return GolferParams(
                 m_hub=p["m_hub"],
                 m_r_upper=p["m_r_upper"],
@@ -414,7 +424,7 @@ class MainWindow(QMainWindow):
                 grip_right=p["grip_right"],
                 grip_left=p["grip_left"],
                 m_clubhead=p.get("m_clubhead", 0.2),
-                g=g,
+                g=g_eff,
                 b_hub=p.get("b_hub", 0.0),
                 b_rs=p.get("b_rs", 0.0),
                 b_re=p.get("b_re", 0.0),

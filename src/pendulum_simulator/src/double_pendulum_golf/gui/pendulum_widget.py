@@ -89,6 +89,9 @@ class PendulumWidget(QWidget):
         # None = show all segments (default); set[str] = only these joints
         self._visible_segments: set[str] | None = None
 
+        # Swing plane tilt angle in radians (#1113)
+        self._tilt_angle: float = 0.0
+
         # Pre-computed counterfactual forces (list[dict] or None)
         self._zero_torque_forces: list[dict] | None = None
 
@@ -264,6 +267,19 @@ class PendulumWidget(QWidget):
         self._visible_segments = segments
         self.update()
 
+    def set_tilt_angle(self, angle_rad: float) -> None:
+        """Set the swing plane tilt angle for display projection.
+
+        Parameters
+        ----------
+        angle_rad : float
+            Tilt from vertical in radians (0 = vertical, π/2 = horizontal).
+
+        Closes #1113.
+        """
+        self._tilt_angle = float(angle_rad)
+        self.update()
+
     def reset_view(self) -> None:
         """Reset zoom and pan to default (also callable from toolstrip button)."""
         self._zoom = 1.0
@@ -351,16 +367,21 @@ class PendulumWidget(QWidget):
         return max(30.0, min(w_scale, h_scale))
 
     def _world_to_pixel(self, x_world: float, y_world: float) -> QPointF:
-        """Convert physics coords to widget pixels, applying zoom and pan.
+        """Convert physics coords to widget pixels, applying zoom, pan, and tilt.
 
         Shoulder is placed at horizontal centre and 35% from the top so
         full-circle swings remain on-screen without the user needing to pan.
+
+        When a tilt angle is set (#1113), the Y axis is foreshortened by
+        cos(tilt) to simulate viewing the pendulum on a tilted plane.
         """
         base_ppm = self._pixels_per_meter
         cx = self.width() / 2.0 + self._pan_x
         cy = self.height() * 0.35 + self._pan_y  # 35% from top (was 20%)
+        # Apply tilt foreshortening to Y axis only
+        y_projected = y_world * float(np.cos(self._tilt_angle))
         px = cx + x_world * base_ppm
-        py = cy - y_world * base_ppm
+        py = cy - y_projected * base_ppm
         return QPointF(px, py)
 
     # ------------------------------------------------------------------
