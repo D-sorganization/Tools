@@ -166,8 +166,8 @@ class PopOutChart:
                     "Pop-Out Chart",
                     "Install matplotlib for pop-out charts:\n  pip install matplotlib",
                 )
-            except Exception:
-                pass
+            except (ImportError, RuntimeError) as exc:
+                logger.debug("Could not show matplotlib info dialog: %s", exc)
             return
 
         if self._x is None or self._y is None:

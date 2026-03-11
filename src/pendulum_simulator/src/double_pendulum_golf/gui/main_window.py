@@ -498,7 +498,12 @@ class MainWindow(QMainWindow):
                     tip_v = vels.get("tip", (0, 0))
                     speed = float(np.hypot(tip_v[0], tip_v[1]))
                     return -speed  # minimize negative speed
-                except Exception:  # noqa: BLE001
+                except (
+                    RuntimeError,
+                    ValueError,
+                    ArithmeticError,
+                ) as exc:  # noqa: BLE001
+                    logger.debug("double objective simulation failed: %s", exc)
                     return 0.0  # crashed → bad solution
 
             return objective
@@ -596,7 +601,12 @@ class MainWindow(QMainWindow):
                     tip_v = vels.get("tip", (0, 0))
                     speed = float(np.hypot(tip_v[0], tip_v[1]))
                     return -speed
-                except Exception:  # noqa: BLE001
+                except (
+                    RuntimeError,
+                    ValueError,
+                    ArithmeticError,
+                ) as exc:  # noqa: BLE001
+                    logger.debug("triple objective simulation failed: %s", exc)
                     return 0.0
 
             return objective
@@ -716,7 +726,12 @@ class MainWindow(QMainWindow):
                     tip_v = vels.get("club_tip", (0, 0))
                     speed = float(np.hypot(tip_v[0], tip_v[1]))
                     return -speed
-                except Exception:  # noqa: BLE001
+                except (
+                    RuntimeError,
+                    ValueError,
+                    ArithmeticError,
+                ) as exc:  # noqa: BLE001
+                    logger.debug("golfer objective simulation failed: %s", exc)
                     return 0.0
 
             return objective
@@ -834,7 +849,7 @@ class MainWindow(QMainWindow):
                     show_custom_options=True,
                 )
 
-        except Exception:
+        except (ImportError, AttributeError, RuntimeError):
             logger.exception("Failed to initialise ThemeManager")
             self._theme_manager = None
 

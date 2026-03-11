@@ -17,6 +17,7 @@ Design by Contract
 
 from __future__ import annotations
 
+import logging
 import numpy as np
 from PyQt6.QtCore import QPointF, Qt
 from PyQt6.QtGui import QBrush, QColor, QFont, QPainter, QPainterPath, QPen
@@ -24,6 +25,8 @@ from PyQt6.QtWidgets import QWidget
 
 from ..simulation_golfer import GolferSimulationResult
 from .base_pendulum_widget import BasePendulumWidget
+
+logger = logging.getLogger(__name__)
 
 
 class GolferPendulumWidget(BasePendulumWidget):
@@ -110,7 +113,8 @@ class GolferPendulumWidget(BasePendulumWidget):
         for state in result.states:
             try:
                 forces.append(zero_torque_joint_forces(state, params))
-            except Exception:
+            except (ValueError, RuntimeError, ArithmeticError) as exc:
+                logger.warning("zero_torque_joint_forces failed for state: %s", exc)
                 forces.append({})
         return forces
 
@@ -269,7 +273,8 @@ class GolferPendulumWidget(BasePendulumWidget):
             return
         try:
             forces = self._result.joint_forces_at(self._current_idx)
-        except Exception:
+        except (AttributeError, ValueError, IndexError) as exc:
+            logger.debug("joint_forces_at unavailable: %s", exc)
             return
         if not forces:
             return

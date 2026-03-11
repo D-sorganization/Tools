@@ -17,6 +17,7 @@ Design by Contract
 
 from __future__ import annotations
 
+import logging
 import numpy as np
 from PyQt6.QtCore import QPoint, QPointF, QRect, Qt
 from PyQt6.QtGui import QBrush, QColor, QFont, QPainter, QPainterPath, QPen
@@ -25,6 +26,8 @@ from PyQt6.QtWidgets import QWidget
 from ..jacobians import ellipsoids_double, ellipsoids_triple
 from ..simulation import SimulationResult
 from .base_pendulum_widget import BasePendulumWidget
+
+logger = logging.getLogger(__name__)
 
 
 class PendulumWidget(BasePendulumWidget):
@@ -155,7 +158,8 @@ class PendulumWidget(BasePendulumWidget):
                     forces.append(zero_torque_joint_forces_triple(state, params))  # type: ignore[arg-type]
                 else:
                     forces.append(zero_torque_joint_forces_double(state, params))
-            except Exception:
+            except (ValueError, RuntimeError, ArithmeticError) as exc:
+                logger.warning("zero_torque_joint_forces failed for state: %s", exc)
                 forces.append({})
         return forces
 

@@ -121,8 +121,8 @@ class TorqueHistoryWidget(QWidget):
             self._grid_color = theme.grid_color
             # Register for future theme changes
             manager.add_theme_change_callback(self._on_plot_theme_changed)
-        except Exception:
-            logger.debug("PlotThemeManager unavailable, using defaults")
+        except (ImportError, AttributeError, RuntimeError) as exc:
+            logger.debug("PlotThemeManager unavailable, using defaults: %s", exc)
 
     def _on_plot_theme_changed(self, theme: object) -> None:
         """Update backgrounds when the plot theme changes (trace colors stay)."""
@@ -134,8 +134,8 @@ class TorqueHistoryWidget(QWidget):
             self._grid_color = theme.grid_color  # type: ignore[attr-defined]
             for pw in (self._plot_j1, self._plot_j2):
                 pw.setBackground(self._bg_color)
-        except Exception:
-            logger.debug("Could not update torque plot theme")
+        except (AttributeError, RuntimeError) as exc:
+            logger.debug("Could not update torque plot theme: %s", exc)
 
     # ------------------------------------------------------------------
     # UI construction
