@@ -224,6 +224,34 @@ class SimulationPanel(QWidget):
         if hasattr(self, "_splitter"):
             self._splitter.splitterMoved.connect(lambda *_: self.save_layout())
 
+        # Wire optimizer (#1151): build objective from current params on demand
+        if self.optimizer is not None and self.objective_builder is not None:
+            from .optimization_widget import OptimizationWidget
+
+            opt = cast("OptimizationWidget", self.optimizer)
+            _obj_builder = self.objective_builder  # capture for closure
+            assert callable(_obj_builder), "objective_builder must be callable"
+
+            # Before each optimizer run, rebuild the objective with current params
+            orig_on_run = opt._on_run
+
+            def _patched_on_run() -> None:
+                """Build objective from current UI params, then run optimizer."""
+                try:
+                    p = self.controls.get_params()
+                    obj_fn = _obj_builder(p)
+                    opt.set_objective_function(obj_fn)
+                except (ValueError, AssertionError) as e:
+                    opt._log.append(f"⚠ Cannot build objective: {e}")
+                    return
+                orig_on_run()
+
+            opt._btn_run.clicked.disconnect()
+            opt._btn_run.clicked.connect(_patched_on_run)
+
+            # Wire apply back to controls (set torque coefficients)
+            opt.optimized_coefficients.connect(self._apply_optimized_coefficients)
+
     def _setup_timer(self) -> None:
         self._timer = QTimer(self)
         self._timer.setInterval(self.ANIMATION_INTERVAL_MS)
@@ -459,6 +487,77 @@ class SimulationPanel(QWidget):
         if self._result is None:
             return 0
         return int(self._result.n_steps)
+
+    def _apply_optimized_coefficients(self, result: object) -> None:
+        """Apply optimizer results back to the control widget's torque fields.
+
+        Splits the flat coefficient array into per-joint polynomial strings.
+        Supports double (2), triple (3), and golfer (7) torque-param models.
+
+        Pre: result has 'coeffs' key with a numpy array.
+        Closes #1151.
+        """
+        import logging
+
+        logger = logging.getLogger(__name__)
+
+        if not isinstance(result, dict):
+            logger.warning("Optimizer result is not a dict, skipping apply")
+            return
+        coeffs = result.get("coeffs")
+        if coeffs is None:
+            logger.warning("No coefficients in optimizer result")
+            return
+
+        coeffs = np.asarray(coeffs, dtype=float)
+
+        # Determine model type by which control widget is active
+        from .controls_widget import ControlsWidget
+        from .controls_widget_triple import ControlsWidgetTriple
+        from .controls_widget_golfer import ControlsWidgetGolfer
+
+        def _fmt_coeffs(arr: np.ndarray) -> str:
+            """Format coefficient array as comma-separated string."""
+            return ", ".join(f"{v:.4f}" for v in arr)
+
+        if isinstance(self.controls, ControlsWidget):
+            # Double: split into 2 groups (shoulder, wrist)
+            n_half = len(coeffs) // 2
+            self.controls.inp_tau_shoulder.set_value(_fmt_coeffs(coeffs[:n_half]))
+            self.controls.inp_tau_wrist.set_value(_fmt_coeffs(coeffs[n_half:]))
+            logger.info("Applied double pendulum optimizer coefficients")
+
+        elif isinstance(self.controls, ControlsWidgetTriple):
+            # Triple: split into 3 groups (shoulder, elbow, wrist)
+            n_third = len(coeffs) // 3
+            self.controls.inp_tau_shoulder.set_value(_fmt_coeffs(coeffs[:n_third]))
+            self.controls.inp_tau_elbow.set_value(
+                _fmt_coeffs(coeffs[n_third : 2 * n_third])
+            )
+            self.controls.inp_tau_wrist.set_value(_fmt_coeffs(coeffs[2 * n_third :]))
+            logger.info("Applied triple pendulum optimizer coefficients")
+
+        elif isinstance(self.controls, ControlsWidgetGolfer):
+            # Golfer: split into 7 groups
+            n_seventh = max(1, len(coeffs) // 7)
+            field_names = [
+                "inp_tau_hub",
+                "inp_tau_rs",
+                "inp_tau_re",
+                "inp_tau_rh",
+                "inp_tau_ls",
+                "inp_tau_le",
+                "inp_tau_lh",
+            ]
+            for i, field_name in enumerate(field_names):
+                field = getattr(self.controls, field_name, None)
+                if field is not None:
+                    start = i * n_seventh
+                    end = (i + 1) * n_seventh if i < 6 else len(coeffs)
+                    field.set_value(_fmt_coeffs(coeffs[start:end]))
+            logger.info("Applied golfer optimizer coefficients")
+        else:
+            logger.warning("Unknown controls type for optimizer apply")
 
     def _on_export_data(self) -> None:
         if self._result is None:
