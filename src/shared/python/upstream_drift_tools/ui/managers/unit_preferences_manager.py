@@ -172,6 +172,22 @@ UNIT_CATEGORIES: dict[str, UnitCategory] = {
         available_units=["hr", "min", "s", "day"],
         description="Time measurements",
     ),
+    "torque": UnitCategory(
+        name="torque",
+        display_name="Torque",
+        si_unit="N·m",
+        default_display_unit="N·m",
+        available_units=["N·m", "lbf·ft", "lbf·in", "kN·m", "mN·m", "kgf·m"],
+        description="Torque / moment measurements",
+    ),
+    "angular_velocity": UnitCategory(
+        name="angular_velocity",
+        display_name="Angular Velocity",
+        si_unit="rad/s",
+        default_display_unit="rad/s",
+        available_units=["rad/s", "deg/s", "rpm", "rev/s"],
+        description="Angular velocity measurements",
+    ),
 }
 
 # Predefined unit system presets
@@ -192,6 +208,8 @@ UNIT_PRESETS: dict[str, dict[str, str]] = {
         "composition": "vol %",
         "area": "m2",
         "time": "hr",
+        "torque": "N·m",
+        "angular_velocity": "rad/s",
     },
     "Metric (SI)": {
         "temperature": "K",
@@ -209,6 +227,8 @@ UNIT_PRESETS: dict[str, dict[str, str]] = {
         "composition": "mole fraction",
         "area": "m2",
         "time": "s",
+        "torque": "N·m",
+        "angular_velocity": "rad/s",
     },
     "Metric (Engineering)": {
         "temperature": "°C",
@@ -226,6 +246,8 @@ UNIT_PRESETS: dict[str, dict[str, str]] = {
         "composition": "vol %",
         "area": "m2",
         "time": "hr",
+        "torque": "N·m",
+        "angular_velocity": "rad/s",
     },
     "Imperial (US)": {
         "temperature": "°F",
@@ -243,6 +265,8 @@ UNIT_PRESETS: dict[str, dict[str, str]] = {
         "composition": "vol %",
         "area": "ft2",
         "time": "hr",
+        "torque": "lbf·ft",
+        "angular_velocity": "deg/s",
     },
 }
 

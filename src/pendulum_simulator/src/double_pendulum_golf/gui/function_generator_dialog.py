@@ -70,21 +70,32 @@ def _find_sibling_package(marker_path: str) -> Path | None:
 
 try:
     import logging as _logging
+    import os as _os
 
     _fg_logger = _logging.getLogger(__name__)
 
     _src_root = _find_sibling_package("function_generator/python")
     if _src_root is not None:
         _fg_root = _src_root / "function_generator" / "python"
-        if str(_fg_root) not in sys.path:
-            sys.path.insert(0, str(_fg_root))
-        # The function_generator package imports 'shared.python.safe_eval' etc.
-        if str(_src_root) not in sys.path:
-            sys.path.insert(0, str(_src_root))
-        # Also add shared/python for the safe_eval dependency (#1153)
         _shared_root = _src_root / "shared" / "python"
-        if _shared_root.exists() and str(_shared_root) not in sys.path:
-            sys.path.insert(0, str(_shared_root))
+
+        # Normalize all paths to avoid Windows forward/back-slash mismatches
+        _norm_paths: list[str] = [_os.path.normpath(str(p)) for p in sys.path]
+
+        # Add all required paths BEFORE attempting the import:
+        # 1. shared/python — for signal_toolkit and safe_eval
+        # 2. src root — for 'shared.python.safe_eval' namespace resolution
+        # 3. function_generator/python — for the function_generator package
+        for _p in [_shared_root, _src_root, _fg_root]:
+            _np = _os.path.normpath(str(_p))
+            if _np not in _norm_paths:
+                sys.path.insert(0, str(_p))
+                _norm_paths.insert(0, _np)
+
+        # Clean any partially-cached failed imports so we get a fresh attempt
+        for _mod in list(sys.modules):
+            if _mod.startswith("function_generator"):
+                del sys.modules[_mod]
 
         from function_generator.ui.pyqt6.main_window import (
             FunctionGeneratorWidget as _FGWidget,

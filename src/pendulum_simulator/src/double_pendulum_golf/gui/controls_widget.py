@@ -41,6 +41,13 @@ from .controls_utils import (
 )
 from .torque_preview_widget import TorquePreviewWidget
 
+try:
+    from upstream_drift_tools.ui.widgets.unit_aware_input import UnitAwareInput
+
+    _HAS_UAI = True
+except ImportError:
+    _HAS_UAI = False
+
 
 class LabeledInput(QWidget):
     """A label + line-edit pair used throughout the control panel."""
@@ -227,6 +234,7 @@ class ControlsWidget(QWidget):
         self.inp_tau_shoulder.edit.textChanged.connect(self._update_torque_preview)
         self.inp_tau_wrist.edit.textChanged.connect(self._update_torque_preview)
         self.inp_tend.edit.textChanged.connect(self._update_torque_preview)
+        self.chk_clamp.toggled.connect(lambda _: self._update_torque_preview())
 
     # ---- Section builders (each ≤30 lines) --------------------------------
 
@@ -253,14 +261,78 @@ class ControlsWidget(QWidget):
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(3)
-        self.inp_m1 = LabeledInput("m1 (kg)", "5.0", "Arms mass (kg)", lw)
-        self.inp_m2 = LabeledInput("m2 (kg)", "0.30", "Shaft mass (kg)", lw)
-        self.inp_mClub = LabeledInput("mC (kg)", "0.20", "Clubhead mass (kg)", lw)
-        self.inp_L1 = LabeledInput("L1 (m)", "0.65", "Arms length (m)", lw)
-        self.inp_L2 = LabeledInput("L2 (m)", "1.10", "Shaft length (m)", lw)
-        layout.addLayout(_row(self.inp_m1, self.inp_m2))
-        layout.addLayout(_row(self.inp_L1, self.inp_L2))
-        layout.addWidget(self.inp_mClub)
+        if _HAS_UAI:
+            self.inp_m1 = UnitAwareInput(
+                category="mass",
+                default_value=5.0,
+                default_unit="kg",
+                min_value=0,
+                max_value=500,
+                decimals=3,
+                compact=True,
+            )
+            self.inp_m2 = UnitAwareInput(
+                category="mass",
+                default_value=0.30,
+                default_unit="kg",
+                min_value=0,
+                max_value=500,
+                decimals=3,
+                compact=True,
+            )
+            self.inp_mClub = UnitAwareInput(
+                category="mass",
+                default_value=0.20,
+                default_unit="kg",
+                min_value=0,
+                max_value=500,
+                decimals=3,
+                compact=True,
+            )
+            self.inp_L1 = UnitAwareInput(
+                category="length",
+                default_value=0.65,
+                default_unit="m",
+                min_value=0,
+                max_value=100,
+                decimals=4,
+                compact=True,
+            )
+            self.inp_L2 = UnitAwareInput(
+                category="length",
+                default_value=1.10,
+                default_unit="m",
+                min_value=0,
+                max_value=100,
+                decimals=4,
+                compact=True,
+            )
+            # Add labels
+            for lbl_text, widget in [
+                ("m1", self.inp_m1),
+                ("m2", self.inp_m2),
+                ("mC", self.inp_mClub),
+                ("L1", self.inp_L1),
+                ("L2", self.inp_L2),
+            ]:
+                row = QHBoxLayout()
+                row.setContentsMargins(0, 0, 0, 0)
+                row.setSpacing(3)
+                lbl = QLabel(lbl_text)
+                lbl.setFixedWidth(24)
+                lbl.setStyleSheet(STYLE_LABEL)
+                row.addWidget(lbl)
+                row.addWidget(widget)
+                layout.addLayout(row)
+        else:
+            self.inp_m1 = LabeledInput("m1 (kg)", "5.0", "Arms mass (kg)", lw)
+            self.inp_m2 = LabeledInput("m2 (kg)", "0.30", "Shaft mass (kg)", lw)
+            self.inp_mClub = LabeledInput("mC (kg)", "0.20", "Clubhead mass (kg)", lw)
+            self.inp_L1 = LabeledInput("L1 (m)", "0.65", "Arms length (m)", lw)
+            self.inp_L2 = LabeledInput("L2 (m)", "1.10", "Shaft length (m)", lw)
+            layout.addLayout(_row(self.inp_m1, self.inp_m2))
+            layout.addLayout(_row(self.inp_L1, self.inp_L2))
+            layout.addWidget(self.inp_mClub)
         return box
 
     def _build_joint_limits_section(self) -> QGroupBox:
@@ -270,13 +342,22 @@ class ControlsWidget(QWidget):
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(3)
-        self.chk_limits = QCheckBox("Enable wrist limits")
+        self.chk_limits = QCheckBox("Enable joint limits")
         self.chk_limits.setStyleSheet(STYLE_CHECK)
         layout.addWidget(self.chk_limits)
+        # Shoulder (theta1) limits
+        self.inp_theta1_min = LabeledInput(
+            "θ1 min°", "-180", "Min shoulder angle (deg)", lw
+        )
+        self.inp_theta1_max = LabeledInput(
+            "θ1 max°", "180", "Max shoulder angle (deg)", lw
+        )
+        layout.addLayout(_row(self.inp_theta1_min, self.inp_theta1_max))
+        # Wrist (phi) limits
         self.inp_phi_min = LabeledInput("φ min°", "-90", "Min wrist angle (deg)", lw)
         self.inp_phi_max = LabeledInput("φ max°", "90", "Max wrist angle (deg)", lw)
-        self.inp_limit_k = LabeledInput("K (N·m/rad)", "500", "Penalty stiffness", lw)
         layout.addLayout(_row(self.inp_phi_min, self.inp_phi_max))
+        self.inp_limit_k = LabeledInput("K (N·m/rad)", "500", "Penalty stiffness", lw)
         layout.addWidget(self.inp_limit_k)
         return box
 
@@ -290,13 +371,49 @@ class ControlsWidget(QWidget):
         self.chk_clamp = QCheckBox("Enable torque clamping")
         self.chk_clamp.setStyleSheet(STYLE_CHECK)
         layout.addWidget(self.chk_clamp)
-        self.inp_max_tau1 = LabeledInput(
-            "Max |τ1|", "50", "Max shoulder torque magnitude ±(N·m)", lw
-        )
-        self.inp_max_tau2 = LabeledInput(
-            "Max |τ2|", "20", "Max wrist torque magnitude ±(N·m)", lw
-        )
-        layout.addLayout(_row(self.inp_max_tau1, self.inp_max_tau2))
+        if _HAS_UAI:
+            self.inp_max_tau1 = UnitAwareInput(
+                category="torque",
+                default_value=50.0,
+                default_unit="N\u00b7m",
+                min_value=0,
+                max_value=10000,
+                decimals=1,
+                compact=True,
+            )
+            self.inp_max_tau2 = UnitAwareInput(
+                category="torque",
+                default_value=20.0,
+                default_unit="N\u00b7m",
+                min_value=0,
+                max_value=10000,
+                decimals=1,
+                compact=True,
+            )
+            for lbl_text, widget in [
+                ("Max|\u03c41|", self.inp_max_tau1),
+                ("Max|\u03c42|", self.inp_max_tau2),
+            ]:
+                row = QHBoxLayout()
+                row.setContentsMargins(0, 0, 0, 0)
+                row.setSpacing(3)
+                lbl = QLabel(lbl_text)
+                lbl.setFixedWidth(48)
+                lbl.setStyleSheet(STYLE_LABEL)
+                row.addWidget(lbl)
+                row.addWidget(widget)
+                layout.addLayout(row)
+        else:
+            self.inp_max_tau1 = LabeledInput(
+                "Max |\u03c41|",
+                "50",
+                "Max shoulder torque magnitude \u00b1(N\u00b7m)",
+                lw,
+            )
+            self.inp_max_tau2 = LabeledInput(
+                "Max |\u03c42|", "20", "Max wrist torque magnitude \u00b1(N\u00b7m)", lw
+            )
+            layout.addLayout(_row(self.inp_max_tau1, self.inp_max_tau2))
         return box
 
     def _build_ic_section(self) -> QGroupBox:
@@ -306,12 +423,55 @@ class ControlsWidget(QWidget):
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(3)
-        self.inp_theta1 = LabeledInput("θ1°", "120", "Arm angle from vertical", lw)
-        self.inp_phi = LabeledInput("φ°", "-90", "Club angle relative to arm", lw)
-        self.inp_dtheta1 = LabeledInput("dθ1", "0", "Arm angular velocity rad/s", lw)
-        self.inp_dphi = LabeledInput("dφ", "0", "Club angular velocity rad/s", lw)
-        layout.addLayout(_row(self.inp_theta1, self.inp_phi))
-        layout.addLayout(_row(self.inp_dtheta1, self.inp_dphi))
+        # Angles stay as LabeledInput (always degrees, no conversion needed)
+        self.inp_theta1 = LabeledInput(
+            "\u03b81\u00b0", "120", "Arm angle from vertical", lw
+        )
+        self.inp_phi = LabeledInput(
+            "\u03c6\u00b0", "-90", "Club angle relative to arm", lw
+        )
+        if _HAS_UAI:
+            self.inp_dtheta1 = UnitAwareInput(
+                category="angular_velocity",
+                default_value=0.0,
+                default_unit="rad/s",
+                min_value=-1000,
+                max_value=1000,
+                decimals=3,
+                compact=True,
+            )
+            self.inp_dphi = UnitAwareInput(
+                category="angular_velocity",
+                default_value=0.0,
+                default_unit="rad/s",
+                min_value=-1000,
+                max_value=1000,
+                decimals=3,
+                compact=True,
+            )
+            layout.addLayout(_row(self.inp_theta1, self.inp_phi))
+            for lbl_text, widget in [
+                ("d\u03b81", self.inp_dtheta1),
+                ("d\u03c6", self.inp_dphi),
+            ]:
+                row = QHBoxLayout()
+                row.setContentsMargins(0, 0, 0, 0)
+                row.setSpacing(3)
+                lbl = QLabel(lbl_text)
+                lbl.setFixedWidth(24)
+                lbl.setStyleSheet(STYLE_LABEL)
+                row.addWidget(lbl)
+                row.addWidget(widget)
+                layout.addLayout(row)
+        else:
+            self.inp_dtheta1 = LabeledInput(
+                "d\u03b81", "0", "Arm angular velocity rad/s", lw
+            )
+            self.inp_dphi = LabeledInput(
+                "d\u03c6", "0", "Club angular velocity rad/s", lw
+            )
+            layout.addLayout(_row(self.inp_theta1, self.inp_phi))
+            layout.addLayout(_row(self.inp_dtheta1, self.inp_dphi))
         return box
 
     def _build_torque_section(self) -> QGroupBox:
@@ -519,24 +679,50 @@ class ControlsWidget(QWidget):
         )
         self.inp_theta1.set_value(str(theta1))
         self.inp_phi.set_value(str(phi))
-        self.inp_dtheta1.set_value(str(dth))
-        self.inp_dphi.set_value(str(dph))
         self.inp_tau_shoulder.set_value(tau_sh)
         self.inp_tau_wrist.set_value(tau_wr)
         self.inp_tend.set_value(str(tend))
-        self.inp_m1.set_value(str(m1))
-        self.inp_m2.set_value(str(m2))
-        self.inp_mClub.set_value(str(mClub))
-        self.inp_L1.set_value(str(L1))
-        self.inp_L2.set_value(str(L2))
+
+        if _HAS_UAI:
+            # Preset values are in SI — set with is_si=True
+            self.inp_m1.set_value(m1, is_si=True)
+            self.inp_m2.set_value(m2, is_si=True)
+            self.inp_mClub.set_value(mClub, is_si=True)
+            self.inp_L1.set_value(L1, is_si=True)
+            self.inp_L2.set_value(L2, is_si=True)
+            self.inp_dtheta1.set_value(dth, is_si=True)
+            self.inp_dphi.set_value(dph, is_si=True)
+        else:
+            self.inp_dtheta1.set_value(str(dth))
+            self.inp_dphi.set_value(str(dph))
+            self.inp_m1.set_value(str(m1))
+            self.inp_m2.set_value(str(m2))
+            self.inp_mClub.set_value(str(mClub))
+            self.inp_L1.set_value(str(L1))
+            self.inp_L2.set_value(str(L2))
         self._update_torque_preview()
 
     # ------------------------------------------------------------------
     # Value parsing
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def _uai_or_parse(widget: object, label: str) -> float:
+        """Extract SI value from UnitAwareInput or parse from LabeledInput.
+
+        Design by Contract
+        ------------------
+        Post: returns a finite float in SI units.
+        """
+        if _HAS_UAI and isinstance(widget, UnitAwareInput):
+            return widget.value_si()
+        return parse_float(widget, label)
+
     def get_params(self) -> dict:
         """Parse all input fields and return as a simulation parameter dict.
+
+        When UnitAwareInput widgets are present, values are automatically
+        returned in SI units regardless of the user's selected display unit.
 
         Returns
         -------
@@ -552,11 +738,11 @@ class ControlsWidget(QWidget):
         """
         dt_raw = parse_float(self.inp_dt, "dt")
         dt = clamp_dt(dt_raw)
-        m1 = parse_float(self.inp_m1, "m1")
-        m2 = parse_float(self.inp_m2, "m2")
-        mClub = parse_float(self.inp_mClub, "mClub")
-        L1 = parse_float(self.inp_L1, "L1")
-        L2 = parse_float(self.inp_L2, "L2")
+        m1 = self._uai_or_parse(self.inp_m1, "m1")
+        m2 = self._uai_or_parse(self.inp_m2, "m2")
+        mClub = self._uai_or_parse(self.inp_mClub, "mClub")
+        L1 = self._uai_or_parse(self.inp_L1, "L1")
+        L2 = self._uai_or_parse(self.inp_L2, "L2")
         b1 = require_non_negative(parse_float(self.inp_b1, "b1"), "b1")
         b2 = require_non_negative(parse_float(self.inp_b2, "b2"), "b2")
         mu1 = require_non_negative(parse_float(self.inp_mu1, "μ1"), "μ1")
@@ -575,8 +761,8 @@ class ControlsWidget(QWidget):
             "L2": L2,
             "theta1_rad": np.radians(parse_float(self.inp_theta1, "θ1")),
             "phi_rad": np.radians(parse_float(self.inp_phi, "φ")),
-            "dtheta1": parse_float(self.inp_dtheta1, "dθ1"),
-            "dphi": parse_float(self.inp_dphi, "dφ"),
+            "dtheta1": self._uai_or_parse(self.inp_dtheta1, "dθ1"),
+            "dphi": self._uai_or_parse(self.inp_dphi, "dφ"),
             "shoulder_coeffs": parse_coeffs(self.inp_tau_shoulder, "Shoulder torque"),
             "wrist_coeffs": parse_coeffs(self.inp_tau_wrist, "Wrist torque"),
             "t_end": parse_float(self.inp_tend, "Duration"),
@@ -587,12 +773,14 @@ class ControlsWidget(QWidget):
             "mu2": mu2,
             "gravity_on": self.chk_gravity.isChecked(),
             "enable_limits": self.chk_limits.isChecked(),
+            "theta1_min_rad": np.radians(parse_float(self.inp_theta1_min, "θ1 min")),
+            "theta1_max_rad": np.radians(parse_float(self.inp_theta1_max, "θ1 max")),
             "phi_min_rad": np.radians(parse_float(self.inp_phi_min, "φ min")),
             "phi_max_rad": np.radians(parse_float(self.inp_phi_max, "φ max")),
             "limit_stiffness": parse_float(self.inp_limit_k, "Limit K"),
             "enable_clamp": self.chk_clamp.isChecked(),
-            "max_torque1": parse_float(self.inp_max_tau1, "Max τ1"),
-            "max_torque2": parse_float(self.inp_max_tau2, "Max τ2"),
+            "max_torque1": self._uai_or_parse(self.inp_max_tau1, "Max τ1"),
+            "max_torque2": self._uai_or_parse(self.inp_max_tau2, "Max τ2"),
             "tilt_deg": parse_float(self.inp_tilt, "Tilt"),
             "azimuth_deg": parse_float(self.inp_azimuth, "Azimuth"),
         }
@@ -603,6 +791,20 @@ class ControlsWidget(QWidget):
         except ValueError:
             t_end = 2.0
         self.torque_preview.set_duration(t_end)
+
+        # Compute clamp limits if clamping is active
+        clamp_limits: list[float | None] | None = None
+        if self.chk_clamp.isChecked():
+            try:
+                tau1 = self._uai_or_parse(self.inp_max_tau1, "Max τ1")
+            except (ValueError, AttributeError):
+                tau1 = float("inf")
+            try:
+                tau2 = self._uai_or_parse(self.inp_max_tau2, "Max τ2")
+            except (ValueError, AttributeError):
+                tau2 = float("inf")
+            clamp_limits = [tau1, tau2]
+
         self.torque_preview.set_profiles(
             [
                 (
@@ -615,7 +817,8 @@ class ControlsWidget(QWidget):
                     parse_coeffs_lenient(self.inp_tau_wrist),
                     QColor(120, 180, 230),
                 ),
-            ]
+            ],
+            clamp_limits=clamp_limits,
         )
 
     # ------------------------------------------------------------------

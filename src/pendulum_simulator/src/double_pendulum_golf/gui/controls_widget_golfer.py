@@ -81,6 +81,10 @@ class ControlsWidgetGolfer(QWidget):
             "tau_le": "0",
             "tau_lh": "0",
             "t_end": 2.0,
+            "L_rscap": 0.12,
+            "L_lscap": 0.12,
+            "m_rscap": 0.5,
+            "m_lscap": 0.5,
         },
         "Backswing Start": {
             "m_hub": 2.0,
@@ -115,6 +119,10 @@ class ControlsWidgetGolfer(QWidget):
             "tau_le": "0",
             "tau_lh": "0",
             "t_end": 2.0,
+            "L_rscap": 0.12,
+            "L_lscap": 0.12,
+            "m_rscap": 0.5,
+            "m_lscap": 0.5,
         },
     }
 
@@ -211,11 +219,31 @@ class ControlsWidgetGolfer(QWidget):
         self.inp_grip_left = LabeledInput(
             "Grip L (m)", "0.25", "Left hand grip from club base"
         )
+        self.inp_L_rscap = LabeledInput(
+            "R Scap (m)",
+            "0.12",
+            "Right scapula link length.\n"
+            "Connects the hub bar endpoint to the right shoulder.\n"
+            "Set to 0 to disable scapula.",
+        )
+        self.inp_L_lscap = LabeledInput(
+            "L Scap (m)",
+            "0.12",
+            "Left scapula link length.\n"
+            "Connects the hub bar endpoint to the left shoulder.\n"
+            "Set to 0 to disable scapula.",
+        )
+        self.inp_m_rscap = LabeledInput("R Scap m", "0.5", "Right scapula mass (kg)")
+        self.inp_m_lscap = LabeledInput("L Scap m", "0.5", "Left scapula mass (kg)")
         for w in [
             self.inp_d_rs,
             self.inp_d_ls,
             self.inp_grip_right,
             self.inp_grip_left,
+            self.inp_L_rscap,
+            self.inp_L_lscap,
+            self.inp_m_rscap,
+            self.inp_m_lscap,
         ]:
             gl.addWidget(w)
         main.addWidget(geom_grp)
@@ -439,6 +467,10 @@ class ControlsWidgetGolfer(QWidget):
         self.inp_tau_le.set_value(str(p["tau_le"]))
         self.inp_tau_lh.set_value(str(p["tau_lh"]))
         self.inp_tend.set_value(str(p["t_end"]))
+        self.inp_L_rscap.set_value(str(p.get("L_rscap", 0.12)))
+        self.inp_L_lscap.set_value(str(p.get("L_lscap", 0.12)))
+        self.inp_m_rscap.set_value(str(p.get("m_rscap", 0.5)))
+        self.inp_m_lscap.set_value(str(p.get("m_lscap", 0.5)))
 
     def get_params(self) -> dict:
         """Parse all inputs into a simulation parameter dict.
@@ -486,6 +518,10 @@ class ControlsWidgetGolfer(QWidget):
             "b_ls": parse_float(self.inp_b_ls, "b_ls"),
             "b_le": parse_float(self.inp_b_le, "b_le"),
             "b_lh": parse_float(self.inp_b_lh, "b_lh"),
+            "L_rscap": parse_float(self.inp_L_rscap, "L_rscap"),
+            "L_lscap": parse_float(self.inp_L_lscap, "L_lscap"),
+            "m_rscap": parse_float(self.inp_m_rscap, "m_rscap"),
+            "m_lscap": parse_float(self.inp_m_lscap, "m_lscap"),
         }
         for name in (
             "m_hub",

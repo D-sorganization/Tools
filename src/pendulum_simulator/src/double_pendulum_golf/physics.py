@@ -68,20 +68,29 @@ class PendulumParams:
 
 @dataclass(frozen=True)
 class JointLimits:
-    """Joint angle limits for the wrist (phi).
+    """Joint angle limits for both shoulder (theta1) and wrist (phi).
 
     Contract:
-        - phiMin < phiMax.
+        - For each pair, min < max.
         - stiffness > 0, damping >= 0.
+        - theta1 limits default to ±π (unconstrained).
     """
 
+    # Wrist (phi) limits
     phi_min: float = -np.pi / 2  # rad
     phi_max: float = np.pi / 2  # rad
+
+    # Shoulder (theta1) limits — defaults allow full rotation
+    theta1_min: float = -np.pi  # rad
+    theta1_max: float = np.pi  # rad
+
+    # Shared penalty parameters
     stiffness: float = 500.0  # N·m/rad
     damping: float = 20.0  # N·m·s/rad
 
     def __post_init__(self) -> None:
         assert self.phi_min < self.phi_max
+        assert self.theta1_min < self.theta1_max
         assert self.stiffness > 0
         assert self.damping >= 0
 
@@ -244,29 +253,40 @@ def friction_torque_vector(
 # ---------------------------------------------------------------------------
 
 
-def joint_limit_torque(phi: float, dphi: float, limits: JointLimits) -> np.ndarray:
+def joint_limit_torque(
+    phi: float,
+    dphi: float,
+    limits: JointLimits,
+    theta1: float = 0.0,
+    dtheta1: float = 0.0,
+) -> np.ndarray:
     """Smooth joint limit penalty using Hermite smoothstep.
 
-    Pre: phi, dphi finite.
-    Post: penalty is 0 when phi is within limits.
+    Pre: all angle/velocity args finite.
+    Post: penalty is 0 when angles are within limits.
     Returns shape (2,): [tau_penalty_shoulder, tau_penalty_wrist].
     """
     assert np.isfinite(phi) and np.isfinite(dphi)
-    tau2 = 0.0
     transition = 0.05  # rad (~3 degrees)
 
-    if phi < limits.phi_min:
-        pen = limits.phi_min - phi
-        blend = min(1.0, pen / transition)
-        smooth = blend * blend * (3 - 2 * blend)
-        tau2 = smooth * (limits.stiffness * pen + limits.damping * max(0.0, -dphi))
-    elif phi > limits.phi_max:
-        pen = phi - limits.phi_max
-        blend = min(1.0, pen / transition)
-        smooth = blend * blend * (3 - 2 * blend)
-        tau2 = -smooth * (limits.stiffness * pen + limits.damping * max(0.0, dphi))
+    def _penalty(angle: float, vel: float, lo: float, hi: float) -> float:
+        """Compute signed smoothstep penalty for a single DOF."""
+        if angle < lo:
+            pen = lo - angle
+            blend = min(1.0, pen / transition)
+            smooth = blend * blend * (3 - 2 * blend)
+            return smooth * (limits.stiffness * pen + limits.damping * max(0.0, -vel))
+        if angle > hi:
+            pen = angle - hi
+            blend = min(1.0, pen / transition)
+            smooth = blend * blend * (3 - 2 * blend)
+            return -smooth * (limits.stiffness * pen + limits.damping * max(0.0, vel))
+        return 0.0
 
-    return np.array([0.0, tau2])
+    tau1 = _penalty(theta1, dtheta1, limits.theta1_min, limits.theta1_max)
+    tau2 = _penalty(phi, dphi, limits.phi_min, limits.phi_max)
+
+    return np.array([tau1, tau2])
 
 
 # ---------------------------------------------------------------------------
@@ -345,7 +365,9 @@ def equations_of_motion(
 
     tau_limits = np.zeros(2)
     if limits is not None:
-        tau_limits = joint_limit_torque(phi, dphi, limits)
+        tau_limits = joint_limit_torque(
+            phi, dphi, limits, theta1=theta1, dtheta1=dtheta1
+        )
 
     rhs = tau_drive + tau_friction + tau_limits - C - G
     qddot = np.linalg.solve(M, rhs)
@@ -474,7 +496,11 @@ def ztcf_accelerations(
     C = coriolis_vector(phi, dtheta1, dphi, params)
     G = gravity_vector(theta1, phi, params)
     tau_f = friction_torque_vector(dtheta1, dphi, params)
-    tau_lim = np.zeros(2) if limits is None else joint_limit_torque(phi, dphi, limits)
+    tau_lim = (
+        np.zeros(2)
+        if limits is None
+        else joint_limit_torque(phi, dphi, limits, theta1=theta1, dtheta1=dtheta1)
+    )
     rhs = tau_f + tau_lim - C - G
     return np.linalg.solve(M, rhs)
 

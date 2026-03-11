@@ -55,6 +55,7 @@ from .simulation_panel import SimulationPanel
 from .toolstrip_widget import ToolStrip
 from .torque_history_widget import TorqueHistoryWidget
 from .optimization_widget import OptimizationWidget
+from .unit_converter import UnitConverter
 
 # TODO(#1042): Derive from fleet ThemeManager palette when it's a hard dep.
 from .controls_utils import PENDULUM_DARK_STYLE as _PENDULUM_DARK_STYLE
@@ -151,6 +152,9 @@ class MainWindow(QMainWindow):
             self.setWindowIcon(QIcon(str(_icon_path)))
 
         self._theme_manager: object | None = None
+
+        # Unit conversion state (#1137, #1124)
+        self._unit_converter = UnitConverter()
 
         # Ctrl+mousewheel font zoom (#1147)
         settings = QSettings(_SETTINGS_ORG, _SETTINGS_APP)
@@ -264,6 +268,8 @@ class MainWindow(QMainWindow):
         self._tabs.addTab(self._double_panel, "⚙ Double Pendulum")
         self._tabs.addTab(self._triple_panel, "⚙ Triple Pendulum")
         self._tabs.addTab(self._golfer_panel, "⚙ Golfer Upper Body")
+        # Hide tab bar — model selection is via toolstrip dropdown (#1149)
+        self._tabs.tabBar().setVisible(False)
         main_layout.addWidget(self._tabs, stretch=1)
 
         self.status = QStatusBar()
@@ -308,6 +314,9 @@ class MainWindow(QMainWindow):
             lambda: self._active_panel().controls.export_video_requested.emit()
         )
 
+        # ── Pop-out chart (#1135) → active panel ─────────────────────
+        ts.popout_chart_requested.connect(self._on_popout_chart)
+
         # ── Overlay toggles → active panel's pendulum widget ──────────
         def _fwd_overlay(attr: str, value: object) -> None:
             pw = self._active_panel().pendulum
@@ -348,6 +357,10 @@ class MainWindow(QMainWindow):
         ts.force_ell_scale_changed.connect(
             lambda v: _fwd_overlay("set_force_ellipsoid_scale", v)
         )
+
+        # ── Rotation controls (#1146) → active panel's pendulum widget ──
+        ts.azimuth_changed.connect(lambda v: _fwd_overlay("set_view_azimuth", v))
+        ts.tilt_changed.connect(lambda v: _fwd_overlay("set_tilt_angle", v))
 
         # ── Reset view → active panel's pendulum widget ───────────────
         ts.reset_view_requested.connect(
@@ -454,6 +467,8 @@ class MainWindow(QMainWindow):
             return JointLimits(
                 phi_min=p.get("phi_min_rad", -np.pi / 2),
                 phi_max=p.get("phi_max_rad", np.pi / 2),
+                theta1_min=p.get("theta1_min_rad", -np.pi),
+                theta1_max=p.get("theta1_max_rad", np.pi),
                 stiffness=p.get("limit_stiffness", 500.0),
             )
 
@@ -662,6 +677,10 @@ class MainWindow(QMainWindow):
                 b_ls=p.get("b_ls", 0.0),
                 b_le=p.get("b_le", 0.0),
                 b_lh=p.get("b_lh", 0.0),
+                L_rscap=p.get("L_rscap", 0.12),
+                L_lscap=p.get("L_lscap", 0.12),
+                m_rscap=p.get("m_rscap", 0.5),
+                m_lscap=p.get("m_lscap", 0.5),
             )
 
         def build_state(p: dict) -> np.ndarray:
@@ -818,6 +837,52 @@ class MainWindow(QMainWindow):
         # Sync segment visibility from current checkbox state
         if hasattr(pw, "set_visible_segments"):
             ts._on_segment_toggled()  # re-emits segment_visibility_changed
+
+    # ------------------------------------------------------------------
+    # Pop-out chart (#1135)
+    # ------------------------------------------------------------------
+
+    def _on_popout_chart(self) -> None:
+        """Open a pop-out chart for the active panel's simulation data.
+
+        Design by Contract
+        ------------------
+        Pre: A simulation must have been run (result is not None).
+        Post: A detachable chart window opens with torque history.
+        """
+        from .popout_chart import PopOutChart
+
+        panel = self._active_panel()
+        result = panel._result
+        if result is None:
+            from PyQt6.QtWidgets import QMessageBox
+
+            QMessageBox.information(
+                self,
+                "Pop-Out Chart",
+                "Run a simulation first to generate data for charting.",
+            )
+            return
+
+        # Pop out torque history: plot driving torque at joint 1 vs time
+        t = np.asarray(result.t, dtype=np.float64)
+        torques = np.array(
+            [result.torques_at(i)[0] for i in range(result.n_steps)],
+            dtype=np.float64,
+        )
+
+        chart = PopOutChart(self)
+        chart.plot_data(
+            t, torques, "Time (s)", "Torque (N·m)", "Joint 1 Driving Torque"
+        )
+        chart.add_regression(degree=3)
+        chart.show()
+
+        # Keep reference to prevent garbage collection
+        if not hasattr(self, "_popout_charts"):
+            self._popout_charts: list = []
+        self._popout_charts.append(chart)
+        logger.info("Pop-out chart opened for active panel")
 
     # ------------------------------------------------------------------
     # Theme management

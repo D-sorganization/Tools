@@ -30,7 +30,11 @@ class TestControlsWidgetValidation:
         from double_pendulum_golf.gui.controls_widget import ControlsWidget
 
         widget = ControlsWidget()
-        widget.inp_m1.set_value("-1")
+        # UnitAwareInput.set_value expects a float; LabeledInput expects str
+        try:
+            widget.inp_m1.set_value(-1.0, is_si=True)
+        except TypeError:
+            widget.inp_m1.set_value("-1")
         with pytest.raises(ValueError, match="m1 must be positive"):
             widget.get_params()
         widget.deleteLater()

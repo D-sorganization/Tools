@@ -9,6 +9,7 @@ tooling.
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import Enum
@@ -500,6 +501,32 @@ SPECIFIC_ENERGY_FACTORS: Mapping[str, float] = MappingProxyType(
     }
 )
 
+# Torque / moment factors (SI base: N·m)
+# Sources: NIST SP 811 (2008), IEEE Std 260.1
+_FOOT_TO_METER = FOOT_TO_METER  # 0.3048
+_LBF_TO_N = POUND_TO_KILOGRAM * 9.80665  # 0.45359237 * 9.80665 = 4.44822…
+_INCH_TO_METER = INCH_TO_METER  # 0.0254
+TORQUE_FACTORS: Mapping[str, float] = MappingProxyType(
+    {
+        "N·m": 1.0,
+        "kN·m": 1000.0,
+        "mN·m": 0.001,
+        "lbf·ft": _LBF_TO_N * _FOOT_TO_METER,  # ≈ 1.35582 N·m
+        "lbf·in": _LBF_TO_N * _INCH_TO_METER,  # ≈ 0.11298 N·m
+        "kgf·m": 9.80665,  # 1 kgf = 9.80665 N
+    }
+)
+
+# Angular velocity factors (SI base: rad/s)
+ANGULAR_VELOCITY_FACTORS: Mapping[str, float] = MappingProxyType(
+    {
+        "rad/s": 1.0,
+        "deg/s": math.pi / 180.0,  # 1 deg/s = π/180 rad/s
+        "rpm": 2.0 * math.pi / 60.0,  # 1 rpm = 2π/60 rad/s
+        "rev/s": 2.0 * math.pi,  # 1 rev/s = 2π rad/s
+    }
+)
+
 CATEGORY_TABLES: Mapping[str, Mapping[str, float]] = MappingProxyType(
     {
         "length": LENGTH_FACTORS,
@@ -519,6 +546,8 @@ CATEGORY_TABLES: Mapping[str, Mapping[str, float]] = MappingProxyType(
         "heat_transfer": HEAT_TRANSFER_COEFF_FACTORS,
         "specific_heat": SPECIFIC_HEAT_FACTORS,
         "specific_energy": SPECIFIC_ENERGY_FACTORS,
+        "torque": TORQUE_FACTORS,
+        "angular_velocity": ANGULAR_VELOCITY_FACTORS,
     }
 )
 
