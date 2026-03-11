@@ -376,7 +376,6 @@ class BasePendulumWidget(QWidget):
         # Draw tilted plane as a semi-transparent quadrilateral
         # The plane passes through origin and extends in x-z
         extent = 2.5
-        cos_t = float(np.cos(self._tilt_angle))
         sin_t = float(np.sin(self._tilt_angle))
 
         # Four corners of the plane in world coords (projected)
