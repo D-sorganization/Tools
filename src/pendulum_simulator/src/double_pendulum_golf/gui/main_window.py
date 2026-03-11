@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import logging
 import sys
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -354,7 +355,6 @@ class MainWindow(QMainWindow):
                         clamp=clamp,
                     )
                     # Tip speed at last frame
-                    pos = result.positions_at(result.n_steps - 1)
                     vels = result.joint_velocities_at(result.n_steps - 1)
                     tip_v = vels.get("tip", (0, 0))
                     speed = float(np.hypot(tip_v[0], tip_v[1]))
