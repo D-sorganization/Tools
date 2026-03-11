@@ -83,7 +83,7 @@ def test_biomass_feed_default_ultimate_sums_to_one():
 
 
 def test_decompose_returns_dict_summing_to_one():
-    from dwsim_model.chemistry.biomass_decomposer import BiomassFeed, BiomassDecomposer
+    from dwsim_model.chemistry.biomass_decomposer import BiomassDecomposer, BiomassFeed
 
     feed = BiomassFeed()
     dec = BiomassDecomposer()
@@ -95,7 +95,7 @@ def test_decompose_returns_dict_summing_to_one():
 
 
 def test_decompose_all_fractions_non_negative():
-    from dwsim_model.chemistry.biomass_decomposer import BiomassFeed, BiomassDecomposer
+    from dwsim_model.chemistry.biomass_decomposer import BiomassDecomposer, BiomassFeed
 
     feed = BiomassFeed()
     dec = BiomassDecomposer()
@@ -106,7 +106,7 @@ def test_decompose_all_fractions_non_negative():
 
 
 def test_decompose_raises_on_invalid_moisture_ash():
-    from dwsim_model.chemistry.biomass_decomposer import BiomassFeed, BiomassDecomposer
+    from dwsim_model.chemistry.biomass_decomposer import BiomassDecomposer, BiomassFeed
 
     # moisture=0.55 + ash=0.50 → daf_frac = -0.05, passes __post_init__ but fails decompose
     feed = BiomassFeed(moisture_ar=0.55, ash_ar=0.50)
@@ -125,7 +125,7 @@ def test_decompose_raises_on_invalid_moisture_ash():
     ],
 )
 def test_decompose_various_moisture_levels(moisture: float, ash: float):
-    from dwsim_model.chemistry.biomass_decomposer import BiomassFeed, BiomassDecomposer
+    from dwsim_model.chemistry.biomass_decomposer import BiomassDecomposer, BiomassFeed
 
     feed = BiomassFeed(moisture_ar=moisture, ash_ar=ash)
     dec = BiomassDecomposer()
