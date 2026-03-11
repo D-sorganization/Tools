@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-from PyQt6.QtCore import QByteArray, QSettings
+from PyQt6.QtCore import QByteArray, QSettings, Qt
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QMainWindow,
@@ -130,6 +130,10 @@ class MainWindow(QMainWindow):
 
     WINDOW_TITLE = "Pendulums"
 
+    # Font zoom bounds (#1147)
+    _FONT_MIN_PT = 8
+    _FONT_MAX_PT = 24
+
     def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle(self.WINDOW_TITLE)
@@ -147,10 +151,53 @@ class MainWindow(QMainWindow):
             self.setWindowIcon(QIcon(str(_icon_path)))
 
         self._theme_manager: object | None = None
+
+        # Ctrl+mousewheel font zoom (#1147)
+        settings = QSettings(_SETTINGS_ORG, _SETTINGS_APP)
+        self._font_zoom_pt: int = int(settings.value("font_zoom_pt", 0))
+        if self._font_zoom_pt:
+            self._apply_font_zoom()
+
         self._build_menu()
         self._build_ui()
         self._setup_theme()
         self._restore_geometry()
+
+    def wheelEvent(self, event: object) -> None:
+        """Ctrl+mousewheel scales all UI fonts (#1147)."""
+        from PyQt6.QtGui import QWheelEvent
+
+        if not isinstance(event, QWheelEvent):
+            return
+        mods = event.modifiers()
+        if mods & Qt.KeyboardModifier.ControlModifier:
+            delta = event.angleDelta().y()
+            if delta > 0:
+                self._font_zoom_pt = min(self._FONT_MAX_PT, self._font_zoom_pt + 1)
+            elif delta < 0:
+                self._font_zoom_pt = max(self._FONT_MIN_PT - 10, self._font_zoom_pt - 1)
+            self._apply_font_zoom()
+            event.accept()
+            return
+        super().wheelEvent(event)
+
+    def _apply_font_zoom(self) -> None:
+        """Apply font zoom offset to the application font."""
+        from PyQt6.QtWidgets import QApplication
+
+        app = QApplication.instance()
+        if not isinstance(app, QApplication):
+            return
+        font = app.font()
+        base_pt = 10  # default base
+        new_pt = max(self._FONT_MIN_PT, min(self._FONT_MAX_PT, base_pt + self._font_zoom_pt))
+        font.setPointSize(new_pt)
+        app.setFont(font)
+        # Persist
+        settings = QSettings(_SETTINGS_ORG, _SETTINGS_APP)
+        settings.setValue("font_zoom_pt", self._font_zoom_pt)
+        logger.info("Font zoom: %d pt (offset %+d)", new_pt, self._font_zoom_pt)
+
 
     # ------------------------------------------------------------------
     # Menu bar
