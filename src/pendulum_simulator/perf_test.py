@@ -38,11 +38,7 @@ for i in range(10):
     )
     elapsed = time.time() - start
     times.append(elapsed)
-<<<<<<< Updated upstream
-    print(f"  Run {i+1}: {elapsed:.3f}s")  # noqa: T201
-=======
-    print(f"  Run {i + 1}: {elapsed:.3f}s")
->>>>>>> Stashed changes
+    print(f"  Run {i + 1}: {elapsed:.3f}s")  # noqa: T201
 
 print(f"\nAverage: {np.mean(times):.3f}s")  # noqa: T201
 print(f"Min: {np.min(times):.3f}s")  # noqa: T201

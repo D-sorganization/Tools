@@ -248,9 +248,7 @@ def optimize_simple_torque_profile(
     @jax.jit
     @jax.value_and_grad
     def loss_fn(coeffs):
-        return clubhead_speed_objective(
-            coeffs, params, initial_state, t_end, alpha, beta, dt
-        )
+        return clubhead_speed_objective(coeffs, params, initial_state, t_end, alpha, beta, dt)
 
     history = []
 
@@ -297,9 +295,7 @@ def compute_gradient_via_finite_difference(
     """
     grad = jnp.zeros(7)
 
-    f0 = clubhead_speed_objective(
-        torque_coeffs, params, initial_state, t_end, alpha, beta, dt
-    )
+    f0 = clubhead_speed_objective(torque_coeffs, params, initial_state, t_end, alpha, beta, dt)
 
     for i in range(7):
         torque_plus = torque_coeffs.at[i].add(eps)

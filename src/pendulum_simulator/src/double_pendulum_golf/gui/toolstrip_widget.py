@@ -529,8 +529,7 @@ class ToolStrip(QWidget):
         self.chk_gravity.setChecked(True)
         self.chk_gravity.setStyleSheet(_CHK_COM)  # reuse COM style
         self.chk_gravity.setToolTip(
-            "Toggle gravity (g=9.81 m/s²).\n"
-            "Disable to observe pure inertial/torque dynamics."
+            "Toggle gravity (g=9.81 m/s²).\nDisable to observe pure inertial/torque dynamics."
         )
         self.chk_gravity.toggled.connect(self.gravity_toggled.emit)
         extra_col.addWidget(self.chk_gravity)
