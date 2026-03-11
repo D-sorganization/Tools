@@ -63,9 +63,9 @@ class ControlsWidgetTriple(QWidget):
             5.0,
             0.5,
             0.4,
-            0.6,
-            0.6,
-            0.3,
+            0.20,  # L1: Hub (sternum → shoulder)
+            0.65,  # L2: Arm
+            1.10,  # L3: Club
         ),
         "Free Triple Pendulum": (
             90.0,
@@ -81,9 +81,9 @@ class ControlsWidgetTriple(QWidget):
             1.0,
             0.5,
             0.2,
-            1.0,
-            1.0,
-            0.5,
+            0.50,  # L1
+            0.50,  # L2
+            0.50,  # L3
         ),
     }
 
@@ -122,9 +122,27 @@ class ControlsWidgetTriple(QWidget):
         self.inp_m1 = LabeledInput("m1 (kg)", "5.0", "Mass of segment 1")
         self.inp_m2 = LabeledInput("m2 (kg)", "0.5", "Mass of segment 2")
         self.inp_m3 = LabeledInput("m3 (kg)", "0.4", "Mass of segment 3")
-        self.inp_L1 = LabeledInput("L1 (m)", "0.6", "Length of segment 1")
-        self.inp_L2 = LabeledInput("L2 (m)", "0.6", "Length of segment 2")
-        self.inp_L3 = LabeledInput("L3 (m)", "0.6", "Length of segment 3")
+        self.inp_L1 = LabeledInput(
+            "L1 (m) — Hub",
+            "0.20",
+            "Length of segment 1: Hub (sternum → shoulder)",
+        )
+        self.inp_L2 = LabeledInput(
+            "L2 (m) — Arm",
+            "0.65",
+            "Length of segment 2: Arm",
+        )
+        self.inp_L3 = LabeledInput(
+            "L3 (m) — Club",
+            "1.10",
+            "Length of segment 3: Club",
+        )
+        self.inp_scapula = LabeledInput(
+            "Scapula °",
+            "0",
+            "Scapula protraction/retraction offset angle (#1152).\n"
+            "0° = neutral, positive = protracted (forward).",
+        )
         for w in [
             self.inp_m1,
             self.inp_m2,
@@ -132,6 +150,7 @@ class ControlsWidgetTriple(QWidget):
             self.inp_L1,
             self.inp_L2,
             self.inp_L3,
+            self.inp_scapula,
         ]:
             pl2.addWidget(w)
         main_layout.addWidget(phys_group)
@@ -326,9 +345,10 @@ class ControlsWidgetTriple(QWidget):
         self.chk_forces.setChecked(False)
         self.chk_forces.setStyleSheet(STYLE_CHECK)
         self.chk_forces.toggled.connect(self.forces_changed.emit)
+        self.chk_forces.setVisible(False)  # #1143: force toggle lives in toolstrip
 
         vl.addWidget(self.chk_gravity)
-        vl.addWidget(self.chk_forces)
+        # chk_forces hidden — toolstrip is the single source of truth (#1143)
         main_layout.addWidget(vis_group)
 
         main_layout.addStretch()
@@ -428,6 +448,7 @@ class ControlsWidgetTriple(QWidget):
             "mu1": mu1,
             "mu2": mu2,
             "mu3": mu3,
+            "scapula_deg": parse_float(self.inp_scapula, "Scapula"),
         }
 
     def _update_torque_preview(self) -> None:

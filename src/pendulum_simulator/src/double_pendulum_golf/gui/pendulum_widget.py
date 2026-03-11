@@ -17,6 +17,7 @@ Design by Contract
 
 from __future__ import annotations
 
+import logging
 import numpy as np
 from PyQt6.QtCore import QPoint, QPointF, QRect, Qt
 from PyQt6.QtGui import QBrush, QColor, QFont, QPainter, QPainterPath, QPen
@@ -25,6 +26,8 @@ from PyQt6.QtWidgets import QWidget
 from ..jacobians import ellipsoids_double, ellipsoids_triple
 from ..simulation import SimulationResult
 from .base_pendulum_widget import BasePendulumWidget
+
+logger = logging.getLogger(__name__)
 
 
 class PendulumWidget(BasePendulumWidget):
@@ -155,7 +158,8 @@ class PendulumWidget(BasePendulumWidget):
                     forces.append(zero_torque_joint_forces_triple(state, params))  # type: ignore[arg-type]
                 else:
                     forces.append(zero_torque_joint_forces_double(state, params))
-            except Exception:
+            except (ValueError, RuntimeError, ArithmeticError) as exc:
+                logger.warning("zero_torque_joint_forces failed for state: %s", exc)
                 forces.append({})
         return forces
 
@@ -479,19 +483,39 @@ class PendulumWidget(BasePendulumWidget):
                     outline=self.COLOR_MOB_OUTLINE,
                     label="M",
                 )
-            if self._show_force_ellipsoids and ell["force_semi_axes"] is not None:
+            if self._show_force_ellipsoids:
                 force = ell["force_semi_axes"]
                 force_scale = self._force_ellipsoid_scale * ppm * 0.3
-                self._draw_ellipse_axes(
-                    painter,
-                    cx_px,
-                    cy_px,
-                    dirs,
-                    force * force_scale,
-                    fill=self.COLOR_FORCE_ELLIPSOID,
-                    outline=self.COLOR_FORCE_OUTLINE,
-                    label="F",
-                )
+                if force is not None:
+                    self._draw_ellipse_axes(
+                        painter,
+                        cx_px,
+                        cy_px,
+                        dirs,
+                        force * force_scale,
+                        fill=self.COLOR_FORCE_ELLIPSOID,
+                        outline=self.COLOR_FORCE_OUTLINE,
+                        label="F",
+                    )
+                else:
+                    # Degenerate (singular) — draw a line along the major
+                    # mobility axis to show the direction of force capability
+                    # (#1133: force ellipsoid at wrist always visible)
+                    mob = ell["mob_semi_axes"]
+                    line_len = float(mob[0]) * force_scale * 0.5
+                    line_len = max(10.0, min(line_len, 200.0))
+                    dx_line = float(dirs[0, 0]) * line_len
+                    dy_line = -float(dirs[1, 0]) * line_len  # screen Y is inverted
+                    pen = QPen(self.COLOR_FORCE_OUTLINE, 1.5, Qt.PenStyle.DashLine)
+                    painter.setPen(pen)
+                    painter.drawLine(
+                        QPointF(cx_px - dx_line, cy_px - dy_line),
+                        QPointF(cx_px + dx_line, cy_px + dy_line),
+                    )
+                    painter.setFont(QFont("Monospace", 7))
+                    painter.drawText(
+                        QPointF(cx_px + dx_line + 4, cy_px + dy_line), "F∞"
+                    )
 
     def _draw_ellipse_axes(
         self,

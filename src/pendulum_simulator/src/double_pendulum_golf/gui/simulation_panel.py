@@ -4,6 +4,8 @@ Shared simulation panel for double and triple pendulum tabs.
 
 from __future__ import annotations
 
+import logging
+
 import csv
 import os
 import shutil
@@ -29,6 +31,8 @@ if TYPE_CHECKING:
     from .controls_widget import ControlsWidget
     from .controls_widget_golfer import ControlsWidgetGolfer
     from .controls_widget_triple import ControlsWidgetTriple
+
+logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -220,9 +224,47 @@ class SimulationPanel(QWidget):
         ):
             self.controls.force_scale_changed.connect(self.pendulum.set_force_scale)
 
+        # Wire real-time rotation controls (#1146)
+        if hasattr(self.controls, "tilt_changed") and hasattr(
+            self.pendulum, "set_tilt_angle"
+        ):
+            self.controls.tilt_changed.connect(self.pendulum.set_tilt_angle)
+        if hasattr(self.controls, "azimuth_changed") and hasattr(
+            self.pendulum, "set_view_azimuth"
+        ):
+            self.controls.azimuth_changed.connect(self.pendulum.set_view_azimuth)
+
         # Persist splitter when it changes
         if hasattr(self, "_splitter"):
             self._splitter.splitterMoved.connect(lambda *_: self.save_layout())
+
+        # Wire optimizer (#1151): build objective from current params on demand
+        if self.optimizer is not None and self.objective_builder is not None:
+            from .optimization_widget import OptimizationWidget
+
+            opt = cast("OptimizationWidget", self.optimizer)
+            _obj_builder = self.objective_builder  # capture for closure
+            assert callable(_obj_builder), "objective_builder must be callable"
+
+            # Before each optimizer run, rebuild the objective with current params
+            orig_on_run = opt._on_run
+
+            def _patched_on_run() -> None:
+                """Build objective from current UI params, then run optimizer."""
+                try:
+                    p = self.controls.get_params()
+                    obj_fn = _obj_builder(p)
+                    opt.set_objective_function(obj_fn)
+                except (ValueError, AssertionError) as e:
+                    opt._log.append(f"⚠ Cannot build objective: {e}")
+                    return
+                orig_on_run()
+
+            opt._btn_run.clicked.disconnect()
+            opt._btn_run.clicked.connect(_patched_on_run)
+
+            # Wire apply back to controls (set torque coefficients)
+            opt.optimized_coefficients.connect(self._apply_optimized_coefficients)
 
     def _setup_timer(self) -> None:
         self._timer = QTimer(self)
@@ -233,12 +275,14 @@ class SimulationPanel(QWidget):
         try:
             p = self.controls.get_params()
         except ValueError as e:
+            logger.warning("Parameter validation failed: %s", e)
             QMessageBox.warning(self, "Input Error", str(e))
             return
 
         try:
             params = self._params_builder(p)
         except AssertionError as e:
+            logger.warning("Parameter build assertion failed: %s", e)
             QMessageBox.warning(self, "Parameter Error", str(e))
             return
 
@@ -253,6 +297,11 @@ class SimulationPanel(QWidget):
         self.controls.btn_reset.setEnabled(False)
         self._show_busy(True)
         self.sim_started.emit()
+        logger.info(
+            "Simulation started: t_end=%.3f, dt=%.4f",
+            p["t_end"],
+            float(p.get("dt", 0.005)),
+        )
 
         # Build optional joint limits and torque clamp
         limits = self._limits_builder(p) if self._limits_builder else None
@@ -308,6 +357,13 @@ class SimulationPanel(QWidget):
         else:
             self._sim_dt = 0.005
 
+        logger.info(
+            "Simulation finished: %d steps, t=[0, %.3f]s, dt=%.4fms",
+            res.n_steps,
+            float(res.t[-1]),
+            self._sim_dt * 1000,
+        )
+
         self.pendulum.set_simulation(res)
         self.matrix.set_simulation(res)
         if self.torque_history is not None:
@@ -321,6 +377,7 @@ class SimulationPanel(QWidget):
 
     def _on_sim_error(self, msg: str) -> None:
         """Called on the main thread when simulation fails."""
+        logger.error("Simulation failed: %s", msg)
         self._show_busy(False)
         self.controls.btn_run.setEnabled(True)
         self.controls.btn_reset.setEnabled(True)
@@ -459,6 +516,75 @@ class SimulationPanel(QWidget):
         if self._result is None:
             return 0
         return int(self._result.n_steps)
+
+    def _apply_optimized_coefficients(self, result: object) -> None:
+        """Apply optimizer results back to the control widget's torque fields.
+
+        Splits the flat coefficient array into per-joint polynomial strings.
+        Supports double (2), triple (3), and golfer (7) torque-param models.
+
+        Pre: result has 'coeffs' key with a numpy array.
+        Closes #1151.
+        """
+        import logging
+
+        logger = logging.getLogger(__name__)
+
+        if not isinstance(result, dict):
+            logger.warning("Optimizer result is not a dict, skipping apply")
+            return
+        coeffs = result.get("coeffs")
+        if coeffs is None:
+            logger.warning("No coefficients in optimizer result")
+            return
+
+        coeffs = np.asarray(coeffs, dtype=float)
+
+        # Determine model type by which control widget is active
+        from .controls_widget import ControlsWidget
+        from .controls_widget_triple import ControlsWidgetTriple
+        from .controls_widget_golfer import ControlsWidgetGolfer
+
+        def _fmt_coeffs(arr: np.ndarray) -> str:
+            """Format coefficient array as comma-separated string."""
+            return ", ".join(f"{v:.4f}" for v in arr)
+
+        if isinstance(self.controls, ControlsWidget):
+            # Double: split into 2 groups (shoulder, wrist)
+            n_half = len(coeffs) // 2
+            self.controls.inp_tau_shoulder.set_value(_fmt_coeffs(coeffs[:n_half]))
+            self.controls.inp_tau_wrist.set_value(_fmt_coeffs(coeffs[n_half:]))
+            logger.info("Applied double pendulum optimizer coefficients")
+
+        elif isinstance(self.controls, ControlsWidgetTriple):
+            # Triple: split into 3 groups (shoulder, elbow, wrist)
+            n_third = len(coeffs) // 3
+            self.controls.inp_tau_shoulder.set_value(_fmt_coeffs(coeffs[:n_third]))
+            self.controls.inp_tau_elbow.set_value(
+                _fmt_coeffs(coeffs[n_third : 2 * n_third])
+            )
+            self.controls.inp_tau_wrist.set_value(_fmt_coeffs(coeffs[2 * n_third :]))
+            logger.info("Applied triple pendulum optimizer coefficients")
+
+        elif isinstance(self.controls, ControlsWidgetGolfer):
+            # Golfer: split into 7 groups
+            n_seventh = max(1, len(coeffs) // 7)
+            field_names = [
+                "inp_tau_hub",
+                "inp_tau_rs",
+                "inp_tau_re",
+                "inp_tau_rh",
+                "inp_tau_ls",
+                "inp_tau_le",
+                "inp_tau_lh",
+            ]
+            for i, field_name in enumerate(field_names):
+                field = getattr(self.controls, field_name, None)
+                if field is not None:
+                    start = i * n_seventh
+                    end = (i + 1) * n_seventh if i < 6 else len(coeffs)
+                    field.set_value(_fmt_coeffs(coeffs[start:end]))
+            logger.info("Applied golfer optimizer coefficients")
 
     def _on_export_data(self) -> None:
         if self._result is None:

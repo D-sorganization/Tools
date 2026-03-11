@@ -52,6 +52,7 @@ def _solve_constrained_dynamics(
     torque_func: TorqueFunc,
     alpha: float = DEFAULT_ALPHA,
     beta: float = DEFAULT_BETA,
+    torque_limits: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Solve the augmented KKT system for accelerations and multipliers.
 
@@ -85,6 +86,12 @@ def _solve_constrained_dynamics(
     tau_tuple = torque_func(t)
     tau = np.zeros(N_DOF)
     tau[:7] = tau_tuple
+
+    # Torque saturation (#1150)
+    if torque_limits is not None:
+        from .physics import clamp_torque_ndof
+
+        tau[:7] = clamp_torque_ndof(tau[:7], torque_limits[:7])
 
     native_result = _native_backend.golfer_constrained_dynamics(
         q, qdot, tau, params, alpha, beta
@@ -156,9 +163,12 @@ def constrained_accelerations(
     torque_func: TorqueFunc,
     alpha: float = DEFAULT_ALPHA,
     beta: float = DEFAULT_BETA,
+    torque_limits: np.ndarray | None = None,
 ) -> np.ndarray:
     """Compute constrained accelerations using augmented Lagrangian method."""
-    qddot, _ = _solve_constrained_dynamics(state, t, params, torque_func, alpha, beta)
+    qddot, _ = _solve_constrained_dynamics(
+        state, t, params, torque_func, alpha, beta, torque_limits
+    )
     return qddot
 
 
@@ -217,6 +227,7 @@ def equations_of_motion(
     torque_func: TorqueFunc,
     alpha: float = DEFAULT_ALPHA,
     beta: float = DEFAULT_BETA,
+    torque_limits: np.ndarray | None = None,
 ) -> State:
     """State derivative for the constrained golfer model.
 
@@ -228,6 +239,8 @@ def equations_of_motion(
     t : float
     params : GolferParams
     torque_func : callable (t) -> 7-tuple
+    torque_limits : np.ndarray, shape (7,), optional
+        Per-joint torque saturation limits (#1150).
 
     Returns
     -------
@@ -237,7 +250,9 @@ def equations_of_motion(
     assert np.all(np.isfinite(state)), f"State has non-finite values: {state}"
 
     qdot = state[N_DOF:]
-    qddot = constrained_accelerations(state, t, params, torque_func, alpha, beta)
+    qddot = constrained_accelerations(
+        state, t, params, torque_func, alpha, beta, torque_limits
+    )
 
     state_dot = np.zeros(2 * N_DOF)
     state_dot[:N_DOF] = qdot

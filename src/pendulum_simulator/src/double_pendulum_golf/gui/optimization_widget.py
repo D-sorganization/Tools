@@ -42,34 +42,34 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 _STYLE = """
 QGroupBox {
-    color: #9090c8; font-size: 10px; font-weight: bold;
+    color: #9090c8; font-size: 11px; font-weight: bold;
     border: 1px solid #303050; border-radius: 4px;
     margin-top: 8px; padding-top: 14px;
 }
 QGroupBox::title { subcontrol-origin: margin; left: 8px; }
-QLabel { color: #8080b0; font-size: 9px; }
+QLabel { color: #8080b0; font-size: 11px; }
 QPushButton {
     background: #262650; color: #b0b0e8; border: 1px solid #404070;
-    border-radius: 3px; padding: 4px 12px; font-size: 9px;
+    border-radius: 3px; padding: 4px 12px; font-size: 11px;
 }
 QPushButton:hover { background: #303068; }
 QPushButton:disabled { color: #505060; }
 QSpinBox {
     background: #1a1a2a; color: #b0b0e8; border: 1px solid #303050;
-    border-radius: 2px; font-size: 9px; padding: 2px;
+    border-radius: 2px; font-size: 11px; padding: 2px;
 }
 QComboBox {
     background: #1a1a2a; color: #b0b0e8; border: 1px solid #303050;
-    border-radius: 2px; font-size: 9px; padding: 2px;
+    border-radius: 2px; font-size: 11px; padding: 2px;
 }
 QTextEdit {
     background: #0e0e1a; color: #808090; border: 1px solid #202040;
-    border-radius: 3px; font-family: monospace; font-size: 8px;
+    border-radius: 3px; font-family: monospace; font-size: 11px;
 }
 QProgressBar {
     background: #1a1a2a; border: 1px solid #303050;
     border-radius: 3px; text-align: center;
-    color: #a0a0d0; font-size: 8px;
+    color: #a0a0d0; font-size: 11px;
 }
 QProgressBar::chunk { background: #404090; border-radius: 2px; }
 """

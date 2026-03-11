@@ -52,6 +52,8 @@ class TriplePendulumParams:
     mu1: float = 0.0  # Coulomb friction at joint 1 (N·m, constant magnitude)
     mu2: float = 0.0  # Coulomb friction at joint 2 (N·m, constant magnitude)
     mu3: float = 0.0  # Coulomb friction at joint 3 (N·m, constant magnitude)
+    # --- Scapula offset (#1152) ---
+    scapula_offset_rad: float = 0.0  # angular offset of hub anchor (rad)
 
     def __post_init__(self) -> None:
         assert self.m1 > 0, f"m1 must be positive, got {self.m1}"
@@ -356,7 +358,11 @@ def friction_torque_vector(
 
 
 def equations_of_motion(
-    state: State, t: float, params: TriplePendulumParams, torque_func: TorqueFunc
+    state: State,
+    t: float,
+    params: TriplePendulumParams,
+    torque_func: TorqueFunc,
+    torque_limits: np.ndarray | None = None,
 ) -> State:
     """Compute the state derivative: dx/dt = f(x, t).
 
@@ -367,6 +373,7 @@ def equations_of_motion(
     Preconditions:
         - state has shape (6,) with all finite values.
         - torque_func returns a 3-tuple of finite floats.
+        - torque_limits, if provided, has shape (3,) with positive values.
     Postconditions:
         - Returns shape (6,) with all finite values.
 
@@ -376,6 +383,8 @@ def equations_of_motion(
     t : float
     params : TriplePendulumParams
     torque_func : callable (t) -> (tau1, tau2, tau3)
+    torque_limits : np.ndarray, shape (3,), optional
+        Per-joint torque saturation limits (#1150).
 
     Returns
     -------
@@ -392,6 +401,12 @@ def equations_of_motion(
 
     tau1, tau2, tau3 = torque_func(t)
     tau = np.array([tau1, tau2, tau3])
+
+    # Torque saturation (#1150)
+    if torque_limits is not None:
+        from .physics import clamp_torque_ndof
+
+        tau = clamp_torque_ndof(tau, torque_limits)
 
     tau_friction = friction_torque_vector(dtheta1, dphi1, dphi2, params)
 
@@ -417,7 +432,7 @@ def forward_kinematics(
 ) -> dict:
     """Compute joint and tip positions in the world frame.
 
-    Origin is at the shoulder (fixed pivot).
+    Origin is at the hub (fixed pivot).
     x-axis points right, y-axis points up.
 
     Parameters
@@ -432,7 +447,8 @@ def forward_kinematics(
 
     Returns
     -------
-    dict with 'shoulder', 'wrist1', 'wrist2', 'tip' as (x, y) tuples.
+    dict with 'hub', 'shoulder', 'wrist1', 'wrist2', 'tip' as (x, y) tuples.
+    The shoulder is displaced from the hub by the scapula offset (#1152).
     """
     native_positions = _native_backend.triple_forward_kinematics(
         theta1, phi1, phi2, params
@@ -442,12 +458,23 @@ def forward_kinematics(
 
     L1, L2, L3 = params.L1, params.L2, params.L3
 
+    # Scapula offset (#1152): displaces shoulder anchor from hub
+    # Only applies displacement when offset is non-zero.
+    scap = params.scapula_offset_rad
+    if abs(scap) > 1e-8:
+        scap_len = L1 * 0.3  # scapula link length (30% of hub segment)
+        ox = scap_len * np.sin(scap)
+        oy = -scap_len * (1.0 - np.cos(scap))  # zero when scap=0
+    else:
+        ox = 0.0
+        oy = 0.0
+
     abs_angle2 = theta1 + phi1
     abs_angle3 = theta1 + phi1 + phi2
 
     # Segment 1 endpoint (wrist1 / first joint)
-    w1x = L1 * np.sin(theta1)
-    w1y = -L1 * np.cos(theta1)
+    w1x = ox + L1 * np.sin(theta1)
+    w1y = oy - L1 * np.cos(theta1)
 
     # Segment 2 endpoint (wrist2 / second joint)
     w2x = w1x + L2 * np.sin(abs_angle2)
@@ -458,7 +485,8 @@ def forward_kinematics(
     ty = w2y - L3 * np.cos(abs_angle3)
 
     return {
-        "shoulder": (0.0, 0.0),
+        "hub": (0.0, 0.0),
+        "shoulder": (ox, oy),
         "wrist1": (w1x, w1y),
         "wrist2": (w2x, w2y),
         "tip": (tx, ty),

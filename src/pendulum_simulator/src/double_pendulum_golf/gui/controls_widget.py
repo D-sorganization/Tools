@@ -114,6 +114,10 @@ class ControlsWidget(QWidget):
     forces_changed = pyqtSignal(bool)
     force_scale_changed = pyqtSignal(float)
 
+    # Real-time view rotation (#1146)
+    tilt_changed = pyqtSignal(float)  # radians
+    azimuth_changed = pyqtSignal(float)  # radians
+
     # Preset: (theta1°, phi°, dth, dph, tau_sh, tau_wr, tend, m1, m2, mClub, L1, L2)
     PRESETS = {
         "Golf Swing (passive wrist)": (
@@ -271,7 +275,7 @@ class ControlsWidget(QWidget):
         layout.addWidget(self.chk_limits)
         self.inp_phi_min = LabeledInput("φ min°", "-90", "Min wrist angle (deg)", lw)
         self.inp_phi_max = LabeledInput("φ max°", "90", "Max wrist angle (deg)", lw)
-        self.inp_limit_k = LabeledInput("K", "500", "Penalty stiffness (N·m/rad)", lw)
+        self.inp_limit_k = LabeledInput("K (N·m/rad)", "500", "Penalty stiffness", lw)
         layout.addLayout(_row(self.inp_phi_min, self.inp_phi_max))
         layout.addWidget(self.inp_limit_k)
         return box
@@ -287,9 +291,11 @@ class ControlsWidget(QWidget):
         self.chk_clamp.setStyleSheet(STYLE_CHECK)
         layout.addWidget(self.chk_clamp)
         self.inp_max_tau1 = LabeledInput(
-            "Max τ1", "50", "Max shoulder torque (N·m)", lw
+            "Max |τ1|", "50", "Max shoulder torque magnitude ±(N·m)", lw
         )
-        self.inp_max_tau2 = LabeledInput("Max τ2", "20", "Max wrist torque (N·m)", lw)
+        self.inp_max_tau2 = LabeledInput(
+            "Max |τ2|", "20", "Max wrist torque magnitude ±(N·m)", lw
+        )
         layout.addLayout(_row(self.inp_max_tau1, self.inp_max_tau2))
         return box
 
@@ -404,7 +410,26 @@ class ControlsWidget(QWidget):
             56,
         )
         layout.addWidget(self.inp_azimuth)
+
+        # Live rotation updates (#1146)
+        self.inp_tilt.edit.textChanged.connect(self._on_tilt_edited)
+        self.inp_azimuth.edit.textChanged.connect(self._on_azimuth_edited)
+
         return box
+
+    def _on_tilt_edited(self, text: str) -> None:
+        """Emit tilt_changed in real-time when Tilt input is edited (#1146)."""
+        try:
+            self.tilt_changed.emit(np.radians(float(text)))
+        except ValueError:
+            pass
+
+    def _on_azimuth_edited(self, text: str) -> None:
+        """Emit azimuth_changed in real-time when Azimuth input is edited (#1146)."""
+        try:
+            self.azimuth_changed.emit(np.radians(float(text)))
+        except ValueError:
+            pass
 
     def _build_hidden_compat_widgets(self) -> None:
         """Create hidden widgets whose signals are still wired internally.

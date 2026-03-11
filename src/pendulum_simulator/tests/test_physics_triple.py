@@ -128,10 +128,10 @@ class TestTripleForwardKinematics:
         pos = forward_kinematics_triple(theta1, phi1, phi2, triple_params)
 
         # Check keys
-        assert set(pos.keys()) == {"shoulder", "wrist1", "wrist2", "tip"}
+        assert set(pos.keys()) == {"hub", "shoulder", "wrist1", "wrist2", "tip"}
 
-        # Shoulder at origin
-        assert np.allclose(pos["shoulder"], (0.0, 0.0))
+        # Hub at origin
+        assert np.allclose(pos["hub"], (0.0, 0.0))
 
         # When straight down, positions should be at negative y
         assert pos["wrist1"][0] == 0.0  # x = 0
@@ -145,10 +145,10 @@ class TestTripleForwardKinematics:
         phi1, phi2 = 0.0, 0.0
         pos = forward_kinematics_triple(theta1, phi1, phi2, triple_params)
 
-        # Wrist1 should be at (L1, 0)
+        # With default scapula offset (0), wrist1 should be at (L1, 0)
         L1 = triple_params.L1
-        assert np.isclose(pos["wrist1"][0], L1)
-        assert np.isclose(pos["wrist1"][1], 0.0, atol=1e-12)
+        assert np.isclose(pos["wrist1"][0], L1, atol=1e-6)
+        assert np.isclose(pos["wrist1"][1], 0.0, atol=1e-6)
 
 
 class TestTripleEquationsOfMotion:

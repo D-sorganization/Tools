@@ -88,18 +88,28 @@ class JointLimits:
 
 @dataclass(frozen=True)
 class TorqueClamp:
-    """Torque saturation limits.
+    """Torque saturation limits (symmetric ± clamp).
 
     Contract:
-        - Both limits must be positive.
+        - Both limits must be non-zero; abs() is applied automatically.
+        - Clamped range: [-|max_torque|, +|max_torque|] per DOF.
+
+    Closes #1138: accepts negative values via abs() for usability.
     """
 
-    max_torque1: float = float("inf")  # N·m
-    max_torque2: float = float("inf")  # N·m
+    max_torque1: float = float("inf")  # N·m (magnitude, ± symmetric)
+    max_torque2: float = float("inf")  # N·m (magnitude, ± symmetric)
 
     def __post_init__(self) -> None:
-        assert self.max_torque1 > 0
-        assert self.max_torque2 > 0
+        # Accept negative inputs by taking abs (#1138)
+        object.__setattr__(self, "max_torque1", abs(self.max_torque1))
+        object.__setattr__(self, "max_torque2", abs(self.max_torque2))
+        assert (
+            self.max_torque1 > 0
+        ), f"|max_torque1| must be positive, got {self.max_torque1}"
+        assert (
+            self.max_torque2 > 0
+        ), f"|max_torque2| must be positive, got {self.max_torque2}"
 
 
 # Type aliases
@@ -276,6 +286,28 @@ def clamp_torque(tau: np.ndarray, clamp: TorqueClamp) -> np.ndarray:
             np.clip(tau[1], -clamp.max_torque2, clamp.max_torque2),
         ]
     )
+
+
+def clamp_torque_ndof(tau: np.ndarray, limits: np.ndarray) -> np.ndarray:
+    """Clamp N-DOF torque vector to symmetric per-DOF limits (#1150).
+
+    Parameters
+    ----------
+    tau : ndarray, shape (n,)
+        Joint torque vector.
+    limits : ndarray, shape (n,)
+        Per-joint maximum torque magnitudes (positive).
+        Use ``inf`` for unclamped joints.
+
+    Pre: tau.shape == limits.shape, all limits > 0.
+    Post: |result[i]| <= limits[i] for all i.
+    """
+    assert (
+        tau.shape == limits.shape
+    ), f"Shape mismatch: tau={tau.shape}, limits={limits.shape}"
+    assert np.all(limits > 0), "All limits must be positive"
+    result: np.ndarray = np.clip(tau, -limits, limits)
+    return result
 
 
 # ---------------------------------------------------------------------------

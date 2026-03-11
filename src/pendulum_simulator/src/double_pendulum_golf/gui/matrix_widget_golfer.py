@@ -7,12 +7,15 @@ QPainter-based rendering with color-coded cells.
 
 from __future__ import annotations
 
+import logging
 import numpy as np
 from PyQt6.QtCore import QRectF, Qt
 from PyQt6.QtGui import QBrush, QColor, QFont, QPainter, QPen
 from PyQt6.QtWidgets import QWidget
 
 from ..simulation_golfer import GolferSimulationResult
+
+logger = logging.getLogger(__name__)
 
 
 class GolferMatrixWidget(QWidget):
@@ -240,7 +243,7 @@ class GolferMatrixWidget(QWidget):
             for i in range(len(lam)):
                 painter.drawText(16, y + 12, f"  lambda_{i + 1} = {lam[i]:+8.3f}")
                 y += 14
-        except Exception:
-            pass
+        except (AttributeError, TypeError, IndexError) as exc:
+            logger.debug("constraint_forces_at unavailable: %s", exc)
 
         return y + 4

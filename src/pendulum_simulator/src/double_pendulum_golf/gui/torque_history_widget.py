@@ -121,8 +121,8 @@ class TorqueHistoryWidget(QWidget):
             self._grid_color = theme.grid_color
             # Register for future theme changes
             manager.add_theme_change_callback(self._on_plot_theme_changed)
-        except Exception:
-            logger.debug("PlotThemeManager unavailable, using defaults")
+        except (ImportError, AttributeError, RuntimeError) as exc:
+            logger.debug("PlotThemeManager unavailable, using defaults: %s", exc)
 
     def _on_plot_theme_changed(self, theme: object) -> None:
         """Update backgrounds when the plot theme changes (trace colors stay)."""
@@ -134,8 +134,8 @@ class TorqueHistoryWidget(QWidget):
             self._grid_color = theme.grid_color  # type: ignore[attr-defined]
             for pw in (self._plot_j1, self._plot_j2):
                 pw.setBackground(self._bg_color)
-        except Exception:
-            logger.debug("Could not update torque plot theme")
+        except (AttributeError, RuntimeError) as exc:
+            logger.debug("Could not update torque plot theme: %s", exc)
 
     # ------------------------------------------------------------------
     # UI construction
@@ -146,10 +146,11 @@ class TorqueHistoryWidget(QWidget):
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
 
-        title = QLabel("Torque History")
+        title = QLabel("📊 Torque History")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         title.setStyleSheet(
-            f"color: {self._text_color}; font-size: 12px; font-weight: bold;"
+            f"color: {self._text_color}; font-size: 14px; font-weight: bold;"
+            "padding: 4px; border-bottom: 1px solid #505070;"
         )
         layout.addWidget(title)
 
@@ -162,14 +163,17 @@ class TorqueHistoryWidget(QWidget):
             layout.addWidget(fallback)
             return
 
+        # Style for clearer axis text (#1145)
+        _axis_style = {"color": self._text_color, "font-size": "11px"}
+
         # Two stacked plot widgets (joint 1 top, joint 2 bottom)
         self._plot_j1 = pg.PlotWidget(title="Joint 1 — Shoulder")
         self._plot_j2 = pg.PlotWidget(title="Joint 2 — Wrist")
 
         for pw in (self._plot_j1, self._plot_j2):
             pw.setBackground(self._bg_color)
-            pw.getPlotItem().setLabel("bottom", "Time (s)")
-            pw.getPlotItem().setLabel("left", "Torque (N·m)")
+            pw.getPlotItem().setLabel("bottom", "Time (s)", **_axis_style)
+            pw.getPlotItem().setLabel("left", "Torque (N·m)", **_axis_style)
             pw.getPlotItem().addLegend(offset=(10, 10))
             pw.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
             layout.addWidget(pw)
