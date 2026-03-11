@@ -45,6 +45,7 @@ from .controls_utils import STYLE_LABEL, STYLE_EDIT, STYLE_BTN, STYLE_BTN_IMPORT
 _FUNCGEN_AVAILABLE = False
 FunctionGeneratorWidget = None
 
+
 def _find_sibling_package(marker_path: str) -> Path | None:
     """Walk up from this file to find a sibling package directory.
 
@@ -65,6 +66,7 @@ def _find_sibling_package(marker_path: str) -> Path | None:
         p = p.parent
     return None
 
+
 try:
     _src_root = _find_sibling_package("function_generator/python")
     if _src_root is not None:
@@ -77,6 +79,7 @@ try:
         from function_generator.ui.pyqt6.main_window import (
             FunctionGeneratorWidget as _FGWidget,
         )
+
         FunctionGeneratorWidget = _FGWidget
         _FUNCGEN_AVAILABLE = True
 except ImportError:

@@ -103,6 +103,7 @@ try:
             ThemeManagerDialog as _ThemeManagerDialog,
             create_theme_menu as _create_theme_menu,
         )
+
         ThemeManager = _ThemeManager
         ThemeManagerDialog = _ThemeManagerDialog
         create_theme_menu = _create_theme_menu
@@ -300,18 +301,24 @@ class MainWindow(QMainWindow):
         # Guard each callback so non-active panels are silently ignored.
         for panel in self._panels:
             panel.sim_started.connect(
-                lambda _p=panel: ts.set_running(True) if _p is self._active_panel() else None
+                lambda _p=panel: (
+                    ts.set_running(True) if _p is self._active_panel() else None
+                )
             )
             panel.sim_finished.connect(
                 lambda _p=panel: (
-                    ts.set_running(False),
-                    ts.set_frame_range(_p.current_n_steps()),
+                    (
+                        ts.set_running(False),
+                        ts.set_frame_range(_p.current_n_steps()),
+                    )
+                    if _p is self._active_panel()
+                    else None
                 )
-                if _p is self._active_panel()
-                else None
             )
             panel.frame_changed.connect(
-                lambda idx, _p=panel: ts.set_frame(idx) if _p is self._active_panel() else None
+                lambda idx, _p=panel: (
+                    ts.set_frame(idx) if _p is self._active_panel() else None
+                )
             )
 
         # Update segment checkboxes when tab changes

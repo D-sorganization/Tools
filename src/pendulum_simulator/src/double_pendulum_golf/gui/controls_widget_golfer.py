@@ -534,9 +534,9 @@ class ControlsWidgetGolfer(QWidget):
 
     def set_slider_value(self, val: int) -> None:
         """Pre: 0 <= val <= slider.maximum()"""
-        assert 0 <= val <= self.slider.maximum(), (
-            f"Slider value {val} out of range [0, {self.slider.maximum()}]"
-        )
+        assert (
+            0 <= val <= self.slider.maximum()
+        ), f"Slider value {val} out of range [0, {self.slider.maximum()}]"
         self.slider.blockSignals(True)
         self.slider.setValue(val)
         self.slider.blockSignals(False)

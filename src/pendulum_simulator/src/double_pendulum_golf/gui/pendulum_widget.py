@@ -431,8 +431,12 @@ class PendulumWidget(BasePendulumWidget):
         if state.shape[0] >= 6:
             theta1, phi1, phi2 = float(state[0]), float(state[1]), float(state[2])
             data = ellipsoids_triple(
-                theta1, phi1, phi2,
-                params.L1, params.L2, params.L3,  # type: ignore[attr-defined]
+                theta1,
+                phi1,
+                phi2,
+                params.L1,
+                params.L2,
+                params.L3,  # type: ignore[attr-defined]
             )
             pos = self._result.positions_at(self._current_idx)
             endpoint_map = {
@@ -450,7 +454,10 @@ class PendulumWidget(BasePendulumWidget):
             }
 
         for name, ell in data.items():
-            if self._visible_segments is not None and name not in self._visible_segments:
+            if (
+                self._visible_segments is not None
+                and name not in self._visible_segments
+            ):
                 continue
             world_pos = endpoint_map.get(name)
             if world_pos is None:
@@ -463,15 +470,27 @@ class PendulumWidget(BasePendulumWidget):
                 mob = ell["mob_semi_axes"]
                 mob_scale = self._mob_ellipsoid_scale * ppm * 0.3
                 self._draw_ellipse_axes(
-                    painter, cx_px, cy_px, dirs, mob * mob_scale,
-                    fill=self.COLOR_MOB_ELLIPSOID, outline=self.COLOR_MOB_OUTLINE, label="M",
+                    painter,
+                    cx_px,
+                    cy_px,
+                    dirs,
+                    mob * mob_scale,
+                    fill=self.COLOR_MOB_ELLIPSOID,
+                    outline=self.COLOR_MOB_OUTLINE,
+                    label="M",
                 )
             if self._show_force_ellipsoids and ell["force_semi_axes"] is not None:
                 force = ell["force_semi_axes"]
                 force_scale = self._force_ellipsoid_scale * ppm * 0.3
                 self._draw_ellipse_axes(
-                    painter, cx_px, cy_px, dirs, force * force_scale,
-                    fill=self.COLOR_FORCE_ELLIPSOID, outline=self.COLOR_FORCE_OUTLINE, label="F",
+                    painter,
+                    cx_px,
+                    cy_px,
+                    dirs,
+                    force * force_scale,
+                    fill=self.COLOR_FORCE_ELLIPSOID,
+                    outline=self.COLOR_FORCE_OUTLINE,
+                    label="F",
                 )
 
     def _draw_ellipse_axes(
@@ -555,10 +574,12 @@ class PendulumWidget(BasePendulumWidget):
             c2x = wx + 0.5 * params.L2 * np.sin(abs2)
             c2y = wy - 0.5 * params.L2 * np.cos(abs2)
             total_m = params.m1 + params.m2
-            com = np.array([
-                (params.m1 * c1x + params.m2 * c2x) / total_m,
-                (params.m1 * c1y + params.m2 * c2y) / total_m,
-            ])
+            com = np.array(
+                [
+                    (params.m1 * c1x + params.m2 * c2x) / total_m,
+                    (params.m1 * c1y + params.m2 * c2y) / total_m,
+                ]
+            )
 
         com_px = self._world_to_pixel(float(com[0]), float(com[1]))
 
@@ -589,7 +610,11 @@ class PendulumWidget(BasePendulumWidget):
         x = r.right() - btn_size - margin
         y_start = margin
 
-        buttons = [("\u2295", "Zoom in"), ("\u2296", "Zoom out"), ("\u2922", "Reset view")]
+        buttons = [
+            ("\u2295", "Zoom in"),
+            ("\u2296", "Zoom out"),
+            ("\u2922", "Reset view"),
+        ]
         painter.setFont(QFont("Sans", 11))
 
         for i, (icon, _) in enumerate(buttons):

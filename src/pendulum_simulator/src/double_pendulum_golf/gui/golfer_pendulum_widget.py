@@ -322,8 +322,13 @@ class GolferPendulumWidget(BasePendulumWidget):
         club_com = 0.5 * (club_base + club_tip)
 
         masses = [
-            params.m_hub, params.m_r_upper, params.m_r_fore,
-            params.m_l_upper, params.m_l_fore, params.m_club, params.m_clubhead,
+            params.m_hub,
+            params.m_r_upper,
+            params.m_r_fore,
+            params.m_l_upper,
+            params.m_l_fore,
+            params.m_club,
+            params.m_clubhead,
         ]
         positions = [hub, re, rh, le, lh, club_com, club_tip]
 

@@ -219,7 +219,9 @@ class BasePendulumWidget(QWidget):
         if not isinstance(event, QMouseEvent):
             return
         if event.button() == Qt.MouseButton.LeftButton:
-            if hasattr(self, "_handle_zoom_button_click") and self._handle_zoom_button_click(event.pos()):
+            if hasattr(
+                self, "_handle_zoom_button_click"
+            ) and self._handle_zoom_button_click(event.pos()):
                 return
             self._drag_start = event.pos()
             self._drag_pan_start = (self._pan_x, self._pan_y)
@@ -351,6 +353,7 @@ class BasePendulumWidget(QWidget):
         painter.setPen(Qt.PenStyle.NoPen)
         painter.setBrush(QBrush(gradient))
         from PyQt6.QtGui import QPolygonF
+
         poly = QPolygonF([left, right, bottom_right, bottom_left])
         painter.drawPolygon(poly)
 
@@ -399,7 +402,9 @@ class BasePendulumWidget(QWidget):
         painter.setFont(QFont("Monospace", 8))
         painter.drawText(label_pos, f"tilt {tilt_deg:.1f}°")
 
-    def _draw_ball(self, painter: QPainter, x: float, y: float, radius_m: float = 0.0214) -> None:
+    def _draw_ball(
+        self, painter: QPainter, x: float, y: float, radius_m: float = 0.0214
+    ) -> None:
         """Draw a golf ball at the given world coordinates.
 
         Pre: radius_m > 0
@@ -423,6 +428,7 @@ class BasePendulumWidget(QWidget):
 
         # Ball body
         from PyQt6.QtGui import QRadialGradient
+
         gradient = QRadialGradient(
             center.x() - r_px * 0.3,
             center.y() - r_px * 0.3,
