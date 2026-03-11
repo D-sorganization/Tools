@@ -448,4 +448,3 @@ class TestOptimizationWidget:
         assert "speed" in results[0]
         assert "history" in results[0]
         assert len(objective_called) > 0
-
