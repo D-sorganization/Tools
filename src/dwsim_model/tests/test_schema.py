@@ -10,8 +10,6 @@ These tests verify that:
 """
 
 import pytest
-from pydantic import ValidationError
-
 from dwsim_model.config.schema import (
     ReactionEntry,
     ReactorConfig,
@@ -20,6 +18,7 @@ from dwsim_model.config.schema import (
     validate_master_config,
     validate_stream_config,
 )
+from pydantic import ValidationError
 
 # ─────────────────────────────────────────────────────────────────────────────
 # UltimateAnalysis

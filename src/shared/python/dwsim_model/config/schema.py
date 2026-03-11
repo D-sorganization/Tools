@@ -16,7 +16,7 @@ Usage:
 from __future__ import annotations
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -69,37 +69,37 @@ class ProximateAnalysis(BaseModel):
 class StreamConfig(BaseModel):
     """Configuration for a single material stream."""
 
-    temperature_C: Optional[float] = Field(
+    temperature_C: float | None = Field(
         None,
         ge=-273.15,  # Absolute zero
         le=3000.0,  # Max reasonable process temp
         description="Stream temperature in °C",
     )
-    temperature_K: Optional[float] = Field(
+    temperature_K: float | None = Field(
         None,
         ge=0.0,
         le=3273.15,
         description="Alternative: specify temperature in Kelvin",
     )
-    pressure_Pa: Optional[float] = Field(
+    pressure_Pa: float | None = Field(
         None,
         ge=0.0,
         le=1e8,  # 1000 bar upper limit
         description="Stream pressure in Pa",
     )
-    mass_flow_kg_s: Optional[float] = Field(
+    mass_flow_kg_s: float | None = Field(
         None, ge=0.0, le=10000.0, description="Mass flow rate in kg/s"
     )
-    components: Optional[dict[str, float]] = Field(
+    components: dict[str, float] | None = Field(
         None, description="Component mole fractions (must sum to ~1.0)"
     )
-    ultimate_analysis: Optional[UltimateAnalysis] = None
-    proximate_analysis: Optional[ProximateAnalysis] = None
-    hhv_mj_kg: Optional[float] = Field(None, ge=0.0, le=60.0)
+    ultimate_analysis: UltimateAnalysis | None = None
+    proximate_analysis: ProximateAnalysis | None = None
+    hhv_mj_kg: float | None = Field(None, ge=0.0, le=60.0)
 
     @field_validator("pressure_Pa")
     @classmethod
-    def pressure_above_vacuum(cls, v: Optional[float]) -> Optional[float]:
+    def pressure_above_vacuum(cls, v: float | None) -> float | None:
         if v is not None and v < 1000.0:
             raise ValueError(
                 f"Pressure {v} Pa is very low (< 1000 Pa = 0.01 atm). "
@@ -129,11 +129,11 @@ class ReactionEntry(BaseModel):
 
     name: str
     stoichiometry: str
-    base_component: Optional[str] = None
-    conversion: Optional[float] = Field(None, ge=0.0, le=1.0)
-    heat_of_reaction_kJ_mol: Optional[float] = None
-    type: Optional[str] = None  # "equilibrium" | "kinetic" | "conversion"
-    kinetics: Optional[KineticParameters] = None
+    base_component: str | None = None
+    conversion: float | None = Field(None, ge=0.0, le=1.0)
+    heat_of_reaction_kJ_mol: float | None = None
+    type: str | None = None  # "equilibrium" | "kinetic" | "conversion"
+    kinetics: KineticParameters | None = None
 
 
 class KineticParameters(BaseModel):
@@ -154,9 +154,9 @@ class ReactorConfig(BaseModel):
     mode: str = Field(
         "isothermal", description="isothermal | adiabatic | specified_duty"
     )
-    volume_m3: Optional[float] = Field(None, gt=0.0)
-    length_m: Optional[float] = Field(None, gt=0.0)
-    diameter_m: Optional[float] = Field(None, gt=0.0)
+    volume_m3: float | None = Field(None, gt=0.0)
+    length_m: float | None = Field(None, gt=0.0)
+    diameter_m: float | None = Field(None, gt=0.0)
     reactions: list[ReactionEntry] = Field(default_factory=list)
 
     @model_validator(mode="after")
@@ -203,18 +203,18 @@ class ReactorConfig(BaseModel):
 
 
 class ScenarioTargets(BaseModel):
-    cold_gas_efficiency_min: Optional[float] = Field(None, ge=0.0, le=1.0)
-    carbon_conversion_min: Optional[float] = Field(None, ge=0.0, le=1.0)
-    h2_co_ratio_target: Optional[float] = Field(None, ge=0.0, le=20.0)
-    syngas_temperature_outlet_C: Optional[float] = Field(None, ge=-50.0, le=1500.0)
-    tar_loading_mg_Nm3_max: Optional[float] = Field(None, ge=0.0)
+    cold_gas_efficiency_min: float | None = Field(None, ge=0.0, le=1.0)
+    carbon_conversion_min: float | None = Field(None, ge=0.0, le=1.0)
+    h2_co_ratio_target: float | None = Field(None, ge=0.0, le=20.0)
+    syngas_temperature_outlet_C: float | None = Field(None, ge=-50.0, le=1500.0)
+    tar_loading_mg_Nm3_max: float | None = Field(None, ge=0.0)
 
 
 class ScenarioConfig(BaseModel):
     name: str = "unnamed"
     description: str = ""
     overrides: dict[str, Any] = Field(default_factory=dict)
-    targets: Optional[ScenarioTargets] = None
+    targets: ScenarioTargets | None = None
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -245,9 +245,9 @@ class MasterConfig(BaseModel):
         default_factory=dict, description="Feed sub-file paths"
     )
     reactors: dict[str, str] = Field(default_factory=dict)
-    energy: Optional[str] = None
-    equipment: Optional[str] = None
-    scenario: Optional[str] = None
+    energy: str | None = None
+    equipment: str | None = None
+    scenario: str | None = None
     output: OutputConfig = Field(default_factory=OutputConfig)
 
     @field_validator("reactor_mode")

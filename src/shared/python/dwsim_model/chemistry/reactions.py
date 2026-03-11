@@ -14,7 +14,6 @@ import logging
 from pathlib import Path
 
 import yaml
-
 from dwsim_model.config.schema import ReactorConfig, validate_reactor_config
 
 logger = logging.getLogger(__name__)

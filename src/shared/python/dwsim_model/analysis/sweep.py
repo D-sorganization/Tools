@@ -55,7 +55,7 @@ import logging
 import time
 from collections.abc import Callable, Sequence
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -168,7 +168,7 @@ class ParameterSweep:
     def __init__(
         self,
         base_config_path: str | Path | None = None,
-        model_runner: Optional[Callable[[dict], dict]] = None,
+        model_runner: Callable[[dict], dict] | None = None,
     ):
         self.base_config_path = Path(base_config_path) if base_config_path else None
         self._runner = model_runner or _default_model_runner
@@ -198,8 +198,8 @@ class ParameterSweep:
         self,
         param_path: str,
         values: Sequence[float],
-        kpis: Optional[list[str]] = None,
-        label: Optional[str] = None,
+        kpis: list[str] | None = None,
+        label: str | None = None,
     ):
         """
         Sweep one parameter over a sequence of values.
@@ -268,9 +268,9 @@ class ParameterSweep:
         values_a: Sequence[float],
         param_b_path: str,
         values_b: Sequence[float],
-        kpis: Optional[list[str]] = None,
-        label_a: Optional[str] = None,
-        label_b: Optional[str] = None,
+        kpis: list[str] | None = None,
+        label_a: str | None = None,
+        label_b: str | None = None,
     ):
         """
         Sweep two parameters over a 2-D grid (len(values_a) × len(values_b) runs).
@@ -346,7 +346,7 @@ class ParameterSweep:
     def sensitivity_oat(
         self,
         params: dict[str, tuple[float, float]],
-        kpis: Optional[list[str]] = None,
+        kpis: list[str] | None = None,
         n_steps: int = 5,
     ):
         """

@@ -18,7 +18,6 @@ What we're checking
 """
 
 import pytest
-
 from dwsim_model.chemistry.biomass_decomposer import BiomassDecomposer, BiomassFeed
 
 # ─────────────────────────────────────────────────────────────────────────────

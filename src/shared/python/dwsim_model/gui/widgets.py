@@ -29,7 +29,7 @@ import logging
 import tkinter as tk
 from collections.abc import Callable
 from tkinter import ttk
-from typing import Any, Optional
+from typing import Any
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Colour constants (matches the HTML report palette)
@@ -78,12 +78,12 @@ class ValidatedEntry:
         self,
         parent,
         label: str,
-        min_val: Optional[float] = None,
-        max_val: Optional[float] = None,
+        min_val: float | None = None,
+        max_val: float | None = None,
         default: Any = "",
         units: str = "",
-        on_change: Optional[Callable] = None,
-        row: Optional[int] = None,
+        on_change: Callable | None = None,
+        row: int | None = None,
     ):
         self.min_val = min_val
         self.max_val = max_val
@@ -144,7 +144,7 @@ class ValidatedEntry:
         if self._on_change:
             self._on_change(self.get_value())
 
-    def get_value(self) -> Optional[float]:
+    def get_value(self) -> float | None:
         """Return the current value as float, or None if invalid."""
         if not self._valid:
             return None
@@ -185,9 +185,9 @@ class ComboField:
         parent,
         label: str,
         choices: list[str],
-        default: Optional[str] = None,
-        on_change: Optional[Callable] = None,
-        row: Optional[int] = None,
+        default: str | None = None,
+        on_change: Callable | None = None,
+        row: int | None = None,
     ):
         self._var = tk.StringVar(value=default or (choices[0] if choices else ""))
         if on_change:
@@ -294,7 +294,7 @@ class KPIPanel(ttk.Frame):
                 "suffix": suffix or "",
             }
 
-    def update_kpis(self, kpi_dict: dict, targets: Optional[dict] = None) -> None:
+    def update_kpis(self, kpi_dict: dict, targets: dict | None = None) -> None:
         """Update displayed values; apply traffic-light colours if targets given."""
         targets = targets or {}
         for key, card in self._cards.items():

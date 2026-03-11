@@ -8,7 +8,6 @@ after the simulation runs.
 from __future__ import annotations
 
 from tkinter import ttk
-from typing import Optional
 
 from dwsim_model.gui.widgets import KPIPanel, LogPanel
 
@@ -92,7 +91,7 @@ class ResultsTab(ttk.Frame):
 
     # ── Public API ─────────────────────────────────────────────────────────
 
-    def update_results(self, results, metrics, targets: Optional[dict] = None) -> None:
+    def update_results(self, results, metrics, targets: dict | None = None) -> None:
         """Populate the KPI panel and stream table from results objects."""
         # KPIs
         self.kpi_panel.update_kpis(metrics.to_dict(), targets=targets)

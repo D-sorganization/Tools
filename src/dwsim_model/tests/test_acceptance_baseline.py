@@ -3,7 +3,6 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 import pytest
-
 from dwsim_model.gasification import GasificationFlowsheet
 from dwsim_model.results.extractor import ResultsExtractor
 from dwsim_model.results.metrics import MetricsCalculator

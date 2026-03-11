@@ -34,7 +34,6 @@ Key interface expected of each energy stream:
 from types import SimpleNamespace
 
 import pytest
-
 from dwsim_model.results.metrics import GasificationMetrics, MetricsCalculator
 
 # ─────────────────────────────────────────────────────────────────────────────

@@ -11,7 +11,6 @@ import importlib
 import inspect
 
 import pytest
-
 from dwsim_model.units import (
     VALID_MODES,
     run_full_train,

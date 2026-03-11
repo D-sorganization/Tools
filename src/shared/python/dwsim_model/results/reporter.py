@@ -24,7 +24,6 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +39,7 @@ def generate_html_report(
     output_path: str | Path,
     scenario_name: str = "Baseline",
     model_version: str = "2.0",
-    targets: Optional[dict] = None,
+    targets: dict | None = None,
 ) -> Path:
     """
     Generate a self-contained HTML report and write it to *output_path*.
