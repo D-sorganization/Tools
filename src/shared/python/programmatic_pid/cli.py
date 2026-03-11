@@ -134,7 +134,7 @@ def generate_process_sheet(
     spec_path: str | Path,
     out_path: str | Path,
     svg_path: str | Path | None = None,
-    profile: str = "presentation",
+    profile: str | None = "presentation",
     prepared_spec: dict[str, Any] | None = None,
 ) -> None:
     """Generate the process (Sheet 1) DXF and optional SVG."""
@@ -323,7 +323,7 @@ def generate_controls_sheet(
     spec_path: str | Path,
     out_path: str | Path,
     svg_path: str | Path | None = None,
-    profile: str = "presentation",
+    profile: str | None = "presentation",
     prepared_spec: dict[str, Any] | None = None,
 ) -> None:
     """Generate the controls and interlocks (Sheet 2) DXF and optional SVG."""

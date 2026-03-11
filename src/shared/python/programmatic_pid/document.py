@@ -58,7 +58,7 @@ class PIDDocument:
         validate_spec(self._spec)
         self._accessor = SpecAccessor(self._spec)
         self._equipment_by_id: dict[str, dict[str, Any]] = {
-            eq.get("id"): eq for eq in self._accessor.equipment if eq.get("id")
+            eq["id"]: eq for eq in self._accessor.equipment if eq.get("id")
         }
 
     @classmethod
