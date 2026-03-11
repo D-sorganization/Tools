@@ -209,6 +209,11 @@ class ToolStrip(QWidget):
     mob_ellipsoid_toggled = pyqtSignal(bool)
     force_ellipsoid_toggled = pyqtSignal(bool)
     com_toggled = pyqtSignal(bool)
+
+    # Export actions (#1141)
+    export_data_requested = pyqtSignal()
+    export_video_requested = pyqtSignal()
+
     # Per-segment visibility: emits set[str] | None (#1100, #1101, #1102)
     segment_visibility_changed = pyqtSignal(object)
 
@@ -222,6 +227,9 @@ class ToolStrip(QWidget):
 
     # Physics toggles (#1142)
     gravity_toggled = pyqtSignal(bool)
+
+    # Model selection (#1149)
+    model_changed = pyqtSignal(int)
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -259,6 +267,23 @@ class ToolStrip(QWidget):
         title.setStyleSheet(_TITLE)
         title.setFont(QFont("Sans", 11, QFont.Weight.Bold))
         layout.addWidget(title)
+
+        # Model selection dropdown (#1149)
+        from PyQt6.QtWidgets import QComboBox
+
+        self.cmb_model = QComboBox()
+        self.cmb_model.addItems(["⚙ Double", "⚙ Triple", "⚙ Golfer"])
+        self.cmb_model.setToolTip("Switch between pendulum models")
+        self.cmb_model.setStyleSheet(
+            "QComboBox { background: #303050; color: #c0c0d8; border: 1px solid #505070;"
+            "  border-radius: 3px; padding: 2px 6px; font-size: 11px; }"
+            "QComboBox::drop-down { border: none; }"
+            "QComboBox QAbstractItemView { background: #252540; color: #c0c0d8;"
+            "  selection-background-color: #3b6eb0; }"
+        )
+        self.cmb_model.currentIndexChanged.connect(self.model_changed.emit)
+        layout.addWidget(self.cmb_model)
+
         layout.addWidget(_vline())
 
         # Run / Reset / Play
@@ -329,6 +354,21 @@ class ToolStrip(QWidget):
         )
         self.btn_reset_view.clicked.connect(self.reset_view_requested.emit)
         layout.addWidget(self.btn_reset_view)
+
+        layout.addWidget(_vline())
+
+        # Export buttons (#1141)
+        self.btn_export_csv = QPushButton("📄 CSV")
+        self.btn_export_csv.setStyleSheet(_BTN_SMALL)
+        self.btn_export_csv.setToolTip("Export simulation data to CSV")
+        self.btn_export_csv.clicked.connect(self.export_data_requested.emit)
+        layout.addWidget(self.btn_export_csv)
+
+        self.btn_export_video = QPushButton("🎬 Video")
+        self.btn_export_video.setStyleSheet(_BTN_SMALL)
+        self.btn_export_video.setToolTip("Export animation as video")
+        self.btn_export_video.clicked.connect(self.export_video_requested.emit)
+        layout.addWidget(self.btn_export_video)
 
     def _build_overlay_section(self, layout: QHBoxLayout) -> None:
         """Build stacked overlay controls: three rows of [☑ checkbox] [slider] [value].

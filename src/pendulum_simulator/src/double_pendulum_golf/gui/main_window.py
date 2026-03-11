@@ -300,6 +300,14 @@ class MainWindow(QMainWindow):
         )
         ts.frame_scrubbed.connect(lambda idx: self._active_panel().scrub_to_frame(idx))
 
+        # ── Export actions (#1141) → active panel's controls ──────────
+        ts.export_data_requested.connect(
+            lambda: self._active_panel().controls.export_data_requested.emit()
+        )
+        ts.export_video_requested.connect(
+            lambda: self._active_panel().controls.export_video_requested.emit()
+        )
+
         # ── Overlay toggles → active panel's pendulum widget ──────────
         def _fwd_overlay(attr: str, value: object) -> None:
             pw = self._active_panel().pendulum
@@ -355,6 +363,20 @@ class MainWindow(QMainWindow):
                 else None
             )
         )
+
+        # ── Model selection dropdown (#1149) ──────────────────────────
+        def _on_model_dropdown_changed(idx: int) -> None:
+            self._tabs.blockSignals(True)
+            self._tabs.setCurrentIndex(idx)
+            self._tabs.blockSignals(False)
+
+        def _on_tab_changed(idx: int) -> None:
+            ts.cmb_model.blockSignals(True)
+            ts.cmb_model.setCurrentIndex(idx)
+            ts.cmb_model.blockSignals(False)
+
+        ts.model_changed.connect(_on_model_dropdown_changed)
+        self._tabs.currentChanged.connect(_on_tab_changed)
 
         # ── Busy state and frame sync — only forward from the active panel ─
         # Guard each callback so non-active panels are silently ignored.
