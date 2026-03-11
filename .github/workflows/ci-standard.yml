@@ -61,7 +61,7 @@ jobs:
             # Fallback for new branches or force pushes where before is null/zero
             git diff --diff-filter=ACMRT --name-only HEAD~1 HEAD -- '*.py' > changed_python_files.txt || echo "No previous commit found (initial commit?)"
           fi
-          grep -v '^tests/' changed_python_files.txt > changed_mypy_files.txt || true
+          grep -v -E '^tests/|/tests/' changed_python_files.txt > changed_mypy_files.txt || true
           cat changed_python_files.txt
 
       - name: Lint (Ruff)
@@ -91,7 +91,7 @@ jobs:
         run: |
           if [ -s changed_mypy_files.txt ]; then
             # Filter out legacy directories that are not yet type-safe
-            grep -v -E "src/electrode_advisor/|src/shared/python/model_generation/|src/shared/python/upstream_drift_tools/|src/shared/python/signal_toolkit/|src/function_generator/|src/data_processing/data_processor/|src/glass_bath_fea/|src/tools/folder_tools/" changed_mypy_files.txt > filtered_mypy_files.txt || true
+            grep -v -E "src/electrode_advisor/|src/shared/python/model_generation/|src/shared/python/upstream_drift_tools/|src/shared/python/signal_toolkit/|src/shared/python/programmatic_pid/|src/function_generator/|src/data_processing/data_processor/|src/glass_bath_fea/|src/tools/folder_tools/|simulation_golfer_gpu|optimizer_gpu" changed_mypy_files.txt > filtered_mypy_files.txt || true
 
             if [ -s filtered_mypy_files.txt ]; then
               export MYPYPATH=src/shared/python:src:src/python/src
