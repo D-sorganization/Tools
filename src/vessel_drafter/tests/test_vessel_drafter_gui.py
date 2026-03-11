@@ -1,17 +1,18 @@
 import os
 
 import pytest
-from PyQt6.QtWidgets import QApplication
 
-build123d = pytest.importorskip("build123d")
+os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
+pytest.importorskip("PyQt6.QtWidgets", reason="Qt system libraries not available")
+pytest.importorskip("build123d", reason="build123d not installed")
+
+from PyQt6.QtWidgets import QApplication  # noqa: E402
 from vessel_drafter.gui.vessel_drafter_window import VesselDrafterWindow  # noqa: E402
 from vessel_drafter.models.vessel_drafter import (  # noqa: E402
     VesselLidPort,
     VesselSidePort,
 )
-
-os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 
 def test_window_reads_defaults_and_refreshes_preview() -> None:
