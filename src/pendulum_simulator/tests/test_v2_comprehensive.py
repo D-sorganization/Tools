@@ -6,8 +6,29 @@ Covers issues #1132–#1155 with TDD, DbC, and DRY compliance.
 
 from __future__ import annotations
 
+import importlib
+
 import numpy as np
 import pytest
+
+# Guard for tests that import modules requiring PyQt6 / display server.
+_pyqt6_available = importlib.util.find_spec("PyQt6") is not None
+_skip_no_qt = pytest.mark.skipif(not _pyqt6_available, reason="PyQt6 not available")
+
+try:
+    if _pyqt6_available:
+        from PyQt6.QtWidgets import QApplication  # noqa: F401
+
+        _qt_runtime_ok = True
+    else:
+        _qt_runtime_ok = False
+except ImportError:
+    _qt_runtime_ok = False
+
+_skip_no_qt_runtime = pytest.mark.skipif(
+    not _qt_runtime_ok,
+    reason="PyQt6 runtime not available (missing display libs)",
+)
 
 # ---------------------------------------------------------------------------
 # Physics tests
@@ -97,6 +118,7 @@ class TestTorqueClampAbsValue:
         assert result.n_steps >= 2
 
 
+@_skip_no_qt_runtime
 class TestTriplePendulumDefaults:
     """#1140: Verify anatomical segment lengths for golf model."""
 
@@ -137,6 +159,7 @@ class TestTriplePendulumDefaults:
         assert params.L3 == 1.10
 
 
+@_skip_no_qt_runtime
 class TestFontSizeConstants:
     """#1134: Verify centralized font size constants exist and meet minimum."""
 
@@ -172,6 +195,7 @@ class TestFontSizeConstants:
         assert FONT_TITLE > FONT_BODY
 
 
+@_skip_no_qt_runtime
 class TestStylesheetConsistency:
     """#1134: Verify stylesheet tokens use centralized font sizes."""
 
@@ -290,6 +314,7 @@ class TestUnitConversionModule:
         assert uc.torque_unit == "lbf·in"
 
 
+@_skip_no_qt_runtime
 class TestEquationsPopup:
     """#1136, #1144: Equations popup module."""
 
@@ -314,6 +339,7 @@ class TestEquationsPopup:
             assert len(html) > 100  # non-trivial content
 
 
+@_skip_no_qt_runtime
 class TestPopOutChart:
     """#1135: Pop-out chart with regression."""
 
@@ -417,6 +443,7 @@ class TestScapulaOffset:
         assert "tip" in fk
 
 
+@_skip_no_qt_runtime
 class Test3DSegmentMode:
     """#1155: 3D segment display."""
 
