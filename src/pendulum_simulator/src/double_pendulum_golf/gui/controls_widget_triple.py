@@ -137,6 +137,12 @@ class ControlsWidgetTriple(QWidget):
             "1.10",
             "Length of segment 3: Club",
         )
+        self.inp_scapula = LabeledInput(
+            "Scapula °",
+            "0",
+            "Scapula protraction/retraction offset angle (#1152).\n"
+            "0° = neutral, positive = protracted (forward).",
+        )
         for w in [
             self.inp_m1,
             self.inp_m2,
@@ -144,6 +150,7 @@ class ControlsWidgetTriple(QWidget):
             self.inp_L1,
             self.inp_L2,
             self.inp_L3,
+            self.inp_scapula,
         ]:
             pl2.addWidget(w)
         main_layout.addWidget(phys_group)
@@ -441,6 +448,7 @@ class ControlsWidgetTriple(QWidget):
             "mu1": mu1,
             "mu2": mu2,
             "mu3": mu3,
+            "scapula_deg": parse_float(self.inp_scapula, "Scapula"),
         }
 
     def _update_torque_preview(self) -> None:

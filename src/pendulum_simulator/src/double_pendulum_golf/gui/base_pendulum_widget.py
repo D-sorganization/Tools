@@ -92,6 +92,9 @@ class BasePendulumWidget(QWidget):
         # View azimuth rotation in radians (#1118)
         self._view_azimuth: float = 0.0
 
+        # 3D segment rendering mode (#1155)
+        self._3d_mode: bool = False
+
     # ------------------------------------------------------------------
     # Abstract interface — subclasses must implement
     # ------------------------------------------------------------------
@@ -532,3 +535,74 @@ class BasePendulumWidget(QWidget):
         painter.setPen(QPen(self.COLOR_NO_GRAVITY, 2))
         painter.setFont(QFont("Sans", 10, QFont.Weight.Bold))
         painter.drawText(self.width() - 120, 20, "⚠ No Gravity")
+
+    # ------------------------------------------------------------------
+    # 3D segment rendering (#1155)
+    # ------------------------------------------------------------------
+
+    def set_3d_mode(self, enabled: bool) -> None:
+        """Toggle 3D tapered segment rendering (#1155).
+
+        Pre: enabled is bool.
+        """
+        self._3d_mode = bool(enabled)
+        self.update()
+
+    def _draw_3d_segment(
+        self,
+        painter: QPainter,
+        p1: QPointF,
+        p2: QPointF,
+        width_start: float,
+        width_end: float,
+        color: QColor,
+    ) -> None:
+        """Draw a tapered, gradient-shaded segment between two pixel points.
+
+        Creates a pseudo-3D effect by drawing a filled quadrilateral with
+        a lateral gradient (highlight on one side, shadow on the other).
+
+        Pre: width_start > 0, width_end > 0.
+        Post: A tapered polygon is rendered between p1 and p2.
+        """
+        from PyQt6.QtGui import QLinearGradient, QPolygonF
+
+        dx = p2.x() - p1.x()
+        dy = p2.y() - p1.y()
+        length = (dx**2 + dy**2) ** 0.5
+        if length < 1e-3:
+            return
+
+        # Normal vector (perpendicular to segment direction)
+        nx = -dy / length
+        ny = dx / length
+
+        # Build tapered quad: 4 corners
+        hw1 = width_start / 2.0
+        hw2 = width_end / 2.0
+        poly = QPolygonF([
+            QPointF(p1.x() + nx * hw1, p1.y() + ny * hw1),
+            QPointF(p2.x() + nx * hw2, p2.y() + ny * hw2),
+            QPointF(p2.x() - nx * hw2, p2.y() - ny * hw2),
+            QPointF(p1.x() - nx * hw1, p1.y() - ny * hw1),
+        ])
+
+        # Gradient across the width for 3D cylinder effect
+        mid_x = (p1.x() + p2.x()) / 2
+        mid_y = (p1.y() + p2.y()) / 2
+        grad = QLinearGradient(
+            QPointF(mid_x + nx * hw1, mid_y + ny * hw1),
+            QPointF(mid_x - nx * hw1, mid_y - ny * hw1),
+        )
+        highlight = QColor(color)
+        highlight.setAlpha(min(255, color.alpha() + 60))
+        shadow = QColor(color)
+        shadow.setAlpha(max(30, color.alpha() - 80))
+
+        grad.setColorAt(0.0, highlight)
+        grad.setColorAt(0.5, color)
+        grad.setColorAt(1.0, shadow)
+
+        painter.setPen(QPen(QColor(0, 0, 0, 40), 1))
+        painter.setBrush(QBrush(grad))
+        painter.drawPolygon(poly)

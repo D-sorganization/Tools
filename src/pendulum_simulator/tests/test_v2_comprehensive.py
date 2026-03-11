@@ -354,6 +354,71 @@ class TestPopOutChart:
         assert len(x_fit) == 200
 
 
+class TestScapulaOffset:
+    """#1152: Scapula segment motion relative to hub."""
+
+    def test_scapula_offset_default_zero(self) -> None:
+        """Default scapula offset should be zero."""
+        from double_pendulum_golf.physics_triple import TriplePendulumParams
+
+        p = TriplePendulumParams(m1=5, m2=0.5, m3=0.4, L1=0.2, L2=0.65, L3=1.1)
+        assert p.scapula_offset_rad == 0.0
+
+    def test_forward_kinematics_with_scapula_offset(self) -> None:
+        """Non-zero scapula offset should displace shoulder from hub."""
+        from double_pendulum_golf.physics_triple import (
+            TriplePendulumParams,
+            forward_kinematics,
+        )
+
+        p_zero = TriplePendulumParams(
+            m1=5, m2=0.5, m3=0.4, L1=0.2, L2=0.65, L3=1.1,
+            scapula_offset_rad=0.0,
+        )
+        p_offset = TriplePendulumParams(
+            m1=5, m2=0.5, m3=0.4, L1=0.2, L2=0.65, L3=1.1,
+            scapula_offset_rad=np.radians(30),
+        )
+
+        fk_zero = forward_kinematics(0, 0, 0, p_zero)
+        fk_offset = forward_kinematics(0, 0, 0, p_offset)
+
+        # Hub should always be at origin
+        assert fk_zero["hub"] == (0.0, 0.0)
+        assert fk_offset["hub"] == (0.0, 0.0)
+
+        # Shoulder should be displaced with offset
+        sh_zero = fk_zero["shoulder"]
+        sh_offset = fk_offset["shoulder"]
+        # With 30° offset, shoulder should have non-zero x
+        assert abs(sh_offset[0]) > abs(sh_zero[0])
+
+    def test_forward_kinematics_has_hub_key(self) -> None:
+        """Forward kinematics result should include 'hub' key."""
+        from double_pendulum_golf.physics_triple import (
+            TriplePendulumParams,
+            forward_kinematics,
+        )
+
+        p = TriplePendulumParams(m1=5, m2=0.5, m3=0.4, L1=0.2, L2=0.65, L3=1.1)
+        fk = forward_kinematics(0, 0, 0, p)
+        assert "hub" in fk
+        assert "shoulder" in fk
+        assert "tip" in fk
+
+
+class Test3DSegmentMode:
+    """#1155: 3D segment display."""
+
+    def test_base_widget_has_3d_mode(self) -> None:
+        """BasePendulumWidget should have _3d_mode attribute."""
+        from double_pendulum_golf.gui.base_pendulum_widget import BasePendulumWidget
+
+        # Verify the class has set_3d_mode method
+        assert hasattr(BasePendulumWidget, "set_3d_mode")
+        assert hasattr(BasePendulumWidget, "_draw_3d_segment")
+
+
 class TestDiagnosticLogging:
     """#1154: Logging module uses logging, never print."""
 

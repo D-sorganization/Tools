@@ -326,6 +326,11 @@ class MainWindow(QMainWindow):
         )
         ts.com_toggled.connect(lambda v: _fwd_overlay("set_show_com", v))
 
+        # ── 3D segment rendering (#1155) ──────────────────────────────
+        ts.mode_3d_toggled.connect(
+            lambda v: _fwd_overlay("set_3d_mode", v)
+        )
+
         # ── Gravity toggle (#1142) → active panel's pendulum + controls ──
         def _fwd_gravity(on: bool) -> None:
             _fwd_overlay("set_gravity_on", on)
@@ -542,6 +547,7 @@ class MainWindow(QMainWindow):
                 mu1=p.get("mu1", 0.0),
                 mu2=p.get("mu2", 0.0),
                 mu3=p.get("mu3", 0.0),
+                scapula_offset_rad=np.radians(p.get("scapula_deg", 0.0)),
             )
 
         def build_state(p: dict) -> np.ndarray:

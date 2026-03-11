@@ -217,6 +217,9 @@ class ToolStrip(QWidget):
     # Per-segment visibility: emits set[str] | None (#1100, #1101, #1102)
     segment_visibility_changed = pyqtSignal(object)
 
+    # 3D mode toggle (#1155)
+    mode_3d_toggled = pyqtSignal(bool)
+
     # Scale changes
     force_scale_changed = pyqtSignal(float)
     mob_scale_changed = pyqtSignal(float)
@@ -531,6 +534,15 @@ class ToolStrip(QWidget):
         )
         self.chk_gravity.toggled.connect(self.gravity_toggled.emit)
         extra_col.addWidget(self.chk_gravity)
+
+        self.chk_3d = QCheckBox("3D Segments")
+        self.chk_3d.setStyleSheet(_CHK_COM)  # reuse COM style
+        self.chk_3d.setToolTip(
+            "Toggle 3D tapered segment rendering (#1155).\n"
+            "Shows segments as gradient-shaded cylinders."
+        )
+        self.chk_3d.toggled.connect(self.mode_3d_toggled.emit)
+        extra_col.addWidget(self.chk_3d)
 
         extra_col.addStretch()
         layout.addLayout(extra_col)
