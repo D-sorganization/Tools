@@ -1,0 +1,138 @@
+{
+  "project": "vessel_drafter_default",
+  "units": {
+    "source": "inches",
+    "cad": "millimeters"
+  },
+  "vessel": {
+    "inner_diameter_in": 50.0,
+    "glass_depth_in": 14.0,
+    "plenum_height_in": 14.0,
+    "head_depth_in": 12.5,
+    "outer_diameter_in": 74.0,
+    "full_height_in": 77.0,
+    "outer_head_depth_in": 24.5
+  },
+  "materials": {
+    "hot_face_refractory": {
+      "thickness_in": 6.0,
+      "display_name": "Hot Face Refractory",
+      "color_hex": "#D95F02",
+      "density_lb_per_ft3": 165.0,
+      "thermal_conductivity_w_per_mk": 1.6,
+      "thermal_expansion_um_per_m_c": 5.0
+    },
+    "ifb": {
+      "thickness_in": 4.5,
+      "display_name": "IFB",
+      "color_hex": "#C7A46A",
+      "density_lb_per_ft3": 52.0,
+      "thermal_conductivity_w_per_mk": 0.25,
+      "thermal_expansion_um_per_m_c": 4.0
+    },
+    "duraboard": {
+      "thickness_in": 1.0,
+      "display_name": "Duraboard",
+      "color_hex": "#F5F5F0",
+      "density_lb_per_ft3": 18.0,
+      "thermal_conductivity_w_per_mk": 0.08,
+      "thermal_expansion_um_per_m_c": 2.0
+    },
+    "steel_shell": {
+      "thickness_in": 0.5,
+      "display_name": "Steel Shell",
+      "color_hex": "#8A8F98",
+      "density_lb_per_ft3": 490.0,
+      "thermal_conductivity_w_per_mk": 45.0,
+      "thermal_expansion_um_per_m_c": 12.0
+    }
+  },
+  "glass_bath": {
+    "display_name": "Glass Bath",
+    "color_hex": "#F28C28",
+    "height_in": 14.0,
+    "density_lb_per_ft3": 156.0,
+    "thermal_conductivity_w_per_mk": 1.1,
+    "thermal_expansion_um_per_m_c": 9.0
+  },
+  "electrodes": {
+    "count": 3,
+    "diameter_in": 2.0,
+    "insertion_into_inner_circle_in": 14.0,
+    "extension_past_inner_circle_in": 36.0,
+    "modeled_length_in": 50.0,
+    "centerline_height_in": 7.0
+  },
+  "ports": {
+    "side": [],
+    "lid": []
+  },
+  "drafting_assumptions": {
+    "axis_convention": "Z up",
+    "plenum_only_internal_void": true,
+    "dished_heads": "Offset elliptical head profiles with constant-thickness shell layers"
+  },
+  "computed_metrics": {
+    "components": {
+      "glass_bath": {
+        "display_name": "Glass Bath",
+        "category": "glass",
+        "volume_in3": 27488.935718910692,
+        "volume_ft3": 15.90794891140665,
+        "surface_area_ft2": 42.54240051736178,
+        "density_lb_per_ft3": 156.0,
+        "mass_lb": 2481.6400301794374,
+        "thermal_conductivity_w_per_mk": 1.1,
+        "thermal_expansion_um_per_m_c": 9.0
+      },
+      "hot_face_refractory": {
+        "display_name": "Hot Face Refractory",
+        "category": "refractory",
+        "volume_in3": 88988.78116854577,
+        "volume_ft3": 51.49813725031584,
+        "surface_area_ft2": 164.01330220148813,
+        "density_lb_per_ft3": 165.0,
+        "mass_lb": 8497.192646302114,
+        "thermal_conductivity_w_per_mk": 1.6,
+        "thermal_expansion_um_per_m_c": 5.0
+      },
+      "ifb": {
+        "display_name": "IFB",
+        "category": "refractory",
+        "volume_in3": 74572.77393760835,
+        "volume_ft3": 43.15554047315298,
+        "surface_area_ft2": 230.7873914656143,
+        "density_lb_per_ft3": 52.0,
+        "mass_lb": 2244.088104603955,
+        "thermal_conductivity_w_per_mk": 0.25,
+        "thermal_expansion_um_per_m_c": 4.0
+      },
+      "duraboard": {
+        "display_name": "Duraboard",
+        "category": "refractory",
+        "volume_in3": 19176.148188844018,
+        "volume_ft3": 11.097307979655103,
+        "surface_area_ft2": 266.40874834654153,
+        "density_lb_per_ft3": 18.0,
+        "mass_lb": 199.75154363379184,
+        "thermal_conductivity_w_per_mk": 0.08,
+        "thermal_expansion_um_per_m_c": 2.0
+      },
+      "steel_shell": {
+        "display_name": "Steel Shell",
+        "category": "shell",
+        "volume_in3": 9962.059564488354,
+        "volume_ft3": 5.765080766486316,
+        "surface_area_ft2": 276.7779477759409,
+        "density_lb_per_ft3": 490.0,
+        "mass_lb": 2824.889575578295,
+        "thermal_conductivity_w_per_mk": 45.0,
+        "thermal_expansion_um_per_m_c": 12.0
+      }
+    },
+    "refractory_total_volume_in3": 182737.70329499815,
+    "refractory_total_volume_ft3": 105.75098570312393,
+    "refractory_total_surface_area_ft2": 661.209442013644,
+    "refractory_total_mass_lb": 10941.032294539862
+  }
+}
