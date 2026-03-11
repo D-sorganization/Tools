@@ -546,7 +546,7 @@ class ToolStrip(QWidget):
         self._segment_names = names
 
         # Find and clear the segment row layout (last layout in overlay_frame)
-        overlay_frame = self.findChild(QFrame, "overlay_section")
+        overlay_frame: QFrame | None = self.findChild(QFrame, "overlay_section")  # type: ignore[assignment]
         if overlay_frame is None:
             return
         overlay_layout = overlay_frame.layout()
@@ -577,7 +577,7 @@ class ToolStrip(QWidget):
                 seg_layout.addWidget(chk)
                 self._segment_checks[name] = chk
             if hasattr(seg_layout, "addStretch"):
-                seg_layout.addStretch()  # type: ignore[union-attr]
+                seg_layout.addStretch()
 
         # Emit all-visible since we just reset
         self.segment_visibility_changed.emit(None)
