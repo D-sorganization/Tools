@@ -14,7 +14,7 @@ from collections import deque
 
 import numpy as np
 from PyQt6.QtCore import QPoint, QPointF, Qt
-from PyQt6.QtGui import QBrush, QColor, QFont, QMouseEvent, QPainter, QPen
+from PyQt6.QtGui import QBrush, QColor, QFont, QMouseEvent, QPainter, QPainterPath, QPen
 from PyQt6.QtWidgets import QWidget
 
 from ..simulation_golfer import GolferSimulationResult
@@ -72,6 +72,7 @@ class GolferPendulumWidget(QWidget):
         self._show_force_ellipsoids: bool = False
         self._mob_ellipsoid_scale: float = 1.0
         self._force_ellipsoid_scale: float = 1.0
+        self._show_com: bool = False
 
     # ------------------------------------------------------------------
     # Public interface (_SimViewer protocol)
@@ -134,6 +135,11 @@ class GolferPendulumWidget(QWidget):
         self._zoom = 1.0
         self._pan_x = 0.0
         self._pan_y = 0.0
+        self.update()
+
+    def set_show_com(self, show: bool) -> None:
+        """Toggle combined center of mass display."""
+        self._show_com = show
         self.update()
 
     # ------------------------------------------------------------------
@@ -233,6 +239,9 @@ class GolferPendulumWidget(QWidget):
 
         if self._show_forces:
             self._draw_force_vectors(painter)
+
+        if self._show_com:
+            self._draw_com(painter)
 
         self._draw_info(painter)
         painter.end()
@@ -387,6 +396,87 @@ class GolferPendulumWidget(QWidget):
             p1 = self._world_to_pixel(*jp)
             p2 = self._world_to_pixel(*end)
             painter.drawLine(p1, p2)
+
+            # Filled arrowhead
+            dx = p2.x() - p1.x()
+            dy = p2.y() - p1.y()
+            arrow_l = max(1.0, np.hypot(dx, dy))
+            ux, uy = dx / arrow_l, dy / arrow_l
+            a_len = 10.0
+            a_w = 4.0
+            left = QPointF(
+                p2.x() - a_len * ux + a_w * uy,
+                p2.y() - a_len * uy - a_w * ux,
+            )
+            right = QPointF(
+                p2.x() - a_len * ux - a_w * uy,
+                p2.y() - a_len * uy + a_w * ux,
+            )
+            path = QPainterPath()
+            path.moveTo(p2)
+            path.lineTo(left)
+            path.lineTo(right)
+            path.closeSubpath()
+            old_brush = painter.brush()
+            painter.setBrush(QBrush(painter.pen().color()))
+            painter.drawPath(path)
+            painter.setBrush(old_brush)
+
+    # ------------------------------------------------------------------
+    # Center of Mass drawing
+    # ------------------------------------------------------------------
+
+    COLOR_COM = QColor(255, 255, 80)  # bright yellow
+
+    def _draw_com(self, painter: QPainter) -> None:
+        """Draw the combined center of mass of the golfer system."""
+        if self._result is None:
+            return
+
+        pos = self._result.positions_at(self._current_idx)
+        params = self._result.params
+
+        # Mass points at segment midpoints or endpoints
+        hub = np.array(pos["hub"])
+        re = np.array(pos["re"])
+        rh = np.array(pos["rh"])
+        le = np.array(pos["le"])
+        lh = np.array(pos["lh"])
+        club_base = np.array(pos["club_base"])
+        club_tip = np.array(pos["club_tip"])
+        club_com = 0.5 * (club_base + club_tip)
+
+        masses = [
+            params.m_hub,
+            params.m_r_upper,
+            params.m_r_fore,
+            params.m_l_upper,
+            params.m_l_fore,
+            params.m_club,
+            params.m_clubhead,
+        ]
+        positions = [hub, re, rh, le, lh, club_com, club_tip]
+
+        total_m = sum(masses)
+        com = sum(m * p for m, p in zip(masses, positions)) / total_m
+
+        com_px = self._world_to_pixel(float(com[0]), float(com[1]))
+
+        # Draw COM marker: crosshair + circle
+        r = 6
+        painter.setPen(QPen(self.COLOR_COM, 2))
+        painter.setBrush(QBrush(QColor(255, 255, 80, 100)))
+        painter.drawEllipse(com_px, r, r)
+        painter.drawLine(
+            QPointF(com_px.x() - r * 1.5, com_px.y()),
+            QPointF(com_px.x() + r * 1.5, com_px.y()),
+        )
+        painter.drawLine(
+            QPointF(com_px.x(), com_px.y() - r * 1.5),
+            QPointF(com_px.x(), com_px.y() + r * 1.5),
+        )
+        painter.setFont(QFont("Monospace", 7))
+        painter.drawText(QPointF(com_px.x() + r + 2, com_px.y() - 2), "COM")
 
     def _draw_info(self, painter: QPainter) -> None:
         assert self._result is not None

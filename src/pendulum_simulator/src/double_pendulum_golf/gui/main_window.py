@@ -240,6 +240,8 @@ class MainWindow(QMainWindow):
                 ts.mob_ellipsoid_toggled.connect(pw.set_show_mob_ellipsoids)
             if hasattr(pw, "set_show_force_ellipsoids"):
                 ts.force_ellipsoid_toggled.connect(pw.set_show_force_ellipsoids)
+            if hasattr(pw, "set_show_com"):
+                ts.com_toggled.connect(pw.set_show_com)
 
             # Scale sliders → pendulum widget (optional capability)
             if hasattr(pw, "set_force_scale"):

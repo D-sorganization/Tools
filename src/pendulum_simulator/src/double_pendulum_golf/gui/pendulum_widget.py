@@ -18,7 +18,7 @@ from collections import deque
 
 import numpy as np
 from PyQt6.QtCore import QPoint, QPointF, QRect, Qt
-from PyQt6.QtGui import QBrush, QColor, QFont, QMouseEvent, QPainter, QPen
+from PyQt6.QtGui import QBrush, QColor, QFont, QMouseEvent, QPainter, QPainterPath, QPen
 from PyQt6.QtWidgets import QWidget
 
 from ..jacobians import ellipsoids_double, ellipsoids_triple
@@ -79,6 +79,7 @@ class PendulumWidget(QWidget):
         self._force_scale: float = 1.0
         self._show_mob_ellipsoids: bool = False
         self._show_force_ellipsoids: bool = False
+        self._show_com: bool = False
 
         # Ellipsoid display scales (separate for mobility vs force)
         self._mob_ellipsoid_scale: float = 1.0
@@ -240,6 +241,11 @@ class PendulumWidget(QWidget):
         self._force_ellipsoid_scale = float(scale)
         self.update()
 
+    def set_show_com(self, show: bool) -> None:
+        """Toggle combined center of mass display."""
+        self._show_com = show
+        self.update()
+
     def reset_view(self) -> None:
         """Reset zoom and pan to default (also callable from toolstrip button)."""
         self._zoom = 1.0
@@ -373,6 +379,9 @@ class PendulumWidget(QWidget):
 
         if self._show_mob_ellipsoids or self._show_force_ellipsoids:
             self._draw_ellipsoids_at_frame(painter)
+
+        if self._show_com:
+            self._draw_com(painter)
 
         self._draw_info(painter)
         self._draw_zoom_controls(painter)
@@ -732,29 +741,107 @@ class PendulumWidget(QWidget):
             painter.drawText(QPointF(lbl_x, lbl_y), label)
 
     def _draw_arrow(self, painter: QPainter, origin: tuple, end: tuple) -> None:
+        """Draw a force/torque vector with a filled triangular arrowhead."""
         p0 = self._world_to_pixel(origin[0], origin[1])
         p1 = self._world_to_pixel(end[0], end[1])
         painter.drawLine(p0, p1)
-        # Arrowhead
+
+        # Arrowhead — filled triangle
         dx = p1.x() - p0.x()
         dy = p1.y() - p0.y()
         length = max(1.0, np.hypot(dx, dy))
         ux, uy = dx / length, dy / length
-        arrow_len = 8.0
+        arrow_len = 10.0
+        arrow_w = 4.0
+
+        tip = p1
+        left = QPointF(
+            p1.x() - arrow_len * ux + arrow_w * uy,
+            p1.y() - arrow_len * uy - arrow_w * ux,
+        )
+        right = QPointF(
+            p1.x() - arrow_len * ux - arrow_w * uy,
+            p1.y() - arrow_len * uy + arrow_w * ux,
+        )
+
+        path = QPainterPath()
+        path.moveTo(tip)
+        path.lineTo(left)
+        path.lineTo(right)
+        path.closeSubpath()
+
+        old_brush = painter.brush()
+        painter.setBrush(QBrush(painter.pen().color()))
+        painter.drawPath(path)
+        painter.setBrush(old_brush)
+
+    # ------------------------------------------------------------------
+    # Center of Mass drawing
+    # ------------------------------------------------------------------
+
+    COLOR_COM = QColor(255, 255, 80)  # bright yellow
+
+    def _draw_com(self, painter: QPainter) -> None:
+        """Draw the combined center of mass of the system."""
+        if self._result is None:
+            return
+
+        state = self._result.states[self._current_idx]
+        params = self._result.params
+
+        # Compute COM from all mass point positions
+        if state.shape[0] >= 6:
+            # Triple pendulum
+            pos = self._result.positions_at(self._current_idx)
+            masses = [params.m1, params.m2, getattr(params, "m3", params.m2)]
+            wrist1 = np.array(pos.get("wrist1", pos.get("wrist", (0, 0))))
+            wrist2 = np.array(pos.get("wrist2", (0, 0)))
+            tip = np.array(pos["tip"])
+            # Approximate: mass at midpoint of each segment
+            shoulder = np.array(pos["shoulder"])
+            com1 = 0.5 * (shoulder + wrist1)
+            com2 = 0.5 * (wrist1 + wrist2)
+            com3 = 0.5 * (wrist2 + tip)
+            total_m = sum(masses)
+            com = (masses[0] * com1 + masses[1] * com2 + masses[2] * com3) / total_m
+        else:
+            # Double pendulum
+            theta1 = state[0]
+            phi = state[1]
+            abs2 = theta1 + phi
+            # Mass at midpoint of each segment
+            c1x = 0.5 * params.L1 * np.sin(theta1)
+            c1y = -0.5 * params.L1 * np.cos(theta1)
+            wx = params.L1 * np.sin(theta1)
+            wy = -params.L1 * np.cos(theta1)
+            c2x = wx + 0.5 * params.L2 * np.sin(abs2)
+            c2y = wy - 0.5 * params.L2 * np.cos(abs2)
+            total_m = params.m1 + params.m2
+            com = np.array([
+                (params.m1 * c1x + params.m2 * c2x) / total_m,
+                (params.m1 * c1y + params.m2 * c2y) / total_m,
+            ])
+
+        com_px = self._world_to_pixel(float(com[0]), float(com[1]))
+
+        # Draw COM marker: crosshair + circle
+        r = 6
+        painter.setPen(QPen(self.COLOR_COM, 2))
+        painter.setBrush(QBrush(QColor(255, 255, 80, 100)))
+        painter.drawEllipse(com_px, r, r)
+        # Crosshair lines
         painter.drawLine(
-            p1,
-            QPointF(
-                p1.x() - arrow_len * (ux + 0.4 * uy),
-                p1.y() - arrow_len * (uy - 0.4 * ux),
-            ),
+            QPointF(com_px.x() - r * 1.5, com_px.y()),
+            QPointF(com_px.x() + r * 1.5, com_px.y()),
         )
         painter.drawLine(
-            p1,
-            QPointF(
-                p1.x() - arrow_len * (ux - 0.4 * uy),
-                p1.y() - arrow_len * (uy + 0.4 * ux),
-            ),
+            QPointF(com_px.x(), com_px.y() - r * 1.5),
+            QPointF(com_px.x(), com_px.y() + r * 1.5),
         )
+
+        # Label
+        painter.setFont(QFont("Monospace", 7))
+        painter.drawText(QPointF(com_px.x() + r + 2, com_px.y() - 2), "COM")
 
     def _draw_zoom_controls(self, painter: QPainter) -> None:
         """Draw a small zoom toolbar in the top-right corner."""

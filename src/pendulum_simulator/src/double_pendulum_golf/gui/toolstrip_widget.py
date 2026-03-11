@@ -1,13 +1,16 @@
 """
-ToolStrip — persistent three-row header bar.
+ToolStrip — persistent header bar with stacked overlay controls.
 
 Row 1 (Actions):   Title | Run  Reset  ▶Play | Speed | [frame slider] | Frame# | ⤢ Reset View
-Row 2 (Vectors):   ☑ Force Vectors   [scale slider  0.1×–100×]  value
-Row 3 (Ellips):    ☑ Mobility Ellipsoids [scale] value  |  ☑ Force Ellipsoids [scale] value
+Row 2 (Overlays):  Stacked vertical overlay controls (Force/Mobility/Force Ell each with
+                   checkbox + scale slider) | ☑ Zero-τ | ☑ COM | Status
 
 Design by Contract
 ------------------
 Stateless: emits signals only; does not own simulation data.
+
+Closes #1098: Stack overlay sliders vertically in toolbar section
+Closes #1099: Force vector checkbox is toolstrip-only
 """
 
 from __future__ import annotations
@@ -79,6 +82,18 @@ _CHK_FELL = (
     "border-radius:3px;background:#1a1a2a;}"
     "QCheckBox::indicator:checked{background:#604020;border-color:#c08040;}"
 )
+_CHK_ZERO = (
+    "QCheckBox{color:#d0a0e0;font-size:9px;spacing:3px;}"
+    "QCheckBox::indicator{width:12px;height:12px;border:1px solid #604080;"
+    "border-radius:3px;background:#1a1a2a;}"
+    "QCheckBox::indicator:checked{background:#602080;border-color:#a060c0;}"
+)
+_CHK_COM = (
+    "QCheckBox{color:#e0e060;font-size:9px;spacing:3px;}"
+    "QCheckBox::indicator{width:12px;height:12px;border:1px solid #606020;"
+    "border-radius:3px;background:#1a1a2a;}"
+    "QCheckBox::indicator:checked{background:#505010;border-color:#a0a030;}"
+)
 _SLIDER_FORCE = (
     "QSlider::groove:horizontal{height:3px;background:#203028;border-radius:2px;}"
     "QSlider::handle:horizontal{background:#60b070;border:none;"
@@ -109,6 +124,14 @@ _LABEL = "color:#606080;font-size:9px;"
 _VAL_LBL = "color:#8080b0;font-size:9px;font-family:monospace;min-width:32px;"
 _FRAME_LBL = "color:#6060a0;font-size:9px;font-family:monospace;"
 _TITLE = "color:#9090c8;font-size:11px;font-weight:bold;letter-spacing:1px;padding-right:4px;"
+_OVERLAY_SECTION = (
+    "QFrame#overlay_section {"
+    "background: #12122a;"
+    "border: 1px solid #2a2a4a;"
+    "border-radius: 4px;"
+    "padding: 2px;"
+    "}"
+)
 
 
 def _vline() -> QFrame:
@@ -138,7 +161,7 @@ def _make_scale_slider(style: str, default: int = 10, max_val: int = 1000) -> QS
     s.setValue(default)
     s.setStyleSheet(style)
     s.setFixedHeight(14)
-    s.setMaximumWidth(200)
+    s.setMaximumWidth(160)
     return s
 
 
@@ -147,12 +170,27 @@ def _fmt_scale(raw: int) -> str:
     return f"{v:.0f}×" if v >= 10 else f"{v:.1f}×"
 
 
+def _overlay_row(
+    checkbox: QCheckBox,
+    slider: QSlider,
+    label: QLabel,
+) -> QHBoxLayout:
+    """Build a single overlay row: [☑ Name] [---slider---] [value]."""
+    row = QHBoxLayout()
+    row.setContentsMargins(0, 0, 0, 0)
+    row.setSpacing(3)
+    checkbox.setFixedWidth(130)
+    row.addWidget(checkbox)
+    row.addWidget(slider, stretch=1)
+    row.addWidget(label)
+    return row
+
+
 class ToolStrip(QWidget):
-    """Persistent three-row header toolbar.
+    """Persistent header toolbar with stacked overlay controls.
 
     Row 1: simulation actions + playback.
-    Row 2: Force Vectors checkbox + scale slider.
-    Row 3: Mobility Ellipsoids + Force Ellipsoids (each with checkbox + scale).
+    Row 2: Stacked overlay controls (force/mob/force-ell) + extra toggles.
     """
 
     # Simulation lifecycle
@@ -167,6 +205,7 @@ class ToolStrip(QWidget):
     zero_torque_toggled = pyqtSignal(bool)
     mob_ellipsoid_toggled = pyqtSignal(bool)
     force_ellipsoid_toggled = pyqtSignal(bool)
+    com_toggled = pyqtSignal(bool)
 
     # Scale changes
     force_scale_changed = pyqtSignal(float)
@@ -179,7 +218,7 @@ class ToolStrip(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setObjectName("toolstrip")
-        self.setFixedHeight(105)
+        self.setFixedHeight(118)
         self.setStyleSheet(_STYLE_STRIP)
         self._build()
 
@@ -199,17 +238,11 @@ class ToolStrip(QWidget):
 
         outer.addWidget(_hline())
 
+        # Row 2: overlay section (stacked vertically) + extra toggles
         row2 = QHBoxLayout()
-        row2.setSpacing(4)
-        self._build_row2(row2)
+        row2.setSpacing(6)
+        self._build_overlay_section(row2)
         outer.addLayout(row2)
-
-        outer.addWidget(_hline())
-
-        row3 = QHBoxLayout()
-        row3.setSpacing(4)
-        self._build_row3(row3)
-        outer.addLayout(row3)
 
     def _build_row1(self, layout: QHBoxLayout) -> None:
         """Actions row: Title | Run Reset Play | Speed | [frame slider] | Frame# | Reset View"""
@@ -289,95 +322,116 @@ class ToolStrip(QWidget):
         self.btn_reset_view.clicked.connect(self.reset_view_requested.emit)
         layout.addWidget(self.btn_reset_view)
 
-    def _build_row2(self, layout: QHBoxLayout) -> None:
-        """Force overlay row: ☑ Force Vectors [scale] | ☑ Zero-τ Forces"""
+    def _build_overlay_section(self, layout: QHBoxLayout) -> None:
+        """Build stacked overlay controls: three rows of [☑ checkbox] [slider] [value].
 
+        All three overlay types (Force Vectors, Mobility Ellipsoids, Force Ellipsoids)
+        are stacked vertically in a compact section.
+        """
+        # --- Overlay section container ---
+        overlay_frame = QFrame()
+        overlay_frame.setObjectName("overlay_section")
+        overlay_frame.setStyleSheet(_OVERLAY_SECTION)
+        overlay_layout = QVBoxLayout(overlay_frame)
+        overlay_layout.setContentsMargins(4, 2, 4, 2)
+        overlay_layout.setSpacing(1)
+
+        # Row A: Force Vectors checkbox + scale slider
         self.chk_forces = QCheckBox("Force Vectors")
         self.chk_forces.setStyleSheet(_CHK_FORCE)
-        self.chk_forces.setFixedWidth(100)
         self.chk_forces.setToolTip(
             "Show net joint force vectors at each joint.\n"
             "Arrow length scales with force magnitude."
         )
         self.chk_forces.toggled.connect(self.forces_toggled.emit)
-        layout.addWidget(self.chk_forces)
 
         self._sld_force = _make_scale_slider(_SLIDER_FORCE, default=10)
         self._sld_force.setToolTip("Force vector display scale (0.1× – 100×)")
         self._sld_force.valueChanged.connect(self._on_force_scale)
-        layout.addWidget(self._sld_force)
 
         self._lbl_force_scale = QLabel("1.0×")
         self._lbl_force_scale.setStyleSheet(_VAL_LBL)
-        layout.addWidget(self._lbl_force_scale)
 
+        overlay_layout.addLayout(
+            _overlay_row(self.chk_forces, self._sld_force, self._lbl_force_scale)
+        )
+
+        # Row B: Mobility Ellipsoids checkbox + scale slider
+        self.chk_mob = QCheckBox("Mobility Ellipsoids")
+        self.chk_mob.setStyleSheet(_CHK_MOB)
+        self.chk_mob.setToolTip(
+            "Show mobility ellipsoids at segment endpoints.\n"
+            "Cyan = achievable velocity; large = high dexterity."
+        )
+        self.chk_mob.toggled.connect(self.mob_ellipsoid_toggled.emit)
+
+        self._sld_mob = _make_scale_slider(_SLIDER_MOB, default=10, max_val=100)
+        self._sld_mob.setToolTip("Mobility ellipsoid display scale (0.1× – 10×)")
+        self._sld_mob.valueChanged.connect(self._on_mob_scale)
+
+        self._lbl_mob_scale = QLabel("1.0×")
+        self._lbl_mob_scale.setStyleSheet(_VAL_LBL)
+
+        overlay_layout.addLayout(
+            _overlay_row(self.chk_mob, self._sld_mob, self._lbl_mob_scale)
+        )
+
+        # Row C: Force Ellipsoids checkbox + scale slider
+        self.chk_force_ell = QCheckBox("Force Ellipsoids")
+        self.chk_force_ell.setStyleSheet(_CHK_FELL)
+        self.chk_force_ell.setToolTip(
+            "Show force ellipsoids at segment endpoints.\n"
+            "Orange = achievable endpoint force; small = near-singular."
+        )
+        self.chk_force_ell.toggled.connect(self.force_ellipsoid_toggled.emit)
+
+        self._sld_force_ell = _make_scale_slider(_SLIDER_FELL, default=10, max_val=100)
+        self._sld_force_ell.setToolTip("Force ellipsoid display scale (0.1× – 10×)")
+        self._sld_force_ell.valueChanged.connect(self._on_force_ell_scale)
+
+        self._lbl_force_ell_scale = QLabel("1.0×")
+        self._lbl_force_ell_scale.setStyleSheet(_VAL_LBL)
+
+        overlay_layout.addLayout(
+            _overlay_row(self.chk_force_ell, self._sld_force_ell, self._lbl_force_ell_scale)
+        )
+
+        layout.addWidget(overlay_frame)
         layout.addWidget(_vline())
 
+        # --- Extra toggles column (vertical, right of overlay section) ---
+        extra_col = QVBoxLayout()
+        extra_col.setContentsMargins(0, 0, 0, 0)
+        extra_col.setSpacing(2)
+
         self.chk_zero_torque = QCheckBox("Zero-τ Forces")
-        self.chk_zero_torque.setStyleSheet(
-            "QCheckBox{color:#d0a0e0;font-size:9px;spacing:3px;}"
-            "QCheckBox::indicator{width:12px;height:12px;border:1px solid #604080;"
-            "border-radius:3px;background:#1a1a2a;}"
-            "QCheckBox::indicator:checked{background:#602080;border-color:#a060c0;}"
-        )
+        self.chk_zero_torque.setStyleSheet(_CHK_ZERO)
         self.chk_zero_torque.setToolTip(
             "Show zero-torque counterfactual forces (dashed vectors).\n"
             "These represent joint forces if all driving torques were removed—\n"
             "the passive drift due to gravity and inertia alone."
         )
         self.chk_zero_torque.toggled.connect(self.zero_torque_toggled.emit)
-        layout.addWidget(self.chk_zero_torque)
+        extra_col.addWidget(self.chk_zero_torque)
 
-        layout.addStretch()
-
-    def _build_row3(self, layout: QHBoxLayout) -> None:
-        """Ellipsoid row: ☑ Mobility [scale] value | ☑ Force Ell [scale] value | [status]"""
-
-        self.chk_mob = QCheckBox("Mobility Ellipsoids")
-        self.chk_mob.setStyleSheet(_CHK_MOB)
-        self.chk_mob.setFixedWidth(130)
-        self.chk_mob.setToolTip(
-            "Show mobility ellipsoids at segment endpoints.\n"
-            "Cyan = achievable velocity; large = high dexterity."
+        self.chk_com = QCheckBox("Center of Mass")
+        self.chk_com.setStyleSheet(_CHK_COM)
+        self.chk_com.setToolTip(
+            "Show the combined center of mass of the whole system."
         )
-        self.chk_mob.toggled.connect(self.mob_ellipsoid_toggled.emit)
-        layout.addWidget(self.chk_mob)
+        self.chk_com.toggled.connect(self.com_toggled.emit)
+        extra_col.addWidget(self.chk_com)
 
-        self._sld_mob = _make_scale_slider(_SLIDER_MOB, default=10, max_val=100)
-        self._sld_mob.setToolTip("Mobility ellipsoid display scale (0.1× – 10×)")
-        self._sld_mob.valueChanged.connect(self._on_mob_scale)
-        layout.addWidget(self._sld_mob, stretch=1)
-
-        self._lbl_mob_scale = QLabel("1.0×")
-        self._lbl_mob_scale.setStyleSheet(_VAL_LBL)
-        layout.addWidget(self._lbl_mob_scale)
-
-        layout.addWidget(_vline())
-
-        self.chk_force_ell = QCheckBox("Force Ellipsoids")
-        self.chk_force_ell.setStyleSheet(_CHK_FELL)
-        self.chk_force_ell.setFixedWidth(110)
-        self.chk_force_ell.setToolTip(
-            "Show force ellipsoids at segment endpoints.\n"
-            "Orange = achievable endpoint force; small = near-singular."
-        )
-        self.chk_force_ell.toggled.connect(self.force_ellipsoid_toggled.emit)
-        layout.addWidget(self.chk_force_ell)
-
-        self._sld_force_ell = _make_scale_slider(_SLIDER_FELL, default=10, max_val=100)
-        self._sld_force_ell.setToolTip("Force ellipsoid display scale (0.1× – 10×)")
-        self._sld_force_ell.valueChanged.connect(self._on_force_ell_scale)
-        layout.addWidget(self._sld_force_ell, stretch=1)
-
-        self._lbl_force_ell_scale = QLabel("1.0×")
-        self._lbl_force_ell_scale.setStyleSheet(_VAL_LBL)
-        layout.addWidget(self._lbl_force_ell_scale)
+        extra_col.addStretch()
+        layout.addLayout(extra_col)
 
         layout.addWidget(_vline())
 
         self._status_lbl = QLabel("Ready")
         self._status_lbl.setStyleSheet("color:#404060;font-size:9px;")
         layout.addWidget(self._status_lbl)
+
+        layout.addStretch()
 
     # ------------------------------------------------------------------
     # Slots / public API
