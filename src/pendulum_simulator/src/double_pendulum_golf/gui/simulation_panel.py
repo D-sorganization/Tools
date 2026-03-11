@@ -224,6 +224,16 @@ class SimulationPanel(QWidget):
         ):
             self.controls.force_scale_changed.connect(self.pendulum.set_force_scale)
 
+        # Wire real-time rotation controls (#1146)
+        if hasattr(self.controls, "tilt_changed") and hasattr(
+            self.pendulum, "set_tilt_angle"
+        ):
+            self.controls.tilt_changed.connect(self.pendulum.set_tilt_angle)
+        if hasattr(self.controls, "azimuth_changed") and hasattr(
+            self.pendulum, "set_view_azimuth"
+        ):
+            self.controls.azimuth_changed.connect(self.pendulum.set_view_azimuth)
+
         # Persist splitter when it changes
         if hasattr(self, "_splitter"):
             self._splitter.splitterMoved.connect(lambda *_: self.save_layout())

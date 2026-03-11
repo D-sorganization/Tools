@@ -114,6 +114,10 @@ class ControlsWidget(QWidget):
     forces_changed = pyqtSignal(bool)
     force_scale_changed = pyqtSignal(float)
 
+    # Real-time view rotation (#1146)
+    tilt_changed = pyqtSignal(float)      # radians
+    azimuth_changed = pyqtSignal(float)   # radians
+
     # Preset: (theta1°, phi°, dth, dph, tau_sh, tau_wr, tend, m1, m2, mClub, L1, L2)
     PRESETS = {
         "Golf Swing (passive wrist)": (
@@ -406,7 +410,26 @@ class ControlsWidget(QWidget):
             56,
         )
         layout.addWidget(self.inp_azimuth)
+
+        # Live rotation updates (#1146)
+        self.inp_tilt.edit.textChanged.connect(self._on_tilt_edited)
+        self.inp_azimuth.edit.textChanged.connect(self._on_azimuth_edited)
+
         return box
+
+    def _on_tilt_edited(self, text: str) -> None:
+        """Emit tilt_changed in real-time when Tilt input is edited (#1146)."""
+        try:
+            self.tilt_changed.emit(np.radians(float(text)))
+        except ValueError:
+            pass
+
+    def _on_azimuth_edited(self, text: str) -> None:
+        """Emit azimuth_changed in real-time when Azimuth input is edited (#1146)."""
+        try:
+            self.azimuth_changed.emit(np.radians(float(text)))
+        except ValueError:
+            pass
 
     def _build_hidden_compat_widgets(self) -> None:
         """Create hidden widgets whose signals are still wired internally.
