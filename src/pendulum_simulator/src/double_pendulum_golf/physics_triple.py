@@ -356,7 +356,11 @@ def friction_torque_vector(
 
 
 def equations_of_motion(
-    state: State, t: float, params: TriplePendulumParams, torque_func: TorqueFunc
+    state: State,
+    t: float,
+    params: TriplePendulumParams,
+    torque_func: TorqueFunc,
+    torque_limits: np.ndarray | None = None,
 ) -> State:
     """Compute the state derivative: dx/dt = f(x, t).
 
@@ -367,6 +371,7 @@ def equations_of_motion(
     Preconditions:
         - state has shape (6,) with all finite values.
         - torque_func returns a 3-tuple of finite floats.
+        - torque_limits, if provided, has shape (3,) with positive values.
     Postconditions:
         - Returns shape (6,) with all finite values.
 
@@ -376,6 +381,8 @@ def equations_of_motion(
     t : float
     params : TriplePendulumParams
     torque_func : callable (t) -> (tau1, tau2, tau3)
+    torque_limits : np.ndarray, shape (3,), optional
+        Per-joint torque saturation limits (#1150).
 
     Returns
     -------
@@ -392,6 +399,12 @@ def equations_of_motion(
 
     tau1, tau2, tau3 = torque_func(t)
     tau = np.array([tau1, tau2, tau3])
+
+    # Torque saturation (#1150)
+    if torque_limits is not None:
+        from .physics import clamp_torque_ndof
+
+        tau = clamp_torque_ndof(tau, torque_limits)
 
     tau_friction = friction_torque_vector(dtheta1, dphi1, dphi2, params)
 

@@ -288,6 +288,27 @@ def clamp_torque(tau: np.ndarray, clamp: TorqueClamp) -> np.ndarray:
     )
 
 
+def clamp_torque_ndof(tau: np.ndarray, limits: np.ndarray) -> np.ndarray:
+    """Clamp N-DOF torque vector to symmetric per-DOF limits (#1150).
+
+    Parameters
+    ----------
+    tau : ndarray, shape (n,)
+        Joint torque vector.
+    limits : ndarray, shape (n,)
+        Per-joint maximum torque magnitudes (positive).
+        Use ``inf`` for unclamped joints.
+
+    Pre: tau.shape == limits.shape, all limits > 0.
+    Post: |result[i]| <= limits[i] for all i.
+    """
+    assert tau.shape == limits.shape, (
+        f"Shape mismatch: tau={tau.shape}, limits={limits.shape}"
+    )
+    assert np.all(limits > 0), "All limits must be positive"
+    return np.clip(tau, -limits, limits)
+
+
 # ---------------------------------------------------------------------------
 # Equations of motion
 # ---------------------------------------------------------------------------

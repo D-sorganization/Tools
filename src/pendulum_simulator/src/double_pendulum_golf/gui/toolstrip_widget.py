@@ -220,6 +220,9 @@ class ToolStrip(QWidget):
     # View controls
     reset_view_requested = pyqtSignal()
 
+    # Physics toggles (#1142)
+    gravity_toggled = pyqtSignal(bool)
+
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setObjectName("toolstrip")
@@ -451,6 +454,16 @@ class ToolStrip(QWidget):
         self.chk_com.setToolTip("Show the combined center of mass of the whole system.")
         self.chk_com.toggled.connect(self.com_toggled.emit)
         extra_col.addWidget(self.chk_com)
+
+        self.chk_gravity = QCheckBox("🌍 Gravity")
+        self.chk_gravity.setChecked(True)
+        self.chk_gravity.setStyleSheet(_CHK_COM)  # reuse COM style
+        self.chk_gravity.setToolTip(
+            "Toggle gravity (g=9.81 m/s²).\n"
+            "Disable to observe pure inertial/torque dynamics."
+        )
+        self.chk_gravity.toggled.connect(self.gravity_toggled.emit)
+        extra_col.addWidget(self.chk_gravity)
 
         extra_col.addStretch()
         layout.addLayout(extra_col)

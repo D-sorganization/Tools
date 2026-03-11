@@ -318,6 +318,17 @@ class MainWindow(QMainWindow):
         )
         ts.com_toggled.connect(lambda v: _fwd_overlay("set_show_com", v))
 
+        # ── Gravity toggle (#1142) → active panel's pendulum + controls ──
+        def _fwd_gravity(on: bool) -> None:
+            _fwd_overlay("set_gravity_on", on)
+            ctrl = self._active_panel().controls
+            if hasattr(ctrl, "chk_gravity"):
+                ctrl.chk_gravity.blockSignals(True)
+                ctrl.chk_gravity.setChecked(on)
+                ctrl.chk_gravity.blockSignals(False)
+
+        ts.gravity_toggled.connect(_fwd_gravity)
+
         # ── Scale sliders → active panel's pendulum widget ────────────
         ts.force_scale_changed.connect(lambda v: _fwd_overlay("set_force_scale", v))
         ts.mob_scale_changed.connect(

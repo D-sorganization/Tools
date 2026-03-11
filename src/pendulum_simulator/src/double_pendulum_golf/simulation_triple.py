@@ -133,8 +133,15 @@ def run_simulation(
     method: str = "DOP853",
     rtol: float = 1e-6,
     atol: float = 1e-8,
+    torque_limits: np.ndarray | None = None,
 ) -> TripleSimulationResult:
     """Integrate the triple pendulum equations of motion.
+
+    Parameters
+    ----------
+    torque_limits : np.ndarray, shape (3,), optional
+        Per-joint torque saturation limits (#1150).
+        Use ``np.inf`` for unclamped joints.
 
     Performance notes
     -----------------
@@ -161,7 +168,7 @@ def run_simulation(
     t_eval = np.arange(0.0, t_end, dt)
 
     def ode_rhs(t: float, y: np.ndarray) -> np.ndarray:
-        return equations_of_motion(y, t, params, torque_func)
+        return equations_of_motion(y, t, params, torque_func, torque_limits)
 
     sol = solve_ivp(
         ode_rhs,

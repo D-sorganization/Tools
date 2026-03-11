@@ -59,6 +59,39 @@ class TestTorqueClampAbsValue:
         assert result_neg[0] == -10.0
         assert result_neg[1] == -5.0
 
+    def test_clamp_torque_ndof(self) -> None:
+        """#1150: generic N-DOF clamping works for 3-DOF."""
+        from double_pendulum_golf.physics import clamp_torque_ndof
+
+        tau = np.array([50.0, -30.0, 10.0])
+        limits = np.array([25.0, 20.0, 15.0])
+        result = clamp_torque_ndof(tau, limits)
+        np.testing.assert_array_equal(result, [25.0, -20.0, 10.0])
+
+    def test_clamp_torque_ndof_inf_passthrough(self) -> None:
+        """#1150: inf limit means no clamping."""
+        from double_pendulum_golf.physics import clamp_torque_ndof
+
+        tau = np.array([999.0, -999.0])
+        limits = np.array([np.inf, np.inf])
+        result = clamp_torque_ndof(tau, limits)
+        np.testing.assert_array_equal(result, tau)
+
+    def test_triple_sim_with_torque_limits(self) -> None:
+        """#1150: triple simulation runs with torque_limits."""
+        from double_pendulum_golf.physics_triple import TriplePendulumParams
+        from double_pendulum_golf.simulation_triple import run_simulation
+
+        params = TriplePendulumParams(m1=2.0, m2=1.5, m3=1.0, L1=0.2, L2=0.65, L3=1.1)
+        state = np.array([0.5, 0.1, -0.1, 0.0, 0.0, 0.0])
+        torque_func = lambda t: (0.0, 0.0, 0.0)  # noqa: E731
+        limits = np.array([50.0, 30.0, 20.0])
+        result = run_simulation(
+            params, state, t_end=0.1, torque_func=torque_func, dt=0.01,
+            torque_limits=limits,
+        )
+        assert result.n_steps >= 2
+
 
 class TestTriplePendulumDefaults:
     """#1140: Verify anatomical segment lengths for golf model."""

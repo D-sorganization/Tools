@@ -4,6 +4,8 @@ Shared simulation panel for double and triple pendulum tabs.
 
 from __future__ import annotations
 
+import logging
+
 import csv
 import os
 import shutil
@@ -29,6 +31,8 @@ if TYPE_CHECKING:
     from .controls_widget import ControlsWidget
     from .controls_widget_golfer import ControlsWidgetGolfer
     from .controls_widget_triple import ControlsWidgetTriple
+
+logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -261,12 +265,14 @@ class SimulationPanel(QWidget):
         try:
             p = self.controls.get_params()
         except ValueError as e:
+            logger.warning("Parameter validation failed: %s", e)
             QMessageBox.warning(self, "Input Error", str(e))
             return
 
         try:
             params = self._params_builder(p)
         except AssertionError as e:
+            logger.warning("Parameter build assertion failed: %s", e)
             QMessageBox.warning(self, "Parameter Error", str(e))
             return
 
@@ -281,6 +287,11 @@ class SimulationPanel(QWidget):
         self.controls.btn_reset.setEnabled(False)
         self._show_busy(True)
         self.sim_started.emit()
+        logger.info(
+            "Simulation started: t_end=%.3f, dt=%.4f",
+            p["t_end"],
+            float(p.get("dt", 0.005)),
+        )
 
         # Build optional joint limits and torque clamp
         limits = self._limits_builder(p) if self._limits_builder else None
@@ -336,6 +347,13 @@ class SimulationPanel(QWidget):
         else:
             self._sim_dt = 0.005
 
+        logger.info(
+            "Simulation finished: %d steps, t=[0, %.3f]s, dt=%.4fms",
+            res.n_steps,
+            float(res.t[-1]),
+            self._sim_dt * 1000,
+        )
+
         self.pendulum.set_simulation(res)
         self.matrix.set_simulation(res)
         if self.torque_history is not None:
@@ -349,6 +367,7 @@ class SimulationPanel(QWidget):
 
     def _on_sim_error(self, msg: str) -> None:
         """Called on the main thread when simulation fails."""
+        logger.error("Simulation failed: %s", msg)
         self._show_busy(False)
         self.controls.btn_run.setEnabled(True)
         self.controls.btn_reset.setEnabled(True)
