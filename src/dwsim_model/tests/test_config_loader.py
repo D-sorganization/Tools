@@ -5,9 +5,11 @@ from pathlib import Path
 import pytest
 from dwsim_model.config_loader import ConfigLoader
 
+_CONFIG_PATH = Path(__file__).resolve().parent.parent / "config" / "master_config.yaml"
+
 
 def test_load_master_config_resolves_feed_and_energy_subfiles() -> None:
-    loader = ConfigLoader(config_path=Path("config/master_config.yaml"))
+    loader = ConfigLoader(config_path=_CONFIG_PATH)
 
     config = loader.load()
 
@@ -18,7 +20,7 @@ def test_load_master_config_resolves_feed_and_energy_subfiles() -> None:
 
 
 def test_load_master_config_applies_scenario_overrides() -> None:
-    loader = ConfigLoader(config_path=Path("config/master_config.yaml"))
+    loader = ConfigLoader(config_path=_CONFIG_PATH)
 
     config = loader.load()
 

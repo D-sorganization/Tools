@@ -18,9 +18,7 @@ from dwsim_model.config.schema import ReactorConfig, validate_reactor_config
 
 logger = logging.getLogger(__name__)
 
-_CONFIG_DIR = (
-    Path(__file__).resolve().parent.parent.parent.parent / "config" / "reactors"
-)
+_CONFIG_DIR = Path(__file__).resolve().parent.parent / "config" / "reactors"
 
 _OPERATION_MODES = {
     "isothermal": 0,

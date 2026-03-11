@@ -195,6 +195,11 @@ def test_baseline_config_build_extract_and_kpis(monkeypatch) -> None:
         mass_fractions={"Water": 1.0},
     )
 
+    # Set energy stream power so specific_energy_consumption_kWh_t is non-zero.
+    # PROP_ES_0 is the energy flow in kW; FakeStream stores EnergyFlow = value * 1000 W.
+    builder.energy_streams["E_PEM_AC_Power"].SetPropertyValue("PROP_ES_0", 5000.0)
+    builder.energy_streams["E_PEM_DC_Power"].SetPropertyValue("PROP_ES_0", 3000.0)
+
     extractor = ResultsExtractor(compound_names=list(flowsheet.compound_set))
     results = extractor.extract(builder, converged=True)
 

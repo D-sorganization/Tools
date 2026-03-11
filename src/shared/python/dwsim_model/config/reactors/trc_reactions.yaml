@@ -1,0 +1,72 @@
+# ============================================================
+#  trc_reactions.yaml — TRC Plug-Flow Reactor Configuration
+# ============================================================
+#
+# The Thermal Reduction Chamber is a refractory-lined vessel that
+# provides additional residence time after the PEM for:
+#   1. Tar destruction (secondary cracking reactions)
+#   2. Approach to final syngas equilibrium
+#   3. Controlled cool-down before the quench vessel
+#
+# As a PFR, it requires kinetic rate expressions.
+
+reactor:
+  name: "TRC_Reactor"
+  type: "RCT_PFR"
+
+  # Reactor geometry
+  volume_m3: 2.0          # Total reactor volume
+  length_m: 3.0           # Reactor length (used with diameter for residence time)
+  diameter_m: 0.92        # Internal diameter (gives ≈ 2.0 m³ cylindrical volume)
+
+  # Operating conditions
+  temperature_C: 950.0    # Inlet temperature from PEM
+  pressure_Pa: 101325.0
+  mode: "adiabatic"       # TRC is typically adiabatic (refractory insulated)
+
+# ────────────────────────────────────────────────────────────
+# Kinetic reactions (Arrhenius expressions)
+# ────────────────────────────────────────────────────────────
+# Rate law: r = A * exp(-Ea / R*T) * [C_A]^n  [mol/m³/s]
+# R = 8.314 J/mol/K
+#
+# References:
+#   Tar cracking: Jess (1996) Fuel 75(12), 1441–1448
+#   WGS kinetics: Moe (1962) Chem. Eng. Prog. 58(3)
+
+reactions:
+  - name: "Naphthalene Cracking (tar destruction)"
+    # C10H8 + 10H2O → 10CO + 14H2
+    stoichiometry: "Naphthalene + 10*H2O → 10*CO + 14*H2"
+    base_component: "Naphthalene"
+    kinetics:
+      pre_exponential_A: 9.2e9   # m³/mol/s (second-order)
+      activation_energy_J_mol: 2.04e5   # 204 kJ/mol (Jess 1996)
+      reaction_order_n: 1.0      # First order in tar
+    heat_of_reaction_kJ_mol: 1240.0   # Strongly endothermic
+
+  - name: "Toluene Steam Reforming (tar destruction)"
+    # C7H8 + 7H2O → 7CO + 11H2
+    stoichiometry: "Toluene + 7*H2O → 7*CO + 11*H2"
+    base_component: "Toluene"
+    kinetics:
+      pre_exponential_A: 3.8e9
+      activation_energy_J_mol: 1.85e5
+      reaction_order_n: 1.0
+    heat_of_reaction_kJ_mol: 869.0
+
+  - name: "Water Gas Shift (equilibrium approach)"
+    stoichiometry: "CO + H2O → CO2 + H2"
+    base_component: "Carbon monoxide"
+    kinetics:
+      pre_exponential_A: 2.78e3   # mol/kg_cat/s/Pa² (Moe 1962, simplified)
+      activation_energy_J_mol: 47400.0
+      reaction_order_n: 1.0
+    heat_of_reaction_kJ_mol: -41.2
+
+# ────────────────────────────────────────────────────────────
+# Expected outlet conditions (for validation)
+# ────────────────────────────────────────────────────────────
+expected_outlet:
+  temperature_C: 850.0    # Should cool ~100°C through endothermic cracking
+  tar_destruction_pct: 80  # Target 80% tar destruction across TRC

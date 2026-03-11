@@ -96,11 +96,17 @@ class TestPackageInstallation:
 
     def test_cli_entry_point_exists(self) -> None:
         """The dwsim-model CLI entry point must respond to --help."""
+        import os
+
+        repo_root = Path(__file__).resolve().parents[3]
+        lib_path = str(repo_root / "src" / "shared" / "python")
+        env = {**os.environ, "PYTHONPATH": lib_path}
         result = subprocess.run(
             [sys.executable, "-m", "dwsim_model", "--help"],
             capture_output=True,
             check=False,
             text=True,
+            env=env,
         )
         assert result.returncode == 0
         assert "subcommand" in result.stdout.lower() or "usage" in result.stdout.lower()
