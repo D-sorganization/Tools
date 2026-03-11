@@ -3,11 +3,13 @@ from __future__ import annotations
 from pathlib import Path
 
 import programmatic_pid.generator as mod
+import pytest
 
-ROOT = Path(__file__).resolve().parents[1]
-SPEC_PATH = ROOT / "examples" / "biochar" / "biochar_pid_spec.yml"
+ROOT = Path(__file__).resolve().parents[2]
+SPEC_PATH = ROOT / "examples" / "pid" / "biochar" / "biochar_pid_spec.yml"
 
 
+@pytest.mark.skipif(not SPEC_PATH.exists(), reason="biochar spec not found")
 def test_generate_two_sheet_outputs(tmp_path):
     out_dxf = tmp_path / "pid.dxf"
     out_svg = tmp_path / "pid.svg"

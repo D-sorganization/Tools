@@ -242,10 +242,10 @@ class PIDDocument:
                     logger.info("PDF exported to %s", path)
                 else:
                     raise RuntimeError("svglib could not parse SVG")
-            except ImportError:
+            except ImportError as err:
                 raise RuntimeError(
                     "PDF export requires 'svglib' and 'reportlab'. "
                     "Install with: pip install svglib reportlab"
-                ) from None
+                ) from err
         finally:
             svg_path.unlink(missing_ok=True)
