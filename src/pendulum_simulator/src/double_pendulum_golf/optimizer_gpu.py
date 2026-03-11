@@ -7,6 +7,8 @@ JAX's automatic differentiation and optax optimizers.
 
 from __future__ import annotations
 
+import logging
+
 try:
     import jax
     import jax.numpy as jnp
@@ -24,6 +26,8 @@ from .simulation_golfer_gpu import (
     DEFAULT_ALPHA,
     DEFAULT_BETA,
 )
+
+logger = logging.getLogger(__name__)
 
 # Type aliases
 JaxArray = jnp.ndarray
@@ -192,7 +196,7 @@ def optimize_torque_profile(
         history.append(loss_val)
 
         if (i + 1) % max(1, n_iterations // 10) == 0:
-            print(f"Iteration {i + 1}/{n_iterations}: loss = {loss_val:.6f}")
+            logger.info("Iteration %d/%d: loss = %.6f", i + 1, n_iterations, loss_val)
 
     optimal_coeffs = torque_coeffs.reshape(7, n_coeffs_per_joint)
 
@@ -248,7 +252,9 @@ def optimize_simple_torque_profile(
     @jax.jit
     @jax.value_and_grad
     def loss_fn(coeffs):
-        return clubhead_speed_objective(coeffs, params, initial_state, t_end, alpha, beta, dt)
+        return clubhead_speed_objective(
+            coeffs, params, initial_state, t_end, alpha, beta, dt
+        )
 
     history = []
 
@@ -261,7 +267,7 @@ def optimize_simple_torque_profile(
         history.append(loss_val)
 
         if (i + 1) % max(1, n_iterations // 10) == 0:
-            print(f"Iteration {i + 1}/{n_iterations}: loss = {loss_val:.6f}")
+            logger.info("Iteration %d/%d: loss = %.6f", i + 1, n_iterations, loss_val)
 
     return torque_coeffs, history
 
@@ -295,7 +301,9 @@ def compute_gradient_via_finite_difference(
     """
     grad = jnp.zeros(7)
 
-    f0 = clubhead_speed_objective(torque_coeffs, params, initial_state, t_end, alpha, beta, dt)
+    f0 = clubhead_speed_objective(
+        torque_coeffs, params, initial_state, t_end, alpha, beta, dt
+    )
 
     for i in range(7):
         torque_plus = torque_coeffs.at[i].add(eps)

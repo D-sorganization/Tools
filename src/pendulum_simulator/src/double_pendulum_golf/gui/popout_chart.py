@@ -108,6 +108,8 @@ class PopOutChart:
         self._ax: object | None = None
         self._canvas: object | None = None
         self._window: object | None = None
+        self._regression: tuple[np.ndarray, np.ndarray, int, np.ndarray] | None = None
+        self._regression_label: str = ""
 
     def plot_data(
         self,
@@ -190,7 +192,7 @@ class PopOutChart:
         ax.plot(self._x, self._y, color="#6fa8dc", linewidth=1.5, label="Data")
 
         # Plot regression if available
-        if hasattr(self, "_regression") and self._regression is not None:
+        if self._regression is not None:
             x_fit, y_fit, degree, _ = self._regression
             ax.plot(
                 x_fit,
