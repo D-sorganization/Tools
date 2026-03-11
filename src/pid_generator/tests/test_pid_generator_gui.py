@@ -33,8 +33,8 @@ def test_get_gui_info_returns_gui_info():
 
 
 @pytest.mark.skipif(
-    "PyQt6" not in sys.modules and importlib.util.find_spec("PyQt6") is None,
-    reason="PyQt6 not installed",
+    importlib.util.find_spec("PyQt6") is None or importlib.util.find_spec("ezdxf") is None,
+    reason="PyQt6 and ezdxf required",
 )
 def test_main_window_class_importable():
     """The PIDGeneratorMainWindow class can be imported."""
