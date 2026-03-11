@@ -11,6 +11,7 @@ Stateless: emits signals only; does not own simulation data.
 
 Closes #1098: Stack overlay sliders vertically in toolbar section
 Closes #1099: Force vector checkbox is toolstrip-only
+Closes #1134: Font sizes increased for visibility
 """
 
 from __future__ import annotations
@@ -67,32 +68,32 @@ _BTN_SMALL = (
     "QPushButton:hover{background:#252860;color:#b0b0e0;}"
 )
 _CHK_FORCE = (
-    "QCheckBox{color:#a0e0b0;font-size:9px;spacing:3px;}"
-    "QCheckBox::indicator{width:12px;height:12px;border:1px solid #405068;"
+    "QCheckBox{color:#a0e0b0;font-size:11px;spacing:3px;}"
+    "QCheckBox::indicator{width:14px;height:14px;border:1px solid #405068;"
     "border-radius:3px;background:#1a1a2a;}"
     "QCheckBox::indicator:checked{background:#285040;border-color:#60a060;}"
 )
 _CHK_MOB = (
-    "QCheckBox{color:#80c8f0;font-size:9px;spacing:3px;}"
-    "QCheckBox::indicator{width:12px;height:12px;border:1px solid #304060;"
+    "QCheckBox{color:#80c8f0;font-size:11px;spacing:3px;}"
+    "QCheckBox::indicator{width:14px;height:14px;border:1px solid #304060;"
     "border-radius:3px;background:#1a1a2a;}"
     "QCheckBox::indicator:checked{background:#204060;border-color:#4080c0;}"
 )
 _CHK_FELL = (
-    "QCheckBox{color:#f0b880;font-size:9px;spacing:3px;}"
-    "QCheckBox::indicator{width:12px;height:12px;border:1px solid #604020;"
+    "QCheckBox{color:#f0b880;font-size:11px;spacing:3px;}"
+    "QCheckBox::indicator{width:14px;height:14px;border:1px solid #604020;"
     "border-radius:3px;background:#1a1a2a;}"
     "QCheckBox::indicator:checked{background:#604020;border-color:#c08040;}"
 )
 _CHK_ZERO = (
-    "QCheckBox{color:#d0a0e0;font-size:9px;spacing:3px;}"
-    "QCheckBox::indicator{width:12px;height:12px;border:1px solid #604080;"
+    "QCheckBox{color:#d0a0e0;font-size:11px;spacing:3px;}"
+    "QCheckBox::indicator{width:14px;height:14px;border:1px solid #604080;"
     "border-radius:3px;background:#1a1a2a;}"
     "QCheckBox::indicator:checked{background:#602080;border-color:#a060c0;}"
 )
 _CHK_COM = (
-    "QCheckBox{color:#e0e060;font-size:9px;spacing:3px;}"
-    "QCheckBox::indicator{width:12px;height:12px;border:1px solid #606020;"
+    "QCheckBox{color:#e0e060;font-size:11px;spacing:3px;}"
+    "QCheckBox::indicator{width:14px;height:14px;border:1px solid #606020;"
     "border-radius:3px;background:#1a1a2a;}"
     "QCheckBox::indicator:checked{background:#505010;border-color:#a0a030;}"
 )
@@ -122,10 +123,10 @@ _SLIDER_FRAME = (
 )
 _SEP_STYLE = "QFrame{color:#2a2a50;border:none;}"
 _SEP_H_STYLE = "QFrame{color:#2a2a50;border:none;max-height:1px;}"
-_LABEL = "color:#606080;font-size:11px;"
-_VAL_LBL = "color:#8080b0;font-size:11px;font-family:monospace;min-width:32px;"
-_FRAME_LBL = "color:#6060a0;font-size:11px;font-family:monospace;"
-_TITLE = "color:#9090c8;font-size:12px;font-weight:bold;letter-spacing:1px;padding-right:4px;"
+_LABEL = "color:#606080;font-size:12px;"
+_VAL_LBL = "color:#8080b0;font-size:12px;font-family:monospace;min-width:32px;"
+_FRAME_LBL = "color:#6060a0;font-size:12px;font-family:monospace;"
+_TITLE = "color:#9090c8;font-size:14px;font-weight:bold;letter-spacing:1px;padding-right:4px;"
 _OVERLAY_SECTION = (
     "QFrame#overlay_section {"
     "background: #12122a;"
@@ -407,7 +408,7 @@ class ToolStrip(QWidget):
         seg_row.setContentsMargins(0, 1, 0, 0)
         seg_row.setSpacing(2)
         seg_lbl = QLabel("Segments:")
-        seg_lbl.setStyleSheet("color:#505070;font-size:8px;")
+        seg_lbl.setStyleSheet("color:#505070;font-size:11px;")
         seg_row.addWidget(seg_lbl)
         self._segment_checks: dict[str, QCheckBox] = {}
         # Default segment names (double pendulum); updated dynamically
@@ -416,8 +417,8 @@ class ToolStrip(QWidget):
             chk = QCheckBox(name[:6])  # truncate for compact display
             chk.setChecked(True)
             chk.setStyleSheet(
-                "QCheckBox{color:#707090;font-size:7px;spacing:1px;}"
-                "QCheckBox::indicator{width:9px;height:9px;border:1px solid #404060;"
+                "QCheckBox{color:#707090;font-size:11px;spacing:2px;}"
+                "QCheckBox::indicator{width:11px;height:11px;border:1px solid #404060;"
                 "border-radius:2px;background:#1a1a2a;}"
                 "QCheckBox::indicator:checked{background:#303068;border-color:#5050a0;}"
             )
@@ -457,7 +458,7 @@ class ToolStrip(QWidget):
         layout.addWidget(_vline())
 
         self._status_lbl = QLabel("Ready")
-        self._status_lbl.setStyleSheet("color:#404060;font-size:9px;")
+        self._status_lbl.setStyleSheet("color:#404060;font-size:11px;")
         layout.addWidget(self._status_lbl)
 
         layout.addStretch()

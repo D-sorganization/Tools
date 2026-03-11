@@ -88,18 +88,24 @@ class JointLimits:
 
 @dataclass(frozen=True)
 class TorqueClamp:
-    """Torque saturation limits.
+    """Torque saturation limits (symmetric ± clamp).
 
     Contract:
-        - Both limits must be positive.
+        - Both limits must be non-zero; abs() is applied automatically.
+        - Clamped range: [-|max_torque|, +|max_torque|] per DOF.
+
+    Closes #1138: accepts negative values via abs() for usability.
     """
 
-    max_torque1: float = float("inf")  # N·m
-    max_torque2: float = float("inf")  # N·m
+    max_torque1: float = float("inf")  # N·m (magnitude, ± symmetric)
+    max_torque2: float = float("inf")  # N·m (magnitude, ± symmetric)
 
     def __post_init__(self) -> None:
-        assert self.max_torque1 > 0
-        assert self.max_torque2 > 0
+        # Accept negative inputs by taking abs (#1138)
+        object.__setattr__(self, "max_torque1", abs(self.max_torque1))
+        object.__setattr__(self, "max_torque2", abs(self.max_torque2))
+        assert self.max_torque1 > 0, f"|max_torque1| must be positive, got {self.max_torque1}"
+        assert self.max_torque2 > 0, f"|max_torque2| must be positive, got {self.max_torque2}"
 
 
 # Type aliases

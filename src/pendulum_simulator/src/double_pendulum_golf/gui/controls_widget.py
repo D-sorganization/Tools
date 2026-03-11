@@ -271,7 +271,7 @@ class ControlsWidget(QWidget):
         layout.addWidget(self.chk_limits)
         self.inp_phi_min = LabeledInput("φ min°", "-90", "Min wrist angle (deg)", lw)
         self.inp_phi_max = LabeledInput("φ max°", "90", "Max wrist angle (deg)", lw)
-        self.inp_limit_k = LabeledInput("K", "500", "Penalty stiffness (N·m/rad)", lw)
+        self.inp_limit_k = LabeledInput("K (N·m/rad)", "500", "Penalty stiffness", lw)
         layout.addLayout(_row(self.inp_phi_min, self.inp_phi_max))
         layout.addWidget(self.inp_limit_k)
         return box
@@ -287,9 +287,11 @@ class ControlsWidget(QWidget):
         self.chk_clamp.setStyleSheet(STYLE_CHECK)
         layout.addWidget(self.chk_clamp)
         self.inp_max_tau1 = LabeledInput(
-            "Max τ1", "50", "Max shoulder torque (N·m)", lw
+            "Max |τ1|", "50", "Max shoulder torque magnitude ±(N·m)", lw
         )
-        self.inp_max_tau2 = LabeledInput("Max τ2", "20", "Max wrist torque (N·m)", lw)
+        self.inp_max_tau2 = LabeledInput(
+            "Max |τ2|", "20", "Max wrist torque magnitude ±(N·m)", lw
+        )
         layout.addLayout(_row(self.inp_max_tau1, self.inp_max_tau2))
         return box
 

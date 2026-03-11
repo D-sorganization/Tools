@@ -1,13 +1,14 @@
 """
 Shared utilities for double and triple pendulum control widgets.
 
-DRY: All parse helpers and playback state used by both
-     ControlsWidget and ControlsWidgetTriple live here.
+DRY: All parse helpers, stylesheet tokens, and font constants
+     used by ControlsWidget, ControlsWidgetTriple, etc. live here.
 
 Design by Contract
 ------------------
 - parse_float raises ValueError (not returns None) on bad input
 - parse_coeffs raises ValueError on non-numeric tokens
+- Font size constants must all be >= MIN_FONT_PX
 """
 
 from __future__ import annotations
@@ -21,26 +22,43 @@ if TYPE_CHECKING:
 # Stylesheet tokens shared by both control panels
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# Font size constants — DRY, single source of truth (#1134)
+# All font sizes in pixels; zoom system (#1147) scales these.
+# ---------------------------------------------------------------------------
+MIN_FONT_PX: int = 11  # absolute minimum for readability
+FONT_BODY: int = 11  # body text, labels, checkboxes
+FONT_GROUP: int = 11  # group box titles
+FONT_EDIT: int = 11  # text inputs (monospace)
+FONT_BTN: int = 11  # button labels
+FONT_TITLE: int = 14  # major titles
+FONT_STATUS: int = 11  # status bar text
+
+assert all(
+    v >= MIN_FONT_PX
+    for v in (FONT_BODY, FONT_GROUP, FONT_EDIT, FONT_BTN, FONT_STATUS)
+), "All font sizes must meet minimum readability threshold"
+
 STYLE_GROUP = (
-    "QGroupBox { color: #c8c8e0; border: 1px solid #404060;"
-    "border-radius: 6px; margin-top: 10px; padding-top: 14px;"
-    "font-weight: bold; font-size: 10px; }"
-    "QGroupBox::title { subcontrol-origin: margin; left: 8px; padding: 0 4px; }"
+    f"QGroupBox {{ color: #c8c8e0; border: 1px solid #404060;"
+    f"border-radius: 6px; margin-top: 10px; padding-top: 14px;"
+    f"font-weight: bold; font-size: {FONT_GROUP}px; }}"
+    f"QGroupBox::title {{ subcontrol-origin: margin; left: 8px; padding: 0 4px; }}"
 )
 STYLE_EDIT = (
-    "background: #1e1e30; color: #e0e0f0; border: 1px solid #404060;"
-    "border-radius: 3px; padding: 2px 5px; font-family: monospace; font-size: 10px;"
+    f"background: #1e1e30; color: #e0e0f0; border: 1px solid #404060;"
+    f"border-radius: 3px; padding: 2px 5px; font-family: monospace; font-size: {FONT_EDIT}px;"
 )
-STYLE_LABEL = "color: #9090b0; font-size: 10px;"
+STYLE_LABEL = f"color: #9090b0; font-size: {FONT_BODY}px;"
 STYLE_SPIN = (
-    "background: #1e1e30; color: #e0e0f0; border: 1px solid #404060;"
-    "border-radius: 3px; padding: 1px 4px; font-size: 10px;"
+    f"background: #1e1e30; color: #e0e0f0; border: 1px solid #404060;"
+    f"border-radius: 3px; padding: 1px 4px; font-size: {FONT_BODY}px;"
 )
 STYLE_CHECK = (
-    "QCheckBox { color: #b8b8d0; font-size: 11px; spacing: 4px; }"
-    "QCheckBox::indicator { width: 13px; height: 13px; border: 1px solid #484868;"
-    "border-radius: 3px; background: #22223a; }"
-    "QCheckBox::indicator:checked { background: #5060a0; border-color: #7080c0; }"
+    f"QCheckBox {{ color: #b8b8d0; font-size: {FONT_BODY}px; spacing: 4px; }}"
+    f"QCheckBox::indicator {{ width: 14px; height: 14px; border: 1px solid #484868;"
+    f"border-radius: 3px; background: #22223a; }}"
+    f"QCheckBox::indicator:checked {{ background: #5060a0; border-color: #7080c0; }}"
 )
 STYLE_SLIDER = (
     "QSlider::groove:horizontal { background: #252540; height: 6px; border-radius: 3px; }"
@@ -50,49 +68,49 @@ STYLE_SLIDER = (
     "QSlider::handle:horizontal:hover { background: #a0b0f0; }"
 )
 STYLE_BTN = (
-    "QPushButton { background: #282848; color: #c0c0e8; border: 1px solid #404068;"
-    "border-radius: 5px; padding: 6px 14px; font-size: 11px; }"
-    "QPushButton:hover { background: #30306a; color: #e0e0ff; }"
-    "QPushButton:pressed { background: #20204a; }"
+    f"QPushButton {{ background: #282848; color: #c0c0e8; border: 1px solid #404068;"
+    f"border-radius: 5px; padding: 6px 14px; font-size: {FONT_BTN}px; }}"
+    f"QPushButton:hover {{ background: #30306a; color: #e0e0ff; }}"
+    f"QPushButton:pressed {{ background: #20204a; }}"
 )
 STYLE_BTN_IMPORT = (
-    "QPushButton { background: #1e4a2a; color: #a0e8b0; border: 1px solid #285a38;"
-    "border-radius: 5px; padding: 7px 14px; font-weight: bold; font-size: 11px; }"
-    "QPushButton:hover { background: #286038; }"
-    "QPushButton:pressed { background: #153820; }"
+    f"QPushButton {{ background: #1e4a2a; color: #a0e8b0; border: 1px solid #285a38;"
+    f"border-radius: 5px; padding: 7px 14px; font-weight: bold; font-size: {FONT_BTN}px; }}"
+    f"QPushButton:hover {{ background: #286038; }}"
+    f"QPushButton:pressed {{ background: #153820; }}"
 )
 
 # ── Full-window dark stylesheet (fallback when fleet ThemeManager unavailable)
 # TODO(#1042): Derive from fleet ThemeManager palette when it's a hard dep.
-PENDULUM_DARK_STYLE = """
-    QMainWindow { background: #12121c; }
-    QStatusBar  { background: #12121c; color: #7878a0; font-size: 11px;
-                  border-top: 1px solid #282840; }
-    QTabWidget::pane { border: 1px solid #303050; background: #12121c; }
-    QTabBar::tab { background: #1e1e30; color: #9090b0; border: 1px solid #303050;
+PENDULUM_DARK_STYLE = f"""
+    QMainWindow {{ background: #12121c; }}
+    QStatusBar  {{ background: #12121c; color: #7878a0; font-size: {FONT_STATUS}px;
+                  border-top: 1px solid #282840; }}
+    QTabWidget::pane {{ border: 1px solid #303050; background: #12121c; }}
+    QTabBar::tab {{ background: #1e1e30; color: #9090b0; border: 1px solid #303050;
                    padding: 7px 18px; margin-right: 2px; border-bottom: none;
-                   font-size: 12px; }
-    QTabBar::tab:selected { background: #282848; color: #d0d0f0;
-                            border-bottom: 2px solid #6070c0; }
-    QTabBar::tab:hover    { background: #222238; color: #c0c0e8; }
-    QSplitter::handle { background: #282848; width: 4px; }
-    QSplitter::handle:hover { background: #404068; }
-    QScrollBar:vertical { background: #1a1a2a; width: 10px; border: none; }
-    QScrollBar::handle:vertical { background: #404060; min-height: 20px;
-                                  border-radius: 5px; }
-    QScrollBar::handle:vertical:hover { background: #5060a0; }
-    QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
-    QScrollBar:horizontal { background: #1a1a2a; height: 10px; border: none; }
-    QScrollBar::handle:horizontal { background: #404060; min-width: 20px;
-                                    border-radius: 5px; }
-    QScrollBar::handle:horizontal:hover { background: #5060a0; }
-    QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0; }
-    QLabel { color: #c0c0d8; }
-    QMenuBar { background: #16162a; color: #b0b0d0; font-size: 11px; }
-    QMenuBar::item:selected { background: #282848; }
-    QMenu { background: #1e1e30; color: #c0c0d8; border: 1px solid #404060;
-            font-size: 11px; }
-    QMenu::item:selected { background: #383868; }
+                   font-size: {FONT_BTN}px; }}
+    QTabBar::tab:selected {{ background: #282848; color: #d0d0f0;
+                            border-bottom: 2px solid #6070c0; }}
+    QTabBar::tab:hover    {{ background: #222238; color: #c0c0e8; }}
+    QSplitter::handle {{ background: #282848; width: 4px; }}
+    QSplitter::handle:hover {{ background: #404068; }}
+    QScrollBar:vertical {{ background: #1a1a2a; width: 10px; border: none; }}
+    QScrollBar::handle:vertical {{ background: #404060; min-height: 20px;
+                                  border-radius: 5px; }}
+    QScrollBar::handle:vertical:hover {{ background: #5060a0; }}
+    QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{ height: 0; }}
+    QScrollBar:horizontal {{ background: #1a1a2a; height: 10px; border: none; }}
+    QScrollBar::handle:horizontal {{ background: #404060; min-width: 20px;
+                                    border-radius: 5px; }}
+    QScrollBar::handle:horizontal:hover {{ background: #5060a0; }}
+    QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {{ width: 0; }}
+    QLabel {{ color: #c0c0d8; font-size: {FONT_BODY}px; }}
+    QMenuBar {{ background: #16162a; color: #b0b0d0; font-size: {FONT_BODY}px; }}
+    QMenuBar::item:selected {{ background: #282848; }}
+    QMenu {{ background: #1e1e30; color: #c0c0d8; border: 1px solid #404060;
+            font-size: {FONT_BODY}px; }}
+    QMenu::item:selected {{ background: #383868; }}
 """
 
 
