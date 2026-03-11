@@ -63,9 +63,9 @@ class ControlsWidgetTriple(QWidget):
             5.0,
             0.5,
             0.4,
-            0.20,   # L1: Hub (sternum → shoulder)
-            0.65,   # L2: Arm
-            1.10,   # L3: Club
+            0.20,  # L1: Hub (sternum → shoulder)
+            0.65,  # L2: Arm
+            1.10,  # L3: Club
         ),
         "Free Triple Pendulum": (
             90.0,
@@ -81,9 +81,9 @@ class ControlsWidgetTriple(QWidget):
             1.0,
             0.5,
             0.2,
-            0.50,   # L1
-            0.50,   # L2
-            0.50,   # L3
+            0.50,  # L1
+            0.50,  # L2
+            0.50,  # L3
         ),
     }
 
@@ -123,15 +123,18 @@ class ControlsWidgetTriple(QWidget):
         self.inp_m2 = LabeledInput("m2 (kg)", "0.5", "Mass of segment 2")
         self.inp_m3 = LabeledInput("m3 (kg)", "0.4", "Mass of segment 3")
         self.inp_L1 = LabeledInput(
-            "L1 (m) — Hub", "0.20",
+            "L1 (m) — Hub",
+            "0.20",
             "Length of segment 1: Hub (sternum → shoulder)",
         )
         self.inp_L2 = LabeledInput(
-            "L2 (m) — Arm", "0.65",
+            "L2 (m) — Arm",
+            "0.65",
             "Length of segment 2: Arm",
         )
         self.inp_L3 = LabeledInput(
-            "L3 (m) — Club", "1.10",
+            "L3 (m) — Club",
+            "1.10",
             "Length of segment 3: Club",
         )
         for w in [

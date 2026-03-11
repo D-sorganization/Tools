@@ -35,8 +35,7 @@ FONT_TITLE: int = 14  # major titles
 FONT_STATUS: int = 11  # status bar text
 
 assert all(
-    v >= MIN_FONT_PX
-    for v in (FONT_BODY, FONT_GROUP, FONT_EDIT, FONT_BTN, FONT_STATUS)
+    v >= MIN_FONT_PX for v in (FONT_BODY, FONT_GROUP, FONT_EDIT, FONT_BTN, FONT_STATUS)
 ), "All font sizes must meet minimum readability threshold"
 
 STYLE_GROUP = (

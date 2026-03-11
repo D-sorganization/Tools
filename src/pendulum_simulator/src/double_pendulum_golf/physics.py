@@ -104,8 +104,12 @@ class TorqueClamp:
         # Accept negative inputs by taking abs (#1138)
         object.__setattr__(self, "max_torque1", abs(self.max_torque1))
         object.__setattr__(self, "max_torque2", abs(self.max_torque2))
-        assert self.max_torque1 > 0, f"|max_torque1| must be positive, got {self.max_torque1}"
-        assert self.max_torque2 > 0, f"|max_torque2| must be positive, got {self.max_torque2}"
+        assert (
+            self.max_torque1 > 0
+        ), f"|max_torque1| must be positive, got {self.max_torque1}"
+        assert (
+            self.max_torque2 > 0
+        ), f"|max_torque2| must be positive, got {self.max_torque2}"
 
 
 # Type aliases

@@ -88,8 +88,12 @@ class TestTriplePendulumDefaults:
         from double_pendulum_golf.physics_triple import TriplePendulumParams
 
         params = TriplePendulumParams(
-            m1=5.0, m2=0.5, m3=0.4,
-            L1=0.20, L2=0.65, L3=1.10,
+            m1=5.0,
+            m2=0.5,
+            m3=0.4,
+            L1=0.20,
+            L2=0.65,
+            L3=1.10,
         )
         assert params.L1 == 0.20
         assert params.L2 == 0.65
@@ -101,12 +105,6 @@ class TestFontSizeConstants:
 
     def test_font_constants_exist(self) -> None:
         from double_pendulum_golf.gui.controls_utils import (
-            FONT_BODY,
-            FONT_BTN,
-            FONT_EDIT,
-            FONT_GROUP,
-            FONT_STATUS,
-            FONT_TITLE,
             MIN_FONT_PX,
         )
 
@@ -174,8 +172,12 @@ class TestPhysicsTripleEnergy:
         from double_pendulum_golf.simulation_triple import run_simulation
 
         params = TriplePendulumParams(
-            m1=1.0, m2=0.5, m3=0.3,
-            L1=0.20, L2=0.65, L3=1.10,
+            m1=1.0,
+            m2=0.5,
+            m3=0.3,
+            L1=0.20,
+            L2=0.65,
+            L3=1.10,
         )
         state0 = np.array([np.pi / 3, -np.pi / 6, -np.pi / 8, 0.0, 0.0, 0.0])
 
@@ -193,9 +195,9 @@ class TestPhysicsTripleEnergy:
         E0 = total_energy(state0, params)
         E_final = total_energy(result.states[-1], params)
         # Energy should be conserved within integration tolerance
-        assert abs(E_final - E0) / max(abs(E0), 1e-10) < 0.01, (
-            f"Energy drift: E0={E0:.4f}, E_final={E_final:.4f}"
-        )
+        assert (
+            abs(E_final - E0) / max(abs(E0), 1e-10) < 0.01
+        ), f"Energy drift: E0={E0:.4f}, E_final={E_final:.4f}"
 
 
 class TestUnitConversionModule:
@@ -205,6 +207,7 @@ class TestUnitConversionModule:
         """UnitConverter class should be importable."""
         try:
             from double_pendulum_golf.gui.unit_converter import UnitConverter
+
             assert UnitConverter is not None
         except ImportError:
             pytest.skip("UnitConverter not yet implemented")
@@ -221,8 +224,9 @@ class TestDiagnosticLogging:
         source = inspect.getsource(phys)
         # Allow 'print' only in string literals and comments
         import re
+
         # Find print() calls outside of strings
-        matches = re.findall(r'^\s*print\s*\(', source, re.MULTILINE)
+        matches = re.findall(r"^\s*print\s*\(", source, re.MULTILINE)
         assert len(matches) == 0, f"Found {len(matches)} print() calls in physics.py"
 
     def test_no_print_statements_in_physics_triple(self) -> None:
@@ -232,5 +236,7 @@ class TestDiagnosticLogging:
         import double_pendulum_golf.physics_triple as phys_t
 
         source = inspect.getsource(phys_t)
-        matches = re.findall(r'^\s*print\s*\(', source, re.MULTILINE)
-        assert len(matches) == 0, f"Found {len(matches)} print() calls in physics_triple.py"
+        matches = re.findall(r"^\s*print\s*\(", source, re.MULTILINE)
+        assert (
+            len(matches) == 0
+        ), f"Found {len(matches)} print() calls in physics_triple.py"

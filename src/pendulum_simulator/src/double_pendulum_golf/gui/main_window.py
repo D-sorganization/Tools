@@ -190,14 +190,15 @@ class MainWindow(QMainWindow):
             return
         font = app.font()
         base_pt = 10  # default base
-        new_pt = max(self._FONT_MIN_PT, min(self._FONT_MAX_PT, base_pt + self._font_zoom_pt))
+        new_pt = max(
+            self._FONT_MIN_PT, min(self._FONT_MAX_PT, base_pt + self._font_zoom_pt)
+        )
         font.setPointSize(new_pt)
         app.setFont(font)
         # Persist
         settings = QSettings(_SETTINGS_ORG, _SETTINGS_APP)
         settings.setValue("font_zoom_pt", self._font_zoom_pt)
         logger.info("Font zoom: %d pt (offset %+d)", new_pt, self._font_zoom_pt)
-
 
     # ------------------------------------------------------------------
     # Menu bar
