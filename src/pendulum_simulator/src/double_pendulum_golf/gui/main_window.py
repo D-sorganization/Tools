@@ -282,7 +282,7 @@ class MainWindow(QMainWindow):
         # ── Reset view → active panel's pendulum widget ───────────────
         ts.reset_view_requested.connect(
             lambda: (
-                self._active_panel().pendulum.reset_view()  # type: ignore[union-attr]
+                self._active_panel().pendulum.reset_view()  # type: ignore[attr-defined]
                 if hasattr(self._active_panel().pendulum, "reset_view")
                 else None
             )
@@ -291,7 +291,7 @@ class MainWindow(QMainWindow):
         # ── Per-segment overlay visibility ────────────────────────────
         ts.segment_visibility_changed.connect(
             lambda vis: (
-                self._active_panel().pendulum.set_visible_segments(vis)  # type: ignore[union-attr]
+                self._active_panel().pendulum.set_visible_segments(vis)  # type: ignore[attr-defined]
                 if hasattr(self._active_panel().pendulum, "set_visible_segments")
                 else None
             )
@@ -307,10 +307,10 @@ class MainWindow(QMainWindow):
             )
             panel.sim_finished.connect(
                 lambda _p=panel: (
-                    (
-                        ts.set_running(False),
-                        ts.set_frame_range(_p.current_n_steps()),
-                    )
+                    [
+                        ts.set_running(False),  # type: ignore[func-returns-value]
+                        ts.set_frame_range(_p.current_n_steps()),  # type: ignore[func-returns-value]
+                    ]
                     if _p is self._active_panel()
                     else None
                 )
@@ -507,7 +507,7 @@ class MainWindow(QMainWindow):
                         t_end=t_end,
                         torque_func=torque_func,  # type: ignore[arg-type]
                     )
-                    vels = result.joint_velocities_at(result.n_steps - 1)
+                    vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]
                     tip_v = vels.get("tip", (0, 0))
                     speed = float(np.hypot(tip_v[0], tip_v[1]))
                     return -speed
@@ -627,7 +627,7 @@ class MainWindow(QMainWindow):
                         t_end=t_end,
                         torque_func=torque_func,  # type: ignore[arg-type]
                     )
-                    vels = result.joint_velocities_at(result.n_steps - 1)
+                    vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]
                     tip_v = vels.get("club_tip", (0, 0))
                     speed = float(np.hypot(tip_v[0], tip_v[1]))
                     return -speed

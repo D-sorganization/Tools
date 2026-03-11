@@ -97,6 +97,7 @@ class SimulationPanel(QWidget):
         limits_builder: Callable[[dict], Any] | None = None,
         clamp_builder: Callable[[dict], Any] | None = None,
         optimizer: QWidget | None = None,
+        objective_builder: Any | None = None,
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
@@ -105,6 +106,7 @@ class SimulationPanel(QWidget):
         self.matrix = matrix
         self.torque_history = torque_history
         self.optimizer = optimizer
+        self.objective_builder = objective_builder
         self._params_builder = params_builder
         self._torque_builder = torque_builder
         self._state_builder = state_builder
