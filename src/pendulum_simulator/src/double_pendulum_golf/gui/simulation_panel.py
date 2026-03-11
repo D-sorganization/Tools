@@ -96,6 +96,7 @@ class SimulationPanel(QWidget):
         torque_history: _SimViewer | None = None,
         limits_builder: Callable[[dict], Any] | None = None,
         clamp_builder: Callable[[dict], Any] | None = None,
+        optimizer: QWidget | None = None,
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
@@ -103,6 +104,7 @@ class SimulationPanel(QWidget):
         self.pendulum = pendulum
         self.matrix = matrix
         self.torque_history = torque_history
+        self.optimizer = optimizer
         self._params_builder = params_builder
         self._torque_builder = torque_builder
         self._state_builder = state_builder
@@ -114,7 +116,9 @@ class SimulationPanel(QWidget):
 
         self._result: Any | None = None
         self._anim_idx = 0
+        self._anim_frac: float = 0.0  # fractional frame accumulator (#1097)
         self._playback_speed = 1.0
+        self._sim_dt: float = 0.005  # simulation time step (updated on sim completion)
 
         self._build_ui()
         self._connect_signals()
@@ -160,6 +164,19 @@ class SimulationPanel(QWidget):
             splitter.setStretchFactor(0, 0)
             splitter.setStretchFactor(1, 3)
             splitter.setStretchFactor(2, 1)
+
+        # Add optimizer panel if provided (#1108, #1109, #1110)
+        if self.optimizer is not None:
+            opt_scroll = QScrollArea()
+            opt_scroll.setWidget(self.optimizer)
+            opt_scroll.setWidgetResizable(True)
+            opt_scroll.setMinimumWidth(200)
+            opt_scroll.setMaximumWidth(300)
+            opt_scroll.setStyleSheet(
+                "QScrollArea { border: none; background: transparent; }"
+            )
+            splitter.addWidget(opt_scroll)
+            splitter.setStretchFactor(splitter.count() - 1, 0)
 
         main_layout.addWidget(splitter)
         self._splitter = splitter  # keep reference for save/restore
@@ -277,6 +294,12 @@ class SimulationPanel(QWidget):
         self._result = res
         self._anim_idx = 0
 
+        # Compute simulation dt for real-time playback (#1115)
+        if res.n_steps > 1:
+            self._sim_dt = float(res.t[-1] - res.t[0]) / (res.n_steps - 1)
+        else:
+            self._sim_dt = 0.005
+
         self.pendulum.set_simulation(res)
         self.matrix.set_simulation(res)
         if self.torque_history is not None:
@@ -321,6 +344,7 @@ class SimulationPanel(QWidget):
         self._timer.stop()
         self._result = None
         self._anim_idx = 0
+        self._anim_frac = 0.0
         self.pendulum.clear()
         self.matrix.clear()
         if self.torque_history is not None:
@@ -335,6 +359,7 @@ class SimulationPanel(QWidget):
         if playing:
             if self._anim_idx >= self._result.n_steps - 1:
                 self._anim_idx = 0
+                self._anim_frac = 0.0
                 if hasattr(self.pendulum, "_trail"):
                     self.pendulum._trail.clear()
             self._timer.start()
@@ -366,15 +391,32 @@ class SimulationPanel(QWidget):
         self._display_frame(frame)
 
     def _advance_frame(self) -> None:
+        """Advance the animation by a fractional frame count.
+
+        Uses a fractional accumulator so that high-speed playback (e.g. 5×)
+        still produces smooth visual transitions instead of integer jumps.
+
+        Closes #1097.
+        """
         if self._result is None:
             self._timer.stop()
             return
 
-        frames_per_tick = max(1, int(self._playback_speed * 3))
-        self._anim_idx += frames_per_tick
+        # Compute real-time frame advance (#1115)
+        # frames_per_tick = wall_clock_tick / sim_dt × speed_multiplier
+        dt_wall = self.ANIMATION_INTERVAL_MS / 1000.0
+        frames_per_tick = (dt_wall / max(self._sim_dt, 1e-6)) * self._playback_speed
+        self._anim_frac += frames_per_tick
+        advance = int(self._anim_frac)
+        if advance < 1:
+            return  # sub-frame accumulation — wait for next tick
+        self._anim_frac -= advance
+
+        self._anim_idx += advance
 
         if self._anim_idx >= self._result.n_steps:
             self._anim_idx = self._result.n_steps - 1
+            self._anim_frac = 0.0
             self._timer.stop()
             self.controls.stop_playback()
 

@@ -72,6 +72,10 @@ gui = [
 theme = [
     "PyQt6>=6.5.0",
 ]
+# P&ID generation
+pid = [
+    "ezdxf[draw]>=1.4.3",
+]
 # Development tools
 dev = [
     "pytest>=7.0.0",
@@ -83,6 +87,7 @@ dev = [
 
 [project.scripts]
 urdf-gen = "model_generation.cli:main"
+generate-pid = "programmatic_pid.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/D-sorganization/Tools"
@@ -98,6 +103,7 @@ include = [
     "humanoid_character_builder*",
     "signal_toolkit*",
     "rotation_converter*",
+    "programmatic_pid*",
     "utils*",
     "tools*",
     "web_applications*",

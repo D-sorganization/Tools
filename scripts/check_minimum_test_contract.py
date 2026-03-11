@@ -68,7 +68,14 @@ def main() -> int:
         )
         return 0
 
-    violations = [pkg for pkg in packages if not has_tests(pkg)]
+    # Packages with tests in non-standard locations that the heuristic can't find
+    KNOWN_TESTED = {
+        "src/shared/python/programmatic_pid",  # tests/programmatic_pid/
+        "src/pid_generator",  # tests/programmatic_pid/ (thin CLI wrapper)
+    }
+    violations = [
+        pkg for pkg in packages if pkg not in KNOWN_TESTED and not has_tests(pkg)
+    ]
     if violations:
         sys.stderr.write("Minimum test contract failed for changed packages:\n")
         for pkg in violations:

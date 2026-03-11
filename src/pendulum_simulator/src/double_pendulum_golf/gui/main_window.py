@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import logging
 import sys
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -53,6 +54,7 @@ from .pendulum_widget import PendulumWidget
 from .simulation_panel import SimulationPanel
 from .toolstrip_widget import ToolStrip
 from .torque_history_widget import TorqueHistoryWidget
+from .optimization_widget import OptimizationWidget
 
 # TODO(#1042): Derive from fleet ThemeManager palette when it's a hard dep.
 from .controls_utils import PENDULUM_DARK_STYLE as _PENDULUM_DARK_STYLE
@@ -240,6 +242,8 @@ class MainWindow(QMainWindow):
                 ts.mob_ellipsoid_toggled.connect(pw.set_show_mob_ellipsoids)
             if hasattr(pw, "set_show_force_ellipsoids"):
                 ts.force_ellipsoid_toggled.connect(pw.set_show_force_ellipsoids)
+            if hasattr(pw, "set_show_com"):
+                ts.com_toggled.connect(pw.set_show_com)
 
             # Scale sliders → pendulum widget (optional capability)
             if hasattr(pw, "set_force_scale"):
@@ -265,6 +269,15 @@ class MainWindow(QMainWindow):
             if hasattr(pw, "reset_view"):
                 ts.reset_view_requested.connect(pw.reset_view)
 
+            # Per-segment overlay visibility (#1100, #1101, #1102)
+            if hasattr(pw, "set_visible_segments"):
+                ts.segment_visibility_changed.connect(pw.set_visible_segments)
+
+        # Update segment checkboxes when tab changes
+        self._tabs.currentChanged.connect(self._on_tab_changed)
+        # Initialize with the default tab's segments
+        self._on_tab_changed(self._tabs.currentIndex())
+
     def _build_double_panel(self) -> SimulationPanel:
         controls = ControlsWidget()
         pendulum = PendulumWidget()
@@ -272,14 +285,20 @@ class MainWindow(QMainWindow):
         torque_history = TorqueHistoryWidget()
 
         def build_params(p: dict) -> PendulumParams:
+            tilt_rad = np.radians(p.get("tilt_deg", 0.0))
+            azimuth_rad = np.radians(p.get("azimuth_deg", 0.0))
             g = 9.81 if p.get("gravity_on", True) else 0.0
+            g_eff = g * float(np.cos(tilt_rad))  # (#1113) effective gravity on plane
+            # Update display tilt and view azimuth on next paint
+            pendulum.set_tilt_angle(tilt_rad)
+            pendulum.set_view_azimuth(azimuth_rad)  # (#1118)
             return PendulumParams(
                 m1=p["m1"],
                 m2=p["m2"],
                 L1=p["L1"],
                 L2=p["L2"],
                 mClub=p.get("mClub", 0.0),
-                g=g,
+                g=g_eff,
                 b1=p.get("b1", 0.0),
                 b2=p.get("b2", 0.0),
                 mu1=p.get("mu1", 0.0),
@@ -309,6 +328,44 @@ class MainWindow(QMainWindow):
                 max_torque2=p.get("max_torque2", 20.0),
             )
 
+        # Optimizer (#1108)
+        optimizer = OptimizationWidget(
+            model_name="Double Pendulum",
+            n_torque_params=2,
+        )
+
+        def _make_double_objective(p: dict) -> Callable:
+            """Build a tip-speed objective from current controls."""
+            params = build_params(p)
+            initial_state = build_state(p)
+            t_end = p["t_end"]
+            limits = build_limits(p)
+            clamp = build_clamp(p)
+
+            def objective(coeffs: np.ndarray) -> float:
+                n_half = len(coeffs) // 2
+                s_coeffs = list(coeffs[:n_half])
+                w_coeffs = list(coeffs[n_half:])
+                torque_func = make_polynomial_torque(s_coeffs, w_coeffs)
+                try:
+                    result = run_simulation(
+                        params=params,
+                        initial_state=initial_state,
+                        t_end=t_end,
+                        torque_func=torque_func,  # type: ignore[arg-type]
+                        limits=limits,
+                        clamp=clamp,
+                    )
+                    # Tip speed at last frame
+                    vels = result.joint_velocities_at(result.n_steps - 1)
+                    tip_v = vels.get("tip", (0, 0))
+                    speed = float(np.hypot(tip_v[0], tip_v[1]))
+                    return -speed  # minimize negative speed
+                except Exception:  # noqa: BLE001
+                    return 0.0  # crashed → bad solution
+
+            return objective
+
         panel = SimulationPanel(
             controls=controls,
             pendulum=pendulum,  # type: ignore[arg-type]
@@ -320,6 +377,7 @@ class MainWindow(QMainWindow):
             torque_history=torque_history,  # type: ignore[arg-type]
             limits_builder=build_limits,
             clamp_builder=build_clamp,
+            optimizer=optimizer,
         )
         panel._settings_key = "splitter_double"
         return panel
@@ -330,7 +388,11 @@ class MainWindow(QMainWindow):
         matrix = TripleMatrixWidget()
 
         def build_params(p: dict) -> TriplePendulumParams:
+            tilt_rad = np.radians(p.get("tilt_deg", 0.0))
             g = 9.81 if p.get("gravity_on", True) else 0.0
+            g_eff = g * float(np.cos(tilt_rad))  # (#1113)
+            pendulum.set_tilt_angle(tilt_rad)
+            pendulum.set_view_azimuth(np.radians(p.get("azimuth_deg", 0.0)))  # (#1118)
             return TriplePendulumParams(
                 m1=p["m1"],
                 m2=p["m2"],
@@ -338,7 +400,7 @@ class MainWindow(QMainWindow):
                 L1=p["L1"],
                 L2=p["L2"],
                 L3=p["L3"],
-                g=g,
+                g=g_eff,
                 b1=p.get("b1", 0.0),
                 b2=p.get("b2", 0.0),
                 b3=p.get("b3", 0.0),
@@ -366,6 +428,12 @@ class MainWindow(QMainWindow):
                 p["wrist_coeffs"],
             )
 
+        # Optimizer (#1109)
+        optimizer = OptimizationWidget(
+            model_name="Triple Pendulum",
+            n_torque_params=3,
+        )
+
         panel = SimulationPanel(
             controls=controls,
             pendulum=pendulum,  # type: ignore[arg-type]
@@ -374,6 +442,7 @@ class MainWindow(QMainWindow):
             torque_builder=build_torque,
             state_builder=build_state,
             run_simulation=run_simulation_triple,
+            optimizer=optimizer,
         )
         panel._settings_key = "splitter_triple"
         return panel
@@ -384,7 +453,11 @@ class MainWindow(QMainWindow):
         matrix = GolferMatrixWidget()
 
         def build_params(p: dict) -> GolferParams:
+            tilt_rad = np.radians(p.get("tilt_deg", 0.0))
             g = 9.81 if p.get("gravity_on", True) else 0.0
+            g_eff = g * float(np.cos(tilt_rad))  # (#1113)
+            pendulum.set_tilt_angle(tilt_rad)
+            pendulum.set_view_azimuth(np.radians(p.get("azimuth_deg", 0.0)))  # (#1118)
             return GolferParams(
                 m_hub=p["m_hub"],
                 m_r_upper=p["m_r_upper"],
@@ -403,7 +476,7 @@ class MainWindow(QMainWindow):
                 grip_right=p["grip_right"],
                 grip_left=p["grip_left"],
                 m_clubhead=p.get("m_clubhead", 0.2),
-                g=g,
+                g=g_eff,
                 b_hub=p.get("b_hub", 0.0),
                 b_rs=p.get("b_rs", 0.0),
                 b_re=p.get("b_re", 0.0),
@@ -446,6 +519,12 @@ class MainWindow(QMainWindow):
                 p["lh_coeffs"],
             )
 
+        # Optimizer (#1110)
+        optimizer = OptimizationWidget(
+            model_name="Golfer Upper Body",
+            n_torque_params=7,
+        )
+
         panel = SimulationPanel(
             controls=controls,
             pendulum=pendulum,  # type: ignore[arg-type]
@@ -454,9 +533,29 @@ class MainWindow(QMainWindow):
             torque_builder=build_torque,
             state_builder=build_state,
             run_simulation=run_simulation_golfer,
+            optimizer=optimizer,
         )
         panel._settings_key = "splitter_golfer"
         return panel
+
+    # ------------------------------------------------------------------
+    # Per-segment visibility (#1100, #1101, #1102)
+    # ------------------------------------------------------------------
+
+    # Joint names per model type
+    _SEGMENTS_DOUBLE = ["shoulder", "wrist", "tip"]
+    _SEGMENTS_TRIPLE = ["shoulder", "wrist1", "wrist2", "tip"]
+    _SEGMENTS_GOLFER = ["hub", "rs", "re", "rh", "ls", "le", "lh", "club_tip"]
+
+    def _on_tab_changed(self, index: int) -> None:
+        """Update toolstrip segment checkboxes for the active model tab."""
+        segment_map = {
+            0: self._SEGMENTS_DOUBLE,
+            1: self._SEGMENTS_TRIPLE,
+            2: self._SEGMENTS_GOLFER,
+        }
+        names = segment_map.get(index, self._SEGMENTS_DOUBLE)
+        self._toolstrip.set_segment_names(names)
 
     # ------------------------------------------------------------------
     # Theme management

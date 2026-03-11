@@ -14,7 +14,7 @@ from collections import deque
 
 import numpy as np
 from PyQt6.QtCore import QPoint, QPointF, Qt
-from PyQt6.QtGui import QBrush, QColor, QFont, QMouseEvent, QPainter, QPen
+from PyQt6.QtGui import QBrush, QColor, QFont, QMouseEvent, QPainter, QPainterPath, QPen
 from PyQt6.QtWidgets import QWidget
 
 from ..simulation_golfer import GolferSimulationResult
@@ -72,6 +72,16 @@ class GolferPendulumWidget(QWidget):
         self._show_force_ellipsoids: bool = False
         self._mob_ellipsoid_scale: float = 1.0
         self._force_ellipsoid_scale: float = 1.0
+        self._show_com: bool = False
+
+        # Per-segment overlay visibility (#1102)
+        self._visible_segments: set[str] | None = None
+
+        # Swing plane tilt angle in radians (#1113)
+        self._tilt_angle: float = 0.0
+
+        # View azimuth rotation in radians (#1118)
+        self._view_azimuth: float = 0.0
 
     # ------------------------------------------------------------------
     # Public interface (_SimViewer protocol)
@@ -134,6 +144,29 @@ class GolferPendulumWidget(QWidget):
         self._zoom = 1.0
         self._pan_x = 0.0
         self._pan_y = 0.0
+        self.update()
+
+    def set_show_com(self, show: bool) -> None:
+        """Toggle combined center of mass display."""
+        self._show_com = show
+        self.update()
+
+    def set_visible_segments(self, segments: set[str] | None) -> None:
+        """Set which joints are visible for overlays.
+
+        Closes #1102.
+        """
+        self._visible_segments = segments
+        self.update()
+
+    def set_tilt_angle(self, angle_rad: float) -> None:
+        """Set swing plane tilt for display projection (#1113)."""
+        self._tilt_angle = float(angle_rad)
+        self.update()
+
+    def set_view_azimuth(self, angle_rad: float) -> None:
+        """Set view azimuth for canvas rotation (#1118)."""
+        self._view_azimuth = float(angle_rad)
         self.update()
 
     # ------------------------------------------------------------------
@@ -208,7 +241,15 @@ class GolferPendulumWidget(QWidget):
         ppm = self._pixels_per_meter
         cx = self.width() / 2.0 + self._pan_x
         cy = self.height() * 0.30 + self._pan_y
-        return QPointF(cx + x * ppm, cy - y * ppm)
+        # Apply azimuth rotation (#1118)
+        cos_az = float(np.cos(self._view_azimuth))
+        sin_az = float(np.sin(self._view_azimuth))
+        x_rot = x * cos_az
+        depth = x * sin_az
+        # Apply tilt foreshortening (#1113)
+        cos_tilt = float(np.cos(self._tilt_angle))
+        y_proj = y * cos_tilt - depth * float(np.sin(self._tilt_angle))
+        return QPointF(cx + x_rot * ppm, cy - y_proj * ppm)
 
     # ------------------------------------------------------------------
     # Painting
@@ -234,6 +275,9 @@ class GolferPendulumWidget(QWidget):
         if self._show_forces:
             self._draw_force_vectors(painter)
 
+        if self._show_com:
+            self._draw_com(painter)
+
         self._draw_info(painter)
         painter.end()
 
@@ -254,20 +298,35 @@ class GolferPendulumWidget(QWidget):
             painter.drawLine(p1, p2)
             r += step
 
+    SPLINE_SUBDIV = 4  # (#1116) trail smoothing subdivisions
+
     def _draw_trail(self, painter: QPainter) -> None:
         n = len(self._trail)
         if n < 2:
             return
-        for i in range(1, n):
-            alpha = int(30 + 180 * (i / n))
-            width = 1.0 + 2.5 * (i / n)
+
+        # Catmull-Rom spline smoothing (#1116)
+        if n >= 4:
+            from .pendulum_widget import PendulumWidget
+
+            smooth = PendulumWidget._catmull_rom_smooth(
+                list(self._trail), self.SPLINE_SUBDIV
+            )
+        else:
+            smooth = list(self._trail)
+
+        ns = len(smooth)
+        for i in range(1, ns):
+            t = i / ns
+            alpha = int(30 + 180 * t)
+            width = 1.0 + 2.5 * t
             color = QColor(self.COLOR_TRAIL)
             color.setAlpha(alpha)
             pen = QPen(color, width)
             pen.setCapStyle(Qt.PenCapStyle.RoundCap)
             painter.setPen(pen)
-            x0, y0 = self._trail[i - 1]
-            x1, y1 = self._trail[i]
+            x0, y0 = smooth[i - 1]
+            x1, y1 = smooth[i]
             painter.drawLine(
                 self._world_to_pixel(x0, y0),
                 self._world_to_pixel(x1, y1),
@@ -294,6 +353,25 @@ class GolferPendulumWidget(QWidget):
         pen.setCapStyle(Qt.PenCapStyle.RoundCap)
         painter.setPen(pen)
         painter.drawLine(origin, hub)
+
+        # Scapula links (#1104, #1111)
+        if "rscap" in pos:
+            rscap = self._world_to_pixel(*pos["rscap"])
+            pen = QPen(QColor(180, 120, 120), 2, Qt.PenStyle.DashDotLine)
+            pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+            painter.setPen(pen)
+            painter.drawLine(rscap, rs)
+            # Scapula joint marker
+            painter.setBrush(QBrush(QColor(180, 120, 120, 150)))
+            painter.drawEllipse(rscap, 3, 3)
+        if "lscap" in pos:
+            lscap = self._world_to_pixel(*pos["lscap"])
+            pen = QPen(QColor(120, 120, 180), 2, Qt.PenStyle.DashDotLine)
+            pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+            painter.setPen(pen)
+            painter.drawLine(lscap, ls)
+            painter.setBrush(QBrush(QColor(120, 120, 180, 150)))
+            painter.drawEllipse(lscap, 3, 3)
 
         # Shoulder bar (RS → LS through hub)
         pen = QPen(self.COLOR_SHOULDER_BAR, 3, Qt.PenStyle.DashLine)
@@ -376,6 +454,9 @@ class GolferPendulumWidget(QWidget):
 
         painter.setPen(QPen(self.COLOR_FORCE, 2))
         for key, force in forces.items():
+            # Per-segment visibility filter (#1102)
+            if self._visible_segments is not None and key not in self._visible_segments:
+                continue
             jp = joint_pos_map.get(key)
             if jp is None:
                 continue
@@ -387,6 +468,87 @@ class GolferPendulumWidget(QWidget):
             p1 = self._world_to_pixel(*jp)
             p2 = self._world_to_pixel(*end)
             painter.drawLine(p1, p2)
+
+            # Filled arrowhead
+            dx = p2.x() - p1.x()
+            dy = p2.y() - p1.y()
+            arrow_l = max(1.0, np.hypot(dx, dy))
+            ux, uy = dx / arrow_l, dy / arrow_l
+            a_len = 10.0
+            a_w = 4.0
+            left = QPointF(
+                p2.x() - a_len * ux + a_w * uy,
+                p2.y() - a_len * uy - a_w * ux,
+            )
+            right = QPointF(
+                p2.x() - a_len * ux - a_w * uy,
+                p2.y() - a_len * uy + a_w * ux,
+            )
+            path = QPainterPath()
+            path.moveTo(p2)
+            path.lineTo(left)
+            path.lineTo(right)
+            path.closeSubpath()
+            old_brush = painter.brush()
+            painter.setBrush(QBrush(painter.pen().color()))
+            painter.drawPath(path)
+            painter.setBrush(old_brush)
+
+    # ------------------------------------------------------------------
+    # Center of Mass drawing
+    # ------------------------------------------------------------------
+
+    COLOR_COM = QColor(255, 255, 80)  # bright yellow
+
+    def _draw_com(self, painter: QPainter) -> None:
+        """Draw the combined center of mass of the golfer system."""
+        if self._result is None:
+            return
+
+        pos = self._result.positions_at(self._current_idx)
+        params = self._result.params
+
+        # Mass points at segment midpoints or endpoints
+        hub = np.array(pos["hub"])
+        re = np.array(pos["re"])
+        rh = np.array(pos["rh"])
+        le = np.array(pos["le"])
+        lh = np.array(pos["lh"])
+        club_base = np.array(pos["club_base"])
+        club_tip = np.array(pos["club_tip"])
+        club_com = 0.5 * (club_base + club_tip)
+
+        masses = [
+            params.m_hub,
+            params.m_r_upper,
+            params.m_r_fore,
+            params.m_l_upper,
+            params.m_l_fore,
+            params.m_club,
+            params.m_clubhead,
+        ]
+        positions = [hub, re, rh, le, lh, club_com, club_tip]
+
+        total_m = sum(masses)
+        com = sum(m * p for m, p in zip(masses, positions)) / total_m
+
+        com_px = self._world_to_pixel(float(com[0]), float(com[1]))
+
+        # Draw COM marker: crosshair + circle
+        r = 6
+        painter.setPen(QPen(self.COLOR_COM, 2))
+        painter.setBrush(QBrush(QColor(255, 255, 80, 100)))
+        painter.drawEllipse(com_px, r, r)
+        painter.drawLine(
+            QPointF(com_px.x() - r * 1.5, com_px.y()),
+            QPointF(com_px.x() + r * 1.5, com_px.y()),
+        )
+        painter.drawLine(
+            QPointF(com_px.x(), com_px.y() - r * 1.5),
+            QPointF(com_px.x(), com_px.y() + r * 1.5),
+        )
+        painter.setFont(QFont("Monospace", 7))
+        painter.drawText(QPointF(com_px.x() + r + 2, com_px.y() - 2), "COM")
 
     def _draw_info(self, painter: QPainter) -> None:
         assert self._result is not None

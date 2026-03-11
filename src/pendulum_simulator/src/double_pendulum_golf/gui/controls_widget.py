@@ -371,7 +371,7 @@ class ControlsWidget(QWidget):
         return box
 
     def _build_gravity_section(self) -> QGroupBox:
-        """Gravity toggle — force/scale controls live in the toolstrip."""
+        """Gravity toggle and swing plane tilt — force/scale controls live in the toolstrip."""
         box = QGroupBox("Physics")
         box.setStyleSheet(STYLE_GROUP)
         layout = QVBoxLayout(box)
@@ -382,6 +382,28 @@ class ControlsWidget(QWidget):
         self.chk_gravity.setStyleSheet(STYLE_CHECK)
         self.chk_gravity.toggled.connect(self.gravity_changed.emit)
         layout.addWidget(self.chk_gravity)
+
+        # Swing plane tilt angle (#1113)
+        self.inp_tilt = LabeledInput(
+            "Tilt °",
+            "0",
+            "Swing plane tilt from vertical (0°=vertical, 90°=horizontal).\n"
+            "Effective gravity = g·cos(tilt). A typical golfer's\n"
+            "swing plane is tilted ~30–60° from vertical.",
+            56,
+        )
+        layout.addWidget(self.inp_tilt)
+
+        # View azimuth angle (#1118)
+        self.inp_azimuth = LabeledInput(
+            "Azimuth °",
+            "0",
+            "View rotation around vertical axis (0°=front, 90°=side).\n"
+            "Rotate the canvas to see the tilted swing plane\n"
+            "from different angles.",
+            56,
+        )
+        layout.addWidget(self.inp_azimuth)
         return box
 
     def _build_hidden_compat_widgets(self) -> None:
@@ -536,6 +558,8 @@ class ControlsWidget(QWidget):
             "enable_clamp": self.chk_clamp.isChecked(),
             "max_torque1": parse_float(self.inp_max_tau1, "Max τ1"),
             "max_torque2": parse_float(self.inp_max_tau2, "Max τ2"),
+            "tilt_deg": parse_float(self.inp_tilt, "Tilt"),
+            "azimuth_deg": parse_float(self.inp_azimuth, "Azimuth"),
         }
 
     def _update_torque_preview(self) -> None:

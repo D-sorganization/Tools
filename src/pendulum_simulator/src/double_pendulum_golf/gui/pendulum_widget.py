@@ -18,7 +18,7 @@ from collections import deque
 
 import numpy as np
 from PyQt6.QtCore import QPoint, QPointF, QRect, Qt
-from PyQt6.QtGui import QBrush, QColor, QFont, QMouseEvent, QPainter, QPen
+from PyQt6.QtGui import QBrush, QColor, QFont, QMouseEvent, QPainter, QPainterPath, QPen
 from PyQt6.QtWidgets import QWidget
 
 from ..jacobians import ellipsoids_double, ellipsoids_triple
@@ -79,10 +79,21 @@ class PendulumWidget(QWidget):
         self._force_scale: float = 1.0
         self._show_mob_ellipsoids: bool = False
         self._show_force_ellipsoids: bool = False
+        self._show_com: bool = False
 
         # Ellipsoid display scales (separate for mobility vs force)
         self._mob_ellipsoid_scale: float = 1.0
         self._force_ellipsoid_scale: float = 1.0
+
+        # Per-segment overlay visibility (#1100, #1101)
+        # None = show all segments (default); set[str] = only these joints
+        self._visible_segments: set[str] | None = None
+
+        # Swing plane tilt angle in radians (#1113)
+        self._tilt_angle: float = 0.0
+
+        # View azimuth rotation in radians (#1118)
+        self._view_azimuth: float = 0.0
 
         # Pre-computed counterfactual forces (list[dict] or None)
         self._zero_torque_forces: list[dict] | None = None
@@ -240,6 +251,50 @@ class PendulumWidget(QWidget):
         self._force_ellipsoid_scale = float(scale)
         self.update()
 
+    def set_show_com(self, show: bool) -> None:
+        """Toggle combined center of mass display."""
+        self._show_com = show
+        self.update()
+
+    def set_visible_segments(self, segments: set[str] | None) -> None:
+        """Set which joint segments are visible for overlays.
+
+        Parameters
+        ----------
+        segments : set[str] or None
+            Joint names to show overlays for (e.g. {"wrist", "tip"}).
+            None means show all segments.
+
+        Closes #1100, #1101.
+        """
+        self._visible_segments = segments
+        self.update()
+
+    def set_tilt_angle(self, angle_rad: float) -> None:
+        """Set the swing plane tilt angle for display projection.
+
+        Parameters
+        ----------
+        angle_rad : float
+            Tilt from vertical in radians (0 = vertical, π/2 = horizontal).
+
+        Closes #1113.
+        """
+        self._tilt_angle = float(angle_rad)
+        self.update()
+
+    def set_view_azimuth(self, angle_rad: float) -> None:
+        """Set the view azimuth for canvas rotation (#1118).
+
+        Parameters
+        ----------
+        angle_rad : float
+            Rotation around the vertical axis in radians.
+            0 = front view, π/2 = side view.
+        """
+        self._view_azimuth = float(angle_rad)
+        self.update()
+
     def reset_view(self) -> None:
         """Reset zoom and pan to default (also callable from toolstrip button)."""
         self._zoom = 1.0
@@ -327,16 +382,30 @@ class PendulumWidget(QWidget):
         return max(30.0, min(w_scale, h_scale))
 
     def _world_to_pixel(self, x_world: float, y_world: float) -> QPointF:
-        """Convert physics coords to widget pixels, applying zoom and pan.
+        """Convert physics coords to widget pixels with 3D projection.
 
-        Shoulder is placed at horizontal centre and 35% from the top so
-        full-circle swings remain on-screen without the user needing to pan.
+        Applies azimuth rotation (#1118) and tilt foreshortening (#1113)
+        for a proper view of the pendulum on a tilted/rotated plane.
+
+        Projection: rotate (x, y) by azimuth around vertical, then
+        compress the depth axis by cos(tilt).
         """
         base_ppm = self._pixels_per_meter
         cx = self.width() / 2.0 + self._pan_x
-        cy = self.height() * 0.35 + self._pan_y  # 35% from top (was 20%)
-        px = cx + x_world * base_ppm
-        py = cy - y_world * base_ppm
+        cy = self.height() * 0.35 + self._pan_y
+
+        # Apply azimuth rotation (#1118)
+        cos_az = float(np.cos(self._view_azimuth))
+        sin_az = float(np.sin(self._view_azimuth))
+        x_rot = x_world * cos_az
+        depth = x_world * sin_az  # into screen
+
+        # Apply tilt foreshortening to Y + depth (#1113)
+        cos_tilt = float(np.cos(self._tilt_angle))
+        y_proj = y_world * cos_tilt - depth * float(np.sin(self._tilt_angle))
+
+        px = cx + x_rot * base_ppm
+        py = cy - y_proj * base_ppm
         return QPointF(px, py)
 
     # ------------------------------------------------------------------
@@ -373,6 +442,9 @@ class PendulumWidget(QWidget):
 
         if self._show_mob_ellipsoids or self._show_force_ellipsoids:
             self._draw_ellipsoids_at_frame(painter)
+
+        if self._show_com:
+            self._draw_com(painter)
 
         self._draw_info(painter)
         self._draw_zoom_controls(painter)
@@ -412,24 +484,81 @@ class PendulumWidget(QWidget):
         painter.setPen(pen)
         painter.drawLine(p1, p2)
 
+    # Number of subdivision samples per trail segment (#1116)
+    SPLINE_SUBDIV = 4
+
     def _draw_trail(self, painter: QPainter) -> None:
         n = len(self._trail)
         if n < 2:
             return
-        for i in range(1, n):
-            alpha = int(30 + 180 * (i / n))
-            width = 1.0 + 2.5 * (i / n)
+
+        # Build spline-smoothed points via Catmull-Rom (#1116)
+        if n >= 4:
+            smooth = self._catmull_rom_smooth(list(self._trail), self.SPLINE_SUBDIV)
+        else:
+            smooth = list(self._trail)
+
+        ns = len(smooth)
+        for i in range(1, ns):
+            t = i / ns  # progress 0→1
+            alpha = int(30 + 180 * t)
+            width = 1.0 + 2.5 * t
             color = QColor(self.COLOR_TRAIL)
             color.setAlpha(alpha)
             pen = QPen(color, width)
             pen.setCapStyle(Qt.PenCapStyle.RoundCap)
             painter.setPen(pen)
-            x0, y0 = self._trail[i - 1]
-            x1, y1 = self._trail[i]
+            x0, y0 = smooth[i - 1]
+            x1, y1 = smooth[i]
             painter.drawLine(
                 self._world_to_pixel(x0, y0),
                 self._world_to_pixel(x1, y1),
             )
+
+    @staticmethod
+    def _catmull_rom_smooth(
+        points: list[tuple[float, float]],
+        n_sub: int = 4,
+    ) -> list[tuple[float, float]]:
+        """Catmull-Rom spline interpolation over trail points.
+
+        Generates ``n_sub`` subdivisions between each pair of interior
+        control points for a smooth curve.  Endpoint tangents are clamped
+        by duplicating the first and last points.
+        """
+        n = len(points)
+        if n < 4:
+            return points
+
+        # Duplicate endpoints for boundary tangents
+        pts = [points[0]] + list(points) + [points[-1]]
+        result: list[tuple[float, float]] = []
+
+        for i in range(1, len(pts) - 2):
+            p0 = pts[i - 1]
+            p1 = pts[i]
+            p2 = pts[i + 1]
+            p3 = pts[i + 2]
+            for j in range(n_sub):
+                t = j / n_sub
+                t2 = t * t
+                t3 = t2 * t
+                x = 0.5 * (
+                    (2 * p1[0])
+                    + (-p0[0] + p2[0]) * t
+                    + (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2
+                    + (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3
+                )
+                y = 0.5 * (
+                    (2 * p1[1])
+                    + (-p0[1] + p2[1]) * t
+                    + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2
+                    + (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3
+                )
+                result.append((x, y))
+        # Add final point
+        result.append(points[-1])
+        return result
 
     def _draw_pendulum(self, painter: QPainter) -> None:
         """Draw the segments and joint markers."""
@@ -543,6 +672,9 @@ class PendulumWidget(QWidget):
 
         painter.setPen(QPen(self.COLOR_FORCE, 2))
         for key, force in forces.items():
+            # Per-segment visibility filter (#1100)
+            if self._visible_segments is not None and key not in self._visible_segments:
+                continue
             joint_pos = joint_map.get(key)
             if joint_pos is None:
                 continue
@@ -585,6 +717,9 @@ class PendulumWidget(QWidget):
         pen = QPen(self.COLOR_ZERO_TORQUE, 2, Qt.PenStyle.DashLine)
         painter.setPen(pen)
         for key, force in forces.items():
+            # Per-segment visibility filter (#1100)
+            if self._visible_segments is not None and key not in self._visible_segments:
+                continue
             joint_pos = joint_map.get(key)
             if joint_pos is None:
                 continue
@@ -640,6 +775,12 @@ class PendulumWidget(QWidget):
             }
 
         for name, ell in data.items():
+            # Per-segment visibility filter (#1100)
+            if (
+                self._visible_segments is not None
+                and name not in self._visible_segments
+            ):
+                continue
             world_pos = endpoint_map.get(name)
             if world_pos is None:
                 continue
@@ -732,29 +873,109 @@ class PendulumWidget(QWidget):
             painter.drawText(QPointF(lbl_x, lbl_y), label)
 
     def _draw_arrow(self, painter: QPainter, origin: tuple, end: tuple) -> None:
+        """Draw a force/torque vector with a filled triangular arrowhead."""
         p0 = self._world_to_pixel(origin[0], origin[1])
         p1 = self._world_to_pixel(end[0], end[1])
         painter.drawLine(p0, p1)
-        # Arrowhead
+
+        # Arrowhead — filled triangle
         dx = p1.x() - p0.x()
         dy = p1.y() - p0.y()
         length = max(1.0, np.hypot(dx, dy))
         ux, uy = dx / length, dy / length
-        arrow_len = 8.0
+        arrow_len = 10.0
+        arrow_w = 4.0
+
+        tip = p1
+        left = QPointF(
+            p1.x() - arrow_len * ux + arrow_w * uy,
+            p1.y() - arrow_len * uy - arrow_w * ux,
+        )
+        right = QPointF(
+            p1.x() - arrow_len * ux - arrow_w * uy,
+            p1.y() - arrow_len * uy + arrow_w * ux,
+        )
+
+        path = QPainterPath()
+        path.moveTo(tip)
+        path.lineTo(left)
+        path.lineTo(right)
+        path.closeSubpath()
+
+        old_brush = painter.brush()
+        painter.setBrush(QBrush(painter.pen().color()))
+        painter.drawPath(path)
+        painter.setBrush(old_brush)
+
+    # ------------------------------------------------------------------
+    # Center of Mass drawing
+    # ------------------------------------------------------------------
+
+    COLOR_COM = QColor(255, 255, 80)  # bright yellow
+
+    def _draw_com(self, painter: QPainter) -> None:
+        """Draw the combined center of mass of the system."""
+        if self._result is None:
+            return
+
+        state = self._result.states[self._current_idx]
+        params = self._result.params
+
+        # Compute COM from all mass point positions
+        if state.shape[0] >= 6:
+            # Triple pendulum
+            pos = self._result.positions_at(self._current_idx)
+            masses = [params.m1, params.m2, getattr(params, "m3", params.m2)]
+            wrist1 = np.array(pos.get("wrist1", pos.get("wrist", (0, 0))))
+            wrist2 = np.array(pos.get("wrist2", (0, 0)))
+            tip = np.array(pos["tip"])
+            # Approximate: mass at midpoint of each segment
+            shoulder = np.array(pos["shoulder"])
+            com1 = 0.5 * (shoulder + wrist1)
+            com2 = 0.5 * (wrist1 + wrist2)
+            com3 = 0.5 * (wrist2 + tip)
+            total_m = sum(masses)
+            com = (masses[0] * com1 + masses[1] * com2 + masses[2] * com3) / total_m
+        else:
+            # Double pendulum
+            theta1 = state[0]
+            phi = state[1]
+            abs2 = theta1 + phi
+            # Mass at midpoint of each segment
+            c1x = 0.5 * params.L1 * np.sin(theta1)
+            c1y = -0.5 * params.L1 * np.cos(theta1)
+            wx = params.L1 * np.sin(theta1)
+            wy = -params.L1 * np.cos(theta1)
+            c2x = wx + 0.5 * params.L2 * np.sin(abs2)
+            c2y = wy - 0.5 * params.L2 * np.cos(abs2)
+            total_m = params.m1 + params.m2
+            com = np.array(
+                [
+                    (params.m1 * c1x + params.m2 * c2x) / total_m,
+                    (params.m1 * c1y + params.m2 * c2y) / total_m,
+                ]
+            )
+
+        com_px = self._world_to_pixel(float(com[0]), float(com[1]))
+
+        # Draw COM marker: crosshair + circle
+        r = 6
+        painter.setPen(QPen(self.COLOR_COM, 2))
+        painter.setBrush(QBrush(QColor(255, 255, 80, 100)))
+        painter.drawEllipse(com_px, r, r)
+        # Crosshair lines
         painter.drawLine(
-            p1,
-            QPointF(
-                p1.x() - arrow_len * (ux + 0.4 * uy),
-                p1.y() - arrow_len * (uy - 0.4 * ux),
-            ),
+            QPointF(com_px.x() - r * 1.5, com_px.y()),
+            QPointF(com_px.x() + r * 1.5, com_px.y()),
         )
         painter.drawLine(
-            p1,
-            QPointF(
-                p1.x() - arrow_len * (ux - 0.4 * uy),
-                p1.y() - arrow_len * (uy + 0.4 * ux),
-            ),
+            QPointF(com_px.x(), com_px.y() - r * 1.5),
+            QPointF(com_px.x(), com_px.y() + r * 1.5),
         )
+
+        # Label
+        painter.setFont(QFont("Monospace", 7))
+        painter.drawText(QPointF(com_px.x() + r + 2, com_px.y() - 2), "COM")
 
     def _draw_zoom_controls(self, painter: QPainter) -> None:
         """Draw a small zoom toolbar in the top-right corner."""
