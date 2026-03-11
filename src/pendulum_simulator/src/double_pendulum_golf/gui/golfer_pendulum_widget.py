@@ -80,6 +80,9 @@ class GolferPendulumWidget(QWidget):
         # Swing plane tilt angle in radians (#1113)
         self._tilt_angle: float = 0.0
 
+        # View azimuth rotation in radians (#1118)
+        self._view_azimuth: float = 0.0
+
     # ------------------------------------------------------------------
     # Public interface (_SimViewer protocol)
     # ------------------------------------------------------------------
@@ -161,6 +164,11 @@ class GolferPendulumWidget(QWidget):
         self._tilt_angle = float(angle_rad)
         self.update()
 
+    def set_view_azimuth(self, angle_rad: float) -> None:
+        """Set view azimuth for canvas rotation (#1118)."""
+        self._view_azimuth = float(angle_rad)
+        self.update()
+
     # ------------------------------------------------------------------
     # Zoom / Pan
     # ------------------------------------------------------------------
@@ -233,8 +241,15 @@ class GolferPendulumWidget(QWidget):
         ppm = self._pixels_per_meter
         cx = self.width() / 2.0 + self._pan_x
         cy = self.height() * 0.30 + self._pan_y
-        y_proj = y * float(np.cos(self._tilt_angle))  # (#1113)
-        return QPointF(cx + x * ppm, cy - y_proj * ppm)
+        # Apply azimuth rotation (#1118)
+        cos_az = float(np.cos(self._view_azimuth))
+        sin_az = float(np.sin(self._view_azimuth))
+        x_rot = x * cos_az
+        depth = x * sin_az
+        # Apply tilt foreshortening (#1113)
+        cos_tilt = float(np.cos(self._tilt_angle))
+        y_proj = y * cos_tilt - depth * float(np.sin(self._tilt_angle))
+        return QPointF(cx + x_rot * ppm, cy - y_proj * ppm)
 
     # ------------------------------------------------------------------
     # Painting
@@ -283,20 +298,35 @@ class GolferPendulumWidget(QWidget):
             painter.drawLine(p1, p2)
             r += step
 
+    SPLINE_SUBDIV = 4  # (#1116) trail smoothing subdivisions
+
     def _draw_trail(self, painter: QPainter) -> None:
         n = len(self._trail)
         if n < 2:
             return
-        for i in range(1, n):
-            alpha = int(30 + 180 * (i / n))
-            width = 1.0 + 2.5 * (i / n)
+
+        # Catmull-Rom spline smoothing (#1116)
+        if n >= 4:
+            from .pendulum_widget import PendulumWidget
+
+            smooth = PendulumWidget._catmull_rom_smooth(
+                list(self._trail), self.SPLINE_SUBDIV
+            )
+        else:
+            smooth = list(self._trail)
+
+        ns = len(smooth)
+        for i in range(1, ns):
+            t = i / ns
+            alpha = int(30 + 180 * t)
+            width = 1.0 + 2.5 * t
             color = QColor(self.COLOR_TRAIL)
             color.setAlpha(alpha)
             pen = QPen(color, width)
             pen.setCapStyle(Qt.PenCapStyle.RoundCap)
             painter.setPen(pen)
-            x0, y0 = self._trail[i - 1]
-            x1, y1 = self._trail[i]
+            x0, y0 = smooth[i - 1]
+            x1, y1 = smooth[i]
             painter.drawLine(
                 self._world_to_pixel(x0, y0),
                 self._world_to_pixel(x1, y1),

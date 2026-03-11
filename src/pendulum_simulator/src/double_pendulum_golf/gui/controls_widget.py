@@ -393,6 +393,17 @@ class ControlsWidget(QWidget):
             56,
         )
         layout.addWidget(self.inp_tilt)
+
+        # View azimuth angle (#1118)
+        self.inp_azimuth = LabeledInput(
+            "Azimuth °",
+            "0",
+            "View rotation around vertical axis (0°=front, 90°=side).\n"
+            "Rotate the canvas to see the tilted swing plane\n"
+            "from different angles.",
+            56,
+        )
+        layout.addWidget(self.inp_azimuth)
         return box
 
     def _build_hidden_compat_widgets(self) -> None:
@@ -548,6 +559,7 @@ class ControlsWidget(QWidget):
             "max_torque1": parse_float(self.inp_max_tau1, "Max τ1"),
             "max_torque2": parse_float(self.inp_max_tau2, "Max τ2"),
             "tilt_deg": parse_float(self.inp_tilt, "Tilt"),
+            "azimuth_deg": parse_float(self.inp_azimuth, "Azimuth"),
         }
 
     def _update_torque_preview(self) -> None:

@@ -118,6 +118,7 @@ class SimulationPanel(QWidget):
         self._anim_idx = 0
         self._anim_frac: float = 0.0  # fractional frame accumulator (#1097)
         self._playback_speed = 1.0
+        self._sim_dt: float = 0.005  # simulation time step (updated on sim completion)
 
         self._build_ui()
         self._connect_signals()
@@ -293,6 +294,12 @@ class SimulationPanel(QWidget):
         self._result = res
         self._anim_idx = 0
 
+        # Compute simulation dt for real-time playback (#1115)
+        if res.n_steps > 1:
+            self._sim_dt = float(res.t[-1] - res.t[0]) / (res.n_steps - 1)
+        else:
+            self._sim_dt = 0.005
+
         self.pendulum.set_simulation(res)
         self.matrix.set_simulation(res)
         if self.torque_history is not None:
@@ -395,8 +402,11 @@ class SimulationPanel(QWidget):
             self._timer.stop()
             return
 
-        # Accumulate fractional frames: speed=1× → ~3 frames per 16 ms tick
-        self._anim_frac += self._playback_speed * 3.0
+        # Compute real-time frame advance (#1115)
+        # frames_per_tick = wall_clock_tick / sim_dt × speed_multiplier
+        dt_wall = self.ANIMATION_INTERVAL_MS / 1000.0
+        frames_per_tick = (dt_wall / max(self._sim_dt, 1e-6)) * self._playback_speed
+        self._anim_frac += frames_per_tick
         advance = int(self._anim_frac)
         if advance < 1:
             return  # sub-frame accumulation — wait for next tick

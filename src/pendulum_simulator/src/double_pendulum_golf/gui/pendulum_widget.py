@@ -92,6 +92,9 @@ class PendulumWidget(QWidget):
         # Swing plane tilt angle in radians (#1113)
         self._tilt_angle: float = 0.0
 
+        # View azimuth rotation in radians (#1118)
+        self._view_azimuth: float = 0.0
+
         # Pre-computed counterfactual forces (list[dict] or None)
         self._zero_torque_forces: list[dict] | None = None
 
@@ -280,6 +283,18 @@ class PendulumWidget(QWidget):
         self._tilt_angle = float(angle_rad)
         self.update()
 
+    def set_view_azimuth(self, angle_rad: float) -> None:
+        """Set the view azimuth for canvas rotation (#1118).
+
+        Parameters
+        ----------
+        angle_rad : float
+            Rotation around the vertical axis in radians.
+            0 = front view, π/2 = side view.
+        """
+        self._view_azimuth = float(angle_rad)
+        self.update()
+
     def reset_view(self) -> None:
         """Reset zoom and pan to default (also callable from toolstrip button)."""
         self._zoom = 1.0
@@ -367,21 +382,30 @@ class PendulumWidget(QWidget):
         return max(30.0, min(w_scale, h_scale))
 
     def _world_to_pixel(self, x_world: float, y_world: float) -> QPointF:
-        """Convert physics coords to widget pixels, applying zoom, pan, and tilt.
+        """Convert physics coords to widget pixels with 3D projection.
 
-        Shoulder is placed at horizontal centre and 35% from the top so
-        full-circle swings remain on-screen without the user needing to pan.
+        Applies azimuth rotation (#1118) and tilt foreshortening (#1113)
+        for a proper view of the pendulum on a tilted/rotated plane.
 
-        When a tilt angle is set (#1113), the Y axis is foreshortened by
-        cos(tilt) to simulate viewing the pendulum on a tilted plane.
+        Projection: rotate (x, y) by azimuth around vertical, then
+        compress the depth axis by cos(tilt).
         """
         base_ppm = self._pixels_per_meter
         cx = self.width() / 2.0 + self._pan_x
-        cy = self.height() * 0.35 + self._pan_y  # 35% from top (was 20%)
-        # Apply tilt foreshortening to Y axis only
-        y_projected = y_world * float(np.cos(self._tilt_angle))
-        px = cx + x_world * base_ppm
-        py = cy - y_projected * base_ppm
+        cy = self.height() * 0.35 + self._pan_y
+
+        # Apply azimuth rotation (#1118)
+        cos_az = float(np.cos(self._view_azimuth))
+        sin_az = float(np.sin(self._view_azimuth))
+        x_rot = x_world * cos_az
+        depth = x_world * sin_az  # into screen
+
+        # Apply tilt foreshortening to Y + depth (#1113)
+        cos_tilt = float(np.cos(self._tilt_angle))
+        y_proj = y_world * cos_tilt - depth * float(np.sin(self._tilt_angle))
+
+        px = cx + x_rot * base_ppm
+        py = cy - y_proj * base_ppm
         return QPointF(px, py)
 
     # ------------------------------------------------------------------
@@ -460,24 +484,81 @@ class PendulumWidget(QWidget):
         painter.setPen(pen)
         painter.drawLine(p1, p2)
 
+    # Number of subdivision samples per trail segment (#1116)
+    SPLINE_SUBDIV = 4
+
     def _draw_trail(self, painter: QPainter) -> None:
         n = len(self._trail)
         if n < 2:
             return
-        for i in range(1, n):
-            alpha = int(30 + 180 * (i / n))
-            width = 1.0 + 2.5 * (i / n)
+
+        # Build spline-smoothed points via Catmull-Rom (#1116)
+        if n >= 4:
+            smooth = self._catmull_rom_smooth(list(self._trail), self.SPLINE_SUBDIV)
+        else:
+            smooth = list(self._trail)
+
+        ns = len(smooth)
+        for i in range(1, ns):
+            t = i / ns  # progress 0→1
+            alpha = int(30 + 180 * t)
+            width = 1.0 + 2.5 * t
             color = QColor(self.COLOR_TRAIL)
             color.setAlpha(alpha)
             pen = QPen(color, width)
             pen.setCapStyle(Qt.PenCapStyle.RoundCap)
             painter.setPen(pen)
-            x0, y0 = self._trail[i - 1]
-            x1, y1 = self._trail[i]
+            x0, y0 = smooth[i - 1]
+            x1, y1 = smooth[i]
             painter.drawLine(
                 self._world_to_pixel(x0, y0),
                 self._world_to_pixel(x1, y1),
             )
+
+    @staticmethod
+    def _catmull_rom_smooth(
+        points: list[tuple[float, float]],
+        n_sub: int = 4,
+    ) -> list[tuple[float, float]]:
+        """Catmull-Rom spline interpolation over trail points.
+
+        Generates ``n_sub`` subdivisions between each pair of interior
+        control points for a smooth curve.  Endpoint tangents are clamped
+        by duplicating the first and last points.
+        """
+        n = len(points)
+        if n < 4:
+            return points
+
+        # Duplicate endpoints for boundary tangents
+        pts = [points[0]] + list(points) + [points[-1]]
+        result: list[tuple[float, float]] = []
+
+        for i in range(1, len(pts) - 2):
+            p0 = pts[i - 1]
+            p1 = pts[i]
+            p2 = pts[i + 1]
+            p3 = pts[i + 2]
+            for j in range(n_sub):
+                t = j / n_sub
+                t2 = t * t
+                t3 = t2 * t
+                x = 0.5 * (
+                    (2 * p1[0])
+                    + (-p0[0] + p2[0]) * t
+                    + (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2
+                    + (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3
+                )
+                y = 0.5 * (
+                    (2 * p1[1])
+                    + (-p0[1] + p2[1]) * t
+                    + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2
+                    + (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3
+                )
+                result.append((x, y))
+        # Add final point
+        result.append(points[-1])
+        return result
 
     def _draw_pendulum(self, painter: QPainter) -> None:
         """Draw the segments and joint markers."""

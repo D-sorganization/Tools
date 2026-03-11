@@ -286,10 +286,12 @@ class MainWindow(QMainWindow):
 
         def build_params(p: dict) -> PendulumParams:
             tilt_rad = np.radians(p.get("tilt_deg", 0.0))
+            azimuth_rad = np.radians(p.get("azimuth_deg", 0.0))
             g = 9.81 if p.get("gravity_on", True) else 0.0
             g_eff = g * float(np.cos(tilt_rad))  # (#1113) effective gravity on plane
-            # Update display tilt on next paint
+            # Update display tilt and view azimuth on next paint
             pendulum.set_tilt_angle(tilt_rad)
+            pendulum.set_view_azimuth(azimuth_rad)  # (#1118)
             return PendulumParams(
                 m1=p["m1"],
                 m2=p["m2"],
@@ -390,6 +392,7 @@ class MainWindow(QMainWindow):
             g = 9.81 if p.get("gravity_on", True) else 0.0
             g_eff = g * float(np.cos(tilt_rad))  # (#1113)
             pendulum.set_tilt_angle(tilt_rad)
+            pendulum.set_view_azimuth(np.radians(p.get("azimuth_deg", 0.0)))  # (#1118)
             return TriplePendulumParams(
                 m1=p["m1"],
                 m2=p["m2"],
@@ -454,6 +457,7 @@ class MainWindow(QMainWindow):
             g = 9.81 if p.get("gravity_on", True) else 0.0
             g_eff = g * float(np.cos(tilt_rad))  # (#1113)
             pendulum.set_tilt_angle(tilt_rad)
+            pendulum.set_view_azimuth(np.radians(p.get("azimuth_deg", 0.0)))  # (#1118)
             return GolferParams(
                 m_hub=p["m_hub"],
                 m_r_upper=p["m_r_upper"],
