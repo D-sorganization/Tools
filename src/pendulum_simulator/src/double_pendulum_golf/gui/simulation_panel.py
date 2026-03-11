@@ -585,8 +585,6 @@ class SimulationPanel(QWidget):
                     end = (i + 1) * n_seventh if i < 6 else len(coeffs)
                     field.set_value(_fmt_coeffs(coeffs[start:end]))
             logger.info("Applied golfer optimizer coefficients")
-        else:
-            logger.warning("Unknown controls type for optimizer apply")
 
     def _on_export_data(self) -> None:
         if self._result is None:
