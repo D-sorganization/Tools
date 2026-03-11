@@ -2,6 +2,7 @@
 
 Profiles: review (dense), presentation (clean), compact (tight).
 """
+
 from __future__ import annotations
 
 from copy import deepcopy

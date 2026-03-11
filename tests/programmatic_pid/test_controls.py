@@ -1,9 +1,9 @@
 """Tests for programmatic_pid.controls — control loop routing and rendering."""
+
 from __future__ import annotations
 
 import ezdxf
 import pytest
-
 from programmatic_pid.controls import (
     add_control_loops,
     orthogonal_control_route,
@@ -20,6 +20,7 @@ def doc_and_msp():
 
 
 # --- orthogonal_control_route ---
+
 
 class TestOrthogonalControlRoute:
     def test_basic_route(self):
@@ -48,6 +49,7 @@ class TestOrthogonalControlRoute:
 
 
 # --- resolve_reference_point ---
+
 
 class TestResolveReferencePoint:
     def test_instrument_ref(self):
@@ -85,15 +87,18 @@ class TestResolveReferencePoint:
 
 # --- add_control_loops ---
 
+
 class TestAddControlLoops:
     def test_draws_loop(self, doc_and_msp):
         _, msp = doc_and_msp
         spec = {
-            "control_loops": [{
-                "id": "CL-1",
-                "measurement": "TI-101",
-                "final_element": "CV-101",
-            }],
+            "control_loops": [
+                {
+                    "id": "CL-1",
+                    "measurement": "TI-101",
+                    "final_element": "CV-101",
+                }
+            ],
             "defaults": {},
         }
         instrument_by_id = {"TI-101": {"x": 10, "y": 10}}
@@ -101,7 +106,10 @@ class TestAddControlLoops:
         stream_points = {"CV-101": (50.0, 10.0)}
         before = len(msp)
         add_control_loops(
-            msp, spec, text_h=1.5, text_layer="TEXT",
+            msp,
+            spec,
+            text_h=1.5,
+            text_layer="TEXT",
             equipment_by_id=equipment_by_id,
             instrument_by_id=instrument_by_id,
             stream_points=stream_points,
@@ -110,11 +118,18 @@ class TestAddControlLoops:
 
     def test_skips_incomplete_loop(self, doc_and_msp):
         _, msp = doc_and_msp
-        spec = {"control_loops": [{"id": "CL-BAD", "measurement": "", "final_element": ""}]}
+        spec = {
+            "control_loops": [{"id": "CL-BAD", "measurement": "", "final_element": ""}]
+        }
         before = len(msp)
         add_control_loops(
-            msp, spec, text_h=1.5, text_layer="TEXT",
-            equipment_by_id={}, instrument_by_id={}, stream_points={},
+            msp,
+            spec,
+            text_h=1.5,
+            text_layer="TEXT",
+            equipment_by_id={},
+            instrument_by_id={},
+            stream_points={},
         )
         assert len(msp) == before
 
@@ -122,7 +137,12 @@ class TestAddControlLoops:
         _, msp = doc_and_msp
         before = len(msp)
         add_control_loops(
-            msp, {"control_loops": []}, text_h=1.5, text_layer="TEXT",
-            equipment_by_id={}, instrument_by_id={}, stream_points={},
+            msp,
+            {"control_loops": []},
+            text_h=1.5,
+            text_layer="TEXT",
+            equipment_by_id={},
+            instrument_by_id={},
+            stream_points={},
         )
         assert len(msp) == before

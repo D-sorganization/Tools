@@ -12,7 +12,13 @@ def test_generate_two_sheet_outputs(tmp_path):
     out_dxf = tmp_path / "pid.dxf"
     out_svg = tmp_path / "pid.svg"
 
-    mod.generate(str(SPEC_PATH), str(out_dxf), str(out_svg), sheet_set="two", profile="presentation")
+    mod.generate(
+        str(SPEC_PATH),
+        str(out_dxf),
+        str(out_svg),
+        sheet_set="two",
+        profile="presentation",
+    )
 
     assert out_dxf.exists()
     assert out_svg.exists()

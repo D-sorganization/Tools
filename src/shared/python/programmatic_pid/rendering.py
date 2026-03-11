@@ -11,18 +11,19 @@ Postconditions:
     - Functions add entities to the modelspace on the specified layer.
     - ``ensure_layer`` / ``ensure_layers`` are idempotent.
 """
+
 from __future__ import annotations
 
 import logging
 import math
 import textwrap
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any
 
 import ezdxf
 from ezdxf.enums import TextEntityAlignment
-
-from programmatic_pid.geometry import closest_point_on_rect, text_box, to_float
+from programmatic_pid.geometry import to_float
 from programmatic_pid.spec_loader import get_drawing, get_layer_config
 
 logger = logging.getLogger(__name__)
@@ -32,7 +33,10 @@ logger = logging.getLogger(__name__)
 # Layer management
 # ---------------------------------------------------------------------------
 
-def ensure_layer(doc: Any, name: str, color: int = 7, linetype: str = "CONTINUOUS") -> None:
+
+def ensure_layer(
+    doc: Any, name: str, color: int = 7, linetype: str = "CONTINUOUS"
+) -> None:
     """Create a layer if it doesn't already exist.
 
     Preconditions:
@@ -100,6 +104,7 @@ def layer_name(
 # Text utilities
 # ---------------------------------------------------------------------------
 
+
 def parse_alignment(align: Any) -> TextEntityAlignment:
     """Convert a string alignment name to an ezdxf ``TextEntityAlignment``."""
     if isinstance(align, TextEntityAlignment):
@@ -122,6 +127,7 @@ def wrap_text_lines(text: str, width: int) -> list[str]:
 # ---------------------------------------------------------------------------
 # Drawing primitives
 # ---------------------------------------------------------------------------
+
 
 def add_text(
     msp: Any,
@@ -161,7 +167,15 @@ def add_text_panel(
     add_box(msp, x, y, w, h, border_layer)
     inset_x = x + 1.1
     inset_top = y + h - 1.0
-    add_text(msp, title, inset_x, inset_top, text_h * 1.05, layer=text_layer, align="TOP_LEFT")
+    add_text(
+        msp,
+        title,
+        inset_x,
+        inset_top,
+        text_h * 1.05,
+        layer=text_layer,
+        align="TOP_LEFT",
+    )
 
     step = max(text_h * 1.16, 0.9)
     available = max(int((h - 2.6) / step), 1)
@@ -192,6 +206,7 @@ def add_box(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> Non
 # ---------------------------------------------------------------------------
 # Arrow primitives
 # ---------------------------------------------------------------------------
+
 
 def add_arrow_head(
     msp: Any,
@@ -238,7 +253,9 @@ def add_arrow(
     if color is not None:
         attrs["color"] = int(color)
     msp.add_line((sx, sy), (ex, ey), dxfattribs=attrs)
-    add_arrow_head(msp, (sx, sy), (ex, ey), layer=layer, color=color, arrow_size=arrow_size)
+    add_arrow_head(
+        msp, (sx, sy), (ex, ey), layer=layer, color=color, arrow_size=arrow_size
+    )
 
 
 def add_poly_arrow(
@@ -256,12 +273,15 @@ def add_poly_arrow(
     if color is not None:
         attrs["color"] = int(color)
     msp.add_lwpolyline(points, dxfattribs=attrs)
-    add_arrow_head(msp, points[-2], points[-1], layer, color=color, arrow_size=arrow_size)
+    add_arrow_head(
+        msp, points[-2], points[-1], layer, color=color, arrow_size=arrow_size
+    )
 
 
 # ---------------------------------------------------------------------------
 # SVG export
 # ---------------------------------------------------------------------------
+
 
 def export_svg_from_dxf(
     spec: dict[str, Any],
@@ -299,7 +319,9 @@ def export_svg_from_dxf(
             "pt": layout.Units.pt,
             "px": layout.Units.px,
         }
-        page = layout.Page(page_width, page_height, units=unit_map.get(unit_name, layout.Units.mm))
+        page = layout.Page(
+            page_width, page_height, units=unit_map.get(unit_name, layout.Units.mm)
+        )
         Path(svg_path).write_text(backend.get_string(page), encoding="utf-8")
     except Exception as exc:
         logger.warning("DXF created, but SVG export failed: %s", exc)

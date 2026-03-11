@@ -1,8 +1,8 @@
 """Contract tests for profiles module."""
+
 from __future__ import annotations
 
 import pytest
-
 from programmatic_pid.profiles import PROFILE_PRESETS, apply_profile
 
 

@@ -3,13 +3,13 @@
 DRY: The SpecAccessor class replaces the scattered get_project / get_drawing /
 get_text_config / get_layout_config / get_layer_config accessor functions.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
 
 import yaml
-
 from programmatic_pid.geometry import to_float
 from programmatic_pid.profiles import apply_profile
 from programmatic_pid.types import SpecDict, TextConfig
@@ -102,13 +102,23 @@ class SpecAccessor:
             layout = {}
         return {
             "style": str(layout.get("style", "clean")).lower(),
-            "show_inline_equipment_notes": bool(layout.get("show_inline_equipment_notes", False)),
+            "show_inline_equipment_notes": bool(
+                layout.get("show_inline_equipment_notes", False)
+            ),
             "show_instrument_suffix": bool(layout.get("show_instrument_suffix", False)),
-            "show_control_tags_on_lines": bool(layout.get("show_control_tags_on_lines", False)),
+            "show_control_tags_on_lines": bool(
+                layout.get("show_control_tags_on_lines", False)
+            ),
             "gap": max(to_float(layout.get("gap"), 8.0), 2.0),
-            "right_panel_width": max(to_float(layout.get("right_panel_width"), 84.0), 45.0),
-            "bottom_panel_height": max(to_float(layout.get("bottom_panel_height"), 34.0), 18.0),
-            "title_block_height": max(to_float(layout.get("title_block_height"), 11.0), 6.0),
+            "right_panel_width": max(
+                to_float(layout.get("right_panel_width"), 84.0), 45.0
+            ),
+            "bottom_panel_height": max(
+                to_float(layout.get("bottom_panel_height"), 34.0), 18.0
+            ),
+            "title_block_height": max(
+                to_float(layout.get("title_block_height"), 11.0), 6.0
+            ),
             "panel_text_chars": max(int(layout.get("panel_text_chars", 42)), 24),
             "stream_label_scale": min(
                 max(to_float(layout.get("stream_label_scale"), 0.76), 0.45), 1.5
@@ -152,6 +162,7 @@ class SpecAccessor:
 # Backward-compatible free functions that delegate to the old interface.
 # These are kept so that generator.py continues to work during migration.
 # ---------------------------------------------------------------------------
+
 
 def get_project(spec: SpecDict) -> dict[str, Any]:
     return spec.get("project", {})

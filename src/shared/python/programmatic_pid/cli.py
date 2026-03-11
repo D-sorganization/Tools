@@ -13,6 +13,7 @@ Or programmatically::
     from programmatic_pid.cli import generate
     generate("spec.yml", "out.dxf", svg_path="out.svg")
 """
+
 from __future__ import annotations
 
 import argparse
@@ -22,7 +23,6 @@ from pathlib import Path
 from typing import Any
 
 import ezdxf
-
 from programmatic_pid.controls import add_control_loops
 from programmatic_pid.equipment import draw_equipment_symbol, equipment_dims
 from programmatic_pid.geometry import to_float
@@ -60,6 +60,7 @@ logger = logging.getLogger(__name__)
 # Equipment rendering (orchestration wrapper)
 # ---------------------------------------------------------------------------
 
+
 def add_equipment(
     msp: Any,
     eq: dict[str, Any],
@@ -84,8 +85,17 @@ def add_equipment(
     eq_id = str(eq.get("id", "")).strip()
     service = str(eq.get("service") or eq.get("name") or eq.get("tag") or "").strip()
     if eq_id and service and service != eq_id:
-        add_text(msp, eq_id, x + w / 2, y + hh / 2 + text_h * 0.48, text_h, layer=text_layer)
-        add_text(msp, service, x + w / 2, y + hh / 2 - text_h * 0.52, text_h * 0.82, layer=text_layer)
+        add_text(
+            msp, eq_id, x + w / 2, y + hh / 2 + text_h * 0.48, text_h, layer=text_layer
+        )
+        add_text(
+            msp,
+            service,
+            x + w / 2,
+            y + hh / 2 - text_h * 0.52,
+            text_h * 0.82,
+            layer=text_layer,
+        )
     elif eq_id:
         add_text(msp, eq_id, x + w / 2, y + hh / 2, text_h, layer=text_layer)
 
@@ -93,8 +103,11 @@ def add_equipment(
         for zone in eq.get("zones", []):
             zy = y + hh * to_float(zone.get("y_frac", 0.0))
             add_text(
-                msp, zone.get("name", ""),
-                x + w / 2, zy + text_h * 0.6, text_h * 0.7,
+                msp,
+                zone.get("name", ""),
+                x + w / 2,
+                zy + text_h * 0.6,
+                text_h * 0.7,
                 layer=text_layer,
             )
 
@@ -102,8 +115,10 @@ def add_equipment(
         note_step = max(text_h * 1.2, 0.8)
         for i, note in enumerate(eq.get("notes", [])[:2]):
             add_text(
-                msp, f"- {note}",
-                x, y - note_step * (i + 1),
+                msp,
+                f"- {note}",
+                x,
+                y - note_step * (i + 1),
                 text_h * 0.62,
                 layer=notes_layer,
                 align="TOP_LEFT",
@@ -113,6 +128,7 @@ def add_equipment(
 # ---------------------------------------------------------------------------
 # Sheet generators
 # ---------------------------------------------------------------------------
+
 
 def generate_process_sheet(
     spec_path: str | Path,
@@ -138,9 +154,13 @@ def generate_process_sheet(
     eq_min_x, eq_min_y, eq_max_x, eq_max_y = equipment_bbox
 
     layer_index = {layer.dxf.name.lower(): layer.dxf.name for layer in doc.layers}
-    text_layer = layer_name(layer_index, "TEXT", "annotations", "titleblock", default="TEXT")
+    text_layer = layer_name(
+        layer_index, "TEXT", "annotations", "titleblock", default="TEXT"
+    )
     notes_layer = layer_name(layer_index, "NOTES", "annotations", default=text_layer)
-    instrument_layer = layer_name(layer_index, "INSTRUMENTS", "instruments", default="INSTRUMENTS")
+    instrument_layer = layer_name(
+        layer_index, "INSTRUMENTS", "instruments", default="INSTRUMENTS"
+    )
     leader_layer = layer_name(layer_index, "LEADERS", default="LEADERS")
     arrow_size = to_float(
         spec.get("defaults", {}).get("arrow_size"),
@@ -171,12 +191,16 @@ def generate_process_sheet(
     add_box(msp, x_min, y_min, x_max - x_min, y_max - y_min, notes_layer)
     add_box(
         msp,
-        eq_min_x - 2.0, eq_min_y - 2.0,
-        (eq_max_x - eq_min_x) + 4.0, (eq_max_y - eq_min_y) + 4.0,
+        eq_min_x - 2.0,
+        eq_min_y - 2.0,
+        (eq_max_x - eq_min_x) + 4.0,
+        (eq_max_y - eq_min_y) + 4.0,
         notes_layer,
     )
 
-    add_title_block(msp, spec, t, text_layer, notes_layer, layout_regions["panels"]["title"])
+    add_title_block(
+        msp, spec, t, text_layer, notes_layer, layout_regions["panels"]["title"]
+    )
 
     project = get_project(spec)
     doc_title = (
@@ -186,33 +210,42 @@ def generate_process_sheet(
     )
     subtitle = project.get("subtitle") or "Conceptual process arrangement"
     add_text(
-        msp, doc_title,
+        msp,
+        doc_title,
         (eq_min_x + eq_max_x) / 2,
         eq_max_y + max(t["title_height"] * 0.9, 3.0),
         t["title_height"],
         layer=text_layer,
     )
     add_text(
-        msp, subtitle,
+        msp,
+        subtitle,
         (eq_min_x + eq_max_x) / 2,
         eq_max_y + max(t["title_height"] * 0.1, 1.3),
         max(t["subtitle_height"] * 0.95, 1.2),
         layer=text_layer,
     )
 
-    equipment_by_id = {eq.get("id"): eq for eq in spec.get("equipment", []) if eq.get("id")}
+    equipment_by_id = {
+        eq.get("id"): eq for eq in spec.get("equipment", []) if eq.get("id")
+    }
     for eq in spec.get("equipment", []):
         add_equipment(
-            msp, eq, t["body_height"],
+            msp,
+            eq,
+            t["body_height"],
             text_layer=text_layer,
             notes_layer=notes_layer,
             show_inline_notes=layout_cfg["show_inline_equipment_notes"],
         )
 
-    instrument_by_id = {ins.get("id"): ins for ins in spec.get("instruments", []) if ins.get("id")}
+    instrument_by_id = {
+        ins.get("id"): ins for ins in spec.get("instruments", []) if ins.get("id")
+    }
     for ins in spec.get("instruments", []):
         add_instrument(
-            msp, ins,
+            msp,
+            ins,
             text_h=t["small_height"],
             text_layer=text_layer,
             default_layer=instrument_layer,
@@ -225,7 +258,8 @@ def generate_process_sheet(
     for stream in spec.get("streams", []):
         try:
             stream_point = add_stream(
-                msp, stream,
+                msp,
+                stream,
                 text_h=t["small_height"],
                 text_layer=text_layer,
                 equipment_by_id=equipment_by_id,
@@ -242,7 +276,8 @@ def generate_process_sheet(
             logger.warning("Skipped stream %s: %s", stream.get("id", "<unknown>"), exc)
 
     add_control_loops(
-        msp, spec,
+        msp,
+        spec,
         text_h=t["small_height"],
         text_layer=text_layer,
         equipment_by_id=equipment_by_id,
@@ -252,7 +287,14 @@ def generate_process_sheet(
         show_loop_tags=layout_cfg["show_control_tags_on_lines"],
     )
 
-    add_notes(msp, spec, t, text_layer=text_layer, notes_layer=notes_layer, layout_regions=layout_regions)
+    add_notes(
+        msp,
+        spec,
+        t,
+        text_layer=text_layer,
+        notes_layer=notes_layer,
+        layout_regions=layout_regions,
+    )
     add_text(
         msp,
         "Conceptual draft generated from YAML. Validate controls and safety details before design issue.",
@@ -268,7 +310,9 @@ def generate_process_sheet(
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     doc.saveas(out_path)
-    export_svg_from_dxf(spec, out_path, svg_path, fallback_extent=(x_min, y_min, x_max, y_max))
+    export_svg_from_dxf(
+        spec, out_path, svg_path, fallback_extent=(x_min, y_min, x_max, y_max)
+    )
 
     logger.info("Created: %s", out_path)
     if svg_path:
@@ -300,7 +344,9 @@ def generate_controls_sheet(
     y_max = y_min + height
 
     layer_index = {layer.dxf.name.lower(): layer.dxf.name for layer in doc.layers}
-    text_layer = layer_name(layer_index, "TEXT", "annotations", "titleblock", default="TEXT")
+    text_layer = layer_name(
+        layer_index, "TEXT", "annotations", "titleblock", default="TEXT"
+    )
     notes_layer = layer_name(layer_index, "NOTES", "annotations", default=text_layer)
     control_layer = layer_name(layer_index, "control_lines", default="control_lines")
     if control_layer not in doc.layers:
@@ -309,14 +355,22 @@ def generate_controls_sheet(
     margin = 8.0
     add_box(msp, x_min, y_min, width, height, notes_layer)
     add_text(
-        msp, "Sheet 2 - Controls and Interlocks",
-        x_min + margin, y_max - margin * 0.6,
-        t["title_height"], layer=text_layer, align="TOP_LEFT",
+        msp,
+        "Sheet 2 - Controls and Interlocks",
+        x_min + margin,
+        y_max - margin * 0.6,
+        t["title_height"],
+        layer=text_layer,
+        align="TOP_LEFT",
     )
     add_text(
-        msp, f"Generated from {Path(spec_path).name}",
-        x_min + margin, y_max - margin * 1.7,
-        t["subtitle_height"], layer=text_layer, align="TOP_LEFT",
+        msp,
+        f"Generated from {Path(spec_path).name}",
+        x_min + margin,
+        y_max - margin * 1.7,
+        t["subtitle_height"],
+        layer=text_layer,
+        align="TOP_LEFT",
     )
 
     table_x = x_min + margin
@@ -329,16 +383,51 @@ def generate_controls_sheet(
     col_measure = table_x + table_w * 0.06
     col_ctrl = table_x + table_w * 0.44
     col_final = table_x + table_w * 0.72
-    add_text(msp, "Measurement", col_measure, table_top - 1.3, t["body_height"], layer=text_layer, align="TOP_LEFT")
-    add_text(msp, "Controller/Logic", col_ctrl, table_top - 1.3, t["body_height"], layer=text_layer, align="TOP_LEFT")
-    add_text(msp, "Final Element", col_final, table_top - 1.3, t["body_height"], layer=text_layer, align="TOP_LEFT")
-    msp.add_line((col_ctrl - 2.0, table_y), (col_ctrl - 2.0, table_top), dxfattribs={"layer": notes_layer})
-    msp.add_line((col_final - 2.0, table_y), (col_final - 2.0, table_top), dxfattribs={"layer": notes_layer})
+    add_text(
+        msp,
+        "Measurement",
+        col_measure,
+        table_top - 1.3,
+        t["body_height"],
+        layer=text_layer,
+        align="TOP_LEFT",
+    )
+    add_text(
+        msp,
+        "Controller/Logic",
+        col_ctrl,
+        table_top - 1.3,
+        t["body_height"],
+        layer=text_layer,
+        align="TOP_LEFT",
+    )
+    add_text(
+        msp,
+        "Final Element",
+        col_final,
+        table_top - 1.3,
+        t["body_height"],
+        layer=text_layer,
+        align="TOP_LEFT",
+    )
+    msp.add_line(
+        (col_ctrl - 2.0, table_y),
+        (col_ctrl - 2.0, table_top),
+        dxfattribs={"layer": notes_layer},
+    )
+    msp.add_line(
+        (col_final - 2.0, table_y),
+        (col_final - 2.0, table_top),
+        dxfattribs={"layer": notes_layer},
+    )
 
     loops = spec.get("control_loops", [])
     row_h = max(t["small_height"] * layout_cfg["controls_row_height_scale"], 8.0)
     usable_rows = max(int((table_h - 4.0) / row_h), 1)
-    bubble_r = max(to_float(spec.get("defaults", {}).get("instrument_bubble_radius"), 1.6) * 0.42, 0.7)
+    bubble_r = max(
+        to_float(spec.get("defaults", {}).get("instrument_bubble_radius"), 1.6) * 0.42,
+        0.7,
+    )
     for i, loop in enumerate(loops[:usable_rows]):
         y = table_top - 3.2 - i * row_h
         measurement = str(loop.get("measurement", ""))
@@ -346,21 +435,73 @@ def generate_controls_sheet(
         loop_tag = str(loop.get("tag") or loop.get("id") or "")
         desc = str(loop.get("description") or loop.get("note") or "")
 
-        msp.add_circle((col_measure - 1.5, y - 0.4), radius=bubble_r, dxfattribs={"layer": "instruments"})
-        add_text(msp, measurement, col_measure, y, t["small_height"], layer=text_layer, align="TOP_LEFT")
-        add_text(msp, loop_tag, col_ctrl, y, t["small_height"], layer=text_layer, align="TOP_LEFT")
-        add_text(msp, final, col_final, y, t["small_height"], layer=text_layer, align="TOP_LEFT")
+        msp.add_circle(
+            (col_measure - 1.5, y - 0.4),
+            radius=bubble_r,
+            dxfattribs={"layer": "instruments"},
+        )
+        add_text(
+            msp,
+            measurement,
+            col_measure,
+            y,
+            t["small_height"],
+            layer=text_layer,
+            align="TOP_LEFT",
+        )
+        add_text(
+            msp,
+            loop_tag,
+            col_ctrl,
+            y,
+            t["small_height"],
+            layer=text_layer,
+            align="TOP_LEFT",
+        )
+        add_text(
+            msp,
+            final,
+            col_final,
+            y,
+            t["small_height"],
+            layer=text_layer,
+            align="TOP_LEFT",
+        )
         if desc:
-            add_text(msp, desc, col_ctrl, y - 1.9, t["small_height"] * 0.9, layer=text_layer, align="TOP_LEFT")
+            add_text(
+                msp,
+                desc,
+                col_ctrl,
+                y - 1.9,
+                t["small_height"] * 0.9,
+                layer=text_layer,
+                align="TOP_LEFT",
+            )
 
-        add_arrow(msp, (col_measure + 8.5, y - 0.5), (col_ctrl - 3.2, y - 0.5), control_layer, arrow_size=1.0)
-        add_arrow(msp, (col_ctrl + 9.2, y - 0.5), (col_final - 3.2, y - 0.5), control_layer, arrow_size=1.0)
+        add_arrow(
+            msp,
+            (col_measure + 8.5, y - 0.5),
+            (col_ctrl - 3.2, y - 0.5),
+            control_layer,
+            arrow_size=1.0,
+        )
+        add_arrow(
+            msp,
+            (col_ctrl + 9.2, y - 0.5),
+            (col_final - 3.2, y - 0.5),
+            control_layer,
+            arrow_size=1.0,
+        )
 
     if len(loops) > usable_rows:
         add_text(
-            msp, f"... {len(loops) - usable_rows} additional loops truncated",
-            table_x + 1.0, table_y + 1.0,
-            t["small_height"], layer=text_layer, align="BOTTOM_LEFT",
+            msp,
+            f"... {len(loops) - usable_rows} additional loops truncated",
+            table_x + 1.0,
+            table_y + 1.0,
+            t["small_height"],
+            layer=text_layer,
+            align="BOTTOM_LEFT",
         )
 
     interlocks = spec.get("interlocks", [])
@@ -373,9 +514,17 @@ def generate_controls_sheet(
         for i in interlocks
     ]
     add_text_panel(
-        msp, table_x, lower_y, left_w, lower_h,
-        "Interlock Summary", interlock_lines,
-        t["small_height"], text_layer, notes_layer, max_chars=72,
+        msp,
+        table_x,
+        lower_y,
+        left_w,
+        lower_h,
+        "Interlock Summary",
+        interlock_lines,
+        t["small_height"],
+        text_layer,
+        notes_layer,
+        max_chars=72,
     )
 
     inst_lines = []
@@ -384,15 +533,25 @@ def generate_controls_sheet(
         service = str(ins.get("service", "")).strip()
         inst_lines.append(f"{tag}: {service}")
     add_text_panel(
-        msp, table_x + left_w + margin, lower_y, right_w, lower_h,
-        "Instrument Index", inst_lines,
-        t["small_height"], text_layer, notes_layer, max_chars=38,
+        msp,
+        table_x + left_w + margin,
+        lower_y,
+        right_w,
+        lower_h,
+        "Instrument Index",
+        inst_lines,
+        t["small_height"],
+        text_layer,
+        notes_layer,
+        max_chars=38,
     )
 
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     doc.saveas(out_path)
-    export_svg_from_dxf(spec, out_path, svg_path, fallback_extent=(x_min, y_min, x_max, y_max))
+    export_svg_from_dxf(
+        spec, out_path, svg_path, fallback_extent=(x_min, y_min, x_max, y_max)
+    )
     logger.info("Created: %s", out_path)
     if svg_path:
         logger.info("Attempted SVG: %s", svg_path)
@@ -401,6 +560,7 @@ def generate_controls_sheet(
 # ---------------------------------------------------------------------------
 # Top-level orchestration
 # ---------------------------------------------------------------------------
+
 
 def derive_related_path(path: str | Path, suffix: str) -> Path:
     """Derive a related file path by appending a suffix before the extension."""
@@ -430,8 +590,11 @@ def generate(
     """
     prepared_spec = prepare_spec(spec_path, profile)
     generate_process_sheet(
-        spec_path, out_path, svg_path,
-        profile=profile, prepared_spec=prepared_spec,
+        spec_path,
+        out_path,
+        svg_path,
+        profile=profile,
+        prepared_spec=prepared_spec,
     )
     if sheet_set == "two":
         controls_out = controls_out or derive_related_path(out_path, "controls")
@@ -442,19 +605,26 @@ def generate(
         else:
             target_svg = None
         generate_controls_sheet(
-            spec_path, controls_out, target_svg,
-            profile=profile, prepared_spec=prepared_spec,
+            spec_path,
+            controls_out,
+            target_svg,
+            profile=profile,
+            prepared_spec=prepared_spec,
         )
 
 
 def main() -> None:
     """CLI entry point for ``generate-pid``."""
-    ap = argparse.ArgumentParser(description="Generate P&ID drawings from YAML specifications")
+    ap = argparse.ArgumentParser(
+        description="Generate P&ID drawings from YAML specifications"
+    )
     ap.add_argument("--spec", required=True, help="Path to YAML spec file")
     ap.add_argument("--out", required=True, help="Output DXF path")
     ap.add_argument("--svg", help="Optional SVG output path")
     ap.add_argument("--sheet-set", choices=["single", "two"], default="two")
-    ap.add_argument("--profile", choices=sorted(PROFILE_PRESETS), default="presentation")
+    ap.add_argument(
+        "--profile", choices=sorted(PROFILE_PRESETS), default="presentation"
+    )
     ap.add_argument("--controls-out", help="Controls sheet DXF output path")
     ap.add_argument("--controls-svg", help="Controls sheet SVG output path")
     args = ap.parse_args()

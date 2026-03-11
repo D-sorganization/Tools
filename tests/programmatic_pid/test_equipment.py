@@ -1,8 +1,8 @@
 """Contract tests for equipment module — registry pattern and valve symbols."""
+
 from __future__ import annotations
 
 import ezdxf
-
 from programmatic_pid.equipment import (
     EQUIPMENT_RENDERERS,
     draw_equipment_symbol,
@@ -16,7 +16,15 @@ from programmatic_pid.equipment import (
 
 
 def _eq(etype="vessel", x=0, y=0, w=10, h=10, **kw):
-    return {"id": "TEST-1", "type": etype, "x": x, "y": y, "width": w, "height": h, **kw}
+    return {
+        "id": "TEST-1",
+        "type": etype,
+        "x": x,
+        "y": y,
+        "width": w,
+        "height": h,
+        **kw,
+    }
 
 
 def test_equipment_dims():
@@ -54,6 +62,7 @@ def test_nearest_equipment_anchor():
 
 # ----- Registry pattern tests -----
 
+
 def test_all_basic_types_registered():
     expected = {"hopper", "fan", "rotary_valve", "burner", "bin", "vessel", "box"}
     assert expected.issubset(set(EQUIPMENT_RENDERERS.keys()))
@@ -62,8 +71,14 @@ def test_all_basic_types_registered():
 def test_valve_types_registered():
     """Postcondition: all new valve types are in the registry."""
     valve_types = {
-        "gate_valve", "globe_valve", "ball_valve", "check_valve",
-        "control_valve", "relief_valve", "psv", "rupture_disk",
+        "gate_valve",
+        "globe_valve",
+        "ball_valve",
+        "check_valve",
+        "control_valve",
+        "relief_valve",
+        "psv",
+        "rupture_disk",
     }
     assert valve_types.issubset(set(EQUIPMENT_RENDERERS.keys()))
 
@@ -91,7 +106,9 @@ def test_draw_equipment_symbol_uses_registry():
     for eq_type in ["hopper", "fan", "gate_valve", "control_valve", "pump"]:
         initial_count = len(list(msp))
         draw_equipment_symbol(msp, _eq(etype=eq_type), "EQUIPMENT")
-        assert len(list(msp)) > initial_count, f"{eq_type} should add entities to modelspace"
+        assert (
+            len(list(msp)) > initial_count
+        ), f"{eq_type} should add entities to modelspace"
 
 
 def test_draw_equipment_symbol_fallback_to_box():

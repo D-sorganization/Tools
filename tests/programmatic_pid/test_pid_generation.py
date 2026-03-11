@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import ezdxf
-
 import programmatic_pid.generator as mod
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,7 +16,9 @@ def minimal_spec() -> dict:
             {"id": "E-2", "x": 20, "y": 0, "width": 10, "height": 10},
         ],
         "instruments": [{"id": "PT-1", "tag": "PT-1", "x": 2, "y": 2}],
-        "streams": [{"id": "S-1", "from": {"equipment": "E-1"}, "to": {"equipment": "E-2"}}],
+        "streams": [
+            {"id": "S-1", "from": {"equipment": "E-1"}, "to": {"equipment": "E-2"}}
+        ],
         "control_loops": [
             {
                 "id": "PIC-1",
@@ -98,7 +99,10 @@ def test_apply_profile_overrides_layout_and_defaults():
     spec_data = minimal_spec()
     prof = mod.apply_profile(spec_data, "compact")
     layout = mod.get_layout_config(prof)
-    assert layout["bottom_panel_height"] < mod.get_layout_config(spec_data)["bottom_panel_height"]
+    assert (
+        layout["bottom_panel_height"]
+        < mod.get_layout_config(spec_data)["bottom_panel_height"]
+    )
     assert layout["stream_label_scale"] < 0.76
 
 
@@ -113,7 +117,12 @@ def test_add_stream_draws_leader_line_when_displaced():
     # Reserve around the default placement so the placer must move the label.
     placer.reserve_rect((9.0, 0.2, 13.0, 2.4))
 
-    stream = {"start": [0.0, 0.0], "end": [20.0, 0.0], "label": "Long stream label", "layer": "process_lines"}
+    stream = {
+        "start": [0.0, 0.0],
+        "end": [20.0, 0.0],
+        "label": "Long stream label",
+        "layer": "process_lines",
+    }
     mod.add_stream(
         msp,
         stream,
@@ -127,5 +136,7 @@ def test_add_stream_draws_leader_line_when_displaced():
         leader_layer="LEADERS",
     )
 
-    leader_lines = [e for e in msp if e.dxftype() == "LINE" and e.dxf.layer == "LEADERS"]
+    leader_lines = [
+        e for e in msp if e.dxftype() == "LINE" and e.dxf.layer == "LEADERS"
+    ]
     assert leader_lines, "Expected displaced label leader line on LEADERS layer"

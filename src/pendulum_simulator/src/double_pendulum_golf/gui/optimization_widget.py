@@ -117,15 +117,19 @@ class _OptimizerWorker(QObject):
                     x0,
                     method="Nelder-Mead",
                     options={"maxiter": self._n_iterations, "adaptive": True},
-                    callback=lambda xk: self._report(len(history), float(self._objective(xk)), history),
+                    callback=lambda xk: self._report(
+                        len(history), float(self._objective(xk)), history
+                    ),
                 )
-                self.finished.emit({
-                    "coeffs": result.x,
-                    "speed": -float(result.fun),
-                    "history": history,
-                    "success": result.success,
-                    "message": result.message,
-                })
+                self.finished.emit(
+                    {
+                        "coeffs": result.x,
+                        "speed": -float(result.fun),
+                        "history": history,
+                        "success": result.success,
+                        "message": result.message,
+                    }
+                )
             elif self._method == "CMA-ES":
                 # Use differential evolution as a robust global optimizer
                 bounds = [(-50.0, 50.0)] * self._n_params
@@ -139,28 +143,34 @@ class _OptimizerWorker(QObject):
                     ),
                     polish=True,
                 )
-                self.finished.emit({
-                    "coeffs": result.x,
-                    "speed": -float(result.fun),
-                    "history": history,
-                    "success": result.success,
-                    "message": result.message,
-                })
+                self.finished.emit(
+                    {
+                        "coeffs": result.x,
+                        "speed": -float(result.fun),
+                        "history": history,
+                        "success": result.success,
+                        "message": result.message,
+                    }
+                )
             else:
                 result = minimize(
                     self._objective,
                     x0,
                     method="L-BFGS-B",
                     options={"maxiter": self._n_iterations},
-                    callback=lambda xk: self._report(len(history), float(self._objective(xk)), history),
+                    callback=lambda xk: self._report(
+                        len(history), float(self._objective(xk)), history
+                    ),
                 )
-                self.finished.emit({
-                    "coeffs": result.x,
-                    "speed": -float(result.fun),
-                    "history": history,
-                    "success": result.success,
-                    "message": result.message,
-                })
+                self.finished.emit(
+                    {
+                        "coeffs": result.x,
+                        "speed": -float(result.fun),
+                        "history": history,
+                        "success": result.success,
+                        "message": result.message,
+                    }
+                )
         except Exception as exc:  # noqa: BLE001
             self.error.emit(str(exc))
 
@@ -320,9 +330,7 @@ class OptimizationWidget(QWidget):
         self._lbl_status.setText("Optimizing...")
 
         self._thread = QThread()
-        self._worker = _OptimizerWorker(
-            self._objective_fn, n_params, n_iters, method
-        )
+        self._worker = _OptimizerWorker(self._objective_fn, n_params, n_iters, method)
         self._worker.moveToThread(self._thread)
 
         self._thread.started.connect(self._worker.run)
@@ -359,9 +367,7 @@ class OptimizationWidget(QWidget):
         success = result.get("success", False)
         msg = result.get("message", "")
 
-        self._lbl_status.setText(
-            f"{'✓' if success else '⚠'} Speed: {speed:.4f} m/s"
-        )
+        self._lbl_status.setText(f"{'✓' if success else '⚠'} Speed: {speed:.4f} m/s")
         self._log.append(f"\nOptimization {'succeeded' if success else 'finished'}:")
         self._log.append(f"  Max speed: {speed:.4f} m/s")
         self._log.append(f"  Status: {msg}")

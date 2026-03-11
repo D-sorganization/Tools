@@ -2,10 +2,11 @@
 
 DRY: Centralises the point/rect operations that were scattered across generator.py.
 """
+
 from __future__ import annotations
 
 import math
-from typing import Sequence
+from collections.abc import Sequence
 
 from programmatic_pid.types import BBox, Point
 
@@ -30,7 +31,9 @@ def clamp(value: float, lo: float, hi: float) -> float:
     return max(lo, min(hi, value))
 
 
-def closest_point_on_rect(point: tuple[float, float], rect: tuple[float, float, float, float]) -> Point:
+def closest_point_on_rect(
+    point: tuple[float, float], rect: tuple[float, float, float, float]
+) -> Point:
     """Return the closest point on *rect* to *point*."""
     px, py = to_float(point[0]), to_float(point[1])
     x1, y1, x2, y2 = rect
@@ -45,7 +48,9 @@ def rects_overlap(
     """Return True if axis-aligned rectangles *a* and *b* overlap (with padding)."""
     ax1, ay1, ax2, ay2 = a
     bx1, by1, bx2, by2 = b
-    return not (ax2 + pad <= bx1 or bx2 + pad <= ax1 or ay2 + pad <= by1 or by2 + pad <= ay1)
+    return not (
+        ax2 + pad <= bx1 or bx2 + pad <= ax1 or ay2 + pad <= by1 or by2 + pad <= ay1
+    )
 
 
 def text_box(
@@ -95,7 +100,10 @@ def dedupe_points(points: Sequence[tuple[float, float]]) -> list[tuple[float, fl
 
 
 def find_free_region(
-    occupied: list[BBox], width: float, height: float, search_origin: Point | None = None
+    occupied: list[BBox],
+    width: float,
+    height: float,
+    search_origin: Point | None = None,
 ) -> BBox | None:
     """Find a free rectangular region that does not overlap any occupied box.
 

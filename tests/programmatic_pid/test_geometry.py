@@ -1,4 +1,5 @@
 """Contract tests for geometry module."""
+
 from __future__ import annotations
 
 from programmatic_pid.geometry import (

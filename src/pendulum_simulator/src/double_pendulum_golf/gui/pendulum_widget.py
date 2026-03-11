@@ -695,7 +695,10 @@ class PendulumWidget(QWidget):
 
         for name, ell in data.items():
             # Per-segment visibility filter (#1100)
-            if self._visible_segments is not None and name not in self._visible_segments:
+            if (
+                self._visible_segments is not None
+                and name not in self._visible_segments
+            ):
                 continue
             world_pos = endpoint_map.get(name)
             if world_pos is None:
@@ -865,10 +868,12 @@ class PendulumWidget(QWidget):
             c2x = wx + 0.5 * params.L2 * np.sin(abs2)
             c2y = wy - 0.5 * params.L2 * np.cos(abs2)
             total_m = params.m1 + params.m2
-            com = np.array([
-                (params.m1 * c1x + params.m2 * c2x) / total_m,
-                (params.m1 * c1y + params.m2 * c2y) / total_m,
-            ])
+            com = np.array(
+                [
+                    (params.m1 * c1x + params.m2 * c2x) / total_m,
+                    (params.m1 * c1y + params.m2 * c2y) / total_m,
+                ]
+            )
 
         com_px = self._world_to_pixel(float(com[0]), float(com[1]))
 

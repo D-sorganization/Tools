@@ -1,10 +1,10 @@
 """Tests for programmatic_pid.streams — stream/pipe rendering."""
+
 from __future__ import annotations
 
 import ezdxf
 import pytest
-
-from programmatic_pid.rendering import ensure_layer, ensure_layers
+from programmatic_pid.rendering import ensure_layers
 from programmatic_pid.streams import add_stream, resolve_endpoint
 
 
@@ -16,6 +16,7 @@ def doc_and_msp():
 
 
 # --- resolve_endpoint ---
+
 
 class TestResolveEndpoint:
     def test_point_endpoint(self):
@@ -42,14 +43,17 @@ class TestResolveEndpoint:
 
 # --- add_stream ---
 
+
 class TestAddStream:
     def test_vertices_stream(self, doc_and_msp):
         _, msp = doc_and_msp
         result = add_stream(
             msp,
             {"vertices": [[0, 0], [10, 10], [20, 0]], "label": "S-1"},
-            text_h=1.5, text_layer="TEXT",
-            equipment_by_id={}, arrow_size=1.2,
+            text_h=1.5,
+            text_layer="TEXT",
+            equipment_by_id={},
+            arrow_size=1.2,
         )
         assert result is not None
         assert len(result) == 2
@@ -59,8 +63,10 @@ class TestAddStream:
         result = add_stream(
             msp,
             {"start": [0, 0], "end": [20, 20]},
-            text_h=1.5, text_layer="TEXT",
-            equipment_by_id={}, arrow_size=1.2,
+            text_h=1.5,
+            text_layer="TEXT",
+            equipment_by_id={},
+            arrow_size=1.2,
         )
         assert result is not None
 
@@ -70,9 +76,12 @@ class TestAddStream:
         eq2 = {"id": "V-102", "x": 30, "y": 0, "width": 10, "height": 10}
         result = add_stream(
             msp,
-            {"from": {"equipment": "V-101", "side": "right"},
-             "to": {"equipment": "V-102", "side": "left"}},
-            text_h=1.5, text_layer="TEXT",
+            {
+                "from": {"equipment": "V-101", "side": "right"},
+                "to": {"equipment": "V-102", "side": "left"},
+            },
+            text_h=1.5,
+            text_layer="TEXT",
             equipment_by_id={"V-101": eq, "V-102": eq2},
             arrow_size=1.2,
         )
@@ -81,17 +90,24 @@ class TestAddStream:
     def test_empty_stream_returns_none(self, doc_and_msp):
         _, msp = doc_and_msp
         result = add_stream(
-            msp, {}, text_h=1.5, text_layer="TEXT",
-            equipment_by_id={}, arrow_size=1.2,
+            msp,
+            {},
+            text_h=1.5,
+            text_layer="TEXT",
+            equipment_by_id={},
+            arrow_size=1.2,
         )
         assert result is None
 
     def test_too_few_vertices_returns_none(self, doc_and_msp):
         _, msp = doc_and_msp
         result = add_stream(
-            msp, {"vertices": [[0, 0]]},
-            text_h=1.5, text_layer="TEXT",
-            equipment_by_id={}, arrow_size=1.2,
+            msp,
+            {"vertices": [[0, 0]]},
+            text_h=1.5,
+            text_layer="TEXT",
+            equipment_by_id={},
+            arrow_size=1.2,
         )
         assert result is None
 
@@ -99,9 +115,10 @@ class TestAddStream:
         _, msp = doc_and_msp
         result = add_stream(
             msp,
-            {"vertices": [[0, 0], [10, 10]],
-             "label": {"text": "S-1", "x": 5, "y": 8}},
-            text_h=1.5, text_layer="TEXT",
-            equipment_by_id={}, arrow_size=1.2,
+            {"vertices": [[0, 0], [10, 10]], "label": {"text": "S-1", "x": 5, "y": 8}},
+            text_h=1.5,
+            text_layer="TEXT",
+            equipment_by_id={},
+            arrow_size=1.2,
         )
         assert result is not None

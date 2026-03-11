@@ -11,6 +11,7 @@ Preconditions:
 Postconditions:
     - Each function adds entities to the modelspace; no return values.
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -48,12 +49,18 @@ def add_title_block(
     date = project.get("date", "")
 
     add_text(
-        msp, title, x + 1.1, y + h - 0.9,
-        text_cfg["body_height"], layer=text_layer, align="TOP_LEFT",
+        msp,
+        title,
+        x + 1.1,
+        y + h - 0.9,
+        text_cfg["body_height"],
+        layer=text_layer,
+        align="TOP_LEFT",
     )
     if subtitle:
         add_text(
-            msp, subtitle,
+            msp,
+            subtitle,
             x + 1.1,
             y + h - max(text_cfg["body_height"] * 1.35, 2.0),
             text_cfg["small_height"],
@@ -66,8 +73,13 @@ def add_title_block(
         f"Date: {date}   Author: {author}   Company: {company}"
     ).strip()
     add_text(
-        msp, meta, x + 1.1, y + 0.9,
-        text_cfg["small_height"], layer=text_layer, align="BOTTOM_LEFT",
+        msp,
+        meta,
+        x + 1.1,
+        y + 0.9,
+        text_cfg["small_height"],
+        layer=text_layer,
+        align="BOTTOM_LEFT",
     )
 
 
@@ -125,7 +137,8 @@ def add_notes(
         for loop in loops
     ]
     add_text_panel(
-        msp, *panels["control"],
+        msp,
+        *panels["control"],
         title="Key Control Loops",
         lines=loop_lines,
         text_h=text_cfg["small_height"],
@@ -150,7 +163,8 @@ def add_notes(
         f"Dry-basis char yield = {dry_yield:.1f}%",
     ]
     add_text_panel(
-        msp, *panels["mass"],
+        msp,
+        *panels["mass"],
         title="Approximate Mass Balance",
         lines=mass_lines,
         text_h=text_cfg["small_height"],
@@ -196,7 +210,8 @@ def add_notes(
         right_lines.extend(equipment_note_lines[:6])
 
     add_text_panel(
-        msp, *panels["right"],
+        msp,
+        *panels["right"],
         title="Design and Safety Notes",
         lines=right_lines,
         text_h=text_cfg["small_height"],

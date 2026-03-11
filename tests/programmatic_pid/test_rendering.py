@@ -1,12 +1,11 @@
 """Tests for programmatic_pid.rendering — low-level DXF drawing primitives."""
+
 from __future__ import annotations
 
 import ezdxf
 import pytest
-
 from programmatic_pid.rendering import (
     add_arrow,
-    add_arrow_head,
     add_box,
     add_poly_arrow,
     add_text,
@@ -26,6 +25,7 @@ def doc_and_msp():
 
 
 # --- Layer management ---
+
 
 class TestEnsureLayer:
     def test_creates_new_layer(self, doc_and_msp):
@@ -65,13 +65,16 @@ class TestLayerName:
 
 # --- Text utilities ---
 
+
 class TestParseAlignment:
     def test_string_to_enum(self):
         from ezdxf.enums import TextEntityAlignment
+
         assert parse_alignment("TOP_LEFT") == TextEntityAlignment.TOP_LEFT
 
     def test_none_defaults_to_middle_center(self):
         from ezdxf.enums import TextEntityAlignment
+
         assert parse_alignment(None) == TextEntityAlignment.MIDDLE_CENTER
 
 
@@ -85,6 +88,7 @@ class TestWrapTextLines:
 
 
 # --- Drawing primitives ---
+
 
 class TestAddText:
     def test_adds_text_entity(self, doc_and_msp):
@@ -108,12 +112,15 @@ class TestAddTextPanel:
         _, msp = doc_and_msp
         ensure_layer(msp.doc, "TEXT")
         ensure_layer(msp.doc, "NOTES")
-        add_text_panel(msp, 0, 0, 40, 20, "Title", ["Line 1", "Line 2"], 1.5, "TEXT", "NOTES")
+        add_text_panel(
+            msp, 0, 0, 40, 20, "Title", ["Line 1", "Line 2"], 1.5, "TEXT", "NOTES"
+        )
         # Should have box + title + content texts
         assert len(msp) > 2
 
 
 # --- Arrow primitives ---
+
 
 class TestAddArrow:
     def test_draws_line_and_head(self, doc_and_msp):

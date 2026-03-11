@@ -1,7 +1,6 @@
 """Tests for programmatic_pid.layout — canvas layout and label placement."""
-from __future__ import annotations
 
-import pytest
+from __future__ import annotations
 
 from programmatic_pid.layout import (
     LabelPlacer,
@@ -11,14 +10,16 @@ from programmatic_pid.layout import (
     spread_instrument_positions,
 )
 
-
 # --- LabelPlacer ---
+
 
 class TestLabelPlacer:
     def test_first_position_is_accepted(self):
         lp = LabelPlacer()
         x, y, align = lp.find_position(
-            "Hello", (10, 10), 2.0,
+            "Hello",
+            (10, 10),
+            2.0,
             preferred=[(0, 3, "BOTTOM_CENTER"), (0, -3, "TOP_CENTER")],
         )
         assert isinstance(x, float)
@@ -30,7 +31,9 @@ class TestLabelPlacer:
         # Reserve a large area at (10, 13)
         lp.reserve_rect((5, 11, 15, 15))
         x, y, align = lp.find_position(
-            "Hi", (10, 10), 1.0,
+            "Hi",
+            (10, 10),
+            1.0,
             preferred=[(0, 3, "BOTTOM_CENTER"), (0, -3, "TOP_CENTER")],
         )
         # Should have picked the second preferred since first overlaps
@@ -50,13 +53,16 @@ class TestLabelPlacer:
                 lp.reserve_rect((dx, dy, dx + 2, dy + 2))
         # Should still return something (fallback to first preferred)
         x, y, align = lp.find_position(
-            "Test", (0, 0), 1.0,
+            "Test",
+            (0, 0),
+            1.0,
             preferred=[(0, 3, "BOTTOM_CENTER")],
         )
         assert align == "BOTTOM_CENTER"
 
 
 # --- spread_instrument_positions ---
+
 
 class TestSpreadInstrumentPositions:
     def test_preserves_count(self):
@@ -78,12 +84,15 @@ class TestSpreadInstrumentPositions:
 
 # --- get_equipment_bounds ---
 
+
 class TestGetEquipmentBounds:
     def test_with_equipment(self):
-        spec = {"equipment": [
-            {"x": 10, "y": 20, "width": 15, "height": 10},
-            {"x": 50, "y": 30, "width": 20, "height": 15},
-        ]}
+        spec = {
+            "equipment": [
+                {"x": 10, "y": 20, "width": 15, "height": 10},
+                {"x": 50, "y": 30, "width": 20, "height": 15},
+            ]
+        }
         x_min, y_min, x_max, y_max = get_equipment_bounds(spec)
         assert x_min == 10
         assert y_min == 20
@@ -96,6 +105,7 @@ class TestGetEquipmentBounds:
 
 
 # --- compute_layout_regions ---
+
 
 class TestComputeLayoutRegions:
     def test_returns_required_keys(self):
@@ -113,11 +123,19 @@ class TestComputeLayoutRegions:
 
 # --- get_modelspace_extent ---
 
+
 class TestGetModelspaceExtent:
     def test_from_explicit_extent(self):
-        spec = {"drawing": {"modelspace_extent": {
-            "x_min": 0, "y_min": 0, "x_max": 200, "y_max": 150,
-        }}}
+        spec = {
+            "drawing": {
+                "modelspace_extent": {
+                    "x_min": 0,
+                    "y_min": 0,
+                    "x_max": 200,
+                    "y_max": 150,
+                }
+            }
+        }
         result = get_modelspace_extent(spec)
         assert result == (0.0, 0.0, 200.0, 150.0)
 

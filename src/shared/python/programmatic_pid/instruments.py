@@ -9,6 +9,7 @@ Preconditions:
 Postconditions:
     - ``add_instrument`` adds a circle and tag text to the modelspace.
 """
+
 from __future__ import annotations
 
 from typing import Any

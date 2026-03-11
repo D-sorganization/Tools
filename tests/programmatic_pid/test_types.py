@@ -1,4 +1,5 @@
 """Contract tests for types module."""
+
 from __future__ import annotations
 
 from programmatic_pid.types import BBox, Point, SpecValidationError, ValidationIssue

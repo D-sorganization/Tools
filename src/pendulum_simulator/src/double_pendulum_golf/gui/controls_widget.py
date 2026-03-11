@@ -385,7 +385,8 @@ class ControlsWidget(QWidget):
 
         # Swing plane tilt angle (#1113)
         self.inp_tilt = LabeledInput(
-            "Tilt °", "0",
+            "Tilt °",
+            "0",
             "Swing plane tilt from vertical (0°=vertical, 90°=horizontal).\n"
             "Effective gravity = g·cos(tilt). A typical golfer's\n"
             "swing plane is tilted ~30–60° from vertical.",

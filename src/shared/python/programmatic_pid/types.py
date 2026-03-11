@@ -3,16 +3,15 @@
 Design-by-Contract: This module defines the shared vocabulary used across
 all other modules. No module-level side effects.
 """
+
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, NamedTuple
 
 
 class SpecValidationError(ValueError):
     """Raised when a YAML specification fails contract validation."""
-
-    pass
 
 
 @dataclass

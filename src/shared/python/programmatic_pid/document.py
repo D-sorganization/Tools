@@ -16,6 +16,7 @@ Usage::
     bbox = doc.equipment_bbox("V-101")
     free = doc.find_free_region(20, 15)
 """
+
 from __future__ import annotations
 
 import logging
@@ -28,7 +29,11 @@ from programmatic_pid.geometry import find_free_region, to_float
 from programmatic_pid.profiles import apply_profile
 from programmatic_pid.spec_loader import SpecAccessor, load_spec
 from programmatic_pid.types import BBox, Point, SpecDict
-from programmatic_pid.validation import collect_issues, validate_spec, validate_spec_json
+from programmatic_pid.validation import (
+    collect_issues,
+    validate_spec,
+    validate_spec_json,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +68,9 @@ class PIDDocument:
         return cls(spec, profile=profile)
 
     @classmethod
-    def from_partial(cls, spec_data: SpecDict, profile: str | None = None) -> PIDDocument | None:
+    def from_partial(
+        cls, spec_data: SpecDict, profile: str | None = None
+    ) -> PIDDocument | None:
         """Try to build from a potentially incomplete spec.
 
         Returns None if the spec has fatal errors; otherwise returns
@@ -94,7 +101,9 @@ class PIDDocument:
 
     @property
     def instrument_ids(self) -> list[str]:
-        return [ins.get("id", "") for ins in self._accessor.instruments if ins.get("id")]
+        return [
+            ins.get("id", "") for ins in self._accessor.instruments if ins.get("id")
+        ]
 
     @property
     def stream_ids(self) -> list[str]:
@@ -165,7 +174,10 @@ class PIDDocument:
         Delegates to the existing generate() function for backward compat.
         """
         # Import here to avoid circular imports during transition
-        from programmatic_pid.generator import generate_process_sheet, generate_controls_sheet
+        from programmatic_pid.generator import (
+            generate_controls_sheet,
+            generate_process_sheet,
+        )
 
         path = Path(path)
         generate_process_sheet(
@@ -221,8 +233,8 @@ class PIDDocument:
                 raise RuntimeError("SVG generation failed; cannot produce PDF")
 
             try:
-                from svglib.svglib import svg2rlg
                 from reportlab.graphics import renderPDF
+                from svglib.svglib import svg2rlg
 
                 drawing = svg2rlg(str(svg_path))
                 if drawing:

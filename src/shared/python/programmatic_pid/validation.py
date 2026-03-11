@@ -3,6 +3,7 @@
 Design-by-Contract: validate_spec() is the single precondition gate.
 All downstream modules assume the spec has passed validation.
 """
+
 from __future__ import annotations
 
 import json
@@ -23,7 +24,9 @@ def _load_schema() -> dict[str, Any] | None:
     global _SCHEMA
     if _SCHEMA is not None:
         return _SCHEMA
-    schema_path = Path(__file__).resolve().parents[2] / "schema" / "pid_spec.schema.json"
+    schema_path = (
+        Path(__file__).resolve().parents[2] / "schema" / "pid_spec.schema.json"
+    )
     if schema_path.exists():
         with open(schema_path, encoding="utf-8") as f:
             _SCHEMA = json.load(f)
@@ -53,7 +56,9 @@ def collect_issues(spec: SpecDict) -> list[ValidationIssue]:
         issues.append(ValidationIssue("project.id", "project.id is required"))
     if not (project.get("title") or project.get("document_title")):
         issues.append(
-            ValidationIssue("project.title", "project.title or project.document_title is required")
+            ValidationIssue(
+                "project.title", "project.title or project.document_title is required"
+            )
         )
 
     equipment = spec.get("equipment", [])
@@ -64,11 +69,15 @@ def collect_issues(spec: SpecDict) -> list[ValidationIssue]:
     for idx, eq in enumerate(equipment):
         eq_id = eq.get("id")
         if not eq_id:
-            issues.append(ValidationIssue(f"equipment[{idx}].id", "equipment entry missing id"))
+            issues.append(
+                ValidationIssue(f"equipment[{idx}].id", "equipment entry missing id")
+            )
             continue
         if eq_id in equipment_ids:
             issues.append(
-                ValidationIssue(f"equipment[{idx}].id", f"duplicate equipment id: {eq_id}")
+                ValidationIssue(
+                    f"equipment[{idx}].id", f"duplicate equipment id: {eq_id}"
+                )
             )
         equipment_ids.add(eq_id)
 
@@ -85,11 +94,15 @@ def collect_issues(spec: SpecDict) -> list[ValidationIssue]:
     for idx, ins in enumerate(spec.get("instruments", [])):
         ins_id = ins.get("id")
         if not ins_id:
-            issues.append(ValidationIssue(f"instruments[{idx}].id", "instrument entry missing id"))
+            issues.append(
+                ValidationIssue(f"instruments[{idx}].id", "instrument entry missing id")
+            )
             continue
         if ins_id in instrument_ids:
             issues.append(
-                ValidationIssue(f"instruments[{idx}].id", f"duplicate instrument id: {ins_id}")
+                ValidationIssue(
+                    f"instruments[{idx}].id", f"duplicate instrument id: {ins_id}"
+                )
             )
         instrument_ids.add(ins_id)
 

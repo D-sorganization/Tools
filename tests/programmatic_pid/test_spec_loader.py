@@ -1,7 +1,12 @@
 """Contract tests for spec_loader module — SpecAccessor and config access."""
+
 from __future__ import annotations
 
-from programmatic_pid.spec_loader import SpecAccessor, get_layout_config, get_text_config
+from programmatic_pid.spec_loader import (
+    SpecAccessor,
+    get_layout_config,
+    get_text_config,
+)
 
 
 def _spec():

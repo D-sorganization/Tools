@@ -12,18 +12,20 @@ Postconditions:
       ``equipment_bbox``, ``canvas_bbox``, and ``panels`` keys.
     - ``LabelPlacer.find_position`` always returns a valid (x, y, align) tuple.
 """
+
 from __future__ import annotations
 
-from typing import Any, Sequence
+from collections.abc import Sequence
+from typing import Any
 
 from programmatic_pid.equipment import equipment_dims
 from programmatic_pid.geometry import rects_overlap, text_box, to_float
 from programmatic_pid.spec_loader import get_drawing, get_layout_config
 
-
 # ---------------------------------------------------------------------------
 # Label collision avoidance
 # ---------------------------------------------------------------------------
+
 
 class LabelPlacer:
     """Track occupied rectangles and find collision-free label positions.
@@ -74,7 +76,9 @@ class LabelPlacer:
             x = ax + dx
             y = ay + dy
             candidate = text_box(text, x, y, h, align=align)
-            if not any(rects_overlap(candidate, r, pad=h * 0.20) for r in self.occupied):
+            if not any(
+                rects_overlap(candidate, r, pad=h * 0.20) for r in self.occupied
+            ):
                 self.reserve_rect(candidate)
                 return x, y, align
         fallback = preferred[0]
@@ -88,6 +92,7 @@ class LabelPlacer:
 # ---------------------------------------------------------------------------
 # Instrument spreading
 # ---------------------------------------------------------------------------
+
 
 def spread_instrument_positions(
     instruments: list[dict[str, Any]],
@@ -145,6 +150,7 @@ def spread_instrument_positions(
 # Canvas / panel layout
 # ---------------------------------------------------------------------------
 
+
 def get_equipment_bounds(
     spec: dict[str, Any],
 ) -> tuple[float, float, float, float]:
@@ -154,12 +160,8 @@ def get_equipment_bounds(
         return 0.0, 0.0, 240.0, 160.0
     x_min = min(to_float(eq.get("x", 0.0)) for eq in equipment)
     y_min = min(to_float(eq.get("y", 0.0)) for eq in equipment)
-    x_max = max(
-        to_float(eq.get("x", 0.0)) + equipment_dims(eq)[0] for eq in equipment
-    )
-    y_max = max(
-        to_float(eq.get("y", 0.0)) + equipment_dims(eq)[1] for eq in equipment
-    )
+    x_max = max(to_float(eq.get("x", 0.0)) + equipment_dims(eq)[0] for eq in equipment)
+    y_max = max(to_float(eq.get("y", 0.0)) + equipment_dims(eq)[1] for eq in equipment)
     return x_min, y_min, x_max, y_max
 
 

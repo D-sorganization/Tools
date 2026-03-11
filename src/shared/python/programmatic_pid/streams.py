@@ -8,9 +8,10 @@ Preconditions:
 Postconditions:
     - ``add_stream`` returns ``(lx, ly)`` label centre or ``None`` if nothing drawn.
 """
+
 from __future__ import annotations
 
-from typing import Any, Sequence
+from typing import Any
 
 from programmatic_pid.equipment import equipment_anchor
 from programmatic_pid.geometry import closest_point_on_rect, text_box, to_float

@@ -1,7 +1,6 @@
 """Contract tests for PIDDocument facade class."""
-from __future__ import annotations
 
-from pathlib import Path
+from __future__ import annotations
 
 from programmatic_pid.document import PIDDocument
 from programmatic_pid.types import BBox, Point
@@ -15,7 +14,9 @@ def _spec():
             {"id": "E-2", "x": 30, "y": 0, "width": 10, "height": 10},
         ],
         "instruments": [{"id": "PT-1", "tag": "PT-1", "x": 5, "y": 5}],
-        "streams": [{"id": "S-1", "from": {"equipment": "E-1"}, "to": {"equipment": "E-2"}}],
+        "streams": [
+            {"id": "S-1", "from": {"equipment": "E-1"}, "to": {"equipment": "E-2"}}
+        ],
         "control_loops": [
             {"id": "PIC-1", "measurement": "PT-1", "final_element": "E-2"}
         ],

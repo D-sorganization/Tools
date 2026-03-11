@@ -1,8 +1,13 @@
 """Contract tests for validation module — structured errors and jsonschema."""
+
 from __future__ import annotations
 
 from programmatic_pid.types import SpecValidationError
-from programmatic_pid.validation import collect_issues, validate_spec, validate_spec_json
+from programmatic_pid.validation import (
+    collect_issues,
+    validate_spec,
+    validate_spec_json,
+)
 
 
 def _minimal_spec():
