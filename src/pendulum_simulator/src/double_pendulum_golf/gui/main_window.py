@@ -53,6 +53,7 @@ from .pendulum_widget import PendulumWidget
 from .simulation_panel import SimulationPanel
 from .toolstrip_widget import ToolStrip
 from .torque_history_widget import TorqueHistoryWidget
+from .optimization_widget import OptimizationWidget
 
 # TODO(#1042): Derive from fleet ThemeManager palette when it's a hard dep.
 from .controls_utils import PENDULUM_DARK_STYLE as _PENDULUM_DARK_STYLE
@@ -324,6 +325,45 @@ class MainWindow(QMainWindow):
                 max_torque2=p.get("max_torque2", 20.0),
             )
 
+        # Optimizer (#1108)
+        optimizer = OptimizationWidget(
+            model_name="Double Pendulum",
+            n_torque_params=2,
+        )
+
+        def _make_double_objective(p: dict) -> Callable:
+            """Build a tip-speed objective from current controls."""
+            params = build_params(p)
+            initial_state = build_state(p)
+            t_end = p["t_end"]
+            limits = build_limits(p)
+            clamp = build_clamp(p)
+
+            def objective(coeffs: np.ndarray) -> float:
+                n_half = len(coeffs) // 2
+                s_coeffs = list(coeffs[:n_half])
+                w_coeffs = list(coeffs[n_half:])
+                torque_func = make_polynomial_torque(s_coeffs, w_coeffs)
+                try:
+                    result = run_simulation(
+                        params=params,
+                        initial_state=initial_state,
+                        t_end=t_end,
+                        torque_func=torque_func,
+                        limits=limits,
+                        clamp=clamp,
+                    )
+                    # Tip speed at last frame
+                    pos = result.positions_at(result.n_steps - 1)
+                    vels = result.joint_velocities_at(result.n_steps - 1)
+                    tip_v = vels.get("tip", (0, 0))
+                    speed = float(np.hypot(tip_v[0], tip_v[1]))
+                    return -speed  # minimize negative speed
+                except Exception:  # noqa: BLE001
+                    return 0.0  # crashed → bad solution
+
+            return objective
+
         panel = SimulationPanel(
             controls=controls,
             pendulum=pendulum,  # type: ignore[arg-type]
@@ -335,6 +375,7 @@ class MainWindow(QMainWindow):
             torque_history=torque_history,  # type: ignore[arg-type]
             limits_builder=build_limits,
             clamp_builder=build_clamp,
+            optimizer=optimizer,
         )
         panel._settings_key = "splitter_double"
         return panel
@@ -384,6 +425,12 @@ class MainWindow(QMainWindow):
                 p["wrist_coeffs"],
             )
 
+        # Optimizer (#1109)
+        optimizer = OptimizationWidget(
+            model_name="Triple Pendulum",
+            n_torque_params=3,
+        )
+
         panel = SimulationPanel(
             controls=controls,
             pendulum=pendulum,  # type: ignore[arg-type]
@@ -392,6 +439,7 @@ class MainWindow(QMainWindow):
             torque_builder=build_torque,
             state_builder=build_state,
             run_simulation=run_simulation_triple,
+            optimizer=optimizer,
         )
         panel._settings_key = "splitter_triple"
         return panel
@@ -467,6 +515,12 @@ class MainWindow(QMainWindow):
                 p["lh_coeffs"],
             )
 
+        # Optimizer (#1110)
+        optimizer = OptimizationWidget(
+            model_name="Golfer Upper Body",
+            n_torque_params=7,
+        )
+
         panel = SimulationPanel(
             controls=controls,
             pendulum=pendulum,  # type: ignore[arg-type]
@@ -475,6 +529,7 @@ class MainWindow(QMainWindow):
             torque_builder=build_torque,
             state_builder=build_state,
             run_simulation=run_simulation_golfer,
+            optimizer=optimizer,
         )
         panel._settings_key = "splitter_golfer"
         return panel

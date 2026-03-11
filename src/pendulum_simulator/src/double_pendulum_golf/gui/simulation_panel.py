@@ -96,6 +96,7 @@ class SimulationPanel(QWidget):
         torque_history: _SimViewer | None = None,
         limits_builder: Callable[[dict], Any] | None = None,
         clamp_builder: Callable[[dict], Any] | None = None,
+        optimizer: QWidget | None = None,
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
@@ -103,6 +104,7 @@ class SimulationPanel(QWidget):
         self.pendulum = pendulum
         self.matrix = matrix
         self.torque_history = torque_history
+        self.optimizer = optimizer
         self._params_builder = params_builder
         self._torque_builder = torque_builder
         self._state_builder = state_builder
@@ -161,6 +163,19 @@ class SimulationPanel(QWidget):
             splitter.setStretchFactor(0, 0)
             splitter.setStretchFactor(1, 3)
             splitter.setStretchFactor(2, 1)
+
+        # Add optimizer panel if provided (#1108, #1109, #1110)
+        if self.optimizer is not None:
+            opt_scroll = QScrollArea()
+            opt_scroll.setWidget(self.optimizer)
+            opt_scroll.setWidgetResizable(True)
+            opt_scroll.setMinimumWidth(200)
+            opt_scroll.setMaximumWidth(300)
+            opt_scroll.setStyleSheet(
+                "QScrollArea { border: none; background: transparent; }"
+            )
+            splitter.addWidget(opt_scroll)
+            splitter.setStretchFactor(splitter.count() - 1, 0)
 
         main_layout.addWidget(splitter)
         self._splitter = splitter  # keep reference for save/restore
