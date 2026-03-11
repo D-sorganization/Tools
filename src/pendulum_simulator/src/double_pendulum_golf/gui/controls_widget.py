@@ -464,7 +464,17 @@ class ControlsWidget(QWidget):
         dlg.exec()
 
     def _on_torque_imported(self, joint: str, coeffs: list[float]) -> None:
-        """Receive torque profile imported from Function Generator."""
+        """Receive torque profile imported from Function Generator.
+
+        Pre: joint in {"shoulder", "wrist", "elbow"}
+        Pre: len(coeffs) >= 1
+        """
+        assert joint.lower() in {
+            "shoulder",
+            "wrist",
+            "elbow",
+        }, f"Unknown joint '{joint}', expected shoulder/wrist/elbow"
+        assert len(coeffs) >= 1, "Coefficients list must not be empty"
         coeffs_str = ", ".join(f"{c:.4g}" for c in coeffs)
         if joint.lower() == "shoulder":
             self.inp_tau_shoulder.set_value(coeffs_str)
@@ -593,10 +603,16 @@ class ControlsWidget(QWidget):
         self.play_toggled.emit(checked)
 
     def set_slider_range(self, max_val: int) -> None:
+        """Pre: max_val >= 0"""
+        assert max_val >= 0, f"Slider max must be non-negative, got {max_val}"
         self.slider.setRange(0, max_val)
         self.lbl_frame.setText(f"Frame: 0 / {max_val}")
 
     def set_slider_value(self, val: int) -> None:
+        """Pre: 0 <= val <= slider.maximum()"""
+        assert (
+            0 <= val <= self.slider.maximum()
+        ), f"Slider value {val} out of range [0, {self.slider.maximum()}]"
         self.slider.blockSignals(True)
         self.slider.setValue(val)
         self.slider.blockSignals(False)

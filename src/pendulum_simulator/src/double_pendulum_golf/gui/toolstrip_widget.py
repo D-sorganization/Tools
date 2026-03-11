@@ -122,10 +122,10 @@ _SLIDER_FRAME = (
 )
 _SEP_STYLE = "QFrame{color:#2a2a50;border:none;}"
 _SEP_H_STYLE = "QFrame{color:#2a2a50;border:none;max-height:1px;}"
-_LABEL = "color:#606080;font-size:9px;"
-_VAL_LBL = "color:#8080b0;font-size:9px;font-family:monospace;min-width:32px;"
-_FRAME_LBL = "color:#6060a0;font-size:9px;font-family:monospace;"
-_TITLE = "color:#9090c8;font-size:11px;font-weight:bold;letter-spacing:1px;padding-right:4px;"
+_LABEL = "color:#606080;font-size:11px;"
+_VAL_LBL = "color:#8080b0;font-size:11px;font-family:monospace;min-width:32px;"
+_FRAME_LBL = "color:#6060a0;font-size:11px;font-family:monospace;"
+_TITLE = "color:#9090c8;font-size:12px;font-weight:bold;letter-spacing:1px;padding-right:4px;"
 _OVERLAY_SECTION = (
     "QFrame#overlay_section {"
     "background: #12122a;"
@@ -527,23 +527,23 @@ class ToolStrip(QWidget):
         else:
             self.segment_visibility_changed.emit(checked)
 
-    def set_segment_names(self, names: list[str]) -> None:
+    def set_segment_names(self, names: list[tuple[str, str]]) -> None:
         """Update segment sub-checkboxes for the active model tab.
 
         Called by MainWindow when the tab index changes.
 
         Parameters
         ----------
-        names : list[str]
-            Joint names for the current model (e.g. ["shoulder", "wrist", "tip"]
-            for double, ["hub", "re", "rh", "le", "lh", "club_tip"] for golfer).
+        names : list[tuple[str, str]]
+            List of (internal_key, display_label) tuples for the current model.
+            e.g. [("shoulder", "Shoulder"), ("wrist", "Wrist")] for double.
         """
         # Remove old checkboxes
         for chk in self._segment_checks.values():
             chk.setParent(None)
             chk.deleteLater()
         self._segment_checks.clear()
-        self._segment_names = names
+        self._segment_names = [key for key, _label in names]
 
         # Find and clear the segment row layout (last layout in overlay_frame)
         overlay_frame: QFrame | None = self.findChild(QFrame, "overlay_section")
@@ -563,19 +563,19 @@ class ToolStrip(QWidget):
                 w = item.widget() if item is not None else None
                 if w is not None:
                     w.deleteLater()
-            # Add new checkboxes
-            for name in names:
-                chk = QCheckBox(name[:6])
+            # Add new checkboxes — label for display, key for internal tracking
+            for key, label in names:
+                chk = QCheckBox(label)
                 chk.setChecked(True)
                 chk.setStyleSheet(
-                    "QCheckBox{color:#707090;font-size:7px;spacing:1px;}"
-                    "QCheckBox::indicator{width:9px;height:9px;border:1px solid #404060;"
+                    "QCheckBox{color:#707090;font-size:10px;spacing:2px;}"
+                    "QCheckBox::indicator{width:11px;height:11px;border:1px solid #404060;"
                     "border-radius:2px;background:#1a1a2a;}"
                     "QCheckBox::indicator:checked{background:#303068;border-color:#5050a0;}"
                 )
                 chk.toggled.connect(self._on_segment_toggled)
                 seg_layout.addWidget(chk)
-                self._segment_checks[name] = chk
+                self._segment_checks[key] = chk
             if hasattr(seg_layout, "addStretch"):
                 seg_layout.addStretch()
 

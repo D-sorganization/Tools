@@ -97,6 +97,7 @@ class SimulationPanel(QWidget):
         limits_builder: Callable[[dict], Any] | None = None,
         clamp_builder: Callable[[dict], Any] | None = None,
         optimizer: QWidget | None = None,
+        objective_builder: Any | None = None,
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
@@ -105,6 +106,7 @@ class SimulationPanel(QWidget):
         self.matrix = matrix
         self.torque_history = torque_history
         self.optimizer = optimizer
+        self.objective_builder = objective_builder
         self._params_builder = params_builder
         self._torque_builder = torque_builder
         self._state_builder = state_builder
@@ -282,7 +284,13 @@ class SimulationPanel(QWidget):
         self._sim_thread.start()
 
     def _on_sim_done(self, result: object) -> None:
-        """Called on the main thread when simulation completes."""
+        """Called on the main thread when simulation completes.
+
+        Pre: result has n_steps, t, states attributes (TrajectoryResultMixin).
+        """
+        assert result is not None, "Simulation result must not be None"
+        assert hasattr(result, "n_steps"), "Result must have n_steps attribute"
+        assert hasattr(result, "t"), "Result must have t attribute"
 
         res: Any = result  # pyqtSignal emits object; cast for attribute access
 
@@ -367,6 +375,8 @@ class SimulationPanel(QWidget):
             self._timer.stop()
 
     def _on_speed_change(self, speed: float) -> None:
+        """Pre: speed > 0"""
+        assert speed > 0, f"Playback speed must be positive, got {speed}"
         self._playback_speed = speed
 
     def _on_frame_change(self, frame: int) -> None:
@@ -401,6 +411,9 @@ class SimulationPanel(QWidget):
         if self._result is None:
             self._timer.stop()
             return
+
+        # Inv: _playback_speed > 0, _sim_dt > 0
+        assert self._playback_speed > 0, "Playback speed invariant violated"
 
         # Compute real-time frame advance (#1115)
         # frames_per_tick = wall_clock_tick / sim_dt × speed_multiplier

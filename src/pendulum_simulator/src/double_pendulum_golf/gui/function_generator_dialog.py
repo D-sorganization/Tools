@@ -43,26 +43,47 @@ from .controls_utils import STYLE_LABEL, STYLE_EDIT, STYLE_BTN, STYLE_BTN_IMPORT
 
 # ── Try to import the shared Function Generator ───────────────────────────────
 _FUNCGEN_AVAILABLE = False
-try:
-    # Walk up from this file to find the 'function_generator/python' directory
-    _fg_root = None
-    _p = Path(__file__).resolve().parent
+FunctionGeneratorWidget = None
+
+
+def _find_sibling_package(marker_path: str) -> Path | None:
+    """Walk up from this file to find a sibling package directory.
+
+    Searches up to 10 parent levels for the given relative path.
+    Returns the parent directory containing the marker, or None.
+
+    Design by Contract
+    ------------------
+    Pre:  marker_path is a non-empty relative path string.
+    Post: returns a valid directory Path or None.
+    """
+    assert marker_path, "marker_path must be non-empty"
+    p = Path(__file__).resolve().parent
     for _ in range(10):
-        _candidate = _p / "function_generator" / "python"
-        if _candidate.exists():
-            _fg_root = _candidate
-            break
-        _p = _p.parent
+        candidate = p / marker_path
+        if candidate.exists():
+            return p
+        p = p.parent
+    return None
 
-    if _fg_root is not None and str(_fg_root) not in sys.path:
-        sys.path.insert(0, str(_fg_root))
-    from function_generator.ui.pyqt6.main_window import (
-        FunctionGeneratorWidget,
-    )
 
-    _FUNCGEN_AVAILABLE = True
+try:
+    _src_root = _find_sibling_package("function_generator/python")
+    if _src_root is not None:
+        _fg_root = _src_root / "function_generator" / "python"
+        if str(_fg_root) not in sys.path:
+            sys.path.insert(0, str(_fg_root))
+        # The function_generator package imports 'shared.python.safe_eval' etc.
+        if str(_src_root) not in sys.path:
+            sys.path.insert(0, str(_src_root))
+        from function_generator.ui.pyqt6.main_window import (
+            FunctionGeneratorWidget as _FGWidget,
+        )
+
+        FunctionGeneratorWidget = _FGWidget
+        _FUNCGEN_AVAILABLE = True
 except ImportError:
-    FunctionGeneratorWidget = None
+    pass  # FunctionGeneratorWidget remains None
 
 
 class _FallbackPolyWidget(QWidget):

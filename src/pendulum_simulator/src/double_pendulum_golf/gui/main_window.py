@@ -69,29 +69,45 @@ _THEME_AVAILABLE = False
 ThemeManager: Any = None
 ThemeManagerDialog: Any = None
 create_theme_menu: Any = None
-try:
-    # Walk up from this file to find the 'shared/python' directory
-    _shared_root = None
-    _p = Path(__file__).resolve().parent
+
+
+def _find_sibling_package(marker_path: str) -> Path | None:
+    """Walk up from this file to find a sibling package directory.
+
+    Searches up to 10 parent levels for the given relative path.
+    Returns the parent directory containing the marker, or None.
+
+    Design by Contract
+    ------------------
+    Pre:  marker_path is a non-empty relative path string.
+    Post: returns a valid directory Path or None.
+    """
+    assert marker_path, "marker_path must be non-empty"
+    p = Path(__file__).resolve().parent
     for _ in range(10):
-        _candidate = _p / "shared" / "python"
-        if _candidate.exists():
-            _shared_root = _candidate
-            break
-        _p = _p.parent
+        candidate = p / marker_path
+        if candidate.exists():
+            return p
+        p = p.parent
+    return None
 
-    if _shared_root is not None and str(_shared_root) not in sys.path:
-        sys.path.insert(0, str(_shared_root))
-    from theme import (
-        ThemeManager as _ThemeManager,
-        ThemeManagerDialog as _ThemeManagerDialog,
-        create_theme_menu as _create_theme_menu,
-    )
 
-    ThemeManager = _ThemeManager
-    ThemeManagerDialog = _ThemeManagerDialog
-    create_theme_menu = _create_theme_menu
-    _THEME_AVAILABLE = True
+try:
+    _src_root = _find_sibling_package("shared/python")
+    if _src_root is not None:
+        _shared_root = _src_root / "shared" / "python"
+        if str(_shared_root) not in sys.path:
+            sys.path.insert(0, str(_shared_root))
+        from theme import (
+            ThemeManager as _ThemeManager,
+            ThemeManagerDialog as _ThemeManagerDialog,
+            create_theme_menu as _create_theme_menu,
+        )
+
+        ThemeManager = _ThemeManager
+        ThemeManagerDialog = _ThemeManagerDialog
+        create_theme_menu = _create_theme_menu
+        _THEME_AVAILABLE = True
 except ImportError:
     pass  # ThemeManager / ThemeManagerDialog / create_theme_menu remain None
 
@@ -211,72 +227,109 @@ class MainWindow(QMainWindow):
         self._wire_toolstrip()
 
     def _wire_toolstrip(self) -> None:
-        """Connect toolstrip signals to both pendulum panels."""
+        """Connect toolstrip signals — dispatched only to the active tab's panel."""
         ts = self._toolstrip
 
-        # Only forward Run/Reset/Play/Speed to the ACTIVE tab's panel
-        # (both panels subscribe; the hidden one just ignores it)
-        all_panels = (
+        # Build the ordered panel list matching tab indices
+        self._panels: tuple[SimulationPanel, ...] = (
             self._double_panel,
             self._triple_panel,
             self._golfer_panel,
         )
-        for panel in all_panels:
-            pw = panel.pendulum
 
-            # Simulation actions
-            ts.run_requested.connect(panel.controls.run_requested.emit)
-            ts.reset_requested.connect(panel.controls.reset_requested.emit)
-            ts.play_toggled.connect(panel.controls.play_toggled.emit)
-            ts.speed_changed.connect(panel.controls.speed_changed.emit)
+        # ── Simulation action signals → active panel only ──────────────
+        ts.run_requested.connect(
+            lambda: self._active_panel().controls.run_requested.emit()
+        )
+        ts.reset_requested.connect(
+            lambda: self._active_panel().controls.reset_requested.emit()
+        )
+        ts.play_toggled.connect(
+            lambda checked: self._active_panel().controls.play_toggled.emit(checked)
+        )
+        ts.speed_changed.connect(
+            lambda val: self._active_panel().controls.speed_changed.emit(val)
+        )
+        ts.frame_scrubbed.connect(lambda idx: self._active_panel().scrub_to_frame(idx))
 
-            # Playback scrubbing via toolstrip slider
-            ts.frame_scrubbed.connect(panel.scrub_to_frame)
+        # ── Overlay toggles → active panel's pendulum widget ──────────
+        def _fwd_overlay(attr: str, value: object) -> None:
+            pw = self._active_panel().pendulum
+            if hasattr(pw, attr):
+                getattr(pw, attr)(value)
 
-            # Overlay toggles → pendulum widget (optional capability)
-            if hasattr(pw, "set_show_forces"):
-                ts.forces_toggled.connect(pw.set_show_forces)
-            if hasattr(pw, "set_show_zero_torque_forces"):
-                ts.zero_torque_toggled.connect(pw.set_show_zero_torque_forces)
-            if hasattr(pw, "set_show_mob_ellipsoids"):
-                ts.mob_ellipsoid_toggled.connect(pw.set_show_mob_ellipsoids)
-            if hasattr(pw, "set_show_force_ellipsoids"):
-                ts.force_ellipsoid_toggled.connect(pw.set_show_force_ellipsoids)
-            if hasattr(pw, "set_show_com"):
-                ts.com_toggled.connect(pw.set_show_com)
+        ts.forces_toggled.connect(lambda v: _fwd_overlay("set_show_forces", v))
+        ts.zero_torque_toggled.connect(
+            lambda v: _fwd_overlay("set_show_zero_torque_forces", v)
+        )
+        ts.mob_ellipsoid_toggled.connect(
+            lambda v: _fwd_overlay("set_show_mob_ellipsoids", v)
+        )
+        ts.force_ellipsoid_toggled.connect(
+            lambda v: _fwd_overlay("set_show_force_ellipsoids", v)
+        )
+        ts.com_toggled.connect(lambda v: _fwd_overlay("set_show_com", v))
 
-            # Scale sliders → pendulum widget (optional capability)
-            if hasattr(pw, "set_force_scale"):
-                ts.force_scale_changed.connect(pw.set_force_scale)
-            if hasattr(pw, "set_mob_ellipsoid_scale"):
-                ts.mob_scale_changed.connect(pw.set_mob_ellipsoid_scale)
-            if hasattr(pw, "set_force_ellipsoid_scale"):
-                ts.force_ell_scale_changed.connect(pw.set_force_ellipsoid_scale)
+        # ── Scale sliders → active panel's pendulum widget ────────────
+        ts.force_scale_changed.connect(lambda v: _fwd_overlay("set_force_scale", v))
+        ts.mob_scale_changed.connect(
+            lambda v: _fwd_overlay("set_mob_ellipsoid_scale", v)
+        )
+        ts.force_ell_scale_changed.connect(
+            lambda v: _fwd_overlay("set_force_ellipsoid_scale", v)
+        )
 
-            # Busy state
-            panel.sim_started.connect(lambda: ts.set_running(True))
-            panel.sim_finished.connect(lambda: ts.set_running(False))
-
-            # Sync toolstrip slider when simulation completes
-            panel.sim_finished.connect(
-                lambda p=panel: ts.set_frame_range(p.current_n_steps())
+        # ── Reset view → active panel's pendulum widget ───────────────
+        ts.reset_view_requested.connect(
+            lambda: (
+                self._active_panel().pendulum.reset_view()  # type: ignore[attr-defined]
+                if hasattr(self._active_panel().pendulum, "reset_view")
+                else None
             )
+        )
 
-            # Sync toolstrip frame counter when animation advances
-            panel.frame_changed.connect(lambda idx: ts.set_frame(idx))
+        # ── Per-segment overlay visibility ────────────────────────────
+        ts.segment_visibility_changed.connect(
+            lambda vis: (
+                self._active_panel().pendulum.set_visible_segments(vis)  # type: ignore[attr-defined]
+                if hasattr(self._active_panel().pendulum, "set_visible_segments")
+                else None
+            )
+        )
 
-            # Reset view button → clear zoom/pan on the pendulum canvas
-            if hasattr(pw, "reset_view"):
-                ts.reset_view_requested.connect(pw.reset_view)
-
-            # Per-segment overlay visibility (#1100, #1101, #1102)
-            if hasattr(pw, "set_visible_segments"):
-                ts.segment_visibility_changed.connect(pw.set_visible_segments)
+        # ── Busy state and frame sync — only forward from the active panel ─
+        # Guard each callback so non-active panels are silently ignored.
+        for panel in self._panels:
+            panel.sim_started.connect(
+                lambda _p=panel: (
+                    ts.set_running(True) if _p is self._active_panel() else None
+                )
+            )
+            panel.sim_finished.connect(
+                lambda _p=panel: (
+                    [
+                        ts.set_running(False),  # type: ignore[func-returns-value]
+                        ts.set_frame_range(_p.current_n_steps()),  # type: ignore[func-returns-value]
+                    ]
+                    if _p is self._active_panel()
+                    else None
+                )
+            )
+            panel.frame_changed.connect(
+                lambda idx, _p=panel: (
+                    ts.set_frame(idx) if _p is self._active_panel() else None
+                )
+            )
 
         # Update segment checkboxes when tab changes
         self._tabs.currentChanged.connect(self._on_tab_changed)
         # Initialize with the default tab's segments
         self._on_tab_changed(self._tabs.currentIndex())
+
+    def _active_panel(self) -> SimulationPanel:
+        """Return the SimulationPanel for the currently visible tab."""
+        idx = self._tabs.currentIndex()
+        return self._panels[idx]
 
     def _build_double_panel(self) -> SimulationPanel:
         controls = ControlsWidget()
@@ -378,6 +431,7 @@ class MainWindow(QMainWindow):
             limits_builder=build_limits,
             clamp_builder=build_clamp,
             optimizer=optimizer,
+            objective_builder=_make_double_objective,
         )
         panel._settings_key = "splitter_double"
         return panel
@@ -434,6 +488,34 @@ class MainWindow(QMainWindow):
             n_torque_params=3,
         )
 
+        def _make_triple_objective(p: dict) -> Callable:
+            """Build a tip-speed objective from current controls."""
+            params = build_params(p)
+            initial_state = build_state(p)
+            t_end = p["t_end"]
+
+            def objective(coeffs: np.ndarray) -> float:
+                n_third = len(coeffs) // 3
+                s_c = list(coeffs[:n_third])
+                e_c = list(coeffs[n_third : 2 * n_third])
+                w_c = list(coeffs[2 * n_third :])
+                torque_func = make_polynomial_torque_triple(s_c, e_c, w_c)
+                try:
+                    result = run_simulation_triple(
+                        params=params,
+                        initial_state=initial_state,
+                        t_end=t_end,
+                        torque_func=torque_func,  # type: ignore[arg-type]
+                    )
+                    vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]
+                    tip_v = vels.get("tip", (0, 0))
+                    speed = float(np.hypot(tip_v[0], tip_v[1]))
+                    return -speed
+                except Exception:  # noqa: BLE001
+                    return 0.0
+
+            return objective
+
         panel = SimulationPanel(
             controls=controls,
             pendulum=pendulum,  # type: ignore[arg-type]
@@ -443,6 +525,7 @@ class MainWindow(QMainWindow):
             state_builder=build_state,
             run_simulation=run_simulation_triple,
             optimizer=optimizer,
+            objective_builder=_make_triple_objective,
         )
         panel._settings_key = "splitter_triple"
         return panel
@@ -525,6 +608,34 @@ class MainWindow(QMainWindow):
             n_torque_params=7,
         )
 
+        def _make_golfer_objective(p: dict) -> Callable:
+            """Build a clubhead-speed objective from current controls."""
+            params = build_params(p)
+            initial_state = build_state(p)
+            t_end = p["t_end"]
+
+            def objective(coeffs: np.ndarray) -> float:
+                n_seventh = max(1, len(coeffs) // 7)
+                slices = [
+                    list(coeffs[i * n_seventh : (i + 1) * n_seventh]) for i in range(7)
+                ]
+                torque_func = make_polynomial_torque_golfer(*slices)
+                try:
+                    result = run_simulation_golfer(
+                        params=params,
+                        initial_state=initial_state,
+                        t_end=t_end,
+                        torque_func=torque_func,  # type: ignore[arg-type]
+                    )
+                    vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]
+                    tip_v = vels.get("club_tip", (0, 0))
+                    speed = float(np.hypot(tip_v[0], tip_v[1]))
+                    return -speed
+                except Exception:  # noqa: BLE001
+                    return 0.0
+
+            return objective
+
         panel = SimulationPanel(
             controls=controls,
             pendulum=pendulum,  # type: ignore[arg-type]
@@ -534,6 +645,7 @@ class MainWindow(QMainWindow):
             state_builder=build_state,
             run_simulation=run_simulation_golfer,
             optimizer=optimizer,
+            objective_builder=_make_golfer_objective,
         )
         panel._settings_key = "splitter_golfer"
         return panel
@@ -542,13 +654,37 @@ class MainWindow(QMainWindow):
     # Per-segment visibility (#1100, #1101, #1102)
     # ------------------------------------------------------------------
 
-    # Joint names per model type
-    _SEGMENTS_DOUBLE = ["shoulder", "wrist", "tip"]
-    _SEGMENTS_TRIPLE = ["shoulder", "wrist1", "wrist2", "tip"]
-    _SEGMENTS_GOLFER = ["hub", "rs", "re", "rh", "ls", "le", "lh", "club_tip"]
+    # Joint (key, display_label) per model type.
+    # key = internal physics key, label = human-readable for toolstrip.
+    _SEGMENTS_DOUBLE: list[tuple[str, str]] = [
+        ("shoulder", "Shoulder"),
+        ("wrist", "Wrist"),
+        ("tip", "Tip"),
+    ]
+    _SEGMENTS_TRIPLE: list[tuple[str, str]] = [
+        ("shoulder", "Shoulder"),
+        ("wrist1", "Wrist 1"),
+        ("wrist2", "Wrist 2"),
+        ("tip", "Tip"),
+    ]
+    _SEGMENTS_GOLFER: list[tuple[str, str]] = [
+        ("hub", "Hub"),
+        ("rs", "Right Shoulder"),
+        ("re", "Right Elbow"),
+        ("rh", "Right Hand"),
+        ("ls", "Left Shoulder"),
+        ("le", "Left Elbow"),
+        ("lh", "Left Hand"),
+        ("club_tip", "Club Tip"),
+    ]
 
     def _on_tab_changed(self, index: int) -> None:
-        """Update toolstrip segment checkboxes for the active model tab."""
+        """Update toolstrip segment checkboxes and sync overlay state for the active tab.
+
+        When the user switches tabs the new panel's pendulum widget must
+        receive the current overlay toggle states from the toolstrip so
+        that forces, ellipsoids, COM, etc. match the checkbox display.
+        """
         segment_map = {
             0: self._SEGMENTS_DOUBLE,
             1: self._SEGMENTS_TRIPLE,
@@ -556,6 +692,32 @@ class MainWindow(QMainWindow):
         }
         names = segment_map.get(index, self._SEGMENTS_DOUBLE)
         self._toolstrip.set_segment_names(names)
+
+        # ── Sync overlay toggle states to the newly-active panel ──────
+        pw = self._active_panel().pendulum
+        ts = self._toolstrip
+        if hasattr(pw, "set_show_forces"):
+            pw.set_show_forces(ts.chk_forces.isChecked())
+        if hasattr(pw, "set_show_zero_torque_forces"):
+            pw.set_show_zero_torque_forces(ts.chk_zero_torque.isChecked())
+        if hasattr(pw, "set_show_mob_ellipsoids"):
+            pw.set_show_mob_ellipsoids(ts.chk_mob.isChecked())
+        if hasattr(pw, "set_show_force_ellipsoids"):
+            pw.set_show_force_ellipsoids(ts.chk_force_ell.isChecked())
+        if hasattr(pw, "set_show_com"):
+            pw.set_show_com(ts.chk_com.isChecked())
+
+        # Sync scale slider values
+        if hasattr(pw, "set_force_scale"):
+            pw.set_force_scale(ts._sld_force.value() / 10.0)
+        if hasattr(pw, "set_mob_ellipsoid_scale"):
+            pw.set_mob_ellipsoid_scale(ts._sld_mob.value() / 10.0)
+        if hasattr(pw, "set_force_ellipsoid_scale"):
+            pw.set_force_ellipsoid_scale(ts._sld_force_ell.value() / 10.0)
+
+        # Sync segment visibility from current checkbox state
+        if hasattr(pw, "set_visible_segments"):
+            ts._on_segment_toggled()  # re-emits segment_visibility_changed
 
     # ------------------------------------------------------------------
     # Theme management

@@ -43,6 +43,9 @@ class MatrixWidget(QWidget):
         self._current_idx: int = 0
 
     def set_simulation(self, result: SimulationResult) -> None:
+        """Pre: result is not None and has at least one time step."""
+        assert result is not None, "SimulationResult must not be None"
+        assert result.n_steps >= 1, "Result must have at least one time step"
         self._result = result
         self._current_idx = 0
         self.update()
