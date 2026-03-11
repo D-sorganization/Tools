@@ -560,4 +560,4 @@ def launch() -> int:
     app = QApplication.instance() or QApplication(sys.argv)
     window = VesselDrafterWindow()
     window.show()
-    return app.exec()
+    return int(app.exec())
