@@ -1,0 +1,50 @@
+# ============================================================
+#  gas_cleanup.yaml — Downstream Gas Cleanup Equipment
+# ============================================================
+
+# ────────────────────────────────────────────────────────────
+# Quench Vessel
+# ────────────────────────────────────────────────────────────
+quench_vessel:
+  name: "Quench_Vessel"
+  target_outlet_temperature_C: 250.0  # Design target
+  type: "direct_water_quench"
+
+# ────────────────────────────────────────────────────────────
+# Baghouse (Fabric Filter)
+# ────────────────────────────────────────────────────────────
+baghouse:
+  name: "Baghouse"
+  # Particle separation efficiency
+  # 99.9% collection efficiency is typical for fabric filters
+  particle_collection_efficiency: 0.999  # Fraction of solids removed
+  # In DWSIM SolidSeparator: set SolidsSeperationEfficiency
+  pressure_drop_Pa: 1500.0   # ~15 mbar typical across baghouse
+
+# ────────────────────────────────────────────────────────────
+# Scrubber (Wet Scrubber / Venturi)
+# ────────────────────────────────────────────────────────────
+scrubber:
+  name: "Scrubber"
+  # Component separation — removes soluble species and remaining particulate
+  # Map: component → fraction removed into liquid blowdown
+  separation_specs:
+    Water:            0.95   # Condense most water out
+    Hydrogen sulfide: 0.90   # H2S absorbed by scrubber liquor
+    Ammonia:          0.85   # NH3 absorbed
+    Hydrogen chloride: 0.95  # HCl absorbed
+    Naphthalene:      0.70   # Partial tar removal
+    Toluene:          0.60   # Partial tar removal
+  pressure_drop_Pa: 2000.0
+
+# ────────────────────────────────────────────────────────────
+# Blower / Compressor
+# ────────────────────────────────────────────────────────────
+blower:
+  name: "Blower"
+  # Pressure rise through the blower
+  outlet_pressure_Pa: 105000.0   # Slightly above atmospheric
+  # Efficiency (isentropic)
+  isentropic_efficiency: 0.75
+  # Mechanical efficiency
+  mechanical_efficiency: 0.95

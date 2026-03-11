@@ -1,0 +1,28 @@
+# ============================================================
+#  air_blown.yaml — Air-Blown Gasification Scenario
+# ============================================================
+#
+# Air instead of pure oxygen reduces operating cost but dilutes
+# the syngas with nitrogen, reducing heating value significantly.
+# LHV of air-blown syngas is typically 4–7 MJ/Nm³ vs 10–15 for
+# oxygen-blown.  Only suitable for direct combustion end-use.
+
+scenario:
+  name: "Air Blown"
+  description: "Air-blown operation — lower cost, lower syngas quality"
+
+overrides:
+  feeds:
+    Gasifier_Oxygen_Feed:
+      mass_flow_kg_s: 14.3    # Air is ~23.2% O2 by mass; need ~3 kg O2 → ~13 kg air
+      components:
+        Oxygen:   0.232
+        Nitrogen: 0.768
+
+  energy_streams:
+    E_PEM_AC_Power: 3000000.0   # Reduced plasma demand with air
+    E_PEM_DC_Power: 1500000.0
+
+targets:
+  cold_gas_efficiency_min: 0.55    # Lower for N2-diluted syngas
+  h2_co_ratio_target: 1.0

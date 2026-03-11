@@ -1,0 +1,38 @@
+# ============================================================
+#  baseline.yaml — Baseline Operating Scenario
+# ============================================================
+#
+# This scenario represents typical steady-state operation at
+# design capacity.  Values here override the base config files.
+#
+# To create a new scenario, copy this file and modify values.
+# Then set ``scenario:`` in master_config.yaml to point at it.
+
+scenario:
+  name: "Baseline"
+  description: "Design-point operation — 10 kg/s biomass, ER=0.30, S/C=0.50"
+
+# Override specific feed conditions
+overrides:
+  feeds:
+    Gasifier_Biomass_Feed:
+      mass_flow_kg_s: 10.0
+      temperature_C: 25.0
+
+    Gasifier_Oxygen_Feed:
+      mass_flow_kg_s: 3.0     # ER ≈ 0.30
+
+    Gasifier_Steam_Feed:
+      mass_flow_kg_s: 2.0     # S/C ≈ 0.50
+
+  energy_streams:
+    E_PEM_AC_Power: 5000000.0   # 5 MW
+    E_PEM_DC_Power: 3000000.0   # 3 MW
+
+# Key performance targets (used by validation module)
+targets:
+  cold_gas_efficiency_min: 0.65      # ≥ 65% CGE
+  carbon_conversion_min: 0.90        # ≥ 90% carbon conversion
+  h2_co_ratio_target: 1.8            # Target H2/CO for downstream use
+  syngas_temperature_outlet_C: 60    # After blower, before end-use
+  tar_loading_mg_Nm3_max: 100.0      # Clean gas target for ICE use

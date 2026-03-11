@@ -1,0 +1,28 @@
+# ============================================================
+#  trc_feeds.yaml — TRC (Thermal Reduction Chamber) Feed Conditions
+# ============================================================
+#
+# The TRC is a plug-flow reactor that provides additional
+# residence time for tar cracking and equilibration after
+# the high-temperature PEM zone.
+
+TRC_Solids_Feed:
+  temperature_C: 25.0
+  pressure_Pa: 101325.0
+  mass_flow_kg_s: 0.1
+  components:
+    Helium: 1.0
+
+TRC_Oxygen_Feed:
+  temperature_C: 25.0
+  pressure_Pa: 101325.0
+  mass_flow_kg_s: 0.2
+  components:
+    Oxygen: 1.0
+
+TRC_Steam_Feed:
+  temperature_C: 200.0
+  pressure_Pa: 500000.0
+  mass_flow_kg_s: 0.2
+  components:
+    Water: 1.0

@@ -1,0 +1,38 @@
+# ============================================================
+#  pem_feeds.yaml — PEM (Plasma Entrained Melter) Feed Conditions
+# ============================================================
+#
+# The PEM receives the syngas from the downdraft gasifier and
+# subjects it to plasma heating (AC arc + DC plasma torch).
+# Additional oxygen and steam can be injected to control
+# stoichiometry and hydrogen content.
+
+# ────────────────────────────────────────────────────────────
+# PEM Solids Feed (supplemental carbon / char injection)
+# ────────────────────────────────────────────────────────────
+PEM_Solids_Feed:
+  temperature_C: 25.0
+  pressure_Pa: 101325.0
+  mass_flow_kg_s: 0.2
+  components:
+    Helium: 1.0   # Char/ash proxy
+
+# ────────────────────────────────────────────────────────────
+# PEM Oxygen Feed (fine-tune oxidation)
+# ────────────────────────────────────────────────────────────
+PEM_Oxygen_Feed:
+  temperature_C: 25.0
+  pressure_Pa: 101325.0
+  mass_flow_kg_s: 0.5
+  components:
+    Oxygen: 1.0
+
+# ────────────────────────────────────────────────────────────
+# PEM Steam Feed (H2/CO ratio adjustment)
+# ────────────────────────────────────────────────────────────
+PEM_Steam_Feed:
+  temperature_C: 200.0
+  pressure_Pa: 500000.0
+  mass_flow_kg_s: 0.5
+  components:
+    Water: 1.0
