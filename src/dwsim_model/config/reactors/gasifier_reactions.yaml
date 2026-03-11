@@ -1,0 +1,71 @@
+# ============================================================
+#  gasifier_reactions.yaml — Downdraft Gasifier Reaction Set
+# ============================================================
+#
+# These parameters are used by chemistry/reactions.py to
+# configure the DWSIM RCT_Conversion reactor.
+#
+# For RCT_Conversion: specify fractional conversions per reaction.
+# For RCT_Equilibrium: only temperature/pressure are used.
+# For RCT_PFR: kinetics section is used instead.
+#
+# References:
+#   Prins et al. (2007) Fuel 86(9), 1286–1290
+#   Jarungthammachote & Dutta (2007) Energy Conv. Mgmt. 48(7)
+
+reactor:
+  name: "Downdraft_Gasifier"
+  type: "RCT_Conversion"   # Must match reactor_mode in master_config
+
+  # Operating conditions
+  temperature_C: 900.0
+  pressure_Pa: 101325.0     # Atmospheric — typical for small downdraft
+  mode: "isothermal"        # isothermal | adiabatic | specified_duty
+
+# ────────────────────────────────────────────────────────────
+# Conversion reactions
+# ────────────────────────────────────────────────────────────
+# Each entry defines one reaction.
+# ``base_component`` is the limiting reactant (conversion applies to it).
+# ``conversion`` is the fractional conversion of the base component (0–1).
+# ``heat_of_reaction_kJ_mol`` is the standard enthalpy change (negative = exothermic).
+#
+# NOTE: conversions are approximate starting points.  Tune them to match
+# measured syngas compositions from your specific gasifier.
+
+reactions:
+  - name: "Partial Oxidation"
+    stoichiometry: "2C + O2 → 2CO"
+    base_component: "Oxygen"
+    conversion: 0.90       # Most O2 converted to CO (not CO2)
+    heat_of_reaction_kJ_mol: -221.0
+
+  - name: "Complete Combustion"
+    stoichiometry: "C + O2 → CO2"
+    base_component: "Oxygen"
+    conversion: 0.08       # Small fraction goes to CO2
+    heat_of_reaction_kJ_mol: -393.5
+
+  - name: "Water Gas Reaction (primary)"
+    stoichiometry: "C + H2O → CO + H2"
+    base_component: "Water"
+    conversion: 0.60       # Moderate conversion; T-dependent
+    heat_of_reaction_kJ_mol: 131.3
+
+  - name: "Boudouard Reaction"
+    stoichiometry: "C + CO2 → 2CO"
+    base_component: "Carbon dioxide"
+    conversion: 0.35       # Partial — limited by carbon availability
+    heat_of_reaction_kJ_mol: 172.5
+
+  - name: "Methanation"
+    stoichiometry: "C + 2H2 → CH4"
+    base_component: "Hydrogen"
+    conversion: 0.05       # Low at 900°C — thermodynamically unfavourable
+    heat_of_reaction_kJ_mol: -74.8
+
+  - name: "Water Gas Shift (WGS)"
+    stoichiometry: "CO + H2O → CO2 + H2"
+    base_component: "Carbon monoxide"
+    conversion: 0.20       # Partial equilibrium
+    heat_of_reaction_kJ_mol: -41.2

@@ -1,0 +1,23 @@
+# ============================================================
+#  high_steam.yaml — High Steam-to-Carbon Ratio Scenario
+# ============================================================
+#
+# High S/C promotes WGS reaction → higher H2/CO ratio.
+# Useful when targeting hydrogen-rich syngas for fuel cells
+# or methanol synthesis (requires H2/CO ≈ 2.0–2.2).
+
+scenario:
+  name: "High Steam"
+  description: "High S/C = 1.0 to maximise H2/CO ratio"
+
+overrides:
+  feeds:
+    Gasifier_Steam_Feed:
+      mass_flow_kg_s: 4.0     # S/C ≈ 1.0
+
+    PEM_Steam_Feed:
+      mass_flow_kg_s: 1.0
+
+targets:
+  h2_co_ratio_target: 2.1
+  cold_gas_efficiency_min: 0.60   # Slightly lower due to steam heating load

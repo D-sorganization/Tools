@@ -81,6 +81,11 @@ pid = [
 cad = [
     "build123d==0.10.0",
 ]
+# DWSIM gasification model
+dwsim = [
+    "pythonnet>=3.0.0",
+    "pydantic>=2.0.0",
+]
 # Development tools
 dev = [
     "pytest>=7.0.0",
@@ -93,6 +98,7 @@ dev = [
 [project.scripts]
 urdf-gen = "model_generation.cli:main"
 generate-pid = "programmatic_pid.cli:main"
+dwsim-model = "dwsim_model.__main__:main"
 
 [project.urls]
 Homepage = "https://github.com/D-sorganization/Tools"
@@ -109,6 +115,7 @@ include = [
     "signal_toolkit*",
     "rotation_converter*",
     "programmatic_pid*",
+    "dwsim_model*",
     "utils*",
     "tools*",
     "web_applications*",

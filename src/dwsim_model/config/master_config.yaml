@@ -1,0 +1,77 @@
+# ============================================================
+#  master_config.yaml — Gasification Model Master Configuration
+# ============================================================
+#
+# This is the single file you point the model at.  It references
+# sub-files for each section so each concern stays in one place.
+#
+# To run the model:
+#   python -m dwsim_model run --config config/master_config.yaml
+#
+# To override individual values without editing this file, create
+# a scenario file and pass it with --scenario.
+
+# ────────────────────────────────────────────────────────────
+# Model identity
+# ────────────────────────────────────────────────────────────
+model:
+  name: "Plasma-Assisted Gasification Train"
+  version: "2.0"
+  description: >
+    Three-stage gasification: Downdraft Gasifier → PEM Plasma Reactor →
+    Thermal Reduction Chamber, followed by Quench, Baghouse, Scrubber,
+    and Blower.
+
+# ────────────────────────────────────────────────────────────
+# Reactor fidelity mode
+# ────────────────────────────────────────────────────────────
+# Options: mixed | kinetic | equilibrium | conversion | custom
+# "mixed" is the recommended starting point:
+#   Gasifier → RCT_Conversion  (specified conversions per reaction)
+#   PEM      → RCT_Equilibrium (minimise Gibbs energy)
+#   TRC      → RCT_PFR         (plug-flow with kinetic expressions)
+reactor_mode: "mixed"
+
+# ────────────────────────────────────────────────────────────
+# Compound set
+# ────────────────────────────────────────────────────────────
+# Options: minimal | standard | extended
+# "standard"  adds C2 hydrocarbons on top of core syngas species.
+# "extended"  also adds tar surrogates (Naphthalene, Toluene) and
+#             trace contaminants (H2S, NH3).
+compound_set: "standard"
+
+# ────────────────────────────────────────────────────────────
+# Sub-configuration files
+# ────────────────────────────────────────────────────────────
+feeds:
+  gasifier: "config/feeds/gasifier_feeds.yaml"
+  pem:      "config/feeds/pem_feeds.yaml"
+  trc:      "config/feeds/trc_feeds.yaml"
+  quench:   "config/feeds/quench_feeds.yaml"
+
+reactors:
+  gasifier: "config/reactors/gasifier_reactions.yaml"
+  pem:      "config/reactors/pem_reactions.yaml"
+  trc:      "config/reactors/trc_reactions.yaml"
+
+energy:   "config/energy/energy_inputs.yaml"
+equipment: "config/equipment/gas_cleanup.yaml"
+
+# ────────────────────────────────────────────────────────────
+# Active scenario override
+# ────────────────────────────────────────────────────────────
+# Values in the scenario file override anything defined above.
+# Comment out this line to use base values only.
+scenario: "config/scenarios/baseline.yaml"
+
+# ────────────────────────────────────────────────────────────
+# Output settings
+# ────────────────────────────────────────────────────────────
+output:
+  directory: "results/"
+  formats:
+    - json       # Machine-readable results
+    - html       # Human-readable report
+  save_dwxml: true   # Also save DWSIM GUI file
+  dwxml_name: "Gasification_Model_GUI.dwxml"

@@ -8,7 +8,8 @@
       "category": "Process Simulation",
       "surfaces": {
         "pyqt6": true,
-        "web": true
+        "web": true,
+        "legacy_gui": false
       }
     },
     {
@@ -18,7 +19,8 @@
       "category": "Process Simulation",
       "surfaces": {
         "pyqt6": true,
-        "web": true
+        "web": true,
+        "legacy_gui": false
       }
     },
     {
@@ -28,7 +30,8 @@
       "category": "Biomechanics",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -38,7 +41,19 @@
       "category": "Data Processing",
       "surfaces": {
         "pyqt6": true,
-        "web": true
+        "web": true,
+        "legacy_gui": false
+      }
+    },
+    {
+      "id": "dwsim_model",
+      "name": "DWSIM Gasification Model",
+      "description": "DWSIM-backed gasification process simulation with Tkinter GUI",
+      "category": "Process Simulation",
+      "surfaces": {
+        "pyqt6": false,
+        "web": false,
+        "legacy_gui": true
       }
     },
     {
@@ -48,7 +63,8 @@
       "category": "Process Simulation",
       "surfaces": {
         "pyqt6": true,
-        "web": true
+        "web": true,
+        "legacy_gui": false
       }
     },
     {
@@ -58,7 +74,8 @@
       "category": "Process Simulation",
       "surfaces": {
         "pyqt6": true,
-        "web": true
+        "web": true,
+        "legacy_gui": false
       }
     },
     {
@@ -68,7 +85,8 @@
       "category": "Process Simulation",
       "surfaces": {
         "pyqt6": true,
-        "web": true
+        "web": true,
+        "legacy_gui": false
       }
     },
     {
@@ -78,7 +96,8 @@
       "category": "Utilities",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -88,7 +107,8 @@
       "category": "Development Tools",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -98,7 +118,8 @@
       "category": "Development Tools",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -108,7 +129,8 @@
       "category": "Signal Processing",
       "surfaces": {
         "pyqt6": true,
-        "web": true
+        "web": true,
+        "legacy_gui": false
       }
     },
     {
@@ -118,7 +140,8 @@
       "category": "Robotics",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -128,7 +151,8 @@
       "category": "Robotics",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -138,7 +162,8 @@
       "category": "Analysis",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -148,7 +173,8 @@
       "category": "Mathematics",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -158,7 +184,8 @@
       "category": "Optimization",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -168,7 +195,8 @@
       "category": "Development Tools",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -178,7 +206,8 @@
       "category": "Engineering Drafting",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -188,7 +217,8 @@
       "category": "Process Simulation",
       "surfaces": {
         "pyqt6": true,
-        "web": true
+        "web": true,
+        "legacy_gui": false
       }
     },
     {
@@ -198,7 +228,8 @@
       "category": "Process Simulation",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -208,7 +239,8 @@
       "category": "Robotics",
       "surfaces": {
         "pyqt6": true,
-        "web": true
+        "web": true,
+        "legacy_gui": false
       }
     },
     {
@@ -218,7 +250,8 @@
       "category": "Process Simulation",
       "surfaces": {
         "pyqt6": true,
-        "web": true
+        "web": true,
+        "legacy_gui": false
       }
     },
     {
@@ -228,7 +261,8 @@
       "category": "Signal Processing",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -238,7 +272,8 @@
       "category": "Thermodynamics",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -248,7 +283,8 @@
       "category": "Process Simulation",
       "surfaces": {
         "pyqt6": true,
-        "web": true
+        "web": true,
+        "legacy_gui": false
       }
     },
     {
@@ -258,7 +294,8 @@
       "category": "Process Simulation",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -268,7 +305,8 @@
       "category": "Process Simulation",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -278,7 +316,8 @@
       "category": "Process Simulation",
       "surfaces": {
         "pyqt6": true,
-        "web": true
+        "web": true,
+        "legacy_gui": false
       }
     },
     {
@@ -288,7 +327,8 @@
       "category": "Robotics",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -298,7 +338,8 @@
       "category": "Process Simulation",
       "surfaces": {
         "pyqt6": true,
-        "web": false
+        "web": false,
+        "legacy_gui": false
       }
     },
     {
@@ -308,7 +349,8 @@
       "category": "Process Simulation",
       "surfaces": {
         "pyqt6": true,
-        "web": true
+        "web": true,
+        "legacy_gui": false
       }
     }
   ]

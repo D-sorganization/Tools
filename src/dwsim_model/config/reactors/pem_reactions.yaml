@@ -1,0 +1,61 @@
+# ============================================================
+#  pem_reactions.yaml — PEM Plasma Reactor Configuration
+# ============================================================
+#
+# The PEM operates as an equilibrium reactor (RCT_Equilibrium / Gibbs).
+# At plasma temperatures (1200–1600 °C), most reactions reach equilibrium
+# rapidly.  The plasma torch provides energy input via AC and DC arcs.
+#
+# Key reactions at PEM conditions:
+#   WGS equilibrium:       CO + H2O ⇌ CO2 + H2     (Keq strong R-to-L at T>800°C)
+#   Methanation reverse:   CH4 + H2O ⇌ CO + 3H2    (steam reforming)
+#   Tar cracking:          CxHy → x·C + y/2·H2      (simplified)
+#   Boudouard:             C + CO2 ⇌ 2CO             (favoured at >900°C)
+
+reactor:
+  name: "PEM_Reactor"
+  type: "RCT_Equilibrium"
+
+  # The plasma zone temperature.  Typical range: 1200–1600 °C
+  # Higher T → more CO, H2; less CH4, CO2
+  temperature_C: 1400.0
+  pressure_Pa: 101325.0
+  mode: "isothermal"   # The plasma arc maintains this temperature
+
+# ────────────────────────────────────────────────────────────
+# Equilibrium reactions
+# ────────────────────────────────────────────────────────────
+# For RCT_Equilibrium, DWSIM minimises Gibbs energy at the set T, P.
+# These are reference reactions; DWSIM uses them as constraints.
+
+reactions:
+  - name: "Water Gas Shift"
+    stoichiometry: "CO + H2O → CO2 + H2"
+    type: "equilibrium"
+    # Kp at 1400°C ≈ 0.02 — equilibrium strongly favours CO + H2O at this T
+
+  - name: "Steam Methane Reforming"
+    stoichiometry: "CH4 + H2O → CO + 3H2"
+    type: "equilibrium"
+    # Endothermic; highly favoured at plasma temperatures
+
+  - name: "Boudouard"
+    stoichiometry: "C + CO2 → 2CO"
+    type: "equilibrium"
+    # Strongly favoured above 900°C
+
+  - name: "Methane Decomposition"
+    stoichiometry: "CH4 → C + 2H2"
+    type: "equilibrium"
+    # Important at >1000°C
+
+# ────────────────────────────────────────────────────────────
+# Energy input from plasma torches
+# ────────────────────────────────────────────────────────────
+# These are set via energy_inputs.yaml; shown here for reference.
+# AC arc (electrode heating): typically 2–6 MW for 10 kg/s feed
+# DC plasma torch: typically 1–4 MW
+plasma_energy_reference:
+  ac_power_kW: 5000.0    # 5 MW AC arc
+  dc_power_kW: 3000.0    # 3 MW DC torch
+  thermal_efficiency: 0.85   # 85% of electrical energy → gas enthalpy

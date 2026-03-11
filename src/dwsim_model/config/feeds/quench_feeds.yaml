@@ -1,0 +1,41 @@
+# ============================================================
+#  quench_feeds.yaml — Quench Vessel Feed Conditions
+# ============================================================
+#
+# The quench vessel rapidly cools the hot syngas from ~900 °C
+# to ~200–300 °C by direct water injection, steam injection,
+# or nitrogen dilution.  This prevents tar condensation in
+# downstream piping and protects the baghouse.
+
+# ────────────────────────────────────────────────────────────
+# Water injection (primary cooling medium)
+# ────────────────────────────────────────────────────────────
+Quench_Water_Injection:
+  temperature_C: 20.0
+  pressure_Pa: 150000.0   # 1.5 bar — above quench vessel pressure
+  # Flow rate is typically sized to bring syngas from ~900°C to ~250°C.
+  # As a starting point: Q_sensible ≈ m_syngas × Cp_avg × ΔT / h_vap,water
+  # Rough estimate: ~0.3–0.5 kg water per kg syngas.
+  mass_flow_kg_s: 1.5
+  components:
+    Water: 1.0
+
+# ────────────────────────────────────────────────────────────
+# Nitrogen injection (inerting / flow control)
+# ────────────────────────────────────────────────────────────
+Quench_Nitrogen:
+  temperature_C: 20.0
+  pressure_Pa: 150000.0
+  mass_flow_kg_s: 0.1    # Small — mainly for inerting
+  components:
+    Nitrogen: 1.0
+
+# ────────────────────────────────────────────────────────────
+# Steam injection (optional — increases H2 content via WGS)
+# ────────────────────────────────────────────────────────────
+Quench_Steam:
+  temperature_C: 150.0
+  pressure_Pa: 400000.0
+  mass_flow_kg_s: 0.0    # Disabled by default; set > 0 to enable
+  components:
+    Water: 1.0
