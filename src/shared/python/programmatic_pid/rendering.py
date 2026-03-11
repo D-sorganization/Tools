@@ -157,7 +157,7 @@ def add_text_panel(
     w: float,
     h: float,
     title: str,
-    lines: list[str],
+    lines: Sequence[str | None],
     text_h: float,
     text_layer: str,
     border_layer: str,

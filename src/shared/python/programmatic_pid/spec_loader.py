@@ -7,7 +7,7 @@ get_text_config / get_layout_config / get_layer_config accessor functions.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import yaml
 from programmatic_pid.geometry import to_float
@@ -23,7 +23,8 @@ def load_spec(path: str | Path) -> SpecDict:
     Postcondition: returns a dict (possibly empty if YAML is blank).
     """
     with open(path, encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        data = yaml.safe_load(f)
+    return cast(SpecDict, data) if isinstance(data, dict) else {}
 
 
 def prepare_spec(spec_path: str | Path, profile: str | None) -> SpecDict:
@@ -54,13 +55,16 @@ class SpecAccessor:
 
     @property
     def project(self) -> dict[str, Any]:
-        return self._spec.get("project", {})
+        p = self._spec.get("project")
+        return p if isinstance(p, dict) else {}
 
     @property
     def drawing(self) -> dict[str, Any]:
-        if "drawing" in self._spec and isinstance(self._spec["drawing"], dict):
-            return self._spec["drawing"]
-        return self.project.get("drawing", {})
+        d = self._spec.get("drawing")
+        if isinstance(d, dict):
+            return d
+        proj_d = self.project.get("drawing")
+        return proj_d if isinstance(proj_d, dict) else {}
 
     @property
     def text_config(self) -> TextConfig:
@@ -139,23 +143,28 @@ class SpecAccessor:
 
     @property
     def equipment(self) -> list[dict[str, Any]]:
-        return self._spec.get("equipment", [])
+        v = self._spec.get("equipment")
+        return cast(list[dict[str, Any]], v) if isinstance(v, list) else []
 
     @property
     def instruments(self) -> list[dict[str, Any]]:
-        return self._spec.get("instruments", [])
+        v = self._spec.get("instruments")
+        return cast(list[dict[str, Any]], v) if isinstance(v, list) else []
 
     @property
     def streams(self) -> list[dict[str, Any]]:
-        return self._spec.get("streams", [])
+        v = self._spec.get("streams")
+        return cast(list[dict[str, Any]], v) if isinstance(v, list) else []
 
     @property
     def control_loops(self) -> list[dict[str, Any]]:
-        return self._spec.get("control_loops", [])
+        v = self._spec.get("control_loops")
+        return cast(list[dict[str, Any]], v) if isinstance(v, list) else []
 
     @property
     def interlocks(self) -> list[dict[str, Any]]:
-        return self._spec.get("interlocks", [])
+        v = self._spec.get("interlocks")
+        return cast(list[dict[str, Any]], v) if isinstance(v, list) else []
 
 
 # ---------------------------------------------------------------------------
@@ -165,13 +174,15 @@ class SpecAccessor:
 
 
 def get_project(spec: SpecDict) -> dict[str, Any]:
-    return spec.get("project", {})
+    p = spec.get("project")
+    return p if isinstance(p, dict) else {}
 
 
 def get_drawing(spec: SpecDict) -> dict[str, Any]:
     if "drawing" in spec and isinstance(spec["drawing"], dict):
         return spec["drawing"]
-    return get_project(spec).get("drawing", {})
+    d = get_project(spec).get("drawing")
+    return cast(dict[str, Any], d) if isinstance(d, dict) else {}
 
 
 def ensure_drawing(spec: SpecDict) -> dict[str, Any]:
@@ -182,7 +193,7 @@ def ensure_drawing(spec: SpecDict) -> dict[str, Any]:
     if not isinstance(drawing, dict):
         drawing = {}
         project["drawing"] = drawing
-    return drawing
+    return cast(dict[str, Any], drawing)
 
 
 def get_text_config(spec: SpecDict) -> dict[str, float]:

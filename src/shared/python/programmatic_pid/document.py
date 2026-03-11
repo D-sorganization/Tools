@@ -58,7 +58,7 @@ class PIDDocument:
         validate_spec(self._spec)
         self._accessor = SpecAccessor(self._spec)
         self._equipment_by_id: dict[str, dict[str, Any]] = {
-            eq.get("id"): eq for eq in self._accessor.equipment if eq.get("id")
+            eq["id"]: eq for eq in self._accessor.equipment if eq.get("id")
         }
 
     @classmethod
@@ -224,9 +224,12 @@ class PIDDocument:
         Requires svglib + reportlab or ezdxf's drawing backend.
         Falls back gracefully with a clear error message.
         """
+        import os
         import tempfile
 
-        svg_path = Path(tempfile.mktemp(suffix=".svg"))
+        _fd, _svg_tmp = tempfile.mkstemp(suffix=".svg")
+        os.close(_fd)
+        svg_path = Path(_svg_tmp)
         try:
             self.export_svg(svg_path)
             if not svg_path.exists():
@@ -242,10 +245,10 @@ class PIDDocument:
                     logger.info("PDF exported to %s", path)
                 else:
                     raise RuntimeError("svglib could not parse SVG")
-            except ImportError:
+            except ImportError as err:
                 raise RuntimeError(
                     "PDF export requires 'svglib' and 'reportlab'. "
                     "Install with: pip install svglib reportlab"
-                ) from None
+                ) from err
         finally:
             svg_path.unlink(missing_ok=True)

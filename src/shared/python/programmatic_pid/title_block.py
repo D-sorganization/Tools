@@ -136,9 +136,13 @@ def add_notes(
         f'{loop.get("objective") or loop.get("description") or loop.get("note", "")}'
         for loop in loops
     ]
+    cx, cy, cw, ch = panels["control"]
     add_text_panel(
         msp,
-        *panels["control"],
+        cx,
+        cy,
+        cw,
+        ch,
         title="Key Control Loops",
         lines=loop_lines,
         text_h=text_cfg["small_height"],
@@ -162,9 +166,13 @@ def add_notes(
         f"Biochar product = {char_wet:.0f} kg/h wet",
         f"Dry-basis char yield = {dry_yield:.1f}%",
     ]
+    mx, my, mw, mh = panels["mass"]
     add_text_panel(
         msp,
-        *panels["mass"],
+        mx,
+        my,
+        mw,
+        mh,
         title="Approximate Mass Balance",
         lines=mass_lines,
         text_h=text_cfg["small_height"],
@@ -209,9 +217,13 @@ def add_notes(
         right_lines.append("Equipment Notes:")
         right_lines.extend(equipment_note_lines[:6])
 
+    rx, ry, rw, rh = panels["right"]
     add_text_panel(
         msp,
-        *panels["right"],
+        rx,
+        ry,
+        rw,
+        rh,
         title="Design and Safety Notes",
         lines=right_lines,
         text_h=text_cfg["small_height"],

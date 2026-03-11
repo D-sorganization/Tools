@@ -5,7 +5,7 @@ from pathlib import Path
 import ezdxf
 import programmatic_pid.generator as mod
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def minimal_spec() -> dict:

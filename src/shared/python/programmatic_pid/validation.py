@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from programmatic_pid.geometry import to_float
-from programmatic_pid.types import SpecDict, SpecValidationError, ValidationIssue
+from programmatic_pid.types import SpecValidationError, ValidationIssue
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,7 @@ def _equipment_dims(eq: dict[str, Any]) -> tuple[float, float]:
     )
 
 
-def collect_issues(spec: SpecDict) -> list[ValidationIssue]:
+def collect_issues(spec: Any) -> list[ValidationIssue]:
     """Return a list of structured validation issues (errors + warnings).
 
     Agent-friendly: callers can serialise these to JSON for programmatic fixes.
@@ -160,7 +160,7 @@ def collect_issues(spec: SpecDict) -> list[ValidationIssue]:
     return issues
 
 
-def validate_spec(spec: SpecDict) -> None:
+def validate_spec(spec: Any) -> None:
     """Validate spec and raise SpecValidationError if any errors found.
 
     Precondition: spec is a dict loaded from YAML.
@@ -187,7 +187,7 @@ def validate_spec(spec: SpecDict) -> None:
         )
 
 
-def validate_spec_json(spec: SpecDict) -> list[dict[str, str]]:
+def validate_spec_json(spec: Any) -> list[dict[str, str]]:
     """Agent-friendly validation that returns structured JSON-serializable issues.
 
     Never raises; callers inspect the returned list.
