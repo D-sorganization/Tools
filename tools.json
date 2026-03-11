@@ -49,6 +49,14 @@
             "desc": "Intelligent PDF File Renaming Tool"
         }
     ],
+    "Engineering Drafting": [
+        {
+            "name": "P&ID Generator",
+            "path": "src/pid_generator/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Generate P&ID drawings from YAML specifications (DXF + SVG output)"
+        }
+    ],
     "Mathematics": [
         {
             "name": "ODE Solver",

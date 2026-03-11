@@ -1,11 +1,18 @@
-#!/usr/bin/env python3
-"""P&ID Generator — CLI launcher for the Tools monorepo.
+"""Launch the Programmatic PID generator CLI.
 
-Usage:
-    python launch_cli.py --spec path/to/spec.yml --out output.dxf [--svg output.svg]
+This module serves as the entry point for the Tools launcher
+to invoke the P&ID generator command-line interface.
 """
 
-from programmatic_pid.cli import main
+from __future__ import annotations
+
+
+def main() -> None:
+    """Launch the PID generator CLI."""
+    from programmatic_pid.cli import main as cli_main
+
+    cli_main()
+
 
 if __name__ == "__main__":
     main()

@@ -172,6 +172,16 @@
       }
     },
     {
+      "id": "pid_generator",
+      "name": "P&ID Generator",
+      "description": "Generate P&ID drawings from YAML specifications (DXF + SVG output)",
+      "category": "Engineering Drafting",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
       "id": "pressure_drop_calculator",
       "name": "Pressure Drop Calculator",
       "description": "Pipe flow pressure drop analysis with multiple friction methods",
