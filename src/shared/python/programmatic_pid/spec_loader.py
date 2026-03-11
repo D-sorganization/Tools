@@ -193,7 +193,7 @@ def ensure_drawing(spec: SpecDict) -> dict[str, Any]:
     if not isinstance(drawing, dict):
         drawing = {}
         project["drawing"] = drawing
-    return drawing
+    return cast(dict[str, Any], drawing)
 
 
 def get_text_config(spec: SpecDict) -> dict[str, float]:
