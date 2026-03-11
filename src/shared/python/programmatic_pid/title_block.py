@@ -138,7 +138,11 @@ def add_notes(
     ]
     cx, cy, cw, ch = panels["control"]
     add_text_panel(
-        msp, cx, cy, cw, ch,
+        msp,
+        cx,
+        cy,
+        cw,
+        ch,
         title="Key Control Loops",
         lines=loop_lines,
         text_h=text_cfg["small_height"],
@@ -164,7 +168,11 @@ def add_notes(
     ]
     mx, my, mw, mh = panels["mass"]
     add_text_panel(
-        msp, mx, my, mw, mh,
+        msp,
+        mx,
+        my,
+        mw,
+        mh,
         title="Approximate Mass Balance",
         lines=mass_lines,
         text_h=text_cfg["small_height"],
@@ -211,7 +219,11 @@ def add_notes(
 
     rx, ry, rw, rh = panels["right"]
     add_text_panel(
-        msp, rx, ry, rw, rh,
+        msp,
+        rx,
+        ry,
+        rw,
+        rh,
         title="Design and Safety Notes",
         lines=right_lines,
         text_h=text_cfg["small_height"],

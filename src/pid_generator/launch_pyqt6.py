@@ -19,16 +19,16 @@ def main() -> None:
     try:
         from PyQt6.QtWidgets import (
             QApplication,
+            QComboBox,
             QFileDialog,
+            QHBoxLayout,
+            QLabel,
+            QLineEdit,
             QMainWindow,
             QMessageBox,
             QPushButton,
-            QLabel,
-            QLineEdit,
             QVBoxLayout,
-            QHBoxLayout,
             QWidget,
-            QComboBox,
         )
     except ImportError:
         print("PyQt6 not installed. Run: pip install PyQt6", file=sys.stderr)
@@ -129,10 +129,14 @@ def main() -> None:
         profile = None if profile_text == "(default)" else profile_text
 
         if not spec_path:
-            QMessageBox.warning(window, "Missing Input", "Please select a spec YAML file.")
+            QMessageBox.warning(
+                window, "Missing Input", "Please select a spec YAML file."
+            )
             return
         if not out_path:
-            QMessageBox.warning(window, "Missing Output", "Please specify an output DXF path.")
+            QMessageBox.warning(
+                window, "Missing Output", "Please specify an output DXF path."
+            )
             return
 
         status_label.setText("Generating…")
