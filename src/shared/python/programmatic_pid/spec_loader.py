@@ -182,7 +182,7 @@ def get_drawing(spec: SpecDict) -> dict[str, Any]:
     if "drawing" in spec and isinstance(spec["drawing"], dict):
         return spec["drawing"]
     d = get_project(spec).get("drawing")
-    return d if isinstance(d, dict) else {}
+    return cast(dict[str, Any], d) if isinstance(d, dict) else {}
 
 
 def ensure_drawing(spec: SpecDict) -> dict[str, Any]:
