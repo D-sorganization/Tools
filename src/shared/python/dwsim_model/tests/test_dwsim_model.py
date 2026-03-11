@@ -58,6 +58,13 @@ def test_standard_pressure_is_one_atm():
     assert STANDARD_PRESSURE_PA == pytest.approx(101_325.0)
 
 
+def test_energy_stream_names_present():
+    from dwsim_model.constants import ENERGY_STREAM_NAMES
+
+    assert "gasifier_heat_loss" in ENERGY_STREAM_NAMES
+    assert "blower_power" in ENERGY_STREAM_NAMES
+
+
 def test_stream_names_has_required_keys():
     from dwsim_model.constants import STREAM_NAMES
 
