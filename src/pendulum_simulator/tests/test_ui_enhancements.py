@@ -5,7 +5,6 @@ Covers issues #1097, #1100-#1102, #1103, #1104, #1108-#1110, #1111, #1113.
 
 from __future__ import annotations
 
-
 import numpy as np
 import pytest
 
