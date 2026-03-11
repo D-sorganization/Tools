@@ -37,7 +37,9 @@ def get_automation(dwsim_path: str | None = None):
         logger.info("Successfully loaded DWSIM automation.")
     except Exception as e:
         logger.error(f"Failed to load DWSIM automation from {dwsim_path}: {e}")
-        raise RuntimeError(f"Could not load DWSIM automation from {dwsim_path}: {e}") from e
+        raise RuntimeError(
+            f"Could not load DWSIM automation from {dwsim_path}: {e}"
+        ) from e
 
     return _interf, _ObjectType
 
@@ -82,7 +84,9 @@ class FlowsheetBuilder:
             return prop_pack
         except Exception as e:
             logger.error(f"Failed to load property package {package_name}: {e}")
-            raise ValueError(f"Failed to load property package {package_name}: {e}") from e
+            raise ValueError(
+                f"Failed to load property package {package_name}: {e}"
+            ) from e
 
     def add_object(
         self, obj_type_name: str, name: str, x: int = 0, y: int = 0
@@ -134,7 +138,9 @@ class FlowsheetBuilder:
             )
         except Exception as e:
             logger.error(f"Failed to connect {source_obj} to {target_obj}: {e}")
-            raise RuntimeError(f"Failed to connect {source_obj} to {target_obj}: {e}") from e
+            raise RuntimeError(
+                f"Failed to connect {source_obj} to {target_obj}: {e}"
+            ) from e
 
     def calculate(self) -> None:
         """Run the simulation flowsheet."""
