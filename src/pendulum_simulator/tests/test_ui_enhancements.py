@@ -19,6 +19,17 @@ from double_pendulum_golf.physics_golfer import (
     analytical_fk_jacobians as golfer_analytical_jacobians,
 )
 
+
+def _has_pyqt6() -> bool:
+    """Check if PyQt6 is available (not on headless CI)."""
+    try:
+        import PyQt6.QtWidgets  # noqa: F401
+
+        return True
+    except (ImportError, RuntimeError):
+        return False
+
+
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -391,6 +402,7 @@ class TestPerSegmentVisibility:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.skipif(not _has_pyqt6(), reason="PyQt6 not available (headless CI)")
 class TestOptimizationWidget:
     """Optimization widget basic functionality tests."""
 
@@ -401,7 +413,6 @@ class TestOptimizationWidget:
 
     def test_instantiation(self) -> None:
         """Widget should instantiate without errors."""
-        pytest.importorskip("PyQt6")
         from double_pendulum_golf.gui.optimization_widget import OptimizationWidget
 
         # Need QApplication for widget creation
@@ -422,7 +433,7 @@ class TestOptimizationWidget:
         """Background optimizer worker should optimize a simple quadratic."""
         from double_pendulum_golf.gui.optimization_widget import _OptimizerWorker
 
-        objective_called = []
+        objective_called: list[bool] = []
 
         def simple_objective(x: np.ndarray) -> float:
             objective_called.append(True)
@@ -435,8 +446,8 @@ class TestOptimizationWidget:
             method="Nelder-Mead",
         )
 
-        results: list = []
-        errors: list = []
+        results: list[dict[str, object]] = []
+        errors: list[str] = []
         worker.finished.connect(lambda r: results.append(r))
         worker.error.connect(lambda e: errors.append(e))
 
