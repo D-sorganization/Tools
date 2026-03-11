@@ -358,9 +358,7 @@ class TestPerSegmentVisibility:
     """Segment visibility filtering must work correctly."""
 
     @staticmethod
-    def _filter_visible(
-        names: list[str], visible: set[str] | None
-    ) -> list[str]:
+    def _filter_visible(names: list[str], visible: set[str] | None) -> list[str]:
         return [n for n in names if visible is None or n in visible]
 
     def test_none_means_all_visible(self) -> None:
