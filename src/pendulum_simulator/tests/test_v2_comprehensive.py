@@ -87,7 +87,11 @@ class TestTorqueClampAbsValue:
         torque_func = lambda t: (0.0, 0.0, 0.0)  # noqa: E731
         limits = np.array([50.0, 30.0, 20.0])
         result = run_simulation(
-            params, state, t_end=0.1, torque_func=torque_func, dt=0.01,
+            params,
+            state,
+            t_end=0.1,
+            torque_func=torque_func,
+            dt=0.01,
             torque_limits=limits,
         )
         assert result.n_steps >= 2

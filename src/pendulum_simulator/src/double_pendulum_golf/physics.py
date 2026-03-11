@@ -302,9 +302,9 @@ def clamp_torque_ndof(tau: np.ndarray, limits: np.ndarray) -> np.ndarray:
     Pre: tau.shape == limits.shape, all limits > 0.
     Post: |result[i]| <= limits[i] for all i.
     """
-    assert tau.shape == limits.shape, (
-        f"Shape mismatch: tau={tau.shape}, limits={limits.shape}"
-    )
+    assert (
+        tau.shape == limits.shape
+    ), f"Shape mismatch: tau={tau.shape}, limits={limits.shape}"
     assert np.all(limits > 0), "All limits must be positive"
     return np.clip(tau, -limits, limits)
 
