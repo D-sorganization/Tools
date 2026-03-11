@@ -76,6 +76,10 @@ theme = [
 pid = [
     "ezdxf[draw]>=1.4.3",
 ]
+# CAD geometry export (build123d pulls in its own matplotlib and PyQt6)
+cad = [
+    "build123d==0.10.0",
+]
 # Development tools
 dev = [
     "pytest>=7.0.0",

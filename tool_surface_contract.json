@@ -282,6 +282,16 @@
       }
     },
     {
+      "id": "vessel_drafter",
+      "name": "Vessel Drafter",
+      "description": "Refractory vessel design with STEP, STL, BREP, and GLTF export",
+      "category": "Process Simulation",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false
+      }
+    },
+    {
       "id": "wgs_reactor",
       "name": "WGS Reactor Calculator",
       "description": "Water-Gas Shift reactor equilibrium and sizing calculations",

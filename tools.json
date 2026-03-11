@@ -193,6 +193,12 @@
             "desc": "Predict temperature profiles for heated vessels"
         },
         {
+            "name": "Vessel Drafter",
+            "path": "src/vessel_drafter/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Refractory vessel design with STEP, STL, BREP, and GLTF export"
+        },
+        {
             "name": "WGS Reactor Calculator (PyQt6)",
             "path": "src/wgs_reactor/launch_pyqt6.py",
             "type": "python",
@@ -263,14 +269,6 @@
             "path": "src/steam_engine_calculator/launch_pyqt6.py",
             "type": "python",
             "desc": "Calculate thermodynamic properties of steam/water"
-        }
-    ],
-    "Engineering Drafting": [
-        {
-            "name": "P&ID Generator",
-            "path": "src/pid_generator/launch_cli.py",
-            "type": "python",
-            "desc": "Generate P&ID drawings from YAML specifications (DXF + SVG output)"
         }
     ],
     "Utilities": [
