@@ -43,11 +43,17 @@ class GolferPendulumWidget(BasePendulumWidget):
     COLOR_GRIP = QColor(255, 225, 80)
     COLOR_SHOULDER_BAR = QColor(140, 140, 160)
 
+    # Zero torque vector color (violet/purple, same as PendulumWidget)
+    COLOR_ZERO_TORQUE = QColor(210, 120, 255)
+
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self._result: GolferSimulationResult | None = None
         self._current_idx: int = 0
+
+        # Pre-computed zero-torque counterfactual forces (#1148)
+        self._zero_torque_forces: list[dict] | None = None
 
     # ------------------------------------------------------------------
     # Abstract interface implementation
@@ -86,7 +92,27 @@ class GolferPendulumWidget(BasePendulumWidget):
         self._result = result
         self._current_idx = 0
         self._trail.clear()
+
+        # Pre-compute zero-torque counterfactual forces (#1148)
+        self._zero_torque_forces = self._precompute_zero_torque_forces(result)
+
         self.update()
+
+    @staticmethod
+    def _precompute_zero_torque_forces(
+        result: GolferSimulationResult,
+    ) -> list[dict]:
+        """Pre-compute zero-torque counterfactual joint forces for every frame."""
+        from .counterfactual_golfer import zero_torque_joint_forces
+
+        forces: list[dict] = []
+        params = result.params
+        for state in result.states:
+            try:
+                forces.append(zero_torque_joint_forces(state, params))
+            except Exception:
+                forces.append({})
+        return forces
 
     def set_frame(self, idx: int) -> None:
         if self._result is None:
@@ -132,6 +158,9 @@ class GolferPendulumWidget(BasePendulumWidget):
 
         if self._show_forces:
             self._draw_force_vectors(painter)
+
+        if self._show_zero_torque_forces:
+            self._draw_zero_torque_force_vectors(painter)
 
         if self._show_com:
             self._draw_com(painter)
@@ -297,6 +326,69 @@ class GolferPendulumWidget(BasePendulumWidget):
             path.closeSubpath()
             old_brush = painter.brush()
             painter.setBrush(QBrush(painter.pen().color()))
+            painter.drawPath(path)
+            painter.setBrush(old_brush)
+
+    def _draw_zero_torque_force_vectors(self, painter: QPainter) -> None:
+        """Draw zero-torque (passive drift) force vectors at each joint (#1148)."""
+        if self._result is None or self._zero_torque_forces is None:
+            return
+        forces = self._zero_torque_forces[self._current_idx]
+        if not forces:
+            return
+
+        pos = self._result.positions_at(self._current_idx)
+        magnitudes = [np.hypot(f[0], f[1]) for f in forces.values()]
+        max_mag = max(1.0, max(magnitudes))
+        scale = 0.4 * self._pixels_per_meter * self._force_scale / max_mag
+
+        joint_pos_map = {
+            "hub": pos.get("hub"),
+            "re": pos.get("re"),
+            "rh": pos.get("rh"),
+            "le": pos.get("le"),
+            "lh": pos.get("lh"),
+            "club_tip": pos.get("club_tip"),
+        }
+
+        pen = QPen(self.COLOR_ZERO_TORQUE, 2, Qt.PenStyle.DashLine)
+        painter.setPen(pen)
+        for key, force in forces.items():
+            if self._visible_segments is not None and key not in self._visible_segments:
+                continue
+            jp = joint_pos_map.get(key)
+            if jp is None:
+                continue
+            fx, fy = force
+            end = (
+                jp[0] + fx * scale / self._pixels_per_meter,
+                jp[1] + fy * scale / self._pixels_per_meter,
+            )
+            p1 = self._world_to_pixel(*jp)
+            p2 = self._world_to_pixel(*end)
+            painter.drawLine(p1, p2)
+
+            # Arrowhead
+            dx = p2.x() - p1.x()
+            dy = p2.y() - p1.y()
+            arrow_l = max(1.0, np.hypot(dx, dy))
+            ux, uy = dx / arrow_l, dy / arrow_l
+            a_len, a_w = 8.0, 3.0
+            left = QPointF(
+                p2.x() - a_len * ux + a_w * uy,
+                p2.y() - a_len * uy - a_w * ux,
+            )
+            right = QPointF(
+                p2.x() - a_len * ux - a_w * uy,
+                p2.y() - a_len * uy + a_w * ux,
+            )
+            path = QPainterPath()
+            path.moveTo(p2)
+            path.lineTo(left)
+            path.lineTo(right)
+            path.closeSubpath()
+            old_brush = painter.brush()
+            painter.setBrush(QBrush(self.COLOR_ZERO_TORQUE))
             painter.drawPath(path)
             painter.setBrush(old_brush)
 
