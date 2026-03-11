@@ -348,18 +348,11 @@ pub mod py_bindings {
             return Err(pyo3::exceptions::PyValueError::new_err("q must have length 8"));
         }
         let mut q_arr = [0.0; 8];
-        for i in 0..8 {
-            q_arr[i] = q[i];
-        }
+        q_arr.copy_from_slice(&q[..8]);
         let m = golfer_mass_matrix(&q_arr, &params.inner);
-        let mut result = Vec::new();
-        for i in 0..8 {
-            let mut row = Vec::new();
-            for j in 0..8 {
-                row.push(m[(i, j)]);
-            }
-            result.push(row);
-        }
+        let result: Vec<Vec<f64>> = (0..8)
+            .map(|i| (0..8).map(|j| m[(i, j)]).collect())
+            .collect();
         Ok(result)
     }
 
@@ -370,9 +363,7 @@ pub mod py_bindings {
             return Err(pyo3::exceptions::PyValueError::new_err("q must have length 8"));
         }
         let mut q_arr = [0.0; 8];
-        for i in 0..8 {
-            q_arr[i] = q[i];
-        }
+        q_arr.copy_from_slice(&q[..8]);
         let g = golfer_gravity_vector(&q_arr, &params.inner);
         Ok(g.as_slice().to_vec())
     }
@@ -384,9 +375,7 @@ pub mod py_bindings {
             return Err(pyo3::exceptions::PyValueError::new_err("q must have length 8"));
         }
         let mut q_arr = [0.0; 8];
-        for i in 0..8 {
-            q_arr[i] = q[i];
-        }
+        q_arr.copy_from_slice(&q[..8]);
         let fk = golfer_forward_kinematics(&q_arr, &params.inner);
         let mut result = HashMap::new();
         result.insert("hub".to_string(), vec![fk.hub.0, fk.hub.1]);
@@ -409,9 +398,7 @@ pub mod py_bindings {
             return Err(pyo3::exceptions::PyValueError::new_err("q must have length 8"));
         }
         let mut q_arr = [0.0; 8];
-        for i in 0..8 {
-            q_arr[i] = q[i];
-        }
+        q_arr.copy_from_slice(&q[..8]);
         let phi = constraint_vector(&q_arr, &params.inner);
         Ok(phi.as_slice().to_vec())
     }
@@ -423,18 +410,11 @@ pub mod py_bindings {
             return Err(pyo3::exceptions::PyValueError::new_err("q must have length 8"));
         }
         let mut q_arr = [0.0; 8];
-        for i in 0..8 {
-            q_arr[i] = q[i];
-        }
+        q_arr.copy_from_slice(&q[..8]);
         let j = constraint_jacobian(&q_arr, &params.inner);
-        let mut result = Vec::new();
-        for i in 0..4 {
-            let mut row = Vec::new();
-            for jj in 0..8 {
-                row.push(j[(i, jj)]);
-            }
-            result.push(row);
-        }
+        let result: Vec<Vec<f64>> = (0..4)
+            .map(|i| (0..8).map(|jj| j[(i, jj)]).collect())
+            .collect();
         Ok(result)
     }
 
@@ -719,16 +699,11 @@ pub mod wasm_bindings {
             return Err(JsValue::from_str("q must have length 8"));
         }
         let mut q_arr = [0.0; 8];
-        for i in 0..8 {
-            q_arr[i] = q[i];
-        }
+        q_arr.copy_from_slice(&q[..8]);
         let m = golfer_mass_matrix(&q_arr, &params.inner);
-        let mut result = Vec::new();
-        for i in 0..8 {
-            for j in 0..8 {
-                result.push(m[(i, j)]);
-            }
-        }
+        let result: Vec<f64> = (0..8)
+            .flat_map(|i| (0..8).map(move |j| m[(i, j)]))
+            .collect();
         Ok(result)
     }
 
@@ -739,9 +714,7 @@ pub mod wasm_bindings {
             return Err(JsValue::from_str("q must have length 8"));
         }
         let mut q_arr = [0.0; 8];
-        for i in 0..8 {
-            q_arr[i] = q[i];
-        }
+        q_arr.copy_from_slice(&q[..8]);
         let fk = golfer_forward_kinematics(&q_arr, &params.inner);
         Ok(vec![
             fk.hub.0,
