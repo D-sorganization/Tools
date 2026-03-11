@@ -20,16 +20,10 @@ from __future__ import annotations
 
 import logging
 from enum import Enum
+from typing import TYPE_CHECKING
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import (
-    QDialog,
-    QLabel,
-    QScrollArea,
-    QVBoxLayout,
-    QWidget,
-)
+if TYPE_CHECKING:
+    from PyQt6.QtWidgets import QDialog, QWidget
 
 logger = logging.getLogger(__name__)
 
@@ -181,6 +175,10 @@ def show_equations_popup(parent: QWidget | None, topic: EquationTopic) -> QDialo
     Pre: topic is a valid EquationTopic.
     Post: returns the QDialog instance (caller may discard).
     """
+    from PyQt6.QtCore import Qt
+    from PyQt6.QtGui import QFont
+    from PyQt6.QtWidgets import QDialog, QLabel, QScrollArea, QVBoxLayout
+
     assert topic in _TOPICS, f"Unknown topic: {topic}"
     title, html = _TOPICS[topic]
 
