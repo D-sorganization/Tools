@@ -13,8 +13,6 @@ from typing import Any, NamedTuple
 class SpecValidationError(ValueError):
     """Raised when a YAML specification fails contract validation."""
 
-    pass
-
 
 @dataclass
 class ValidationIssue:
