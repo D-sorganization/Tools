@@ -115,6 +115,16 @@ class GolferParams:
     b_le: float = 0.0
     b_lh: float = 0.0
 
+    # Scapula joint parameters (#1104)
+    # Optional scapula links between hub bar and shoulder joints.
+    # When L_rscap/L_lscap = 0, the scapula is absent (backwards compatible).
+    L_rscap: float = 0.0  # right scapula link length
+    L_lscap: float = 0.0  # left scapula link length
+    m_rscap: float = 0.0  # right scapula mass
+    m_lscap: float = 0.0  # left scapula mass
+    b_rscap: float = 0.0  # right scapula damping
+    b_lscap: float = 0.0  # left scapula damping
+
     def __post_init__(self) -> None:
         for name, val in [
             ("m_hub", self.m_hub),
@@ -272,9 +282,32 @@ def forward_kinematics(
 
     hub = _hub_position(th_hub, p)
 
-    # Shoulder positions (perpendicular to hub standoff)
-    rs = _shoulder_position(hub, th_hub, p.d_rs, +1.0)
-    ls = _shoulder_position(hub, th_hub, p.d_ls, -1.0)
+    # Scapula and shoulder positions (#1104)
+    # The hub bar endpoint is where the shoulder (or scapula) connects.
+    rs_bar = _shoulder_position(hub, th_hub, p.d_rs, +1.0)
+    ls_bar = _shoulder_position(hub, th_hub, p.d_ls, -1.0)
+
+    # If scapula link is present, the shoulder is offset downward from the bar
+    if p.L_rscap > 0:
+        rscap = rs_bar  # scapula joint sits at bar endpoint
+        # Shoulder extends from scapula along hub angle (downward)
+        rs = (
+            rscap[0] + p.L_rscap * np.sin(th_hub),
+            rscap[1] - p.L_rscap * np.cos(th_hub),
+        )
+    else:
+        rscap = rs_bar
+        rs = rs_bar
+
+    if p.L_lscap > 0:
+        lscap = ls_bar
+        ls = (
+            lscap[0] + p.L_lscap * np.sin(th_hub),
+            lscap[1] - p.L_lscap * np.cos(th_hub),
+        )
+    else:
+        lscap = ls_bar
+        ls = ls_bar
 
     # Right arm chain: RS → RE → RH
     r_abs = _absolute_angles(th_hub, [alpha_rs, alpha_re, alpha_rh])
@@ -304,7 +337,7 @@ def forward_kinematics(
         club_base[1] - p.L_club * club_dy,
     )
 
-    return {
+    result = {
         "origin": (0.0, 0.0),
         "hub": hub,
         "rs": rs,
@@ -318,6 +351,14 @@ def forward_kinematics(
         "grip_right": rh,
         "grip_left": grip_l_on_club,
     }
+
+    # Add scapula positions if present (#1104)
+    if p.L_rscap > 0:
+        result["rscap"] = rscap
+    if p.L_lscap > 0:
+        result["lscap"] = lscap
+
+    return result
 
 
 # ---------------------------------------------------------------------------

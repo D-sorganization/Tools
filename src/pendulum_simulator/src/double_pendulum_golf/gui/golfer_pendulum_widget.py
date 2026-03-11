@@ -324,6 +324,25 @@ class GolferPendulumWidget(QWidget):
         painter.setPen(pen)
         painter.drawLine(origin, hub)
 
+        # Scapula links (#1104, #1111)
+        if "rscap" in pos:
+            rscap = self._world_to_pixel(*pos["rscap"])
+            pen = QPen(QColor(180, 120, 120), 2, Qt.PenStyle.DashDotLine)
+            pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+            painter.setPen(pen)
+            painter.drawLine(rscap, rs)
+            # Scapula joint marker
+            painter.setBrush(QBrush(QColor(180, 120, 120, 150)))
+            painter.drawEllipse(rscap, 3, 3)
+        if "lscap" in pos:
+            lscap = self._world_to_pixel(*pos["lscap"])
+            pen = QPen(QColor(120, 120, 180), 2, Qt.PenStyle.DashDotLine)
+            pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+            painter.setPen(pen)
+            painter.drawLine(lscap, ls)
+            painter.setBrush(QBrush(QColor(120, 120, 180, 150)))
+            painter.drawEllipse(lscap, 3, 3)
+
         # Shoulder bar (RS → LS through hub)
         pen = QPen(self.COLOR_SHOULDER_BAR, 3, Qt.PenStyle.DashLine)
         painter.setPen(pen)
