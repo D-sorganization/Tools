@@ -224,9 +224,12 @@ class PIDDocument:
         Requires svglib + reportlab or ezdxf's drawing backend.
         Falls back gracefully with a clear error message.
         """
+        import os
         import tempfile
 
-        svg_path = Path(tempfile.mktemp(suffix=".svg"))
+        _fd, _svg_tmp = tempfile.mkstemp(suffix=".svg")
+        os.close(_fd)
+        svg_path = Path(_svg_tmp)
         try:
             self.export_svg(svg_path)
             if not svg_path.exists():
