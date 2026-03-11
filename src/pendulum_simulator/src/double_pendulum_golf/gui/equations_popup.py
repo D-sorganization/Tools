@@ -175,9 +175,7 @@ _TOPICS = {
 }
 
 
-def show_equations_popup(
-    parent: QWidget | None, topic: EquationTopic
-) -> QDialog:
+def show_equations_popup(parent: QWidget | None, topic: EquationTopic) -> QDialog:
     """Show a non-modal equations popup.
 
     Pre: topic is a valid EquationTopic.

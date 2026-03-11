@@ -372,11 +372,21 @@ class TestScapulaOffset:
         )
 
         p_zero = TriplePendulumParams(
-            m1=5, m2=0.5, m3=0.4, L1=0.2, L2=0.65, L3=1.1,
+            m1=5,
+            m2=0.5,
+            m3=0.4,
+            L1=0.2,
+            L2=0.65,
+            L3=1.1,
             scapula_offset_rad=0.0,
         )
         p_offset = TriplePendulumParams(
-            m1=5, m2=0.5, m3=0.4, L1=0.2, L2=0.65, L3=1.1,
+            m1=5,
+            m2=0.5,
+            m3=0.4,
+            L1=0.2,
+            L2=0.65,
+            L3=1.1,
             scapula_offset_rad=np.radians(30),
         )
 

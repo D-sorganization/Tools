@@ -33,7 +33,6 @@ try:
     import matplotlib
 
     matplotlib.use("QtAgg")
-    import matplotlib.pyplot as plt
     from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
     from matplotlib.figure import Figure
 

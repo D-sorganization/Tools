@@ -580,12 +580,14 @@ class BasePendulumWidget(QWidget):
         # Build tapered quad: 4 corners
         hw1 = width_start / 2.0
         hw2 = width_end / 2.0
-        poly = QPolygonF([
-            QPointF(p1.x() + nx * hw1, p1.y() + ny * hw1),
-            QPointF(p2.x() + nx * hw2, p2.y() + ny * hw2),
-            QPointF(p2.x() - nx * hw2, p2.y() - ny * hw2),
-            QPointF(p1.x() - nx * hw1, p1.y() - ny * hw1),
-        ])
+        poly = QPolygonF(
+            [
+                QPointF(p1.x() + nx * hw1, p1.y() + ny * hw1),
+                QPointF(p2.x() + nx * hw2, p2.y() + ny * hw2),
+                QPointF(p2.x() - nx * hw2, p2.y() - ny * hw2),
+                QPointF(p1.x() - nx * hw1, p1.y() - ny * hw1),
+            ]
+        )
 
         # Gradient across the width for 3D cylinder effect
         mid_x = (p1.x() + p2.x()) / 2

@@ -327,9 +327,7 @@ class MainWindow(QMainWindow):
         ts.com_toggled.connect(lambda v: _fwd_overlay("set_show_com", v))
 
         # ── 3D segment rendering (#1155) ──────────────────────────────
-        ts.mode_3d_toggled.connect(
-            lambda v: _fwd_overlay("set_3d_mode", v)
-        )
+        ts.mode_3d_toggled.connect(lambda v: _fwd_overlay("set_3d_mode", v))
 
         # ── Gravity toggle (#1142) → active panel's pendulum + controls ──
         def _fwd_gravity(on: bool) -> None:
