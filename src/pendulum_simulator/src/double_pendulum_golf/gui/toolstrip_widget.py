@@ -546,7 +546,7 @@ class ToolStrip(QWidget):
         self._segment_names = names
 
         # Find and clear the segment row layout (last layout in overlay_frame)
-        overlay_frame: QFrame | None = self.findChild(QFrame, "overlay_section")  # type: ignore[assignment]
+        overlay_frame: QFrame | None = self.findChild(QFrame, "overlay_section")
         if overlay_frame is None:
             return
         overlay_layout = overlay_frame.layout()
