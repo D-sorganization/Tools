@@ -447,9 +447,7 @@ def golfer_constrained_dynamics(
     beta: float,
 ) -> tuple[np.ndarray, np.ndarray] | None:
     """Return native golfer accelerations and multipliers when supported."""
-    if not golfer_native_enabled() or not golfer_native_constraint_dynamics_supported(
-        params
-    ):
+    if not golfer_native_enabled() or not golfer_native_constraint_dynamics_supported(params):
         return None
 
     try:

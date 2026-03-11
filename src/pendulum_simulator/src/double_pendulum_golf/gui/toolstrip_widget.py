@@ -519,9 +519,7 @@ class ToolStrip(QWidget):
         If all segments are checked, emit None (show all).
         Otherwise emit the set of checked segment names.
         """
-        checked = {
-            name for name, chk in self._segment_checks.items() if chk.isChecked()
-        }
+        checked = {name for name, chk in self._segment_checks.items() if chk.isChecked()}
         if len(checked) == len(self._segment_checks):
             self.segment_visibility_changed.emit(None)  # all visible
         else:

@@ -171,9 +171,7 @@ class SimulationPanel(QWidget):
             opt_scroll.setWidgetResizable(True)
             opt_scroll.setMinimumWidth(200)
             opt_scroll.setMaximumWidth(300)
-            opt_scroll.setStyleSheet(
-                "QScrollArea { border: none; background: transparent; }"
-            )
+            opt_scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
             splitter.addWidget(opt_scroll)
             splitter.setStretchFactor(splitter.count() - 1, 0)
 

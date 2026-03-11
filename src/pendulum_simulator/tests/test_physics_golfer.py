@@ -132,14 +132,14 @@ class TestGolferParamsValidation:
 class TestForwardKinematics:
     """FK must return correct positions for all joints."""
 
-    def test_hanging_down_hub_below_origin(self, golfer_params: GolferParams) -> None:
+    def test_hanging_down_hub_above_origin(self, golfer_params: GolferParams) -> None:
         q = np.zeros(N_DOF)
         pos = forward_kinematics(q, golfer_params)
         assert "hub" in pos
         assert "origin" in pos
         assert pos["origin"] == (0.0, 0.0)
-        # Hub hangs below origin
-        assert pos["hub"][1] < 0
+        # Hub extends upward (inside arm loop) after #1103 reversal
+        assert pos["hub"][1] > 0
 
     def test_all_joint_keys_present(self, golfer_params: GolferParams) -> None:
         q = np.zeros(N_DOF)
