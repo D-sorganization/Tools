@@ -267,6 +267,15 @@ class MainWindow(QMainWindow):
             if hasattr(pw, "reset_view"):
                 ts.reset_view_requested.connect(pw.reset_view)
 
+            # Per-segment overlay visibility (#1100, #1101, #1102)
+            if hasattr(pw, "set_visible_segments"):
+                ts.segment_visibility_changed.connect(pw.set_visible_segments)
+
+        # Update segment checkboxes when tab changes
+        self._tabs.currentChanged.connect(self._on_tab_changed)
+        # Initialize with the default tab's segments
+        self._on_tab_changed(self._tabs.currentIndex())
+
     def _build_double_panel(self) -> SimulationPanel:
         controls = ControlsWidget()
         pendulum = PendulumWidget()
@@ -459,6 +468,25 @@ class MainWindow(QMainWindow):
         )
         panel._settings_key = "splitter_golfer"
         return panel
+
+    # ------------------------------------------------------------------
+    # Per-segment visibility (#1100, #1101, #1102)
+    # ------------------------------------------------------------------
+
+    # Joint names per model type
+    _SEGMENTS_DOUBLE = ["shoulder", "wrist", "tip"]
+    _SEGMENTS_TRIPLE = ["shoulder", "wrist1", "wrist2", "tip"]
+    _SEGMENTS_GOLFER = ["hub", "rs", "re", "rh", "ls", "le", "lh", "club_tip"]
+
+    def _on_tab_changed(self, index: int) -> None:
+        """Update toolstrip segment checkboxes for the active model tab."""
+        segment_map = {
+            0: self._SEGMENTS_DOUBLE,
+            1: self._SEGMENTS_TRIPLE,
+            2: self._SEGMENTS_GOLFER,
+        }
+        names = segment_map.get(index, self._SEGMENTS_DOUBLE)
+        self._toolstrip.set_segment_names(names)
 
     # ------------------------------------------------------------------
     # Theme management

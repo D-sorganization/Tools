@@ -74,6 +74,9 @@ class GolferPendulumWidget(QWidget):
         self._force_ellipsoid_scale: float = 1.0
         self._show_com: bool = False
 
+        # Per-segment overlay visibility (#1102)
+        self._visible_segments: set[str] | None = None
+
     # ------------------------------------------------------------------
     # Public interface (_SimViewer protocol)
     # ------------------------------------------------------------------
@@ -140,6 +143,14 @@ class GolferPendulumWidget(QWidget):
     def set_show_com(self, show: bool) -> None:
         """Toggle combined center of mass display."""
         self._show_com = show
+        self.update()
+
+    def set_visible_segments(self, segments: set[str] | None) -> None:
+        """Set which joints are visible for overlays.
+
+        Closes #1102.
+        """
+        self._visible_segments = segments
         self.update()
 
     # ------------------------------------------------------------------
@@ -385,6 +396,9 @@ class GolferPendulumWidget(QWidget):
 
         painter.setPen(QPen(self.COLOR_FORCE, 2))
         for key, force in forces.items():
+            # Per-segment visibility filter (#1102)
+            if self._visible_segments is not None and key not in self._visible_segments:
+                continue
             jp = joint_pos_map.get(key)
             if jp is None:
                 continue

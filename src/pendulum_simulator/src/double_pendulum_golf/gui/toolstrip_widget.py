@@ -206,6 +206,8 @@ class ToolStrip(QWidget):
     mob_ellipsoid_toggled = pyqtSignal(bool)
     force_ellipsoid_toggled = pyqtSignal(bool)
     com_toggled = pyqtSignal(bool)
+    # Per-segment visibility: emits set[str] | None (#1100, #1101, #1102)
+    segment_visibility_changed = pyqtSignal(object)
 
     # Scale changes
     force_scale_changed = pyqtSignal(float)
@@ -218,7 +220,7 @@ class ToolStrip(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setObjectName("toolstrip")
-        self.setFixedHeight(118)
+        self.setFixedHeight(136)
         self.setStyleSheet(_STYLE_STRIP)
         self._build()
 
@@ -396,6 +398,31 @@ class ToolStrip(QWidget):
             _overlay_row(self.chk_force_ell, self._sld_force_ell, self._lbl_force_ell_scale)
         )
 
+        # Row D: Per-segment visibility sub-checkboxes (#1100, #1101, #1102)
+        seg_row = QHBoxLayout()
+        seg_row.setContentsMargins(0, 1, 0, 0)
+        seg_row.setSpacing(2)
+        seg_lbl = QLabel("Segments:")
+        seg_lbl.setStyleSheet("color:#505070;font-size:8px;")
+        seg_row.addWidget(seg_lbl)
+        self._segment_checks: dict[str, QCheckBox] = {}
+        # Default segment names (double pendulum); updated dynamically
+        self._segment_names: list[str] = ["shoulder", "wrist", "tip"]
+        for name in self._segment_names:
+            chk = QCheckBox(name[:6])  # truncate for compact display
+            chk.setChecked(True)
+            chk.setStyleSheet(
+                "QCheckBox{color:#707090;font-size:7px;spacing:1px;}"
+                "QCheckBox::indicator{width:9px;height:9px;border:1px solid #404060;"
+                "border-radius:2px;background:#1a1a2a;}"
+                "QCheckBox::indicator:checked{background:#303068;border-color:#5050a0;}"
+            )
+            chk.toggled.connect(self._on_segment_toggled)
+            seg_row.addWidget(chk)
+            self._segment_checks[name] = chk
+        seg_row.addStretch()
+        overlay_layout.addLayout(seg_row)
+
         layout.addWidget(overlay_frame)
         layout.addWidget(_vline())
 
@@ -483,6 +510,72 @@ class ToolStrip(QWidget):
         self._frame_slider.blockSignals(False)
         total = self._frame_slider.maximum()
         self._frame_lbl.setText(f"{idx} / {total}")
+
+    def _on_segment_toggled(self) -> None:
+        """Recompute visible segments and emit the signal.
+
+        If all segments are checked, emit None (show all).
+        Otherwise emit the set of checked segment names.
+        """
+        checked = {
+            name for name, chk in self._segment_checks.items() if chk.isChecked()
+        }
+        if len(checked) == len(self._segment_checks):
+            self.segment_visibility_changed.emit(None)  # all visible
+        else:
+            self.segment_visibility_changed.emit(checked)
+
+    def set_segment_names(self, names: list[str]) -> None:
+        """Update segment sub-checkboxes for the active model tab.
+
+        Called by MainWindow when the tab index changes.
+
+        Parameters
+        ----------
+        names : list[str]
+            Joint names for the current model (e.g. ["shoulder", "wrist", "tip"]
+            for double, ["hub", "re", "rh", "le", "lh", "club_tip"] for golfer).
+        """
+        # Remove old checkboxes
+        for chk in self._segment_checks.values():
+            chk.setParent(None)
+            chk.deleteLater()
+        self._segment_checks.clear()
+        self._segment_names = names
+
+        # Find and clear the segment row layout (last layout in overlay_frame)
+        overlay_frame = self.findChild(QFrame, "overlay_section")
+        if overlay_frame is None:
+            return
+        overlay_layout = overlay_frame.layout()
+        if overlay_layout is None:
+            return
+        # The segment row is the last item in overlay_layout
+        seg_item = overlay_layout.itemAt(overlay_layout.count() - 1)
+        if seg_item is not None and seg_item.layout() is not None:
+            seg_layout = seg_item.layout()
+            # Clear old widgets (keep "Segments:" label at position 0)
+            while seg_layout.count() > 1:
+                item = seg_layout.takeAt(1)
+                if item is not None and item.widget() is not None:
+                    item.widget().deleteLater()
+            # Add new checkboxes
+            for name in names:
+                chk = QCheckBox(name[:6])
+                chk.setChecked(True)
+                chk.setStyleSheet(
+                    "QCheckBox{color:#707090;font-size:7px;spacing:1px;}"
+                    "QCheckBox::indicator{width:9px;height:9px;border:1px solid #404060;"
+                    "border-radius:2px;background:#1a1a2a;}"
+                    "QCheckBox::indicator:checked{background:#303068;border-color:#5050a0;}"
+                )
+                chk.toggled.connect(self._on_segment_toggled)
+                seg_layout.addWidget(chk)
+                self._segment_checks[name] = chk
+            seg_layout.addStretch()
+
+        # Emit all-visible since we just reset
+        self.segment_visibility_changed.emit(None)
 
     def stop_play(self) -> None:
         """Force the Play button to the uncheck (stopped) state."""

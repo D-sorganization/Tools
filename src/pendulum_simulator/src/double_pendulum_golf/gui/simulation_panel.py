@@ -114,6 +114,7 @@ class SimulationPanel(QWidget):
 
         self._result: Any | None = None
         self._anim_idx = 0
+        self._anim_frac: float = 0.0  # fractional frame accumulator (#1097)
         self._playback_speed = 1.0
 
         self._build_ui()
@@ -321,6 +322,7 @@ class SimulationPanel(QWidget):
         self._timer.stop()
         self._result = None
         self._anim_idx = 0
+        self._anim_frac = 0.0
         self.pendulum.clear()
         self.matrix.clear()
         if self.torque_history is not None:
@@ -335,6 +337,7 @@ class SimulationPanel(QWidget):
         if playing:
             if self._anim_idx >= self._result.n_steps - 1:
                 self._anim_idx = 0
+                self._anim_frac = 0.0
                 if hasattr(self.pendulum, "_trail"):
                     self.pendulum._trail.clear()
             self._timer.start()
@@ -366,15 +369,29 @@ class SimulationPanel(QWidget):
         self._display_frame(frame)
 
     def _advance_frame(self) -> None:
+        """Advance the animation by a fractional frame count.
+
+        Uses a fractional accumulator so that high-speed playback (e.g. 5×)
+        still produces smooth visual transitions instead of integer jumps.
+
+        Closes #1097.
+        """
         if self._result is None:
             self._timer.stop()
             return
 
-        frames_per_tick = max(1, int(self._playback_speed * 3))
-        self._anim_idx += frames_per_tick
+        # Accumulate fractional frames: speed=1× → ~3 frames per 16 ms tick
+        self._anim_frac += self._playback_speed * 3.0
+        advance = int(self._anim_frac)
+        if advance < 1:
+            return  # sub-frame accumulation — wait for next tick
+        self._anim_frac -= advance
+
+        self._anim_idx += advance
 
         if self._anim_idx >= self._result.n_steps:
             self._anim_idx = self._result.n_steps - 1
+            self._anim_frac = 0.0
             self._timer.stop()
             self.controls.stop_playback()
 

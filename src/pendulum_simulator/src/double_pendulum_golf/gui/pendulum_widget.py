@@ -85,6 +85,10 @@ class PendulumWidget(QWidget):
         self._mob_ellipsoid_scale: float = 1.0
         self._force_ellipsoid_scale: float = 1.0
 
+        # Per-segment overlay visibility (#1100, #1101)
+        # None = show all segments (default); set[str] = only these joints
+        self._visible_segments: set[str] | None = None
+
         # Pre-computed counterfactual forces (list[dict] or None)
         self._zero_torque_forces: list[dict] | None = None
 
@@ -244,6 +248,20 @@ class PendulumWidget(QWidget):
     def set_show_com(self, show: bool) -> None:
         """Toggle combined center of mass display."""
         self._show_com = show
+        self.update()
+
+    def set_visible_segments(self, segments: set[str] | None) -> None:
+        """Set which joint segments are visible for overlays.
+
+        Parameters
+        ----------
+        segments : set[str] or None
+            Joint names to show overlays for (e.g. {"wrist", "tip"}).
+            None means show all segments.
+
+        Closes #1100, #1101.
+        """
+        self._visible_segments = segments
         self.update()
 
     def reset_view(self) -> None:
@@ -552,6 +570,9 @@ class PendulumWidget(QWidget):
 
         painter.setPen(QPen(self.COLOR_FORCE, 2))
         for key, force in forces.items():
+            # Per-segment visibility filter (#1100)
+            if self._visible_segments is not None and key not in self._visible_segments:
+                continue
             joint_pos = joint_map.get(key)
             if joint_pos is None:
                 continue
@@ -594,6 +615,9 @@ class PendulumWidget(QWidget):
         pen = QPen(self.COLOR_ZERO_TORQUE, 2, Qt.PenStyle.DashLine)
         painter.setPen(pen)
         for key, force in forces.items():
+            # Per-segment visibility filter (#1100)
+            if self._visible_segments is not None and key not in self._visible_segments:
+                continue
             joint_pos = joint_map.get(key)
             if joint_pos is None:
                 continue
@@ -649,6 +673,9 @@ class PendulumWidget(QWidget):
             }
 
         for name, ell in data.items():
+            # Per-segment visibility filter (#1100)
+            if self._visible_segments is not None and name not in self._visible_segments:
+                continue
             world_pos = endpoint_map.get(name)
             if world_pos is None:
                 continue
