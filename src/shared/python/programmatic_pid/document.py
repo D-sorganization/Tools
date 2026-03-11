@@ -246,6 +246,6 @@ class PIDDocument:
                 raise RuntimeError(
                     "PDF export requires 'svglib' and 'reportlab'. "
                     "Install with: pip install svglib reportlab"
-                )
+                ) from None
         finally:
             svg_path.unlink(missing_ok=True)
