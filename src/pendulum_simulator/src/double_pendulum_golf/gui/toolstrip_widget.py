@@ -302,17 +302,17 @@ class ToolStrip(QWidget):
 
         layout.addWidget(_vline())
 
-        # Playback frame slider
+        # Simulation progress slider (#1132: percentage display)
         self._frame_slider = QSlider(Qt.Orientation.Horizontal)
         self._frame_slider.setRange(0, 0)
         self._frame_slider.setStyleSheet(_SLIDER_FRAME)
-        self._frame_slider.setToolTip("Scrub to any frame")
+        self._frame_slider.setToolTip("Simulation progress — drag to scrub")
         self._frame_slider.valueChanged.connect(self._on_frame_slider_changed)
         layout.addWidget(self._frame_slider, stretch=1)
 
-        self._frame_lbl = QLabel("0 / 0")
+        self._frame_lbl = QLabel("0%")
         self._frame_lbl.setStyleSheet(_FRAME_LBL)
-        self._frame_lbl.setFixedWidth(58)
+        self._frame_lbl.setFixedWidth(90)
         self._frame_lbl.setAlignment(Qt.AlignmentFlag.AlignRight)
         layout.addWidget(self._frame_lbl)
 
@@ -473,7 +473,8 @@ class ToolStrip(QWidget):
 
     def _on_frame_slider_changed(self, val: int) -> None:
         total = self._frame_slider.maximum()
-        self._frame_lbl.setText(f"{val} / {total}")
+        pct = int(100 * val / max(total, 1))
+        self._frame_lbl.setText(f"{pct}% ({val}/{total})")
         self.frame_scrubbed.emit(val)
 
     def _on_force_scale(self, raw: int) -> None:
@@ -503,8 +504,7 @@ class ToolStrip(QWidget):
         assert n_steps >= 0
         self._frame_slider.setRange(0, max(0, n_steps - 1))
         self._frame_slider.setValue(0)
-        total = max(0, n_steps - 1)
-        self._frame_lbl.setText(f"0 / {total}")
+        self._frame_lbl.setText(f"0% (0/{max(0, n_steps - 1)})")
 
     def set_frame(self, idx: int) -> None:
         """Update slider + label to reflect current frame (no re-emission)."""
@@ -512,7 +512,8 @@ class ToolStrip(QWidget):
         self._frame_slider.setValue(idx)
         self._frame_slider.blockSignals(False)
         total = self._frame_slider.maximum()
-        self._frame_lbl.setText(f"{idx} / {total}")
+        pct = int(100 * idx / max(total, 1))
+        self._frame_lbl.setText(f"{pct}% ({idx}/{total})")
 
     def _on_segment_toggled(self) -> None:
         """Recompute visible segments and emit the signal.
