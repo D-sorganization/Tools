@@ -35,6 +35,7 @@ class ToolRegistration:
     category: str
     has_pyqt6: bool
     has_web: bool
+    has_legacy_gui: bool = False  # Tkinter / non-PyQt6 GUI (launch_gui.py)
 
 
 def load_gui_info(path: Path) -> dict[str, Any] | None:
@@ -79,9 +80,15 @@ def _discover_registrations(repo_root: Path) -> list[ToolRegistration]:
         # Determine surface availability
         has_pyqt6 = "pyqt6" in info and (tool_dir / "launch_pyqt6.py").exists()
         has_web = "web" in info and (tool_dir / "launch_web.py").exists()
+        # Legacy/Tkinter GUI: explicit launch_gui.py with no PyQt6 surface
+        has_legacy_gui = (
+            not has_pyqt6
+            and "tkinter" in info
+            and (tool_dir / "launch_gui.py").exists()
+        )
 
         # Skip tools with no available surface
-        if not has_pyqt6 and not has_web:
+        if not has_pyqt6 and not has_web and not has_legacy_gui:
             continue
 
         registration = ToolRegistration(
@@ -91,6 +98,7 @@ def _discover_registrations(repo_root: Path) -> list[ToolRegistration]:
             category=info.get("category", "Uncategorized"),
             has_pyqt6=has_pyqt6,
             has_web=has_web,
+            has_legacy_gui=has_legacy_gui,
         )
 
         if tool_id in seen_ids:
@@ -151,6 +159,22 @@ def generate_manifest_data(repo_root: Path) -> dict[str, list[dict[str, Any]]]:
                     }
                 )
 
+        if reg.has_legacy_gui:
+            src_dir = repo_root / "src"
+            tool_dir = _find_tool_dir(src_dir, reg.id)
+            if tool_dir:
+                launch_script = tool_dir / "launch_gui.py"
+                manifest[reg.category].append(
+                    {
+                        "name": reg.name,
+                        "path": str(launch_script.relative_to(repo_root)).replace(
+                            "\\", "/"
+                        ),
+                        "type": "python",
+                        "desc": reg.description,
+                    }
+                )
+
     # Sort categories and tools for determinism
     sorted_manifest: dict[str, list[dict[str, Any]]] = {}
     for cat in sorted(manifest.keys()):
@@ -202,6 +226,7 @@ def generate_contract_data(repo_root: Path) -> dict[str, Any]:
                 "surfaces": {
                     "pyqt6": reg.has_pyqt6,
                     "web": reg.has_web,
+                    "legacy_gui": reg.has_legacy_gui,
                 },
             }
         )

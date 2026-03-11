@@ -183,3 +183,14 @@ ignore_missing_imports = true
 check_untyped_defs = true
 disallow_untyped_defs = false
 explicit_package_bases = true
+
+# Suppress the phantom "src.*" namespace created when CWD is treated as a
+# source root alongside MYPYPATH="src".  With explicit_package_bases=true,
+# src/shared/python/__init__.py is seen as both "shared.python" (via src root)
+# and "src.shared.python" (via CWD root), causing a "source file found twice"
+# error.  Silencing the phantom namespace is safe because no real code uses
+# src.xxx imports.
+[[tool.mypy.overrides]]
+module = ["src", "src.*"]
+ignore_errors = true
+follow_imports = "silent"

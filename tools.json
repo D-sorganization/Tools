@@ -99,6 +99,12 @@
             "desc": "Baghouse filter performance and drum sizing calculator"
         },
         {
+            "name": "DWSIM Gasification Model",
+            "path": "src/dwsim_model/launch_gui.py",
+            "type": "python",
+            "desc": "DWSIM-backed gasification process simulation with Tkinter GUI"
+        },
+        {
             "name": "Electrode Advisor (PyQt6)",
             "path": "src/electrode_advisor/launch_pyqt6.py",
             "type": "python",
@@ -199,18 +205,6 @@
             "path": "src/thermal_profile_predictor/launch_pyqt6.py",
             "type": "python",
             "desc": "Predict temperature profiles for heated vessels"
-        },
-        {
-            "name": "DWSIM Gasification Model",
-            "path": "src/dwsim_model/launch_gui.py",
-            "type": "python",
-            "desc": "DWSIM-backed gasification process simulation (Tkinter GUI)"
-        },
-        {
-            "name": "DWSIM Gasification Model (CLI)",
-            "path": "src/dwsim_model/launch_cli.py",
-            "type": "python",
-            "desc": "DWSIM gasification CLI: run, sweep, validate, export, summary"
         },
         {
             "name": "Vessel Drafter",
