@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 from vessel_drafter.models.vessel_drafter import (
     DEFAULT_VESSEL_DRAFTER_LAYOUT,
@@ -63,7 +64,7 @@ def build_material_metrics_report(
     )
 
 
-def _component_metric(component) -> ComponentMaterialMetric:
+def _component_metric(component: Any) -> ComponentMaterialMetric:
     volume_in3 = _mm3_to_in3(component.shape.volume)
     volume_ft3 = volume_in3 / CUBIC_INCHES_PER_CUBIC_FOOT
     surface_area_ft2 = _mm2_to_ft2(component.shape.area)
@@ -82,8 +83,8 @@ def _component_metric(component) -> ComponentMaterialMetric:
 
 
 def _mm3_to_in3(volume_mm3: float) -> float:
-    return volume_mm3 / (MM_PER_INCH**3)
+    return float(volume_mm3 / (MM_PER_INCH**3))
 
 
 def _mm2_to_ft2(area_mm2: float) -> float:
-    return (area_mm2 / (MM_PER_INCH**2)) / SQUARE_INCHES_PER_SQUARE_FOOT
+    return float((area_mm2 / (MM_PER_INCH**2)) / SQUARE_INCHES_PER_SQUARE_FOOT)

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import cast
 
 from PyQt6.QtWidgets import (
     QApplication,
@@ -509,7 +510,7 @@ class VesselDrafterWindow(QMainWindow):
         spin = make_double_spin(0.0, 0.0, 360.0)
         spin.setSingleStep(15.0)
         spin.setEnabled(False)
-        return spin
+        return cast(QDoubleSpinBox, spin)
 
     def _update_three_d_preview(self, layout: VesselDrafterLayout) -> None:
         view_options = self._read_three_d_view_options()

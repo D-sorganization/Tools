@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from functools import lru_cache
 from math import pi
-from typing import TypeAlias, cast
+from typing import Any, TypeAlias, cast
 
 import numpy as np
 
@@ -47,7 +47,7 @@ class VesselSceneMesh:
 
     @property
     def polygons(self) -> FloatArray:
-        return self.vertices[self.faces]
+        return cast(FloatArray, self.vertices[self.faces])
 
 
 @dataclass(frozen=True)
@@ -244,7 +244,7 @@ def _build_exact_meshes(
     return tuple(meshes)
 
 
-def _exact_component_mesh(component) -> tuple[FloatArray, IntArray]:
+def _exact_component_mesh(component: Any) -> tuple[FloatArray, IntArray]:
     vertices, triangle_indices = component.shape.tessellate(6.0)
     vertex_array = np.array(
         [_vector_to_inch_point(vertex) for vertex in vertices],
@@ -254,7 +254,7 @@ def _exact_component_mesh(component) -> tuple[FloatArray, IntArray]:
     return vertex_array, face_array
 
 
-def _vector_to_inch_point(vector) -> tuple[float, float, float]:
+def _vector_to_inch_point(vector: Any) -> tuple[float, float, float]:
     return (
         vector.X / MM_PER_INCH,
         vector.Y / MM_PER_INCH,
@@ -384,7 +384,7 @@ def _segment_faces(
         )
 
     if isinstance(end_group, int):
-        ring_indices = _ring_index_pairs(cast(IntArray, start_group), wrap_around)
+        ring_indices = _ring_index_pairs(start_group, wrap_around)
         return np.column_stack(
             (
                 np.full(len(ring_indices), end_group, dtype=np.int32),
@@ -624,15 +624,16 @@ def _point_in_triangle(point: FloatArray, triangle: FloatArray) -> bool:
 
 
 def _edge_sign(point: FloatArray, first: FloatArray, second: FloatArray) -> float:
-    return ((point[0] - second[0]) * (first[1] - second[1])) - (
-        (first[0] - second[0]) * (point[1] - second[1])
+    return float(
+        ((point[0] - second[0]) * (first[1] - second[1]))
+        - ((first[0] - second[0]) * (point[1] - second[1]))
     )
 
 
 def _cross_z(previous: FloatArray, current: FloatArray, following: FloatArray) -> float:
     first = current - previous
     second = following - current
-    return (first[0] * second[1]) - (first[1] * second[0])
+    return float((first[0] * second[1]) - (first[1] * second[0]))
 
 
 def _signed_area(points: FloatArray) -> float:

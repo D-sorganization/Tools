@@ -6,6 +6,7 @@ import json
 import os
 from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
 from vessel_drafter.analysis.vessel_drafter_metrics import build_material_metrics_report
 from vessel_drafter.models.vessel_drafter import (
@@ -87,7 +88,7 @@ def export_vessel_gltf(
     return export_vessel(layout, output_dir, stem, formats=("gltf",))["gltf"]
 
 
-def _export_compound(compound, out_file: Path, fmt: str) -> None:
+def _export_compound(compound: Any, out_file: Path, fmt: str) -> None:
     from build123d import export_brep, export_gltf, export_step, export_stl
 
     if fmt == "step":
@@ -114,7 +115,7 @@ def _write_manifest(
                 "surface_area_ft2": entry.surface_area_ft2,
                 "mass_lb": entry.mass_lb,
             }
-            for entry in report.entries
+            for entry in report.component_metrics
         },
     }
     manifest_path = output_path / f"{stem}.json"

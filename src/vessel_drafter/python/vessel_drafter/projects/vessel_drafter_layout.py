@@ -57,7 +57,7 @@ def _color_from_hex(color_hex: str) -> Color:
     return Color(red, green, blue)
 
 
-def _apply_style(shape, label: str, color_hex: str):
+def _apply_style(shape: Any, label: str, color_hex: str) -> Any:
     shape.label = label
     shape.color = _color_from_hex(color_hex)
     return shape
@@ -71,7 +71,7 @@ def _build_revolved_profile(
     half_profile: tuple[ProfilePoint, ...],
     label: str,
     color_hex: str,
-):
+) -> Any:
     with BuildSketch(Plane.XZ) as sketch:
         with BuildLine():
             Polyline(_points_to_mm(half_profile), close=True)
@@ -80,7 +80,7 @@ def _build_revolved_profile(
     return _apply_style(part, label, color_hex)
 
 
-def _build_glass_bath(layout: VesselDrafterLayout):
+def _build_glass_bath(layout: VesselDrafterLayout) -> Any:
     return _build_revolved_profile(
         build_glass_boundary_half(layout),
         label="glass_bath",
@@ -88,8 +88,8 @@ def _build_glass_bath(layout: VesselDrafterLayout):
     )
 
 
-def _build_shell_band_shapes(layout: VesselDrafterLayout):
-    shapes = []
+def _build_shell_band_shapes(layout: VesselDrafterLayout) -> list[Any]:
+    shapes: list[Any] = []
     for profile in build_shell_band_profiles(layout):
         inner_half = (
             build_cavity_boundary_half(layout)
@@ -110,7 +110,7 @@ def _build_shell_band_shapes(layout: VesselDrafterLayout):
 def _build_electrode(
     placement: VesselElectrodePlacement,
     layout: VesselDrafterLayout,
-):
+) -> Any:
     direction_x = cos(placement.angle_radians)
     direction_y = sin(placement.angle_radians)
     inner_tip_x_mm = placement.inner_tip_radius_in * direction_x * MM_PER_INCH
@@ -141,7 +141,7 @@ def _build_electrode(
 def _build_side_port_cutter(
     port: VesselSidePort,
     layout: VesselDrafterLayout,
-):
+) -> Any:
     direction_x = cos(port.normalized_clock_angle_radians)
     direction_y = sin(port.normalized_clock_angle_radians)
     start_radius_in = layout.inner_radius_in - 1.0
@@ -165,7 +165,7 @@ def _build_side_port_cutter(
 def _build_lid_port_cutter(
     port: VesselLidPort,
     layout: VesselDrafterLayout,
-):
+) -> Any:
     direction_x = cos(port.normalized_clock_angle_radians)
     direction_y = sin(port.normalized_clock_angle_radians)
     start_z_in = layout.glass_depth_in
@@ -196,7 +196,7 @@ def _port_cutters(layout: VesselDrafterLayout) -> tuple[Solid, ...]:
     return side_cutters + lid_cutters
 
 
-def _cut_ports(shape, cutters: tuple[Solid, ...]):
+def _cut_ports(shape: Any, cutters: tuple[Solid, ...]) -> Any:
     if not cutters:
         return shape
     return shape.cut(*cutters)

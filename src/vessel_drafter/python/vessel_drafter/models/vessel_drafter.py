@@ -28,35 +28,35 @@ class MaterialLayer:
 
     @property
     def name(self) -> str:
-        return self.properties.name
+        return str(self.properties.name)
 
     @property
     def display_name(self) -> str:
-        return self.properties.display_name
+        return str(self.properties.display_name)
 
     @property
     def color_hex(self) -> str:
-        return self.properties.color_hex
+        return str(self.properties.color_hex)
 
     @property
     def category(self) -> str:
-        return self.properties.category
+        return str(self.properties.category)
 
     @property
     def density_lb_per_ft3(self) -> float:
-        return self.properties.density_lb_per_ft3
+        return float(self.properties.density_lb_per_ft3)
 
     @property
     def thermal_conductivity_w_per_mk(self) -> float:
-        return self.properties.thermal_conductivity_w_per_mk
+        return float(self.properties.thermal_conductivity_w_per_mk)
 
     @property
     def thermal_expansion_um_per_m_c(self) -> float:
-        return self.properties.thermal_expansion_um_per_m_c
+        return float(self.properties.thermal_expansion_um_per_m_c)
 
     @property
     def preview_alpha(self) -> float:
-        return self.properties.preview_alpha
+        return float(self.properties.preview_alpha)
 
 
 @dataclass(frozen=True)

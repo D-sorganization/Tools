@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from math import cos, sin
+from typing import Any
 
 from PyQt6.QtCore import QPointF, QRectF, Qt
 from PyQt6.QtGui import QBrush, QColor, QPainterPath, QPen
@@ -148,7 +150,7 @@ def render_plan(scene: QGraphicsScene, preview: PlanPreview) -> None:
 def _add_band_polygon(
     scene: QGraphicsScene,
     polygon: CrossSectionBandPolygon,
-    map_point,
+    map_point: Callable[[Any], QPointF],
     z_value: float,
 ) -> None:
     path = _loop_path(polygon.outer_loop, map_point)
@@ -158,7 +160,9 @@ def _add_band_polygon(
     _add_path(scene, path, polygon.color_hex, z_value)
 
 
-def _loop_path(loop: tuple[ProfilePoint, ...], map_point) -> QPainterPath:
+def _loop_path(
+    loop: tuple[ProfilePoint, ...], map_point: Callable[[Any], QPointF]
+) -> QPainterPath:
     path = QPainterPath()
     first_point = map_point(loop[0])
     path.moveTo(first_point)
