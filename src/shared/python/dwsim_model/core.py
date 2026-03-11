@@ -37,7 +37,7 @@ def get_automation(dwsim_path: str | None = None):
         logger.info("Successfully loaded DWSIM automation.")
     except Exception as e:
         logger.error(f"Failed to load DWSIM automation from {dwsim_path}: {e}")
-        raise RuntimeError(f"Could not load DWSIM automation from {dwsim_path}: {e}")
+        raise RuntimeError(f"Could not load DWSIM automation from {dwsim_path}: {e}") from e
 
     return _interf, _ObjectType
 
@@ -64,7 +64,7 @@ class FlowsheetBuilder:
             logger.debug(f"Added compound '{name}' to the simulation.")
         except Exception as e:
             logger.error(f"Failed to add compound '{name}': {e}")
-            raise ValueError(f"Failed to add compound '{name}': {e}")
+            raise ValueError(f"Failed to add compound '{name}': {e}") from e
 
     def add_property_package(self, package_name: str = "Peng-Robinson (PR)") -> object:
         """Add a property package to the flowsheet."""
@@ -82,7 +82,7 @@ class FlowsheetBuilder:
             return prop_pack
         except Exception as e:
             logger.error(f"Failed to load property package {package_name}: {e}")
-            raise ValueError(f"Failed to load property package {package_name}: {e}")
+            raise ValueError(f"Failed to load property package {package_name}: {e}") from e
 
     def add_object(
         self, obj_type_name: str, name: str, x: int = 0, y: int = 0
@@ -115,7 +115,7 @@ class FlowsheetBuilder:
             )
             raise ValueError(
                 f"Failed to add object '{name}' of type '{obj_type_name}': {e}"
-            )
+            ) from e
 
     def connect(
         self, source_obj, target_obj, source_port: int = 0, target_port: int = 0
@@ -134,7 +134,7 @@ class FlowsheetBuilder:
             )
         except Exception as e:
             logger.error(f"Failed to connect {source_obj} to {target_obj}: {e}")
-            raise RuntimeError(f"Failed to connect {source_obj} to {target_obj}: {e}")
+            raise RuntimeError(f"Failed to connect {source_obj} to {target_obj}: {e}") from e
 
     def calculate(self) -> None:
         """Run the simulation flowsheet."""
@@ -146,7 +146,7 @@ class FlowsheetBuilder:
         except Exception as e:
             # This handles DWSIM solver exceptions nicely
             logger.error(f"DWSIM solver returned an error: {e}")
-            raise RuntimeError(f"DWSIM solver returned an error: {e}")
+            raise RuntimeError(f"DWSIM solver returned an error: {e}") from e
 
     def save(self, filepath: str) -> None:
         """Save the flowsheet to a .dwxml or .dwsjson file for GUI visualization."""
@@ -157,4 +157,4 @@ class FlowsheetBuilder:
             logger.info(f"Saved flowsheet successfully to: {abs_path}")
         except Exception as e:
             logger.error(f"Failed to save flowsheet to {filepath}: {e}")
-            raise RuntimeError(f"Failed to save flowsheet: {e}")
+            raise RuntimeError(f"Failed to save flowsheet: {e}") from e

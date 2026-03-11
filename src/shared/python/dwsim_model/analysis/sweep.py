@@ -372,11 +372,11 @@ class ParameterSweep:
         """
         try:
             import numpy as np
-        except ImportError:
+        except ImportError as exc:
             # AUTO-FIXED: explicitly fail with clear missing dependency requirement instead of crashing silently
             raise ImportError(
                 "numpy is required for sensitivity_oat. Install it with: pip install numpy"
-            )
+            ) from exc
 
         all_rows = []
 
