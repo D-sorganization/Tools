@@ -242,12 +242,116 @@ class TestUnitConversionModule:
 
     def test_unit_converter_exists(self) -> None:
         """UnitConverter class should be importable."""
-        try:
-            from double_pendulum_golf.gui.unit_converter import UnitConverter
+        from double_pendulum_golf.gui.unit_converter import UnitConverter
 
-            assert UnitConverter is not None
-        except ImportError:
-            pytest.skip("UnitConverter not yet implemented")
+        assert UnitConverter is not None
+
+    def test_si_passthrough(self) -> None:
+        """SI mode returns values unchanged."""
+        from double_pendulum_golf.gui.unit_converter import UnitConverter, UnitSystem
+
+        uc = UnitConverter(system=UnitSystem.SI)
+        assert uc.to_si_length(1.5) == 1.5
+        assert uc.from_si_length(1.5) == 1.5
+        assert uc.to_si_mass(3.0) == 3.0
+        assert uc.from_si_mass(3.0) == 3.0
+        assert uc.to_si_torque(10.0) == 10.0
+        assert uc.length_unit == "m"
+        assert uc.mass_unit == "kg"
+        assert uc.torque_unit == "N·m"
+
+    def test_imperial_length(self) -> None:
+        """Imperial: 1 inch = 0.0254 m."""
+        from double_pendulum_golf.gui.unit_converter import UnitConverter, UnitSystem
+
+        uc = UnitConverter(system=UnitSystem.IMPERIAL)
+        np.testing.assert_allclose(uc.to_si_length(1.0), 0.0254)
+        np.testing.assert_allclose(uc.from_si_length(0.0254), 1.0)
+        assert uc.length_unit == "in"
+
+    def test_imperial_mass(self) -> None:
+        """Imperial: 1 lb ≈ 0.4536 kg."""
+        from double_pendulum_golf.gui.unit_converter import UnitConverter, UnitSystem
+
+        uc = UnitConverter(system=UnitSystem.IMPERIAL)
+        np.testing.assert_allclose(uc.to_si_mass(1.0), 0.45359237, rtol=1e-6)
+        np.testing.assert_allclose(uc.from_si_mass(0.45359237), 1.0, rtol=1e-6)
+        assert uc.mass_unit == "lb"
+
+    def test_imperial_torque_roundtrip(self) -> None:
+        """Imperial torque: lbf·in → N·m → lbf·in roundtrip."""
+        from double_pendulum_golf.gui.unit_converter import UnitConverter, UnitSystem
+
+        uc = UnitConverter(system=UnitSystem.IMPERIAL)
+        original = 42.0
+        si_val = uc.to_si_torque(original)
+        back = uc.from_si_torque(si_val)
+        np.testing.assert_allclose(back, original, rtol=1e-10)
+        assert uc.torque_unit == "lbf·in"
+
+
+class TestEquationsPopup:
+    """#1136, #1144: Equations popup module."""
+
+    def test_equation_topics_importable(self) -> None:
+        """EquationTopic enum should be importable."""
+        from double_pendulum_golf.gui.equations_popup import EquationTopic
+
+        assert EquationTopic.MASS_MATRIX is not None
+        assert EquationTopic.EQUATIONS_OF_MOTION is not None
+
+    def test_content_defined_for_all_topics(self) -> None:
+        """HTML content must exist for every EquationTopic."""
+        from double_pendulum_golf.gui.equations_popup import (
+            EquationTopic,
+            _TOPICS,
+        )
+
+        for topic in EquationTopic:
+            assert topic in _TOPICS, f"Missing content for {topic}"
+            title, html = _TOPICS[topic]
+            assert len(title) > 0
+            assert len(html) > 100  # non-trivial content
+
+
+class TestPopOutChart:
+    """#1135: Pop-out chart with regression."""
+
+    def test_fit_regression_linear(self) -> None:
+        """Linear regression should recover slope and intercept."""
+        from double_pendulum_golf.gui.popout_chart import fit_regression
+
+        x = np.linspace(0, 10, 100)
+        y = 3.0 * x + 7.0 + np.random.default_rng(42).normal(0, 0.01, 100)
+        x_fit, y_fit, coeffs = fit_regression(x, y, degree=1)
+        # slope ≈ 3, intercept ≈ 7
+        np.testing.assert_allclose(coeffs[0], 3.0, atol=0.05)
+        np.testing.assert_allclose(coeffs[1], 7.0, atol=0.1)
+        assert len(x_fit) == 200  # dense grid
+
+    def test_popout_chart_stores_data(self) -> None:
+        """PopOutChart.plot_data stores x and y arrays."""
+        from double_pendulum_golf.gui.popout_chart import PopOutChart
+
+        chart = PopOutChart()
+        x = np.array([1.0, 2.0, 3.0])
+        y = np.array([4.0, 5.0, 6.0])
+        chart.plot_data(x, y, "X", "Y", "Test")
+        np.testing.assert_array_equal(chart._x, x)
+        np.testing.assert_array_equal(chart._y, y)
+
+    def test_add_regression_returns_fit(self) -> None:
+        """add_regression should return fitted data."""
+        from double_pendulum_golf.gui.popout_chart import PopOutChart
+
+        chart = PopOutChart()
+        x = np.linspace(0, 5, 50)
+        y = x**2
+        chart.plot_data(x, y)
+        result = chart.add_regression(degree=2)
+        assert result is not None
+        x_fit, y_fit = result
+        assert len(x_fit) == 200
 
 
 class TestDiagnosticLogging:

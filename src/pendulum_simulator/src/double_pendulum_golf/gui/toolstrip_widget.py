@@ -370,6 +370,33 @@ class ToolStrip(QWidget):
         self.btn_export_video.clicked.connect(self.export_video_requested.emit)
         layout.addWidget(self.btn_export_video)
 
+        layout.addWidget(_vline())
+
+        # Help / Equations buttons (#1136, #1144)
+        self.btn_eom = QPushButton("📐 EoM")
+        self.btn_eom.setStyleSheet(_BTN_SMALL)
+        self.btn_eom.setToolTip("Show Equations of Motion derivation")
+        self.btn_eom.clicked.connect(self._show_eom_popup)
+        layout.addWidget(self.btn_eom)
+
+        self.btn_mass_matrix = QPushButton("📊 M(q)")
+        self.btn_mass_matrix.setStyleSheet(_BTN_SMALL)
+        self.btn_mass_matrix.setToolTip("Show Mass Matrix explanation")
+        self.btn_mass_matrix.clicked.connect(self._show_mass_matrix_popup)
+        layout.addWidget(self.btn_mass_matrix)
+
+    def _show_eom_popup(self) -> None:
+        """Open the Equations of Motion popup (#1144)."""
+        from .equations_popup import EquationTopic, show_equations_popup
+
+        show_equations_popup(self, EquationTopic.EQUATIONS_OF_MOTION)
+
+    def _show_mass_matrix_popup(self) -> None:
+        """Open the Mass Matrix popup (#1136)."""
+        from .equations_popup import EquationTopic, show_equations_popup
+
+        show_equations_popup(self, EquationTopic.MASS_MATRIX)
+
     def _build_overlay_section(self, layout: QHBoxLayout) -> None:
         """Build stacked overlay controls: three rows of [☑ checkbox] [slider] [value].
 
