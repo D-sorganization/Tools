@@ -115,8 +115,8 @@ class ControlsWidget(QWidget):
     force_scale_changed = pyqtSignal(float)
 
     # Real-time view rotation (#1146)
-    tilt_changed = pyqtSignal(float)      # radians
-    azimuth_changed = pyqtSignal(float)   # radians
+    tilt_changed = pyqtSignal(float)  # radians
+    azimuth_changed = pyqtSignal(float)  # radians
 
     # Preset: (theta1°, phi°, dth, dph, tau_sh, tau_wr, tend, m1, m2, mClub, L1, L2)
     PRESETS = {
