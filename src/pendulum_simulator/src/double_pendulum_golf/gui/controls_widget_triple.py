@@ -335,9 +335,10 @@ class ControlsWidgetTriple(QWidget):
         self.chk_forces.setChecked(False)
         self.chk_forces.setStyleSheet(STYLE_CHECK)
         self.chk_forces.toggled.connect(self.forces_changed.emit)
+        self.chk_forces.setVisible(False)  # #1143: force toggle lives in toolstrip
 
         vl.addWidget(self.chk_gravity)
-        vl.addWidget(self.chk_forces)
+        # chk_forces hidden — toolstrip is the single source of truth (#1143)
         main_layout.addWidget(vis_group)
 
         main_layout.addStretch()
