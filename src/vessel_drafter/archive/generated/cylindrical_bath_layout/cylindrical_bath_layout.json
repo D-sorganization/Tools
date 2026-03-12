@@ -1,0 +1,51 @@
+{
+  "project": "cylindrical_bath_layout",
+  "units": {
+    "source": "inches",
+    "cad": "millimeters"
+  },
+  "bath": {
+    "shape": "cylindrical",
+    "inner_diameter_in": 50.0,
+    "depth_in": 14.0,
+    "refractory_thickness_in": 6.0,
+    "outer_diameter_in": 62.0
+  },
+  "electrodes": {
+    "count": 3,
+    "diameter_in": 2.0,
+    "insertion_into_inner_circle_in": 14.0,
+    "extension_past_inner_circle_in": 36.0,
+    "modeled_length_in": 50.0,
+    "center_height_fraction": 0.5
+  },
+  "drafting_assumptions": {
+    "axis_convention": "Z up",
+    "electrodes_centered_vertically": true,
+    "electrode_tip_reference": "Modeled from the inner-wall penetration tip to the external end.",
+    "conflicting_length_note_ignored": "Used explicit 14 in insertion and 36 in extension values."
+  },
+  "placements": [
+    {
+      "index": 1,
+      "angle_degrees": 0.0,
+      "center_mm": [914.4000000000001, 0.0, 0.0],
+      "inner_tip_mm": [279.40000000000003, 0.0, 0.0],
+      "outer_tip_mm": [1549.4, 0.0, 0.0]
+    },
+    {
+      "index": 2,
+      "angle_degrees": 120.0,
+      "center_mm": [-457.1999999999998, 791.8936292204909, 0.0],
+      "inner_tip_mm": [-139.69999999999996, 241.9674978173722, 0.0],
+      "outer_tip_mm": [-774.6999999999997, 1341.8197606236095, 0.0]
+    },
+    {
+      "index": 3,
+      "angle_degrees": 240.0,
+      "center_mm": [-457.20000000000044, -791.8936292204905, 0.0],
+      "inner_tip_mm": [-139.70000000000013, -241.9674978173721, 0.0],
+      "outer_tip_mm": [-774.7000000000007, -1341.819760623609, 0.0]
+    }
+  ]
+}
