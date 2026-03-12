@@ -192,7 +192,7 @@ def run_simulation(
             from .physics_triple import mass_matrix_components
 
             M = mass_matrix_components(y[1], y[2], params)
-            qddot_correction = np.linalg.solve(M, tau_limit)
+            qddot_correction = np.linalg.solve(M, tau_limit)  # type: ignore[arg-type]
             dydt[3:] += qddot_correction
         return dydt
 
