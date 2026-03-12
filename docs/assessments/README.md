@@ -174,6 +174,7 @@ This document defines the comprehensive 16-point assessment framework (A-O + Hig
 | 3.5     | 2026-03 | Executed Completist Audit (Mar 12)                             |
 | 3.6     | 2026-03 | Automated update to comprehensive assessment framework         |
 | 3.7     | 2026-03 | AUTO-FIXED formatting issues                                   |
+| 3.8     | 2026-03 | Added Thesis Defense Orthogonality/Adversarial issues          |
 
 ---
 
