@@ -629,9 +629,7 @@ def wire_toolstrip(main_window: Any) -> None:
     # Loop toggle — forward to all panels
     if hasattr(ts, "loop_toggled"):
         ts.loop_toggled.connect(
-            lambda v: [
-                setattr(p, "_loop_playback", v) for p in main_window._panels
-            ]
+            lambda v: [setattr(p, "_loop_playback", v) for p in main_window._panels]
         )
 
     # Update segment checkboxes when tab changes

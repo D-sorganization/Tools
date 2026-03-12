@@ -30,6 +30,7 @@ class _WheelBlockFilter(QObject):
                 return True  # Block the event
         return False
 
+
 _LOG_FORMAT = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 _LOG_DIR = Path.home() / ".pendulum_simulator"
 
@@ -80,9 +81,7 @@ def main() -> None:
         app.setWindowIcon(icon)
         logging.getLogger(__name__).info("App icon set from %s", _ICON_PATH)
     else:
-        logging.getLogger(__name__).warning(
-            "App icon not found at %s", _ICON_PATH
-        )
+        logging.getLogger(__name__).warning("App icon not found at %s", _ICON_PATH)
         tracker.record(
             "ui",
             f"App icon not found at {_ICON_PATH}",

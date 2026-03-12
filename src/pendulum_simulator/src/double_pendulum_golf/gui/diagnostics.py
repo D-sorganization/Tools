@@ -184,9 +184,7 @@ class DiagnosticsTracker:
     @property
     def error_count(self) -> int:
         """Count of error and critical events."""
-        return sum(
-            1 for e in self._events if e.severity in ("error", "critical")
-        )
+        return sum(1 for e in self._events if e.severity in ("error", "critical"))
 
     def clear(self) -> None:
         """Clear all events and truncate the log file."""
@@ -349,9 +347,7 @@ class DiagnosticsViewer(QDialog):
         header_view.setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
         header_view.setSectionResizeMode(3, QHeaderView.ResizeMode.Stretch)
         header_view.setSectionResizeMode(4, QHeaderView.ResizeMode.ResizeToContents)
-        self._table.setSelectionBehavior(
-            QTableWidget.SelectionBehavior.SelectRows
-        )
+        self._table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self._table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self._table.currentCellChanged.connect(self._on_row_selected)
         layout.addWidget(self._table, stretch=3)
@@ -420,7 +416,9 @@ class DiagnosticsViewer(QDialog):
             f"{total} events total • {error_count} errors/critical"
         )
 
-    def _on_row_selected(self, row: int, _col: int, _prev_row: int, _prev_col: int) -> None:
+    def _on_row_selected(
+        self, row: int, _col: int, _prev_row: int, _prev_col: int
+    ) -> None:
         """Show details for the selected event."""
         # Events are displayed newest-first (reversed)
         if 0 <= row < len(self._displayed_events):
@@ -442,4 +440,3 @@ class DiagnosticsViewer(QDialog):
         cb = QApplication.clipboard()
         if cb is not None:
             cb.setText(self._details.toPlainText())
-

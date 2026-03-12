@@ -299,7 +299,9 @@ class SimulationPanel(QWidget):
             p = self.controls.get_params()
         except ValueError as e:
             logger.warning("Parameter validation failed: %s", e)
-            get_tracker().record_exception("simulation", e, context="Parameter validation")
+            get_tracker().record_exception(
+                "simulation", e, context="Parameter validation"
+            )
             QMessageBox.warning(self, "Input Error", str(e))
             return
 
@@ -320,7 +322,9 @@ class SimulationPanel(QWidget):
             torque_func = self._torque_builder(p)
         except Exception as e:
             logger.warning("State/torque build failed: %s", e, exc_info=True)
-            get_tracker().record_exception("simulation", e, context="State/torque build")
+            get_tracker().record_exception(
+                "simulation", e, context="State/torque build"
+            )
             QMessageBox.warning(self, "Build Error", str(e))
             return
 
