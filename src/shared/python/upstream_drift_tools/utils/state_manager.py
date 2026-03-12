@@ -15,36 +15,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-
-def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
-    """Read JSON from a file, returning a default on failure."""
-    path = Path(file_path)
-    if not path.exists():
-        return default
-    try:
-        with open(path, encoding="utf-8") as f:
-            return json.load(f)
-    except (json.JSONDecodeError, OSError):
-        return default
-
-
-def safe_write_json(
-    file_path: Path | str,
-    data: Any,
-    indent: int = 2,
-    create_parents: bool = True,
-) -> bool:
-    """Write data as JSON to a file."""
-    path = Path(file_path)
-    try:
-        if create_parents:
-            path.parent.mkdir(parents=True, exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=indent, ensure_ascii=False)
-        return True
-    except (TypeError, OSError):
-        return False
-
+# Use canonical file I/O utilities instead of reimplementing them
+from utils.file_utils import safe_read_json, safe_write_json  # noqa: F401 (re-exported)
 
 # Setup logging
 logger = logging.getLogger(__name__)
