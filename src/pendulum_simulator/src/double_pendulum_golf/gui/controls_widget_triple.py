@@ -219,7 +219,7 @@ class ControlsWidgetTriple(ControlsWidgetBase):
             self.inp_L3 = LabeledInput(  # type: ignore[assignment]
                 "L3 (m) — Club", "1.10", "Length of segment 3: Club"
             )
-            for w in [
+            for w in [  # type: ignore[assignment]
                 self.inp_m1,
                 self.inp_m2,
                 self.inp_m3,

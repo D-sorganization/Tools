@@ -228,7 +228,7 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
             self.inp_m_l_fore = LabeledInput("L Fore", "2.0", "Left forearm")  # type: ignore[assignment]
             self.inp_m_club = LabeledInput("Club", "0.5", "Club shaft mass")  # type: ignore[assignment]
             self.inp_m_clubhead = LabeledInput("Clubhead", "0.2", "Clubhead point mass")  # type: ignore[assignment]
-            for w in [
+            for w in [  # type: ignore[assignment]
                 self.inp_m_hub,
                 self.inp_m_r_upper,
                 self.inp_m_r_fore,
@@ -287,7 +287,7 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
             self.inp_L_l_upper = LabeledInput("L Upper", "0.35", "Left upper arm")  # type: ignore[assignment]
             self.inp_L_l_fore = LabeledInput("L Fore", "0.30", "Left forearm")  # type: ignore[assignment]
             self.inp_L_club = LabeledInput("Club", "1.1", "Club total length")  # type: ignore[assignment]
-            for w in [
+            for w in [  # type: ignore[assignment]
                 self.inp_L_hub,
                 self.inp_L_r_upper,
                 self.inp_L_r_fore,
