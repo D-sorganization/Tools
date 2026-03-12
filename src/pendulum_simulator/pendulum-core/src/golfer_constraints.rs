@@ -16,9 +16,8 @@ pub struct BaumgarteGains {
     pub beta: f64,
 }
 
-impl BaumgarteGains {
-    /// Default Baumgarte gains for typical mechanical systems
-    pub fn default() -> Self {
+impl Default for BaumgarteGains {
+    fn default() -> Self {
         BaumgarteGains {
             alpha: 10.0,
             beta: 10.0,
@@ -86,7 +85,7 @@ pub fn constrained_accelerations(
     // Right-hand side of KKT system:
     // rhs = [τ - C - G; -γ - α*J*qdot - β*Φ]
     let rhs_upper = tau_vec - c - g;
-    let rhs_lower = -gamma - gains.alpha * j.clone() * qdot_vec - gains.beta * phi;
+    let rhs_lower = -gamma - gains.alpha * j * qdot_vec - gains.beta * phi;
 
     // Solve via the Schur complement J M^-1 J^T, which is numerically
     // better behaved than factorizing the full indefinite KKT system.
@@ -94,13 +93,18 @@ pub fn constrained_accelerations(
     for i in 0..8 {
         regularized_mass[(i, i)] += MASS_REGULARIZATION;
     }
-    let m_inv = regularized_mass.try_inverse().expect("Mass matrix singular");
+    let m_inv = regularized_mass
+        .try_inverse()
+        .expect("Mass matrix singular");
     let mut schur = j * m_inv * j.transpose();
     for i in 0..4 {
         schur[(i, i)] += CONSTRAINT_REGULARIZATION;
     }
     let schur_rhs = rhs_lower - j * m_inv * rhs_upper;
-    let lambda = schur.lu().solve(&schur_rhs).expect("Constraint system singular");
+    let lambda = schur
+        .lu()
+        .solve(&schur_rhs)
+        .expect("Constraint system singular");
     let a = m_inv * (rhs_upper + j.transpose() * lambda);
 
     (a, lambda)
@@ -142,11 +146,7 @@ pub fn project_to_constraints(
 /// Project velocity to the constraint surface using minimum-norm correction.
 ///
 /// Solves: find Δqdot such that J * Δqdot = -dJ/dt * qdot via least-squares.
-pub fn project_velocity(
-    q: &[f64; 8],
-    qdot: &[f64; 8],
-    params: &GolferParams,
-) -> [f64; 8] {
+pub fn project_velocity(q: &[f64; 8], qdot: &[f64; 8], params: &GolferParams) -> [f64; 8] {
     let j = golfer::constraint_jacobian(q, params);
     let eps = 1e-7;
 

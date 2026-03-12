@@ -276,6 +276,7 @@ impl Vec2 {
         self.x * other.y - self.y * other.x
     }
 
+    #[allow(clippy::should_implement_trait)]
     pub fn add(self, other: Self) -> Self {
         Vec2 {
             x: self.x + other.x,
@@ -283,6 +284,7 @@ impl Vec2 {
         }
     }
 
+    #[allow(clippy::should_implement_trait)]
     pub fn sub(self, other: Self) -> Self {
         Vec2 {
             x: self.x - other.x,

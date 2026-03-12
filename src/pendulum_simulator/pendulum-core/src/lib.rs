@@ -13,6 +13,7 @@
 //! - `wasm`: Compile with wasm-bindgen for WASM targets
 //! - `serde`: Enable serialization support via serde
 
+pub mod batch;
 pub mod double;
 pub mod golfer;
 pub mod golfer_constraints;
@@ -43,7 +44,9 @@ pub use golfer_constraints::{
     project_velocity, BaumgarteGains,
 };
 
-pub use integrator::{integrate_double_pendulum, integrate_golfer, integrate_triple_pendulum, RK45Config};
+pub use integrator::{
+    integrate_double_pendulum, integrate_golfer, integrate_triple_pendulum, RK45Config,
+};
 
 pub use types::{
     DoubleFKResult, DoublePendulumParams, GolferFKResult, GolferParams, TripleFKResult,
@@ -57,14 +60,13 @@ pub use nalgebra::{SMatrix, SVector};
 pub mod py_bindings {
     //! Python FFI bindings via PyO3.
 
-    use crate::types::*;
-    use crate::*;
     use crate::golfer_constraints::{
         constrained_accelerations as golfer_constrained_accelerations,
         project_to_constraints as golfer_project_to_constraints,
-        project_velocity as golfer_project_velocity,
-        BaumgarteGains,
+        project_velocity as golfer_project_velocity, BaumgarteGains,
     };
+    use crate::types::*;
+    use crate::*;
     use pyo3::prelude::*;
     use std::collections::HashMap;
 
@@ -110,29 +112,38 @@ pub mod py_bindings {
         }
 
         pub fn validate(&self) -> PyResult<()> {
-            self.inner.validate().map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
+            self.inner
+                .validate()
+                .map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
         }
     }
 
     /// Double pendulum mass matrix
     #[pyfunction]
-    pub fn py_double_mass_matrix(q: Vec<f64>, params: &PyDoublePendulumParams) -> PyResult<Vec<Vec<f64>>> {
+    pub fn py_double_mass_matrix(
+        q: Vec<f64>,
+        params: &PyDoublePendulumParams,
+    ) -> PyResult<Vec<Vec<f64>>> {
         if q.len() != 2 {
-            return Err(pyo3::exceptions::PyValueError::new_err("q must have length 2"));
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q must have length 2",
+            ));
         }
         let q_arr = [q[0], q[1]];
         let m = double_mass_matrix(&q_arr, &params.inner);
-        Ok(vec![
-            vec![m[(0, 0)], m[(0, 1)]],
-            vec![m[(1, 0)], m[(1, 1)]],
-        ])
+        Ok(vec![vec![m[(0, 0)], m[(0, 1)]], vec![m[(1, 0)], m[(1, 1)]]])
     }
 
     /// Double pendulum gravity vector
     #[pyfunction]
-    pub fn py_double_gravity_vector(q: Vec<f64>, params: &PyDoublePendulumParams) -> PyResult<Vec<f64>> {
+    pub fn py_double_gravity_vector(
+        q: Vec<f64>,
+        params: &PyDoublePendulumParams,
+    ) -> PyResult<Vec<f64>> {
         if q.len() != 2 {
-            return Err(pyo3::exceptions::PyValueError::new_err("q must have length 2"));
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q must have length 2",
+            ));
         }
         let q_arr = [q[0], q[1]];
         let g = double_gravity_vector(&q_arr, &params.inner);
@@ -141,9 +152,15 @@ pub mod py_bindings {
 
     /// Double pendulum Coriolis vector
     #[pyfunction]
-    pub fn py_double_coriolis(q: Vec<f64>, qdot: Vec<f64>, params: &PyDoublePendulumParams) -> PyResult<Vec<f64>> {
+    pub fn py_double_coriolis(
+        q: Vec<f64>,
+        qdot: Vec<f64>,
+        params: &PyDoublePendulumParams,
+    ) -> PyResult<Vec<f64>> {
         if q.len() != 2 || qdot.len() != 2 {
-            return Err(pyo3::exceptions::PyValueError::new_err("q and qdot must have length 2"));
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q and qdot must have length 2",
+            ));
         }
         let q_arr = [q[0], q[1]];
         let qdot_arr = [qdot[0], qdot[1]];
@@ -153,9 +170,14 @@ pub mod py_bindings {
 
     /// Double pendulum forward kinematics
     #[pyfunction]
-    pub fn py_double_forward_kinematics(q: Vec<f64>, params: &PyDoublePendulumParams) -> PyResult<HashMap<String, f64>> {
+    pub fn py_double_forward_kinematics(
+        q: Vec<f64>,
+        params: &PyDoublePendulumParams,
+    ) -> PyResult<HashMap<String, f64>> {
         if q.len() != 2 {
-            return Err(pyo3::exceptions::PyValueError::new_err("q must have length 2"));
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q must have length 2",
+            ));
         }
         let q_arr = [q[0], q[1]];
         let fk = double_forward_kinematics(&q_arr, &params.inner);
@@ -203,7 +225,9 @@ pub mod py_bindings {
         }
 
         pub fn validate(&self) -> PyResult<()> {
-            self.inner.validate().map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
+            self.inner
+                .validate()
+                .map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
         }
     }
 
@@ -214,7 +238,9 @@ pub mod py_bindings {
         params: &PyTriplePendulumParams,
     ) -> PyResult<Vec<Vec<f64>>> {
         if q.len() != 3 {
-            return Err(pyo3::exceptions::PyValueError::new_err("q must have length 3"));
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q must have length 3",
+            ));
         }
         let q_arr = [q[0], q[1], q[2]];
         let m = triple_mass_matrix(&q_arr, &params.inner);
@@ -232,7 +258,9 @@ pub mod py_bindings {
         params: &PyTriplePendulumParams,
     ) -> PyResult<Vec<f64>> {
         if q.len() != 3 {
-            return Err(pyo3::exceptions::PyValueError::new_err("q must have length 3"));
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q must have length 3",
+            ));
         }
         let q_arr = [q[0], q[1], q[2]];
         let g = triple_gravity_vector(&q_arr, &params.inner);
@@ -264,7 +292,9 @@ pub mod py_bindings {
         params: &PyTriplePendulumParams,
     ) -> PyResult<HashMap<String, f64>> {
         if q.len() != 3 {
-            return Err(pyo3::exceptions::PyValueError::new_err("q must have length 3"));
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q must have length 3",
+            ));
         }
         let q_arr = [q[0], q[1], q[2]];
         let fk = triple_forward_kinematics(&q_arr, &params.inner);
@@ -337,7 +367,9 @@ pub mod py_bindings {
         }
 
         pub fn validate(&self) -> PyResult<()> {
-            self.inner.validate().map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
+            self.inner
+                .validate()
+                .map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
         }
     }
 
@@ -345,7 +377,9 @@ pub mod py_bindings {
     #[pyfunction]
     pub fn py_golfer_mass_matrix(q: Vec<f64>, params: &PyGolferParams) -> PyResult<Vec<Vec<f64>>> {
         if q.len() != 8 {
-            return Err(pyo3::exceptions::PyValueError::new_err("q must have length 8"));
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q must have length 8",
+            ));
         }
         let mut q_arr = [0.0; 8];
         q_arr.copy_from_slice(&q[..8]);
@@ -360,7 +394,9 @@ pub mod py_bindings {
     #[pyfunction]
     pub fn py_golfer_gravity_vector(q: Vec<f64>, params: &PyGolferParams) -> PyResult<Vec<f64>> {
         if q.len() != 8 {
-            return Err(pyo3::exceptions::PyValueError::new_err("q must have length 8"));
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q must have length 8",
+            ));
         }
         let mut q_arr = [0.0; 8];
         q_arr.copy_from_slice(&q[..8]);
@@ -370,22 +406,36 @@ pub mod py_bindings {
 
     /// Golfer forward kinematics
     #[pyfunction]
-    pub fn py_golfer_forward_kinematics(q: Vec<f64>, params: &PyGolferParams) -> PyResult<HashMap<String, Vec<f64>>> {
+    pub fn py_golfer_forward_kinematics(
+        q: Vec<f64>,
+        params: &PyGolferParams,
+    ) -> PyResult<HashMap<String, Vec<f64>>> {
         if q.len() != 8 {
-            return Err(pyo3::exceptions::PyValueError::new_err("q must have length 8"));
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q must have length 8",
+            ));
         }
         let mut q_arr = [0.0; 8];
         q_arr.copy_from_slice(&q[..8]);
         let fk = golfer_forward_kinematics(&q_arr, &params.inner);
         let mut result = HashMap::new();
         result.insert("hub".to_string(), vec![fk.hub.0, fk.hub.1]);
-        result.insert("r_shoulder".to_string(), vec![fk.r_shoulder.0, fk.r_shoulder.1]);
+        result.insert(
+            "r_shoulder".to_string(),
+            vec![fk.r_shoulder.0, fk.r_shoulder.1],
+        );
         result.insert("r_elbow".to_string(), vec![fk.r_elbow.0, fk.r_elbow.1]);
         result.insert("r_wrist".to_string(), vec![fk.r_wrist.0, fk.r_wrist.1]);
-        result.insert("l_shoulder".to_string(), vec![fk.l_shoulder.0, fk.l_shoulder.1]);
+        result.insert(
+            "l_shoulder".to_string(),
+            vec![fk.l_shoulder.0, fk.l_shoulder.1],
+        );
         result.insert("l_elbow".to_string(), vec![fk.l_elbow.0, fk.l_elbow.1]);
         result.insert("l_wrist".to_string(), vec![fk.l_wrist.0, fk.l_wrist.1]);
-        result.insert("club_base".to_string(), vec![fk.club_base.0, fk.club_base.1]);
+        result.insert(
+            "club_base".to_string(),
+            vec![fk.club_base.0, fk.club_base.1],
+        );
         result.insert("club_com".to_string(), vec![fk.club_com.0, fk.club_com.1]);
         result.insert("club_tip".to_string(), vec![fk.club_tip.0, fk.club_tip.1]);
         Ok(result)
@@ -395,7 +445,9 @@ pub mod py_bindings {
     #[pyfunction]
     pub fn py_golfer_constraint_vector(q: Vec<f64>, params: &PyGolferParams) -> PyResult<Vec<f64>> {
         if q.len() != 8 {
-            return Err(pyo3::exceptions::PyValueError::new_err("q must have length 8"));
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q must have length 8",
+            ));
         }
         let mut q_arr = [0.0; 8];
         q_arr.copy_from_slice(&q[..8]);
@@ -405,9 +457,14 @@ pub mod py_bindings {
 
     /// Golfer constraint Jacobian
     #[pyfunction]
-    pub fn py_golfer_constraint_jacobian(q: Vec<f64>, params: &PyGolferParams) -> PyResult<Vec<Vec<f64>>> {
+    pub fn py_golfer_constraint_jacobian(
+        q: Vec<f64>,
+        params: &PyGolferParams,
+    ) -> PyResult<Vec<Vec<f64>>> {
         if q.len() != 8 {
-            return Err(pyo3::exceptions::PyValueError::new_err("q must have length 8"));
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q must have length 8",
+            ));
         }
         let mut q_arr = [0.0; 8];
         q_arr.copy_from_slice(&q[..8]);
@@ -446,13 +503,7 @@ pub mod py_bindings {
         let gains = BaumgarteGains { alpha, beta };
 
         let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            golfer_constrained_accelerations(
-                &q_arr,
-                &qdot_arr,
-                &tau_arr,
-                &params.inner,
-                &gains,
-            )
+            golfer_constrained_accelerations(&q_arr, &qdot_arr, &tau_arr, &params.inner, &gains)
         }));
 
         match result {
@@ -546,7 +597,44 @@ pub mod py_bindings {
         m.add_function(wrap_pyfunction!(py_golfer_constrained_dynamics, m)?)?;
         m.add_function(wrap_pyfunction!(py_golfer_project_to_constraints, m)?)?;
         m.add_function(wrap_pyfunction!(py_golfer_project_velocity, m)?)?;
+        m.add_function(wrap_pyfunction!(py_batch_evaluate_double, m)?)?;
         Ok(())
+    }
+
+    /// Batch-evaluate N candidate polynomial torque profiles in parallel.
+    ///
+    /// Returns a list of (max_tip_speed, tip_speed_at_bottom, success) tuples.
+    #[pyfunction]
+    #[pyo3(signature = (params, coeffs_batch, n_coeffs_per_joint, q0, qdot0, t_end))]
+    pub fn py_batch_evaluate_double(
+        params: &PyDoublePendulumParams,
+        coeffs_batch: Vec<Vec<f64>>,
+        n_coeffs_per_joint: usize,
+        q0: Vec<f64>,
+        qdot0: Vec<f64>,
+        t_end: f64,
+    ) -> PyResult<Vec<(f64, f64, bool)>> {
+        if q0.len() != 2 || qdot0.len() != 2 {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q0 and qdot0 must have length 2",
+            ));
+        }
+        let q0_arr = [q0[0], q0[1]];
+        let qdot0_arr = [qdot0[0], qdot0[1]];
+
+        let results = crate::batch::batch_evaluate_double(
+            &params.inner,
+            &coeffs_batch,
+            n_coeffs_per_joint,
+            q0_arr,
+            qdot0_arr,
+            t_end,
+        );
+
+        Ok(results
+            .iter()
+            .map(|r| (r.max_tip_speed, r.tip_speed_at_bottom, r.success))
+            .collect())
     }
 }
 
@@ -567,7 +655,15 @@ pub mod wasm_bindings {
     #[wasm_bindgen]
     impl WasmDoublePendulumParams {
         #[wasm_bindgen(constructor)]
-        pub fn new(m1: f64, m2: f64, l1: f64, l2: f64, g: f64, friction1: f64, friction2: f64) -> WasmDoublePendulumParams {
+        pub fn new(
+            m1: f64,
+            m2: f64,
+            l1: f64,
+            l2: f64,
+            g: f64,
+            friction1: f64,
+            friction2: f64,
+        ) -> WasmDoublePendulumParams {
             WasmDoublePendulumParams {
                 inner: DoublePendulumParams {
                     m1,
@@ -672,7 +768,10 @@ pub mod wasm_bindings {
 
     /// Double pendulum mass matrix (WASM)
     #[wasm_bindgen]
-    pub fn wasm_double_mass_matrix(q: &[f64], params: &WasmDoublePendulumParams) -> Result<Vec<f64>, JsValue> {
+    pub fn wasm_double_mass_matrix(
+        q: &[f64],
+        params: &WasmDoublePendulumParams,
+    ) -> Result<Vec<f64>, JsValue> {
         if q.len() != 2 {
             return Err(JsValue::from_str("q must have length 2"));
         }
@@ -683,7 +782,10 @@ pub mod wasm_bindings {
 
     /// Double pendulum gravity vector (WASM)
     #[wasm_bindgen]
-    pub fn wasm_double_gravity_vector(q: &[f64], params: &WasmDoublePendulumParams) -> Result<Vec<f64>, JsValue> {
+    pub fn wasm_double_gravity_vector(
+        q: &[f64],
+        params: &WasmDoublePendulumParams,
+    ) -> Result<Vec<f64>, JsValue> {
         if q.len() != 2 {
             return Err(JsValue::from_str("q must have length 2"));
         }
@@ -694,7 +796,10 @@ pub mod wasm_bindings {
 
     /// Golfer mass matrix (WASM)
     #[wasm_bindgen]
-    pub fn wasm_golfer_mass_matrix(q: &[f64], params: &WasmGolferParams) -> Result<Vec<f64>, JsValue> {
+    pub fn wasm_golfer_mass_matrix(
+        q: &[f64],
+        params: &WasmGolferParams,
+    ) -> Result<Vec<f64>, JsValue> {
         if q.len() != 8 {
             return Err(JsValue::from_str("q must have length 8"));
         }
@@ -709,7 +814,10 @@ pub mod wasm_bindings {
 
     /// Golfer forward kinematics (WASM)
     #[wasm_bindgen]
-    pub fn wasm_golfer_forward_kinematics(q: &[f64], params: &WasmGolferParams) -> Result<Vec<f64>, JsValue> {
+    pub fn wasm_golfer_forward_kinematics(
+        q: &[f64],
+        params: &WasmGolferParams,
+    ) -> Result<Vec<f64>, JsValue> {
         if q.len() != 8 {
             return Err(JsValue::from_str("q must have length 8"));
         }
