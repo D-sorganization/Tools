@@ -9,12 +9,12 @@ from __future__ import annotations
 
 import math
 
-# =============================================================================
-# Physical Constants
-# =============================================================================
-
-# Standard gravity (m/s^2)
-GRAVITY_M_S2: float = 9.80665
+# Import universally shared physical constants from the canonical source
+try:
+    from utils.constants import STANDARD_GRAVITY as GRAVITY_M_S2  # noqa: F401
+except ImportError:
+    # Fallback for environments where utils is not on PYTHONPATH
+    GRAVITY_M_S2: float = 9.80665
 
 # Human tissue average density (kg/m^3)
 # Approximately the density of muscle tissue

@@ -202,5 +202,42 @@ def init_default_logging(
     return root_logger
 
 
+class LogExecutionTime:
+    """Context manager that logs the wall-clock duration of a block.
+
+    Example::
+
+        with LogExecutionTime("my_operation"):
+            do_something()
+        # INFO: my_operation completed in 0.1234s
+    """
+
+    def __init__(
+        self,
+        name: str,
+        logger_instance: logging.Logger | None = None,
+    ) -> None:
+        self.name = name
+        self._logger = logger_instance or get_logger(name)
+
+    def __enter__(self) -> "LogExecutionTime":
+        import time
+
+        self._start = time.perf_counter()
+        self._logger.debug("Starting %s…", self.name)
+        return self
+
+    def __exit__(self, exc_type: object, exc_val: object, exc_tb: object) -> None:
+        import time
+
+        duration = time.perf_counter() - self._start
+        self._logger.info("%s completed in %.4fs", self.name, duration)
+
+
+def log_execution_time(name: str) -> LogExecutionTime:
+    """Convenience factory for :class:`LogExecutionTime`."""
+    return LogExecutionTime(name)
+
+
 # Module-level logger for convenience
 logger = get_logger(__name__)
