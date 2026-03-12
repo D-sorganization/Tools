@@ -146,11 +146,12 @@ class GolferPendulumWidget(BasePendulumWidget):
 
         self._draw_grid(painter)
 
-        # Ground plane + tilt plane visualization
+        # Ground plane + tilt plane + ball visualization
         if self._result is not None:
             L_total = self._get_total_length()
             self._draw_ground_plane(painter, -L_total)
             self._draw_tilt_plane(painter)
+            self._draw_ball(painter, 0.0, -L_total)
 
         if self._result is None:
             self._draw_placeholder(painter)
