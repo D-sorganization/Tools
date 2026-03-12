@@ -7,11 +7,14 @@ pure-Python implementations remain the contract-preserving fallback path.
 
 from __future__ import annotations
 
+import logging
 import os
 import warnings
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from .physics import PendulumParams
@@ -214,7 +217,15 @@ def double_mass_matrix(phi: float, params: PendulumParams) -> np.ndarray | None:
             q_arr.tolist(), _to_rust_double_params(params)
         )
         return np.array(result, dtype=float)
-    except Exception as exc:  # pragma: no cover - exercised when extension exists
+    except (
+        RuntimeError,
+        AttributeError,
+        TypeError,
+    ) as exc:  # pragma: no cover - exercised when extension exists
+        logger.debug(
+            "double_mass_matrix: Rust call failed (%s), falling back to Python",
+            type(exc).__name__,
+        )
         _warn_once("double_mass_matrix", exc)
         return None
 
@@ -232,7 +243,15 @@ def double_gravity_vector(
             q_arr.tolist(), _to_rust_double_params(params)
         )
         return np.array(result, dtype=float)
-    except Exception as exc:  # pragma: no cover - exercised when extension exists
+    except (
+        RuntimeError,
+        AttributeError,
+        TypeError,
+    ) as exc:  # pragma: no cover - exercised when extension exists
+        logger.debug(
+            "double_gravity_vector: Rust call failed (%s), falling back to Python",
+            type(exc).__name__,
+        )
         _warn_once("double_gravity_vector", exc)
         return None
 
@@ -256,7 +275,15 @@ def double_coriolis_vector(
             _to_rust_double_params(params),
         )
         return np.array(result, dtype=float)
-    except Exception as exc:  # pragma: no cover - exercised when extension exists
+    except (
+        RuntimeError,
+        AttributeError,
+        TypeError,
+    ) as exc:  # pragma: no cover - exercised when extension exists
+        logger.debug(
+            "double_coriolis_vector: Rust call failed (%s), falling back to Python",
+            type(exc).__name__,
+        )
         _warn_once("double_coriolis_vector", exc)
         return None
 
@@ -273,7 +300,15 @@ def double_forward_kinematics(
         result = _pendulum_core.py_double_forward_kinematics(
             q_arr.tolist(), _to_rust_double_params(params)
         )
-    except Exception as exc:  # pragma: no cover - exercised when extension exists
+    except (
+        RuntimeError,
+        AttributeError,
+        TypeError,
+    ) as exc:  # pragma: no cover - exercised when extension exists
+        logger.debug(
+            "double_forward_kinematics: Rust call failed (%s), falling back to Python",
+            type(exc).__name__,
+        )
         _warn_once("double_forward_kinematics", exc)
         return None
 
@@ -297,7 +332,15 @@ def triple_mass_matrix(
             q_arr.tolist(), _to_rust_triple_params(params)
         )
         return np.array(result, dtype=float)
-    except Exception as exc:  # pragma: no cover - exercised when extension exists
+    except (
+        RuntimeError,
+        AttributeError,
+        TypeError,
+    ) as exc:  # pragma: no cover - exercised when extension exists
+        logger.debug(
+            "triple_mass_matrix: Rust call failed (%s), falling back to Python",
+            type(exc).__name__,
+        )
         _warn_once("triple_mass_matrix", exc)
         return None
 
@@ -315,7 +358,15 @@ def triple_gravity_vector(
             q_arr.tolist(), _to_rust_triple_params(params)
         )
         return np.array(result, dtype=float)
-    except Exception as exc:  # pragma: no cover - exercised when extension exists
+    except (
+        RuntimeError,
+        AttributeError,
+        TypeError,
+    ) as exc:  # pragma: no cover - exercised when extension exists
+        logger.debug(
+            "triple_gravity_vector: Rust call failed (%s), falling back to Python",
+            type(exc).__name__,
+        )
         _warn_once("triple_gravity_vector", exc)
         return None
 
@@ -341,7 +392,15 @@ def triple_coriolis_vector(
             _to_rust_triple_params(params),
         )
         return np.array(result, dtype=float)
-    except Exception as exc:  # pragma: no cover - exercised when extension exists
+    except (
+        RuntimeError,
+        AttributeError,
+        TypeError,
+    ) as exc:  # pragma: no cover - exercised when extension exists
+        logger.debug(
+            "triple_coriolis_vector: Rust call failed (%s), falling back to Python",
+            type(exc).__name__,
+        )
         _warn_once("triple_coriolis_vector", exc)
         return None
 
@@ -361,7 +420,15 @@ def triple_forward_kinematics(
         result = _pendulum_core.py_triple_forward_kinematics(
             q_arr.tolist(), _to_rust_triple_params(params)
         )
-    except Exception as exc:  # pragma: no cover - exercised when extension exists
+    except (
+        RuntimeError,
+        AttributeError,
+        TypeError,
+    ) as exc:  # pragma: no cover - exercised when extension exists
+        logger.debug(
+            "triple_forward_kinematics: Rust call failed (%s), falling back to Python",
+            type(exc).__name__,
+        )
         _warn_once("triple_forward_kinematics", exc)
         return None
 
@@ -384,7 +451,15 @@ def golfer_mass_matrix(q: np.ndarray, params: GolferParams) -> np.ndarray | None
             q_arr.tolist(), _to_rust_golfer_params(params)
         )
         return np.array(result, dtype=float)
-    except Exception as exc:  # pragma: no cover - exercised when extension exists
+    except (
+        RuntimeError,
+        AttributeError,
+        TypeError,
+    ) as exc:  # pragma: no cover - exercised when extension exists
+        logger.debug(
+            "golfer_mass_matrix: Rust call failed (%s), falling back to Python",
+            type(exc).__name__,
+        )
         _warn_once("golfer_mass_matrix", exc)
         return None
 
@@ -400,7 +475,15 @@ def golfer_gravity_vector(q: np.ndarray, params: GolferParams) -> np.ndarray | N
             q_arr.tolist(), _to_rust_golfer_params(params)
         )
         return np.array(result, dtype=float)
-    except Exception as exc:  # pragma: no cover - exercised when extension exists
+    except (
+        RuntimeError,
+        AttributeError,
+        TypeError,
+    ) as exc:  # pragma: no cover - exercised when extension exists
+        logger.debug(
+            "golfer_gravity_vector: Rust call failed (%s), falling back to Python",
+            type(exc).__name__,
+        )
         _warn_once("golfer_gravity_vector", exc)
         return None
 
@@ -417,7 +500,15 @@ def golfer_forward_kinematics(
         result = _pendulum_core.py_golfer_forward_kinematics(
             q_arr.tolist(), _to_rust_golfer_params(params)
         )
-    except Exception as exc:  # pragma: no cover - exercised when extension exists
+    except (
+        RuntimeError,
+        AttributeError,
+        TypeError,
+    ) as exc:  # pragma: no cover - exercised when extension exists
+        logger.debug(
+            "golfer_forward_kinematics: Rust call failed (%s), falling back to Python",
+            type(exc).__name__,
+        )
         _warn_once("golfer_forward_kinematics", exc)
         return None
 
@@ -455,9 +546,7 @@ def golfer_constrained_dynamics(
     beta: float,
 ) -> tuple[np.ndarray, np.ndarray] | None:
     """Return native golfer accelerations and multipliers when supported."""
-    if not golfer_native_enabled() or not golfer_native_constraint_dynamics_supported(
-        params
-    ):
+    if not golfer_native_enabled() or not golfer_native_constraint_dynamics_supported(params):
         return None
 
     try:
@@ -476,7 +565,15 @@ def golfer_constrained_dynamics(
             np.array(qddot, dtype=float),
             np.array(lambda_forces, dtype=float),
         )
-    except Exception as exc:  # pragma: no cover - exercised when extension exists
+    except (
+        RuntimeError,
+        AttributeError,
+        TypeError,
+    ) as exc:  # pragma: no cover - exercised when extension exists
+        logger.debug(
+            "golfer_constrained_dynamics: Rust call failed (%s), falling back to Python",
+            type(exc).__name__,
+        )
         _warn_once("golfer_constrained_dynamics", exc)
         return None
 
@@ -500,7 +597,15 @@ def golfer_project_to_constraints(
             tol,
         )
         return np.array(result, dtype=float)
-    except Exception as exc:  # pragma: no cover - exercised when extension exists
+    except (
+        RuntimeError,
+        AttributeError,
+        TypeError,
+    ) as exc:  # pragma: no cover - exercised when extension exists
+        logger.debug(
+            "golfer_project_to_constraints: Rust call failed (%s), falling back to Python",
+            type(exc).__name__,
+        )
         _warn_once("golfer_project_to_constraints", exc)
         return None
 
@@ -523,7 +628,15 @@ def golfer_project_velocity(
             _to_rust_golfer_params(params),
         )
         return np.array(result, dtype=float)
-    except Exception as exc:  # pragma: no cover - exercised when extension exists
+    except (
+        RuntimeError,
+        AttributeError,
+        TypeError,
+    ) as exc:  # pragma: no cover - exercised when extension exists
+        logger.debug(
+            "golfer_project_velocity: Rust call failed (%s), falling back to Python",
+            type(exc).__name__,
+        )
         _warn_once("golfer_project_velocity", exc)
         return None
 
@@ -541,23 +654,23 @@ def batch_evaluate_double(
     Returns a list of ``(max_tip_speed, tip_speed_at_bottom, success)``
     tuples, or ``None`` if the native backend is unavailable.
     """
-    if _pendulum_core is None or not hasattr(
-        _pendulum_core, "py_batch_evaluate_double"
-    ):
+    if _pendulum_core is None or not hasattr(_pendulum_core, "py_batch_evaluate_double"):
         return None
 
     try:
-        result: list[tuple[float, float, bool]] = (
-            _pendulum_core.py_batch_evaluate_double(
-                _to_rust_double_params(params),
-                coeffs_batch,
-                n_coeffs_per_joint,
-                q0,
-                qdot0,
-                t_end,
-            )
+        result: list[tuple[float, float, bool]] = _pendulum_core.py_batch_evaluate_double(
+            _to_rust_double_params(params),
+            coeffs_batch,
+            n_coeffs_per_joint,
+            q0,
+            qdot0,
+            t_end,
         )
         return result
-    except Exception as exc:  # pragma: no cover
+    except (RuntimeError, AttributeError, TypeError) as exc:  # pragma: no cover
+        logger.debug(
+            "batch_evaluate_double: Rust call failed (%s), falling back to Python",
+            type(exc).__name__,
+        )
         _warn_once("batch_evaluate_double", exc)
         return None

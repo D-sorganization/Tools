@@ -14,14 +14,13 @@ from __future__ import annotations
 
 import logging
 import sys
-from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 from PyQt6.QtCore import QByteArray, QSettings, Qt
-from PyQt6.QtGui import QAction
+from PyQt6.QtGui import QAction, QShortcut
 from PyQt6.QtWidgets import (
+    QDockWidget,
     QMainWindow,
     QMenu,
     QMenuBar,
@@ -31,39 +30,18 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from ..physics import (
-    JointLimits,
-    JointLimitsNDOF,
-    PendulumParams,
-    TorqueClamp,
-)
-from ..physics_golfer import GolferParams
-from ..physics_triple import TriplePendulumParams
-from ..simulation import make_polynomial_torque, run_simulation
-from ..simulation_golfer import (
-    make_polynomial_torque as make_polynomial_torque_golfer,
-)
-from ..simulation_golfer import run_simulation as run_simulation_golfer
-from ..simulation_triple import (
-    make_polynomial_torque as make_polynomial_torque_triple,
-)
-from ..simulation_triple import run_simulation as run_simulation_triple
-from .controls_widget import ControlsWidget
-from .controls_widget_golfer import ControlsWidgetGolfer
-from .controls_widget_triple import ControlsWidgetTriple
-from .golfer_pendulum_widget import GolferPendulumWidget
-from .matrix_widget import MatrixWidget
-from .matrix_widget_golfer import GolferMatrixWidget
-from .matrix_widget_triple import TripleMatrixWidget
-from .pendulum_widget import PendulumWidget
 from .simulation_panel import SimulationPanel
 from .toolstrip_widget import ToolStrip
-from .torque_history_widget import TorqueHistoryWidget
-from .optimization_widget import OptimizationWidget
 from .unit_converter import UnitConverter
+from .analysis_tab import AnalysisTab
 
-# TODO(#1042): Derive from fleet ThemeManager palette when it's a hard dep.
 from .controls_utils import PENDULUM_DARK_STYLE as _PENDULUM_DARK_STYLE
+from .panel_builders import (
+    build_double_panel,
+    build_triple_panel,
+    build_golfer_panel,
+    wire_toolstrip,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -114,8 +92,11 @@ try:
         ThemeManagerDialog = _ThemeManagerDialog
         create_theme_menu = _create_theme_menu
         _THEME_AVAILABLE = True
+        logger.info("ThemeManager loaded successfully")
+    else:
+        logger.info("ThemeManager not available; using default theme")
 except ImportError:
-    pass  # ThemeManager / ThemeManagerDialog / create_theme_menu remain None
+    logger.info("ThemeManager not available; using default theme")
 
 # ── Try to import shared PlotThemeManager ──────────────────────────────────
 _PLOT_THEME_AVAILABLE = False
@@ -139,6 +120,7 @@ class MainWindow(QMainWindow):
     # Font zoom bounds (#1147)
     _FONT_MIN_PT = 8
     _FONT_MAX_PT = 24
+    _panels: tuple[SimulationPanel, ...]
 
     def __init__(self) -> None:
         super().__init__()
@@ -199,9 +181,7 @@ class MainWindow(QMainWindow):
             return
         font = app.font()
         base_pt = 10  # default base
-        new_pt = max(
-            self._FONT_MIN_PT, min(self._FONT_MAX_PT, base_pt + self._font_zoom_pt)
-        )
+        new_pt = max(self._FONT_MIN_PT, min(self._FONT_MAX_PT, base_pt + self._font_zoom_pt))
         font.setPointSize(new_pt)
         app.setFont(font)
         # Persist
@@ -231,6 +211,16 @@ class MainWindow(QMainWindow):
         self._action_theme_mgr.setShortcut("Ctrl+Shift+T")
         self._action_theme_mgr.triggered.connect(self._open_theme_manager)
         view_menu.addAction(self._action_theme_mgr)
+
+        view_menu.addSeparator()
+
+        # Analysis dock toggle
+        self._action_analysis = QAction("📊 Analysis Panel", self)
+        self._action_analysis.setCheckable(True)
+        self._action_analysis.setChecked(False)
+        self._action_analysis.setShortcut("Ctrl+Shift+A")
+        self._action_analysis.triggered.connect(self._toggle_analysis_dock)
+        view_menu.addAction(self._action_analysis)
 
         view_menu.addSeparator()
 
@@ -267,9 +257,9 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(self._toolstrip)
 
         self._tabs = QTabWidget()
-        self._double_panel = self._build_double_panel()
-        self._triple_panel = self._build_triple_panel()
-        self._golfer_panel = self._build_golfer_panel()
+        self._double_panel = build_double_panel(self)
+        self._triple_panel = build_triple_panel(self)
+        self._golfer_panel = build_golfer_panel(self)
         self._tabs.addTab(self._double_panel, "⚙ Double Pendulum")
         self._tabs.addTab(self._triple_panel, "⚙ Triple Pendulum")
         self._tabs.addTab(self._golfer_panel, "⚙ Golfer Upper Body")
@@ -279,546 +269,93 @@ class MainWindow(QMainWindow):
             tab_bar.setVisible(False)
         main_layout.addWidget(self._tabs, stretch=1)
 
+        # ── Analysis dock (docked bottom by default) ──────────────────
+        self._analysis_tab = AnalysisTab(self)
+        self._analysis_dock = QDockWidget("📊 Analysis", self)
+        self._analysis_dock.setWidget(self._analysis_tab.widget())
+        self._analysis_dock.setAllowedAreas(
+            Qt.DockWidgetArea.BottomDockWidgetArea
+            | Qt.DockWidgetArea.RightDockWidgetArea
+            | Qt.DockWidgetArea.LeftDockWidgetArea
+        )
+        self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, self._analysis_dock)
+        self._analysis_dock.setVisible(False)  # start hidden
+        self._analysis_dock.visibilityChanged.connect(
+            lambda vis: self._action_analysis.setChecked(vis)
+        )
+
         self.status = QStatusBar()
         self.setStatusBar(self.status)
         self.status.showMessage(
             "Ready  ·  Scroll=zoom  ·  Drag=pan  ·  Dbl-click=reset view",
         )
 
-        self._wire_toolstrip()
+        wire_toolstrip(self)
+        self._setup_keyboard_shortcuts()
+        self._wire_analysis_tab()
 
-    def _wire_toolstrip(self) -> None:
-        """Connect toolstrip signals — dispatched only to the active tab's panel."""
-        ts = self._toolstrip
+    def _setup_keyboard_shortcuts(self) -> None:
+        """Set up global keyboard shortcuts for simulation control."""
+        from PyQt6.QtGui import QKeySequence
 
-        # Build the ordered panel list matching tab indices
-        self._panels: tuple[SimulationPanel, ...] = (
-            self._double_panel,
-            self._triple_panel,
-            self._golfer_panel,
-        )
+        # Space = play/pause toggle
+        QShortcut(QKeySequence(Qt.Key.Key_Space), self, self._on_shortcut_play_pause)
+        # R = reset simulation
+        QShortcut(QKeySequence(Qt.Key.Key_R), self, self._on_shortcut_reset)
+        # Ctrl+E = export CSV
+        QShortcut(QKeySequence("Ctrl+E"), self, self._on_shortcut_export_data)
+        # F5 = run simulation
+        QShortcut(QKeySequence(Qt.Key.Key_F5), self, self._on_shortcut_run)
+        # Escape = stop animation
+        QShortcut(QKeySequence(Qt.Key.Key_Escape), self, self._on_shortcut_stop)
 
-        # ── Simulation action signals → active panel only ──────────────
-        ts.run_requested.connect(
-            lambda: self._active_panel().controls.run_requested.emit()
-        )
-        ts.reset_requested.connect(
-            lambda: self._active_panel().controls.reset_requested.emit()
-        )
-        ts.play_toggled.connect(
-            lambda checked: self._active_panel().controls.play_toggled.emit(checked)
-        )
-        ts.speed_changed.connect(
-            lambda val: self._active_panel().controls.speed_changed.emit(val)
-        )
-        ts.frame_scrubbed.connect(lambda idx: self._active_panel().scrub_to_frame(idx))
+    def _on_shortcut_play_pause(self) -> None:
+        """Space key: toggle play/pause."""
+        panel = self._active_panel()
+        current_state = panel.controls.btn_play.isChecked()
+        panel.controls.btn_play.setChecked(not current_state)
 
-        # ── Export actions (#1141) → active panel's controls ──────────
-        ts.export_data_requested.connect(
-            lambda: self._active_panel().controls.export_data_requested.emit()
-        )
-        ts.export_video_requested.connect(
-            lambda: self._active_panel().controls.export_video_requested.emit()
-        )
+    def _on_shortcut_reset(self) -> None:
+        """R key: reset simulation."""
+        self._active_panel().controls.reset_requested.emit()
 
-        # ── Pop-out chart (#1135) → active panel ─────────────────────
-        ts.popout_chart_requested.connect(self._on_popout_chart)
+    def _on_shortcut_export_data(self) -> None:
+        """Ctrl+E: export CSV data."""
+        self._active_panel().controls.export_data_requested.emit()
 
-        # ── Overlay toggles → active panel's pendulum widget ──────────
-        def _fwd_overlay(attr: str, value: object) -> None:
-            pw = self._active_panel().pendulum
-            if hasattr(pw, attr):
-                getattr(pw, attr)(value)
+    def _on_shortcut_run(self) -> None:
+        """F5: run simulation."""
+        self._active_panel().controls.run_requested.emit()
 
-        ts.forces_toggled.connect(lambda v: _fwd_overlay("set_show_forces", v))
-        ts.zero_torque_toggled.connect(
-            lambda v: _fwd_overlay("set_show_zero_torque_forces", v)
-        )
-        ts.mob_ellipsoid_toggled.connect(
-            lambda v: _fwd_overlay("set_show_mob_ellipsoids", v)
-        )
-        ts.force_ellipsoid_toggled.connect(
-            lambda v: _fwd_overlay("set_show_force_ellipsoids", v)
-        )
-        ts.com_toggled.connect(lambda v: _fwd_overlay("set_show_com", v))
+    def _on_shortcut_stop(self) -> None:
+        """Escape: stop animation."""
+        self._active_panel().controls.stop_playback()
 
-        # ── 3D segment rendering (#1155) ──────────────────────────────
-        ts.mode_3d_toggled.connect(lambda v: _fwd_overlay("set_3d_mode", v))
+    def _wire_analysis_tab(self) -> None:
+        """Connect each panel's sim_finished signal to push results to analysis.
 
-        # ── Gravity toggle (#1142) → active panel's pendulum + controls ──
-        def _fwd_gravity(on: bool) -> None:
-            _fwd_overlay("set_gravity_on", on)
-            ctrl = self._active_panel().controls
-            if hasattr(ctrl, "chk_gravity"):
-                ctrl.chk_gravity.blockSignals(True)
-                ctrl.chk_gravity.setChecked(on)
-                ctrl.chk_gravity.blockSignals(False)
+        Design by Contract
+        ------------------
+        Pre:  self._panels and self._analysis_tab exist.
+        Post: Any simulation completion updates the analysis tab.
+        """
+        model_map = {0: "double", 1: "triple", 2: "golfer"}
 
-        ts.gravity_toggled.connect(_fwd_gravity)
+        for idx, panel in enumerate(self._panels):
+            model_type = model_map[idx]
 
-        # ── Scale sliders → active panel's pendulum widget ────────────
-        ts.force_scale_changed.connect(lambda v: _fwd_overlay("set_force_scale", v))
-        ts.mob_scale_changed.connect(
-            lambda v: _fwd_overlay("set_mob_ellipsoid_scale", v)
-        )
-        ts.force_ell_scale_changed.connect(
-            lambda v: _fwd_overlay("set_force_ellipsoid_scale", v)
-        )
+            def _on_finished(_p: SimulationPanel = panel, _mt: str = model_type) -> None:
+                result = _p._result
+                if result is not None:
+                    self._analysis_tab.set_result(result, model_type=_mt)
+                    logger.info("Analysis tab updated with %s result", _mt)
 
-        # ── Rotation controls (#1146) → active panel's pendulum widget ──
-        ts.azimuth_changed.connect(lambda v: _fwd_overlay("set_view_azimuth", v))
-        ts.tilt_changed.connect(lambda v: _fwd_overlay("set_tilt_angle", v))
-
-        # ── Reset view → active panel's pendulum widget ───────────────
-        ts.reset_view_requested.connect(
-            lambda: (
-                self._active_panel().pendulum.reset_view()  # type: ignore[attr-defined]
-                if hasattr(self._active_panel().pendulum, "reset_view")
-                else None
-            )
-        )
-
-        # ── Per-segment overlay visibility ────────────────────────────
-        ts.segment_visibility_changed.connect(
-            lambda vis: (
-                self._active_panel().pendulum.set_visible_segments(vis)  # type: ignore[attr-defined]
-                if hasattr(self._active_panel().pendulum, "set_visible_segments")
-                else None
-            )
-        )
-
-        # ── Model selection dropdown (#1149) ──────────────────────────
-        def _on_model_dropdown_changed(idx: int) -> None:
-            self._tabs.blockSignals(True)
-            self._tabs.setCurrentIndex(idx)
-            self._tabs.blockSignals(False)
-
-        def _on_tab_changed(idx: int) -> None:
-            ts.cmb_model.blockSignals(True)
-            ts.cmb_model.setCurrentIndex(idx)
-            ts.cmb_model.blockSignals(False)
-
-        ts.model_changed.connect(_on_model_dropdown_changed)
-        self._tabs.currentChanged.connect(_on_tab_changed)
-
-        # ── Busy state and frame sync — only forward from the active panel ─
-        # Guard each callback so non-active panels are silently ignored.
-        for panel in self._panels:
-            panel.sim_started.connect(
-                lambda _p=panel: (
-                    ts.set_running(True) if _p is self._active_panel() else None
-                )
-            )
-            panel.sim_finished.connect(
-                lambda _p=panel: (
-                    [
-                        ts.set_running(False),  # type: ignore[func-returns-value]
-                        ts.set_frame_range(_p.current_n_steps()),  # type: ignore[func-returns-value]
-                    ]
-                    if _p is self._active_panel()
-                    else None
-                )
-            )
-            panel.frame_changed.connect(
-                lambda idx, _p=panel: (
-                    ts.set_frame(idx) if _p is self._active_panel() else None
-                )
-            )
-
-        # Update segment checkboxes when tab changes
-        self._tabs.currentChanged.connect(self._on_tab_changed)
-        # Initialize with the default tab's segments
-        self._on_tab_changed(self._tabs.currentIndex())
+            panel.sim_finished.connect(_on_finished)
 
     def _active_panel(self) -> SimulationPanel:
         """Return the SimulationPanel for the currently visible tab."""
         idx = self._tabs.currentIndex()
         return self._panels[idx]
-
-    def _build_double_panel(self) -> SimulationPanel:
-        controls = ControlsWidget()
-        pendulum = PendulumWidget()
-        matrix = MatrixWidget()
-        torque_history = TorqueHistoryWidget()
-
-        def build_params(p: dict) -> PendulumParams:
-            tilt_rad = np.radians(p.get("tilt_deg", 0.0))
-            azimuth_rad = np.radians(p.get("azimuth_deg", 0.0))
-            g = 9.81 if p.get("gravity_on", True) else 0.0
-            g_eff = g * float(np.cos(tilt_rad))  # (#1113) effective gravity on plane
-            # Update display tilt and view azimuth on next paint
-            pendulum.set_tilt_angle(tilt_rad)
-            pendulum.set_view_azimuth(azimuth_rad)  # (#1118)
-            return PendulumParams(
-                m1=p["m1"],
-                m2=p["m2"],
-                L1=p["L1"],
-                L2=p["L2"],
-                mClub=p.get("mClub", 0.0),
-                g=g_eff,
-                b1=p.get("b1", 0.0),
-                b2=p.get("b2", 0.0),
-                mu1=p.get("mu1", 0.0),
-                mu2=p.get("mu2", 0.0),
-            )
-
-        def build_state(p: dict) -> np.ndarray:
-            return np.array([p["theta1_rad"], p["phi_rad"], p["dtheta1"], p["dphi"]])
-
-        def build_torque(p: dict) -> object:
-            return make_polynomial_torque(p["shoulder_coeffs"], p["wrist_coeffs"])
-
-        def build_limits(p: dict) -> JointLimits | None:
-            if not p.get("enable_limits", False):
-                return None
-            return JointLimits(
-                phi_min=p.get("phi_min_rad", -np.pi / 2),
-                phi_max=p.get("phi_max_rad", np.pi / 2),
-                theta1_min=p.get("theta1_min_rad", -np.pi),
-                theta1_max=p.get("theta1_max_rad", np.pi),
-                stiffness=p.get("limit_stiffness", 500.0),
-            )
-
-        def build_clamp(p: dict) -> TorqueClamp | None:
-            if not p.get("enable_clamp", False):
-                return None
-            return TorqueClamp(
-                max_torque1=p.get("max_torque1", 50.0),
-                max_torque2=p.get("max_torque2", 20.0),
-            )
-
-        # Optimizer (#1108)
-        optimizer = OptimizationWidget(
-            model_name="Double Pendulum",
-            n_torque_params=2,
-        )
-
-        def _make_double_objective(p: dict) -> Callable:
-            """Build a tip-speed objective from current controls."""
-            params = build_params(p)
-            initial_state = build_state(p)
-            t_end = p["t_end"]
-            limits = build_limits(p)
-            clamp = build_clamp(p)
-
-            def objective(coeffs: np.ndarray) -> float:
-                n_half = len(coeffs) // 2
-                s_coeffs = list(coeffs[:n_half])
-                w_coeffs = list(coeffs[n_half:])
-                torque_func = make_polynomial_torque(s_coeffs, w_coeffs)
-                try:
-                    result = run_simulation(
-                        params=params,
-                        initial_state=initial_state,
-                        t_end=t_end,
-                        torque_func=torque_func,  # type: ignore[arg-type]
-                        limits=limits,
-                        clamp=clamp,
-                    )
-                    # Tip speed at last frame
-                    vels = result.joint_velocities_at(result.n_steps - 1)
-                    tip_v = vels.get("tip", (0, 0))
-                    speed = float(np.hypot(tip_v[0], tip_v[1]))
-                    return -speed  # minimize negative speed
-                except (
-                    RuntimeError,
-                    ValueError,
-                    ArithmeticError,
-                ) as exc:  # noqa: BLE001
-                    logger.debug("double objective simulation failed: %s", exc)
-                    return 0.0  # crashed → bad solution
-
-            return objective
-
-        panel = SimulationPanel(
-            controls=controls,
-            pendulum=pendulum,  # type: ignore[arg-type]
-            matrix=matrix,  # type: ignore[arg-type]
-            params_builder=build_params,
-            torque_builder=build_torque,
-            state_builder=build_state,
-            run_simulation=run_simulation,
-            torque_history=torque_history,
-            limits_builder=build_limits,
-            clamp_builder=build_clamp,
-            optimizer=optimizer,
-            objective_builder=_make_double_objective,
-        )
-        panel._settings_key = "splitter_double"
-        return panel
-
-    def _build_triple_panel(self) -> SimulationPanel:
-        controls = ControlsWidgetTriple()
-        pendulum = PendulumWidget()
-        matrix = TripleMatrixWidget()
-        torque_history = TorqueHistoryWidget()
-
-        def build_params(p: dict) -> TriplePendulumParams:
-            tilt_rad = np.radians(p.get("tilt_deg", 0.0))
-            g = 9.81 if p.get("gravity_on", True) else 0.0
-            g_eff = g * float(np.cos(tilt_rad))  # (#1113)
-            pendulum.set_tilt_angle(tilt_rad)
-            pendulum.set_view_azimuth(np.radians(p.get("azimuth_deg", 0.0)))  # (#1118)
-            return TriplePendulumParams(
-                m1=p["m1"],
-                m2=p["m2"],
-                m3=p["m3"],
-                L1=p["L1"],
-                L2=p["L2"],
-                L3=p["L3"],
-                g=g_eff,
-                b1=p.get("b1", 0.0),
-                b2=p.get("b2", 0.0),
-                b3=p.get("b3", 0.0),
-                mu1=p.get("mu1", 0.0),
-                mu2=p.get("mu2", 0.0),
-                mu3=p.get("mu3", 0.0),
-                scapula_offset_rad=np.radians(p.get("scapula_deg", 0.0)),
-            )
-
-        def build_state(p: dict) -> np.ndarray:
-            return np.array(
-                [
-                    p["theta1_rad"],
-                    p["phi1_rad"],
-                    p["phi2_rad"],
-                    p["dtheta1"],
-                    p["dphi1"],
-                    p["dphi2"],
-                ],
-            )
-
-        def build_torque(p: dict) -> object:
-            return make_polynomial_torque_triple(
-                p["shoulder_coeffs"],
-                p["elbow_coeffs"],
-                p["wrist_coeffs"],
-            )
-
-        def build_limits(p: dict) -> JointLimitsNDOF | None:
-            if not p.get("enable_limits", False):
-                return None
-            return JointLimitsNDOF(
-                angle_min=np.array(p["limit_mins_rad"]),
-                angle_max=np.array(p["limit_maxs_rad"]),
-                stiffness=p.get("limit_stiffness", 500.0),
-            )
-
-        def build_clamp(p: dict) -> np.ndarray | None:
-            if not p.get("enable_clamp", False):
-                return None
-            return np.array(p["torque_limits"])
-
-        # Optimizer (#1109)
-        optimizer = OptimizationWidget(
-            model_name="Triple Pendulum",
-            n_torque_params=3,
-        )
-
-        def _make_triple_objective(p: dict) -> Callable:
-            """Build a tip-speed objective from current controls."""
-            params = build_params(p)
-            initial_state = build_state(p)
-            t_end = p["t_end"]
-            limits = build_limits(p)
-            clamp = build_clamp(p)
-
-            def objective(coeffs: np.ndarray) -> float:
-                n_third = len(coeffs) // 3
-                s_c = list(coeffs[:n_third])
-                e_c = list(coeffs[n_third : 2 * n_third])
-                w_c = list(coeffs[2 * n_third :])
-                torque_func = make_polynomial_torque_triple(s_c, e_c, w_c)
-                try:
-                    result = run_simulation_triple(
-                        params=params,
-                        initial_state=initial_state,
-                        t_end=t_end,
-                        torque_func=torque_func,  # type: ignore[arg-type]
-                        torque_limits=clamp,
-                        limits=limits,
-                    )
-                    vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]
-                    tip_v = vels.get("tip", (0, 0))
-                    speed = float(np.hypot(tip_v[0], tip_v[1]))
-                    return -speed
-                except (
-                    RuntimeError,
-                    ValueError,
-                    ArithmeticError,
-                ) as exc:  # noqa: BLE001
-                    logger.debug("triple objective simulation failed: %s", exc)
-                    return 0.0
-
-            return objective
-
-        panel = SimulationPanel(
-            controls=controls,
-            pendulum=pendulum,  # type: ignore[arg-type]
-            matrix=matrix,  # type: ignore[arg-type]
-            params_builder=build_params,
-            torque_builder=build_torque,
-            state_builder=build_state,
-            run_simulation=run_simulation_triple,
-            torque_history=torque_history,
-            limits_builder=build_limits,
-            clamp_builder=build_clamp,
-            optimizer=optimizer,
-            objective_builder=_make_triple_objective,
-        )
-        panel._settings_key = "splitter_triple"
-        return panel
-
-    def _build_golfer_panel(self) -> SimulationPanel:
-        controls = ControlsWidgetGolfer()
-        pendulum = GolferPendulumWidget()
-        matrix = GolferMatrixWidget()
-        torque_history = TorqueHistoryWidget()
-
-        def build_params(p: dict) -> GolferParams:
-            tilt_rad = np.radians(p.get("tilt_deg", 0.0))
-            g = 9.81 if p.get("gravity_on", True) else 0.0
-            g_eff = g * float(np.cos(tilt_rad))  # (#1113)
-            pendulum.set_tilt_angle(tilt_rad)
-            pendulum.set_view_azimuth(np.radians(p.get("azimuth_deg", 0.0)))  # (#1118)
-            return GolferParams(
-                m_hub=p["m_hub"],
-                m_r_upper=p["m_r_upper"],
-                m_r_fore=p["m_r_fore"],
-                m_l_upper=p["m_l_upper"],
-                m_l_fore=p["m_l_fore"],
-                m_club=p["m_club"],
-                L_hub=p["L_hub"],
-                L_r_upper=p["L_r_upper"],
-                L_r_fore=p["L_r_fore"],
-                L_l_upper=p["L_l_upper"],
-                L_l_fore=p["L_l_fore"],
-                L_club=p["L_club"],
-                d_rs=p["d_rs"],
-                d_ls=p["d_ls"],
-                grip_right=p["grip_right"],
-                grip_left=p["grip_left"],
-                m_clubhead=p.get("m_clubhead", 0.2),
-                g=g_eff,
-                b_hub=p.get("b_hub", 0.0),
-                b_rs=p.get("b_rs", 0.0),
-                b_re=p.get("b_re", 0.0),
-                b_rh=p.get("b_rh", 0.0),
-                b_ls=p.get("b_ls", 0.0),
-                b_le=p.get("b_le", 0.0),
-                b_lh=p.get("b_lh", 0.0),
-                L_rscap=p.get("L_rscap", 0.12),
-                L_lscap=p.get("L_lscap", 0.12),
-                m_rscap=p.get("m_rscap", 0.5),
-                m_lscap=p.get("m_lscap", 0.5),
-            )
-
-        def build_state(p: dict) -> np.ndarray:
-            return np.array(
-                [
-                    p["theta_hub_rad"],
-                    p["alpha_rs_rad"],
-                    p["alpha_re_rad"],
-                    p["alpha_rh_rad"],
-                    p["alpha_ls_rad"],
-                    p["alpha_le_rad"],
-                    p["alpha_lh_rad"],
-                    0.0,  # theta_club (computed by projection)
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,  # qdot (all zero)
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                ]
-            )
-
-        def build_torque(p: dict) -> object:
-            return make_polynomial_torque_golfer(
-                p["hub_coeffs"],
-                p["rs_coeffs"],
-                p["re_coeffs"],
-                p["rh_coeffs"],
-                p["ls_coeffs"],
-                p["le_coeffs"],
-                p["lh_coeffs"],
-            )
-
-        def build_limits(p: dict) -> JointLimitsNDOF | None:
-            if not p.get("enable_limits", False):
-                return None
-            return JointLimitsNDOF(
-                angle_min=np.array(p["limit_mins_rad"]),
-                angle_max=np.array(p["limit_maxs_rad"]),
-                stiffness=p.get("limit_stiffness", 500.0),
-            )
-
-        def build_clamp(p: dict) -> np.ndarray | None:
-            if not p.get("enable_clamp", False):
-                return None
-            return np.array(p["torque_limits"])
-
-        # Optimizer (#1110)
-        optimizer = OptimizationWidget(
-            model_name="Golfer Upper Body",
-            n_torque_params=7,
-        )
-
-        def _make_golfer_objective(p: dict) -> Callable:
-            """Build a clubhead-speed objective from current controls."""
-            params = build_params(p)
-            initial_state = build_state(p)
-            t_end = p["t_end"]
-            limits = build_limits(p)
-            clamp = build_clamp(p)
-
-            def objective(coeffs: np.ndarray) -> float:
-                n_seventh = max(1, len(coeffs) // 7)
-                slices = [
-                    list(coeffs[i * n_seventh : (i + 1) * n_seventh]) for i in range(7)
-                ]
-                torque_func = make_polynomial_torque_golfer(*slices)
-                try:
-                    result = run_simulation_golfer(
-                        params=params,
-                        initial_state=initial_state,
-                        t_end=t_end,
-                        torque_func=torque_func,  # type: ignore[arg-type]
-                        torque_limits=clamp,
-                        limits=limits,
-                    )
-                    vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]
-                    tip_v = vels.get("club_tip", (0, 0))
-                    speed = float(np.hypot(tip_v[0], tip_v[1]))
-                    return -speed
-                except (
-                    RuntimeError,
-                    ValueError,
-                    ArithmeticError,
-                ) as exc:  # noqa: BLE001
-                    logger.debug("golfer objective simulation failed: %s", exc)
-                    return 0.0
-
-            return objective
-
-        panel = SimulationPanel(
-            controls=controls,
-            pendulum=pendulum,  # type: ignore[arg-type]
-            matrix=matrix,  # type: ignore[arg-type]
-            params_builder=build_params,
-            torque_builder=build_torque,
-            state_builder=build_state,
-            run_simulation=run_simulation_golfer,
-            torque_history=torque_history,
-            limits_builder=build_limits,
-            clamp_builder=build_clamp,
-            optimizer=optimizer,
-            objective_builder=_make_golfer_objective,
-        )
-        panel._settings_key = "splitter_golfer"
-        return panel
 
     # ------------------------------------------------------------------
     # Per-segment visibility (#1100, #1101, #1102)
@@ -999,11 +536,7 @@ class MainWindow(QMainWindow):
         self.status.showMessage(f"Theme changed to: {name}", 3000)
 
     def _open_theme_manager(self) -> None:
-        if (
-            not _THEME_AVAILABLE
-            or self._theme_manager is None
-            or ThemeManagerDialog is None
-        ):
+        if not _THEME_AVAILABLE or self._theme_manager is None or ThemeManagerDialog is None:
             from PyQt6.QtWidgets import QMessageBox
 
             QMessageBox.information(
@@ -1015,6 +548,10 @@ class MainWindow(QMainWindow):
             return
         dlg = ThemeManagerDialog(self._theme_manager, self)
         dlg.exec()
+
+    def _toggle_analysis_dock(self, checked: bool) -> None:
+        """Show or hide the docked analysis panel."""
+        self._analysis_dock.setVisible(checked)
 
     def _apply_pendulum_dark(self) -> None:
         """Force-reset to the built-in pendulum dark stylesheet."""

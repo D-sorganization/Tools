@@ -11,7 +11,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 import numpy as np
-from scipy.integrate import solve_ivp
 
 from .physics import (
     JointLimits,
@@ -34,6 +33,7 @@ from .physics import (
     potential_energy,
     total_energy,
 )
+from .simulation_core import integrate_ode
 from .simulation_result_base import TrajectoryResultMixin
 
 # Re-export from shared utility for backwards compatibility (DRY — #1041)
@@ -182,28 +182,23 @@ def run_simulation(
     assert all(np.isfinite(initial_state))
     assert t_end > 0 and 0 < dt < t_end
 
-    t_eval = np.arange(0.0, t_end, dt)
-
     def ode_rhs(t: float, y: np.ndarray) -> np.ndarray:
         return equations_of_motion(y, t, params, torque_func, limits, clamp)
 
-    sol = solve_ivp(
+    t, states = integrate_ode(
         ode_rhs,
-        t_span=(0.0, t_end),
-        y0=initial_state,
-        t_eval=t_eval,
+        initial_state,
+        t_end,
+        dt=dt,
         method=method,
         rtol=1e-8,
         atol=1e-10,
         max_step=dt,
     )
 
-    if not sol.success:
-        raise RuntimeError(f"Integration failed: {sol.message}")
-
     result = SimulationResult(
-        t=sol.t,
-        states=sol.y.T,
+        t=t,
+        states=states,
         params=params,
         torque_func=torque_func,
         limits=limits,

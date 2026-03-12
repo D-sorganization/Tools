@@ -43,7 +43,7 @@ class GolferMatrixWidget(MatrixWidgetBase):
         entries = []
         for row in range(8):
             for col in range(8):
-                label = f"M{row+1}{col+1}"
+                label = f"M{row + 1}{col + 1}"
                 value = mc[row, col]
                 is_diag = row == col
                 entries.append((row, col, label, value, is_diag))

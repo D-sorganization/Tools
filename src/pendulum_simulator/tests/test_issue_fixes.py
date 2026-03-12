@@ -164,9 +164,7 @@ class TestPopOutChart:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.skipif(
-    not _has_pyqt6(), reason="PyQt6 not available in headless environment"
-)
+@pytest.mark.skipif(not _has_pyqt6(), reason="PyQt6 not available in headless environment")
 class TestBasePendulumWidget3D:
     """3D segment rendering base class methods must exist and be callable."""
 
@@ -229,9 +227,7 @@ class TestViewAzimuth:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.skipif(
-    not _has_pyqt6(), reason="PyQt6 not available in headless environment"
-)
+@pytest.mark.skipif(not _has_pyqt6(), reason="PyQt6 not available in headless environment")
 class TestFunctionGeneratorDialog:
     """Function generator dialog must be importable with correct structure."""
 
@@ -284,9 +280,9 @@ class TestCodeQuality:
                 stripped = line.strip()
                 if stripped.startswith("#") or stripped.startswith('"'):
                     continue
-                assert (
-                    "print(" not in stripped
-                ), f"optimizer_gpu.py line {i}: found print() call"
+                assert "print(" not in stripped, (
+                    f"optimizer_gpu.py line {i}: found print() call"
+                )
         except ImportError:
             pytest.skip("optimizer_gpu not available")
 
