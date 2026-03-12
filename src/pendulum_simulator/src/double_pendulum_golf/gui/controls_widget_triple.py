@@ -15,7 +15,6 @@ from PyQt6.QtWidgets import (
     QDoubleSpinBox,
     QGroupBox,
     QHBoxLayout,
-    QLabel,
     QPushButton,
     QSlider,
     QVBoxLayout,
