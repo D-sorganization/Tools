@@ -11,7 +11,7 @@ from vessel_drafter.models.cylindrical_bath import (
 )
 
 
-def _build_inner_bath_volume(layout: CylindricalBathLayout):
+def _build_inner_bath_volume(layout: CylindricalBathLayout) -> Solid:
     bath_volume = Cylinder(
         radius=layout.inner_radius_mm,
         height=layout.depth_mm,
@@ -21,7 +21,7 @@ def _build_inner_bath_volume(layout: CylindricalBathLayout):
     return bath_volume
 
 
-def _build_refractory_annulus(layout: CylindricalBathLayout):
+def _build_refractory_annulus(layout: CylindricalBathLayout) -> Solid:
     with BuildPart() as refractory_annulus:
         Cylinder(
             radius=layout.outer_radius_mm,
@@ -42,7 +42,7 @@ def _build_refractory_annulus(layout: CylindricalBathLayout):
 def _build_radial_electrode(
     placement: RadialElectrodePlacement,
     layout: CylindricalBathLayout,
-):
+) -> Solid:
     plane = Plane(
         origin=(
             placement.inner_tip_x_mm,

@@ -102,7 +102,8 @@ def main() -> int:
             launch as launch_vessel_drafter,
         )
 
-        return launch_vessel_drafter()
+        result: int = launch_vessel_drafter()
+        return result
 
     parser.error(f"Unknown command: {args.command}")
     return 2

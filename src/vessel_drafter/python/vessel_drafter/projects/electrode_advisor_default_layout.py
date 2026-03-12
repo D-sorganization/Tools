@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from build123d import Align, Box, BuildPart, Compound, Cylinder, Locations, Mode
+from build123d import Align, Box, BuildPart, Compound, Cylinder, Locations, Mode, Solid
 
 from vessel_drafter.models.electrode_advisor import (
     DEFAULT_ELECTRODE_ADVISOR_LAYOUT,
@@ -11,7 +11,7 @@ from vessel_drafter.models.electrode_advisor import (
 )
 
 
-def _build_bath_shell(layout: ElectrodeAdvisorLayout):
+def _build_bath_shell(layout: ElectrodeAdvisorLayout) -> Solid:
     shell = layout.drafting.bath_shell_thickness_mm
     with BuildPart() as bath_shell:
         Box(
@@ -32,7 +32,7 @@ def _build_bath_shell(layout: ElectrodeAdvisorLayout):
     return bath_shell.part
 
 
-def _build_glass_volume(layout: ElectrodeAdvisorLayout):
+def _build_glass_volume(layout: ElectrodeAdvisorLayout) -> Solid:
     shell = layout.drafting.bath_shell_thickness_mm
     clearance = layout.drafting.glass_clearance_mm
     with BuildPart() as glass_volume:
@@ -49,7 +49,7 @@ def _build_glass_volume(layout: ElectrodeAdvisorLayout):
 def _build_electrode_assembly(
     placement: ElectrodePlacement,
     layout: ElectrodeAdvisorLayout,
-):
+) -> Solid:
     holder_height = layout.drafting.electrode_holder_height_mm
     holder_radius = (
         placement.diameter_mm * 0.5 * layout.drafting.electrode_holder_radius_factor
