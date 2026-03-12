@@ -1,3 +1,7 @@
+import pytest
+
+build123d = pytest.importorskip("build123d")  # noqa: E402
+
 import json
 
 from vessel_drafter.exporters.step_export import (

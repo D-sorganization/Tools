@@ -1,6 +1,9 @@
+import pytest
+
+build123d = pytest.importorskip("build123d")
+
 from math import sqrt
 
-import pytest
 from vessel_drafter.models.cylindrical_bath import (
     DEFAULT_CYLINDRICAL_BATH_LAYOUT,
 )

@@ -1,6 +1,9 @@
+import pytest
+
+build123d = pytest.importorskip("build123d")
+
 from math import sqrt
 
-import pytest
 from vessel_drafter.models.electrode_advisor import (
     DEFAULT_ELECTRODE_ADVISOR_LAYOUT,
 )

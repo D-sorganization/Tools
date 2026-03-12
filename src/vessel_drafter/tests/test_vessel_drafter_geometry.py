@@ -1,10 +1,13 @@
 import pytest
-from vessel_drafter.models.vessel_drafter import (
+
+build123d = pytest.importorskip("build123d")
+
+from vessel_drafter.models.vessel_drafter import (  # noqa: E402
     DEFAULT_VESSEL_DRAFTER_LAYOUT,
     VesselDrafterLayout,
     VesselLidPort,
 )
-from vessel_drafter.projects.vessel_drafter_layout import (
+from vessel_drafter.projects.vessel_drafter_layout import (  # noqa: E402
     build_vessel_drafter_shape,
 )
 
