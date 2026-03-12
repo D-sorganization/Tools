@@ -193,8 +193,8 @@ class ControlsWidgetTriple(QWidget):
         pl4.addWidget(self.inp_tau_elbow)
         pl4.addWidget(self.inp_tau_wrist)
 
-        self.btn_funcgen = QPushButton("📈 Function Generator…")
-        self.btn_funcgen.setToolTip("Import a waveform as torque coefficients")
+        self.btn_funcgen = QPushButton("📈 Signal Toolkit…")
+        self.btn_funcgen.setToolTip("Design a waveform and import as torque coefficients")
         self.btn_funcgen.setStyleSheet(
             "QPushButton{background:#282848;color:#b0b0e0;border:1px solid #404068;"
             "border-radius:4px;padding:4px 8px;font-size:10px;}"
@@ -483,10 +483,10 @@ class ControlsWidgetTriple(QWidget):
     # ------------------------------------------------------------------
 
     def _open_function_generator(self) -> None:
-        """Open Function Generator as a dialog for torque design."""
+        """Open Signal Toolkit as a dialog for torque design."""
         from .function_generator_dialog import FunctionGeneratorDialog
 
-        dlg = FunctionGeneratorDialog(self)
+        dlg = FunctionGeneratorDialog(self, joint_names=["Shoulder", "Elbow", "Wrist"])
         dlg.torque_imported.connect(self._on_torque_imported)
         dlg.exec()
 
@@ -514,9 +514,9 @@ class ControlsWidgetTriple(QWidget):
 
     def set_slider_value(self, val: int) -> None:
         """Pre: 0 <= val <= slider.maximum()"""
-        assert (
-            0 <= val <= self.slider.maximum()
-        ), f"Slider value {val} out of range [0, {self.slider.maximum()}]"
+        assert 0 <= val <= self.slider.maximum(), (
+            f"Slider value {val} out of range [0, {self.slider.maximum()}]"
+        )
         self.slider.blockSignals(True)
         self.slider.setValue(val)
         self.slider.blockSignals(False)
