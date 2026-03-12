@@ -320,11 +320,7 @@ class ControlsWidgetBase(QWidget):
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(4)
-        self.chk_gravity = QCheckBox("🌍  Gravity enabled")
-        self.chk_gravity.setChecked(True)
-        self.chk_gravity.setStyleSheet(STYLE_CHECK)
-        self.chk_gravity.toggled.connect(self.gravity_changed.emit)
-        layout.addWidget(self.chk_gravity)
+        # Gravity is always on (#1209) — no checkbox needed
 
         self.chk_forces = QCheckBox("↗  Show force vectors")
         self.chk_forces.setChecked(False)
@@ -403,7 +399,7 @@ class ControlsWidgetBase(QWidget):
         self.btn_play.setChecked(False)
 
     def gravity_on(self) -> bool:
-        return self.chk_gravity.isChecked()
+        return True  # Gravity always on (#1209)
 
     def show_forces(self) -> bool:
         return self.chk_forces.isChecked()

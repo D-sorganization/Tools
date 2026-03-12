@@ -428,7 +428,7 @@ class ControlsWidgetTriple(ControlsWidgetBase):
             "elbow_coeffs": parse_coeffs(self.inp_tau_elbow, "Elbow torque"),
             "wrist_coeffs": parse_coeffs(self.inp_tau_wrist, "Wrist torque"),
             "t_end": parse_float(self.inp_tend, "Duration"),
-            "gravity_on": self.chk_gravity.isChecked(),
+            "gravity_on": True,  # Gravity always on (#1209)
             "b1": b1,
             "b2": b2,
             "b3": b3,

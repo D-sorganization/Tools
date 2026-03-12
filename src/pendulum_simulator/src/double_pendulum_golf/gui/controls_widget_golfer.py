@@ -551,7 +551,7 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
             "le_coeffs": parse_coeffs(self.inp_tau_le, "LE torque"),
             "lh_coeffs": parse_coeffs(self.inp_tau_lh, "LH torque"),
             "t_end": parse_float(self.inp_tend, "Duration"),
-            "gravity_on": self.chk_gravity.isChecked(),
+            "gravity_on": True,  # Gravity always on (#1209)
             "b_hub": parse_float(self.inp_b_hub, "b_hub"),
             "b_rs": parse_float(self.inp_b_rs, "b_rs"),
             "b_re": parse_float(self.inp_b_re, "b_re"),

@@ -500,17 +500,12 @@ class ControlsWidget(ControlsWidgetBase):
         return box
 
     def _build_rotation_section(self) -> QGroupBox:
-        """Gravity toggle and swing plane tilt — force/scale controls live in the toolstrip."""
+        """Swing plane tilt — gravity is always on (#1209)."""
         box = QGroupBox("Physics")
         box.setStyleSheet(STYLE_GROUP)
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(4)
-        self.chk_gravity = QCheckBox("🌍 Gravity on")
-        self.chk_gravity.setChecked(True)
-        self.chk_gravity.setStyleSheet(STYLE_CHECK)
-        self.chk_gravity.toggled.connect(self.gravity_changed.emit)
-        layout.addWidget(self.chk_gravity)
 
         self.inp_tilt = LabeledInput(
             "Tilt °",
@@ -648,7 +643,7 @@ class ControlsWidget(ControlsWidgetBase):
             "b2": b2,
             "mu1": mu1,
             "mu2": mu2,
-            "gravity_on": self.chk_gravity.isChecked(),
+            "gravity_on": True,  # Gravity always on (#1209)
             "enable_limits": self.chk_limits.isChecked(),
             "theta1_min_rad": np.radians(parse_float(self.inp_theta1_min, "θ1 min")),
             "theta1_max_rad": np.radians(parse_float(self.inp_theta1_max, "θ1 max")),

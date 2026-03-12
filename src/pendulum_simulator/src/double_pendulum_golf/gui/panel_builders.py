@@ -533,18 +533,14 @@ def wire_toolstrip(main_window: Any) -> None:
     # ── Overlay toggles → active panel's pendulum widget ──────────
     _connect_common_signals(main_window)
 
-    # ── Gravity toggle (#1142) → active panel's pendulum + controls ──
-    def _fwd_gravity(on: bool) -> None:
-        pw = main_window._active_panel().pendulum
-        if hasattr(pw, "set_gravity_on"):
-            pw.set_gravity_on(on)
-        ctrl = main_window._active_panel().controls
-        if hasattr(ctrl, "chk_gravity"):
-            ctrl.chk_gravity.blockSignals(True)
-            ctrl.chk_gravity.setChecked(on)
-            ctrl.chk_gravity.blockSignals(False)
-
-    ts.gravity_toggled.connect(_fwd_gravity)
+    # ── Torque/MoF/Sum display toggles (#1208) → active panel's pendulum ──
+    ts.torque_vectors_toggled.connect(
+        lambda v: _fwd_overlay("set_show_torque_vectors", v)
+    )
+    ts.moment_of_force_toggled.connect(
+        lambda v: _fwd_overlay("set_show_moment_of_force", v)
+    )
+    ts.sum_moments_toggled.connect(lambda v: _fwd_overlay("set_show_sum_moments", v))
 
     # ── Scale sliders → active panel's pendulum widget ────────────
     def _fwd_overlay(attr: str, value: object) -> None:

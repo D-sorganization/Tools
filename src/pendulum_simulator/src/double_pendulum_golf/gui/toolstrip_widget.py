@@ -98,6 +98,24 @@ _CHK_COM = (
     "border-radius:3px;background:#1a1a2a;}"
     "QCheckBox::indicator:checked{background:#505010;border-color:#a0a030;}"
 )
+_CHK_TORQUE = (
+    "QCheckBox{color:#f08080;font-size:11px;spacing:3px;}"
+    "QCheckBox::indicator{width:14px;height:14px;border:1px solid #604040;"
+    "border-radius:3px;background:#1a1a2a;}"
+    "QCheckBox::indicator:checked{background:#604040;border-color:#c06060;}"
+)
+_CHK_MOF = (
+    "QCheckBox{color:#8080f0;font-size:11px;spacing:3px;}"
+    "QCheckBox::indicator{width:14px;height:14px;border:1px solid #404060;"
+    "border-radius:3px;background:#1a1a2a;}"
+    "QCheckBox::indicator:checked{background:#304080;border-color:#6060c0;}"
+)
+_CHK_SUM = (
+    "QCheckBox{color:#60c060;font-size:11px;spacing:3px;}"
+    "QCheckBox::indicator{width:14px;height:14px;border:1px solid #406040;"
+    "border-radius:3px;background:#1a1a2a;}"
+    "QCheckBox::indicator:checked{background:#305030;border-color:#60a060;}"
+)
 _SLIDER_FORCE = (
     "QSlider::groove:horizontal{height:3px;background:#203028;border-radius:2px;}"
     "QSlider::handle:horizontal{background:#60b070;border:none;"
@@ -117,14 +135,15 @@ _SLIDER_FELL = (
     "QSlider::sub-page:horizontal{background:#805028;border-radius:2px;}"
 )
 _PROGRESS_BAR = (
-    "QSlider::groove:horizontal{height:8px;background:#1a1a30;border-radius:4px;"
-    "border:1px solid #2a2a48;}"
+    "QSlider::groove:horizontal{height:10px;background:#1a1a36;border-radius:5px;"
+    "border:1px solid #3a3a5a;}"
     "QSlider::sub-page:horizontal{background:qlineargradient("
     "x1:0,y1:0,x2:1,y2:0,stop:0 #2a5080,stop:1 #4888c8);"
-    "border-radius:4px;}"
-    "QSlider::handle:horizontal{background:#6090c0;border:1px solid #4070a0;"
-    "width:12px;height:14px;margin:-4px 0;border-radius:6px;}"
-    "QSlider::handle:horizontal:hover{background:#70a0d0;}"
+    "border-radius:5px;}"
+    "QSlider::handle:horizontal{background:#70a8e0;border:2px solid #4080c0;"
+    "width:16px;height:18px;margin:-5px 0;border-radius:8px;}"
+    "QSlider::handle:horizontal:hover{background:#90c0f0;"
+    "border-color:#60a0e0;}"
 )
 _SEP_STYLE = "QFrame{color:#2a2a50;border:none;}"
 _SEP_H_STYLE = "QFrame{color:#2a2a50;border:none;max-height:1px;}"
@@ -240,8 +259,10 @@ class ToolStrip(QWidget):
     azimuth_changed = pyqtSignal(float)  # radians
     tilt_changed = pyqtSignal(float)  # radians
 
-    # Physics toggles (#1142)
-    gravity_toggled = pyqtSignal(bool)
+    # Physics display toggles (#1208)
+    torque_vectors_toggled = pyqtSignal(bool)
+    moment_of_force_toggled = pyqtSignal(bool)
+    sum_moments_toggled = pyqtSignal(bool)
 
     # Model selection (#1149)
     model_changed = pyqtSignal(int)
@@ -359,11 +380,17 @@ class ToolStrip(QWidget):
 
         layout.addWidget(_vline())
 
-        # Simulation progress bar (#1132: percentage display)
+        # Playback scrub slider — MUST be visible (#1207)
+        scrub_lbl = QLabel("Playback:")
+        scrub_lbl.setStyleSheet(_LABEL)
+        layout.addWidget(scrub_lbl)
+
         self._frame_slider = QSlider(Qt.Orientation.Horizontal)
         self._frame_slider.setRange(0, 0)
         self._frame_slider.setStyleSheet(_PROGRESS_BAR)
-        self._frame_slider.setToolTip("Simulation progress — drag to scrub")
+        self._frame_slider.setToolTip("Drag to scrub through animation frames")
+        self._frame_slider.setMinimumWidth(200)
+        self._frame_slider.setFixedHeight(20)
         self._frame_slider.valueChanged.connect(self._on_frame_slider_changed)
         layout.addWidget(self._frame_slider, stretch=1)
 
@@ -581,14 +608,35 @@ class ToolStrip(QWidget):
         self.chk_com.toggled.connect(self.com_toggled.emit)
         extra_col.addWidget(self.chk_com)
 
-        self.chk_gravity = QCheckBox("🌍 Gravity")
-        self.chk_gravity.setChecked(True)
-        self.chk_gravity.setStyleSheet(_CHK_COM)  # reuse COM style
-        self.chk_gravity.setToolTip(
-            "Toggle gravity (g=9.81 m/s²).\nDisable to observe pure inertial/torque dynamics."
+        # Torque vectors (#1208)
+        self.chk_torque = QCheckBox("Torque Vectors")
+        self.chk_torque.setStyleSheet(_CHK_TORQUE)
+        self.chk_torque.setToolTip(
+            "Show applied torque as curved arrows at each joint.\n"
+            "Red arrows — magnitude scales with torque value."
         )
-        self.chk_gravity.toggled.connect(self.gravity_toggled.emit)
-        extra_col.addWidget(self.chk_gravity)
+        self.chk_torque.toggled.connect(self.torque_vectors_toggled.emit)
+        extra_col.addWidget(self.chk_torque)
+
+        # Moment of Force vectors (#1208)
+        self.chk_mof = QCheckBox("Moment of Force")
+        self.chk_mof.setStyleSheet(_CHK_MOF)
+        self.chk_mof.setToolTip(
+            "Show moment of force from proximal segment on distal.\n"
+            "Blue arrows — proximal-on-distal convention."
+        )
+        self.chk_mof.toggled.connect(self.moment_of_force_toggled.emit)
+        extra_col.addWidget(self.chk_mof)
+
+        # Sum of Moments vectors (#1208)
+        self.chk_sum_moments = QCheckBox("Sum of Moments")
+        self.chk_sum_moments.setStyleSheet(_CHK_SUM)
+        self.chk_sum_moments.setToolTip(
+            "Show sum of all moments (torque + moment of force)\n"
+            "Green arrows — resultant moment at each joint."
+        )
+        self.chk_sum_moments.toggled.connect(self.sum_moments_toggled.emit)
+        extra_col.addWidget(self.chk_sum_moments)
 
         self.chk_3d = QCheckBox("3D Segments")
         self.chk_3d.setStyleSheet(_CHK_COM)  # reuse COM style
