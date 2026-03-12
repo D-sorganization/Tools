@@ -59,7 +59,15 @@ def _configure_logging() -> None:
     logging.getLogger(__name__).info("Logging configured — file: %s", log_file)
 
 
+__version__ = "0.1.0"
+
+
 def main() -> None:
+    # Handle --version flag before any GUI initialization
+    if "--version" in sys.argv:
+        print(f"pendulum-simulator {__version__}")
+        sys.exit(0)
+
     _configure_logging()
 
     # Initialize diagnostics tracker early — installs global exception hook
