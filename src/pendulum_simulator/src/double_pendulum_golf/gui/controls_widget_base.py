@@ -151,6 +151,19 @@ class ControlsWidgetBase(QWidget):
         existing signal connections (play_toggled, frame_changed, etc.)
         continue to work.  Controls are driven from the ToolStrip.
         """
+        # Run/Reset buttons — may already exist if subclass called
+        # _build_run_reset_buttons().  Create as hidden fallbacks so
+        # SimulationPanel._on_run can always reference btn_run/btn_reset.
+        if not hasattr(self, "btn_run"):
+            from PyQt6.QtWidgets import QPushButton as _QPB
+
+            self.btn_run = _QPB()
+            self.btn_run.hide()
+        if not hasattr(self, "btn_reset"):
+            from PyQt6.QtWidgets import QPushButton as _QPB
+
+            self.btn_reset = _QPB()
+            self.btn_reset.hide()
         self.btn_play = QPushButton()
         self.btn_play.setCheckable(True)
         self.btn_play.toggled.connect(self._on_play_toggled)

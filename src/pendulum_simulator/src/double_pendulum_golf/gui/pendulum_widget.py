@@ -164,16 +164,28 @@ class PendulumWidget(BasePendulumWidget):
         return forces
 
     def set_frame(self, idx: int) -> None:
-        """Advance to frame idx and update the trail."""
+        """Set the displayed frame and rebuild the trail up to that frame.
+
+        Instead of appending one point per call (which breaks when scrubbing
+        back and forth), rebuild the trail from the precomputed tip cache
+        so it always shows frames [max(0, idx-TRAIL_LENGTH)..idx].
+        """
         if self._result is None:
             return
         idx = max(0, min(idx, self._result.n_steps - 1))
+        self._current_idx = idx
+
+        # Rebuild trail from precomputed cache: show last TRAIL_LENGTH frames
+        self._trail.clear()
         if self._tip_positions_cache is not None:
-            self._trail.append(tuple(self._tip_positions_cache[idx]))
+            start = max(0, idx - self.TRAIL_LENGTH + 1)
+            for i in range(start, idx + 1):
+                self._trail.append(tuple(self._tip_positions_cache[i]))
         else:
+            # Fallback: compute the current tip position only
             pos = self._result.positions_at(idx)
             self._trail.append(pos["tip"])
-        self._current_idx = idx
+
         self.update()
 
     def clear(self) -> None:

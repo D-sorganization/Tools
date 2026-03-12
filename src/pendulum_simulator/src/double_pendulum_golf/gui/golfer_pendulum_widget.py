@@ -62,8 +62,11 @@ class GolferPendulumWidget(BasePendulumWidget):
         self._result: GolferSimulationResult | None = None
         self._current_idx: int = 0
 
-        # Pre-computed zero-torque counterfactual forces (#1148)
+        # Pre-computed counterfactual forces (list[dict] or None)
         self._zero_torque_forces: list[dict] | None = None
+
+        # Precomputed club tip positions for efficient trail rendering
+        self._tip_positions_cache: np.ndarray | None = None
 
     # ------------------------------------------------------------------
     # Abstract interface implementation
@@ -103,10 +106,25 @@ class GolferPendulumWidget(BasePendulumWidget):
         self._current_idx = 0
         self._trail.clear()
 
+        # Precompute club tip positions for trail rendering
+        self._tip_positions_cache = self._precompute_club_tips(result)
+
         # Pre-compute zero-torque counterfactual forces (#1148)
         self._zero_torque_forces = self._precompute_zero_torque_forces(result)
 
         self.update()
+
+    @staticmethod
+    def _precompute_club_tips(result: GolferSimulationResult) -> np.ndarray:
+        """Precompute club tip (x, y) for every frame.
+
+        Returns shape (n_steps, 2) float64 array.
+        """
+        tips = []
+        for i in range(result.n_steps):
+            pos = result.positions_at(i)
+            tips.append(pos["club_tip"])
+        return np.array(tips)
 
     @staticmethod
     def _precompute_zero_torque_forces(
@@ -126,12 +144,26 @@ class GolferPendulumWidget(BasePendulumWidget):
         return forces
 
     def set_frame(self, idx: int) -> None:
+        """Set the displayed frame and rebuild trail to that frame.
+
+        Rebuilds the trail from the precomputed club tip positions so
+        scrubbing back and forth always shows a clean path.
+        """
         if self._result is None:
             return
         idx = max(0, min(idx, self._result.n_steps - 1))
-        pos = self._result.positions_at(idx)
-        self._trail.append(pos["club_tip"])
         self._current_idx = idx
+
+        # Rebuild trail from precomputed cache
+        self._trail.clear()
+        if self._tip_positions_cache is not None:
+            start = max(0, idx - self.TRAIL_LENGTH + 1)
+            for i in range(start, idx + 1):
+                self._trail.append(tuple(self._tip_positions_cache[i]))
+        else:
+            pos = self._result.positions_at(idx)
+            self._trail.append(pos["club_tip"])
+
         self.update()
 
     def clear(self) -> None:

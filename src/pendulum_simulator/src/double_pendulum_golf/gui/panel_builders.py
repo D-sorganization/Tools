@@ -617,6 +617,22 @@ def wire_toolstrip(main_window: Any) -> None:
                 ts.set_frame(idx) if _p is main_window._active_panel() else None
             )
         )
+        # Reset toolstrip play button when playback ends
+        panel.playback_ended.connect(
+            lambda _p=panel: (
+                ts.btn_play.setChecked(False)
+                if _p is main_window._active_panel()
+                else None
+            )
+        )
+
+    # Loop toggle — forward to all panels
+    if hasattr(ts, "loop_toggled"):
+        ts.loop_toggled.connect(
+            lambda v: [
+                setattr(p, "_loop_playback", v) for p in main_window._panels
+            ]
+        )
 
     # Update segment checkboxes when tab changes
     main_window._tabs.currentChanged.connect(main_window._on_tab_changed)

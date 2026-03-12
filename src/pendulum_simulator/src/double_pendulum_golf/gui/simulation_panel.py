@@ -94,6 +94,8 @@ class SimulationPanel(QWidget):
     sim_finished = pyqtSignal()
     #: Emitted each time the displayed frame changes (idx: int)
     frame_changed = pyqtSignal(int)
+    #: Emitted when animation playback reaches end (for toolstrip play reset)
+    playback_ended = pyqtSignal()
 
     def __init__(
         self,
@@ -132,6 +134,7 @@ class SimulationPanel(QWidget):
         self._anim_frac: float = 0.0  # fractional frame accumulator (#1097)
         self._playback_speed = 1.0
         self._sim_dt: float = 0.005  # simulation time step (updated on sim completion)
+        self._loop_playback: bool = False  # loop animation when it reaches the end
 
         self._build_ui()
         self._connect_signals()
@@ -290,17 +293,21 @@ class SimulationPanel(QWidget):
         self._timer.timeout.connect(self._advance_frame)
 
     def _on_run(self) -> None:
+        from .diagnostics import get_tracker
+
         try:
             p = self.controls.get_params()
         except ValueError as e:
             logger.warning("Parameter validation failed: %s", e)
+            get_tracker().record_exception("simulation", e, context="Parameter validation")
             QMessageBox.warning(self, "Input Error", str(e))
             return
 
         try:
             params = self._params_builder(p)
-        except AssertionError as e:
-            logger.warning("Parameter build assertion failed: %s", e)
+        except (AssertionError, Exception) as e:
+            logger.warning("Parameter build failed: %s", e, exc_info=True)
+            get_tracker().record_exception("simulation", e, context="Parameter build")
             QMessageBox.warning(self, "Parameter Error", str(e))
             return
 
@@ -308,8 +315,14 @@ class SimulationPanel(QWidget):
             QMessageBox.warning(self, "Input Error", "Duration must be positive")
             return
 
-        initial_state = self._state_builder(p)
-        torque_func = self._torque_builder(p)
+        try:
+            initial_state = self._state_builder(p)
+            torque_func = self._torque_builder(p)
+        except Exception as e:
+            logger.warning("State/torque build failed: %s", e, exc_info=True)
+            get_tracker().record_exception("simulation", e, context="State/torque build")
+            QMessageBox.warning(self, "Build Error", str(e))
+            return
 
         self.controls.btn_run.setEnabled(False)
         self.controls.btn_reset.setEnabled(False)
@@ -398,7 +411,15 @@ class SimulationPanel(QWidget):
 
     def _on_sim_error(self, msg: str) -> None:
         """Called on the main thread when simulation fails."""
+        from .diagnostics import get_tracker
+
         logger.error("Simulation failed: %s", msg)
+        get_tracker().record(
+            "simulation",
+            f"Simulation failed: {msg}",
+            severity="error",
+            details=msg,
+        )
         self._show_busy(False)
         self._show_progress(False)
         self.controls.btn_run.setEnabled(True)
@@ -520,10 +541,17 @@ class SimulationPanel(QWidget):
         self._anim_idx += advance
 
         if self._anim_idx >= self._result.n_steps:
-            self._anim_idx = self._result.n_steps - 1
-            self._anim_frac = 0.0
-            self._timer.stop()
-            self.controls.stop_playback()
+            if self._loop_playback:
+                # Loop: restart from beginning
+                self._anim_idx = 0
+                self._anim_frac = 0.0
+            else:
+                # Stop at end and reset play button
+                self._anim_idx = self._result.n_steps - 1
+                self._anim_frac = 0.0
+                self._timer.stop()
+                self.controls.stop_playback()
+                self.playback_ended.emit()
 
         self._display_frame(self._anim_idx)
         self.controls.set_slider_value(self._anim_idx)
