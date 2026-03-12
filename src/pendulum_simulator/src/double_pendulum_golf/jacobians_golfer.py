@@ -106,7 +106,10 @@ def delta_matrix(q: np.ndarray, p: GolferParams) -> np.ndarray:
     from .physics_golfer import mass_matrix
 
     M = mass_matrix(q, p)
-    return np.linalg.inv(M)
+    # The golfer mass matrix is rank-deficient (rank 6 of 8) because the
+    # closed kinematic loop imposes 4 holonomic constraints on 8 DOFs.
+    # Use Moore-Penrose pseudoinverse so delta lives in the feasible subspace.
+    return np.linalg.pinv(M)
 
 
 def ztcf_matrix(
@@ -115,9 +118,12 @@ def ztcf_matrix(
     """Compute the Zero-Torque Constraint Force transfer matrix.
 
     Maps applied joint torques to endpoint forces via:
-        F_endpoint = (J M^{-1} J^T)^{-1} J M^{-1} tau
+        F_endpoint = (J M^{+} J^T)^{-1} J M^{+} tau
 
-    The ZTCF matrix is: T = (J M^{-1} J^T)^{-1} J M^{-1}
+    The ZTCF matrix is: T = (J M^{+} J^T)^{-1} J M^{+}
+
+    Uses the pseudoinverse M^{+} because the golfer mass matrix is
+    rank-deficient due to the closed kinematic loop.
 
     Returns
     -------
@@ -130,7 +136,7 @@ def ztcf_matrix(
 
     J = _numerical_jacobian(q, p, joint_name)
     M = mass_matrix(q, p)
-    M_inv = np.linalg.inv(M)
+    M_inv = np.linalg.pinv(M)
 
     JMinv = J @ M_inv
     A = JMinv @ J.T

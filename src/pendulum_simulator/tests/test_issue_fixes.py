@@ -8,6 +8,17 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+
+def _has_pyqt6() -> bool:
+    """Check if PyQt6 can be imported (False in headless CI environments)."""
+    try:
+        from PyQt6.QtWidgets import QWidget  # noqa: F401
+
+        return True
+    except (ImportError, OSError):
+        return False
+
+
 # ---------------------------------------------------------------------------
 # #1137 — Unit Converter
 # ---------------------------------------------------------------------------
@@ -153,6 +164,9 @@ class TestPopOutChart:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.skipif(
+    not _has_pyqt6(), reason="PyQt6 not available in headless environment"
+)
 class TestBasePendulumWidget3D:
     """3D segment rendering base class methods must exist and be callable."""
 
@@ -215,6 +229,9 @@ class TestViewAzimuth:
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.skipif(
+    not _has_pyqt6(), reason="PyQt6 not available in headless environment"
+)
 class TestFunctionGeneratorDialog:
     """Function generator dialog must be importable with correct structure."""
 
@@ -301,25 +318,28 @@ class TestCodeQuality:
 
 
 class TestCatmullRomSmoothing:
-    """Trail smoothing must produce at least as many points as input."""
+    """Trail smoothing must produce at least as many points as input.
+
+    Uses the Qt-free catmull_rom module so tests run headlessly.
+    """
 
     def test_smooth_produces_more_points(self) -> None:
-        from double_pendulum_golf.gui.base_pendulum_widget import BasePendulumWidget
+        from double_pendulum_golf.gui.catmull_rom import catmull_rom_smooth
 
         pts = [(0.0, 0.0), (1.0, 1.0), (2.0, 0.0), (3.0, 1.0), (4.0, 0.0)]
-        result = BasePendulumWidget._catmull_rom_smooth(pts, 4)
+        result = catmull_rom_smooth(pts, 4)
         assert len(result) >= len(pts)
 
     def test_smooth_fewer_than_4_returns_unchanged(self) -> None:
-        from double_pendulum_golf.gui.base_pendulum_widget import BasePendulumWidget
+        from double_pendulum_golf.gui.catmull_rom import catmull_rom_smooth
 
         pts = [(0.0, 0.0), (1.0, 1.0), (2.0, 0.0)]
-        result = BasePendulumWidget._catmull_rom_smooth(pts, 4)
+        result = catmull_rom_smooth(pts, 4)
         assert result == pts
 
     def test_smooth_endpoints_preserved(self) -> None:
-        from double_pendulum_golf.gui.base_pendulum_widget import BasePendulumWidget
+        from double_pendulum_golf.gui.catmull_rom import catmull_rom_smooth
 
         pts = [(0.0, 0.0), (1.0, 2.0), (2.0, -1.0), (3.0, 1.0)]
-        result = BasePendulumWidget._catmull_rom_smooth(pts, 4)
+        result = catmull_rom_smooth(pts, 4)
         assert result[-1] == pts[-1]

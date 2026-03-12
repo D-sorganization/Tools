@@ -2,27 +2,25 @@
 Control panel widget (double pendulum) — parameter inputs,
 torque polynomial editors, gravity toggle.
 
-Refactored in quality pass:
-- _build_ui split into focused section methods (DRY/changeability)
-- parse_float / parse_coeffs imported from controls_utils (DRY)
-- DbC assertions on all public inputs
+Refactored to extend ControlsWidgetBase (DRY).
+Model-specific: UnitAwareInput support, joint limits, torque clamps,
+tilt/azimuth rotation controls.
+
+NOTE: ``LabeledInput`` and ``_row`` are defined here and imported
+by controls_widget_triple.py and controls_widget_golfer.py.
 """
 
 from __future__ import annotations
 
 import numpy as np
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import (
     QCheckBox,
-    QComboBox,
-    QDoubleSpinBox,
     QGroupBox,
     QHBoxLayout,
     QLabel,
     QLineEdit,
-    QPushButton,
-    QSlider,
     QVBoxLayout,
     QWidget,
 )
@@ -39,6 +37,7 @@ from .controls_utils import (
     require_non_negative,
     require_positive,
 )
+from .controls_widget_base import ControlsWidgetBase
 from .torque_preview_widget import TorquePreviewWidget
 
 try:
@@ -47,6 +46,11 @@ try:
     _HAS_UAI = True
 except ImportError:
     _HAS_UAI = False
+
+
+# ---------------------------------------------------------------------------
+# Reusable widgets (imported by triple / golfer variants)
+# ---------------------------------------------------------------------------
 
 
 class LabeledInput(QWidget):
@@ -95,35 +99,23 @@ def _row(*widgets: QWidget) -> QHBoxLayout:
     return row
 
 
-class ControlsWidget(QWidget):
-    """Parameter input panel with presets and playback controls.
+# ---------------------------------------------------------------------------
+# Double pendulum controls
+# ---------------------------------------------------------------------------
 
-    Signals
-    -------
-    run_requested        : user clicks Run
-    reset_requested      : user clicks Reset
-    play_toggled(bool)   : play/pause toggled
-    speed_changed(float) : playback speed changed
-    frame_changed(int)   : timeline slider moved
-    gravity_changed(bool): gravity on/off
-    forces_changed(bool) : force vectors show/hide
-    force_scale_changed(float): force vector display scale
+
+class ControlsWidget(ControlsWidgetBase):
+    """Parameter input panel for the double pendulum model.
+
+    Extra signals beyond base:
+    - tilt_changed / azimuth_changed — real-time view rotation
+    - force_scale_changed — force vector display scale
     """
 
-    run_requested = pyqtSignal()
-    reset_requested = pyqtSignal()
-    play_toggled = pyqtSignal(bool)
-    speed_changed = pyqtSignal(float)
-    frame_changed = pyqtSignal(int)
-    export_data_requested = pyqtSignal()
-    export_video_requested = pyqtSignal()
-    gravity_changed = pyqtSignal(bool)
-    forces_changed = pyqtSignal(bool)
-    force_scale_changed = pyqtSignal(float)
-
-    # Real-time view rotation (#1146)
+    # Extra signals specific to the double pendulum
     tilt_changed = pyqtSignal(float)  # radians
     azimuth_changed = pyqtSignal(float)  # radians
+    force_scale_changed = pyqtSignal(float)
 
     # Preset: (theta1°, phi°, dth, dph, tau_sh, tau_wr, tend, m1, m2, mClub, L1, L2)
     PRESETS = {
@@ -203,7 +195,6 @@ class ControlsWidget(QWidget):
         super().__init__(parent)
         self.setMinimumWidth(270)
         self.setMaximumWidth(370)
-        self._is_playing = False
         self._build_ui()
         self._apply_preset("Golf Swing (passive wrist)")
 
@@ -225,8 +216,9 @@ class ControlsWidget(QWidget):
         main_layout.addWidget(self._build_torque_section())
         main_layout.addWidget(self._build_sim_section())
         main_layout.addWidget(self._build_dissipation_section())
-        main_layout.addWidget(self._build_gravity_section())
+        main_layout.addWidget(self._build_rotation_section())
         self._build_hidden_compat_widgets()
+        self._build_extra_hidden_widgets()
         main_layout.addWidget(self._build_export_section())
         main_layout.addStretch()
 
@@ -236,23 +228,13 @@ class ControlsWidget(QWidget):
         self.inp_tend.edit.textChanged.connect(self._update_torque_preview)
         self.chk_clamp.toggled.connect(lambda _: self._update_torque_preview())
 
-    # ---- Section builders (each ≤30 lines) --------------------------------
+    def _build_extra_hidden_widgets(self) -> None:
+        """Extra hidden compat widgets specific to double pendulum."""
+        self.lbl_frame = QLabel("Frame: 0 / 0")
+        self.chk_forces = QCheckBox()
+        self.chk_forces.toggled.connect(self.forces_changed.emit)
 
-    def _build_preset_section(self) -> QGroupBox:
-        box = QGroupBox("Preset")
-        box.setStyleSheet(STYLE_GROUP)
-        layout = QVBoxLayout(box)
-        layout.setContentsMargins(4, 10, 4, 4)
-        self.preset_combo = QComboBox()
-        self.preset_combo.setStyleSheet(
-            "background:#1e1e30;color:#e0e0f0;border:1px solid #404060;"
-            "border-radius:3px;padding:3px;font-size:10px;"
-        )
-        for name in self.PRESETS:
-            self.preset_combo.addItem(name)
-        self.preset_combo.currentTextChanged.connect(self._apply_preset)
-        layout.addWidget(self.preset_combo)
-        return box
+    # ---- Model-specific section builders --------------------------------
 
     def _build_physics_section(self) -> QGroupBox:
         lw = 56
@@ -307,7 +289,6 @@ class ControlsWidget(QWidget):
                 decimals=4,
                 compact=True,
             )
-            # Add labels
             for lbl_text, widget in [
                 ("m1", self.inp_m1),
                 ("m2", self.inp_m2),
@@ -345,7 +326,6 @@ class ControlsWidget(QWidget):
         self.chk_limits = QCheckBox("Enable joint limits")
         self.chk_limits.setStyleSheet(STYLE_CHECK)
         layout.addWidget(self.chk_limits)
-        # Shoulder (theta1) limits
         self.inp_theta1_min = LabeledInput(
             "θ1 min°", "-180", "Min shoulder angle (deg)", lw
         )
@@ -353,7 +333,6 @@ class ControlsWidget(QWidget):
             "θ1 max°", "180", "Max shoulder angle (deg)", lw
         )
         layout.addLayout(_row(self.inp_theta1_min, self.inp_theta1_max))
-        # Wrist (phi) limits
         self.inp_phi_min = LabeledInput("φ min°", "-90", "Min wrist angle (deg)", lw)
         self.inp_phi_max = LabeledInput("φ max°", "90", "Max wrist angle (deg)", lw)
         layout.addLayout(_row(self.inp_phi_min, self.inp_phi_max))
@@ -407,11 +386,14 @@ class ControlsWidget(QWidget):
             self.inp_max_tau1 = LabeledInput(  # type: ignore[assignment]
                 "Max |\u03c41|",
                 "50",
-                "Max shoulder torque magnitude \u00b1(N\u00b7m)",
+                "Max shoulder torque magnitude ±(N·m)",
                 lw,
             )
             self.inp_max_tau2 = LabeledInput(  # type: ignore[assignment]
-                "Max |\u03c42|", "20", "Max wrist torque magnitude \u00b1(N\u00b7m)", lw
+                "Max |\u03c42|",
+                "20",
+                "Max wrist torque magnitude ±(N·m)",
+                lw,
             )
             layout.addLayout(_row(self.inp_max_tau1, self.inp_max_tau2))
         return box
@@ -423,13 +405,8 @@ class ControlsWidget(QWidget):
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(3)
-        # Angles stay as LabeledInput (always degrees, no conversion needed)
-        self.inp_theta1 = LabeledInput(
-            "\u03b81\u00b0", "120", "Arm angle from vertical", lw
-        )
-        self.inp_phi = LabeledInput(
-            "\u03c6\u00b0", "-90", "Club angle relative to arm", lw
-        )
+        self.inp_theta1 = LabeledInput("θ1°", "120", "Arm angle from vertical", lw)
+        self.inp_phi = LabeledInput("φ°", "-90", "Club angle relative to arm", lw)
         if _HAS_UAI:
             self.inp_dtheta1 = UnitAwareInput(
                 category="angular_velocity",
@@ -450,10 +427,7 @@ class ControlsWidget(QWidget):
                 compact=True,
             )
             layout.addLayout(_row(self.inp_theta1, self.inp_phi))
-            for lbl_text, widget in [
-                ("d\u03b81", self.inp_dtheta1),
-                ("d\u03c6", self.inp_dphi),
-            ]:
+            for lbl_text, widget in [("dθ1", self.inp_dtheta1), ("dφ", self.inp_dphi)]:
                 row = QHBoxLayout()
                 row.setContentsMargins(0, 0, 0, 0)
                 row.setSpacing(3)
@@ -464,8 +438,8 @@ class ControlsWidget(QWidget):
                 row.addWidget(widget)
                 layout.addLayout(row)
         else:
-            self.inp_dtheta1 = LabeledInput("d\u03b81", "0", "Arm angular velocity rad/s", lw)  # type: ignore[assignment]
-            self.inp_dphi = LabeledInput("d\u03c6", "0", "Club angular velocity rad/s", lw)  # type: ignore[assignment]
+            self.inp_dtheta1 = LabeledInput("dθ1", "0", "Arm angular velocity rad/s", lw)  # type: ignore[assignment]
+            self.inp_dphi = LabeledInput("dφ", "0", "Club angular velocity rad/s", lw)  # type: ignore[assignment]
             layout.addLayout(_row(self.inp_theta1, self.inp_phi))
             layout.addLayout(_row(self.inp_dtheta1, self.inp_dphi))
         return box
@@ -482,16 +456,7 @@ class ControlsWidget(QWidget):
         self.inp_tau_wrist = LabeledInput("Wrist", "0", "τ(t)=c0+c1·t+…", 56)
         layout.addWidget(self.inp_tau_shoulder)
         layout.addWidget(self.inp_tau_wrist)
-        self.btn_funcgen = QPushButton("📈 Signal Toolkit…")
-        self.btn_funcgen.setToolTip(
-            "Design a waveform and import as torque coefficients"
-        )
-        self.btn_funcgen.setStyleSheet(
-            "QPushButton{background:#282848;color:#b0b0e0;border:1px solid #404068;"
-            "border-radius:4px;padding:4px 8px;font-size:10px;}"
-            "QPushButton:hover{background:#32326a;}"
-        )
-        self.btn_funcgen.clicked.connect(self._open_function_generator)
+        self.btn_funcgen = self._build_funcgen_button()
         layout.addWidget(self.btn_funcgen)
         preview_box = QGroupBox("Torque Preview")
         preview_box.setStyleSheet(STYLE_GROUP)
@@ -534,7 +499,7 @@ class ControlsWidget(QWidget):
         layout.addLayout(_row(self.inp_mu1, self.inp_mu2))
         return box
 
-    def _build_gravity_section(self) -> QGroupBox:
+    def _build_rotation_section(self) -> QGroupBox:
         """Gravity toggle and swing plane tilt — force/scale controls live in the toolstrip."""
         box = QGroupBox("Physics")
         box.setStyleSheet(STYLE_GROUP)
@@ -547,7 +512,6 @@ class ControlsWidget(QWidget):
         self.chk_gravity.toggled.connect(self.gravity_changed.emit)
         layout.addWidget(self.chk_gravity)
 
-        # Swing plane tilt angle (#1113)
         self.inp_tilt = LabeledInput(
             "Tilt °",
             "0",
@@ -558,7 +522,6 @@ class ControlsWidget(QWidget):
         )
         layout.addWidget(self.inp_tilt)
 
-        # View azimuth angle (#1118)
         self.inp_azimuth = LabeledInput(
             "Azimuth °",
             "0",
@@ -569,105 +532,43 @@ class ControlsWidget(QWidget):
         )
         layout.addWidget(self.inp_azimuth)
 
-        # Live rotation updates (#1146)
         self.inp_tilt.edit.textChanged.connect(self._on_tilt_edited)
         self.inp_azimuth.edit.textChanged.connect(self._on_azimuth_edited)
-
         return box
 
     def _on_tilt_edited(self, text: str) -> None:
-        """Emit tilt_changed in real-time when Tilt input is edited (#1146)."""
+        """Emit tilt_changed in real-time when Tilt input is edited."""
         try:
             self.tilt_changed.emit(np.radians(float(text)))
         except ValueError:
             pass
 
     def _on_azimuth_edited(self, text: str) -> None:
-        """Emit azimuth_changed in real-time when Azimuth input is edited (#1146)."""
+        """Emit azimuth_changed in real-time when Azimuth input is edited."""
         try:
             self.azimuth_changed.emit(np.radians(float(text)))
         except ValueError:
             pass
 
-    def _build_hidden_compat_widgets(self) -> None:
-        """Create hidden widgets whose signals are still wired internally.
+    # ── Override base set_slider_range/value to also update lbl_frame ─
+    def set_slider_range(self, max_val: int) -> None:
+        super().set_slider_range(max_val)
+        self.lbl_frame.setText(f"Frame: 0 / {max_val}")
 
-        These are never shown but must exist so that SimulationPanel's
-        existing signal connections (play_toggled, frame_changed, etc.)
-        continue to work.  Controls are now driven from the ToolStrip.
-        """
-        self.btn_run = QPushButton()
-        self.btn_run.clicked.connect(self.run_requested.emit)
-        self.btn_reset = QPushButton()
-        self.btn_reset.clicked.connect(self.reset_requested.emit)
-        self.btn_play = QPushButton()
-        self.btn_play.setCheckable(True)
-        self.btn_play.toggled.connect(self._on_play_toggled)
-        self.speed_spin = QDoubleSpinBox()
-        self.speed_spin.setRange(0.05, 20.0)
-        self.speed_spin.setValue(1.0)
-        self.speed_spin.valueChanged.connect(lambda v: self.speed_changed.emit(v))
-        self.slider = QSlider(Qt.Orientation.Horizontal)
-        self.slider.setRange(0, 100)
-        self.slider.valueChanged.connect(self.frame_changed.emit)
-        self.lbl_frame = QLabel("Frame: 0 / 0")
-        self.chk_forces = QCheckBox()
-        self.chk_forces.toggled.connect(self.forces_changed.emit)
+    def set_slider_value(self, val: int) -> None:
+        super().set_slider_value(val)
+        self.lbl_frame.setText(f"Frame: {val} / {self.slider.maximum()}")
 
-    def _build_export_section(self) -> QGroupBox:
-        box = QGroupBox("Export")
-        box.setStyleSheet(STYLE_GROUP)
-        layout = QHBoxLayout(box)
-        layout.setContentsMargins(4, 10, 4, 4)
-        _btn_style = (
-            "QPushButton{background:#1e1e2e;color:#9090b0;border:1px solid #3a3a58;"
-            "border-radius:4px;padding:4px 6px;font-size:10px;}"
-            "QPushButton:hover{background:#282848;}"
-        )
-        self.btn_export_data = QPushButton("📊 Data")
-        self.btn_export_video = QPushButton("🎬 Video")
-        for btn in (self.btn_export_data, self.btn_export_video):
-            btn.setStyleSheet(_btn_style)
-        self.btn_export_data.clicked.connect(self.export_data_requested.emit)
-        self.btn_export_video.clicked.connect(self.export_video_requested.emit)
-        layout.addWidget(self.btn_export_data)
-        layout.addWidget(self.btn_export_video)
-        return box
+    # ── Abstract interface implementation ────────────────────────────
 
-    # ------------------------------------------------------------------
-    # Function generator integration
-    # ------------------------------------------------------------------
+    def _get_joint_names(self) -> list[str]:
+        return ["Shoulder", "Wrist"]
 
-    def _open_function_generator(self) -> None:
-        """Open Signal Toolkit as a dialog for torque design."""
-        from .function_generator_dialog import FunctionGeneratorDialog
-
-        dlg = FunctionGeneratorDialog(self, joint_names=["Shoulder", "Wrist"])
-        dlg.torque_imported.connect(self._on_torque_imported)
-        dlg.exec()
-
-    def _on_torque_imported(self, joint: str, coeffs: list[float]) -> None:
-        """Receive torque profile imported from Function Generator.
-
-        Pre: joint in {"shoulder", "wrist", "elbow"}
-        Pre: len(coeffs) >= 1
-        """
-        assert joint.lower() in {
-            "shoulder",
-            "wrist",
-            "elbow",
-        }, f"Unknown joint '{joint}', expected shoulder/wrist/elbow"
-        assert len(coeffs) >= 1, "Coefficients list must not be empty"
-        coeffs_str = ", ".join(f"{c:.4g}" for c in coeffs)
-        if joint.lower() == "shoulder":
-            self.inp_tau_shoulder.set_value(coeffs_str)
-        else:
-            self.inp_tau_wrist.set_value(coeffs_str)
-        self._update_torque_preview()
-
-    # ------------------------------------------------------------------
-    # Preset application
-    # ------------------------------------------------------------------
+    def _get_torque_inputs(self) -> dict[str, LabeledInput]:
+        return {
+            "Shoulder": self.inp_tau_shoulder,
+            "Wrist": self.inp_tau_wrist,
+        }
 
     def _apply_preset(self, name: str) -> None:
         if name not in self.PRESETS:
@@ -682,7 +583,6 @@ class ControlsWidget(QWidget):
         self.inp_tend.set_value(str(tend))
 
         if _HAS_UAI:
-            # Preset values are in SI — set with is_si=True
             self.inp_m1.set_value(m1, is_si=True)
             self.inp_m2.set_value(m2, is_si=True)
             self.inp_mClub.set_value(mClub, is_si=True)
@@ -706,34 +606,13 @@ class ControlsWidget(QWidget):
 
     @staticmethod
     def _uai_or_parse(widget: object, label: str) -> float:
-        """Extract SI value from UnitAwareInput or parse from LabeledInput.
-
-        Design by Contract
-        ------------------
-        Post: returns a finite float in SI units.
-        """
+        """Extract SI value from UnitAwareInput or parse from LabeledInput."""
         if _HAS_UAI and isinstance(widget, UnitAwareInput):
             return widget.value_si()
         return parse_float(widget, label)  # type: ignore[arg-type]
 
     def get_params(self) -> dict:
-        """Parse all input fields and return as a simulation parameter dict.
-
-        When UnitAwareInput widgets are present, values are automatically
-        returned in SI units regardless of the user's selected display unit.
-
-        Returns
-        -------
-        dict with keys: m1, m2, mClub, L1, L2, theta1_rad, phi_rad,
-            dtheta1, dphi, shoulder_coeffs, wrist_coeffs, t_end,
-            dt, b1, b2, mu1, mu2, gravity_on,
-            enable_limits, phi_min_rad, phi_max_rad, limit_stiffness,
-            enable_clamp, max_torque1, max_torque2
-
-        Raises
-        ------
-        ValueError if any input cannot be parsed.
-        """
+        """Parse all input fields and return as a simulation parameter dict."""
         dt_raw = parse_float(self.inp_dt, "dt")
         dt = clamp_dt(dt_raw)
         m1 = self._uai_or_parse(self.inp_m1, "m1")
@@ -790,7 +669,6 @@ class ControlsWidget(QWidget):
             t_end = 2.0
         self.torque_preview.set_duration(t_end)
 
-        # Compute clamp limits if clamping is active
         clamp_limits: list[float | None] | None = None
         if self.chk_clamp.isChecked():
             try:
@@ -820,35 +698,10 @@ class ControlsWidget(QWidget):
         )
 
     # ------------------------------------------------------------------
-    # Playback
+    # Playback — override base to use styled text
     # ------------------------------------------------------------------
 
     def _on_play_toggled(self, checked: bool) -> None:
         self._is_playing = checked
         self.btn_play.setText("⏸ Pause" if checked else "▶ Play")
         self.play_toggled.emit(checked)
-
-    def set_slider_range(self, max_val: int) -> None:
-        """Pre: max_val >= 0"""
-        assert max_val >= 0, f"Slider max must be non-negative, got {max_val}"
-        self.slider.setRange(0, max_val)
-        self.lbl_frame.setText(f"Frame: 0 / {max_val}")
-
-    def set_slider_value(self, val: int) -> None:
-        """Pre: 0 <= val <= slider.maximum()"""
-        assert (
-            0 <= val <= self.slider.maximum()
-        ), f"Slider value {val} out of range [0, {self.slider.maximum()}]"
-        self.slider.blockSignals(True)
-        self.slider.setValue(val)
-        self.slider.blockSignals(False)
-        self.lbl_frame.setText(f"Frame: {val} / {self.slider.maximum()}")
-
-    def stop_playback(self) -> None:
-        self.btn_play.setChecked(False)
-
-    def gravity_on(self) -> bool:
-        return self.chk_gravity.isChecked()
-
-    def show_forces(self) -> bool:
-        return self.chk_forces.isChecked()

@@ -8,9 +8,13 @@ in a GolferSimulationResult for GUI and analysis access.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 import numpy as np
 from scipy.integrate import solve_ivp
+
+if TYPE_CHECKING:
+    from .physics import JointLimitsNDOF
 
 from .constraint_solver import (
     constraint_forces,
@@ -162,6 +166,9 @@ def run_simulation(
     atol: float = 1e-8,
     alpha: float = 5.0,
     beta: float = 5.0,
+    torque_limits: np.ndarray | None = None,
+    limits: "JointLimitsNDOF | None" = None,
+    clamp: np.ndarray | None = None,
 ) -> GolferSimulationResult:
     """Integrate the constrained golfer equations of motion.
 
@@ -175,6 +182,10 @@ def run_simulation(
     method : str — ODE solver method
     rtol, atol : float — solver tolerances
     alpha, beta : float — Baumgarte stabilization gains
+    torque_limits : np.ndarray, shape (7,), optional
+        Per-joint torque saturation limits.
+    limits : JointLimitsNDOF, optional
+        Joint angle limits with penalty stiffness.
 
     Returns
     -------
@@ -187,6 +198,9 @@ def run_simulation(
     assert t_end > 0, f"t_end must be positive, got {t_end}"
     assert 0 < dt < t_end, f"dt must be in (0, t_end), got {dt}"
 
+    # Merge clamp kwarg (from SimulationPanel) with torque_limits (legacy)
+    effective_torque_limits = torque_limits if torque_limits is not None else clamp
+
     # Project initial conditions onto constraint manifold
     q0 = project_to_constraints(initial_state[:N_DOF], params)
     qdot0 = project_velocity(q0, initial_state[N_DOF:], params)
@@ -195,7 +209,26 @@ def run_simulation(
     t_eval = np.arange(0.0, t_end, dt)
 
     def ode_rhs(t: float, y: np.ndarray) -> np.ndarray:
-        return equations_of_motion(y, t, params, torque_func, alpha, beta)
+        dydt = equations_of_motion(
+            y, t, params, torque_func, alpha, beta, effective_torque_limits
+        )
+        # Apply joint limit penalty torques if enabled
+        if limits is not None:
+            from .physics import joint_limit_torque_ndof
+
+            q = y[:N_DOF]
+            qdot = y[N_DOF:]
+            # Only apply limits to the 7 actuated DOFs (not club theta)
+            q_actuated = q[:7]
+            qdot_actuated = qdot[:7]
+            tau_limit = joint_limit_torque_ndof(q_actuated, qdot_actuated, limits)
+            # Add penalty via M^-1 * tau_limit (full 8-DOF mass matrix)
+            M = mass_matrix(q, params)
+            tau_full = np.zeros(N_DOF)
+            tau_full[:7] = tau_limit
+            qddot_correction = np.linalg.solve(M, tau_full)
+            dydt[N_DOF:] += qddot_correction
+        return dydt
 
     sol = solve_ivp(
         ode_rhs,

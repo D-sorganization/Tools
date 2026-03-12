@@ -308,6 +308,71 @@ def clamp_torque(tau: np.ndarray, clamp: TorqueClamp) -> np.ndarray:
     )
 
 
+@dataclass(frozen=True)
+class JointLimitsNDOF:
+    """N-DOF joint angle limits with Hermite smoothstep penalties.
+
+    Generalisation of ``JointLimits`` (which is 2-DOF specific) to
+    arbitrary joint counts.  Used by the triple and golfer models.
+
+    Contract:
+        - angle_min.shape == angle_max.shape == (n_dof,)
+        - angle_min[i] < angle_max[i]  for all i
+        - stiffness > 0, damping >= 0
+    """
+
+    angle_min: np.ndarray  # (n_dof,) in radians
+    angle_max: np.ndarray  # (n_dof,) in radians
+    stiffness: float = 500.0  # N·m/rad
+    damping: float = 20.0  # N·m·s/rad
+
+    def __post_init__(self) -> None:
+        assert self.angle_min.ndim == 1, "angle_min must be 1D"
+        assert self.angle_max.ndim == 1, "angle_max must be 1D"
+        assert self.angle_min.shape == self.angle_max.shape, "Shape mismatch"
+        assert np.all(
+            self.angle_min < self.angle_max
+        ), "min must be < max for all joints"
+        assert self.stiffness > 0, f"stiffness must be positive, got {self.stiffness}"
+        assert self.damping >= 0, f"damping must be non-negative, got {self.damping}"
+
+
+def joint_limit_torque_ndof(
+    angles: np.ndarray,
+    velocities: np.ndarray,
+    limits: JointLimitsNDOF,
+) -> np.ndarray:
+    """Smooth joint limit penalty using Hermite smoothstep, N-DOF.
+
+    Pre: angles.shape == velocities.shape == limits.angle_min.shape
+    Post: penalty is 0 when all angles are within limits.
+    Returns shape (n_dof,).
+    """
+    n = len(angles)
+    assert angles.shape == (n,) and velocities.shape == (n,)
+    assert limits.angle_min.shape == (n,)
+    transition = 0.05  # rad (~3 degrees)
+    result = np.zeros(n)
+    for i in range(n):
+        angle, vel = angles[i], velocities[i]
+        lo, hi = limits.angle_min[i], limits.angle_max[i]
+        if angle < lo:
+            pen = lo - angle
+            blend = min(1.0, pen / transition)
+            smooth = blend * blend * (3 - 2 * blend)
+            result[i] = smooth * (
+                limits.stiffness * pen + limits.damping * max(0.0, -vel)
+            )
+        elif angle > hi:
+            pen = angle - hi
+            blend = min(1.0, pen / transition)
+            smooth = blend * blend * (3 - 2 * blend)
+            result[i] = -smooth * (
+                limits.stiffness * pen + limits.damping * max(0.0, vel)
+            )
+    return result
+
+
 def clamp_torque_ndof(tau: np.ndarray, limits: np.ndarray) -> np.ndarray:
     """Clamp N-DOF torque vector to symmetric per-DOF limits (#1150).
 

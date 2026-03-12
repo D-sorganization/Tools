@@ -17,9 +17,8 @@ pub struct RK45Config {
     pub max_steps: usize,
 }
 
-impl RK45Config {
-    /// Default RK45 configuration
-    pub fn default() -> Self {
+impl Default for RK45Config {
+    fn default() -> Self {
         RK45Config {
             h0: 0.01,
             h_min: 1e-6,
@@ -49,7 +48,12 @@ const RK45_A: &[&[f64]] = &[
     &[1.0 / 5.0],
     &[3.0 / 40.0, 9.0 / 40.0],
     &[44.0 / 45.0, -56.0 / 15.0, 32.0 / 9.0],
-    &[19372.0 / 6561.0, -25360.0 / 2187.0, 64448.0 / 6561.0, -212.0 / 729.0],
+    &[
+        19372.0 / 6561.0,
+        -25360.0 / 2187.0,
+        64448.0 / 6561.0,
+        -212.0 / 729.0,
+    ],
     &[
         9017.0 / 3168.0,
         -355.0 / 33.0,
@@ -159,23 +163,19 @@ where
 
         // Step acceptance and size control
         let q: f64 = 0.84 * (1.0 / (error + 1e-10)).powf(0.25);
-        let h_new = h * q.min(4.0).max(0.1);
+        let h_new = h * q.clamp(0.1, 4.0);
 
         if error <= 1.0 {
             // Accept step
             t += h;
             y = y5;
 
-            result.push(IntegrationStep {
-                t,
-                y,
-                h,
-            });
+            result.push(IntegrationStep { t, y, h });
 
             step_count += 1;
         }
 
-        h = h_new.min(config.h_max).max(config.h_min);
+        h = h_new.clamp(config.h_min, config.h_max);
     }
 
     result
@@ -260,10 +260,8 @@ where
     F: Fn(f64, &[f64; 8], &[f64; 8]) -> [f64; 8],
 {
     let mut y0 = [0.0; 16];
-    for i in 0..8 {
-        y0[i] = q0[i];
-        y0[8 + i] = qdot0[i];
-    }
+    y0[..8].copy_from_slice(&q0);
+    y0[8..16].copy_from_slice(&qdot0);
 
     integrate_rk45(
         |t, y| {
@@ -271,8 +269,8 @@ where
             let qdot = [y[8], y[9], y[10], y[11], y[12], y[13], y[14], y[15]];
             let qddot = f(t, &q, &qdot);
             [
-                qdot[0], qdot[1], qdot[2], qdot[3], qdot[4], qdot[5], qdot[6], qdot[7],
-                qddot[0], qddot[1], qddot[2], qddot[3], qddot[4], qddot[5], qddot[6], qddot[7],
+                qdot[0], qdot[1], qdot[2], qdot[3], qdot[4], qdot[5], qdot[6], qdot[7], qddot[0],
+                qddot[1], qddot[2], qddot[3], qddot[4], qddot[5], qddot[6], qddot[7],
             ]
         },
         t0,

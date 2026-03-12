@@ -31,15 +31,21 @@ from PyQt6.QtWidgets import (
 
 logger = logging.getLogger(__name__)
 
-# ── Ensure shared/python (Tools/src/) is on sys.path ──────────────────────
-_p = Path(__file__).resolve().parent
+# ── Ensure shared/python (Tools/src/shared/python) is on sys.path ──────
+_this_file = Path(__file__).resolve()
+# Walk up to find the `src` dir that contains `shared/python/signal_toolkit`
+_search = _this_file.parent
 for _ in range(10):
-    if (_p / "shared" / "python").is_dir():
-        _np = os.path.normpath(str(_p))
-        if _np not in [os.path.normpath(s) for s in sys.path]:
-            sys.path.insert(0, str(_p))
+    _candidate = _search / "shared" / "python"
+    if (_candidate / "signal_toolkit" / "__init__.py").is_file():
+        _norm = os.path.normpath(str(_candidate))
+        if _norm not in [os.path.normpath(s) for s in sys.path]:
+            sys.path.insert(0, str(_candidate))
+            logger.info("Added signal_toolkit path: %s", _candidate)
         break
-    _p = _p.parent
+    _search = _search.parent
+else:
+    logger.warning("signal_toolkit not found — walked up from %s", _this_file)
 
 # ── Try to import the shared widgets ──────────────────────────────────────
 _HAS_POLY_WIDGET = False
@@ -72,6 +78,19 @@ except ImportError as _exc:
 
 _WIDGET_AVAILABLE = _HAS_POLY_WIDGET or _HAS_SIGNAL_WIDGET
 _WIDGET_IMPORT_ERROR = "; ".join(_IMPORT_ERRORS) if _IMPORT_ERRORS else None
+
+if _WIDGET_AVAILABLE:
+    logger.info(
+        "Function generator available: poly=%s, signal=%s",
+        _HAS_POLY_WIDGET,
+        _HAS_SIGNAL_WIDGET,
+    )
+else:
+    logger.error(
+        "Function generator UNAVAILABLE: %s (searched from %s)",
+        _WIDGET_IMPORT_ERROR,
+        _this_file,
+    )
 
 
 class FunctionGeneratorDialog(QDialog):

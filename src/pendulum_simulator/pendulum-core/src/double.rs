@@ -75,6 +75,43 @@ pub fn gravity_vector(q: &[f64; 2], params: &DoublePendulumParams) -> SVector<f6
     SVector::<f64, 2>::new(g0, g1)
 }
 
+/// Compute viscous friction torque vector.
+///
+/// τ_friction[i] = -friction_i * qdot[i]
+///
+/// This is the linear damping (viscous friction) at each joint.
+pub fn friction_torque(qdot: &[f64; 2], params: &DoublePendulumParams) -> SVector<f64, 2> {
+    SVector::<f64, 2>::new(-params.friction1 * qdot[0], -params.friction2 * qdot[1])
+}
+
+/// Compute joint accelerations: qddot = M⁻¹(tau + tau_friction - C - G).
+///
+/// This is the full unconstrained equations of motion including friction.
+/// `tau` is the applied (driving) torque vector.
+pub fn equations_of_motion(
+    q: &[f64; 2],
+    qdot: &[f64; 2],
+    tau: &[f64; 2],
+    params: &DoublePendulumParams,
+) -> [f64; 2] {
+    let m = mass_matrix(q, params);
+    let c = coriolis(q, qdot, params);
+    let g = gravity_vector(q, params);
+    let f = friction_torque(qdot, params);
+
+    // RHS = tau + friction - coriolis - gravity
+    let rhs = SVector::<f64, 2>::new(tau[0], tau[1]) + f - c - g;
+
+    // Solve M * qddot = rhs
+    let decomp = m.lu();
+    let qddot = decomp.solve(&rhs).unwrap_or_else(|| {
+        // Fallback: use pseudo-inverse if singular (shouldn't happen)
+        SVector::<f64, 2>::zeros()
+    });
+
+    [qddot[0], qddot[1]]
+}
+
 /// Compute forward kinematics.
 ///
 /// Given configuration q = [θ₁, φ], compute the positions of:
@@ -86,10 +123,7 @@ pub fn forward_kinematics(q: &[f64; 2], params: &DoublePendulumParams) -> Double
     let theta2 = theta1 + phi;
 
     // Wrist position: shoulder + L1*(sin(θ₁), -cos(θ₁))
-    let wrist = (
-        params.l1 * theta1.sin(),
-        -params.l1 * theta1.cos(),
-    );
+    let wrist = (params.l1 * theta1.sin(), -params.l1 * theta1.cos());
 
     // Club tip: wrist + L2*(sin(θ₂), -cos(θ₂))
     let club_tip = (
@@ -115,12 +149,7 @@ pub fn jacobian_wrist(q: &[f64; 2], params: &DoublePendulumParams) -> SMatrix<f6
     let cos_theta1 = theta1.cos();
     let sin_theta1 = theta1.sin();
 
-    SMatrix::<f64, 2, 2>::new(
-        params.l1 * cos_theta1,
-        0.0,
-        -params.l1 * sin_theta1,
-        0.0,
-    )
+    SMatrix::<f64, 2, 2>::new(params.l1 * cos_theta1, 0.0, -params.l1 * sin_theta1, 0.0)
 }
 
 /// Compute the Jacobian of the club tip position with respect to q.

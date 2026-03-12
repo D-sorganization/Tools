@@ -85,11 +85,9 @@ pub fn coriolis(q: &[f64; 3], qdot: &[f64; 3], params: &TriplePendulumParams) ->
     let c0 = (h12 + h13) * (2.0 * dtheta1 + dphi1) * dphi1
         + (h13 + h23) * (2.0 * dtheta1 + 2.0 * dphi1 + dphi2) * dphi2;
 
-    let c1 = -(h12 + h13) * dtheta1 * dtheta1
-        + h23 * (2.0 * dtheta1 + 2.0 * dphi1 + dphi2) * dphi2;
+    let c1 = -(h12 + h13) * dtheta1 * dtheta1 + h23 * (2.0 * dtheta1 + 2.0 * dphi1 + dphi2) * dphi2;
 
-    let c2 = -(h13 + h23) * dtheta1 * dtheta1
-        - h23 * (2.0 * dtheta1 + dphi1) * dphi1;
+    let c2 = -(h13 + h23) * dtheta1 * dtheta1 - h23 * (2.0 * dtheta1 + dphi1) * dphi1;
 
     SVector::<f64, 3>::new(c0, c1, c2)
 }
@@ -130,6 +128,40 @@ pub fn gravity_vector(q: &[f64; 3], params: &TriplePendulumParams) -> SVector<f6
 
 /// Compute forward kinematics.
 ///
+/// Compute viscous friction torque vector.
+///
+/// τ_friction[i] = -friction_i * qdot[i]
+pub fn friction_torque(qdot: &[f64; 3], params: &TriplePendulumParams) -> SVector<f64, 3> {
+    SVector::<f64, 3>::new(
+        -params.friction[0] * qdot[0],
+        -params.friction[1] * qdot[1],
+        -params.friction[2] * qdot[2],
+    )
+}
+
+/// Compute joint accelerations: qddot = M⁻¹(tau + tau_friction - C - G).
+///
+/// Full unconstrained equations of motion including viscous friction.
+pub fn equations_of_motion(
+    q: &[f64; 3],
+    qdot: &[f64; 3],
+    tau: &[f64; 3],
+    params: &TriplePendulumParams,
+) -> [f64; 3] {
+    let m = mass_matrix(q, params);
+    let c = coriolis(q, qdot, params);
+    let g = gravity_vector(q, params);
+    let f = friction_torque(qdot, params);
+
+    let rhs = SVector::<f64, 3>::new(tau[0], tau[1], tau[2]) + f - c - g;
+    let decomp = m.lu();
+    let qddot = decomp
+        .solve(&rhs)
+        .unwrap_or_else(SVector::<f64, 3>::zeros);
+
+    [qddot[0], qddot[1], qddot[2]]
+}
+
 /// Given configuration q = [θ₁, φ₁, φ₂], compute the positions of:
 /// - joint1: end of segment 1
 /// - joint2: end of segment 2

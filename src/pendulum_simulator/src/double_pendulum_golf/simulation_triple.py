@@ -6,10 +6,16 @@ stores results in a structured TripleSimulationResult for easy access
 by the GUI and analysis code.
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 import numpy as np
 from scipy.integrate import solve_ivp
+
+if TYPE_CHECKING:
+    from .physics import JointLimitsNDOF
 
 from .physics_triple import (
     TriplePendulumParams,
@@ -134,6 +140,8 @@ def run_simulation(
     rtol: float = 1e-6,
     atol: float = 1e-8,
     torque_limits: np.ndarray | None = None,
+    limits: "JointLimitsNDOF | None" = None,
+    clamp: np.ndarray | None = None,
 ) -> TripleSimulationResult:
     """Integrate the triple pendulum equations of motion.
 
@@ -164,11 +172,29 @@ def run_simulation(
     assert t_end > 0, f"t_end must be positive, got {t_end}"
     assert 0 < dt < t_end, f"dt must be in (0, t_end), got {dt}"
 
+    # Merge clamp kwarg (from SimulationPanel) with torque_limits (legacy)
+    effective_torque_limits = torque_limits if torque_limits is not None else clamp
+
     # Uniform output grid — solver adapts its internal step freely
     t_eval = np.arange(0.0, t_end, dt)
 
     def ode_rhs(t: float, y: np.ndarray) -> np.ndarray:
-        return equations_of_motion(y, t, params, torque_func, torque_limits)
+        dydt = equations_of_motion(y, t, params, torque_func, effective_torque_limits)
+        # Apply joint limit penalty torques if enabled (#1151)
+        if limits is not None:
+            from .physics import joint_limit_torque_ndof
+
+            q = y[:3]
+            qdot = y[3:]
+            tau_limit = joint_limit_torque_ndof(q, qdot, limits)
+            # Re-solve with added penalty (tau_limit enters as extra torque)
+            # We add the limit torques to qddot via M^-1 * tau_limit
+            from .physics_triple import mass_matrix_components
+
+            M = mass_matrix_components(y[1], y[2], params)
+            qddot_correction = np.linalg.solve(M, tau_limit)  # type: ignore[call-overload]
+            dydt[3:] += qddot_correction
+        return dydt
 
     sol = solve_ivp(
         ode_rhs,

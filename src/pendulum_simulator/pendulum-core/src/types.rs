@@ -155,6 +155,11 @@ pub struct GolferParams {
     // Physics
     /// Gravitational acceleration (m/s²)
     pub g: f64,
+
+    // Friction (viscous damping at each actuated joint)
+    /// Friction coefficients for 7 actuated joints
+    /// [hub, r_shoulder, r_elbow, r_wrist, l_shoulder, l_elbow, l_wrist]
+    pub friction: [f64; 7],
 }
 
 impl GolferParams {
@@ -184,6 +189,11 @@ impl GolferParams {
         for (valid, msg) in &checks {
             if !valid {
                 return Err(msg.to_string());
+            }
+        }
+        for (i, &fric) in self.friction.iter().enumerate() {
+            if fric < 0.0 {
+                return Err(format!("friction[{}] must be non-negative", i));
             }
         }
         Ok(())
@@ -276,6 +286,7 @@ impl Vec2 {
         self.x * other.y - self.y * other.x
     }
 
+    #[allow(clippy::should_implement_trait)]
     pub fn add(self, other: Self) -> Self {
         Vec2 {
             x: self.x + other.x,
@@ -283,6 +294,7 @@ impl Vec2 {
         }
     }
 
+    #[allow(clippy::should_implement_trait)]
     pub fn sub(self, other: Self) -> Self {
         Vec2 {
             x: self.x - other.x,

@@ -28,16 +28,10 @@ pub fn forward_kinematics(q: &[f64; 8], params: &GolferParams) -> GolferFKResult
     let hub = Vec2::new(params.l_hub * hub_sin, -params.l_hub * hub_cos);
 
     // Right shoulder
-    let rs = hub.add(Vec2::new(
-        params.d_rs * hub_cos,
-        params.d_rs * hub_sin,
-    ));
+    let rs = hub.add(Vec2::new(params.d_rs * hub_cos, params.d_rs * hub_sin));
 
     // Left shoulder
-    let ls = hub.add(Vec2::new(
-        -params.d_ls * hub_cos,
-        -params.d_ls * hub_sin,
-    ));
+    let ls = hub.add(Vec2::new(-params.d_ls * hub_cos, -params.d_ls * hub_sin));
 
     // Right arm absolute angles
     let theta_rs = theta_hub + q[1];
@@ -93,7 +87,10 @@ pub fn forward_kinematics(q: &[f64; 8], params: &GolferParams) -> GolferFKResult
 /// Returns a HashMap with keys: "hub", "r_shoulder", "r_elbow", "r_wrist",
 /// "l_shoulder", "l_elbow", "l_wrist", "club_com", "club_tip"
 /// Each value is a 2x8 Jacobian matrix.
-pub fn analytical_fk_jacobians(q: &[f64; 8], params: &GolferParams) -> HashMap<String, SMatrix<f64, 2, 8>> {
+pub fn analytical_fk_jacobians(
+    q: &[f64; 8],
+    params: &GolferParams,
+) -> HashMap<String, SMatrix<f64, 2, 8>> {
     let mut jacobians = HashMap::new();
 
     let theta_hub = q[0];
@@ -141,7 +138,8 @@ pub fn analytical_fk_jacobians(q: &[f64; 8], params: &GolferParams) -> HashMap<S
     j_rh[(0, 0)] = params.l_hub * hub_cos - params.d_rs * hub_sin
         + params.l_r_upper * cos_rs
         + params.l_r_fore * cos_re;
-    j_rh[(1, 0)] = params.l_hub * hub_sin + params.d_rs * hub_cos
+    j_rh[(1, 0)] = params.l_hub * hub_sin
+        + params.d_rs * hub_cos
         + params.l_r_upper * sin_rs
         + params.l_r_fore * sin_re;
     j_rh[(0, 1)] = params.l_r_upper * cos_rs + params.l_r_fore * cos_re;
@@ -164,7 +162,8 @@ pub fn analytical_fk_jacobians(q: &[f64; 8], params: &GolferParams) -> HashMap<S
     let mut j_lh = SMatrix::<f64, 2, 8>::zeros();
     let cos_le = theta_le.cos();
     let sin_le = theta_le.sin();
-    j_lh[(0, 0)] = params.l_hub * hub_cos + params.d_ls * hub_sin
+    j_lh[(0, 0)] = params.l_hub * hub_cos
+        + params.d_ls * hub_sin
         + params.l_l_upper * cos_ls
         + params.l_l_fore * cos_le;
     j_lh[(1, 0)] = params.l_hub * hub_sin - params.d_ls * hub_cos
@@ -187,7 +186,8 @@ pub fn analytical_fk_jacobians(q: &[f64; 8], params: &GolferParams) -> HashMap<S
         + params.l_r_fore * cos_re
         - params.grip_right * club_sin
         + half_club * club_sin;
-    j_club_com[(1, 0)] = params.l_hub * hub_sin + params.d_rs * hub_cos
+    j_club_com[(1, 0)] = params.l_hub * hub_sin
+        + params.d_rs * hub_cos
         + params.l_r_upper * sin_rs
         + params.l_r_fore * sin_re
         + params.grip_right * club_cos
@@ -209,7 +209,8 @@ pub fn analytical_fk_jacobians(q: &[f64; 8], params: &GolferParams) -> HashMap<S
         + params.l_r_fore * cos_re
         - params.grip_right * club_sin
         + params.l_club * club_sin;
-    j_club_tip[(1, 0)] = params.l_hub * hub_sin + params.d_rs * hub_cos
+    j_club_tip[(1, 0)] = params.l_hub * hub_sin
+        + params.d_rs * hub_cos
         + params.l_r_upper * sin_rs
         + params.l_r_fore * sin_re
         + params.grip_right * club_cos
@@ -354,6 +355,19 @@ pub fn gravity_vector(q: &[f64; 8], params: &GolferParams) -> SVector<f64, 8> {
     g
 }
 
+/// Compute viscous friction torque vector for 7 actuated joints.
+///
+/// τ_friction[i] = -friction_i * qdot[i]  for i = 0..6 (actuated DOFs)
+/// τ_friction[7] = 0.0  (club angle is constrained, not actuated)
+pub fn friction_torque(qdot: &[f64; 8], params: &GolferParams) -> SVector<f64, 8> {
+    let mut f = SVector::<f64, 8>::zeros();
+    for i in 0..7 {
+        f[i] = -params.friction[i] * qdot[i];
+    }
+    // qdot[7] (club angle) has no direct friction — it's a constrained DOF
+    f
+}
+
 /// Compute the 4-dimensional constraint vector Φ(q).
 ///
 /// Constraints:
@@ -438,6 +452,7 @@ mod tests {
             grip_right: 0.3,
             grip_left: 0.3,
             g: 9.81,
+            friction: [0.0; 7],
         };
 
         let q = [0.0; 8]; // All angles zero
@@ -469,6 +484,7 @@ mod tests {
             grip_right: 0.3,
             grip_left: 0.3,
             g: 9.81,
+            friction: [0.0; 7],
         };
 
         let q = [0.0; 8];
@@ -499,6 +515,7 @@ mod tests {
             grip_right: 0.3,
             grip_left: 0.3,
             g: 9.81,
+            friction: [0.0; 7],
         };
 
         let q = [0.0; 8];

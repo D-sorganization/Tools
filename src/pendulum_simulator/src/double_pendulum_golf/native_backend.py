@@ -65,7 +65,15 @@ def _vector8(values: np.ndarray, name: str) -> np.ndarray:
 
 
 def _backend_mode(env_name: str) -> str:
-    mode = os.getenv(env_name, "python").strip().lower()
+    """Return the configured backend mode for a model.
+
+    Default is ``"auto"``, which selects Rust when ``pendulum_core`` is
+    importable and falls back to Python otherwise.  Set the environment
+    variable to ``"python"`` or ``"rust"`` to force a specific backend.
+    """
+    mode = os.getenv(env_name, "auto").strip().lower()
+    if mode == "auto":
+        return "rust" if _pendulum_core is not None else "python"
     return mode if mode in {"python", "rust"} else "python"
 
 
@@ -517,4 +525,39 @@ def golfer_project_velocity(
         return np.array(result, dtype=float)
     except Exception as exc:  # pragma: no cover - exercised when extension exists
         _warn_once("golfer_project_velocity", exc)
+        return None
+
+
+def batch_evaluate_double(
+    params: PendulumParams,
+    coeffs_batch: list[list[float]],
+    n_coeffs_per_joint: int,
+    q0: list[float],
+    qdot0: list[float],
+    t_end: float,
+) -> list[tuple[float, float, bool]] | None:
+    """Batch-evaluate polynomial torque profiles via Rust rayon.
+
+    Returns a list of ``(max_tip_speed, tip_speed_at_bottom, success)``
+    tuples, or ``None`` if the native backend is unavailable.
+    """
+    if _pendulum_core is None or not hasattr(
+        _pendulum_core, "py_batch_evaluate_double"
+    ):
+        return None
+
+    try:
+        result: list[tuple[float, float, bool]] = (
+            _pendulum_core.py_batch_evaluate_double(
+                _to_rust_double_params(params),
+                coeffs_batch,
+                n_coeffs_per_joint,
+                q0,
+                qdot0,
+                t_end,
+            )
+        )
+        return result
+    except Exception as exc:  # pragma: no cover
+        _warn_once("batch_evaluate_double", exc)
         return None

@@ -1,28 +1,21 @@
 """
 Control panel widget for triple pendulum inputs.
 
-Refactored: parse_float / parse_coeffs now imported from controls_utils (DRY).
+Refactored to extend ControlsWidgetBase (DRY).
+Only model-specific sections remain here.
 """
 
 from __future__ import annotations
 
 import numpy as np
-from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import (
-    QCheckBox,
-    QComboBox,
-    QDoubleSpinBox,
     QGroupBox,
-    QHBoxLayout,
-    QPushButton,
-    QSlider,
     QVBoxLayout,
     QWidget,
 )
 
 from .controls_utils import (
-    STYLE_CHECK,
     STYLE_GROUP,
     parse_coeffs,
     parse_coeffs_lenient,
@@ -31,21 +24,19 @@ from .controls_utils import (
     require_positive,
 )
 from .controls_widget import LabeledInput
+from .controls_widget_base import ControlsWidgetBase
 from .torque_preview_widget import TorquePreviewWidget
 
+try:
+    from upstream_drift_tools.ui.widgets.unit_aware_input import UnitAwareInput
 
-class ControlsWidgetTriple(QWidget):
+    _HAS_UAI = True
+except ImportError:
+    _HAS_UAI = False
+
+
+class ControlsWidgetTriple(ControlsWidgetBase):
     """Parameter input panel for the triple pendulum."""
-
-    run_requested = pyqtSignal()
-    reset_requested = pyqtSignal()
-    play_toggled = pyqtSignal(bool)
-    speed_changed = pyqtSignal(float)
-    frame_changed = pyqtSignal(int)
-    export_data_requested = pyqtSignal()
-    export_video_requested = pyqtSignal()
-    gravity_changed = pyqtSignal(bool)
-    forces_changed = pyqtSignal(bool)
 
     PRESETS = {
         "Triple Swing": (
@@ -90,7 +81,6 @@ class ControlsWidgetTriple(QWidget):
         super().__init__(parent)
         self.setMinimumWidth(300)
         self.setMaximumWidth(360)
-        self._is_playing = False
         self._build_ui()
         self._apply_preset("Triple Swing")
 
@@ -99,64 +89,161 @@ class ControlsWidgetTriple(QWidget):
         main_layout.setContentsMargins(8, 8, 8, 8)
         main_layout.setSpacing(6)
 
-        style_group = STYLE_GROUP  # use canonical shared style
+        main_layout.addWidget(self._build_preset_section())
+        main_layout.addWidget(self._build_physics_section())
+        main_layout.addWidget(self._build_ic_section())
+        main_layout.addWidget(self._build_torque_section())
+        main_layout.addWidget(self._build_torque_preview_section())
+        main_layout.addWidget(
+            self._build_torque_clamp_section_ndof(
+                ["Shoulder", "Elbow", "Wrist"],
+                [50.0, 30.0, 15.0],
+            )
+        )
+        main_layout.addWidget(
+            self._build_joint_limits_section_ndof(
+                ["Shoulder", "Elbow", "Wrist"],
+                [-180.0, -150.0, -90.0],
+                [180.0, 150.0, 90.0],
+            )
+        )
+        main_layout.addWidget(self._build_sim_section())
+        main_layout.addWidget(self._build_dissipation_section())
+        main_layout.addLayout(self._build_run_reset_buttons())
+        self._build_hidden_compat_widgets()
+        main_layout.addWidget(self._build_export_section())
+        main_layout.addWidget(self._build_gravity_section())
+        main_layout.addStretch()
 
-        preset_group = QGroupBox("Preset")
-        preset_group.setStyleSheet(style_group)
-        pl = QVBoxLayout(preset_group)
-        self.preset_combo = QComboBox()
-        self.preset_combo.setStyleSheet(
-            "background: #2a2a38; color: #e0e0f0; border: 1px solid #505068;"
-            "border-radius: 3px; padding: 4px;"
-        )
-        for name in self.PRESETS:
-            self.preset_combo.addItem(name)
-        self.preset_combo.currentTextChanged.connect(self._apply_preset)
-        pl.addWidget(self.preset_combo)
-        main_layout.addWidget(preset_group)
+        # Wire torque preview
+        self.inp_tau_shoulder.edit.textChanged.connect(self._update_torque_preview)
+        self.inp_tau_elbow.edit.textChanged.connect(self._update_torque_preview)
+        self.inp_tau_wrist.edit.textChanged.connect(self._update_torque_preview)
+        self.inp_tend.edit.textChanged.connect(self._update_torque_preview)
 
-        phys_group = QGroupBox("Physical Parameters")
-        phys_group.setStyleSheet(style_group)
-        pl2 = QVBoxLayout(phys_group)
-        self.inp_m1 = LabeledInput("m1 (kg)", "5.0", "Mass of segment 1")
-        self.inp_m2 = LabeledInput("m2 (kg)", "0.5", "Mass of segment 2")
-        self.inp_m3 = LabeledInput("m3 (kg)", "0.4", "Mass of segment 3")
-        self.inp_L1 = LabeledInput(
-            "L1 (m) — Hub",
-            "0.20",
-            "Length of segment 1: Hub (sternum → shoulder)",
-        )
-        self.inp_L2 = LabeledInput(
-            "L2 (m) — Arm",
-            "0.65",
-            "Length of segment 2: Arm",
-        )
-        self.inp_L3 = LabeledInput(
-            "L3 (m) — Club",
-            "1.10",
-            "Length of segment 3: Club",
-        )
+    # ── Model-specific section builders ──────────────────────────────
+
+    def _build_physics_section(self) -> QGroupBox:
+        from PyQt6.QtWidgets import QHBoxLayout, QLabel
+
+        from .controls_utils import STYLE_LABEL
+
+        box = QGroupBox("Physical Parameters")
+        box.setStyleSheet(STYLE_GROUP)
+        layout = QVBoxLayout(box)
+        layout.setContentsMargins(4, 12, 4, 4)
+        layout.setSpacing(3)
+
+        if _HAS_UAI:
+            self.inp_m1 = UnitAwareInput(
+                category="mass",
+                default_value=5.0,
+                default_unit="kg",
+                min_value=0,
+                max_value=500,
+                decimals=3,
+                compact=True,
+            )
+            self.inp_m2 = UnitAwareInput(
+                category="mass",
+                default_value=0.5,
+                default_unit="kg",
+                min_value=0,
+                max_value=500,
+                decimals=3,
+                compact=True,
+            )
+            self.inp_m3 = UnitAwareInput(
+                category="mass",
+                default_value=0.4,
+                default_unit="kg",
+                min_value=0,
+                max_value=500,
+                decimals=3,
+                compact=True,
+            )
+            self.inp_L1 = UnitAwareInput(
+                category="length",
+                default_value=0.20,
+                default_unit="m",
+                min_value=0,
+                max_value=100,
+                decimals=4,
+                compact=True,
+            )
+            self.inp_L2 = UnitAwareInput(
+                category="length",
+                default_value=0.65,
+                default_unit="m",
+                min_value=0,
+                max_value=100,
+                decimals=4,
+                compact=True,
+            )
+            self.inp_L3 = UnitAwareInput(
+                category="length",
+                default_value=1.10,
+                default_unit="m",
+                min_value=0,
+                max_value=100,
+                decimals=4,
+                compact=True,
+            )
+            for lbl_text, widget in [
+                ("m1", self.inp_m1),
+                ("m2", self.inp_m2),
+                ("m3", self.inp_m3),
+                ("L1 Hub", self.inp_L1),
+                ("L2 Arm", self.inp_L2),
+                ("L3 Club", self.inp_L3),
+            ]:
+                row = QHBoxLayout()
+                row.setContentsMargins(0, 0, 0, 0)
+                row.setSpacing(3)
+                lbl = QLabel(lbl_text)
+                lbl.setFixedWidth(50)
+                lbl.setStyleSheet(STYLE_LABEL)
+                row.addWidget(lbl)
+                row.addWidget(widget)
+                layout.addLayout(row)
+        else:
+            self.inp_m1 = LabeledInput("m1 (kg)", "5.0", "Mass of segment 1")  # type: ignore[assignment]
+            self.inp_m2 = LabeledInput("m2 (kg)", "0.5", "Mass of segment 2")  # type: ignore[assignment]
+            self.inp_m3 = LabeledInput("m3 (kg)", "0.4", "Mass of segment 3")  # type: ignore[assignment]
+            self.inp_L1 = LabeledInput(  # type: ignore[assignment]
+                "L1 (m) — Hub", "0.20", "Length of segment 1: Hub (sternum → shoulder)"
+            )
+            self.inp_L2 = LabeledInput(  # type: ignore[assignment]
+                "L2 (m) — Arm", "0.65", "Length of segment 2: Arm"
+            )
+            self.inp_L3 = LabeledInput(  # type: ignore[assignment]
+                "L3 (m) — Club", "1.10", "Length of segment 3: Club"
+            )
+            for w in [  # type: ignore[assignment]
+                self.inp_m1,
+                self.inp_m2,
+                self.inp_m3,
+                self.inp_L1,
+                self.inp_L2,
+                self.inp_L3,
+            ]:
+                layout.addWidget(w)
+
         self.inp_scapula = LabeledInput(
             "Scapula °",
             "0",
             "Scapula protraction/retraction offset angle (#1152).\n"
             "0° = neutral, positive = protracted (forward).",
         )
-        for w in [
-            self.inp_m1,
-            self.inp_m2,
-            self.inp_m3,
-            self.inp_L1,
-            self.inp_L2,
-            self.inp_L3,
-            self.inp_scapula,
-        ]:
-            pl2.addWidget(w)
-        main_layout.addWidget(phys_group)
+        layout.addWidget(self.inp_scapula)
+        return box
 
-        ic_group = QGroupBox("Initial Conditions")
-        ic_group.setStyleSheet(style_group)
-        pl3 = QVBoxLayout(ic_group)
+    def _build_ic_section(self) -> QGroupBox:
+        box = QGroupBox("Initial Conditions")
+        box.setStyleSheet(STYLE_GROUP)
+        layout = QVBoxLayout(box)
+        layout.setContentsMargins(4, 12, 4, 4)
+        layout.setSpacing(3)
         self.inp_theta1 = LabeledInput("theta1 (deg)", "120", "Segment 1 angle")
         self.inp_phi1 = LabeledInput("phi1 (deg)", "-60", "Segment 2 relative angle")
         self.inp_phi2 = LabeledInput("phi2 (deg)", "-30", "Segment 3 relative angle")
@@ -171,59 +258,55 @@ class ControlsWidgetTriple(QWidget):
             self.inp_dphi1,
             self.inp_dphi2,
         ]:
-            pl3.addWidget(w)
-        main_layout.addWidget(ic_group)
+            layout.addWidget(w)
+        return box
 
-        torque_group = QGroupBox("Torque Polynomials (c0, c1, c2, ...)")
-        torque_group.setStyleSheet(style_group)
-        pl4 = QVBoxLayout(torque_group)
+    def _build_torque_section(self) -> QGroupBox:
+        box = QGroupBox("Torque Polynomials (c0, c1, c2, ...)")
+        box.setStyleSheet(STYLE_GROUP)
+        layout = QVBoxLayout(box)
+        layout.setContentsMargins(4, 12, 4, 4)
+        layout.setSpacing(3)
         self.inp_tau_shoulder = LabeledInput(
-            "Shoulder",
-            "-25, 10",
-            "Polynomial coefficients: tau(t) = c0 + c1*t + c2*t^2 + ...",
+            "Shoulder", "-25, 10", "τ(t) = c0 + c1*t + c2*t^2 + ..."
         )
         self.inp_tau_elbow = LabeledInput(
-            "Elbow", "0", "Polynomial coefficients: tau(t) = c0 + c1*t + c2*t^2 + ..."
+            "Elbow", "0", "τ(t) = c0 + c1*t + c2*t^2 + ..."
         )
         self.inp_tau_wrist = LabeledInput(
-            "Wrist", "0", "Polynomial coefficients: tau(t) = c0 + c1*t + c2*t^2 + ..."
+            "Wrist", "0", "τ(t) = c0 + c1*t + c2*t^2 + ..."
         )
-        pl4.addWidget(self.inp_tau_shoulder)
-        pl4.addWidget(self.inp_tau_elbow)
-        pl4.addWidget(self.inp_tau_wrist)
+        layout.addWidget(self.inp_tau_shoulder)
+        layout.addWidget(self.inp_tau_elbow)
+        layout.addWidget(self.inp_tau_wrist)
+        self.btn_funcgen = self._build_funcgen_button()
+        layout.addWidget(self.btn_funcgen)
+        return box
 
-        self.btn_funcgen = QPushButton("📈 Signal Toolkit…")
-        self.btn_funcgen.setToolTip(
-            "Design a waveform and import as torque coefficients"
-        )
-        self.btn_funcgen.setStyleSheet(
-            "QPushButton{background:#282848;color:#b0b0e0;border:1px solid #404068;"
-            "border-radius:4px;padding:4px 8px;font-size:10px;}"
-            "QPushButton:hover{background:#32326a;}"
-        )
-        self.btn_funcgen.clicked.connect(self._open_function_generator)
-        pl4.addWidget(self.btn_funcgen)
-
-        main_layout.addWidget(torque_group)
-
-        preview_group = QGroupBox("Torque Preview")
-        preview_group.setStyleSheet(style_group)
-        preview_layout = QVBoxLayout(preview_group)
+    def _build_torque_preview_section(self) -> QGroupBox:
+        box = QGroupBox("Torque Preview")
+        box.setStyleSheet(STYLE_GROUP)
+        layout = QVBoxLayout(box)
+        layout.setContentsMargins(4, 12, 4, 4)
         self.torque_preview = TorquePreviewWidget()
-        preview_layout.addWidget(self.torque_preview)
-        main_layout.addWidget(preview_group)
+        layout.addWidget(self.torque_preview)
+        return box
 
-        time_group = QGroupBox("Simulation")
-        time_group.setStyleSheet(style_group)
-        pl5 = QVBoxLayout(time_group)
+    def _build_sim_section(self) -> QGroupBox:
+        box = QGroupBox("Simulation")
+        box.setStyleSheet(STYLE_GROUP)
+        layout = QVBoxLayout(box)
+        layout.setContentsMargins(4, 12, 4, 4)
         self.inp_tend = LabeledInput("Duration (s)", "2.0", "Total simulation time")
-        pl5.addWidget(self.inp_tend)
-        main_layout.addWidget(time_group)
+        layout.addWidget(self.inp_tend)
+        return box
 
-        # ── Dissipation parameters ────────────────────────────────
-        diss_group = QGroupBox("Dissipation")
-        diss_group.setStyleSheet(style_group)
-        diss_layout = QVBoxLayout(diss_group)
+    def _build_dissipation_section(self) -> QGroupBox:
+        box = QGroupBox("Dissipation")
+        box.setStyleSheet(STYLE_GROUP)
+        layout = QVBoxLayout(box)
+        layout.setContentsMargins(4, 12, 4, 4)
+        layout.setSpacing(3)
         self.inp_b1 = LabeledInput("b1", "0.0", "Viscous damping shoulder (N·m·s)")
         self.inp_b2 = LabeledInput("b2", "0.0", "Viscous damping elbow (N·m·s)")
         self.inp_b3 = LabeledInput("b3", "0.0", "Viscous damping wrist (N·m·s)")
@@ -238,100 +321,20 @@ class ControlsWidgetTriple(QWidget):
             self.inp_mu2,
             self.inp_mu3,
         ]:
-            diss_layout.addWidget(w)
-        main_layout.addWidget(diss_group)
+            layout.addWidget(w)
+        return box
 
-        btn_layout = QHBoxLayout()
-        self.btn_run = QPushButton("Run Simulation")
-        self.btn_run.setStyleSheet(
-            "QPushButton { background: #2d6b3f; color: white; border: none;"
-            "border-radius: 5px; padding: 10px; font-size: 13px; font-weight: bold; }"
-            "QPushButton:hover { background: #3a8a52; }"
-            "QPushButton:pressed { background: #1f5030; }"
-        )
-        self.btn_run.clicked.connect(self.run_requested.emit)
+    # ── Abstract interface implementation ────────────────────────────
 
-        self.btn_reset = QPushButton("Reset")
-        self.btn_reset.setStyleSheet(
-            "QPushButton { background: #5a3030; color: white; border: none;"
-            "border-radius: 5px; padding: 10px; font-size: 13px; }"
-            "QPushButton:hover { background: #7a4040; }"
-        )
-        self.btn_reset.clicked.connect(self.reset_requested.emit)
+    def _get_joint_names(self) -> list[str]:
+        return ["Shoulder", "Elbow", "Wrist"]
 
-        btn_layout.addWidget(self.btn_run, stretch=2)
-        btn_layout.addWidget(self.btn_reset, stretch=1)
-        main_layout.addLayout(btn_layout)
-
-        # Playback controls are in the toolstrip — create hidden compat widgets
-        self.btn_play = QPushButton()
-        self.btn_play.setCheckable(True)
-        self.btn_play.toggled.connect(self._on_play_toggled)
-        self.speed_spin = QDoubleSpinBox()
-        self.speed_spin.setRange(0.1, 5.0)
-        self.speed_spin.setSingleStep(0.1)
-        self.speed_spin.setValue(1.0)
-        self.speed_spin.valueChanged.connect(lambda v: self.speed_changed.emit(v))
-        self.slider = QSlider(Qt.Orientation.Horizontal)
-        self.slider.setRange(0, 100)
-        self.slider.valueChanged.connect(self.frame_changed.emit)
-
-        export_group = QGroupBox("Export")
-        export_group.setStyleSheet(style_group)
-        export_layout = QHBoxLayout(export_group)
-
-        self.btn_export_data = QPushButton("Export Data")
-        self.btn_export_data.setStyleSheet(
-            "QPushButton { background: #303050; color: #c0c0e0; border: 1px solid #505068;"
-            "border-radius: 4px; padding: 6px 10px; }"
-            "QPushButton:hover { background: #3a3a60; }"
-        )
-        self.btn_export_data.clicked.connect(self.export_data_requested.emit)
-
-        self.btn_export_video = QPushButton("Export Video")
-        self.btn_export_video.setStyleSheet(
-            "QPushButton { background: #303050; color: #c0c0e0; border: 1px solid #505068;"
-            "border-radius: 4px; padding: 6px 10px; }"
-            "QPushButton:hover { background: #3a3a60; }"
-        )
-        self.btn_export_video.clicked.connect(self.export_video_requested.emit)
-
-        export_layout.addWidget(self.btn_export_data)
-        export_layout.addWidget(self.btn_export_video)
-        main_layout.addWidget(export_group)
-
-        # ── Physics & Display toggles ─────────────────────────────
-        vis_group = QGroupBox("Physics & Display")
-        vis_group.setStyleSheet(
-            "QGroupBox { color: #c0c0d8; border: 1px solid #404058;"
-            "border-radius: 5px; margin-top: 8px; padding-top: 14px;"
-            "font-weight: bold; }"
-            "QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 4px; }"
-        )
-        vl = QVBoxLayout(vis_group)
-        vl.setSpacing(4)
-
-        self.chk_gravity = QCheckBox("🌍  Gravity enabled")
-        self.chk_gravity.setChecked(True)
-        self.chk_gravity.setStyleSheet(STYLE_CHECK)
-        self.chk_gravity.toggled.connect(self.gravity_changed.emit)
-
-        self.chk_forces = QCheckBox("↗  Show force vectors")
-        self.chk_forces.setChecked(False)
-        self.chk_forces.setStyleSheet(STYLE_CHECK)
-        self.chk_forces.toggled.connect(self.forces_changed.emit)
-        self.chk_forces.setVisible(False)  # #1143: force toggle lives in toolstrip
-
-        vl.addWidget(self.chk_gravity)
-        # chk_forces hidden — toolstrip is the single source of truth (#1143)
-        main_layout.addWidget(vis_group)
-
-        main_layout.addStretch()
-
-        self.inp_tau_shoulder.edit.textChanged.connect(self._update_torque_preview)
-        self.inp_tau_elbow.edit.textChanged.connect(self._update_torque_preview)
-        self.inp_tau_wrist.edit.textChanged.connect(self._update_torque_preview)
-        self.inp_tend.edit.textChanged.connect(self._update_torque_preview)
+    def _get_torque_inputs(self) -> dict[str, LabeledInput]:
+        return {
+            "Shoulder": self.inp_tau_shoulder,
+            "Elbow": self.inp_tau_elbow,
+            "Wrist": self.inp_tau_wrist,
+        }
 
     def _apply_preset(self, name: str) -> None:
         if name not in self.PRESETS:
@@ -365,27 +368,32 @@ class ControlsWidgetTriple(QWidget):
         self.inp_tau_elbow.set_value(tau_el)
         self.inp_tau_wrist.set_value(tau_wr)
         self.inp_tend.set_value(str(tend))
-        self.inp_m1.set_value(str(m1))
-        self.inp_m2.set_value(str(m2))
-        self.inp_m3.set_value(str(m3))
-        self.inp_L1.set_value(str(L1))
-        self.inp_L2.set_value(str(L2))
-        self.inp_L3.set_value(str(L3))
+        # Use float API for UnitAwareInput, fall back to str for LabeledInput
+        for widget, val in [
+            (self.inp_m1, m1),
+            (self.inp_m2, m2),
+            (self.inp_m3, m3),
+            (self.inp_L1, L1),
+            (self.inp_L2, L2),
+            (self.inp_L3, L3),
+        ]:
+            try:
+                widget.set_value(val, is_si=True)
+            except TypeError:
+                widget.set_value(str(val))  # type: ignore[arg-type]
         self._update_torque_preview()
 
     def get_params(self) -> dict:
         """Parse all inputs and return a simulation parameter dict.
 
-        Raises
-        ------
-        ValueError if any field cannot be parsed or violates input contracts.
+        Raises ValueError if any field cannot be parsed or violates contracts.
         """
-        m1 = parse_float(self.inp_m1, "m1")
-        m2 = parse_float(self.inp_m2, "m2")
-        m3 = parse_float(self.inp_m3, "m3")
-        L1 = parse_float(self.inp_L1, "L1")
-        L2 = parse_float(self.inp_L2, "L2")
-        L3 = parse_float(self.inp_L3, "L3")
+        m1 = self._uai_or_parse(self.inp_m1, "m1")
+        m2 = self._uai_or_parse(self.inp_m2, "m2")
+        m3 = self._uai_or_parse(self.inp_m3, "m3")
+        L1 = self._uai_or_parse(self.inp_L1, "L1")
+        L2 = self._uai_or_parse(self.inp_L2, "L2")
+        L3 = self._uai_or_parse(self.inp_L3, "L3")
         b1 = require_non_negative(parse_float(self.inp_b1, "b1"), "b1")
         b2 = require_non_negative(parse_float(self.inp_b2, "b2"), "b2")
         b3 = require_non_negative(parse_float(self.inp_b3, "b3"), "b3")
@@ -399,7 +407,11 @@ class ControlsWidgetTriple(QWidget):
         require_positive(L2, "L2")
         require_positive(L3, "L3")
 
-        return {
+        # Torque clamp / joint limits (N-DOF base class helpers)
+        torque_lims = self._parse_torque_limits()
+        joint_lims = self._parse_joint_limits()
+
+        result = {
             "m1": m1,
             "m2": m2,
             "m3": m3,
@@ -425,6 +437,25 @@ class ControlsWidgetTriple(QWidget):
             "mu3": mu3,
             "scapula_deg": parse_float(self.inp_scapula, "Scapula"),
         }
+
+        # Torque saturation — flat list → np.ndarray for physics
+        if torque_lims is not None:
+            result["enable_clamp"] = True
+            result["torque_limits"] = torque_lims  # list[float], len 3
+        else:
+            result["enable_clamp"] = False
+
+        # Joint angle limits — (mins_rad, maxs_rad, stiffness)
+        if joint_lims is not None:
+            mins_rad, maxs_rad, stiffness = joint_lims
+            result["enable_limits"] = True
+            result["limit_mins_rad"] = mins_rad
+            result["limit_maxs_rad"] = maxs_rad
+            result["limit_stiffness"] = stiffness
+        else:
+            result["enable_limits"] = False
+
+        return result
 
     def _update_torque_preview(self) -> None:
         try:
@@ -452,49 +483,3 @@ class ControlsWidgetTriple(QWidget):
                 ),
             ]
         )
-
-    # ------------------------------------------------------------------
-    # Function generator integration
-    # ------------------------------------------------------------------
-
-    def _open_function_generator(self) -> None:
-        """Open Signal Toolkit as a dialog for torque design."""
-        from .function_generator_dialog import FunctionGeneratorDialog
-
-        dlg = FunctionGeneratorDialog(self, joint_names=["Shoulder", "Elbow", "Wrist"])
-        dlg.torque_imported.connect(self._on_torque_imported)
-        dlg.exec()
-
-    def _on_torque_imported(self, joint: str, coeffs: list[float]) -> None:
-        """Receive torque profile imported from Function Generator."""
-        coeffs_str = ", ".join(f"{c:.4g}" for c in coeffs)
-        joint_lower = joint.lower()
-        if joint_lower == "shoulder":
-            self.inp_tau_shoulder.set_value(coeffs_str)
-        elif joint_lower == "elbow":
-            self.inp_tau_elbow.set_value(coeffs_str)
-        else:
-            self.inp_tau_wrist.set_value(coeffs_str)
-        self._update_torque_preview()
-
-    def _on_play_toggled(self, checked: bool) -> None:
-        self._is_playing = checked
-        self.btn_play.setText("Pause" if checked else "Play")
-        self.play_toggled.emit(checked)
-
-    def set_slider_range(self, max_val: int) -> None:
-        """Pre: max_val >= 0"""
-        assert max_val >= 0, f"Slider max must be non-negative, got {max_val}"
-        self.slider.setRange(0, max_val)
-
-    def set_slider_value(self, val: int) -> None:
-        """Pre: 0 <= val <= slider.maximum()"""
-        assert (
-            0 <= val <= self.slider.maximum()
-        ), f"Slider value {val} out of range [0, {self.slider.maximum()}]"
-        self.slider.blockSignals(True)
-        self.slider.setValue(val)
-        self.slider.blockSignals(False)
-
-    def stop_playback(self) -> None:
-        self.btn_play.setChecked(False)
