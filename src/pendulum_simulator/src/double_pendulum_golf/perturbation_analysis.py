@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
 
@@ -175,7 +176,7 @@ class PerturbationConfig:
     noise_amplitude: float = 0.1
     seed: int | None = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         assert self.n_trials > 0, f"n_trials must be positive, got {self.n_trials}"
         assert (
             self.noise_amplitude >= 0
@@ -246,8 +247,8 @@ def variability_summary(
 def batch_perturb_and_simulate(
     base_coeffs: list[list[float]],
     config: PerturbationConfig,
-    simulate_fn,
-    extract_fn,
+    simulate_fn: Any,
+    extract_fn: Any,
 ) -> list[dict]:
     """Run N perturbed simulations and collect results.
 

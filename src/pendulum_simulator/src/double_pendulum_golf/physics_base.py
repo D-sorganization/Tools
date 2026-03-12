@@ -99,7 +99,7 @@ def friction_torque_ndof(
         tau -= coulomb_coeffs * np.sign(qdot)
 
     assert np.all(np.isfinite(tau)), f"Friction torque non-finite: {tau}"
-    return tau  # type: ignore[return-value]
+    return tau  # type: ignore[no-any-return]
 
 
 # ---------------------------------------------------------------------------
@@ -122,7 +122,7 @@ def clamp_torque_ndof(tau: np.ndarray, limits: np.ndarray) -> np.ndarray:
     assert limits.shape == (n,), f"limits shape {limits.shape} vs tau {tau.shape}"
     assert np.all(limits > 0), "Torque limits must be positive"
     result = np.clip(tau, -limits, limits)
-    return result  # type: ignore[return-value]
+    return result  # type: ignore[no-any-return]
 
 
 # ---------------------------------------------------------------------------

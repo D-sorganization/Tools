@@ -131,7 +131,7 @@ def compute_system_com(
 
     assert com.shape == (2,), f"Expected shape (2,), got {com.shape}"  # type: ignore[union-attr]
     assert np.all(np.isfinite(com)), f"COM is not finite: {com}"
-    return com  # type: ignore[return-value]
+    return com  # type: ignore[no-any-return]
 
 
 def hub_offset_for_com(

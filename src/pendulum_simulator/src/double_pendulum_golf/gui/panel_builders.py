@@ -565,7 +565,7 @@ def wire_toolstrip(main_window: Any) -> None:
     # ── Reset view → active panel's pendulum widget ───────────────
     ts.reset_view_requested.connect(
         lambda: (
-            main_window._active_panel().pendulum.reset_view()  # type: ignore[attr-defined]
+            main_window._active_panel().pendulum.reset_view()
             if hasattr(main_window._active_panel().pendulum, "reset_view")
             else None
         )
@@ -574,7 +574,7 @@ def wire_toolstrip(main_window: Any) -> None:
     # ── Per-segment overlay visibility ────────────────────────────
     ts.segment_visibility_changed.connect(
         lambda vis: (
-            main_window._active_panel().pendulum.set_visible_segments(vis)  # type: ignore[attr-defined]
+            main_window._active_panel().pendulum.set_visible_segments(vis)
             if hasattr(main_window._active_panel().pendulum, "set_visible_segments")
             else None
         )
@@ -605,8 +605,8 @@ def wire_toolstrip(main_window: Any) -> None:
         panel.sim_finished.connect(
             lambda _p=panel: (
                 [
-                    ts.set_running(False),  # type: ignore[func-returns-value]
-                    ts.set_frame_range(_p.current_n_steps()),  # type: ignore[func-returns-value]
+                    ts.set_running(False),
+                    ts.set_frame_range(_p.current_n_steps()),
                 ]
                 if _p is main_window._active_panel()
                 else None

@@ -13,7 +13,7 @@ Usage:
 """
 
 import logging
-from typing import Dict, Tuple
+from typing import Any, Dict, Tuple
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -65,7 +65,7 @@ class DoublePendulumParams:
         self.friction2 = friction2
         self.m_clubhead = m_clubhead
 
-    def to_rust(self):
+    def to_rust(self) -> Any:
         """Convert to Rust parameter object (if native available)."""
         if HAS_NATIVE:
             return pendulum_core.PyDoublePendulumParams(
@@ -173,7 +173,7 @@ class DoublePendulum:
         """Compute forward kinematics."""
         if self.use_native:
             try:
-                return pendulum_core.py_double_forward_kinematics(
+                return pendulum_core.py_double_forward_kinematics(  # type: ignore[no-any-return]
                     q.tolist(), self.params.to_rust()
                 )
             except (RuntimeError, AttributeError, TypeError) as e:
@@ -243,7 +243,7 @@ class GolferParams:
         self.grip_left = grip_left
         self.g = g
 
-    def to_rust(self):
+    def to_rust(self) -> Any:
         """Convert to Rust parameter object (if native available)."""
         if HAS_NATIVE:
             return pendulum_core.PyGolferParams(

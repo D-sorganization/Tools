@@ -110,7 +110,7 @@ def net_force_on_club(
     net = np.array(f_right, dtype=float) + np.array(f_left, dtype=float)
     assert net.shape == (2,)
     assert np.all(np.isfinite(net)), f"Net force is not finite: {net}"
-    return net  # type: ignore[return-value]
+    return net  # type: ignore[no-any-return]
 
 
 def _cross_2d(r: np.ndarray, f: np.ndarray) -> float:
