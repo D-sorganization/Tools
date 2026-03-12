@@ -151,6 +151,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+
       - name: Install Dependencies
         run: |
           pip install --upgrade pip
