@@ -211,7 +211,7 @@ class MatrixWidgetBase(QWidget):
         """
         rows, cols = self.get_matrix_size()
         entries = self.get_matrix_entries(mc)
-        col_labels = self.get_column_labels()
+        _ = self.get_column_labels()  # reserved for future DOF labels in matrix
 
         # Compute cell dimensions to fit matrix
         cell_w = max(80, (self.width() - 60) // cols)
