@@ -106,7 +106,7 @@ def main() -> int:
         return result
 
     parser.error(f"Unknown command: {args.command}")
-    return 2
+    return 2  # type: ignore[unreachable]
 
 
 if __name__ == "__main__":
