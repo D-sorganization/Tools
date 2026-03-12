@@ -145,7 +145,6 @@ class MatrixWidgetBase(QWidget, ABC):
         Returns:
             Tuple of (num_rows, num_cols), e.g., (2, 2), (3, 3), (8, 8)
         """
-        pass
 
     @abstractmethod
     def get_matrix_entries(self, mc: dict) -> list:
@@ -156,7 +155,6 @@ class MatrixWidgetBase(QWidget, ABC):
         Returns:
             List of (row, col, label, value, is_diag) tuples, one per cell
         """
-        pass
 
     @abstractmethod
     def get_column_labels(self) -> list[str]:
@@ -165,7 +163,6 @@ class MatrixWidgetBase(QWidget, ABC):
         Returns:
             List of label strings, or empty list if no labels needed
         """
-        pass
 
     @abstractmethod
     def _draw_coupling_ratio(self, painter: QPainter, mc: dict, y: int) -> int:
@@ -178,7 +175,6 @@ class MatrixWidgetBase(QWidget, ABC):
         Returns:
             New y cursor position after drawing
         """
-        pass
 
     # ======================================================================
     # Shared drawing helpers
