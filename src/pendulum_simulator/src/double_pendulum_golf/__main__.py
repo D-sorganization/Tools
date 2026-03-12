@@ -23,8 +23,10 @@ class _WheelBlockFilter(QObject):
     Closes #1193.
     """
 
-    def eventFilter(self, obj: QObject, event: QEvent) -> bool:  # noqa: N802
-        if event.type() == QEvent.Type.Wheel:
+    def eventFilter(  # noqa: N802
+        self, obj: QObject | None, event: QEvent | None
+    ) -> bool:
+        if event is not None and event.type() == QEvent.Type.Wheel:
             if isinstance(obj, (QComboBox, QDoubleSpinBox, QSpinBox)):
                 event.ignore()
                 return True  # Block the event

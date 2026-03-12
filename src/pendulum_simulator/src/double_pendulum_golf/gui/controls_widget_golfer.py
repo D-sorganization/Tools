@@ -304,8 +304,12 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(3)
-        self.inp_d_rs = LabeledInput("d_RS (m)", "0.20", "Hub bar to right shoulder offset")
-        self.inp_d_ls = LabeledInput("d_LS (m)", "0.20", "Hub bar to left shoulder offset")
+        self.inp_d_rs = LabeledInput(
+            "d_RS (m)", "0.20", "Hub bar to right shoulder offset"
+        )
+        self.inp_d_ls = LabeledInput(
+            "d_LS (m)", "0.20", "Hub bar to left shoulder offset"
+        )
         self.inp_grip_right = LabeledInput(
             "Grip R (m)", "0.05", "Right hand grip from club base"
         )
@@ -329,14 +333,15 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
             "Set to 0 to disable.",
         )
         self.inp_m_rscap = LabeledInput(
-            "R UBody m", "7.0",
+            "R UBody m",
+            "7.0",
             "Right upper body mass (kg).\n"
-            "Should be ~2× arm mass to represent torso."
+            "Should be ~2× arm mass to represent torso.",
         )
         self.inp_m_lscap = LabeledInput(
-            "L UBody m", "7.0",
-            "Left upper body mass (kg).\n"
-            "Should be ~2× arm mass to represent torso."
+            "L UBody m",
+            "7.0",
+            "Left upper body mass (kg).\n" "Should be ~2× arm mass to represent torso.",
         )
         for w in [
             self.inp_d_rs,

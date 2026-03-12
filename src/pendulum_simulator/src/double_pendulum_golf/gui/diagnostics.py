@@ -339,9 +339,9 @@ class DiagnosticsViewer(QDialog):
         self._table.setHorizontalHeaderLabels(
             ["Time", "Severity", "Category", "Message", "Source"]
         )
-        self._table.horizontalHeader().setStretchLastSection(True)
         header_view = self._table.horizontalHeader()
         assert header_view is not None
+        header_view.setStretchLastSection(True)
         header_view.setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
         header_view.setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
         header_view.setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
