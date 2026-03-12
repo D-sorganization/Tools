@@ -82,6 +82,11 @@ class BasePendulumWidget(QWidget):
         self._show_force_ellipsoids: bool = False
         self._show_com: bool = False
 
+        # Torque / moment vector display (#1208)
+        self._show_torque_vectors: bool = False
+        self._show_moment_of_force: bool = False
+        self._show_sum_moments: bool = False
+
         # Ellipsoid display scales
         self._mob_ellipsoid_scale: float = 1.0
         self._force_ellipsoid_scale: float = 1.0
@@ -192,6 +197,21 @@ class BasePendulumWidget(QWidget):
     def set_view_azimuth(self, angle_rad: float) -> None:
         """Set view azimuth for canvas rotation (#1118)."""
         self._view_azimuth = float(angle_rad)
+        self.update()
+
+    def set_show_torque_vectors(self, show: bool) -> None:
+        """Toggle torque vector display at each joint (#1208)."""
+        self._show_torque_vectors = bool(show)
+        self.update()
+
+    def set_show_moment_of_force(self, show: bool) -> None:
+        """Toggle moment-of-force (proximal-on-distal) vector display (#1208)."""
+        self._show_moment_of_force = bool(show)
+        self.update()
+
+    def set_show_sum_moments(self, show: bool) -> None:
+        """Toggle sum-of-moments (resultant) vector display (#1208)."""
+        self._show_sum_moments = bool(show)
         self.update()
 
     def reset_view(self) -> None:
