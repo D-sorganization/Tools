@@ -127,7 +127,8 @@ repos:
       - id: bandit
         name: "bandit (security scan)"
         stages: [pre-push]
-        args: ["-r", ".", "-ll", "-ii", "-x", "tests/,archive/,legacy/,.github/"]
+        args:
+          ["-r", ".", "-ll", "-ii", "-x", "tests/,archive/,legacy/,.github/"]
         pass_filenames: false
         # Only run if Python files changed
         types: [python]
@@ -138,7 +139,7 @@ repos:
       - id: pytest-unit
         name: "pytest (unit tests)"
         stages: [pre-push]
-        entry: python -m pytest tests/unit -x -q --tb=short -m "not slow and not integration"
+        entry: python3 -m pytest tests/unit -x -q --tb=short -m "not slow and not integration"
         language: system
         pass_filenames: false
         # Only run if Python files changed
@@ -179,4 +180,4 @@ ci:
   autofix_prs: true
   autoupdate_branch: "main"
   autoupdate_commit_msg: "chore: update pre-commit hooks"
-  skip: [pytest-unit, bandit, mypy]  # Skip slow hooks in CI
+  skip: [pytest-unit, bandit, mypy] # Skip slow hooks in CI
