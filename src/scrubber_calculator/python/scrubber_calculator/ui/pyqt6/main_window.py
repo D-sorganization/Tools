@@ -540,8 +540,9 @@ class ScrubberCalculatorWindow(BaseCalculatorWidget):
 
 def main() -> None:
     """Run the Scrubber Calculator application."""
-    from shared.python.theme import setup_themed_app
     from PyQt6.QtWidgets import QMainWindow
+
+    from shared.python.theme import setup_themed_app
 
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
