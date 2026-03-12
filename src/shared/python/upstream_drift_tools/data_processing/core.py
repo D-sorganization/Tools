@@ -480,7 +480,7 @@ class DataProcessorEngine(BaseCalculationEngine):
         elif fit_type == FitType.POLYNOMIAL:
             c = np.polyfit(x, y, degree)
             f = np.polyval(c, x)
-            terms = [f"{c[i]:.4f}x^{degree-i}" for i in range(degree)] + [
+            terms = [f"{c[i]:.4f}x^{degree - i}" for i in range(degree)] + [
                 f"{c[-1]:.4f}"
             ]
             eq = "y = " + " + ".join(terms)
