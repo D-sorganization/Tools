@@ -32,16 +32,25 @@ from PyQt6.QtWidgets import (
 logger = logging.getLogger(__name__)
 
 # ── Ensure shared/python (Tools/src/shared/python) is on sys.path ──────
+# signal_toolkit needs two path entries:
+#   1. shared/python   — so `import signal_toolkit` works
+#   2. src/            — so `from shared.python.safe_eval import ...` works
+#                        (signal_toolkit uses this internally)
 _this_file = Path(__file__).resolve()
-# Walk up to find the `src` dir that contains `shared/python/signal_toolkit`
 _search = _this_file.parent
 for _ in range(10):
     _candidate = _search / "shared" / "python"
     if (_candidate / "signal_toolkit" / "__init__.py").is_file():
+        # Add shared/python for top-level signal_toolkit imports
         _norm = os.path.normpath(str(_candidate))
         if _norm not in [os.path.normpath(s) for s in sys.path]:
             sys.path.insert(0, str(_candidate))
             logger.info("Added signal_toolkit path: %s", _candidate)
+        # Add parent (src/) for internal `from shared.python.X` imports
+        _parent_norm = os.path.normpath(str(_search))
+        if _parent_norm not in [os.path.normpath(s) for s in sys.path]:
+            sys.path.insert(0, str(_search))
+            logger.info("Added shared.python parent path: %s", _search)
         break
     _search = _search.parent
 else:
@@ -164,14 +173,22 @@ class FunctionGeneratorDialog(QDialog):
 
             layout.addWidget(tabs, stretch=1)
         else:
+            from PyQt6.QtWidgets import QTextEdit
+
             error_detail = _WIDGET_IMPORT_ERROR or "Unknown reason"
-            note = QLabel(
+            note = QTextEdit()
+            note.setReadOnly(True)
+            note.setPlainText(
                 f"⚠ Signal Toolkit widgets not available.\n\n"
                 f"Reason: {error_detail}\n\n"
+                f"Searched from: {_this_file}\n\n"
                 "Ensure the signal_toolkit package is on the Python path.\n"
+                "You can select and copy this text for troubleshooting."
             )
-            note.setWordWrap(True)
-            note.setStyleSheet("color: #e0a060; padding: 8px; font-size: 11px;")
+            note.setStyleSheet(
+                "QTextEdit { color: #e0a060; background: #1a1a2e;"
+                " padding: 8px; font-size: 12px; border: 1px solid #404060; }"
+            )
             layout.addWidget(note)
 
         # Close button
