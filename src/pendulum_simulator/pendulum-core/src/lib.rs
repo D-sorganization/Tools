@@ -14,6 +14,7 @@
 //! - `serde`: Enable serialization support via serde
 
 pub mod batch;
+pub mod cmaes;
 pub mod double;
 pub mod golfer;
 pub mod golfer_constraints;
@@ -47,6 +48,8 @@ pub use golfer_constraints::{
 pub use integrator::{
     integrate_double_pendulum, integrate_golfer, integrate_triple_pendulum, RK45Config,
 };
+
+pub use cmaes::{optimize, optimize_torque_coefficients, CmaEsConfig, CmaEsResult};
 
 pub use types::{
     DoubleFKResult, DoublePendulumParams, GolferFKResult, GolferParams, TripleFKResult,
@@ -575,12 +578,122 @@ pub mod py_bindings {
         }
     }
 
+    /// Python wrapper for CMA-ES result
+    #[pyclass]
+    #[derive(Clone)]
+    pub struct PyCmaEsResult {
+        pub best_solution: Vec<f64>,
+        pub best_fitness: f64,
+        pub fitness_history: Vec<f64>,
+        pub generations: usize,
+        pub evaluations: usize,
+    }
+
+    #[pymethods]
+    impl PyCmaEsResult {
+        #[getter]
+        pub fn best_solution(&self) -> Vec<f64> {
+            self.best_solution.clone()
+        }
+
+        #[getter]
+        pub fn best_fitness(&self) -> f64 {
+            self.best_fitness
+        }
+
+        #[getter]
+        pub fn fitness_history(&self) -> Vec<f64> {
+            self.fitness_history.clone()
+        }
+
+        #[getter]
+        pub fn generations(&self) -> usize {
+            self.generations
+        }
+
+        #[getter]
+        pub fn evaluations(&self) -> usize {
+            self.evaluations
+        }
+    }
+
+    /// Python wrapper for CMA-ES configuration
+    #[pyclass]
+    #[derive(Clone)]
+    pub struct PyCmaEsConfig {
+        pub population_size: usize,
+        pub max_iterations: usize,
+        pub initial_sigma: f64,
+        pub target_fitness: Option<f64>,
+        pub fitness_tolerance: f64,
+    }
+
+    #[pymethods]
+    impl PyCmaEsConfig {
+        #[new]
+        #[pyo3(signature = (population_size=0, max_iterations=500, initial_sigma=0.3, target_fitness=None, fitness_tolerance=1e-12))]
+        pub fn new(
+            population_size: usize,
+            max_iterations: usize,
+            initial_sigma: f64,
+            target_fitness: Option<f64>,
+            fitness_tolerance: f64,
+        ) -> Self {
+            PyCmaEsConfig {
+                population_size,
+                max_iterations,
+                initial_sigma,
+                target_fitness,
+                fitness_tolerance,
+            }
+        }
+    }
+
+    /// Run CMA-ES optimization on torque polynomial coefficients (Python interface).
+    ///
+    /// This is a basic Python wrapper that runs a CMA-ES with a simple synthetic
+    /// objective function for testing. For real usage, use the Rust API.
+    #[pyfunction]
+    #[pyo3(signature = (n_joints, n_coeffs_per_joint, initial_coeffs, max_iterations=500))]
+    pub fn py_cmaes_optimize_torque(
+        n_joints: usize,
+        n_coeffs_per_joint: usize,
+        initial_coeffs: Vec<f64>,
+        max_iterations: usize,
+    ) -> PyResult<PyCmaEsResult> {
+        let config = crate::cmaes::CmaEsConfig {
+            population_size: 0, // auto
+            max_iterations,
+            initial_sigma: 0.3,
+            target_fitness: None,
+            fitness_tolerance: 1e-12,
+        };
+
+        let result = crate::cmaes::optimize_torque_coefficients(
+            n_joints,
+            n_coeffs_per_joint,
+            &initial_coeffs,
+            |coeffs| coeffs.iter().map(|c| c * c).sum::<f64>(),
+            &config,
+        );
+
+        Ok(PyCmaEsResult {
+            best_solution: result.best_solution,
+            best_fitness: result.best_fitness,
+            fitness_history: result.fitness_history,
+            generations: result.generations,
+            evaluations: result.evaluations,
+        })
+    }
+
     /// Module initialization
     #[pymodule]
     pub fn pendulum_core(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
         m.add_class::<PyDoublePendulumParams>()?;
         m.add_class::<PyTriplePendulumParams>()?;
         m.add_class::<PyGolferParams>()?;
+        m.add_class::<PyCmaEsConfig>()?;
+        m.add_class::<PyCmaEsResult>()?;
         m.add_function(wrap_pyfunction!(py_double_mass_matrix, m)?)?;
         m.add_function(wrap_pyfunction!(py_double_gravity_vector, m)?)?;
         m.add_function(wrap_pyfunction!(py_double_coriolis, m)?)?;
@@ -598,6 +711,7 @@ pub mod py_bindings {
         m.add_function(wrap_pyfunction!(py_golfer_project_to_constraints, m)?)?;
         m.add_function(wrap_pyfunction!(py_golfer_project_velocity, m)?)?;
         m.add_function(wrap_pyfunction!(py_batch_evaluate_double, m)?)?;
+        m.add_function(wrap_pyfunction!(py_cmaes_optimize_torque, m)?)?;
         Ok(())
     }
 
@@ -846,5 +960,128 @@ pub mod wasm_bindings {
             fk.club_tip.0,
             fk.club_tip.1,
         ])
+    }
+
+    /// WASM-safe wrapper for CMA-ES result
+    #[wasm_bindgen]
+    pub struct WasmCmaEsResult {
+        best_solution: Vec<f64>,
+        best_fitness: f64,
+        fitness_history: Vec<f64>,
+        generations: usize,
+        evaluations: usize,
+    }
+
+    #[wasm_bindgen]
+    impl WasmCmaEsResult {
+        #[wasm_bindgen(getter)]
+        pub fn best_solution(&self) -> Vec<f64> {
+            self.best_solution.clone()
+        }
+
+        #[wasm_bindgen(getter)]
+        pub fn best_fitness(&self) -> f64 {
+            self.best_fitness
+        }
+
+        #[wasm_bindgen(getter)]
+        pub fn fitness_history(&self) -> Vec<f64> {
+            self.fitness_history.clone()
+        }
+
+        #[wasm_bindgen(getter)]
+        pub fn generations(&self) -> usize {
+            self.generations
+        }
+
+        #[wasm_bindgen(getter)]
+        pub fn evaluations(&self) -> usize {
+            self.evaluations
+        }
+    }
+
+    /// WASM-safe wrapper for CMA-ES configuration
+    #[wasm_bindgen]
+    pub struct WasmCmaEsConfig {
+        population_size: usize,
+        max_iterations: usize,
+        initial_sigma: f64,
+        target_fitness: Option<f64>,
+        fitness_tolerance: f64,
+    }
+
+    #[wasm_bindgen]
+    impl WasmCmaEsConfig {
+        #[wasm_bindgen(constructor)]
+        pub fn new(
+            population_size: usize,
+            max_iterations: usize,
+            initial_sigma: f64,
+        ) -> WasmCmaEsConfig {
+            WasmCmaEsConfig {
+                population_size: if population_size == 0 {
+                    0
+                } else {
+                    population_size
+                },
+                max_iterations,
+                initial_sigma,
+                target_fitness: None,
+                fitness_tolerance: 1e-12,
+            }
+        }
+
+        #[wasm_bindgen(js_name = withTargetFitness)]
+        pub fn with_target_fitness(
+            population_size: usize,
+            max_iterations: usize,
+            initial_sigma: f64,
+            target_fitness: f64,
+        ) -> WasmCmaEsConfig {
+            WasmCmaEsConfig {
+                population_size,
+                max_iterations,
+                initial_sigma,
+                target_fitness: Some(target_fitness),
+                fitness_tolerance: 1e-12,
+            }
+        }
+    }
+
+    /// Run CMA-ES optimization on torque coefficients (WASM interface).
+    #[wasm_bindgen]
+    pub fn wasm_cmaes_optimize_torque(
+        n_joints: usize,
+        n_coeffs_per_joint: usize,
+        initial_coeffs: &[f64],
+        config: &WasmCmaEsConfig,
+    ) -> Result<WasmCmaEsResult, JsValue> {
+        if initial_coeffs.len() != n_joints * n_coeffs_per_joint {
+            return Err(JsValue::from_str("initial_coeffs length mismatch"));
+        }
+
+        let rust_config = crate::cmaes::CmaEsConfig {
+            population_size: config.population_size,
+            max_iterations: config.max_iterations,
+            initial_sigma: config.initial_sigma,
+            target_fitness: config.target_fitness,
+            fitness_tolerance: config.fitness_tolerance,
+        };
+
+        let result = crate::cmaes::optimize_torque_coefficients(
+            n_joints,
+            n_coeffs_per_joint,
+            initial_coeffs,
+            |coeffs| coeffs.iter().map(|c| c * c).sum::<f64>(),
+            &rust_config,
+        );
+
+        Ok(WasmCmaEsResult {
+            best_solution: result.best_solution,
+            best_fitness: result.best_fitness,
+            fitness_history: result.fitness_history,
+            generations: result.generations,
+            evaluations: result.evaluations,
+        })
     }
 }

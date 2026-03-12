@@ -31,7 +31,12 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from ..physics import JointLimits, PendulumParams, TorqueClamp
+from ..physics import (
+    JointLimits,
+    JointLimitsNDOF,
+    PendulumParams,
+    TorqueClamp,
+)
 from ..physics_golfer import GolferParams
 from ..physics_triple import TriplePendulumParams
 from ..simulation import make_polynomial_torque, run_simulation
@@ -589,6 +594,20 @@ class MainWindow(QMainWindow):
                 p["wrist_coeffs"],
             )
 
+        def build_limits(p: dict) -> JointLimitsNDOF | None:
+            if not p.get("enable_limits", False):
+                return None
+            return JointLimitsNDOF(
+                angle_min=np.array(p["limit_mins_rad"]),
+                angle_max=np.array(p["limit_maxs_rad"]),
+                stiffness=p.get("limit_stiffness", 500.0),
+            )
+
+        def build_clamp(p: dict) -> np.ndarray | None:
+            if not p.get("enable_clamp", False):
+                return None
+            return np.array(p["torque_limits"])
+
         # Optimizer (#1109)
         optimizer = OptimizationWidget(
             model_name="Triple Pendulum",
@@ -600,6 +619,8 @@ class MainWindow(QMainWindow):
             params = build_params(p)
             initial_state = build_state(p)
             t_end = p["t_end"]
+            limits = build_limits(p)
+            clamp = build_clamp(p)
 
             def objective(coeffs: np.ndarray) -> float:
                 n_third = len(coeffs) // 3
@@ -613,6 +634,8 @@ class MainWindow(QMainWindow):
                         initial_state=initial_state,
                         t_end=t_end,
                         torque_func=torque_func,  # type: ignore[arg-type]
+                        torque_limits=clamp,
+                        limits=limits,
                     )
                     vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]
                     tip_v = vels.get("tip", (0, 0))
@@ -636,6 +659,8 @@ class MainWindow(QMainWindow):
             torque_builder=build_torque,
             state_builder=build_state,
             run_simulation=run_simulation_triple,
+            limits_builder=build_limits,
+            clamp_builder=build_clamp,
             optimizer=optimizer,
             objective_builder=_make_triple_objective,
         )
@@ -718,6 +743,20 @@ class MainWindow(QMainWindow):
                 p["lh_coeffs"],
             )
 
+        def build_limits(p: dict) -> JointLimitsNDOF | None:
+            if not p.get("enable_limits", False):
+                return None
+            return JointLimitsNDOF(
+                angle_min=np.array(p["limit_mins_rad"]),
+                angle_max=np.array(p["limit_maxs_rad"]),
+                stiffness=p.get("limit_stiffness", 500.0),
+            )
+
+        def build_clamp(p: dict) -> np.ndarray | None:
+            if not p.get("enable_clamp", False):
+                return None
+            return np.array(p["torque_limits"])
+
         # Optimizer (#1110)
         optimizer = OptimizationWidget(
             model_name="Golfer Upper Body",
@@ -729,6 +768,8 @@ class MainWindow(QMainWindow):
             params = build_params(p)
             initial_state = build_state(p)
             t_end = p["t_end"]
+            limits = build_limits(p)
+            clamp = build_clamp(p)
 
             def objective(coeffs: np.ndarray) -> float:
                 n_seventh = max(1, len(coeffs) // 7)
@@ -742,6 +783,8 @@ class MainWindow(QMainWindow):
                         initial_state=initial_state,
                         t_end=t_end,
                         torque_func=torque_func,  # type: ignore[arg-type]
+                        torque_limits=clamp,
+                        limits=limits,
                     )
                     vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]
                     tip_v = vels.get("club_tip", (0, 0))
@@ -765,6 +808,8 @@ class MainWindow(QMainWindow):
             torque_builder=build_torque,
             state_builder=build_state,
             run_simulation=run_simulation_golfer,
+            limits_builder=build_limits,
+            clamp_builder=build_clamp,
             optimizer=optimizer,
             objective_builder=_make_golfer_objective,
         )
@@ -845,14 +890,16 @@ class MainWindow(QMainWindow):
     # ------------------------------------------------------------------
 
     def _on_popout_chart(self) -> None:
-        """Open a pop-out chart for the active panel's simulation data.
+        """Open a pop-out chart with user-selected data variables.
 
         Design by Contract
         ------------------
         Pre: A simulation must have been run (result is not None).
-        Post: A detachable chart window opens with torque history.
+        Post: A detachable chart window opens with the selected data.
         """
+        from .chart_data_dialog import ChartDataDialog
         from .popout_chart import PopOutChart
+        from ..data_extractor import extract_series
 
         panel = self._active_panel()
         result = panel._result
@@ -866,25 +913,49 @@ class MainWindow(QMainWindow):
             )
             return
 
-        # Pop out torque history: plot driving torque at joint 1 vs time
-        t = np.asarray(result.t, dtype=np.float64)
-        torques = np.array(
-            [result.torques_at(i)[0] for i in range(result.n_steps)],
-            dtype=np.float64,
-        )
+        # Determine model type from active panel
+        model_type = "double"
+        if hasattr(panel, "_triple"):
+            model_type = "triple"
+        elif hasattr(panel, "_golfer"):
+            model_type = "golfer"
+
+        dlg = ChartDataDialog(self, model_type=model_type)
+        if not dlg.exec():
+            return
+
+        x_key, y_key, reg_degree = dlg.get_selection()
+
+        try:
+            x_vals, x_desc, x_unit = extract_series(result, x_key, model_type)
+            y_vals, y_desc, y_unit = extract_series(result, y_key, model_type)
+        except (KeyError, AttributeError) as exc:
+            from PyQt6.QtWidgets import QMessageBox
+
+            QMessageBox.warning(
+                self,
+                "Data Error",
+                f"Could not extract data: {exc}",
+            )
+            return
 
         chart = PopOutChart(self)
         chart.plot_data(
-            t, torques, "Time (s)", "Torque (N·m)", "Joint 1 Driving Torque"
+            x_vals,
+            y_vals,
+            f"{x_desc} ({x_unit})",
+            f"{y_desc} ({y_unit})",
+            f"{y_desc} vs {x_desc}",
         )
-        chart.add_regression(degree=3)
+        if reg_degree > 0:
+            chart.add_regression(degree=reg_degree)
         chart.show()
 
         # Keep reference to prevent garbage collection
         if not hasattr(self, "_popout_charts"):
             self._popout_charts: list = []
         self._popout_charts.append(chart)
-        logger.info("Pop-out chart opened for active panel")
+        logger.info("Pop-out chart opened: %s vs %s", y_key, x_key)
 
     # ------------------------------------------------------------------
     # Theme management

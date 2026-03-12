@@ -86,10 +86,7 @@ pub fn forward_kinematics(q: &[f64; 2], params: &DoublePendulumParams) -> Double
     let theta2 = theta1 + phi;
 
     // Wrist position: shoulder + L1*(sin(θ₁), -cos(θ₁))
-    let wrist = (
-        params.l1 * theta1.sin(),
-        -params.l1 * theta1.cos(),
-    );
+    let wrist = (params.l1 * theta1.sin(), -params.l1 * theta1.cos());
 
     // Club tip: wrist + L2*(sin(θ₂), -cos(θ₂))
     let club_tip = (
@@ -115,12 +112,7 @@ pub fn jacobian_wrist(q: &[f64; 2], params: &DoublePendulumParams) -> SMatrix<f6
     let cos_theta1 = theta1.cos();
     let sin_theta1 = theta1.sin();
 
-    SMatrix::<f64, 2, 2>::new(
-        params.l1 * cos_theta1,
-        0.0,
-        -params.l1 * sin_theta1,
-        0.0,
-    )
+    SMatrix::<f64, 2, 2>::new(params.l1 * cos_theta1, 0.0, -params.l1 * sin_theta1, 0.0)
 }
 
 /// Compute the Jacobian of the club tip position with respect to q.

@@ -85,11 +85,9 @@ pub fn coriolis(q: &[f64; 3], qdot: &[f64; 3], params: &TriplePendulumParams) ->
     let c0 = (h12 + h13) * (2.0 * dtheta1 + dphi1) * dphi1
         + (h13 + h23) * (2.0 * dtheta1 + 2.0 * dphi1 + dphi2) * dphi2;
 
-    let c1 = -(h12 + h13) * dtheta1 * dtheta1
-        + h23 * (2.0 * dtheta1 + 2.0 * dphi1 + dphi2) * dphi2;
+    let c1 = -(h12 + h13) * dtheta1 * dtheta1 + h23 * (2.0 * dtheta1 + 2.0 * dphi1 + dphi2) * dphi2;
 
-    let c2 = -(h13 + h23) * dtheta1 * dtheta1
-        - h23 * (2.0 * dtheta1 + dphi1) * dphi1;
+    let c2 = -(h13 + h23) * dtheta1 * dtheta1 - h23 * (2.0 * dtheta1 + dphi1) * dphi1;
 
     SVector::<f64, 3>::new(c0, c1, c2)
 }
