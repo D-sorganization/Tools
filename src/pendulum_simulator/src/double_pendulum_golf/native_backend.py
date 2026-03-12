@@ -547,13 +547,15 @@ def batch_evaluate_double(
         return None
 
     try:
-        result: list[tuple[float, float, bool]] = _pendulum_core.py_batch_evaluate_double(
-            _to_rust_double_params(params),
-            coeffs_batch,
-            n_coeffs_per_joint,
-            q0,
-            qdot0,
-            t_end,
+        result: list[tuple[float, float, bool]] = (
+            _pendulum_core.py_batch_evaluate_double(
+                _to_rust_double_params(params),
+                coeffs_batch,
+                n_coeffs_per_joint,
+                q0,
+                qdot0,
+                t_end,
+            )
         )
         return result
     except Exception as exc:  # pragma: no cover
