@@ -8,7 +8,6 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # #1137 — Unit Converter
 # ---------------------------------------------------------------------------
@@ -268,9 +267,9 @@ class TestCodeQuality:
                 stripped = line.strip()
                 if stripped.startswith("#") or stripped.startswith('"'):
                     continue
-                assert "print(" not in stripped, (
-                    f"optimizer_gpu.py line {i}: found print() call"
-                )
+                assert (
+                    "print(" not in stripped
+                ), f"optimizer_gpu.py line {i}: found print() call"
         except ImportError:
             pytest.skip("optimizer_gpu not available")
 
