@@ -67,9 +67,9 @@ class MatrixWidgetBase(QWidget):
           - result has n_steps >= 1
         """
         assert result is not None, f"{self.__class__.__name__}: result must not be None"
-        assert (
-            result.n_steps >= 1
-        ), f"{self.__class__.__name__}: result must have at least one time step"
+        assert result.n_steps >= 1, (
+            f"{self.__class__.__name__}: result must have at least one time step"
+        )
         self._result = result
         self._current_idx = 0
         logger.debug(
@@ -108,9 +108,7 @@ class MatrixWidgetBase(QWidget):
         if self._result is None:
             painter.setPen(self.COLOR_LABEL)
             painter.setFont(QFont("Sans", 11))
-            painter.drawText(
-                self.rect(), Qt.AlignmentFlag.AlignCenter, "No simulation loaded"
-            )
+            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "No simulation loaded")
             painter.end()
             return
 
@@ -142,7 +140,9 @@ class MatrixWidgetBase(QWidget):
     def get_matrix_size(self) -> tuple[int, int]:
         """Return (rows, cols) for the mass matrix grid layout.
 
-        Returns:
+        Returns
+        -------
+        tuple[int, int]
             Tuple of (num_rows, num_cols), e.g., (2, 2), (3, 3), (8, 8)
         """
 
@@ -150,9 +150,14 @@ class MatrixWidgetBase(QWidget):
     def get_matrix_entries(self, mc: dict) -> list:
         """Build list of matrix cell entries for rendering.
 
-        Pre:
-          - mc is a dict with matrix values
-        Returns:
+        Parameters
+        ----------
+        mc : dict
+            Dictionary with matrix values
+
+        Returns
+        -------
+        list
             List of (row, col, label, value, is_diag) tuples, one per cell
         """
 
@@ -160,7 +165,9 @@ class MatrixWidgetBase(QWidget):
     def get_column_labels(self) -> list[str]:
         """Return list of DOF (degree of freedom) column labels.
 
-        Returns:
+        Returns
+        -------
+        list[str]
             List of label strings, or empty list if no labels needed
         """
 
@@ -168,11 +175,18 @@ class MatrixWidgetBase(QWidget):
     def _draw_coupling_ratio(self, painter: QPainter, mc: dict, y: int) -> int:
         """Draw the coupling ratio bar. Subclass computes coupling metric.
 
-        Pre:
-          - painter is valid and drawing to this widget
-          - mc is current mass matrix dict
-          - y is current cursor position
-        Returns:
+        Parameters
+        ----------
+        painter : QPainter
+            Valid painter object drawing to this widget
+        mc : dict
+            Current mass matrix dictionary
+        y : int
+            Current cursor position
+
+        Returns
+        -------
+        int
             New y cursor position after drawing
         """
 

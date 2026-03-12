@@ -16,12 +16,15 @@ from typing import TYPE_CHECKING, Any, Protocol, cast
 
 import numpy as np
 from PyQt6.QtCore import QByteArray, QObject, QSettings, Qt, QThread, QTimer, pyqtSignal
+from PyQt6.QtGui import QPixmap  # noqa: F401 — used by subclasses
+from PyQt6.QtSvg import QSvgGenerator
 from PyQt6.QtWidgets import (
     QApplication,
     QFileDialog,
     QHBoxLayout,
     QLabel,
     QMessageBox,
+    QProgressBar,
     QScrollArea,
     QSplitter,
     QWidget,
@@ -49,6 +52,7 @@ class _SimWorker(QObject):
 
     finished = pyqtSignal(object)
     error = pyqtSignal(str)
+    progress = pyqtSignal(int)
 
     def __init__(
         self,
@@ -62,9 +66,12 @@ class _SimWorker(QObject):
     def run(self) -> None:
         """Called by QThread.started — executes the ODE integration."""
         try:
+            self.progress.emit(0)  # Start at 0%
             result = self._run_fn(**self._run_kwargs)
+            self.progress.emit(100)  # End at 100%
             self.finished.emit(result)
-        except Exception as exc:  # noqa: BLE001
+        except (RuntimeError, ValueError, AssertionError, OSError) as exc:
+            logger.error("Simulation worker error: %s", exc)
             self.error.emit(str(exc))
 
 
@@ -178,14 +185,22 @@ class SimulationPanel(QWidget):
             opt_scroll.setWidgetResizable(True)
             opt_scroll.setMinimumWidth(200)
             opt_scroll.setMaximumWidth(300)
-            opt_scroll.setStyleSheet(
-                "QScrollArea { border: none; background: transparent; }"
-            )
+            opt_scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
             splitter.addWidget(opt_scroll)
             splitter.setStretchFactor(splitter.count() - 1, 0)
 
         main_layout.addWidget(splitter)
         self._splitter = splitter  # keep reference for save/restore
+
+        # Progress bar (hidden by default, positioned absolutely like busy indicator)
+        self._progress_bar = QProgressBar(self)
+        self._progress_bar.setStyleSheet(
+            "QProgressBar { border: 1px solid #404070; border-radius: 3px; "
+            "background: #1a1a2e; padding: 2px; }"
+            "QProgressBar::chunk { background: #4a7bdb; }"
+        )
+        self._progress_bar.setFixedSize(200, 24)
+        self._progress_bar.hide()
 
         # Restore saved splitter state
         settings = QSettings("D-sorganization", "PendulumSimulator")
@@ -206,6 +221,7 @@ class SimulationPanel(QWidget):
         self.controls.frame_changed.connect(self._on_frame_change)
         self.controls.export_data_requested.connect(self._on_export_data)
         self.controls.export_video_requested.connect(self._on_export_video)
+        self.controls.export_image_requested.connect(self.export_image)
 
         # Wire new physics/display toggles if the pendulum widget supports them
         if hasattr(self.controls, "gravity_changed") and hasattr(
@@ -225,9 +241,7 @@ class SimulationPanel(QWidget):
             self.controls.force_scale_changed.connect(self.pendulum.set_force_scale)
 
         # Wire real-time rotation controls (#1146)
-        if hasattr(self.controls, "tilt_changed") and hasattr(
-            self.pendulum, "set_tilt_angle"
-        ):
+        if hasattr(self.controls, "tilt_changed") and hasattr(self.pendulum, "set_tilt_angle"):
             self.controls.tilt_changed.connect(self.pendulum.set_tilt_angle)
         if hasattr(self.controls, "azimuth_changed") and hasattr(
             self.pendulum, "set_view_azimuth"
@@ -296,6 +310,7 @@ class SimulationPanel(QWidget):
         self.controls.btn_run.setEnabled(False)
         self.controls.btn_reset.setEnabled(False)
         self._show_busy(True)
+        self._show_progress(True)
         self.sim_started.emit()
         logger.info(
             "Simulation started: t_end=%.3f, dt=%.4f",
@@ -325,6 +340,7 @@ class SimulationPanel(QWidget):
         self._sim_worker = _SimWorker(self._run_simulation, run_kwargs)
         self._sim_worker.moveToThread(self._sim_thread)
         self._sim_thread.started.connect(self._sim_worker.run)
+        self._sim_worker.progress.connect(self._progress_bar.setValue)
         self._sim_worker.finished.connect(self._on_sim_done)
         self._sim_worker.error.connect(self._on_sim_error)
         self._sim_worker.finished.connect(self._sim_thread.quit)
@@ -344,6 +360,7 @@ class SimulationPanel(QWidget):
         res: Any = result  # pyqtSignal emits object; cast for attribute access
 
         self._show_busy(False)
+        self._show_progress(False)
         self.controls.btn_run.setEnabled(True)
         self.controls.btn_reset.setEnabled(True)
         self.sim_finished.emit()
@@ -379,6 +396,7 @@ class SimulationPanel(QWidget):
         """Called on the main thread when simulation fails."""
         logger.error("Simulation failed: %s", msg)
         self._show_busy(False)
+        self._show_progress(False)
         self.controls.btn_run.setEnabled(True)
         self.controls.btn_reset.setEnabled(True)
         self.sim_finished.emit()
@@ -404,6 +422,19 @@ class SimulationPanel(QWidget):
             self._busy_label.show()
         else:
             self._busy_label.hide()
+
+    def _show_progress(self, show: bool) -> None:
+        """Show / hide the progress bar during simulation."""
+        if show:
+            # Position below busy indicator
+            self._progress_bar.move(
+                (self.width() - 200) // 2,
+                38,
+            )
+            self._progress_bar.raise_()
+            self._progress_bar.show()
+        else:
+            self._progress_bar.hide()
 
     def _on_reset(self) -> None:
         self._timer.stop()
@@ -560,9 +591,7 @@ class SimulationPanel(QWidget):
             # Triple: split into 3 groups (shoulder, elbow, wrist)
             n_third = len(coeffs) // 3
             self.controls.inp_tau_shoulder.set_value(_fmt_coeffs(coeffs[:n_third]))
-            self.controls.inp_tau_elbow.set_value(
-                _fmt_coeffs(coeffs[n_third : 2 * n_third])
-            )
+            self.controls.inp_tau_elbow.set_value(_fmt_coeffs(coeffs[n_third : 2 * n_third]))
             self.controls.inp_tau_wrist.set_value(_fmt_coeffs(coeffs[2 * n_third :]))
             logger.info("Applied triple pendulum optimizer coefficients")
 
@@ -585,6 +614,92 @@ class SimulationPanel(QWidget):
                     end = (i + 1) * n_seventh if i < 6 else len(coeffs)
                     field.set_value(_fmt_coeffs(coeffs[start:end]))
             logger.info("Applied golfer optimizer coefficients")
+
+    def export_image(self) -> None:
+        """Export the current pendulum visualization as PNG, SVG, or PDF."""
+        if self._result is None:
+            QMessageBox.information(self, "Export Image", "Run a simulation first.")
+            return
+
+        path, selected_filter = QFileDialog.getSaveFileName(
+            self,
+            "Export Image",
+            "",
+            "PNG Files (*.png);;SVG Files (*.svg);;PDF Files (*.pdf)",
+        )
+        if not path:
+            return
+
+        try:
+            if path.endswith(".png"):
+                self._export_as_png(path)
+            elif path.endswith(".svg"):
+                self._export_as_svg(path)
+            elif path.endswith(".pdf"):
+                self._export_as_pdf(path)
+            else:
+                # Default to PNG if extension unclear
+                if not path.endswith("."):
+                    path += ".png"
+                self._export_as_png(path)
+
+            QMessageBox.information(self, "Export Image", f"Saved image to:\n{path}")
+        except Exception as e:  # noqa: BLE001
+            logger.error("Failed to export image: %s", e)
+            QMessageBox.critical(
+                self,
+                "Export Image",
+                f"Failed to export image:\n{e}",
+            )
+
+    def _export_as_png(self, path: str) -> None:
+        """Export the pendulum widget as a PNG image."""
+        pix = cast("QWidget", self.pendulum).grab()
+        if not pix.save(path):
+            raise OSError(f"Failed to save PNG to {path}")
+        logger.info("Exported PNG: %s", path)
+
+    def _export_as_svg(self, path: str) -> None:
+        """Export the pendulum widget as an SVG image."""
+        from PyQt6.QtCore import QRect
+        from PyQt6.QtGui import QPainter
+
+        widget = cast("QWidget", self.pendulum)
+        rect = QRect(0, 0, widget.width(), widget.height())
+
+        generator = QSvgGenerator()
+        generator.setFileName(path)
+        generator.setSize(rect.size())
+        generator.setViewBox(rect)
+        generator.setTitle("Pendulum Visualization")
+        generator.setDescription("Exported from Pendulum Simulator")
+
+        painter = QPainter()
+        painter.begin(generator)
+        widget.render(painter)
+        painter.end()
+
+        logger.info("Exported SVG: %s", path)
+
+    def _export_as_pdf(self, path: str) -> None:
+        """Export the pendulum widget as a PDF (via QPrinter)."""
+        from PyQt6.QtCore import QMarginsF
+        from PyQt6.QtGui import QPainter
+        from PyQt6.QtPrintSupport import QPrinter
+
+        widget = cast("QWidget", self.pendulum)
+
+        printer = QPrinter(QPrinter.PrinterMode.HighResolution)
+        printer.setOutputFormat(QPrinter.OutputFormat.PdfFormat)
+        printer.setOutputFileName(path)
+        printer.setPageMargins(QMarginsF(0, 0, 0, 0))
+
+        painter = QPainter()
+        painter.begin(printer)
+        widget.render(painter)
+        painter.end()
+
+        logger.info("Exported PDF: %s", path)
 
     def _on_export_data(self) -> None:
         if self._result is None:

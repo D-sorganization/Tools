@@ -70,6 +70,9 @@ class BasePendulumWidget(QWidget):
         self._drag_start: QPoint | None = None
         self._drag_pan_start: tuple[float, float] = (0.0, 0.0)
 
+        # 3D rotation state (right-click drag)
+        self._rotate_start: QPoint | None = None
+
         # Feature toggles (shared across all model types)
         self._show_forces: bool = False
         self._show_zero_torque_forces: bool = False
@@ -222,13 +225,16 @@ class BasePendulumWidget(QWidget):
         if not isinstance(event, QMouseEvent):
             return
         if event.button() == Qt.MouseButton.LeftButton:
-            if hasattr(
-                self, "_handle_zoom_button_click"
-            ) and self._handle_zoom_button_click(event.pos()):
+            if hasattr(self, "_handle_zoom_button_click") and self._handle_zoom_button_click(
+                event.pos()
+            ):
                 return
             self._drag_start = event.pos()
             self._drag_pan_start = (self._pan_x, self._pan_y)
             self.setCursor(Qt.CursorShape.ClosedHandCursor)
+        elif event.button() == Qt.MouseButton.RightButton:
+            self._rotate_start = event.pos()
+            self.setCursor(Qt.CursorShape.OpenHandCursor)
 
     def mouseMoveEvent(self, event: object) -> None:
         if not isinstance(event, QMouseEvent):
@@ -238,12 +244,24 @@ class BasePendulumWidget(QWidget):
             self._pan_x = self._drag_pan_start[0] + delta.x()
             self._pan_y = self._drag_pan_start[1] + delta.y()
             self.update()
+        elif self._rotate_start is not None:
+            delta = event.pos() - self._rotate_start
+            sensitivity = 0.01  # radians per pixel
+            self._view_azimuth += delta.x() * sensitivity
+            self._tilt_angle += delta.y() * sensitivity
+            # Clamp tilt to [-pi/2, pi/2]
+            max_tilt = float(np.pi / 2)
+            self._tilt_angle = max(-max_tilt, min(max_tilt, self._tilt_angle))
+            self.update()
 
     def mouseReleaseEvent(self, event: object) -> None:
         if not isinstance(event, QMouseEvent):
             return
         if event.button() == Qt.MouseButton.LeftButton:
             self._drag_start = None
+            self.setCursor(Qt.CursorShape.CrossCursor)
+        elif event.button() == Qt.MouseButton.RightButton:
+            self._rotate_start = None
             self.setCursor(Qt.CursorShape.CrossCursor)
 
     def mouseDoubleClickEvent(self, event: object) -> None:

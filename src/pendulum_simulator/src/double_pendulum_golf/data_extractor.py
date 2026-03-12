@@ -7,15 +7,20 @@ the data table module.
 
 Design by Contract
 ------------------
-- extract_series() returns (values, unit_label) or raises KeyError.
+- extract_series() returns (values, description, unit_label) or raises KeyError.
 - list_available_series() returns all valid series names for a result type.
 - All returned arrays are shape (N,) and finite.
+
+DRY
+---
+Dispatch table pattern replaces sequential if-elif chains (O(1) lookup).
+Vectorized extractors avoid per-frame method calls where possible.
 """
 
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Callable
 
 import numpy as np
 
@@ -26,120 +31,158 @@ logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
-# Registry of extractable data series
+# Extractor type alias
 # ---------------------------------------------------------------------------
 
-# Each entry: (description, unit_label, extractor_function)
-# extractor_function(result) -> np.ndarray, shape (N,)
+Extractor = Callable[[Any], np.ndarray]
 
-_DOUBLE_SERIES: dict[str, tuple[str, str]] = {
-    "time": ("Time", "s"),
-    "theta1": ("Shoulder angle θ₁", "rad"),
-    "phi": ("Wrist angle φ", "rad"),
-    "dtheta1": ("Shoulder velocity θ̇₁", "rad/s"),
-    "dphi": ("Wrist velocity φ̇", "rad/s"),
-    "torque_shoulder": ("Shoulder torque", "N·m"),
-    "torque_wrist": ("Wrist torque", "N·m"),
-    "total_torque_shoulder": ("Total shoulder torque", "N·m"),
-    "total_torque_wrist": ("Total wrist torque", "N·m"),
-    "kinetic_energy": ("Kinetic energy", "J"),
-    "potential_energy": ("Potential energy", "J"),
-    "total_energy": ("Total energy", "J"),
-    "wrist_speed": ("Wrist speed", "m/s"),
-    "tip_speed": ("Tip speed", "m/s"),
-    "accel_shoulder": ("Shoulder acceleration", "rad/s²"),
-    "accel_wrist": ("Wrist acceleration", "rad/s²"),
-    "coriolis_shoulder": ("Coriolis term (shoulder)", "N·m"),
-    "coriolis_wrist": ("Coriolis term (wrist)", "N·m"),
-    "gravity_shoulder": ("Gravity term (shoulder)", "N·m"),
-    "gravity_wrist": ("Gravity term (wrist)", "N·m"),
-    "friction_shoulder": ("Friction torque (shoulder)", "N·m"),
-    "friction_wrist": ("Friction torque (wrist)", "N·m"),
-    "base_force_x": ("Base force Fx", "N"),
-    "base_force_y": ("Base force Fy", "N"),
-    "base_force_mag": ("Base force magnitude", "N"),
+
+def _make_state_extractor(col: int) -> Extractor:
+    """Factory: extract a single column from the states array."""
+
+    def _extract(result: Any) -> np.ndarray:
+        return np.asarray(result.states[:, col], dtype=float)
+
+    return _extract
+
+
+def _make_torque_extractor(joint: int) -> Extractor:
+    """Factory: extract driving torque for a specific joint."""
+
+    def _extract(result: Any) -> np.ndarray:
+        n = result.n_steps
+        return np.array([result.torques_at(i)[joint] for i in range(n)], dtype=float)
+
+    return _extract
+
+
+def _make_total_torque_extractor(joint: int) -> Extractor:
+    """Factory: extract total torque (drive + friction) for a joint."""
+
+    def _extract(result: Any) -> np.ndarray:
+        return np.asarray(result.all_total_torques()[:, joint], dtype=float)
+
+    return _extract
+
+
+def _make_energy_extractor(component: str) -> Extractor:
+    """Factory: extract energy component ('kinetic', 'potential', 'total')."""
+
+    def _extract(result: Any) -> np.ndarray:
+        return np.asarray(result.all_energies()[component], dtype=float)
+
+    return _extract
+
+
+def _make_velocity_extractor(key: str) -> Extractor:
+    """Factory: extract a named velocity from joint_velocities_at."""
+
+    def _extract(result: Any) -> np.ndarray:
+        n = result.n_steps
+        return np.array([result.joint_velocities_at(i)[key] for i in range(n)], dtype=float)
+
+    return _extract
+
+
+def _make_accel_extractor(joint: int) -> Extractor:
+    """Factory: extract acceleration for a specific joint."""
+
+    def _extract(result: Any) -> np.ndarray:
+        return np.asarray(result.all_accelerations()[:, joint], dtype=float)
+
+    return _extract
+
+
+def _make_coriolis_extractor(joint: int) -> Extractor:
+    """Factory: extract Coriolis term for a specific joint."""
+
+    def _extract(result: Any) -> np.ndarray:
+        n = result.n_steps
+        return np.array([result.coriolis_at(i)[joint] for i in range(n)], dtype=float)
+
+    return _extract
+
+
+def _make_gravity_extractor(joint: int) -> Extractor:
+    """Factory: extract gravity term for a specific joint."""
+
+    def _extract(result: Any) -> np.ndarray:
+        n = result.n_steps
+        return np.array([result.gravity_at(i)[joint] for i in range(n)], dtype=float)
+
+    return _extract
+
+
+def _make_friction_extractor(joint: int) -> Extractor:
+    """Factory: extract friction torque for a specific joint."""
+
+    def _extract(result: Any) -> np.ndarray:
+        return np.asarray(result.all_friction_torques()[:, joint], dtype=float)
+
+    return _extract
+
+
+def _make_base_force_extractor(component: str) -> Extractor:
+    """Factory: extract base force component ('fx', 'fy', 'magnitude')."""
+
+    def _extract(result: Any) -> np.ndarray:
+        n = result.n_steps
+        return np.array([result.base_force_at(i)[component] for i in range(n)], dtype=float)
+
+    return _extract
+
+
+# ---------------------------------------------------------------------------
+# Series registry: (description, unit, extractor)
+# ---------------------------------------------------------------------------
+
+_DOUBLE_SERIES: dict[str, tuple[str, str, Extractor]] = {
+    "time": ("Time", "s", lambda r: np.asarray(r.t, dtype=float)),
+    "theta1": ("Shoulder angle θ₁", "rad", _make_state_extractor(0)),
+    "phi": ("Wrist angle φ", "rad", _make_state_extractor(1)),
+    "dtheta1": ("Shoulder velocity θ̇₁", "rad/s", _make_state_extractor(2)),
+    "dphi": ("Wrist velocity φ̇", "rad/s", _make_state_extractor(3)),
+    "torque_shoulder": ("Shoulder torque", "N·m", _make_torque_extractor(0)),
+    "torque_wrist": ("Wrist torque", "N·m", _make_torque_extractor(1)),
+    "total_torque_shoulder": (
+        "Total shoulder torque",
+        "N·m",
+        _make_total_torque_extractor(0),
+    ),
+    "total_torque_wrist": (
+        "Total wrist torque",
+        "N·m",
+        _make_total_torque_extractor(1),
+    ),
+    "kinetic_energy": ("Kinetic energy", "J", _make_energy_extractor("kinetic")),
+    "potential_energy": ("Potential energy", "J", _make_energy_extractor("potential")),
+    "total_energy": ("Total energy", "J", _make_energy_extractor("total")),
+    "wrist_speed": ("Wrist speed", "m/s", _make_velocity_extractor("wrist_speed")),
+    "tip_speed": ("Tip speed", "m/s", _make_velocity_extractor("tip_speed")),
+    "accel_shoulder": ("Shoulder acceleration", "rad/s²", _make_accel_extractor(0)),
+    "accel_wrist": ("Wrist acceleration", "rad/s²", _make_accel_extractor(1)),
+    "coriolis_shoulder": (
+        "Coriolis term (shoulder)",
+        "N·m",
+        _make_coriolis_extractor(0),
+    ),
+    "coriolis_wrist": ("Coriolis term (wrist)", "N·m", _make_coriolis_extractor(1)),
+    "gravity_shoulder": ("Gravity term (shoulder)", "N·m", _make_gravity_extractor(0)),
+    "gravity_wrist": ("Gravity term (wrist)", "N·m", _make_gravity_extractor(1)),
+    "friction_shoulder": (
+        "Friction torque (shoulder)",
+        "N·m",
+        _make_friction_extractor(0),
+    ),
+    "friction_wrist": ("Friction torque (wrist)", "N·m", _make_friction_extractor(1)),
+    "base_force_x": ("Base force Fx", "N", _make_base_force_extractor("fx")),
+    "base_force_y": ("Base force Fy", "N", _make_base_force_extractor("fy")),
+    "base_force_mag": (
+        "Base force magnitude",
+        "N",
+        _make_base_force_extractor("magnitude"),
+    ),
 }
-
-
-def _extract_double(result: Any, key: str) -> np.ndarray:
-    """Extract a named data series from a double pendulum result.
-
-    Preconditions:
-        result is a SimulationResult with n_steps >= 1.
-        key is in _DOUBLE_SERIES.
-    Postconditions:
-        Returns shape (N,) finite array.
-    """
-    n = result.n_steps
-
-    if key == "time":
-        return np.asarray(result.t, dtype=float)
-    if key == "theta1":
-        return np.asarray(result.states[:, 0], dtype=float)
-    if key == "phi":
-        return np.asarray(result.states[:, 1], dtype=float)
-    if key == "dtheta1":
-        return np.asarray(result.states[:, 2], dtype=float)
-    if key == "dphi":
-        return np.asarray(result.states[:, 3], dtype=float)
-
-    if key == "torque_shoulder":
-        return np.array([result.torques_at(i)[0] for i in range(n)], dtype=float)
-    if key == "torque_wrist":
-        return np.array([result.torques_at(i)[1] for i in range(n)], dtype=float)
-
-    if key == "total_torque_shoulder":
-        data = result.all_total_torques()
-        return np.asarray(data[:, 0], dtype=float)
-    if key == "total_torque_wrist":
-        data = result.all_total_torques()
-        return np.asarray(data[:, 1], dtype=float)
-
-    if key in ("kinetic_energy", "potential_energy", "total_energy"):
-        energies = result.all_energies()
-        return np.asarray(energies[key.replace("_energy", "")], dtype=float)
-
-    if key == "wrist_speed":
-        return np.array(
-            [result.joint_velocities_at(i)["wrist_speed"] for i in range(n)],
-            dtype=float,
-        )
-    if key == "tip_speed":
-        return np.array(
-            [result.joint_velocities_at(i)["tip_speed"] for i in range(n)],
-            dtype=float,
-        )
-
-    if key == "accel_shoulder":
-        return np.asarray(result.all_accelerations()[:, 0], dtype=float)
-    if key == "accel_wrist":
-        return np.asarray(result.all_accelerations()[:, 1], dtype=float)
-
-    if key == "coriolis_shoulder":
-        return np.array([result.coriolis_at(i)[0] for i in range(n)], dtype=float)
-    if key == "coriolis_wrist":
-        return np.array([result.coriolis_at(i)[1] for i in range(n)], dtype=float)
-
-    if key == "gravity_shoulder":
-        return np.array([result.gravity_at(i)[0] for i in range(n)], dtype=float)
-    if key == "gravity_wrist":
-        return np.array([result.gravity_at(i)[1] for i in range(n)], dtype=float)
-
-    if key == "friction_shoulder":
-        return np.asarray(result.all_friction_torques()[:, 0], dtype=float)
-    if key == "friction_wrist":
-        return np.asarray(result.all_friction_torques()[:, 1], dtype=float)
-
-    if key == "base_force_x":
-        return np.array([result.base_force_at(i)["fx"] for i in range(n)], dtype=float)
-    if key == "base_force_y":
-        return np.array([result.base_force_at(i)["fy"] for i in range(n)], dtype=float)
-    if key == "base_force_mag":
-        return np.array(
-            [result.base_force_at(i)["magnitude"] for i in range(n)], dtype=float
-        )
-
-    raise KeyError(f"Unknown series key: {key!r}")
 
 
 # ---------------------------------------------------------------------------
@@ -155,7 +198,7 @@ def list_available_series(model_type: str = "double") -> list[tuple[str, str, st
     list of (key, description, unit_label)
     """
     registry = _DOUBLE_SERIES  # extend for triple/golfer later
-    return [(k, desc, unit) for k, (desc, unit) in registry.items()]
+    return [(k, desc, unit) for k, (desc, unit, _) in registry.items()]
 
 
 def extract_series(
@@ -180,8 +223,15 @@ def extract_series(
     Raises
     ------
     KeyError if key is not recognized.
+
+    Design by Contract
+    ------------------
+    Pre: key in _DOUBLE_SERIES
+    Post: returned array is 1-D
     """
-    desc, unit = _DOUBLE_SERIES[key]
-    values = _extract_double(result, key)
+    if key not in _DOUBLE_SERIES:
+        raise KeyError(f"Unknown series key: {key!r}")
+    desc, unit, extractor = _DOUBLE_SERIES[key]
+    values = extractor(result)
     assert values.ndim == 1, f"Expected 1-D array, got shape {values.shape}"
     return values, desc, unit

@@ -12,9 +12,11 @@ Usage:
     M = model.mass_matrix(q)
 """
 
-import sys
+import logging
 from typing import Dict, Tuple
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 # Try to import the compiled Rust module
 HAS_NATIVE = False
@@ -25,6 +27,7 @@ try:
     NATIVE_ERROR = None
 except ImportError as e:
     NATIVE_ERROR = str(e)
+    logger.debug("Rust pendulum_core unavailable: %s", e)
 
 
 class DoublePendulumParams:
@@ -99,14 +102,13 @@ class DoublePendulum:
         """Compute the 2x2 mass matrix M(q)."""
         if self.use_native:
             try:
-                result = pendulum_core.py_double_mass_matrix(
-                    q.tolist(), self.params.to_rust()
-                )
+                result = pendulum_core.py_double_mass_matrix(q.tolist(), self.params.to_rust())
                 return np.array(result, dtype=np.float64)
-            except Exception as e:
-                print(
-                    f"Warning: Rust call failed: {e}, falling back to NumPy",
-                    file=sys.stderr,
+            except (RuntimeError, AttributeError, TypeError) as e:
+                logger.warning(
+                    "Rust mass_matrix call failed (%s), falling back to NumPy: %s",
+                    type(e).__name__,
+                    e,
                 )
 
         # NumPy fallback
@@ -127,8 +129,11 @@ class DoublePendulum:
                     q.tolist(), self.params.to_rust()
                 )
                 return np.array(result, dtype=np.float64)
-            except Exception:
-                pass
+            except (RuntimeError, AttributeError, TypeError) as e:
+                logger.warning(
+                    "Rust gravity_vector call failed (%s), falling back to NumPy",
+                    type(e).__name__,
+                )
 
         # NumPy fallback
         theta1 = q[0]
@@ -148,8 +153,11 @@ class DoublePendulum:
                     q.tolist(), qdot.tolist(), self.params.to_rust()
                 )
                 return np.array(result, dtype=np.float64)
-            except Exception:
-                pass
+            except (RuntimeError, AttributeError, TypeError) as e:
+                logger.warning(
+                    "Rust coriolis call failed (%s), falling back to NumPy",
+                    type(e).__name__,
+                )
 
         # NumPy fallback
         phi = q[1]
@@ -166,8 +174,11 @@ class DoublePendulum:
                 return pendulum_core.py_double_forward_kinematics(
                     q.tolist(), self.params.to_rust()
                 )
-            except Exception:
-                pass
+            except (RuntimeError, AttributeError, TypeError) as e:
+                logger.warning(
+                    "Rust forward_kinematics call failed (%s), falling back to NumPy",
+                    type(e).__name__,
+                )
 
         # NumPy fallback
         theta1 = q[0]
@@ -306,20 +317,17 @@ class Golfer:
         """Compute the 8x8 mass matrix M(q)."""
         if self.use_native:
             try:
-                result = pendulum_core.py_golfer_mass_matrix(
-                    q.tolist(), self.params.to_rust()
-                )
+                result = pendulum_core.py_golfer_mass_matrix(q.tolist(), self.params.to_rust())
                 return np.array(result, dtype=np.float64)
-            except Exception as e:
-                print(
-                    f"Warning: Rust call failed: {e}, falling back to NumPy",
-                    file=sys.stderr,
+            except (RuntimeError, AttributeError, TypeError) as e:
+                logger.warning(
+                    "Rust golfer mass_matrix call failed (%s), falling back to NumPy: %s",
+                    type(e).__name__,
+                    e,
                 )
 
         # NumPy fallback would be implemented by porting the Rust analytical code
-        raise NotImplementedError(
-            "NumPy fallback for golfer mass matrix not yet implemented"
-        )
+        raise NotImplementedError("NumPy fallback for golfer mass matrix not yet implemented")
 
     def gravity_vector(self, q: np.ndarray) -> np.ndarray:
         """Compute the gravity vector G(q)."""
@@ -329,12 +337,10 @@ class Golfer:
                     q.tolist(), self.params.to_rust()
                 )
                 return np.array(result, dtype=np.float64)
-            except Exception:
-                pass
+            except (RuntimeError, AttributeError, TypeError) as e:
+                logger.warning("Rust golfer gravity_vector call failed (%s)", type(e).__name__)
 
-        raise NotImplementedError(
-            "NumPy fallback for golfer gravity not yet implemented"
-        )
+        raise NotImplementedError("NumPy fallback for golfer gravity not yet implemented")
 
     def forward_kinematics(self, q: np.ndarray) -> Dict[str, Tuple[float, float]]:
         """Compute forward kinematics."""
@@ -344,8 +350,10 @@ class Golfer:
                     q.tolist(), self.params.to_rust()
                 )
                 return {k: tuple(v) for k, v in result.items()}
-            except Exception:
-                pass
+            except (RuntimeError, AttributeError, TypeError) as e:
+                logger.warning(
+                    "Rust golfer forward_kinematics call failed (%s)", type(e).__name__
+                )
 
         raise NotImplementedError("NumPy fallback for golfer FK not yet implemented")
 
@@ -357,8 +365,10 @@ class Golfer:
                     q.tolist(), self.params.to_rust()
                 )
                 return np.array(result, dtype=np.float64)
-            except Exception:
-                pass
+            except (RuntimeError, AttributeError, TypeError) as e:
+                logger.warning(
+                    "Rust golfer constraint_vector call failed (%s)", type(e).__name__
+                )
 
         raise NotImplementedError("NumPy fallback for constraints not yet implemented")
 
@@ -370,12 +380,12 @@ class Golfer:
                     q.tolist(), self.params.to_rust()
                 )
                 return np.array(result, dtype=np.float64)
-            except Exception:
-                pass
+            except (RuntimeError, AttributeError, TypeError) as e:
+                logger.warning(
+                    "Rust golfer constraint_jacobian call failed (%s)", type(e).__name__
+                )
 
-        raise NotImplementedError(
-            "NumPy fallback for constraint Jacobian not yet implemented"
-        )
+        raise NotImplementedError("NumPy fallback for constraint Jacobian not yet implemented")
 
 
 def get_native_info() -> Dict[str, object]:
