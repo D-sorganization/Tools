@@ -43,7 +43,9 @@ class TorquePreviewWidget(QWidget):
         profiles: list of (name, coefficients, color)
         clamp_limits: list parallel to profiles with clamp magnitudes or None
         """
-        self._profiles = [(name, list(coeffs), color) for name, coeffs, color in profiles]
+        self._profiles = [
+            (name, list(coeffs), color) for name, coeffs, color in profiles
+        ]
         self._clamp_limits = list(clamp_limits) if clamp_limits else []
         self.update()
 
@@ -58,7 +60,9 @@ class TorquePreviewWidget(QWidget):
         if not self._profiles:
             painter.setPen(self.COLOR_TEXT)
             painter.setFont(QFont("Sans", 9))
-            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "Torque preview")
+            painter.drawText(
+                self.rect(), Qt.AlignmentFlag.AlignCenter, "Torque preview"
+            )
             painter.end()
             return
 
@@ -99,7 +103,9 @@ class TorquePreviewWidget(QWidget):
                 for lv in [limit, -limit]:
                     y = qrect.bottom() - (lv - v_min) / (v_max - v_min) * qrect.height()
                     if qrect.top() <= y <= qrect.bottom():
-                        painter.drawLine(QPointF(qrect.left(), y), QPointF(qrect.right(), y))
+                        painter.drawLine(
+                            QPointF(qrect.left(), y), QPointF(qrect.right(), y)
+                        )
 
         for idx, ((_, values), (__, ___, color)) in enumerate(
             zip(series, self._profiles, strict=True)
@@ -113,7 +119,10 @@ class TorquePreviewWidget(QWidget):
                 points: list[QPointF] = []
                 for i, val in enumerate(values):
                     x = qrect.left() + (t[i] / self._t_end) * qrect.width()
-                    y = qrect.bottom() - (val - v_min) / (v_max - v_min) * qrect.height()
+                    y = (
+                        qrect.bottom()
+                        - (val - v_min) / (v_max - v_min) * qrect.height()
+                    )
                     points.append(QPointF(x, y))
                 for i in range(1, len(points)):
                     painter.drawLine(points[i - 1], points[i])
@@ -124,7 +133,10 @@ class TorquePreviewWidget(QWidget):
                 points = []
                 for i, val in enumerate(clamped):
                     x = qrect.left() + (t[i] / self._t_end) * qrect.width()
-                    y = qrect.bottom() - (val - v_min) / (v_max - v_min) * qrect.height()
+                    y = (
+                        qrect.bottom()
+                        - (val - v_min) / (v_max - v_min) * qrect.height()
+                    )
                     points.append(QPointF(x, y))
                 for i in range(1, len(points)):
                     painter.drawLine(points[i - 1], points[i])
@@ -135,7 +147,10 @@ class TorquePreviewWidget(QWidget):
                 points = []
                 for i, val in enumerate(values):
                     x = qrect.left() + (t[i] / self._t_end) * qrect.width()
-                    y = qrect.bottom() - (val - v_min) / (v_max - v_min) * qrect.height()
+                    y = (
+                        qrect.bottom()
+                        - (val - v_min) / (v_max - v_min) * qrect.height()
+                    )
                     points.append(QPointF(x, y))
                 for i in range(1, len(points)):
                     painter.drawLine(points[i - 1], points[i])

@@ -178,7 +178,9 @@ class SimulationPanel(QWidget):
             opt_scroll.setWidgetResizable(True)
             opt_scroll.setMinimumWidth(200)
             opt_scroll.setMaximumWidth(300)
-            opt_scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
+            opt_scroll.setStyleSheet(
+                "QScrollArea { border: none; background: transparent; }"
+            )
             splitter.addWidget(opt_scroll)
             splitter.setStretchFactor(splitter.count() - 1, 0)
 
@@ -223,7 +225,9 @@ class SimulationPanel(QWidget):
             self.controls.force_scale_changed.connect(self.pendulum.set_force_scale)
 
         # Wire real-time rotation controls (#1146)
-        if hasattr(self.controls, "tilt_changed") and hasattr(self.pendulum, "set_tilt_angle"):
+        if hasattr(self.controls, "tilt_changed") and hasattr(
+            self.pendulum, "set_tilt_angle"
+        ):
             self.controls.tilt_changed.connect(self.pendulum.set_tilt_angle)
         if hasattr(self.controls, "azimuth_changed") and hasattr(
             self.pendulum, "set_view_azimuth"
@@ -556,7 +560,9 @@ class SimulationPanel(QWidget):
             # Triple: split into 3 groups (shoulder, elbow, wrist)
             n_third = len(coeffs) // 3
             self.controls.inp_tau_shoulder.set_value(_fmt_coeffs(coeffs[:n_third]))
-            self.controls.inp_tau_elbow.set_value(_fmt_coeffs(coeffs[n_third : 2 * n_third]))
+            self.controls.inp_tau_elbow.set_value(
+                _fmt_coeffs(coeffs[n_third : 2 * n_third])
+            )
             self.controls.inp_tau_wrist.set_value(_fmt_coeffs(coeffs[2 * n_third :]))
             logger.info("Applied triple pendulum optimizer coefficients")
 
