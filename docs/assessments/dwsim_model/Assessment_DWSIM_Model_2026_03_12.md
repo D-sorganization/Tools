@@ -199,8 +199,10 @@ The DWSIM Gasification Model is a well-architected scientific simulation tool th
 | `subprocess` | ✅ None found |
 | `yaml.safe_load()` | ✅ Used consistently (never `yaml.load()`) |
 | SQL injection surface | ✅ N/A — no database |
-| Path traversal | ✅ pathlib used; `_resolve_ref_path` bounds to config dir |
+| Path traversal | ⚠️ `_resolve_ref_path` checks exists() but doesn't validate path stays within project root — `../../etc/passwd` could escape |
 | Secrets in code | ⚠️ Hardcoded Windows path in `core.py:15` (user-specific, not a secret) |
+| DWSIM_PATH env var | ⚠️ `core.py:22` appends env var to `sys.path` without sanitisation — could load malicious DLLs |
+| Thread safety | ⚠️ GUI `_last_results`/`_last_metrics` accessed from main + sim thread without lock |
 | Network calls | ✅ None (CDN reference in HTML report is client-side only) |
 
 ---
@@ -213,6 +215,7 @@ The DWSIM Gasification Model is a well-architected scientific simulation tool th
 | DW-B-001 | `config_loader.py` | MAJOR | Narrowed bare `except Exception: pass` to `(AttributeError, TypeError, RuntimeError)` with debug logging |
 | DW-K-001 | `__main__.py` | MAJOR | Eliminated duplicated `_find_default_config()`; delegates to canonical implementation in `config_loader.py` |
 | DW-L-001 | `chemistry/reactions.py` | MODERATE | Extracted `get_reaction_summary()` → returns string; preserved `print_reaction_summary()` for CLI backward compatibility |
+| DW-B-003 | `chemistry/reactions.py` | MODERATE | Bare `except Exception` in `_try_attr_on` could catch SystemExit/KeyboardInterrupt | **FIXED**: narrowed to `(AttributeError, TypeError, ValueError, RuntimeError)` |
 
 ---
 
@@ -222,7 +225,8 @@ The DWSIM Gasification Model is a well-architected scientific simulation tool th
 2. **[S] DONE — Narrow bare except in config_loader** — Energy stream property fallback
 3. **[S] DONE — DRY: deduplicate _find_default_config** — Single source of truth
 4. **[S] DONE — Refactor print_reaction_summary** — Return string, print in CLI only
-5. **[M] Add GUI smoke tests** — Widget construction tests for 5 untested modules
+5. **[S] DONE — Narrow bare except in reactions.py _try_attr_on** — Specific exception types
+6. **[M] Add GUI smoke tests** — Widget construction tests for 5 untested modules
 6. **[M] Add reporter tests** — Test HTML/JSON generation with mock data
 7. **[M] Extract StandaloneBase** — DRY the 3 standalone model files
 8. **[S] Reorder schema.py** — Move `KineticParameters` before `ReactionEntry`

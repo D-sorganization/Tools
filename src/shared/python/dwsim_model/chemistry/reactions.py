@@ -193,7 +193,7 @@ class ReactorAdapter:
         try:
             setattr(target, attr_name, value)
             return True
-        except Exception:
+        except (AttributeError, TypeError, ValueError, RuntimeError):
             return False
 
     def _set_mapped_property(
