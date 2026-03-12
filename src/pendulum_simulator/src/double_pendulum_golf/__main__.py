@@ -8,8 +8,8 @@ import logging
 import sys
 from pathlib import Path
 
-from PyQt6.QtCore import QEvent, QObject
-from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import QEvent, QObject, Qt
+from PyQt6.QtGui import QIcon, QKeySequence, QShortcut, QWheelEvent
 from PyQt6.QtWidgets import QApplication, QComboBox, QDoubleSpinBox, QSpinBox
 
 from .gui import MainWindow
@@ -17,20 +17,52 @@ from .gui.diagnostics import get_tracker
 
 
 class _WheelBlockFilter(QObject):
-    """Global event filter that blocks mouse wheel on value-input widgets.
+    """Global event filter: blocks wheel on value-inputs, Ctrl+Wheel zooms fonts.
 
-    Prevents accidental value changes when scrolling the controls panel.
-    Closes #1193.
+    - Plain wheel on QComboBox/QSpinBox/QDoubleSpinBox: blocked (#1193)
+    - Ctrl+Wheel anywhere: scales application font by ±1pt (#1147)
     """
+
+    _MIN_FONT_PT = 6
+    _MAX_FONT_PT = 40
+    _default_font_pt: int | None = None
 
     def eventFilter(  # noqa: N802
         self, obj: QObject | None, event: QEvent | None
     ) -> bool:
         if event is not None and event.type() == QEvent.Type.Wheel:
+            wheel: QWheelEvent = event  # type: ignore[assignment]
+            # Ctrl+Wheel → font zoom
+            if wheel.modifiers() & Qt.KeyboardModifier.ControlModifier:
+                delta = wheel.angleDelta().y()
+                app = QApplication.instance()
+                if app is not None:
+                    font = app.font()
+                    if self._default_font_pt is None:
+                        self._default_font_pt = font.pointSize()
+                    new_size = font.pointSize() + (1 if delta > 0 else -1)
+                    new_size = max(self._MIN_FONT_PT, min(self._MAX_FONT_PT, new_size))
+                    font.setPointSize(new_size)
+                    app.setFont(font)
+                    logging.getLogger(__name__).info("Font zoom: %dpt", new_size)
+                event.accept()
+                return True
+            # Plain wheel on value-input widgets → blocked
             if isinstance(obj, (QComboBox, QDoubleSpinBox, QSpinBox)):
                 event.ignore()
                 return True  # Block the event
         return False
+
+    def reset_font(self) -> None:
+        """Reset font to default size (Ctrl+0)."""
+        app = QApplication.instance()
+        if app is not None and self._default_font_pt is not None:
+            font = app.font()
+            font.setPointSize(self._default_font_pt)
+            app.setFont(font)
+            logging.getLogger(__name__).info(
+                "Font reset to %dpt", self._default_font_pt
+            )
 
 
 _LOG_FORMAT = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
@@ -100,6 +132,10 @@ def main() -> None:
 
     window = MainWindow()
     window.show()
+
+    # Add Ctrl+0 shortcut to reset font size (#1147)
+    _reset_shortcut = QShortcut(QKeySequence("Ctrl+0"), window)
+    _reset_shortcut.activated.connect(_wheel_filter.reset_font)
 
     sys.exit(app.exec())
 
