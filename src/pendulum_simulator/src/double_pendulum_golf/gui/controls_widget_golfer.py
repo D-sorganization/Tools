@@ -41,7 +41,7 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
 
     PRESETS = {
         "Address Position": {
-            "m_hub": 2.0,
+            "m_hub": 0.001,  # Standoff is massless (near-zero for numerics)
             "m_r_upper": 3.5,
             "m_r_fore": 2.0,
             "m_l_upper": 3.5,
@@ -73,13 +73,13 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
             "tau_le": "0",
             "tau_lh": "0",
             "t_end": 2.0,
-            "L_rscap": 0.12,
-            "L_lscap": 0.12,
-            "m_rscap": 0.5,
-            "m_lscap": 0.5,
+            "L_rscap": 0.18,
+            "L_lscap": 0.18,
+            "m_rscap": 7.0,  # Upper body segment (~2× arm mass)
+            "m_lscap": 7.0,  # Upper body segment (~2× arm mass)
         },
         "Backswing Start": {
-            "m_hub": 2.0,
+            "m_hub": 0.001,  # Standoff is massless
             "m_r_upper": 3.5,
             "m_r_fore": 2.0,
             "m_l_upper": 3.5,
@@ -111,10 +111,10 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
             "tau_le": "0",
             "tau_lh": "0",
             "t_end": 2.0,
-            "L_rscap": 0.12,
-            "L_lscap": 0.12,
-            "m_rscap": 0.5,
-            "m_lscap": 0.5,
+            "L_rscap": 0.18,
+            "L_lscap": 0.18,
+            "m_rscap": 7.0,  # Upper body segment
+            "m_lscap": 7.0,  # Upper body segment
         },
     }
 
@@ -191,7 +191,7 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
         layout.setSpacing(3)
 
         mass_specs = [
-            ("Hub", "m_hub", 2.0),
+            ("Stoff", "m_hub", 0.001),  # Standoff (massless)
             ("R Upr", "m_r_upper", 3.5),
             ("R Fore", "m_r_fore", 2.0),
             ("L Upr", "m_l_upper", 3.5),
@@ -221,7 +221,7 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
                 row.addWidget(w)
                 layout.addLayout(row)
         else:
-            self.inp_m_hub = LabeledInput("Hub", "2.0", "Hub standoff mass")  # type: ignore[assignment]
+            self.inp_m_hub = LabeledInput("Standoff", "0.001", "Standoff mass (massless)")  # type: ignore[assignment]
             self.inp_m_r_upper = LabeledInput("R Upper", "3.5", "Right upper arm")  # type: ignore[assignment]
             self.inp_m_r_fore = LabeledInput("R Fore", "2.0", "Right forearm")  # type: ignore[assignment]
             self.inp_m_l_upper = LabeledInput("L Upper", "3.5", "Left upper arm")  # type: ignore[assignment]
@@ -252,7 +252,7 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
         layout.setSpacing(3)
 
         length_specs = [
-            ("Hub", "L_hub", 0.15),
+            ("Stoff", "L_hub", 0.15),  # Standoff length
             ("R Upr", "L_r_upper", 0.35),
             ("R Fore", "L_r_fore", 0.30),
             ("L Upr", "L_l_upper", 0.35),
@@ -281,7 +281,7 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
                 row.addWidget(w)
                 layout.addLayout(row)
         else:
-            self.inp_L_hub = LabeledInput("Hub", "0.15", "Hub standoff length")  # type: ignore[assignment]
+            self.inp_L_hub = LabeledInput("Standoff", "0.15", "Standoff length (COM offset)")  # type: ignore[assignment]
             self.inp_L_r_upper = LabeledInput("R Upper", "0.35", "Right upper arm")  # type: ignore[assignment]
             self.inp_L_r_fore = LabeledInput("R Fore", "0.30", "Right forearm")  # type: ignore[assignment]
             self.inp_L_l_upper = LabeledInput("L Upper", "0.35", "Left upper arm")  # type: ignore[assignment]
@@ -304,8 +304,8 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(3)
-        self.inp_d_rs = LabeledInput("d_RS (m)", "0.20", "Hub to right shoulder offset")
-        self.inp_d_ls = LabeledInput("d_LS (m)", "0.20", "Hub to left shoulder offset")
+        self.inp_d_rs = LabeledInput("d_RS (m)", "0.20", "Hub bar to right shoulder offset")
+        self.inp_d_ls = LabeledInput("d_LS (m)", "0.20", "Hub bar to left shoulder offset")
         self.inp_grip_right = LabeledInput(
             "Grip R (m)", "0.05", "Right hand grip from club base"
         )
@@ -313,21 +313,31 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
             "Grip L (m)", "0.25", "Left hand grip from club base"
         )
         self.inp_L_rscap = LabeledInput(
-            "R Scap (m)",
-            "0.12",
-            "Right scapula link length.\n"
-            "Connects the hub bar endpoint to the right shoulder.\n"
-            "Set to 0 to disable scapula.",
+            "R UBody (m)",
+            "0.18",
+            "Right upper body segment length.\n"
+            "Connects hub to right shoulder via revolute joint.\n"
+            "Represents the upper torso on the right side.\n"
+            "Set to 0 to disable.",
         )
         self.inp_L_lscap = LabeledInput(
-            "L Scap (m)",
-            "0.12",
-            "Left scapula link length.\n"
-            "Connects the hub bar endpoint to the left shoulder.\n"
-            "Set to 0 to disable scapula.",
+            "L UBody (m)",
+            "0.18",
+            "Left upper body segment length.\n"
+            "Connects hub to left shoulder via revolute joint.\n"
+            "Represents the upper torso on the left side.\n"
+            "Set to 0 to disable.",
         )
-        self.inp_m_rscap = LabeledInput("R Scap m", "0.5", "Right scapula mass (kg)")
-        self.inp_m_lscap = LabeledInput("L Scap m", "0.5", "Left scapula mass (kg)")
+        self.inp_m_rscap = LabeledInput(
+            "R UBody m", "7.0",
+            "Right upper body mass (kg).\n"
+            "Should be ~2× arm mass to represent torso."
+        )
+        self.inp_m_lscap = LabeledInput(
+            "L UBody m", "7.0",
+            "Left upper body mass (kg).\n"
+            "Should be ~2× arm mass to represent torso."
+        )
         for w in [
             self.inp_d_rs,
             self.inp_d_ls,

@@ -72,6 +72,7 @@ class UnitAwareInput(QWidget):
         self._layout.addWidget(self._value_input)
 
         self._unit_combo = QComboBox()
+        self._unit_combo.setFixedWidth(60)  # Consistent width across all unit dropdowns
         cat_info = UNIT_CATEGORIES.get(category)
         if cat_info:
             self._unit_combo.addItems(cat_info.available_units)

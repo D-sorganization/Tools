@@ -239,13 +239,13 @@ class GolferPendulumWidget(BasePendulumWidget):
         club_base = self._world_to_pixel(*pos["club_base"])
         club_tip = self._world_to_pixel(*pos["club_tip"])
 
-        # Hub standoff (origin -> hub)
+        # Standoff (origin -> hub) — massless, COM offset adjustment
         pen = QPen(self.COLOR_HUB, 4)
         pen.setCapStyle(Qt.PenCapStyle.RoundCap)
         painter.setPen(pen)
         painter.drawLine(origin, hub)
 
-        # Scapula links (#1104, #1111)
+        # Upper body segments (hub -> shoulders) (#1104, #1111)
         if "rscap" in pos:
             rscap = self._world_to_pixel(*pos["rscap"])
             pen = QPen(QColor(180, 120, 120), 2, Qt.PenStyle.DashDotLine)
