@@ -37,6 +37,21 @@ _WIDGET_IMPORT_ERROR: str | None = None
 _SignalToolkitWidget: type | None = None
 
 try:
+    import os
+    import sys
+    from pathlib import Path
+
+    # signal_toolkit.widget_processing imports 'shared.python.safe_eval' which
+    # needs the Tools/src/ root on sys.path.  Walk up to find it.
+    _p = Path(__file__).resolve().parent
+    for _ in range(10):
+        if (_p / "shared" / "python").is_dir():
+            _np = os.path.normpath(str(_p))
+            if _np not in [os.path.normpath(s) for s in sys.path]:
+                sys.path.insert(0, str(_p))
+            break
+        _p = _p.parent
+
     from signal_toolkit.widget import SignalToolkitWidget as _STWidget
 
     _SignalToolkitWidget = _STWidget
