@@ -254,19 +254,32 @@ def configure_trc(trc_obj, sim) -> None:
     logger.info("TRC configured with %d reactions.", len(config.reactions))
 
 
-def print_reaction_summary() -> None:
-    """Print a summary of validated reactor contracts."""
+def get_reaction_summary() -> str:
+    """Return a formatted summary of validated reactor contracts.
+
+    Returns
+    -------
+    str
+        Multi-line summary of all reactor configurations and their reactions.
+    """
+    lines: list[str] = []
     for label, filename in (
         ("Gasifier", "gasifier_reactions.yaml"),
         ("PEM", "pem_reactions.yaml"),
         ("TRC", "trc_reactions.yaml"),
     ):
         config = _load_reactor_contract(filename)
-        print(f"\n{label} ({config.type}):")
-        print(f"  Temperature: {config.temperature_C} C")
-        print(f"  Pressure: {config.pressure_Pa} Pa")
+        lines.append(f"\n{label} ({config.type}):")
+        lines.append(f"  Temperature: {config.temperature_C} C")
+        lines.append(f"  Pressure: {config.pressure_Pa} Pa")
         for reaction in config.reactions:
-            print(f"  - {reaction.name}")
+            lines.append(f"  - {reaction.name}")
+    return "\n".join(lines)
+
+
+def print_reaction_summary() -> None:
+    """Print a summary of validated reactor contracts to stdout."""
+    print(get_reaction_summary())
 
 
 if __name__ == "__main__":

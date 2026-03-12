@@ -369,12 +369,11 @@ class MainWindow(tk.Tk):
             )
 
             self._results_tab.log("Building flowsheet…")
-            flowsheet = GasificationFlowsheet()
-            flowsheet._injected_config = cfg
-            flowsheet.build()
+            flowsheet = GasificationFlowsheet(runtime_config=cfg)
+            flowsheet.build_flowsheet()
 
             self._results_tab.log("Solving…")
-            flowsheet.solve()
+            flowsheet.run()
             self._results_tab.log("Solve complete.", "INFO")
 
             extractor = ResultsExtractor()
@@ -442,10 +441,9 @@ class MainWindow(tk.Tk):
             from dwsim_model.gasification import GasificationFlowsheet
 
             cfg = self._collect_config_from_tabs()
-            flowsheet = GasificationFlowsheet()
-            flowsheet._injected_config = cfg
-            flowsheet.build()
-            flowsheet.builder.sim.SaveToFile(path)
+            flowsheet = GasificationFlowsheet(runtime_config=cfg)
+            flowsheet.build_flowsheet()
+            flowsheet.builder.save(str(path))
             messagebox.showinfo(
                 "Export Complete",
                 f"Flowsheet exported to:\n{path}\n\n"

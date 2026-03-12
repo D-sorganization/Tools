@@ -387,11 +387,18 @@ class ConfigLoader:
 
     @staticmethod
     def _set_energy_stream_value(stream, value_watts: float) -> None:
-        """Apply an energy flow using the DWSIM property identifier supported by the runtime."""
+        """Apply an energy flow using the DWSIM property identifier supported by the runtime.
+
+        Tries PROP_ES_0 first (newer DWSIM API, expects kW); falls back to
+        EnergyFlow (older API, expects W) if the first property is not available.
+        """
         try:
             stream.SetPropertyValue("PROP_ES_0", value_watts / 1000.0)
             return
-        except Exception:
-            pass
+        except (AttributeError, TypeError, RuntimeError):
+            logger.debug(
+                "PROP_ES_0 not supported by this DWSIM version; "
+                "falling back to EnergyFlow."
+            )
 
         stream.SetPropertyValue("EnergyFlow", value_watts)
