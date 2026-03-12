@@ -49,6 +49,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from .theme import SEVERITY_COLORS, STYLE_DIAGNOSTICS_DIALOG
+
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
@@ -73,13 +75,8 @@ class DiagnosticEvent:
     extra: dict[str, Any] = field(default_factory=dict)
 
 
-# Severity → color mapping for the viewer
-_SEVERITY_COLORS: dict[str, str] = {
-    "info": "#6080c0",
-    "warning": "#c0a040",
-    "error": "#d06060",
-    "critical": "#e03030",
-}
+# Severity → color mapping for the viewer (imported from theme)
+_SEVERITY_COLORS = SEVERITY_COLORS
 
 
 # ---------------------------------------------------------------------------
@@ -278,25 +275,7 @@ class DiagnosticsViewer(QDialog):
         self._tracker = tracker
         self.setWindowTitle("Diagnostics Tracker — Pendulum Simulator")
         self.resize(950, 600)
-        self.setStyleSheet(
-            "QDialog { background: #1a1a2e; color: #c0c0d8; }"
-            "QTableWidget { background: #12122a; color: #c0c0d8; "
-            "gridline-color: #2a2a4a; border: 1px solid #2a2a4a; "
-            "font-size: 11px; }"
-            "QTableWidget::item:selected { background: #2a4060; }"
-            "QHeaderView::section { background: #1e1e3a; color: #9090c8; "
-            "border: 1px solid #2a2a4a; padding: 4px; font-weight: bold; }"
-            "QTextEdit { background: #0e0e1e; color: #a0c0e0; "
-            "border: 1px solid #2a2a4a; font-family: Consolas, monospace; "
-            "font-size: 11px; }"
-            "QComboBox { background: #252540; color: #c0c0d8; "
-            "border: 1px solid #404060; padding: 3px 8px; }"
-            "QPushButton { background: #252540; color: #b0b0d8; "
-            "border: 1px solid #404060; border-radius: 4px; "
-            "padding: 4px 12px; font-weight: bold; }"
-            "QPushButton:hover { background: #303060; }"
-            "QLabel { color: #9090c8; }"
-        )
+        self.setStyleSheet(STYLE_DIAGNOSTICS_DIALOG)
         self._build_ui()
         self._populate()
 
