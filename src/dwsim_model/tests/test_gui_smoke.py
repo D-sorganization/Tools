@@ -16,7 +16,9 @@ import pytest
 tk = pytest.importorskip(
     "tkinter", reason="tkinter not available — skipping GUI smoke tests"
 )
-ttk = tk.ttk  # type: ignore[attr-defined]
+ttk = pytest.importorskip(
+    "tkinter.ttk", reason="tkinter.ttk not available — skipping GUI smoke tests"
+)
 from unittest.mock import MagicMock  # noqa: E402
 
 # ---------------------------------------------------------------------------
