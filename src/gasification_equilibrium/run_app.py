@@ -44,7 +44,9 @@ def main() -> None:
         )
         print(f"Converged: {result.converged}")  # noqa: T201
         print(f"H2/CO = {result.h2_co_ratio:.3f}")  # noqa: T201
-        print(f"Carbon Conversion = {result.carbon_conversion * 100:.1f}%")  # noqa: T201
+        print(
+            f"Carbon Conversion = {result.carbon_conversion * 100:.1f}%"
+        )  # noqa: T201
         print("\nEquilibrium Composition (mol%):")  # noqa: T201
         for sp, frac in sorted(result.composition_dict().items(), key=lambda x: -x[1]):
             if frac > 0.001:

@@ -40,16 +40,13 @@ logger = logging.getLogger(__name__)
 
 def get_stylesheet() -> str:
     """Get the Catppuccin Mocha stylesheet with ResultCard extension."""
-    return str(
-        _base_stylesheet()
-        + f"""
+    return str(_base_stylesheet() + f"""
         QFrame#resultCard {{
             background-color: {COLORS["surface0"]};
             border-radius: 8px;
             padding: 10px;
         }}
-    """
-    )
+    """)
 
 
 class ResultCard(QFrame):
@@ -90,10 +87,12 @@ class ScrubberCalculatorWindow(BaseCalculatorWidget):
     def __init__(self) -> None:
         super().__init__(
             calculator_name="ScrubberCalculator",
-            window_title="Packed Bed Scrubber Calculator",
-            min_size=(1200, 800),
         )
+        # Note: Set window title and min size on the parent QMainWindow instead
         self.setStyleSheet(get_stylesheet())
+
+        # Main layout for widgets
+        self.main_layout = QVBoxLayout(self)
 
         # Store results for display
         self.last_results: ScrubberResults | None = None
@@ -105,7 +104,6 @@ class ScrubberCalculatorWindow(BaseCalculatorWidget):
 
     def _setup_ui(self) -> None:
         """Set up the user interface."""
-        # Use the main_layout from BaseCalculatorWidget
         content_widget = QWidget()
         content_layout = QHBoxLayout(content_widget)
         content_layout.setSpacing(15)
@@ -542,14 +540,22 @@ class ScrubberCalculatorWindow(BaseCalculatorWidget):
 
 def main() -> None:
     """Run the Scrubber Calculator application."""
+    from PyQt6.QtWidgets import QMainWindow
+
     from shared.python.theme import setup_themed_app
 
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
 
-    window = ScrubberCalculatorWindow()
-    setup_themed_app(app, window, settings_app="ScrubberCalculator")
-    window.show()
+    # Wrap the widget in a QMainWindow for setup_themed_app
+    main_window = QMainWindow()
+    widget = ScrubberCalculatorWindow()
+    main_window.setCentralWidget(widget)
+    main_window.setWindowTitle("Packed Bed Scrubber Calculator")
+    main_window.setMinimumSize(1200, 800)
+
+    setup_themed_app(app, main_window, settings_app="ScrubberCalculator")
+    main_window.show()
 
     sys.exit(app.exec())
 

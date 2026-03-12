@@ -143,9 +143,9 @@ class TestComputeGibbsGradient:
             G_plus = compute_gibbs(n_plus, 1000, P_REF, small_matrix)
             G_base = compute_gibbs(n, 1000, P_REF, small_matrix)
             num_grad = (G_plus - G_base) / eps
-            assert abs(grad[i] - num_grad) < 0.1, (
-                f"Gradient mismatch at species {i}: analytical={grad[i]:.4f}, numerical={num_grad:.4f}"
-            )
+            assert (
+                abs(grad[i] - num_grad) < 0.1
+            ), f"Gradient mismatch at species {i}: analytical={grad[i]:.4f}, numerical={num_grad:.4f}"
 
 
 class TestInitialGuess:

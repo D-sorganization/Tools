@@ -54,18 +54,18 @@ class TestSpeciesDatabase:
 
     def test_all_coefficients_have_7_elements(self) -> None:
         for key, sp in SPECIES_DB.items():
-            assert len(sp["coeff_low"]) == 7, (
-                f"{key} coeff_low has {len(sp['coeff_low'])} elements"
-            )
-            assert len(sp["coeff_high"]) == 7, (
-                f"{key} coeff_high has {len(sp['coeff_high'])} elements"
-            )
+            assert (
+                len(sp["coeff_low"]) == 7
+            ), f"{key} coeff_low has {len(sp['coeff_low'])} elements"
+            assert (
+                len(sp["coeff_high"]) == 7
+            ), f"{key} coeff_high has {len(sp['coeff_high'])} elements"
 
     def test_temperature_ranges_valid(self) -> None:
         for key, sp in SPECIES_DB.items():
-            assert sp["T_low"] < sp["T_mid"] < sp["T_high"], (
-                f"{key} has invalid T range"
-            )
+            assert (
+                sp["T_low"] < sp["T_mid"] < sp["T_high"]
+            ), f"{key} has invalid T range"
             assert sp["T_low"] > 0, f"{key} T_low must be positive"
 
     def test_molecular_weights_positive(self) -> None:
@@ -83,9 +83,9 @@ class TestSpeciesDatabase:
                 assert elem in known, f"{key} has unknown element '{elem}'"
 
     def test_minimum_species_count(self) -> None:
-        assert len(SPECIES_DB) >= 14, (
-            "Should have at least 14 species (including C3H8, Ar)"
-        )
+        assert (
+            len(SPECIES_DB) >= 14
+        ), "Should have at least 14 species (including C3H8, Ar)"
 
     def test_essential_species_present(self) -> None:
         essential = ["H2", "CO", "CO2", "H2O", "CH4", "N2", "C_solid"]
@@ -161,9 +161,9 @@ class TestNASAPolynomials:
                 g = g_over_rt(T, coeffs)
                 h = h_over_rt(T, coeffs)
                 s = s_over_r(T, coeffs)
-                assert abs(g - (h - s)) < 1e-10, (
-                    f"{key} at {T}K: G/RT={g} != H/RT-S/R={h - s}"
-                )
+                assert (
+                    abs(g - (h - s)) < 1e-10
+                ), f"{key} at {T}K: G/RT={g} != H/RT-S/R={h - s}"
 
     def test_coefficient_selection_low_range(self) -> None:
         """Uses low-T coefficients for T <= T_mid."""
@@ -271,9 +271,9 @@ class TestConstants:
     def test_hhv_greater_than_lhv(self) -> None:
         for sp in HEATING_VALUES_HHV:
             if sp in HEATING_VALUES_LHV:
-                assert HEATING_VALUES_HHV[sp] >= HEATING_VALUES_LHV[sp], (
-                    f"{sp}: HHV should be >= LHV"
-                )
+                assert (
+                    HEATING_VALUES_HHV[sp] >= HEATING_VALUES_LHV[sp]
+                ), f"{sp}: HHV should be >= LHV"
 
     def test_atomic_weights_has_all_elements(self) -> None:
         assert "C" in ATOMIC_WEIGHTS
