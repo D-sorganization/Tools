@@ -12,7 +12,13 @@ _ObjectType = None
 
 def get_automation(dwsim_path: str | None = None):
     if dwsim_path is None:
-        dwsim_path = os.environ.get("DWSIM_PATH", r"C:\Users\diete\AppData\Local\DWSIM")
+        dwsim_path = os.environ.get("DWSIM_PATH")
+        if dwsim_path is None:
+            raise RuntimeError(
+                "DWSIM_PATH environment variable is not set. "
+                "Set DWSIM_PATH to the directory containing DWSIM.Automation.dll "
+                "(e.g. export DWSIM_PATH='C:/Users/username/AppData/Local/DWSIM')."
+            )
 
     global _interf, _ObjectType
     if _interf is not None:

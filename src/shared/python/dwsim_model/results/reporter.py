@@ -620,11 +620,10 @@ def _build_energy_table(results) -> str:
 
     rows = []
     for name, value in sorted(results.energy_streams.items()):
-        kw = value / 1000.0 if value is not None else None
+        # value is an EnergyStreamResult object; energy_flow_kW is already in kW
+        kw = value.energy_flow_kW if hasattr(value, "energy_flow_kW") else float(value)
         desc = descriptions.get(name, "—")
-        color = ""
-        if kw is not None:
-            color = "color:#ef4444;" if kw < 0 else "color:#22c55e;"
+        color = "color:#ef4444;" if kw < 0 else "color:#22c55e;"
         rows.append(
             f"<tr>"
             f"<td><strong>{name}</strong></td>"
@@ -639,8 +638,11 @@ def _build_energy_table(results) -> str:
             "No energy stream data available.</td></tr>"
         ]
 
-    # Total
-    total_kw = sum(v / 1000.0 for v in results.energy_streams.values() if v is not None)
+    # Total — energy_flow_kW is already in kW
+    total_kw = sum(
+        v.energy_flow_kW if hasattr(v, "energy_flow_kW") else float(v)
+        for v in results.energy_streams.values()
+    )
     rows.append(
         f"<tr style='font-weight:700;background:#edf2f7;'>"
         f"<td>TOTAL</td>"

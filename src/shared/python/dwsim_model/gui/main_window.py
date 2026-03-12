@@ -52,6 +52,16 @@ class MainWindow(tk.Tk):
     MIN_WIDTH = 900
     MIN_HEIGHT = 600
 
+    @staticmethod
+    def _discover_scenarios() -> list[str]:
+        """Discover available scenarios by globbing config/scenarios/*.yaml."""
+        here = Path(__file__).resolve().parent
+        project_root = here.parent.parent.parent.parent
+        scenario_dir = project_root / "config" / "scenarios"
+        if not scenario_dir.is_dir():
+            return ["baseline", "high_steam", "air_blown"]
+        return sorted(p.stem for p in scenario_dir.glob("*.yaml"))
+
     def __init__(self):
         super().__init__()
         self.title(self.APP_TITLE)
@@ -106,7 +116,7 @@ class MainWindow(tk.Tk):
         def make_command(s: str):
             return lambda: self._on_load_scenario(s)
 
-        for scenario in ("baseline", "high_steam", "air_blown"):
+        for scenario in self._discover_scenarios():
             sc_menu.add_command(
                 label=scenario.replace("_", " ").title(),
                 command=make_command(scenario),
@@ -149,12 +159,15 @@ class MainWindow(tk.Tk):
 
         # Scenario picker
         ttk.Label(toolbar, text="Scenario:").pack(side="right", padx=(0, 4))
-        self._scenario_var = tk.StringVar(value="baseline")
+        _scenarios = self._discover_scenarios()
+        self._scenario_var = tk.StringVar(
+            value=_scenarios[0] if _scenarios else "baseline"
+        )
         scenario_combo = ttk.Combobox(
             toolbar,
             textvariable=self._scenario_var,
             width=14,
-            values=["baseline", "high_steam", "air_blown"],
+            values=_scenarios,
             state="readonly",
         )
         scenario_combo.pack(side="right", padx=4, pady=4)
@@ -406,7 +419,7 @@ class MainWindow(tk.Tk):
             # Schedule GUI update on the main thread
             self.after(0, self._on_run_success, results, metrics, html_path)
 
-        except Exception as exc:
+        except (RuntimeError, OSError, ValueError, TypeError) as exc:
             logger.error(f"Simulation error: {exc}", exc_info=True)
             self.after(0, self._on_run_failure, str(exc))
 

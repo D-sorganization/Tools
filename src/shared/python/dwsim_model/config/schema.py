@@ -124,6 +124,14 @@ class StreamConfig(BaseModel):
 # ─────────────────────────────────────────────────────────────────────────────
 
 
+class KineticParameters(BaseModel):
+    """Arrhenius-style kinetic parameters for a PFR reaction."""
+
+    pre_exponential_A: float = Field(..., gt=0.0)
+    activation_energy_J_mol: float = Field(..., gt=0.0)
+    reaction_order_n: float = Field(..., ge=0.0)
+
+
 class ReactionEntry(BaseModel):
     """A single reaction definition."""
 
@@ -134,14 +142,6 @@ class ReactionEntry(BaseModel):
     heat_of_reaction_kJ_mol: float | None = None
     type: str | None = None  # "equilibrium" | "kinetic" | "conversion"
     kinetics: KineticParameters | None = None
-
-
-class KineticParameters(BaseModel):
-    """Arrhenius-style kinetic parameters for a PFR reaction."""
-
-    pre_exponential_A: float = Field(..., gt=0.0)
-    activation_energy_J_mol: float = Field(..., gt=0.0)
-    reaction_order_n: float = Field(..., ge=0.0)
 
 
 class ReactorConfig(BaseModel):
@@ -284,7 +284,7 @@ def validate_master_config(raw: dict) -> MasterConfig:
         import yaml
         raw = yaml.safe_load(open("config/master_config.yaml"))
         cfg = validate_master_config(raw)
-        print(cfg.reactor_mode)
+        logger.info(cfg.reactor_mode)
     """
     return MasterConfig.model_validate(raw)
 

@@ -15,6 +15,12 @@ def build_gasifier_stage(
     builder, reactor_type: str, connect: Connector
 ) -> dict[str, object]:
     """Create the gasifier stage and wire its internal topology."""
+    if not builder:
+        raise ValueError("builder must not be None or falsy")
+    if not reactor_type:
+        raise ValueError("reactor_type must be a non-empty string")
+    if not connect:
+        raise ValueError("connect must be a callable Connector")
     feed_biomass = builder.add_object("MaterialStream", "Gasifier_Biomass_Feed", 0, 300)
     feed_solids = builder.add_object("MaterialStream", "Gasifier_Solids_Feed", 0, 350)
     feed_oxygen = builder.add_object("MaterialStream", "Gasifier_Oxygen_Feed", 0, 400)
@@ -80,6 +86,12 @@ def build_pem_stage(
     syngas_inlet_name: str = "PEM_Syngas_Inlet",
 ) -> dict[str, object]:
     """Create the PEM stage and wire its internal topology."""
+    if not builder:
+        raise ValueError("builder must not be None or falsy")
+    if not reactor_type:
+        raise ValueError("reactor_type must be a non-empty string")
+    if not connect:
+        raise ValueError("connect must be a callable Connector")
     feed_syngas = syngas_inlet or builder.add_object(
         "MaterialStream", syngas_inlet_name, 650, 150
     )
@@ -143,6 +155,12 @@ def build_trc_stage(
     syngas_inlet_name: str = "TRC_Syngas_Inlet",
 ) -> dict[str, object]:
     """Create the TRC stage and wire its internal topology."""
+    if not builder:
+        raise ValueError("builder must not be None or falsy")
+    if not reactor_type:
+        raise ValueError("reactor_type must be a non-empty string")
+    if not connect:
+        raise ValueError("connect must be a callable Connector")
     feed_syngas = syngas_inlet or builder.add_object(
         "MaterialStream", syngas_inlet_name, 1450, 150
     )
