@@ -194,9 +194,7 @@ class MainWindow(QMainWindow):
             return
         font = app.font()
         base_pt = 10  # default base
-        new_pt = max(
-            self._FONT_MIN_PT, min(self._FONT_MAX_PT, base_pt + self._font_zoom_pt)
-        )
+        new_pt = max(self._FONT_MIN_PT, min(self._FONT_MAX_PT, base_pt + self._font_zoom_pt))
         font.setPointSize(new_pt)
         app.setFont(font)
         # Persist
@@ -292,9 +290,7 @@ class MainWindow(QMainWindow):
         )
 
         # ── Simulation action signals → active panel only ──────────────
-        ts.run_requested.connect(
-            lambda: self._active_panel().controls.run_requested.emit()
-        )
+        ts.run_requested.connect(lambda: self._active_panel().controls.run_requested.emit())
         ts.reset_requested.connect(
             lambda: self._active_panel().controls.reset_requested.emit()
         )
@@ -327,9 +323,7 @@ class MainWindow(QMainWindow):
         ts.zero_torque_toggled.connect(
             lambda v: _fwd_overlay("set_show_zero_torque_forces", v)
         )
-        ts.mob_ellipsoid_toggled.connect(
-            lambda v: _fwd_overlay("set_show_mob_ellipsoids", v)
-        )
+        ts.mob_ellipsoid_toggled.connect(lambda v: _fwd_overlay("set_show_mob_ellipsoids", v))
         ts.force_ellipsoid_toggled.connect(
             lambda v: _fwd_overlay("set_show_force_ellipsoids", v)
         )
@@ -351,9 +345,7 @@ class MainWindow(QMainWindow):
 
         # ── Scale sliders → active panel's pendulum widget ────────────
         ts.force_scale_changed.connect(lambda v: _fwd_overlay("set_force_scale", v))
-        ts.mob_scale_changed.connect(
-            lambda v: _fwd_overlay("set_mob_ellipsoid_scale", v)
-        )
+        ts.mob_scale_changed.connect(lambda v: _fwd_overlay("set_mob_ellipsoid_scale", v))
         ts.force_ell_scale_changed.connect(
             lambda v: _fwd_overlay("set_force_ellipsoid_scale", v)
         )
@@ -398,9 +390,7 @@ class MainWindow(QMainWindow):
         # Guard each callback so non-active panels are silently ignored.
         for panel in self._panels:
             panel.sim_started.connect(
-                lambda _p=panel: (
-                    ts.set_running(True) if _p is self._active_panel() else None
-                )
+                lambda _p=panel: (ts.set_running(True) if _p is self._active_panel() else None)
             )
             panel.sim_finished.connect(
                 lambda _p=panel: (
@@ -730,9 +720,7 @@ class MainWindow(QMainWindow):
 
             def objective(coeffs: np.ndarray) -> float:
                 n_seventh = max(1, len(coeffs) // 7)
-                slices = [
-                    list(coeffs[i * n_seventh : (i + 1) * n_seventh]) for i in range(7)
-                ]
+                slices = [list(coeffs[i * n_seventh : (i + 1) * n_seventh]) for i in range(7)]
                 torque_func = make_polynomial_torque_golfer(*slices)
                 try:
                     result = run_simulation_golfer(
@@ -872,9 +860,7 @@ class MainWindow(QMainWindow):
         )
 
         chart = PopOutChart(self)
-        chart.plot_data(
-            t, torques, "Time (s)", "Torque (N·m)", "Joint 1 Driving Torque"
-        )
+        chart.plot_data(t, torques, "Time (s)", "Torque (N·m)", "Joint 1 Driving Torque")
         chart.add_regression(degree=3)
         chart.show()
 
@@ -922,11 +908,7 @@ class MainWindow(QMainWindow):
         self.status.showMessage(f"Theme changed to: {name}", 3000)
 
     def _open_theme_manager(self) -> None:
-        if (
-            not _THEME_AVAILABLE
-            or self._theme_manager is None
-            or ThemeManagerDialog is None
-        ):
+        if not _THEME_AVAILABLE or self._theme_manager is None or ThemeManagerDialog is None:
             from PyQt6.QtWidgets import QMessageBox
 
             QMessageBox.information(

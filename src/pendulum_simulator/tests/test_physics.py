@@ -45,29 +45,25 @@ class TestMassMatrixSymmetry:
 class TestMassMatrixPositiveDefinite:
     """The mass matrix must be positive definite (all eigenvalues > 0)."""
 
-    def test_positive_definite_at_various_angles(
-        self, default_params: PendulumParams
-    ) -> None:
+    def test_positive_definite_at_various_angles(self, default_params: PendulumParams) -> None:
         for phi in np.linspace(-np.pi, np.pi, 50):
             M = mass_matrix(phi, default_params)
             eigenvalues = np.linalg.eigvalsh(M)
-            assert all(
-                ev > 0 for ev in eigenvalues
-            ), f"Not positive definite at phi={phi}: eigenvalues={eigenvalues}"
+            assert all(ev > 0 for ev in eigenvalues), (
+                f"Not positive definite at phi={phi}: eigenvalues={eigenvalues}"
+            )
 
 
 class TestMassMatrixCouplingMaximum:
     """Off-diagonal coupling |M12| should be maximized when segments are aligned (phi=0)."""
 
-    def test_coupling_maximized_at_alignment(
-        self, default_params: PendulumParams
-    ) -> None:
+    def test_coupling_maximized_at_alignment(self, default_params: PendulumParams) -> None:
         M12_at_zero = abs(mass_matrix(0.0, default_params)[0, 1])
         for phi in np.linspace(0.1, np.pi, 30):
             M12 = abs(mass_matrix(phi, default_params)[0, 1])
-            assert (
-                M12 <= M12_at_zero + 1e-10
-            ), f"|M12| at phi={phi:.2f} ({M12:.4f}) exceeds value at phi=0 ({M12_at_zero:.4f})"
+            assert M12 <= M12_at_zero + 1e-10, (
+                f"|M12| at phi={phi:.2f} ({M12:.4f}) exceeds value at phi=0 ({M12_at_zero:.4f})"
+            )
 
 
 class TestMassMatrixDiagonalConstant:
@@ -77,9 +73,7 @@ class TestMassMatrixDiagonalConstant:
         M22_ref = mass_matrix(0.0, default_params)[1, 1]
         for phi in np.linspace(-np.pi, np.pi, 30):
             M22 = mass_matrix(phi, default_params)[1, 1]
-            assert np.isclose(
-                M22, M22_ref
-            ), f"M22 changed at phi={phi}: {M22} vs {M22_ref}"
+            assert np.isclose(M22, M22_ref), f"M22 changed at phi={phi}: {M22} vs {M22_ref}"
 
     def test_m22_equals_expected(self, default_params: PendulumParams) -> None:
         """M22 = m2 * L2^2 for point mass at tip."""
@@ -122,9 +116,7 @@ class TestMassMatrixKnownValues:
 class TestCoriolisVector:
     """Tests for the Coriolis/centrifugal force computation."""
 
-    def test_zero_velocity_gives_zero_coriolis(
-        self, default_params: PendulumParams
-    ) -> None:
+    def test_zero_velocity_gives_zero_coriolis(self, default_params: PendulumParams) -> None:
         """No velocity => no velocity-dependent forces."""
         C = coriolis_vector(0.5, 0.0, 0.0, default_params)
         assert np.allclose(C, [0.0, 0.0])

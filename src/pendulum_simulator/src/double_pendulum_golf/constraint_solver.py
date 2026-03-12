@@ -99,9 +99,9 @@ def _solve_constrained_dynamics(
     if native_result is not None:
         qddot, lambda_forces = native_result
         assert np.all(np.isfinite(qddot)), f"qddot has non-finite values: {qddot}"
-        assert np.all(
-            np.isfinite(lambda_forces)
-        ), f"Constraint forces have non-finite values: {lambda_forces}"
+        assert np.all(np.isfinite(lambda_forces)), (
+            f"Constraint forces have non-finite values: {lambda_forces}"
+        )
         return qddot, lambda_forces
 
     # Compute dynamic terms
@@ -150,9 +150,9 @@ def _solve_constrained_dynamics(
     lambda_forces = sol[n:]
 
     assert np.all(np.isfinite(qddot)), f"qddot has non-finite values: {qddot}"
-    assert np.all(
-        np.isfinite(lambda_forces)
-    ), f"Constraint forces have non-finite values: {lambda_forces}"
+    assert np.all(np.isfinite(lambda_forces)), (
+        f"Constraint forces have non-finite values: {lambda_forces}"
+    )
     return qddot, lambda_forces
 
 
@@ -186,9 +186,7 @@ def constraint_forces(
     -------
     lambda_vec : np.ndarray, shape (4,) — constraint forces
     """
-    _, lambda_forces = _solve_constrained_dynamics(
-        state, t, params, torque_func, alpha, beta
-    )
+    _, lambda_forces = _solve_constrained_dynamics(state, t, params, torque_func, alpha, beta)
     return lambda_forces
 
 
@@ -303,9 +301,7 @@ def project_to_constraints(
     assert max_iter > 0, f"max_iter must be positive, got {max_iter}"
     assert tol > 0, f"tol must be positive, got {tol}"
 
-    native_projection = _native_backend.golfer_project_to_constraints(
-        q, params, max_iter, tol
-    )
+    native_projection = _native_backend.golfer_project_to_constraints(q, params, max_iter, tol)
     if native_projection is not None:
         residual = float(np.linalg.norm(constraint_vector(native_projection, params)))
         if residual < tol:
@@ -318,9 +314,7 @@ def project_to_constraints(
             return q
         Phi_q = constraint_jacobian(q, params)
         # Use pseudoinverse for robustness
-        dq = Phi_q.T @ np.linalg.solve(
-            Phi_q @ Phi_q.T + 1e-12 * np.eye(N_CONSTRAINTS), Phi
-        )
+        dq = Phi_q.T @ np.linalg.solve(Phi_q @ Phi_q.T + 1e-12 * np.eye(N_CONSTRAINTS), Phi)
         q -= dq
 
     residual = float(np.linalg.norm(constraint_vector(q, params)))

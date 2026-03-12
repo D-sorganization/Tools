@@ -346,12 +346,8 @@ class ControlsWidget(QWidget):
         self.chk_limits.setStyleSheet(STYLE_CHECK)
         layout.addWidget(self.chk_limits)
         # Shoulder (theta1) limits
-        self.inp_theta1_min = LabeledInput(
-            "θ1 min°", "-180", "Min shoulder angle (deg)", lw
-        )
-        self.inp_theta1_max = LabeledInput(
-            "θ1 max°", "180", "Max shoulder angle (deg)", lw
-        )
+        self.inp_theta1_min = LabeledInput("θ1 min°", "-180", "Min shoulder angle (deg)", lw)
+        self.inp_theta1_max = LabeledInput("θ1 max°", "180", "Max shoulder angle (deg)", lw)
         layout.addLayout(_row(self.inp_theta1_min, self.inp_theta1_max))
         # Wrist (phi) limits
         self.inp_phi_min = LabeledInput("φ min°", "-90", "Min wrist angle (deg)", lw)
@@ -424,12 +420,8 @@ class ControlsWidget(QWidget):
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(3)
         # Angles stay as LabeledInput (always degrees, no conversion needed)
-        self.inp_theta1 = LabeledInput(
-            "\u03b81\u00b0", "120", "Arm angle from vertical", lw
-        )
-        self.inp_phi = LabeledInput(
-            "\u03c6\u00b0", "-90", "Club angle relative to arm", lw
-        )
+        self.inp_theta1 = LabeledInput("\u03b81\u00b0", "120", "Arm angle from vertical", lw)
+        self.inp_phi = LabeledInput("\u03c6\u00b0", "-90", "Club angle relative to arm", lw)
         if _HAS_UAI:
             self.inp_dtheta1 = UnitAwareInput(
                 category="angular_velocity",
@@ -464,12 +456,8 @@ class ControlsWidget(QWidget):
                 row.addWidget(widget)
                 layout.addLayout(row)
         else:
-            self.inp_dtheta1 = LabeledInput(
-                "d\u03b81", "0", "Arm angular velocity rad/s", lw
-            )
-            self.inp_dphi = LabeledInput(
-                "d\u03c6", "0", "Club angular velocity rad/s", lw
-            )
+            self.inp_dtheta1 = LabeledInput("d\u03b81", "0", "Arm angular velocity rad/s", lw)
+            self.inp_dphi = LabeledInput("d\u03c6", "0", "Club angular velocity rad/s", lw)
             layout.addLayout(_row(self.inp_theta1, self.inp_phi))
             layout.addLayout(_row(self.inp_dtheta1, self.inp_dphi))
         return box
@@ -480,16 +468,12 @@ class ControlsWidget(QWidget):
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(3)
-        self.inp_tau_shoulder = LabeledInput(
-            "Shoulder", "-25, 10", "τ(t)=c0+c1·t+…", 56
-        )
+        self.inp_tau_shoulder = LabeledInput("Shoulder", "-25, 10", "τ(t)=c0+c1·t+…", 56)
         self.inp_tau_wrist = LabeledInput("Wrist", "0", "τ(t)=c0+c1·t+…", 56)
         layout.addWidget(self.inp_tau_shoulder)
         layout.addWidget(self.inp_tau_wrist)
         self.btn_funcgen = QPushButton("📈 Signal Toolkit…")
-        self.btn_funcgen.setToolTip(
-            "Design a waveform and import as torque coefficients"
-        )
+        self.btn_funcgen.setToolTip("Design a waveform and import as torque coefficients")
         self.btn_funcgen.setStyleSheet(
             "QPushButton{background:#282848;color:#b0b0e0;border:1px solid #404068;"
             "border-radius:4px;padding:4px 8px;font-size:10px;}"
@@ -676,9 +660,7 @@ class ControlsWidget(QWidget):
     def _apply_preset(self, name: str) -> None:
         if name not in self.PRESETS:
             return
-        theta1, phi, dth, dph, tau_sh, tau_wr, tend, m1, m2, mClub, L1, L2 = (
-            self.PRESETS[name]
-        )
+        theta1, phi, dth, dph, tau_sh, tau_wr, tend, m1, m2, mClub, L1, L2 = self.PRESETS[name]
         self.inp_theta1.set_value(str(theta1))
         self.inp_phi.set_value(str(phi))
         self.inp_tau_shoulder.set_value(tau_sh)
@@ -840,9 +822,9 @@ class ControlsWidget(QWidget):
 
     def set_slider_value(self, val: int) -> None:
         """Pre: 0 <= val <= slider.maximum()"""
-        assert (
-            0 <= val <= self.slider.maximum()
-        ), f"Slider value {val} out of range [0, {self.slider.maximum()}]"
+        assert 0 <= val <= self.slider.maximum(), (
+            f"Slider value {val} out of range [0, {self.slider.maximum()}]"
+        )
         self.slider.blockSignals(True)
         self.slider.setValue(val)
         self.slider.blockSignals(False)
