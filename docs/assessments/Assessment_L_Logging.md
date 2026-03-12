@@ -1,11 +1,11 @@
 # Assessment: Logging (Category L)
 
-## Grade: 9.4/10
+## Grade: 9.2/10
 
 ## Justification
-Logging usage: 2159 vs Prints: 135
+Logging usage: 2343 vs Prints: 200
 
 ## Statistics
-- Total Python Files: 1136
-- Total Lines of Code: 2060608
-- Analysis Date: 2026-03-05
+- Total Python Files: 1366
+- Total Lines of Code: 2043689
+- Analysis Date: 2026-03-12
