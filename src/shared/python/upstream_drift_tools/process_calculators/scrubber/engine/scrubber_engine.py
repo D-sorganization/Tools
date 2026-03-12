@@ -174,10 +174,10 @@ class ScrubberEngine:
             warnings.append(str(cooling_water["warning"]))
 
         return (
-            caustic_req.get("naoh_pure_kg_hr", 0.0),
-            caustic_req.get("naoh_solution_L_hr", 0.0),
-            heat_duty["total_heat_kw"],
-            cooling_water.get("water_flow_L_min", 0.0),
+            float(caustic_req.get("naoh_pure_kg_hr", 0.0)),
+            float(caustic_req.get("naoh_solution_L_hr", 0.0)),
+            float(heat_duty["total_heat_kw"]),
+            float(cooling_water.get("water_flow_L_min", 0.0)),
             warnings,
         )
 

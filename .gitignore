@@ -116,3 +116,4 @@ src/pendulum_simulator/pendulum-core/target/
 Cargo.lock
 # WASM build output
 pkg/
+.jules/
