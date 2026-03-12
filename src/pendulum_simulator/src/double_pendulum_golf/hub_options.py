@@ -129,7 +129,7 @@ def compute_system_com(
 
     com = sum(m * pos for m, pos in masses_positions) / total_mass
 
-    assert com.shape == (2,), f"Expected shape (2,), got {com.shape}"  # type: ignore[union-attr]
+    assert com.shape == (2,), f"Expected shape (2,), got {com.shape}"
     assert np.all(np.isfinite(com)), f"COM is not finite: {com}"
     return com  # type: ignore[no-any-return]
 

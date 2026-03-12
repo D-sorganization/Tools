@@ -26,6 +26,7 @@ golfer_constraints.net_joint_forces / counterfactual_golfer for force data.
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 import numpy as np
 
@@ -292,7 +293,7 @@ def overall_club_decomposition(
     state: np.ndarray,
     t: float,
     p: GolferParams,
-    torque_func,
+    torque_func: Any,
     alpha: float = 0.0,
 ) -> dict[str, float | np.ndarray]:
     """Club force decomposition using overall (full dynamics) forces.
