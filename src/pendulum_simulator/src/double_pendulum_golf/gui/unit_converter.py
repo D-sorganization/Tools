@@ -191,7 +191,7 @@ class UnitPreferences:
         """
         valid = [label for label, _ in _UNIT_OPTIONS[category]]
         assert unit_label in valid, (
-            f"Invalid unit '{unit_label}' for {category.value}. " f"Valid: {valid}"
+            f"Invalid unit '{unit_label}' for {category.value}. Valid: {valid}"
         )
         self.selections[category] = unit_label
 

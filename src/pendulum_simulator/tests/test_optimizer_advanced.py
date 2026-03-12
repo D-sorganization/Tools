@@ -3,11 +3,23 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
-from double_pendulum_golf.gui.optimization_widget import (
-    CMAESState,
-    _cmaes_step,
-)
+
+def _has_optimizer() -> bool:
+    """Check if optimizer can be imported (False in headless CI environments)."""
+    try:
+        from double_pendulum_golf.gui.optimization_widget import (  # noqa: F401
+            CMAESState,
+            _cmaes_step,
+        )
+
+        return True
+    except (ImportError, OSError):
+        return False
+
+
+pytestmark = pytest.mark.skipif(not _has_optimizer(), reason="PyQt6/optimizer not available")
 
 
 class TestCMAESStep:
@@ -20,6 +32,11 @@ class TestCMAESStep:
 
     def test_basic_improvement(self) -> None:
         """CMA-ES should improve fitness over multiple generations."""
+        from double_pendulum_golf.gui.optimization_widget import (
+            CMAESState,
+            _cmaes_step,
+        )
+
         rng = np.random.default_rng(42)
         n = 4
 
@@ -40,6 +57,11 @@ class TestCMAESStep:
 
     def test_finds_optimum(self) -> None:
         """CMA-ES should converge near the origin for the sphere fn."""
+        from double_pendulum_golf.gui.optimization_widget import (
+            CMAESState,
+            _cmaes_step,
+        )
+
         rng = np.random.default_rng(0)
         n = 2
         state = CMAESState(
@@ -59,6 +81,11 @@ class TestCMAESStep:
 
     def test_warm_start_advantage(self) -> None:
         """Warm-starting near the optimum should converge faster."""
+        from double_pendulum_golf.gui.optimization_widget import (
+            CMAESState,
+            _cmaes_step,
+        )
+
         rng = np.random.default_rng(42)
         n = 4
 
@@ -84,14 +111,17 @@ class TestCMAESStep:
             state_cold, _ = _cmaes_step(state_cold, self._sphere, pop_size=10, rng=rng)
         rng_w = np.random.default_rng(42)
         for _ in range(20):
-            state_warm, _ = _cmaes_step(
-                state_warm, self._sphere, pop_size=10, rng=rng_w
-            )
+            state_warm, _ = _cmaes_step(state_warm, self._sphere, pop_size=10, rng=rng_w)
 
         assert state_warm.best_fitness < state_cold.best_fitness
 
     def test_stall_detection(self) -> None:
         """CMA-ES should detect stalling when fitness plateaus."""
+        from double_pendulum_golf.gui.optimization_widget import (
+            CMAESState,
+            _cmaes_step,
+        )
+
         rng = np.random.default_rng(42)
         n = 2
 

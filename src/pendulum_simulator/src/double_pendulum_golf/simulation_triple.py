@@ -12,7 +12,6 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import numpy as np
-from scipy.integrate import solve_ivp
 
 if TYPE_CHECKING:
     from .physics import JointLimitsNDOF
@@ -32,6 +31,7 @@ from .physics_triple import (
     potential_energy,
     total_energy,
 )
+from .simulation_core import integrate_ode
 from .simulation_result_base import TrajectoryResultMixin
 
 # Re-export from shared utility for backwards compatibility (DRY — #1041)
@@ -165,18 +165,15 @@ def run_simulation(
       visualisation-quality results.  Use tighter values only when
       quantitative energy conservation is required.
     """
-    assert initial_state.shape == (
-        6,
-    ), f"Initial state shape must be (6,), got {initial_state.shape}"
+    assert initial_state.shape == (6,), (
+        f"Initial state shape must be (6,), got {initial_state.shape}"
+    )
     assert all(np.isfinite(initial_state)), "Initial state must be finite"
     assert t_end > 0, f"t_end must be positive, got {t_end}"
     assert 0 < dt < t_end, f"dt must be in (0, t_end), got {dt}"
 
     # Merge clamp kwarg (from SimulationPanel) with torque_limits (legacy)
     effective_torque_limits = torque_limits if torque_limits is not None else clamp
-
-    # Uniform output grid — solver adapts its internal step freely
-    t_eval = np.arange(0.0, t_end, dt)
 
     def ode_rhs(t: float, y: np.ndarray) -> np.ndarray:
         dydt = equations_of_motion(y, t, params, torque_func, effective_torque_limits)
@@ -196,23 +193,20 @@ def run_simulation(
             dydt[3:] += qddot_correction
         return dydt
 
-    sol = solve_ivp(
+    t, states = integrate_ode(
         ode_rhs,
-        t_span=(0.0, t_end),
-        y0=initial_state,
-        t_eval=t_eval,
+        initial_state,
+        t_end,
+        dt=dt,
         method=method,
         rtol=rtol,
         atol=atol,
         # max_step deliberately omitted — adaptive step is much faster
     )
 
-    if not sol.success:
-        raise RuntimeError(f"Integration failed: {sol.message}")
-
     result = TripleSimulationResult(
-        t=sol.t,
-        states=sol.y.T,
+        t=t,
+        states=states,
         params=params,
         torque_func=torque_func,
     )

@@ -160,16 +160,12 @@ def mass_matrix(phi1: float, phi2: float, params: TriplePendulumParams) -> np.nd
     # Postcondition: symmetry
     for i in range(3):
         for j in range(3):
-            assert np.isclose(
-                M[i, j], M[j, i]
-            ), f"Mass matrix not symmetric at [{i},{j}]"
+            assert np.isclose(M[i, j], M[j, i]), f"Mass matrix not symmetric at [{i},{j}]"
 
     return M
 
 
-def mass_matrix_components(
-    phi1: float, phi2: float, params: TriplePendulumParams
-) -> dict:
+def mass_matrix_components(phi1: float, phi2: float, params: TriplePendulumParams) -> dict:
     """Return individual mass matrix terms with labels.
 
     Returns
@@ -229,9 +225,9 @@ def coriolis_vector(
     -------
     C_qdot : np.ndarray, shape (3,)
     """
-    assert all(
-        np.isfinite(v) for v in [phi1, phi2, dtheta1, dphi1, dphi2]
-    ), "All inputs must be finite"
+    assert all(np.isfinite(v) for v in [phi1, phi2, dtheta1, dphi1, dphi2]), (
+        "All inputs must be finite"
+    )
     native_coriolis = _native_backend.triple_coriolis_vector(
         phi1, phi2, dtheta1, dphi1, dphi2, params
     )
@@ -416,9 +412,7 @@ def equations_of_motion(
 
     state_dot = np.array([dtheta1, dphi1, dphi2, qddot[0], qddot[1], qddot[2]])
 
-    assert all(
-        np.isfinite(state_dot)
-    ), f"State derivative has non-finite values: {state_dot}"
+    assert all(np.isfinite(state_dot)), f"State derivative has non-finite values: {state_dot}"
     return state_dot
 
 
@@ -450,9 +444,7 @@ def forward_kinematics(
     dict with 'hub', 'shoulder', 'wrist1', 'wrist2', 'tip' as (x, y) tuples.
     The shoulder is displaced from the hub by the scapula offset (#1152).
     """
-    native_positions = _native_backend.triple_forward_kinematics(
-        theta1, phi1, phi2, params
-    )
+    native_positions = _native_backend.triple_forward_kinematics(theta1, phi1, phi2, params)
     if native_positions is not None:
         return native_positions
 
@@ -533,9 +525,7 @@ def linear_accelerations(
     }
 
 
-def net_joint_forces(
-    state: State, qddot: np.ndarray, params: TriplePendulumParams
-) -> dict:
+def net_joint_forces(state: State, qddot: np.ndarray, params: TriplePendulumParams) -> dict:
     """Compute net joint forces (proximal on distal) in world coordinates.
 
     Returns
@@ -568,10 +558,12 @@ def net_joint_forces(
 
 def kinetic_energy(state: State, params: TriplePendulumParams) -> float:
     """Compute total kinetic energy T = 0.5 * qdot^T M qdot."""
+    from .physics_base import kinetic_energy_from_M
+
     theta1, phi1, phi2, dtheta1, dphi1, dphi2 = state
     M = mass_matrix(phi1, phi2, params)
     qdot = np.array([dtheta1, dphi1, dphi2])
-    return float(0.5 * qdot @ M @ qdot)
+    return kinetic_energy_from_M(M, qdot)
 
 
 def potential_energy(state: State, params: TriplePendulumParams) -> float:
@@ -589,9 +581,7 @@ def potential_energy(state: State, params: TriplePendulumParams) -> float:
     V = (
         -m1 * g * L1 * np.cos(theta1)
         - m2 * g * (L1 * np.cos(theta1) + L2 * np.cos(abs_angle2))
-        - m3
-        * g
-        * (L1 * np.cos(theta1) + L2 * np.cos(abs_angle2) + L3 * np.cos(abs_angle3))
+        - m3 * g * (L1 * np.cos(theta1) + L2 * np.cos(abs_angle2) + L3 * np.cos(abs_angle3))
     )
 
     return float(V)
@@ -599,4 +589,8 @@ def potential_energy(state: State, params: TriplePendulumParams) -> float:
 
 def total_energy(state: State, params: TriplePendulumParams) -> float:
     """Compute total energy E = T + V."""
-    return kinetic_energy(state, params) + potential_energy(state, params)
+    from .physics_base import total_energy_from_parts
+
+    return total_energy_from_parts(
+        kinetic_energy(state, params), potential_energy(state, params)
+    )

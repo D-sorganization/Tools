@@ -77,8 +77,7 @@ STYLE_BTN_FUNCGEN = (
 )
 
 STYLE_COMBO = (
-    "background:#2a2a38;color:#e0e0f0;border:1px solid #505068;"
-    "border-radius:3px;padding:4px;"
+    "background:#2a2a38;color:#e0e0f0;border:1px solid #505068;border-radius:3px;padding:4px;"
 )
 
 
@@ -103,6 +102,7 @@ class ControlsWidgetBase(QWidget):
     frame_changed = pyqtSignal(int)
     export_data_requested = pyqtSignal()
     export_video_requested = pyqtSignal()
+    export_image_requested = pyqtSignal()
     gravity_changed = pyqtSignal(bool)
     forces_changed = pyqtSignal(bool)
 
@@ -253,10 +253,7 @@ class ControlsWidgetBase(QWidget):
 
         if not hasattr(self, "chk_clamp") or not self.chk_clamp.isChecked():
             return None
-        return [
-            parse_float(inp, f"Max torque {i}")
-            for i, inp in enumerate(self.clamp_inputs)
-        ]
+        return [parse_float(inp, f"Max torque {i}") for i, inp in enumerate(self.clamp_inputs)]
 
     def _parse_joint_limits(self) -> tuple[list[float], list[float], float] | None:
         """Parse joint limit values.
@@ -279,7 +276,7 @@ class ControlsWidgetBase(QWidget):
         return mins, maxs, k
 
     def _build_export_section(self) -> QGroupBox:
-        """Build export buttons (Data + Video).  Shared across all models."""
+        """Build export buttons (Data + Video + Image).  Shared across all models."""
         box = QGroupBox("Export")
         box.setStyleSheet(STYLE_GROUP)
         layout = QHBoxLayout(box)
@@ -290,8 +287,12 @@ class ControlsWidgetBase(QWidget):
         self.btn_export_video = QPushButton("Export Video")
         self.btn_export_video.setStyleSheet(STYLE_BTN_EXPORT)
         self.btn_export_video.clicked.connect(self.export_video_requested.emit)
+        self.btn_export_image = QPushButton("Export Image")
+        self.btn_export_image.setStyleSheet(STYLE_BTN_EXPORT)
+        self.btn_export_image.clicked.connect(self.export_image_requested.emit)
         layout.addWidget(self.btn_export_data)
         layout.addWidget(self.btn_export_video)
+        layout.addWidget(self.btn_export_image)
         return box
 
     def _build_gravity_section(self) -> QGroupBox:
@@ -348,9 +349,7 @@ class ControlsWidgetBase(QWidget):
         inputs = self._get_torque_inputs()
         key = joint.lower()
         valid_keys = {k.lower() for k in inputs}
-        assert (
-            key in valid_keys
-        ), f"Unknown joint '{joint}', expected one of {valid_keys}"
+        assert key in valid_keys, f"Unknown joint '{joint}', expected one of {valid_keys}"
         assert len(coeffs) >= 1, "Coefficients list must not be empty"
 
         coeffs_str = ", ".join(f"{c:.4g}" for c in coeffs)
@@ -377,9 +376,9 @@ class ControlsWidgetBase(QWidget):
 
     def set_slider_value(self, val: int) -> None:
         """Pre: 0 <= val <= slider.maximum()"""
-        assert (
-            0 <= val <= self.slider.maximum()
-        ), f"Slider value {val} out of range [0, {self.slider.maximum()}]"
+        assert 0 <= val <= self.slider.maximum(), (
+            f"Slider value {val} out of range [0, {self.slider.maximum()}]"
+        )
         self.slider.blockSignals(True)
         self.slider.setValue(val)
         self.slider.blockSignals(False)
@@ -399,19 +398,43 @@ class ControlsWidgetBase(QWidget):
 
     @abc.abstractmethod
     def _apply_preset(self, name: str) -> None:
-        """Fill all inputs from the named preset."""
+        """Fill all inputs from the named preset.
+
+        Parameters
+        ----------
+        name : str
+            Name of the preset to apply
+        """
 
     @abc.abstractmethod
     def get_params(self) -> dict:
-        """Parse all inputs and return a simulation parameter dict."""
+        """Parse all inputs and return a simulation parameter dict.
+
+        Returns
+        -------
+        dict
+            Dictionary of simulation parameters
+        """
 
     @abc.abstractmethod
     def _get_joint_names(self) -> list[str]:
-        """Return joint names for the function generator dialog."""
+        """Return joint names for the function generator dialog.
+
+        Returns
+        -------
+        list[str]
+            List of joint names
+        """
 
     @abc.abstractmethod
     def _get_torque_inputs(self) -> dict[str, "LabeledInput"]:
-        """Return mapping of joint name → torque input widget."""
+        """Return mapping of joint name → torque input widget.
+
+        Returns
+        -------
+        dict[str, LabeledInput]
+            Mapping from joint name to torque input widget
+        """
 
     @staticmethod
     def _uai_or_parse(widget: object, label: str) -> float:
