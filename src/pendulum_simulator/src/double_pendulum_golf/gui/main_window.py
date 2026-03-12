@@ -267,7 +267,9 @@ class MainWindow(QMainWindow):
         self._tabs.addTab(self._triple_panel, "⚙ Triple Pendulum")
         self._tabs.addTab(self._golfer_panel, "⚙ Golfer Upper Body")
         # Hide tab bar — model selection is via toolstrip dropdown (#1149)
-        self._tabs.tabBar().setVisible(False)
+        tab_bar = self._tabs.tabBar()
+        if tab_bar is not None:
+            tab_bar.setVisible(False)
         main_layout.addWidget(self._tabs, stretch=1)
 
         self.status = QStatusBar()

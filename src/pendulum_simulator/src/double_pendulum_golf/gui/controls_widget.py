@@ -325,11 +325,11 @@ class ControlsWidget(QWidget):
                 row.addWidget(widget)
                 layout.addLayout(row)
         else:
-            self.inp_m1 = LabeledInput("m1 (kg)", "5.0", "Arms mass (kg)", lw)
-            self.inp_m2 = LabeledInput("m2 (kg)", "0.30", "Shaft mass (kg)", lw)
-            self.inp_mClub = LabeledInput("mC (kg)", "0.20", "Clubhead mass (kg)", lw)
-            self.inp_L1 = LabeledInput("L1 (m)", "0.65", "Arms length (m)", lw)
-            self.inp_L2 = LabeledInput("L2 (m)", "1.10", "Shaft length (m)", lw)
+            self.inp_m1 = LabeledInput("m1 (kg)", "5.0", "Arms mass (kg)", lw)  # type: ignore[assignment]
+            self.inp_m2 = LabeledInput("m2 (kg)", "0.30", "Shaft mass (kg)", lw)  # type: ignore[assignment]
+            self.inp_mClub = LabeledInput("mC (kg)", "0.20", "Clubhead mass (kg)", lw)  # type: ignore[assignment]
+            self.inp_L1 = LabeledInput("L1 (m)", "0.65", "Arms length (m)", lw)  # type: ignore[assignment]
+            self.inp_L2 = LabeledInput("L2 (m)", "1.10", "Shaft length (m)", lw)  # type: ignore[assignment]
             layout.addLayout(_row(self.inp_m1, self.inp_m2))
             layout.addLayout(_row(self.inp_L1, self.inp_L2))
             layout.addWidget(self.inp_mClub)
@@ -400,13 +400,13 @@ class ControlsWidget(QWidget):
                 row.addWidget(widget)
                 layout.addLayout(row)
         else:
-            self.inp_max_tau1 = LabeledInput(
+            self.inp_max_tau1 = LabeledInput(  # type: ignore[assignment]
                 "Max |\u03c41|",
                 "50",
                 "Max shoulder torque magnitude \u00b1(N\u00b7m)",
                 lw,
             )
-            self.inp_max_tau2 = LabeledInput(
+            self.inp_max_tau2 = LabeledInput(  # type: ignore[assignment]
                 "Max |\u03c42|", "20", "Max wrist torque magnitude \u00b1(N\u00b7m)", lw
             )
             layout.addLayout(_row(self.inp_max_tau1, self.inp_max_tau2))
@@ -456,8 +456,8 @@ class ControlsWidget(QWidget):
                 row.addWidget(widget)
                 layout.addLayout(row)
         else:
-            self.inp_dtheta1 = LabeledInput("d\u03b81", "0", "Arm angular velocity rad/s", lw)
-            self.inp_dphi = LabeledInput("d\u03c6", "0", "Club angular velocity rad/s", lw)
+            self.inp_dtheta1 = LabeledInput("d\u03b81", "0", "Arm angular velocity rad/s", lw)  # type: ignore[assignment]
+            self.inp_dphi = LabeledInput("d\u03c6", "0", "Club angular velocity rad/s", lw)  # type: ignore[assignment]
             layout.addLayout(_row(self.inp_theta1, self.inp_phi))
             layout.addLayout(_row(self.inp_dtheta1, self.inp_dphi))
         return box
@@ -677,13 +677,13 @@ class ControlsWidget(QWidget):
             self.inp_dtheta1.set_value(dth, is_si=True)
             self.inp_dphi.set_value(dph, is_si=True)
         else:
-            self.inp_dtheta1.set_value(str(dth))
-            self.inp_dphi.set_value(str(dph))
-            self.inp_m1.set_value(str(m1))
-            self.inp_m2.set_value(str(m2))
-            self.inp_mClub.set_value(str(mClub))
-            self.inp_L1.set_value(str(L1))
-            self.inp_L2.set_value(str(L2))
+            self.inp_dtheta1.set_value(str(dth))  # type: ignore[arg-type]
+            self.inp_dphi.set_value(str(dph))  # type: ignore[arg-type]
+            self.inp_m1.set_value(str(m1))  # type: ignore[arg-type]
+            self.inp_m2.set_value(str(m2))  # type: ignore[arg-type]
+            self.inp_mClub.set_value(str(mClub))  # type: ignore[arg-type]
+            self.inp_L1.set_value(str(L1))  # type: ignore[arg-type]
+            self.inp_L2.set_value(str(L2))  # type: ignore[arg-type]
         self._update_torque_preview()
 
     # ------------------------------------------------------------------
@@ -700,7 +700,7 @@ class ControlsWidget(QWidget):
         """
         if _HAS_UAI and isinstance(widget, UnitAwareInput):
             return widget.value_si()
-        return parse_float(widget, label)
+        return parse_float(widget, label)  # type: ignore[arg-type]
 
     def get_params(self) -> dict:
         """Parse all input fields and return as a simulation parameter dict.
