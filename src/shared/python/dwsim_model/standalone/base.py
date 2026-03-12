@@ -48,7 +48,7 @@ class StandaloneBase:
         Subclasses must call ``self._is_built = True`` at the end.
         """
 
-    def _safe_connect(self, src, tgt, p1: int = 0, p2: int = 0) -> None:
+    def _safe_connect(self, src: object, tgt: object, p1: int = 0, p2: int = 0) -> None:
         """Connect two DWSIM objects, logging a warning on failure."""
         try:
             self.builder.connect(src, tgt, p1, p2)
