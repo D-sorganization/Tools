@@ -15,7 +15,6 @@ from PyQt6.QtWidgets import (
     QDoubleSpinBox,
     QGroupBox,
     QHBoxLayout,
-    QLabel,
     QPushButton,
     QSlider,
     QVBoxLayout,
@@ -193,8 +192,10 @@ class ControlsWidgetTriple(QWidget):
         pl4.addWidget(self.inp_tau_elbow)
         pl4.addWidget(self.inp_tau_wrist)
 
-        self.btn_funcgen = QPushButton("📈 Function Generator…")
-        self.btn_funcgen.setToolTip("Import a waveform as torque coefficients")
+        self.btn_funcgen = QPushButton("📈 Signal Toolkit…")
+        self.btn_funcgen.setToolTip(
+            "Design a waveform and import as torque coefficients"
+        )
         self.btn_funcgen.setStyleSheet(
             "QPushButton{background:#282848;color:#b0b0e0;border:1px solid #404068;"
             "border-radius:4px;padding:4px 8px;font-size:10px;}"
@@ -262,44 +263,18 @@ class ControlsWidgetTriple(QWidget):
         btn_layout.addWidget(self.btn_reset, stretch=1)
         main_layout.addLayout(btn_layout)
 
-        play_group = QGroupBox("Playback")
-        play_group.setStyleSheet(style_group)
-        pl6 = QVBoxLayout(play_group)
-
-        ctrl_row = QHBoxLayout()
-        self.btn_play = QPushButton("Play")
+        # Playback controls are in the toolstrip — create hidden compat widgets
+        self.btn_play = QPushButton()
         self.btn_play.setCheckable(True)
-        self.btn_play.setStyleSheet(
-            "QPushButton { background: #303050; color: #c0c0e0; border: 1px solid #505068;"
-            "border-radius: 4px; padding: 6px 12px; }"
-            "QPushButton:checked { background: #504030; color: #f0d080; }"
-        )
         self.btn_play.toggled.connect(self._on_play_toggled)
-        ctrl_row.addWidget(self.btn_play)
-
-        ctrl_row.addWidget(QLabel("Speed:"))
         self.speed_spin = QDoubleSpinBox()
         self.speed_spin.setRange(0.1, 5.0)
         self.speed_spin.setSingleStep(0.1)
         self.speed_spin.setValue(1.0)
-        self.speed_spin.setStyleSheet(
-            "background: #2a2a38; color: #e0e0f0; border: 1px solid #505068;"
-        )
         self.speed_spin.valueChanged.connect(lambda v: self.speed_changed.emit(v))
-        ctrl_row.addWidget(self.speed_spin)
-        pl6.addLayout(ctrl_row)
-
         self.slider = QSlider(Qt.Orientation.Horizontal)
         self.slider.setRange(0, 100)
-        self.slider.setStyleSheet(
-            "QSlider::groove:horizontal { background: #303048; height: 6px;"
-            "border-radius: 3px; }"
-            "QSlider::handle:horizontal { background: #7070a0; width: 14px;"
-            "margin: -5px 0; border-radius: 7px; }"
-        )
         self.slider.valueChanged.connect(self.frame_changed.emit)
-        pl6.addWidget(self.slider)
-        main_layout.addWidget(play_group)
 
         export_group = QGroupBox("Export")
         export_group.setStyleSheet(style_group)
@@ -483,10 +458,10 @@ class ControlsWidgetTriple(QWidget):
     # ------------------------------------------------------------------
 
     def _open_function_generator(self) -> None:
-        """Open Function Generator as a dialog for torque design."""
+        """Open Signal Toolkit as a dialog for torque design."""
         from .function_generator_dialog import FunctionGeneratorDialog
 
-        dlg = FunctionGeneratorDialog(self)
+        dlg = FunctionGeneratorDialog(self, joint_names=["Shoulder", "Elbow", "Wrist"])
         dlg.torque_imported.connect(self._on_torque_imported)
         dlg.exec()
 

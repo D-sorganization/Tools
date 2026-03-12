@@ -1,345 +1,168 @@
 """
-FunctionGeneratorDialog — wraps the shared Function Generator widget
-(src/function_generator/…) inside a modal dialog so users can design
-a torque profile waveform and import it as polynomial coefficients
-directly into the pendulum controls.
+FunctionGeneratorDialog — wraps the shared Signal Toolkit widgets
+inside a tabbed dialog so users can either:
 
-Integration points
-------------------
-- The Function Generator's ``signal_generated`` signal fires whenever
-  the waveform changes; we live-fit a polynomial to the signal values
-  and show the fitted coefficients.
-- "Import as Shoulder Torque" / "Import as Wrist Torque" buttons emit
-  ``torque_imported(joint, coeffs)`` back to the parent ControlsWidget.
-- The dialog tries to import FunctionGeneratorWidget from the sibling
-  function_generator package; if not installed it falls back to a plain
-  polynomial-coefficient entry dialog.
+  1. **Design tab**: Draw points / freehand / type equations → polynomial fit
+     (PolynomialGeneratorWidget from signal_toolkit.polynomial_generator)
+  2. **Analyze tab**: Generate waveforms, filter, add noise → polynomial fit
+     (SignalToolkitWidget from signal_toolkit.widget)
+
+Both tabs emit compatible signals that are mapped to torque coefficients
+for the selected pendulum joint.
 """
 
 from __future__ import annotations
 
+import logging
+import os
 import sys
 from pathlib import Path
 
-import numpy as np
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
-    QGroupBox,
-    QHBoxLayout,
     QLabel,
-    QLineEdit,
-    QPushButton,
-    QSpinBox,
-    QSplitter,
+    QTabWidget,
     QVBoxLayout,
     QWidget,
 )
 
-# ── Import shared style constants ─────────────────────────────────────────────
-from .controls_utils import STYLE_LABEL, STYLE_EDIT, STYLE_BTN, STYLE_BTN_IMPORT
+logger = logging.getLogger(__name__)
 
-# ── Try to import the shared Function Generator ───────────────────────────────
-_FUNCGEN_AVAILABLE = False
-_FUNCGEN_IMPORT_ERROR: str | None = None
-FunctionGeneratorWidget = None
+# ── Ensure shared/python (Tools/src/) is on sys.path ──────────────────────
+_p = Path(__file__).resolve().parent
+for _ in range(10):
+    if (_p / "shared" / "python").is_dir():
+        _np = os.path.normpath(str(_p))
+        if _np not in [os.path.normpath(s) for s in sys.path]:
+            sys.path.insert(0, str(_p))
+        break
+    _p = _p.parent
 
-
-def _find_sibling_package(marker_path: str) -> Path | None:
-    """Walk up from this file to find a sibling package directory.
-
-    Searches up to 10 parent levels for the given relative path.
-    Returns the parent directory containing the marker, or None.
-
-    Design by Contract
-    ------------------
-    Pre:  marker_path is a non-empty relative path string.
-    Post: returns a valid directory Path or None.
-    """
-    assert marker_path, "marker_path must be non-empty"
-    p = Path(__file__).resolve().parent
-    for _ in range(10):
-        candidate = p / marker_path
-        if candidate.exists():
-            return p
-        p = p.parent
-    return None
-
+# ── Try to import the shared widgets ──────────────────────────────────────
+_HAS_POLY_WIDGET = False
+_HAS_SIGNAL_WIDGET = False
+_IMPORT_ERRORS: list[str] = []
+_PolyWidget: type | None = None
+_SignalWidget: type | None = None
 
 try:
-    import logging as _logging
-
-    _fg_logger = _logging.getLogger(__name__)
-
-    _src_root = _find_sibling_package("function_generator/python")
-    if _src_root is not None:
-        _fg_root = _src_root / "function_generator" / "python"
-        if str(_fg_root) not in sys.path:
-            sys.path.insert(0, str(_fg_root))
-        # The function_generator package imports 'shared.python.safe_eval' etc.
-        if str(_src_root) not in sys.path:
-            sys.path.insert(0, str(_src_root))
-        # Also add shared/python for the safe_eval dependency (#1153)
-        _shared_root = _src_root / "shared" / "python"
-        if _shared_root.exists() and str(_shared_root) not in sys.path:
-            sys.path.insert(0, str(_shared_root))
-
-        from function_generator.ui.pyqt6.main_window import (
-            FunctionGeneratorWidget as _FGWidget,
-        )
-
-        FunctionGeneratorWidget = _FGWidget
-        _FUNCGEN_AVAILABLE = True
-        _fg_logger.info("Function Generator package loaded from %s", _fg_root)
-    else:
-        _FUNCGEN_IMPORT_ERROR = (
-            "function_generator/python directory not found in parent hierarchy"
-        )
-        _fg_logger.warning("Function Generator: %s", _FUNCGEN_IMPORT_ERROR)
-except ImportError as _exc:
-    _FUNCGEN_IMPORT_ERROR = str(_exc)
-    import logging as _logging
-
-    _logging.getLogger(__name__).warning(
-        "Function Generator import failed: %s", _FUNCGEN_IMPORT_ERROR
+    from signal_toolkit.polynomial_generator import (
+        PolynomialGeneratorWidget as _PW,
     )
 
+    _PolyWidget = _PW
+    _HAS_POLY_WIDGET = True
+    logger.info("PolynomialGeneratorWidget loaded successfully")
+except ImportError as _exc:
+    _IMPORT_ERRORS.append(f"PolynomialGeneratorWidget: {_exc}")
+    logger.warning("PolynomialGeneratorWidget import failed: %s", _exc)
 
-class _FallbackPolyWidget(QWidget):
-    """Minimal fallback when the function_generator package is not installed."""
+try:
+    from signal_toolkit.widget import SignalToolkitWidget as _SW
 
-    signal_generated = pyqtSignal(object)
+    _SignalWidget = _SW
+    _HAS_SIGNAL_WIDGET = True
+    logger.info("SignalToolkitWidget loaded successfully")
+except ImportError as _exc:
+    _IMPORT_ERRORS.append(f"SignalToolkitWidget: {_exc}")
+    logger.warning("SignalToolkitWidget import failed: %s", _exc)
 
-    def __init__(self, parent: QWidget | None = None) -> None:
-        super().__init__(parent)
-        layout = QVBoxLayout(self)
-        error_detail = _FUNCGEN_IMPORT_ERROR or "Unknown reason"
-        note = QLabel(
-            f"⚠ Function Generator package not available.\n\n"
-            f"Reason: {error_detail}\n\n"
-            "Ensure the function_generator package is on the Python path.\n\n"
-            "Enter polynomial coefficients directly below (c0, c1, c2 …):",
-        )
-        note.setWordWrap(True)
-        note.setStyleSheet("color: #e0a060; padding: 8px; font-size: 11px;")
-        layout.addWidget(note)
-
-        coeff_lbl = QLabel("Coefficients (comma-separated):")
-        coeff_lbl.setStyleSheet(STYLE_LABEL)
-        layout.addWidget(coeff_lbl)
-
-        self.coeff_edit = QLineEdit("0, 0")
-        self.coeff_edit.setStyleSheet(STYLE_EDIT)
-        layout.addWidget(self.coeff_edit)
-
-        layout.addStretch()
-
-    def get_polynomial_coefficients(self) -> list[float]:
-        parts = self.coeff_edit.text().split(",")
-        coeffs: list[float] = []
-        for p in parts:
-            p = p.strip()
-            if p:
-                try:
-                    coeffs.append(float(p))
-                except ValueError:
-                    pass
-        return coeffs or [0.0]
+_WIDGET_AVAILABLE = _HAS_POLY_WIDGET or _HAS_SIGNAL_WIDGET
+_WIDGET_IMPORT_ERROR = "; ".join(_IMPORT_ERRORS) if _IMPORT_ERRORS else None
 
 
 class FunctionGeneratorDialog(QDialog):
-    """Modal dialog hosting the Function Generator widget.
+    """Tabbed dialog for torque profile design.
 
-    After designing a waveform the user clicks one of:
-    'Import as Shoulder Torque', 'Import as Elbow Torque', or 'Import as Wrist Torque'.
-    The dialog fits a polynomial of selected order to the signal
-    and emits ``torque_imported(joint_name, coefficients_list)``.
+    Tab 1 — **Design**: PolynomialGeneratorWidget (draw / click / drag / equation → fit)
+    Tab 2 — **Analyze**: SignalToolkitWidget (waveforms, filters, noise → fit)
+
+    Both tabs allow "Apply to Joint" which emits ``torque_imported``.
 
     Signals
     -------
     torque_imported(str, list[float])
-        Joint name (``"shoulder"``, ``"elbow"``, or ``"wrist"``) and the fitted poly coefficients.
+        Joint name and the fitted polynomial coefficients.
     """
 
     torque_imported = pyqtSignal(str, object)
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        parent: QWidget | None = None,
+        joint_names: list[str] | None = None,
+    ) -> None:
         super().__init__(parent)
-        self.setWindowTitle("Function Generator — Torque Profile Designer")
+        self.setWindowTitle("Signal Toolkit — Torque Profile Designer")
         self.setModal(True)
-        self.resize(1050, 660)
-        self.setMinimumSize(750, 500)
-        self.setStyleSheet(
-            "QDialog { background: #12121c; color: #d0d0e8; }"
-            "QGroupBox { color: #c0c0e0; border: 1px solid #3a3a58;"
-            "border-radius: 6px; margin-top: 10px; padding-top: 14px; }"
-            "QGroupBox::title { subcontrol-origin: margin; left: 8px; padding: 0 4px; }"
-            "QLabel { color: #b0b0cc; }",
-        )
+        self.resize(1200, 800)
+        self.setMinimumSize(800, 600)
+        self.setStyleSheet("QDialog { background: #12121c; color: #d0d0e8; }")
 
-        self._current_signal: object = None
-        self._fitted_coeffs: list[float] = [0.0]
-
+        self._joint_names = joint_names or ["Shoulder", "Wrist"]
         self._build_ui()
 
-    # ------------------------------------------------------------------
-    # UI construction
-    # ------------------------------------------------------------------
-
     def _build_ui(self) -> None:
-        main_layout = QVBoxLayout(self)
-        main_layout.setContentsMargins(10, 10, 10, 8)
-        main_layout.setSpacing(8)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(10, 10, 10, 8)
+        layout.setSpacing(8)
 
         # Header
-        hdr = QLabel(
-            "Design a torque waveform and import it as polynomial coefficients",
-        )
+        hdr = QLabel("Design or generate a torque waveform and apply it to a joint")
         hdr.setFont(QFont("Sans", 11))
         hdr.setStyleSheet("color: #9090b8; padding: 2px 0;")
-        main_layout.addWidget(hdr)
+        layout.addWidget(hdr)
 
-        splitter = QSplitter(Qt.Orientation.Vertical)
+        has_any_widget = _HAS_POLY_WIDGET or _HAS_SIGNAL_WIDGET
 
-        # ── Function generator widget ─────────────────────────────────
-        if _FUNCGEN_AVAILABLE and FunctionGeneratorWidget is not None:
-            self._fg_widget = FunctionGeneratorWidget(use_builtin_theme=False)
-            self._fg_widget.signal_generated.connect(self._on_signal_generated)
+        if has_any_widget:
+            tabs = QTabWidget()
+            tabs.setStyleSheet(
+                "QTabWidget::pane { border: 1px solid #2a2a48; background: #12121c; }"
+                "QTabBar::tab { background: #1a1a30; color: #8080a0; padding: 8px 16px;"
+                "  border-top-left-radius: 4px; border-top-right-radius: 4px; }"
+                "QTabBar::tab:selected { background: #252548; color: #c0c0e0;"
+                "  border-bottom: 2px solid #4888c8; }"
+                "QTabBar::tab:hover:!selected { background: #202040; }"
+            )
+
+            # Tab 1: Polynomial Designer (draw / click / equation → fit)
+            if _HAS_POLY_WIDGET and _PolyWidget is not None:
+                self._poly_widget = _PolyWidget(use_builtin_theme=False)
+                self._poly_widget.set_joints(self._joint_names)
+                self._poly_widget.polynomial_generated.connect(self._on_signal_applied)
+                tabs.addTab(self._poly_widget, "🎨 Design (Draw / Click / Equation)")
+
+            # Tab 2: Signal Processing (generate waveform → filter → fit → apply)
+            if _HAS_SIGNAL_WIDGET and _SignalWidget is not None:
+                self._signal_widget = _SignalWidget(use_builtin_theme=False)
+                self._signal_widget.set_joints(self._joint_names)
+                self._signal_widget.signal_generated.connect(self._on_signal_applied)
+                tabs.addTab(self._signal_widget, "📊 Analyze (Waveforms / Filters)")
+
+            layout.addWidget(tabs, stretch=1)
         else:
-            self._fg_widget = _FallbackPolyWidget()
+            error_detail = _WIDGET_IMPORT_ERROR or "Unknown reason"
+            note = QLabel(
+                f"⚠ Signal Toolkit widgets not available.\n\n"
+                f"Reason: {error_detail}\n\n"
+                "Ensure the signal_toolkit package is on the Python path.\n"
+            )
+            note.setWordWrap(True)
+            note.setStyleSheet("color: #e0a060; padding: 8px; font-size: 11px;")
+            layout.addWidget(note)
 
-        splitter.addWidget(self._fg_widget)
-
-        # ── Polynomial fit panel ──────────────────────────────────────
-        fit_container = QWidget()
-        fit_layout = QVBoxLayout(fit_container)
-        fit_layout.setContentsMargins(0, 0, 0, 0)
-        fit_layout.setSpacing(6)
-
-        fit_group = QGroupBox("Polynomial Fit to Waveform")
-        fit_row = QHBoxLayout(fit_group)
-        fit_row.setContentsMargins(8, 14, 8, 8)
-        fit_row.setSpacing(10)
-
-        order_lbl = QLabel("Poly order:")
-        order_lbl.setStyleSheet(STYLE_LABEL)
-        fit_row.addWidget(order_lbl)
-
-        self._order_spin = QSpinBox()
-        self._order_spin.setRange(0, 10)
-        self._order_spin.setValue(3)
-        self._order_spin.setFixedWidth(50)
-        self._order_spin.setToolTip(
-            "Polynomial order for fitting.\n0 = constant, 1 = linear, … 3+ = curved.",
-        )
-        self._order_spin.setStyleSheet(
-            "background: #1e1e30; color: #e0e0f0; border: 1px solid #404060;"
-            "border-radius: 3px; padding: 2px 4px;",
-        )
-        self._order_spin.valueChanged.connect(self._refit)
-        fit_row.addWidget(self._order_spin)
-
-        fit_row.addWidget(QLabel("Coefficients (c0, c1, c2 …):"))
-        self._coeff_display = QLineEdit()
-        self._coeff_display.setReadOnly(True)
-        self._coeff_display.setPlaceholderText("Generate a waveform to fit…")
-        self._coeff_display.setStyleSheet(STYLE_EDIT)
-        fit_row.addWidget(self._coeff_display, stretch=1)
-
-        self._btn_refit = QPushButton("↺ Re-fit")
-        self._btn_refit.setStyleSheet(STYLE_BTN)
-        self._btn_refit.clicked.connect(self._refit)
-        fit_row.addWidget(self._btn_refit)
-
-        fit_layout.addWidget(fit_group)
-
-        # ── Import buttons ────────────────────────────────────────────
-        import_row = QHBoxLayout()
-        import_row.setSpacing(8)
-
-        self._btn_import_shoulder = QPushButton("📥 Import → Shoulder Torque")
-        self._btn_import_shoulder.setStyleSheet(STYLE_BTN_IMPORT)
-        self._btn_import_shoulder.setToolTip(
-            "Fit the displayed waveform to a polynomial and copy\n"
-            "the coefficients to the Shoulder torque input.",
-        )
-        self._btn_import_shoulder.clicked.connect(lambda: self._import("shoulder"))
-
-        self._btn_import_elbow = QPushButton("📥 Import → Elbow Torque")
-        self._btn_import_elbow.setStyleSheet(STYLE_BTN_IMPORT)
-        self._btn_import_elbow.setToolTip(
-            "Fit the displayed waveform to a polynomial and copy\n"
-            "the coefficients to the Elbow torque input.",
-        )
-        self._btn_import_elbow.clicked.connect(lambda: self._import("elbow"))
-
-        self._btn_import_wrist = QPushButton("📥 Import → Wrist Torque")
-        self._btn_import_wrist.setStyleSheet(STYLE_BTN_IMPORT)
-        self._btn_import_wrist.setToolTip(
-            "Fit the displayed waveform to a polynomial and copy\n"
-            "the coefficients to the Wrist torque input.",
-        )
-        self._btn_import_wrist.clicked.connect(lambda: self._import("wrist"))
-
-        import_row.addStretch()
-        import_row.addWidget(self._btn_import_shoulder)
-        import_row.addWidget(self._btn_import_elbow)
-        import_row.addWidget(self._btn_import_wrist)
-
+        # Close button
         btn_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
         btn_box.rejected.connect(self.reject)
-        import_row.addWidget(btn_box)
-        fit_layout.addLayout(import_row)
+        layout.addWidget(btn_box)
 
-        splitter.addWidget(fit_container)
-        splitter.setSizes([430, 160])
-        main_layout.addWidget(splitter, stretch=1)
-
-    # ------------------------------------------------------------------
-    # Signal handling
-    # ------------------------------------------------------------------
-
-    def _on_signal_generated(self, signal: object) -> None:
-        """Receive a generated Signal object and auto-refit."""
-        self._current_signal = signal
-        self._refit()
-
-    def _refit(self) -> None:
-        """Fit a polynomial to the current signal."""
-        if self._current_signal is None:
-            if isinstance(self._fg_widget, _FallbackPolyWidget):
-                self._fitted_coeffs = self._fg_widget.get_polynomial_coefficients()
-                self._coeff_display.setText(
-                    ", ".join(f"{c:.4g}" for c in self._fitted_coeffs),
-                )
-            return
-
-        sig: object = self._current_signal
-        order = self._order_spin.value()
-
-        try:
-            from typing import Any
-
-            sig_any: Any = sig
-            t = np.asarray(sig_any.time, dtype=np.float64)
-            y = np.asarray(sig_any.values, dtype=np.float64)
-            if len(t) < order + 1:
-                self._coeff_display.setText("Not enough samples for this order")
-                return
-            raw_coeffs = np.polyfit(t, y, order)  # highest power first
-            # Reverse so c0 = constant term (matches our polynomial convention)
-            self._fitted_coeffs = list(raw_coeffs[::-1])
-            self._coeff_display.setText(
-                ", ".join(f"{c:.4g}" for c in self._fitted_coeffs),
-            )
-        except Exception as exc:
-            self._coeff_display.setText(f"Fit error: {exc}")
-
-    def _import(self, joint: str) -> None:
-        """Emit the fitted coefficients for the specified joint and close."""
-        if not self._fitted_coeffs:
-            return
-        self.torque_imported.emit(joint, self._fitted_coeffs)
+    def _on_signal_applied(self, joint_name: str, coefficients: list) -> None:
+        """Handle signal emissions from either widget."""
+        logger.info("Signal applied to %s: %s", joint_name, coefficients)
+        # Normalize joint name to lowercase for consistency
+        self.torque_imported.emit(joint_name.lower(), list(coefficients))
         self.accept()

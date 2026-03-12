@@ -20,6 +20,7 @@ from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QCheckBox,
+    QComboBox,
     QDoubleSpinBox,
     QFrame,
     QHBoxLayout,
@@ -115,11 +116,14 @@ _SLIDER_FELL = (
     "width:10px;height:10px;margin:-4px 0;border-radius:5px;}"
     "QSlider::sub-page:horizontal{background:#805028;border-radius:2px;}"
 )
-_SLIDER_FRAME = (
-    "QSlider::groove:horizontal{height:3px;background:#202038;border-radius:2px;}"
-    "QSlider::handle:horizontal{background:#5858a8;border:none;"
-    "width:10px;height:10px;margin:-4px 0;border-radius:5px;}"
-    "QSlider::sub-page:horizontal{background:#383880;border-radius:2px;}"
+_PROGRESS_BAR = (
+    "QSlider::groove:horizontal{height:6px;background:#1a1a30;border-radius:3px;"
+    "border:1px solid #2a2a48;}"
+    "QSlider::sub-page:horizontal{background:qlineargradient("
+    "x1:0,y1:0,x2:1,y2:0,stop:0 #2a5080,stop:1 #4888c8);"
+    "border-radius:3px;}"
+    "QSlider::handle:horizontal{background:rgba(255,255,255,40);border:none;"
+    "width:2px;height:10px;margin:-2px 0;border-radius:1px;}"
 )
 _SEP_STYLE = "QFrame{color:#2a2a50;border:none;}"
 _SEP_H_STYLE = "QFrame{color:#2a2a50;border:none;max-height:1px;}"
@@ -214,6 +218,9 @@ class ToolStrip(QWidget):
     export_data_requested = pyqtSignal()
     export_video_requested = pyqtSignal()
 
+    # Pop-out chart (#1135)
+    popout_chart_requested = pyqtSignal()
+
     # Per-segment visibility: emits set[str] | None (#1100, #1101, #1102)
     segment_visibility_changed = pyqtSignal(object)
 
@@ -227,6 +234,10 @@ class ToolStrip(QWidget):
 
     # View controls
     reset_view_requested = pyqtSignal()
+
+    # Rotation controls (#1146)
+    azimuth_changed = pyqtSignal(float)  # radians
+    tilt_changed = pyqtSignal(float)  # radians
 
     # Physics toggles (#1142)
     gravity_toggled = pyqtSignal(bool)
@@ -272,7 +283,6 @@ class ToolStrip(QWidget):
         layout.addWidget(title)
 
         # Model selection dropdown (#1149)
-        from PyQt6.QtWidgets import QComboBox
 
         self.cmb_model = QComboBox()
         self.cmb_model.addItems(["⚙ Double", "⚙ Triple", "⚙ Golfer"])
@@ -333,10 +343,10 @@ class ToolStrip(QWidget):
 
         layout.addWidget(_vline())
 
-        # Simulation progress slider (#1132: percentage display)
+        # Simulation progress bar (#1132: percentage display)
         self._frame_slider = QSlider(Qt.Orientation.Horizontal)
         self._frame_slider.setRange(0, 0)
-        self._frame_slider.setStyleSheet(_SLIDER_FRAME)
+        self._frame_slider.setStyleSheet(_PROGRESS_BAR)
         self._frame_slider.setToolTip("Simulation progress — drag to scrub")
         self._frame_slider.valueChanged.connect(self._on_frame_slider_changed)
         layout.addWidget(self._frame_slider, stretch=1)
@@ -387,6 +397,14 @@ class ToolStrip(QWidget):
         self.btn_mass_matrix.setToolTip("Show Mass Matrix explanation")
         self.btn_mass_matrix.clicked.connect(self._show_mass_matrix_popup)
         layout.addWidget(self.btn_mass_matrix)
+
+        self.btn_popout = QPushButton("📈 Pop Out")
+        self.btn_popout.setStyleSheet(_BTN_SMALL)
+        self.btn_popout.setToolTip(
+            "Pop out current simulation data as a\ndetachable chart with regression fitting"
+        )
+        self.btn_popout.clicked.connect(self.popout_chart_requested.emit)
+        layout.addWidget(self.btn_popout)
 
     def _show_eom_popup(self) -> None:
         """Open the Equations of Motion popup (#1144)."""
@@ -543,6 +561,59 @@ class ToolStrip(QWidget):
         self.chk_3d.toggled.connect(self.mode_3d_toggled.emit)
         extra_col.addWidget(self.chk_3d)
 
+        # Rotation controls (#1146)
+        azimuth_row = QHBoxLayout()
+        azimuth_row.setContentsMargins(0, 0, 0, 0)
+        azimuth_row.setSpacing(2)
+        az_lbl = QLabel("Az:")
+        az_lbl.setStyleSheet("color:#606080;font-size:10px;")
+        az_lbl.setToolTip("View azimuth rotation (0°-360°)")
+        azimuth_row.addWidget(az_lbl)
+
+        self._sld_azimuth = QSlider(Qt.Orientation.Horizontal)
+        self._sld_azimuth.setRange(0, 360)
+        self._sld_azimuth.setValue(0)
+        self._sld_azimuth.setFixedWidth(80)
+        self._sld_azimuth.setStyleSheet(
+            "QSlider::groove:horizontal{height:4px;background:#252540;"
+            "border-radius:2px;}"
+            "QSlider::handle:horizontal{width:10px;margin:-3px 0;"
+            "background:#6080b0;border-radius:5px;}"
+        )
+        self._sld_azimuth.valueChanged.connect(self._on_azimuth_slider)
+        azimuth_row.addWidget(self._sld_azimuth)
+
+        self._lbl_azimuth = QLabel("0°")
+        self._lbl_azimuth.setStyleSheet("color:#606080;font-size:10px;min-width:30px;")
+        azimuth_row.addWidget(self._lbl_azimuth)
+        extra_col.addLayout(azimuth_row)
+
+        tilt_row = QHBoxLayout()
+        tilt_row.setContentsMargins(0, 0, 0, 0)
+        tilt_row.setSpacing(2)
+        tilt_lbl = QLabel("Tilt:")
+        tilt_lbl.setStyleSheet("color:#606080;font-size:10px;")
+        tilt_lbl.setToolTip("Swing plane tilt from vertical (0°-90°)")
+        tilt_row.addWidget(tilt_lbl)
+
+        self._sld_tilt = QSlider(Qt.Orientation.Horizontal)
+        self._sld_tilt.setRange(0, 90)
+        self._sld_tilt.setValue(0)
+        self._sld_tilt.setFixedWidth(80)
+        self._sld_tilt.setStyleSheet(
+            "QSlider::groove:horizontal{height:4px;background:#252540;"
+            "border-radius:2px;}"
+            "QSlider::handle:horizontal{width:10px;margin:-3px 0;"
+            "background:#608050;border-radius:5px;}"
+        )
+        self._sld_tilt.valueChanged.connect(self._on_tilt_slider)
+        tilt_row.addWidget(self._sld_tilt)
+
+        self._lbl_tilt = QLabel("0°")
+        self._lbl_tilt.setStyleSheet("color:#606080;font-size:10px;min-width:30px;")
+        tilt_row.addWidget(self._lbl_tilt)
+        extra_col.addLayout(tilt_row)
+
         extra_col.addStretch()
         layout.addLayout(extra_col)
 
@@ -579,6 +650,20 @@ class ToolStrip(QWidget):
     def _on_force_ell_scale(self, raw: int) -> None:
         self._lbl_force_ell_scale.setText(_fmt_scale(raw))
         self.force_ell_scale_changed.emit(raw / 10.0)
+
+    def _on_azimuth_slider(self, deg: int) -> None:
+        """Emit azimuth rotation in radians from slider value (#1146)."""
+        import numpy as np
+
+        self._lbl_azimuth.setText(f"{deg}°")
+        self.azimuth_changed.emit(np.radians(float(deg)))
+
+    def _on_tilt_slider(self, deg: int) -> None:
+        """Emit tilt rotation in radians from slider value (#1146)."""
+        import numpy as np
+
+        self._lbl_tilt.setText(f"{deg}°")
+        self.tilt_changed.emit(np.radians(float(deg)))
 
     def set_status(self, msg: str) -> None:
         """Update the right-hand status label."""

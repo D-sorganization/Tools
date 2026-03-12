@@ -24,15 +24,29 @@ class TorquePreviewWidget(QWidget):
         self.setMinimumHeight(140)
         self._profiles: list[tuple[str, list[float], QColor]] = []
         self._t_end = 2.0
+        # Per-joint clamp limits (None = no clamping, float = symmetric ±limit)
+        self._clamp_limits: list[float | None] = []
 
     def set_duration(self, t_end: float) -> None:
         self._t_end = max(0.1, float(t_end))
         self.update()
 
-    def set_profiles(self, profiles: Iterable[tuple[str, list[float], QColor]]) -> None:
+    def set_profiles(
+        self,
+        profiles: Iterable[tuple[str, list[float], QColor]],
+        clamp_limits: list[float | None] | None = None,
+    ) -> None:
+        """Set the polynomial profiles and optional per-joint clamp limits.
+
+        Parameters
+        ----------
+        profiles: list of (name, coefficients, color)
+        clamp_limits: list parallel to profiles with clamp magnitudes or None
+        """
         self._profiles = [
             (name, list(coeffs), color) for name, coeffs, color in profiles
         ]
+        self._clamp_limits = list(clamp_limits) if clamp_limits else []
         self.update()
 
     def paintEvent(self, event: object) -> None:
@@ -61,6 +75,16 @@ class TorquePreviewWidget(QWidget):
             poly = np.array(coeffs[::-1])
             series.append((name, np.polyval(poly, t)))
 
+        # Build clamped versions when limits are active
+        clamped_series: list[np.ndarray | None] = []
+        for i, (_, vals) in enumerate(series):
+            limit = self._clamp_limits[i] if i < len(self._clamp_limits) else None
+            if limit is not None and np.isfinite(limit):
+                clamped_series.append(np.clip(vals, -limit, limit))
+            else:
+                clamped_series.append(None)
+
+        # Compute Y scale from all values (including unclamped for context)
         all_vals = np.concatenate([s[1] for s in series]) if series else np.array([0.0])
         v_min = float(np.min(all_vals))
         v_max = float(np.max(all_vals))
@@ -69,16 +93,67 @@ class TorquePreviewWidget(QWidget):
             v_max += 1.0
 
         qrect = QRectF(rect)
-        for (_, values), (__, ___, color) in zip(series, self._profiles, strict=True):
-            pen = QPen(color, 2)
-            painter.setPen(pen)
-            points: list[QPointF] = []
-            for i, val in enumerate(values):
-                x = qrect.left() + (t[i] / self._t_end) * qrect.width()
-                y = qrect.bottom() - (val - v_min) / (v_max - v_min) * qrect.height()
-                points.append(QPointF(x, y))
-            for i in range(1, len(points)):
-                painter.drawLine(points[i - 1], points[i])
+
+        # Draw clamp limit lines (horizontal dashed)
+        for i, (__, ___, color) in enumerate(self._profiles):
+            limit = self._clamp_limits[i] if i < len(self._clamp_limits) else None
+            if limit is not None and np.isfinite(limit):
+                clamp_pen = QPen(color.darker(150), 1, Qt.PenStyle.DashLine)
+                painter.setPen(clamp_pen)
+                for lv in [limit, -limit]:
+                    y = qrect.bottom() - (lv - v_min) / (v_max - v_min) * qrect.height()
+                    if qrect.top() <= y <= qrect.bottom():
+                        painter.drawLine(
+                            QPointF(qrect.left(), y), QPointF(qrect.right(), y)
+                        )
+
+        for idx, ((_, values), (__, ___, color)) in enumerate(
+            zip(series, self._profiles, strict=True)
+        ):
+            clamped = clamped_series[idx]
+
+            # If clamped, draw unclamped as thin dashed (demand)
+            if clamped is not None:
+                demand_pen = QPen(color, 1, Qt.PenStyle.DotLine)
+                painter.setPen(demand_pen)
+                points: list[QPointF] = []
+                for i, val in enumerate(values):
+                    x = qrect.left() + (t[i] / self._t_end) * qrect.width()
+                    y = (
+                        qrect.bottom()
+                        - (val - v_min) / (v_max - v_min) * qrect.height()
+                    )
+                    points.append(QPointF(x, y))
+                for i in range(1, len(points)):
+                    painter.drawLine(points[i - 1], points[i])
+
+                # Draw clamped as thick solid (effective)
+                eff_pen = QPen(color, 2)
+                painter.setPen(eff_pen)
+                points = []
+                for i, val in enumerate(clamped):
+                    x = qrect.left() + (t[i] / self._t_end) * qrect.width()
+                    y = (
+                        qrect.bottom()
+                        - (val - v_min) / (v_max - v_min) * qrect.height()
+                    )
+                    points.append(QPointF(x, y))
+                for i in range(1, len(points)):
+                    painter.drawLine(points[i - 1], points[i])
+            else:
+                # No clamping — draw as normal
+                pen = QPen(color, 2)
+                painter.setPen(pen)
+                points = []
+                for i, val in enumerate(values):
+                    x = qrect.left() + (t[i] / self._t_end) * qrect.width()
+                    y = (
+                        qrect.bottom()
+                        - (val - v_min) / (v_max - v_min) * qrect.height()
+                    )
+                    points.append(QPointF(x, y))
+                for i in range(1, len(points)):
+                    painter.drawLine(points[i - 1], points[i])
 
         self._draw_legend(painter, qrect)
         painter.end()

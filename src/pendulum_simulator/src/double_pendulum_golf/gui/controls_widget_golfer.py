@@ -15,7 +15,6 @@ from PyQt6.QtWidgets import (
     QDoubleSpinBox,
     QGroupBox,
     QHBoxLayout,
-    QLabel,
     QPushButton,
     QScrollArea,
     QSlider,
@@ -81,6 +80,10 @@ class ControlsWidgetGolfer(QWidget):
             "tau_le": "0",
             "tau_lh": "0",
             "t_end": 2.0,
+            "L_rscap": 0.12,
+            "L_lscap": 0.12,
+            "m_rscap": 0.5,
+            "m_lscap": 0.5,
         },
         "Backswing Start": {
             "m_hub": 2.0,
@@ -115,6 +118,10 @@ class ControlsWidgetGolfer(QWidget):
             "tau_le": "0",
             "tau_lh": "0",
             "t_end": 2.0,
+            "L_rscap": 0.12,
+            "L_lscap": 0.12,
+            "m_rscap": 0.5,
+            "m_lscap": 0.5,
         },
     }
 
@@ -211,11 +218,31 @@ class ControlsWidgetGolfer(QWidget):
         self.inp_grip_left = LabeledInput(
             "Grip L (m)", "0.25", "Left hand grip from club base"
         )
+        self.inp_L_rscap = LabeledInput(
+            "R Scap (m)",
+            "0.12",
+            "Right scapula link length.\n"
+            "Connects the hub bar endpoint to the right shoulder.\n"
+            "Set to 0 to disable scapula.",
+        )
+        self.inp_L_lscap = LabeledInput(
+            "L Scap (m)",
+            "0.12",
+            "Left scapula link length.\n"
+            "Connects the hub bar endpoint to the left shoulder.\n"
+            "Set to 0 to disable scapula.",
+        )
+        self.inp_m_rscap = LabeledInput("R Scap m", "0.5", "Right scapula mass (kg)")
+        self.inp_m_lscap = LabeledInput("L Scap m", "0.5", "Left scapula mass (kg)")
         for w in [
             self.inp_d_rs,
             self.inp_d_ls,
             self.inp_grip_right,
             self.inp_grip_left,
+            self.inp_L_rscap,
+            self.inp_L_lscap,
+            self.inp_m_rscap,
+            self.inp_m_lscap,
         ]:
             gl.addWidget(w)
         main.addWidget(geom_grp)
@@ -320,45 +347,18 @@ class ControlsWidgetGolfer(QWidget):
         btn_layout.addWidget(self.btn_reset, stretch=1)
         main.addLayout(btn_layout)
 
-        # Playback
-        play_grp = QGroupBox("Playback")
-        play_grp.setStyleSheet(style_group)
-        plb = QVBoxLayout(play_grp)
-
-        ctrl_row = QHBoxLayout()
-        self.btn_play = QPushButton("Play")
+        # Playback controls are in the toolstrip — create hidden compat widgets
+        self.btn_play = QPushButton()
         self.btn_play.setCheckable(True)
-        self.btn_play.setStyleSheet(
-            "QPushButton{background:#303050;color:#c0c0e0;"
-            "border:1px solid #505068;border-radius:4px;padding:6px 12px;}"
-            "QPushButton:checked{background:#504030;color:#f0d080;}"
-        )
         self.btn_play.toggled.connect(self._on_play_toggled)
-        ctrl_row.addWidget(self.btn_play)
-
-        ctrl_row.addWidget(QLabel("Speed:"))
         self.speed_spin = QDoubleSpinBox()
         self.speed_spin.setRange(0.1, 5.0)
         self.speed_spin.setSingleStep(0.1)
         self.speed_spin.setValue(1.0)
-        self.speed_spin.setStyleSheet(
-            "background:#2a2a38;color:#e0e0f0;border:1px solid #505068;"
-        )
         self.speed_spin.valueChanged.connect(lambda v: self.speed_changed.emit(v))
-        ctrl_row.addWidget(self.speed_spin)
-        plb.addLayout(ctrl_row)
-
         self.slider = QSlider(Qt.Orientation.Horizontal)
         self.slider.setRange(0, 100)
-        self.slider.setStyleSheet(
-            "QSlider::groove:horizontal{background:#303048;height:6px;"
-            "border-radius:3px;}"
-            "QSlider::handle:horizontal{background:#7070a0;width:14px;"
-            "margin:-5px 0;border-radius:7px;}"
-        )
         self.slider.valueChanged.connect(self.frame_changed.emit)
-        plb.addWidget(self.slider)
-        main.addWidget(play_grp)
 
         # Export
         export_grp = QGroupBox("Export")
@@ -439,6 +439,10 @@ class ControlsWidgetGolfer(QWidget):
         self.inp_tau_le.set_value(str(p["tau_le"]))
         self.inp_tau_lh.set_value(str(p["tau_lh"]))
         self.inp_tend.set_value(str(p["t_end"]))
+        self.inp_L_rscap.set_value(str(p.get("L_rscap", 0.12)))
+        self.inp_L_lscap.set_value(str(p.get("L_lscap", 0.12)))
+        self.inp_m_rscap.set_value(str(p.get("m_rscap", 0.5)))
+        self.inp_m_lscap.set_value(str(p.get("m_lscap", 0.5)))
 
     def get_params(self) -> dict:
         """Parse all inputs into a simulation parameter dict.
@@ -486,6 +490,10 @@ class ControlsWidgetGolfer(QWidget):
             "b_ls": parse_float(self.inp_b_ls, "b_ls"),
             "b_le": parse_float(self.inp_b_le, "b_le"),
             "b_lh": parse_float(self.inp_b_lh, "b_lh"),
+            "L_rscap": parse_float(self.inp_L_rscap, "L_rscap"),
+            "L_lscap": parse_float(self.inp_L_lscap, "L_lscap"),
+            "m_rscap": parse_float(self.inp_m_rscap, "m_rscap"),
+            "m_lscap": parse_float(self.inp_m_lscap, "m_lscap"),
         }
         for name in (
             "m_hub",

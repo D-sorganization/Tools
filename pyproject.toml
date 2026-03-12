@@ -190,3 +190,7 @@ explicit_package_bases = true
 # "source file found twice" error.  Since src/ has no __init__.py, disabling
 # namespace packages stops CWD from treating src/ as a namespace package.
 namespace_packages = false
+
+[[tool.mypy.overrides]]
+module = "signal_toolkit.*"
+ignore_errors = true

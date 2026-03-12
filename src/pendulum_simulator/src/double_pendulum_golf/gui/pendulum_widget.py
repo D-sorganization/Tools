@@ -197,11 +197,12 @@ class PendulumWidget(BasePendulumWidget):
 
         self._draw_grid(painter)
 
-        # Ground plane + tilt plane visualization
+        # Ground plane + tilt plane + ball visualization
         if self._result is not None:
             L_total = self._get_total_length()
             self._draw_ground_plane(painter, -L_total)
             self._draw_tilt_plane(painter)
+            self._draw_ball(painter, 0.0, -L_total)
 
         if self._result is None:
             self._draw_placeholder(painter)
@@ -239,7 +240,11 @@ class PendulumWidget(BasePendulumWidget):
     # ------------------------------------------------------------------
 
     def _draw_pendulum(self, painter: QPainter) -> None:
-        """Draw the segments and joint markers."""
+        """Draw the segments and joint markers.
+
+        When 3D mode is enabled (#1155), uses tapered gradient segments.
+        Otherwise falls back to flat-line rendering.
+        """
         assert self._result is not None
         pos = self._result.positions_at(self._current_idx)
         shoulder = self._world_to_pixel(*pos["shoulder"])
@@ -252,26 +257,61 @@ class PendulumWidget(BasePendulumWidget):
         else:
             wrist1 = self._world_to_pixel(*pos["wrist"])
 
-        # Arm segment (shoulder -> wrist)
-        pen = QPen(self.COLOR_ARM, 5)
-        pen.setCapStyle(Qt.PenCapStyle.RoundCap)
-        painter.setPen(pen)
-        painter.drawLine(shoulder, wrist1)
+        if self._3d_mode:
+            # 3D tapered segment rendering (#1155)
+            self._draw_3d_segment(
+                painter,
+                shoulder,
+                wrist1,
+                14,
+                10,
+                self.COLOR_ARM,
+            )
+            if wrist2 is not None:
+                self._draw_3d_segment(
+                    painter,
+                    wrist1,
+                    wrist2,
+                    10,
+                    7,
+                    self.COLOR_CLUB,
+                )
+                self._draw_3d_segment(
+                    painter,
+                    wrist2,
+                    tip,
+                    7,
+                    5,
+                    self.COLOR_WRIST2,
+                )
+            else:
+                self._draw_3d_segment(
+                    painter,
+                    wrist1,
+                    tip,
+                    10,
+                    6,
+                    self.COLOR_CLUB,
+                )
+        else:
+            # Flat-line rendering (default)
+            pen = QPen(self.COLOR_ARM, 5)
+            pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+            painter.setPen(pen)
+            painter.drawLine(shoulder, wrist1)
 
-        # Club segment 1 (wrist -> wrist2 or tip)
-        pen = QPen(self.COLOR_CLUB, 4)
-        pen.setCapStyle(Qt.PenCapStyle.RoundCap)
-        painter.setPen(pen)
-        painter.drawLine(wrist1, wrist2 if wrist2 is not None else tip)
+            pen = QPen(self.COLOR_CLUB, 4)
+            pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+            painter.setPen(pen)
+            painter.drawLine(wrist1, wrist2 if wrist2 is not None else tip)
 
-        # Club segment 2 (wrist2 -> tip) if triple
-        if wrist2 is not None:
-            pen2 = QPen(self.COLOR_WRIST2, 3)
-            pen2.setCapStyle(Qt.PenCapStyle.RoundCap)
-            painter.setPen(pen2)
-            painter.drawLine(wrist2, tip)
+            if wrist2 is not None:
+                pen2 = QPen(self.COLOR_WRIST2, 3)
+                pen2.setCapStyle(Qt.PenCapStyle.RoundCap)
+                painter.setPen(pen2)
+                painter.drawLine(wrist2, tip)
 
-        # Joints
+        # Joints (always drawn)
         self._draw_joint(painter, shoulder, 8, self.COLOR_SHOULDER)
         self._draw_joint(painter, wrist1, 6, self.COLOR_WRIST)
         if wrist2 is not None:
