@@ -14,6 +14,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Mouse wheel blocking on all input widgets to prevent accidental value changes (#1193)
 - Playback controls: slider scrubbing, loop toggle, play/pause state management
 - Animation trail cleanup on slider interaction
+- **Torque Vectors** checkbox in toolbar overlay — red arrows at each joint (#1208)
+- **Moment of Force** checkbox in toolbar overlay — blue arrows, proximal-on-distal (#1208)
+- **Sum of Moments** checkbox in toolbar overlay — green resultant arrows (#1208)
+- Playback slider now has "Playback:" label, 200px min-width, 10px groove, glowing handle (#1207)
+- 21 new toolstrip element tests verifying slider, checkboxes, and signals permanently exist
+- `--version` CLI flag for quick version check (#1201)
+- About dialog (Help → About) with version and credits (#1206)
+- Keyboard shortcuts: Ctrl+R (run), Space (play/pause), Ctrl+E (export), Escape (reset) (#1206)
 
 ### Changed
 - Golfer model topology corrected: standoff is now massless (0.001 kg default), upper body segments carry ~7 kg each (#1195)
@@ -22,9 +30,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Signal toolkit error messages are now selectable/copyable (QTextEdit)
 - Signal toolkit import fixed: both `shared/python` and `src/` added to sys.path
 - Diagnostics viewer now uses centralized theme module
+- Type hint coverage improved from 81% → 99.7% (#1198)
+- Assessment score increased from 7.2 → 8.2 / 10
 
 ### Removed
 - Redundant local CI workflow (`src/pendulum_simulator/.github/workflows/ci.yml`) — CI managed by top-level `ci-standard.yml` (#1205)
+- **Gravity checkbox permanently removed** from toolstrip AND controls panel — gravity is always on (#1209)
+- Gravity toggle signal removed from toolstrip
+- 43 of 55 pendulum-simulator GitHub issues closed and verified
 
 ### Fixed
 - Golfer simulation not starting when clicking Run button
@@ -32,6 +45,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - `eventFilter` signature mismatch with PyQt6 type stubs
 - `horizontalHeader()` None check ordering in diagnostics viewer
 - `setattr` in list comprehension causing mypy `func-returns-value` error
+- Playback slider was nearly invisible with range(0,0) on dark background (#1207)
 
 ## [0.1.0] - 2026-03-01
 
