@@ -75,13 +75,13 @@ def _extract_double(result: Any, key: str) -> np.ndarray:
     if key == "time":
         return np.asarray(result.t, dtype=float)
     if key == "theta1":
-        return result.states[:, 0]
+        return np.asarray(result.states[:, 0], dtype=float)
     if key == "phi":
-        return result.states[:, 1]
+        return np.asarray(result.states[:, 1], dtype=float)
     if key == "dtheta1":
-        return result.states[:, 2]
+        return np.asarray(result.states[:, 2], dtype=float)
     if key == "dphi":
-        return result.states[:, 3]
+        return np.asarray(result.states[:, 3], dtype=float)
 
     if key == "torque_shoulder":
         return np.array([result.torques_at(i)[0] for i in range(n)], dtype=float)
@@ -90,14 +90,14 @@ def _extract_double(result: Any, key: str) -> np.ndarray:
 
     if key == "total_torque_shoulder":
         data = result.all_total_torques()
-        return data[:, 0]
+        return np.asarray(data[:, 0], dtype=float)
     if key == "total_torque_wrist":
         data = result.all_total_torques()
-        return data[:, 1]
+        return np.asarray(data[:, 1], dtype=float)
 
     if key in ("kinetic_energy", "potential_energy", "total_energy"):
         energies = result.all_energies()
-        return energies[key.replace("_energy", "")]
+        return np.asarray(energies[key.replace("_energy", "")], dtype=float)
 
     if key == "wrist_speed":
         return np.array(
@@ -111,9 +111,9 @@ def _extract_double(result: Any, key: str) -> np.ndarray:
         )
 
     if key == "accel_shoulder":
-        return result.all_accelerations()[:, 0]
+        return np.asarray(result.all_accelerations()[:, 0], dtype=float)
     if key == "accel_wrist":
-        return result.all_accelerations()[:, 1]
+        return np.asarray(result.all_accelerations()[:, 1], dtype=float)
 
     if key == "coriolis_shoulder":
         return np.array([result.coriolis_at(i)[0] for i in range(n)], dtype=float)
@@ -126,9 +126,9 @@ def _extract_double(result: Any, key: str) -> np.ndarray:
         return np.array([result.gravity_at(i)[1] for i in range(n)], dtype=float)
 
     if key == "friction_shoulder":
-        return result.all_friction_torques()[:, 0]
+        return np.asarray(result.all_friction_torques()[:, 0], dtype=float)
     if key == "friction_wrist":
-        return result.all_friction_torques()[:, 1]
+        return np.asarray(result.all_friction_torques()[:, 1], dtype=float)
 
     if key == "base_force_x":
         return np.array([result.base_force_at(i)["fx"] for i in range(n)], dtype=float)

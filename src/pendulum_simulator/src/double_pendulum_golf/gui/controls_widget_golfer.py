@@ -7,6 +7,8 @@ Only model-specific sections (8-segment params, 7 joints) remain here.
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -219,13 +221,13 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
                 row.addWidget(w)
                 layout.addLayout(row)
         else:
-            self.inp_m_hub = LabeledInput("Hub", "2.0", "Hub standoff mass")
-            self.inp_m_r_upper = LabeledInput("R Upper", "3.5", "Right upper arm")
-            self.inp_m_r_fore = LabeledInput("R Fore", "2.0", "Right forearm")
-            self.inp_m_l_upper = LabeledInput("L Upper", "3.5", "Left upper arm")
-            self.inp_m_l_fore = LabeledInput("L Fore", "2.0", "Left forearm")
-            self.inp_m_club = LabeledInput("Club", "0.5", "Club shaft mass")
-            self.inp_m_clubhead = LabeledInput("Clubhead", "0.2", "Clubhead point mass")
+            self.inp_m_hub = LabeledInput("Hub", "2.0", "Hub standoff mass")  # type: ignore[assignment]
+            self.inp_m_r_upper = LabeledInput("R Upper", "3.5", "Right upper arm")  # type: ignore[assignment]
+            self.inp_m_r_fore = LabeledInput("R Fore", "2.0", "Right forearm")  # type: ignore[assignment]
+            self.inp_m_l_upper = LabeledInput("L Upper", "3.5", "Left upper arm")  # type: ignore[assignment]
+            self.inp_m_l_fore = LabeledInput("L Fore", "2.0", "Left forearm")  # type: ignore[assignment]
+            self.inp_m_club = LabeledInput("Club", "0.5", "Club shaft mass")  # type: ignore[assignment]
+            self.inp_m_clubhead = LabeledInput("Clubhead", "0.2", "Clubhead point mass")  # type: ignore[assignment]
             for w in [
                 self.inp_m_hub,
                 self.inp_m_r_upper,
@@ -279,12 +281,12 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
                 row.addWidget(w)
                 layout.addLayout(row)
         else:
-            self.inp_L_hub = LabeledInput("Hub", "0.15", "Hub standoff length")
-            self.inp_L_r_upper = LabeledInput("R Upper", "0.35", "Right upper arm")
-            self.inp_L_r_fore = LabeledInput("R Fore", "0.30", "Right forearm")
-            self.inp_L_l_upper = LabeledInput("L Upper", "0.35", "Left upper arm")
-            self.inp_L_l_fore = LabeledInput("L Fore", "0.30", "Left forearm")
-            self.inp_L_club = LabeledInput("Club", "1.1", "Club total length")
+            self.inp_L_hub = LabeledInput("Hub", "0.15", "Hub standoff length")  # type: ignore[assignment]
+            self.inp_L_r_upper = LabeledInput("R Upper", "0.35", "Right upper arm")  # type: ignore[assignment]
+            self.inp_L_r_fore = LabeledInput("R Fore", "0.30", "Right forearm")  # type: ignore[assignment]
+            self.inp_L_l_upper = LabeledInput("L Upper", "0.35", "Left upper arm")  # type: ignore[assignment]
+            self.inp_L_l_fore = LabeledInput("L Fore", "0.30", "Left forearm")  # type: ignore[assignment]
+            self.inp_L_club = LabeledInput("Club", "1.1", "Club total length")  # type: ignore[assignment]
             for w in [
                 self.inp_L_hub,
                 self.inp_L_r_upper,
@@ -452,12 +454,12 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
             return
         p = self.PRESETS[name]
 
-        def _sv(widget: object, val: object) -> None:
+        def _sv(widget: Any, val: Any) -> None:
             """Set value on UnitAwareInput (float) or LabeledInput (str)."""
             try:
-                widget.set_value(float(str(val)), is_si=True)  # type: ignore[union-attr]
+                widget.set_value(float(str(val)), is_si=True)
             except TypeError:
-                widget.set_value(str(val))  # type: ignore[union-attr]
+                widget.set_value(str(val))
 
         _sv(self.inp_m_hub, p["m_hub"])
         _sv(self.inp_m_r_upper, p["m_r_upper"])

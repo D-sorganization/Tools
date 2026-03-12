@@ -105,7 +105,7 @@ def angular_power_series(
     assert np.all(np.isfinite(torques)), "torques must be all finite"
     assert np.all(np.isfinite(angular_velocities)), "velocities must be all finite"
 
-    result = torques * angular_velocities
+    result: np.ndarray = torques * angular_velocities
     assert np.all(np.isfinite(result)), "angular power series has non-finite values"
     return result
 
@@ -139,7 +139,7 @@ def linear_power_series(
     assert np.all(np.isfinite(forces)), "forces must be finite"
     assert np.all(np.isfinite(velocities)), "velocities must be finite"
 
-    result = np.sum(forces * velocities, axis=1)
+    result: np.ndarray = np.sum(forces * velocities, axis=1)
     assert np.all(np.isfinite(result)), "linear power series has non-finite values"
     return result
 

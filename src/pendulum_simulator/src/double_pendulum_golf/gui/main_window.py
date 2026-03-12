@@ -538,7 +538,7 @@ class MainWindow(QMainWindow):
             torque_builder=build_torque,
             state_builder=build_state,
             run_simulation=run_simulation,
-            torque_history=torque_history,  # type: ignore[arg-type]
+            torque_history=torque_history,
             limits_builder=build_limits,
             clamp_builder=build_clamp,
             optimizer=optimizer,
@@ -660,7 +660,7 @@ class MainWindow(QMainWindow):
             torque_builder=build_torque,
             state_builder=build_state,
             run_simulation=run_simulation_triple,
-            torque_history=torque_history,  # type: ignore[arg-type]
+            torque_history=torque_history,
             limits_builder=build_limits,
             clamp_builder=build_clamp,
             optimizer=optimizer,
@@ -811,7 +811,7 @@ class MainWindow(QMainWindow):
             torque_builder=build_torque,
             state_builder=build_state,
             run_simulation=run_simulation_golfer,
-            torque_history=torque_history,  # type: ignore[arg-type]
+            torque_history=torque_history,
             limits_builder=build_limits,
             clamp_builder=build_clamp,
             optimizer=optimizer,
