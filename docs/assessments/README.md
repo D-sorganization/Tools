@@ -171,6 +171,8 @@ This document defines the comprehensive 16-point assessment framework (A-O + Hig
 | 3.2     | 2026-03 | Added Thesis Defense Adversarial Issue         |
 | 3.3     | 2026-03 | Removed stale assessments older than 2026-03-08|
 | 3.4     | 2026-03 | Added Pendulum Simulator comprehensive assessment (2026-03-11) |
+| 3.5     | 2026-03 | Automated update to comprehensive assessment framework |
+| 3.6     | 2026-03 | AUTO-FIXED formatting issues |
 
 ---
 

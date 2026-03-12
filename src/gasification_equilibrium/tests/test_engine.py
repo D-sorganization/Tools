@@ -66,9 +66,9 @@ class TestSinglePointEquilibrium:
 
     def test_converges_at_1000k(self, engine: GasificationEngine) -> None:
         result = engine.solve(temperature=1000, feed={"C": 1.0, "H": 1.0, "O": 1.0})
-        assert result.converged, (
-            f"Failed to converge: balance_err={result.element_balance_error}"
-        )
+        assert (
+            result.converged
+        ), f"Failed to converge: balance_err={result.element_balance_error}"
 
     def test_converges_at_1500k(self, engine: GasificationEngine) -> None:
         result = engine.solve(temperature=1500, feed={"C": 1.0, "H": 2.0, "O": 0.5})
