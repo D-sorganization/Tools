@@ -380,17 +380,10 @@ def _print_sweep_summary(df) -> None:
 
 
 def _find_default_config() -> Path | None:
-    """Search for master_config.yaml starting from this file's location."""
-    here = Path(__file__).resolve().parent
-    project_root = here.parent.parent
-    candidates = [
-        project_root / "config" / "master_config.yaml",
-        project_root / "config" / "master_config.yml",
-    ]
-    for c in candidates:
-        if c.exists():
-            return c
-    return None
+    """Search for master_config.yaml — delegates to config_loader's canonical implementation."""
+    from dwsim_model.config_loader import _find_default_config as _find_cfg
+
+    return _find_cfg()
 
 
 # ─────────────────────────────────────────────────────────────────────────────

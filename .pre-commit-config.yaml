@@ -117,7 +117,10 @@ repos:
             __pycache__/|
             \.pytest_cache/|
             \.venv/|
-            \.github/
+            \.github/|
+            .*/tests/|
+            src/shared/python/dwsim_model/|
+            src/dwsim_model/
           )
 
   # Bandit - Security scanning (pre-push only, Python only)

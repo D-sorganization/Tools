@@ -104,7 +104,7 @@ class ResultsExtractor:
 
         extractor = ResultsExtractor(compound_names)
         results = extractor.extract(builder)
-        print(results.metrics["cold_gas_efficiency"])
+        logger.info(results.metrics["cold_gas_efficiency"])
 
     Parameters
     ----------
@@ -270,7 +270,45 @@ class ResultsExtractor:
 
         V_dot [m³/s] = (m_dot / MW_mix) * R * T_NTP / P_NTP
         """
-        from dwsim_model.chemistry.biomass_decomposer import _MW as MW_TABLE
+        # Exact compound→MW (g/mol) lookup supporting both DWSIM full names and
+        # short chemical formula keys used in biomass_decomposer._MW.
+        _COMPOUND_MW: dict[str, float] = {
+            # Short formula keys
+            "CO": 28.010,
+            "H2": 2.016,
+            "CO2": 44.010,
+            "CH4": 16.043,
+            "H2O": 18.015,
+            "N2": 28.014,
+            "O2": 31.998,
+            "H2S": 34.081,
+            "NH3": 17.031,
+            "HCl": 36.461,
+            "He": 4.003,
+            "Ar": 39.948,
+            "C2H4": 28.054,
+            "C2H6": 30.069,
+            "C2H2": 26.038,
+            "C10H8": 128.173,
+            "C7H8": 92.141,
+            # DWSIM full-name keys
+            "Carbon monoxide": 28.010,
+            "Hydrogen": 2.016,
+            "Carbon dioxide": 44.010,
+            "Methane": 16.043,
+            "Water": 18.015,
+            "Nitrogen": 28.014,
+            "Oxygen": 31.998,
+            "Hydrogen sulfide": 34.081,
+            "Ammonia": 17.031,
+            "Helium": 4.003,
+            "Argon": 39.948,
+            "Ethylene": 28.054,
+            "Ethane": 30.069,
+            "Acetylene": 26.038,
+            "Naphthalene": 128.173,
+            "Toluene": 92.141,
+        }
 
         if mass_flow_kg_s <= 0 or not mole_fractions:
             return 0.0
@@ -279,14 +317,12 @@ class ResultsExtractor:
         T_NTP = 273.15  # K
         P_NTP = 101325.0  # Pa
 
-        # MW mix (g/mol) from mole fractions
+        # MW mix (g/mol) via exact O(1) lookup
         mw_mix = 0.0
         for compound, xf in mole_fractions.items():
-            # Look for compound MW in our table (simplified name matching)
-            for key, mw in MW_TABLE.items():
-                if key.lower() in compound.lower() or compound.lower() in key.lower():
-                    mw_mix += xf * mw
-                    break
+            mw = _COMPOUND_MW.get(compound)
+            if mw is not None:
+                mw_mix += xf * mw
 
         if mw_mix <= 0:
             return 0.0

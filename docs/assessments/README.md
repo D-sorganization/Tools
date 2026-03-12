@@ -152,29 +152,30 @@ This document defines the comprehensive 16-point assessment framework (A-O + Hig
 
 ## Version History
 
-| Version | Date    | Changes                                                        |
-| ------- | ------- | -------------------------------------------------------------- |
-| 1.0     | 2025-12 | Initial 15-point framework                                     |
-| 2.0     | 2026-01 | Reorganized based on UX/strategic gap analysis                 |
-| 2.1     | 2026-02 | Added comprehensive multi-framework assessment                 |
-| 2.2     | 2026-02 | Added completist audit reports                                 |
-| 2.3     | 2026-02 | Added automated assessment generation script                   |
-| 2.4     | 2026-02 | Executed Completist Audit (Feb 22)                             |
-| 2.5     | 2026-02 | Generated Comprehensive Assessments (Feb 23)                   |
-| 2.6     | 2026-02 | Executed Completist Audit (Feb 26)                             |
-| 2.7     | 2026-02 | Automated Assessment Update (Feb 26)                           |
-| 2.8     | 2026-03 | Executed Completist Audit (Mar 01)                             |
-| 2.9     | 2026-03 | Executed Completist Audit (Mar 05)                             |
-| 2.10    | 2026-03 | Executed Completist Audit (Mar 08)                             |
-| 3.0     | 2026-03 | Added Thesis Defense Orthogonality Issue                       |
-| 3.1     | 2026-03 | Added Thesis Defense Orthogonality Issue 2026-03-09            |
-| 3.2     | 2026-03 | Added Thesis Defense Adversarial Issue                         |
-| 3.3     | 2026-03 | Removed stale assessments older than 2026-03-08                |
-| 3.4     | 2026-03 | Added Pendulum Simulator comprehensive assessment (2026-03-11) |
-| 3.5     | 2026-03 | Executed Completist Audit (Mar 12)                             |
-| 3.6     | 2026-03 | Automated update to comprehensive assessment framework         |
-| 3.7     | 2026-03 | AUTO-FIXED formatting issues                                   |
-| 3.8     | 2026-03 | Added Thesis Defense Orthogonality/Adversarial issues          |
+| Version | Date    | Changes                                                                           |
+| ------- | ------- | --------------------------------------------------------------------------------- |
+| 1.0     | 2025-12 | Initial 15-point framework                                                        |
+| 2.0     | 2026-01 | Reorganized based on UX/strategic gap analysis                                    |
+| 2.1     | 2026-02 | Added comprehensive multi-framework assessment                                    |
+| 2.2     | 2026-02 | Added completist audit reports                                                    |
+| 2.3     | 2026-02 | Added automated assessment generation script                                      |
+| 2.4     | 2026-02 | Executed Completist Audit (Feb 22)                                                |
+| 2.5     | 2026-02 | Generated Comprehensive Assessments (Feb 23)                                      |
+| 2.6     | 2026-02 | Executed Completist Audit (Feb 26)                                                |
+| 2.7     | 2026-02 | Automated Assessment Update (Feb 26)                                              |
+| 2.8     | 2026-03 | Executed Completist Audit (Mar 01)                                                |
+| 2.9     | 2026-03 | Executed Completist Audit (Mar 05)                                                |
+| 2.10    | 2026-03 | Executed Completist Audit (Mar 08)                                                |
+| 3.0     | 2026-03 | Added Thesis Defense Orthogonality Issue                                          |
+| 3.1     | 2026-03 | Added Thesis Defense Orthogonality Issue 2026-03-09                               |
+| 3.2     | 2026-03 | Added Thesis Defense Adversarial Issue                                            |
+| 3.3     | 2026-03 | Removed stale assessments older than 2026-03-08                                   |
+| 3.4     | 2026-03 | Added Pendulum Simulator comprehensive assessment (2026-03-11)                    |
+| 3.5     | 2026-03 | Executed Completist Audit (Mar 12)                                                |
+| 3.6     | 2026-03 | Automated update to comprehensive assessment framework                            |
+| 3.7     | 2026-03 | AUTO-FIXED formatting issues                                                      |
+| 3.8     | 2026-03 | Added Thesis Defense Orthogonality/Adversarial issues                             |
+| 3.9     | 2026-03 | Added DWSIM Model comprehensive assessment + low-hanging fruit fixes (2026-03-12) |
 
 ---
 
