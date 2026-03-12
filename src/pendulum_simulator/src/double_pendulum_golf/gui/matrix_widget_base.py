@@ -67,9 +67,9 @@ class MatrixWidgetBase(QWidget):
           - result has n_steps >= 1
         """
         assert result is not None, f"{self.__class__.__name__}: result must not be None"
-        assert result.n_steps >= 1, (
-            f"{self.__class__.__name__}: result must have at least one time step"
-        )
+        assert (
+            result.n_steps >= 1
+        ), f"{self.__class__.__name__}: result must have at least one time step"
         self._result = result
         self._current_idx = 0
         logger.debug(
@@ -108,7 +108,9 @@ class MatrixWidgetBase(QWidget):
         if self._result is None:
             painter.setPen(self.COLOR_LABEL)
             painter.setFont(QFont("Sans", 11))
-            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "No simulation loaded")
+            painter.drawText(
+                self.rect(), Qt.AlignmentFlag.AlignCenter, "No simulation loaded"
+            )
             painter.end()
             return
 

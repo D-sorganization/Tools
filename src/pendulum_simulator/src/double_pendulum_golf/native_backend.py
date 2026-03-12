@@ -546,7 +546,9 @@ def golfer_constrained_dynamics(
     beta: float,
 ) -> tuple[np.ndarray, np.ndarray] | None:
     """Return native golfer accelerations and multipliers when supported."""
-    if not golfer_native_enabled() or not golfer_native_constraint_dynamics_supported(params):
+    if not golfer_native_enabled() or not golfer_native_constraint_dynamics_supported(
+        params
+    ):
         return None
 
     try:
@@ -654,17 +656,21 @@ def batch_evaluate_double(
     Returns a list of ``(max_tip_speed, tip_speed_at_bottom, success)``
     tuples, or ``None`` if the native backend is unavailable.
     """
-    if _pendulum_core is None or not hasattr(_pendulum_core, "py_batch_evaluate_double"):
+    if _pendulum_core is None or not hasattr(
+        _pendulum_core, "py_batch_evaluate_double"
+    ):
         return None
 
     try:
-        result: list[tuple[float, float, bool]] = _pendulum_core.py_batch_evaluate_double(
-            _to_rust_double_params(params),
-            coeffs_batch,
-            n_coeffs_per_joint,
-            q0,
-            qdot0,
-            t_end,
+        result: list[tuple[float, float, bool]] = (
+            _pendulum_core.py_batch_evaluate_double(
+                _to_rust_double_params(params),
+                coeffs_batch,
+                n_coeffs_per_joint,
+                q0,
+                qdot0,
+                t_end,
+            )
         )
         return result
     except (RuntimeError, AttributeError, TypeError) as exc:  # pragma: no cover

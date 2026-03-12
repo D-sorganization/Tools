@@ -88,9 +88,9 @@ def friction_torque_ndof(
     Post: opposes motion direction element-wise.
     """
     n = qdot.shape[0]
-    assert viscous_coeffs.shape == (n,), (
-        f"viscous shape {viscous_coeffs.shape} vs qdot {qdot.shape}"
-    )
+    assert viscous_coeffs.shape == (
+        n,
+    ), f"viscous shape {viscous_coeffs.shape} vs qdot {qdot.shape}"
     assert np.all(np.isfinite(qdot)), "qdot has non-finite values"
 
     tau = -viscous_coeffs * qdot
@@ -161,7 +161,9 @@ def chain_positions(
     convention y-up (positive cosine), matching the existing physics modules.
     """
     n = absolute_angles.shape[0]
-    assert lengths.shape == (n,), f"lengths {lengths.shape} vs angles {absolute_angles.shape}"
+    assert lengths.shape == (
+        n,
+    ), f"lengths {lengths.shape} vs angles {absolute_angles.shape}"
 
     positions = np.zeros((n, 2))
     x, y = origin
