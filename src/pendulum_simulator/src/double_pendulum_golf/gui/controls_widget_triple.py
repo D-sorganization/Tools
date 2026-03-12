@@ -368,12 +368,19 @@ class ControlsWidgetTriple(ControlsWidgetBase):
         self.inp_tau_elbow.set_value(tau_el)
         self.inp_tau_wrist.set_value(tau_wr)
         self.inp_tend.set_value(str(tend))
-        self.inp_m1.set_value(str(m1))
-        self.inp_m2.set_value(str(m2))
-        self.inp_m3.set_value(str(m3))
-        self.inp_L1.set_value(str(L1))
-        self.inp_L2.set_value(str(L2))
-        self.inp_L3.set_value(str(L3))
+        # Use float API for UnitAwareInput, fall back to str for LabeledInput
+        for widget, val in [
+            (self.inp_m1, m1),
+            (self.inp_m2, m2),
+            (self.inp_m3, m3),
+            (self.inp_L1, L1),
+            (self.inp_L2, L2),
+            (self.inp_L3, L3),
+        ]:
+            try:
+                widget.set_value(val, is_si=True)
+            except TypeError:
+                widget.set_value(str(val))
         self._update_torque_preview()
 
     def get_params(self) -> dict:

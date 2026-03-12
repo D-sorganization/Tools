@@ -355,6 +355,19 @@ pub fn gravity_vector(q: &[f64; 8], params: &GolferParams) -> SVector<f64, 8> {
     g
 }
 
+/// Compute viscous friction torque vector for 7 actuated joints.
+///
+/// τ_friction[i] = -friction_i * qdot[i]  for i = 0..6 (actuated DOFs)
+/// τ_friction[7] = 0.0  (club angle is constrained, not actuated)
+pub fn friction_torque(qdot: &[f64; 8], params: &GolferParams) -> SVector<f64, 8> {
+    let mut f = SVector::<f64, 8>::zeros();
+    for i in 0..7 {
+        f[i] = -params.friction[i] * qdot[i];
+    }
+    // qdot[7] (club angle) has no direct friction — it's a constrained DOF
+    f
+}
+
 /// Compute the 4-dimensional constraint vector Φ(q).
 ///
 /// Constraints:
@@ -439,6 +452,7 @@ mod tests {
             grip_right: 0.3,
             grip_left: 0.3,
             g: 9.81,
+            friction: [0.0; 7],
         };
 
         let q = [0.0; 8]; // All angles zero
@@ -470,6 +484,7 @@ mod tests {
             grip_right: 0.3,
             grip_left: 0.3,
             g: 9.81,
+            friction: [0.0; 7],
         };
 
         let q = [0.0; 8];
@@ -500,6 +515,7 @@ mod tests {
             grip_right: 0.3,
             grip_left: 0.3,
             g: 9.81,
+            friction: [0.0; 7],
         };
 
         let q = [0.0; 8];

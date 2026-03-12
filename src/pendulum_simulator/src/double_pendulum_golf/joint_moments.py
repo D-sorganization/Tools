@@ -195,6 +195,75 @@ def triple_pendulum_moments(
 
 
 # ---------------------------------------------------------------------------
+# Golfer (7-DOF) joint moments
+# ---------------------------------------------------------------------------
+
+
+def golfer_pendulum_moments(
+    positions: dict,
+    joint_forces: dict,
+    applied_torques: tuple[float, ...],
+    params: object,
+) -> dict:
+    """Compute all joint moments for the golfer upper-body model.
+
+    Parameters
+    ----------
+    positions : dict
+        Output of forward_kinematics: {hub, rs, re, rh, ls, le, lh, club_tip, ...}.
+    joint_forces : dict
+        Output of net_joint_forces: {hub, rs, re, rh, ls, le, lh, ...} each (fx,fy).
+    applied_torques : tuple
+        (tau_hub, tau_rs, tau_re, tau_rh, tau_ls, tau_le, tau_lh) from torque function.
+    params : GolferParams
+        Physical parameters (used for segment topology).
+
+    Returns
+    -------
+    dict with applied_torque, moment_of_force, total_moment for each of the
+    7 actuated joints.
+
+    Contract
+    --------
+    Pre:  len(applied_torques) >= 7 and all required keys present in positions/forces.
+    Post: Returns dict with 21 keys (3 per joint × 7 joints), all finite.
+    """
+    assert (
+        len(applied_torques) >= 7
+    ), f"Need >= 7 applied torques, got {len(applied_torques)}"
+    # Joint → distal endpoint pairs (joint connects to next link's endpoint)
+    joints = ["hub", "rs", "re", "rh", "ls", "le", "lh"]
+    endpoints = ["rs", "re", "rh", "club_tip", "le", "lh", "club_tip"]
+
+    result = {}
+    for i, (jname, ename) in enumerate(zip(joints, endpoints)):
+        j_pos_raw = positions.get(jname)
+        e_pos_raw = positions.get(ename)
+        f_raw = joint_forces.get(jname)
+
+        if j_pos_raw is None or e_pos_raw is None or f_raw is None:
+            # Missing data — store zeros
+            result[f"{jname}_applied_torque"] = applied_torques[i]
+            result[f"{jname}_moment_of_force"] = 0.0
+            result[f"{jname}_total_moment"] = applied_torques[i]
+            continue
+
+        j_pos = np.array(j_pos_raw, dtype=float)
+        e_pos = np.array(e_pos_raw, dtype=float)
+        com = (j_pos + e_pos) / 2.0
+        f_joint = np.array(f_raw, dtype=float)
+
+        m_force = moment_of_force(j_pos, com, f_joint)
+        total = total_moment_at_joint(applied_torques[i], j_pos, com, f_joint)
+
+        result[f"{jname}_applied_torque"] = applied_torques[i]
+        result[f"{jname}_moment_of_force"] = m_force
+        result[f"{jname}_total_moment"] = total
+
+    return result
+
+
+# ---------------------------------------------------------------------------
 # Torque vector direction for 2-D rendering
 # ---------------------------------------------------------------------------
 

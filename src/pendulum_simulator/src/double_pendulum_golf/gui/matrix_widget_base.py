@@ -9,7 +9,7 @@ coupling ratio calculations.
 from __future__ import annotations
 
 import logging
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Any
 
 from PyQt6.QtCore import QRectF, Qt
@@ -19,7 +19,7 @@ from PyQt6.QtWidgets import QWidget
 logger = logging.getLogger(__name__)
 
 
-class MatrixWidgetBase(QWidget, ABC):
+class MatrixWidgetBase(QWidget):
     """Abstract base class for matrix visualization widgets.
 
     Shared responsibilities:

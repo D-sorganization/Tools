@@ -23,21 +23,23 @@ pub mod triple;
 pub mod types;
 
 pub use double::{
-    coriolis as double_coriolis, forward_kinematics as double_forward_kinematics,
+    coriolis as double_coriolis, equations_of_motion as double_equations_of_motion,
+    forward_kinematics as double_forward_kinematics, friction_torque as double_friction_torque,
     gravity_vector as double_gravity_vector, jacobian_club_tip, jacobian_wrist,
     mass_matrix as double_mass_matrix,
 };
 
 pub use triple::{
-    coriolis as triple_coriolis, forward_kinematics as triple_forward_kinematics,
+    coriolis as triple_coriolis, equations_of_motion as triple_equations_of_motion,
+    forward_kinematics as triple_forward_kinematics, friction_torque as triple_friction_torque,
     gravity_vector as triple_gravity_vector, jacobian_joint1, jacobian_joint2, jacobian_joint3,
     mass_matrix as triple_mass_matrix,
 };
 
 pub use golfer::{
     analytical_fk_jacobians, constraint_jacobian, constraint_vector,
-    forward_kinematics as golfer_forward_kinematics, gravity_vector as golfer_gravity_vector,
-    mass_matrix as golfer_mass_matrix,
+    forward_kinematics as golfer_forward_kinematics, friction_torque as golfer_friction_torque,
+    gravity_vector as golfer_gravity_vector, mass_matrix as golfer_mass_matrix,
 };
 
 pub use golfer_constraints::{
@@ -171,6 +173,44 @@ pub mod py_bindings {
         Ok(c.as_slice().to_vec())
     }
 
+    /// Double pendulum friction torque
+    #[pyfunction]
+    pub fn py_double_friction_torque(
+        qdot: Vec<f64>,
+        params: &PyDoublePendulumParams,
+    ) -> PyResult<Vec<f64>> {
+        if qdot.len() != 2 {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "qdot must have length 2",
+            ));
+        }
+        let qdot_arr = [qdot[0], qdot[1]];
+        let f = double_friction_torque(&qdot_arr, &params.inner);
+        Ok(f.as_slice().to_vec())
+    }
+
+    /// Double pendulum equations of motion (with friction)
+    #[pyfunction]
+    pub fn py_double_equations_of_motion(
+        q: Vec<f64>,
+        qdot: Vec<f64>,
+        tau: Vec<f64>,
+        params: &PyDoublePendulumParams,
+    ) -> PyResult<Vec<f64>> {
+        if q.len() != 2 || qdot.len() != 2 || tau.len() != 2 {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q, qdot, and tau must have length 2",
+            ));
+        }
+        let qddot = double_equations_of_motion(
+            &[q[0], q[1]],
+            &[qdot[0], qdot[1]],
+            &[tau[0], tau[1]],
+            &params.inner,
+        );
+        Ok(qddot.to_vec())
+    }
+
     /// Double pendulum forward kinematics
     #[pyfunction]
     pub fn py_double_forward_kinematics(
@@ -288,6 +328,44 @@ pub mod py_bindings {
         Ok(c.as_slice().to_vec())
     }
 
+    /// Triple pendulum friction torque
+    #[pyfunction]
+    pub fn py_triple_friction_torque(
+        qdot: Vec<f64>,
+        params: &PyTriplePendulumParams,
+    ) -> PyResult<Vec<f64>> {
+        if qdot.len() != 3 {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "qdot must have length 3",
+            ));
+        }
+        let qdot_arr = [qdot[0], qdot[1], qdot[2]];
+        let f = triple_friction_torque(&qdot_arr, &params.inner);
+        Ok(f.as_slice().to_vec())
+    }
+
+    /// Triple pendulum equations of motion (with friction)
+    #[pyfunction]
+    pub fn py_triple_equations_of_motion(
+        q: Vec<f64>,
+        qdot: Vec<f64>,
+        tau: Vec<f64>,
+        params: &PyTriplePendulumParams,
+    ) -> PyResult<Vec<f64>> {
+        if q.len() != 3 || qdot.len() != 3 || tau.len() != 3 {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q, qdot, and tau must have length 3",
+            ));
+        }
+        let qddot = triple_equations_of_motion(
+            &[q[0], q[1], q[2]],
+            &[qdot[0], qdot[1], qdot[2]],
+            &[tau[0], tau[1], tau[2]],
+            &params.inner,
+        );
+        Ok(qddot.to_vec())
+    }
+
     /// Triple pendulum forward kinematics
     #[pyfunction]
     pub fn py_triple_forward_kinematics(
@@ -324,7 +402,7 @@ pub mod py_bindings {
     #[pymethods]
     impl PyGolferParams {
         #[new]
-        #[pyo3(signature = (l_hub, m_hub, d_rs, d_ls, l_r_upper, m_r_upper, l_r_fore, m_r_fore, l_l_upper, m_l_upper, l_l_fore, m_l_fore, l_club, m_club, m_clubhead, grip_right, grip_left, g))]
+        #[pyo3(signature = (l_hub, m_hub, d_rs, d_ls, l_r_upper, m_r_upper, l_r_fore, m_r_fore, l_l_upper, m_l_upper, l_l_fore, m_l_fore, l_club, m_club, m_clubhead, grip_right, grip_left, g, friction=None))]
         pub fn new(
             l_hub: f64,
             m_hub: f64,
@@ -344,7 +422,12 @@ pub mod py_bindings {
             grip_right: f64,
             grip_left: f64,
             g: f64,
+            friction: Option<Vec<f64>>,
         ) -> Self {
+            let fric = match friction {
+                Some(f) if f.len() >= 7 => [f[0], f[1], f[2], f[3], f[4], f[5], f[6]],
+                _ => [0.0; 7],
+            };
             PyGolferParams {
                 inner: GolferParams {
                     l_hub,
@@ -365,6 +448,7 @@ pub mod py_bindings {
                     grip_right,
                     grip_left,
                     g,
+                    friction: fric,
                 },
             }
         }
@@ -405,6 +489,23 @@ pub mod py_bindings {
         q_arr.copy_from_slice(&q[..8]);
         let g = golfer_gravity_vector(&q_arr, &params.inner);
         Ok(g.as_slice().to_vec())
+    }
+
+    /// Golfer friction torque (7 actuated joints + 1 constrained)
+    #[pyfunction]
+    pub fn py_golfer_friction_torque(
+        qdot: Vec<f64>,
+        params: &PyGolferParams,
+    ) -> PyResult<Vec<f64>> {
+        if qdot.len() != 8 {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "qdot must have length 8",
+            ));
+        }
+        let mut qdot_arr = [0.0; 8];
+        qdot_arr.copy_from_slice(&qdot[..8]);
+        let f = golfer_friction_torque(&qdot_arr, &params.inner);
+        Ok(f.as_slice().to_vec())
     }
 
     /// Golfer forward kinematics
@@ -697,13 +798,18 @@ pub mod py_bindings {
         m.add_function(wrap_pyfunction!(py_double_mass_matrix, m)?)?;
         m.add_function(wrap_pyfunction!(py_double_gravity_vector, m)?)?;
         m.add_function(wrap_pyfunction!(py_double_coriolis, m)?)?;
+        m.add_function(wrap_pyfunction!(py_double_friction_torque, m)?)?;
+        m.add_function(wrap_pyfunction!(py_double_equations_of_motion, m)?)?;
         m.add_function(wrap_pyfunction!(py_double_forward_kinematics, m)?)?;
         m.add_function(wrap_pyfunction!(py_triple_mass_matrix, m)?)?;
         m.add_function(wrap_pyfunction!(py_triple_gravity_vector, m)?)?;
         m.add_function(wrap_pyfunction!(py_triple_coriolis, m)?)?;
+        m.add_function(wrap_pyfunction!(py_triple_friction_torque, m)?)?;
+        m.add_function(wrap_pyfunction!(py_triple_equations_of_motion, m)?)?;
         m.add_function(wrap_pyfunction!(py_triple_forward_kinematics, m)?)?;
         m.add_function(wrap_pyfunction!(py_golfer_mass_matrix, m)?)?;
         m.add_function(wrap_pyfunction!(py_golfer_gravity_vector, m)?)?;
+        m.add_function(wrap_pyfunction!(py_golfer_friction_torque, m)?)?;
         m.add_function(wrap_pyfunction!(py_golfer_forward_kinematics, m)?)?;
         m.add_function(wrap_pyfunction!(py_golfer_constraint_vector, m)?)?;
         m.add_function(wrap_pyfunction!(py_golfer_constraint_jacobian, m)?)?;
@@ -871,6 +977,7 @@ pub mod wasm_bindings {
                     grip_right,
                     grip_left,
                     g,
+                    friction: [0.0; 7],
                 },
             }
         }

@@ -126,11 +126,11 @@ _PRESETS: dict[str, dict[UnitCategory, str]] = {
     "Imperial": {
         UnitCategory.LENGTH: "in",
         UnitCategory.MASS: "lb",
-        UnitCategory.TORQUE: "lbf·ft",
+        UnitCategory.TORQUE: "lbf·in",
         UnitCategory.FORCE: "lbf",
         UnitCategory.ANGLE: "deg",
         UnitCategory.ANGULAR_VELOCITY: "deg/s",
-        UnitCategory.STIFFNESS: "lbf·ft/rad",
+        UnitCategory.STIFFNESS: "lbf·in/rad",
         UnitCategory.ENERGY: "ft·lbf",
         UnitCategory.POWER: "ft·lbf/s",
         UnitCategory.LINEAR_VELOCITY: "ft/s",

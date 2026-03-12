@@ -23,6 +23,7 @@ from PyQt6.QtCore import QPointF, Qt
 from PyQt6.QtGui import QBrush, QColor, QFont, QPainter, QPainterPath, QPen
 from PyQt6.QtWidgets import QWidget
 
+from ..jacobians_golfer import ellipsoids_golfer
 from ..simulation_golfer import GolferSimulationResult
 from .base_pendulum_widget import BasePendulumWidget
 
@@ -48,6 +49,12 @@ class GolferPendulumWidget(BasePendulumWidget):
 
     # Zero torque vector color (violet/purple, same as PendulumWidget)
     COLOR_ZERO_TORQUE = QColor(210, 120, 255)
+
+    # Ellipsoid colors (matching PendulumWidget for consistency)
+    COLOR_MOB_ELLIPSOID = QColor(100, 200, 255, 70)
+    COLOR_MOB_OUTLINE = QColor(100, 200, 255, 180)
+    COLOR_FORCE_ELLIPSOID = QColor(255, 160, 80, 60)
+    COLOR_FORCE_OUTLINE = QColor(255, 160, 80, 180)
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -166,6 +173,9 @@ class GolferPendulumWidget(BasePendulumWidget):
 
         if self._show_zero_torque_forces:
             self._draw_zero_torque_force_vectors(painter)
+
+        if self._show_mob_ellipsoids or self._show_force_ellipsoids:
+            self._draw_ellipsoids_at_frame(painter)
 
         if self._show_com:
             self._draw_com(painter)
@@ -452,6 +462,144 @@ class GolferPendulumWidget(BasePendulumWidget):
 
     # ------------------------------------------------------------------
     # Info and placeholder
+    # ------------------------------------------------------------------
+    # Ellipsoid drawing (#1200 — N-DOF force/mobility ellipsoids)
+    # ------------------------------------------------------------------
+
+    def _draw_ellipsoids_at_frame(self, painter: QPainter) -> None:
+        """Compute and draw mobility/force ellipsoids for golfer endpoints.
+
+        Contract
+        --------
+        Pre:  self._result is not None.
+        Post: Ellipsoids drawn at each visible endpoint.
+        """
+        assert self._result is not None
+        state = self._result.states[self._current_idx]
+        params = self._result.params
+        ppm = self._pixels_per_meter
+
+        try:
+            data = ellipsoids_golfer(state, params)
+        except (ValueError, RuntimeError, ArithmeticError) as exc:
+            logger.debug("ellipsoids_golfer failed: %s", exc)
+            return
+
+        pos = self._result.positions_at(self._current_idx)
+        # Map ellipsoid keys to position keys
+        endpoint_map = {
+            "rh": pos.get("rh", (0.0, 0.0)),
+            "lh": pos.get("lh", (0.0, 0.0)),
+            "club_tip": pos.get("club_tip", (0.0, 0.0)),
+            "re": pos.get("re", (0.0, 0.0)),
+            "le": pos.get("le", (0.0, 0.0)),
+            "hub": pos.get("hub", (0.0, 0.0)),
+        }
+
+        for name, ell in data.items():
+            if (
+                self._visible_segments is not None
+                and name not in self._visible_segments
+            ):
+                continue
+            world_pos = endpoint_map.get(name)
+            if world_pos is None:
+                continue
+            cx_px = self._world_to_pixel(*world_pos).x()
+            cy_px = self._world_to_pixel(*world_pos).y()
+
+            dirs = ell["directions"]
+            if self._show_mob_ellipsoids:
+                mob = ell["mob_semi_axes"]
+                mob_scale = self._mob_ellipsoid_scale * ppm * 0.3
+                self._draw_ellipse_axes(
+                    painter,
+                    cx_px,
+                    cy_px,
+                    dirs,
+                    mob * mob_scale,
+                    fill=self.COLOR_MOB_ELLIPSOID,
+                    outline=self.COLOR_MOB_OUTLINE,
+                    label="M",
+                )
+            if self._show_force_ellipsoids:
+                force = ell["force_semi_axes"]
+                force_scale = self._force_ellipsoid_scale * ppm * 0.3
+                if force is not None:
+                    self._draw_ellipse_axes(
+                        painter,
+                        cx_px,
+                        cy_px,
+                        dirs,
+                        force * force_scale,
+                        fill=self.COLOR_FORCE_ELLIPSOID,
+                        outline=self.COLOR_FORCE_OUTLINE,
+                        label="F",
+                    )
+                else:
+                    # Degenerate (singular) — draw direction line with label
+                    mob = ell["mob_semi_axes"]
+                    line_len = float(mob[0]) * force_scale * 0.5
+                    line_len = max(10.0, min(line_len, 200.0))
+                    dx_line = float(dirs[0, 0]) * line_len
+                    dy_line = -float(dirs[1, 0]) * line_len
+                    pen = QPen(self.COLOR_FORCE_OUTLINE, 1.5, Qt.PenStyle.DashLine)
+                    painter.setPen(pen)
+                    painter.drawLine(
+                        QPointF(cx_px - dx_line, cy_px - dy_line),
+                        QPointF(cx_px + dx_line, cy_px + dy_line),
+                    )
+                    painter.setFont(QFont("Monospace", 7))
+                    painter.drawText(
+                        QPointF(cx_px + dx_line + 4, cy_px + dy_line), "F\u221e"
+                    )
+
+    def _draw_ellipse_axes(
+        self,
+        painter: QPainter,
+        cx: float,
+        cy: float,
+        directions: np.ndarray,
+        semi_axes_px: np.ndarray,
+        fill: QColor,
+        outline: QColor,
+        label: str = "",
+    ) -> None:
+        """Draw a 2-D ellipse defined by principal axes and semi-axis lengths.
+
+        Contract
+        --------
+        Pre: directions.shape == (2, 2)
+        Pre: semi_axes_px.shape == (2,)
+        """
+        assert directions.shape == (2, 2), "directions must be (2, 2)"
+        assert semi_axes_px.shape == (2,), "semi_axes_px must be (2,)"
+
+        a = float(semi_axes_px[0])
+        b = float(semi_axes_px[1])
+
+        max_px = min(self.width(), self.height()) * 0.8
+        a = max(2.0, min(a, max_px))
+        b = max(2.0, min(b, max_px))
+
+        dx, dy = float(directions[0, 0]), float(directions[1, 0])
+        angle_deg = float(np.degrees(np.arctan2(-dy, dx)))
+
+        painter.save()
+        painter.translate(cx, cy)
+        painter.rotate(angle_deg)
+        painter.setBrush(QBrush(fill))
+        painter.setPen(QPen(outline, 1.2))
+        painter.drawEllipse(QPointF(0.0, 0.0), a, b)
+        painter.restore()
+
+        if label:
+            lbl_x = cx + float(directions[0, 0]) * a + 4
+            lbl_y = cy - float(directions[1, 0]) * a
+            painter.setFont(QFont("Monospace", 7))
+            painter.setPen(outline)
+            painter.drawText(QPointF(lbl_x, lbl_y), label)
+
     # ------------------------------------------------------------------
 
     def _draw_info(self, painter: QPainter) -> None:

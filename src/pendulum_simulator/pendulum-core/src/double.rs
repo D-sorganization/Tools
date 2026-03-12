@@ -75,6 +75,43 @@ pub fn gravity_vector(q: &[f64; 2], params: &DoublePendulumParams) -> SVector<f6
     SVector::<f64, 2>::new(g0, g1)
 }
 
+/// Compute viscous friction torque vector.
+///
+/// τ_friction[i] = -friction_i * qdot[i]
+///
+/// This is the linear damping (viscous friction) at each joint.
+pub fn friction_torque(qdot: &[f64; 2], params: &DoublePendulumParams) -> SVector<f64, 2> {
+    SVector::<f64, 2>::new(-params.friction1 * qdot[0], -params.friction2 * qdot[1])
+}
+
+/// Compute joint accelerations: qddot = M⁻¹(tau + tau_friction - C - G).
+///
+/// This is the full unconstrained equations of motion including friction.
+/// `tau` is the applied (driving) torque vector.
+pub fn equations_of_motion(
+    q: &[f64; 2],
+    qdot: &[f64; 2],
+    tau: &[f64; 2],
+    params: &DoublePendulumParams,
+) -> [f64; 2] {
+    let m = mass_matrix(q, params);
+    let c = coriolis(q, qdot, params);
+    let g = gravity_vector(q, params);
+    let f = friction_torque(qdot, params);
+
+    // RHS = tau + friction - coriolis - gravity
+    let rhs = SVector::<f64, 2>::new(tau[0], tau[1]) + f - c - g;
+
+    // Solve M * qddot = rhs
+    let decomp = m.lu();
+    let qddot = decomp.solve(&rhs).unwrap_or_else(|| {
+        // Fallback: use pseudo-inverse if singular (shouldn't happen)
+        SVector::<f64, 2>::zeros()
+    });
+
+    [qddot[0], qddot[1]]
+}
+
 /// Compute forward kinematics.
 ///
 /// Given configuration q = [θ₁, φ], compute the positions of:

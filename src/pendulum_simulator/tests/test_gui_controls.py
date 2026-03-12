@@ -43,7 +43,10 @@ class TestControlsWidgetValidation:
         from double_pendulum_golf.gui.controls_widget_triple import ControlsWidgetTriple
 
         widget = ControlsWidgetTriple()
-        widget.inp_L2.set_value("-0.5")
+        try:
+            widget.inp_L2.set_value(-0.5, is_si=True)
+        except TypeError:
+            widget.inp_L2.set_value("-0.5")
         with pytest.raises(ValueError, match="L2 must be positive"):
             widget.get_params()
         widget.deleteLater()
@@ -52,7 +55,10 @@ class TestControlsWidgetValidation:
         from double_pendulum_golf.gui.controls_widget_golfer import ControlsWidgetGolfer
 
         widget = ControlsWidgetGolfer()
-        widget.inp_grip_right.set_value("2.0")
+        try:
+            widget.inp_grip_right.set_value(2.0, is_si=True)
+        except TypeError:
+            widget.inp_grip_right.set_value("2.0")
         with pytest.raises(ValueError, match="grip_right must be ≤ L_club"):
             widget.get_params()
         widget.deleteLater()

@@ -551,6 +551,7 @@ class MainWindow(QMainWindow):
         controls = ControlsWidgetTriple()
         pendulum = PendulumWidget()
         matrix = TripleMatrixWidget()
+        torque_history = TorqueHistoryWidget()
 
         def build_params(p: dict) -> TriplePendulumParams:
             tilt_rad = np.radians(p.get("tilt_deg", 0.0))
@@ -659,6 +660,7 @@ class MainWindow(QMainWindow):
             torque_builder=build_torque,
             state_builder=build_state,
             run_simulation=run_simulation_triple,
+            torque_history=torque_history,  # type: ignore[arg-type]
             limits_builder=build_limits,
             clamp_builder=build_clamp,
             optimizer=optimizer,
@@ -671,6 +673,7 @@ class MainWindow(QMainWindow):
         controls = ControlsWidgetGolfer()
         pendulum = GolferPendulumWidget()
         matrix = GolferMatrixWidget()
+        torque_history = TorqueHistoryWidget()
 
         def build_params(p: dict) -> GolferParams:
             tilt_rad = np.radians(p.get("tilt_deg", 0.0))
@@ -808,6 +811,7 @@ class MainWindow(QMainWindow):
             torque_builder=build_torque,
             state_builder=build_state,
             run_simulation=run_simulation_golfer,
+            torque_history=torque_history,  # type: ignore[arg-type]
             limits_builder=build_limits,
             clamp_builder=build_clamp,
             optimizer=optimizer,

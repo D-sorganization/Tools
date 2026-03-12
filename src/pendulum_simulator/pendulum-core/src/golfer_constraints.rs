@@ -210,6 +210,7 @@ mod tests {
             grip_right: 0.3,
             grip_left: 0.3,
             g: 9.81,
+            friction: [0.0; 7],
         };
 
         let q = [0.0; 8];
@@ -244,6 +245,7 @@ mod tests {
             grip_right: 0.3,
             grip_left: 0.3,
             g: 9.81,
+            friction: [0.0; 7],
         };
 
         let q = [0.0; 8];
