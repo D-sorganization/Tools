@@ -200,7 +200,9 @@ class SignalToolkitLauncher(QMainWindow):
         self.poly_gen.polynomial_generated.connect(self._on_poly_generated)
 
         self._build_menus()
-        self.statusBar().showMessage("Ready")
+        sb = self.statusBar()
+        if sb is not None:
+            sb.showMessage("Ready")
 
     # ------------------------------------------------------------------
     # Signal routing
@@ -225,9 +227,9 @@ class SignalToolkitLauncher(QMainWindow):
         signal.name = f"Polynomial ({joint_name})"
         self.toolkit.load_external_signal(signal)
 
-        self.statusBar().showMessage(
-            f"Polynomial ({joint_name}) sent to Signal Toolkit", 5000
-        )
+        sb = self.statusBar()
+        if sb is not None:
+            sb.showMessage(f"Polynomial ({joint_name}) sent to Signal Toolkit", 5000)
 
     # ------------------------------------------------------------------
     # Menu bar
@@ -236,6 +238,7 @@ class SignalToolkitLauncher(QMainWindow):
     def _build_menus(self) -> None:
         """Create the application menu bar."""
         menubar = self.menuBar()
+        assert menubar is not None
 
         # --- File ---
         file_menu = QMenu("&File", self)
