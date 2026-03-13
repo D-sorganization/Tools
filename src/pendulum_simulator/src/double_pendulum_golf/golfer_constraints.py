@@ -24,6 +24,13 @@ def constraint_vector(q: np.ndarray, p: GolferParams) -> np.ndarray:
     -------
     Phi : np.ndarray, shape (4,)
     """
+    if not isinstance(q, np.ndarray):
+        raise TypeError("q must be a numpy ndarray")
+    if q.ndim != 1 or q.shape[0] < N_DOF:
+        raise ValueError(f"q must be a 1D array of at least {N_DOF} elements")
+    if not isinstance(p, GolferParams):
+        raise TypeError("p must be a GolferParams instance")
+
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
 
@@ -70,6 +77,13 @@ def numerical_constraint_jacobian(q: np.ndarray, p: GolferParams) -> np.ndarray:
     -------
     Phi_q : np.ndarray, shape (4, 8)
     """
+    if not isinstance(q, np.ndarray):
+        raise TypeError("q must be a numpy ndarray")
+    if q.ndim != 1 or q.shape[0] < N_DOF:
+        raise ValueError(f"q must be a 1D array of at least {N_DOF} elements")
+    if not isinstance(p, GolferParams):
+        raise TypeError("p must be a GolferParams instance")
+
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
 
@@ -101,6 +115,13 @@ def analytical_constraint_jacobian(q: np.ndarray, p: GolferParams) -> np.ndarray
     -------
     Phi_q : np.ndarray, shape (4, 8)
     """
+    if not isinstance(q, np.ndarray):
+        raise TypeError("q must be a numpy ndarray")
+    if q.ndim != 1 or q.shape[0] < N_DOF:
+        raise ValueError(f"q must be a 1D array of at least {N_DOF} elements")
+    if not isinstance(p, GolferParams):
+        raise TypeError("p must be a GolferParams instance")
+
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
 
@@ -128,10 +149,10 @@ def analytical_constraint_jacobian(q: np.ndarray, p: GolferParams) -> np.ndarray
     Phi_q[0, :] -= J_rh[0, :]
     Phi_q[1, :] -= J_rh[1, :]
 
-    # d(grip_left * sin(th_club))/dq_7 = grip_left * cos(th_club)
-    # d(-grip_left * cos(th_club))/dq_7 = grip_left * sin(th_club)
-    Phi_q[0, 7] -= p.grip_left * cos_club
-    Phi_q[1, 7] += p.grip_left * sin_club
+    # d((grip_left - grip_right) * sin(th_club))/dq_7 = (grip_left - grip_right) * cos(th_club)
+    # d(-(grip_left - grip_right) * cos(th_club))/dq_7 = (grip_left - grip_right) * sin(th_club)
+    Phi_q[0, 7] -= (p.grip_left - p.grip_right) * cos_club
+    Phi_q[1, 7] += (p.grip_left - p.grip_right) * sin_club
 
     # Constraint 3: perpendicular distance = 0
     # Phi[2] = (lh - rh) · club_perp = lh_x * club_perp_x + lh_y * club_perp_y
@@ -177,6 +198,17 @@ def linear_accelerations(
 
     Returns dict with keys matching forward_kinematics joint names.
     """
+    if not isinstance(q, np.ndarray) or not isinstance(qdot, np.ndarray) or not isinstance(qddot, np.ndarray):
+        raise TypeError("q, qdot, and qddot must be numpy ndarrays")
+    if q.ndim != 1 or q.shape[0] < N_DOF:
+        raise ValueError(f"q must be a 1D array of at least {N_DOF} elements")
+    if qdot.ndim != 1 or qdot.shape[0] < N_DOF:
+        raise ValueError(f"qdot must be a 1D array of at least {N_DOF} elements")
+    if qddot.ndim != 1 or qddot.shape[0] < N_DOF:
+        raise ValueError(f"qddot must be a 1D array of at least {N_DOF} elements")
+    if not isinstance(p, GolferParams):
+        raise TypeError("p must be a GolferParams instance")
+
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
     if qdot.shape[0] > N_DOF:
@@ -253,6 +285,13 @@ def friction_torque_vector(qdot: np.ndarray, p: GolferParams) -> np.ndarray:
     tau_f : np.ndarray, shape (8,)
         Note: club DOF (index 7) has no independent damping.
     """
+    if not isinstance(qdot, np.ndarray):
+        raise TypeError("qdot must be a numpy ndarray")
+    if qdot.ndim != 1 or qdot.shape[0] < N_DOF:
+        raise ValueError(f"qdot must be a 1D array of at least {N_DOF} elements")
+    if not isinstance(p, GolferParams):
+        raise TypeError("p must be a GolferParams instance")
+
     if qdot.shape[0] > N_DOF:
         qdot = qdot[:N_DOF]
 
