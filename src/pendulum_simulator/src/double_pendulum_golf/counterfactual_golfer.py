@@ -58,4 +58,4 @@ def zero_torque_joint_forces(
     q = state[:N_DOF]
     qdot = state[N_DOF:]
     qddot = zero_torque_accelerations(state, params)
-    return net_joint_forces(q, qdot, qddot, params)
+    return net_joint_forces(q, qdot, qddot, params)  # type: ignore[no-any-return]
