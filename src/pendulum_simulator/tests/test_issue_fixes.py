@@ -423,3 +423,73 @@ class TestSharedConstants:
             "from double_pendulum_golf.constants import" in source
             or "from ..constants import" in source
         )
+
+
+# ---------------------------------------------------------------------------
+# #1159 — DbC assertion coverage
+# ---------------------------------------------------------------------------
+
+
+class TestDbCAssertionCoverage:
+    """Verify Design by Contract assertions are enforced in critical modules."""
+
+    def test_pendulum_params_rejects_negative_mass(self) -> None:
+        from double_pendulum_golf.physics import PendulumParams
+
+        with pytest.raises(AssertionError, match="m1 must be positive"):
+            PendulumParams(m1=-1.0, m2=0.5, L1=0.6, L2=1.0)
+
+    def test_pendulum_params_rejects_negative_gravity(self) -> None:
+        from double_pendulum_golf.physics import PendulumParams
+
+        with pytest.raises(AssertionError, match="g must be non-negative"):
+            PendulumParams(m1=5.0, m2=0.5, L1=0.6, L2=1.0, g=-1.0)
+
+    def test_triple_params_rejects_negative_length(self) -> None:
+        from double_pendulum_golf.physics_triple import TriplePendulumParams
+
+        with pytest.raises(AssertionError, match="L2 must be positive"):
+            TriplePendulumParams(m1=5.0, m2=0.5, m3=0.3, L1=0.6, L2=-1.0, L3=0.5)
+
+    def test_simulation_rejects_wrong_state_shape(self) -> None:
+        from double_pendulum_golf.physics import PendulumParams
+        from double_pendulum_golf.simulation import run_simulation
+
+        params = PendulumParams(m1=5.0, m2=0.5, L1=0.6, L2=1.0)
+        bad_state = np.array([0.0, 0.0, 0.0])  # Should be shape (4,)
+        with pytest.raises(AssertionError):
+            run_simulation(params, bad_state, 1.0, lambda t: (0.0, 0.0))
+
+    def test_simulation_rejects_nonfinite_state(self) -> None:
+        from double_pendulum_golf.physics import PendulumParams
+        from double_pendulum_golf.simulation import run_simulation
+
+        params = PendulumParams(m1=5.0, m2=0.5, L1=0.6, L2=1.0)
+        nan_state = np.array([np.nan, 0.0, 0.0, 0.0])
+        with pytest.raises(AssertionError):
+            run_simulation(params, nan_state, 1.0, lambda t: (0.0, 0.0))
+
+    def test_noise_generator_rejects_negative_amplitude(self) -> None:
+        from double_pendulum_golf.perturbation_analysis import generate_noise
+
+        with pytest.raises(AssertionError, match="amplitude must be non-negative"):
+            generate_noise("white", 100, -1.0)
+
+    def test_noise_generator_rejects_zero_samples(self) -> None:
+        from double_pendulum_golf.perturbation_analysis import generate_noise
+
+        with pytest.raises(AssertionError, match="n_samples must be positive"):
+            generate_noise("white", 0, 1.0)
+
+    def test_trajectory_mixin_rejects_nonfinite(self) -> None:
+        """TrajectoryResultMixin._validate_trajectory enforces finite states."""
+        from double_pendulum_golf.simulation_result_base import TrajectoryResultMixin
+
+        class FakeResult(TrajectoryResultMixin):
+            pass
+
+        r = FakeResult()
+        r.t = np.array([0.0, 0.1])
+        r.states = np.array([[0.0, 0.0, 0.0, np.nan], [0.0, 0.0, 0.0, 0.0]])
+        with pytest.raises(AssertionError, match="finite"):
+            r._validate_trajectory(expected_state_width=4)
