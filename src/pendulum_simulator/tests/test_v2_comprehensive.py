@@ -7,6 +7,8 @@ Covers issues #1132–#1155 with TDD, DbC, and DRY compliance.
 from __future__ import annotations
 
 import importlib
+import os
+import sys
 
 import numpy as np
 import pytest
@@ -15,8 +17,16 @@ import pytest
 _pyqt6_available = importlib.util.find_spec("PyQt6") is not None
 _skip_no_qt = pytest.mark.skipif(not _pyqt6_available, reason="PyQt6 not available")
 
+# On headless Linux, even importing QApplication succeeds but
+# instantiating QWidget causes SIGABRT — check for display first.
+_has_display = (
+    sys.platform in ("win32", "darwin")
+    or bool(os.environ.get("DISPLAY"))
+    or bool(os.environ.get("WAYLAND_DISPLAY"))
+)
+
 try:
-    if _pyqt6_available:
+    if _pyqt6_available and _has_display:
         from PyQt6.QtWidgets import QApplication  # noqa: F401
 
         _qt_runtime_ok = True

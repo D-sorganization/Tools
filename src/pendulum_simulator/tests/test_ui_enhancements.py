@@ -5,6 +5,9 @@ Covers issues #1097, #1100-#1102, #1103, #1104, #1108-#1110, #1111, #1113.
 
 from __future__ import annotations
 
+import os
+import sys
+
 import numpy as np
 import pytest
 
@@ -21,7 +24,11 @@ from double_pendulum_golf.physics_golfer import (
 
 
 def _has_pyqt6() -> bool:
-    """Check if PyQt6 is available (not on headless CI)."""
+    """Check if PyQt6 is available AND a display is present."""
+    # On headless Linux, QWidget() causes SIGABRT even if PyQt6 is importable
+    if sys.platform not in ("win32", "darwin"):
+        if not (os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")):
+            return False
     try:
         import PyQt6.QtWidgets  # noqa: F401
 
