@@ -40,3 +40,10 @@ parallel = ["rayon"]
 
 [dependencies.math-primitives]
 path = "../../../rust_core/math-primitives"
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name = "physics_bench"
+harness = false
