@@ -14,6 +14,7 @@
 resolver = "2"
 members = [
     "rust_core/tools-core",
+    "rust_core/math-primitives",
 ]
 
 [workspace.package]

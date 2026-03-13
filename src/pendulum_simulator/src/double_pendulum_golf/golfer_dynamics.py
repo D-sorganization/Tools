@@ -89,6 +89,159 @@ def potential_energy_from_q(q: np.ndarray, p: GolferParams) -> float:
     return V
 
 
+class _TrigCache:
+    """Precomputed sine/cosine values for golfer FK Jacobians (DRY)."""
+
+    __slots__ = (
+        "sin_hub",
+        "cos_hub",
+        "sin_rs",
+        "cos_rs",
+        "sin_re",
+        "cos_re",
+        "sin_ls",
+        "cos_ls",
+        "sin_le",
+        "cos_le",
+        "sin_club",
+        "cos_club",
+    )
+
+    def __init__(self, q: np.ndarray) -> None:
+        th_hub = q[0]
+        self.sin_hub = np.sin(th_hub)
+        self.cos_hub = np.cos(th_hub)
+
+        th_rs_abs = th_hub + q[1]
+        self.sin_rs = np.sin(th_rs_abs)
+        self.cos_rs = np.cos(th_rs_abs)
+
+        th_re_abs = th_rs_abs + q[2]
+        self.sin_re = np.sin(th_re_abs)
+        self.cos_re = np.cos(th_re_abs)
+
+        th_ls_abs = th_hub + q[4]
+        self.sin_ls = np.sin(th_ls_abs)
+        self.cos_ls = np.cos(th_ls_abs)
+
+        th_le_abs = th_ls_abs + q[5]
+        self.sin_le = np.sin(th_le_abs)
+        self.cos_le = np.cos(th_le_abs)
+
+        self.sin_club = np.sin(q[7])
+        self.cos_club = np.cos(q[7])
+
+
+def _hub_and_shoulder_jacobians(
+    p: GolferParams, tc: _TrigCache
+) -> dict[str, np.ndarray]:
+    """Compute Jacobians for hub, right shoulder, and left shoulder."""
+    J_hub = np.zeros((2, N_DOF))
+    J_hub[0, 0] = -p.L_hub * tc.cos_hub
+    J_hub[1, 0] = -p.L_hub * tc.sin_hub
+
+    J_rs = np.zeros((2, N_DOF))
+    J_rs[0, 0] = -p.L_hub * tc.cos_hub - p.d_rs * tc.sin_hub
+    J_rs[1, 0] = -p.L_hub * tc.sin_hub + p.d_rs * tc.cos_hub
+
+    J_ls = np.zeros((2, N_DOF))
+    J_ls[0, 0] = -p.L_hub * tc.cos_hub + p.d_ls * tc.sin_hub
+    J_ls[1, 0] = -p.L_hub * tc.sin_hub - p.d_ls * tc.cos_hub
+
+    return {"hub": J_hub, "rs": J_rs, "ls": J_ls}
+
+
+def _right_arm_chain_jacobian(
+    p: GolferParams, tc: _TrigCache
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Compute Jacobians for RE, RH along the right arm kinematic chain.
+
+    Returns (J_re, J_rh) and also the RH Jacobian which is reused by club.
+    """
+    # RE (right elbow): depends on q[0], q[1]
+    J_re = np.zeros((2, N_DOF))
+    J_re[0, 0] = -p.L_hub * tc.cos_hub - p.d_rs * tc.sin_hub + p.L_r_upper * tc.cos_rs
+    J_re[1, 0] = -p.L_hub * tc.sin_hub + p.d_rs * tc.cos_hub + p.L_r_upper * tc.sin_rs
+    J_re[0, 1] = p.L_r_upper * tc.cos_rs
+    J_re[1, 1] = p.L_r_upper * tc.sin_rs
+
+    # RH (right hand): depends on q[0], q[1], q[2]
+    J_rh = np.zeros((2, N_DOF))
+    J_rh[0, 0] = (
+        -p.L_hub * tc.cos_hub
+        - p.d_rs * tc.sin_hub
+        + p.L_r_upper * tc.cos_rs
+        + p.L_r_fore * tc.cos_re
+    )
+    J_rh[1, 0] = (
+        -p.L_hub * tc.sin_hub
+        + p.d_rs * tc.cos_hub
+        + p.L_r_upper * tc.sin_rs
+        + p.L_r_fore * tc.sin_re
+    )
+    J_rh[0, 1] = p.L_r_upper * tc.cos_rs + p.L_r_fore * tc.cos_re
+    J_rh[1, 1] = p.L_r_upper * tc.sin_rs + p.L_r_fore * tc.sin_re
+    J_rh[0, 2] = p.L_r_fore * tc.cos_re
+    J_rh[1, 2] = p.L_r_fore * tc.sin_re
+
+    return J_re, J_rh, J_rh
+
+
+def _left_arm_chain_jacobian(
+    p: GolferParams, tc: _TrigCache
+) -> tuple[np.ndarray, np.ndarray]:
+    """Compute Jacobians for LE, LH along the left arm kinematic chain."""
+    # LE (left elbow): depends on q[0], q[4]
+    J_le = np.zeros((2, N_DOF))
+    J_le[0, 0] = -p.L_hub * tc.cos_hub + p.d_ls * tc.sin_hub + p.L_l_upper * tc.cos_ls
+    J_le[1, 0] = -p.L_hub * tc.sin_hub - p.d_ls * tc.cos_hub + p.L_l_upper * tc.sin_ls
+    J_le[0, 4] = p.L_l_upper * tc.cos_ls
+    J_le[1, 4] = p.L_l_upper * tc.sin_ls
+
+    # LH (left hand): depends on q[0], q[4], q[5]
+    J_lh = np.zeros((2, N_DOF))
+    J_lh[0, 0] = (
+        -p.L_hub * tc.cos_hub
+        + p.d_ls * tc.sin_hub
+        + p.L_l_upper * tc.cos_ls
+        + p.L_l_fore * tc.cos_le
+    )
+    J_lh[1, 0] = (
+        -p.L_hub * tc.sin_hub
+        - p.d_ls * tc.cos_hub
+        + p.L_l_upper * tc.sin_ls
+        + p.L_l_fore * tc.sin_le
+    )
+    J_lh[0, 4] = p.L_l_upper * tc.cos_ls + p.L_l_fore * tc.cos_le
+    J_lh[1, 4] = p.L_l_upper * tc.sin_ls + p.L_l_fore * tc.sin_le
+    J_lh[0, 5] = p.L_l_fore * tc.cos_le
+    J_lh[1, 5] = p.L_l_fore * tc.sin_le
+
+    return J_le, J_lh
+
+
+def _club_jacobians(
+    p: GolferParams, tc: _TrigCache, j_rh: np.ndarray
+) -> tuple[np.ndarray, np.ndarray]:
+    """Compute Jacobians for club COM and club tip, reusing the RH Jacobian."""
+    # Club COM: RH chain + club angle
+    coeff_com_x = 0.5 * p.L_club - p.grip_right
+    coeff_com_y = -0.5 * (p.L_club - 2 * p.grip_right)
+
+    J_club_com = j_rh.copy()
+    J_club_com[0, 7] = coeff_com_x * tc.cos_club
+    J_club_com[1, 7] = coeff_com_y * tc.sin_club
+
+    # Club TIP: RH chain + club angle (different coefficient)
+    coeff_tip = p.L_club - p.grip_right
+
+    J_club_tip = j_rh.copy()
+    J_club_tip[0, 7] = coeff_tip * tc.cos_club
+    J_club_tip[1, 7] = -coeff_tip * tc.sin_club
+
+    return J_club_com, J_club_tip
+
+
 def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndarray]:
     """Compute position Jacobians analytically for all mass points.
 
@@ -101,7 +254,7 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
 
     Returns
     -------
-    dict with keys: 'hub', 're', 'rh', 'le', 'lh', 'club_com', 'club_tip'
+    dict with keys: 'hub', 'rs', 're', 'rh', 'ls', 'le', 'lh', 'club_com', 'club_tip'
     Each value is a 2×8 matrix: J[point][row, col] = d(pos[row])/dq[col]
     """
     if not isinstance(q, np.ndarray):
@@ -114,241 +267,24 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
 
-    # Extract coordinates for clarity
-    th_hub = q[0]
-    alpha_rs, alpha_re, alpha_rh = q[1], q[2], q[3]
-    alpha_ls, alpha_le, alpha_lh = q[4], q[5], q[6]
-    th_club = q[7]
+    tc = _TrigCache(q)
 
-    # Precompute sine/cosine values
-    sin_hub = np.sin(th_hub)
-    cos_hub = np.cos(th_hub)
+    # Hub + shoulders
+    jacobians = _hub_and_shoulder_jacobians(p, tc)
 
-    th_rs_abs = th_hub + alpha_rs
-    sin_rs = np.sin(th_rs_abs)
-    cos_rs = np.cos(th_rs_abs)
-
-    th_re_abs = th_hub + alpha_rs + alpha_re
-    sin_re = np.sin(th_re_abs)
-    cos_re = np.cos(th_re_abs)
-
-    th_rh_abs = th_hub + alpha_rs + alpha_re + alpha_rh  # noqa: F841
-
-    th_ls_abs = th_hub + alpha_ls
-    sin_ls = np.sin(th_ls_abs)
-    cos_ls = np.cos(th_ls_abs)
-
-    th_le_abs = th_hub + alpha_ls + alpha_le
-    sin_le = np.sin(th_le_abs)
-    cos_le = np.cos(th_le_abs)
-
-    th_lh_abs = th_hub + alpha_ls + alpha_le + alpha_lh  # noqa: F841
-
-    sin_club = np.sin(th_club)
-    cos_club = np.cos(th_club)
-
-    jacobians = {}
-
-    # -----------------------------------------------------------------------
-    # 1. HUB: position = (-L_hub * sin(th_hub), L_hub * cos(th_hub))  (#1103)
-    # Depends only on q[0]
-    # -----------------------------------------------------------------------
-    J_hub = np.zeros((2, N_DOF))
-    J_hub[0, 0] = -p.L_hub * cos_hub
-    J_hub[1, 0] = -p.L_hub * sin_hub
-    jacobians["hub"] = J_hub
-
-    # -----------------------------------------------------------------------
-    # 2. RS (Right Shoulder): position from hub + perpendicular offset
-    # rs_x = hub_x + d_rs * cos(th_hub)
-    # rs_y = hub_y + d_rs * sin(th_hub)
-    # -----------------------------------------------------------------------
-    J_rs = np.zeros((2, N_DOF))
-    # d/dq[0]: d(hub_x)/dq[0] + d(d_rs*cos)/dq[0)  (#1103 reversed hub)
-    J_rs[0, 0] = -p.L_hub * cos_hub - p.d_rs * sin_hub
-    J_rs[1, 0] = -p.L_hub * sin_hub + p.d_rs * cos_hub
-    jacobians["rs"] = J_rs
-
-    # -----------------------------------------------------------------------
-    # 3. RE (Right Elbow): from RS along right upper arm
-    # re_x = rs_x + L_r_upper * sin(th_rs_abs)
-    # re_y = rs_y - L_r_upper * cos(th_rs_abs)
-    # Depends on q[0], q[1]
-    # -----------------------------------------------------------------------
-    J_re = np.zeros((2, N_DOF))
-    # d/dq[0]: d(rs)/dq[0] + d(L_r_upper*sin(th_rs_abs))/dq[0]  (#1103)
-    J_re[0, 0] = -p.L_hub * cos_hub - p.d_rs * sin_hub + p.L_r_upper * cos_rs
-    J_re[1, 0] = -p.L_hub * sin_hub + p.d_rs * cos_hub + p.L_r_upper * sin_rs
-    # d/dq[1]: d(L_r_upper*sin(th_rs_abs))/dq[1]
-    J_re[0, 1] = p.L_r_upper * cos_rs
-    J_re[1, 1] = p.L_r_upper * sin_rs
+    # Right arm chain (RE, RH) — also returns J_rh for club reuse
+    J_re, J_rh, j_rh_base = _right_arm_chain_jacobian(p, tc)
     jacobians["re"] = J_re
-
-    # -----------------------------------------------------------------------
-    # 4. RH (Right Hand): from RS along right upper + forearm
-    # rh_x = rs_x + L_r_upper*sin(th_rs_abs) + L_r_fore*sin(th_re_abs)
-    # rh_y = rs_y - L_r_upper*cos(th_rs_abs) - L_r_fore*cos(th_re_abs)
-    # Depends on q[0], q[1], q[2]
-    # -----------------------------------------------------------------------
-    J_rh = np.zeros((2, N_DOF))
-    # d/dq[0]  (#1103 reversed hub)
-    J_rh[0, 0] = (
-        -p.L_hub * cos_hub
-        - p.d_rs * sin_hub
-        + p.L_r_upper * cos_rs
-        + p.L_r_fore * cos_re
-    )
-    J_rh[1, 0] = (
-        -p.L_hub * sin_hub
-        + p.d_rs * cos_hub
-        + p.L_r_upper * sin_rs
-        + p.L_r_fore * sin_re
-    )
-    # d/dq[1]
-    J_rh[0, 1] = p.L_r_upper * cos_rs + p.L_r_fore * cos_re
-    J_rh[1, 1] = p.L_r_upper * sin_rs + p.L_r_fore * sin_re
-    # d/dq[2]
-    J_rh[0, 2] = p.L_r_fore * cos_re
-    J_rh[1, 2] = p.L_r_fore * sin_re
     jacobians["rh"] = J_rh
 
-    # -----------------------------------------------------------------------
-    # 5. LS (Left Shoulder): similar to RS but on left side
-    # ls_x = hub_x - d_ls * cos(th_hub)
-    # ls_y = hub_y - d_ls * sin(th_hub)
-    # -----------------------------------------------------------------------
-    J_ls = np.zeros((2, N_DOF))
-    J_ls[0, 0] = -p.L_hub * cos_hub + p.d_ls * sin_hub  # (#1103)
-    J_ls[1, 0] = -p.L_hub * sin_hub - p.d_ls * cos_hub
-    jacobians["ls"] = J_ls
-
-    # -----------------------------------------------------------------------
-    # 6. LE (Left Elbow): from LS along left upper arm
-    # le_x = ls_x + L_l_upper * sin(th_ls_abs)
-    # le_y = ls_y - L_l_upper * cos(th_ls_abs)
-    # Depends on q[0], q[4]
-    # -----------------------------------------------------------------------
-    J_le = np.zeros((2, N_DOF))
-    # d/dq[0]  (#1103)
-    J_le[0, 0] = -p.L_hub * cos_hub + p.d_ls * sin_hub + p.L_l_upper * cos_ls
-    J_le[1, 0] = -p.L_hub * sin_hub - p.d_ls * cos_hub + p.L_l_upper * sin_ls
-    # d/dq[4]
-    J_le[0, 4] = p.L_l_upper * cos_ls
-    J_le[1, 4] = p.L_l_upper * sin_ls
+    # Left arm chain (LE, LH)
+    J_le, J_lh = _left_arm_chain_jacobian(p, tc)
     jacobians["le"] = J_le
-
-    # -----------------------------------------------------------------------
-    # 7. LH (Left Hand): from LS along left upper + forearm
-    # lh_x = ls_x + L_l_upper*sin(th_ls_abs) + L_l_fore*sin(th_le_abs)
-    # lh_y = ls_y - L_l_upper*cos(th_ls_abs) - L_l_fore*cos(th_le_abs)
-    # Depends on q[0], q[4], q[5]
-    # -----------------------------------------------------------------------
-    J_lh = np.zeros((2, N_DOF))
-    # d/dq[0]  (#1103)
-    J_lh[0, 0] = (
-        -p.L_hub * cos_hub
-        + p.d_ls * sin_hub
-        + p.L_l_upper * cos_ls
-        + p.L_l_fore * cos_le
-    )
-    J_lh[1, 0] = (
-        -p.L_hub * sin_hub
-        - p.d_ls * cos_hub
-        + p.L_l_upper * sin_ls
-        + p.L_l_fore * sin_le
-    )
-    # d/dq[4]
-    J_lh[0, 4] = p.L_l_upper * cos_ls + p.L_l_fore * cos_le
-    J_lh[1, 4] = p.L_l_upper * sin_ls + p.L_l_fore * sin_le
-    # d/dq[5]
-    J_lh[0, 5] = p.L_l_fore * cos_le
-    J_lh[1, 5] = p.L_l_fore * sin_le
     jacobians["lh"] = J_lh
 
-    # -----------------------------------------------------------------------
-    # 8. Club COM: midpoint between club base and club tip
-    # Using club_dx = sin(th_club), club_dy = -cos(th_club):
-    # club_base_x = rh_x - grip_right * sin(th_club)
-    # club_base_y = rh_y + grip_right * (-cos(th_club))
-    # club_tip_x = club_base_x + L_club * sin(th_club)
-    # club_tip_y = club_base_y - L_club * (-cos(th_club))
-    # club_com = 0.5 * (club_base + club_tip)
-    # Depends on q[0], q[1], q[2], q[3], q[7]
-    # -----------------------------------------------------------------------
-    # Expanded form:
-    # club_com_x = rh_x + (0.5*L_club - grip_right)*sin(th_club)
-    # club_com_y = rh_y + 0.5*(L_club - 2*grip_right)*cos(th_club)
-    # But note: club_dy = -cos(th_club), so club_base_y = rh_y - grip_right*cos
-    # Derivatives w.r.t. th_club:
-    # d(club_com_x)/dth_club = (0.5*L_club - grip_right)*cos(th_club)
-    # d(club_com_y)/dth_club = 0.5*(L_club - 2*grip_right)*(-sin(th_club))
-    #                        = -0.5*(L_club - 2*grip_right)*sin(th_club)
-    coeff_club_x = 0.5 * p.L_club - p.grip_right
-    coeff_club_y = -0.5 * (p.L_club - 2 * p.grip_right)  # = -0.5*L_club + grip_right
-
-    J_club_com = np.zeros((2, N_DOF))
-    # d/dq[0], d/dq[1], d/dq[2], d/dq[3] from rh  (#1103 reversed hub)
-    J_club_com[0, 0] = (
-        -p.L_hub * cos_hub
-        - p.d_rs * sin_hub
-        + p.L_r_upper * cos_rs
-        + p.L_r_fore * cos_re
-    )
-    J_club_com[1, 0] = (
-        -p.L_hub * sin_hub
-        + p.d_rs * cos_hub
-        + p.L_r_upper * sin_rs
-        + p.L_r_fore * sin_re
-    )
-    J_club_com[0, 1] = p.L_r_upper * cos_rs + p.L_r_fore * cos_re
-    J_club_com[1, 1] = p.L_r_upper * sin_rs + p.L_r_fore * sin_re
-    J_club_com[0, 2] = p.L_r_fore * cos_re
-    J_club_com[1, 2] = p.L_r_fore * sin_re
-    # d/dq[3]: none (right wrist angle doesn't affect hand position)
-    # d/dq[7]: from club angle
-    J_club_com[0, 7] = coeff_club_x * cos_club
-    J_club_com[1, 7] = coeff_club_y * sin_club
+    # Club (COM + tip), reusing J_rh base (DRY)
+    J_club_com, J_club_tip = _club_jacobians(p, tc, j_rh_base)
     jacobians["club_com"] = J_club_com
-
-    # -----------------------------------------------------------------------
-    # 9. Club TIP
-    # Using club_dx = sin(th_club), club_dy = -cos(th_club):
-    # club_tip_x = club_base_x + L_club * sin(th_club)
-    #            = rh_x - grip_right*sin + L_club*sin
-    #            = rh_x + (L_club - grip_right)*sin
-    # club_tip_y = club_base_y - L_club*(-cos(th_club))
-    #            = rh_y - grip_right*cos(th_club) + L_club*cos(th_club)
-    #            = rh_y + (L_club - grip_right)*cos(th_club)
-    # Derivatives w.r.t. th_club:
-    # d(club_tip_x)/dth_club = (L_club - grip_right)*cos(th_club)
-    # d(club_tip_y)/dth_club = (L_club - grip_right)*(-sin(th_club))
-    #                        = -(L_club - grip_right)*sin(th_club)
-    # Depends on q[0], q[1], q[2], q[3], q[7]
-    # -----------------------------------------------------------------------
-    coeff_tip_x = p.L_club - p.grip_right
-    coeff_tip_y = -(p.L_club - p.grip_right)
-
-    J_club_tip = np.zeros((2, N_DOF))
-    # d/dq[0], d/dq[1], d/dq[2], d/dq[3] from rh (via club_base)  (#1103)
-    J_club_tip[0, 0] = (
-        -p.L_hub * cos_hub
-        - p.d_rs * sin_hub
-        + p.L_r_upper * cos_rs
-        + p.L_r_fore * cos_re
-    )
-    J_club_tip[1, 0] = (
-        -p.L_hub * sin_hub
-        + p.d_rs * cos_hub
-        + p.L_r_upper * sin_rs
-        + p.L_r_fore * sin_re
-    )
-    J_club_tip[0, 1] = p.L_r_upper * cos_rs + p.L_r_fore * cos_re
-    J_club_tip[1, 1] = p.L_r_upper * sin_rs + p.L_r_fore * sin_re
-    J_club_tip[0, 2] = p.L_r_fore * cos_re
-    J_club_tip[1, 2] = p.L_r_fore * sin_re
-    # d/dq[7]: from club direction
-    J_club_tip[0, 7] = coeff_tip_x * cos_club
-    J_club_tip[1, 7] = coeff_tip_y * sin_club
     jacobians["club_tip"] = J_club_tip
 
     return jacobians

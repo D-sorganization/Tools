@@ -1,0 +1,17 @@
+[package]
+name = "math-primitives"
+description = "SE3/SO3 math primitives: quaternions, rotations, transforms (Hub library)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+nalgebra = "0.33"
+
+[features]
+default = []
+
+[lib]
+name = "math_primitives"
+crate-type = ["lib"]
