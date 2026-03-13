@@ -23,6 +23,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 import numpy as np
+import numpy.typing as npt
 
 from . import native_backend as _native_backend
 from .constants import GRAVITY_MSS
@@ -123,7 +124,7 @@ class TorqueClamp:
 
 
 # Type aliases
-State = np.ndarray  # shape (4,)
+State = npt.NDArray[np.float64]  # shape (4,)
 TorqueFunc = Callable[[float], tuple[float, float]]
 
 
