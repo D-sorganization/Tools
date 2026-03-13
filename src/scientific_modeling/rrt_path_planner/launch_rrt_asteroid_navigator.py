@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Standalone launcher for the RRT asteroid navigator."""
+
 # ruff: noqa: E402, I001
 
 from __future__ import annotations
