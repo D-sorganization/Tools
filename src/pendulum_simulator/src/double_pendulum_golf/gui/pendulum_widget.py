@@ -25,6 +25,7 @@ from PyQt6.QtWidgets import QWidget
 
 from ..jacobians import ellipsoids_double, ellipsoids_triple
 from ..simulation import SimulationResult
+from ..joint_moments import double_pendulum_moments, triple_pendulum_moments
 from .base_pendulum_widget import BasePendulumWidget
 
 logger = logging.getLogger(__name__)
@@ -57,6 +58,13 @@ class PendulumWidget(BasePendulumWidget):
 
     # Zero-torque force vector color (violet/purple)
     COLOR_ZERO_TORQUE = QColor(210, 120, 255)
+
+    # Torque vector color (cyan)
+    COLOR_TORQUE = QColor(0, 220, 220)
+    # Moment of force color (orange-gold)
+    COLOR_MOMENT = QColor(255, 180, 60)
+    # Sum of moments color (hot pink)
+    COLOR_SUM_MOMENTS = QColor(255, 80, 180)
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -232,6 +240,12 @@ class PendulumWidget(BasePendulumWidget):
         if self._show_zero_torque_forces:
             pos = self._result.positions_at(self._current_idx)
             self._draw_zero_torque_force_vectors(painter, pos)
+
+        if self._show_torque_vectors:
+            self._draw_torque_vectors(painter)
+
+        if self._show_moment_of_force or self._show_sum_moments:
+            self._draw_moment_of_force(painter)
 
         if self._show_mob_ellipsoids or self._show_force_ellipsoids:
             self._draw_ellipsoids_at_frame(painter)
@@ -472,6 +486,158 @@ class PendulumWidget(BasePendulumWidget):
         painter.setBrush(QBrush(painter.pen().color()))
         painter.drawPath(path)
         painter.setBrush(old_brush)
+
+    # ------------------------------------------------------------------
+    # Torque vector drawing (#1119, #1170)
+    # ------------------------------------------------------------------
+
+    def _draw_torque_vectors(self, painter: QPainter) -> None:
+        """Draw applied torque as curved arcs at each joint.
+
+        Convention: clockwise = negative, counterclockwise = positive.
+        Arc radius scales with torque magnitude.
+        """
+        if self._result is None:
+            return
+        try:
+            torques = self._result.torques_at(self._current_idx)
+        except (AttributeError, IndexError):
+            return
+
+        pos = self._result.positions_at(self._current_idx)
+        joint_names = ["shoulder"]
+        if "wrist1" in pos:
+            joint_names.extend(["wrist1", "wrist2"])
+        else:
+            joint_names.append("wrist")
+
+        torque_list = list(torques) if not isinstance(torques, list) else torques
+        max_tau = max(1e-6, max(abs(t) for t in torque_list))
+
+        for i, jname in enumerate(joint_names):
+            if i >= len(torque_list):
+                break
+            if (
+                self._visible_segments is not None
+                and jname not in self._visible_segments
+            ):
+                continue
+            jp = pos.get(jname)
+            if jp is None:
+                continue
+
+            tau = torque_list[i]
+            if abs(tau) < 1e-10:
+                continue
+
+            center = self._world_to_pixel(*jp)
+            radius = int(15 + 25 * abs(tau) / max_tau)
+
+            # Arc parameters: torque sign determines direction
+            start_angle = 30 * 16  # 30° in 1/16 degree units for Qt
+            span = int(np.sign(tau) * 240 * 16 * abs(tau) / max_tau)
+
+            pen = QPen(self.COLOR_TORQUE, 2.5)
+            painter.setPen(pen)
+            rect = QRect(
+                center.x() - radius,
+                center.y() - radius,
+                2 * radius,
+                2 * radius,
+            )
+            painter.drawArc(rect, start_angle, span)
+
+            # Draw arrowhead at arc end
+            end_angle_rad = np.radians((start_angle + span) / 16)
+            arrow_x = center.x() + radius * np.cos(end_angle_rad)
+            arrow_y = center.y() - radius * np.sin(end_angle_rad)
+
+            # Small direction indicator
+            painter.setBrush(QBrush(self.COLOR_TORQUE))
+            painter.drawEllipse(QPointF(arrow_x, arrow_y), 3, 3)
+
+            # Label
+            painter.setFont(QFont("Monospace", 7))
+            painter.drawText(
+                QPointF(center.x() + radius + 3, center.y() - 2),
+                f"τ={tau:.1f}",
+            )
+
+    def _draw_moment_of_force(self, painter: QPainter) -> None:
+        """Draw moment-of-force and/or sum of moments at each joint.
+
+        Uses the joint_moments module for proper proximal-on-distal computation.
+        """
+        if self._result is None:
+            return
+        try:
+            torques = self._result.torques_at(self._current_idx)
+            forces = self._result.joint_forces_at(self._current_idx)
+        except (AttributeError, IndexError):
+            return
+
+        pos = self._result.positions_at(self._current_idx)
+        state = self._result.states[self._current_idx]
+        params = self._result.params
+
+        try:
+            if state.shape[0] >= 6:
+                moments = triple_pendulum_moments(pos, forces, tuple(torques), params)
+            else:
+                moments = double_pendulum_moments(pos, forces, tuple(torques), params)
+        except (ValueError, KeyError, TypeError, AssertionError) as exc:
+            logger.debug("Moment computation failed: %s", exc)
+            return
+
+        # Draw total moments at each joint
+        joint_names = ["shoulder"]
+        if "wrist1" in pos:
+            joint_names.extend(["wrist1", "wrist2"])
+        else:
+            joint_names.append("wrist")
+
+        for jname in joint_names:
+            if (
+                self._visible_segments is not None
+                and jname not in self._visible_segments
+            ):
+                continue
+            jp = pos.get(jname)
+            if jp is None:
+                continue
+
+            center = self._world_to_pixel(*jp)
+
+            if self._show_sum_moments:
+                key = f"{jname}_total_moment"
+                total = moments.get(key, 0.0)
+                if abs(total) > 1e-10:
+                    painter.setPen(QPen(self.COLOR_SUM_MOMENTS, 2))
+                    painter.setFont(QFont("Monospace", 7))
+                    painter.drawText(
+                        QPointF(center.x() - 30, center.y() + 18),
+                        f"ΣM={total:.2f}",
+                    )
+
+            if self._show_moment_of_force:
+                key_applied = f"{jname}_applied_torque"
+                key_gravity = f"{jname}_gravity_moment"
+                tau_applied = moments.get(key_applied, 0.0)
+                tau_grav = moments.get(key_gravity, 0.0)
+
+                y_offset = 0
+                for label, val, color in [
+                    ("τ_a", tau_applied, self.COLOR_TORQUE),
+                    ("M_g", tau_grav, self.COLOR_MOMENT),
+                ]:
+                    if abs(val) > 1e-10:
+                        painter.setPen(QPen(color, 1.5))
+                        painter.setFont(QFont("Monospace", 6))
+                        painter.drawText(
+                            QPointF(center.x() + 12, center.y() + y_offset - 8),
+                            f"{label}={val:.2f}",
+                        )
+                        y_offset += 10
 
     # ------------------------------------------------------------------
     # Ellipsoid drawing
