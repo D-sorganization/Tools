@@ -118,8 +118,8 @@ def cmd_run(args: argparse.Namespace) -> int:
     generate_json_report(results, metrics, json_path, scenario_name=scenario)
 
     logger.info(f"Reports written to {out_dir}/")
-    print(f"\n✓  HTML report: {html_path}")
-    print(f"✓  JSON report: {json_path}")
+    print(f"\n✓  HTML report: {html_path}")  # noqa: T201
+    print(f"✓  JSON report: {json_path}")  # noqa: T201
 
     # Save .dwxml if requested
     if args.save_dwxml:
@@ -129,7 +129,7 @@ def cmd_run(args: argparse.Namespace) -> int:
                 str(dwxml_path)
             )  # fix: was sim.SaveToFile() - wrong DWSIM API
             logger.info(f"DWSIM file saved: {dwxml_path}")
-            print(f"✓  DWXML file:   {dwxml_path}")
+            print(f"✓  DWXML file:   {dwxml_path}")  # noqa: T201
         except Exception as exc:
             logger.warning(f"Could not save DWXML: {exc}")
 
@@ -180,14 +180,16 @@ def cmd_sweep(args: argparse.Namespace) -> int:
 
     try:
         df.to_csv(out_path, index=False)
-        print(f"\n✓  Sweep results saved to {out_path}")
+        print(f"\n✓  Sweep results saved to {out_path}")  # noqa: T201
     except AttributeError:
         # No pandas — df is a list of dicts
         import json
 
         json_path = out_path.with_suffix(".json")
         json_path.write_text(json.dumps(df, indent=2, default=str))
-        print(f"\n✓  Sweep results saved to {json_path} (pandas not installed)")
+        print(
+            f"\n✓  Sweep results saved to {json_path} (pandas not installed)"
+        )  # noqa: T201
 
     # Print a quick table of results to console
     _print_sweep_summary(df)
@@ -209,21 +211,21 @@ def cmd_validate(args: argparse.Namespace) -> int:
 
     config_path = Path(args.config) if args.config else _find_default_config()
     if not config_path or not config_path.exists():
-        print(f"✗  Config file not found: {config_path}", file=sys.stderr)
+        print(f"✗  Config file not found: {config_path}", file=sys.stderr)  # noqa: T201
         return 1
 
-    print(f"Validating: {config_path}")
+    print(f"Validating: {config_path}")  # noqa: T201
 
     try:
         with config_path.open("r", encoding="utf-8") as fh:
             raw = yaml.safe_load(fh) or {}
         cfg = validate_master_config(raw)
-        print(
+        print(  # noqa: T201
             f"✓  master_config: VALID (reactor_mode={cfg.reactor_mode}, "
             f"compound_set={cfg.compound_set})"
         )
     except Exception as exc:
-        print(f"✗  master_config: INVALID\n   {exc}", file=sys.stderr)
+        print(f"✗  master_config: INVALID\n   {exc}", file=sys.stderr)  # noqa: T201
         logger.debug("Validation error detail:", exc_info=True)
         return 1
 
@@ -235,7 +237,7 @@ def cmd_validate(args: argparse.Namespace) -> int:
     reactor_dir = config_path.parent / "reactors"
     ok &= _validate_yaml_directory(reactor_dir, "reactor", logger)
 
-    print(
+    print(  # noqa: T201
         "\n"
         + (
             "✓  All configs valid."
@@ -258,11 +260,15 @@ def _validate_yaml_directory(directory: Path, label: str, logger) -> bool:
             with yaml_file.open("r", encoding="utf-8") as fh:
                 data = yaml.safe_load(fh)
             if data is None:
-                print(f"  ⚠  {yaml_file.name}: empty file")
+                print(f"  ⚠  {yaml_file.name}: empty file")  # noqa: T201
             else:
-                print(f"  ✓  {yaml_file.name}: {len(data)} top-level keys")
+                print(
+                    f"  ✓  {yaml_file.name}: {len(data)} top-level keys"
+                )  # noqa: T201
         except Exception as exc:
-            print(f"  ✗  {yaml_file.name}: PARSE ERROR — {exc}", file=sys.stderr)
+            print(
+                f"  ✗  {yaml_file.name}: PARSE ERROR — {exc}", file=sys.stderr
+            )  # noqa: T201
             ok = False
     return ok
 
@@ -289,12 +295,12 @@ def cmd_export(args: argparse.Namespace) -> int:
         flowsheet.builder.save(
             str(out_path)
         )  # fix: was sim.SaveToFile() - wrong DWSIM API
-        print(f"✓  Flowsheet exported to {out_path}")
-        print("   Open with DWSIM → File → Open Simulation")
+        print(f"✓  Flowsheet exported to {out_path}")  # noqa: T201
+        print("   Open with DWSIM → File → Open Simulation")  # noqa: T201
         return 0
     except Exception as exc:
         logger.error(f"Export failed: {exc}")
-        print(
+        print(  # noqa: T201
             "✗  Could not save DWXML. This requires DWSIM to be installed.\n"
             f"   Error: {exc}",
             file=sys.stderr,
@@ -327,9 +333,9 @@ def _print_kpi_table(metrics) -> None:
     def fmt(val, fmt_spec=".3f", suffix=""):
         return f"{val:{fmt_spec}}{suffix}" if val is not None else "—"
 
-    print("\n" + "─" * 55)
-    print(f"  {'KPI':<35} {'Value':>15}")
-    print("─" * 55)
+    print("\n" + "─" * 55)  # noqa: T201
+    print(f"  {'KPI':<35} {'Value':>15}")  # noqa: T201
+    print("─" * 55)  # noqa: T201
 
     rows = [
         ("Cold Gas Efficiency", fmt(getattr(m, "cold_gas_efficiency", None), ".1%")),
@@ -352,16 +358,16 @@ def _print_kpi_table(metrics) -> None:
     ]
 
     for label, value in rows:
-        print(f"  {label:<35} {value:>15}")
+        print(f"  {label:<35} {value:>15}")  # noqa: T201
 
-    print("─" * 55)
+    print("─" * 55)  # noqa: T201
 
     warnings = getattr(m, "warnings", [])
     if warnings:
-        print(f"\n  ⚠  {len(warnings)} diagnostic warning(s):")
+        print(f"\n  ⚠  {len(warnings)} diagnostic warning(s):")  # noqa: T201
         for w in warnings:
-            print(f"     • {w}")
-    print()
+            print(f"     • {w}")  # noqa: T201
+    print()  # noqa: T201
 
 
 def _print_sweep_summary(df) -> None:
@@ -370,13 +376,13 @@ def _print_sweep_summary(df) -> None:
         import pandas as pd
 
         if isinstance(df, pd.DataFrame) and not df.empty:
-            print("\nSweep results preview (first 10 rows):")
-            print(df.head(10).to_string(index=False))
+            print("\nSweep results preview (first 10 rows):")  # noqa: T201
+            print(df.head(10).to_string(index=False))  # noqa: T201
     except (ImportError, Exception):
         if isinstance(df, list) and df:
-            print("\nSweep results preview:")
+            print("\nSweep results preview:")  # noqa: T201
             for row in df[:10]:
-                print("  ", row)
+                print("  ", row)  # noqa: T201
 
 
 def _find_default_config() -> Path | None:
@@ -493,7 +499,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         return handler(args)
     except KeyboardInterrupt:
-        print("\nInterrupted.", file=sys.stderr)
+        print("\nInterrupted.", file=sys.stderr)  # noqa: T201
         return 130
     except Exception as exc:
         logging.getLogger("dwsim_model.cli").error(
