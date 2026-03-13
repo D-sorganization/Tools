@@ -21,11 +21,23 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import Any
+from typing import Protocol
 
 import numpy as np
 
 logger = logging.getLogger(__name__)
+
+
+class SimulateFn(Protocol):
+    """Protocol for simulation callable."""
+
+    def __call__(self, coeffs: list[list[float]]) -> object: ...
+
+
+class ExtractFn(Protocol):
+    """Protocol for metric extraction callable."""
+
+    def __call__(self, result: object) -> dict[str, float | np.ndarray]: ...
 
 
 # ---------------------------------------------------------------------------
@@ -247,8 +259,8 @@ def variability_summary(
 def batch_perturb_and_simulate(
     base_coeffs: list[list[float]],
     config: PerturbationConfig,
-    simulate_fn: Any,
-    extract_fn: Any,
+    simulate_fn: SimulateFn,
+    extract_fn: ExtractFn,
 ) -> list[dict]:
     """Run N perturbed simulations and collect results.
 
