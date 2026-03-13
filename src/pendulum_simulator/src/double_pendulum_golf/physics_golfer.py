@@ -68,6 +68,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
 import numpy.typing as npt
@@ -236,7 +237,7 @@ _LAZY_REEXPORTS: dict[str, tuple[str, str]] = {
 }
 
 
-def __getattr__(name: str) -> object:
+def __getattr__(name: str) -> Any:
     """Lazy re-export for backward compatibility.
 
     Defers import of sub-modules until first access, preventing
