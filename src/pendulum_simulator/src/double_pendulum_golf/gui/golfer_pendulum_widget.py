@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import logging
 import numpy as np
-from PyQt6.QtCore import QPointF, Qt
+from PyQt6.QtCore import QPointF, QRect, Qt
 from PyQt6.QtGui import QBrush, QColor, QFont, QPainter, QPainterPath, QPen
 from PyQt6.QtWidgets import QWidget
 
@@ -49,6 +49,9 @@ class GolferPendulumWidget(BasePendulumWidget):
 
     # Zero torque vector color (violet/purple, same as PendulumWidget)
     COLOR_ZERO_TORQUE = QColor(210, 120, 255)
+
+    # Torque vector color (cyan)
+    COLOR_TORQUE = QColor(0, 220, 220)
 
     # Ellipsoid colors (matching PendulumWidget for consistency)
     COLOR_MOB_ELLIPSOID = QColor(100, 200, 255, 70)
@@ -205,6 +208,9 @@ class GolferPendulumWidget(BasePendulumWidget):
 
         if self._show_zero_torque_forces:
             self._draw_zero_torque_force_vectors(painter)
+
+        if self._show_torque_vectors:
+            self._draw_torque_vectors(painter)
 
         if self._show_mob_ellipsoids or self._show_force_ellipsoids:
             self._draw_ellipsoids_at_frame(painter)
@@ -439,6 +445,78 @@ class GolferPendulumWidget(BasePendulumWidget):
             painter.setBrush(QBrush(self.COLOR_ZERO_TORQUE))
             painter.drawPath(path)
             painter.setBrush(old_brush)
+
+    # ------------------------------------------------------------------
+    # Torque vector drawing (#1119, #1170)
+    # ------------------------------------------------------------------
+
+    def _draw_torque_vectors(self, painter: QPainter) -> None:
+        """Draw applied torque as curved arcs at each golfer joint.
+
+        Convention: clockwise = negative, counterclockwise = positive.
+        Arc radius scales with torque magnitude.
+        """
+        if self._result is None:
+            return
+        try:
+            torques = self._result.torques_at(self._current_idx)
+        except (AttributeError, IndexError):
+            return
+
+        pos = self._result.positions_at(self._current_idx)
+
+        # Map DOF index to joint position key
+        # DOFs: hub, rs, re, rh, ls, le, lh
+        joint_keys = ["hub", "rs", "re", "rh", "ls", "le", "lh"]
+        torque_list = list(torques) if not isinstance(torques, list) else torques
+        max_tau = max(1e-6, max(abs(t) for t in torque_list[:7]))
+
+        for i, jname in enumerate(joint_keys):
+            if i >= len(torque_list):
+                break
+            if (
+                self._visible_segments is not None
+                and jname not in self._visible_segments
+            ):
+                continue
+            jp = pos.get(jname)
+            if jp is None:
+                continue
+
+            tau = torque_list[i]
+            if abs(tau) < 1e-10:
+                continue
+
+            center = self._world_to_pixel(*jp)
+            radius = int(12 + 20 * abs(tau) / max_tau)
+
+            # Arc parameters
+            start_angle = 30 * 16
+            span = int(np.sign(tau) * 240 * 16 * abs(tau) / max_tau)
+
+            pen = QPen(self.COLOR_TORQUE, 2.5)
+            painter.setPen(pen)
+            rect = QRect(
+                center.x() - radius,
+                center.y() - radius,
+                2 * radius,
+                2 * radius,
+            )
+            painter.drawArc(rect, start_angle, span)
+
+            # Arc endpoint dot
+            end_angle_rad = np.radians((start_angle + span) / 16)
+            arrow_x = center.x() + radius * np.cos(end_angle_rad)
+            arrow_y = center.y() - radius * np.sin(end_angle_rad)
+            painter.setBrush(QBrush(self.COLOR_TORQUE))
+            painter.drawEllipse(QPointF(arrow_x, arrow_y), 3, 3)
+
+            # Label
+            painter.setFont(QFont("Monospace", 6))
+            painter.drawText(
+                QPointF(center.x() + radius + 2, center.y() - 2),
+                f"\u03c4={tau:.1f}",
+            )
 
     # ------------------------------------------------------------------
     # Center of Mass drawing
