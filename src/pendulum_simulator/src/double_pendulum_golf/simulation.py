@@ -35,6 +35,7 @@ from .physics import (
 )
 from .simulation_core import integrate_ode
 from .simulation_result_base import TrajectoryResultMixin
+from .native_backend import double_native_enabled, simulate_double
 
 # Re-export from shared utility for backwards compatibility (DRY — #1041)
 from .torque_utils import make_polynomial_torque  # noqa: F401
@@ -172,6 +173,8 @@ def run_simulation(
     method: str = "RK45",
     limits: JointLimits | None = None,
     clamp: TorqueClamp | None = None,
+    coeffs: list[float] | None = None,
+    n_coeffs_per_joint: int | None = None,
 ) -> SimulationResult:
     """Integrate the double pendulum equations of motion.
 
@@ -182,19 +185,45 @@ def run_simulation(
     assert all(np.isfinite(initial_state))
     assert t_end > 0 and 0 < dt < t_end
 
-    def ode_rhs(t: float, y: np.ndarray) -> np.ndarray:
-        return equations_of_motion(y, t, params, torque_func, limits, clamp)
+    t, states = None, None
+    if (
+        double_native_enabled()
+        and coeffs is not None
+        and n_coeffs_per_joint is not None
+        and limits is None
+        and clamp is None
+    ):
+        q0 = initial_state[:2].tolist()
+        qdot0 = initial_state[2:4].tolist()
+        t_span = (0.0, t_end)
+        max_steps = int(max(t_end / dt * 10, 100000))
+        res = simulate_double(
+            params, q0, qdot0, coeffs, n_coeffs_per_joint, t_span, max_steps
+        )
+        if res is not None:
+            t_res, states_res = res
+            if len(t_res) >= 2:
+                # Interpolate to the desired uniform grid if needed
+                t_eval = np.arange(0.0, t_end, dt)
+                from scipy.interpolate import interp1d
+                interp = interp1d(t_res, states_res, axis=0, bounds_error=False, fill_value="extrapolate")
+                states = interp(t_eval)
+                t = t_eval
 
-    t, states = integrate_ode(
-        ode_rhs,
-        initial_state,
-        t_end,
-        dt=dt,
-        method=method,
-        rtol=1e-8,
-        atol=1e-10,
-        max_step=dt,
-    )
+    if t is None or states is None:
+        def ode_rhs(t: float, y: np.ndarray) -> np.ndarray:
+            return equations_of_motion(y, t, params, torque_func, limits, clamp)
+
+        t, states = integrate_ode(
+            ode_rhs,
+            initial_state,
+            t_end,
+            dt=dt,
+            method=method,
+            rtol=1e-8,
+            atol=1e-10,
+            max_step=dt,
+        )
 
     result = SimulationResult(
         t=t,

@@ -6,7 +6,6 @@ from double_pendulum_golf.golfer_constraints import (
     numerical_constraint_jacobian,
     analytical_constraint_jacobian,
     linear_accelerations,
-    net_joint_forces,
     friction_torque_vector,
 )
 from double_pendulum_golf.physics_golfer import GolferParams, N_DOF

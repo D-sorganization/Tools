@@ -15,13 +15,6 @@ GUI_INFO = {
         "settings_app": "DWSIMModel",
         "min_size": [1200, 800],
     },
-    "pyqt6": {
-        "enabled": False,
-        "note": "GUI currently uses Tkinter; PyQt6 port planned",
-    },
-    "web": {
-        "enabled": False,
-    },
 }
 
 

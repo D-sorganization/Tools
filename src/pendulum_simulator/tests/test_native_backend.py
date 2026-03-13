@@ -66,6 +66,7 @@ def golfer_params() -> GolferParams:
 def test_native_backend_info_defaults_to_python(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    monkeypatch.setattr(native_backend, "_pendulum_core", None)
     monkeypatch.delenv("PENDULUM_DOUBLE_BACKEND", raising=False)
     monkeypatch.delenv("PENDULUM_TRIPLE_BACKEND", raising=False)
     monkeypatch.delenv("PENDULUM_GOLFER_BACKEND", raising=False)
@@ -518,3 +519,24 @@ def test_native_projection_wrappers_map_rust_outputs(
     assert qdot_proj is not None
     assert np.array_equal(q_proj, np.full(8, 0.25))
     assert np.array_equal(qdot_proj, np.full(8, 0.5))
+
+def test_simulate_double_works_with_valid_inputs() -> None:
+    from double_pendulum_golf.physics import PendulumParams
+    from double_pendulum_golf.native_backend import simulate_double, double_native_enabled
+
+    if not double_native_enabled():
+        pytest.skip("Native backend disabled or unavailable")
+
+    params = PendulumParams(m1=1.0, m2=1.0, L1=1.0, L2=1.0, g=9.81)
+    q0 = [0.0, 0.0]
+    qdot0 = [0.0, 0.0]
+    coeffs = [0.0, 0.0, 0.0, 0.0]
+    n_coeffs = 2
+    t_span = (0.0, 1.0)
+
+    res = simulate_double(params, q0, qdot0, coeffs, n_coeffs, t_span, 100)
+    assert res is not None
+    t, states = res
+    assert len(t) >= 2
+    assert states.shape == (len(t), 4)
+

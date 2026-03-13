@@ -279,7 +279,7 @@ def get_reaction_summary() -> str:
 
 def print_reaction_summary() -> None:
     """Print a summary of validated reactor contracts to stdout."""
-    print(get_reaction_summary())
+    logger.info(get_reaction_summary())
 
 
 if __name__ == "__main__":
