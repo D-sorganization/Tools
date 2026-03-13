@@ -540,8 +540,8 @@ class PendulumWidget(BasePendulumWidget):
             pen = QPen(self.COLOR_TORQUE, 2.5)
             painter.setPen(pen)
             rect = QRect(
-                center.x() - radius,
-                center.y() - radius,
+                int(center.x()) - radius,
+                int(center.y()) - radius,
                 2 * radius,
                 2 * radius,
             )
@@ -582,9 +582,9 @@ class PendulumWidget(BasePendulumWidget):
 
         try:
             if state.shape[0] >= 6:
-                moments = triple_pendulum_moments(pos, forces, tuple(torques), params)
+                moments = triple_pendulum_moments(pos, forces, tuple(torques), params)  # type: ignore[arg-type]
             else:
-                moments = double_pendulum_moments(pos, forces, tuple(torques), params)
+                moments = double_pendulum_moments(pos, forces, tuple(torques), params)  # type: ignore[arg-type]
         except (ValueError, KeyError, TypeError, AssertionError) as exc:
             logger.debug("Moment computation failed: %s", exc)
             return
