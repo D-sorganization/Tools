@@ -5,7 +5,7 @@
 
 use nalgebra::{Matrix3, Vector3};
 
-use crate::quaternion::{quat, Quaternion};
+use crate::quaternion::Quaternion;
 
 /// Euler angles [roll, pitch, yaw] → 3×3 rotation matrix (ZYX convention).
 ///
@@ -58,17 +58,17 @@ pub fn euler_to_quaternion(euler: &[f64; 3]) -> Quaternion {
     let (cp, sp) = (hp.cos(), hp.sin());
     let (cy, sy) = (hy.cos(), hy.sin());
 
-    quat(
-        cr * cp * cy + sr * sp * sy,
-        sr * cp * cy - cr * sp * sy,
-        cr * sp * cy + sr * cp * sy,
-        cr * cp * sy - sr * sp * cy,
-    )
+    Quaternion {
+        w: cr * cp * cy + sr * sp * sy,
+        x: sr * cp * cy - cr * sp * sy,
+        y: cr * sp * cy + sr * cp * sy,
+        z: cr * cp * sy - sr * sp * cy,
+    }
 }
 
 /// Quaternion [w, x, y, z] → Euler angles [roll, pitch, yaw].
 pub fn quaternion_to_euler(q: &Quaternion) -> [f64; 3] {
-    let (w, x, y, z) = (q[0], q[1], q[2], q[3]);
+    let (w, x, y, z) = (q.w, q.x, q.y, q.z);
 
     // Roll (x-axis)
     let sinr_cosp = 2.0 * (w * x + y * z);
@@ -93,8 +93,8 @@ pub fn quaternion_to_euler(q: &Quaternion) -> [f64; 3] {
 
 /// Quaternion [w, x, y, z] → 3×3 rotation matrix.
 pub fn quaternion_to_rotation_matrix(q: &Quaternion) -> Matrix3<f64> {
-    let qn = q / q.norm(); // normalize
-    let (w, x, y, z) = (qn[0], qn[1], qn[2], qn[3]);
+    let qn_mag = q.magnitude();
+    let (w, x, y, z) = (q.w / qn_mag, q.x / qn_mag, q.y / qn_mag, q.z / qn_mag);
 
     Matrix3::new(
         1.0 - 2.0 * (y * y + z * z),
@@ -117,36 +117,36 @@ pub fn rotation_matrix_to_quaternion(r: &Matrix3<f64>) -> Quaternion {
 
     if trace > 0.0 {
         let s = 0.5 / (trace + 1.0).sqrt();
-        quat(
-            0.25 / s,
-            (r[(2, 1)] - r[(1, 2)]) * s,
-            (r[(0, 2)] - r[(2, 0)]) * s,
-            (r[(1, 0)] - r[(0, 1)]) * s,
-        )
+        Quaternion {
+            w: 0.25 / s,
+            x: (r[(2, 1)] - r[(1, 2)]) * s,
+            y: (r[(0, 2)] - r[(2, 0)]) * s,
+            z: (r[(1, 0)] - r[(0, 1)]) * s,
+        }
     } else if r[(0, 0)] > r[(1, 1)] && r[(0, 0)] > r[(2, 2)] {
         let s = 2.0 * (1.0 + r[(0, 0)] - r[(1, 1)] - r[(2, 2)]).sqrt();
-        quat(
-            (r[(2, 1)] - r[(1, 2)]) / s,
-            0.25 * s,
-            (r[(0, 1)] + r[(1, 0)]) / s,
-            (r[(0, 2)] + r[(2, 0)]) / s,
-        )
+        Quaternion {
+            w: (r[(2, 1)] - r[(1, 2)]) / s,
+            x: 0.25 * s,
+            y: (r[(0, 1)] + r[(1, 0)]) / s,
+            z: (r[(0, 2)] + r[(2, 0)]) / s,
+        }
     } else if r[(1, 1)] > r[(2, 2)] {
         let s = 2.0 * (1.0 + r[(1, 1)] - r[(0, 0)] - r[(2, 2)]).sqrt();
-        quat(
-            (r[(0, 2)] - r[(2, 0)]) / s,
-            (r[(0, 1)] + r[(1, 0)]) / s,
-            0.25 * s,
-            (r[(1, 2)] + r[(2, 1)]) / s,
-        )
+        Quaternion {
+            w: (r[(0, 2)] - r[(2, 0)]) / s,
+            x: (r[(0, 1)] + r[(1, 0)]) / s,
+            y: 0.25 * s,
+            z: (r[(1, 2)] + r[(2, 1)]) / s,
+        }
     } else {
         let s = 2.0 * (1.0 + r[(2, 2)] - r[(0, 0)] - r[(1, 1)]).sqrt();
-        quat(
-            (r[(1, 0)] - r[(0, 1)]) / s,
-            (r[(0, 2)] + r[(2, 0)]) / s,
-            (r[(1, 2)] + r[(2, 1)]) / s,
-            0.25 * s,
-        )
+        Quaternion {
+            w: (r[(1, 0)] - r[(0, 1)]) / s,
+            x: (r[(0, 2)] + r[(2, 0)]) / s,
+            y: (r[(1, 2)] + r[(2, 1)]) / s,
+            z: 0.25 * s,
+        }
     }
 }
 

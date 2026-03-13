@@ -8,16 +8,26 @@ repository.workspace = true
 
 [dependencies]
 nalgebra = "0.33"
+serde = { workspace = true }
 
 [dependencies.pyo3]
 version = "0.24"
 features = ["extension-module"]
 optional = true
 
+[dependencies.wasm-bindgen]
+workspace = true
+optional = true
+
 [features]
 default = []
 python = ["pyo3"]
+wasm = ["wasm-bindgen"]
 
 [lib]
 name = "math_primitives"
 crate-type = ["lib"]
+
+[dev-dependencies]
+serde_json = { workspace = true }
+proptest = { workspace = true }

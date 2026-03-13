@@ -7,7 +7,7 @@
 
 use nalgebra::{Matrix3, Matrix4, Vector3};
 
-use crate::quaternion::{quaternion_multiply, Quaternion};
+use crate::quaternion::Quaternion;
 use crate::rotation::{
     euler_to_quaternion, euler_to_rotation_matrix, quaternion_to_euler,
     quaternion_to_rotation_matrix, rotation_matrix_to_euler, rotation_matrix_to_quaternion,
@@ -118,7 +118,7 @@ impl Pose6DOF {
     pub fn rotate_euler(&self, delta_euler: &[f64; 3]) -> Pose6DOF {
         let q1 = self.to_quaternion();
         let q2 = euler_to_quaternion(delta_euler);
-        let q3 = quaternion_multiply(&q1, &q2);
+        let q3 = q1.multiply(&q2);
         let new_euler = quaternion_to_euler(&q3);
         Pose6DOF {
             position: self.position,
@@ -307,7 +307,7 @@ impl Transform6DOF {
 
         let q1 = rotation_matrix_to_quaternion(&t1.rotation);
         let q2 = rotation_matrix_to_quaternion(&t2.rotation);
-        let q = crate::quaternion::slerp(&q1, &q2, alpha);
+        let q = q1.slerp(&q2, alpha);
         let rotation = quaternion_to_rotation_matrix(&q);
 
         Transform6DOF {
