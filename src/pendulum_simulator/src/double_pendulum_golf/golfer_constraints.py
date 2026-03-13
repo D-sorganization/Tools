@@ -198,7 +198,11 @@ def linear_accelerations(
 
     Returns dict with keys matching forward_kinematics joint names.
     """
-    if not isinstance(q, np.ndarray) or not isinstance(qdot, np.ndarray) or not isinstance(qddot, np.ndarray):
+    if (
+        not isinstance(q, np.ndarray)
+        or not isinstance(qdot, np.ndarray)
+        or not isinstance(qddot, np.ndarray)
+    ):
         raise TypeError("q, qdot, and qddot must be numpy ndarrays")
     if q.ndim != 1 or q.shape[0] < N_DOF:
         raise ValueError(f"q must be a 1D array of at least {N_DOF} elements")

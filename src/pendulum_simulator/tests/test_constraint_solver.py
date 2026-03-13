@@ -20,12 +20,14 @@ from double_pendulum_golf.constraint_solver import (
     project_to_constraints,
     project_velocity,
 )
+from double_pendulum_golf.golfer_constraints import (
+    analytical_constraint_jacobian as constraint_jacobian,
+    constraint_vector,
+)
 from double_pendulum_golf.physics_golfer import (
     N_CONSTRAINTS,
     N_DOF,
     GolferParams,
-    constraint_jacobian,
-    constraint_vector,
 )
 
 

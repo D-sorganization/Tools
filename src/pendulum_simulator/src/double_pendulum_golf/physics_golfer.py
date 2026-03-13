@@ -194,6 +194,63 @@ N_CONSTRAINTS = 4
 
 
 # Backward compatibility re-exports removed to prevent cyclic import (Issue TDD resolution)
+# Restored via lazy __getattr__ below to avoid circular imports while
+# maintaining API compatibility for existing callers.
+
+# Mapping from old name → (module, actual_name)
+_LAZY_REEXPORTS: dict[str, tuple[str, str]] = {
+    # golfer_kinematics
+    "forward_kinematics": (".golfer_kinematics", "forward_kinematics"),
+    # golfer_constraints
+    "constraint_vector": (".golfer_constraints", "constraint_vector"),
+    "constraint_jacobian": (
+        ".golfer_constraints",
+        "analytical_constraint_jacobian",
+    ),
+    "analytical_constraint_jacobian": (
+        ".golfer_constraints",
+        "analytical_constraint_jacobian",
+    ),
+    "numerical_constraint_jacobian": (
+        ".golfer_constraints",
+        "numerical_constraint_jacobian",
+    ),
+    "friction_torque_vector": (".golfer_constraints", "friction_torque_vector"),
+    "net_joint_forces": (".golfer_constraints", "net_joint_forces"),
+    # golfer_dynamics
+    "mass_matrix": (".golfer_dynamics", "analytical_mass_matrix"),
+    "analytical_mass_matrix": (".golfer_dynamics", "analytical_mass_matrix"),
+    "gravity_vector": (".golfer_dynamics", "analytical_gravity_vector"),
+    "analytical_gravity_vector": (
+        ".golfer_dynamics",
+        "analytical_gravity_vector",
+    ),
+    "coriolis_matrix": (".golfer_dynamics", "analytical_coriolis"),
+    "analytical_coriolis": (".golfer_dynamics", "analytical_coriolis"),
+    "analytical_fk_jacobians": (".golfer_dynamics", "analytical_fk_jacobians"),
+    "kinetic_energy": (".golfer_dynamics", "kinetic_energy"),
+    "potential_energy": (".golfer_dynamics", "potential_energy"),
+    "potential_energy_from_q": (".golfer_dynamics", "potential_energy_from_q"),
+    "total_energy": (".golfer_dynamics", "total_energy"),
+}
+
+
+def __getattr__(name: str) -> object:
+    """Lazy re-export for backward compatibility.
+
+    Defers import of sub-modules until first access, preventing
+    circular import errors while preserving the public API.
+    """
+    if name in _LAZY_REEXPORTS:
+        module_path, attr_name = _LAZY_REEXPORTS[name]
+        import importlib
+
+        mod = importlib.import_module(module_path, package=__package__)
+        value = getattr(mod, attr_name)
+        # Cache in module namespace for subsequent accesses
+        globals()[name] = value
+        return value
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 def get_native_backend_info() -> dict[str, object]:
