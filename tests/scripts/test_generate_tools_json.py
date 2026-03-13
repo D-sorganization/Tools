@@ -307,7 +307,7 @@ class TestContractGeneration:
 
         # Each tool entry
         expected_tool_keys = {"id", "name", "description", "category", "surfaces"}
-        expected_surface_keys = {"pyqt6", "web"}
+        expected_surface_keys = {"pyqt6", "web", "legacy_gui"}
 
         for tool in contract["tools"]:
             assert (

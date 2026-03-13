@@ -16,9 +16,6 @@ GUI_INFO = {
         "settings_app": "VesselDrafter",
         "min_size": [1400, 900],
     },
-    "web": {
-        "enabled": False,
-    },
 }
 
 

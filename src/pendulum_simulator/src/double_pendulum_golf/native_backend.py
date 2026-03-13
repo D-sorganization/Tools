@@ -680,3 +680,42 @@ def batch_evaluate_double(
         )
         _warn_once("batch_evaluate_double", exc)
         return None
+
+def simulate_double(
+    params: PendulumParams,
+    q0: list[float],
+    qdot0: list[float],
+    coeffs: list[float],
+    n_coeffs_per_joint: int,
+    t_span: tuple[float, float],
+    max_steps: int = 100000,
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Run RK45 integration in Rust for the double pendulum.
+
+    Returns ``(times, states)``, where ``times`` is a 1D array and ``states``
+    is a 2D array of shape ``(N, 4)`` containing ``[q1, q2, qdot1, qdot2]``.
+    Returns ``None`` if the native backend is unavailable.
+    """
+    if _pendulum_core is None or not hasattr(
+        _pendulum_core, "py_simulate_double"
+    ):
+        return None
+
+    try:
+        times, states = _pendulum_core.py_simulate_double(
+            _to_rust_double_params(params),
+            q0,
+            qdot0,
+            coeffs,
+            n_coeffs_per_joint,
+            t_span,
+            max_steps,
+        )
+        return np.array(times, dtype=float), np.array(states, dtype=float)
+    except (RuntimeError, AttributeError, TypeError) as exc:  # pragma: no cover
+        logger.debug(
+            "simulate_double: Rust call failed (%s), falling back to Python",
+            type(exc).__name__,
+        )
+        _warn_once("simulate_double", exc)
+        return None

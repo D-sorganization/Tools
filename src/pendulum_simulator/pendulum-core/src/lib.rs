@@ -246,6 +246,86 @@ pub mod py_bindings {
         Ok(result)
     }
 
+    /// Simulate the double pendulum with polynomial torque profiles.
+    #[pyfunction]
+    #[pyo3(signature = (params, q0, qdot0, coeffs, n_coeffs_per_joint, t_span, max_steps=100000))]
+    pub fn py_simulate_double(
+        params: &PyDoublePendulumParams,
+        q0: Vec<f64>,
+        qdot0: Vec<f64>,
+        coeffs: Vec<f64>,
+        n_coeffs_per_joint: usize,
+        t_span: (f64, f64),
+        max_steps: usize,
+    ) -> PyResult<(Vec<f64>, Vec<Vec<f64>>)> {
+        if q0.len() != 2 || qdot0.len() != 2 {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q0 and qdot0 must have length 2",
+            ));
+        }
+        if coeffs.len() != n_coeffs_per_joint * 2 {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "coeffs must have length equal to n_coeffs_per_joint * 2",
+            ));
+        }
+        
+        let (coeffs1, coeffs2) = coeffs.split_at(n_coeffs_per_joint);
+        let q0_arr = [q0[0], q0[1]];
+        let qdot0_arr = [qdot0[0], qdot0[1]];
+        
+        let config = crate::integrator::RK45Config {
+            h0: 0.005,
+            h_min: 1e-6,
+            h_max: 0.01,
+            rtol: 1e-6,
+            atol: 1e-9,
+            max_steps,
+        };
+        
+        let mut y0 = [0.0; 4];
+        y0[0] = q0_arr[0];
+        y0[1] = q0_arr[1];
+        y0[2] = qdot0_arr[0];
+        y0[3] = qdot0_arr[1];
+        
+        // Use generic rk45 on the full 4D state vector
+        let result = crate::integrator::integrate_rk45(
+            |t, y| {
+                let q = [y[0], y[1]];
+                let qd = [y[2], y[3]];
+                
+                let tau1: f64 = coeffs1
+                    .iter()
+                    .enumerate()
+                    .map(|(i, c)| c * t.powi(i as i32))
+                    .sum();
+                let tau2: f64 = coeffs2
+                    .iter()
+                    .enumerate()
+                    .map(|(i, c)| c * t.powi(i as i32))
+                    .sum();
+                    
+                let qddot = double_equations_of_motion(
+                    &q,
+                    &qd,
+                    &[tau1, tau2],
+                    &params.inner,
+                );
+                
+                [qd[0], qd[1], qddot[0], qddot[1]]
+            },
+            t_span.0,
+            t_span.1,
+            y0,
+            config,
+        );
+        
+        let times: Vec<f64> = result.iter().map(|s| s.t).collect();
+        let states: Vec<Vec<f64>> = result.iter().map(|s| s.y.to_vec()).collect();
+        
+        Ok((times, states))
+    }
+
     /// Python wrapper for TriplePendulumParams
     #[pyclass]
     #[derive(Clone)]
@@ -829,6 +909,7 @@ pub mod py_bindings {
         m.add_function(wrap_pyfunction!(py_golfer_project_to_constraints, m)?)?;
         m.add_function(wrap_pyfunction!(py_golfer_project_velocity, m)?)?;
         m.add_function(wrap_pyfunction!(py_batch_evaluate_double, m)?)?;
+        m.add_function(wrap_pyfunction!(py_simulate_double, m)?)?;
         m.add_function(wrap_pyfunction!(py_cmaes_optimize_torque, m)?)?;
         // Jacobians & ellipsoids
         m.add_function(wrap_pyfunction!(py_double_jacobians, m)?)?;

@@ -353,13 +353,13 @@ if __name__ == "__main__":
 
     fracs = decomposer.decompose(feed)
 
-    print("\nDecomposed biomass → equivalent gas mixture:")
-    print(f"{'Species':<25} {'Mole Fraction':>15}")
-    print("-" * 42)
+    logger.info("\nDecomposed biomass → equivalent gas mixture:")
+    logger.info(f"{'Species':<25} {'Mole Fraction':>15}")
+    logger.info("-" * 42)
     for species, xf in sorted(fracs.items(), key=lambda x: -x[1]):
-        print(f"{species:<25} {xf:>15.4f}")
+        logger.info(f"{species:<25} {xf:>15.4f}")
 
     estimated_hhv = decomposer.estimate_hhv(feed)
-    print(f"\nChanniwala-Parikh HHV estimate: {estimated_hhv:.2f} MJ/kg")
-    print(f"Provided HHV: {feed.hhv_mj_kg:.2f} MJ/kg")
-    print(f"Difference: {abs(estimated_hhv - feed.hhv_mj_kg):.2f} MJ/kg")
+    logger.info(f"\nChanniwala-Parikh HHV estimate: {estimated_hhv:.2f} MJ/kg")
+    logger.info(f"Provided HHV: {feed.hhv_mj_kg:.2f} MJ/kg")
+    logger.info(f"Difference: {abs(estimated_hhv - feed.hhv_mj_kg):.2f} MJ/kg")
