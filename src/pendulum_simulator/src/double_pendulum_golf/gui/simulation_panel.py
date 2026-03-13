@@ -320,7 +320,7 @@ class SimulationPanel(QWidget):
         try:
             initial_state = self._state_builder(p)
             torque_func = self._torque_builder(p)
-        except Exception as e:
+        except (ValueError, TypeError, KeyError) as e:
             logger.warning("State/torque build failed: %s", e, exc_info=True)
             get_tracker().record_exception(
                 "simulation", e, context="State/torque build"
@@ -682,7 +682,7 @@ class SimulationPanel(QWidget):
                 self._export_as_png(path)
 
             QMessageBox.information(self, "Export Image", f"Saved image to:\n{path}")
-        except Exception as e:  # noqa: BLE001
+        except (OSError, ValueError, RuntimeError) as e:
             logger.error("Failed to export image: %s", e)
             QMessageBox.critical(
                 self,

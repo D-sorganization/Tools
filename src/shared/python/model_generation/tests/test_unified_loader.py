@@ -316,6 +316,63 @@ class TestMJCFParsing:
         assert link.visual_geometry is not None
         assert link.visual_geometry.geometry_type.value == "capsule"
 
+    def test_capsule_fromto_non_numeric_returns_none(self) -> None:
+        """Non-numeric fromto values must be rejected gracefully (#1073)."""
+        import defusedxml.ElementTree as ET
+        from model_generation.converters.mjcf_converter import MJCFConverter
+
+        converter = MJCFConverter()
+        xml = """<mujoco model="test">
+  <worldbody>
+    <body name="bad" pos="0 0 0">
+      <geom fromto="a b c d e f" size="0.05" type="capsule"/>
+    </body>
+  </worldbody>
+</mujoco>"""
+        root = ET.fromstring(xml)
+        model = converter._parse_mjcf(root)
+        link = model.links[0]
+        # Non-numeric fromto should be rejected: geometry is None
+        assert link.visual_geometry is None
+
+    def test_capsule_fromto_short_values_returns_none(self) -> None:
+        """fromto with fewer than 6 values must be rejected (#1073)."""
+        import defusedxml.ElementTree as ET
+        from model_generation.converters.mjcf_converter import MJCFConverter
+
+        converter = MJCFConverter()
+        xml = """<mujoco model="test">
+  <worldbody>
+    <body name="short" pos="0 0 0">
+      <geom fromto="0 0 0 1" size="0.05" type="capsule"/>
+    </body>
+  </worldbody>
+</mujoco>"""
+        root = ET.fromstring(xml)
+        model = converter._parse_mjcf(root)
+        link = model.links[0]
+        assert link.visual_geometry is None
+
+    def test_capsule_zero_length_degrades_to_sphere(self) -> None:
+        """Zero-length capsule (identical from/to) must degrade to sphere (#1073)."""
+        import defusedxml.ElementTree as ET
+        from model_generation.converters.mjcf_converter import MJCFConverter
+
+        converter = MJCFConverter()
+        xml = """<mujoco model="test">
+  <worldbody>
+    <body name="zero" pos="0 0 0">
+      <geom fromto="0.5 0.5 0.5 0.5 0.5 0.5" size="0.03" type="capsule"/>
+    </body>
+  </worldbody>
+</mujoco>"""
+        root = ET.fromstring(xml)
+        model = converter._parse_mjcf(root)
+        link = model.links[0]
+        assert link.visual_geometry is not None
+        assert link.visual_geometry.geometry_type.value == "sphere"
+        assert abs(link.visual_geometry.dimensions[0] - 0.03) < 0.001
+
     def test_mjcf_geom_parsing_box(self) -> None:
         import defusedxml.ElementTree as ET
         from model_generation.converters.mjcf_converter import MJCFConverter

@@ -287,7 +287,7 @@ def batch_perturb_and_simulate(
             sim_result = simulate_fn(perturbed)
             metrics = extract_fn(sim_result)
             results.append(metrics)
-        except Exception:
+        except (ValueError, RuntimeError, FloatingPointError):
             logger.warning("Trial %d failed, skipping", i, exc_info=True)
             continue
 
