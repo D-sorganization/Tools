@@ -396,12 +396,15 @@ class ControlsWidgetBase(QWidget):
         self.slider.blockSignals(False)
 
     def stop_playback(self) -> None:
+        """Reset the play/pause toggle to the stopped state."""
         self.btn_play.setChecked(False)
 
     def gravity_on(self) -> bool:
+        """Return whether gravity is enabled (always True since #1209)."""
         return True  # Gravity always on (#1209)
 
     def show_forces(self) -> bool:
+        """Return whether force vector display is enabled."""
         return self.chk_forces.isChecked()
 
     # ------------------------------------------------------------------
