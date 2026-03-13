@@ -1448,7 +1448,7 @@ def InverseDynamicsTrajectory(
         timestamp = np.linspace(0, Tf, N)
         try:
             import matplotlib.pyplot as plt
-        except:
+        except ImportError:
             print('The result will not be plotted due to a lack of package matplotlib')
         else:
             plt.plot(timestamp, Tau1, label = "Tau1")
@@ -1566,7 +1566,7 @@ def ForwardDynamicsTrajectory(
             timestamp = np.linspace(0, Tf, N)
             try:
                 import matplotlib.pyplot as plt
-        except:
+        except ImportError:
             print('The result will not be plotted due to a lack of package matplotlib')
         else:
             plt.plot(timestamp, theta1, label = "Theta1")

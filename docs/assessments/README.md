@@ -177,6 +177,7 @@ This document defines the comprehensive 16-point assessment framework (A-O + Hig
 | 3.8     | 2026-03 | Added Thesis Defense Orthogonality/Adversarial issues                                       |
 | 3.9     | 2026-03 | Added DWSIM Model comprehensive assessment + low-hanging fruit fixes (2026-03-12)           |
 | 4.0     | 2026-03 | Archived DWSIM_Model standalone repo assessments into docs/assessments/dwsim_model/archive/ |
+| 4.1     | 2026-03 | Added comprehensive A-O + Pragmatic Programmer + Performance & Rust Integration assessment (2026-03-13) |
 
 ---
 
