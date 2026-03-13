@@ -16,8 +16,10 @@ from __future__ import annotations
 import math
 
 import pytest
-from hypothesis import HealthCheck, given, settings
-from hypothesis import strategies as st
+
+hypothesis = pytest.importorskip("hypothesis", reason="hypothesis not installed")
+from hypothesis import HealthCheck, given, settings  # noqa: E402
+from hypothesis import strategies as st  # noqa: E402
 
 # Module-level cached calculator to avoid re-initializing the slow
 # interpolation table on every Hypothesis example.
