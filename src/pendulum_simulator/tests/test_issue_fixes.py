@@ -313,6 +313,30 @@ class TestCodeQuality:
             except ImportError:
                 continue
 
+    def test_no_broad_except_in_physics(self) -> None:
+        """Physics/perturbation modules must not use 'except Exception'."""
+        import importlib
+        import inspect
+        import re
+
+        modules = [
+            "double_pendulum_golf.perturbation_analysis",
+        ]
+        pattern = re.compile(r"except\s+Exception\s*[:\s]")
+        for mod_name in modules:
+            try:
+                mod = importlib.import_module(mod_name)
+                source = inspect.getsource(mod)
+                lines = source.split("\n")
+                for i, line in enumerate(lines, 1):
+                    if pattern.search(line) and "# noqa" not in line:
+                        pytest.fail(
+                            f"{mod_name} line {i}: broad 'except Exception' "
+                            f"found — narrow to specific types"
+                        )
+            except ImportError:
+                continue
+
 
 """Tests for the Catmull-Rom spline smoothing used in trail rendering (#1116)."""
 
