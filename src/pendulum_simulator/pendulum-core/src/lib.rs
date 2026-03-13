@@ -16,9 +16,11 @@
 pub mod batch;
 pub mod cmaes;
 pub mod double;
+pub mod dynamics;
 pub mod golfer;
 pub mod golfer_constraints;
 pub mod integrator;
+pub mod jacobians;
 pub mod triple;
 pub mod types;
 
@@ -52,6 +54,16 @@ pub use integrator::{
 };
 
 pub use cmaes::{optimize, optimize_torque_coefficients, CmaEsConfig, CmaEsResult};
+
+pub use jacobians::{
+    ellipsoids_double, ellipsoids_triple, jacobian_double as jacobian_double_analytical,
+    jacobian_triple as jacobian_triple_analytical, EllipsoidResult,
+};
+
+pub use dynamics::{
+    angular_impulse_series, angular_power_series, angular_work_series, linear_impulse_series,
+    linear_power_series, linear_work_series,
+};
 
 pub use types::{
     DoubleFKResult, DoublePendulumParams, GolferFKResult, GolferParams, TripleFKResult,
@@ -818,6 +830,18 @@ pub mod py_bindings {
         m.add_function(wrap_pyfunction!(py_golfer_project_velocity, m)?)?;
         m.add_function(wrap_pyfunction!(py_batch_evaluate_double, m)?)?;
         m.add_function(wrap_pyfunction!(py_cmaes_optimize_torque, m)?)?;
+        // Jacobians & ellipsoids
+        m.add_function(wrap_pyfunction!(py_double_jacobians, m)?)?;
+        m.add_function(wrap_pyfunction!(py_double_ellipsoids, m)?)?;
+        m.add_function(wrap_pyfunction!(py_triple_jacobians, m)?)?;
+        m.add_function(wrap_pyfunction!(py_triple_ellipsoids, m)?)?;
+        // Dynamics quantities
+        m.add_function(wrap_pyfunction!(py_angular_power_series, m)?)?;
+        m.add_function(wrap_pyfunction!(py_linear_power_series, m)?)?;
+        m.add_function(wrap_pyfunction!(py_angular_work_series, m)?)?;
+        m.add_function(wrap_pyfunction!(py_linear_work_series, m)?)?;
+        m.add_function(wrap_pyfunction!(py_angular_impulse_series, m)?)?;
+        m.add_function(wrap_pyfunction!(py_linear_impulse_series, m)?)?;
         Ok(())
     }
 
@@ -855,6 +879,162 @@ pub mod py_bindings {
             .iter()
             .map(|r| (r.max_tip_speed, r.tip_speed_at_bottom, r.success))
             .collect())
+    }
+
+    // -----------------------------------------------------------------------
+    // Jacobians & Ellipsoids
+    // -----------------------------------------------------------------------
+
+    /// Compute double pendulum Jacobians at wrist and tip.
+    /// Returns {"wrist": [[j00,j01],[j10,j11]], "tip": [[j00,j01],[j10,j11]]}.
+    #[pyfunction]
+    pub fn py_double_jacobians(
+        theta1: f64,
+        phi: f64,
+        l1: f64,
+        l2: f64,
+    ) -> PyResult<HashMap<String, Vec<Vec<f64>>>> {
+        let (j_wrist, j_tip) = crate::jacobians::jacobian_double(theta1, phi, l1, l2);
+        let mut result = HashMap::new();
+        result.insert(
+            "wrist".to_string(),
+            vec![
+                vec![j_wrist[(0, 0)], j_wrist[(0, 1)]],
+                vec![j_wrist[(1, 0)], j_wrist[(1, 1)]],
+            ],
+        );
+        result.insert(
+            "tip".to_string(),
+            vec![
+                vec![j_tip[(0, 0)], j_tip[(0, 1)]],
+                vec![j_tip[(1, 0)], j_tip[(1, 1)]],
+            ],
+        );
+        Ok(result)
+    }
+
+    /// Compute double pendulum ellipsoid data.
+    /// Returns {"wrist": {...}, "tip": {...}} with mobility and force semi-axes.
+    #[pyfunction]
+    pub fn py_double_ellipsoids(
+        theta1: f64,
+        phi: f64,
+        l1: f64,
+        l2: f64,
+    ) -> PyResult<HashMap<String, HashMap<String, Vec<f64>>>> {
+        let (e_wrist, e_tip) = crate::jacobians::ellipsoids_double(theta1, phi, l1, l2);
+        let mut result = HashMap::new();
+        result.insert("wrist".to_string(), ellipsoid_to_map(&e_wrist));
+        result.insert("tip".to_string(), ellipsoid_to_map(&e_tip));
+        Ok(result)
+    }
+
+    /// Compute triple pendulum Jacobians at wrist1, wrist2, and tip.
+    #[pyfunction]
+    pub fn py_triple_jacobians(
+        theta1: f64,
+        phi1: f64,
+        phi2: f64,
+        l1: f64,
+        l2: f64,
+        l3: f64,
+    ) -> PyResult<HashMap<String, Vec<Vec<f64>>>> {
+        let (j_w1, j_w2, j_tip) =
+            crate::jacobians::jacobian_triple(theta1, phi1, phi2, l1, l2, l3);
+        let mut result = HashMap::new();
+        for (name, j) in [("wrist1", j_w1), ("wrist2", j_w2), ("tip", j_tip)] {
+            result.insert(
+                name.to_string(),
+                vec![
+                    vec![j[(0, 0)], j[(0, 1)], j[(0, 2)]],
+                    vec![j[(1, 0)], j[(1, 1)], j[(1, 2)]],
+                ],
+            );
+        }
+        Ok(result)
+    }
+
+    /// Compute triple pendulum ellipsoid data.
+    #[pyfunction]
+    pub fn py_triple_ellipsoids(
+        theta1: f64,
+        phi1: f64,
+        phi2: f64,
+        l1: f64,
+        l2: f64,
+        l3: f64,
+    ) -> PyResult<HashMap<String, HashMap<String, Vec<f64>>>> {
+        let (e_w1, e_w2, e_tip) =
+            crate::jacobians::ellipsoids_triple(theta1, phi1, phi2, l1, l2, l3);
+        let mut result = HashMap::new();
+        result.insert("wrist1".to_string(), ellipsoid_to_map(&e_w1));
+        result.insert("wrist2".to_string(), ellipsoid_to_map(&e_w2));
+        result.insert("tip".to_string(), ellipsoid_to_map(&e_tip));
+        Ok(result)
+    }
+
+    fn ellipsoid_to_map(
+        e: &crate::jacobians::EllipsoidResult,
+    ) -> HashMap<String, Vec<f64>> {
+        let mut m = HashMap::new();
+        m.insert(
+            "directions".to_string(),
+            vec![e.directions[(0, 0)], e.directions[(1, 0)], e.directions[(0, 1)], e.directions[(1, 1)]],
+        );
+        m.insert(
+            "mob_semi_axes".to_string(),
+            vec![e.mob_semi_axes[0], e.mob_semi_axes[1]],
+        );
+        if let Some(ref fsa) = e.force_semi_axes {
+            m.insert("force_semi_axes".to_string(), vec![fsa[0], fsa[1]]);
+        }
+        m.insert(
+            "singular_values".to_string(),
+            vec![e.singular_values[0], e.singular_values[1]],
+        );
+        m
+    }
+
+    // -----------------------------------------------------------------------
+    // Dynamics quantities
+    // -----------------------------------------------------------------------
+
+    #[pyfunction]
+    pub fn py_angular_power_series(torques: Vec<f64>, angular_velocities: Vec<f64>) -> Vec<f64> {
+        crate::dynamics::angular_power_series(&torques, &angular_velocities)
+    }
+
+    #[pyfunction]
+    pub fn py_linear_power_series(forces: Vec<f64>, velocities: Vec<f64>) -> Vec<f64> {
+        crate::dynamics::linear_power_series(&forces, &velocities)
+    }
+
+    #[pyfunction]
+    pub fn py_angular_work_series(
+        torques: Vec<f64>,
+        angular_velocities: Vec<f64>,
+        time: Vec<f64>,
+    ) -> Vec<f64> {
+        crate::dynamics::angular_work_series(&torques, &angular_velocities, &time)
+    }
+
+    #[pyfunction]
+    pub fn py_linear_work_series(
+        forces: Vec<f64>,
+        velocities: Vec<f64>,
+        time: Vec<f64>,
+    ) -> Vec<f64> {
+        crate::dynamics::linear_work_series(&forces, &velocities, &time)
+    }
+
+    #[pyfunction]
+    pub fn py_angular_impulse_series(torques: Vec<f64>, time: Vec<f64>) -> Vec<f64> {
+        crate::dynamics::angular_impulse_series(&torques, &time)
+    }
+
+    #[pyfunction]
+    pub fn py_linear_impulse_series(forces: Vec<f64>, time: Vec<f64>) -> Vec<f64> {
+        crate::dynamics::linear_impulse_series(&forces, &time)
     }
 }
 
