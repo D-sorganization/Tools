@@ -497,8 +497,8 @@ class GolferPendulumWidget(BasePendulumWidget):
             pen = QPen(self.COLOR_TORQUE, 2.5)
             painter.setPen(pen)
             rect = QRect(
-                center.x() - radius,
-                center.y() - radius,
+                int(center.x()) - radius,
+                int(center.y()) - radius,
                 2 * radius,
                 2 * radius,
             )

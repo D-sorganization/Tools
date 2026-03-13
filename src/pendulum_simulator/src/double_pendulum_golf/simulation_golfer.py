@@ -74,12 +74,12 @@ class GolferSimulationResult(TrajectoryResultMixin):
     def mass_matrix_at(self, idx: int) -> np.ndarray:
         """8×8 mass matrix at time index."""
         self._check_idx(idx)
-        return mass_matrix(self.q_at(idx), self.params)
+        return mass_matrix(self.q_at(idx), self.params)  # type: ignore[no-any-return]
 
     def positions_at(self, idx: int) -> dict:
         """Forward kinematics at time index."""
         self._check_idx(idx)
-        return forward_kinematics(self.q_at(idx), self.params)
+        return forward_kinematics(self.q_at(idx), self.params)  # type: ignore[no-any-return]
 
     def torques_at(
         self, idx: int
@@ -101,7 +101,7 @@ class GolferSimulationResult(TrajectoryResultMixin):
         q = self.q_at(idx)
         qdot = self.qdot_at(idx)
         qddot = self.accelerations_at(idx)
-        return net_joint_forces(q, qdot, qddot, self.params)
+        return net_joint_forces(q, qdot, qddot, self.params)  # type: ignore[no-any-return]
 
     def constraint_forces_at(self, idx: int) -> np.ndarray:
         """Lagrange multiplier (constraint) forces at time index."""
@@ -118,12 +118,12 @@ class GolferSimulationResult(TrajectoryResultMixin):
     def coriolis_at(self, idx: int) -> np.ndarray:
         """Coriolis/centrifugal torques at time index."""
         self._check_idx(idx)
-        return coriolis_matrix(self.q_at(idx), self.qdot_at(idx), self.params)
+        return coriolis_matrix(self.q_at(idx), self.qdot_at(idx), self.params)  # type: ignore[no-any-return]
 
     def gravity_at(self, idx: int) -> np.ndarray:
         """Gravitational torques at time index."""
         self._check_idx(idx)
-        return gravity_vector(self.q_at(idx), self.params)
+        return gravity_vector(self.q_at(idx), self.params)  # type: ignore[no-any-return]
 
     def energy_at(self, idx: int) -> dict:
         """Energy decomposition at time index."""
@@ -138,7 +138,7 @@ class GolferSimulationResult(TrajectoryResultMixin):
     def friction_torques_at(self, idx: int) -> np.ndarray:
         """Friction torques at time index."""
         self._check_idx(idx)
-        return friction_torque_vector(self.qdot_at(idx), self.params)
+        return friction_torque_vector(self.qdot_at(idx), self.params)  # type: ignore[no-any-return]
 
     def total_torques_at(self, idx: int) -> np.ndarray:
         """Total applied torque (drive + friction) at time index."""
