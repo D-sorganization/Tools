@@ -70,6 +70,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 import numpy as np
+import numpy.typing as npt
 
 from . import native_backend as _native_backend
 from .constants import GRAVITY_MSS
@@ -181,7 +182,7 @@ class GolferParams:
 
 
 # State: 8 angles + 8 angular velocities = 16 DOF
-State = np.ndarray  # shape (16,)
+State = npt.NDArray[np.float64]  # shape (16,)
 
 # Torque function: (t) -> 7 torques (hub, rs, re, rh, ls, le, lh)
 TorqueFunc = Callable[[float], tuple[float, float, float, float, float, float, float]]
