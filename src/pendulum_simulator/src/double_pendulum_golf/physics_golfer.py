@@ -193,35 +193,7 @@ N_DOF = 8
 N_CONSTRAINTS = 4
 
 
-# Re-export all public APIs for backward compatibility
-from .golfer_kinematics import forward_kinematics  # noqa: F401, E402
-from .golfer_dynamics import (  # noqa: F401, E402
-    analytical_fk_jacobians,
-    analytical_mass_matrix,
-    analytical_coriolis,
-    analytical_gravity_vector,
-    kinetic_energy,
-    potential_energy,
-    total_energy,
-    potential_energy_from_q,
-)
-from .golfer_constraints import (  # noqa: F401, E402
-    constraint_vector,
-    numerical_constraint_jacobian,
-    analytical_constraint_jacobian,
-    linear_accelerations,
-    net_joint_forces,
-    friction_torque_vector,
-)
-
-# ---------------------------------------------------------------------------
-# Default function aliases for backward compatibility
-# ---------------------------------------------------------------------------
-# These use the analytical versions defined in the sub-modules
-constraint_jacobian = analytical_constraint_jacobian  # noqa: F405
-mass_matrix = analytical_mass_matrix  # noqa: F405
-coriolis_matrix = analytical_coriolis  # noqa: F405
-gravity_vector = analytical_gravity_vector  # noqa: F405
+# Backward compatibility re-exports removed to prevent cyclic import (Issue TDD resolution)
 
 
 def get_native_backend_info() -> dict[str, object]:
