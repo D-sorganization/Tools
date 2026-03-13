@@ -5,7 +5,14 @@ Comprehensive Tests for RRT Path Planner with DbC Principles.
 import unittest
 
 import numpy as np
-from star_wars_rrt import Obstacle, PursuitAI, RRTPlanner, Ship
+from star_wars_rrt import (
+    Obstacle,
+    PursuitAI,
+    RRTPlanner,
+    Ship,
+    distance_to_obstacle_surface,
+    generate_asteroid_field,
+)
 
 
 class TestRRTPlannerDbC(unittest.TestCase):
@@ -97,6 +104,58 @@ class TestRRTPlannerDbC(unittest.TestCase):
             self.assertTrue(self.bounds[0] <= new_pos[0] <= self.bounds[1])
             self.assertTrue(self.bounds[2] <= new_pos[1] <= self.bounds[3])
             self.assertTrue(self.bounds[4] <= new_pos[2] <= self.bounds[5])
+
+    def test_path_metrics_capture_efficiency(self) -> None:
+        """Path analysis should quantify route quality for educational overlays."""
+        path = np.array(
+            [
+                [-0.8, -0.8, 0.0],
+                [-0.2, -0.2, 0.0],
+                [0.2, 0.2, 0.0],
+                [0.8, 0.8, 0.0],
+            ]
+        )
+
+        metrics = self.planner.analyze_path(path, [])
+
+        self.assertEqual(metrics.waypoint_count, 4)
+        self.assertGreater(metrics.path_length, 0.0)
+        self.assertAlmostEqual(metrics.efficiency, 1.0, delta=0.05)
+        self.assertGreaterEqual(metrics.min_clearance, 0.0)
+
+    def test_smoothing_preserves_endpoints(self) -> None:
+        """Path smoothing should keep the mission endpoints intact."""
+        path = np.array(
+            [
+                [-0.8, -0.8, 0.0],
+                [-0.2, -0.5, 0.0],
+                [0.2, 0.5, 0.0],
+                [0.8, 0.8, 0.0],
+            ]
+        )
+
+        smoothed = self.planner.smooth_path(path, [], iterations=32)
+
+        self.assertTrue(np.allclose(smoothed[0], path[0]))
+        self.assertTrue(np.allclose(smoothed[-1], path[-1]))
+        self.assertLessEqual(len(smoothed), len(path))
+
+    def test_generated_asteroid_field_respects_reserved_points(self) -> None:
+        """Obstacle generation should leave launch and destination corridors open."""
+        start = np.array([-0.8, 0.0, 0.0])
+        goal = np.array([0.8, 0.0, 0.0])
+
+        obstacles = generate_asteroid_field(
+            self.bounds,
+            25,
+            rng=np.random.default_rng(7),
+            reserved_points=[start, goal],
+            clearance=0.12,
+        )
+
+        for obstacle in obstacles:
+            self.assertGreaterEqual(distance_to_obstacle_surface(start, obstacle), 0.12)
+            self.assertGreaterEqual(distance_to_obstacle_surface(goal, obstacle), 0.12)
 
 
 if __name__ == "__main__":

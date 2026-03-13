@@ -241,3 +241,17 @@ def test_famous_mission_time_order(mission_name: str) -> None:
     waypoints = FAMOUS_MISSIONS[mission_name]()
     times = [wp.time for wp in waypoints]
     assert times == sorted(times), f"{mission_name} waypoints not in time order"
+
+
+@pytest.mark.parametrize(
+    "mission_name",
+    list(FAMOUS_MISSIONS.keys()),
+)
+def test_famous_mission_metadata_contract(mission_name: str) -> None:
+    """Mission entries should remain callable and expose UI metadata."""
+    mission = FAMOUS_MISSIONS[mission_name]
+    assert callable(mission)
+    assert mission.get("description")
+    assert mission.get("launch_date")
+    assert mission.get("science_highlights")
+    assert mission.get("destinations")

@@ -67,6 +67,7 @@ try:
         GL_SPECULAR,
         GL_SRC_ALPHA,
         GL_TEXTURE_2D,
+        GL_TRIANGLE_FAN,
         GL_VERTEX_ARRAY,
         GL_VERTEX_SHADER,
         GL_VIEWPORT,
@@ -539,6 +540,12 @@ class Renderer:
         glCallList(self._sphere_list)
         glPopMatrix()
 
+        if body.body_type == BodyType.STAR:
+            self._render_star_glow(size, color)
+
+        if highlight:
+            self._render_selection_ring(size)
+
         # Draw rings for Saturn, etc.
         if hasattr(body, "has_rings") and body.has_rings:
             self._render_rings(body, size)
@@ -549,6 +556,42 @@ class Renderer:
         glEnable(GL_LIGHTING)
         if texturing_active:
             glDisable(GL_TEXTURE_2D)
+
+    def _render_star_glow(
+        self, body_size: float, color: tuple[float, float, float]
+    ) -> None:
+        """Render a soft halo to make the Sun feel more luminous."""
+        glDisable(GL_LIGHTING)
+        glEnable(GL_BLEND)
+        glow_radius = body_size * 1.9
+        glColor4f(color[0], color[1], min(color[2] + 0.1, 1.0), 0.18)
+
+        segments = 48
+        glBegin(GL_TRIANGLE_FAN)
+        glVertex3f(0.0, 0.0, 0.0)
+        for i in range(segments + 1):
+            angle = 2 * math.pi * i / segments
+            glVertex3f(
+                glow_radius * math.cos(angle), 0.0, glow_radius * math.sin(angle)
+            )
+        glEnd()
+        glDisable(GL_BLEND)
+
+    def _render_selection_ring(self, body_size: float) -> None:
+        """Render an orbit-plane selection ring for the chosen body."""
+        glDisable(GL_LIGHTING)
+        glColor4f(0.95, 0.95, 0.6, 0.85)
+        glLineWidth(2.0)
+
+        ring_radius = body_size * 1.8
+        segments = 64
+        glBegin(GL_LINE_LOOP)
+        for i in range(segments):
+            angle = 2 * math.pi * i / segments
+            glVertex3f(
+                ring_radius * math.cos(angle), 0.0, ring_radius * math.sin(angle)
+            )
+        glEnd()
 
     def _render_rings(self, body: CelestialBody, body_size: float) -> None:
         """Render planetary rings."""

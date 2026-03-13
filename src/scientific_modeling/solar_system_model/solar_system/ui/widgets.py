@@ -977,11 +977,16 @@ class MissionListPanel:
     def get_render_data(self, missions_dict: dict[str, Any]) -> dict[str, Any]:
         missions_info = []
         for name, data in missions_dict.items():
+            highlights = data.get("science_highlights", ())
+            destinations = data.get("destinations", ())
             missions_info.append(
                 {
                     "name": name,
                     "description": data.get("description", ""),
                     "launch_date": data.get("launch_date", ""),
+                    "mission_type": data.get("mission_type", ""),
+                    "destinations": ", ".join(destinations),
+                    "science_highlights": "; ".join(highlights[:2]),
                 }
             )
 
