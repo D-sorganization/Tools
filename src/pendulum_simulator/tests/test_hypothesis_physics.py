@@ -11,10 +11,13 @@ Tests invariants that must hold for ANY valid parameter/state combination:
 from __future__ import annotations
 
 import numpy as np
-from hypothesis import given, settings
-from hypothesis import strategies as st
+import pytest
 
-from double_pendulum_golf.physics import (
+hypothesis = pytest.importorskip("hypothesis", reason="hypothesis not installed")
+from hypothesis import given, settings  # noqa: E402
+from hypothesis import strategies as st  # noqa: E402
+
+from double_pendulum_golf.physics import (  # noqa: E402
     PendulumParams,
     forward_kinematics,
     kinetic_energy,
@@ -22,7 +25,7 @@ from double_pendulum_golf.physics import (
     potential_energy,
     total_energy,
 )
-from double_pendulum_golf.physics_triple import (
+from double_pendulum_golf.physics_triple import (  # noqa: E402
     TriplePendulumParams,
     forward_kinematics as triple_fk,
     kinetic_energy as triple_ke,
