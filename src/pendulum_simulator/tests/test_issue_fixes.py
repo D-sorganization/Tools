@@ -367,3 +367,59 @@ class TestCatmullRomSmoothing:
         pts = [(0.0, 0.0), (1.0, 2.0), (2.0, -1.0), (3.0, 1.0)]
         result = catmull_rom_smooth(pts, 4)
         assert result[-1] == pts[-1]
+
+
+# ---------------------------------------------------------------------------
+# #1190 — Shared physical constants (DRY)
+# ---------------------------------------------------------------------------
+
+
+class TestSharedConstants:
+    """Verify shared constants module exists and is the single source of truth."""
+
+    def test_constants_importable(self) -> None:
+        from double_pendulum_golf.constants import GRAVITY_MSS, GRAVITY_STANDARD
+
+        assert GRAVITY_MSS == 9.81
+        assert GRAVITY_STANDARD == 9.80665
+
+    def test_conversion_factors(self) -> None:
+        from double_pendulum_golf.constants import (
+            INCHES_PER_M,
+            LBF_PER_N,
+            M_PER_INCH,
+            NM_PER_KGFM,
+        )
+
+        assert NM_PER_KGFM == 9.80665
+        assert abs(LBF_PER_N - 0.224809) < 1e-6
+        assert abs(M_PER_INCH - 0.0254) < 1e-6
+        assert abs(INCHES_PER_M - 39.3701) < 1e-4
+
+    def test_physics_uses_shared_gravity(self) -> None:
+        """DbC: physics module default g must equal the shared constant."""
+        from double_pendulum_golf.constants import GRAVITY_MSS
+        from double_pendulum_golf.physics import PendulumParams
+
+        params = PendulumParams(m1=5.0, m2=0.5, L1=0.6, L2=1.0)
+        assert params.g == GRAVITY_MSS
+
+    def test_physics_triple_uses_shared_gravity(self) -> None:
+        from double_pendulum_golf.constants import GRAVITY_MSS
+        from double_pendulum_golf.physics_triple import TriplePendulumParams
+
+        params = TriplePendulumParams(m1=5.0, m2=0.5, m3=0.3, L1=0.6, L2=1.0, L3=0.5)
+        assert params.g == GRAVITY_MSS
+
+    def test_no_private_gravity_in_unit_converter(self) -> None:
+        """DRY: unit_converter must not define its own gravity constant."""
+        import inspect
+
+        from double_pendulum_golf.gui import unit_converter
+
+        source = inspect.getsource(unit_converter)
+        # After refactoring, there should be an import from constants
+        assert (
+            "from double_pendulum_golf.constants import" in source
+            or "from ..constants import" in source
+        )

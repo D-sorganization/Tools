@@ -72,6 +72,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from . import native_backend as _native_backend
+from .constants import GRAVITY_MSS
 
 # ---------------------------------------------------------------------------
 # Data structures
@@ -116,7 +117,7 @@ class GolferParams:
     m_clubhead: float = 0.2
 
     # Gravity
-    g: float = 9.81
+    g: float = GRAVITY_MSS
 
     # Dissipation (default: no losses)
     b_hub: float = 0.0

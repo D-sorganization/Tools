@@ -443,9 +443,6 @@ class AnalysisTab:
                 m2=1.0,
                 L1=0.6,
                 L2=1.1,
-                g=9.81,
-                b1=0.0,
-                b2=0.0,
             )
         )
 
@@ -499,10 +496,6 @@ class AnalysisTab:
                 L1=0.4,
                 L2=0.35,
                 L3=0.3,
-                g=9.81,
-                b1=0.0,
-                b2=0.0,
-                b3=0.0,
             )
         )
 
@@ -571,7 +564,6 @@ class AnalysisTab:
                 d_ls=0.2,
                 grip_right=0.3,
                 grip_left=0.3,
-                g=9.81,
             )
         )
 

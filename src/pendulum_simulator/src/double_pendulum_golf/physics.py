@@ -25,6 +25,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from . import native_backend as _native_backend
+from .constants import GRAVITY_MSS
 
 # ---------------------------------------------------------------------------
 # Data structures
@@ -47,7 +48,7 @@ class PendulumParams:
     L1: float  # length of arms (m), typical ~0.65
     L2: float  # length of shaft (m), typical ~1.10
     mClub: float = 0.0  # clubhead mass (kg), typical ~0.20
-    g: float = 9.81  # gravitational acceleration (m/s²)
+    g: float = GRAVITY_MSS  # gravitational acceleration (m/s²)
     b1: float = 0.0  # viscous damping at shoulder (N·m·s/rad)
     b2: float = 0.0  # viscous damping at wrist (N·m·s/rad)
     mu1: float = 0.0  # Coulomb friction at shoulder (N·m)

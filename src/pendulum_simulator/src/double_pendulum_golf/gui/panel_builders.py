@@ -24,6 +24,8 @@ from typing import Any
 
 import numpy as np
 
+from ..constants import GRAVITY_MSS
+
 from ..physics import (
     JointLimits,
     JointLimitsNDOF,
@@ -77,7 +79,7 @@ def build_double_panel(main_window: Any) -> SimulationPanel:
     def build_params(p: dict) -> PendulumParams:
         tilt_rad = np.radians(p.get("tilt_deg", 0.0))
         azimuth_rad = np.radians(p.get("azimuth_deg", 0.0))
-        g = 9.81 if p.get("gravity_on", True) else 0.0
+        g = GRAVITY_MSS if p.get("gravity_on", True) else 0.0
         g_eff = g * float(np.cos(tilt_rad))  # (#1113) effective gravity on plane
         # Update display tilt and view azimuth on next paint
         pendulum.set_tilt_angle(tilt_rad)
@@ -201,7 +203,7 @@ def build_triple_panel(main_window: Any) -> SimulationPanel:
 
     def build_params(p: dict) -> TriplePendulumParams:
         tilt_rad = np.radians(p.get("tilt_deg", 0.0))
-        g = 9.81 if p.get("gravity_on", True) else 0.0
+        g = GRAVITY_MSS if p.get("gravity_on", True) else 0.0
         g_eff = g * float(np.cos(tilt_rad))  # (#1113)
         pendulum.set_tilt_angle(tilt_rad)
         pendulum.set_view_azimuth(np.radians(p.get("azimuth_deg", 0.0)))  # (#1118)
@@ -336,7 +338,7 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
 
     def build_params(p: dict) -> GolferParams:
         tilt_rad = np.radians(p.get("tilt_deg", 0.0))
-        g = 9.81 if p.get("gravity_on", True) else 0.0
+        g = GRAVITY_MSS if p.get("gravity_on", True) else 0.0
         g_eff = g * float(np.cos(tilt_rad))  # (#1113)
         pendulum.set_tilt_angle(tilt_rad)
         pendulum.set_view_azimuth(np.radians(p.get("azimuth_deg", 0.0)))  # (#1118)

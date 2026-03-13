@@ -22,6 +22,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
+from double_pendulum_golf.constants import GRAVITY_STANDARD
+
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
@@ -32,7 +34,7 @@ _METERS_PER_FOOT = 0.3048
 _KG_PER_LB = 0.45359237
 _NM_PER_LBFIN = 0.1129848290276167
 _NM_PER_LBFFT = 1.3558179483314
-_NM_PER_KGFM = 9.80665
+_NM_PER_KGFM = GRAVITY_STANDARD
 _N_PER_LBF = 4.4482216152605
 _J_PER_FTLBF = 1.3558179483314
 _W_PER_FTLBFS = 1.3558179483314
@@ -82,7 +84,7 @@ _UNIT_OPTIONS: dict[UnitCategory, list[tuple[str, float]]] = {
     UnitCategory.FORCE: [
         ("N", 1.0),
         ("lbf", _N_PER_LBF),
-        ("kgf", 9.80665),
+        ("kgf", GRAVITY_STANDARD),
     ],
     UnitCategory.ANGLE: [
         ("rad", 1.0),
