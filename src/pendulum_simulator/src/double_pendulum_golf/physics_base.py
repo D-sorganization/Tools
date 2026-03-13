@@ -13,6 +13,7 @@ Design by Contract
 from __future__ import annotations
 
 import numpy as np
+import numpy.typing as npt
 
 # ---------------------------------------------------------------------------
 # Generic kinetic energy (works for any DOF count)
@@ -93,13 +94,13 @@ def friction_torque_ndof(
     ), f"viscous shape {viscous_coeffs.shape} vs qdot {qdot.shape}"
     assert np.all(np.isfinite(qdot)), "qdot has non-finite values"
 
-    tau = -viscous_coeffs * qdot
+    tau: npt.NDArray[np.float64] = np.asarray(-viscous_coeffs * qdot, dtype=np.float64)
     if coulomb_coeffs is not None:
         assert coulomb_coeffs.shape == (n,)
         tau -= coulomb_coeffs * np.sign(qdot)
 
     assert np.all(np.isfinite(tau)), f"Friction torque non-finite: {tau}"
-    return tau  # type: ignore[no-any-return]
+    return tau
 
 
 # ---------------------------------------------------------------------------
@@ -121,8 +122,10 @@ def clamp_torque_ndof(tau: np.ndarray, limits: np.ndarray) -> np.ndarray:
     n = tau.shape[0]
     assert limits.shape == (n,), f"limits shape {limits.shape} vs tau {tau.shape}"
     assert np.all(limits > 0), "Torque limits must be positive"
-    result = np.clip(tau, -limits, limits)
-    return result  # type: ignore[no-any-return]
+    result: npt.NDArray[np.float64] = np.asarray(
+        np.clip(tau, -limits, limits), dtype=np.float64
+    )
+    return result
 
 
 # ---------------------------------------------------------------------------

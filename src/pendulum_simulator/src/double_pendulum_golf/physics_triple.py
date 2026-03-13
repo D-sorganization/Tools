@@ -19,6 +19,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 import numpy as np
+import numpy.typing as npt
 
 from . import native_backend as _native_backend
 from .constants import GRAVITY_MSS
@@ -73,7 +74,7 @@ class TriplePendulumParams:
 
 
 # Type alias: state vector [theta1, phi1, phi2, dtheta1, dphi1, dphi2]
-State = np.ndarray  # shape (6,)
+State = npt.NDArray[np.float64]  # shape (6,)
 
 # Torque function signature: (t) -> (tau1, tau2, tau3)
 TorqueFunc = Callable[[float], tuple[float, float, float]]
