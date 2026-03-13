@@ -14,6 +14,8 @@
 //! - All primitive dimensions must be positive.
 
 pub mod geometry;
+#[cfg(feature = "python")]
+pub mod py_bindings;
 pub mod quaternion;
 pub mod rotation;
 pub mod transform;
