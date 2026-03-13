@@ -144,10 +144,7 @@ impl Pose6DOF {
         let r2 = other.rotation_matrix();
         let r = r1 * r2;
         let p = r1 * other.position + self.position;
-        Pose6DOF::from_rotation_matrix(
-            [p[0], p[1], p[2]],
-            &r,
-        )
+        Pose6DOF::from_rotation_matrix([p[0], p[1], p[2]], &r)
     }
 
     /// Transform a point by this pose.
@@ -304,10 +301,7 @@ impl Transform6DOF {
 
     /// Interpolate between two transforms (SLERP + linear).
     pub fn interpolate(t1: &Transform6DOF, t2: &Transform6DOF, alpha: f64) -> Transform6DOF {
-        debug_assert!(
-            (0.0..=1.0).contains(&alpha),
-            "alpha must be in [0, 1]"
-        );
+        debug_assert!((0.0..=1.0).contains(&alpha), "alpha must be in [0, 1]");
 
         let translation = (1.0 - alpha) * t1.translation + alpha * t2.translation;
 
@@ -394,10 +388,7 @@ mod tests {
 
     #[test]
     fn test_transform_compose_inverse_is_identity() {
-        let t = Transform6DOF::new(
-            euler_to_rotation_matrix(&[0.3, 0.5, -0.2]),
-            [1.0, 2.0, 3.0],
-        );
+        let t = Transform6DOF::new(euler_to_rotation_matrix(&[0.3, 0.5, -0.2]), [1.0, 2.0, 3.0]);
         let t_inv = t.inverse();
         let result = t.compose(&t_inv);
         let pt = result.transform_point(&[5.0, 6.0, 7.0]);

@@ -37,15 +37,9 @@ pub fn rotation_matrix_to_euler(r: &Matrix3<f64>) -> [f64; 3] {
         // Gimbal lock
         let yaw = 0.0;
         let (pitch, roll) = if r[(2, 0)] < 0.0 {
-            (
-                std::f64::consts::FRAC_PI_2,
-                r[(0, 1)].atan2(r[(0, 2)]),
-            )
+            (std::f64::consts::FRAC_PI_2, r[(0, 1)].atan2(r[(0, 2)]))
         } else {
-            (
-                -std::f64::consts::FRAC_PI_2,
-                (-r[(0, 1)]).atan2(-r[(0, 2)]),
-            )
+            (-std::f64::consts::FRAC_PI_2, (-r[(0, 1)]).atan2(-r[(0, 2)]))
         };
         [roll, pitch, yaw]
     } else {
@@ -165,11 +159,7 @@ pub fn axis_angle_to_rotation_matrix(axis: &[f64; 3], angle: f64) -> Matrix3<f64
     let a = Vector3::new(axis[0], axis[1], axis[2]);
     let a = a / a.norm(); // normalize
 
-    let k = Matrix3::new(
-        0.0, -a[2], a[1],
-        a[2], 0.0, -a[0],
-        -a[1], a[0], 0.0,
-    );
+    let k = Matrix3::new(0.0, -a[2], a[1], a[2], 0.0, -a[0], -a[1], a[0], 0.0);
 
     Matrix3::identity() + angle.sin() * k + (1.0 - angle.cos()) * (k * k)
 }

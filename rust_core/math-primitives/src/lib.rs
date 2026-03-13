@@ -16,7 +16,7 @@ pub mod rotation;
 pub mod transform;
 
 pub use quaternion::{
-    Quaternion, quaternion_inverse, quaternion_multiply, quaternion_normalize, slerp,
+    quaternion_inverse, quaternion_multiply, quaternion_normalize, slerp, Quaternion,
 };
 pub use rotation::{
     axis_angle_to_rotation_matrix, euler_to_quaternion, euler_to_rotation_matrix,
