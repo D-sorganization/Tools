@@ -19,6 +19,12 @@ def _mass_point_positions(
     q: np.ndarray, p: GolferParams
 ) -> list[tuple[float, Callable]]:
     """Return list of (mass, position_function) for all point masses."""
+    if not isinstance(q, np.ndarray):
+        raise TypeError("q must be a numpy ndarray")
+    if q.ndim != 1 or q.shape[0] < N_DOF:
+        raise ValueError(f"q must be a 1D array of at least {N_DOF} elements")
+    if not isinstance(p, GolferParams):
+        raise TypeError("p must be a GolferParams instance")
 
     def hub_pos(qq: np.ndarray) -> tuple[float, float]:
         from .golfer_kinematics import _hub_position
@@ -64,6 +70,13 @@ def _mass_point_positions(
 
 def potential_energy_from_q(q: np.ndarray, p: GolferParams) -> float:
     """Compute total gravitational potential energy from coordinates."""
+    if not isinstance(q, np.ndarray):
+        raise TypeError("q must be a numpy ndarray")
+    if q.ndim != 1 or q.shape[0] < N_DOF:
+        raise ValueError(f"q must be a 1D array of at least {N_DOF} elements")
+    if not isinstance(p, GolferParams):
+        raise TypeError("p must be a GolferParams instance")
+
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
 
@@ -91,6 +104,13 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     dict with keys: 'hub', 're', 'rh', 'le', 'lh', 'club_com', 'club_tip'
     Each value is a 2×8 matrix: J[point][row, col] = d(pos[row])/dq[col]
     """
+    if not isinstance(q, np.ndarray):
+        raise TypeError("q must be a numpy ndarray")
+    if q.ndim != 1 or q.shape[0] < N_DOF:
+        raise ValueError(f"q must be a 1D array of at least {N_DOF} elements")
+    if not isinstance(p, GolferParams):
+        raise TypeError("p must be a GolferParams instance")
+
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
 
@@ -353,6 +373,13 @@ def analytical_mass_matrix(q: np.ndarray, p: GolferParams) -> np.ndarray:
     if native_mass_matrix is not None:
         return native_mass_matrix
 
+    if not isinstance(q, np.ndarray):
+        raise TypeError("q must be a numpy ndarray")
+    if q.ndim != 1 or q.shape[0] < N_DOF:
+        raise ValueError(f"q must be a 1D array of at least {N_DOF} elements")
+    if not isinstance(p, GolferParams):
+        raise TypeError("p must be a GolferParams instance")
+
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
 
@@ -397,6 +424,15 @@ def analytical_coriolis(q: np.ndarray, qdot: np.ndarray, p: GolferParams) -> np.
     -------
     C_qdot : np.ndarray, shape (8,)
     """
+    if not isinstance(q, np.ndarray) or not isinstance(qdot, np.ndarray):
+        raise TypeError("q and qdot must be numpy ndarrays")
+    if q.ndim != 1 or q.shape[0] < N_DOF:
+        raise ValueError(f"q must be a 1D array of at least {N_DOF} elements")
+    if qdot.ndim != 1 or qdot.shape[0] < N_DOF:
+        raise ValueError(f"qdot must be a 1D array of at least {N_DOF} elements")
+    if not isinstance(p, GolferParams):
+        raise TypeError("p must be a GolferParams instance")
+
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
     if qdot.shape[0] > N_DOF:
@@ -438,6 +474,13 @@ def analytical_gravity_vector(q: np.ndarray, p: GolferParams) -> np.ndarray:
     if native_gravity is not None:
         return native_gravity
 
+    if not isinstance(q, np.ndarray):
+        raise TypeError("q must be a numpy ndarray")
+    if q.ndim != 1 or q.shape[0] < N_DOF:
+        raise ValueError(f"q must be a 1D array of at least {N_DOF} elements")
+    if not isinstance(p, GolferParams):
+        raise TypeError("p must be a GolferParams instance")
+
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
 
@@ -466,6 +509,15 @@ def analytical_gravity_vector(q: np.ndarray, p: GolferParams) -> np.ndarray:
 def kinetic_energy(q: np.ndarray, qdot: np.ndarray, p: GolferParams) -> float:
     """Compute T = 0.5 * qdot^T M qdot."""
     from .physics_base import kinetic_energy_from_M
+
+    if not isinstance(q, np.ndarray) or not isinstance(qdot, np.ndarray):
+        raise TypeError("q and qdot must be numpy ndarrays")
+    if q.ndim != 1 or q.shape[0] < N_DOF:
+        raise ValueError(f"q must be a 1D array of at least {N_DOF} elements")
+    if qdot.ndim != 1 or qdot.shape[0] < N_DOF:
+        raise ValueError(f"qdot must be a 1D array of at least {N_DOF} elements")
+    if not isinstance(p, GolferParams):
+        raise TypeError("p must be a GolferParams instance")
 
     if q.shape[0] > N_DOF:
         q = q[:N_DOF]
