@@ -161,10 +161,12 @@ class BasePendulumWidget(QWidget):
         self.update()
 
     def set_show_mob_ellipsoids(self, show: bool) -> None:
+        """Toggle display of manipulability ellipsoids."""
         self._show_mob_ellipsoids = bool(show)
         self.update()
 
     def set_show_force_ellipsoids(self, show: bool) -> None:
+        """Toggle display of force ellipsoids."""
         self._show_force_ellipsoids = bool(show)
         self.update()
 
@@ -181,6 +183,7 @@ class BasePendulumWidget(QWidget):
         self.update()
 
     def set_show_com(self, show: bool) -> None:
+        """Toggle display of centre-of-mass markers."""
         self._show_com = bool(show)
         self.update()
 
@@ -226,6 +229,7 @@ class BasePendulumWidget(QWidget):
     # ------------------------------------------------------------------
 
     def wheelEvent(self, event: object) -> None:
+        """Handle mouse wheel for zoom, centered on cursor position."""
         from PyQt6.QtGui import QWheelEvent
 
         if not isinstance(event, QWheelEvent):
@@ -242,6 +246,7 @@ class BasePendulumWidget(QWidget):
         self.update()
 
     def mousePressEvent(self, event: object) -> None:
+        """Begin pan (left-click) or orbit (right-click) drag interaction."""
         if not isinstance(event, QMouseEvent):
             return
         if event.button() == Qt.MouseButton.LeftButton:
@@ -257,6 +262,7 @@ class BasePendulumWidget(QWidget):
             self.setCursor(Qt.CursorShape.OpenHandCursor)
 
     def mouseMoveEvent(self, event: object) -> None:
+        """Continue pan or orbit drag, updating view transform."""
         if not isinstance(event, QMouseEvent):
             return
         if self._drag_start is not None:
@@ -275,6 +281,7 @@ class BasePendulumWidget(QWidget):
             self.update()
 
     def mouseReleaseEvent(self, event: object) -> None:
+        """End drag interaction and restore the default cursor."""
         if not isinstance(event, QMouseEvent):
             return
         if event.button() == Qt.MouseButton.LeftButton:
