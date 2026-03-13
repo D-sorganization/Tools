@@ -21,6 +21,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from . import native_backend as _native_backend
+from .constants import GRAVITY_MSS
 
 # ---------------------------------------------------------------------------
 # Data structures
@@ -44,7 +45,7 @@ class TriplePendulumParams:
     L1: float  # length of segment 1 (m)
     L2: float  # length of segment 2 (m)
     L3: float  # length of segment 3 (m)
-    g: float = 9.81  # gravitational acceleration (m/s^2)
+    g: float = GRAVITY_MSS  # gravitational acceleration (m/s^2)
     # --- Dissipative parameters (default 0 = no losses) ---
     b1: float = 0.0  # viscous damping at joint 1 (N·m·s/rad)
     b2: float = 0.0  # viscous damping at joint 2 (N·m·s/rad)
