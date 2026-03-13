@@ -424,7 +424,7 @@ def apply_styles(root: tk.Tk) -> None:
     style = ttk.Style(root)
     try:
         style.theme_use("clam")
-    except Exception as exc:
+    except tk.TclError as exc:
         logging.getLogger(__name__).debug(
             f"Could not apply clam theme: {exc}"
         )  # AUTO-FIXED  # Fall back to default

@@ -228,7 +228,7 @@ class MainWindow(tk.Tk):
             self._config_path = path
             self._set_status(f"Config loaded: {path.name}")
             self._push_config_to_tabs()
-        except Exception as exc:
+        except (OSError, ValueError) as exc:
             messagebox.showerror("Load Error", f"Could not load config:\n{exc}")
 
     def _push_config_to_tabs(self) -> None:
@@ -284,7 +284,7 @@ class MainWindow(tk.Tk):
                 yaml.dump(cfg, fh, default_flow_style=False, allow_unicode=True)
             self._config_path = path
             self._set_status(f"Config saved: {path.name}")
-        except Exception as exc:
+        except OSError as exc:
             messagebox.showerror("Save Error", f"Could not save config:\n{exc}")
 
     def _on_load_scenario(self, scenario_name: str) -> None:
@@ -316,7 +316,7 @@ class MainWindow(tk.Tk):
 
             cfg = self._collect_config_from_tabs()
             validate_master_config(cfg)
-        except Exception as exc:
+        except (ValueError, TypeError) as exc:
             errors.append(f"Schema validation: {exc}")
 
         if errors:
@@ -462,7 +462,7 @@ class MainWindow(tk.Tk):
                 f"Flowsheet exported to:\n{path}\n\n"
                 "Open with DWSIM → File → Open Simulation.",
             )
-        except Exception as exc:
+        except (RuntimeError, OSError, ValueError) as exc:
             messagebox.showerror("Export Error", f"Could not export:\n{exc}")
 
     def _on_about(self) -> None:
