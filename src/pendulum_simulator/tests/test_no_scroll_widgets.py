@@ -2,10 +2,17 @@
 
 from __future__ import annotations
 
+import os
+import sys
+
 import pytest
 
 
 def _has_pyqt6() -> bool:
+    # On headless Linux, QWidget() causes SIGABRT even if PyQt6 is importable
+    if sys.platform not in ("win32", "darwin"):
+        if not (os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")):
+            return False
     try:
         from PyQt6.QtWidgets import QWidget  # noqa: F401
 
@@ -14,7 +21,7 @@ def _has_pyqt6() -> bool:
         return False
 
 
-@pytest.mark.skipif(not _has_pyqt6(), reason="PyQt6 not available")
+@pytest.mark.skipif(not _has_pyqt6(), reason="PyQt6 not available or no display")
 class TestNoScrollWidgets:
     """Verify mousewheel events are ignored on value widgets."""
 
