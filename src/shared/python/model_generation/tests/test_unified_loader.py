@@ -479,3 +479,117 @@ class TestDisplayDefaults:
         assert prefs.show_collisions is True
         assert prefs.show_inertias is True
         assert prefs.show_frames is False
+
+
+class TestURDFDeterministicFormatting:
+    """Verify URDF writer outputs deterministic numeric formatting (#1065)."""
+
+    def test_urdf_deterministic_numeric_formatting(self) -> None:
+        """Same model must produce bit-identical URDF on two consecutive writes."""
+        from model_generation.builders.urdf_writer import URDFWriter
+        from model_generation.core.types import (
+            Geometry,
+            GeometryType,
+            Inertia,
+            Joint,
+            JointLimits,
+            JointType,
+            Link,
+            Origin,
+        )
+
+        link_a = Link(
+            name="base",
+            inertia=Inertia(
+                ixx=0.00123456789,
+                iyy=0.009876,
+                izz=0.001010101,
+                mass=2.5,
+                center_of_mass=(0.0001, -0.002, 0.03),
+            ),
+            visual_geometry=Geometry(
+                geometry_type=GeometryType.BOX,
+                dimensions=(0.1, 0.2, 0.3),
+            ),
+            visual_origin=Origin(xyz=(0.0, 0.0, 0.0), rpy=(0.0, 0.0, 0.0)),
+            collision_origin=Origin(),
+        )
+        link_b = Link(
+            name="child",
+            inertia=Inertia(ixx=1e-6, iyy=1e-6, izz=1e-6, mass=0.001),
+            visual_origin=Origin(),
+            collision_origin=Origin(),
+        )
+        joint = Joint(
+            name="j1",
+            joint_type=JointType.REVOLUTE,
+            parent="base",
+            child="child",
+            origin=Origin(xyz=(0.0, 0.0, 0.15), rpy=(0.0, 0.0, 0.0)),
+            axis=(0, 0, 1),
+            limits=JointLimits(lower=-3.14, upper=3.14, effort=10.0, velocity=2.0),
+        )
+
+        writer = URDFWriter()
+        output_1 = writer.write("test_robot", [link_a, link_b], [joint])
+        output_2 = writer.write("test_robot", [link_a, link_b], [joint])
+        assert output_1 == output_2, "URDF output is not deterministic across writes"
+
+    def test_urdf_uses_bounded_precision(self) -> None:
+        """Numeric values must not exceed 6 significant figures."""
+        import re
+
+        from model_generation.builders.urdf_writer import URDFWriter
+        from model_generation.core.types import (
+            Inertia,
+            Joint,
+            JointType,
+            Link,
+            Origin,
+        )
+
+        link = Link(
+            name="x",
+            inertia=Inertia(
+                ixx=0.123456789012345,
+                iyy=0.987654321098765,
+                izz=0.111111111111111,
+                mass=1.999999999,
+                center_of_mass=(0.123456789, 0.0, 0.0),
+            ),
+            visual_origin=Origin(),
+            collision_origin=Origin(),
+        )
+        link_b = Link(
+            name="y",
+            inertia=Inertia(ixx=1e-6, iyy=1e-6, izz=1e-6, mass=0.1),
+            visual_origin=Origin(),
+            collision_origin=Origin(),
+        )
+        joint = Joint(
+            name="jj",
+            joint_type=JointType.FIXED,
+            parent="x",
+            child="y",
+            origin=Origin(),
+        )
+
+        writer = URDFWriter()
+        xml = writer.write("precision_test", [link, link_b], [joint])
+
+        # Extract all numeric values from attributes
+        numbers = re.findall(r'="([^"]*)"', xml)
+        for value_str in numbers:
+            for part in value_str.split():
+                try:
+                    float(part)
+                    # Verify no more than 6 significant digits in the decimal
+                    # representation (:.6g guarantees this)
+                    stripped = part.lstrip("-").lstrip("0").replace(".", "")
+                    stripped = stripped.lstrip("0")
+                    # :.6g can produce up to 6 sig figs
+                    assert (
+                        len(stripped) <= 6
+                    ), f"Value '{part}' has more than 6 significant digits"
+                except ValueError:
+                    pass  # non-numeric attribute value
