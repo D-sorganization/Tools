@@ -24,7 +24,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::types::Vector3;
+use math_primitives::types::Vector3;
 
 // ── Physical Constants ───────────────────────────────────────────────────────
 

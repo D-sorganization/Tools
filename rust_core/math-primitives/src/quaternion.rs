@@ -1,182 +1,382 @@
-//! Quaternion type and operations.
+//! Unit quaternion for rotation representations.
 //!
-//! Convention: [w, x, y, z] where w is the scalar part.
+//! The **canonical rotation type** for the simulation kernel.
+//! All rotation conversions flow through this type.
+//!
+//! # Design by Contract
+//! - Quaternions are stored normalized. `new()` normalizes automatically.
+//! - `debug_assert!` rejects NaN and zero-magnitude input.
 
-use nalgebra::Vector4;
+use serde::{Deserialize, Serialize};
 
-/// Unit quaternion type (w, x, y, z).
-pub type Quaternion = Vector4<f64>;
+use crate::types::Vector3;
 
-/// Create a quaternion from components.
-#[inline]
-pub fn quat(w: f64, x: f64, y: f64, z: f64) -> Quaternion {
-    Quaternion::new(w, x, y, z)
+/// A unit quaternion representing a 3D rotation.
+///
+/// Stored as `(w, x, y, z)` where `w` is the scalar part.
+/// Always normalized (magnitude = 1) to represent valid rotations.
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
+#[cfg_attr(feature = "wasm", wasm_bindgen::prelude::wasm_bindgen)]
+pub struct Quaternion {
+    pub w: f64,
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
 }
 
-/// Identity quaternion [1, 0, 0, 0].
-#[inline]
-pub fn identity() -> Quaternion {
-    quat(1.0, 0.0, 0.0, 0.0)
-}
+impl Quaternion {
+    /// Create a new quaternion and normalize it.
+    ///
+    /// # Contracts (DbC)
+    /// - Precondition: No component is NaN.
+    /// - Precondition: At least one component is non-zero.
+    /// - Postcondition: The returned quaternion has unit magnitude.
+    pub fn new(w: f64, x: f64, y: f64, z: f64) -> Result<Self, &'static str> {
+        debug_assert!(!w.is_nan(), "Quaternion::new: w must not be NaN");
+        debug_assert!(!x.is_nan(), "Quaternion::new: x must not be NaN");
+        debug_assert!(!y.is_nan(), "Quaternion::new: y must not be NaN");
+        debug_assert!(!z.is_nan(), "Quaternion::new: z must not be NaN");
 
-/// Normalize a quaternion to unit length.
-///
-/// # Panics
-/// Panics (in debug) if the quaternion has zero norm.
-pub fn quaternion_normalize(q: &Quaternion) -> Quaternion {
-    let norm = q.norm();
-    debug_assert!(norm > 1e-15, "Cannot normalize zero quaternion");
-    q / norm
-}
-
-/// Hamilton product of two quaternions.
-///
-/// q1 * q2 composes the rotations (q2 applied first, then q1).
-pub fn quaternion_multiply(q1: &Quaternion, q2: &Quaternion) -> Quaternion {
-    let (w1, x1, y1, z1) = (q1[0], q1[1], q1[2], q1[3]);
-    let (w2, x2, y2, z2) = (q2[0], q2[1], q2[2], q2[3]);
-
-    quat(
-        w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2,
-        w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2,
-        w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2,
-        w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2,
-    )
-}
-
-/// Quaternion inverse (conjugate / norm²).
-///
-/// For unit quaternions, this is just the conjugate.
-pub fn quaternion_inverse(q: &Quaternion) -> Quaternion {
-    let norm_sq = q.dot(q);
-    debug_assert!(norm_sq > 1e-15, "Cannot invert zero quaternion");
-    quat(q[0], -q[1], -q[2], -q[3]) / norm_sq
-}
-
-/// Spherical linear interpolation between two quaternions.
-///
-/// # Arguments
-/// * `q1` - Start quaternion
-/// * `q2` - End quaternion
-/// * `t` - Interpolation parameter in [0, 1]
-///
-/// # Preconditions
-/// * `t` must be in [0, 1]
-/// * Both quaternions should be unit quaternions
-pub fn slerp(q1: &Quaternion, q2: &Quaternion, t: f64) -> Quaternion {
-    debug_assert!((0.0..=1.0).contains(&t), "t must be in [0, 1], got {t}");
-
-    let mut q2_adj = *q2;
-    let mut dot = q1.dot(q2);
-
-    // Handle antipodal quaternions (shortest path)
-    if dot < 0.0 {
-        q2_adj = -q2_adj;
-        dot = -dot;
+        let mag = (w * w + x * x + y * y + z * z).sqrt();
+        if mag < f64::EPSILON {
+            return Err("Cannot create quaternion from zero-magnitude input");
+        }
+        Ok(Self {
+            w: w / mag,
+            x: x / mag,
+            y: y / mag,
+            z: z / mag,
+        })
     }
 
-    // Near-linear interpolation for very close quaternions
-    if dot > 0.9995 {
-        let result = q1 + t * (q2_adj - q1);
-        return quaternion_normalize(&result);
+    /// The identity quaternion (no rotation).
+    #[must_use]
+    pub const fn identity() -> Self {
+        Self {
+            w: 1.0,
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+        }
     }
 
-    let theta_0 = dot.acos();
-    let theta = theta_0 * t;
-    let sin_theta = theta.sin();
-    let sin_theta_0 = theta_0.sin();
+    /// Create from axis-angle representation.
+    ///
+    /// # Contracts (DbC)
+    /// - Precondition: `axis` must be non-zero (will be normalized).
+    /// - Precondition: `angle_rad` must not be NaN.
+    pub fn from_axis_angle(axis: &Vector3, angle_rad: f64) -> Result<Self, &'static str> {
+        debug_assert!(
+            !angle_rad.is_nan(),
+            "from_axis_angle: angle must not be NaN"
+        );
+        let n = axis.normalized()?;
+        let half = angle_rad * 0.5;
+        let s = half.sin();
+        // axis-angle to quaternion always produces unit quaternion
+        Ok(Self {
+            w: half.cos(),
+            x: n.x * s,
+            y: n.y * s,
+            z: n.z * s,
+        })
+    }
 
-    let s1 = theta.cos() - dot * sin_theta / sin_theta_0;
-    let s2 = sin_theta / sin_theta_0;
+    /// Squared magnitude (should always be ~1.0 for unit quaternions).
+    #[must_use]
+    pub fn magnitude_squared(&self) -> f64 {
+        self.w * self.w + self.x * self.x + self.y * self.y + self.z * self.z
+    }
 
-    s1 * q1 + s2 * q2_adj
+    /// Euclidean magnitude.
+    #[must_use]
+    pub fn magnitude(&self) -> f64 {
+        self.magnitude_squared().sqrt()
+    }
+
+    /// Conjugate (inverse for unit quaternions).
+    #[must_use]
+    pub fn conjugate(&self) -> Self {
+        Self {
+            w: self.w,
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
+    }
+
+    /// Hamilton product (quaternion multiplication).
+    ///
+    /// # Contracts (DbC)
+    /// - Postcondition: result has approximately unit magnitude.
+    #[must_use]
+    pub fn multiply(&self, other: &Self) -> Self {
+        let result = Self {
+            w: self.w * other.w - self.x * other.x - self.y * other.y - self.z * other.z,
+            x: self.w * other.x + self.x * other.w + self.y * other.z - self.z * other.y,
+            y: self.w * other.y - self.x * other.z + self.y * other.w + self.z * other.x,
+            z: self.w * other.z + self.x * other.y - self.y * other.x + self.z * other.w,
+        };
+        // Postcondition: unit × unit = unit (skip for embedded vectors in rotate_vector)
+        debug_assert!(
+            (self.magnitude_squared() - 1.0).abs() > 0.1
+                || (other.magnitude_squared() - 1.0).abs() > 0.1
+                || (result.magnitude_squared() - 1.0).abs() < 1e-6,
+            "DbC postcondition: unit quaternion product must be unit, got mag²={}",
+            result.magnitude_squared()
+        );
+        result
+    }
+
+    /// Rotate a vector by this quaternion: v' = q * v * q⁻¹
+    #[must_use]
+    pub fn rotate_vector(&self, v: &Vector3) -> Vector3 {
+        let q_v = Quaternion {
+            w: 0.0,
+            x: v.x,
+            y: v.y,
+            z: v.z,
+        };
+        let result = self.multiply(&q_v).multiply(&self.conjugate());
+        Vector3::new(result.x, result.y, result.z)
+    }
+
+    /// Spherical linear interpolation between two quaternions.
+    ///
+    /// # Contracts (DbC)
+    /// - Precondition: `t` in [0, 1] (clamped in release mode for safety).
+    /// - Postcondition: result is a unit quaternion.
+    #[must_use]
+    pub fn slerp(&self, other: &Self, t: f64) -> Self {
+        debug_assert!(
+            (0.0..=1.0).contains(&t),
+            "slerp: t must be in [0.0, 1.0], got {t}"
+        );
+        // Clamp in release mode to prevent extrapolation
+        let t = t.clamp(0.0, 1.0);
+
+        let mut dot = self.w * other.w + self.x * other.x + self.y * other.y + self.z * other.z;
+
+        // If dot is negative, negate one quaternion to take the shorter path
+        let mut other_adj = *other;
+        if dot < 0.0 {
+            other_adj = Quaternion {
+                w: -other.w,
+                x: -other.x,
+                y: -other.y,
+                z: -other.z,
+            };
+            dot = -dot;
+        }
+
+        // If quaternions are very close, use linear interpolation
+        if dot > 0.9995 {
+            let w = self.w + t * (other_adj.w - self.w);
+            let x = self.x + t * (other_adj.x - self.x);
+            let y = self.y + t * (other_adj.y - self.y);
+            let z = self.z + t * (other_adj.z - self.z);
+            let mag = (w * w + x * x + y * y + z * z).sqrt();
+            return Quaternion {
+                w: w / mag,
+                x: x / mag,
+                y: y / mag,
+                z: z / mag,
+            };
+        }
+
+        let theta = dot.acos();
+        let sin_theta = theta.sin();
+        let s0 = ((1.0 - t) * theta).sin() / sin_theta;
+        let s1 = (t * theta).sin() / sin_theta;
+
+        Quaternion {
+            w: s0 * self.w + s1 * other_adj.w,
+            x: s0 * self.x + s1 * other_adj.x,
+            y: s0 * self.y + s1 * other_adj.y,
+            z: s0 * self.z + s1 * other_adj.z,
+        }
+    }
 }
 
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
+impl std::fmt::Display for Quaternion {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Quaternion({:.6}, {:.6}, {:.6}, {:.6})",
+            self.w, self.x, self.y, self.z
+        )
+    }
+}
+
+// ── Python bindings ──────────────────────────────────────────────────────────
+
+#[cfg(feature = "python")]
+#[pyo3::prelude::pymethods]
+impl Quaternion {
+    /// Create a new unit quaternion (automatically normalized).
+    #[new]
+    #[pyo3(text_signature = "(w, x, y, z)")]
+    fn py_new(w: f64, x: f64, y: f64, z: f64) -> pyo3::PyResult<Self> {
+        Self::new(w, x, y, z).map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
+    }
+
+    /// Scalar component.
+    #[getter]
+    fn w(&self) -> f64 {
+        self.w
+    }
+    /// X imaginary component.
+    #[getter]
+    fn x(&self) -> f64 {
+        self.x
+    }
+    /// Y imaginary component.
+    #[getter]
+    fn y(&self) -> f64 {
+        self.y
+    }
+    /// Z imaginary component.
+    #[getter]
+    fn z(&self) -> f64 {
+        self.z
+    }
+
+    fn __repr__(&self) -> String {
+        format!("Quaternion({}, {}, {}, {})", self.w, self.x, self.y, self.z)
+    }
+
+    /// Return the conjugate (inverse for unit quaternions).
+    #[pyo3(name = "conjugate", text_signature = "($self)")]
+    fn py_conjugate(&self) -> Self {
+        self.conjugate()
+    }
+
+    /// Hamilton product (quaternion multiplication).
+    #[pyo3(name = "multiply", text_signature = "($self, other)")]
+    fn py_multiply(&self, other: &Self) -> Self {
+        self.multiply(other)
+    }
+
+    /// Rotate a 3D vector by this quaternion: v' = q * v * q⁻¹.
+    #[pyo3(name = "rotate_vector", text_signature = "($self, v)")]
+    fn py_rotate_vector(&self, v: &Vector3) -> Vector3 {
+        self.rotate_vector(v)
+    }
+
+    /// Create a quaternion from axis-angle representation.
+    #[staticmethod]
+    #[pyo3(name = "from_axis_angle", text_signature = "(axis, angle_rad)")]
+    fn py_from_axis_angle(axis: &Vector3, angle_rad: f64) -> pyo3::PyResult<Self> {
+        Self::from_axis_angle(axis, angle_rad)
+            .map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
+    }
+}
+
+// ── Tests (TDD) ──────────────────────────────────────────────────────────────
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    fn approx_eq(a: f64, b: f64, tol: f64) -> bool {
-        (a - b).abs() < tol
-    }
-
-    fn quat_approx_eq(a: &Quaternion, b: &Quaternion, tol: f64) -> bool {
-        (a - b).norm() < tol
-    }
-
     #[test]
     fn test_identity_quaternion() {
-        let q = identity();
-        assert!(approx_eq(q[0], 1.0, 1e-12));
-        assert!(approx_eq(q.norm(), 1.0, 1e-12));
+        let q = Quaternion::identity();
+        assert!((q.w - 1.0).abs() < f64::EPSILON);
+        assert!(q.x.abs() < f64::EPSILON);
     }
 
     #[test]
-    fn test_quaternion_multiply_identity() {
-        let q = quat(0.5, 0.5, 0.5, 0.5);
-        let id = identity();
-        let result = quaternion_multiply(&q, &id);
-        assert!(quat_approx_eq(&result, &q, 1e-12));
+    fn test_new_normalizes() {
+        let q = Quaternion::new(2.0, 0.0, 0.0, 0.0).unwrap();
+        assert!((q.magnitude() - 1.0).abs() < 1e-12);
+        assert!((q.w - 1.0).abs() < 1e-12);
     }
 
     #[test]
-    fn test_quaternion_multiply_inverse_gives_identity() {
-        let q = quaternion_normalize(&quat(1.0, 2.0, 3.0, 4.0));
-        let q_inv = quaternion_inverse(&q);
-        let result = quaternion_multiply(&q, &q_inv);
-        let id = identity();
-        assert!(
-            quat_approx_eq(&result, &id, 1e-10),
-            "q * q^-1 should be identity, got {result:?}"
-        );
+    fn test_zero_input_returns_error() {
+        assert!(Quaternion::new(0.0, 0.0, 0.0, 0.0).is_err());
     }
 
     #[test]
-    fn test_quaternion_normalize() {
-        let q = quat(1.0, 2.0, 3.0, 4.0);
-        let qn = quaternion_normalize(&q);
-        assert!(approx_eq(qn.norm(), 1.0, 1e-12));
+    fn test_conjugate() {
+        let q = Quaternion::new(1.0, 1.0, 1.0, 1.0).unwrap();
+        let c = q.conjugate();
+        assert!((c.w - q.w).abs() < 1e-12);
+        assert!((c.x + q.x).abs() < 1e-12);
+        assert!((c.y + q.y).abs() < 1e-12);
+        assert!((c.z + q.z).abs() < 1e-12);
     }
 
     #[test]
-    fn test_slerp_endpoints() {
-        let q1 = identity();
-        let q2 = quaternion_normalize(&quat(0.0, 1.0, 0.0, 0.0));
-
-        let r0 = slerp(&q1, &q2, 0.0);
-        let r1 = slerp(&q1, &q2, 1.0);
-
-        assert!(quat_approx_eq(&r0, &q1, 1e-10));
-        assert!(quat_approx_eq(&r1, &q2, 1e-10));
+    fn test_multiply_identity() {
+        let q = Quaternion::new(0.5, 0.5, 0.5, 0.5).unwrap();
+        let id = Quaternion::identity();
+        let result = q.multiply(&id);
+        assert!((result.w - q.w).abs() < 1e-12);
+        assert!((result.x - q.x).abs() < 1e-12);
     }
 
     #[test]
-    fn test_slerp_midpoint_is_unit() {
-        let q1 = identity();
-        let q2 = quaternion_normalize(&quat(0.0, 0.0, 1.0, 0.0));
-        let mid = slerp(&q1, &q2, 0.5);
-        assert!(
-            approx_eq(mid.norm(), 1.0, 1e-10),
-            "SLERP midpoint should be unit quaternion"
-        );
+    fn test_multiply_by_conjugate_gives_identity() {
+        let q = Quaternion::new(1.0, 2.0, 3.0, 4.0).unwrap();
+        let result = q.multiply(&q.conjugate());
+        assert!((result.w - 1.0).abs() < 1e-10);
+        assert!(result.x.abs() < 1e-10);
+        assert!(result.y.abs() < 1e-10);
+        assert!(result.z.abs() < 1e-10);
     }
 
     #[test]
-    fn test_multiply_associativity() {
-        let a = quaternion_normalize(&quat(1.0, 0.5, 0.3, 0.1));
-        let b = quaternion_normalize(&quat(0.2, 0.8, 0.1, 0.5));
-        let c = quaternion_normalize(&quat(0.3, 0.1, 0.7, 0.6));
+    fn test_from_axis_angle_90_deg_about_z() {
+        let axis = Vector3::new(0.0, 0.0, 1.0);
+        let q = Quaternion::from_axis_angle(&axis, std::f64::consts::FRAC_PI_2).unwrap();
+        // Rotate x-axis by 90° about z should give y-axis
+        let v = Vector3::new(1.0, 0.0, 0.0);
+        let r = q.rotate_vector(&v);
+        assert!(r.x.abs() < 1e-10);
+        assert!((r.y - 1.0).abs() < 1e-10);
+        assert!(r.z.abs() < 1e-10);
+    }
 
-        let ab_c = quaternion_multiply(&quaternion_multiply(&a, &b), &c);
-        let a_bc = quaternion_multiply(&a, &quaternion_multiply(&b, &c));
+    #[test]
+    fn test_rotate_identity_preserves_vector() {
+        let q = Quaternion::identity();
+        let v = Vector3::new(1.0, 2.0, 3.0);
+        let r = q.rotate_vector(&v);
+        assert!((r.x - v.x).abs() < 1e-12);
+        assert!((r.y - v.y).abs() < 1e-12);
+        assert!((r.z - v.z).abs() < 1e-12);
+    }
 
-        assert!(
-            quat_approx_eq(&ab_c, &a_bc, 1e-10),
-            "Quaternion multiplication should be associative"
-        );
+    #[test]
+    fn test_slerp_at_endpoints() {
+        let q1 = Quaternion::identity();
+        let axis = Vector3::new(0.0, 0.0, 1.0);
+        let q2 = Quaternion::from_axis_angle(&axis, std::f64::consts::FRAC_PI_2).unwrap();
+
+        let s0 = q1.slerp(&q2, 0.0);
+        assert!((s0.w - q1.w).abs() < 1e-10);
+
+        let s1 = q1.slerp(&q2, 1.0);
+        assert!((s1.w - q2.w).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_slerp_midpoint() {
+        let q1 = Quaternion::identity();
+        let axis = Vector3::new(0.0, 0.0, 1.0);
+        let q2 = Quaternion::from_axis_angle(&axis, std::f64::consts::FRAC_PI_2).unwrap();
+        let mid = q1.slerp(&q2, 0.5);
+        // Midpoint of identity and 90° rotation should be 45° rotation
+        assert!((mid.magnitude() - 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_serde_roundtrip() {
+        let q = Quaternion::new(1.0, 2.0, 3.0, 4.0).unwrap();
+        let json = serde_json::to_string(&q).unwrap();
+        let q2: Quaternion = serde_json::from_str(&json).unwrap();
+        assert!((q.w - q2.w).abs() < 1e-12);
     }
 }

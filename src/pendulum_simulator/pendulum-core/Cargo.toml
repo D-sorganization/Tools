@@ -37,3 +37,6 @@ parallel = ["rayon"]
 
 [workspace]
 
+
+[dependencies.math-primitives]
+path = "../../../rust_core/math-primitives"

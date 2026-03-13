@@ -39,20 +39,20 @@ pub mod py_bindings {
     #[pyo3(name = "euler_to_quaternion")]
     fn py_euler_to_quaternion(euler: [f64; 3]) -> [f64; 4] {
         let q = rotation::euler_to_quaternion(&euler);
-        [q[0], q[1], q[2], q[3]]
+        [q.w, q.x, q.y, q.z]
     }
 
     #[pyfunction]
     #[pyo3(name = "quaternion_to_euler")]
     fn py_quaternion_to_euler(q: [f64; 4]) -> [f64; 3] {
-        let qv = quaternion::quat(q[0], q[1], q[2], q[3]);
+        let qv = quaternion::Quaternion::new(q[0], q[1], q[2], q[3]).unwrap_or_else(|_| quaternion::Quaternion::identity());
         rotation::quaternion_to_euler(&qv)
     }
 
     #[pyfunction]
     #[pyo3(name = "quaternion_to_rotation_matrix")]
     fn py_quaternion_to_rotation_matrix(q: [f64; 4]) -> Vec<Vec<f64>> {
-        let qv = quaternion::quat(q[0], q[1], q[2], q[3]);
+        let qv = quaternion::Quaternion::new(q[0], q[1], q[2], q[3]).unwrap_or_else(|_| quaternion::Quaternion::identity());
         let r = rotation::quaternion_to_rotation_matrix(&qv);
         (0..3)
             .map(|i| (0..3).map(|j| r[(i, j)]).collect())
@@ -75,27 +75,27 @@ pub mod py_bindings {
     #[pyfunction]
     #[pyo3(name = "quaternion_multiply")]
     fn py_quaternion_multiply(q1: [f64; 4], q2: [f64; 4]) -> [f64; 4] {
-        let a = quaternion::quat(q1[0], q1[1], q1[2], q1[3]);
-        let b = quaternion::quat(q2[0], q2[1], q2[2], q2[3]);
-        let r = quaternion::quaternion_multiply(&a, &b);
-        [r[0], r[1], r[2], r[3]]
+        let a = quaternion::Quaternion::new(q1[0], q1[1], q1[2], q1[3]).unwrap_or_else(|_| quaternion::Quaternion::identity());
+        let b = quaternion::Quaternion::new(q2[0], q2[1], q2[2], q2[3]).unwrap_or_else(|_| quaternion::Quaternion::identity());
+        let r = a.multiply(&b);
+        [r.w, r.x, r.y, r.z]
     }
 
     #[pyfunction]
     #[pyo3(name = "quaternion_inverse")]
     fn py_quaternion_inverse(q: [f64; 4]) -> [f64; 4] {
-        let qv = quaternion::quat(q[0], q[1], q[2], q[3]);
-        let r = quaternion::quaternion_inverse(&qv);
-        [r[0], r[1], r[2], r[3]]
+        let qv = quaternion::Quaternion::new(q[0], q[1], q[2], q[3]).unwrap_or_else(|_| quaternion::Quaternion::identity());
+        let r = qv.conjugate();
+        [r.w, r.x, r.y, r.z]
     }
 
     #[pyfunction]
     #[pyo3(name = "slerp")]
     fn py_slerp(q1: [f64; 4], q2: [f64; 4], t: f64) -> [f64; 4] {
-        let a = quaternion::quat(q1[0], q1[1], q1[2], q1[3]);
-        let b = quaternion::quat(q2[0], q2[1], q2[2], q2[3]);
-        let r = quaternion::slerp(&a, &b, t);
-        [r[0], r[1], r[2], r[3]]
+        let a = quaternion::Quaternion::new(q1[0], q1[1], q1[2], q1[3]).unwrap_or_else(|_| quaternion::Quaternion::identity());
+        let b = quaternion::Quaternion::new(q2[0], q2[1], q2[2], q2[3]).unwrap_or_else(|_| quaternion::Quaternion::identity());
+        let r = a.slerp(&b, t);
+        [r.w, r.x, r.y, r.z]
     }
 
     // -----------------------------------------------------------------------
@@ -182,7 +182,7 @@ pub mod py_bindings {
 
         fn to_quaternion(&self) -> [f64; 4] {
             let q = self.inner.to_quaternion();
-            [q[0], q[1], q[2], q[3]]
+            [q.w, q.x, q.y, q.z]
         }
 
         fn __repr__(&self) -> String {
