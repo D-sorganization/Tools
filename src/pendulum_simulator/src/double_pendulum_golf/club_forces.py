@@ -26,6 +26,7 @@ golfer_constraints.net_joint_forces / counterfactual_golfer for force data.
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 import numpy as np
 
@@ -110,7 +111,7 @@ def net_force_on_club(
     net = np.array(f_right, dtype=float) + np.array(f_left, dtype=float)
     assert net.shape == (2,)
     assert np.all(np.isfinite(net)), f"Net force is not finite: {net}"
-    return net  # type: ignore[return-value]
+    return net  # type: ignore[no-any-return]
 
 
 def _cross_2d(r: np.ndarray, f: np.ndarray) -> float:
@@ -292,7 +293,7 @@ def overall_club_decomposition(
     state: np.ndarray,
     t: float,
     p: GolferParams,
-    torque_func,
+    torque_func: Any,
     alpha: float = 0.0,
 ) -> dict[str, float | np.ndarray]:
     """Club force decomposition using overall (full dynamics) forces.

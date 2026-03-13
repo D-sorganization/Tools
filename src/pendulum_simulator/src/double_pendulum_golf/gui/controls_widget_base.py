@@ -76,9 +76,7 @@ STYLE_BTN_FUNCGEN = (
     "QPushButton:hover{background:#32326a;}"
 )
 
-STYLE_COMBO = (
-    "background:#2a2a38;color:#e0e0f0;border:1px solid #505068;border-radius:3px;padding:4px;"
-)
+STYLE_COMBO = "background:#2a2a38;color:#e0e0f0;border:1px solid #505068;border-radius:3px;padding:4px;"
 
 
 class ControlsWidgetBase(QWidget):
@@ -153,6 +151,19 @@ class ControlsWidgetBase(QWidget):
         existing signal connections (play_toggled, frame_changed, etc.)
         continue to work.  Controls are driven from the ToolStrip.
         """
+        # Run/Reset buttons — may already exist if subclass called
+        # _build_run_reset_buttons().  Create as hidden fallbacks so
+        # SimulationPanel._on_run can always reference btn_run/btn_reset.
+        if not hasattr(self, "btn_run"):
+            from PyQt6.QtWidgets import QPushButton as _QPB
+
+            self.btn_run = _QPB()
+            self.btn_run.hide()
+        if not hasattr(self, "btn_reset"):
+            from PyQt6.QtWidgets import QPushButton as _QPB
+
+            self.btn_reset = _QPB()
+            self.btn_reset.hide()
         self.btn_play = QPushButton()
         self.btn_play.setCheckable(True)
         self.btn_play.toggled.connect(self._on_play_toggled)
@@ -253,7 +264,10 @@ class ControlsWidgetBase(QWidget):
 
         if not hasattr(self, "chk_clamp") or not self.chk_clamp.isChecked():
             return None
-        return [parse_float(inp, f"Max torque {i}") for i, inp in enumerate(self.clamp_inputs)]
+        return [
+            parse_float(inp, f"Max torque {i}")
+            for i, inp in enumerate(self.clamp_inputs)
+        ]
 
     def _parse_joint_limits(self) -> tuple[list[float], list[float], float] | None:
         """Parse joint limit values.
@@ -306,11 +320,7 @@ class ControlsWidgetBase(QWidget):
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(4)
-        self.chk_gravity = QCheckBox("🌍  Gravity enabled")
-        self.chk_gravity.setChecked(True)
-        self.chk_gravity.setStyleSheet(STYLE_CHECK)
-        self.chk_gravity.toggled.connect(self.gravity_changed.emit)
-        layout.addWidget(self.chk_gravity)
+        # Gravity is always on (#1209) — no checkbox needed
 
         self.chk_forces = QCheckBox("↗  Show force vectors")
         self.chk_forces.setChecked(False)
@@ -349,7 +359,9 @@ class ControlsWidgetBase(QWidget):
         inputs = self._get_torque_inputs()
         key = joint.lower()
         valid_keys = {k.lower() for k in inputs}
-        assert key in valid_keys, f"Unknown joint '{joint}', expected one of {valid_keys}"
+        assert (
+            key in valid_keys
+        ), f"Unknown joint '{joint}', expected one of {valid_keys}"
         assert len(coeffs) >= 1, "Coefficients list must not be empty"
 
         coeffs_str = ", ".join(f"{c:.4g}" for c in coeffs)
@@ -376,9 +388,9 @@ class ControlsWidgetBase(QWidget):
 
     def set_slider_value(self, val: int) -> None:
         """Pre: 0 <= val <= slider.maximum()"""
-        assert 0 <= val <= self.slider.maximum(), (
-            f"Slider value {val} out of range [0, {self.slider.maximum()}]"
-        )
+        assert (
+            0 <= val <= self.slider.maximum()
+        ), f"Slider value {val} out of range [0, {self.slider.maximum()}]"
         self.slider.blockSignals(True)
         self.slider.setValue(val)
         self.slider.blockSignals(False)
@@ -387,7 +399,7 @@ class ControlsWidgetBase(QWidget):
         self.btn_play.setChecked(False)
 
     def gravity_on(self) -> bool:
-        return self.chk_gravity.isChecked()
+        return True  # Gravity always on (#1209)
 
     def show_forces(self) -> bool:
         return self.chk_forces.isChecked()

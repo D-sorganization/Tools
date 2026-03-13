@@ -13,7 +13,7 @@ Usage:
 """
 
 import logging
-from typing import Dict, Tuple
+from typing import Any, Dict, Tuple
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -65,7 +65,7 @@ class DoublePendulumParams:
         self.friction2 = friction2
         self.m_clubhead = m_clubhead
 
-    def to_rust(self):
+    def to_rust(self) -> Any:
         """Convert to Rust parameter object (if native available)."""
         if HAS_NATIVE:
             return pendulum_core.PyDoublePendulumParams(
@@ -102,7 +102,9 @@ class DoublePendulum:
         """Compute the 2x2 mass matrix M(q)."""
         if self.use_native:
             try:
-                result = pendulum_core.py_double_mass_matrix(q.tolist(), self.params.to_rust())
+                result = pendulum_core.py_double_mass_matrix(
+                    q.tolist(), self.params.to_rust()
+                )
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning(
@@ -171,7 +173,7 @@ class DoublePendulum:
         """Compute forward kinematics."""
         if self.use_native:
             try:
-                return pendulum_core.py_double_forward_kinematics(
+                return pendulum_core.py_double_forward_kinematics(  # type: ignore[no-any-return]
                     q.tolist(), self.params.to_rust()
                 )
             except (RuntimeError, AttributeError, TypeError) as e:
@@ -241,7 +243,7 @@ class GolferParams:
         self.grip_left = grip_left
         self.g = g
 
-    def to_rust(self):
+    def to_rust(self) -> Any:
         """Convert to Rust parameter object (if native available)."""
         if HAS_NATIVE:
             return pendulum_core.PyGolferParams(
@@ -317,7 +319,9 @@ class Golfer:
         """Compute the 8x8 mass matrix M(q)."""
         if self.use_native:
             try:
-                result = pendulum_core.py_golfer_mass_matrix(q.tolist(), self.params.to_rust())
+                result = pendulum_core.py_golfer_mass_matrix(
+                    q.tolist(), self.params.to_rust()
+                )
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning(
@@ -327,7 +331,9 @@ class Golfer:
                 )
 
         # NumPy fallback would be implemented by porting the Rust analytical code
-        raise NotImplementedError("NumPy fallback for golfer mass matrix not yet implemented")
+        raise NotImplementedError(
+            "NumPy fallback for golfer mass matrix not yet implemented"
+        )
 
     def gravity_vector(self, q: np.ndarray) -> np.ndarray:
         """Compute the gravity vector G(q)."""
@@ -338,9 +344,13 @@ class Golfer:
                 )
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
-                logger.warning("Rust golfer gravity_vector call failed (%s)", type(e).__name__)
+                logger.warning(
+                    "Rust golfer gravity_vector call failed (%s)", type(e).__name__
+                )
 
-        raise NotImplementedError("NumPy fallback for golfer gravity not yet implemented")
+        raise NotImplementedError(
+            "NumPy fallback for golfer gravity not yet implemented"
+        )
 
     def forward_kinematics(self, q: np.ndarray) -> Dict[str, Tuple[float, float]]:
         """Compute forward kinematics."""
@@ -385,7 +395,9 @@ class Golfer:
                     "Rust golfer constraint_jacobian call failed (%s)", type(e).__name__
                 )
 
-        raise NotImplementedError("NumPy fallback for constraint Jacobian not yet implemented")
+        raise NotImplementedError(
+            "NumPy fallback for constraint Jacobian not yet implemented"
+        )
 
 
 def get_native_info() -> Dict[str, object]:

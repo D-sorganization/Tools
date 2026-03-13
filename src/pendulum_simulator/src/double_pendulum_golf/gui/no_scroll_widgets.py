@@ -15,6 +15,8 @@ Design by Contract
 
 from __future__ import annotations
 
+from typing import Any
+
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QComboBox, QDoubleSpinBox, QSlider, QSpinBox, QWidget
 
@@ -48,7 +50,7 @@ class NoScrollSlider(QSlider):
     the standard QSlider — this class is only for value-input sliders.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
 

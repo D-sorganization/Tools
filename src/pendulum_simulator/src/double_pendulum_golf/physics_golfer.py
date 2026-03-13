@@ -3,28 +3,40 @@ Golfer upper-body physics using Lagrangian formulation with a closed kinematic l
 
 Topology (from the sketch)
 --------------------------
-Fixed hub connects via a standoff to two shoulder joints that branch
-into independent arm chains.  Both wrist endpoints attach to different
-points on a shared club segment, closing the kinematic loop.
+The system is anchored at a fixed pivot (origin). A massless standoff
+extends downward to the hub point. The standoff length adjusts where
+the center of rotation sits relative to the body's center of mass.
 
-    Hub ─── RS (right shoulder)
-     │           │
-     │          RE (right elbow)
-     │           │
-     │          RH (right hand / wrist)──┐
-     │                                   Club ── Clubhead
-     │          LH (left hand / wrist)───┘
-     │           │
-     │          LE (left elbow)
-     │           │
-     └── LS (left shoulder)
+From the hub point, two upper-body (scapula) segments extend to the
+shoulder joints via revolute joints. These upper-body segments represent
+the torso and carry significant mass (~2× arm mass each).
 
-Segments (8 total):
-    1. Hub standoff (fixed → hub point)
-    2. Hub → Right Shoulder
+Each shoulder branches into an independent arm chain (upper arm → forearm →
+hand). Both wrist endpoints attach to different points on a shared club
+segment, closing the kinematic loop.
+
+    Origin (fixed pivot)
+      │
+      │  Standoff (massless, adjustable length for COM offset)
+      │
+    Hub ────── R UBody (upper body R) ──── RS (right shoulder)
+      │                                      │
+      │                                     RE (right elbow)
+      │                                      │
+      │                                     RH (right hand)──┐
+      │                                                      Club ── Clubhead
+      │                                     LH (left hand)───┘
+      │                                      │
+      │                                     LE (left elbow)
+      │                                      │
+      └────── L UBody (upper body L) ──── LS (left shoulder)
+
+Segments (up to 10 total):
+    1. Standoff (origin → hub point) — massless, for COM rotation adjustment
+    2. R Upper Body / Scapula (hub → right shoulder) — represents right torso
     3. Right Shoulder → Right Elbow (right upper arm)
     4. Right Elbow → Right Hand (right forearm)
-    5. Hub → Left Shoulder
+    5. L Upper Body / Scapula (hub → left shoulder) — represents left torso
     6. Left Shoulder → Left Elbow (left upper arm)
     7. Left Elbow → Left Hand (left forearm)
     8. Club (shaft + clubhead)
@@ -77,7 +89,7 @@ class GolferParams:
     """
 
     # Segment masses (kg)
-    m_hub: float  # hub standoff mass
+    m_hub: float  # standoff mass — should be ~0 (massless, for COM offset only)
     m_r_upper: float  # right upper arm
     m_r_fore: float  # right forearm
     m_l_upper: float  # left upper arm
@@ -85,7 +97,7 @@ class GolferParams:
     m_club: float  # club shaft + head
 
     # Segment lengths (m)
-    L_hub: float  # hub standoff length
+    L_hub: float  # standoff length (adjusts COM rotation center)
     L_r_upper: float  # right upper arm length
     L_r_fore: float  # right forearm length
     L_l_upper: float  # left upper arm length
@@ -115,15 +127,16 @@ class GolferParams:
     b_le: float = 0.0
     b_lh: float = 0.0
 
-    # Scapula joint parameters (#1104)
-    # Optional scapula links between hub bar and shoulder joints.
-    # When L_rscap/L_lscap = 0, the scapula is absent (backwards compatible).
-    L_rscap: float = 0.0  # right scapula link length
-    L_lscap: float = 0.0  # left scapula link length
-    m_rscap: float = 0.0  # right scapula mass
-    m_lscap: float = 0.0  # left scapula mass
-    b_rscap: float = 0.0  # right scapula damping
-    b_lscap: float = 0.0  # left scapula damping
+    # Upper body / scapula joint parameters (#1104)
+    # These segments connect the hub to the shoulder joints via revolute joints.
+    # They represent the upper torso and should carry significant mass (~2× arm mass).
+    # When L_rscap/L_lscap = 0, the upper body segment is absent (backwards compatible).
+    L_rscap: float = 0.0  # right upper body segment length
+    L_lscap: float = 0.0  # left upper body segment length
+    m_rscap: float = 0.0  # right upper body mass (recommended: ~7 kg)
+    m_lscap: float = 0.0  # left upper body mass (recommended: ~7 kg)
+    b_rscap: float = 0.0  # right upper body damping
+    b_lscap: float = 0.0  # left upper body damping
 
     def __post_init__(self) -> None:
         for name, val in [
@@ -148,12 +161,18 @@ class GolferParams:
 
         assert self.d_rs >= 0, f"d_rs must be non-negative, got {self.d_rs}"
         assert self.d_ls >= 0, f"d_ls must be non-negative, got {self.d_ls}"
-        assert self.grip_right >= 0, f"grip_right must be non-negative, got {self.grip_right}"
-        assert self.grip_left >= 0, f"grip_left must be non-negative, got {self.grip_left}"
+        assert (
+            self.grip_right >= 0
+        ), f"grip_right must be non-negative, got {self.grip_right}"
+        assert (
+            self.grip_left >= 0
+        ), f"grip_left must be non-negative, got {self.grip_left}"
         assert self.grip_right <= self.L_club, "grip_right must be ≤ L_club"
         assert self.grip_left <= self.L_club, "grip_left must be ≤ L_club"
         assert self.g >= 0, f"g must be non-negative, got {self.g}"
-        assert self.m_clubhead >= 0, f"m_clubhead must be non-negative, got {self.m_clubhead}"
+        assert (
+            self.m_clubhead >= 0
+        ), f"m_clubhead must be non-negative, got {self.m_clubhead}"
 
         for name in ["b_hub", "b_rs", "b_re", "b_rh", "b_ls", "b_le", "b_lh"]:
             val = getattr(self, name)

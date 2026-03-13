@@ -35,7 +35,9 @@ from PyQt6.QtWidgets import (
 # Stylesheet constants
 # ---------------------------------------------------------------------------
 
-_STYLE_STRIP = "QWidget#toolstrip {background: #16162e;border-bottom: 1px solid #2a2a50;}"
+_STYLE_STRIP = (
+    "QWidget#toolstrip {background: #16162e;border-bottom: 1px solid #2a2a50;}"
+)
 _BTN_RUN = (
     "QPushButton{"
     "background:#1e5c30;color:#a8f0b8;border:none;border-radius:5px;"
@@ -62,9 +64,9 @@ _BTN_PLAY = (
     "QPushButton:hover{background:#282860;}"
 )
 _BTN_SMALL = (
-    "QPushButton{background:#1e2440;color:#9090c0;border:1px solid #303060;"
-    "border-radius:4px;padding:2px 7px;font-size:9px;}"
-    "QPushButton:hover{background:#252860;color:#b0b0e0;}"
+    "QPushButton{background:#1e2440;color:#b0b0d8;border:1px solid #303060;"
+    "border-radius:4px;padding:3px 10px;font-size:10px;font-weight:bold;}"
+    "QPushButton:hover{background:#252860;color:#d0d0f0;}"
 )
 _CHK_FORCE = (
     "QCheckBox{color:#a0e0b0;font-size:11px;spacing:3px;}"
@@ -96,6 +98,24 @@ _CHK_COM = (
     "border-radius:3px;background:#1a1a2a;}"
     "QCheckBox::indicator:checked{background:#505010;border-color:#a0a030;}"
 )
+_CHK_TORQUE = (
+    "QCheckBox{color:#f08080;font-size:11px;spacing:3px;}"
+    "QCheckBox::indicator{width:14px;height:14px;border:1px solid #604040;"
+    "border-radius:3px;background:#1a1a2a;}"
+    "QCheckBox::indicator:checked{background:#604040;border-color:#c06060;}"
+)
+_CHK_MOF = (
+    "QCheckBox{color:#8080f0;font-size:11px;spacing:3px;}"
+    "QCheckBox::indicator{width:14px;height:14px;border:1px solid #404060;"
+    "border-radius:3px;background:#1a1a2a;}"
+    "QCheckBox::indicator:checked{background:#304080;border-color:#6060c0;}"
+)
+_CHK_SUM = (
+    "QCheckBox{color:#60c060;font-size:11px;spacing:3px;}"
+    "QCheckBox::indicator{width:14px;height:14px;border:1px solid #406040;"
+    "border-radius:3px;background:#1a1a2a;}"
+    "QCheckBox::indicator:checked{background:#305030;border-color:#60a060;}"
+)
 _SLIDER_FORCE = (
     "QSlider::groove:horizontal{height:3px;background:#203028;border-radius:2px;}"
     "QSlider::handle:horizontal{background:#60b070;border:none;"
@@ -115,13 +135,15 @@ _SLIDER_FELL = (
     "QSlider::sub-page:horizontal{background:#805028;border-radius:2px;}"
 )
 _PROGRESS_BAR = (
-    "QSlider::groove:horizontal{height:6px;background:#1a1a30;border-radius:3px;"
-    "border:1px solid #2a2a48;}"
+    "QSlider::groove:horizontal{height:10px;background:#1a1a36;border-radius:5px;"
+    "border:1px solid #3a3a5a;}"
     "QSlider::sub-page:horizontal{background:qlineargradient("
     "x1:0,y1:0,x2:1,y2:0,stop:0 #2a5080,stop:1 #4888c8);"
-    "border-radius:3px;}"
-    "QSlider::handle:horizontal{background:rgba(255,255,255,40);border:none;"
-    "width:2px;height:10px;margin:-2px 0;border-radius:1px;}"
+    "border-radius:5px;}"
+    "QSlider::handle:horizontal{background:#70a8e0;border:2px solid #4080c0;"
+    "width:16px;height:18px;margin:-5px 0;border-radius:8px;}"
+    "QSlider::handle:horizontal:hover{background:#90c0f0;"
+    "border-color:#60a0e0;}"
 )
 _SEP_STYLE = "QFrame{color:#2a2a50;border:none;}"
 _SEP_H_STYLE = "QFrame{color:#2a2a50;border:none;max-height:1px;}"
@@ -237,11 +259,16 @@ class ToolStrip(QWidget):
     azimuth_changed = pyqtSignal(float)  # radians
     tilt_changed = pyqtSignal(float)  # radians
 
-    # Physics toggles (#1142)
-    gravity_toggled = pyqtSignal(bool)
+    # Physics display toggles (#1208)
+    torque_vectors_toggled = pyqtSignal(bool)
+    moment_of_force_toggled = pyqtSignal(bool)
+    sum_moments_toggled = pyqtSignal(bool)
 
     # Model selection (#1149)
     model_changed = pyqtSignal(int)
+
+    # Loop playback toggle
+    loop_toggled = pyqtSignal(bool)
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -283,7 +310,7 @@ class ToolStrip(QWidget):
         # Model selection dropdown (#1149)
 
         self.cmb_model = QComboBox()
-        self.cmb_model.addItems(["⚙ Double", "⚙ Triple", "⚙ Golfer"])
+        self.cmb_model.addItems(["Double Pendulum", "Triple Pendulum", "Upper Body"])
         self.cmb_model.setToolTip("Switch between pendulum models")
         self.cmb_model.setStyleSheet(
             "QComboBox { background: #303050; color: #c0c0d8; border: 1px solid #505070;"
@@ -317,6 +344,18 @@ class ToolStrip(QWidget):
         self.btn_play.toggled.connect(self._on_play_toggled)
         layout.addWidget(self.btn_play)
 
+        # Loop toggle
+        self.chk_loop = QCheckBox("🔁")
+        self.chk_loop.setToolTip("Loop animation")
+        self.chk_loop.setStyleSheet(
+            "QCheckBox{color:#8080b0;font-size:13px;spacing:2px;}"
+            "QCheckBox::indicator{width:14px;height:14px;border:1px solid #404060;"
+            "border-radius:3px;background:#1a1a2a;}"
+            "QCheckBox::indicator:checked{background:#304060;border-color:#5080c0;}"
+        )
+        self.chk_loop.toggled.connect(self.loop_toggled.emit)
+        layout.addWidget(self.chk_loop)
+
         layout.addWidget(_vline())
 
         # Speed
@@ -341,11 +380,17 @@ class ToolStrip(QWidget):
 
         layout.addWidget(_vline())
 
-        # Simulation progress bar (#1132: percentage display)
+        # Playback scrub slider — MUST be visible (#1207)
+        scrub_lbl = QLabel("Playback:")
+        scrub_lbl.setStyleSheet(_LABEL)
+        layout.addWidget(scrub_lbl)
+
         self._frame_slider = QSlider(Qt.Orientation.Horizontal)
         self._frame_slider.setRange(0, 0)
         self._frame_slider.setStyleSheet(_PROGRESS_BAR)
-        self._frame_slider.setToolTip("Simulation progress — drag to scrub")
+        self._frame_slider.setToolTip("Drag to scrub through animation frames")
+        self._frame_slider.setMinimumWidth(200)
+        self._frame_slider.setFixedHeight(20)
         self._frame_slider.valueChanged.connect(self._on_frame_slider_changed)
         layout.addWidget(self._frame_slider, stretch=1)
 
@@ -369,13 +414,13 @@ class ToolStrip(QWidget):
         layout.addWidget(_vline())
 
         # Export buttons (#1141)
-        self.btn_export_csv = QPushButton("📄 CSV")
+        self.btn_export_csv = QPushButton("📄 Export CSV")
         self.btn_export_csv.setStyleSheet(_BTN_SMALL)
         self.btn_export_csv.setToolTip("Export simulation data to CSV")
         self.btn_export_csv.clicked.connect(self.export_data_requested.emit)
         layout.addWidget(self.btn_export_csv)
 
-        self.btn_export_video = QPushButton("🎬 Video")
+        self.btn_export_video = QPushButton("🎬 Export Video")
         self.btn_export_video.setStyleSheet(_BTN_SMALL)
         self.btn_export_video.setToolTip("Export animation as video")
         self.btn_export_video.clicked.connect(self.export_video_requested.emit)
@@ -384,25 +429,41 @@ class ToolStrip(QWidget):
         layout.addWidget(_vline())
 
         # Help / Equations buttons (#1136, #1144)
-        self.btn_eom = QPushButton("📐 EoM")
+        self.btn_eom = QPushButton("📐 Equations of Motion")
         self.btn_eom.setStyleSheet(_BTN_SMALL)
         self.btn_eom.setToolTip("Show Equations of Motion derivation")
         self.btn_eom.clicked.connect(self._show_eom_popup)
         layout.addWidget(self.btn_eom)
 
-        self.btn_mass_matrix = QPushButton("📊 M(q)")
+        self.btn_mass_matrix = QPushButton("📊 Mass Matrix")
         self.btn_mass_matrix.setStyleSheet(_BTN_SMALL)
         self.btn_mass_matrix.setToolTip("Show Mass Matrix explanation")
         self.btn_mass_matrix.clicked.connect(self._show_mass_matrix_popup)
         layout.addWidget(self.btn_mass_matrix)
 
-        self.btn_popout = QPushButton("📈 Pop Out")
+        self.btn_popout = QPushButton("📈 Pop-Out Chart")
         self.btn_popout.setStyleSheet(_BTN_SMALL)
         self.btn_popout.setToolTip(
             "Pop out current simulation data as a\ndetachable chart with regression fitting"
         )
         self.btn_popout.clicked.connect(self.popout_chart_requested.emit)
         layout.addWidget(self.btn_popout)
+
+        layout.addWidget(_vline())
+
+        # Diagnostics button
+        self.btn_diagnostics = QPushButton("🔍 Diagnostics")
+        self.btn_diagnostics.setStyleSheet(
+            "QPushButton{background:#2a1a2a;color:#d0a0d0;border:1px solid #503060;"
+            "border-radius:4px;padding:3px 10px;font-size:10px;font-weight:bold;}"
+            "QPushButton:hover{background:#3a2a3a;color:#e0b0e0;}"
+        )
+        self.btn_diagnostics.setToolTip(
+            "Open diagnostics tracker — view all errors,\n"
+            "warnings, and system events for troubleshooting"
+        )
+        self.btn_diagnostics.clicked.connect(self._show_diagnostics)
+        layout.addWidget(self.btn_diagnostics)
 
     def _show_eom_popup(self) -> None:
         """Open the Equations of Motion popup (#1144)."""
@@ -415,6 +476,12 @@ class ToolStrip(QWidget):
         from .equations_popup import EquationTopic, show_equations_popup
 
         show_equations_popup(self, EquationTopic.MASS_MATRIX)
+
+    def _show_diagnostics(self) -> None:
+        """Open the diagnostics tracker viewer."""
+        from .diagnostics import get_tracker
+
+        get_tracker().show_viewer(self)
 
     def _build_overlay_section(self, layout: QHBoxLayout) -> None:
         """Build stacked overlay controls: three rows of [☑ checkbox] [slider] [value].
@@ -487,7 +554,9 @@ class ToolStrip(QWidget):
         self._lbl_force_ell_scale.setStyleSheet(_VAL_LBL)
 
         overlay_layout.addLayout(
-            _overlay_row(self.chk_force_ell, self._sld_force_ell, self._lbl_force_ell_scale)
+            _overlay_row(
+                self.chk_force_ell, self._sld_force_ell, self._lbl_force_ell_scale
+            )
         )
 
         # Row D: Per-segment visibility sub-checkboxes (#1100, #1101, #1102)
@@ -539,14 +608,35 @@ class ToolStrip(QWidget):
         self.chk_com.toggled.connect(self.com_toggled.emit)
         extra_col.addWidget(self.chk_com)
 
-        self.chk_gravity = QCheckBox("🌍 Gravity")
-        self.chk_gravity.setChecked(True)
-        self.chk_gravity.setStyleSheet(_CHK_COM)  # reuse COM style
-        self.chk_gravity.setToolTip(
-            "Toggle gravity (g=9.81 m/s²).\nDisable to observe pure inertial/torque dynamics."
+        # Torque vectors (#1208)
+        self.chk_torque = QCheckBox("Torque Vectors")
+        self.chk_torque.setStyleSheet(_CHK_TORQUE)
+        self.chk_torque.setToolTip(
+            "Show applied torque as curved arrows at each joint.\n"
+            "Red arrows — magnitude scales with torque value."
         )
-        self.chk_gravity.toggled.connect(self.gravity_toggled.emit)
-        extra_col.addWidget(self.chk_gravity)
+        self.chk_torque.toggled.connect(self.torque_vectors_toggled.emit)
+        extra_col.addWidget(self.chk_torque)
+
+        # Moment of Force vectors (#1208)
+        self.chk_mof = QCheckBox("Moment of Force")
+        self.chk_mof.setStyleSheet(_CHK_MOF)
+        self.chk_mof.setToolTip(
+            "Show moment of force from proximal segment on distal.\n"
+            "Blue arrows — proximal-on-distal convention."
+        )
+        self.chk_mof.toggled.connect(self.moment_of_force_toggled.emit)
+        extra_col.addWidget(self.chk_mof)
+
+        # Sum of Moments vectors (#1208)
+        self.chk_sum_moments = QCheckBox("Sum of Moments")
+        self.chk_sum_moments.setStyleSheet(_CHK_SUM)
+        self.chk_sum_moments.setToolTip(
+            "Show sum of all moments (torque + moment of force)\n"
+            "Green arrows — resultant moment at each joint."
+        )
+        self.chk_sum_moments.toggled.connect(self.sum_moments_toggled.emit)
+        extra_col.addWidget(self.chk_sum_moments)
 
         self.chk_3d = QCheckBox("3D Segments")
         self.chk_3d.setStyleSheet(_CHK_COM)  # reuse COM style
@@ -693,7 +783,9 @@ class ToolStrip(QWidget):
         If all segments are checked, emit None (show all).
         Otherwise emit the set of checked segment names.
         """
-        checked = {name for name, chk in self._segment_checks.items() if chk.isChecked()}
+        checked = {
+            name for name, chk in self._segment_checks.items() if chk.isChecked()
+        }
         if len(checked) == len(self._segment_checks):
             self.segment_visibility_changed.emit(None)  # all visible
         else:

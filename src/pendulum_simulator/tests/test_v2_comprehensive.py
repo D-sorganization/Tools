@@ -7,6 +7,8 @@ Covers issues #1132–#1155 with TDD, DbC, and DRY compliance.
 from __future__ import annotations
 
 import importlib
+import os
+import sys
 
 import numpy as np
 import pytest
@@ -15,8 +17,16 @@ import pytest
 _pyqt6_available = importlib.util.find_spec("PyQt6") is not None
 _skip_no_qt = pytest.mark.skipif(not _pyqt6_available, reason="PyQt6 not available")
 
+# On headless Linux, even importing QApplication succeeds but
+# instantiating QWidget causes SIGABRT — check for display first.
+_has_display = (
+    sys.platform in ("win32", "darwin")
+    or bool(os.environ.get("DISPLAY"))
+    or bool(os.environ.get("WAYLAND_DISPLAY"))
+)
+
 try:
-    if _pyqt6_available:
+    if _pyqt6_available and _has_display:
         from PyQt6.QtWidgets import QApplication  # noqa: F401
 
         _qt_runtime_ok = True
@@ -256,9 +266,9 @@ class TestPhysicsTripleEnergy:
         E0 = total_energy(state0, params)
         E_final = total_energy(result.states[-1], params)
         # Energy should be conserved within integration tolerance
-        assert abs(E_final - E0) / max(abs(E0), 1e-10) < 0.01, (
-            f"Energy drift: E0={E0:.4f}, E_final={E_final:.4f}"
-        )
+        assert (
+            abs(E_final - E0) / max(abs(E0), 1e-10) < 0.01
+        ), f"Energy drift: E0={E0:.4f}, E_final={E_final:.4f}"
 
 
 class TestUnitConversionModule:
@@ -480,4 +490,6 @@ class TestDiagnosticLogging:
 
         source = inspect.getsource(phys_t)
         matches = re.findall(r"^\s*print\s*\(", source, re.MULTILINE)
-        assert len(matches) == 0, f"Found {len(matches)} print() calls in physics_triple.py"
+        assert (
+            len(matches) == 0
+        ), f"Found {len(matches)} print() calls in physics_triple.py"

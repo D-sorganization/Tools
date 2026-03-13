@@ -15,7 +15,9 @@ from .golfer_kinematics import forward_kinematics
 from .physics_golfer import GolferParams, N_DOF, State
 
 
-def _mass_point_positions(q: np.ndarray, p: GolferParams) -> list[tuple[float, Callable]]:
+def _mass_point_positions(
+    q: np.ndarray, p: GolferParams
+) -> list[tuple[float, Callable]]:
     """Return list of (mass, position_function) for all point masses."""
 
     def hub_pos(qq: np.ndarray) -> tuple[float, float]:
@@ -171,10 +173,16 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     J_rh = np.zeros((2, N_DOF))
     # d/dq[0]  (#1103 reversed hub)
     J_rh[0, 0] = (
-        -p.L_hub * cos_hub - p.d_rs * sin_hub + p.L_r_upper * cos_rs + p.L_r_fore * cos_re
+        -p.L_hub * cos_hub
+        - p.d_rs * sin_hub
+        + p.L_r_upper * cos_rs
+        + p.L_r_fore * cos_re
     )
     J_rh[1, 0] = (
-        -p.L_hub * sin_hub + p.d_rs * cos_hub + p.L_r_upper * sin_rs + p.L_r_fore * sin_re
+        -p.L_hub * sin_hub
+        + p.d_rs * cos_hub
+        + p.L_r_upper * sin_rs
+        + p.L_r_fore * sin_re
     )
     # d/dq[1]
     J_rh[0, 1] = p.L_r_upper * cos_rs + p.L_r_fore * cos_re
@@ -218,10 +226,16 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     J_lh = np.zeros((2, N_DOF))
     # d/dq[0]  (#1103)
     J_lh[0, 0] = (
-        -p.L_hub * cos_hub + p.d_ls * sin_hub + p.L_l_upper * cos_ls + p.L_l_fore * cos_le
+        -p.L_hub * cos_hub
+        + p.d_ls * sin_hub
+        + p.L_l_upper * cos_ls
+        + p.L_l_fore * cos_le
     )
     J_lh[1, 0] = (
-        -p.L_hub * sin_hub - p.d_ls * cos_hub + p.L_l_upper * sin_ls + p.L_l_fore * sin_le
+        -p.L_hub * sin_hub
+        - p.d_ls * cos_hub
+        + p.L_l_upper * sin_ls
+        + p.L_l_fore * sin_le
     )
     # d/dq[4]
     J_lh[0, 4] = p.L_l_upper * cos_ls + p.L_l_fore * cos_le
@@ -255,10 +269,16 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     J_club_com = np.zeros((2, N_DOF))
     # d/dq[0], d/dq[1], d/dq[2], d/dq[3] from rh  (#1103 reversed hub)
     J_club_com[0, 0] = (
-        -p.L_hub * cos_hub - p.d_rs * sin_hub + p.L_r_upper * cos_rs + p.L_r_fore * cos_re
+        -p.L_hub * cos_hub
+        - p.d_rs * sin_hub
+        + p.L_r_upper * cos_rs
+        + p.L_r_fore * cos_re
     )
     J_club_com[1, 0] = (
-        -p.L_hub * sin_hub + p.d_rs * cos_hub + p.L_r_upper * sin_rs + p.L_r_fore * sin_re
+        -p.L_hub * sin_hub
+        + p.d_rs * cos_hub
+        + p.L_r_upper * sin_rs
+        + p.L_r_fore * sin_re
     )
     J_club_com[0, 1] = p.L_r_upper * cos_rs + p.L_r_fore * cos_re
     J_club_com[1, 1] = p.L_r_upper * sin_rs + p.L_r_fore * sin_re
@@ -291,10 +311,16 @@ def analytical_fk_jacobians(q: np.ndarray, p: GolferParams) -> dict[str, np.ndar
     J_club_tip = np.zeros((2, N_DOF))
     # d/dq[0], d/dq[1], d/dq[2], d/dq[3] from rh (via club_base)  (#1103)
     J_club_tip[0, 0] = (
-        -p.L_hub * cos_hub - p.d_rs * sin_hub + p.L_r_upper * cos_rs + p.L_r_fore * cos_re
+        -p.L_hub * cos_hub
+        - p.d_rs * sin_hub
+        + p.L_r_upper * cos_rs
+        + p.L_r_fore * cos_re
     )
     J_club_tip[1, 0] = (
-        -p.L_hub * sin_hub + p.d_rs * cos_hub + p.L_r_upper * sin_rs + p.L_r_fore * sin_re
+        -p.L_hub * sin_hub
+        + p.d_rs * cos_hub
+        + p.L_r_upper * sin_rs
+        + p.L_r_fore * sin_re
     )
     J_club_tip[0, 1] = p.L_r_upper * cos_rs + p.L_r_fore * cos_re
     J_club_tip[1, 1] = p.L_r_upper * sin_rs + p.L_r_fore * sin_re
@@ -461,4 +487,6 @@ def total_energy(state: State, p: GolferParams) -> float:
 
     q = state[:N_DOF]
     qdot = state[N_DOF:]
-    return total_energy_from_parts(kinetic_energy(q, qdot, p), potential_energy(state, p))
+    return total_energy_from_parts(
+        kinetic_energy(q, qdot, p), potential_energy(state, p)
+    )

@@ -29,23 +29,35 @@ The simulator provides three models of increasing complexity:
 
 ## Golfer Upper-Body Model
 
+The golfer model uses an 8-DOF closed kinematic loop with the following topology:
+
+- **Standoff** (origin → hub): Massless segment that adjusts where the center
+  of rotation sits relative to the body's center of mass.
+- **Upper Body segments** (hub → shoulders): Connect the hub to each shoulder
+  via revolute joints. Represent the upper torso and carry significant mass
+  (~2× arm mass each, ~7 kg default).
+- **Arms** (shoulder → elbow → hand): Standard arm chains.
+- **Club**: Shared between both hands via grip constraints.
+
 ```
-           Origin (fixed)
+           Origin (fixed pivot)
               |
-              | hub standoff (θ_hub)
+              |  Standoff (massless, adjustable for COM offset, θ_hub)
               |
-           [Hub]──────────────────┐
-           / shoulder bar         |
-         RS                       LS
-          |  (α_rs)                |  (α_ls)
-       R Upper                  L Upper
-          |  (α_re)                |  (α_le)
-       R Forearm                L Forearm
-          |  (α_rh)                |  (α_lh)
-         RH ─ ─ grip_right ─ ─ CLUB ─ ─ grip_left ─ ─ LH
-                               |
-                          [Clubhead]
-                          (θ_club)
+           [Hub]
+           /    \
+     R UBody     L UBody      (upper body segments, ~7 kg each)
+         |           |
+        RS          LS         (shoulder revolute joints)
+         |           |
+      R Upper     L Upper      (α_rs, α_ls — upper arms)
+         |           |
+      R Forearm   L Forearm    (α_re, α_le — forearms)
+         |           |
+        RH ─ ─ grip ─ CLUB ─ grip ─ ─ LH    (α_rh, α_lh — wrists)
+                       |
+                  [Clubhead]
+                  (θ_club)
 ```
 
 Generalized coordinates (8 DOF):

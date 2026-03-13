@@ -326,8 +326,12 @@ class ControlsWidget(ControlsWidgetBase):
         self.chk_limits = QCheckBox("Enable joint limits")
         self.chk_limits.setStyleSheet(STYLE_CHECK)
         layout.addWidget(self.chk_limits)
-        self.inp_theta1_min = LabeledInput("θ1 min°", "-180", "Min shoulder angle (deg)", lw)
-        self.inp_theta1_max = LabeledInput("θ1 max°", "180", "Max shoulder angle (deg)", lw)
+        self.inp_theta1_min = LabeledInput(
+            "θ1 min°", "-180", "Min shoulder angle (deg)", lw
+        )
+        self.inp_theta1_max = LabeledInput(
+            "θ1 max°", "180", "Max shoulder angle (deg)", lw
+        )
         layout.addLayout(_row(self.inp_theta1_min, self.inp_theta1_max))
         self.inp_phi_min = LabeledInput("φ min°", "-90", "Min wrist angle (deg)", lw)
         self.inp_phi_max = LabeledInput("φ max°", "90", "Max wrist angle (deg)", lw)
@@ -446,7 +450,9 @@ class ControlsWidget(ControlsWidgetBase):
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(3)
-        self.inp_tau_shoulder = LabeledInput("Shoulder", "-25, 10", "τ(t)=c0+c1·t+…", 56)
+        self.inp_tau_shoulder = LabeledInput(
+            "Shoulder", "-25, 10", "τ(t)=c0+c1·t+…", 56
+        )
         self.inp_tau_wrist = LabeledInput("Wrist", "0", "τ(t)=c0+c1·t+…", 56)
         layout.addWidget(self.inp_tau_shoulder)
         layout.addWidget(self.inp_tau_wrist)
@@ -494,17 +500,12 @@ class ControlsWidget(ControlsWidgetBase):
         return box
 
     def _build_rotation_section(self) -> QGroupBox:
-        """Gravity toggle and swing plane tilt — force/scale controls live in the toolstrip."""
+        """Swing plane tilt — gravity is always on (#1209)."""
         box = QGroupBox("Physics")
         box.setStyleSheet(STYLE_GROUP)
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(4)
-        self.chk_gravity = QCheckBox("🌍 Gravity on")
-        self.chk_gravity.setChecked(True)
-        self.chk_gravity.setStyleSheet(STYLE_CHECK)
-        self.chk_gravity.toggled.connect(self.gravity_changed.emit)
-        layout.addWidget(self.chk_gravity)
 
         self.inp_tilt = LabeledInput(
             "Tilt °",
@@ -567,7 +568,9 @@ class ControlsWidget(ControlsWidgetBase):
     def _apply_preset(self, name: str) -> None:
         if name not in self.PRESETS:
             return
-        theta1, phi, dth, dph, tau_sh, tau_wr, tend, m1, m2, mClub, L1, L2 = self.PRESETS[name]
+        theta1, phi, dth, dph, tau_sh, tau_wr, tend, m1, m2, mClub, L1, L2 = (
+            self.PRESETS[name]
+        )
         self.inp_theta1.set_value(str(theta1))
         self.inp_phi.set_value(str(phi))
         self.inp_tau_shoulder.set_value(tau_sh)
@@ -640,7 +643,7 @@ class ControlsWidget(ControlsWidgetBase):
             "b2": b2,
             "mu1": mu1,
             "mu2": mu2,
-            "gravity_on": self.chk_gravity.isChecked(),
+            "gravity_on": True,  # Gravity always on (#1209)
             "enable_limits": self.chk_limits.isChecked(),
             "theta1_min_rad": np.radians(parse_float(self.inp_theta1_min, "θ1 min")),
             "theta1_max_rad": np.radians(parse_float(self.inp_theta1_max, "θ1 max")),

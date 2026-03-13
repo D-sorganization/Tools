@@ -435,7 +435,9 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
 
         def objective(coeffs: np.ndarray) -> float:
             n_seventh = max(1, len(coeffs) // 7)
-            slices = [list(coeffs[i * n_seventh : (i + 1) * n_seventh]) for i in range(7)]
+            slices = [
+                list(coeffs[i * n_seventh : (i + 1) * n_seventh]) for i in range(7)
+            ]
             torque_func = make_polynomial_torque_golfer(*slices)
             try:
                 result = run_simulation_golfer(
@@ -501,7 +503,9 @@ def wire_toolstrip(main_window: Any) -> None:
     )
 
     # ── Simulation action signals → active panel only ──────────────
-    ts.run_requested.connect(lambda: main_window._active_panel().controls.run_requested.emit())
+    ts.run_requested.connect(
+        lambda: main_window._active_panel().controls.run_requested.emit()
+    )
     ts.reset_requested.connect(
         lambda: main_window._active_panel().controls.reset_requested.emit()
     )
@@ -511,7 +515,9 @@ def wire_toolstrip(main_window: Any) -> None:
     ts.speed_changed.connect(
         lambda val: main_window._active_panel().controls.speed_changed.emit(val)
     )
-    ts.frame_scrubbed.connect(lambda idx: main_window._active_panel().scrub_to_frame(idx))
+    ts.frame_scrubbed.connect(
+        lambda idx: main_window._active_panel().scrub_to_frame(idx)
+    )
 
     # ── Export actions (#1141) → active panel's controls ──────────
     ts.export_data_requested.connect(
@@ -527,18 +533,14 @@ def wire_toolstrip(main_window: Any) -> None:
     # ── Overlay toggles → active panel's pendulum widget ──────────
     _connect_common_signals(main_window)
 
-    # ── Gravity toggle (#1142) → active panel's pendulum + controls ──
-    def _fwd_gravity(on: bool) -> None:
-        pw = main_window._active_panel().pendulum
-        if hasattr(pw, "set_gravity_on"):
-            pw.set_gravity_on(on)
-        ctrl = main_window._active_panel().controls
-        if hasattr(ctrl, "chk_gravity"):
-            ctrl.chk_gravity.blockSignals(True)
-            ctrl.chk_gravity.setChecked(on)
-            ctrl.chk_gravity.blockSignals(False)
-
-    ts.gravity_toggled.connect(_fwd_gravity)
+    # ── Torque/MoF/Sum display toggles (#1208) → active panel's pendulum ──
+    ts.torque_vectors_toggled.connect(
+        lambda v: _fwd_overlay("set_show_torque_vectors", v)
+    )
+    ts.moment_of_force_toggled.connect(
+        lambda v: _fwd_overlay("set_show_moment_of_force", v)
+    )
+    ts.sum_moments_toggled.connect(lambda v: _fwd_overlay("set_show_sum_moments", v))
 
     # ── Scale sliders → active panel's pendulum widget ────────────
     def _fwd_overlay(attr: str, value: object) -> None:
@@ -548,7 +550,9 @@ def wire_toolstrip(main_window: Any) -> None:
 
     ts.force_scale_changed.connect(lambda v: _fwd_overlay("set_force_scale", v))
     ts.mob_scale_changed.connect(lambda v: _fwd_overlay("set_mob_ellipsoid_scale", v))
-    ts.force_ell_scale_changed.connect(lambda v: _fwd_overlay("set_force_ellipsoid_scale", v))
+    ts.force_ell_scale_changed.connect(
+        lambda v: _fwd_overlay("set_force_ellipsoid_scale", v)
+    )
 
     # ── Rotation controls (#1146) → active panel's pendulum widget ──
     ts.azimuth_changed.connect(lambda v: _fwd_overlay("set_view_azimuth", v))
@@ -557,7 +561,7 @@ def wire_toolstrip(main_window: Any) -> None:
     # ── Reset view → active panel's pendulum widget ───────────────
     ts.reset_view_requested.connect(
         lambda: (
-            main_window._active_panel().pendulum.reset_view()  # type: ignore[attr-defined]
+            main_window._active_panel().pendulum.reset_view()
             if hasattr(main_window._active_panel().pendulum, "reset_view")
             else None
         )
@@ -566,7 +570,7 @@ def wire_toolstrip(main_window: Any) -> None:
     # ── Per-segment overlay visibility ────────────────────────────
     ts.segment_visibility_changed.connect(
         lambda vis: (
-            main_window._active_panel().pendulum.set_visible_segments(vis)  # type: ignore[attr-defined]
+            main_window._active_panel().pendulum.set_visible_segments(vis)
             if hasattr(main_window._active_panel().pendulum, "set_visible_segments")
             else None
         )
@@ -597,8 +601,8 @@ def wire_toolstrip(main_window: Any) -> None:
         panel.sim_finished.connect(
             lambda _p=panel: (
                 [
-                    ts.set_running(False),  # type: ignore[func-returns-value]
-                    ts.set_frame_range(_p.current_n_steps()),  # type: ignore[func-returns-value]
+                    ts.set_running(False),
+                    ts.set_frame_range(_p.current_n_steps()),
                 ]
                 if _p is main_window._active_panel()
                 else None
@@ -609,6 +613,23 @@ def wire_toolstrip(main_window: Any) -> None:
                 ts.set_frame(idx) if _p is main_window._active_panel() else None
             )
         )
+        # Reset toolstrip play button when playback ends
+        panel.playback_ended.connect(
+            lambda _p=panel: (
+                ts.btn_play.setChecked(False)
+                if _p is main_window._active_panel()
+                else None
+            )
+        )
+
+    # Loop toggle — forward to all panels
+    if hasattr(ts, "loop_toggled"):
+
+        def _set_loop(v: bool) -> None:
+            for p in main_window._panels:
+                p._loop_playback = v
+
+        ts.loop_toggled.connect(_set_loop)
 
     # Update segment checkboxes when tab changes
     main_window._tabs.currentChanged.connect(main_window._on_tab_changed)
@@ -635,9 +656,15 @@ def _connect_common_signals(main_window: Any) -> None:
             getattr(pw, attr)(value)
 
     ts.forces_toggled.connect(lambda v: _fwd_overlay("set_show_forces", v))
-    ts.zero_torque_toggled.connect(lambda v: _fwd_overlay("set_show_zero_torque_forces", v))
-    ts.mob_ellipsoid_toggled.connect(lambda v: _fwd_overlay("set_show_mob_ellipsoids", v))
-    ts.force_ellipsoid_toggled.connect(lambda v: _fwd_overlay("set_show_force_ellipsoids", v))
+    ts.zero_torque_toggled.connect(
+        lambda v: _fwd_overlay("set_show_zero_torque_forces", v)
+    )
+    ts.mob_ellipsoid_toggled.connect(
+        lambda v: _fwd_overlay("set_show_mob_ellipsoids", v)
+    )
+    ts.force_ellipsoid_toggled.connect(
+        lambda v: _fwd_overlay("set_show_force_ellipsoids", v)
+    )
     ts.com_toggled.connect(lambda v: _fwd_overlay("set_show_com", v))
 
     # ── 3D segment rendering (#1155) ──────────────────────────────
