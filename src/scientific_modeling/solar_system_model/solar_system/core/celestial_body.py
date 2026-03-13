@@ -23,6 +23,8 @@ from .constants import (
     ORBITAL_ELEMENTS,
     PHYSICAL_PROPERTIES,
     SECONDS_PER_DAY,
+    SUN_MASS,
+    C,
     OrbitalElements,
     PhysicalProperties,
 )
@@ -468,6 +470,47 @@ class CelestialBody:
                     "Orbital Period": f"{self.get_orbital_period_days():.2f} days",
                 }
             )
+
+        return info
+
+    def get_info_dict_at_time(self, julian_date: float) -> dict[str, Any]:
+        """Return display info enriched with time-aware orbital context."""
+        from ..physics.orbital_mechanics import OrbitalMechanics
+
+        info = self.get_info_dict()
+        state = self.get_state_at_time(julian_date)
+
+        info["Distance from Sun"] = f"{state.distance / AU:.3f} AU"
+        info["Current Speed"] = f"{state.speed / 1000:.2f} km/s"
+        info["Light-Time to Sun"] = f"{state.distance / C / 60:.2f} min"
+
+        if self.body_type == BodyType.SPACECRAFT:
+            info["Mission Epoch"] = f"JD {julian_date:.1f}"
+            return info
+
+        if self.orbital_elements and self.parent and self.parent.gm > 0:
+            elem = self.get_elements_at_time(julian_date)
+            semi_major_axis_m = elem.semi_major_axis * AU
+            specific_energy = OrbitalMechanics.specific_orbital_energy(
+                semi_major_axis_m, self.parent.gm
+            )
+            circular_speed = OrbitalMechanics.circular_velocity(
+                state.distance, self.parent.gm
+            )
+
+            info["Circular Speed Here"] = f"{circular_speed / 1000:.2f} km/s"
+            info["Specific Orbital Energy"] = f"{specific_energy / 1e6:.2f} MJ/kg"
+
+            if self.mass > 0 and self.parent.mass > 0:
+                soi = OrbitalMechanics.sphere_of_influence(
+                    semi_major_axis_m, self.mass, self.parent.mass
+                )
+                info["Sphere of Influence"] = f"{soi / AU:.4f} AU"
+            elif self.mass > 0 and self.parent.name == "Sun":
+                soi = OrbitalMechanics.sphere_of_influence(
+                    semi_major_axis_m, self.mass, SUN_MASS
+                )
+                info["Sphere of Influence"] = f"{soi / AU:.4f} AU"
 
         return info
 

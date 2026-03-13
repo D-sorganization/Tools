@@ -12,7 +12,6 @@ import numpy as np
 
 from ..core.celestial_body import BodyType
 from ..core.constants import (
-    AU,
     DWARF_PLANETS,
     INNER_PLANETS,
     OUTER_PLANETS,
@@ -223,10 +222,7 @@ class SceneRenderMixin:
         """Build the content data dict for the active sidebar tab."""
         if content_key == "educational" and self.educational_panel:
             if self.selected_body:
-                info = self.selected_body.get_info_dict()
-                state = self.selected_body.get_state_at_time(julian_date)
-                dist = np.linalg.norm(state.position) / AU
-                info["Distance"] = f"{dist:.2f} AU"
+                info = self.selected_body.get_info_dict_at_time(julian_date)
                 self.educational_panel.set_body(self.selected_body.name, info)
             return self.educational_panel.get_render_data()
 

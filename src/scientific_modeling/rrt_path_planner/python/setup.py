@@ -31,7 +31,7 @@ def read_requirements() -> list[str]:
 setup(
     name="star-wars-rrt-planner",
     version="2.0.0",
-    description="Enhanced Star Wars RRT Path Planner with real-time 3D rendering",
+    description="RRT asteroid navigator with path metrics and optional 3D rendering",
     long_description=read_readme(),
     long_description_content_type="text/markdown",
     author="Star Wars RRT Team",
@@ -56,6 +56,7 @@ setup(
     entry_points={
         "console_scripts": [
             "star-wars-rrt=star_wars_rrt:main",
+            "rrt-asteroid-navigator=star_wars_rrt:main",
         ],
     },
     classifiers=[
