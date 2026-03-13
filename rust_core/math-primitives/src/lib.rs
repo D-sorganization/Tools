@@ -4,6 +4,7 @@
 //! - Quaternion operations (multiply, inverse, slerp, normalize)
 //! - Euler angle ↔ rotation matrix ↔ quaternion conversions
 //! - Axis-angle to rotation matrix (Rodrigues formula)
+//! - Pose6DOF and Transform6DOF types
 //!
 //! Design by Contract:
 //! - Quaternions are stored as [w, x, y, z].
@@ -12,6 +13,7 @@
 
 pub mod quaternion;
 pub mod rotation;
+pub mod transform;
 
 pub use quaternion::{
     Quaternion, quaternion_inverse, quaternion_multiply, quaternion_normalize, slerp,
@@ -21,3 +23,4 @@ pub use rotation::{
     quaternion_to_euler, quaternion_to_rotation_matrix, rotation_matrix_to_euler,
     rotation_matrix_to_quaternion,
 };
+pub use transform::{Pose6DOF, Transform6DOF};
