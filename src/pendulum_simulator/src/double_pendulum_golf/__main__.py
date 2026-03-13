@@ -36,7 +36,7 @@ class _WheelBlockFilter(QObject):
             if wheel.modifiers() & Qt.KeyboardModifier.ControlModifier:
                 delta = wheel.angleDelta().y()
                 app = QApplication.instance()
-                if app is not None:
+                if isinstance(app, QApplication):
                     font = app.font()
                     if self._default_font_pt is None:
                         self._default_font_pt = font.pointSize()
@@ -56,7 +56,7 @@ class _WheelBlockFilter(QObject):
     def reset_font(self) -> None:
         """Reset font to default size (Ctrl+0)."""
         app = QApplication.instance()
-        if app is not None and self._default_font_pt is not None:
+        if isinstance(app, QApplication) and self._default_font_pt is not None:
             font = app.font()
             font.setPointSize(self._default_font_pt)
             app.setFont(font)
