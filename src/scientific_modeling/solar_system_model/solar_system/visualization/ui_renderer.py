@@ -422,6 +422,9 @@ class UIRenderer:
             name = mission.get("name", "Unknown")
             launch = mission.get("launch_date", "")
             desc = mission.get("description", "")
+            mission_type = mission.get("mission_type", "")
+            destinations = mission.get("destinations", "")
+            highlights = mission.get("science_highlights", "")
 
             # Mission Title
             self.text_cache.render(name, x, current_y, "default", (255, 255, 100))
@@ -432,6 +435,12 @@ class UIRenderer:
                 f"Launched: {launch}", x + 10, current_y, "small", (150, 200, 255)
             )
             current_y += 20
+
+            if mission_type:
+                self.text_cache.render(
+                    mission_type, x + 10, current_y, "small", (160, 255, 180)
+                )
+                current_y += 18
 
             # Description (wrapped)
             words = desc.split()
@@ -451,6 +460,26 @@ class UIRenderer:
                     line, x + 15, current_y, "small", (220, 220, 220)
                 )
                 current_y += 25
+
+            if destinations:
+                self.text_cache.render(
+                    f"Targets: {destinations}",
+                    x + 10,
+                    current_y,
+                    "small",
+                    (255, 210, 120),
+                )
+                current_y += 18
+
+            if highlights:
+                self.text_cache.render(
+                    f"Science: {highlights}",
+                    x + 10,
+                    current_y,
+                    "small",
+                    (190, 220, 255),
+                )
+                current_y += 24
 
         self.end_2d()
 

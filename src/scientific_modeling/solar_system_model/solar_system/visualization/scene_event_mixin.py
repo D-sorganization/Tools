@@ -6,9 +6,11 @@ to reduce class size and improve single-responsibility adherence.
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from ..core.constants import PLANET_ORDER
+from ..data.famous_missions import FAMOUS_MISSIONS
 
 if TYPE_CHECKING:
     pass

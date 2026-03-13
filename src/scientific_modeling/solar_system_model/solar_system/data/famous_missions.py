@@ -6,10 +6,35 @@ Provides pre-calculated or approximate trajectories for significant
 historical space missions.
 """
 
+from __future__ import annotations
+
+from collections.abc import Callable
+from dataclasses import dataclass
+
 import numpy as np
 
 from ..core.celestial_body import StateVector
 from ..core.constants import AU
+
+
+@dataclass(frozen=True)
+class MissionProfile:
+    """Metadata-rich mission descriptor that remains callable for compatibility."""
+
+    get_trajectory: Callable[[], list[StateVector]]
+    description: str
+    launch_date: str
+    destinations: tuple[str, ...]
+    science_highlights: tuple[str, ...]
+    mission_type: str
+
+    def __call__(self) -> list[StateVector]:
+        """Return the mission trajectory when called like a legacy function."""
+        return self.get_trajectory()
+
+    def get(self, key: str, default: object | None = None) -> object | None:
+        """Support the dict-like access pattern used throughout the UI."""
+        return getattr(self, key, default)
 
 
 def get_voyager1_trajectory() -> list[StateVector]:
@@ -305,54 +330,124 @@ def get_galileo_trajectory() -> list[StateVector]:
 
 
 FAMOUS_MISSIONS = {
-    "Voyager 1": {
-        "get_trajectory": get_voyager1_trajectory,
-        "description": "Explored Jupiter and Saturn. First spacecraft to enter interstellar space.",
-        "launch_date": "1977-09-05",
-    },
-    "Voyager 2": {
-        "get_trajectory": get_voyager2_trajectory,
-        "description": "Only spacecraft to visit Uranus and Neptune. Utilized a rare planetary alignment.",
-        "launch_date": "1977-08-20",
-    },
-    "Apollo 11": {
-        "get_trajectory": get_apollo11_trajectory,
-        "description": "First crewed lunar landing. Neil Armstrong and Buzz Aldrin walked on the Moon.",
-        "launch_date": "1969-07-16",
-    },
-    "Cassini-Huygens": {
-        "get_trajectory": get_cassini_trajectory,
-        "description": "Studied Saturn and its moons for 13 years. Deployed Huygens probe to Titan.",
-        "launch_date": "1997-10-15",
-    },
-    "New Horizons": {
-        "get_trajectory": get_new_horizons_trajectory,
-        "description": "First mission to Pluto and the Kuiper Belt. Fastest spacecraft ever launched.",
-        "launch_date": "2006-01-19",
-    },
-    "Curiosity": {
-        "get_trajectory": get_curiosity_trajectory,
-        "description": "Mars Science Laboratory rover. Searching for past habitable environments on Mars.",
-        "launch_date": "2011-11-26",
-    },
-    "Pioneer 10": {
-        "get_trajectory": get_pioneer10_trajectory,
-        "description": "First spacecraft to travel through the asteroid belt and visit Jupiter.",
-        "launch_date": "1972-03-03",
-    },
-    "Mariner 2": {
-        "get_trajectory": get_mariner2_trajectory,
-        "description": "First successful planetary flyby (Venus). Confirmed the planet's high surface temperature.",
-        "launch_date": "1962-08-27",
-    },
-    "Mariner 10": {
-        "get_trajectory": get_mariner10_trajectory,
-        "description": "First to use gravity assist (Venus to Mercury). Visited Mercury three times.",
-        "launch_date": "1973-11-03",
-    },
-    "Galileo": {
-        "get_trajectory": get_galileo_trajectory,
-        "description": "Complex mission to Jupiter using Venus and Earth gravity assists.",
-        "launch_date": "1989-10-18",
-    },
+    "Voyager 1": MissionProfile(
+        get_trajectory=get_voyager1_trajectory,
+        description="Explored Jupiter and Saturn before becoming the first spacecraft to enter interstellar space.",
+        launch_date="1977-09-05",
+        destinations=("Jupiter", "Saturn", "Interstellar Space"),
+        science_highlights=(
+            "Grand Tour gravity assists",
+            "Titan-atmosphere flyby science",
+            "Heliosphere boundary crossing",
+        ),
+        mission_type="Outer planets / heliophysics",
+    ),
+    "Voyager 2": MissionProfile(
+        get_trajectory=get_voyager2_trajectory,
+        description="Only spacecraft to visit Uranus and Neptune, enabled by a once-in-176-year planetary alignment.",
+        launch_date="1977-08-20",
+        destinations=("Jupiter", "Saturn", "Uranus", "Neptune"),
+        science_highlights=(
+            "Four-giant-planet tour",
+            "Uranian magnetosphere survey",
+            "Neptunian moon and ring discoveries",
+        ),
+        mission_type="Outer planets / comparative planetology",
+    ),
+    "Apollo 11": MissionProfile(
+        get_trajectory=get_apollo11_trajectory,
+        description="First crewed lunar landing mission, proving translunar navigation and human surface operations.",
+        launch_date="1969-07-16",
+        destinations=("Earth orbit", "Moon", "Earth"),
+        science_highlights=(
+            "First crewed lunar landing",
+            "Lunar sample return",
+            "Precision rendezvous and reentry",
+        ),
+        mission_type="Crewed exploration",
+    ),
+    "Cassini-Huygens": MissionProfile(
+        get_trajectory=get_cassini_trajectory,
+        description="Long-lived Saturn system flagship that also delivered the Huygens probe to Titan.",
+        launch_date="1997-10-15",
+        destinations=("Venus", "Earth", "Jupiter", "Saturn", "Titan"),
+        science_highlights=(
+            "Titan atmosphere entry probe",
+            "Enceladus plume chemistry",
+            "Saturn ring and magnetosphere dynamics",
+        ),
+        mission_type="Orbiter / atmospheric probe",
+    ),
+    "New Horizons": MissionProfile(
+        get_trajectory=get_new_horizons_trajectory,
+        description="First reconnaissance mission to Pluto, later extended into the Kuiper Belt.",
+        launch_date="2006-01-19",
+        destinations=("Jupiter", "Pluto", "Arrokoth"),
+        science_highlights=(
+            "Fastest Earth departure at launch",
+            "Pluto system geology mapping",
+            "Kuiper Belt primordial object flyby",
+        ),
+        mission_type="Flyby / Kuiper Belt science",
+    ),
+    "Curiosity": MissionProfile(
+        get_trajectory=get_curiosity_trajectory,
+        description="Mars Science Laboratory rover mission aimed at assessing past Martian habitability.",
+        launch_date="2011-11-26",
+        destinations=("Earth", "Mars"),
+        science_highlights=(
+            "Sky-crane landing architecture",
+            "Habitability and sediment chemistry",
+            "Long-baseline surface mobility science",
+        ),
+        mission_type="Planetary rover",
+    ),
+    "Pioneer 10": MissionProfile(
+        get_trajectory=get_pioneer10_trajectory,
+        description="Trailblazing Jupiter flyby mission and the first spacecraft through the main asteroid belt.",
+        launch_date="1972-03-03",
+        destinations=("Asteroid Belt", "Jupiter", "Outer Solar System"),
+        science_highlights=(
+            "First asteroid belt crossing",
+            "First Jupiter close encounter",
+            "Deep-space engineering pathfinder",
+        ),
+        mission_type="Flyby / deep-space precursor",
+    ),
+    "Mariner 2": MissionProfile(
+        get_trajectory=get_mariner2_trajectory,
+        description="First successful interplanetary probe and first planetary flyby, returning decisive Venus data.",
+        launch_date="1962-08-27",
+        destinations=("Venus",),
+        science_highlights=(
+            "First successful planetary encounter",
+            "Confirmed Venusian heat",
+            "Solar wind and charged-particle measurements",
+        ),
+        mission_type="Early planetary flyby",
+    ),
+    "Mariner 10": MissionProfile(
+        get_trajectory=get_mariner10_trajectory,
+        description="First gravity-assist mission and first spacecraft to visit Mercury.",
+        launch_date="1973-11-03",
+        destinations=("Venus", "Mercury"),
+        science_highlights=(
+            "First gravity assist at Venus",
+            "Three Mercury flybys",
+            "Mapped much of Mercury's surface",
+        ),
+        mission_type="Gravity-assist flyby",
+    ),
+    "Galileo": MissionProfile(
+        get_trajectory=get_galileo_trajectory,
+        description="Jupiter flagship mission using inner-solar-system gravity assists to reach the Jovian system.",
+        launch_date="1989-10-18",
+        destinations=("Venus", "Earth", "Jupiter"),
+        science_highlights=(
+            "Atmospheric entry probe at Jupiter",
+            "Galilean moon system science",
+            "Multi-flyby gravity assist sequence",
+        ),
+        mission_type="Orbiter / atmospheric probe",
+    ),
 }

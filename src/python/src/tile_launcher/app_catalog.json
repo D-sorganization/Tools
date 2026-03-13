@@ -70,5 +70,21 @@
     "launch_type": "python",
     "logo": "tools_icon.png",
     "description": "Start the rotation converter web application."
+  },
+  {
+    "id": "solar_system_model",
+    "name": "Solar System Model",
+    "relative_path": "src/scientific_modeling/solar_system_model/launch_solar_system.py",
+    "launch_type": "python",
+    "logo": "tools_icon_hq.ico",
+    "description": "Launch the educational solar system simulator with famous missions and science overlays."
+  },
+  {
+    "id": "rrt_asteroid_navigator",
+    "name": "RRT Asteroid Navigator",
+    "relative_path": "src/scientific_modeling/rrt_path_planner/launch_rrt_asteroid_navigator.py",
+    "launch_type": "python",
+    "logo": "tools_icon_simple.ico",
+    "description": "Start the asteroid-field RRT path planner and pursuit simulator."
   }
 ]
