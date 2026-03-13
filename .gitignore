@@ -42,13 +42,18 @@ logs/
 # Development artifacts
 branch_cleanup_report_*.md
 .coverage
+.coverage.*
 coverage.xml
+coverage.json
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 .hypothesis/
 .dmypy.json
 dmypy.json
+
+# Binary documents (should not be in VCS)
+*.docx
 
 # Temp output files (explicitly listed for clarity)
 mypy_output.txt
