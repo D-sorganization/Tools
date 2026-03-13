@@ -14,12 +14,24 @@ Design by Contract:
 
 from __future__ import annotations
 
+import os
 import sys
 
 import pytest
 from PyQt6.QtWidgets import QApplication, QCheckBox, QSlider
 
 from double_pendulum_golf.gui.toolstrip_widget import ToolStrip
+
+# Skip entire module on headless CI (no display → QApplication segfaults)
+_HAVE_DISPLAY = (
+    sys.platform == "win32"
+    or sys.platform == "darwin"
+    or os.environ.get("DISPLAY")
+    or os.environ.get("WAYLAND_DISPLAY")
+)
+pytestmark = pytest.mark.skipif(
+    not _HAVE_DISPLAY, reason="No display available (headless CI)"
+)
 
 # ---------------------------------------------------------------------------
 # Fixture: QApplication + ToolStrip instance
