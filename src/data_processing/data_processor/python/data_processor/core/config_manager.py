@@ -11,6 +11,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from data_processor.contracts import require
+
 
 class ConfigManager:
     """Manages application configuration persistence."""
@@ -37,10 +39,14 @@ class ConfigManager:
     def save_config(self, name: str, settings: dict[str, Any]) -> None:
         """Save a named configuration.
 
-        Args:
-            name: Unique name for this configuration
-            settings: Dictionary of settings to save
+        **Pre-conditions** (DbC):
+          - ``name`` must be a non-empty string.
+          - ``settings`` must be a dict.
         """
+        require(
+            isinstance(name, str) and bool(name.strip()), "name must be non-empty", name
+        )
+        require(isinstance(settings, dict), "settings must be a dict", type(settings))
         configs = self._load_all_configs()
 
         configs[name] = {

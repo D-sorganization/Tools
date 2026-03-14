@@ -22,6 +22,8 @@ from uuid import uuid4
 
 import pandas as pd
 
+from data_processor.contracts import require
+
 logger = logging.getLogger(__name__)
 
 
@@ -259,6 +261,10 @@ class DatasetManager:
     ) -> str:
         """Load a dataset from an existing DataFrame.
 
+        **Pre-conditions** (DbC):
+          - ``df`` must not be empty.
+          - ``name`` must be a non-empty string.
+
         Args:
             df: DataFrame to load
             name: Name for the dataset
@@ -267,6 +273,12 @@ class DatasetManager:
         Returns:
             Dataset ID for the loaded dataset
         """
+        require(not df.empty, "df must not be empty")
+        require(
+            isinstance(name, str) and bool(name.strip()),
+            "name must be a non-empty string",
+            name,
+        )
         metadata = DatasetMetadata.create(
             name=name,
             source_file=source_file,
