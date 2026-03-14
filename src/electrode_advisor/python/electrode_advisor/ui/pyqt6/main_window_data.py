@@ -102,7 +102,7 @@ class DataMixin:
 
             # Update displays
             self._update_3d_visualization()
-            self._update_temperature_profile()
+            # #1377: _update_temperature_profile removed — was a no-op stub
             self._update_current_distribution()
             self._update_power_distribution()
             self._update_results_tables()
@@ -296,8 +296,9 @@ class DataMixin:
                 alpha=0.8,
             )
 
-            # Line currents (for demonstration, using phase current * 0.8)
-            line_currents = [current * 0.8 for current in phase_currents]
+            # Line currents: delta config → I_line = √3 × I_phase (#1357)
+            sqrt3 = float(np.sqrt(3))
+            line_currents = [current * sqrt3 for current in phase_currents]
             bars2 = self.current_ax.bar(
                 x + width / 2,
                 line_currents,
@@ -408,8 +409,7 @@ class DataMixin:
                     f"{powers[i]:.1f}"
                 )
 
-            # Create bar chart
-            import numpy as np
+            # Create bar chart (#1379: numpy imported at module level)
 
             x_positions = np.arange(len(phases))
             bars = self.power_ax.bar(x_positions, powers, color=colors, alpha=0.7)
