@@ -19,7 +19,6 @@ import pytest
 
 from double_pendulum_golf.simulation_result_base import TrajectoryResultMixin
 
-
 # ---------------------------------------------------------------------------
 # Minimal concrete subclass for testing
 # ---------------------------------------------------------------------------

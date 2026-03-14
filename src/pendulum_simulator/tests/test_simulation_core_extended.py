@@ -52,7 +52,8 @@ class TestIntegrateOdeExtended:
             return -y
 
         with patch(
-            "double_pendulum_golf.simulation_core.solve_ivp", side_effect=capturing_solve_ivp
+            "double_pendulum_golf.simulation_core.solve_ivp",
+            side_effect=capturing_solve_ivp,
         ):
             integrate_ode(rhs, np.array([1.0]), t_end=0.1, dt=0.01)
 
@@ -74,7 +75,8 @@ class TestIntegrateOdeExtended:
             return -y
 
         with patch(
-            "double_pendulum_golf.simulation_core.solve_ivp", side_effect=capturing_solve_ivp
+            "double_pendulum_golf.simulation_core.solve_ivp",
+            side_effect=capturing_solve_ivp,
         ):
             integrate_ode(rhs, np.array([1.0]), t_end=0.1, dt=0.01, max_step=0.005)
 

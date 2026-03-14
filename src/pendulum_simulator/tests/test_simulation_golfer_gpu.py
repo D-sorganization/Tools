@@ -14,7 +14,6 @@ import types
 from unittest.mock import MagicMock
 import numpy as np
 
-
 # ---------------------------------------------------------------------------
 # Build fake jax / diffrax modules before importing the GPU module
 # ---------------------------------------------------------------------------
@@ -94,7 +93,6 @@ sys.modules.setdefault("double_pendulum_golf.physics_golfer_jax", _fake_physics_
 
 # Now import the module under test
 from double_pendulum_golf import simulation_golfer_gpu as _gpu_mod  # noqa: E402
-
 
 # ---------------------------------------------------------------------------
 # Tests for extract_final_state
