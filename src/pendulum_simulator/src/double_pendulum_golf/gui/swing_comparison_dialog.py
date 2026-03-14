@@ -145,7 +145,7 @@ class _ComparisonWorker(QObject):
             trial_results = []
             for i in range(self._config.n_trials):
                 if self._cancelled:
-                    break
+                    break  # type: ignore[unreachable]
                 trial_seed = base_seed + i
                 try:
                     perturbed = perturb_torque_coeffs(
@@ -261,7 +261,9 @@ class SwingComparisonDialog(QDialog):
             self._preset_list.addItem(item)
         # Default: select first two
         for i in range(min(2, self._preset_list.count())):
-            self._preset_list.item(i).setSelected(True)
+            item = self._preset_list.item(i)
+            if item is not None:
+                item.setSelected(True)
         self._preset_list.setFixedHeight(140)
         lay.addWidget(self._preset_list)
         return grp
