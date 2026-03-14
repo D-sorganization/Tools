@@ -5,6 +5,9 @@ Tests cover:
     segment dimensions, template definitions, DbC contract enforcement.
   - urdf_generator: generate_urdf_xml, validate_urdf_structure, template
     dispatch, config propagation, XML validity.
+  - preview_generator: generate_preview_text, DbC, content validation.
+  - theme: build_stylesheet, palette structure.
+  - contracts: require/ensure, PreconditionError/PostconditionError.
 
 Replaces the old mock-heavy tests with real functional tests.
 """
@@ -18,6 +21,7 @@ import pytest
 from urdf_builder_gui.anthropometric_model import (
     HEIGHT_RATIOS,
     MASS_RATIOS,
+    TEMPLATE_SEGMENTS,
     URDFConfig,
     compute_box_inertia,
     compute_cylinder_inertia,
@@ -27,11 +31,91 @@ from urdf_builder_gui.anthropometric_model import (
     get_template_segments,
     interpolate_gender_factor,
 )
-from urdf_builder_gui.contracts import PreconditionError
+from urdf_builder_gui.contracts import (
+    PostconditionError,
+    PreconditionError,
+    ensure,
+    require,
+)
+from urdf_builder_gui.preview_generator import generate_preview_text
+from urdf_builder_gui.theme import CATPPUCCIN_MOCHA, build_stylesheet
 from urdf_builder_gui.urdf_generator import (
     generate_urdf_xml,
     validate_urdf_structure,
 )
+
+# ═══════════════════════════════════════════════════════════════════════
+# Contracts Tests
+# ═══════════════════════════════════════════════════════════════════════
+
+
+class TestContracts:
+    """Tests for the local DbC contracts module."""
+
+    def test_require_passes_on_true(self) -> None:
+        require(True, "should not fail")
+
+    def test_require_raises_on_false(self) -> None:
+        with pytest.raises(PreconditionError, match="bad input"):
+            require(False, "bad input")
+
+    def test_require_includes_args(self) -> None:
+        with pytest.raises(PreconditionError, match="42"):
+            require(False, "value is wrong", 42)
+
+    def test_ensure_passes_on_true(self) -> None:
+        ensure(True, "should not fail")
+
+    def test_ensure_raises_on_false(self) -> None:
+        with pytest.raises(PostconditionError, match="output invalid"):
+            ensure(False, "output invalid")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# Theme Tests
+# ═══════════════════════════════════════════════════════════════════════
+
+
+class TestTheme:
+    """Tests for the shared theme module."""
+
+    def test_palette_has_required_keys(self) -> None:
+        """Palette must have all core keys used by the GUI."""
+        required = {"base", "text", "blue", "green", "red", "yellow", "surface0"}
+        assert required.issubset(set(CATPPUCCIN_MOCHA.keys()))
+
+    def test_palette_values_are_hex_colours(self) -> None:
+        for key, val in CATPPUCCIN_MOCHA.items():
+            assert val.startswith("#"), f"{key} is not a hex colour"
+            assert len(val) == 7, f"{key} must be #RRGGBB"
+
+    def test_build_stylesheet_returns_string(self) -> None:
+        ss = build_stylesheet()
+        assert isinstance(ss, str)
+        assert "QMainWindow" in ss
+        assert "QPushButton" in ss
+
+    def test_build_stylesheet_with_custom_palette(self) -> None:
+        custom = {**CATPPUCCIN_MOCHA, "base": "#000000"}
+        ss = build_stylesheet(custom)
+        assert "#000000" in ss
+
+    def test_build_stylesheet_contains_all_widgets(self) -> None:
+        ss = build_stylesheet()
+        widgets = [
+            "QMainWindow",
+            "QWidget",
+            "QTabWidget",
+            "QGroupBox",
+            "QLabel",
+            "QComboBox",
+            "QSlider",
+            "QTextEdit",
+            "QPushButton",
+        ]
+        for w in widgets:
+            assert w in ss, f"Stylesheet missing {w}"
+
 
 # ═══════════════════════════════════════════════════════════════════════
 # Anthropometric Model Tests
@@ -77,6 +161,12 @@ class TestMassRatios:
     def test_all_ratios_positive(self) -> None:
         for key, val in MASS_RATIOS.items():
             assert val > 0, f"Mass ratio for {key} must be positive"
+
+    def test_torso_equals_lumbar_plus_thorax(self) -> None:
+        """Combined torso entry must match lumbar + thorax."""
+        assert MASS_RATIOS["torso"] == pytest.approx(
+            MASS_RATIOS["lumbar"] + MASS_RATIOS["thorax"]
+        )
 
 
 class TestComputeSegmentLength:
@@ -211,6 +301,38 @@ class TestTemplateSegments:
         with pytest.raises((PreconditionError, AssertionError)):
             get_template_segments("Nonexistent Template")
 
+    def test_all_templates_have_pelvis(self) -> None:
+        """Every template must have the pelvis root segment."""
+        for name, segs in TEMPLATE_SEGMENTS.items():
+            assert "pelvis" in segs, f"Template '{name}' missing pelvis"
+
+    def test_templates_produce_unique_segments(self) -> None:
+        """Each template should produce a unique set of segments."""
+        segment_sets = [frozenset(s) for s in TEMPLATE_SEGMENTS.values()]
+        assert len(segment_sets) == len(set(segment_sets))
+
+
+class TestURDFConfig:
+    """Tests for URDFConfig dataclass."""
+
+    def test_defaults(self) -> None:
+        cfg = URDFConfig()
+        assert cfg.robot_name == "humanoid"
+        assert cfg.height_m == 1.75
+        assert cfg.mass_kg == 70.0
+        assert cfg.gender_factor == 0.5
+
+    def test_proportions_default_all_one(self) -> None:
+        cfg = URDFConfig()
+        for key, val in cfg.proportions.items():
+            assert val == 1.0, f"Proportion '{key}' should default to 1.0"
+
+    def test_frozen(self) -> None:
+        """URDFConfig should be immutable."""
+        cfg = URDFConfig()
+        with pytest.raises(AttributeError):
+            cfg.robot_name = "changed"  # type: ignore[misc]
+
 
 # ═══════════════════════════════════════════════════════════════════════
 # URDF Generator Tests
@@ -264,6 +386,18 @@ class TestGenerateURDF:
         assert 'damping="5.00"' in xml
         assert 'friction="2.00"' in xml
 
+    def test_collision_geometry_none_omits_collision(self) -> None:
+        """When collision_geometry='None', no collision elements."""
+        config = URDFConfig(collision_geometry="None")
+        xml = generate_urdf_xml(config)
+        assert "<collision>" not in xml
+
+    def test_collision_geometry_default_includes_collision(self) -> None:
+        """Default collision_geometry includes collision elements."""
+        config = URDFConfig()
+        xml = generate_urdf_xml(config)
+        assert "<collision>" in xml
+
     def test_invalid_robot_name_raises(self) -> None:
         """Invalid XML names should be rejected."""
         with pytest.raises((PreconditionError, AssertionError)):
@@ -276,6 +410,22 @@ class TestGenerateURDF:
     def test_zero_height_raises(self) -> None:
         with pytest.raises((PreconditionError, AssertionError)):
             generate_urdf_xml(URDFConfig(height_m=0.0))
+
+    def test_all_templates_produce_valid_urdf(self) -> None:
+        """Every template should produce valid URDF."""
+        for template_name in TEMPLATE_SEGMENTS:
+            config = URDFConfig(template=template_name)
+            xml = generate_urdf_xml(config)
+            is_valid, errors = validate_urdf_structure(xml)
+            assert is_valid, f"Template '{template_name}' invalid: {errors}"
+
+    def test_proportions_affect_output(self) -> None:
+        """Different proportions should produce different dimensions."""
+        cfg1 = URDFConfig(proportions={"torso_length": 1.0, "arm_length": 1.0})
+        cfg2 = URDFConfig(proportions={"torso_length": 1.5, "arm_length": 1.0})
+        xml1 = generate_urdf_xml(cfg1)
+        xml2 = generate_urdf_xml(cfg2)
+        assert xml1 != xml2
 
 
 class TestValidateURDF:
@@ -306,3 +456,74 @@ class TestValidateURDF:
         is_valid, errors = validate_urdf_structure(xml)
         assert not is_valid
         assert any("duplicate" in e.lower() for e in errors)
+
+    def test_unknown_joint_reference(self) -> None:
+        xml = """<?xml version="1.0"?>
+<robot name="test">
+  <link name="a"/>
+  <joint name="j1" type="fixed">
+    <parent link="nonexistent"/>
+    <child link="a"/>
+  </joint>
+</robot>"""
+        is_valid, errors = validate_urdf_structure(xml)
+        assert not is_valid
+        assert any("unknown" in e.lower() for e in errors)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# Preview Generator Tests
+# ═══════════════════════════════════════════════════════════════════════
+
+
+class TestPreviewGenerator:
+    """Tests for generate_preview_text."""
+
+    def test_contains_robot_name(self) -> None:
+        config = URDFConfig(robot_name="test_bot")
+        text = generate_preview_text(config)
+        assert "test_bot" in text
+
+    def test_contains_body_parameters(self) -> None:
+        config = URDFConfig(height_m=1.80, mass_kg=80.0)
+        text = generate_preview_text(config)
+        assert "1.80" in text
+        assert "80.0" in text
+
+    def test_contains_template_name(self) -> None:
+        config = URDFConfig(template="Upper Body Only")
+        text = generate_preview_text(config)
+        assert "Upper Body Only" in text
+
+    def test_contains_segment_sizes(self) -> None:
+        """Preview should list estimated segment sizes."""
+        text = generate_preview_text(URDFConfig())
+        assert "Torso Height" in text
+        assert "Thigh Length" in text
+
+    def test_contains_template_segments(self) -> None:
+        """Preview should list the segments in the template."""
+        text = generate_preview_text(URDFConfig(template="Custom"))
+        assert "pelvis" in text
+        assert "torso" in text
+
+    def test_contains_options(self) -> None:
+        config = URDFConfig(damping=3.0, friction=1.5)
+        text = generate_preview_text(config)
+        assert "3.00" in text
+        assert "1.50" in text
+
+    def test_uses_shared_height_ratios(self) -> None:
+        """Segment sizes should use HEIGHT_RATIOS, not hardcoded values."""
+        config = URDFConfig(height_m=2.0)
+        text = generate_preview_text(config)
+        expected_torso = 2.0 * HEIGHT_RATIOS["torso"]
+        assert f"{expected_torso:.3f}" in text
+
+    def test_empty_name_raises(self) -> None:
+        with pytest.raises((PreconditionError, AssertionError)):
+            generate_preview_text(URDFConfig(robot_name=""))
+
+    def test_zero_height_raises(self) -> None:
+        with pytest.raises((PreconditionError, AssertionError)):
+            generate_preview_text(URDFConfig(height_m=0.0))
