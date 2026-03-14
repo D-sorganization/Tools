@@ -13,12 +13,6 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-_log = logging.getLogger(__name__)
-
-# Constraint violation thresholds for warning/abort.
-_CONSTRAINT_WARN_TOL = 1e-4
-_CONSTRAINT_ABORT_TOL = 1e-2
-
 if TYPE_CHECKING:
     from .physics import JointLimitsNDOF
 
@@ -50,6 +44,12 @@ from .simulation_result_base import TrajectoryResultMixin
 
 # Re-export from shared utility for backwards compatibility (DRY — #1041)
 from .torque_utils import make_polynomial_torque  # noqa: F401
+
+_log = logging.getLogger(__name__)
+
+# Constraint violation thresholds for warning/abort.
+_CONSTRAINT_WARN_TOL = 1e-4
+_CONSTRAINT_ABORT_TOL = 1e-2
 
 # ---------------------------------------------------------------------------
 # Simulation result container
