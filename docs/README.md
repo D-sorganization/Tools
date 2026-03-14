@@ -1,6 +1,6 @@
 # Documentation Index
 
-This directory contains detailed documentation for the Golf Biomechanics Simulator & Game Engine repository.
+This directory contains detailed documentation for the AffineDrift Tools repository.
 
 ## 🏗️ Architecture
 
@@ -15,6 +15,7 @@ This directory contains detailed documentation for the Golf Biomechanics Simulat
 
 ## 🛠️ Tools
 
+- **[Tools Inventory & Platform Parity](tools/TOOLS_INVENTORY.md)**: Complete inventory of all applications with platform support matrix (PyQt6, Web, Tauri) and identified parity gaps.
 - **[Enhanced Tools](tools/ENHANCED_TOOLS.md)**: Detailed overview and comparison of the "Pro" tools (Folder Fix Pro, Folder Packer Pro) versus their legacy counterparts.
 
 ## 📅 Release & History
