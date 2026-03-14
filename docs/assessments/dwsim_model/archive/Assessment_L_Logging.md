@@ -1,7 +1,5 @@
-# Assessment L_Logging
+# Assessment: Logging
 
-## Grade: 7/10
+## Grade: 6/10
 
-### Assessment Notes
-
-- Uses the standard `logging` library (`logger = logging.getLogger(__name__)`) in `gasification.py` instead of print statements, adhering to `AGENTS.md` rules.
+Notes: Based on automated review.
