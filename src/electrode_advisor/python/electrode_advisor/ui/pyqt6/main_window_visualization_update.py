@@ -333,15 +333,22 @@ class VisualizationUpdateMixin:
                 self.electrode_ax.set_ylabel("")
                 if hasattr(self.electrode_ax, "set_zlabel"):
                     self.electrode_ax.set_zlabel("")
-        if hasattr(self, "electrode_ax") and self.electrode_ax:
-            self.electrode_ax.tick_params(
-                axis="x", which="both", bottom=False, top=False, labelbottom=False
-            )
-            self.electrode_ax.tick_params(
-                axis="y", which="both", left=False, right=False, labelleft=False
-            )
-            if hasattr(self.electrode_ax, "zaxis"):
-                self.electrode_ax.zaxis.set_tick_params(labelleft=False)
+                self.electrode_ax.tick_params(
+                    axis="x",
+                    which="both",
+                    bottom=False,
+                    top=False,
+                    labelbottom=False,
+                )
+                self.electrode_ax.tick_params(
+                    axis="y",
+                    which="both",
+                    left=False,
+                    right=False,
+                    labelleft=False,
+                )
+                if hasattr(self.electrode_ax, "zaxis"):
+                    self.electrode_ax.zaxis.set_tick_params(labelleft=False)
 
         if self.electrode_ax is not None:
             self.electrode_ax.set_title("")

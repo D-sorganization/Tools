@@ -362,7 +362,7 @@ class ElectrodeVisualization(ElectrodeLayersMixin):
 
         for i, (depth, angle) in enumerate(zip(depths, angles, strict=False)):
             angle_rad = np.radians(angle)
-            electrode_z = metal_height + glass_height / 2
+            electrode_z = metal_height + glass_height - depth
 
             x_start = (bath_radius + extension_length) * np.cos(angle_rad)
             y_start = (bath_radius + extension_length) * np.sin(angle_rad)

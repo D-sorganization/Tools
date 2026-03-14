@@ -19,7 +19,6 @@ logger = logging.getLogger(__name__)
 
 _COLOR_MODE_CURRENT = "Current intensity"
 _COLOR_MODE_POWER = "Power dissipation"
-_COLOR_MODE_TEMPERATURE = "Temperature gradient"
 
 
 class ResultsAndChartsMixin:
@@ -162,8 +161,6 @@ class ResultsAndChartsMixin:
             value = self._get_path_current(path_type, phase_index)
         elif color_mode == _COLOR_MODE_POWER:
             value = self._get_path_power(path_type, phase_index)
-        elif color_mode == _COLOR_MODE_TEMPERATURE:
-            value = self._get_path_temperature(path_type, phase_index)
         else:
             return "lightblue"
 
@@ -253,14 +250,6 @@ class ResultsAndChartsMixin:
             return float(current**2 * resistance)
         return 0.0
 
-    def _get_path_temperature(self, _path_type: str, _phase_index: int) -> float:
-        """Return bath temperature as path temperature baseline.
-
-        A physics-based thermal rise model is not yet implemented.
-        Issue #1359: the old ``power * 0.001`` formula had no physical basis.
-        """
-        return float(self.bath_temp_input.value())
-
     def _calculate_color_scale_bounds(self, color_mode: str) -> tuple[float, float]:
         """Calculate min/max values for color scaling"""
         values = []
@@ -271,8 +260,6 @@ class ResultsAndChartsMixin:
                     values.append(self._get_path_current(path_type, phase_idx))
                 elif color_mode == _COLOR_MODE_POWER:
                     values.append(self._get_path_power(path_type, phase_idx))
-                elif color_mode == _COLOR_MODE_TEMPERATURE:
-                    values.append(self._get_path_temperature(path_type, phase_idx))
 
         if values:
             return min(values), max(values)
@@ -286,8 +273,6 @@ class ResultsAndChartsMixin:
             cmap = colormaps.get_cmap("coolwarm")
         elif color_mode == _COLOR_MODE_POWER:
             cmap = colormaps.get_cmap("hot")
-        elif color_mode == _COLOR_MODE_TEMPERATURE:
-            cmap = colormaps.get_cmap("plasma")
         else:
             cmap = colormaps.get_cmap("viridis")  # Default
 

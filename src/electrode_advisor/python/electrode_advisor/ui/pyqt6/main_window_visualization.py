@@ -231,8 +231,6 @@ class VisualizationMixin:
             value = self._get_path_current(path_type, phase_index)
         elif color_mode == "Power dissipation":
             value = self._get_path_power(path_type, phase_index)
-        elif color_mode == "Temperature gradient":
-            value = self._get_path_temperature(path_type, phase_index)
         else:
             return "lightblue"
 
@@ -341,8 +339,6 @@ class VisualizationMixin:
                     values.append(self._get_path_current(path_type, phase_idx))
                 elif color_mode == "Power dissipation":
                     values.append(self._get_path_power(path_type, phase_idx))
-                elif color_mode == "Temperature gradient":
-                    values.append(self._get_path_temperature(path_type, phase_idx))
 
         if values:
             return min(values), max(values)
@@ -356,8 +352,6 @@ class VisualizationMixin:
             cmap = colormaps.get_cmap("coolwarm")  # Blue to red
         elif color_mode == "Power dissipation":
             cmap = colormaps.get_cmap("hot")  # Black to red to yellow to white
-        elif color_mode == "Temperature gradient":
-            cmap = colormaps.get_cmap("plasma")  # Purple to pink to yellow
         else:
             cmap = colormaps.get_cmap("viridis")  # Default
 
