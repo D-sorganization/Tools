@@ -217,7 +217,7 @@ impl Vector3 {
     #[pyo3(name = "normalized", text_signature = "($self)")]
     fn py_normalized(&self) -> pyo3::PyResult<Self> {
         self.normalized()
-            .map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
+            .map_err(pyo3::exceptions::PyValueError::new_err)
     }
 
     /// Return a new vector scaled by the given factor.

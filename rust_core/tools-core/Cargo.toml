@@ -15,12 +15,13 @@ crate-type = ["cdylib", "rlib"]
 default = []
 # Enable PyO3 bindings for Python wheel builds (maturin)
 # Enable PyO3 bindings for Python wheel builds (maturin)
-python = ["dep:pyo3", "math-primitives/python"]
+python = ["dep:pyo3", "dep:numpy", "math-primitives/python"]
 # Enable wasm-bindgen for WASM/NPM builds (wasm-pack)
 wasm = ["dep:wasm-bindgen", "math-primitives/wasm"]
 
 [dependencies]
 pyo3 = { workspace = true, optional = true }
+numpy = { workspace = true, optional = true }
 wasm-bindgen = { workspace = true, optional = true }
 serde = { workspace = true }
 math-primitives = { path = "../math-primitives" }

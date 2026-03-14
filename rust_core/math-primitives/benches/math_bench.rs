@@ -3,8 +3,8 @@
 //! Measures per-call latency for rotation, quaternion, and geometry operations.
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use math_primitives::rotation::{euler_to_rotation_matrix, rotation_matrix_to_euler};
 use math_primitives::quaternion::Quaternion;
+use math_primitives::rotation::{euler_to_rotation_matrix, rotation_matrix_to_euler};
 use math_primitives::types::Vector3;
 
 fn bench_euler_to_rotmat(c: &mut Criterion) {
