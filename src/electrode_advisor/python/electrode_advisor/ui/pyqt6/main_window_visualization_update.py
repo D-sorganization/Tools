@@ -412,7 +412,6 @@ class VisualizationUpdateMixin:
                 bath_radius,
                 color=direct_color,
                 alpha=path_alpha * 0.8,
-                label=f"Direct Glass {i + 1}-{j + 1}",
                 current_value=direct_current,
                 resistance_value=direct_resistance,
             )
@@ -427,7 +426,6 @@ class VisualizationUpdateMixin:
                     bath_radius,
                     color=metal_color,
                     alpha=path_alpha * 0.6,
-                    label=f"Via Metal {i + 1}-{j + 1}",
                     current_value=metal_current,
                     resistance_value=self._get_path_resistance("via_metal", i),
                 )
@@ -480,7 +478,6 @@ class VisualizationUpdateMixin:
         bath_radius: float,
         color: str = "blue",
         alpha: float = 0.4,
-        label: str = "",
         current_value: float = 0.0,
         resistance_value: float = 0.0,
     ) -> None:
@@ -513,7 +510,6 @@ class VisualizationUpdateMixin:
         bath_radius: float,
         color: str = "red",
         alpha: float = 0.3,
-        label: str = "",
         current_value: float = 0.0,
         resistance_value: float = 0.0,
     ) -> None:

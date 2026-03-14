@@ -326,19 +326,14 @@ class TestBuildExtrusionFaces:
 class TestElectrodeVisualizationInterface:
     """Issue #931: TDD tests for ElectrodeVisualization public API."""
 
-    def test_instantiation_without_axis(self) -> None:
+    def test_instantiation_without_config(self) -> None:
         viz = ElectrodeVisualization()
         assert viz is not None
 
-    def test_set_axis_accepts_none(self) -> None:
-        viz = ElectrodeVisualization()
-        viz.set_axis(None)  # Should not raise
-
-    def test_set_axis_stores_value(self) -> None:
+    def test_instantiation_with_config(self) -> None:
         sentinel = object()
-        viz = ElectrodeVisualization()
-        viz.set_axis(sentinel)
-        assert viz.ax is sentinel
+        viz = ElectrodeVisualization(config=sentinel)
+        assert viz.config is sentinel
 
     def test_electrode_wall_positions_is_static(self) -> None:
         """_electrode_wall_positions should be callable without an instance ax."""
@@ -943,6 +938,8 @@ class TestViaMetalPathDry:
         src = inspect.getsource(draw_via_metal_path)
         delegated = "annotate_resistance_value" in src or "annotate_path_value" in src
         assert delegated, "draw_via_metal_path must delegate resistance annotation"
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Source-code verification tests — confirm fixes are applied
 # ─────────────────────────────────────────────────────────────────────────────
@@ -954,13 +951,17 @@ class TestElectrodeZInSource:
     def test_source_uses_depth_not_glass_height_over_2(self) -> None:
         """Source code must use `metal_height + glass_height - depth`."""
         try:
-            from electrode_advisor.ui.pyqt6.main_window_paths import PathsMixin
+            from electrode_advisor.ui.pyqt6.main_window_visualization_update import (
+                VisualizationUpdateMixin,
+            )
         except ImportError:
-            pytest.skip("PathsMixin not importable")
+            pytest.skip("VisualizationUpdateMixin not importable")
         import inspect
 
-        source = inspect.getsource(PathsMixin._compute_electrode_positions)
-        msg = "_compute_electrode_positions must use `glass_height - depth`"
+        source = inspect.getsource(
+            VisualizationUpdateMixin._compute_electrode_positions_for_paths
+        )
+        msg = "_compute_electrode_positions_for_paths must use `glass_height - depth`"
         assert "glass_height - depth" in source, msg
         bad = "glass_height / 2"
         assert bad not in source, f"Old formula '{bad}' must be removed"
@@ -977,9 +978,8 @@ class TestLineCurrentInSource:
         import inspect
 
         source = inspect.getsource(DataMixin._update_current_distribution)
-        assert (
-            "sqrt3" in source or "sqrt(3)" in source
-        ), "Line current must use √3 factor"
+        uses_sqrt3 = "sqrt3" in source or "sqrt(3)" in source
+        assert uses_sqrt3, "Line current must use sqrt(3) factor"
         assert "* 0.8" not in source, "Wrong 0.8 factor must be removed"
 
 
@@ -1011,10 +1011,99 @@ class TestDRYAnnotationRefactored:
 
         source = inspect.getsource(draw_via_metal_path)
         assert "annotate_path_value" in source, "Must delegate to annotate_path_value"
-        assert (
-            "annotate_resistance_value" in source
-        ), "Must delegate to annotate_resistance_value"
+        has_res = "annotate_resistance_value" in source
+        assert has_res, "Must delegate to annotate_resistance_value"
         # Should not contain inline ax.text calls anymore
-        assert (
-            source.count("ax.text(") == 0
-        ), "Inline ax.text calls should be replaced with shared annotators"
+        no_inline = source.count("ax.text(") == 0
+        assert no_inline, "Inline ax.text should use shared annotators"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Issues #1398-#1406 — Dead code removal
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestDeadCodeRemoval:
+    """Issues #1398-#1406: dead code must be removed."""
+
+    def test_main_window_paths_file_deleted(self) -> None:
+        """#1398: main_window_paths.py is entirely dead code and must be removed."""
+        from pathlib import Path
+
+        pyqt6_dir = (
+            Path(__file__).resolve().parents[1]
+            / "python"
+            / "electrode_advisor"
+            / "ui"
+            / "pyqt6"
+        )
+        paths_file = pyqt6_dir / "main_window_paths.py"
+        assert not paths_file.exists(), "main_window_paths.py should have been deleted"
+
+    def test_periodic_update_removed_from_calculation_mixin(self) -> None:
+        """#1400: _periodic_update was empty and must be removed."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_calculation import (
+                CalculationMixin,
+            )
+        except ImportError:
+            pytest.skip("CalculationMixin not importable")
+        has_periodic = hasattr(CalculationMixin, "_periodic_update")
+        assert not has_periodic, "_periodic_update must be removed"
+
+    def test_base_calculator_available_removed(self) -> None:
+        """#1401: BASE_CALCULATOR_AVAILABLE was always False and must be removed."""
+        try:
+            from electrode_advisor.ui.pyqt6 import main_window
+        except ImportError:
+            pytest.skip("main_window not importable")
+        has_const = hasattr(main_window, "BASE_CALCULATOR_AVAILABLE")
+        assert not has_const, "BASE_CALCULATOR_AVAILABLE must be removed"
+
+    def test_state_mixin_available_removed(self) -> None:
+        """#1401: STATE_MIXIN_AVAILABLE was always False and must be removed."""
+        try:
+            from electrode_advisor.ui.pyqt6 import main_window
+        except ImportError:
+            pytest.skip("main_window not importable")
+        has_const = hasattr(main_window, "STATE_MIXIN_AVAILABLE")
+        assert not has_const, "STATE_MIXIN_AVAILABLE must be removed"
+
+    def test_label_param_removed_from_trapezoidal_path(self) -> None:
+        """#1402: label parameter silently discarded — must be removed."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_visualization_update import (
+                VisualizationUpdateMixin,
+            )
+        except ImportError:
+            pytest.skip("VisualizationUpdateMixin not importable")
+        import inspect
+
+        sig = inspect.signature(VisualizationUpdateMixin._draw_correct_trapezoidal_path)
+        has_label = "label" in sig.parameters
+        assert not has_label, "label param must be removed from trapezoidal"
+
+    def test_label_param_removed_from_via_metal_path(self) -> None:
+        """#1402: label parameter silently discarded — must be removed."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_visualization_update import (
+                VisualizationUpdateMixin,
+            )
+        except ImportError:
+            pytest.skip("VisualizationUpdateMixin not importable")
+        import inspect
+
+        sig = inspect.signature(VisualizationUpdateMixin._draw_correct_via_metal_path)
+        has_label = "label" in sig.parameters
+        assert not has_label, "label param must be removed from via_metal"
+
+    def test_visualization_no_set_axis(self) -> None:
+        """#1405: ElectrodeVisualization.set_axis() was dead code."""
+        try:
+            from electrode_advisor.utils.visualization import (
+                ElectrodeVisualization,
+            )
+        except ImportError:
+            pytest.skip("ElectrodeVisualization not importable")
+        has_set_axis = hasattr(ElectrodeVisualization, "set_axis")
+        assert not has_set_axis, "set_axis must be removed"

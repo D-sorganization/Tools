@@ -8,7 +8,6 @@ from typing import Any
 from PyQt6.QtCore import QTimer, pyqtSlot
 from PyQt6.QtWidgets import QMessageBox
 
-from ...configs.ui_defaults import PERIODIC_UPDATE_MS
 from ...configs.view_presets import (
     DEFAULT_Z_SCALE_FACTOR,
     DEFAULT_ZOOM_SCALE_FACTOR,
@@ -47,10 +46,8 @@ class EventsMixin:
     _update_results_tables: Any
 
     def _setup_timers(self) -> None:
-        """Setup update timers"""
+        """Setup update timers (periodic update removed — was a no-op)."""
         self.calc_timer = QTimer()
-        self.calc_timer.timeout.connect(self._periodic_update)
-        self.calc_timer.start(PERIODIC_UPDATE_MS)
 
     @pyqtSlot()
     def _on_input_changed(self) -> None:
@@ -108,8 +105,6 @@ class EventsMixin:
             self.electrode_ax.set_ylim(
                 y_center - new_range / 2, y_center + new_range / 2
             )
-            if self.electrode_canvas is not None:
-                self.electrode_canvas.draw()
             if hasattr(self.electrode_ax, "set_zlim"):
                 z_range = (
                     (
@@ -404,9 +399,6 @@ class EventsMixin:
 
         except (RuntimeError, AttributeError) as e:
             logger.exception("Error in glass integration change handler: %s", e)
-
-    def _periodic_update(self) -> None:
-        """Periodic update for real-time monitoring"""
 
     @pyqtSlot()
     def _run_optimization(self) -> None:
