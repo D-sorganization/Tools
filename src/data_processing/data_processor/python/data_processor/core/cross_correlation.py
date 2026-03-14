@@ -23,6 +23,8 @@ from typing import Any
 
 import numpy as np
 
+from data_processor.contracts import require
+
 logger = logging.getLogger(__name__)
 
 
@@ -187,8 +189,8 @@ class CrossCorrelationAnalyzer:
         x = np.asarray(x, dtype=np.float64)
         y = np.asarray(y, dtype=np.float64)
 
-        if len(x) != len(y):
-            raise ValueError("Series must have the same length")
+        require(len(x) == len(y), "Series must have the same length", len(x))
+        require(len(x) >= 3, "Need at least 3 data points", len(x))
 
         n = len(x)
         max_lag = max_lag or self.config.max_lag or n // 3
