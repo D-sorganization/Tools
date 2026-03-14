@@ -25,7 +25,16 @@ def compute_wall_position(
     electrode_pos: dict[str, Any],
     bath_radius: float,
 ) -> np.ndarray:
-    """Compute glass bath wall intersection for an electrode."""
+    """Compute glass bath wall intersection for an electrode.
+
+    Preconditions
+    -------------
+    bath_radius : must be strictly positive.
+    electrode_pos : must contain ``'angle'`` (radians) and ``'tip'`` keys.
+    """
+    assert bath_radius > 0, f"bath_radius must be positive, got {bath_radius}"
+    assert "angle" in electrode_pos, "electrode_pos must contain 'angle' key"
+    assert "tip" in electrode_pos, "electrode_pos must contain 'tip' key"
     angle = electrode_pos["angle"]
     tip_z = electrode_pos["tip"][2]
     return np.array(
@@ -45,7 +54,13 @@ def build_trapezoidal_prism(
     electrode_z: float,
     effective_height: float,
 ) -> list[list[list[float]]]:
-    """Build 6-face trapezoidal prism vertices from wall/tip positions."""
+    """Build 6-face trapezoidal prism vertices from wall/tip positions.
+
+    Preconditions
+    -------------
+    effective_height : must be strictly positive.
+    """
+    assert effective_height > 0, f"effective_height must be > 0, got {effective_height}"
     z_top = electrode_z + effective_height / 2
     z_bottom = electrode_z - effective_height / 2
 
@@ -96,6 +111,7 @@ def build_extrusion_faces(
     list[list[np.ndarray]]
         Six faces (bottom, top, 4 sides) for ``Poly3DCollection``.
     """
+    assert z_start != z_end, f"z_start and z_end must differ, both are {z_start}"
     vertices: list[np.ndarray] = []
 
     # Bottom face (at z_start)

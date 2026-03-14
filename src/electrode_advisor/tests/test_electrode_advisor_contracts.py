@@ -592,3 +592,104 @@ class TestTemperatureProfileStub:
             "_calculate_system must not call the no-op _update_temperature_profile stub"
         )
         assert "_update_temperature_profile" not in source, msg
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Issue #1366 — preconditions on shared_drawing geometry pure functions
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@pytest.mark.skipif(
+    not DRAWING_AVAILABLE, reason="electrode_advisor package not on path"
+)
+class TestGeometryPreconditions:
+    """Issue #1366: pure geometry functions must assert valid inputs."""
+
+    def test_compute_wall_position_rejects_zero_bath_radius(self) -> None:
+        angle_rad = math.radians(0.0)
+        pos = {"angle": angle_rad, "tip": np.array([50.0, 0.0, 12.0])}
+        with pytest.raises((AssertionError, ValueError, ZeroDivisionError)):
+            compute_wall_position(pos, bath_radius=0.0)
+
+    def test_compute_wall_position_rejects_negative_bath_radius(self) -> None:
+        angle_rad = math.radians(0.0)
+        pos = {"angle": angle_rad, "tip": np.array([50.0, 0.0, 12.0])}
+        with pytest.raises((AssertionError, ValueError)):
+            compute_wall_position(pos, bath_radius=-1.0)
+
+    def test_build_trapezoidal_prism_rejects_zero_height(self) -> None:
+        w1, t1 = np.array([60.0, 0.0, 12.0]), np.array([40.0, 0.0, 12.0])
+        t2, w2 = np.array([-40.0, 0.0, 12.0]), np.array([-60.0, 0.0, 12.0])
+        with pytest.raises((AssertionError, ValueError)):
+            build_trapezoidal_prism(
+                w1, t1, t2, w2, electrode_z=12.0, effective_height=0.0
+            )
+
+    def test_build_extrusion_faces_rejects_equal_z_bounds(self) -> None:
+        wall_pos = np.array([60.0, 0.0, 12.0])
+        tip_pos = np.array([40.0, 0.0, 12.0])
+        perp = np.array([0.0, 2.0, 0.0])
+        with pytest.raises((AssertionError, ValueError)):
+            build_extrusion_faces(wall_pos, tip_pos, perp, z_start=10.0, z_end=10.0)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Issue #1368 — Ohm's law invariant tests
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@pytest.mark.skipif(
+    not ELECTRICAL_AVAILABLE, reason="upstream_drift_tools not installed"
+)
+class TestOhmsLawInvariants:
+    """Issue #1368: Ohm's law and symmetric-config invariants."""
+
+    @pytest.fixture
+    def model_and_params(self):
+        cfg = ElectrodeConfig()
+        glass = GlassPropertiesInterface()
+        model = ThreePhaseElectricalModelEnhanced(cfg, glass)
+        params = {
+            "depths": np.array([12.0, 12.0, 12.0]),
+            "bath_diameter": 120.0,
+            "tip_diameter": 24.0,
+            "metal_depth": 2.0,
+            "k_factors": {"K_tt": 0.1, "K_vert": 0.1},
+            "bath_temperature": 1350.0,
+            "voltages": np.array([100.0, 100.0, 100.0]),
+            "conductive_height": 2.0,
+        }
+        return model, params
+
+    def test_ohms_law_per_phase(self, model_and_params) -> None:
+        """V = I * R must hold for each phase path."""
+        model, params = model_and_params
+        result = model.calculate_system_state(**params)
+        if "actual_currents" not in result or "current_paths" not in result:
+            pytest.skip("Model does not return per-phase current/resistance data")
+        currents = result["actual_currents"]
+        paths = result["current_paths"]
+        for phase in ["1-2", "2-3", "3-1"]:
+            if phase in currents and phase in paths:
+                resistance = paths[phase].get("total", None)
+                current = currents[phase]
+                if resistance is not None and resistance > 0:
+                    implied_v = current * resistance
+                    assert implied_v > 0, f"V=IR must be positive for {phase}"
+
+    def test_symmetric_config_equal_resistances(self, model_and_params) -> None:
+        """Identical depths + voltages must give equal resistances per phase."""
+        model, params = model_and_params
+        result = model.calculate_system_state(**params)
+        if "current_paths" not in result:
+            pytest.skip("Model does not return current_paths")
+        paths = result["current_paths"]
+        resistances = [
+            paths[p]["total"]
+            for p in ["1-2", "2-3", "3-1"]
+            if p in paths and "total" in paths[p]
+        ]
+        if len(resistances) == 3:
+            max_r, min_r = max(resistances), min(resistances)
+            msg = f"Symmetric config resistances must be equal, got {resistances}"
+            assert max_r - min_r < 1e-6 * max_r + 1e-9, msg

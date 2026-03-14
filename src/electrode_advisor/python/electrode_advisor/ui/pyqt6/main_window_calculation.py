@@ -170,6 +170,12 @@ class CalculationMixin:
             metal_layer_height = self.metal_layer_height_input.value()  # type: ignore[attr-defined]
             bath_temperature = self.bath_temp_input.value()  # type: ignore[attr-defined]
 
+            # DbC preconditions (#1365)
+            assert bath_diameter > 0, f"bath_diameter must be > 0, got {bath_diameter}"
+            assert all(d >= 0 for d in depths), f"depths must be >= 0, got {depths}"
+            in_range = 800 <= bath_temperature <= 1600
+            assert in_range, f"temperature {bath_temperature} not in [800,1600]"
+
             voltages = np.array(
                 [
                     cast(QDoubleSpinBox, self.phase_inputs["1-2"]["voltage"]).value(),  # type: ignore[attr-defined]
@@ -195,6 +201,14 @@ class CalculationMixin:
                 conductive_height=conductive_height,
             )
             logger.debug("[DEBUG] calculation_results: %s", self.calculation_results)  # type: ignore[attr-defined]
+
+            # DbC postcondition (#1380): model must return a non-empty dict
+            assert isinstance(self.calculation_results, dict), (  # type: ignore[attr-defined]
+                "calculate_system_state must return a dict"
+            )
+            assert len(self.calculation_results) > 0, (  # type: ignore[attr-defined]
+                "calculate_system_state must return a non-empty result"
+            )
 
             self._update_3d_visualization()  # type: ignore[attr-defined]
             self._update_current_distribution()  # type: ignore[attr-defined]
