@@ -189,6 +189,15 @@ class TestDatasetManagerWorkspace:
         self, mgr: DatasetManager, sample_df: pd.DataFrame, tmp_path: Path
     ) -> None:
         """Save workspace → load from fresh manager → data matches."""
+        # Workspace persistence uses parquet; skip if no engine installed.
+        try:
+            import pyarrow  # noqa: F401
+        except ImportError:
+            try:
+                import fastparquet  # noqa: F401
+            except ImportError:
+                pytest.skip("No parquet engine (pyarrow/fastparquet) available")
+
         mgr.load_from_dataframe(sample_df, name="ws_test")
         ws_path = tmp_path / "ws_save"
         mgr.save_workspace(ws_path)
