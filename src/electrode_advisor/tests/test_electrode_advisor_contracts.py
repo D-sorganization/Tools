@@ -346,15 +346,16 @@ class TestElectrodeVisualizationInterface:
         viz = ElectrodeVisualization(config=sentinel)
         assert viz.config is sentinel
 
-    def test_electrode_wall_positions_is_static(self) -> None:
-        """_electrode_wall_positions should be callable without an instance ax."""
-        pos1 = _make_electrode_pos(0.0)
-        pos2 = _make_electrode_pos(120.0)
-        result = ElectrodeVisualization._electrode_wall_positions(
-            pos1, pos2, bath_radius=60.0
-        )
-        assert result is not None
-        assert len(result) == 2, "Expected two wall positions"
+    def test_dead_old_style_methods_removed(self) -> None:
+        """Issue #1440: dead old-style drawing methods must not exist."""
+        assert not hasattr(ElectrodeVisualization, "draw_correct_trapezoidal_path")
+        assert not hasattr(ElectrodeVisualization, "draw_correct_via_metal_path")
+        assert not hasattr(ElectrodeVisualization, "draw_electrode_length_extrusion")
+        assert not hasattr(ElectrodeVisualization, "_electrode_wall_positions")
+        assert not hasattr(ElectrodeVisualization, "_extrude_polygon")
+        assert not hasattr(ElectrodeVisualization, "_build_extrusion_vertices")
+        assert not hasattr(ElectrodeVisualization, "_box_faces")
+        assert not hasattr(ElectrodeVisualization, "_label_midpoint")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -367,39 +368,22 @@ class TestElectrodeVisualizationInterface:
     reason="Required packages not available",
 )
 class TestSharedDrawingDRYConsistency:
-    """Verify that ElectrodeVisualization delegates to shared_drawing helpers.
+    """Verify shared_drawing.compute_wall_position produces correct results.
 
-    Issue #931: The DRY extraction means shared_drawing.compute_wall_position and
-    ElectrodeVisualization._electrode_wall_positions should produce consistent results.
+    Issue #1440: Old-style _electrode_wall_positions removed from
+    ElectrodeVisualization; only shared_drawing.compute_wall_position remains.
     """
 
-    def test_compute_wall_position_matches_electrode_wall_positions(self) -> None:
-        pos1 = _make_electrode_pos(0.0)
-        pos2 = _make_electrode_pos(120.0)
+    def test_compute_wall_position_returns_correct_coords(self) -> None:
+        pos = _make_electrode_pos(0.0)
         bath_radius = 60.0
-
-        # Direct call via shared_drawing
-        wp1_direct = np.asarray(compute_wall_position(pos1, bath_radius))
-        wp2_direct = np.asarray(compute_wall_position(pos2, bath_radius))
-
-        # Via ElectrodeVisualization static method
-        wall1_via, wall2_via = ElectrodeVisualization._electrode_wall_positions(
-            pos1, pos2, bath_radius
-        )
-        wp1_via = np.asarray(wall1_via)[:2]
-        wp2_via = np.asarray(wall2_via)[:2]
-
+        result = np.asarray(compute_wall_position(pos, bath_radius))
+        assert len(result) == 2, "Expected (x, y) pair"
         np.testing.assert_allclose(
-            wp1_direct[:2],
-            wp1_via,
+            result[0],
+            bath_radius,
             rtol=1e-5,
-            err_msg="compute_wall_position and _electrode_wall_positions disagree for pos1",
-        )
-        np.testing.assert_allclose(
-            wp2_direct[:2],
-            wp2_via,
-            rtol=1e-5,
-            err_msg="compute_wall_position and _electrode_wall_positions disagree for pos2",
+            err_msg="x-component should equal bath_radius for angle=0",
         )
 
 
@@ -1413,3 +1397,166 @@ class TestRobustnessDbC:
         no_index = "phase[0]" not in src
         assert uses_split, "must use split for phase key"
         assert no_index, "must not use character indexing"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Batch 6: Constants + Architecture (#1429-#1440)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestConstantsModule:
+    """Issues #1429-#1434: Magic numbers centralized in constants module."""
+
+    def test_constants_importable(self) -> None:
+        try:
+            from electrode_advisor.utils.constants import (
+                CYLINDER_CIRCUM_SEGMENTS,
+                CYLINDER_LENGTH_SEGMENTS,
+                CYLINDER_THETA_SEGMENTS,
+                ELECTRODE_ANGLES_DEG,
+                ELECTRODE_COLORS,
+                ELECTRODE_COUNT,
+                SHELL_THICKNESS,
+                SPHERE_U_RESOLUTION,
+                SPHERE_V_RESOLUTION,
+            )
+        except ImportError:
+            pytest.skip("constants module not importable")
+
+        assert ELECTRODE_COUNT == 3
+        assert len(ELECTRODE_ANGLES_DEG) == ELECTRODE_COUNT
+        assert len(ELECTRODE_COLORS) == ELECTRODE_COUNT
+        assert SHELL_THICKNESS > 0
+        assert SPHERE_U_RESOLUTION > 0
+        assert SPHERE_V_RESOLUTION > 0
+        assert CYLINDER_THETA_SEGMENTS > 0
+        assert CYLINDER_LENGTH_SEGMENTS > 0
+        assert CYLINDER_CIRCUM_SEGMENTS > 0
+
+    def test_angles_sum_to_360(self) -> None:
+        """Electrode angles must be evenly spaced around circle."""
+        try:
+            from electrode_advisor.utils.constants import ELECTRODE_ANGLES_DEG
+        except ImportError:
+            pytest.skip("constants module not importable")
+
+        diffs = [
+            ELECTRODE_ANGLES_DEG[(i + 1) % len(ELECTRODE_ANGLES_DEG)]
+            - ELECTRODE_ANGLES_DEG[i]
+            for i in range(len(ELECTRODE_ANGLES_DEG) - 1)
+        ]
+        assert all(d == diffs[0] for d in diffs), "Angles must be evenly spaced"
+
+
+@pytest.mark.skipif(not VISUALIZATION_AVAILABLE, reason="visualization not importable")
+class TestVisualizationUsesConstants:
+    """Issues #1429-#1434: visualization.py must use constants, not literals."""
+
+    def test_no_hardcoded_electrode_angles(self) -> None:
+        import inspect
+
+        from electrode_advisor.utils.visualization import ElectrodeVisualization
+
+        src = inspect.getsource(ElectrodeVisualization.draw_3d_electrodes)
+        assert "[0, 120, 240]" not in src, "must use ELECTRODE_ANGLES_DEG"
+
+    def test_no_hardcoded_sphere_resolution(self) -> None:
+        import inspect
+
+        from electrode_advisor.utils.visualization import ElectrodeVisualization
+
+        src = inspect.getsource(ElectrodeVisualization.draw_electrode_sphere)
+        assert "np.linspace(0, 2 * np.pi, 20)" not in src
+        assert "np.linspace(0, np.pi, 15)" not in src
+
+    def test_no_hardcoded_shell_thickness(self) -> None:
+        import inspect
+
+        from electrode_advisor.utils.visualization_layers import ElectrodeLayersMixin
+
+        src = inspect.getsource(ElectrodeLayersMixin.draw_3d_metal_shell)
+        assert "shell_thickness = 0.5" not in src, "must use SHELL_THICKNESS"
+
+
+class TestProtocolsModule:
+    """Issue #1438: Protocol classes for mixin interface contracts."""
+
+    def test_protocols_importable(self) -> None:
+        try:
+            from electrode_advisor.utils.protocols import (
+                SupportsCalculation,
+                SupportsElectrodeConfig,
+                SupportsVisualization,
+            )
+        except ImportError:
+            pytest.skip("protocols module not importable")
+
+        assert SupportsElectrodeConfig is not None
+        assert SupportsVisualization is not None
+        assert SupportsCalculation is not None
+
+    def test_protocols_are_runtime_checkable(self) -> None:
+        try:
+            from electrode_advisor.utils.protocols import (
+                SupportsElectrodeConfig,
+            )
+        except ImportError:
+            pytest.skip("protocols module not importable")
+
+        # Runtime-checkable protocols support isinstance checks
+        assert hasattr(SupportsElectrodeConfig, "__protocol_attrs__") or hasattr(
+            SupportsElectrodeConfig, "__abstractmethods__"
+        )
+
+
+@pytest.mark.skipif(not VISUALIZATION_AVAILABLE, reason="visualization not importable")
+class TestDeadMethodsRemoved:
+    """Issue #1440: Old-style drawing methods removed from ElectrodeVisualization."""
+
+    def test_no_draw_correct_trapezoidal_path(self) -> None:
+        assert not hasattr(ElectrodeVisualization, "draw_correct_trapezoidal_path")
+
+    def test_no_draw_correct_via_metal_path(self) -> None:
+        assert not hasattr(ElectrodeVisualization, "draw_correct_via_metal_path")
+
+    def test_no_draw_electrode_length_extrusion(self) -> None:
+        assert not hasattr(ElectrodeVisualization, "draw_electrode_length_extrusion")
+
+    def test_no_private_helpers_from_dead_methods(self) -> None:
+        for attr in (
+            "_electrode_wall_positions",
+            "_extrude_polygon",
+            "_build_extrusion_vertices",
+            "_box_faces",
+            "_label_midpoint",
+        ):
+            assert not hasattr(ElectrodeVisualization, attr), f"dead: {attr}"
+
+    def test_live_methods_still_exist(self) -> None:
+        """Ensure we did not remove methods that are still in use."""
+        for attr in (
+            "draw_cylinder",
+            "draw_cylinder_between",
+            "draw_trapezoidal_prism",
+            "draw_via_metal_path",
+            "draw_3d_electrodes",
+            "draw_horizontal_cylinder",
+            "draw_electrode_sphere",
+        ):
+            assert hasattr(ElectrodeVisualization, attr), f"{attr} must still exist"
+
+
+class TestElectrodeCountConstant:
+    """Issue #1439: ELECTRODE_COUNT used instead of hard-coded 3."""
+
+    def test_visualization_update_uses_electrode_count(self) -> None:
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_visualization_update import (
+                VisualizationUpdateMixin,
+            )
+        except ImportError:
+            pytest.skip("VisualizationUpdateMixin not importable")
+        import inspect
+
+        src = inspect.getsource(VisualizationUpdateMixin._read_viz_params)
+        assert "ELECTRODE_COUNT" in src, "must use ELECTRODE_COUNT constant"

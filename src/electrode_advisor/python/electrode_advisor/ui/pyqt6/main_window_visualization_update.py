@@ -13,6 +13,7 @@ from typing import Any
 import numpy as np
 from PyQt6.QtWidgets import QCheckBox
 
+from ...utils.constants import ELECTRODE_ANGLES_DEG, ELECTRODE_COUNT
 from ...utils.shared_drawing import (
     draw_trapezoidal_path,
     draw_via_metal_path,
@@ -259,7 +260,7 @@ class VisualizationUpdateMixin:
             "metal_height": self.metal_layer_height_input.value(),
             "glass_height": self.glass_layer_height_input.value(),
             "refractory_thickness": self.refractory_thickness_input.value(),
-            "depths": [self.depth_inputs[i].value() for i in range(3)],
+            "depths": [self.depth_inputs[i].value() for i in range(ELECTRODE_COUNT)],
         }
 
     @staticmethod
@@ -392,8 +393,8 @@ class VisualizationUpdateMixin:
             depths, bath_radius, metal_height, glass_height
         )
 
-        for i in range(3):
-            j = (i + 1) % 3
+        for i in range(ELECTRODE_COUNT):
+            j = (i + 1) % ELECTRODE_COUNT
             phase_key = f"{i + 1}-{j + 1}"
 
             current_paths, actual_currents = self._get_phase_current_data()
@@ -446,7 +447,7 @@ class VisualizationUpdateMixin:
         glass_height: float,
     ) -> list[dict[str, Any]]:
         """Compute electrode positions at 120-degree intervals for path drawing."""
-        angles = [0, 120, 240]
+        angles = ELECTRODE_ANGLES_DEG
         refractory_thickness = self.refractory_thickness_input.value()
         electrode_extension = self.electrode_extension_slider.value()
         total_length = bath_radius + refractory_thickness + electrode_extension

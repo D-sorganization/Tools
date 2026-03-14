@@ -20,6 +20,34 @@ logger = logging.getLogger(__name__)
 class CalculationMixin:
     """Mixin providing calculation and event handling for ElectrodeAdvisorWidget."""
 
+    # -- Attributes provided by the host class (declared for mypy, #1435) --
+    bath_diameter_input: Any
+    bath_temp_input: Any
+    calculation_results: Any
+    config: Any
+    conductive_layer_height_input: Any
+    depth_inputs: Any
+    electrode_ax: Any
+    electrode_canvas: Any
+    electrode_diameter_combo: Any
+    electrode_extension_slider: Any
+    electrical_model: Any
+    glass_layer_height_input: Any
+    horizontal_spreading_input: Any
+    k_tt_input: Any
+    k_vert_input: Any
+    metal_conductive_checkbox: Any
+    metal_layer_height_input: Any
+    optimization_complete: Any
+    phase_inputs: Any
+    power_factor_input: Any
+    show_metal_checkbox: Any
+    status_label: Any
+    status_panel: Any
+    vertical_spreading_input: Any
+    zoom_label: Any
+    zoom_slider: Any
+
     def _setup_timers(self) -> None:
         """Setup update timers (periodic update removed — was a no-op)."""
         self.calc_timer = QTimer()
@@ -73,15 +101,15 @@ class CalculationMixin:
 
     @pyqtSlot()
     def _validate_glass_height(self) -> None:
-        """Validate that glass height is above electrode tips"""
+        """Validate that glass height is above electrode tips (#1437)."""
         try:
-            glass_height = self.glass_layer_height_input.value()  # type: ignore[attr-defined]
-            metal_height = self.metal_layer_height_input.value()  # type: ignore[attr-defined]
+            glass_height = self.glass_layer_height_input.value()
+            metal_height = self.metal_layer_height_input.value()
 
             max_electrode_depth: float = 0.0
             for i in range(3):
-                if i in self.depth_inputs:  # type: ignore[attr-defined]
-                    depth = self.depth_inputs[i].value()  # type: ignore[attr-defined]
+                if i in self.depth_inputs:
+                    depth = self.depth_inputs[i].value()
                     max_electrode_depth = max(max_electrode_depth, depth)
 
             min_glass_height = max_electrode_depth + metal_height + 1.0
@@ -95,12 +123,11 @@ class CalculationMixin:
                     f"(Electrode depth: {max_electrode_depth:.1f} in + "
                     f"Metal height: {metal_height:.1f} in + Safety margin: 1.0 in)",
                 )
-                self.glass_layer_height_input.setValue(min_glass_height)  # type: ignore[attr-defined]
-
-            self._calculate_system()
+                self.glass_layer_height_input.setValue(min_glass_height)
 
         except (RuntimeError, AttributeError) as e:
             logger.exception("Error in glass height validation: %s", e)
+        finally:
             self._calculate_system()
 
     def _compute_effective_conductivity(self) -> bool:
