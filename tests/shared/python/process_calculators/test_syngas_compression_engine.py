@@ -6,10 +6,7 @@ testing the core engine math internally within the Tools repository.
 
 from __future__ import annotations
 
-import math
-
 import pytest
-
 from upstream_drift_tools.process_calculators.syngas_compression_calculator import (
     CompressionStage,
     SyngasCompressionEngine,
@@ -102,9 +99,7 @@ class TestCompressionWork:
         with pytest.raises(ValueError, match="Unknown compression type"):
             engine.calculate_compression_work(stage, 100.0, mixture)
 
-    def test_zero_inlet_pressure_raises(
-        self, engine: SyngasCompressionEngine
-    ) -> None:
+    def test_zero_inlet_pressure_raises(self, engine: SyngasCompressionEngine) -> None:
         """Zero inlet pressure is a physics precondition violation."""
         stage = CompressionStage(
             inlet_pressure=0.0,
@@ -136,8 +131,8 @@ class TestWaterDropout:
         """Very low water content at atmospheric pressure should not condense."""
         result = engine.calculate_water_dropout(
             temperature=350.0,  # 77°C
-            pressure=1.0,       # 1 bar
-            water_content=0.01, # 0.01 mol%
+            pressure=1.0,  # 1 bar
+            water_content=0.01,  # 0.01 mol%
         )
         assert result["water_dropout"] == pytest.approx(0.0, abs=1e-6)
         assert result["condensation_rate"] == pytest.approx(0.0, abs=1e-6)
@@ -148,7 +143,7 @@ class TestWaterDropout:
         """High water content at elevated pressure should trigger dropout."""
         result = engine.calculate_water_dropout(
             temperature=353.15,  # 80°C
-            pressure=100.0,      # 100 bar - very high, reduces vp fraction
+            pressure=100.0,  # 100 bar - very high, reduces vp fraction
             water_content=50.0,  # 50 mol% water
         )
         assert result["water_dropout"] > 0
@@ -181,7 +176,9 @@ class TestMultistageCompression:
                 compression_type="isentropic",
             )
         ]
-        result = engine.calculate_multistage_compression(stages, 500.0, syngas_composition)
+        result = engine.calculate_multistage_compression(
+            stages, 500.0, syngas_composition
+        )
         assert "stages" in result
         assert len(result["stages"]) == 1
         assert "total_power_hp" in result
@@ -193,15 +190,17 @@ class TestMultistageCompression:
         syngas_composition: dict,
     ) -> None:
         """Two stages for same pressure ratio should use more total HP than one."""
-        single_stage = [
-            CompressionStage(1.0, 25.0, 300.0, 0.85, "isentropic")
-        ]
+        single_stage = [CompressionStage(1.0, 25.0, 300.0, 0.85, "isentropic")]
         two_stages = [
             CompressionStage(1.0, 5.0, 300.0, 0.85, "isentropic"),
             CompressionStage(5.0, 25.0, 300.0, 0.85, "isentropic"),
         ]
-        r1 = engine.calculate_multistage_compression(single_stage, 100.0, syngas_composition)
-        r2 = engine.calculate_multistage_compression(two_stages, 100.0, syngas_composition)
+        r1 = engine.calculate_multistage_compression(
+            single_stage, 100.0, syngas_composition
+        )
+        r2 = engine.calculate_multistage_compression(
+            two_stages, 100.0, syngas_composition
+        )
         # Both compute positive power
         assert r1["total_power_hp"] > 0
         assert r2["total_power_hp"] > 0
@@ -244,6 +243,8 @@ class TestProcessConditionAnalysis:
         """Very high outlet temp should populate concerns list."""
         # Single-stage from 1 to 500 bar will generate extreme heat
         stages = [CompressionStage(1.0, 500.0, 300.0, 0.85, "isentropic")]
-        result = engine.calculate_multistage_compression(stages, 100.0, syngas_composition)
+        result = engine.calculate_multistage_compression(
+            stages, 100.0, syngas_composition
+        )
         analysis = engine.analyze_process_conditions(result)
         assert len(analysis["concerns"]) > 0 or len(analysis["warnings"]) > 0
