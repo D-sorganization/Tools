@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import cast
+from typing import Any, cast
 
 import matplotlib.colors as mcolors
 import numpy as np
@@ -29,6 +29,25 @@ class ResultsAndChartsMixin:
     - ``self.config``
     - Various chart axes and canvas attributes
     """
+
+    # -- Attributes provided by the host class (declared for mypy, #1436) --
+    auto_scale_checkbox: Any
+    bath_temp_input: Any
+    calculation_results: Any
+    color_mode_combo: Any
+    config: Any
+    current_ax: Any
+    current_canvas: Any
+    max_scale_input: Any
+    metal_conductive_checkbox: Any
+    min_scale_input: Any
+    path_labels: Any
+    phase_inputs: Any
+    power_ax: Any
+    power_canvas: Any
+    power_factor_input: Any
+    resistance_table: Any
+    total_power_display: Any
 
     def _update_results_tables(self) -> None:
         """Update the results tables with new path information"""

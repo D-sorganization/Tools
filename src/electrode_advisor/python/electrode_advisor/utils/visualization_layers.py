@@ -11,6 +11,8 @@ from typing import Any
 
 import numpy as np
 
+from .constants import SHELL_THICKNESS
+
 
 class ElectrodeLayersMixin:
     """Mixin providing layer/vessel drawing for ElectrodeVisualization."""
@@ -160,7 +162,7 @@ class ElectrodeLayersMixin:
     ) -> None:
         """Draw the metal vessel shell as a 1/2 inch thick cylinder outside the refractory."""
         try:
-            shell_thickness = 0.5
+            shell_thickness = SHELL_THICKNESS
             shell_inner_radius = inner_radius + refractory_thickness
             shell_outer_radius = shell_inner_radius + shell_thickness
             shell_color = "#2F2F2F"
