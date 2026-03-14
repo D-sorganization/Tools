@@ -134,9 +134,7 @@ class SimulationResult(TrajectoryResultMixin):
             "potential": potential_energy(state, self.params),
             "total": total_energy(state, self.params),
         }
-        assert all(
-            np.isfinite(v) for v in result.values()
-        ), f"Non-finite energy at idx={idx}: {result}"
+        self._assert_energy_finite(result, idx)
         return result
 
     def coriolis_at(self, idx: int) -> np.ndarray:

@@ -141,9 +141,7 @@ class GolferSimulationResult(TrajectoryResultMixin):
             "potential": potential_energy(state, self.params),
             "total": total_energy(state, self.params),
         }
-        assert all(
-            np.isfinite(v) for v in result.values()
-        ), f"Non-finite energy at idx={idx}: {result}"
+        self._assert_energy_finite(result, idx)
         return result
 
     def friction_torques_at(self, idx: int) -> np.ndarray:
@@ -152,7 +150,11 @@ class GolferSimulationResult(TrajectoryResultMixin):
         return friction_torque_vector(self.qdot_at(idx), self.params)  # type: ignore[no-any-return]
 
     def total_torques_at(self, idx: int) -> np.ndarray:
-        """Total applied torque (drive + friction) at time index."""
+        """Total applied torque (drive + friction) at time index.
+
+        Overrides the base to spread the 7-joint torque_func output over the
+        full N_DOF=8 vector before adding friction.
+        """
         self._check_idx(idx)
         tau_drive = np.zeros(N_DOF)
         tau_drive[:7] = self.torque_func(self.t[idx])

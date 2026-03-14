@@ -39,6 +39,26 @@ class TrajectoryResultMixin:
     def _check_idx(self, idx: int) -> None:
         assert 0 <= idx < self.n_steps, f"Index {idx} out of range [0, {self.n_steps})"
 
+    @staticmethod
+    def _assert_energy_finite(result: dict, idx: int) -> None:
+        """Shared postcondition: all energy components must be finite."""
+        assert all(
+            np.isfinite(v) for v in result.values()
+        ), f"Non-finite energy at idx={idx}: {result}"
+
+    def total_torques_at(self, idx: int) -> np.ndarray:
+        """Total applied torque (drive + friction) at time index.
+
+        Default implementation: tau_drive + tau_friction.  Subclasses that
+        apply torque clamping (e.g. double-pendulum with TorqueClamp) must
+        override this method.
+        """
+        self._check_idx(idx)
+        torque_func = getattr(self, "torque_func")
+        tau_drive = np.array(torque_func(self.t[idx]))
+        tau_friction: np.ndarray = self.friction_torques_at(idx)  # type: ignore[attr-defined]
+        return np.asarray(tau_drive + tau_friction)
+
     def all_positions(self) -> list[Any]:
         positions_at = getattr(self, "positions_at")
         return [positions_at(i) for i in range(self.n_steps)]
