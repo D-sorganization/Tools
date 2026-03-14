@@ -8,7 +8,6 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 import pytest
-
 from upstream_drift_tools.data_processing.core import (
     AggregationType,
     DataProcessorEngine,
@@ -166,7 +165,6 @@ class TestDataProcessorEngineQueries:
 
     def test_filter_data_operator_in(self, eng: DataProcessorEngine) -> None:
         """Filters with string operator works."""
-        from unittest.mock import patch
         # Bypassing the filter by patching is not strictly necessary for unit tests of the tool itself.
         # It's an internal test of the tool.
         res = eng.query("C == 'cat'")

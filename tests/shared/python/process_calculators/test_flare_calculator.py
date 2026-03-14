@@ -6,12 +6,11 @@ This test file adheres to the Fleet-Wide Shared Component Testing Strategy, test
 from __future__ import annotations
 
 import pytest
-
+from upstream_drift_tools.process_calculators.constants import FLARE_MIN_HEIGHT
 from upstream_drift_tools.process_calculators.flare_calculator import (
     FlareCalculator,
     FlareDesign,
 )
-from upstream_drift_tools.process_calculators.constants import FLARE_MIN_HEIGHT
 
 
 @pytest.fixture
@@ -82,7 +81,7 @@ class TestFlareCalculator:
         mix_bad = {"CO": 0.8, "H2S": 0.2}
         eff_bad = calculator.calculate_combustion_efficiency(
             gas_composition=mix_bad,
-            temperature=200.0, # cold penalty
+            temperature=200.0,  # cold penalty
             pressure=1.0,
         )
         assert eff_bad < eff_good

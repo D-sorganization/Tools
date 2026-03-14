@@ -6,7 +6,6 @@ This test file adheres to the Fleet-Wide Shared Component Testing Strategy, test
 from __future__ import annotations
 
 import pytest
-
 from upstream_drift_tools.process_calculators.baghouse_calculator import (
     BaghouseCalculator,
     BaghouseResult,
@@ -108,7 +107,7 @@ class TestBaghouseCalculations:
     def test_calculate_preconditions(self, calculator: BaghouseCalculator) -> None:
         """Test DbC assertions map to valid inputs."""
         mix = {"N2": 1.0}
-        
+
         with pytest.raises(AssertionError, match="Gas flow must be positive"):
             calculator.calculate(
                 gas_flow_kg_s=-1.0,
