@@ -152,6 +152,7 @@ class GolferPendulumWidget(BasePendulumWidget):
         Rebuilds the trail from the precomputed club tip positions so
         scrubbing back and forth always shows a clean path.
         """
+        assert idx is not None, "idx must be provided"
         if self._result is None:
             return
         idx = max(0, min(idx, self._result.n_steps - 1))
@@ -180,6 +181,7 @@ class GolferPendulumWidget(BasePendulumWidget):
     # ------------------------------------------------------------------
 
     def paintEvent(self, event: object) -> None:
+        assert event is not None, "event must be provided"
         self._pixels_per_meter = self._compute_base_scale() * self._zoom
 
         painter = QPainter(self)
@@ -318,6 +320,7 @@ class GolferPendulumWidget(BasePendulumWidget):
     # ------------------------------------------------------------------
 
     def _draw_force_vectors(self, painter: QPainter) -> None:
+        assert painter is not None, "painter must be provided"
         if self._result is None:
             return
         try:
@@ -385,6 +388,7 @@ class GolferPendulumWidget(BasePendulumWidget):
 
     def _draw_zero_torque_force_vectors(self, painter: QPainter) -> None:
         """Draw zero-torque (passive drift) force vectors at each joint (#1148)."""
+        assert painter is not None, "painter must be provided"
         if self._result is None or self._zero_torque_forces is None:
             return
         forces = self._zero_torque_forces[self._current_idx]
@@ -456,6 +460,7 @@ class GolferPendulumWidget(BasePendulumWidget):
         Convention: clockwise = negative, counterclockwise = positive.
         Arc radius scales with torque magnitude.
         """
+        assert painter is not None, "painter must be provided"
         if self._result is None:
             return
         try:
@@ -524,6 +529,7 @@ class GolferPendulumWidget(BasePendulumWidget):
 
     def _draw_com(self, painter: QPainter) -> None:
         """Draw the combined center of mass of the golfer system."""
+        assert painter is not None, "painter must be provided"
         if self._result is None:
             return
 
@@ -731,6 +737,7 @@ class GolferPendulumWidget(BasePendulumWidget):
             y += 15
 
     def _draw_placeholder(self, painter: QPainter) -> None:
+        assert painter is not None, "painter must be provided"
         painter.setPen(QColor(80, 80, 110))
         painter.setFont(QFont("Sans", 12))
         painter.drawText(

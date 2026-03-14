@@ -51,6 +51,7 @@ class ClipboardMixin:
         Returns:
             True if copied
         """
+        assert model_id is not None, "model_id must be provided"
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")
@@ -95,6 +96,7 @@ class ClipboardMixin:
         Returns:
             True if copied
         """
+        assert model_id is not None, "model_id must be provided"
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")
@@ -148,6 +150,7 @@ class ClipboardMixin:
         Returns:
             True if copied
         """
+        assert model_id is not None, "model_id must be provided"
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")

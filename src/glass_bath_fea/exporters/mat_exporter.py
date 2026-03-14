@@ -30,6 +30,7 @@ def export_mesh_to_mat(mesh_data: dict, output_path: Path | str) -> None:
         output_path: Path to output .mat file
     """
     # Use MATLAB PDE Toolbox naming conventions
+    assert mesh_data is not None, "mesh_data must be provided"
     data = {
         # p (points) - node coordinates
         "p": mesh_data["nodes"],
@@ -95,6 +96,7 @@ def export_fea_data_package(
         output_dir: Directory for output files
         include_mesh: Whether to include mesh data
     """
+    assert config is not None, "config must be provided"
     from glass_bath_fea.core.material_properties import (
         GlassMaterialModel,
         export_material_data,

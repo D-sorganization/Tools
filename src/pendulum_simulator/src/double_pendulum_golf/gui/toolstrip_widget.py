@@ -183,6 +183,7 @@ def _make_scale_slider(style: str, default: int = 10, max_val: int = 1000) -> QS
     max_val=1000 → 0.1×…100× (force vectors, which can be very large)
     max_val=100  → 0.1×…10×  (ellipsoids, more subtle visual scaling)
     """
+    assert style is not None, "style must be provided"
     s = QSlider(Qt.Orientation.Horizontal)
     s.setRange(1, max_val)
     s.setValue(default)
@@ -203,6 +204,7 @@ def _overlay_row(
     label: QLabel,
 ) -> QHBoxLayout:
     """Build a single overlay row: [☑ Name] [---slider---] [value]."""
+    assert checkbox is not None, "checkbox must be provided"
     row = QHBoxLayout()
     row.setContentsMargins(0, 0, 0, 0)
     row.setSpacing(3)
@@ -302,6 +304,7 @@ class ToolStrip(QWidget):
     def _build_row1(self, layout: QHBoxLayout) -> None:
         """Actions row: Title | Run Reset Play | Speed | [frame slider] | Frame# | Reset View"""
 
+        assert layout is not None, "layout must be provided"
         title = QLabel("Pendulums")
         title.setStyleSheet(_TITLE)
         title.setFont(QFont("Sans", 11, QFont.Weight.Bold))
@@ -490,6 +493,7 @@ class ToolStrip(QWidget):
         are stacked vertically in a compact section.
         """
         # --- Overlay section container ---
+        assert layout is not None, "layout must be provided"
         overlay_frame = QFrame()
         overlay_frame.setObjectName("overlay_section")
         overlay_frame.setStyleSheet(_OVERLAY_SECTION)
@@ -720,6 +724,7 @@ class ToolStrip(QWidget):
         self.play_toggled.emit(checked)
 
     def _on_frame_slider_changed(self, val: int) -> None:
+        assert val is not None, "val must be provided"
         total = self._frame_slider.maximum()
         pct = int(100 * val / max(total, 1))
         self._frame_lbl.setText(f"{pct}% ({val}/{total})")
@@ -739,6 +744,7 @@ class ToolStrip(QWidget):
 
     def _on_azimuth_slider(self, deg: int) -> None:
         """Emit azimuth rotation in radians from slider value (#1146)."""
+        assert deg is not None, "deg must be provided"
         import numpy as np
 
         self._lbl_azimuth.setText(f"{deg}°")
@@ -746,6 +752,7 @@ class ToolStrip(QWidget):
 
     def _on_tilt_slider(self, deg: int) -> None:
         """Emit tilt rotation in radians from slider value (#1146)."""
+        assert deg is not None, "deg must be provided"
         import numpy as np
 
         self._lbl_tilt.setText(f"{deg}°")
@@ -757,6 +764,7 @@ class ToolStrip(QWidget):
 
     def set_running(self, running: bool) -> None:
         """Disable run/reset while simulation is computing."""
+        assert running is not None, "running must be provided"
         self.btn_run.setEnabled(not running)
         self.btn_reset.setEnabled(not running)
         self.set_status("Simulating…" if running else "Ready")
@@ -770,6 +778,7 @@ class ToolStrip(QWidget):
 
     def set_frame(self, idx: int) -> None:
         """Update slider + label to reflect current frame (no re-emission)."""
+        assert idx is not None, "idx must be provided"
         self._frame_slider.blockSignals(True)
         self._frame_slider.setValue(idx)
         self._frame_slider.blockSignals(False)
@@ -803,6 +812,7 @@ class ToolStrip(QWidget):
             e.g. [("shoulder", "Shoulder"), ("wrist", "Wrist")] for double.
         """
         # Remove old checkboxes
+        assert names is not None, "names must be provided"
         for chk in self._segment_checks.values():
             chk.setParent(None)
             chk.deleteLater()

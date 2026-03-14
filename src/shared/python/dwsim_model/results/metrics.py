@@ -201,10 +201,12 @@ class GasificationMetrics:
         Returns a list of failure messages (empty list = all targets met).
         This makes it easy to check: ``if not metrics.check_targets(targets): print("OK")``.
         """
+        assert targets is not None, "targets must be provided"
         failures = []
 
         def _safe_ge(val, threshold, label):
             """Greater-than-or-equal check that handles None gracefully."""
+            assert val is not None, "val must be provided"
             if val is None:
                 failures.append(f"{label}: metric not computed (None).")
                 return
@@ -289,6 +291,7 @@ class MetricsCalculator:
         -------
         GasificationMetrics
         """
+        assert results is not None, "results must be provided"
         m = GasificationMetrics(biomass_lhv_mj_kg=self.biomass_lhv_mj_kg)
 
         syngas = results.get_stream("Final_Syngas")
@@ -389,6 +392,7 @@ class MetricsCalculator:
 
         LHV_mix = Σ (w_i * LHV_i)
         """
+        assert mass_fractions is not None, "mass_fractions must be provided"
         lhv = 0.0
         for compound, wf in mass_fractions.items():
             if compound in LHV_MJ_KG:
@@ -398,6 +402,7 @@ class MetricsCalculator:
     @staticmethod
     def _calc_syngas_lhv_volumetric(syngas_stream, syngas_lhv_mj_kg: float) -> float:
         """Convert syngas LHV from a mass basis (MJ/kg) to a volumetric basis (MJ/Nm3)."""
+        assert syngas_stream is not None, "syngas_stream must be provided"
         if (
             syngas_stream.mass_flow_kg_s <= 0
             or syngas_stream.volumetric_flow_Nm3_h <= 0
@@ -413,6 +418,7 @@ class MetricsCalculator:
         Carbon in gas outlets: sum over CO, CO2, CH4, C2 species.
         Carbon in feed: from Gasifier_Biomass_Feed mass flow × carbon fraction.
         """
+        assert results is not None, "results must be provided"
         if biomass_stream is None or biomass_stream.mass_flow_kg_s <= 0:
             return 0.0
 
@@ -439,6 +445,7 @@ class MetricsCalculator:
 
     def _calc_feed_carbon_mass_flow(self, biomass_stream) -> float | None:
         """Compute biomass-feed carbon mass flow from an explicit basis or a surrogate stream."""
+        assert biomass_stream is not None, "biomass_stream must be provided"
         if self.biomass_carbon_mass_fraction is not None:
             return biomass_stream.mass_flow_kg_s * self.biomass_carbon_mass_fraction
 
@@ -459,6 +466,7 @@ class MetricsCalculator:
     @staticmethod
     def _calc_ratio(mole_fractions: dict, numerator: str, denominator: str) -> float:
         """Compute molar ratio of two species. Returns 0 if denominator is near zero."""
+        assert mole_fractions is not None, "mole_fractions must be provided"
         num = mole_fractions.get(numerator, 0.0)
         den = mole_fractions.get(denominator, 0.0)
         if den < 1e-9:
@@ -470,6 +478,7 @@ class MetricsCalculator:
         Specific Energy Consumption = total electrical input / biomass feed rate.
         Units: kWh per tonne of biomass (kWh/t).
         """
+        assert results is not None, "results must be provided"
         if biomass_stream is None or biomass_stream.mass_flow_kg_s <= 0:
             return 0.0
 

@@ -47,6 +47,7 @@ class FeatureExtractor:
         Returns:
             Tuple of (features_array, feature_names)
         """
+        assert data is not None, "data must be provided"
         all_features = []
         all_names: list[str] = []
 
@@ -93,6 +94,7 @@ class FeatureExtractor:
         Returns:
             Tuple of (features_array, feature_names)
         """
+        assert data is not None, "data must be provided"
         features_list = []
         all_names: list[str] = []
 
@@ -121,6 +123,7 @@ class FeatureExtractor:
         Returns:
             FeatureResult with extracted features
         """
+        assert data is not None, "data must be provided"
         data = np.asarray(data, dtype=np.float64)
         if data.ndim == 1:
             data = data.reshape(1, -1)
@@ -171,6 +174,7 @@ class FeatureExtractor:
         Returns:
             Tuple of (features, names)
         """
+        assert data is not None, "data must be provided"
         features, names = self._extract_statistical(data, prefix)
         return np.array(features), names
 
@@ -190,6 +194,7 @@ class FeatureExtractor:
         Returns:
             Tuple of (features, names)
         """
+        assert data is not None, "data must be provided"
         windows = windows or self.config.rolling_windows
         features = []
         names = []
@@ -233,6 +238,7 @@ class FeatureExtractor:
         Returns:
             Tuple of (features, names)
         """
+        assert data is not None, "data must be provided"
         lags = lags or self.config.lag_values
         features = []
         names = []
@@ -274,6 +280,7 @@ class FeatureExtractor:
         Returns:
             Tuple of (features, names)
         """
+        assert data is not None, "data must be provided"
         degree = degree or self.config.polynomial_degree
         include_interactions = (
             include_interactions
@@ -310,6 +317,7 @@ class FeatureExtractor:
         self, data: np.ndarray, prefix: str
     ) -> tuple[list[float], list[str]]:
         """Extract statistical features."""
+        assert data is not None, "data must be provided"
         features: list[float] = []
         names: list[str] = []
 
@@ -371,6 +379,7 @@ class FeatureExtractor:
         self, data: np.ndarray, prefix: str
     ) -> tuple[list[float], list[str]]:
         """Extract time domain features."""
+        assert data is not None, "data must be provided"
         features: list[float] = []
         names: list[str] = []
 
@@ -449,6 +458,7 @@ class FeatureExtractor:
         self, data: np.ndarray, prefix: str
     ) -> tuple[list[float], list[str]]:
         """Extract frequency domain features."""
+        assert data is not None, "data must be provided"
         features: list[float] = []
         names: list[str] = []
 
@@ -520,6 +530,7 @@ class FeatureExtractor:
         self, column: np.ndarray, prefix: str
     ) -> tuple[np.ndarray, list[str]]:
         """Extract features from a single column (tabular data)."""
+        assert column is not None, "column must be provided"
         features: list[float] = []
         names: list[str] = []
 
@@ -542,6 +553,7 @@ class FeatureExtractor:
         self, data: np.ndarray, window: int, func: Callable
     ) -> np.ndarray:
         """Compute rolling statistic."""
+        assert data is not None, "data must be provided"
         n = len(data)
         if window > n:
             window = n
@@ -554,6 +566,7 @@ class FeatureExtractor:
 
     def _skewness(self, data: np.ndarray) -> float:
         """Compute skewness."""
+        assert data is not None, "data must be provided"
         n = len(data)
         if n < 3:
             return 0.0
@@ -568,6 +581,7 @@ class FeatureExtractor:
 
     def _kurtosis(self, data: np.ndarray) -> float:
         """Compute excess kurtosis."""
+        assert data is not None, "data must be provided"
         n = len(data)
         if n < 4:
             return 0.0
@@ -582,6 +596,7 @@ class FeatureExtractor:
 
     def _count_peaks(self, data: np.ndarray) -> int:
         """Count number of peaks."""
+        assert data is not None, "data must be provided"
         n = len(data)
         if n < 3:
             return 0
@@ -595,6 +610,7 @@ class FeatureExtractor:
 
     def _peak_prominences(self, data: np.ndarray) -> list[float]:
         """Get peak prominences."""
+        assert data is not None, "data must be provided"
         n = len(data)
         if n < 3:
             return []
@@ -614,6 +630,7 @@ class FeatureExtractor:
 
     def _autocorrelation(self, data: np.ndarray, lag: int) -> float:
         """Compute autocorrelation at given lag."""
+        assert data is not None, "data must be provided"
         n = len(data)
         if lag >= n:
             return 0.0
@@ -679,6 +696,7 @@ class FeatureExtractor:
         self, features: np.ndarray, names: list[str]
     ) -> dict[str, dict[str, float]]:
         """Compute statistics for each feature."""
+        assert features is not None, "features must be provided"
         stats: dict[str, dict[str, float]] = {}
 
         if features.ndim == 1:
@@ -715,6 +733,7 @@ def extract_features(
         >>> result = extract_features(data, ['x', 'y', 'z'])
         >>> print(f"Extracted {result.n_features} features")
     """
+    assert data is not None, "data must be provided"
     extractor = FeatureExtractor()
     return extractor.extract_all(data, column_names)
 

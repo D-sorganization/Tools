@@ -126,6 +126,7 @@ class _PerturbWorker(QObject):
         simulate_fn: Callable,
         extract_fn: Callable,
     ) -> None:
+        assert base_coeffs is not None, "base_coeffs must be provided"
         super().__init__()
         self._base_coeffs = base_coeffs
         self._config = config
@@ -407,12 +408,14 @@ class PerturbationPanel(QWidget):
         self._status_label.setText("Cancelling…")
 
     def _on_progress(self, trial: int) -> None:
+        assert trial is not None, "trial must be provided"
         n = getattr(self, "_n_trials", 1)
         pct = int(100 * trial / max(n, 1))
         self._progress.setValue(pct)
         self._status_label.setText(f"Trial {trial} / {n}")
 
     def _on_finished(self, results: list) -> None:
+        assert results is not None, "results must be provided"
         self._run_btn.setEnabled(True)
         self._cancel_btn.setEnabled(False)
         if not results:
@@ -425,6 +428,7 @@ class PerturbationPanel(QWidget):
         self._status_label.setText(f"Done — {summary['n_trials']} trials completed")
 
     def _on_error(self, msg: str) -> None:
+        assert msg is not None, "msg must be provided"
         self._run_btn.setEnabled(True)
         self._cancel_btn.setEnabled(False)
         self._status_label.setText(f"Error: {msg}")
@@ -435,6 +439,7 @@ class PerturbationPanel(QWidget):
     # ------------------------------------------------------------------
 
     def _display_summary(self, summary: dict) -> None:
+        assert summary is not None, "summary must be provided"
         mean = summary["tip_speed_mean"]
         std = summary["tip_speed_std"]
         cv = summary["tip_speed_cv"]
@@ -453,6 +458,7 @@ class PerturbationPanel(QWidget):
             lbl.setText("—")
 
     def _update_histogram(self, speeds: list[float]) -> None:
+        assert speeds is not None, "speeds must be provided"
         self._ax.clear()
         self._ax.set_facecolor("#1a1a2e")
         self._ax.hist(speeds, bins=20, color="#5555b0", edgecolor="#303070")

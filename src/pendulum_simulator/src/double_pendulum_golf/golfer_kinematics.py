@@ -37,6 +37,7 @@ def _hub_position(theta_hub: float, p: GolferParams) -> tuple[float, float]:
     Reversed direction (#1103): hub extends upward (inside the arm loop)
     to simulate rotation around the combined center of mass.
     """
+    assert theta_hub is not None, "theta_hub must be provided"
     x = -p.L_hub * np.sin(theta_hub)
     y = p.L_hub * np.cos(theta_hub)
     return (x, y)
@@ -54,6 +55,7 @@ def _shoulder_position(
     side: +1 for right, -1 for left (perpendicular offset direction).
     """
     # Perpendicular direction to hub standoff (rotated 90° from hub direction)
+    assert hub_xy is not None, "hub_xy must be provided"
     perp_x = side * np.cos(theta_hub)
     perp_y = side * np.sin(theta_hub)
     x = hub_xy[0] + d_shoulder * perp_x
@@ -78,6 +80,7 @@ def _chain_endpoint(
     -------
     (x, y) endpoint position
     """
+    assert origin is not None, "origin must be provided"
     x, y = origin
     for angle, length in zip(angles_abs, lengths):
         x += length * np.sin(angle)
@@ -90,6 +93,7 @@ def _absolute_angles(theta_hub: float, relative_angles: list[float]) -> list[flo
 
     Each relative angle is added cumulatively to the hub angle.
     """
+    assert theta_hub is not None, "theta_hub must be provided"
     result = []
     cumulative = theta_hub
     for rel in relative_angles:

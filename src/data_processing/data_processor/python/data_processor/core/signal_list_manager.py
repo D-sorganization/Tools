@@ -25,6 +25,7 @@ class SignalListManager:
             config_dir: Directory to store signal lists. Defaults to user's home.
             filename: Name of the signal lists file.
         """
+        assert filename is not None, "filename must be provided"
         if config_dir is None:
             self.config_dir = Path.home() / ".data_processor"
         else:
@@ -46,6 +47,7 @@ class SignalListManager:
             signals: List of signal names
             description: Optional description
         """
+        assert name is not None, "name must be provided"
         lists = self._load_all_lists()
 
         lists[name] = {
@@ -83,6 +85,7 @@ class SignalListManager:
         Args:
             name: Name of the signal list to delete
         """
+        assert name is not None, "name must be provided"
         lists = self._load_all_lists()
 
         if name in lists:
@@ -127,6 +130,7 @@ class SignalListManager:
             name: Name of the signal list
             export_path: Path to export to
         """
+        assert name is not None, "name must be provided"
         signals = self.load_signal_list(name)
         export_path = Path(export_path)
 
@@ -145,6 +149,7 @@ class SignalListManager:
         Returns:
             Name of the imported signal list
         """
+        assert import_path is not None, "import_path must be provided"
         import_path = Path(import_path)
 
         with open(import_path, encoding="utf-8") as f:

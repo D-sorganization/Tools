@@ -47,6 +47,7 @@ if PYQT6_AVAILABLE:
             df: pd.DataFrame,
             parent: QWidget | None = None,
         ) -> None:
+            assert df is not None, "df must be provided"
             super().__init__(parent)
             self.df = df
             self.setWindowTitle("Contour Plot")
@@ -168,6 +169,7 @@ if PYQT6_AVAILABLE:
             df: pd.DataFrame,
             parent: QWidget | None = None,
         ) -> None:
+            assert df is not None, "df must be provided"
             super().__init__(parent)
             self.df = df
             self.setWindowTitle("Heatmap")
@@ -260,6 +262,7 @@ if PYQT6_AVAILABLE:
             signals: list[str],
             parent: QWidget | None = None,
         ) -> None:
+            assert original_df is not None, "original_df must be provided"
             super().__init__(parent)
             self.original_df = original_df
             self.filtered_df = filtered_df

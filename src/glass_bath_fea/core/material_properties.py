@@ -64,6 +64,7 @@ class GlassMaterialModel:
             activation_energy: Activation energy for conduction (J/mol)
             reference_temp_k: Reference temperature in Kelvin
         """
+        assert composition is not None, "composition must be provided"
         self.composition = composition
         self._base_conductivity = base_conductivity
         self._activation_energy = activation_energy
@@ -92,6 +93,7 @@ class GlassMaterialModel:
             Electrical conductivity in S/m
         """
         # Convert to Kelvin
+        assert temperature_celsius is not None, "temperature_celsius must be provided"
         temp_k = temperature_celsius + 273.15
 
         # Apply small heating effect from power dissipation
@@ -136,6 +138,7 @@ class GlassMaterialModel:
         Returns:
             Electrical resistivity in Ω·m
         """
+        assert temperature_celsius is not None, "temperature_celsius must be provided"
         sigma = self.get_conductivity(temperature_celsius, power_density)
         return 1.0 / sigma
 
@@ -150,6 +153,7 @@ class GlassMaterialModel:
         Returns:
             Dynamic viscosity in Pa·s
         """
+        assert temperature_celsius is not None, "temperature_celsius must be provided"
         temp_k = temperature_celsius + 273.15
 
         # Fulcher equation
@@ -204,6 +208,7 @@ def export_material_data(
         output_path: Path to output .mat file
         include_metal: Whether to include metal properties
     """
+    assert model is not None, "model must be provided"
     from scipy.io import savemat
 
     params = model.get_arrhenius_params()

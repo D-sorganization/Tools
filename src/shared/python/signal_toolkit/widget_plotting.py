@@ -89,6 +89,7 @@ class PlottingMixin:
         title: str,
     ) -> None:
         """Update the secondary plot."""
+        assert signal is not None, "signal must be provided"
         self_w = cast("WidgetProtocol", self)
         self_w.canvas2.axes.clear()
         self_w.canvas2.setup_dark_theme()
@@ -117,6 +118,7 @@ class PlottingMixin:
 
         Renders magnitude (dB) on the secondary canvas.
         """
+        assert frequencies is not None, "frequencies must be provided"
         self_w = cast("WidgetProtocol", self)
         self_w.canvas2.axes.clear()
         self_w.canvas2.setup_dark_theme()
@@ -136,11 +138,13 @@ class PlottingMixin:
 
     def _log(self, message: str) -> None:
         """Log a message to the result text area."""
+        assert message is not None, "message must be provided"
         self_w = cast("WidgetProtocol", self)
         self_w.result_text.append(message)
 
     def set_joints(self, joints: list[str]) -> None:
         """Set the list of available joints."""
+        assert joints is not None, "joints must be provided"
         self_w = cast("WidgetProtocol", self)
         self_w.joint_names = joints  # type: ignore[assignment]
         self_w.joint_combo.clear()

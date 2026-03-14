@@ -86,6 +86,7 @@ class FlareCalculatorEngine:
         pressure: float,
     ) -> FlareDesign:
         """Calculate flare size based on flow conditions."""
+        assert total_flow is not None, "total_flow must be provided"
         total_comp = sum(gas_composition.values())
         if total_comp == 0:
             comp_fractions = dict.fromkeys(gas_composition, 0.0)
@@ -144,6 +145,7 @@ class FlareCalculatorEngine:
 
     def calculate_radiation_zones(self, flare_design: FlareDesign) -> dict[str, float]:
         """Calculate radiation zones around the flare."""
+        assert flare_design is not None, "flare_design must be provided"
         zones = {"lethal": 0.0, "damage": 0.0, "safe": 0.0, "comfort": 0.0}
         emissivity = 0.3
         heat_release = flare_design.heat_release
@@ -194,6 +196,7 @@ class FlareCalculatorMainWindow(BaseCalculatorWindow):
     def _create_input_panel(self, layout: QVBoxLayout) -> None:
         """Create input panel with operating conditions and gas composition."""
         # Operating Conditions
+        assert layout is not None, "layout must be provided"
         conditions_group = QGroupBox("Operating Conditions")
         conditions_layout = QFormLayout()
 
@@ -256,6 +259,7 @@ class FlareCalculatorMainWindow(BaseCalculatorWindow):
     def _create_results_panel(self, layout: QVBoxLayout) -> None:
         """Create results panel with design parameters and safety zones."""
         # Flare Design Results
+        assert layout is not None, "layout must be provided"
         design_group = QGroupBox("Flare Design Parameters")
         design_layout = QVBoxLayout()
 

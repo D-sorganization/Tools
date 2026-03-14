@@ -161,6 +161,7 @@ class ResultsAndChartsMixin:
     def _get_current_based_color(self, path_type: str, phase_index: int = 0) -> str:
         """Get color based on selected coloring mode with proper scaling"""
         # Get coloring mode
+        assert path_type is not None, "path_type must be provided"
         color_mode = self.color_mode_combo.currentText()
 
         if color_mode == "Default colors":
@@ -198,6 +199,7 @@ class ResultsAndChartsMixin:
 
     def _get_path_current(self, path_type: str, phase_index: int) -> float:
         """Get current value for specific path"""
+        assert path_type is not None, "path_type must be provided"
         actual_currents = self.calculation_results.get("actual_currents", {})
         current_paths = self.calculation_results.get("current_paths", {})
 
@@ -225,6 +227,7 @@ class ResultsAndChartsMixin:
 
     def _get_path_resistance(self, path_type: str, phase_index: int) -> float:
         """Get resistance value for specific path"""
+        assert path_type is not None, "path_type must be provided"
         current_paths = self.calculation_results.get("current_paths", {})
 
         # Check if metal conduction is enabled
@@ -246,6 +249,7 @@ class ResultsAndChartsMixin:
 
     def _get_path_power(self, path_type: str, phase_index: int) -> float:
         """Get power dissipation for specific path"""
+        assert path_type is not None, "path_type must be provided"
         current = self._get_path_current(path_type, phase_index)
         current_paths = self.calculation_results.get("current_paths", {})
 
@@ -266,6 +270,7 @@ class ResultsAndChartsMixin:
 
     def _calculate_color_scale_bounds(self, color_mode: str) -> tuple[float, float]:
         """Calculate min/max values for color scaling"""
+        assert color_mode is not None, "color_mode must be provided"
         values = []
 
         for phase_idx in range(3):
@@ -283,6 +288,7 @@ class ResultsAndChartsMixin:
         """Convert normalized value (0-1) to color based on mode"""
 
         # Select colormap based on mode
+        assert normalized_value is not None, "normalized_value must be provided"
         if color_mode == _COLOR_MODE_CURRENT:
             cmap = colormaps.get_cmap("coolwarm")
         elif color_mode == _COLOR_MODE_POWER:
@@ -322,6 +328,7 @@ class ResultsAndChartsMixin:
         line_currents: list[float],
     ) -> None:
         """Render the current distribution bar chart (view only, no data extraction)."""
+        assert phase_currents is not None, "phase_currents must be provided"
         phases = ["1-2", "2-3", "3-1"]
         colors = ["#FF4444", "#44FF44", "#4444FF"]
         x = np.arange(len(phases))
@@ -410,6 +417,7 @@ class ResultsAndChartsMixin:
         power_factor: float,
     ) -> None:
         """Render the power distribution bar chart and update display labels (view only)."""
+        assert powers is not None, "powers must be provided"
         phase_keys = ["1-2", "2-3", "3-1"]
         phases = ["Phase 1-2", "Phase 2-3", "Phase 3-1"]
         colors = ["#FF8C00", "#32CD32", "#1E90FF"]

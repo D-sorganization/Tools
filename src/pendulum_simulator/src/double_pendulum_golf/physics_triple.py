@@ -178,6 +178,7 @@ def mass_matrix_components(
     -------
     dict with keys M11..M33 and M_full.
     """
+    assert phi1 is not None, "phi1 must be provided"
     M = mass_matrix(phi1, phi2, params)
     return {
         "M11": M[0, 0],
@@ -452,6 +453,7 @@ def forward_kinematics(
     dict with 'hub', 'shoulder', 'wrist1', 'wrist2', 'tip' as (x, y) tuples.
     The shoulder is displaced from the hub by the scapula offset (#1152).
     """
+    assert theta1 is not None, "theta1 must be provided"
     native_positions = _native_backend.triple_forward_kinematics(
         theta1, phi1, phi2, params
     )
@@ -544,6 +546,7 @@ def net_joint_forces(
     -------
     dict with keys: 'shoulder', 'wrist1', 'wrist2' as (fx, fy) tuples.
     """
+    assert state is not None, "state must be provided"
     acc = linear_accelerations(state, qddot, params)
     g_vec = np.array([0.0, -params.g])
 
@@ -570,6 +573,7 @@ def net_joint_forces(
 
 def kinetic_energy(state: State, params: TriplePendulumParams) -> float:
     """Compute total kinetic energy T = 0.5 * qdot^T M qdot."""
+    assert state is not None, "state must be provided"
     from .physics_base import kinetic_energy_from_M
 
     theta1, phi1, phi2, dtheta1, dphi1, dphi2 = state
@@ -580,6 +584,7 @@ def kinetic_energy(state: State, params: TriplePendulumParams) -> float:
 
 def potential_energy(state: State, params: TriplePendulumParams) -> float:
     """Compute total potential energy."""
+    assert state is not None, "state must be provided"
     theta1, phi1, phi2, _, _, _ = state
 
     m1, m2, m3 = params.m1, params.m2, params.m3
@@ -603,6 +608,7 @@ def potential_energy(state: State, params: TriplePendulumParams) -> float:
 
 def total_energy(state: State, params: TriplePendulumParams) -> float:
     """Compute total energy E = T + V."""
+    assert state is not None, "state must be provided"
     from .physics_base import total_energy_from_parts
 
     return total_energy_from_parts(

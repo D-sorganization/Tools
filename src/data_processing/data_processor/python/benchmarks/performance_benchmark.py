@@ -67,6 +67,7 @@ class PerformanceBenchmark:
         suffix: str = "",
     ) -> str:
         """Create test CSV file with specified dimensions."""
+        assert n_rows is not None, "n_rows must be provided"
         np.random.seed(42)
 
         # Generate test data

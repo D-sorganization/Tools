@@ -16,6 +16,7 @@ def plot_composition_bars(
     ax: Any, comp_dict: dict[str, float], species_keys: list[str]
 ) -> None:
     """Horizontal bar chart of gas-phase mole fractions."""
+    assert comp_dict is not None, "comp_dict must be provided"
     ax.clear()
     ax.set_facecolor(COLORS["panel"])
 
@@ -63,6 +64,7 @@ def plot_pie_chart(
     ax: Any, comp_dict: dict[str, float], threshold: float = 0.005
 ) -> None:
     """Pie chart of significant gas species."""
+    assert comp_dict is not None, "comp_dict must be provided"
     ax.clear()
     ax.set_facecolor(COLORS["bg"])
 
@@ -146,6 +148,7 @@ def plot_sweep_composition(
     ax: Any, results: list[Any], selected_species: list[str]
 ) -> None:
     """Temperature sweep composition curves with glow effect."""
+    assert results is not None, "results must be provided"
     ax.clear()
     ax.set_facecolor(COLORS["panel"])
 
@@ -183,6 +186,7 @@ def plot_sweep_composition(
 
 def plot_sweep_metrics(ax: Any, results: list[Any]) -> Any:
     """Dual-axis metrics plot: H2/CO + carbon conversion + CGE."""
+    assert results is not None, "results must be provided"
     ax.clear()
     ax.set_facecolor(COLORS["panel"])
 
@@ -251,6 +255,7 @@ def plot_surface_3d(
     cmap: str = "viridis",
 ) -> None:
     """3D surface plot with wireframe overlay."""
+    assert t_grid is not None, "t_grid must be provided"
     ax.clear()
     ax.set_facecolor(COLORS["bg"])
 
@@ -305,6 +310,7 @@ def plot_contour(
     existing_cbar: Any = None,
 ) -> Any:
     """Filled contour plot with labels and colorbar."""
+    assert t_grid is not None, "t_grid must be provided"
     ax.clear()
     ax.set_facecolor(COLORS["panel"])
 
@@ -344,6 +350,7 @@ def plot_feed_bars(
     ylabel: str = "Molar Amount",
 ) -> None:
     """Vertical bar chart of feed elements."""
+    assert feed_dict is not None, "feed_dict must be provided"
     ax.clear()
     ax.set_facecolor(COLORS["panel"])
     if not feed_dict:

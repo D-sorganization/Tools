@@ -118,6 +118,7 @@ class VisualizationMixin:
 
     def _draw_visible_components(self, p: dict) -> None:
         """Draw 3-D components whose visibility checkbox is ticked."""
+        assert p is not None, "p must be provided"
         total_height = p["glass_height"] + p["metal_height"]
 
         if self._safe_checkbox_check(self, "show_refractory_checkbox"):
@@ -192,6 +193,7 @@ class VisualizationMixin:
 
     def _configure_axis_limits(self, p: dict) -> None:
         """Set axis limits, aspect ratio, and camera angle."""
+        assert p is not None, "p must be provided"
         total_height = p["glass_height"] + p["metal_height"]
         extension_length = float(self.electrode_extension_slider.value())
         max_range = max(p["bath_radius"] + extension_length, total_height)
@@ -212,6 +214,7 @@ class VisualizationMixin:
     def _get_current_based_color(self, path_type: str, phase_index: int = 0) -> str:
         """Get color based on selected coloring mode with proper scaling"""
         # Get coloring mode
+        assert path_type is not None, "path_type must be provided"
         color_mode = self.color_mode_combo.currentText()
 
         if color_mode == "Default colors":
@@ -249,6 +252,7 @@ class VisualizationMixin:
 
     def _get_path_current(self, path_type: str, phase_index: int) -> float:
         """Get current value for specific path"""
+        assert path_type is not None, "path_type must be provided"
         actual_currents = self.calculation_results.get("actual_currents", {})
         current_paths = self.calculation_results.get("current_paths", {})
 
@@ -276,6 +280,7 @@ class VisualizationMixin:
 
     def _get_path_resistance(self, path_type: str, phase_index: int) -> float:
         """Get resistance value for specific path"""
+        assert path_type is not None, "path_type must be provided"
         current_paths = self.calculation_results.get("current_paths", {})
 
         # Check if metal conduction is enabled
@@ -297,6 +302,7 @@ class VisualizationMixin:
 
     def _get_path_power(self, path_type: str, phase_index: int) -> float:
         """Get power dissipation for specific path"""
+        assert path_type is not None, "path_type must be provided"
         current = self._get_path_current(path_type, phase_index)
         current_paths = self.calculation_results.get("current_paths", {})
 
@@ -317,6 +323,7 @@ class VisualizationMixin:
 
     def _get_path_temperature(self, path_type: str, phase_index: int) -> float:
         """Get estimated temperature for path based on power dissipation"""
+        assert path_type is not None, "path_type must be provided"
         base_temp = self.bath_temp_input.value()
         power = self._get_path_power(path_type, phase_index)
 
@@ -326,6 +333,7 @@ class VisualizationMixin:
 
     def _calculate_color_scale_bounds(self, color_mode: str) -> tuple[float, float]:
         """Calculate min/max values for color scaling"""
+        assert color_mode is not None, "color_mode must be provided"
         values = []
 
         for phase_idx in range(3):
@@ -343,6 +351,7 @@ class VisualizationMixin:
         """Convert normalized value (0-1) to color based on mode"""
 
         # Select colormap based on mode
+        assert normalized_value is not None, "normalized_value must be provided"
         if color_mode == "Current intensity":
             cmap = colormaps.get_cmap("coolwarm")  # Blue to red
         elif color_mode == "Power dissipation":

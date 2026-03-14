@@ -199,6 +199,7 @@ class BaseStateSpaceModel(ABC):
         Returns:
             StateSpaceResult with fitted values and diagnostics
         """
+        assert y is not None, "y must be provided"
         y = np.asarray(y, dtype=np.float64).flatten()
         n = len(y)
 
@@ -334,6 +335,7 @@ class BaseStateSpaceModel(ABC):
         Returns:
             Tuple of (filtered_states, filtered_covariances, log_likelihood)
         """
+        assert y is not None, "y must be provided"
         n = len(y)
 
         # Initialize
@@ -404,6 +406,7 @@ class BaseStateSpaceModel(ABC):
         Returns:
             Tuple of (smoothed_states, smoothed_covariances)
         """
+        assert y is not None, "y must be provided"
         n = len(y)
 
         # Initialize with last filtered values
@@ -444,6 +447,8 @@ class BaseStateSpaceModel(ABC):
         Returns:
             Tuple of (optimal_params, log_likelihood, converged, n_iterations)
         """
+
+        assert y is not None, "y must be provided"
 
         def objective(params):
             # Ensure positive variances if needed
@@ -489,6 +494,7 @@ class BaseStateSpaceModel(ABC):
         Returns:
             Tuple of (optimal_params, log_likelihood, converged, n_iterations)
         """
+        assert y is not None, "y must be provided"
         params = initial_params.copy()
         max_iter = self.config.max_iterations
         tol = self.config.tolerance
@@ -524,6 +530,7 @@ class BaseStateSpaceModel(ABC):
 
         Default implementation - can be overridden by subclasses.
         """
+        assert y is not None, "y must be provided"
         n = len(y)
 
         # Estimate observation variance
@@ -547,6 +554,7 @@ class BaseStateSpaceModel(ABC):
         self, y: np.ndarray, params: np.ndarray, eps: float = 1e-6
     ) -> np.ndarray:
         """Compute numerical gradient of log-likelihood."""
+        assert y is not None, "y must be provided"
         grad = np.zeros(len(params))
 
         for i in range(len(params)):
@@ -568,6 +576,7 @@ class BaseStateSpaceModel(ABC):
 
     def _normal_ppf(self, p: float) -> float:
         """Inverse normal CDF."""
+        assert p is not None, "p must be provided"
         if p <= 0 or p >= 1:
             return 0.0
         if p < 0.5:
@@ -595,6 +604,7 @@ class LocalLevelModel(BaseStateSpaceModel):
 
     def _initialize_matrices(self, y: np.ndarray) -> None:
         """Initialize model matrices."""
+        assert y is not None, "y must be provided"
         self.T = np.array([[1.0]])
         self.Z = np.array([[1.0]])
         self.R = np.array([[1.0]])
@@ -603,6 +613,7 @@ class LocalLevelModel(BaseStateSpaceModel):
 
     def _update_matrices(self, parameters: np.ndarray) -> None:
         """Update Q and H with parameter values."""
+        assert parameters is not None, "parameters must be provided"
         self.Q = np.array([[parameters[0] ** 2]])
         self.H = np.array([[parameters[1] ** 2]])
 
@@ -612,6 +623,7 @@ class LocalLevelModel(BaseStateSpaceModel):
 
     def _parameters_to_dict(self, parameters: np.ndarray) -> dict[str, float]:
         """Convert to dictionary."""
+        assert parameters is not None, "parameters must be provided"
         return {
             "sigma_eta_sq": float(parameters[0] ** 2),
             "sigma_eps_sq": float(parameters[1] ** 2),
@@ -636,6 +648,7 @@ class LocalLinearTrendModel(BaseStateSpaceModel):
 
     def _initialize_matrices(self, y: np.ndarray) -> None:
         """Initialize model matrices."""
+        assert y is not None, "y must be provided"
         self.T = np.array([[1.0, 1.0], [0.0, 1.0]])
         self.Z = np.array([[1.0, 0.0]])
         self.R = np.eye(2)
@@ -650,6 +663,7 @@ class LocalLinearTrendModel(BaseStateSpaceModel):
 
     def _update_matrices(self, parameters: np.ndarray) -> None:
         """Update matrices with parameter values."""
+        assert parameters is not None, "parameters must be provided"
         self.Q = np.array([[parameters[0] ** 2, 0], [0, parameters[1] ** 2]])
         self.H = np.array([[parameters[2] ** 2]])
 
@@ -665,6 +679,7 @@ class LocalLinearTrendModel(BaseStateSpaceModel):
 
     def _parameters_to_dict(self, parameters: np.ndarray) -> dict[str, float]:
         """Convert to dictionary."""
+        assert parameters is not None, "parameters must be provided"
         return {
             "sigma_eta_sq": float(parameters[0] ** 2),
             "sigma_zeta_sq": float(parameters[1] ** 2),
@@ -689,6 +704,7 @@ class SeasonalModel(BaseStateSpaceModel):
 
     def _initialize_matrices(self, y: np.ndarray) -> None:
         """Initialize model matrices."""
+        assert y is not None, "y must be provided"
         period = self.period
 
         # Transition matrix
@@ -720,6 +736,7 @@ class SeasonalModel(BaseStateSpaceModel):
 
     def _update_matrices(self, parameters: np.ndarray) -> None:
         """Update with parameter values."""
+        assert parameters is not None, "parameters must be provided"
         self.Q = np.diag([parameters[0], parameters[1], parameters[2]])
         self.H = np.array([[parameters[3]]])
 
@@ -729,6 +746,7 @@ class SeasonalModel(BaseStateSpaceModel):
 
     def _parameters_to_dict(self, parameters: np.ndarray) -> dict[str, float]:
         """Convert to dictionary."""
+        assert parameters is not None, "parameters must be provided"
         return {
             "sigma_level_sq": float(parameters[0]),
             "sigma_trend_sq": float(parameters[1]),
@@ -758,6 +776,7 @@ class ARIMAStateSpace(BaseStateSpaceModel):
 
     def _initialize_matrices(self, y: np.ndarray) -> None:
         """Initialize model matrices."""
+        assert y is not None, "y must be provided"
         r = self.n_states
 
         # Difference the series if needed
@@ -797,6 +816,7 @@ class ARIMAStateSpace(BaseStateSpaceModel):
 
     def _update_matrices(self, parameters: np.ndarray) -> None:
         """Update with parameter values."""
+        assert parameters is not None, "parameters must be provided"
         idx = 0
 
         # AR coefficients
@@ -822,6 +842,7 @@ class ARIMAStateSpace(BaseStateSpaceModel):
 
     def _parameters_to_dict(self, parameters: np.ndarray) -> dict[str, float]:
         """Convert to dictionary."""
+        assert parameters is not None, "parameters must be provided"
         result = {}
         idx = 0
 
@@ -838,6 +859,7 @@ class ARIMAStateSpace(BaseStateSpaceModel):
 
     def _estimate_ar(self, y: np.ndarray, p: int) -> np.ndarray:
         """Estimate AR coefficients using Yule-Walker equations."""
+        assert y is not None, "y must be provided"
         n = len(y)
         if n < p + 1:
             return np.zeros(p)
@@ -917,6 +939,7 @@ def fit_state_space(
         >>> result = fit_state_space(y, model_type='local_level')
         >>> print(f"AIC: {result.aic:.2f}")
     """
+    assert y is not None, "y must be provided"
     type_map = {
         "local_level": StateSpaceModelType.LOCAL_LEVEL,
         "local_linear_trend": StateSpaceModelType.LOCAL_LINEAR_TREND,

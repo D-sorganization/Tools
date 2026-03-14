@@ -78,6 +78,7 @@ def _load_file(path: Path) -> dict:
 
 def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
     """Recursively merge *override* into *base* and return the merged dict."""
+    assert base is not None, "base must be provided"
     merged = dict(base)
     for key, value in override.items():
         current = merged.get(key)
@@ -169,6 +170,7 @@ class ConfigLoader:
         those files and merge them.  If ``raw`` already has a ``feeds`` key
         (legacy JSON style), return it unchanged.
         """
+        assert raw is not None, "raw must be provided"
         if _is_runtime_config(raw):
             resolved = dict(raw)
         else:
@@ -182,6 +184,7 @@ class ConfigLoader:
         self, master: MasterConfig, raw: dict[str, Any]
     ) -> dict[str, Any]:
         """Expand master config references into a runtime-ready dictionary."""
+        assert master is not None, "master must be provided"
         resolved: dict[str, Any] = {
             "model": master.model.model_dump(),
             "reactor_mode": master.reactor_mode,
@@ -244,6 +247,7 @@ class ConfigLoader:
         self, scenario_data: dict[str, Any]
     ) -> ScenarioConfig:
         """Validate a scenario config block."""
+        assert scenario_data is not None, "scenario_data must be provided"
         scenario = scenario_data.get("scenario", {})
         return ScenarioConfig.model_validate(
             {
@@ -256,6 +260,7 @@ class ConfigLoader:
 
     def _validate_resolved_config(self, resolved: dict[str, Any]) -> None:
         """Validate resolved streams and reactors before runtime application."""
+        assert resolved is not None, "resolved must be provided"
         for stream_name, props in resolved.get("feeds", {}).items():
             validate_stream_config(props, stream_name=stream_name)
 
@@ -289,6 +294,7 @@ class ConfigLoader:
             NOTE: The original code passed ``b.energies`` here — that attribute
             does not exist.  The correct attribute is ``b.energy_streams``.
         """
+        assert builder is not None, "builder must be provided"
         if not self.config:
             logger.debug("apply_to_flowsheet: config is empty, nothing to apply.")
             return
@@ -327,6 +333,7 @@ class ConfigLoader:
 
     def _set_stream_conditions(self, stream, name: str, props: dict) -> None:
         """Set T, P, and mass-flow on a material stream."""
+        assert stream is not None, "stream must be provided"
         if "temperature_C" in props:
             t_k = float(props["temperature_C"]) + 273.15
             stream.SetPropertyValue("Temperature", t_k)
@@ -347,6 +354,7 @@ class ConfigLoader:
         Fractions are normalised if they don't sum to exactly 1.0
         (tolerance ±0.02).
         """
+        assert stream is not None, "stream must be provided"
         components: dict = props.get("components", {})
         if not components:
             return
@@ -392,6 +400,7 @@ class ConfigLoader:
         Tries PROP_ES_0 first (newer DWSIM API, expects kW); falls back to
         EnergyFlow (older API, expects W) if the first property is not available.
         """
+        assert stream is not None, "stream must be provided"
         try:
             stream.SetPropertyValue("PROP_ES_0", value_watts / 1000.0)
             return

@@ -70,6 +70,7 @@ class FrameError(Exception):
         operation: str,
         detail: str = "",
     ) -> None:
+        assert expected_frame is not None, "expected_frame must be provided"
         self.expected_frame = expected_frame
         self.actual_frame = actual_frame
         self.operation = operation
@@ -125,6 +126,7 @@ class RigidTransform:
         target_frame: str,
     ) -> None:
         """Private — use factory methods instead."""
+        assert T is not None, "T must be provided"
         T = np.asarray(T, dtype=float)
         _validate_se3(T)
         require(len(source_frame) > 0, "source_frame must be non-empty")
@@ -175,6 +177,7 @@ class RigidTransform:
         target: str,
     ) -> RigidTransform:
         """Create from a Rotation object and 3-vector translation."""
+        assert rotation is not None, "rotation must be provided"
         R = rotation.as_rotation_matrix()
         p = np.asarray(p, dtype=float)
         return cls.from_rotation_translation(R, p, source=source, target=target)
@@ -210,6 +213,7 @@ class RigidTransform:
         target: str,
     ) -> RigidTransform:
         """Create from Euler angles (a, b, c) and 3-vector translation."""
+        assert a is not None, "a must be provided"
         R = euler_to_rotation_matrix(a, b, c, convention)
         p = np.asarray(p, dtype=float)
         return cls.from_rotation_translation(R, p, source=source, target=target)
@@ -225,6 +229,7 @@ class RigidTransform:
         target: str,
     ) -> RigidTransform:
         """Create from axis-angle rotation and 3-vector translation."""
+        assert angle is not None, "angle must be provided"
         R = axis_angle_to_rotation_matrix(axis, angle)
         p = np.asarray(p, dtype=float)
         return cls.from_rotation_translation(R, p, source=source, target=target)
@@ -259,6 +264,7 @@ class RigidTransform:
 
         Uses the matrix exponential: T = exp([twist] * theta).
         """
+        assert theta is not None, "theta must be provided"
         twist = np.asarray(twist, dtype=float)
         require(twist.shape == (6,), "twist must have 6 elements", twist.shape)
         T = twist_angle_to_homogeneous(twist, theta)
@@ -279,6 +285,7 @@ class RigidTransform:
             screw: dict with ``axis``, ``point``, ``pitch`` keys.
             theta: Rotation angle (radians).
         """
+        assert screw is not None, "screw must be provided"
         twist = screw_to_twist(screw)
         return cls.from_twist(twist, theta, source=source, target=target)
 
@@ -340,6 +347,7 @@ class RigidTransform:
         self, convention: str
     ) -> tuple[tuple[float, float, float], np.ndarray]:
         """Return (Euler angles tuple, 3-vector translation)."""
+        assert convention is not None, "convention must be provided"
         euler = rotation_matrix_to_euler(self._T[:3, :3], convention)
         return euler, self.translation
 

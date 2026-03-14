@@ -53,6 +53,7 @@ class ResultCard(QFrame):
     """A card widget for displaying a single result."""
 
     def __init__(self, title: str, parent: QWidget | None = None) -> None:
+        assert title is not None, "title must be provided"
         super().__init__(parent)
         self.setObjectName("resultCard")
         self.setFrameStyle(QFrame.Shape.StyledPanel)

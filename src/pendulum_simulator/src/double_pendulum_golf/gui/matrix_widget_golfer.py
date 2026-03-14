@@ -40,6 +40,7 @@ class GolferMatrixWidget(MatrixWidgetBase):
 
     def get_matrix_entries(self, mc: dict) -> list:
         """Return list of matrix cell entries for 8x8 (numpy array)."""
+        assert mc is not None, "mc must be provided"
         entries = []
         for row in range(8):
             for col in range(8):
@@ -55,6 +56,7 @@ class GolferMatrixWidget(MatrixWidgetBase):
 
     def paintEvent(self, event: object) -> None:
         """Override to include constraint violation section."""
+        assert event is not None, "event must be provided"
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.fillRect(self.rect(), self.COLOR_BG)

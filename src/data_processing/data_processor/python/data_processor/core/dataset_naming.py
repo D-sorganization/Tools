@@ -34,6 +34,7 @@ def generate_dataset_name(
     Returns:
         Generated dataset name (without extension)
     """
+    assert base_name is not None, "base_name must be provided"
     parts = [base_name]
 
     if include_filter and filter_type:
@@ -172,6 +173,7 @@ def generate_timestamped_name(
     Returns:
         Filename with timestamp
     """
+    assert base_name is not None, "base_name must be provided"
     timestamp = datetime.now().strftime(timestamp_format)
     name = f"{base_name}_{timestamp}"
 

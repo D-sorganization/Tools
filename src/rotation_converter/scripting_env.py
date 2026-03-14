@@ -123,6 +123,7 @@ class ConsoleEnvironment:
         Returns:
             (stdout_output, stderr_output)
         """
+        assert source is not None, "source must be provided"
         if not source.strip():
             return "", ""
 

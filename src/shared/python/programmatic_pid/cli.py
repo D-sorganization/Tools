@@ -70,6 +70,7 @@ def add_equipment(
     show_inline_notes: bool = False,
 ) -> None:
     """Draw one equipment item: symbol + labels + optional inline notes."""
+    assert eq is not None, "eq must be provided"
     x = to_float(eq.get("x", 0.0))
     y = to_float(eq.get("y", 0.0))
     w, hh = equipment_dims(eq)
@@ -138,6 +139,7 @@ def generate_process_sheet(
     prepared_spec: dict[str, Any] | None = None,
 ) -> None:
     """Generate the process (Sheet 1) DXF and optional SVG."""
+    assert spec_path is not None, "spec_path must be provided"
     if prepared_spec is None:
         spec = prepare_spec(spec_path, profile)
     else:
@@ -327,6 +329,7 @@ def generate_controls_sheet(
     prepared_spec: dict[str, Any] | None = None,
 ) -> None:
     """Generate the controls and interlocks (Sheet 2) DXF and optional SVG."""
+    assert spec_path is not None, "spec_path must be provided"
     if prepared_spec is None:
         spec = prepare_spec(spec_path, profile)
     else:
@@ -564,6 +567,7 @@ def generate_controls_sheet(
 
 def derive_related_path(path: str | Path, suffix: str) -> Path:
     """Derive a related file path by appending a suffix before the extension."""
+    assert path is not None, "path must be provided"
     p = Path(path)
     return p.with_name(f"{p.stem}_{suffix}{p.suffix}")
 
@@ -588,6 +592,7 @@ def generate(
         controls_svg: Optional path for the controls sheet SVG.
         profile: Layout profile name (default ``"presentation"``).
     """
+    assert spec_path is not None, "spec_path must be provided"
     prepared_spec = prepare_spec(spec_path, profile)
     generate_process_sheet(
         spec_path,

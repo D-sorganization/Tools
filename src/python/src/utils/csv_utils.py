@@ -29,6 +29,7 @@ def safe_read_csv(
     Returns:
         DataFrame or default value
     """
+    assert file_path is not None, "file_path must be provided"
     path = Path(file_path)
 
     if not path.exists():
@@ -60,6 +61,7 @@ def safe_write_csv(
     Returns:
         True if write succeeded, False otherwise
     """
+    assert df is not None, "df must be provided"
     path = Path(file_path)
 
     try:
@@ -89,6 +91,7 @@ def read_csv_with_validation(
     Returns:
         DataFrame if valid, None otherwise
     """
+    assert file_path is not None, "file_path must be provided"
     df = safe_read_csv(file_path, **kwargs)
 
     if df.empty:

@@ -186,6 +186,7 @@ class FinancialCalculatorEngine:
         tax_rate: float,
     ) -> FinancialDesign:
         """Run financial calculation."""
+        assert plant_capacity is not None, "plant_capacity must be provided"
         params = self._params_class(
             plant_capacity_tpd=plant_capacity,
             operating_days_per_year=operating_days,
@@ -223,6 +224,7 @@ class FinancialCalculatorEngine:
 
     def generate_projections(self, years: int = 10) -> list[dict]:
         """Generate yearly projections."""
+        assert years is not None, "years must be provided"
         result = self._calculator.generate_yearly_projections(years)
         return list(result)
 
@@ -558,6 +560,7 @@ class FinancialCalculatorMainWindow(QMainWindow):
 
     def _update_results(self, results: FinancialDesign) -> None:
         """Update results display."""
+        assert results is not None, "results must be provided"
         self.metric_labels["annual_tons"].setText(
             f"{results.annual_feedstock_tons:,.0f} tons"
         )
@@ -570,6 +573,7 @@ class FinancialCalculatorMainWindow(QMainWindow):
 
     def _update_projections(self, projections: list[dict]) -> None:
         """Update projections table."""
+        assert projections is not None, "projections must be provided"
         self.projections_table.setRowCount(len(projections))
 
         for row, proj in enumerate(projections):

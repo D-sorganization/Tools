@@ -112,6 +112,7 @@ class GasificationEngine:
         Precondition: temperature > 0, pressure > 0
         Postcondition: EquilibriumResult with valid composition
         """
+        assert temperature is not None, "temperature must be provided"
         feed_elements = self._build_feed(
             feed,
             feed_mass,
@@ -145,6 +146,7 @@ class GasificationEngine:
 
         Handles all three input modes and legacy compatibility.
         """
+        assert process_inputs is not None, "process_inputs must be provided"
         if process_inputs is not None:
             base = self._resolve_base_feed(feed, feed_mass)
             return build_total_feed(base, process_inputs)
@@ -193,6 +195,7 @@ class GasificationEngine:
 
         This preserves backward compatibility with the old API.
         """
+        assert base is not None, "base must be provided"
         elements = base.as_dict()
         c_moles = elements.get("C", 0.0)
 
@@ -217,6 +220,7 @@ class GasificationEngine:
         feed_elements: dict[str, float],
     ) -> "EquilibriumResult":
         """Convert SolverResult to EquilibriumResult with metrics."""
+        assert raw is not None, "raw must be provided"
         mole_fracs, total_gas = gas_mole_fractions(raw.moles, self.species_keys)
 
         return EquilibriumResult(

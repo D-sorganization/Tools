@@ -29,6 +29,7 @@ class GlassIntegrationMixin:
 
     def set_glass_properties_calculator(self, calculator: Callable[..., Any]) -> None:
         """Set external glass properties calculator"""
+        assert calculator is not None, "calculator must be provided"
         self.glass_interface.set_external_calculator(calculator)
         self._calculate_system()
 
@@ -50,6 +51,7 @@ class GlassIntegrationMixin:
                     Returns:
                         Glass conductivity value
                     """
+                    assert temperature is not None, "temperature must be provided"
                     if hasattr(actual_calculator, "calculate_resistivity"):
                         # Get resistivity and convert to conductivity
                         resistivity = actual_calculator.calculate_resistivity(
