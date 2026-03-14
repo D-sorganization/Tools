@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 
+@pytest.fixture
 def clean_env():
     set_contracts_enabled(True)
     old = os.environ.get("CORS_ORIGINS")
