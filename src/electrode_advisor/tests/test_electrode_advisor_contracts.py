@@ -1250,3 +1250,72 @@ class TestDryElimination:
             pytest.skip("Drawing file not found")
         line_count = len(drawing_path.read_text().splitlines())
         assert line_count < 150, f"DrawingMixin should be <150 lines, got {line_count}"
+
+
+# ── Batch 3: Correctness fixes tests ────────────────────────────────────────
+
+
+class TestCorrectnessFixes:
+    """Tests for Batch 3 correctness fixes (#1415-#1418)."""
+
+    def test_electrode_z_uses_depth(self) -> None:
+        """#1415: draw_3d_electrodes must use depth in z-position formula."""
+        try:
+            from electrode_advisor.utils.visualization import ElectrodeVisualization
+        except ImportError:
+            pytest.skip("ElectrodeVisualization not importable")
+        import inspect
+
+        src = inspect.getsource(ElectrodeVisualization.draw_3d_electrodes)
+        uses_depth = "glass_height - depth" in src
+        assert uses_depth, "z must use glass_height - depth"
+
+    def test_tick_hiding_not_unconditional(self) -> None:
+        """#1416: tick-hiding must be inside else branch, not unconditional."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_visualization_update import (
+                VisualizationUpdateMixin,
+            )
+        except ImportError:
+            pytest.skip("VisualizationUpdateMixin not importable")
+        import inspect
+
+        src = inspect.getsource(VisualizationUpdateMixin._configure_viz_axis_labels)
+        # The old bug had an unconditional block after the if/else that always
+        # hid ticks. After the fix, labelbottom=False should only appear once
+        # (in the else branch), not twice.
+        count = src.count("labelbottom=False")
+        assert count == 1, f"labelbottom=False once, got {count}"
+
+    def test_temperature_gradient_removed_from_results(self) -> None:
+        """#1417: _COLOR_MODE_TEMPERATURE must be removed from results_charts."""
+        try:
+            from electrode_advisor.ui.pyqt6 import main_window_results_charts as mod
+        except ImportError:
+            pytest.skip("main_window_results_charts not importable")
+        has_temp = hasattr(mod, "_COLOR_MODE_TEMPERATURE")
+        assert not has_temp, "Temperature gradient constant must be removed"
+
+    def test_temperature_gradient_not_in_visual_controls(self) -> None:
+        """#1417: Temperature gradient must not be in color mode combo items."""
+        try:
+            from electrode_advisor.ui.pyqt6 import main_window_visual_controls as mod
+        except ImportError:
+            pytest.skip("main_window_visual_controls not importable")
+        import inspect
+
+        src = inspect.getsource(mod)
+        has_temp = "Temperature gradient" in src
+        assert not has_temp, "Temperature gradient must be removed from combo"
+
+    def test_visualization_constructor_takes_config(self) -> None:
+        """#1418: ElectrodeVisualization constructor must accept config param."""
+        try:
+            from electrode_advisor.utils.visualization import ElectrodeVisualization
+        except ImportError:
+            pytest.skip("ElectrodeVisualization not importable")
+        import inspect
+
+        sig = inspect.signature(ElectrodeVisualization.__init__)
+        has_config = "config" in sig.parameters
+        assert has_config, "constructor must accept config parameter"

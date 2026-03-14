@@ -102,7 +102,6 @@ class ControlsMixin:
                 "Default colors",
                 "Current intensity",
                 "Power dissipation",
-                "Temperature gradient",
             ]
         )
         self.color_mode_combo.setCurrentText("Current intensity")
