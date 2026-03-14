@@ -191,9 +191,7 @@ class SimulationPanel(QWidget):
             opt_scroll.setWidgetResizable(True)
             opt_scroll.setMinimumWidth(200)
             opt_scroll.setMaximumWidth(300)
-            opt_scroll.setStyleSheet(
-                _SCROLL_STYLE
-            )
+            opt_scroll.setStyleSheet(_SCROLL_STYLE)
             splitter.addWidget(opt_scroll)
             splitter.setStretchFactor(splitter.count() - 1, 0)
 

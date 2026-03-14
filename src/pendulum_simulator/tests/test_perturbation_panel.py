@@ -77,10 +77,13 @@ class TestPerturbationPanelConstruction:
 
 class TestSetSimulationCallbacks:
     def test_enables_run_button(self, panel) -> None:
-        panel.set_simulation_callbacks(lambda c: {}, lambda r: {
-            "tip_speed_final": 1.0,
-            "tip_position_final": np.array([0.0, 0.0]),
-        })
+        panel.set_simulation_callbacks(
+            lambda c: {},
+            lambda r: {
+                "tip_speed_final": 1.0,
+                "tip_position_final": np.array([0.0, 0.0]),
+            },
+        )
         assert panel._run_btn.isEnabled()
 
     def test_rejects_none_simulate_fn(self, panel) -> None:

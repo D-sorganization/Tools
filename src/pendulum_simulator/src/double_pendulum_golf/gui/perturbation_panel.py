@@ -373,7 +373,9 @@ class PerturbationPanel(QWidget):
         self._status_label.setText("Running…")
         self._clear_results()
 
-        worker = _PerturbWorker(base_coeffs, config, self._simulate_fn, self._extract_fn)
+        worker = _PerturbWorker(
+            base_coeffs, config, self._simulate_fn, self._extract_fn
+        )
         thread = QThread(self)
         worker.moveToThread(thread)
 
@@ -412,9 +414,7 @@ class PerturbationPanel(QWidget):
         self._display_summary(summary)
         if _HAS_MPL:
             self._update_histogram([r["tip_speed_final"] for r in results])
-        self._status_label.setText(
-            f"Done — {summary['n_trials']} trials completed"
-        )
+        self._status_label.setText(f"Done — {summary['n_trials']} trials completed")
 
     def _on_error(self, msg: str) -> None:
         self._run_btn.setEnabled(True)

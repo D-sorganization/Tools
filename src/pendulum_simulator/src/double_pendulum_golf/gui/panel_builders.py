@@ -216,8 +216,10 @@ def build_double_panel(main_window: Any) -> SimulationPanel:
         }
 
     perturb.set_coeffs_source(
-        lambda: [controls.get_params().get("shoulder_coeffs", [0.0]),
-                 controls.get_params().get("wrist_coeffs", [0.0])]
+        lambda: [
+            controls.get_params().get("shoulder_coeffs", [0.0]),
+            controls.get_params().get("wrist_coeffs", [0.0]),
+        ]
     )
     perturb.set_simulation_callbacks(_double_simulate_fn, _double_extract_fn)
     panel.set_perturbation_panel(perturb)
@@ -396,9 +398,11 @@ def build_triple_panel(main_window: Any) -> SimulationPanel:
         }
 
     perturb.set_coeffs_source(
-        lambda: [controls.get_params().get("shoulder_coeffs", [0.0]),
-                 controls.get_params().get("elbow_coeffs", [0.0]),
-                 controls.get_params().get("wrist_coeffs", [0.0])]
+        lambda: [
+            controls.get_params().get("shoulder_coeffs", [0.0]),
+            controls.get_params().get("elbow_coeffs", [0.0]),
+            controls.get_params().get("wrist_coeffs", [0.0]),
+        ]
     )
     perturb.set_simulation_callbacks(_triple_simulate_fn, _triple_extract_fn)
     panel.set_perturbation_panel(perturb)
@@ -607,8 +611,12 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
     def _golfer_coeffs_fn() -> list:
         p = controls.get_params()
         joint_keys = [
-            "hip_coeffs", "spine_coeffs", "r_shoulder_coeffs",
-            "r_elbow_coeffs", "l_shoulder_coeffs", "l_elbow_coeffs",
+            "hip_coeffs",
+            "spine_coeffs",
+            "r_shoulder_coeffs",
+            "r_elbow_coeffs",
+            "l_shoulder_coeffs",
+            "l_elbow_coeffs",
             "wrist_coeffs",
         ]
         return [p.get(k, [0.0]) for k in joint_keys]
