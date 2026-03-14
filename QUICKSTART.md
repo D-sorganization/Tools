@@ -31,8 +31,9 @@ source venv/bin/activate
 # On Windows:
 venv\Scripts\activate
 
-# Install dependencies
-pip install -r requirements.txt
+# Install dependencies and developer tooling
+python -m pip install -r requirements.txt
+python -m pip install -e ".[dev]"
 ```
 
 ### 3. Verify Installation
@@ -40,6 +41,9 @@ pip install -r requirements.txt
 ```bash
 # Check Python version
 python --version  # Should be 3.10 or higher
+
+# Confirm the root developer entrypoints are available
+make help
 
 # Test launcher
 python UnifiedToolsLauncher.py
@@ -79,27 +83,27 @@ This opens a GUI with all available tools organized by category:
 
 ```bash
 # Run all tests
-pytest .
+python -m pytest
 
 # Run specific test file
-pytest tests/test_example.py
+python -m pytest tests/test_validation.py
 
 # Run with coverage
-pytest --cov=.
+python -m pytest --cov=.
 ```
 
 ### Code Quality Checks
 
 ```bash
 # Lint code
-ruff check .
+python -m ruff check .
 
 # Format code
-ruff format .
-black .
+python -m ruff format .
+python -m black .
 
 # Type checking
-mypy . --config-file mypy.ini
+python -m mypy . --config-file mypy.ini
 ```
 
 ## Troubleshooting
