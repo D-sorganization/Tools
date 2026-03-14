@@ -248,15 +248,168 @@ class CalculationMixin:
         color_str = color.name() if hasattr(color, "name") else str(color)
         self.status_panel.setStyleSheet(f"background-color: {color_str}")  # type: ignore[attr-defined]
 
+    def _compute_balanced_depths(
+        self,
+        target_resistance: float,
+        phase_index: int,
+        current_depths: np.ndarray,
+        lo: float = 1.0,
+        hi: float = 40.0,
+        tol: float = 1e-3,
+        max_iter: int = 50,
+    ) -> float:
+        """Use bisection to find the depth for one electrode that hits target_resistance.
+
+        Pure computation — no side effects on UI state.
+
+        Parameters
+        ----------
+        target_resistance:
+            Desired total resistance (Ohm) for the phase pair.
+        phase_index:
+            Index (0, 1, 2) of the electrode whose depth is varied.
+        current_depths:
+            Numpy array of the three current electrode depths (inches).
+        lo, hi:
+            Bisection search bounds for depth (inches).
+        tol:
+            Convergence tolerance on depth (inches).
+        max_iter:
+            Maximum bisection iterations.
+
+        Returns
+        -------
+        float
+            Depth (inches) that produces a resistance closest to target_resistance,
+            or the midpoint if bisection does not converge within max_iter.
+        """
+        bath_diameter = self.bath_diameter_input.value()  # type: ignore[attr-defined]
+        electrode_diameter = float(self.electrode_diameter_combo.currentText())  # type: ignore[attr-defined]
+        metal_layer_height = self.metal_layer_height_input.value()  # type: ignore[attr-defined]
+        bath_temperature = self.bath_temp_input.value()  # type: ignore[attr-defined]
+        voltages = np.array(
+            [
+                cast(QDoubleSpinBox, self.phase_inputs["1-2"]["voltage"]).value(),  # type: ignore[attr-defined]
+                cast(QDoubleSpinBox, self.phase_inputs["2-3"]["voltage"]).value(),  # type: ignore[attr-defined]
+                cast(QDoubleSpinBox, self.phase_inputs["3-1"]["voltage"]).value(),  # type: ignore[attr-defined]
+            ]
+        )
+        k_factors = {
+            "K_tt": self.k_tt_input.value() * self.config.k_scaling_factor,  # type: ignore[attr-defined]
+            "K_vert": self.k_vert_input.value() * self.config.k_scaling_factor,  # type: ignore[attr-defined]
+        }
+        conductive_height = self.conductive_layer_height_input.value()  # type: ignore[attr-defined]
+
+        def resistance_at_depth(depth: float) -> float:
+            trial_depths = current_depths.copy()
+            trial_depths[phase_index] = depth
+            result = self.electrical_model.calculate_system_state(  # type: ignore[attr-defined]
+                depths=trial_depths,
+                bath_diameter=bath_diameter,
+                tip_diameter=electrode_diameter,
+                metal_depth=metal_layer_height,
+                k_factors=k_factors,
+                bath_temperature=bath_temperature,
+                voltages=voltages,
+                conductive_height=conductive_height,
+            )
+            phase_keys = ["1-2", "2-3", "3-1"]
+            phase_key = phase_keys[phase_index]
+            paths = result.get("current_paths", {})
+            return float(paths.get(phase_key, {}).get("total", float("inf")))
+
+        r_lo = resistance_at_depth(lo)
+        r_hi = resistance_at_depth(hi)
+
+        # Resistance decreases with depth (deeper electrode → lower resistance).
+        # Ensure the target lies within [r_hi, r_lo].
+        if target_resistance <= r_hi or target_resistance >= r_lo:
+            mid = (lo + hi) / 2.0
+            logger.debug(
+                "[DEBUG] bisect: target %.4f out of range [%.4f, %.4f]; returning mid %.4f",
+                target_resistance,
+                r_hi,
+                r_lo,
+                mid,
+            )
+            return mid
+
+        for _ in range(max_iter):
+            mid = (lo + hi) / 2.0
+            r_mid = resistance_at_depth(mid)
+            if abs(r_mid - target_resistance) < tol or (hi - lo) / 2.0 < tol:
+                return mid
+            # Deeper → lower R, so if r_mid > target we need to go deeper
+            if r_mid > target_resistance:
+                lo = mid
+            else:
+                hi = mid
+        return (lo + hi) / 2.0
+
     @pyqtSlot()
     def _run_optimization(self) -> None:
-        """Run electrode position optimization"""
-        QMessageBox.information(
-            self,  # type: ignore[arg-type]
-            "Optimization",
-            "Optimization feature will be implemented with full algorithm integration",
-        )
-        self.optimization_complete.emit({"status": "pending"})  # type: ignore[attr-defined]
+        """Run electrode position optimization using bisection to equalize resistances.
+
+        Issue #1362: replaces the placeholder stub with a real bisection-based
+        electrode advancement algorithm.  For each electrode, finds the insertion
+        depth that brings its per-phase resistance to the mean of the current
+        resistances, yielding a more balanced power distribution.
+        """
+        try:
+            if not self.calculation_results:  # type: ignore[attr-defined]
+                QMessageBox.warning(
+                    self,  # type: ignore[arg-type]
+                    "Optimization",
+                    "Run a calculation first before optimizing.",
+                )
+                return
+
+            current_paths = self.calculation_results.get("current_paths", {})  # type: ignore[attr-defined]
+            phase_keys = ["1-2", "2-3", "3-1"]
+            resistances = [
+                current_paths.get(pk, {}).get("total", 0.0) for pk in phase_keys
+            ]
+            target_resistance = float(np.mean(resistances))
+
+            current_depths = np.array(
+                [
+                    self.depth_inputs[0].value(),  # type: ignore[attr-defined]
+                    self.depth_inputs[1].value(),  # type: ignore[attr-defined]
+                    self.depth_inputs[2].value(),  # type: ignore[attr-defined]
+                ]
+            )
+
+            new_depths = current_depths.copy()
+            for i in range(3):
+                new_depths[i] = self._compute_balanced_depths(
+                    target_resistance=target_resistance,
+                    phase_index=i,
+                    current_depths=new_depths,
+                )
+
+            for i in range(3):
+                self.depth_inputs[i].setValue(new_depths[i])  # type: ignore[attr-defined]
+
+            self._calculate_system()
+            self.optimization_complete.emit(
+                {"status": "complete", "depths": new_depths.tolist()}
+            )  # type: ignore[attr-defined]
+            QMessageBox.information(
+                self,  # type: ignore[arg-type]
+                "Optimization Complete",
+                f"Balanced electrode depths:\n"
+                f"  E1: {new_depths[0]:.2f} in\n"
+                f"  E2: {new_depths[1]:.2f} in\n"
+                f"  E3: {new_depths[2]:.2f} in\n"
+                f"Target resistance: {target_resistance:.4f} Ω",
+            )
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
+            logger.exception("Optimization failed: %s", e)
+            QMessageBox.critical(
+                self,  # type: ignore[arg-type]
+                "Optimization Error",
+                f"Optimization failed: {e!s}",
+            )
 
     def _periodic_update(self) -> None:
         """Periodic update for real-time monitoring"""

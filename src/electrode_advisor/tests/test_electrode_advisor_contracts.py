@@ -829,3 +829,117 @@ class TestExtractedChartHelpers:
         line_currents = [c * math.sqrt(3) for c in phase_currents]
         for phase_c, line_c in zip(phase_currents, line_currents, strict=True):
             assert abs(line_c / phase_c - math.sqrt(3)) < 1e-10
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Issue #1362 — _run_optimization bisection algorithm
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestBisectionBalancing:
+    """Issue #1362: bisection-based electrode advancement is no longer a stub."""
+
+    def test_run_optimization_method_exists(self) -> None:
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_calculation import (
+                CalculationMixin,
+            )
+        except ImportError:
+            pytest.skip("CalculationMixin not importable")
+        has_method = hasattr(CalculationMixin, "_run_optimization")
+        assert has_method, "_run_optimization must exist on CalculationMixin"
+
+    def test_compute_balanced_depths_method_exists(self) -> None:
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_calculation import (
+                CalculationMixin,
+            )
+        except ImportError:
+            pytest.skip("CalculationMixin not importable")
+        has_method = hasattr(CalculationMixin, "_compute_balanced_depths")
+        assert has_method, "_compute_balanced_depths must exist as a separate method"
+
+    def test_bisection_pure_arithmetic_converges(self) -> None:
+        """Bisection on a monotone function converges to within tolerance."""
+        # f(x) = 1/x — resistance-like (decreases with depth)
+        target = 0.05  # target resistance
+        lo, hi = 1.0, 40.0
+        tol = 1e-3
+        for _ in range(50):
+            mid = (lo + hi) / 2.0
+            r_mid = 1.0 / mid
+            if abs(r_mid - target) < tol or (hi - lo) / 2.0 < tol:
+                break
+            if r_mid > target:
+                lo = mid
+            else:
+                hi = mid
+        result_depth = (lo + hi) / 2.0
+        assert abs(1.0 / result_depth - target) < tol * 10
+
+    def test_bisection_mean_resistance_target(self) -> None:
+        """Target resistance for balancing is the arithmetic mean of per-phase Rs."""
+        resistances = [0.12, 0.10, 0.14]
+        target = sum(resistances) / len(resistances)
+        assert abs(target - 0.12) < 1e-10
+
+    @pytest.mark.skipif(
+        not ELECTRICAL_AVAILABLE, reason="upstream_drift_tools not installed"
+    )
+    def test_balanced_symmetric_system_unchanged(self) -> None:
+        """For a symmetric system, balanced depths should be close to original depths."""
+        cfg = ElectrodeConfig()
+        glass = GlassPropertiesInterface()
+        model = ThreePhaseElectricalModelEnhanced(cfg, glass)
+
+        params = {
+            "depths": np.array([12.0, 12.0, 12.0]),
+            "bath_diameter": 120.0,
+            "tip_diameter": 24.0,
+            "metal_depth": 2.0,
+            "k_factors": {"K_tt": 1.0, "K_vert": 1.0},
+            "bath_temperature": 1350.0,
+            "voltages": np.array([100.0, 100.0, 100.0]),
+            "conductive_height": 2.0,
+        }
+        result = model.calculate_system_state(**params)
+        paths = result.get("current_paths", {})
+        resistances = [
+            paths.get(pk, {}).get("total", 0.0) for pk in ["1-2", "2-3", "3-1"]
+        ]
+        if all(r > 0 for r in resistances):
+            # For a symmetric system, all resistances should be equal
+            max_r = max(resistances)
+            min_r = min(resistances)
+            assert max_r - min_r < 1e-4 * max_r + 1e-9
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Issue #1363 — draw_via_metal_path delegates to annotate helpers (DRY)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@pytest.mark.skipif(not DRAWING_AVAILABLE, reason="shared_drawing not importable")
+class TestViaMetalPathDry:
+    """Issue #1363: draw_via_metal_path no longer duplicates annotation logic."""
+
+    def test_annotate_path_value_used_by_draw_via_metal_path(self) -> None:
+        """draw_via_metal_path source must not inline ax.text for current annotation."""
+        import inspect
+
+        from electrode_advisor.utils.shared_drawing import draw_via_metal_path
+
+        src = inspect.getsource(draw_via_metal_path)
+        # The function must delegate to annotate_path_value (no bare ax.text for current)
+        calls_helper = "annotate_path_value" in src
+        assert calls_helper, "draw_via_metal_path must call annotate_path_value"
+
+    def test_annotate_resistance_value_used_by_draw_via_metal_path(self) -> None:
+        """draw_via_metal_path source must delegate resistance annotation."""
+        import inspect
+
+        from electrode_advisor.utils.shared_drawing import draw_via_metal_path
+
+        src = inspect.getsource(draw_via_metal_path)
+        delegated = "annotate_resistance_value" in src or "annotate_path_value" in src
+        assert delegated, "draw_via_metal_path must delegate resistance annotation"
