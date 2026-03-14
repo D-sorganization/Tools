@@ -520,9 +520,13 @@ def test_native_projection_wrappers_map_rust_outputs(
     assert np.array_equal(q_proj, np.full(8, 0.25))
     assert np.array_equal(qdot_proj, np.full(8, 0.5))
 
+
 def test_simulate_double_works_with_valid_inputs() -> None:
     from double_pendulum_golf.physics import PendulumParams
-    from double_pendulum_golf.native_backend import simulate_double, double_native_enabled
+    from double_pendulum_golf.native_backend import (
+        simulate_double,
+        double_native_enabled,
+    )
 
     if not double_native_enabled():
         pytest.skip("Native backend disabled or unavailable")
@@ -539,4 +543,3 @@ def test_simulate_double_works_with_valid_inputs() -> None:
     t, states = res
     assert len(t) >= 2
     assert states.shape == (len(t), 4)
-

@@ -12,6 +12,8 @@ pub use math::{clamp, lerp, GRAVITY, R_GAS};
 pub use math_primitives::matrix3::Matrix3;
 pub use math_primitives::quaternion::Quaternion;
 pub use math_primitives::types::Vector3;
+// Re-export submodules (used by benchmarks)
+pub use math_primitives::{matrix3, quaternion, types};
 
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
@@ -32,5 +34,9 @@ fn tools_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(math::py_clamp, m)?)?;
     m.add_function(wrap_pyfunction!(math::py_deg_to_rad, m)?)?;
     m.add_function(wrap_pyfunction!(math::py_rad_to_deg, m)?)?;
+
+    // Register math_primitives submodule (rotation, quaternion, geometry, numpy bindings)
+    math_primitives::py_bindings::py_math::register_module(m)?;
+
     Ok(())
 }

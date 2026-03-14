@@ -206,11 +206,19 @@ def run_simulation(
                 # Interpolate to the desired uniform grid if needed
                 t_eval = np.arange(0.0, t_end, dt)
                 from scipy.interpolate import interp1d
-                interp = interp1d(t_res, states_res, axis=0, bounds_error=False, fill_value="extrapolate")
+
+                interp = interp1d(
+                    t_res,
+                    states_res,
+                    axis=0,
+                    bounds_error=False,
+                    fill_value="extrapolate",
+                )
                 states = interp(t_eval)
                 t = t_eval
 
     if t is None or states is None:
+
         def ode_rhs(t: float, y: np.ndarray) -> np.ndarray:
             return equations_of_motion(y, t, params, torque_func, limits, clamp)
 
