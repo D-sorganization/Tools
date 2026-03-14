@@ -1107,3 +1107,146 @@ class TestDeadCodeRemoval:
             pytest.skip("ElectrodeVisualization not importable")
         has_set_axis = hasattr(ElectrodeVisualization, "set_axis")
         assert not has_set_axis, "set_axis must be removed"
+
+
+# ── Batch 2: DRY elimination tests ──────────────────────────────────────────
+
+
+class TestDryElimination:
+    """Tests for Batch 2 DRY fixes (#1407-#1414)."""
+
+    def test_drawing_mixin_delegates_metal_layer(self) -> None:
+        """#1407: DrawingMixin._draw_3d_metal_layer delegates to visualization."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_drawing import DrawingMixin
+        except ImportError:
+            pytest.skip("DrawingMixin not importable")
+        import inspect
+
+        src = inspect.getsource(DrawingMixin._draw_3d_metal_layer)
+        has_delegation = "self.visualization.draw_3d_metal_layer" in src
+        assert has_delegation, "must delegate to self.visualization"
+
+    def test_drawing_mixin_delegates_glass_layer(self) -> None:
+        """#1408: DrawingMixin._draw_3d_glass_layer delegates to visualization."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_drawing import DrawingMixin
+        except ImportError:
+            pytest.skip("DrawingMixin not importable")
+        import inspect
+
+        src = inspect.getsource(DrawingMixin._draw_3d_glass_layer)
+        has_delegation = "self.visualization.draw_3d_glass_layer" in src
+        assert has_delegation, "must delegate to self.visualization"
+
+    def test_drawing_mixin_delegates_refractory_layer(self) -> None:
+        """#1409: DrawingMixin._draw_3d_refractory_layer delegates to visualization."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_drawing import DrawingMixin
+        except ImportError:
+            pytest.skip("DrawingMixin not importable")
+        import inspect
+
+        src = inspect.getsource(DrawingMixin._draw_3d_refractory_layer)
+        has_delegation = "self.visualization.draw_3d_refractory_layer" in src
+        assert has_delegation, "must delegate to self.visualization"
+
+    def test_drawing_mixin_delegates_metal_shell(self) -> None:
+        """#1410: DrawingMixin._draw_3d_metal_shell delegates to visualization."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_drawing import DrawingMixin
+        except ImportError:
+            pytest.skip("DrawingMixin not importable")
+        import inspect
+
+        src = inspect.getsource(DrawingMixin._draw_3d_metal_shell)
+        has_delegation = "self.visualization.draw_3d_metal_shell" in src
+        assert has_delegation, "must delegate to self.visualization"
+
+    def test_drawing_mixin_delegates_electrodes(self) -> None:
+        """#1411: DrawingMixin._draw_3d_electrodes delegates to visualization."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_drawing import DrawingMixin
+        except ImportError:
+            pytest.skip("DrawingMixin not importable")
+        import inspect
+
+        src = inspect.getsource(DrawingMixin._draw_3d_electrodes)
+        has_delegation = "self.visualization.draw_3d_electrodes" in src
+        assert has_delegation, "must delegate to self.visualization"
+
+    def test_drawing_mixin_delegates_sphere(self) -> None:
+        """#1412: _draw_electrode_sphere delegates to visualization."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_drawing import DrawingMixin
+        except ImportError:
+            pytest.skip("DrawingMixin not importable")
+        import inspect
+
+        src = inspect.getsource(DrawingMixin._draw_electrode_sphere)
+        has_delegation = "self.visualization.draw_electrode_sphere" in src
+        assert has_delegation, "must delegate to self.visualization"
+
+    def test_results_mixin_no_draw_electrode_sphere(self) -> None:
+        """#1412: ResultsAndChartsMixin must not have its own _draw_electrode_sphere."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_results_charts import (
+                ResultsAndChartsMixin,
+            )
+        except ImportError:
+            pytest.skip("ResultsAndChartsMixin not importable")
+        has_sphere = "_draw_electrode_sphere" in ResultsAndChartsMixin.__dict__
+        assert not has_sphere, "duplicate sphere method must be removed"
+
+    def test_read_calculation_params_exists(self) -> None:
+        """#1414: _read_calculation_params extracted from duplicated UI reads."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_calculation import (
+                CalculationMixin,
+            )
+        except ImportError:
+            pytest.skip("CalculationMixin not importable")
+        has_method = hasattr(CalculationMixin, "_read_calculation_params")
+        assert has_method, "_read_calculation_params must exist"
+
+    def test_calculate_system_uses_read_params(self) -> None:
+        """#1414: _calculate_system must call _read_calculation_params."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_calculation import (
+                CalculationMixin,
+            )
+        except ImportError:
+            pytest.skip("CalculationMixin not importable")
+        import inspect
+
+        src = inspect.getsource(CalculationMixin._calculate_system)
+        uses_method = "_read_calculation_params" in src
+        assert uses_method, "_calculate_system must use _read_calculation_params"
+
+    def test_compute_balanced_depths_uses_read_params(self) -> None:
+        """#1414: _compute_balanced_depths must call _read_calculation_params."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_calculation import (
+                CalculationMixin,
+            )
+        except ImportError:
+            pytest.skip("CalculationMixin not importable")
+        import inspect
+
+        src = inspect.getsource(CalculationMixin._compute_balanced_depths)
+        uses_method = "_read_calculation_params" in src
+        assert uses_method, "_compute_balanced_depths must use _read_calculation_params"
+
+    def test_drawing_mixin_file_under_150_lines(self) -> None:
+        """DrawingMixin file should be small after delegation rewrite."""
+        from pathlib import Path
+
+        drawing_path = Path(
+            "/home/dieterolson/Linux_Repositories/Linux_Tools/Tools/"
+            "src/electrode_advisor/python/electrode_advisor/"
+            "ui/pyqt6/main_window_drawing.py"
+        )
+        if not drawing_path.exists():
+            pytest.skip("Drawing file not found")
+        line_count = len(drawing_path.read_text().splitlines())
+        assert line_count < 150, f"DrawingMixin should be <150 lines, got {line_count}"
