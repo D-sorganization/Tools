@@ -50,7 +50,8 @@ class TestConstraintDriftLogging:
         """Line 266: warn when viol > _CONSTRAINT_WARN_TOL during integration."""
         from double_pendulum_golf.constraint_solver import project_to_constraints
 
-        q0 = project_to_constraints(np.zeros(N_DOF), golfer_params)
+        q_guess = np.array([0.0, 0.5, 0.5, 0.5, 0.5, 0.1, 0.1, 0.1])  # Bent state
+        q0 = project_to_constraints(q_guess, golfer_params)
         initial_state = np.concatenate([q0, np.zeros(N_DOF)])
 
         # Always return a value above warn threshold → exercises line 266
@@ -78,7 +79,8 @@ class TestConstraintDriftLogging:
         """Line 296: log.error when max_viol > _CONSTRAINT_ABORT_TOL (1e-2)."""
         from double_pendulum_golf.constraint_solver import project_to_constraints
 
-        q0 = project_to_constraints(np.zeros(N_DOF), golfer_params)
+        q_guess = np.array([0.0, 0.5, 0.5, 0.5, 0.5, 0.1, 0.1, 0.1])  # Bent state
+        q0 = project_to_constraints(q_guess, golfer_params)
         initial_state = np.concatenate([q0, np.zeros(N_DOF)])
 
         # Always return a value above abort threshold
@@ -105,7 +107,8 @@ class TestConstraintDriftLogging:
         """Line 302: log.warning when WARN < max_viol <= ABORT (postcondition)."""
         from double_pendulum_golf.constraint_solver import project_to_constraints
 
-        q0 = project_to_constraints(np.zeros(N_DOF), golfer_params)
+        q_guess = np.array([0.0, 0.5, 0.5, 0.5, 0.5, 0.1, 0.1, 0.1])  # Bent state
+        q0 = project_to_constraints(q_guess, golfer_params)
         initial_state = np.concatenate([q0, np.zeros(N_DOF)])
 
         # Always return a value between warn and abort thresholds
