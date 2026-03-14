@@ -14,11 +14,20 @@ from unittest.mock import MagicMock
 
 import pytest
 
-# ===========================================================================
-# catmull_rom tests
-# ===========================================================================
-
 from double_pendulum_golf.gui.catmull_rom import catmull_rom_smooth
+import double_pendulum_golf.gui.torque_history_constants as thc
+from double_pendulum_golf.gui.unit_converter import (
+    UnitCategory,
+    UnitConverter,
+    UnitPreferences,
+    UnitSystem,
+    _get_factor,
+    from_si,
+    get_available_units,
+    get_preset_names,
+    get_unit_label,
+    to_si,
+)
 
 
 class TestCatmullRomSmooth:
@@ -105,8 +114,6 @@ class TestCatmullRomSmooth:
 # ===========================================================================
 # torque_history_constants tests
 # ===========================================================================
-
-import double_pendulum_golf.gui.torque_history_constants as thc
 
 
 class TestTorqueHistoryConstants:
@@ -207,19 +214,6 @@ class TestTorqueHistoryConstants:
 # ===========================================================================
 # unit_converter tests
 # ===========================================================================
-
-from double_pendulum_golf.gui.unit_converter import (
-    UnitCategory,
-    UnitConverter,
-    UnitPreferences,
-    UnitSystem,
-    _get_factor,
-    from_si,
-    get_available_units,
-    get_preset_names,
-    get_unit_label,
-    to_si,
-)
 
 
 class TestUnitPreferences:
