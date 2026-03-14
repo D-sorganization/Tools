@@ -128,7 +128,16 @@ class Signal:
         require(new_fs > 0, "new_fs must be positive", new_fs)
         new_dt = 1.0 / new_fs
         new_time = np.arange(self.time[0], self.time[-1], new_dt)
-        new_values = np.interp(new_time, self.time, self.values)
+
+        if self.values.ndim == 1:
+            new_values = np.interp(new_time, self.time, self.values)
+        else:
+            # Multi-channel: interpolate each channel independently
+            n_channels = self.values.shape[1]
+            new_values = np.empty((len(new_time), n_channels))
+            for ch in range(n_channels):
+                new_values[:, ch] = np.interp(new_time, self.time, self.values[:, ch])
+
         return Signal(
             time=new_time,
             values=new_values,
@@ -185,6 +194,76 @@ class Signal:
             time=self.time.copy(),
             values=-self.values,
             name=f"-{self.name}",
+            units=self.units,
+            metadata=dict(self.metadata),
+        )
+
+    def __sub__(self, other: Signal | float | np.ndarray) -> Signal:
+        """Subtract two signals or subtract a constant."""
+        if isinstance(other, Signal):
+            if not np.allclose(self.time, other.time):
+                msg = "Signals must have the same time array for subtraction"
+                raise ValueError(msg)
+            return Signal(
+                time=self.time.copy(),
+                values=self.values - other.values,
+                name=f"({self.name} - {other.name})",
+                units=self.units,
+                metadata=dict(self.metadata),
+            )
+        return Signal(
+            time=self.time.copy(),
+            values=self.values - other,
+            name=self.name,
+            units=self.units,
+            metadata=dict(self.metadata),
+        )
+
+    def __truediv__(self, other: Signal | float | np.ndarray) -> Signal:
+        """Divide two signals or divide by a constant."""
+        if isinstance(other, Signal):
+            if not np.allclose(self.time, other.time):
+                msg = "Signals must have the same time array for division"
+                raise ValueError(msg)
+            return Signal(
+                time=self.time.copy(),
+                values=self.values / other.values,
+                name=f"({self.name} / {other.name})",
+                units=self.units,
+                metadata=dict(self.metadata),
+            )
+        return Signal(
+            time=self.time.copy(),
+            values=self.values / other,
+            name=self.name,
+            units=self.units,
+            metadata=dict(self.metadata),
+        )
+
+    def __radd__(self, other: float | np.ndarray) -> Signal:
+        """Support reverse addition (e.g., 2 + signal)."""
+        return self.__add__(other)
+
+    def __rsub__(self, other: float | np.ndarray) -> Signal:
+        """Support reverse subtraction (e.g., 2 - signal)."""
+        return Signal(
+            time=self.time.copy(),
+            values=other - self.values,
+            name=self.name,
+            units=self.units,
+            metadata=dict(self.metadata),
+        )
+
+    def __rmul__(self, other: float | np.ndarray) -> Signal:
+        """Support reverse multiplication (e.g., 2 * signal)."""
+        return self.__mul__(other)
+
+    def __rtruediv__(self, other: float | np.ndarray) -> Signal:
+        """Support reverse division (e.g., 2 / signal)."""
+        return Signal(
+            time=self.time.copy(),
+            values=other / self.values,
+            name=self.name,
             units=self.units,
             metadata=dict(self.metadata),
         )

@@ -172,6 +172,8 @@ class FilterDesigner:
         Returns:
             FilterSpec with filter coefficients.
         """
+        if order < 1:
+            raise ValueError(f"Filter order must be >= 1, got {order}")
         wn, btype = _normalize_cutoff(filter_type, cutoff, fs)
         b, a = butter(order, wn, btype=btype)
         return FilterSpec(
@@ -204,6 +206,10 @@ class FilterDesigner:
         Returns:
             FilterSpec with filter coefficients.
         """
+        if order < 1:
+            raise ValueError(f"Filter order must be >= 1, got {order}")
+        if ripple_db <= 0:
+            raise ValueError(f"ripple_db must be > 0, got {ripple_db}")
         wn, btype = _normalize_cutoff(filter_type, cutoff, fs)
         b, a = cheby1(order, ripple_db, wn, btype=btype)
         return FilterSpec(
@@ -236,6 +242,10 @@ class FilterDesigner:
         Returns:
             FilterSpec with filter coefficients.
         """
+        if order < 1:
+            raise ValueError(f"Filter order must be >= 1, got {order}")
+        if attenuation_db <= 0:
+            raise ValueError(f"attenuation_db must be > 0, got {attenuation_db}")
         wn, btype = _normalize_cutoff(filter_type, cutoff, fs)
         b, a = cheby2(order, attenuation_db, wn, btype=btype)
         return FilterSpec(
@@ -270,6 +280,12 @@ class FilterDesigner:
         Returns:
             FilterSpec with filter coefficients.
         """
+        if order < 1:
+            raise ValueError(f"Filter order must be >= 1, got {order}")
+        if ripple_db <= 0:
+            raise ValueError(f"ripple_db must be > 0, got {ripple_db}")
+        if attenuation_db <= 0:
+            raise ValueError(f"attenuation_db must be > 0, got {attenuation_db}")
         wn, btype = _normalize_cutoff(filter_type, cutoff, fs)
         b, a = ellip(order, ripple_db, attenuation_db, wn, btype=btype)
         return FilterSpec(
@@ -300,6 +316,8 @@ class FilterDesigner:
         Returns:
             FilterSpec with filter coefficients.
         """
+        if order < 1:
+            raise ValueError(f"Filter order must be >= 1, got {order}")
         wn, btype = _normalize_cutoff(filter_type, cutoff, fs)
         b, a = _scipy_bessel(order, wn, btype=btype, norm="phase")
         return FilterSpec(
@@ -334,6 +352,20 @@ def apply_filter(
     else:
         # Causal filtering (introduces phase shift)
         filtered_values = lfilter(filter_spec.b, filter_spec.a, signal.values)
+
+    # Postcondition: filter output should be finite
+    if not np.all(np.isfinite(filtered_values)):
+        import logging
+
+        logging.getLogger(__name__).warning(
+            "Filter output contains non-finite values; clamping to input range."
+        )
+        filtered_values = np.nan_to_num(
+            filtered_values,
+            nan=0.0,
+            posinf=np.max(signal.values),
+            neginf=np.min(signal.values),
+        )
 
     return Signal(
         time=signal.time,
