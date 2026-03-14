@@ -213,3 +213,63 @@ src/
 ├── web_applications/         # Web-only utilities
 └── wgs_reactor/              # WGS reactor
 ```
+
+---
+
+## Rust Shared Kernel (tools-core)
+
+The `rust_core/` workspace provides the single source of truth for computation,
+compiled to both **PyO3 (Python)** and **WASM (web)** via feature gates.
+
+### Rust Crates
+
+| Crate             | Location                                | Modules                                                    | Tests |
+| ----------------- | --------------------------------------- | ---------------------------------------------------------- | ----- |
+| `math-primitives` | `rust_core/math-primitives/`            | quaternion, rotation, matrix3, geometry, transform, types  | 88    |
+| `tools-core`      | `rust_core/tools-core/`                 | math, atmosphere, ball_flight, **signal**, **engineering** | 58    |
+| `pendulum-core`   | `src/pendulum_simulator/pendulum-core/` | physics, RK4 solver                                        | 12+   |
+
+### Signal Processing Kernel (`tools-core::signal`)
+
+| Function      | Formula                      | Status         |
+| ------------- | ---------------------------- | -------------- |
+| `sinusoid`    | y = A·sin(2πft + φ) + offset | ✅ Implemented |
+| `cosine`      | y = A·cos(2πft + φ) + offset | ✅ Implemented |
+| `exponential` | y = A·exp(-λt) + offset      | ✅ Implemented |
+| `linear`      | y = slope·t + intercept      | ✅ Implemented |
+| `step`        | Heaviside step               | ✅ Implemented |
+| `square`      | Square wave with duty cycle  | ✅ Implemented |
+| `triangle`    | Triangle wave                | ✅ Implemented |
+| `chirp`       | Linear frequency sweep       | ✅ Implemented |
+| `polynomial`  | y = Σ cₙ·tⁿ                  | ✅ Implemented |
+| `pulse`       | Rectangular pulse            | ✅ Implemented |
+
+### Engineering Calculation Kernel (`tools-core::engineering`)
+
+| Function                             | Domain          | Status         |
+| ------------------------------------ | --------------- | -------------- |
+| `reynolds_number`                    | Fluid mechanics | ✅ Implemented |
+| `churchill_friction_factor`          | Fluid mechanics | ✅ Implemented |
+| `darcy_weisbach_pressure_drop`       | Fluid mechanics | ✅ Implemented |
+| `flow_rate_from_velocity`            | Fluid mechanics | ✅ Implemented |
+| `ideal_gas_density`                  | Thermodynamics  | ✅ Implemented |
+| `compressibility_factor_vdw`         | Thermodynamics  | ✅ Implemented |
+| `isentropic_work`                    | Thermodynamics  | ✅ Implemented |
+| `convective_heat_transfer`           | Heat transfer   | ✅ Implemented |
+| `radiative_heat_transfer`            | Heat transfer   | ✅ Implemented |
+| `lmtd`                               | Heat transfer   | ✅ Implemented |
+| Unit conversions (C/K/F, bar/psi/Pa) | Units           | ✅ Implemented |
+
+### Tool → Rust Integration Status
+
+| Tool                        | Uses Rust? | Via                                 | Issue |
+| --------------------------- | :--------: | ----------------------------------- | ----- |
+| `rotation_converter`        |     ✅     | `tools_core.math_primitives` (PyO3) | —     |
+| `pendulum_simulator`        |     ✅     | `pendulum_core` (PyO3)              | —     |
+| `function_generator`        |     ❌     | Planned: `tools_core.signal`        | #1354 |
+| `signal_processing_studio`  |     ❌     | Planned: `tools_core.signal`        | #1354 |
+| `pressure_drop_calculator`  |     ❌     | Planned: `tools_core.engineering`   | #1355 |
+| `flow_rate_converter`       |     ❌     | Planned: `tools_core.engineering`   | #1355 |
+| `thermal_profile_predictor` |     ❌     | Planned: `tools_core.engineering`   | #1355 |
+| `syngas_compression`        |     ❌     | Planned: `tools_core.engineering`   | #1355 |
+| Web frontends (WASM)        |     ❌     | Planned: `wasm-pack` build          | #1356 |
