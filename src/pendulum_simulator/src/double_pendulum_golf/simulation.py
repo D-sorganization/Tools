@@ -129,11 +129,15 @@ class SimulationResult(TrajectoryResultMixin):
     def energy_at(self, idx: int) -> dict:
         self._check_idx(idx)
         state = self.states[idx]
-        return {
+        result = {
             "kinetic": kinetic_energy(state, self.params),
             "potential": potential_energy(state, self.params),
             "total": total_energy(state, self.params),
         }
+        assert all(np.isfinite(v) for v in result.values()), (
+            f"Non-finite energy at idx={idx}: {result}"
+        )
+        return result
 
     def coriolis_at(self, idx: int) -> np.ndarray:
         self._check_idx(idx)
@@ -197,20 +201,26 @@ def run_simulation(
         qdot0 = initial_state[2:4].tolist()
         t_span = (0.0, t_end)
         max_steps = int(max(t_end / dt * 10, 100000))
-        res = simulate_double(
-            params, q0, qdot0, coeffs, n_coeffs_per_joint, t_span, max_steps
-        )
+        res = simulate_double(params, q0, qdot0, coeffs, n_coeffs_per_joint, t_span, max_steps)
         if res is not None:
             t_res, states_res = res
             if len(t_res) >= 2:
                 # Interpolate to the desired uniform grid if needed
                 t_eval = np.arange(0.0, t_end, dt)
                 from scipy.interpolate import interp1d
-                interp = interp1d(t_res, states_res, axis=0, bounds_error=False, fill_value="extrapolate")
+
+                interp = interp1d(
+                    t_res,
+                    states_res,
+                    axis=0,
+                    bounds_error=False,
+                    fill_value="extrapolate",
+                )
                 states = interp(t_eval)
                 t = t_eval
 
     if t is None or states is None:
+
         def ode_rhs(t: float, y: np.ndarray) -> np.ndarray:
             return equations_of_motion(y, t, params, torque_func, limits, clamp)
 

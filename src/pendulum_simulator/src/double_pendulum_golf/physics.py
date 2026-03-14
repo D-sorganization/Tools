@@ -19,6 +19,7 @@ Segments:
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable
 from dataclasses import dataclass
 
@@ -27,6 +28,11 @@ import numpy.typing as npt
 
 from . import native_backend as _native_backend
 from .constants import GRAVITY_MSS
+
+_log = logging.getLogger(__name__)
+
+# Condition number threshold above which a warning is issued for M.
+_MASS_MATRIX_COND_WARN = 1e12
 
 # ---------------------------------------------------------------------------
 # Data structures
@@ -255,6 +261,37 @@ def friction_torque_vector(
 # ---------------------------------------------------------------------------
 
 
+def _hermite_penalty(
+    pen: float, vel: float, transition: float, stiffness: float, damping: float
+) -> float:
+    """Hermite smoothstep penalty magnitude for a single DOF at penetration depth ``pen``.
+
+    The smoothstep ramps from 0 (at pen=0) to 1 (at pen>=transition), providing
+    a C1-continuous blend from the free region into the full penalty region.
+
+    Parameters
+    ----------
+    pen : float
+        Penetration depth (positive, in radians).
+    vel : float
+        Signed joint velocity (rad/s); only the component into the limit is penalised.
+    transition : float
+        Transition width (rad) over which smoothstep blends from 0 to 1.
+    stiffness : float
+        Spring constant (N·m/rad).
+    damping : float
+        Damping coefficient (N·m·s/rad); acts only when velocity pushes further into limit.
+
+    Returns
+    -------
+    float
+        Non-negative penalty magnitude (caller applies sign based on limit side).
+    """
+    blend = min(1.0, pen / transition)
+    smooth = blend * blend * (3 - 2 * blend)
+    return smooth * (stiffness * pen + damping * max(0.0, vel))
+
+
 def joint_limit_torque(
     phi: float,
     dphi: float,
@@ -274,15 +311,13 @@ def joint_limit_torque(
     def _penalty(angle: float, vel: float, lo: float, hi: float) -> float:
         """Compute signed smoothstep penalty for a single DOF."""
         if angle < lo:
-            pen = lo - angle
-            blend = min(1.0, pen / transition)
-            smooth = blend * blend * (3 - 2 * blend)
-            return smooth * (limits.stiffness * pen + limits.damping * max(0.0, -vel))
+            return _hermite_penalty(
+                lo - angle, -vel, transition, limits.stiffness, limits.damping
+            )
         if angle > hi:
-            pen = angle - hi
-            blend = min(1.0, pen / transition)
-            smooth = blend * blend * (3 - 2 * blend)
-            return -smooth * (limits.stiffness * pen + limits.damping * max(0.0, vel))
+            return -_hermite_penalty(
+                angle - hi, vel, transition, limits.stiffness, limits.damping
+            )
         return 0.0
 
     tau1 = _penalty(theta1, dtheta1, limits.theta1_min, limits.theta1_max)
@@ -359,18 +394,12 @@ def joint_limit_torque_ndof(
         angle, vel = angles[i], velocities[i]
         lo, hi = limits.angle_min[i], limits.angle_max[i]
         if angle < lo:
-            pen = lo - angle
-            blend = min(1.0, pen / transition)
-            smooth = blend * blend * (3 - 2 * blend)
-            result[i] = smooth * (
-                limits.stiffness * pen + limits.damping * max(0.0, -vel)
+            result[i] = _hermite_penalty(
+                lo - angle, -vel, transition, limits.stiffness, limits.damping
             )
         elif angle > hi:
-            pen = angle - hi
-            blend = min(1.0, pen / transition)
-            smooth = blend * blend * (3 - 2 * blend)
-            result[i] = -smooth * (
-                limits.stiffness * pen + limits.damping * max(0.0, vel)
+            result[i] = -_hermite_penalty(
+                angle - hi, vel, transition, limits.stiffness, limits.damping
             )
     return result
 
@@ -437,6 +466,9 @@ def equations_of_motion(
         )
 
     rhs = tau_drive + tau_friction + tau_limits - C - G
+    cond = np.linalg.cond(M)
+    if cond > _MASS_MATRIX_COND_WARN:
+        _log.warning("Mass matrix near-singular: cond(M)=%.3e at phi=%.4f", cond, phi)
     qddot = np.linalg.solve(M, rhs)
 
     state_dot = np.array([dtheta1, dphi, qddot[0], qddot[1]])
@@ -450,7 +482,10 @@ def equations_of_motion(
 
 
 def forward_kinematics(theta1: float, phi: float, params: PendulumParams) -> dict:
-    """Compute joint positions in world frame. Origin at shoulder."""
+    """Compute joint positions in world frame. Origin at shoulder.
+
+    Post: ||wrist - shoulder|| ≈ L1, ||tip - wrist|| ≈ L2 (within 1e-9).
+    """
     native_positions = _native_backend.double_forward_kinematics(theta1, phi, params)
     if native_positions is not None:
         return native_positions
@@ -461,7 +496,14 @@ def forward_kinematics(theta1: float, phi: float, params: PendulumParams) -> dic
     wy = -L1 * np.cos(theta1)
     tx = wx + L2 * np.sin(abs_angle2)
     ty = wy - L2 * np.cos(abs_angle2)
-    return {"shoulder": (0.0, 0.0), "wrist": (wx, wy), "tip": (tx, ty)}
+    result = {"shoulder": (0.0, 0.0), "wrist": (wx, wy), "tip": (tx, ty)}
+    _wrist_dist = np.hypot(wx, wy)
+    _tip_dist = np.hypot(tx - wx, ty - wy)
+    assert (
+        abs(_wrist_dist - L1) < 1e-9
+    ), f"Wrist distance {_wrist_dist:.6f} ≠ L1={L1:.6f}"
+    assert abs(_tip_dist - L2) < 1e-9, f"Tip distance {_tip_dist:.6f} ≠ L2={L2:.6f}"
+    return result
 
 
 # ---------------------------------------------------------------------------

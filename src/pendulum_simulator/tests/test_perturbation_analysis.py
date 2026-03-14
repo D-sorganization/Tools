@@ -7,6 +7,8 @@ Covers:
 - Batch simulation runner
 - Statistical summary computation
 - Variability metrics
+- DbC: invalid noise_type rejected at public API boundary
+- Noise simulation: perturbed outputs remain finite
 """
 
 from __future__ import annotations
@@ -116,9 +118,7 @@ class TestPerturbationConfig:
         assert cfg.seed is None
 
     def test_custom(self):
-        cfg = PerturbationConfig(
-            n_trials=50, noise_type="pink", noise_amplitude=0.2, seed=42
-        )
+        cfg = PerturbationConfig(n_trials=50, noise_type="pink", noise_amplitude=0.2, seed=42)
         assert cfg.n_trials == 50
         assert cfg.noise_type == "pink"
 
@@ -198,9 +198,7 @@ class TestBatchPerturbAndSimulate:
                 "tip_position_final": np.array([1.0, -0.5]),
             }
 
-        results = batch_perturb_and_simulate(
-            base_coeffs, config, simulate_fn, extract_fn
-        )
+        results = batch_perturb_and_simulate(base_coeffs, config, simulate_fn, extract_fn)
         assert len(results) == 5
 
     def test_handles_failures_gracefully(self):
@@ -223,7 +221,76 @@ class TestBatchPerturbAndSimulate:
                 "tip_position_final": np.array([0.0, 0.0]),
             }
 
-        results = batch_perturb_and_simulate(
-            base_coeffs, config, simulate_fn, extract_fn
-        )
+        results = batch_perturb_and_simulate(base_coeffs, config, simulate_fn, extract_fn)
         assert len(results) == 2  # 3 trials, 1 failed
+
+
+# ---------------------------------------------------------------------------
+# DbC: noise_type pre-validated at public API boundary (issue #1288)
+# ---------------------------------------------------------------------------
+
+
+class TestPerturbTorqueCoeffsDbC:
+    """Design-by-Contract checks on perturb_torque_coeffs."""
+
+    def test_invalid_noise_type_rejected_at_public_boundary(self):
+        """Invalid noise_type must raise AssertionError at function entry, not deep inside."""
+        coeffs = [[1.0, 2.0], [3.0, 4.0]]
+        with pytest.raises(AssertionError, match="noise_type"):
+            perturb_torque_coeffs(coeffs, noise_amplitude=0.1, noise_type="red")
+
+    def test_all_valid_noise_types_accepted(self):
+        coeffs = [[1.0, 2.0]]
+        for noise_type in ("white", "pink", "brown"):
+            result = perturb_torque_coeffs(
+                coeffs, noise_amplitude=0.1, noise_type=noise_type, seed=0
+            )
+            assert len(result) == 1  # same shape
+
+    def test_negative_amplitude_rejected(self):
+        coeffs = [[1.0]]
+        with pytest.raises(AssertionError):
+            perturb_torque_coeffs(coeffs, noise_amplitude=-0.1)
+
+
+# ---------------------------------------------------------------------------
+# Noise simulation: perturbed outputs must be finite (issue #1289)
+# ---------------------------------------------------------------------------
+
+
+class TestPerturbedSimulationFiniteOutputs:
+    """Batch perturbed simulations must produce finite results."""
+
+    def test_finite_outputs_across_trials(self):
+        """All tip_speed_final values from batch_perturb_and_simulate must be finite."""
+        base_coeffs = [[1.0, 0.0], [0.5, 0.0]]
+        config = PerturbationConfig(n_trials=10, noise_amplitude=0.05, seed=42)
+
+        def simulate_fn(coeffs):
+            # Minimal fake simulation: returns dict with finite values
+            return {"coeffs": coeffs}
+
+        def extract_fn(_result):
+            return {
+                "tip_speed_final": 25.0 + np.random.default_rng(0).normal(0, 0.5),
+                "tip_position_final": np.array([0.5, -0.3]),
+            }
+
+        results = batch_perturb_and_simulate(base_coeffs, config, simulate_fn, extract_fn)
+        assert len(results) > 0
+        for r in results:
+            assert np.isfinite(r["tip_speed_final"]), f"Non-finite tip_speed: {r}"
+
+    def test_variability_summary_finite_with_perturbed_inputs(self):
+        """variability_summary must handle perturbed results without NaN."""
+        results = [
+            {
+                "tip_speed_final": 28.0 + i * 0.2,
+                "tip_position_final": np.array([0.5 + i * 0.01, -0.3]),
+            }
+            for i in range(20)
+        ]
+        summary = variability_summary(results)
+        assert np.isfinite(summary["tip_speed_mean"])
+        assert np.isfinite(summary["tip_speed_std"])
+        assert np.isfinite(summary["tip_speed_cv"])
