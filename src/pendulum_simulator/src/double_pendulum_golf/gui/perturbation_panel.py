@@ -299,6 +299,11 @@ class PerturbationPanel(QWidget):
         btn_row.addWidget(self._cancel_btn)
         lay.addLayout(btn_row)
 
+        self._compare_btn = QPushButton("Compare Presets…")
+        self._compare_btn.setEnabled(False)
+        self._compare_btn.clicked.connect(self._on_compare)
+        lay.addWidget(self._compare_btn)
+
         self._progress = QProgressBar()
         self._progress.setRange(0, 100)
         self._progress.setValue(0)
@@ -374,7 +379,10 @@ class PerturbationPanel(QWidget):
         self._clear_results()
 
         worker = _PerturbWorker(
-            base_coeffs, config, self._simulate_fn, self._extract_fn
+            base_coeffs,
+            config,
+            self._simulate_fn,
+            self._extract_fn,
         )
         thread = QThread(self)
         worker.moveToThread(thread)
@@ -463,6 +471,11 @@ class PerturbationPanel(QWidget):
     #: Must be set by the parent panel before the user clicks Run Batch.
     _get_coeffs_fn: Callable[[], list[list[float]]] | None = None
 
+    #: Optional callable for preset comparison — returns preset names.
+    _get_preset_names_fn: Callable[[], list[str]] | None = None
+    #: Optional callable — returns coefficients for a named preset.
+    _get_coeffs_for_preset_fn: Callable[[str], list[list[float]]] | None = None
+
     def set_coeffs_source(self, fn: Callable[[], list[list[float]]]) -> None:
         """Register a callable that returns current torque polynomial coefficients.
 
@@ -474,3 +487,43 @@ class PerturbationPanel(QWidget):
         """
         assert callable(fn), "fn must be callable"
         self._get_coeffs_fn = fn
+
+    def set_preset_source(
+        self,
+        get_names_fn: Callable[[], list[str]],
+        get_coeffs_fn: Callable[[str], list[list[float]]],
+    ) -> None:
+        """Register preset-related callables for the comparison dialog.
+
+        Parameters
+        ----------
+        get_names_fn : callable() -> list[str]
+            Returns the list of available preset names.
+        get_coeffs_fn : callable(name) -> list[list[float]]
+            Returns the polynomial coefficient lists for a named preset.
+        """
+        assert callable(get_names_fn), "get_names_fn must be callable"
+        assert callable(get_coeffs_fn), "get_coeffs_fn must be callable"
+        self._get_preset_names_fn = get_names_fn
+        self._get_coeffs_for_preset_fn = get_coeffs_fn
+        self._compare_btn.setEnabled(True)
+
+    def _on_compare(self) -> None:
+        """Open the swing robustness comparison dialog."""
+        if self._get_preset_names_fn is None or self._get_coeffs_for_preset_fn is None:
+            return
+        if self._simulate_fn is None or self._extract_fn is None:
+            return
+        from .swing_comparison_dialog import SwingComparisonDialog
+
+        names = self._get_preset_names_fn()
+        if len(names) < 2:
+            return
+        dlg = SwingComparisonDialog(
+            preset_names=names,
+            get_coeffs_for_preset=self._get_coeffs_for_preset_fn,
+            simulate_fn=self._simulate_fn,
+            extract_fn=self._extract_fn,
+            parent=self,
+        )
+        dlg.exec()

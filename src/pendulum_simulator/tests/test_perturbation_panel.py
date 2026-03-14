@@ -8,8 +8,14 @@ so the tests remain fast and Qt-free of real ODE integration.
 
 from __future__ import annotations
 
+import os
+
 import numpy as np
 import pytest
+
+# Use offscreen platform so Qt widgets can be constructed without a display
+# (required in headless CI environments).
+os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 try:
     from PyQt6.QtWidgets import QApplication
