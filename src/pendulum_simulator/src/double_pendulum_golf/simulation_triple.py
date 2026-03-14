@@ -98,9 +98,7 @@ class TripleSimulationResult(TrajectoryResultMixin):
             "potential": potential_energy(state, self.params),
             "total": total_energy(state, self.params),
         }
-        assert all(
-            np.isfinite(v) for v in result.values()
-        ), f"Non-finite energy at idx={idx}: {result}"
+        self._assert_energy_finite(result, idx)
         return result
 
     def friction_torques_at(self, idx: int) -> np.ndarray:
@@ -113,20 +111,6 @@ class TripleSimulationResult(TrajectoryResultMixin):
         self._check_idx(idx)
         s = self.states[idx]
         return friction_torque_vector(s[3], s[4], s[5], self.params)
-
-    def total_torques_at(self, idx: int) -> np.ndarray:
-        """Get total applied torque at time idx.
-
-        Total = driving torque + friction torque.
-
-        Returns
-        -------
-        np.ndarray, shape (3,)  [N·m]
-        """
-        self._check_idx(idx)
-        tau_drive = np.array(self.torque_func(self.t[idx]))
-        tau_friction = self.friction_torques_at(idx)
-        return np.asarray(tau_drive + tau_friction)
 
 
 # ---------------------------------------------------------------------------
