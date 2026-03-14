@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """Parametric URDF Builder PyQt6 Main Window.
 
-A PyQt6 GUI for generating parametric URDF models for robotics applications.
+A thin UI shell that delegates all business logic to the extracted modules:
+  - urdf_generator: URDF XML generation & validation
+  - preview_generator: Human-readable model previews
+  - anthropometric_model: Shared constants & config
+  - theme: Reusable palette & stylesheet
 """
 
 from __future__ import annotations
@@ -31,187 +35,11 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-# Catppuccin Mocha color palette
-CATPPUCCIN_MOCHA = {
-    "rosewater": "#f5e0dc",
-    "flamingo": "#f2cdcd",
-    "pink": "#f5c2e7",
-    "mauve": "#cba6f7",
-    "red": "#f38ba8",
-    "maroon": "#eba0ac",
-    "peach": "#fab387",
-    "yellow": "#f9e2af",
-    "green": "#a6e3a1",
-    "teal": "#94e2d5",
-    "sky": "#89dceb",
-    "sapphire": "#74c7ec",
-    "blue": "#89b4fa",
-    "lavender": "#b4befe",
-    "text": "#cdd6f4",
-    "subtext1": "#bac2de",
-    "subtext0": "#a6adc8",
-    "overlay2": "#9399b2",
-    "overlay1": "#7f849c",
-    "overlay0": "#6c7086",
-    "surface2": "#585b70",
-    "surface1": "#45475a",
-    "surface0": "#313244",
-    "base": "#1e1e2e",
-    "mantle": "#181825",
-    "crust": "#11111b",
-}
+from urdf_builder_gui.theme import CATPPUCCIN_MOCHA, build_stylesheet
 
-STYLESHEET = f"""
-QMainWindow {{
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-}}
+logger = logging.getLogger(__name__)
 
-QWidget {{
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    font-family: "Segoe UI", "Arial", sans-serif;
-}}
-
-QScrollArea {{
-    border: none;
-    background-color: {CATPPUCCIN_MOCHA["base"]};
-}}
-
-QTabWidget::pane {{
-    border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
-    background-color: {CATPPUCCIN_MOCHA["mantle"]};
-    border-radius: 4px;
-}}
-
-QTabBar::tab {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["subtext1"]};
-    padding: 8px 16px;
-    margin-right: 2px;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-}}
-
-QTabBar::tab:selected {{
-    background-color: {CATPPUCCIN_MOCHA["surface1"]};
-    color: {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QGroupBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
-    border-radius: 8px;
-    margin-top: 12px;
-    padding: 12px;
-    font-weight: bold;
-}}
-
-QGroupBox::title {{
-    subcontrol-origin: margin;
-    left: 12px;
-    padding: 0 6px;
-    color: {CATPPUCCIN_MOCHA["mauve"]};
-}}
-
-QLabel {{
-    color: {CATPPUCCIN_MOCHA["text"]};
-    background-color: transparent;
-}}
-
-QDoubleSpinBox, QSpinBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 6px 10px;
-}}
-
-QDoubleSpinBox:focus, QSpinBox:focus {{
-    border: 1px solid {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QComboBox {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 6px 10px;
-    min-width: 150px;
-}}
-
-QComboBox:hover {{
-    border: 1px solid {CATPPUCCIN_MOCHA["blue"]};
-}}
-
-QComboBox::drop-down {{
-    border: none;
-    width: 24px;
-}}
-
-QComboBox::down-arrow {{
-    image: none;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 6px solid {CATPPUCCIN_MOCHA["text"]};
-    margin-right: 8px;
-}}
-
-QComboBox QAbstractItemView {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    selection-background-color: {CATPPUCCIN_MOCHA["surface2"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface1"]};
-}}
-
-QSlider::groove:horizontal {{
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    height: 8px;
-    background: {CATPPUCCIN_MOCHA["surface0"]};
-    border-radius: 4px;
-}}
-
-QSlider::handle:horizontal {{
-    background: {CATPPUCCIN_MOCHA["blue"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    width: 18px;
-    margin: -5px 0;
-    border-radius: 9px;
-}}
-
-QTextEdit {{
-    background-color: {CATPPUCCIN_MOCHA["surface0"]};
-    color: {CATPPUCCIN_MOCHA["text"]};
-    border: 1px solid {CATPPUCCIN_MOCHA["surface2"]};
-    border-radius: 4px;
-    padding: 8px;
-    font-family: "Consolas", "Courier New", monospace;
-}}
-
-QPushButton {{
-    background-color: {CATPPUCCIN_MOCHA["blue"]};
-    color: {CATPPUCCIN_MOCHA["crust"]};
-    border: none;
-    border-radius: 4px;
-    padding: 10px 24px;
-    font-weight: bold;
-}}
-
-QPushButton:hover {{
-    background-color: {CATPPUCCIN_MOCHA["sapphire"]};
-}}
-
-QPushButton:pressed {{
-    background-color: {CATPPUCCIN_MOCHA["lavender"]};
-}}
-
-QPushButton#exportBtn {{
-    background-color: {CATPPUCCIN_MOCHA["green"]};
-}}
-
-QPushButton#exportBtn:hover {{
-    background-color: {CATPPUCCIN_MOCHA["teal"]};
-}}
-"""
+STYLESHEET = build_stylesheet()
 
 
 class URDFBuilderWindow(QMainWindow):
@@ -504,6 +332,8 @@ class URDFBuilderWindow(QMainWindow):
 
         return group
 
+    # ── Event handlers ──────────────────────────────────────────────────
+
     def _on_gender_changed(self, value: int) -> None:
         """Update gender label based on slider value."""
         if value < 33:
@@ -517,6 +347,8 @@ class URDFBuilderWindow(QMainWindow):
         """Reset all proportion sliders to defaults."""
         for slider in self.proportion_sliders.values():
             slider.setValue(100)
+
+    # ── LoD gateway ─────────────────────────────────────────────────────
 
     def _get_proportions(self) -> dict[str, float]:
         """Get current proportion factors."""
@@ -548,9 +380,10 @@ class URDFBuilderWindow(QMainWindow):
             proportions=self._get_proportions(),
         )
 
+    # ── Actions (thin shells) ───────────────────────────────────────────
+
     def _generate_urdf(self) -> None:
         """Generate URDF from current parameters."""
-        logger = logging.getLogger(__name__)
         try:
             from urdf_builder_gui.urdf_generator import generate_urdf_xml
 
@@ -564,59 +397,41 @@ class URDFBuilderWindow(QMainWindow):
             self.results_text.setPlainText(f"Generation failed: {exc}")
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
 
-    # _generate_standalone_urdf removed — replaced by urdf_generator module
-
     def _preview_structure(self) -> None:
-        """Preview the model structure."""
-        name = self.name_input.currentText()
-        height = self.height_input.value()
-        mass = self.mass_input.value()
-        gender = self.gender_slider.value() / 100.0
-        template = self.template_combo.currentText()
-        proportions = self._get_proportions()
+        """Preview model structure via the extracted generator."""
+        try:
+            from urdf_builder_gui.preview_generator import generate_preview_text
 
-        preview = []
-        preview.append("Model Structure Preview")
-        preview.append("=" * 50)
-        preview.append(f"\nRobot Name: {name}")
-        preview.append(f"Template: {template}")
-        preview.append("\nBody Parameters:")
-        preview.append(f"  Height: {height:.2f} m")
-        preview.append(f"  Mass: {mass:.1f} kg")
-        preview.append(f"  Gender Factor: {gender:.2f}")
-
-        preview.append("\nSegment Proportions:")
-        for key, value in proportions.items():
-            label = key.replace("_", " ").title()
-            preview.append(f"  {label}: {value * 100:.0f}%")
-
-        preview.append("\nEstimated Segment Sizes:")
-        preview.append(f"  Pelvis Height: {height * 0.078:.3f} m")
-        preview.append(f"  Torso Height: {height * 0.278:.3f} m")
-        preview.append(f"  Head Diameter: {height * 0.139:.3f} m")
-        preview.append(f"  Thigh Length: {height * 0.245:.3f} m")
-        preview.append(f"  Shin Length: {height * 0.246:.3f} m")
-        preview.append(f"  Upper Arm Length: {height * 0.186:.3f} m")
-        preview.append(f"  Forearm Length: {height * 0.146:.3f} m")
-
-        preview.append("\nOptions:")
-        preview.append(f"  Default Geometry: {self.geometry_combo.currentText()}")
-        preview.append(f"  Joint Damping: {self.damping_input.value():.2f}")
-        preview.append(f"  Joint Friction: {self.friction_input.value():.2f}")
-        preview.append(f"  Inertia Mode: {self.inertia_mode_combo.currentText()}")
-        preview.append(f"  Density: {self.density_input.value():.0f} kg/m³")
-
-        self.results_text.setPlainText("\n".join(preview))
-        self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['text']};")
+            config = self._get_config()
+            preview = generate_preview_text(config)
+            self.results_text.setPlainText(preview)
+            self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['text']};")
+        except Exception as exc:
+            logger.error("Preview generation failed: %s", exc)
+            self.results_text.setPlainText(f"Preview failed: {exc}")
+            self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
 
     def _export_urdf(self) -> None:
-        """Export URDF to file."""
+        """Export URDF to file with structural validation."""
         content = self.results_text.toPlainText()
+
+        # Must have generated URDF first
         if not content or not content.strip().startswith("<?xml"):
             self.results_text.setPlainText(
                 "Please generate URDF first before exporting."
             )
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['yellow']};")
+            return
+
+        # Validate before writing
+        from urdf_builder_gui.urdf_generator import validate_urdf_structure
+
+        is_valid, errors = validate_urdf_structure(content)
+        if not is_valid:
+            msg = "URDF validation failed:\n" + "\n".join(f"  • {e}" for e in errors)
+            self.results_text.setPlainText(msg)
+            self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
+            logger.warning("Export blocked: URDF validation failed: %s", errors)
             return
 
         file_path, _ = QFileDialog.getSaveFileName(
@@ -632,7 +447,9 @@ class URDFBuilderWindow(QMainWindow):
                     f.write(content)
                 self.results_text.append(f"\n\nExported to: {file_path}")
                 self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['green']};")
+                logger.info("URDF exported to %s", file_path)
             except OSError as e:
+                logger.error("Export failed: %s", e)
                 self.results_text.append(f"\n\nExport failed: {e}")
                 self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
 
