@@ -1,6 +1,6 @@
 # Tools Monorepo 🛠️
 
-[![CI Standard](https://github.com/dieterolson/Tools/actions/workflows/ci-standard.yml/badge.svg)](https://github.com/dieterolson/Tools/actions/workflows/ci-standard.yml)
+[![CI Standard](https://github.com/D-sorganization/Tools/actions/workflows/ci-standard.yml/badge.svg)](https://github.com/D-sorganization/Tools/actions/workflows/ci-standard.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
@@ -28,7 +28,7 @@ The repository is organized into several key areas:
   - **`src/python/src/utils/`**: Shared utilities (compatibility shims, logger utils)
   - **`src/python/src/tile_launcher/`**: Tile launcher components
   - **`src/shared/python/upstream_drift_tools/`**: **NEW** Centralized shared library for fleet-wide logic (Thermo, Conversion, Robotics)
-  - **`src/python/tests/`**: Test suite for core functionality
+  - **`tests/`**: Canonical root test suite for the shared monorepo surface
 
 - **`src/tools/`**: Tool implementations and utilities
 
@@ -117,8 +117,8 @@ See [Launcher Hierarchy & Guide](docs/LAUNCHERS.md) for detailed documentation.
 1. **Clone the Repository**
 
    ```bash
-   git clone <repository-url>
-   cd <repository-directory>
+   git clone https://github.com/D-sorganization/Tools.git
+   cd Tools
    git lfs install
    git lfs pull
    ```
@@ -130,8 +130,9 @@ See [Launcher Hierarchy & Guide](docs/LAUNCHERS.md) for detailed documentation.
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-   # Install dependencies
-   pip install -r requirements.txt
+   # Install dependencies and the editable package with dev tools
+   python -m pip install -r requirements.txt
+   python -m pip install -e ".[dev]"
    ```
 
 3. **Install Pre-commit Hooks** (For developers)
@@ -170,6 +171,7 @@ Detailed documentation is available in the `docs/` directory:
 - **[Plugin System](docs/PLUGIN_SYSTEM.md)**: Automatic tool discovery via manifest files.
 - **[Quick Start Guide](QUICKSTART.md)**: Getting started with the Tools repository.
 - **[Release Notes](docs/release/CHANGELOG.md)**: History of changes and updates.
+- **[Security Policy](SECURITY.md)**: How to report vulnerabilities responsibly.
 
 ## 🤝 Contribution
 
@@ -179,6 +181,7 @@ We follow a strict **"Safety First"** contribution policy.
 2. **Testing**: All new features must be accompanied by tests. Tests run on Python 3.10, 3.11, and 3.12.
 3. **Linting**: Ensure your code passes all `pre-commit` checks (Ruff, MyPy, etc.).
 4. **Review**: All changes require a Pull Request review.
+5. **Security**: Report vulnerabilities through the process documented in [SECURITY.md](SECURITY.md), not through public issues.
 
 ### CI/CD Testing
 
@@ -295,7 +298,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 3. Run from virtual environment: `source venv/bin/activate`
 4. Check Python version compatibility (3.10+ required, 3.12 recommended)
 
-For more help, see [GitHub Issues](https://github.com/dieterolson/Tools/issues) or create a new issue.
+For more help, see [GitHub Issues](https://github.com/D-sorganization/Tools/issues) or create a new issue.
 
 ## 🛡️ License
 

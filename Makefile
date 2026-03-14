@@ -25,29 +25,29 @@ help:
 
 # Install dependencies
 install:
-	pip install -r requirements.txt
-	pip install -r python/requirements.txt || true
+	python -m pip install -r requirements.txt
+	python -m pip install -e ".[dev]"
 
 # Run linters
 lint:
 	@echo "Running ruff check..."
-	ruff check .
+	python -m ruff check .
 	@echo "Running mypy (errors are advisory; see CONTRIBUTING.md)..."
-	mypy . --config-file mypy.ini || true
+	python -m mypy . --config-file mypy.ini || true
 
 # Format code
 format:
 	@echo "Running black..."
-	black .
+	python -m black .
 	@echo "Running ruff format..."
-	ruff format .
+	python -m ruff format .
 	@echo "Running ruff fix..."
-	ruff check . --fix || true
+	python -m ruff check . --fix || true
 
 # Run tests
 test:
 	@echo "Running pytest..."
-	pytest python/tests/ -v --tb=short
+	python -m pytest
 
 # Run all checks
 check: lint test
