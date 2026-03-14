@@ -15,6 +15,7 @@ Implements:
 from __future__ import annotations
 
 import ast
+import logging
 import re
 from enum import Enum
 from typing import Any
@@ -24,6 +25,10 @@ import pandas as pd
 from scipy.interpolate import UnivariateSpline
 from scipy.optimize import curve_fit
 from shared.python.safe_eval import safe_eval
+
+from data_processor.contracts import ensure, require
+
+logger = logging.getLogger(__name__)
 
 
 class IntegrationMethod(Enum):
@@ -51,6 +56,63 @@ class TrendlineType(Enum):
 
 
 # =============================================================================
+# SHARED HELPERS (DRY)
+# =============================================================================
+
+
+def time_to_numeric(series: pd.Series) -> pd.Series:
+    """Convert a time column to numeric seconds from start.
+
+    **Pre-conditions** (DbC):
+      - ``series`` must not be empty.
+
+    **Post-conditions** (DbC):
+      - Returned series has the same length as input.
+
+    Args:
+        series: A pandas Series containing time data (datetime or numeric).
+
+    Returns:
+        Numeric series in seconds.
+    """
+    require(len(series) > 0, "time series must not be empty", len(series))
+
+    if pd.api.types.is_datetime64_any_dtype(series):
+        result = (series - series.min()).dt.total_seconds()
+    else:
+        result = pd.to_numeric(series, errors="coerce")
+
+    ensure(len(result) == len(series), "output length must match input", len(result))
+    return result
+
+
+def compute_r_squared(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    """Compute the coefficient of determination (R²).
+
+    **Pre-conditions** (DbC):
+      - ``y_true`` and ``y_pred`` must have the same length.
+      - At least 2 data points.
+
+    **Post-conditions** (DbC):
+      - Result is a finite float (may be negative for poor fits).
+
+    Args:
+        y_true: Observed values.
+        y_pred: Predicted values.
+
+    Returns:
+        R-squared value.
+    """
+    require(len(y_true) == len(y_pred), "y_true and y_pred must have same length")
+    require(len(y_true) >= 2, "need at least 2 data points", len(y_true))
+
+    ss_res = np.sum((y_true - y_pred) ** 2)
+    ss_tot = np.sum((y_true - np.mean(y_true)) ** 2)
+    r_squared = float(1.0 - (ss_res / ss_tot)) if ss_tot > 0.0 else 0.0
+    return r_squared
+
+
+# =============================================================================
 # INTEGRATION
 # =============================================================================
 
@@ -63,6 +125,10 @@ def integrate_signals(
 ) -> pd.DataFrame:
     """Integrate specified signals over time.
 
+    **Pre-conditions** (DbC):
+      - ``time_col`` must exist in ``df``.
+      - ``method`` must be a known integration method.
+
     Args:
         df: DataFrame containing time series data
         time_col: Name of the time column
@@ -72,17 +138,15 @@ def integrate_signals(
     Returns:
         DataFrame with new cumulative columns added (cumulative_{signal})
     """
+    valid_methods = {m.value for m in IntegrationMethod}
+    require(time_col in df.columns, f"time_col '{time_col}' not in DataFrame", time_col)
+    require(method in valid_methods, f"method must be one of {valid_methods}", method)
+
     if not signals:
         return df
 
     result = df.copy()
-
-    # Convert time to numeric (seconds from start)
-    if pd.api.types.is_datetime64_any_dtype(result[time_col]):
-        time_numeric = (result[time_col] - result[time_col].min()).dt.total_seconds()
-    else:
-        time_numeric = pd.to_numeric(result[time_col], errors="coerce")
-
+    time_numeric = time_to_numeric(result[time_col])
     dt = time_numeric.diff().fillna(0)
 
     for signal in signals:
@@ -100,36 +164,35 @@ def _compute_integral(signal_data: pd.Series, dt: pd.Series, method: str) -> np.
     """Compute the cumulative integral of a signal."""
     n = len(signal_data)
     cumulative = np.zeros(n)
+    y = signal_data.values.copy()
+    d = dt.values.copy()
 
     if method == "trapezoidal":
         for i in range(1, n):
-            y_curr = signal_data.iloc[i]
-            y_prev = signal_data.iloc[i - 1]
-            dt_i = dt.iloc[i]
-
-            if not np.isnan(y_curr) and not np.isnan(y_prev):
-                cumulative[i] = cumulative[i - 1] + 0.5 * (y_curr + y_prev) * dt_i
+            if not np.isnan(y[i]) and not np.isnan(y[i - 1]):
+                cumulative[i] = cumulative[i - 1] + 0.5 * (y[i] + y[i - 1]) * d[i]
             else:
                 cumulative[i] = cumulative[i - 1]
 
     elif method == "rectangular":
-        # Left-endpoint method
-        values = signal_data.fillna(0).values
-        cumulative = np.cumsum(values * dt.values)
+        values = np.nan_to_num(y, nan=0.0)
+        cumulative = np.cumsum(values * d)
 
     elif method == "simpson":
-        # Simpson's rule (falls back to trapezoidal for odd intervals)
+        # Composite Simpson's 1/3 rule: process pairs of intervals
+        # Uses triplets (y[i-2], y[i-1], y[i]). Falls back to trapezoidal
+        # for the first interval and any interval with NaN.
         for i in range(1, n):
-            y_curr = signal_data.iloc[i]
-            y_prev = signal_data.iloc[i - 1]
-            dt_i = dt.iloc[i]
-
-            if not np.isnan(y_curr) and not np.isnan(y_prev):
-                # For simplicity, use trapezoidal for each pair
-                # Full Simpson requires triplets of points
-                cumulative[i] = cumulative[i - 1] + 0.5 * (y_curr + y_prev) * dt_i
-            else:
+            if np.isnan(y[i]) or np.isnan(y[i - 1]):
                 cumulative[i] = cumulative[i - 1]
+            elif i >= 2 and not np.isnan(y[i - 2]) and i % 2 == 0:
+                # Simpson's 1/3: integrate over two equal sub-intervals
+                h = (d[i - 1] + d[i]) / 2.0  # average sub-interval width
+                area = (h / 3.0) * (y[i - 2] + 4.0 * y[i - 1] + y[i])
+                cumulative[i] = cumulative[i - 2] + area
+            else:
+                # Trapezoidal fallback for odd intervals / first step
+                cumulative[i] = cumulative[i - 1] + 0.5 * (y[i] + y[i - 1]) * d[i]
 
     return cumulative
 
@@ -162,6 +225,10 @@ def differentiate_signals(
     Returns:
         DataFrame with new derivative columns added ({signal}_d{order})
     """
+    require(time_col in df.columns, f"time_col '{time_col}' not in DataFrame", time_col)
+    valid_methods = {m.value for m in DifferentiationMethod}
+    require(method in valid_methods, f"method must be one of {valid_methods}", method)
+
     if orders is None:
         orders = [1]
 
@@ -169,13 +236,7 @@ def differentiate_signals(
         return df
 
     result = df.copy()
-
-    # Convert time to numeric
-    if pd.api.types.is_datetime64_any_dtype(result[time_col]):
-        time_numeric = (result[time_col] - result[time_col].min()).dt.total_seconds()
-    else:
-        time_numeric = pd.to_numeric(result[time_col], errors="coerce")
-
+    time_numeric = time_to_numeric(result[time_col])
     dt = time_numeric.diff().fillna(1).mean()  # Average time step
 
     for signal in signals:
@@ -249,7 +310,7 @@ def _rolling_poly_derivative(
         try:
             coeffs = np.polyfit(x, w, poly_order)
             deriv_coeffs = np.polyder(coeffs, deriv_order)
-            return np.polyval(deriv_coeffs, x[-1])
+            return float(np.polyval(deriv_coeffs, x[-1]))
         except (np.linalg.LinAlgError, TypeError):
             return np.nan
 
@@ -281,6 +342,10 @@ def resample_data(
     Returns:
         Resampled DataFrame
     """
+    require(time_col in df.columns, f"time_col '{time_col}' not in DataFrame", time_col)
+    valid_agg = {"mean", "sum", "first", "last"}
+    require(method in valid_agg, f"method must be one of {valid_agg}", method)
+
     result = df.copy()
 
     # Ensure time column is datetime
@@ -292,16 +357,8 @@ def resample_data(
     # Get numeric columns for resampling
     numeric_cols = result.select_dtypes(include=[np.number]).columns.tolist()
 
-    if method == "mean":
-        resampled = result[numeric_cols].resample(rule).mean()
-    elif method == "sum":
-        resampled = result[numeric_cols].resample(rule).sum()
-    elif method == "first":
-        resampled = result[numeric_cols].resample(rule).first()
-    elif method == "last":
-        resampled = result[numeric_cols].resample(rule).last()
-    else:
-        resampled = result[numeric_cols].resample(rule).mean()
+    agg_func = getattr(result[numeric_cols].resample(rule), method)
+    resampled = agg_func()
 
     if interpolate:
         resampled = resampled.interpolate(method="time")
@@ -504,9 +561,19 @@ def calculate_trendline(
         Dictionary with trend parameters and R-squared value
     """
     # DbC preconditions
-    assert x_col in df.columns, f"x_col '{x_col}' not found in DataFrame columns"
-    assert y_col in df.columns, f"y_col '{y_col}' not found in DataFrame columns"
-    assert degree >= 1, f"Polynomial degree must be >= 1, got {degree}"
+    require(
+        x_col in df.columns, f"x_col '{x_col}' not found in DataFrame columns", x_col
+    )
+    require(
+        y_col in df.columns, f"y_col '{y_col}' not found in DataFrame columns", y_col
+    )
+    require(degree >= 1, f"Polynomial degree must be >= 1, got {degree}", degree)
+    valid_trends = {t.value for t in TrendlineType}
+    require(
+        trend_type in valid_trends,
+        f"trend_type must be one of {valid_trends}",
+        trend_type,
+    )
 
     # Filter to valid data
     mask = ~(np.isnan(df[x_col]) | np.isnan(df[y_col]))
@@ -520,8 +587,7 @@ def calculate_trendline(
     x = df.loc[mask, x_col].values
     y = df.loc[mask, y_col].values
 
-    if len(x) < 2:
-        raise ValueError("Not enough data points for trendline")
+    require(len(x) >= 2, "Not enough data points for trendline", len(x))
 
     if trend_type == "linear":
         return _linear_trend(x, y)
@@ -539,12 +605,8 @@ def _linear_trend(x: np.ndarray, y: np.ndarray) -> dict[str, Any]:
     """Calculate linear regression: y = mx + b."""
     coeffs = np.polyfit(x, y, 1)
     slope, intercept = coeffs
-
-    # Calculate R-squared
     y_pred = np.polyval(coeffs, x)
-    ss_res = np.sum((y - y_pred) ** 2)
-    ss_tot = np.sum((y - np.mean(y)) ** 2)
-    r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0
+    r_squared = compute_r_squared(y, y_pred)
 
     return {
         "slope": slope,
@@ -558,12 +620,8 @@ def _linear_trend(x: np.ndarray, y: np.ndarray) -> dict[str, Any]:
 def _polynomial_trend(x: np.ndarray, y: np.ndarray, degree: int) -> dict[str, Any]:
     """Calculate polynomial regression."""
     coeffs = np.polyfit(x, y, degree)
-
-    # Calculate R-squared
     y_pred = np.polyval(coeffs, x)
-    ss_res = np.sum((y - y_pred) ** 2)
-    ss_tot = np.sum((y - np.mean(y)) ** 2)
-    r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0
+    r_squared = compute_r_squared(y, y_pred)
 
     return {
         "coefficients": coeffs.tolist(),
@@ -599,11 +657,8 @@ def _exponential_trend(x: np.ndarray, y: np.ndarray) -> dict[str, Any]:
     except RuntimeError:
         a, b = a_init, b_init
 
-    # Calculate R-squared
     y_pred = exp_func(x_pos, a, b)
-    ss_res = np.sum((y_pos - y_pred) ** 2)
-    ss_tot = np.sum((y_pos - np.mean(y_pos)) ** 2)
-    r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0
+    r_squared = compute_r_squared(y_pos, y_pred)
 
     return {
         "a": a,
@@ -630,12 +685,8 @@ def _power_trend(x: np.ndarray, y: np.ndarray) -> dict[str, Any]:
     coeffs = np.polyfit(log_x, log_y, 1)
     b = coeffs[0]
     a = np.exp(coeffs[1])
-
-    # Calculate R-squared
     y_pred = a * (x_pos**b)
-    ss_res = np.sum((y_pos - y_pred) ** 2)
-    ss_tot = np.sum((y_pos - np.mean(y_pos)) ** 2)
-    r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0
+    r_squared = compute_r_squared(y_pos, y_pred)
 
     return {
         "a": a,
@@ -660,6 +711,9 @@ def trim_time_range(
 ) -> pd.DataFrame:
     """Trim data to a specific time range.
 
+    **Pre-conditions** (DbC):
+      - ``time_col`` must exist in ``df``.
+
     Args:
         df: DataFrame with time series data
         time_col: Name of the time column
@@ -670,6 +724,8 @@ def trim_time_range(
     Returns:
         Trimmed DataFrame
     """
+    require(time_col in df.columns, f"time_col '{time_col}' not in DataFrame", time_col)
+
     result = df.copy()
 
     # Ensure time column is datetime
@@ -702,6 +758,8 @@ def trim_time_range(
 # =============================================================================
 
 __all__ = [
+    "compute_r_squared",
+    "time_to_numeric",
     "integrate_signals",
     "differentiate_signals",
     "resample_data",
