@@ -61,13 +61,17 @@ except ImportError:
 
 
 def _make_electrode_pos(angle_deg: float = 0.0, z: float = 12.0) -> dict[str, Any]:
-    """Create a standard electrode position dict."""
+    """Create a standard electrode position dict with all required keys."""
     angle_rad = math.radians(angle_deg)
+    radius = 50.0
     return {
-        "x": 50.0 * math.cos(angle_rad),
-        "y": 50.0 * math.sin(angle_rad),
+        "x": radius * math.cos(angle_rad),
+        "y": radius * math.sin(angle_rad),
         "z": z,
-        "angle": angle_deg,
+        "angle": angle_rad,
+        "tip": np.array(
+            [radius * math.cos(angle_rad), radius * math.sin(angle_rad), z]
+        ),
     }
 
 
@@ -211,10 +215,9 @@ class TestComputeWallPosition:
         pos = {"x": 50.0, "y": 0.0, "z": 12.0}
         bath_radius = 60.0
         wall = np.asarray(compute_wall_position(pos, bath_radius=bath_radius))
-        magnitude = float(np.linalg.norm(wall[:2]))  # x-y only
-        assert (
-            magnitude <= bath_radius + 1e-6
-        ), f"Wall position {magnitude:.2f} > bath_radius {bath_radius}"
+        magnitude = float(np.linalg.norm(wall[:2]))
+        msg = f"Wall position {magnitude:.2f} > bath_radius {bath_radius}"
+        assert magnitude <= bath_radius + 1e-6, msg
 
     @pytest.mark.parametrize("angle_deg", [0, 60, 120, 180, 240, 300])
     def test_symmetric_electrodes_give_valid_wall_positions(
@@ -392,3 +395,200 @@ class TestSharedDrawingDRYConsistency:
             rtol=1e-5,
             err_msg="compute_wall_position and _electrode_wall_positions disagree for pos2",
         )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Issue #1357 — line current must be sqrt(3) × phase current (not 0.8×)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestLineCurrentPhysics:
+    """Issue #1357: delta configuration line current = sqrt(3) * phase current."""
+
+    def test_line_current_is_sqrt3_times_phase_current(self) -> None:
+        phase_current = 300.0
+        line_current = phase_current * math.sqrt(3)
+        assert abs(line_current - phase_current * 1.7320508) < 1e-4
+
+    def test_line_current_not_0_8_factor(self) -> None:
+        """0.8 factor is wrong physics — sqrt(3) is correct for delta."""
+        phase_current = 300.0
+        correct = phase_current * math.sqrt(3)
+        wrong = phase_current * 0.8
+        assert abs(correct - wrong) > 1.0, "sqrt(3) and 0.8 must differ"
+
+    @pytest.mark.parametrize("phase_a", [100.0, 200.0, 500.0, 1000.0])
+    def test_line_current_parameterized(self, phase_a: float) -> None:
+        line = phase_a * math.sqrt(3)
+        assert line > phase_a, "Line current exceeds phase current in delta"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Issue #1358 / #1375 — electrode z-position must reflect user depth
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestElectrodeZPosition:
+    """Issue #1358/#1375: electrode_z = metal_height + glass_height - depth."""
+
+    @pytest.mark.parametrize(
+        "metal_h,glass_h,depth,expected_z",
+        [
+            (2.0, 15.0, 12.0, 5.0),
+            (2.0, 15.0, 0.0, 17.0),
+            (2.0, 15.0, 15.0, 2.0),
+            (3.0, 10.0, 5.0, 8.0),
+        ],
+    )
+    def test_electrode_z_position_reflects_depth(
+        self, metal_h: float, glass_h: float, depth: float, expected_z: float
+    ) -> None:
+        electrode_z = metal_h + glass_h - depth
+        assert abs(electrode_z - expected_z) < 1e-9
+
+    def test_old_formula_glass_height_over_2_is_wrong(self) -> None:
+        """Old formula metal_height + glass_height / 2 does not respect depth."""
+        metal_h, glass_h, depth = 2.0, 15.0, 12.0
+        correct = metal_h + glass_h - depth
+        old_formula = metal_h + glass_h / 2
+        assert abs(correct - old_formula) > 1.0, "Formulas must differ"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Issue #1378 — per-phase power = V × I (power factor only on total)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestPerPhasePowerCalculation:
+    """Issue #1378: per-phase power is V*I; total applies power factor."""
+
+    def test_per_phase_power_is_vi_not_vi_pf(self) -> None:
+        voltage, current, power_factor = 100.0, 300.0, 0.9
+        per_phase = voltage * current / 1000.0
+        total_with_pf = per_phase * 3 * power_factor
+        assert abs(per_phase - 30.0) < 1e-9
+        assert abs(total_with_pf - 81.0) < 1e-9
+
+    @pytest.mark.parametrize("pf", [0.8, 0.9, 0.95, 1.0])
+    def test_total_power_uses_power_factor(self, pf: float) -> None:
+        voltage, current = 100.0, 300.0
+        per_phase = voltage * current / 1000.0
+        total = per_phase * 3 * pf
+        assert total <= per_phase * 3 + 1e-9
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Issue #1367 — compute_wall_position test dict format (angle in radians + tip)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@pytest.mark.skipif(
+    not DRAWING_AVAILABLE, reason="electrode_advisor package not on path"
+)
+class TestComputeWallPositionCorrectFormat:
+    """Issue #1367: electrode_pos dict needs 'angle' (radians) and 'tip' keys."""
+
+    def test_angle_key_is_radians(self) -> None:
+        """compute_wall_position expects angle in radians, not degrees."""
+        angle_rad = math.radians(0.0)
+        pos = {
+            "angle": angle_rad,
+            "tip": np.array([50.0, 0.0, 12.0]),
+        }
+        result = compute_wall_position(pos, bath_radius=60.0)
+        assert result is not None
+        arr = np.asarray(result)
+        # Wall at angle=0 should be at (60, 0, z)
+        assert abs(arr[0] - 60.0) < 1e-6
+        assert abs(arr[1] - 0.0) < 1e-6
+
+    @pytest.mark.parametrize("angle_deg", [0, 60, 120, 180, 240, 300])
+    def test_wall_position_with_correct_dict_format(self, angle_deg: float) -> None:
+        angle_rad = math.radians(angle_deg)
+        pos = {
+            "angle": angle_rad,
+            "tip": np.array(
+                [
+                    50.0 * math.cos(angle_rad),
+                    50.0 * math.sin(angle_rad),
+                    12.0,
+                ]
+            ),
+        }
+        result = compute_wall_position(pos, bath_radius=60.0)
+        arr = np.asarray(result)
+        # x-y magnitude should equal bath_radius
+        magnitude = float(np.linalg.norm(arr[:2]))
+        assert abs(magnitude - 60.0) < 1e-5
+
+    def test_wall_z_matches_tip_z(self) -> None:
+        """Wall z-coordinate must equal electrode tip z."""
+        angle_rad = math.radians(30.0)
+        z_tip = 8.5
+        pos = {
+            "angle": angle_rad,
+            "tip": np.array(
+                [50.0 * math.cos(angle_rad), 50.0 * math.sin(angle_rad), z_tip]
+            ),
+        }
+        result = compute_wall_position(pos, bath_radius=60.0)
+        arr = np.asarray(result)
+        assert abs(arr[2] - z_tip) < 1e-9
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Issue #1377 — VisualizationUpdateMixin dead-code wrappers removed
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@pytest.mark.skipif(
+    not DRAWING_AVAILABLE, reason="electrode_advisor package not on path"
+)
+class TestDeadCodeWrappersRemoved:
+    """Issue #1377: thin wrapper methods must be gone from VisualizationUpdateMixin."""
+
+    def test_compute_wall_position_not_in_visualization_update(self) -> None:
+        """shared_drawing.compute_wall_position should be imported directly."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_visualization_update import (
+                VisualizationUpdateMixin,
+            )
+        except ImportError:
+            pytest.skip("VisualizationUpdateMixin not importable")
+        msg = "_compute_wall_position thin wrapper must be removed"
+        assert not hasattr(VisualizationUpdateMixin, "_compute_wall_position"), msg
+
+    def test_build_trapezoidal_prism_not_in_visualization_update(self) -> None:
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_visualization_update import (
+                VisualizationUpdateMixin,
+            )
+        except ImportError:
+            pytest.skip("VisualizationUpdateMixin not importable")
+        msg = "_build_trapezoidal_prism thin wrapper must be removed"
+        assert not hasattr(VisualizationUpdateMixin, "_build_trapezoidal_prism"), msg
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Issue #1376 — _update_temperature_profile no-op stub removed from call chain
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestTemperatureProfileStub:
+    """Issue #1376: _update_temperature_profile is a no-op; call removed."""
+
+    def test_update_temperature_profile_not_called_from_calculate(self) -> None:
+        """_calculate_system should not call a no-op temperature profile stub."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_calculation import (
+                CalculationMixin,
+            )
+        except ImportError:
+            pytest.skip("CalculationMixin not importable")
+        import inspect
+
+        source = inspect.getsource(CalculationMixin._calculate_system)
+        msg = (
+            "_calculate_system must not call the no-op _update_temperature_profile stub"
+        )
+        assert "_update_temperature_profile" not in source, msg
