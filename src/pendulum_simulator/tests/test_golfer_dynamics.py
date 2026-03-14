@@ -50,11 +50,11 @@ def test_mass_point_positions_dbc(params, valid_q):
     points = _mass_point_positions(valid_q, params)
     assert len(points) == 7
 
-    with pytest.raises(TypeError):
+    with pytest.raises((AssertionError, TypeError)):
         _mass_point_positions("wrong", params)
     with pytest.raises(ValueError):
         _mass_point_positions(np.zeros(2), params)
-    with pytest.raises(TypeError):
+    with pytest.raises((AssertionError, TypeError)):
         _mass_point_positions(valid_q, "wrong")
 
 
@@ -63,11 +63,11 @@ def test_potential_energy_from_q_dbc(params, valid_q):
     pe = potential_energy_from_q(valid_q, params)
     assert isinstance(pe, float)
 
-    with pytest.raises(TypeError):
+    with pytest.raises((AssertionError, TypeError)):
         potential_energy_from_q(list(valid_q), params)
     with pytest.raises(ValueError):
         potential_energy_from_q(np.zeros(2), params)
-    with pytest.raises(TypeError):
+    with pytest.raises((AssertionError, TypeError)):
         potential_energy_from_q(valid_q, None)
 
 
@@ -78,7 +78,7 @@ def test_jacobians_dbc(params, valid_q):
     assert "lh" in J
     assert J["lh"].shape == (2, N_DOF)
 
-    with pytest.raises(TypeError):
+    with pytest.raises((AssertionError, TypeError)):
         analytical_fk_jacobians(None, params)
     with pytest.raises(ValueError):
         analytical_fk_jacobians(np.zeros(2), params)
@@ -89,7 +89,9 @@ def test_mass_matrix_dbc(params, valid_q):
     M = analytical_mass_matrix(valid_q, params)
     assert M.shape == (N_DOF, N_DOF)
 
-    with pytest.raises(TypeError):
+    # None input: native_backend now has a DbC assertion that fires first,
+    # so accept either AssertionError (DbC) or TypeError (numpy ops on None)
+    with pytest.raises((AssertionError, TypeError)):
         analytical_mass_matrix(None, params)
     with pytest.raises(ValueError):
         analytical_mass_matrix(np.zeros(2), params)
@@ -115,7 +117,7 @@ def test_gravity_vector_dbc(params, valid_q):
     G = analytical_gravity_vector(valid_q, params)
     assert G.shape == (N_DOF,)
 
-    with pytest.raises(TypeError):
+    with pytest.raises((AssertionError, TypeError)):
         analytical_gravity_vector(None, params)
     with pytest.raises(ValueError):
         analytical_gravity_vector(np.zeros(2), params)
