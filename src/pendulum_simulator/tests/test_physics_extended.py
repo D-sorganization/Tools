@@ -46,14 +46,6 @@ try:
 except ImportError:
     HAS_FRICTION = False
 
-# control_vector is optional
-try:
-    from double_pendulum_golf.physics import control_vector
-
-    HAS_CONTROL_VECTOR = True
-except ImportError:
-    HAS_CONTROL_VECTOR = False
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
