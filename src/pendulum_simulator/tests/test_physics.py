@@ -303,3 +303,126 @@ class TestDbCViolations:
     ) -> None:
         with pytest.raises(AssertionError):
             equations_of_motion(np.array([0, 0, 0]), 0.0, default_params, zero_torque)
+
+
+# ======================================================================
+# Joint limit Hermite smoothstep — edge cases (issue #1289, #1290)
+# ======================================================================
+
+
+class TestHermitePenaltyHelper:
+    """Test the extracted _hermite_penalty helper for edge-case correctness."""
+
+    def test_imports(self):
+        from double_pendulum_golf.physics import _hermite_penalty  # noqa: F401
+
+    def test_zero_penetration_gives_zero(self):
+        from double_pendulum_golf.physics import _hermite_penalty
+
+        # pen=0 → blend=0 → smooth=0 → penalty=0
+        assert _hermite_penalty(
+            0.0, vel=0.0, transition=0.05, stiffness=500.0, damping=20.0
+        ) == pytest.approx(0.0)
+
+    def test_full_penetration_no_blend(self):
+        from double_pendulum_golf.physics import _hermite_penalty
+
+        # pen >= transition → blend=1 → smooth=1 → full penalty
+        pen = 0.05  # exactly at transition
+        result = _hermite_penalty(
+            pen, vel=0.0, transition=0.05, stiffness=500.0, damping=0.0
+        )
+        assert result == pytest.approx(500.0 * 0.05, rel=1e-9)
+
+    def test_large_penetration_clamps_blend(self):
+        from double_pendulum_golf.physics import _hermite_penalty
+
+        # pen >> transition → blend clamped at 1 → same as full penalty
+        r1 = _hermite_penalty(
+            0.05, vel=0.0, transition=0.05, stiffness=500.0, damping=0.0
+        )
+        r2 = _hermite_penalty(
+            1.0, vel=0.0, transition=0.05, stiffness=500.0, damping=0.0
+        )
+        # Both have blend=1; r2 has larger pen so larger result
+        assert r2 > r1
+
+    def test_damping_only_when_velocity_into_limit(self):
+        from double_pendulum_golf.physics import _hermite_penalty
+
+        # vel > 0 means moving into the limit → damping adds
+        pen = 0.05
+        r_into = _hermite_penalty(
+            pen, vel=1.0, transition=0.05, stiffness=0.0, damping=20.0
+        )
+        # vel = 0 means no damping contribution
+        r_zero = _hermite_penalty(
+            pen, vel=0.0, transition=0.05, stiffness=0.0, damping=20.0
+        )
+        assert r_into > r_zero
+
+
+class TestJointLimitTorqueEdgeCases:
+    """Joint limit torque: at-limit, within, and beyond limit cases."""
+
+    @pytest.fixture
+    def limits(self):
+        from double_pendulum_golf.physics import JointLimits
+
+        return JointLimits(
+            theta1_min=-1.0,
+            theta1_max=1.0,
+            phi_min=-1.0,
+            phi_max=1.0,
+            stiffness=500.0,
+            damping=20.0,
+        )
+
+    def test_within_limits_gives_zero(self, limits):
+        from double_pendulum_golf.physics import joint_limit_torque
+
+        tau = joint_limit_torque(
+            phi=0.0, dphi=0.0, limits=limits, theta1=0.0, dtheta1=0.0
+        )
+        np.testing.assert_allclose(tau, [0.0, 0.0], atol=1e-12)
+
+    def test_exactly_at_lower_phi_limit_gives_zero(self, limits):
+        from double_pendulum_golf.physics import joint_limit_torque
+
+        # phi == phi_min → penetration=0 → penalty=0
+        tau = joint_limit_torque(phi=-1.0, dphi=0.0, limits=limits)
+        assert tau[1] == pytest.approx(0.0)
+
+    def test_below_lower_phi_limit_gives_positive_torque(self, limits):
+        from double_pendulum_golf.physics import joint_limit_torque
+
+        # phi < phi_min → positive restoring torque
+        tau = joint_limit_torque(phi=-1.1, dphi=0.0, limits=limits)
+        assert tau[1] > 0.0
+
+    def test_above_upper_phi_limit_gives_negative_torque(self, limits):
+        from double_pendulum_golf.physics import joint_limit_torque
+
+        # phi > phi_max → negative restoring torque
+        tau = joint_limit_torque(phi=1.1, dphi=0.0, limits=limits)
+        assert tau[1] < 0.0
+
+
+class TestForwardKinematicsPostconditions:
+    """Postcondition: segment lengths must match params.L1 and params.L2."""
+
+    def test_segment_lengths_arbitrary_angle(self, default_params: PendulumParams):
+        for theta1 in np.linspace(-np.pi, np.pi, 12):
+            for phi in np.linspace(-np.pi / 2, np.pi / 2, 6):
+                pos = forward_kinematics(theta1, phi, default_params)
+                sx, sy = pos["shoulder"]
+                wx, wy = pos["wrist"]
+                tx, ty = pos["tip"]
+                wrist_dist = np.hypot(wx - sx, wy - sy)
+                tip_dist = np.hypot(tx - wx, ty - wy)
+                assert (
+                    abs(wrist_dist - default_params.L1) < 1e-9
+                ), f"theta1={theta1:.2f}, phi={phi:.2f}: wrist_dist={wrist_dist:.9f}"
+                assert (
+                    abs(tip_dist - default_params.L2) < 1e-9
+                ), f"theta1={theta1:.2f}, phi={phi:.2f}: tip_dist={tip_dist:.9f}"
