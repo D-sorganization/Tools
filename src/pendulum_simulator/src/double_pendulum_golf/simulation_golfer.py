@@ -81,7 +81,9 @@ class GolferSimulationResult(TrajectoryResultMixin):
         self._check_idx(idx)
         return forward_kinematics(self.q_at(idx), self.params)  # type: ignore[no-any-return]
 
-    def torques_at(self, idx: int) -> tuple[float, float, float, float, float, float, float]:
+    def torques_at(
+        self, idx: int
+    ) -> tuple[float, float, float, float, float, float, float]:
         """Applied driving torques at time index."""
         self._check_idx(idx)
         return self.torque_func(self.t[idx])
@@ -104,7 +106,9 @@ class GolferSimulationResult(TrajectoryResultMixin):
     def constraint_forces_at(self, idx: int) -> np.ndarray:
         """Lagrange multiplier (constraint) forces at time index."""
         self._check_idx(idx)
-        return constraint_forces(self.states[idx], self.t[idx], self.params, self.torque_func)
+        return constraint_forces(
+            self.states[idx], self.t[idx], self.params, self.torque_func
+        )
 
     def constraint_violation_at(self, idx: int) -> float:
         """Constraint violation magnitude at time index."""
@@ -130,9 +134,9 @@ class GolferSimulationResult(TrajectoryResultMixin):
             "potential": potential_energy(state, self.params),
             "total": total_energy(state, self.params),
         }
-        assert all(np.isfinite(v) for v in result.values()), (
-            f"Non-finite energy at idx={idx}: {result}"
-        )
+        assert all(
+            np.isfinite(v) for v in result.values()
+        ), f"Non-finite energy at idx={idx}: {result}"
         return result
 
     def friction_torques_at(self, idx: int) -> np.ndarray:
@@ -191,9 +195,9 @@ def run_simulation(
     -------
     GolferSimulationResult
     """
-    assert initial_state.shape == (2 * N_DOF,), (
-        f"Initial state shape must be ({2 * N_DOF},), got {initial_state.shape}"
-    )
+    assert initial_state.shape == (
+        2 * N_DOF,
+    ), f"Initial state shape must be ({2 * N_DOF},), got {initial_state.shape}"
     assert np.all(np.isfinite(initial_state)), "Initial state must be finite"
     assert t_end > 0, f"t_end must be positive, got {t_end}"
     assert 0 < dt < t_end, f"dt must be in (0, t_end), got {dt}"

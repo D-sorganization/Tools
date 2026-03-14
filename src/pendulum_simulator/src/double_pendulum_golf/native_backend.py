@@ -681,6 +681,7 @@ def batch_evaluate_double(
         _warn_once("batch_evaluate_double", exc)
         return None
 
+
 def simulate_double(
     params: PendulumParams,
     q0: list[float],
@@ -696,9 +697,7 @@ def simulate_double(
     is a 2D array of shape ``(N, 4)`` containing ``[q1, q2, qdot1, qdot2]``.
     Returns ``None`` if the native backend is unavailable.
     """
-    if _pendulum_core is None or not hasattr(
-        _pendulum_core, "py_simulate_double"
-    ):
+    if _pendulum_core is None or not hasattr(_pendulum_core, "py_simulate_double"):
         return None
 
     try:
