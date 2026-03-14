@@ -48,7 +48,10 @@ class TestConstraintDriftLogging:
         self, golfer_params: GolferParams, caplog: pytest.LogCaptureFixture
     ) -> None:
         """Line 266: warn when viol > _CONSTRAINT_WARN_TOL during integration."""
-        initial_state = np.zeros(2 * N_DOF)
+        from double_pendulum_golf.constraint_solver import project_to_constraints
+
+        q0 = project_to_constraints(np.zeros(N_DOF), golfer_params)
+        initial_state = np.concatenate([q0, np.zeros(N_DOF)])
 
         # Always return a value above warn threshold → exercises line 266
         with caplog.at_level(
@@ -73,7 +76,10 @@ class TestConstraintDriftLogging:
         self, golfer_params: GolferParams, caplog: pytest.LogCaptureFixture
     ) -> None:
         """Line 296: log.error when max_viol > _CONSTRAINT_ABORT_TOL (1e-2)."""
-        initial_state = np.zeros(2 * N_DOF)
+        from double_pendulum_golf.constraint_solver import project_to_constraints
+
+        q0 = project_to_constraints(np.zeros(N_DOF), golfer_params)
+        initial_state = np.concatenate([q0, np.zeros(N_DOF)])
 
         # Always return a value above abort threshold
         with caplog.at_level(
@@ -97,7 +103,10 @@ class TestConstraintDriftLogging:
         self, golfer_params: GolferParams, caplog: pytest.LogCaptureFixture
     ) -> None:
         """Line 302: log.warning when WARN < max_viol <= ABORT (postcondition)."""
-        initial_state = np.zeros(2 * N_DOF)
+        from double_pendulum_golf.constraint_solver import project_to_constraints
+
+        q0 = project_to_constraints(np.zeros(N_DOF), golfer_params)
+        initial_state = np.concatenate([q0, np.zeros(N_DOF)])
 
         # Always return a value between warn and abort thresholds
         with caplog.at_level(
