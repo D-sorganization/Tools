@@ -10,7 +10,15 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 
 import numpy as np
-from contracts import require
+
+try:
+    from contracts import require
+except ImportError:
+
+    def require(condition: object, message: str = "", *args: object) -> None:  # type: ignore[misc]
+        """Fallback DbC require when pycontracts is not installed."""
+        if not condition:
+            raise ValueError(message)
 
 
 @dataclass

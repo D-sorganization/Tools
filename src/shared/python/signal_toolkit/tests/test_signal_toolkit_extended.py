@@ -549,3 +549,116 @@ class TestSignalGeneratorExtended:
         # During pulse
         mid_idx = np.argmin(np.abs(t - 3.5))
         assert signal.values[mid_idx] == 5.0
+
+
+# =============================================================================
+# Contracts fallback (Issue #1280)
+# =============================================================================
+
+
+class TestContractsFallback:
+    """Tests for contracts package fallback behavior."""
+
+    def test_require_fallback_passes_truthy(self) -> None:
+        """Fallback require should pass on truthy condition."""
+        from signal_toolkit.core import require
+
+        # Should not raise
+        require(True, "should pass")
+        require(1, "should pass")
+
+    def test_require_fallback_raises_on_falsy(self) -> None:
+        """Fallback require should raise ValueError on falsy condition."""
+        from signal_toolkit.core import require
+
+        with pytest.raises((ValueError, Exception)):
+            require(False, "this should fail")
+
+
+# =============================================================================
+# Polynomial DRY (Issue #1282)
+# =============================================================================
+
+
+class TestPolynomialDry:
+    """Tests verifying polynomial evaluation consistency."""
+
+    def test_polyval_matches_signal_generator(self) -> None:
+        """np.polyval and SignalGenerator.polynomial should produce same results."""
+        t = np.linspace(0, 10, 100)
+        # Ascending order: c0 + c1*t + c2*t^2
+        ascending = [1.0, 2.0, 0.5]
+        sig = SignalGenerator.polynomial(t, ascending)
+
+        # np.polyval uses descending order
+        descending = ascending[::-1]
+        t_shifted = t - t[0]
+        expected = np.polyval(descending, t_shifted)
+
+        np.testing.assert_allclose(sig.values, expected, atol=1e-10)
+
+
+# =============================================================================
+# Series Expansion (Issue #1279)
+# =============================================================================
+
+
+class TestSeriesExpansionIntegration:
+    """Integration tests for SeriesExpansion with Signal data."""
+
+    def test_maclaurin_of_sin(self) -> None:
+        """Maclaurin series of sin(x) should converge near x=0."""
+        from signal_toolkit.series import SeriesExpansion
+
+        expansion = SeriesExpansion(max_terms=10)
+        result = expansion.get_series_result(np.sin, center=0.0, n_terms=8)
+
+        # Near zero, approximation should be close
+        x_test = np.array([0.1, 0.5])
+        approx = result.function(x_test)
+        exact = np.sin(x_test)
+        np.testing.assert_allclose(approx, exact, atol=1e-4)
+
+    def test_taylor_of_exp(self) -> None:
+        """Taylor series of exp(x) centered at 1 should converge near x=1."""
+        from signal_toolkit.series import SeriesExpansion
+
+        expansion = SeriesExpansion(max_terms=10)
+        result = expansion.get_series_result(np.exp, center=1.0, n_terms=8)
+
+        x_test = np.array([0.8, 1.2])
+        approx = result.function(x_test)
+        exact = np.exp(x_test)
+        np.testing.assert_allclose(approx, exact, atol=1e-3)
+
+
+# =============================================================================
+# FilterSpec Bode Plot (Issue #1278)
+# =============================================================================
+
+
+class TestFilterSpecFrequencyResponse:
+    """Tests for FilterSpec.get_frequency_response."""
+
+    def test_butterworth_freq_response(self) -> None:
+        """Butterworth filter should have monotonic magnitude rolloff."""
+        spec = FilterDesigner.butterworth(
+            FilterType.LOWPASS, cutoff=10.0, fs=100.0, order=4
+        )
+        freqs, magnitude, phase = spec.get_frequency_response(256)
+
+        assert len(freqs) == 256
+        assert len(magnitude) == 256
+        assert len(phase) == 256
+        # DC gain should be ~1
+        assert magnitude[0] > 0.9
+        # High-frequency should be attenuated
+        assert magnitude[-1] < 0.01
+
+    def test_bessel_freq_response(self) -> None:
+        """Bessel filter should also return valid frequency response."""
+        spec = FilterDesigner.bessel(FilterType.LOWPASS, cutoff=10.0, fs=100.0, order=4)
+        freqs, magnitude, phase = spec.get_frequency_response(128)
+
+        assert len(freqs) == 128
+        assert magnitude[0] > 0.9

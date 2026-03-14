@@ -13,22 +13,22 @@
 //! - All rotation matrices are SO(3) (orthonormal, det=+1).
 //! - All primitive dimensions must be positive.
 
-pub mod types;
 pub mod geometry;
+pub mod matrix3;
 #[cfg(feature = "python")]
 pub mod py_bindings;
 pub mod quaternion;
-pub mod matrix3;
 pub mod rotation;
 pub mod transform;
+pub mod types;
 
 pub use geometry::{
     capsule_capsule_distance, check_collision_spheres, closest_points_segments,
     sphere_capsule_distance, sphere_sphere_distance, Capsule, Cylinder, DistanceResult,
     GeometricPrimitive, OrientedBox, Sphere,
 };
-pub use quaternion::Quaternion;
 pub use matrix3::Matrix3;
+pub use quaternion::Quaternion;
 pub use rotation::{
     axis_angle_to_rotation_matrix, euler_to_quaternion, euler_to_rotation_matrix,
     quaternion_to_euler, quaternion_to_rotation_matrix, rotation_matrix_to_euler,

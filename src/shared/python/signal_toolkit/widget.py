@@ -201,6 +201,10 @@ if HAS_MATPLOTLIB and HAS_PYQT:
             self.integral_signal: Signal | None = None
             self.joint_names: list[str] = []
 
+            # Undo / Redo stacks (#1276)
+            self._undo_stack: list[Signal] = []
+            self._redo_stack: list[Signal] = []
+
             # Default time array
             self.t_default = np.linspace(0, 10, 1000)
 

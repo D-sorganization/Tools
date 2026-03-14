@@ -90,76 +90,13 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
         self.drag_start_points: list[tuple[float, float]] = []
         self.mode = "view"  # view, draw, add_points, drag
 
-        # Dark Theme Palette
+        # Dark Theme Palette — shared with SignalToolkitWidget (#1277)
         if not use_builtin_theme:
             pass  # Skip built-in theme; host app provides styling
         else:
-            self.setStyleSheet("""
-            QWidget {
-                background-color: #2b2b2b;
-                color: #ffffff;
-                font-family: 'Segoe UI', sans-serif;
-            }
-            QGroupBox {
-                border: 1px solid #444;
-                border-radius: 6px;
-                margin-top: 12px;
-                padding-top: 10px;
-                font-weight: bold;
-                color: #e0e0e0;
-            }
-            QGroupBox::title {
-                subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 5px;
-            }
-            QPushButton {
-                background-color: #3d3d3d;
-                border: 1px solid #555;
-                border-radius: 4px;
-                padding: 6px;
-                color: #fff;
-            }
-            QPushButton:hover {
-                background-color: #4d4d4d;
-                border: 1px solid #666;
-            }
-            QPushButton:pressed {
-                background-color: #2b2b2b;
-            }
-            QComboBox, QDoubleSpinBox, QLineEdit {
-                background-color: #1e1e1e;
-                border: 1px solid #555;
-                border-radius: 4px;
-                padding: 4px;
-                color: #fff;
-            }
-            QComboBox::drop-down {
-                border: none;
-            }
-            QTextEdit {
-                background-color: #1e1e1e;
-                border: 1px solid #555;
-                border-radius: 4px;
-                color: #fff;
-            }
-            QRadioButton {
-                color: #e0e0e0;
-            }
-            QLabel {
-                color: #cccccc;
-            }
-            QPushButton#fitBtn {
-                background-color: #2e7d32;
-                color: white;
-                font-weight: bold;
-                border: none;
-                padding: 10px;
-            }
-            QPushButton#fitBtn:hover {
-                background-color: #388e3c;
-            }
-        """)
+            from .widget import DARK_STYLESHEET
+
+            self.setStyleSheet(DARK_STYLESHEET)
 
         # UI Setup
         self._setup_ui()
@@ -405,11 +342,11 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
             dx, dy = zip(*self.drawn_points, strict=True)
             self.canvas.axes.plot(dx, dy, "g--", alpha=0.5, label="Drawn Path")
 
-        # Plot fitted polynomial
+        # Plot fitted polynomial using shared SignalGenerator (#1282)
         if self.polynomial_coeffs is not None:
             x_range = np.linspace(self.x_min_spin.value(), self.x_max_spin.value(), 500)
-            poly_func = np.poly1d(self.polynomial_coeffs)
-            y_poly = poly_func(x_range)
+            # np.polyfit returns descending order; np.polyval uses descending natively
+            y_poly = np.polyval(self.polynomial_coeffs, x_range)
             self.canvas.axes.plot(
                 x_range, y_poly, color="#4da6ff", linewidth=2.5, label="Polynomial Fit"
             )

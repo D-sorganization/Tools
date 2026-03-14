@@ -218,7 +218,7 @@ impl Quaternion {
     #[new]
     #[pyo3(text_signature = "(w, x, y, z)")]
     fn py_new(w: f64, x: f64, y: f64, z: f64) -> pyo3::PyResult<Self> {
-        Self::new(w, x, y, z).map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
+        Self::new(w, x, y, z).map_err(pyo3::exceptions::PyValueError::new_err)
     }
 
     /// Scalar component.
@@ -268,8 +268,7 @@ impl Quaternion {
     #[staticmethod]
     #[pyo3(name = "from_axis_angle", text_signature = "(axis, angle_rad)")]
     fn py_from_axis_angle(axis: &Vector3, angle_rad: f64) -> pyo3::PyResult<Self> {
-        Self::from_axis_angle(axis, angle_rad)
-            .map_err(|e| pyo3::exceptions::PyValueError::new_err(e))
+        Self::from_axis_angle(axis, angle_rad).map_err(pyo3::exceptions::PyValueError::new_err)
     }
 }
 

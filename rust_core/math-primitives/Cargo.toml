@@ -15,13 +15,17 @@ version = "0.24"
 features = ["extension-module"]
 optional = true
 
+[dependencies.numpy]
+workspace = true
+optional = true
+
 [dependencies.wasm-bindgen]
 workspace = true
 optional = true
 
 [features]
 default = []
-python = ["pyo3"]
+python = ["pyo3", "numpy"]
 wasm = ["wasm-bindgen"]
 
 [lib]
