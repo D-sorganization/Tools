@@ -361,78 +361,37 @@ def draw_via_metal_path(
             horizontal_spreading_factor=horizontal_spreading_factor,
         )
 
-        # Annotate current
-        if (
-            hasattr(owner, "show_current_values_checkbox")
-            and owner.show_current_values_checkbox.isChecked()
-            and current_value > 0
-        ):
-            e1_tip = electrode1_pos["tip"]
-            e2_tip = electrode2_pos["tip"]
-            mid_x = (e1_tip[0] + e2_tip[0]) / 2
-            mid_y = (e1_tip[1] + e2_tip[1]) / 2
-            mid_z = metal_height + 0.5
+        e1_tip = electrode1_pos["tip"]
+        e2_tip = electrode2_pos["tip"]
+        mid_x = (e1_tip[0] + e2_tip[0]) / 2
+        mid_y = (e1_tip[1] + e2_tip[1]) / 2
 
-            ax.text(
-                mid_x,
-                mid_y,
-                mid_z,
-                f"{current_value:.0f}A",
-                bbox={
-                    "boxstyle": "round,pad=0.2",
-                    "facecolor": "lightcoral",
-                    "alpha": 0.8,
-                },
-                fontsize=8,
-                ha="center",
-                va="center",
-                color="darkred",
-            )
+        # Annotate current — delegate to shared helper (#1363)
+        annotate_path_value(
+            owner,
+            ax,
+            mid_x,
+            mid_y,
+            metal_height + 0.5,
+            current_value,
+            "show_current_values_checkbox",
+            "{:.0f}A",
+            "lightcoral",
+            "darkred",
+        )
 
-        # Annotate resistance
-        if (
-            hasattr(owner, "show_resistance_values_checkbox")
-            and owner.show_resistance_values_checkbox.isChecked()
-            and resistance_value > 0
-        ):
-            e1_tip = electrode1_pos["tip"]
-            e2_tip = electrode2_pos["tip"]
-            mid_x = (e1_tip[0] + e2_tip[0]) / 2
-            mid_y = (e1_tip[1] + e2_tip[1]) / 2
-
-            offset = (
-                -1.0
-                if (
-                    hasattr(owner, "show_current_values_checkbox")
-                    and owner.show_current_values_checkbox.isChecked()
-                    and current_value > 0
-                )
-                else 0.5
-            )
-            mid_z = metal_height + offset
-
-            if resistance_value == float("inf"):
-                resistance_text = "\u221e\u03a9"
-            elif resistance_value >= 1.0:
-                resistance_text = f"{resistance_value:.2f}\u03a9"
-            else:
-                resistance_text = f"{resistance_value:.3f}\u03a9"
-
-            ax.text(
-                mid_x,
-                mid_y,
-                mid_z,
-                resistance_text,
-                bbox={
-                    "boxstyle": "round,pad=0.2",
-                    "facecolor": "lightpink",
-                    "alpha": 0.8,
-                },
-                fontsize=8,
-                ha="center",
-                va="center",
-                color="darkred",
-            )
+        # Annotate resistance — delegate to shared helper (#1363)
+        annotate_resistance_value(
+            owner,
+            ax,
+            mid_x,
+            mid_y,
+            metal_height,
+            resistance_value,
+            current_value,
+            "lightpink",
+            "darkred",
+        )
 
     except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
         logger.exception("Error drawing correct via-metal path: %s", e)
