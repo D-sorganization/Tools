@@ -348,7 +348,6 @@ class DrawingMixin:
             refractory_color = "#D2B48C"  # Tan/light brown
 
             # Draw all surfaces
-            # Draw all surfaces
             # Outer surface
             self.electrode_ax.plot_surface(
                 X_outer,
@@ -454,7 +453,6 @@ class DrawingMixin:
                 mc = self.config.colors["metal_shell"]
                 shell_color = mc.name() if hasattr(mc, "name") else str(mc)
 
-            # Draw all surfaces
             # Draw all surfaces
             self.electrode_ax.plot_surface(
                 X_outer, Y_outer, Z_outer, color=shell_color, alpha=shell_alpha

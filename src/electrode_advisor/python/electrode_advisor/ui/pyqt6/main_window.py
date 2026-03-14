@@ -55,12 +55,6 @@ from ...utils.visualization import ElectrodeVisualization  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
-# BaseCalculatorWidget not available in standalone Tools context
-BASE_CALCULATOR_AVAILABLE = False
-
-# State management mixin not available in standalone Tools context
-STATE_MIXIN_AVAILABLE = False
-
 # Existing mixins
 # New decomposition mixins
 from .main_window_calculation import CalculationMixin  # noqa: E402

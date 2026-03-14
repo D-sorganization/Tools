@@ -21,12 +21,8 @@ class CalculationMixin:
     """Mixin providing calculation and event handling for ElectrodeAdvisorWidget."""
 
     def _setup_timers(self) -> None:
-        """Setup update timers"""
-        from ...configs.ui_defaults import PERIODIC_UPDATE_MS
-
+        """Setup update timers (periodic update removed — was a no-op)."""
         self.calc_timer = QTimer()
-        self.calc_timer.timeout.connect(self._periodic_update)
-        self.calc_timer.start(PERIODIC_UPDATE_MS)
 
     @pyqtSlot()
     def _on_input_changed(self) -> None:
@@ -61,8 +57,6 @@ class CalculationMixin:
             self.electrode_ax.set_ylim(  # type: ignore[attr-defined]
                 y_center - new_range / 2, y_center + new_range / 2
             )
-            if self.electrode_canvas is not None:  # type: ignore[attr-defined]
-                self.electrode_canvas.draw()  # type: ignore[attr-defined]
             if hasattr(self.electrode_ax, "set_zlim"):  # type: ignore[attr-defined]
                 z_range = (
                     (
@@ -410,6 +404,3 @@ class CalculationMixin:
                 "Optimization Error",
                 f"Optimization failed: {e!s}",
             )
-
-    def _periodic_update(self) -> None:
-        """Periodic update for real-time monitoring"""

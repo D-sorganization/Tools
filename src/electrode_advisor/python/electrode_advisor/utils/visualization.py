@@ -23,13 +23,9 @@ class ElectrodeVisualization(ElectrodeLayersMixin):
     :class:`ElectrodeLayersMixin`.
     """
 
-    def __init__(self, ax: Any = None) -> None:
-        """Initialize with optional matplotlib 3D axis."""
-        self.ax = ax
-
-    def set_axis(self, ax: Any) -> None:
-        """Set the matplotlib 3D axis for drawing."""
-        self.ax = ax
+    def __init__(self, config: Any = None) -> None:
+        """Initialize with optional configuration object."""
+        self.config = config
 
     # ================================================================
     # Primitive Cylinder Drawing
@@ -188,7 +184,6 @@ class ElectrodeVisualization(ElectrodeLayersMixin):
         horizontal_spreading_factor: float,
         color: str = "blue",
         alpha: float = 0.3,
-        label: str = "",
         current_value: float = 0.0,
         show_current_values: bool = False,
     ) -> None:
@@ -240,7 +235,6 @@ class ElectrodeVisualization(ElectrodeLayersMixin):
         horizontal_spreading_factor: float,
         color: str = "red",
         alpha: float = 0.3,
-        label: str = "",
         current_value: float = 0.0,
         show_current_values: bool = False,
     ) -> None:

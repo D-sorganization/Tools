@@ -92,19 +92,6 @@ class ResultsAndChartsMixin:
 
                     self.resistance_table.setItem(i, 4, QTableWidgetItem(split_text))
 
-            # Update power display in phase inputs - now uses consistent power factor calculation
-            # Note: Power displays are now updated only by _update_power_distribution()
-            # for consistency
-            # This section is commented out to avoid conflicting updates
-            # actual_currents = self.calculation_results.get('actual_currents', {})
-            # for phase in phases:
-            #     if phase in self.phase_inputs and phase in actual_currents:
-            #         current = actual_currents[phase]
-            #         voltage = self.phase_inputs[phase]['voltage'].value()
-            #         power_factor = self.power_factor_input.value()
-            #         power = current * voltage * power_factor / 1000  # kW with power factor
-            #         self.phase_inputs[phase]['power'].setText(f"{power:.1f}")
-
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error updating results tables: %s", e)
 
@@ -339,9 +326,6 @@ class ResultsAndChartsMixin:
         self.electrode_ax.plot_surface(
             x_sphere, y_sphere, z_sphere, color=color, alpha=alpha, linewidth=0
         )
-
-    def _update_temperature_profile(self) -> None:
-        """Temperature profile removed - this functionality is no longer needed"""
 
     def _extract_current_data(self) -> tuple[list[float], list[float]]:
         """Extract phase and line current values from UI inputs (pure, no rendering).
