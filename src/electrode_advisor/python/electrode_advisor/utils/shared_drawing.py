@@ -361,12 +361,12 @@ def draw_via_metal_path(
             horizontal_spreading_factor=horizontal_spreading_factor,
         )
 
+        # Annotate current and resistance — delegate to shared helper (#1363)
         e1_tip = electrode1_pos["tip"]
         e2_tip = electrode2_pos["tip"]
         mid_x = (e1_tip[0] + e2_tip[0]) / 2
         mid_y = (e1_tip[1] + e2_tip[1]) / 2
 
-        # Annotate current — delegate to shared helper (#1363)
         annotate_path_value(
             owner,
             ax,
@@ -379,7 +379,6 @@ def draw_via_metal_path(
             "lightcoral",
             "darkred",
         )
-
         # Annotate resistance — delegate to shared helper (#1363)
         annotate_resistance_value(
             owner,

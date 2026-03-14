@@ -943,3 +943,78 @@ class TestViaMetalPathDry:
         src = inspect.getsource(draw_via_metal_path)
         delegated = "annotate_resistance_value" in src or "annotate_path_value" in src
         assert delegated, "draw_via_metal_path must delegate resistance annotation"
+# ─────────────────────────────────────────────────────────────────────────────
+# Source-code verification tests — confirm fixes are applied
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestElectrodeZInSource:
+    """Issue #1358/#1375: verify _compute_electrode_positions uses correct formula."""
+
+    def test_source_uses_depth_not_glass_height_over_2(self) -> None:
+        """Source code must use `metal_height + glass_height - depth`."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_paths import PathsMixin
+        except ImportError:
+            pytest.skip("PathsMixin not importable")
+        import inspect
+
+        source = inspect.getsource(PathsMixin._compute_electrode_positions)
+        msg = "_compute_electrode_positions must use `glass_height - depth`"
+        assert "glass_height - depth" in source, msg
+        bad = "glass_height / 2"
+        assert bad not in source, f"Old formula '{bad}' must be removed"
+
+
+class TestLineCurrentInSource:
+    """Issue #1357: verify line current uses sqrt(3), not 0.8."""
+
+    def test_source_uses_sqrt3_not_0_8(self) -> None:
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_data import DataMixin
+        except ImportError:
+            pytest.skip("DataMixin not importable")
+        import inspect
+
+        source = inspect.getsource(DataMixin._update_current_distribution)
+        assert (
+            "sqrt3" in source or "sqrt(3)" in source
+        ), "Line current must use √3 factor"
+        assert "* 0.8" not in source, "Wrong 0.8 factor must be removed"
+
+
+class TestTemperatureProfileStubRemovedFromDataMixin:
+    """Issue #1377: _update_temperature_profile call removed from DataMixin."""
+
+    def test_calculate_system_does_not_call_temperature_profile(self) -> None:
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_data import DataMixin
+        except ImportError:
+            pytest.skip("DataMixin not importable")
+        import inspect
+
+        source = inspect.getsource(DataMixin._calculate_system)
+        msg = "DataMixin._calculate_system must not call no-op _update_temperature_profile"
+        assert "_update_temperature_profile" not in source, msg
+
+
+class TestDRYAnnotationRefactored:
+    """Issue #1363: draw_via_metal_path must delegate to shared annotators."""
+
+    def test_no_inline_ax_text_in_draw_via_metal_path(self) -> None:
+        """draw_via_metal_path should use annotate_path_value, not inline ax.text."""
+        try:
+            from electrode_advisor.utils.shared_drawing import draw_via_metal_path
+        except ImportError:
+            pytest.skip("shared_drawing not importable")
+        import inspect
+
+        source = inspect.getsource(draw_via_metal_path)
+        assert "annotate_path_value" in source, "Must delegate to annotate_path_value"
+        assert (
+            "annotate_resistance_value" in source
+        ), "Must delegate to annotate_resistance_value"
+        # Should not contain inline ax.text calls anymore
+        assert (
+            source.count("ax.text(") == 0
+        ), "Inline ax.text calls should be replaced with shared annotators"

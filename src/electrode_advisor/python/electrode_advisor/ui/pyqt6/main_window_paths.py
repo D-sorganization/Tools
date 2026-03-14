@@ -319,7 +319,7 @@ class PathsMixin:
 
         for depth, angle in zip(depths, angles, strict=False):
             angle_rad = np.radians(angle)
-            electrode_z = metal_height + glass_height / 2
+            electrode_z = metal_height + glass_height - depth  # #1358/#1375
             x_tip = (bath_radius - depth) * np.cos(angle_rad)
             y_tip = (bath_radius - depth) * np.sin(angle_rad)
             x_base = total_electrode_length * np.cos(angle_rad)
