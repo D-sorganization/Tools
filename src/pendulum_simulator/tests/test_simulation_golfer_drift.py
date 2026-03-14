@@ -49,34 +49,25 @@ class TestConstraintDriftLogging:
     ) -> None:
         """Line 266: warn when viol > _CONSTRAINT_WARN_TOL during integration."""
         initial_state = np.zeros(2 * N_DOF)
-        initial_state[0] = 0.05
 
-        # Patch constraint_violation to return a high value on first few calls
-        call_count = [0]
-
-        def fake_violation(y, params):
-            call_count[0] += 1
-            # Return a value above warn threshold for first few calls
-            if call_count[0] <= 3:
-                return 1e-3  # > _CONSTRAINT_WARN_TOL (1e-4), < _CONSTRAINT_ABORT_TOL (1e-2)
-            return 0.0
-
+        # Always return a value above warn threshold → exercises line 266
         with caplog.at_level(
             logging.WARNING, logger="double_pendulum_golf.simulation_golfer"
         ):
             with patch(
                 "double_pendulum_golf.simulation_golfer.constraint_violation",
-                side_effect=fake_violation,
+                return_value=1e-3,  # > _CONSTRAINT_WARN_TOL (1e-4)
             ):
                 result = run_simulation(
                     golfer_params,
                     initial_state,
-                    t_end=0.02,
+                    t_end=0.01,
                     torque_func=lambda t: (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
-                    dt=0.01,
+                    dt=0.005,
                 )
-        # Should have logged a warning during simulation
-        assert "Constraint violation" in caplog.text or len(result.t) >= 2
+        # Line 266 logged warning during integration, line 302 logs at end
+        assert "violation" in caplog.text.lower()
+        assert len(result.t) >= 2
 
     def test_abort_threshold_log_line296(
         self, golfer_params: GolferParams, caplog: pytest.LogCaptureFixture
@@ -84,27 +75,20 @@ class TestConstraintDriftLogging:
         """Line 296: log.error when max_viol > _CONSTRAINT_ABORT_TOL (1e-2)."""
         initial_state = np.zeros(2 * N_DOF)
 
-        call_count = [0]
-
-        def fake_violation(y, params):
-            call_count[0] += 1
-            if call_count[0] <= 2:
-                return 0.5  # >> _CONSTRAINT_ABORT_TOL (1e-2)
-            return 0.0
-
+        # Always return a value above abort threshold
         with caplog.at_level(
             logging.ERROR, logger="double_pendulum_golf.simulation_golfer"
         ):
             with patch(
                 "double_pendulum_golf.simulation_golfer.constraint_violation",
-                side_effect=fake_violation,
+                return_value=0.5,  # >> _CONSTRAINT_ABORT_TOL (1e-2)
             ):
                 result = run_simulation(
                     golfer_params,
                     initial_state,
-                    t_end=0.02,
+                    t_end=0.01,
                     torque_func=lambda t: (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
-                    dt=0.01,
+                    dt=0.005,
                 )
         assert "Excessive constraint drift" in caplog.text
         assert len(result.t) >= 2
@@ -115,27 +99,20 @@ class TestConstraintDriftLogging:
         """Line 302: log.warning when WARN < max_viol <= ABORT (postcondition)."""
         initial_state = np.zeros(2 * N_DOF)
 
-        call_count = [0]
-
-        def fake_violation(y, params):
-            call_count[0] += 1
-            if call_count[0] == 1:
-                return 5e-3  # > WARN (1e-4), < ABORT (1e-2)
-            return 0.0
-
+        # Always return a value between warn and abort thresholds
         with caplog.at_level(
             logging.WARNING, logger="double_pendulum_golf.simulation_golfer"
         ):
             with patch(
                 "double_pendulum_golf.simulation_golfer.constraint_violation",
-                side_effect=fake_violation,
+                return_value=5e-3,  # > WARN (1e-4), < ABORT (1e-2)
             ):
                 result = run_simulation(
                     golfer_params,
                     initial_state,
-                    t_end=0.02,
+                    t_end=0.01,
                     torque_func=lambda t: (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
-                    dt=0.01,
+                    dt=0.005,
                 )
         assert "Max constraint violation" in caplog.text
         assert len(result.t) >= 2
