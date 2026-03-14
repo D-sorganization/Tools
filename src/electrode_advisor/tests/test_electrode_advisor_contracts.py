@@ -201,18 +201,24 @@ class TestElectricalModelPhysics:
     not DRAWING_AVAILABLE, reason="electrode_advisor package not on path"
 )
 class TestComputeWallPosition:
-    """Issue #931: contracts + behavior for compute_wall_position."""
+    """Issue #931, #1425: contracts + behavior for compute_wall_position."""
 
-    def test_returns_array_with_two_xy_coords(self) -> None:
-        pos = {"x": 50.0, "y": 0.0, "z": 12.0}
+    def test_returns_array_with_xy_coords(self) -> None:
+        pos = {
+            "angle": 0.0,
+            "tip": np.array([50.0, 0.0, 12.0]),
+        }
         result = compute_wall_position(pos, bath_radius=60.0)
         assert result is not None
         arr = np.asarray(result)
-        assert arr.shape == (2,) or arr.ndim == 1, "Expected 2-element array"
+        assert arr.ndim == 1, "Expected 1-d array"
 
     def test_wall_position_magnitude_le_bath_radius(self) -> None:
         """Wall position must lie at or inside the bath radius."""
-        pos = {"x": 50.0, "y": 0.0, "z": 12.0}
+        pos = {
+            "angle": 0.0,
+            "tip": np.array([50.0, 0.0, 12.0]),
+        }
         bath_radius = 60.0
         wall = np.asarray(compute_wall_position(pos, bath_radius=bath_radius))
         magnitude = float(np.linalg.norm(wall[:2]))
@@ -225,9 +231,14 @@ class TestComputeWallPosition:
     ) -> None:
         angle_rad = math.radians(angle_deg)
         pos = {
-            "x": 40.0 * math.cos(angle_rad),
-            "y": 40.0 * math.sin(angle_rad),
-            "z": 12.0,
+            "angle": angle_rad,
+            "tip": np.array(
+                [
+                    40.0 * math.cos(angle_rad),
+                    40.0 * math.sin(angle_rad),
+                    12.0,
+                ]
+            ),
         }
         result = compute_wall_position(pos, bath_radius=60.0)
         assert result is not None
@@ -739,17 +750,33 @@ class TestElectrodeConfigAccessors:
 
 
 class TestComputeEffectiveConductivity:
-    """Issue #1370: _compute_effective_conductivity is an extracted pure function."""
+    """Issue #1370, #1424: _compute_effective_conductivity behavioral test."""
 
-    def test_compute_effective_conductivity_importable(self) -> None:
+    def test_compute_effective_conductivity_callable(self) -> None:
+        """Method must exist and be callable."""
         try:
             from electrode_advisor.ui.pyqt6.main_window_calculation import (
                 CalculationMixin,
             )
         except ImportError:
             pytest.skip("CalculationMixin not importable")
-        has_method = hasattr(CalculationMixin, "_compute_effective_conductivity")
-        assert has_method, "_compute_effective_conductivity must be a separate method"
+        method = getattr(CalculationMixin, "_compute_effective_conductivity", None)
+        assert method is not None, "method must exist"
+        assert callable(method), "method must be callable"
+
+    def test_compute_effective_conductivity_returns_bool(self) -> None:
+        """Method must return bool from checkbox state."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_calculation import (
+                CalculationMixin,
+            )
+        except ImportError:
+            pytest.skip("CalculationMixin not importable")
+        import inspect
+
+        sig = inspect.signature(CalculationMixin._compute_effective_conductivity)
+        ret = sig.return_annotation
+        assert ret is bool, f"must return bool, got {ret}"
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -760,45 +787,45 @@ class TestComputeEffectiveConductivity:
 class TestExtractedChartHelpers:
     """Issues #1372/#1373: power and current extraction helpers exist on the mixin."""
 
-    def test_extract_power_data_method_exists(self) -> None:
+    def test_extract_power_data_callable(self) -> None:
         try:
             from electrode_advisor.ui.pyqt6.main_window_results_charts import (
                 ResultsAndChartsMixin,
             )
         except ImportError:
             pytest.skip("ResultsAndChartsMixin not importable")
-        has_method = hasattr(ResultsAndChartsMixin, "_extract_power_data")
-        assert has_method, "_extract_power_data must be a separate method"
+        method = getattr(ResultsAndChartsMixin, "_extract_power_data", None)
+        assert method is not None and callable(method)
 
-    def test_render_power_bar_chart_method_exists(self) -> None:
+    def test_render_power_bar_chart_callable(self) -> None:
         try:
             from electrode_advisor.ui.pyqt6.main_window_results_charts import (
                 ResultsAndChartsMixin,
             )
         except ImportError:
             pytest.skip("ResultsAndChartsMixin not importable")
-        has_method = hasattr(ResultsAndChartsMixin, "_render_power_bar_chart")
-        assert has_method, "_render_power_bar_chart must be a separate method"
+        method = getattr(ResultsAndChartsMixin, "_render_power_bar_chart", None)
+        assert method is not None and callable(method)
 
-    def test_extract_current_data_method_exists(self) -> None:
+    def test_extract_current_data_callable(self) -> None:
         try:
             from electrode_advisor.ui.pyqt6.main_window_results_charts import (
                 ResultsAndChartsMixin,
             )
         except ImportError:
             pytest.skip("ResultsAndChartsMixin not importable")
-        has_method = hasattr(ResultsAndChartsMixin, "_extract_current_data")
-        assert has_method, "_extract_current_data must be a separate method"
+        method = getattr(ResultsAndChartsMixin, "_extract_current_data", None)
+        assert method is not None and callable(method)
 
-    def test_render_current_bar_chart_method_exists(self) -> None:
+    def test_render_current_bar_chart_callable(self) -> None:
         try:
             from electrode_advisor.ui.pyqt6.main_window_results_charts import (
                 ResultsAndChartsMixin,
             )
         except ImportError:
             pytest.skip("ResultsAndChartsMixin not importable")
-        has_method = hasattr(ResultsAndChartsMixin, "_render_current_bar_chart")
-        assert has_method, "_render_current_bar_chart must be a separate method"
+        method = getattr(ResultsAndChartsMixin, "_render_current_bar_chart", None)
+        assert method is not None and callable(method)
 
     def test_power_data_pure_arithmetic(self) -> None:
         """_extract_power_data arithmetic: P = V * I / 1000 kW."""

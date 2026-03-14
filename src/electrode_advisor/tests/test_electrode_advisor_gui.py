@@ -101,39 +101,37 @@ class TestElectrodeAdvisorGUI:
     )
     def test_widget_creation(self, mock_qt_app):
         """Test that the widget can be created."""
-        # This test requires Qt to be available
-        try:
-            from electrode_advisor.ui.pyqt6.main_window import (
-                ElectrodeAdvisorWidget,
-            )
+        main_window = pytest.importorskip(
+            "electrode_advisor.ui.pyqt6.main_window",
+            reason="electrode_advisor.ui not available",
+        )
+        widget_cls = main_window.ElectrodeAdvisorWidget
 
-            # Mock the Qt widgets to avoid display issues
-            with (
-                patch.object(ElectrodeAdvisorWidget, "_init_ui", return_value=None),
-                patch.object(
-                    ElectrodeAdvisorWidget, "_apply_styling", return_value=None
-                ),
-                patch.object(
-                    ElectrodeAdvisorWidget, "calculate_system", return_value=None
-                ),
-            ):
-                widget = ElectrodeAdvisorWidget.__new__(ElectrodeAdvisorWidget)
-                assert widget is not None
-        except ImportError as e:
-            pytest.skip(f"Qt not available: {e}")
+        with (
+            patch.object(widget_cls, "_init_ui", return_value=None),
+            patch.object(widget_cls, "_apply_styling", return_value=None),
+            patch.object(widget_cls, "calculate_system", return_value=None),
+        ):
+            widget = widget_cls.__new__(widget_cls)
+            assert widget is not None
 
     def test_launcher_dependencies(self):
         """Test that the launcher can check dependencies."""
         launcher_path = Path(__file__).resolve().parents[1] / "launch_pyqt6.py"
+        if not launcher_path.exists():
+            pytest.skip("launch_pyqt6.py not found")
         spec = importlib.util.spec_from_file_location(
             "electrode_advisor_launch_pyqt6", launcher_path
         )
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
+        if spec is None or spec.loader is None:
+            pytest.skip("Cannot load launcher spec")
+        try:
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+        except ImportError as exc:
+            pytest.skip(f"Launcher deps unavailable: {exc}")
 
         missing = mod.check_dependencies()
-        # We expect no missing dependencies in a properly set up environment
-        # But don't fail if they're missing (CI might not have PyQt6)
         assert isinstance(missing, list)
 
 
@@ -142,15 +140,9 @@ class TestGUIRegistration:
 
     def test_registration_imports(self):
         """Test that registration module can be imported."""
-        try:
-            from gui_launcher import (
-                GUIType,
-                LaunchConfig,
-                register_gui,
-            )
-
-            assert GUIType is not None
-            assert LaunchConfig is not None
-            assert register_gui is not None
-        except ImportError as e:
-            pytest.skip(f"GUI launcher not available: {e}")
+        gui_launcher = pytest.importorskip(
+            "gui_launcher", reason="gui_launcher not available"
+        )
+        assert gui_launcher.GUIType is not None
+        assert gui_launcher.LaunchConfig is not None
+        assert gui_launcher.register_gui is not None

@@ -260,19 +260,13 @@ class CalculationMixin:
             self._update_status(error_msg, "error")
 
     def _update_status(self, message: str, status_type: str = "ok") -> None:
-        """Update status display"""
+        """Update status display using config.status_color() accessor (#1427)."""
         self.status_label.setText(message)  # type: ignore[attr-defined]
 
         if self.config.colors is None:  # type: ignore[attr-defined]
             return
 
-        color_map = {
-            "ok": self.config.colors["status_ok"],  # type: ignore[attr-defined]
-            "warn": self.config.colors["status_warn"],  # type: ignore[attr-defined]
-            "error": self.config.colors["status_err"],  # type: ignore[attr-defined]
-        }
-
-        color = color_map.get(status_type, self.config.colors["status_ok"])  # type: ignore[attr-defined]
+        color = self.config.status_color(status_type)  # type: ignore[attr-defined]
         color_str = color.name() if hasattr(color, "name") else str(color)
         self.status_panel.setStyleSheet(f"background-color: {color_str}")  # type: ignore[attr-defined]
 
