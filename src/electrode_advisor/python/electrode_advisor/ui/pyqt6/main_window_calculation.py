@@ -2,13 +2,13 @@
 
 Contains _calculate_system, _update_status, _validate_glass_height,
 _on_metal_conductivity_changed, _on_input_changed, _on_zoom_slider_changed,
-_setup_timers, _periodic_update, and _run_optimization.
+_setup_timers, and _run_optimization.
 """
 
 from __future__ import annotations
 
 import logging
-from typing import cast
+from typing import Any, cast
 
 import numpy as np
 from PyQt6.QtCore import QTimer, pyqtSlot
@@ -145,6 +145,55 @@ class CalculationMixin:
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error handling metal conductivity change: %s", e)
 
+    def _read_calculation_params(self) -> dict[str, Any]:
+        """Read UI inputs needed for electrical-model calculations.
+
+        Extracted from _calculate_system and _compute_balanced_depths to
+        eliminate duplicated parameter reading (fixes #1414).
+
+        Returns
+        -------
+        dict
+            Keys: depths, bath_diameter, electrode_diameter,
+            metal_layer_height, bath_temperature, voltages,
+            k_factors, conductive_height.
+        """
+        depths = np.array(
+            [
+                self.depth_inputs[0].value(),  # type: ignore[attr-defined]
+                self.depth_inputs[1].value(),  # type: ignore[attr-defined]
+                self.depth_inputs[2].value(),  # type: ignore[attr-defined]
+            ]
+        )
+        bath_diameter = self.bath_diameter_input.value()  # type: ignore[attr-defined]
+        electrode_diameter = float(
+            self.electrode_diameter_combo.currentText()  # type: ignore[attr-defined]
+        )
+        metal_layer_height = self.metal_layer_height_input.value()  # type: ignore[attr-defined]
+        bath_temperature = self.bath_temp_input.value()  # type: ignore[attr-defined]
+        voltages = np.array(
+            [
+                cast(QDoubleSpinBox, self.phase_inputs["1-2"]["voltage"]).value(),  # type: ignore[attr-defined]
+                cast(QDoubleSpinBox, self.phase_inputs["2-3"]["voltage"]).value(),  # type: ignore[attr-defined]
+                cast(QDoubleSpinBox, self.phase_inputs["3-1"]["voltage"]).value(),  # type: ignore[attr-defined]
+            ]
+        )
+        k_factors = {
+            "K_tt": self.k_tt_input.value() * self.config.k_scaling_factor,  # type: ignore[attr-defined]
+            "K_vert": self.k_vert_input.value() * self.config.k_scaling_factor,  # type: ignore[attr-defined]
+        }
+        conductive_height = self.conductive_layer_height_input.value()  # type: ignore[attr-defined]
+        return {
+            "depths": depths,
+            "bath_diameter": bath_diameter,
+            "electrode_diameter": electrode_diameter,
+            "metal_layer_height": metal_layer_height,
+            "bath_temperature": bath_temperature,
+            "voltages": voltages,
+            "k_factors": k_factors,
+            "conductive_height": conductive_height,
+        }
+
     def _calculate_system(self) -> None:
         """Calculate System method.
 
@@ -160,18 +209,10 @@ class CalculationMixin:
                 self.horizontal_spreading_input.value()  # type: ignore[attr-defined]
             )
 
-            depths = np.array(
-                [
-                    self.depth_inputs[0].value(),  # type: ignore[attr-defined]
-                    self.depth_inputs[1].value(),  # type: ignore[attr-defined]
-                    self.depth_inputs[2].value(),  # type: ignore[attr-defined]
-                ]
-            )
-
-            bath_diameter = self.bath_diameter_input.value()  # type: ignore[attr-defined]
-            electrode_diameter = float(self.electrode_diameter_combo.currentText())  # type: ignore[attr-defined]
-            metal_layer_height = self.metal_layer_height_input.value()  # type: ignore[attr-defined]
-            bath_temperature = self.bath_temp_input.value()  # type: ignore[attr-defined]
+            params = self._read_calculation_params()
+            depths = params["depths"]
+            bath_diameter = params["bath_diameter"]
+            bath_temperature = params["bath_temperature"]
 
             # DbC preconditions (#1365)
             assert bath_diameter > 0, f"bath_diameter must be > 0, got {bath_diameter}"
@@ -179,29 +220,15 @@ class CalculationMixin:
             in_range = 800 <= bath_temperature <= 1600
             assert in_range, f"temperature {bath_temperature} not in [800,1600]"
 
-            voltages = np.array(
-                [
-                    cast(QDoubleSpinBox, self.phase_inputs["1-2"]["voltage"]).value(),  # type: ignore[attr-defined]
-                    cast(QDoubleSpinBox, self.phase_inputs["2-3"]["voltage"]).value(),  # type: ignore[attr-defined]
-                    cast(QDoubleSpinBox, self.phase_inputs["3-1"]["voltage"]).value(),  # type: ignore[attr-defined]
-                ]
-            )
-
-            k_factors = {
-                "K_tt": self.k_tt_input.value() * self.config.k_scaling_factor,  # type: ignore[attr-defined]
-                "K_vert": self.k_vert_input.value() * self.config.k_scaling_factor,  # type: ignore[attr-defined]
-            }
-
-            conductive_height = self.conductive_layer_height_input.value()  # type: ignore[attr-defined]
             self.calculation_results = self.electrical_model.calculate_system_state(  # type: ignore[attr-defined]
                 depths=depths,
                 bath_diameter=bath_diameter,
-                tip_diameter=electrode_diameter,
-                metal_depth=metal_layer_height,
-                k_factors=k_factors,
+                tip_diameter=params["electrode_diameter"],
+                metal_depth=params["metal_layer_height"],
+                k_factors=params["k_factors"],
                 bath_temperature=bath_temperature,
-                voltages=voltages,
-                conductive_height=conductive_height,
+                voltages=params["voltages"],
+                conductive_height=params["conductive_height"],
             )
             logger.debug("[DEBUG] calculation_results: %s", self.calculation_results)  # type: ignore[attr-defined]
 
@@ -277,35 +304,20 @@ class CalculationMixin:
             Depth (inches) that produces a resistance closest to target_resistance,
             or the midpoint if bisection does not converge within max_iter.
         """
-        bath_diameter = self.bath_diameter_input.value()  # type: ignore[attr-defined]
-        electrode_diameter = float(self.electrode_diameter_combo.currentText())  # type: ignore[attr-defined]
-        metal_layer_height = self.metal_layer_height_input.value()  # type: ignore[attr-defined]
-        bath_temperature = self.bath_temp_input.value()  # type: ignore[attr-defined]
-        voltages = np.array(
-            [
-                cast(QDoubleSpinBox, self.phase_inputs["1-2"]["voltage"]).value(),  # type: ignore[attr-defined]
-                cast(QDoubleSpinBox, self.phase_inputs["2-3"]["voltage"]).value(),  # type: ignore[attr-defined]
-                cast(QDoubleSpinBox, self.phase_inputs["3-1"]["voltage"]).value(),  # type: ignore[attr-defined]
-            ]
-        )
-        k_factors = {
-            "K_tt": self.k_tt_input.value() * self.config.k_scaling_factor,  # type: ignore[attr-defined]
-            "K_vert": self.k_vert_input.value() * self.config.k_scaling_factor,  # type: ignore[attr-defined]
-        }
-        conductive_height = self.conductive_layer_height_input.value()  # type: ignore[attr-defined]
+        params = self._read_calculation_params()
 
         def resistance_at_depth(depth: float) -> float:
             trial_depths = current_depths.copy()
             trial_depths[phase_index] = depth
             result = self.electrical_model.calculate_system_state(  # type: ignore[attr-defined]
                 depths=trial_depths,
-                bath_diameter=bath_diameter,
-                tip_diameter=electrode_diameter,
-                metal_depth=metal_layer_height,
-                k_factors=k_factors,
-                bath_temperature=bath_temperature,
-                voltages=voltages,
-                conductive_height=conductive_height,
+                bath_diameter=params["bath_diameter"],
+                tip_diameter=params["electrode_diameter"],
+                metal_depth=params["metal_layer_height"],
+                k_factors=params["k_factors"],
+                bath_temperature=params["bath_temperature"],
+                voltages=params["voltages"],
+                conductive_height=params["conductive_height"],
             )
             phase_keys = ["1-2", "2-3", "3-1"]
             phase_key = phase_keys[phase_index]

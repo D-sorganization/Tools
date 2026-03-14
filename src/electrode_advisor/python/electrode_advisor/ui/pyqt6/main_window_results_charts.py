@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import Any, cast
+from typing import cast
 
 import matplotlib.colors as mcolors
 import numpy as np
@@ -298,34 +298,8 @@ class ResultsAndChartsMixin:
         return mcolors.to_hex(rgba)
 
     # Drawing geometry methods (_draw_3d_metal_layer, _draw_3d_glass_layer,
-    # _draw_3d_electrodes, _draw_horizontal_cylinder, _draw_3d_refractory_layer,
+    # _draw_3d_electrodes, _draw_electrode_sphere, _draw_3d_refractory_layer,
     # _draw_3d_metal_shell) are provided by DrawingMixin via inheritance.
-
-    def _draw_electrode_sphere(
-        self,
-        x_center: float,
-        y_center: float,
-        z_center: float,
-        radius: float,
-        color: Any,
-        alpha: float,
-    ) -> None:
-        """Draw a spherical tip at the electrode end"""
-        if self.electrode_ax is None:
-            return
-        # Create sphere
-        u = np.linspace(0, 2 * np.pi, 20)
-        v = np.linspace(0, np.pi, 15)
-
-        # Sphere coordinates
-        x_sphere = radius * np.outer(np.cos(u), np.sin(v)) + x_center
-        y_sphere = radius * np.outer(np.sin(u), np.sin(v)) + y_center
-        z_sphere = radius * np.outer(np.ones(np.size(u)), np.cos(v)) + z_center
-
-        # Draw sphere
-        self.electrode_ax.plot_surface(
-            x_sphere, y_sphere, z_sphere, color=color, alpha=alpha, linewidth=0
-        )
 
     def _extract_current_data(self) -> tuple[list[float], list[float]]:
         """Extract phase and line current values from UI inputs (pure, no rendering).
