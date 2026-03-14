@@ -37,6 +37,8 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+_SCROLL_STYLE = "QScrollArea { border: none; background: transparent; }"
+
 
 # ---------------------------------------------------------------------------
 # Background simulation worker
@@ -120,6 +122,7 @@ class SimulationPanel(QWidget):
         self.torque_history = torque_history
         self.optimizer = optimizer
         self.objective_builder = objective_builder
+        self.perturbation_panel: QWidget | None = None
         self._params_builder = params_builder
         self._torque_builder = torque_builder
         self._state_builder = state_builder
@@ -153,7 +156,7 @@ class SimulationPanel(QWidget):
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         scroll.setMinimumWidth(280)
         scroll.setMaximumWidth(380)
-        scroll.setStyleSheet("QScrollArea { border: none; background: transparent; }")
+        scroll.setStyleSheet(_SCROLL_STYLE)
         splitter.addWidget(scroll)
 
         splitter.addWidget(cast("QWidget", self.pendulum))
@@ -189,7 +192,7 @@ class SimulationPanel(QWidget):
             opt_scroll.setMinimumWidth(200)
             opt_scroll.setMaximumWidth(300)
             opt_scroll.setStyleSheet(
-                "QScrollArea { border: none; background: transparent; }"
+                _SCROLL_STYLE
             )
             splitter.addWidget(opt_scroll)
             splitter.setStretchFactor(splitter.count() - 1, 0)
@@ -212,6 +215,22 @@ class SimulationPanel(QWidget):
         saved = settings.value(self._settings_key)
         if isinstance(saved, QByteArray):
             self._splitter.restoreState(saved)
+
+    def set_perturbation_panel(self, panel: QWidget) -> None:
+        """Attach a perturbation panel to the right side of the splitter.
+
+        Must be called after construction but before the widget is shown.
+        """
+        assert panel is not None, "perturbation panel must not be None"
+        self.perturbation_panel = panel
+        scroll = QScrollArea()
+        scroll.setWidget(panel)
+        scroll.setWidgetResizable(True)
+        scroll.setMinimumWidth(200)
+        scroll.setMaximumWidth(320)
+        scroll.setStyleSheet(_SCROLL_STYLE)
+        self._splitter.addWidget(scroll)
+        self._splitter.setStretchFactor(self._splitter.count() - 1, 0)
 
     def save_layout(self) -> None:
         """Persist the current splitter positions to QSettings."""

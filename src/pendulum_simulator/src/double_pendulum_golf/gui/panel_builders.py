@@ -54,6 +54,7 @@ from .pendulum_widget import PendulumWidget
 from .simulation_panel import SimulationPanel
 from .torque_history_widget import TorqueHistoryWidget
 from .optimization_widget import OptimizationWidget
+from .perturbation_panel import PerturbationPanel
 
 logger = logging.getLogger(__name__)
 
@@ -180,6 +181,46 @@ def build_double_panel(main_window: Any) -> SimulationPanel:
         objective_builder=_make_double_objective,
     )
     panel._settings_key = "splitter_double"
+
+    # Wire perturbation panel (#1284)
+    perturb = PerturbationPanel()
+
+    def _double_simulate_fn(coeffs: list) -> object:
+        s_coeffs, w_coeffs = coeffs[0], coeffs[1]
+        p = controls.get_params()
+        params = build_params(p)
+        initial_state = build_state(p)
+        limits = build_limits(p)
+        clamp = build_clamp(p)
+        torque_func = make_polynomial_torque(s_coeffs, w_coeffs)
+        return run_simulation(
+            params=params,
+            initial_state=initial_state,
+            t_end=p["t_end"],
+            torque_func=torque_func,  # type: ignore[arg-type]
+            limits=limits,
+            clamp=clamp,
+        )
+
+    def _double_extract_fn(result: object) -> dict:
+
+        res = result  # type: ignore[assignment]
+        vels = res.joint_velocities_at(res.n_steps - 1)  # type: ignore[attr-defined]
+        tip_v = vels.get("tip", (0.0, 0.0))
+        speed = float(np.hypot(tip_v[0], tip_v[1]))
+        pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
+        tip_xy = pos.get("tip", (0.0, 0.0))
+        return {
+            "tip_speed_final": speed,
+            "tip_position_final": np.array([tip_xy[0], tip_xy[1]]),
+        }
+
+    perturb.set_coeffs_source(
+        lambda: [controls.get_params().get("shoulder_coeffs", [0.0]),
+                 controls.get_params().get("wrist_coeffs", [0.0])]
+    )
+    perturb.set_simulation_callbacks(_double_simulate_fn, _double_extract_fn)
+    panel.set_perturbation_panel(perturb)
     return panel
 
 
@@ -315,6 +356,52 @@ def build_triple_panel(main_window: Any) -> SimulationPanel:
         objective_builder=_make_triple_objective,
     )
     panel._settings_key = "splitter_triple"
+
+    # Wire perturbation panel (#1284)
+    perturb = PerturbationPanel()
+
+    def _triple_simulate_fn(coeffs: list) -> object:
+        p = controls.get_params()
+        params = build_params(p)
+        initial_state = build_state(p)
+        limits = build_limits(p)
+        clamp = build_clamp(p)
+        torque_func = make_polynomial_torque_triple(coeffs[0], coeffs[1], coeffs[2])
+        return run_simulation_triple(
+            params=params,
+            initial_state=initial_state,
+            t_end=p["t_end"],
+            torque_func=torque_func,  # type: ignore[arg-type]
+            limits=limits,
+            clamp=clamp,
+        )
+
+    def _triple_extract_fn(result: object) -> dict:
+        res = result  # type: ignore[assignment]
+        pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
+        tip_xy = pos.get("tip", (0.0, 0.0))
+        # Triple pendulum has no joint_velocities_at; approximate from last two frames
+        if res.n_steps >= 2:  # type: ignore[attr-defined]
+            dt = float(res.t[-1] - res.t[-2])  # type: ignore[attr-defined]
+            pos_prev = res.positions_at(res.n_steps - 2)  # type: ignore[attr-defined]
+            tip_prev = pos_prev.get("tip", (0.0, 0.0))
+            vx = (tip_xy[0] - tip_prev[0]) / max(dt, 1e-9)
+            vy = (tip_xy[1] - tip_prev[1]) / max(dt, 1e-9)
+        else:
+            vx, vy = 0.0, 0.0
+        speed = float(np.hypot(vx, vy))
+        return {
+            "tip_speed_final": speed,
+            "tip_position_final": np.array([tip_xy[0], tip_xy[1]]),
+        }
+
+    perturb.set_coeffs_source(
+        lambda: [controls.get_params().get("shoulder_coeffs", [0.0]),
+                 controls.get_params().get("elbow_coeffs", [0.0]),
+                 controls.get_params().get("wrist_coeffs", [0.0])]
+    )
+    perturb.set_simulation_callbacks(_triple_simulate_fn, _triple_extract_fn)
+    panel.set_perturbation_panel(perturb)
     return panel
 
 
@@ -479,6 +566,56 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
         objective_builder=_make_golfer_objective,
     )
     panel._settings_key = "splitter_golfer"
+
+    # Wire perturbation panel (#1284)
+    perturb = PerturbationPanel()
+
+    def _golfer_simulate_fn(coeffs: list) -> object:
+        p = controls.get_params()
+        params = build_params(p)
+        initial_state = build_state(p)
+        limits = build_limits(p)
+        clamp = build_clamp(p)
+        torque_func = make_polynomial_torque_golfer(*coeffs)  # type: ignore[arg-type]
+        return run_simulation_golfer(
+            params=params,
+            initial_state=initial_state,
+            t_end=p["t_end"],
+            torque_func=torque_func,
+            limits=limits,
+            clamp=clamp,
+        )
+
+    def _golfer_extract_fn(result: object) -> dict:
+        res = result  # type: ignore[assignment]
+        pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
+        tip_xy = pos.get("club_tip", pos.get("tip", (0.0, 0.0)))
+        if res.n_steps >= 2:  # type: ignore[attr-defined]
+            dt = float(res.t[-1] - res.t[-2])  # type: ignore[attr-defined]
+            pos_prev = res.positions_at(res.n_steps - 2)  # type: ignore[attr-defined]
+            tip_prev = pos_prev.get("club_tip", pos_prev.get("tip", (0.0, 0.0)))
+            vx = (tip_xy[0] - tip_prev[0]) / max(dt, 1e-9)
+            vy = (tip_xy[1] - tip_prev[1]) / max(dt, 1e-9)
+        else:
+            vx, vy = 0.0, 0.0
+        speed = float(np.hypot(vx, vy))
+        return {
+            "tip_speed_final": speed,
+            "tip_position_final": np.array([tip_xy[0], tip_xy[1]]),
+        }
+
+    def _golfer_coeffs_fn() -> list:
+        p = controls.get_params()
+        joint_keys = [
+            "hip_coeffs", "spine_coeffs", "r_shoulder_coeffs",
+            "r_elbow_coeffs", "l_shoulder_coeffs", "l_elbow_coeffs",
+            "wrist_coeffs",
+        ]
+        return [p.get(k, [0.0]) for k in joint_keys]
+
+    perturb.set_coeffs_source(_golfer_coeffs_fn)
+    perturb.set_simulation_callbacks(_golfer_simulate_fn, _golfer_extract_fn)
+    panel.set_perturbation_panel(perturb)
     return panel
 
 
