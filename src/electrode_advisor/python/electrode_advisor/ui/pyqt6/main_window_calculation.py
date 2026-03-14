@@ -141,9 +141,6 @@ class CalculationMixin:
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error handling metal conductivity change: %s", e)
-            import traceback
-
-            traceback.print_exc()
 
     def _calculate_system(self) -> None:
         """Calculate System method.

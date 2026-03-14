@@ -179,10 +179,10 @@ class InputPanelMixin:
         )
         phys_layout.addRow("Bath Diameter:", self.bath_diameter_input)
 
-        # Electrode diameter selector
+        # Electrode diameter selector (industrial furnace sizes in inches)
         self.electrode_diameter_combo = create_combobox(
-            items=["1.25", "2.0", "3.0"],
-            default_item="2.0",
+            items=["3.0", "4.0", "5.0", "6.0"],
+            default_item="4.0",
             current_text_changed_callback=self._on_input_changed,
         )
         phys_layout.addRow("Electrode Diameter:", self.electrode_diameter_combo)
