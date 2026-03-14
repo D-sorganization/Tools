@@ -6,9 +6,15 @@ Contains plot update, secondary plot, and logging methods.
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING, cast
+
+import numpy as np
 
 from .calculus import compute_tangent_line
 from .core import Signal
+
+if TYPE_CHECKING:
+    from .widget_protocol import WidgetProtocol
 
 logger = logging.getLogger(__name__)
 
@@ -21,17 +27,18 @@ class PlottingMixin:
         fitted_signal: Signal | None = None,
     ) -> None:
         """Update the main plot."""
-        self.canvas.axes.clear()  # type: ignore[attr-defined]
-        self.canvas.setup_dark_theme()  # type: ignore[attr-defined]
+        self_w = cast("WidgetProtocol", self)
+        self_w.canvas.axes.clear()
+        self_w.canvas.setup_dark_theme()
 
-        if self.current_signal is None:
-            self.canvas.draw()  # type: ignore[attr-defined]
+        if self_w.current_signal is None:
+            self_w.canvas.draw()
             return
 
         # Plot current signal
-        self.canvas.axes.plot(  # type: ignore[attr-defined]
-            self.current_signal.time,
-            self.current_signal.values,
+        self_w.canvas.axes.plot(
+            self_w.current_signal.time,
+            self_w.current_signal.values,
             color="#4da6ff",
             linewidth=1.5,
             label="Signal",
@@ -39,7 +46,7 @@ class PlottingMixin:
 
         # Plot fitted signal if provided
         if fitted_signal:
-            self.canvas.axes.plot(  # type: ignore[attr-defined]
+            self_w.canvas.axes.plot(
                 fitted_signal.time,
                 fitted_signal.values,
                 color="#ff6b6b",
@@ -49,19 +56,19 @@ class PlottingMixin:
             )
 
         # Plot tangent line if enabled
-        if self.show_tangent_check.isChecked():  # type: ignore[attr-defined]
+        if self_w.show_tangent_check.isChecked():
             tangent = compute_tangent_line(
-                self.current_signal,
-                self.tangent_t_spin.value(),  # type: ignore[attr-defined]
+                self_w.current_signal,
+                self_w.tangent_t_spin.value(),
             )
-            self.canvas.axes.plot(  # type: ignore[attr-defined]
+            self_w.canvas.axes.plot(
                 tangent.t_range,
                 tangent.line_values,
                 color="#ffd93d",
                 linewidth=2,
                 label=f"Tangent (slope={tangent.slope:.3f})",
             )
-            self.canvas.axes.scatter(  # type: ignore[attr-defined]
+            self_w.canvas.axes.scatter(
                 [tangent.t_point],
                 [tangent.y_point],
                 color="#ffd93d",
@@ -69,12 +76,12 @@ class PlottingMixin:
                 zorder=5,
             )
 
-        self.canvas.axes.set_xlabel("Time")  # type: ignore[attr-defined]
-        self.canvas.axes.set_ylabel("Value")  # type: ignore[attr-defined]
-        self.canvas.axes.set_title(self.current_signal.name)  # type: ignore[attr-defined]
-        self.canvas.axes.legend(loc="upper right")  # type: ignore[attr-defined]
+        self_w.canvas.axes.set_xlabel("Time")
+        self_w.canvas.axes.set_ylabel("Value")
+        self_w.canvas.axes.set_title(self_w.current_signal.name)
+        self_w.canvas.axes.legend(loc="upper right")
 
-        self.canvas.draw()  # type: ignore[attr-defined]
+        self_w.canvas.draw()
 
     def _update_secondary_plot(
         self,
@@ -82,28 +89,59 @@ class PlottingMixin:
         title: str,
     ) -> None:
         """Update the secondary plot."""
-        self.canvas2.axes.clear()  # type: ignore[attr-defined]
-        self.canvas2.setup_dark_theme()  # type: ignore[attr-defined]
+        self_w = cast("WidgetProtocol", self)
+        self_w.canvas2.axes.clear()
+        self_w.canvas2.setup_dark_theme()
 
-        self.canvas2.axes.plot(  # type: ignore[attr-defined]
+        self_w.canvas2.axes.plot(
             signal.time,
             signal.values,
             color="#6bcb77",
             linewidth=1.5,
         )
 
-        self.canvas2.axes.set_xlabel("Time")  # type: ignore[attr-defined]
-        self.canvas2.axes.set_ylabel("Value")  # type: ignore[attr-defined]
-        self.canvas2.axes.set_title(title)  # type: ignore[attr-defined]
+        self_w.canvas2.axes.set_xlabel("Time")
+        self_w.canvas2.axes.set_ylabel("Value")
+        self_w.canvas2.axes.set_title(title)
 
-        self.canvas2.draw()  # type: ignore[attr-defined]
+        self_w.canvas2.draw()
+
+    def _update_frequency_response_plot(
+        self,
+        frequencies: np.ndarray,
+        magnitude: np.ndarray,
+        phase: np.ndarray,
+        title: str = "Frequency Response",
+    ) -> None:
+        """Update the secondary plot with a Bode-style frequency response.
+
+        Renders magnitude (dB) on the secondary canvas.
+        """
+        self_w = cast("WidgetProtocol", self)
+        self_w.canvas2.axes.clear()
+        self_w.canvas2.setup_dark_theme()
+
+        # Magnitude in dB
+        mag_db = 20 * np.log10(np.maximum(magnitude, 1e-10))
+        self_w.canvas2.axes.plot(
+            frequencies, mag_db, color="#4ecdc4", linewidth=1.5, label="Magnitude (dB)"
+        )
+        self_w.canvas2.axes.set_xlabel("Frequency (Hz)")
+        self_w.canvas2.axes.set_ylabel("Magnitude (dB)")
+        self_w.canvas2.axes.set_title(title)
+        self_w.canvas2.axes.grid(True, alpha=0.3)
+        self_w.canvas2.axes.legend(loc="upper right")
+
+        self_w.canvas2.draw()
 
     def _log(self, message: str) -> None:
         """Log a message to the result text area."""
-        self.result_text.append(message)  # type: ignore[attr-defined]
+        self_w = cast("WidgetProtocol", self)
+        self_w.result_text.append(message)
 
     def set_joints(self, joints: list[str]) -> None:
         """Set the list of available joints."""
-        self.joint_names = joints
-        self.joint_combo.clear()  # type: ignore[attr-defined]
-        self.joint_combo.addItems(joints)  # type: ignore[attr-defined]
+        self_w = cast("WidgetProtocol", self)
+        self_w.joint_names = joints  # type: ignore[assignment]
+        self_w.joint_combo.clear()
+        self_w.joint_combo.addItems(joints)

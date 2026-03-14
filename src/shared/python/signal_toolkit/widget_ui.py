@@ -97,6 +97,9 @@ class UISetupMixin:
         # Noise tab
         tabs.addTab(self._create_noise_tab(), "Noise")
 
+        # Series tab (Issue #1279)
+        tabs.addTab(self._create_series_tab(), "Series")
+
         # Import tab
         tabs.addTab(self._create_import_tab(), "Import")
 
@@ -119,6 +122,14 @@ class UISetupMixin:
 
         self.export_btn = QPushButton("Export Signal")
         joint_layout.addWidget(self.export_btn)
+
+        # Undo / Redo row
+        undo_redo_row = QHBoxLayout()
+        self.undo_btn = QPushButton("↩ Undo")
+        self.redo_btn = QPushButton("↪ Redo")
+        undo_redo_row.addWidget(self.undo_btn)
+        undo_redo_row.addWidget(self.redo_btn)
+        joint_layout.addLayout(undo_redo_row)
 
         content_layout.addWidget(joint_group)
 
@@ -641,6 +652,10 @@ class UISetupMixin:
 
         layout.addWidget(int_group)
 
+        # Export calculus results (Issue #1281)
+        self.export_calculus_btn = QPushButton("Export Calculus Result")
+        layout.addWidget(self.export_calculus_btn)
+
         layout.addStretch()
         return tab
 
@@ -788,6 +803,45 @@ class UISetupMixin:
         layout.addStretch()
         return tab
 
+    def _create_series_tab(self) -> QWidget:
+        """Create Taylor/Maclaurin series controls (Issue #1279)."""
+        tab = QWidget()
+        layout = QVBoxLayout(tab)
+
+        # Expansion settings
+        series_group = QGroupBox("Series Expansion")
+        series_layout = QGridLayout(series_group)
+
+        series_layout.addWidget(QLabel("Type:"), 0, 0)
+        self.series_type_combo = QComboBox()
+        self.series_type_combo.addItems(["Taylor", "Maclaurin"])
+        series_layout.addWidget(self.series_type_combo, 0, 1)
+
+        series_layout.addWidget(QLabel("Center (a):"), 1, 0)
+        self.series_center_spin = QDoubleSpinBox()
+        self.series_center_spin.setRange(-100, 100)
+        self.series_center_spin.setValue(0.0)
+        self.series_center_spin.setDecimals(3)
+        series_layout.addWidget(self.series_center_spin, 1, 1)
+
+        series_layout.addWidget(QLabel("Terms:"), 2, 0)
+        self.series_terms_spin = QSpinBox()
+        self.series_terms_spin.setRange(2, 20)
+        self.series_terms_spin.setValue(6)
+        series_layout.addWidget(self.series_terms_spin, 2, 1)
+
+        layout.addWidget(series_group)
+
+        # Compute button
+        self.compute_series_btn = QPushButton("Compute Series")
+        self.compute_series_btn.setStyleSheet(
+            "background-color: #0078d4; font-weight: bold;"
+        )
+        layout.addWidget(self.compute_series_btn)
+
+        layout.addStretch()
+        return tab
+
     def _create_import_tab(self) -> QWidget:
         """Create import controls."""
         tab = QWidget()
@@ -884,6 +938,9 @@ class UISetupMixin:
         self.add_noise_btn.clicked.connect(self._add_noise)  # type: ignore[attr-defined]
         self.reset_signal_btn.clicked.connect(self._reset_signal)  # type: ignore[attr-defined]
 
+        # Series
+        self.compute_series_btn.clicked.connect(self._compute_series)  # type: ignore[attr-defined]
+
         # Import
         self.browse_btn.clicked.connect(self._browse_file)  # type: ignore[attr-defined]
         self.import_btn.clicked.connect(self._import_signal)  # type: ignore[attr-defined]
@@ -891,3 +948,10 @@ class UISetupMixin:
         # Output
         self.apply_btn.clicked.connect(self._apply_to_joint)  # type: ignore[attr-defined]
         self.export_btn.clicked.connect(self._export_signal)  # type: ignore[attr-defined]
+
+        # Undo / Redo
+        self.undo_btn.clicked.connect(self.undo)  # type: ignore[attr-defined]
+        self.redo_btn.clicked.connect(self.redo)  # type: ignore[attr-defined]
+
+        # Calculus export
+        self.export_calculus_btn.clicked.connect(self._export_calculus_result)  # type: ignore[attr-defined]
