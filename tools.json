@@ -32,13 +32,13 @@
     "Development Tools": [
         {
             "name": "Folder Packer Pro",
-            "path": "src/tools/folder_tools/folder_packer_pro/launch_pyqt6.py",
+            "path": "src/folder_packer_pro/launch_pyqt6.py",
             "type": "python",
             "desc": "Professional Project Archiving and Distribution Tool"
         },
         {
             "name": "Folder Tool (Utility)",
-            "path": "src/tools/folder_tools/folder_tool/launch_pyqt6.py",
+            "path": "src/folder_tool/launch_pyqt6.py",
             "type": "python",
             "desc": "Directory Management Utility"
         },
@@ -237,12 +237,6 @@
             "path": "src/inertia_calculator/launch_pyqt6.py",
             "type": "python",
             "desc": "Calculate and validate inertia tensors for rigid bodies"
-        },
-        {
-            "name": "Parametric URDF Builder",
-            "path": "src/urdf_builder_gui/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Generate parametric URDF models for robotics applications"
         },
         {
             "name": "Rotation Converter (PyQt6)",

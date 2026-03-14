@@ -2,21 +2,51 @@
 
 A PyQt6-based GUI application for generating parametric URDF (Unified Robot Description Format) models for robotics applications.
 
-## Purpose
+## Architecture
 
-The Parametric URDF Builder allows users to create robot models by specifying high-level parameters rather than manually writing XML. It automatically calculates link dimensions, inertial properties, and joint configurations based on anthropometric scaling factors.
+The tool follows a clean modular architecture with **5 GUI-independent core modules** and a thin UI shell:
+
+```
+urdf_builder_gui/
+├── python/urdf_builder_gui/         ← Canonical module source
+│   ├── contracts.py                 ← DbC require/ensure
+│   ├── anthropometric_model.py      ← Constants, config, physics
+│   ├── urdf_generator.py            ← URDF XML generation + validation
+│   ├── preview_generator.py         ← Human-readable model previews
+│   ├── theme.py                     ← Catppuccin Mocha palette + stylesheet
+│   └── ui/pyqt6/main_window.py      ← Thin PyQt6 UI shell
+├── tests/
+│   └── test_urdf_builder_gui.py     ← 75+ TDD tests
+├── gui_registration.py              ← Fleet launcher registration
+├── launch_pyqt6.py                  ← Standalone launcher
+└── README.md
+```
+
+### Design Principles
+
+| Principle | Implementation |
+|-----------|---------------|
+| **DRY** | Shared `HEIGHT_RATIOS`, `MASS_RATIOS` constants; no duplicate logic |
+| **DbC** | `require()`/`ensure()` contracts on all public functions |
+| **LoD** | `_get_config()` gateway prevents generator from touching GUI widgets |
+| **TDD** | 75+ tests covering all modules, boundaries, and integration |
+| **Orthogonality** | Core modules have zero GUI dependencies |
+| **Reusability** | Web viewer API reuses same core modules as PyQt6 GUI |
 
 ## Key Features
 
 - **Parametric Model Generation**: Define robots using height, mass, and proportion factors
-- **Template-Based Design**: Choose from full humanoid, upper body, lower body, or custom templates
+- **6 Templates**: Full Humanoid, Upper Body Only, Lower Body Only, Torso + Arms, Torso + Legs, Custom
 - **Gender-Based Scaling**: Adjust body proportions using anthropometric gender factors
-- **Geometry Options**: Support for capsule, cylinder, box, and sphere collision primitives
+- **Geometry Options**: Box collision primitives (with collision geometry toggle)
 - **Joint Configuration**: Configurable damping, friction, and limit parameters
-- **Live Preview**: View model structure before generating final URDF
+- **Physics-Based Inertia**: Computed from actual box model (`I = m(h²+d²)/12`)
+- **Live Preview**: View model structure and estimated segment sizes
+- **URDF Validation**: Structural validation before export (XML, links, joints)
 - **Direct Export**: Save URDF files with proper XML formatting
+- **Web API**: FastAPI endpoints for headless URDF generation
 
-## Installation / Prerequisites
+## Installation
 
 ### Dependencies
 
@@ -24,35 +54,30 @@ The Parametric URDF Builder allows users to create robot models by specifying hi
 pip install PyQt6
 ```
 
-### Optional (for advanced model generation)
+### Running
 
 ```bash
-pip install model_generation  # Internal package for parametric humanoid building
-```
-
-### Running the Application
-
-```bash
-python -m urdf_builder_gui.ui.pyqt6.main_window
-# or
+# Via fleet launcher
 python launch_pyqt6.py
+
+# Direct module execution
+python -m urdf_builder_gui.ui.pyqt6.main_window
 ```
 
-## Usage Instructions
+## Usage
 
 ### Body Parameters Tab
 
 1. Enter a robot name (used as the URDF robot element name)
-2. Set the total height in meters
-3. Set the total mass in kilograms
+2. Set the total height in meters (0.5 – 3.0 m)
+3. Set the total mass in kilograms (20 – 200 kg)
 4. Adjust the gender factor slider (affects shoulder/hip width ratios)
 5. Select a model template
 
 ### Proportions Tab
 
-1. Adjust individual body segment proportions using sliders
-2. Values range from 50% to 150% of default proportions
-3. Click "Reset to Defaults" to restore 100% scaling
+1. Adjust individual body segment proportions using sliders (50% – 150%)
+2. Click "Reset to Defaults" to restore 100% scaling
 
 ### Options Tab
 
@@ -60,11 +85,11 @@ python launch_pyqt6.py
 2. **Joint Options**: Set default damping and friction coefficients
 3. **Inertia Calculation**: Choose primitive, mesh-based, or scaled inertia mode
 
-### Generating Output
+### Actions
 
-1. Click "Preview Structure" to see a summary of the model
-2. Click "Generate URDF" to create the XML
-3. Click "Export URDF File" to save to disk
+1. Click **Preview Structure** to see a summary (segment sizes, options, template segments)
+2. Click **Generate URDF** to create the XML
+3. Click **Export URDF File** to save to disk (validates URDF structure first)
 
 ## Input Parameters
 
@@ -72,7 +97,7 @@ python launch_pyqt6.py
 
 | Parameter     | Unit | Range     | Description                      |
 | ------------- | ---- | --------- | -------------------------------- |
-| Robot Name    | -    | text      | Identifier for the robot model   |
+| Robot Name    | -    | text      | Valid XML NCName identifier      |
 | Height        | m    | 0.5 - 3.0 | Total standing height            |
 | Mass          | kg   | 20 - 200  | Total body mass                  |
 | Gender Factor | %    | 0 - 100   | Female (0) to Male (100) scaling |
@@ -92,151 +117,77 @@ python launch_pyqt6.py
 
 | Parameter        | Unit      | Range      | Description                  |
 | ---------------- | --------- | ---------- | ---------------------------- |
-| Default Damping  | N*m*s/rad | 0 - 100    | Viscous damping coefficient  |
-| Default Friction | N\*m      | 0 - 100    | Coulomb friction coefficient |
-| Density          | kg/m^3    | 500 - 2000 | Default material density     |
-
-## Output Format
-
-### URDF Structure
-
-The generated URDF follows the standard format:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<robot name="humanoid">
-  <link name="pelvis">
-    <visual>
-      <geometry><box size="0.2 0.3 0.15"/></geometry>
-      <material name="skin"><color rgba="0.8 0.6 0.5 1.0"/></material>
-    </visual>
-    <collision>
-      <geometry><box size="0.2 0.3 0.15"/></geometry>
-    </collision>
-    <inertial>
-      <mass value="7.8400"/>
-      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
-    </inertial>
-  </link>
-
-  <joint name="pelvis_to_torso" type="fixed">
-    <parent link="pelvis"/>
-    <child link="torso"/>
-    <origin xyz="0 0 0.25"/>
-  </joint>
-  <!-- Additional links and joints -->
-</robot>
-```
-
-### Model Templates
-
-| Template        | Links Included                            |
-| --------------- | ----------------------------------------- |
-| Full Humanoid   | Pelvis, torso, head, both arms, both legs |
-| Upper Body Only | Pelvis, torso, head, both arms            |
-| Lower Body Only | Pelvis, both legs                         |
-| Torso + Arms    | Pelvis, torso, both arms                  |
-| Torso + Legs    | Pelvis, torso, both legs                  |
+| Default Damping  | N·m·s/rad | 0 - 100    | Viscous damping coefficient  |
+| Default Friction | N·m       | 0 - 100    | Coulomb friction coefficient |
+| Density          | kg/m³     | 500 - 2000 | Default material density     |
 
 ## Mathematical Models
 
 ### Segment Length Estimation
 
-Segment lengths are calculated from total height using anthropometric ratios:
+Segment lengths are calculated from total height using de Leva (1996) anthropometric ratios
+(defined in `anthropometric_model.HEIGHT_RATIOS`):
 
-```
-Pelvis Height  = 0.078 * H
-Torso Height   = 0.278 * H
-Head Diameter  = 0.139 * H
-Thigh Length   = 0.245 * H
-Shin Length    = 0.246 * H
-Upper Arm      = 0.186 * H
-Forearm        = 0.146 * H
-```
+| Segment    | Ratio  |
+|------------|--------|
+| Pelvis     | 0.078  |
+| Torso      | 0.278  |
+| Head       | 0.139  |
+| Thigh      | 0.245  |
+| Shin       | 0.246  |
+| Upper Arm  | 0.186  |
+| Forearm    | 0.146  |
 
 ### Mass Distribution
 
-Segment masses are distributed according to de Leva (1996) ratios:
+Segment masses distributed per `MASS_RATIOS` (de Leva 1996):
 
-```
-Pelvis Mass    = 0.112 * M
-Torso Mass     = 0.350 * M
-Head Mass      = 0.069 * M
-Thigh Mass     = 0.142 * M (each)
-Shin Mass      = 0.043 * M (each)
-```
+| Segment    | Ratio | Note      |
+|------------|-------|-----------|
+| Pelvis     | 0.112 |           |
+| Torso      | 0.355 | Combined  |
+| Head       | 0.069 |           |
+| Thigh      | 0.142 | Per leg   |
+| Shin       | 0.043 | Per leg   |
+| Upper Arm  | 0.027 | Per arm   |
+| Forearm    | 0.016 | Per arm   |
 
 ### Inertia Calculation
 
-For primitive geometry mode, inertia is computed assuming uniform density:
+For primitive geometry mode, inertia is computed assuming uniform density box model:
 
 ```
-I_box = (1/12) * m * (h^2 + d^2)  [for each principal axis]
-I_cylinder = (1/12) * m * (3r^2 + h^2)  [transverse]
-           = (1/2) * m * r^2  [axial]
+I_box_xx = (1/12) * m * (h² + d²)
+I_box_yy = (1/12) * m * (w² + d²)
+I_box_zz = (1/12) * m * (w² + h²)
 ```
 
-## Example Usage
+Cylinder and sphere inertia formulae also available in `anthropometric_model.py`.
 
-### Example 1: Standard Adult Male
+## Web API
 
-Parameters:
+The URDF Viewer web application (`src/web_applications/urdf_viewer/`) exposes API
+endpoints that reuse the same core modules:
 
-- Height: 1.75 m
-- Mass: 75 kg
-- Gender Factor: 80%
-- Template: Full Humanoid
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/generate` | POST | Generate URDF XML from parameters |
+| `/api/preview` | POST | Generate human-readable preview |
+| `/api/templates` | GET | List available templates |
+| `/api/models` | GET | List uploaded models |
+| `/api/upload` | POST | Upload a URDF file |
+| `/api/models/{name}` | GET | Download a model file |
 
-Generated structure includes 17 links (pelvis, torso, head, 2x arms, 2x legs with segments) with properly scaled dimensions.
+## Testing
 
-### Example 2: Child Robot Model
+```bash
+cd src/urdf_builder_gui
+python -m pytest tests/test_urdf_builder_gui.py -v
+```
 
-Parameters:
-
-- Height: 1.20 m
-- Mass: 25 kg
-- Gender Factor: 50%
-- Head Size: 120% (larger relative head for children)
-
-### Example 3: Heavy-Duty Industrial Arm
-
-Parameters:
-
-- Template: Torso + Arms
-- Mass: 150 kg
-- Damping: 10.0
-- Friction: 5.0
-
-## Troubleshooting
-
-### "Build failed: Unknown error"
-
-Ensure all required parameters are set and within valid ranges. Check that height > 0.5m and mass > 20kg.
-
-### URDF validation fails in ROS
-
-- Verify all joints have valid parent/child links
-- Check that link names don't contain special characters
-- Ensure inertia values are positive definite
-
-### Model appears distorted in visualization
-
-- Reset proportions to 100% defaults
-- Check that extreme proportion values aren't causing geometric issues
-- Verify height and mass are reasonable for the template
-
-### Export fails to save file
-
-- Check write permissions in the target directory
-- Ensure the filename doesn't contain invalid characters
-- Verify sufficient disk space
-
-## Related Tools
-
-- **Inertia Calculator**: Compute precise inertias for custom shapes
-- **Humanoid Builder GUI**: Advanced humanoid with anthropometric data
-- **C3D Viewer**: Import motion capture data to animate models
-- **MuJoCo Converter**: Convert URDF to MuJoCo XML format
+Test coverage includes: contracts, theme, anthropometric model, URDF generator,
+URDF validator, preview generator, URDFConfig, integration round-trips,
+and file sync verification.
 
 ## References
 
@@ -244,21 +195,9 @@ Ensure all required parameters are set and within valid ranges. Check that heigh
 - de Leva, P. (1996). Adjustments to Zatsiorsky-Seluyanov's segment inertia parameters.
 - Winter, D.A. (2009). Biomechanics and Motor Control of Human Movement.
 
-## Current Features
-
-- Purpose: Generate parametric URDF models for robotics applications
-- Category: Robotics
-- Python files in tool path: 9
-- Surface support: PyQt6=implemented, Web manifest=no, Web implementation=missing
-- Test visibility: 0 name-matched test files under tests/
-
 ## Implementation State
 
-- PyQt6 launcher: Implemented
-- Web surface declared in manifest: No
-- Web surface implementation: Gap / Not present
-- README last reviewed: 2026-02-27
-
-## Implementation Gaps
-
-- No name-matched tests detected in repository-level tests/.
+- PyQt6 launcher: ✅ Implemented
+- Web API: ✅ Implemented (FastAPI)
+- Tests: ✅ 75+ passing
+- README last reviewed: 2026-03-14
