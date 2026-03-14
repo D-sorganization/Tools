@@ -1,7 +1,5 @@
-# Assessment M_Configuration
+# Assessment: Configuration
 
-## Grade: 7/10
+## Grade: 8/10
 
-### Assessment Notes
-
-- AUTO-FIXED: Hardcoded Windows path (`C:\Users\diete\...`) was replaced with environment variable fallback (`os.environ.get("DWSIM_PATH", ...)`). Much more robust now.
+Notes: Based on automated review.

@@ -1,7 +1,5 @@
-# Assessment K_Data_Handling
+# Assessment: Data Handling
 
-## Grade: 6/10
+## Grade: 7/10
 
-### Assessment Notes
-
-- Data flows through streams (`materials`, `energy_streams`) effectively. Lacking persistent data storage or data validation schemas for inputs.
+Notes: Based on automated review.

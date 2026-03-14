@@ -6,7 +6,9 @@
 
 pub mod atmosphere;
 pub mod ball_flight;
+pub mod engineering;
 pub mod math;
+pub mod signal;
 // Re-export primary types
 pub use math::{clamp, lerp, GRAVITY, R_GAS};
 pub use math_primitives::matrix3::Matrix3;
@@ -37,6 +39,83 @@ fn tools_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
 
     // Register math_primitives submodule (rotation, quaternion, geometry, numpy bindings)
     math_primitives::py_bindings::py_math::register_module(m)?;
+
+    // Register signal submodule
+    let signal_mod = PyModule::new(m.py(), "signal")?;
+    signal_mod.add_function(wrap_pyfunction!(
+        signal::py_bindings::py_sinusoid,
+        &signal_mod
+    )?)?;
+    signal_mod.add_function(wrap_pyfunction!(
+        signal::py_bindings::py_cosine,
+        &signal_mod
+    )?)?;
+    signal_mod.add_function(wrap_pyfunction!(
+        signal::py_bindings::py_exponential,
+        &signal_mod
+    )?)?;
+    signal_mod.add_function(wrap_pyfunction!(
+        signal::py_bindings::py_linear,
+        &signal_mod
+    )?)?;
+    signal_mod.add_function(wrap_pyfunction!(signal::py_bindings::py_step, &signal_mod)?)?;
+    signal_mod.add_function(wrap_pyfunction!(
+        signal::py_bindings::py_square,
+        &signal_mod
+    )?)?;
+    signal_mod.add_function(wrap_pyfunction!(
+        signal::py_bindings::py_triangle,
+        &signal_mod
+    )?)?;
+    signal_mod.add_function(wrap_pyfunction!(
+        signal::py_bindings::py_chirp,
+        &signal_mod
+    )?)?;
+    signal_mod.add_function(wrap_pyfunction!(
+        signal::py_bindings::py_polynomial,
+        &signal_mod
+    )?)?;
+    signal_mod.add_function(wrap_pyfunction!(
+        signal::py_bindings::py_pulse,
+        &signal_mod
+    )?)?;
+    m.add_submodule(&signal_mod)?;
+
+    // Register engineering submodule
+    let eng_mod = PyModule::new(m.py(), "engineering")?;
+    eng_mod.add_function(wrap_pyfunction!(
+        engineering::py_bindings::py_reynolds_number,
+        &eng_mod
+    )?)?;
+    eng_mod.add_function(wrap_pyfunction!(
+        engineering::py_bindings::py_churchill_friction_factor,
+        &eng_mod
+    )?)?;
+    eng_mod.add_function(wrap_pyfunction!(
+        engineering::py_bindings::py_darcy_weisbach,
+        &eng_mod
+    )?)?;
+    eng_mod.add_function(wrap_pyfunction!(
+        engineering::py_bindings::py_ideal_gas_density,
+        &eng_mod
+    )?)?;
+    eng_mod.add_function(wrap_pyfunction!(
+        engineering::py_bindings::py_isentropic_work,
+        &eng_mod
+    )?)?;
+    eng_mod.add_function(wrap_pyfunction!(
+        engineering::py_bindings::py_lmtd,
+        &eng_mod
+    )?)?;
+    eng_mod.add_function(wrap_pyfunction!(
+        engineering::py_bindings::py_celsius_to_kelvin,
+        &eng_mod
+    )?)?;
+    eng_mod.add_function(wrap_pyfunction!(
+        engineering::py_bindings::py_kelvin_to_celsius,
+        &eng_mod
+    )?)?;
+    m.add_submodule(&eng_mod)?;
 
     Ok(())
 }
