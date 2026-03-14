@@ -7,19 +7,19 @@ charts, color mapping for conductive paths, and electrode sphere drawing.
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any
+import math
+from typing import Any, cast
 
 import matplotlib.colors as mcolors
 import numpy as np
 from matplotlib import colormaps
 from PyQt6.QtWidgets import QDoubleSpinBox, QLineEdit, QTableWidgetItem
 
-if TYPE_CHECKING:
-    from typing import cast
-else:
-    from typing import cast
-
 logger = logging.getLogger(__name__)
+
+_COLOR_MODE_CURRENT = "Current intensity"
+_COLOR_MODE_POWER = "Power dissipation"
+_COLOR_MODE_TEMPERATURE = "Temperature gradient"
 
 
 class ResultsAndChartsMixin:
@@ -139,22 +139,16 @@ class ResultsAndChartsMixin:
                         [v["resistance_ratio"] for v in current_dist.values()]
                     )
 
-                    # Thermal efficiency estimate (simplified)
-                    thermal_eff = (avg_direct / 100) * 0.85 + (avg_metal / 100) * 0.95
                 else:
                     # Metal conduction disabled - all current through glass
                     avg_direct = 100.0
                     avg_metal = 0.0
-                    avg_ratio = 1.0  # No ratio when only one path type
-
-                    # Higher thermal efficiency when all current goes through glass
-                    # (no metal losses)
-                    thermal_eff = 0.85
+                    avg_ratio = 1.0
 
                 self.path_labels["Direct Glass Fraction"].setText(f"{avg_direct:.1f}%")
                 self.path_labels["Via Metal Fraction"].setText(f"{avg_metal:.1f}%")
                 self.path_labels["Path Resistance Ratio"].setText(f"{avg_ratio:.2f}")
-                self.path_labels["Thermal Efficiency"].setText(f"{thermal_eff:.1%}")
+                self.path_labels["Thermal Efficiency"].setText("N/A")
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error updating analysis display: %s", e)
@@ -177,11 +171,11 @@ class ResultsAndChartsMixin:
             return "lightblue"
 
         # Get the value to map to color
-        if color_mode == "Current intensity":
+        if color_mode == _COLOR_MODE_CURRENT:
             value = self._get_path_current(path_type, phase_index)
-        elif color_mode == "Power dissipation":
+        elif color_mode == _COLOR_MODE_POWER:
             value = self._get_path_power(path_type, phase_index)
-        elif color_mode == "Temperature gradient":
+        elif color_mode == _COLOR_MODE_TEMPERATURE:
             value = self._get_path_temperature(path_type, phase_index)
         else:
             return "lightblue"
@@ -272,14 +266,13 @@ class ResultsAndChartsMixin:
             return float(current**2 * resistance)
         return 0.0
 
-    def _get_path_temperature(self, path_type: str, phase_index: int) -> float:
-        """Get estimated temperature for path based on power dissipation"""
-        base_temp = self.bath_temp_input.value()
-        power = self._get_path_power(path_type, phase_index)
+    def _get_path_temperature(self, _path_type: str, _phase_index: int) -> float:
+        """Return bath temperature as path temperature baseline.
 
-        # Simple temperature rise model (would be more complex in reality)
-        temp_rise = power * 0.001  # Simplified: 1°C per kW
-        return base_temp + temp_rise
+        A physics-based thermal rise model is not yet implemented.
+        Issue #1359: the old ``power * 0.001`` formula had no physical basis.
+        """
+        return float(self.bath_temp_input.value())
 
     def _calculate_color_scale_bounds(self, color_mode: str) -> tuple[float, float]:
         """Calculate min/max values for color scaling"""
@@ -287,11 +280,11 @@ class ResultsAndChartsMixin:
 
         for phase_idx in range(3):
             for path_type in ["direct_glass", "via_metal"]:
-                if color_mode == "Current intensity":
+                if color_mode == _COLOR_MODE_CURRENT:
                     values.append(self._get_path_current(path_type, phase_idx))
-                elif color_mode == "Power dissipation":
+                elif color_mode == _COLOR_MODE_POWER:
                     values.append(self._get_path_power(path_type, phase_idx))
-                elif color_mode == "Temperature gradient":
+                elif color_mode == _COLOR_MODE_TEMPERATURE:
                     values.append(self._get_path_temperature(path_type, phase_idx))
 
         if values:
@@ -302,12 +295,12 @@ class ResultsAndChartsMixin:
         """Convert normalized value (0-1) to color based on mode"""
 
         # Select colormap based on mode
-        if color_mode == "Current intensity":
-            cmap = colormaps.get_cmap("coolwarm")  # Blue to red
-        elif color_mode == "Power dissipation":
-            cmap = colormaps.get_cmap("hot")  # Black to red to yellow to white
-        elif color_mode == "Temperature gradient":
-            cmap = colormaps.get_cmap("plasma")  # Purple to pink to yellow
+        if color_mode == _COLOR_MODE_CURRENT:
+            cmap = colormaps.get_cmap("coolwarm")
+        elif color_mode == _COLOR_MODE_POWER:
+            cmap = colormaps.get_cmap("hot")
+        elif color_mode == _COLOR_MODE_TEMPERATURE:
+            cmap = colormaps.get_cmap("plasma")
         else:
             cmap = colormaps.get_cmap("viridis")  # Default
 
@@ -382,8 +375,8 @@ class ResultsAndChartsMixin:
                 alpha=0.8,
             )
 
-            # Line currents (for demonstration, using phase current * 0.8)
-            line_currents = [current * 0.8 for current in phase_currents]
+            # Line currents: in delta configuration, I_line = sqrt(3) * I_phase
+            line_currents = [current * math.sqrt(3) for current in phase_currents]
             bars2 = self.current_ax.bar(
                 x + width / 2,
                 line_currents,
@@ -495,8 +488,6 @@ class ResultsAndChartsMixin:
                 )
 
             # Create bar chart
-            import numpy as np
-
             x_positions = np.arange(len(phases))
             bars = self.power_ax.bar(x_positions, powers, color=colors, alpha=0.7)
             self.power_ax.set_xticks(x_positions)
@@ -532,8 +523,5 @@ class ResultsAndChartsMixin:
             if self.power_canvas is not None:
                 self.power_canvas.draw()
 
-        except ImportError as e:
+        except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error updating power distribution: %s", e)
-            import traceback
-
-            traceback.print_exc()

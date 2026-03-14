@@ -8,7 +8,7 @@ rendering the real geometry view.
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import numpy as np
 from PyQt6.QtWidgets import QCheckBox
@@ -23,9 +23,6 @@ from ...utils.shared_drawing import (
     draw_via_metal_path,
 )
 from ...utils.visualization import ElectrodeVisualization
-
-if TYPE_CHECKING:
-    pass
 
 logger = logging.getLogger(__name__)
 
@@ -266,7 +263,7 @@ class VisualizationUpdateMixin:
             "metal_height": self.metal_layer_height_input.value(),
             "glass_height": self.glass_layer_height_input.value(),
             "refractory_thickness": self.refractory_thickness_input.value(),
-            "depths": [inp.value() for inp in self.depth_inputs[:3]],
+            "depths": [self.depth_inputs[i].value() for i in range(3)],
         }
 
     @staticmethod
@@ -456,7 +453,7 @@ class VisualizationUpdateMixin:
 
         for depth, angle in zip(depths, angles, strict=False):
             angle_rad = np.radians(angle)
-            electrode_z = metal_height + glass_height / 2
+            electrode_z = metal_height + glass_height - depth
             x_tip = (bath_radius - depth) * np.cos(angle_rad)
             y_tip = (bath_radius - depth) * np.sin(angle_rad)
             x_base = total_length * np.cos(angle_rad)
