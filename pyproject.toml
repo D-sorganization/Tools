@@ -90,6 +90,9 @@ dwsim = [
 dev = [
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
+    "pytest-xdist>=3.0.0",
+    "pytest-timeout>=2.0.0",
+    "pytest-benchmark>=4.0.0",
     "ruff>=0.1.0",
     "black>=23.0.0",
     "mypy>=1.0.0",
@@ -147,7 +150,7 @@ testpaths = ["tests", "src"]
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
-addopts = "--strict-markers"
+addopts = "-ra -q --strict-markers --strict-config --durations=20 --benchmark-disable -n auto --dist loadscope"
 pythonpath = ["src"]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
