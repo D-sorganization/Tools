@@ -261,9 +261,9 @@ class SwingComparisonDialog(QDialog):
             self._preset_list.addItem(item)
         # Default: select first two
         for i in range(min(2, self._preset_list.count())):
-            item = self._preset_list.item(i)
-            if item is not None:
-                item.setSelected(True)
+            default_item = self._preset_list.item(i)
+            if default_item is not None:
+                default_item.setSelected(True)
         self._preset_list.setFixedHeight(140)
         lay.addWidget(self._preset_list)
         return grp
