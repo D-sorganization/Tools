@@ -18,6 +18,7 @@ def gas_mole_fractions(
 
     Postcondition: fractions sum to ~1.0, all >= 0
     """
+    assert moles is not None, "moles must be provided"
     gas_mask = np.array([SPECIES_DB[k]["phase"] == "gas" for k in species_keys])
     n_gas = moles * gas_mask
     total = max(float(n_gas.sum()), 1e-15)
@@ -29,6 +30,7 @@ def h2_co_ratio(moles: np.ndarray, species_keys: list[str]) -> float:
 
     Returns 0.0 if CO is negligible.
     """
+    assert moles is not None, "moles must be provided"
     comp = dict(zip(species_keys, moles, strict=True))
     h2 = float(comp.get("H2", 0.0))
     co = float(comp.get("CO", 0.0))
@@ -42,6 +44,7 @@ def carbon_conversion(
 
     Postcondition: 0.0 <= result <= 1.0
     """
+    assert moles is not None, "moles must be provided"
     c_feed = feed_elements.get("C", 0.0)
     if c_feed <= 1e-12:
         return 1.0
@@ -65,6 +68,7 @@ def cold_gas_efficiency(
 
     Postcondition: 0.0 <= result (can exceed 1.0 with external energy input)
     """
+    assert mole_fractions is not None, "mole_fractions must be provided"
     syngas_energy = sum(
         mole_fractions[i] * total_gas_moles * HEATING_VALUES_HHV.get(sp, 0.0)
         for i, sp in enumerate(species_keys)

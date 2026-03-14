@@ -110,7 +110,6 @@ def _make_results(
 
 
 class TestGasificationMetrics:
-
     def test_to_dict_contains_all_kpi_keys(self):
         m = GasificationMetrics(
             cold_gas_efficiency=0.72,
@@ -168,7 +167,6 @@ class TestGasificationMetrics:
 
 
 class TestMetricsCalculator:
-
     def setup_method(self):
         self.calculator = MetricsCalculator()
 

@@ -128,6 +128,7 @@ class BaghouseCalculatorEngine:
         bag_area: float,
     ) -> BaghouseDesign:
         """Run baghouse calculation."""
+        assert gas_flow is not None, "gas_flow must be provided"
         result = self._calculator.calculate(
             gas_flow_kg_s=gas_flow,
             inlet_temp_k=inlet_temp + 273.15,
@@ -380,6 +381,7 @@ class BaghouseCalculatorMainWindow(BaseCalculatorWindow):
 
     def _update_results(self, results: BaghouseDesign) -> None:
         """Update results display."""
+        assert results is not None, "results must be provided"
         self.metric_labels["carbon"].setText(f"{results.carbon_removed:.1f} kg/hr")
         self.metric_labels["ash"].setText(f"{results.ash_removed:.1f} kg/hr")
         self.metric_labels["total"].setText(f"{results.total_solids:.1f} kg/hr")

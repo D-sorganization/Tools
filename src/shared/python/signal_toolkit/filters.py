@@ -83,6 +83,7 @@ class FilterSpec:
         Returns:
             Tuple of (frequencies, magnitude, phase).
         """
+        assert num_points is not None, "num_points must be provided"
         w, h = scipy_signal.freqz(self.b, self.a, worN=num_points, fs=self.fs)
         magnitude = np.abs(h)
         phase = np.angle(h)
@@ -100,6 +101,7 @@ class FilterSpec:
         Returns:
             Tuple of (time, impulse_response).
         """
+        assert num_samples is not None, "num_samples must be provided"
         impulse = np.zeros(num_samples)
         impulse[0] = 1.0
 
@@ -346,6 +348,7 @@ def apply_filter(
     Returns:
         Filtered signal.
     """
+    assert signal is not None, "signal must be provided"
     if zero_phase:
         # Zero-phase filtering (no phase distortion)
         filtered_values = filtfilt(filter_spec.b, filter_spec.a, signal.values)
@@ -401,6 +404,7 @@ def create_butterworth_filter(
     Returns:
         FilterSpec.
     """
+    assert filter_type is not None, "filter_type must be provided"
     ft = FilterType(filter_type)
     return FilterDesigner.butterworth(ft, cutoff, fs, order)
 
@@ -424,6 +428,7 @@ def create_chebyshev_filter(
     Returns:
         FilterSpec.
     """
+    assert filter_type is not None, "filter_type must be provided"
     ft = FilterType(filter_type)
     return FilterDesigner.chebyshev1(ft, cutoff, fs, order, ripple_db)
 
@@ -460,6 +465,7 @@ def create_savgol_filter(
     Returns:
         Function that applies Savitzky-Golay filter to values.
     """
+    assert window_length is not None, "window_length must be provided"
     if window_length % 2 == 0:
         window_length += 1
 
@@ -484,6 +490,7 @@ def apply_moving_average(
     Returns:
         Filtered signal.
     """
+    assert signal is not None, "signal must be provided"
     filter_func = create_moving_average_filter(window_size)
     filtered_values = filter_func(signal.values)
 
@@ -511,6 +518,7 @@ def apply_savgol(
     Returns:
         Filtered signal.
     """
+    assert signal is not None, "signal must be provided"
     if window_length % 2 == 0:
         window_length += 1
 
@@ -548,6 +556,7 @@ def apply_median_filter(
     Returns:
         Filtered signal.
     """
+    assert signal is not None, "signal must be provided"
     if kernel_size % 2 == 0:
         kernel_size += 1
 
@@ -575,6 +584,7 @@ def apply_exponential_smoothing(
     Returns:
         Smoothed signal.
     """
+    assert signal is not None, "signal must be provided"
     values = signal.values
     smoothed = np.zeros_like(values)
     smoothed[0] = values[0]
@@ -604,6 +614,7 @@ def apply_gaussian_smoothing(
     Returns:
         Smoothed signal.
     """
+    assert signal is not None, "signal must be provided"
     from scipy.ndimage import gaussian_filter1d
 
     filtered_values = gaussian_filter1d(signal.values, sigma)
@@ -636,6 +647,7 @@ def apply_bilateral_filter(
     Returns:
         Filtered signal.
     """
+    assert signal is not None, "signal must be provided"
     values = signal.values
     n = len(values)
     filtered = np.zeros(n)
@@ -698,6 +710,7 @@ class AdaptiveFilter:
         Returns:
             Tuple of (filtered_signal, error_signal).
         """
+        assert signal is not None, "signal must be provided"
         n = len(signal.values)
         x = signal.values
         d = reference.values
@@ -748,6 +761,7 @@ class AdaptiveFilter:
         Returns:
             Tuple of (filtered_signal, error_signal).
         """
+        assert signal is not None, "signal must be provided"
         n = len(signal.values)
         x = signal.values
         d = reference.values

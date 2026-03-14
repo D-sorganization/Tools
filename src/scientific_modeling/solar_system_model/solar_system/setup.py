@@ -24,6 +24,7 @@ except ImportError:
         encoding: str = "utf-8",
         create_parents: bool = True,
     ) -> None:
+        assert path is not None, "path must be provided"
         p = Path(path)
         if create_parents:
             p.parent.mkdir(parents=True, exist_ok=True)

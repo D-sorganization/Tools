@@ -1,4 +1,4 @@
-﻿"""Pure physics engine for the Asteroid Jumper simulation.
+"""Pure physics engine for the Asteroid Jumper simulation.
 
 All state is represented as plain dataclasses; no Qt dependencies.
 Physics uses Newtonian rigid-body mechanics in 2-D.

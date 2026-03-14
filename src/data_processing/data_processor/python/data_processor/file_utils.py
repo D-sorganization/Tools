@@ -197,6 +197,7 @@ class DataWriter:
             ValueError: If format is not supported
             ImportError: If required library is not available
         """
+        assert data is not None, "data must be provided"
         file_path = Path(file_path)
         fmt = format_type.lower()
 

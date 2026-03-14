@@ -32,6 +32,8 @@ def handle_file_errors(
         Decorator function
     """
 
+    assert log_error is not None, "log_error must be provided"
+
     def decorator(func: Callable[..., T]) -> Callable[..., T | None]:
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> T | None:
@@ -136,6 +138,8 @@ def log_and_continue(
         Decorator function
     """
 
+    assert error_message is not None, "error_message must be provided"
+
     def decorator(func: Callable[..., T]) -> Callable[..., T | None]:
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> T | None:
@@ -165,6 +169,8 @@ def exit_on_error(
     Returns:
         Decorator function
     """
+
+    assert error_message is not None, "error_message must be provided"
 
     def decorator(func: Callable[..., T]) -> Callable[..., T]:
         @wraps(func)

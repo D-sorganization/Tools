@@ -41,6 +41,7 @@ class SimulationTime:
     @classmethod
     def from_julian_date(cls, jd: float) -> SimulationTime:
         """Create SimulationTime from Julian date."""
+        assert jd is not None, "jd must be provided"
         dt = cls.julian_to_datetime(jd)
         year = cls.julian_to_decimal_year(jd)
         return cls(julian_date=jd, datetime_utc=dt, year=year)
@@ -48,6 +49,7 @@ class SimulationTime:
     @classmethod
     def from_datetime(cls, dt: datetime) -> SimulationTime:
         """Create SimulationTime from datetime."""
+        assert dt is not None, "dt must be provided"
         jd = cls.datetime_to_julian(dt)
         year = cls.julian_to_decimal_year(jd)
         return cls(julian_date=jd, datetime_utc=dt, year=year)
@@ -266,6 +268,7 @@ class TimeManager:
         Args:
             sim_time: Target simulation time
         """
+        assert sim_time is not None, "sim_time must be provided"
         jd = sim_time.julian_date
         jd = max(self._min_julian_date, min(jd, self._max_julian_date))
 
@@ -293,6 +296,7 @@ class TimeManager:
 
     def advance_days(self, days: float) -> None:
         """Advance simulation by specified number of days."""
+        assert days is not None, "days must be provided"
         new_jd = self._simulation_time.julian_date + days
         self.set_julian_date(new_jd)
 
@@ -310,6 +314,7 @@ class TimeManager:
         Returns:
             True if preset was found and set
         """
+        assert preset_name is not None, "preset_name must be provided"
         if preset_name in self.WARP_FACTORS:
             self._time_warp = self.WARP_FACTORS[preset_name]
             return True

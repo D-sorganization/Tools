@@ -135,6 +135,7 @@ class PopOutChart:
 
         Returns (x_fit, y_fit) or None if no data.
         """
+        assert degree is not None, "degree must be provided"
         if self._x is None or self._y is None:
             return None
         x_fit, y_fit, coeffs = fit_regression(self._x, self._y, degree)

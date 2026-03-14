@@ -97,6 +97,7 @@ def create_resized_images(
     Returns:
         List of resized images.
     """
+    assert img is not None, "img must be provided"
     require(
         isinstance(sizes, list) and len(sizes) > 0, "sizes must be a non-empty list"
     )
@@ -121,6 +122,7 @@ def convert_png_to_ico(
     Returns:
         True if successful, False otherwise.
     """
+    assert png_path is not None, "png_path must be provided"
     require(isinstance(png_path, Path), "png_path must be a Path")
     require(isinstance(ico_path, Path), "ico_path must be a Path")
 

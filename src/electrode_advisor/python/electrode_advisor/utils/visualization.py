@@ -52,6 +52,7 @@ class ElectrodeVisualization(ElectrodeLayersMixin):
         wireframe: bool = False,
     ) -> None:
         """Draw a 3D cylinder."""
+        assert radius is not None, "radius must be provided"
         if radius <= 0 or height <= 0:
             return
         theta = np.linspace(0, 2 * np.pi, CYLINDER_THETA_SEGMENTS)
@@ -82,6 +83,7 @@ class ElectrodeVisualization(ElectrodeLayersMixin):
         alpha: float = 1.0,
     ) -> None:
         """Draw cylinder from base point to tip point."""
+        assert radius is not None, "radius must be provided"
         base = np.array(base)
         tip = np.array(tip)
         direction = tip - base
@@ -116,6 +118,7 @@ class ElectrodeVisualization(ElectrodeLayersMixin):
         alpha: float = 1.0,
     ) -> None:
         """Draw the real trapezoidal prism between two electrodes in glass."""
+        assert pos1 is not None, "pos1 must be provided"
         e1_angle = pos1["angle"]
         e2_angle = pos2["angle"]
         z = pos1["tip"][2]
@@ -152,6 +155,7 @@ class ElectrodeVisualization(ElectrodeLayersMixin):
         alpha: float = 1.0,
     ) -> None:
         """Draw the real via-metal path as three segments."""
+        assert pos1 is not None, "pos1 must be provided"
         tip1 = pos1["tip"]
         tip2 = pos2["tip"]
         # Segment 1: tip1 down to metal
@@ -199,6 +203,7 @@ class ElectrodeVisualization(ElectrodeLayersMixin):
         show_electrode_labels: bool = False,
     ) -> None:
         """Draw the three electrodes as horizontal cylinders with spherical tips."""
+        assert electrode_radius is not None, "electrode_radius must be provided"
         angles = ELECTRODE_ANGLES_DEG
         electrode_colors = ELECTRODE_COLORS
 
@@ -267,6 +272,7 @@ class ElectrodeVisualization(ElectrodeLayersMixin):
         label: str,
     ) -> None:
         """Draw a horizontal cylindrical electrode with proper 3D geometry."""
+        assert x_start is not None, "x_start must be provided"
         n_length = CYLINDER_LENGTH_SEGMENTS
         n_circum = CYLINDER_CIRCUM_SEGMENTS
 
@@ -327,6 +333,7 @@ class ElectrodeVisualization(ElectrodeLayersMixin):
         alpha: float,
     ) -> None:
         """Draw a spherical tip at the electrode end."""
+        assert x_center is not None, "x_center must be provided"
         u = np.linspace(0, 2 * np.pi, SPHERE_U_RESOLUTION)
         v = np.linspace(0, np.pi, SPHERE_V_RESOLUTION)
 

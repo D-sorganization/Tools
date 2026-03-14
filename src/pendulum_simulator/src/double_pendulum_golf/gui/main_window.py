@@ -156,6 +156,7 @@ class MainWindow(QMainWindow):
 
     def wheelEvent(self, event: object) -> None:
         """Ctrl+mousewheel scales all UI fonts (#1147)."""
+        assert event is not None, "event must be provided"
         from PyQt6.QtGui import QWheelEvent
 
         if not isinstance(event, QWheelEvent):
@@ -396,6 +397,7 @@ class MainWindow(QMainWindow):
         receive the current overlay toggle states from the toolstrip so
         that forces, ellipsoids, COM, etc. match the checkbox display.
         """
+        assert index is not None, "index must be provided"
         segment_map = {
             0: self._SEGMENTS_DOUBLE,
             1: self._SEGMENTS_TRIPLE,
@@ -590,6 +592,7 @@ class MainWindow(QMainWindow):
             self.restoreGeometry(geom)
 
     def closeEvent(self, event: object) -> None:
+        assert event is not None, "event must be provided"
         settings = QSettings(_SETTINGS_ORG, _SETTINGS_APP)
         settings.setValue("window_geometry", self.saveGeometry())
         self._double_panel.save_layout()

@@ -54,6 +54,7 @@ def get_relative_path(from_path: Path | str, to_path: Path | str) -> Path:
     Returns:
         Relative path from from_path to to_path
     """
+    assert from_path is not None, "from_path must be provided"
     from_p = Path(from_path).resolve()
     to_p = Path(to_path).resolve()
 
@@ -76,6 +77,7 @@ def find_nearest_file(
     Returns:
         Path to file if found, None otherwise
     """
+    assert filename is not None, "filename must be provided"
     start_path = Path.cwd() if start_path is None else Path(start_path)
 
     current = start_path.resolve()
@@ -102,6 +104,7 @@ def find_nearest_dir(dirname: str, start_path: Path | str | None = None) -> Path
     Returns:
         Path to directory if found, None otherwise
     """
+    assert dirname is not None, "dirname must be provided"
     start_path = Path.cwd() if start_path is None else Path(start_path)
 
     current = start_path.resolve()

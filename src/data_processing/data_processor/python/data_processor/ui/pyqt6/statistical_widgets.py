@@ -89,6 +89,7 @@ if PYQT6_AVAILABLE:
 
         def set_variables(self, variables: list[str]) -> None:
             """Set the available variables."""
+            assert variables is not None, "variables must be provided"
             self.list_widget.clear()
             for var in variables:
                 item = QListWidgetItem(var)
@@ -185,6 +186,7 @@ if PYQT6_AVAILABLE:
 
         def set_dataframe(self, df: pd.DataFrame) -> None:
             """Set the DataFrame and update variable list."""
+            assert df is not None, "df must be provided"
             numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
             self.variable_selector.set_variables(numeric_cols)
 
@@ -346,6 +348,7 @@ if PYQT6_AVAILABLE:
 
         def set_dataframe(self, df: pd.DataFrame) -> None:
             """Set DataFrame and update variable combos."""
+            assert df is not None, "df must be provided"
             all_cols = list(df.columns)
             numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
 
@@ -393,6 +396,7 @@ if PYQT6_AVAILABLE:
 
         def display_results(self, report: str) -> None:
             """Display ANOVA results."""
+            assert report is not None, "report must be provided"
             self.results_text.setText(report)
 
     class RegressionWidget(QWidget):
@@ -473,6 +477,7 @@ if PYQT6_AVAILABLE:
 
         def set_dataframe(self, df: pd.DataFrame) -> None:
             """Set DataFrame and update variable lists."""
+            assert df is not None, "df must be provided"
             numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
             self.target_combo.clear()
             self.target_combo.addItems(numeric_cols)
@@ -493,6 +498,7 @@ if PYQT6_AVAILABLE:
 
         def display_results(self, result: Any, report: str) -> None:
             """Display regression results."""
+            assert report is not None, "report must be provided"
             self.summary_text.setText(report)
 
             # Coefficients table

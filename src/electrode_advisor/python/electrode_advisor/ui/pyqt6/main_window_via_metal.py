@@ -42,6 +42,7 @@ class ViaMetalMixin:
 
         Delegates to :func:`~shared_drawing.draw_via_metal_path`.
         """
+        assert electrode1_pos is not None, "electrode1_pos must be provided"
         if self.electrode_ax is None:
             return
         draw_via_metal_path(
@@ -73,6 +74,7 @@ class ViaMetalMixin:
 
         Delegates to :func:`~shared_drawing.draw_electrode_length_extrusion`.
         """
+        assert electrode_pos is not None, "electrode_pos must be provided"
         if self.electrode_ax is None:
             return
         draw_electrode_length_extrusion(
@@ -97,6 +99,7 @@ class ViaMetalMixin:
         alpha: float,
     ) -> None:
         """Draw a spherical tip at the electrode end."""
+        assert x_center is not None, "x_center must be provided"
         if self.electrode_ax is None:
             return
         u = np.linspace(0, 2 * np.pi, 20)

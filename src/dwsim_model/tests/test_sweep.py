@@ -29,7 +29,6 @@ from dwsim_model.analysis.sweep import (
 
 
 class TestNestedHelpers:
-
     def test_set_nested_simple(self):
         d = {"feeds": {"biomass": {"flow": 1.0}}}
         _set_nested(d, "feeds.biomass.flow", 2.5)
@@ -94,7 +93,6 @@ def _make_mock_runner(kpi_fn=None):
 
 
 class TestParameterSweep1D:
-
     def setup_method(self):
         """Fresh sweep engine with mock runner before each test."""
         self.mock_runner = _make_mock_runner()
@@ -171,7 +169,6 @@ class TestParameterSweep1D:
 
 
 class TestParameterSweep2D:
-
     def setup_method(self):
         self.mock_runner = _make_mock_runner()
         self.sweep = ParameterSweep(model_runner=self.mock_runner)
@@ -233,7 +230,6 @@ class TestParameterSweep2D:
 
 
 class TestSensitivityOAT:
-
     def test_oat_produces_rows_for_each_param(self):
         pytest.importorskip("numpy")
         mock_runner = _make_mock_runner()

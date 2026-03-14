@@ -146,6 +146,7 @@ class ResultsExtractor:
         FlowsheetResults
             All extracted stream data and derived metrics.
         """
+        assert builder is not None, "builder must be provided"
         results = FlowsheetResults()
 
         streams_to_extract = (
@@ -190,6 +191,7 @@ class ResultsExtractor:
 
     def _extract_material_stream(self, name: str, stream_obj) -> StreamResult:
         """Extract all properties from a single material stream."""
+        assert name is not None, "name must be provided"
         result = StreamResult(name=name)
 
         # Temperature (DWSIM returns K; we store °C)
@@ -229,6 +231,7 @@ class ResultsExtractor:
 
     def _extract_energy_stream(self, name: str, e_obj) -> EnergyStreamResult:
         """Extract energy flow from an energy stream."""
+        assert name is not None, "name must be provided"
         w = self._get_prop(e_obj, _PROP_ENERGY_FLOW, default=0.0)
         return EnergyStreamResult(name=name, energy_flow_kW=(w / 1000.0) if w else 0.0)
 
@@ -242,6 +245,7 @@ class ResultsExtractor:
         DWSIM properties can be read as attributes or via GetPropertyValue().
         We try both to be resilient across API versions.
         """
+        assert obj is not None, "obj must be provided"
         try:
             val = obj.GetPropertyValue(prop_name)
             if val is not None:
@@ -272,6 +276,7 @@ class ResultsExtractor:
         """
         # Exact compound→MW (g/mol) lookup supporting both DWSIM full names and
         # short chemical formula keys used in biomass_decomposer._MW.
+        assert mass_flow_kg_s is not None, "mass_flow_kg_s must be provided"
         _COMPOUND_MW: dict[str, float] = {
             # Short formula keys
             "CO": 28.010,

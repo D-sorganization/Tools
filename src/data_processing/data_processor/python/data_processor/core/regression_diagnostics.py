@@ -64,6 +64,7 @@ class DiagnosticsMixin:
         Returns:
             Tuple of (intercept_se, coefficient_se_array)
         """
+        assert X is not None, "X must be provided"
         X_with_intercept = np.column_stack([np.ones(n), X])
         try:
             var_covar = mse * np.linalg.inv(X_with_intercept.T @ X_with_intercept)
@@ -99,6 +100,7 @@ class DiagnosticsMixin:
         Returns:
             List of CoefficientInfo objects
         """
+        assert coeffs is not None, "coeffs must be provided"
         coef_info = []
         for i, name in enumerate(feature_names):
             t_stat = coeffs[i] / coef_se[i] if coef_se[i] > 0 else 0
@@ -129,6 +131,7 @@ class DiagnosticsMixin:
         feature_names: list[str],
     ) -> RegressionResult:
         """Calculate comprehensive regression statistics."""
+        assert X is not None, "X must be provided"
         n, p = X.shape
 
         ss_res = np.sum(residuals**2)
@@ -190,6 +193,7 @@ class DiagnosticsMixin:
 
     def _calculate_vif(self, X: np.ndarray) -> np.ndarray:
         """Calculate Variance Inflation Factors."""
+        assert X is not None, "X must be provided"
         n, p = X.shape
         vifs = np.ones(p)
 
@@ -224,6 +228,7 @@ class DiagnosticsMixin:
         residuals: np.ndarray,
     ) -> RegressionDiagnostics:
         """Calculate regression diagnostics."""
+        assert X is not None, "X must be provided"
         n, p = X.shape
 
         # Hat matrix for leverage
@@ -317,6 +322,7 @@ class DiagnosticsMixin:
     ) -> dict[str, float]:
         """Calculate variable importance (standardized coefficients)."""
         # Standardize coefficients by feature standard deviation
+        assert coeffs is not None, "coeffs must be provided"
         x_std = np.std(X, axis=0)
         x_std[x_std == 0] = 1
 
@@ -338,6 +344,8 @@ class DiagnosticsMixin:
         original_predictors: list[str],
     ) -> Callable[[np.ndarray], np.ndarray]:
         """Create prediction function for the model."""
+
+        assert coeffs is not None, "coeffs must be provided"
 
         def predict(X: np.ndarray) -> np.ndarray:
             # Build features if needed

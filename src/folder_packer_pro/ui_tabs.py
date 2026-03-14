@@ -48,6 +48,7 @@ class PackTabMixin:
 
     def _create_pack_left_column(self, parent: ttk.Frame) -> None:
         """Create the left column of the pack tab (source, output, stats, progress)."""
+        assert parent is not None, "parent must be provided"
         header_label = ttk.Label(
             parent,
             text="📦 Folder Packer Pro",
@@ -62,6 +63,7 @@ class PackTabMixin:
 
     def _create_pack_source_section(self, parent: ttk.Frame) -> None:
         """Create the source folder input section."""
+        assert parent is not None, "parent must be provided"
         frame = ttk.LabelFrame(parent, text="Source Folder", padding=PADDING_MEDIUM)
         frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
@@ -83,6 +85,7 @@ class PackTabMixin:
 
     def _create_pack_output_section(self, parent: ttk.Frame) -> None:
         """Create the output package file input section."""
+        assert parent is not None, "parent must be provided"
         frame = ttk.LabelFrame(
             parent, text="Output Package File", padding=PADDING_MEDIUM
         )
@@ -106,6 +109,7 @@ class PackTabMixin:
 
     def _create_pack_stats_section(self, parent: ttk.Frame) -> None:
         """Create the project statistics display section."""
+        assert parent is not None, "parent must be provided"
         frame = ttk.LabelFrame(
             parent, text="Project Statistics", padding=PADDING_MEDIUM
         )
@@ -128,6 +132,7 @@ class PackTabMixin:
 
     def _create_pack_progress_section(self, parent: ttk.Frame) -> None:
         """Create the progress bar and status label section."""
+        assert parent is not None, "parent must be provided"
         frame = ttk.LabelFrame(parent, text="Progress", padding=PADDING_MEDIUM)
         frame.pack(fill="x")
 
@@ -154,6 +159,7 @@ class PackTabMixin:
             right_frame: Parent frame for options.
         """
         # Compression options
+        assert right_frame is not None, "right_frame must be provided"
         compression_frame = ttk.LabelFrame(
             right_frame,
             text="Compression Options",
@@ -289,6 +295,7 @@ class UnpackTabMixin:
 
     def _create_unpack_source_section(self, parent: ttk.Frame) -> None:
         """Create the package file source input section."""
+        assert parent is not None, "parent must be provided"
         frame = ttk.LabelFrame(parent, text="Package File", padding=PADDING_MEDIUM)
         frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
@@ -310,6 +317,7 @@ class UnpackTabMixin:
 
     def _create_unpack_dest_section(self, parent: ttk.Frame) -> None:
         """Create the destination folder input section."""
+        assert parent is not None, "parent must be provided"
         frame = ttk.LabelFrame(
             parent, text="Destination Folder", padding=PADDING_MEDIUM
         )
@@ -333,6 +341,7 @@ class UnpackTabMixin:
 
     def _create_unpack_decrypt_section(self, parent: ttk.Frame) -> None:
         """Create the decryption controls section."""
+        assert parent is not None, "parent must be provided"
         frame = ttk.LabelFrame(parent, text="Decryption", padding=PADDING_MEDIUM)
         frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
@@ -349,13 +358,15 @@ class UnpackTabMixin:
 
         ttk.Label(self.decrypt_password_frame, text="Password:").pack(anchor="w")  # type: ignore[attr-defined]
         self.unpack_password_entry = ttk.Entry(  # type: ignore[attr-defined]
-            self.decrypt_password_frame, show="*"  # type: ignore[attr-defined]
+            self.decrypt_password_frame,
+            show="*",  # type: ignore[attr-defined]
         )
         self.unpack_password_entry.pack(fill="x", pady=(PADDING_SMALL, 0))  # type: ignore[attr-defined]
         self.unpack_password_entry.configure(state="disabled")  # type: ignore[attr-defined]
 
     def _create_unpack_info_section(self, parent: ttk.Frame) -> None:
         """Create the package information display section."""
+        assert parent is not None, "parent must be provided"
         frame = ttk.LabelFrame(
             parent, text="Package Information", padding=PADDING_MEDIUM
         )
@@ -378,6 +389,7 @@ class UnpackTabMixin:
 
     def _create_unpack_progress_section(self, parent: ttk.Frame) -> None:
         """Create the progress bar and status label section."""
+        assert parent is not None, "parent must be provided"
         frame = ttk.LabelFrame(parent, text="Progress", padding=PADDING_MEDIUM)
         frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
@@ -399,6 +411,7 @@ class UnpackTabMixin:
 
     def _create_unpack_action_buttons(self, parent: ttk.Frame) -> None:
         """Create the extract and cancel action buttons."""
+        assert parent is not None, "parent must be provided"
         action_frame = ttk.Frame(parent)
         action_frame.pack(fill="x")
 
@@ -487,7 +500,8 @@ class PreviewTabMixin:
         tree_scroll.pack(side="right", fill="y")
 
         self.preview_tree.bind(  # type: ignore[attr-defined]
-            "<<TreeviewSelect>>", self._on_file_select  # type: ignore[attr-defined]
+            "<<TreeviewSelect>>",
+            self._on_file_select,  # type: ignore[attr-defined]
         )
 
         # Preview pane
@@ -519,6 +533,7 @@ class PreviewTabMixin:
             content: File content to display.
             file_ext: File extension for syntax detection.
         """
+        assert content is not None, "content must be provided"
         keywords = {
             "def",
             "class",

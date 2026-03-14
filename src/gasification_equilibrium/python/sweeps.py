@@ -65,6 +65,7 @@ def surface_sweep(
 
     Precondition: param_name is a valid kwarg for engine.solve()
     """
+    assert t_range is not None, "t_range must be provided"
     temperatures = np.linspace(t_range[0], t_range[1], n_t)
     param_values = np.linspace(param_range[0], param_range[1], n_param)
 

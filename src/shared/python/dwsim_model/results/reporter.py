@@ -64,6 +64,7 @@ def generate_html_report(
     -------
     Path to the written HTML file.
     """
+    assert results is not None, "results must be provided"
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -91,6 +92,7 @@ def generate_json_report(
 
     Useful for programmatic consumption, parameter sweeps, and regression tests.
     """
+    assert results is not None, "results must be provided"
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -134,6 +136,7 @@ def _stream_to_dict(stream) -> dict:
 
 def _fmt(value, fmt=".3g", suffix="") -> str:
     """Format a numeric value, or return '—' for None/NaN."""
+    assert value is not None, "value must be provided"
     if value is None:
         return "—"
     try:
@@ -144,6 +147,7 @@ def _fmt(value, fmt=".3g", suffix="") -> str:
 
 def _traffic_light_class(metric_key: str, value, targets: dict) -> str:
     """Return CSS class 'good', 'warn', or 'bad' based on target comparison."""
+    assert metric_key is not None, "metric_key must be provided"
     if not targets or value is None:
         return ""
     target = targets.get(metric_key)
@@ -188,6 +192,7 @@ def _traffic_light_class(metric_key: str, value, targets: dict) -> str:
 def _build_html(results, metrics, scenario_name, model_version, targets) -> str:
     """Assemble the complete HTML document string."""
 
+    assert results is not None, "results must be provided"
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
     converged_badge = (
         '<span class="badge-green">CONVERGED</span>'
@@ -463,7 +468,10 @@ def _build_html(results, metrics, scenario_name, model_version, targets) -> str:
 def _build_kpi_cards(metrics, targets: dict) -> str:
     """Build the HTML for KPI metric cards."""
 
+    assert metrics is not None, "metrics must be provided"
+
     def card(key, value, label, fmt, suffix, target_key=None):
+        assert key is not None, "key must be provided"
         css = _traffic_light_class(target_key or key, value, targets)
         formatted = _fmt(value, fmt, suffix)
         target_val = targets.get(target_key or key)
@@ -679,6 +687,7 @@ def _build_syngas_table(syngas_stream) -> str:
 
 def _build_warnings(results, metrics) -> str:
     """Build the warnings / diagnostics section HTML."""
+    assert results is not None, "results must be provided"
     errors = getattr(results, "errors", [])
     warnings = getattr(metrics, "warnings", [])
 

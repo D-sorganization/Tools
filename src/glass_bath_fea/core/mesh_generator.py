@@ -43,6 +43,7 @@ class MeshGenerator:
         Args:
             config: FEA configuration with vessel dimensions
         """
+        assert config is not None, "config must be provided"
         self.config = config
         self.geometry_generator = GeometryGenerator(config)
 
@@ -184,6 +185,7 @@ class MeshGenerator:
         Returns:
             Array of material IDs for each element.
         """
+        assert points is not None, "points must be provided"
         dims = self.geometry_generator.get_dimensions()
         material_ids = []
 
@@ -209,6 +211,7 @@ class MeshGenerator:
         Returns:
             Dictionary with quality metrics.
         """
+        assert mesh is not None, "mesh must be provided"
         nodes = mesh["nodes"]
         elements = mesh["elements"]
 
@@ -254,6 +257,7 @@ class MeshGenerator:
             True if mesh is watertight.
         """
         # For mock mesh, assume it's watertight if it has elements
+        assert mesh is not None, "mesh must be provided"
         elements = mesh.get("elements", np.array([]))
 
         if elements.size == 0:
@@ -272,6 +276,7 @@ class MeshGenerator:
         Returns:
             Dictionary with mesh statistics.
         """
+        assert mesh is not None, "mesh must be provided"
         nodes = mesh["nodes"]
         elements = mesh["elements"]
         material_ids = mesh.get("material_ids", np.array([]))

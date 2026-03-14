@@ -67,6 +67,7 @@ class VisualizationBuilder:
             QWidget: The created visualization tab
 
         """
+        assert scroll_callback is not None, "scroll_callback must be provided"
         self.viz_widget = QWidget()
         viz_layout = QHBoxLayout(self.viz_widget)
 

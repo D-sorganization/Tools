@@ -212,6 +212,7 @@ class StateAndExportMixin:
         self, currents: list[float], voltages: list[float]
     ) -> None:
         """Set electrical measurements programmatically"""
+        assert currents is not None, "currents must be provided"
         phases = ["1-2", "2-3", "3-1"]
         for i, phase in enumerate(phases[:3]):
             if phase in self.phase_inputs:

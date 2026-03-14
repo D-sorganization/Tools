@@ -63,6 +63,7 @@ class GeminiTitleLLM:
             logger.error("google-generativeai package not installed")
 
     def extract_title(self, pdf_path: Path) -> TitleResult:
+        assert pdf_path is not None, "pdf_path must be provided"
         if not self.genai or not self.model:
             return TitleResult(
                 None, 0.0, "llm", "Gemini API not available or model not initialized"

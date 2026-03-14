@@ -45,6 +45,7 @@ class TransformsMixin:
         Returns:
             Time-warped data
         """
+        assert data is not None, "data must be provided"
         sigma = sigma or self.config.warp_sigma
         knots = knots or self.config.warp_knots
 
@@ -75,6 +76,7 @@ class TransformsMixin:
         Returns:
             Magnitude-warped data
         """
+        assert data is not None, "data must be provided"
         sigma = sigma or self.config.magnitude_sigma
         knots = knots or self.config.warp_knots
 
@@ -109,6 +111,7 @@ class TransformsMixin:
         Returns:
             Window-warped data
         """
+        assert data is not None, "data must be provided"
         if scales is None:
             scales = [0.5, 2.0]
 
@@ -142,6 +145,7 @@ class TransformsMixin:
         Returns:
             Scaled data
         """
+        assert data is not None, "data must be provided"
         range_ = range_ or self.config.scale_range
         scale_factor = self._rng.uniform(range_[0], range_[1])
         return data * scale_factor
@@ -158,6 +162,7 @@ class TransformsMixin:
         Returns:
             Rotated data
         """
+        assert data is not None, "data must be provided"
         if data.ndim == 1 or (data.ndim == 2 and data.shape[1] < 2):
             return data.copy()
 
@@ -238,6 +243,7 @@ class TransformsMixin:
         Returns:
             Sliced data (may have different length)
         """
+        assert data is not None, "data must be provided"
         ratio = ratio or self.config.window_ratio
 
         if data.ndim == 1:
@@ -261,6 +267,7 @@ class TransformsMixin:
         Returns:
             Cropped and resized data
         """
+        assert data is not None, "data must be provided"
         ratio = ratio or self.config.crop_ratio
 
         if data.ndim == 1:
@@ -335,6 +342,7 @@ class TransformsMixin:
         Returns:
             Tuple of (augmented_data, augmented_labels)
         """
+        assert data is not None, "data must be provided"
         k_neighbors = k_neighbors or self.config.smote_k_neighbors
         data = np.atleast_2d(data)
         n_samples = data.shape[0]
@@ -389,6 +397,7 @@ class TransformsMixin:
         Returns:
             Tuple of (mixed_data, mixed_labels)
         """
+        assert data is not None, "data must be provided"
         alpha = alpha or self.config.mixup_alpha
         n_samples = data.shape[0]
 
@@ -442,6 +451,7 @@ class TransformsMixin:
         Returns:
             Data with masked regions
         """
+        assert data is not None, "data must be provided"
         ratio = ratio or self.config.cutout_ratio
         result = data.copy()
 
@@ -481,6 +491,7 @@ class TransformsMixin:
         Returns:
             Tuple of (mixed_data, mixed_labels)
         """
+        assert data is not None, "data must be provided"
         ratio = ratio or self.config.cutout_ratio
         n_samples = data.shape[0]
 
@@ -594,6 +605,7 @@ class TransformsMixin:
 
     def _time_warp_1d(self, data: np.ndarray, sigma: float, knots: int) -> np.ndarray:
         """Apply time warping to 1D data."""
+        assert data is not None, "data must be provided"
         n = len(data)
 
         # Generate random warp path
@@ -609,6 +621,7 @@ class TransformsMixin:
 
     def _generate_warp_curve(self, length: int, sigma: float, knots: int) -> np.ndarray:
         """Generate smooth random warp curve."""
+        assert length is not None, "length must be provided"
         knot_positions = np.linspace(0, length - 1, knots + 2)
         knot_values = self._rng.normal(1.0, sigma, knots + 2)
         knot_values = np.maximum(knot_values, 0.1)  # Ensure positive
@@ -620,6 +633,7 @@ class TransformsMixin:
         self, data: np.ndarray, ratio: float, scales: list[float]
     ) -> np.ndarray:
         """Apply window warping to 1D data."""
+        assert data is not None, "data must be provided"
         n = len(data)
         window_size = int(n * ratio)
         start = self._rng.integers(0, n - window_size + 1)
@@ -647,6 +661,7 @@ class TransformsMixin:
 
     def _permute_1d(self, data: np.ndarray, max_segments: int) -> np.ndarray:
         """Permute segments of 1D data."""
+        assert data is not None, "data must be provided"
         n = len(data)
         n_segments = self._rng.integers(2, min(max_segments + 1, n // 2 + 1))
         segment_size = n // n_segments
@@ -670,6 +685,7 @@ class TransformsMixin:
 
     def _interpolate(self, data: np.ndarray, target_length: int) -> np.ndarray:
         """Interpolate data to target length."""
+        assert data is not None, "data must be provided"
         n = len(data)
         if n == target_length:
             return data.copy()
@@ -683,6 +699,7 @@ class TransformsMixin:
         self, data: np.ndarray, mask_ratio: float, num_masks: int
     ) -> np.ndarray:
         """Apply frequency masking to 1D data."""
+        assert data is not None, "data must be provided"
         n = len(data)
         fft = np.fft.rfft(data)
         n_freq = len(fft)
@@ -698,6 +715,7 @@ class TransformsMixin:
         self, data: np.ndarray, max_shift_ratio: float
     ) -> np.ndarray:
         """Apply frequency shift to 1D data."""
+        assert data is not None, "data must be provided"
         n = len(data)
         fft = np.fft.rfft(data)
         n_freq = len(fft)

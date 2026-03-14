@@ -16,6 +16,7 @@ class ResultsTab(ttk.Frame):
     """Tab for displaying simulation results."""
 
     def __init__(self, parent, controller):
+        assert parent is not None, "parent must be provided"
         super().__init__(parent)
         self.controller = controller
         self._build()
@@ -94,6 +95,7 @@ class ResultsTab(ttk.Frame):
     def update_results(self, results, metrics, targets: dict | None = None) -> None:
         """Populate the KPI panel and stream table from results objects."""
         # KPIs
+        assert results is not None, "results must be provided"
         self.kpi_panel.update_kpis(metrics.to_dict(), targets=targets)
 
         # Stream table

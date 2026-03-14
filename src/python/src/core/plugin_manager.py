@@ -23,6 +23,7 @@ class PluginManager:
     """Manages tool discovery and loading."""
 
     def __init__(self, repo_root: Path):
+        assert repo_root is not None, "repo_root must be provided"
         self.repo_root = repo_root
         self.tools_file = repo_root / "tools.json"
         self.tools: dict[str, list[Tool]] = {}
@@ -122,6 +123,7 @@ class PluginManager:
 
     def get_tool_by_name(self, name: str) -> Tool | None:
         """Find a tool by name."""
+        assert name is not None, "name must be provided"
         for category in self.tools.values():
             for tool in category:
                 if tool.name == name:

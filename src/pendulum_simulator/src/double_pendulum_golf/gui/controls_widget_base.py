@@ -377,6 +377,7 @@ class ControlsWidgetBase(QWidget):
     # ------------------------------------------------------------------
 
     def _on_play_toggled(self, checked: bool) -> None:
+        assert checked is not None, "checked must be provided"
         self._is_playing = checked
         self.btn_play.setText("Pause" if checked else "Play")
         self.play_toggled.emit(checked)
@@ -459,6 +460,7 @@ class ControlsWidgetBase(QWidget):
         Subclasses should use this when parsing inputs that might be
         UnitAwareInput or plain LabeledInput widgets.
         """
+        assert widget is not None, "widget must be provided"
         from .controls_utils import parse_float
 
         try:

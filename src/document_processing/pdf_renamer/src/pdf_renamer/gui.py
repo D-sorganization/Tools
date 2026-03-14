@@ -65,6 +65,7 @@ class ProcessingThread(QThread):
         move_failed: bool = True,
         failed_folder: str = "failed_renames",
     ):
+        assert directory is not None, "directory must be provided"
         super().__init__()
         self.directory = directory
         self.dry_run = dry_run
@@ -144,6 +145,7 @@ class ProcessingThread(QThread):
 
     def _delete_duplicate_set(self, paths: list[Path]) -> None:
         """Delete all but the first file in a duplicate set."""
+        assert paths is not None, "paths must be provided"
         keep = paths[0]
         to_delete = paths[1:]
         self.log_message.emit(f"Keeping: {keep.name}", "SUCCESS")
@@ -180,6 +182,7 @@ class ProcessingThread(QThread):
 
     def _process_pdf_files(self, pdf_files: list[Path]) -> None:
         """Process PDF files in parallel using ThreadPoolExecutor."""
+        assert pdf_files is not None, "pdf_files must be provided"
         cache = ResultCache(self.db_path)
         transaction_log = TransactionLog()
         llm = GeminiTitleLLM() if self.use_llm else None
@@ -630,6 +633,7 @@ class PDFRenamerGUI(QMainWindow):
 
     def append_log(self, message: str, level: str = "INFO") -> None:
         """Append message to log with color coding."""
+        assert message is not None, "message must be provided"
         colors = {
             "INFO": "black",
             "SUCCESS": "green",
@@ -648,6 +652,7 @@ class PDFRenamerGUI(QMainWindow):
 
     def update_progress(self, current: int, total: int, message: str) -> None:
         """Update progress bar and status."""
+        assert current is not None, "current must be provided"
         if total > 0:
             self.progress_bar.setValue(int((current / total) * 100))
         self.status_label.setText(message)
@@ -708,6 +713,7 @@ class PDFRenamerGUI(QMainWindow):
 
     def processing_finished(self, success: bool, message: str) -> None:
         """Handle processing completion."""
+        assert success is not None, "success must be provided"
         self.start_btn.setEnabled(True)
         self.cancel_btn.setEnabled(False)
         self.progress_bar.setValue(100 if success else 0)
@@ -787,6 +793,7 @@ class PDFRenamerGUI(QMainWindow):
 
     def populate_proposals_table(self, proposals: list[RenameProposal]) -> None:
         """Populate the proposals table with data."""
+        assert proposals is not None, "proposals must be provided"
         self.proposals_table.setRowCount(len(proposals))
 
         for i, proposal in enumerate(proposals):

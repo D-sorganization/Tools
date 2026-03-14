@@ -18,6 +18,7 @@ logger = logging.getLogger("pdf_renamer")
 
 def apply_style(title: str, style: str) -> str:
     """Sanitize *title* and convert it to the requested naming *style*."""
+    assert title is not None, "title must be provided"
     safe_title = sanitize_filename(title)
     if style == "snake_case":
         return safe_title.lower().replace(" ", "_")

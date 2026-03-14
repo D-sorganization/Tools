@@ -53,6 +53,7 @@ class Rotation:
 
     def __init__(self, q: np.ndarray) -> None:
         """Private — use factory methods instead."""
+        assert q is not None, "q must be provided"
         q = np.asarray(q, dtype=float)
         require(q.shape == (4,), "internal quaternion must have 4 elements")
         norm = np.linalg.norm(q)
@@ -99,6 +100,7 @@ class Rotation:
             a, b, c: angles in radians.
             convention: e.g. "xyz", "zyx", "zyz".
         """
+        assert a is not None, "a must be provided"
         q = euler_to_quaternion(a, b, c, convention)
         return cls(q)
 
@@ -108,6 +110,7 @@ class Rotation:
 
         Precondition: axis is a unit vector.
         """
+        assert angle is not None, "angle must be provided"
         axis = np.asarray(axis, dtype=float)
         require(axis.shape == (3,), "axis must have 3 elements", axis.shape)
         q = axis_angle_to_quaternion(axis, angle)
@@ -150,6 +153,7 @@ class Rotation:
 
     def compose(self, other: Rotation) -> Rotation:
         """Compose this rotation with another: self * other."""
+        assert other is not None, "other must be provided"
         q = quaternion_multiply(self._q, other._q)
         return Rotation(normalize_quaternion(q))
 

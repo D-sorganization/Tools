@@ -88,6 +88,7 @@ def _set_nested(d: dict, dot_path: str, value: Any) -> dict:
     >>> _set_nested(cfg, "feeds.Steam.mass_flow_kg_s", 2.5)
     {'feeds': {'Steam': {'mass_flow_kg_s': 2.5}}}
     """
+    assert d is not None, "d must be provided"
     keys = dot_path.split(".")
     node = d
     for key in keys[:-1]:
@@ -102,6 +103,7 @@ def _set_nested(d: dict, dot_path: str, value: Any) -> dict:
 
 def _get_nested(d: dict, dot_path: str, default=None) -> Any:
     """Get a value from a nested dict using a dot-separated path."""
+    assert d is not None, "d must be provided"
     keys = dot_path.split(".")
     node = d
     for key in keys:
@@ -222,6 +224,7 @@ class ParameterSweep:
         pandas.DataFrame if pandas is installed, else list of dicts.
         Each row corresponds to one simulation run.
         """
+        assert param_path is not None, "param_path must be provided"
         label = label or param_path.rsplit(".", maxsplit=1)[-1]
         rows = []
 
@@ -290,6 +293,7 @@ class ParameterSweep:
         -------
         pandas.DataFrame or list of dicts.
         """
+        assert param_a_path is not None, "param_a_path must be provided"
         label_a = label_a or param_a_path.rsplit(".", maxsplit=1)[-1]
         label_b = label_b or param_b_path.rsplit(".", maxsplit=1)[-1]
         total_runs = len(values_a) * len(values_b)
@@ -370,6 +374,7 @@ class ParameterSweep:
         All rows include a 'swept_param' column identifying which parameter
         was varied.
         """
+        assert params is not None, "params must be provided"
         try:
             import numpy as np
         except ImportError as exc:

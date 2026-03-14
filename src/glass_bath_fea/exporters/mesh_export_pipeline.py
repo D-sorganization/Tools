@@ -99,6 +99,7 @@ class MeshExportPipeline:
         Returns:
             Tuple of (mesh_data_or_None, error_list).
         """
+        assert coarse is not None, "coarse must be provided"
         errors: list[str] = []
         try:
             self.config = self._resolve_config(warnings)
@@ -139,6 +140,7 @@ class MeshExportPipeline:
         Returns:
             Tuple of (exported_file_paths, errors).
         """
+        assert output_path is not None, "output_path must be provided"
         exported_files: list[str] = []
         errors: list[str] = []
 
@@ -193,6 +195,7 @@ class MeshExportPipeline:
         Returns:
             A ``MeshExportResult`` summarising what was exported.
         """
+        assert output_dir is not None, "output_dir must be provided"
         if formats is None:
             formats = ["msh", "mat", "json"]
 
@@ -238,6 +241,7 @@ class MeshExportPipeline:
 
     def _resolve_config(self, warnings: list[str]) -> GlassBathFEAConfig:
         """Resolve FEA configuration from electrode config or direct config."""
+        assert warnings is not None, "warnings must be provided"
         if self._fea_config is not None:
             return self._fea_config
 

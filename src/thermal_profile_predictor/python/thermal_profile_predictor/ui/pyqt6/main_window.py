@@ -392,6 +392,7 @@ class ThermalProfilePredictorWindow(QMainWindow):
 
     def _on_power_profile_changed(self, profile: str) -> None:
         """Handle power profile selection change."""
+        assert profile is not None, "profile must be provided"
         self.ramp_rate_input.setEnabled(profile == "Linear Ramp")
         self.step_time_input.setEnabled(profile == "Step Function")
 

@@ -53,6 +53,7 @@ class ProcessingStep:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> ProcessingStep:
         """Create from dictionary."""
+        assert data is not None, "data must be provided"
         return cls(
             operation=OperationType(data["operation"]),
             parameters=data["parameters"],
@@ -79,6 +80,7 @@ class ProcessingPipeline:
         description: str = "",
     ) -> ProcessingStep:
         """Add a processing step to the pipeline."""
+        assert operation is not None, "operation must be provided"
         step = ProcessingStep(
             operation=operation,
             parameters=parameters,
@@ -89,12 +91,14 @@ class ProcessingPipeline:
 
     def remove_step(self, index: int) -> ProcessingStep | None:
         """Remove a step by index."""
+        assert index is not None, "index must be provided"
         if 0 <= index < len(self.steps):
             return self.steps.pop(index)
         return None
 
     def move_step(self, from_index: int, to_index: int) -> bool:
         """Move a step from one position to another."""
+        assert from_index is not None, "from_index must be provided"
         if 0 <= from_index < len(self.steps) and 0 <= to_index < len(self.steps):
             step = self.steps.pop(from_index)
             self.steps.insert(to_index, step)
@@ -115,6 +119,7 @@ class ProcessingPipeline:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> ProcessingPipeline:
         """Create from dictionary."""
+        assert data is not None, "data must be provided"
         steps = [ProcessingStep.from_dict(s) for s in data.get("steps", [])]
         return cls(
             name=data["name"],

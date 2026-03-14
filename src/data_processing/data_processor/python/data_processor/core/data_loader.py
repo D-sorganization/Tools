@@ -35,6 +35,7 @@ except ImportError:
         **kwargs: Any,
     ) -> pd.DataFrame:
         """Read CSV with error handling (inline fallback)."""
+        assert file_path is not None, "file_path must be provided"
         path = Path(file_path)
         if not path.exists():
             return default if default is not None else pd.DataFrame()
@@ -73,6 +74,7 @@ class DataLoader:
         Args:
             use_high_performance: Whether to use high-performance parallel loading
         """
+        assert use_high_performance is not None, "use_high_performance must be provided"
         self.use_high_performance = use_high_performance
         if use_high_performance:
             self.hp_loader = HighPerformanceDataLoader()
@@ -99,6 +101,7 @@ class DataLoader:
             DataFrame or None if loading fails
         """
         # --- Pre-conditions ---
+        assert file_path is not None, "file_path must be provided"
         require(
             isinstance(file_path, str) and bool(file_path.strip()),
             "file_path must be a non-empty string",
@@ -154,6 +157,7 @@ class DataLoader:
             Dictionary mapping file paths to DataFrames, or single combined
             DataFrame if combine=True
         """
+        assert file_paths is not None, "file_paths must be provided"
         require(
             isinstance(file_paths, list) and len(file_paths) > 0,
             "file_paths must be a non-empty list",
@@ -214,6 +218,7 @@ class DataLoader:
         Returns:
             Set of unique signal names
         """
+        assert file_paths is not None, "file_paths must be provided"
         require(
             isinstance(file_paths, list) and len(file_paths) > 0,
             "file_paths must be a non-empty list",
@@ -249,6 +254,7 @@ class DataLoader:
 
     def detect_time_column(self, df: pd.DataFrame) -> str | None:
         """Detect the time column in a DataFrame."""
+        assert df is not None, "df must be provided"
         for col in df.columns:
             col_str: str = str(col)
             col_lower = col_str.lower()
@@ -282,6 +288,7 @@ class DataLoader:
 
     def get_numeric_signals(self, df: pd.DataFrame) -> list[str]:
         """Get list of numeric signal names."""
+        assert df is not None, "df must be provided"
         numeric_cols: list[str] = df.select_dtypes(include=np.number).columns.tolist()
         logger.info(f"Found {len(numeric_cols)} numeric signals")
         return numeric_cols
@@ -297,6 +304,7 @@ class DataLoader:
         **Pre-conditions** (DbC):
           - ``how`` must be one of 'inner', 'outer', 'left', 'right'.
         """
+        assert dataframes is not None, "dataframes must be provided"
         require(
             how in {"inner", "outer", "left", "right"},
             "how must be one of 'inner', 'outer', 'left', 'right'",
@@ -341,6 +349,7 @@ class DataLoader:
         end_time: str,
     ) -> pd.DataFrame:
         """Filter DataFrame by time range."""
+        assert df is not None, "df must be provided"
         if not isinstance(df.index, pd.DatetimeIndex):
             logger.error("DataFrame must have DatetimeIndex for time filtering")
             return df
@@ -376,6 +385,7 @@ class DataLoader:
           - ``output_path`` must be a non-empty string.
           - ``format_type`` must be a recognised format.
         """
+        assert df is not None, "df must be provided"
         require(
             isinstance(df, pd.DataFrame) and not df.empty,
             "df must be a non-empty DataFrame",

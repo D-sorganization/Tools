@@ -78,6 +78,7 @@ class SinusoidFitter:
             Tuple of (amplitude, frequency, phase, offset) estimates.
         """
         # Offset estimate
+        assert t is not None, "t must be provided"
         offset = np.mean(y)
         y_centered = y - offset
 
@@ -117,6 +118,7 @@ class SinusoidFitter:
         Returns:
             FitResult with fitted parameters and statistics.
         """
+        assert signal is not None, "signal must be provided"
         t = signal.time - signal.time[0]  # Shift to start at 0
         y = signal.values
 
@@ -268,6 +270,7 @@ class ExponentialFitter:
         Returns:
             FitResult with fitted parameters.
         """
+        assert signal is not None, "signal must be provided"
         t = signal.time - signal.time[0]
         y = signal.values
 
@@ -342,6 +345,7 @@ class ExponentialFitter:
         Returns:
             FitResult with fitted parameters.
         """
+        assert signal is not None, "signal must be provided"
         t = signal.time - signal.time[0]
         y = signal.values
 
@@ -414,6 +418,7 @@ class LinearFitter:
         Returns:
             FitResult with slope and intercept parameters.
         """
+        assert signal is not None, "signal must be provided"
         t = signal.time - signal.time[0]
         y = signal.values
 
@@ -465,6 +470,7 @@ class PolynomialFitter:
         Args:
             order: Polynomial order (degree).
         """
+        assert order is not None, "order must be provided"
         self.order = order
 
     def fit(
@@ -481,6 +487,7 @@ class PolynomialFitter:
         Returns:
             FitResult with polynomial coefficients.
         """
+        assert signal is not None, "signal must be provided"
         t = signal.time - signal.time[0]
         y = signal.values
 
@@ -529,6 +536,7 @@ class PolynomialFitter:
         Returns:
             Array of coefficients [c0, c1, c2, ...].
         """
+        assert params is not None, "params must be provided"
         max_order = max(int(k[1:]) for k in params.keys())
         coeffs = np.zeros(max_order + 1)
         for k, v in params.items():
@@ -556,6 +564,7 @@ class CustomFunctionFitter:
             param_names: List of parameter names (excluding t).
             expression: String representation of the function (for display).
         """
+        assert func is not None, "func must be provided"
         self.func = func
         self.param_names = param_names
         self.expression = expression
@@ -576,6 +585,7 @@ class CustomFunctionFitter:
         Returns:
             FitResult with fitted parameters.
         """
+        assert signal is not None, "signal must be provided"
         t = signal.time - signal.time[0]
         y = signal.values
 
@@ -746,6 +756,7 @@ class FunctionFitter:
         initial_guess: list[float] | None = None,
     ) -> FitResult:
         """Fit a custom function."""
+        assert signal is not None, "signal must be provided"
         fitter = CustomFunctionFitter(func, param_names)
         return fitter.fit(signal, initial_guess)
 
@@ -757,6 +768,7 @@ class FunctionFitter:
         initial_guess: list[float] | None = None,
     ) -> FitResult:
         """Fit a custom function from expression string."""
+        assert signal is not None, "signal must be provided"
         fitter = CustomFunctionFitter.from_expression(expression, param_names)
         return fitter.fit(signal, initial_guess)
 

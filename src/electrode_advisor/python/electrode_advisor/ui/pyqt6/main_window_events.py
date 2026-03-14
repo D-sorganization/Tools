@@ -332,6 +332,7 @@ class EventsMixin:
 
     def _set_view_preset(self, preset: str) -> None:
         """Set predefined view angles using view presets from config."""
+        assert preset is not None, "preset must be provided"
         if self.electrode_ax is None:
             return
 

@@ -42,6 +42,7 @@ class GeometryGenerator:
         Args:
             config: FEA configuration with vessel dimensions
         """
+        assert config is not None, "config must be provided"
         self.config = config
 
         # Pre-compute dimensions in meters
@@ -201,6 +202,7 @@ class GeometryGenerator:
         Returns:
             Tuple of (x, y, z) Cartesian coordinates.
         """
+        assert r is not None, "r must be provided"
         x = r * math.cos(theta)
         y = r * math.sin(theta)
         return (x, y, z)

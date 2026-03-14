@@ -130,6 +130,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
         **kwargs: Any,
     ) -> GeneratedMeshResult:
         """Generate primitive meshes for body segments."""
+        assert params is not None, "params must be provided"
         if not self.is_available:
             return GeneratedMeshResult(
                 success=False,
@@ -266,6 +267,7 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
         Uses MakeHuman's Python API when available, or falls back to
         loading pre-made MakeHuman exports with vertex group segmentation.
         """
+        assert params is not None, "params must be provided"
         if not self.is_available:
             return GeneratedMeshResult(
                 success=False,
@@ -314,6 +316,7 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
 
         Requires MakeHuman to be installed and accessible via Python.
         """
+        assert params is not None, "params must be provided"
         import subprocess
         import tempfile
 
@@ -354,6 +357,7 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
         self, modifiers: dict[str, float], output_dir: Path
     ) -> str:
         """Create a MakeHuman Python script for mesh generation."""
+        assert modifiers is not None, "modifiers must be provided"
         script = f"""
 import mh
 import human
@@ -456,6 +460,7 @@ generate_human()
         vertex_groups: dict[str, list[int]] | None = None,
     ) -> GeneratedMeshResult:
         """Segment mesh into body parts using vertex groups or geometry."""
+        assert visual_dir is not None, "visual_dir must be provided"
         from humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
@@ -517,6 +522,7 @@ generate_human()
         valid_segments: Any,
     ) -> tuple[dict[str, Path], dict[str, Path]]:
         """Segment mesh using vertex group indices."""
+        assert visual_dir is not None, "visual_dir must be provided"
         mesh_paths: dict[str, Path] = {}
         collision_paths: dict[str, Path] = {}
 
@@ -553,6 +559,7 @@ generate_human()
         valid_segments: Any,
     ) -> tuple[dict[str, Path], dict[str, Path]]:
         """Segment mesh using bounding-box z-range slicing."""
+        assert visual_dir is not None, "visual_dir must be provided"
         mesh_paths: dict[str, Path] = {}
         collision_paths: dict[str, Path] = {}
 
@@ -601,6 +608,7 @@ generate_human()
 
     def _parse_obj_vertex_groups(self, obj_file: Path) -> dict[str, list[int]]:
         """Parse vertex groups from OBJ file."""
+        assert obj_file is not None, "obj_file must be provided"
         groups: dict[str, list[int]] = {}
         current_group = "default"
         vertex_index = 0
@@ -631,6 +639,7 @@ generate_human()
     def _convert_params_to_makehuman(self, params: BodyParameters) -> dict[str, float]:
         """Convert BodyParameters to MakeHuman modifier values."""
         # MakeHuman uses modifiers in range [-1, 1] or [0, 1]
+        assert params is not None, "params must be provided"
         modifiers = {}
 
         # Height is handled by overall scale
@@ -705,6 +714,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
 
         We map our BodyParameters to SMPL-X betas and pose.
         """
+        assert params is not None, "params must be provided"
         if not self.is_available:
             return GeneratedMeshResult(
                 success=False,
@@ -812,6 +822,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         - beta[4]: Hip width
         - etc.
         """
+        assert params is not None, "params must be provided"
         import numpy as np
 
         betas = np.zeros(10)
@@ -875,6 +886,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         params: BodyParameters,
     ) -> GeneratedMeshResult:
         """Segment SMPL-X mesh into body parts using joint positions."""
+        assert visual_dir is not None, "visual_dir must be provided"
         import numpy as np
         from humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
@@ -927,6 +939,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         valid_segments: Any,
     ) -> tuple[dict[str, Path], dict[str, Path]]:
         """Extract and export individual segment meshes from SMPL-X vertex groups."""
+        assert visual_dir is not None, "visual_dir must be provided"
         mesh_paths: dict[str, Path] = {}
         collision_paths: dict[str, Path] = {}
 
@@ -969,6 +982,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         params: BodyParameters,
     ) -> GeneratedMeshResult:
         """Fallback segmentation using z-coordinate slicing."""
+        assert visual_dir is not None, "visual_dir must be provided"
         from humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )

@@ -87,6 +87,7 @@ class MatrixWidgetBase(QWidget):
         Post:
           - _current_idx is clamped to [0, n_steps-1]
         """
+        assert idx is not None, "idx must be provided"
         if self._result is None:
             return
         self._current_idx = max(0, min(idx, self._result.n_steps - 1))
@@ -101,6 +102,7 @@ class MatrixWidgetBase(QWidget):
 
     def paintEvent(self, event: object) -> None:
         """Render the widget. Orchestrates sections and delegates to helpers."""
+        assert event is not None, "event must be provided"
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.fillRect(self.rect(), self.COLOR_BG)
@@ -206,6 +208,7 @@ class MatrixWidgetBase(QWidget):
         Returns:
             New y cursor position
         """
+        assert painter is not None, "painter must be provided"
         painter.setPen(self.COLOR_TEXT)
         font = QFont("Sans", 11, QFont.Weight.Bold)
         painter.setFont(font)
@@ -225,6 +228,7 @@ class MatrixWidgetBase(QWidget):
         Returns:
             New y cursor position after matrix and legend
         """
+        assert painter is not None, "painter must be provided"
         rows, cols = self.get_matrix_size()
         entries = self.get_matrix_entries(mc)
         _ = self.get_column_labels()  # reserved for future DOF labels in matrix

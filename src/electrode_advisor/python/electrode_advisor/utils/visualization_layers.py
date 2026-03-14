@@ -19,6 +19,7 @@ class ElectrodeLayersMixin:
 
     def draw_3d_vessel(self, ax: Any, radius: float, total_height: float) -> None:
         """Draw the cylindrical vessel in 3D."""
+        assert radius is not None, "radius must be provided"
         theta = np.linspace(0, 2 * np.pi, 50)
         z_wall = np.linspace(0, total_height, 20)
 
@@ -36,6 +37,7 @@ class ElectrodeLayersMixin:
         self, ax: Any, radius: float, height: float, metal_alpha: float = 0.6
     ) -> None:
         """Draw the metal layer as a fully shaded grey cylinder volume."""
+        assert radius is not None, "radius must be provided"
         if height <= 0:
             return
         theta = np.linspace(0, 2 * np.pi, 30)
@@ -74,6 +76,7 @@ class ElectrodeLayersMixin:
         glass_alpha: float = 0.4,
     ) -> None:
         """Draw the full glass layer volume above the metal as translucent orange."""
+        assert radius is not None, "radius must be provided"
         total_height = metal_height + glass_height
         theta = np.linspace(0, 2 * np.pi, 30)
         z_glass = np.linspace(metal_height, total_height, 10)
@@ -195,6 +198,7 @@ class ElectrodeLayersMixin:
     @staticmethod
     def _disk_mesh(theta: Any, radius: float, z_value: float) -> tuple[Any, Any, Any]:
         """Create a filled disk mesh at the given z height."""
+        assert radius is not None, "radius must be provided"
         r = np.linspace(0, radius, 15)
         R, T = np.meshgrid(r, theta)
         X = R * np.cos(T)
@@ -207,6 +211,7 @@ class ElectrodeLayersMixin:
         theta: Any, z_values: Any, radius: float
     ) -> tuple[Any, Any, Any]:
         """Create a cylindrical surface mesh."""
+        assert radius is not None, "radius must be provided"
         T_cyl, Z_cyl = np.meshgrid(theta, z_values)
         X_cyl = radius * np.cos(T_cyl)
         Y_cyl = radius * np.sin(T_cyl)
@@ -247,6 +252,7 @@ class ElectrodeLayersMixin:
         alpha: float,
     ) -> None:
         """Draw horizontal edge circles at given z levels."""
+        assert radius is not None, "radius must be provided"
         x = radius * np.cos(theta)
         y = radius * np.sin(theta)
         for z in z_levels:
@@ -262,6 +268,7 @@ class ElectrodeLayersMixin:
         alpha: float,
     ) -> None:
         """Draw an annular (ring) volume between inner and outer radii."""
+        assert inner_radius is not None, "inner_radius must be provided"
         theta = np.linspace(0, 2 * np.pi, 30)
         z_vals = np.linspace(0, total_height, 8 if total_height > 0 else 2)
 

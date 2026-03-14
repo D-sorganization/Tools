@@ -79,6 +79,7 @@ class IOMixin:
 
     def show_context_menu(self, position: QPoint) -> None:
         """Show context menu for manual state management"""
+        assert position is not None, "position must be provided"
         from PyQt6.QtWidgets import QMenu
 
         menu = QMenu(self)  # type: ignore[call-overload]
@@ -318,6 +319,7 @@ class IOMixin:
         self, currents: list[float], voltages: list[float]
     ) -> None:
         """Set electrical measurements programmatically"""
+        assert currents is not None, "currents must be provided"
         phases = ["1-2", "2-3", "3-1"]
         for i, phase in enumerate(phases[:3]):
             if phase in self.phase_inputs:
