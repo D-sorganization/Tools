@@ -94,9 +94,11 @@ class TestEquationsOfMotionBranches:
         """Using TorqueClamp should not crash and must return finite derivatives."""
         clamp = TorqueClamp(max_torque1=0.001, max_torque2=0.001)
         state = np.array([0.1, 0.05, 0.0, 0.0])
+
         # Use large torque that will be clamped
         def torque_fn(t):
             return (1e6, 1e6)
+
         state_dot = equations_of_motion(state, 0.0, params, torque_fn, clamp=clamp)
         assert state_dot.shape == (4,)
         assert np.all(np.isfinite(state_dot))
@@ -109,8 +111,10 @@ class TestEquationsOfMotionBranches:
             stiffness=1000.0,
             damping=10.0,
         )
+
         def torque_fn(t):
             return (0.0, 0.0)
+
         # phi far beyond limit → penalty torques activated
         state = np.array([0.0, 2.0, 0.0, 0.0])
         state_dot = equations_of_motion(state, 0.0, params, torque_fn, limits=limits)
@@ -123,8 +127,10 @@ class TestEquationsOfMotionBranches:
         """Very large phi can make mass matrix near-singular for some params."""
         # Use very small m2 to stress the mass matrix
         p = PendulumParams(m1=1e6, m2=1e-9, L1=0.6, L2=0.001)
+
         def torque_fn(t):
             return (0.0, 0.0)
+
         state = np.array([0.0, 0.0, 0.0, 0.0])
         with caplog.at_level(logging.WARNING, logger="double_pendulum_golf.physics"):
             state_dot = equations_of_motion(state, 0.0, p, torque_fn)

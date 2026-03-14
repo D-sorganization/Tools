@@ -38,8 +38,10 @@ class TestEquationsOfMotionWithTorqueLimits:
         """Passing torque_limits clamps huge torques and still produces finite derivatives."""
         state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
         limits = np.array([0.001, 0.001, 0.001])  # tiny limits
+
         def huge_torque(t):
             return (1e6, 1e6, 1e6)
+
         state_dot = equations_of_motion(
             state, 0.0, params, huge_torque, torque_limits=limits
         )
@@ -52,8 +54,10 @@ class TestEquationsOfMotionWithTorqueLimits:
         """With infinite limits, torques pass through unchanged."""
         state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
         limits = np.array([np.inf, np.inf, np.inf])
+
         def tau_fn(t):
             return (5.0, -3.0, 2.0)
+
         state_dot = equations_of_motion(
             state, 0.0, params, tau_fn, torque_limits=limits
         )

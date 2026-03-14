@@ -36,6 +36,7 @@ class TestSimulationTotalTorquesWithClamp:
         """When clamp is provided, total_torques_at should apply it."""
         params = PendulumParams(m1=5.0, m2=0.5, L1=0.6, L2=1.0)
         clamp = TorqueClamp(max_torque1=0.001, max_torque2=0.001)  # tiny limit
+
         def big_torque(t):
             return (1e6, 1e6)
 
