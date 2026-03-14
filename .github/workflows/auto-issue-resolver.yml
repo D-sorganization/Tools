@@ -47,21 +47,21 @@ on:
         default: "auto-fix"
         type: choice
         options:
-          - "auto-fix"      # Automatically fix and create PR
-          - "draft-pr"      # Create draft PR for review
+          - "auto-fix" # Automatically fix and create PR
+          - "draft-pr" # Create draft PR for review
           - "analysis-only" # Only analyze, don't create PRs
 
   # Trigger when assessment results are updated
   push:
     paths:
-      - 'docs/assessments/Assessment_*_Results_*.md'
-      - 'docs/assessments/Assessment_Highlight_Results_*.md'
+      - "docs/assessments/Assessment_*_Results_*.md"
+      - "docs/assessments/Assessment_Highlight_Results_*.md"
     branches:
       - main
 
   # Weekly scheduled run
   schedule:
-    - cron: "0 8 * * 0,4"  # Monday at 3 AM UTC
+    - cron: "0 8 * * 0,4" # Monday at 3 AM UTC
 
 concurrency:
   group: auto-issue-resolver
@@ -77,12 +77,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -225,7 +225,7 @@ jobs:
           python prioritize_issues.py
 
       - name: Upload prioritized issues
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: prioritized-issues
           path: prioritized_issues.json
@@ -244,12 +244,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -505,7 +505,7 @@ jobs:
 
     steps:
       - name: Download prioritized issues
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: prioritized-issues
 
