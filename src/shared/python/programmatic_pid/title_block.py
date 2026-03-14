@@ -134,8 +134,8 @@ def add_notes(
     # --- Control loops panel ---
     loops = spec.get("control_loops", [])
     loop_lines = [
-        f'{loop.get("id", "")}: '
-        f'{loop.get("objective") or loop.get("description") or loop.get("note", "")}'
+        f"{loop.get('id', '')}: "
+        f"{loop.get('objective') or loop.get('description') or loop.get('note', '')}"
         for loop in loops
     ]
     cx, cy, cw, ch = panels["control"]
@@ -199,14 +199,14 @@ def add_notes(
             design_notes.append(note)
 
     interlock_lines = [
-        f'{i.get("id", "")}: {i.get("trigger", "")}'
+        f"{i.get('id', '')}: {i.get('trigger', '')}"
         for i in spec.get("interlocks", [])[:5]
     ]
     equipment_note_lines = []
     for eq in spec.get("equipment", []):
         notes = eq.get("notes", [])
         if notes:
-            equipment_note_lines.append(f'{eq.get("id", "")}: {notes[0]}')
+            equipment_note_lines.append(f"{eq.get('id', '')}: {notes[0]}")
 
     right_lines: list[str] = []
     right_lines.extend(f"- {note}" for note in design_notes[:6])

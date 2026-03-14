@@ -513,7 +513,7 @@ def generate_controls_sheet(
     left_w = table_w * 0.58
     right_w = table_w - left_w - margin
     interlock_lines = [
-        f'{i.get("id", "")}: {i.get("trigger", "")} -> {i.get("action", "")}'
+        f"{i.get('id', '')}: {i.get('trigger', '')} -> {i.get('action', '')}"
         for i in interlocks
     ]
     add_text_panel(

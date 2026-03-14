@@ -26,7 +26,6 @@ from pydantic import ValidationError
 
 
 class TestUltimateAnalysis:
-
     def test_valid_analysis_passes(self):
         ua = UltimateAnalysis(C=0.501, H=0.062, O=0.421, N=0.008, S=0.005, Cl=0.003)
         assert pytest.approx(0.501) == ua.C
@@ -56,7 +55,6 @@ class TestUltimateAnalysis:
 
 
 class TestStreamConfig:
-
     def test_valid_stream_config(self):
         sc = StreamConfig(
             temperature_C=25.0,
@@ -102,7 +100,6 @@ class TestStreamConfig:
 
 
 class TestReactorConfig:
-
     def test_valid_reactor_config(self):
         rc = ReactorConfig(
             name="Gasifier",
@@ -154,7 +151,6 @@ class TestReactorConfig:
 
 
 class TestMasterConfig:
-
     def test_valid_master_config(self):
         cfg = validate_master_config(
             {
@@ -201,7 +197,6 @@ class TestMasterConfig:
 
 
 class TestValidateStreamConfigHelper:
-
     def test_valid_stream_passes(self):
         sc = validate_stream_config(
             {"temperature_C": 200.0, "pressure_Pa": 500000.0}, stream_name="Steam_Feed"
@@ -211,5 +206,6 @@ class TestValidateStreamConfigHelper:
     def test_error_includes_stream_name(self):
         with pytest.raises(ValueError, match="My_Stream"):
             validate_stream_config(
-                {"pressure_Pa": 100.0}, stream_name="My_Stream"  # too low
+                {"pressure_Pa": 100.0},
+                stream_name="My_Stream",  # too low
             )

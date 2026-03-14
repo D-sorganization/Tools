@@ -62,7 +62,7 @@ class ArchiveOperationsMixin:
 
             return (
                 True,
-                f"Successfully extracted and deleted " f"'{Path(archive_path).name}'",
+                f"Successfully extracted and deleted '{Path(archive_path).name}'",
             )
 
         except (IOError, PermissionError, OSError) as e:

@@ -358,7 +358,8 @@ class UnpackTabMixin:
 
         ttk.Label(self.decrypt_password_frame, text="Password:").pack(anchor="w")  # type: ignore[attr-defined]
         self.unpack_password_entry = ttk.Entry(  # type: ignore[attr-defined]
-            self.decrypt_password_frame, show="*"  # type: ignore[attr-defined]
+            self.decrypt_password_frame,
+            show="*",  # type: ignore[attr-defined]
         )
         self.unpack_password_entry.pack(fill="x", pady=(PADDING_SMALL, 0))  # type: ignore[attr-defined]
         self.unpack_password_entry.configure(state="disabled")  # type: ignore[attr-defined]
@@ -499,7 +500,8 @@ class PreviewTabMixin:
         tree_scroll.pack(side="right", fill="y")
 
         self.preview_tree.bind(  # type: ignore[attr-defined]
-            "<<TreeviewSelect>>", self._on_file_select  # type: ignore[attr-defined]
+            "<<TreeviewSelect>>",
+            self._on_file_select,  # type: ignore[attr-defined]
         )
 
         # Preview pane

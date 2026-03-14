@@ -222,7 +222,8 @@ class PackOperationMixin:
                 assert filename is not None, "filename must be provided"
                 progress = (current / total) * 100
                 self.root.after(
-                    0, lambda p=progress: self.pack_progress_var.set(float(p))  # type: ignore[misc]
+                    0,
+                    lambda p=progress: self.pack_progress_var.set(float(p)),  # type: ignore[misc]
                 )
                 self._update_pack_status(f"Packing {filename} ({current}/{total})")
 
