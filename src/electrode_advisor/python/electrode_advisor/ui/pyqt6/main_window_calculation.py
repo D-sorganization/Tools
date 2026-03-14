@@ -197,7 +197,6 @@ class CalculationMixin:
             logger.debug("[DEBUG] calculation_results: %s", self.calculation_results)  # type: ignore[attr-defined]
 
             self._update_3d_visualization()  # type: ignore[attr-defined]
-            self._update_temperature_profile()  # type: ignore[attr-defined]
             self._update_current_distribution()  # type: ignore[attr-defined]
             self._update_power_distribution()  # type: ignore[attr-defined]
             self._update_results_tables()  # type: ignore[attr-defined]
