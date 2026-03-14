@@ -89,7 +89,9 @@ def test_mass_matrix_dbc(params, valid_q):
     M = analytical_mass_matrix(valid_q, params)
     assert M.shape == (N_DOF, N_DOF)
 
-    with pytest.raises(TypeError):
+    # None input: native_backend now has a DbC assertion that fires first,
+    # so accept either AssertionError (DbC) or TypeError (numpy ops on None)
+    with pytest.raises((AssertionError, TypeError)):
         analytical_mass_matrix(None, params)
     with pytest.raises(ValueError):
         analytical_mass_matrix(np.zeros(2), params)
