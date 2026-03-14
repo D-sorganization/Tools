@@ -7,6 +7,7 @@ in a GolferSimulationResult for GUI and analysis access.
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -43,6 +44,12 @@ from .simulation_result_base import TrajectoryResultMixin
 
 # Re-export from shared utility for backwards compatibility (DRY — #1041)
 from .torque_utils import make_polynomial_torque  # noqa: F401
+
+_log = logging.getLogger(__name__)
+
+# Constraint violation thresholds for warning/abort.
+_CONSTRAINT_WARN_TOL = 1e-4
+_CONSTRAINT_ABORT_TOL = 1e-2
 
 # ---------------------------------------------------------------------------
 # Simulation result container
@@ -210,6 +217,9 @@ def run_simulation(
     qdot0 = project_velocity(q0, initial_state[N_DOF:], params)
     y0 = np.concatenate([q0, qdot0])
 
+    # Track constraint drift for postcondition check.
+    _max_violation: list[float] = [0.0]
+
     def ode_rhs(t: float, y: np.ndarray) -> np.ndarray:
         dydt = equations_of_motion(
             y, t, params, torque_func, alpha, beta, effective_torque_limits
@@ -230,6 +240,18 @@ def run_simulation(
             tau_full[:7] = tau_limit
             qddot_correction = np.linalg.solve(M, tau_full)
             dydt[N_DOF:] += qddot_correction
+
+        # Monitor constraint drift (Baumgarte stabilization postcondition).
+        viol = constraint_violation(y, params)
+        if viol > _max_violation[0]:
+            _max_violation[0] = viol
+        if viol > _CONSTRAINT_WARN_TOL:
+            _log.warning(
+                "Constraint violation %.3e at t=%.4f (warn threshold=%.3e)",
+                viol,
+                t,
+                _CONSTRAINT_WARN_TOL,
+            )
         return dydt
 
     t, states = integrate_ode(
@@ -250,4 +272,16 @@ def run_simulation(
     )
 
     assert result.n_steps >= 2, "Simulation must produce at least 2 time points"
+
+    # Postcondition: constraint drift must remain bounded.
+    max_viol = _max_violation[0]
+    if max_viol > _CONSTRAINT_ABORT_TOL:
+        _log.error(
+            "Excessive constraint drift: max violation=%.3e > abort threshold=%.3e",
+            max_viol,
+            _CONSTRAINT_ABORT_TOL,
+        )
+    elif max_viol > _CONSTRAINT_WARN_TOL:
+        _log.warning("Max constraint violation=%.3e during simulation", max_viol)
+
     return result
