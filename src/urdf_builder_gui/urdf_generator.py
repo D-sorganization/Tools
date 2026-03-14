@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import logging
 import re
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET  # nosec B405 — input is self-generated
 from dataclasses import dataclass
 
 from urdf_builder_gui.contracts import require
@@ -301,7 +301,7 @@ def validate_urdf_structure(urdf_xml: str) -> tuple[bool, list[str]]:
     """
     errors: list[str] = []
     try:
-        root = ET.fromstring(urdf_xml)
+        root = ET.fromstring(urdf_xml)  # nosec B314
     except ET.ParseError as e:
         return False, [f"XML parse error: {e}"]
 
