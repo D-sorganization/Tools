@@ -27,10 +27,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with: { python-version: "3.12" }
 
       - name: Install System Dependencies
@@ -144,10 +144,10 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -197,7 +197,7 @@ jobs:
         run: python3 scripts/check_coverage_policy.py --coverage-file coverage.xml --policy-file config/coverage_policy.json --baseline-file config/coverage_baseline.json --output-json coverage_trend_${{ matrix.python-version }}.json
 
       - name: Upload Coverage Trend
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: coverage-trend-${{ matrix.python-version }}
           path: coverage_trend_${{ matrix.python-version }}.json
@@ -215,7 +215,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Check for Rust changes
         id: rust-changes
@@ -329,7 +329,7 @@ jobs:
 
       - name: Upload Benchmark Results
         if: steps.rust-changes.outputs.has_changes == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: rust-benchmarks
           path: benchmark_results.txt
