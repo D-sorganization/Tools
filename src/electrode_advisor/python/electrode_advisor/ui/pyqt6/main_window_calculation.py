@@ -166,9 +166,15 @@ class CalculationMixin:
             ]
         )
         bath_diameter = self.bath_diameter_input.value()  # type: ignore[attr-defined]
-        electrode_diameter = float(
-            self.electrode_diameter_combo.currentText()  # type: ignore[attr-defined]
-        )
+        try:
+            electrode_diameter = float(
+                self.electrode_diameter_combo.currentText()  # type: ignore[attr-defined]
+            )
+        except (ValueError, TypeError) as exc:
+            raise ValueError(
+                f"Invalid electrode diameter: "
+                f"{self.electrode_diameter_combo.currentText()!r}"  # type: ignore[attr-defined]
+            ) from exc
         metal_layer_height = self.metal_layer_height_input.value()  # type: ignore[attr-defined]
         bath_temperature = self.bath_temp_input.value()  # type: ignore[attr-defined]
         voltages = np.array(
@@ -214,11 +220,14 @@ class CalculationMixin:
             bath_diameter = params["bath_diameter"]
             bath_temperature = params["bath_temperature"]
 
-            # DbC preconditions (#1365)
-            assert bath_diameter > 0, f"bath_diameter must be > 0, got {bath_diameter}"
-            assert all(d >= 0 for d in depths), f"depths must be >= 0, got {depths}"
-            in_range = 800 <= bath_temperature <= 1600
-            assert in_range, f"temperature {bath_temperature} not in [800,1600]"
+            # DbC preconditions (#1365, #1419: ValueError instead of assert)
+            if bath_diameter <= 0:
+                raise ValueError(f"bath_diameter must be > 0, got {bath_diameter}")
+            if not all(d >= 0 for d in depths):
+                raise ValueError(f"depths must be >= 0, got {depths}")
+            if not (800 <= bath_temperature <= 1600):
+                msg = f"temperature {bath_temperature} not in [800,1600]"
+                raise ValueError(msg)
 
             self.calculation_results = self.electrical_model.calculate_system_state(  # type: ignore[attr-defined]
                 depths=depths,
@@ -232,13 +241,11 @@ class CalculationMixin:
             )
             logger.debug("[DEBUG] calculation_results: %s", self.calculation_results)  # type: ignore[attr-defined]
 
-            # DbC postcondition (#1380): model must return a non-empty dict
-            assert isinstance(self.calculation_results, dict), (  # type: ignore[attr-defined]
-                "calculate_system_state must return a dict"
-            )
-            assert len(self.calculation_results) > 0, (  # type: ignore[attr-defined]
-                "calculate_system_state must return a non-empty result"
-            )
+            # DbC postcondition (#1380, #1419: ValueError instead of assert)
+            if not isinstance(self.calculation_results, dict):  # type: ignore[attr-defined]
+                raise TypeError("calculate_system_state must return a dict")
+            if len(self.calculation_results) == 0:  # type: ignore[attr-defined]
+                raise ValueError("calculate_system_state returned empty")
 
             self._update_3d_visualization()  # type: ignore[attr-defined]
             self._update_current_distribution()  # type: ignore[attr-defined]
@@ -324,29 +331,49 @@ class CalculationMixin:
             paths = result.get("current_paths", {})
             return float(paths.get(phase_key, {}).get("total", float("inf")))
 
+        # Save original bounds for postcondition (#1420)
+        lo_orig, hi_orig = lo, hi
+
         r_lo = resistance_at_depth(lo)
         r_hi = resistance_at_depth(hi)
 
         # Resistance decreases with depth (deeper electrode → lower resistance).
         # Ensure the target lies within [r_hi, r_lo].
         if target_resistance <= r_hi or target_resistance >= r_lo:
-            mid = (lo + hi) / 2.0
+            result = (lo + hi) / 2.0
             logger.debug(
                 "[DEBUG] bisect: target %.4f out of range [%.4f, %.4f]; returning mid %.4f",
                 target_resistance,
                 r_hi,
                 r_lo,
-                mid,
+                result,
             )
-            return mid
+        else:
+            result = self._bisect_depth(
+                resistance_at_depth, target_resistance, lo, hi, tol, max_iter
+            )
 
+        # DbC postcondition (#1420)
+        if not (lo_orig <= result <= hi_orig):
+            raise ValueError(f"depth {result} outside [{lo_orig}, {hi_orig}]")
+        return result
+
+    @staticmethod
+    def _bisect_depth(
+        resistance_fn: Any,
+        target: float,
+        lo: float,
+        hi: float,
+        tol: float,
+        max_iter: int,
+    ) -> float:
+        """Run bisection loop to find depth matching target resistance."""
         for _ in range(max_iter):
             mid = (lo + hi) / 2.0
-            r_mid = resistance_at_depth(mid)
-            if abs(r_mid - target_resistance) < tol or (hi - lo) / 2.0 < tol:
+            r_mid = resistance_fn(mid)
+            if abs(r_mid - target) < tol or (hi - lo) / 2.0 < tol:
                 return mid
-            # Deeper → lower R, so if r_mid > target we need to go deeper
-            if r_mid > target_resistance:
+            if r_mid > target:
                 lo = mid
             else:
                 hi = mid

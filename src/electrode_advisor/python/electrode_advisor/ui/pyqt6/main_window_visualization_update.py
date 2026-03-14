@@ -156,7 +156,8 @@ class VisualizationUpdateMixin:
         if not (self.show_paths_checkbox.isChecked() and "current_paths" in results):
             return
         for phase in results["current_paths"]:
-            i, j = int(phase[0]) - 1, int(phase[2]) - 1
+            parts = phase.split("-")
+            i, j = int(parts[0]) - 1, int(parts[1]) - 1
             self.visualizer.draw_trapezoidal_prism(
                 ax,
                 positions[i],
