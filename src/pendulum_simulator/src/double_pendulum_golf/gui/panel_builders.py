@@ -203,7 +203,6 @@ def build_double_panel(main_window: Any) -> SimulationPanel:
         )
 
     def _double_extract_fn(result: object) -> dict:
-
         res = result  # type: ignore[assignment]
         vels = res.joint_velocities_at(res.n_steps - 1)  # type: ignore[attr-defined]
         tip_v = vels.get("tip", (0.0, 0.0))
@@ -220,6 +219,21 @@ def build_double_panel(main_window: Any) -> SimulationPanel:
             controls.get_params().get("shoulder_coeffs", [0.0]),
             controls.get_params().get("wrist_coeffs", [0.0]),
         ]
+    )
+
+    def _double_preset_coeffs(name: str) -> list[list[float]]:
+        preset = controls.PRESETS.get(name)
+        if preset is None:
+            return [[0.0], [0.0]]
+
+        def _parse(s: str) -> list[float]:
+            return [float(x.strip()) for x in s.split(",") if x.strip()] or [0.0]
+
+        return [_parse(str(preset[4])), _parse(str(preset[5]))]
+
+    perturb.set_preset_source(
+        lambda: list(controls.PRESETS.keys()),
+        _double_preset_coeffs,
     )
     perturb.set_simulation_callbacks(_double_simulate_fn, _double_extract_fn)
     panel.set_perturbation_panel(perturb)
@@ -403,6 +417,22 @@ def build_triple_panel(main_window: Any) -> SimulationPanel:
             controls.get_params().get("elbow_coeffs", [0.0]),
             controls.get_params().get("wrist_coeffs", [0.0]),
         ]
+    )
+
+    def _triple_preset_coeffs(name: str) -> list[list[float]]:
+        preset = controls.PRESETS.get(name)
+        if preset is None:
+            return [[0.0], [0.0], [0.0]]
+
+        def _parse(s: str) -> list[float]:
+            return [float(x.strip()) for x in s.split(",") if x.strip()] or [0.0]
+
+        # Triple PRESETS tuple: indices 6=tau_sh, 7=tau_el, 8=tau_wr
+        return [_parse(str(preset[6])), _parse(str(preset[7])), _parse(str(preset[8]))]
+
+    perturb.set_preset_source(
+        lambda: list(controls.PRESETS.keys()),
+        _triple_preset_coeffs,
     )
     perturb.set_simulation_callbacks(_triple_simulate_fn, _triple_extract_fn)
     panel.set_perturbation_panel(perturb)
@@ -622,6 +652,31 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
         return [p.get(k, [0.0]) for k in joint_keys]
 
     perturb.set_coeffs_source(_golfer_coeffs_fn)
+
+    _GOLFER_TAU_KEYS = [
+        "tau_hub",
+        "tau_rs",
+        "tau_re",
+        "tau_rh",
+        "tau_ls",
+        "tau_le",
+        "tau_lh",
+    ]
+
+    def _golfer_preset_coeffs(name: str) -> list[list[float]]:
+        preset = controls.PRESETS.get(name)
+        if preset is None:
+            return [[0.0]] * len(_GOLFER_TAU_KEYS)
+
+        def _parse(s: str) -> list[float]:
+            return [float(x.strip()) for x in s.split(",") if x.strip()] or [0.0]
+
+        return [_parse(str(preset.get(k, "0"))) for k in _GOLFER_TAU_KEYS]
+
+    perturb.set_preset_source(
+        lambda: list(controls.PRESETS.keys()),
+        _golfer_preset_coeffs,
+    )
     perturb.set_simulation_callbacks(_golfer_simulate_fn, _golfer_extract_fn)
     panel.set_perturbation_panel(perturb)
     return panel
