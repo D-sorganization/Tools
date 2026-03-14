@@ -72,6 +72,7 @@ def main() -> int:
     KNOWN_TESTED = {
         "src/shared/python/programmatic_pid",  # tests/programmatic_pid/
         "src/pid_generator",  # tests/programmatic_pid/ (thin CLI wrapper)
+        "src/shared/python/tests",  # the tests folder itself
     }
     violations = [
         pkg for pkg in packages if pkg not in KNOWN_TESTED and not has_tests(pkg)
