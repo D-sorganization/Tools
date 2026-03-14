@@ -321,17 +321,6 @@
       }
     },
     {
-      "id": "urdf_builder_gui",
-      "name": "Parametric URDF Builder",
-      "description": "Generate parametric URDF models for robotics applications",
-      "category": "Robotics",
-      "surfaces": {
-        "pyqt6": true,
-        "web": false,
-        "legacy_gui": false
-      }
-    },
-    {
       "id": "vessel_drafter",
       "name": "Vessel Drafter",
       "description": "Refractory vessel design with STEP, STL, BREP, and GLTF export",
