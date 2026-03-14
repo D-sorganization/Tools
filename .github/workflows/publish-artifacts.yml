@@ -6,32 +6,32 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Dry run (no actual publish)'
+        description: "Dry run (no actual publish)"
         required: false
-        default: 'true'
+        default: "true"
         type: choice
         options:
-          - 'true'
-          - 'false'
+          - "true"
+          - "false"
 
 permissions:
   contents: read
-  id-token: write  # Required for PyPI trusted publishing
+  id-token: write # Required for PyPI trusted publishing
 
 jobs:
   build-python-wheel:
     name: Build Python Wheel
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install Maturin
         run: pip install maturin
@@ -44,7 +44,7 @@ jobs:
           ls -la ../../target/wheels/
 
       - name: Upload Wheel Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: python-wheel
           path: target/wheels/*.whl
@@ -54,7 +54,7 @@ jobs:
     name: Build WASM/NPM Package
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -72,7 +72,7 @@ jobs:
           ls -la pkg/
 
       - name: Upload WASM Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: wasm-package
           path: rust_core/tools-core/pkg/
@@ -86,10 +86,10 @@ jobs:
       github.event_name == 'release' ||
       (github.event_name == 'workflow_dispatch' && inputs.dry_run == 'false')
     environment:
-      name: pypi  # GitHub environment with PyPI trusted publishing configured
+      name: pypi # GitHub environment with PyPI trusted publishing configured
     steps:
       - name: Download Wheel
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: python-wheel
           path: dist/
@@ -120,16 +120,16 @@ jobs:
       (github.event_name == 'workflow_dispatch' && inputs.dry_run == 'false')
     steps:
       - name: Download WASM Package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: wasm-package
           path: pkg/
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
 
       - name: Publish to NPM
         env:
