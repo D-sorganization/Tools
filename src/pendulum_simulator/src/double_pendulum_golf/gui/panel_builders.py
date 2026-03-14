@@ -585,7 +585,7 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
             params=params,
             initial_state=initial_state,
             t_end=p["t_end"],
-            torque_func=torque_func,
+            torque_func=torque_func,  # type: ignore[arg-type]
             limits=limits,
             clamp=clamp,
         )
