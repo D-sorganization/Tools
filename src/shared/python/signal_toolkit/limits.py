@@ -116,8 +116,9 @@ def _apply_saturation_values(
     else:
         result = np.clip(normalized, -1, 1)
 
-    # Scale back to original range
-    return result * half_range + center
+    # Scale back to original range and clamp to guarantee bounds
+    # Postcondition: output ∈ [lower, upper] for all modes
+    return np.clip(result * half_range + center, lower, upper)
 
 
 def _soft_clip(x: np.ndarray, k: float = 1.0) -> np.ndarray:

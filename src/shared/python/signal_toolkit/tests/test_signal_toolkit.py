@@ -407,8 +407,8 @@ class TestCalculus:
 
     def test_integral_of_constant(self) -> None:
         """Test integral of constant function."""
-        t = np.linspace(0, 10, 100)
-        values = np.ones(100) * 5.0
+        t = np.linspace(0, 10, 1001)
+        values = np.ones(1001) * 5.0
 
         signal = Signal(t, values)
         result = compute_integral(signal, lower_bound=0, upper_bound=10)
