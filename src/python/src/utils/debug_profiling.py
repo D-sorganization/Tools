@@ -65,6 +65,7 @@ def profile(
         Decorator function
     """
     # Import here to avoid circular dependency at module level
+    assert sort_by is not None, "sort_by must be provided"
     from utils.debug_utils import is_debug_mode
 
     def decorator(func: F) -> F:
@@ -109,6 +110,7 @@ def profile_block(
         ProfileResult object (populated after block completes)
     """
     # Import here to avoid circular dependency at module level
+    assert name is not None, "name must be provided"
     from utils.debug_utils import is_debug_mode
 
     profiler = cProfile.Profile()
@@ -180,6 +182,8 @@ def timed(
         Decorator function
     """
 
+    assert log_level is not None, "log_level must be provided"
+
     def decorator(func: F) -> F:
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -215,6 +219,7 @@ def timer(
     Yields:
         TimingStats object (populated after block completes)
     """
+    assert name is not None, "name must be provided"
     stats = TimingStats(
         name=name,
         elapsed_seconds=0.0,

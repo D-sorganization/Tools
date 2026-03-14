@@ -44,6 +44,7 @@ class SignalProcessor:
           - ``df`` must not be empty.
           - ``config.filter_type`` must be supported by the engine.
         """
+        assert df is not None, "df must be provided"
         require(not df.empty, "Cannot filter an empty dataframe")
         engine_params = config.to_engine_parameters()
 
@@ -100,6 +101,7 @@ class SignalProcessor:
 
         Delegates to ``signal_processing.integrate_signals``.
         """
+        assert df is not None, "df must be provided"
         require(not df.empty, "Cannot integrate an empty dataframe")
         require(time_col in df.columns, f"time_col '{time_col}' not in df", time_col)
         return integrate_signals(df, time_col, signals, method)
@@ -122,6 +124,7 @@ class SignalProcessor:
 
         Delegates to ``signal_processing.differentiate_signals``.
         """
+        assert df is not None, "df must be provided"
         require(not df.empty, "Cannot differentiate an empty dataframe")
         require(time_col in df.columns, f"time_col '{time_col}' not in df", time_col)
         return differentiate_signals(
@@ -140,6 +143,7 @@ class SignalProcessor:
 
         Delegates to ``signal_processing.apply_custom_variable``.
         """
+        assert df is not None, "df must be provided"
         require(not df.empty, "Cannot apply formula to an empty dataframe")
         require(bool(formula.strip()), "formula must be a non-empty string", formula)
         require(
@@ -155,6 +159,7 @@ class SignalProcessor:
         **Pre-conditions** (DbC):
           - ``df`` must not be empty.
         """
+        assert df is not None, "df must be provided"
         require(not df.empty, "Cannot compute statistics on an empty dataframe")
         numeric_df = df.select_dtypes(include=[np.number])
         stats: dict[str, Any] = {}
@@ -178,6 +183,7 @@ class SignalProcessor:
         Accepts an IntegrationConfig (or any object with ``signals``
         and ``method`` attributes) and delegates to the real implementation.
         """
+        assert df is not None, "df must be provided"
         signals = getattr(config, "signals", [])
         method = getattr(config, "method", "trapezoidal")
         # Try to detect a time column from the df index or first column
@@ -190,6 +196,7 @@ class SignalProcessor:
         Accepts a DifferentiationConfig (or any object with ``signals``
         and ``method``/``order`` attributes) and delegates.
         """
+        assert df is not None, "df must be provided"
         signals = getattr(config, "signals", [])
         method = getattr(config, "method", "spline")
         order = getattr(config, "order", 1)

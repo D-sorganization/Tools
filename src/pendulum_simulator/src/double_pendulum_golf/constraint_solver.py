@@ -175,6 +175,7 @@ def constrained_accelerations(
     torque_limits: np.ndarray | None = None,
 ) -> np.ndarray:
     """Compute constrained accelerations using augmented Lagrangian method."""
+    assert state is not None, "state must be provided"
     qddot, _ = _solve_constrained_dynamics(
         state, t, params, torque_func, alpha, beta, torque_limits
     )
@@ -195,6 +196,7 @@ def constraint_forces(
     -------
     lambda_vec : np.ndarray, shape (4,) — constraint forces
     """
+    assert state is not None, "state must be provided"
     _, lambda_forces = _solve_constrained_dynamics(
         state, t, params, torque_func, alpha, beta
     )
@@ -208,6 +210,7 @@ def _constraint_acceleration_bias(
 
     This is the acceleration-level bias term from the constraint.
     """
+    assert q is not None, "q must be provided"
     eps = 1e-7
     Phi_q_0 = constraint_jacobian(q, params)
     Phi_q_dt = constraint_jacobian(q + eps * qdot, params)
@@ -279,6 +282,7 @@ def constraint_violation(state: State, params: GolferParams) -> float:
     -------
     float — ||Phi(q)||_2
     """
+    assert state is not None, "state must be provided"
     q = state[:N_DOF]
     Phi = constraint_vector(q, params)
     return float(np.linalg.norm(Phi))
@@ -352,6 +356,7 @@ def project_velocity(
     -------
     qdot_projected : np.ndarray, shape (8,)
     """
+    assert q is not None, "q must be provided"
     native_projection = _native_backend.golfer_project_velocity(q, qdot, params)
     if native_projection is not None:
         native_violation = constraint_jacobian(q, params) @ native_projection

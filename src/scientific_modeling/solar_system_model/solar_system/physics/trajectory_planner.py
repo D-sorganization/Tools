@@ -158,6 +158,7 @@ class TrajectoryPlanner:
             - a_transfer: Semi-major axis of transfer orbit (meters)
         """
         # Transfer orbit semi-major axis
+        assert r1 is not None, "r1 must be provided"
         a_transfer = (r1 + r2) / 2
 
         # Velocities in circular orbits
@@ -192,6 +193,7 @@ class TrajectoryPlanner:
             Phase angle in degrees
         """
         # Transfer orbit semi-major axis
+        assert r1 is not None, "r1 must be provided"
         a_transfer = (r1 + r2) / 2
 
         # Time of flight
@@ -225,6 +227,7 @@ class TrajectoryPlanner:
             Tuple of (delta_v1, delta_v2, delta_v3, time_of_flight)
         """
         # First transfer ellipse (r1 to r_intermediate)
+        assert r1 is not None, "r1 must be provided"
         a1 = (r1 + r_intermediate) / 2
 
         # Second transfer ellipse (r_intermediate to r2)
@@ -271,6 +274,7 @@ class TrajectoryPlanner:
         Returns:
             Synodic period in days
         """
+        assert origin is not None, "origin must be provided"
         t1 = origin.get_orbital_period()
         t2 = destination.get_orbital_period()
 
@@ -297,6 +301,7 @@ class TrajectoryPlanner:
         Returns:
             List of launch window opportunities
         """
+        assert origin is not None, "origin must be provided"
         windows = []
 
         # Get approximate orbital radii
@@ -416,6 +421,7 @@ class TrajectoryPlanner:
     ) -> TransferTrajectory:
         """Calculate a Hohmann transfer trajectory."""
         # Get transfer parameters
+        assert origin is not None, "origin must be provided"
         dv1, dv2, tof, a_transfer = self.hohmann_transfer(r1, r2)
         tof_days = tof / SECONDS_PER_DAY
         arrival_date = departure_date + tof_days
@@ -480,6 +486,7 @@ class TrajectoryPlanner:
     ) -> TransferTrajectory:
         """Calculate a bi-elliptic transfer trajectory."""
         # Use intermediate radius 1.5x the larger orbit
+        assert origin is not None, "origin must be provided"
         r_intermediate = max(r1, r2) * 1.5
 
         dv1, dv2, dv3, tof = self.bi_elliptic_transfer(r1, r2, r_intermediate)
@@ -544,6 +551,7 @@ class TrajectoryPlanner:
     ) -> TransferTrajectory:
         """Plan a patched-conic gravity assist sequence."""
 
+        assert origin is not None, "origin must be provided"
         first_leg = self.calculate_transfer(
             origin, assist_body, departure_date, TransferType.HOHMANN
         )
@@ -598,6 +606,7 @@ class TrajectoryPlanner:
         num_points: int = 100,
     ) -> list[StateVector]:
         """Generate points along a transfer trajectory."""
+        assert initial_state is not None, "initial_state must be provided"
         points = []
 
         # Determine orbit parameters
@@ -711,6 +720,7 @@ class TrajectoryPlanner:
         Returns:
             Spacecraft with the trajectory set
         """
+        assert trajectory is not None, "trajectory must be provided"
         spacecraft = Spacecraft(name=name, trajectory=trajectory.trajectory_points)
         return spacecraft
 
@@ -727,6 +737,7 @@ class TrajectoryPlanner:
         Returns:
             Dictionary with transfer information
         """
+        assert origin is not None, "origin must be provided"
         r1 = (
             origin.orbital_elements.semi_major_axis * AU
             if origin.orbital_elements

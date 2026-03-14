@@ -43,6 +43,7 @@ class ResultCard(QFrame):
     """A card widget for displaying a single result."""
 
     def __init__(self, title: str, parent: QWidget | None = None) -> None:
+        assert title is not None, "title must be provided"
         super().__init__(parent)
         self.setObjectName("resultCard")
         self.setFrameStyle(QFrame.Shape.StyledPanel)
@@ -213,6 +214,7 @@ class WGSReactorEngine:
     ) -> dict[str, float]:
         """Size WGS reactor based on throughput and conversion."""
         # Space velocity (GHSV) - typical for WGS
+        assert feed_rate is not None, "feed_rate must be provided"
         ghsv = 3000  # h^-1
 
         # Reactor volume

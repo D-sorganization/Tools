@@ -38,6 +38,7 @@ class JsonFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         """Format log record as JSON."""
+        assert record is not None, "record must be provided"
         payload: dict[str, Any] = {
             "level": record.levelname,
             "logger": record.name,
@@ -70,6 +71,7 @@ def get_logger(
     Returns:
         Configured logging.Logger instance.
     """
+    assert level is not None, "level must be provided"
     if name is None:
         import inspect
 
@@ -116,6 +118,7 @@ def setup_logging(
         force: Override any existing configuration.
     """
     # Convert string level to int if needed
+    assert level is not None, "level must be provided"
     if isinstance(level, str):
         level = getattr(logging, level.upper(), logging.INFO)
 
@@ -185,6 +188,7 @@ def init_default_logging(
     Returns:
         Root logger instance
     """
+    assert level is not None, "level must be provided"
     root_logger = logging.getLogger()
     if not root_logger.handlers:
         handler = logging.StreamHandler(sys.stdout)
@@ -228,6 +232,7 @@ class LogExecutionTime:
         return self
 
     def __exit__(self, exc_type: object, exc_val: object, exc_tb: object) -> None:
+        assert exc_type is not None, "exc_type must be provided"
         import time
 
         duration = time.perf_counter() - self._start

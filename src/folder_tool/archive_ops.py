@@ -37,6 +37,7 @@ class ArchiveOperationsMixin:
             OSError: If file system operations fail
             Exception: If extraction process fails
         """
+        assert archive_path is not None, "archive_path must be provided"
         archive_path_obj, archive_size = self._validate_archive_input(archive_path)
 
         # Generate unique extraction directory
@@ -61,7 +62,7 @@ class ArchiveOperationsMixin:
 
             return (
                 True,
-                f"Successfully extracted and deleted " f"'{Path(archive_path).name}'",
+                f"Successfully extracted and deleted '{Path(archive_path).name}'",
             )
 
         except (IOError, PermissionError, OSError) as e:

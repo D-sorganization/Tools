@@ -74,5 +74,6 @@ def apply_theme() -> None:
 
 def style_slider(slider: Any, color: str) -> None:
     """Apply consistent styling to a matplotlib Slider."""
+    assert color is not None, "color must be provided"
     slider.label.set_color(COLORS["text"])
     slider.valtext.set_color(color)

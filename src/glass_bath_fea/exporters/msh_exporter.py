@@ -26,6 +26,7 @@ def export_mesh_to_msh(
         output_path: Path to output .msh file
         physical_names: Optional mapping of material IDs to names
     """
+    assert mesh_data is not None, "mesh_data must be provided"
     nodes = mesh_data["nodes"]
     elements = mesh_data["elements"]
     material_ids = mesh_data.get("material_ids", np.ones(elements.shape[1]))

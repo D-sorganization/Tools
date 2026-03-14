@@ -372,6 +372,7 @@ class SyngasWaterCalculatorWindow(BaseCalculatorWindow):
 
     def _display_risk_assessment(self, risk: dict) -> None:
         """Update risk assessment labels with color coding."""
+        assert risk is not None, "risk must be provided"
         margin = risk["temperature_margin_c"]
         self.margin_label.setText(f"{margin:.1f}")
 
@@ -394,6 +395,7 @@ class SyngasWaterCalculatorWindow(BaseCalculatorWindow):
 
     def _display_calculation_error(self, error: Exception) -> None:
         """Display error state in all result labels."""
+        assert error is not None, "error must be provided"
         error_msg = f"Error: {error}"
         for label in self.result_labels.values():
             label.setText("--")

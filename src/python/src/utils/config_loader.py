@@ -26,6 +26,7 @@ class ConfigLoader:
             config_path: Path to configuration file
             default_config: Default configuration to use if file doesn't exist
         """
+        assert config_path is not None, "config_path must be provided"
         self.config_path = Path(config_path)
         self.default_config = default_config or {}
         self._config: dict[str, Any] | None = None
@@ -39,6 +40,7 @@ class ConfigLoader:
         Returns:
             Configuration dictionary
         """
+        assert reload is not None, "reload must be provided"
         if self._config is not None and not reload:
             return self._config
 
@@ -55,6 +57,7 @@ class ConfigLoader:
         Returns:
             Configuration value or default
         """
+        assert key is not None, "key must be provided"
         if self._config is None:
             self.load()
 
@@ -78,6 +81,7 @@ class ConfigLoader:
             key: Configuration key (supports dot notation)
             value: Value to set
         """
+        assert key is not None, "key must be provided"
         if self._config is None:
             self.load()
 
@@ -131,5 +135,6 @@ def load_config(
     Returns:
         Configuration dictionary
     """
+    assert config_path is not None, "config_path must be provided"
     loader = ConfigLoader(config_path, default_config)
     return loader.load()

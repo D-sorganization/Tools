@@ -85,6 +85,7 @@ class SignalListWidget(QWidget):
 
     def set_signals(self, signals: list[str]) -> None:
         """Set the list of available signals."""
+        assert signals is not None, "signals must be provided"
         self._all_signals = signals.copy()
         self._populate_list(signals)
         self.count_label.setText(f"({len(signals)})")
@@ -92,12 +93,14 @@ class SignalListWidget(QWidget):
 
     def _populate_list(self, signals: list[str]) -> None:
         """Populate list widget with signals."""
+        assert signals is not None, "signals must be provided"
         self.list_widget.clear()
         for signal in signals:
             self.list_widget.addItem(signal)
 
     def _filter_signals(self, search_text: str) -> None:
         """Filter signals based on search text."""
+        assert search_text is not None, "search_text must be provided"
         search_lower = search_text.lower().strip()
         if not search_lower:
             filtered = self._all_signals
@@ -118,6 +121,7 @@ class SignalListWidget(QWidget):
 
     def select_signals(self, signals: list[str]) -> None:
         """Select specific signals by name."""
+        assert signals is not None, "signals must be provided"
         self.list_widget.clearSelection()
         for i in range(self.list_widget.count()):
             item = self.list_widget.item(i)
@@ -339,6 +343,7 @@ class FilterConfigWidget(QWidget):
 
     def _on_filter_changed(self, filter_type: str) -> None:
         """Handle filter type change."""
+        assert filter_type is not None, "filter_type must be provided"
         index = self.FILTER_TYPES.index(filter_type)
         self.param_stack.setCurrentIndex(index)
         self.filterChanged.emit(filter_type, self.get_parameters())
@@ -416,6 +421,7 @@ class StatisticsWidget(QWidget):
 
     def update_statistics(self, df: pd.DataFrame, signals: list[str]) -> None:
         """Update statistics display."""
+        assert df is not None, "df must be provided"
         self.table.setRowCount(len(signals))
 
         for i, signal in enumerate(signals):
@@ -456,6 +462,7 @@ class DataPreviewWidget(QWidget):
 
     def update_preview(self, df: pd.DataFrame, max_rows: int = 100) -> None:
         """Update data preview."""
+        assert df is not None, "df must be provided"
         if df is None or df.empty:
             self.info_label.setText("No data loaded")
             self.table.clear()
@@ -511,6 +518,7 @@ class StatusBar(QWidget):
 
     def show_progress(self, value: int = 0, maximum: int = 100) -> None:
         """Show progress bar."""
+        assert value is not None, "value must be provided"
         self.progress_bar.setMaximum(maximum)
         self.progress_bar.setValue(value)
         self.progress_bar.setVisible(True)

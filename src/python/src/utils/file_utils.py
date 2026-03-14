@@ -23,6 +23,7 @@ def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
     Returns:
         Parsed JSON data or default value
     """
+    assert file_path is not None, "file_path must be provided"
     path = Path(file_path)
 
     if not path.exists():
@@ -57,6 +58,7 @@ def safe_write_json(
     Returns:
         True if write succeeded, False otherwise
     """
+    assert file_path is not None, "file_path must be provided"
     path = Path(file_path)
 
     try:
@@ -86,6 +88,7 @@ def ensure_directory(path: Path | str, create: bool = True) -> bool:
     Returns:
         True if directory exists (or was created), False otherwise
     """
+    assert path is not None, "path must be provided"
     dir_path = Path(path)
 
     if dir_path.exists():
@@ -121,6 +124,7 @@ def find_file_upwards(
     Returns:
         Path to file if found, None otherwise
     """
+    assert filename is not None, "filename must be provided"
     start_path = Path.cwd() if start_path is None else Path(start_path)
 
     current = start_path.resolve()
@@ -149,6 +153,7 @@ def safe_read_text(
     Returns:
         File contents or default value
     """
+    assert file_path is not None, "file_path must be provided"
     path = Path(file_path)
 
     if not path.exists():
@@ -179,6 +184,7 @@ def safe_write_text(
     Returns:
         True if write succeeded, False otherwise
     """
+    assert file_path is not None, "file_path must be provided"
     path = Path(file_path)
 
     try:

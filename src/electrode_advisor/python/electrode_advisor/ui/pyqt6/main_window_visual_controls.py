@@ -127,6 +127,7 @@ class VisualControlsMixin:
 
     def _create_color_controls(self, parent_layout: QVBoxLayout) -> None:
         """Build the color controls group."""
+        assert parent_layout is not None, "parent_layout must be provided"
         color_group = QGroupBox("Color Controls")
         color_layout = QFormLayout(color_group)
 
@@ -192,6 +193,7 @@ class VisualControlsMixin:
 
     def _create_view_presets(self, parent_layout: QVBoxLayout) -> None:
         """Build the view presets group."""
+        assert parent_layout is not None, "parent_layout must be provided"
         preset_group = QGroupBox("View Presets")
         preset_layout = QGridLayout(preset_group)
 
@@ -215,6 +217,7 @@ class VisualControlsMixin:
 
     def _create_zoom_controls(self, parent_layout: QVBoxLayout) -> None:
         """Build the zoom control group."""
+        assert parent_layout is not None, "parent_layout must be provided"
         zoom_group = QGroupBox("Zoom Control")
         zoom_layout = QVBoxLayout(zoom_group)
 
@@ -232,6 +235,7 @@ class VisualControlsMixin:
 
     def _create_interaction_controls(self, parent_layout: QVBoxLayout) -> None:
         """Build the 3D interaction mode group."""
+        assert parent_layout is not None, "parent_layout must be provided"
         interaction_group = QGroupBox("3D Interaction")
         interaction_layout = QVBoxLayout(interaction_group)
 
@@ -258,6 +262,7 @@ class VisualControlsMixin:
 
     def _create_transparency_controls(self, parent_layout: QVBoxLayout) -> None:
         """Build the transparency sliders group."""
+        assert parent_layout is not None, "parent_layout must be provided"
         trans_group = QGroupBox("Transparency")
         trans_layout = QFormLayout(trans_group)
 
@@ -311,6 +316,7 @@ class VisualControlsMixin:
 
     def _create_visual_settings(self, parent_layout: QVBoxLayout) -> None:
         """Build the visual settings group (electrode extension slider)."""
+        assert parent_layout is not None, "parent_layout must be provided"
         visual_group = QGroupBox("Visual Settings")
         visual_layout = QFormLayout(visual_group)
 
@@ -345,6 +351,7 @@ class VisualControlsMixin:
 
     def _create_export_controls(self, parent_layout: QVBoxLayout) -> None:
         """Build the export buttons group."""
+        assert parent_layout is not None, "parent_layout must be provided"
         export_group = QGroupBox("Export")
         export_layout = QVBoxLayout(export_group)
 
@@ -360,6 +367,7 @@ class VisualControlsMixin:
 
     def _create_display_components(self, parent_layout: QVBoxLayout) -> None:
         """Build the display component toggles group."""
+        assert parent_layout is not None, "parent_layout must be provided"
         display_group = QGroupBox("Display Components")
         display_layout = QGridLayout(display_group)
         display_layout.setSpacing(2)
@@ -411,6 +419,7 @@ class VisualControlsMixin:
 
     def _create_conductive_model_controls(self, parent_layout: QVBoxLayout) -> None:
         """Build the conductive model controls group."""
+        assert parent_layout is not None, "parent_layout must be provided"
         model_group = QGroupBox("Conductive Model")
         model_layout = QFormLayout(model_group)
 

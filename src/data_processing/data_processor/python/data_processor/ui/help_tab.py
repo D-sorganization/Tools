@@ -174,6 +174,7 @@ class HelpTabMixin:
 
     def create_help_tab(self, tab: ctk.CTkFrame) -> None:
         """Create the help tab with comprehensive documentation."""
+        assert tab is not None, "tab must be provided"
         tab.grid_columnconfigure(0, weight=1)
         tab.grid_rowconfigure(1, weight=1)
 

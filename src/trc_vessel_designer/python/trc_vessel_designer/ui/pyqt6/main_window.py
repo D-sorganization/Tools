@@ -145,6 +145,7 @@ class TRCVesselDesignerWidget(QWidget):
 
     def _create_layers_from_preset(self, preset_name: str) -> list[LayerConfig]:
         """Create layer configurations from a preset."""
+        assert preset_name is not None, "preset_name must be provided"
         preset = REFRACTORY_PRESETS.get(preset_name, REFRACTORY_PRESETS["standard"])
         return [
             LayerConfig(
@@ -409,6 +410,7 @@ class TRCVesselDesignerWidget(QWidget):
 
     def _on_preset_changed(self, index: int) -> None:
         """Handle preset selection changes."""
+        assert index is not None, "index must be provided"
         presets = ["standard", "high_temp", "economy"]
         if 0 <= index < len(presets):
             self.layers = self._create_layers_from_preset(presets[index])
@@ -519,6 +521,7 @@ class TRCVesselDesignerWidget(QWidget):
 
     def _update_status(self, message: str, status_type: str = "ok") -> None:
         """Update the status display."""
+        assert message is not None, "message must be provided"
         self.status_label.setText(message)
 
         colors = {
@@ -571,6 +574,7 @@ class TRCVesselDesignerWidget(QWidget):
 
     def set_current_state(self, state: dict[str, Any]) -> None:
         """Restore state from saved data."""
+        assert state is not None, "state must be provided"
         if "dimensions" in state:
             dims = state["dimensions"]
             self.cylinder_height_input.setValue(dims.get("cylinder_height", 72.0))

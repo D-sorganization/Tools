@@ -31,6 +31,7 @@ def validate_path(
     Returns:
         Tuple of (is_valid, error_message)
     """
+    assert path is not None, "path must be provided"
     path_obj = Path(path).resolve()
 
     if must_exist and not path_obj.exists():
@@ -70,6 +71,7 @@ def validate_file_extension(
     Returns:
         Tuple of (is_valid, error_message)
     """
+    assert file_path is not None, "file_path must be provided"
     path = Path(file_path)
     ext = path.suffix
 
@@ -106,6 +108,7 @@ def validate_python_version(
     Returns:
         Tuple of (is_valid, version_string)
     """
+    assert min_major is not None, "min_major must be provided"
     import sys
 
     version = sys.version_info
@@ -136,6 +139,7 @@ def validate_not_none(value: Any, name: str = "value") -> tuple[bool, str | None
     Returns:
         Tuple of (is_valid, error_message)
     """
+    assert name is not None, "name must be provided"
     if value is None:
         return False, f"{name} cannot be None"
     return True, None
@@ -154,6 +158,7 @@ def validate_not_empty(
     Returns:
         Tuple of (is_valid, error_message)
     """
+    assert value is not None, "value must be provided"
     if not value:
         return False, f"{name} cannot be empty"
     return True, None
@@ -176,6 +181,7 @@ def validate_in_range(
     Returns:
         Tuple of (is_valid, error_message)
     """
+    assert value is not None, "value must be provided"
     if min_val is not None and value < min_val:
         return False, f"{name} ({value}) is less than minimum ({min_val})"
 

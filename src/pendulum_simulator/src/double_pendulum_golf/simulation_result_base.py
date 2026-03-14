@@ -53,6 +53,7 @@ class TrajectoryResultMixin:
         apply torque clamping (e.g. double-pendulum with TorqueClamp) must
         override this method.
         """
+        assert idx is not None, "idx must be provided"
         self._check_idx(idx)
         torque_func = getattr(self, "torque_func")
         tau_drive = np.array(torque_func(self.t[idx]))

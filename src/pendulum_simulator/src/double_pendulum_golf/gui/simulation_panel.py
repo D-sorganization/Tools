@@ -61,6 +61,7 @@ class _SimWorker(QObject):
         run_fn: Any,
         run_kwargs: dict,
     ) -> None:
+        assert run_kwargs is not None, "run_kwargs must be provided"
         super().__init__()
         self._run_fn = run_fn
         self._run_kwargs = run_kwargs
@@ -115,6 +116,7 @@ class SimulationPanel(QWidget):
         objective_builder: Any | None = None,
         parent: QWidget | None = None,
     ) -> None:
+        assert controls is not None, "controls must be provided"
         super().__init__(parent)
         self.controls = controls
         self.pendulum = pendulum
@@ -432,6 +434,7 @@ class SimulationPanel(QWidget):
 
     def _on_sim_error(self, msg: str) -> None:
         """Called on the main thread when simulation fails."""
+        assert msg is not None, "msg must be provided"
         from .diagnostics import get_tracker
 
         logger.error("Simulation failed: %s", msg)
@@ -450,6 +453,7 @@ class SimulationPanel(QWidget):
 
     def _show_busy(self, busy: bool) -> None:
         """Show / hide a 'Simulating…' indicator in the top-right."""
+        assert busy is not None, "busy must be provided"
         if not hasattr(self, "_busy_label"):
             self._busy_label = QLabel("⏳  Simulating…", self)
             self._busy_label.setStyleSheet(
@@ -514,6 +518,7 @@ class SimulationPanel(QWidget):
         self._playback_speed = speed
 
     def _on_frame_change(self, frame: int) -> None:
+        assert frame is not None, "frame must be provided"
         if self._result is None:
             return
         self._anim_idx = frame
@@ -588,6 +593,7 @@ class SimulationPanel(QWidget):
 
     def scrub_to_frame(self, idx: int) -> None:
         """Jump to a specific frame index (called by toolstrip slider)."""
+        assert idx is not None, "idx must be provided"
         if self._result is None:
             return
         idx = max(0, min(idx, self._result.n_steps - 1))
@@ -610,6 +616,7 @@ class SimulationPanel(QWidget):
         Pre: result has 'coeffs' key with a numpy array.
         Closes #1151.
         """
+        assert result is not None, "result must be provided"
         import logging
 
         logger = logging.getLogger(__name__)
@@ -716,6 +723,7 @@ class SimulationPanel(QWidget):
 
     def _export_as_svg(self, path: str) -> None:
         """Export the pendulum widget as an SVG image."""
+        assert path is not None, "path must be provided"
         from PyQt6.QtCore import QRect
         from PyQt6.QtGui import QPainter
 
@@ -738,6 +746,7 @@ class SimulationPanel(QWidget):
 
     def _export_as_pdf(self, path: str) -> None:
         """Export the pendulum widget as a PDF (via QPrinter)."""
+        assert path is not None, "path must be provided"
         from PyQt6.QtCore import QMarginsF
         from PyQt6.QtGui import QPainter
         from PyQt6.QtPrintSupport import QPrinter

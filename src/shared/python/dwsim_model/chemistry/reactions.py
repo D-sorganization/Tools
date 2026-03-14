@@ -67,6 +67,7 @@ class ReactorAdapter:
     """Adapter that applies a validated ReactorConfig to a DWSIM reactor."""
 
     def __init__(self, reactor_obj, sim, config: ReactorConfig):
+        assert reactor_obj is not None, "reactor_obj must be provided"
         self.reactor_obj = reactor_obj
         self.sim = sim
         self.config = config
@@ -151,6 +152,7 @@ class ReactorAdapter:
         )
 
     def _apply_reaction_details(self, reaction_obj, reaction) -> None:
+        assert reaction_obj is not None, "reaction_obj must be provided"
         if reaction.kinetics is None:
             return
 
@@ -199,6 +201,7 @@ class ReactorAdapter:
     def _set_mapped_property(
         self, field_name: str, value: float, *, required: bool = False
     ) -> bool:
+        assert field_name is not None, "field_name must be provided"
         property_name = _PROPERTY_MAP.get(self.config.type, {}).get(field_name)
         if property_name is None:
             if required:
@@ -237,18 +240,21 @@ class ReactorAdapter:
 
 
 def configure_gasifier(gasifier_obj, sim) -> None:
+    assert gasifier_obj is not None, "gasifier_obj must be provided"
     config = _load_reactor_contract("gasifier_reactions.yaml")
     ReactorAdapter(gasifier_obj, sim, config).apply()
     logger.info("Gasifier configured with %d reactions.", len(config.reactions))
 
 
 def configure_pem(pem_obj, sim) -> None:
+    assert pem_obj is not None, "pem_obj must be provided"
     config = _load_reactor_contract("pem_reactions.yaml")
     ReactorAdapter(pem_obj, sim, config).apply()
     logger.info("PEM configured with %d reactions.", len(config.reactions))
 
 
 def configure_trc(trc_obj, sim) -> None:
+    assert trc_obj is not None, "trc_obj must be provided"
     config = _load_reactor_contract("trc_reactions.yaml")
     ReactorAdapter(trc_obj, sim, config).apply()
     logger.info("TRC configured with %d reactions.", len(config.reactions))

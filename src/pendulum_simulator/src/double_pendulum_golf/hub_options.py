@@ -47,6 +47,7 @@ def effective_hub_mass(m_hub: float, massless: bool = False) -> float:
     ------------------
     Post: result > 0
     """
+    assert m_hub is not None, "m_hub must be provided"
     if massless:
         return _HUB_MASS_EPSILON
     return m_hub
@@ -152,6 +153,7 @@ def hub_offset_for_com(
     -------
     tuple (dx, dy)
     """
+    assert q is not None, "q must be provided"
     com = compute_system_com(q, p)
     # The hub origin is at (0, 0) in world frame
     return (float(com[0]), float(com[1]))

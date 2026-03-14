@@ -60,6 +60,7 @@ class PersistenceMixin:
 
     def show_context_menu(self, position: QPoint) -> None:
         """Show context menu for manual state management"""
+        assert position is not None, "position must be provided"
         from PyQt6.QtWidgets import QMenu
 
         menu = QMenu(self)  # type: ignore[arg-type]

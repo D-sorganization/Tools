@@ -45,6 +45,7 @@ class ChartDataDialog(QDialog):
         parent: QWidget | None = None,
         model_type: str = "double",
     ) -> None:
+        assert model_type is not None, "model_type must be provided"
         super().__init__(parent)
         self.setWindowTitle("Select Chart Data")
         self.setMinimumWidth(400)

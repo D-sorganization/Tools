@@ -154,6 +154,7 @@ def annotate_path_value(
     text_color: str,
 ) -> None:
     """Annotate a path with a formatted value label."""
+    assert mid_x is not None, "mid_x must be provided"
     if not (
         hasattr(owner, checkbox_name)
         and getattr(owner, checkbox_name).isChecked()
@@ -190,6 +191,7 @@ def annotate_resistance_value(
     text_color: str,
 ) -> None:
     """Annotate a path with a resistance value label."""
+    assert mid_x is not None, "mid_x must be provided"
     if not (
         hasattr(owner, "show_resistance_values_checkbox")
         and owner.show_resistance_values_checkbox.isChecked()

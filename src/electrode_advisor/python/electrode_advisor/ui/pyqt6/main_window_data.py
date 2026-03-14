@@ -117,6 +117,7 @@ class DataMixin:
 
     def _update_status(self, message: str, status_type: str = "ok") -> None:
         """Update status display"""
+        assert message is not None, "message must be provided"
         self.status_label.setText(message)
 
         if self.config.colors is None:

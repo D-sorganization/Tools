@@ -125,6 +125,7 @@ class ElectrodeAdvisorWidget(
             vertical_spreading: Initial vertical spreading factor
             horizontal_spreading: Initial horizontal spreading factor
         """
+        assert calculator_name is not None, "calculator_name must be provided"
         super().__init__(parent)
 
         self.calculator_name = calculator_name

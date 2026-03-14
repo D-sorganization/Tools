@@ -12,13 +12,13 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 # Use shared path utilities
-from utils.path_helpers import ensure_utils_in_path
+from utils.path_helpers import ensure_utils_in_path  # noqa: E402
 
 ensure_utils_in_path()
 
 # Import shared utilities
-from utils.logging_utils import get_logger
-from utils.subprocess_utils import run_python_script
+from utils.logging_utils import get_logger  # noqa: E402
+from utils.subprocess_utils import run_python_script  # noqa: E402
 
 logger = get_logger(__name__)
 

@@ -34,6 +34,7 @@ class ElectrodeAdapter:
         Args:
             config: Glass bath FEA configuration
         """
+        assert config is not None, "config must be provided"
         self.config = config
         self._electrode_config: Any = None
         self._glass_interface: Any = None
@@ -144,6 +145,7 @@ class ElectrodeAdapter:
         Returns:
             Electrical conductivity in S/m.
         """
+        assert temperature_celsius is not None, "temperature_celsius must be provided"
         glass = self.get_glass_interface()
 
         # Build composition dict for the interface
@@ -215,6 +217,7 @@ class ElectrodeAdapter:
         Args:
             output_path: Path to output .mat file.
         """
+        assert output_path is not None, "output_path must be provided"
         from scipy.io import savemat
 
         # Get electrode positions

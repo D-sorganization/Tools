@@ -146,6 +146,7 @@ class ModelCache:
         Returns:
             CacheEntry if cached, None otherwise
         """
+        assert model_id is not None, "model_id must be provided"
         entry = self._entries.get(model_id)
         if entry and entry.local_path.exists():
             entry.last_accessed = time.time()
@@ -173,6 +174,7 @@ class ModelCache:
             Created CacheEntry
         """
         # Check if cleanup needed
+        assert model_id is not None, "model_id must be provided"
         self._maybe_cleanup()
 
         # Compute checksum if requested
@@ -207,6 +209,7 @@ class ModelCache:
         Returns:
             True if removed
         """
+        assert model_id is not None, "model_id must be provided"
         entry = self._entries.get(model_id)
         if not entry:
             return False
@@ -230,6 +233,7 @@ class ModelCache:
 
     def contains(self, model_id: str) -> bool:
         """Check if model is cached."""
+        assert model_id is not None, "model_id must be provided"
         entry = self._entries.get(model_id)
         return entry is not None and entry.local_path.exists()
 
@@ -243,6 +247,7 @@ class ModelCache:
         Returns:
             True if valid, False if corrupted or missing
         """
+        assert model_id is not None, "model_id must be provided"
         entry = self._entries.get(model_id)
         if not entry or not entry.local_path.exists():
             return False
@@ -255,6 +260,7 @@ class ModelCache:
 
     def get_cache_path(self, model_id: str) -> Path:
         """Get the cache path for a model (may not exist yet)."""
+        assert model_id is not None, "model_id must be provided"
         safe_id = model_id.replace("/", "_").replace("\\", "_")
         return self.config.cache_dir / safe_id
 
@@ -317,6 +323,7 @@ class ModelCache:
 
     def _compute_checksum(self, path: Path) -> str:
         """Compute SHA-256 checksum of a file."""
+        assert path is not None, "path must be provided"
         sha256 = hashlib.sha256()
         with open(path, "rb") as f:
             for chunk in iter(lambda: f.read(8192), b""):
@@ -325,6 +332,7 @@ class ModelCache:
 
     def _get_size(self, path: Path) -> int:
         """Get total size of path (file or directory)."""
+        assert path is not None, "path must be provided"
         if path.is_file():
             return path.stat().st_size
         elif path.is_dir():

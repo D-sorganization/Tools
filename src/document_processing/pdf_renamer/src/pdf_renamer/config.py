@@ -19,6 +19,7 @@ except ImportError:
     # Final fallback - inline implementations
     def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
         """Fallback safe JSON reader."""
+        assert file_path is not None, "file_path must be provided"
         path = Path(file_path)
         if not path.exists():
             return default
@@ -35,6 +36,7 @@ except ImportError:
         create_parents: bool = True,
     ) -> bool:
         """Fallback safe JSON writer."""
+        assert file_path is not None, "file_path must be provided"
         path = Path(file_path)
         try:
             if create_parents:

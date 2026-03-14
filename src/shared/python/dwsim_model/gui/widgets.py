@@ -85,6 +85,7 @@ class ValidatedEntry:
         on_change: Callable | None = None,
         row: int | None = None,
     ):
+        assert parent is not None, "parent must be provided"
         self.min_val = min_val
         self.max_val = max_val
         self._on_change = on_change
@@ -189,6 +190,7 @@ class ComboField:
         on_change: Callable | None = None,
         row: int | None = None,
     ):
+        assert parent is not None, "parent must be provided"
         self._var = tk.StringVar(value=default or (choices[0] if choices else ""))
         if on_change:
             self._var.trace_add("write", lambda *a: on_change(self._var.get()))
@@ -222,6 +224,7 @@ class SectionFrame(ttk.LabelFrame):
     """
 
     def __init__(self, parent, title: str, **kwargs):
+        assert parent is not None, "parent must be provided"
         super().__init__(parent, text=title, padding=10, **kwargs)
         self.columnconfigure(1, weight=1)
 
@@ -257,6 +260,7 @@ class KPIPanel(ttk.Frame):
     ]
 
     def __init__(self, parent, **kwargs):
+        assert parent is not None, "parent must be provided"
         super().__init__(parent, **kwargs)
         self._cards: dict[str, dict] = {}
         self._build()
@@ -296,6 +300,7 @@ class KPIPanel(ttk.Frame):
 
     def update_kpis(self, kpi_dict: dict, targets: dict | None = None) -> None:
         """Update displayed values; apply traffic-light colours if targets given."""
+        assert kpi_dict is not None, "kpi_dict must be provided"
         targets = targets or {}
         for key, card in self._cards.items():
             val = kpi_dict.get(key)
@@ -318,6 +323,7 @@ class KPIPanel(ttk.Frame):
 
     @staticmethod
     def _traffic_light_bg(key: str, value: float, targets: dict) -> str:
+        assert key is not None, "key must be provided"
         target = targets.get(key)
         if target is None:
             return "white"
@@ -358,6 +364,7 @@ class LogPanel(ttk.Frame):
     """
 
     def __init__(self, parent, **kwargs):
+        assert parent is not None, "parent must be provided"
         super().__init__(parent, **kwargs)
         self._text = tk.Text(
             self,
@@ -381,6 +388,7 @@ class LogPanel(ttk.Frame):
 
     def append(self, message: str, level: str = "INFO") -> None:
         """Append a line to the log panel."""
+        assert message is not None, "message must be provided"
         self._text.configure(state="normal")
         self._text.insert("end", message + "\n", level)
         self._text.see("end")
@@ -393,6 +401,7 @@ class LogPanel(ttk.Frame):
 
     def attach_to_logger(self, logger_name: str = "") -> None:
         """Route Python logging output to this panel."""
+        assert logger_name is not None, "logger_name must be provided"
         import logging
 
         panel = self

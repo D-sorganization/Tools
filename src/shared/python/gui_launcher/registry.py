@@ -68,6 +68,7 @@ class GUIRegistry:
             icon: Optional path to icon file
             repository: Optional repository identifier
         """
+        assert tool_name is not None, "tool_name must be provided"
         require(
             isinstance(tool_name, str) and tool_name,
             "tool_name must be a non-empty string",
@@ -106,6 +107,7 @@ class GUIRegistry:
         Returns:
             True if the tool was found and removed
         """
+        assert tool_name is not None, "tool_name must be provided"
         require(
             isinstance(tool_name, str) and tool_name,
             "tool_name must be a non-empty string",
@@ -124,6 +126,7 @@ class GUIRegistry:
         Returns:
             GUIRegistration or None if not found
         """
+        assert tool_name is not None, "tool_name must be provided"
         require(
             isinstance(tool_name, str) and tool_name,
             "tool_name must be a non-empty string",
@@ -144,6 +147,7 @@ class GUIRegistry:
         Returns:
             LaunchConfig or None if not found
         """
+        assert tool_name is not None, "tool_name must be provided"
         require(
             isinstance(tool_name, str) and tool_name,
             "tool_name must be a non-empty string",
@@ -186,6 +190,7 @@ class GUIRegistry:
         Returns:
             List of available GUIType values
         """
+        assert tool_name is not None, "tool_name must be provided"
         registration = self._registrations.get(tool_name)
         if registration:
             return list(registration.gui_configs.keys())
@@ -221,6 +226,7 @@ def register_gui(
         gui_configs: Dictionary mapping GUIType to LaunchConfig
         **kwargs: Additional registration options
     """
+    assert tool_name is not None, "tool_name must be provided"
     registry = get_registry()
     registry.register(
         tool_name=tool_name,

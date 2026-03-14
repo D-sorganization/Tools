@@ -75,6 +75,7 @@ class ProcessingMixin(AnalysisMixin, ArchiveMixin, UIProcessingMixin):
 
     def _run_destination_workflow(self, mode: str) -> None:
         """Run source-to-destination workflow (combine, flatten, prune)."""
+        assert mode is not None, "mode must be provided"
         if not self.validate_inputs(check_destination=True):
             return
 
@@ -145,6 +146,7 @@ class ProcessingMixin(AnalysisMixin, ArchiveMixin, UIProcessingMixin):
 
     def _run_post_processing(self, final_summary: str, backup_path: str | None) -> str:
         """Run post-processing steps (dedup, zip, backup note)."""
+        assert final_summary is not None, "final_summary must be provided"
         if self.deduplicate_var.get():
             try:
                 self.update_progress(70, "Deduplicating files...")

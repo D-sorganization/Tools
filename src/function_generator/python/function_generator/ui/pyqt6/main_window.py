@@ -359,6 +359,7 @@ class FunctionGeneratorWidget(QWidget):
         Returns:
             Generated signal array, or None if waveform is unknown
         """
+        assert waveform is not None, "waveform must be provided"
         amp = self.amplitude_spin.value()
         freq = self.frequency_spin.value()
         phase = np.radians(self.phase_spin.value())

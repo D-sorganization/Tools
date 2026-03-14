@@ -20,6 +20,7 @@ def _build_pyinstaller_command(script_dir: Path, main_script: Path) -> list[str]
     Returns:
         List of command arguments for PyInstaller.
     """
+    assert script_dir is not None, "script_dir must be provided"
     icon_path = script_dir / "paper_plane_icon.ico"
     has_icon = icon_path.exists()
 

@@ -137,6 +137,7 @@ class KalmanFilter:
         Args:
             config: Filter configuration
         """
+        assert config is not None, "config must be provided"
         self.config = config
         self._initialize_matrices()
 
@@ -222,6 +223,7 @@ class KalmanFilter:
         Returns:
             KalmanFilterResult with filtered states and diagnostics
         """
+        assert measurements is not None, "measurements must be provided"
         if measurements.ndim == 1:
             measurements = measurements.reshape(-1, self.config.measurement_dim)
         elif (
@@ -309,6 +311,7 @@ class KalmanFilter:
         Returns:
             Updated result with smoothed estimates
         """
+        assert filter_result is not None, "filter_result must be provided"
         T = filter_result.filtered_states.shape[0]
         n = self.config.state_dim
 
@@ -356,6 +359,7 @@ class KalmanFilter:
         innovation_cov: np.ndarray,
     ) -> float:
         """Calculate log likelihood contribution from one observation."""
+        assert innovation is not None, "innovation must be provided"
         m = len(innovation)
         sign, logdet = np.linalg.slogdet(innovation_cov)
         if sign <= 0:
@@ -387,6 +391,7 @@ class ExtendedKalmanFilter:
         obs_dim: int | None = None,
     ) -> None:
         """Initialize EKF."""
+        assert state_dim is not None, "state_dim must be provided"
         self.n = state_dim
         self.m = measurement_dim or obs_dim or state_dim
         self.f = f
@@ -408,6 +413,7 @@ class ExtendedKalmanFilter:
         observation_jacobian: Callable | None = None,
     ) -> KalmanFilterResult:
         """Run EKF on measurements."""
+        assert measurements is not None, "measurements must be provided"
         f = transition_func or self.f
         h = observation_func or self.h
         F_jac = transition_jacobian or self.F_jacobian
@@ -508,6 +514,7 @@ class UnscentedKalmanFilter:
         kappa: float = 0.0,
     ) -> None:
         """Initialize UKF."""
+        assert state_dim is not None, "state_dim must be provided"
         self.n = state_dim
         self.m = measurement_dim
         self.f = f
@@ -543,6 +550,7 @@ class UnscentedKalmanFilter:
 
     def _sigma_points(self, x: np.ndarray, P: np.ndarray) -> np.ndarray:
         """Generate sigma points."""
+        assert x is not None, "x must be provided"
         n = self.n
         lambda_ = self.lambda_
 
@@ -563,6 +571,7 @@ class UnscentedKalmanFilter:
         control_inputs: np.ndarray | None = None,
     ) -> KalmanFilterResult:
         """Run UKF on measurements."""
+        assert measurements is not None, "measurements must be provided"
         if measurements.ndim == 1:
             measurements = measurements.reshape(-1, self.m)
         elif (
@@ -674,6 +683,7 @@ def apply_kalman_filter(
     Returns:
         DataFrame with filtered signal columns added
     """
+    assert df is not None, "df must be provided"
     config = KalmanFilterConfig(
         state_dim=1,
         measurement_dim=1,
@@ -718,6 +728,7 @@ def kalman_smooth(
     Returns:
         Smoothed 1D signal
     """
+    assert signal is not None, "signal must be provided"
     signal = np.asarray(signal).flatten()
     n = len(signal)
 
@@ -753,6 +764,7 @@ def estimate_kalman_params(
         Tuple of (process_noise, measurement_noise) estimates
     """
     # Simple innovation-based estimation
+    assert signal is not None, "signal must be provided"
     signal = np.asarray(signal).flatten()
     signal = signal[~np.isnan(signal)]
 

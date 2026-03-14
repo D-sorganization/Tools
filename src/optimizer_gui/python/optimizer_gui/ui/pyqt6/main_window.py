@@ -573,6 +573,7 @@ class OptimizerWindow(QMainWindow):
 
     def _run_adam_demo(self, params: list[ParameterConfig]) -> None:
         """Run Adam optimization demo."""
+        assert params is not None, "params must be provided"
         maximize = self.maximize_checkbox.isChecked()
         learning_rate = self.learning_rate_input.value()
         beta1 = self.beta1_input.value()
@@ -643,6 +644,7 @@ class OptimizerWindow(QMainWindow):
     @staticmethod
     def _eval_rosenbrock(values: np.ndarray, maximize: bool) -> float:
         """Evaluate the Rosenbrock demo objective function."""
+        assert values is not None, "values must be provided"
         if len(values) >= 2:
             x, y = values[0], values[1]
             obj = (1 - x) ** 2 + 100 * (y - x**2) ** 2
@@ -658,6 +660,7 @@ class OptimizerWindow(QMainWindow):
         maximize: bool,
     ) -> np.ndarray:
         """Compute numerical gradient via central differences."""
+        assert values is not None, "values must be provided"
         gradient = np.zeros_like(values)
         step = self.grad_step_input.value()
         for i in range(len(values)):
@@ -680,6 +683,7 @@ class OptimizerWindow(QMainWindow):
         max_iterations: int,
     ) -> None:
         """Update UI with Adam optimization results."""
+        assert best_obj is not None, "best_obj must be provided"
         self.best_objective_label.setText(f"{best_obj:.6f}")
         self.iterations_label.setText(str(len(self._history)))
         self.converged_label.setText(
@@ -708,6 +712,7 @@ class OptimizerWindow(QMainWindow):
 
     def _run_surface_demo(self, params: list[ParameterConfig], method: str) -> None:
         """Run surface optimization demo."""
+        assert params is not None, "params must be provided"
         if len(params) < 2:
             self.history_text.setPlainText(
                 "Error: Surface optimization requires at least 2 parameters."

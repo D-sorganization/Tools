@@ -58,6 +58,7 @@ except ImportError:
 
     class ContractViolationError(AssertionError, ValueError):  # type: ignore[no-redef]
         def __init__(self, kind: str, msg: str, value: Any = None) -> None:
+            assert kind is not None, "kind must be provided"
             self.message = msg
             detail = f"[DbC {kind}] {msg}"
             if value is not None:
@@ -66,14 +67,17 @@ except ImportError:
 
     class PreconditionError(ContractViolationError):  # type: ignore[no-redef]
         def __init__(self, msg: str, value: Any = None) -> None:
+            assert msg is not None, "msg must be provided"
             super().__init__("pre-condition", msg, value)
 
     class PostconditionError(ContractViolationError):  # type: ignore[no-redef]
         def __init__(self, msg: str, value: Any = None) -> None:
+            assert msg is not None, "msg must be provided"
             super().__init__("post-condition", msg, value)
 
     class InvariantError(ContractViolationError):  # type: ignore[no-redef]
         def __init__(self, msg: str, value: Any = None) -> None:
+            assert msg is not None, "msg must be provided"
             super().__init__("invariant", msg, value)
 
     def _fail(kind: str, msg: str, value: Any = None) -> None:

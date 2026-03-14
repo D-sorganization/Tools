@@ -127,6 +127,7 @@ class DiagnosticsTracker:
         extra: dict[str, Any] | None = None,
     ) -> None:
         """Record a diagnostic event and flush to disk."""
+        assert category is not None, "category must be provided"
         event = DiagnosticEvent(
             timestamp=datetime.now(tz=timezone.utc).isoformat(),
             severity=severity,
@@ -161,6 +162,7 @@ class DiagnosticsTracker:
         context: str = "",
     ) -> None:
         """Convenience: record an exception with its full traceback."""
+        assert category is not None, "category must be provided"
         tb = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
         msg = f"{type(exc).__name__}: {exc}"
         if context:
@@ -232,6 +234,7 @@ class DiagnosticsTracker:
             exc_value: BaseException,
             exc_tb: Any,
         ) -> None:
+            assert exc_type is not None, "exc_type must be provided"
             tb_str = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
             self.record(
                 "uncaught_exception",
@@ -271,6 +274,7 @@ class DiagnosticsViewer(QDialog):
         tracker: DiagnosticsTracker,
         parent: QWidget | None = None,
     ) -> None:
+        assert tracker is not None, "tracker must be provided"
         super().__init__(parent)
         self._tracker = tracker
         self.setWindowTitle("Diagnostics Tracker — Pendulum Simulator")

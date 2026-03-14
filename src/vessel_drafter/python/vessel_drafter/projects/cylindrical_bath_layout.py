@@ -43,6 +43,7 @@ def _build_radial_electrode(
     placement: RadialElectrodePlacement,
     layout: CylindricalBathLayout,
 ) -> Solid:
+    assert placement is not None, "placement must be provided"
     plane = Plane(
         origin=(
             placement.inner_tip_x_mm,

@@ -39,6 +39,7 @@ class NoiseMixin:
         Returns:
             Noisy data
         """
+        assert data is not None, "data must be provided"
         std = std or self.config.noise_std
         data_std = np.std(data)
         if data_std == 0:
@@ -59,6 +60,7 @@ class NoiseMixin:
         Returns:
             Noisy data
         """
+        assert data is not None, "data must be provided"
         range_ = range_ or self.config.noise_range
         data_range = np.ptp(data)
         noise = self._rng.uniform(
@@ -79,6 +81,7 @@ class NoiseMixin:
         Returns:
             Noisy data
         """
+        assert data is not None, "data must be provided"
         noise = self._generate_colored_noise(data.shape, color)
         noise = noise * amplitude * np.std(data)
         return data + noise
@@ -95,6 +98,7 @@ class NoiseMixin:
         Returns:
             Noisy data
         """
+        assert data is not None, "data must be provided"
         prob = prob or self.config.salt_pepper_prob
         result = data.copy()
 
@@ -111,6 +115,7 @@ class NoiseMixin:
     def _generate_colored_noise(self, shape: tuple[int, ...], color: str) -> np.ndarray:
         """Generate colored noise."""
         # Start with white noise
+        assert shape is not None, "shape must be provided"
         white = self._rng.standard_normal(shape)
 
         if color == "white":
