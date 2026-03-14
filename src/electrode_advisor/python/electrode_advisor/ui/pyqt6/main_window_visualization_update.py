@@ -14,11 +14,6 @@ import numpy as np
 from PyQt6.QtWidgets import QCheckBox
 
 from ...utils.shared_drawing import (
-    annotate_path_value,
-    annotate_resistance_value,
-    build_trapezoidal_prism,
-    compute_wall_position,
-    draw_electrode_length_extrusion,
     draw_trapezoidal_path,
     draw_via_metal_path,
 )
@@ -509,78 +504,6 @@ class VisualizationUpdateMixin:
             resistance_value=resistance_value,
         )
 
-    @staticmethod
-    def _compute_wall_position(
-        electrode_pos: dict[str, Any],
-        bath_radius: float,
-    ) -> np.ndarray:
-        """Compute glass bath wall intersection for an electrode."""
-        return compute_wall_position(electrode_pos, bath_radius)
-
-    @staticmethod
-    def _build_trapezoidal_prism(
-        wall1: np.ndarray,
-        tip1: np.ndarray,
-        tip2: np.ndarray,
-        wall2: np.ndarray,
-        electrode_z: float,
-        effective_height: float,
-    ) -> list[list[list[float]]]:
-        """Build 6-face trapezoidal prism vertices from wall/tip positions."""
-        return build_trapezoidal_prism(
-            wall1, tip1, tip2, wall2, electrode_z, effective_height
-        )
-
-    def _annotate_path_value(
-        self,
-        ax: Any,
-        mid_x: float,
-        mid_y: float,
-        mid_z: float,
-        value: float,
-        checkbox_name: str,
-        fmt: str,
-        bg_color: str,
-        text_color: str,
-    ) -> None:
-        """Annotate a path with a formatted value label."""
-        annotate_path_value(
-            self,
-            ax,
-            mid_x,
-            mid_y,
-            mid_z,
-            value,
-            checkbox_name,
-            fmt,
-            bg_color,
-            text_color,
-        )
-
-    def _annotate_resistance_value(
-        self,
-        ax: Any,
-        mid_x: float,
-        mid_y: float,
-        electrode_z: float,
-        resistance_value: float,
-        current_value: float,
-        bg_color: str,
-        text_color: str,
-    ) -> None:
-        """Annotate a path with resistance value."""
-        annotate_resistance_value(
-            self,
-            ax,
-            mid_x,
-            mid_y,
-            electrode_z,
-            resistance_value,
-            current_value,
-            bg_color,
-            text_color,
-        )
-
     def _draw_correct_via_metal_path(
         self,
         electrode1_pos: dict[str, Any],
@@ -612,33 +535,5 @@ class VisualizationUpdateMixin:
             alpha=alpha,
             current_value=current_value,
             resistance_value=resistance_value,
-            horizontal_spreading_factor=self.config.horizontal_spreading_factor,
-        )
-
-    def _draw_electrode_length_extrusion(
-        self,
-        electrode_pos: dict[str, Any],
-        metal_height: float,
-        electrode_radius: float,
-        bath_radius: float,
-        direction: str,
-        color: str,
-        alpha: float,
-    ) -> None:
-        """Draw rectangular extrusion along electrode length within glass bath.
-
-        Delegates to :func:`~shared_drawing.draw_electrode_length_extrusion`.
-        """
-        if self.electrode_ax is None:
-            return
-        draw_electrode_length_extrusion(
-            ax=self.electrode_ax,
-            electrode_pos=electrode_pos,
-            metal_height=metal_height,
-            electrode_radius=electrode_radius,
-            bath_radius=bath_radius,
-            direction=direction,
-            color=color,
-            alpha=alpha,
             horizontal_spreading_factor=self.config.horizontal_spreading_factor,
         )

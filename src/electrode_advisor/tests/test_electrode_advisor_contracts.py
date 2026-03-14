@@ -534,3 +534,61 @@ class TestComputeWallPositionCorrectFormat:
         result = compute_wall_position(pos, bath_radius=60.0)
         arr = np.asarray(result)
         assert abs(arr[2] - z_tip) < 1e-9
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Issue #1377 — VisualizationUpdateMixin dead-code wrappers removed
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@pytest.mark.skipif(
+    not DRAWING_AVAILABLE, reason="electrode_advisor package not on path"
+)
+class TestDeadCodeWrappersRemoved:
+    """Issue #1377: thin wrapper methods must be gone from VisualizationUpdateMixin."""
+
+    def test_compute_wall_position_not_in_visualization_update(self) -> None:
+        """shared_drawing.compute_wall_position should be imported directly."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_visualization_update import (
+                VisualizationUpdateMixin,
+            )
+        except ImportError:
+            pytest.skip("VisualizationUpdateMixin not importable")
+        msg = "_compute_wall_position thin wrapper must be removed"
+        assert not hasattr(VisualizationUpdateMixin, "_compute_wall_position"), msg
+
+    def test_build_trapezoidal_prism_not_in_visualization_update(self) -> None:
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_visualization_update import (
+                VisualizationUpdateMixin,
+            )
+        except ImportError:
+            pytest.skip("VisualizationUpdateMixin not importable")
+        msg = "_build_trapezoidal_prism thin wrapper must be removed"
+        assert not hasattr(VisualizationUpdateMixin, "_build_trapezoidal_prism"), msg
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Issue #1376 — _update_temperature_profile no-op stub removed from call chain
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestTemperatureProfileStub:
+    """Issue #1376: _update_temperature_profile is a no-op; call removed."""
+
+    def test_update_temperature_profile_not_called_from_calculate(self) -> None:
+        """_calculate_system should not call a no-op temperature profile stub."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_calculation import (
+                CalculationMixin,
+            )
+        except ImportError:
+            pytest.skip("CalculationMixin not importable")
+        import inspect
+
+        source = inspect.getsource(CalculationMixin._calculate_system)
+        msg = (
+            "_calculate_system must not call the no-op _update_temperature_profile stub"
+        )
+        assert "_update_temperature_profile" not in source, msg
