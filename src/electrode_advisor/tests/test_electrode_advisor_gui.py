@@ -101,26 +101,19 @@ class TestElectrodeAdvisorGUI:
     )
     def test_widget_creation(self, mock_qt_app):
         """Test that the widget can be created."""
-        # This test requires Qt to be available
-        try:
-            from electrode_advisor.ui.pyqt6.main_window import (
-                ElectrodeAdvisorWidget,
-            )
+        main_window = pytest.importorskip(
+            "electrode_advisor.ui.pyqt6.main_window",
+            reason="electrode_advisor.ui not available",
+        )
+        widget_cls = main_window.ElectrodeAdvisorWidget
 
-            # Mock the Qt widgets to avoid display issues
-            with (
-                patch.object(ElectrodeAdvisorWidget, "_init_ui", return_value=None),
-                patch.object(
-                    ElectrodeAdvisorWidget, "_apply_styling", return_value=None
-                ),
-                patch.object(
-                    ElectrodeAdvisorWidget, "calculate_system", return_value=None
-                ),
-            ):
-                widget = ElectrodeAdvisorWidget.__new__(ElectrodeAdvisorWidget)
-                assert widget is not None
-        except ImportError as e:
-            pytest.skip(f"Qt not available: {e}")
+        with (
+            patch.object(widget_cls, "_init_ui", return_value=None),
+            patch.object(widget_cls, "_apply_styling", return_value=None),
+            patch.object(widget_cls, "calculate_system", return_value=None),
+        ):
+            widget = widget_cls.__new__(widget_cls)
+            assert widget is not None
 
     def test_launcher_dependencies(self):
         """Test that the launcher can check dependencies."""
@@ -142,15 +135,9 @@ class TestGUIRegistration:
 
     def test_registration_imports(self):
         """Test that registration module can be imported."""
-        try:
-            from gui_launcher import (
-                GUIType,
-                LaunchConfig,
-                register_gui,
-            )
-
-            assert GUIType is not None
-            assert LaunchConfig is not None
-            assert register_gui is not None
-        except ImportError as e:
-            pytest.skip(f"GUI launcher not available: {e}")
+        gui_launcher = pytest.importorskip(
+            "gui_launcher", reason="gui_launcher not available"
+        )
+        assert gui_launcher.GUIType is not None
+        assert gui_launcher.LaunchConfig is not None
+        assert gui_launcher.register_gui is not None

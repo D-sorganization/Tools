@@ -215,12 +215,7 @@ class VisualizationMixin:
         color_mode = self.color_mode_combo.currentText()
 
         if color_mode == "Default colors":
-            if self.config.color_schemes is not None:
-                # Return default colors from scheme
-                return str(
-                    self.config.color_schemes["default"].get(path_type, "lightblue")
-                )
-            return "lightblue"
+            return self.config.scheme_color("default", path_type)
 
         # Get calculation results
         if not hasattr(self, "calculation_results") or not self.calculation_results:
