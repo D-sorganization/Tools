@@ -83,21 +83,53 @@ class ElectrodeConfig:
         if self.color_schemes is None:
             self.color_schemes = {
                 "default": {
-                    "direct_glass": "#4169E1",  # Royal blue
-                    "via_metal_down": "#DC143C",  # Crimson
-                    "via_metal_horizontal": "#C0C0C0",  # Silver
-                    "via_metal_up": "#DC143C",  # Crimson
+                    "direct_glass": "#4169E1",
+                    "via_metal_down": "#DC143C",
+                    "via_metal_horizontal": "#C0C0C0",
+                    "via_metal_up": "#DC143C",
                 },
                 "current_intensity": {
-                    # Uses gradient from blue (low) to red (high)
                     "gradient": "coolwarm",
                     "min_color": "#0000FF",
                     "max_color": "#FF0000",
                 },
                 "power_dissipation": {
-                    # Uses gradient from green (low) to yellow to red (high)
                     "gradient": "RdYlGn_r",
                     "min_color": "#00FF00",
                     "max_color": "#FF0000",
                 },
             }
+
+    def status_color(self, status_type: str) -> str:
+        """Return the hex color string for a status type.
+
+        Eliminates repeated ``self.config.colors[status_key]`` navigation (#1369).
+
+        Parameters
+        ----------
+        status_type : str
+            One of ``'ok'``, ``'warn'``, or ``'error'``.
+        """
+        if self.colors is None:
+            return "#C8FFC8"
+        key_map = {"ok": "status_ok", "warn": "status_warn", "error": "status_err"}
+        key = key_map.get(status_type, "status_ok")
+        return str(self.colors.get(key, "#C8FFC8"))
+
+    def scheme_color(self, scheme: str, path_type: str) -> str:
+        """Return the hex color for a path type within a color scheme.
+
+        Eliminates repeated ``self.config.color_schemes[scheme][path]`` navigation
+        (#1369).
+
+        Parameters
+        ----------
+        scheme : str
+            Color scheme name, e.g. ``'default'``.
+        path_type : str
+            Path type key, e.g. ``'direct_glass'``.
+        """
+        if self.color_schemes is None:
+            return "lightblue"
+        scheme_dict = self.color_schemes.get(scheme, {})
+        return str(scheme_dict.get(path_type, "lightblue"))

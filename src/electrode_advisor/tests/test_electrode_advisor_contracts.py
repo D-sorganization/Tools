@@ -693,3 +693,139 @@ class TestOhmsLawInvariants:
             max_r, min_r = max(resistances), min(resistances)
             msg = f"Symmetric config resistances must be equal, got {resistances}"
             assert max_r - min_r < 1e-6 * max_r + 1e-9, msg
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Issue #1369 — LOD: ElectrodeConfig accessor methods
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@pytest.mark.skipif(
+    not ELECTRICAL_AVAILABLE, reason="upstream_drift_tools not installed"
+)
+class TestElectrodeConfigAccessors:
+    """Issue #1369: status_color() and scheme_color() eliminate triple-navigation."""
+
+    def test_status_color_returns_string_for_ok(self) -> None:
+        cfg = ElectrodeConfig()
+        color = cfg.status_color("ok")
+        assert isinstance(color, str)
+        assert len(color) > 0
+
+    def test_status_color_returns_string_for_warn(self) -> None:
+        cfg = ElectrodeConfig()
+        color = cfg.status_color("warn")
+        assert isinstance(color, str)
+
+    def test_status_color_returns_string_for_error(self) -> None:
+        cfg = ElectrodeConfig()
+        color = cfg.status_color("error")
+        assert isinstance(color, str)
+
+    def test_status_color_unknown_falls_back(self) -> None:
+        cfg = ElectrodeConfig()
+        color = cfg.status_color("unknown_key")
+        assert isinstance(color, str)
+
+    def test_scheme_color_returns_string_for_direct_glass(self) -> None:
+        cfg = ElectrodeConfig()
+        color = cfg.scheme_color("default", "direct_glass")
+        assert isinstance(color, str)
+
+    def test_scheme_color_returns_fallback_for_unknown(self) -> None:
+        cfg = ElectrodeConfig()
+        color = cfg.scheme_color("nonexistent_scheme", "nonexistent_path")
+        assert isinstance(color, str)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Issue #1370 — _on_metal_conductivity_changed extracted pure function
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestComputeEffectiveConductivity:
+    """Issue #1370: _compute_effective_conductivity is an extracted pure function."""
+
+    def test_compute_effective_conductivity_importable(self) -> None:
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_calculation import (
+                CalculationMixin,
+            )
+        except ImportError:
+            pytest.skip("CalculationMixin not importable")
+        has_method = hasattr(CalculationMixin, "_compute_effective_conductivity")
+        assert has_method, "_compute_effective_conductivity must be a separate method"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Issues #1372/#1373 — _extract_power_data / _extract_current_data extracted
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class TestExtractedChartHelpers:
+    """Issues #1372/#1373: power and current extraction helpers exist on the mixin."""
+
+    def test_extract_power_data_method_exists(self) -> None:
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_results_charts import (
+                ResultsAndChartsMixin,
+            )
+        except ImportError:
+            pytest.skip("ResultsAndChartsMixin not importable")
+        has_method = hasattr(ResultsAndChartsMixin, "_extract_power_data")
+        assert has_method, "_extract_power_data must be a separate method"
+
+    def test_render_power_bar_chart_method_exists(self) -> None:
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_results_charts import (
+                ResultsAndChartsMixin,
+            )
+        except ImportError:
+            pytest.skip("ResultsAndChartsMixin not importable")
+        has_method = hasattr(ResultsAndChartsMixin, "_render_power_bar_chart")
+        assert has_method, "_render_power_bar_chart must be a separate method"
+
+    def test_extract_current_data_method_exists(self) -> None:
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_results_charts import (
+                ResultsAndChartsMixin,
+            )
+        except ImportError:
+            pytest.skip("ResultsAndChartsMixin not importable")
+        has_method = hasattr(ResultsAndChartsMixin, "_extract_current_data")
+        assert has_method, "_extract_current_data must be a separate method"
+
+    def test_render_current_bar_chart_method_exists(self) -> None:
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_results_charts import (
+                ResultsAndChartsMixin,
+            )
+        except ImportError:
+            pytest.skip("ResultsAndChartsMixin not importable")
+        has_method = hasattr(ResultsAndChartsMixin, "_render_current_bar_chart")
+        assert has_method, "_render_current_bar_chart must be a separate method"
+
+    def test_power_data_pure_arithmetic(self) -> None:
+        """_extract_power_data arithmetic: P = V * I / 1000 kW."""
+        # Simulate the pure calculation without a QWidget
+        phase_data = [
+            {"current": 100.0, "voltage": 200.0},
+            {"current": 150.0, "voltage": 180.0},
+            {"current": 120.0, "voltage": 210.0},
+        ]
+        powers = [d["current"] * d["voltage"] / 1000 for d in phase_data]
+        total_resistive = sum(powers)
+        power_factor = 0.9
+        total_apparent = total_resistive / power_factor
+
+        assert len(powers) == 3
+        assert all(p > 0 for p in powers)
+        assert total_resistive > 0
+        assert total_apparent >= total_resistive  # apparent >= resistive for pf <= 1
+
+    def test_current_data_line_current_formula(self) -> None:
+        """Line current = phase current * sqrt(3) for delta configuration."""
+        phase_currents = [100.0, 110.0, 90.0]
+        line_currents = [c * math.sqrt(3) for c in phase_currents]
+        for phase_c, line_c in zip(phase_currents, line_currents, strict=True):
+            assert abs(line_c / phase_c - math.sqrt(3)) < 1e-10

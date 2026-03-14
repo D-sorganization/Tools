@@ -109,32 +109,41 @@ class CalculationMixin:
             logger.exception("Error in glass height validation: %s", e)
             self._calculate_system()
 
+    def _compute_effective_conductivity(self) -> bool:
+        """Return whether metal layer conduction is currently enabled.
+
+        Pure query — no side effects. Extracted from _on_metal_conductivity_changed
+        to separate concern of reading state from concern of updating display (#1370).
+        """
+        return bool(self.metal_conductive_checkbox.isChecked())  # type: ignore[attr-defined]
+
+    def _update_metal_conductivity_display(self, is_enabled: bool) -> None:
+        """Update show_metal_checkbox appearance based on conductivity state (#1370)."""
+        if not hasattr(self, "show_metal_checkbox"):
+            return
+        if not is_enabled:
+            self.show_metal_checkbox.setChecked(False)  # type: ignore[attr-defined]
+            self.show_metal_checkbox.setEnabled(False)  # type: ignore[attr-defined]
+            self.show_metal_checkbox.setStyleSheet("QCheckBox { color: #888888; }")  # type: ignore[attr-defined]
+            self.show_metal_checkbox.setToolTip(  # type: ignore[attr-defined]
+                "Metal layer visualization disabled when conduction is off"
+            )
+        else:
+            self.show_metal_checkbox.setEnabled(True)  # type: ignore[attr-defined]
+            self.show_metal_checkbox.setChecked(True)  # type: ignore[attr-defined]
+            self.show_metal_checkbox.setStyleSheet("")  # type: ignore[attr-defined]
+            self.show_metal_checkbox.setToolTip("")  # type: ignore[attr-defined]
+
     @pyqtSlot()
     def _on_metal_conductivity_changed(self) -> None:
         """Handle metal layer conductivity toggle"""
         try:
-            is_enabled = self.metal_conductive_checkbox.isChecked()  # type: ignore[attr-defined]
+            is_enabled = self._compute_effective_conductivity()
             logger.debug(
                 "[DEBUG] Metal layer conductivity: %s",
                 "Enabled" if is_enabled else "Disabled",
             )
-
-            if hasattr(self, "show_metal_checkbox"):
-                if not is_enabled:
-                    self.show_metal_checkbox.setChecked(False)  # type: ignore[attr-defined]
-                    self.show_metal_checkbox.setEnabled(False)  # type: ignore[attr-defined]
-                    self.show_metal_checkbox.setStyleSheet(  # type: ignore[attr-defined]
-                        "QCheckBox { color: #888888; }"
-                    )
-                    self.show_metal_checkbox.setToolTip(  # type: ignore[attr-defined]
-                        "Metal layer visualization disabled when conduction is off"
-                    )
-                else:
-                    self.show_metal_checkbox.setEnabled(True)  # type: ignore[attr-defined]
-                    self.show_metal_checkbox.setChecked(True)  # type: ignore[attr-defined]
-                    self.show_metal_checkbox.setStyleSheet("")  # type: ignore[attr-defined]
-                    self.show_metal_checkbox.setToolTip("")  # type: ignore[attr-defined]
-
+            self._update_metal_conductivity_display(is_enabled)
             self._calculate_system()
             self._update_results_tables()  # type: ignore[attr-defined]
             self._update_analysis_display()  # type: ignore[attr-defined]

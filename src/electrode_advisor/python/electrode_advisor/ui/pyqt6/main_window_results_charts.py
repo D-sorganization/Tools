@@ -343,185 +343,169 @@ class ResultsAndChartsMixin:
     def _update_temperature_profile(self) -> None:
         """Temperature profile removed - this functionality is no longer needed"""
 
+    def _extract_current_data(self) -> tuple[list[float], list[float]]:
+        """Extract phase and line current values from UI inputs (pure, no rendering).
+
+        Returns
+        -------
+        tuple[list[float], list[float]]
+            (phase_currents, line_currents) for phases 1-2, 2-3, 3-1.
+        """
+        phase_currents = [
+            self.phase_inputs["1-2"]["current"].value(),
+            self.phase_inputs["2-3"]["current"].value(),
+            self.phase_inputs["3-1"]["current"].value(),
+        ]
+        line_currents = [c * math.sqrt(3) for c in phase_currents]
+        return phase_currents, line_currents
+
+    def _render_current_bar_chart(
+        self,
+        phase_currents: list[float],
+        line_currents: list[float],
+    ) -> None:
+        """Render the current distribution bar chart (view only, no data extraction)."""
+        phases = ["1-2", "2-3", "3-1"]
+        colors = ["#FF4444", "#44FF44", "#4444FF"]
+        x = np.arange(len(phases))
+        width = 0.35
+
+        bars1 = self.current_ax.bar(
+            x - width / 2, phase_currents, width, label="Phase", color=colors, alpha=0.8
+        )
+        bars2 = self.current_ax.bar(
+            x + width / 2, line_currents, width, label="Line", color=colors, alpha=0.5
+        )
+        max_current = max(phase_currents + line_currents) if phase_currents else 100
+        self.current_ax.set_ylim(0, max_current * 1.3)
+
+        for bar, current in zip(bars1, phase_currents, strict=False):
+            self.current_ax.text(
+                bar.get_x() + bar.get_width() / 2.0,
+                bar.get_height() + max_current * 0.02,
+                f"{current:.1f}A",
+                ha="center",
+                va="bottom",
+                fontsize=8,
+            )
+        for bar, current in zip(bars2, line_currents, strict=False):
+            self.current_ax.text(
+                bar.get_x() + bar.get_width() / 2.0,
+                bar.get_height() + max_current * 0.02,
+                f"{current:.1f}A",
+                ha="center",
+                va="bottom",
+                fontsize=8,
+            )
+        self.current_ax.set_xlabel("Phase")
+        self.current_ax.set_ylabel("Current (A)")
+        self.current_ax.set_title("Current Distribution")
+        self.current_ax.set_xticks(x)
+        self.current_ax.set_xticklabels(phases)
+        self.current_ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.05), ncol=2)
+        self.current_ax.grid(True, alpha=0.3)
+
     def _update_current_distribution(self) -> None:
         """Update current distribution plot with phase and line currents"""
         try:
             if not self.current_ax:
                 return
-
             self.current_ax.clear()
-
-            # Get current values
-            phase_currents = [
-                self.phase_inputs["1-2"]["current"].value(),
-                self.phase_inputs["2-3"]["current"].value(),
-                self.phase_inputs["3-1"]["current"].value(),
-            ]
-
-            phases = ["1-2", "2-3", "3-1"]
-            colors = ["#FF4444", "#44FF44", "#4444FF"]
-
-            # Create side-by-side bars for phase and line currents
-            x = np.arange(len(phases))
-            width = 0.35
-
-            # Phase currents
-            bars1 = self.current_ax.bar(
-                x - width / 2,
-                phase_currents,
-                width,
-                label="Phase",
-                color=colors,
-                alpha=0.8,
-            )
-
-            # Line currents: in delta configuration, I_line = sqrt(3) * I_phase
-            line_currents = [current * math.sqrt(3) for current in phase_currents]
-            bars2 = self.current_ax.bar(
-                x + width / 2,
-                line_currents,
-                width,
-                label="Line",
-                color=colors,
-                alpha=0.5,
-            )
-
-            # Increase y-axis limits to prevent cutoff
-            max_current = max(phase_currents + line_currents) if phase_currents else 100
-            self.current_ax.set_ylim(0, max_current * 1.3)  # 30% headroom
-
-            # Add value labels on bars
-            for bar, current in zip(bars1, phase_currents, strict=False):
-                height = bar.get_height()
-                self.current_ax.text(
-                    bar.get_x() + bar.get_width() / 2.0,
-                    height + max_current * 0.02,
-                    f"{current:.1f}A",
-                    ha="center",
-                    va="bottom",
-                    fontsize=8,
-                )
-
-            for bar, current in zip(bars2, line_currents, strict=False):
-                height = bar.get_height()
-                self.current_ax.text(
-                    bar.get_x() + bar.get_width() / 2.0,
-                    height + max_current * 0.02,
-                    f"{current:.1f}A",
-                    ha="center",
-                    va="bottom",
-                    fontsize=8,
-                )
-
-            if self.current_ax:
-                self.current_ax.set_xlabel("Phase")
-                self.current_ax.set_ylabel("Current (A)")
-                self.current_ax.set_title("Current Distribution")
-                self.current_ax.set_xticks(x)
-                self.current_ax.set_xticklabels(phases)
-
-                # Position legend below the plot
-                self.current_ax.legend(
-                    loc="upper center", bbox_to_anchor=(0.5, -0.05), ncol=2
-                )
-
-                self.current_ax.grid(True, alpha=0.3)
-
+            phase_currents, line_currents = self._extract_current_data()
+            self._render_current_bar_chart(phase_currents, line_currents)
             if self.current_canvas is not None:
                 self.current_canvas.draw()
-
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error updating current distribution: %s", e)
+
+    def _extract_power_data(self) -> tuple[list[float], float, float, float]:
+        """Extract per-phase powers and totals from UI inputs (pure, no rendering).
+
+        Returns
+        -------
+        tuple[list[float], float, float, float]
+            (powers_kw, total_resistive_kw, total_apparent_kw, power_factor)
+            where powers_kw contains one entry per phase (1-2, 2-3, 3-1).
+        """
+        phase_keys = ["1-2", "2-3", "3-1"]
+        powers: list[float] = []
+        for phase_key in phase_keys:
+            current = cast(
+                QDoubleSpinBox, self.phase_inputs[phase_key]["current"]
+            ).value()
+            voltage = cast(
+                QDoubleSpinBox, self.phase_inputs[phase_key]["voltage"]
+            ).value()
+            powers.append(current * voltage / 1000)
+
+        total_resistive = sum(powers)
+        power_factor = self.power_factor_input.value()
+        total_apparent = (
+            total_resistive / power_factor if power_factor > 0 else total_resistive
+        )
+        return powers, total_resistive, total_apparent, power_factor
+
+    def _render_power_bar_chart(
+        self,
+        powers: list[float],
+        total_resistive: float,
+        total_apparent: float,
+        power_factor: float,
+    ) -> None:
+        """Render the power distribution bar chart and update display labels (view only)."""
+        phase_keys = ["1-2", "2-3", "3-1"]
+        phases = ["Phase 1-2", "Phase 2-3", "Phase 3-1"]
+        colors = ["#FF8C00", "#32CD32", "#1E90FF"]
+
+        self.total_power_display.setText(f"{total_resistive:.1f}")
+        for i, phase_key in enumerate(phase_keys):
+            cast(QLineEdit, self.phase_inputs[phase_key]["power"]).setText(
+                f"{powers[i]:.1f}"
+            )
+
+        x_positions = np.arange(len(phases))
+        bars = self.power_ax.bar(x_positions, powers, color=colors, alpha=0.7)
+        self.power_ax.set_xticks(x_positions)
+        self.power_ax.set_xticklabels(phases)
+
+        max_power = max(powers) if powers else 50
+        self.power_ax.set_ylim(0, max_power * 1.3)
+
+        for i, (bar, power) in enumerate(zip(bars, powers, strict=False)):
+            height = bar.get_height()
+            self.power_ax.text(
+                i,
+                height + max_power * 0.02,
+                f"{power:.1f}kW",
+                ha="center",
+                va="bottom",
+                fontsize=8,
+            )
+
+        pf_text = (
+            f"System PF: {power_factor:.2f} | Total Resistive: {total_resistive:.1f}kW"
+        )
+        if abs(total_apparent - total_resistive) > 0.1:
+            pf_text += f" | Apparent: {total_apparent:.1f}kW"
+
+        self.power_ax.set_xlabel("Phase")
+        self.power_ax.set_ylabel("Power (kW)")
+        self.power_ax.set_title(f"Power Distribution\n{pf_text}")
+        self.power_ax.grid(True, alpha=0.3)
 
     def _update_power_distribution(self) -> None:
         """Update power distribution plot with corrected 3-phase delta calculations"""
         try:
             if not self.power_ax:
                 return
-
             self.power_ax.clear()
-
-            # Calculate power for each phase in a 3-phase delta system
-            powers = []
-            phases = ["Phase 1-2", "Phase 2-3", "Phase 3-1"]
-            colors = ["#FF8C00", "#32CD32", "#1E90FF"]
-
-            phase_keys = ["1-2", "2-3", "3-1"]
-
-            # For each phase in delta configuration
-            for phase_key in phase_keys:
-                current = cast(
-                    QDoubleSpinBox, self.phase_inputs[phase_key]["current"]
-                ).value()
-                voltage = cast(
-                    QDoubleSpinBox, self.phase_inputs[phase_key]["voltage"]
-                ).value()
-
-                # For resistive loads (molten glass), power factor = 1.0 for each phase
-                # Individual phase real power: P = V * I * cos(φ) where cos(φ) = 1 for resistive
-                power = current * voltage / 1000  # Convert to kW
-                powers.append(power)
-
-            # Calculate total three-phase power
-            # For balanced 3-phase delta with resistive loads:
-            total_resistive_power = sum(powers)
-
-            # Apply system power factor for any reactive components (transformers, etc.)
-            power_factor = self.power_factor_input.value()
-
-            # The system power factor accounts for reactive components in the circuit
-            # but doesn't affect the resistive power in the glass
-            # Display both values for clarity
-            total_apparent_power = (
-                total_resistive_power / power_factor
-                if power_factor > 0
-                else total_resistive_power
+            powers, total_resistive, total_apparent, power_factor = (
+                self._extract_power_data()
             )
-
-            # Update displays
-            self.total_power_display.setText(f"{total_resistive_power:.1f}")
-
-            # Update individual phase power displays (always resistive power)
-            for i, phase_key in enumerate(phase_keys):
-                cast(QLineEdit, self.phase_inputs[phase_key]["power"]).setText(
-                    f"{powers[i]:.1f}"
-                )
-
-            # Create bar chart
-            x_positions = np.arange(len(phases))
-            bars = self.power_ax.bar(x_positions, powers, color=colors, alpha=0.7)
-            self.power_ax.set_xticks(x_positions)
-            self.power_ax.set_xticklabels(phases)
-
-            # Increase y-axis limits to prevent cutoff
-            max_power = max(powers) if powers else 50
-            self.power_ax.set_ylim(0, max_power * 1.3)
-
-            # Add value labels on bars
-            for i, (bar, power) in enumerate(zip(bars, powers, strict=False)):
-                height = bar.get_height()
-                self.power_ax.text(
-                    i,
-                    height + max_power * 0.02,
-                    f"{power:.1f}kW",
-                    ha="center",
-                    va="bottom",
-                    fontsize=8,
-                )
-
-            # Add system power factor info in subtitle
-            pf_text = f"System PF: {power_factor:.2f} | Total Resistive: {total_resistive_power:.1f}kW"
-            if abs(total_apparent_power - total_resistive_power) > 0.1:
-                pf_text += f" | Apparent: {total_apparent_power:.1f}kW"
-
-            if self.power_ax:
-                self.power_ax.set_xlabel("Phase")
-                self.power_ax.set_ylabel("Power (kW)")
-                self.power_ax.set_title(f"Power Distribution\n{pf_text}")
-                self.power_ax.grid(True, alpha=0.3)
-
+            self._render_power_bar_chart(
+                powers, total_resistive, total_apparent, power_factor
+            )
             if self.power_canvas is not None:
                 self.power_canvas.draw()
-
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.exception("Error updating power distribution: %s", e)
