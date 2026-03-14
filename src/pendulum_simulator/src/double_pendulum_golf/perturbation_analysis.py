@@ -143,9 +143,15 @@ def perturb_torque_coeffs(
     Design by Contract
     ------------------
     Pre:  noise_amplitude >= 0
+    Pre:  noise_type in {'white', 'pink', 'brown'}
     Post: output has same shape as input
     """
     assert noise_amplitude >= 0
+    assert noise_type in {
+        "white",
+        "pink",
+        "brown",
+    }, f"noise_type must be 'white', 'pink', or 'brown'; got {noise_type!r}"
 
     if noise_amplitude == 0.0:
         return [list(c) for c in coeffs]

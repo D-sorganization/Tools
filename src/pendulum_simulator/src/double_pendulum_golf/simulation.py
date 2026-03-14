@@ -129,11 +129,15 @@ class SimulationResult(TrajectoryResultMixin):
     def energy_at(self, idx: int) -> dict:
         self._check_idx(idx)
         state = self.states[idx]
-        return {
+        result = {
             "kinetic": kinetic_energy(state, self.params),
             "potential": potential_energy(state, self.params),
             "total": total_energy(state, self.params),
         }
+        assert all(
+            np.isfinite(v) for v in result.values()
+        ), f"Non-finite energy at idx={idx}: {result}"
+        return result
 
     def coriolis_at(self, idx: int) -> np.ndarray:
         self._check_idx(idx)
