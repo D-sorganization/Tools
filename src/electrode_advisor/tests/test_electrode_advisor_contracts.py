@@ -1319,3 +1319,70 @@ class TestCorrectnessFixes:
         sig = inspect.signature(ElectrodeVisualization.__init__)
         has_config = "config" in sig.parameters
         assert has_config, "constructor must accept config parameter"
+
+
+# ── Batch 4: Robustness + DbC tests ─────────────────────────────────────────
+
+
+class TestRobustnessDbC:
+    """Tests for Batch 4 robustness/DbC fixes (#1419-#1422)."""
+
+    def test_calculate_system_uses_valueerror(self) -> None:
+        """#1419: _calculate_system must raise ValueError, not assert."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_calculation import (
+                CalculationMixin,
+            )
+        except ImportError:
+            pytest.skip("CalculationMixin not importable")
+        import inspect
+
+        src = inspect.getsource(CalculationMixin._calculate_system)
+        no_assert = "assert bath_diameter" not in src
+        has_raise = "raise ValueError" in src
+        assert no_assert, "must not use assert for preconditions"
+        assert has_raise, "must raise ValueError for preconditions"
+
+    def test_compute_balanced_depths_postcondition(self) -> None:
+        """#1420: _compute_balanced_depths must have postcondition."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_calculation import (
+                CalculationMixin,
+            )
+        except ImportError:
+            pytest.skip("CalculationMixin not importable")
+        import inspect
+
+        src = inspect.getsource(CalculationMixin._compute_balanced_depths)
+        has_post = "lo_orig" in src and "hi_orig" in src
+        assert has_post, "must check result in [lo, hi]"
+
+    def test_electrode_diameter_validated(self) -> None:
+        """#1421: _read_calculation_params must validate diameter."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_calculation import (
+                CalculationMixin,
+            )
+        except ImportError:
+            pytest.skip("CalculationMixin not importable")
+        import inspect
+
+        src = inspect.getsource(CalculationMixin._read_calculation_params)
+        has_validation = "except (ValueError, TypeError)" in src
+        assert has_validation, "must validate diameter conversion"
+
+    def test_phase_key_uses_split(self) -> None:
+        """#1422: phase key parsing must use split('-')."""
+        try:
+            from electrode_advisor.ui.pyqt6.main_window_visualization_update import (
+                VisualizationUpdateMixin,
+            )
+        except ImportError:
+            pytest.skip("VisualizationUpdateMixin not importable")
+        import inspect
+
+        src = inspect.getsource(VisualizationUpdateMixin._draw_3d_conductive_paths_new)
+        uses_split = 'split("-")' in src
+        no_index = "phase[0]" not in src
+        assert uses_split, "must use split for phase key"
+        assert no_index, "must not use character indexing"
