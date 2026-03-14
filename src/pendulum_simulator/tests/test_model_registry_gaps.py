@@ -86,9 +86,6 @@ class TestRegisterBuiltinsImportError:
 
         # Clear registry and patch builtins to trigger ImportError for double
         clear_registry()
-        original_import = (
-            __builtins__.__import__ if hasattr(__builtins__, "__import__") else None
-        )
 
         # Use monkeypatch to make the double pendulum import fail
         with monkeypatch.context() as m:
