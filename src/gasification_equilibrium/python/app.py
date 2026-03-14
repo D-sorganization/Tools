@@ -62,6 +62,7 @@ def make_slider(
     callback: Callable[..., Any],
 ) -> Slider:
     """Create a styled slider. Returns the Slider widget."""
+    assert rect is not None, "rect must be provided"
     ax = fig.add_axes(rect)
     ax.set_facecolor(COLORS["panel"])
     sl = Slider(ax, label, vmin, vmax, valinit=vinit, valstep=vstep, color=color)
@@ -74,6 +75,7 @@ def make_button(
     fig: Any, rect: list[float], label: str, color: str, callback: Callable[..., Any]
 ) -> Button:
     """Create a styled button. Returns the Button widget."""
+    assert rect is not None, "rect must be provided"
     ax = fig.add_axes(rect)
     btn = Button(ax, label, color=color, hovercolor=COLORS["grid"])
     btn.label.set_color(COLORS["bg"])
@@ -113,6 +115,7 @@ def build_single_point_tab(
 
     Returns dict of {name: widget_or_axes} for visibility toggling.
     """
+    assert state is not None, "state must be provided"
     widgets = {}
 
     widgets["ax_bar"] = fig.add_axes([0.06, 0.35, 0.38, 0.55])
@@ -238,6 +241,7 @@ def build_sweep_tab(
     fig: Any, state: AppState, on_sweep: Callable[[], None]
 ) -> dict[str, Any]:
     """Build Tab 2: temperature sweep with species selection."""
+    assert state is not None, "state must be provided"
     widgets = {}
 
     widgets["ax_comp"] = fig.add_axes([0.07, 0.52, 0.55, 0.38])
@@ -327,6 +331,7 @@ def build_sweep_tab(
 
 def build_surface_tab(fig: Any, on_surface: Callable[[], None]) -> dict[str, Any]:
     """Build Tab 3: 3D surface plots."""
+    assert on_surface is not None, "on_surface must be provided"
     widgets = {}
 
     widgets["ax_3d"] = fig.add_axes([0.02, 0.12, 0.55, 0.78], projection="3d")
@@ -368,6 +373,7 @@ def build_feed_tab(
     fig: Any, state: AppState, on_apply: Callable[[], None]
 ) -> dict[str, Any]:
     """Build Tab 4: CHONS feed editor with presets and injection summary."""
+    assert state is not None, "state must be provided"
     widgets = {}
 
     widgets["ax_comp"] = fig.add_axes([0.06, 0.42, 0.38, 0.48])
@@ -524,6 +530,7 @@ class GasificationApp:
 
     def _show_tab(self, idx: int) -> None:
         """Switch visible tab."""
+        assert idx is not None, "idx must be provided"
         for i, ax in enumerate(self.tab_axes):
             active = i == idx
             ax.set_facecolor(COLORS["accent"] if active else COLORS["panel"])
@@ -546,6 +553,7 @@ class GasificationApp:
         sw["check"].on_clicked(lambda lbl: self._toggle_species(lbl, sw))
 
     def _toggle_species(self, label: str, sw: dict[str, Any]) -> None:
+        assert label is not None, "label must be provided"
         sp_key = sw["species_map"].get(label, label)
         if sp_key in self.state.selected_species:
             self.state.selected_species.remove(sp_key)

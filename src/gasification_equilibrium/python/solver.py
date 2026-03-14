@@ -52,6 +52,7 @@ class ElementMatrix:
     """
 
     def __init__(self, species_keys: list[str], element_keys: list[str]) -> None:
+        assert species_keys is not None, "species_keys must be provided"
         self.species_keys = list(species_keys)
         self.element_keys = list(element_keys)
         self.n_species = len(species_keys)
@@ -64,6 +65,7 @@ class ElementMatrix:
     @staticmethod
     def _build(species_keys: list[str], element_keys: list[str]) -> np.ndarray:
         """Build A[j, i] = atoms of element j in species i."""
+        assert species_keys is not None, "species_keys must be provided"
         A = np.zeros((len(element_keys), len(species_keys)))
         for i, sp_key in enumerate(species_keys):
             elem_dict = dict(SPECIES_DB[sp_key]["elements"])
@@ -84,6 +86,7 @@ class ElementMatrix:
 
         Postcondition: b.shape == (n_elements,)
         """
+        assert feed_elements is not None, "feed_elements must be provided"
         b = np.zeros(self.n_elements)
         for j, elem in enumerate(self.element_keys):
             b[j] = feed_elements.get(elem, 0.0)
@@ -105,6 +108,7 @@ def compute_gibbs(n: np.ndarray, T: float, P: float, matrix: ElementMatrix) -> f
 
     Precondition: T > 0, P > 0
     """
+    assert n is not None, "n must be provided"
     n_safe = np.maximum(n, MIN_MOLES)
     n_gas_total = max(np.sum(n_safe * matrix.gas_mask), MIN_MOLES)
     ln_P_ratio = np.log(P / P_REF)
@@ -127,6 +131,7 @@ def compute_gibbs_gradient(
 
     Postcondition: returns array of shape (n_species,)
     """
+    assert n is not None, "n must be provided"
     n_safe = np.maximum(n, MIN_MOLES)
     n_gas_total = max(np.sum(n_safe * matrix.gas_mask), MIN_MOLES)
     ln_P_ratio = np.log(P / P_REF)
@@ -148,6 +153,7 @@ def initial_guess(matrix: ElementMatrix, b: np.ndarray) -> np.ndarray:
     Precondition: b.shape == (n_elements,)
     Postcondition: n.shape == (n_species,), all >= MIN_MOLES
     """
+    assert matrix is not None, "matrix must be provided"
     try:
         n0, _ = nnls(matrix.A, b)
     except Exception:

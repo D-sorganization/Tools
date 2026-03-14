@@ -30,6 +30,7 @@ class PlotConfigManager:
             config_dir: Directory to store plot configs. Defaults to user's home.
             filename: Name of the config file.
         """
+        assert filename is not None, "filename must be provided"
         if config_dir is None:
             self.config_dir = Path.home() / ".data_processor"
         else:
@@ -87,6 +88,7 @@ class PlotConfigManager:
             }
         }
         """
+        assert name is not None, "name must be provided"
         configs = self._load_all_configs()
 
         configs[name] = {
@@ -122,6 +124,7 @@ class PlotConfigManager:
         Args:
             name: Name of the plot configuration to delete
         """
+        assert name is not None, "name must be provided"
         configs = self._load_all_configs()
 
         if name in configs:
@@ -168,6 +171,7 @@ class PlotConfigManager:
             source_name: Name of the configuration to copy
             new_name: Name for the new configuration
         """
+        assert source_name is not None, "source_name must be provided"
         config = self.load_plot_config(source_name)
         config["name"] = new_name
         self.save_plot_config(new_name, config)
@@ -179,6 +183,7 @@ class PlotConfigManager:
             name: Name of the configuration to update
             updates: Dictionary of fields to update
         """
+        assert name is not None, "name must be provided"
         config = self.load_plot_config(name)
         config.update(updates)
         self.save_plot_config(name, config)
@@ -190,6 +195,7 @@ class PlotConfigManager:
             name: Name of the plot configuration
             export_path: Path to export to
         """
+        assert name is not None, "name must be provided"
         config = self.load_plot_config(name)
         export_path = Path(export_path)
 
@@ -208,6 +214,7 @@ class PlotConfigManager:
         Returns:
             Name of the imported configuration
         """
+        assert import_path is not None, "import_path must be provided"
         import_path = Path(import_path)
 
         with open(import_path, encoding="utf-8") as f:
@@ -226,6 +233,7 @@ class PlotConfigManager:
         Returns:
             List of exported file paths
         """
+        assert export_dir is not None, "export_dir must be provided"
         export_dir = Path(export_dir)
         export_dir.mkdir(parents=True, exist_ok=True)
 

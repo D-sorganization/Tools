@@ -67,6 +67,7 @@ class FileLayoutStore:
 
     def save(self, layout_ids: Sequence[str]) -> None:
         """Save the layout to the JSON file."""
+        assert layout_ids is not None, "layout_ids must be provided"
         self.path.parent.mkdir(parents=True, exist_ok=True)
         serialized = json.dumps(list(layout_ids), indent=2)
         self.path.write_text(serialized, encoding="utf-8")
@@ -85,4 +86,5 @@ class InMemoryLayoutStore:
 
     def save(self, layout_ids: Sequence[str]) -> None:
         """Update the in-memory layout."""
+        assert layout_ids is not None, "layout_ids must be provided"
         self._layout = list(layout_ids)

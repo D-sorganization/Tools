@@ -31,6 +31,7 @@ class FileValidationMixin:
             OSError: If file system operations fail
             ValueError: If file size validation fails
         """
+        assert file_path is not None, "file_path must be provided"
         if self.cancel_operation:
             return False
 
@@ -162,6 +163,7 @@ class FileValidationMixin:
         Raises:
             OSError: If file system operations fail during path construction
         """
+        assert file_path is not None, "file_path must be provided"
         filename = Path(file_path).name
         dest_path = dest_base
 

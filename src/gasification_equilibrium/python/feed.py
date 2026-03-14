@@ -124,6 +124,7 @@ class FeedComposition:
         Precondition: mass_fracs values >= 0, keys are element symbols
         Postcondition: returns FeedComposition with moles/kg
         """
+        assert mass_fracs is not None, "mass_fracs must be provided"
         total = sum(
             v for k, v in mass_fracs.items() if k != "Ash" and k in ATOMIC_WEIGHTS
         )
@@ -193,6 +194,7 @@ def build_total_feed(
     Precondition: base_feed and process_inputs are valid
     Postcondition: all returned values >= 0
     """
+    assert base_feed is not None, "base_feed must be provided"
     total = base_feed.as_dict()
 
     # Add oxidant (O2 or air)

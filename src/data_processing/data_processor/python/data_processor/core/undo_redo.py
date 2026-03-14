@@ -76,6 +76,7 @@ class UndoRedoManager(Generic[T]):
         Args:
             max_history: Maximum number of commands to keep in history
         """
+        assert max_history is not None, "max_history must be provided"
         self._history: list[CommandRecord] = []
         self._redo_stack: list[CommandRecord] = []
         self._max_history = max_history
@@ -119,6 +120,7 @@ class UndoRedoManager(Generic[T]):
         Returns:
             Result of the command execution
         """
+        assert command is not None, "command must be provided"
         result = command.execute()
 
         record = CommandRecord(command=command, result=result)
@@ -216,6 +218,7 @@ class DataFrameCommand(Command):
             df_getter: Function to get current DataFrame
             df_setter: Function to set new DataFrame
         """
+        assert df_getter is not None, "df_getter must be provided"
         self._get_df = df_getter
         self._set_df = df_setter
         self._previous_df: pd.DataFrame | None = None
@@ -232,6 +235,7 @@ class FilterCommand(DataFrameCommand):
         filter_name: str,
         filter_params: dict[str, Any],
     ) -> None:
+        assert df_getter is not None, "df_getter must be provided"
         super().__init__(df_getter, df_setter)
         self._filter_func = filter_func
         self._filter_name = filter_name
@@ -271,6 +275,7 @@ class ColumnOperationCommand(DataFrameCommand):
         new_data: pd.Series | None = None,
         formula: str | None = None,
     ) -> None:
+        assert df_getter is not None, "df_getter must be provided"
         super().__init__(df_getter, df_setter)
         self._operation = operation  # "add", "remove", "rename", "modify"
         self._column_name = column_name
@@ -337,6 +342,7 @@ class RowFilterCommand(DataFrameCommand):
         mask: pd.Series,
         filter_description: str,
     ) -> None:
+        assert df_getter is not None, "df_getter must be provided"
         super().__init__(df_getter, df_setter)
         self._mask = mask
         self._filter_description = filter_description
@@ -373,6 +379,7 @@ class ResampleCommand(DataFrameCommand):
         rule: str,
         method: str,
     ) -> None:
+        assert df_getter is not None, "df_getter must be provided"
         super().__init__(df_getter, df_setter)
         self._resample_func = resample_func
         self._rule = rule
@@ -413,6 +420,7 @@ class CompositeCommand(Command):
             commands: List of commands to execute as a group
             group_name: Name for the composite operation
         """
+        assert commands is not None, "commands must be provided"
         self._commands = commands
         self._group_name = group_name
 
@@ -453,6 +461,7 @@ class LambdaCommand(Command):
         name: str,
         description: str = "",
     ) -> None:
+        assert execute_fn is not None, "execute_fn must be provided"
         self._execute_fn = execute_fn
         self._undo_fn = undo_fn
         self._name = name

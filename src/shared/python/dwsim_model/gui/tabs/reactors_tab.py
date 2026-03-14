@@ -16,6 +16,7 @@ class ReactorsTab(ttk.Frame):
     """Tab for reactor operating condition settings."""
 
     def __init__(self, parent, controller):
+        assert parent is not None, "parent must be provided"
         super().__init__(parent)
         self.controller = controller
         self._build()
@@ -183,6 +184,7 @@ class ReactorsTab(ttk.Frame):
 
     def load_values(self, reactors_dict: dict) -> None:
         """Load reactor config into GUI fields."""
+        assert reactors_dict is not None, "reactors_dict must be provided"
         gas = reactors_dict.get("Gasifier", {})
         self.gas_temp.set_value(gas.get("temperature_C", ""))
         self.gas_pressure.set_value(gas.get("pressure_Pa", ""))

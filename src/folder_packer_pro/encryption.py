@@ -27,6 +27,7 @@ class EncryptionManager:
         Returns:
             32-byte encryption key
         """
+        assert password is not None, "password must be provided"
         kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
             length=32,
@@ -46,6 +47,7 @@ class EncryptionManager:
         Returns:
             Encrypted data with salt prepended
         """
+        assert data is not None, "data must be provided"
         salt = os.urandom(16)
         key = EncryptionManager.derive_key(password, salt)
         cipher = Fernet(key)
@@ -64,6 +66,7 @@ class EncryptionManager:
         Returns:
             Decrypted data
         """
+        assert encrypted_data is not None, "encrypted_data must be provided"
         salt = encrypted_data[:16]
         encrypted = encrypted_data[16:]
         key = EncryptionManager.derive_key(password, salt)

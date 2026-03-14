@@ -250,6 +250,7 @@ def cmd_validate(args: argparse.Namespace) -> int:
 
 def _validate_yaml_directory(directory: Path, label: str, logger) -> bool:
     """Load and report on all YAML files in a directory."""
+    assert directory is not None, "directory must be provided"
     import yaml
 
     if not directory.exists():

@@ -33,6 +33,7 @@ class DrawingMixin:
 
     def _draw_3d_metal_layer(self, radius: float, height: float) -> None:
         """Draw the metal layer, delegating to ElectrodeLayersMixin."""
+        assert radius is not None, "radius must be provided"
         if height <= 0 or self.electrode_ax is None:
             return
         metal_alpha = self.metal_alpha_slider.value() / 100.0
@@ -44,6 +45,7 @@ class DrawingMixin:
         self, radius: float, metal_height: float, glass_height: float
     ) -> None:
         """Draw the glass layer, delegating to ElectrodeLayersMixin."""
+        assert radius is not None, "radius must be provided"
         if self.electrode_ax is None:
             return
         glass_alpha = self.glass_alpha_slider.value() / 100.0
@@ -55,6 +57,7 @@ class DrawingMixin:
         self, inner_radius: float, total_height: float, thickness: float
     ) -> None:
         """Draw the refractory layer, delegating to ElectrodeLayersMixin."""
+        assert inner_radius is not None, "inner_radius must be provided"
         if self.electrode_ax is None:
             return
         refractory_alpha = self.refractory_alpha_slider.value() / 100.0
@@ -73,6 +76,7 @@ class DrawingMixin:
         refractory_thickness: float,
     ) -> None:
         """Draw the metal shell, delegating to ElectrodeLayersMixin."""
+        assert inner_radius is not None, "inner_radius must be provided"
         if self.electrode_ax is None:
             return
         shell_alpha = self.metal_shell_alpha_slider.value() / 100.0
@@ -93,6 +97,7 @@ class DrawingMixin:
         glass_height: float,
     ) -> None:
         """Draw electrodes, delegating to ElectrodeVisualization."""
+        assert depths is not None, "depths must be provided"
         if self.electrode_ax is None:
             return
         electrode_alpha = self.electrode_alpha_slider.value() / 100.0
@@ -120,6 +125,7 @@ class DrawingMixin:
         alpha: float,
     ) -> None:
         """Draw a spherical tip, delegating to ElectrodeVisualization."""
+        assert x_center is not None, "x_center must be provided"
         if self.electrode_ax is None:
             return
         self.visualization.draw_electrode_sphere(

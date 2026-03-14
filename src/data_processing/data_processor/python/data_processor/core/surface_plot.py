@@ -150,6 +150,7 @@ class SurfacePlotEngine:
             SurfacePlotResult with grid and data arrays
         """
         # Validate columns exist
+        assert df is not None, "df must be provided"
         self._validate_columns(df, config)
 
         # Extract and clean data
@@ -201,6 +202,7 @@ class SurfacePlotEngine:
             Z values for the regression surface
         """
         # Flatten grids for prediction
+        assert x_grid is not None, "x_grid must be provided"
         x_flat = x_grid.ravel()
         y_flat = y_grid.ravel()
         xy_points = np.column_stack([x_flat, y_flat])
@@ -224,6 +226,7 @@ class SurfacePlotEngine:
         config: SurfacePlotConfig,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Extract and clean data arrays from DataFrame."""
+        assert df is not None, "df must be provided"
         x = pd.to_numeric(df[config.x_column], errors="coerce").values
         y = pd.to_numeric(df[config.y_column], errors="coerce").values
         z = pd.to_numeric(df[config.z_column], errors="coerce").values
@@ -240,6 +243,7 @@ class SurfacePlotEngine:
         threshold: float,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Remove outliers using z-score method."""
+        assert x is not None, "x must be provided"
         z_scores = np.abs((z - np.mean(z)) / np.std(z))
         mask = z_scores < threshold
         return x[mask], y[mask], z[mask]
@@ -251,6 +255,7 @@ class SurfacePlotEngine:
         config: SurfacePlotConfig,
     ) -> tuple[np.ndarray, np.ndarray]:
         """Create interpolation grid."""
+        assert x is not None, "x must be provided"
         x_range = config.x_range or (np.min(x), np.max(x))
         y_range = config.y_range or (np.min(y), np.max(y))
 
@@ -295,6 +300,7 @@ class SurfacePlotEngine:
         z_grid: np.ndarray,
     ) -> dict[str, Any]:
         """Compute statistics about the surface."""
+        assert x is not None, "x must be provided"
         valid_grid = z_grid[~np.isnan(z_grid)]
         return {
             "n_points": len(z),
@@ -323,6 +329,7 @@ class SurfacePlotEngine:
         y_grid: np.ndarray,
     ) -> np.ndarray:
         """Linear interpolation using griddata."""
+        assert x is not None, "x must be provided"
         points = np.column_stack([x, y])
         grid_points = np.column_stack([x_grid.ravel(), y_grid.ravel()])
         z_interp = interpolate.griddata(points, z, grid_points, method="linear")
@@ -337,6 +344,7 @@ class SurfacePlotEngine:
         y_grid: np.ndarray,
     ) -> np.ndarray:
         """Cubic interpolation using griddata."""
+        assert x is not None, "x must be provided"
         points = np.column_stack([x, y])
         grid_points = np.column_stack([x_grid.ravel(), y_grid.ravel()])
         z_interp = interpolate.griddata(points, z, grid_points, method="cubic")
@@ -351,6 +359,7 @@ class SurfacePlotEngine:
         y_grid: np.ndarray,
     ) -> np.ndarray:
         """Nearest neighbor interpolation."""
+        assert x is not None, "x must be provided"
         points = np.column_stack([x, y])
         grid_points = np.column_stack([x_grid.ravel(), y_grid.ravel()])
         z_interp = interpolate.griddata(points, z, grid_points, method="nearest")
@@ -421,6 +430,7 @@ class SurfacePlotEngine:
     ) -> np.ndarray:
         """Apply Gaussian smoothing."""
         # Handle NaN values
+        assert z is not None, "z must be provided"
         mask = np.isnan(z)
         z_filled = np.where(mask, 0, z)
         weights = np.where(mask, 0, 1).astype(float)
@@ -443,6 +453,7 @@ class SurfacePlotEngine:
     ) -> np.ndarray:
         """Apply median smoothing."""
         # Handle NaN values
+        assert z is not None, "z must be provided"
         mask = np.isnan(z)
         z_filled = np.nan_to_num(z, nan=np.nanmedian(z))
 
@@ -461,6 +472,7 @@ class SurfacePlotEngine:
         config: SurfacePlotConfig,
     ) -> np.ndarray:
         """Apply uniform (box) smoothing."""
+        assert z is not None, "z must be provided"
         mask = np.isnan(z)
         z_filled = np.where(mask, 0, z)
         weights = np.where(mask, 0, 1).astype(float)
@@ -511,6 +523,7 @@ class SurfacePlotEngine:
 
     def _fill_nan_2d(self, arr: np.ndarray) -> np.ndarray:
         """Fill NaN values in 2D array using nearest neighbor."""
+        assert arr is not None, "arr must be provided"
         mask = np.isnan(arr)
         if not np.any(mask):
             return arr
@@ -551,6 +564,7 @@ def plot_surface_matplotlib(
     Returns:
         matplotlib figure
     """
+    assert result is not None, "result must be provided"
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
 

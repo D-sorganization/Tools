@@ -337,6 +337,7 @@ class ControlsWidgetTriple(ControlsWidgetBase):
         }
 
     def _apply_preset(self, name: str) -> None:
+        assert name is not None, "name must be provided"
         if name not in self.PRESETS:
             return
         (

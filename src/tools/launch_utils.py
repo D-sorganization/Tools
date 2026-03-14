@@ -131,6 +131,7 @@ def launch_python_tool(
     Issue #930: the stream-reading closure has been extracted to the
     module-level ``_stream_reader`` helper for testability.
     """
+    assert path is not None, "path must be provided"
     require(isinstance(path, Path), "path must be a Path")
     require(
         bool(isinstance(tool_name, str) and tool_name),
@@ -188,6 +189,7 @@ def launch_matlab_tool(
     log_func: Callable[[str], None] | None = None,
 ) -> None:
     """Launch a MATLAB tool."""
+    assert path is not None, "path must be provided"
     require(isinstance(path, Path), "path must be a Path")
     require(
         bool(isinstance(tool_name, str) and tool_name),
@@ -229,6 +231,7 @@ def launch_octave_tool(
     log_func: Callable[[str], None] | None = None,
 ) -> None:
     """Launch an Octave tool."""
+    assert path is not None, "path must be provided"
     require(isinstance(path, Path), "path must be a Path")
     require(
         bool(isinstance(tool_name, str) and tool_name),
@@ -267,6 +270,7 @@ def launch_browser_tool(
     path: Path, log_func: Callable[[str], None] | None = None
 ) -> None:
     """Launch a browser tool."""
+    assert path is not None, "path must be provided"
     require(isinstance(path, Path), "path must be a Path")
     try:
         uri = path.as_uri()
@@ -284,6 +288,7 @@ def launch_batch_tool(
     log_func: Callable[[str], None] | None = None,
 ) -> None:
     """Launch a batch script."""
+    assert path is not None, "path must be provided"
     require(isinstance(path, Path), "path must be a Path")
     require(
         bool(isinstance(tool_name, str) and tool_name),

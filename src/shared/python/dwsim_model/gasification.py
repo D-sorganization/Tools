@@ -61,6 +61,7 @@ class GasificationFlowsheet:
         compound_set: list[str] | None = None,
         runtime_config: dict | None = None,
     ):
+        assert mode is not None, "mode must be provided"
         self.builder = builder or FlowsheetBuilder()
         self.mode = ReactorMode(mode)
         self.custom_reactors = custom_reactors or {}

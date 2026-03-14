@@ -76,6 +76,7 @@ class VisualizationUpdateMixin:
         refractory_thickness: float,
     ) -> None:
         """Draw refractory, glass, metal, and shell layers for real geometry."""
+        assert bath_diameter is not None, "bath_diameter must be provided"
         if self.show_refractory_checkbox.isChecked():
             self.visualizer.draw_cylinder(
                 ax,
@@ -122,6 +123,7 @@ class VisualizationUpdateMixin:
         tip_diameter: float,
     ) -> None:
         """Draw electrode cylinders and optional labels for real geometry."""
+        assert positions is not None, "positions must be provided"
         if not self.show_electrodes_checkbox.isChecked():
             return
         for pos in positions:
@@ -154,6 +156,7 @@ class VisualizationUpdateMixin:
         metal_depth: float,
     ) -> None:
         """Draw conductive paths for real geometry view."""
+        assert results is not None, "results must be provided"
         if not (self.show_paths_checkbox.isChecked() and "current_paths" in results):
             return
         for phase in results["current_paths"]:
@@ -188,6 +191,7 @@ class VisualizationUpdateMixin:
         metal_depth: float,
     ) -> None:
         """Set axis labels, limits, and camera angle for real geometry."""
+        assert bath_diameter is not None, "bath_diameter must be provided"
         show_labels = self.show_axis_labels_checkbox.isChecked()
         ax.set_xlabel("X (in)" if show_labels else "")
         ax.set_ylabel("Y (in)" if show_labels else "")
@@ -276,6 +280,7 @@ class VisualizationUpdateMixin:
 
     def _draw_viz_visible_components(self, p: dict) -> None:
         """Draw 3-D components whose visibility checkbox is ticked."""
+        assert p is not None, "p must be provided"
         total_height = p["glass_height"] + p["metal_height"]
 
         if self._safe_viz_checkbox(self, "show_refractory_checkbox"):
@@ -357,6 +362,7 @@ class VisualizationUpdateMixin:
 
     def _configure_viz_axis_limits(self, p: dict) -> None:
         """Set axis limits, aspect ratio, and camera angle."""
+        assert p is not None, "p must be provided"
         total_height = p["glass_height"] + p["metal_height"]
         extension_length = float(self.electrode_extension_slider.value())
         max_range = max(p["bath_radius"] + extension_length, total_height)
@@ -383,6 +389,7 @@ class VisualizationUpdateMixin:
         glass_height: float,
     ) -> None:
         """Draw the new 6-path conductive model with correct geometry."""
+        assert depths is not None, "depths must be provided"
         if self.electrode_ax is None:
             return
         metal_conductive = self.metal_conductive_checkbox.isChecked()
@@ -447,6 +454,7 @@ class VisualizationUpdateMixin:
         glass_height: float,
     ) -> list[dict[str, Any]]:
         """Compute electrode positions at 120-degree intervals for path drawing."""
+        assert depths is not None, "depths must be provided"
         angles = ELECTRODE_ANGLES_DEG
         refractory_thickness = self.refractory_thickness_input.value()
         electrode_extension = self.electrode_extension_slider.value()
@@ -494,6 +502,7 @@ class VisualizationUpdateMixin:
 
         Delegates to :func:`~shared_drawing.draw_trapezoidal_path`.
         """
+        assert electrode1_pos is not None, "electrode1_pos must be provided"
         if self.electrode_ax is None:
             return
         draw_trapezoidal_path(
@@ -526,6 +535,7 @@ class VisualizationUpdateMixin:
 
         Delegates to :func:`~shared_drawing.draw_via_metal_path`.
         """
+        assert electrode1_pos is not None, "electrode1_pos must be provided"
         if self.electrode_ax is None:
             return
         draw_via_metal_path(

@@ -54,6 +54,7 @@ class BackupCopyMixin:
 
     def _backup_single_folder(self, folder: str, backup_base: Path) -> bool:
         """Backup one folder into *backup_base*. Returns True on success."""
+        assert folder is not None, "folder must be provided"
         if not Path(folder).exists():
             logger.warning(f"Source folder no longer exists: {folder}")
             return False
@@ -174,6 +175,7 @@ class BackupCopyMixin:
             PermissionError: If insufficient permissions to read source or write
                 destination
         """
+        assert source_path is not None, "source_path must be provided"
         source_path_obj, dest_path_obj = self._validate_copy_inputs(
             source_path, dest_path
         )
@@ -275,6 +277,7 @@ class BackupCopyMixin:
         Returns:
             True if sizes match, False otherwise.
         """
+        assert source_path_obj is not None, "source_path_obj must be provided"
         if not dest_path_obj.exists():
             logger.error(f"Destination file was not created: {dest_path}")
             return False

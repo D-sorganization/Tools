@@ -66,7 +66,6 @@ def standard_decomposer():
 
 
 class TestBiomassFeedValidation:
-
     def test_valid_default_feed_creates_without_error(self):
         feed = BiomassFeed()
         assert feed.moisture_ar == 0.15
@@ -141,7 +140,6 @@ class TestBiomassFeedValidation:
 
 
 class TestDecompose:
-
     def test_mole_fractions_sum_to_one(self, pine_feed, standard_decomposer):
         fracs = standard_decomposer.decompose(pine_feed)
         total = sum(fracs.values())
@@ -259,7 +257,6 @@ class TestDecompose:
 
 
 class TestHHVEstimation:
-
     def test_hhv_in_reasonable_range(self, pine_feed, standard_decomposer):
         """Channiwala-Parikh HHV for woody biomass should be roughly 15–22 MJ/kg."""
         hhv = standard_decomposer.estimate_hhv(pine_feed)

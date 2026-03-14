@@ -36,6 +36,7 @@ def orthogonal_control_route(
     Postconditions:
         - Returns a list of 2–4 (x, y) tuples with no consecutive duplicates.
     """
+    assert start is not None, "start must be provided"
     sx, sy = to_float(start[0]), to_float(start[1])
     ex, ey = to_float(end[0]), to_float(end[1])
     if corridor_y is not None:
@@ -56,6 +57,7 @@ def resolve_reference_point(
 
     Returns ``None`` if *ref_id* is not found in any lookup.
     """
+    assert ref_id is not None, "ref_id must be provided"
     if ref_id in instrument_by_id:
         ins = instrument_by_id[ref_id]
         return to_float(ins.get("x", 0.0)), to_float(ins.get("y", 0.0)), "instrument"
@@ -88,6 +90,7 @@ def add_control_loops(
         - Each resolvable loop produces at least one polyline + arrowhead.
         - Unresolvable loops emit a log warning and are skipped.
     """
+    assert spec is not None, "spec must be provided"
     loops = spec.get("control_loops", [])
     if not loops:
         return

@@ -41,6 +41,7 @@ class ExecutionTracer:
             exclude_modules: Don't trace these modules
             max_depth: Maximum call depth to trace
         """
+        assert max_depth is not None, "max_depth must be provided"
         self.include_modules = include_modules or []
         self.exclude_modules = exclude_modules or ["logging", "threading"]
         self.max_depth = max_depth
@@ -73,6 +74,7 @@ class ExecutionTracer:
         arg: Any,
     ) -> Callable[..., Any] | None:
         """Trace function for sys.settrace."""
+        assert event is not None, "event must be provided"
         if not self._should_trace(frame):
             return None
 
@@ -140,6 +142,7 @@ def trace_calls(
         Decorator function
     """
     # Import here to avoid circular dependency at module level
+    assert max_depth is not None, "max_depth must be provided"
     from utils.debug_utils import is_debug_mode
 
     def decorator(func: F) -> F:
@@ -199,6 +202,7 @@ def get_call_stack(
     Returns:
         List of StackFrame objects
     """
+    assert skip_frames is not None, "skip_frames must be provided"
     frames: list[StackFrame] = []
     stack = inspect.stack()[skip_frames : skip_frames + max_frames]
 
@@ -243,6 +247,7 @@ def format_call_stack(
     Returns:
         Formatted call stack string.
     """
+    assert skip_frames is not None, "skip_frames must be provided"
     frames = get_call_stack(skip_frames + 1, max_frames, include_locals)
 
     lines = ["\n=== Call Stack ==="]
@@ -273,6 +278,7 @@ def print_call_stack(
         file: File to write to. When *None*, the stack is emitted
               via the module logger at DEBUG level instead of stderr.
     """
+    assert skip_frames is not None, "skip_frames must be provided"
     text = format_call_stack(skip_frames + 1, max_frames, include_locals)
     if file is not None:
         file.write(text + "\n")

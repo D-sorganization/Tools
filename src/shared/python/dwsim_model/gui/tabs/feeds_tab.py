@@ -34,6 +34,7 @@ class FeedsTab(ttk.Frame):
     """
 
     def __init__(self, parent, controller):
+        assert parent is not None, "parent must be provided"
         super().__init__(parent)
         self.controller = controller
         self._build()
@@ -170,6 +171,7 @@ class FeedsTab(ttk.Frame):
 
     def _on_agent_change(self, value: str) -> None:
         """Auto-fill oxygen purity when agent type changes."""
+        assert value is not None, "value must be provided"
         presets = {
             "Pure Oxygen (95% O₂)": 0.95,
             "Industrial Oxygen (90% O₂)": 0.90,
@@ -228,6 +230,7 @@ class FeedsTab(ttk.Frame):
 
     def load_values(self, feeds_dict: dict) -> None:
         """Load values from a feeds config dict into the GUI fields."""
+        assert feeds_dict is not None, "feeds_dict must be provided"
         bio = feeds_dict.get("Gasifier_Biomass_Feed", {})
         self.biomass_flow.set_value(bio.get("mass_flow_kg_s", ""))
         self.biomass_moisture.set_value(bio.get("moisture_ar", ""))

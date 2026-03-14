@@ -50,6 +50,7 @@ def _build_electrode_assembly(
     placement: ElectrodePlacement,
     layout: ElectrodeAdvisorLayout,
 ) -> Solid:
+    assert placement is not None, "placement must be provided"
     holder_height = layout.drafting.electrode_holder_height_mm
     holder_radius = (
         placement.diameter_mm * 0.5 * layout.drafting.electrode_holder_radius_factor

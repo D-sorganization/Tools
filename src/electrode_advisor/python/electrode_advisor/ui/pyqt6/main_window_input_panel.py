@@ -76,6 +76,7 @@ class InputPanelMixin:
         self, parent_layout: QVBoxLayout
     ) -> None:
         """Create the 3-Phase Electrical Measurements section."""
+        assert parent_layout is not None, "parent_layout must be provided"
         elec_group = QGroupBox("3-Phase Electrical Measurements")
         elec_layout = QGridLayout(elec_group)
 
@@ -133,6 +134,7 @@ class InputPanelMixin:
 
     def _create_power_factor_section(self, parent_layout: QVBoxLayout) -> None:
         """Create the System Power Factor section."""
+        assert parent_layout is not None, "parent_layout must be provided"
         power_factor_group = QGroupBox("System Power Factor")
         power_factor_layout = QFormLayout(power_factor_group)
 
@@ -167,6 +169,7 @@ class InputPanelMixin:
 
     def _create_physical_parameters_section(self, parent_layout: QVBoxLayout) -> None:
         """Create the Physical Parameters section."""
+        assert parent_layout is not None, "parent_layout must be provided"
         phys_group = QGroupBox("Physical Parameters")
         phys_layout = QFormLayout(phys_group)
 
@@ -267,6 +270,7 @@ class InputPanelMixin:
 
     def _create_electrode_depths_section(self, parent_layout: QVBoxLayout) -> None:
         """Create the Current Electrode Depths section."""
+        assert parent_layout is not None, "parent_layout must be provided"
         pos_group = QGroupBox("Current Electrode Depths")
         pos_layout = QGridLayout(pos_group)
 
@@ -290,6 +294,7 @@ class InputPanelMixin:
 
     def _create_model_parameters_section(self, parent_layout: QVBoxLayout) -> None:
         """Create the Advanced Model Parameters section."""
+        assert parent_layout is not None, "parent_layout must be provided"
         model_group = QGroupBox("Advanced Model Parameters")
         model_layout = QFormLayout(model_group)
 
@@ -332,6 +337,7 @@ class InputPanelMixin:
     def _create_glass_properties_section(self, parent_layout: QVBoxLayout) -> None:
         """Create the Glass Properties Integration section."""
         # Glass properties button
+        assert parent_layout is not None, "parent_layout must be provided"
         glass_btn = QPushButton("Configure Glass Properties")
         glass_btn.clicked.connect(self.glass_properties_requested.emit)
         parent_layout.addWidget(glass_btn)
@@ -385,6 +391,7 @@ class InputPanelMixin:
 
     def _create_optimization_button(self, parent_layout: QVBoxLayout) -> None:
         """Create the optimization button."""
+        assert parent_layout is not None, "parent_layout must be provided"
         optimize_btn = QPushButton("Calculate Electrode Advancement")
         optimize_btn.clicked.connect(self._run_optimization)
         optimize_btn.setStyleSheet("""

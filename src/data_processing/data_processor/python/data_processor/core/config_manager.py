@@ -28,6 +28,7 @@ class ConfigManager:
             config_dir: Directory to store configurations. Defaults to user's home.
             config_filename: Name of the config file.
         """
+        assert config_filename is not None, "config_filename must be provided"
         if config_dir is None:
             self.config_dir = Path.home() / ".data_processor"
         else:
@@ -43,6 +44,7 @@ class ConfigManager:
           - ``name`` must be a non-empty string.
           - ``settings`` must be a dict.
         """
+        assert name is not None, "name must be provided"
         require(
             isinstance(name, str) and bool(name.strip()), "name must be non-empty", name
         )
@@ -82,6 +84,7 @@ class ConfigManager:
         Args:
             name: Name of the configuration to delete
         """
+        assert name is not None, "name must be provided"
         configs = self._load_all_configs()
 
         if name in configs:
@@ -124,6 +127,7 @@ class ConfigManager:
             name: Name of the configuration
             export_path: Path to export to
         """
+        assert name is not None, "name must be provided"
         settings = self.load_config(name)
         export_path = Path(export_path)
 
@@ -137,6 +141,7 @@ class ConfigManager:
             name: Name to save the configuration as
             import_path: Path to import from
         """
+        assert name is not None, "name must be provided"
         import_path = Path(import_path)
 
         with open(import_path, encoding="utf-8") as f:

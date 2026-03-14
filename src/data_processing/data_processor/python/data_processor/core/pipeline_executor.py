@@ -48,6 +48,7 @@ class PipelineExecutor:
         Returns:
             Processed DataFrame
         """
+        assert pipeline is not None, "pipeline must be provided"
         import pandas as pd
 
         # Load data if path provided
@@ -85,6 +86,7 @@ class PipelineExecutor:
 
     def _execute_step(self, df: pd.DataFrame, step: ProcessingStep) -> pd.DataFrame:
         """Execute a single processing step."""
+        assert df is not None, "df must be provided"
         params = step.parameters
 
         if step.operation == OperationType.FILTER:

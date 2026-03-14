@@ -89,10 +89,12 @@ class SimulationResult(TrajectoryResultMixin):
 
     def torques_at(self, idx: int) -> tuple[float, float]:
         """Get applied torques at time index idx."""
+        assert idx is not None, "idx must be provided"
         self._check_idx(idx)
         return self.torque_func(self.t[idx])
 
     def accelerations_at(self, idx: int) -> np.ndarray:
+        assert idx is not None, "idx must be provided"
         self._check_idx(idx)
         state_dot = equations_of_motion(
             self.states[idx],
@@ -105,28 +107,33 @@ class SimulationResult(TrajectoryResultMixin):
         return state_dot[2:]
 
     def joint_forces_at(self, idx: int) -> dict:
+        assert idx is not None, "idx must be provided"
         self._check_idx(idx)
         qddot = self.accelerations_at(idx)
         return net_joint_forces(self.states[idx], qddot, self.params)
 
     def joint_velocities_at(self, idx: int) -> dict:
         """Get linear joint velocities at time index idx."""
+        assert idx is not None, "idx must be provided"
         self._check_idx(idx)
         return joint_velocities(self.states[idx], self.params)
 
     def base_force_at(self, idx: int) -> dict:
         """Get base reaction force at time index idx."""
+        assert idx is not None, "idx must be provided"
         self._check_idx(idx)
         qddot = self.accelerations_at(idx)
         return base_force(self.states[idx], qddot, self.params)
 
     def control_vector_at(self, idx: int) -> dict:
         """Get control vector at time index idx."""
+        assert idx is not None, "idx must be provided"
         self._check_idx(idx)
         qddot = self.accelerations_at(idx)
         return control_vector(self.states[idx], qddot, self.params, self.limits)
 
     def energy_at(self, idx: int) -> dict:
+        assert idx is not None, "idx must be provided"
         self._check_idx(idx)
         state = self.states[idx]
         result = {
@@ -138,21 +145,25 @@ class SimulationResult(TrajectoryResultMixin):
         return result
 
     def coriolis_at(self, idx: int) -> np.ndarray:
+        assert idx is not None, "idx must be provided"
         self._check_idx(idx)
         s = self.states[idx]
         return coriolis_vector(s[1], s[2], s[3], self.params)
 
     def gravity_at(self, idx: int) -> np.ndarray:
+        assert idx is not None, "idx must be provided"
         self._check_idx(idx)
         s = self.states[idx]
         return gravity_vector(s[0], s[1], self.params)
 
     def friction_torques_at(self, idx: int) -> np.ndarray:
+        assert idx is not None, "idx must be provided"
         self._check_idx(idx)
         s = self.states[idx]
         return friction_torque_vector(s[2], s[3], self.params)
 
     def total_torques_at(self, idx: int) -> np.ndarray:
+        assert idx is not None, "idx must be provided"
         self._check_idx(idx)
         tau_drive = np.array(self.torque_func(self.t[idx]))
         if self.clamp is not None:

@@ -140,6 +140,7 @@ class CalculationMixin:
 
     def _update_metal_conductivity_display(self, is_enabled: bool) -> None:
         """Update show_metal_checkbox appearance based on conductivity state (#1370)."""
+        assert is_enabled is not None, "is_enabled must be provided"
         if not hasattr(self, "show_metal_checkbox"):
             return
         if not is_enabled:
@@ -288,6 +289,7 @@ class CalculationMixin:
 
     def _update_status(self, message: str, status_type: str = "ok") -> None:
         """Update status display using config.status_color() accessor (#1427)."""
+        assert message is not None, "message must be provided"
         self.status_label.setText(message)  # type: ignore[attr-defined]
 
         if self.config.colors is None:  # type: ignore[attr-defined]
@@ -389,6 +391,7 @@ class CalculationMixin:
         max_iter: int,
     ) -> float:
         """Run bisection loop to find depth matching target resistance."""
+        assert target is not None, "target must be provided"
         for _ in range(max_iter):
             mid = (lo + hi) / 2.0
             r_mid = resistance_fn(mid)

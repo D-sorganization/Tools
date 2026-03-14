@@ -137,6 +137,7 @@ class SignalProcessingStudio(*_get_base_classes()):  # type: ignore[misc]
 
     def _on_poly_fallback(self, joint_name: str, coeffs: list) -> None:
         """Fallback when Function Generator is unavailable."""
+        assert joint_name is not None, "joint_name must be provided"
         import numpy as np
         from signal_toolkit.core import SignalGenerator
 

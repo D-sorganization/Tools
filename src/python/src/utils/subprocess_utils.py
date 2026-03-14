@@ -122,6 +122,7 @@ def run_pip_command(
     Returns:
         CompletedProcess object
     """
+    assert command is not None, "command must be provided"
     pip_cmd = [sys.executable, "-m", "pip", command]
 
     if upgrade:
@@ -175,5 +176,6 @@ def get_command_output(
     Returns:
         Command stdout as string
     """
+    assert command is not None, "command must be provided"
     result = run_command(command, cwd=cwd, timeout=timeout, check=True)
     return result.stdout.strip()

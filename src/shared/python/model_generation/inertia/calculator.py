@@ -192,6 +192,7 @@ class InertiaCalculator:
             # Manual values
             calc.compute({"ixx": 0.1, "iyy": 0.1, "izz": 0.05, "mass": 2.0})
         """
+        assert source is not None, "source must be provided"
         mode = mode or self.default_mode
         density = density or self.default_density
 
@@ -248,6 +249,7 @@ class InertiaCalculator:
         Returns:
             InertiaResult
         """
+        assert mesh_path is not None, "mesh_path must be provided"
         mode = (
             InertiaMode.MESH_SPECIFIED_MASS
             if mass is not None
@@ -394,6 +396,7 @@ class InertiaCalculator:
         mode: InertiaMode,
     ) -> InertiaResult:
         """Compute from mesh file using trimesh."""
+        assert density is not None, "density must be provided"
         mesh_path = self._resolve_mesh_path(source)
         cache_key = f"{mesh_path}:{density}:{mass}"
 
@@ -428,6 +431,7 @@ class InertiaCalculator:
         self, mesh_path: Path, mode: InertiaMode, mass: float | None
     ) -> Any | None:
         """Load mesh from file, returning None on failure."""
+        assert mesh_path is not None, "mesh_path must be provided"
         try:
             import trimesh
         except ImportError:
@@ -451,6 +455,7 @@ class InertiaCalculator:
         self, mesh: Any, mesh_path: Path, mode: InertiaMode, mass: float | None
     ) -> dict[str, Any] | None:
         """Extract inertia properties from mesh, returning None on failure."""
+        assert mesh_path is not None, "mesh_path must be provided"
         is_watertight = mesh.is_watertight
         if not is_watertight:
             logger.warning(
@@ -477,6 +482,7 @@ class InertiaCalculator:
         source_path: str,
     ) -> InertiaResult:
         """Scale inertia based on mode and create result."""
+        assert mesh_props is not None, "mesh_props must be provided"
         raw_inertia = mesh_props["raw_inertia"]
         volume = mesh_props["volume"]
         com = mesh_props["com"]

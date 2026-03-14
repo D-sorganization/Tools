@@ -276,6 +276,7 @@ class MainWindow(tk.Tk):
             self._save_config_to(Path(path))
 
     def _save_config_to(self, path: Path) -> None:
+        assert path is not None, "path must be provided"
         import yaml
 
         cfg = self._collect_config_from_tabs()
@@ -289,6 +290,7 @@ class MainWindow(tk.Tk):
 
     def _on_load_scenario(self, scenario_name: str) -> None:
         """Load a scenario override YAML and apply it to the GUI."""
+        assert scenario_name is not None, "scenario_name must be provided"
         here = Path(__file__).resolve().parent
         project_root = here.parent.parent.parent.parent
         scenario_path = project_root / "config" / "scenarios" / f"{scenario_name}.yaml"
@@ -425,6 +427,7 @@ class MainWindow(tk.Tk):
 
     def _on_run_success(self, results, metrics, html_path: Path) -> None:
         """Called on main thread when simulation completes successfully."""
+        assert results is not None, "results must be provided"
         self._results_tab.update_results(results, metrics)
         self._results_tab.set_html_path(html_path)
         self._results_tab.log(f"✓ Complete. HTML report: {html_path}", "INFO")
@@ -433,6 +436,7 @@ class MainWindow(tk.Tk):
 
     def _on_run_failure(self, error_msg: str) -> None:
         """Called on main thread when simulation fails."""
+        assert error_msg is not None, "error_msg must be provided"
         self._results_tab.log(f"✗ Simulation failed: {error_msg}", "ERROR")
         self._run_btn.configure(state="normal", text="▶  Run Simulation")
         self._set_status("Simulation failed — see log.")

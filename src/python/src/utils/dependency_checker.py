@@ -35,6 +35,7 @@ def check_python_version(min_major: int = 3, min_minor: int = 10) -> tuple[bool,
     Returns:
         Tuple of (is_valid, version_string)
     """
+    assert min_major is not None, "min_major must be provided"
     version = sys.version_info
     version_str = f"{version.major}.{version.minor}.{version.micro}"
 
@@ -79,6 +80,7 @@ def check_dependencies(
         DependencyStatus object with check results
     """
     # Normalize input to dict format
+    assert required is not None, "required must be provided"
     if isinstance(required, list):
         required_dict = {name: f"pip install {name}" for name in required}
     else:
@@ -110,6 +112,7 @@ def install_package(
         True if installation succeeded, False otherwise
     """
     # Map import name to pip name if needed
+    assert package_name is not None, "package_name must be provided"
     pip_name = (
         package_map.get(package_name, package_name) if package_map else package_name
     )
@@ -152,6 +155,7 @@ def install_missing_packages(
     Returns:
         True if all installations succeeded, False otherwise
     """
+    assert packages is not None, "packages must be provided"
     if not packages:
         return True
 
@@ -178,6 +182,7 @@ def install_from_requirements(
     Returns:
         True if installation succeeded, False otherwise
     """
+    assert upgrade_pip is not None, "upgrade_pip must be provided"
     from pathlib import Path
 
     if requirements_path is None:

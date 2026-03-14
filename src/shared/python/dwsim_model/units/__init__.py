@@ -140,6 +140,7 @@ def run_gasifier(
     RuntimeError
         If DWSIM runtime is not available or the solve fails.
     """
+    assert mode is not None, "mode must be provided"
     _validate_mode(mode)
 
     gasifier_module = importlib.import_module("dwsim_model.standalone.gasifier_model")
@@ -182,6 +183,7 @@ def run_pem(
     RuntimeError
         If DWSIM runtime is not available or the solve fails.
     """
+    assert mode is not None, "mode must be provided"
     _validate_mode(mode)
 
     pem_module = importlib.import_module("dwsim_model.standalone.pem_model")
@@ -224,6 +226,7 @@ def run_trc(
     RuntimeError
         If DWSIM runtime is not available or the solve fails.
     """
+    assert mode is not None, "mode must be provided"
     _validate_mode(mode)
 
     trc_module = importlib.import_module("dwsim_model.standalone.trc_model")
@@ -266,6 +269,7 @@ def run_full_train(
     RuntimeError
         If DWSIM runtime is not available or the solve fails.
     """
+    assert mode is not None, "mode must be provided"
     _validate_mode(mode)
 
     gasification_module = importlib.import_module("dwsim_model.gasification")

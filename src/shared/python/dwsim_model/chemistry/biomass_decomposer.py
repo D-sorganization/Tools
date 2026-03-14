@@ -290,6 +290,7 @@ class BiomassDecomposer:
 
         Reference: Channiwala & Parikh (2002) Fuel 81(8), 1051–1063
         """
+        assert feed is not None, "feed must be provided"
         ua = feed.ultimate_daf
         daf = 1.0 - feed.moisture_ar - feed.ash_ar
 

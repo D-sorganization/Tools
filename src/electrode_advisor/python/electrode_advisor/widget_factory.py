@@ -47,6 +47,7 @@ def create_double_spinbox(
     Returns:
         Configured QDoubleSpinBox
     """
+    assert min_value is not None, "min_value must be provided"
     spinbox = QDoubleSpinBox()
     spinbox.setRange(min_value, max_value)
     spinbox.setValue(default_value)
@@ -87,6 +88,7 @@ def create_slider(
     Returns:
         Configured QSlider
     """
+    assert min_value is not None, "min_value must be provided"
     slider = QSlider(orientation)
     slider.setRange(min_value, max_value)
     slider.setValue(default_value)
@@ -114,6 +116,7 @@ def create_checkbox(
     Returns:
         Configured QCheckBox
     """
+    assert text is not None, "text must be provided"
     checkbox = QCheckBox(text)
     checkbox.setChecked(checked)
     if state_changed_callback:
@@ -134,6 +137,7 @@ def create_readonly_lineedit(
     Returns:
         Configured read-only QLineEdit
     """
+    assert default_text is not None, "default_text must be provided"
     lineedit = QLineEdit(default_text)
     lineedit.setReadOnly(True)
     lineedit.setStyleSheet(f"background-color: {background_color};")
@@ -157,6 +161,7 @@ def create_button(
     Returns:
         Configured QPushButton
     """
+    assert text is not None, "text must be provided"
     button = QPushButton(text)
     if tooltip:
         button.setToolTip(tooltip)
@@ -182,6 +187,7 @@ def create_combobox(
     Returns:
         Configured QComboBox
     """
+    assert items is not None, "items must be provided"
     combobox = QComboBox()
     combobox.addItems(items)
     if default_item:
@@ -212,6 +218,7 @@ def create_label(
     Returns:
         Configured QLabel
     """
+    assert text is not None, "text must be provided"
     label = QLabel(text)
     if font_size or bold:
         from PyQt6.QtGui import QFont

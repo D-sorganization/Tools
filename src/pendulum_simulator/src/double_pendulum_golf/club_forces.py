@@ -301,6 +301,7 @@ def overall_club_decomposition(
     Uses the actual constrained dynamics to get accelerations and
     computes net joint forces from F = ma - mg.
     """
+    assert state is not None, "state must be provided"
     from .constraint_solver import constrained_accelerations
     from .physics_golfer import net_joint_forces
 
@@ -317,6 +318,7 @@ def ztcf_club_decomposition(
     alpha: float = 0.0,
 ) -> dict[str, float | np.ndarray]:
     """Club force decomposition using zero-torque counterfactual forces."""
+    assert state is not None, "state must be provided"
     from .counterfactual_golfer import zero_torque_accelerations
     from .physics_golfer import net_joint_forces
 
@@ -337,6 +339,7 @@ def delta_club_decomposition(
 
     DELTA accelerations = M^+ * tau at zero velocity.
     """
+    assert state is not None, "state must be provided"
     from .jacobians_golfer import delta_matrix
     from .physics_golfer import net_joint_forces
 

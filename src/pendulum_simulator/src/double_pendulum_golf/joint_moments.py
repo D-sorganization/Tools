@@ -61,6 +61,7 @@ def moment_of_force(
     Postconditions:
         Returns finite float (N·m, positive = CCW).
     """
+    assert joint_position is not None, "joint_position must be provided"
     r = np.asarray(distal_com_position, dtype=float) - np.asarray(
         joint_position, dtype=float
     )
@@ -117,6 +118,7 @@ def double_pendulum_moments(
         shoulder_applied_torque, shoulder_moment_of_force, shoulder_total_moment,
         wrist_applied_torque, wrist_moment_of_force, wrist_total_moment.
     """
+    assert positions is not None, "positions must be provided"
     shoulder = np.array(positions["shoulder"])
     wrist = np.array(positions["wrist"])
     tip = np.array(positions["tip"])
@@ -174,6 +176,7 @@ def triple_pendulum_moments(
     -------
     dict with applied_torque, moment_of_force, total_moment for each joint.
     """
+    assert positions is not None, "positions must be provided"
     joints = ["shoulder", "elbow", "wrist"]
     endpoints = ["elbow", "wrist", "tip"]
 

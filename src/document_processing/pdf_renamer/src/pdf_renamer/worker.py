@@ -35,6 +35,7 @@ class ProcessingResult:
         title_result: TitleResult | None = None,
         new_path: Path | None = None,
     ):
+        assert file_path is not None, "file_path must be provided"
         self.file_path = file_path
         self.success = success
         self.message = message
@@ -59,6 +60,7 @@ def _extract_or_load_title(
     Returns:
         TitleResult from cache or fresh extraction
     """
+    assert file_path is not None, "file_path must be provided"
     cached = cache.get(file_hash)
     if cached and cached.title:
         logger.debug(f"[CACHE] {file_path.name} -> {cached.title}")
@@ -101,6 +103,7 @@ def _handle_missing_title(
     Returns:
         ProcessingResult indicating failure
     """
+    assert file_path is not None, "file_path must be provided"
     if move_failed and not dry_run:
         failed_path = _move_to_failed_folder(file_path, failed_folder, transaction_log)
         if failed_path:

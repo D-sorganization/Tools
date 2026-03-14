@@ -450,6 +450,7 @@ def cp_over_r(T: float, coeffs: list[float]) -> float:
     Precondition: T > 0, coeffs has 7 elements
     Postcondition: returns positive float
     """
+    assert T is not None, "T must be provided"
     a = coeffs
     return a[0] + a[1] * T + a[2] * T**2 + a[3] * T**3 + a[4] * T**4
 
@@ -459,6 +460,7 @@ def h_over_rt(T: float, coeffs: list[float]) -> float:
 
     Precondition: T > 0, coeffs has 7 elements
     """
+    assert T is not None, "T must be provided"
     a = coeffs
     return (
         a[0]
@@ -475,6 +477,7 @@ def s_over_r(T: float, coeffs: list[float]) -> float:
 
     Precondition: T > 0, coeffs has 7 elements
     """
+    assert T is not None, "T must be provided"
     a = coeffs
     return float(
         a[0] * np.log(T)
@@ -503,6 +506,7 @@ def get_coeffs(species_key: str, T: float) -> list[float]:
     Uses low-T coefficients for T <= T_mid, high-T for T > T_mid.
     Clamps T to valid range with warning.
     """
+    assert species_key is not None, "species_key must be provided"
     sp = SPECIES_DB[species_key]
     T_clamped = float(np.clip(T, float(sp["T_low"]), float(sp["T_high"])))
     if T_clamped <= float(sp["T_mid"]):
@@ -516,6 +520,7 @@ def gibbs_dimensionless(species_key: str, T: float) -> float:
     Precondition: species_key in SPECIES_DB, T > 0
     Postcondition: returns float (can be negative)
     """
+    assert species_key is not None, "species_key must be provided"
     coeffs = get_coeffs(species_key, T)
     return g_over_rt(T, coeffs)
 
@@ -525,6 +530,7 @@ def enthalpy_j_per_mol(species_key: str, T: float) -> float:
 
     Precondition: species_key in SPECIES_DB, T > 0
     """
+    assert species_key is not None, "species_key must be provided"
     coeffs = get_coeffs(species_key, T)
     return h_over_rt(T, coeffs) * R_GAS * T
 
@@ -534,6 +540,7 @@ def entropy_j_per_mol_k(species_key: str, T: float) -> float:
 
     Precondition: species_key in SPECIES_DB, T > 0
     """
+    assert species_key is not None, "species_key must be provided"
     coeffs = get_coeffs(species_key, T)
     return s_over_r(T, coeffs) * R_GAS
 
@@ -543,6 +550,7 @@ def cp_j_per_mol_k(species_key: str, T: float) -> float:
 
     Precondition: species_key in SPECIES_DB, T > 0
     """
+    assert species_key is not None, "species_key must be provided"
     coeffs = get_coeffs(species_key, T)
     return cp_over_r(T, coeffs) * R_GAS
 

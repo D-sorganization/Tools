@@ -294,6 +294,7 @@ def compute_all_dynamics(
         angular_work, linear_work,
         angular_impulse, linear_impulse
     """
+    assert time is not None, "time must be provided"
     logger.debug("Computing all dynamics quantities for %d timesteps", len(time))
 
     return {

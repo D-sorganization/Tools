@@ -101,6 +101,7 @@ class FolderPackerGUI:
             root: Main Tkinter root window.
 
         """
+        assert root is not None, "root must be provided"
         self.root = root
         self.root.title("Folder Packer")
         self.root.geometry(f"{DEFAULT_WINDOW_WIDTH}x{DEFAULT_WINDOW_HEIGHT}")
@@ -134,6 +135,7 @@ class FolderPackerGUI:
     def _setup_header(self, parent: ttk.Frame) -> None:
         """Set up the header section."""
         # Title
+        assert parent is not None, "parent must be provided"
         title_label = ttk.Label(
             parent,
             text="📁 Folder Packer",
@@ -156,6 +158,7 @@ class FolderPackerGUI:
 
     def _setup_source_section(self, parent: ttk.Frame) -> None:
         """Set up the source folders section."""
+        assert parent is not None, "parent must be provided"
         source_frame = ttk.LabelFrame(
             parent, text="Source Folders", padding=str(SMALL_PADDING)
         )
@@ -190,6 +193,7 @@ class FolderPackerGUI:
     def _setup_output_section(self, parent: ttk.Frame) -> None:
         """Set up the output directory section."""
         # Output directory section
+        assert parent is not None, "parent must be provided"
         output_label = ttk.Label(
             parent,
             text="Output Directory:",
@@ -215,6 +219,7 @@ class FolderPackerGUI:
 
     def _setup_actions(self, parent: ttk.Frame) -> None:
         """Set up action buttons."""
+        assert parent is not None, "parent must be provided"
         pack_button = ttk.Button(
             parent,
             text="Pack Folders",
@@ -225,6 +230,7 @@ class FolderPackerGUI:
 
     def _setup_status_section(self, parent: ttk.Frame) -> None:
         """Set up status display section."""
+        assert parent is not None, "parent must be provided"
         status_frame = ttk.LabelFrame(parent, text="Status", padding=str(SMALL_PADDING))
         status_frame.grid(row=6, column=0, columnspan=3, sticky="ew")
         status_frame.columnconfigure(0, weight=GRID_WEIGHT_MAIN)
@@ -355,6 +361,7 @@ class FolderPackerGUI:
             destination: Destination folder path.
 
         """
+        assert source is not None, "source must be provided"
         destination.mkdir(parents=True, exist_ok=True)
 
         for item in source.iterdir():
@@ -375,6 +382,7 @@ class FolderPackerGUI:
 
         """
         # Check if it's a configuration file (these are always included)
+        assert file_path is not None, "file_path must be provided"
         config_extensions = {".env", ".config", ".conf", ".cfg", ".ini", ".toml"}
         if file_path.suffix.lower() in config_extensions:
             return True
@@ -392,6 +400,7 @@ class FolderPackerGUI:
             bool: True if the directory should be included.
 
         """
+        assert dir_path is not None, "dir_path must be provided"
         dir_name = dir_path.name.lower()
 
         # Always exclude certain patterns
@@ -403,6 +412,7 @@ class FolderPackerGUI:
 
     def _should_include_item(self, item: Path) -> bool:
         """Check if an item (file or dir) should be included."""
+        assert item is not None, "item must be provided"
         if item.is_file():
             return self.should_include_file(item)
         if item.is_dir():
@@ -416,6 +426,7 @@ class FolderPackerGUI:
             message: Status message to display.
 
         """
+        assert message is not None, "message must be provided"
         timestamp = datetime.datetime.now(tz=UTC).strftime("%H:%M:%S")
         status_line = f"[{timestamp}] {message}\n"
         self.status_text.insert(tk.END, status_line)

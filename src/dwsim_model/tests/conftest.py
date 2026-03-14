@@ -38,6 +38,7 @@ if not clr_available:
     original_add_pp = core.FlowsheetBuilder.add_property_package
 
     def patched_init(self, dwsim_path=None):
+        assert dwsim_path is not None, "dwsim_path must be provided"
         original_init(self, dwsim_path)
 
         self._mock_compounds = []
@@ -57,6 +58,7 @@ if not clr_available:
         self.sim.PropertyPackages = mock_pp
 
     def patched_add_pp(self, package_name="Peng-Robinson (PR)"):
+        assert package_name is not None, "package_name must be provided"
         pkg = original_add_pp(self, package_name)
         self._mock_packages.append(pkg)
         return pkg
@@ -82,6 +84,7 @@ FILE_MARKERS = {
 
 
 def pytest_collection_modifyitems(config, items):
+    assert config is not None, "config must be provided"
     dwsim_path = os.environ.get("DWSIM_PATH", r"C:\Users\diete\AppData\Local\DWSIM")
     automation_dll = os.path.join(dwsim_path, "DWSIM.Automation.dll")
     dwsim_available = os.path.exists(automation_dll)

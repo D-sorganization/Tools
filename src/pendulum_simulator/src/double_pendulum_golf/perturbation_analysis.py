@@ -289,6 +289,7 @@ def batch_perturb_and_simulate(
     Pre:  config.n_trials > 0
     Post: len(output) == config.n_trials (or fewer if some trials fail)
     """
+    assert base_coeffs is not None, "base_coeffs must be provided"
     results = []
     base_seed = config.seed if config.seed is not None else 0
 

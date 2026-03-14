@@ -43,6 +43,7 @@ class SelectionDialog(QDialog):
 
     def __init__(self, title: str, apps: Iterable[AppDefinition]) -> None:
         """Initialize the dialog with a title and list of apps."""
+        assert title is not None, "title must be provided"
         super().__init__()
         self.setWindowTitle(title)
         self.setModal(True)
@@ -85,6 +86,7 @@ class LauncherWindow(QMainWindow):
 
     def __init__(self, manager: AppManager) -> None:
         """Initialize the main window."""
+        assert manager is not None, "manager must be provided"
         super().__init__()
         self.manager = manager
         self.edit_mode = False
@@ -202,6 +204,7 @@ class LauncherWindow(QMainWindow):
 
     def _icon_for_app(self, app: AppDefinition) -> QIcon:
         """Load the icon for the given app, or a fallback."""
+        assert app is not None, "app must be provided"
         icon_path = self._logo_path(app)
         if icon_path and icon_path.exists():
             pixmap = QPixmap(str(icon_path)).scaled(
@@ -215,6 +218,7 @@ class LauncherWindow(QMainWindow):
 
     def _logo_path(self, app: AppDefinition) -> Path | None:
         """Resolve the full path to the app's logo."""
+        assert app is not None, "app must be provided"
         if not app.logo:
             return None
         return Path(self.manager.repository_root) / str(app.logo)
@@ -266,6 +270,7 @@ class LauncherWindow(QMainWindow):
 
     def _launch_selected(self, item: QListWidgetItem) -> None:
         """Launch the app corresponding to the clicked tile."""
+        assert item is not None, "item must be provided"
         if self.edit_mode:
             return
 
@@ -275,6 +280,7 @@ class LauncherWindow(QMainWindow):
 
     def _launch_app(self, app: AppDefinition) -> None:
         """Execute the launch logic for the given app."""
+        assert app is not None, "app must be provided"
         target_path = app.resolved_path(self.manager.repository_root)
         if not target_path.exists():
             QMessageBox.warning(

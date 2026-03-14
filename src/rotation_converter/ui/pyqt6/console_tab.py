@@ -139,6 +139,7 @@ class CommandConsoleTab(QWidget):
         self, text: str, is_error: bool = False, is_input: bool = False
     ) -> None:
         """Prints text to the console, preserving whitespace and colour."""
+        assert text is not None, "text must be provided"
         cursor = self._output.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.End)
 

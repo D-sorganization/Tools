@@ -19,6 +19,7 @@ class DuplicateFinder:
             directory: Root directory to scan
             recursive: Whether to scan subdirectories
         """
+        assert directory is not None, "directory must be provided"
         self.directory = directory
         self.recursive = recursive
 
@@ -79,6 +80,7 @@ class DuplicateFinder:
         Returns:
             Hexadecimal SHA256 hash string
         """
+        assert file_path is not None, "file_path must be provided"
         sha256 = hashlib.sha256()
         with open(file_path, "rb") as f:
             while chunk := f.read(chunk_size):
