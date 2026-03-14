@@ -527,3 +527,114 @@ class TestPreviewGenerator:
     def test_zero_height_raises(self) -> None:
         with pytest.raises((PreconditionError, AssertionError)):
             generate_preview_text(URDFConfig(height_m=0.0))
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# DRY File Sync Verification
+# ═══════════════════════════════════════════════════════════════════════
+
+
+class TestFileSyncIntegrity:
+    """Ensure root-level and python/ module copies stay in sync.
+
+    The package has two copies of each module (root-level and python/
+    urdf_builder_gui/) due to dual package discovery requirements.
+    This test class catches drift.
+    """
+
+    _SYNCED_MODULES = [
+        "contracts.py",
+        "anthropometric_model.py",
+        "urdf_generator.py",
+        "preview_generator.py",
+        "theme.py",
+    ]
+
+    def test_root_and_python_copies_identical(self) -> None:
+        """Every root-level module must match its python/ copy."""
+        from pathlib import Path
+
+        root_dir = Path(__file__).resolve().parent.parent
+        python_dir = root_dir / "python" / "urdf_builder_gui"
+
+        mismatches: list[str] = []
+        for mod_name in self._SYNCED_MODULES:
+            root_file = root_dir / mod_name
+            python_file = python_dir / mod_name
+
+            if not root_file.exists():
+                mismatches.append(f"{mod_name}: missing at root level")
+                continue
+            if not python_file.exists():
+                mismatches.append(f"{mod_name}: missing in python/")
+                continue
+
+            root_content = root_file.read_text(encoding="utf-8")
+            python_content = python_file.read_text(encoding="utf-8")
+            if root_content != python_content:
+                mismatches.append(
+                    f"{mod_name}: root and python/ copies differ — "
+                    "run: cp <root>/X python/urdf_builder_gui/X"
+                )
+
+        assert (
+            not mismatches
+        ), "DRY sync violation! Module copies have drifted:\n" + "\n".join(
+            f"  • {m}" for m in mismatches
+        )
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# Integration / Round-Trip Tests
+# ═══════════════════════════════════════════════════════════════════════
+
+
+class TestIntegration:
+    """End-to-end integration tests for the full generation pipeline."""
+
+    def test_generate_then_validate_round_trip(self) -> None:
+        """Generate → validate round-trip must always succeed."""
+        for template in TEMPLATE_SEGMENTS:
+            config = URDFConfig(
+                robot_name="integration_test",
+                height_m=1.80,
+                mass_kg=80.0,
+                template=template,
+                damping=2.0,
+                friction=1.0,
+            )
+            xml = generate_urdf_xml(config)
+            is_valid, errors = validate_urdf_structure(xml)
+            assert is_valid, f"{template}: {errors}"
+
+    def test_preview_and_generate_same_template(self) -> None:
+        """Preview and generate should reference the same segments."""
+        for template in TEMPLATE_SEGMENTS:
+            config = URDFConfig(template=template)
+            preview = generate_preview_text(config)
+            xml = generate_urdf_xml(config)
+
+            # Every segment name in the template should appear in preview
+            for seg in get_template_segments(template):
+                assert seg in preview, f"{template}: {seg} not in preview"
+
+            # Generated XML should have links for each segment
+            root = ET.fromstring(xml)
+            link_names = {link.get("name") for link in root.findall("link")}
+            for seg in get_template_segments(template):
+                assert seg in link_names, f"{template}: {seg} not in XML"
+
+    def test_different_configs_produce_different_output(self) -> None:
+        """Different heights must produce different URDF XML."""
+        xml1 = generate_urdf_xml(URDFConfig(height_m=1.50))
+        xml2 = generate_urdf_xml(URDFConfig(height_m=2.00))
+        assert xml1 != xml2
+
+    def test_all_inertia_values_positive(self) -> None:
+        """Every inertia value in generated URDF must be positive."""
+        xml = generate_urdf_xml(URDFConfig())
+        root = ET.fromstring(xml)
+        for inertia_el in root.iter("inertia"):
+            for attr in ["ixx", "iyy", "izz"]:
+                val = float(inertia_el.get(attr, "0"))
+                assert val > 0, f"Non-positive {attr}={val}"

@@ -1,8 +1,15 @@
-"""GUI registration for Parametric URDF Builder."""
+"""GUI registration for Parametric URDF Builder.
+
+Returns metadata for fleet launcher discovery. Immutable dict structure
+ensures registration data cannot be accidentally mutated.
+"""
 
 from __future__ import annotations
 
-GUI_INFO = {
+from typing import Any
+
+# Module-level constant — frozen via convention (no setter).
+_GUI_INFO: dict[str, Any] = {
     "name": "Parametric URDF Builder",
     "tool_name": "urdf_builder_gui",
     "description": "Generate parametric URDF models for robotics applications",
@@ -17,6 +24,10 @@ GUI_INFO = {
 }
 
 
-def get_gui_info() -> dict:
-    """Return GUI registration information."""
-    return GUI_INFO
+def get_gui_info() -> dict[str, Any]:
+    """Return GUI registration information.
+
+    Returns a shallow copy to prevent callers from mutating the
+    canonical registration dictionary.
+    """
+    return dict(_GUI_INFO)
