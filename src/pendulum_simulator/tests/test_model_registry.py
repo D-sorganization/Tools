@@ -6,6 +6,7 @@ import pytest
 
 from double_pendulum_golf.model_registry import (
     ModelConfig,
+    clear_registry,
     get_model,
     list_models,
     register_model,
@@ -60,3 +61,32 @@ class TestModelRegistry:
         from double_pendulum_golf.model_registry import _registry
 
         _registry.pop("test_custom", None)
+
+    def test_clear_registry(self) -> None:
+        """clear_registry removes all models; builtin models should be re-registered."""
+        # Add a temporary model
+        config = ModelConfig(
+            name="Temp",
+            n_dof=1,
+            state_size=2,
+            param_class=dict,
+            simulation_runner=lambda: None,
+            result_class=dict,
+            description="temp",
+        )
+        register_model("_temp_clear_test", config)
+        assert "_temp_clear_test" in list_models()
+
+        # Clear the registry
+        clear_registry()
+        models_after = list_models()
+
+        # After clearing, the temp model should be gone
+        assert "_temp_clear_test" not in models_after
+
+        # Re-register builtins to avoid breaking other tests
+        from double_pendulum_golf.model_registry import _register_builtins
+
+        _register_builtins()
+        # Builtins should be back
+        assert "double" in list_models()
