@@ -61,3 +61,54 @@ class TestElectricalModel:
         # Test metal conductivity
         cond_metal = glass.get_conductivity(1200.0, is_metal=True)
         assert cond_metal == 10000.0
+
+
+class TestElectrodeConfigMethods:
+    """Tests for ElectrodeConfig.status_color and scheme_color methods."""
+
+    def test_status_color_ok(self):
+        cfg = ElectrodeConfig()
+        assert cfg.status_color("ok") == "#C8FFC8"
+
+    def test_status_color_warn(self):
+        cfg = ElectrodeConfig()
+        assert cfg.status_color("warn") == "#FFFFB4"
+
+    def test_status_color_error(self):
+        cfg = ElectrodeConfig()
+        assert cfg.status_color("error") == "#FF9696"
+
+    def test_status_color_unknown_falls_back_to_ok(self):
+        cfg = ElectrodeConfig()
+        result = cfg.status_color("unknown_type")
+        # Falls back to 'status_ok' key
+        assert result == "#C8FFC8"
+
+    def test_status_color_colors_none(self):
+        """When colors dict is None, returns fallback."""
+        cfg = ElectrodeConfig(colors=None)
+        cfg.__post_init__()
+        cfg.colors = None  # Force None after init
+        assert cfg.status_color("ok") == "#C8FFC8"
+
+    def test_scheme_color_default_scheme(self):
+        cfg = ElectrodeConfig()
+        color = cfg.scheme_color("default", "direct_glass")
+        assert color == "#4169E1"
+
+    def test_scheme_color_missing_path_type_returns_lightblue(self):
+        cfg = ElectrodeConfig()
+        color = cfg.scheme_color("default", "nonexistent_path")
+        assert color == "lightblue"
+
+    def test_scheme_color_missing_scheme_returns_lightblue(self):
+        cfg = ElectrodeConfig()
+        color = cfg.scheme_color("nonexistent_scheme", "direct_glass")
+        assert color == "lightblue"
+
+    def test_scheme_color_color_schemes_none(self):
+        """When color_schemes is None, returns 'lightblue'."""
+        cfg = ElectrodeConfig()
+        cfg.__post_init__()
+        cfg.color_schemes = None
+        assert cfg.scheme_color("default", "direct_glass") == "lightblue"

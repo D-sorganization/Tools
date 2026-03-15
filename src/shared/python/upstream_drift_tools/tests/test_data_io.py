@@ -157,3 +157,39 @@ class TestWriteData:
 
         with pytest.raises((PreconditionError, PostconditionError, ValueError)):
             write_data(sample_df, tmp_path / "out.xyz")
+
+
+# ---------------------------------------------------------------------------
+# pandas unavailable paths (lines 66-67, 127-128)
+# ---------------------------------------------------------------------------
+
+
+class TestPandasUnavailable:
+    def test_read_data_raises_when_pandas_not_available(self, tmp_path: Path):
+        """Lines 66-67: _HAS_PANDAS=False → ImportError in read_data."""
+        import upstream_drift_tools.data_io as data_io_mod
+
+        csv_path = tmp_path / "data.csv"
+        csv_path.write_text("a,b\n1,2\n")
+
+        original = data_io_mod._HAS_PANDAS
+        try:
+            data_io_mod._HAS_PANDAS = False
+            with pytest.raises(ImportError, match="pandas is required for read_data"):
+                data_io_mod.read_data(csv_path)
+        finally:
+            data_io_mod._HAS_PANDAS = original
+
+    def test_write_data_raises_when_pandas_not_available(
+        self, sample_df: pd.DataFrame, tmp_path: Path
+    ):
+        """Lines 127-128: _HAS_PANDAS=False → ImportError in write_data."""
+        import upstream_drift_tools.data_io as data_io_mod
+
+        original = data_io_mod._HAS_PANDAS
+        try:
+            data_io_mod._HAS_PANDAS = False
+            with pytest.raises(ImportError, match="pandas is required for write_data"):
+                data_io_mod.write_data(sample_df, tmp_path / "out.csv")
+        finally:
+            data_io_mod._HAS_PANDAS = original
