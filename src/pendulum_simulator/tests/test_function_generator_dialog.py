@@ -19,13 +19,17 @@ def test_function_generator_dialog_init(qapp):
     assert btn_box is not None
 
 
-def test_on_signal_applied(qapp, qtbot):
+def test_on_signal_applied(qapp):
+    from unittest.mock import MagicMock
     dlg = FunctionGeneratorDialog()
-
-    with qtbot.waitSignal(dlg.torque_imported, timeout=1000) as blocker:
-        dlg._on_signal_applied("Wrist", [1.0, 2.0, 3.0])
-
-    assert blocker.args == ["wrist", [1.0, 2.0, 3.0]]
+    
+    mock_emit = MagicMock()
+    dlg.torque_imported.connect(mock_emit)
+    
+    dlg._on_signal_applied("Wrist", [1.0, 2.0, 3.0])
+    
+    # PyQt signals pass arguments to connected slot
+    mock_emit.assert_called_once_with("wrist", [1.0, 2.0, 3.0])
     assert dlg.result() == 1  # QDialog.DialogCode.Accepted
 
 

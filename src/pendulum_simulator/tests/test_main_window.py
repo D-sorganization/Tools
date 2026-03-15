@@ -21,6 +21,7 @@ def test_main_window_init(qapp, monkeypatch):
 
 def test_wheel_event_zoom(qapp):
     w = MainWindow()
+    w._font_zoom_pt = 10  # Manually set to safe default
 
     # Not a wheel event
     w.wheelEvent(object())
