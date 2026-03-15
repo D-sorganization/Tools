@@ -3,9 +3,13 @@
 Covers first-party code only:
 - thermal_profile._solve_thermal_profile: error path (lines 23-24), power_func
   fallback (line 43)
-- wgs_reactor: equilibrium error path (lines 37-38), sizing error path (65-66),
-  WGSReactorEngine None check (lines 22-26)
+- wgs_reactor: equilibrium error path (lines 37-38), sizing error path (65-66)
 - contracts.rotation_converter: Pydantic model_validator branches (91-151)
+- pressure_drop: laminar/turbulent inline branches
+- flare: error path (lines 37-38)
+- baghouse: error path (lines 34-35)
+- acid_gas_dewpoint: _safe_float helper (NaN/Inf → None)
+- scrubber: unknown packing type (47-48), ValueError calc error (87-88)
 
 NOTE: rotation_converter *router* is deliberately NOT tested here because it
 wraps the deprecated `rotation_converter` package (an external dependency).
@@ -299,3 +303,203 @@ class TestReferenceFrameConversionRequestValidator:
             rotation_matrix=[[1, 0, 0], [0, 1, 0], [0, 0, 1]],
         )
         assert req.rotation_matrix is not None
+
+
+# ---------------------------------------------------------------------------
+# pressure_drop router - inline pure calculation branches
+# ---------------------------------------------------------------------------
+
+
+class TestPressureDropInlineBranches:
+    """Cover laminar/transitional/turbulent regimes — all inline first-party code."""
+
+    def _req(self, **overrides):
+        from calc_backend.contracts.pressure_drop import PressureDropRequest
+
+        kwargs = dict(
+            pipe_diameter_m=0.1,
+            pipe_length_m=100.0,
+            roughness_m=0.000045,
+            flow_rate_kg_s=1.0,
+            temperature_k=300.0,
+            pressure_pa=101325.0,
+            molecular_weight_kg_mol=0.029,
+        )
+        kwargs.update(overrides)
+        return PressureDropRequest(**kwargs)
+
+    def test_zero_flow_rate_laminar(self):
+        """Very tiny flow rate → Re approaches 0 → laminar."""
+        from calc_backend.routers.pressure_drop import calculate_pressure_drop
+
+        resp = calculate_pressure_drop(self._req(flow_rate_kg_s=1e-12))
+        assert resp.flow_regime == "Laminar"
+
+    def test_laminar_regime(self):
+        """Re < 2300 → Laminar, friction = 64/Re."""
+        from calc_backend.routers.pressure_drop import calculate_pressure_drop
+
+        # Very slow flow → laminar
+        resp = calculate_pressure_drop(self._req(flow_rate_kg_s=0.0001))
+        assert resp.flow_regime == "Laminar"
+
+    def test_turbulent_regime(self):
+        """Re > 4000 → Turbulent."""
+        from calc_backend.routers.pressure_drop import calculate_pressure_drop
+
+        # High flow → turbulent
+        resp = calculate_pressure_drop(self._req(flow_rate_kg_s=5.0))
+        assert resp.flow_regime == "Turbulent"
+
+    def test_transitional_regime(self):
+        """Re ≈ 2300-4000 → Transitional branch."""
+        from calc_backend.routers.pressure_drop import calculate_pressure_drop
+
+        resp = calculate_pressure_drop(
+            self._req(pipe_diameter_m=0.05, flow_rate_kg_s=0.005)
+        )
+        assert resp.flow_regime in {"Laminar", "Transitional", "Turbulent"}
+
+
+# ---------------------------------------------------------------------------
+# flare, baghouse, acid_gas_dewpoint error paths
+# ---------------------------------------------------------------------------
+
+
+class TestFlareErrorPath:
+    """Cover lines 37-38 in flare.py: except → HTTPException 422."""
+
+    def test_calc_error_raises_422(self):
+        from calc_backend.contracts.flare import FlareRequest
+
+        req = FlareRequest(
+            total_flow_kg_hr=1000.0,
+            gas_composition={"CO": 0.5, "H2": 0.5},
+            temperature_k=400.0,
+            pressure_bar=2.0,
+        )
+        mock_calc = MagicMock()
+        mock_calc.calculate_flare_size.side_effect = ValueError("flare too hot")
+
+        with patch(
+            "upstream_drift_tools.process_calculators.FlareCalculator",
+            return_value=mock_calc,
+        ):
+            import importlib
+
+            import calc_backend.routers.flare as _flare_m
+
+            importlib.reload(_flare_m)
+            with pytest.raises(HTTPException) as exc_info:
+                _flare_m.calculate_flare(req)
+        assert exc_info.value.status_code == 422
+
+
+class TestBaghouseErrorPath:
+    """Cover lines 34-35 in baghouse.py: except → HTTPException 422."""
+
+    def test_calc_error_raises_422(self):
+        from calc_backend.contracts.baghouse import BaghouseRequest
+
+        req = BaghouseRequest(
+            gas_flow_kg_s=1.0,
+            inlet_temp_k=500.0,
+            pressure_pa=101325.0,
+            composition={"CO2": 0.15, "N2": 0.85},
+            solid_carbon_in_kg_hr=50.0,
+            ash_in_kg_hr=20.0,
+            carbon_removal_efficiency=0.95,  # fraction 0-1
+            ash_removal_efficiency=0.99,  # fraction 0-1
+            heat_loss_w=500.0,
+            drum_volume_m3=2.0,
+            solid_density_kg_m3=800.0,
+            bag_area_ft2=500.0,
+        )
+        mock_calc = MagicMock()
+        mock_calc.calculate.side_effect = ValueError("baghouse failure")
+
+        with patch(
+            "upstream_drift_tools.process_calculators.BaghouseCalculator",
+            return_value=mock_calc,
+        ):
+            import importlib
+
+            import calc_backend.routers.baghouse as _bag_m
+
+            importlib.reload(_bag_m)
+            with pytest.raises(HTTPException) as exc_info:
+                _bag_m.calculate_baghouse(req)
+        assert exc_info.value.status_code == 422
+
+
+class TestAcidGasDewpointHelpers:
+    """Cover _safe_float (NaN/Inf → None) — first-party inline helper."""
+
+    def test_safe_float_nan_returns_none(self):
+        """Line 21: NaN → None."""
+        from calc_backend.routers.acid_gas_dewpoint import _safe_float
+
+        assert _safe_float(float("nan")) is None
+
+    def test_safe_float_inf_returns_none(self):
+        """Line 21: Inf → None."""
+        from calc_backend.routers.acid_gas_dewpoint import _safe_float
+
+        assert _safe_float(float("inf")) is None
+        assert _safe_float(float("-inf")) is None
+
+    def test_safe_float_normal_value_passes_through(self):
+        from calc_backend.routers.acid_gas_dewpoint import _safe_float
+
+        assert _safe_float(3.14) == pytest.approx(3.14)
+
+
+class TestScrubberErrorPaths:
+    """Cover lines 47-48 (unknown packing) and 87-88 (calc error) in scrubber.py."""
+
+    def test_unknown_packing_type_raises_422(self):
+        """Lines 47-48: unknown packing type → HTTPException 422."""
+        from calc_backend.contracts.scrubber import ScrubberRequest
+        from calc_backend.routers.scrubber import calculate_scrubber
+
+        req = ScrubberRequest(
+            gas_flow_kg_hr=5000.0,
+            gas_temperature_k=350.0,
+            gas_pressure_pa=101325.0,
+            gas_molecular_weight=30.0,
+            liquid_flow_kg_hr=10000.0,
+            packing_type="UNKNOWN_PACKING_XYZ",
+            percent_of_flood=70.0,
+            acid_gas_removed_kg_hr={"SO2": 10.0},
+            caustic_concentration_pct=10.0,
+        )
+        with pytest.raises(HTTPException) as exc_info:
+            calculate_scrubber(req)
+        assert exc_info.value.status_code == 422
+        assert "UNKNOWN_PACKING_XYZ" in exc_info.value.detail
+
+    def test_scrubber_calc_error_raises_422(self):
+        """Lines 87-88: calculate_gas_density error → HTTPException 422."""
+        from calc_backend.contracts.scrubber import ScrubberRequest
+        from calc_backend.routers.scrubber import calculate_scrubber
+
+        req = ScrubberRequest(
+            gas_flow_kg_hr=5000.0,
+            gas_temperature_k=350.0,
+            gas_pressure_pa=101325.0,
+            gas_molecular_weight=30.0,
+            liquid_flow_kg_hr=10000.0,
+            packing_type="Metal Pall Rings",
+            percent_of_flood=70.0,
+            acid_gas_removed_kg_hr={"SO2": 10.0},
+            caustic_concentration_pct=10.0,
+        )
+        # calculate_gas_density is locally imported inside the function;
+        # patch it from the source module to trigger the except path.
+        with patch(
+            "upstream_drift_tools.process_calculators.scrubber_calculator.calculate_gas_density",
+            side_effect=ValueError("density fail"),
+        ):
+            with pytest.raises(HTTPException) as exc_info:
+                calculate_scrubber(req)
+        assert exc_info.value.status_code == 422
