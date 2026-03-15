@@ -136,7 +136,6 @@ def _stream_to_dict(stream) -> dict:
 
 def _fmt(value, fmt=".3g", suffix="") -> str:
     """Format a numeric value, or return '—' for None/NaN."""
-    assert value is not None, "value must be provided"
     if value is None:
         return "—"
     try:
