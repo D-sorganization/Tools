@@ -238,3 +238,161 @@ class TestFileFormatDetector:
         assert isinstance(extensions, list)
         assert ".csv" in extensions
         assert ".json" in extensions
+
+
+# ---------------------------------------------------------------------------
+# Additional format paths: Excel, Parquet (available), NumPy dict, MATLAB
+# ---------------------------------------------------------------------------
+
+
+try:
+    import pyarrow  # noqa: F401
+
+    _PYARROW_HERE = True
+except ImportError:
+    _PYARROW_HERE = False
+
+requires_pyarrow = pytest.mark.skipif(not _PYARROW_HERE, reason="pyarrow not installed")
+
+
+try:
+    import openpyxl  # noqa: F401
+
+    _OPENPYXL_HERE = True
+except ImportError:
+    _OPENPYXL_HERE = False
+
+requires_openpyxl = pytest.mark.skipif(
+    not _OPENPYXL_HERE, reason="openpyxl not installed"
+)
+
+
+class TestDataReaderAdditionalFormats:
+    @requires_openpyxl
+    def test_read_excel(self, sample_df: pd.DataFrame, tmp_path: Path):
+        """Line 53: excel read path via read_file."""
+        from upstream_drift_tools.data_processing.io import DataReader
+
+        excel_path = tmp_path / "test.xlsx"
+        sample_df.to_excel(excel_path, index=False)
+        result = DataReader.read_file(excel_path)
+        assert list(result.columns) == ["x", "y"]
+
+    @requires_pyarrow
+    def test_read_parquet_with_pyarrow_available(
+        self, sample_df: pd.DataFrame, tmp_path: Path
+    ):
+        """Line 57: parquet read path when PYARROW_AVAILABLE=True."""
+        from upstream_drift_tools.data_processing.io import DataReader
+
+        pq_path = tmp_path / "test.parquet"
+        sample_df.to_parquet(pq_path, index=False)
+        result = DataReader.read_file(pq_path)
+        assert list(result.columns) == ["x", "y"]
+
+    def test_read_numpy_dict_format(self, tmp_path: Path):
+        """Line 66: np.load returning non-ndarray (e.g. NpzFile) → data.item() path."""
+        from unittest.mock import MagicMock, patch
+
+        from upstream_drift_tools.data_processing.io import DataReader
+
+        npy_path = tmp_path / "data.npy"
+        npy_path.write_bytes(b"placeholder")
+
+        # Simulate np.load returning something that is NOT an ndarray
+        # (e.g. NpzFile), and whose .item() returns a dict
+        data_dict = {"col_a": [1.0, 2.0], "col_b": [3.0, 4.0]}
+        mock_result = MagicMock()  # not an np.ndarray instance
+        mock_result.__class__ = (
+            object  # ensure isinstance(mock_result, np.ndarray) is False
+        )
+        mock_result.item.return_value = data_dict
+
+        # Patch np.load in the io module namespace
+        with patch(
+            "upstream_drift_tools.data_processing.io.np.load", return_value=mock_result
+        ):
+            result = DataReader.read_file(npy_path)
+        assert "col_a" in result.columns
+
+    def test_read_matlab_no_scipy_raises(self):
+        """Lines 68-69: SCIPY_AVAILABLE=False raises ImportError for .mat files."""
+        import upstream_drift_tools.data_processing.io as io_mod
+        from upstream_drift_tools.data_processing.io import DataReader
+
+        original = io_mod.SCIPY_AVAILABLE
+        try:
+            io_mod.SCIPY_AVAILABLE = False
+            with pytest.raises(ImportError, match="SciPy"):
+                DataReader.read_file("/tmp/fake.mat")
+        finally:
+            io_mod.SCIPY_AVAILABLE = original
+
+    def test_read_matlab_single_key(self, tmp_path: Path):
+        """Lines 70-73: MATLAB file read with a single data key."""
+        from unittest.mock import patch
+
+        import upstream_drift_tools.data_processing.io as io_mod
+        from upstream_drift_tools.data_processing.io import DataReader
+
+        mat_path = tmp_path / "data.mat"
+        mat_path.write_bytes(b"placeholder")
+
+        mock_data = {"mydata": np.array([[1.0, 2.0], [3.0, 4.0]]), "__header__": b""}
+        original = io_mod.SCIPY_AVAILABLE
+        try:
+            io_mod.SCIPY_AVAILABLE = True
+            with patch("scipy.io.loadmat", return_value=mock_data):
+                result = DataReader.read_file(mat_path)
+        finally:
+            io_mod.SCIPY_AVAILABLE = original
+        assert result.shape == (2, 2)
+
+    def test_read_matlab_multi_key(self, tmp_path: Path):
+        """Lines 74-76: MATLAB file with multiple data keys → dict DataFrame."""
+        from unittest.mock import patch
+
+        import upstream_drift_tools.data_processing.io as io_mod
+        from upstream_drift_tools.data_processing.io import DataReader
+
+        mat_path = tmp_path / "data.mat"
+        mat_path.write_bytes(b"placeholder")
+
+        mock_data = {
+            "x": np.array([1.0, 2.0, 3.0]),
+            "y": np.array([4.0, 5.0, 6.0]),
+            "__header__": b"",
+        }
+        original = io_mod.SCIPY_AVAILABLE
+        try:
+            io_mod.SCIPY_AVAILABLE = True
+            with patch("scipy.io.loadmat", return_value=mock_data):
+                result = DataReader.read_file(mat_path)
+        finally:
+            io_mod.SCIPY_AVAILABLE = original
+        assert "x" in result.columns
+        assert "y" in result.columns
+
+
+class TestDataWriterAdditionalFormats:
+    @requires_openpyxl
+    def test_write_excel(self, sample_df: pd.DataFrame, tmp_path: Path):
+        """Line 109: excel write path."""
+        from upstream_drift_tools.data_processing.io import DataWriter
+
+        excel_path = tmp_path / "out.xlsx"
+        DataWriter.write_file(sample_df, excel_path)
+        result = pd.read_excel(excel_path)
+        assert list(result.columns) == ["x", "y"]
+
+    @requires_pyarrow
+    def test_write_parquet_with_pyarrow_available(
+        self, sample_df: pd.DataFrame, tmp_path: Path
+    ):
+        """Line 113: parquet write when PYARROW_AVAILABLE=True."""
+        from upstream_drift_tools.data_processing.io import DataWriter
+
+        pq_path = tmp_path / "out.parquet"
+        DataWriter.write_file(sample_df, pq_path)
+        result = pd.read_parquet(pq_path)
+        assert list(result.columns) == ["x", "y"]
