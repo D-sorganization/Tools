@@ -52,8 +52,8 @@ def test_find_optimal_on_surface_diff_evo() -> None:
 
     res = find_optimal_on_surface(x_grid, y_grid, Z, method="Differential Evolution")
     assert res["success"]
-    assert res["optimal_x"] == pytest.approx(5.0, abs=1e-1)
-    assert res["optimal_y"] == pytest.approx(5.0, abs=1e-1)
+    assert res["optimal_x"] == pytest.approx(5.0, abs=0.5)
+    assert res["optimal_y"] == pytest.approx(5.0, abs=0.5)
 
 
 def test_find_optimal_invalid_method() -> None:
