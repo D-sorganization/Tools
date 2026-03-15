@@ -508,6 +508,7 @@ class TestNormalizeUnit:
         assert result is not None
 
 
+
 # ---------------------------------------------------------------------------
 # gas_flow dispatch coverage via _convert_gas_flow (lines 229-242, 300)
 # ---------------------------------------------------------------------------
