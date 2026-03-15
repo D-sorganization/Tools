@@ -78,7 +78,6 @@ class TestCalculateVaporPressure:
         _, method = calc.calculate_vapor_pressure(500.0, "auto")
         assert "Antoine" in method
 
-
     def test_iapws_method_directly(self):
         """Line 295: method='iapws' → _iapws_equation called directly."""
         calc = SyngasWaterCalculator()
