@@ -70,3 +70,15 @@ class TestGetRepoRoot:
         ):
             root = get_repo_root()
         assert root.exists()
+
+    def test_default_with_frame_parent(self, monkeypatch):
+        """When calling frame has __file__, start_path uses it."""
+        import inspect
+        from unittest.mock import MagicMock, patch
+
+        fake_frame = MagicMock()
+        fake_frame.f_back.f_globals = {"__file__": __file__}
+
+        with patch.object(inspect, "currentframe", return_value=fake_frame):
+            root = get_repo_root()
+        assert root.exists()
