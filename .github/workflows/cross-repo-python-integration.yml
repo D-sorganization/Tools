@@ -1,0 +1,100 @@
+name: Cross-Repo Python Integration
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/shared/python/**"
+      - ".github/workflows/cross-repo-python-integration.yml"
+  pull_request:
+    paths:
+      - "src/shared/python/**"
+      - ".github/workflows/cross-repo-python-integration.yml"
+  schedule:
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: cross-repo-python-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  downstream-consumer-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        downstream:
+          - repo: D-sorganization/Gasification_Model
+            path: _downstream
+            install: pip install -r requirements.txt
+            setup_script: scripts/setup_tools_workspace.sh
+            test_command: xvfb-run pytest tests/shared_contracts/ -v --tb=short
+            env_name: REQUIRE_REAL_UPSTREAM_DRIFT_TOOLS
+          - repo: D-sorganization/UpstreamDrift
+            path: _downstream
+            install: pip install -e ".[dev,gui-test]"
+            setup_script: scripts/setup_tools_workspace.sh
+            test_command: xvfb-run --auto-servernum pytest tests/shared_contracts/ --timeout=60 --timeout-method=thread -v --tb=short
+            env_name: REQUIRE_REAL_TOOLS_REPO
+
+    steps:
+      - name: Checkout Tools
+        uses: actions/checkout@v6
+
+      - name: Checkout ${{ matrix.downstream.repo }}
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ matrix.downstream.repo }}
+          path: ${{ matrix.downstream.path }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libegl1 libgl1 xvfb \
+            libxkbcommon-x11-0 \
+            libxcb-cursor0 \
+            libxcb-icccm4 \
+            libxcb-image0 \
+            libxcb-keysyms1 \
+            libxcb-randr0 \
+            libxcb-render-util0 \
+            libxcb-shape0 \
+            libxcb-xinerama0 \
+            libxcb-xkb1 \
+            libdbus-1-3 \
+            libxcb-xinput0 \
+            libxcb-xfixes0
+
+      - name: Link Tools workspace into downstream checkout
+        working-directory: ${{ matrix.downstream.path }}
+        env:
+          GITHUB_WORKSPACE: ${{ github.workspace }}/${{ matrix.downstream.path }}
+        run: bash "${{ matrix.downstream.setup_script }}"
+
+      - name: Install downstream dependencies
+        working-directory: ${{ matrix.downstream.path }}
+        run: ${{ matrix.downstream.install }}
+
+      - name: Run downstream consumer contracts
+        working-directory: ${{ matrix.downstream.path }}
+        env:
+          QT_QPA_PLATFORM: offscreen
+          REQUIRE_REAL_UPSTREAM_DRIFT_TOOLS: ${{ matrix.downstream.env_name == 'REQUIRE_REAL_UPSTREAM_DRIFT_TOOLS' && '1' || '' }}
+          REQUIRE_REAL_TOOLS_REPO: ${{ matrix.downstream.env_name == 'REQUIRE_REAL_TOOLS_REPO' && '1' || '' }}
+        run: ${{ matrix.downstream.test_command }}
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Cross-Repo Python Integration" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Downstream: ${{ matrix.downstream.repo }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Test suite: tests/shared_contracts/" >> "$GITHUB_STEP_SUMMARY"
