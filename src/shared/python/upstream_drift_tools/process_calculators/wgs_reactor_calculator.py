@@ -493,9 +493,9 @@ if BASE_CALCULATOR_AVAILABLE:
 
         def create_input_tab(self) -> None:
             """Create input tab"""
-            input_widget = QWidget()
-            scroll = QScrollArea()
-            scroll_widget = QWidget()
+            self._input_widget = QWidget()
+            self._input_scroll = QScrollArea()
+            self._input_scroll_widget = QWidget()
             scroll_layout = QVBoxLayout()
 
             # Catalyst selection
@@ -560,31 +560,31 @@ if BASE_CALCULATOR_AVAILABLE:
             calc_btn.clicked.connect(self.calculate)
             scroll_layout.addWidget(calc_btn)
 
-            scroll_widget.setLayout(scroll_layout)
-            scroll.setWidget(scroll_widget)
-            scroll.setWidgetResizable(True)
+            self._input_scroll_widget.setLayout(scroll_layout)
+            self._input_scroll.setWidget(self._input_scroll_widget)
+            self._input_scroll.setWidgetResizable(True)
 
-            input_widget.setLayout(QVBoxLayout())
-            input_layout = input_widget.layout()
+            self._input_widget.setLayout(QVBoxLayout())
+            input_layout = self._input_widget.layout()
             if input_layout:
-                input_layout.addWidget(scroll)
-            self.tab_widget.addTab(input_widget, "Reactor Parameters")
+                input_layout.addWidget(self._input_scroll)
+            self.tab_widget.addTab(self._input_widget, "Reactor Parameters")
 
         def create_results_tab(self) -> None:
             """Create results tab"""
-            results_widget = QWidget()
+            self._results_widget = QWidget()
             layout = QVBoxLayout()
 
             self.results_text = QTextEdit()
             self.results_text.setReadOnly(True)
             layout.addWidget(self.results_text)
 
-            results_widget.setLayout(layout)
-            self.tab_widget.addTab(results_widget, "WGS Results")
+            self._results_widget.setLayout(layout)
+            self.tab_widget.addTab(self._results_widget, "WGS Results")
 
         def create_plots_tab(self) -> None:
             """Create plots tab"""
-            plots_widget = QWidget()
+            self._plots_widget = QWidget()
             layout = QVBoxLayout()
 
             self.figure = Figure(figsize=(10, 6))
@@ -596,8 +596,8 @@ if BASE_CALCULATOR_AVAILABLE:
             else:
                 layout.addWidget(QLabel("Plot not available in headless mode"))
 
-            plots_widget.setLayout(layout)
-            self.tab_widget.addTab(plots_widget, "Composition Profiles")
+            self._plots_widget.setLayout(layout)
+            self.tab_widget.addTab(self._plots_widget, "Composition Profiles")
 
         def set_default_values(self) -> None:
             """Set default values"""
