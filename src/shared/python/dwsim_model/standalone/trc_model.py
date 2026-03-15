@@ -18,7 +18,7 @@ class TRCStandaloneFlowsheet(StandaloneBase):
         self._is_built = True
 
 
-if __name__ == "__main__":
+def main() -> TRCStandaloneFlowsheet:
     logging.basicConfig(level=logging.INFO)
     logger.info("Building Standalone TRC...")
     m = TRCStandaloneFlowsheet()
@@ -26,3 +26,8 @@ if __name__ == "__main__":
     m.build_flowsheet()
     m.calculate()
     m.builder.save("Standalone_TRC.dwxml")
+    return m
+
+
+if __name__ == "__main__":
+    main()
