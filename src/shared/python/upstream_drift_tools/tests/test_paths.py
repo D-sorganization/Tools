@@ -49,15 +49,11 @@ class TestGetRepoRoot:
 
     def test_raises_from_filesystem_root(self):
         """Starting from filesystem root triggers the parent==current break path."""
-        from unittest.mock import patch
+        # Find the root of the file system (e.g. '/' or 'C:\\')
+        fs_root = Path(Path.cwd().anchor)
 
-        # Adjust _MAX_SEARCH_DEPTH to 1 so we exhaust very quickly from tmp
-        with patch("upstream_drift_tools.utils.paths._MAX_SEARCH_DEPTH", 1):
-            import tempfile
-
-            with tempfile.TemporaryDirectory() as tmpdir:
-                with pytest.raises(FileNotFoundError):
-                    get_repo_root(Path(tmpdir) / "no_such_thing")
+        with pytest.raises(FileNotFoundError, match="Repository root not found"):
+            get_repo_root(fs_root)
 
     def test_default_no_file_frame_uses_cwd(self, monkeypatch):
         """When calling frame has no __file__, start_path falls back to cwd()."""
