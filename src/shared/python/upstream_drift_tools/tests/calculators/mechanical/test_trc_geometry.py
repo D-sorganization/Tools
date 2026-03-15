@@ -450,3 +450,28 @@ class TestResultDataclasses:
     def test_layer_result_defaults(self) -> None:
         lr = LayerResult(name="test", volume_ft3=1.0, mass_lb=2.0, density=100.0)
         assert lr.outer_surface_area_ft2 == 0.0
+
+
+class TestMetalShellSurfaceArea:
+    """Ensure the 'Metal Shell' layer name triggers surface area calculation."""
+
+    def test_metal_shell_layer_calculates_surface_area(self) -> None:
+        """Metal Shell layer triggers surface area calculation (line 244-254)."""
+        engine = TRCGeometryEngine()
+        dimensions = VesselDimensions(
+            cylinder_height=100.0,
+            cylinder_diameter=50.0,
+            cone_height=20.0,
+            cone_bottom_diameter=10.0,
+            cone_interior_hole=5.0,
+            top_refractory_thickness=2.0,
+        )
+        layers = [
+            LayerConfig(
+                name="Metal Shell", thickness=0.25, density=490.0, color="grey"
+            ),
+        ]
+        result = engine.calculate_geometry(dimensions, layers)
+        assert len(result.layers) == 1
+        # Metal Shell should have non-zero surface area
+        assert result.outside_surface_area_ft2 > 0
