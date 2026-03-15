@@ -15,6 +15,17 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+try:
+    import pyarrow  # noqa: F401
+
+    PYARROW_AVAILABLE = True
+except ImportError:
+    PYARROW_AVAILABLE = False
+
+requires_pyarrow = pytest.mark.skipif(
+    not PYARROW_AVAILABLE, reason="pyarrow not installed"
+)
+
 
 @pytest.fixture
 def sample_df() -> pd.DataFrame:
@@ -50,6 +61,7 @@ class TestReadData:
         result = read_data(csv_path, prefer_parquet=False)
         assert len(result) == 3
 
+    @requires_pyarrow
     def test_read_csv_prefers_parquet_sibling(
         self, sample_df: pd.DataFrame, tmp_path: Path
     ):
@@ -67,6 +79,7 @@ class TestReadData:
         # Should read the parquet sibling (has 'extra' column)
         assert "extra" in result.columns
 
+    @requires_pyarrow
     def test_read_parquet_directly(self, sample_df: pd.DataFrame, tmp_path: Path):
         from upstream_drift_tools.data_io import read_data
 
@@ -108,6 +121,7 @@ class TestWriteData:
         loaded = pd.read_csv(csv_path)
         assert list(loaded.columns) == ["a", "b"]
 
+    @requires_pyarrow
     def test_write_parquet_basic(self, sample_df: pd.DataFrame, tmp_path: Path):
         from upstream_drift_tools.data_io import write_data
 
@@ -117,6 +131,7 @@ class TestWriteData:
         loaded = pd.read_parquet(pq_path)
         assert list(loaded.columns) == ["a", "b"]
 
+    @requires_pyarrow
     def test_write_parquet_also_csv(self, sample_df: pd.DataFrame, tmp_path: Path):
         from upstream_drift_tools.data_io import write_data
 
