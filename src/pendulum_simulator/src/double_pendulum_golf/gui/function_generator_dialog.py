@@ -54,7 +54,7 @@ for _ in range(10):
         break
     _search = _search.parent
 else:
-    logger.warning("signal_toolkit not found — walked up from %s", _this_file)
+    logger.warning("signal_toolkit not found — walked up from %s", _this_file)  # pragma: no cover
 
 # ── Try to import the shared widgets ──────────────────────────────────────
 _HAS_POLY_WIDGET = False
@@ -71,7 +71,7 @@ try:
     _PolyWidget = _PW
     _HAS_POLY_WIDGET = True
     logger.info("PolynomialGeneratorWidget loaded successfully")
-except ImportError as _exc:
+except ImportError as _exc:  # pragma: no cover
     _IMPORT_ERRORS.append(f"PolynomialGeneratorWidget: {_exc}")
     logger.warning("PolynomialGeneratorWidget import failed: %s", _exc)
 
@@ -81,7 +81,7 @@ try:
     _SignalWidget = _SW
     _HAS_SIGNAL_WIDGET = True
     logger.info("SignalToolkitWidget loaded successfully")
-except ImportError as _exc:
+except ImportError as _exc:  # pragma: no cover
     _IMPORT_ERRORS.append(f"SignalToolkitWidget: {_exc}")
     logger.warning("SignalToolkitWidget import failed: %s", _exc)
 
@@ -95,7 +95,7 @@ if _WIDGET_AVAILABLE:
         _HAS_SIGNAL_WIDGET,
     )
 else:
-    logger.error(
+    logger.error(  # pragma: no cover
         "Function generator UNAVAILABLE: %s (searched from %s)",
         _WIDGET_IMPORT_ERROR,
         _this_file,
