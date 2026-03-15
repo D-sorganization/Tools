@@ -9,6 +9,7 @@ import os
 import subprocess
 import sys
 import webbrowser
+from collections.abc import Callable
 
 import matplotlib
 import numpy as np
@@ -31,6 +32,7 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QScrollArea,
     QSizePolicy,
+    QSlider,
     QSpinBox,
     QTableWidget,
     QTableWidgetItem,
@@ -39,7 +41,6 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from ...ui.utils.widget_factory import create_slider
 from .psa_model import (
     DEFAULT_COMPONENTS,
     ComponentData,
@@ -49,6 +50,22 @@ from .psa_model import (
     calculate_sensitivity,
     get_flammability_status,
 )
+
+
+def create_slider(
+    min_value: int,
+    max_value: int,
+    default_value: int,
+    orientation: Qt.Orientation,
+    value_changed_callback: Callable[[int], None] | None = None,
+) -> QSlider:
+    slider = QSlider(orientation)
+    slider.setRange(min_value, max_value)
+    slider.setValue(default_value)
+    if value_changed_callback:
+        slider.valueChanged.connect(value_changed_callback)
+    return slider
+
 
 matplotlib.use("QtAgg")
 
