@@ -29,13 +29,11 @@ jobs:
           - repo: D-sorganization/Gasification_Model
             path: _downstream
             install: pip install -r requirements.txt
-            setup_script: scripts/setup_tools_workspace.sh
             test_command: xvfb-run pytest tests/shared_contracts/ -v --tb=short
             env_name: REQUIRE_REAL_UPSTREAM_DRIFT_TOOLS
           - repo: D-sorganization/UpstreamDrift
             path: _downstream
             install: pip install -e ".[dev,gui-test]"
-            setup_script: scripts/setup_tools_workspace.sh
             test_command: xvfb-run --auto-servernum pytest tests/shared_contracts/ --timeout=60 --timeout-method=thread -v --tb=short
             env_name: REQUIRE_REAL_TOOLS_REPO
 
@@ -78,20 +76,41 @@ jobs:
             libxcb-xinput0 \
             libxcb-xfixes0
 
-      - name: Link Tools workspace into downstream checkout
+      - name: Check downstream suite availability
         if: steps.checkout_downstream.outcome == 'success'
         working-directory: ${{ matrix.downstream.path }}
-        env:
-          GITHUB_WORKSPACE: ${{ github.workspace }}/${{ matrix.downstream.path }}
-        run: bash "${{ matrix.downstream.setup_script }}"
+        id: suite
+        run: |
+          if [ -d tests/shared_contracts ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Prepare Tools workspace for downstream tests
+        if: steps.checkout_downstream.outcome == 'success' && steps.suite.outputs.available == 'true'
+        working-directory: ${{ matrix.downstream.path }}
+        run: |
+          tools_repo_root="${{ github.workspace }}"
+          tools_link="$(dirname "$PWD")/Tools"
+          ln -sfn "$tools_repo_root" "$tools_link"
+
+          echo "TOOLS_REPO_ROOT=$tools_repo_root" >> "$GITHUB_ENV"
+
+          tools_pythonpath="$tools_repo_root/src/shared/python:$tools_repo_root/src:$tools_repo_root/src/python/src"
+          if [ -n "${PYTHONPATH:-}" ]; then
+            echo "PYTHONPATH=$tools_pythonpath:$PYTHONPATH" >> "$GITHUB_ENV"
+          else
+            echo "PYTHONPATH=$tools_pythonpath" >> "$GITHUB_ENV"
+          fi
 
       - name: Install downstream dependencies
-        if: steps.checkout_downstream.outcome == 'success'
+        if: steps.checkout_downstream.outcome == 'success' && steps.suite.outputs.available == 'true'
         working-directory: ${{ matrix.downstream.path }}
         run: ${{ matrix.downstream.install }}
 
       - name: Run downstream consumer contracts
-        if: steps.checkout_downstream.outcome == 'success'
+        if: steps.checkout_downstream.outcome == 'success' && steps.suite.outputs.available == 'true'
         working-directory: ${{ matrix.downstream.path }}
         env:
           QT_QPA_PLATFORM: offscreen
@@ -100,11 +119,18 @@ jobs:
         run: ${{ matrix.downstream.test_command }}
 
       - name: Summary
-        if: always() && steps.checkout_downstream.outcome == 'success'
+        if: always() && steps.checkout_downstream.outcome == 'success' && steps.suite.outputs.available == 'true'
         run: |
           echo "## Cross-Repo Python Integration" >> "$GITHUB_STEP_SUMMARY"
           echo "- Downstream: ${{ matrix.downstream.repo }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- Test suite: tests/shared_contracts/" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Summary (suite missing)
+        if: steps.checkout_downstream.outcome == 'success' && steps.suite.outputs.available != 'true'
+        run: |
+          echo "## Cross-Repo Python Integration" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Downstream: ${{ matrix.downstream.repo }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Skipped: downstream default branch does not yet contain tests/shared_contracts/." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Summary (skipped)
         if: steps.checkout_downstream.outcome != 'success'
