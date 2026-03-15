@@ -14,7 +14,7 @@ import numpy as np
 import pytest
 
 hypothesis = pytest.importorskip("hypothesis", reason="hypothesis not installed")
-from hypothesis import given, settings  # noqa: E402
+from hypothesis import HealthCheck, given, settings  # noqa: E402
 from hypothesis import strategies as st  # noqa: E402
 
 from double_pendulum_golf.physics import (  # noqa: E402
@@ -111,7 +111,10 @@ class TestDoubleProperties:
     """Property-based tests for the 2-DOF double pendulum."""
 
     @given(params=double_params(), phi=_angle)
-    @settings(max_examples=50)
+    @settings(
+        max_examples=50,
+        suppress_health_check=[HealthCheck.too_slow, HealthCheck.filter_too_much],
+    )
     def test_mass_matrix_symmetric(self, params: PendulumParams, phi: float) -> None:
         M = mass_matrix(phi, params)
         assert M.shape == (2, 2)

@@ -131,6 +131,28 @@ class TestRunSimulation:
             v = constraint_violation(sim_result.states[i], _GOLFER_PARAMS)
             assert v < 0.1, f"Constraint violation at step {i}: {v}"
 
+    def test_run_with_joint_limits(self) -> None:
+        from double_pendulum_golf.physics import JointLimitsNDOF
+
+        limits = JointLimitsNDOF(
+            angle_min=np.array([-1.0] * 7),
+            angle_max=np.array([1.0] * 7),
+            stiffness=100.0,
+            damping=10.0,
+        )
+        state0 = _consistent_initial_state(_GOLFER_PARAMS)
+        result = run_simulation(
+            _GOLFER_PARAMS,
+            state0,
+            t_end=0.01,
+            torque_func=_zero_torque,
+            dt=0.005,
+            limits=limits,
+            rtol=1e-4,
+            atol=1e-6,
+        )
+        assert result.n_steps >= 2
+
 
 class TestConstraintViolationPostcondition:
     """Constraint monitoring postcondition: drift must stay within abort threshold."""
