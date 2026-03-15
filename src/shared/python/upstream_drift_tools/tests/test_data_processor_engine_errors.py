@@ -246,3 +246,40 @@ class TestQueryErrorPath:
         engine = _engine_with_data()
         with pytest.raises(FilterError, match="expression"):
             engine.query("")
+
+
+# ---------------------------------------------------------------------------
+# ColumnNotFoundError — direct tests for __init__ branches (lines 22-28)
+# ---------------------------------------------------------------------------
+
+
+class TestColumnNotFoundError:
+    def test_without_available_list(self):
+        """Lines 22-25: no available columns → message without suffix."""
+        from upstream_drift_tools.data_processing.exceptions import ColumnNotFoundError
+
+        err = ColumnNotFoundError("missing_col")
+        assert err.column == "missing_col"
+        assert err.available == []
+        assert "missing_col" in str(err)
+        assert "Available" not in str(err)
+
+    def test_with_available_list(self):
+        """Lines 26-27: available columns → message with 'Available' suffix."""
+        from upstream_drift_tools.data_processing.exceptions import ColumnNotFoundError
+
+        err = ColumnNotFoundError("missing_col", ["col_a", "col_b"])
+        assert err.column == "missing_col"
+        assert err.available == ["col_a", "col_b"]
+        assert "Available" in str(err)
+        assert "col_a" in str(err)
+
+    def test_is_data_processing_error(self):
+        """ColumnNotFoundError is a DataProcessingError subclass."""
+        from upstream_drift_tools.data_processing.exceptions import (
+            ColumnNotFoundError,
+            DataProcessingError,
+        )
+
+        err = ColumnNotFoundError("x")
+        assert isinstance(err, DataProcessingError)
