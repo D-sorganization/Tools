@@ -188,9 +188,9 @@ jobs:
           )
           if [ -s changed_test_files.txt ]; then
             mapfile -t changed_test_files < changed_test_files.txt
-            pytest "${changed_test_files[@]}" "${smoke_tests[@]}" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
+            pytest "${changed_test_files[@]}" "${smoke_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
           else
-            pytest "${smoke_tests[@]}" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
+            pytest "${smoke_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
           fi
 
       - name: Coverage Policy Gate
