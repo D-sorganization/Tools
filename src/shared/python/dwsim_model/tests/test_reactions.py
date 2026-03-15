@@ -9,7 +9,7 @@ from dwsim_model.chemistry.reactions import (
     configure_pem,
     configure_trc,
 )
-from dwsim_model.config.schema import KineticConfig, ReactionConfig, ReactorConfig
+from dwsim_model.config.schema import KineticParameters, ReactionEntry, ReactorConfig
 
 
 def test_load_reactor_contract_not_found():
@@ -98,7 +98,7 @@ def test_reactor_adapter_geometry():
         pressure_Pa=1e5,
         volume_m3=10.0,
         length_m=5.0,
-        diameter_m=None,
+        diameter_m=2.0,
         reactions=[],
     )
     reactor_obj = MagicMock()
@@ -117,7 +117,9 @@ def test_reactor_adapter_add_reaction(mock_reactor_config):
     sim = MagicMock()
     sim.AddReaction.return_value = MagicMock(ID="RXN_99")
 
-    rxn = ReactionConfig(name="R1", conversion=0.5, base_component="CH4")
+    rxn = ReactionEntry(
+        name="R1", conversion=0.5, base_component="CH4", stoichiometry="CH4"
+    )
     mock_reactor_config.reactions = [rxn]
 
     adapter = ReactorAdapter(reactor_obj, sim, mock_reactor_config)
@@ -133,10 +135,10 @@ def test_reactor_adapter_reaction_kinetics(mock_reactor_config):
     r_obj = MagicMock()
     sim.AddReaction.return_value = r_obj
 
-    kinetics = KineticConfig(
+    kinetics = KineticParameters(
         pre_exponential_A=1.0, activation_energy_J_mol=2.0, reaction_order_n=1.5
     )
-    rxn = ReactionConfig(name="R1", kinetics=kinetics)
+    rxn = ReactionEntry(name="R1", stoichiometry="CH4", kinetics=kinetics)
     mock_reactor_config.reactions = [rxn]
     mock_reactor_config.type = "RCT_PFR"  # Uses Kinetic
 
