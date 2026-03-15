@@ -82,6 +82,42 @@ class TestLoadFileErrorPath:
         with pytest.raises(FileIOError, match="file_path must not be empty"):
             engine.load_file("")
 
+    def test_load_file_success_path(self):
+        """Lines 191-196: successful load_file sets data, original_data, path."""
+        from upstream_drift_tools.data_processing.core import DataProcessorEngine
+
+        engine = DataProcessorEngine()
+        mock_df = pd.DataFrame({"a": [1, 2], "b": [3, 4]})
+
+        with patch(
+            "upstream_drift_tools.data_processing.core.DataReader.read_file",
+            return_value=mock_df,
+        ):
+            result = engine.load_file("/some/file.csv")
+
+        # load_file returns a ProcessingResult object
+        assert result.success is True
+        assert engine.data is not None
+        assert len(engine.data) == 2
+        assert engine.file_path is not None
+
+
+# ---------------------------------------------------------------------------
+# _get_basic_stats with data=None (line 572)
+# ---------------------------------------------------------------------------
+
+
+class TestGetBasicStatsNull:
+    def test_get_basic_stats_returns_empty_when_no_data(self):
+        """Line 572: _get_basic_stats returns {} when self.data is None."""
+        from upstream_drift_tools.data_processing.core import DataProcessorEngine
+
+        engine = DataProcessorEngine()
+        # data is None at start
+        assert engine.data is None
+        result = engine._get_basic_stats()
+        assert result == {}
+
 
 # ---------------------------------------------------------------------------
 # transform_column error path (lines 337-339)
