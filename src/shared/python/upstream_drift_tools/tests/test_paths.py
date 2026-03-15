@@ -46,3 +46,31 @@ class TestGetRepoRoot:
         """A string path is accepted (converted to Path internally)."""
         root = get_repo_root(str(Path(__file__).parent))
         assert root.exists()
+
+    def test_raises_from_filesystem_root(self):
+        """Starting from filesystem root triggers the parent==current break path."""
+        from unittest.mock import patch
+
+        # Adjust _MAX_SEARCH_DEPTH to 1 so we exhaust very quickly from tmp
+        with patch("upstream_drift_tools.utils.paths._MAX_SEARCH_DEPTH", 1):
+            import tempfile
+
+            with tempfile.TemporaryDirectory() as tmpdir:
+                with pytest.raises(FileNotFoundError):
+                    get_repo_root(Path(tmpdir) / "no_such_thing")
+
+    def test_default_no_file_frame_uses_cwd(self, monkeypatch):
+        """When calling frame has no __file__, start_path falls back to cwd()."""
+        import inspect
+        from unittest.mock import MagicMock, patch
+
+        # Simulate inspection returning a frame without __file__ in f_globals
+        fake_frame = MagicMock()
+        fake_frame.f_back.f_globals = {}  # no __file__
+
+        with (
+            patch.object(inspect, "currentframe", return_value=fake_frame),
+            patch("pathlib.Path.cwd", return_value=Path(__file__).parent),
+        ):
+            root = get_repo_root()
+        assert root.exists()

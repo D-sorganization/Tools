@@ -233,3 +233,41 @@ class TestLaunchApp:
             result = launch_app(cfg, window_factory=lambda: mock_window)
         # With mocked _import_pyqt6, window setup proceeds; exit code is app.exec()
         assert result == 42
+
+
+# ---------------------------------------------------------------------------
+# _import_pyqt6 - success path (lines 135-138)
+# ---------------------------------------------------------------------------
+
+
+class TestImportPyQt6:
+    def test_import_pyqt6_success_path(self):
+        """_import_pyqt6 returns (app_instance, QMainWindow) when Qt is available."""
+        import sys
+        import types
+
+        from upstream_drift_tools.launcher_factory import _import_pyqt6
+
+        # Build fake PyQt6 module hierarchy
+        fake_qapp = MagicMock()
+        fake_qapp.instance.return_value = None  # No existing instance
+        fake_qmainwindow = MagicMock()
+
+        mock_widgets = types.ModuleType("PyQt6.QtWidgets")
+        mock_widgets.QApplication = fake_qapp
+        mock_widgets.QMainWindow = fake_qmainwindow
+
+        mock_pyqt6 = types.ModuleType("PyQt6")
+
+        original_modules = sys.modules.copy()
+        try:
+            sys.modules["PyQt6"] = mock_pyqt6
+            sys.modules["PyQt6.QtWidgets"] = mock_widgets
+
+            app, qmw = _import_pyqt6()
+            # QApplication.instance() returns None so QApplication(sys.argv) is called
+            assert qmw is fake_qmainwindow
+        finally:
+            # Restore sys.modules
+            sys.modules.clear()
+            sys.modules.update(original_modules)
