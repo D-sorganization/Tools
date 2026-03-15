@@ -59,7 +59,7 @@ class GlassPropertiesInterface:
         self._current_properties: dict[str, Any] = {}  # Store current glass properties
         # Pre-compute reference term for Arrhenius equation
         self._arrhenius_ref_term = (
-            -self._default_properties["activation_energy"]
+            self._default_properties["activation_energy"]
             / _R_GAS
             / self._default_properties["reference_temp"]
         )
