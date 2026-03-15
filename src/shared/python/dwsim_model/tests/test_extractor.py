@@ -49,7 +49,10 @@ def test_results_extractor_calc_volumetric_flow() -> None:
 
 
 def test_results_extractor_get_prop_no_value() -> None:
-    assert ResultsExtractor._get_prop(MockPropertyObject({}), "missing", default=123.0) == 123.0
+    assert (
+        ResultsExtractor._get_prop(MockPropertyObject({}), "missing", default=123.0)
+        == 123.0
+    )
 
 
 def test_results_extractor_get_prop() -> None:

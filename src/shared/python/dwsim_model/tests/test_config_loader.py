@@ -8,12 +8,14 @@ def test_is_runtime_config() -> None:
     assert not _is_runtime_config({"feeds": "path/to/feeds.yaml"})
     assert _is_runtime_config({"energy_streams": {"E1": 500}})
 
+
 def test_deep_merge() -> None:
     base = {"a": 1, "b": {"c": 2}}
     override = {"b": {"d": 3}, "e": 4}
     merged = _deep_merge(base, override)
 
     assert merged == {"a": 1, "b": {"c": 2, "d": 3}, "e": 4}
+
 
 def test_config_loader_init_with_data() -> None:
     data = {"feeds": {"S1": {"temperature_C": 25}}}
@@ -22,6 +24,7 @@ def test_config_loader_init_with_data() -> None:
     assert loader._config_data == data
     loaded = loader.load()
     assert loaded == data
+
 
 @patch("dwsim_model.config_loader._load_file")
 @patch("dwsim_model.config_loader.Path.exists")
@@ -43,6 +46,7 @@ def test_config_loader_load_file(mock_exists, mock_load_file) -> None:
     assert mock_load_file.called
     assert "model" in config
     assert config["reactor_mode"] == "mixed"
+
 
 def test_apply_to_flowsheet() -> None:
     data = {"feeds": {"S1": {"temperature_C": 25}}, "energy_streams": {"E1": 500.0}}

@@ -89,7 +89,7 @@ def test_run_pem(mock_extract, mock_import_module) -> None:
     mock_import_module.return_value = mock_mod
     mock_flowsheet = MagicMock()
     mock_mod.PEMStandaloneFlowsheet.return_value = mock_flowsheet
-    
+
     mock_extract.return_value = {"status": "ok"}
 
     run_pem(mode="equilibrium")
@@ -105,7 +105,7 @@ def test_run_trc(mock_extract, mock_import_module) -> None:
     mock_import_module.return_value = mock_mod
     mock_flowsheet = MagicMock()
     mock_mod.TRCStandaloneFlowsheet.return_value = mock_flowsheet
-    
+
     mock_extract.return_value = {"status": "ok"}
 
     run_trc(mode="kinetic")
@@ -121,7 +121,7 @@ def test_run_full_train(mock_extract, mock_import_module) -> None:
     mock_import_module.return_value = mock_mod
     mock_flowsheet = MagicMock()
     mock_mod.GasificationFlowsheet.return_value = mock_flowsheet
-    
+
     mock_extract.return_value = {"status": "ok"}
 
     run_full_train(mode="mixed", config_path="test.yaml", compound_set=["A", "B"])

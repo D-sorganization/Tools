@@ -576,7 +576,6 @@ class TestFlareRouterMocked:
 
     @patch("calc_backend.routers.flare.FlareCalculator", create=True)
     def test_flare_success_with_mock(self, mock_cls, client: TestClient):
-
         mock_calc = MagicMock()
         mock_design = MagicMock(
             height=50.0,
@@ -893,7 +892,6 @@ class TestSyngasWaterSanitize:
     """Direct unit tests for _sanitize and _fallback helper in syngas_water."""
 
     def test_sanitize_nan(self):
-
         from calc_backend.routers.syngas_water import _sanitize
 
         assert _sanitize(float("nan")) == 0.0

@@ -286,6 +286,11 @@ class TestPSAModelSensitivity:
         assert sensitivity["net_product"].shape == (11, 3)
         assert sensitivity["s2_tail_o2"].shape == (11, 3)
 
+    def test_sensitivity_defaults(self) -> None:
+        """Test sensitivity calculation with default None arguments."""
+        sensitivity = calculate_sensitivity(total_feed=1000.0)
+        assert sensitivity["h2_recovery"].shape == (11, 1)
+
 
 class TestO2SafetyAnalysis:
     """Test O2 safety analysis functions."""
@@ -323,6 +328,12 @@ class TestO2SafetyAnalysis:
 
         # S2 tail O2 should be below danger threshold (2%)
         assert o2_analysis["s2_tail_o2"][0, 0] < 2.0
+
+    def test_o2_analysis_defaults(self) -> None:
+        """Test O2 safety analysis with default None arguments."""
+        o2_analysis = calculate_o2_safety_analysis(total_feed=1000.0)
+        assert len(o2_analysis["inlet_o2_pcts"]) == 4
+        assert len(o2_analysis["stage1_o2_removal"]) == 10
 
 
 class TestFlammabilityStatus:

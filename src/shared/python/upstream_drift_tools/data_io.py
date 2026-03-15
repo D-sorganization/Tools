@@ -129,7 +129,9 @@ def write_data(
 
     path = Path(file_path)
     if path.suffix.lower() not in {".csv", ".tsv", ".txt", ".parquet"}:
-        raise ValueError(f"Output file extension must be CSV or Parquet, got: {path.suffix}")
+        raise ValueError(
+            f"Output file extension must be CSV or Parquet, got: {path.suffix}"
+        )
 
     require(
         path.suffix.lower() in {".csv", ".tsv", ".txt", ".parquet"},

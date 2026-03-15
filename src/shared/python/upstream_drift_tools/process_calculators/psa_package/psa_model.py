@@ -330,28 +330,34 @@ def calculate_sensitivity(
         Dictionary with arrays for each metric vs recycle fractions
     """
     assert total_feed is not None, "total_feed must be provided"
-    if s2_tail_recycle_range is None:
-        s2_tail_recycle_range = np.linspace(0, 1, 11)
-    if product_recycle_range is None:
-        product_recycle_range = np.array([0.0])
-    if components is None:
-        components = list(DEFAULT_COMPONENTS)
 
-    n_tail = len(s2_tail_recycle_range)
-    n_prod = len(product_recycle_range)
+    _s2_tail = s2_tail_recycle_range
+    if _s2_tail is None:
+        _s2_tail = np.linspace(0.0, 1.0, 11, dtype=np.float64)
+
+    _prod_recycle = product_recycle_range
+    if _prod_recycle is None:
+        _prod_recycle = np.array([0.0], dtype=np.float64)
+
+    _components = components
+    if _components is None:
+        _components = list(DEFAULT_COMPONENTS)
+
+    n_tail = len(_s2_tail)
+    n_prod = len(_prod_recycle)
 
     h2_recovery = np.zeros((n_tail, n_prod), dtype=np.float64)
     h2_purity = np.zeros((n_tail, n_prod), dtype=np.float64)
     net_product = np.zeros((n_tail, n_prod), dtype=np.float64)
     s2_tail_o2 = np.zeros((n_tail, n_prod), dtype=np.float64)
 
-    for i, r_tail in enumerate(s2_tail_recycle_range):
-        for j, r_prod in enumerate(product_recycle_range):
+    for i, r_tail in enumerate(_s2_tail):
+        for j, r_prod in enumerate(_prod_recycle):
             model = PSAModel(
                 total_feed_scfm=total_feed,
                 s2_tail_recycle_frac=float(r_tail),
                 product_recycle_frac=float(r_prod),
-                components=components,
+                components=_components,
             )
             results = model.calculate()
             h2_recovery[i, j] = results.h2_recovery_pct
@@ -360,8 +366,8 @@ def calculate_sensitivity(
             s2_tail_o2[i, j] = results.s2_tail_o2_pct
 
     return {
-        "s2_tail_recycle": s2_tail_recycle_range,
-        "product_recycle": product_recycle_range,
+        "s2_tail_recycle": _s2_tail,
+        "product_recycle": _prod_recycle,
         "h2_recovery": h2_recovery,
         "h2_purity": h2_purity,
         "net_product": net_product,
