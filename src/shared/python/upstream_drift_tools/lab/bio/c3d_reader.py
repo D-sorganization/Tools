@@ -135,6 +135,8 @@ class C3DDataReader:
             PreconditionError: If *file_path* is empty.
         """
         assert file_path is not None, "file_path must be provided"
+        if not file_path:
+            raise ValueError("file_path must be a non-empty path")
         require(bool(file_path), "file_path must be a non-empty path", file_path)
         self.file_path = Path(file_path)
         self._c3d_data: C3DMapping | None = None
