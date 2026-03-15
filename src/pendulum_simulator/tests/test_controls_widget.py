@@ -84,10 +84,10 @@ def test_controls_preview_error(qapp):
     w.inp_max_tau2.set_value("invalid")
     w._update_torque_preview()
 
-def test_controls_uai_or_parse(qapp):
+def test_controls_uai_or_parse(qapp, monkeypatch):
     class MockUAI(QWidget):
         def value_si(self): return 99.0
     
-    cw._HAS_UAI = True
-    cw.UnitAwareInput = MockUAI
+    monkeypatch.setattr(cw, "_HAS_UAI", True)
+    monkeypatch.setattr(cw, "UnitAwareInput", MockUAI, raising=False)
     assert ControlsWidget._uai_or_parse(MockUAI(), "test") == 99.0

@@ -134,7 +134,7 @@ class GolferPendulumWidget(BasePendulumWidget):
         result: GolferSimulationResult,
     ) -> list[dict]:
         """Pre-compute zero-torque counterfactual joint forces for every frame."""
-        from .counterfactual_golfer import zero_torque_joint_forces
+        from ..counterfactual_golfer import zero_torque_joint_forces
 
         forces: list[dict] = []
         params = result.params
