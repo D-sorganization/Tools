@@ -65,6 +65,7 @@ class DummyEngine:
         val = kwargs.get("p1", 0) + kwargs.get("p2", 0)
         return {"out_var": val}
 
+
 def test_run_multi_parameter_analysis_parallel(analysis_params: dict) -> None:
     engine = DummyEngine()
     p1_vals = np.array([1.0, 2.0])

@@ -27,7 +27,9 @@ def test_setup_thermo() -> None:
 def test_reactor_types() -> None:
     # Test CUSTOM mode
     builder = MagicMock()
-    flowsheet = GasificationFlowsheet(builder=builder, mode="custom", custom_reactors={"gasifier": "RCT_1"})
+    flowsheet = GasificationFlowsheet(
+        builder=builder, mode="custom", custom_reactors={"gasifier": "RCT_1"}
+    )
     types = flowsheet._get_reactor_types()
     assert types["gasifier"] == "RCT_1"
 
@@ -45,7 +47,10 @@ def test_reactor_types() -> None:
 @patch("dwsim_model.gasification.ConfigLoader")
 def test_build_flowsheet(mock_config_loader, mock_trc, mock_pem, mock_gasifier) -> None:
     builder = MagicMock()
-    builder.materials = {"Syngas_Pre_TRC": MagicMock(), "Syngas_Pre_Quench": MagicMock()}
+    builder.materials = {
+        "Syngas_Pre_TRC": MagicMock(),
+        "Syngas_Pre_Quench": MagicMock(),
+    }
 
     # Mock stage returns
     mock_gasifier.return_value = {"syngas_out": MagicMock()}

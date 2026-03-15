@@ -77,13 +77,11 @@ class TestLoadDataframe:
         assert "my_data" in dp.history[0]
 
     def test_load_dataframe_invalid_type_raises(self):
-
         dp = DataProcessor()
         with pytest.raises(PreconditionError):
             dp.load_dataframe("not a dataframe")  # type: ignore[arg-type]
 
     def test_load_dataframe_empty_name_raises(self, sample_df: pd.DataFrame):
-
         dp = DataProcessor()
         with pytest.raises(PreconditionError):
             dp.load_dataframe(sample_df, name="")
@@ -238,12 +236,10 @@ class TestTrimTime:
         assert dp.dataframe["time"].max() <= 0.5
 
     def test_trim_invalid_start_raises(self, dp: DataProcessor):
-
         with pytest.raises(PreconditionError):
             dp.trim_time("x", 0.5)  # type: ignore[arg-type]
 
     def test_trim_end_less_than_start_raises(self, dp: DataProcessor):
-
         with pytest.raises(PreconditionError):
             dp.trim_time(0.8, 0.2)
 
@@ -273,7 +269,6 @@ class TestResample:
         assert len(dp.dataframe) > 0
 
     def test_resample_invalid_rate_raises(self, dp: DataProcessor):
-
         with pytest.raises(PreconditionError):
             dp.resample(target_rate=-1.0)
 
@@ -357,12 +352,10 @@ class TestApplyFormula:
         assert any("speed" in h for h in dp.history)
 
     def test_apply_formula_invalid_column_name_raises(self, dp: DataProcessor):
-
         with pytest.raises(PreconditionError):
             dp.apply_formula("", "x + y")
 
     def test_apply_formula_empty_expression_raises(self, dp: DataProcessor):
-
         with pytest.raises(PreconditionError):
             dp.apply_formula("result", "")
 
@@ -382,7 +375,6 @@ class TestTransformOps:
         assert len(dp.dataframe.columns) == 3  # no change
 
     def test_drop_columns_invalid_raises(self, dp: DataProcessor):
-
         with pytest.raises(PreconditionError):
             dp.drop_columns([])
 
@@ -391,7 +383,6 @@ class TestTransformOps:
         assert "x_renamed" in dp.dataframe.columns
 
     def test_rename_columns_empty_raises(self, dp: DataProcessor):
-
         with pytest.raises(PreconditionError):
             dp.rename_columns({})
 
@@ -406,12 +397,10 @@ class TestTransformOps:
         assert all(x_vals[i] >= x_vals[i + 1] for i in range(len(x_vals) - 1))
 
     def test_sort_invalid_column_raises(self, dp: DataProcessor):
-
         with pytest.raises(PreconditionError):
             dp.sort("")
 
     def test_sort_invalid_ascending_raises(self, dp: DataProcessor):
-
         with pytest.raises(PreconditionError):
             dp.sort("x", ascending="yes")  # type: ignore[arg-type]
 
@@ -450,7 +439,6 @@ class TestAnalysis:
         assert "y" in result.columns
 
     def test_correlate_invalid_method_raises(self, dp: DataProcessor):
-
         with pytest.raises(PreconditionError):
             dp.correlate(method="")
 

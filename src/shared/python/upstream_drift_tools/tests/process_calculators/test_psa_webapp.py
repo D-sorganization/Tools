@@ -14,9 +14,16 @@ sys.modules["pandas"] = MagicMock()
 import numpy as np
 import pytest
 from upstream_drift_tools.process_calculators.psa_package.psa_webapp import (
+    DEFAULT_COMPONENTS,
     PSAResults,
     StreamCompositions,
     StreamFlows,
+    _render_data_tables_tab,
+    _render_key_metrics,
+    _render_o2_safety_tab,
+    _render_results_tab,
+    _render_sensitivity_tab,
+    _render_sidebar,
     _resolve_plot_mode,
     get_flammability_status,
     main,
@@ -165,3 +172,93 @@ def test_webapp_main(
     mock_key.assert_called_once()
     mock_streamlit.title.assert_called()
     mock_streamlit.tabs.assert_called()
+
+
+def test_render_sidebar(mock_streamlit):
+    mock_streamlit.sidebar.slider.side_effect = [1100, 100, 0, 18, 81]
+    mock_streamlit.sidebar.number_input.side_effect = [32.08, 0.50]
+    total_feed, s2_recycle, prod_recycle, components = _render_sidebar(
+        DEFAULT_COMPONENTS
+    )
+    assert total_feed == 1100.0
+    assert s2_recycle == 100
+    assert prod_recycle == 0
+    assert len(components) == 7
+
+
+def test_render_key_metrics(mock_streamlit, sample_results):
+    mock_streamlit.columns.return_value = (
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
+    )
+    sample_results.s2_tail_h2_pct = 2.0
+    sample_results.s2_tail_o2_pct = 1.0
+    _render_key_metrics(sample_results)
+    assert mock_streamlit.columns.called
+    assert mock_streamlit.metric.called
+    assert mock_streamlit.success.called
+
+
+def test_render_key_metrics_flammable(mock_streamlit, sample_results):
+    mock_streamlit.columns.return_value = (
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
+    )
+    sample_results.s2_tail_h2_pct = 50.0
+    sample_results.s2_tail_o2_pct = 5.0
+    _render_key_metrics(sample_results)
+    assert mock_streamlit.error.called
+
+
+def test_render_key_metrics_caution(mock_streamlit, sample_results):
+    mock_streamlit.columns.return_value = (
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
+        MagicMock(),
+    )
+    sample_results.s2_tail_h2_pct = 80.0
+    sample_results.s2_tail_o2_pct = 1.0
+    _render_key_metrics(sample_results)
+    assert mock_streamlit.warning.called
+
+
+@patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp.go.Figure")
+def test_render_results_tab(mock_figure, mock_streamlit, sample_results):
+    mock_streamlit.columns.return_value = (MagicMock(), MagicMock())
+    _render_results_tab(sample_results)
+    assert mock_streamlit.subheader.called
+    assert mock_streamlit.columns.called
+    assert mock_streamlit.dataframe.called
+    assert mock_streamlit.plotly_chart.called
+
+
+@patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp.go.Figure")
+def test_render_sensitivity_tab(mock_figure, mock_streamlit):
+    mock_streamlit.columns.side_effect = [
+        (MagicMock(), MagicMock(), MagicMock()),
+        (MagicMock(), MagicMock()),
+    ]
+    mock_streamlit.checkbox.side_effect = [True, False]
+    mock_streamlit.slider.return_value = 2
+    _render_sensitivity_tab(1100.0, 100, 0, DEFAULT_COMPONENTS)
+    assert mock_streamlit.plotly_chart.called
+
+
+@patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp.px.imshow")
+@patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp.go.Figure")
+def test_render_o2_safety_tab(mock_figure, mock_imshow, mock_streamlit):
+    mock_streamlit.columns.return_value = (MagicMock(), MagicMock(), MagicMock())
+    mock_streamlit.slider.return_value = 2
+    _render_o2_safety_tab(1100.0, DEFAULT_COMPONENTS)
+    assert mock_streamlit.plotly_chart.called
+
+
+def test_render_data_tables_tab(mock_streamlit, sample_results):
+    _render_data_tables_tab(sample_results)
+    assert mock_streamlit.dataframe.called
+    assert mock_streamlit.markdown.called
