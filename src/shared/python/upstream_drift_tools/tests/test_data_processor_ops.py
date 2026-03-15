@@ -11,7 +11,7 @@ from upstream_drift_tools.ui.widgets.data_processor_widget import DataProcessorW
 
 
 @pytest.fixture
-def test_widget(qapp):
+def test_widget(qapp) -> None:
     widget = DataProcessorWidget()
     df = pd.DataFrame(
         {
@@ -26,7 +26,7 @@ def test_widget(qapp):
     return widget
 
 
-def test_apply_filter(test_widget):
+def test_apply_filter(test_widget) -> None:
     test_widget.filter_column.setCurrentText("A")
     test_widget.filter_operator.setCurrentText(">")
     test_widget.filter_value.setText("2")
@@ -42,7 +42,7 @@ def test_apply_filter(test_widget):
         assert test_widget.status_label.text() == "Filtered"
 
 
-def test_apply_filter_empty(test_widget):
+def test_apply_filter_empty(test_widget) -> None:
     test_widget.filter_column.setCurrentText("")
     test_widget.filter_value.setText("")
     with patch("PyQt6.QtWidgets.QMessageBox.warning") as mock_warn:
@@ -50,7 +50,7 @@ def test_apply_filter_empty(test_widget):
         mock_warn.assert_called_once()
 
 
-def test_apply_filter_string_val(test_widget):
+def test_apply_filter_string_val(test_widget) -> None:
     test_widget.filter_column.setCurrentText("B")
     test_widget.filter_operator.setCurrentText("==")
     test_widget.filter_value.setText("a")
@@ -67,7 +67,7 @@ def test_apply_filter_string_val(test_widget):
             mock_warn.assert_called_once()
 
 
-def test_execute_query(test_widget):
+def test_execute_query(test_widget) -> None:
     test_widget.query_input.setText("A > 2")
     with patch.object(test_widget.engine, "query") as mock_query:
         res = MagicMock()
@@ -86,7 +86,7 @@ def test_execute_query(test_widget):
         mock_warn.assert_called_once()
 
 
-def test_aggregate_data(test_widget):
+def test_aggregate_data(test_widget) -> None:
     test_widget.agg_group_by.setCurrentText("(None)")
     test_widget.agg_column.setCurrentText("A")
     test_widget.agg_type.setCurrentText("sum")
@@ -113,7 +113,7 @@ def test_aggregate_data(test_widget):
             mock_warn.assert_called_once()
 
 
-def test_add_column(test_widget):
+def test_add_column(test_widget) -> None:
     test_widget.new_col_name.setText("D")
     test_widget.new_col_expr.setText("A * 2")
 
@@ -133,7 +133,7 @@ def test_add_column(test_widget):
         mock_warn.assert_called_once()
 
 
-def test_transform_column(test_widget):
+def test_transform_column(test_widget) -> None:
     test_widget.transform_column.setCurrentText("C")
     test_widget.transform_type.setCurrentText("round")
     test_widget.transform_param.setValue(2)
@@ -160,7 +160,7 @@ def test_transform_column(test_widget):
             mock_trans.assert_called_once_with("C", "fillna", value=0.5)
 
 
-def test_rename_column(test_widget):
+def test_rename_column(test_widget) -> None:
     test_widget.rename_column.setCurrentText("A")
     test_widget.rename_to.setText("Alpha")
 
@@ -179,7 +179,7 @@ def test_rename_column(test_widget):
         mock_warn.assert_called_once()
 
 
-def test_drop_column(test_widget):
+def test_drop_column(test_widget) -> None:
     test_widget.rename_column.setCurrentText("A")
 
     with patch(
@@ -196,7 +196,7 @@ def test_drop_column(test_widget):
             mock_drop.assert_called_once_with(["A"])
 
 
-def test_fit_curve(test_widget):
+def test_fit_curve(test_widget) -> None:
     test_widget.fit_x_column.setCurrentText("A")
     test_widget.fit_y_column.setCurrentText("C")
     test_widget.fit_type.setCurrentText("linear")

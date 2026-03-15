@@ -20,11 +20,12 @@ from upstream_drift_tools.ui.mixins.calculator_state_mixin import CalculatorStat
 
 
 class MockCalculator(QWidget, CalculatorStateMixin):
-    def __init__(self, name=None):
+    def __init__(self, name=None) -> None:
         QWidget.__init__(self)
         CalculatorStateMixin.__init__(self, name)
 
-def test_mixin_init(qapp):
+
+def test_mixin_init(qapp) -> None:
     calc = MockCalculator()
     assert calc.calculator_name == "UnknownCalculator"
     assert calc.auto_save_enabled is True
@@ -33,7 +34,8 @@ def test_mixin_init(qapp):
     assert isinstance(calc.input_widgets, list)
     assert isinstance(calc.copyable_widgets, list)
 
-def test_setup_copy_paste(qapp):
+
+def test_setup_copy_paste(qapp) -> None:
     calc = MockCalculator("TestCalc")
     # setup_copy_paste is called by singleShot 0, so call it directly for test
     calc.setup_copy_paste()
@@ -41,7 +43,8 @@ def test_setup_copy_paste(qapp):
     assert hasattr(calc, "copy_all_action")
     assert hasattr(calc, "paste_action")
 
-def test_register_splitter(qapp):
+
+def test_register_splitter(qapp) -> None:
     calc = MockCalculator()
     splitter = QSplitter(Qt.Orientation.Horizontal)
     calc.register_splitter(splitter, "test_splitter")
@@ -55,7 +58,8 @@ def test_register_splitter(qapp):
     assert calc.unsaved_changes is True
     assert "test_splitter" in calc.splitter_states
 
-def test_register_input_widget(qapp):
+
+def test_register_input_widget(qapp) -> None:
     calc = MockCalculator()
     spin = QSpinBox()
     spin.setObjectName("my_spin")
@@ -67,7 +71,8 @@ def test_register_input_widget(qapp):
     spin.setValue(10)
     assert calc.unsaved_changes is True
 
-def test_register_copyable_widget(qapp):
+
+def test_register_copyable_widget(qapp) -> None:
     calc = MockCalculator()
     text_edit = QTextEdit()
 
@@ -75,7 +80,8 @@ def test_register_copyable_widget(qapp):
     assert len(calc.copyable_widgets) == 1
     assert calc.copyable_widgets[0]["type"] == "text"
 
-def test_auto_register_widgets(qapp):
+
+def test_auto_register_widgets(qapp) -> None:
     calc = MockCalculator()
 
     splitter = QSplitter()
@@ -100,7 +106,8 @@ def test_auto_register_widgets(qapp):
     # 1 text edit + 1 table widget
     assert len(calc.copyable_widgets) == 2
 
-def test_save_restore_splitter_states(qapp):
+
+def test_save_restore_splitter_states(qapp) -> None:
     calc = MockCalculator()
     splitter = QSplitter(Qt.Orientation.Horizontal)
 
@@ -115,7 +122,8 @@ def test_save_restore_splitter_states(qapp):
         calc.restore_splitter_states({"s1": {"sizes": [300, 400]}})
         mock_set.assert_called_with([300, 400])
 
-def test_save_restore_input_states(qapp):
+
+def test_save_restore_input_states(qapp) -> None:
     calc = MockCalculator()
 
     spin = QSpinBox()
@@ -161,7 +169,8 @@ def test_save_restore_input_states(qapp):
     # check gets restored with string "", which evaluates to boolean False or similar (bool("") -> False)
     assert check.isChecked() is False
 
-def test_get_set_calculator_state(qapp, monkeypatch):
+
+def test_get_set_calculator_state(qapp, monkeypatch) -> None:
     calc = MockCalculator("MockCalculator")
     spin = QSpinBox()
     spin.setObjectName("sp1")
@@ -176,8 +185,12 @@ def test_get_set_calculator_state(qapp, monkeypatch):
     calc.set_calculator_state({"input_states": {"sp1": "15"}})
     assert spin.value() == 15
 
-@patch("upstream_drift_tools.utils.state_manager.StateManager.save_state", return_value=True)
-def test_save_state_method(mock_save, qapp):
+
+@patch(
+    "upstream_drift_tools.utils.state_manager.StateManager.save_state",
+    return_value=True,
+)
+def test_save_state_method(mock_save, qapp) -> None:
     calc = MockCalculator("MyCalc")
     calc.unsaved_changes = True
     assert calc.save_calculator_state() is True
@@ -186,8 +199,9 @@ def test_save_state_method(mock_save, qapp):
 
     assert calc.save_state() is True  # test alias
 
+
 @patch("upstream_drift_tools.utils.state_manager.StateManager.load_state")
-def test_load_state_method(mock_load, qapp):
+def test_load_state_method(mock_load, qapp) -> None:
     calc = MockCalculator("MyCalc")
 
     mock_load.return_value = {"input_states": {}}
@@ -198,8 +212,9 @@ def test_load_state_method(mock_load, qapp):
     res = calc.load_state()  # test alias
     assert res is not None
 
+
 @patch("PyQt6.QtWidgets.QApplication.clipboard")
-def test_copy_all_results(mock_clipboard, qapp):
+def test_copy_all_results(mock_clipboard, qapp) -> None:
     clip_mock = MagicMock()
     mock_clipboard.return_value = clip_mock
 
@@ -213,8 +228,9 @@ def test_copy_all_results(mock_clipboard, qapp):
     calc.copy_all_results()
     clip_mock.setText.assert_called_with("result 1\n\nresult 2")
 
+
 @patch("PyQt6.QtWidgets.QApplication.clipboard")
-def test_paste_text(mock_clipboard, qapp):
+def test_paste_text(mock_clipboard, qapp) -> None:
     clip_mock = MagicMock()
     clip_mock.text.return_value = "clipboard text"
     mock_clipboard.return_value = clip_mock
@@ -226,7 +242,8 @@ def test_paste_text(mock_clipboard, qapp):
         calc.paste_text()
         assert line.text() == "clipboard text"
 
-def test_get_table_text(qapp):
+
+def test_get_table_text(qapp) -> None:
     calc = MockCalculator()
     table = QTableWidget(2, 2)
     table.setHorizontalHeaderLabels(["A", "B"])
@@ -240,7 +257,8 @@ def test_get_table_text(qapp):
     assert "1\t2" in extracted
     assert "3\t4" in extracted
 
-def test_buttons_creation(qapp):
+
+def test_buttons_creation(qapp) -> None:
     calc = MockCalculator()
     btn = calc.create_copy_button("Copy")
     assert isinstance(btn, QPushButton)
@@ -250,7 +268,8 @@ def test_buttons_creation(qapp):
     assert isinstance(s_btn, QPushButton)
     assert isinstance(l_btn, QPushButton)
 
-def test_handle_close_event(qapp):
+
+def test_handle_close_event(qapp) -> None:
     calc = MockCalculator()
     calc.unsaved_changes = True
 
@@ -260,8 +279,10 @@ def test_handle_close_event(qapp):
         mock_save.assert_called_once()
         event.accept.assert_called_once()
 
-def test_show_menus(qapp):
+
+def test_show_menus(qapp) -> None:
     from PyQt6.QtCore import QPoint
+
     calc = MockCalculator()
     calc.setup_copy_paste()
 
@@ -273,7 +294,8 @@ def test_show_menus(qapp):
         # widget info map
         calc.show_widget_context_menu(QPoint(0, 0), {"widget": text_edit})
 
-def test_copy_selected_text_focused(qapp):
+
+def test_copy_selected_text_focused(qapp) -> None:
     calc = MockCalculator()
     text = QTextEdit("focused text")
     with patch.object(calc, "focusWidget", return_value=text):
@@ -281,7 +303,8 @@ def test_copy_selected_text_focused(qapp):
             calc.copy_selected_text()
             mock_copy.assert_called_with("focused text")
 
-def test_copy_selected_text_unfocused(qapp):
+
+def test_copy_selected_text_unfocused(qapp) -> None:
     calc = MockCalculator()
     text = QTextEdit("unfocused text")
     calc.register_copyable_widget(text)
@@ -294,7 +317,8 @@ def test_copy_selected_text_unfocused(qapp):
                 calc.copy_selected_text()
                 mock_copy.assert_called_with("unfocused text")
 
-def test_restore_input_state_invalid_value(qapp):
+
+def test_restore_input_state_invalid_value(qapp) -> None:
     calc = MockCalculator()
     spin = QSpinBox()
     spin.setObjectName("spin")
@@ -306,40 +330,51 @@ def test_restore_input_state_invalid_value(qapp):
     calc.restore_input_states({"spin": "invalid"})
     # shouldn't crash
 
-def test_restore_splitter_state_with_load(qapp):
+
+def test_restore_splitter_state_with_load(qapp) -> None:
     calc = MockCalculator("MyCalc2")
     splitter = QSplitter(Qt.Orientation.Horizontal)
 
-    with patch.object(calc, "load_calculator_state", return_value={"splitter_states": {"s1": {"sizes": [11, 22]}}}):
+    with patch.object(
+        calc,
+        "load_calculator_state",
+        return_value={"splitter_states": {"s1": {"sizes": [11, 22]}}},
+    ):
         with patch.object(splitter, "setSizes") as mock_set:
             calc.register_splitter(splitter, "s1")
             # register_splitter calls restore_splitter_state implicitly
             mock_set.assert_called_with([11, 22])
 
-def test_set_calculator_state_geometry(qapp):
+
+def test_set_calculator_state_geometry(qapp) -> None:
     calc = MockCalculator()
 
     with patch.object(calc, "restoreGeometry") as mock_rest:
         import base64
+
         geom_b64 = base64.b64encode(b"dummy_geometry").decode("utf-8")
         calc.set_calculator_state({"window_geometry": geom_b64})
         mock_rest.assert_called_once()
         args = mock_rest.call_args[0][0]
         assert args == b"dummy_geometry"
 
-def test_get_text_from_widget_variants(qapp):
+
+def test_get_text_from_widget_variants(qapp) -> None:
     calc = MockCalculator()
 
     class DummyText:
-        def toPlainText(self): return "plain"
+        def toPlainText(self):
+            return "plain"
 
     class DummyTextFallback:
-        def text(self): return "txt"
+        def text(self):
+            return "txt"
 
     assert calc.get_text_from_widget(DummyText()) == "plain"
     assert calc.get_text_from_widget(DummyTextFallback()) == "txt"
 
-def test_paste_text_variations(qapp):
+
+def test_paste_text_variations(qapp) -> None:
     calc = MockCalculator()
     with patch("PyQt6.QtWidgets.QApplication.clipboard") as mock_clipboard:
         clip_mock = MagicMock()
@@ -352,7 +387,8 @@ def test_paste_text_variations(qapp):
             calc.paste_text()
             assert text_edit.toPlainText() == "clipboard"
 
-def test_auto_save_state(qapp):
+
+def test_auto_save_state(qapp) -> None:
     calc = MockCalculator()
     calc.unsaved_changes = True
     calc.auto_save_enabled = True
@@ -365,7 +401,8 @@ def test_auto_save_state(qapp):
         calc.auto_save_state()
         mock_save.assert_not_called()
 
-def test_auto_register_already_registered(qapp):
+
+def test_auto_register_already_registered(qapp) -> None:
     calc = MockCalculator()
     splitter = QSplitter()
     splitter.setParent(calc)
@@ -391,7 +428,8 @@ def test_auto_register_already_registered(qapp):
     assert input_names.count("spin") == 1
     assert len(calc.copyable_widgets) == 2
 
-def test_paste_text_plain_text(qapp):
+
+def test_paste_text_plain_text(qapp) -> None:
     calc = MockCalculator()
     with patch("PyQt6.QtWidgets.QApplication.clipboard") as mock_clipboard:
         clip_mock = MagicMock()
@@ -399,8 +437,9 @@ def test_paste_text_plain_text(qapp):
         mock_clipboard.return_value = clip_mock
 
         class MockEditor:
-            def __init__(self):
+            def __init__(self) -> None:
                 self.val = ""
+
             def setPlainText(self, text):
                 self.val = text
 
@@ -410,8 +449,9 @@ def test_paste_text_plain_text(qapp):
             assert editor.val == "clipboard"
 
         class MockInsertEditor:
-            def __init__(self):
+            def __init__(self) -> None:
                 self.val = ""
+
             def insertPlainText(self, text):
                 self.val = text
 
@@ -420,27 +460,30 @@ def test_paste_text_plain_text(qapp):
             calc.paste_text()
             assert insert_editor.val == "clipboard"
 
-def test_exceptions_coverage(qapp):
+
+def test_exceptions_coverage(qapp) -> None:
     calc = MockCalculator()
 
     # test_setup_copy_paste exception
     with patch.object(calc, "addAction", side_effect=RuntimeError):
-        calc.setup_copy_paste() # should silently pass
+        calc.setup_copy_paste()  # should silently pass
 
     # test_copy_all_results exception
     calc.register_copyable_widget(QTextEdit(), "text")
     with patch.object(calc, "get_text_from_widget", side_effect=ValueError):
-        calc.copy_all_results() # should silently pass
+        calc.copy_all_results()  # should silently pass
 
     # get_text_from_widget exception
     # pass something that throws RuntimeError when checked type
     class BadWidget:
-        def __class__(self): raise RuntimeError()
+        def __class__(self):
+            raise RuntimeError()
+
     calc.get_text_from_widget(BadWidget())
 
     # handle_close_event exception
     event = MagicMock()
     with patch.object(calc, "save_calculator_state", side_effect=OSError):
         calc.unsaved_changes = True
-        calc.handle_close_event(event) # should try except and accept
+        calc.handle_close_event(event)  # should try except and accept
         event.accept.assert_called_once()

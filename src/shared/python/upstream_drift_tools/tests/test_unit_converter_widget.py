@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -13,7 +14,7 @@ from upstream_drift_tools.ui.widgets.unit_converter_widget import (
 )
 
 
-def test_conversion_row():
+def test_conversion_row() -> None:
     row = ConversionRow("id1", "m", "km", "1000", "1", True)
     d = row.to_dict()
     assert d["row_id"] == "id1"
@@ -31,7 +32,7 @@ def test_conversion_row():
     assert row.last_used != d["last_used"]
 
 
-def test_case_insensitive_completer():
+def test_case_insensitive_completer() -> None:
     comp = CaseInsensitiveCompleter(["m", "km", "cm"])
 
     comp.updateModel(["A", "B"])
@@ -51,13 +52,13 @@ def clean_settings():
 
 
 @pytest.fixture
-def mock_converter(monkeypatch):
+def mock_converter(monkeypatch) -> Any:
     mock = MagicMock()
     mock.get_supported_units.return_value = {"length": ["m", "km"], "temp": ["°C"]}
     mock._get_category.return_value = "length"
     mock._normalize_unit.side_effect = lambda x: x
 
-    def mock_conv(val, f, t):
+    def mock_conv(val, f, t) -> Any:
         if f == "m" and t == "km":
             return ConversionResult(val / 1000, f, t)
         if f == "km" and t == "m":
@@ -73,7 +74,7 @@ def mock_converter(monkeypatch):
         yield mock
 
 
-def test_unit_converter_init(qapp, clean_settings, mock_converter):
+def test_unit_converter_init(qapp, clean_settings, mock_converter) -> None:
     widget = UnitConverterWidget()
     assert len(widget.rows) == 6
     assert len(widget.recent_widgets) == 3
@@ -84,7 +85,7 @@ def test_unit_converter_init(qapp, clean_settings, mock_converter):
     assert isinstance(w2, UnitConverterWidget)
 
 
-def test_unit_converter_value_changed(qapp, clean_settings, mock_converter):
+def test_unit_converter_value_changed(qapp, clean_settings, mock_converter) -> None:
     widget = UnitConverterWidget()
     w0 = widget.recent_widgets[0]
 
@@ -99,7 +100,7 @@ def test_unit_converter_value_changed(qapp, clean_settings, mock_converter):
     assert w0.to_value.text() == "2"
 
 
-def test_unit_converter_unit_changed(qapp, clean_settings, mock_converter):
+def test_unit_converter_unit_changed(qapp, clean_settings, mock_converter) -> None:
     widget = UnitConverterWidget()
     w0 = widget.recent_widgets[0]
 
@@ -112,7 +113,7 @@ def test_unit_converter_unit_changed(qapp, clean_settings, mock_converter):
     assert w0.to_value.text() == "1000"
 
 
-def test_unit_converter_swap(qapp, clean_settings, mock_converter):
+def test_unit_converter_swap(qapp, clean_settings, mock_converter) -> None:
     widget = UnitConverterWidget()
     w0 = widget.recent_widgets[0]
     w0.from_unit.setCurrentText("m")
@@ -128,7 +129,7 @@ def test_unit_converter_swap(qapp, clean_settings, mock_converter):
     assert w0.to_value.text() == "2000"
 
 
-def test_unit_converter_save_delete(qapp, clean_settings, mock_converter):
+def test_unit_converter_save_delete(qapp, clean_settings, mock_converter) -> None:
     widget = UnitConverterWidget()
     widget.rows[0].update_last_used()  # assure it's most recent
     row_id = widget.rows[0].row_id
@@ -144,7 +145,7 @@ def test_unit_converter_save_delete(qapp, clean_settings, mock_converter):
     assert widget.rows[idx2].is_saved is False
 
 
-def test_unit_converter_copy(qapp, clean_settings, mock_converter):
+def test_unit_converter_copy(qapp, clean_settings, mock_converter) -> None:
     widget = UnitConverterWidget()
     w0 = widget.recent_widgets[0]
     w0.to_value.setText("42")
@@ -157,13 +158,13 @@ def test_unit_converter_copy(qapp, clean_settings, mock_converter):
     assert cb.text() == "42"
 
 
-def test_unit_converter_load_corrupt(qapp, clean_settings, mock_converter):
+def test_unit_converter_load_corrupt(qapp, clean_settings, mock_converter) -> None:
     clean_settings.setValue("recent_conversions", "{[")  # invalid
     widget = UnitConverterWidget()
     assert len(widget.rows) == 6  # defaults
 
 
-def test_unit_converter_incompatible(qapp, clean_settings, mock_converter):
+def test_unit_converter_incompatible(qapp, clean_settings, mock_converter) -> None:
     widget = UnitConverterWidget()
     # If mock_converter._get_category raises exception
     mock_converter._get_category.side_effect = RuntimeError("Err")
@@ -172,7 +173,7 @@ def test_unit_converter_incompatible(qapp, clean_settings, mock_converter):
     mock_converter._get_category.side_effect = None
 
 
-def test_convert_row_invalid_val(qapp, clean_settings, mock_converter):
+def test_convert_row_invalid_val(qapp, clean_settings, mock_converter) -> None:
     widget = UnitConverterWidget()
     w0 = widget.recent_widgets[0]
     w0.from_unit.setCurrentText("m")
