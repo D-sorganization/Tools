@@ -335,13 +335,12 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
         self.inp_m_rscap = LabeledInput(
             "R UBody m",
             "7.0",
-            "Right upper body mass (kg).\n"
-            "Should be ~2× arm mass to represent torso.",
+            "Right upper body mass (kg).\nShould be ~2× arm mass to represent torso.",
         )
         self.inp_m_lscap = LabeledInput(
             "L UBody m",
             "7.0",
-            "Left upper body mass (kg).\n" "Should be ~2× arm mass to represent torso.",
+            "Left upper body mass (kg).\nShould be ~2× arm mass to represent torso.",
         )
         for w in [
             self.inp_d_rs,

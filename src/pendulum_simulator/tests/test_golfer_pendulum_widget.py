@@ -1,12 +1,11 @@
 """Tests for GolferPendulumWidget."""
 
-import pytest
 import numpy as np
 from unittest.mock import MagicMock
-from PyQt6.QtWidgets import QWidget
 from PyQt6.QtGui import QPainter
 from double_pendulum_golf.gui.golfer_pendulum_widget import GolferPendulumWidget
 from double_pendulum_golf.physics_golfer import GolferParams
+
 
 def create_mock_result():
     res = MagicMock()
@@ -45,74 +44,79 @@ def create_mock_result():
         "grip_right": (0.1, 0.4),
         "grip_left": (-0.1, 0.4),
         "rscap": (0.05, 0.05),
-        "lscap": (-0.05, 0.05)
+        "lscap": (-0.05, 0.05),
     }
+
     def mock_pos_at(*args):
         return pos_dict
+
     res.positions_at.side_effect = mock_pos_at
-    
+
     res.joint_forces_at.return_value = {
         "hub": (1.0, 1.0),
         "re": (0.0, 0.0),
-        "unknown": (0.0, 0.0)
+        "unknown": (0.0, 0.0),
     }
-    
+
     res.torques_at.return_value = [1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     return res
+
 
 def test_golfer_widget_init(qapp):
     w = GolferPendulumWidget()
     assert w._get_total_length() == 2.5
     assert not w._has_result()
 
+
 def test_set_simulation_and_frame(qapp, monkeypatch):
     w = GolferPendulumWidget()
     res = create_mock_result()
-    
+
     monkeypatch.setattr(
         "double_pendulum_golf.counterfactual_golfer.zero_torque_joint_forces",
-        lambda *args: {"hub": (1.0, 1.0)}
+        lambda *args: {"hub": (1.0, 1.0)},
     )
-    
+
     w.set_simulation(res)
     assert w._has_result()
     assert w._get_total_length() > 2.0
-    
+
     w.set_frame(1)
     assert w._current_idx == 1
-    
+
     w.clear()
     assert not w._has_result()
+
 
 def test_painting(qapp, monkeypatch):
     w = GolferPendulumWidget()
     res = create_mock_result()
-    
+
     # Mock zero_torque
     monkeypatch.setattr(
         "double_pendulum_golf.counterfactual_golfer.zero_torque_joint_forces",
-        lambda *args: {"hub": (1.0, 1.0)}
+        lambda *args: {"hub": (1.0, 1.0)},
     )
     # Mock ellipsoids
     ell_data = {
         "hub": {
             "directions": np.eye(2),
             "mob_semi_axes": np.array([1.0, 1.0]),
-            "force_semi_axes": np.array([1.0, 1.0])
+            "force_semi_axes": np.array([1.0, 1.0]),
         },
         "club_tip": {
             "directions": np.eye(2),
             "mob_semi_axes": np.array([1.0, 1.0]),
-            "force_semi_axes": None # coverage branch
-        }
+            "force_semi_axes": None,  # coverage branch
+        },
     }
     monkeypatch.setattr(
         "double_pendulum_golf.jacobians_golfer.ellipsoids_golfer",
-        lambda *args: ell_data
+        lambda *args: ell_data,
     )
-    
+
     w.set_simulation(res)
-    
+
     # Enable all feature toggles
     w.set_show_forces(True)
     w.set_show_zero_torque_forces(True)
@@ -121,35 +125,46 @@ def test_painting(qapp, monkeypatch):
     w.set_show_force_ellipsoids(True)
     w.set_show_com(True)
     w.set_gravity_on(False)
-    
+
     painter = MagicMock(spec=QPainter)
     w.resize(400, 400)
-    
+
     # Exception branch for zero_torque_joint_forces
-    def broken_zero(*args): raise ValueError()
-    monkeypatch.setattr("double_pendulum_golf.counterfactual_golfer.zero_torque_joint_forces", broken_zero)
+    def broken_zero(*args):
+        raise ValueError()
+
+    monkeypatch.setattr(
+        "double_pendulum_golf.counterfactual_golfer.zero_torque_joint_forces",
+        broken_zero,
+    )
     w.set_simulation(res)
     w.paintEvent(MagicMock())
-    
+
     # Draw without result
     w.clear()
     w.paintEvent(MagicMock())
-    
+
     # Draw with actual everything
-    monkeypatch.setattr("double_pendulum_golf.counterfactual_golfer.zero_torque_joint_forces", lambda *args: {"hub": (1.0, 1.0)})
+    monkeypatch.setattr(
+        "double_pendulum_golf.counterfactual_golfer.zero_torque_joint_forces",
+        lambda *args: {"hub": (1.0, 1.0)},
+    )
     w.set_simulation(res)
     w.paintEvent(MagicMock())
-    
+
     # Test visible_segments filter
     w.set_visible_segments({"hub"})
     w.paintEvent(MagicMock())
-    
+
     # Exception branches inside drawing
     res.joint_forces_at.side_effect = AttributeError
     w._draw_force_vectors(painter)
-    
-    monkeypatch.setattr("double_pendulum_golf.jacobians_golfer.ellipsoids_golfer", MagicMock(side_effect=ValueError))
+
+    monkeypatch.setattr(
+        "double_pendulum_golf.jacobians_golfer.ellipsoids_golfer",
+        MagicMock(side_effect=ValueError),
+    )
     w._draw_ellipsoids_at_frame(painter)
-    
+
     res.torques_at.side_effect = AttributeError
     w._draw_torque_vectors(painter)

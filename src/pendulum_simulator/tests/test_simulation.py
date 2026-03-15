@@ -148,7 +148,6 @@ class TestSimulationBasics:
                 return_value=(np.array([0.0]), np.zeros((1, 4))),
             ) as mock_sim,
         ):
-
             # If native returns < 2 points, it falls back to Python ODE solver
             result = run_simulation(
                 default_params,

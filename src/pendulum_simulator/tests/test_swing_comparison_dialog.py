@@ -174,3 +174,143 @@ class TestSwingComparisonDialogContracts:
                 simulate_fn=_stub_simulate,
                 extract_fn=_stub_extract,
             )
+
+
+class TestSwingComparisonExecution:
+    @pytest.fixture
+    def dialog(self, app):
+        from double_pendulum_golf.gui.swing_comparison_dialog import (
+            SwingComparisonDialog,
+        )
+
+        return SwingComparisonDialog(
+            preset_names=_PRESET_NAMES,
+            get_coeffs_for_preset=lambda name: _COEFFS.get(name, [[0.0]]),
+            simulate_fn=_stub_simulate,
+            extract_fn=_stub_extract,
+        )
+
+    def test_run_requires_2_selections(self, dialog):
+        # Deselect all
+        for i in range(dialog._preset_list.count()):
+            dialog._preset_list.item(i).setSelected(False)
+        dialog._on_run()
+        assert "Select at least 2 presets" in dialog._status.text()
+
+    def test_run_max_4_selections(self, dialog):
+        from PyQt6.QtWidgets import QListWidgetItem
+
+        dialog._preset_names = ["a", "b", "c", "d", "e"]
+        for name in dialog._preset_names:
+            dialog._preset_list.addItem(QListWidgetItem(name))
+
+        for i in range(dialog._preset_list.count()):
+            dialog._preset_list.item(i).setSelected(True)
+        dialog._on_run()
+        assert "Select at most 4 presets" in dialog._status.text()
+
+    def test_worker_logic(self, dialog):
+        from double_pendulum_golf.gui.swing_comparison_dialog import _ComparisonWorker
+        from unittest.mock import MagicMock
+        from double_pendulum_golf.perturbation_analysis import PerturbationConfig
+
+        jobs = [
+            ("Preset A", [[0.0]], _stub_simulate, _stub_extract),
+            ("Preset B", [[0.0]], _stub_simulate, _stub_extract),
+        ]
+        config = PerturbationConfig(n_trials=2, noise_amplitude=0.1, noise_type="white")
+        worker = _ComparisonWorker(jobs, config)
+
+        worker.preset_progress = MagicMock()
+        worker.preset_done = MagicMock()
+        worker.all_done = MagicMock()
+
+        worker.run()
+
+        worker.preset_progress.emit.assert_called()
+        worker.preset_done.emit.assert_called()
+        worker.all_done.emit.assert_called()
+
+        # Test worker cancellation
+        worker = _ComparisonWorker(jobs, config)
+        worker.cancel()
+        worker.run()
+
+        # Test error handling
+        def fail_sim(_):
+            raise ValueError("Sim failed")
+
+        fail_jobs = [("Preset C", [[0.0]], fail_sim, _stub_extract)]
+        f_worker = _ComparisonWorker(fail_jobs, config)
+        f_worker.preset_progress = MagicMock()
+        f_worker.all_done = MagicMock()
+        f_worker.run()
+        f_worker.all_done.emit.assert_called_with([])
+
+    def test_run_flow(self, dialog):
+        from unittest.mock import patch
+
+        with patch("PyQt6.QtCore.QThread.start"):
+            dialog._on_run()
+            assert dialog._thread is not None
+            assert dialog._worker is not None
+
+            # Test callbacks
+            dialog._on_preset_progress("Preset A", 1)
+            assert dialog._completed_trials == 1
+
+            summary = {
+                "tip_speed_cv": 0.05,
+                "tip_speed_mean": 30.0,
+                "tip_speed_std": 1.5,
+                "tip_speed_min": 28,
+                "tip_speed_max": 32,
+                "n_trials": 2,
+            }
+            dialog._on_preset_done("Preset A", summary)
+
+            with patch(
+                "double_pendulum_golf.gui.swing_comparison_dialog._HAS_MPL", False
+            ):
+                dialog._on_all_done([("Preset A", summary)])
+
+            from double_pendulum_golf.gui.swing_comparison_dialog import _HAS_MPL
+
+            if _HAS_MPL:
+                dialog._on_all_done([("Preset A", summary)])
+
+            dialog._on_cancel()
+            assert not dialog._cancel_btn.isEnabled()
+
+            dialog._on_error("Test error")
+            assert "Error: Test error" in dialog._status.text()
+
+    def test_export(self, dialog, tmp_path):
+        from unittest.mock import patch
+
+        dialog._on_export()  # should return early
+
+        summary = {
+            "tip_speed_cv": 0.05,
+            "tip_speed_mean": 30.0,
+            "tip_speed_std": 1.5,
+            "tip_speed_min": 28,
+            "tip_speed_max": 32,
+            "n_trials": 2,
+        }
+        dialog._results = [("Preset A", summary)]
+
+        # no path
+        with patch(
+            "PyQt6.QtWidgets.QFileDialog.getSaveFileName", return_value=("", "")
+        ):
+            dialog._on_export()
+
+        csv_file = tmp_path / "test.csv"
+        with patch(
+            "PyQt6.QtWidgets.QFileDialog.getSaveFileName",
+            return_value=(str(csv_file), ""),
+        ):
+            dialog._on_export()
+
+        assert csv_file.exists()
