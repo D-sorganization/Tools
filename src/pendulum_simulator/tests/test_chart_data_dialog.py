@@ -1,7 +1,7 @@
 """Tests for the ChartDataDialog dialog."""
 
 import pytest
-from PyQt6.QtWidgets import QDialog, QDialogButtonBox
+from PyQt6.QtWidgets import QDialogButtonBox
 
 from double_pendulum_golf.gui.chart_data_dialog import ChartDataDialog
 
@@ -51,11 +51,11 @@ class TestChartDataDialog:
         qtbot.addWidget(dialog)
 
         buttons = dialog.findChild(QDialogButtonBox)
-        
+
         # Click OK
         with qtbot.waitSignal(dialog.accepted):
             buttons.button(QDialogButtonBox.StandardButton.Ok).click()
-            
+
         dialog.show()
 
         # Click Cancel

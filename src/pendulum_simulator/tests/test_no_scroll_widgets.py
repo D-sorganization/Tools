@@ -26,18 +26,22 @@ class TestNoScrollWidgets:
 
     def test_no_scroll_spinbox_ignores_wheel(self, qapp) -> None:
         from double_pendulum_golf.gui.no_scroll_widgets import NoScrollSpinBox
+
         w = NoScrollSpinBox()
-        
-        mock_event = pytest.MonkeyPatch().context()
+
+        pytest.MonkeyPatch().context()
         from unittest.mock import MagicMock
+
         event = MagicMock()
         w.wheelEvent(event)
         event.ignore.assert_called_once()
 
     def test_no_scroll_double_spinbox(self, qapp) -> None:
         from double_pendulum_golf.gui.no_scroll_widgets import NoScrollDoubleSpinBox
+
         w = NoScrollDoubleSpinBox()
         from unittest.mock import MagicMock
+
         event = MagicMock()
         w.wheelEvent(event)
         event.ignore.assert_called_once()
@@ -45,8 +49,10 @@ class TestNoScrollWidgets:
     def test_no_scroll_slider(self, qapp) -> None:
         from double_pendulum_golf.gui.no_scroll_widgets import NoScrollSlider
         from PyQt6.QtCore import Qt
+
         w = NoScrollSlider(Qt.Orientation.Horizontal)
         from unittest.mock import MagicMock
+
         event = MagicMock()
         w.wheelEvent(event)
         event.ignore.assert_called_once()
@@ -56,6 +62,7 @@ class TestNoScrollWidgets:
 
         w = NoScrollComboBox()
         from unittest.mock import MagicMock
+
         event = MagicMock()
         w.wheelEvent(event)
         event.ignore.assert_called_once()

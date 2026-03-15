@@ -45,7 +45,6 @@ class TestWheelBlockFilter:
 
     @patch("double_pendulum_golf.__main__.QApplication.instance")
     def test_event_filter_ctrl_wheel(self, mock_instance):
-
         # Because _WheelBlockFilter does isinstance(app, QApplication), we need a real or subclassed app.
         # However, mocking the instance might fail the isinstance check unless we patch QApplication itself.
         pass

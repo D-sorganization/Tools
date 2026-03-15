@@ -1,8 +1,6 @@
 """Tests for the diagnostics tracker and viewer."""
 
 import json
-import logging
-import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -32,7 +30,9 @@ class TestDiagnosticsTracker:
         assert t1 is t2
 
     def test_record_event(self, temp_tracker):
-        temp_tracker.record("test_cat", "test msg", severity="warning", extra={"k": "v"})
+        temp_tracker.record(
+            "test_cat", "test msg", severity="warning", extra={"k": "v"}
+        )
         assert len(temp_tracker.events) == 1
         event = temp_tracker.events[0]
         assert event.category == "test_cat"
@@ -83,7 +83,7 @@ class TestDiagnosticsTracker:
 
     def test_load_history_handles_corrupt_lines(self, tmp_path):
         diag_file = tmp_path / "diagnostics.jsonl"
-        content = "not json\n{\"timestamp\": \"1\", \"severity\": \"info\", \"category\": \"ok\", \"message\": \"m\"}\n"
+        content = 'not json\n{"timestamp": "1", "severity": "info", "category": "ok", "message": "m"}\n'
         diag_file.write_text(content, encoding="utf-8")
 
         with patch("double_pendulum_golf.gui.diagnostics._DIAG_FILE", diag_file):
@@ -145,7 +145,9 @@ class TestDiagnosticsViewer:
 
         viewer._table.setCurrentCell(0, 0)
 
-        with patch("double_pendulum_golf.gui.diagnostics.QApplication.clipboard") as mock_clip:
+        with patch(
+            "double_pendulum_golf.gui.diagnostics.QApplication.clipboard"
+        ) as mock_clip:
             mock_cb = MagicMock()
             mock_clip.return_value = mock_cb
             viewer._copy_details()
@@ -159,15 +161,16 @@ class TestExceptionHook:
         # Patch sys.excepthook before calling _install_exception_hook so it wraps our mock
         with patch("sys.excepthook", MagicMock()) as mock_orig_hook:
             temp_tracker._install_exception_hook()
-            
+
             import sys
+
             installed_hook = sys.excepthook
-            
+
             exc = ValueError("dummy error")
             installed_hook(type(exc), exc, exc.__traceback__)
-            
+
             assert mock_orig_hook.called
-            
+
             events = temp_tracker.events
             assert len(events) == 1
             assert events[0].category == "uncaught_exception"
@@ -176,10 +179,12 @@ class TestExceptionHook:
 
 class TestDiagnosticsGaps:
     def test_show_viewer(self, temp_tracker):
-        with patch("double_pendulum_golf.gui.diagnostics.DiagnosticsViewer.exec") as mock_exec:
+        with patch(
+            "double_pendulum_golf.gui.diagnostics.DiagnosticsViewer.exec"
+        ) as mock_exec:
             temp_tracker.show_viewer()
             mock_exec.assert_called_once()
-            
+
     def test_flush_oserror(self, temp_tracker):
         with patch("pathlib.Path.open", side_effect=OSError):
             # should not crash
@@ -188,12 +193,14 @@ class TestDiagnosticsGaps:
 
     def test_load_history_oserror(self, tmp_path):
         import double_pendulum_golf.gui.diagnostics as diag
+
         with patch.object(diag.Path, "read_text", side_effect=OSError):
             tracker = diag.DiagnosticsTracker()
             assert len(tracker.events) == 0
 
     def test_load_history_empty_line(self, tmp_path):
         import double_pendulum_golf.gui.diagnostics as diag
+
         diag_file = tmp_path / "diagnostics.jsonl"
         content = "\n"  # empty line
         diag_file.write_text(content, encoding="utf-8")
@@ -202,20 +209,20 @@ class TestDiagnosticsGaps:
             with patch("double_pendulum_golf.gui.diagnostics._LOG_DIR", tmp_path):
                 tracker = diag.DiagnosticsTracker()
                 assert len(tracker.events) == 0
-                
+
     def test_caller_source_empty(self):
         import double_pendulum_golf.gui.diagnostics as diag
+
         # Requesting a depth much larger than the stack will exhaust frames and hit `return ""`
         assert diag.DiagnosticsTracker._caller_source(depth=9999) == ""
-        
+
     def test_viewer_bad_timestamp(self, temp_tracker, qtbot):
         temp_tracker.record("test", "test", severity="info")
         # Ruin the timestamp
         temp_tracker._events[0].timestamp = "bad_time_string_here"
-        
+
         viewer = DiagnosticsViewer(temp_tracker)
         qtbot.addWidget(viewer)
-        
+
         # It should fall back to timestamp[:19]
         assert viewer._table.item(0, 0).text() == "bad_time_string_her"
-
