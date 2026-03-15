@@ -21,42 +21,44 @@ def _has_pyqt6() -> bool:
         return False
 
 
-@pytest.mark.skipif(not _has_pyqt6(), reason="PyQt6 not available or no display")
 class TestNoScrollWidgets:
     """Verify mousewheel events are ignored on value widgets."""
 
-    def test_no_scroll_spinbox_ignores_wheel(self) -> None:
+    def test_no_scroll_spinbox_ignores_wheel(self, qapp) -> None:
         from double_pendulum_golf.gui.no_scroll_widgets import NoScrollSpinBox
-
         w = NoScrollSpinBox()
-        w.setValue(5)
-        # Can't easily simulate wheel event without QApplication, so just
-        # verify the class exists and has wheelEvent override
-        assert hasattr(w, "wheelEvent")
-        assert w.value() == 5
+        
+        mock_event = pytest.MonkeyPatch().context()
+        from unittest.mock import MagicMock
+        event = MagicMock()
+        w.wheelEvent(event)
+        event.ignore.assert_called_once()
 
-    def test_no_scroll_double_spinbox(self) -> None:
+    def test_no_scroll_double_spinbox(self, qapp) -> None:
         from double_pendulum_golf.gui.no_scroll_widgets import NoScrollDoubleSpinBox
-
         w = NoScrollDoubleSpinBox()
-        w.setValue(3.14)
-        assert abs(w.value() - 3.14) < 0.01
+        from unittest.mock import MagicMock
+        event = MagicMock()
+        w.wheelEvent(event)
+        event.ignore.assert_called_once()
 
-    def test_no_scroll_slider(self) -> None:
+    def test_no_scroll_slider(self, qapp) -> None:
         from double_pendulum_golf.gui.no_scroll_widgets import NoScrollSlider
         from PyQt6.QtCore import Qt
-
         w = NoScrollSlider(Qt.Orientation.Horizontal)
-        w.setValue(50)
-        assert w.value() == 50
+        from unittest.mock import MagicMock
+        event = MagicMock()
+        w.wheelEvent(event)
+        event.ignore.assert_called_once()
 
-    def test_no_scroll_combobox(self) -> None:
+    def test_no_scroll_combobox(self, qapp) -> None:
         from double_pendulum_golf.gui.no_scroll_widgets import NoScrollComboBox
 
         w = NoScrollComboBox()
-        w.addItems(["A", "B", "C"])
-        w.setCurrentIndex(1)
-        assert w.currentText() == "B"
+        from unittest.mock import MagicMock
+        event = MagicMock()
+        w.wheelEvent(event)
+        event.ignore.assert_called_once()
 
 
 class TestMouseRotation3D:
