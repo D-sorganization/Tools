@@ -14,7 +14,6 @@ from PyQt6.QtCore import QEvent, Qt
 from double_pendulum_golf import __main__
 from double_pendulum_golf.gui import __getattr__ as gui_getattr
 
-
 # ---------------------------------------------------------------------------
 # gui.__init__.py test
 # ---------------------------------------------------------------------------
@@ -46,7 +45,6 @@ class TestWheelBlockFilter:
 
     @patch("double_pendulum_golf.__main__.QApplication.instance")
     def test_event_filter_ctrl_wheel(self, mock_instance):
-        from PyQt6.QtWidgets import QApplication
 
         # Because _WheelBlockFilter does isinstance(app, QApplication), we need a real or subclassed app.
         # However, mocking the instance might fail the isinstance check unless we patch QApplication itself.

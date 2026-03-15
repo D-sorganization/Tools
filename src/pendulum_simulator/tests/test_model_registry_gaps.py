@@ -79,7 +79,9 @@ class TestRegisterModelOverwrite:
 
 
 class TestRegisterBuiltinsImportError:
-    def test_import_error_branches(self, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture) -> None:
+    def test_import_error_branches(
+        self, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """Simulate ImportError for all built-in models to cover except blocks."""
         import sys
         from double_pendulum_golf import model_registry
@@ -92,7 +94,9 @@ class TestRegisterBuiltinsImportError:
         monkeypatch.setitem(sys.modules, "double_pendulum_golf.physics_triple", None)
         monkeypatch.setitem(sys.modules, "double_pendulum_golf.physics_golfer", None)
 
-        with caplog.at_level(logging.DEBUG, logger="double_pendulum_golf.model_registry"):
+        with caplog.at_level(
+            logging.DEBUG, logger="double_pendulum_golf.model_registry"
+        ):
             model_registry._register_builtins()
 
         # All 3 modules should fail to import and log at DEBUG level
