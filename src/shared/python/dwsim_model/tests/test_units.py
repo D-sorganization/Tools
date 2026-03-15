@@ -1,7 +1,6 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from dwsim_model.units import (
     _extract_standalone_results,
     _validate_mode,
