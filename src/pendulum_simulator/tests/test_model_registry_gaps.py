@@ -79,48 +79,30 @@ class TestRegisterModelOverwrite:
 
 
 class TestRegisterBuiltinsImportError:
-    def test_import_error_double_skipped(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        """Simulate ImportError for double pendulum module — should not crash."""
+    def test_import_error_branches(
+        self, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """Simulate ImportError for all built-in models to cover except blocks."""
         import sys
         from double_pendulum_golf import model_registry
 
-        # Clear registry and patch builtins to trigger ImportError for double
+        # Clear registry
         clear_registry()
 
-        # Use monkeypatch to make the double pendulum import fail
-        with monkeypatch.context() as m:
-            # Remove the actual double modules from sys.modules to force ImportError
-            for mod_key in list(sys.modules.keys()):
-                if "simulation" in mod_key and "double_pendulum_golf" in mod_key:
-                    m.delitem(sys.modules, mod_key, raising=False)
+        # Force ImportError by setting modules to None in sys.modules
+        monkeypatch.setitem(sys.modules, "double_pendulum_golf.physics", None)
+        monkeypatch.setitem(sys.modules, "double_pendulum_golf.physics_triple", None)
+        monkeypatch.setitem(sys.modules, "double_pendulum_golf.physics_golfer", None)
 
-            # Re-running _register_builtins should not crash even if double import fails
-            # The error paths silently log and continue
-            try:
-                model_registry._register_builtins()
-            except Exception:
-                pass  # We only care it doesn't propagate unhandled
+        with caplog.at_level(
+            logging.DEBUG, logger="double_pendulum_golf.model_registry"
+        ):
+            model_registry._register_builtins()
 
-    def test_debug_log_on_import_error(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        """_register_builtins should log debug message on import failure."""
-        import double_pendulum_golf.model_registry as reg_module
+        # All 3 modules should fail to import and log at DEBUG level
+        assert "Could not register double pendulum model" in caplog.text
+        assert "Could not register triple pendulum model" in caplog.text
+        assert "Could not register golfer model" in caplog.text
 
-        # Patch to test that import errors are silently caught
-        original_fn = reg_module._register_builtins
-
-        exception_raised = []
-
-        def patched_register_builtins():
-            try:
-                raise ImportError("Simulated import failure")
-            except ImportError:
-                exception_raised.append(True)
-
-        reg_module._register_builtins = patched_register_builtins
-        try:
-            reg_module._register_builtins()
-            assert (
-                exception_raised
-            ), "The patched function should have caught ImportError"
-        finally:
-            reg_module._register_builtins = original_fn
+        # Registry should remain empty
+        assert len(model_registry.list_models()) == 0
