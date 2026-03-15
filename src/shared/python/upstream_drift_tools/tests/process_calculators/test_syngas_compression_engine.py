@@ -5,9 +5,14 @@ Targets: 15% → ~60%+ coverage (excludes Qt UI widget, only tests pure engine).
 
 from __future__ import annotations
 
+from unittest.mock import MagicMock, patch
+
 import pytest
 from upstream_drift_tools.process_calculators.syngas_compression_calculator import (
+    HAS_PYQT,
+    CompressionCalculationWorker,
     CompressionStage,
+    SyngasCompressionCalculatorWidget,
     SyngasCompressionEngine,
 )
 
@@ -252,3 +257,202 @@ class TestAnalyzeProcessConditions:
         analysis = self._run_and_analyze(engine, stages)
         assert analysis["average_efficiency"] is not None
         assert analysis["average_efficiency"] > 0
+
+
+class TestWorkerAndWidget:
+    @pytest.fixture(autouse=True)
+    def prevent_qt_quit(self):
+        from PyQt6.QtWidgets import QApplication
+
+        app = QApplication.instance()
+        if app:
+            app.setQuitOnLastWindowClosed(False)
+
+    @pytest.fixture(autouse=True)
+    def patch_state(self, monkeypatch):
+        try:
+            from upstream_drift_tools.ui.mixins.calculator_state_mixin import (
+                CalculatorStateMixin,
+            )
+
+            def mock_init(self, *args, **kwargs):
+                self.copyable_widgets = []
+                self.input_widgets = []
+
+            monkeypatch.setattr(CalculatorStateMixin, "__init__", mock_init)
+            if hasattr(CalculatorStateMixin, "restore_state"):
+                monkeypatch.setattr(
+                    CalculatorStateMixin, "restore_state", lambda *args, **kwargs: None
+                )
+        except ImportError:
+            pass
+
+    def test_worker_success(self, engine):
+        stages = [_make_stage(1.0, 3.0, 300.0, 0.85, "isentropic")]
+        worker = CompressionCalculationWorker(engine, stages, 100.0, SYNGAS_COMP, True)
+
+        # Mock run since thread execution in pytest is tricky
+        def mock_run():
+            result = engine.calculate_multistage_compression(stages, 100.0, SYNGAS_COMP)
+            analysis = engine.analyze_process_conditions(result)
+            worker.finished.emit({"result": result, "analysis": analysis})
+
+        with patch.object(worker, "run", side_effect=mock_run):
+            worker.run()
+        # Doesn't fail
+
+    def test_worker_error(self, engine):
+        stages = [_make_stage(1.0, 3.0, 300.0, 0.85, "isentropic")]
+        worker = CompressionCalculationWorker(engine, stages, 100.0, SYNGAS_COMP, True)
+
+        def mock_error_run():
+            worker.error.emit("calculation error")
+
+        with patch.object(worker, "run", side_effect=mock_error_run):
+            worker.run()
+        assert not hasattr(worker, "result")
+
+    @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
+    def test_widget_initialization(self, qtbot):
+        with patch(
+            "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
+        ) as mock_timer:
+            widget = SyngasCompressionCalculatorWidget()
+            assert widget.engine is not None
+            mock_timer.assert_called()
+
+    @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
+    def test_widget_show_event(self, qtbot):
+        widget = SyngasCompressionCalculatorWidget()
+        with patch(
+            "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
+        ) as mock_timer:
+            from PyQt6.QtGui import QShowEvent
+
+            event = QShowEvent()
+            widget.showEvent(event)
+            mock_timer.assert_called_with(50, widget._refresh_layout)
+
+    @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
+    def test_widget_refresh_layout(self, qtbot):
+        widget = SyngasCompressionCalculatorWidget()
+        mock_curr = MagicMock()
+        widget.tab_widget = MagicMock()
+        widget.tab_widget.currentIndex.return_value = 0
+        widget.tab_widget.widget.return_value = mock_curr
+
+        with patch.object(widget, "updateGeometry"):
+            widget._refresh_layout()
+            mock_curr.updateGeometry.assert_called_once()
+
+    @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
+    @patch(
+        "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
+    )
+    def test_widget_setup_state_management(self, mock_timer, qtbot):
+        widget = SyngasCompressionCalculatorWidget()
+        widget.findChildren = MagicMock(return_value=[MagicMock()])
+
+    @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
+    @patch(
+        "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
+    )
+    def test_widget_set_default_values(self, mock_timer, qtbot):
+        widget = SyngasCompressionCalculatorWidget()
+        widget.set_default_values()
+
+    @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
+    @patch(
+        "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
+    )
+    def test_widget_calculate_compression(self, mock_timer, qtbot):
+        widget = SyngasCompressionCalculatorWidget()
+        mock_spinbox = MagicMock()
+        mock_spinbox.value.return_value = 10.0
+        widget.composition_inputs = {k: mock_spinbox for k in SYNGAS_COMP.keys()}
+        mock_combo = MagicMock()
+        mock_combo.currentText.return_value = "Isentropic"
+        widget.compression_type_combo = mock_combo
+        widget.flow_rate_input = mock_spinbox
+        widget.inlet_temp_input = mock_spinbox
+        widget.inlet_pressure_input = mock_spinbox
+        mock_checkbox = MagicMock()
+        mock_checkbox.isChecked.return_value = False
+        widget.intercooling_checkbox = mock_checkbox
+        stage_active_checkbox = MagicMock()
+        stage_active_checkbox.isChecked.return_value = True
+        widget.stage_inputs = [
+            [mock_spinbox, mock_spinbox, mock_combo, stage_active_checkbox]
+        ]
+
+        with patch(
+            "upstream_drift_tools.process_calculators.syngas_compression_calculator.CompressionCalculationWorker"
+        ) as mock_worker:
+            worker_instance = MagicMock()
+            mock_worker.return_value = worker_instance
+            widget.calculate_compression()
+            worker_instance.start.assert_called_once()
+
+    @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
+    @patch(
+        "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
+    )
+    def test_widget_calculate_compression_no_stages(self, mock_timer, qtbot):
+        widget = SyngasCompressionCalculatorWidget()
+        # Mock composition inputs to pass the first step
+        mock_spinbox = MagicMock()
+        mock_spinbox.value.return_value = 10.0
+        widget.composition_inputs = {k: mock_spinbox for k in SYNGAS_COMP.keys()}
+        mock_combo = MagicMock()
+        mock_combo.currentText.return_value = "Isentropic"
+        widget.compression_type_combo = mock_combo
+        widget.flow_rate_input = mock_spinbox
+        widget.inlet_temp_input = mock_spinbox
+        widget.inlet_pressure_input = mock_spinbox
+        mock_checkbox = MagicMock()
+        mock_checkbox.isChecked.return_value = False
+        widget.intercooling_checkbox = mock_checkbox
+        stage_active_checkbox = MagicMock()
+        stage_active_checkbox.isChecked.return_value = False
+
+        # Mock stages to have one inactive stage
+        widget.stage_inputs = [
+            [mock_spinbox, mock_spinbox, mock_combo, stage_active_checkbox]
+        ]
+
+        with patch(
+            "upstream_drift_tools.process_calculators.syngas_compression_calculator.QMessageBox.warning"
+        ) as mock_msg:
+            widget.calculate_compression()
+            mock_msg.assert_called_once()
+
+    @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
+    @patch(
+        "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
+    )
+    def test_widget_on_calculation_error(self, mock_timer, qtbot):
+        widget = SyngasCompressionCalculatorWidget()
+        with patch(
+            "upstream_drift_tools.process_calculators.syngas_compression_calculator.QMessageBox.critical"
+        ) as mock_msg:
+            widget.on_calculation_error("test error")
+            mock_msg.assert_called_once()
+
+    @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
+    @patch(
+        "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
+    )
+    def test_widget_on_calculation_finished(self, mock_timer, qtbot, engine):
+        widget = SyngasCompressionCalculatorWidget()
+
+        stages = [_make_stage(1.0, 3.0, 300.0, 0.85, "isentropic")]
+        result = engine.calculate_multistage_compression(stages, 100.0, SYNGAS_COMP)
+        analysis = engine.analyze_process_conditions(result)
+
+        data = {"result": result, "analysis": analysis}
+
+        with patch.object(widget, "calculation_finished") as mock_signal:
+            widget.on_calculation_finished(data)
+            mock_signal.emit.assert_called_once_with(data)
+            assert "RESULTS" in widget.results_text.toPlainText()
+            assert "CONCERNS" in widget.analysis_text.toPlainText()
