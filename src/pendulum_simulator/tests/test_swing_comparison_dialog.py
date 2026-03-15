@@ -146,38 +146,31 @@ class TestSwingComparisonDialogConstruction:
     def test_cancel_button_initially_disabled(self, dialog) -> None:
         assert not dialog._cancel_btn.isEnabled()
 
-    def test_noise_combo_has_three_items(self, dialog) -> None:
-        assert dialog._noise_combo.count() == 3
+    def test_amp_spin_default(self, dialog) -> None:
+        assert dialog._amp_spin.value() == 0.1
 
     def test_trials_spin_default(self, dialog) -> None:
-        assert dialog._trials_spin.value() == 50
+        assert dialog._trials_spin.value() == 30
 
     def test_export_button_initially_disabled(self, dialog) -> None:
         assert not dialog._export_btn.isEnabled()
 
 
 # ---------------------------------------------------------------------------
-# SwingComparisonDialog with fewer than 2 presets
+# SwingComparisonDialog Contracts
 # ---------------------------------------------------------------------------
 
 
-class TestSwingComparisonDialogSinglePreset:
-    def test_run_button_disabled_with_one_preset(self, app) -> None:  # noqa: ARG002
+class TestSwingComparisonDialogContracts:
+    def test_init_rejects_single_preset(self, app) -> None:  # noqa: ARG002
         from double_pendulum_golf.gui.swing_comparison_dialog import (
             SwingComparisonDialog,
         )
 
-        dlg = SwingComparisonDialog(
-            preset_names=["Only One"],
-            get_coeffs_for_preset=lambda name: [[0.0]],
-            simulate_fn=_stub_simulate,
-            extract_fn=_stub_extract,
-        )
-        # With only 1 preset only 1 can be selected; run needs ≥2 selected
-        # The run button should reflect that fewer than 2 are selected
-        selected_count = sum(
-            1
-            for i in range(dlg._preset_list.count())
-            if dlg._preset_list.item(i) and dlg._preset_list.item(i).isSelected()
-        )
-        assert selected_count < 2
+        with pytest.raises(AssertionError, match="Need at least 2 presets"):
+            SwingComparisonDialog(
+                preset_names=["Only One"],
+                get_coeffs_for_preset=lambda name: [[0.0]],
+                simulate_fn=_stub_simulate,
+                extract_fn=_stub_extract,
+            )

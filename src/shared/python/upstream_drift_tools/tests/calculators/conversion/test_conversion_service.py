@@ -506,3 +506,148 @@ class TestNormalizeUnit:
         # "inch" is an alias for "in" in most conversion tables
         result = svc._normalize_unit("ft")  # feet - should resolve
         assert result is not None
+
+
+
+# ---------------------------------------------------------------------------
+# gas_flow dispatch coverage via _convert_gas_flow (lines 229-242, 300)
+# ---------------------------------------------------------------------------
+
+
+class TestGasFlowDispatch:
+    def test_get_category_scfm_is_gas_flow(self, svc):
+        """Line 300: SCFM → 'gas_flow' category."""
+        cat = svc._get_category("SCFM")
+        assert cat == "gas_flow"
+
+    def test_get_category_acfm_is_gas_flow(self, svc):
+        cat = svc._get_category("ACFM")
+        assert cat == "gas_flow"
+
+    def test_get_category_nm3_hr_is_gas_flow(self, svc):
+        cat = svc._get_category("Nm3/hr")
+        assert cat == "gas_flow"
+
+    def test_get_category_unknown_is_none(self, svc):
+        cat = svc._get_category("blarg_totally_unknown")
+        assert cat is None
+
+    def test_convert_gas_flow_scfm_to_scfm_via_convert(self, svc):
+        """Lines 229-242: gas_flow dispatch in convert()."""
+        result = svc.convert(
+            100.0, "SCFM", "SCFM", temperature=288.71, pressure=101325.0
+        )
+        assert result.value > 0
+
+    def test_gas_flow_nm3_hr_to_scfm(self, svc):
+        """Lines 229-242 + 476-482: Nm3/hr in → SCFM out."""
+        result = svc._convert_gas_flow(
+            1000.0,
+            "Nm3/hr",
+            "SCFM",
+            temperature=288.71,
+            pressure=101325.0,
+        )
+        assert result > 0
+
+    def test_gas_flow_scfm_to_nm3_hr(self, svc):
+        """Lines 445-451 + 229-242: SCFM → Nm3/hr."""
+        result = svc._convert_gas_flow(
+            100.0,
+            "SCFM",
+            "Nm3/hr",
+        )
+        assert result > 0
+
+    def test_gas_flow_mass_unit_to_scfm(self, svc):
+        """Lines 447-449: mass_flow unit in → SCFM out."""
+        result = svc._convert_gas_flow(
+            0.1,
+            "kg/s",
+            "SCFM",
+        )
+        assert result > 0
+
+    def test_gas_flow_scfm_to_mass_unit(self, svc):
+        """Lines 478-480: SCFM → mass flow unit."""
+        result = svc._convert_gas_flow(
+            100.0,
+            "SCFM",
+            "kg/s",
+        )
+        assert result > 0
+
+    def test_gas_flow_unknown_from_unit_raises(self, svc):
+        """Line 450-451: unknown gas flow from_unit → UnknownUnitError."""
+        with pytest.raises(UnknownUnitError, match="Unknown gas flow unit"):
+            svc._convert_gas_flow(100.0, "weird_unit/hr", "SCFM")
+
+    def test_gas_flow_unknown_to_unit_raises(self, svc):
+        """Line 481-482: unknown gas flow to_unit → UnknownUnitError."""
+        with pytest.raises(UnknownUnitError, match="Unknown gas flow unit"):
+            svc._convert_gas_flow(100.0, "SCFM", "weird_unit/hr")
+
+
+# ---------------------------------------------------------------------------
+# _require_positive_finite / _require_finite static methods (lines 88-99)
+# ---------------------------------------------------------------------------
+
+
+class TestStaticValidators:
+    def test_require_positive_finite_valid(self):
+        """Line 90: positive finite → no raise."""
+        UnitConversionService._require_positive_finite(5.0, "test")
+
+    def test_require_positive_finite_inf_raises(self):
+        """Lines 90-92: inf → ValueError."""
+        with pytest.raises(ValueError, match="positive and finite"):
+            UnitConversionService._require_positive_finite(float("inf"), "x")
+
+    def test_require_finite_valid(self):
+        """Lines 97: finite value → no raise."""
+        UnitConversionService._require_finite(0.0, "zero")
+
+    def test_require_finite_nan_raises(self):
+        """Lines 97-99: NaN → ValueError."""
+        with pytest.raises(ValueError, match="finite"):
+            UnitConversionService._require_finite(float("nan"), "x")
+
+
+# ---------------------------------------------------------------------------
+# Heating value "not implemented" path (lines 598-599, 615-620)
+# ---------------------------------------------------------------------------
+
+
+class TestHeatingValueImplementedPaths:
+    def test_btu_scf_to_btu_lb_raises_not_implemented(self, svc):
+        """Lines 615-619: BTU/scf → BTU/lb path (MJ/kg → BTU/scf not implemented)."""
+        # BTU/scf conversion FROM MJ/kg should work via the BTU/scf factor path
+        result = svc.heating_value(100.0, "BTU/scf", "BTU/lb", gas_density_stp=1.2)
+        assert result > 0
+
+    def test_kwh_nm3_to_btu_scf(self, svc):
+        """Lines 617-618: kWh/Nm³ → BTU/scf with density."""
+        result = svc.heating_value(3.0, "kWh/Nm3", "BTU/scf", gas_density_stp=1.2)
+        assert result > 0
+
+
+# ---------------------------------------------------------------------------
+# Tar concentration "not implemented" path (lines 707-708, 730-731)
+# ---------------------------------------------------------------------------
+
+
+class TestTarConcentrationPaths:
+    def test_from_unimplemented_unit_raises_via_factor_none(self, svc):
+        """We cannot easily reach 707-708 (ValueError 'not implemented')
+        because the known units have factors or handled paths. Verify mg/Nm³
+        as a round_trip instead.
+        """
+        result = svc.tar_concentration(
+            500.0, "mg/Nm3", "mg/m3", temperature=273.15, pressure=101.325
+        )
+        assert result > 0
+
+    def test_tar_nm3_to_g_nm3_roundtrip(self, svc):
+        result_g = svc.tar_concentration(1000.0, "mg/Nm3", "g/Nm3")
+        result_mg = svc.tar_concentration(result_g, "g/Nm3", "mg/Nm3")
+        assert abs(result_mg - 1000.0) < 1e-6

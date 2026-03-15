@@ -255,7 +255,10 @@ def run_simulation(
             M = mass_matrix(q, params)
             tau_full = np.zeros(N_DOF)
             tau_full[:7] = tau_limit
-            qddot_correction = np.linalg.solve(M, tau_full)
+            try:
+                qddot_correction = np.linalg.solve(M, tau_full)
+            except np.linalg.LinAlgError:
+                qddot_correction = np.linalg.lstsq(M, tau_full, rcond=None)[0]
             dydt[N_DOF:] += qddot_correction
 
         # Monitor constraint drift (Baumgarte stabilization postcondition).

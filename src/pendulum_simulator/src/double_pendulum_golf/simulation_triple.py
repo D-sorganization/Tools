@@ -183,10 +183,13 @@ def run_simulation(
             tau_limit = joint_limit_torque_ndof(q, qdot, limits)
             # Re-solve with added penalty (tau_limit enters as extra torque)
             # We add the limit torques to qddot via M^-1 * tau_limit
-            from .physics_triple import mass_matrix_components
+            from .physics_triple import mass_matrix
 
-            M = mass_matrix_components(y[1], y[2], params)
-            qddot_correction = np.linalg.solve(M, tau_limit)  # type: ignore[call-overload]
+            M = mass_matrix(y[1], y[2], params)
+            try:
+                qddot_correction = np.linalg.solve(M, tau_limit)
+            except np.linalg.LinAlgError:
+                qddot_correction = np.linalg.lstsq(M, tau_limit, rcond=None)[0]
             dydt[3:] += qddot_correction
         return dydt
 

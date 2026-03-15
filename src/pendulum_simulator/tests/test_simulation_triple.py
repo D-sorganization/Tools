@@ -76,6 +76,30 @@ class TestTripleSimulationBasics:
         )
         assert all(np.diff(result.t) > 0)
 
+    def test_run_with_joint_limits(
+        self,
+        triple_params: TriplePendulumParams,
+        zero_torque: Callable[[float], tuple[float, float, float]],
+        aligned_state: np.ndarray,
+    ) -> None:
+        from double_pendulum_golf.physics import JointLimitsNDOF
+
+        limits = JointLimitsNDOF(
+            angle_min=np.array([-1.0, -1.0, -1.0]),
+            angle_max=np.array([1.0, 1.0, 1.0]),
+            stiffness=100.0,
+            damping=10.0,
+        )
+        result = run_simulation(
+            triple_params,
+            aligned_state,
+            t_end=0.01,
+            torque_func=zero_torque,
+            dt=0.005,
+            limits=limits,
+        )
+        assert result.n_steps >= 2
+
 
 class TestTripleSimulationResultContracts:
     """Trajectory-level DbC validation for TripleSimulationResult."""

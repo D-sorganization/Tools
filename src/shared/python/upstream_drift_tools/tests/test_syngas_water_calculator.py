@@ -79,6 +79,14 @@ class TestCalculateVaporPressure:
         assert "Antoine" in method
 
 
+    def test_iapws_method_directly(self):
+        """Line 295: method='iapws' → _iapws_equation called directly."""
+        calc = SyngasWaterCalculator()
+        value, method = calc.calculate_vapor_pressure(100.0, "iapws")
+        assert method == "IAPWS-IF97"
+        assert value > 0
+
+
 class TestMagnusEquation:
     def test_magnus_out_of_range_raises(self):
         """Lines 384-385: T > 100 → ValueError."""

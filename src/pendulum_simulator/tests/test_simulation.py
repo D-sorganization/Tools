@@ -103,6 +103,66 @@ class TestSimulationBasics:
         )
         assert all(np.diff(result.t) > 0)
 
+    def test_native_backend_integration(self, default_params: PendulumParams) -> None:
+        import unittest.mock as mock
+
+        with (
+            mock.patch(
+                "double_pendulum_golf.simulation.double_native_enabled",
+                return_value=True,
+            ),
+            mock.patch("double_pendulum_golf.simulation.simulate_double") as mock_sim,
+        ):
+            # Setup mock to return a coarse trajectory
+            # Use 3 points to ensure interpolation is triggered
+            t_res = np.array([0.0, 0.5, 1.0])
+            states_res = np.zeros((3, 4))
+            mock_sim.return_value = (t_res, states_res)
+
+            result = run_simulation(
+                default_params,
+                np.array([0.0, 0.0, 0.0, 0.0]),
+                t_end=1.0,
+                torque_func=lambda t: (0.0, 0.0),
+                dt=0.1,  # 10 steps
+                coeffs=[0.0] * 10,
+                n_coeffs_per_joint=5,
+            )
+            assert mock_sim.called
+            # The result should be interpolated to dt=0.1, so length is 10 (from 0.0 to 0.9)
+            assert len(result.t) == 10
+            assert np.isclose(result.t[1] - result.t[0], 0.1)
+
+    def test_native_backend_too_few_points(
+        self, default_params: PendulumParams
+    ) -> None:
+        import unittest.mock as mock
+
+        with (
+            mock.patch(
+                "double_pendulum_golf.simulation.double_native_enabled",
+                return_value=True,
+            ),
+            mock.patch(
+                "double_pendulum_golf.simulation.simulate_double",
+                return_value=(np.array([0.0]), np.zeros((1, 4))),
+            ) as mock_sim,
+        ):
+
+            # If native returns < 2 points, it falls back to Python ODE solver
+            result = run_simulation(
+                default_params,
+                np.array([0.0, 0.0, 0.0, 0.0]),
+                t_end=0.5,
+                torque_func=lambda t: (0.0, 0.0),
+                dt=0.1,
+                coeffs=[0.0] * 10,
+                n_coeffs_per_joint=5,
+            )
+            assert mock_sim.called
+            # Fell back, so length should be based on integration
+            assert len(result.t) >= 5
+
 
 class TestSimulationResultContracts:
     """Trajectory-level DbC validation for SimulationResult."""
