@@ -2,7 +2,14 @@
 
 from __future__ import annotations
 
+import sys
 from unittest.mock import MagicMock, patch
+
+sys.modules["streamlit"] = MagicMock()
+sys.modules["plotly"] = MagicMock()
+sys.modules["plotly.express"] = MagicMock()
+sys.modules["plotly.graph_objects"] = MagicMock()
+sys.modules["pandas"] = MagicMock()
 
 import numpy as np
 import pytest
@@ -128,7 +135,25 @@ def test_webapp_main(
     mock_imshow,
     mock_streamlit,
 ):
-    mock_sidebar.return_value = (1100.0, 100, 0, [])
+    mock_sidebar.return_value = (
+        1100.0,
+        100,
+        0,
+        [
+            {
+                "name": "H2",
+                "feed_pct": 32.08,
+                "stage1_removal_pct": 18.0,
+                "stage2_removal_pct": 15.0,
+            },
+            {
+                "name": "O2",
+                "feed_pct": 0.50,
+                "stage1_removal_pct": 81.0,
+                "stage2_removal_pct": 99.99,
+            },
+        ],
+    )
 
     # Mock tabs
     tab1, tab2, tab3, tab4 = MagicMock(), MagicMock(), MagicMock(), MagicMock()
