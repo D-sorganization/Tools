@@ -92,6 +92,14 @@ This document defines the comprehensive 16-point assessment framework (A-O + Hig
 
 ---
 
+## Active Program Assessments
+
+| Date       | Topic                              | Report File                                         |
+| ---------- | ---------------------------------- | --------------------------------------------------- |
+| 2026-03-15 | Testing Improvement Action Plan    | `TESTING_IMPROVEMENT_ACTION_PLAN_2026-03-15.md`     |
+
+---
+
 ## Severity Definitions (All Assessments)
 
 | Severity     | Definition                                           | Response Time |
