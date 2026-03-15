@@ -18,7 +18,7 @@ class PEMStandaloneFlowsheet(StandaloneBase):
         self._is_built = True
 
 
-if __name__ == "__main__":
+def main() -> PEMStandaloneFlowsheet:
     logging.basicConfig(level=logging.INFO)
     logger.info("Building Standalone PEM...")
     m = PEMStandaloneFlowsheet()
@@ -26,3 +26,8 @@ if __name__ == "__main__":
     m.build_flowsheet()
     m.calculate()
     m.builder.save("Standalone_PEM.dwxml")
+    return m
+
+
+if __name__ == "__main__":
+    main()

@@ -25,7 +25,7 @@ class GasifierStandaloneFlowsheet(StandaloneBase):
         self._is_built = True
 
 
-if __name__ == "__main__":
+def main() -> GasifierStandaloneFlowsheet:
     logging.basicConfig(level=logging.INFO)
     logger.info("Building Standalone Gasifier...")
     m = GasifierStandaloneFlowsheet()
@@ -33,3 +33,8 @@ if __name__ == "__main__":
     m.build_flowsheet()
     m.calculate()
     m.builder.save("Standalone_Gasifier.dwxml")
+    return m
+
+
+if __name__ == "__main__":
+    main()
