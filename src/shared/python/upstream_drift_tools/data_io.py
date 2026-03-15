@@ -21,7 +21,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from contracts import ensure, require
+from contracts import require
 
 logger = logging.getLogger(__name__)
 
@@ -128,7 +128,10 @@ def write_data(
         raise ImportError(msg)
 
     path = Path(file_path)
-    ensure(
+    if path.suffix.lower() not in {".csv", ".tsv", ".txt", ".parquet"}:
+        raise ValueError(f"Output file extension must be CSV or Parquet, got: {path.suffix}")
+
+    require(
         path.suffix.lower() in {".csv", ".tsv", ".txt", ".parquet"},
         f"Output file extension must be CSV or Parquet, got: {path.suffix}",
     )

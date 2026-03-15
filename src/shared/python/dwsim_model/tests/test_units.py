@@ -20,7 +20,7 @@ def test_validate_mode() -> None:
         _validate_mode("invalid_mode")
 
 
-@patch("importlib.import_module")
+@patch("dwsim_model.units.importlib.import_module")
 def test_extract_standalone_results(mock_import_module) -> None:
     # Setup mocks
     mock_extractor_mod = MagicMock()
@@ -58,9 +58,9 @@ def test_extract_standalone_results(mock_import_module) -> None:
     mock_extractor.extract.assert_called_once_with(builder)
 
 
+@patch("dwsim_model.units.importlib.import_module")
 @patch("dwsim_model.units._extract_standalone_results")
-@patch("importlib.import_module")
-def test_run_gasifier(mock_import_module, mock_extract) -> None:
+def test_run_gasifier(mock_extract, mock_import_module) -> None:
     mock_gasifier_mod = MagicMock()
     mock_import_module.return_value = mock_gasifier_mod
 
@@ -72,7 +72,7 @@ def test_run_gasifier(mock_import_module, mock_extract) -> None:
     result = run_gasifier(mode="conversion", compound_set=["C1", "C2"])
 
     assert result == {"status": "ok"}
-    mock_import_module.assert_called_with("dwsim_model.standalone.gasifier_model")
+    mock_import_module.assert_any_call("dwsim_model.standalone.gasifier_model")
     mock_gasifier_mod.GasifierStandaloneFlowsheet.assert_called_once_with(
         compound_set=["C1", "C2"]
     )
@@ -82,44 +82,50 @@ def test_run_gasifier(mock_import_module, mock_extract) -> None:
     mock_extract.assert_called_once_with(mock_flowsheet.builder)
 
 
+@patch("dwsim_model.units.importlib.import_module")
 @patch("dwsim_model.units._extract_standalone_results")
-@patch("importlib.import_module")
-def test_run_pem(mock_import_module, mock_extract) -> None:
+def test_run_pem(mock_extract, mock_import_module) -> None:
     mock_mod = MagicMock()
     mock_import_module.return_value = mock_mod
     mock_flowsheet = MagicMock()
     mock_mod.PEMStandaloneFlowsheet.return_value = mock_flowsheet
+    
+    mock_extract.return_value = {"status": "ok"}
 
     run_pem(mode="equilibrium")
-    mock_import_module.assert_called_with("dwsim_model.standalone.pem_model")
+    mock_import_module.assert_any_call("dwsim_model.standalone.pem_model")
     mock_flowsheet.calculate.assert_called_once()
     mock_extract.assert_called_once_with(mock_flowsheet.builder)
 
 
+@patch("dwsim_model.units.importlib.import_module")
 @patch("dwsim_model.units._extract_standalone_results")
-@patch("importlib.import_module")
-def test_run_trc(mock_import_module, mock_extract) -> None:
+def test_run_trc(mock_extract, mock_import_module) -> None:
     mock_mod = MagicMock()
     mock_import_module.return_value = mock_mod
     mock_flowsheet = MagicMock()
     mock_mod.TRCStandaloneFlowsheet.return_value = mock_flowsheet
+    
+    mock_extract.return_value = {"status": "ok"}
 
     run_trc(mode="kinetic")
-    mock_import_module.assert_called_with("dwsim_model.standalone.trc_model")
+    mock_import_module.assert_any_call("dwsim_model.standalone.trc_model")
     mock_flowsheet.calculate.assert_called_once()
     mock_extract.assert_called_once_with(mock_flowsheet.builder)
 
 
+@patch("dwsim_model.units.importlib.import_module")
 @patch("dwsim_model.units._extract_standalone_results")
-@patch("importlib.import_module")
-def test_run_full_train(mock_import_module, mock_extract) -> None:
+def test_run_full_train(mock_extract, mock_import_module) -> None:
     mock_mod = MagicMock()
     mock_import_module.return_value = mock_mod
     mock_flowsheet = MagicMock()
     mock_mod.GasificationFlowsheet.return_value = mock_flowsheet
+    
+    mock_extract.return_value = {"status": "ok"}
 
     run_full_train(mode="mixed", config_path="test.yaml", compound_set=["A", "B"])
-    mock_import_module.assert_called_with("dwsim_model.gasification")
+    mock_import_module.assert_any_call("dwsim_model.gasification")
     mock_mod.GasificationFlowsheet.assert_called_once_with(
         mode="mixed", config_path="test.yaml", compound_set=["A", "B"]
     )

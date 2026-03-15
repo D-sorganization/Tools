@@ -219,9 +219,10 @@ class TestContractsToggle:
             sqrt(-1)
 
         # Should pass when disabled
-        set_contracts_enabled(False)
-        result = sqrt(-1)  # No error
-        assert result == 1.0
-
-        # Re-enable for other tests
-        set_contracts_enabled(True)
+        try:
+            set_contracts_enabled(False)
+            result = sqrt(-1)  # No error
+            assert result == 1.0
+        finally:
+            # ALWAYS Re-enable for other tests in the global suite
+            set_contracts_enabled(True)
