@@ -5,7 +5,7 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 
-from folder_tool_constants import (
+from folder_tool.folder_tool_constants import (
     DEFAULT_CHUNK_SIZE,
     MAX_ARCHIVE_SIZE_RATIO,
     MAX_COUNTER_ATTEMPTS,
