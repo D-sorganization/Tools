@@ -329,7 +329,7 @@ class TestArchiveMixin:
 
             with patch.object(Path, "exists", side_effect=mock_exists, autospec=True):
                 with patch.object(Path, "unlink", side_effect=mock_unlink):
-                    with pytest.raises(Exception):
+                    with pytest.raises(Exception, match="count error"):
                         app.create_output_zip()
 
     def test_create_output_zip_path_type_error(self, app, tmp_path):
