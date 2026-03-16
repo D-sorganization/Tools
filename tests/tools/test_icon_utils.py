@@ -77,3 +77,64 @@ def test_ico_sizes_constant():
     for size in ICO_SIZES:
         assert len(size) == 2
         assert all(isinstance(dim, int) and dim > 0 for dim in size)
+
+def test_check_pil_installed():
+    from tools.icon_utils import _PILState, ensure_pil_installed
+    from unittest.mock import patch
+    original = _PILState.available
+    _PILState.available = False
+    
+    with patch("builtins.__import__", side_effect=ImportError("mock error")):
+        _PILState._try_import()
+        assert _PILState.available is False
+
+    with patch("tools.dependency_utils.install_packages", return_value=True):
+        with patch.object(_PILState, "_try_import") as mock_try:
+            ensure_pil_installed()
+            mock_try.assert_called_once()
+    
+    with patch("tools.dependency_utils.install_packages", return_value=False):
+        with patch.object(_PILState, "_try_import") as mock_try:
+            ensure_pil_installed()
+            mock_try.assert_not_called()
+    
+    _PILState.available = original
+
+def test_convert_image_mode():
+    from tools.icon_utils import convert_image_mode
+    from unittest.mock import MagicMock
+    
+    img = MagicMock()
+    
+    img.mode = "RGBA"
+    convert_image_mode(img)
+    img.convert.assert_called_with("RGBA")
+    
+    img.mode = "P"
+    convert_image_mode(img)
+    img.convert.assert_called_with("RGBA")
+    
+    img.mode = "CMYK"
+    convert_image_mode(img)
+    img.convert.assert_called_with("RGB")
+    
+    img.mode = "RGB"
+    convert_image_mode(img)
+    # the second call shouldn't have been to convert("RGB") if it was already "RGB"
+
+def test_convert_png_to_ico_exceptions(tmp_path):
+    from tools.icon_utils import convert_png_to_ico
+    from unittest.mock import patch
+    
+    png = tmp_path / "test2.png"
+    ico = tmp_path / "test2.ico"
+    png.write_text("dummy content")
+
+    with patch("PIL.Image.open", side_effect=PermissionError("mock")):
+        assert convert_png_to_ico(png, ico) is False
+        
+    with patch("PIL.Image.open", side_effect=OSError("mock")):
+        assert convert_png_to_ico(png, ico) is False
+        
+    with patch("PIL.Image.open", side_effect=ValueError("mock")):
+        assert convert_png_to_ico(png, ico) is False

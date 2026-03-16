@@ -130,3 +130,25 @@ def test_set_qt_icon_success_with_mock(mock_find):
 
     assert success is True
     mock_window.setWindowIcon.assert_called_once()
+
+
+def test_get_repo_root_fallback():
+    import sys
+    import importlib
+    import builtins
+    
+    real_import = builtins.__import__
+    
+    def fake_import(name, *args, **kwargs):
+        if name in ("upstream_drift_tools.utils.paths", "tools.launch_utils"):
+            raise ImportError(f"Mock missing {name}")
+        return real_import(name, *args, **kwargs)
+        
+    with patch("builtins.__import__", side_effect=fake_import):
+        if "tools.ui_utils" in sys.modules:
+            del sys.modules["tools.ui_utils"]
+            
+        import tools.ui_utils
+        assert callable(tools.ui_utils.get_repo_root)
+        root = tools.ui_utils.get_repo_root()
+        assert isinstance(root, Path)
