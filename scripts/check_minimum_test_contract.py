@@ -78,7 +78,8 @@ def main() -> int:
         if not pkg_path.exists():
             return False
         py_files = [
-            f for f in pkg_path.rglob("*.py")
+            f
+            for f in pkg_path.rglob("*.py")
             if "tests" not in f.parts and "__pycache__" not in f.parts
         ]
         return bool(py_files)
