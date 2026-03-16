@@ -15,6 +15,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.shared.python.contracts import PreconditionError
 from src.shared.python.cors import DEFAULT_ORIGINS, add_cors_middleware
 
+_PreconditionError = PreconditionError
+
+
 # ─── Good path: default origins ────────────────────────────────
 
 
@@ -110,25 +113,25 @@ def test_none_origins_uses_default():
 
 def test_dbc_requires_fastapi_app():
     """Non-FastAPI app raises PreconditionError."""
-    with pytest.raises(PreconditionError):
+    with pytest.raises(_PreconditionError):
         add_cors_middleware(MagicMock())  # type: ignore[arg-type]
 
 
 def test_dbc_requires_fastapi_not_none():
     """None app raises PreconditionError."""
-    with pytest.raises(PreconditionError):
+    with pytest.raises(_PreconditionError):
         add_cors_middleware(None)  # type: ignore[arg-type]
 
 
 def test_dbc_origins_must_be_list_of_strings():
     """Origins list containing non-strings raises PreconditionError."""
     app = FastAPI()
-    with pytest.raises(PreconditionError):
+    with pytest.raises(_PreconditionError):
         add_cors_middleware(app, origins=[123, 456])  # type: ignore[arg-type]
 
 
 def test_dbc_origins_dict_rejected():
     """Origins as a dict raises PreconditionError."""
     app = FastAPI()
-    with pytest.raises(PreconditionError):
+    with pytest.raises(_PreconditionError):
         add_cors_middleware(app, origins={"origin": "http://example.com"})  # type: ignore[arg-type]

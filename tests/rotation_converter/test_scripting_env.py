@@ -4,12 +4,27 @@ import os
 import tempfile
 import unittest
 
-from rotation_converter.scripting_env import ConsoleEnvironment
+from rotation_converter import modern_robotics as mr
+from rotation_converter.converter import Rotation
+from rotation_converter.rigid_transform import RigidTransform
+from shared.python.scripting.scripting_env import ConsoleEnvironment
 
 
 class TestConsoleEnvironment(unittest.TestCase):
     def setUp(self) -> None:
-        self.env = ConsoleEnvironment()
+        initial_ns = {
+            "mr": mr,
+            "Rotation": Rotation,
+            "RigidTransform": RigidTransform,
+        }
+        for name in dir(mr):
+            if not name.startswith("_") and callable(getattr(mr, name)):
+                initial_ns[name] = getattr(mr, name)
+
+        self.env = ConsoleEnvironment(
+            default_namespace=initial_ns,
+            user_lib_path="~/.rotation_converter_test_funcs.py",
+        )
 
     def test_initial_namespace(self) -> None:
         """Test that modern_robotics functions and useful classes are loaded."""

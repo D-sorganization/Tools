@@ -260,7 +260,7 @@ class SyngasCompressionEngine:
         # Use SyngasWaterCalculator (expects Celsius)
         temperature_c = temperature - CELSIUS_TO_KELVIN_OFFSET
         water_vp_pa, _ = self.water_calculator.calculate_vapor_pressure(
-            temperature_c, method="iapws"
+            temperature_c, method="auto"
         )
         water_vp_bar = water_vp_pa / BAR_TO_PA
 
