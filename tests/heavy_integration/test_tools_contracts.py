@@ -23,14 +23,13 @@ class TestTrimeshGeometryContracts:
 
     def test_box_mesh_is_watertight_and_valid_volume(self) -> None:
         import trimesh
-        import numpy as np
 
         box = trimesh.creation.box((1.0, 2.0, 3.0))
 
         assert box.is_watertight, "Box mesh must be watertight for URDF/physics use"
-        assert box.volume == pytest.approx(6.0, rel=1e-4), (
-            f"Expected volume 6.0, got {box.volume}"
-        )
+        assert box.volume == pytest.approx(
+            6.0, rel=1e-4
+        ), f"Expected volume 6.0, got {box.volume}"
         assert len(box.vertices) > 0
         assert len(box.faces) > 0
 
@@ -61,18 +60,22 @@ class TestSignalProcessingStack:
         from scipy import signal
 
         # Design a 4th-order Butterworth low-pass at 0.1 (normalized)
-        b, a = signal.butter(4, 0.1, btype='low')
+        b, a = signal.butter(4, 0.1, btype="low")
         w, h = signal.freqz(b, a, worN=1024)
 
         freq = w / (2 * np.pi)
         # Passband gain at DC should be ~1.0
         dc_gain = abs(h[0])
-        assert dc_gain == pytest.approx(1.0, abs=0.01), f"DC gain should be 1.0, got {dc_gain}"
+        assert dc_gain == pytest.approx(
+            1.0, abs=0.01
+        ), f"DC gain should be 1.0, got {dc_gain}"
 
         # Stopband attenuation at 0.5 should be < -20 dB
         stop_idx = int(0.5 * len(freq))
         stop_gain_db = 20 * np.log10(abs(h[stop_idx]) + 1e-12)
-        assert stop_gain_db < -20, f"Expected > 20 dB attenuation, got {stop_gain_db:.1f} dB"
+        assert (
+            stop_gain_db < -20
+        ), f"Expected > 20 dB attenuation, got {stop_gain_db:.1f} dB"
 
     def test_fft_roundtrip(self) -> None:
         """FFT→IFFT roundtrip preserves signal — fundamental DSP contract."""
@@ -92,8 +95,9 @@ class TestEzdxfPIDContracts:
     """Contract: ezdxf creates valid DXF drawings for P&ID generation."""
 
     def test_pid_drawing_entities_valid(self) -> None:
-        import ezdxf  # type: ignore
         import io
+
+        import ezdxf  # type: ignore
 
         doc = ezdxf.new(dxfversion="R2010")
         msp = doc.modelspace()
@@ -101,7 +105,9 @@ class TestEzdxfPIDContracts:
         # Simulate a P&ID: pipe (line), vessel (circle), valve (text tag)
         msp.add_line((0, 0), (100, 0), dxfattribs={"layer": "PIPE"})
         msp.add_circle((50, 0), radius=10, dxfattribs={"layer": "VESSEL"})
-        msp.add_text("V-101", dxfattribs={"height": 2.5, "layer": "TAG"}).set_placement((45, 15))
+        msp.add_text("V-101", dxfattribs={"height": 2.5, "layer": "TAG"}).set_placement(
+            (45, 15)
+        )
 
         # Write to in-memory buffer and re-read — proves valid DXF output
         buf = io.StringIO()
