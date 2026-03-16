@@ -68,6 +68,29 @@ def main() -> int:
         )
         return 0
 
+    # Skip packages that have been removed (deleted from disk) — deletions are not
+    # test contract violations. A package disappearing satisfies the contract vacuously.
+    # Note: after `git rm`, a directory may still exist with only __pycache__/ or
+    # tests/ subdirs. We consider a package "present" only if it has tracked Python
+    # source files (i.e., at least one .py file outside of tests/).
+    def _has_source_files(pkg: str) -> bool:
+        pkg_path = ROOT / pkg
+        if not pkg_path.exists():
+            return False
+        py_files = [
+            f for f in pkg_path.rglob("*.py")
+            if "tests" not in f.parts and "__pycache__" not in f.parts
+        ]
+        return bool(py_files)
+
+    packages = [pkg for pkg in packages if _has_source_files(pkg)]
+
+    if not packages:
+        sys.stdout.write(
+            "All changed packages were deleted; minimum test contract check skipped.\n"
+        )
+        return 0
+
     # Packages with tests in non-standard locations that the heuristic can't find
     KNOWN_TESTED = {
         "src/shared/python/programmatic_pid",  # tests/programmatic_pid/
