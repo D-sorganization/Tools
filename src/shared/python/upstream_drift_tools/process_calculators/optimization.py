@@ -7,8 +7,6 @@ from dataclasses import dataclass
 from typing import Any, Final, TypedDict, cast
 
 import numpy as np
-from scipy.interpolate import RegularGridInterpolator
-from scipy.optimize import differential_evolution, minimize
 
 from .analysis_utils import evaluate_output
 
@@ -393,6 +391,8 @@ def find_optimal_on_surface(
     # We will try to infer or assume Z corresponds to shape (len(y_vals), len(x_vals)).
 
     # If Z shape is (len(y), len(x)), we transpose for Interp((x, y), Z.T)
+    from scipy.interpolate import RegularGridInterpolator  # lazy import
+
     if z_grid.shape == (len(y_vals), len(x_vals)):
         interpolator = RegularGridInterpolator(
             (x_vals, y_vals),
@@ -496,6 +496,8 @@ def _run_lbfgsb(objective: Any, bounds: Any, callback: Any) -> dict:
             callback(eval_count[0], 100)  # Unknown total
         return float(objective(p))
 
+    from scipy.optimize import minimize  # lazy import
+
     res = minimize(
         tracked_obj,
         x0,
@@ -522,6 +524,8 @@ def _run_differential_evolution(objective: Any, bounds: Any, callback: Any) -> d
         if callback and eval_count[0] % 10 == 0:
             callback(eval_count[0], 100)
         return float(objective(p))
+
+    from scipy.optimize import differential_evolution  # lazy import
 
     res = differential_evolution(
         tracked_obj, bounds, maxiter=50, popsize=10, atol=0.01, tol=0.01
