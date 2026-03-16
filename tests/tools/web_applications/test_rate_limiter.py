@@ -129,9 +129,9 @@ class TestRateLimiterThreadSafety:
             t.join()
 
         allowed_count = sum(1 for r in results if r)
-        assert allowed_count == limit, (
-            f"Expected exactly {limit} allowed requests, got {allowed_count}"
-        )
+        assert (
+            allowed_count == limit
+        ), f"Expected exactly {limit} allowed requests, got {allowed_count}"
 
     def test_concurrent_different_keys(self) -> None:
         """Different keys under concurrency should each get their own limit."""
