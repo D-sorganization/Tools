@@ -298,7 +298,7 @@ class TestFolderOperationsMixin:
         app.source_folders = [str(src)]
         app.dest_folder = str(tmp_path / "dest")
         app.cancel_operation = True
-        
+
         res = app._prune_empty_folders()
         assert "Processed " in res[0] and "non-empty source folder" in res[0]
 

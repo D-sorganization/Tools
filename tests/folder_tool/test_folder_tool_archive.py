@@ -251,7 +251,9 @@ class TestArchiveMixin:
         def mock_stat(self_path, **kwargs):
             if "processed_files" in str(self_path.name):
                 stat_calls[0] += 1
-                if stat_calls[0] > 2:  # 1st exists() check, 2nd exists() check, 3rd is stat()
+                if (
+                    stat_calls[0] > 2
+                ):  # 1st exists() check, 2nd exists() check, 3rd is stat()
                     raise OSError("stat error")
             return original_stat(self_path, **kwargs)
 
@@ -295,7 +297,9 @@ class TestArchiveMixin:
                     # Let other paths fallback
                     return original_exists(self_path, *args, **kwargs)
 
-                with patch.object(Path, "exists", side_effect=mock_exists, autospec=True):
+                with patch.object(
+                    Path, "exists", side_effect=mock_exists, autospec=True
+                ):
                     with patch.object(
                         Path, "unlink", side_effect=OSError("unlink error")
                     ):

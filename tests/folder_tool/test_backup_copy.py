@@ -77,12 +77,15 @@ class TestBackupCopyMixin:
             with patch("shutil.rmtree", side_effect=OSError("rmtree error")):
                 # In order for rmtree to be called, dest path must exist
                 original_exists = Path.exists
+
                 def mock_exists(self_path, *args, **kwargs):
                     if "dest" in str(self_path):
                         return True
                     return original_exists(self_path, *args, **kwargs)
 
-                with patch.object(Path, "exists", side_effect=mock_exists, autospec=True):
+                with patch.object(
+                    Path, "exists", side_effect=mock_exists, autospec=True
+                ):
                     assert not app._backup_single_folder(str(src), dest)
 
     def test_backup_single_folder_empty_dest(self, app, tmp_path):
@@ -144,8 +147,9 @@ class TestBackupCopyMixin:
         src = tmp_path / "src"
         src.mkdir()
         app.source_folders = [str(src)]
-        
+
         original_exists = Path.exists
+
         def mock_exists(self_path, *args, **kwargs):
             if self_path.name.startswith("backup_"):
                 return False
@@ -274,7 +278,7 @@ class TestBackupCopyMixin:
         src.write_text("a")
         dest = tmp_path / "dest"
         dest.write_text("a")
-        
+
         assert app._verify_copy(src, dest, str(src), str(dest))
 
     def test_verify_copy_mismatch(self, app, tmp_path):
@@ -291,10 +295,12 @@ class TestBackupCopyMixin:
         dest.write_text("a")
 
         original_stat = Path.stat
+
         def mock_stat(self_path, **kwargs):
             if self_path.name == "src":
                 raise OSError("stat err")
             return original_stat(self_path, **kwargs)
+
         with patch.object(Path, "stat", side_effect=mock_stat, autospec=True):
             assert not app._verify_copy(src, dest, str(src), str(dest))
 
@@ -343,10 +349,12 @@ class TestBackupCopyMixin:
     def test_get_unique_path_exists_error(self, app, tmp_path):
         p = tmp_path / "file.txt"
         original_exists = Path.exists
+
         def mock_exists(self_path, *args, **kwargs):
             if self_path.name == "file.txt":
                 raise OSError("exist error")
             return original_exists(self_path, *args, **kwargs)
+
         with patch.object(Path, "exists", side_effect=mock_exists, autospec=True):
             assert app._get_unique_path(str(p)) == str(p)
 
