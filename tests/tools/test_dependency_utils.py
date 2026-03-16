@@ -3,7 +3,7 @@
 import sys
 from unittest.mock import MagicMock, patch
 
-from src.tools.dependency_utils import check_dependencies, install_packages
+from tools.dependency_utils import check_dependencies, install_packages
 
 
 def test_check_dependencies_all_present():

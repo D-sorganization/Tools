@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 
 from src.shared.python.contracts import PreconditionError
-from src.tools.scientific_auditor import ScienceAuditor, audit_directory, audit_file
+from tools.scientific_auditor import ScienceAuditor, audit_directory, audit_file
 
 # ─── ScienceAuditor.visit_BinOp ────────────────────────────────
 

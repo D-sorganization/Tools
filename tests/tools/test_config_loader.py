@@ -2,7 +2,7 @@
 
 import json
 
-from src.tools.config_loader import load_tools_config, validate_tools_config
+from tools.config_loader import load_tools_config, validate_tools_config
 
 
 def test_validate_tools_config(tmp_path):
