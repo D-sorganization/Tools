@@ -6,12 +6,12 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from src.shared.python.contracts import PreconditionError
-from src.tools.ui_utils import find_icon, set_qt_icon, set_tk_icon
+from tools.ui_utils import find_icon, set_qt_icon, set_tk_icon
 
 # ─── find_icon ─────────────────────────────────────────────────
 
 
-@patch("src.tools.ui_utils.get_repo_root")
+@patch("tools.ui_utils.get_repo_root")
 @patch("pathlib.Path.exists")
 def test_find_icon_success(mock_exists, mock_root, tmp_path):
     mock_root.return_value = tmp_path
@@ -22,7 +22,7 @@ def test_find_icon_success(mock_exists, mock_root, tmp_path):
     assert str(icon_path) == str(tmp_path / "test.ico")
 
 
-@patch("src.tools.ui_utils.get_repo_root")
+@patch("tools.ui_utils.get_repo_root")
 @patch("pathlib.Path.exists")
 def test_find_icon_failure(mock_exists, mock_root, tmp_path):
     mock_root.return_value = tmp_path
@@ -51,7 +51,7 @@ def test_find_icon_dbc_non_string():
 # ─── set_tk_icon ───────────────────────────────────────────────
 
 
-@patch("src.tools.ui_utils.find_icon")
+@patch("tools.ui_utils.find_icon")
 def test_set_tk_icon_success(mock_find):
     mock_find.return_value = Path("fake.ico")
     mock_root = MagicMock()
@@ -60,7 +60,7 @@ def test_set_tk_icon_success(mock_find):
     mock_root.iconbitmap.assert_called_once_with("fake.ico")
 
 
-@patch("src.tools.ui_utils.find_icon")
+@patch("tools.ui_utils.find_icon")
 def test_set_tk_icon_no_icon(mock_find):
     mock_find.return_value = None
     mock_root = MagicMock()
@@ -69,7 +69,7 @@ def test_set_tk_icon_no_icon(mock_find):
     mock_root.iconbitmap.assert_not_called()
 
 
-@patch("src.tools.ui_utils.find_icon")
+@patch("tools.ui_utils.find_icon")
 def test_set_tk_icon_os_error(mock_find):
     """iconbitmap raising OSError returns False gracefully."""
     mock_find.return_value = Path("fake.ico")
@@ -79,7 +79,7 @@ def test_set_tk_icon_os_error(mock_find):
     assert success is False
 
 
-@patch("src.tools.ui_utils.find_icon")
+@patch("tools.ui_utils.find_icon")
 def test_set_tk_icon_runtime_error(mock_find):
     """iconbitmap raising RuntimeError returns False gracefully."""
     mock_find.return_value = Path("fake.ico")
@@ -92,7 +92,7 @@ def test_set_tk_icon_runtime_error(mock_find):
 # ─── set_qt_icon ───────────────────────────────────────────────
 
 
-@patch("src.tools.ui_utils.find_icon")
+@patch("tools.ui_utils.find_icon")
 def test_set_qt_icon_no_icon(mock_find):
     mock_find.return_value = None
     success = set_qt_icon(MagicMock(), "fake.ico")
@@ -100,7 +100,7 @@ def test_set_qt_icon_no_icon(mock_find):
 
 
 @patch("builtins.__import__")
-@patch("src.tools.ui_utils.find_icon")
+@patch("tools.ui_utils.find_icon")
 def test_set_qt_icon_import_error(mock_find, mock_import):
     mock_find.return_value = Path("fake.ico")
 
@@ -115,7 +115,7 @@ def test_set_qt_icon_import_error(mock_find, mock_import):
     assert success is False
 
 
-@patch("src.tools.ui_utils.find_icon")
+@patch("tools.ui_utils.find_icon")
 def test_set_qt_icon_success_with_mock(mock_find):
     """If PyQt6 is available, icon should be set successfully."""
     mock_find.return_value = Path("fake.ico")

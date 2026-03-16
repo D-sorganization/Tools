@@ -18,7 +18,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from src.shared.python.contracts import PreconditionError
-from src.tools.launch_utils import (
+from tools.launch_utils import (
     LaunchError,
     PlatformError,
     SecurityError,
@@ -222,7 +222,7 @@ class TestLaunchToolDispatch:
         with pytest.raises((PreconditionError, ValueError, TypeError)):
             launch_tool("not-a-dict", tmp_path)  # type: ignore[arg-type]
 
-    @patch("src.tools.launch_utils.launch_python_tool")
+    @patch("tools.launch_utils.launch_python_tool")
     def test_dispatches_to_launch_python_tool(
         self, mock_launch: MagicMock, tmp_path: Path
     ) -> None:

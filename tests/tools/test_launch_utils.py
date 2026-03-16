@@ -11,7 +11,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from src.shared.python.contracts import PreconditionError
-from src.tools.launch_utils import (
+from tools.launch_utils import (
     LaunchError,
     PlatformError,
     SecurityError,

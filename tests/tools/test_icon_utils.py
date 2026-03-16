@@ -9,7 +9,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from src.shared.python.contracts import PreconditionError
-from src.tools.icon_utils import (
+from tools.icon_utils import (
     ICO_SIZES,
     check_pil_installed,
     convert_png_to_ico,

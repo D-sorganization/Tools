@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 from src.shared.python.contracts import PreconditionError
-from src.tools.quality_utils import (
+from tools.quality_utils import (
     check_ast_issues,
     check_banned_patterns,
     check_file,
