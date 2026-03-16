@@ -16,7 +16,6 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from scipy.interpolate import interp1d
 
 from .constants import (
     ANTOINE_WATER_A,
@@ -405,6 +404,8 @@ class SyngasWaterCalculator:
                     vapor_pressure_error,
                 )
                 P_sat_range.append(np.nan)
+        from scipy.interpolate import interp1d  # lazy import
+
         self.vapor_pressure_table = interp1d(
             T_range, P_sat_range, bounds_error=False, fill_value=np.nan
         )
