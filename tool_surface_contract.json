@@ -2,28 +2,6 @@
   "version": "1.0.0",
   "tools": [
     {
-      "id": "acid_gas_dewpoint",
-      "name": "Acid Gas Dewpoint Calculator",
-      "description": "HF, HCl, H2S dewpoint analysis for syngas applications",
-      "category": "Process Simulation",
-      "surfaces": {
-        "pyqt6": true,
-        "web": true,
-        "legacy_gui": false
-      }
-    },
-    {
-      "id": "baghouse_calculator",
-      "name": "Baghouse Calculator",
-      "description": "Baghouse filter performance and drum sizing calculator",
-      "category": "Process Simulation",
-      "surfaces": {
-        "pyqt6": true,
-        "web": true,
-        "legacy_gui": false
-      }
-    },
-    {
       "id": "c3d_viewer",
       "name": "C3D Motion Capture Viewer",
       "description": "View and analyze C3D motion capture files",
@@ -46,42 +24,9 @@
       }
     },
     {
-      "id": "dwsim_model",
-      "name": "DWSIM Gasification Model",
-      "description": "DWSIM-backed gasification process simulation with Tkinter GUI",
-      "category": "Process Simulation",
-      "surfaces": {
-        "pyqt6": false,
-        "web": false,
-        "legacy_gui": true
-      }
-    },
-    {
-      "id": "electrode_advisor",
-      "name": "Electrode Advisor",
-      "description": "AC Electrode Advancement Module for electrode system analysis",
-      "category": "Process Simulation",
-      "surfaces": {
-        "pyqt6": true,
-        "web": true,
-        "legacy_gui": false
-      }
-    },
-    {
       "id": "financial_calculator",
       "name": "Financial Calculator",
       "description": "Comprehensive financial modeling for plant operations",
-      "category": "Process Simulation",
-      "surfaces": {
-        "pyqt6": true,
-        "web": true,
-        "legacy_gui": false
-      }
-    },
-    {
-      "id": "flare_calculator",
-      "name": "Flare Calculator",
-      "description": "Flare sizing and safety zone calculator",
       "category": "Process Simulation",
       "surfaces": {
         "pyqt6": true,
@@ -222,32 +167,10 @@
       }
     },
     {
-      "id": "psa_package",
-      "name": "PSA System Analysis",
-      "description": "Two-stage Pressure Swing Adsorption system analysis",
-      "category": "Process Simulation",
-      "surfaces": {
-        "pyqt6": true,
-        "web": false,
-        "legacy_gui": false
-      }
-    },
-    {
       "id": "rotation_converter",
       "name": "Rotation Converter",
       "description": "Comprehensive rotation and rigid-body transform converter with interactive 3D visualization. Supports quaternions, Euler angles, rotation matrices, axis-angle, SE(3), twists, screw axes, and frame-aware transforms.",
       "category": "Robotics",
-      "surfaces": {
-        "pyqt6": true,
-        "web": true,
-        "legacy_gui": false
-      }
-    },
-    {
-      "id": "scrubber_calculator",
-      "name": "Scrubber Calculator",
-      "description": "Packed bed scrubber design with NTU/HTU mass transfer",
-      "category": "Process Simulation",
       "surfaces": {
         "pyqt6": true,
         "web": true,
@@ -277,50 +200,6 @@
       }
     },
     {
-      "id": "syngas_compression",
-      "name": "Syngas Compression Calculator",
-      "description": "Multi-stage compression analysis with water dropout calculations",
-      "category": "Process Simulation",
-      "surfaces": {
-        "pyqt6": true,
-        "web": true,
-        "legacy_gui": false
-      }
-    },
-    {
-      "id": "syngas_water_calculator",
-      "name": "Syngas Water Calculator",
-      "description": "Calculate water content and dew point in syngas systems",
-      "category": "Process Simulation",
-      "surfaces": {
-        "pyqt6": true,
-        "web": false,
-        "legacy_gui": false
-      }
-    },
-    {
-      "id": "thermal_profile_predictor",
-      "name": "Thermal Profile Predictor",
-      "description": "Predict temperature profiles for heated vessels",
-      "category": "Process Simulation",
-      "surfaces": {
-        "pyqt6": true,
-        "web": false,
-        "legacy_gui": false
-      }
-    },
-    {
-      "id": "trc_vessel_designer",
-      "name": "TRC Vessel Designer",
-      "description": "Thermal Reaction Chamber vessel design tool",
-      "category": "Process Simulation",
-      "surfaces": {
-        "pyqt6": true,
-        "web": true,
-        "legacy_gui": false
-      }
-    },
-    {
       "id": "vessel_drafter",
       "name": "Vessel Drafter",
       "description": "Refractory vessel design with STEP, STL, BREP, and GLTF export",
@@ -328,17 +207,6 @@
       "surfaces": {
         "pyqt6": true,
         "web": false,
-        "legacy_gui": false
-      }
-    },
-    {
-      "id": "wgs_reactor",
-      "name": "WGS Reactor Calculator",
-      "description": "Water-Gas Shift reactor equilibrium and sizing calculations",
-      "category": "Process Simulation",
-      "surfaces": {
-        "pyqt6": true,
-        "web": true,
         "legacy_gui": false
       }
     }

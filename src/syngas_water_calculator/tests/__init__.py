@@ -1,1 +1,0 @@
-# Syngas Water Calculator Tests

@@ -1,1 +1,0 @@
-"""Electrode Advisor Python package."""

@@ -75,48 +75,6 @@
     ],
     "Process Simulation": [
         {
-            "name": "Acid Gas Dewpoint Calculator (PyQt6)",
-            "path": "src/acid_gas_dewpoint/launch_pyqt6.py",
-            "type": "python",
-            "desc": "HF, HCl, H2S dewpoint analysis for syngas applications"
-        },
-        {
-            "name": "Acid Gas Dewpoint Calculator (Web)",
-            "path": "src/acid_gas_dewpoint/launch_web.py",
-            "type": "python",
-            "desc": "HF, HCl, H2S dewpoint analysis for syngas applications"
-        },
-        {
-            "name": "Baghouse Calculator (PyQt6)",
-            "path": "src/baghouse_calculator/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Baghouse filter performance and drum sizing calculator"
-        },
-        {
-            "name": "Baghouse Calculator (Web)",
-            "path": "src/baghouse_calculator/launch_web.py",
-            "type": "python",
-            "desc": "Baghouse filter performance and drum sizing calculator"
-        },
-        {
-            "name": "DWSIM Gasification Model",
-            "path": "src/dwsim_model/launch_gui.py",
-            "type": "python",
-            "desc": "DWSIM-backed gasification process simulation with Tkinter GUI"
-        },
-        {
-            "name": "Electrode Advisor (PyQt6)",
-            "path": "src/electrode_advisor/launch_pyqt6.py",
-            "type": "python",
-            "desc": "AC Electrode Advancement Module for electrode system analysis"
-        },
-        {
-            "name": "Electrode Advisor (Web)",
-            "path": "src/electrode_advisor/launch_web.py",
-            "type": "python",
-            "desc": "AC Electrode Advancement Module for electrode system analysis"
-        },
-        {
             "name": "Financial Calculator (PyQt6)",
             "path": "src/financial_calculator/launch_pyqt6.py",
             "type": "python",
@@ -127,24 +85,6 @@
             "path": "src/financial_calculator/launch_web.py",
             "type": "python",
             "desc": "Comprehensive financial modeling for plant operations"
-        },
-        {
-            "name": "Flare Calculator (PyQt6)",
-            "path": "src/flare_calculator/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Flare sizing and safety zone calculator"
-        },
-        {
-            "name": "Flare Calculator (Web)",
-            "path": "src/flare_calculator/launch_web.py",
-            "type": "python",
-            "desc": "Flare sizing and safety zone calculator"
-        },
-        {
-            "name": "PSA System Analysis",
-            "path": "src/psa_package/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Two-stage Pressure Swing Adsorption system analysis"
         },
         {
             "name": "Pressure Drop Calculator (PyQt6)",
@@ -159,70 +99,10 @@
             "desc": "Pipe flow pressure drop analysis with multiple friction methods"
         },
         {
-            "name": "Scrubber Calculator (PyQt6)",
-            "path": "src/scrubber_calculator/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Packed bed scrubber design with NTU/HTU mass transfer"
-        },
-        {
-            "name": "Scrubber Calculator (Web)",
-            "path": "src/scrubber_calculator/launch_web.py",
-            "type": "python",
-            "desc": "Packed bed scrubber design with NTU/HTU mass transfer"
-        },
-        {
-            "name": "Syngas Compression Calculator (PyQt6)",
-            "path": "src/syngas_compression/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Multi-stage compression analysis with water dropout calculations"
-        },
-        {
-            "name": "Syngas Compression Calculator (Web)",
-            "path": "src/syngas_compression/launch_web.py",
-            "type": "python",
-            "desc": "Multi-stage compression analysis with water dropout calculations"
-        },
-        {
-            "name": "Syngas Water Calculator",
-            "path": "src/syngas_water_calculator/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Calculate water content and dew point in syngas systems"
-        },
-        {
-            "name": "TRC Vessel Designer (PyQt6)",
-            "path": "src/trc_vessel_designer/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Thermal Reaction Chamber vessel design tool"
-        },
-        {
-            "name": "TRC Vessel Designer (Web)",
-            "path": "src/trc_vessel_designer/launch_web.py",
-            "type": "python",
-            "desc": "Thermal Reaction Chamber vessel design tool"
-        },
-        {
-            "name": "Thermal Profile Predictor",
-            "path": "src/thermal_profile_predictor/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Predict temperature profiles for heated vessels"
-        },
-        {
             "name": "Vessel Drafter",
             "path": "src/vessel_drafter/launch_pyqt6.py",
             "type": "python",
             "desc": "Refractory vessel design with STEP, STL, BREP, and GLTF export"
-        },
-        {
-            "name": "WGS Reactor Calculator (PyQt6)",
-            "path": "src/wgs_reactor/launch_pyqt6.py",
-            "type": "python",
-            "desc": "Water-Gas Shift reactor equilibrium and sizing calculations"
-        },
-        {
-            "name": "WGS Reactor Calculator (Web)",
-            "path": "src/wgs_reactor/launch_web.py",
-            "type": "python",
-            "desc": "Water-Gas Shift reactor equilibrium and sizing calculations"
         }
     ],
     "Robotics": [
