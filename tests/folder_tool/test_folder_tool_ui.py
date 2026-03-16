@@ -86,7 +86,10 @@ class TestUICreationMixin:
 
     def test_set_windows_app_id_error(self, app):
         with patch("sys.platform", "win32"):
-            with patch("ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID", side_effect=TypeError("mock error")):
+            with patch(
+                "ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID",
+                side_effect=TypeError("mock error"),
+            ):
                 app._set_windows_app_id()
 
     def test_load_ico_icon_success(self, app):
