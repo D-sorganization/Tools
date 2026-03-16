@@ -9,4 +9,5 @@ jobs:
   run-heavy-tests:
     uses: D-sorganization/Repository_Management/.github/workflows/reusable-heavy-tests.yml@main
     with:
+      repo_name: 'Tools'
       test_path: 'tests/heavy_integration/'
