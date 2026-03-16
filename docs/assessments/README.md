@@ -191,3 +191,16 @@ This document defines the comprehensive 16-point assessment framework (A-O + Hig
 
 _See individual Assessment_Prompt_X.md files for detailed prompts._
 | 4.2     | 2026-03 | Executed Completist Audit (Mar 15)                                                          |
+
+---
+
+## 2026-03-15 Migration Note
+
+The following assessment directories were removed as their modules migrated to the
+private [Tools_Private](https://github.com/D-sorganization/Tools_Private) repository:
+
+-  — DWSIM process simulation
+- All associated gasification/process simulation module assessments
+
+Assessment history for these modules is preserved in the Tools_Private repository.
+

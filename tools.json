@@ -1,171 +1,170 @@
 {
-  "Analysis": [
-    {
-      "name": "Multi-Parameter Analysis",
-      "path": "src/multi_param_analysis/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Run multi-parameter sensitivity analysis with grid evaluation"
-    }
-  ],
-  "Biomechanics": [
-    {
-      "name": "C3D Motion Capture Viewer",
-      "path": "src/c3d_viewer/launch_pyqt6.py",
-      "type": "python",
-      "desc": "View and analyze C3D motion capture files"
-    }
-  ],
-  "Data Processing": [
-    {
-      "name": "Data Processor (PyQt6)",
-      "path": "src/data_processing/data_processor/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Signal processing and time-series data analysis tool"
-    },
-    {
-      "name": "Data Processor (Web)",
-      "path": "src/data_processing/data_processor/launch_web.py",
-      "type": "python",
-      "desc": "Signal processing and time-series data analysis tool"
-    }
-  ],
-  "Development Tools": [
-    {
-      "name": "Folder Packer Pro",
-      "path": "src/folder_packer_pro/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Professional Project Archiving and Distribution Tool"
-    },
-    {
-      "name": "Folder Tool (Utility)",
-      "path": "src/folder_tool/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Directory Management Utility"
-    },
-    {
-      "name": "PDF Renamer",
-      "path": "src/document_processing/pdf_renamer/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Intelligent PDF File Renaming Tool"
-    }
-  ],
-  "Engineering Drafting": [
-    {
-      "name": "P&ID Generator",
-      "path": "src/pid_generator/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Generate P&ID drawings from YAML specifications (DXF + SVG output)"
-    }
-  ],
-  "Mathematics": [
-    {
-      "name": "ODE Solver",
-      "path": "src/ode_solver/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Solve systems of ordinary differential equations symbolically"
-    }
-  ],
-  "Optimization": [
-    {
-      "name": "Adam Optimizer",
-      "path": "src/optimizer_gui/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Configure and run Adam-based optimization"
-    }
-  ],
-  "Process Simulation": [
-    {
-      "name": "Financial Calculator (PyQt6)",
-      "path": "src/financial_calculator/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Comprehensive financial modeling for plant operations"
-    },
-    {
-      "name": "Financial Calculator (Web)",
-      "path": "src/financial_calculator/launch_web.py",
-      "type": "python",
-      "desc": "Comprehensive financial modeling for plant operations"
-    },
-    {
-      "name": "Pressure Drop Calculator (PyQt6)",
-      "path": "src/pressure_drop_calculator/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Pipe flow pressure drop analysis with multiple friction methods"
-    },
-    {
-      "name": "Pressure Drop Calculator (Web)",
-      "path": "src/pressure_drop_calculator/launch_web.py",
-      "type": "python",
-      "desc": "Pipe flow pressure drop analysis with multiple friction methods"
-    },
-    {
-      "name": "Vessel Drafter",
-      "path": "src/vessel_drafter/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Refractory vessel design with STEP, STL, BREP, and GLTF export"
-    }
-  ],
-  "Robotics": [
-    {
-      "name": "Humanoid Character Builder",
-      "path": "src/humanoid_builder_gui/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Build parametric humanoid characters with anthropometric calculations"
-    },
-    {
-      "name": "Inertia Calculator",
-      "path": "src/inertia_calculator/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Calculate and validate inertia tensors for rigid bodies"
-    },
-    {
-      "name": "Rotation Converter (PyQt6)",
-      "path": "src/rotation_converter/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Comprehensive rotation and rigid-body transform converter with interactive 3D visualization. Supports quaternions, Euler angles, rotation matrices, axis-angle, SE(3), twists, screw axes, and frame-aware transforms."
-    },
-    {
-      "name": "Rotation Converter (Web)",
-      "path": "src/rotation_converter/launch_web.py",
-      "type": "python",
-      "desc": "Comprehensive rotation and rigid-body transform converter with interactive 3D visualization. Supports quaternions, Euler angles, rotation matrices, axis-angle, SE(3), twists, screw axes, and frame-aware transforms."
-    }
-  ],
-  "Signal Processing": [
-    {
-      "name": "Function Generator (PyQt6)",
-      "path": "src/function_generator/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Generate and visualize various waveforms (sine, square, triangle, etc.)"
-    },
-    {
-      "name": "Function Generator (Web)",
-      "path": "src/function_generator/launch_web.py",
-      "type": "python",
-      "desc": "Generate and visualize various waveforms (sine, square, triangle, etc.)"
-    },
-    {
-      "name": "Signal Processing Studio",
-      "path": "src/signal_processing_studio/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Unified signal processing: waveform generation, analysis, filtering, curve fitting"
-    }
-  ],
-  "Thermodynamics": [
-    {
-      "name": "Steam Engine Calculator",
-      "path": "src/steam_engine_calculator/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Calculate thermodynamic properties of steam/water"
-    }
-  ],
-  "Utilities": [
-    {
-      "name": "Flow Rate Converter",
-      "path": "src/flow_rate_converter/launch_pyqt6.py",
-      "type": "python",
-      "desc": "Convert between mass, molar, and volumetric flow rate units"
-    }
-  ],
-  "tools": []
+    "Analysis": [
+        {
+            "name": "Multi-Parameter Analysis",
+            "path": "src/multi_param_analysis/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Run multi-parameter sensitivity analysis with grid evaluation"
+        }
+    ],
+    "Biomechanics": [
+        {
+            "name": "C3D Motion Capture Viewer",
+            "path": "src/c3d_viewer/launch_pyqt6.py",
+            "type": "python",
+            "desc": "View and analyze C3D motion capture files"
+        }
+    ],
+    "Data Processing": [
+        {
+            "name": "Data Processor (PyQt6)",
+            "path": "src/data_processing/data_processor/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Signal processing and time-series data analysis tool"
+        },
+        {
+            "name": "Data Processor (Web)",
+            "path": "src/data_processing/data_processor/launch_web.py",
+            "type": "python",
+            "desc": "Signal processing and time-series data analysis tool"
+        }
+    ],
+    "Development Tools": [
+        {
+            "name": "Folder Packer Pro",
+            "path": "src/folder_packer_pro/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Professional Project Archiving and Distribution Tool"
+        },
+        {
+            "name": "Folder Tool (Utility)",
+            "path": "src/folder_tool/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Directory Management Utility"
+        },
+        {
+            "name": "PDF Renamer",
+            "path": "src/document_processing/pdf_renamer/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Intelligent PDF File Renaming Tool"
+        }
+    ],
+    "Engineering Drafting": [
+        {
+            "name": "P&ID Generator",
+            "path": "src/pid_generator/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Generate P&ID drawings from YAML specifications (DXF + SVG output)"
+        }
+    ],
+    "Mathematics": [
+        {
+            "name": "ODE Solver",
+            "path": "src/ode_solver/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Solve systems of ordinary differential equations symbolically"
+        }
+    ],
+    "Optimization": [
+        {
+            "name": "Adam Optimizer",
+            "path": "src/optimizer_gui/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Configure and run Adam-based optimization"
+        }
+    ],
+    "Process Simulation": [
+        {
+            "name": "Financial Calculator (PyQt6)",
+            "path": "src/financial_calculator/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Comprehensive financial modeling for plant operations"
+        },
+        {
+            "name": "Financial Calculator (Web)",
+            "path": "src/financial_calculator/launch_web.py",
+            "type": "python",
+            "desc": "Comprehensive financial modeling for plant operations"
+        },
+        {
+            "name": "Pressure Drop Calculator (PyQt6)",
+            "path": "src/pressure_drop_calculator/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Pipe flow pressure drop analysis with multiple friction methods"
+        },
+        {
+            "name": "Pressure Drop Calculator (Web)",
+            "path": "src/pressure_drop_calculator/launch_web.py",
+            "type": "python",
+            "desc": "Pipe flow pressure drop analysis with multiple friction methods"
+        },
+        {
+            "name": "Vessel Drafter",
+            "path": "src/vessel_drafter/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Refractory vessel design with STEP, STL, BREP, and GLTF export"
+        }
+    ],
+    "Robotics": [
+        {
+            "name": "Humanoid Character Builder",
+            "path": "src/humanoid_builder_gui/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Build parametric humanoid characters with anthropometric calculations"
+        },
+        {
+            "name": "Inertia Calculator",
+            "path": "src/inertia_calculator/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Calculate and validate inertia tensors for rigid bodies"
+        },
+        {
+            "name": "Rotation Converter (PyQt6)",
+            "path": "src/rotation_converter/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Comprehensive rotation and rigid-body transform converter with interactive 3D visualization. Supports quaternions, Euler angles, rotation matrices, axis-angle, SE(3), twists, screw axes, and frame-aware transforms."
+        },
+        {
+            "name": "Rotation Converter (Web)",
+            "path": "src/rotation_converter/launch_web.py",
+            "type": "python",
+            "desc": "Comprehensive rotation and rigid-body transform converter with interactive 3D visualization. Supports quaternions, Euler angles, rotation matrices, axis-angle, SE(3), twists, screw axes, and frame-aware transforms."
+        }
+    ],
+    "Signal Processing": [
+        {
+            "name": "Function Generator (PyQt6)",
+            "path": "src/function_generator/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Generate and visualize various waveforms (sine, square, triangle, etc.)"
+        },
+        {
+            "name": "Function Generator (Web)",
+            "path": "src/function_generator/launch_web.py",
+            "type": "python",
+            "desc": "Generate and visualize various waveforms (sine, square, triangle, etc.)"
+        },
+        {
+            "name": "Signal Processing Studio",
+            "path": "src/signal_processing_studio/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Unified signal processing: waveform generation, analysis, filtering, curve fitting"
+        }
+    ],
+    "Thermodynamics": [
+        {
+            "name": "Steam Engine Calculator",
+            "path": "src/steam_engine_calculator/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Calculate thermodynamic properties of steam/water"
+        }
+    ],
+    "Utilities": [
+        {
+            "name": "Flow Rate Converter",
+            "path": "src/flow_rate_converter/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Convert between mass, molar, and volumetric flow rate units"
+        }
+    ]
 }
