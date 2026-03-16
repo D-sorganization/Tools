@@ -1,10 +1,12 @@
 """Unit tests for folder_tool_file_ops."""
 
-from folder_tool.archive_ops import ArchiveOperationsMixin
-from folder_tool.backup_copy import BackupCopyMixin
-from folder_tool.file_validation import FileValidationMixin
-from folder_tool.folder_ops import FolderOperationsMixin
-from folder_tool.folder_tool_file_ops import FileOperationsMixin
+from folder_tool.folder_tool_file_ops import (
+    ArchiveOperationsMixin,
+    BackupCopyMixin,
+    FileOperationsMixin,
+    FileValidationMixin,
+    FolderOperationsMixin,
+)
 
 
 class DummyApp(FileOperationsMixin):

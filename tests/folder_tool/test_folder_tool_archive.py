@@ -314,7 +314,7 @@ class TestArchiveMixin:
         src.mkdir()
         (src / "file1.txt").write_text("abc")
 
-        def mock_unlink(self_path, *args, **kwargs):
+        def mock_unlink(*args, **kwargs):
             pass
 
         with patch.object(
@@ -329,7 +329,7 @@ class TestArchiveMixin:
 
             with patch.object(Path, "exists", side_effect=mock_exists, autospec=True):
                 with patch.object(Path, "unlink", side_effect=mock_unlink):
-                    with pytest.raises(Exception, match="count error"):
+                    with pytest.raises(Exception, match="Failed to create ZIP archive"):
                         app.create_output_zip()
 
     def test_create_output_zip_path_type_error(self, app, tmp_path):
