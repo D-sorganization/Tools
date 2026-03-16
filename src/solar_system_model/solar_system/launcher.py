@@ -9,14 +9,13 @@ clear guidance instead of obscure import errors.
 from __future__ import annotations
 
 import logging
-
-logger = logging.getLogger(__name__)
-
 import subprocess
 import sys
 from collections.abc import Callable
 from dataclasses import dataclass
 from importlib.util import find_spec
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_WIDTH = 1280
 DEFAULT_HEIGHT = 720
