@@ -1,5 +1,9 @@
 """Tests for FunctionGeneratorDialog."""
 
+import pytest
+
+pytest.importorskip("pytestqt")
+
 from PyQt6.QtWidgets import QDialogButtonBox
 
 from double_pendulum_golf.gui.function_generator_dialog import FunctionGeneratorDialog

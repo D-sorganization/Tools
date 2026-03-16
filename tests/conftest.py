@@ -13,6 +13,18 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock
 
+# ---------------------------------------------------------------------------
+# Headless / thread-safety env vars — must be set BEFORE any scipy/matplotlib
+# import so that both the main process and any xdist worker sub-processes
+# (which re-execute conftest.py on startup) get a stable non-GUI backend.
+# ---------------------------------------------------------------------------
+os.environ.setdefault("MPLBACKEND", "Agg")
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("MKL_NUM_THREADS", "1")
+os.environ.setdefault("NUMEXPR_NUM_THREADS", "1")
+os.environ.setdefault("HEADLESS", "true")
+
 import pytest
 
 # =============================================================================

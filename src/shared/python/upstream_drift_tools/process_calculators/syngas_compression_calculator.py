@@ -22,8 +22,7 @@ import os
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, cast
 
-import matplotlib as mpl
-from matplotlib.figure import Figure
+# matplotlib is imported lazily inside methods to prevent Windows hang
 
 # Try PyQt6 imports - these are optional for core calculations
 try:
@@ -78,24 +77,40 @@ except ImportError:
         return True, ""
 
 
-if os.environ.get("HEADLESS", "false").lower() == "true":
+def _setup_matplotlib_backend() -> None:
+    """Configure the matplotlib backend lazily (called at GUI init time)."""
+    import matplotlib as mpl  # lazy import
+
+    if os.environ.get("HEADLESS", "false").lower() == "true":
+        try:
+            mpl.use("Agg")
+        except (ImportError, RuntimeError) as e:
+            logging.getLogger(__name__).debug("Failed to set Agg backend: %s", e)
+    else:
+        try:
+            mpl.use("QtAgg")
+        except (RuntimeError, AttributeError):
+            mpl.use("Agg")
+
+
+def _get_figure_canvas_class() -> type:
+    """Lazily load FigureCanvas to prevent matplotlib backend hang at import."""
     try:
-        mpl.use("Agg")
-    except (ImportError, RuntimeError) as e:
-        logging.getLogger(__name__).debug("Failed to set Agg backend: %s", e)
-else:
-    try:
-        mpl.use("QtAgg")
-    except (RuntimeError, AttributeError):
-        mpl.use("Agg")
+        from matplotlib.backends.backend_qtagg import (  # type: ignore[import]
+            FigureCanvasQTAgg as FigureCanvas,
+        )
+
+        return FigureCanvas
+    except ImportError:
+        from matplotlib.backends.backend_agg import (
+            FigureCanvasAgg as FigureCanvas,  # type: ignore[import]
+        )
+
+        return FigureCanvas
+
 
 if TYPE_CHECKING:
     from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-else:
-    try:
-        from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-    except ImportError:
-        from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
 # Import existing syngas water content utility
 # ruff: noqa: E402
@@ -814,6 +829,8 @@ if HAS_PYQT:
             layout = QVBoxLayout()
 
             # Create matplotlib figure
+            from matplotlib.figure import Figure  # lazy import
+
             self.figure = Figure(figsize=(10, 8))
             self.canvas = FigureCanvas(self.figure)
             layout.addWidget(self.canvas)

@@ -4,8 +4,6 @@ from collections.abc import Callable, Sequence
 from typing import Any
 
 import numpy as np
-from scipy.integrate import solve_ivp
-from scipy.optimize import curve_fit
 
 __all__ = ["fit_heating_parameters", "predict_temperature_profile"]
 
@@ -43,6 +41,8 @@ def predict_temperature_profile(
             t, y, thermal_mass, heat_loss_coeff, ambient_temp, power_func
         )
 
+    from scipy.integrate import solve_ivp  # lazy import
+
     sol = solve_ivp(rhs, t_span, [initial_temp], t_eval=t_eval, vectorized=False)
     return sol.t, sol.y[0]
 
@@ -77,6 +77,8 @@ def fit_heating_parameters(
             power_func,
         )
         return temps
+
+    from scipy.optimize import curve_fit  # lazy import
 
     popt, _ = curve_fit(
         model,

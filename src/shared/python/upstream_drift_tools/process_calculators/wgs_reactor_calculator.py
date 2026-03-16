@@ -22,9 +22,8 @@ import os
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
-import matplotlib as mpl
+# matplotlib and scipy imported lazily to prevent Windows hang at module load
 import numpy as np
-from scipy.optimize import minimize
 from upstream_drift_tools.utils.state_manager import safe_read_json
 
 from .constants import (
@@ -93,6 +92,8 @@ else:
 
     try:
         HEADLESS = os.environ.get("HEADLESS", "false").lower() == "true"
+        import matplotlib as mpl  # lazy import
+
         if PYQT_AVAILABLE and not HEADLESS:
             mpl.use("QtAgg")
             from matplotlib.backends.backend_qtagg import (
@@ -401,6 +402,8 @@ class WGSReactorEngine:
 
         x_initial = 0.5 * min(n_CO_0, n_H2O_0)
         bounds = [(0, min(n_CO_0, n_H2O_0))]
+        from scipy.optimize import minimize  # lazy import
+
         result = minimize(total_gibbs_energy, x_initial, bounds=bounds)
         x_eq = result.x[0]
 
