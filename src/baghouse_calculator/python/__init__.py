@@ -1,1 +1,0 @@
-"""Baghouse Calculator package."""
