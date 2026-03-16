@@ -232,7 +232,6 @@ class LogExecutionTime:
         return self
 
     def __exit__(self, exc_type: object, exc_val: object, exc_tb: object) -> None:
-        assert exc_type is not None, "exc_type must be provided"
         import time
 
         duration = time.perf_counter() - self._start

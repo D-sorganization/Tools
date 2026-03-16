@@ -126,7 +126,7 @@ class TestHeadlessQtEnvironment:
     def test_qt_application_lifecycle(self) -> None:
         from PyQt6.QtWidgets import QApplication, QWidget
 
-        app = QApplication.instance() or QApplication(sys.argv)
+        _app = QApplication.instance() or QApplication(sys.argv)
         widget = QWidget()
         widget.setWindowTitle("Heavy Test Widget")
         widget.resize(200, 100)

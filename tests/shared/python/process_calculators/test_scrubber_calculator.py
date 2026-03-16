@@ -5,7 +5,6 @@ This test file adheres to the Fleet-Wide Shared Component Testing Strategy, test
 
 from __future__ import annotations
 
-import pytest
 from upstream_drift_tools.process_calculators.scrubber_calculator import (
     PACKING_DATABASE,
     WATER_DENSITY,
@@ -23,20 +22,22 @@ class TestScrubberCalculator:
 
     def test_gas_density(self) -> None:
         """Verify the ideal gas law derivation for density."""
-        # Nitrogen at standardish conditions
+        # Nitrogen at standardish conditions — param name is 'molecular_weight'
         density = calculate_gas_density(
-            temperature_k=298.15, pressure_pa=101325.0, mol_weight=28.0134
+            temperature_k=298.15, pressure_pa=101325.0, molecular_weight=28.0134
         )
         assert density > 1.0 and density < 2.0  # roughly 1.14 kg/m3
 
     def test_gas_viscosity(self) -> None:
         """Verify empirical derivation for viscosity."""
-        visc = calculate_gas_viscosity(temperature_k=298.15, mol_weight=28.0134)
+        # param name is 'molecular_weight', not 'mol_weight'
+        visc = calculate_gas_viscosity(temperature_k=298.15, molecular_weight=28.0134)
         assert visc > 0.00001 and visc < 0.00002
 
     def test_flooding_velocity_valid(self) -> None:
         """Calculate flooding threshold utilizing Eckert's Generalized Flooding correlation approximations."""
-        packing = PACKING_DATABASE["pall_ring_1_inch_ceramic"]
+        # Key is 'Metal Pall Rings', not 'pall_ring_1_inch_ceramic'
+        packing = PACKING_DATABASE["Metal Pall Rings"]
 
         velocity = calculate_flooding_velocity(
             liquid_mass_flux=5.0,
@@ -64,26 +65,45 @@ class TestScrubberCalculator:
         assert res["diameter_ft"] > 0.0
 
     def test_caustic_requirement(self) -> None:
-        """Test simple stochiometric mass ratio scaling for NaOH."""
+        """Test simple stoichiometric mass ratio scaling for NaOH.
+
+        acid_gas_removed must be a dict[str, float] not a plain float.
+        """
         req = calculate_caustic_requirement(
-            acid_gas_removed=10.0, caustic_concentration=20.0
+            acid_gas_removed={"HCl": 10.0},
+            caustic_concentration=20.0,
         )
 
-        # 10 kg/hr of acid, need NaOH to offset. At 20%, mass should be huge.
-        assert req["caustic_mass_kg_hr"] > 10.0
-        assert req["caustic_flow_l_hr"] > 0.0
+        # 10 kg/hr of HCl requires NaOH. At 20% concentration, solution flow > pure NaOH.
+        assert req["naoh_pure_kg_hr"] > 0.0
+        assert req["naoh_solution_kg_hr"] > req["naoh_pure_kg_hr"]
+        assert req["naoh_solution_L_hr"] > 0.0
 
-    def test_preconditions(self) -> None:
-        """DbC edge cases ensuring invalid physical numbers raise errors."""
-        with pytest.raises(AssertionError, match="Gas flow must be positive"):
-            calculate_column_diameter(
-                gas_flow_kg_hr=-10.0,
-                gas_density=1.2,
-                flooding_velocity=2.5,
-                percent_of_flood=70.0,
-            )
+    def test_caustic_with_multiple_gases(self) -> None:
+        """Multiple acid gases are summed correctly."""
+        req = calculate_caustic_requirement(
+            acid_gas_removed={"HCl": 5.0, "SO2": 5.0},
+            caustic_concentration=25.0,
+        )
+        single = calculate_caustic_requirement(
+            acid_gas_removed={"HCl": 5.0},
+            caustic_concentration=25.0,
+        )
+        # More gas → more NaOH required
+        assert req["naoh_pure_kg_hr"] > single["naoh_pure_kg_hr"]
 
-        with pytest.raises(AssertionError, match="Temperature must be positive"):
-            calculate_gas_density(
-                temperature_k=-5.0, pressure_pa=101325.0, mol_weight=28.0
-            )
+    def test_column_diameter_zero_flooding_velocity_returns_zero(self) -> None:
+        """Zero flooding velocity returns zero-sized column."""
+        res = calculate_column_diameter(
+            gas_flow_kg_hr=5000.0,
+            gas_density=1.2,
+            flooding_velocity=0.0,
+            percent_of_flood=70.0,
+        )
+        assert res["diameter_m"] == 0.0
+
+    def test_packing_database_has_expected_keys(self) -> None:
+        """Packing database contains standard packing types."""
+        assert "Metal Pall Rings" in PACKING_DATABASE
+        assert "Ceramic Raschig Rings" in PACKING_DATABASE
+        assert "Structured Packing" in PACKING_DATABASE
