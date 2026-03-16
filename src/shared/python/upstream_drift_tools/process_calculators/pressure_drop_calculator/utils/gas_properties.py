@@ -515,12 +515,13 @@ def calculate_pure_gas_viscosity_lucas(
         mu_r = 0.0
 
     # Correlation for ξ
+    tr_diff = 0.292 - T_r if T_r < 0.292 else 0.0
     if mu_r < 0.022:
         F_p = 1.0
     elif mu_r < 0.075:
-        F_p = 1.0 + 30.55 * (0.292 - T_r) ** 1.72
+        F_p = 1.0 + 30.55 * (tr_diff) ** 1.72
     else:
-        F_p = 1.0 + 30.55 * (0.292 - T_r) ** 1.72 * abs(mu_r - 0.022)
+        F_p = 1.0 + 30.55 * (tr_diff) ** 1.72 * abs(mu_r - 0.022)
 
     # Low pressure viscosity correlation
     if T_r <= 1.5:

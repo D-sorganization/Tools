@@ -176,9 +176,9 @@ class TestFrictionalPressureDrop:
         assert dp2 == pytest.approx(2 * dp1, rel=1e-6)
 
     def test_exact_value(self) -> None:
-        """Manual: f=0.02, L=100, D=0.1, ρ=1.2, V=10 → ΔP = 0.02*(100/0.1)*(0.5*1.2*100) = 12000 Pa"""
+        """Manual: f=0.02, L=100, D=0.1, ρ=1.2, V=10 → ΔP = 0.02*(100/0.1)*(0.5*1.2*100) = 1200.0 Pa"""
         dp = calculate_frictional_pressure_drop(0.02, 100.0, 0.1, 1.2, 10.0)
-        assert dp == pytest.approx(12_000.0, rel=1e-6)
+        assert dp == pytest.approx(1200.0, rel=1e-6)
 
 
 class TestElevationPressureDrop:
