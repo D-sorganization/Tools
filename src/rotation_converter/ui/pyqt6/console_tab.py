@@ -14,7 +14,10 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from rotation_converter.scripting_env import ConsoleEnvironment
+from rotation_converter import modern_robotics as mr
+from rotation_converter.converter import Rotation
+from rotation_converter.rigid_transform import RigidTransform
+from shared.python.scripting.scripting_env import ConsoleEnvironment
 
 
 class CommandConsoleTab(QWidget):
@@ -22,7 +25,20 @@ class CommandConsoleTab(QWidget):
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self._env = ConsoleEnvironment()
+
+        initial_ns = {
+            "mr": mr,
+            "Rotation": Rotation,
+            "RigidTransform": RigidTransform,
+        }
+        for name in dir(mr):
+            if not name.startswith("_") and callable(getattr(mr, name)):
+                initial_ns[name] = getattr(mr, name)
+
+        self._env = ConsoleEnvironment(
+            default_namespace=initial_ns,
+            user_lib_path="~/.rotation_converter_user_funcs.py",
+        )
         self._history: list[str] = []
         self._history_idx = 0
         self._build_ui()

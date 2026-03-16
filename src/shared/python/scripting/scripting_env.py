@@ -1,4 +1,9 @@
-"""Python scripting environment (MATLAB-like backend) for rotation_converter."""
+"""Python scripting environment (MATLAB-like backend).
+
+Provides an interactive console environment that can be embedded into applications
+or run standalone, featuring namespace management, persistent user scripts, and
+stdout capturing.
+"""
 
 import contextlib
 import io
@@ -26,17 +31,24 @@ except ImportError:
     scipy = None  # type: ignore
     HAS_SCIPY = False
 
-from rotation_converter import modern_robotics as mr
-from rotation_converter.converter import Rotation
-from rotation_converter.rigid_transform import RigidTransform
-
 
 class ConsoleEnvironment:
     """Manages the interactive Python namespace and execution for the CLI."""
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        default_namespace: dict[str, Any] | None = None,
+        user_lib_path: str = "~/.shared_console_user_funcs.py",
+    ) -> None:
+        """Initialize the console environment.
+
+        Args:
+            default_namespace: Variables/modules to inject into the namespace.
+            user_lib_path: Path to the user's persistent functions file.
+        """
+        self._initial_namespace = default_namespace or {}
         self.namespace: dict[str, Any] = {}
-        self._user_lib_path = os.path.expanduser("~/.rotation_converter_user_funcs.py")
+        self._user_lib_path = os.path.expanduser(user_lib_path)
         self.reset()
 
     def reset(self) -> None:
@@ -54,15 +66,8 @@ class ConsoleEnvironment:
         if HAS_SCIPY:
             self.namespace["scipy"] = scipy
 
-        self.namespace["mr"] = mr
-        self.namespace["Rotation"] = Rotation
-        self.namespace["RigidTransform"] = RigidTransform
-
-        # Inject all modern_robotics functions directly for MATLAB-like behavior
-        # (DRY: dynamic mapping instead of manual assignment of 50+ functions)
-        for name in dir(mr):
-            if not name.startswith("_") and callable(getattr(mr, name)):
-                self.namespace[name] = getattr(mr, name)
+        # Inject injected defaults
+        self.namespace.update(self._initial_namespace)
 
         # Provide specialized help function that works within the console
         self.namespace["help"] = self._custom_help
