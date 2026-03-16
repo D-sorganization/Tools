@@ -1,5 +1,9 @@
 """Tests for FunctionGeneratorDialog."""
 
+import pytest
+
+pytest.importorskip("pytestqt")
+
 from PyQt6.QtWidgets import QDialogButtonBox
 
 from double_pendulum_golf.gui.function_generator_dialog import FunctionGeneratorDialog
@@ -21,13 +25,14 @@ def test_function_generator_dialog_init(qapp):
 
 def test_on_signal_applied(qapp):
     from unittest.mock import MagicMock
+
     dlg = FunctionGeneratorDialog()
-    
+
     mock_emit = MagicMock()
     dlg.torque_imported.connect(mock_emit)
-    
+
     dlg._on_signal_applied("Wrist", [1.0, 2.0, 3.0])
-    
+
     # PyQt signals pass arguments to connected slot
     mock_emit.assert_called_once_with("wrist", [1.0, 2.0, 3.0])
     assert dlg.result() == 1  # QDialog.DialogCode.Accepted

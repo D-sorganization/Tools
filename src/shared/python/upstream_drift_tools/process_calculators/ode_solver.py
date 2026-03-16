@@ -3,13 +3,12 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-import matplotlib.pyplot as plt
 import numpy as np
-import scipy.integrate  # Added to fix F821
-import sympy as sp
-from scipy.integrate import solve_ivp
+
+if TYPE_CHECKING:
+    import scipy.integrate
 
 
 class ODESolver:
@@ -30,6 +29,8 @@ class ODESolver:
             Mapping of parameter name to numerical value.
 
         """
+        import sympy as sp  # lazy import – avoids hang on Windows at module load
+
         assert derivatives is not None, "derivatives must be provided"
         self.derivatives = derivatives
         self.parameters = parameters
@@ -41,12 +42,14 @@ class ODESolver:
 
         self._functions = self._lambdify_derivatives()
 
-    def _lambdify_derivatives(self) -> list[sp.Lambda]:
+    def _lambdify_derivatives(self) -> list[Any]:
         """Convert symbolic derivatives to callable functions.
 
         Returns:
             List of lambda functions for each derivative expression.
         """
+        import sympy as sp  # lazy import
+
         funcs = []
         for expr in self.derivatives.values():
             sym_expr = sp.sympify(expr)
@@ -89,6 +92,8 @@ class ODESolver:
             Additional options forwarded to :func:`scipy.integrate.solve_ivp`.
 
         """
+        from scipy.integrate import solve_ivp  # lazy import
+
         return solve_ivp(
             self._rhs,
             t_span,
@@ -100,6 +105,8 @@ class ODESolver:
 
     def plot(self, solution: Any) -> None:
         """Plot the solution returned by :meth:`solve`."""
+        import matplotlib.pyplot as plt  # lazy import – GUI not needed at import
+
         for idx, name in enumerate(self.derivatives.keys()):
             plt.plot(solution.t, solution.y[idx], label=name)
         plt.xlabel("t")
