@@ -435,6 +435,7 @@ def test_workspace_pollution_bare_clear_in_function():
     )
     assert any("clear" in i.lower() for i in issues)
 
+
 def test_analyze_empty_line(tmp_path):
     matlab = tmp_path / "matlab"
     matlab.mkdir()
@@ -442,6 +443,7 @@ def test_analyze_empty_line(tmp_path):
     checker = MATLABQualityChecker(tmp_path)
     issues = checker._analyze_matlab_file(matlab / "empty.m")
     assert issues == []
+
 
 def test_analyze_archive_skipped(tmp_path):
     matlab = tmp_path / "matlab"
@@ -452,6 +454,7 @@ def test_analyze_archive_skipped(tmp_path):
     checker._static_matlab_analysis()
     assert checker.results["total_files"] == 0
 
+
 def test_analyze_oserror(tmp_path):
     matlab = tmp_path / "matlab"
     matlab.mkdir()
@@ -459,10 +462,12 @@ def test_analyze_oserror(tmp_path):
     f.touch()
     checker = MATLABQualityChecker(tmp_path)
     from unittest.mock import patch
+
     with patch.object(Path, "open", side_effect=OSError("mock error")):
         issues = checker._analyze_matlab_file(f)
         assert len(issues) == 1
         assert "Could not analyze file" in issues[0]
+
 
 def test_run_matlab_script_success(tmp_path):
     matlab = tmp_path / "matlab"
@@ -470,7 +475,8 @@ def test_run_matlab_script_success(tmp_path):
     script = matlab / "matlab_quality_config.m"
     script.touch()
     checker = MATLABQualityChecker(tmp_path)
-    from unittest.mock import patch, MagicMock
+    from unittest.mock import MagicMock, patch
+
     mock_run = MagicMock()
     mock_run.returncode = 0
     mock_run.stdout = "ok"
@@ -479,19 +485,22 @@ def test_run_matlab_script_success(tmp_path):
         assert result["success"] is True
         assert result["method"] == "matlab_script"
 
+
 def test_run_matlab_script_fail_subprocess(tmp_path):
     matlab = tmp_path / "matlab"
     matlab.mkdir()
     script = matlab / "matlab_quality_config.m"
     script.touch()
     checker = MATLABQualityChecker(tmp_path)
-    from unittest.mock import patch, MagicMock
+    from unittest.mock import MagicMock, patch
+
     mock_run = MagicMock()
     mock_run.returncode = 1
     mock_run.stderr = "error"
     with patch("subprocess.run", return_value=mock_run):
         result = checker._run_matlab_script(script)
         assert result.get("method") == "static_analysis"
+
 
 def test_run_matlab_script_exception(tmp_path):
     matlab = tmp_path / "matlab"
@@ -500,9 +509,11 @@ def test_run_matlab_script_exception(tmp_path):
     script.touch()
     checker = MATLABQualityChecker(tmp_path)
     from unittest.mock import patch
+
     with patch("subprocess.run", side_effect=OSError("mock")):
         result = checker.run_matlab_quality_checks()
         assert result.get("method") == "static_analysis"
+
 
 def test_run_matlab_script_value_error(tmp_path):
     matlab = tmp_path / "matlab"
@@ -511,9 +522,11 @@ def test_run_matlab_script_value_error(tmp_path):
     script.touch()
     checker = MATLABQualityChecker(tmp_path)
     from unittest.mock import patch
+
     with patch("subprocess.run", side_effect=ValueError("mock")):
         result = checker._run_matlab_script(script)
         assert "error" in result
+
 
 def test_run_all_checks_matlab_error(tmp_path):
     matlab = tmp_path / "matlab"
@@ -521,40 +534,58 @@ def test_run_all_checks_matlab_error(tmp_path):
     (matlab / "test.m").write_text("x=1;")
     checker = MATLABQualityChecker(tmp_path)
     from unittest.mock import patch
-    with patch.object(checker, "run_matlab_quality_checks", return_value={"error": "mock run error"}):
+
+    with patch.object(
+        checker, "run_matlab_quality_checks", return_value={"error": "mock run error"}
+    ):
         result = checker.run_all_checks()
         assert result["passed"] is False
         assert "mock run error" in result["summary"]
 
+
 def test_run_matlab_quality_checks_cli_success(tmp_path):
-    from tools.matlab_quality_utils import run_matlab_quality_checks_cli
     from unittest.mock import patch
-    import sys
-    
+
+    from tools.matlab_quality_utils import run_matlab_quality_checks_cli
+
     with patch("sys.argv", ["script", "--project-root", str(tmp_path)]):
         with patch("sys.exit") as mock_exit:
-            with patch("tools.matlab_quality_utils.MATLABQualityChecker.run_all_checks", return_value={"passed": True, "issues": []}):
+            with patch(
+                "tools.matlab_quality_utils.MATLABQualityChecker.run_all_checks",
+                return_value={"passed": True, "issues": []},
+            ):
                 run_matlab_quality_checks_cli()
                 mock_exit.assert_called_with(0)
+
 
 def test_run_matlab_quality_checks_cli_json(tmp_path):
-    from tools.matlab_quality_utils import run_matlab_quality_checks_cli
     from unittest.mock import patch
-    import sys
-    
-    with patch("sys.argv", ["script", "--project-root", str(tmp_path), "--output-format", "json"]):
+
+    from tools.matlab_quality_utils import run_matlab_quality_checks_cli
+
+    with patch(
+        "sys.argv",
+        ["script", "--project-root", str(tmp_path), "--output-format", "json"],
+    ):
         with patch("sys.exit") as mock_exit:
-            with patch("tools.matlab_quality_utils.MATLABQualityChecker.run_all_checks", return_value={"passed": True, "issues": []}):
+            with patch(
+                "tools.matlab_quality_utils.MATLABQualityChecker.run_all_checks",
+                return_value={"passed": True, "issues": []},
+            ):
                 run_matlab_quality_checks_cli()
                 mock_exit.assert_called_with(0)
 
+
 def test_run_matlab_quality_checks_cli_strict_issues(tmp_path):
-    from tools.matlab_quality_utils import run_matlab_quality_checks_cli
     from unittest.mock import patch
-    import sys
-    
+
+    from tools.matlab_quality_utils import run_matlab_quality_checks_cli
+
     with patch("sys.argv", ["script", "--project-root", str(tmp_path), "--strict"]):
         with patch("sys.exit") as mock_exit:
-            with patch("tools.matlab_quality_utils.MATLABQualityChecker.run_all_checks", return_value={"passed": True, "issues": ["an issue"]}):
+            with patch(
+                "tools.matlab_quality_utils.MATLABQualityChecker.run_all_checks",
+                return_value={"passed": True, "issues": ["an issue"]},
+            ):
                 run_matlab_quality_checks_cli()
                 mock_exit.assert_called_with(1)
