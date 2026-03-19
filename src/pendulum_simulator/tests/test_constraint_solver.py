@@ -56,9 +56,7 @@ def golfer_params() -> GolferParams:
 
 
 @pytest.fixture
-def zero_torque() -> (
-    Callable[[float], tuple[float, float, float, float, float, float, float]]
-):
+def zero_torque() -> Callable[[float], tuple[float, float, float, float, float, float, float]]:
     """Zero torque function for all joints."""
     return lambda t: (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
@@ -79,18 +77,18 @@ class TestProjectToConstraints:
         q = np.zeros(N_DOF)
         q_proj = project_to_constraints(q, golfer_params)
         phi = constraint_vector(q_proj, golfer_params)
-        assert (
-            np.linalg.norm(phi) < 1e-6
-        ), f"Constraint violation after projection: {np.linalg.norm(phi)}"
+        assert np.linalg.norm(phi) < 1e-6, (
+            f"Constraint violation after projection: {np.linalg.norm(phi)}"
+        )
 
     def test_arbitrary_config_projects(self, golfer_params: GolferParams) -> None:
         rng = np.random.default_rng(123)
         q = rng.uniform(-0.5, 0.5, size=N_DOF)
         q_proj = project_to_constraints(q, golfer_params)
         phi = constraint_vector(q_proj, golfer_params)
-        assert (
-            np.linalg.norm(phi) < 1e-4
-        ), f"Constraint violation after projection: {np.linalg.norm(phi)}"
+        assert np.linalg.norm(phi) < 1e-4, (
+            f"Constraint violation after projection: {np.linalg.norm(phi)}"
+        )
 
     def test_idempotent(self, golfer_params: GolferParams) -> None:
         q = np.zeros(N_DOF)
@@ -109,9 +107,7 @@ class TestProjectToConstraints:
         def constant_jacobian(_q: np.ndarray, _params: GolferParams) -> np.ndarray:
             return np.eye(N_CONSTRAINTS, N_DOF)
 
-        monkeypatch.setattr(
-            constraint_solver_module, "constraint_vector", stuck_constraint
-        )
+        monkeypatch.setattr(constraint_solver_module, "constraint_vector", stuck_constraint)
         monkeypatch.setattr(
             constraint_solver_module,
             "constraint_jacobian",
@@ -137,9 +133,9 @@ class TestProjectVelocity:
         qdot_proj = project_velocity(q, qdot, golfer_params)
         Phi_q = constraint_jacobian(q, golfer_params)
         violation = Phi_q @ qdot_proj
-        assert (
-            np.linalg.norm(violation) < 1e-6
-        ), f"Velocity constraint violation: {np.linalg.norm(violation)}"
+        assert np.linalg.norm(violation) < 1e-6, (
+            f"Velocity constraint violation: {np.linalg.norm(violation)}"
+        )
 
 
 class TestConstrainedAccelerations:
@@ -148,9 +144,7 @@ class TestConstrainedAccelerations:
     def test_finite_at_rest(
         self,
         golfer_params: GolferParams,
-        zero_torque: Callable[
-            [float], tuple[float, float, float, float, float, float, float]
-        ],
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
     ) -> None:
         state = _make_consistent_state(golfer_params)
         qddot = constrained_accelerations(state, 0.0, golfer_params, zero_torque)
@@ -160,9 +154,7 @@ class TestConstrainedAccelerations:
     def test_shape(
         self,
         golfer_params: GolferParams,
-        zero_torque: Callable[
-            [float], tuple[float, float, float, float, float, float, float]
-        ],
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
     ) -> None:
         state = _make_consistent_state(golfer_params)
         qddot = constrained_accelerations(state, 0.0, golfer_params, zero_torque)
@@ -175,9 +167,7 @@ class TestConstraintForces:
     def test_shape(
         self,
         golfer_params: GolferParams,
-        zero_torque: Callable[
-            [float], tuple[float, float, float, float, float, float, float]
-        ],
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
     ) -> None:
         state = _make_consistent_state(golfer_params)
         lam = constraint_forces(state, 0.0, golfer_params, zero_torque)
@@ -191,9 +181,7 @@ class TestNativeConstraintBackend:
     def test_constrained_dynamics_prefers_native_backend(
         self,
         golfer_params: GolferParams,
-        zero_torque: Callable[
-            [float], tuple[float, float, float, float, float, float, float]
-        ],
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         native_qddot = np.full(N_DOF, 3.0)
@@ -267,9 +255,7 @@ class TestEquationsOfMotion:
     def test_shape(
         self,
         golfer_params: GolferParams,
-        zero_torque: Callable[
-            [float], tuple[float, float, float, float, float, float, float]
-        ],
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
     ) -> None:
         state = _make_consistent_state(golfer_params)
         state_dot = equations_of_motion(state, 0.0, golfer_params, zero_torque)
@@ -279,9 +265,7 @@ class TestEquationsOfMotion:
     def test_velocity_in_derivative(
         self,
         golfer_params: GolferParams,
-        zero_torque: Callable[
-            [float], tuple[float, float, float, float, float, float, float]
-        ],
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
     ) -> None:
         state = _make_consistent_state(golfer_params)
         state_dot = equations_of_motion(state, 0.0, golfer_params, zero_torque)
