@@ -33,6 +33,12 @@ from upstream_drift_tools.ui.widgets.base_calculator_widget import BaseCalculato
 if TYPE_CHECKING:
     from upstream_drift_tools.calculators.thermo.steam_engine import SteamProperties
 
+# LoD: module-level aliases for Qt enum chains (avoids 3-level deep attribute access)
+_SCROLL_BAR_AS_NEEDED = Qt.ScrollBarPolicy.ScrollBarAsNeeded
+_FONT_WEIGHT_BOLD = QFont.Weight.Bold
+_ALIGN_CENTER = Qt.AlignmentFlag.AlignCenter
+_FRAME_STYLED_PANEL = QFrame.Shape.StyledPanel
+
 # Catppuccin Mocha color palette
 COLORS = {
     "base": "#1e1e2e",
@@ -76,16 +82,34 @@ def validate_pressure_pa(value: float) -> tuple[bool, str]:
 
 
 def format_temperature(value: float, unit: str = "K") -> str:
-    """Format temperature with units."""
-    assert value is not None, "value must be provided"
+    """Format temperature with units.
+
+    Args:
+        value: Temperature value (numeric).
+        unit: Unit string, "K" or "C".
+
+    Raises:
+        TypeError: If value is not a number.
+    """
+    if not isinstance(value, (int, float)):
+        raise TypeError(f"value must be a number, got {type(value).__name__}")
     if unit == "C":
         return f"{value - 273.15:.2f} °C"
     return f"{value:.2f} K"
 
 
 def format_pressure(value: float, unit: str = "Pa") -> str:
-    """Format pressure with units."""
-    assert value is not None, "value must be provided"
+    """Format pressure with units.
+
+    Args:
+        value: Pressure value (numeric).
+        unit: Unit string, "Pa", "kPa", "bar", or "MPa".
+
+    Raises:
+        TypeError: If value is not a number.
+    """
+    if not isinstance(value, (int, float)):
+        raise TypeError(f"value must be a number, got {type(value).__name__}")
     if unit == "bar":
         return f"{value / 1e5:.4f} bar"
     if unit == "kPa":
@@ -166,7 +190,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         # Scroll area wrapping the content
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        scroll.setHorizontalScrollBarPolicy(_SCROLL_BAR_AS_NEEDED)
 
         central = QWidget()
         main_layout = QVBoxLayout(central)
@@ -175,7 +199,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
 
         # Title
         title = QLabel("Steam Thermodynamic Properties Calculator")
-        title.setFont(QFont("Segoe UI", 18, QFont.Weight.Bold))
+        title.setFont(QFont("Segoe UI", 18, _FONT_WEIGHT_BOLD))
         title.setStyleSheet(f"color: {COLORS['blue']};")
         main_layout.addWidget(title)
 
@@ -267,7 +291,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
 
         # Calculate button
         calc_btn = QPushButton("Calculate Properties")
-        calc_btn.setFont(QFont("Segoe UI", 12, QFont.Weight.Bold))
+        calc_btn.setFont(QFont("Segoe UI", 12, _FONT_WEIGHT_BOLD))
         calc_btn.setMinimumHeight(50)
         calc_btn.clicked.connect(self._calculate)
         layout.addWidget(calc_btn)
@@ -283,7 +307,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
 
         # Results header
         header = QLabel("Calculated Properties")
-        header.setFont(QFont("Segoe UI", 14, QFont.Weight.Bold))
+        header.setFont(QFont("Segoe UI", 14, _FONT_WEIGHT_BOLD))
         header.setStyleSheet(f"color: {COLORS['green']};")
         layout.addWidget(header)
 
@@ -292,12 +316,12 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         phase_layout = QHBoxLayout()
 
         self.phase_label = QLabel("--")
-        self.phase_label.setFont(QFont("Segoe UI", 16, QFont.Weight.Bold))
-        self.phase_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.phase_label.setFont(QFont("Segoe UI", 16, _FONT_WEIGHT_BOLD))
+        self.phase_label.setAlignment(_ALIGN_CENTER)
         phase_layout.addWidget(self.phase_label)
 
         self.quality_label = QLabel("Quality: --")
-        self.quality_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.quality_label.setAlignment(_ALIGN_CENTER)
         phase_layout.addWidget(self.quality_label)
 
         phase_group.setLayout(phase_layout)
@@ -369,24 +393,54 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         return panel
 
     def _create_group(self, title: str) -> QGroupBox:
-        """Create a styled group box."""
-        assert title is not None, "title must be provided"
+        """Create a styled group box.
+
+        Args:
+            title: Group box title string.
+
+        Raises:
+            TypeError: If title is not a string.
+        """
+        if not isinstance(title, str):
+            raise TypeError(f"title must be a string, got {type(title).__name__}")
         group = QGroupBox(title)
-        group.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
+        group.setFont(QFont("Segoe UI", 10, _FONT_WEIGHT_BOLD))
         return group
 
     def _create_label(self, text: str) -> QLabel:
-        """Create a styled label."""
-        assert text is not None, "text must be provided"
+        """Create a styled label.
+
+        Args:
+            text: Label text string.
+
+        Raises:
+            TypeError: If text is not a string.
+        """
+        if not isinstance(text, str):
+            raise TypeError(f"text must be a string, got {type(text).__name__}")
         label = QLabel(text)
         label.setStyleSheet(f"color: {COLORS['text']};")
         return label
 
     def _create_result_card(self, name: str, key: str, color: str) -> QFrame:
-        """Create a result display card."""
-        assert name is not None, "name must be provided"
+        """Create a result display card.
+
+        Args:
+            name: Display name for the property.
+            key: Dictionary key for the result label.
+            color: Hex color string for the value label.
+
+        Raises:
+            TypeError: If name, key, or color is not a string.
+        """
+        if not isinstance(name, str):
+            raise TypeError(f"name must be a string, got {type(name).__name__}")
+        if not isinstance(key, str):
+            raise TypeError(f"key must be a string, got {type(key).__name__}")
+        if not isinstance(color, str):
+            raise TypeError(f"color must be a string, got {type(color).__name__}")
         card = QFrame()
-        card.setFrameShape(QFrame.Shape.StyledPanel)
+        card.setFrameShape(_FRAME_STYLED_PANEL)
         card.setMinimumHeight(60)
 
         layout = QVBoxLayout(card)
@@ -397,7 +451,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         name_label.setStyleSheet(f"color: {COLORS['subtext0']}; font-size: 10px;")
 
         value_label = QLabel("--")
-        value_label.setFont(QFont("Segoe UI", 11, QFont.Weight.Bold))
+        value_label.setFont(QFont("Segoe UI", 11, _FONT_WEIGHT_BOLD))
         value_label.setStyleSheet(f"color: {color};")
 
         self.result_labels[key] = value_label
@@ -636,9 +690,17 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
             QMessageBox.critical(self, "Calculation Error", f"Error: {e}")
 
     def _display_results(self, result: SteamProperties) -> None:
-        """Display calculation results."""
+        """Display calculation results.
+
+        Args:
+            result: SteamProperties dataclass with calculated values.
+
+        Raises:
+            ValueError: If result is None.
+        """
+        if result is None:
+            raise ValueError("result must not be None")
         # Phase state
-        assert result is not None, "result must be provided"
         phase_colors = {
             "liquid": COLORS["blue"],
             "vapor": COLORS["peach"],
