@@ -161,6 +161,112 @@ class TestDemoFunctions:
         assert abs(grad_y) < 1e-3
 
 
+class TestEvalRosenbrockDbC:
+    """DbC tests for _eval_rosenbrock static method."""
+
+    def test_eval_rosenbrock_valid_2d(self):
+        """Test _eval_rosenbrock returns correct value for 2D input."""
+        try:
+            from optimizer_gui.ui.pyqt6.main_window import OptimizerWindow
+
+            values = np.array([1.0, 1.0])
+            result = OptimizerWindow._eval_rosenbrock(values, maximize=False)
+            assert result == pytest.approx(0.0)
+        except ImportError:
+            pytest.skip("OptimizerWindow not available")
+
+    def test_eval_rosenbrock_minimize(self):
+        """Test _eval_rosenbrock returns positive value for non-minimum."""
+        try:
+            from optimizer_gui.ui.pyqt6.main_window import OptimizerWindow
+
+            values = np.array([0.0, 0.0])
+            result = OptimizerWindow._eval_rosenbrock(values, maximize=False)
+            assert result > 0.0
+        except ImportError:
+            pytest.skip("OptimizerWindow not available")
+
+    def test_eval_rosenbrock_maximize_negates(self):
+        """Test _eval_rosenbrock negates objective when maximize=True."""
+        try:
+            from optimizer_gui.ui.pyqt6.main_window import OptimizerWindow
+
+            values = np.array([0.0, 0.0])
+            minimized = OptimizerWindow._eval_rosenbrock(values, maximize=False)
+            maximized = OptimizerWindow._eval_rosenbrock(values, maximize=True)
+            assert maximized == pytest.approx(-minimized)
+        except ImportError:
+            pytest.skip("OptimizerWindow not available")
+
+    def test_eval_rosenbrock_raises_type_error_for_non_ndarray(self):
+        """Test _eval_rosenbrock raises TypeError for non-ndarray input."""
+        try:
+            from optimizer_gui.ui.pyqt6.main_window import OptimizerWindow
+
+            with pytest.raises(TypeError, match="numpy ndarray"):
+                OptimizerWindow._eval_rosenbrock([1.0, 1.0], maximize=False)
+        except ImportError:
+            pytest.skip("OptimizerWindow not available")
+
+    def test_eval_rosenbrock_raises_value_error_for_empty(self):
+        """Test _eval_rosenbrock raises ValueError for empty array."""
+        try:
+            from optimizer_gui.ui.pyqt6.main_window import OptimizerWindow
+
+            with pytest.raises(ValueError, match="must not be empty"):
+                OptimizerWindow._eval_rosenbrock(np.array([]), maximize=False)
+        except ImportError:
+            pytest.skip("OptimizerWindow not available")
+
+    def test_eval_rosenbrock_single_element(self):
+        """Test _eval_rosenbrock works with 1D input."""
+        try:
+            from optimizer_gui.ui.pyqt6.main_window import OptimizerWindow
+
+            values = np.array([1.0])
+            result = OptimizerWindow._eval_rosenbrock(values, maximize=False)
+            assert result == pytest.approx(0.0)
+        except ImportError:
+            pytest.skip("OptimizerWindow not available")
+
+
+class TestInitAdamArraysDbC:
+    """DbC tests for _init_adam_arrays static method."""
+
+    def test_init_adam_arrays_valid(self):
+        """Test _init_adam_arrays returns correct arrays from params."""
+        try:
+            from optimizer_gui.ui.pyqt6.main_window import (
+                OptimizerWindow,
+                ParameterConfig,
+            )
+
+            params = [
+                ParameterConfig("x", 0.5, 0.0, 1.0),
+                ParameterConfig("y", 0.3, 0.0, 0.6),
+            ]
+            values, lower, upper = OptimizerWindow._init_adam_arrays(params)
+            np.testing.assert_array_almost_equal(values, [0.5, 0.3])
+            np.testing.assert_array_almost_equal(lower, [0.0, 0.0])
+            np.testing.assert_array_almost_equal(upper, [1.0, 0.6])
+        except ImportError:
+            pytest.skip("OptimizerWindow not available")
+
+    def test_init_adam_arrays_single_param(self):
+        """Test _init_adam_arrays handles single-parameter case."""
+        try:
+            from optimizer_gui.ui.pyqt6.main_window import (
+                OptimizerWindow,
+                ParameterConfig,
+            )
+
+            params = [ParameterConfig("x", 0.5, 0.0, 1.0)]
+            values, lower, upper = OptimizerWindow._init_adam_arrays(params)
+            assert len(values) == 1
+        except ImportError:
+            pytest.skip("OptimizerWindow not available")
+
+
 class TestOptimizerGUIRegistration:
     """Tests for GUI framework registration."""
 
