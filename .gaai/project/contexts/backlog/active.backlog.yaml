@@ -509,7 +509,8 @@ items:
   - id: GH1471
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/glass_bath_fea"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-19T23:21:07Z"
     github_issue: 1471
     artefact: .gaai/project/contexts/artefacts/stories/GH1471.story.md
     dependencies: []
