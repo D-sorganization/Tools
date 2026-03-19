@@ -134,7 +134,8 @@ items:
   - id: GH1496
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/web_applications"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-19T20:58:17Z"
     github_issue: 1496
     artefact: .gaai/project/contexts/artefacts/stories/GH1496.story.md
     dependencies: []
