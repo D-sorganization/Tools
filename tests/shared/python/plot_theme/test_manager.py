@@ -9,6 +9,21 @@ from plot_theme.manager import PlotThemeManager, get_plot_theme_manager
 from plot_theme.themes import DEFAULT_THEME, PLOT_THEMES
 
 
+def _matplotlib_available() -> bool:
+    """Return True if matplotlib is importable."""
+    try:
+        import matplotlib  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
+
+_skip_no_matplotlib = pytest.mark.skipif(
+    not _matplotlib_available(), reason="matplotlib not installed"
+)
+
+
 class TestPlotThemeManager:
     """Tests for PlotThemeManager class."""
 
@@ -150,10 +165,9 @@ class TestPlotThemeManagerMatplotlib:
             mock_mpl.rcParams = {}
             yield mock_mpl
 
+    @_skip_no_matplotlib
     def test_apply_to_matplotlib(self) -> None:
         """Test applying theme to matplotlib."""
-        pytest.importorskip("matplotlib")
-
         manager = PlotThemeManager()
         # Should not raise
         manager.apply_to_matplotlib()
