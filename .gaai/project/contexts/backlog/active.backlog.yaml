@@ -30,8 +30,12 @@ items:
   - id: GH1575
     title: "CI: Validate Tools_Private end-to-end with first test PR"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-19T16:22:02Z"
+    completed_at: "2026-03-19T16:28:01Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1612"
+    pr_number: 1612
+    pr_status: "open"
     github_issue: 1575
     artefact: .gaai/project/contexts/artefacts/stories/GH1575.story.md
     dependencies: []
