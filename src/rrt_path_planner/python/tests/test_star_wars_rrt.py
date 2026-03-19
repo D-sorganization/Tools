@@ -166,9 +166,7 @@ class TestDbCNoneInputs(unittest.TestCase):
         self.planner = RRTPlanner(self.bounds)
         self.obstacle = Obstacle(0, np.array([0.0, 0.0, 0.0]), 0.1, (1.0, 0.0, 0.0))
         self.valid_point = np.array([0.5, 0.5, 0.5])
-        self.valid_path = np.array(
-            [[-0.8, 0.0, 0.0], [0.0, 0.0, 0.0], [0.8, 0.0, 0.0]]
-        )
+        self.valid_path = np.array([[-0.8, 0.0, 0.0], [0.0, 0.0, 0.0], [0.8, 0.0, 0.0]])
 
     def test_distance_to_obstacle_surface_none_point(self) -> None:
         """distance_to_obstacle_surface raises TypeError when point is None."""
