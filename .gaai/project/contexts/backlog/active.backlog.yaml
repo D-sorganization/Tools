@@ -435,11 +435,12 @@ items:
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/ode_solver"
     priority: medium
     status: done
-    started_at: "2026-03-19T22:52:11Z"
+    started_at: "2026-03-19T15:52:11-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1638"
     pr_number: 1638
     pr_status: "open"
-    completed_at: "2026-03-19T23:01:53Z"
+    completed_at: "2026-03-19T16:01:53-07:00"
+    cost_usd: 1.8903
     github_issue: 1476
     artefact: .gaai/project/contexts/artefacts/stories/GH1476.story.md
     dependencies: []
