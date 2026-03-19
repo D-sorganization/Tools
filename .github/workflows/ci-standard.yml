@@ -44,7 +44,7 @@ jobs:
           pip install -r requirements.txt
           pip install fastapi
           pip install httpx
-          pip install ruff==0.14.10 black==26.1.0 mypy==1.13.0 bandit==1.7.7 pip-audit types-PyYAML types-requests
+          pip install ruff==0.14.10 mypy==1.13.0 bandit==1.7.7 pip-audit types-PyYAML types-requests
 
       - name: Collect Changed Python Files
         run: |
@@ -74,15 +74,10 @@ jobs:
             ruff check .
           fi
 
-      - name: Normalize Line Endings
-        run: |
-          # Convert CRLF to LF for consistent Black formatting
-          find . -name "*.py" -type f -exec sed -i 's/\r$//' {} \;
-
-      - name: Format Check (Black)
+      - name: Format Check (ruff-format)
         run: |
           if [ -s changed_python_files.txt ]; then
-            xargs -r -d '\n' black --check < changed_python_files.txt
+            xargs -r -d '\n' ruff format --check < changed_python_files.txt
           else
             echo "No changed Python files to format-check."
           fi
