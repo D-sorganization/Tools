@@ -498,7 +498,8 @@ class HelpDialog(QDialog):
             title: Topic title
             content: Markdown content
         """
-        assert title is not None, "title must be provided"
+        if not isinstance(title, str):
+            raise TypeError(f"title must be a str, got {type(title).__name__}")
         self.title_label.setText(title)
         html_content = _markdown_to_html(content)
         self.content_browser.setHtml(html_content)
@@ -521,7 +522,8 @@ class HelpDialog(QDialog):
         Args:
             topic: Topic ID/title to navigate to
         """
-        assert topic is not None, "topic must be provided"
+        if not isinstance(topic, str):
+            raise TypeError(f"topic must be a str, got {type(topic).__name__}")
         if topic not in self.topics:
             return
 
@@ -585,7 +587,8 @@ class HelpButton(QToolButton):
             parent: Parent widget
             tooltip: Tooltip text for the button
         """
-        assert topic_id is not None, "topic_id must be provided"
+        if not isinstance(topic_id, str):
+            raise TypeError(f"topic_id must be a str, got {type(topic_id).__name__}")
         super().__init__(parent)
         self.topic_id = topic_id
 
@@ -651,7 +654,8 @@ class TooltipManager:
             widget: Widget to apply tooltip to
             key: Tooltip key (must be registered first)
         """
-        assert widget is not None, "widget must be provided"
+        if not isinstance(widget, QWidget):
+            raise TypeError(f"widget must be a QWidget, got {type(widget).__name__}")
         if key not in self._widgets:
             self._widgets[key] = []
         self._widgets[key].append(widget)
@@ -667,7 +671,8 @@ class TooltipManager:
             text: Tooltip text
         """
         # Wrap in styled HTML for consistent appearance
-        assert widget is not None, "widget must be provided"
+        if not isinstance(widget, QWidget):
+            raise TypeError(f"widget must be a QWidget, got {type(widget).__name__}")
         styled_text = f"""
             <div style="
                 background-color: #313244;
@@ -688,7 +693,8 @@ class TooltipManager:
             key: Tooltip key
             text: New tooltip text
         """
-        assert key is not None, "key must be provided"
+        if not isinstance(key, str):
+            raise TypeError(f"key must be a str, got {type(key).__name__}")
         self._tooltips[key] = text
         if key in self._widgets:
             for widget in self._widgets[key]:
@@ -732,7 +738,8 @@ class HelpManager:
         Args:
             path: Path to the help directory
         """
-        assert path is not None, "path must be provided"
+        if not isinstance(path, (str, Path)):
+            raise TypeError(f"path must be a str or Path, got {type(path).__name__}")
         self._help_dir = Path(path)
         self._scan_help_files()
 
@@ -742,7 +749,8 @@ class HelpManager:
         Args:
             path: Path to USER_MANUAL.md
         """
-        assert path is not None, "path must be provided"
+        if not isinstance(path, (str, Path)):
+            raise TypeError(f"path must be a str or Path, got {type(path).__name__}")
         manual_path = Path(path)
         if manual_path.exists():
             self._user_manual = load_help_from_file(manual_path)
@@ -784,7 +792,8 @@ class HelpManager:
             Topic content or error message
         """
         # Check registered topics first
-        assert topic_id is not None, "topic_id must be provided"
+        if not isinstance(topic_id, str):
+            raise TypeError(f"topic_id must be a str, got {type(topic_id).__name__}")
         if topic_id in self._topics:
             return self._topics[topic_id]
 
@@ -826,7 +835,8 @@ class HelpManager:
             topic_id: Topic to display
             parent: Parent widget for the dialog
         """
-        assert topic_id is not None, "topic_id must be provided"
+        if not isinstance(topic_id, str):
+            raise TypeError(f"topic_id must be a str, got {type(topic_id).__name__}")
         content = self.get_topic_content(topic_id)
         all_topics = self.get_all_topics()
 
