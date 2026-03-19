@@ -144,7 +144,8 @@ items:
   - id: GH1495
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/vessel_drafter"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-19T21:00:29Z"
     github_issue: 1495
     artefact: .gaai/project/contexts/artefacts/stories/GH1495.story.md
     dependencies: []
