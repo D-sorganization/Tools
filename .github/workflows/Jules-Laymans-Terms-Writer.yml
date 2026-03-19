@@ -401,9 +401,7 @@ jobs:
 
             git commit -m "$MSG
 
-          Automated update by Jules Layman's Terms Writer.
-
-          Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          Automated update by Jules Layman's Terms Writer."
 
             git push origin "$BRANCH_NAME"
 

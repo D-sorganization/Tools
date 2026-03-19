@@ -330,9 +330,7 @@ jobs:
           Iteration: $iteration of $MAX_ITERATIONS
           Tools:$CHANGES_MADE
 
-          CI verification loop will check if more fixes are needed.
-
-          Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          CI verification loop will check if more fixes are needed."
 
                 git push origin "$BRANCH"
                 echo "✅ Pushed repair iteration $iteration"
