@@ -314,11 +314,12 @@ items:
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/scientific_modeling"
     priority: medium
     status: done
-    started_at: "2026-03-19T22:05:08Z"
-    completed_at: "2026-03-19T22:16:21Z"
+    started_at: "2026-03-19T15:05:08-07:00"
+    completed_at: "2026-03-19T15:16:21-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1630"
     pr_number: 1630
     pr_status: "open"
+    cost_usd: 2.5714
     github_issue: 1484
     artefact: .gaai/project/contexts/artefacts/stories/GH1484.story.md
     dependencies: []
