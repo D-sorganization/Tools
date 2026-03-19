@@ -15,15 +15,29 @@ import numpy as np
 import pytest
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
+_INNER_PYTHON_DIR = str(Path(__file__).resolve().parents[1] / "python")
 
 # Force the inner signal_processing_studio package to take precedence.
 # pytest may have already resolved the outer __init__.py from src/.
-if "signal_processing_studio" in sys.modules:
-    del sys.modules["signal_processing_studio"]
-if "signal_processing_studio.signal_bus" in sys.modules:
-    del sys.modules["signal_processing_studio.signal_bus"]
-if "signal_processing_studio.main_window" in sys.modules:
-    del sys.modules["signal_processing_studio.main_window"]
+# Ensure the inner python/ dir is at position 0 so the real package is found
+# before the outer namespace package in src/.
+if _INNER_PYTHON_DIR in sys.path:
+    sys.path.remove(_INNER_PYTHON_DIR)
+sys.path.insert(0, _INNER_PYTHON_DIR)
+
+for _mod in list(sys.modules.keys()):
+    # Only clear the core package and its modules — not the tests subpackage
+    # (which pytest has already registered under signal_processing_studio.tests.*).
+    if _mod in (
+        "signal_processing_studio",
+        "signal_processing_studio.signal_bus",
+        "signal_processing_studio.main_window",
+    ):
+        del sys.modules[_mod]
+
+# Invalidate Python's path finder caches so the repositioned sys.path entry
+# takes effect. importlib is accessible via the `import importlib.util` above.
+importlib.invalidate_caches()
 
 from signal_toolkit.core import Signal  # noqa: E402
 
@@ -339,3 +353,91 @@ class TestLauncher:
         from signal_processing_studio.main_window import SignalProcessingStudio
 
         assert SignalProcessingStudio is not None
+
+
+# =============================================================================
+# DbC Precondition Tests — GH1487
+# =============================================================================
+
+
+class TestSignalBusDbC:
+    """Tests for DbC preconditions added to SignalBus (GH1487)."""
+
+    def test_on_func_gen_signal_raises_for_none_signal(self) -> None:
+        """_on_func_gen_signal should raise ValueError when signal is None."""
+        bus, _, _, _ = _make_bus()
+        with pytest.raises(ValueError, match="signal must not be None"):
+            bus._on_func_gen_signal(None)
+
+    def test_on_poly_generated_raises_for_none_joint_name(self) -> None:
+        """_on_poly_generated should raise ValueError when joint_name is None."""
+        bus, _, _, _ = _make_bus()
+        with pytest.raises(ValueError, match="joint_name must not be None"):
+            bus._on_poly_generated(None, [1.0, 0.0])
+
+    def test_on_poly_generated_raises_type_error_for_non_list_coeffs(self) -> None:
+        """_on_poly_generated should raise TypeError when coeffs is not a list."""
+        bus, _, _, _ = _make_bus()
+        with pytest.raises(TypeError, match="coeffs must be a list"):
+            bus._on_poly_generated("knee", (1.0, 0.0))  # tuple instead of list
+
+    def test_on_poly_generated_accepts_empty_list_coeffs(self) -> None:
+        """_on_poly_generated should accept an empty list for coeffs."""
+        bus, _, toolkit, _ = _make_bus(toolkit_signal=None)
+        # Empty list reversed is still empty; SignalGenerator handles it
+        try:
+            bus._on_poly_generated("hip", [])
+        except TypeError:
+            pytest.fail("Empty list for coeffs should not raise TypeError")
+
+    def test_status_raises_for_none_message(self) -> None:
+        """_status should raise ValueError when message is None."""
+        bus, _, _, _ = _make_bus()
+        with pytest.raises(ValueError, match="message must not be None"):
+            bus._status(None)
+
+
+class TestMainWindowDbCLoD:
+    """Tests for DbC and LoD fixes in main_window.py (GH1487)."""
+
+    def test_on_poly_fallback_raises_for_none_joint_name(self) -> None:
+        """_on_poly_fallback should raise ValueError when joint_name is None."""
+        from signal_processing_studio.main_window import SignalProcessingStudio
+
+        studio = SignalProcessingStudio.__new__(SignalProcessingStudio)
+        studio.toolkit = MagicMock()
+        studio.toolkit.current_signal = None
+
+        with pytest.raises(ValueError, match="joint_name must not be None"):
+            studio._on_poly_fallback(None, [1.0, 0.0])
+
+    def test_on_poly_fallback_raises_type_error_for_non_list_coeffs(self) -> None:
+        """_on_poly_fallback should raise TypeError when coeffs is not a list."""
+        from signal_processing_studio.main_window import SignalProcessingStudio
+
+        studio = SignalProcessingStudio.__new__(SignalProcessingStudio)
+        studio.toolkit = MagicMock()
+        studio.toolkit.current_signal = None
+
+        with pytest.raises(TypeError, match="coeffs must be a list"):
+            studio._on_poly_fallback("knee", (1.0, 0.0))
+
+    def test_connect_action_helper_exists(self) -> None:
+        """_connect_action module-level helper should be importable."""
+        from signal_processing_studio.main_window import _connect_action
+
+        assert callable(_connect_action)
+
+    def test_connect_action_raises_for_none_action(self) -> None:
+        """_connect_action should raise ValueError when action is None."""
+        from signal_processing_studio.main_window import _connect_action
+
+        with pytest.raises(ValueError, match="action must not be None"):
+            _connect_action(None, lambda: None)
+
+    def test_connect_action_raises_for_none_slot(self) -> None:
+        """_connect_action should raise ValueError when slot is None."""
+        from signal_processing_studio.main_window import _connect_action
+
+        with pytest.raises(ValueError, match="slot must not be None"):
+            _connect_action(MagicMock(), None)
