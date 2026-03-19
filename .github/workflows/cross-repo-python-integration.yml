@@ -2,13 +2,18 @@ name: Cross-Repo Python Integration
 
 on:
   push:
-    branches: [main]
+    branches: [main, staging]
     paths:
       - "src/shared/python/**"
+      - "src/python/**"
+      - "manifests/**"
       - ".github/workflows/cross-repo-python-integration.yml"
   pull_request:
+    branches: [staging, main]
     paths:
       - "src/shared/python/**"
+      - "src/python/**"
+      - "manifests/**"
       - ".github/workflows/cross-repo-python-integration.yml"
   schedule:
     - cron: "0 7 * * 1"
@@ -120,10 +125,18 @@ jobs:
 
       - name: Summary
         if: always() && steps.checkout_downstream.outcome == 'success' && steps.suite.outputs.available == 'true'
+        working-directory: ${{ matrix.downstream.path }}
         run: |
-          echo "## Cross-Repo Python Integration" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Downstream: ${{ matrix.downstream.repo }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Test suite: tests/shared_contracts/" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Cross-Repo Python Integration: ${{ matrix.downstream.repo }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Downstream consumer: ${{ matrix.downstream.repo }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Contract suite: \`tests/shared_contracts/\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          if [ -d tests/shared_contracts ]; then
+            echo "### Contract categories tested:" >> "$GITHUB_STEP_SUMMARY"
+            find tests/shared_contracts -name "test_*.py" -o -name "*_test.py" 2>/dev/null | sort | while read -r f; do
+              echo "- \`$f\`" >> "$GITHUB_STEP_SUMMARY"
+            done
+          fi
 
       - name: Summary (suite missing)
         if: steps.checkout_downstream.outcome == 'success' && steps.suite.outputs.available != 'true'
