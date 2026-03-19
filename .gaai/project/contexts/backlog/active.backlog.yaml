@@ -225,11 +225,12 @@ items:
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/thermal_profile_predictor"
     priority: medium
     status: done
-    started_at: "2026-03-19T21:25:11Z"
-    completed_at: "2026-03-19T21:34:58Z"
+    started_at: "2026-03-19T14:25:11-07:00"
+    completed_at: "2026-03-19T14:35:29-07:00"
     pr_url: "https://github.com/D-sorganization/Tools_Private/pull/15"
     pr_number: 15
     pr_status: "open"
+    cost_usd: 2.2908
     github_issue: 1490
     artefact: .gaai/project/contexts/artefacts/stories/GH1490.story.md
     dependencies: []
