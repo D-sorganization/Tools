@@ -10,6 +10,7 @@ import subprocess
 import sys
 import webbrowser
 from collections.abc import Callable
+from typing import Any
 
 import matplotlib
 import numpy as np
@@ -668,13 +669,13 @@ class SensitivityPlotWidget(QWidget):
 
         S2, PROD = np.meshgrid(s2_range, prod_range, indexing="ij")
 
-        ax = self.canvas.fig.add_subplot(111, projection="3d")
-        surf = ax.plot_surface(  # type: ignore[attr-defined]
+        ax: Any = self.canvas.fig.add_subplot(111, projection="3d")
+        surf = ax.plot_surface(
             S2 * 100, PROD * 100, sensitivity["h2_recovery"], cmap="viridis", alpha=0.8
         )
         ax.set_xlabel("S2 Tail Recycle (%)")
         ax.set_ylabel("Product Recycle (%)")
-        ax.set_zlabel("H2 Recovery (%)")  # type: ignore[attr-defined]
+        ax.set_zlabel("H2 Recovery (%)")
         ax.set_title("H2 Recovery Surface")
         self.canvas.fig.colorbar(surf, ax=ax, shrink=0.5, label="H2 Recovery (%)")
 
