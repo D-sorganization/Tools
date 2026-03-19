@@ -369,3 +369,30 @@ items:
     artefact: .gaai/project/contexts/artefacts/stories/GH1466.story.md
     dependencies: []
     created_at: 2026-03-19
+
+  - id: GH1465
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/flare_calculator"
+    priority: medium
+    status: refined
+    github_issue: 1465
+    artefact: .gaai/project/contexts/artefacts/stories/GH1465.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1464
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/financial_calculator"
+    priority: medium
+    status: refined
+    github_issue: 1464
+    artefact: .gaai/project/contexts/artefacts/stories/GH1464.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1463
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/electrode_advisor"
+    priority: medium
+    status: refined
+    github_issue: 1463
+    artefact: .gaai/project/contexts/artefacts/stories/GH1463.story.md
+    dependencies: []
+    created_at: 2026-03-19
