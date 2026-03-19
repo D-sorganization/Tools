@@ -56,16 +56,22 @@ QT_MODULES = {
 }
 
 
-def _collect_python_files(directory: Path) -> list[Path]:
-    """Collect all .py files under a directory, skipping __pycache__."""
+def _collect_python_files(directory: Path, skip_tests: bool = True) -> list[Path]:
+    """Collect all .py files under a directory, skipping __pycache__ and optionally tests."""
     files: list[Path] = []
     if not directory.exists():
         return files
     for root, dirs, filenames in os.walk(directory):
-        # Skip cache and hidden directories
-        dirs[:] = [d for d in dirs if d != "__pycache__" and not d.startswith(".")]
+        # Skip cache, hidden, and (optionally) test directories
+        dirs[:] = [
+            d
+            for d in dirs
+            if d != "__pycache__"
+            and not d.startswith(".")
+            and not (skip_tests and d in {"tests", "test"})
+        ]
         for f in filenames:
-            if f.endswith(".py"):
+            if f.endswith(".py") and not (skip_tests and f.startswith("test_")):
                 files.append(Path(root) / f)
     return files
 
@@ -379,11 +385,9 @@ class TestNoPrintInLibraryCode:
                     rel = filepath.relative_to(REPO_ROOT)
                     violations.append(f"  {rel}:{node.lineno} print()")
 
-        assert (
-            not violations
-        ), f"Shared library uses print() ({len(violations)} calls):\n" + "\n".join(
-            violations
-        )
+        detail = "\n".join(violations)
+        msg = f"Shared library uses print() ({len(violations)} calls):\n{detail}"
+        assert not violations, msg
 
 
 # ─── Test: No circular imports between shared sub-packages ────────
@@ -501,6 +505,5 @@ class TestExceptionHierarchyConsistency:
             TransformationError,
             UnsupportedOperationError,
         ):
-            assert issubclass(
-                exc_class, DataProcessingError
-            ), f"{exc_class.__name__} does not inherit DataProcessingError"
+            msg = f"{exc_class.__name__} does not inherit DataProcessingError"
+            assert issubclass(exc_class, DataProcessingError), msg

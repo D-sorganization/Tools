@@ -17,9 +17,10 @@ from __future__ import annotations
 import os
 from typing import Any
 
-from contracts import require
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from .contracts import require
 
 # Default local-development origins used when CORS_ORIGINS env var is unset.
 DEFAULT_ORIGINS: list[str] = [

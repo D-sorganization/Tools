@@ -326,12 +326,11 @@ jobs:
           echo "Running code quality checks..."
 
           # Install linting tools
-          pip install ruff black isort
+          pip install ruff
 
           # Run formatters (auto-fix)
           echo "Running formatters..."
-          black . || true
-          isort --profile black . || true
+          ruff format . || true
           ruff check . --fix || true
 
           # Commit formatting changes if any

@@ -41,7 +41,7 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt || true
-          pip install ruff black mypy || true
+          pip install ruff mypy || true
           npm install -g @google/jules
 
       - name: Gather Priority Issues
@@ -124,7 +124,7 @@ jobs:
 
           1. Identify TOP $MAX_ISSUES priority items
           2. ACTUALLY FIX THEM - make code changes
-          3. Run: ruff check . --fix && black .
+          3. Run: ruff check . --fix && ruff format .
           4. Document in docs/assessments/issues/resolved/
 
           Include "Fixes #NUM" for issues you completely resolve.
@@ -193,7 +193,7 @@ jobs:
         continue-on-error: true
         run: |
           ruff check . --fix || true
-          black . || true
+          ruff format . || true
 
       - name: Commit and Create/Update PR
         env:

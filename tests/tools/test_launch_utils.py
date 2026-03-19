@@ -131,7 +131,7 @@ def test_launch_matlab_tool_not_found_opens_file(mock_popen, tmp_path):
     mock_popen.side_effect = FileNotFoundError("matlab not found")
     logs: list[str] = []
     # Should not raise — it catches FileNotFoundError and logs warning
-    with patch("os.startfile"):
+    with patch("os.startfile", create=True):
         launch_matlab_tool(f, "Script", log_func=logs.append)
     assert any("not found" in m.lower() or "editor" in m.lower() for m in logs)
 
@@ -151,7 +151,7 @@ def test_launch_octave_tool_not_found_opens_file(mock_popen, tmp_path):
     f.write_text("disp('hello')")
     mock_popen.side_effect = FileNotFoundError("octave not found")
     logs: list[str] = []
-    with patch("os.startfile"):
+    with patch("os.startfile", create=True):
         launch_octave_tool(f, "Script", log_func=logs.append)
     assert any("not found" in m.lower() or "editor" in m.lower() for m in logs)
 

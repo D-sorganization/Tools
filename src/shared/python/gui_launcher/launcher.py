@@ -411,7 +411,7 @@ def launch_pyqt6_app(config: LaunchConfig) -> int:
             logger.warning("Theme system not available, launching without theme")
 
         window.show()
-        return app.exec()
+        return int(app.exec())
 
     except ImportError as e:
         logger.error("Failed to import GUI components: %s", e)

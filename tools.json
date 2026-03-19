@@ -119,6 +119,12 @@
             "desc": "Calculate and validate inertia tensors for rigid bodies"
         },
         {
+            "name": "Parametric URDF Builder",
+            "path": "src/urdf_builder_gui/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Generate parametric URDF models for robotics applications"
+        },
+        {
             "name": "Rotation Converter (PyQt6)",
             "path": "src/rotation_converter/launch_pyqt6.py",
             "type": "python",
