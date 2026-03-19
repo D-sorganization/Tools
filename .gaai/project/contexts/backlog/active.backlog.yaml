@@ -404,7 +404,8 @@ items:
   - id: GH1478
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/pendulum_simulator"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-19T22:44:36Z"
     github_issue: 1478
     artefact: .gaai/project/contexts/artefacts/stories/GH1478.story.md
     dependencies: []
