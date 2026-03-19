@@ -207,6 +207,31 @@ jobs:
             pytest "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
           fi
 
+      - name: Provider-Contract Suite (Exported Packages)
+        # Always runs — unconditional, not gated on changed files.
+        # Enforces that breaking imports or minimal-runtime regressions in core
+        # exported packages (upstream_drift_tools, signal_toolkit, model_generation,
+        # theme) fail CI. Coverage is reported for the three non-GUI packages;
+        # theme tests run for import verification (PyQt6 present via requirements.txt).
+        # Resolves: https://github.com/D-sorganization/Tools/issues/1547
+        run: |
+          pytest \
+            tests/shared/python/upstream_drift_tools/ \
+            tests/shared/python/signal_toolkit/ \
+            tests/shared/python/model_generation/ \
+            tests/shared/python/theme/ \
+            -m "not live_simulation" \
+            --import-mode=importlib \
+            --cov=src/shared/python/upstream_drift_tools \
+            --cov=src/shared/python/signal_toolkit \
+            --cov=src/shared/python/model_generation \
+            --cov-report=term \
+            --cov-fail-under=10
+
+          echo "## Provider-Contract Suite (Python ${{ matrix.python-version }})" >> $GITHUB_STEP_SUMMARY
+          echo "Packages verified: upstream_drift_tools, signal_toolkit, model_generation, theme" >> $GITHUB_STEP_SUMMARY
+          echo "Coverage gate: ≥10% for upstream_drift_tools + signal_toolkit + model_generation" >> $GITHUB_STEP_SUMMARY
+
       - name: Coverage Policy Gate
         run: python3 scripts/check_coverage_policy.py --coverage-file coverage.xml --policy-file config/coverage_policy.json --baseline-file config/coverage_baseline.json --output-json coverage_trend_${{ matrix.python-version }}.json
 
