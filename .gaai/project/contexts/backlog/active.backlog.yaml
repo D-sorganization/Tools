@@ -195,11 +195,12 @@ items:
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/trc_vessel_designer"
     priority: medium
     status: done
-    started_at: "2026-03-19T21:17:37Z"
-    completed_at: "2026-03-19T21:24:02Z"
+    started_at: "2026-03-19T14:17:37-07:00"
+    completed_at: "2026-03-19T14:24:02-07:00"
     pr_url: "https://github.com/D-sorganization/Tools_Private/pull/14"
     pr_number: 14
     pr_status: "open"
+    cost_usd: 1.4862
     github_issue: 1492
     artefact: .gaai/project/contexts/artefacts/stories/GH1492.story.md
     dependencies: []
