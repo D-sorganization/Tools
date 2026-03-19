@@ -35,6 +35,15 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+# PyQt6 enum aliases — eliminate 3-level deep attribute chains (LoD compliance)
+_SCROLL_BAR_ALWAYS_OFF = Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+_ALIGN_CENTER = Qt.AlignmentFlag.AlignCenter
+_HORIZONTAL = Qt.Orientation.Horizontal
+_POLICY_EXPANDING = QSizePolicy.Policy.Expanding
+_POLICY_FIXED = QSizePolicy.Policy.Fixed
+_RESIZE_MODE_STRETCH = QHeaderView.ResizeMode.Stretch
+_RESIZE_MODE_RESIZE_TO_CONTENTS = QHeaderView.ResizeMode.ResizeToContents
+
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {
     "rosewater": "#f5e0dc",
@@ -323,7 +332,7 @@ class HumanoidBuilderWindow(QMainWindow):
         # Central widget with scroll area
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
-        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll_area.setHorizontalScrollBarPolicy(_SCROLL_BAR_ALWAYS_OFF)
         self.setCentralWidget(scroll_area)
 
         central_widget = QWidget()
@@ -339,7 +348,7 @@ class HumanoidBuilderWindow(QMainWindow):
         title_font.setPointSize(18)
         title_font.setBold(True)
         title_label.setFont(title_font)
-        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title_label.setAlignment(_ALIGN_CENTER)
         title_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['blue']};")
         main_layout.addWidget(title_label)
 
@@ -380,9 +389,7 @@ class HumanoidBuilderWindow(QMainWindow):
         self.height_spin.setDecimals(2)
         self.height_spin.setValue(1.75)
         self.height_spin.setSingleStep(0.01)
-        self.height_spin.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
-        )
+        self.height_spin.setSizePolicy(_POLICY_EXPANDING, _POLICY_FIXED)
         primary_layout.addWidget(self.height_spin, 0, 1)
 
         # Mass
@@ -419,7 +426,7 @@ class HumanoidBuilderWindow(QMainWindow):
 
         # Muscularity
         factors_layout.addWidget(QLabel("Muscularity:"), 0, 0)
-        self.muscularity_slider = QSlider(Qt.Orientation.Horizontal)
+        self.muscularity_slider = QSlider(_HORIZONTAL)
         self.muscularity_slider.setRange(0, 100)
         self.muscularity_slider.setValue(50)
         factors_layout.addWidget(self.muscularity_slider, 0, 1)
@@ -432,7 +439,7 @@ class HumanoidBuilderWindow(QMainWindow):
 
         # Body fat
         factors_layout.addWidget(QLabel("Body Fat:"), 1, 0)
-        self.bodyfat_slider = QSlider(Qt.Orientation.Horizontal)
+        self.bodyfat_slider = QSlider(_HORIZONTAL)
         self.bodyfat_slider.setRange(0, 100)
         self.bodyfat_slider.setValue(20)
         factors_layout.addWidget(self.bodyfat_slider, 1, 1)
@@ -498,7 +505,7 @@ class HumanoidBuilderWindow(QMainWindow):
         for row, (label_text, key) in enumerate(proportions):
             props_layout.addWidget(QLabel(f"{label_text}:"), row, 0)
 
-            slider = QSlider(Qt.Orientation.Horizontal)
+            slider = QSlider(_HORIZONTAL)
             slider.setRange(50, 150)  # 0.5 to 1.5
             slider.setValue(100)  # 1.0
             props_layout.addWidget(slider, row, 1)
@@ -563,9 +570,9 @@ class HumanoidBuilderWindow(QMainWindow):
         )
         header = self.segments_table.horizontalHeader()
         if header:
-            header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+            header.setSectionResizeMode(0, _RESIZE_MODE_STRETCH)
             for i in range(1, 5):
-                header.setSectionResizeMode(i, QHeaderView.ResizeMode.ResizeToContents)
+                header.setSectionResizeMode(i, _RESIZE_MODE_RESIZE_TO_CONTENTS)
         self.segments_table.setMinimumHeight(300)
 
         segments_layout.addWidget(self.segments_table)
