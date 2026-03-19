@@ -89,7 +89,18 @@ class PressureDropCalculatorWidget(QWidget):
     }
 
     def __init__(self, parent: QWidget | None = None) -> None:
-        """Initialize the Pressure Drop Calculator widget."""
+        """Initialize the Pressure Drop Calculator widget.
+
+        Args:
+            parent: Optional parent widget. Must be a QWidget or None.
+
+        Raises:
+            TypeError: If parent is not a QWidget or None.
+        """
+        if parent is not None and not isinstance(parent, QWidget):
+            raise TypeError(
+                f"parent must be a QWidget or None, got {type(parent).__name__}"
+            )
         super().__init__(parent)
         self.results: dict[str, Any] | None = None
         self._init_ui()
@@ -101,7 +112,8 @@ class PressureDropCalculatorWidget(QWidget):
         layout = QHBoxLayout(self)
         layout.setContentsMargins(10, 10, 10, 10)
 
-        splitter = QSplitter(Qt.Orientation.Horizontal)
+        orientation = Qt.Orientation.Horizontal
+        splitter = QSplitter(orientation)
         splitter.addWidget(self._create_input_panel())
         splitter.addWidget(self._create_results_panel())
         splitter.setSizes([350, 650])
@@ -423,7 +435,8 @@ class PressureDropCalculatorWidget(QWidget):
         ax.tick_params(colors="#cdd6f4")
         ax.grid(True, alpha=0.3, color="#585b70")
 
-        for spine in ax.spines.values():
+        spines = ax.spines
+        for spine in spines.values():
             spine.set_color("#585b70")
 
         self.figure.tight_layout()

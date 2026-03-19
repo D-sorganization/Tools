@@ -119,6 +119,84 @@ class TestPressureDropGUI:
             pytest.skip(f"Qt not available: {e}")
 
 
+class TestPressureDropGUIDbCLoD:
+    """Tests for DbC and LoD fixes in main_window.py (GH1480)."""
+
+    def test_init_dbc_rejects_invalid_parent_type(self) -> None:
+        """PressureDropCalculatorWidget.__init__ raises TypeError for non-None non-QWidget."""
+        from unittest.mock import patch
+
+        pytest.importorskip("PyQt6.QtWidgets")
+        from pressure_drop_calculator.python.pressure_drop_calculator.ui.pyqt6.main_window import (
+            PressureDropCalculatorWidget,
+        )
+
+        with (
+            patch.object(PressureDropCalculatorWidget, "_init_ui", return_value=None),
+            patch.object(
+                PressureDropCalculatorWidget, "_apply_styling", return_value=None
+            ),
+            patch.object(
+                PressureDropCalculatorWidget, "_connect_signals", return_value=None
+            ),
+            patch("PyQt6.QtWidgets.QWidget.__init__", return_value=None),
+        ):
+            with pytest.raises(TypeError, match="parent must be a QWidget or None"):
+                widget = PressureDropCalculatorWidget.__new__(
+                    PressureDropCalculatorWidget
+                )
+                PressureDropCalculatorWidget.__init__(widget, parent=42)  # type: ignore[arg-type]
+
+    def test_init_dbc_accepts_none_parent(self) -> None:
+        """PressureDropCalculatorWidget.__init__ accepts None as parent (default)."""
+        from unittest.mock import patch
+
+        pytest.importorskip("PyQt6.QtWidgets")
+        from pressure_drop_calculator.python.pressure_drop_calculator.ui.pyqt6.main_window import (
+            PressureDropCalculatorWidget,
+        )
+
+        with (
+            patch.object(PressureDropCalculatorWidget, "_init_ui", return_value=None),
+            patch.object(
+                PressureDropCalculatorWidget, "_apply_styling", return_value=None
+            ),
+            patch.object(
+                PressureDropCalculatorWidget, "_connect_signals", return_value=None
+            ),
+            patch("PyQt6.QtWidgets.QWidget.__init__", return_value=None),
+        ):
+            widget = PressureDropCalculatorWidget.__new__(PressureDropCalculatorWidget)
+            PressureDropCalculatorWidget.__init__(widget, parent=None)
+            assert widget is not None
+
+    def test_lod_qt_orientation_fix_uses_local_variable(self) -> None:
+        """LoD fix: Qt.Orientation.Horizontal is extracted to a local variable in _init_ui."""
+        import inspect
+
+        pytest.importorskip("PyQt6.QtCore")
+        from pressure_drop_calculator.python.pressure_drop_calculator.ui.pyqt6.main_window import (
+            PressureDropCalculatorWidget,
+        )
+
+        source = inspect.getsource(PressureDropCalculatorWidget._init_ui)
+        assert "orientation = Qt.Orientation.Horizontal" in source
+        assert "QSplitter(orientation)" in source
+
+    def test_lod_spines_fix_uses_local_variable(self) -> None:
+        """LoD fix: ax.spines is extracted to local variable before calling .values()."""
+        import inspect
+
+        pytest.importorskip("PyQt6.QtWidgets")
+        from pressure_drop_calculator.python.pressure_drop_calculator.ui.pyqt6.main_window import (
+            PressureDropCalculatorWidget,
+        )
+
+        source = inspect.getsource(PressureDropCalculatorWidget._update_chart)
+        assert "spines = ax.spines" in source
+        assert "for spine in spines.values()" in source
+
+
 class TestGUIRegistration:
     """Test suite for GUI registration."""
 
