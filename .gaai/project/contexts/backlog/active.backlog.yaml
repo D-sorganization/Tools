@@ -48,7 +48,8 @@ items:
   - id: GH1567
     title: "PLAN: Create Tools_Private repository for proprietary components"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-19T20:41:08Z"
     github_issue: 1567
     artefact: .gaai/project/contexts/artefacts/stories/GH1567.story.md
     dependencies: []
