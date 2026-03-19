@@ -294,7 +294,8 @@ items:
   - id: GH1485
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/scrubber_calculator"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-19T22:04:00Z"
     github_issue: 1485
     artefact: .gaai/project/contexts/artefacts/stories/GH1485.story.md
     dependencies: []
