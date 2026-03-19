@@ -55,7 +55,8 @@ items:
   - id: GH1548
     title: "Audit and reduce skip-heavy shared-package tests"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-19T16:31:55Z"
     github_issue: 1548
     artefact: .gaai/project/contexts/artefacts/stories/GH1548.story.md
     dependencies: []
