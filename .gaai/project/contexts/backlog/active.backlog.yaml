@@ -10,8 +10,12 @@ items:
   - id: GH1601
     title: "type: 739 type: ignore comments + legacy directories excluded from mypy"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-19T16:18:35Z"
+    completed_at: "2026-03-19T16:39:32Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1613"
+    pr_number: 1613
+    pr_status: "open"
     github_issue: 1601
     artefact: .gaai/project/contexts/artefacts/stories/GH1601.story.md
     dependencies: []
