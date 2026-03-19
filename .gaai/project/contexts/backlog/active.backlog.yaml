@@ -48,8 +48,12 @@ items:
   - id: GH1567
     title: "PLAN: Create Tools_Private repository for proprietary components"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-19T20:41:08Z"
+    completed_at: "2026-03-19T20:46:34Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1618"
+    pr_number: 1618
+    pr_status: "open"
     github_issue: 1567
     artefact: .gaai/project/contexts/artefacts/stories/GH1567.story.md
     dependencies: []
