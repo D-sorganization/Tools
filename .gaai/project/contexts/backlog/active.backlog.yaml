@@ -10,7 +10,8 @@ items:
   - id: GH1601
     title: "type: 739 type: ignore comments + legacy directories excluded from mypy"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-19T16:18:35Z"
     github_issue: 1601
     artefact: .gaai/project/contexts/artefacts/stories/GH1601.story.md
     dependencies: []
