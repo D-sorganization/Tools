@@ -57,7 +57,8 @@ class ContractLevel(enum.Enum):
 
 def _resolve_contract_level() -> ContractLevel:
     """Determine the contract level from environment."""
-    env_val = os.environ.get("DBC_LEVEL", "").lower().strip()
+    raw = os.environ.get("DBC_LEVEL", "")
+    env_val = raw.lower().strip()
     if env_val in ("off", "warn", "enforce"):
         return ContractLevel(env_val)
     return ContractLevel.ENFORCE if __debug__ else ContractLevel.OFF
