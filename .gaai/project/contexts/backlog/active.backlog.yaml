@@ -20,7 +20,8 @@ items:
   - id: GH1587
     title: "[Testing] 630 source modules have no corresponding test file"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-19T16:18:39Z"
     github_issue: 1587
     artefact: .gaai/project/contexts/artefacts/stories/GH1587.story.md
     dependencies: []
