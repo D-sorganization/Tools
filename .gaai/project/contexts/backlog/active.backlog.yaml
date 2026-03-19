@@ -255,11 +255,12 @@ items:
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/steam_engine_calculator"
     priority: medium
     status: done
-    started_at: "2026-03-19T21:37:08Z"
-    completed_at: "2026-03-19T21:47:23Z"
+    started_at: "2026-03-19T14:37:08-07:00"
+    completed_at: "2026-03-19T14:47:33-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1627"
     pr_number: 1627
     pr_status: "open"
+    cost_usd: 2.9953
     github_issue: 1488
     artefact: .gaai/project/contexts/artefacts/stories/GH1488.story.md
     dependencies: []
