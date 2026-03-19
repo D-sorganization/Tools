@@ -309,7 +309,8 @@ items:
   - id: GH1484
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/scientific_modeling"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-19T22:05:08Z"
     github_issue: 1484
     artefact: .gaai/project/contexts/artefacts/stories/GH1484.story.md
     dependencies: []
