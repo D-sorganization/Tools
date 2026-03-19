@@ -65,9 +65,10 @@ def build_material_metrics_report(
 
 
 def _component_metric(component: Any) -> ComponentMaterialMetric:
-    volume_in3 = _mm3_to_in3(component.shape.volume)
+    shape = component.shape
+    volume_in3 = _mm3_to_in3(shape.volume)
     volume_ft3 = volume_in3 / CUBIC_INCHES_PER_CUBIC_FOOT
-    surface_area_ft2 = _mm2_to_ft2(component.shape.area)
+    surface_area_ft2 = _mm2_to_ft2(shape.area)
     return ComponentMaterialMetric(
         label=component.label,
         display_name=component.display_name,

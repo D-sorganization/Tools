@@ -7,6 +7,7 @@ all test suites in the repository.
 
 import logging
 import os
+import sys
 import tempfile
 from collections.abc import Generator
 from pathlib import Path
@@ -18,6 +19,16 @@ from unittest.mock import MagicMock
 # import so that both the main process and any xdist worker sub-processes
 # (which re-execute conftest.py on startup) get a stable non-GUI backend.
 # ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# vessel_drafter path — not managed by pytest.ini pythonpath due to worktree
+# import ordering; add here so collection succeeds.
+# ---------------------------------------------------------------------------
+_VESSEL_DRAFTER_PYTHON = (
+    Path(__file__).resolve().parent.parent / "src" / "vessel_drafter" / "python"
+)
+if _VESSEL_DRAFTER_PYTHON.exists() and str(_VESSEL_DRAFTER_PYTHON) not in sys.path:
+    sys.path.insert(0, str(_VESSEL_DRAFTER_PYTHON))
 os.environ.setdefault("MPLBACKEND", "Agg")
 os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
 os.environ.setdefault("OMP_NUM_THREADS", "1")
