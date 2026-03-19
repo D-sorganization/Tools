@@ -13,6 +13,21 @@ from plot_theme.integration import (
 from plot_theme.manager import PlotThemeManager
 
 
+def _matplotlib_available() -> bool:
+    """Return True if matplotlib is importable."""
+    try:
+        import matplotlib  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
+
+_skip_no_matplotlib = pytest.mark.skipif(
+    not _matplotlib_available(), reason="matplotlib not installed"
+)
+
+
 class TestApplyPlotTheme:
     """Tests for apply_plot_theme function."""
 
@@ -127,10 +142,7 @@ class TestPlotThemeMixin:
 class TestCreateThemedFigure:
     """Tests for create_themed_figure function."""
 
-    @pytest.mark.skipif(
-        not pytest.importorskip("matplotlib", reason="matplotlib not installed"),
-        reason="matplotlib not installed",
-    )
+    @_skip_no_matplotlib
     def test_creates_figure_and_axes(self) -> None:
         """Test that create_themed_figure returns figure and axes."""
         from plot_theme.integration import create_themed_figure
@@ -144,10 +156,7 @@ class TestCreateThemedFigure:
 class TestStyleAxis:
     """Tests for style_axis function."""
 
-    @pytest.mark.skipif(
-        not pytest.importorskip("matplotlib", reason="matplotlib not installed"),
-        reason="matplotlib not installed",
-    )
+    @_skip_no_matplotlib
     def test_styles_axis(self) -> None:
         """Test that style_axis applies theme to axes."""
         import matplotlib.pyplot as plt

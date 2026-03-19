@@ -1,8 +1,11 @@
-"""Tests for shared ChatDockWidget and helpers.
+"""Tests for shared ChatDockWidget widget classes.
 
-Session-file helpers and widget tests all require importing from
-chat_dock_widget, which imports PyQt6.QtWidgets at module level.
+Widget tests require PyQt6.QtWidgets (display server) and pytest-qt.
 The entire file is skipped on headless CI where libEGL is unavailable.
+
+Session-file helper tests (no display needed) have been moved to
+test_chat_session_helpers.py, which uses only PyQt6 (import-level)
+and the standard library.
 """
 
 from __future__ import annotations
@@ -13,41 +16,6 @@ import pytest
 # requires libEGL.so.1 on Linux. Skip the entire file when unavailable.
 pytest.importorskip("PyQt6.QtWidgets", reason="PyQt6.QtWidgets requires display server")
 pytest.importorskip("pytestqt", reason="pytest-qt required for widget tests")
-
-from chat.chat_dock_widget import (  # noqa: E402
-    _read_shared_session_id,
-    _session_file_path,
-    _write_shared_session_id,
-)
-
-
-class TestSessionFileHelpers:
-    """Tests for session file persistence functions."""
-
-    def test_session_file_path(self):
-        path = _session_file_path("my_app")
-        assert path.name == "active_chat_session.txt"
-        assert ".my_app" in str(path)
-
-    def test_write_and_read(self, tmp_path):
-        path = tmp_path / "session.txt"
-        _write_shared_session_id("test-session-123", path)
-        assert _read_shared_session_id(path) == "test-session-123"
-
-    def test_read_missing_file(self, tmp_path):
-        path = tmp_path / "nonexistent.txt"
-        assert _read_shared_session_id(path) is None
-
-    def test_read_empty_file(self, tmp_path):
-        path = tmp_path / "empty.txt"
-        path.write_text("", encoding="utf-8")
-        assert _read_shared_session_id(path) is None
-
-    def test_write_creates_parent_dirs(self, tmp_path):
-        path = tmp_path / "deep" / "nested" / "session.txt"
-        _write_shared_session_id("abc", path)
-        assert path.exists()
-        assert _read_shared_session_id(path) == "abc"
 
 
 class TestChatMessageBubble:
