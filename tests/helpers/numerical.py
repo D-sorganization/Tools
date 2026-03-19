@@ -91,6 +91,11 @@ def assert_monotonic(
 ) -> None:
     """Assert a sequence is monotonically increasing or decreasing.
 
+    Preconditions:
+        values must be a list.
+        increasing must be a bool.
+        strict must be a bool.
+
     Args:
         values: Sequence of values to check.
         increasing: True for non-decreasing, False for non-increasing.
@@ -98,8 +103,15 @@ def assert_monotonic(
         label: Name for diagnostics.
 
     Raises:
+        TypeError: If arguments have wrong types.
         AssertionError: If monotonicity is violated.
     """
+    if not isinstance(values, list):
+        raise TypeError(f"values must be a list, got {type(values).__name__}")
+    if not isinstance(increasing, bool):
+        raise TypeError(f"increasing must be a bool, got {type(increasing).__name__}")
+    if not isinstance(strict, bool):
+        raise TypeError(f"strict must be a bool, got {type(strict).__name__}")
     if len(values) < 2:
         return
     for i in range(1, len(values)):
