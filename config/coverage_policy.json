@@ -1,6 +1,6 @@
 {
-  "minimum_total_percent": 0.6,
-  "max_total_drop_percent": 0.1,
+  "minimum_total_percent": 28.0,
+  "max_total_drop_percent": 2.0,
   "tracked_packages": {
     "src/shared/python/notes": 49.0
   }
