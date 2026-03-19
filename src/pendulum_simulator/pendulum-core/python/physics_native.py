@@ -56,7 +56,32 @@ class DoublePendulumParams:
             friction2: Friction coefficient for second joint
             m_clubhead: Clubhead point mass at the tip (kg)
         """
-        assert m1 is not None, "m1 must be provided"
+        if not isinstance(m1, (int, float)):
+            raise TypeError(f"m1 must be a number, got {type(m1).__name__}")
+        if not isinstance(m2, (int, float)):
+            raise TypeError(f"m2 must be a number, got {type(m2).__name__}")
+        if not isinstance(l1, (int, float)):
+            raise TypeError(f"l1 must be a number, got {type(l1).__name__}")
+        if not isinstance(l2, (int, float)):
+            raise TypeError(f"l2 must be a number, got {type(l2).__name__}")
+        if not isinstance(g, (int, float)):
+            raise TypeError(f"g must be a number, got {type(g).__name__}")
+        if m1 <= 0:
+            raise ValueError(f"m1 must be positive, got {m1}")
+        if m2 <= 0:
+            raise ValueError(f"m2 must be positive, got {m2}")
+        if l1 <= 0:
+            raise ValueError(f"l1 must be positive, got {l1}")
+        if l2 <= 0:
+            raise ValueError(f"l2 must be positive, got {l2}")
+        if g <= 0:
+            raise ValueError(f"g must be positive, got {g}")
+        if friction1 < 0:
+            raise ValueError(f"friction1 must be non-negative, got {friction1}")
+        if friction2 < 0:
+            raise ValueError(f"friction2 must be non-negative, got {friction2}")
+        if m_clubhead < 0:
+            raise ValueError(f"m_clubhead must be non-negative, got {m_clubhead}")
         self.m1 = m1
         self.m2 = m2
         self.l1 = l1
@@ -94,7 +119,7 @@ class DoublePendulum:
         g: float = 9.81,
         m_clubhead: float = 0.0,
     ):
-        assert m1 is not None, "m1 must be provided"
+        # Validation delegated to DoublePendulumParams (raises TypeError/ValueError on bad input)
         self.params = DoublePendulumParams(
             m1=m1, m2=m2, l1=l1, l2=l2, g=g, m_clubhead=m_clubhead
         )
@@ -102,12 +127,13 @@ class DoublePendulum:
 
     def mass_matrix(self, q: np.ndarray) -> np.ndarray:
         """Compute the 2x2 mass matrix M(q)."""
-        assert q is not None, "q must be provided"
+        if not isinstance(q, np.ndarray):
+            raise TypeError(f"q must be a numpy ndarray, got {type(q).__name__}")
+        if q.shape != (2,):
+            raise ValueError(f"q must have shape (2,), got {q.shape}")
         if self.use_native:
             try:
-                result = pendulum_core.py_double_mass_matrix(
-                    q.tolist(), self.params.to_rust()
-                )
+                result = pendulum_core.py_double_mass_matrix(q.tolist(), self.params.to_rust())
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning(
@@ -128,7 +154,10 @@ class DoublePendulum:
 
     def gravity_vector(self, q: np.ndarray) -> np.ndarray:
         """Compute the gravity vector G(q)."""
-        assert q is not None, "q must be provided"
+        if not isinstance(q, np.ndarray):
+            raise TypeError(f"q must be a numpy ndarray, got {type(q).__name__}")
+        if q.shape != (2,):
+            raise ValueError(f"q must have shape (2,), got {q.shape}")
         if self.use_native:
             try:
                 result = pendulum_core.py_double_gravity_vector(
@@ -153,7 +182,14 @@ class DoublePendulum:
 
     def coriolis(self, q: np.ndarray, qdot: np.ndarray) -> np.ndarray:
         """Compute the Coriolis vector C(q, qdot)."""
-        assert q is not None, "q must be provided"
+        if not isinstance(q, np.ndarray):
+            raise TypeError(f"q must be a numpy ndarray, got {type(q).__name__}")
+        if q.shape != (2,):
+            raise ValueError(f"q must have shape (2,), got {q.shape}")
+        if not isinstance(qdot, np.ndarray):
+            raise TypeError(f"qdot must be a numpy ndarray, got {type(qdot).__name__}")
+        if qdot.shape != (2,):
+            raise ValueError(f"qdot must have shape (2,), got {qdot.shape}")
         if self.use_native:
             try:
                 result = pendulum_core.py_double_coriolis(
@@ -176,7 +212,10 @@ class DoublePendulum:
 
     def forward_kinematics(self, q: np.ndarray) -> Dict[str, float]:
         """Compute forward kinematics."""
-        assert q is not None, "q must be provided"
+        if not isinstance(q, np.ndarray):
+            raise TypeError(f"q must be a numpy ndarray, got {type(q).__name__}")
+        if q.shape != (2,):
+            raise ValueError(f"q must have shape (2,), got {q.shape}")
         if self.use_native:
             try:
                 return pendulum_core.py_double_forward_kinematics(  # type: ignore[no-any-return]
@@ -230,7 +269,43 @@ class GolferParams:
         g: float = 9.81,
     ):
         """Initialize golfer model parameters."""
-        assert l_hub is not None, "l_hub must be provided"
+        _lengths = {
+            "l_hub": l_hub,
+            "l_r_upper": l_r_upper,
+            "l_r_fore": l_r_fore,
+            "l_l_upper": l_l_upper,
+            "l_l_fore": l_l_fore,
+            "l_club": l_club,
+        }
+        _masses = {
+            "m_hub": m_hub,
+            "m_r_upper": m_r_upper,
+            "m_r_fore": m_r_fore,
+            "m_l_upper": m_l_upper,
+            "m_l_fore": m_l_fore,
+            "m_club": m_club,
+        }
+        for name, val in _lengths.items():
+            if not isinstance(val, (int, float)):
+                raise TypeError(f"{name} must be a number, got {type(val).__name__}")
+            if val <= 0:
+                raise ValueError(f"{name} must be positive, got {val}")
+        for name, val in _masses.items():
+            if not isinstance(val, (int, float)):
+                raise TypeError(f"{name} must be a number, got {type(val).__name__}")
+            if val <= 0:
+                raise ValueError(f"{name} must be positive, got {val}")
+        for name, val in (("d_rs", d_rs), ("d_ls", d_ls)):
+            if not isinstance(val, (int, float)):
+                raise TypeError(f"{name} must be a number, got {type(val).__name__}")
+        if not isinstance(m_clubhead, (int, float)):
+            raise TypeError(f"m_clubhead must be a number, got {type(m_clubhead).__name__}")
+        if m_clubhead < 0:
+            raise ValueError(f"m_clubhead must be non-negative, got {m_clubhead}")
+        if not isinstance(g, (int, float)):
+            raise TypeError(f"g must be a number, got {type(g).__name__}")
+        if g <= 0:
+            raise ValueError(f"g must be positive, got {g}")
         self.l_hub = l_hub
         self.m_hub = m_hub
         self.d_rs = d_rs
@@ -300,7 +375,7 @@ class Golfer:
         grip_left: float,
         g: float = 9.81,
     ):
-        assert l_hub is not None, "l_hub must be provided"
+        # Validation delegated to GolferParams (raises TypeError/ValueError on bad input)
         self.params = GolferParams(
             l_hub=l_hub,
             m_hub=m_hub,
@@ -325,12 +400,13 @@ class Golfer:
 
     def mass_matrix(self, q: np.ndarray) -> np.ndarray:
         """Compute the 8x8 mass matrix M(q)."""
-        assert q is not None, "q must be provided"
+        if not isinstance(q, np.ndarray):
+            raise TypeError(f"q must be a numpy ndarray, got {type(q).__name__}")
+        if q.shape != (8,):
+            raise ValueError(f"q must have shape (8,), got {q.shape}")
         if self.use_native:
             try:
-                result = pendulum_core.py_golfer_mass_matrix(
-                    q.tolist(), self.params.to_rust()
-                )
+                result = pendulum_core.py_golfer_mass_matrix(q.tolist(), self.params.to_rust())
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning(
@@ -340,13 +416,14 @@ class Golfer:
                 )
 
         # NumPy fallback would be implemented by porting the Rust analytical code
-        raise NotImplementedError(
-            "NumPy fallback for golfer mass matrix not yet implemented"
-        )
+        raise NotImplementedError("NumPy fallback for golfer mass matrix not yet implemented")
 
     def gravity_vector(self, q: np.ndarray) -> np.ndarray:
         """Compute the gravity vector G(q)."""
-        assert q is not None, "q must be provided"
+        if not isinstance(q, np.ndarray):
+            raise TypeError(f"q must be a numpy ndarray, got {type(q).__name__}")
+        if q.shape != (8,):
+            raise ValueError(f"q must have shape (8,), got {q.shape}")
         if self.use_native:
             try:
                 result = pendulum_core.py_golfer_gravity_vector(
@@ -354,17 +431,16 @@ class Golfer:
                 )
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
-                logger.warning(
-                    "Rust golfer gravity_vector call failed (%s)", type(e).__name__
-                )
+                logger.warning("Rust golfer gravity_vector call failed (%s)", type(e).__name__)
 
-        raise NotImplementedError(
-            "NumPy fallback for golfer gravity not yet implemented"
-        )
+        raise NotImplementedError("NumPy fallback for golfer gravity not yet implemented")
 
     def forward_kinematics(self, q: np.ndarray) -> Dict[str, Tuple[float, float]]:
         """Compute forward kinematics."""
-        assert q is not None, "q must be provided"
+        if not isinstance(q, np.ndarray):
+            raise TypeError(f"q must be a numpy ndarray, got {type(q).__name__}")
+        if q.shape != (8,):
+            raise ValueError(f"q must have shape (8,), got {q.shape}")
         if self.use_native:
             try:
                 result = pendulum_core.py_golfer_forward_kinematics(
@@ -406,9 +482,7 @@ class Golfer:
                     "Rust golfer constraint_jacobian call failed (%s)", type(e).__name__
                 )
 
-        raise NotImplementedError(
-            "NumPy fallback for constraint Jacobian not yet implemented"
-        )
+        raise NotImplementedError("NumPy fallback for constraint Jacobian not yet implemented")
 
 
 def get_native_info() -> Dict[str, object]:

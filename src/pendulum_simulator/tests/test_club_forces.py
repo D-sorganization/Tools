@@ -374,7 +374,77 @@ class TestDELTAClubDecomposition:
         # So F = m*0 - m*(0, -g) = (0, m*g)
         # Net force should be +(m_rh + m_lh)*g in the y direction
         net_fy = result["net_force"][1]
-        expected_fy = (
-            default_params.m_r_fore + default_params.m_l_fore
-        ) * default_params.g
+        expected_fy = (default_params.m_r_fore + default_params.m_l_fore) * default_params.g
         assert net_fy == pytest.approx(expected_fy, rel=0.01)
+
+
+# ---------------------------------------------------------------------------
+# DbC precondition tests for decomposition functions (GH1478)
+# ---------------------------------------------------------------------------
+
+
+class TestDecompositionDbc:
+    """Validate TypeError/ValueError preconditions on decomposition functions."""
+
+    def test_overall_state_wrong_type(self, default_params):
+        from double_pendulum_golf.club_forces import overall_club_decomposition
+
+        with pytest.raises(TypeError, match="state must be a numpy ndarray"):
+            overall_club_decomposition(
+                state=[0.0] * 16,
+                t=0.0,
+                p=default_params,
+                torque_func=lambda t: (0.0,) * 7,
+            )
+
+    def test_overall_state_wrong_shape(self, default_params):
+        from double_pendulum_golf.club_forces import overall_club_decomposition
+
+        with pytest.raises(ValueError, match="state must have shape"):
+            overall_club_decomposition(
+                state=np.zeros(8),
+                t=0.0,
+                p=default_params,
+                torque_func=lambda t: (0.0,) * 7,
+            )
+
+    def test_overall_t_wrong_type(self, default_params):
+        from double_pendulum_golf.club_forces import overall_club_decomposition
+
+        with pytest.raises(TypeError, match="t must be a number"):
+            overall_club_decomposition(
+                state=np.zeros(16),
+                t="now",
+                p=default_params,
+                torque_func=lambda t: (0.0,) * 7,
+            )
+
+    def test_ztcf_state_wrong_type(self, default_params):
+        from double_pendulum_golf.club_forces import ztcf_club_decomposition
+
+        with pytest.raises(TypeError, match="state must be a numpy ndarray"):
+            ztcf_club_decomposition(state=list(range(16)), p=default_params)
+
+    def test_ztcf_state_wrong_shape(self, default_params):
+        from double_pendulum_golf.club_forces import ztcf_club_decomposition
+
+        with pytest.raises(ValueError, match="state must have shape"):
+            ztcf_club_decomposition(state=np.zeros(10), p=default_params)
+
+    def test_delta_state_wrong_type(self, default_params):
+        from double_pendulum_golf.club_forces import delta_club_decomposition
+
+        with pytest.raises(TypeError, match="state must be a numpy ndarray"):
+            delta_club_decomposition(state=list(range(16)), tau=np.zeros(8), p=default_params)
+
+    def test_delta_tau_wrong_type(self, default_params):
+        from double_pendulum_golf.club_forces import delta_club_decomposition
+
+        with pytest.raises(TypeError, match="tau must be a numpy ndarray"):
+            delta_club_decomposition(state=np.zeros(16), tau=[0.0] * 8, p=default_params)
+
+    def test_delta_tau_wrong_shape(self, default_params):
+        from double_pendulum_golf.club_forces import delta_club_decomposition
+
+        with pytest.raises(ValueError, match="tau must have shape"):
+            delta_club_decomposition(state=np.zeros(16), tau=np.zeros(4), p=default_params)
