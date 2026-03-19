@@ -178,16 +178,33 @@ jobs:
 
       - name: Run Tests with Coverage (Python ${{ matrix.python-version }})
         run: |
-          smoke_tests=(
+          # Core required test suite — always runs regardless of which files changed.
+          # Covers: utilities, shared-library contracts, architecture boundaries,
+          # rotation math, process calculator constants, and manifest generation.
+          # Expanded from 3-file smoke set to representative cross-module slice (issue #1577).
+          core_tests=(
+            # Utility + error handling (original smoke tests)
             "tests/test_path_helpers.py"
             "tests/test_error_handling.py"
+            # Notes storage (original smoke test)
             "tests/shared/python/notes/test_storage.py"
+            # Shared-library contracts and security primitives
+            "tests/shared/python/test_contracts.py"
+            "tests/shared/python/test_safe_eval.py"
+            # Architecture layer boundary enforcement
+            "tests/architecture/test_layer_boundaries.py"
+            # Core rotation math (shared library used across many tools)
+            "tests/rotation_converter/test_rotation_core.py"
+            # Process calculator constants (always fast, catches unit regressions)
+            "tests/shared/python/process_calculators/test_constants.py"
+            # Tools manifest integrity
+            "tests/scripts/test_generate_tools_json.py"
           )
           if [ -s changed_test_files.txt ]; then
             mapfile -t changed_test_files < changed_test_files.txt
-            pytest "${changed_test_files[@]}" "${smoke_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
+            pytest "${changed_test_files[@]}" "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
           else
-            pytest "${smoke_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
+            pytest "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
           fi
 
       - name: Coverage Policy Gate
