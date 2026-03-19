@@ -11,11 +11,12 @@ items:
     title: "type: 739 type: ignore comments + legacy directories excluded from mypy"
     priority: medium
     status: done
-    started_at: "2026-03-19T16:18:35Z"
-    completed_at: "2026-03-19T16:39:32Z"
+    started_at: "2026-03-19T09:18:35-07:00"
+    completed_at: "2026-03-19T09:40:09-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1613"
     pr_number: 1613
     pr_status: "open"
+    cost_usd: 3.5968
     github_issue: 1601
     artefact: .gaai/project/contexts/artefacts/stories/GH1601.story.md
     dependencies: []
