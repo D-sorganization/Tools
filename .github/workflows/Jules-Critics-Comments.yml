@@ -412,9 +412,7 @@ jobs:
 
             git commit -m "$MSG
 
-          Automated update by Jules Critics Comments Writer.
-
-          Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          Automated update by Jules Critics Comments Writer."
 
             git push origin "$BRANCH_NAME"
 

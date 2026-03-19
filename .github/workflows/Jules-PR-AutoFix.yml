@@ -277,9 +277,7 @@ jobs:
           Tools used:$CHANGES_MADE
 
           This commit was created by Jules PR AutoFix workflow.
-          CI verification loop will check if more fixes are needed.
-
-          Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          CI verification loop will check if more fixes are needed."
 
               # Push changes
               git push origin "$BRANCH"

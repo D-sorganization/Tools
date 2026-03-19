@@ -339,9 +339,7 @@ jobs:
             git config user.name "Jules Assessment Remediator"
             git config user.email "jules-bot@github-actions"
             git add .
-            git commit -m "style: apply automated formatting
-
-          Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+            git commit -m "style: apply automated formatting"
             git push origin "$BRANCH_NAME"
           fi
 

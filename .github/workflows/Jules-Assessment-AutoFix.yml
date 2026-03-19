@@ -328,9 +328,7 @@ jobs:
           Fixes applied:${FIX_SUMMARY:-"\n- Various improvements"}
 
           Assessment Score: ${{ needs.run-assessments.outputs.assessment_score }}/10
-          Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)
-
-          Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
           git push -u origin "$BRANCH_NAME"
 
