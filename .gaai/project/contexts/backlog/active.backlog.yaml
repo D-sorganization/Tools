@@ -339,7 +339,8 @@ items:
   - id: GH1482
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/python"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-19T22:19:08Z"
     github_issue: 1482
     artefact: .gaai/project/contexts/artefacts/stories/GH1482.story.md
     dependencies: []
