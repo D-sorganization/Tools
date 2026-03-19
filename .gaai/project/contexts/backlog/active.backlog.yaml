@@ -354,7 +354,8 @@ items:
   - id: GH1481
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/project_packer"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-19T22:25:27Z"
     github_issue: 1481
     artefact: .gaai/project/contexts/artefacts/stories/GH1481.story.md
     dependencies: []
