@@ -58,7 +58,8 @@ except ImportError:
         assert path is not None, "path must be provided"
         p = Path(path)
         if create_parents:
-            p.parent.mkdir(parents=True, exist_ok=True)
+            parent_dir = p.parent
+            parent_dir.mkdir(parents=True, exist_ok=True)
         p.write_text(content, encoding=encoding)
 
 

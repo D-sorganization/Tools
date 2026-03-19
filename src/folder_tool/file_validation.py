@@ -39,7 +39,8 @@ class FileValidationMixin:
         extensions = self.filter_extensions.get().strip()
         if extensions:
             ext_list = [ext.strip().lower() for ext in extensions.split(",")]
-            file_ext = Path(file_path).suffix.lower()
+            file_suffix = Path(file_path).suffix
+            file_ext = file_suffix.lower()
             if file_ext not in ext_list:
                 return False
 
@@ -169,7 +170,8 @@ class FileValidationMixin:
 
         # Organize by type
         if self.organize_by_type_var.get():
-            file_ext = Path(filename).suffix.lower()
+            filename_suffix = Path(filename).suffix
+            file_ext = filename_suffix.lower()
             type_mapping = {
                 ".jpg": "Images",
                 ".jpeg": "Images",
@@ -201,7 +203,8 @@ class FileValidationMixin:
         if self.organize_by_date_var.get():
             try:
                 mtime = os.path.getmtime(file_path)
-                date_folder = datetime.fromtimestamp(mtime).strftime("%Y/%m")
+                mtime_dt = datetime.fromtimestamp(mtime)
+                date_folder = mtime_dt.strftime("%Y/%m")
                 dest_path = Path(dest_path) / date_folder
             except OSError:
                 dest_path = Path(dest_path) / "Unknown_Date"
