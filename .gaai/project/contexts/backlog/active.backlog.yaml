@@ -370,11 +370,12 @@ items:
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/pressure_drop_calculator"
     priority: medium
     status: done
-    started_at: "2026-03-19T22:29:42Z"
-    completed_at: "2026-03-19T22:38:00Z"
+    started_at: "2026-03-19T15:29:42-07:00"
+    completed_at: "2026-03-19T15:38:00-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1633"
     pr_number: 1633
     pr_status: "open"
+    cost_usd: 1.8593
     github_issue: 1480
     artefact: .gaai/project/contexts/artefacts/stories/GH1480.story.md
     dependencies: []
