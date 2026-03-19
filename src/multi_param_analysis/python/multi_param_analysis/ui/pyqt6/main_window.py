@@ -264,7 +264,8 @@ class MultiParamAnalysisWindow(QMainWindow):
         # Run button
         run_btn = QPushButton("Run Analysis")
         run_btn.setObjectName("runBtn")
-        run_btn.clicked.connect(self._run_analysis)
+        run_btn_clicked = run_btn.clicked
+        run_btn_clicked.connect(self._run_analysis)
         main_layout.addWidget(run_btn)
 
         main_layout.addStretch()
