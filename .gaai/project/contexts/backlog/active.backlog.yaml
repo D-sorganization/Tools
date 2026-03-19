@@ -75,8 +75,12 @@ items:
   - id: GH1547
     title: "Enforce required shared Python provider-contract suite in CI"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-19T16:41:41Z"
+    completed_at: "2026-03-19T16:48:42Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1616"
+    pr_number: 1616
+    pr_status: "open"
     github_issue: 1547
     artefact: .gaai/project/contexts/artefacts/stories/GH1547.story.md
     dependencies: []
