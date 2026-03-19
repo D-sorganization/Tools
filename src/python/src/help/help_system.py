@@ -129,7 +129,8 @@ def _markdown_to_html(markdown_text: str) -> str:
 
 def _handle_code_block(line: str, s: _MarkdownState) -> bool:
     """Handle fenced code block start/end and code block content."""
-    assert line is not None, "line must be provided"
+    if not isinstance(line, str):
+        raise TypeError(f"line must be a str, got {type(line).__name__}")
     if line.strip().startswith("```"):
         if s.in_code_block:
             s.html_lines.append("</pre>")
@@ -150,7 +151,8 @@ def _handle_code_block(line: str, s: _MarkdownState) -> bool:
 
 def _handle_horizontal_rule(line: str, s: _MarkdownState) -> bool:
     """Handle --- and *** horizontal rules."""
-    assert line is not None, "line must be provided"
+    if not isinstance(line, str):
+        raise TypeError(f"line must be a str, got {type(line).__name__}")
     if line.strip() in ("---", "***"):
         s.close_list()
         s.html_lines.append("<hr>")
@@ -160,7 +162,8 @@ def _handle_horizontal_rule(line: str, s: _MarkdownState) -> bool:
 
 def _handle_table_line(line: str, s: _MarkdownState) -> bool:
     """Handle markdown table rows and separators."""
-    assert line is not None, "line must be provided"
+    if not isinstance(line, str):
+        raise TypeError(f"line must be a str, got {type(line).__name__}")
     if "|" in line and not line.strip().startswith("|--"):
         if "|--" in line or "| --" in line or "|:--" in line:
             s.table_has_header = True
@@ -202,7 +205,8 @@ _HEADER_MAP: list[tuple[str, str, str, str]] = [
 
 def _handle_header(line: str, s: _MarkdownState) -> bool:
     """Handle # through #### headers."""
-    assert line is not None, "line must be provided"
+    if not isinstance(line, str):
+        raise TypeError(f"line must be a str, got {type(line).__name__}")
     for prefix, tag, color, margin in _HEADER_MAP:
         if line.startswith(prefix):
             s.close_list()
@@ -216,7 +220,8 @@ def _handle_header(line: str, s: _MarkdownState) -> bool:
 
 def _handle_list_item(line: str, s: _MarkdownState) -> bool:
     """Handle unordered and ordered list items."""
-    assert line is not None, "line must be provided"
+    if not isinstance(line, str):
+        raise TypeError(f"line must be a str, got {type(line).__name__}")
     stripped = line.strip()
     if stripped.startswith("- ") or stripped.startswith("* "):
         if not s.in_list:
@@ -242,7 +247,8 @@ def _handle_list_item(line: str, s: _MarkdownState) -> bool:
 
 def _handle_paragraph(line: str, s: _MarkdownState) -> None:
     """Handle regular paragraphs and blank lines."""
-    assert line is not None, "line must be provided"
+    if not isinstance(line, str):
+        raise TypeError(f"line must be a str, got {type(line).__name__}")
     stripped = line.strip()
     if stripped:
         content = _process_inline_formatting(stripped)
@@ -309,7 +315,8 @@ class HelpDialog(QDialog):
             content: Markdown content to display
             topics: Optional dict mapping topic IDs to content for navigation
         """
-        assert title is not None, "title must be provided"
+        if not isinstance(title, str):
+            raise TypeError(f"title must be a str, got {type(title).__name__}")
         super().__init__(parent)
         self.setWindowTitle(f"Help - {title}")
         self.resize(900, 650)
@@ -923,7 +930,8 @@ def create_help_menu_actions(
     Returns:
         List of QAction objects for the help menu
     """
-    assert parent is not None, "parent must be provided"
+    if not isinstance(parent, QWidget):
+        raise TypeError(f"parent must be a QWidget, got {type(parent).__name__}")
     actions: list[QAction] = []
 
     # User Manual action
