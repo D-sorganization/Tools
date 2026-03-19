@@ -11,7 +11,6 @@ items:
     title: "type: 739 type: ignore comments + legacy directories excluded from mypy"
     priority: medium
     status: done
-    started_at: "2026-03-19T09:18:35-07:00"
     completed_at: "2026-03-19T09:40:09-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1613"
     pr_number: 1613
@@ -25,8 +24,7 @@ items:
   - id: GH1587
     title: "[Testing] 630 source modules have no corresponding test file"
     priority: medium
-    status: in_progress
-    started_at: "2026-03-19T16:18:39Z"
+    status: refined
     github_issue: 1587
     artefact: .gaai/project/contexts/artefacts/stories/GH1587.story.md
     dependencies: []
@@ -36,7 +34,6 @@ items:
     title: "CI: Validate Tools_Private end-to-end with first test PR"
     priority: medium
     status: done
-    started_at: "2026-03-19T09:22:03-07:00"
     completed_at: "2026-03-19T09:28:09-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1612"
     pr_number: 1612
@@ -50,8 +47,7 @@ items:
   - id: GH1567
     title: "PLAN: Create Tools_Private repository for proprietary components"
     priority: medium
-    status: in_progress
-    started_at: "2026-03-19T16:29:42Z"
+    status: refined
     github_issue: 1567
     artefact: .gaai/project/contexts/artefacts/stories/GH1567.story.md
     dependencies: []
@@ -61,7 +57,6 @@ items:
     title: "Audit and reduce skip-heavy shared-package tests"
     priority: medium
     status: done
-    started_at: "2026-03-19T09:31:55-07:00"
     completed_at: "2026-03-19T09:41:35-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1614"
     pr_number: 1614
@@ -76,7 +71,6 @@ items:
     title: "Enforce required shared Python provider-contract suite in CI"
     priority: medium
     status: done
-    started_at: "2026-03-19T09:41:41-07:00"
     completed_at: "2026-03-19T09:48:42-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1616"
     pr_number: 1616
@@ -91,7 +85,6 @@ items:
     title: "Add cross-repo Python consumer integration workflow for Gasification_Model and UpstreamDrift"
     priority: medium
     status: done
-    started_at: "2026-03-19T16:42:49Z"
     completed_at: "2026-03-19T16:49:19Z"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1617"
     pr_number: 1617
@@ -104,8 +97,7 @@ items:
   - id: GH1498
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in tests"
     priority: medium
-    status: in_progress
-    started_at: "2026-03-19T16:49:19Z"
+    status: refined
     github_issue: 1498
     artefact: .gaai/project/contexts/artefacts/stories/GH1498.story.md
     dependencies: []
