@@ -90,9 +90,12 @@ items:
   - id: GH1546
     title: "Add cross-repo Python consumer integration workflow for Gasification_Model and UpstreamDrift"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-19T16:42:49Z"
     completed_at: "2026-03-19T16:49:19Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1617"
+    pr_number: 1617
+    pr_status: "open"
     github_issue: 1546
     artefact: .gaai/project/contexts/artefacts/stories/GH1546.story.md
     dependencies: []
