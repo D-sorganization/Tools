@@ -8,8 +8,8 @@ from __future__ import annotations
 
 from typing import Any
 
-# Module-level constant — frozen via convention (no setter).
-_GUI_INFO: dict[str, Any] = {
+# Public constant expected by the fleet launcher discovery system.
+GUI_INFO: dict[str, Any] = {
     "name": "Parametric URDF Builder",
     "tool_name": "urdf_builder_gui",
     "description": "Generate parametric URDF models for robotics applications",
@@ -30,4 +30,4 @@ def get_gui_info() -> dict[str, Any]:
     Returns a shallow copy to prevent callers from mutating the
     canonical registration dictionary.
     """
-    return dict(_GUI_INFO)
+    return dict(GUI_INFO)

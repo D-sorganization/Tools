@@ -68,22 +68,22 @@ class GUIRegistry:
             icon: Optional path to icon file
             repository: Optional repository identifier
         """
-        assert tool_name is not None, "tool_name must be provided"
+        require(tool_name is not None, "tool_name must be provided")
         require(
-            isinstance(tool_name, str) and tool_name,
+            isinstance(tool_name, str) and bool(tool_name),
             "tool_name must be a non-empty string",
         )
         require(
-            isinstance(display_name, str) and display_name,
+            isinstance(display_name, str) and bool(display_name),
             "display_name must be a non-empty string",
         )
         require(isinstance(description, str), "description must be a string")
         require(
-            isinstance(gui_configs, dict) and gui_configs,
+            isinstance(gui_configs, dict) and bool(gui_configs),
             "gui_configs must be a non-empty dict",
         )
         require(
-            isinstance(category, str) and category,
+            isinstance(category, str) and bool(category),
             "category must be a non-empty string",
         )
         registration = GUIRegistration(
@@ -107,9 +107,9 @@ class GUIRegistry:
         Returns:
             True if the tool was found and removed
         """
-        assert tool_name is not None, "tool_name must be provided"
+        require(tool_name is not None, "tool_name must be provided")
         require(
-            isinstance(tool_name, str) and tool_name,
+            isinstance(tool_name, str) and bool(tool_name),
             "tool_name must be a non-empty string",
         )
         if tool_name in self._registrations:
@@ -128,7 +128,7 @@ class GUIRegistry:
         """
         assert tool_name is not None, "tool_name must be provided"
         require(
-            isinstance(tool_name, str) and tool_name,
+            isinstance(tool_name, str) and bool(tool_name),
             "tool_name must be a non-empty string",
         )
         return self._registrations.get(tool_name)
@@ -149,7 +149,7 @@ class GUIRegistry:
         """
         assert tool_name is not None, "tool_name must be provided"
         require(
-            isinstance(tool_name, str) and tool_name,
+            isinstance(tool_name, str) and bool(tool_name),
             "tool_name must be a non-empty string",
         )
         require(isinstance(gui_type, GUIType), "gui_type must be a GUIType enum member")

@@ -15,13 +15,14 @@ from __future__ import annotations
 import logging
 from enum import Enum
 
-from cors import add_cors_middleware
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from upstream_drift_tools.calculators.thermo.steam_engine import (
     SteamCalculationEngine,
     SteamProperties,
 )
+
+from shared.python.cors import add_cors_middleware
 
 logger = logging.getLogger(__name__)
 

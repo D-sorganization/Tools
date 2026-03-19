@@ -143,7 +143,7 @@ class DataProcessor:
         """Load from an existing DataFrame."""
         assert df is not None, "df must be provided"
         require(isinstance(df, pd.DataFrame), "df must be a pandas DataFrame")
-        require(isinstance(name, str) and name, "name must be a non-empty string")
+        require(isinstance(name, str) and bool(name), "name must be a non-empty string")
         self._df = df.copy()
         self._source_path = ""
         self._history = [
@@ -357,11 +357,11 @@ class DataProcessor:
         """
         assert new_column is not None, "new_column must be provided"
         require(
-            isinstance(new_column, str) and new_column,
+            isinstance(new_column, str) and bool(new_column),
             "new_column must be a non-empty string",
         )
         require(
-            isinstance(expression, str) and expression,
+            isinstance(expression, str) and bool(expression),
             "expression must be a non-empty string",
         )
         df = self.dataframe
@@ -375,7 +375,8 @@ class DataProcessor:
         """Drop specified columns."""
         assert columns is not None, "columns must be provided"
         require(
-            isinstance(columns, list) and columns, "columns must be a non-empty list"
+            isinstance(columns, list) and bool(columns),
+            "columns must be a non-empty list",
         )
         self._df = self.dataframe.drop(columns=columns, errors="ignore")
         self._history.append(f"Dropped columns: {columns}")
@@ -385,7 +386,8 @@ class DataProcessor:
         """Rename columns."""
         assert mapping is not None, "mapping must be provided"
         require(
-            isinstance(mapping, dict) and mapping, "mapping must be a non-empty dict"
+            isinstance(mapping, dict) and bool(mapping),
+            "mapping must be a non-empty dict",
         )
         self._df = self.dataframe.rename(columns=mapping)
         self._history.append(f"Renamed {len(mapping)} columns")
@@ -394,7 +396,7 @@ class DataProcessor:
     def sort(self, by: str, ascending: bool = True) -> DataProcessor:
         """Sort by a column."""
         assert by is not None, "by must be provided"
-        require(isinstance(by, str) and by, "by must be a non-empty string")
+        require(isinstance(by, str) and bool(by), "by must be a non-empty string")
         require(isinstance(ascending, bool), "ascending must be a boolean")
         self._df = self.dataframe.sort_values(by=by, ascending=ascending).reset_index(
             drop=True
@@ -427,8 +429,11 @@ class DataProcessor:
 
     def correlate(self, method: str = "pearson") -> pd.DataFrame:
         """Return correlation matrix."""
-        assert method is not None, "method must be provided"
-        require(isinstance(method, str) and method, "method must be a non-empty string")
+        require(method is not None, "method must be provided")
+        require(
+            isinstance(method, str) and bool(method),
+            "method must be a non-empty string",
+        )
         result: pd.DataFrame = self.dataframe.select_dtypes(include="number").corr(
             method=method
         )
@@ -444,7 +449,7 @@ class DataProcessor:
 
         Delegates to ``data_processor.core.outlier_detection`` when available.
         """
-        assert method is not None, "method must be provided"
+        require(method is not None, "method must be provided")
         df = self.dataframe
         if columns is None:
             columns = list(df.select_dtypes(include="number").columns)

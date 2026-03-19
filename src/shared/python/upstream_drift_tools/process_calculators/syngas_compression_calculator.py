@@ -67,14 +67,16 @@ try:
     )
 except ImportError:
 
-    def validate_gas_composition(comp: dict) -> tuple[bool, str]:
-        """Simple validation fallback."""
+    def validate_gas_composition(comp: dict, auto_normalize: bool = False) -> dict:
+        """Simple validation and normalization fallback."""
         if not comp:
-            return False, "Empty composition"
+            raise ValueError("Empty composition")
         total = sum(comp.values())
+        if auto_normalize and total > 0:
+            return {k: v / total for k, v in comp.items()}
         if abs(total - 1.0) > 0.01 and abs(total - 100.0) > 1.0:
-            return False, f"Composition sum {total} not normalized"
-        return True, ""
+            raise ValueError(f"Composition sum {total} not normalized")
+        return comp
 
 
 def _setup_matplotlib_backend() -> None:
@@ -152,19 +154,34 @@ try:
     )
 except ImportError:
     # Minimal fallback for standalone use
+    from dataclasses import dataclass as _dc
+
+    @_dc
+    class _SpeciesData:
+        molecular_weight: float  # kg/mol
+        critical_temperature: float  # K
+        critical_pressure: float  # Pa
+
+    # Source: NIST / Perry's Chemical Engineers' Handbook (approximate values)
+    _SPECIES_TABLE: dict[str, "_SpeciesData"] = {
+        "CO": _SpeciesData(0.02801, 132.9, 3.499e6),
+        "CO2": _SpeciesData(0.04401, 304.2, 7.376e6),
+        "H2": _SpeciesData(0.00202, 33.2, 1.297e6),
+        "H2O": _SpeciesData(0.01802, 647.1, 22.064e6),
+        "CH4": _SpeciesData(0.01604, 190.6, 4.604e6),
+        "N2": _SpeciesData(0.02801, 126.2, 3.390e6),
+        "O2": _SpeciesData(0.03200, 154.6, 5.046e6),
+        "H2S": _SpeciesData(0.03408, 373.5, 8.963e6),
+        "Ar": _SpeciesData(0.03995, 150.8, 4.874e6),
+    }
+
     class _MinimalSpeciesDB:
         def get_molecular_weight(self, species: str) -> float | None:
-            mw = {
-                "CO": 0.028,
-                "CO2": 0.044,
-                "H2": 0.002,
-                "H2O": 0.018,
-                "CH4": 0.016,
-                "N2": 0.028,
-                "O2": 0.032,
-                "H2S": 0.034,
-            }
-            return mw.get(species)
+            s = _SPECIES_TABLE.get(species)
+            return s.molecular_weight if s else None
+
+        def get_species(self, species: str) -> "_SpeciesData | None":
+            return _SPECIES_TABLE.get(species)
 
     def get_species_database() -> Any:
         return _MinimalSpeciesDB()

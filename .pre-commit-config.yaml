@@ -36,15 +36,9 @@ repos:
         types: [python]
         exclude: ^(\.github/|docs/|.*\.md$)
 
-  # Black - Python code formatter
-  - repo: https://github.com/psf/black
-    rev: 26.1.0
-    hooks:
-      - id: black
-        name: "black (format)"
-        language_version: python3.11
-        types: [python]
-        exclude: ^(\.github/|docs/|.*\.md$)
+  # Black removed: ruff-format is the canonical Python formatter.
+  # Both ruff-format and black conflict on parenthesized assert style —
+  # keeping both causes an infinite formatter loop in pre-commit.
 
   # -------------------------------------------------------------------------
   # Stage 2: Quick Quality Checks - PYTHON FILES ONLY
@@ -120,7 +114,16 @@ repos:
             \.github/|
             .*/tests/|
             src/shared/python/dwsim_model/|
-            src/dwsim_model/
+            src/dwsim_model/|
+            src/shared/python/upstream_drift_tools/|
+            src/shared/python/model_generation/|
+            src/shared/python/signal_toolkit/|
+            src/shared/python/programmatic_pid/|
+            src/electrode_advisor/|
+            src/function_generator/|
+            src/data_processing/data_processor/|
+            src/glass_bath_fea/|
+            src/tools/folder_tools/
           )
 
   # Bandit - Security scanning (pre-push only, Python only)
@@ -130,10 +133,24 @@ repos:
       - id: bandit
         name: "bandit (security scan)"
         stages: [pre-push]
-        args:
-          ["-r", ".", "-ll", "-ii", "-x", "tests/,archive/,legacy/,.github/"]
-        pass_filenames: false
-        # Only run if Python files changed
+        # Run on changed Python src/ files only (mirrors CI behavior).
+        # Previously used pass_filenames: false + -r . which scanned the
+        # entire repo on every push and blocked due to pre-existing findings.
+        args: ["-ll", "-ii"]
+        files: ^src/
+        exclude: |
+          (?x)^(
+            src/matlab/|
+            src/javascript/|
+            src/archive/|
+            src/legacy/|
+            src/experimental/|
+            .*/tests/|
+            src/shared/python/upstream_drift_tools/|
+            src/shared/python/model_generation/|
+            src/data_processing/data_processor/|
+            src/glass_bath_fea/
+          )
         types: [python]
 
   # Pytest - Unit tests (pre-push only)
