@@ -534,7 +534,8 @@ items:
   - id: GH1469
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/function_generator"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-19T23:32:56Z"
     github_issue: 1469
     artefact: .gaai/project/contexts/artefacts/stories/GH1469.story.md
     dependencies: []
