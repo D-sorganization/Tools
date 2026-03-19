@@ -66,34 +66,34 @@ class TestBuildLoDFix:
     def test_main_no_chained_path_parent_absolute(self, build_module) -> None:
         """Verify main() does not chain Path().parent.absolute() directly."""
         source = inspect.getsource(build_module.main)
-        assert "Path(__file__).parent.absolute()" not in source, (
-            "LoD violation: build.py must not chain Path(__file__).parent.absolute()"
-        )
+        assert (
+            "Path(__file__).parent.absolute()" not in source
+        ), "LoD violation: build.py must not chain Path(__file__).parent.absolute()"
 
     def test_main_no_chained_stderr_write(self, build_module) -> None:
         """Verify main() does not chain sys.stderr.write() directly."""
         source = inspect.getsource(build_module.main)
-        assert "sys.stderr.write" not in source, (
-            "LoD violation: build.py must not chain sys.stderr.write() directly"
-        )
+        assert (
+            "sys.stderr.write" not in source
+        ), "LoD violation: build.py must not chain sys.stderr.write() directly"
 
     def test_main_extracts_stderr_to_variable(self, build_module) -> None:
         """Verify main() extracts sys.stderr to a local variable."""
         source = inspect.getsource(build_module.main)
-        assert "stderr = sys.stderr" in source, (
-            "build.py main() should extract sys.stderr to a local variable"
-        )
+        assert (
+            "stderr = sys.stderr" in source
+        ), "build.py main() should extract sys.stderr to a local variable"
 
     def test_main_extracts_path_parent(self, build_module) -> None:
         """Verify main() extracts Path().parent to an intermediate variable."""
         source = inspect.getsource(build_module.main)
         # Should use script_parent or similar intermediate variable
-        assert "Path(__file__).parent" in source, (
-            "build.py should still use Path(__file__).parent but assign to intermediate"
-        )
-        assert ".absolute()" in source, (
-            "build.py should call .absolute() on the intermediate variable"
-        )
+        assert (
+            "Path(__file__).parent" in source
+        ), "build.py should still use Path(__file__).parent but assign to intermediate"
+        assert (
+            ".absolute()" in source
+        ), "build.py should call .absolute() on the intermediate variable"
 
     def test_no_print_calls_in_source(self, build_module) -> None:
         """Verify no print() calls exist in build module source."""

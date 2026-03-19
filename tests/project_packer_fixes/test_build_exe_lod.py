@@ -39,9 +39,9 @@ class TestBuildExeLoDFix:
         import inspect
 
         source = inspect.getsource(build_exe_module.check_pyinstaller)
-        assert "importlib.util.find_spec" not in source, (
-            "LoD violation: should use find_spec directly, not importlib.util.find_spec"
-        )
+        assert (
+            "importlib.util.find_spec" not in source
+        ), "LoD violation: should use find_spec directly, not importlib.util.find_spec"
         assert "find_spec" in source, "check_pyinstaller should call find_spec"
 
     def test_check_pyinstaller_available(self, build_exe_module) -> None:
@@ -60,9 +60,9 @@ class TestBuildExeLoDFix:
 
     def test_find_spec_import_at_module_level(self, build_exe_module) -> None:
         """Verify find_spec is imported at module level (not accessed via importlib.util)."""
-        assert hasattr(build_exe_module, "find_spec"), (
-            "find_spec must be imported at module level in build_exe"
-        )
+        assert hasattr(
+            build_exe_module, "find_spec"
+        ), "find_spec must be imported at module level in build_exe"
 
     def test_install_pyinstaller_success(self, build_exe_module) -> None:
         """Test successful PyInstaller installation."""
