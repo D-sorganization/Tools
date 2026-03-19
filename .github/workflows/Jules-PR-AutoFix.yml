@@ -147,7 +147,7 @@ jobs:
         if: steps.branch.outputs.skip != 'true' && steps.limits.outputs.exceeded != 'true'
         run: |
           # Pin versions to match CI Standard quality gate
-          pip install ruff==0.14.10 black==26.1.0 mypy==1.13.0 autoflake
+          pip install ruff==0.14.10 mypy==1.13.0 autoflake
           # Install project deps so mypy can resolve imports
           pip install -e ".[dev]" 2>/dev/null || pip install -e . 2>/dev/null || true
 
@@ -206,11 +206,11 @@ jobs:
               git add -A
             fi
 
-            # ----- FIX 2: Black formatting -----
-            echo ">>> Running black (scoped)..."
-            black $CHANGED_FILES 2>&1 || true
+            # ----- FIX 2: ruff-format (canonical formatter) -----
+            echo ">>> Running ruff format (scoped)..."
+            ruff format $CHANGED_FILES 2>&1 || true
             if ! git diff --quiet; then
-              CHANGES_MADE="$CHANGES_MADE black"
+              CHANGES_MADE="$CHANGES_MADE ruff-format"
               git add -A
             fi
 
@@ -224,10 +224,10 @@ jobs:
               git add -A
             fi
 
-            # ----- FIX 4: Re-run ruff + black for consistency after autoflake -----
-            echo ">>> Re-running ruff + black (post-cleanup)..."
+            # ----- FIX 4: Re-run ruff for consistency after autoflake -----
+            echo ">>> Re-running ruff (post-cleanup)..."
             ruff check --fix $CHANGED_FILES 2>&1 || true
-            black $CHANGED_FILES 2>&1 || true
+            ruff format $CHANGED_FILES 2>&1 || true
             if ! git diff --quiet; then
               CHANGES_MADE="$CHANGES_MADE post-cleanup"
               git add -A
@@ -245,7 +245,7 @@ jobs:
                 CHANGES_MADE="$CHANGES_MADE mypy-agent"
                 # Re-run ruff + black on mypy agent's changes for formatting consistency
                 ruff check --fix . 2>&1 || true
-                black . 2>&1 || true
+                ruff format . 2>&1 || true
                 git add -A
               fi
             else

@@ -138,7 +138,7 @@ jobs:
       - name: Install Tools
         if: steps.branch.outputs.skip != 'true' && steps.limits.outputs.exceeded != 'true'
         run: |
-          pip install ruff black mypy isort autoflake pytest
+          pip install ruff mypy autoflake pytest
 
       - name: Fetch CI Failure Logs
         id: logs
@@ -212,21 +212,7 @@ jobs:
               git add -A
             fi
 
-            # Run isort as backup for import sorting
-            echo "Running isort..."
-            isort --profile black . 2>&1 || true
-            if [ -n "$(git status --porcelain)" ]; then
-              CHANGES_MADE="$CHANGES_MADE isort"
-              git add -A
-            fi
-
-            # Run black as backup formatter
-            echo "Running black..."
-            black . 2>&1 || true
-            if [ -n "$(git status --porcelain)" ]; then
-              CHANGES_MADE="$CHANGES_MADE black"
-              git add -A
-            fi
+            # ruff handles both import sorting and formatting — isort/black removed
 
             # Remove unused imports
             echo "Running autoflake..."
