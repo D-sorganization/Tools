@@ -360,11 +360,12 @@ items:
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/project_packer"
     priority: medium
     status: done
-    started_at: "2026-03-19T22:25:27Z"
-    completed_at: "2026-03-19T22:42:54Z"
+    started_at: "2026-03-19T15:25:27-07:00"
+    completed_at: "2026-03-19T15:42:54-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1634"
     pr_number: 1634
     pr_status: "open"
+    cost_usd: 3.1115
     github_issue: 1481
     artefact: .gaai/project/contexts/artefacts/stories/GH1481.story.md
     dependencies: []
