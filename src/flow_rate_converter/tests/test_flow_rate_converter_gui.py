@@ -13,6 +13,152 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 
+class TestFlowRateConverterLoDConstants:
+    """Tests verifying LoD-compliance constants extracted from Qt enum chains.
+
+    These tests guard the module-level constants added to resolve the 10 LoD
+    violations reported in GH1466 (deep attribute chains like
+    Qt.AlignmentFlag.AlignCenter and QSizePolicy.Policy.*).
+    """
+
+    def test_lod_constants_present_in_source(self):
+        """Verify that LoD-compliance constants are declared in main_window source.
+
+        Uses AST analysis so no import of PyQt6 is required in the test environment.
+        """
+        import ast
+        import pathlib
+
+        src = (
+            pathlib.Path(__file__).parent.parent
+            / "python"
+            / "flow_rate_converter"
+            / "ui"
+            / "pyqt6"
+            / "main_window.py"
+        )
+        source = src.read_text()
+        tree = ast.parse(source)
+
+        # Collect all top-level assignment targets
+        top_level_names: set[str] = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name):
+                        top_level_names.add(target.id)
+
+        assert "_ALIGN_CENTER" in top_level_names, (
+            "Missing _ALIGN_CENTER constant in main_window"
+        )
+        assert "_EXPANDING" in top_level_names, (
+            "Missing _EXPANDING constant in main_window"
+        )
+        assert "_FIXED" in top_level_names, "Missing _FIXED constant in main_window"
+
+    def test_no_bare_qt_alignment_flag_chain_in_source(self):
+        """Verify source file has no bare Qt.AlignmentFlag.AlignCenter except in constants."""
+        import ast
+        import pathlib
+
+        src = (
+            pathlib.Path(__file__).parent.parent
+            / "python"
+            / "flow_rate_converter"
+            / "ui"
+            / "pyqt6"
+            / "main_window.py"
+        )
+        source = src.read_text()
+        tree = ast.parse(source)
+
+        chains_found = []
+        for node in ast.walk(tree):
+            # Match attribute chain: Qt.AlignmentFlag.AlignCenter
+            if (
+                isinstance(node, ast.Attribute)
+                and node.attr == "AlignCenter"
+                and isinstance(node.value, ast.Attribute)
+                and node.value.attr == "AlignmentFlag"
+                and isinstance(node.value.value, ast.Name)
+                and node.value.value.id == "Qt"
+            ):
+                # Allow only in simple assignment targets (constant definitions)
+                chains_found.append(node.lineno)
+
+        # Only the constant definition line should have this chain
+        assert len(chains_found) <= 1, (
+            f"LoD violation: Qt.AlignmentFlag.AlignCenter found at lines {chains_found}; "
+            "only the constant definition should use this chain"
+        )
+
+    def test_no_bare_qsizepolicy_expanding_chain_in_source(self):
+        """Verify source has no bare QSizePolicy.Policy.Expanding except in constant def."""
+        import ast
+        import pathlib
+
+        src = (
+            pathlib.Path(__file__).parent.parent
+            / "python"
+            / "flow_rate_converter"
+            / "ui"
+            / "pyqt6"
+            / "main_window.py"
+        )
+        source = src.read_text()
+        tree = ast.parse(source)
+
+        chains_found = []
+        for node in ast.walk(tree):
+            if (
+                isinstance(node, ast.Attribute)
+                and node.attr == "Expanding"
+                and isinstance(node.value, ast.Attribute)
+                and node.value.attr == "Policy"
+                and isinstance(node.value.value, ast.Name)
+                and node.value.value.id == "QSizePolicy"
+            ):
+                chains_found.append(node.lineno)
+
+        assert len(chains_found) <= 1, (
+            f"LoD violation: QSizePolicy.Policy.Expanding found at lines {chains_found}; "
+            "only the constant definition should use this chain"
+        )
+
+    def test_no_bare_qsizepolicy_fixed_chain_in_source(self):
+        """Verify source has no bare QSizePolicy.Policy.Fixed except in constant def."""
+        import ast
+        import pathlib
+
+        src = (
+            pathlib.Path(__file__).parent.parent
+            / "python"
+            / "flow_rate_converter"
+            / "ui"
+            / "pyqt6"
+            / "main_window.py"
+        )
+        source = src.read_text()
+        tree = ast.parse(source)
+
+        chains_found = []
+        for node in ast.walk(tree):
+            if (
+                isinstance(node, ast.Attribute)
+                and node.attr == "Fixed"
+                and isinstance(node.value, ast.Attribute)
+                and node.value.attr == "Policy"
+                and isinstance(node.value.value, ast.Name)
+                and node.value.value.id == "QSizePolicy"
+            ):
+                chains_found.append(node.lineno)
+
+        assert len(chains_found) <= 1, (
+            f"LoD violation: QSizePolicy.Policy.Fixed found at lines {chains_found}; "
+            "only the constant definition should use this chain"
+        )
+
+
 class TestFlowRateConverterMainWindow:
     """Tests for the PyQt6 Flow Rate Converter main window."""
 
