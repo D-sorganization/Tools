@@ -6,3 +6,93 @@
 #   - Only Discovery may add items; only Delivery may update status
 
 items: []
+
+  - id: GH1601
+    title: "type: 739 type: ignore comments + legacy directories excluded from mypy"
+    priority: medium
+    status: refined
+    github_issue: 1601
+    artefact: .gaai/project/contexts/artefacts/stories/GH1601.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1587
+    title: "[Testing] 630 source modules have no corresponding test file"
+    priority: medium
+    status: refined
+    github_issue: 1587
+    artefact: .gaai/project/contexts/artefacts/stories/GH1587.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1575
+    title: "CI: Validate Tools_Private end-to-end with first test PR"
+    priority: medium
+    status: refined
+    github_issue: 1575
+    artefact: .gaai/project/contexts/artefacts/stories/GH1575.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1567
+    title: "PLAN: Create Tools_Private repository for proprietary components"
+    priority: medium
+    status: refined
+    github_issue: 1567
+    artefact: .gaai/project/contexts/artefacts/stories/GH1567.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1548
+    title: "Audit and reduce skip-heavy shared-package tests"
+    priority: medium
+    status: refined
+    github_issue: 1548
+    artefact: .gaai/project/contexts/artefacts/stories/GH1548.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1547
+    title: "Enforce required shared Python provider-contract suite in CI"
+    priority: medium
+    status: refined
+    github_issue: 1547
+    artefact: .gaai/project/contexts/artefacts/stories/GH1547.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1546
+    title: "Add cross-repo Python consumer integration workflow for Gasification_Model and UpstreamDrift"
+    priority: medium
+    status: refined
+    github_issue: 1546
+    artefact: .gaai/project/contexts/artefacts/stories/GH1546.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1498
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in tests"
+    priority: medium
+    status: refined
+    github_issue: 1498
+    artefact: .gaai/project/contexts/artefacts/stories/GH1498.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1497
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/wgs_reactor"
+    priority: medium
+    status: refined
+    github_issue: 1497
+    artefact: .gaai/project/contexts/artefacts/stories/GH1497.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1496
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/web_applications"
+    priority: medium
+    status: refined
+    github_issue: 1496
+    artefact: .gaai/project/contexts/artefacts/stories/GH1496.story.md
+    dependencies: []
+    created_at: 2026-03-19
