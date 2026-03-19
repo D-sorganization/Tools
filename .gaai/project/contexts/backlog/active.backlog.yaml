@@ -5,7 +5,7 @@
 #   - Must have a corresponding artefact with acceptance criteria
 #   - Only Discovery may add items; only Delivery may update status
 
-items: []
+items:
 
   - id: GH1601
     title: "type: 739 type: ignore comments + legacy directories excluded from mypy"
