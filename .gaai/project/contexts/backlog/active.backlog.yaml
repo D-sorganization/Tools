@@ -105,11 +105,12 @@ items:
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in tests"
     priority: medium
     status: done
-    started_at: "2026-03-19T20:47:34Z"
-    completed_at: "2026-03-19T20:55:46Z"
+    started_at: "2026-03-19T13:47:34-07:00"
+    completed_at: "2026-03-19T13:55:46-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1619"
     pr_number: 1619
     pr_status: "open"
+    cost_usd: 1.5665
     github_issue: 1498
     artefact: .gaai/project/contexts/artefacts/stories/GH1498.story.md
     dependencies: []
