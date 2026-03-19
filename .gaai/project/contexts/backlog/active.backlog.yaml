@@ -264,7 +264,8 @@ items:
   - id: GH1487
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/signal_processing_studio"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-19T21:43:37Z"
     github_issue: 1487
     artefact: .gaai/project/contexts/artefacts/stories/GH1487.story.md
     dependencies: []
