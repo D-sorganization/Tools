@@ -494,11 +494,12 @@ items:
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/humanoid_builder_gui"
     priority: medium
     status: done
-    started_at: "2026-03-19T23:12:35Z"
-    completed_at: "2026-03-19T23:19:49Z"
+    started_at: "2026-03-19T16:12:35-07:00"
+    completed_at: "2026-03-19T16:19:49-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1641"
     pr_number: 1641
     pr_status: "open"
+    cost_usd: 1.5261
     github_issue: 1472
     artefact: .gaai/project/contexts/artefacts/stories/GH1472.story.md
     dependencies: []
