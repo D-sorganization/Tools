@@ -30,7 +30,8 @@ items:
   - id: GH1575
     title: "CI: Validate Tools_Private end-to-end with first test PR"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-19T16:22:02Z"
     github_issue: 1575
     artefact: .gaai/project/contexts/artefacts/stories/GH1575.story.md
     dependencies: []
