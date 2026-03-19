@@ -419,7 +419,8 @@ class HelpDialog(QDialog):
 
     def _apply_theme(self) -> None:
         """Apply Catppuccin Mocha dark theme to the dialog."""
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
             QDialog {
                 background-color: #1e1e2e;
                 color: #cdd6f4;
@@ -489,7 +490,8 @@ class HelpDialog(QDialog):
             QSplitter::handle {
                 background-color: #45475a;
             }
-        """)
+        """
+        )
 
     def _display_content(self, title: str, content: str) -> None:
         """Display content in the browser.
@@ -602,7 +604,8 @@ class HelpButton(QToolButton):
 
     def _apply_style(self) -> None:
         """Apply button styling."""
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
             QToolButton {
                 background-color: #45475a;
                 color: #89b4fa;
@@ -618,7 +621,8 @@ class HelpButton(QToolButton):
             QToolButton:pressed {
                 background-color: #313244;
             }
-        """)
+        """
+        )
 
     def _show_help(self) -> None:
         """Show the help dialog for this topic."""
