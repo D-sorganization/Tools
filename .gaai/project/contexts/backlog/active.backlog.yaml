@@ -186,3 +186,93 @@ items:
     artefact: .gaai/project/contexts/artefacts/stories/GH1486.story.md
     dependencies: []
     created_at: 2026-03-19
+
+  - id: GH1485
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/scrubber_calculator"
+    priority: medium
+    status: refined
+    github_issue: 1485
+    artefact: .gaai/project/contexts/artefacts/stories/GH1485.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1484
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/scientific_modeling"
+    priority: medium
+    status: refined
+    github_issue: 1484
+    artefact: .gaai/project/contexts/artefacts/stories/GH1484.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1483
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/rotation_converter"
+    priority: medium
+    status: refined
+    github_issue: 1483
+    artefact: .gaai/project/contexts/artefacts/stories/GH1483.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1482
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/python"
+    priority: medium
+    status: refined
+    github_issue: 1482
+    artefact: .gaai/project/contexts/artefacts/stories/GH1482.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1481
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/project_packer"
+    priority: medium
+    status: refined
+    github_issue: 1481
+    artefact: .gaai/project/contexts/artefacts/stories/GH1481.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1480
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/pressure_drop_calculator"
+    priority: medium
+    status: refined
+    github_issue: 1480
+    artefact: .gaai/project/contexts/artefacts/stories/GH1480.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1479
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/pid_generator"
+    priority: medium
+    status: refined
+    github_issue: 1479
+    artefact: .gaai/project/contexts/artefacts/stories/GH1479.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1478
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/pendulum_simulator"
+    priority: medium
+    status: refined
+    github_issue: 1478
+    artefact: .gaai/project/contexts/artefacts/stories/GH1478.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1477
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/optimizer_gui"
+    priority: medium
+    status: refined
+    github_issue: 1477
+    artefact: .gaai/project/contexts/artefacts/stories/GH1477.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1476
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/ode_solver"
+    priority: medium
+    status: refined
+    github_issue: 1476
+    artefact: .gaai/project/contexts/artefacts/stories/GH1476.story.md
+    dependencies: []
+    created_at: 2026-03-19
