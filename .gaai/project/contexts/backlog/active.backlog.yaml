@@ -61,11 +61,12 @@ items:
     title: "Audit and reduce skip-heavy shared-package tests"
     priority: medium
     status: done
-    started_at: "2026-03-19T16:31:55Z"
-    completed_at: "2026-03-19T16:41:34Z"
+    started_at: "2026-03-19T09:31:55-07:00"
+    completed_at: "2026-03-19T09:41:35-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1614"
     pr_number: 1614
     pr_status: "open"
+    cost_usd: 2.0587
     github_issue: 1548
     artefact: .gaai/project/contexts/artefacts/stories/GH1548.story.md
     dependencies: []
