@@ -720,11 +720,12 @@ items:
     title: "Implement semantic versioning and deprecation path"
     priority: medium
     status: done
-    started_at: "2026-03-20T13:38:25Z"
-    completed_at: "2026-03-20T13:48:15Z"
+    started_at: "2026-03-20T06:38:25-07:00"
+    completed_at: "2026-03-20T06:48:16-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1666"
     pr_number: 1666
     pr_status: "open"
+    cost_usd: 1.619
     github_issue: 1652
     artefact: .gaai/project/contexts/artefacts/stories/GH1652.story.md
     dependencies: []
