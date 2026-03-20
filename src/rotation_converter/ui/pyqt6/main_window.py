@@ -168,13 +168,10 @@ class RotationConverterTab(QWidget):
         self._connect_signals()
         self._update_outputs()
 
-    def _build_ui(self) -> None:
-        layout = QHBoxLayout(self)
-
-        # Left: Input
+    def _build_input_group(self) -> QGroupBox:
+        """Build the left-side input group with representation selector and value entry."""
         input_group = QGroupBox("Input Rotation")
         input_layout = QVBoxLayout(input_group)
-
         form = QFormLayout()
         self._repr_combo = QComboBox()
         self._repr_combo.addItems(
@@ -187,26 +184,22 @@ class RotationConverterTab(QWidget):
             ]
         )
         form.addRow("Representation:", self._repr_combo)
-
         self._euler_conv = QComboBox()
         self._euler_conv.addItems(EULER_CONVENTIONS)
         form.addRow("Euler Convention:", self._euler_conv)
-
         self._input_edit = QTextEdit()
         self._input_edit.setPlaceholderText("Enter values (space or comma separated)")
         self._input_edit.setMaximumHeight(100)
         self._input_edit.setText("1.0 0.0 0.0 0.0")
         form.addRow("Values:", self._input_edit)
-
         self._convert_btn = QPushButton("Convert")
         form.addRow(self._convert_btn)
-
         input_layout.addLayout(form)
-        layout.addWidget(input_group, 1)
+        return input_group
 
-        # Right: Outputs + Plot
+    def _build_output_section(self) -> QVBoxLayout:
+        """Build the output section with target combo, result display, and all-repr text."""
         right = QVBoxLayout()
-
         target_group = QGroupBox("Main Output Extraction")
         target_layout = QFormLayout(target_group)
         self._target_repr = QComboBox()
@@ -228,7 +221,6 @@ class RotationConverterTab(QWidget):
         self._main_result.setStyleSheet("font-size: 16px; font-weight: bold;")
         target_layout.addRow("Result:", self._main_result)
         right.addWidget(target_group, 1)
-
         output_group = QGroupBox("All Representations")
         output_layout = QVBoxLayout(output_group)
         self._output_text = QTextEdit()
@@ -236,8 +228,10 @@ class RotationConverterTab(QWidget):
         self._output_text.setStyleSheet("font-family: monospace; font-size: 11px;")
         output_layout.addWidget(self._output_text)
         right.addWidget(output_group, 2)
+        return right
 
-        # 3D rotation axes plot
+    def _build_plot_section(self) -> QGroupBox:
+        """Build the 3D rotation axes matplotlib plot group."""
         plot_group = QGroupBox("3D Rotation Axes")
         plot_layout = QVBoxLayout(plot_group)
         self._fig = Figure(figsize=(4, 3), dpi=100)
@@ -249,8 +243,13 @@ class RotationConverterTab(QWidget):
             QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
         )
         plot_layout.addWidget(self._canvas)
-        right.addWidget(plot_group, 3)
+        return plot_group
 
+    def _build_ui(self) -> None:
+        layout = QHBoxLayout(self)
+        layout.addWidget(self._build_input_group(), 1)
+        right = self._build_output_section()
+        right.addWidget(self._build_plot_section(), 3)
         layout.addLayout(right, 2)
 
     def _connect_signals(self) -> None:

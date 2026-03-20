@@ -25,6 +25,7 @@ from rotation_converter.modern_robotics import (
     FKinBody,
     FKinSpace,
     IKinBody,
+    InverseDynamics,
     JacobianBody,
     JacobianSpace,
     MatrixExp3,
@@ -37,6 +38,8 @@ from rotation_converter.modern_robotics import (
     TransToRp,
     VecTose3,
     VecToso3,
+    _inverse_dynamics_backward_pass,
+    _inverse_dynamics_forward_pass,
     se3ToVec,
     so3ToVec,
 )
@@ -705,3 +708,147 @@ class TestModernRoboticsContracts:
         T = np.eye(4)
         with pytest.raises(PreconditionError):
             IKinBody(Blist, M, T, np.array([0.0]), eomg=-1.0)
+
+
+# ===========================================================================
+# InverseDynamics: refactored forward/backward pass helpers
+# ===========================================================================
+
+_3DOF_ROBOT = {
+    "thetalist": np.array([0.1, 0.1, 0.1]),
+    "dthetalist": np.array([0.1, 0.2, 0.3]),
+    "ddthetalist": np.array([2.0, 1.5, 1.0]),
+    "g": np.array([0, 0, -9.8]),
+    "Ftip": np.array([1, 1, 1, 1, 1, 1], dtype=float),
+    "Mlist": np.array(
+        [
+            [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.089159], [0, 0, 0, 1]],
+            [[0, 0, 1, 0.28], [0, 1, 0, 0.13585], [-1, 0, 0, 0], [0, 0, 0, 1]],
+            [[1, 0, 0, 0], [0, 1, 0, -0.1197], [0, 0, 1, 0.395], [0, 0, 0, 1]],
+            [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.14225], [0, 0, 0, 1]],
+        ],
+        dtype=float,
+    ),
+    "Glist": np.array(
+        [
+            np.diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7]),
+            np.diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393]),
+            np.diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275]),
+        ]
+    ),
+    "Slist": np.array(
+        [
+            [1, 0, 1, 0, 1, 0],
+            [0, 1, 0, -0.089, 0, 0],
+            [0, 1, 0, -0.089, 0, 0.425],
+        ],
+        dtype=float,
+    ).T,
+}
+
+
+class TestInverseDynamics:
+    """Unit tests for InverseDynamics and its private helper passes."""
+
+    def test_inverse_dynamics_docstring_example(self) -> None:
+        """Result matches the expected output from the module docstring."""
+        r = _3DOF_ROBOT
+        result = InverseDynamics(
+            r["thetalist"],
+            r["dthetalist"],
+            r["ddthetalist"],
+            r["g"],
+            r["Ftip"],
+            r["Mlist"],
+            r["Glist"],
+            r["Slist"],
+        )
+        expected = np.array([74.69616155, -33.06766016, -3.23057314])
+        np.testing.assert_allclose(result, expected, atol=1e-6)
+
+    def test_inverse_dynamics_returns_n_vector(self) -> None:
+        """Return value is a 1-D array with n elements."""
+        r = _3DOF_ROBOT
+        result = InverseDynamics(
+            r["thetalist"],
+            r["dthetalist"],
+            r["ddthetalist"],
+            r["g"],
+            r["Ftip"],
+            r["Mlist"],
+            r["Glist"],
+            r["Slist"],
+        )
+        assert result.shape == (3,)
+
+    def test_forward_pass_shapes(self) -> None:
+        """Private forward pass returns arrays with correct shapes."""
+        r = _3DOF_ROBOT
+        n = len(r["thetalist"])
+        Ai, AdTi, Vi, Vdi = _inverse_dynamics_forward_pass(
+            n,
+            r["thetalist"],
+            r["dthetalist"],
+            r["ddthetalist"],
+            r["g"],
+            r["Mlist"],
+            r["Slist"],
+        )
+        assert Ai.shape == (6, n)
+        assert Vi.shape == (6, n + 1)
+        assert Vdi.shape == (6, n + 1)
+        assert len(AdTi) == n + 1
+
+    def test_backward_pass_matches_full_function(self) -> None:
+        """Forward + backward pass composition matches the full InverseDynamics output."""
+        r = _3DOF_ROBOT
+        n = len(r["thetalist"])
+        Ai, AdTi, Vi, Vdi = _inverse_dynamics_forward_pass(
+            n,
+            r["thetalist"],
+            r["dthetalist"],
+            r["ddthetalist"],
+            r["g"],
+            r["Mlist"],
+            r["Slist"],
+        )
+        tau = _inverse_dynamics_backward_pass(
+            n, r["Ftip"], Ai, AdTi, Vi, Vdi, r["Glist"]
+        )
+        expected = InverseDynamics(
+            r["thetalist"],
+            r["dthetalist"],
+            r["ddthetalist"],
+            r["g"],
+            r["Ftip"],
+            r["Mlist"],
+            r["Glist"],
+            r["Slist"],
+        )
+        np.testing.assert_allclose(tau, expected, atol=1e-12)
+
+    def test_zero_gravity_reduces_torques(self) -> None:
+        """With zero gravity and no tip force, torques are smaller (inertia-only)."""
+        r = _3DOF_ROBOT
+        tau_full = InverseDynamics(
+            r["thetalist"],
+            r["dthetalist"],
+            r["ddthetalist"],
+            r["g"],
+            r["Ftip"],
+            r["Mlist"],
+            r["Glist"],
+            r["Slist"],
+        )
+        tau_no_g = InverseDynamics(
+            r["thetalist"],
+            r["dthetalist"],
+            r["ddthetalist"],
+            np.zeros(3),
+            np.zeros(6),
+            r["Mlist"],
+            r["Glist"],
+            r["Slist"],
+        )
+        # With gravity and tip forces removed, torques should differ
+        assert not np.allclose(tau_full, tau_no_g)

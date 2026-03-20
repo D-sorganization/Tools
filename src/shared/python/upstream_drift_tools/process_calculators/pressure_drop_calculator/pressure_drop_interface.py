@@ -401,6 +401,53 @@ def _build_fitting_list(
     return fitting_list
 
 
+def _build_pressure_drop_inputs(
+    pipe_size,
+    pipe_schedule,
+    pipe_diameter,
+    pipe_length,
+    pipe_material,
+    pipe_roughness,
+    elevation_change,
+    flow_rate,
+    flow_unit,
+    gas_composition,
+    fittings,
+    friction_method,
+    compressibility_correction,
+    standard_condition,
+    temp_k,
+    pressure_pa,
+) -> "PressureDropInputs":
+    """Resolve all parameters and construct a PressureDropInputs object."""
+    pipe_diameter, roughness = _resolve_pipe_geometry(
+        pipe_size, pipe_schedule, pipe_diameter, pipe_material, pipe_roughness
+    )
+    composition, mass_flow_kg_s = _resolve_gas_and_flow(
+        flow_rate,
+        flow_unit,
+        gas_composition,
+        temp_k,
+        pressure_pa,
+        compressibility_correction,
+        standard_condition,
+    )
+    fitting_list = _build_fitting_list(fittings)
+    return PressureDropInputs(
+        pipe_diameter=pipe_diameter,
+        pipe_length=pipe_length,
+        pipe_roughness=roughness,
+        elevation_change=elevation_change,
+        mass_flow_rate=mass_flow_kg_s,
+        inlet_pressure=pressure_pa,
+        inlet_temperature=temp_k,
+        gas_composition=composition,
+        fittings=fitting_list,
+        compressibility_correction=compressibility_correction,
+        friction_method=friction_method,
+    )
+
+
 def calculate_pressure_drop(
     # Pipe geometry
     pipe_size: str | None = None,
@@ -436,17 +483,14 @@ def calculate_pressure_drop(
         pipe_material: Pipe material from MATERIAL_ROUGHNESS
         pipe_roughness: Explicit roughness in meters (overrides material)
         elevation_change: Elevation change (meters, + = upward)
-
         flow_rate: Flow rate value
         flow_unit: Flow rate unit (kg/h, lb/hr, SCFM, kmol/h, etc.)
         pressure: Inlet pressure
         pressure_unit: Pressure unit (bar, psi, Pa, atm)
         temperature: Inlet temperature
         temperature_unit: Temperature unit (K, C, F)
-
         gas_composition: Dict of {component: mole_fraction}
         fittings: List of fittings, e.g., [{'type': '90_elbow_std', 'quantity': 4}]
-
         friction_method: 'colebrook', 'swamee-jain', 'churchill', or 'haaland'
         compressibility_correction: Use real gas corrections
         standard_condition: 'STP', 'NTP', 'SCFM', etc. for volumetric flows
@@ -455,49 +499,32 @@ def calculate_pressure_drop(
         Dictionary with results including pressure drop in various units
 
     Example:
-        >>> result = calculate_pressure_drop(
-        ...     pipe_size='4',
-        ...     pipe_schedule='40',
-        ...     pipe_length=100,
-        ...     flow_rate=1500,
-        ...     flow_unit='SCFM',
-        ...     pressure=10,
-        ...     temperature=500
-        ... )
+        >>> result = calculate_pressure_drop(pipe_size='4', pipe_schedule='40',
+        ...     pipe_length=100, flow_rate=1500, flow_unit='SCFM',
+        ...     pressure=10, temperature=500)
         >>> print(f"dP = {result['pressure_drop_bar']:.4f} bar")
     """
     assert pipe_length is not None, "pipe_length must be provided"
     temp_k = _convert_temperature(temperature, temperature_unit, "K")
     pressure_pa = _convert_pressure(pressure, pressure_unit, "Pa")
-
-    pipe_diameter, roughness = _resolve_pipe_geometry(
-        pipe_size, pipe_schedule, pipe_diameter, pipe_material, pipe_roughness
-    )
-    composition, mass_flow_kg_s = _resolve_gas_and_flow(
+    inputs = _build_pressure_drop_inputs(
+        pipe_size,
+        pipe_schedule,
+        pipe_diameter,
+        pipe_length,
+        pipe_material,
+        pipe_roughness,
+        elevation_change,
         flow_rate,
         flow_unit,
         gas_composition,
-        temp_k,
-        pressure_pa,
+        fittings,
+        friction_method,
         compressibility_correction,
         standard_condition,
+        temp_k,
+        pressure_pa,
     )
-    fitting_list = _build_fitting_list(fittings)
-
-    inputs = PressureDropInputs(
-        pipe_diameter=pipe_diameter,
-        pipe_length=pipe_length,
-        pipe_roughness=roughness,
-        elevation_change=elevation_change,
-        mass_flow_rate=mass_flow_kg_s,
-        inlet_pressure=pressure_pa,
-        inlet_temperature=temp_k,
-        gas_composition=composition,
-        fittings=fitting_list,
-        compressibility_correction=compressibility_correction,
-        friction_method=friction_method,
-    )
-
     engine = PressureDropCalculationEngine()
     results = engine.calculate(inputs)
     return _format_results(results)
