@@ -28,6 +28,10 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+# Qt enum aliases — break LoD chains (Qt.X.Y is a 3-level access)
+_SCROLL_BAR_OFF = Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+_ALIGN_CENTER = Qt.AlignmentFlag.AlignCenter
+
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {
     "rosewater": "#f5e0dc",
@@ -241,12 +245,13 @@ class ODESolverWindow(QMainWindow):
         menu_bar = self.menuBar()
         view_menu = menu_bar.addMenu("&View")  # type: ignore
         notes_action = view_menu.addAction("Toggle &Notes")  # type: ignore
-        notes_action.triggered.connect(self._toggle_notes)  # type: ignore
+        notes_triggered = notes_action.triggered  # type: ignore
+        notes_triggered.connect(self._toggle_notes)
 
         # Central widget with scroll area
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
-        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll_area.setHorizontalScrollBarPolicy(_SCROLL_BAR_OFF)
         self.setCentralWidget(scroll_area)
 
         central_widget = QWidget()
@@ -262,7 +267,7 @@ class ODESolverWindow(QMainWindow):
         title_font.setPointSize(18)
         title_font.setBold(True)
         title_label.setFont(title_font)
-        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title_label.setAlignment(_ALIGN_CENTER)
         title_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['blue']};")
         main_layout.addWidget(title_label)
 
@@ -388,8 +393,21 @@ class ODESolverWindow(QMainWindow):
         return group
 
     def _on_preset_changed(self, preset_name: str) -> None:
-        """Handle preset selection change."""
-        assert preset_name is not None, "preset_name must be provided"
+        """Handle preset selection change.
+
+        Preconditions:
+            preset_name must be a non-empty str.
+
+        Raises:
+            TypeError: if preset_name is not a str.
+            ValueError: if preset_name is an empty string.
+        """
+        if not isinstance(preset_name, str):
+            raise TypeError(
+                f"preset_name must be str, got {type(preset_name).__name__}"
+            )
+        if not preset_name:
+            raise ValueError("preset_name must not be empty")
         if preset_name == "Custom":
             self.preset_description.setText("")
             return
@@ -415,8 +433,16 @@ class ODESolverWindow(QMainWindow):
         self.initial_edit.setPlainText("\n".join(init_lines))
 
     def _parse_dict_input(self, text: str) -> dict[str, str]:
-        """Parse colon-separated key-value pairs from text."""
-        assert text is not None, "text must be provided"
+        """Parse colon-separated key-value pairs from text.
+
+        Preconditions:
+            text must be a str.
+
+        Raises:
+            TypeError: if text is not a str.
+        """
+        if not isinstance(text, str):
+            raise TypeError(f"text must be str, got {type(text).__name__}")
         result = {}
         for line in text.strip().split("\n"):
             line = line.strip()

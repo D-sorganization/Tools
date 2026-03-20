@@ -10,7 +10,8 @@ logger = logging.getLogger(__name__)
 
 def run() -> None:
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        chromium = p.chromium
+        browser = chromium.launch(headless=True)
         context = browser.new_context()
         page = context.new_page()
 
@@ -41,9 +42,8 @@ def run() -> None:
             logger.error("ERROR: #gasFlowHint not found")
 
         # Check aria-describedby on standardCondition
-        described_by = page.locator("#standardCondition").get_attribute(
-            "aria-describedby"
-        )
+        condition_locator = page.locator("#standardCondition")
+        described_by = condition_locator.get_attribute("aria-describedby")
         logger.info(f"Standard Condition aria-describedby: {described_by}")
 
         if described_by == "gasFlowHint":

@@ -175,7 +175,12 @@ def constrained_accelerations(
     torque_limits: np.ndarray | None = None,
 ) -> np.ndarray:
     """Compute constrained accelerations using augmented Lagrangian method."""
-    assert state is not None, "state must be provided"
+    if not isinstance(state, np.ndarray):
+        raise TypeError(f"state must be a numpy ndarray, got {type(state).__name__}")
+    if state.shape != (2 * N_DOF,):
+        raise ValueError(f"state must have shape ({2 * N_DOF},), got {state.shape}")
+    if not isinstance(t, (int, float)):
+        raise TypeError(f"t must be a number, got {type(t).__name__}")
     qddot, _ = _solve_constrained_dynamics(
         state, t, params, torque_func, alpha, beta, torque_limits
     )
@@ -196,7 +201,12 @@ def constraint_forces(
     -------
     lambda_vec : np.ndarray, shape (4,) — constraint forces
     """
-    assert state is not None, "state must be provided"
+    if not isinstance(state, np.ndarray):
+        raise TypeError(f"state must be a numpy ndarray, got {type(state).__name__}")
+    if state.shape != (2 * N_DOF,):
+        raise ValueError(f"state must have shape ({2 * N_DOF},), got {state.shape}")
+    if not isinstance(t, (int, float)):
+        raise TypeError(f"t must be a number, got {type(t).__name__}")
     _, lambda_forces = _solve_constrained_dynamics(
         state, t, params, torque_func, alpha, beta
     )

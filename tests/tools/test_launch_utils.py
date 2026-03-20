@@ -289,3 +289,46 @@ def test_launch_tool_dbc_rejects_non_dict():
 def test_launch_tool_dbc_rejects_non_path():
     with pytest.raises(PreconditionError):
         launch_tool({"name": "x"}, "/not/a/Path/object")  # type: ignore[arg-type]
+
+
+# ─── _stream_reader DbC ────────────────────────────────────────
+
+
+def test_stream_reader_dbc_none_stream():
+    """_stream_reader must reject None stream."""
+    from tools.launch_utils import _stream_reader
+
+    with pytest.raises(PreconditionError):
+        _stream_reader(None, "[OUT]", print)  # type: ignore[arg-type]
+
+
+def test_stream_reader_dbc_non_string_prefix():
+    """_stream_reader must reject non-string prefix."""
+    import io
+
+    from tools.launch_utils import _stream_reader
+
+    with pytest.raises(PreconditionError):
+        _stream_reader(io.StringIO("line"), 123, print)  # type: ignore[arg-type]
+
+
+def test_stream_reader_dbc_non_callable_log_func():
+    """_stream_reader must reject non-callable log_func."""
+    import io
+
+    from tools.launch_utils import _stream_reader
+
+    with pytest.raises(PreconditionError):
+        _stream_reader(io.StringIO("line"), "[OUT]", "not_callable")  # type: ignore[arg-type]
+
+
+def test_stream_reader_forwards_lines():
+    """_stream_reader forwards lines to log_func with prefix."""
+    import io
+
+    from tools.launch_utils import _stream_reader
+
+    output: list[str] = []
+    _stream_reader(io.StringIO("hello\nworld\n"), "[OUT]", output.append)
+    assert any("[OUT] hello" in m for m in output)
+    assert any("[OUT] world" in m for m in output)

@@ -262,3 +262,67 @@ class TestHumanoidBuilderGUIRegistration:
             assert hasattr(launch_pyqt6, "main")
         except ImportError:
             pytest.skip("Launcher not yet implemented")
+
+
+class TestLoDAliases:
+    """Tests for LoD-compliant PyQt6 enum aliases in main_window module.
+
+    Verifies that module-level aliases eliminate 3-level deep attribute chains.
+    """
+
+    @pytest.fixture
+    def mock_qt_modules(self):
+        """Mock PyQt6 modules for headless environments."""
+        with patch.dict(
+            sys.modules,
+            {
+                "PyQt6": MagicMock(),
+                "PyQt6.QtWidgets": MagicMock(),
+                "PyQt6.QtCore": MagicMock(),
+                "PyQt6.QtGui": MagicMock(),
+            },
+        ):
+            yield
+
+    def test_enum_aliases_defined(self, mock_qt_modules):
+        """Test that LoD-compliant enum aliases are defined at module level."""
+        try:
+            import importlib
+
+            import humanoid_builder_gui.ui.pyqt6.main_window as mw
+
+            importlib.reload(mw)
+            alias_names = [
+                "_SCROLL_BAR_ALWAYS_OFF",
+                "_ALIGN_CENTER",
+                "_HORIZONTAL",
+                "_POLICY_EXPANDING",
+                "_POLICY_FIXED",
+                "_RESIZE_MODE_STRETCH",
+                "_RESIZE_MODE_RESIZE_TO_CONTENTS",
+            ]
+            for name in alias_names:
+                assert hasattr(mw, name), f"Missing LoD alias: {name}"
+        except ImportError:
+            pytest.skip("PyQt6 not available in this environment")
+
+    def test_no_deep_attribute_chains_in_method_body(self, mock_qt_modules):
+        """Test that the module source has no 3-level Qt enum chains outside aliases."""
+        import inspect
+        import re
+
+        try:
+            import humanoid_builder_gui.ui.pyqt6.main_window as mw
+
+            source = inspect.getsource(mw)
+            # Find all 3-level Qt enum accesses: Qt.Xxx.Yyy or QFoo.Bar.Baz
+            pattern = re.compile(
+                r"(?<![_A-Z])(Qt\.\w+\.\w+|QSizePolicy\.Policy\.\w+|QHeaderView\.ResizeMode\.\w+)"
+            )
+            matches = pattern.findall(source)
+            # Only the alias definitions should match (7 lines)
+            assert len(matches) <= 7, (
+                f"Unexpected deep attribute chains found: {matches}"
+            )
+        except ImportError:
+            pytest.skip("PyQt6 not available in this environment")

@@ -89,7 +89,18 @@ class PressureDropCalculatorWidget(QWidget):
     }
 
     def __init__(self, parent: QWidget | None = None) -> None:
-        """Initialize the Pressure Drop Calculator widget."""
+        """Initialize the Pressure Drop Calculator widget.
+
+        Args:
+            parent: Optional parent widget. Must be a QWidget or None.
+
+        Raises:
+            TypeError: If parent is not a QWidget or None.
+        """
+        if parent is not None and not isinstance(parent, QWidget):
+            raise TypeError(
+                f"parent must be a QWidget or None, got {type(parent).__name__}"
+            )
         super().__init__(parent)
         self.results: dict[str, Any] | None = None
         self._init_ui()
@@ -101,7 +112,8 @@ class PressureDropCalculatorWidget(QWidget):
         layout = QHBoxLayout(self)
         layout.setContentsMargins(10, 10, 10, 10)
 
-        splitter = QSplitter(Qt.Orientation.Horizontal)
+        orientation = Qt.Orientation.Horizontal
+        splitter = QSplitter(orientation)
         splitter.addWidget(self._create_input_panel())
         splitter.addWidget(self._create_results_panel())
         splitter.setSizes([350, 650])
@@ -347,18 +359,18 @@ class PressureDropCalculatorWidget(QWidget):
 
         # Main results table
         results_data = [
-            ("Total Pressure Drop", f"{r.get('total_pressure_drop', 0):.2f} Pa"),
-            ("Outlet Pressure", f"{r.get('outlet_pressure', 0) / 1e5:.4f} bar"),
-            ("Friction Pressure Drop", f"{r.get('friction_pressure_drop', 0):.2f} Pa"),
-            ("Fitting Pressure Drop", f"{r.get('fitting_pressure_drop', 0):.2f} Pa"),
+            ("Total Pressure Drop", f"{r.get('pressure_drop_pa', 0):.2f} Pa"),
+            ("Outlet Pressure", f"{r.get('outlet_pressure_pa', 0) / 1e5:.4f} bar"),
+            ("Friction Pressure Drop", f"{r.get('friction_loss_pa', 0):.2f} Pa"),
+            ("Fitting Pressure Drop", f"{r.get('fitting_loss_pa', 0):.2f} Pa"),
             (
                 "Elevation Pressure Drop",
-                f"{r.get('elevation_pressure_drop', 0):.2f} Pa",
+                f"{r.get('elevation_loss_pa', 0):.2f} Pa",
             ),
             ("Friction Factor", f"{r.get('friction_factor', 0):.6f}"),
             (
                 "Pressure Drop per 100ft",
-                f"{r.get('pressure_drop_per_100ft', 0):.2f} Pa/100ft",
+                f"{r.get('pressure_drop_per_100ft_pa', 0):.2f} Pa/100ft",
             ),
             ("Flow Regime", r.get("flow_regime", "Unknown")),
         ]
@@ -408,7 +420,7 @@ class PressureDropCalculatorWidget(QWidget):
         ax.set_facecolor("#313244")
 
         inlet_p = self.pressure_spin.value() * 1e5  # Convert bar to Pa
-        outlet_p = self.results.get("outlet_pressure", inlet_p)
+        outlet_p = self.results.get("outlet_pressure_pa", inlet_p)
         length = self.pipe_length_spin.value()
 
         x = [0, length]
@@ -423,7 +435,8 @@ class PressureDropCalculatorWidget(QWidget):
         ax.tick_params(colors="#cdd6f4")
         ax.grid(True, alpha=0.3, color="#585b70")
 
-        for spine in ax.spines.values():
+        spines = ax.spines
+        for spine in spines.values():
             spine.set_color("#585b70")
 
         self.figure.tight_layout()

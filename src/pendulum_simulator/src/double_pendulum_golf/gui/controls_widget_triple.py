@@ -207,19 +207,19 @@ class ControlsWidgetTriple(ControlsWidgetBase):
                 row.addWidget(widget)
                 layout.addLayout(row)
         else:
-            self.inp_m1 = LabeledInput("m1 (kg)", "5.0", "Mass of segment 1")    # type: ignore
-            self.inp_m2 = LabeledInput("m2 (kg)", "0.5", "Mass of segment 2")    # type: ignore
-            self.inp_m3 = LabeledInput("m3 (kg)", "0.4", "Mass of segment 3")    # type: ignore
-            self.inp_L1 = LabeledInput(    # type: ignore
+            self.inp_m1 = LabeledInput("m1 (kg)", "5.0", "Mass of segment 1")  # type: ignore
+            self.inp_m2 = LabeledInput("m2 (kg)", "0.5", "Mass of segment 2")  # type: ignore
+            self.inp_m3 = LabeledInput("m3 (kg)", "0.4", "Mass of segment 3")  # type: ignore
+            self.inp_L1 = LabeledInput(  # type: ignore
                 "L1 (m) — Hub", "0.20", "Length of segment 1: Hub (sternum → shoulder)"
             )
-            self.inp_L2 = LabeledInput(    # type: ignore
+            self.inp_L2 = LabeledInput(  # type: ignore
                 "L2 (m) — Arm", "0.65", "Length of segment 2: Arm"
             )
-            self.inp_L3 = LabeledInput(    # type: ignore
+            self.inp_L3 = LabeledInput(  # type: ignore
                 "L3 (m) — Club", "1.10", "Length of segment 3: Club"
             )
-            for w in [    # type: ignore
+            for w in [  # type: ignore
                 self.inp_m1,
                 self.inp_m2,
                 self.inp_m3,
@@ -381,7 +381,7 @@ class ControlsWidgetTriple(ControlsWidgetBase):
             try:
                 widget.set_value(val, is_si=True)
             except TypeError:
-                widget.set_value(str(val))    # type: ignore
+                widget.set_value(str(val))  # type: ignore
         self._update_torque_preview()
 
     def get_params(self) -> dict:
