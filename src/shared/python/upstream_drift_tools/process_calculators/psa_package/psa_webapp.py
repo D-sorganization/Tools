@@ -676,7 +676,8 @@ def main() -> None:
     # Footer
     st.markdown("---")
     st.markdown(
-        "*PSA System Analysis Tool - All calculations validated against Excel reference model.*"
+        "*PSA System Analysis Tool - "
+        "All calculations validated against Excel reference model.*"
     )
 
 
