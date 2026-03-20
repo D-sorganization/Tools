@@ -63,12 +63,34 @@ except ImportError:
         p.write_text(content, encoding=encoding)
 
 
+def _get_log_path() -> "Path":
+    """Return XDG-compliant log file path for folder_tool.
+
+    Uses ``get_xdg_config_dir`` from shared utils when available, falling back
+    to ``~/.config/folder_tool`` to stay consistent with XDG conventions.
+    """
+    from pathlib import Path as _Path
+
+    try:
+        from utils.config_loader import get_xdg_config_dir
+
+        config_dir = get_xdg_config_dir("folder_tool")
+    except ImportError:
+        import os
+
+        xdg_home = os.environ.get("XDG_CONFIG_HOME", "")
+        base = _Path(xdg_home) if xdg_home else _Path.home() / ".config"
+        config_dir = base / "folder_tool"
+
+    config_dir.mkdir(parents=True, exist_ok=True)
+    return config_dir / "folder_processor.log"
+
+
 # Set up logging to capture detailed information
-log_filename = "folder_processor.log"
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler(log_filename, mode="w")],
+    handlers=[logging.FileHandler(str(_get_log_path()), mode="w")],
 )
 
 # Get logger for this module
