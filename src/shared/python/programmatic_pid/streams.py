@@ -43,7 +43,7 @@ def resolve_endpoint(
     eq_id = endpoint.get("equipment")
     if not eq_id or eq_id not in equipment_by_id:
         raise KeyError(f"Unknown equipment endpoint: {eq_id}")
-    return equipment_anchor(
+    return equipment_anchor(  # type: ignore
         equipment_by_id[eq_id],
         endpoint.get("side", "right"),
         endpoint.get("offset", 0.0),

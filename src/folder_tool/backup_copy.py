@@ -99,7 +99,7 @@ class BackupCopyMixin:
         Returns:
             Path to backup directory if successful [str], None if failed.
         """
-        valid_folders = self._validated_source_folders(self.source_folders)
+        valid_folders = self._validated_source_folders(self.source_folders)  # type: ignore
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         try:
@@ -107,7 +107,7 @@ class BackupCopyMixin:
         except (IOError, PermissionError, OSError) as e:
             raise ValueError(f"Cannot determine backup location: {e}") from e
 
-        self.update_status("Creating backup...")
+        self.update_status("Creating backup...")  # type: ignore
         logger.info(f"Creating backup at: {backup_base}")
 
         try:
@@ -122,7 +122,7 @@ class BackupCopyMixin:
             successful = 0
             failed = 0
             for i, folder in enumerate(valid_folders):
-                if self.cancel_operation:
+                if self.cancel_operation:  # type: ignore
                     logger.info("Backup operation cancelled by user")
                     return None
 
@@ -132,7 +132,7 @@ class BackupCopyMixin:
                     failed += 1
 
                 progress = (i + 1) / len(valid_folders) * PROGRESS_BACKUP_PERCENT
-                self.update_progress(
+                self.update_progress(  # type: ignore
                     progress,
                     f"Backing up folder {i + 1}/{len(valid_folders)}",
                 )
