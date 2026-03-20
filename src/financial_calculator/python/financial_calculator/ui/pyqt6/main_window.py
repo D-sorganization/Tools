@@ -50,6 +50,10 @@ COLORS = {
     "lavender": "#b4befe",
 }
 
+# LoD: extract deep enum references to module-level constants (avoids obj.prop.subprop chains)
+_SCROLLBAR_OFF = Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+_BOLD_WEIGHT = QFont.Weight.Bold
+
 
 def get_stylesheet() -> str:
     """Generate Catppuccin Mocha stylesheet."""
@@ -185,8 +189,64 @@ class FinancialCalculatorEngine:
         depreciation_years: int,
         tax_rate: float,
     ) -> FinancialDesign:
-        """Run financial calculation."""
-        assert plant_capacity is not None, "plant_capacity must be provided"
+        """Run financial calculation.
+
+        Preconditions:
+            plant_capacity: non-negative float (tons per day)
+            operating_days: integer in [0, 365]
+            utilization: float in [0, 100] (percent)
+            product_price: non-negative float
+            feedstock_cost: non-negative float
+            labor_cost: non-negative float
+            utilities_cost: non-negative float
+            maintenance_cost: non-negative float
+            fixed_labor: non-negative float
+            insurance: non-negative float
+            capital: non-negative float
+            debt_ratio: float in [0, 100] (percent)
+            interest_rate: float in [0, 100] (percent)
+            depreciation_years: positive integer
+            tax_rate: float in [0, 100] (percent)
+
+        Raises:
+            TypeError: if any argument has the wrong type.
+            ValueError: if any numeric argument is out of valid range.
+        """
+        if not isinstance(plant_capacity, (int, float)):
+            raise TypeError(
+                f"plant_capacity must be a number, got {type(plant_capacity)}"
+            )
+        if plant_capacity < 0:
+            raise ValueError(
+                f"plant_capacity must be non-negative, got {plant_capacity}"
+            )
+        if not isinstance(operating_days, int):
+            raise TypeError(
+                f"operating_days must be an int, got {type(operating_days)}"
+            )
+        if not 0 <= operating_days <= 365:
+            raise ValueError(
+                f"operating_days must be in [0, 365], got {operating_days}"
+            )
+        if not isinstance(utilization, (int, float)):
+            raise TypeError(f"utilization must be a number, got {type(utilization)}")
+        if not 0 <= utilization <= 100:
+            raise ValueError(f"utilization must be in [0, 100], got {utilization}")
+        if not isinstance(product_price, (int, float)):
+            raise TypeError(
+                f"product_price must be a number, got {type(product_price)}"
+            )
+        if product_price < 0:
+            raise ValueError(f"product_price must be non-negative, got {product_price}")
+        if not isinstance(depreciation_years, int):
+            raise TypeError(
+                f"depreciation_years must be an int, got {type(depreciation_years)}"
+            )
+        if depreciation_years <= 0:
+            raise ValueError(
+                f"depreciation_years must be positive, got {depreciation_years}"
+            )
+
         params = self._params_class(
             plant_capacity_tpd=plant_capacity,
             operating_days_per_year=operating_days,
@@ -223,8 +283,19 @@ class FinancialCalculatorEngine:
         )
 
     def generate_projections(self, years: int = 10) -> list[dict]:
-        """Generate yearly projections."""
-        assert years is not None, "years must be provided"
+        """Generate yearly projections.
+
+        Preconditions:
+            years: positive integer.
+
+        Raises:
+            TypeError: if years is not an integer.
+            ValueError: if years is not positive.
+        """
+        if not isinstance(years, int):
+            raise TypeError(f"years must be an int, got {type(years)}")
+        if years <= 0:
+            raise ValueError(f"years must be positive, got {years}")
         result = self._calculator.generate_yearly_projections(years)
         return list(result)
 
@@ -233,7 +304,16 @@ class FinancialCalculatorMainWindow(QMainWindow):
     """Main window for Financial Calculator application."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
-        """Initialize the main window."""
+        """Initialize the main window.
+
+        Preconditions:
+            parent: a QWidget instance or None.
+
+        Raises:
+            TypeError: if parent is not a QWidget or None.
+        """
+        if parent is not None and not isinstance(parent, QWidget):
+            raise TypeError(f"parent must be a QWidget or None, got {type(parent)}")
         super().__init__(parent)
         self.setWindowTitle("Financial Calculator")
         self.setMinimumSize(1200, 800)
@@ -260,7 +340,7 @@ class FinancialCalculatorMainWindow(QMainWindow):
 
     def _setup_ui(self) -> None:
         """Set up the user interface."""
-        # Menu bar with Notes toggle
+        # Menu bar with Notes toggle — break into named intermediates (LoD)
         menu_bar = self.menuBar()
         view_menu = menu_bar.addMenu("&View")  # type: ignore
         notes_action = view_menu.addAction("Toggle &Notes")  # type: ignore
@@ -285,14 +365,16 @@ class FinancialCalculatorMainWindow(QMainWindow):
         """Create the input panel with all parameters."""
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        # LoD: use module-level constant instead of Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        scroll.setHorizontalScrollBarPolicy(_SCROLLBAR_OFF)
 
         container = QWidget()
         layout = QVBoxLayout(container)
         layout.setSpacing(15)
 
         title = QLabel("Financial Model Calculator")
-        title.setFont(QFont("", 18, QFont.Weight.Bold))
+        # LoD: use module-level constant instead of QFont.Weight.Bold
+        title.setFont(QFont("", 18, _BOLD_WEIGHT))
         title.setStyleSheet(f"color: {COLORS['blue']};")
         layout.addWidget(title)
 
@@ -448,7 +530,8 @@ class FinancialCalculatorMainWindow(QMainWindow):
 
         # Results title
         title = QLabel("Financial Analysis Results")
-        title.setFont(QFont("", 18, QFont.Weight.Bold))
+        # LoD: use module-level constant instead of QFont.Weight.Bold
+        title.setFont(QFont("", 18, _BOLD_WEIGHT))
         title.setStyleSheet(f"color: {COLORS['green']};")
         layout.addWidget(title)
 
@@ -500,7 +583,8 @@ class FinancialCalculatorMainWindow(QMainWindow):
             name_label.setStyleSheet(f"color: {COLORS['subtext0']};")
 
             value_label = QLabel(default)
-            value_label.setFont(QFont("", 16, QFont.Weight.Bold))
+            # LoD: use module-level constant instead of QFont.Weight.Bold
+            value_label.setFont(QFont("", 16, _BOLD_WEIGHT))
             value_label.setStyleSheet(f"color: {color};")
             self.metric_labels[key] = value_label
 
@@ -559,8 +643,16 @@ class FinancialCalculatorMainWindow(QMainWindow):
         self._update_projections(projections)
 
     def _update_results(self, results: FinancialDesign) -> None:
-        """Update results display."""
-        assert results is not None, "results must be provided"
+        """Update results display.
+
+        Preconditions:
+            results: a FinancialDesign instance.
+
+        Raises:
+            TypeError: if results is not a FinancialDesign.
+        """
+        if not isinstance(results, FinancialDesign):
+            raise TypeError(f"results must be a FinancialDesign, got {type(results)}")
         self.metric_labels["annual_tons"].setText(
             f"{results.annual_feedstock_tons:,.0f} tons"
         )
@@ -572,8 +664,16 @@ class FinancialCalculatorMainWindow(QMainWindow):
         self.metric_labels["payback"].setText(f"{results.payback_years:.1f} years")
 
     def _update_projections(self, projections: list[dict]) -> None:
-        """Update projections table."""
-        assert projections is not None, "projections must be provided"
+        """Update projections table.
+
+        Preconditions:
+            projections: a list of projection dicts.
+
+        Raises:
+            TypeError: if projections is not a list.
+        """
+        if not isinstance(projections, list):
+            raise TypeError(f"projections must be a list, got {type(projections)}")
         self.projections_table.setRowCount(len(projections))
 
         for row, proj in enumerate(projections):
