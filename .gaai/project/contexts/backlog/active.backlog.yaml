@@ -735,8 +735,12 @@ items:
   - id: GH1651
     title: "Fix MD5 weak hash finding in text_editor.py:796"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-20T13:49:39Z"
+    completed_at: "2026-03-20T13:53:46Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1667"
+    pr_number: 1667
+    pr_status: "open"
     github_issue: 1651
     artefact: .gaai/project/contexts/artefacts/stories/GH1651.story.md
     dependencies: []
