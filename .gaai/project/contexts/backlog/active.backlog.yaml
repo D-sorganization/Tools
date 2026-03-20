@@ -690,9 +690,12 @@ items:
   - id: GH1654
     title: "Reduce type:ignore count from 724 to under 200"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-20T13:17:12Z"
     completed_at: "2026-03-20T13:48:13Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1665"
+    pr_number: 1665
+    pr_status: "open"
     github_issue: 1654
     artefact: .gaai/project/contexts/artefacts/stories/GH1654.story.md
     dependencies: []
