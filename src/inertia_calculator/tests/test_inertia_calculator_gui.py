@@ -6,6 +6,7 @@ TDD tests for the Inertia Calculator GUI components.
 Tests cover PyQt6 main window, inertia calculations, and validation.
 """
 
+import math
 import sys
 from unittest.mock import MagicMock, patch
 
@@ -164,6 +165,138 @@ class TestInertiaValidation:
 
         # Should violate: |Ixx - Iyy| <= Izz <= Ixx + Iyy
         assert not (abs(ixx - iyy) <= izz <= ixx + iyy)
+
+
+def _load_main_window_module():
+    """Load InertiaCalculatorWindow module with mocked Qt and base class.
+
+    Returns the loaded module with InertiaCalculatorWindow available as a real class.
+    The base class is replaced with a minimal stub to avoid PyQt6 initialization.
+    """
+    import importlib.util
+
+    class _FakeBaseCalculatorWindow:
+        """Minimal stub for BaseCalculatorWindow used in headless testing."""
+
+        def __init__(self, calculator_name=None, window_title=None, min_size=None):
+            self.main_layout = MagicMock()
+
+    base_calc_mock = MagicMock()
+    base_calc_mock.BaseCalculatorWindow = _FakeBaseCalculatorWindow
+
+    mocks = {
+        "PyQt6": MagicMock(),
+        "PyQt6.QtWidgets": MagicMock(),
+        "PyQt6.QtCore": MagicMock(),
+        "PyQt6.QtGui": MagicMock(),
+        "upstream_drift_tools": MagicMock(),
+        "upstream_drift_tools.ui": MagicMock(),
+        "upstream_drift_tools.ui.widgets": MagicMock(),
+        "upstream_drift_tools.ui.widgets.base_calculator_widget": base_calc_mock,
+    }
+
+    # Use a unique module name to avoid caching collisions across tests
+    module_name = f"_main_window_test_{id(mocks)}"
+    module_path = (
+        "/home/dieterolson/gaai-fleet/GH1473-workspace/src/inertia_calculator"
+        "/python/inertia_calculator/ui/pyqt6/main_window.py"
+    )
+
+    with patch.dict(sys.modules, mocks):
+        spec = importlib.util.spec_from_file_location(module_name, module_path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+
+    return mod
+
+
+class TestDisplayResultsDbC:
+    """DbC tests for _display_results precondition enforcement (AC: DbC violations fixed)."""
+
+    def test_display_results_raises_type_error_for_non_numeric(self):
+        """_display_results raises TypeError when non-numeric value passed for ixx."""
+        mod = _load_main_window_module()
+        window = MagicMock(spec=mod.InertiaCalculatorWindow)
+        with pytest.raises(TypeError, match="ixx must be a numeric value"):
+            mod.InertiaCalculatorWindow._display_results(
+                window, "not_a_number", 0.1, 0.1, 0.0, 0.0, 0.0, 1.0, "test"
+            )
+
+    def test_display_results_raises_value_error_for_nan(self):
+        """_display_results raises ValueError when NaN passed for ixx."""
+        mod = _load_main_window_module()
+        window = MagicMock(spec=mod.InertiaCalculatorWindow)
+        with pytest.raises(ValueError, match="must be a finite number"):
+            mod.InertiaCalculatorWindow._display_results(
+                window, math.nan, 0.1, 0.1, 0.0, 0.0, 0.0, 1.0, "test"
+            )
+
+    def test_display_results_raises_value_error_for_inf(self):
+        """_display_results raises ValueError when inf passed for iyy."""
+        mod = _load_main_window_module()
+        window = MagicMock(spec=mod.InertiaCalculatorWindow)
+        with pytest.raises(ValueError, match="must be a finite number"):
+            mod.InertiaCalculatorWindow._display_results(
+                window, 0.1, math.inf, 0.1, 0.0, 0.0, 0.0, 1.0, "test"
+            )
+
+    def test_display_results_raises_value_error_for_non_positive_mass(self):
+        """_display_results raises ValueError when mass <= 0."""
+        mod = _load_main_window_module()
+        window = MagicMock(spec=mod.InertiaCalculatorWindow)
+        with pytest.raises(ValueError, match="mass must be positive"):
+            mod.InertiaCalculatorWindow._display_results(
+                window, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0, -1.0, "test"
+            )
+
+    def test_display_results_raises_type_error_for_non_string_description(self):
+        """_display_results raises TypeError when description is not a str."""
+        mod = _load_main_window_module()
+        window = MagicMock(spec=mod.InertiaCalculatorWindow)
+        with pytest.raises(TypeError, match="description must be a str"):
+            mod.InertiaCalculatorWindow._display_results(
+                window, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0, 1.0, 42
+            )
+
+
+class TestValidateInertiaDbC:
+    """DbC tests for _validate_inertia precondition enforcement (AC: DbC violations fixed)."""
+
+    def test_validate_inertia_raises_type_error_for_string(self):
+        """_validate_inertia raises TypeError for non-numeric ixx."""
+        mod = _load_main_window_module()
+        window = MagicMock(spec=mod.InertiaCalculatorWindow)
+        with pytest.raises(TypeError, match="ixx must be a numeric value"):
+            mod.InertiaCalculatorWindow._validate_inertia(
+                window, "bad", 0.1, 0.1, 0.0, 0.0, 0.0
+            )
+
+    def test_validate_inertia_raises_value_error_for_nan(self):
+        """_validate_inertia raises ValueError for NaN iyz."""
+        mod = _load_main_window_module()
+        window = MagicMock(spec=mod.InertiaCalculatorWindow)
+        with pytest.raises(ValueError, match="iyz must be a finite number"):
+            mod.InertiaCalculatorWindow._validate_inertia(
+                window, 0.1, 0.1, 0.1, 0.0, 0.0, math.nan
+            )
+
+    def test_validate_inertia_returns_errors_for_negative_diagonal(self):
+        """_validate_inertia returns error list for negative Ixx."""
+        mod = _load_main_window_module()
+        window = MagicMock(spec=mod.InertiaCalculatorWindow)
+        errors = mod.InertiaCalculatorWindow._validate_inertia(
+            window, -0.1, 0.1, 0.1, 0.0, 0.0, 0.0
+        )
+        assert any("Ixx" in e for e in errors)
+
+    def test_validate_inertia_returns_empty_for_valid_tensor(self):
+        """_validate_inertia returns empty list for a valid diagonal tensor."""
+        mod = _load_main_window_module()
+        window = MagicMock(spec=mod.InertiaCalculatorWindow)
+        errors = mod.InertiaCalculatorWindow._validate_inertia(
+            window, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0
+        )
+        assert errors == []
 
 
 class TestInertiaCalculatorGUIRegistration:
