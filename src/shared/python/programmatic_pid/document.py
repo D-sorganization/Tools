@@ -170,7 +170,7 @@ class PIDDocument:
 
     def validate_json(self) -> list[dict[str, str]]:
         """Return structured validation results as JSON-serializable dicts."""
-        return validate_spec_json(self._spec)
+        return validate_spec_json(self._spec)  # type: ignore[no-any-return]
 
     # ----- Export -----
 
