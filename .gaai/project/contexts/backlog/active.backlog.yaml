@@ -641,3 +641,93 @@ items:
     artefact: .gaai/project/contexts/artefacts/stories/GH1463.story.md
     dependencies: []
     created_at: 2026-03-19
+
+  - id: GH1657
+    title: "Centralize configuration with XDG Base Directory support"
+    priority: medium
+    status: refined
+    github_issue: 1657
+    artefact: .gaai/project/contexts/artefacts/stories/GH1657.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1656
+    title: "Add ODE solver timeout and load testing"
+    priority: medium
+    status: refined
+    github_issue: 1656
+    artefact: .gaai/project/contexts/artefacts/stories/GH1656.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1655
+    title: "Replace 92 print() calls in src/ with logging"
+    priority: medium
+    status: refined
+    github_issue: 1655
+    artefact: .gaai/project/contexts/artefacts/stories/GH1655.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1654
+    title: "Reduce type:ignore count from 724 to under 200"
+    priority: medium
+    status: refined
+    github_issue: 1654
+    artefact: .gaai/project/contexts/artefacts/stories/GH1654.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1653
+    title: "Add cross-repo integration test for UpstreamDrift/Gasification compatibility"
+    priority: medium
+    status: refined
+    github_issue: 1653
+    artefact: .gaai/project/contexts/artefacts/stories/GH1653.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1652
+    title: "Implement semantic versioning and deprecation path"
+    priority: medium
+    status: refined
+    github_issue: 1652
+    artefact: .gaai/project/contexts/artefacts/stories/GH1652.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1651
+    title: "Fix MD5 weak hash finding in text_editor.py:796"
+    priority: medium
+    status: refined
+    github_issue: 1651
+    artefact: .gaai/project/contexts/artefacts/stories/GH1651.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1650
+    title: "Enforce function length limit and refactor violations"
+    priority: medium
+    status: refined
+    github_issue: 1650
+    artefact: .gaai/project/contexts/artefacts/stories/GH1650.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1649
+    title: "Refactor oversized files: modern_robotics.py (2079L), pressure_drop_interface.py (1390L)"
+    priority: medium
+    status: refined
+    github_issue: 1649
+    artefact: .gaai/project/contexts/artefacts/stories/GH1649.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1648
+    title: "BLOCKER: Fix relative import regression in src/shared/python/cors.py"
+    priority: medium
+    status: refined
+    github_issue: 1648
+    artefact: .gaai/project/contexts/artefacts/stories/GH1648.story.md
+    dependencies: []
+    created_at: 2026-03-20
