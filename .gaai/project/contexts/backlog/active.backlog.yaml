@@ -751,11 +751,12 @@ items:
     title: "Enforce function length limit and refactor violations"
     priority: medium
     status: done
-    started_at: "2026-03-20T13:49:43Z"
-    completed_at: "2026-03-20T14:04:00Z"
+    started_at: "2026-03-20T06:49:43-07:00"
+    completed_at: "2026-03-20T07:04:02-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1668"
     pr_number: 1668
     pr_status: "open"
+    cost_usd: 1.8817
     github_issue: 1650
     artefact: .gaai/project/contexts/artefacts/stories/GH1650.story.md
     dependencies: []
