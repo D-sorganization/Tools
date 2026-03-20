@@ -203,7 +203,7 @@ def build_double_panel(main_window: Any) -> SimulationPanel:
         )
 
     def _double_extract_fn(result: object) -> dict:
-        res = result    # type: ignore
+        res = result  # type: ignore
         vels = res.joint_velocities_at(res.n_steps - 1)  # type: ignore[attr-defined]
         tip_v = vels.get("tip", (0.0, 0.0))
         speed = float(np.hypot(tip_v[0], tip_v[1]))
@@ -393,7 +393,7 @@ def build_triple_panel(main_window: Any) -> SimulationPanel:
         )
 
     def _triple_extract_fn(result: object) -> dict:
-        res = result    # type: ignore
+        res = result  # type: ignore
         pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
         tip_xy = pos.get("tip", (0.0, 0.0))
         # Triple pendulum has no joint_velocities_at; approximate from last two frames
@@ -610,7 +610,7 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
         initial_state = build_state(p)
         limits = build_limits(p)
         clamp = build_clamp(p)
-        torque_func = make_polynomial_torque_golfer(*coeffs)    # type: ignore
+        torque_func = make_polynomial_torque_golfer(*coeffs)  # type: ignore
         return run_simulation_golfer(
             params=params,
             initial_state=initial_state,
@@ -621,7 +621,7 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
         )
 
     def _golfer_extract_fn(result: object) -> dict:
-        res = result    # type: ignore
+        res = result  # type: ignore
         pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
         tip_xy = pos.get("club_tip", pos.get("tip", (0.0, 0.0)))
         if res.n_steps >= 2:  # type: ignore[attr-defined]

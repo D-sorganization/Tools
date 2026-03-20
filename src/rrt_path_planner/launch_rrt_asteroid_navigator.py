@@ -21,9 +21,8 @@ if str(REPO_ROOT) not in sys.path:
 from _bootstrap import bootstrap
 
 REPO_ROOT = bootstrap(__file__)
-PYTHON_SRC = (
-    REPO_ROOT / "src" / "scientific_modeling" / "rrt_path_planner" / "python" / "src"
-)
+_RRT_ROOT = REPO_ROOT / "src" / "rrt_path_planner"
+PYTHON_SRC = _RRT_ROOT / "python" / "src"
 if str(PYTHON_SRC) not in sys.path:
     sys.path.insert(0, str(PYTHON_SRC))
 

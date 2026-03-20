@@ -72,13 +72,14 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
+    stdout = sys.stdout
 
     if args.command == "export-electrode-advisor-default":
         step_path = export_default_layout_step(
             output_path=Path(args.output),
             manifest_path=Path(args.manifest),
         )
-        sys.stdout.write(str(step_path) + "\n")
+        stdout.write(str(step_path) + "\n")
         return 0
 
     if args.command == "export-cylindrical-bath-layout":
@@ -86,7 +87,7 @@ def main() -> int:
             output_path=Path(args.output),
             manifest_path=Path(args.manifest),
         )
-        sys.stdout.write(str(step_path) + "\n")
+        stdout.write(str(step_path) + "\n")
         return 0
 
     if args.command == "export-vessel-drafter-default":
@@ -94,7 +95,7 @@ def main() -> int:
             output_path=Path(args.output),
             manifest_path=Path(args.manifest),
         )
-        sys.stdout.write(str(step_path) + "\n")
+        stdout.write(str(step_path) + "\n")
         return 0
 
     if args.command == "launch-vessel-drafter-gui":

@@ -7,6 +7,8 @@ as tabs within a single QMainWindow with shared theme support.
 from __future__ import annotations
 
 import sys
+from collections.abc import Callable
+from typing import Any
 
 from PyQt6.QtGui import QAction, QKeySequence
 from PyQt6.QtWidgets import (
@@ -36,6 +38,20 @@ try:
     HAS_FUNC_GEN = True
 except ImportError:
     HAS_FUNC_GEN = False
+
+
+def _connect_action(action: QAction, slot: Callable[..., Any]) -> None:
+    """Connect a QAction's triggered signal to a slot.
+
+    Preconditions:
+        action must not be None.
+        slot must not be None.
+    """
+    if action is None:
+        raise ValueError("action must not be None")
+    if slot is None:
+        raise ValueError("slot must not be None")
+    action.triggered.connect(slot)
 
 
 def _get_base_classes() -> tuple:
@@ -108,13 +124,13 @@ class SignalProcessingStudio(*_get_base_classes()):  # type: ignore[misc]
             send_action = QAction("Send to &Toolkit", self)
             send_action.setShortcut(QKeySequence("Ctrl+T"))
             send_action.setStatusTip("Send current signal to Signal Toolkit tab")
-            send_action.triggered.connect(self._send_to_toolkit)
+            _connect_action(send_action, self._send_to_toolkit)
             file_menu.addAction(send_action)
             file_menu.addSeparator()
 
         exit_action = QAction("E&xit", self)
         exit_action.setShortcut(QKeySequence("Ctrl+Q"))
-        exit_action.triggered.connect(self.close)
+        _connect_action(exit_action, self.close)
         file_menu.addAction(exit_action)
 
         menubar.addMenu(file_menu)
@@ -122,7 +138,7 @@ class SignalProcessingStudio(*_get_base_classes()):  # type: ignore[misc]
         # Help menu
         help_menu = QMenu("&Help", self)
         about_action = QAction("&About", self)
-        about_action.triggered.connect(self._show_about)
+        _connect_action(about_action, self._show_about)
         help_menu.addAction(about_action)
         menubar.addMenu(help_menu)
 
@@ -137,7 +153,10 @@ class SignalProcessingStudio(*_get_base_classes()):  # type: ignore[misc]
 
     def _on_poly_fallback(self, joint_name: str, coeffs: list) -> None:
         """Fallback when Function Generator is unavailable."""
-        assert joint_name is not None, "joint_name must be provided"
+        if joint_name is None:
+            raise ValueError("joint_name must not be None")
+        if not isinstance(coeffs, list):
+            raise TypeError(f"coeffs must be a list, got {type(coeffs).__name__}")
         import numpy as np
         from signal_toolkit.core import SignalGenerator
 

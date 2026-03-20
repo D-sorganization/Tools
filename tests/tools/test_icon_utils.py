@@ -104,6 +104,14 @@ def test_check_pil_installed():
     _PILState.available = original
 
 
+def test_convert_image_mode_dbc_none():
+    """convert_image_mode must reject None img."""
+    from tools.icon_utils import convert_image_mode
+
+    with pytest.raises(PreconditionError):
+        convert_image_mode(None)  # type: ignore[arg-type]
+
+
 def test_convert_image_mode():
     from unittest.mock import MagicMock
 

@@ -301,3 +301,70 @@ class TestConstraintViolation:
         state = _make_consistent_state(golfer_params)
         v = constraint_violation(state, golfer_params)
         assert v < 1e-4, f"Violation = {v}, expected near zero"
+
+
+# ---------------------------------------------------------------------------
+# DbC precondition tests (GH1478)
+# ---------------------------------------------------------------------------
+
+
+class TestConstrainedAccelerationsDbc:
+    """Validate TypeError/ValueError preconditions on constrained_accelerations."""
+
+    def test_state_wrong_type(self, golfer_params, zero_torque):
+        with pytest.raises(TypeError, match="state must be a numpy ndarray"):
+            constrained_accelerations(
+                state=list(range(16)),
+                t=0.0,
+                params=golfer_params,
+                torque_func=zero_torque,
+            )
+
+    def test_state_wrong_shape(self, golfer_params, zero_torque):
+        with pytest.raises(ValueError, match="state must have shape"):
+            constrained_accelerations(
+                state=np.zeros(8),
+                t=0.0,
+                params=golfer_params,
+                torque_func=zero_torque,
+            )
+
+    def test_t_wrong_type(self, golfer_params, zero_torque):
+        with pytest.raises(TypeError, match="t must be a number"):
+            constrained_accelerations(
+                state=np.zeros(2 * N_DOF),
+                t="zero",
+                params=golfer_params,
+                torque_func=zero_torque,
+            )
+
+
+class TestConstraintForcesDbc:
+    """Validate TypeError/ValueError preconditions on constraint_forces."""
+
+    def test_state_wrong_type(self, golfer_params, zero_torque):
+        with pytest.raises(TypeError, match="state must be a numpy ndarray"):
+            constraint_forces(
+                state=list(range(16)),
+                t=0.0,
+                params=golfer_params,
+                torque_func=zero_torque,
+            )
+
+    def test_state_wrong_shape(self, golfer_params, zero_torque):
+        with pytest.raises(ValueError, match="state must have shape"):
+            constraint_forces(
+                state=np.zeros(4),
+                t=0.0,
+                params=golfer_params,
+                torque_func=zero_torque,
+            )
+
+    def test_t_wrong_type(self, golfer_params, zero_torque):
+        with pytest.raises(TypeError, match="t must be a number"):
+            constraint_forces(
+                state=np.zeros(2 * N_DOF),
+                t=None,
+                params=golfer_params,
+                torque_func=zero_torque,
+            )

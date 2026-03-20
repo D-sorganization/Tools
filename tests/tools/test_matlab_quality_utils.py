@@ -589,3 +589,15 @@ def test_run_matlab_quality_checks_cli_strict_issues(tmp_path):
             ):
                 run_matlab_quality_checks_cli()
                 mock_exit.assert_called_with(1)
+
+
+# ─── _run_matlab_script DbC ────────────────────────────────────
+
+
+def test_run_matlab_script_dbc_non_path(tmp_path):
+    """_run_matlab_script must reject non-Path script_path."""
+    from src.shared.python.contracts import PreconditionError
+
+    checker = MATLABQualityChecker(tmp_path)
+    with pytest.raises(PreconditionError):
+        checker._run_matlab_script("not_a_path.m")  # type: ignore[arg-type]

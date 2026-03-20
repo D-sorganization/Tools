@@ -49,7 +49,7 @@ class UICreationMixin:
         """Sets the Windows app user model ID for taskbar grouping."""
         try:
             if sys.platform == "win32":
-                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(    # type: ignore
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(  # type: ignore
                     "FolderFix.Tool.2.0",
                 )
                 logger.info("Set Windows App User Model ID for taskbar grouping")
@@ -60,7 +60,7 @@ class UICreationMixin:
         """Loads and sets the ICO icon for the application."""
         # Use iconbitmap for Windows taskbar integration
         assert ico_path is not None, "ico_path must be provided"
-        self.root.iconbitmap(ico_path)    # type: ignore
+        self.root.iconbitmap(ico_path)  # type: ignore
         logger.info(f"Loaded ICO icon for taskbar: {ico_path}")
 
         # Also set iconphoto with multiple sizes for better display
@@ -578,7 +578,7 @@ class UICreationMixin:
         for frame in frames_to_toggle:
             for child in frame.winfo_children():
                 if hasattr(child, "configure"):
-                    child.configure(state=new_state)    # type: ignore
+                    child.configure(state=new_state)  # type: ignore
 
     def select_source_folders(self) -> None:
         """Open folder selection dialog to add source folders.
@@ -651,7 +651,7 @@ class UICreationMixin:
             Exception: If folder removal fails for other reasons
         """
         try:
-            selected_indices = list(self.source_listbox.curselection())    # type: ignore
+            selected_indices = list(self.source_listbox.curselection())  # type: ignore
             if not selected_indices:
                 messagebox.showinfo("Info", "Please select folders to remove.")
                 return

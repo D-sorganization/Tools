@@ -63,7 +63,19 @@ class FunctionGeneratorWidget(QWidget):
         *,
         use_builtin_theme: bool = True,
     ) -> None:
-        """Initialize the Function Generator widget."""
+        """Initialize the Function Generator widget.
+
+        Args:
+            parent: Optional parent QWidget. Must be a QWidget instance or None.
+            use_builtin_theme: Whether to apply the built-in dark theme styling.
+
+        Raises:
+            TypeError: If use_builtin_theme is not a bool.
+        """
+        if not isinstance(use_builtin_theme, bool):
+            raise TypeError(
+                f"use_builtin_theme must be bool, got {type(use_builtin_theme).__name__}"
+            )
         super().__init__(parent)
         self.current_signal: Signal | None = None
         self._init_ui()
@@ -78,7 +90,8 @@ class FunctionGeneratorWidget(QWidget):
         layout.setContentsMargins(10, 10, 10, 10)
 
         # Create splitter for resizable panels
-        splitter = QSplitter(Qt.Orientation.Horizontal)
+        horizontal_orientation = Qt.Orientation.Horizontal
+        splitter = QSplitter(horizontal_orientation)
 
         # Left panel - Controls
         controls_widget = QWidget()
@@ -359,7 +372,10 @@ class FunctionGeneratorWidget(QWidget):
         Returns:
             Generated signal array, or None if waveform is unknown
         """
-        assert waveform is not None, "waveform must be provided"
+        if waveform is None:
+            raise ValueError("waveform must be provided")
+        if not isinstance(t, np.ndarray):
+            raise TypeError(f"t must be a numpy ndarray, got {type(t).__name__}")
         amp = self.amplitude_spin.value()
         freq = self.frequency_spin.value()
         phase = np.radians(self.phase_spin.value())
@@ -486,7 +502,8 @@ class FunctionGeneratorWidget(QWidget):
         ax.set_title(f"{self.waveform_combo.currentText()}", color="#cdd6f4")
         ax.tick_params(colors="#cdd6f4")
         ax.grid(True, alpha=0.3, color="#585b70")
-        for spine in ax.spines.values():
+        ax_spines = ax.spines
+        for spine in ax_spines.values():
             spine.set_color("#585b70")
         self.time_figure.tight_layout()
         self.time_canvas.draw()
@@ -497,9 +514,10 @@ class FunctionGeneratorWidget(QWidget):
         ax2.set_facecolor("#313244")
 
         # Compute FFT
+        np_fft = np.fft
         n = len(signal.values)
-        fft_vals = np.fft.fft(signal.values)
-        fft_freq = np.fft.fftfreq(n, signal.dt)
+        fft_vals = np_fft.fft(signal.values)
+        fft_freq = np_fft.fftfreq(n, signal.dt)
 
         # Only positive frequencies
         pos_mask = fft_freq >= 0
@@ -512,7 +530,8 @@ class FunctionGeneratorWidget(QWidget):
         ax2.set_title("Frequency Spectrum", color="#cdd6f4")
         ax2.tick_params(colors="#cdd6f4")
         ax2.grid(True, alpha=0.3, color="#585b70")
-        for spine in ax2.spines.values():
+        ax2_spines = ax2.spines
+        for spine in ax2_spines.values():
             spine.set_color("#585b70")
 
         # Limit x-axis to meaningful frequencies
