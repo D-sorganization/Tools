@@ -215,7 +215,7 @@ def rotation_matrix_to_quaternion(R: Any) -> np.ndarray:
     q = np.array([w, x, y, z])
     q = q / np.linalg.norm(q)
     # Canonical form: w >= 0
-    if q[0] < 0:
+    if q[0] < 0:  # type: ignore
         q = -q
 
     ensure(bool(abs(np.linalg.norm(q) - 1.0) < 1e-9), "result must be unit quaternion")
