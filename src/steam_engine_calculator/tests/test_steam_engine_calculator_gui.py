@@ -19,6 +19,13 @@ class TestSteamEngineCalculatorMainWindow:
     @pytest.fixture
     def mock_qt_app(self):
         """Create mock Qt application for headless testing."""
+        import types
+
+        mock_base_module = types.ModuleType(
+            "upstream_drift_tools.ui.widgets.base_calculator_widget"
+        )
+        mock_base_module.BaseCalculatorWindow = MagicMock
+
         with patch.dict(
             sys.modules,
             {
@@ -26,8 +33,19 @@ class TestSteamEngineCalculatorMainWindow:
                 "PyQt6.QtWidgets": MagicMock(),
                 "PyQt6.QtCore": MagicMock(),
                 "PyQt6.QtGui": MagicMock(),
+                "upstream_drift_tools": MagicMock(),
+                "upstream_drift_tools.ui": MagicMock(),
+                "upstream_drift_tools.ui.widgets": MagicMock(),
+                "upstream_drift_tools.ui.widgets.base_calculator_widget": mock_base_module,
+                "shared": MagicMock(),
+                "shared.python": MagicMock(),
+                "shared.python.theme": MagicMock(),
             },
         ):
+            # Clear cached module to force re-import with mocks
+            for key in list(sys.modules.keys()):
+                if "steam_engine_calculator.ui.pyqt6" in key:
+                    del sys.modules[key]
             yield
 
     def test_main_window_imports(self, mock_qt_app):
@@ -264,3 +282,262 @@ class TestSteamEngineCalculatorGUIRegistration:
             assert gui_registration.GUI_METADATA["category"] == "thermodynamics"
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
+
+
+class TestSteamEngineCalculatorDbCLoD:
+    """Tests for DbC and LoD compliance in main_window.py."""
+
+    @pytest.fixture
+    def mock_pyqt6(self):
+        """Mock PyQt6 modules for headless testing."""
+        import types
+
+        # Build minimal mock hierarchy
+        mock_qt = MagicMock()
+        mock_qt_core = MagicMock()
+        mock_qt_gui = MagicMock()
+        mock_qt_widgets = MagicMock()
+
+        # Provide concrete enum-like sentinel values so aliases resolve
+        mock_qt_core.Qt = MagicMock()
+        mock_qt_core.Qt.ScrollBarPolicy = MagicMock()
+        mock_qt_core.Qt.ScrollBarPolicy.ScrollBarAsNeeded = "scroll_as_needed"
+        mock_qt_core.Qt.AlignmentFlag = MagicMock()
+        mock_qt_core.Qt.AlignmentFlag.AlignCenter = "align_center"
+        mock_qt_gui.QFont = MagicMock()
+        mock_qt_gui.QFont.Weight = MagicMock()
+        mock_qt_gui.QFont.Weight.Bold = "font_bold"
+        mock_qt_widgets.QFrame = MagicMock()
+        mock_qt_widgets.QFrame.Shape = MagicMock()
+        mock_qt_widgets.QFrame.Shape.StyledPanel = "styled_panel"
+
+        # Patch base class to avoid Qt dependency
+        mock_base_module = types.ModuleType(
+            "upstream_drift_tools.ui.widgets.base_calculator_widget"
+        )
+        mock_base_module.BaseCalculatorWindow = MagicMock
+
+        with patch.dict(
+            sys.modules,
+            {
+                "PyQt6": mock_qt,
+                "PyQt6.QtCore": mock_qt_core,
+                "PyQt6.QtGui": mock_qt_gui,
+                "PyQt6.QtWidgets": mock_qt_widgets,
+                "upstream_drift_tools": MagicMock(),
+                "upstream_drift_tools.ui": MagicMock(),
+                "upstream_drift_tools.ui.widgets": MagicMock(),
+                "upstream_drift_tools.ui.widgets.base_calculator_widget": mock_base_module,
+                "shared": MagicMock(),
+                "shared.python": MagicMock(),
+                "shared.python.theme": MagicMock(),
+            },
+        ):
+            # Clear cached module to force re-import with mocks
+            for key in list(sys.modules.keys()):
+                if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                    del sys.modules[key]
+            yield
+
+    def test_format_temperature_raises_for_non_numeric(self, mock_pyqt6):
+        """DbC: format_temperature raises TypeError for non-numeric input."""
+        for key in list(sys.modules.keys()):
+            if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                del sys.modules[key]
+        import importlib
+
+        mw = importlib.import_module("steam_engine_calculator.ui.pyqt6.main_window")
+        with pytest.raises(TypeError, match="value must be a number"):
+            mw.format_temperature("not_a_number")
+
+    def test_format_temperature_raises_for_none(self, mock_pyqt6):
+        """DbC: format_temperature raises TypeError for None input."""
+        for key in list(sys.modules.keys()):
+            if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                del sys.modules[key]
+        import importlib
+
+        mw = importlib.import_module("steam_engine_calculator.ui.pyqt6.main_window")
+        with pytest.raises(TypeError, match="value must be a number"):
+            mw.format_temperature(None)
+
+    def test_format_temperature_accepts_numeric(self, mock_pyqt6):
+        """DbC: format_temperature works with valid numeric input."""
+        for key in list(sys.modules.keys()):
+            if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                del sys.modules[key]
+        import importlib
+
+        mw = importlib.import_module("steam_engine_calculator.ui.pyqt6.main_window")
+        assert "373.15" in mw.format_temperature(373.15)
+        assert "100.00" in mw.format_temperature(373.15, "C")
+
+    def test_format_pressure_raises_for_non_numeric(self, mock_pyqt6):
+        """DbC: format_pressure raises TypeError for non-numeric input."""
+        for key in list(sys.modules.keys()):
+            if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                del sys.modules[key]
+        import importlib
+
+        mw = importlib.import_module("steam_engine_calculator.ui.pyqt6.main_window")
+        with pytest.raises(TypeError, match="value must be a number"):
+            mw.format_pressure("not_a_number")
+
+    def test_format_pressure_raises_for_none(self, mock_pyqt6):
+        """DbC: format_pressure raises TypeError for None input."""
+        for key in list(sys.modules.keys()):
+            if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                del sys.modules[key]
+        import importlib
+
+        mw = importlib.import_module("steam_engine_calculator.ui.pyqt6.main_window")
+        with pytest.raises(TypeError, match="value must be a number"):
+            mw.format_pressure(None)
+
+    def test_format_pressure_accepts_numeric(self, mock_pyqt6):
+        """DbC: format_pressure works with valid numeric input."""
+        for key in list(sys.modules.keys()):
+            if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                del sys.modules[key]
+        import importlib
+
+        mw = importlib.import_module("steam_engine_calculator.ui.pyqt6.main_window")
+        assert "101325" in mw.format_pressure(101325.0)
+        assert "bar" in mw.format_pressure(101325.0, "bar")
+
+    def test_lod_scroll_bar_alias_exists(self, mock_pyqt6):
+        """LoD: _SCROLL_BAR_AS_NEEDED alias is defined at module level."""
+        for key in list(sys.modules.keys()):
+            if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                del sys.modules[key]
+        import importlib
+
+        mw = importlib.import_module("steam_engine_calculator.ui.pyqt6.main_window")
+        assert hasattr(mw, "_SCROLL_BAR_AS_NEEDED")
+
+    def test_lod_font_weight_alias_exists(self, mock_pyqt6):
+        """LoD: _FONT_WEIGHT_BOLD alias is defined at module level."""
+        for key in list(sys.modules.keys()):
+            if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                del sys.modules[key]
+        import importlib
+
+        mw = importlib.import_module("steam_engine_calculator.ui.pyqt6.main_window")
+        assert hasattr(mw, "_FONT_WEIGHT_BOLD")
+
+    def test_lod_align_center_alias_exists(self, mock_pyqt6):
+        """LoD: _ALIGN_CENTER alias is defined at module level."""
+        for key in list(sys.modules.keys()):
+            if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                del sys.modules[key]
+        import importlib
+
+        mw = importlib.import_module("steam_engine_calculator.ui.pyqt6.main_window")
+        assert hasattr(mw, "_ALIGN_CENTER")
+
+    def test_lod_frame_shape_alias_exists(self, mock_pyqt6):
+        """LoD: _FRAME_STYLED_PANEL alias is defined at module level."""
+        for key in list(sys.modules.keys()):
+            if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                del sys.modules[key]
+        import importlib
+
+        mw = importlib.import_module("steam_engine_calculator.ui.pyqt6.main_window")
+        assert hasattr(mw, "_FRAME_STYLED_PANEL")
+
+    def test_display_results_raises_for_none(self, mock_pyqt6):
+        """DbC: _display_results raises ValueError for None result.
+
+        Calls the unbound method with a MagicMock as self — the precondition
+        raises before any Qt interaction, so no full window needed.
+        """
+        for key in list(sys.modules.keys()):
+            if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                del sys.modules[key]
+        import importlib
+
+        mw = importlib.import_module("steam_engine_calculator.ui.pyqt6.main_window")
+        fake_self = MagicMock()
+        with pytest.raises(ValueError, match="result must not be None"):
+            mw.SteamEngineCalculatorWindow._display_results(fake_self, None)
+
+    def test_create_group_raises_for_non_string(self, mock_pyqt6):
+        """DbC: _create_group raises TypeError for non-string title.
+
+        Calls the unbound method with a MagicMock as self — raises before Qt.
+        """
+        for key in list(sys.modules.keys()):
+            if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                del sys.modules[key]
+        import importlib
+
+        mw = importlib.import_module("steam_engine_calculator.ui.pyqt6.main_window")
+        fake_self = MagicMock()
+        with pytest.raises(TypeError, match="title must be a string"):
+            mw.SteamEngineCalculatorWindow._create_group(fake_self, 42)
+
+    def test_create_label_raises_for_non_string(self, mock_pyqt6):
+        """DbC: _create_label raises TypeError for non-string text.
+
+        Calls the unbound method with a MagicMock as self — raises before Qt.
+        """
+        for key in list(sys.modules.keys()):
+            if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                del sys.modules[key]
+        import importlib
+
+        mw = importlib.import_module("steam_engine_calculator.ui.pyqt6.main_window")
+        fake_self = MagicMock()
+        with pytest.raises(TypeError, match="text must be a string"):
+            mw.SteamEngineCalculatorWindow._create_label(fake_self, None)
+
+    def test_create_result_card_raises_for_non_string_name(self, mock_pyqt6):
+        """DbC: _create_result_card raises TypeError for non-string name.
+
+        Calls the unbound method with a MagicMock as self — raises before Qt.
+        """
+        for key in list(sys.modules.keys()):
+            if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                del sys.modules[key]
+        import importlib
+
+        mw = importlib.import_module("steam_engine_calculator.ui.pyqt6.main_window")
+        fake_self = MagicMock()
+        with pytest.raises(TypeError, match="name must be a string"):
+            mw.SteamEngineCalculatorWindow._create_result_card(
+                fake_self, None, "key", "#fff"
+            )
+
+    def test_create_result_card_raises_for_non_string_key(self, mock_pyqt6):
+        """DbC: _create_result_card raises TypeError for non-string key.
+
+        Calls the unbound method with a MagicMock as self — raises before Qt.
+        """
+        for key in list(sys.modules.keys()):
+            if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                del sys.modules[key]
+        import importlib
+
+        mw = importlib.import_module("steam_engine_calculator.ui.pyqt6.main_window")
+        fake_self = MagicMock()
+        with pytest.raises(TypeError, match="key must be a string"):
+            mw.SteamEngineCalculatorWindow._create_result_card(
+                fake_self, "name", 42, "#fff"
+            )
+
+    def test_create_result_card_raises_for_non_string_color(self, mock_pyqt6):
+        """DbC: _create_result_card raises TypeError for non-string color.
+
+        Calls the unbound method with a MagicMock as self — raises before Qt.
+        """
+        for key in list(sys.modules.keys()):
+            if "steam_engine_calculator.ui.pyqt6.main_window" in key:
+                del sys.modules[key]
+        import importlib
+
+        mw = importlib.import_module("steam_engine_calculator.ui.pyqt6.main_window")
+        fake_self = MagicMock()
+        with pytest.raises(TypeError, match="color must be a string"):
+            mw.SteamEngineCalculatorWindow._create_result_card(
+                fake_self, "name", "key", None
+            )
