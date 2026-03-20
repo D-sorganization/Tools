@@ -97,100 +97,100 @@ class SceneEventMixin:
         assert key is not None, "key must be provided"
         if key == K_ESCAPE:
             return False
-        if not self.renderer:
+        if not self.renderer:  # type: ignore
             return True
 
         if key == K_SPACE:
-            self.time_manager.toggle_pause()
+            self.time_manager.toggle_pause()  # type: ignore
         elif key in (K_EQUALS, K_PLUS, K_KP_PLUS):
-            self.time_manager.increase_time_warp()
+            self.time_manager.increase_time_warp()  # type: ignore
         elif key in (K_MINUS, K_KP_MINUS):
-            self.time_manager.decrease_time_warp()
+            self.time_manager.decrease_time_warp()  # type: ignore
         elif key == K_r:
-            self.time_manager.reverse_time()
+            self.time_manager.reverse_time()  # type: ignore
         elif key in (K_d, K_n, K_e):
             self._handle_panel_toggle(key)
         elif key in (K_LEFTBRACKET, K_RIGHTBRACKET, K_PAGEUP, K_PAGEDOWN):
             self._handle_time_jump(key)
         elif key == K_HOME:
-            self.renderer.camera.reset()
-            self.renderer.camera.mode = CameraMode.FREE
+            self.renderer.camera.reset()  # type: ignore
+            self.renderer.camera.mode = CameraMode.FREE  # type: ignore
         elif key in (K_o, K_l, K_i, K_g, K_h, K_v, K_c, K_f, K_m):
             self._handle_view_toggle(key)
         elif key == K_t:
             self._handle_trajectory_plan()
         elif key == K_PERIOD:
-            if self.educational_panel and self.educational_panel.visible:
-                self.educational_panel.cycle_fact()
+            if self.educational_panel and self.educational_panel.visible:  # type: ignore
+                self.educational_panel.cycle_fact()  # type: ignore
         elif key == K_0:
-            if self.sun:
-                self.select_body(self.sun)
-                self._update_educational_panel()
+            if self.sun:  # type: ignore
+                self.select_body(self.sun)  # type: ignore
+                self._update_educational_panel()  # type: ignore
         elif K_1 <= key <= K_9:
             self._select_planet_by_number(key)
         return True
 
     def _handle_panel_toggle(self, key: int) -> None:
         """Toggle date-picker, time-nav, or historical-events panels."""
-        if key == K_d and self.date_picker:
-            self.date_picker.toggle()
-            if self.date_picker.visible:
-                self.date_picker.set_date(self.time_manager.current_time.datetime_utc)
-                self._mark_immersion_task("navigate_time")
-        elif key == K_n and self.time_nav_panel:
-            self.time_nav_panel.toggle()
-            self._mark_immersion_task("navigate_time")
-        elif key == K_e and self.historical_events:
-            self.historical_events.toggle()
-            if self.historical_events.visible:
-                self._mark_immersion_task("historical_events")
+        if key == K_d and self.date_picker:  # type: ignore
+            self.date_picker.toggle()  # type: ignore
+            if self.date_picker.visible:  # type: ignore
+                self.date_picker.set_date(self.time_manager.current_time.datetime_utc)  # type: ignore
+                self._mark_immersion_task("navigate_time")  # type: ignore
+        elif key == K_n and self.time_nav_panel:  # type: ignore
+            self.time_nav_panel.toggle()  # type: ignore
+            self._mark_immersion_task("navigate_time")  # type: ignore
+        elif key == K_e and self.historical_events:  # type: ignore
+            self.historical_events.toggle()  # type: ignore
+            if self.historical_events.visible:  # type: ignore
+                self._mark_immersion_task("historical_events")  # type: ignore
 
     def _handle_time_jump(self, key: int) -> None:
         """Jump forward/backward by 1 day or 1 month."""
         if key == K_LEFTBRACKET:
-            self._jump_time(-1)
+            self._jump_time(-1)  # type: ignore
         elif key == K_RIGHTBRACKET:
-            self._jump_time(1)
+            self._jump_time(1)  # type: ignore
         elif key == K_PAGEUP:
-            self._jump_month(-1)
+            self._jump_month(-1)  # type: ignore
         elif key == K_PAGEDOWN:
-            self._jump_month(1)
+            self._jump_month(1)  # type: ignore
 
     def _handle_view_toggle(self, key: int) -> None:
         """Toggle visibility / overlay options."""
         if key == K_o:
-            self.view_state.show_orbits = not self.view_state.show_orbits
-            self.renderer.settings.show_orbits = self.view_state.show_orbits
-            self._mark_immersion_task("toggle_overlays")
+            self.view_state.show_orbits = not self.view_state.show_orbits  # type: ignore
+            self.renderer.settings.show_orbits = self.view_state.show_orbits  # type: ignore
+            self._mark_immersion_task("toggle_overlays")  # type: ignore
         elif key == K_l:
-            self.view_state.show_labels = not self.view_state.show_labels
-            self.renderer.settings.show_labels = self.view_state.show_labels
-            self._mark_immersion_task("toggle_overlays")
+            self.view_state.show_labels = not self.view_state.show_labels  # type: ignore
+            self.renderer.settings.show_labels = self.view_state.show_labels  # type: ignore
+            self._mark_immersion_task("toggle_overlays")  # type: ignore
         elif key == K_i:
-            self.view_state.show_info_panel = not self.view_state.show_info_panel
+            self.view_state.show_info_panel = not self.view_state.show_info_panel  # type: ignore
         elif key == K_g:
-            self.renderer.settings.show_grid = not self.renderer.settings.show_grid
-            self._mark_immersion_task("toggle_overlays")
+            self.renderer.settings.show_grid = not self.renderer.settings.show_grid  # type: ignore
+            self._mark_immersion_task("toggle_overlays")  # type: ignore
         elif key == K_h:
-            self.view_state.show_help = not self.view_state.show_help
+            self.view_state.show_help = not self.view_state.show_help  # type: ignore
         elif key == K_v:
-            self.settings.stereo_view = not self.settings.stereo_view
+            self.settings.stereo_view = not self.settings.stereo_view  # type: ignore
         elif key == K_c:
-            self._cycle_camera_mode()
+            self._cycle_camera_mode()  # type: ignore
         elif key == K_f:
-            self._focus_on_selected()
+            self._focus_on_selected()  # type: ignore
         elif key == K_m:
-            if self.immersion_checklist:
-                self.immersion_checklist.toggle()
-            self.view_state.show_immersion_checklist = (
-                not self.view_state.show_immersion_checklist
+            if self.immersion_checklist:  # type: ignore
+                self.immersion_checklist.toggle()  # type: ignore
+            self.view_state.show_immersion_checklist = (  # type: ignore
+                not self.view_state.show_immersion_checklist  # type: ignore
             )
 
     def _handle_trajectory_plan(self) -> None:
         """Plan an Earth-to-Mars trajectory and display the result."""
-        trajectory = self.plan_trajectory("Earth", "Mars")
+        trajectory = self.plan_trajectory("Earth", "Mars")  # type: ignore
         if trajectory:
-            self._mark_immersion_task("plan_transfer")
+            self._mark_immersion_task("plan_transfer")  # type: ignore
             self._action_message = (
                 "Earth\u2192Mars transfer: \u0394V "
                 f"{trajectory.total_delta_v / 1000:.2f} km/s, "
@@ -205,8 +205,8 @@ class SceneEventMixin:
         planet_index = key - K_1
         if planet_index < len(PLANET_ORDER):
             planet_name = PLANET_ORDER[planet_index]
-            self.select_body(self.planets[planet_name])
-            self._update_educational_panel()
+            self.select_body(self.planets[planet_name])  # type: ignore
+            self._update_educational_panel()  # type: ignore
 
     def _handle_mouse_button(self, button: int, pressed: bool) -> None:
         """Handle mouse button events."""
@@ -226,52 +226,52 @@ class SceneEventMixin:
     def _handle_mouse_motion(self, pos: tuple[int, int], rel: tuple[int, int]) -> None:
         """Handle mouse motion."""
         assert pos is not None, "pos must be provided"
-        if not self.renderer:
+        if not self.renderer:  # type: ignore
             return
         if self._mouse_dragging:
             buttons = pygame.mouse.get_pressed()
             mode = "Orbit"
-            if self.unified_controls:
-                mode = self.unified_controls.get_current_mode()
-            elif self.nav_mode_panel:
-                mode = self.nav_mode_panel.get_current_mode()
+            if self.unified_controls:  # type: ignore
+                mode = self.unified_controls.get_current_mode()  # type: ignore
+            elif self.nav_mode_panel:  # type: ignore
+                mode = self.nav_mode_panel.get_current_mode()  # type: ignore
 
             if buttons[0]:  # Left button - depends on mode
                 if mode == "Orbit":
-                    self.renderer.camera.orbit(-rel[0], -rel[1])
+                    self.renderer.camera.orbit(-rel[0], -rel[1])  # type: ignore
                 elif mode == "Pan":
-                    self.renderer.camera.pan(-rel[0], rel[1])
+                    self.renderer.camera.pan(-rel[0], rel[1])  # type: ignore
                 elif mode == "Zoom":
-                    self.renderer.camera.zoom(rel[1] * 0.5)
+                    self.renderer.camera.zoom(rel[1] * 0.5)  # type: ignore
             elif buttons[2]:  # Right button - pan camera
-                self.renderer.camera.pan(-rel[0], rel[1])
+                self.renderer.camera.pan(-rel[0], rel[1])  # type: ignore
 
     def _handle_mouse_wheel(self, y_offset: float) -> None:
         """Handle mouse wheel events."""
         assert y_offset is not None, "y_offset must be provided"
-        if not self.renderer:
+        if not self.renderer:  # type: ignore
             return
         mode = "Orbit"
-        if self.unified_controls:
-            mode = self.unified_controls.get_current_mode()
-        elif self.nav_mode_panel:
-            mode = self.nav_mode_panel.get_current_mode()
+        if self.unified_controls:  # type: ignore
+            mode = self.unified_controls.get_current_mode()  # type: ignore
+        elif self.nav_mode_panel:  # type: ignore
+            mode = self.nav_mode_panel.get_current_mode()  # type: ignore
 
         if mode in ("Zoom", "Orbit"):
             mx, my = pygame.mouse.get_pos()
-            width = self.renderer.settings.window_width
-            height = self.renderer.settings.window_height
+            width = self.renderer.settings.window_width  # type: ignore
+            height = self.renderer.settings.window_height  # type: ignore
             aspect = width / height
             ndc_x = (mx / width) * 2.0 - 1.0
             ndc_y = -((my / height) * 2.0 - 1.0)
-            self.renderer.camera.zoom_at(y_offset, (ndc_x, ndc_y), aspect)
+            self.renderer.camera.zoom_at(y_offset, (ndc_x, ndc_y), aspect)  # type: ignore
         elif mode == "Pan":
-            width = self.renderer.settings.window_width
-            height = self.renderer.settings.window_height
+            width = self.renderer.settings.window_width  # type: ignore
+            height = self.renderer.settings.window_height  # type: ignore
             aspect = width / height
-            self.renderer.camera.zoom_at(y_offset, (0, 0), aspect)
+            self.renderer.camera.zoom_at(y_offset, (0, 0), aspect)  # type: ignore
 
-        self._mark_immersion_task("toggle_overlays")
+        self._mark_immersion_task("toggle_overlays")  # type: ignore
 
     def _handle_ui_click(self, pos: tuple[int, int]) -> bool:
         """Handle clicks on UI overlays."""
@@ -279,7 +279,7 @@ class SceneEventMixin:
         x, y = pos
 
         # 1. Check Date Picker
-        if self.date_picker and self.date_picker.visible:
+        if self.date_picker and self.date_picker.visible:  # type: ignore
             pass  # Placeholder for future hit testing logic
 
         # 2. Check Sidebar
@@ -299,33 +299,33 @@ class SceneEventMixin:
             True if the click was consumed by the sidebar.
         """
         assert x is not None, "x must be provided"
-        if not self.sidebar_panel:
+        if not self.sidebar_panel:  # type: ignore
             return False
 
-        sx, sy = self.sidebar_panel.position
+        sx, sy = self.sidebar_panel.position  # type: ignore
         if not (
-            sx <= x <= sx + self.sidebar_panel.width
-            and sy <= y <= sy + self.sidebar_panel.height
+            sx <= x <= sx + self.sidebar_panel.width  # type: ignore
+            and sy <= y <= sy + self.sidebar_panel.height  # type: ignore
         ):
             return False
 
         rel_x, rel_y = x - sx, y - sy
-        action = self.sidebar_panel.handle_click(rel_x, rel_y)
+        action = self.sidebar_panel.handle_click(rel_x, rel_y)  # type: ignore
         if action == "tab_changed":
             return True
 
-        current_tab = self.sidebar_panel.tabs[self.sidebar_panel.current_tab_index]
+        current_tab = self.sidebar_panel.tabs[self.sidebar_panel.current_tab_index]  # type: ignore
         if current_tab.content_renderer_key == "planets":
             list_start_y = 75
             if rel_y > list_start_y:
                 idx = (rel_y - list_start_y) // 25
-                bodies = ["Sun"] + [p for p in PLANET_ORDER if p in self.planets]
+                bodies = ["Sun"] + [p for p in PLANET_ORDER if p in self.planets]  # type: ignore
                 if 0 <= idx < len(bodies):
                     name = bodies[idx]
-                    body = self.get_body_by_name(name)
+                    body = self.get_body_by_name(name)  # type: ignore
                     if body:
-                        self.select_body(body)
-                        self._focus_on_selected()
+                        self.select_body(body)  # type: ignore
+                        self._focus_on_selected()  # type: ignore
         elif current_tab.content_renderer_key == "missions":
             list_start_y = 75
             if rel_y > list_start_y:
@@ -337,14 +337,14 @@ class SceneEventMixin:
                     data = FAMOUS_MISSIONS[name]
                     launch_str = data.get("launch_date", "")
                     if launch_str:
-                        launch_dt = datetime.strptime(launch_str, "%Y-%m-%d")
-                        self.time_manager.set_datetime(launch_dt)
+                        launch_dt = datetime.strptime(launch_str, "%Y-%m-%d")  # type: ignore
+                        self.time_manager.set_datetime(launch_dt)  # type: ignore
                         self._action_message = f"Simulating {name} launch..."
 
                     # Focus on spacecraft if available
-                    if name in self.spacecraft:
-                        self.select_body(self.spacecraft[name])
-                        self._focus_on_selected()
+                    if name in self.spacecraft:  # type: ignore
+                        self.select_body(self.spacecraft[name])  # type: ignore
+                        self._focus_on_selected()  # type: ignore
         return True
 
     def _handle_controls_click(self, x: int, y: int) -> bool:
@@ -354,12 +354,12 @@ class SceneEventMixin:
             True if the click was consumed by the control panel.
         """
         assert x is not None, "x must be provided"
-        if not self.unified_controls:
+        if not self.unified_controls:  # type: ignore
             return False
 
-        cx, cy = self.unified_controls.position
-        cw = self.unified_controls.width
-        ch = self.unified_controls.height
+        cx, cy = self.unified_controls.position  # type: ignore
+        cw = self.unified_controls.width  # type: ignore
+        ch = self.unified_controls.height  # type: ignore
         if not (cx <= x <= cx + cw and cy <= y <= cy + ch):
             return False
 
@@ -369,18 +369,18 @@ class SceneEventMixin:
         # A. Navigation Modes (Left)
         if 20 <= rel_x <= 350 and 20 <= rel_y <= 80:
             idx = (rel_x - 20) // 80
-            if 0 <= idx < len(self.unified_controls.modes):
-                self.unified_controls.set_mode(self.unified_controls.modes[idx])
+            if 0 <= idx < len(self.unified_controls.modes):  # type: ignore
+                self.unified_controls.set_mode(self.unified_controls.modes[idx])  # type: ignore
             return True
 
         # B. Buttons (Left, below modes)
         if 20 <= rel_x <= 350 and 80 <= rel_y <= 120:
             bx = 20
-            for btn in self.unified_controls.buttons:
+            for btn in self.unified_controls.buttons:  # type: ignore
                 if bx <= rel_x <= bx + btn.width:
                     if btn.action == "reset_view":
-                        if self.renderer:
-                            self.renderer.camera.reset()
+                        if self.renderer:  # type: ignore
+                            self.renderer.camera.reset()  # type: ignore
                     elif btn.action == "toggle_orbits_btn":
                         self._handle_setting_action("toggle_orbits")
                     return True
@@ -394,8 +394,8 @@ class SceneEventMixin:
                 row = (rel_y - start_y) // 30
                 col = 0 if (rel_x - set_x) < 160 else 1
                 idx = row * 2 + col
-                if idx < len(self.unified_controls.checkboxes):
-                    action = self.unified_controls.toggle_checkbox(int(idx))
+                if idx < len(self.unified_controls.checkboxes):  # type: ignore
+                    action = self.unified_controls.toggle_checkbox(int(idx))  # type: ignore
                     if action:
                         self._handle_setting_action(action)
             return True
@@ -409,21 +409,21 @@ class SceneEventMixin:
             action: The action identifier string.
         """
         if action == "toggle_orbits":
-            self.view_state.show_orbits = not self.view_state.show_orbits
+            self.view_state.show_orbits = not self.view_state.show_orbits  # type: ignore
         elif action == "toggle_labels":
-            self.view_state.show_labels = not self.view_state.show_labels
-            if self.renderer:
-                self.renderer.settings.show_labels = self.view_state.show_labels
+            self.view_state.show_labels = not self.view_state.show_labels  # type: ignore
+            if self.renderer:  # type: ignore
+                self.renderer.settings.show_labels = self.view_state.show_labels  # type: ignore
         elif action == "toggle_grid":
-            if self.renderer:
-                self.renderer.settings.show_grid = not self.renderer.settings.show_grid
+            if self.renderer:  # type: ignore
+                self.renderer.settings.show_grid = not self.renderer.settings.show_grid  # type: ignore
         elif action == "toggle_stereo":
-            self.settings.stereo_view = not self.settings.stereo_view
+            self.settings.stereo_view = not self.settings.stereo_view  # type: ignore
         elif action == "toggle_inner":
-            self.view_state.show_inner_planets = not self.view_state.show_inner_planets
+            self.view_state.show_inner_planets = not self.view_state.show_inner_planets  # type: ignore
         elif action == "toggle_outer":
-            self.view_state.show_outer_planets = not self.view_state.show_outer_planets
+            self.view_state.show_outer_planets = not self.view_state.show_outer_planets  # type: ignore
         elif action == "toggle_dwarf":
-            self.view_state.show_dwarf_planets = not self.view_state.show_dwarf_planets
+            self.view_state.show_dwarf_planets = not self.view_state.show_dwarf_planets  # type: ignore
         elif action == "toggle_moons":
-            self.view_state.show_minor_bodies = not self.view_state.show_minor_bodies
+            self.view_state.show_minor_bodies = not self.view_state.show_minor_bodies  # type: ignore

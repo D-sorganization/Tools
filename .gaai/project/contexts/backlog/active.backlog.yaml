@@ -124,7 +124,7 @@ items:
   - id: GH1497
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/wgs_reactor"
     priority: medium
-    status: in_progress
+    status: failed
     started_at: "2026-03-19T20:57:09Z"
     github_issue: 1497
     artefact: .gaai/project/contexts/artefacts/stories/GH1497.story.md
@@ -524,8 +524,13 @@ items:
   - id: GH1470
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/gasification_equilibrium"
     priority: medium
-    status: in_progress
-    started_at: "2026-03-19T23:21:13Z"
+    status: done
+    started_at: "2026-03-19T16:21:13-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools_Private/pull/19"
+    pr_number: 19
+    pr_status: "open"
+    completed_at: "2026-03-19T16:41:30-07:00"
+    cost_usd: 2.4533
     github_issue: 1470
     artefact: .gaai/project/contexts/artefacts/stories/GH1470.story.md
     dependencies: []
@@ -549,8 +554,13 @@ items:
   - id: GH1468
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/folder_tool"
     priority: medium
-    status: in_progress
-    started_at: "2026-03-19T23:39:22Z"
+    status: done
+    started_at: "2026-03-19T16:39:22-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1644"
+    pr_number: 1644
+    pr_status: "open"
+    completed_at: "2026-03-19T16:46:14-07:00"
+    cost_usd: 2.2393
     github_issue: 1468
     artefact: .gaai/project/contexts/artefacts/stories/GH1468.story.md
     dependencies: []
@@ -559,7 +569,13 @@ items:
   - id: GH1467
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/folder_packer_pro"
     priority: medium
-    status: refined
+    status: done
+    started_at: "2026-03-19T16:42:36-07:00"
+    completed_at: "2026-03-19T16:49:24-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1645"
+    pr_number: 1645
+    pr_status: "open"
+    cost_usd: 1.7181
     github_issue: 1467
     artefact: .gaai/project/contexts/artefacts/stories/GH1467.story.md
     dependencies: []
@@ -568,7 +584,13 @@ items:
   - id: GH1466
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/flow_rate_converter"
     priority: medium
-    status: refined
+    status: done
+    started_at: "2026-03-19T16:47:57-07:00"
+    completed_at: "2026-03-19T16:53:31-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1646"
+    pr_number: 1646
+    pr_status: "open"
+    cost_usd: 1.631
     github_issue: 1466
     artefact: .gaai/project/contexts/artefacts/stories/GH1466.story.md
     dependencies: []
@@ -577,7 +599,13 @@ items:
   - id: GH1465
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/flare_calculator"
     priority: medium
-    status: refined
+    status: done
+    started_at: "2026-03-19T16:51:13-07:00"
+    completed_at: "2026-03-19T17:04:10-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools_Private/pull/20"
+    pr_number: 20
+    pr_status: "open"
+    cost_usd: 3.3419
     github_issue: 1465
     artefact: .gaai/project/contexts/artefacts/stories/GH1465.story.md
     dependencies: []
@@ -586,7 +614,13 @@ items:
   - id: GH1464
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/financial_calculator"
     priority: medium
-    status: refined
+    status: done
+    started_at: "2026-03-19T16:54:29-07:00"
+    completed_at: "2026-03-19T17:02:27-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1647"
+    pr_number: 1647
+    pr_status: "open"
+    cost_usd: 1.7208
     github_issue: 1464
     artefact: .gaai/project/contexts/artefacts/stories/GH1464.story.md
     dependencies: []
@@ -595,7 +629,14 @@ items:
   - id: GH1463
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/electrode_advisor"
     priority: medium
-    status: refined
+    status: done
+    started_at: "2026-03-19T17:04:04-07:00"
+    completed_at: "2026-03-19T17:15:43-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools_Private/pull/21"
+    pr_number: 21
+    pr_status: "open"
+    cost_usd: "2.4874
+2.5269"
     github_issue: 1463
     artefact: .gaai/project/contexts/artefacts/stories/GH1463.story.md
     dependencies: []

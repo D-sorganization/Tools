@@ -41,10 +41,10 @@ def orthogonal_control_route(
     ex, ey = to_float(end[0]), to_float(end[1])
     if corridor_y is not None:
         detour_y = to_float(corridor_y) - (route_index % 5) * max(to_float(spread), 0.5)
-        return dedupe_points([(sx, sy), (sx, detour_y), (ex, detour_y), (ex, ey)])
+        return dedupe_points([(sx, sy), (sx, detour_y), (ex, detour_y), (ex, ey)])  # type: ignore[no-any-return]
     offset_band = (route_index % 5) - 2
     center_x = sx + (ex - sx) * 0.5 + offset_band * max(to_float(spread), 0.5)
-    return dedupe_points([(sx, sy), (center_x, sy), (center_x, ey), (ex, ey)])
+    return dedupe_points([(sx, sy), (center_x, sy), (center_x, ey), (ex, ey)])  # type: ignore[no-any-return]
 
 
 def resolve_reference_point(

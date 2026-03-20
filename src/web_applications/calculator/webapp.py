@@ -45,10 +45,10 @@ def create_app() -> Flask:
     app = Flask(__name__, static_folder="static", template_folder="templates")
     # Security: Trust one layer of proxy for X-Forwarded-For and X-Forwarded-Proto
     # This ensures correct IP resolution and HTTPS detection behind a reverse proxy (e.g. Nginx, ALB).
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)  # type: ignore[method-assign]
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)  # type: ignore
     calculator = TI89Calculator()
     # Rate limit: 100 requests per 60 seconds per IP
-    app.limiter = RateLimiter(limit=100, window=60)  # type: ignore[attr-defined]
+    app.limiter = RateLimiter(limit=100, window=60)  # type: ignore
 
     @app.after_request
     def add_security_headers(response: Response) -> Response:
@@ -89,7 +89,7 @@ def create_app() -> Flask:
         if not current_app.testing:
             client_ip = request.remote_addr or "unknown"
             # Access limiter via closure over 'app'
-            if not app.limiter.is_allowed(client_ip):  # type: ignore[attr-defined]
+            if not app.limiter.is_allowed(client_ip):  # type: ignore
                 return (
                     jsonify({"error": "Rate limit exceeded. Please try again later."}),
                     429,

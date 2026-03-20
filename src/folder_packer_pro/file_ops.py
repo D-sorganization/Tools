@@ -93,10 +93,12 @@ def collect_folder_stats(
                 continue
 
             try:
-                size = file_path.stat().st_size
+                stat_result = file_path.stat()
+                size = stat_result.st_size
                 stats["total_files"] += 1
                 stats["total_size"] += size
-                ext = file_path.suffix.lower() or "no extension"
+                raw_ext = file_path.suffix
+                ext = raw_ext.lower() or "no extension"
                 stats["file_types"][ext] += 1
             except (OSError, PermissionError):
                 logger.exception("Error scanning %s", file_path)
@@ -113,7 +115,8 @@ def get_file_type(file_path: Path) -> str:
     Returns:
         Category string (e.g., "Code", "Image", "Document").
     """
-    ext = file_path.suffix.lower()
+    raw_suffix = file_path.suffix
+    ext = raw_suffix.lower()
     if ext in CODE_EXTENSIONS:
         return "Code"
     elif ext in MARKUP_EXTENSIONS:

@@ -63,7 +63,19 @@ class FunctionGeneratorWidget(QWidget):
         *,
         use_builtin_theme: bool = True,
     ) -> None:
-        """Initialize the Function Generator widget."""
+        """Initialize the Function Generator widget.
+
+        Args:
+            parent: Optional parent QWidget. Must be a QWidget instance or None.
+            use_builtin_theme: Whether to apply the built-in dark theme styling.
+
+        Raises:
+            TypeError: If use_builtin_theme is not a bool.
+        """
+        if not isinstance(use_builtin_theme, bool):
+            raise TypeError(
+                f"use_builtin_theme must be bool, got {type(use_builtin_theme).__name__}"
+            )
         super().__init__(parent)
         self.current_signal: Signal | None = None
         self._init_ui()
@@ -78,7 +90,8 @@ class FunctionGeneratorWidget(QWidget):
         layout.setContentsMargins(10, 10, 10, 10)
 
         # Create splitter for resizable panels
-        splitter = QSplitter(Qt.Orientation.Horizontal)
+        horizontal_orientation = Qt.Orientation.Horizontal
+        splitter = QSplitter(horizontal_orientation)
 
         # Left panel - Controls
         controls_widget = QWidget()
@@ -359,14 +372,17 @@ class FunctionGeneratorWidget(QWidget):
         Returns:
             Generated signal array, or None if waveform is unknown
         """
-        assert waveform is not None, "waveform must be provided"
+        if waveform is None:
+            raise ValueError("waveform must be provided")
+        if not isinstance(t, np.ndarray):
+            raise TypeError(f"t must be a numpy ndarray, got {type(t).__name__}")
         amp = self.amplitude_spin.value()
         freq = self.frequency_spin.value()
         phase = np.radians(self.phase_spin.value())
         offset = self.offset_spin.value()
 
         if waveform == "Sinusoid":
-            return SignalGenerator.sinusoid(
+            return SignalGenerator.sinusoid(  # type: ignore
                 t,
                 amplitude=amp,
                 frequency=freq,
@@ -374,7 +390,7 @@ class FunctionGeneratorWidget(QWidget):
                 offset=offset,
             )
         elif waveform == "Cosine":
-            return SignalGenerator.cosine(
+            return SignalGenerator.cosine(  # type: ignore
                 t,
                 amplitude=amp,
                 frequency=freq,
@@ -382,7 +398,7 @@ class FunctionGeneratorWidget(QWidget):
                 offset=offset,
             )
         elif waveform == "Square Wave":
-            return SignalGenerator.square(
+            return SignalGenerator.square(  # type: ignore
                 t,
                 frequency=freq,
                 amplitude=amp,
@@ -390,21 +406,21 @@ class FunctionGeneratorWidget(QWidget):
                 offset=offset,
             )
         elif waveform == "Triangle Wave":
-            return SignalGenerator.triangle(
+            return SignalGenerator.triangle(  # type: ignore
                 t,
                 frequency=freq,
                 amplitude=amp,
                 offset=offset,
             )
         elif waveform == "Sawtooth":
-            return SignalGenerator.sawtooth(
+            return SignalGenerator.sawtooth(  # type: ignore
                 t,
                 frequency=freq,
                 amplitude=amp,
                 offset=offset,
             )
         elif waveform == "Pulse":
-            return SignalGenerator.pulse(
+            return SignalGenerator.pulse(  # type: ignore
                 t,
                 start_time=self.pulse_start_spin.value(),
                 duration=self.pulse_duration_spin.value(),
@@ -412,21 +428,21 @@ class FunctionGeneratorWidget(QWidget):
                 baseline=offset,
             )
         elif waveform == "Step":
-            return SignalGenerator.step(
+            return SignalGenerator.step(  # type: ignore
                 t,
                 step_time=self.step_time_spin.value(),
                 step_value=amp,
                 initial_value=offset,
             )
         elif waveform == "Exponential":
-            return SignalGenerator.exponential(
+            return SignalGenerator.exponential(  # type: ignore
                 t,
                 amplitude=amp,
                 decay_rate=self.decay_rate_spin.value(),
                 offset=offset,
             )
         elif waveform == "Linear":
-            return SignalGenerator.linear(
+            return SignalGenerator.linear(  # type: ignore
                 t,
                 slope=self.slope_spin.value(),
                 intercept=self.intercept_spin.value(),
@@ -436,9 +452,9 @@ class FunctionGeneratorWidget(QWidget):
             coeffs = [float(c.strip()) for c in coeffs_text.split(",") if c.strip()]
             if not coeffs:
                 coeffs = [0, 1]
-            return SignalGenerator.polynomial(t, coeffs)
+            return SignalGenerator.polynomial(t, coeffs)  # type: ignore
         elif waveform == "Chirp":
-            return SignalGenerator.chirp(
+            return SignalGenerator.chirp(  # type: ignore
                 t,
                 f0=self.chirp_f0_spin.value(),
                 f1=self.chirp_f1_spin.value(),
@@ -446,7 +462,7 @@ class FunctionGeneratorWidget(QWidget):
                 method=self.chirp_method_combo.currentText(),
             )
         elif waveform == "Constant":
-            return SignalGenerator.constant(t, value=self.constant_value_spin.value())
+            return SignalGenerator.constant(t, value=self.constant_value_spin.value())  # type: ignore
         return None
 
     def _generate_signal(self) -> None:
@@ -486,7 +502,8 @@ class FunctionGeneratorWidget(QWidget):
         ax.set_title(f"{self.waveform_combo.currentText()}", color="#cdd6f4")
         ax.tick_params(colors="#cdd6f4")
         ax.grid(True, alpha=0.3, color="#585b70")
-        for spine in ax.spines.values():
+        ax_spines = ax.spines
+        for spine in ax_spines.values():
             spine.set_color("#585b70")
         self.time_figure.tight_layout()
         self.time_canvas.draw()
@@ -497,9 +514,10 @@ class FunctionGeneratorWidget(QWidget):
         ax2.set_facecolor("#313244")
 
         # Compute FFT
+        np_fft = np.fft
         n = len(signal.values)
-        fft_vals = np.fft.fft(signal.values)
-        fft_freq = np.fft.fftfreq(n, signal.dt)
+        fft_vals = np_fft.fft(signal.values)
+        fft_freq = np_fft.fftfreq(n, signal.dt)
 
         # Only positive frequencies
         pos_mask = fft_freq >= 0
@@ -512,7 +530,8 @@ class FunctionGeneratorWidget(QWidget):
         ax2.set_title("Frequency Spectrum", color="#cdd6f4")
         ax2.tick_params(colors="#cdd6f4")
         ax2.grid(True, alpha=0.3, color="#585b70")
-        for spine in ax2.spines.values():
+        ax2_spines = ax2.spines
+        for spine in ax2_spines.values():
             spine.set_color("#585b70")
 
         # Limit x-axis to meaningful frequencies
@@ -547,7 +566,8 @@ RMS: {np.sqrt(np.mean(signal.values**2)):.4f}"""
 
     def _apply_styling(self) -> None:
         """Apply dark theme styling."""
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
             QWidget {
                 background-color: #1e1e2e;
                 color: #cdd6f4;
@@ -612,4 +632,5 @@ RMS: {np.sqrt(np.mean(signal.values**2)):.4f}"""
             QSplitter::handle {
                 background-color: #585b70;
             }
-        """)
+        """
+        )

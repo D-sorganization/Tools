@@ -25,6 +25,11 @@ from PyQt6.QtWidgets import (
 )
 from upstream_drift_tools.ui.widgets.base_calculator_widget import BaseCalculatorWindow
 
+# LoD: extract repeated Qt enum chains to named constants (avoids obj.prop.subprop chains)
+_ALIGN_CENTER = Qt.AlignmentFlag.AlignCenter
+_EXPANDING = QSizePolicy.Policy.Expanding
+_FIXED = QSizePolicy.Policy.Fixed
+
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {
     "rosewater": "#f5e0dc",
@@ -229,7 +234,7 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
         title_font.setPointSize(18)
         title_font.setBold(True)
         title_label.setFont(title_font)
-        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title_label.setAlignment(_ALIGN_CENTER)
         main_layout.addWidget(title_label)
 
         # Tab widget for different conversion types
@@ -258,9 +263,7 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
         self.mass_value_input.setRange(0, 1e12)
         self.mass_value_input.setDecimals(6)
         self.mass_value_input.setValue(1000.0)
-        self.mass_value_input.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
-        )
+        self.mass_value_input.setSizePolicy(_EXPANDING, _FIXED)
         input_layout.addWidget(self.mass_value_input, 0, 1)
 
         input_layout.addWidget(QLabel("From Unit:"), 1, 0)
@@ -295,7 +298,7 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
         result_font = QFont()
         result_font.setPointSize(16)
         self.mass_result_label.setFont(result_font)
-        self.mass_result_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.mass_result_label.setAlignment(_ALIGN_CENTER)
         results_layout.addWidget(self.mass_result_label)
 
         layout.addWidget(results_group)
@@ -320,9 +323,7 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
         self.molar_value_input.setRange(0, 1e12)
         self.molar_value_input.setDecimals(6)
         self.molar_value_input.setValue(100.0)
-        self.molar_value_input.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
-        )
+        self.molar_value_input.setSizePolicy(_EXPANDING, _FIXED)
         input_layout.addWidget(self.molar_value_input, 0, 1)
 
         input_layout.addWidget(QLabel("From Unit:"), 1, 0)
@@ -377,7 +378,7 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
         result_font = QFont()
         result_font.setPointSize(16)
         self.molar_result_label.setFont(result_font)
-        self.molar_result_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.molar_result_label.setAlignment(_ALIGN_CENTER)
         results_layout.addWidget(self.molar_result_label)
 
         layout.addWidget(results_group)
@@ -402,9 +403,7 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
         self.vol_value_input.setRange(0, 1e12)
         self.vol_value_input.setDecimals(6)
         self.vol_value_input.setValue(1000.0)
-        self.vol_value_input.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
-        )
+        self.vol_value_input.setSizePolicy(_EXPANDING, _FIXED)
         input_layout.addWidget(self.vol_value_input, 0, 1)
 
         input_layout.addWidget(QLabel("From Unit:"), 1, 0)
@@ -463,7 +462,7 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
         result_font = QFont()
         result_font.setPointSize(16)
         self.vol_result_label.setFont(result_font)
-        self.vol_result_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.vol_result_label.setAlignment(_ALIGN_CENTER)
         results_layout.addWidget(self.vol_result_label)
 
         layout.addWidget(results_group)

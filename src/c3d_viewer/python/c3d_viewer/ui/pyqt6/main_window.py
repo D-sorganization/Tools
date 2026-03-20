@@ -230,9 +230,9 @@ class C3DViewerWindow(QMainWindow):
 
         # Menu bar with Notes toggle
         menu_bar = self.menuBar()
-        view_menu = menu_bar.addMenu("&View")
-        notes_action = view_menu.addAction("Toggle &Notes")
-        notes_action.triggered.connect(self._toggle_notes)
+        view_menu = menu_bar.addMenu("&View")  # type: ignore
+        notes_action = view_menu.addAction("Toggle &Notes")  # type: ignore
+        notes_action.triggered.connect(self._toggle_notes)  # type: ignore
 
         # Central widget with scroll area
         scroll_area = QScrollArea()

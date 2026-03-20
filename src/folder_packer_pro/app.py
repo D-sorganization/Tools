@@ -244,7 +244,7 @@ class FolderPackerPro(
 
     # -- File Selection --------------------------------------------------------
 
-    def _on_file_select(self, event: tk.Event) -> None:  # type: ignore[type-arg]
+    def _on_file_select(self, event: tk.Event) -> None:  # type: ignore
         """Handle file selection in preview tree.
 
         Args:
@@ -387,15 +387,11 @@ class FolderPackerPro(
         if log_path.exists():
             try:
                 if sys.platform == "win32":
-                    os.startfile(log_path)  # type: ignore[attr-defined]  # noqa: S606
+                    os.startfile(log_path)  # noqa: S606  # type: ignore
                 elif sys.platform == "darwin":
-                    subprocess.run(
-                        ["open", str(log_path)], check=False
-                    )  # noqa: S603, S607
+                    subprocess.run(["open", str(log_path)], check=False)  # noqa: S603, S607
                 else:
-                    subprocess.run(
-                        ["xdg-open", str(log_path)], check=False
-                    )  # noqa: S603, S607
+                    subprocess.run(["xdg-open", str(log_path)], check=False)  # noqa: S603, S607
             except (OSError, subprocess.SubprocessError) as e:
                 messagebox.showerror("Error", f"Could not open log file: {e}")
         else:

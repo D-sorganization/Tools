@@ -6,6 +6,7 @@ A PyQt6 GUI for calculating and validating inertia tensors.
 
 from __future__ import annotations
 
+import math
 import sys
 
 import numpy as np
@@ -204,10 +205,14 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         """Set up the user interface."""
         self.setStyleSheet(STYLESHEET)
 
+        # LoD: assign Qt attribute constants to local variables
+        scrollbar_policy_off = Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+        align_center = Qt.AlignmentFlag.AlignCenter
+
         # Scroll area wrapping the content
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
-        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll_area.setHorizontalScrollBarPolicy(scrollbar_policy_off)
 
         scroll_content = QWidget()
         scroll_area.setWidget(scroll_content)
@@ -223,7 +228,7 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         title_font.setPointSize(18)
         title_font.setBold(True)
         title_label.setFont(title_font)
-        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title_label.setAlignment(align_center)
         title_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['blue']};")
         main_layout.addWidget(title_label)
 
@@ -242,6 +247,10 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
 
     def _create_primitive_tab(self) -> QWidget:
         """Create the primitive shapes calculation tab."""
+        # LoD: assign Qt attribute constants to local variables
+        size_policy_expanding = QSizePolicy.Policy.Expanding
+        size_policy_fixed = QSizePolicy.Policy.Fixed
+
         tab = QWidget()
         layout = QVBoxLayout(tab)
         layout.setContentsMargins(12, 12, 12, 12)
@@ -257,7 +266,8 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         self.shape_combo.addItems(
             ["Solid Box", "Solid Cylinder", "Solid Sphere", "Hollow Cylinder"]
         )
-        self.shape_combo.currentTextChanged.connect(self._on_shape_changed)
+        shape_combo_signal = self.shape_combo.currentTextChanged
+        shape_combo_signal.connect(self._on_shape_changed)
         shape_layout.addWidget(self.shape_combo, 0, 1)
 
         # Mass
@@ -266,9 +276,7 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         self.mass_input.setRange(0.001, 10000)
         self.mass_input.setDecimals(4)
         self.mass_input.setValue(1.0)
-        self.mass_input.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
-        )
+        self.mass_input.setSizePolicy(size_policy_expanding, size_policy_fixed)
         shape_layout.addWidget(self.mass_input, 1, 1)
 
         # Dimension inputs (labels change based on shape)
@@ -300,7 +308,8 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
 
         # Calculate button
         calc_btn = QPushButton("Calculate Inertia")
-        calc_btn.clicked.connect(self._calculate_primitive)
+        calc_btn_signal = calc_btn.clicked
+        calc_btn_signal.connect(self._calculate_primitive)
         layout.addWidget(calc_btn)
 
         layout.addStretch()
@@ -377,7 +386,8 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
 
         # Validate button
         validate_btn = QPushButton("Validate Inertia")
-        validate_btn.clicked.connect(self._validate_manual)
+        validate_btn_signal = validate_btn.clicked
+        validate_btn_signal.connect(self._validate_manual)
         layout.addWidget(validate_btn)
 
         layout.addStretch()
@@ -499,8 +509,38 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         mass: float,
         description: str,
     ) -> None:
-        """Display calculation results."""
-        assert ixx is not None, "ixx must be provided"
+        """Display calculation results.
+
+        Preconditions:
+            ixx, iyy, izz, ixy, ixz, iyz: finite float values (kg*m²).
+            mass: finite positive float (kg).
+            description: non-empty string describing the source.
+
+        Raises:
+            TypeError: if any numeric argument is not a float/int, or description is not a str.
+            ValueError: if any numeric argument is not finite, or mass is not positive.
+        """
+        for name, val in (
+            ("ixx", ixx),
+            ("iyy", iyy),
+            ("izz", izz),
+            ("ixy", ixy),
+            ("ixz", ixz),
+            ("iyz", iyz),
+            ("mass", mass),
+        ):
+            if not isinstance(val, (int, float)):
+                raise TypeError(
+                    f"{name} must be a numeric value, got {type(val).__name__}"
+                )
+            if not math.isfinite(val):
+                raise ValueError(f"{name} must be a finite number, got {val}")
+        if not isinstance(description, str):
+            raise TypeError(
+                f"description must be a str, got {type(description).__name__}"
+            )
+        if mass <= 0:
+            raise ValueError(f"mass must be positive, got {mass}")
         results = []
         results.append("Inertia Calculation Results")
         results.append("=" * 50)
@@ -554,8 +594,29 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         ixz: float,
         iyz: float,
     ) -> list[str]:
-        """Validate inertia tensor."""
-        assert ixx is not None, "ixx must be provided"
+        """Validate inertia tensor.
+
+        Preconditions:
+            ixx, iyy, izz, ixy, ixz, iyz: finite float values (kg*m²).
+
+        Raises:
+            TypeError: if any argument is not a float/int.
+            ValueError: if any argument is not finite.
+        """
+        for name, val in (
+            ("ixx", ixx),
+            ("iyy", iyy),
+            ("izz", izz),
+            ("ixy", ixy),
+            ("ixz", ixz),
+            ("iyz", iyz),
+        ):
+            if not isinstance(val, (int, float)):
+                raise TypeError(
+                    f"{name} must be a numeric value, got {type(val).__name__}"
+                )
+            if not math.isfinite(val):
+                raise ValueError(f"{name} must be a finite number, got {val}")
         errors = []
 
         # Check positive diagonal
@@ -578,6 +639,9 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
             errors.append("Triangle inequality violated for Iyy")
 
         # Check positive definite
+        # LoD: assign np.linalg sub-attributes to local variables
+        linalg_cholesky = np.linalg.cholesky
+        linalg_error = np.linalg.LinAlgError
         tensor = np.array(
             [
                 [ixx, ixy, ixz],
@@ -586,8 +650,8 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
             ]
         )
         try:
-            np.linalg.cholesky(tensor)
-        except np.linalg.LinAlgError:
+            linalg_cholesky(tensor)
+        except linalg_error:
             errors.append("Inertia tensor is not positive definite")
 
         return errors

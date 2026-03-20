@@ -145,6 +145,175 @@ class TestFinancialCalculatorMainWindow:
         assert hasattr(window, "calculate_btn")
 
 
+class TestFinancialCalculatorEngineDbC:
+    """Test DbC preconditions on FinancialCalculatorEngine methods."""
+
+    @pytest.fixture
+    def engine_wrapper(self):
+        """Create FinancialCalculatorEngine wrapper instance."""
+        from financial_calculator.ui.pyqt6.main_window import FinancialCalculatorEngine
+
+        return FinancialCalculatorEngine()
+
+    def test_calculate_rejects_non_numeric_plant_capacity(self, engine_wrapper):
+        """calculate() raises TypeError for non-numeric plant_capacity."""
+        with pytest.raises(TypeError, match="plant_capacity must be a number"):
+            engine_wrapper.calculate(
+                plant_capacity="bad",
+                operating_days=330,
+                utilization=85.0,
+                product_price=500.0,
+                feedstock_cost=200.0,
+                labor_cost=30.0,
+                utilities_cost=40.0,
+                maintenance_cost=15.0,
+                fixed_labor=500000.0,
+                insurance=100000.0,
+                capital=10000000.0,
+                debt_ratio=60.0,
+                interest_rate=7.0,
+                depreciation_years=10,
+                tax_rate=25.0,
+            )
+
+    def test_calculate_rejects_negative_plant_capacity(self, engine_wrapper):
+        """calculate() raises ValueError for negative plant_capacity."""
+        with pytest.raises(ValueError, match="plant_capacity must be non-negative"):
+            engine_wrapper.calculate(
+                plant_capacity=-1.0,
+                operating_days=330,
+                utilization=85.0,
+                product_price=500.0,
+                feedstock_cost=200.0,
+                labor_cost=30.0,
+                utilities_cost=40.0,
+                maintenance_cost=15.0,
+                fixed_labor=500000.0,
+                insurance=100000.0,
+                capital=10000000.0,
+                debt_ratio=60.0,
+                interest_rate=7.0,
+                depreciation_years=10,
+                tax_rate=25.0,
+            )
+
+    def test_calculate_rejects_non_int_operating_days(self, engine_wrapper):
+        """calculate() raises TypeError for non-integer operating_days."""
+        with pytest.raises(TypeError, match="operating_days must be an int"):
+            engine_wrapper.calculate(
+                plant_capacity=100.0,
+                operating_days=330.5,
+                utilization=85.0,
+                product_price=500.0,
+                feedstock_cost=200.0,
+                labor_cost=30.0,
+                utilities_cost=40.0,
+                maintenance_cost=15.0,
+                fixed_labor=500000.0,
+                insurance=100000.0,
+                capital=10000000.0,
+                debt_ratio=60.0,
+                interest_rate=7.0,
+                depreciation_years=10,
+                tax_rate=25.0,
+            )
+
+    def test_calculate_rejects_out_of_range_operating_days(self, engine_wrapper):
+        """calculate() raises ValueError for operating_days outside [0, 365]."""
+        with pytest.raises(ValueError, match="operating_days must be in"):
+            engine_wrapper.calculate(
+                plant_capacity=100.0,
+                operating_days=400,
+                utilization=85.0,
+                product_price=500.0,
+                feedstock_cost=200.0,
+                labor_cost=30.0,
+                utilities_cost=40.0,
+                maintenance_cost=15.0,
+                fixed_labor=500000.0,
+                insurance=100000.0,
+                capital=10000000.0,
+                debt_ratio=60.0,
+                interest_rate=7.0,
+                depreciation_years=10,
+                tax_rate=25.0,
+            )
+
+    def test_calculate_rejects_non_positive_depreciation_years(self, engine_wrapper):
+        """calculate() raises ValueError for non-positive depreciation_years."""
+        with pytest.raises(ValueError, match="depreciation_years must be positive"):
+            engine_wrapper.calculate(
+                plant_capacity=100.0,
+                operating_days=330,
+                utilization=85.0,
+                product_price=500.0,
+                feedstock_cost=200.0,
+                labor_cost=30.0,
+                utilities_cost=40.0,
+                maintenance_cost=15.0,
+                fixed_labor=500000.0,
+                insurance=100000.0,
+                capital=10000000.0,
+                debt_ratio=60.0,
+                interest_rate=7.0,
+                depreciation_years=0,
+                tax_rate=25.0,
+            )
+
+    def test_generate_projections_rejects_non_int_years(self, engine_wrapper):
+        """generate_projections() raises TypeError for non-integer years."""
+        with pytest.raises(TypeError, match="years must be an int"):
+            engine_wrapper.generate_projections(years=5.5)
+
+    def test_generate_projections_rejects_zero_years(self, engine_wrapper):
+        """generate_projections() raises ValueError for non-positive years."""
+        with pytest.raises(ValueError, match="years must be positive"):
+            engine_wrapper.generate_projections(years=0)
+
+
+class TestFinancialCalculatorMainWindowDbC:
+    """Test DbC preconditions on FinancialCalculatorMainWindow."""
+
+    @pytest.fixture
+    def app(self):
+        """Create QApplication for tests."""
+        from PyQt6.QtWidgets import QApplication
+
+        app = QApplication.instance()
+        if app is None:
+            app = QApplication([])
+        yield app
+
+    def test_init_rejects_non_widget_parent(self, app):
+        """__init__ raises TypeError if parent is not a QWidget or None."""
+        from financial_calculator.ui.pyqt6.main_window import (
+            FinancialCalculatorMainWindow,
+        )
+
+        with pytest.raises(TypeError, match="parent must be a QWidget or None"):
+            FinancialCalculatorMainWindow(parent="not_a_widget")  # type: ignore[arg-type]
+
+    def test_update_results_rejects_wrong_type(self, app):
+        """_update_results raises TypeError if results is not FinancialDesign."""
+        from financial_calculator.ui.pyqt6.main_window import (
+            FinancialCalculatorMainWindow,
+        )
+
+        window = FinancialCalculatorMainWindow()
+        with pytest.raises(TypeError, match="results must be a FinancialDesign"):
+            window._update_results("not_a_design")  # type: ignore[arg-type]
+
+    def test_update_projections_rejects_wrong_type(self, app):
+        """_update_projections raises TypeError if projections is not a list."""
+        from financial_calculator.ui.pyqt6.main_window import (
+            FinancialCalculatorMainWindow,
+        )
+
+        window = FinancialCalculatorMainWindow()
+        with pytest.raises(TypeError, match="projections must be a list"):
+            window._update_projections("not_a_list")  # type: ignore[arg-type]
+
+
 class TestFinancialCalculations:
     """Test financial calculation logic."""
 

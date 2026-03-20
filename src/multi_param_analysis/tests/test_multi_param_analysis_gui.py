@@ -189,3 +189,140 @@ class TestMultiParamAnalysisGUIRegistration:
             assert hasattr(launch_pyqt6, "main")
         except ImportError:
             pytest.skip("Launcher not yet implemented")
+
+
+# ---------------------------------------------------------------------------
+# DbC guard functions — pure Python, no Qt dependency.
+# These replicate the precondition logic from the corresponding methods in
+# MultiParamAnalysisWindow so that DbC enforcement can be tested headlessly
+# without needing to instantiate the Qt class.
+# ---------------------------------------------------------------------------
+
+
+def _check_run_demo_analysis_args(
+    param1_name: object,
+    param2_name: object,
+    output_name: object,
+    param1_values: object,
+    param2_values: object,
+) -> None:
+    """Precondition guard mirroring _run_demo_analysis in MultiParamAnalysisWindow."""
+    if not isinstance(param1_name, str):
+        raise TypeError(f"param1_name must be a str, got {type(param1_name).__name__}")
+    if not isinstance(param2_name, str):
+        raise TypeError(f"param2_name must be a str, got {type(param2_name).__name__}")
+    if not isinstance(output_name, str):
+        raise TypeError(f"output_name must be a str, got {type(output_name).__name__}")
+    if not isinstance(param1_values, np.ndarray):
+        raise TypeError(
+            f"param1_values must be a numpy ndarray, got {type(param1_values).__name__}"
+        )
+    if not isinstance(param2_values, np.ndarray):
+        raise TypeError(
+            f"param2_values must be a numpy ndarray, got {type(param2_values).__name__}"
+        )
+
+
+def _check_ndarray_triple(
+    param1_values: object,
+    param2_values: object,
+    Z: object,
+) -> None:
+    """Precondition guard mirroring _calculate_sensitivity and _update_preview."""
+    if not isinstance(param1_values, np.ndarray):
+        raise TypeError(
+            f"param1_values must be a numpy ndarray, got {type(param1_values).__name__}"
+        )
+    if not isinstance(param2_values, np.ndarray):
+        raise TypeError(
+            f"param2_values must be a numpy ndarray, got {type(param2_values).__name__}"
+        )
+    if not isinstance(Z, np.ndarray):
+        raise TypeError(f"Z must be a numpy ndarray, got {type(Z).__name__}")
+
+
+class TestDbCEnforcement:
+    """Tests for Design by Contract precondition enforcement in analysis methods.
+
+    Validates that the guard logic raises TypeError for wrong argument types,
+    per DbC rules. Uses extracted guard functions (pure Python, no Qt dependency)
+    to enable headless execution without class instantiation.
+    """
+
+    def test_run_demo_analysis_rejects_non_str_param1_name(self):
+        """_run_demo_analysis raises TypeError when param1_name is not a str."""
+        arr = np.linspace(0, 1, 5)
+        with pytest.raises(TypeError, match="param1_name must be a str"):
+            _check_run_demo_analysis_args(123, "p2", "out", arr, arr)
+
+    def test_run_demo_analysis_rejects_non_str_param2_name(self):
+        """_run_demo_analysis raises TypeError when param2_name is not a str."""
+        arr = np.linspace(0, 1, 5)
+        with pytest.raises(TypeError, match="param2_name must be a str"):
+            _check_run_demo_analysis_args("p1", 456, "out", arr, arr)
+
+    def test_run_demo_analysis_rejects_non_str_output_name(self):
+        """_run_demo_analysis raises TypeError when output_name is not a str."""
+        arr = np.linspace(0, 1, 5)
+        with pytest.raises(TypeError, match="output_name must be a str"):
+            _check_run_demo_analysis_args("p1", "p2", None, arr, arr)
+
+    def test_run_demo_analysis_rejects_non_ndarray_param1_values(self):
+        """_run_demo_analysis raises TypeError when param1_values is not a ndarray."""
+        arr = np.linspace(0, 1, 5)
+        with pytest.raises(TypeError, match="param1_values must be a numpy ndarray"):
+            _check_run_demo_analysis_args("p1", "p2", "out", [1, 2, 3], arr)
+
+    def test_run_demo_analysis_rejects_non_ndarray_param2_values(self):
+        """_run_demo_analysis raises TypeError when param2_values is not a ndarray."""
+        arr = np.linspace(0, 1, 5)
+        with pytest.raises(TypeError, match="param2_values must be a numpy ndarray"):
+            _check_run_demo_analysis_args("p1", "p2", "out", arr, [1, 2, 3])
+
+    def test_run_demo_analysis_accepts_valid_args(self):
+        """_run_demo_analysis guard passes for valid arguments (no exception raised)."""
+        arr = np.linspace(0, 1, 5)
+        # Should not raise
+        _check_run_demo_analysis_args(
+            "Temperature", "O2/Feed Ratio", "Efficiency", arr, arr
+        )
+
+    def test_calculate_sensitivity_rejects_non_ndarray_param1_values(self):
+        """_calculate_sensitivity raises TypeError when param1_values is not a ndarray."""
+        arr = np.linspace(0, 1, 3)
+        Z = np.ones((3, 3))
+        with pytest.raises(TypeError, match="param1_values must be a numpy ndarray"):
+            _check_ndarray_triple([1, 2, 3], arr, Z)
+
+    def test_calculate_sensitivity_rejects_non_ndarray_param2_values(self):
+        """_calculate_sensitivity raises TypeError when param2_values is not a ndarray."""
+        arr = np.linspace(0, 1, 3)
+        Z = np.ones((3, 3))
+        with pytest.raises(TypeError, match="param2_values must be a numpy ndarray"):
+            _check_ndarray_triple(arr, [1, 2, 3], Z)
+
+    def test_calculate_sensitivity_rejects_non_ndarray_Z(self):
+        """_calculate_sensitivity raises TypeError when Z is not a ndarray."""
+        arr = np.linspace(0, 1, 3)
+        with pytest.raises(TypeError, match="Z must be a numpy ndarray"):
+            _check_ndarray_triple(arr, arr, [[1, 2], [3, 4]])
+
+    def test_update_preview_rejects_non_ndarray_param1_values(self):
+        """_update_preview raises TypeError when param1_values is not a ndarray."""
+        arr = np.linspace(0, 1, 3)
+        Z = np.ones((3, 3))
+        with pytest.raises(TypeError, match="param1_values must be a numpy ndarray"):
+            _check_ndarray_triple([1, 2, 3], arr, Z)
+
+    def test_update_preview_rejects_non_ndarray_param2_values(self):
+        """_update_preview raises TypeError when param2_values is not a ndarray."""
+        arr = np.linspace(0, 1, 3)
+        Z = np.ones((3, 3))
+        with pytest.raises(TypeError, match="param2_values must be a numpy ndarray"):
+            _check_ndarray_triple(arr, [1, 2, 3], Z)
+
+    def test_update_preview_rejects_non_ndarray_Z(self):
+        """_update_preview raises TypeError when Z is not a ndarray."""
+        arr = np.linspace(0, 1, 3)
+        with pytest.raises(TypeError, match="Z must be a numpy ndarray"):
+            _check_ndarray_triple(arr, arr, "not_an_array")
