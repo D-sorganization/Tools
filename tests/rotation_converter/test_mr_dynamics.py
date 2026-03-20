@@ -12,7 +12,6 @@ Tests cover:
 from __future__ import annotations
 
 import numpy as np
-import pytest
 
 from rotation_converter.modern_robotics import (
     EulerStep,
@@ -28,18 +27,10 @@ from rotation_converter.modern_robotics import (
 # 3-Link UR5-like robot fixture (Lynch & Park textbook example)
 # ---------------------------------------------------------------------------
 
-M01 = np.array(
-    [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.089159], [0, 0, 0, 1]]
-)
-M12 = np.array(
-    [[0, 0, 1, 0.28], [0, 1, 0, 0.13585], [-1, 0, 0, 0], [0, 0, 0, 1]]
-)
-M23 = np.array(
-    [[1, 0, 0, 0], [0, 1, 0, -0.1197], [0, 0, 1, 0.395], [0, 0, 0, 1]]
-)
-M34 = np.array(
-    [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.14225], [0, 0, 0, 1]]
-)
+M01 = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.089159], [0, 0, 0, 1]])
+M12 = np.array([[0, 0, 1, 0.28], [0, 1, 0, 0.13585], [-1, 0, 0, 0], [0, 0, 0, 1]])
+M23 = np.array([[1, 0, 0, 0], [0, 1, 0, -0.1197], [0, 0, 1, 0.395], [0, 0, 0, 1]])
+M34 = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.14225], [0, 0, 0, 1]])
 Mlist = np.array([M01, M12, M23, M34])
 
 G1 = np.diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7])
@@ -78,9 +69,7 @@ class TestEulerStep:
         dt = 0.1
         theta_next, dtheta_next = EulerStep(theta, dtheta, ddtheta, dt)
         np.testing.assert_allclose(theta_next, np.array([0.11, 0.12, 0.13]), atol=ATOL)
-        np.testing.assert_allclose(
-            dtheta_next, np.array([0.3, 0.35, 0.4]), atol=ATOL
-        )
+        np.testing.assert_allclose(dtheta_next, np.array([0.3, 0.35, 0.4]), atol=ATOL)
 
 
 class TestAdBracket:
