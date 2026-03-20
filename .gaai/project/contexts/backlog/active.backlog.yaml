@@ -670,7 +670,8 @@ items:
   - id: GH1655
     title: "Replace 92 print() calls in src/ with logging"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-20T13:16:07Z"
     github_issue: 1655
     artefact: .gaai/project/contexts/artefacts/stories/GH1655.story.md
     dependencies: []
