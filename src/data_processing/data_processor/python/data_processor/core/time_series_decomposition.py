@@ -960,7 +960,7 @@ def decompose_time_series(
     Example:
         >>> data = np.sin(np.linspace(0, 4 * np.pi, 100)) + np.random.randn(100) * 0.1
         >>> result = decompose_time_series(data, period=25)
-        >>> print(f"Trend strength: {result.trend_strength:.2f}")
+        >>> logger.debug(f"Trend strength: {result.trend_strength:.2f}")
     """
     assert data is not None, "data must be provided"
     method_map = {

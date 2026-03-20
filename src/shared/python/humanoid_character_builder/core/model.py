@@ -5,6 +5,11 @@ This module defines the classes used to represent the humanoid model,
 including links, joints, and the model itself.
 """
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 from __future__ import annotations
 
 from dataclasses import dataclass

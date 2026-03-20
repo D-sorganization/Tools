@@ -39,7 +39,7 @@ class Vec2(NamedTuple):
         return Vec2(self.x - other.x, self.y - other.y)
 
     def __mul__(self, scalar: object) -> Vec2:
-        assert isinstance(scalar, (int, float)), "Vec2 * scalar required"
+        assert isinstance(scalar, int | float), "Vec2 * scalar required"
         return Vec2(self.x * scalar, self.y * scalar)
 
     def __rmul__(self, scalar: object) -> Vec2:

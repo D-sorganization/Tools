@@ -328,7 +328,7 @@ class AcidGasDewpointCalculator:
         """
         # DbC preconditions
         assert isinstance(
-            temperature_c, (int, float)
+            temperature_c, int | float
         ), f"temperature_c must be numeric, got {type(temperature_c).__name__}"
         assert (
             isinstance(component, str) and len(component) > 0

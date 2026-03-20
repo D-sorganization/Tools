@@ -1,3 +1,6 @@
+import logging
+
+logger = logging.getLogger(__name__)
 #!/usr/bin/env python3
 """Advanced Pressure Drop Calculator for Combustion and Gasification Gases.
 
@@ -39,7 +42,7 @@ Example:
     >>> # Calculate
     >>> engine = PressureDropCalculationEngine()
     >>> results = engine.calculate(inputs)
-    >>> print(f"Pressure drop: {results.total_pressure_drop/1e5:.4f} bar")
+    >>> logger.debug(f"Pressure drop: {results.total_pressure_drop/1e5:.4f} bar")
 
 References:
     - Crane Technical Paper No. 410

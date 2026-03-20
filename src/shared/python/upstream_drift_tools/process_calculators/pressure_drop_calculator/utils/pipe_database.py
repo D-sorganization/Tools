@@ -1,3 +1,6 @@
+import logging
+
+logger = logging.getLogger(__name__)
 #!/usr/bin/env python3
 """Pipe database with standard sizes and material properties.
 
@@ -303,7 +306,7 @@ def get_pipe_spec(
 
     Example:
         >>> spec = get_pipe_spec("4", "40")
-        >>> print(spec.inner_diameter)  # mm
+        >>> logger.debug(spec.inner_diameter)  # mm
         102.26
     """
     key = (nominal_size, schedule)

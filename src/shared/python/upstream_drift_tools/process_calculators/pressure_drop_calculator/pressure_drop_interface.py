@@ -18,7 +18,7 @@ QUICK START:
     ...     pressure=10,  # bar
     ...     temperature=500  # K
     ... )
-    >>> print(f"Pressure drop: {result['pressure_drop_bar']:.4f} bar")
+    >>> logger.debug(f"Pressure drop: {result['pressure_drop_bar']:.4f} bar")
 
     >>> # Calculation with custom gas composition
     >>> result = calculate_pressure_drop(
@@ -843,7 +843,7 @@ def calculate_pressure_drop(
         ...     pressure=10,
         ...     temperature=500
         ... )
-        >>> print(f"ΔP = {result['pressure_drop_bar']:.4f} bar")
+        >>> logger.debug(f"ΔP = {result['pressure_drop_bar']:.4f} bar")
     """
     assert pipe_length is not None, "pipe_length must be provided"
     temp_k = _convert_temperature(temperature, temperature_unit, "K")
