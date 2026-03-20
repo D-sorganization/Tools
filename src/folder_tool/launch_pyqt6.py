@@ -32,13 +32,13 @@ except ImportError:
     import logging
     import subprocess
 
-    def run_python_script(  # type: ignore[no-untyped-def]
-        script_path: Path,
+    def run_python_script(
+        script_path: Path | str,
         args: list[str] | None = None,
         cwd: Path | str | None = None,
         timeout: int | None = None,
         check: bool = False,
-    ):
+    ) -> subprocess.CompletedProcess[str]:
         assert script_path is not None, "script_path must be provided"
         command = [sys.executable, str(script_path)]
         if args:
@@ -47,7 +47,11 @@ except ImportError:
             command, cwd=str(cwd) if cwd else None, timeout=timeout, check=check
         )
 
-    def get_logger(name):  # type: ignore[no-untyped-def]
+    def get_logger(
+        name: str | None = None,
+        level: int | str = logging.INFO,
+        use_simple_format: bool = False,
+    ) -> logging.Logger:
         return logging.getLogger(name)
 
 

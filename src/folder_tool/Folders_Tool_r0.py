@@ -50,17 +50,18 @@ except ImportError:
     from pathlib import Path
 
     def safe_write_text(
-        path: str,
+        file_path: Path | str,
         content: str,
         encoding: str = "utf-8",
         create_parents: bool = True,
-    ) -> None:
-        assert path is not None, "path must be provided"
-        p = Path(path)
+    ) -> bool:
+        assert file_path is not None, "file_path must be provided"
+        p = Path(file_path)
         if create_parents:
             parent_dir = p.parent
             parent_dir.mkdir(parents=True, exist_ok=True)
         p.write_text(content, encoding=encoding)
+        return True
 
 
 # Set up logging to capture detailed information

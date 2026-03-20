@@ -107,9 +107,11 @@ class UICreationMixin:
             from PIL import Image, ImageTk
 
             try:
-                image = Image.open(png_path)
-                if image.mode != "RGBA":
-                    image = image.convert("RGBA")
+                raw_image = Image.open(png_path)
+                if raw_image.mode != "RGBA":
+                    image = raw_image.convert("RGBA")
+                else:
+                    image = raw_image
 
                 photos = []
                 for size in ICON_SIZES:
