@@ -6,13 +6,37 @@
 3. No destructive git history operations.
 4. No secret commits (.env, API keys, credentials).
 
-## Quality Gates (CI)
-5. `ruff check` must pass on modified Python files before PR creation.
-6. `ruff format --check` must pass (this repo uses ruff format, NOT black).
+## Quality Gates (CI) — MANDATORY PRE-PR CHECKLIST
+
+**Before creating a PR, the delivery agent MUST run these commands and fix all issues:**
+
+```bash
+# Step 1: Auto-format (fixes most issues automatically)
+python3 -m ruff format .
+
+# Step 2: Lint and auto-fix what's possible
+python3 -m ruff check --fix .
+
+# Step 3: Verify clean (must exit 0)
+python3 -m ruff format --check .
+python3 -m ruff check .
+
+# Step 4: Run tests on changed files
+python3 -m pytest -x --timeout=60 -q
+```
+
+**If any step fails after auto-fix, manually resolve before proceeding. Do NOT create a PR with known lint/format failures.**
+
+5. `ruff check` must pass on ALL modified Python files before PR creation.
+6. `ruff format --check` must pass (this repo uses ruff format, NOT black. NEVER run black.).
 7. No new `print()` calls in `src/` (use logging).
 8. Minimum test coverage: 10%. Delta-based checks — coverage must not decrease on touched files.
 9. Cross-repo shared library caution: changes to shared packages may affect Gasification_Model, UpstreamDrift, and AffineDrift. Verify downstream impact before modifying shared code.
 10. No TODO/FIXME comments unless a tracked GitHub issue exists.
+
+## CI Watch (Post-PR)
+11. After creating a PR, invoke the `ci-watch-and-fix` skill to monitor CI and remediate failures.
+12. Do NOT mark a story as `done` until CI passes or the skill escalates after 3 remediation cycles.
 
 ## Escalation
 11. If a story requires modifying CI pipelines in a breaking way — escalate.
