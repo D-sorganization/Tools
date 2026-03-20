@@ -453,15 +453,15 @@ class FolderToolMixin:
             elif mode == "analyze":
                 self._folder_analyze_operation()
 
-            self.after(0, lambda: self.folder_status_var.set("Processing complete"))  # type: ignore
-            self.after(0, lambda: self.folder_progress_bar.set(1.0))  # type: ignore
-            self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore
-            self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore
+            self.after(0, lambda: self.folder_status_var.set("Processing complete"))  # type: ignore[attr-defined]
+            self.after(0, lambda: self.folder_progress_bar.set(1.0))  # type: ignore[attr-defined]
+            self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore[attr-defined]
+            self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore[attr-defined]
         except (OSError, PermissionError, ValueError) as exc:
             msg = f"Error: {exc}"
-            self.after(0, lambda m=msg: self.folder_status_var.set(m))  # type: ignore
-            self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore
-            self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore
+            self.after(0, lambda m=msg: self.folder_status_var.set(m))  # type: ignore[attr-defined]
+            self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore[attr-defined]
+            self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore[attr-defined]
 
     def _folder_combine_operation(self) -> None:
         """Combine operation - copy all files from source folders to destination."""
@@ -475,7 +475,7 @@ class FolderToolMixin:
 
             total_files = len(all_file_paths)
             if total_files == 0:
-                self.after(0, lambda: self.folder_status_var.set("No files found"))  # type: ignore
+                self.after(0, lambda: self.folder_status_var.set("No files found"))  # type: ignore[attr-defined]
                 return
 
             processed_files = 0
@@ -495,11 +495,11 @@ class FolderToolMixin:
                 if processed_files % 10 == 0:
                     pct = processed_files / total_files
                     n, tot = processed_files, total_files
-                    self.after(  # type: ignore
+                    self.after(  # type: ignore[attr-defined]
                         0,
                         lambda p=pct: self.folder_progress_bar.set(p),
                     )
-                    self.after(  # type: ignore
+                    self.after(  # type: ignore[attr-defined]
                         0,
                         lambda p=n, t=tot: self.folder_status_var.set(
                             f"Processed {p}/{t}"
@@ -534,7 +534,7 @@ class FolderToolMixin:
                 if (i + 1) % 10 == 0:
                     self.after(
                         0, lambda p=(i + 1) / total: self.folder_progress_bar.set(p)
-                    )  # type: ignore
+                    )  # type: ignore[attr-defined]
         except (OSError, PermissionError) as e:
             logger.error(f"Flatten failed: {e}")
 
@@ -603,12 +603,12 @@ class FolderToolMixin:
         for p, sz in largest:
             report += f"{p.name}: {sz / 1e6:.2f} MB\n"
 
-        self.after(0, lambda: self._show_folder_analysis_report(report))  # type: ignore
+        self.after(0, lambda: self._show_folder_analysis_report(report))  # type: ignore[attr-defined]
 
     def _show_folder_analysis_report(self, text: str) -> None:
         """Show report."""
         assert text is not None, "text must be provided"
-        dialog = ctk.CTkToplevel(self)  # type: ignore
+        dialog = ctk.CTkToplevel(self)  # type: ignore[attr-defined]
         dialog.title("Analysis Report")
         t = ctk.CTkTextbox(dialog)
         t.pack(fill="both", expand=True)

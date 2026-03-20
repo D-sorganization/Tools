@@ -694,7 +694,7 @@ def skip_if_no_module(module_name: str, reason: str | None = None) -> Callable[[
             return func
         except ImportError:
             skip_reason = reason or f"Module '{module_name}' not available"
-            return pytest.mark.skip(reason=skip_reason)(func)  # type: ignore
+            return pytest.mark.skip(reason=skip_reason)(func)  # type: ignore[no-any-return]
 
     return decorator
 
@@ -753,7 +753,7 @@ def parametrize_with_edge_cases(
     all_values = base_values + generate_edge_case_data(data_type)
 
     def decorator(func: F) -> F:
-        return pytest.mark.parametrize(param_name, all_values)(func)  # type: ignore
+        return pytest.mark.parametrize(param_name, all_values)(func)  # type: ignore[no-any-return]
 
     return decorator
 

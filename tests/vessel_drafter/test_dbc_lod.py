@@ -163,7 +163,7 @@ class TestStepExportDbC:
         from vessel_drafter.exporters.step_export import export_default_layout_step
 
         with pytest.raises(AssertionError, match="output_path"):
-            export_default_layout_step(output_path=None)  # type: ignore[arg-type]
+            export_default_layout_step(output_path=None)
 
     def test_export_cylindrical_bath_layout_step_none_output_path_raises(self) -> None:
         from vessel_drafter.exporters.step_export import (
@@ -171,13 +171,13 @@ class TestStepExportDbC:
         )
 
         with pytest.raises(AssertionError, match="output_path"):
-            export_cylindrical_bath_layout_step(output_path=None)  # type: ignore[arg-type]
+            export_cylindrical_bath_layout_step(output_path=None)
 
     def test_export_vessel_drafter_step_none_output_path_raises(self) -> None:
         from vessel_drafter.exporters.step_export import export_vessel_drafter_step
 
         with pytest.raises(AssertionError, match="output_path"):
-            export_vessel_drafter_step(output_path=None)  # type: ignore[arg-type]
+            export_vessel_drafter_step(output_path=None)
 
 
 # ---------------------------------------------------------------------------
@@ -321,7 +321,7 @@ class TestVesselExportDbC:
         from vessel_drafter.exporters.vessel_export import export_vessel
 
         with pytest.raises(AssertionError, match="layout"):
-            export_vessel(layout=None)  # type: ignore[arg-type]
+            export_vessel(layout=None)
 
 
 # ---------------------------------------------------------------------------

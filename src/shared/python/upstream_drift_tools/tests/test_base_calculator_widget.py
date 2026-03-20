@@ -33,7 +33,7 @@ def test_base_calculator_widget_show_info(mock_info, qapp):
 def test_base_calculator_window_init(qapp):
     # Missing calculator name should raise AssertionError
     with pytest.raises(AssertionError):
-        BaseCalculatorWindow(calculator_name=None)  # type: ignore
+        BaseCalculatorWindow(calculator_name=None)  # type: ignore[attr-defined]
 
     window = BaseCalculatorWindow(
         calculator_name="TestWindow", window_title="MyTitle", min_size=(400, 300)

@@ -273,7 +273,7 @@ class TestDataProcessorContracts:
 
         dp = DataProcessor()
         with pytest.raises(PreconditionError):
-            dp.load_dataframe({"not": "a dataframe"})  # type: ignore[arg-type]
+            dp.load_dataframe({"not": "a dataframe"})
 
     def test_load_dataframe_requires_non_empty_name(self) -> None:
         from src.shared.python.contracts import PreconditionError
@@ -287,7 +287,7 @@ class TestDataProcessorContracts:
 
         dp = DataProcessor()
         with pytest.raises(PreconditionError):
-            dp.load_dataframe(pd.DataFrame({"x": [1]}), name=123)  # type: ignore[arg-type]
+            dp.load_dataframe(pd.DataFrame({"x": [1]}), name=123)
 
     # trim_time contracts
 
@@ -301,13 +301,13 @@ class TestDataProcessorContracts:
         from src.shared.python.contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
-            dp_loaded.trim_time("start", 0.5)  # type: ignore[arg-type]
+            dp_loaded.trim_time("start", 0.5)
 
     def test_trim_time_requires_numeric_end(self, dp_loaded: DataProcessor) -> None:
         from src.shared.python.contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
-            dp_loaded.trim_time(0.0, "end")  # type: ignore[arg-type]
+            dp_loaded.trim_time(0.0, "end")
 
     # resample contracts
 
@@ -327,7 +327,7 @@ class TestDataProcessorContracts:
         from src.shared.python.contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
-            dp_loaded.resample("100hz")  # type: ignore[arg-type]
+            dp_loaded.resample("100hz")
 
     # apply_formula contracts
 
@@ -359,7 +359,7 @@ class TestDataProcessorContracts:
         from src.shared.python.contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
-            dp_loaded.drop_columns("x")  # type: ignore[arg-type]
+            dp_loaded.drop_columns("x")
 
     # rename_columns contracts
 
@@ -373,7 +373,7 @@ class TestDataProcessorContracts:
         from src.shared.python.contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
-            dp_loaded.rename_columns([("x", "val")])  # type: ignore[arg-type]
+            dp_loaded.rename_columns([("x", "val")])
 
     # sort contracts
 
@@ -387,7 +387,7 @@ class TestDataProcessorContracts:
         from src.shared.python.contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
-            dp_loaded.sort("x", ascending=1)  # type: ignore[arg-type]
+            dp_loaded.sort("x", ascending=1)
 
     # correlate contracts
 
@@ -403,4 +403,4 @@ class TestDataProcessorContracts:
         from src.shared.python.contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
-            dp_loaded.correlate(method=None)  # type: ignore[arg-type]
+            dp_loaded.correlate(method=None)

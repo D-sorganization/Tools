@@ -49,7 +49,7 @@ except ImportError:
     # Fallback definition if utils not found
     from pathlib import Path
 
-    def safe_write_text(  # type: ignore
+    def safe_write_text(
         path: str,
         content: str,
         encoding: str = "utf-8",
@@ -142,11 +142,11 @@ class FolderProcessorApp(UICreationMixin, FileOperationsMixin, ProcessingMixin):
 
     def get_constants_info(self) -> dict[str, dict[str, str]]:
         """Return constants metadata — delegates to module-level function."""
-        return get_constants_info()  # type: ignore
+        return get_constants_info()  # type: ignore[no-any-return]
 
     def export_constants_documentation(self, output_path: str) -> bool:
         """Export constants docs — delegates to module-level function."""
-        return export_constants_documentation(output_path)  # type: ignore
+        return export_constants_documentation(output_path)  # type: ignore[no-any-return]
 
 
 if __name__ == "__main__":

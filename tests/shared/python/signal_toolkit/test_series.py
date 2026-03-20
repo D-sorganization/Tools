@@ -146,7 +146,7 @@ class TestTaylorSeries:
 
     def test_taylor_invalid_callable_raises(self, se: SeriesExpansion) -> None:
         with pytest.raises(TypeError):
-            se.taylor_series("not_a_function", center=0.0, n_terms=5)  # type: ignore[arg-type]
+            se.taylor_series("not_a_function", center=0.0, n_terms=5)
 
     def test_taylor_invalid_nterms_raises(self, se: SeriesExpansion) -> None:
         with pytest.raises(ValueError):

@@ -93,7 +93,7 @@ class TestStreamReader:
 
         broken = BrokenStream()
         errors: list[str] = []
-        _stream_reader(broken, "[ERR]", errors.append)  # type: ignore[arg-type]
+        _stream_reader(broken, "[ERR]", errors.append)
         assert broken.was_closed
         assert any("Error" in e for e in errors)
 
@@ -118,7 +118,7 @@ class TestValidateAndSanitizePath:
 
     def test_rejects_non_path_repo_root(self) -> None:
         with pytest.raises((PreconditionError, ValueError, TypeError)):
-            validate_and_sanitize_path("some/file.py", "/not/a/Path/object")  # type: ignore[arg-type]
+            validate_and_sanitize_path("some/file.py", "/not/a/Path/object")
 
     def test_rejects_path_traversal(self, tmp_path: Path) -> None:
         with pytest.raises(SecurityError):
@@ -148,7 +148,7 @@ class TestValidateAndSanitizePath:
 class TestLaunchPythonToolContracts:
     def test_rejects_non_path(self) -> None:
         with pytest.raises((PreconditionError, ValueError)):
-            launch_python_tool("/not/a/Path", "tool")  # type: ignore[arg-type]
+            launch_python_tool("/not/a/Path", "tool")
 
     def test_rejects_empty_tool_name(self, tmp_path: Path) -> None:
         f = tmp_path / "tool.py"
@@ -220,7 +220,7 @@ class TestLaunchToolDispatch:
 
     def test_rejects_non_dict_tool_info(self, tmp_path: Path) -> None:
         with pytest.raises((PreconditionError, ValueError, TypeError)):
-            launch_tool("not-a-dict", tmp_path)  # type: ignore[arg-type]
+            launch_tool("not-a-dict", tmp_path)
 
     @patch("tools.launch_utils.launch_python_tool")
     def test_dispatches_to_launch_python_tool(

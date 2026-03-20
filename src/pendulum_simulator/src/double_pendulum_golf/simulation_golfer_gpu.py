@@ -45,9 +45,9 @@ DEFAULT_BETA = 5.0
 
 def constrained_eom_jax(
     t: float,
-    state: JaxArray,  # type: ignore
+    state: JaxArray,  # type: ignore[valid-type]
     args: tuple,
-) -> JaxArray:  # type: ignore
+) -> JaxArray:  # type: ignore[valid-type]
     """State derivative for constrained golfer EOM (JAX-compatible).
 
     Solves the KKT system for constrained accelerations:
@@ -74,8 +74,8 @@ def constrained_eom_jax(
     assert t is not None, "t must be provided"
     params, torque_coeffs, alpha, beta = args
 
-    q = state[:N_DOF]  # type: ignore
-    qdot = state[N_DOF:]  # type: ignore
+    q = state[:N_DOF]  # type: ignore[index]
+    qdot = state[N_DOF:]  # type: ignore[index]
 
     # Compute dynamic terms
     M = mass_matrix_jax(q, params)
@@ -113,7 +113,7 @@ def constrained_eom_jax(
     gamma = _constraint_acceleration_bias_jax(q, qdot, params)
 
     # Baumgarte RHS
-    rhs_constraint = -gamma - 2.0 * alpha * Phi_dot - beta**2 * Phi  # type: ignore
+    rhs_constraint = -gamma - 2.0 * alpha * Phi_dot - beta**2 * Phi  # type: ignore[operator]
 
     # Assemble KKT system
     n = N_DOF
@@ -131,12 +131,12 @@ def constrained_eom_jax(
     sol = jnp.linalg.solve(KKT, rhs)
     qddot = sol[:n]
 
-    return jnp.concatenate([qdot, qddot])  # type: ignore
+    return jnp.concatenate([qdot, qddot])  # type: ignore[no-any-return]
 
 
 def _constraint_acceleration_bias_jax(
-    q: JaxArray, qdot: JaxArray, p: GolferParamsJAX  # type: ignore
-) -> JaxArray:  # type: ignore
+    q: JaxArray, qdot: JaxArray, p: GolferParamsJAX  # type: ignore[valid-type]
+) -> JaxArray:  # type: ignore[valid-type]
     """Compute gamma = Phi_qq * qdot * qdot (centripetal acceleration bias).
 
     Uses finite difference of constraint Jacobian.
@@ -152,7 +152,7 @@ def _constraint_acceleration_bias_jax(
     gamma : JaxArray, shape (4,)
     """
     assert q is not None, "q must be provided"
-    eps = 1e-7  # type: ignore
+    eps = 1e-7  # type: ignore[unreachable]
     Phi_q_0 = constraint_jacobian_jax(q, p)
 
     # Compute dPhi_q/dq via finite differences
@@ -169,9 +169,9 @@ def _constraint_acceleration_bias_jax(
 
 def run_single_simulation_jax(
     params: GolferParamsJAX,
-    initial_state: JaxArray,  # type: ignore
+    initial_state: JaxArray,  # type: ignore[valid-type]
     t_end: float,
-    torque_coeffs: JaxArray,  # type: ignore
+    torque_coeffs: JaxArray,  # type: ignore[valid-type]
     alpha: float = DEFAULT_ALPHA,
     beta: float = DEFAULT_BETA,
     dt: float = 0.005,
@@ -223,9 +223,9 @@ def run_single_simulation_jax(
 @jax.jit
 def run_batch_simulations(
     params: GolferParamsJAX,
-    initial_states: JaxArray,  # type: ignore
+    initial_states: JaxArray,  # type: ignore[valid-type]
     t_end: float,
-    torque_coeffs_batch: JaxArray,  # type: ignore
+    torque_coeffs_batch: JaxArray,  # type: ignore[valid-type]
     alpha: float = DEFAULT_ALPHA,
     beta: float = DEFAULT_BETA,
     dt: float = 0.005,
@@ -256,15 +256,15 @@ def run_batch_simulations(
     # so this is a wrapper that should be called without jit for batching
     assert params is not None, "params must be provided"
     solutions = []
-    for i in range(initial_states.shape[0]):  # type: ignore
+    for i in range(initial_states.shape[0]):  # type: ignore[attr-defined]
         sol = run_single_simulation_jax(
-            params, initial_states[i], t_end, torque_coeffs_batch[i], alpha, beta, dt  # type: ignore
+            params, initial_states[i], t_end, torque_coeffs_batch[i], alpha, beta, dt  # type: ignore[index]
         )
         solutions.append(sol)
     return solutions
 
 
-def extract_final_state(sol: object) -> JaxArray:  # type: ignore
+def extract_final_state(sol: object) -> JaxArray:  # type: ignore[valid-type]
     """Extract final state from solution object.
 
     Parameters
@@ -275,10 +275,10 @@ def extract_final_state(sol: object) -> JaxArray:  # type: ignore
     -------
     final_state : JaxArray, shape (16,)
     """
-    return sol.ys[-1]  # type: ignore
+    return sol.ys[-1]  # type: ignore[attr-defined,no-any-return]
 
 
-def extract_trajectory(sol: object) -> JaxArray:  # type: ignore
+def extract_trajectory(sol: object) -> JaxArray:  # type: ignore[valid-type]
     """Extract full trajectory from solution object.
 
     Parameters
@@ -289,10 +289,10 @@ def extract_trajectory(sol: object) -> JaxArray:  # type: ignore
     -------
     trajectory : JaxArray, shape (n_steps, 16)
     """
-    return sol.ys  # type: ignore
+    return sol.ys  # type: ignore[attr-defined,no-any-return]
 
 
-def extract_times(sol: object) -> JaxArray:  # type: ignore
+def extract_times(sol: object) -> JaxArray:  # type: ignore[valid-type]
     """Extract time points from solution object.
 
     Parameters
@@ -303,4 +303,4 @@ def extract_times(sol: object) -> JaxArray:  # type: ignore
     -------
     times : JaxArray, shape (n_steps,)
     """
-    return sol.ts  # type: ignore
+    return sol.ts  # type: ignore[attr-defined,no-any-return]

@@ -691,15 +691,15 @@ class AnalysisTab:
         ax.tick_params(colors="#c0c0d8")
         ax.xaxis.label.set_color("#c0c0d8")
         ax.yaxis.label.set_color("#c0c0d8")
-        ax.zaxis.label.set_color("#c0c0d8")  # type: ignore[attr-defined]
-        ax.xaxis.pane.fill = False  # type: ignore[attr-defined]
-        ax.yaxis.pane.fill = False  # type: ignore[attr-defined]
-        ax.zaxis.pane.fill = False  # type: ignore[attr-defined]
+        ax.zaxis.label.set_color("#c0c0d8")
+        ax.xaxis.pane.fill = False
+        ax.yaxis.pane.fill = False
+        ax.zaxis.pane.fill = False
 
         # Mask NaN for cleaner rendering
         Z_masked = np.ma.array(Z, mask=~np.isfinite(Z))
 
-        ax.plot_surface(  # type: ignore[attr-defined]
+        ax.plot_surface(
             X,
             Y,
             Z_masked,
@@ -709,7 +709,7 @@ class AnalysisTab:
         )
         ax.set_xlabel(xlabel, fontsize=10)
         ax.set_ylabel(ylabel, fontsize=10)
-        ax.set_zlabel(zlabel, fontsize=10)  # type: ignore[attr-defined]
+        ax.set_zlabel(zlabel, fontsize=10)
         ax.set_title(f"{zlabel} surface", color="#c0c0d8", fontsize=12)
 
         self._fig_3d.tight_layout()

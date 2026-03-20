@@ -83,7 +83,7 @@ def se3_matrix_to_twist_vector(M: Any) -> np.ndarray:
     result = np.concatenate([omega, v])
 
     ensure(result.shape == (6,), "result must have 6 elements")
-    return result  # type: ignore
+    return result  # type: ignore[no-any-return]
 
 
 # ---------------------------------------------------------------------------
@@ -295,12 +295,12 @@ def screw_to_twist(screw: dict[str, Any]) -> np.ndarray:
     else:
         # Rotation/helical — axis must be unit for valid twist
         require_unit_vector(axis, "screw axis")
-        omega = axis  # type: ignore
+        omega = axis  # type: ignore[assignment]
         v = np.cross(-omega, point) + pitch * omega
 
     xi = np.concatenate([omega, v])
     ensure(xi.shape == (6,), "result must have 6 elements")
-    return xi  # type: ignore
+    return xi  # type: ignore[no-any-return]
 
 
 # ---------------------------------------------------------------------------

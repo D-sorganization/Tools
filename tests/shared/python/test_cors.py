@@ -114,7 +114,7 @@ def test_none_origins_uses_default():
 def test_dbc_requires_fastapi_app():
     """Non-FastAPI app raises PreconditionError."""
     with pytest.raises(_PreconditionError):
-        add_cors_middleware(MagicMock())  # type: ignore[arg-type]
+        add_cors_middleware(MagicMock())
 
 
 def test_dbc_requires_fastapi_not_none():
@@ -127,7 +127,7 @@ def test_dbc_origins_must_be_list_of_strings():
     """Origins list containing non-strings raises PreconditionError."""
     app = FastAPI()
     with pytest.raises(_PreconditionError):
-        add_cors_middleware(app, origins=[123, 456])  # type: ignore[arg-type]
+        add_cors_middleware(app, origins=[123, 456])
 
 
 def test_dbc_origins_dict_rejected():

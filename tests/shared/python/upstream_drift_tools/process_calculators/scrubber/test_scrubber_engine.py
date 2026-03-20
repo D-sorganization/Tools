@@ -44,7 +44,7 @@ class TestScrubberInputs:
     def test_frozen_dataclass(self) -> None:
         inputs = _typical_inputs()
         with pytest.raises(AttributeError):
-            inputs.gas_flow_kg_hr = 9999.0  # type: ignore[misc]
+            inputs.gas_flow_kg_hr = 9999.0
 
     def test_defaults(self) -> None:
         inputs = ScrubberInputs(
@@ -84,7 +84,7 @@ class TestScrubberResults:
             max_ntu=4.0,
         )
         with pytest.raises(AttributeError):
-            results.column_diameter_m = 999.0  # type: ignore[misc]
+            results.column_diameter_m = 999.0
 
     def test_defaults_empty_lists(self) -> None:
         results = ScrubberResults(

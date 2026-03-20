@@ -20,7 +20,7 @@ try:
 
     HAS_PANDAS = True
 except ImportError:
-    pd = None  # type: ignore
+    pd = None
     HAS_PANDAS = False
 
 try:
@@ -28,7 +28,7 @@ try:
 
     HAS_SCIPY = True
 except ImportError:
-    scipy = None  # type: ignore
+    scipy = None
     HAS_SCIPY = False
 
 

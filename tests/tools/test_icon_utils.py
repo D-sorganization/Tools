@@ -33,19 +33,19 @@ def test_create_resized_images_dbc_non_list():
     """create_resized_images must reject non-list sizes."""
     mock_img = MagicMock()
     with pytest.raises(PreconditionError):
-        create_resized_images(mock_img, "not_a_list")  # type: ignore[arg-type]
+        create_resized_images(mock_img, "not_a_list")
 
 
 def test_convert_png_to_ico_dbc_non_path_input(tmp_path):
     """convert_png_to_ico must reject string paths."""
     with pytest.raises(PreconditionError):
-        convert_png_to_ico("input.png", tmp_path / "out.ico")  # type: ignore[arg-type]
+        convert_png_to_ico("input.png", tmp_path / "out.ico")
 
 
 def test_convert_png_to_ico_dbc_non_path_output(tmp_path):
     """convert_png_to_ico must reject string output paths."""
     with pytest.raises(PreconditionError):
-        convert_png_to_ico(tmp_path / "in.png", "out.ico")  # type: ignore[arg-type]
+        convert_png_to_ico(tmp_path / "in.png", "out.ico")
 
 
 def test_convert_png_to_ico_missing_file_returns_false(tmp_path):
@@ -109,7 +109,7 @@ def test_convert_image_mode_dbc_none():
     from tools.icon_utils import convert_image_mode
 
     with pytest.raises(PreconditionError):
-        convert_image_mode(None)  # type: ignore[arg-type]
+        convert_image_mode(None)
 
 
 def test_convert_image_mode():

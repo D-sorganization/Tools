@@ -469,7 +469,7 @@ class ControlsWidgetBase(QWidget):
             )
 
             if isinstance(widget, _UAI):
-                return widget.value_si()  # type: ignore
+                return widget.value_si()  # type: ignore[no-any-return]
         except ImportError:
             pass
         return parse_float(widget, label)  # type: ignore[arg-type]

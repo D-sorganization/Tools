@@ -133,7 +133,7 @@ class MatplotlibRenderer:
             theme_colors = self._theme_manager.get_colors()
             cmap = theme_colors.get("contour_cmap", cmap)
 
-        ax.plot_surface(  # type: ignore[attr-defined]
+        ax.plot_surface(
             x_mesh,
             y_mesh,
             z_data,
@@ -144,7 +144,7 @@ class MatplotlibRenderer:
         )
 
         if spec.show_scatter:
-            ax.scatter(  # type: ignore[misc]
+            ax.scatter(
                 x_mesh.ravel(),
                 y_mesh.ravel(),
                 z_data.ravel(),
@@ -155,7 +155,7 @@ class MatplotlibRenderer:
 
         ax.set_xlabel(spec.x_axis.label or "X")
         ax.set_ylabel(spec.y_axis.label or "Y")
-        ax.set_zlabel(spec.z_axis.label or "Z")  # type: ignore[attr-defined]
+        ax.set_zlabel(spec.z_axis.label or "Z")
 
         if spec.title:
             ax.set_title(spec.title)
