@@ -87,7 +87,10 @@ class ConfigLoader:
         if self._config is not None and not reload:
             return self._config
 
-        self._config = safe_read_json(self.config_path, self.default_config.copy())
+        loaded = safe_read_json(self.config_path, self.default_config.copy())
+        self._config = (
+            loaded if isinstance(loaded, dict) else self.default_config.copy()
+        )
         return self._config
 
     def get(self, key: str, default: Any = None) -> Any:
@@ -127,15 +130,13 @@ class ConfigLoader:
         assert key is not None, "key must be provided"
         if self._config is None:
             self.load()
-
-        keys = key.split(".")
-        config = self._config
-
-        # Navigate to the parent dict
         if self._config is None:
             self._config = {}
-        config = self._config
 
+        keys = key.split(".")
+        config: dict[str, Any] = self._config
+
+        # Navigate to the parent dict
         for k in keys[:-1]:
             if k not in config:
                 config[k] = {}
