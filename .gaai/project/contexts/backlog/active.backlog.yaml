@@ -715,7 +715,8 @@ items:
   - id: GH1652
     title: "Implement semantic versioning and deprecation path"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-20T13:38:25Z"
     github_issue: 1652
     artefact: .gaai/project/contexts/artefacts/stories/GH1652.story.md
     dependencies: []
