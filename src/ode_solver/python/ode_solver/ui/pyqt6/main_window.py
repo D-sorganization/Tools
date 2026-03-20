@@ -6,6 +6,7 @@ A PyQt6 GUI for solving systems of ordinary differential equations.
 
 from __future__ import annotations
 
+import logging
 import sys
 from typing import Any
 
@@ -27,6 +28,10 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+from ode_solver.timeout import SolverTimeoutError, with_timeout
+
+_log = logging.getLogger(__name__)
 
 # Qt enum aliases — break LoD chains (Qt.X.Y is a 3-level access)
 _SCROLL_BAR_OFF = Qt.ScrollBarPolicy.ScrollBarAlwaysOff
@@ -452,8 +457,17 @@ class ODESolverWindow(QMainWindow):
             result[key.strip()] = value.strip()
         return result
 
+    # Default solver timeout in seconds (30 s is generous for typical ODEs)
+    _SOLVER_TIMEOUT_S: float = 30.0
+
     def _solve(self) -> None:
-        """Solve the ODE system."""
+        """Solve the ODE system with a timeout guard.
+
+        Wraps the scipy integration call with ``with_timeout`` so that
+        pathological or stiff systems cannot hang the GUI indefinitely.
+        Raises ``SolverTimeoutError`` if the computation exceeds
+        ``_SOLVER_TIMEOUT_S`` seconds.
+        """
         try:
             from upstream_drift_tools.process_calculators.ode_solver import (
                 ODESolver,
@@ -483,9 +497,15 @@ class ODESolverWindow(QMainWindow):
             num_points = self.num_points_input.value()
             t_eval = np.linspace(t_start, t_end, num_points)
 
-            # Solve
+            # Solve — guarded by timeout to prevent unbounded hangs
             solver = ODESolver(derivatives, parameters)
-            solution = solver.solve((t_start, t_end), y0, t_eval=t_eval)
+            solution = with_timeout(
+                self._SOLVER_TIMEOUT_S,
+                solver.solve,
+                (t_start, t_end),
+                y0,
+                t_eval=t_eval,
+            )
 
             # Format results
             results = []
@@ -540,6 +560,12 @@ class ODESolverWindow(QMainWindow):
             self.results_text.setPlainText("\n".join(results))
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['green']};")
 
+        except SolverTimeoutError as e:
+            _log.warning("Solver timed out: %s", e)
+            self.results_text.setPlainText(
+                f"Timeout: {e}\n\nTry reducing the time span or simplifying the ODE system."
+            )
+            self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['yellow']};")
         except ImportError as e:
             self.results_text.setPlainText(f"Error: {e}")
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
