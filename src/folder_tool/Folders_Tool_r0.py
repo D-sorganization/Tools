@@ -1,7 +1,6 @@
 # Standard library imports
 import logging
 import tkinter as tk
-
 from tkinter import ttk
 
 from _bootstrap import bootstrap  # noqa: E402

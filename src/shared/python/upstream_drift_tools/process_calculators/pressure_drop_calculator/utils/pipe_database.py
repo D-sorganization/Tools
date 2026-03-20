@@ -12,7 +12,11 @@ References:
     - Colebrook, C.F. (1939): "Turbulent flow in pipes"
 """
 
+import logging
+
 from ..models.pressure_drop_data_models import PipeSpecification
+
+logger = logging.getLogger(__name__)
 
 # ============================================================================
 # MATERIAL ROUGHNESS VALUES
@@ -303,7 +307,7 @@ def get_pipe_spec(
 
     Example:
         >>> spec = get_pipe_spec("4", "40")
-        >>> print(spec.inner_diameter)  # mm
+        >>> logger.debug(spec.inner_diameter)  # mm
         102.26
     """
     key = (nominal_size, schedule)

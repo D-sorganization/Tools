@@ -547,8 +547,7 @@ RMS: {np.sqrt(np.mean(signal.values**2)):.4f}"""
 
     def _apply_styling(self) -> None:
         """Apply dark theme styling."""
-        self.setStyleSheet(
-            """
+        self.setStyleSheet("""
             QWidget {
                 background-color: #1e1e2e;
                 color: #cdd6f4;
@@ -613,5 +612,4 @@ RMS: {np.sqrt(np.mean(signal.values**2)):.4f}"""
             QSplitter::handle {
                 background-color: #585b70;
             }
-        """
-        )
+        """)

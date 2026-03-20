@@ -431,8 +431,7 @@ class PressureDropCalculatorWidget(QWidget):
 
     def _apply_styling(self) -> None:
         """Apply dark theme styling."""
-        self.setStyleSheet(
-            """
+        self.setStyleSheet("""
             QWidget {
                 background-color: #1e1e2e;
                 color: #cdd6f4;
@@ -500,5 +499,4 @@ class PressureDropCalculatorWidget(QWidget):
                 background-color: #89b4fa;
                 color: #1e1e2e;
             }
-        """
-        )
+        """)

@@ -7,6 +7,7 @@ including links, joints, and the model itself.
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Any
 
@@ -15,6 +16,8 @@ from humanoid_character_builder.contracts import precondition
 from humanoid_character_builder.mesh.inertia_calculator import InertiaResult
 from scipy.spatial import ConvexHull
 from scipy.spatial.transform import Rotation as R
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -88,9 +91,7 @@ class SupportPolygon:
         """Compute minimum distance from point to the polygon edge."""
         assert point is not None, "point must be provided"
         if not self.contains(point):
-            return (
-                -1.0
-            )  # Or positive distance to polygon? Convention usually margin > 0 is stable.
+            return -1.0  # Or positive distance to polygon? Convention usually margin > 0 is stable.
             # If outside, negative margin.
 
         px, py = point

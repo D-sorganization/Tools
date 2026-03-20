@@ -24,12 +24,15 @@ References:
 
 from __future__ import annotations
 
+import logging
 import math
 from typing import Any
 
 import numpy as np
 
 from rotation_converter._contracts import ensure, require, require_finite
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Internal helpers (DRY — shared across multiple functions)
@@ -1456,7 +1459,7 @@ def InverseDynamicsTrajectory(
         try:
             import matplotlib.pyplot as plt
         except ImportError:
-            print('The result will not be plotted due to a lack of package matplotlib')
+            logger.debug('The result will not be plotted due to a lack of package matplotlib')
         else:
             plt.plot(timestamp, Tau1, label = "Tau1")
             plt.plot(timestamp, Tau2, label = "Tau2")
@@ -1575,7 +1578,7 @@ def ForwardDynamicsTrajectory(
             try:
                 import matplotlib.pyplot as plt
         except ImportError:
-            print('The result will not be plotted due to a lack of package matplotlib')
+            logger.debug('The result will not be plotted due to a lack of package matplotlib')
         else:
             plt.plot(timestamp, theta1, label = "Theta1")
             plt.plot(timestamp, theta2, label = "Theta2")

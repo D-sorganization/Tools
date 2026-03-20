@@ -53,7 +53,9 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [lint.per-file-ignores]
 # Ignore "unused imports" in __init__.py files (common pattern)
-"__init__.py" = ["F401"]
+# Also ignore E402 (module-level import not at top) for __init__.py files
+# since version metadata assignments before imports are a standard Python pattern
+"__init__.py" = ["F401", "E402"]
 # Allow assertions in tests
 "tests/*" = ["S101"]
 "**/tests/*" = ["S101", "E402"]

@@ -143,7 +143,7 @@ def _style_figure(fig: Figure, ax: Any = None) -> None:
     c = _get_plot_colors()
     fig.set_facecolor(c["bg"])
     if ax is not None:
-        axes = [ax] if not isinstance(ax, (list, np.ndarray)) else list(ax)
+        axes = [ax] if not isinstance(ax, list | np.ndarray) else list(ax)
         for a in axes:
             a.set_facecolor(c["surface"])
             a.tick_params(colors=c["fg"], labelsize=8)

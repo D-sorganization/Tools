@@ -96,8 +96,8 @@ class TestStandardCondition:
         for member in StandardCondition:
             val = member.value
             assert len(val) == 3, f"{member.name} should have (T, P, label)"
-            assert isinstance(val[0], (int, float)), f"{member.name} T must be numeric"
-            assert isinstance(val[1], (int, float)), f"{member.name} P must be numeric"
+            assert isinstance(val[0], int | float), f"{member.name} T must be numeric"
+            assert isinstance(val[1], int | float), f"{member.name} P must be numeric"
             assert isinstance(val[2], str), f"{member.name} label must be str"
 
     def test_temperatures_reasonable(self) -> None:
@@ -110,6 +110,6 @@ class TestStandardCondition:
         """All pressures should be between 90 kPa and 110 kPa."""
         for member in StandardCondition:
             pressure_pa = member.value[1]
-            assert (
-                90_000 <= pressure_pa <= 110_000
-            ), f"{member.name}: P={pressure_pa} Pa out of range"
+            assert 90_000 <= pressure_pa <= 110_000, (
+                f"{member.name}: P={pressure_pa} Pa out of range"
+            )

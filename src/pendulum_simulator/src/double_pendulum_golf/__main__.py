@@ -15,6 +15,8 @@ from PyQt6.QtWidgets import QApplication, QComboBox, QDoubleSpinBox, QSpinBox
 from .gui import MainWindow
 from .gui.diagnostics import get_tracker
 
+logger = logging.getLogger(__name__)
+
 
 class _WheelBlockFilter(QObject):
     """Global event filter: blocks wheel on value-inputs, Ctrl+Wheel zooms fonts.
@@ -60,9 +62,7 @@ class _WheelBlockFilter(QObject):
             font = app.font()
             font.setPointSize(self._default_font_pt)
             app.setFont(font)
-            logging.getLogger(__name__).info(
-                "Font reset to %dpt", self._default_font_pt
-            )
+            logging.getLogger(__name__).info("Font reset to %dpt", self._default_font_pt)
 
 
 _LOG_FORMAT = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
@@ -97,7 +97,7 @@ __version__ = "0.1.0"
 def main() -> None:
     # Handle --version flag before any GUI initialization
     if "--version" in sys.argv:
-        print(f"pendulum-simulator {__version__}")  # noqa: T201
+        logger.debug("pendulum-simulator %s", __version__)
         sys.exit(0)
 
     _configure_logging()

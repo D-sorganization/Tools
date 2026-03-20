@@ -344,7 +344,7 @@ def calculate_mixture_molecular_weight(composition: dict[str, float]) -> float:
     Example:
         >>> comp = {'H2': 0.3, 'CO': 0.4, 'CO2': 0.3}
         >>> mw = calculate_mixture_molecular_weight(comp)
-        >>> print(f"MW = {mw:.2f} kg/kmol")
+        >>> logger.debug(f"MW = {mw:.2f} kg/kmol")
     """
     mw_mix = 0.0
     for component, mole_frac in composition.items():
@@ -404,7 +404,7 @@ def calculate_compressibility_factor(
     Example:
         >>> comp = {'CH4': 0.9, 'CO2': 0.1}
         >>> z = calculate_compressibility_factor(comp, 300, 50e5)
-        >>> print(f"Z = {z:.4f}")
+        >>> logger.debug(f"Z = {z:.4f}")
     """
     # Calculate pseudocritical properties using Kay's rule
     assert composition is not None, "composition must be provided"
@@ -765,7 +765,7 @@ def calculate_mixture_viscosity_wilke(
     Example:
         >>> comp = {'H2': 0.3, 'CO': 0.3, 'N2': 0.4}
         >>> mu = calculate_mixture_viscosity_wilke(comp, 800, 1e5)
-        >>> print(f"Viscosity = {mu:.6f} Pa·s = {mu*1e6:.2f} µPa·s")
+        >>> logger.debug(f"Viscosity = {mu:.6f} Pa·s = {mu*1e6:.2f} µPa·s")
     """
     assert composition is not None, "composition must be provided"
     pure_viscosities = _compute_pure_viscosities(composition, temperature, pressure)
@@ -837,8 +837,8 @@ def calculate_gas_properties(
     Example:
         >>> comp = {'H2': 0.25, 'CO': 0.35, 'CO2': 0.15, 'N2': 0.25}
         >>> props = calculate_gas_properties(comp, 700, 5e5)
-        >>> print(f"Density: {props['density']:.3f} kg/m³")
-        >>> print(f"Gamma: {props['heat_capacity_ratio']:.3f}")
+        >>> logger.debug(f"Density: {props['density']:.3f} kg/m³")
+        >>> logger.debug(f"Gamma: {props['heat_capacity_ratio']:.3f}")
     """
     # Molecular weight
     assert composition is not None, "composition must be provided"
