@@ -20,7 +20,10 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .contracts import require
+try:
+    from .contracts import require
+except ImportError:
+    from contracts import require  # type: ignore[no-redef]
 
 # Default local-development origins used when CORS_ORIGINS env var is unset.
 DEFAULT_ORIGINS: list[str] = [
