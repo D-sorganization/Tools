@@ -7,6 +7,7 @@ all test suites in the repository.
 
 import logging
 import os
+import sys
 import tempfile
 from collections.abc import Generator
 from pathlib import Path
@@ -18,6 +19,16 @@ from unittest.mock import MagicMock
 # import so that both the main process and any xdist worker sub-processes
 # (which re-execute conftest.py on startup) get a stable non-GUI backend.
 # ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# vessel_drafter path — not managed by pytest.ini pythonpath due to worktree
+# import ordering; add here so collection succeeds.
+# ---------------------------------------------------------------------------
+_VESSEL_DRAFTER_PYTHON = (
+    Path(__file__).resolve().parent.parent / "src" / "vessel_drafter" / "python"
+)
+if _VESSEL_DRAFTER_PYTHON.exists() and str(_VESSEL_DRAFTER_PYTHON) not in sys.path:
+    sys.path.insert(0, str(_VESSEL_DRAFTER_PYTHON))
 os.environ.setdefault("MPLBACKEND", "Agg")
 os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
 os.environ.setdefault("OMP_NUM_THREADS", "1")
@@ -258,8 +269,7 @@ def mock_file() -> MagicMock:
     """
     mock = MagicMock()
     mock.name = "mock_file.txt"
-    mock.read.return_value = ""
-    mock.write.return_value = None
+    mock.configure_mock(**{"read.return_value": "", "write.return_value": None})
     mock.__enter__ = MagicMock(return_value=mock)
     mock.__exit__ = MagicMock(return_value=False)
     return mock
@@ -274,7 +284,7 @@ def mock_response() -> MagicMock:
     """
     mock = MagicMock()
     mock.status_code = 200
-    mock.json.return_value = {}
+    mock.configure_mock(**{"json.return_value": {}})
     mock.text = ""
     mock.headers = {}
     mock.ok = True
@@ -292,11 +302,15 @@ def mock_path(tmp_path: Path) -> MagicMock:
         Mock Path object
     """
     mock = MagicMock(spec=Path)
-    mock.exists.return_value = True
-    mock.is_file.return_value = True
-    mock.is_dir.return_value = False
-    mock.read_text.return_value = ""
-    mock.read_bytes.return_value = b""
+    mock.configure_mock(
+        **{
+            "exists.return_value": True,
+            "is_file.return_value": True,
+            "is_dir.return_value": False,
+            "read_text.return_value": "",
+            "read_bytes.return_value": b"",
+        }
+    )
     mock.parent = tmp_path
     return mock
 

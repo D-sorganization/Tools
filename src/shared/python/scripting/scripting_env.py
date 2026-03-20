@@ -28,7 +28,7 @@ try:
 
     HAS_SCIPY = True
 except ImportError:
-    scipy = None  # type: ignore
+    scipy = None
     HAS_SCIPY = False
 
 

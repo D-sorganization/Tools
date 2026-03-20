@@ -1,10 +1,12 @@
 """Sphinx configuration for Double Pendulum Golf Simulator."""
 
-import os
 import sys
+from os.path import abspath
 
 # Add source directory to path for autodoc
-sys.path.insert(0, os.path.abspath("../src"))
+_src_path = abspath("../src")
+if _src_path not in sys.path:
+    sys.path.insert(0, _src_path)
 
 # -- Project information -------------------------------------------------------
 project = "Double Pendulum Golf Simulator"

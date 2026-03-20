@@ -32,6 +32,10 @@ class PIDGeneratorMainWindow(QMainWindow):
     """Main window for the P&ID Generator tool."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
+        if parent is not None and not isinstance(parent, QWidget):
+            raise TypeError(
+                f"parent must be a QWidget or None, got {type(parent).__name__!r}"
+            )
         super().__init__(parent)
         self.setWindowTitle("P&ID Generator")
         self.setMinimumSize(800, 400)
@@ -93,10 +97,13 @@ class PIDGeneratorMainWindow(QMainWindow):
         self._status_label = QLabel("")
         layout.addWidget(self._status_label)
 
-        # Connections
-        spec_browse.clicked.connect(self._browse_spec)
-        out_browse.clicked.connect(self._browse_out)
-        generate_btn.clicked.connect(self._generate)
+        # Connections — extract signals to local vars (LoD: no >2-level chains)
+        spec_clicked = spec_browse.clicked
+        spec_clicked.connect(self._browse_spec)
+        out_clicked = out_browse.clicked
+        out_clicked.connect(self._browse_out)
+        gen_clicked = generate_btn.clicked
+        gen_clicked.connect(self._generate)
 
     def _browse_spec(self) -> None:
         path, _ = QFileDialog.getOpenFileName(

@@ -30,6 +30,12 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+# LOD: Extract deep Qt constant chains (>2 levels) to module-level aliases.
+_SCROLLBAR_ALWAYS_OFF = Qt.ScrollBarPolicy.ScrollBarAlwaysOff
+_ALIGN_CENTER = Qt.AlignmentFlag.AlignCenter
+_SIZE_EXPANDING = QSizePolicy.Policy.Expanding
+_SIZE_FIXED = QSizePolicy.Policy.Fixed
+
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {
     "rosewater": "#f5e0dc",
@@ -226,7 +232,7 @@ class MultiParamAnalysisWindow(QMainWindow):
         # Central widget with scroll area
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
-        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll_area.setHorizontalScrollBarPolicy(_SCROLLBAR_ALWAYS_OFF)
         self.setCentralWidget(scroll_area)
 
         central_widget = QWidget()
@@ -242,7 +248,7 @@ class MultiParamAnalysisWindow(QMainWindow):
         title_font.setPointSize(18)
         title_font.setBold(True)
         title_label.setFont(title_font)
-        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title_label.setAlignment(_ALIGN_CENTER)
         title_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['blue']};")
         main_layout.addWidget(title_label)
 
@@ -258,7 +264,8 @@ class MultiParamAnalysisWindow(QMainWindow):
         # Run button
         run_btn = QPushButton("Run Analysis")
         run_btn.setObjectName("runBtn")
-        run_btn.clicked.connect(self._run_analysis)
+        run_btn_clicked = run_btn.clicked
+        run_btn_clicked.connect(self._run_analysis)
         main_layout.addWidget(run_btn)
 
         main_layout.addStretch()
@@ -293,9 +300,7 @@ class MultiParamAnalysisWindow(QMainWindow):
         self.param1_min.setRange(-1e6, 1e6)
         self.param1_min.setDecimals(2)
         self.param1_min.setValue(600)
-        self.param1_min.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
-        )
+        self.param1_min.setSizePolicy(_SIZE_EXPANDING, _SIZE_FIXED)
         param1_layout.addWidget(self.param1_min, 1, 1)
 
         param1_layout.addWidget(QLabel("Maximum:"), 2, 0)
@@ -336,9 +341,7 @@ class MultiParamAnalysisWindow(QMainWindow):
         self.param2_min.setRange(-1e6, 1e6)
         self.param2_min.setDecimals(3)
         self.param2_min.setValue(0.1)
-        self.param2_min.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
-        )
+        self.param2_min.setSizePolicy(_SIZE_EXPANDING, _SIZE_FIXED)
         param2_layout.addWidget(self.param2_min, 1, 1)
 
         param2_layout.addWidget(QLabel("Maximum:"), 2, 0)
@@ -528,8 +531,36 @@ class MultiParamAnalysisWindow(QMainWindow):
         param1_values: np.ndarray,
         param2_values: np.ndarray,
     ) -> None:
-        """Run demo analysis with test function."""
-        assert param1_name is not None, "param1_name must be provided"
+        """Run demo analysis with test function.
+
+        Preconditions:
+            param1_name: must be a non-empty str
+            param2_name: must be a non-empty str
+            output_name: must be a non-empty str
+            param1_values: must be a numpy ndarray
+            param2_values: must be a numpy ndarray
+        """
+        if not isinstance(param1_name, str):
+            raise TypeError(
+                f"param1_name must be a str, got {type(param1_name).__name__}"
+            )
+        if not isinstance(param2_name, str):
+            raise TypeError(
+                f"param2_name must be a str, got {type(param2_name).__name__}"
+            )
+        if not isinstance(output_name, str):
+            raise TypeError(
+                f"output_name must be a str, got {type(output_name).__name__}"
+            )
+        if not isinstance(param1_values, np.ndarray):
+            raise TypeError(
+                f"param1_values must be a numpy ndarray, got {type(param1_values).__name__}"
+            )
+        if not isinstance(param2_values, np.ndarray):
+            raise TypeError(
+                f"param2_values must be a numpy ndarray, got {type(param2_values).__name__}"
+            )
+
         demo_func = self.demo_func_combo.currentText()
 
         # Create meshgrid
@@ -599,9 +630,25 @@ class MultiParamAnalysisWindow(QMainWindow):
         param2_values: np.ndarray,
         Z: np.ndarray,
     ) -> None:
-        """Calculate sensitivity indices."""
+        """Calculate sensitivity indices.
+
+        Preconditions:
+            param1_values: must be a numpy ndarray
+            param2_values: must be a numpy ndarray
+            Z: must be a numpy ndarray
+        """
+        if not isinstance(param1_values, np.ndarray):
+            raise TypeError(
+                f"param1_values must be a numpy ndarray, got {type(param1_values).__name__}"
+            )
+        if not isinstance(param2_values, np.ndarray):
+            raise TypeError(
+                f"param2_values must be a numpy ndarray, got {type(param2_values).__name__}"
+            )
+        if not isinstance(Z, np.ndarray):
+            raise TypeError(f"Z must be a numpy ndarray, got {type(Z).__name__}")
+
         # Simple variance-based sensitivity
-        assert param1_values is not None, "param1_values must be provided"
         total_var = Z.var()
 
         if total_var > 0:
@@ -644,8 +691,24 @@ class MultiParamAnalysisWindow(QMainWindow):
         param2_values: np.ndarray,
         Z: np.ndarray,
     ) -> None:
-        """Update the data preview."""
-        assert param1_values is not None, "param1_values must be provided"
+        """Update the data preview.
+
+        Preconditions:
+            param1_values: must be a numpy ndarray
+            param2_values: must be a numpy ndarray
+            Z: must be a numpy ndarray
+        """
+        if not isinstance(param1_values, np.ndarray):
+            raise TypeError(
+                f"param1_values must be a numpy ndarray, got {type(param1_values).__name__}"
+            )
+        if not isinstance(param2_values, np.ndarray):
+            raise TypeError(
+                f"param2_values must be a numpy ndarray, got {type(param2_values).__name__}"
+            )
+        if not isinstance(Z, np.ndarray):
+            raise TypeError(f"Z must be a numpy ndarray, got {type(Z).__name__}")
+
         lines = []
         lines.append("Multi-Parameter Analysis Results")
         lines.append("=" * 50)

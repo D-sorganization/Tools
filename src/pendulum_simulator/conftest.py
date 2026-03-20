@@ -9,6 +9,7 @@ from __future__ import annotations
 import pathlib
 import sys
 
-_SRC_DIR = str(pathlib.Path(__file__).resolve().parent / "src")
+_THIS_FILE = pathlib.Path(__file__).resolve()
+_SRC_DIR = str(_THIS_FILE.parent / "src")
 if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
