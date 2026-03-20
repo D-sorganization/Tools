@@ -793,7 +793,7 @@ class URDFTextEditor(TextEditorDiffMixin):
     def _add_to_history(self, description: str) -> None:
         """Add current content to history."""
         assert description is not None, "description must be provided"
-        checksum = hashlib.md5(self._content.encode()).hexdigest()
+        checksum = hashlib.sha256(self._content.encode()).hexdigest()
 
         version = EditorVersion(
             content=self._content,
