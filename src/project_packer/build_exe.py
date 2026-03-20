@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Build executable for Folder Packer application."""
 
-import importlib.util
 import logging
 import shutil
 import subprocess
 import sys
+from importlib.util import find_spec
 from pathlib import Path
 
 # Set up logging
@@ -28,7 +28,7 @@ def check_pyinstaller() -> bool:
 
 
     """
-    return importlib.util.find_spec("PyInstaller") is not None
+    return find_spec("PyInstaller") is not None
 
 
 def install_pyinstaller() -> bool:
