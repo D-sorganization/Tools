@@ -28,11 +28,6 @@ Run with:
     python -m data_processor.cli run --config pipeline.json
 """
 
-import logging
-
-logger = logging.getLogger(__name__)
-
-
 from __future__ import annotations
 
 import json
@@ -98,7 +93,7 @@ def _select_signals(
     missing = sorted(set(selected_signals) - set(valid_signals))
 
     if missing:
-        console.logger.debug(
+        console.print(
             f"[yellow]Warning: missing signals skipped in {source_label} -> "
             f"{', '.join(missing)}[/yellow]",
         )
@@ -181,7 +176,7 @@ def detect(
     console.rule("Signal Detection")
     signals = loader.detect_signals(file_paths)
     if not signals:
-        console.logger.debug("[yellow]No signals detected.[/yellow]")
+        console.print("[yellow]No signals detected.[/yellow]")
         raise typer.Exit(code=0)
 
     table = Table(title="Detected Signals")
@@ -189,7 +184,7 @@ def detect(
     for signal in sorted(signals):
         table.add_row(signal)
 
-    console.logger.debug(table)
+    console.print(table)
 
 
 @app.command()  # type: ignore[misc]
@@ -284,9 +279,9 @@ def _run_combined(
             str(output_path),
             format_type=pipeline.output.format,
         )
-        console.logger.debug(f"[green]Saved processed data to {output_path}[/green]")
+        console.print(f"[green]Saved processed data to {output_path}[/green]")
     else:
-        console.logger.debug("[cyan]Pipeline completed (no output specified).[/cyan]")
+        console.print("[cyan]Pipeline completed (no output specified).[/cyan]")
 
 
 def _run_uncombined(
@@ -322,12 +317,12 @@ def _run_uncombined(
                 format_type=target_format,
             )
 
-        console.logger.debug(
+        console.print(
             f"[green]Saved processed data for {len(processed_frames)} files "
             f"to {output_path}[/green]",
         )
     else:
-        console.logger.debug(
+        console.print(
             "[cyan]Processed files (no output directory provided): "
             f"{', '.join(Path(p).name for p in processed_frames)}[/cyan]",
         )
