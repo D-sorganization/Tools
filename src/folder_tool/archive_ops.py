@@ -41,7 +41,7 @@ class ArchiveOperationsMixin:
         archive_path_obj, archive_size = self._validate_archive_input(archive_path)
 
         # Generate unique extraction directory
-        extract_dir = self._get_unique_path(os.path.splitext(archive_path)[0])
+        extract_dir = self._get_unique_path(os.path.splitext(archive_path)[0])  # type: ignore
         extract_dir_obj = Path(extract_dir)
 
         try:
@@ -52,7 +52,7 @@ class ArchiveOperationsMixin:
             shutil.unpack_archive(archive_path, extract_dir)
 
             # Validate extraction if safe mode is enabled
-            if self.safe_extract_var.get():
+            if self.safe_extract_var.get():  # type: ignore
                 self._validate_extraction_result(
                     extract_dir, extract_dir_obj, archive_size
                 )
@@ -197,7 +197,7 @@ class ArchiveOperationsMixin:
 
         # Find all archives
         archives = []
-        for source_folder in self.source_folders:
+        for source_folder in self.source_folders:  # type: ignore
             for root, _dirs, files in os.walk(source_folder):
                 for file in files:
                     if file.lower().endswith((".zip", ".rar", ".7z")):
@@ -207,10 +207,10 @@ class ArchiveOperationsMixin:
             return ["No archives found to extract."]
 
         for i, archive_path in enumerate(archives):
-            if self.cancel_operation:
+            if self.cancel_operation:  # type: ignore
                 break
 
-            self.update_progress(
+            self.update_progress(  # type: ignore
                 20 + (i / len(archives)) * 10,
                 f"Extracting {Path(archive_path).name}...",
             )

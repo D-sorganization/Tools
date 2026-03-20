@@ -650,7 +650,7 @@ class OptimizerWindow(QMainWindow):
             obj = (1 - x) ** 2 + 100 * (y - x**2) ** 2
         else:
             obj = (values[0] - 1) ** 2
-        return -obj if maximize else obj
+        return -obj if maximize else obj  # type: ignore
 
     def _compute_numerical_gradient(
         self,

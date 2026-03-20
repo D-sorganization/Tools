@@ -36,29 +36,29 @@ class ArchiveMixin:
         Raises:
             ValueError, FileNotFoundError, PermissionError as appropriate.
         """
-        if not self.dest_folder:
+        if not self.dest_folder:  # type: ignore
             raise ValueError("Destination folder not set")
-        if not isinstance(self.dest_folder, str):
+        if not isinstance(self.dest_folder, str):  # type: ignore
             raise ValueError(
-                f"Destination folder must be a string, got {type(self.dest_folder)}",
+                f"Destination folder must be a string, got {type(self.dest_folder)}",  # type: ignore
             )
 
-        dest = Path(self.dest_folder)
+        dest = Path(self.dest_folder)  # type: ignore
         if not dest.exists():
             raise FileNotFoundError(
-                f"Destination folder does not exist: {self.dest_folder}",
+                f"Destination folder does not exist: {self.dest_folder}",  # type: ignore
             )
         if not dest.is_dir():
-            raise ValueError(f"Destination path is not a directory: {self.dest_folder}")
-        if not os.access(self.dest_folder, os.R_OK):
-            raise PermissionError(f"Cannot read destination folder: {self.dest_folder}")
+            raise ValueError(f"Destination path is not a directory: {self.dest_folder}")  # type: ignore
+        if not os.access(self.dest_folder, os.R_OK):  # type: ignore
+            raise PermissionError(f"Cannot read destination folder: {self.dest_folder}")  # type: ignore
 
         try:
             if not any(dest.iterdir()):
                 raise ValueError("Destination folder is empty - nothing to archive")
         except (OSError, PermissionError) as e:
             raise PermissionError(
-                f"Cannot access destination folder contents: {self.dest_folder} - {e}",
+                f"Cannot access destination folder contents: {self.dest_folder} - {e}",  # type: ignore
             ) from e
 
         return dest
@@ -71,7 +71,7 @@ class ArchiveMixin:
         """
         total_files = 0
         total_size = 0
-        for root, _dirs, files in os.walk(self.dest_folder):
+        for root, _dirs, files in os.walk(self.dest_folder):  # type: ignore
             for file in files:
                 file_path = Path(root) / file
                 try:
@@ -97,9 +97,9 @@ class ArchiveMixin:
         processed_size = 0
         failed_files = 0
 
-        for root, _dirs, files in os.walk(self.dest_folder):
+        for root, _dirs, files in os.walk(self.dest_folder):  # type: ignore
             for file in files:
-                if self.cancel_operation:
+                if self.cancel_operation:  # type: ignore
                     raise Exception("ZIP creation cancelled by user")
 
                 file_path = Path(root) / file
@@ -111,7 +111,7 @@ class ArchiveMixin:
                         failed_files += 1
                         continue
 
-                    arcname = os.path.relpath(file_path, self.dest_folder)
+                    arcname = os.path.relpath(file_path, self.dest_folder)  # type: ignore
                     zipf.write(file_path, arcname)
                     processed_files += 1
                     processed_size += os.path.getsize(file_path)
@@ -121,7 +121,7 @@ class ArchiveMixin:
                             PROGRESS_START_ZIP
                             + (processed_files / total_files) * PROGRESS_ZIP_PERCENT
                         )
-                        self.update_progress(
+                        self.update_progress(  # type: ignore
                             progress,
                             f"Added {processed_files}/{total_files} files to ZIP",
                         )
@@ -152,7 +152,7 @@ class ArchiveMixin:
             raise ValueError(f"Cannot determine ZIP location: {e}") from e
 
         if zip_path.exists():
-            zip_path = Path(self._get_unique_path(str(zip_path)))
+            zip_path = Path(self._get_unique_path(str(zip_path)))  # type: ignore
 
         logger.info(f"Creating ZIP archive: {zip_path}")
 

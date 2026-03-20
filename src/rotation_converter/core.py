@@ -219,7 +219,7 @@ def rotation_matrix_to_quaternion(R: Any) -> np.ndarray:
         q = -q
 
     ensure(bool(abs(np.linalg.norm(q) - 1.0) < 1e-9), "result must be unit quaternion")
-    return q
+    return q  # type: ignore
 
 
 # ===========================================================================

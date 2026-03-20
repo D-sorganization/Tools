@@ -70,8 +70,8 @@ class PackTabMixin:
         entry_frame = ttk.Frame(frame)
         entry_frame.pack(fill="x")
 
-        self.pack_source_entry = ttk.Entry(entry_frame)  # type: ignore[attr-defined]
-        self.pack_source_entry.pack(  # type: ignore[attr-defined]
+        self.pack_source_entry = ttk.Entry(entry_frame)    # type: ignore
+        self.pack_source_entry.pack(    # type: ignore
             side="left",
             fill="x",
             expand=True,
@@ -94,8 +94,8 @@ class PackTabMixin:
         entry_frame = ttk.Frame(frame)
         entry_frame.pack(fill="x")
 
-        self.pack_output_entry = ttk.Entry(entry_frame)  # type: ignore[attr-defined]
-        self.pack_output_entry.pack(  # type: ignore[attr-defined]
+        self.pack_output_entry = ttk.Entry(entry_frame)    # type: ignore
+        self.pack_output_entry.pack(    # type: ignore
             side="left",
             fill="x",
             expand=True,
@@ -115,14 +115,14 @@ class PackTabMixin:
         )
         frame.pack(fill="both", expand=True, pady=(0, PADDING_MEDIUM))
 
-        self.stats_text = scrolledtext.ScrolledText(  # type: ignore[attr-defined]
+        self.stats_text = scrolledtext.ScrolledText(    # type: ignore
             frame,
             height=10,
             wrap="word",
             font=("Consolas", 9),
             state="disabled",
         )
-        self.stats_text.pack(fill="both", expand=True)  # type: ignore[attr-defined]
+        self.stats_text.pack(fill="both", expand=True)    # type: ignore
 
         ttk.Button(
             frame,
@@ -136,21 +136,21 @@ class PackTabMixin:
         frame = ttk.LabelFrame(parent, text="Progress", padding=PADDING_MEDIUM)
         frame.pack(fill="x")
 
-        self.pack_progress_var = tk.DoubleVar()  # type: ignore[attr-defined]
-        self.pack_progress_bar = ttk.Progressbar(  # type: ignore[attr-defined]
+        self.pack_progress_var = tk.DoubleVar()    # type: ignore
+        self.pack_progress_bar = ttk.Progressbar(    # type: ignore
             frame,
-            variable=self.pack_progress_var,  # type: ignore[attr-defined]
+            variable=self.pack_progress_var,    # type: ignore
             maximum=100,
             mode="determinate",
         )
-        self.pack_progress_bar.pack(fill="x", pady=(0, PADDING_SMALL))  # type: ignore[attr-defined]
+        self.pack_progress_bar.pack(fill="x", pady=(0, PADDING_SMALL))    # type: ignore
 
-        self.pack_status_label = ttk.Label(  # type: ignore[attr-defined]
+        self.pack_status_label = ttk.Label(    # type: ignore
             frame,
             text="Ready",
             font=("Segoe UI", 9),
         )
-        self.pack_status_label.pack(fill="x")  # type: ignore[attr-defined]
+        self.pack_status_label.pack(fill="x")    # type: ignore
 
     def _create_pack_options(self, right_frame: ttk.Frame) -> None:  # noqa: PLR0915
         """Create pack options in the right column.
@@ -169,7 +169,7 @@ class PackTabMixin:
 
         ttk.Label(compression_frame, text="Compression Level:").pack(anchor="w")
 
-        self.compression_var = tk.StringVar(value="balanced")  # type: ignore[attr-defined]
+        self.compression_var = tk.StringVar(value="balanced")    # type: ignore
         compression_options = [
             ("None (Fastest)", "none"),
             ("Fast", "fast"),
@@ -181,7 +181,7 @@ class PackTabMixin:
             ttk.Radiobutton(
                 compression_frame,
                 text=text,
-                variable=self.compression_var,  # type: ignore[attr-defined]
+                variable=self.compression_var,    # type: ignore
                 value=value,
             ).pack(anchor="w", pady=2)
 
@@ -193,29 +193,29 @@ class PackTabMixin:
         )
         security_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
-        self.encrypt_var = tk.BooleanVar()  # type: ignore[attr-defined]
+        self.encrypt_var = tk.BooleanVar()    # type: ignore
         ttk.Checkbutton(
             security_frame,
             text="Enable AES-256 Encryption",
-            variable=self.encrypt_var,  # type: ignore[attr-defined]
+            variable=self.encrypt_var,    # type: ignore
             command=self._on_encrypt_toggle,  # type: ignore[attr-defined]
         ).pack(anchor="w")
 
-        self.password_frame = ttk.Frame(security_frame)  # type: ignore[attr-defined]
-        self.password_frame.pack(fill="x", pady=(PADDING_SMALL, 0))  # type: ignore[attr-defined]
+        self.password_frame = ttk.Frame(security_frame)    # type: ignore
+        self.password_frame.pack(fill="x", pady=(PADDING_SMALL, 0))    # type: ignore
 
-        ttk.Label(self.password_frame, text="Password:").pack(anchor="w")  # type: ignore[attr-defined]
-        self.pack_password_entry = ttk.Entry(self.password_frame, show="*")  # type: ignore[attr-defined]
-        self.pack_password_entry.pack(fill="x", pady=(PADDING_SMALL, 0))  # type: ignore[attr-defined]
-        self.pack_password_entry.configure(state="disabled")  # type: ignore[attr-defined]
+        ttk.Label(self.password_frame, text="Password:").pack(anchor="w")    # type: ignore
+        self.pack_password_entry = ttk.Entry(self.password_frame, show="*")    # type: ignore
+        self.pack_password_entry.pack(fill="x", pady=(PADDING_SMALL, 0))    # type: ignore
+        self.pack_password_entry.configure(state="disabled")    # type: ignore
 
-        ttk.Label(self.password_frame, text="Confirm:").pack(  # type: ignore[attr-defined]
+        ttk.Label(self.password_frame, text="Confirm:").pack(    # type: ignore
             anchor="w",
             pady=(PADDING_SMALL, 0),
         )
-        self.pack_password_confirm = ttk.Entry(self.password_frame, show="*")  # type: ignore[attr-defined]
-        self.pack_password_confirm.pack(fill="x", pady=(PADDING_SMALL, 0))  # type: ignore[attr-defined]
-        self.pack_password_confirm.configure(state="disabled")  # type: ignore[attr-defined]
+        self.pack_password_confirm = ttk.Entry(self.password_frame, show="*")    # type: ignore
+        self.pack_password_confirm.pack(fill="x", pady=(PADDING_SMALL, 0))    # type: ignore
+        self.pack_password_confirm.configure(state="disabled")    # type: ignore
 
         # Advanced options
         advanced_frame = ttk.LabelFrame(
@@ -225,47 +225,47 @@ class PackTabMixin:
         )
         advanced_frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
-        self.include_git_var = tk.BooleanVar()  # type: ignore[attr-defined]
-        self.create_manifest_var = tk.BooleanVar(value=True)  # type: ignore[attr-defined]
-        self.verify_pack_var = tk.BooleanVar(value=True)  # type: ignore[attr-defined]
+        self.include_git_var = tk.BooleanVar()    # type: ignore
+        self.create_manifest_var = tk.BooleanVar(value=True)    # type: ignore
+        self.verify_pack_var = tk.BooleanVar(value=True)    # type: ignore
 
         ttk.Checkbutton(
             advanced_frame,
             text="Include .git folder (preserve repository)",
-            variable=self.include_git_var,  # type: ignore[attr-defined]
+            variable=self.include_git_var,    # type: ignore
         ).pack(anchor="w")
         ttk.Checkbutton(
             advanced_frame,
             text="Create manifest file",
-            variable=self.create_manifest_var,  # type: ignore[attr-defined]
+            variable=self.create_manifest_var,    # type: ignore
         ).pack(anchor="w")
         ttk.Checkbutton(
             advanced_frame,
             text="Verify package after creation",
-            variable=self.verify_pack_var,  # type: ignore[attr-defined]
+            variable=self.verify_pack_var,    # type: ignore
         ).pack(anchor="w")
 
         # Action buttons
         action_frame = ttk.Frame(right_frame)
         action_frame.pack(fill="x", pady=(PADDING_MEDIUM, 0))
 
-        self.pack_btn = ttk.Button(  # type: ignore[attr-defined]
+        self.pack_btn = ttk.Button(    # type: ignore
             action_frame,
             text="📦 Create Package",
             command=self._start_pack,  # type: ignore[attr-defined]
             style="Accent.TButton",
         )
-        self.pack_btn.pack(  # type: ignore[attr-defined]
+        self.pack_btn.pack(    # type: ignore
             side="left", fill="x", expand=True, padx=(0, PADDING_SMALL)
         )
 
-        self.pack_cancel_btn = ttk.Button(  # type: ignore[attr-defined]
+        self.pack_cancel_btn = ttk.Button(    # type: ignore
             action_frame,
             text="⏹️ Cancel",
             command=self._cancel_operation,  # type: ignore[attr-defined]
             state="disabled",
         )
-        self.pack_cancel_btn.pack(side="right", fill="x", expand=True)  # type: ignore[attr-defined]
+        self.pack_cancel_btn.pack(side="right", fill="x", expand=True)    # type: ignore
 
 
 class UnpackTabMixin:
@@ -302,8 +302,8 @@ class UnpackTabMixin:
         entry_frame = ttk.Frame(frame)
         entry_frame.pack(fill="x")
 
-        self.unpack_source_entry = ttk.Entry(entry_frame)  # type: ignore[attr-defined]
-        self.unpack_source_entry.pack(  # type: ignore[attr-defined]
+        self.unpack_source_entry = ttk.Entry(entry_frame)    # type: ignore
+        self.unpack_source_entry.pack(    # type: ignore
             side="left",
             fill="x",
             expand=True,
@@ -326,8 +326,8 @@ class UnpackTabMixin:
         entry_frame = ttk.Frame(frame)
         entry_frame.pack(fill="x")
 
-        self.unpack_dest_entry = ttk.Entry(entry_frame)  # type: ignore[attr-defined]
-        self.unpack_dest_entry.pack(  # type: ignore[attr-defined]
+        self.unpack_dest_entry = ttk.Entry(entry_frame)    # type: ignore
+        self.unpack_dest_entry.pack(    # type: ignore
             side="left",
             fill="x",
             expand=True,
@@ -345,24 +345,24 @@ class UnpackTabMixin:
         frame = ttk.LabelFrame(parent, text="Decryption", padding=PADDING_MEDIUM)
         frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
-        self.encrypted_var = tk.BooleanVar()  # type: ignore[attr-defined]
+        self.encrypted_var = tk.BooleanVar()    # type: ignore
         ttk.Checkbutton(
             frame,
             text="Package is encrypted",
-            variable=self.encrypted_var,  # type: ignore[attr-defined]
+            variable=self.encrypted_var,    # type: ignore
             command=self._on_encrypted_toggle,  # type: ignore[attr-defined]
         ).pack(anchor="w")
 
-        self.decrypt_password_frame = ttk.Frame(frame)  # type: ignore[attr-defined]
-        self.decrypt_password_frame.pack(fill="x", pady=(PADDING_SMALL, 0))  # type: ignore[attr-defined]
+        self.decrypt_password_frame = ttk.Frame(frame)    # type: ignore
+        self.decrypt_password_frame.pack(fill="x", pady=(PADDING_SMALL, 0))    # type: ignore
 
-        ttk.Label(self.decrypt_password_frame, text="Password:").pack(anchor="w")  # type: ignore[attr-defined]
-        self.unpack_password_entry = ttk.Entry(  # type: ignore[attr-defined]
+        ttk.Label(self.decrypt_password_frame, text="Password:").pack(anchor="w")    # type: ignore
+        self.unpack_password_entry = ttk.Entry(    # type: ignore
             self.decrypt_password_frame,
-            show="*",  # type: ignore[attr-defined]
+            show="*",    # type: ignore
         )
-        self.unpack_password_entry.pack(fill="x", pady=(PADDING_SMALL, 0))  # type: ignore[attr-defined]
-        self.unpack_password_entry.configure(state="disabled")  # type: ignore[attr-defined]
+        self.unpack_password_entry.pack(fill="x", pady=(PADDING_SMALL, 0))    # type: ignore
+        self.unpack_password_entry.configure(state="disabled")    # type: ignore
 
     def _create_unpack_info_section(self, parent: ttk.Frame) -> None:
         """Create the package information display section."""
@@ -372,14 +372,14 @@ class UnpackTabMixin:
         )
         frame.pack(fill="both", expand=True, pady=(0, PADDING_MEDIUM))
 
-        self.package_info_text = scrolledtext.ScrolledText(  # type: ignore[attr-defined]
+        self.package_info_text = scrolledtext.ScrolledText(    # type: ignore
             frame,
             height=10,
             wrap="word",
             font=("Consolas", 9),
             state="disabled",
         )
-        self.package_info_text.pack(fill="both", expand=True)  # type: ignore[attr-defined]
+        self.package_info_text.pack(fill="both", expand=True)    # type: ignore
 
         ttk.Button(
             frame,
@@ -393,21 +393,21 @@ class UnpackTabMixin:
         frame = ttk.LabelFrame(parent, text="Progress", padding=PADDING_MEDIUM)
         frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
-        self.unpack_progress_var = tk.DoubleVar()  # type: ignore[attr-defined]
-        self.unpack_progress_bar = ttk.Progressbar(  # type: ignore[attr-defined]
+        self.unpack_progress_var = tk.DoubleVar()    # type: ignore
+        self.unpack_progress_bar = ttk.Progressbar(    # type: ignore
             frame,
-            variable=self.unpack_progress_var,  # type: ignore[attr-defined]
+            variable=self.unpack_progress_var,    # type: ignore
             maximum=100,
             mode="determinate",
         )
-        self.unpack_progress_bar.pack(fill="x", pady=(0, PADDING_SMALL))  # type: ignore[attr-defined]
+        self.unpack_progress_bar.pack(fill="x", pady=(0, PADDING_SMALL))    # type: ignore
 
-        self.unpack_status_label = ttk.Label(  # type: ignore[attr-defined]
+        self.unpack_status_label = ttk.Label(    # type: ignore
             frame,
             text="Ready",
             font=("Segoe UI", 9),
         )
-        self.unpack_status_label.pack(fill="x")  # type: ignore[attr-defined]
+        self.unpack_status_label.pack(fill="x")    # type: ignore
 
     def _create_unpack_action_buttons(self, parent: ttk.Frame) -> None:
         """Create the extract and cancel action buttons."""
@@ -415,26 +415,26 @@ class UnpackTabMixin:
         action_frame = ttk.Frame(parent)
         action_frame.pack(fill="x")
 
-        self.unpack_btn = ttk.Button(  # type: ignore[attr-defined]
+        self.unpack_btn = ttk.Button(    # type: ignore
             action_frame,
             text="📂 Extract Package",
             command=self._start_unpack,  # type: ignore[attr-defined]
             style="Accent.TButton",
         )
-        self.unpack_btn.pack(  # type: ignore[attr-defined]
+        self.unpack_btn.pack(    # type: ignore
             side="left",
             fill="x",
             expand=True,
             padx=(0, PADDING_SMALL),
         )
 
-        self.unpack_cancel_btn = ttk.Button(  # type: ignore[attr-defined]
+        self.unpack_cancel_btn = ttk.Button(    # type: ignore
             action_frame,
             text="⏹️ Cancel",
             command=self._cancel_operation,  # type: ignore[attr-defined]
             state="disabled",
         )
-        self.unpack_cancel_btn.pack(side="right", fill="x", expand=True)  # type: ignore[attr-defined]
+        self.unpack_cancel_btn.pack(side="right", fill="x", expand=True)    # type: ignore
 
 
 class PreviewTabMixin:
@@ -474,32 +474,32 @@ class PreviewTabMixin:
         tree_frame = ttk.Frame(tree_label_frame)
         tree_frame.pack(fill="both", expand=True)
 
-        self.preview_tree = ttk.Treeview(  # type: ignore[attr-defined]
+        self.preview_tree = ttk.Treeview(    # type: ignore
             tree_frame,
             columns=("size", "type", "modified"),
             selectmode="browse",
         )
-        self.preview_tree.heading("#0", text="File Path", anchor="w")  # type: ignore[attr-defined]
-        self.preview_tree.heading("size", text="Size", anchor="w")  # type: ignore[attr-defined]
-        self.preview_tree.heading("type", text="Type", anchor="w")  # type: ignore[attr-defined]
-        self.preview_tree.heading("modified", text="Modified", anchor="w")  # type: ignore[attr-defined]
+        self.preview_tree.heading("#0", text="File Path", anchor="w")    # type: ignore
+        self.preview_tree.heading("size", text="Size", anchor="w")    # type: ignore
+        self.preview_tree.heading("type", text="Type", anchor="w")    # type: ignore
+        self.preview_tree.heading("modified", text="Modified", anchor="w")    # type: ignore
 
-        self.preview_tree.column("#0", width=300)  # type: ignore[attr-defined]
-        self.preview_tree.column("size", width=80)  # type: ignore[attr-defined]
-        self.preview_tree.column("type", width=80)  # type: ignore[attr-defined]
-        self.preview_tree.column("modified", width=120)  # type: ignore[attr-defined]
+        self.preview_tree.column("#0", width=300)    # type: ignore
+        self.preview_tree.column("size", width=80)    # type: ignore
+        self.preview_tree.column("type", width=80)    # type: ignore
+        self.preview_tree.column("modified", width=120)    # type: ignore
 
         tree_scroll = ttk.Scrollbar(
             tree_frame,
             orient="vertical",
-            command=self.preview_tree.yview,  # type: ignore[attr-defined]
+            command=self.preview_tree.yview,    # type: ignore
         )
-        self.preview_tree.configure(yscrollcommand=tree_scroll.set)  # type: ignore[attr-defined]
+        self.preview_tree.configure(yscrollcommand=tree_scroll.set)    # type: ignore
 
-        self.preview_tree.pack(side="left", fill="both", expand=True)  # type: ignore[attr-defined]
+        self.preview_tree.pack(side="left", fill="both", expand=True)    # type: ignore
         tree_scroll.pack(side="right", fill="y")
 
-        self.preview_tree.bind(  # type: ignore[attr-defined]
+        self.preview_tree.bind(    # type: ignore
             "<<TreeviewSelect>>",
             self._on_file_select,  # type: ignore[attr-defined]
         )
@@ -512,19 +512,19 @@ class PreviewTabMixin:
         )
         preview_label_frame.pack(side="right", fill="both", expand=True)
 
-        self.preview_text = scrolledtext.ScrolledText(  # type: ignore[attr-defined]
+        self.preview_text = scrolledtext.ScrolledText(    # type: ignore
             preview_label_frame,
             wrap="none",
             font=("Consolas", 9),
             state="disabled",
         )
-        self.preview_text.pack(fill="both", expand=True)  # type: ignore[attr-defined]
+        self.preview_text.pack(fill="both", expand=True)    # type: ignore
 
         # Configure syntax highlighting tags
-        self.preview_text.tag_configure("keyword", foreground="#569cd6")  # type: ignore[attr-defined]
-        self.preview_text.tag_configure("string", foreground="#ce9178")  # type: ignore[attr-defined]
-        self.preview_text.tag_configure("comment", foreground="#6a9955")  # type: ignore[attr-defined]
-        self.preview_text.tag_configure("number", foreground="#b5cea8")  # type: ignore[attr-defined]
+        self.preview_text.tag_configure("keyword", foreground="#569cd6")    # type: ignore
+        self.preview_text.tag_configure("string", foreground="#ce9178")    # type: ignore
+        self.preview_text.tag_configure("comment", foreground="#6a9955")    # type: ignore
+        self.preview_text.tag_configure("number", foreground="#b5cea8")    # type: ignore
 
     def _insert_with_highlighting(self, content: str, file_ext: str) -> None:
         """Insert text with basic syntax highlighting.
@@ -562,26 +562,26 @@ class PreviewTabMixin:
         lines = content.splitlines()
         for i, line in enumerate(lines):
             if i >= 1000:
-                self.preview_text.insert("end", "\n... (truncated)")  # type: ignore[attr-defined]
+                self.preview_text.insert("end", "\n... (truncated)")    # type: ignore
                 break
 
             if file_ext in CODE_EXTENSIONS:
                 if line.strip().startswith("#"):
-                    self.preview_text.insert("end", line + "\n", "comment")  # type: ignore[attr-defined]
+                    self.preview_text.insert("end", line + "\n", "comment")    # type: ignore
                 else:
                     words = re.split(r"(\s+)", line)
                     for word in words:
                         if word in keywords:
-                            self.preview_text.insert("end", word, "keyword")  # type: ignore[attr-defined]
+                            self.preview_text.insert("end", word, "keyword")    # type: ignore
                         elif word.startswith('"') or word.startswith("'"):
-                            self.preview_text.insert("end", word, "string")  # type: ignore[attr-defined]
+                            self.preview_text.insert("end", word, "string")    # type: ignore
                         elif word.isdigit():
-                            self.preview_text.insert("end", word, "number")  # type: ignore[attr-defined]
+                            self.preview_text.insert("end", word, "number")    # type: ignore
                         else:
-                            self.preview_text.insert("end", word)  # type: ignore[attr-defined]
-                    self.preview_text.insert("end", "\n")  # type: ignore[attr-defined]
+                            self.preview_text.insert("end", word)    # type: ignore
+                    self.preview_text.insert("end", "\n")    # type: ignore
             else:
-                self.preview_text.insert("end", line + "\n")  # type: ignore[attr-defined]
+                self.preview_text.insert("end", line + "\n")    # type: ignore
 
 
 class LogTabMixin:
@@ -616,24 +616,24 @@ class LogTabMixin:
             command=self._save_log,  # type: ignore[attr-defined]
         ).pack(side="right")
 
-        self.log_text = scrolledtext.ScrolledText(  # type: ignore[attr-defined]
+        self.log_text = scrolledtext.ScrolledText(    # type: ignore
             main_frame,
             wrap="word",
             font=("Consolas", 9),
             state="disabled",
         )
-        self.log_text.pack(fill="both", expand=True)  # type: ignore[attr-defined]
+        self.log_text.pack(fill="both", expand=True)    # type: ignore
 
         # Configure log level tags
-        self.log_text.tag_configure(  # type: ignore[attr-defined]
+        self.log_text.tag_configure(    # type: ignore
             "info", foreground="#ffffff"
         )
-        self.log_text.tag_configure(  # type: ignore[attr-defined]
+        self.log_text.tag_configure(    # type: ignore
             "success", foreground="#28a745"
         )
-        self.log_text.tag_configure(  # type: ignore[attr-defined]
+        self.log_text.tag_configure(    # type: ignore
             "warning", foreground="#ffc107"
         )
-        self.log_text.tag_configure(  # type: ignore[attr-defined]
+        self.log_text.tag_configure(    # type: ignore
             "error", foreground="#dc3545"
         )

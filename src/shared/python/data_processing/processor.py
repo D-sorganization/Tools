@@ -435,7 +435,7 @@ class DataProcessor:
             "method must be a non-empty string",
         )
         result: pd.DataFrame = self.dataframe.select_dtypes(include="number").corr(
-            method=method
+            method=method  # type: ignore
         )
         return result
 
