@@ -11,9 +11,6 @@ import time
 
 import numpy as np
 import pytest
-
-_logger = logging.getLogger(__name__)
-
 from double_pendulum_golf.constraint_solver import (
     _constraint_acceleration_bias as numerical_bias,
     project_to_constraints,
@@ -27,6 +24,8 @@ from double_pendulum_golf.physics_golfer import (
     gravity_vector as numerical_gravity,
     mass_matrix as numerical_mass_matrix,
 )
+
+_logger = logging.getLogger(__name__)
 
 # Test parameters
 _PARAMS = GolferParams(
