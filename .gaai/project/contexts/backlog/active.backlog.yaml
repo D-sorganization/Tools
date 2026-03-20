@@ -692,6 +692,7 @@ items:
     priority: medium
     status: in_progress
     started_at: "2026-03-20T13:17:12Z"
+    completed_at: "2026-03-20T13:48:13Z"
     github_issue: 1654
     artefact: .gaai/project/contexts/artefacts/stories/GH1654.story.md
     dependencies: []
@@ -715,8 +716,12 @@ items:
   - id: GH1652
     title: "Implement semantic versioning and deprecation path"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-20T13:38:25Z"
+    completed_at: "2026-03-20T13:48:15Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1666"
+    pr_number: 1666
+    pr_status: "open"
     github_issue: 1652
     artefact: .gaai/project/contexts/artefacts/stories/GH1652.story.md
     dependencies: []
