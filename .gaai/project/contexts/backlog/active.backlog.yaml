@@ -645,7 +645,8 @@ items:
   - id: GH1657
     title: "Centralize configuration with XDG Base Directory support"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-20T13:04:55Z"
     github_issue: 1657
     artefact: .gaai/project/contexts/artefacts/stories/GH1657.story.md
     dependencies: []
