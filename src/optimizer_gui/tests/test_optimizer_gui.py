@@ -275,13 +275,13 @@ class TestOptimizerGUIRegistration:
         try:
             from optimizer_gui import gui_registration
 
-            assert hasattr(gui_registration, "GUI_METADATA")
-            metadata = gui_registration.GUI_METADATA
+            assert hasattr(gui_registration, "GUI_INFO")
+            metadata = gui_registration.GUI_INFO
 
             assert "name" in metadata
             assert "description" in metadata
             assert "category" in metadata
-            assert "entry_point" in metadata
+            assert "tool_name" in metadata
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
@@ -290,7 +290,7 @@ class TestOptimizerGUIRegistration:
         try:
             from optimizer_gui import gui_registration
 
-            assert gui_registration.GUI_METADATA["category"] == "optimization"
+            assert gui_registration.GUI_INFO["category"] == "Optimization"
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
