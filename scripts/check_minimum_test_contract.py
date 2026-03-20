@@ -98,6 +98,8 @@ def main() -> int:
         "src/pid_generator",  # tests/programmatic_pid/ (thin CLI wrapper)
         "src/shared/python/tests",  # the tests folder itself
         "src/shared/python/gui_launcher",  # tests/shared/python/gui_launcher/test_registry.py
+        "src/folder_packer_pro",  # tests/folder_packer_pro/test_file_ops.py
+        "src/media_processing",  # src/media_processing/.../tests_video_processor/test_api.py
     }
     violations = [
         pkg for pkg in packages if pkg not in KNOWN_TESTED and not has_tests(pkg)
