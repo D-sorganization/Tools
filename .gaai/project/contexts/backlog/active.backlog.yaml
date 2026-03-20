@@ -676,11 +676,12 @@ items:
     title: "Replace 92 print() calls in src/ with logging"
     priority: medium
     status: done
-    started_at: "2026-03-20T13:16:07Z"
-    completed_at: "2026-03-20T13:28:15Z"
+    started_at: "2026-03-20T06:16:07-07:00"
+    completed_at: "2026-03-20T06:28:16-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1663"
     pr_number: 1663
     pr_status: "open"
+    cost_usd: 2.5478
     github_issue: 1655
     artefact: .gaai/project/contexts/artefacts/stories/GH1655.story.md
     dependencies: []
