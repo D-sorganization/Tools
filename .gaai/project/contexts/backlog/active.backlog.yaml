@@ -775,7 +775,8 @@ items:
   - id: GH1648
     title: "BLOCKER: Fix relative import regression in src/shared/python/cors.py"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-20T14:05:07Z"
     github_issue: 1648
     artefact: .gaai/project/contexts/artefacts/stories/GH1648.story.md
     dependencies: []
