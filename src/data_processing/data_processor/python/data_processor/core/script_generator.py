@@ -133,10 +133,10 @@ class ScriptGenerator:
 
         for i, step in enumerate(pipeline.steps):
             if not step.enabled:
-                lines.append(f"    # Step {i + 1} (disabled): {step.description}")
+                lines.append(f"    # Step {i+1} (disabled): {step.description}")
                 continue
 
-            lines.append(f"    # Step {i + 1}: {step.description}")
+            lines.append(f"    # Step {i+1}: {step.description}")
             lines.extend(self._generate_step_code(step, indent=4))
             lines.append("")
 
@@ -166,7 +166,7 @@ class ScriptGenerator:
                     "    OUTPUT_PATH = 'output.csv'",
                     "",
                     "    result = process_data(INPUT_PATH, OUTPUT_PATH)",
-                    "    logger.debug(f'Processing complete. Output shape: {result.shape}')",
+                    "    print(f'Processing complete. Output shape: {result.shape}')",
                 ]
             )
         return lines
@@ -268,7 +268,7 @@ class ScriptGenerator:
                 "        df.to_csv(output_path, index=False)",
                 "        return output_path",
                 "    except Exception as e:",
-                "        logger.debug(f'Error processing {input_path}: {e}')",
+                "        print(f'Error processing {input_path}: {e}')",
                 "        return None",
                 "",
             ]
@@ -294,7 +294,7 @@ class ScriptGenerator:
             "    for pattern in input_patterns:",
             "        input_files.extend(glob.glob(pattern))",
             "",
-            "    logger.debug(f'Found {len(input_files)} files to process')",
+            "    print(f'Found {len(input_files)} files to process')",
             "",
         ]
 
@@ -312,7 +312,7 @@ class ScriptGenerator:
                     "            input_file = futures[future]",
                     "            result = future.result()",
                     "            if result:",
-                    "                logger.debug(f'Processed: {input_file} -> {result}')",
+                    "                print(f'Processed: {input_file} -> {result}')",
                 ]
             )
         else:
@@ -322,7 +322,7 @@ class ScriptGenerator:
                     "    for input_file in input_files:",
                     "        result = process_single_file(input_file, output_dir)",
                     "        if result:",
-                    "            logger.debug(f'Processed: {input_file} -> {result}')",
+                    "            print(f'Processed: {input_file} -> {result}')",
                 ]
             )
 

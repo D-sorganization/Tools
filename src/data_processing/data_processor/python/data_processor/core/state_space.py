@@ -937,7 +937,7 @@ def fit_state_space(
     Example:
         >>> y = np.cumsum(np.random.randn(100)) + np.random.randn(100) * 0.5
         >>> result = fit_state_space(y, model_type='local_level')
-        >>> logger.debug(f"AIC: {result.aic:.2f}")
+        >>> print(f"AIC: {result.aic:.2f}")
     """
     assert y is not None, "y must be provided"
     type_map = {

@@ -182,7 +182,7 @@ def augment_data(
     Example:
         >>> data = np.random.randn(100, 50)  # 100 samples, 50 timesteps
         >>> result = augment_data(data, methods=['gaussian_noise', 'time_warp'])
-        >>> logger.debug(f"Augmentation factor: {result.augmentation_factor:.1f}x")
+        >>> print(f"Augmentation factor: {result.augmentation_factor:.1f}x")
     """
     assert data is not None, "data must be provided"
     if methods is None:

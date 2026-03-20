@@ -731,7 +731,7 @@ def extract_features(
     Example:
         >>> data = np.random.randn(100, 50, 3)  # 100 samples, 50 timesteps, 3 channels
         >>> result = extract_features(data, ['x', 'y', 'z'])
-        >>> logger.debug(f"Extracted {result.n_features} features")
+        >>> print(f"Extracted {result.n_features} features")
     """
     assert data is not None, "data must be provided"
     extractor = FeatureExtractor()

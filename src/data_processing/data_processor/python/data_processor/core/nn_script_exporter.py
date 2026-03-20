@@ -365,7 +365,7 @@ class NeuralNetworkScriptExporter:
             "            val_loss += criterion(outputs, y_batch).item()",
             "",
             "    val_loss /= len(val_loader)",
-            "    logger.debug(f'Epoch {epoch+1}: Train Loss = {train_loss/len(train_loader):.4f}, Val Loss = {val_loss:.4f}')",  # noqa: E501
+            "    print(f'Epoch {epoch+1}: Train Loss = {train_loss/len(train_loader):.4f}, Val Loss = {val_loss:.4f}')",  # noqa: E501
             "",
             "    # Early stopping check",
             "    if val_loss < best_val_loss:",
@@ -375,7 +375,7 @@ class NeuralNetworkScriptExporter:
             "    else:",
             "        patience_counter += 1",
             "        if patience_counter >= patience:",
-            "            logger.debug(f'Early stopping at epoch {epoch+1}')",
+            "            print(f'Early stopping at epoch {epoch+1}')",
             "            break",
             "",
         ]
@@ -394,8 +394,8 @@ class NeuralNetworkScriptExporter:
             "from sklearn.metrics import mean_squared_error, r2_score",
             "mse = mean_squared_error(y_test, predictions)",
             "r2 = r2_score(y_test, predictions)",
-            "logger.debug(f'Test MSE: {mse:.4f}')",
-            "logger.debug(f'Test R2: {r2:.4f}')",
+            "print(f'Test MSE: {mse:.4f}')",
+            "print(f'Test R2: {r2:.4f}')",
         ]
 
     # ------------------------------------------------------------------ #
@@ -541,8 +541,8 @@ class NeuralNetworkScriptExporter:
             "",
             "# Evaluation",
             "results = model.evaluate(X_test, y_test)",
-            "logger.debug(f'Test Loss: {results[0]:.4f}')",
-            "logger.debug(f'Test MAE: {results[1]:.4f}')",
+            "print(f'Test Loss: {results[0]:.4f}')",
+            "print(f'Test MAE: {results[1]:.4f}')",
             "",
             "# Predictions",
             "predictions = model.predict(X_test)",
@@ -675,8 +675,8 @@ class NeuralNetworkScriptExporter:
             "predictions = model.predict(X_test)",
             "mse = mean_squared_error(y_test, predictions)",
             "r2 = r2_score(y_test, predictions)",
-            "logger.debug(f'Test MSE: {mse:.4f}')",
-            "logger.debug(f'Test R2: {r2:.4f}')",
+            "print(f'Test MSE: {mse:.4f}')",
+            "print(f'Test R2: {r2:.4f}')",
         ]
 
     # ------------------------------------------------------------------ #

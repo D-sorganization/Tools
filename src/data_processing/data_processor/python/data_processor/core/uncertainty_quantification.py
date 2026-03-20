@@ -922,7 +922,7 @@ def bootstrap_confidence_interval(
     Example:
         >>> data = np.random.randn(100)
         >>> result = bootstrap_confidence_interval(data)
-        >>> logger.debug(f"CI: ({result.ci_lower:.3f}, {result.ci_upper:.3f})")
+        >>> print(f"CI: ({result.ci_lower:.3f}, {result.ci_upper:.3f})")
     """
     assert data is not None, "data must be provided"
     config = UncertaintyConfig(

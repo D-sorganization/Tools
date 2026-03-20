@@ -972,7 +972,7 @@ def cross_correlate(
         >>> x = np.random.randn(100)
         >>> y = np.roll(x, 5) + np.random.randn(100) * 0.5
         >>> result = cross_correlate(x, y)
-        >>> logger.debug(f"Optimal lag: {result.optimal_lag}")
+        >>> print(f"Optimal lag: {result.optimal_lag}")
     """
     assert x is not None, "x must be provided"
     analyzer = CrossCorrelationAnalyzer()
