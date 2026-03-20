@@ -49,7 +49,7 @@ except ImportError:
     # Fallback definition if utils not found
     from pathlib import Path
 
-    def safe_write_text(    # type: ignore
+    def safe_write_text(  # type: ignore
         path: str,
         content: str,
         encoding: str = "utf-8",

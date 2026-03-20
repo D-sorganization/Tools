@@ -79,11 +79,11 @@ class AnalysisMixin:
 
         for root, _dirs, files in os.walk(folder):
             if self.cancel_operation:  # type: ignore
-                break    # type: ignore
+                break  # type: ignore
 
             for file in files:
                 if self.cancel_operation:  # type: ignore
-                    break    # type: ignore
+                    break  # type: ignore
 
                 file_path = Path(root) / file
                 try:

@@ -46,7 +46,7 @@ class FolderOperationsMixin:
             for root, _dirs, files in os.walk(src):
                 for file in files:
                     if self.cancel_operation:  # type: ignore
-                        break    # type: ignore
+                        break  # type: ignore
 
                     source_path = Path(root) / file
 
@@ -233,7 +233,7 @@ class FolderOperationsMixin:
             for root, _dirs, files in os.walk(src):
                 for file in files:
                     if self.cancel_operation:  # type: ignore
-                        break    # type: ignore
+                        break  # type: ignore
 
                     source_path = Path(root) / file
 
@@ -370,7 +370,7 @@ class FolderOperationsMixin:
 
             for root, dirs, files in os.walk(src):
                 if self.cancel_operation:  # type: ignore
-                    break    # type: ignore
+                    break  # type: ignore
 
                 if not files and not any(
                     any(Path(root, d).iterdir())
@@ -386,7 +386,7 @@ class FolderOperationsMixin:
 
                 for file in files:
                     if self.cancel_operation:  # type: ignore
-                        break    # type: ignore
+                        break  # type: ignore
 
                     copied, failed = self._copy_single_file_in_prune(
                         Path(root) / file,
