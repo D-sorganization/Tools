@@ -1,6 +1,3 @@
-import logging
-
-logger = logging.getLogger(__name__)
 #!/usr/bin/env python3
 """Advanced Pressure Drop Calculator for Combustion and Gasification Gases.
 

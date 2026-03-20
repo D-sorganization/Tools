@@ -1,6 +1,3 @@
-import logging
-
-logger = logging.getLogger(__name__)
 # mypy: ignore-errors
 """Modern Robotics (Lynch & Park) core algorithms.
 
@@ -27,12 +24,15 @@ References:
 
 from __future__ import annotations
 
+import logging
 import math
 from typing import Any
 
 import numpy as np
 
 from rotation_converter._contracts import ensure, require, require_finite
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Internal helpers (DRY — shared across multiple functions)

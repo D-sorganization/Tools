@@ -130,7 +130,7 @@ def analyze_codebase() -> RepoStats:
                         tree = ast.parse(content)
                         for node in ast.walk(tree):
                             if isinstance(
-                                node, (ast.FunctionDef, ast.AsyncFunctionDef)
+                                node, ast.FunctionDef | ast.AsyncFunctionDef
                             ):
                                 stats["functions"] += 1
                                 if ast.get_docstring(node):

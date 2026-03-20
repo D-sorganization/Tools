@@ -5,13 +5,9 @@ This module defines the classes used to represent the humanoid model,
 including links, joints, and the model itself.
 """
 
-import logging
-
-logger = logging.getLogger(__name__)
-
-
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Any
 
@@ -20,6 +16,8 @@ from humanoid_character_builder.contracts import precondition
 from humanoid_character_builder.mesh.inertia_calculator import InertiaResult
 from scipy.spatial import ConvexHull
 from scipy.spatial.transform import Rotation as R
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
