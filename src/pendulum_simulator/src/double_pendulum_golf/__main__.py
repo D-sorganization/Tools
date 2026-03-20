@@ -15,6 +15,7 @@ from PyQt6.QtWidgets import QApplication, QComboBox, QDoubleSpinBox, QSpinBox
 from .gui import MainWindow
 from .gui.diagnostics import get_tracker
 
+logger = logging.getLogger(__name__)
 
 class _WheelBlockFilter(QObject):
     """Global event filter: blocks wheel on value-inputs, Ctrl+Wheel zooms fonts.
@@ -95,7 +96,7 @@ __version__ = "0.1.0"
 def main() -> None:
     # Handle --version flag before any GUI initialization
     if "--version" in sys.argv:
-        logger.debug(f"pendulum-simulator {__version__}")  # noqa: T201
+        logger.debug("pendulum-simulator %s", __version__)
         sys.exit(0)
 
     _configure_logging()
