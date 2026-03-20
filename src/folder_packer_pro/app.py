@@ -389,13 +389,9 @@ class FolderPackerPro(
                 if sys.platform == "win32":
                     os.startfile(log_path)  # noqa: S606  # type: ignore
                 elif sys.platform == "darwin":
-                    subprocess.run(
-                        ["open", str(log_path)], check=False
-                    )  # noqa: S603, S607
+                    subprocess.run(["open", str(log_path)], check=False)  # noqa: S603, S607
                 else:
-                    subprocess.run(
-                        ["xdg-open", str(log_path)], check=False
-                    )  # noqa: S603, S607
+                    subprocess.run(["xdg-open", str(log_path)], check=False)  # noqa: S603, S607
             except (OSError, subprocess.SubprocessError) as e:
                 messagebox.showerror("Error", f"Could not open log file: {e}")
         else:
