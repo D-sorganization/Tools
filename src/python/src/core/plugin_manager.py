@@ -23,7 +23,16 @@ class PluginManager:
     """Manages tool discovery and loading."""
 
     def __init__(self, repo_root: Path):
-        assert repo_root is not None, "repo_root must be provided"
+        """Initialize the plugin manager.
+
+        Args:
+            repo_root: Root directory of the repository.
+
+        Raises:
+            TypeError: If repo_root is not a Path.
+        """
+        if not isinstance(repo_root, Path):
+            raise TypeError(f"repo_root must be a Path, got {type(repo_root).__name__}")
         self.repo_root = repo_root
         self.tools_file = repo_root / "tools.json"
         self.tools: dict[str, list[Tool]] = {}
@@ -122,8 +131,16 @@ class PluginManager:
             return {}
 
     def get_tool_by_name(self, name: str) -> Tool | None:
-        """Find a tool by name."""
-        assert name is not None, "name must be provided"
+        """Find a tool by name.
+
+        Args:
+            name: The tool name to search for.
+
+        Raises:
+            TypeError: If name is not a str.
+        """
+        if not isinstance(name, str):
+            raise TypeError(f"name must be a str, got {type(name).__name__}")
         for category in self.tools.values():
             for tool in category:
                 if tool.name == name:
@@ -162,11 +179,12 @@ class PluginManager:
 
                 try:
                     # Extract tool information from manifest
-                    tool_name = manifest_data.get("name", manifest_path.parent.name)
+                    manifest_dir = manifest_path.parent
+                    tool_name = manifest_data.get("name", manifest_dir.name)
                     tool_path = manifest_data.get("path")
                     if not tool_path:
                         # Try to find main entry point
-                        main_files = list(manifest_path.parent.glob("*.py"))
+                        main_files = list(manifest_dir.glob("*.py"))
                         if main_files:
                             tool_path = str(main_files[0].relative_to(self.repo_root))
                         else:
@@ -175,9 +193,7 @@ class PluginManager:
                         # Make path relative to repo root
                         if not Path(tool_path).is_absolute():
                             tool_path = str(
-                                (manifest_path.parent / tool_path).relative_to(
-                                    self.repo_root
-                                )
+                                (manifest_dir / tool_path).relative_to(self.repo_root)
                             )
 
                     tool_type = manifest_data.get("type", "python")
