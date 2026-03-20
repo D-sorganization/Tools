@@ -685,7 +685,8 @@ items:
   - id: GH1654
     title: "Reduce type:ignore count from 724 to under 200"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-20T13:17:12Z"
     github_issue: 1654
     artefact: .gaai/project/contexts/artefacts/stories/GH1654.story.md
     dependencies: []
