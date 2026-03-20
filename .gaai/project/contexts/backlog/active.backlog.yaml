@@ -701,11 +701,12 @@ items:
     title: "Add cross-repo integration test for UpstreamDrift/Gasification compatibility"
     priority: medium
     status: done
-    started_at: "2026-03-20T13:29:17Z"
-    completed_at: "2026-03-20T13:36:53Z"
+    started_at: "2026-03-20T06:29:17-07:00"
+    completed_at: "2026-03-20T06:37:30-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1664"
     pr_number: 1664
     pr_status: "open"
+    cost_usd: 1.5519
     github_issue: 1653
     artefact: .gaai/project/contexts/artefacts/stories/GH1653.story.md
     dependencies: []
