@@ -24,6 +24,12 @@ class SignalBus(QObject):
         poly_gen: Any,
         status_callback: Callable[[str], None] | None = None,
     ) -> None:
+        if func_gen is None:
+            raise ValueError("func_gen must not be None")
+        if toolkit is None:
+            raise ValueError("toolkit must not be None")
+        if poly_gen is None:
+            raise ValueError("poly_gen must not be None")
         super().__init__()
         self.func_gen = func_gen
         self.toolkit = toolkit
@@ -38,7 +44,8 @@ class SignalBus(QObject):
 
     def _on_func_gen_signal(self, signal: Signal) -> None:
         """Route generated signal from Function Generator to Signal Toolkit."""
-        assert signal is not None, "signal must be provided"
+        if signal is None:
+            raise ValueError("signal must not be None")
         self.toolkit.load_external_signal(signal)
         self._status(
             f"Signal sent to Toolkit: {signal.name or 'waveform'} "
@@ -48,7 +55,10 @@ class SignalBus(QObject):
     def _on_poly_generated(self, joint_name: str, coeffs: list) -> None:
         """Convert polynomial coefficients to Signal and route to Toolkit."""
         # Use toolkit's current time range, or default
-        assert joint_name is not None, "joint_name must be provided"
+        if joint_name is None:
+            raise ValueError("joint_name must not be None")
+        if not isinstance(coeffs, list):
+            raise TypeError(f"coeffs must be a list, got {type(coeffs).__name__}")
         if self.toolkit.current_signal is not None:
             t = self.toolkit.current_signal.time
         else:
@@ -67,7 +77,8 @@ class SignalBus(QObject):
 
     def _status(self, message: str) -> None:
         """Emit status message."""
-        assert message is not None, "message must be provided"
+        if message is None:
+            raise ValueError("message must not be None")
         self.signal_routed.emit(message)
         if self._status_callback:
             self._status_callback(message)
