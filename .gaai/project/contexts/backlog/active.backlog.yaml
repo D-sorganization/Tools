@@ -655,7 +655,8 @@ items:
   - id: GH1656
     title: "Add ODE solver timeout and load testing"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-20T13:04:59Z"
     github_issue: 1656
     artefact: .gaai/project/contexts/artefacts/stories/GH1656.story.md
     dependencies: []
