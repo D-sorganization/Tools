@@ -27,7 +27,7 @@ torque_func = make_polynomial_torque(
     [0],  # wrist
 )
 
-print("Running simulation...")
+print("Running simulation...")  # noqa: T201
 try:
     result = run_simulation(
         params=params,
@@ -36,13 +36,13 @@ try:
         torque_func=torque_func,
         dt=0.005,
     )
-    print("✓ Simulation succeeded!")
-    print(f"  Steps: {result.n_steps}")
-    print(f"  Time range: {result.t[0]:.3f} to {result.t[-1]:.3f} s")
-    print(f"  Initial state: {result.states[0]}")
-    print(f"  Final state: {result.states[-1]}")
+    print("✓ Simulation succeeded!")  # noqa: T201
+    print(f"  Steps: {result.n_steps}")  # noqa: T201
+    print(f"  Time range: {result.t[0]:.3f} to {result.t[-1]:.3f} s")  # noqa: T201
+    print(f"  Initial state: {result.states[0]}")  # noqa: T201
+    print(f"  Final state: {result.states[-1]}")  # noqa: T201
 except Exception as e:
-    print(f"✗ Simulation failed: {e}")
+    print(f"✗ Simulation failed: {e}")  # noqa: T201
     import traceback
 
     traceback.print_exc()
