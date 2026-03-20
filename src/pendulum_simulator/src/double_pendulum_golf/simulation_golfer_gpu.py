@@ -135,7 +135,9 @@ def constrained_eom_jax(
 
 
 def _constraint_acceleration_bias_jax(
-    q: JaxArray, qdot: JaxArray, p: GolferParamsJAX  # type: ignore[valid-type]
+    q: JaxArray,
+    qdot: JaxArray,
+    p: GolferParamsJAX,  # type: ignore[valid-type]
 ) -> JaxArray:  # type: ignore[valid-type]
     """Compute gamma = Phi_qq * qdot * qdot (centripetal acceleration bias).
 
@@ -258,7 +260,13 @@ def run_batch_simulations(
     solutions = []
     for i in range(initial_states.shape[0]):  # type: ignore[attr-defined]
         sol = run_single_simulation_jax(
-            params, initial_states[i], t_end, torque_coeffs_batch[i], alpha, beta, dt  # type: ignore[index]
+            params,
+            initial_states[i],
+            t_end,
+            torque_coeffs_batch[i],
+            alpha,
+            beta,
+            dt,  # type: ignore[index]
         )
         solutions.append(sol)
     return solutions

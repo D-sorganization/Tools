@@ -255,9 +255,7 @@ class PackTabMixin:
             command=self._start_pack,  # type: ignore[attr-defined]
             style="Accent.TButton",
         )
-        self.pack_btn.pack(
-            side="left", fill="x", expand=True, padx=(0, PADDING_SMALL)
-        )
+        self.pack_btn.pack(side="left", fill="x", expand=True, padx=(0, PADDING_SMALL))
 
         self.pack_cancel_btn = ttk.Button(
             action_frame,

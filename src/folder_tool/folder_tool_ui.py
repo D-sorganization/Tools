@@ -25,7 +25,9 @@ class UICreationMixin:
             if getattr(sys, "frozen", False):
                 # Running as compiled executable
                 base_dir = getattr(
-                    sys, "_MEIPASS", Path(os.path.abspath(__file__).parent)  # type: ignore[attr-defined]
+                    sys,
+                    "_MEIPASS",
+                    Path(os.path.abspath(__file__).parent),  # type: ignore[attr-defined]
                 )
             else:
                 # Running as script

@@ -213,12 +213,8 @@ class ControlsWidgetTriple(ControlsWidgetBase):
             self.inp_L1 = LabeledInput(
                 "L1 (m) — Hub", "0.20", "Length of segment 1: Hub (sternum → shoulder)"
             )
-            self.inp_L2 = LabeledInput(
-                "L2 (m) — Arm", "0.65", "Length of segment 2: Arm"
-            )
-            self.inp_L3 = LabeledInput(
-                "L3 (m) — Club", "1.10", "Length of segment 3: Club"
-            )
+            self.inp_L2 = LabeledInput("L2 (m) — Arm", "0.65", "Length of segment 2: Arm")
+            self.inp_L3 = LabeledInput("L3 (m) — Club", "1.10", "Length of segment 3: Club")
             for w in [
                 self.inp_m1,
                 self.inp_m2,
@@ -270,12 +266,8 @@ class ControlsWidgetTriple(ControlsWidgetBase):
         self.inp_tau_shoulder = LabeledInput(
             "Shoulder", "-25, 10", "τ(t) = c0 + c1*t + c2*t^2 + ..."
         )
-        self.inp_tau_elbow = LabeledInput(
-            "Elbow", "0", "τ(t) = c0 + c1*t + c2*t^2 + ..."
-        )
-        self.inp_tau_wrist = LabeledInput(
-            "Wrist", "0", "τ(t) = c0 + c1*t + c2*t^2 + ..."
-        )
+        self.inp_tau_elbow = LabeledInput("Elbow", "0", "τ(t) = c0 + c1*t + c2*t^2 + ...")
+        self.inp_tau_wrist = LabeledInput("Wrist", "0", "τ(t) = c0 + c1*t + c2*t^2 + ...")
         layout.addWidget(self.inp_tau_shoulder)
         layout.addWidget(self.inp_tau_elbow)
         layout.addWidget(self.inp_tau_wrist)
