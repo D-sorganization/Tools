@@ -7,6 +7,8 @@ as tabs within a single QMainWindow with shared theme support.
 from __future__ import annotations
 
 import sys
+from collections.abc import Callable
+from typing import Any
 
 from PyQt6.QtGui import QAction, QKeySequence
 from PyQt6.QtWidgets import (
@@ -38,7 +40,7 @@ except ImportError:
     HAS_FUNC_GEN = False
 
 
-def _connect_action(action: QAction, slot: object) -> None:
+def _connect_action(action: QAction, slot: Callable[..., Any]) -> None:
     """Connect a QAction's triggered signal to a slot.
 
     Preconditions:
