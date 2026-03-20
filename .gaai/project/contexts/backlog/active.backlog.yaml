@@ -646,11 +646,12 @@ items:
     title: "Centralize configuration with XDG Base Directory support"
     priority: medium
     status: done
-    started_at: "2026-03-20T13:04:55Z"
-    completed_at: "2026-03-20T13:15:22Z"
+    started_at: "2026-03-20T06:04:55-07:00"
+    completed_at: "2026-03-20T06:15:23-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1660"
     pr_number: 1660
     pr_status: "open"
+    cost_usd: 2.1718
     github_issue: 1657
     artefact: .gaai/project/contexts/artefacts/stories/GH1657.story.md
     dependencies: []
