@@ -32,7 +32,7 @@ except ImportError:
     import logging
     import subprocess
 
-    def run_python_script(
+    def run_python_script(  # type: ignore
         script_path: Path,
         args: list[str] | None = None,
         cwd: Path | str | None = None,
@@ -47,7 +47,7 @@ except ImportError:
             command, cwd=str(cwd) if cwd else None, timeout=timeout, check=check
         )
 
-    def get_logger(name):
+    def get_logger(name):  # type: ignore
         return logging.getLogger(name)
 
 

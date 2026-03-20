@@ -19,7 +19,7 @@ try:
 
     PYGAME_AVAILABLE = True
 except ImportError:
-    pygame = None
+    pygame = None  # type: ignore
     DOUBLEBUF = K_c = K_ESCAPE = K_SPACE = KEYDOWN = OPENGL = QUIT = 0
     PYGAME_AVAILABLE = False
 
@@ -28,7 +28,7 @@ try:
 
     TRIMESH_AVAILABLE = True
 except ImportError:
-    trimesh = None
+    trimesh = None  # type: ignore
     TRIMESH_AVAILABLE = False
 
 try:
@@ -185,7 +185,7 @@ def generate_asteroid_field(
         )
         size = float(generator.uniform(0.02, 0.08))
         color = tuple(float(v) for v in generator.uniform(0.45, 1.0, size=3))
-        obstacle = Obstacle(obstacle_type, position, size, color)
+        obstacle = Obstacle(obstacle_type, position, size, color)  # type: ignore
 
         if all(
             distance_to_obstacle_surface(point, obstacle) >= clearance

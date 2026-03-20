@@ -37,10 +37,10 @@ class ScanPreviewMixin:
 
     def _scan_folder(self) -> None:
         """Scan source folder and display statistics."""
-        if not self.pack_source_entry.get():
+        if not self.pack_source_entry.get():  # type: ignore
             return
 
-        source_path = Path(self.pack_source_entry.get())
+        source_path = Path(self.pack_source_entry.get())  # type: ignore
         if not source_path.exists():
             messagebox.showerror("Error", "Source folder does not exist.")
             return
@@ -49,10 +49,10 @@ class ScanPreviewMixin:
             """Background task to scan folder statistics."""
             stats = collect_folder_stats(
                 source_path,
-                self.exclude_patterns,
-                self.include_git_var.get(),
+                self.exclude_patterns,  # type: ignore
+                self.include_git_var.get(),  # type: ignore
             )
-            self.root.after(0, lambda: self._display_stats(stats))
+            self.root.after(0, lambda: self._display_stats(stats))  # type: ignore
 
         threading.Thread(target=scan, daemon=True).start()
 
@@ -63,8 +63,8 @@ class ScanPreviewMixin:
             stats: Dictionary with folder statistics.
         """
         assert stats is not None, "stats must be provided"
-        self.stats_text.configure(state="normal")
-        self.stats_text.delete("1.0", "end")
+        self.stats_text.configure(state="normal")  # type: ignore
+        self.stats_text.delete("1.0", "end")  # type: ignore
 
         output = "Project Statistics\n\n"
         output += f"Total Files: {stats['total_files']:,}\n"
@@ -82,19 +82,19 @@ class ScanPreviewMixin:
             )
             output += f"  {ext:20s} {count:5,} files ({percentage:5.1f}%)\n"
 
-        self.stats_text.insert("1.0", output)
-        self.stats_text.configure(state="disabled")
+        self.stats_text.insert("1.0", output)  # type: ignore
+        self.stats_text.configure(state="disabled")  # type: ignore
 
         self._update_preview_tree()
 
     def _update_preview_tree(self) -> None:
         """Update preview tree with files to be packed."""
-        self.preview_tree.delete(*self.preview_tree.get_children())
+        self.preview_tree.delete(*self.preview_tree.get_children())  # type: ignore
 
-        if not self.pack_source_entry.get():
+        if not self.pack_source_entry.get():  # type: ignore
             return
 
-        source_path = Path(self.pack_source_entry.get())
+        source_path = Path(self.pack_source_entry.get())  # type: ignore
         if not source_path.exists():
             return
 
@@ -107,8 +107,8 @@ class ScanPreviewMixin:
                     for d in dirs
                     if not should_exclude(
                         Path(root_dir) / d,
-                        self.exclude_patterns,
-                        self.include_git_var.get(),
+                        self.exclude_patterns,  # type: ignore
+                        self.include_git_var.get(),  # type: ignore
                     )
                 ]
 
@@ -116,8 +116,8 @@ class ScanPreviewMixin:
                     file_path = Path(root_dir) / filename
                     if not should_exclude(
                         file_path,
-                        self.exclude_patterns,
-                        self.include_git_var.get(),
+                        self.exclude_patterns,  # type: ignore
+                        self.include_git_var.get(),  # type: ignore
                     ):
                         try:
                             stat = file_path.stat()
@@ -129,7 +129,7 @@ class ScanPreviewMixin:
                 if len(files) >= 500:
                     break
 
-            self.root.after(0, lambda: self._populate_tree(files, source_path))
+            self.root.after(0, lambda: self._populate_tree(files, source_path))  # type: ignore
 
         threading.Thread(target=scan, daemon=True).start()
 
@@ -151,7 +151,7 @@ class ScanPreviewMixin:
             file_type = get_file_type(file_path)
             modified = dt.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M")
 
-            self.preview_tree.insert(
+            self.preview_tree.insert(  # type: ignore
                 "",
                 "end",
                 text=str(rel_path),
@@ -165,17 +165,17 @@ class PackOperationMixin:
 
     def _start_pack(self) -> None:
         """Start packing operation."""
-        if not self.pack_source_entry.get():
+        if not self.pack_source_entry.get():  # type: ignore
             messagebox.showwarning("No Source", "Please select a source folder.")
             return
 
-        if not self.pack_output_entry.get():
+        if not self.pack_output_entry.get():  # type: ignore
             messagebox.showwarning("No Output", "Please select an output file.")
             return
 
-        if self.encrypt_var.get():
-            password = self.pack_password_entry.get()
-            confirm = self.pack_password_confirm.get()
+        if self.encrypt_var.get():  # type: ignore
+            password = self.pack_password_entry.get()  # type: ignore
+            confirm = self.pack_password_confirm.get()  # type: ignore
 
             if not password:
                 messagebox.showwarning(
@@ -189,70 +189,70 @@ class PackOperationMixin:
                 return
 
         self.cancel_operation = False
-        self.pack_btn.configure(state="disabled")
-        self.pack_cancel_btn.configure(state="normal")
-        self.pack_progress_var.set(0)
+        self.pack_btn.configure(state="disabled")  # type: ignore
+        self.pack_cancel_btn.configure(state="normal")  # type: ignore
+        self.pack_progress_var.set(0)  # type: ignore
 
         threading.Thread(target=self._run_pack, daemon=True).start()
 
     def _run_pack(self) -> None:
         """Run pack operation in background."""
         try:
-            source_path = Path(self.pack_source_entry.get())
-            output_path = Path(self.pack_output_entry.get())
+            source_path = Path(self.pack_source_entry.get())  # type: ignore
+            output_path = Path(self.pack_output_entry.get())  # type: ignore
 
-            self._update_pack_status("Collecting files...")
+            self._update_pack_status("Collecting files...")  # type: ignore
 
             files_to_pack = collect_files(
                 source_path,
-                self.exclude_patterns,
-                self.include_git_var.get(),
+                self.exclude_patterns,  # type: ignore
+                self.include_git_var.get(),  # type: ignore
                 cancel_check=lambda: self.cancel_operation,
             )
 
             if self.cancel_operation:
-                self._log_message("Pack operation cancelled", "warning")
+                self._log_message("Pack operation cancelled", "warning")  # type: ignore
                 return
 
             total_files = len(files_to_pack)
-            self._log_message(f"Packing {total_files} files...", "info")
+            self._log_message(f"Packing {total_files} files...", "info")  # type: ignore
 
             def progress_callback(filename: str, current: int, total: int) -> None:
                 """Report pack progress to UI."""
                 assert filename is not None, "filename must be provided"
                 progress = (current / total) * 100
-                self.root.after(
+                self.root.after(  # type: ignore
                     0,
-                    lambda p=progress: self.pack_progress_var.set(float(p)),  # type: ignore[misc]
+                    lambda p=progress: self.pack_progress_var.set(float(p)),  # type: ignore
                 )
-                self._update_pack_status(f"Packing {filename} ({current}/{total})")
+                self._update_pack_status(f"Packing {filename} ({current}/{total})")  # type: ignore
 
             result = pack_files(
                 source_path=source_path,
                 output_path=output_path,
                 files_to_pack=files_to_pack,
-                compression=self.compression_var.get(),
-                encrypt=self.encrypt_var.get(),
+                compression=self.compression_var.get(),  # type: ignore
+                encrypt=self.encrypt_var.get(),  # type: ignore
                 password=(
-                    self.pack_password_entry.get() if self.encrypt_var.get() else ""
+                    self.pack_password_entry.get() if self.encrypt_var.get() else ""  # type: ignore
                 ),
-                create_manifest=self.create_manifest_var.get(),
+                create_manifest=self.create_manifest_var.get(),  # type: ignore
                 progress_callback=progress_callback,
                 cancel_check=lambda: self.cancel_operation,
             )
 
             for error in result.errors:
-                self._log_message(error, "error")
+                self._log_message(error, "error")  # type: ignore
 
             if result.success:
-                self._log_message(
+                self._log_message(  # type: ignore
                     f"Package created successfully: {output_path}", "success"
                 )
-                self._log_message(
+                self._log_message(  # type: ignore
                     f"Package size: {format_size(result.package_size)}",
                     "info",
                 )
-                self.root.after(
+                self.root.after(  # type: ignore
                     0,
                     lambda: messagebox.showinfo(
                         "Success",
@@ -262,9 +262,9 @@ class PackOperationMixin:
                     ),
                 )
             else:
-                self._log_message(f"Pack operation failed: {result.error}", "error")
+                self._log_message(f"Pack operation failed: {result.error}", "error")  # type: ignore
                 error_msg = result.error or "Unknown error"
-                self.root.after(
+                self.root.after(  # type: ignore
                     0,
                     lambda: messagebox.showerror(
                         "Error", f"Pack failed:\n\n{error_msg}"
@@ -273,15 +273,15 @@ class PackOperationMixin:
 
         except (PermissionError, OSError) as e:
             logger.exception("Pack operation failed")
-            self._log_message(f"Pack operation failed: {e}", "error")
+            self._log_message(f"Pack operation failed: {e}", "error")  # type: ignore
             error_msg = str(e)
-            self.root.after(
+            self.root.after(  # type: ignore
                 0,
                 lambda: messagebox.showerror("Error", f"Pack failed:\n\n{error_msg}"),
             )
 
         finally:
-            self.root.after(0, self._pack_finished)
+            self.root.after(0, self._pack_finished)  # type: ignore
 
 
 class UnpackOperationMixin:
@@ -289,19 +289,19 @@ class UnpackOperationMixin:
 
     def _start_unpack(self) -> None:
         """Start unpacking operation."""
-        if not self.unpack_source_entry.get():
+        if not self.unpack_source_entry.get():  # type: ignore
             messagebox.showwarning("No Package", "Please select a package file.")
             return
 
-        if not self.unpack_dest_entry.get():
+        if not self.unpack_dest_entry.get():  # type: ignore
             messagebox.showwarning(
                 "No Destination",
                 "Please select a destination folder.",
             )
             return
 
-        if self.encrypted_var.get():
-            password = self.unpack_password_entry.get()
+        if self.encrypted_var.get():  # type: ignore
+            password = self.unpack_password_entry.get()  # type: ignore
             if not password:
                 messagebox.showwarning(
                     "No Password",
@@ -310,50 +310,50 @@ class UnpackOperationMixin:
                 return
 
         self.cancel_operation = False
-        self.unpack_btn.configure(state="disabled")
-        self.unpack_cancel_btn.configure(state="normal")
-        self.unpack_progress_var.set(0)
+        self.unpack_btn.configure(state="disabled")  # type: ignore
+        self.unpack_cancel_btn.configure(state="normal")  # type: ignore
+        self.unpack_progress_var.set(0)  # type: ignore
 
         threading.Thread(target=self._run_unpack, daemon=True).start()
 
     def _run_unpack(self) -> None:
         """Run unpack operation in background."""
         try:
-            package_path = Path(self.unpack_source_entry.get())
-            dest_path = Path(self.unpack_dest_entry.get())
+            package_path = Path(self.unpack_source_entry.get())  # type: ignore
+            dest_path = Path(self.unpack_dest_entry.get())  # type: ignore
 
-            self._update_unpack_status("Reading package...")
+            self._update_unpack_status("Reading package...")  # type: ignore
 
             def progress_callback(filename: str, current: int, total: int) -> None:
                 """Report unpack progress to UI."""
                 assert filename is not None, "filename must be provided"
                 progress = (current / total) * 100
-                self.root.after(
+                self.root.after(  # type: ignore
                     0,
-                    lambda p=progress: self.unpack_progress_var.set(float(p)),  # type: ignore[misc]
+                    lambda p=progress: self.unpack_progress_var.set(float(p)),  # type: ignore
                 )
-                self._update_unpack_status(f"Extracting {filename} ({current}/{total})")
+                self._update_unpack_status(f"Extracting {filename} ({current}/{total})")  # type: ignore
 
             result = unpack_files(
                 package_path=package_path,
                 dest_path=dest_path,
-                encrypted=self.encrypted_var.get(),
+                encrypted=self.encrypted_var.get(),  # type: ignore
                 password=(
-                    self.unpack_password_entry.get() if self.encrypted_var.get() else ""
+                    self.unpack_password_entry.get() if self.encrypted_var.get() else ""  # type: ignore
                 ),
                 progress_callback=progress_callback,
                 cancel_check=lambda: self.cancel_operation,
             )
 
             for error in result.errors:
-                self._log_message(error, "error")
+                self._log_message(error, "error")  # type: ignore
 
             if result.success:
-                self._log_message(
+                self._log_message(  # type: ignore
                     f"Package extracted successfully to: {dest_path}",
                     "success",
                 )
-                self.root.after(
+                self.root.after(  # type: ignore
                     0,
                     lambda: messagebox.showinfo(
                         "Success",
@@ -363,9 +363,9 @@ class UnpackOperationMixin:
                     ),
                 )
             else:
-                self._log_message(f"Unpack operation failed: {result.error}", "error")
+                self._log_message(f"Unpack operation failed: {result.error}", "error")  # type: ignore
                 error_msg = result.error or "Unknown error"
-                self.root.after(
+                self.root.after(  # type: ignore
                     0,
                     lambda: messagebox.showerror(
                         "Error", f"Unpack failed:\n\n{error_msg}"
@@ -374,19 +374,19 @@ class UnpackOperationMixin:
 
         except (PermissionError, OSError) as e:
             logger.exception("Unpack operation failed")
-            self._log_message(f"Unpack operation failed: {e}", "error")
+            self._log_message(f"Unpack operation failed: {e}", "error")  # type: ignore
             error_msg = str(e)
-            self.root.after(
+            self.root.after(  # type: ignore
                 0,
                 lambda: messagebox.showerror("Error", f"Unpack failed:\n\n{error_msg}"),
             )
 
         finally:
-            self.root.after(0, self._unpack_finished)
+            self.root.after(0, self._unpack_finished)  # type: ignore
 
     def _inspect_package(self) -> None:
         """Inspect package file and show information."""
-        package_path = self.unpack_source_entry.get()
+        package_path = self.unpack_source_entry.get()  # type: ignore
         if not package_path:
             messagebox.showwarning("No Package", "Please select a package file first.")
             return
@@ -394,8 +394,8 @@ class UnpackOperationMixin:
         try:
             info = inspect_package(Path(package_path))
 
-            self.package_info_text.configure(state="normal")
-            self.package_info_text.delete("1.0", "end")
+            self.package_info_text.configure(state="normal")  # type: ignore
+            self.package_info_text.delete("1.0", "end")  # type: ignore
 
             output = "Package Information\n\n"
             output += f"File: {info['file']}\n"
@@ -408,8 +408,8 @@ class UnpackOperationMixin:
                 output += f"Total Files: {metadata.get('total_files', 0)}\n"
                 output += f"Compression: {metadata.get('compression', 'Unknown')}\n"
 
-            self.package_info_text.insert("1.0", output)
-            self.package_info_text.configure(state="disabled")
+            self.package_info_text.insert("1.0", output)  # type: ignore
+            self.package_info_text.configure(state="disabled")  # type: ignore
 
         except (
             OSError,

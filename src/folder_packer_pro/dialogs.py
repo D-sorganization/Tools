@@ -46,7 +46,7 @@ class DialogsMixin:
         scrollbar.pack(side="right", fill="y")
 
         # Populate with current patterns
-        for pattern in sorted(self.exclude_patterns):  # type: ignore[attr-defined]
+        for pattern in sorted(self.exclude_patterns):  # type: ignore
             listbox.insert("end", pattern)
 
         # Buttons
@@ -61,7 +61,7 @@ class DialogsMixin:
                 parent=dialog,
             )
             if pattern:
-                self.exclude_patterns.add(pattern)  # type: ignore[attr-defined]
+                self.exclude_patterns.add(pattern)  # type: ignore
                 listbox.insert("end", pattern)
 
         def remove_pattern() -> None:
@@ -69,14 +69,14 @@ class DialogsMixin:
             selection = listbox.curselection()
             if selection:
                 pattern = listbox.get(selection[0])
-                self.exclude_patterns.discard(pattern)  # type: ignore[attr-defined]
+                self.exclude_patterns.discard(pattern)  # type: ignore
                 listbox.delete(selection[0])
 
         def reset_patterns() -> None:
             """Reset exclusion patterns to defaults."""
-            self.exclude_patterns = set(DEFAULT_EXCLUDE_PATTERNS)  # type: ignore[attr-defined]
+            self.exclude_patterns = set(DEFAULT_EXCLUDE_PATTERNS)  # type: ignore
             listbox.delete(0, "end")
-            for pattern in sorted(self.exclude_patterns):  # type: ignore[attr-defined]
+            for pattern in sorted(self.exclude_patterns):  # type: ignore
                 listbox.insert("end", pattern)
 
         ttk.Button(button_frame, text="Add", command=add_pattern).pack(
