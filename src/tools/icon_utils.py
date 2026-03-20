@@ -72,6 +72,7 @@ def convert_image_mode(img: Image.Image) -> Image.Image:
     Returns:
         Converted image in RGBA or RGB mode.
     """
+    require(img is not None, "img must be provided")
     if img.mode in ("RGBA", "LA"):
         logger.info("Image has transparency - preserving alpha channel")
         return img.convert("RGBA")

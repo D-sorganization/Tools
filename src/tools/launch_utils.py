@@ -108,6 +108,9 @@ def _stream_reader(
     Extracted from ``launch_python_tool`` to satisfy SRP and enable unit testing.
     Issue #930: decompose long orchestration functions in the tools package.
     """
+    require(stream is not None, "stream must be provided")
+    require(isinstance(prefix, str), "prefix must be a string")
+    require(callable(log_func), "log_func must be callable")
     try:
         for line in stream:
             log_func(f"{prefix} {line.strip()}")
