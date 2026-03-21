@@ -510,7 +510,7 @@ class SolarSystemScene(SceneEventMixin, SceneRenderMixin):
 
         handler = _TIME_NAV_DISPATCH.get(action)
         if handler:
-            handler()  # type: ignore
+            handler()  # type: ignore[operator]
             return
 
         if action == "prev_year":

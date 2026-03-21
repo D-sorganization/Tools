@@ -17,7 +17,7 @@ from tools.matlab_quality_utils import MATLABQualityChecker
 def test_init_requires_path(tmp_path):
     """Non-Path raises PreconditionError."""
     with pytest.raises(PreconditionError):
-        MATLABQualityChecker(str(tmp_path))  # type: ignore[arg-type]
+        MATLABQualityChecker(str(tmp_path))
 
 
 def test_init_requires_absolute_path():
@@ -112,7 +112,7 @@ def test_check_banned_dbc_non_path():
             "script.m",
             "% TODO",
             1,
-            issues,  # type: ignore[arg-type]
+            issues,
         )
 
 
@@ -123,7 +123,7 @@ def test_check_banned_dbc_non_string_line():
             Path("f.m"),
             999,
             1,
-            issues,  # type: ignore[arg-type]
+            issues,
         )
 
 
@@ -162,7 +162,7 @@ def test_workspace_pollution_dbc_non_path():
             "clc",
             1,
             True,
-            issues,  # type: ignore[arg-type]
+            issues,
         )
 
 
@@ -198,7 +198,7 @@ def test_check_function_def_dbc_non_list():
             Path("f.m"),
             "not a list",
             1,
-            [],  # type: ignore[arg-type]
+            [],
         )
 
 
@@ -600,4 +600,4 @@ def test_run_matlab_script_dbc_non_path(tmp_path):
 
     checker = MATLABQualityChecker(tmp_path)
     with pytest.raises(PreconditionError):
-        checker._run_matlab_script("not_a_path.m")  # type: ignore[arg-type]
+        checker._run_matlab_script("not_a_path.m")

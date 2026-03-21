@@ -207,19 +207,15 @@ class ControlsWidgetTriple(ControlsWidgetBase):
                 row.addWidget(widget)
                 layout.addLayout(row)
         else:
-            self.inp_m1 = LabeledInput("m1 (kg)", "5.0", "Mass of segment 1")  # type: ignore
-            self.inp_m2 = LabeledInput("m2 (kg)", "0.5", "Mass of segment 2")  # type: ignore
-            self.inp_m3 = LabeledInput("m3 (kg)", "0.4", "Mass of segment 3")  # type: ignore
-            self.inp_L1 = LabeledInput(  # type: ignore
+            self.inp_m1 = LabeledInput("m1 (kg)", "5.0", "Mass of segment 1")
+            self.inp_m2 = LabeledInput("m2 (kg)", "0.5", "Mass of segment 2")
+            self.inp_m3 = LabeledInput("m3 (kg)", "0.4", "Mass of segment 3")
+            self.inp_L1 = LabeledInput(
                 "L1 (m) — Hub", "0.20", "Length of segment 1: Hub (sternum → shoulder)"
             )
-            self.inp_L2 = LabeledInput(  # type: ignore
-                "L2 (m) — Arm", "0.65", "Length of segment 2: Arm"
-            )
-            self.inp_L3 = LabeledInput(  # type: ignore
-                "L3 (m) — Club", "1.10", "Length of segment 3: Club"
-            )
-            for w in [  # type: ignore
+            self.inp_L2 = LabeledInput("L2 (m) — Arm", "0.65", "Length of segment 2: Arm")
+            self.inp_L3 = LabeledInput("L3 (m) — Club", "1.10", "Length of segment 3: Club")
+            for w in [
                 self.inp_m1,
                 self.inp_m2,
                 self.inp_m3,
@@ -270,12 +266,8 @@ class ControlsWidgetTriple(ControlsWidgetBase):
         self.inp_tau_shoulder = LabeledInput(
             "Shoulder", "-25, 10", "τ(t) = c0 + c1*t + c2*t^2 + ..."
         )
-        self.inp_tau_elbow = LabeledInput(
-            "Elbow", "0", "τ(t) = c0 + c1*t + c2*t^2 + ..."
-        )
-        self.inp_tau_wrist = LabeledInput(
-            "Wrist", "0", "τ(t) = c0 + c1*t + c2*t^2 + ..."
-        )
+        self.inp_tau_elbow = LabeledInput("Elbow", "0", "τ(t) = c0 + c1*t + c2*t^2 + ...")
+        self.inp_tau_wrist = LabeledInput("Wrist", "0", "τ(t) = c0 + c1*t + c2*t^2 + ...")
         layout.addWidget(self.inp_tau_shoulder)
         layout.addWidget(self.inp_tau_elbow)
         layout.addWidget(self.inp_tau_wrist)
@@ -381,7 +373,7 @@ class ControlsWidgetTriple(ControlsWidgetBase):
             try:
                 widget.set_value(val, is_si=True)
             except TypeError:
-                widget.set_value(str(val))  # type: ignore
+                widget.set_value(str(val))
         self._update_torque_preview()
 
     def get_params(self) -> dict:

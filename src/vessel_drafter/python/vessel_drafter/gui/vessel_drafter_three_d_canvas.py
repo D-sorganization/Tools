@@ -52,7 +52,7 @@ class VesselDrafterThreeDCanvas(FigureCanvasQTAgg):
         if resolved_view_options.split_enabled:
             meshes = tuple(reversed(meshes))
         for index, mesh in enumerate(meshes):
-            axes.add_collection3d(  # type: ignore
+            axes.add_collection3d(
                 Poly3DCollection(
                     mesh.polygons,
                     facecolors=mesh.color_hex,

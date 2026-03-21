@@ -1,6 +1,10 @@
 """Tests for the ChartDataDialog dialog."""
 
 import pytest
+
+pytest.importorskip("PyQt6", reason="PyQt6 not installed")
+pytest.importorskip("pytestqt", reason="pytest-qt required for widget tests")
+
 from PyQt6.QtWidgets import QDialogButtonBox
 
 from double_pendulum_golf.gui.chart_data_dialog import ChartDataDialog
@@ -17,7 +21,7 @@ class TestChartDataDialog:
 
     def test_init_raises_if_model_type_none(self):
         with pytest.raises(AssertionError):
-            ChartDataDialog(model_type=None)  # type: ignore
+            ChartDataDialog(model_type=None)  # type: ignore[attr-defined]
 
     def test_default_selections_are_set(self, qtbot):
         dialog = ChartDataDialog(model_type="double")

@@ -39,7 +39,7 @@ if TYPE_CHECKING:
 logger = get_logger(__name__)
 
 
-class DataProcessorGUI(ctk.CTk):  # type: ignore
+class DataProcessorGUI(ctk.CTk):  # type: ignore[attr-defined]
     """Main GUI application using refactored core modules."""
 
     def __init__(self) -> None:

@@ -19,7 +19,7 @@ try:
 
     PYGAME_AVAILABLE = True
 except ImportError:
-    pygame = None  # type: ignore
+    pygame = None
     DOUBLEBUF = K_c = K_ESCAPE = K_SPACE = KEYDOWN = OPENGL = QUIT = 0
     PYGAME_AVAILABLE = False
 
@@ -28,7 +28,7 @@ try:
 
     TRIMESH_AVAILABLE = True
 except ImportError:
-    trimesh = None  # type: ignore
+    trimesh = None
     TRIMESH_AVAILABLE = False
 
 try:
@@ -185,7 +185,7 @@ def generate_asteroid_field(
         )
         size = float(generator.uniform(0.02, 0.08))
         color = tuple(float(v) for v in generator.uniform(0.45, 1.0, size=3))
-        obstacle = Obstacle(obstacle_type, position, size, color)  # type: ignore
+        obstacle = Obstacle(obstacle_type, position, size, color)  # type: ignore[arg-type]
 
         if all(
             distance_to_obstacle_surface(point, obstacle) >= clearance
@@ -624,7 +624,7 @@ class StarWarsRenderer:
         glBegin(GL_POINTS)
         for star, brightness in zip(self.stars, self.star_brightness, strict=False):
             glColor3f(brightness, brightness, brightness)
-            glVertex3f(star[0], star[1], star[2])
+            glVertex3f(star[0], star[1], star[2])  # type: ignore[index]
         glEnd()
         glEnable(GL_LIGHTING)
 

@@ -45,7 +45,7 @@ def test_find_icon_dbc_empty_name():
 
 def test_find_icon_dbc_non_string():
     with pytest.raises(PreconditionError):
-        find_icon(None)  # type: ignore[arg-type]
+        find_icon(None)
 
 
 # ─── set_tk_icon ───────────────────────────────────────────────

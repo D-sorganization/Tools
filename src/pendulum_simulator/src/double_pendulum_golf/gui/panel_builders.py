@@ -203,7 +203,7 @@ def build_double_panel(main_window: Any) -> SimulationPanel:
         )
 
     def _double_extract_fn(result: object) -> dict:
-        res = result  # type: ignore
+        res = result
         vels = res.joint_velocities_at(res.n_steps - 1)  # type: ignore[attr-defined]
         tip_v = vels.get("tip", (0.0, 0.0))
         speed = float(np.hypot(tip_v[0], tip_v[1]))
@@ -393,7 +393,7 @@ def build_triple_panel(main_window: Any) -> SimulationPanel:
         )
 
     def _triple_extract_fn(result: object) -> dict:
-        res = result  # type: ignore
+        res = result
         pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
         tip_xy = pos.get("tip", (0.0, 0.0))
         # Triple pendulum has no joint_velocities_at; approximate from last two frames
@@ -558,9 +558,7 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
 
         def objective(coeffs: np.ndarray) -> float:
             n_seventh = max(1, len(coeffs) // 7)
-            slices = [
-                list(coeffs[i * n_seventh : (i + 1) * n_seventh]) for i in range(7)
-            ]
+            slices = [list(coeffs[i * n_seventh : (i + 1) * n_seventh]) for i in range(7)]
             torque_func = make_polynomial_torque_golfer(*slices)
             try:
                 result = run_simulation_golfer(
@@ -610,7 +608,7 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
         initial_state = build_state(p)
         limits = build_limits(p)
         clamp = build_clamp(p)
-        torque_func = make_polynomial_torque_golfer(*coeffs)  # type: ignore
+        torque_func = make_polynomial_torque_golfer(*coeffs)
         return run_simulation_golfer(
             params=params,
             initial_state=initial_state,
@@ -621,7 +619,7 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
         )
 
     def _golfer_extract_fn(result: object) -> dict:
-        res = result  # type: ignore
+        res = result
         pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
         tip_xy = pos.get("club_tip", pos.get("tip", (0.0, 0.0)))
         if res.n_steps >= 2:  # type: ignore[attr-defined]
@@ -705,9 +703,7 @@ def wire_toolstrip(main_window: Any) -> None:
     )
 
     # ── Simulation action signals → active panel only ──────────────
-    ts.run_requested.connect(
-        lambda: main_window._active_panel().controls.run_requested.emit()
-    )
+    ts.run_requested.connect(lambda: main_window._active_panel().controls.run_requested.emit())
     ts.reset_requested.connect(
         lambda: main_window._active_panel().controls.reset_requested.emit()
     )
@@ -717,9 +713,7 @@ def wire_toolstrip(main_window: Any) -> None:
     ts.speed_changed.connect(
         lambda val: main_window._active_panel().controls.speed_changed.emit(val)
     )
-    ts.frame_scrubbed.connect(
-        lambda idx: main_window._active_panel().scrub_to_frame(idx)
-    )
+    ts.frame_scrubbed.connect(lambda idx: main_window._active_panel().scrub_to_frame(idx))
 
     # ── Export actions (#1141) → active panel's controls ──────────
     ts.export_data_requested.connect(
@@ -736,12 +730,8 @@ def wire_toolstrip(main_window: Any) -> None:
     _connect_common_signals(main_window)
 
     # ── Torque/MoF/Sum display toggles (#1208) → active panel's pendulum ──
-    ts.torque_vectors_toggled.connect(
-        lambda v: _fwd_overlay("set_show_torque_vectors", v)
-    )
-    ts.moment_of_force_toggled.connect(
-        lambda v: _fwd_overlay("set_show_moment_of_force", v)
-    )
+    ts.torque_vectors_toggled.connect(lambda v: _fwd_overlay("set_show_torque_vectors", v))
+    ts.moment_of_force_toggled.connect(lambda v: _fwd_overlay("set_show_moment_of_force", v))
     ts.sum_moments_toggled.connect(lambda v: _fwd_overlay("set_show_sum_moments", v))
 
     # ── Scale sliders → active panel's pendulum widget ────────────
@@ -752,9 +742,7 @@ def wire_toolstrip(main_window: Any) -> None:
 
     ts.force_scale_changed.connect(lambda v: _fwd_overlay("set_force_scale", v))
     ts.mob_scale_changed.connect(lambda v: _fwd_overlay("set_mob_ellipsoid_scale", v))
-    ts.force_ell_scale_changed.connect(
-        lambda v: _fwd_overlay("set_force_ellipsoid_scale", v)
-    )
+    ts.force_ell_scale_changed.connect(lambda v: _fwd_overlay("set_force_ellipsoid_scale", v))
 
     # ── Rotation controls (#1146) → active panel's pendulum widget ──
     ts.azimuth_changed.connect(lambda v: _fwd_overlay("set_view_azimuth", v))
@@ -818,9 +806,7 @@ def wire_toolstrip(main_window: Any) -> None:
         # Reset toolstrip play button when playback ends
         panel.playback_ended.connect(
             lambda _p=panel: (
-                ts.btn_play.setChecked(False)
-                if _p is main_window._active_panel()
-                else None
+                ts.btn_play.setChecked(False) if _p is main_window._active_panel() else None
             )
         )
 
@@ -858,15 +844,9 @@ def _connect_common_signals(main_window: Any) -> None:
             getattr(pw, attr)(value)
 
     ts.forces_toggled.connect(lambda v: _fwd_overlay("set_show_forces", v))
-    ts.zero_torque_toggled.connect(
-        lambda v: _fwd_overlay("set_show_zero_torque_forces", v)
-    )
-    ts.mob_ellipsoid_toggled.connect(
-        lambda v: _fwd_overlay("set_show_mob_ellipsoids", v)
-    )
-    ts.force_ellipsoid_toggled.connect(
-        lambda v: _fwd_overlay("set_show_force_ellipsoids", v)
-    )
+    ts.zero_torque_toggled.connect(lambda v: _fwd_overlay("set_show_zero_torque_forces", v))
+    ts.mob_ellipsoid_toggled.connect(lambda v: _fwd_overlay("set_show_mob_ellipsoids", v))
+    ts.force_ellipsoid_toggled.connect(lambda v: _fwd_overlay("set_show_force_ellipsoids", v))
     ts.com_toggled.connect(lambda v: _fwd_overlay("set_show_com", v))
 
     # ── 3D segment rendering (#1155) ──────────────────────────────

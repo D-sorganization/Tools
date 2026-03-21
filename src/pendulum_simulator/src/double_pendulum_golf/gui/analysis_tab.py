@@ -272,12 +272,8 @@ class AnalysisTab:
         from ..data_extractor import extract_series
 
         try:
-            x_vals, x_desc, x_unit = extract_series(
-                self._result, x_key, self._model_type
-            )
-            y_vals, y_desc, y_unit = extract_series(
-                self._result, y_key, self._model_type
-            )
+            x_vals, x_desc, x_unit = extract_series(self._result, x_key, self._model_type)
+            y_vals, y_desc, y_unit = extract_series(self._result, y_key, self._model_type)
         except (KeyError, AttributeError) as exc:
             logger.error("Failed to extract series: %s", exc)
             return
@@ -467,9 +463,7 @@ class AnalysisTab:
         if z_key == "potential_energy":
 
             def _eval(angles: dict) -> float:
-                state = np.array(
-                    [angles.get("theta1", 0.0), angles.get("phi", 0.0), 0.0, 0.0]
-                )
+                state = np.array([angles.get("theta1", 0.0), angles.get("phi", 0.0), 0.0, 0.0])
                 return potential_energy(state, params)
 
             return _eval
@@ -691,15 +685,15 @@ class AnalysisTab:
         ax.tick_params(colors="#c0c0d8")
         ax.xaxis.label.set_color("#c0c0d8")
         ax.yaxis.label.set_color("#c0c0d8")
-        ax.zaxis.label.set_color("#c0c0d8")  # type: ignore[attr-defined]
-        ax.xaxis.pane.fill = False  # type: ignore[attr-defined]
-        ax.yaxis.pane.fill = False  # type: ignore[attr-defined]
-        ax.zaxis.pane.fill = False  # type: ignore[attr-defined]
+        ax.zaxis.label.set_color("#c0c0d8")
+        ax.xaxis.pane.fill = False
+        ax.yaxis.pane.fill = False
+        ax.zaxis.pane.fill = False
 
         # Mask NaN for cleaner rendering
         Z_masked = np.ma.array(Z, mask=~np.isfinite(Z))
 
-        ax.plot_surface(  # type: ignore[attr-defined]
+        ax.plot_surface(
             X,
             Y,
             Z_masked,
@@ -709,7 +703,7 @@ class AnalysisTab:
         )
         ax.set_xlabel(xlabel, fontsize=10)
         ax.set_ylabel(ylabel, fontsize=10)
-        ax.set_zlabel(zlabel, fontsize=10)  # type: ignore[attr-defined]
+        ax.set_zlabel(zlabel, fontsize=10)
         ax.set_title(f"{zlabel} surface", color="#c0c0d8", fontsize=12)
 
         self._fig_3d.tight_layout()

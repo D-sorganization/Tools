@@ -57,7 +57,7 @@ class TestShouldExclude:
 
     def test_precondition_path_none(self) -> None:
         with pytest.raises(AssertionError, match="path must be provided"):
-            should_exclude(None, set())  # type: ignore[arg-type]
+            should_exclude(None, set())
 
 
 # ---------------------------------------------------------------------------
@@ -124,7 +124,7 @@ class TestCollectFolderStats:
 
     def test_precondition_folder_none(self) -> None:
         with pytest.raises(AssertionError, match="folder must be provided"):
-            collect_folder_stats(None, set())  # type: ignore[arg-type]
+            collect_folder_stats(None, set())
 
 
 # ---------------------------------------------------------------------------

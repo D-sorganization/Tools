@@ -32,11 +32,11 @@ class FileValidationMixin:
             ValueError: If file size validation fails
         """
         assert file_path is not None, "file_path must be provided"
-        if self.cancel_operation:  # type: ignore
+        if self.cancel_operation:  # type: ignore[attr-defined]
             return False
 
         # Extension filter
-        extensions = self.filter_extensions.get().strip()  # type: ignore
+        extensions = self.filter_extensions.get().strip()  # type: ignore[attr-defined]
         if extensions:
             ext_list = [ext.strip().lower() for ext in extensions.split(",")]
             file_ext = Path(file_path).suffix.lower()
@@ -49,32 +49,32 @@ class FileValidationMixin:
             file_size_mb = file_size_bytes / (1024 * 1024)
 
             # Validate minimum size
-            min_size_mb = float(self.min_file_size.get() or 0)  # type: ignore
+            min_size_mb = float(self.min_file_size.get() or 0)  # type: ignore[attr-defined]
             if min_size_mb < 0:
                 min_size_mb = 0  # Reset invalid negative values
-                self.min_file_size.set("0")  # type: ignore
+                self.min_file_size.set("0")  # type: ignore[attr-defined]
             if file_size_mb < min_size_mb:
                 return False
 
             # Validate maximum size
-            max_size_str = self.max_file_size.get().strip()  # type: ignore
+            max_size_str = self.max_file_size.get().strip()  # type: ignore[attr-defined]
             if max_size_str:
                 try:
                     max_size_mb = float(max_size_str)
                     if max_size_mb < 0:
                         max_size_mb = MAX_FILE_SIZE_MB  # Reset invalid negative values
-                        self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore
+                        self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore[attr-defined]
                     if file_size_mb > max_size_mb:
                         return False
 
                     # Validate against absolute maximum
                     if max_size_mb > MAX_FILE_SIZE_MB:
                         max_size_mb = MAX_FILE_SIZE_MB
-                        self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore
+                        self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore[attr-defined]
                         return False
                 except ValueError:
                     # Invalid input, reset to empty
-                    self.max_file_size.set("")  # type: ignore
+                    self.max_file_size.set("")  # type: ignore[attr-defined]
                     return False
 
         except (ValueError, OSError):
@@ -90,7 +90,7 @@ class FileValidationMixin:
         """
         try:
             # Validate minimum size
-            min_size_str = self.min_file_size.get().strip()  # type: ignore
+            min_size_str = self.min_file_size.get().strip()  # type: ignore[attr-defined]
             if min_size_str:
                 min_size_mb = float(min_size_str)
                 if min_size_mb < 0:
@@ -98,7 +98,7 @@ class FileValidationMixin:
                         "Invalid Input",
                         "Minimum file size cannot be negative. Setting to 0 MB.",
                     )
-                    self.min_file_size.set("0")  # type: ignore
+                    self.min_file_size.set("0")  # type: ignore[attr-defined]
                     return False
                 if min_size_mb > MAX_FILE_SIZE_MB:
                     messagebox.showwarning(
@@ -106,11 +106,11 @@ class FileValidationMixin:
                         f"Minimum file size cannot exceed {MAX_FILE_SIZE_MB} MB. "
                         "Setting to 0 MB.",
                     )
-                    self.min_file_size.set("0")  # type: ignore
+                    self.min_file_size.set("0")  # type: ignore[attr-defined]
                     return False
 
             # Validate maximum size
-            max_size_str = self.max_file_size.get().strip()  # type: ignore
+            max_size_str = self.max_file_size.get().strip()  # type: ignore[attr-defined]
             if max_size_str:
                 max_size_mb = float(max_size_str)
                 if max_size_mb < 0:
@@ -119,7 +119,7 @@ class FileValidationMixin:
                         f"Maximum file size cannot be negative. Setting to "
                         f"{MAX_FILE_SIZE_MB} MB.",
                     )
-                    self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore
+                    self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore[attr-defined]
                     return False
                 if max_size_mb > MAX_FILE_SIZE_MB:
                     messagebox.showwarning(
@@ -127,7 +127,7 @@ class FileValidationMixin:
                         f"Maximum file size cannot exceed {MAX_FILE_SIZE_MB} MB. "
                         f"Setting to {MAX_FILE_SIZE_MB} MB.",
                     )
-                    self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore
+                    self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore[attr-defined]
                     return False
 
                 # Check if min > max
@@ -168,7 +168,7 @@ class FileValidationMixin:
         dest_path = dest_base
 
         # Organize by type
-        if self.organize_by_type_var.get():  # type: ignore
+        if self.organize_by_type_var.get():  # type: ignore[attr-defined]
             file_ext = Path(filename).suffix.lower()
             type_mapping = {
                 ".jpg": "Images",
@@ -195,15 +195,15 @@ class FileValidationMixin:
                 ".tar": "Archives",
             }
             file_type = type_mapping.get(file_ext, "Other")
-            dest_path = Path(dest_path) / file_type  # type: ignore
+            dest_path = Path(dest_path) / file_type  # type: ignore[assignment]
 
         # Organize by date
-        if self.organize_by_date_var.get():  # type: ignore
+        if self.organize_by_date_var.get():  # type: ignore[attr-defined]
             try:
                 mtime = os.path.getmtime(file_path)
                 date_folder = datetime.fromtimestamp(mtime).strftime("%Y/%m")
-                dest_path = Path(dest_path) / date_folder  # type: ignore
+                dest_path = Path(dest_path) / date_folder  # type: ignore[assignment]
             except OSError:
-                dest_path = Path(dest_path) / "Unknown_Date"  # type: ignore
+                dest_path = Path(dest_path) / "Unknown_Date"  # type: ignore[assignment]
 
         return str(Path(dest_path) / filename)

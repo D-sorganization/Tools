@@ -34,14 +34,14 @@ JaxArray = jnp.ndarray
 
 
 def clubhead_speed_objective(
-    torque_coeffs: JaxArray,  # type: ignore
+    torque_coeffs: JaxArray,  # type: ignore[valid-type]
     params: GolferParamsJAX,
-    initial_state: JaxArray,  # type: ignore
+    initial_state: JaxArray,  # type: ignore[valid-type]
     t_end: float,
     alpha: float = DEFAULT_ALPHA,
     beta: float = DEFAULT_BETA,
     dt: float = 0.005,
-) -> JaxArray:  # type: ignore
+) -> JaxArray:  # type: ignore[valid-type]
     """Objective function: maximize clubhead speed at impact.
 
     Parameters
@@ -64,21 +64,21 @@ def clubhead_speed_objective(
     neg_speed : JaxArray, shape ()
         Negative clubhead speed (for minimization)
     """
-    assert torque_coeffs.shape == (  # type: ignore
+    assert torque_coeffs.shape == (  # type: ignore[attr-defined]
         7,
-    ), f"Expected (7,) coeffs, got {torque_coeffs.shape}"  # type: ignore
+    ), f"Expected (7,) coeffs, got {torque_coeffs.shape}"  # type: ignore[attr-defined]
     assert t_end > 0, f"t_end must be positive, got {t_end}"
     assert dt > 0, f"dt must be positive, got {dt}"
-    assert initial_state.shape == (  # type: ignore
+    assert initial_state.shape == (  # type: ignore[attr-defined]
         16,
-    ), f"Expected (16,) state, got {initial_state.shape}"  # type: ignore
+    ), f"Expected (16,) state, got {initial_state.shape}"  # type: ignore[attr-defined]
     sol = run_single_simulation_jax(
         params, initial_state, t_end, torque_coeffs, alpha, beta, dt
     )
     final_state = extract_final_state(sol)
 
-    q = final_state[:8]  # type: ignore
-    qdot = final_state[8:]  # type: ignore
+    q = final_state[:8]  # type: ignore[index]
+    qdot = final_state[8:]  # type: ignore[index]
 
     # Compute clubhead velocity via FK Jacobian
     jacobians = analytical_fk_jacobians_jax(q, params)
@@ -87,18 +87,19 @@ def clubhead_speed_objective(
 
     speed = jnp.sqrt(v_tip[0] ** 2 + v_tip[1] ** 2)
 
-    return -speed  # minimize negative speed = maximize speed  # type: ignore
+    # minimize negative speed = maximize speed
+    return -speed  # type: ignore[no-any-return]
 
 
 def clubhead_velocity_at_final_time(
-    torque_coeffs: JaxArray,  # type: ignore
+    torque_coeffs: JaxArray,  # type: ignore[valid-type]
     params: GolferParamsJAX,
-    initial_state: JaxArray,  # type: ignore
+    initial_state: JaxArray,  # type: ignore[valid-type]
     t_end: float,
     alpha: float = DEFAULT_ALPHA,
     beta: float = DEFAULT_BETA,
     dt: float = 0.005,
-) -> JaxArray:  # type: ignore
+) -> JaxArray:  # type: ignore[valid-type]
     """Compute clubhead velocity magnitude at final time.
 
     Parameters
@@ -116,21 +117,21 @@ def clubhead_velocity_at_final_time(
     speed : JaxArray, shape ()
         Clubhead speed magnitude (positive)
     """
-    assert torque_coeffs.shape == (  # type: ignore
+    assert torque_coeffs.shape == (  # type: ignore[attr-defined]
         7,
-    ), f"Expected (7,) coeffs, got {torque_coeffs.shape}"  # type: ignore
+    ), f"Expected (7,) coeffs, got {torque_coeffs.shape}"  # type: ignore[attr-defined]
     assert t_end > 0, f"t_end must be positive, got {t_end}"
     assert dt > 0, f"dt must be positive, got {dt}"
-    assert initial_state.shape == (  # type: ignore
+    assert initial_state.shape == (  # type: ignore[attr-defined]
         16,
-    ), f"Expected (16,) state, got {initial_state.shape}"  # type: ignore
+    ), f"Expected (16,) state, got {initial_state.shape}"  # type: ignore[attr-defined]
     sol = run_single_simulation_jax(
         params, initial_state, t_end, torque_coeffs, alpha, beta, dt
     )
     final_state = extract_final_state(sol)
 
-    q = final_state[:8]  # type: ignore
-    qdot = final_state[8:]  # type: ignore
+    q = final_state[:8]  # type: ignore[index]
+    qdot = final_state[8:]  # type: ignore[index]
 
     jacobians = analytical_fk_jacobians_jax(q, params)
     J_tip = jacobians["club_tip"]
@@ -138,12 +139,12 @@ def clubhead_velocity_at_final_time(
 
     speed = jnp.sqrt(v_tip[0] ** 2 + v_tip[1] ** 2)
 
-    return speed  # type: ignore
+    return speed  # type: ignore[no-any-return]
 
 
 def optimize_torque_profile(
     params: GolferParamsJAX,
-    initial_state: JaxArray,  # type: ignore
+    initial_state: JaxArray,  # type: ignore[valid-type]
     t_end: float,
     n_coeffs_per_joint: int = 3,
     n_iterations: int = 100,
@@ -152,7 +153,7 @@ def optimize_torque_profile(
     beta: float = DEFAULT_BETA,
     dt: float = 0.005,
     seed: int = 42,
-) -> tuple[JaxArray, list[float]]:  # type: ignore
+) -> tuple[JaxArray, list[float]]:  # type: ignore[valid-type]
     """Optimize torque polynomial coefficients using Adam optimizer.
 
     Parameters
@@ -197,7 +198,7 @@ def optimize_torque_profile(
 
     @jax.jit
     @jax.value_and_grad
-    def loss_fn(coeffs):  # type: ignore
+    def loss_fn(coeffs):  # type: ignore[no-untyped-def]
         coeffs_reshaped = coeffs.reshape(7, n_coeffs_per_joint)
         # Use mean torque across coefficients as the single torque profile
         torque_simple = jnp.mean(coeffs_reshaped, axis=1)
@@ -219,9 +220,9 @@ def optimize_torque_profile(
             logger.info("Iteration %d/%d: loss = %.6f", i + 1, n_iterations, loss_val)
 
     optimal_coeffs = torque_coeffs.reshape(7, n_coeffs_per_joint)
-    assert (
-        len(history) == n_iterations
-    ), f"Expected {n_iterations} history entries, got {len(history)}"
+    assert len(history) == n_iterations, (
+        f"Expected {n_iterations} history entries, got {len(history)}"
+    )
     assert optimal_coeffs.shape == (7, n_coeffs_per_joint)
 
     return optimal_coeffs, history
@@ -229,7 +230,7 @@ def optimize_torque_profile(
 
 def optimize_simple_torque_profile(
     params: GolferParamsJAX,
-    initial_state: JaxArray,  # type: ignore
+    initial_state: JaxArray,  # type: ignore[valid-type]
     t_end: float,
     n_iterations: int = 100,
     learning_rate: float = 0.01,
@@ -237,7 +238,7 @@ def optimize_simple_torque_profile(
     beta: float = DEFAULT_BETA,
     dt: float = 0.005,
     seed: int = 42,
-) -> tuple[JaxArray, list[float]]:  # type: ignore
+) -> tuple[JaxArray, list[float]]:  # type: ignore[valid-type]
     """Optimize a simple torque profile (one coefficient per joint) using Adam.
 
     Parameters
@@ -278,10 +279,8 @@ def optimize_simple_torque_profile(
 
     @jax.jit
     @jax.value_and_grad
-    def loss_fn(coeffs):  # type: ignore
-        return clubhead_speed_objective(
-            coeffs, params, initial_state, t_end, alpha, beta, dt
-        )
+    def loss_fn(coeffs):  # type: ignore[no-untyped-def]
+        return clubhead_speed_objective(coeffs, params, initial_state, t_end, alpha, beta, dt)
 
     history = []
 
@@ -301,15 +300,15 @@ def optimize_simple_torque_profile(
 
 
 def compute_gradient_via_finite_difference(
-    torque_coeffs: JaxArray,  # type: ignore
+    torque_coeffs: JaxArray,  # type: ignore[valid-type]
     params: GolferParamsJAX,
-    initial_state: JaxArray,  # type: ignore
+    initial_state: JaxArray,  # type: ignore[valid-type]
     t_end: float,
     eps: float = 1e-5,
     alpha: float = DEFAULT_ALPHA,
     beta: float = DEFAULT_BETA,
     dt: float = 0.005,
-) -> JaxArray:  # type: ignore
+) -> JaxArray:  # type: ignore[valid-type]
     """Compute objective gradient via finite differences (for testing).
 
     Parameters
@@ -327,22 +326,20 @@ def compute_gradient_via_finite_difference(
     -------
     grad : JaxArray, shape (7,)
     """
-    assert torque_coeffs.shape == (  # type: ignore
+    assert torque_coeffs.shape == (  # type: ignore[attr-defined]
         7,
-    ), f"Expected (7,) coeffs, got {torque_coeffs.shape}"  # type: ignore
+    ), f"Expected (7,) coeffs, got {torque_coeffs.shape}"  # type: ignore[attr-defined]
     assert eps > 0, f"eps must be positive, got {eps}"
     grad = jnp.zeros(7)
 
-    f0 = clubhead_speed_objective(
-        torque_coeffs, params, initial_state, t_end, alpha, beta, dt
-    )
+    f0 = clubhead_speed_objective(torque_coeffs, params, initial_state, t_end, alpha, beta, dt)
 
     for i in range(7):
-        torque_plus = torque_coeffs.at[i].add(eps)  # type: ignore
+        torque_plus = torque_coeffs.at[i].add(eps)  # type: ignore[attr-defined]
         f_plus = clubhead_speed_objective(
             torque_plus, params, initial_state, t_end, alpha, beta, dt
         )
-        grad = grad.at[i].set((f_plus - f0) / eps)  # type: ignore
+        grad = grad.at[i].set((f_plus - f0) / eps)  # type: ignore[operator]
 
     assert grad.shape == (7,)
-    return grad  # type: ignore
+    return grad  # type: ignore[no-any-return]

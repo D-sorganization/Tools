@@ -20,7 +20,7 @@ try:
 
     HAS_PANDAS = True
 except ImportError:
-    pd = None  # type: ignore
+    pd = None
     HAS_PANDAS = False
 
 try:
@@ -28,7 +28,7 @@ try:
 
     HAS_SCIPY = True
 except ImportError:
-    scipy = None  # type: ignore
+    scipy = None
     HAS_SCIPY = False
 
 
@@ -115,7 +115,7 @@ class ConsoleEnvironment:
 
         try:
             # Execute within current namespace so imports/functions are persistent
-            exec(code, self.namespace)
+            exec(code, self.namespace)  # nosec B102
         except Exception as e:
             sys.stderr.write(f"Error loading user library: {e}\n")
 
@@ -143,13 +143,13 @@ class ConsoleEnvironment:
                 # Try to evaluate as an expression first for REPL output behavior
                 try:
                     code_obj = compile(source, "<console>", "eval")
-                    res = eval(code_obj, self.namespace)
+                    res = eval(code_obj, self.namespace)  # nosec B307
                     if res is not None:
                         sys.stdout.write(repr(res) + "\n")
                 except SyntaxError:
                     # Not an expression, try exec
                     code_obj = compile(source, "<console>", "exec")
-                    exec(code_obj, self.namespace)
+                    exec(code_obj, self.namespace)  # nosec B102
 
         except Exception:
             # Format exception similar to REPL

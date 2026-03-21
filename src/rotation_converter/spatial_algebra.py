@@ -209,7 +209,7 @@ def ID(
             v[i] = Xup[i] @ v[p_idx] + vJ
             a[i] = Xup[i] @ a[p_idx] + S * qdd[i] + crm(v[i]) @ vJ
 
-        f[i] = model.I[i] @ a[i] + crf(v[i]) @ (model.I[i] @ v[i])  # type: ignore
+        f[i] = model.I[i] @ a[i] + crf(v[i]) @ (model.I[i] @ v[i])
 
         if f_ext is not None and len(f_ext) > i and f_ext[i] is not None:
             f[i] = f[i] - f_ext[i]
@@ -220,7 +220,7 @@ def ID(
         parent = model.parent[i]
         if parent != 0:
             p_idx = parent - 1
-            f[p_idx] = f[p_idx] + Xup[i].T @ f[i]  # type: ignore
+            f[p_idx] = f[p_idx] + Xup[i].T @ f[i]
 
     return tau
 
@@ -282,7 +282,7 @@ def FDab(
             c[i] = crm(v[i]) @ vJ
 
         IA[i] = model.I[i].copy()
-        pA[i] = crf(v[i]) @ (model.I[i] @ v[i])  # type: ignore
+        pA[i] = crf(v[i]) @ (model.I[i] @ v[i])
 
         if f_ext is not None and len(f_ext) > i and f_ext[i] is not None:
             pA[i] = pA[i] - f_ext[i]
@@ -293,7 +293,7 @@ def FDab(
 
     # Pass 2: Articulated body inertias
     for i in range(NB - 1, -1, -1):
-        U[i] = IA[i] @ S_list[i]  # type: ignore
+        U[i] = IA[i] @ S_list[i]
         d[i] = float(S_list[i].T @ U[i])
         u[i] = float(tau[i] - S_list[i].T @ pA[i])
 
@@ -302,8 +302,8 @@ def FDab(
             p_idx = parent - 1
             Ia = IA[i] - np.outer(U[i], U[i]) / d[i]
             pa = pA[i] + Ia @ c[i] + U[i] * (u[i] / d[i])
-            IA[p_idx] = IA[p_idx] + Xup[i].T @ Ia @ Xup[i]  # type: ignore
-            pA[p_idx] = pA[p_idx] + Xup[i].T @ pa  # type: ignore
+            IA[p_idx] = IA[p_idx] + Xup[i].T @ Ia @ Xup[i]
+            pA[p_idx] = pA[p_idx] + Xup[i].T @ pa
 
     a = [np.zeros(6)] * NB
 
@@ -314,7 +314,7 @@ def FDab(
             a[i] = Xup[i] @ (-a_grav) + c[i]
         else:
             p_idx = parent - 1
-            a[i] = Xup[i] @ a[p_idx] + c[i]  # type: ignore
+            a[i] = Xup[i] @ a[p_idx] + c[i]
 
         qdd[i] = (u[i] - U[i].T @ a[i]) / d[i]
         a[i] = a[i] + S_list[i] * qdd[i]

@@ -89,7 +89,7 @@ except ImportError:
     BASE_CALCULATOR_AVAILABLE = False
 
     # Fallback to QWidget if BaseCalculatorWidget is not available
-    class BaseCalculatorWidget(QWidget):  # type: ignore
+    class BaseCalculatorWidget(QWidget):  # type: ignore[attr-defined]
         def __init__(self, *args: Any, **kwargs: Any) -> None:
             QWidget.__init__(self, *args, **kwargs)
 
@@ -327,12 +327,12 @@ class AcidGasDewpointCalculator:
             Vapor pressure in Pa
         """
         # DbC preconditions
-        assert isinstance(
-            temperature_c, (int, float)
-        ), f"temperature_c must be numeric, got {type(temperature_c).__name__}"
-        assert (
-            isinstance(component, str) and len(component) > 0
-        ), "component must be a non-empty string"
+        assert isinstance(temperature_c, (int, float)), (
+            f"temperature_c must be numeric, got {type(temperature_c).__name__}"
+        )
+        assert isinstance(component, str) and len(component) > 0, (
+            "component must be a non-empty string"
+        )
 
         if component not in self.antoine_constants:
             msg = f"Unknown component: {component}"

@@ -35,12 +35,12 @@ class SceneRenderMixin:
 
     def _render(self) -> None:
         """Render the current frame."""
-        if not self.renderer:  # type: ignore
+        if not self.renderer:  # type: ignore[attr-defined]
             return
-        renderer = self.renderer  # type: ignore
-        jd = self.time_manager.julian_date  # type: ignore
+        renderer = self.renderer  # type: ignore[attr-defined]
+        jd = self.time_manager.julian_date  # type: ignore[attr-defined]
 
-        if self.settings.stereo_view:  # type: ignore
+        if self.settings.stereo_view:  # type: ignore[attr-defined]
             self._render_stereo(renderer, jd)
             return
 
@@ -78,16 +78,16 @@ class SceneRenderMixin:
             julian_date: The current simulation time.
         """
         assert julian_date is not None, "julian_date must be provided"
-        if not self.renderer:  # type: ignore
+        if not self.renderer:  # type: ignore[attr-defined]
             return
-        renderer = self.renderer  # type: ignore
+        renderer = self.renderer  # type: ignore[attr-defined]
 
         renderer.render_stars()
         renderer.render_grid()
         renderer.render_axes()
 
-        if self.view_state.show_orbits:  # type: ignore
-            for planet in self.planets.values():  # type: ignore
+        if self.view_state.show_orbits:  # type: ignore[attr-defined]
+            for planet in self.planets.values():  # type: ignore[attr-defined]
                 if self._should_render_body(planet):
                     renderer.render_orbit(planet, julian_date)
 
@@ -101,20 +101,20 @@ class SceneRenderMixin:
     def _render_sun(self, renderer: Any, julian_date: float) -> None:
         """Render the Sun body and label."""
         assert julian_date is not None, "julian_date must be provided"
-        if self.sun:  # type: ignore
-            renderer.render_body(self.sun, julian_date, self.selected_body == self.sun)  # type: ignore
-        if self.view_state.show_labels:  # type: ignore
+        if self.sun:  # type: ignore[attr-defined]
+            renderer.render_body(self.sun, julian_date, self.selected_body == self.sun)  # type: ignore[attr-defined]
+        if self.view_state.show_labels:  # type: ignore[attr-defined]
             sun_pos = np.array([0, 0, 0])
             renderer.render_label("Sun", sun_pos, priority=3)
 
     def _render_planets(self, renderer: Any, julian_date: float) -> None:
         """Render all visible planets with labels."""
-        for planet in self.planets.values():  # type: ignore
+        for planet in self.planets.values():  # type: ignore[attr-defined]
             if not self._should_render_body(planet):
                 continue
-            is_selected = self.selected_body == planet  # type: ignore
+            is_selected = self.selected_body == planet  # type: ignore[attr-defined]
             renderer.render_body(planet, julian_date, is_selected)
-            if self.view_state.show_labels:  # type: ignore
+            if self.view_state.show_labels:  # type: ignore[attr-defined]
                 state = planet.get_state_at_time(julian_date)
                 pos = state.position * renderer.distance_scale
                 renderer.render_label(planet.name, pos, priority=3)
@@ -122,37 +122,37 @@ class SceneRenderMixin:
     def _render_minor_bodies(self, renderer: Any, julian_date: float) -> None:
         """Render asteroids, comets, and the asteroid belt."""
         assert julian_date is not None, "julian_date must be provided"
-        if not self.view_state.show_minor_bodies:  # type: ignore
+        if not self.view_state.show_minor_bodies:  # type: ignore[attr-defined]
             return
 
-        renderer.render_asteroid_belt(self.asteroid_belt_points)  # type: ignore
+        renderer.render_asteroid_belt(self.asteroid_belt_points)  # type: ignore[attr-defined]
 
-        for asteroid in self.asteroids.values():  # type: ignore
-            is_selected = self.selected_body == asteroid  # type: ignore
+        for asteroid in self.asteroids.values():  # type: ignore[attr-defined]
+            is_selected = self.selected_body == asteroid  # type: ignore[attr-defined]
             renderer.render_body(asteroid, julian_date, is_selected)
             state = asteroid.get_state_at_time(julian_date)
             pos = state.position * renderer.distance_scale
             dist_to_cam = np.linalg.norm(pos - np.array(renderer.camera.position))
-            if self.view_state.show_labels and (is_selected or dist_to_cam < 1.0):  # type: ignore
+            if self.view_state.show_labels and (is_selected or dist_to_cam < 1.0):  # type: ignore[attr-defined]
                 renderer.render_label(asteroid.name, pos, priority=1)
 
-        for comet in self.comets.values():  # type: ignore
-            is_selected = self.selected_body == comet  # type: ignore
+        for comet in self.comets.values():  # type: ignore[attr-defined]
+            is_selected = self.selected_body == comet  # type: ignore[attr-defined]
             renderer.render_body(comet, julian_date, is_selected)
-            if self.view_state.show_orbits:  # type: ignore
+            if self.view_state.show_orbits:  # type: ignore[attr-defined]
                 renderer.render_orbit(comet, julian_date, color=(0.6, 0.8, 1.0, 0.7))
             state = comet.get_state_at_time(julian_date)
             pos = state.position * renderer.distance_scale
             dist_to_cam = np.linalg.norm(pos - np.array(renderer.camera.position))
-            if self.view_state.show_labels and (is_selected or dist_to_cam < 3.0):  # type: ignore
+            if self.view_state.show_labels and (is_selected or dist_to_cam < 3.0):  # type: ignore[attr-defined]
                 renderer.render_label(comet.name, pos, priority=2)
 
     def _render_moons(self, renderer: Any, julian_date: float) -> None:
         """Render all moons with proximity-based labels."""
-        for moon in self.moons.values():  # type: ignore
-            is_selected = self.selected_body == moon  # type: ignore
+        for moon in self.moons.values():  # type: ignore[attr-defined]
+            is_selected = self.selected_body == moon  # type: ignore[attr-defined]
             renderer.render_body(moon, julian_date, is_selected)
-            if self.view_state.show_labels:  # type: ignore
+            if self.view_state.show_labels:  # type: ignore[attr-defined]
                 state = moon.get_state_at_time(julian_date)
                 pos = state.position * renderer.distance_scale
                 dist_to_cam = np.linalg.norm(pos - np.array(renderer.camera.position))
@@ -162,11 +162,11 @@ class SceneRenderMixin:
     def _render_trajectories(self, renderer: Any, julian_date: float) -> None:
         """Render active transfer trajectories and famous mission paths."""
         assert julian_date is not None, "julian_date must be provided"
-        if not self.view_state.show_trajectories:  # type: ignore
+        if not self.view_state.show_trajectories:  # type: ignore[attr-defined]
             return
-        for trajectory in self.trajectories:  # type: ignore
+        for trajectory in self.trajectories:  # type: ignore[attr-defined]
             renderer.render_trajectory(trajectory.trajectory_points)
-        for spacecraft in self.spacecraft.values():  # type: ignore
+        for spacecraft in self.spacecraft.values():  # type: ignore[attr-defined]
             if spacecraft.trajectory:
                 renderer.render_trajectory(
                     spacecraft.trajectory,
@@ -176,7 +176,7 @@ class SceneRenderMixin:
 
     def _render_spacecraft(self, renderer: Any, julian_date: float) -> None:
         """Render spacecraft markers and labels based on mission timeline."""
-        for spacecraft in self.spacecraft.values():  # type: ignore
+        for spacecraft in self.spacecraft.values():  # type: ignore[attr-defined]
             if not spacecraft.trajectory or len(spacecraft.trajectory) < 2:
                 continue
             start_time = spacecraft.trajectory[0].time
@@ -202,9 +202,9 @@ class SceneRenderMixin:
             julian_date: The current simulation time.
         """
         assert julian_date is not None, "julian_date must be provided"
-        if not self.renderer:  # type: ignore
+        if not self.renderer:  # type: ignore[attr-defined]
             return
-        renderer = self.renderer  # type: ignore
+        renderer = self.renderer  # type: ignore[attr-defined]
 
         self._render_sidebar(renderer, julian_date)
         self._render_unified_controls(renderer)
@@ -214,44 +214,44 @@ class SceneRenderMixin:
     def _render_sidebar(self, renderer: Any, julian_date: float) -> None:
         """Render the sidebar panel with active-tab content."""
         assert julian_date is not None, "julian_date must be provided"
-        if not self.sidebar_panel:  # type: ignore
+        if not self.sidebar_panel:  # type: ignore[attr-defined]
             return
 
-        content_key = self.sidebar_panel.tabs[  # type: ignore
-            self.sidebar_panel.current_tab_index  # type: ignore
+        content_key = self.sidebar_panel.tabs[  # type: ignore[attr-defined]
+            self.sidebar_panel.current_tab_index  # type: ignore[attr-defined]
         ].content_renderer_key
         content_data = self._get_sidebar_content_data(content_key, julian_date)
-        renderer.render_sidebar(self.sidebar_panel.get_render_data(), content_data)  # type: ignore
+        renderer.render_sidebar(self.sidebar_panel.get_render_data(), content_data)  # type: ignore[attr-defined]
 
     def _get_sidebar_content_data(
         self, content_key: str, julian_date: float
     ) -> dict[str, Any] | None:
         """Build the content data dict for the active sidebar tab."""
         assert content_key is not None, "content_key must be provided"
-        if content_key == "educational" and self.educational_panel:  # type: ignore
-            if self.selected_body:  # type: ignore
-                info = self.selected_body.get_info_dict_at_time(julian_date)  # type: ignore
-                self.educational_panel.set_body(self.selected_body.name, info)  # type: ignore
-            return self.educational_panel.get_render_data()  # type: ignore
+        if content_key == "educational" and self.educational_panel:  # type: ignore[attr-defined]
+            if self.selected_body:  # type: ignore[attr-defined]
+                info = self.selected_body.get_info_dict_at_time(julian_date)  # type: ignore[attr-defined]
+                self.educational_panel.set_body(self.selected_body.name, info)  # type: ignore[attr-defined]
+            return self.educational_panel.get_render_data()  # type: ignore[attr-defined,no-any-return]
 
-        if content_key == "checklist" and self.immersion_checklist:  # type: ignore
-            return self.immersion_checklist.get_render_data()  # type: ignore
+        if content_key == "checklist" and self.immersion_checklist:  # type: ignore[attr-defined]
+            return self.immersion_checklist.get_render_data()  # type: ignore[attr-defined,no-any-return]
 
-        if content_key == "history" and self.historical_events:  # type: ignore
-            return self.historical_events.get_render_data()  # type: ignore
+        if content_key == "history" and self.historical_events:  # type: ignore[attr-defined]
+            return self.historical_events.get_render_data()  # type: ignore[attr-defined,no-any-return]
 
-        if content_key == "missions" and self.missions_panel:  # type: ignore
-            return self.missions_panel.get_render_data(FAMOUS_MISSIONS)  # type: ignore
+        if content_key == "missions" and self.missions_panel:  # type: ignore[attr-defined]
+            return self.missions_panel.get_render_data(FAMOUS_MISSIONS)  # type: ignore[attr-defined,no-any-return]
 
         if content_key == "planets":
             bodies: list[dict[str, Any]] = []
-            bodies.append({"name": "Sun", "selected": self.selected_body == self.sun})  # type: ignore
+            bodies.append({"name": "Sun", "selected": self.selected_body == self.sun})  # type: ignore[attr-defined]
             for name in PLANET_ORDER:
-                if name in self.planets:  # type: ignore
+                if name in self.planets:  # type: ignore[attr-defined]
                     bodies.append(
                         {
                             "name": name,
-                            "selected": self.selected_body == self.planets[name],  # type: ignore
+                            "selected": self.selected_body == self.planets[name],  # type: ignore[attr-defined]
                         }
                     )
             return {"visible": True, "bodies": bodies}
@@ -260,33 +260,34 @@ class SceneRenderMixin:
 
     def _render_unified_controls(self, renderer: Any) -> None:
         """Render the unified control panel."""
-        if not self.unified_controls:  # type: ignore
+        if not self.unified_controls:  # type: ignore[attr-defined]
             return
-        time_data = self.time_nav_panel.get_render_data() if self.time_nav_panel else {}  # type: ignore
+        time_data = self.time_nav_panel.get_render_data() if self.time_nav_panel else {}  # type: ignore[attr-defined]
         renderer.render_unified_controls(
-            self.unified_controls.get_render_data(), time_data  # type: ignore
+            self.unified_controls.get_render_data(),
+            time_data,  # type: ignore[attr-defined]
         )
 
     def _render_floating_overlays(self, renderer: Any) -> None:
         """Render floating overlays (status bar, help, date picker)."""
         status = f"FPS: {renderer.get_fps():.0f}"
-        if self.selected_body:  # type: ignore
-            status += f"  |  Selected: {self.selected_body.name}"  # type: ignore
+        if self.selected_body:  # type: ignore[attr-defined]
+            status += f"  |  Selected: {self.selected_body.name}"  # type: ignore[attr-defined]
         renderer.render_status_bar(status)
 
         if (
-            self.view_state.show_help  # type: ignore
+            self.view_state.show_help  # type: ignore[attr-defined]
             and hasattr(self, "help_overlay")
             and self.help_overlay
         ):
             renderer.render_help_overlay(self.help_overlay.get_render_data())
 
-        if self.date_picker and self.date_picker.visible:  # type: ignore
-            renderer.render_date_picker(self.date_picker.get_render_data())  # type: ignore
+        if self.date_picker and self.date_picker.visible:  # type: ignore[attr-defined]
+            renderer.render_date_picker(self.date_picker.get_render_data())  # type: ignore[attr-defined]
 
     def _render_hud(self, renderer: Any) -> None:
         """Render HUD elements (speed indicator, compass)."""
-        renderer.render_speed_indicator(self.time_manager.time_warp)  # type: ignore
+        renderer.render_speed_indicator(self.time_manager.time_warp)  # type: ignore[attr-defined]
         renderer.render_compass(renderer.camera.yaw)
 
     def _should_render_body(self, body: Any) -> bool:
@@ -299,13 +300,13 @@ class SceneRenderMixin:
             True if the body is visible, False otherwise.
         """
         if body.name in INNER_PLANETS:
-            return self.view_state.show_inner_planets  # type: ignore
+            return self.view_state.show_inner_planets  # type: ignore[attr-defined,no-any-return]
         elif body.name in OUTER_PLANETS:
-            return self.view_state.show_outer_planets  # type: ignore
+            return self.view_state.show_outer_planets  # type: ignore[attr-defined,no-any-return]
         elif body.name in DWARF_PLANETS:
-            return self.view_state.show_dwarf_planets  # type: ignore
+            return self.view_state.show_dwarf_planets  # type: ignore[attr-defined,no-any-return]
         elif body.body_type == BodyType.MOON:
-            return self.view_state.show_minor_bodies  # type: ignore
+            return self.view_state.show_minor_bodies  # type: ignore[attr-defined,no-any-return]
         elif body.body_type in {BodyType.ASTEROID, BodyType.COMET}:
-            return self.view_state.show_minor_bodies  # type: ignore
+            return self.view_state.show_minor_bodies  # type: ignore[attr-defined,no-any-return]
         return True

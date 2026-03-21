@@ -35,11 +35,11 @@ from contracts import (
 
 
 @pytest.fixture(autouse=True)
-def _enforce_contracts() -> None:
+def _enforce_contracts() -> None:  # type: ignore[misc]
     """Ensure contracts are in ENFORCE mode for all tests."""
     original = get_contract_level()
     set_contract_level(ContractLevel.ENFORCE)
-    yield  # type: ignore[misc]
+    yield
     set_contract_level(original)
 
 

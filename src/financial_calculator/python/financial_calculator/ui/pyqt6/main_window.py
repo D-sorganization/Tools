@@ -342,9 +342,9 @@ class FinancialCalculatorMainWindow(QMainWindow):
         """Set up the user interface."""
         # Menu bar with Notes toggle — break into named intermediates (LoD)
         menu_bar = self.menuBar()
-        view_menu = menu_bar.addMenu("&View")  # type: ignore
-        notes_action = view_menu.addAction("Toggle &Notes")  # type: ignore
-        notes_action.triggered.connect(self._toggle_notes)  # type: ignore
+        view_menu = menu_bar.addMenu("&View")  # type: ignore[union-attr]
+        notes_action = view_menu.addAction("Toggle &Notes")  # type: ignore[union-attr]
+        notes_action.triggered.connect(self._toggle_notes)  # type: ignore[union-attr]
 
         central = QWidget()
         self.setCentralWidget(central)

@@ -69,7 +69,7 @@ class FormatConverterMixin:
             df = DataReader.read_file(first_file, format_type)
             columns = df.columns.tolist()
 
-            dialog = ColumnSelectionDialog(self, columns)  # type: ignore
+            dialog = ColumnSelectionDialog(self, columns)  # type: ignore[attr-defined]
             if dialog.result:
                 self.converter_selected_columns = set(dialog.result)
                 self.converter_use_all_columns_var.set(False)
@@ -92,7 +92,7 @@ class FormatConverterMixin:
         parent_tab.grid_rowconfigure(0, weight=1)
 
         # Create the splitter (assumes self._create_splitter exists on the mixing class)
-        splitter_frame = self._create_splitter(  # type: ignore
+        splitter_frame = self._create_splitter(  # type: ignore[attr-defined]
             parent_tab,
             self._create_converter_left_panel,
             self._create_converter_right_panel,
@@ -674,8 +674,8 @@ class FormatConverterMixin:
         timestamp = datetime.now().strftime("%H:%M:%S")
         log_message = f"[{timestamp}] {message}\n"
         # self.after would be available on the class mixing in this one (ctk.CTkFrame)
-        self.after(0, lambda: self.converter_log_text.insert("end", log_message))  # type: ignore
-        self.after(0, lambda: self.converter_log_text.see("end"))  # type: ignore
+        self.after(0, lambda: self.converter_log_text.insert("end", log_message))  # type: ignore[attr-defined]
+        self.after(0, lambda: self.converter_log_text.see("end"))  # type: ignore[attr-defined]
 
     def converter_clear_log(self) -> None:
         """Clear the conversion log."""
@@ -701,7 +701,7 @@ class FormatConverterMixin:
 
     def show_parquet_analyzer(self) -> None:
         """Show the parquet analyzer dialog."""
-        dialog = ParquetAnalyzerDialog(self)  # type: ignore
+        dialog = ParquetAnalyzerDialog(self)  # type: ignore[attr-defined]
         dialog.grab_set()
 
     # Stub for method expected on self

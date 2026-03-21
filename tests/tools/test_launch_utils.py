@@ -72,7 +72,7 @@ def test_validate_path_dbc_non_path_root(tmp_path):
     f = tmp_path / "tool.py"
     f.write_text("x = 1")
     with pytest.raises(PreconditionError):
-        validate_and_sanitize_path("tool.py", str(tmp_path))  # type: ignore[arg-type]
+        validate_and_sanitize_path("tool.py", str(tmp_path))
 
 
 def test_validate_path_dbc_relative_root():
@@ -110,7 +110,7 @@ def test_launch_python_tool_debug_mode(mock_popen, tmp_path):
 
 def test_launch_python_tool_dbc_non_path(tmp_path):
     with pytest.raises(PreconditionError):
-        launch_python_tool("not_a_path.py", "T")  # type: ignore[arg-type]
+        launch_python_tool("not_a_path.py", "T")
 
 
 def test_launch_python_tool_dbc_empty_name(tmp_path):
@@ -138,7 +138,7 @@ def test_launch_matlab_tool_not_found_opens_file(mock_popen, tmp_path):
 
 def test_launch_matlab_tool_dbc_non_path(tmp_path):
     with pytest.raises(PreconditionError):
-        launch_matlab_tool("not_a_path.m", "T")  # type: ignore[arg-type]
+        launch_matlab_tool("not_a_path.m", "T")
 
 
 # ─── launch_octave_tool ────────────────────────────────────────
@@ -158,7 +158,7 @@ def test_launch_octave_tool_not_found_opens_file(mock_popen, tmp_path):
 
 def test_launch_octave_tool_dbc_non_path():
     with pytest.raises(PreconditionError):
-        launch_octave_tool("not_a_path.m", "T")  # type: ignore[arg-type]
+        launch_octave_tool("not_a_path.m", "T")
 
 
 # ─── launch_browser_tool ───────────────────────────────────────
@@ -176,7 +176,7 @@ def test_launch_browser_tool_success(mock_open, tmp_path):
 
 def test_launch_browser_tool_dbc_non_path():
     with pytest.raises(PreconditionError):
-        launch_browser_tool("not_a_path.html")  # type: ignore[arg-type]
+        launch_browser_tool("not_a_path.html")
 
 
 # ─── launch_batch_tool ─────────────────────────────────────────
@@ -213,7 +213,7 @@ def test_launch_batch_tool_wrong_extension_windows(tmp_path):
 
 def test_launch_batch_tool_dbc_non_path():
     with pytest.raises(PreconditionError):
-        launch_batch_tool("not_a_path.bat", "script")  # type: ignore[arg-type]
+        launch_batch_tool("not_a_path.bat", "script")
 
 
 def test_launch_batch_tool_dbc_empty_name(tmp_path):
@@ -283,12 +283,12 @@ def test_launch_tool_file_type_non_windows(mock_popen, tmp_path):
 
 def test_launch_tool_dbc_rejects_non_dict():
     with pytest.raises(PreconditionError):
-        launch_tool("not a dict", Path.cwd())  # type: ignore[arg-type]
+        launch_tool("not a dict", Path.cwd())
 
 
 def test_launch_tool_dbc_rejects_non_path():
     with pytest.raises(PreconditionError):
-        launch_tool({"name": "x"}, "/not/a/Path/object")  # type: ignore[arg-type]
+        launch_tool({"name": "x"}, "/not/a/Path/object")
 
 
 # ─── _stream_reader DbC ────────────────────────────────────────
@@ -299,7 +299,7 @@ def test_stream_reader_dbc_none_stream():
     from tools.launch_utils import _stream_reader
 
     with pytest.raises(PreconditionError):
-        _stream_reader(None, "[OUT]", print)  # type: ignore[arg-type]
+        _stream_reader(None, "[OUT]", print)
 
 
 def test_stream_reader_dbc_non_string_prefix():
@@ -309,7 +309,7 @@ def test_stream_reader_dbc_non_string_prefix():
     from tools.launch_utils import _stream_reader
 
     with pytest.raises(PreconditionError):
-        _stream_reader(io.StringIO("line"), 123, print)  # type: ignore[arg-type]
+        _stream_reader(io.StringIO("line"), 123, print)
 
 
 def test_stream_reader_dbc_non_callable_log_func():
@@ -319,7 +319,7 @@ def test_stream_reader_dbc_non_callable_log_func():
     from tools.launch_utils import _stream_reader
 
     with pytest.raises(PreconditionError):
-        _stream_reader(io.StringIO("line"), "[OUT]", "not_callable")  # type: ignore[arg-type]
+        _stream_reader(io.StringIO("line"), "[OUT]", "not_callable")
 
 
 def test_stream_reader_forwards_lines():

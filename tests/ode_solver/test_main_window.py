@@ -69,19 +69,19 @@ class TestParseDictInput:
         """Passing a non-str raises TypeError (DbC)."""
         mock_self = MagicMock(spec=ODESolverWindow)
         with pytest.raises(TypeError, match="text must be str"):
-            ODESolverWindow._parse_dict_input(mock_self, 42)  # type: ignore[arg-type]
+            ODESolverWindow._parse_dict_input(mock_self, 42)
 
     def test_type_error_for_none(self) -> None:
         """Passing None raises TypeError (DbC) — replaces old assert None check."""
         mock_self = MagicMock(spec=ODESolverWindow)
         with pytest.raises(TypeError, match="text must be str"):
-            ODESolverWindow._parse_dict_input(mock_self, None)  # type: ignore[arg-type]
+            ODESolverWindow._parse_dict_input(mock_self, None)
 
     def test_type_error_for_list(self) -> None:
         """Passing a list raises TypeError (DbC)."""
         mock_self = MagicMock(spec=ODESolverWindow)
         with pytest.raises(TypeError, match="text must be str"):
-            ODESolverWindow._parse_dict_input(mock_self, ["k: 1"])  # type: ignore[arg-type]
+            ODESolverWindow._parse_dict_input(mock_self, ["k: 1"])
 
 
 class TestOnPresetChangedPreconditions:
@@ -96,13 +96,13 @@ class TestOnPresetChangedPreconditions:
         """Passing a non-str raises TypeError (DbC)."""
         mock_self = MagicMock(spec=ODESolverWindow)
         with pytest.raises(TypeError, match="preset_name must be str"):
-            ODESolverWindow._on_preset_changed(mock_self, 123)  # type: ignore[arg-type]
+            ODESolverWindow._on_preset_changed(mock_self, 123)
 
     def test_type_error_for_none(self) -> None:
         """Passing None raises TypeError (DbC) — replaces old assert None check."""
         mock_self = MagicMock(spec=ODESolverWindow)
         with pytest.raises(TypeError, match="preset_name must be str"):
-            ODESolverWindow._on_preset_changed(mock_self, None)  # type: ignore[arg-type]
+            ODESolverWindow._on_preset_changed(mock_self, None)
 
     def test_value_error_for_empty_string(self) -> None:
         """Passing an empty string raises ValueError (DbC)."""

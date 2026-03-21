@@ -45,9 +45,9 @@ def test_pass_out_of_bounds_returns_false():
 
 def test_pass_context_dbc_rejects_bad_args():
     with pytest.raises(PreconditionError):
-        is_legitimate_pass_context("not a list", 1)  # type: ignore[arg-type]
+        is_legitimate_pass_context("not a list", 1)
     with pytest.raises(PreconditionError):
-        is_legitimate_pass_context([], "1")  # type: ignore[arg-type]
+        is_legitimate_pass_context([], "1")
 
 
 # ─── is_legitimate_tkinter_binding ─────────────────────────────
@@ -69,7 +69,7 @@ def test_non_tkinter_line_not_legitimate():
 
 def test_tkinter_binding_dbc_rejects_non_string():
     with pytest.raises(PreconditionError):
-        is_legitimate_tkinter_binding(123)  # type: ignore[arg-type]
+        is_legitimate_tkinter_binding(123)
 
 
 # ─── strip_comments_from_line ───────────────────────────────────
@@ -97,7 +97,7 @@ def test_strip_no_comment():
 
 def test_strip_dbc_rejects_non_string():
     with pytest.raises(PreconditionError):
-        strip_comments_from_line(None)  # type: ignore[arg-type]
+        strip_comments_from_line(None)
 
 
 # ─── check_banned_patterns ─────────────────────────────────────
@@ -124,9 +124,9 @@ def test_check_banned_skips_quality_utils_itself():
 
 def test_check_banned_dbc_rejects_bad_types():
     with pytest.raises(PreconditionError):
-        check_banned_patterns("not a list", Path("f.py"))  # type: ignore[arg-type]
+        check_banned_patterns("not a list", Path("f.py"))
     with pytest.raises(PreconditionError):
-        check_banned_patterns([], "not_a_path")  # type: ignore[arg-type]
+        check_banned_patterns([], "not_a_path")
 
 
 # ─── check_magic_numbers ────────────────────────────────────────
@@ -153,7 +153,7 @@ def test_check_magic_numbers_skips_excluded():
 
 def test_check_magic_dbc_rejects_bad_types():
     with pytest.raises(PreconditionError):
-        check_magic_numbers("not a list", Path("f.py"))  # type: ignore[arg-type]
+        check_magic_numbers("not a list", Path("f.py"))
 
 
 # ─── check_ast_issues ───────────────────────────────────────────
