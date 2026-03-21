@@ -1,6 +1,10 @@
 """Tests for the ChartDataDialog dialog."""
 
 import pytest
+
+pytest.importorskip("PyQt6", reason="PyQt6 not installed")
+pytest.importorskip("pytestqt", reason="pytest-qt required for widget tests")
+
 from PyQt6.QtWidgets import QDialogButtonBox
 
 from double_pendulum_golf.gui.chart_data_dialog import ChartDataDialog
