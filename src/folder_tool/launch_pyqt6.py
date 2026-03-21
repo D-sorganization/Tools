@@ -44,7 +44,11 @@ except ImportError:
         if args:
             command.extend(args)
         return subprocess.run(
-            command, cwd=str(cwd) if cwd else None, timeout=timeout, check=check
+            command,
+            cwd=str(cwd) if cwd else None,
+            timeout=timeout,
+            check=check,
+            text=True,
         )
 
     def get_logger(
