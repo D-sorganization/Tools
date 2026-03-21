@@ -24,15 +24,12 @@ References:
 
 from __future__ import annotations
 
-import logging
 import math
 from typing import Any
 
 import numpy as np
 
 from rotation_converter._contracts import ensure, require, require_finite
-
-_logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Internal helpers (DRY — shared across multiple functions)
@@ -975,8 +972,64 @@ def ad(V):
     ]
 
 
+def _inverse_dynamics_forward_pass(
+    n, thetalist, dthetalist, ddthetalist, g, Mlist, Slist
+):
+    """Forward pass of Newton-Euler inverse dynamics.
+
+    Propagates velocities and accelerations from the base to the tip.
+
+    :return: (Mi, Ai, AdTi, Vi, Vdi) — intermediate kinematic quantities
+    """
+    Mi = np.eye(4)
+    Ai = np.zeros((6, n))
+    AdTi = [[None]] * (n + 1)
+    Vi = np.zeros((6, n + 1))
+    Vdi = np.zeros((6, n + 1))
+    Vdi[:, 0] = np.r_[[0, 0, 0], -np.array(g)]
+    AdTi[n] = Adjoint(TransInv(Mlist[n]))
+    for i in range(n):
+        Mi = np.dot(Mi, Mlist[i])
+        Ai[:, i] = np.dot(Adjoint(TransInv(Mi)), np.array(Slist)[:, i])
+        AdTi[i] = Adjoint(
+            np.dot(MatrixExp6(VecTose3(Ai[:, i] * -thetalist[i])), TransInv(Mlist[i]))
+        )
+        Vi[:, i + 1] = np.dot(AdTi[i], Vi[:, i]) + Ai[:, i] * dthetalist[i]
+        Vdi[:, i + 1] = (
+            np.dot(AdTi[i], Vdi[:, i])
+            + Ai[:, i] * ddthetalist[i]
+            + np.dot(ad(Vi[:, i + 1]), Ai[:, i]) * dthetalist[i]
+        )
+    return Ai, AdTi, Vi, Vdi
+
+
+def _inverse_dynamics_backward_pass(n, Ftip, Ai, AdTi, Vi, Vdi, Glist):
+    """Backward pass of Newton-Euler inverse dynamics.
+
+    Propagates forces from the tip back to the base to compute joint torques.
+
+    :return: taulist — n-vector of required joint forces/torques
+    """
+    Fi = np.array(Ftip).copy()
+    taulist = np.zeros(n)
+    for i in range(n - 1, -1, -1):
+        Fi = (
+            np.dot(np.array(AdTi[i + 1]).T, Fi)
+            + np.dot(np.array(Glist[i]), Vdi[:, i + 1])
+            - np.dot(
+                np.array(ad(Vi[:, i + 1])).T, np.dot(np.array(Glist[i]), Vi[:, i + 1])
+            )
+        )
+        taulist[i] = np.dot(np.array(Fi).T, Ai[:, i])
+    return taulist
+
+
 def InverseDynamics(thetalist, dthetalist, ddthetalist, g, Ftip, Mlist, Glist, Slist):
-    """Computes inverse dynamics in the space frame for an open chain robot
+    """Computes inverse dynamics in the space frame for an open chain robot.
+
+    Uses forward-backward Newton-Euler iterations to solve:
+    taulist = Mlist(thetalist)ddthetalist + c(thetalist,dthetalist)
+              + g(thetalist) + Jtr(thetalist)Ftip
 
     :param thetalist: n-vector of joint variables
     :param dthetalist: n-vector of joint rates
@@ -990,10 +1043,6 @@ def InverseDynamics(thetalist, dthetalist, ddthetalist, g, Ftip, Mlist, Glist, S
     :param Slist: Screw axes Si of the joints in a space frame, in the format
                   of a matrix with axes as the columns
     :return: The n-vector of required joint forces/torques
-    This function uses forward-backward Newton-Euler iterations to solve the
-    equation:
-    taulist = Mlist(thetalist)ddthetalist + c(thetalist,dthetalist) \
-              + g(thetalist) + Jtr(thetalist)Ftip
 
     Example Input (3 Link Robot):
         thetalist = np.array([0.1, 0.1, 0.1])
@@ -1001,26 +1050,6 @@ def InverseDynamics(thetalist, dthetalist, ddthetalist, g, Ftip, Mlist, Glist, S
         ddthetalist = np.array([2, 1.5, 1])
         g = np.array([0, 0, -9.8])
         Ftip = np.array([1, 1, 1, 1, 1, 1])
-        M01 = np.array([[1, 0, 0,        0],
-                        [0, 1, 0,        0],
-                        [0, 0, 1, 0.089159],
-                        [0, 0, 0,        1]])
-        M12 = np.array([[ 0, 0, 1,    0.28],
-                        [ 0, 1, 0, 0.13585],
-                        [-1, 0, 0,       0],
-                        [ 0, 0, 0,       1]])
-        M23 = np.array([[1, 0, 0,       0],
-                        [0, 1, 0, -0.1197],
-                        [0, 0, 1,   0.395],
-                        [0, 0, 0,       1]])
-        M34 = np.array([[1, 0, 0,       0],
-                        [0, 1, 0,       0],
-                        [0, 0, 1, 0.14225],
-                        [0, 0, 0,       1]])
-        G1 = np.diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7])
-        G2 = np.diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393])
-        G3 = np.diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275])
-        Glist = np.array([G1, G2, G3])
         Mlist = np.array([M01, M12, M23, M34])
         Slist = np.array([[1, 0, 1,      0, 1,     0],
                           [0, 1, 0, -0.089, 0,     0],
@@ -1030,37 +1059,10 @@ def InverseDynamics(thetalist, dthetalist, ddthetalist, g, Ftip, Mlist, Glist, S
     """
     assert thetalist is not None, "thetalist must be provided"
     n = len(thetalist)
-    Mi = np.eye(4)
-    Ai = np.zeros((6, n))
-    AdTi = [[None]] * (n + 1)
-    Vi = np.zeros((6, n + 1))
-    Vdi = np.zeros((6, n + 1))
-    Vdi[:, 0] = np.r_[[0, 0, 0], -np.array(g)]
-    AdTi[n] = Adjoint(TransInv(Mlist[n]))
-    Fi = np.array(Ftip).copy()
-    taulist = np.zeros(n)
-    for i in range(n):
-        Mi = np.dot(Mi, Mlist[i])
-        Ai[:, i] = np.dot(Adjoint(TransInv(Mi)), np.array(Slist)[:, i])
-        AdTi[i] = Adjoint(
-            np.dot(MatrixExp6(VecTose3(Ai[:, i] * -thetalist[i])), TransInv(Mlist[i]))
-        )
-        Vi[:, i + 1] = np.dot(AdTi[i], Vi[:, i]) + Ai[:, i] * dthetalist[i]
-        Vdi[:, i + 1] = (
-            np.dot(AdTi[i], Vdi[:, i])
-            + Ai[:, i] * ddthetalist[i]
-            + np.dot(ad(Vi[:, i + 1]), Ai[:, i]) * dthetalist[i]
-        )
-    for i in range(n - 1, -1, -1):
-        Fi = (
-            np.dot(np.array(AdTi[i + 1]).T, Fi)
-            + np.dot(np.array(Glist[i]), Vdi[:, i + 1])
-            - np.dot(
-                np.array(ad(Vi[:, i + 1])).T, np.dot(np.array(Glist[i]), Vi[:, i + 1])
-            )
-        )
-        taulist[i] = np.dot(np.array(Fi).T, Ai[:, i])
-    return taulist
+    Ai, AdTi, Vi, Vdi = _inverse_dynamics_forward_pass(
+        n, thetalist, dthetalist, ddthetalist, g, Mlist, Slist
+    )
+    return _inverse_dynamics_backward_pass(n, Ftip, Ai, AdTi, Vi, Vdi, Glist)
 
 
 def MassMatrix(thetalist, Mlist, Glist, Slist):
@@ -1459,7 +1461,7 @@ def InverseDynamicsTrajectory(
         try:
             import matplotlib.pyplot as plt
         except ImportError:
-            _logger.warning('The result will not be plotted due to a lack of package matplotlib')
+            print('The result will not be plotted due to a lack of package matplotlib')
         else:
             plt.plot(timestamp, Tau1, label = "Tau1")
             plt.plot(timestamp, Tau2, label = "Tau2")
@@ -1578,7 +1580,7 @@ def ForwardDynamicsTrajectory(
             try:
                 import matplotlib.pyplot as plt
         except ImportError:
-            _logger.warning('The result will not be plotted due to a lack of package matplotlib')
+            print('The result will not be plotted due to a lack of package matplotlib')
         else:
             plt.plot(timestamp, theta1, label = "Theta1")
             plt.plot(timestamp, theta2, label = "Theta2")
