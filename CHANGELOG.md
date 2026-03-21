@@ -11,11 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Comprehensive assessment framework (A-O) with 15 quality categories
 - Executive summary (Highlight) assessment template
+- `src/shared/python/deprecation.py`: shared `@deprecated` decorator for marking
+  functions scheduled for removal; emits `DeprecationWarning` with optional
+  `reason` and `removal_version` parameters
 
 ### Changed
 
 - README: Fixed title from "Golf Biomechanics" to "Tools Monorepo"
 - README: Clarified primary launcher entry point
+- `pyproject.toml`: bumped package version from `0.3.0` to `1.0.0` to align
+  with the semantic-versioning baseline established in CHANGELOG [1.0.0]
+- `src/shared/python/programmatic_pid/__init__.py`: bumped `__version__` from
+  `0.3.0` to `1.0.0` to match package-level version
 
 ### Fixed
 
