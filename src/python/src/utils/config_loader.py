@@ -3,15 +3,58 @@ Shared configuration loading utility for consistent configuration management.
 
 This module provides reusable functions for loading and managing configuration
 across the repository, following DRY principles.
+
+Includes XDG Base Directory Specification support via ``get_xdg_config_dir``.
 """
 
 import logging
+import os
+import sys
 from pathlib import Path
 from typing import Any
 
 from .file_utils import safe_read_json, safe_write_json
 
 logger = logging.getLogger(__name__)
+
+
+def get_xdg_config_dir(app_name: str) -> Path:
+    """Return the XDG-compliant configuration directory for *app_name*.
+
+    Follows the XDG Base Directory Specification:
+    - Linux/macOS: ``$XDG_CONFIG_HOME/<app_name>`` (defaults to
+      ``~/.config/<app_name>`` when ``XDG_CONFIG_HOME`` is not set).
+    - Windows: ``%APPDATA%/<app_name>`` (defaults to
+      ``~/.config/<app_name>`` when ``APPDATA`` is not set).
+
+    The directory is **not** created by this function — the caller is
+    responsible for creating it when needed.
+
+    Args:
+        app_name: Application name used as the subdirectory.  Must be a
+            non-empty string and must not contain path separators.
+
+    Returns:
+        Absolute ``Path`` to the application configuration directory.
+
+    Raises:
+        TypeError: If *app_name* is not a string.
+        ValueError: If *app_name* is empty or contains path separators.
+    """
+    if not isinstance(app_name, str):
+        raise TypeError(f"app_name must be a str, got {type(app_name).__name__}")
+    if not app_name:
+        raise ValueError("app_name must not be empty")
+    if "/" in app_name or "\\" in app_name:
+        raise ValueError(f"app_name must not contain path separators, got {app_name!r}")
+
+    if sys.platform == "win32":
+        base = Path(os.environ.get("APPDATA") or Path.home() / ".config")
+    else:
+        xdg_home = os.environ.get("XDG_CONFIG_HOME", "")
+        base = Path(xdg_home) if xdg_home else Path.home() / ".config"
+
+    return base / app_name
 
 
 class ConfigLoader:
@@ -44,7 +87,10 @@ class ConfigLoader:
         if self._config is not None and not reload:
             return self._config
 
-        self._config = safe_read_json(self.config_path, self.default_config.copy())
+        loaded = safe_read_json(self.config_path, self.default_config.copy())
+        self._config = (
+            loaded if isinstance(loaded, dict) else self.default_config.copy()
+        )
         return self._config
 
     def get(self, key: str, default: Any = None) -> Any:
@@ -84,15 +130,13 @@ class ConfigLoader:
         assert key is not None, "key must be provided"
         if self._config is None:
             self.load()
-
-        keys = key.split(".")
-        config = self._config
-
-        # Navigate to the parent dict
         if self._config is None:
             self._config = {}
-        config = self._config
 
+        keys = key.split(".")
+        config: dict[str, Any] = self._config
+
+        # Navigate to the parent dict
         for k in keys[:-1]:
             if k not in config:
                 config[k] = {}
