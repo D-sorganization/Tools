@@ -169,7 +169,7 @@ class FastHasher:
                 return cls.full_hash(file_path)
 
             # For larger files, hash size + first chunk + last chunk
-            hasher = hashlib.md5()
+            hasher = hashlib.md5(usedforsecurity=False)
             hasher.update(str(size).encode())
 
             with file_path.open("rb") as f:
@@ -191,7 +191,7 @@ class FastHasher:
     def full_hash(cls, file_path: Path) -> str:
         """Generate full file hash for exact duplicate detection."""
         try:
-            hasher = hashlib.md5()
+            hasher = hashlib.md5(usedforsecurity=False)
             with file_path.open("rb") as f:
                 while chunk := f.read(cls.CHUNK_SIZE):
                     hasher.update(chunk)

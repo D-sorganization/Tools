@@ -231,7 +231,7 @@ def safe_eval(
 
     tree = validate_expression(expression, allowed_names)
     code = compile(tree, "<safe_eval>", "eval")
-    return eval(code, {"__builtins__": {}}, namespace)  # noqa: S307
+    return eval(code, {"__builtins__": {}}, namespace)  # noqa: S307  # nosec B307
 
 
 def safe_eval_math(
