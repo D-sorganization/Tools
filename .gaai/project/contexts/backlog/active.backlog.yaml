@@ -1110,7 +1110,8 @@ items:
   - id: GH1686
     title: "Assessment: type:ignore count rose from 724 to 1147 (58% increase)"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T22:47:09Z"
     github_issue: 1686
     artefact: .gaai/project/contexts/artefacts/stories/GH1686.story.md
     dependencies: []
