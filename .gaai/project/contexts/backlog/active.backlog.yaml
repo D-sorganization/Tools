@@ -1055,8 +1055,12 @@ items:
   - id: GH1700
     title: "Assessment: Pragmatic Programmer — Broken Windows in contracts module import paths"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-22T22:27:55Z"
+    completed_at: "2026-03-22T22:36:43Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1725"
+    pr_number: 1725
+    pr_status: "open"
     github_issue: 1700
     artefact: .gaai/project/contexts/artefacts/stories/GH1700.story.md
     dependencies: []
