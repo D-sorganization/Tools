@@ -970,11 +970,12 @@ items:
     title: "Assessment: Pragmatic Programmer — Decoupling (calculate_pressure_drop has 4 definitions)"
     priority: medium
     status: done
-    started_at: "2026-03-22T22:04:42Z"
+    started_at: "2026-03-22T15:04:42-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1718"
     pr_number: 1718
     pr_status: "open"
-    completed_at: "2026-03-22T22:11:13Z"
+    completed_at: "2026-03-22T15:11:21-07:00"
+    cost_usd: 1.7095
     github_issue: 1705
     artefact: .gaai/project/contexts/artefacts/stories/GH1705.story.md
     dependencies: []
