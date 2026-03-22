@@ -1086,11 +1086,12 @@ items:
     title: "Assessment: 304 noqa suppressions in src/ — audit for stale entries"
     priority: medium
     status: done
-    started_at: "2026-03-22T22:37:33Z"
-    completed_at: "2026-03-22T22:45:28Z"
+    started_at: "2026-03-22T15:41:23-07:00"
+    completed_at: "2026-03-22T15:45:28-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1727"
     pr_number: 1727
     pr_status: "open"
+    cost_usd: 1.5564
     github_issue: 1698
     artefact: .gaai/project/contexts/artefacts/stories/GH1698.story.md
     dependencies: []
