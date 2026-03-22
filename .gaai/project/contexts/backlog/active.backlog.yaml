@@ -865,7 +865,8 @@ items:
   - id: GH1692
     title: "Assessment: 10 god classes with 25+ methods in shared library"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T21:35:48Z"
     github_issue: 1692
     artefact: .gaai/project/contexts/artefacts/stories/GH1692.story.md
     dependencies: []
