@@ -996,11 +996,12 @@ items:
     title: "Assessment: Pragmatic Programmer — Design by Contract maturity is strong but enforcement inconsistent"
     priority: medium
     status: done
-    started_at: "2026-03-22T22:14:20Z"
-    completed_at: "2026-03-22T22:23:47Z"
+    started_at: "2026-03-22T15:14:20-07:00"
+    completed_at: "2026-03-22T15:23:47-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1722"
     pr_number: 1722
     pr_status: "open"
+    cost_usd: 2.4999
     github_issue: 1704
     artefact: .gaai/project/contexts/artefacts/stories/GH1704.story.md
     dependencies: []
