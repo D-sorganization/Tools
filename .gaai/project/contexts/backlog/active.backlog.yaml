@@ -1125,8 +1125,12 @@ items:
   - id: GH1685
     title: "Assessment: 25 files fail ruff format check on staging"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-22T22:49:07Z"
+    completed_at: "2026-03-22T22:52:21Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1729"
+    pr_number: 1729
+    pr_status: "open"
     github_issue: 1685
     artefact: .gaai/project/contexts/artefacts/stories/GH1685.story.md
     dependencies: []
