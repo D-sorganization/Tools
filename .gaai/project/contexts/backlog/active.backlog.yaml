@@ -1125,7 +1125,8 @@ items:
   - id: GH1685
     title: "Assessment: 25 files fail ruff format check on staging"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T22:49:07Z"
     github_issue: 1685
     artefact: .gaai/project/contexts/artefacts/stories/GH1685.story.md
     dependencies: []
