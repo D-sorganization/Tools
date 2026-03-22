@@ -841,11 +841,12 @@ items:
     title: "Assessment: 6 src/ files use xml.etree.ElementTree without defusedxml for parsing"
     priority: medium
     status: done
-    started_at: "2026-03-22T21:25:13Z"
-    completed_at: "2026-03-22T21:34:57Z"
+    started_at: "2026-03-22T14:25:13-07:00"
+    completed_at: "2026-03-22T14:34:57-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1712"
     pr_number: 1712
     pr_status: "open"
+    cost_usd: 3.0362
     github_issue: 1694
     artefact: .gaai/project/contexts/artefacts/stories/GH1694.story.md
     dependencies: []
