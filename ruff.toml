@@ -40,7 +40,8 @@ exclude = [
 # I = isort (Import sorting)
 # B = flake8-bugbear (Catches likely bugs/traps)
 # UP = pyupgrade (Modernizes old Python syntax)
-select = ["E", "F", "W", "I", "B", "UP"]
+# T201 = print statement detection (no print() in library src/)
+select = ["E", "F", "W", "I", "B", "UP", "T201"]
 
 # Ignore:
 # D = pydocstyle (We let the 'Doc-Scribe' agent handle docstrings, so we don't lint them strictly here)
@@ -54,9 +55,10 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 [lint.per-file-ignores]
 # Ignore "unused imports" in __init__.py files (common pattern)
 "__init__.py" = ["F401"]
-# Allow assertions in tests
+# Allow assertions in tests; allow print() in tests that explicitly test stdout capture
 "tests/*" = ["S101"]
 "**/tests/*" = ["S101", "E402"]
+"tests/test_test_utils.py" = ["T201"]
 "**/*.py" = ["E501"]
 # Ignore boolean argument warnings in replicants
 "replicants/**/*.py" = ["FBT001"]
@@ -67,6 +69,11 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # Scripts use print() for CLI output - this is intentional and correct
 "scripts/**/*.py" = ["T201"]
 "scripts/*.py" = ["T201"]
+# Root-level CLI launcher scripts use print() for terminal output - this is intentional
+"launch.py" = ["T201"]
+"verify_launcher.py" = ["T201"]
+# Jupyter notebooks use print() for output display - this is intentional and correct
+"**/*.ipynb" = ["T201"]
 
 [lint.isort]
 # Tells Ruff how to group your own code vs. libraries
