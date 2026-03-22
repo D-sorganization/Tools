@@ -850,7 +850,8 @@ items:
   - id: GH1693
     title: "Assessment: 6 files duplicated between urdf_builder_gui/ and urdf_builder_gui/python/"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T21:32:53Z"
     github_issue: 1693
     artefact: .gaai/project/contexts/artefacts/stories/GH1693.story.md
     dependencies: []
