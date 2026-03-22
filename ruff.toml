@@ -40,7 +40,7 @@ exclude = [
 # I = isort (Import sorting)
 # B = flake8-bugbear (Catches likely bugs/traps)
 # UP = pyupgrade (Modernizes old Python syntax)
-# T201 = print statement detection (no print() in library src/)
+# T201 = print() detection (src/ must use logging, not print)
 select = ["E", "F", "W", "I", "B", "UP", "T201"]
 
 # Ignore:
@@ -69,11 +69,14 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # Scripts use print() for CLI output - this is intentional and correct
 "scripts/**/*.py" = ["T201"]
 "scripts/*.py" = ["T201"]
-# Root-level CLI launcher scripts use print() for terminal output - this is intentional
+# Root-level launcher and utility scripts use print() for CLI output
 "launch.py" = ["T201"]
 "verify_launcher.py" = ["T201"]
 # Jupyter notebooks use print() for output display - this is intentional and correct
 "**/*.ipynb" = ["T201"]
+# Tests intentionally use print() for capturing stdout in test assertions
+"tests/**/*.py" = ["T201"]
+"tests/*.py" = ["T201"]
 
 [lint.isort]
 # Tells Ruff how to group your own code vs. libraries

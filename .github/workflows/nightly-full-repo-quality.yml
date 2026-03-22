@@ -1,0 +1,225 @@
+name: Nightly Full-Repo Quality
+
+# Non-blocking informational job: runs full-repo ruff lint, ruff format check,
+# mypy type check, and print() audit across the entire codebase.
+#
+# The delta-only CI (ci-standard.yml) only checks changed files, which means
+# accumulated violations in untouched files are never caught. This workflow
+# catches those violations as a tracking metric, preventing the ratchet problem.
+#
+# This job NEVER fails CI — all steps use continue-on-error: true.
+# Violation counts are reported in GITHUB_STEP_SUMMARY for trend tracking.
+#
+# Resolves: https://github.com/D-sorganization/Tools/issues/1697
+
+on:
+  schedule:
+    # Weekly on Sundays at 3 AM UTC (Sunday night/Monday morning)
+    - cron: "0 3 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  full-repo-quality:
+    name: Full-Repo Quality Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Quality Tools
+        run: |
+          pip install --upgrade pip
+          pip install "ruff==0.14.10" "mypy==1.13.0"
+
+      - name: Full-Repo Ruff Lint
+        continue-on-error: true
+        id: ruff_lint
+        run: |
+          echo "## Full-Repo Ruff Lint" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Run ruff and capture output + exit code
+          set +e
+          ruff check . --output-format=concise 2>&1 | tee ruff_lint_output.txt
+          RUFF_EXIT=$?
+          set -e
+
+          VIOLATION_COUNT=$(grep -c '\.py:' ruff_lint_output.txt 2>/dev/null || echo "0")
+
+          if [ "$RUFF_EXIT" -eq 0 ]; then
+            echo "✅ **Ruff lint: 0 violations** — full repo is clean." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Ruff lint violations detected (informational — not blocking CI)**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Total violations | $VIOLATION_COUNT |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Top Violations (first 50)" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            head -50 ruff_lint_output.txt >> $GITHUB_STEP_SUMMARY || true
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Note:** The following directories are excluded from ruff.toml and not counted above:" >> $GITHUB_STEP_SUMMARY
+            echo "- \`src/data_processing\`" >> $GITHUB_STEP_SUMMARY
+            echo "- \`src/document_processing\`" >> $GITHUB_STEP_SUMMARY
+            echo "- \`src/scientific_modeling\`" >> $GITHUB_STEP_SUMMARY
+            echo "- \`src/pendulum_simulator\`" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Full-Repo Ruff Format Check
+        continue-on-error: true
+        id: ruff_format
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Full-Repo Ruff Format Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          set +e
+          ruff format --check . 2>&1 | tee ruff_format_output.txt
+          FORMAT_EXIT=$?
+          set -e
+
+          FORMAT_COUNT=$(grep -c 'Would reformat' ruff_format_output.txt 2>/dev/null || echo "0")
+
+          if [ "$FORMAT_EXIT" -eq 0 ]; then
+            echo "✅ **Ruff format: 0 files need reformatting** — full repo is clean." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Format violations detected (informational — not blocking CI)**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Files needing reformat | $FORMAT_COUNT |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Files Needing Reformat" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            grep 'Would reformat' ruff_format_output.txt >> $GITHUB_STEP_SUMMARY || true
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Full-Repo Mypy Type Check
+        continue-on-error: true
+        id: mypy_check
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Full-Repo Mypy Type Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          set +e
+          # Exclude same legacy directories as ci-standard.yml
+          export MYPYPATH=src:src/python/src
+          mypy src/ \
+            --ignore-missing-imports \
+            --exclude "src/electrode_advisor/" \
+            --exclude "src/shared/python/" \
+            --exclude "src/function_generator/" \
+            --exclude "src/data_processing/" \
+            --exclude "src/glass_bath_fea/" \
+            --exclude "src/tools/folder_tools/" \
+            2>&1 | tee mypy_output.txt
+          MYPY_EXIT=$?
+          set -e
+
+          ERROR_COUNT=$(grep -c ': error:' mypy_output.txt 2>/dev/null || echo "0")
+          NOTE_COUNT=$(grep -c ': note:' mypy_output.txt 2>/dev/null || echo "0")
+
+          if [ "$MYPY_EXIT" -eq 0 ]; then
+            echo "✅ **Mypy: 0 type errors** — full repo src/ is clean." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Mypy type errors detected (informational — not blocking CI)**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Type errors | $ERROR_COUNT |" >> $GITHUB_STEP_SUMMARY
+            echo "| Notes | $NOTE_COUNT |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Top Errors (first 50)" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            grep ': error:' mypy_output.txt | head -50 >> $GITHUB_STEP_SUMMARY || true
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Excluded from check (known legacy):** src/electrode_advisor, src/shared/python, src/function_generator, src/data_processing, src/glass_bath_fea, src/tools/folder_tools" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Print Audit (src/)
+        continue-on-error: true
+        id: print_audit
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Print() Audit — src/" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Detects print() calls in src/ that should use logging instead." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Find print() calls in src/ Python files (exclude comments and test files)
+          set +e
+          grep -rn --include="*.py" "^\s*print(" src/ 2>/dev/null | tee print_audit.txt
+          set -e
+
+          PRINT_COUNT=$(wc -l < print_audit.txt 2>/dev/null || echo "0")
+          PRINT_FILE_COUNT=$(cut -d: -f1 print_audit.txt 2>/dev/null | sort -u | wc -l || echo "0")
+
+          if [ "$PRINT_COUNT" -eq 0 ]; then
+            echo "✅ **Print audit: 0 print() calls found** — src/ uses logging correctly." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **print() calls detected (informational — not blocking CI)**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Total print() occurrences | $PRINT_COUNT |" >> $GITHUB_STEP_SUMMARY
+            echo "| Files affected | $PRINT_FILE_COUNT |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Files with print() (first 30)" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            head -30 print_audit.txt >> $GITHUB_STEP_SUMMARY || true
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: type:ignore Audit
+        continue-on-error: true
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## type:ignore Comment Audit" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Tracks accumulated type:ignore comments that may no longer be needed." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          set +e
+          IGNORE_COUNT=$(grep -rn --include="*.py" "type:\s*ignore" src/ 2>/dev/null | wc -l || echo "0")
+          set -e
+
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Total type:ignore comments in src/ | $IGNORE_COUNT |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "$IGNORE_COUNT" -gt 100 ]; then
+            echo "⚠️ High count of type:ignore comments — consider running full mypy to verify they are still needed." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ type:ignore count is within reasonable range." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Quality Audit Summary
+        if: always()
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "## Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "This is an **informational report** — it does not block CI." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Use these counts to track ratchet accumulation and prioritize cleanup work." >> $GITHUB_STEP_SUMMARY
+          echo "Run the delta CI (ci-standard.yml) to block on new violations in changed files." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "*Generated by Nightly Full-Repo Quality workflow (GH1697)*" >> $GITHUB_STEP_SUMMARY
