@@ -10,7 +10,7 @@ Enforcement Levels (controlled via ``DBC_LEVEL`` environment variable):
 
 Usage (function-call style)::
 
-    from src.shared.python.contracts import require, ensure
+    from contracts import require, ensure
 
     def calculate_pressure_drop(flow_rate: float, diameter: float) -> float:
         require(flow_rate > 0, "flow_rate must be positive", flow_rate)
@@ -21,7 +21,7 @@ Usage (function-call style)::
 
 Usage (decorator style)::
 
-    from src.shared.python.contracts import precondition, postcondition
+    from contracts import precondition, postcondition
 
     @precondition(lambda self, t: t > 0, "temperature must be positive")
     @postcondition(lambda r: r >= 0, "result must be non-negative")

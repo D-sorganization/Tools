@@ -18,7 +18,7 @@ from __future__ import annotations
 
 # Try the fleet-shared contracts module first (monorepo editable install)
 try:
-    from src.shared.python.contracts import (  # type: ignore[import]
+    from contracts import (
         ContractLevel,
         ContractViolationError,
         InvariantError,
