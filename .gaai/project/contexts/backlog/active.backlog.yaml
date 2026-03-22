@@ -1070,8 +1070,12 @@ items:
   - id: GH1699
     title: "Assessment: Cross-repo integration tests pass but lack Gasification_Model coverage"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-22T22:33:39Z"
+    completed_at: "2026-03-22T22:39:22Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1726"
+    pr_number: 1726
+    pr_status: "open"
     github_issue: 1699
     artefact: .gaai/project/contexts/artefacts/stories/GH1699.story.md
     dependencies: []
