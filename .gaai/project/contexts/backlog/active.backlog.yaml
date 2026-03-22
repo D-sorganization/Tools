@@ -1080,7 +1080,8 @@ items:
   - id: GH1698
     title: "Assessment: 304 noqa suppressions in src/ — audit for stale entries"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T22:37:33Z"
     github_issue: 1698
     artefact: .gaai/project/contexts/artefacts/stories/GH1698.story.md
     dependencies: []
