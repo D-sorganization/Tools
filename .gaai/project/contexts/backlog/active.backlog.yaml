@@ -1020,7 +1020,8 @@ items:
   - id: GH1702
     title: "Assessment: Pragmatic Programmer — Orthogonality (E501 globally suppressed)"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T22:22:04Z"
     github_issue: 1702
     artefact: .gaai/project/contexts/artefacts/stories/GH1702.story.md
     dependencies: []
