@@ -94,7 +94,6 @@ dev = [
     "pytest-timeout>=2.0.0",
     "pytest-benchmark>=4.0.0",
     "ruff>=0.1.0",
-    "black>=23.0.0",
     "mypy>=1.0.0",
 ]
 
@@ -140,10 +139,6 @@ select = ["E", "F", "B", "UP", "I", "T201"]
 
 [tool.ruff.lint.per-file-ignores]
 "**/*.ipynb" = ["E402", "T201"]
-
-[tool.black]
-line-length = 88
-target-version = ['py310']
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "src"]
