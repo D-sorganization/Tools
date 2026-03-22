@@ -88,9 +88,7 @@ class SupportPolygon:
         """Compute minimum distance from point to the polygon edge."""
         assert point is not None, "point must be provided"
         if not self.contains(point):
-            return (
-                -1.0
-            )  # Or positive distance to polygon? Convention usually margin > 0 is stable.
+            return -1.0  # Or positive distance to polygon? Convention usually margin > 0 is stable.
             # If outside, negative margin.
 
         px, py = point
@@ -134,7 +132,7 @@ class HumanoidModel:
         links: dict[str, GeneratedLink],
         joints: list[GeneratedJoint],
         root_link_name: str = "pelvis",
-    ):
+    ) -> None:
         assert links is not None, "links must be provided"
         self.links = links
         self.joints = joints

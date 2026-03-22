@@ -258,7 +258,9 @@ class DisplayPreviewPanel(QGroupBox):
 
     display_changed = pyqtSignal(str, bool)
 
-    def __init__(self, preferences: UserPreferences, parent: QWidget | None = None):
+    def __init__(
+        self, preferences: UserPreferences, parent: QWidget | None = None
+    ) -> None:
         assert preferences is not None, "preferences must be provided"
         super().__init__("Display Preview", parent)
         self._preferences = preferences
