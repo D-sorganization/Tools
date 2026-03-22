@@ -795,7 +795,8 @@ items:
   - id: GH1697
     title: "Assessment: CI only delta-checks — full-repo ruff/mypy/format violations go undetected"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T21:11:42Z"
     github_issue: 1697
     artefact: .gaai/project/contexts/artefacts/stories/GH1697.story.md
     dependencies: []
