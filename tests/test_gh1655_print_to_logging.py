@@ -87,20 +87,24 @@ class TestNoUnguardedPrintInSrc:
 
 
 class TestRuffT201Configured:
-    """Verify T201 (print-statement) rule is enabled in ruff config."""
+    """Verify T201 (print-statement) rule is enabled in ruff config.
+
+    ruff.toml is the authoritative ruff configuration (takes precedence over
+    pyproject.toml). Tests read from ruff.toml directly.
+    """
 
     def test_t201_in_ruff_select(self) -> None:
-        """pyproject.toml must include T201 in ruff lint select."""
+        """ruff.toml must include T201 in lint select."""
         try:
             import tomllib
         except ImportError:
             import tomli as tomllib  # type: ignore[no-redef]
 
-        pyproject = Path(__file__).parents[1] / "pyproject.toml"
-        config = tomllib.loads(pyproject.read_text())
-        lint_select = config["tool"]["ruff"]["lint"]["select"]
+        ruff_toml = Path(__file__).parents[1] / "ruff.toml"
+        config = tomllib.loads(ruff_toml.read_text())
+        lint_select = config["lint"]["select"]
         assert "T201" in lint_select, (
-            "T201 must be in [tool.ruff.lint] select to enforce no-print policy"
+            "T201 must be in [lint] select in ruff.toml to enforce no-print policy"
         )
 
     def test_notebooks_excluded_from_t201(self) -> None:
@@ -110,10 +114,11 @@ class TestRuffT201Configured:
         except ImportError:
             import tomli as tomllib  # type: ignore[no-redef]
 
-        pyproject = Path(__file__).parents[1] / "pyproject.toml"
-        config = tomllib.loads(pyproject.read_text())
-        per_file = config["tool"]["ruff"]["lint"].get("per-file-ignores", {})
+        ruff_toml = Path(__file__).parents[1] / "ruff.toml"
+        config = tomllib.loads(ruff_toml.read_text())
+        per_file = config["lint"].get("per-file-ignores", {})
         notebook_ignores = per_file.get("**/*.ipynb", [])
         assert "T201" in notebook_ignores, (
-            "**/*.ipynb must have T201 in per-file-ignores (print is valid in Jupyter notebooks)"
+            "**/*.ipynb must have T201 in per-file-ignores in ruff.toml "
+            "(print is valid in Jupyter notebooks)"
         )
