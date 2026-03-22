@@ -796,11 +796,12 @@ items:
     title: "Assessment: CI only delta-checks — full-repo ruff/mypy/format violations go undetected"
     priority: medium
     status: done
-    started_at: "2026-03-22T21:11:42Z"
-    completed_at: "2026-03-22T21:18:34Z"
+    started_at: "2026-03-22T14:11:42-07:00"
+    completed_at: "2026-03-22T14:18:53-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1709"
     pr_number: 1709
     pr_status: "open"
+    cost_usd: 1.5255
     github_issue: 1697
     artefact: .gaai/project/contexts/artefacts/stories/GH1697.story.md
     dependencies: []
