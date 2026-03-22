@@ -1035,7 +1035,8 @@ items:
   - id: GH1701
     title: "Assessment: Pragmatic Programmer — Tracer Bullets (test coverage at 40% threshold)"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T22:24:59Z"
     github_issue: 1701
     artefact: .gaai/project/contexts/artefacts/stories/GH1701.story.md
     dependencies: []
