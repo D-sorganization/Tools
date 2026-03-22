@@ -930,8 +930,12 @@ items:
   - id: GH1708
     title: "Comprehensive A-O + Pragmatic Programmer Assessment — 2026-03-22"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-22T21:57:53Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1716"
+    pr_number: 1716
+    pr_status: "open"
+    completed_at: "2026-03-22T22:02:42Z"
     github_issue: 1708
     artefact: .gaai/project/contexts/artefacts/stories/GH1708.story.md
     dependencies: []
