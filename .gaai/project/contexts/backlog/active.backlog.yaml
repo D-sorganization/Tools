@@ -979,3 +979,48 @@ items:
     artefact: .gaai/project/contexts/artefacts/stories/GH1699.story.md
     dependencies: []
     created_at: 2026-03-22
+
+  - id: GH1698
+    title: "Assessment: 304 noqa suppressions in src/ — audit for stale entries"
+    priority: medium
+    status: refined
+    github_issue: 1698
+    artefact: .gaai/project/contexts/artefacts/stories/GH1698.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1687
+    title: "Assessment: 27 test collection errors — folder_tool and programmatic_pid suites broken"
+    priority: medium
+    status: refined
+    github_issue: 1687
+    artefact: .gaai/project/contexts/artefacts/stories/GH1687.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1686
+    title: "Assessment: type:ignore count rose from 724 to 1147 (58% increase)"
+    priority: medium
+    status: refined
+    github_issue: 1686
+    artefact: .gaai/project/contexts/artefacts/stories/GH1686.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1685
+    title: "Assessment: 25 files fail ruff format check on staging"
+    priority: medium
+    status: refined
+    github_issue: 1685
+    artefact: .gaai/project/contexts/artefacts/stories/GH1685.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1684
+    title: "Assessment: ruff.toml lacks T201 rule — print() calls bypass CI linting"
+    priority: medium
+    status: refined
+    github_issue: 1684
+    artefact: .gaai/project/contexts/artefacts/stories/GH1684.story.md
+    dependencies: []
+    created_at: 2026-03-22
