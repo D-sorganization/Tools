@@ -969,7 +969,8 @@ items:
   - id: GH1705
     title: "Assessment: Pragmatic Programmer — Decoupling (calculate_pressure_drop has 4 definitions)"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T22:04:42Z"
     github_issue: 1705
     artefact: .gaai/project/contexts/artefacts/stories/GH1705.story.md
     dependencies: []
