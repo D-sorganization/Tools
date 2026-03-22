@@ -1006,11 +1006,12 @@ items:
     title: "Assessment: Pragmatic Programmer — Reversibility (pyproject.toml still references Black)"
     priority: medium
     status: done
-    started_at: "2026-03-22T22:18:12Z"
-    completed_at: "2026-03-22T22:21:04Z"
+    started_at: "2026-03-22T15:18:12-07:00"
+    completed_at: "2026-03-22T15:21:04-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1721"
     pr_number: 1721
     pr_status: "open"
+    cost_usd: 0.5996
     github_issue: 1703
     artefact: .gaai/project/contexts/artefacts/stories/GH1703.story.md
     dependencies: []
