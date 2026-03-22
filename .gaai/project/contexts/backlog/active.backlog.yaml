@@ -1145,7 +1145,8 @@ items:
   - id: GH1684
     title: "Assessment: ruff.toml lacks T201 rule — print() calls bypass CI linting"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T22:53:56Z"
     github_issue: 1684
     artefact: .gaai/project/contexts/artefacts/stories/GH1684.story.md
     dependencies: []
