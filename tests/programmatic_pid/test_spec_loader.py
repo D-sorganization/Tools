@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("ezdxf")
 from programmatic_pid.spec_loader import (
     SpecAccessor,
     get_layout_config,

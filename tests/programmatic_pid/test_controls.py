@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-import ezdxf
 import pytest
+
+ezdxf = pytest.importorskip("ezdxf")
 from programmatic_pid.controls import (
     add_control_loops,
     orthogonal_control_route,
