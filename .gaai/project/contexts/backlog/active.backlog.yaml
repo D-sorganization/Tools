@@ -901,11 +901,12 @@ items:
     title: "Assessment: Dual ruff config (ruff.toml + pyproject.toml) with conflicting rules"
     priority: medium
     status: done
-    started_at: "2026-03-22T21:44:25Z"
-    completed_at: "2026-03-22T21:50:51Z"
+    started_at: "2026-03-22T14:44:25-07:00"
+    completed_at: "2026-03-22T14:50:51-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1714"
     pr_number: 1714
     pr_status: "open"
+    cost_usd: 1.2065
     github_issue: 1689
     artefact: .gaai/project/contexts/artefacts/stories/GH1689.story.md
     dependencies: []
