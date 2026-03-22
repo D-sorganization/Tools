@@ -900,7 +900,8 @@ items:
   - id: GH1689
     title: "Assessment: Dual ruff config (ruff.toml + pyproject.toml) with conflicting rules"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T21:44:25Z"
     github_issue: 1689
     artefact: .gaai/project/contexts/artefacts/stories/GH1689.story.md
     dependencies: []
