@@ -218,43 +218,43 @@ class TestGUIRegistryContracts:
     # register contracts
 
     def test_register_empty_tool_name(self, registry: GUIRegistry) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             registry.register("", "My Tool", "desc", _sample_config())
 
     def test_register_non_string_tool_name(self, registry: GUIRegistry) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             registry.register(123, "My Tool", "desc", _sample_config())
 
     def test_register_empty_display_name(self, registry: GUIRegistry) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             registry.register("tool_x", "", "desc", _sample_config())
 
     def test_register_non_dict_configs(self, registry: GUIRegistry) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             registry.register("tool_x", "Name", "desc", [])
 
     def test_register_empty_configs(self, registry: GUIRegistry) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             registry.register("tool_x", "Name", "desc", {})
 
     def test_register_non_string_description(self, registry: GUIRegistry) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             registry.register("tool_x", "Name", None, _sample_config())
 
     def test_register_empty_category(self, registry: GUIRegistry) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             registry.register("tool_x", "Name", "desc", _sample_config(), category="")
@@ -262,13 +262,13 @@ class TestGUIRegistryContracts:
     # unregister contracts
 
     def test_unregister_empty_name(self, registry: GUIRegistry) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             registry.unregister("")
 
     def test_unregister_non_string(self, registry: GUIRegistry) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             registry.unregister(None)
@@ -276,13 +276,13 @@ class TestGUIRegistryContracts:
     # get contracts
 
     def test_get_empty_name(self, registry: GUIRegistry) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             registry.get("")
 
     def test_get_non_string(self, registry: GUIRegistry) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             registry.get(42)
@@ -290,13 +290,13 @@ class TestGUIRegistryContracts:
     # get_config contracts
 
     def test_get_config_empty_tool_name(self, registry: GUIRegistry) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             registry.get_config("", GUIType.PYQT6)
 
     def test_get_config_non_guitype(self, registry: GUIRegistry) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             registry.get_config("tool_x", "pyqt6")
@@ -304,14 +304,14 @@ class TestGUIRegistryContracts:
     # auto_discover_guis contracts
 
     def test_auto_discover_non_list(self) -> None:
-        from src.shared.python.contracts import PreconditionError
-        from src.shared.python.gui_launcher.registry import auto_discover_guis
+        from contracts import PreconditionError
+        from gui_launcher.registry import auto_discover_guis
 
         with pytest.raises(PreconditionError):
             auto_discover_guis("/not/a/list")  # type: ignore[arg-type]
 
     def test_auto_discover_empty_list_returns_zero(self) -> None:
-        from src.shared.python.gui_launcher.registry import auto_discover_guis
+        from gui_launcher.registry import auto_discover_guis
 
         count = auto_discover_guis([])
         assert count == 0

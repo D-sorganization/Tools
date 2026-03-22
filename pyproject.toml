@@ -107,6 +107,13 @@ dwsim-model = "dwsim_model.__main__:main"
 Homepage = "https://github.com/D-sorganization/Tools"
 Repository = "https://github.com/D-sorganization/Tools"
 
+[tool.setuptools]
+# Bare modules in src/shared/python that are not packages (no __init__.py).
+# setuptools packages.find only discovers packages; these must be listed
+# explicitly so they are included in pip install ud-tools.
+# See: https://github.com/D-sorganization/Tools/issues/1695
+py-modules = ["contracts", "cors", "deprecation", "safe_eval"]
+
 [tool.setuptools.packages.find]
 where = ["src/shared/python", "src/python/src", "src"]
 include = [
