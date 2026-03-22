@@ -805,7 +805,8 @@ items:
   - id: GH1696
     title: "Assessment: Large __init__.py files act as god modules (up to 611 lines)"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T21:11:46Z"
     github_issue: 1696
     artefact: .gaai/project/contexts/artefacts/stories/GH1696.story.md
     dependencies: []
