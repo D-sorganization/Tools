@@ -1005,7 +1005,8 @@ items:
   - id: GH1703
     title: "Assessment: Pragmatic Programmer — Reversibility (pyproject.toml still references Black)"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T22:18:12Z"
     github_issue: 1703
     artefact: .gaai/project/contexts/artefacts/stories/GH1703.story.md
     dependencies: []
