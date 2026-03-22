@@ -376,7 +376,7 @@ class URDFTextEditor(TextEditorDiffMixin):
 
         try:
             DefusedET.fromstring(self._content)
-        except ET.ParseError as e:
+        except DefusedET.ParseError as e:
             # Parse error message for line/column
             error_str = str(e)
             line, col = 1, 0
@@ -407,7 +407,7 @@ class URDFTextEditor(TextEditorDiffMixin):
 
         try:
             root = DefusedET.fromstring(self._content)
-        except ET.ParseError:
+        except DefusedET.ParseError:
             return messages  # Already reported in XML validation
 
         if not self._validate_root_element(root, messages):
@@ -938,7 +938,7 @@ class URDFTextEditor(TextEditorDiffMixin):
             formatted = '<?xml version="1.0"?>\n' + formatted
 
             return self.set_content(formatted, "Format XML")
-        except ET.ParseError as e:
+        except DefusedET.ParseError as e:
             return [
                 ValidationMessage(
                     severity=ValidationSeverity.ERROR,

@@ -9,14 +9,16 @@ from __future__ import annotations
 
 import logging
 import re
-import xml.etree.ElementTree as ET
 import zipfile
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import defusedxml.ElementTree as DefusedET
+
+if TYPE_CHECKING:
+    import xml.etree.ElementTree as ET
 
 logger = logging.getLogger(__name__)
 
@@ -334,7 +336,7 @@ class MDLParser:
         try:
             tree = DefusedET.parse(file)
             root = tree.getroot()
-        except ET.ParseError as e:
+        except DefusedET.ParseError as e:
             model.warnings.append(f"XML parse error: {e}")
             return
 
@@ -589,7 +591,7 @@ class MDLParser:
                 root = DefusedET.fromstring(content)
                 self._parse_slx_blocks(root, model)
                 self._parse_slx_connections(root, model)
-            except ET.ParseError as e:
+            except DefusedET.ParseError as e:
                 model.warnings.append(f"XML parse error: {e}")
         else:
             # Parse as MDL text
