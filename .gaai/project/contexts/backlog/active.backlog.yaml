@@ -825,8 +825,12 @@ items:
   - id: GH1695
     title: "Assessment: cors.py import regression FIXED — but contracts not in requirements.txt"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-22T21:19:26Z"
+    completed_at: "2026-03-22T21:31:45Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1711"
+    pr_number: 1711
+    pr_status: "open"
     github_issue: 1695
     artefact: .gaai/project/contexts/artefacts/stories/GH1695.story.md
     dependencies: []
