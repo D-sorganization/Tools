@@ -127,33 +127,31 @@ def add_equipment(
 
 
 # ---------------------------------------------------------------------------
-# Sheet generators
+# Sheet generators — private helpers
 # ---------------------------------------------------------------------------
 
 
-def generate_process_sheet(
-    spec_path: str | Path,
-    out_path: str | Path,
-    svg_path: str | Path | None = None,
-    profile: str | None = "presentation",
-    prepared_spec: dict[str, Any] | None = None,
-) -> None:
-    """Generate the process (Sheet 1) DXF and optional SVG."""
-    assert spec_path is not None, "spec_path must be provided"
-    if prepared_spec is None:
-        spec = prepare_spec(spec_path, profile)
-    else:
-        spec = deepcopy(prepared_spec)
+def _setup_process_doc(
+    spec: dict[str, Any],
+) -> tuple[Any, Any, dict[str, Any], dict[str, Any], str, str, str, str, float, float]:
+    """Create ezdxf document, resolve layers, and compute layout/text config.
 
+    Parameters
+    ----------
+    spec : dict[str, Any]
+        Prepared specification dictionary.
+
+    Returns
+    -------
+    (doc, msp, t, layout_regions, text_layer, notes_layer,
+     instrument_layer, leader_layer, arrow_size, bubble_radius)
+    """
+    assert spec is not None, "spec must be provided"
     doc = ezdxf.new(setup=True)
     ensure_layers(doc, spec)
     msp = doc.modelspace()
     t = get_text_config(spec)
     layout_regions = compute_layout_regions(spec)
-    layout_cfg = layout_regions["layout_cfg"]
-    equipment_bbox = layout_regions["equipment_bbox"]
-    x_min, y_min, x_max, y_max = layout_regions["canvas_bbox"]
-    eq_min_x, eq_min_y, eq_max_x, eq_max_y = equipment_bbox
 
     layer_index = {layer.dxf.name.lower(): layer.dxf.name for layer in doc.layers}
     text_layer = layer_name(
@@ -172,60 +170,54 @@ def generate_process_sheet(
         spec.get("defaults", {}).get("instrument_bubble_radius"),
         max(t["small_height"] * 0.9, 1.0),
     )
+    return (
+        doc,
+        msp,
+        t,
+        layout_regions,
+        text_layer,
+        notes_layer,
+        instrument_layer,
+        leader_layer,
+        arrow_size,
+        bubble_radius,
+    )
+
+
+def _render_process_elements(
+    msp: Any,
+    spec: dict[str, Any],
+    t: dict[str, Any],
+    text_layer: str,
+    notes_layer: str,
+    instrument_layer: str,
+    leader_layer: str,
+    layout_cfg: dict[str, Any],
+    layout_regions: dict[str, Any],
+    equipment_bbox: tuple[float, float, float, float],
+    arrow_size: float,
+    bubble_radius: float,
+    label_placer: LabelPlacer,
+) -> None:
+    """Render equipment, instruments, streams, control loops, and notes.
+
+    Draws all dynamic content of the process sheet into ``msp``.
+    Called by ``generate_process_sheet`` after doc setup and title block.
+
+    Preconditions
+    -------------
+    - msp is an ezdxf model space already having border boxes drawn.
+    - spec has been prepared (defaults merged, instruments spread).
+    - label_placer has equipment/panel rects reserved.
+    """
+    assert msp is not None, "msp must be provided"
+    assert spec is not None, "spec must be provided"
     stream_label_scale = layout_cfg["stream_label_scale"]
     stream_label_leaders = layout_cfg["stream_label_leaders"]
     instrument_spacing = bubble_radius * layout_cfg["instrument_spacing_factor"]
 
     spec["instruments"] = spread_instrument_positions(
         spec.get("instruments", []), min_spacing=instrument_spacing
-    )
-
-    label_placer = LabelPlacer()
-    for eq in spec.get("equipment", []):
-        ex = to_float(eq.get("x", 0.0))
-        ey = to_float(eq.get("y", 0.0))
-        w, h = equipment_dims(eq)
-        label_placer.reserve_rect((ex, ey, ex + w, ey + h))
-    for _, panel in layout_regions["panels"].items():
-        px, py, pw, ph = panel
-        label_placer.reserve_rect((px, py, px + pw, py + ph))
-
-    add_box(msp, x_min, y_min, x_max - x_min, y_max - y_min, notes_layer)
-    add_box(
-        msp,
-        eq_min_x - 2.0,
-        eq_min_y - 2.0,
-        (eq_max_x - eq_min_x) + 4.0,
-        (eq_max_y - eq_min_y) + 4.0,
-        notes_layer,
-    )
-
-    add_title_block(
-        msp, spec, t, text_layer, notes_layer, layout_regions["panels"]["title"]
-    )
-
-    project = get_project(spec)
-    doc_title = (
-        project.get("document_title")
-        or project.get("title")
-        or "Process and Instrumentation Diagram"
-    )
-    subtitle = project.get("subtitle") or "Conceptual process arrangement"
-    add_text(
-        msp,
-        doc_title,
-        (eq_min_x + eq_max_x) / 2,
-        eq_max_y + max(t["title_height"] * 0.9, 3.0),
-        t["title_height"],
-        layer=text_layer,
-    )
-    add_text(
-        msp,
-        subtitle,
-        (eq_min_x + eq_max_x) / 2,
-        eq_max_y + max(t["title_height"] * 0.1, 1.3),
-        max(t["subtitle_height"] * 0.95, 1.2),
-        layer=text_layer,
     )
 
     equipment_by_id = {
@@ -297,84 +289,37 @@ def generate_process_sheet(
         notes_layer=notes_layer,
         layout_regions=layout_regions,
     )
-    add_text(
-        msp,
-        "Conceptual draft generated from YAML. Validate controls and safety details before design issue.",
-        layout_regions["panels"]["title"][0] + 1.1,
-        layout_regions["panels"]["title"][1]
-        + layout_regions["panels"]["title"][3]
-        - max(t["small_height"] * 3.0, 3.0),
-        max(t["small_height"] * 0.95, 1.0),
-        layer=notes_layer,
-        align="TOP_LEFT",
-    )
-
-    out_path = Path(out_path)
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    doc.saveas(out_path)
-    export_svg_from_dxf(
-        spec, out_path, svg_path, fallback_extent=(x_min, y_min, x_max, y_max)
-    )
-
-    logger.info("Created: %s", out_path)
-    if svg_path:
-        logger.info("Attempted SVG: %s", svg_path)
 
 
-def generate_controls_sheet(
-    spec_path: str | Path,
-    out_path: str | Path,
-    svg_path: str | Path | None = None,
-    profile: str | None = "presentation",
-    prepared_spec: dict[str, Any] | None = None,
+def _render_controls_table(
+    msp: Any,
+    spec: dict[str, Any],
+    t: dict[str, Any],
+    layout_cfg: dict[str, Any],
+    x_min: float,
+    y_min: float,
+    x_max: float,
+    y_max: float,
+    text_layer: str,
+    notes_layer: str,
+    control_layer: str,
+    margin: float,
 ) -> None:
-    """Generate the controls and interlocks (Sheet 2) DXF and optional SVG."""
-    assert spec_path is not None, "spec_path must be provided"
-    if prepared_spec is None:
-        spec = prepare_spec(spec_path, profile)
-    else:
-        spec = deepcopy(prepared_spec)
-    doc = ezdxf.new(setup=True)
-    ensure_layers(doc, spec)
-    msp = doc.modelspace()
+    """Render the controls loop table and lower interlock/instrument panels.
 
-    t = get_text_config(spec)
-    layout_cfg = get_layout_config(spec)
-    x_min, y_min, x_max, y_max = get_modelspace_extent(spec)
-    width = max(x_max - x_min, 200.0)
-    height = max(y_max - y_min, 130.0)
-    x_max = x_min + width
-    y_max = y_min + height
+    Draws the table structure, column headers, per-loop rows, and the two lower
+    text panels (interlock summary and instrument index).
 
-    layer_index = {layer.dxf.name.lower(): layer.dxf.name for layer in doc.layers}
-    text_layer = layer_name(
-        layer_index, "TEXT", "annotations", "titleblock", default="TEXT"
-    )
-    notes_layer = layer_name(layer_index, "NOTES", "annotations", default=text_layer)
-    control_layer = layer_name(layer_index, "control_lines", default="control_lines")
-    if control_layer not in doc.layers:
-        ensure_layer(doc, control_layer, color=1, linetype="DASHDOT")
-
-    margin = 8.0
-    add_box(msp, x_min, y_min, width, height, notes_layer)
-    add_text(
-        msp,
-        "Sheet 2 - Controls and Interlocks",
-        x_min + margin,
-        y_max - margin * 0.6,
-        t["title_height"],
-        layer=text_layer,
-        align="TOP_LEFT",
-    )
-    add_text(
-        msp,
-        f"Generated from {Path(spec_path).name}",
-        x_min + margin,
-        y_max - margin * 1.7,
-        t["subtitle_height"],
-        layer=text_layer,
-        align="TOP_LEFT",
-    )
+    Preconditions
+    -------------
+    - msp is an ezdxf model space with border box already drawn.
+    - spec has been prepared (defaults merged).
+    - layout_cfg is the layout configuration dict from get_layout_config(spec).
+    """
+    assert msp is not None, "msp must be provided"
+    assert spec is not None, "spec must be provided"
+    width = x_max - x_min
+    height = y_max - y_min
 
     table_x = x_min + margin
     table_w = width - 2 * margin
@@ -547,6 +492,201 @@ def generate_controls_sheet(
         text_layer,
         notes_layer,
         max_chars=38,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Sheet generators
+# ---------------------------------------------------------------------------
+
+
+def generate_process_sheet(
+    spec_path: str | Path,
+    out_path: str | Path,
+    svg_path: str | Path | None = None,
+    profile: str | None = "presentation",
+    prepared_spec: dict[str, Any] | None = None,
+) -> None:
+    """Generate the process (Sheet 1) DXF and optional SVG."""
+    assert spec_path is not None, "spec_path must be provided"
+    if prepared_spec is None:
+        spec = prepare_spec(spec_path, profile)
+    else:
+        spec = deepcopy(prepared_spec)
+
+    (
+        doc,
+        msp,
+        t,
+        layout_regions,
+        text_layer,
+        notes_layer,
+        instrument_layer,
+        leader_layer,
+        arrow_size,
+        bubble_radius,
+    ) = _setup_process_doc(spec)
+    layout_cfg = layout_regions["layout_cfg"]
+    equipment_bbox = layout_regions["equipment_bbox"]
+    x_min, y_min, x_max, y_max = layout_regions["canvas_bbox"]
+    eq_min_x, eq_min_y, eq_max_x, eq_max_y = equipment_bbox
+
+    label_placer = LabelPlacer()
+    for eq in spec.get("equipment", []):
+        ex = to_float(eq.get("x", 0.0))
+        ey = to_float(eq.get("y", 0.0))
+        w, h = equipment_dims(eq)
+        label_placer.reserve_rect((ex, ey, ex + w, ey + h))
+    for _, panel in layout_regions["panels"].items():
+        px, py, pw, ph = panel
+        label_placer.reserve_rect((px, py, px + pw, py + ph))
+
+    add_box(msp, x_min, y_min, x_max - x_min, y_max - y_min, notes_layer)
+    add_box(
+        msp,
+        eq_min_x - 2.0,
+        eq_min_y - 2.0,
+        (eq_max_x - eq_min_x) + 4.0,
+        (eq_max_y - eq_min_y) + 4.0,
+        notes_layer,
+    )
+
+    add_title_block(
+        msp, spec, t, text_layer, notes_layer, layout_regions["panels"]["title"]
+    )
+
+    project = get_project(spec)
+    doc_title = (
+        project.get("document_title")
+        or project.get("title")
+        or "Process and Instrumentation Diagram"
+    )
+    subtitle = project.get("subtitle") or "Conceptual process arrangement"
+    add_text(
+        msp,
+        doc_title,
+        (eq_min_x + eq_max_x) / 2,
+        eq_max_y + max(t["title_height"] * 0.9, 3.0),
+        t["title_height"],
+        layer=text_layer,
+    )
+    add_text(
+        msp,
+        subtitle,
+        (eq_min_x + eq_max_x) / 2,
+        eq_max_y + max(t["title_height"] * 0.1, 1.3),
+        max(t["subtitle_height"] * 0.95, 1.2),
+        layer=text_layer,
+    )
+
+    _render_process_elements(
+        msp,
+        spec,
+        t,
+        text_layer=text_layer,
+        notes_layer=notes_layer,
+        instrument_layer=instrument_layer,
+        leader_layer=leader_layer,
+        layout_cfg=layout_cfg,
+        layout_regions=layout_regions,
+        equipment_bbox=equipment_bbox,
+        arrow_size=arrow_size,
+        bubble_radius=bubble_radius,
+        label_placer=label_placer,
+    )
+
+    add_text(
+        msp,
+        "Conceptual draft generated from YAML. Validate controls and safety details before design issue.",
+        layout_regions["panels"]["title"][0] + 1.1,
+        layout_regions["panels"]["title"][1]
+        + layout_regions["panels"]["title"][3]
+        - max(t["small_height"] * 3.0, 3.0),
+        max(t["small_height"] * 0.95, 1.0),
+        layer=notes_layer,
+        align="TOP_LEFT",
+    )
+
+    out_path = Path(out_path)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    doc.saveas(out_path)
+    export_svg_from_dxf(
+        spec, out_path, svg_path, fallback_extent=(x_min, y_min, x_max, y_max)
+    )
+
+    logger.info("Created: %s", out_path)
+    if svg_path:
+        logger.info("Attempted SVG: %s", svg_path)
+
+
+def generate_controls_sheet(
+    spec_path: str | Path,
+    out_path: str | Path,
+    svg_path: str | Path | None = None,
+    profile: str | None = "presentation",
+    prepared_spec: dict[str, Any] | None = None,
+) -> None:
+    """Generate the controls and interlocks (Sheet 2) DXF and optional SVG."""
+    assert spec_path is not None, "spec_path must be provided"
+    if prepared_spec is None:
+        spec = prepare_spec(spec_path, profile)
+    else:
+        spec = deepcopy(prepared_spec)
+    doc = ezdxf.new(setup=True)
+    ensure_layers(doc, spec)
+    msp = doc.modelspace()
+
+    t = get_text_config(spec)
+    layout_cfg = get_layout_config(spec)
+    x_min, y_min, x_max, y_max = get_modelspace_extent(spec)
+    width = max(x_max - x_min, 200.0)
+    height = max(y_max - y_min, 130.0)
+    x_max = x_min + width
+    y_max = y_min + height
+
+    layer_index = {layer.dxf.name.lower(): layer.dxf.name for layer in doc.layers}
+    text_layer = layer_name(
+        layer_index, "TEXT", "annotations", "titleblock", default="TEXT"
+    )
+    notes_layer = layer_name(layer_index, "NOTES", "annotations", default=text_layer)
+    control_layer = layer_name(layer_index, "control_lines", default="control_lines")
+    if control_layer not in doc.layers:
+        ensure_layer(doc, control_layer, color=1, linetype="DASHDOT")
+
+    margin = 8.0
+    add_box(msp, x_min, y_min, width, height, notes_layer)
+    add_text(
+        msp,
+        "Sheet 2 - Controls and Interlocks",
+        x_min + margin,
+        y_max - margin * 0.6,
+        t["title_height"],
+        layer=text_layer,
+        align="TOP_LEFT",
+    )
+    add_text(
+        msp,
+        f"Generated from {Path(spec_path).name}",
+        x_min + margin,
+        y_max - margin * 1.7,
+        t["subtitle_height"],
+        layer=text_layer,
+        align="TOP_LEFT",
+    )
+
+    _render_controls_table(
+        msp,
+        spec,
+        t,
+        layout_cfg=layout_cfg,
+        x_min=x_min,
+        y_min=y_min,
+        x_max=x_max,
+        y_max=y_max,
+        text_layer=text_layer,
+        notes_layer=notes_layer,
+        control_layer=control_layer,
+        margin=margin,
     )
 
     out_path = Path(out_path)

@@ -58,6 +58,317 @@ from .perturbation_panel import PerturbationPanel
 
 logger = logging.getLogger(__name__)
 
+_GOLFER_TAU_KEYS = [
+    "tau_hub",
+    "tau_rs",
+    "tau_re",
+    "tau_rh",
+    "tau_ls",
+    "tau_le",
+    "tau_lh",
+]
+
+
+def _wire_double_perturbation(
+    panel: SimulationPanel,
+    controls: ControlsWidget,
+    build_params: Callable,
+    build_state: Callable,
+    build_limits: Callable,
+    build_clamp: Callable,
+) -> PerturbationPanel:
+    """Wire and return a PerturbationPanel for the double pendulum model.
+
+    Preconditions
+    -------------
+    - panel is a fully constructed SimulationPanel.
+    - controls is a ControlsWidget with PRESETS and get_params().
+
+    Returns
+    -------
+    PerturbationPanel
+        Fully wired; caller must call panel.set_perturbation_panel(perturb).
+    """
+    assert panel is not None, "panel must be provided"
+    assert controls is not None, "controls must be provided"
+    perturb = PerturbationPanel()
+
+    def _double_simulate_fn(coeffs: list) -> object:
+        s_coeffs, w_coeffs = coeffs[0], coeffs[1]
+        p = controls.get_params()
+        params = build_params(p)
+        initial_state = build_state(p)
+        limits = build_limits(p)
+        clamp = build_clamp(p)
+        torque_func = make_polynomial_torque(s_coeffs, w_coeffs)
+        return run_simulation(
+            params=params,
+            initial_state=initial_state,
+            t_end=p["t_end"],
+            torque_func=torque_func,  # type: ignore[arg-type]
+            limits=limits,
+            clamp=clamp,
+        )
+
+    def _double_extract_fn(result: object) -> dict:
+        res = result
+        vels = res.joint_velocities_at(res.n_steps - 1)  # type: ignore[attr-defined]
+        tip_v = vels.get("tip", (0.0, 0.0))
+        speed = float(np.hypot(tip_v[0], tip_v[1]))
+        pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
+        tip_xy = pos.get("tip", (0.0, 0.0))
+        return {
+            "tip_speed_final": speed,
+            "tip_position_final": np.array([tip_xy[0], tip_xy[1]]),
+        }
+
+    perturb.set_coeffs_source(
+        lambda: [
+            controls.get_params().get("shoulder_coeffs", [0.0]),
+            controls.get_params().get("wrist_coeffs", [0.0]),
+        ]
+    )
+
+    def _double_preset_coeffs(name: str) -> list[list[float]]:
+        preset = controls.PRESETS.get(name)
+        if preset is None:
+            return [[0.0], [0.0]]
+
+        def _parse(s: str) -> list[float]:
+            return [float(x.strip()) for x in s.split(",") if x.strip()] or [0.0]
+
+        return [_parse(str(preset[4])), _parse(str(preset[5]))]
+
+    perturb.set_preset_source(
+        lambda: list(controls.PRESETS.keys()),
+        _double_preset_coeffs,
+    )
+    perturb.set_simulation_callbacks(_double_simulate_fn, _double_extract_fn)
+    return perturb
+
+
+def _wire_triple_perturbation(
+    panel: SimulationPanel,
+    controls: ControlsWidgetTriple,
+    build_params: Callable,
+    build_state: Callable,
+    build_limits: Callable,
+    build_clamp: Callable,
+) -> PerturbationPanel:
+    """Wire and return a PerturbationPanel for the triple pendulum model.
+
+    Preconditions
+    -------------
+    - panel is a fully constructed SimulationPanel.
+    - controls is a ControlsWidgetTriple with PRESETS and get_params().
+
+    Returns
+    -------
+    PerturbationPanel
+        Fully wired; caller must call panel.set_perturbation_panel(perturb).
+    """
+    assert panel is not None, "panel must be provided"
+    assert controls is not None, "controls must be provided"
+    perturb = PerturbationPanel()
+
+    def _triple_simulate_fn(coeffs: list) -> object:
+        p = controls.get_params()
+        params = build_params(p)
+        initial_state = build_state(p)
+        limits = build_limits(p)
+        clamp = build_clamp(p)
+        torque_func = make_polynomial_torque_triple(coeffs[0], coeffs[1], coeffs[2])
+        return run_simulation_triple(
+            params=params,
+            initial_state=initial_state,
+            t_end=p["t_end"],
+            torque_func=torque_func,  # type: ignore[arg-type]
+            limits=limits,
+            clamp=clamp,
+        )
+
+    def _triple_extract_fn(result: object) -> dict:
+        res = result
+        pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
+        tip_xy = pos.get("tip", (0.0, 0.0))
+        # Triple pendulum has no joint_velocities_at; approximate from last two frames
+        if res.n_steps >= 2:  # type: ignore[attr-defined]
+            dt = float(res.t[-1] - res.t[-2])  # type: ignore[attr-defined]
+            pos_prev = res.positions_at(res.n_steps - 2)  # type: ignore[attr-defined]
+            tip_prev = pos_prev.get("tip", (0.0, 0.0))
+            vx = (tip_xy[0] - tip_prev[0]) / max(dt, 1e-9)
+            vy = (tip_xy[1] - tip_prev[1]) / max(dt, 1e-9)
+        else:
+            vx, vy = 0.0, 0.0
+        speed = float(np.hypot(vx, vy))
+        return {
+            "tip_speed_final": speed,
+            "tip_position_final": np.array([tip_xy[0], tip_xy[1]]),
+        }
+
+    perturb.set_coeffs_source(
+        lambda: [
+            controls.get_params().get("shoulder_coeffs", [0.0]),
+            controls.get_params().get("elbow_coeffs", [0.0]),
+            controls.get_params().get("wrist_coeffs", [0.0]),
+        ]
+    )
+
+    def _triple_preset_coeffs(name: str) -> list[list[float]]:
+        preset = controls.PRESETS.get(name)
+        if preset is None:
+            return [[0.0], [0.0], [0.0]]
+
+        def _parse(s: str) -> list[float]:
+            return [float(x.strip()) for x in s.split(",") if x.strip()] or [0.0]
+
+        # Triple PRESETS tuple: indices 6=tau_sh, 7=tau_el, 8=tau_wr
+        return [_parse(str(preset[6])), _parse(str(preset[7])), _parse(str(preset[8]))]
+
+    perturb.set_preset_source(
+        lambda: list(controls.PRESETS.keys()),
+        _triple_preset_coeffs,
+    )
+    perturb.set_simulation_callbacks(_triple_simulate_fn, _triple_extract_fn)
+    return perturb
+
+
+def _wire_golfer_perturbation(
+    panel: SimulationPanel,
+    controls: ControlsWidgetGolfer,
+    build_params: Callable,
+    build_state: Callable,
+    build_limits: Callable,
+    build_clamp: Callable,
+) -> PerturbationPanel:
+    """Wire and return a PerturbationPanel for the golfer upper body model.
+
+    Preconditions
+    -------------
+    - panel is a fully constructed SimulationPanel.
+    - controls is a ControlsWidgetGolfer with PRESETS and get_params().
+
+    Returns
+    -------
+    PerturbationPanel
+        Fully wired; caller must call panel.set_perturbation_panel(perturb).
+    """
+    assert panel is not None, "panel must be provided"
+    assert controls is not None, "controls must be provided"
+    perturb = PerturbationPanel()
+
+    def _golfer_simulate_fn(coeffs: list) -> object:
+        p = controls.get_params()
+        params = build_params(p)
+        initial_state = build_state(p)
+        limits = build_limits(p)
+        clamp = build_clamp(p)
+        torque_func = make_polynomial_torque_golfer(*coeffs)
+        return run_simulation_golfer(
+            params=params,
+            initial_state=initial_state,
+            t_end=p["t_end"],
+            torque_func=torque_func,  # type: ignore[arg-type]
+            limits=limits,
+            clamp=clamp,
+        )
+
+    def _golfer_extract_fn(result: object) -> dict:
+        res = result
+        pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
+        tip_xy = pos.get("club_tip", pos.get("tip", (0.0, 0.0)))
+        if res.n_steps >= 2:  # type: ignore[attr-defined]
+            dt = float(res.t[-1] - res.t[-2])  # type: ignore[attr-defined]
+            pos_prev = res.positions_at(res.n_steps - 2)  # type: ignore[attr-defined]
+            tip_prev = pos_prev.get("club_tip", pos_prev.get("tip", (0.0, 0.0)))
+            vx = (tip_xy[0] - tip_prev[0]) / max(dt, 1e-9)
+            vy = (tip_xy[1] - tip_prev[1]) / max(dt, 1e-9)
+        else:
+            vx, vy = 0.0, 0.0
+        speed = float(np.hypot(vx, vy))
+        return {
+            "tip_speed_final": speed,
+            "tip_position_final": np.array([tip_xy[0], tip_xy[1]]),
+        }
+
+    def _golfer_coeffs_fn() -> list:
+        p = controls.get_params()
+        joint_keys = [
+            "hip_coeffs",
+            "spine_coeffs",
+            "r_shoulder_coeffs",
+            "r_elbow_coeffs",
+            "l_shoulder_coeffs",
+            "l_elbow_coeffs",
+            "wrist_coeffs",
+        ]
+        return [p.get(k, [0.0]) for k in joint_keys]
+
+    perturb.set_coeffs_source(_golfer_coeffs_fn)
+
+    def _golfer_preset_coeffs(name: str) -> list[list[float]]:
+        preset = controls.PRESETS.get(name)
+        if preset is None:
+            return [[0.0]] * len(_GOLFER_TAU_KEYS)
+
+        def _parse(s: str) -> list[float]:
+            return [float(x.strip()) for x in s.split(",") if x.strip()] or [0.0]
+
+        return [_parse(str(preset.get(k, "0"))) for k in _GOLFER_TAU_KEYS]
+
+    perturb.set_preset_source(
+        lambda: list(controls.PRESETS.keys()),
+        _golfer_preset_coeffs,
+    )
+    perturb.set_simulation_callbacks(_golfer_simulate_fn, _golfer_extract_fn)
+    return perturb
+
+
+def _wire_panel_sim_signals(
+    ts: Any,
+    panels: tuple,
+    active_panel_fn: Callable,
+) -> None:
+    """Connect simulation lifecycle signals for each panel to the toolstrip.
+
+    For each panel, wires sim_started, sim_finished, frame_changed, and
+    playback_ended to forward updates to the toolstrip only when that panel
+    is the active one.
+
+    Preconditions
+    -------------
+    - ts is the toolstrip widget with set_running, set_frame_range, set_frame,
+      btn_play attributes.
+    - panels is a tuple of SimulationPanel instances.
+    - active_panel_fn() returns the currently active panel.
+    """
+    assert ts is not None, "ts must be provided"
+    assert panels is not None, "panels must be provided"
+    assert active_panel_fn is not None, "active_panel_fn must be provided"
+    for panel in panels:
+        panel.sim_started.connect(
+            lambda _p=panel: (ts.set_running(True) if _p is active_panel_fn() else None)
+        )
+        panel.sim_finished.connect(
+            lambda _p=panel: (
+                [
+                    ts.set_running(False),
+                    ts.set_frame_range(_p.current_n_steps()),
+                ]
+                if _p is active_panel_fn()
+                else None
+            )
+        )
+        panel.frame_changed.connect(
+            lambda idx, _p=panel: (ts.set_frame(idx) if _p is active_panel_fn() else None)
+        )
+        # Reset toolstrip play button when playback ends
+        panel.playback_ended.connect(
+            lambda _p=panel: (
+                ts.btn_play.setChecked(False) if _p is active_panel_fn() else None
+            )
+        )
+
 
 def build_double_panel(main_window: Any) -> SimulationPanel:
     """Build and return the double pendulum simulation panel.
@@ -183,59 +494,9 @@ def build_double_panel(main_window: Any) -> SimulationPanel:
     panel._settings_key = "splitter_double"
 
     # Wire perturbation panel (#1284)
-    perturb = PerturbationPanel()
-
-    def _double_simulate_fn(coeffs: list) -> object:
-        s_coeffs, w_coeffs = coeffs[0], coeffs[1]
-        p = controls.get_params()
-        params = build_params(p)
-        initial_state = build_state(p)
-        limits = build_limits(p)
-        clamp = build_clamp(p)
-        torque_func = make_polynomial_torque(s_coeffs, w_coeffs)
-        return run_simulation(
-            params=params,
-            initial_state=initial_state,
-            t_end=p["t_end"],
-            torque_func=torque_func,  # type: ignore[arg-type]
-            limits=limits,
-            clamp=clamp,
-        )
-
-    def _double_extract_fn(result: object) -> dict:
-        res = result
-        vels = res.joint_velocities_at(res.n_steps - 1)  # type: ignore[attr-defined]
-        tip_v = vels.get("tip", (0.0, 0.0))
-        speed = float(np.hypot(tip_v[0], tip_v[1]))
-        pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
-        tip_xy = pos.get("tip", (0.0, 0.0))
-        return {
-            "tip_speed_final": speed,
-            "tip_position_final": np.array([tip_xy[0], tip_xy[1]]),
-        }
-
-    perturb.set_coeffs_source(
-        lambda: [
-            controls.get_params().get("shoulder_coeffs", [0.0]),
-            controls.get_params().get("wrist_coeffs", [0.0]),
-        ]
+    perturb = _wire_double_perturbation(
+        panel, controls, build_params, build_state, build_limits, build_clamp
     )
-
-    def _double_preset_coeffs(name: str) -> list[list[float]]:
-        preset = controls.PRESETS.get(name)
-        if preset is None:
-            return [[0.0], [0.0]]
-
-        def _parse(s: str) -> list[float]:
-            return [float(x.strip()) for x in s.split(",") if x.strip()] or [0.0]
-
-        return [_parse(str(preset[4])), _parse(str(preset[5]))]
-
-    perturb.set_preset_source(
-        lambda: list(controls.PRESETS.keys()),
-        _double_preset_coeffs,
-    )
-    perturb.set_simulation_callbacks(_double_simulate_fn, _double_extract_fn)
     panel.set_perturbation_panel(perturb)
     return panel
 
@@ -374,67 +635,9 @@ def build_triple_panel(main_window: Any) -> SimulationPanel:
     panel._settings_key = "splitter_triple"
 
     # Wire perturbation panel (#1284)
-    perturb = PerturbationPanel()
-
-    def _triple_simulate_fn(coeffs: list) -> object:
-        p = controls.get_params()
-        params = build_params(p)
-        initial_state = build_state(p)
-        limits = build_limits(p)
-        clamp = build_clamp(p)
-        torque_func = make_polynomial_torque_triple(coeffs[0], coeffs[1], coeffs[2])
-        return run_simulation_triple(
-            params=params,
-            initial_state=initial_state,
-            t_end=p["t_end"],
-            torque_func=torque_func,  # type: ignore[arg-type]
-            limits=limits,
-            clamp=clamp,
-        )
-
-    def _triple_extract_fn(result: object) -> dict:
-        res = result
-        pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
-        tip_xy = pos.get("tip", (0.0, 0.0))
-        # Triple pendulum has no joint_velocities_at; approximate from last two frames
-        if res.n_steps >= 2:  # type: ignore[attr-defined]
-            dt = float(res.t[-1] - res.t[-2])  # type: ignore[attr-defined]
-            pos_prev = res.positions_at(res.n_steps - 2)  # type: ignore[attr-defined]
-            tip_prev = pos_prev.get("tip", (0.0, 0.0))
-            vx = (tip_xy[0] - tip_prev[0]) / max(dt, 1e-9)
-            vy = (tip_xy[1] - tip_prev[1]) / max(dt, 1e-9)
-        else:
-            vx, vy = 0.0, 0.0
-        speed = float(np.hypot(vx, vy))
-        return {
-            "tip_speed_final": speed,
-            "tip_position_final": np.array([tip_xy[0], tip_xy[1]]),
-        }
-
-    perturb.set_coeffs_source(
-        lambda: [
-            controls.get_params().get("shoulder_coeffs", [0.0]),
-            controls.get_params().get("elbow_coeffs", [0.0]),
-            controls.get_params().get("wrist_coeffs", [0.0]),
-        ]
+    perturb = _wire_triple_perturbation(
+        panel, controls, build_params, build_state, build_limits, build_clamp
     )
-
-    def _triple_preset_coeffs(name: str) -> list[list[float]]:
-        preset = controls.PRESETS.get(name)
-        if preset is None:
-            return [[0.0], [0.0], [0.0]]
-
-        def _parse(s: str) -> list[float]:
-            return [float(x.strip()) for x in s.split(",") if x.strip()] or [0.0]
-
-        # Triple PRESETS tuple: indices 6=tau_sh, 7=tau_el, 8=tau_wr
-        return [_parse(str(preset[6])), _parse(str(preset[7])), _parse(str(preset[8]))]
-
-    perturb.set_preset_source(
-        lambda: list(controls.PRESETS.keys()),
-        _triple_preset_coeffs,
-    )
-    perturb.set_simulation_callbacks(_triple_simulate_fn, _triple_extract_fn)
     panel.set_perturbation_panel(perturb)
     return panel
 
@@ -600,84 +803,54 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
     panel._settings_key = "splitter_golfer"
 
     # Wire perturbation panel (#1284)
-    perturb = PerturbationPanel()
-
-    def _golfer_simulate_fn(coeffs: list) -> object:
-        p = controls.get_params()
-        params = build_params(p)
-        initial_state = build_state(p)
-        limits = build_limits(p)
-        clamp = build_clamp(p)
-        torque_func = make_polynomial_torque_golfer(*coeffs)
-        return run_simulation_golfer(
-            params=params,
-            initial_state=initial_state,
-            t_end=p["t_end"],
-            torque_func=torque_func,  # type: ignore[arg-type]
-            limits=limits,
-            clamp=clamp,
-        )
-
-    def _golfer_extract_fn(result: object) -> dict:
-        res = result
-        pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
-        tip_xy = pos.get("club_tip", pos.get("tip", (0.0, 0.0)))
-        if res.n_steps >= 2:  # type: ignore[attr-defined]
-            dt = float(res.t[-1] - res.t[-2])  # type: ignore[attr-defined]
-            pos_prev = res.positions_at(res.n_steps - 2)  # type: ignore[attr-defined]
-            tip_prev = pos_prev.get("club_tip", pos_prev.get("tip", (0.0, 0.0)))
-            vx = (tip_xy[0] - tip_prev[0]) / max(dt, 1e-9)
-            vy = (tip_xy[1] - tip_prev[1]) / max(dt, 1e-9)
-        else:
-            vx, vy = 0.0, 0.0
-        speed = float(np.hypot(vx, vy))
-        return {
-            "tip_speed_final": speed,
-            "tip_position_final": np.array([tip_xy[0], tip_xy[1]]),
-        }
-
-    def _golfer_coeffs_fn() -> list:
-        p = controls.get_params()
-        joint_keys = [
-            "hip_coeffs",
-            "spine_coeffs",
-            "r_shoulder_coeffs",
-            "r_elbow_coeffs",
-            "l_shoulder_coeffs",
-            "l_elbow_coeffs",
-            "wrist_coeffs",
-        ]
-        return [p.get(k, [0.0]) for k in joint_keys]
-
-    perturb.set_coeffs_source(_golfer_coeffs_fn)
-
-    _GOLFER_TAU_KEYS = [
-        "tau_hub",
-        "tau_rs",
-        "tau_re",
-        "tau_rh",
-        "tau_ls",
-        "tau_le",
-        "tau_lh",
-    ]
-
-    def _golfer_preset_coeffs(name: str) -> list[list[float]]:
-        preset = controls.PRESETS.get(name)
-        if preset is None:
-            return [[0.0]] * len(_GOLFER_TAU_KEYS)
-
-        def _parse(s: str) -> list[float]:
-            return [float(x.strip()) for x in s.split(",") if x.strip()] or [0.0]
-
-        return [_parse(str(preset.get(k, "0"))) for k in _GOLFER_TAU_KEYS]
-
-    perturb.set_preset_source(
-        lambda: list(controls.PRESETS.keys()),
-        _golfer_preset_coeffs,
+    perturb = _wire_golfer_perturbation(
+        panel, controls, build_params, build_state, build_limits, build_clamp
     )
-    perturb.set_simulation_callbacks(_golfer_simulate_fn, _golfer_extract_fn)
     panel.set_perturbation_panel(perturb)
     return panel
+
+
+def _wire_overlay_signals(ts: Any, active_panel_fn: Callable) -> None:
+    """Connect overlay toggle, scale-slider, and rotation signals to active panel.
+
+    Preconditions
+    -------------
+    - ts has torque_vectors_toggled, moment_of_force_toggled, sum_moments_toggled,
+      force_scale_changed, mob_scale_changed, force_ell_scale_changed,
+      azimuth_changed, tilt_changed, reset_view_requested, and
+      segment_visibility_changed signals.
+    - active_panel_fn() returns the currently active SimulationPanel.
+    """
+    assert ts is not None, "ts must be provided"
+    assert active_panel_fn is not None, "active_panel_fn must be provided"
+
+    def _fwd_overlay(attr: str, value: object) -> None:
+        pw = active_panel_fn().pendulum
+        if hasattr(pw, attr):
+            getattr(pw, attr)(value)
+
+    ts.torque_vectors_toggled.connect(lambda v: _fwd_overlay("set_show_torque_vectors", v))
+    ts.moment_of_force_toggled.connect(lambda v: _fwd_overlay("set_show_moment_of_force", v))
+    ts.sum_moments_toggled.connect(lambda v: _fwd_overlay("set_show_sum_moments", v))
+    ts.force_scale_changed.connect(lambda v: _fwd_overlay("set_force_scale", v))
+    ts.mob_scale_changed.connect(lambda v: _fwd_overlay("set_mob_ellipsoid_scale", v))
+    ts.force_ell_scale_changed.connect(lambda v: _fwd_overlay("set_force_ellipsoid_scale", v))
+    ts.azimuth_changed.connect(lambda v: _fwd_overlay("set_view_azimuth", v))
+    ts.tilt_changed.connect(lambda v: _fwd_overlay("set_tilt_angle", v))
+    ts.reset_view_requested.connect(
+        lambda: (
+            active_panel_fn().pendulum.reset_view()
+            if hasattr(active_panel_fn().pendulum, "reset_view")
+            else None
+        )
+    )
+    ts.segment_visibility_changed.connect(
+        lambda vis: (
+            active_panel_fn().pendulum.set_visible_segments(vis)
+            if hasattr(active_panel_fn().pendulum, "set_visible_segments")
+            else None
+        )
+    )
 
 
 def wire_toolstrip(main_window: Any) -> None:
@@ -728,43 +901,7 @@ def wire_toolstrip(main_window: Any) -> None:
 
     # ── Overlay toggles → active panel's pendulum widget ──────────
     _connect_common_signals(main_window)
-
-    # ── Torque/MoF/Sum display toggles (#1208) → active panel's pendulum ──
-    ts.torque_vectors_toggled.connect(lambda v: _fwd_overlay("set_show_torque_vectors", v))
-    ts.moment_of_force_toggled.connect(lambda v: _fwd_overlay("set_show_moment_of_force", v))
-    ts.sum_moments_toggled.connect(lambda v: _fwd_overlay("set_show_sum_moments", v))
-
-    # ── Scale sliders → active panel's pendulum widget ────────────
-    def _fwd_overlay(attr: str, value: object) -> None:
-        pw = main_window._active_panel().pendulum
-        if hasattr(pw, attr):
-            getattr(pw, attr)(value)
-
-    ts.force_scale_changed.connect(lambda v: _fwd_overlay("set_force_scale", v))
-    ts.mob_scale_changed.connect(lambda v: _fwd_overlay("set_mob_ellipsoid_scale", v))
-    ts.force_ell_scale_changed.connect(lambda v: _fwd_overlay("set_force_ellipsoid_scale", v))
-
-    # ── Rotation controls (#1146) → active panel's pendulum widget ──
-    ts.azimuth_changed.connect(lambda v: _fwd_overlay("set_view_azimuth", v))
-    ts.tilt_changed.connect(lambda v: _fwd_overlay("set_tilt_angle", v))
-
-    # ── Reset view → active panel's pendulum widget ───────────────
-    ts.reset_view_requested.connect(
-        lambda: (
-            main_window._active_panel().pendulum.reset_view()
-            if hasattr(main_window._active_panel().pendulum, "reset_view")
-            else None
-        )
-    )
-
-    # ── Per-segment overlay visibility ────────────────────────────
-    ts.segment_visibility_changed.connect(
-        lambda vis: (
-            main_window._active_panel().pendulum.set_visible_segments(vis)
-            if hasattr(main_window._active_panel().pendulum, "set_visible_segments")
-            else None
-        )
-    )
+    _wire_overlay_signals(ts, main_window._active_panel)
 
     # ── Model selection dropdown (#1149) ──────────────────────────
     def _on_model_dropdown_changed(idx: int) -> None:
@@ -781,34 +918,7 @@ def wire_toolstrip(main_window: Any) -> None:
     main_window._tabs.currentChanged.connect(_on_tab_changed)
 
     # ── Busy state and frame sync — only forward from the active panel ─
-    # Guard each callback so non-active panels are silently ignored.
-    for panel in main_window._panels:
-        panel.sim_started.connect(
-            lambda _p=panel: (
-                ts.set_running(True) if _p is main_window._active_panel() else None
-            )
-        )
-        panel.sim_finished.connect(
-            lambda _p=panel: (
-                [
-                    ts.set_running(False),
-                    ts.set_frame_range(_p.current_n_steps()),
-                ]
-                if _p is main_window._active_panel()
-                else None
-            )
-        )
-        panel.frame_changed.connect(
-            lambda idx, _p=panel: (
-                ts.set_frame(idx) if _p is main_window._active_panel() else None
-            )
-        )
-        # Reset toolstrip play button when playback ends
-        panel.playback_ended.connect(
-            lambda _p=panel: (
-                ts.btn_play.setChecked(False) if _p is main_window._active_panel() else None
-            )
-        )
+    _wire_panel_sim_signals(ts, main_window._panels, main_window._active_panel)
 
     # Loop toggle — forward to all panels
     if hasattr(ts, "loop_toggled"):

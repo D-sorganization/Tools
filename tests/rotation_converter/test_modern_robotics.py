@@ -852,3 +852,62 @@ class TestInverseDynamics:
         )
         # With gravity and tip forces removed, torques should differ
         assert not np.allclose(tau_full, tau_no_g)
+
+
+# ===========================================================================
+# GH1691: Tests for _simulate_control_plot helper extracted from SimulateControl
+# ===========================================================================
+
+
+class TestSimulateControlPlot:
+    """GH1691: _simulate_control_plot must be callable and handle matplotlib
+    import errors gracefully."""
+
+    def test_plot_helper_importable(self) -> None:
+        """_simulate_control_plot must be importable from modern_robotics."""
+        from rotation_converter.modern_robotics import _simulate_control_plot
+
+        assert callable(_simulate_control_plot)
+
+    def test_plot_helper_runs_with_mock_plt(self) -> None:
+        """_simulate_control_plot must complete without error when matplotlib
+        is available and plt.show is mocked."""
+        from unittest.mock import MagicMock, patch
+
+        from rotation_converter.modern_robotics import _simulate_control_plot
+
+        thetamat = np.array([[0.1, 0.2], [0.15, 0.25]])
+        thetamatd = np.array([[0.05, 0.1], [0.08, 0.12]])
+        dt = 0.01
+
+        mock_plt = MagicMock()
+        with patch.dict("sys.modules", {"matplotlib.pyplot": mock_plt}):
+            # Should not raise
+            _simulate_control_plot(thetamat, thetamatd, dt)
+
+    def test_plot_helper_handles_import_error(self) -> None:
+        """_simulate_control_plot must silently skip plotting when matplotlib
+        is not available (ImportError)."""
+        import sys
+        from unittest.mock import patch
+
+        from rotation_converter.modern_robotics import _simulate_control_plot
+
+        thetamat = np.array([[0.1, 0.2], [0.15, 0.25]])
+        thetamatd = np.array([[0.05, 0.1], [0.08, 0.12]])
+        dt = 0.01
+
+        # Force matplotlib import to fail
+        blocked = {k: None for k in list(sys.modules.keys()) if "matplotlib" in k}
+        blocked["matplotlib"] = None
+        blocked["matplotlib.pyplot"] = None
+        with patch.dict("sys.modules", blocked):
+            # Should not raise even without matplotlib
+            _simulate_control_plot(thetamat, thetamatd, dt)
+
+    def test_plot_precondition_thetamat_none(self) -> None:
+        """_simulate_control_plot must raise AssertionError when thetamat is None."""
+        from rotation_converter.modern_robotics import _simulate_control_plot
+
+        with pytest.raises(AssertionError):
+            _simulate_control_plot(None, np.zeros((2, 2)), 0.01)  # type: ignore[arg-type]
