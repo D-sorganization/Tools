@@ -791,3 +791,93 @@ items:
     artefact: .gaai/project/contexts/artefacts/stories/GH1648.story.md
     dependencies: []
     created_at: 2026-03-20
+
+  - id: GH1697
+    title: "Assessment: CI only delta-checks — full-repo ruff/mypy/format violations go undetected"
+    priority: medium
+    status: refined
+    github_issue: 1697
+    artefact: .gaai/project/contexts/artefacts/stories/GH1697.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1696
+    title: "Assessment: Large __init__.py files act as god modules (up to 611 lines)"
+    priority: medium
+    status: refined
+    github_issue: 1696
+    artefact: .gaai/project/contexts/artefacts/stories/GH1696.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1695
+    title: "Assessment: cors.py import regression FIXED — but contracts not in requirements.txt"
+    priority: medium
+    status: refined
+    github_issue: 1695
+    artefact: .gaai/project/contexts/artefacts/stories/GH1695.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1694
+    title: "Assessment: 6 src/ files use xml.etree.ElementTree without defusedxml for parsing"
+    priority: medium
+    status: refined
+    github_issue: 1694
+    artefact: .gaai/project/contexts/artefacts/stories/GH1694.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1693
+    title: "Assessment: 6 files duplicated between urdf_builder_gui/ and urdf_builder_gui/python/"
+    priority: medium
+    status: refined
+    github_issue: 1693
+    artefact: .gaai/project/contexts/artefacts/stories/GH1693.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1692
+    title: "Assessment: 10 god classes with 25+ methods in shared library"
+    priority: medium
+    status: refined
+    github_issue: 1692
+    artefact: .gaai/project/contexts/artefacts/stories/GH1692.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1691
+    title: "Assessment: 15 functions exceed 100 lines, max 239 lines"
+    priority: medium
+    status: refined
+    github_issue: 1691
+    artefact: .gaai/project/contexts/artefacts/stories/GH1691.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1690
+    title: "Assessment: 2 files exceed 1200-line budget, 20 files in 800-1200 danger zone"
+    priority: medium
+    status: refined
+    github_issue: 1690
+    artefact: .gaai/project/contexts/artefacts/stories/GH1690.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1689
+    title: "Assessment: Dual ruff config (ruff.toml + pyproject.toml) with conflicting rules"
+    priority: medium
+    status: refined
+    github_issue: 1689
+    artefact: .gaai/project/contexts/artefacts/stories/GH1689.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1688
+    title: "Assessment: 6 test failures on staging — modern_robotics logging + missing optional deps"
+    priority: medium
+    status: refined
+    github_issue: 1688
+    artefact: .gaai/project/contexts/artefacts/stories/GH1688.story.md
+    dependencies: []
+    created_at: 2026-03-22
