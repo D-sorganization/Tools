@@ -966,11 +966,12 @@ items:
     title: "Assessment: Pragmatic Programmer — Estimating (Module size budget CI uses 1500, docs say 1200)"
     priority: medium
     status: done
-    started_at: "2026-03-22T22:12:22Z"
-    completed_at: "2026-03-22T22:17:16Z"
+    started_at: "2026-03-22T15:12:22-07:00"
+    completed_at: "2026-03-22T15:17:16-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1720"
     pr_number: 1720
     pr_status: "open"
+    cost_usd: 1.0825
     github_issue: 1706
     artefact: .gaai/project/contexts/artefacts/stories/GH1706.story.md
     dependencies: []
