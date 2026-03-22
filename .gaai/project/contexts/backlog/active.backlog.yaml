@@ -990,7 +990,8 @@ items:
   - id: GH1704
     title: "Assessment: Pragmatic Programmer — Design by Contract maturity is strong but enforcement inconsistent"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T22:14:20Z"
     github_issue: 1704
     artefact: .gaai/project/contexts/artefacts/stories/GH1704.story.md
     dependencies: []
