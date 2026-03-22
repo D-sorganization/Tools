@@ -157,11 +157,17 @@ def _handle_violation(
     message: str,
     value: Any = None,
 ) -> None:
-    """Handle a contract violation according to the current DBC_LEVEL."""
-    if DBC_LEVEL == ContractLevel.ENFORCE:
+    """Handle a contract violation according to the current enforcement level.
+
+    Reads ``_ContractState.level`` directly so that runtime calls to
+    ``set_contract_level()`` take effect immediately — no stale module-level
+    alias is consulted here.
+    """
+    level = _ContractState.level
+    if level == ContractLevel.ENFORCE:
         exc_cls = _VIOLATION_CLASSES.get(condition_type, ContractViolationError)
         raise exc_cls(message, value)
-    elif DBC_LEVEL == ContractLevel.WARN:
+    elif level == ContractLevel.WARN:
         detail = f"[DbC {condition_type}] {message}"
         if value is not None:
             detail += f" (got: {value!r})"
@@ -171,7 +177,7 @@ def _handle_violation(
 def require(condition: bool, message: str, value: Any = None) -> None:
     """Assert a pre-condition at function entry."""
     assert condition is not None, "condition must be provided"
-    if DBC_LEVEL == ContractLevel.OFF:
+    if _ContractState.level == ContractLevel.OFF:
         return
     if not condition:
         _handle_violation("pre-condition", message, value)
@@ -180,7 +186,7 @@ def require(condition: bool, message: str, value: Any = None) -> None:
 def ensure(condition: bool, message: str, value: Any = None) -> None:
     """Assert a post-condition before function return."""
     assert condition is not None, "condition must be provided"
-    if DBC_LEVEL == ContractLevel.OFF:
+    if _ContractState.level == ContractLevel.OFF:
         return
     if not condition:
         _handle_violation("post-condition", message, value)
@@ -189,7 +195,7 @@ def ensure(condition: bool, message: str, value: Any = None) -> None:
 def invariant(condition: bool, message: str, value: Any = None) -> None:
     """Assert a class or loop invariant."""
     assert condition is not None, "condition must be provided"
-    if DBC_LEVEL == ContractLevel.OFF:
+    if _ContractState.level == ContractLevel.OFF:
         return
     if not condition:
         _handle_violation("invariant", message, value)
