@@ -885,8 +885,12 @@ items:
   - id: GH1690
     title: "Assessment: 2 files exceed 1200-line budget, 20 files in 800-1200 danger zone"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-22T21:38:40Z"
+    completed_at: "2026-03-22T21:43:04Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1713"
+    pr_number: 1713
+    pr_status: "open"
     github_issue: 1690
     artefact: .gaai/project/contexts/artefacts/stories/GH1690.story.md
     dependencies: []
