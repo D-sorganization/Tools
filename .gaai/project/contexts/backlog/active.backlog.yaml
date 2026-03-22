@@ -1095,7 +1095,8 @@ items:
   - id: GH1687
     title: "Assessment: 27 test collection errors — folder_tool and programmatic_pid suites broken"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T22:40:27Z"
     github_issue: 1687
     artefact: .gaai/project/contexts/artefacts/stories/GH1687.story.md
     dependencies: []
