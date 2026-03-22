@@ -875,8 +875,12 @@ items:
   - id: GH1691
     title: "Assessment: 15 functions exceed 100 lines, max 239 lines"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-22T21:38:37Z"
+    completed_at: "2026-03-22T22:30:00Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1717"
+    pr_number: 1717
+    pr_status: "open"
     github_issue: 1691
     artefact: .gaai/project/contexts/artefacts/stories/GH1691.story.md
     dependencies: []
