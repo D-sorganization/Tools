@@ -876,11 +876,12 @@ items:
     title: "Assessment: 15 functions exceed 100 lines, max 239 lines"
     priority: medium
     status: done
-    started_at: "2026-03-22T21:38:37Z"
-    completed_at: "2026-03-22T22:30:00Z"
+    started_at: "2026-03-22T14:38:37-07:00"
+    completed_at: "2026-03-22T15:03:55-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1717"
     pr_number: 1717
     pr_status: "open"
+    cost_usd: 7.3462
     github_issue: 1691
     artefact: .gaai/project/contexts/artefacts/stories/GH1691.story.md
     dependencies: []
