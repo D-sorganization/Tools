@@ -945,7 +945,8 @@ items:
   - id: GH1707
     title: "Assessment: 33% of source files lack type annotations on function signatures"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T22:03:40Z"
     github_issue: 1707
     artefact: .gaai/project/contexts/artefacts/stories/GH1707.story.md
     dependencies: []
