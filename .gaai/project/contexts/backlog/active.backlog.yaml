@@ -1115,8 +1115,12 @@ items:
   - id: GH1686
     title: "Assessment: type:ignore count rose from 724 to 1147 (58% increase)"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-03-22T22:47:09Z"
+    completed_at: "2026-03-22T22:52:57Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1730"
+    pr_number: 1730
+    pr_status: "open"
     github_issue: 1686
     artefact: .gaai/project/contexts/artefacts/stories/GH1686.story.md
     dependencies: []
