@@ -1146,11 +1146,12 @@ items:
     title: "Assessment: ruff.toml lacks T201 rule — print() calls bypass CI linting"
     priority: medium
     status: done
-    started_at: "2026-03-22T22:53:56Z"
-    completed_at: "2026-03-22T22:59:30Z"
+    started_at: "2026-03-22T15:53:56-07:00"
+    completed_at: "2026-03-22T15:59:30-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/1731"
     pr_number: 1731
     pr_status: "open"
+    cost_usd: 1.1519
     github_issue: 1684
     artefact: .gaai/project/contexts/artefacts/stories/GH1684.story.md
     dependencies: []
