@@ -265,7 +265,7 @@ class SceneRenderMixin:
         time_data = self.time_nav_panel.get_render_data() if self.time_nav_panel else {}  # type: ignore[attr-defined]
         renderer.render_unified_controls(
             self.unified_controls.get_render_data(),
-            time_data,  # type: ignore[attr-defined]
+            time_data,
         )
 
     def _render_floating_overlays(self, renderer: Any) -> None:
