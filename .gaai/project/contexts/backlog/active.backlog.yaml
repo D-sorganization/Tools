@@ -960,7 +960,8 @@ items:
   - id: GH1706
     title: "Assessment: Pragmatic Programmer — Estimating (Module size budget CI uses 1500, docs say 1200)"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-03-22T22:12:22Z"
     github_issue: 1706
     artefact: .gaai/project/contexts/artefacts/stories/GH1706.story.md
     dependencies: []
