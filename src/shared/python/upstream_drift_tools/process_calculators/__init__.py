@@ -68,9 +68,7 @@ _import_errors: list[str] = []
 
 # Calculators with numpy/scipy dependencies
 try:
-    from .scrubber_calculator import (
-        calculate_gas_density as scrubber_calculate_gas_density,
-    )
+    pass
 
     ScrubberCalculator = None  # Module has functions, no class
 except ImportError as e:
