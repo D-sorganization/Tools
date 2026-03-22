@@ -883,3 +883,93 @@ items:
     artefact: .gaai/project/contexts/artefacts/stories/GH1688.story.md
     dependencies: []
     created_at: 2026-03-22
+
+  - id: GH1708
+    title: "Comprehensive A-O + Pragmatic Programmer Assessment — 2026-03-22"
+    priority: medium
+    status: refined
+    github_issue: 1708
+    artefact: .gaai/project/contexts/artefacts/stories/GH1708.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1707
+    title: "Assessment: 33% of source files lack type annotations on function signatures"
+    priority: medium
+    status: refined
+    github_issue: 1707
+    artefact: .gaai/project/contexts/artefacts/stories/GH1707.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1706
+    title: "Assessment: Pragmatic Programmer — Estimating (Module size budget CI uses 1500, docs say 1200)"
+    priority: medium
+    status: refined
+    github_issue: 1706
+    artefact: .gaai/project/contexts/artefacts/stories/GH1706.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1705
+    title: "Assessment: Pragmatic Programmer — Decoupling (calculate_pressure_drop has 4 definitions)"
+    priority: medium
+    status: refined
+    github_issue: 1705
+    artefact: .gaai/project/contexts/artefacts/stories/GH1705.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1704
+    title: "Assessment: Pragmatic Programmer — Design by Contract maturity is strong but enforcement inconsistent"
+    priority: medium
+    status: refined
+    github_issue: 1704
+    artefact: .gaai/project/contexts/artefacts/stories/GH1704.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1703
+    title: "Assessment: Pragmatic Programmer — Reversibility (pyproject.toml still references Black)"
+    priority: medium
+    status: refined
+    github_issue: 1703
+    artefact: .gaai/project/contexts/artefacts/stories/GH1703.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1702
+    title: "Assessment: Pragmatic Programmer — Orthogonality (E501 globally suppressed)"
+    priority: medium
+    status: refined
+    github_issue: 1702
+    artefact: .gaai/project/contexts/artefacts/stories/GH1702.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1701
+    title: "Assessment: Pragmatic Programmer — Tracer Bullets (test coverage at 40% threshold)"
+    priority: medium
+    status: refined
+    github_issue: 1701
+    artefact: .gaai/project/contexts/artefacts/stories/GH1701.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1700
+    title: "Assessment: Pragmatic Programmer — Broken Windows in contracts module import paths"
+    priority: medium
+    status: refined
+    github_issue: 1700
+    artefact: .gaai/project/contexts/artefacts/stories/GH1700.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1699
+    title: "Assessment: Cross-repo integration tests pass but lack Gasification_Model coverage"
+    priority: medium
+    status: refined
+    github_issue: 1699
+    artefact: .gaai/project/contexts/artefacts/stories/GH1699.story.md
+    dependencies: []
+    created_at: 2026-03-22
