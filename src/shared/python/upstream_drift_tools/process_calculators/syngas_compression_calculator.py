@@ -131,7 +131,7 @@ from .constants import (
     SECONDS_PER_HOUR,
     WATTS_PER_HP,
 )
-from .syngas_water_calculator import SyngasWaterCalculator  # noqa: E402
+from .syngas_water_calculator import SyngasWaterCalculator
 
 # Import BaseCalculatorWidget for state management
 try:

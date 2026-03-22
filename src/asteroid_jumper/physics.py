@@ -26,11 +26,11 @@ class Vec2(NamedTuple):
     x: float = 0.0
     y: float = 0.0
 
-    def __add__(self, other: object) -> Vec2:  # noqa: PYI034  # override with wider type
+    def __add__(self, other: object) -> Vec2:  # override with wider type
         assert isinstance(other, Vec2), "Vec2 + Vec2 required"
         return Vec2(self.x + other.x, self.y + other.y)
 
-    def __sub__(self, other: object) -> Vec2:  # noqa: PYI034  # override with wider type
+    def __sub__(self, other: object) -> Vec2:  # override with wider type
         assert isinstance(other, Vec2), "Vec2 - Vec2 required"
         return Vec2(self.x - other.x, self.y - other.y)
 

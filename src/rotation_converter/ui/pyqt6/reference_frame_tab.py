@@ -144,7 +144,7 @@ class ReferenceFrameTab(QWidget):
             self._results.setPlainText(json.dumps(result.results, indent=2))
             self._markdown.setPlainText(result.explanation_markdown)
             self._latex.setPlainText(result.explanation_latex)
-        except Exception as error:  # noqa: BLE001
+        except Exception as error:
             self._results.setPlainText(f"Error: {error}")
             self._markdown.clear()
             self._latex.clear()

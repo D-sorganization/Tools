@@ -163,7 +163,7 @@ def set_seeds(seed: int = DEFAULT_SEED) -> None:
     random.seed(seed)
 
     if NUMPY_AVAILABLE:
-        np.random.seed(seed)  # noqa: NPY002
+        np.random.seed(seed)
 
     if TORCH_AVAILABLE:
         torch.manual_seed(seed)

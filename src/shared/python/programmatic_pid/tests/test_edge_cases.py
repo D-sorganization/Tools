@@ -66,7 +66,7 @@ class TestValidationSchemaLoading:
         original_fn = _val._load_schema
 
         def patched_load_schema():
-            global _SCHEMA  # noqa: PLW0602
+            global _SCHEMA
             if _val._SCHEMA is not None:
                 return _val._SCHEMA
             if schema_file.exists():

@@ -39,9 +39,9 @@ for _mod in list(sys.modules.keys()):
 # takes effect. importlib is accessible via the `import importlib.util` above.
 importlib.invalidate_caches()
 
-from signal_toolkit.core import Signal  # noqa: E402
+from signal_toolkit.core import Signal
 
-from signal_processing_studio.signal_bus import SignalBus  # noqa: E402
+from signal_processing_studio.signal_bus import SignalBus
 
 # =============================================================================
 # Resample Drawn Points Tests (polynomial_generator._resample_drawn_points)

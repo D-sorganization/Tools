@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any
 
 # Use canonical file I/O utilities instead of reimplementing them
-from utils.file_utils import safe_read_json, safe_write_json  # noqa: F401 (re-exported)
+from utils.file_utils import safe_read_json, safe_write_json
 
 # Setup logging
 logger = logging.getLogger(__name__)

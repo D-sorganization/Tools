@@ -152,7 +152,7 @@ class PackTabMixin:
         )
         self.pack_status_label.pack(fill="x")
 
-    def _create_pack_options(self, right_frame: ttk.Frame) -> None:  # noqa: PLR0915
+    def _create_pack_options(self, right_frame: ttk.Frame) -> None:
         """Create pack options in the right column.
 
         Args:
@@ -438,7 +438,7 @@ class UnpackTabMixin:
 class PreviewTabMixin:
     """Mixin providing the Preview tab creation."""
 
-    def _create_preview_tab(self) -> None:  # noqa: PLR0915
+    def _create_preview_tab(self) -> None:
         """Create file preview tab."""
         tab = ttk.Frame(self.notebook)  # type: ignore[attr-defined]
         self.notebook.add(tab, text="  Preview  ")  # type: ignore[attr-defined]

@@ -55,7 +55,7 @@ __version__ = "0.1.0"
 __author__ = "Golf Modeling Suite"
 
 # --- Only lightweight constants are imported eagerly ---
-from model_generation.core.constants import (  # noqa: E402
+from model_generation.core.constants import (
     DEFAULT_DENSITY_KG_M3,
     DEFAULT_HEIGHT_M,
     DEFAULT_INERTIA_KG_M2,

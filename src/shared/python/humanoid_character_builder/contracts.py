@@ -9,7 +9,7 @@ in the single source of truth.
 
 from __future__ import annotations
 
-from contracts import (  # noqa: F401
+from contracts import (
     ContractViolationError,
     postcondition,
     precondition,

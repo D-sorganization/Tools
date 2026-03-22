@@ -75,7 +75,7 @@ def build_exe() -> int:
     logger.info("Command: %s\n", " ".join(cmd))
 
     try:
-        subprocess.run(cmd, cwd=script_dir, check=True)  # noqa: S603
+        subprocess.run(cmd, cwd=script_dir, check=True)
     except subprocess.CalledProcessError as e:
         logger.exception("\nError: Build failed with exit code %s", e.returncode)
         return 1

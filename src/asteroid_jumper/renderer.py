@@ -130,7 +130,7 @@ class AsteroidJumperRenderer(QWidget):
     # Qt event overrides
     # ------------------------------------------------------------------
 
-    def paintEvent(self, _event: object) -> None:  # noqa: N802
+    def paintEvent(self, _event: object) -> None:
         assert _event is not None, "_event must be provided"
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
@@ -144,7 +144,7 @@ class AsteroidJumperRenderer(QWidget):
         self._draw_hud(painter)
         painter.end()
 
-    def mousePressEvent(self, event: object) -> None:  # noqa: N802
+    def mousePressEvent(self, event: object) -> None:
         assert isinstance(event, type(event))
         from PyQt6.QtGui import QMouseEvent
 
@@ -155,7 +155,7 @@ class AsteroidJumperRenderer(QWidget):
             elif event.button() == Qt.MouseButton.RightButton:
                 self._pan_start = event.position()
 
-    def mouseMoveEvent(self, event: object) -> None:  # noqa: N802
+    def mouseMoveEvent(self, event: object) -> None:
         from PyQt6.QtGui import QMouseEvent
 
         if isinstance(event, QMouseEvent):
@@ -163,10 +163,10 @@ class AsteroidJumperRenderer(QWidget):
                 self._update_force_from_mouse(event.position())
                 self.update()
 
-    def mouseReleaseEvent(self, event: object) -> None:  # noqa: N802
+    def mouseReleaseEvent(self, event: object) -> None:
         self._force_angle_drag = False
 
-    def wheelEvent(self, event: object) -> None:  # noqa: N802
+    def wheelEvent(self, event: object) -> None:
         from PyQt6.QtGui import QWheelEvent
 
         if isinstance(event, QWheelEvent):

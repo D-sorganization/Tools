@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import sys
 
-from _bootstrap import bootstrap  # noqa: E402
+from _bootstrap import bootstrap
 
 _REPO_ROOT = bootstrap(__file__)
 

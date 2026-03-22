@@ -8,7 +8,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from _bootstrap import bootstrap  # noqa: E402
+from _bootstrap import bootstrap
 
 _REPO_ROOT = bootstrap(__file__)
 

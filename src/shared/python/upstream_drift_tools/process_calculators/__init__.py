@@ -68,7 +68,7 @@ _import_errors: list[str] = []
 
 # Calculators with numpy/scipy dependencies
 try:
-    from .scrubber_calculator import (  # noqa: F401
+    from .scrubber_calculator import (
         calculate_gas_density as scrubber_calculate_gas_density,
     )
 
@@ -81,10 +81,10 @@ except ImportError as e:
 SyngasWaterCalculator: type[SyngasWaterCalculatorType] | None = None
 WaterVaporPressureCalculator: type[WaterVaporPressureCalculatorType] | None = None
 try:
-    from .syngas_water_calculator import (  # noqa: F401
+    from .syngas_water_calculator import (
         SyngasWaterCalculator as SyngasWaterCalculator,
     )
-    from .water_vapor_pressure_calculator import (  # noqa: F401
+    from .water_vapor_pressure_calculator import (
         WaterVaporPressureCalculator as WaterVaporPressureCalculator,
     )
 except ImportError as e:
@@ -95,7 +95,7 @@ WGSReactorCalculator: type[WGSReactorEngineType] | None = None
 WGSReactorEngine: type[WGSReactorEngineType] | None = None
 try:
     from .wgs_reactor_calculator import (
-        WGSReactorEngine as WGSReactorEngine,  # noqa: F401
+        WGSReactorEngine as WGSReactorEngine,
     )
 
     WGSReactorCalculator = WGSReactorEngine  # Alias
@@ -106,7 +106,7 @@ except ImportError as e:
 Optimizer: Callable[..., Any] | None = None
 AdamOptimizer: Callable[..., Any] | None = None
 try:
-    from .optimization import (  # noqa: F401
+    from .optimization import (
         find_optimal_on_surface,
         run_adam_optimization,
     )
@@ -119,7 +119,7 @@ except ImportError as e:
 # Pre-declare callable alias to avoid assignment type error in except branch
 MultiParameterAnalysis: Callable[..., Any] | None = None
 try:
-    from .multi_param_analysis import (  # noqa: F401
+    from .multi_param_analysis import (
         run_multi_parameter_analysis,
     )
 
@@ -144,7 +144,7 @@ except ImportError as e:
 # Modular packages — pre-declare to avoid no-redef in except branch
 PressureDropCalculator: type[PressureDropCalculatorType] | None = None
 try:
-    from .pressure_drop_calculator import (  # noqa: F401
+    from .pressure_drop_calculator import (
         PressureDropCalculator as PressureDropCalculator,
     )
 except ImportError as e:

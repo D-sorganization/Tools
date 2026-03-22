@@ -4,7 +4,7 @@ import tkinter as tk
 
 from tkinter import ttk
 
-from _bootstrap import bootstrap  # noqa: E402
+from _bootstrap import bootstrap
 
 _REPO_ROOT = bootstrap(__file__)
 
@@ -44,7 +44,7 @@ from folder_tool_constants import (  # noqa: E402, F401
 )
 
 try:
-    from utils.file_utils import safe_write_text  # noqa: F401, E402
+    from utils.file_utils import safe_write_text
 except ImportError:
     # Fallback definition if utils not found
     from pathlib import Path

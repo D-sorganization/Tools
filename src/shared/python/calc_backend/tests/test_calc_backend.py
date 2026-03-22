@@ -732,7 +732,7 @@ class TestProtocols:
 
         class DummyEval:
             def evaluate(self, expression: str, namespace: dict) -> float:
-                return eval(expression, {}, namespace)  # noqa: S307
+                return eval(expression, {}, namespace)
 
             def validate(self, expression: str) -> bool:
                 return True

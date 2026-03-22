@@ -90,7 +90,7 @@ def safe_execute(
     """
     try:
         return func(*args, **kwargs)
-    except Exception as e:  # noqa: BLE001 - intentional catch-all safety wrapper
+    except Exception as e:
         if log_error:
             logger.error(f"Error executing {func.__name__}: {e}")
         return default

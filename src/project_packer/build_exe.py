@@ -41,7 +41,7 @@ def install_pyinstaller() -> bool:
     """
     logger.info("Installing PyInstaller...")
     try:
-        subprocess.run(  # noqa: S603
+        subprocess.run(
             [sys.executable, "-m", "pip", "install", "pyinstaller"],
             check=True,
             capture_output=True,
@@ -96,9 +96,7 @@ def build_executable() -> bool:
     logger.info("Command: %s", " ".join(cmd))
 
     try:
-        subprocess.run(  # noqa: S603
-            cmd, cwd=Path.cwd(), check=True, capture_output=True, text=True
-        )
+        subprocess.run(cmd, cwd=Path.cwd(), check=True, capture_output=True, text=True)
     except subprocess.CalledProcessError:
         logger.exception("Build failed")
         return False

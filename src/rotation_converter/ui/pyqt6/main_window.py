@@ -118,7 +118,7 @@ def _get_plot_colors() -> dict[str, Any]:
 
             mgr = get_theme_manager()
             colors = mgr.get_current_colors()
-            _dark = is_dark_theme(colors.get("name", "dark"))  # noqa: F841
+            _dark = is_dark_theme(colors.get("name", "dark"))
             return {
                 "bg": colors.get("bg", _DARK_BG),
                 "fg": colors.get("text", _DARK_FG),
