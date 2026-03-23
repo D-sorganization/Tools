@@ -137,16 +137,8 @@ exclude = [
 # =============================================================================
 # Pytest Configuration
 # =============================================================================
-[tool.ruff]
-target-version = "py310"
-line-length = 88
-
-[tool.ruff.lint]
-select = ["E", "F", "B", "UP", "I", "T201"]
-
-[tool.ruff.lint.per-file-ignores]
-"**/*.ipynb" = ["E402", "T201"]
-
+# Ruff configuration lives in ruff.toml (authoritative). [tool.ruff] and
+# [tool.black] sections removed to eliminate conflicting duplicate config.
 [tool.pytest.ini_options]
 testpaths = ["tests", "src"]
 python_files = "test_*.py"
