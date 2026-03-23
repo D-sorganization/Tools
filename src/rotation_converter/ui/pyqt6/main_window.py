@@ -169,7 +169,7 @@ class RotationConverterTab(QWidget):
         self._update_outputs()
 
     def _build_input_group(self) -> QGroupBox:
-        """Build the left-side input group with representation selector and value entry."""
+        """Build the left-side input group with representation selector and value entry."""  # noqa: E501
         input_group = QGroupBox("Input Rotation")
         input_layout = QVBoxLayout(input_group)
         form = QFormLayout()
@@ -198,7 +198,7 @@ class RotationConverterTab(QWidget):
         return input_group
 
     def _build_output_section(self) -> QVBoxLayout:
-        """Build the output section with target combo, result display, and all-repr text."""
+        """Build the output section with target combo, result display, and all-repr text."""  # noqa: E501
         right = QVBoxLayout()
         target_group = QGroupBox("Main Output Extraction")
         target_layout = QFormLayout(target_group)

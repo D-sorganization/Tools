@@ -42,7 +42,8 @@ Quick Start:
 Lazy-loading strategy (see issue #611):
     All heavy imports are deferred to first access via ``__getattr__``.
     This breaks the circular import chain:
-        __init__ -> builders.base_builder -> core.contracts -> core.validation -> core.contracts
+        __init__ -> builders.base_builder -> core.contracts
+        -> core.validation -> core.contracts
     Only lightweight constants are imported eagerly.
 """
 

@@ -93,7 +93,7 @@ class TestValidateSpecWithJsonschema:
         }
         # Patch schema to return truthy value so jsonschema path is exercised
         with patch.object(_val, "_load_schema", return_value={"type": "object"}):
-            # jsonschema may or may not be installed; either way should not crash for valid spec
+            # jsonschema may or may not be installed; either way should not crash for valid spec  # noqa: E501
             try:
                 validate_spec(valid_spec)
             except SpecValidationError:
