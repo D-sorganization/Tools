@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-import ezdxf
 import pytest
+
+ezdxf = pytest.importorskip("ezdxf")
 from programmatic_pid.rendering import ensure_layers
 from programmatic_pid.title_block import (
     add_notes,

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("ezdxf")
 from programmatic_pid.layout import (
     LabelPlacer,
     compute_layout_regions,

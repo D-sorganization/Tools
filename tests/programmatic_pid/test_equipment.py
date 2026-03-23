@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-import ezdxf
+import pytest
+
+ezdxf = pytest.importorskip("ezdxf")
 from programmatic_pid.equipment import (
     EQUIPMENT_RENDERERS,
     draw_equipment_symbol,

@@ -5,6 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+
+pytest.importorskip("ezdxf")
 from programmatic_pid.cli import derive_related_path, generate
 
 _BIOCHAR_SPEC = (
