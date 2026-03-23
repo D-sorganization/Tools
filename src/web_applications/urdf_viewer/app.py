@@ -239,4 +239,4 @@ async def list_templates() -> dict[str, list[str]]:
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)  # noqa: S104  # nosec B104
+    uvicorn.run(app, host="0.0.0.0", port=8000)  # nosec B104

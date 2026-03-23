@@ -35,7 +35,7 @@ def with_timeout(
     *args: Any,
     **kwargs: Any,
 ) -> _T:
-    """Run ``func(*args, **kwargs)`` and raise ``SolverTimeoutError`` if it exceeds *seconds*.
+    """Run *func* and raise ``SolverTimeoutError`` if it exceeds *seconds*.
 
     Preconditions:
         ``seconds`` must be a positive numeric value (int or float).
@@ -58,7 +58,7 @@ def with_timeout(
     """
     if not isinstance(seconds, (int, float)):
         raise TypeError(
-            f"seconds must be a numeric value (int or float), got {type(seconds).__name__}"
+            f"seconds must be a numeric value (int or float), got {type(seconds).__name__}"  # noqa: E501
         )
     if seconds <= 0:
         raise ValueError(f"seconds must be > 0, got {seconds!r}")
@@ -71,7 +71,7 @@ def with_timeout(
     def _target() -> None:
         try:
             result.append(func(*args, **kwargs))
-        except Exception as err:  # noqa: BLE001
+        except Exception as err:
             exc_holder.append(err)
 
     worker = threading.Thread(target=_target, daemon=True, name="ode-solver-worker")
@@ -82,7 +82,7 @@ def with_timeout(
         _log.warning("ODE solver timed out after %.1f s", seconds)
         raise SolverTimeoutError(
             f"ODE solver computation timed out after {seconds:.1f} s. "
-            "Consider simplifying the system, reducing the time span, or increasing the timeout."
+            "Consider simplifying the system, reducing the time span, or increasing the timeout."  # noqa: E501
         )
 
     if exc_holder:

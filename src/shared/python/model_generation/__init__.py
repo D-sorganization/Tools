@@ -42,7 +42,8 @@ Quick Start:
 Lazy-loading strategy (see issue #611):
     All heavy imports are deferred to first access via ``__getattr__``.
     This breaks the circular import chain:
-        __init__ -> builders.base_builder -> core.contracts -> core.validation -> core.contracts
+        __init__ -> builders.base_builder -> core.contracts
+        -> core.validation -> core.contracts
     Only lightweight constants are imported eagerly.
 """
 
@@ -55,7 +56,7 @@ __version__ = "0.1.0"
 __author__ = "Golf Modeling Suite"
 
 # --- Only lightweight constants are imported eagerly ---
-from model_generation.core.constants import (  # noqa: E402
+from model_generation.core.constants import (
     DEFAULT_DENSITY_KG_M3,
     DEFAULT_HEIGHT_M,
     DEFAULT_INERTIA_KG_M2,

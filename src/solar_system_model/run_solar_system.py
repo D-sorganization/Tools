@@ -11,7 +11,7 @@ For full options, run:
 
 import sys
 
-from _bootstrap import bootstrap  # noqa: E402
+from _bootstrap import bootstrap
 
 _REPO_ROOT = bootstrap(__file__)
 

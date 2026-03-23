@@ -45,7 +45,7 @@ try:
     )
 
     # Also verify backward-compatible facade imports work
-    from tools.folder_tools.folder_packer_pro.folder_packer_pro import (  # noqa: F811
+    from tools.folder_tools.folder_packer_pro.folder_packer_pro import (
         EncryptionManager as EncryptionManagerFacade,
     )
     from tools.folder_tools.folder_packer_pro.folder_packer_pro import (
@@ -65,7 +65,7 @@ class TestEncryptionManager:
     def test_encryption_decryption(self) -> None:
         """Test encrypting and decrypting data."""
         data = b"test data"
-        password = "test_password"  # noqa: S105
+        password = "test_password"
 
         encrypted = EncryptionManager.encrypt_data(data, password)
         assert encrypted != data
@@ -75,7 +75,7 @@ class TestEncryptionManager:
 
     def test_derive_key(self) -> None:
         """Test key derivation."""
-        password = "test_password"  # noqa: S105
+        password = "test_password"
         salt = os.urandom(16)
 
         key1 = EncryptionManager.derive_key(password, salt)

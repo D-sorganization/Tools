@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Standalone launcher for the RRT asteroid navigator."""
 
-# ruff: noqa: E402, I001
+# ruff: noqa: E402
 
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ PYTHON_SRC = _RRT_ROOT / "python" / "src"
 if str(PYTHON_SRC) not in sys.path:
     sys.path.insert(0, str(PYTHON_SRC))
 
-from star_wars_rrt import main  # noqa: E402
+from star_wars_rrt import main
 
 if __name__ == "__main__":
     raise SystemExit(main())

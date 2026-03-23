@@ -5,9 +5,12 @@ from __future__ import annotations
 from unittest.mock import MagicMock, patch
 
 import pytest
-from programmatic_pid.geometry import find_free_region
-from programmatic_pid.types import BBox, SpecValidationError
-from programmatic_pid.validation import _load_schema, validate_spec
+
+pytest.importorskip("ezdxf", reason="ezdxf not installed")
+
+from programmatic_pid.geometry import find_free_region  # noqa: E402
+from programmatic_pid.types import BBox, SpecValidationError  # noqa: E402
+from programmatic_pid.validation import _load_schema, validate_spec  # noqa: E402
 
 
 class TestFindFreeRegionNone:
@@ -66,7 +69,7 @@ class TestValidationSchemaLoading:
         original_fn = _val._load_schema
 
         def patched_load_schema():
-            global _SCHEMA  # noqa: PLW0602
+            global _SCHEMA
             if _val._SCHEMA is not None:
                 return _val._SCHEMA
             if schema_file.exists():
@@ -93,7 +96,7 @@ class TestValidateSpecWithJsonschema:
         }
         # Patch schema to return truthy value so jsonschema path is exercised
         with patch.object(_val, "_load_schema", return_value={"type": "object"}):
-            # jsonschema may or may not be installed; either way should not crash for valid spec
+            # jsonschema may or may not be installed; either way should not crash for valid spec  # noqa: E501
             try:
                 validate_spec(valid_spec)
             except SpecValidationError:

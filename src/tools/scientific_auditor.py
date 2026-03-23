@@ -21,7 +21,7 @@ class ScienceAuditor(ast.NodeVisitor):
         super().__init__()
         self.risks: list[dict[str, object]] = []
 
-    def visit_BinOp(self, node: ast.BinOp) -> None:  # noqa: N802
+    def visit_BinOp(self, node: ast.BinOp) -> None:
         # 1. Division Safety
         if isinstance(node.op, ast.Div) and not (
             isinstance(node.right, ast.Constant) and node.right.value != 0
@@ -35,7 +35,7 @@ class ScienceAuditor(ast.NodeVisitor):
             )
         self.generic_visit(node)
 
-    def visit_Call(self, node: ast.Call) -> None:  # noqa: N802
+    def visit_Call(self, node: ast.Call) -> None:
         # 2. Trig Safety
         if (
             isinstance(node.func, ast.Attribute)

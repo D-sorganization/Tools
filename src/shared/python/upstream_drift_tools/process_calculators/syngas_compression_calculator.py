@@ -131,7 +131,7 @@ from .constants import (
     SECONDS_PER_HOUR,
     WATTS_PER_HP,
 )
-from .syngas_water_calculator import SyngasWaterCalculator  # noqa: E402
+from .syngas_water_calculator import SyngasWaterCalculator
 
 # Import BaseCalculatorWidget for state management
 try:
@@ -149,7 +149,7 @@ except ImportError:
 
 # Import species database with fallback
 try:
-    from integrated_process_simulator.calculators.thermodynamic_properties.species_database import (
+    from integrated_process_simulator.calculators.thermodynamic_properties.species_database import (  # noqa: E501
         get_species_database,
     )
 except ImportError:
@@ -1013,9 +1013,9 @@ if HAS_PYQT:
                 [
                     "Mixture Properties:\n",
                     f"  Molecular Weight: {mix_props['molecular_weight']:.2f} g/mol\n",
-                    f"  Critical Temperature: {mix_props['critical_temperature']:.1f} K\n",
+                    f"  Critical Temperature: {mix_props['critical_temperature']:.1f} K\n",  # noqa: E501
                     f"  Critical Pressure: {mix_props['critical_pressure']:.1f} bar\n",
-                    f"  Heat Capacity Ratio (γ): {mix_props['heat_capacity_ratio']:.3f}\n\n",
+                    f"  Heat Capacity Ratio (γ): {mix_props['heat_capacity_ratio']:.3f}\n\n",  # noqa: E501
                     "Compression Stages:\n",
                     "-" * 30 + "\n",
                 ]
@@ -1028,9 +1028,9 @@ if HAS_PYQT:
                     [
                         f"\nStage {stage_num}:\n",
                         f"  Inlet Temperature: {stage_result['inlet_temp']:.1f} K "
-                        f"({stage_result['inlet_temp'] - CELSIUS_TO_KELVIN_OFFSET:.1f} deg C)\n",
+                        f"({stage_result['inlet_temp'] - CELSIUS_TO_KELVIN_OFFSET:.1f} deg C)\n",  # noqa: E501
                         f"  Outlet Temperature: {stage_result['outlet_temp']:.1f} K "
-                        f"({stage_result['outlet_temp'] - CELSIUS_TO_KELVIN_OFFSET:.1f} deg C)\n",
+                        f"({stage_result['outlet_temp'] - CELSIUS_TO_KELVIN_OFFSET:.1f} deg C)\n",  # noqa: E501
                         f"  Heat Rise: {stage_result['heat_rise']:.1f} K\n",
                         f"  Pressure Ratio: {stage_result['pressure_ratio']:.2f}\n",
                         f"  Power Required: {stage_result['power_hp']:.1f} HP\n",
@@ -1042,8 +1042,8 @@ if HAS_PYQT:
                 if water_info["water_dropout"] > ATOL_ZERO:
                     output_parts.extend(
                         [
-                            f"  Water Dropout: {water_info['water_dropout']:.3f} mol%\n",
-                            f"  Condensation Rate: {water_info['condensation_rate']:.1f}%\n",
+                            f"  Water Dropout: {water_info['water_dropout']:.3f} mol%\n",  # noqa: E501
+                            f"  Condensation Rate: {water_info['condensation_rate']:.1f}%\n",  # noqa: E501
                         ]
                     )
 
@@ -1054,9 +1054,9 @@ if HAS_PYQT:
                     "-" * 20 + "\n",
                     f"Total Power Required: {result['total_power_hp']:.1f} HP\n",
                     f"Final Temperature: {result['final_temperature']:.1f} K "
-                    f"({result['final_temperature'] - CELSIUS_TO_KELVIN_OFFSET:.1f} deg C)\n",
+                    f"({result['final_temperature'] - CELSIUS_TO_KELVIN_OFFSET:.1f} deg C)\n",  # noqa: E501
                     f"Final Pressure: {result['final_pressure']:.1f} bar\n",
-                    f"Total Water Dropout: {analysis['total_water_dropout']:.3f} mol%\n",
+                    f"Total Water Dropout: {analysis['total_water_dropout']:.3f} mol%\n",  # noqa: E501
                 ]
             )
 

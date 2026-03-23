@@ -28,7 +28,7 @@ for _p in [_REPO_ROOT, _SHARED_DIR, _URDF_DIR, _APP_DIR]:
 # Skip entire module if FastAPI app can't be imported/initialized
 # (CI may lack python-multipart, cors deps, etc.)
 try:
-    from app import app  # noqa: F401
+    from app import app
 except Exception as _exc:
     pytest.skip(
         f"Skipping urdf_viewer tests — app import failed: {_exc}",

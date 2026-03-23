@@ -22,7 +22,10 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
-import ezdxf
+try:
+    import ezdxf
+except ImportError:  # pragma: no cover — optional heavy dep
+    ezdxf = None  # type: ignore[assignment]
 from programmatic_pid.controls import add_control_loops
 from programmatic_pid.equipment import draw_equipment_symbol, equipment_dims
 from programmatic_pid.geometry import to_float
@@ -597,7 +600,8 @@ def generate_process_sheet(
 
     add_text(
         msp,
-        "Conceptual draft generated from YAML. Validate controls and safety details before design issue.",
+        "Conceptual draft generated from YAML. "
+        "Validate controls and safety details before design issue.",
         layout_regions["panels"]["title"][0] + 1.1,
         layout_regions["panels"]["title"][1]
         + layout_regions["panels"]["title"][3]

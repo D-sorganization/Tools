@@ -63,7 +63,7 @@ class TestAppStartup:
 
 
 class TestPressureDrop:
-    """Tests for the Darcy-Weisbach pressure-drop router (delegates to PressureDropCalculator)."""
+    """Tests for the Darcy-Weisbach pressure-drop router (delegates to PressureDropCalculator)."""  # noqa: E501
 
     def _payload(self, **overrides) -> dict[str, Any]:
         base: dict[str, Any] = {
@@ -632,7 +632,7 @@ class TestFlareRouterMocked:
         mock_cls.return_value = mock_calc
 
         r = client.post("/api/calc/flare", json=self._payload())
-        # If the import-path mock doesn't line up exactly, it will fall through to real import
+        # If the import-path mock doesn't line up exactly, it will fall through to real import  # noqa: E501
         assert r.status_code in (200, 422, 503)
 
     def test_flare_invalid_payload(self, client: TestClient):
@@ -732,7 +732,7 @@ class TestProtocols:
 
         class DummyEval:
             def evaluate(self, expression: str, namespace: dict) -> float:
-                return eval(expression, {}, namespace)  # noqa: S307
+                return eval(expression, {}, namespace)
 
             def validate(self, expression: str) -> bool:
                 return True
@@ -1052,7 +1052,7 @@ class TestPressureDropEdgeCases:
     """Unit-level tests for pressure-drop edge-case branches."""
 
     def test_log10_exception_branch(self):
-        """Very rough pipe → a_val + b_val could be ≤ 0 triggering ValueError fallback."""
+        """Very rough pipe → a_val + b_val could be ≤ 0 triggering ValueError fallback."""  # noqa: E501
         from calc_backend.contracts.pressure_drop import PressureDropRequest
         from calc_backend.routers.pressure_drop import calculate_pressure_drop as _fn
 
