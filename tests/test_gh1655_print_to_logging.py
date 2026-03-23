@@ -82,7 +82,8 @@ class TestNoUnguardedPrintInSrc:
         for node in ast.walk(tree):
             if isinstance(node, ast.Expr) and self._is_print_call(node.value):
                 pytest.fail(
-                    f"Found print() call in {src_file}:{node.lineno} — use logging instead"
+                    f"Found print() call in {src_file}:"
+                    f"{node.lineno} — use logging instead"
                 )
 
 
@@ -108,7 +109,7 @@ class TestRuffT201Configured:
         )
 
     def test_notebooks_excluded_from_t201(self) -> None:
-        """Jupyter notebooks must be excluded from T201 (print is valid in notebooks)."""
+        """Notebooks must be excluded from T201 (print is valid)."""
         try:
             import tomllib
         except ImportError:
