@@ -22,7 +22,10 @@ class TestTrimeshGeometryContracts:
     """Contract: Trimesh produces geometrically valid meshes for URDF/CAD pipelines."""
 
     def test_box_mesh_is_watertight_and_valid_volume(self) -> None:
-        import trimesh
+        trimesh = pytest.importorskip(
+            "trimesh",
+            reason="trimesh not installed — skipping heavy geometry contracts",
+        )
 
         box = trimesh.creation.box((1.0, 2.0, 3.0))
 
@@ -35,7 +38,10 @@ class TestTrimeshGeometryContracts:
 
     def test_mesh_boolean_intersection(self) -> None:
         """Prove boolean ops work — used in electrode CAD pipelines."""
-        import trimesh
+        trimesh = pytest.importorskip(
+            "trimesh",
+            reason="trimesh not installed — skipping heavy geometry contracts",
+        )
 
         a = trimesh.creation.box((1, 1, 1))
         b = trimesh.creation.box((1, 1, 1))
@@ -97,7 +103,10 @@ class TestEzdxfPIDContracts:
     def test_pid_drawing_entities_valid(self) -> None:
         import io
 
-        import ezdxf
+        ezdxf = pytest.importorskip(
+            "ezdxf",
+            reason="ezdxf not installed — skipping heavy P&ID contracts",
+        )
 
         doc = ezdxf.new(dxfversion="R2010")
         msp = doc.modelspace()

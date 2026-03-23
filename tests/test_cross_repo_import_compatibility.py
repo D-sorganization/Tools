@@ -396,3 +396,174 @@ class TestInputValidatorContract:
 
         with pytest.raises(ValueError):
             InputValidator.validate_composition({"CH4": -0.1, "CO2": 1.1})
+
+
+@pytest.mark.integration
+class TestGasificationModelProcessCalculatorPatterns:
+    """Contract: process_calculators subpackage exposes symbols that
+    Gasification_Model imports by name.
+
+    Gasification_Model uses FlareCalculator, BaghouseCalculator,
+    AcidGasDewpointCalculator, FinancialCalculator, and
+    ElectrodeAdvancementCalculator.  These are always-available (no
+    optional deps) and their importability is part of the stable API
+    surface.  A failure here means Gasification_Model would break on
+    ``from upstream_drift_tools.process_calculators import ...``.
+    """
+
+    def test_process_calculators_subpackage_importable(self) -> None:
+        """process_calculators subpackage must import without error."""
+        from upstream_drift_tools import process_calculators  # noqa: F401
+
+        assert process_calculators is not None
+
+    def test_flare_calculator_importable(self) -> None:
+        """FlareCalculator must be importable — used by Gasification_Model flare sizing."""
+        from upstream_drift_tools.process_calculators import FlareCalculator
+
+        assert FlareCalculator is not None
+
+    def test_baghouse_calculator_importable(self) -> None:
+        """BaghouseCalculator must be importable — used by Gasification_Model."""
+        from upstream_drift_tools.process_calculators import BaghouseCalculator
+
+        assert BaghouseCalculator is not None
+
+    def test_acid_gas_dewpoint_calculator_importable(self) -> None:
+        """AcidGasDewpointCalculator must be importable — used by Gasification_Model."""
+        from upstream_drift_tools.process_calculators import AcidGasDewpointCalculator
+
+        assert AcidGasDewpointCalculator is not None
+
+    def test_financial_calculator_importable(self) -> None:
+        """FinancialCalculator must be importable — used by Gasification_Model."""
+        from upstream_drift_tools.process_calculators import FinancialCalculator
+
+        assert FinancialCalculator is not None
+
+    def test_electrode_advancement_calculator_importable(self) -> None:
+        """ElectrodeAdvancementCalculator must be importable."""
+        from upstream_drift_tools.process_calculators import (
+            ElectrodeAdvancementCalculator,
+        )
+
+        assert ElectrodeAdvancementCalculator is not None
+
+    def test_flare_design_dataclass_importable(self) -> None:
+        """FlareDesign dataclass must be importable — Gasification_Model unpacks it."""
+        from upstream_drift_tools.process_calculators import FlareDesign
+
+        assert FlareDesign is not None
+
+    def test_baghouse_result_dataclass_importable(self) -> None:
+        """BaghouseResult dataclass must be importable — Gasification_Model unpacks it."""
+        from upstream_drift_tools.process_calculators import BaghouseResult
+
+        assert BaghouseResult is not None
+
+    def test_constants_importable(self) -> None:
+        """Physical constants must be importable — Gasification_Model uses them directly."""
+        from upstream_drift_tools.process_calculators import (
+            R_GAS_J_MOL_K,
+            R_UNIVERSAL,
+            STANDARD_GRAVITY,
+            celsius_to_kelvin,
+            kelvin_to_celsius,
+        )
+
+        # Verify constants are physically reasonable
+        assert R_UNIVERSAL > 0, "Universal gas constant must be positive"
+        assert R_GAS_J_MOL_K > 0, "Gas constant in J/mol·K must be positive"
+        assert STANDARD_GRAVITY > 0, "Standard gravity must be positive"
+        # Verify unit conversion helpers return correct results
+        assert celsius_to_kelvin(0.0) == pytest.approx(273.15)
+        assert kelvin_to_celsius(273.15) == pytest.approx(0.0)
+
+
+@pytest.mark.contract
+class TestContractsDbCUsagePatterns:
+    """Contract: contracts.py Design by Contract API is usable as Gasification_Model uses it.
+
+    Gasification_Model imports ``require``, ``ensure``, ``PreconditionError``,
+    ``PostconditionError``, and ``ContractLevel`` from
+    ``src.shared.python.contracts``.  These tests verify the DbC API surface
+    is intact and functions correctly — a failure here means Gasification_Model's
+    precondition guards would silently break.
+    """
+
+    def test_contracts_module_importable(self) -> None:
+        """contracts module must be importable from its canonical path."""
+        from src.shared.python import contracts  # noqa: F401
+
+        assert contracts is not None
+
+    def test_require_passes_on_true_condition(self) -> None:
+        """require() must be a no-op when the condition holds."""
+        from src.shared.python.contracts import require
+
+        require(True, "condition is true")  # must not raise
+
+    def test_require_raises_precondition_error_on_false(self) -> None:
+        """require() must raise PreconditionError when condition is False."""
+        from src.shared.python.contracts import (
+            ContractLevel,
+            PreconditionError,
+            require,
+            set_contract_level,
+        )
+
+        set_contract_level(ContractLevel.ENFORCE)
+        with pytest.raises(PreconditionError):
+            require(False, "flow_rate must be positive", -1.0)
+
+    def test_ensure_passes_on_true_condition(self) -> None:
+        """ensure() must be a no-op when the postcondition holds."""
+        from src.shared.python.contracts import ensure
+
+        ensure(True, "result is non-negative")  # must not raise
+
+    def test_ensure_raises_postcondition_error_on_false(self) -> None:
+        """ensure() must raise PostconditionError when postcondition is False."""
+        from src.shared.python.contracts import (
+            ContractLevel,
+            PostconditionError,
+            ensure,
+            set_contract_level,
+        )
+
+        set_contract_level(ContractLevel.ENFORCE)
+        with pytest.raises(PostconditionError):
+            ensure(False, "result must be >= 0", -5.0)
+
+    def test_precondition_decorator_enforces_guard(self) -> None:
+        """@precondition decorator must raise PreconditionError on bad input."""
+        from src.shared.python.contracts import (
+            ContractLevel,
+            PreconditionError,
+            precondition,
+            set_contract_level,
+        )
+
+        set_contract_level(ContractLevel.ENFORCE)
+
+        @precondition(lambda temperature: temperature > 0, "temperature must be > 0 K")
+        def compute_enthalpy(temperature: float) -> float:
+            return temperature * 29.1  # J/mol approximation
+
+        assert compute_enthalpy(298.15) > 0  # valid input passes
+        with pytest.raises(PreconditionError):
+            compute_enthalpy(-10.0)  # invalid input raises
+
+    def test_contract_level_off_disables_checks(self) -> None:
+        """When DBC_LEVEL=off, require() must not raise even for false conditions."""
+        from src.shared.python.contracts import (
+            ContractLevel,
+            require,
+            set_contract_level,
+        )
+
+        set_contract_level(ContractLevel.OFF)
+        try:
+            require(False, "should not raise in OFF mode")
+        finally:
+            set_contract_level(ContractLevel.ENFORCE)  # restore for other tests
