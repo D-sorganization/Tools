@@ -35,9 +35,7 @@ from PyQt6.QtWidgets import (
 # Stylesheet constants
 # ---------------------------------------------------------------------------
 
-_STYLE_STRIP = (
-    "QWidget#toolstrip {background: #16162e;border-bottom: 1px solid #2a2a50;}"
-)
+_STYLE_STRIP = "QWidget#toolstrip {background: #16162e;border-bottom: 1px solid #2a2a50;}"
 _BTN_RUN = (
     "QPushButton{"
     "background:#1e5c30;color:#a8f0b8;border:none;border-radius:5px;"
@@ -301,17 +299,18 @@ class ToolStrip(QWidget):
         self._build_overlay_section(row2)
         outer.addLayout(row2)
 
-    def _build_row1(self, layout: QHBoxLayout) -> None:
-        """Actions row: Title | Run Reset Play | Speed | [frame slider] | Frame# | Reset View"""
+    def _build_action_buttons_group(self, layout: QHBoxLayout) -> None:
+        """Add model selector, simulation action buttons, and speed control to layout.
 
-        assert layout is not None, "layout must be provided"
+        Adds: title label, model combo, Run/Reset/Play/Loop buttons, speed spinbox.
+        Separated from the playback/scrub section by _vline() separators.
+        """
         title = QLabel("Pendulums")
         title.setStyleSheet(_TITLE)
         title.setFont(QFont("Sans", 11, QFont.Weight.Bold))
         layout.addWidget(title)
 
         # Model selection dropdown (#1149)
-
         self.cmb_model = QComboBox()
         self.cmb_model.addItems(["Double Pendulum", "Triple Pendulum", "Upper Body"])
         self.cmb_model.setToolTip("Switch between pendulum models")
@@ -381,39 +380,12 @@ class ToolStrip(QWidget):
         self.speed_spin.valueChanged.connect(lambda v: self.speed_changed.emit(v))
         layout.addWidget(self.speed_spin)
 
-        layout.addWidget(_vline())
+    def _build_tools_group(self, layout: QHBoxLayout) -> None:
+        """Add export, equations, pop-out, and diagnostics buttons to layout.
 
-        # Playback scrub slider — MUST be visible (#1207)
-        scrub_lbl = QLabel("Playback:")
-        scrub_lbl.setStyleSheet(_LABEL)
-        layout.addWidget(scrub_lbl)
-
-        self._frame_slider = QSlider(Qt.Orientation.Horizontal)
-        self._frame_slider.setRange(0, 0)
-        self._frame_slider.setStyleSheet(_PROGRESS_BAR)
-        self._frame_slider.setToolTip("Drag to scrub through animation frames")
-        self._frame_slider.setMinimumWidth(200)
-        self._frame_slider.setFixedHeight(20)
-        self._frame_slider.valueChanged.connect(self._on_frame_slider_changed)
-        layout.addWidget(self._frame_slider, stretch=1)
-
-        self._frame_lbl = QLabel("0%")
-        self._frame_lbl.setStyleSheet(_FRAME_LBL)
-        self._frame_lbl.setFixedWidth(90)
-        self._frame_lbl.setAlignment(Qt.AlignmentFlag.AlignRight)
-        layout.addWidget(self._frame_lbl)
-
-        layout.addWidget(_vline())
-
-        # Reset View
-        self.btn_reset_view = QPushButton("⤢ Reset View")
-        self.btn_reset_view.setStyleSheet(_BTN_SMALL)
-        self.btn_reset_view.setToolTip(
-            "Reset zoom & pan to default\n(shortcut: double-click canvas)"
-        )
-        self.btn_reset_view.clicked.connect(self.reset_view_requested.emit)
-        layout.addWidget(self.btn_reset_view)
-
+        Adds: Export CSV, Export Video, EOM, Mass Matrix, Pop-Out Chart, Diagnostics.
+        Called from _build_row1 after the playback scrub section.
+        """
         layout.addWidget(_vline())
 
         # Export buttons (#1141)
@@ -467,6 +439,47 @@ class ToolStrip(QWidget):
         )
         self.btn_diagnostics.clicked.connect(self._show_diagnostics)
         layout.addWidget(self.btn_diagnostics)
+
+    def _build_row1(self, layout: QHBoxLayout) -> None:
+        """Actions row: Title | Run Reset Play | Speed | [frame slider] | Frame# | Reset View"""
+
+        assert layout is not None, "layout must be provided"
+        self._build_action_buttons_group(layout)
+
+        layout.addWidget(_vline())
+
+        # Playback scrub slider — MUST be visible (#1207)
+        scrub_lbl = QLabel("Playback:")
+        scrub_lbl.setStyleSheet(_LABEL)
+        layout.addWidget(scrub_lbl)
+
+        self._frame_slider = QSlider(Qt.Orientation.Horizontal)
+        self._frame_slider.setRange(0, 0)
+        self._frame_slider.setStyleSheet(_PROGRESS_BAR)
+        self._frame_slider.setToolTip("Drag to scrub through animation frames")
+        self._frame_slider.setMinimumWidth(200)
+        self._frame_slider.setFixedHeight(20)
+        self._frame_slider.valueChanged.connect(self._on_frame_slider_changed)
+        layout.addWidget(self._frame_slider, stretch=1)
+
+        self._frame_lbl = QLabel("0%")
+        self._frame_lbl.setStyleSheet(_FRAME_LBL)
+        self._frame_lbl.setFixedWidth(90)
+        self._frame_lbl.setAlignment(Qt.AlignmentFlag.AlignRight)
+        layout.addWidget(self._frame_lbl)
+
+        layout.addWidget(_vline())
+
+        # Reset View
+        self.btn_reset_view = QPushButton("⤢ Reset View")
+        self.btn_reset_view.setStyleSheet(_BTN_SMALL)
+        self.btn_reset_view.setToolTip(
+            "Reset zoom & pan to default\n(shortcut: double-click canvas)"
+        )
+        self.btn_reset_view.clicked.connect(self.reset_view_requested.emit)
+        layout.addWidget(self.btn_reset_view)
+
+        self._build_tools_group(layout)
 
     def _show_eom_popup(self) -> None:
         """Open the Equations of Motion popup (#1144)."""
@@ -558,9 +571,7 @@ class ToolStrip(QWidget):
         self._lbl_force_ell_scale.setStyleSheet(_VAL_LBL)
 
         overlay_layout.addLayout(
-            _overlay_row(
-                self.chk_force_ell, self._sld_force_ell, self._lbl_force_ell_scale
-            )
+            _overlay_row(self.chk_force_ell, self._sld_force_ell, self._lbl_force_ell_scale)
         )
 
         # Row D: Per-segment visibility sub-checkboxes (#1100, #1101, #1102)
@@ -592,6 +603,23 @@ class ToolStrip(QWidget):
         layout.addWidget(_vline())
 
         # --- Extra toggles column (vertical, right of overlay section) ---
+        extra_col = self._build_extra_toggles_col()
+        layout.addLayout(extra_col)
+
+        layout.addWidget(_vline())
+
+        self._status_lbl = QLabel("Ready")
+        self._status_lbl.setStyleSheet("color:#404060;font-size:11px;")
+        layout.addWidget(self._status_lbl)
+
+        layout.addStretch()
+
+    def _build_extra_toggles_col(self) -> QVBoxLayout:
+        """Build the extra toggles column: physics toggles and rotation sliders.
+
+        Returns a QVBoxLayout containing: Zero-tau, CoM, Torque Vectors, Moment of Force,
+        Sum of Moments, 3D Segments checkboxes, and Azimuth/Tilt rotation sliders.
+        """
         extra_col = QVBoxLayout()
         extra_col.setContentsMargins(0, 0, 0, 0)
         extra_col.setSpacing(2)
@@ -705,15 +733,7 @@ class ToolStrip(QWidget):
         extra_col.addLayout(tilt_row)
 
         extra_col.addStretch()
-        layout.addLayout(extra_col)
-
-        layout.addWidget(_vline())
-
-        self._status_lbl = QLabel("Ready")
-        self._status_lbl.setStyleSheet("color:#404060;font-size:11px;")
-        layout.addWidget(self._status_lbl)
-
-        layout.addStretch()
+        return extra_col
 
     # ------------------------------------------------------------------
     # Slots / public API
@@ -792,9 +812,7 @@ class ToolStrip(QWidget):
         If all segments are checked, emit None (show all).
         Otherwise emit the set of checked segment names.
         """
-        checked = {
-            name for name, chk in self._segment_checks.items() if chk.isChecked()
-        }
+        checked = {name for name, chk in self._segment_checks.items() if chk.isChecked()}
         if len(checked) == len(self._segment_checks):
             self.segment_visibility_changed.emit(None)  # all visible
         else:

@@ -1861,6 +1861,53 @@ def ComputedTorque(
     )
 
 
+def _simulate_control_plot(thetamat, thetamatd, dt):
+    """Plot actual vs desired joint angles for SimulateControl output.
+
+    Displays actual (solid) and desired (dotted) joint angle trajectories using
+    matplotlib if available. No-op if matplotlib is not installed.
+
+    :param thetamat: n×N matrix of actual joint angles (row=joint, col=timestep)
+    :param thetamatd: n×N matrix of desired joint angles (same shape as thetamat)
+    :param dt: timestep in seconds
+    """
+    assert thetamat is not None, "thetamat must be provided"
+    assert thetamatd is not None, "thetamatd must be provided"
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError:
+        return
+    links = np.array(thetamat).shape[0]
+    N = np.array(thetamat).shape[1]
+    Tf = N * dt
+    timestamp = np.linspace(0, Tf, N)
+    for i in range(links):
+        col = [
+            np.random.uniform(0, 1),
+            np.random.uniform(0, 1),
+            np.random.uniform(0, 1),
+        ]
+        plt.plot(
+            timestamp,
+            thetamat[i, :],
+            "-",
+            color=col,
+            label=("ActualTheta" + str(i + 1)),
+        )
+        plt.plot(
+            timestamp,
+            thetamatd[i, :],
+            ".",
+            color=col,
+            label=("DesiredTheta" + str(i + 1)),
+        )
+    plt.legend(loc="upper left")
+    plt.xlabel("Time")
+    plt.ylabel("Joint Angles")
+    plt.title("Plot of Actual and Desired Joint Angles")
+    plt.show()
+
+
 def SimulateControl(
     thetalist,
     dthetalist,
@@ -2048,40 +2095,7 @@ def SimulateControl(
         thetamat[:, i] = thetacurrent
         eint = np.add(eint, dt * np.subtract(thetamatd[:, i], thetacurrent))
     # Output using matplotlib to plot
-    try:
-        import matplotlib.pyplot as plt
-    except ImportError:
-        pass
-    else:
-        links = np.array(thetamat).shape[0]
-        N = np.array(thetamat).shape[1]
-        Tf = N * dt
-        timestamp = np.linspace(0, Tf, N)
-        for i in range(links):
-            col = [
-                np.random.uniform(0, 1),
-                np.random.uniform(0, 1),
-                np.random.uniform(0, 1),
-            ]
-            plt.plot(
-                timestamp,
-                thetamat[i, :],
-                "-",
-                color=col,
-                label=("ActualTheta" + str(i + 1)),
-            )
-            plt.plot(
-                timestamp,
-                thetamatd[i, :],
-                ".",
-                color=col,
-                label=("DesiredTheta" + str(i + 1)),
-            )
-        plt.legend(loc="upper left")
-        plt.xlabel("Time")
-        plt.ylabel("Joint Angles")
-        plt.title("Plot of Actual and Desired Joint Angles")
-        plt.show()
+    _simulate_control_plot(thetamat, thetamatd, dt)
     taumat = np.array(taumat).T
     thetamat = np.array(thetamat).T
     return (taumat, thetamat)

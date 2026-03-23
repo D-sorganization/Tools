@@ -469,3 +469,199 @@ class TestAnalyticalBenchmark:
         _logger.debug("\nGravity speedup: %.1fx", speedup)
         _logger.debug("  Analytical: %.3fs", t_analytical)
         _logger.debug("  Numerical:  %.3fs", t_numerical)
+
+
+# ===========================================================================
+# GH1691: Tests for private JAX Jacobian helpers extracted from
+# analytical_fk_jacobians_jax
+# ===========================================================================
+
+_JAX_PARAMS_AVAILABLE = False
+try:
+    import jax.numpy as jnp
+    from double_pendulum_golf.physics_golfer_jax import (
+        GolferParamsJAX,
+        _club_jacobians_jax,
+        _left_arm_jacobians_jax,
+        _right_arm_jacobians_jax,
+        analytical_fk_jacobians_jax,
+    )
+
+    _JAX_PARAMS_AVAILABLE = True
+except ImportError:
+    pass
+
+_JAX_PARAMS = (
+    GolferParamsJAX(
+        m_hub=2.0,
+        m_r_upper=3.0,
+        m_r_fore=2.0,
+        m_l_upper=3.0,
+        m_l_fore=2.0,
+        m_club=0.5,
+        L_hub=0.15,
+        L_r_upper=0.35,
+        L_r_fore=0.30,
+        L_l_upper=0.35,
+        L_l_fore=0.30,
+        L_club=1.1,
+        d_rs=0.20,
+        d_ls=0.20,
+        grip_right=0.05,
+        grip_left=0.25,
+    )
+    if _JAX_PARAMS_AVAILABLE
+    else None
+)
+
+
+@pytest.mark.skipif(not _JAX_PARAMS_AVAILABLE, reason="JAX not available")
+class TestJacobianHelpers:
+    """GH1691: Private JAX Jacobian helper functions must produce results
+    consistent with analytical_fk_jacobians_jax."""
+
+    def _make_trig(self, q):
+        """Precompute sin/cos values for a given configuration array."""
+        th_hub = float(q[0])
+        alpha_rs, alpha_re = float(q[1]), float(q[2])
+        alpha_ls, alpha_le = float(q[4]), float(q[5])
+        th_club = float(q[7])
+        sin_hub, cos_hub = jnp.sin(th_hub), jnp.cos(th_hub)
+        th_rs = th_hub + alpha_rs
+        th_re = th_hub + alpha_rs + alpha_re
+        sin_rs, cos_rs = jnp.sin(th_rs), jnp.cos(th_rs)
+        sin_re, cos_re = jnp.sin(th_re), jnp.cos(th_re)
+        th_ls = th_hub + alpha_ls
+        th_le = th_hub + alpha_ls + alpha_le
+        sin_ls, cos_ls = jnp.sin(th_ls), jnp.cos(th_ls)
+        sin_le, cos_le = jnp.sin(th_le), jnp.cos(th_le)
+        sin_club, cos_club = jnp.sin(th_club), jnp.cos(th_club)
+        return dict(
+            sin_hub=sin_hub,
+            cos_hub=cos_hub,
+            sin_rs=sin_rs,
+            cos_rs=cos_rs,
+            sin_re=sin_re,
+            cos_re=cos_re,
+            sin_ls=sin_ls,
+            cos_ls=cos_ls,
+            sin_le=sin_le,
+            cos_le=cos_le,
+            sin_club=sin_club,
+            cos_club=cos_club,
+        )
+
+    def test_right_arm_jacobians_match_full(self) -> None:
+        """_right_arm_jacobians_jax output must match keys from full function."""
+        import numpy as np
+
+        rng = np.random.default_rng(0)
+        q = jnp.array(rng.uniform(-0.5, 0.5, 8))
+        tr = self._make_trig(q)
+        full = analytical_fk_jacobians_jax(q, _JAX_PARAMS)
+        helpers = _right_arm_jacobians_jax(
+            _JAX_PARAMS,
+            tr["sin_hub"],
+            tr["cos_hub"],
+            tr["sin_rs"],
+            tr["cos_rs"],
+            tr["sin_re"],
+            tr["cos_re"],
+        )
+        for key in ("hub", "rs", "re", "rh"):
+            np.testing.assert_allclose(
+                np.array(helpers[key]),
+                np.array(full[key]),
+                atol=1e-10,
+                err_msg=f"Mismatch in key '{key}'",
+            )
+
+    def test_left_arm_jacobians_match_full(self) -> None:
+        """_left_arm_jacobians_jax output must match keys from full function."""
+        import numpy as np
+
+        rng = np.random.default_rng(1)
+        q = jnp.array(rng.uniform(-0.5, 0.5, 8))
+        tr = self._make_trig(q)
+        full = analytical_fk_jacobians_jax(q, _JAX_PARAMS)
+        helpers = _left_arm_jacobians_jax(
+            _JAX_PARAMS,
+            tr["sin_hub"],
+            tr["cos_hub"],
+            tr["sin_ls"],
+            tr["cos_ls"],
+            tr["sin_le"],
+            tr["cos_le"],
+        )
+        for key in ("ls", "le", "lh"):
+            np.testing.assert_allclose(
+                np.array(helpers[key]),
+                np.array(full[key]),
+                atol=1e-10,
+                err_msg=f"Mismatch in key '{key}'",
+            )
+
+    def test_club_jacobians_match_full(self) -> None:
+        """_club_jacobians_jax output must match keys from full function."""
+        import numpy as np
+
+        rng = np.random.default_rng(2)
+        q = jnp.array(rng.uniform(-0.5, 0.5, 8))
+        tr = self._make_trig(q)
+        full = analytical_fk_jacobians_jax(q, _JAX_PARAMS)
+        helpers = _club_jacobians_jax(
+            _JAX_PARAMS,
+            tr["sin_hub"],
+            tr["cos_hub"],
+            tr["sin_rs"],
+            tr["cos_rs"],
+            tr["sin_re"],
+            tr["cos_re"],
+            tr["sin_club"],
+            tr["cos_club"],
+        )
+        for key in ("club_com", "club_tip"):
+            np.testing.assert_allclose(
+                np.array(helpers[key]),
+                np.array(full[key]),
+                atol=1e-10,
+                err_msg=f"Mismatch in key '{key}'",
+            )
+
+    def test_helpers_return_correct_shapes(self) -> None:
+        """Each Jacobian helper must return 2×8 arrays for all keys."""
+        import numpy as np
+
+        rng = np.random.default_rng(3)
+        q = jnp.array(rng.uniform(-0.5, 0.5, 8))
+        tr = self._make_trig(q)
+        right = _right_arm_jacobians_jax(
+            _JAX_PARAMS,
+            tr["sin_hub"],
+            tr["cos_hub"],
+            tr["sin_rs"],
+            tr["cos_rs"],
+            tr["sin_re"],
+            tr["cos_re"],
+        )
+        for key, val in right.items():
+            arr = np.array(val)
+            assert arr.shape == (2, 8), f"key '{key}': expected (2,8) got {arr.shape}"
+
+    def test_helpers_precondition_none_p(self) -> None:
+        """_right_arm_jacobians_jax must raise AssertionError if p is None."""
+        import numpy as np
+
+        rng = np.random.default_rng(4)
+        q = jnp.array(rng.uniform(-0.5, 0.5, 8))
+        tr = self._make_trig(q)
+        with pytest.raises(AssertionError):
+            _right_arm_jacobians_jax(
+                None,  # type: ignore[arg-type]
+                tr["sin_hub"],
+                tr["cos_hub"],
+                tr["sin_rs"],
+                tr["cos_rs"],
+                tr["sin_re"],
+                tr["cos_re"],
+            )
