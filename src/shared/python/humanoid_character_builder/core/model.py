@@ -132,7 +132,7 @@ class HumanoidModel:
         links: dict[str, GeneratedLink],
         joints: list[GeneratedJoint],
         root_link_name: str = "pelvis",
-    ):
+    ) -> None:
         assert links is not None, "links must be provided"
         self.links = links
         self.joints = joints
