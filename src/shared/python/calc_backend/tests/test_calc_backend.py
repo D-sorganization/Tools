@@ -63,7 +63,7 @@ class TestAppStartup:
 
 
 class TestPressureDrop:
-    """Tests for the inline Darcy-Weisbach pressure-drop router."""
+    """Tests for the Darcy-Weisbach pressure-drop router (delegates to PressureDropCalculator)."""
 
     def _payload(self, **overrides) -> dict[str, Any]:
         base: dict[str, Any] = {
@@ -129,6 +129,47 @@ class TestPressureDrop:
         del payload["pipe_diameter_m"]
         r = client.post("/api/calc/pressure-drop", json=payload)
         assert r.status_code == 422
+
+    @pytest.mark.contract
+    def test_delegates_to_pressure_drop_calculator(self, client: TestClient):
+        """GH1705: Router must delegate to PressureDropCalculator, not inline logic.
+
+        Verifies numeric parity: router result must match PressureDropCalculator
+        directly called with the same inputs.
+        """
+        from upstream_drift_tools.process_calculators.pressure_drop_calculator import (
+            PressureDropCalculator,
+        )
+
+        payload = self._payload()
+        r = client.post("/api/calc/pressure-drop", json=payload)
+        assert r.status_code == 200
+        body = r.json()
+
+        calculator = PressureDropCalculator()
+        direct = calculator.calculate_pressure_drop(
+            pipe_diameter_m=payload["pipe_diameter_m"],
+            pipe_length_m=payload["pipe_length_m"],
+            roughness_m=payload["roughness_m"],
+            flow_rate_kg_s=payload["flow_rate_kg_s"],
+            temperature_k=payload["temperature_k"],
+            pressure_pa=payload["pressure_pa"],
+            molecular_weight_kg_mol=payload["molecular_weight_kg_mol"],
+        )
+
+        assert (
+            pytest.approx(body["pressure_drop_pa"], rel=1e-9) == direct.pressure_drop_pa
+        )
+        assert (
+            pytest.approx(body["reynolds_number"], rel=1e-9) == direct.reynolds_number
+        )
+        assert (
+            pytest.approx(body["friction_factor"], rel=1e-9) == direct.friction_factor
+        )
+        assert pytest.approx(body["velocity_m_s"], rel=1e-9) == direct.velocity
+        assert body["flow_regime"] == direct.flow_regime
+        assert pytest.approx(body["density_kg_m3"], rel=1e-9) == direct.density
+        assert pytest.approx(body["viscosity_pa_s"], rel=1e-9) == direct.viscosity
 
 
 # ──────────────────────────────────────────────────────────────────────────────
