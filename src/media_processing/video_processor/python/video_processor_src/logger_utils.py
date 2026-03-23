@@ -32,11 +32,14 @@ except ImportError:
     LOG_LEVEL = logging.INFO
     logger = logging.getLogger(__name__)
 
-    def get_logger(name: str) -> logging.Logger:
+    def get_logger(name: str) -> logging.Logger:  # type: ignore[misc]
         """Get a logger instance."""
         return logging.getLogger(name)
 
-    def setup_logging(level: int = LOG_LEVEL, format_string: str = LOG_FORMAT) -> None:
+    def setup_logging(  # type: ignore[misc]
+        level: int = LOG_LEVEL,
+        format_string: str = LOG_FORMAT,
+    ) -> None:
         """Set up logging configuration."""
         logging.basicConfig(
             level=level,
