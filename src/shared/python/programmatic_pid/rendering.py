@@ -21,8 +21,12 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
-import ezdxf
-from ezdxf.enums import TextEntityAlignment
+try:
+    import ezdxf
+    from ezdxf.enums import TextEntityAlignment
+except ImportError:  # pragma: no cover — optional heavy dep
+    ezdxf = None  # type: ignore[assignment]
+    TextEntityAlignment = None  # type: ignore[assignment,misc]
 from programmatic_pid.geometry import to_float
 from programmatic_pid.spec_loader import get_drawing, get_layer_config
 
