@@ -137,7 +137,7 @@ def constrained_eom_jax(
 def _constraint_acceleration_bias_jax(
     q: JaxArray,
     qdot: JaxArray,
-    p: GolferParamsJAX,  # type: ignore[valid-type]
+    p: GolferParamsJAX,
 ) -> JaxArray:  # type: ignore[valid-type]
     """Compute gamma = Phi_qq * qdot * qdot (centripetal acceleration bias).
 
@@ -266,7 +266,7 @@ def run_batch_simulations(
             torque_coeffs_batch[i],
             alpha,
             beta,
-            dt,  # type: ignore[index]
+            dt,
         )
         solutions.append(sol)
     return solutions
