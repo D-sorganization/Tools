@@ -214,6 +214,9 @@ jobs:
         # theme) fail CI. Coverage is reported for the three non-GUI packages;
         # theme tests run for import verification (PyQt6 present via requirements.txt).
         # Resolves: https://github.com/D-sorganization/Tools/issues/1547
+        # CONTRACT ENFORCEMENT (GH1701): This step satisfies the requirement that
+        # API-surface / contract tests run on every PR. Tests marked @pytest.mark.contract
+        # and tests in shared_contracts/ directories are always executed here.
         run: |
           pytest \
             tests/shared/python/upstream_drift_tools/ \
