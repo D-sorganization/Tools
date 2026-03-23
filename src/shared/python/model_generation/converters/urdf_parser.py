@@ -9,11 +9,14 @@ from __future__ import annotations
 
 import logging
 import math
-import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import defusedxml.ElementTree as DefusedET
+
+if TYPE_CHECKING:
+    import xml.etree.ElementTree as ET
 from model_generation.core.types import (
     Geometry,
     GeometryType,
@@ -180,7 +183,7 @@ class URDFParser:
         # Parse XML
         try:
             root = DefusedET.fromstring(xml_string)
-        except ET.ParseError as e:
+        except DefusedET.ParseError as e:
             raise ValueError(f"Invalid URDF XML: {e}") from e
 
         if root.tag != "robot":
