@@ -5,9 +5,12 @@ from __future__ import annotations
 from unittest.mock import MagicMock, patch
 
 import pytest
-from programmatic_pid.geometry import find_free_region
-from programmatic_pid.types import BBox, SpecValidationError
-from programmatic_pid.validation import _load_schema, validate_spec
+
+pytest.importorskip("ezdxf", reason="ezdxf not installed")
+
+from programmatic_pid.geometry import find_free_region  # noqa: E402
+from programmatic_pid.types import BBox, SpecValidationError  # noqa: E402
+from programmatic_pid.validation import _load_schema, validate_spec  # noqa: E402
 
 
 class TestFindFreeRegionNone:
