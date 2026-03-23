@@ -7,8 +7,8 @@ banned patterns, workspace pollution detection, and DbC violations.
 from pathlib import Path
 
 import pytest
+from contracts import PreconditionError
 
-from src.shared.python.contracts import PreconditionError
 from tools.matlab_quality_utils import MATLABQualityChecker
 
 # ─── __init__ DbC ──────────────────────────────────────────────
@@ -596,7 +596,7 @@ def test_run_matlab_quality_checks_cli_strict_issues(tmp_path):
 
 def test_run_matlab_script_dbc_non_path(tmp_path):
     """_run_matlab_script must reject non-Path script_path."""
-    from src.shared.python.contracts import PreconditionError
+    from contracts import PreconditionError
 
     checker = MATLABQualityChecker(tmp_path)
     with pytest.raises(PreconditionError):

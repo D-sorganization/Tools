@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 def find_icon(name: str = "tools_icon.ico") -> Path | None:
     """Find a UI icon by searching standard locations."""
-    from src.shared.python.contracts import require
+    from contracts import require
 
     require(
         isinstance(name, str) and bool(name), "icon name must be a non-empty string"

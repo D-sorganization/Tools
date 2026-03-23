@@ -15,8 +15,7 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-
-from src.shared.python.contracts import require
+from contracts import require
 
 logger = logging.getLogger(__name__)
 SUPPORTED_FILTER_TYPES = {"butterworth", "moving_average", "median", "savgol"}
