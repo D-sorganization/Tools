@@ -59,7 +59,6 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "tests/*" = ["S101"]
 "**/tests/*" = ["S101", "E402"]
 "tests/test_test_utils.py" = ["T201"]
-"**/*.py" = ["E501"]
 # Ignore boolean argument warnings in replicants
 "replicants/**/*.py" = ["FBT001"]
 # UP038 false positive: isinstance() requires tuple syntax, not union types

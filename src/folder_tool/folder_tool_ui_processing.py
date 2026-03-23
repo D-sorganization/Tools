@@ -1,4 +1,4 @@
-"""UIProcessingMixin -- UI dialogs, progress, status, threading for FolderProcessorApp."""
+"""UIProcessingMixin -- UI dialogs, progress, status, threading for FolderProcessorApp."""  # noqa: E501
 
 from __future__ import annotations
 
