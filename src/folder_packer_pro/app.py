@@ -244,7 +244,7 @@ class FolderPackerPro(
 
     # -- File Selection --------------------------------------------------------
 
-    def _on_file_select(self, event: tk.Event) -> None:
+    def _on_file_select(self, event: tk.Event) -> None:  # type: ignore[type-arg]
         """Handle file selection in preview tree.
 
         Args:
