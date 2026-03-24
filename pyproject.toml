@@ -121,6 +121,7 @@ include = [
     "utils*",
     "tools*",
     "web_applications*",
+    "contracts*",
 ]
 exclude = [
     "*.tests*",

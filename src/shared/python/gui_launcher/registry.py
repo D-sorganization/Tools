@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from src.shared.python.contracts import require
+from contracts import require
 
 from .launcher import GUIType, LaunchConfig
 
