@@ -30,7 +30,7 @@ pydantic>=2.0.0  # Data validation using Python type annotations
 # Security & Encryption
 cryptography  # Cryptographic recipes and primitives
 defusedxml>=0.7.0  # Safe XML parsing (mitigates XML bomb / XXE attacks)
-pygments>=2.18.0,<2.19.2  # Pinned: CVE-2026-4539 affects 2.19.2 (transitive via rich/pip-audit)
+pygments>=2.18.0,<2.19.0  # Pinned: CVE-2026-4539 affects 2.19.x (transitive via rich/pip-audit)
 
 # Data Formats & Configuration
 pyyaml>=6.0.1  # YAML parser and emitter
