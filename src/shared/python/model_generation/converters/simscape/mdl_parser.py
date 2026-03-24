@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 import re
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET  # nosec B405 — type annotations + ParseError only; parsing uses defusedxml
 import zipfile
 from dataclasses import dataclass, field
 from enum import Enum
