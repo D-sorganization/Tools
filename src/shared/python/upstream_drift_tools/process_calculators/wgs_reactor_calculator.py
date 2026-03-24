@@ -24,6 +24,7 @@ from typing import TYPE_CHECKING, Any
 
 # matplotlib and scipy imported lazily to prevent Windows hang at module load
 import numpy as np
+from contracts import check_positive, check_pressure, check_temperature, require
 from upstream_drift_tools.utils.state_manager import safe_read_json
 
 from .constants import (
@@ -238,11 +239,18 @@ class WGSReactorEngine:
         self.catalysts = data.get("catalysts", {})
 
     def calculate_equilibrium_constant(self, temperature: float) -> float:
-        """Calculate WGS equilibrium constant using Van't Hoff equation"""
+        """Calculate WGS equilibrium constant using Van't Hoff equation.
+
+        Args:
+            temperature: Reaction temperature (K)
+
+        Preconditions:
+            temperature > 0 K
+        """
         # CO + H2O ⇌ CO2 + H2
         # ΔH° = -41.2 kJ/mol, ΔS° = -42.1 J/(mol·K)
 
-        assert temperature is not None, "temperature must be provided"
+        check_temperature(temperature, "temperature")
         delta_H = WGS_DELTA_H  # J/mol
         delta_S = WGS_DELTA_S  # J/(mol·K)
 
@@ -262,7 +270,7 @@ class WGSReactorEngine:
         Returns:
             (n_CO_0, n_H2O_0, n_CO2_0, n_H2_0, n_total_0)
         """
-        assert inlet_composition is not None, "inlet_composition must be provided"
+        require(inlet_composition is not None, "inlet_composition must be provided")
         n_CO_0 = inlet_composition.get("CO", 0)
         n_H2O_0 = inlet_composition.get("H2O", 0) + n_CO_0 * steam_ratio
         n_CO2_0 = inlet_composition.get("CO2", 0)
@@ -318,9 +326,23 @@ class WGSReactorEngine:
         steam_ratio: float = 2.0,
     ) -> dict[str, Any]:
         """Calculate equilibrium composition for WGS reaction
-        using Gibbs free energy minimization."""
+        using Gibbs free energy minimization.
 
-        assert inlet_composition is not None, "inlet_composition must be provided"
+        Args:
+            inlet_composition: Inlet gas mole fractions (must contain 'CO')
+            temperature: Reaction temperature (K)
+            pressure: Reaction pressure (bar)
+            steam_ratio: Steam-to-CO molar ratio
+
+        Preconditions:
+            inlet_composition must not be empty
+            temperature > 0 K
+            pressure > 0 bar
+            steam_ratio >= 0
+        """
+        check_temperature(temperature, "temperature")
+        check_pressure(pressure, "pressure")
+        require(steam_ratio >= 0, "steam_ratio must be non-negative", steam_ratio)
         n_CO_0, n_H2O_0, n_CO2_0, n_H2_0, n_total_0 = self._prepare_initial_moles(
             inlet_composition, steam_ratio
         )
@@ -418,9 +440,26 @@ class WGSReactorEngine:
         temperature: float,
         catalyst_type: str,
     ) -> dict[str, Any]:
-        """Size WGS reactor based on throughput and conversion"""
-        # Space velocity (GHSV)
-        assert feed_rate is not None, "feed_rate must be provided"
+        """Size WGS reactor based on throughput and conversion.
+
+        Args:
+            feed_rate: Volumetric feed rate (m³/h)
+            conversion: Target CO conversion (%)
+            temperature: Reactor temperature (K)
+            catalyst_type: Catalyst type identifier
+
+        Preconditions:
+            feed_rate > 0
+            0 < conversion <= 100
+            temperature > 0 K
+        """
+        check_positive(feed_rate, "feed_rate")
+        require(
+            0 < conversion <= 100,
+            "conversion must be in (0, 100]",
+            conversion,
+        )
+        check_temperature(temperature, "temperature")
         ghsv = WGS_TYPICAL_GHSV  # h^-1 (typical for WGS)
 
         # Reactor volume
