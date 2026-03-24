@@ -163,6 +163,12 @@ __all__ = [
 # =============================================================================
 # These exports maintain compatibility with code using the original
 # pressure_drop_calculator.py module interface.
+#
+# CANONICAL SOURCE: ``PressureDropCalculator.calculate_pressure_drop`` below is
+# the single authoritative implementation of the Darcy-Weisbach / Swamee-Jain /
+# Sutherland's-viscosity pipeline.  Any new code that needs this calculation
+# MUST import ``PressureDropCalculator`` from this package rather than
+# re-implementing the physics inline (see issue #1705).
 
 import math
 from dataclasses import dataclass
