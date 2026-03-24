@@ -15,7 +15,6 @@ exclude = [
     "venv",
     ".env",
     "node_modules",
-    "*.ipynb",
     "**/*.json",
     "**/archive",
     "**/legacy",
@@ -30,6 +29,12 @@ exclude = [
     "tests/data_processor",
     "python/src/tile_launcher/app_catalog.json",
     "python/tests",
+    # Jupyter notebooks: long f-strings and markdown cells cannot be wrapped without
+    # breaking execution or rendering. Ruff 0.14+ traverses notebooks in subdirectories
+    # independently of `exclude` globs, so explicit notebook paths are listed here.
+    "src/shared/python/upstream_drift_tools/process_calculators/psa_package/psa_analysis.ipynb",
+    "src/shared/python/upstream_drift_tools/process_calculators/psa_package/psa_analysis_colab.ipynb",
+    "src/shared/python/upstream_drift_tools/process_calculators/psa_package/References/psa_stage_removal_sensitivity.ipynb",
 ]
 
 [lint]
@@ -65,17 +70,166 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "**/Data_Processor_r0.py" = ["UP038"]
 # Compatibility shims intentionally use version checks for older Python support
 "tools/compatibility.py" = ["UP036", "UP017"]
-# Scripts use print() for CLI output - this is intentional and correct
-"scripts/**/*.py" = ["T201"]
-"scripts/*.py" = ["T201"]
+# Scripts use print() for CLI output — this is intentional and correct.
+# E501 also suppressed: scripts contain long embedded code templates and
+# generated assessment text that cannot be reformatted without losing meaning.
+"scripts/**/*.py" = ["T201", "E501"]
+"scripts/*.py" = ["T201", "E501"]
 # Root-level launcher and utility scripts use print() for CLI output
 "launch.py" = ["T201"]
 "verify_launcher.py" = ["T201"]
-# Jupyter notebooks use print() for output display - this is intentional and correct
-"**/*.ipynb" = ["E402", "T201"]
+# Jupyter notebooks use print() for output display - this is intentional and correct.
+# E501 suppressed: notebook cells contain long f-strings and markdown that cannot
+# be wrapped without breaking execution or rendering.
+"**/*.ipynb" = ["E402", "T201", "E501"]
+# Explicit notebook paths required for ruff 0.14+ (per-file-ignores globs do not
+# match notebooks discovered through recursive directory traversal).
+"src/shared/python/upstream_drift_tools/process_calculators/psa_package/psa_analysis.ipynb" = ["E402", "T201", "E501"]
+"src/shared/python/upstream_drift_tools/process_calculators/psa_package/psa_analysis_colab.ipynb" = ["E402", "T201", "E501"]
+"src/shared/python/upstream_drift_tools/process_calculators/psa_package/References/psa_stage_removal_sensitivity.ipynb" = ["E402", "T201", "E501"]
 # Tests intentionally use print() for capturing stdout in test assertions
 "tests/**/*.py" = ["T201"]
 "tests/*.py" = ["T201"]
+# Root scripts with pre-existing long lines
+"convert_tools_icon.py" = ["E501"]
+"setup_dev.py" = ["E501"]
+# E501 transition baseline — files with pre-existing long lines (URLs, embedded strings,
+# physics equations, generated content) that require dedicated cleanup passes.
+# New code in these files is still subject to all other lint rules. These per-file
+# suppressions will be removed file-by-file as lines are shortened. See issue #1702.
+"src/financial_calculator/python/financial_calculator/ui/pyqt6/main_window.py" = ["E501"]
+"src/flow_rate_converter/python/flow_rate_converter/ui/pyqt6/main_window.py" = ["E501"]
+"src/flow_rate_converter/tests/test_flow_rate_converter_gui.py" = ["E501"]
+"src/function_generator/gui_registration.py" = ["E501"]
+"src/function_generator/python/function_generator/ui/pyqt6/main_window.py" = ["E501"]
+"src/function_generator/tests/test_function_generator_gui.py" = ["E501"]
+"src/humanoid_builder_gui/gui_registration.py" = ["E501"]
+"src/inertia_calculator/python/inertia_calculator/ui/pyqt6/main_window.py" = ["E501"]
+"src/inertia_calculator/tests/test_inertia_calculator_gui.py" = ["E501"]
+"src/multi_param_analysis/python/multi_param_analysis/ui/pyqt6/main_window.py" = ["E501"]
+"src/multi_param_analysis/tests/test_multi_param_analysis_gui.py" = ["E501"]
+"src/ode_solver/python/ode_solver/ui/pyqt6/main_window.py" = ["E501"]
+"src/optimizer_gui/python/optimizer_gui/ui/pyqt6/main_window.py" = ["E501"]
+"src/pressure_drop_calculator/gui_registration.py" = ["E501"]
+"src/pressure_drop_calculator/python/pressure_drop_calculator/ui/pyqt6/main_window.py" = ["E501"]
+"src/pressure_drop_calculator/tests/test_pressure_drop_calculator_gui.py" = ["E501"]
+"src/project_packer/folder_packer_gui.py" = ["E501"]
+"src/project_packer/tests/test_build_exe.py" = ["E501"]
+"src/python/src/help/help_content.py" = ["E501"]
+"src/python/src/tile_launcher/ui.py" = ["E501"]
+"src/python/src/utils/test_utils.py" = ["E501"]
+"src/python/src/utils/validation.py" = ["E501"]
+"src/rotation_converter/modern_robotics.py" = ["E501"]
+"src/rotation_converter/reference_frame_operations.py" = ["E501"]
+"src/rotation_converter/ui/pyqt6/console_tab.py" = ["E501"]
+"src/shared/python/__init__.py" = ["E501"]
+"src/shared/python/calc_backend/contracts/ode_solver.py" = ["E501"]
+"src/shared/python/calc_backend/contracts/rotation_converter.py" = ["E501"]
+"src/shared/python/calc_backend/contracts/syngas_water.py" = ["E501"]
+"src/shared/python/calc_backend/routers/scrubber.py" = ["E501"]
+"src/shared/python/calc_backend/tests/test_calc_backend_gaps.py" = ["E501"]
+"src/shared/python/data_processing/tests/test_processor.py" = ["E501"]
+"src/shared/python/humanoid_character_builder/core/body_parameters.py" = ["E501"]
+"src/shared/python/humanoid_character_builder/core/model.py" = ["E501"]
+"src/shared/python/humanoid_character_builder/generators/mesh_generator.py" = ["E501"]
+"src/shared/python/humanoid_character_builder/generators/urdf_generator.py" = ["E501"]
+"src/shared/python/humanoid_character_builder/interfaces/api.py" = ["E501"]
+"src/shared/python/humanoid_character_builder/mesh/mesh_processor.py" = ["E501"]
+"src/shared/python/humanoid_character_builder/tests/test_physics_validator.py" = ["E501"]
+"src/shared/python/humanoid_character_builder/tests/test_urdf_contracts_integration.py" = ["E501"]
+"src/shared/python/humanoid_character_builder/tests/test_urdf_generator.py" = ["E501"]
+"src/shared/python/model_generation/api/rest_api.py" = ["E501"]
+"src/shared/python/model_generation/builders/urdf_writer.py" = ["E501"]
+"src/shared/python/model_generation/cli/main.py" = ["E501"]
+"src/shared/python/model_generation/converters/simscape/mdl_parser.py" = ["E501"]
+"src/shared/python/model_generation/editor/editor_clipboard.py" = ["E501"]
+"src/shared/python/model_generation/editor/text_editor.py" = ["E501"]
+"src/shared/python/model_generation/explorer/model_explorer.py" = ["E501"]
+"src/shared/python/model_generation/library/repository.py" = ["E501"]
+"src/shared/python/plot_theme/themes.py" = ["E501"]
+"src/shared/python/programmatic_pid/validation.py" = ["E501"]
+"src/shared/python/signal_toolkit/io.py" = ["E501"]
+"src/shared/python/signal_toolkit/tests/test_noise.py" = ["E501"]
+"src/shared/python/tests/test_safe_eval.py" = ["E501"]
+"src/shared/python/theme/dialogs/custom_theme_dialog.py" = ["E501"]
+"src/shared/python/theme/dialogs/custom_theme_editor.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/__init__.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/bootstrap.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/calculators/conversion/core.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/calculators/conversion/flow_rate_converter.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/calculators/conversion/service.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/calculators/conversion/tables.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/calculators/electrical/electrical_model.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/data_io.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/process_calculators/baghouse_calculator.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/process_calculators/financial_calculator.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/process_calculators/flare_calculator.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/process_calculators/optimization.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/_pdi_formatters.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/_pdi_helpers.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/engine/pressure_drop_calculation_engine.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/pressure_drop_interface.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/utils/fitting_loss_coefficients.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/utils/gas_properties.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/process_calculators/scrubber/tests/test_scrubber_engine.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/process_calculators/wgs_reactor_calculator.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/tests/process_calculators/test_acid_gas_dewpoint_calculator.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/tests/process_calculators/test_pipe_database.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/tests/process_calculators/test_pressure_drop_interface.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/tests/process_calculators/test_wgs_reactor_calculator.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/tests/test_calculator_state_mixin.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/tests/test_data_processor_engine.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/tests/test_pure_calc_modules.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/ui/mixins/calculator_state_mixin.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/ui/widgets/data_processor_widget.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/ui/widgets/mixins/data_processor_ops.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/ui/widgets/unit_converter_widget.py" = ["E501"]
+"src/shared/python/upstream_drift_tools/utils/__init__.py" = ["E501"]
+"src/signal_processing_studio/gui_registration.py" = ["E501"]
+"src/signal_processing_studio/python/signal_processing_studio/signal_bus.py" = ["E501"]
+"src/solar_system_model/solar_system/core/celestial_body.py" = ["E501"]
+"src/solar_system_model/solar_system/data/famous_missions.py" = ["E501"]
+"src/solar_system_model/solar_system/data/historical_events.py" = ["E501"]
+"src/steam_engine_calculator/python/steam_engine_calculator/ui/pyqt6/main_window.py" = ["E501"]
+"src/steam_engine_calculator/tests/test_steam_engine_calculator_gui.py" = ["E501"]
+"src/tools/gui/__init__.py" = ["E501"]
+"src/tools/gui/windows/unified_launcher_window.py" = ["E501"]
+"src/verification/verify_palette_final.py" = ["E501"]
+"src/vessel_drafter/python/vessel_drafter/gui/vessel_drafter_window.py" = ["E501"]
+"src/web_applications/calculator/calculator.py" = ["E501"]
+"src/web_applications/calculator/limiter.py" = ["E501"]
+"src/web_applications/calculator/tests/test_deep_recursion.py" = ["E501"]
+"src/web_applications/calculator/tests/test_limiter.py" = ["E501"]
+"src/web_applications/calculator/webapp.py" = ["E501"]
+"tests/architecture/test_layer_boundaries.py" = ["E501"]
+"tests/calc_backend/test_new_endpoints.py" = ["E501"]
+"tests/folder_packer_pro/test_file_ops.py" = ["E501"]
+"tests/folder_tool/test_folders_tool_r0.py" = ["E501"]
+"tests/heavy_integration/test_tools_contracts.py" = ["E501"]
+"tests/helpers/numerical.py" = ["E501"]
+"tests/project_packer_fixes/test_build_exe_lod.py" = ["E501"]
+"tests/project_packer_fixes/test_folder_packer_gui_lod.py" = ["E501"]
+"tests/rotation_converter/test_modern_robotics.py" = ["E501"]
+"tests/rotation_converter/test_rigid_transform.py" = ["E501"]
+"tests/rotation_converter/test_rotation_converter_advanced.py" = ["E501"]
+"tests/scripts/test_generate_tools_json.py" = ["E501"]
+"tests/shared/python/data_processing/test_data_processor_core.py" = ["E501"]
+"tests/shared/python/model_generation/test_gh1694_xml_security.py" = ["E501"]
+"tests/shared/python/process_calculators/test_baghouse_calculator.py" = ["E501"]
+"tests/shared/python/process_calculators/test_flare_calculator.py" = ["E501"]
+"tests/shared/python/process_calculators/test_gas_properties_physics.py" = ["E501"]
+"tests/shared/python/process_calculators/test_pressure_drop_engine.py" = ["E501"]
+"tests/shared/python/process_calculators/test_pressure_drop_gas_properties.py" = ["E501"]
+"tests/shared/python/process_calculators/test_scrubber_calculator.py" = ["E501"]
+"tests/shared/python/process_calculators/test_wgs_reactor_calculator.py" = ["E501"]
+"tests/shared/python/upstream_drift_tools/process_calculators/pressure_drop/test_fitting_loss_coefficients.py" = ["E501"]
+"tests/shared/python/upstream_drift_tools/process_calculators/pressure_drop/test_pipe_database.py" = ["E501"]
+"tests/shared/python/upstream_drift_tools/process_calculators/pressure_drop/test_pressure_drop_models.py" = ["E501"]
+"tests/test_cross_repo_import_compatibility.py" = ["E501"]
+"tests/test_review_fixes_2026_03_09.py" = ["E501"]
+"tests/verification/test_verification_lod.py" = ["E501"]
+"tests/vessel_drafter/test_dbc_lod.py" = ["E501"]
 
 [lint.isort]
 # Tells Ruff how to group your own code vs. libraries
