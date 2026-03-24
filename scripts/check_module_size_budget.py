@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 
 DEFAULT_MAX_LINES = 1500
@@ -40,7 +41,7 @@ def should_skip(path: Path, exclude_parts: set[str]) -> bool:
     return any(part in exclude_parts for part in path.parts)
 
 
-def iter_python_files(include_roots: tuple[str, ...], exclude_parts: set[str]):
+def iter_python_files(include_roots: tuple[str, ...], exclude_parts: set[str]) -> Iterator[Path]:
     for root in include_roots:
         root_path = Path(root)
         if not root_path.exists():
