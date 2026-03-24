@@ -161,6 +161,10 @@ class TestLoadFile:
         dp.load(txt_file)
         assert len(dp.dataframe) == 100
 
+    @pytest.mark.skipif(
+        not __import__("importlib").util.find_spec("pyarrow"),
+        reason="pyarrow not installed",
+    )
     def test_load_parquet(self, tmp_path: Path, sample_df: pd.DataFrame):
         pq_file = tmp_path / "data.parquet"
         sample_df.to_parquet(pq_file)
@@ -168,6 +172,10 @@ class TestLoadFile:
         dp.load(pq_file)
         assert len(dp.dataframe) == 100
 
+    @pytest.mark.skipif(
+        not __import__("importlib").util.find_spec("openpyxl"),
+        reason="openpyxl not installed",
+    )
     def test_load_xlsx(self, tmp_path: Path, sample_df: pd.DataFrame):
         xlsx_file = tmp_path / "data.xlsx"
         sample_df.to_excel(xlsx_file, index=False)
@@ -467,6 +475,10 @@ class TestExport:
         assert result == out
         assert out.exists()
 
+    @pytest.mark.skipif(
+        not __import__("importlib").util.find_spec("pyarrow"),
+        reason="pyarrow not installed",
+    )
     def test_export_parquet(self, dp: DataProcessor, tmp_path: Path):
         out = tmp_path / "out.parquet"
         dp.export(out)
@@ -477,6 +489,10 @@ class TestExport:
         dp.export(out)
         assert out.exists()
 
+    @pytest.mark.skipif(
+        not __import__("importlib").util.find_spec("openpyxl"),
+        reason="openpyxl not installed",
+    )
     def test_export_xlsx(self, dp: DataProcessor, tmp_path: Path):
         out = tmp_path / "out.xlsx"
         dp.export(out)
