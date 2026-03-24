@@ -132,7 +132,7 @@ jobs:
       #   run: echo "::warning::Skipping gitleaks because GITLEAKS_LICENSE is not configured."
 
       - name: Module Size Budget
-        run: python3 scripts/check_module_size_budget.py --max-lines 1500 --include src
+        run: python3 scripts/check_module_size_budget.py --max-lines 1200 --include src
 
   tests:
     needs: quality-gate
