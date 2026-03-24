@@ -126,7 +126,7 @@ def _get_plot_colors() -> dict[str, Any]:
                 "surface": colors.get("group_bg", _DARK_SURFACE),
                 "axes": CHART_COLORS[:3] if CHART_COLORS else _AXIS_COLORS,
             }
-        except Exception:  # noqa: BLE001
+        except Exception as e:  # noqa: BLE001
             pass
     return {
         "bg": _DARK_BG,
@@ -583,7 +583,7 @@ class RigidTransformTab(QWidget):
                 f"  pitch: {screw['pitch']:.6f}",
                 f"  theta: {screw['theta']:.6f} rad",
             ]
-        except Exception:  # noqa: BLE001
+        except Exception as e:  # noqa: BLE001
             pass
 
         self._tf_output.setPlainText("\n".join(lines))
@@ -1200,7 +1200,7 @@ class RotationConverterMainWindow(QMainWindow):
                 mgr = get_theme_manager()
                 mgr.apply_theme_to_window(self)
                 mgr.themeChanged.connect(self._on_theme_changed)
-            except Exception:  # noqa: BLE001
+            except Exception as e:  # noqa: BLE001
                 pass
 
     def _on_theme_changed(self, theme_name: str) -> None:
