@@ -223,7 +223,7 @@ class PackOperationMixin:
                 progress = (current / total) * 100
                 self.root.after(
                     0,
-                    lambda p=progress: self.pack_progress_var.set(float(p)),  # type: ignore[misc]
+                    lambda p=progress: self.pack_progress_var.set(float(p)),  # type: ignore[attr-defined]
                 )
                 self._update_pack_status(f"Packing {filename} ({current}/{total})")
 
@@ -330,7 +330,7 @@ class UnpackOperationMixin:
                 progress = (current / total) * 100
                 self.root.after(
                     0,
-                    lambda p=progress: self.unpack_progress_var.set(float(p)),  # type: ignore[misc]
+                    lambda p=progress: self.unpack_progress_var.set(float(p)),  # type: ignore[attr-defined]
                 )
                 self._update_unpack_status(f"Extracting {filename} ({current}/{total})")
 
