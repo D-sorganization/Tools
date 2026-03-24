@@ -8,6 +8,8 @@ import math
 from dataclasses import dataclass
 from typing import Final
 
+from contracts import check_positive, check_pressure, check_temperature, ensure, require
+
 from .constants import (
     BAR_TO_PA,
     FLARE_BASE_EFFICIENCY,
@@ -86,12 +88,17 @@ class FlareCalculator:
 
         Returns:
             FlareDesign object with calculated parameters
+
+        Preconditions:
+            total_flow > 0
+            temperature > 0 K
+            pressure > 0 bar
+            gas_composition must not be empty
         """
-        # DbC preconditions
-        assert total_flow > 0, f"total_flow must be positive, got {total_flow}"
-        assert temperature > 0, f"temperature must be positive (K), got {temperature}"
-        assert pressure > 0, f"pressure must be positive (bar), got {pressure}"
-        assert len(gas_composition) > 0, "gas_composition must not be empty"
+        check_positive(total_flow, "total_flow")
+        check_temperature(temperature, "temperature")
+        check_pressure(pressure, "pressure")
+        require(len(gas_composition) > 0, "gas_composition must not be empty")
 
         # Normalize composition to fractions
         total_comp = sum(gas_composition.values())
@@ -167,12 +174,16 @@ class FlareCalculator:
             heat_release=heat_release,
             radiation_intensity=target_radiation,
         )
-        # DbC postconditions
-        assert result.height >= FLARE_MIN_HEIGHT, (
-            f"Flare height must be >= minimum ({FLARE_MIN_HEIGHT}), got {result.height}"
+        # DbC postconditions (via contracts module)
+        ensure(
+            result.height >= FLARE_MIN_HEIGHT,
+            f"Flare height must be >= minimum ({FLARE_MIN_HEIGHT})",
+            result.height,
         )
-        assert result.diameter >= 0, (
-            f"Flare diameter must be non-negative, got {result.diameter}"
+        ensure(
+            result.diameter >= 0,
+            "Flare diameter must be non-negative",
+            result.diameter,
         )
         return result
 
@@ -184,8 +195,17 @@ class FlareCalculator:
 
         Returns:
             Dictionary with zone distances (m)
+
+        Preconditions:
+            flare_design must not be None
+            flare_design.heat_release must be non-negative
         """
-        assert flare_design is not None, "flare_design must be provided"
+        require(flare_design is not None, "flare_design must be provided")
+        require(
+            flare_design.heat_release >= 0,
+            "flare_design.heat_release must be non-negative",
+            flare_design.heat_release,
+        )
         zones = {
             "lethal": 0.0,  # 37.5 kW/m²
             "damage": 0.0,  # 12.5 kW/m²
@@ -227,9 +247,15 @@ class FlareCalculator:
 
         Returns:
             Combustion efficiency (0-1)
+
+        Preconditions:
+            gas_composition must not be empty
+            temperature > 0 K
+            pressure > 0 bar
         """
-        # Simplified efficiency calculation
-        assert gas_composition is not None, "gas_composition must be provided"
+        require(len(gas_composition) > 0, "gas_composition must not be empty")
+        check_temperature(temperature, "temperature")
+        check_pressure(pressure, "pressure")
         efficiency = FLARE_BASE_EFFICIENCY  # Base efficiency
 
         # Normalize factors

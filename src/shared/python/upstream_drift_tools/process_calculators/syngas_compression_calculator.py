@@ -116,6 +116,8 @@ if TYPE_CHECKING:
 
 # Import existing syngas water content utility
 # ruff: noqa: E402
+from contracts import check_positive, check_pressure, check_temperature, require
+
 from .constants import (
     ATOL_ZERO,
     BAR_TO_PA,
@@ -225,8 +227,15 @@ class SyngasCompressionEngine:
         self,
         composition: dict[str, float],
     ) -> dict[str, Any]:
-        """Calculate mixture properties from component composition"""
-        assert composition is not None, "composition must be provided"
+        """Calculate mixture properties from component composition.
+
+        Args:
+            composition: Gas component mole fractions or percentages
+
+        Preconditions:
+            composition must not be empty
+        """
+        require(len(composition) > 0, "composition must not be empty")
         mole_fractions = validate_gas_composition(composition, auto_normalize=True)
 
         mix_mw = 0.0
@@ -268,9 +277,21 @@ class SyngasCompressionEngine:
         pressure: float,
         water_content: float,
     ) -> dict[str, float]:
-        """Calculate water dropout during compression"""
-        if pressure <= 0:
-            raise ValueError(f"pressure must be > 0, got {pressure}")
+        """Calculate water dropout during compression.
+
+        Args:
+            temperature: Gas temperature (K)
+            pressure: Gas pressure (bar)
+            water_content: Water mole percent in gas (mol%)
+
+        Preconditions:
+            temperature > 0 K
+            pressure > 0 bar
+            water_content >= 0
+        """
+        check_temperature(temperature, "temperature")
+        check_pressure(pressure, "pressure")
+        require(water_content >= 0, "water_content must be non-negative", water_content)
 
         # (pressure * 1e5 removed as it was no-op)
 
@@ -408,9 +429,22 @@ class SyngasCompressionEngine:
         composition: dict[str, float],
         intercooling: bool = True,
     ) -> dict[str, Any]:
-        """Calculate multistage compression with optional intercooling"""
-        if not stages:
-            raise ValueError("stages list must not be empty")
+        """Calculate multistage compression with optional intercooling.
+
+        Args:
+            stages: List of compression stage configurations
+            flow_rate: Molar flow rate (kmol/h)
+            composition: Gas component mole fractions
+            intercooling: Whether intercoolers are used between stages
+
+        Preconditions:
+            stages must not be empty
+            flow_rate > 0
+            composition must not be empty
+        """
+        require(len(stages) > 0, "stages list must not be empty")
+        check_positive(flow_rate, "flow_rate")
+        require(len(composition) > 0, "composition must not be empty")
 
         mixture_props = self.calculate_mixture_properties(composition)
         results = []
