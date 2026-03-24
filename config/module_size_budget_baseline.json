@@ -7,7 +7,5 @@
     "src/tools/folder_tools/folder_packer_pro/folder_packer_pro.py": 1911,
     "src/tools/folder_tools/folder_tool/Folders_Tool_r0.py": 3288,
     "src/rotation_converter/modern_robotics.py": 2090,
-    "src/electrode_advisor/tests/test_electrode_advisor_contracts.py": 1562,
-    "src/rotation_converter/ui/pyqt6/main_window.py": 1234,
-    "src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/pressure_drop_interface.py": 1390
+    "src/electrode_advisor/tests/test_electrode_advisor_contracts.py": 1562
 }

@@ -10,7 +10,7 @@ from datetime import datetime, timezone  # noqa: UP017
 from pathlib import Path
 from typing import Any
 
-from src.shared.python.contracts import require
+from contracts import require
 
 # Constants
 MATLAB_SCRIPT_TIMEOUT_SECONDS: int = 300

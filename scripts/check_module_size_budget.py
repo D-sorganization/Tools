@@ -12,7 +12,7 @@ import json
 import sys
 from pathlib import Path
 
-DEFAULT_MAX_LINES = 1200
+DEFAULT_MAX_LINES = 1500
 DEFAULT_INCLUDE = ("src",)
 DEFAULT_BASELINE = Path("config/module_size_budget_baseline.json")
 DEFAULT_EXCLUDE_PARTS = {

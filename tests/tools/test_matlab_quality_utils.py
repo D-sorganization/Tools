@@ -7,8 +7,8 @@ banned patterns, workspace pollution detection, and DbC violations.
 from pathlib import Path
 
 import pytest
+from contracts import PreconditionError
 
-from src.shared.python.contracts import PreconditionError
 from tools.matlab_quality_utils import MATLABQualityChecker
 
 # ─── __init__ DbC ──────────────────────────────────────────────
