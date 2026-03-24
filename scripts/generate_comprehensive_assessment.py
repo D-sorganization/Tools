@@ -135,7 +135,7 @@ def analyze_codebase() -> RepoStats:
                 # Read file content safely
                 try:
                     content = filepath.read_text(encoding="utf-8", errors="ignore")
-                except Exception:
+                except Exception:  # noqa: BLE001
                     continue
 
                 stats["lines"] += len(content.splitlines())
@@ -196,7 +196,7 @@ def analyze_codebase() -> RepoStats:
                     except SyntaxError:
                         # logger.warning(f"Syntax error in {filepath}")
                         pass
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 logger.error(f"Error analyzing {filepath}: {e}")
 
     return stats

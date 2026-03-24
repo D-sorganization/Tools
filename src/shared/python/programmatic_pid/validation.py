@@ -175,7 +175,7 @@ def validate_spec(spec: Any) -> None:
             jsonschema.validate(spec, schema)
         except ImportError:
             logger.debug("jsonschema not installed; skipping schema validation")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             raise SpecValidationError(f"Schema violation: {exc}") from exc
 
     # Referential integrity checks

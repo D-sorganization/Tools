@@ -53,7 +53,7 @@ def load_gui_info(path: Path) -> dict[str, Any] | None:
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         return getattr(module, "GUI_INFO", None)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         logger.warning("Failed to load %s: %s", path, exc)
         return None
 

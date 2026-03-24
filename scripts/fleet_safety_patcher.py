@@ -131,5 +131,5 @@ if __name__ == "__main__":
         try:
             repo_name = repo  # for logs
             process_repo(repo)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             logger.info(f"Failed to process {repo}: {e}")

@@ -356,7 +356,7 @@ class VesselDrafterWindow(QMainWindow):
                 layout, output_dir=path.parent, stem=path.stem, formats=(fmt,)
             )
             QMessageBox.information(self, "Export Complete", f"Exported to {path}")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             QMessageBox.critical(self, "Export Failed", str(exc))
 
     def _prompt_add_side_port(self) -> None:

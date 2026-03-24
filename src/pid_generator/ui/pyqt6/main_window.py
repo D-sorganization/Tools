@@ -146,7 +146,7 @@ class PIDGeneratorMainWindow(QMainWindow):
                 "Done",
                 f"Generated:\n  {out_path}\n  {svg_path}",
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             logger.exception("Generation failed")
             self._status_label.setText(f"\u2717 Error: {exc}")
             QMessageBox.critical(self, "Generation Failed", str(exc))

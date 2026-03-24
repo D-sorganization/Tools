@@ -209,7 +209,7 @@ def write_file_lines(filepath: str, lines: list[str]) -> None:
                     f"!!! LOBOTOMY GUARD: Aborting write to {filepath} (new length: {len(lines)}, original: {original_line_count})"
                 )
                 return
-    except Exception:
+    except Exception:  # noqa: BLE001
         pass
 
     with open(filepath, "w", encoding="utf-8") as f:

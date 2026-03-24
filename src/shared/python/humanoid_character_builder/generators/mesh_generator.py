@@ -372,7 +372,7 @@ def generate_human():
     for key, value in modifiers.items():
         try:
             h.setDetail(key, value)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             logger.warning(f"Failed to set modifier {{key}}={{value}}: {{exc}}")
 
     # Export as OBJ with vertex groups

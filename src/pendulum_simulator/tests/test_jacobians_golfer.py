@@ -242,17 +242,17 @@ class TestEllipsoidsGolfer:
         result = ellipsoids_golfer(q, p)
         for name, data in result.items():
             assert np.all(np.isfinite(data["jacobian"])), f"{name} Jacobian non-finite"
-            assert np.all(
-                np.isfinite(data["singular_values"])
-            ), f"{name} singular values non-finite"
-            assert np.all(
-                np.isfinite(data["mob_semi_axes"])
-            ), f"{name} mobility semi-axes non-finite"
+            assert np.all(np.isfinite(data["singular_values"])), (
+                f"{name} singular values non-finite"
+            )
+            assert np.all(np.isfinite(data["mob_semi_axes"])), (
+                f"{name} mobility semi-axes non-finite"
+            )
             # force_semi_axes may be None at singular configurations
             if data["force_semi_axes"] is not None:
-                assert np.all(
-                    np.isfinite(data["force_semi_axes"])
-                ), f"{name} force semi-axes non-finite"
+                assert np.all(np.isfinite(data["force_semi_axes"])), (
+                    f"{name} force semi-axes non-finite"
+                )
 
     def test_singular_values_descending(self):
         """Singular values should be in descending order."""
@@ -263,9 +263,7 @@ class TestEllipsoidsGolfer:
         for name, data in result.items():
             svs = data["singular_values"]
             # Check descending order
-            assert np.all(
-                np.diff(svs) <= 0
-            ), f"{name} singular values not in descending order"
+            assert np.all(np.diff(svs) <= 0), f"{name} singular values not in descending order"
 
     def test_directions_orthonormal(self):
         """Ellipsoid directions should be orthonormal."""
@@ -278,9 +276,9 @@ class TestEllipsoidsGolfer:
             # Check columns are unit vectors
             for i in range(dirs.shape[1]):
                 col_norm = np.linalg.norm(dirs[:, i])
-                assert np.isclose(
-                    col_norm, 1.0, atol=1e-10
-                ), f"{name} direction {i} not unit norm"
+                assert np.isclose(col_norm, 1.0, atol=1e-10), (
+                    f"{name} direction {i} not unit norm"
+                )
 
     def test_semi_axes_positive(self):
         """Semi-axes lengths should be positive."""
@@ -541,7 +539,7 @@ class TestRobustness:
         try:
             J = jacobian_golfer(q, p)
             assert len(J) == 6
-        except Exception:
+        except Exception:  # noqa: BLE001
             pass  # Some configs may be singular
 
     def test_large_angle_values(self):
