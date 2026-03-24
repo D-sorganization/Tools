@@ -1156,3 +1156,48 @@ items:
     artefact: .gaai/project/contexts/artefacts/stories/GH1684.story.md
     dependencies: []
     created_at: 2026-03-22
+
+  - id: GH1736
+    title: "[Fleet Assessment][PP-BrokenWindows] Pragmatic broken-window markers remain in active code"
+    priority: medium
+    status: refined
+    github_issue: 1736
+    artefact: .gaai/project/contexts/artefacts/stories/GH1736.story.md
+    dependencies: []
+    created_at: 2026-03-24
+
+  - id: GH1735
+    title: "[Fleet Assessment][PP-DRY] Pragmatic DRY violations are visible in repeated code windows"
+    priority: medium
+    status: refined
+    github_issue: 1735
+    artefact: .gaai/project/contexts/artefacts/stories/GH1735.story.md
+    dependencies: []
+    created_at: 2026-03-24
+
+  - id: GH1734
+    title: "[Fleet Assessment][A] Oversized files are accumulating architectural responsibility"
+    priority: medium
+    status: refined
+    github_issue: 1734
+    artefact: .gaai/project/contexts/artefacts/stories/GH1734.story.md
+    dependencies: []
+    created_at: 2026-03-24
+
+  - id: GH1733
+    title: "[Fleet Assessment][G] Dependency versions are not consistently pinned"
+    priority: medium
+    status: refined
+    github_issue: 1733
+    artefact: .gaai/project/contexts/artefacts/stories/GH1733.story.md
+    dependencies: []
+    created_at: 2026-03-24
+
+  - id: GH1732
+    title: "[Fleet Assessment][L] Operational output is inconsistent"
+    priority: medium
+    status: refined
+    github_issue: 1732
+    artefact: .gaai/project/contexts/artefacts/stories/GH1732.story.md
+    dependencies: []
+    created_at: 2026-03-24
