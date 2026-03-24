@@ -116,7 +116,7 @@ class ConsoleEnvironment:
         try:
             # Execute within current namespace so imports/functions are persistent
             exec(code, self.namespace)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             sys.stderr.write(f"Error loading user library: {e}\n")
 
     def execute(self, source: str) -> tuple[str, str]:
@@ -151,7 +151,7 @@ class ConsoleEnvironment:
                     code_obj = compile(source, "<console>", "exec")
                     exec(code_obj, self.namespace)
 
-        except Exception:
+        except Exception:  # noqa: BLE001
             # Format exception similar to REPL
             exc_type, exc_value, exc_traceback = sys.exc_info()
             if exc_traceback:

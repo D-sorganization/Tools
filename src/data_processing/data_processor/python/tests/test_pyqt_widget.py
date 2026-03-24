@@ -24,7 +24,6 @@ def widget(qtbot):
         patch("data_processor.pyqt_widget.DataLoader") as MockDataLoader,
         patch("data_processor.pyqt_widget.SignalProcessor") as MockSignalProcessor,
     ):
-
         mock_loader = MockDataLoader.return_value
         mock_processor = MockSignalProcessor.return_value
 

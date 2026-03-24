@@ -29,7 +29,7 @@ for _p in [_REPO_ROOT, _SHARED_DIR, _URDF_DIR, _APP_DIR]:
 # (CI may lack python-multipart, cors deps, etc.)
 try:
     from app import app  # noqa: F401
-except Exception as _exc:
+except Exception as _exc:  # noqa: BLE001
     pytest.skip(
         f"Skipping urdf_viewer tests — app import failed: {_exc}",
         allow_module_level=True,

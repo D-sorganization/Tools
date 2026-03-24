@@ -73,7 +73,7 @@ class TestTorqueHistoryWidgetContract:
             from PyQt6.QtWidgets import QApplication
 
             _app = QApplication.instance() or QApplication([])
-        except Exception:
+        except Exception:  # noqa: BLE001
             pytest.skip("Qt not available")
 
         from double_pendulum_golf.gui.torque_history_widget import (
@@ -90,7 +90,7 @@ class TestTorqueHistoryWidgetContract:
             from PyQt6.QtWidgets import QApplication
 
             _app = QApplication.instance() or QApplication([])
-        except Exception:
+        except Exception:  # noqa: BLE001
             pytest.skip("Qt not available")
 
         from double_pendulum_golf.gui.torque_history_widget import (

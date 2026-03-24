@@ -133,10 +133,10 @@ class ScriptGenerator:
 
         for i, step in enumerate(pipeline.steps):
             if not step.enabled:
-                lines.append(f"    # Step {i+1} (disabled): {step.description}")
+                lines.append(f"    # Step {i + 1} (disabled): {step.description}")
                 continue
 
-            lines.append(f"    # Step {i+1}: {step.description}")
+            lines.append(f"    # Step {i + 1}: {step.description}")
             lines.extend(self._generate_step_code(step, indent=4))
             lines.append("")
 
@@ -267,7 +267,7 @@ class ScriptGenerator:
                 "        output_path = os.path.join(output_dir, output_name)",
                 "        df.to_csv(output_path, index=False)",
                 "        return output_path",
-                "    except Exception as e:",
+                "    except Exception as e:",  # noqa: BLE001
                 "        print(f'Error processing {input_path}: {e}')",
                 "        return None",
                 "",

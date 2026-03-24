@@ -126,7 +126,7 @@ def _get_plot_colors() -> dict[str, Any]:
                 "surface": colors.get("group_bg", _DARK_SURFACE),
                 "axes": CHART_COLORS[:3] if CHART_COLORS else _AXIS_COLORS,
             }
-        except Exception:
+        except Exception:  # noqa: BLE001
             pass
     return {
         "bg": _DARK_BG,
@@ -301,7 +301,7 @@ class RotationConverterTab(QWidget):
                 rot = Rotation.from_rotation_matrix(R)
             else:
                 return
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             self._output_text.setPlainText(f"Error: {e}")
             return
 
@@ -330,7 +330,7 @@ class RotationConverterTab(QWidget):
             else:
                 res = ""
             self._main_result.setText(res)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             self._main_result.setText(f"Error: {e}")
 
     def _display_all(self, rot: Rotation, conv: str) -> None:
@@ -351,7 +351,7 @@ class RotationConverterTab(QWidget):
                 e = rot.as_euler(c)
                 marker = " ◀" if c == conv else ""
                 lines.append(f"  {c}: {e[0]: .6f}  {e[1]: .6f}  {e[2]: .6f}{marker}")
-            except Exception:
+            except Exception as e:  # noqa: BLE001
                 lines.append(f"  {c}: (error)")
         lines += [
             "",
@@ -526,7 +526,7 @@ class RigidTransformTab(QWidget):
                 T = RigidTransform.from_matrix(v.reshape(4, 4), source=src, target=tgt)
             else:
                 return
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             self._tf_output.setPlainText(f"Error: {e}")
             return
 
@@ -583,7 +583,7 @@ class RigidTransformTab(QWidget):
                 f"  pitch: {screw['pitch']:.6f}",
                 f"  theta: {screw['theta']:.6f} rad",
             ]
-        except Exception:
+        except Exception:  # noqa: BLE001
             pass
 
         self._tf_output.setPlainText("\n".join(lines))
@@ -1200,7 +1200,7 @@ class RotationConverterMainWindow(QMainWindow):
                 mgr = get_theme_manager()
                 mgr.apply_theme_to_window(self)
                 mgr.themeChanged.connect(self._on_theme_changed)
-            except Exception:
+            except Exception:  # noqa: BLE001
                 pass
 
     def _on_theme_changed(self, theme_name: str) -> None:

@@ -181,7 +181,7 @@ def debug_on_error() -> Generator[None, None, None]:
     """
     try:
         yield
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         debug_exception(e)
         raise
 

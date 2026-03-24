@@ -392,7 +392,7 @@ class URDFBuilderWindow(QMainWindow):
             self.results_text.setPlainText(urdf_xml)
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['green']};")
             logger.info("URDF generated successfully for '%s'", config.robot_name)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             logger.error("URDF generation failed: %s", exc)
             self.results_text.setPlainText(f"Generation failed: {exc}")
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
@@ -406,7 +406,7 @@ class URDFBuilderWindow(QMainWindow):
             preview = generate_preview_text(config)
             self.results_text.setPlainText(preview)
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['text']};")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             logger.error("Preview generation failed: %s", exc)
             self.results_text.setPlainText(f"Preview failed: {exc}")
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")
