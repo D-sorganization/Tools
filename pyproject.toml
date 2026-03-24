@@ -170,7 +170,7 @@ exclude = [
 # I = isort (Import sorting)
 # B = flake8-bugbear (Catches likely bugs/traps)
 # UP = pyupgrade (Modernizes old Python syntax)
-select = ["E", "F", "W", "I", "B", "UP"]
+select = ["E", "F", "W", "I", "B", "UP", "T20"]
 
 # Ignore:
 # D = pydocstyle (Doc-Scribe agent handles docstrings, not linted strictly here)
@@ -199,6 +199,10 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # Scripts use print() for CLI output - this is intentional and correct
 "scripts/**/*.py" = ["T201"]
 "scripts/*.py" = ["T201"]
+# verify_launcher.py is a CLI verification tool — print() is the correct output mechanism
+"verify_launcher.py" = ["T201"]
+# test_test_utils.py intentionally uses print() to test the captured_output() context manager
+"tests/test_test_utils.py" = ["T201"]
 
 [tool.ruff.lint.isort]
 # Tells Ruff how to group your own code vs. libraries
