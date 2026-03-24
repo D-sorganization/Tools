@@ -52,7 +52,7 @@ class PlotConfigMixin:
             QMessageBox.warning(
                 self,
                 "No Selection",
-                "Please select a configuration to load.",  # type: ignore[arg-type]
+                "Please select a configuration to load.",
             )
             return
 
@@ -94,7 +94,7 @@ class PlotConfigMixin:
             QMessageBox.warning(
                 self,
                 "No Selection",
-                "Please select a configuration to delete.",  # type: ignore[arg-type]
+                "Please select a configuration to delete.",
             )
             return
 
