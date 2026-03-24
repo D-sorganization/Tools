@@ -8,7 +8,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import IO, Any
 
-from src.shared.python.contracts import require
+from contracts import require
 
 
 def get_repo_root() -> Path:

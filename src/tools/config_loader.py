@@ -40,7 +40,7 @@ def validate_tools_config(
         Validated dictionary with invalid entries removed.
     """
     assert tools_dict is not None, "tools_dict must be provided"
-    from src.shared.python.contracts import require
+    from contracts import require
 
     require(isinstance(tools_dict, dict), "tools_dict must be a dictionary")
 
@@ -95,7 +95,7 @@ def load_tools_config(repo_root: Path) -> dict[str, list[Any]]:
     Returns:
         Dictionary mapping categories to lists of tools.
     """
-    from src.shared.python.contracts import require
+    from contracts import require
 
     require(isinstance(repo_root, Path), "repo_root must be a Path object")
 

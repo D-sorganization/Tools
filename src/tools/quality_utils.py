@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 from re import Pattern
 
-from src.shared.python.contracts import require
+from contracts import require
 
 
 # ANSI colors for terminal output

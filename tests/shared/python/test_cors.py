@@ -9,10 +9,10 @@ Tests cover:
 from unittest.mock import MagicMock
 
 import pytest
+from contracts import PreconditionError
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.shared.python.contracts import PreconditionError
 from src.shared.python.cors import DEFAULT_ORIGINS, add_cors_middleware
 
 _PreconditionError = PreconditionError
