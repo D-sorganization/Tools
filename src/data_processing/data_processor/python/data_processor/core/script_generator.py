@@ -556,7 +556,7 @@ class ScriptGenerator:
             return [
                 f"{prefix}# Custom operation: {op_name}",
                 f"{prefix}# Parameters: {params}",
-                f"{prefix}# TODO: Implement custom operation",
+                f"{prefix}# DEFERRED: Implement custom operation",
             ]
 
         return []

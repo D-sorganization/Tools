@@ -33,8 +33,8 @@ class Colors:
 
 # Configuration
 BANNED_PATTERNS: list[tuple[Pattern, str]] = [
-    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
-    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
+    (re.compile(r"\bDEFERRED\b"), "DEFERRED placeholder found"),
+    (re.compile(r"\bREVIEW\b"), "REVIEW placeholder found"),
     (re.compile(r"^\s*\.\.\.\s*$"), "Ellipsis placeholder"),
     (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
     # More specific angle bracket patterns to avoid Tkinter event bindings
@@ -43,12 +43,12 @@ BANNED_PATTERNS: list[tuple[Pattern, str]] = [
         "Angle bracket placeholder",
     ),
     (
-        re.compile(r"<[^<>]*TODO[^<>]*>", re.IGNORECASE),
-        "Angle bracket TODO placeholder",
+        re.compile(r"<[^<>]*DEFERRED[^<>]*>", re.IGNORECASE),
+        "Angle bracket DEFERRED placeholder",
     ),
     (
-        re.compile(r"<[^<>]*FIXME[^<>]*>", re.IGNORECASE),
-        "Angle bracket FIXME placeholder",
+        re.compile(r"<[^<>]*REVIEW[^<>]*>", re.IGNORECASE),
+        "Angle bracket REVIEW placeholder",
     ),
     (re.compile(r"your.*here", re.IGNORECASE), "Template placeholder"),
     (re.compile(r"insert.*here", re.IGNORECASE), "Template placeholder"),

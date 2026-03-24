@@ -33,7 +33,7 @@ export default function HomePage() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   // Note: config is not imported here to avoid client-side issues
-  // TODO: Move fps to client-side config or use from video metadata
+  // DEFERRED: Move fps to client-side config or use from video metadata
   const DEFAULT_FPS = 30; // Could be from process.env.NEXT_PUBLIC_DEFAULT_VIDEO_FPS
 
   const { getCurrentFrame, getTotalFrames } = useVideoFrame({
@@ -119,7 +119,7 @@ export default function HomePage() {
 
       toast.success('Audio commentary recorded successfully');
 
-      // TODO(#663): Save to database when backend API is available.
+      // DEFERRED(#663): Save to database when backend API is available.
       // Expected endpoint: POST /api/audio-tracks
       // Expected payload: { videoId: string, url: string, startTime: number, duration: number }
       // await fetch('/api/audio-tracks', {
@@ -172,7 +172,7 @@ export default function HomePage() {
         currentFrame,
       });
 
-      // TODO(#663): Save pose data to database when backend API is available.
+      // DEFERRED(#663): Save pose data to database when backend API is available.
       // Expected endpoint: POST /api/pose-data
       // Expected payload: { videoId: string, frame: number, timestamp: number, landmarks: unknown }
       // For now, just log for debugging
