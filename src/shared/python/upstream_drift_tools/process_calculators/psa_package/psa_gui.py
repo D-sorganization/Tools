@@ -925,7 +925,7 @@ class PSAMainWindow(QMainWindow):
             "About PSA System Analysis",
             "<h3>Two-Stage PSA System Analysis</h3>"
             "<p>Version 1.0</p>"
-            "<p>A comprehensive tool for analyzing pressure swing adsorption systems.</p>"  # noqa: E501
+            "<p>A comprehensive tool for analyzing pressure swing adsorption systems.</p>"
             "<p><b>Features:</b></p>"
             "<ul>"
             "<li>Mass balance calculations</li>"
@@ -991,7 +991,7 @@ class PSAMainWindow(QMainWindow):
         self._calculate()
 
     def _on_tab_change(self, index: int) -> None:
-        """Handle tab changes - pre-calculate plots when switching to sensitivity tab."""  # noqa: E501
+        """Handle tab changes - pre-calculate plots when switching to sensitivity tab."""
         if index == 1:  # Sensitivity Analysis tab
             self.sensitivity_widget._update_plot()
 
