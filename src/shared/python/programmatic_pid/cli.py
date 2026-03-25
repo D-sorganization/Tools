@@ -294,43 +294,23 @@ def _render_process_elements(
     )
 
 
-def _render_controls_table(
+def _render_table_column_headers(
     msp: Any,
-    spec: dict[str, Any],
     t: dict[str, Any],
-    layout_cfg: dict[str, Any],
-    x_min: float,
-    y_min: float,
-    x_max: float,
-    y_max: float,
+    table_x: float,
+    table_w: float,
+    table_top: float,
+    table_y: float,
     text_layer: str,
     notes_layer: str,
-    control_layer: str,
-    margin: float,
-) -> None:
-    """Render the controls loop table and lower interlock/instrument panels.
+) -> tuple[float, float, float]:
+    """Draw column header labels and vertical dividers for the controls table.
 
-    Draws the table structure, column headers, per-loop rows, and the two lower
-    text panels (interlock summary and instrument index).
-
-    Preconditions
-    -------------
-    - msp is an ezdxf model space with border box already drawn.
-    - spec has been prepared (defaults merged).
-    - layout_cfg is the layout configuration dict from get_layout_config(spec).
+    Returns
+    -------
+    (col_measure, col_ctrl, col_final)
+        X-coordinates of the three table columns.
     """
-    assert msp is not None, "msp must be provided"
-    assert spec is not None, "spec must be provided"
-    width = x_max - x_min
-    height = y_max - y_min
-
-    table_x = x_min + margin
-    table_w = width - 2 * margin
-    table_top = y_max - margin * 3.4
-    table_h = height * 0.52
-    table_y = table_top - table_h
-    add_box(msp, table_x, table_y, table_w, table_h, notes_layer)
-
     col_measure = table_x + table_w * 0.06
     col_ctrl = table_x + table_w * 0.44
     col_final = table_x + table_w * 0.72
@@ -371,90 +351,101 @@ def _render_controls_table(
         (col_final - 2.0, table_top),
         dxfattribs={"layer": notes_layer},
     )
+    return col_measure, col_ctrl, col_final
 
-    loops = spec.get("control_loops", [])
-    row_h = max(t["small_height"] * layout_cfg["controls_row_height_scale"], 8.0)
-    usable_rows = max(int((table_h - 4.0) / row_h), 1)
-    bubble_r = max(
-        to_float(spec.get("defaults", {}).get("instrument_bubble_radius"), 1.6) * 0.42,
-        0.7,
+
+def _render_loop_row(
+    msp: Any,
+    loop: dict[str, Any],
+    i: int,
+    t: dict[str, Any],
+    col_measure: float,
+    col_ctrl: float,
+    col_final: float,
+    table_top: float,
+    row_h: float,
+    bubble_r: float,
+    text_layer: str,
+    control_layer: str,
+) -> None:
+    """Draw a single control-loop row: instrument bubble, labels, and arrows."""
+    y = table_top - 3.2 - i * row_h
+    measurement = str(loop.get("measurement", ""))
+    final = str(loop.get("final_element", ""))
+    loop_tag = str(loop.get("tag") or loop.get("id") or "")
+    desc = str(loop.get("description") or loop.get("note") or "")
+
+    msp.add_circle(
+        (col_measure - 1.5, y - 0.4),
+        radius=bubble_r,
+        dxfattribs={"layer": "instruments"},
     )
-    for i, loop in enumerate(loops[:usable_rows]):
-        y = table_top - 3.2 - i * row_h
-        measurement = str(loop.get("measurement", ""))
-        final = str(loop.get("final_element", ""))
-        loop_tag = str(loop.get("tag") or loop.get("id") or "")
-        desc = str(loop.get("description") or loop.get("note") or "")
-
-        msp.add_circle(
-            (col_measure - 1.5, y - 0.4),
-            radius=bubble_r,
-            dxfattribs={"layer": "instruments"},
-        )
+    add_text(
+        msp,
+        measurement,
+        col_measure,
+        y,
+        t["small_height"],
+        layer=text_layer,
+        align="TOP_LEFT",
+    )
+    add_text(
+        msp,
+        loop_tag,
+        col_ctrl,
+        y,
+        t["small_height"],
+        layer=text_layer,
+        align="TOP_LEFT",
+    )
+    add_text(
+        msp,
+        final,
+        col_final,
+        y,
+        t["small_height"],
+        layer=text_layer,
+        align="TOP_LEFT",
+    )
+    if desc:
         add_text(
             msp,
-            measurement,
-            col_measure,
-            y,
-            t["small_height"],
-            layer=text_layer,
-            align="TOP_LEFT",
-        )
-        add_text(
-            msp,
-            loop_tag,
+            desc,
             col_ctrl,
-            y,
-            t["small_height"],
+            y - 1.9,
+            t["small_height"] * 0.9,
             layer=text_layer,
             align="TOP_LEFT",
         )
-        add_text(
-            msp,
-            final,
-            col_final,
-            y,
-            t["small_height"],
-            layer=text_layer,
-            align="TOP_LEFT",
-        )
-        if desc:
-            add_text(
-                msp,
-                desc,
-                col_ctrl,
-                y - 1.9,
-                t["small_height"] * 0.9,
-                layer=text_layer,
-                align="TOP_LEFT",
-            )
+    add_arrow(
+        msp,
+        (col_measure + 8.5, y - 0.5),
+        (col_ctrl - 3.2, y - 0.5),
+        control_layer,
+        arrow_size=1.0,
+    )
+    add_arrow(
+        msp,
+        (col_ctrl + 9.2, y - 0.5),
+        (col_final - 3.2, y - 0.5),
+        control_layer,
+        arrow_size=1.0,
+    )
 
-        add_arrow(
-            msp,
-            (col_measure + 8.5, y - 0.5),
-            (col_ctrl - 3.2, y - 0.5),
-            control_layer,
-            arrow_size=1.0,
-        )
-        add_arrow(
-            msp,
-            (col_ctrl + 9.2, y - 0.5),
-            (col_final - 3.2, y - 0.5),
-            control_layer,
-            arrow_size=1.0,
-        )
 
-    if len(loops) > usable_rows:
-        add_text(
-            msp,
-            f"... {len(loops) - usable_rows} additional loops truncated",
-            table_x + 1.0,
-            table_y + 1.0,
-            t["small_height"],
-            layer=text_layer,
-            align="BOTTOM_LEFT",
-        )
-
+def _render_lower_panels(
+    msp: Any,
+    spec: dict[str, Any],
+    t: dict[str, Any],
+    table_x: float,
+    table_y: float,
+    y_min: float,
+    table_w: float,
+    text_layer: str,
+    notes_layer: str,
+    margin: float,
+) -> None:
+    """Draw the interlock summary and instrument index panels below the loop table."""
     interlocks = spec.get("interlocks", [])
     lower_y = y_min + margin
     lower_h = table_y - lower_y - margin
@@ -478,11 +469,11 @@ def _render_controls_table(
         max_chars=72,
     )
 
-    inst_lines = []
-    for ins in spec.get("instruments", []):
-        tag = str(ins.get("tag") or ins.get("id") or "")
-        service = str(ins.get("service", "")).strip()
-        inst_lines.append(f"{tag}: {service}")
+    inst_lines = [
+        f"{ins.get('tag') or ins.get('id') or ''}: "
+        f"{str(ins.get('service', '')).strip()}"
+        for ins in spec.get("instruments", [])
+    ]
     add_text_panel(
         msp,
         table_x + left_w + margin,
@@ -495,6 +486,95 @@ def _render_controls_table(
         text_layer,
         notes_layer,
         max_chars=38,
+    )
+
+
+def _render_controls_table(
+    msp: Any,
+    spec: dict[str, Any],
+    t: dict[str, Any],
+    layout_cfg: dict[str, Any],
+    x_min: float,
+    y_min: float,
+    x_max: float,
+    y_max: float,
+    text_layer: str,
+    notes_layer: str,
+    control_layer: str,
+    margin: float,
+) -> None:
+    """Render the controls loop table and lower interlock/instrument panels.
+
+    Draws the table structure, column headers, per-loop rows, and the two lower
+    text panels (interlock summary and instrument index).
+
+    Preconditions
+    -------------
+    - msp is an ezdxf model space with border box already drawn.
+    - spec has been prepared (defaults merged).
+    - layout_cfg is the layout configuration dict from get_layout_config(spec).
+    """
+    assert msp is not None, "msp must be provided"
+    assert spec is not None, "spec must be provided"
+    width = x_max - x_min
+    height = y_max - y_min
+
+    table_x = x_min + margin
+    table_w = width - 2 * margin
+    table_top = y_max - margin * 3.4
+    table_h = height * 0.52
+    table_y = table_top - table_h
+    add_box(msp, table_x, table_y, table_w, table_h, notes_layer)
+
+    col_measure, col_ctrl, col_final = _render_table_column_headers(
+        msp, t, table_x, table_w, table_top, table_y, text_layer, notes_layer
+    )
+
+    loops = spec.get("control_loops", [])
+    row_h = max(t["small_height"] * layout_cfg["controls_row_height_scale"], 8.0)
+    usable_rows = max(int((table_h - 4.0) / row_h), 1)
+    bubble_r = max(
+        to_float(spec.get("defaults", {}).get("instrument_bubble_radius"), 1.6) * 0.42,
+        0.7,
+    )
+    for i, loop in enumerate(loops[:usable_rows]):
+        _render_loop_row(
+            msp,
+            loop,
+            i,
+            t,
+            col_measure,
+            col_ctrl,
+            col_final,
+            table_top,
+            row_h,
+            bubble_r,
+            text_layer,
+            control_layer,
+        )
+
+    if len(loops) > usable_rows:
+        add_text(
+            msp,
+            f"... {len(loops) - usable_rows} additional loops truncated",
+            table_x + 1.0,
+            table_y + 1.0,
+            t["small_height"],
+            layer=text_layer,
+            align="BOTTOM_LEFT",
+        )
+
+    _render_lower_panels(
+        msp,
+        spec,
+        t,
+        table_x,
+        table_y,
+        y_min,
+        table_w,
+        text_layer,
+        notes_layer,
+        margin,
     )
 
 

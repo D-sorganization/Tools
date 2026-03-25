@@ -614,16 +614,12 @@ class ToolStrip(QWidget):
 
         layout.addStretch()
 
-    def _build_extra_toggles_col(self) -> QVBoxLayout:
-        """Build the extra toggles column: physics toggles and rotation sliders.
+    def _build_physics_checkboxes(self, layout: QVBoxLayout) -> None:
+        """Create and wire the six physics-toggle checkboxes into *layout*.
 
-        Returns a QVBoxLayout containing: Zero-tau, CoM, Torque Vectors, Moment of Force,
-        Sum of Moments, 3D Segments checkboxes, and Azimuth/Tilt rotation sliders.
+        Sets ``self.chk_zero_torque``, ``self.chk_com``, ``self.chk_torque``,
+        ``self.chk_mof``, ``self.chk_sum_moments``, and ``self.chk_3d``.
         """
-        extra_col = QVBoxLayout()
-        extra_col.setContentsMargins(0, 0, 0, 0)
-        extra_col.setSpacing(2)
-
         self.chk_zero_torque = QCheckBox("Zero-τ Forces")
         self.chk_zero_torque.setStyleSheet(_CHK_ZERO)
         self.chk_zero_torque.setToolTip(
@@ -632,13 +628,13 @@ class ToolStrip(QWidget):
             "the passive drift due to gravity and inertia alone."
         )
         self.chk_zero_torque.toggled.connect(self.zero_torque_toggled.emit)
-        extra_col.addWidget(self.chk_zero_torque)
+        layout.addWidget(self.chk_zero_torque)
 
         self.chk_com = QCheckBox("Center of Mass")
         self.chk_com.setStyleSheet(_CHK_COM)
         self.chk_com.setToolTip("Show the combined center of mass of the whole system.")
         self.chk_com.toggled.connect(self.com_toggled.emit)
-        extra_col.addWidget(self.chk_com)
+        layout.addWidget(self.chk_com)
 
         # Torque vectors (#1208)
         self.chk_torque = QCheckBox("Torque Vectors")
@@ -648,7 +644,7 @@ class ToolStrip(QWidget):
             "Red arrows — magnitude scales with torque value."
         )
         self.chk_torque.toggled.connect(self.torque_vectors_toggled.emit)
-        extra_col.addWidget(self.chk_torque)
+        layout.addWidget(self.chk_torque)
 
         # Moment of Force vectors (#1208)
         self.chk_mof = QCheckBox("Moment of Force")
@@ -658,7 +654,7 @@ class ToolStrip(QWidget):
             "Blue arrows — proximal-on-distal convention."
         )
         self.chk_mof.toggled.connect(self.moment_of_force_toggled.emit)
-        extra_col.addWidget(self.chk_mof)
+        layout.addWidget(self.chk_mof)
 
         # Sum of Moments vectors (#1208)
         self.chk_sum_moments = QCheckBox("Sum of Moments")
@@ -668,7 +664,7 @@ class ToolStrip(QWidget):
             "Green arrows — resultant moment at each joint."
         )
         self.chk_sum_moments.toggled.connect(self.sum_moments_toggled.emit)
-        extra_col.addWidget(self.chk_sum_moments)
+        layout.addWidget(self.chk_sum_moments)
 
         self.chk_3d = QCheckBox("3D Segments")
         self.chk_3d.setStyleSheet(_CHK_COM)  # reuse COM style
@@ -677,8 +673,18 @@ class ToolStrip(QWidget):
             "Shows segments as gradient-shaded cylinders."
         )
         self.chk_3d.toggled.connect(self.mode_3d_toggled.emit)
-        extra_col.addWidget(self.chk_3d)
+        layout.addWidget(self.chk_3d)
 
+    def _build_rotation_sliders(self, layout: QVBoxLayout) -> None:
+        """Create and wire the azimuth and tilt rotation sliders into *layout*.
+
+        Sets ``self._sld_azimuth``, ``self._lbl_azimuth``,
+        ``self._sld_tilt``, and ``self._lbl_tilt``.
+        """
+        _sld_style_base = (
+            "QSlider::groove:horizontal{height:4px;background:#252540;border-radius:2px;}"
+            "QSlider::handle:horizontal{width:10px;margin:-3px 0;border-radius:5px;}"
+        )
         # Rotation controls (#1146)
         azimuth_row = QHBoxLayout()
         azimuth_row.setContentsMargins(0, 0, 0, 0)
@@ -693,10 +699,9 @@ class ToolStrip(QWidget):
         self._sld_azimuth.setValue(0)
         self._sld_azimuth.setFixedWidth(80)
         self._sld_azimuth.setStyleSheet(
-            "QSlider::groove:horizontal{height:4px;background:#252540;"
-            "border-radius:2px;}"
-            "QSlider::handle:horizontal{width:10px;margin:-3px 0;"
-            "background:#6080b0;border-radius:5px;}"
+            _sld_style_base.replace(
+                "border-radius:5px;", "background:#6080b0;border-radius:5px;"
+            )
         )
         self._sld_azimuth.valueChanged.connect(self._on_azimuth_slider)
         azimuth_row.addWidget(self._sld_azimuth)
@@ -704,7 +709,7 @@ class ToolStrip(QWidget):
         self._lbl_azimuth = QLabel("0°")
         self._lbl_azimuth.setStyleSheet("color:#606080;font-size:10px;min-width:30px;")
         azimuth_row.addWidget(self._lbl_azimuth)
-        extra_col.addLayout(azimuth_row)
+        layout.addLayout(azimuth_row)
 
         tilt_row = QHBoxLayout()
         tilt_row.setContentsMargins(0, 0, 0, 0)
@@ -719,10 +724,9 @@ class ToolStrip(QWidget):
         self._sld_tilt.setValue(0)
         self._sld_tilt.setFixedWidth(80)
         self._sld_tilt.setStyleSheet(
-            "QSlider::groove:horizontal{height:4px;background:#252540;"
-            "border-radius:2px;}"
-            "QSlider::handle:horizontal{width:10px;margin:-3px 0;"
-            "background:#608050;border-radius:5px;}"
+            _sld_style_base.replace(
+                "border-radius:5px;", "background:#608050;border-radius:5px;"
+            )
         )
         self._sld_tilt.valueChanged.connect(self._on_tilt_slider)
         tilt_row.addWidget(self._sld_tilt)
@@ -730,7 +734,20 @@ class ToolStrip(QWidget):
         self._lbl_tilt = QLabel("0°")
         self._lbl_tilt.setStyleSheet("color:#606080;font-size:10px;min-width:30px;")
         tilt_row.addWidget(self._lbl_tilt)
-        extra_col.addLayout(tilt_row)
+        layout.addLayout(tilt_row)
+
+    def _build_extra_toggles_col(self) -> QVBoxLayout:
+        """Build the extra toggles column: physics toggles and rotation sliders.
+
+        Returns a QVBoxLayout containing: Zero-tau, CoM, Torque Vectors, Moment of Force,
+        Sum of Moments, 3D Segments checkboxes, and Azimuth/Tilt rotation sliders.
+        """
+        extra_col = QVBoxLayout()
+        extra_col.setContentsMargins(0, 0, 0, 0)
+        extra_col.setSpacing(2)
+
+        self._build_physics_checkboxes(extra_col)
+        self._build_rotation_sliders(extra_col)
 
         extra_col.addStretch()
         return extra_col
