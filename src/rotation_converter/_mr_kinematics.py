@@ -230,7 +230,14 @@ def IKinBody(
     return thetalist, False
 
 
-def IKinSpace(Slist, M, T, thetalist0, eomg, ev):
+def IKinSpace(
+    Slist: Any,
+    M: Any,
+    T: Any,
+    thetalist0: Any,
+    eomg: float,
+    ev: float,
+) -> tuple[np.ndarray, bool]:
     """Computes inverse kinematics in the space frame for an open chain robot
 
     :param Slist: The joint screw axes in the space frame when the
@@ -358,7 +365,7 @@ def ScrewTrajectory(
     return trajectory
 
 
-def CubicTimeScaling(Tf, t):
+def CubicTimeScaling(Tf: float, t: float) -> float:
     """Computes s(t) for a cubic time scaling
 
     :param Tf: Total time of the motion in seconds from rest to rest
@@ -375,7 +382,7 @@ def CubicTimeScaling(Tf, t):
     return 3 * (1.0 * t / Tf) ** 2 - 2 * (1.0 * t / Tf) ** 3
 
 
-def QuinticTimeScaling(Tf, t):
+def QuinticTimeScaling(Tf: float, t: float) -> float:
     """Computes s(t) for a quintic time scaling
 
     :param Tf: Total time of the motion in seconds from rest to rest
@@ -393,7 +400,9 @@ def QuinticTimeScaling(Tf, t):
     return 10 * (1.0 * t / Tf) ** 3 - 15 * (1.0 * t / Tf) ** 4 + 6 * (1.0 * t / Tf) ** 5
 
 
-def JointTrajectory(thetastart, thetaend, Tf, N, method):
+def JointTrajectory(
+    thetastart: Any, thetaend: Any, Tf: float, N: int, method: int
+) -> np.ndarray:
     """Computes a straight-line trajectory in joint space
 
     :param thetastart: The initial joint variables
@@ -437,7 +446,9 @@ def JointTrajectory(thetastart, thetaend, Tf, N, method):
     return traj
 
 
-def CartesianTrajectory(Xstart, Xend, Tf, N, method):
+def CartesianTrajectory(
+    Xstart: Any, Xend: Any, Tf: float, N: int, method: int
+) -> list[np.ndarray]:
     """Computes a trajectory as a list of N SE(3) matrices corresponding to
     the origin of the end-effector frame following a straight line
 

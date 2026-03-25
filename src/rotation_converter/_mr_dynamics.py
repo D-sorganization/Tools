@@ -9,6 +9,8 @@ the 1200-line budget.  Import these symbols via ``rotation_converter.modern_robo
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 
 from rotation_converter._mr_rotation_matrices import (
@@ -24,7 +26,7 @@ from rotation_converter._mr_rotation_matrices import (
 # ===========================================================================
 
 
-def ad(V):
+def ad(V: Any) -> np.ndarray:
     """Calculate the 6x6 matrix [adV] of the given 6-vector
 
     :param V: A 6-vector spatial velocity
@@ -53,7 +55,16 @@ def ad(V):
 # ===========================================================================
 
 
-def InverseDynamics(thetalist, dthetalist, ddthetalist, g, Ftip, Mlist, Glist, Slist):
+def InverseDynamics(
+    thetalist: Any,
+    dthetalist: Any,
+    ddthetalist: Any,
+    g: Any,
+    Ftip: Any,
+    Mlist: Any,
+    Glist: Any,
+    Slist: Any,
+) -> np.ndarray:
     """Computes inverse dynamics in the space frame for an open chain robot
 
     :param thetalist: n-vector of joint variables
@@ -120,7 +131,7 @@ def InverseDynamics(thetalist, dthetalist, ddthetalist, g, Ftip, Mlist, Glist, S
     return taulist
 
 
-def MassMatrix(thetalist, Mlist, Glist, Slist):
+def MassMatrix(thetalist: Any, Mlist: Any, Glist: Any, Slist: Any) -> np.ndarray:
     """Computes the mass matrix of an open chain robot based on the given
     configuration
 
@@ -158,7 +169,9 @@ def MassMatrix(thetalist, Mlist, Glist, Slist):
     return M
 
 
-def VelQuadraticForces(thetalist, dthetalist, Mlist, Glist, Slist):
+def VelQuadraticForces(
+    thetalist: Any, dthetalist: Any, Mlist: Any, Glist: Any, Slist: Any
+) -> np.ndarray:
     """Computes the Coriolis and centripetal terms in the inverse dynamics of
     an open chain robot
 
@@ -188,7 +201,9 @@ def VelQuadraticForces(thetalist, dthetalist, Mlist, Glist, Slist):
     )
 
 
-def GravityForces(thetalist, g, Mlist, Glist, Slist):
+def GravityForces(
+    thetalist: Any, g: Any, Mlist: Any, Glist: Any, Slist: Any
+) -> np.ndarray:
     """Computes the joint forces/torques an open chain robot requires to
     overcome gravity at its configuration
 
@@ -213,7 +228,9 @@ def GravityForces(thetalist, g, Mlist, Glist, Slist):
     )
 
 
-def EndEffectorForces(thetalist, Ftip, Mlist, Glist, Slist):
+def EndEffectorForces(
+    thetalist: Any, Ftip: Any, Mlist: Any, Glist: Any, Slist: Any
+) -> np.ndarray:
     """Computes the joint forces/torques an open chain robot requires only to
     create the end-effector force Ftip
 
@@ -239,7 +256,16 @@ def EndEffectorForces(thetalist, Ftip, Mlist, Glist, Slist):
     )
 
 
-def ForwardDynamics(thetalist, dthetalist, taulist, g, Ftip, Mlist, Glist, Slist):
+def ForwardDynamics(
+    thetalist: Any,
+    dthetalist: Any,
+    taulist: Any,
+    g: Any,
+    Ftip: Any,
+    Mlist: Any,
+    Glist: Any,
+    Slist: Any,
+) -> np.ndarray:
     """Computes forward dynamics in the space frame for an open chain robot
 
     :param thetalist: A list of joint variables
@@ -271,7 +297,9 @@ def ForwardDynamics(thetalist, dthetalist, taulist, g, Ftip, Mlist, Glist, Slist
     )
 
 
-def EulerStep(thetalist, dthetalist, ddthetalist, dt):
+def EulerStep(
+    thetalist: Any, dthetalist: Any, ddthetalist: Any, dt: float
+) -> tuple[np.ndarray, np.ndarray]:
     """Compute the joint angles and velocities at the next timestep using
     first order Euler integration
 
@@ -301,8 +329,15 @@ def EulerStep(thetalist, dthetalist, ddthetalist, dt):
 
 
 def InverseDynamicsTrajectory(
-    thetamat, dthetamat, ddthetamat, g, Ftipmat, Mlist, Glist, Slist
-):
+    thetamat: Any,
+    dthetamat: Any,
+    ddthetamat: Any,
+    g: Any,
+    Ftipmat: Any,
+    Mlist: Any,
+    Glist: Any,
+    Slist: Any,
+) -> np.ndarray:
     """Calculates the joint forces/torques required to move the serial chain
     along the given trajectory using inverse dynamics
 
@@ -340,8 +375,17 @@ def InverseDynamicsTrajectory(
 
 
 def ForwardDynamicsTrajectory(
-    thetalist, dthetalist, taumat, g, Ftipmat, Mlist, Glist, Slist, dt, intRes
-):
+    thetalist: Any,
+    dthetalist: Any,
+    taumat: Any,
+    g: Any,
+    Ftipmat: Any,
+    Mlist: Any,
+    Glist: Any,
+    Slist: Any,
+    dt: float,
+    intRes: int,
+) -> tuple[np.ndarray, np.ndarray]:
     """Simulates the motion of a serial chain given an open-loop history of
     joint forces/torques
 
@@ -390,20 +434,20 @@ def ForwardDynamicsTrajectory(
 
 
 def ComputedTorque(
-    thetalist,
-    dthetalist,
-    eint,
-    g,
-    Mlist,
-    Glist,
-    Slist,
-    thetalistd,
-    dthetalistd,
-    ddthetalistd,
-    Kp,
-    Ki,
-    Kd,
-):
+    thetalist: Any,
+    dthetalist: Any,
+    eint: Any,
+    g: Any,
+    Mlist: Any,
+    Glist: Any,
+    Slist: Any,
+    thetalistd: Any,
+    dthetalistd: Any,
+    ddthetalistd: Any,
+    Kp: float,
+    Ki: float,
+    Kd: float,
+) -> np.ndarray:
     """Computes the joint control torques at a particular time instant
 
     :param thetalist: n-vector of joint variables
@@ -442,25 +486,25 @@ def ComputedTorque(
 
 
 def SimulateControl(
-    thetalist,
-    dthetalist,
-    g,
-    Ftipmat,
-    Mlist,
-    Glist,
-    Slist,
-    thetamatd,
-    dthetamatd,
-    ddthetamatd,
-    gtilde,
-    Mtildelist,
-    Gtildelist,
-    Kp,
-    Ki,
-    Kd,
-    dt,
-    intRes,
-):
+    thetalist: Any,
+    dthetalist: Any,
+    g: Any,
+    Ftipmat: Any,
+    Mlist: Any,
+    Glist: Any,
+    Slist: Any,
+    thetamatd: Any,
+    dthetamatd: Any,
+    ddthetamatd: Any,
+    gtilde: Any,
+    Mtildelist: Any,
+    Gtildelist: Any,
+    Kp: float,
+    Ki: float,
+    Kd: float,
+    dt: float,
+    intRes: int,
+) -> tuple[np.ndarray, np.ndarray]:
     """Simulates the computed torque controller over a given desired
     trajectory
 

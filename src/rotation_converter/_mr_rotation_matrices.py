@@ -331,7 +331,7 @@ def MatrixLog6(T: Any) -> np.ndarray:
 # ===========================================================================
 
 
-def Normalize(V):
+def Normalize(V: Any) -> np.ndarray:
     """Normalizes a vector
 
     :param V: A vector
@@ -345,7 +345,7 @@ def Normalize(V):
     return V / np.linalg.norm(V)
 
 
-def RotInv(R):
+def RotInv(R: Any) -> np.ndarray:
     """Inverts a rotation matrix
 
     :param R: A rotation matrix
@@ -363,7 +363,7 @@ def RotInv(R):
     return np.array(R).T
 
 
-def AxisAng3(expc3):
+def AxisAng3(expc3: Any) -> tuple[np.ndarray, float]:
     """Converts a 3-vector of exponential coordinates for rotation into
     axis-angle form
 
@@ -376,10 +376,10 @@ def AxisAng3(expc3):
     Output:
         (np.array([0.26726124, 0.53452248, 0.80178373]), 3.7416573867739413)
     """
-    return (Normalize(expc3), np.linalg.norm(expc3))
+    return (Normalize(expc3), float(np.linalg.norm(expc3)))
 
 
-def Adjoint(T):
+def Adjoint(T: Any) -> np.ndarray:
     """Computes the adjoint representation of a homogeneous transformation
     matrix
 
@@ -403,7 +403,7 @@ def Adjoint(T):
     return np.r_[np.c_[R, np.zeros((3, 3))], np.c_[np.dot(VecToso3(p), R), R]]
 
 
-def ScrewToAxis(q, s, h):
+def ScrewToAxis(q: Any, s: Any, h: Any) -> np.ndarray:
     """Takes a parametric description of a screw axis and converts it to a
     normalized screw axis
 
@@ -422,7 +422,7 @@ def ScrewToAxis(q, s, h):
     return np.r_[s, np.cross(q, s) + np.dot(h, s)]
 
 
-def AxisAng6(expc6):
+def AxisAng6(expc6: Any) -> tuple[np.ndarray, float]:
     """Converts a 6-vector of exponential coordinates into screw axis-angle
     form
 
@@ -439,10 +439,10 @@ def AxisAng6(expc6):
     theta = np.linalg.norm([expc6[0], expc6[1], expc6[2]])
     if _near_zero(theta):
         theta = np.linalg.norm([expc6[3], expc6[4], expc6[5]])
-    return (np.array(expc6 / theta), theta)
+    return (np.array(expc6 / theta), float(theta))
 
 
-def ProjectToSO3(mat):
+def ProjectToSO3(mat: Any) -> np.ndarray:
     """Returns a projection of mat into SO(3)
 
     :param mat: A matrix near SO(3) to project to SO(3)
@@ -469,7 +469,7 @@ def ProjectToSO3(mat):
     return R
 
 
-def ProjectToSE3(mat):
+def ProjectToSE3(mat: Any) -> np.ndarray:
     """Returns a projection of mat into SE(3)
 
     :param mat: A 4x4 matrix to project to SE(3)
@@ -494,7 +494,7 @@ def ProjectToSE3(mat):
     return RpToTrans(ProjectToSO3(mat[:3, :3]), mat[:3, 3])
 
 
-def DistanceToSO3(mat):
+def DistanceToSO3(mat: Any) -> float:
     """Returns the Frobenius norm to describe the distance of mat from the
     SO(3) manifold
 
@@ -514,12 +514,12 @@ def DistanceToSO3(mat):
         0.08835
     """
     if np.linalg.det(mat) > 0:
-        return np.linalg.norm(np.dot(np.array(mat).T, mat) - np.eye(3))
+        return float(np.linalg.norm(np.dot(np.array(mat).T, mat) - np.eye(3)))
     else:
         return 1e9
 
 
-def DistanceToSE3(mat):
+def DistanceToSE3(mat: Any) -> float:
     """Returns the Frobenius norm to describe the distance of mat from the
     SE(3) manifold
 
@@ -544,18 +544,20 @@ def DistanceToSE3(mat):
     """
     matR = np.array(mat)[0:3, 0:3]
     if np.linalg.det(matR) > 0:
-        return np.linalg.norm(
-            np.r_[
-                np.c_[np.dot(np.transpose(matR), matR), np.zeros((3, 1))],
-                [np.array(mat)[3, :]],
-            ]
-            - np.eye(4)
+        return float(
+            np.linalg.norm(
+                np.r_[
+                    np.c_[np.dot(np.transpose(matR), matR), np.zeros((3, 1))],
+                    [np.array(mat)[3, :]],
+                ]
+                - np.eye(4)
+            )
         )
     else:
         return 1e9
 
 
-def TestIfSO3(mat):
+def TestIfSO3(mat: Any) -> bool:
     """Returns true if mat is close to or on the manifold SO(3)
 
     :param mat: A 3x3 matrix
@@ -576,7 +578,7 @@ def TestIfSO3(mat):
     return abs(DistanceToSO3(mat)) < 1e-3
 
 
-def TestIfSE3(mat):
+def TestIfSE3(mat: Any) -> bool:
     """Returns true if mat is close to or on the manifold SE(3)
 
     :param mat: A 4x4 matrix
