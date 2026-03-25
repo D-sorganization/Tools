@@ -33,6 +33,7 @@ PDC_LEGACY = (
     / "pressure_drop_calculator/_legacy.py"
 )
 SIGNAL_TOOLKIT_INIT = REPO_ROOT / "src/shared/python/signal_toolkit/__init__.py"
+SIGNAL_TOOLKIT_LAZY_MAP = REPO_ROOT / "src/shared/python/signal_toolkit/_lazy_map.py"
 
 
 # ---------------------------------------------------------------------------
@@ -222,20 +223,31 @@ def _run_in_fresh_python(script: str) -> tuple[int, str, str]:
 
 @pytest.mark.unit
 def test_signal_toolkit_uses_lazy_import_pattern() -> None:
-    """signal_toolkit/__init__.py must declare a _LAZY dispatch table.
+    """signal_toolkit must use a lazy-import dispatch table with __getattr__.
 
-    The presence of _LAZY and a __getattr__ function is the structural
-    invariant that makes lazy loading possible. This test catches
-    regressions where someone replaces the lazy pattern with eager imports.
+    After the issue-#1696 refactor the dispatch table lives in _lazy_map.py
+    (as ``LAZY``) and is imported by ``__init__.py``, which still defines
+    ``__getattr__`` backed by ``importlib.import_module``.  This test
+    catches regressions where someone replaces the lazy pattern with eager
+    imports or removes the dispatch table entirely.
     """
-    source = SIGNAL_TOOLKIT_INIT.read_text()
-    assert "_LAZY" in source, (
-        "signal_toolkit/__init__.py must contain a _LAZY dispatch table"
+    init_source = SIGNAL_TOOLKIT_INIT.read_text()
+    lazy_map_source = SIGNAL_TOOLKIT_LAZY_MAP.read_text()
+
+    # The dispatch table may live in _lazy_map.py (preferred) or inline.
+    has_lazy_in_init = "_LAZY" in init_source or "LAZY" in init_source
+    has_lazy_in_map = "LAZY" in lazy_map_source
+    assert has_lazy_in_init or has_lazy_in_map, (
+        "signal_toolkit must contain a LAZY dispatch table in __init__.py "
+        "or _lazy_map.py"
     )
-    assert "def __getattr__" in source, (
+    assert SIGNAL_TOOLKIT_LAZY_MAP.exists(), (
+        "_lazy_map.py must exist alongside __init__.py (issue #1696 refactor)"
+    )
+    assert "def __getattr__" in init_source, (
         "signal_toolkit/__init__.py must define __getattr__ for lazy loading"
     )
-    assert "importlib.import_module" in source, (
+    assert "importlib.import_module" in init_source, (
         "signal_toolkit/__init__.py must use importlib.import_module in __getattr__"
     )
 
