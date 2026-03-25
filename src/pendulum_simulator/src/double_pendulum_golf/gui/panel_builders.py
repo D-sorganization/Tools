@@ -642,6 +642,176 @@ def build_triple_panel(main_window: Any) -> SimulationPanel:
     return panel
 
 
+def _build_golfer_params(p: dict, pendulum: GolferPendulumWidget) -> GolferParams:
+    """Construct GolferParams from control dict and update widget view angles.
+
+    Parameters
+    ----------
+    p : dict
+        Parameter dict from ControlsWidgetGolfer.
+    pendulum : GolferPendulumWidget
+        Widget whose tilt/azimuth display is updated as a side effect.
+
+    Returns
+    -------
+    GolferParams
+        Physics parameters for the golfer upper body simulation.
+    """
+    assert p is not None, "p must be provided"
+    assert pendulum is not None, "pendulum must be provided"
+    tilt_rad = np.radians(p.get("tilt_deg", 0.0))
+    g = GRAVITY_MSS if p.get("gravity_on", True) else 0.0
+    g_eff = g * float(np.cos(tilt_rad))  # (#1113)
+    pendulum.set_tilt_angle(tilt_rad)
+    pendulum.set_view_azimuth(np.radians(p.get("azimuth_deg", 0.0)))  # (#1118)
+    return GolferParams(
+        m_hub=p["m_hub"],
+        m_r_upper=p["m_r_upper"],
+        m_r_fore=p["m_r_fore"],
+        m_l_upper=p["m_l_upper"],
+        m_l_fore=p["m_l_fore"],
+        m_club=p["m_club"],
+        L_hub=p["L_hub"],
+        L_r_upper=p["L_r_upper"],
+        L_r_fore=p["L_r_fore"],
+        L_l_upper=p["L_l_upper"],
+        L_l_fore=p["L_l_fore"],
+        L_club=p["L_club"],
+        d_rs=p["d_rs"],
+        d_ls=p["d_ls"],
+        grip_right=p["grip_right"],
+        grip_left=p["grip_left"],
+        m_clubhead=p.get("m_clubhead", 0.2),
+        g=g_eff,
+        b_hub=p.get("b_hub", 0.0),
+        b_rs=p.get("b_rs", 0.0),
+        b_re=p.get("b_re", 0.0),
+        b_rh=p.get("b_rh", 0.0),
+        b_ls=p.get("b_ls", 0.0),
+        b_le=p.get("b_le", 0.0),
+        b_lh=p.get("b_lh", 0.0),
+        L_rscap=p.get("L_rscap", 0.12),
+        L_lscap=p.get("L_lscap", 0.12),
+        m_rscap=p.get("m_rscap", 0.5),
+        m_lscap=p.get("m_lscap", 0.5),
+    )
+
+
+def _build_golfer_state(p: dict) -> np.ndarray:
+    """Build the 16-element golfer initial state vector from control dict."""
+    assert p is not None, "p must be provided"
+    return np.array(
+        [
+            p["theta_hub_rad"],
+            p["alpha_rs_rad"],
+            p["alpha_re_rad"],
+            p["alpha_rh_rad"],
+            p["alpha_ls_rad"],
+            p["alpha_le_rad"],
+            p["alpha_lh_rad"],
+            0.0,  # theta_club (computed by projection)
+            0.0,
+            0.0,
+            0.0,
+            0.0,  # qdot (all zero)
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ]
+    )
+
+
+def _build_golfer_torque(p: dict) -> object:
+    """Build a polynomial torque function for the golfer model from control dict."""
+    assert p is not None, "p must be provided"
+    return make_polynomial_torque_golfer(
+        p["hub_coeffs"],
+        p["rs_coeffs"],
+        p["re_coeffs"],
+        p["rh_coeffs"],
+        p["ls_coeffs"],
+        p["le_coeffs"],
+        p["lh_coeffs"],
+    )
+
+
+def _build_golfer_limits(p: dict) -> JointLimitsNDOF | None:
+    """Build joint limits for the golfer model, or None if disabled."""
+    assert p is not None, "p must be provided"
+    if not p.get("enable_limits", False):
+        return None
+    return JointLimitsNDOF(
+        angle_min=np.array(p["limit_mins_rad"]),
+        angle_max=np.array(p["limit_maxs_rad"]),
+        stiffness=p.get("limit_stiffness", 500.0),
+    )
+
+
+def _build_golfer_clamp(p: dict) -> np.ndarray | None:
+    """Build torque clamp array for the golfer model, or None if disabled."""
+    assert p is not None, "p must be provided"
+    if not p.get("enable_clamp", False):
+        return None
+    return np.array(p["torque_limits"])
+
+
+def _make_golfer_objective_fn(
+    params: GolferParams,
+    initial_state: np.ndarray,
+    t_end: float,
+    limits: JointLimitsNDOF | None,
+    clamp: np.ndarray | None,
+) -> Callable:
+    """Return a clubhead-speed objective callable for the golfer model.
+
+    Parameters
+    ----------
+    params : GolferParams
+        Fixed physics parameters for the optimization run.
+    initial_state : np.ndarray
+        Fixed initial state vector.
+    t_end : float
+        Simulation end time.
+    limits : JointLimitsNDOF | None
+        Optional joint limits.
+    clamp : np.ndarray | None
+        Optional per-joint torque clamp.
+
+    Returns
+    -------
+    Callable[[np.ndarray], float]
+        Objective that returns negative clubhead speed (to minimise).
+    """
+
+    def objective(coeffs: np.ndarray) -> float:
+        n_seventh = max(1, len(coeffs) // 7)
+        slices = [list(coeffs[i * n_seventh : (i + 1) * n_seventh]) for i in range(7)]
+        torque_func = make_polynomial_torque_golfer(*slices)
+        try:
+            result = run_simulation_golfer(
+                params=params,
+                initial_state=initial_state,
+                t_end=t_end,
+                torque_func=torque_func,  # type: ignore[arg-type]
+                torque_limits=clamp,
+                limits=limits,
+            )
+            vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]
+            tip_v = vels.get("club_tip", (0, 0))
+            speed = float(np.hypot(tip_v[0], tip_v[1]))
+            return -speed
+        except (
+            RuntimeError,
+            ValueError,
+            ArithmeticError,
+        ) as exc:  # noqa: BLE001
+            logger.debug("golfer objective simulation failed: %s", exc)
+            return 0.0
+
+    return objective
+
+
 def build_golfer_panel(main_window: Any) -> SimulationPanel:
     """Build and return the golfer upper body simulation panel.
 
@@ -661,89 +831,19 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
     torque_history = TorqueHistoryWidget()
 
     def build_params(p: dict) -> GolferParams:
-        tilt_rad = np.radians(p.get("tilt_deg", 0.0))
-        g = GRAVITY_MSS if p.get("gravity_on", True) else 0.0
-        g_eff = g * float(np.cos(tilt_rad))  # (#1113)
-        pendulum.set_tilt_angle(tilt_rad)
-        pendulum.set_view_azimuth(np.radians(p.get("azimuth_deg", 0.0)))  # (#1118)
-        return GolferParams(
-            m_hub=p["m_hub"],
-            m_r_upper=p["m_r_upper"],
-            m_r_fore=p["m_r_fore"],
-            m_l_upper=p["m_l_upper"],
-            m_l_fore=p["m_l_fore"],
-            m_club=p["m_club"],
-            L_hub=p["L_hub"],
-            L_r_upper=p["L_r_upper"],
-            L_r_fore=p["L_r_fore"],
-            L_l_upper=p["L_l_upper"],
-            L_l_fore=p["L_l_fore"],
-            L_club=p["L_club"],
-            d_rs=p["d_rs"],
-            d_ls=p["d_ls"],
-            grip_right=p["grip_right"],
-            grip_left=p["grip_left"],
-            m_clubhead=p.get("m_clubhead", 0.2),
-            g=g_eff,
-            b_hub=p.get("b_hub", 0.0),
-            b_rs=p.get("b_rs", 0.0),
-            b_re=p.get("b_re", 0.0),
-            b_rh=p.get("b_rh", 0.0),
-            b_ls=p.get("b_ls", 0.0),
-            b_le=p.get("b_le", 0.0),
-            b_lh=p.get("b_lh", 0.0),
-            L_rscap=p.get("L_rscap", 0.12),
-            L_lscap=p.get("L_lscap", 0.12),
-            m_rscap=p.get("m_rscap", 0.5),
-            m_lscap=p.get("m_lscap", 0.5),
-        )
+        return _build_golfer_params(p, pendulum)
 
     def build_state(p: dict) -> np.ndarray:
-        return np.array(
-            [
-                p["theta_hub_rad"],
-                p["alpha_rs_rad"],
-                p["alpha_re_rad"],
-                p["alpha_rh_rad"],
-                p["alpha_ls_rad"],
-                p["alpha_le_rad"],
-                p["alpha_lh_rad"],
-                0.0,  # theta_club (computed by projection)
-                0.0,
-                0.0,
-                0.0,
-                0.0,  # qdot (all zero)
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-            ]
-        )
+        return _build_golfer_state(p)
 
     def build_torque(p: dict) -> object:
-        return make_polynomial_torque_golfer(
-            p["hub_coeffs"],
-            p["rs_coeffs"],
-            p["re_coeffs"],
-            p["rh_coeffs"],
-            p["ls_coeffs"],
-            p["le_coeffs"],
-            p["lh_coeffs"],
-        )
+        return _build_golfer_torque(p)
 
     def build_limits(p: dict) -> JointLimitsNDOF | None:
-        if not p.get("enable_limits", False):
-            return None
-        return JointLimitsNDOF(
-            angle_min=np.array(p["limit_mins_rad"]),
-            angle_max=np.array(p["limit_maxs_rad"]),
-            stiffness=p.get("limit_stiffness", 500.0),
-        )
+        return _build_golfer_limits(p)
 
     def build_clamp(p: dict) -> np.ndarray | None:
-        if not p.get("enable_clamp", False):
-            return None
-        return np.array(p["torque_limits"])
+        return _build_golfer_clamp(p)
 
     # Optimizer (#1110)
     optimizer = OptimizationWidget(
@@ -753,38 +853,13 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
 
     def _make_golfer_objective(p: dict) -> Callable:
         """Build a clubhead-speed objective from current controls."""
-        params = build_params(p)
-        initial_state = build_state(p)
-        t_end = p["t_end"]
-        limits = build_limits(p)
-        clamp = build_clamp(p)
-
-        def objective(coeffs: np.ndarray) -> float:
-            n_seventh = max(1, len(coeffs) // 7)
-            slices = [list(coeffs[i * n_seventh : (i + 1) * n_seventh]) for i in range(7)]
-            torque_func = make_polynomial_torque_golfer(*slices)
-            try:
-                result = run_simulation_golfer(
-                    params=params,
-                    initial_state=initial_state,
-                    t_end=t_end,
-                    torque_func=torque_func,  # type: ignore[arg-type]
-                    torque_limits=clamp,
-                    limits=limits,
-                )
-                vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]
-                tip_v = vels.get("club_tip", (0, 0))
-                speed = float(np.hypot(tip_v[0], tip_v[1]))
-                return -speed
-            except (
-                RuntimeError,
-                ValueError,
-                ArithmeticError,
-            ) as exc:  # noqa: BLE001
-                logger.debug("golfer objective simulation failed: %s", exc)
-                return 0.0
-
-        return objective
+        return _make_golfer_objective_fn(
+            params=build_params(p),
+            initial_state=build_state(p),
+            t_end=p["t_end"],
+            limits=build_limits(p),
+            clamp=build_clamp(p),
+        )
 
     panel = SimulationPanel(
         controls=controls,
