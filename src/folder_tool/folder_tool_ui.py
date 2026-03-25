@@ -69,6 +69,9 @@ class UICreationMixin:
         try:
             from PIL import Image, ImageTk
 
+            # Pillow 9.1+ uses Image.Resampling.LANCZOS; older versions use Image.LANCZOS
+            _lanczos = getattr(Image, "Resampling", Image).LANCZOS
+
             # Load the ICO file which now has multiple sizes
             image = Image.open(ico_path)
 
@@ -80,7 +83,7 @@ class UICreationMixin:
                     # Try to get exact size from ICO, or resize
                     resized = image.resize(
                         (size, size),
-                        Image.Resampling.LANCZOS,
+                        _lanczos,
                     )
                     if resized.mode != "RGBA":
                         resized = resized.convert("RGBA")
@@ -106,6 +109,9 @@ class UICreationMixin:
         if Path(png_path).exists():
             from PIL import Image, ImageTk
 
+            # Pillow 9.1+ uses Image.Resampling.LANCZOS; older versions use Image.LANCZOS
+            _lanczos = getattr(Image, "Resampling", Image).LANCZOS
+
             try:
                 raw_image = Image.open(png_path)
                 if raw_image.mode != "RGBA":
@@ -115,7 +121,7 @@ class UICreationMixin:
 
                 photos = []
                 for size in ICON_SIZES:
-                    resized = image.resize((size, size), Image.Resampling.LANCZOS)
+                    resized = image.resize((size, size), _lanczos)
                     photo = ImageTk.PhotoImage(resized)
                     photos.append(photo)
 
