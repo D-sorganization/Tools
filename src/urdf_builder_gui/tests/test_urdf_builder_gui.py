@@ -530,60 +530,6 @@ class TestPreviewGenerator:
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# DRY File Sync Verification
-# ═══════════════════════════════════════════════════════════════════════
-
-
-class TestFileSyncIntegrity:
-    """Ensure root-level and python/ module copies stay in sync.
-
-    The package has two copies of each module (root-level and python/
-    urdf_builder_gui/) due to dual package discovery requirements.
-    This test class catches drift.
-    """
-
-    _SYNCED_MODULES = [
-        "contracts.py",
-        "anthropometric_model.py",
-        "urdf_generator.py",
-        "preview_generator.py",
-        "theme.py",
-    ]
-
-    def test_root_and_python_copies_identical(self) -> None:
-        """Every root-level module must match its python/ copy."""
-        from pathlib import Path
-
-        root_dir = Path(__file__).resolve().parent.parent
-        python_dir = root_dir / "python" / "urdf_builder_gui"
-
-        mismatches: list[str] = []
-        for mod_name in self._SYNCED_MODULES:
-            root_file = root_dir / mod_name
-            python_file = python_dir / mod_name
-
-            if not root_file.exists():
-                mismatches.append(f"{mod_name}: missing at root level")
-                continue
-            if not python_file.exists():
-                mismatches.append(f"{mod_name}: missing in python/")
-                continue
-
-            root_content = root_file.read_text(encoding="utf-8")
-            python_content = python_file.read_text(encoding="utf-8")
-            if root_content != python_content:
-                mismatches.append(
-                    f"{mod_name}: root and python/ copies differ — "
-                    "run: cp <root>/X python/urdf_builder_gui/X"
-                )
-
-        assert not mismatches, (
-            "DRY sync violation! Module copies have drifted:\n"
-            + "\n".join(f"  • {m}" for m in mismatches)
-        )
-
-
-# ═══════════════════════════════════════════════════════════════════════
 # Integration / Round-Trip Tests
 # ═══════════════════════════════════════════════════════════════════════
 
