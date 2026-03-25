@@ -79,7 +79,8 @@ jobs:
           if [ -s changed_python_files.txt ]; then
             xargs -r -d '\n' ruff format --check < changed_python_files.txt
           else
-            echo "No changed Python files to format-check."
+            echo "No changed Python files — running full-repo format check..."
+            ruff format --check .
           fi
 
       - name: Type Check (Mypy)
@@ -99,6 +100,43 @@ jobs:
             fi
           else
             echo "No changed source Python files to type-check."
+          fi
+
+      # ── Full-Repo Quality (non-blocking) ──────────────────────────────────
+      # Runs full-repo ruff lint + format check on every PR/push for visibility.
+      # Uses continue-on-error: true so existing accumulated violations do not
+      # block PRs — but violation counts are reported in GITHUB_STEP_SUMMARY.
+      # Resolves: https://github.com/D-sorganization/Tools/issues/1697
+      - name: Full-Repo Ruff Lint (non-blocking)
+        continue-on-error: true
+        run: |
+          echo "## Full-Repo Ruff Lint (non-blocking)" >> $GITHUB_STEP_SUMMARY
+          set +e
+          ruff check . --output-format=concise 2>&1 | tee full_repo_ruff_lint.txt
+          RUFF_EXIT=$?
+          set -e
+          VIOLATION_COUNT=$(grep -c '\.py:' full_repo_ruff_lint.txt 2>/dev/null || echo "0")
+          if [ "$RUFF_EXIT" -eq 0 ]; then
+            echo "Full-repo ruff lint: 0 violations." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Full-repo ruff lint: $VIOLATION_COUNT violations (informational — not blocking)." >> $GITHUB_STEP_SUMMARY
+            head -30 full_repo_ruff_lint.txt >> $GITHUB_STEP_SUMMARY || true
+          fi
+
+      - name: Full-Repo Ruff Format Check (non-blocking)
+        continue-on-error: true
+        run: |
+          echo "## Full-Repo Ruff Format Check (non-blocking)" >> $GITHUB_STEP_SUMMARY
+          set +e
+          ruff format --check . 2>&1 | tee full_repo_ruff_format.txt
+          FORMAT_EXIT=$?
+          set -e
+          FORMAT_COUNT=$(grep -c 'Would reformat' full_repo_ruff_format.txt 2>/dev/null || echo "0")
+          if [ "$FORMAT_EXIT" -eq 0 ]; then
+            echo "Full-repo format check: 0 files need reformatting." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Full-repo format check: $FORMAT_COUNT files need reformatting (informational — not blocking)." >> $GITHUB_STEP_SUMMARY
+            grep 'Would reformat' full_repo_ruff_format.txt >> $GITHUB_STEP_SUMMARY || true
           fi
 
       - name: Minimum Test Contract Check
