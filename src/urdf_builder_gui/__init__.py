@@ -20,8 +20,8 @@ _CANONICAL_PKG = Path(__file__).resolve().parent / "python" / "urdf_builder_gui"
 # resolve into the canonical directory even when Python found this __init__.py
 # first via the tool-root sys.path entry.
 _canonical_str = str(_CANONICAL_PKG)
-if _canonical_str not in __path__:  # type: ignore[name-defined]
-    __path__.append(_canonical_str)  # type: ignore[name-defined]
+if _canonical_str not in __path__:
+    __path__.append(_canonical_str)
 
 # Also ensure the python/ directory itself is on sys.path for standalone
 # launcher scripts that do bare ``import urdf_builder_gui``.
