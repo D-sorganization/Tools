@@ -82,12 +82,12 @@ class TestTheme:
     def test_palette_has_required_keys(self) -> None:
         """Palette must have all core keys used by the GUI."""
         required = {"base", "text", "blue", "green", "red", "yellow", "surface0"}
-        if not (required.issubset(set(CATPPUCCIN_MOCHA.keys()))): raise ValueError(f"Assertion failed: { required.issubset(set(CATPPUCCIN_MOCHA.keys())) }")
+        if not (required.issubset(set(CATPPUCCIN_MOCHA.keys()))): raise ValueError(f"Assertion failed: { required.issubset(set(CATPPUCCIN_MOCHA.keys())) }")  # noqa: E701
 
     def test_palette_values_are_hex_colours(self) -> None:
         for key, val in CATPPUCCIN_MOCHA.items():
-            if not (val.startswith("#")): raise ValueError(f"Assertion failed: { val.startswith("#") }, f"{key} is not a hex colour"")
-            if not (len(val) == 7): raise ValueError(f"Assertion failed: { len(val) == 7 }, f"{key} must be #RRGGBB"")
+            if not (val.startswith("#")): raise ValueError(f"Assertion failed: { val.startswith("#") }, f"{key} is not a hex colour"")  # noqa: E701
+            if not (len(val) == 7): raise ValueError(f"Assertion failed: { len(val) == 7 }, f"{key} must be #RRGGBB"")  # noqa: E701
 
     def test_build_stylesheet_returns_string(self) -> None:
         ss = build_stylesheet()

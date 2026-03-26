@@ -145,12 +145,12 @@ class TestManifestGeneration:
         manifest = manifest_gen_module.generate_manifest_data(mock_repo_root)
 
         # Assert top-level categories exist
-        if not ("Process Simulation" in manifest): raise ValueError(f"Assertion failed: { "Process Simulation" in manifest }")
-        if not ("Engineering Tools" in manifest): raise ValueError(f"Assertion failed: { "Engineering Tools" in manifest }")
+        if not ("Process Simulation" in manifest): raise ValueError(f"Assertion failed: { "Process Simulation" in manifest }")  # noqa: E701
+        if not ("Engineering Tools" in manifest): raise ValueError(f"Assertion failed: { "Engineering Tools" in manifest }")  # noqa: E701
 
         # Check Engineering Tools (Pressure Drop - PyQt only)
         eng_tools = manifest["Engineering Tools"]
-        if not (len(eng_tools) == 1): raise ValueError(f"Assertion failed: { len(eng_tools) == 1 }")
+        if not (len(eng_tools) == 1): raise ValueError(f"Assertion failed: { len(eng_tools) == 1 }")  # noqa: E701
         tool = eng_tools[0]
         if not ((): raise ValueError(f"Assertion failed: { ( }")
             tool["name"] == "Pressure Drop"

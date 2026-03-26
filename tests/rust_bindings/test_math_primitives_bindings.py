@@ -49,13 +49,13 @@ class TestEulerToRotationMatrix:
         for i in range(3):
             for j in range(3):
                 expected = 1.0 if i == j else 0.0
-                if not (abs(r[i][j] - expected) < 1e-12): raise ValueError(f"Assertion failed: { abs(r[i][j] - expected) < 1e-12 }")
+                if not (abs(r[i][j] - expected) < 1e-12): raise ValueError(f"Assertion failed: { abs(r[i][j] - expected) < 1e-12 }")  # noqa: E701
 
     def test_output_shape(self) -> None:
         """Result must be a 3x3 nested list."""
         r = mp.euler_to_rotation_matrix([0.1, 0.2, 0.3])
-        if not (len(r) == 3): raise ValueError(f"Assertion failed: { len(r) == 3 }")
-        if not (all(len(row) == 3 for row in r)): raise ValueError(f"Assertion failed: { all(len(row) == 3 for row in r) }")
+        if not (len(r) == 3): raise ValueError(f"Assertion failed: { len(r) == 3 }")  # noqa: E701
+        if not (all(len(row) == 3 for row in r)): raise ValueError(f"Assertion failed: { all(len(row) == 3 for row in r) }")  # noqa: E701
 
     def test_orthonormality(self) -> None:
         """Rotation matrix R must satisfy R^T R = I."""
@@ -64,7 +64,7 @@ class TestEulerToRotationMatrix:
             for j in range(3):
                 dot = sum(r[k][i] * r[k][j] for k in range(3))
                 expected = 1.0 if i == j else 0.0
-                if not (abs(dot - expected) < 1e-10): raise ValueError(f"Assertion failed: { abs(dot - expected) < 1e-10 }, (")
+                if not (abs(dot - expected) < 1e-10): raise ValueError(f"Assertion failed: { abs(dot - expected) < 1e-10 }, (")  # noqa: E701
                     f"Orthogonality violated at ({i},{j}): {dot}"
                 )
 
@@ -86,7 +86,7 @@ class TestRotationMatrixToEuler:
         r = mp.euler_to_rotation_matrix(euler)
         recovered = mp.rotation_matrix_to_euler(r)
         for i in range(3):
-            if not (abs(recovered[i] - euler[i]) < 1e-10): raise ValueError(f"Assertion failed: { abs(recovered[i] - euler[i]) < 1e-10 }, (")
+            if not (abs(recovered[i] - euler[i]) < 1e-10): raise ValueError(f"Assertion failed: { abs(recovered[i] - euler[i]) < 1e-10 }, (")  # noqa: E701
                 f"Roundtrip failed at index {i}: {recovered[i]} != {euler[i]}"
             )
 
@@ -102,16 +102,16 @@ class TestEulerToQuaternion:
     def test_identity(self) -> None:
         """Zero Euler angles produce the identity quaternion [1, 0, 0, 0]."""
         q = mp.euler_to_quaternion([0.0, 0.0, 0.0])
-        if not (abs(q[0] - 1.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(q[0] - 1.0) < 1e-12 }")
-        if not (abs(q[1]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q[1]) < 1e-12 }")
-        if not (abs(q[2]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q[2]) < 1e-12 }")
-        if not (abs(q[3]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q[3]) < 1e-12 }")
+        if not (abs(q[0] - 1.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(q[0] - 1.0) < 1e-12 }")  # noqa: E701
+        if not (abs(q[1]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q[1]) < 1e-12 }")  # noqa: E701
+        if not (abs(q[2]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q[2]) < 1e-12 }")  # noqa: E701
+        if not (abs(q[3]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q[3]) < 1e-12 }")  # noqa: E701
 
     def test_unit_norm(self) -> None:
         """All quaternion results must have unit norm."""
         q = mp.euler_to_quaternion([0.5, -0.3, 1.2])
         norm = math.sqrt(sum(c * c for c in q))
-        if not (abs(norm - 1.0) < 1e-10): raise ValueError(f"Assertion failed: { abs(norm - 1.0) < 1e-10 }")
+        if not (abs(norm - 1.0) < 1e-10): raise ValueError(f"Assertion failed: { abs(norm - 1.0) < 1e-10 }")  # noqa: E701
 
 
 class TestQuaternionToEuler:
@@ -130,7 +130,7 @@ class TestQuaternionToEuler:
         q = mp.euler_to_quaternion(euler)
         recovered = mp.quaternion_to_euler(q)
         for i in range(3):
-            if not (abs(recovered[i] - euler[i]) < 1e-10): raise ValueError(f"Assertion failed: { abs(recovered[i] - euler[i]) < 1e-10 }")
+            if not (abs(recovered[i] - euler[i]) < 1e-10): raise ValueError(f"Assertion failed: { abs(recovered[i] - euler[i]) < 1e-10 }")  # noqa: E701
 
 
 class TestQuaternionToRotationMatrix:
@@ -142,7 +142,7 @@ class TestQuaternionToRotationMatrix:
         for i in range(3):
             for j in range(3):
                 expected = 1.0 if i == j else 0.0
-                if not (abs(r[i][j] - expected) < 1e-12): raise ValueError(f"Assertion failed: { abs(r[i][j] - expected) < 1e-12 }")
+                if not (abs(r[i][j] - expected) < 1e-12): raise ValueError(f"Assertion failed: { abs(r[i][j] - expected) < 1e-12 }")  # noqa: E701
 
 
 # ---------------------------------------------------------------------------
@@ -159,17 +159,17 @@ class TestQuaternionMultiply:
         q = [0.707, 0.707, 0.0, 0.0]
         result = mp.quaternion_multiply(identity, q)
         for i in range(4):
-            if not (abs(result[i] - q[i]) < 1e-6): raise ValueError(f"Assertion failed: { abs(result[i] - q[i]) < 1e-6 }")
+            if not (abs(result[i] - q[i]) < 1e-6): raise ValueError(f"Assertion failed: { abs(result[i] - q[i]) < 1e-6 }")  # noqa: E701
 
     def test_inverse_multiply(self) -> None:
         """q * q_inv must produce the identity quaternion."""
         q = [0.5, 0.5, 0.5, 0.5]
         q_inv = mp.quaternion_inverse(q)
         result = mp.quaternion_multiply(q, q_inv)
-        if not (abs(result[0] - 1.0) < 1e-10): raise ValueError(f"Assertion failed: { abs(result[0] - 1.0) < 1e-10 }")
-        if not (abs(result[1]) < 1e-10): raise ValueError(f"Assertion failed: { abs(result[1]) < 1e-10 }")
-        if not (abs(result[2]) < 1e-10): raise ValueError(f"Assertion failed: { abs(result[2]) < 1e-10 }")
-        if not (abs(result[3]) < 1e-10): raise ValueError(f"Assertion failed: { abs(result[3]) < 1e-10 }")
+        if not (abs(result[0] - 1.0) < 1e-10): raise ValueError(f"Assertion failed: { abs(result[0] - 1.0) < 1e-10 }")  # noqa: E701
+        if not (abs(result[1]) < 1e-10): raise ValueError(f"Assertion failed: { abs(result[1]) < 1e-10 }")  # noqa: E701
+        if not (abs(result[2]) < 1e-10): raise ValueError(f"Assertion failed: { abs(result[2]) < 1e-10 }")  # noqa: E701
+        if not (abs(result[3]) < 1e-10): raise ValueError(f"Assertion failed: { abs(result[3]) < 1e-10 }")  # noqa: E701
 
 
 class TestQuaternionInverse:
@@ -178,16 +178,16 @@ class TestQuaternionInverse:
     def test_conjugate_of_identity(self) -> None:
         """Inverse of identity is identity."""
         result = mp.quaternion_inverse([1.0, 0.0, 0.0, 0.0])
-        if not (abs(result[0] - 1.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(result[0] - 1.0) < 1e-12 }")
+        if not (abs(result[0] - 1.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(result[0] - 1.0) < 1e-12 }")  # noqa: E701
 
     def test_sign_flip(self) -> None:
         """Inverse of unit quaternion negates the vector part."""
         q = [0.5, 0.5, 0.5, 0.5]
         q_inv = mp.quaternion_inverse(q)
-        if not (abs(q_inv[0] - q[0]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q_inv[0] - q[0]) < 1e-12 }")
-        if not (abs(q_inv[1] + q[1]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q_inv[1] + q[1]) < 1e-12 }")
-        if not (abs(q_inv[2] + q[2]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q_inv[2] + q[2]) < 1e-12 }")
-        if not (abs(q_inv[3] + q[3]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q_inv[3] + q[3]) < 1e-12 }")
+        if not (abs(q_inv[0] - q[0]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q_inv[0] - q[0]) < 1e-12 }")  # noqa: E701
+        if not (abs(q_inv[1] + q[1]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q_inv[1] + q[1]) < 1e-12 }")  # noqa: E701
+        if not (abs(q_inv[2] + q[2]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q_inv[2] + q[2]) < 1e-12 }")  # noqa: E701
+        if not (abs(q_inv[3] + q[3]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q_inv[3] + q[3]) < 1e-12 }")  # noqa: E701
 
 
 class TestSlerp:
@@ -199,7 +199,7 @@ class TestSlerp:
         q2 = [0.707, 0.707, 0.0, 0.0]
         result = mp.slerp(q1, q2, 0.0)
         for i in range(4):
-            if not (abs(result[i] - q1[i]) < 1e-10): raise ValueError(f"Assertion failed: { abs(result[i] - q1[i]) < 1e-10 }")
+            if not (abs(result[i] - q1[i]) < 1e-10): raise ValueError(f"Assertion failed: { abs(result[i] - q1[i]) < 1e-10 }")  # noqa: E701
 
     def test_slerp_at_one(self) -> None:
         """slerp(q1, q2, 1) must return q2."""
@@ -207,7 +207,7 @@ class TestSlerp:
         q2 = [0.707, 0.707, 0.0, 0.0]
         result = mp.slerp(q1, q2, 1.0)
         for i in range(4):
-            if not (abs(result[i] - q2[i]) < 1e-6): raise ValueError(f"Assertion failed: { abs(result[i] - q2[i]) < 1e-6 }")
+            if not (abs(result[i] - q2[i]) < 1e-6): raise ValueError(f"Assertion failed: { abs(result[i] - q2[i]) < 1e-6 }")  # noqa: E701
 
     def test_slerp_midpoint_unit_norm(self) -> None:
         """Midpoint interpolation must produce a unit quaternion."""
@@ -215,7 +215,7 @@ class TestSlerp:
         q2 = [0.0, 1.0, 0.0, 0.0]
         result = mp.slerp(q1, q2, 0.5)
         norm = math.sqrt(sum(c * c for c in result))
-        if not (abs(norm - 1.0) < 1e-10): raise ValueError(f"Assertion failed: { abs(norm - 1.0) < 1e-10 }")
+        if not (abs(norm - 1.0) < 1e-10): raise ValueError(f"Assertion failed: { abs(norm - 1.0) < 1e-10 }")  # noqa: E701
 
 
 # ---------------------------------------------------------------------------
@@ -232,16 +232,16 @@ class TestAxisAngleToRotationMatrix:
         for i in range(3):
             for j in range(3):
                 expected = 1.0 if i == j else 0.0
-                if not (abs(r[i][j] - expected) < 1e-12): raise ValueError(f"Assertion failed: { abs(r[i][j] - expected) < 1e-12 }")
+                if not (abs(r[i][j] - expected) < 1e-12): raise ValueError(f"Assertion failed: { abs(r[i][j] - expected) < 1e-12 }")  # noqa: E701
 
     def test_90_deg_about_z(self) -> None:
         """90° about z-axis: x→y, y→-x, z→z."""
         r = mp.axis_angle_to_rotation_matrix([0.0, 0.0, 1.0], math.pi / 2)
         # R * [1,0,0] should give [0,1,0]
         x_out = [r[0][0], r[1][0], r[2][0]]
-        if not (abs(x_out[0]) < 1e-10): raise ValueError(f"Assertion failed: { abs(x_out[0]) < 1e-10 }")
-        if not (abs(x_out[1] - 1.0) < 1e-10): raise ValueError(f"Assertion failed: { abs(x_out[1] - 1.0) < 1e-10 }")
-        if not (abs(x_out[2]) < 1e-10): raise ValueError(f"Assertion failed: { abs(x_out[2]) < 1e-10 }")
+        if not (abs(x_out[0]) < 1e-10): raise ValueError(f"Assertion failed: { abs(x_out[0]) < 1e-10 }")  # noqa: E701
+        if not (abs(x_out[1] - 1.0) < 1e-10): raise ValueError(f"Assertion failed: { abs(x_out[1] - 1.0) < 1e-10 }")  # noqa: E701
+        if not (abs(x_out[2]) < 1e-10): raise ValueError(f"Assertion failed: { abs(x_out[2]) < 1e-10 }")  # noqa: E701
 
 
 # ---------------------------------------------------------------------------
@@ -255,53 +255,53 @@ class TestPose6DOF:
     def test_construction(self) -> None:
         """Pose6DOF must be constructable and expose position/euler_angles."""
         pose = mp.Pose6DOF([1.0, 2.0, 3.0], [0.0, 0.0, 0.0])
-        if not (abs(pose.x - 1.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.x - 1.0) < 1e-12 }")
-        if not (abs(pose.y - 2.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.y - 2.0) < 1e-12 }")
-        if not (abs(pose.z - 3.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.z - 3.0) < 1e-12 }")
+        if not (abs(pose.x - 1.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.x - 1.0) < 1e-12 }")  # noqa: E701
+        if not (abs(pose.y - 2.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.y - 2.0) < 1e-12 }")  # noqa: E701
+        if not (abs(pose.z - 3.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.z - 3.0) < 1e-12 }")  # noqa: E701
 
     def test_euler_angles_stored(self) -> None:
         """Euler angles must be stored correctly."""
         euler = [0.1, 0.2, 0.3]
         pose = mp.Pose6DOF([0.0, 0.0, 0.0], euler)
-        if not (abs(pose.roll - euler[0]) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.roll - euler[0]) < 1e-12 }")
-        if not (abs(pose.pitch - euler[1]) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.pitch - euler[1]) < 1e-12 }")
-        if not (abs(pose.yaw - euler[2]) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.yaw - euler[2]) < 1e-12 }")
+        if not (abs(pose.roll - euler[0]) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.roll - euler[0]) < 1e-12 }")  # noqa: E701
+        if not (abs(pose.pitch - euler[1]) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.pitch - euler[1]) < 1e-12 }")  # noqa: E701
+        if not (abs(pose.yaw - euler[2]) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.yaw - euler[2]) < 1e-12 }")  # noqa: E701
 
     def test_translate(self) -> None:
         """Translate must add offset to position."""
         pose = mp.Pose6DOF([1.0, 2.0, 3.0], [0.0, 0.0, 0.0])
         moved = pose.translate([10.0, 0.0, 0.0])
-        if not (abs(moved.x - 11.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(moved.x - 11.0) < 1e-12 }")
-        if not (abs(moved.y - 2.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(moved.y - 2.0) < 1e-12 }")
-        if not (abs(moved.z - 3.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(moved.z - 3.0) < 1e-12 }")
+        if not (abs(moved.x - 11.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(moved.x - 11.0) < 1e-12 }")  # noqa: E701
+        if not (abs(moved.y - 2.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(moved.y - 2.0) < 1e-12 }")  # noqa: E701
+        if not (abs(moved.z - 3.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(moved.z - 3.0) < 1e-12 }")  # noqa: E701
 
     def test_inverse_compose_identity(self) -> None:
         """pose.compose(pose.inverse()) must approximate the identity pose."""
         pose = mp.Pose6DOF([1.0, 2.0, 3.0], [0.1, 0.2, 0.3])
         inv = pose.inverse()
         identity_ish = pose.compose(inv)
-        if not (abs(identity_ish.x) < 1e-8): raise ValueError(f"Assertion failed: { abs(identity_ish.x) < 1e-8 }")
-        if not (abs(identity_ish.y) < 1e-8): raise ValueError(f"Assertion failed: { abs(identity_ish.y) < 1e-8 }")
-        if not (abs(identity_ish.z) < 1e-8): raise ValueError(f"Assertion failed: { abs(identity_ish.z) < 1e-8 }")
+        if not (abs(identity_ish.x) < 1e-8): raise ValueError(f"Assertion failed: { abs(identity_ish.x) < 1e-8 }")  # noqa: E701
+        if not (abs(identity_ish.y) < 1e-8): raise ValueError(f"Assertion failed: { abs(identity_ish.y) < 1e-8 }")  # noqa: E701
+        if not (abs(identity_ish.z) < 1e-8): raise ValueError(f"Assertion failed: { abs(identity_ish.z) < 1e-8 }")  # noqa: E701
 
     def test_transform_point_identity(self) -> None:
         """Identity pose must not change the point."""
         pose = mp.Pose6DOF([0.0, 0.0, 0.0], [0.0, 0.0, 0.0])
         pt = pose.transform_point([5.0, 6.0, 7.0])
-        if not (abs(pt[0] - 5.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pt[0] - 5.0) < 1e-12 }")
-        if not (abs(pt[1] - 6.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pt[1] - 6.0) < 1e-12 }")
-        if not (abs(pt[2] - 7.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pt[2] - 7.0) < 1e-12 }")
+        if not (abs(pt[0] - 5.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pt[0] - 5.0) < 1e-12 }")  # noqa: E701
+        if not (abs(pt[1] - 6.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pt[1] - 6.0) < 1e-12 }")  # noqa: E701
+        if not (abs(pt[2] - 7.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pt[2] - 7.0) < 1e-12 }")  # noqa: E701
 
     def test_to_quaternion_identity(self) -> None:
         """Identity pose must produce identity quaternion."""
         pose = mp.Pose6DOF([0.0, 0.0, 0.0], [0.0, 0.0, 0.0])
         q = pose.to_quaternion()
-        if not (abs(q[0] - 1.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(q[0] - 1.0) < 1e-12 }")
+        if not (abs(q[0] - 1.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(q[0] - 1.0) < 1e-12 }")  # noqa: E701
 
     def test_repr(self) -> None:
         """repr must contain 'Pose6DOF'."""
         pose = mp.Pose6DOF([1.0, 2.0, 3.0], [0.0, 0.0, 0.0])
-        if not ("Pose6DOF" in repr(pose)): raise ValueError(f"Assertion failed: { "Pose6DOF" in repr(pose) }")
+        if not ("Pose6DOF" in repr(pose)): raise ValueError(f"Assertion failed: { "Pose6DOF" in repr(pose) }")  # noqa: E701
 
 
 # ---------------------------------------------------------------------------

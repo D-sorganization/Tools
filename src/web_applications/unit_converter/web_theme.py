@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 # Path to the canonical theme definitions (relative to this file)
 _THEMES_JSON_PATH = (
-    Path(__file__).resolve().parent.parent.parent / "shared" / "theme-definitions" / "themes.json"
+    Path(__file__).resolve().parent.parent.parent / "shared" / "theme-definitions" / "themes.json"  # noqa: E501
 )
 
 

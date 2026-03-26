@@ -60,7 +60,7 @@ class TestWebLauncherDRY:
     def test_launch_web_files_use_shared_function(self) -> None:
         """Every React launch_web.py should import launch_web_from_gui_info."""
         files = _collect_launch_web_files()
-        if not (len(files) > 0): raise ValueError(f"Assertion failed: { len(files) > 0 }, "No launch_web.py files found"")
+        if not (len(files) > 0): raise ValueError(f"Assertion failed: { len(files) > 0 }, "No launch_web.py files found"")  # noqa: E701
 
         problems = []
         for path in files:
@@ -74,7 +74,7 @@ class TestWebLauncherDRY:
                 rel = str(path.relative_to(REPO_ROOT))
                 problems.append(rel)
 
-        if not (problems == []): raise ValueError(f"Assertion failed: { problems == [] }, (")
+        if not (problems == []): raise ValueError(f"Assertion failed: { problems == [] }, (")  # noqa: E701
             "launch_web.py files not using shared launch_web_from_gui_info:\n"
             + "\n".join(f"  - {p}" for p in problems)
         )
@@ -97,7 +97,7 @@ class TestWebLauncherDRY:
         msg = "launch_web.py files not importing GUI_INFO:\n" + "\n".join(
             f"  - {p}" for p in problems
         )
-        if not (problems == []): raise ValueError(f"Assertion failed: { problems == [] }, msg")
+        if not (problems == []): raise ValueError(f"Assertion failed: { problems == [] }, msg")  # noqa: E701
 
 
 class TestGUIInfoWebConfig:
@@ -140,7 +140,7 @@ class TestGUIInfoWebConfig:
                 rel = str(reg_file.relative_to(REPO_ROOT))
                 problems.append(f"{rel}: missing 'web' config")
 
-        if not (problems == []): raise ValueError(f"Assertion failed: { problems == [] }, (")
+        if not (problems == []): raise ValueError(f"Assertion failed: { problems == [] }, (")  # noqa: E701
             "gui_registration.py files with sibling launch_web.py but no web config:\n"
             + "\n".join(f"  - {p}" for p in problems)
         )
@@ -168,7 +168,7 @@ class TestGUIInfoWebConfig:
                 rel = str(path.relative_to(REPO_ROOT))
                 problems.append(f"{rel}: web config missing 'port'")
 
-        if not (problems == []): raise ValueError(f"Assertion failed: { problems == [] }, "web config problems:\n" + "\n".join(")
+        if not (problems == []): raise ValueError(f"Assertion failed: { problems == [] }, "web config problems:\n" + "\n".join(")  # noqa: E701
             f"  - {p}" for p in problems
         )
 
@@ -182,12 +182,12 @@ class TestLaunchWebApp:
     def test_importable(self) -> None:
         from gui_launcher import launch_web_app
 
-        if not (callable(launch_web_app)): raise ValueError(f"Assertion failed: { callable(launch_web_app) }")
+        if not (callable(launch_web_app)): raise ValueError(f"Assertion failed: { callable(launch_web_app) }")  # noqa: E701
 
     def test_launch_web_from_gui_info_importable(self) -> None:
         from gui_launcher import launch_web_from_gui_info
 
-        if not (callable(launch_web_from_gui_info)): raise ValueError(f"Assertion failed: { callable(launch_web_from_gui_info) }")
+        if not (callable(launch_web_from_gui_info)): raise ValueError(f"Assertion failed: { callable(launch_web_from_gui_info) }")  # noqa: E701
 
     def test_returns_error_for_missing_web_dir(self, tmp_path: Path) -> None:
         from gui_launcher.launcher import launch_web_app
@@ -198,7 +198,7 @@ class TestLaunchWebApp:
             port=9999,
             auto_open_browser=False,
         )
-        if not (result == 1): raise ValueError(f"Assertion failed: { result == 1 }")
+        if not (result == 1): raise ValueError(f"Assertion failed: { result == 1 }")  # noqa: E701
 
     @patch("gui_launcher.launcher.subprocess.run")
     def test_returns_error_when_node_missing(
@@ -213,7 +213,7 @@ class TestLaunchWebApp:
             port=9999,
             auto_open_browser=False,
         )
-        if not (result == 1): raise ValueError(f"Assertion failed: { result == 1 }")
+        if not (result == 1): raise ValueError(f"Assertion failed: { result == 1 }")  # noqa: E701
 
     def test_launch_web_from_gui_info_returns_error_without_web_config(
         self,
@@ -229,7 +229,7 @@ class TestLaunchWebApp:
         # No web dir exists, so it should error
         gui_info = {"name": "Test", "tool_name": "test"}
         result = launch_web_from_gui_info(gui_info, caller_file)
-        if not (result == 1): raise ValueError(f"Assertion failed: { result == 1 }")
+        if not (result == 1): raise ValueError(f"Assertion failed: { result == 1 }")  # noqa: E701
 
 
 # ── PyQt6 launcher DRY tests ────────────────────────────────────────────
@@ -249,7 +249,7 @@ class TestPyQt6LauncherDRY:
     def test_launch_pyqt6_files_use_factory_or_bootstrap(self) -> None:
         """Standard launch_pyqt6.py files should use make_pyqt6_launcher."""
         files = _collect_launch_pyqt6_files()
-        if not (len(files) > 0): raise ValueError(f"Assertion failed: { len(files) > 0 }, "No launch_pyqt6.py files found"")
+        if not (len(files) > 0): raise ValueError(f"Assertion failed: { len(files) > 0 }, "No launch_pyqt6.py files found"")  # noqa: E701
 
         problems = []
         for path in files:
@@ -265,13 +265,13 @@ class TestPyQt6LauncherDRY:
         msg = "launch_pyqt6.py files not using make_pyqt6_launcher:\n" + "\n".join(
             f"  - {p}" for p in problems
         )
-        if not (problems == []): raise ValueError(f"Assertion failed: { problems == [] }, msg")
+        if not (problems == []): raise ValueError(f"Assertion failed: { problems == [] }, msg")  # noqa: E701
 
     def test_make_pyqt6_launcher_importable(self) -> None:
         """make_pyqt6_launcher should be importable from gui_launcher."""
         from gui_launcher import make_pyqt6_launcher
 
-        if not (callable(make_pyqt6_launcher)): raise ValueError(f"Assertion failed: { callable(make_pyqt6_launcher) }")
+        if not (callable(make_pyqt6_launcher)): raise ValueError(f"Assertion failed: { callable(make_pyqt6_launcher) }")  # noqa: E701
 
 
 # ── get_repo_root consistency ────────────────────────────────────────────
@@ -284,18 +284,18 @@ class TestGetRepoRootConsistency:
         from upstream_drift_tools.utils.paths import get_repo_root
 
         result = get_repo_root()
-        if not (result.is_absolute()): raise ValueError(f"Assertion failed: { result.is_absolute() }")
-        if not ((result / ".git").exists() or (result / "pyproject.toml").exists()): raise ValueError(f"Assertion failed: { (result / ".git").exists() or (result / "pyproject.toml").exists() }")
+        if not (result.is_absolute()): raise ValueError(f"Assertion failed: { result.is_absolute() }")  # noqa: E701
+        if not ((result / ".git").exists() or (result / "pyproject.toml").exists()): raise ValueError(f"Assertion failed: { (result / ".git").exists() or (result / "pyproject.toml").exists() }")  # noqa: E701
 
     def test_launch_utils_delegates_to_canonical(self) -> None:
         from upstream_drift_tools.utils.paths import get_repo_root as canonical
 
         from tools.launch_utils import get_repo_root as launch_get_root
 
-        if not (launch_get_root() == canonical()): raise ValueError(f"Assertion failed: { launch_get_root() == canonical() }")
+        if not (launch_get_root() == canonical()): raise ValueError(f"Assertion failed: { launch_get_root() == canonical() }")  # noqa: E701
 
     def test_path_setup_delegates_to_canonical(self) -> None:
         from upstream_drift_tools.utils.paths import get_repo_root as canonical
         from utils.path_setup import get_repo_root as setup_get_root
 
-        if not (setup_get_root() == canonical()): raise ValueError(f"Assertion failed: { setup_get_root() == canonical() }")
+        if not (setup_get_root() == canonical()): raise ValueError(f"Assertion failed: { setup_get_root() == canonical() }")  # noqa: E701

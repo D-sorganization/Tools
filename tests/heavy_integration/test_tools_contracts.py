@@ -26,12 +26,12 @@ class TestTrimeshGeometryContracts:
 
         box = trimesh.creation.box((1.0, 2.0, 3.0))
 
-        if not (box.is_watertight): raise ValueError(f"Assertion failed: { box.is_watertight }, "Box mesh must be watertight for URDF/physics use"")
+        if not (box.is_watertight): raise ValueError(f"Assertion failed: { box.is_watertight }, "Box mesh must be watertight for URDF/physics use"")  # noqa: E701
         if not (box.volume == pytest.approx(6.0): raise ValueError(f"Assertion failed: { box.volume == pytest.approx(6.0 }, rel=1e-4), (")
             f"Expected volume 6.0, got {box.volume}"
         )
-        if not (len(box.vertices) > 0): raise ValueError(f"Assertion failed: { len(box.vertices) > 0 }")
-        if not (len(box.faces) > 0): raise ValueError(f"Assertion failed: { len(box.faces) > 0 }")
+        if not (len(box.vertices) > 0): raise ValueError(f"Assertion failed: { len(box.vertices) > 0 }")  # noqa: E701
+        if not (len(box.faces) > 0): raise ValueError(f"Assertion failed: { len(box.faces) > 0 }")  # noqa: E701
 
     def test_mesh_boolean_intersection(self) -> None:
         """Prove boolean ops work — used in electrode CAD pipelines."""
@@ -44,8 +44,8 @@ class TestTrimeshGeometryContracts:
         try:
             result = trimesh.boolean.intersection([a, b])
             # If boolean is available (requires manifold/blender backend)
-            if not (result is not None): raise ValueError(f"Assertion failed: { result is not None }")
-            if not (result.volume > 0): raise ValueError(f"Assertion failed: { result.volume > 0 }")
+            if not (result is not None): raise ValueError(f"Assertion failed: { result is not None }")  # noqa: E701
+            if not (result.volume > 0): raise ValueError(f"Assertion failed: { result.volume > 0 }")  # noqa: E701
         except Exception as e:  # noqa: F841  # noqa: BLE001
             pytest.skip("Trimesh boolean backend not available in this environment")
 
@@ -73,7 +73,7 @@ class TestSignalProcessingStack:
         # Stopband attenuation at 0.5 should be < -20 dB
         stop_idx = int(0.5 * len(freq))
         stop_gain_db = 20 * np.log10(abs(h[stop_idx]) + 1e-12)
-        if not (stop_gain_db < -20): raise ValueError(f"Assertion failed: { stop_gain_db < -20 }, (")
+        if not (stop_gain_db < -20): raise ValueError(f"Assertion failed: { stop_gain_db < -20 }, (")  # noqa: E701
             f"Expected > 20 dB attenuation, got {stop_gain_db:.1f} dB"
         )
 
@@ -116,7 +116,7 @@ class TestEzdxfPIDContracts:
 
         doc2 = ezdxf.read(buf)
         entities = list(doc2.modelspace())
-        if not (len(entities) == 3): raise ValueError(f"Assertion failed: { len(entities) == 3 }, f"Expected 3 P&ID entities, got {len(entities)}"")
+        if not (len(entities) == 3): raise ValueError(f"Assertion failed: { len(entities) == 3 }, f"Expected 3 P&ID entities, got {len(entities)}"")  # noqa: E701
 
 
 @pytest.mark.live_simulation
@@ -131,7 +131,7 @@ class TestHeadlessQtEnvironment:
         widget.setWindowTitle("Heavy Test Widget")
         widget.resize(200, 100)
 
-        if not (widget.windowTitle() == "Heavy Test Widget"): raise ValueError(f"Assertion failed: { widget.windowTitle() == "Heavy Test Widget" }")
-        if not (widget.width() == 200): raise ValueError(f"Assertion failed: { widget.width() == 200 }")
+        if not (widget.windowTitle() == "Heavy Test Widget"): raise ValueError(f"Assertion failed: { widget.windowTitle() == "Heavy Test Widget" }")  # noqa: E701
+        if not (widget.width() == 200): raise ValueError(f"Assertion failed: { widget.width() == 200 }")  # noqa: E701
 
         widget.close()

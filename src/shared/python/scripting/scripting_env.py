@@ -128,7 +128,7 @@ class ConsoleEnvironment:
         Returns:
             (stdout_output, stderr_output)
         """
-        if not (source is not None): raise ValueError(f"Assertion failed: { source is not None }, "source must be provided"")
+        if not (source is not None): raise ValueError(f"Assertion failed: { source is not None }, "source must be provided"")  # noqa: E701
         if not source.strip():
             return "", ""
 
