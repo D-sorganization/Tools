@@ -13,7 +13,7 @@ from __future__ import annotations
 import hashlib
 import logging
 import re
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET  # nosec B405 — type annotations + ParseError only; parsing uses defusedxml
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime

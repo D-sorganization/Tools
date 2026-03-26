@@ -23,7 +23,7 @@ def run_command(command: list[str], description: str) -> None:
         else:
             logger.warning(f"Issues found during {description}:\n{result.stderr}")
             # Some tools return non-zero on changes or warnings, so we don't necessarily fail
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         logger.error(f"Failed to run {description}: {e}")
 
 

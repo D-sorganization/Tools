@@ -194,7 +194,7 @@ def _serialize_and_write(
     if encrypt:
         json_data = EncryptionManager.encrypt_data(json_data, password)
 
-    with open(output_path, "wb") as f:  # type: ignore[assignment]
+    with open(output_path, "wb") as f:
         f.write(json_data)
 
 

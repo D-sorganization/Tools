@@ -73,7 +73,7 @@ def main() -> None:
         install_python_deps()
         install_node_deps()
         log_step("Setup complete! You are ready to go.")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         logger.error(f"\n{RED}Setup failed: {e}{RESET}")
         sys.exit(1)
 

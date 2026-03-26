@@ -126,7 +126,7 @@ class ArchiveMixin:
                             progress,
                             f"Added {processed_files}/{total_files} files to ZIP",
                         )
-                except (IOError, PermissionError, OSError) as e:
+                except (PermissionError, OSError) as e:
                     failed_files += 1
                     logger.warning(
                         f"Failed to add file to ZIP: {file_path} - {e}",
@@ -193,7 +193,7 @@ class ArchiveMixin:
                 else:
                     logger.info("ZIP creation completed successfully")
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             if zip_path.exists():
                 try:
                     zip_path.unlink()

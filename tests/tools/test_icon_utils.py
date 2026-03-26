@@ -7,8 +7,8 @@ convert_png_to_ico path handling, and DbC contract violations.
 from unittest.mock import MagicMock
 
 import pytest
+from contracts import PreconditionError
 
-from src.shared.python.contracts import PreconditionError
 from tools.icon_utils import (
     ICO_SIZES,
     check_pil_installed,

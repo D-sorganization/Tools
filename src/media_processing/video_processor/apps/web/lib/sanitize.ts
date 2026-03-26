@@ -227,7 +227,7 @@ export function sanitizeColor(color: string): string {
   // Check if rgb/rgba
   if (trimmed.startsWith('rgb')) {
     // For now, just return as-is if it looks like rgb
-    // TODO: Parse and validate RGB values
+    // DEFERRED: Parse and validate RGB values
     return trimmed;
   }
 

@@ -1,6 +1,6 @@
 """Design by Contract (DbC) adapter for the data_processor package.
 
-Re-exports the fleet-standard contract primitives from ``src.shared.python.contracts``
+Re-exports the fleet-standard contract primitives from ``contracts``
 with a transparent fallback so the module works both as part of the Tools monorepo
 (editable install) and as a standalone installation.
 
@@ -18,7 +18,7 @@ from __future__ import annotations
 
 # Try the fleet-shared contracts module first (monorepo editable install)
 try:
-    from src.shared.python.contracts import (  # type: ignore[import]
+    from contracts import (  # type: ignore[import]
         ContractLevel,
         ContractViolationError,
         InvariantError,

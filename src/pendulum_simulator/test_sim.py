@@ -41,7 +41,7 @@ try:
     print(f"  Time range: {result.t[0]:.3f} to {result.t[-1]:.3f} s")
     print(f"  Initial state: {result.states[0]}")
     print(f"  Final state: {result.states[-1]}")
-except Exception as e:
+except Exception as e:  # noqa: BLE001
     print(f"✗ Simulation failed: {e}")
     import traceback
 

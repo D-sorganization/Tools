@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 import math
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET  # nosec B405 — type annotations + ParseError only; parsing uses defusedxml
 from dataclasses import dataclass, field
 from pathlib import Path
 

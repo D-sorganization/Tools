@@ -264,7 +264,7 @@ def generate_process_sheet(
             stream_id = stream.get("id")
             if stream_id and stream_point:
                 stream_points[stream_id] = stream_point
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             logger.warning("Skipped stream %s: %s", stream.get("id", "<unknown>"), exc)
 
     add_control_loops(

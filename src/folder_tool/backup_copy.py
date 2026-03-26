@@ -65,7 +65,7 @@ class BackupCopyMixin:
             backup_path = backup_base / folder_name
             if backup_path.exists():
                 backup_path = Path(self._get_unique_path(str(backup_path)))
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Failed to create backup path for {folder}: {e}")
             return False
 
@@ -75,12 +75,12 @@ class BackupCopyMixin:
             if not backup_path.exists() or not any(backup_path.iterdir()):
                 raise OSError("Backup directory was not created or is empty")
             return True
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Failed to backup folder {folder}: {e}")
             if backup_path.exists():
                 try:
                     shutil.rmtree(backup_path, ignore_errors=True)
-                except (IOError, PermissionError, OSError) as ce:
+                except (PermissionError, OSError) as ce:
                     logger.warning(f"Cleanup failed for {backup_path}: {ce}")
             return False
 
@@ -91,7 +91,7 @@ class BackupCopyMixin:
             try:
                 shutil.rmtree(backup_base, ignore_errors=True)
                 logger.info(f"Cleaned up backup directory: {backup_base}")
-            except (IOError, PermissionError, OSError) as e:
+            except (PermissionError, OSError) as e:
                 logger.warning(f"Failed to cleanup {backup_base}: {e}")
 
     def create_backup(self) -> str | None:
@@ -105,7 +105,7 @@ class BackupCopyMixin:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         try:
             backup_base = Path(valid_folders[0]).parent / f"backup_{timestamp}"
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             raise ValueError(f"Cannot determine backup location: {e}") from e
 
         self.update_status("Creating backup...")
@@ -152,7 +152,7 @@ class BackupCopyMixin:
             logger.error("Backup directory is empty or was not created")
             return None
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Backup creation failed: {e}")
             self._cleanup_backup_dir(backup_base)
             raise
@@ -324,7 +324,7 @@ class BackupCopyMixin:
                     drive = path_obj.parts[0]
                     if not Path(drive).exists():
                         raise ValueError(f"Drive does not exist: {drive}")
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             raise ValueError(f"Invalid path format: {path} - {e}") from e
 
         # Check if path already exists

@@ -9,7 +9,7 @@ and does not depend on other Golf Modeling Suite modules.
 from __future__ import annotations
 
 import logging
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET  # nosec B405 — tree building + serialization only; no parsing
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any

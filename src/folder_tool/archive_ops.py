@@ -64,7 +64,7 @@ class ArchiveOperationsMixin:
                 f"Successfully extracted and deleted '{Path(archive_path).name}'",
             )
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             self._cleanup_failed_extraction(extract_dir_obj, extract_dir)
             return False, f"Failed to extract '{Path(archive_path).name}': {e}"
 
@@ -178,7 +178,7 @@ class ArchiveOperationsMixin:
                 logger.info(
                     f"Cleaned up failed extraction directory: {extract_dir}",
                 )
-            except (IOError, PermissionError, OSError) as cleanup_error:
+            except (PermissionError, OSError) as cleanup_error:
                 logger.warning(
                     f"Failed to cleanup extraction directory: {extract_dir} - " f"{cleanup_error}",
                 )

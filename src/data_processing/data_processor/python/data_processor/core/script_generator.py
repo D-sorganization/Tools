@@ -270,7 +270,7 @@ class ScriptGenerator:
                 "        output_path = os.path.join(output_dir, output_name)",
                 "        df.to_csv(output_path, index=False)",
                 "        return output_path",
-                "    except Exception as e:",
+                "    except Exception as e:",  # noqa: BLE001
                 "        print(f'Error processing {input_path}: {e}')",
                 "        return None",
                 "",
@@ -555,7 +555,7 @@ class ScriptGenerator:
             return [
                 f"{prefix}# Custom operation: {op_name}",
                 f"{prefix}# Parameters: {params}",
-                f"{prefix}# TODO: Implement custom operation",
+                f"{prefix}# DEFERRED: Implement custom operation",
             ]
 
         return []

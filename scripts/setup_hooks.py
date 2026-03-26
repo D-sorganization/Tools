@@ -141,7 +141,7 @@ def main() -> None:
         print(f"  stdout: {e.stdout}")
         print(f"  stderr: {e.stderr}")
         sys.exit(1)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"\n[ERROR] Unexpected error: {e}")
         sys.exit(1)
 
