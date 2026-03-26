@@ -69,9 +69,7 @@ class TestReadDataCSV:
 # ── read_data Parquet Preference ─────────────────────────────────────────
 
 
-_skip_no_pyarrow = pytest.mark.skipif(
-    not _pyarrow_available(), reason="pyarrow not installed"
-)
+_skip_no_pyarrow = pytest.mark.skipif(not _pyarrow_available(), reason="pyarrow not installed")
 
 
 @_skip_no_pyarrow

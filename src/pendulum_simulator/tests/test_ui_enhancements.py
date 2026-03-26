@@ -124,9 +124,7 @@ class TestReversedHubStandoff:
         assert pos["hub"][0] < 0, "Hub should be on left side at π/2"
         assert abs(pos["hub"][1]) < 1e-10
 
-    def test_analytical_jacobians_match_numerical(
-        self, golfer_params: GolferParams
-    ) -> None:
+    def test_analytical_jacobians_match_numerical(self, golfer_params: GolferParams) -> None:
         """Analytical Jacobians must match numerical finite-diff after hub reversal."""
         rng = np.random.default_rng(42)
         eps = 1e-7
@@ -148,9 +146,7 @@ class TestReversedHubStandoff:
                 jacs["hub"], J_hub_num, atol=1e-4
             ), f"Hub Jacobian mismatch:\nAnalytical:\n{jacs['hub']}\nNumerical:\n{J_hub_num}"
 
-    def test_all_analytical_jacobians_match_numerical(
-        self, golfer_params: GolferParams
-    ) -> None:
+    def test_all_analytical_jacobians_match_numerical(self, golfer_params: GolferParams) -> None:
         """All analytical Jacobians must match numerical for several configs."""
         rng = np.random.default_rng(123)
         eps = 1e-7

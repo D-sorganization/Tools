@@ -69,9 +69,7 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
         bottom_frame = ctk.CTkFrame(main_frame)
         bottom_frame.pack(fill="x", padx=10, pady=(10, 0))
 
-        ctk.CTkButton(bottom_frame, text="OK", command=self.ok_clicked).pack(
-            side="right", padx=5
-        )
+        ctk.CTkButton(bottom_frame, text="OK", command=self.ok_clicked).pack(side="right", padx=5)
         ctk.CTkButton(bottom_frame, text="Cancel", command=self.cancel_clicked).pack(
             side="right", padx=5
         )

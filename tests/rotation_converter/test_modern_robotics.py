@@ -546,9 +546,7 @@ class TestRandomMRRoundTrips:
         return np.random.default_rng(seed=99)
 
     @pytest.mark.parametrize("trial", range(20))
-    def test_MatrixExp3_MatrixLog3_random(
-        self, rng: np.random.Generator, trial: int
-    ) -> None:
+    def test_MatrixExp3_MatrixLog3_random(self, rng: np.random.Generator, trial: int) -> None:
         omega = rng.normal(size=3)
         omega = omega / np.linalg.norm(omega)
         theta = rng.uniform(0.01, math.pi - 0.01)
@@ -559,9 +557,7 @@ class TestRandomMRRoundTrips:
         np.testing.assert_allclose(R_back, R, atol=1e-9)
 
     @pytest.mark.parametrize("trial", range(20))
-    def test_MatrixExp6_MatrixLog6_random(
-        self, rng: np.random.Generator, trial: int
-    ) -> None:
+    def test_MatrixExp6_MatrixLog6_random(self, rng: np.random.Generator, trial: int) -> None:
         omega = rng.normal(size=3)
         omega = omega / np.linalg.norm(omega)
         v = rng.normal(size=3)

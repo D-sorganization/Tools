@@ -98,8 +98,7 @@ class ConfigMixin:
             QMessageBox.information(
                 self,  # type: ignore[arg-type]
                 "Success",
-                f"Signal set saved to:\n{filename}\n\n"
-                f"Saved {len(selected_signals)} signals",
+                f"Signal set saved to:\n{filename}\n\n" f"Saved {len(selected_signals)} signals",
             )
 
         except (PermissionError, OSError) as e:

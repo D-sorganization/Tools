@@ -46,9 +46,7 @@ def result(
 ) -> TripleSimulationResult:
     """Run a short simulation and cache the result for all tests in the module."""
     initial_state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
-    return run_simulation(
-        params, initial_state, t_end=0.1, torque_func=torque_func, dt=0.01
-    )
+    return run_simulation(params, initial_state, t_end=0.1, torque_func=torque_func, dt=0.01)
 
 
 class TestRunSimulation:
@@ -160,9 +158,7 @@ class TestTripleSimulationResultMethods:
         tau_f = result.friction_torques_at(0)
         assert tau_f.shape == (3,)
 
-    def test_friction_torques_at_zero_when_no_damping(
-        self, result: TripleSimulationResult
-    ) -> None:
+    def test_friction_torques_at_zero_when_no_damping(self, result: TripleSimulationResult) -> None:
         """Default params have zero damping; friction torques should be zero at t=0."""
         # At t=0, velocities are zero → friction is zero
         tau_f = result.friction_torques_at(0)

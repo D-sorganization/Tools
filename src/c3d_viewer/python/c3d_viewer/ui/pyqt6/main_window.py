@@ -357,9 +357,7 @@ class C3DViewerWindow(QMainWindow):
         self.trajectory_text = QTextEdit()
         self.trajectory_text.setReadOnly(True)
         self.trajectory_text.setMaximumHeight(150)
-        self.trajectory_text.setPlaceholderText(
-            "Select markers to view trajectory statistics..."
-        )
+        self.trajectory_text.setPlaceholderText("Select markers to view trajectory statistics...")
         preview_layout.addWidget(self.trajectory_text)
 
         preview_btn = QPushButton("Analyze Selected Markers")
@@ -650,8 +648,7 @@ class C3DViewerWindow(QMainWindow):
 
         except ImportError:
             self.force_text.setPlainText(
-                "Force plate analysis requires ezc3d library.\n"
-                "Install with: pip install ezc3d"
+                "Force plate analysis requires ezc3d library.\n" "Install with: pip install ezc3d"
             )
 
     def _export_points(self) -> None:

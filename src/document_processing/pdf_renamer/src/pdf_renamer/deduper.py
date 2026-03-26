@@ -64,9 +64,7 @@ class DuplicateFinder:
             for file_hash, paths in hash_map.items():
                 if len(paths) > 1:
                     # Sort by path length and name for deterministic ordering
-                    duplicates[file_hash] = sorted(
-                        paths, key=lambda p: (len(str(p)), p.name)
-                    )
+                    duplicates[file_hash] = sorted(paths, key=lambda p: (len(str(p)), p.name))
 
         return duplicates
 

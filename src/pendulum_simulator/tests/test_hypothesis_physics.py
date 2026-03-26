@@ -129,25 +129,19 @@ class TestDoubleProperties:
 
     @given(params=double_params(), state=double_state())
     @settings(max_examples=50)
-    def test_kinetic_energy_non_negative(
-        self, params: PendulumParams, state: np.ndarray
-    ) -> None:
+    def test_kinetic_energy_non_negative(self, params: PendulumParams, state: np.ndarray) -> None:
         T = kinetic_energy(state, params)
         assert T >= -1e-12, f"Negative kinetic energy: {T}"
 
     @given(params=double_params(), state=double_state())
     @settings(max_examples=50)
-    def test_total_energy_finite(
-        self, params: PendulumParams, state: np.ndarray
-    ) -> None:
+    def test_total_energy_finite(self, params: PendulumParams, state: np.ndarray) -> None:
         E = total_energy(state, params)
         assert np.isfinite(E), f"Non-finite total energy: {E}"
 
     @given(params=double_params(), state=double_state())
     @settings(max_examples=50)
-    def test_total_energy_is_sum(
-        self, params: PendulumParams, state: np.ndarray
-    ) -> None:
+    def test_total_energy_is_sum(self, params: PendulumParams, state: np.ndarray) -> None:
         T = kinetic_energy(state, params)
         V = potential_energy(state, params)
         E = total_energy(state, params)
@@ -155,9 +149,7 @@ class TestDoubleProperties:
 
     @given(params=double_params(), theta1=_angle, phi=_angle)
     @settings(max_examples=30)
-    def test_fk_segment_lengths(
-        self, params: PendulumParams, theta1: float, phi: float
-    ) -> None:
+    def test_fk_segment_lengths(self, params: PendulumParams, theta1: float, phi: float) -> None:
         """FK endpoint distances must match segment lengths."""
         pos = forward_kinematics(theta1, phi, params)
         wrist = np.array(pos["wrist"])
@@ -195,9 +187,7 @@ class TestTripleProperties:
 
     @given(params=triple_params(), phi1=_angle, phi2=_angle)
     @settings(max_examples=50)
-    def test_mass_matrix_psd(
-        self, params: TriplePendulumParams, phi1: float, phi2: float
-    ) -> None:
+    def test_mass_matrix_psd(self, params: TriplePendulumParams, phi1: float, phi2: float) -> None:
         M = triple_mass_matrix(phi1, phi2, params)
         eigenvalues = np.linalg.eigvalsh(M)
         assert np.all(eigenvalues >= -1e-10), f"Negative eigenvalue: {eigenvalues}"
@@ -212,9 +202,7 @@ class TestTripleProperties:
 
     @given(params=triple_params(), state=triple_state())
     @settings(max_examples=50)
-    def test_total_energy_is_sum(
-        self, params: TriplePendulumParams, state: np.ndarray
-    ) -> None:
+    def test_total_energy_is_sum(self, params: TriplePendulumParams, state: np.ndarray) -> None:
         T = triple_ke(state, params)
         V = triple_pe(state, params)
         E = triple_te(state, params)
@@ -222,9 +210,7 @@ class TestTripleProperties:
 
     @given(params=triple_params(), state=triple_state())
     @settings(max_examples=30)
-    def test_fk_segment_lengths(
-        self, params: TriplePendulumParams, state: np.ndarray
-    ) -> None:
+    def test_fk_segment_lengths(self, params: TriplePendulumParams, state: np.ndarray) -> None:
         """FK inter-joint distances must match segment lengths."""
         pos = triple_fk(state[0], state[1], state[2], params)
         shoulder = np.array(pos["shoulder"])

@@ -55,11 +55,7 @@ def test_build_double_panel(mock_run, mock_set_perturb, qapp):
         if hasattr(panel, "_build_params")
         else panel._params_builder(p_dict)
     )
-    (
-        panel._build_state(p_dict)
-        if hasattr(panel, "_build_state")
-        else panel._state_builder(p_dict)
-    )
+    (panel._build_state(p_dict) if hasattr(panel, "_build_state") else panel._state_builder(p_dict))
     (
         panel._build_torque(p_dict)
         if hasattr(panel, "_build_torque")
@@ -179,9 +175,7 @@ def test_build_triple_panel(mock_run, mock_set_perturb, qapp):
 
     real_perturb._get_coeffs_for_preset_fn("Default")
 
-    panel.controls.PRESETS = {
-        "Default": ["0", "0", "0", "0", "0", "0", "1.0, 2.0", "3.0", ""]
-    }
+    panel.controls.PRESETS = {"Default": ["0", "0", "0", "0", "0", "0", "1.0, 2.0", "3.0", ""]}
     parsed = real_perturb._get_coeffs_for_preset_fn("Default")
     assert len(parsed) == 3
 

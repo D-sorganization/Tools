@@ -210,9 +210,7 @@ class TestDecorators:
         def func2(x):
             return x
 
-        with pytest.raises(
-            PostconditionError, match="Failed to evaluate postcondition"
-        ):
+        with pytest.raises(PostconditionError, match="Failed to evaluate postcondition"):
             func2(1)
 
     def test_postcondition_decorator_type_error_warn(self):
@@ -413,9 +411,7 @@ class TestDomainHelpers:
                 return ["error1", "error2"]
 
         ensure_valid_result(MockResult(True))
-        with pytest.raises(
-            PostconditionError, match="Validation failed: error1; error2"
-        ):
+        with pytest.raises(PostconditionError, match="Validation failed: error1; error2"):
             ensure_valid_result(MockResult(False))
 
         set_contracts_enabled(False)

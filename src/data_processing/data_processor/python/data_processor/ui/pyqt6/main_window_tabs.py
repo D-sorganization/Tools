@@ -174,18 +174,14 @@ class TabCreationMixin:
         self.diff_window_spin.setRange(3, 51)
         self.diff_window_spin.setValue(11)
         self.diff_window_spin.setSingleStep(2)
-        self.diff_window_spin.setToolTip(
-            "Window size for rolling polynomial (must be odd)"
-        )
+        self.diff_window_spin.setToolTip("Window size for rolling polynomial (must be odd)")
         diff_order_layout.addWidget(self.diff_window_spin)
 
         diff_order_layout.addWidget(QLabel("Poly Order:"))
         self.diff_poly_order_spin = QSpinBox()
         self.diff_poly_order_spin.setRange(2, 6)
         self.diff_poly_order_spin.setValue(3)
-        self.diff_poly_order_spin.setToolTip(
-            "Polynomial order for Savitzky-Golay filter"
-        )
+        self.diff_poly_order_spin.setToolTip("Polynomial order for Savitzky-Golay filter")
         diff_order_layout.addWidget(self.diff_poly_order_spin)
 
         diff_order_layout.addStretch()
@@ -386,9 +382,7 @@ class TabCreationMixin:
         trend_layout = QFormLayout(trendline_group)
 
         self.trendline_type_combo = QComboBox()
-        self.trendline_type_combo.addItems(
-            ["None", "linear", "polynomial", "exponential", "power"]
-        )
+        self.trendline_type_combo.addItems(["None", "linear", "polynomial", "exponential", "power"])
         trend_layout.addRow("Trendline Type:", self.trendline_type_combo)
 
         self.poly_degree_spin = QSpinBox()
@@ -449,9 +443,7 @@ class TabCreationMixin:
         self.trendline_results = QTextEdit()
         self.trendline_results.setReadOnly(True)
         self.trendline_results.setMaximumHeight(100)
-        self.trendline_results.setPlaceholderText(
-            "Trendline equation and R² will appear here..."
-        )
+        self.trendline_results.setPlaceholderText("Trendline equation and R² will appear here...")
         layout.addWidget(self.trendline_results)
 
         layout.addStretch()

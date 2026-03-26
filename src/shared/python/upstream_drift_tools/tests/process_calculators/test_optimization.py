@@ -7,9 +7,7 @@ from upstream_drift_tools.process_calculators.optimization import (
 
 
 def test_build_override_mapping() -> None:
-    res = _build_override_mapping(
-        ["Temperature", "Pressure", "Unknown"], [100.0, 50.0, 10.0]
-    )
+    res = _build_override_mapping(["Temperature", "Pressure", "Unknown"], [100.0, 50.0, 10.0])
     assert "Temperature" in res
     assert "Pressure" in res
     assert "Unknown" not in res

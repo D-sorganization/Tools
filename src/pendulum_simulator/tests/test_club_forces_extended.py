@@ -66,9 +66,7 @@ class TestOverallClubDecomposition:
     Uses real constrained dynamics with zero torques — simplest valid case.
     """
 
-    def test_returns_required_keys(
-        self, params: GolferParams, zero_state: np.ndarray
-    ) -> None:
+    def test_returns_required_keys(self, params: GolferParams, zero_state: np.ndarray) -> None:
         result = overall_club_decomposition(zero_state, 0.0, params, zero_torque)
         for key in (
             "net_force",
@@ -80,28 +78,20 @@ class TestOverallClubDecomposition:
         ):
             assert key in result, f"Missing key: {key}"
 
-    def test_net_force_is_array(
-        self, params: GolferParams, zero_state: np.ndarray
-    ) -> None:
+    def test_net_force_is_array(self, params: GolferParams, zero_state: np.ndarray) -> None:
         result = overall_club_decomposition(zero_state, 0.0, params, zero_torque)
         assert isinstance(result["net_force"], np.ndarray)
         assert result["net_force"].shape == (2,)
 
-    def test_action_point_is_finite(
-        self, params: GolferParams, zero_state: np.ndarray
-    ) -> None:
+    def test_action_point_is_finite(self, params: GolferParams, zero_state: np.ndarray) -> None:
         result = overall_club_decomposition(zero_state, 0.0, params, zero_torque)
         assert np.all(np.isfinite(result["action_point"]))
 
-    def test_couple_is_finite(
-        self, params: GolferParams, zero_state: np.ndarray
-    ) -> None:
+    def test_couple_is_finite(self, params: GolferParams, zero_state: np.ndarray) -> None:
         result = overall_club_decomposition(zero_state, 0.0, params, zero_torque)
         assert np.isfinite(result["couple"])
 
-    def test_all_values_finite(
-        self, params: GolferParams, zero_state: np.ndarray
-    ) -> None:
+    def test_all_values_finite(self, params: GolferParams, zero_state: np.ndarray) -> None:
         result = overall_club_decomposition(zero_state, 0.0, params, zero_torque)
         for key, val in result.items():
             if isinstance(val, np.ndarray):
@@ -111,25 +101,15 @@ class TestOverallClubDecomposition:
 
     def test_alpha_midpoint(self, params: GolferParams, zero_state: np.ndarray) -> None:
         """alpha=0 gives midpoint between grip positions."""
-        result = overall_club_decomposition(
-            zero_state, 0.0, params, zero_torque, alpha=0.0
-        )
+        result = overall_club_decomposition(zero_state, 0.0, params, zero_torque, alpha=0.0)
         assert result["action_point"].shape == (2,)
 
-    def test_alpha_right_grip(
-        self, params: GolferParams, zero_state: np.ndarray
-    ) -> None:
-        result = overall_club_decomposition(
-            zero_state, 0.0, params, zero_torque, alpha=-1.0
-        )
+    def test_alpha_right_grip(self, params: GolferParams, zero_state: np.ndarray) -> None:
+        result = overall_club_decomposition(zero_state, 0.0, params, zero_torque, alpha=-1.0)
         assert all(np.isfinite(result["action_point"]))
 
-    def test_alpha_left_grip(
-        self, params: GolferParams, zero_state: np.ndarray
-    ) -> None:
-        result = overall_club_decomposition(
-            zero_state, 0.0, params, zero_torque, alpha=1.0
-        )
+    def test_alpha_left_grip(self, params: GolferParams, zero_state: np.ndarray) -> None:
+        result = overall_club_decomposition(zero_state, 0.0, params, zero_torque, alpha=1.0)
         assert all(np.isfinite(result["action_point"]))
 
 
@@ -175,17 +155,13 @@ class TestGolferPendulumMoments:
     def test_returns_21_keys(
         self, full_positions: dict, full_forces: dict, applied_torques: tuple
     ) -> None:
-        result = golfer_pendulum_moments(
-            full_positions, full_forces, applied_torques, object()
-        )
+        result = golfer_pendulum_moments(full_positions, full_forces, applied_torques, object())
         assert len(result) == 21  # 3 keys x 7 joints
 
     def test_joint_names_in_keys(
         self, full_positions: dict, full_forces: dict, applied_torques: tuple
     ) -> None:
-        result = golfer_pendulum_moments(
-            full_positions, full_forces, applied_torques, object()
-        )
+        result = golfer_pendulum_moments(full_positions, full_forces, applied_torques, object())
         for joint in ("hub", "rs", "re", "rh", "ls", "le", "lh"):
             assert f"{joint}_applied_torque" in result
             assert f"{joint}_moment_of_force" in result
@@ -194,30 +170,22 @@ class TestGolferPendulumMoments:
     def test_applied_torques_preserved(
         self, full_positions: dict, full_forces: dict, applied_torques: tuple
     ) -> None:
-        result = golfer_pendulum_moments(
-            full_positions, full_forces, applied_torques, object()
-        )
+        result = golfer_pendulum_moments(full_positions, full_forces, applied_torques, object())
         joints = ["hub", "rs", "re", "rh", "ls", "le", "lh"]
         for i, joint in enumerate(joints):
-            assert result[f"{joint}_applied_torque"] == pytest.approx(
-                applied_torques[i]
-            )
+            assert result[f"{joint}_applied_torque"] == pytest.approx(applied_torques[i])
 
     def test_all_values_finite(
         self, full_positions: dict, full_forces: dict, applied_torques: tuple
     ) -> None:
-        result = golfer_pendulum_moments(
-            full_positions, full_forces, applied_torques, object()
-        )
+        result = golfer_pendulum_moments(full_positions, full_forces, applied_torques, object())
         for key, val in result.items():
             assert np.isfinite(val), f"Non-finite value for {key}: {val}"
 
     def test_total_moment_equals_applied_plus_moment_of_force(
         self, full_positions: dict, full_forces: dict, applied_torques: tuple
     ) -> None:
-        result = golfer_pendulum_moments(
-            full_positions, full_forces, applied_torques, object()
-        )
+        result = golfer_pendulum_moments(full_positions, full_forces, applied_torques, object())
         for joint in ("hub", "rs", "re", "rh", "ls", "le", "lh"):
             total = result[f"{joint}_total_moment"]
             applied = result[f"{joint}_applied_torque"]
@@ -234,25 +202,17 @@ class TestGolferPendulumMoments:
             assert result[f"{joint}_moment_of_force"] == 0.0
             assert result[f"{joint}_total_moment"] == result[f"{joint}_applied_torque"]
 
-    def test_fewer_than_7_torques_raises(
-        self, full_positions: dict, full_forces: dict
-    ) -> None:
+    def test_fewer_than_7_torques_raises(self, full_positions: dict, full_forces: dict) -> None:
         with pytest.raises(AssertionError, match="Need >= 7"):
-            golfer_pendulum_moments(
-                full_positions, full_forces, (1.0, 2.0, 3.0), object()
-            )
+            golfer_pendulum_moments(full_positions, full_forces, (1.0, 2.0, 3.0), object())
 
-    def test_exactly_7_torques_ok(
-        self, full_positions: dict, full_forces: dict
-    ) -> None:
+    def test_exactly_7_torques_ok(self, full_positions: dict, full_forces: dict) -> None:
         torques = (1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0)
         result = golfer_pendulum_moments(full_positions, full_forces, torques, object())
         assert len(result) == 21
 
     def test_zero_forces_moment_of_force_is_zero(self, full_positions: dict) -> None:
-        forces = {
-            joint: (0.0, 0.0) for joint in ("hub", "rs", "re", "rh", "ls", "le", "lh")
-        }
+        forces = {joint: (0.0, 0.0) for joint in ("hub", "rs", "re", "rh", "ls", "le", "lh")}
         torques = (1.0,) * 7
         result = golfer_pendulum_moments(full_positions, forces, torques, object())
         for joint in ("hub", "rs", "re", "rh", "ls", "le", "lh"):

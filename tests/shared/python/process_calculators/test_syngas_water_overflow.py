@@ -71,15 +71,11 @@ class TestSafeExp:
 
     def test_boundary_value_at_max(self):
         """At exactly _EXP_MAX_ARG the result equals math.exp(_EXP_MAX_ARG)."""
-        assert _safe_exp(_EXP_MAX_ARG) == pytest.approx(
-            math.exp(_EXP_MAX_ARG), rel=1e-12
-        )
+        assert _safe_exp(_EXP_MAX_ARG) == pytest.approx(math.exp(_EXP_MAX_ARG), rel=1e-12)
 
     def test_boundary_value_at_neg_max(self):
         """At exactly -_EXP_MAX_ARG the result equals math.exp(-_EXP_MAX_ARG)."""
-        assert _safe_exp(-_EXP_MAX_ARG) == pytest.approx(
-            math.exp(-_EXP_MAX_ARG), rel=1e-12
-        )
+        assert _safe_exp(-_EXP_MAX_ARG) == pytest.approx(math.exp(-_EXP_MAX_ARG), rel=1e-12)
 
     def test_result_always_non_negative(self):
         """exp(x) >= 0 for all real x; clamping must preserve this."""
@@ -285,9 +281,7 @@ class TestPerformanceBenchmarks:
         """Full water content calculation: 100 calls in under 5 seconds."""
         start = time.perf_counter()
         for t in np.linspace(0, 100, 100):
-            calculator.calculate_water_content(
-                temperature_c=float(t), pressure_bar=30.0
-            )
+            calculator.calculate_water_content(temperature_c=float(t), pressure_bar=30.0)
         elapsed = time.perf_counter() - start
         msg = f"calculate_water_content took {elapsed:.3f}s for 100 calls"
         assert elapsed < 5.0, msg

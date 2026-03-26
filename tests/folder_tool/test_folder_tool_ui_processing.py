@@ -142,9 +142,7 @@ class TestUIProcessingMixin:
         from folder_tool.Folders_Tool_r0 import MAX_FALLBACK_CONTENT_SIZE
 
         with patch("tkinter.messagebox.showinfo") as mock_info:
-            app._show_fallback_messagebox(
-                "title", "a" * (MAX_FALLBACK_CONTENT_SIZE + 10)
-            )
+            app._show_fallback_messagebox("title", "a" * (MAX_FALLBACK_CONTENT_SIZE + 10))
             mock_info.assert_called_once()
 
     def test_update_source_info_empty(self, app):

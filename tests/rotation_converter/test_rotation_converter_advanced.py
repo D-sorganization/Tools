@@ -24,9 +24,7 @@ def test_dh_standard() -> None:
 def test_slerp() -> None:
     # 90 degrees about Z
     q1 = np.array([1.0, 0.0, 0.0, 0.0])  # Identity
-    q2 = normalize_quaternion(
-        np.array([math.cos(math.pi / 4), 0.0, 0.0, math.sin(math.pi / 4)])
-    )
+    q2 = normalize_quaternion(np.array([math.cos(math.pi / 4), 0.0, 0.0, math.sin(math.pi / 4)]))
 
     q_mid = slerp(q1, q2, 0.5)
     expected_mid = normalize_quaternion(

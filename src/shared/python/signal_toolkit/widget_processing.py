@@ -100,9 +100,7 @@ class ProcessingMixin:
         """Generate a default signal to start with."""
         w = cast(WidgetProtocol, self)
         t = np.linspace(0, 10, 1000)
-        w.current_signal = SignalGenerator.sinusoid(
-            t, amplitude=1.0, frequency=1.0, name="default"
-        )
+        w.current_signal = SignalGenerator.sinusoid(t, amplitude=1.0, frequency=1.0, name="default")
         w.original_signal = w.current_signal.copy()
         self._update_plot()
 
@@ -238,9 +236,7 @@ class ProcessingMixin:
                 params_str = w.fit_custom_params.text()
                 if expr and params_str:
                     params = [p.strip() for p in params_str.split(",")]
-                    result = fitter.fit_custom_expression(
-                        w.current_signal, expr, params
-                    )
+                    result = fitter.fit_custom_expression(w.current_signal, expr, params)
                 else:
                     return
             else:
@@ -339,11 +335,7 @@ class ProcessingMixin:
 
             # Create preview signal
             preview = apply_saturation(
-                (
-                    w.current_signal.copy()
-                    if w.current_signal
-                    else w.original_signal.copy()
-                ),
+                (w.current_signal.copy() if w.current_signal else w.original_signal.copy()),
                 lower=w.sat_lower.value(),
                 upper=w.sat_upper.value(),
                 mode=mode,
@@ -501,9 +493,7 @@ class ProcessingMixin:
 
             # Log coefficients
             coeffs_str = ", ".join(f"{c:.4f}" for c in result.coefficients[:n_terms])
-            self._log(
-                f"{series_type} Series at a={center:.2f}:\nCoefficients: [{coeffs_str}]"
-            )
+            self._log(f"{series_type} Series at a={center:.2f}:\nCoefficients: [{coeffs_str}]")
 
         except (ValueError, TypeError) as e:
             QMessageBox.warning(self, "Series Error", f"Failed: {e}")  # type: ignore[arg-type]
@@ -578,9 +568,7 @@ class ProcessingMixin:
                         apply_gaussian_smoothing,
                     )
 
-                    w.current_signal = apply_gaussian_smoothing(
-                        w.current_signal, window / 3
-                    )
+                    w.current_signal = apply_gaussian_smoothing(w.current_signal, window / 3)
             else:
                 spec = self._get_filter_spec()
                 if spec is None:
@@ -793,7 +781,6 @@ class ProcessingMixin:
         w.original_signal = signal.copy()
         self._update_plot()
         self._log(
-            f"Loaded external signal: {signal.name or 'unnamed'} "
-            f"({signal.n_samples} samples)"
+            f"Loaded external signal: {signal.name or 'unnamed'} " f"({signal.n_samples} samples)"
         )
         w.signal_updated.emit(signal)

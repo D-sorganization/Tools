@@ -58,9 +58,7 @@ def test_check_matlab_files_found(tmp_path):
 
 
 def test_track_nesting_enters_function():
-    in_func, level = MATLABQualityChecker._track_nesting(
-        "function y = foo(x)", False, 0
-    )
+    in_func, level = MATLABQualityChecker._track_nesting("function y = foo(x)", False, 0)
     assert in_func is True
     assert level == 1
 
@@ -99,9 +97,7 @@ def test_check_banned_fixme():
 
 def test_check_banned_clean_line():
     issues: list[str] = []
-    MATLABQualityChecker._check_banned_patterns(
-        Path("script.m"), "y = x + 1;", 1, issues
-    )
+    MATLABQualityChecker._check_banned_patterns(Path("script.m"), "y = x + 1;", 1, issues)
     assert issues == []
 
 
@@ -286,18 +282,14 @@ def test_anti_pattern_clean_ok(tmp_path):
 def test_magic_number_pi_detected(tmp_path):
     checker = MATLABQualityChecker(tmp_path)
     issues: list[str] = []
-    checker._check_magic_numbers(
-        Path("f.m"), "r = 3.14159 * d;", "r = 3.14159 * d;", 1, issues
-    )
+    checker._check_magic_numbers(Path("f.m"), "r = 3.14159 * d;", "r = 3.14159 * d;", 1, issues)
     assert any("3.14159" in i or "pi" in i.lower() for i in issues)
 
 
 def test_magic_number_gravity_detected(tmp_path):
     checker = MATLABQualityChecker(tmp_path)
     issues: list[str] = []
-    checker._check_magic_numbers(
-        Path("f.m"), "f = m * 9.81;", "f = m * 9.81;", 1, issues
-    )
+    checker._check_magic_numbers(Path("f.m"), "f = m * 9.81;", "f = m * 9.81;", 1, issues)
     assert any("9.81" in i for i in issues)
 
 
@@ -327,9 +319,7 @@ def test_magic_number_in_comment_ignored(tmp_path):
 def test_magic_number_unlabeled_constant(tmp_path):
     checker = MATLABQualityChecker(tmp_path)
     issues: list[str] = []
-    checker._check_magic_numbers(
-        Path("f.m"), "timeout = 3600;", "timeout = 3600;", 1, issues
-    )
+    checker._check_magic_numbers(Path("f.m"), "timeout = 3600;", "timeout = 3600;", 1, issues)
     assert any("3600" in i for i in issues)
 
 
@@ -355,9 +345,7 @@ def test_run_matlab_quality_checks_with_error(tmp_path):
     # Force PermissionError via patching
     from unittest.mock import patch
 
-    with patch.object(
-        checker, "_static_matlab_analysis", side_effect=OSError("denied")
-    ):
+    with patch.object(checker, "_static_matlab_analysis", side_effect=OSError("denied")):
         with patch.object(
             checker,
             "run_matlab_quality_checks",

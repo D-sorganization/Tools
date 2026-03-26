@@ -150,9 +150,7 @@ class TestCollectIssues:
         spec = {
             "project": {"id": "P001", "title": "T"},
             "equipment": [{"id": "V101", "w": 5.0, "h": 5.0}],
-            "control_loops": [
-                {"id": "FC101", "measurement": "UNKNOWN", "final_element": "V101"}
-            ],
+            "control_loops": [{"id": "FC101", "measurement": "UNKNOWN", "final_element": "V101"}],
         }
         issues = collect_issues(spec)
         messages = [i.message for i in issues]
@@ -163,9 +161,7 @@ class TestCollectIssues:
             "project": {"id": "P001", "title": "T"},
             "equipment": [{"id": "V101", "w": 5.0, "h": 5.0}],
             "instruments": [{"id": "FT101"}],
-            "control_loops": [
-                {"id": "FC101", "measurement": "FT101", "final_element": "UNKNOWN"}
-            ],
+            "control_loops": [{"id": "FC101", "measurement": "FT101", "final_element": "UNKNOWN"}],
         }
         issues = collect_issues(spec)
         messages = [i.message for i in issues]

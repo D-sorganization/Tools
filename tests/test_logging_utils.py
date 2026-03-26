@@ -110,9 +110,7 @@ class TestSetupLogging:
 
         # Check root handler has JSON formatter
         root = logging.getLogger()
-        json_formatters = [
-            h for h in root.handlers if isinstance(h.formatter, JsonFormatter)
-        ]
+        json_formatters = [h for h in root.handlers if isinstance(h.formatter, JsonFormatter)]
         assert len(json_formatters) > 0
 
 

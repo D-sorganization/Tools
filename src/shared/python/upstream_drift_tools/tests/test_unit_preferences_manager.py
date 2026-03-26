@@ -86,9 +86,7 @@ def test_get_si_unit():
     assert manager.get_si_unit("invalid_category") == ""
 
 
-@patch(
-    "upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter"
-)
+@patch("upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter")
 def test_convert_to_si(mock_converter, qapp):
     manager = UnitPreferencesManager()
     # Mock the return of converter.convert().value
@@ -105,9 +103,7 @@ def test_convert_to_si(mock_converter, qapp):
     assert manager.convert_to_si(100.0, "temperature", "K") == 100.0
 
 
-@patch(
-    "upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter"
-)
+@patch("upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter")
 def test_convert_from_si(mock_converter, qapp):
     manager = UnitPreferencesManager()
     mock_convert_result = MagicMock()
@@ -122,9 +118,7 @@ def test_convert_from_si(mock_converter, qapp):
     assert manager.convert_from_si(100.0, "temperature", "K") == 100.0
 
 
-@patch(
-    "upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter"
-)
+@patch("upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter")
 def test_convert_error_handling(mock_converter, qapp):
     manager = UnitPreferencesManager()
     mock_converter.convert.side_effect = ValueError("Bad unit")

@@ -92,9 +92,7 @@ class IntegratedCSVProcessorApp(
             if dat_import_exists:
                 self.main_tab_view.add("DAT File Import")
                 if hasattr(self, "create_dat_import_tab"):
-                    self.create_dat_import_tab(
-                        self.main_tab_view.tab("DAT File Import")
-                    )
+                    self.create_dat_import_tab(self.main_tab_view.tab("DAT File Import"))
 
             # Add Folder Tool tab
             if FOLDER_TOOL_AVAILABLE:
@@ -107,9 +105,7 @@ class IntegratedCSVProcessorApp(
 
         logger.info("Integrated CSV Processor App initialized")
 
-    def _create_splitter(
-        self, parent, left_func, right_func, width_attr, default_width
-    ):
+    def _create_splitter(self, parent, left_func, right_func, width_attr, default_width):
         """Helper to create a split layout with two panels.
 
         This implementation replaces the missing original method.

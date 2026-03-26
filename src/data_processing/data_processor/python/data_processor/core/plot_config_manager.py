@@ -208,9 +208,7 @@ class PlotConfigManager:
         with open(export_path, "w", encoding="utf-8") as f:
             json.dump(config, f, indent=2)
 
-    def import_plot_config(
-        self, import_path: Path | str, name: str | None = None
-    ) -> str:
+    def import_plot_config(self, import_path: Path | str, name: str | None = None) -> str:
         """Import a plot configuration from a file.
 
         Args:

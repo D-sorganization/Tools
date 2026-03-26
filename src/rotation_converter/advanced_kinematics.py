@@ -173,9 +173,7 @@ class DualQuaternion:
         if not (other is not None):
             raise ValueError("other must be provided")
         qr_new = quaternion_multiply(self._qr, other._qr)
-        qd_new = quaternion_multiply(self._qr, other._qd) + quaternion_multiply(
-            self._qd, other._qr
-        )
+        qd_new = quaternion_multiply(self._qr, other._qd) + quaternion_multiply(self._qd, other._qr)
         return DualQuaternion(qr_new, qd_new)
 
     def extract_translation(self) -> np.ndarray:

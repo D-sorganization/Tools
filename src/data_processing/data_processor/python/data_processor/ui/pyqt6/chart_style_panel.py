@@ -176,9 +176,7 @@ if PYQT6_AVAILABLE:
             color = QColorDialog.getColor()
             if color.isValid():
                 self._selected_color = color.name()
-                self._color_btn.setStyleSheet(
-                    f"background-color: {self._selected_color};"
-                )
+                self._color_btn.setStyleSheet(f"background-color: {self._selected_color};")
 
         def get_series_style(self) -> Any:
             """Build a SeriesStyle from current widget state."""

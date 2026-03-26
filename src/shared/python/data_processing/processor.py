@@ -129,9 +129,7 @@ class DataProcessor:
             raise ValueError(f"Unsupported file format: {suffix}")
 
         self._source_path = str(path)
-        self._history = [
-            f"Loaded {path.name} ({len(self._df)} rows, {len(self._df.columns)} cols)"
-        ]
+        self._history = [f"Loaded {path.name} ({len(self._df)} rows, {len(self._df.columns)} cols)"]
         logger.info(
             "Loaded %s: %d rows x %d cols",
             path.name,
@@ -148,9 +146,7 @@ class DataProcessor:
         require(isinstance(name, str) and bool(name), "name must be a non-empty string")
         self._df = df.copy()
         self._source_path = ""
-        self._history = [
-            f"Loaded DataFrame '{name}' ({len(df)} rows, {len(df.columns)} cols)"
-        ]
+        self._history = [f"Loaded DataFrame '{name}' ({len(df)} rows, {len(df.columns)} cols)"]
         return self
 
     # ------------------------------------------------------------------
@@ -206,9 +202,7 @@ class DataProcessor:
         try:
             from data_processor.core.signal_processing import resample_data
 
-            self._df = resample_data(
-                df, target_rate, time_col=time_column, method=method
-            )
+            self._df = resample_data(df, target_rate, time_col=time_column, method=method)
         except ImportError:
             # Fallback using pandas
             import numpy as np
@@ -219,9 +213,7 @@ class DataProcessor:
             for col in df.columns:
                 if col == time_column:
                     continue
-                new_df[col] = np.interp(
-                    t_new, np.asarray(t), np.asarray(df[col].values)
-                )
+                new_df[col] = np.interp(t_new, np.asarray(t), np.asarray(df[col].values))
             self._df = new_df
 
         self._history.append(f"Resampled to {target_rate} Hz ({method})")
@@ -265,9 +257,7 @@ class DataProcessor:
             window_size=window_size,
         )
         self._df = df
-        self._history.append(
-            f"Applied {filter_type} filter to {len(selected_columns)} columns"
-        )
+        self._history.append(f"Applied {filter_type} filter to {len(selected_columns)} columns")
         return self
 
     def _validate_filter_contract(self, filter_type: str, window_size: int) -> None:
@@ -277,9 +267,7 @@ class DataProcessor:
         if window_size <= 0:
             raise ValueError("window_size must be positive")
 
-    def _resolve_filter_columns(
-        self, df: pd.DataFrame, columns: list[str] | None
-    ) -> list[str]:
+    def _resolve_filter_columns(self, df: pd.DataFrame, columns: list[str] | None) -> list[str]:
         """Resolve and validate target columns for filtering."""
         selected_columns = (
             list(df.select_dtypes(include="number").columns)
@@ -332,25 +320,19 @@ class DataProcessor:
                 b, a = butter(order, cutoff, btype="low", fs=1000)
                 df[column] = filtfilt(b, a, values)
             elif filter_type == "moving_average":
-                df[column] = (
-                    pd.Series(values).rolling(window_size, center=True).mean().values
-                )
+                df[column] = pd.Series(values).rolling(window_size, center=True).mean().values
             elif filter_type == "median":
                 kernel = window_size if window_size % 2 == 1 else window_size + 1
                 df[column] = medfilt(values, kernel_size=kernel)
             else:
-                df[column] = savgol_filter(
-                    values, window_size, min(order, window_size - 1)
-                )
+                df[column] = savgol_filter(values, window_size, min(order, window_size - 1))
 
     def _apply_filter_fallback(
         self, df: pd.DataFrame, columns: list[str], window_size: int
     ) -> None:
         """Fallback filter implementation (moving average) without SciPy."""
         for column in columns:
-            df[column] = (
-                pd.Series(df[column]).rolling(window_size, center=True).mean().values
-            )
+            df[column] = pd.Series(df[column]).rolling(window_size, center=True).mean().values
 
     def apply_formula(
         self,
@@ -408,9 +390,7 @@ class DataProcessor:
             raise ValueError("by must be provided")
         require(isinstance(by, str) and bool(by), "by must be a non-empty string")
         require(isinstance(ascending, bool), "ascending must be a boolean")
-        self._df = self.dataframe.sort_values(by=by, ascending=ascending).reset_index(
-            drop=True
-        )
+        self._df = self.dataframe.sort_values(by=by, ascending=ascending).reset_index(drop=True)
         self._history.append(f"Sorted by '{by}' ({'asc' if ascending else 'desc'})")
         return self
 
@@ -444,9 +424,7 @@ class DataProcessor:
             isinstance(method, str) and bool(method),
             "method must be a non-empty string",
         )
-        result: pd.DataFrame = self.dataframe.select_dtypes(include="number").corr(
-            method=method
-        )
+        result: pd.DataFrame = self.dataframe.select_dtypes(include="number").corr(method=method)
         return result
 
     def detect_outliers(

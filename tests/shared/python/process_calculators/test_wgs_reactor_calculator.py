@@ -46,9 +46,7 @@ class TestWGSReactorEngine:
         assert "equilibrium_constant" in eq
         assert "heat_released" in eq
 
-        assert (
-            eq["composition"]["H2"] >= 25.0
-        )  # H2 should increase or stay high depending on shift
+        assert eq["composition"]["H2"] >= 25.0  # H2 should increase or stay high depending on shift
         assert eq["composition"]["CO"] <= 25.0  # CO should decrease as it shifts to H2
 
     def test_size_wgs_reactor(self, engine: WGSReactorEngine) -> None:

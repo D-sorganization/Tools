@@ -56,9 +56,7 @@ def golfer_params() -> GolferParams:
 
 
 @pytest.fixture
-def zero_torque() -> (
-    Callable[[float], tuple[float, float, float, float, float, float, float]]
-):
+def zero_torque() -> Callable[[float], tuple[float, float, float, float, float, float, float]]:
     """Zero torque function for all joints."""
     return lambda t: (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
@@ -109,9 +107,7 @@ class TestProjectToConstraints:
         def constant_jacobian(_q: np.ndarray, _params: GolferParams) -> np.ndarray:
             return np.eye(N_CONSTRAINTS, N_DOF)
 
-        monkeypatch.setattr(
-            constraint_solver_module, "constraint_vector", stuck_constraint
-        )
+        monkeypatch.setattr(constraint_solver_module, "constraint_vector", stuck_constraint)
         monkeypatch.setattr(
             constraint_solver_module,
             "constraint_jacobian",
@@ -148,9 +144,7 @@ class TestConstrainedAccelerations:
     def test_finite_at_rest(
         self,
         golfer_params: GolferParams,
-        zero_torque: Callable[
-            [float], tuple[float, float, float, float, float, float, float]
-        ],
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
     ) -> None:
         state = _make_consistent_state(golfer_params)
         qddot = constrained_accelerations(state, 0.0, golfer_params, zero_torque)
@@ -160,9 +154,7 @@ class TestConstrainedAccelerations:
     def test_shape(
         self,
         golfer_params: GolferParams,
-        zero_torque: Callable[
-            [float], tuple[float, float, float, float, float, float, float]
-        ],
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
     ) -> None:
         state = _make_consistent_state(golfer_params)
         qddot = constrained_accelerations(state, 0.0, golfer_params, zero_torque)
@@ -175,9 +167,7 @@ class TestConstraintForces:
     def test_shape(
         self,
         golfer_params: GolferParams,
-        zero_torque: Callable[
-            [float], tuple[float, float, float, float, float, float, float]
-        ],
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
     ) -> None:
         state = _make_consistent_state(golfer_params)
         lam = constraint_forces(state, 0.0, golfer_params, zero_torque)
@@ -191,9 +181,7 @@ class TestNativeConstraintBackend:
     def test_constrained_dynamics_prefers_native_backend(
         self,
         golfer_params: GolferParams,
-        zero_torque: Callable[
-            [float], tuple[float, float, float, float, float, float, float]
-        ],
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         native_qddot = np.full(N_DOF, 3.0)
@@ -230,9 +218,7 @@ class TestNativeConstraintBackend:
                 return np.ones(N_CONSTRAINTS)
             return np.zeros(N_CONSTRAINTS)
 
-        monkeypatch.setattr(
-            constraint_solver_module, "constraint_vector", fake_constraint_vector
-        )
+        monkeypatch.setattr(constraint_solver_module, "constraint_vector", fake_constraint_vector)
         monkeypatch.setattr(
             constraint_solver_module,
             "constraint_jacobian",
@@ -267,9 +253,7 @@ class TestEquationsOfMotion:
     def test_shape(
         self,
         golfer_params: GolferParams,
-        zero_torque: Callable[
-            [float], tuple[float, float, float, float, float, float, float]
-        ],
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
     ) -> None:
         state = _make_consistent_state(golfer_params)
         state_dot = equations_of_motion(state, 0.0, golfer_params, zero_torque)
@@ -279,9 +263,7 @@ class TestEquationsOfMotion:
     def test_velocity_in_derivative(
         self,
         golfer_params: GolferParams,
-        zero_torque: Callable[
-            [float], tuple[float, float, float, float, float, float, float]
-        ],
+        zero_torque: Callable[[float], tuple[float, float, float, float, float, float, float]],
     ) -> None:
         state = _make_consistent_state(golfer_params)
         state_dot = equations_of_motion(state, 0.0, golfer_params, zero_torque)

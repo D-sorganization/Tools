@@ -119,9 +119,7 @@ if PYQT6_AVAILABLE:
             smooth_group = QGroupBox("Smoothing")
             smooth_layout = QFormLayout(smooth_group)
             self.smooth_combo = QComboBox()
-            self.smooth_combo.addItems(
-                ["None", "Gaussian", "Median", "Uniform", "Savitzky-Golay"]
-            )
+            self.smooth_combo.addItems(["None", "Gaussian", "Median", "Uniform", "Savitzky-Golay"])
             smooth_layout.addRow("Method:", self.smooth_combo)
             self.sigma_spin = QDoubleSpinBox()
             self.sigma_spin.setRange(0.1, 10)
@@ -189,9 +187,7 @@ if PYQT6_AVAILABLE:
                 "y_column": self.y_combo.currentText(),
                 "z_column": self.z_combo.currentText(),
                 "grid_resolution": self.resolution_spin.value(),
-                "interpolation": self.interp_combo.currentText()
-                .lower()
-                .replace(" ", "_"),
+                "interpolation": self.interp_combo.currentText().lower().replace(" ", "_"),
                 "smoothing": self.smooth_combo.currentText().lower(),
                 "smoothing_sigma": self.sigma_spin.value(),
                 "smoothing_kernel": self.kernel_spin.value(),
@@ -333,15 +329,11 @@ if PYQT6_AVAILABLE:
             btn_layout.addWidget(self.train_btn)
 
             self.export_pytorch_btn = QPushButton("Export PyTorch")
-            self.export_pytorch_btn.clicked.connect(
-                lambda: self._request_export("pytorch")
-            )
+            self.export_pytorch_btn.clicked.connect(lambda: self._request_export("pytorch"))
             btn_layout.addWidget(self.export_pytorch_btn)
 
             self.export_tf_btn = QPushButton("Export TensorFlow")
-            self.export_tf_btn.clicked.connect(
-                lambda: self._request_export("tensorflow")
-            )
+            self.export_tf_btn.clicked.connect(lambda: self._request_export("tensorflow"))
             btn_layout.addWidget(self.export_tf_btn)
 
             return btn_layout
@@ -369,9 +361,7 @@ if PYQT6_AVAILABLE:
             return {
                 "network_type": self.network_type_combo.currentText().lower(),
                 "hidden_layers": hidden_layers,
-                "activation": self.activation_combo.currentText()
-                .lower()
-                .replace(" ", "_"),
+                "activation": self.activation_combo.currentText().lower().replace(" ", "_"),
                 "dropout": self.dropout_spin.value(),
                 "optimizer": self.optimizer_combo.currentText().lower(),
                 "learning_rate": self.lr_spin.value(),

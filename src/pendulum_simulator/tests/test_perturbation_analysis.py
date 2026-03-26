@@ -74,25 +74,19 @@ class TestPerturbTorqueCoeffs:
 
     def test_preserves_shape(self):
         coeffs = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
-        perturbed = perturb_torque_coeffs(
-            coeffs, noise_amplitude=0.1, noise_type="white", seed=42
-        )
+        perturbed = perturb_torque_coeffs(coeffs, noise_amplitude=0.1, noise_type="white", seed=42)
         assert len(perturbed) == 2
         assert len(perturbed[0]) == 3
         assert len(perturbed[1]) == 3
 
     def test_zero_amplitude_no_change(self):
         coeffs = [[1.0, 2.0], [3.0, 4.0]]
-        perturbed = perturb_torque_coeffs(
-            coeffs, noise_amplitude=0.0, noise_type="white", seed=42
-        )
+        perturbed = perturb_torque_coeffs(coeffs, noise_amplitude=0.0, noise_type="white", seed=42)
         np.testing.assert_allclose(perturbed, coeffs)
 
     def test_perturbation_changes_values(self):
         coeffs = [[1.0, 2.0, 3.0]]
-        perturbed = perturb_torque_coeffs(
-            coeffs, noise_amplitude=0.5, noise_type="white", seed=42
-        )
+        perturbed = perturb_torque_coeffs(coeffs, noise_amplitude=0.5, noise_type="white", seed=42)
         assert not np.allclose(perturbed, coeffs)
 
     def test_seed_reproducibility(self):
@@ -118,9 +112,7 @@ class TestPerturbationConfig:
         assert cfg.seed is None
 
     def test_custom(self):
-        cfg = PerturbationConfig(
-            n_trials=50, noise_type="pink", noise_amplitude=0.2, seed=42
-        )
+        cfg = PerturbationConfig(n_trials=50, noise_type="pink", noise_amplitude=0.2, seed=42)
         assert cfg.n_trials == 50
         assert cfg.noise_type == "pink"
 
@@ -200,9 +192,7 @@ class TestBatchPerturbAndSimulate:
                 "tip_position_final": np.array([1.0, -0.5]),
             }
 
-        results = batch_perturb_and_simulate(
-            base_coeffs, config, simulate_fn, extract_fn
-        )
+        results = batch_perturb_and_simulate(base_coeffs, config, simulate_fn, extract_fn)
         assert len(results) == 5
 
     def test_handles_failures_gracefully(self):
@@ -225,9 +215,7 @@ class TestBatchPerturbAndSimulate:
                 "tip_position_final": np.array([0.0, 0.0]),
             }
 
-        results = batch_perturb_and_simulate(
-            base_coeffs, config, simulate_fn, extract_fn
-        )
+        results = batch_perturb_and_simulate(base_coeffs, config, simulate_fn, extract_fn)
         assert len(results) == 2  # 3 trials, 1 failed
 
 
@@ -282,9 +270,7 @@ class TestPerturbedSimulationFiniteOutputs:
                 "tip_position_final": np.array([0.5, -0.3]),
             }
 
-        results = batch_perturb_and_simulate(
-            base_coeffs, config, simulate_fn, extract_fn
-        )
+        results = batch_perturb_and_simulate(base_coeffs, config, simulate_fn, extract_fn)
         assert len(results) > 0
         for r in results:
             assert np.isfinite(r["tip_speed_final"]), f"Non-finite tip_speed: {r}"

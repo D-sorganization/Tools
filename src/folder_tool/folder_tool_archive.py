@@ -163,8 +163,7 @@ class ArchiveMixin:
                 raise ValueError("No accessible files found in destination folder")
 
             logger.info(
-                f"ZIP will contain {total_files} files, "
-                f"{total_size / (1024 * 1024):.1f} MB",
+                f"ZIP will contain {total_files} files, " f"{total_size / (1024 * 1024):.1f} MB",
             )
 
             with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
@@ -201,8 +200,7 @@ class ArchiveMixin:
                     logger.info(f"Cleaned up failed ZIP file: {zip_path}")
                 except OSError as cleanup_error:
                     logger.warning(
-                        f"Failed to cleanup failed ZIP file: {zip_path} - "
-                        f"{cleanup_error}",
+                        f"Failed to cleanup failed ZIP file: {zip_path} - " f"{cleanup_error}",
                     )
             logger.error(f"Failed to create ZIP archive: {e}")
             raise Exception(f"Failed to create ZIP archive: {e}") from e

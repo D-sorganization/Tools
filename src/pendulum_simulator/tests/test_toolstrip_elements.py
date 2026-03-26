@@ -29,9 +29,7 @@ _HAVE_DISPLAY = (
     or os.environ.get("DISPLAY")
     or os.environ.get("WAYLAND_DISPLAY")
 )
-pytestmark = pytest.mark.skipif(
-    not _HAVE_DISPLAY, reason="No display available (headless CI)"
-)
+pytestmark = pytest.mark.skipif(not _HAVE_DISPLAY, reason="No display available (headless CI)")
 
 # ---------------------------------------------------------------------------
 # Fixture: QApplication + ToolStrip instance
@@ -64,9 +62,7 @@ class TestPlaybackSlider:
 
     def test_frame_slider_exists(self, toolstrip: ToolStrip) -> None:
         """ToolStrip must have a _frame_slider attribute that is a QSlider."""
-        assert hasattr(
-            toolstrip, "_frame_slider"
-        ), "ToolStrip is missing _frame_slider attribute"
+        assert hasattr(toolstrip, "_frame_slider"), "ToolStrip is missing _frame_slider attribute"
         assert isinstance(
             toolstrip._frame_slider, QSlider
         ), f"_frame_slider is {type(toolstrip._frame_slider)}, expected QSlider"
@@ -130,9 +126,7 @@ class TestTorqueCheckboxes:
 
     def test_sum_moments_checkbox_exists(self, toolstrip: ToolStrip) -> None:
         """ToolStrip must have a chk_sum_moments checkbox."""
-        assert hasattr(
-            toolstrip, "chk_sum_moments"
-        ), "ToolStrip missing chk_sum_moments"
+        assert hasattr(toolstrip, "chk_sum_moments"), "ToolStrip missing chk_sum_moments"
         assert isinstance(toolstrip.chk_sum_moments, QCheckBox)
 
     def test_torque_signal_connected(self, toolstrip: ToolStrip) -> None:

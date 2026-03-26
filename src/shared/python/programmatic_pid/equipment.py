@@ -143,9 +143,7 @@ def render_fan(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> 
 
 
 @register_equipment("rotary_valve")
-def render_rotary_valve(
-    msp: Any, x: float, y: float, w: float, h: float, layer: str
-) -> None:
+def render_rotary_valve(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
     if not (x is not None):
         raise ValueError("x must be provided")
     cx, cy = x + w / 2, y + h / 2
@@ -197,9 +195,7 @@ def render_bin(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> 
 
 
 @register_equipment("gate_valve")
-def render_gate_valve(
-    msp: Any, x: float, y: float, w: float, h: float, layer: str
-) -> None:
+def render_gate_valve(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
     """ISA-5.1 gate valve: two opposing triangles meeting at a vertical line."""
     if not (x is not None):
         raise ValueError("x must be provided")
@@ -222,9 +218,7 @@ def render_gate_valve(
 
 
 @register_equipment("globe_valve")
-def render_globe_valve(
-    msp: Any, x: float, y: float, w: float, h: float, layer: str
-) -> None:
+def render_globe_valve(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
     """ISA-5.1 globe valve: like gate valve but with a circle at center."""
     if not (x is not None):
         raise ValueError("x must be provided")
@@ -246,9 +240,7 @@ def render_globe_valve(
 
 
 @register_equipment("ball_valve")
-def render_ball_valve(
-    msp: Any, x: float, y: float, w: float, h: float, layer: str
-) -> None:
+def render_ball_valve(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
     """Ball valve: two triangles with a filled circle."""
     if not (x is not None):
         raise ValueError("x must be provided")
@@ -269,9 +261,7 @@ def render_ball_valve(
 
 
 @register_equipment("check_valve")
-def render_check_valve(
-    msp: Any, x: float, y: float, w: float, h: float, layer: str
-) -> None:
+def render_check_valve(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
     """Check valve: single triangle pointing into a vertical bar."""
     if not (x is not None):
         raise ValueError("x must be provided")
@@ -292,9 +282,7 @@ def render_check_valve(
 
 
 @register_equipment("control_valve")
-def render_control_valve(
-    msp: Any, x: float, y: float, w: float, h: float, layer: str
-) -> None:
+def render_control_valve(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
     """ISA-5.1 control valve: gate valve body with diaphragm actuator."""
     if not (x is not None):
         raise ValueError("x must be provided")
@@ -321,9 +309,7 @@ def render_control_valve(
 
 @register_equipment("relief_valve")
 @register_equipment("psv")
-def render_relief_valve(
-    msp: Any, x: float, y: float, w: float, h: float, layer: str
-) -> None:
+def render_relief_valve(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
     """Pressure safety / relief valve: triangle with a bent vent line."""
     if not (x is not None):
         raise ValueError("x must be provided")
@@ -336,15 +322,11 @@ def render_relief_valve(
         dxfattribs={"layer": layer},
     )
     # Vent arm (angled exhaust line)
-    msp.add_line(
-        (cx, cy + hh), (cx + hw * 0.8, cy + hh * 1.8), dxfattribs={"layer": layer}
-    )
+    msp.add_line((cx, cy + hh), (cx + hw * 0.8, cy + hh * 1.8), dxfattribs={"layer": layer})
 
 
 @register_equipment("rupture_disk")
-def render_rupture_disk(
-    msp: Any, x: float, y: float, w: float, h: float, layer: str
-) -> None:
+def render_rupture_disk(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
     """Rupture disk: two arcs forming a lens shape."""
     if not (x is not None):
         raise ValueError("x must be provided")
@@ -369,9 +351,7 @@ def render_rupture_disk(
 
 
 @register_equipment("heat_exchanger")
-def render_heat_exchanger(
-    msp: Any, x: float, y: float, w: float, h: float, layer: str
-) -> None:
+def render_heat_exchanger(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
     """Shell-and-tube heat exchanger: circle with internal lines."""
     if not (x is not None):
         raise ValueError("x must be provided")
@@ -382,9 +362,7 @@ def render_heat_exchanger(
     for frac in (-0.3, 0.0, 0.3):
         fy = cy + r * frac
         half = math.sqrt(max(r * r - (r * frac) ** 2, 0))
-        msp.add_line(
-            (cx - half * 0.9, fy), (cx + half * 0.9, fy), dxfattribs={"layer": layer}
-        )
+        msp.add_line((cx - half * 0.9, fy), (cx + half * 0.9, fy), dxfattribs={"layer": layer})
 
 
 @register_equipment("pump")
@@ -442,9 +420,7 @@ def draw_equipment_symbol(msp: Any, eq: dict[str, Any], layer: str) -> None:
         if eq_type == "vertical_retort" or subtype == "vertical_retort":
             for zone in eq.get("zones", []):
                 zy = y + h * to_float(zone.get("y_frac", 0.0))
-                msp.add_line(
-                    (x + 0.6, zy), (x + w - 0.6, zy), dxfattribs={"layer": layer}
-                )
+                msp.add_line((x + 0.6, zy), (x + w - 0.6, zy), dxfattribs={"layer": layer})
         return
 
     # Default: box with optional vertical_retort zones

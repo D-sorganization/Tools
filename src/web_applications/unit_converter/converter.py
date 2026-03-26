@@ -386,13 +386,12 @@ class UnitConverter:
 
         if from_category != to_category:
             # Allow mass_flow <-> gas_flow cross-category
-            is_gas_flow = (
-                from_category == "gas_flow" and to_category == "mass_flow"
-            ) or (from_category == "mass_flow" and to_category == "gas_flow")
+            is_gas_flow = (from_category == "gas_flow" and to_category == "mass_flow") or (
+                from_category == "mass_flow" and to_category == "gas_flow"
+            )
             if not is_gas_flow:
                 raise ValueError(
-                    f"Cannot convert {from_unit} ({from_category}) "
-                    f"to {to_unit} ({to_category})"
+                    f"Cannot convert {from_unit} ({from_category}) " f"to {to_unit} ({to_category})"
                 )
 
         category = from_category
@@ -410,9 +409,7 @@ class UnitConverter:
                 standard_condition=standard_condition,
             )
         elif category == "heating_value":
-            result = self._convert_heating_value(
-                value, from_unit, to_unit, gas_density_stp
-            )
+            result = self._convert_heating_value(value, from_unit, to_unit, gas_density_stp)
         else:
             result = self._convert_linear(value, from_unit, to_unit, category)
 
@@ -458,18 +455,14 @@ class UnitConverter:
         else:
             raise ValueError(f"Unknown temperature unit: {to_unit}")
 
-    def _convert_linear(
-        self, value: float, from_unit: str, to_unit: str, category: str
-    ) -> float:
+    def _convert_linear(self, value: float, from_unit: str, to_unit: str, category: str) -> float:
         """Convert units with a simple linear factor through base SI unit."""
         factors = CONVERSION_FACTORS[category]
         from_factor = factors.get(from_unit)
         to_factor = factors.get(to_unit)
 
         if from_factor is None or to_factor is None:
-            raise ValueError(
-                f"Conversion factors not found for {from_unit} to {to_unit}"
-            )
+            raise ValueError(f"Conversion factors not found for {from_unit} to {to_unit}")
 
         base_value = value * from_factor
         return base_value / to_factor
@@ -487,18 +480,14 @@ class UnitConverter:
     ) -> float:
         """Convert gas flow rates via standard m3/hr as intermediate."""
         gas_props = GAS_DATABASE.get(gas_type.lower(), GAS_DATABASE["air"])
-        standard = STANDARD_CONDITIONS.get(
-            standard_condition, STANDARD_CONDITIONS["SCFM_60F"]
-        )
+        standard = STANDARD_CONDITIONS.get(standard_condition, STANDARD_CONDITIONS["SCFM_60F"])
 
         fu = from_unit.upper()
         tu = to_unit.upper()
 
         # Validate ACFM requires T/P
         if (fu == "ACFM" or tu == "ACFM") and (temperature is None or pressure is None):
-            raise ValueError(
-                "Temperature and pressure are required for ACFM conversions"
-            )
+            raise ValueError("Temperature and pressure are required for ACFM conversions")
 
         # Convert to standard m3/hr
         std_temp = float(standard["temp"])
@@ -511,18 +500,14 @@ class UnitConverter:
         if fu == "SCFM":
             m3_hr_std = value * SCFM_TO_CU_METER_PER_HOUR_AT_60F
             if std_temp != stp_temp or std_pressure != stp_pressure:
-                m3_hr_std = (
-                    m3_hr_std * (stp_temp / std_temp) * (std_pressure / stp_pressure)
-                )
+                m3_hr_std = m3_hr_std * (stp_temp / std_temp) * (std_pressure / stp_pressure)
         elif fu == "ACFM":
             if not (temperature is not None and pressure is not None):
-                raise ValueError('DbC Blocked: Precondition failed.')
+                raise ValueError("DbC Blocked: Precondition failed.")
             scfm = value * (std_temp / temperature) * (pressure / std_pressure)
             m3_hr_std = scfm * SCFM_TO_CU_METER_PER_HOUR_AT_60F
             if std_temp != stp_temp or std_pressure != stp_pressure:
-                m3_hr_std = (
-                    m3_hr_std * (stp_temp / std_temp) * (std_pressure / stp_pressure)
-                )
+                m3_hr_std = m3_hr_std * (stp_temp / std_temp) * (std_pressure / stp_pressure)
         elif fu in ("NM3/HR", "NM3/HR"):
             m3_hr_std = value
         elif from_unit.lower() in CONVERSION_FACTORS.get("mass_flow", {}):
@@ -536,18 +521,14 @@ class UnitConverter:
         if tu == "SCFM":
             m3_hr_at_scfm = m3_hr_std
             if stp_temp != std_temp or stp_pressure != std_pressure:
-                m3_hr_at_scfm = (
-                    m3_hr_std * (std_temp / stp_temp) * (stp_pressure / std_pressure)
-                )
+                m3_hr_at_scfm = m3_hr_std * (std_temp / stp_temp) * (stp_pressure / std_pressure)
             return m3_hr_at_scfm / SCFM_TO_CU_METER_PER_HOUR_AT_60F
         elif tu == "ACFM":
             if not (temperature is not None and pressure is not None):
-                raise ValueError('DbC Blocked: Precondition failed.')
+                raise ValueError("DbC Blocked: Precondition failed.")
             m3_hr_at_scfm = m3_hr_std
             if stp_temp != std_temp or stp_pressure != std_pressure:
-                m3_hr_at_scfm = (
-                    m3_hr_std * (std_temp / stp_temp) * (stp_pressure / std_pressure)
-                )
+                m3_hr_at_scfm = m3_hr_std * (std_temp / stp_temp) * (stp_pressure / std_pressure)
             scfm_val = m3_hr_at_scfm / SCFM_TO_CU_METER_PER_HOUR_AT_60F
             return scfm_val * (std_pressure / pressure) * (temperature / std_temp)
         elif tu in ("NM3/HR", "NM3/HR"):

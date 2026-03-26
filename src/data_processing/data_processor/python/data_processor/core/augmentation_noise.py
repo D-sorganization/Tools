@@ -27,9 +27,7 @@ class NoiseMixin:
     config: AugmentationConfig
     _rng: np.random.Generator
 
-    def add_gaussian_noise(
-        self, data: np.ndarray, std: float | None = None
-    ) -> np.ndarray:
+    def add_gaussian_noise(self, data: np.ndarray, std: float | None = None) -> np.ndarray:
         """Add Gaussian noise to data.
 
         Args:
@@ -65,9 +63,7 @@ class NoiseMixin:
             raise ValueError("data must be provided")
         range_ = range_ or self.config.noise_range
         data_range = np.ptp(data)
-        noise = self._rng.uniform(
-            range_[0] * data_range, range_[1] * data_range, data.shape
-        )
+        noise = self._rng.uniform(range_[0] * data_range, range_[1] * data_range, data.shape)
         return data + noise
 
     def add_colored_noise(
@@ -89,9 +85,7 @@ class NoiseMixin:
         noise = noise * amplitude * np.std(data)
         return data + noise
 
-    def add_salt_pepper_noise(
-        self, data: np.ndarray, prob: float | None = None
-    ) -> np.ndarray:
+    def add_salt_pepper_noise(self, data: np.ndarray, prob: float | None = None) -> np.ndarray:
         """Add salt and pepper noise.
 
         Args:

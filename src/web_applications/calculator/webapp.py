@@ -69,9 +69,7 @@ def create_app() -> Flask:
         # HSTS (Strict-Transport-Security) - enforce HTTPS
         # Max-age: 1 year (31536000 seconds), includeSubDomains
         # Only strict if running on HTTPS, but good to have
-        response.headers["Strict-Transport-Security"] = (
-            "max-age=31536000; includeSubDomains"
-        )
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
         # Permissions Policy - Disable sensitive features to reduce attack surface
         response.headers["Permissions-Policy"] = (
             "geolocation=(), camera=(), microphone=(), payment=(), usb=()"
@@ -103,16 +101,14 @@ def create_app() -> Flask:
             return jsonify(response), 200
         except ValueError as error:
             return jsonify({"error": str(error)}), 400
-        except Exception as e:  # pragma: no cover - fallback safety
+        except Exception as e:  # pragma: no cover - fallback safety  # noqa: F841
             logger.exception("Calculation failed")
             return jsonify({"error": "An internal error occurred."}), 500
 
     @app.get("/manifest.webmanifest")
     def manifest() -> Response:
         """Serve the PWA web manifest."""
-        return send_from_directory(
-            app.static_folder or "static", "manifest.webmanifest"
-        )
+        return send_from_directory(app.static_folder or "static", "manifest.webmanifest")
 
     @app.get("/service-worker.js")
     def service_worker() -> Response:
@@ -177,9 +173,7 @@ def _validate_security(value: str | None) -> None:
 
     for keyword in FORBIDDEN_KEYWORDS:
         if keyword in value and KEYWORD_REGEXES[keyword].search(value):
-            raise ValueError(
-                f"Security violation: Restricted keyword '{keyword}' detected."
-            )
+            raise ValueError(f"Security violation: Restricted keyword '{keyword}' detected.")
 
 
 def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
@@ -193,9 +187,7 @@ def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
         raise ValueError("Expression is required")
 
     if len(expression) > MAX_INPUT_LENGTH:
-        raise ValueError(
-            f"Expression exceeds maximum length of {MAX_INPUT_LENGTH} characters"
-        )
+        raise ValueError(f"Expression exceeds maximum length of {MAX_INPUT_LENGTH} characters")
     _validate_security(expression)
 
     # Simplified extraction of optional fields
@@ -237,9 +229,7 @@ def _parse_payload(raw_payload: Mapping[str, object]) -> CalculationPayload:
 
 def _validate_length(value: str | None, name: str) -> None:
     if value and len(value) > MAX_INPUT_LENGTH:
-        raise ValueError(
-            f"{name} exceeds maximum length of {MAX_INPUT_LENGTH} characters"
-        )
+        raise ValueError(f"{name} exceeds maximum length of {MAX_INPUT_LENGTH} characters")
 
 
 def _handle_integral_calculation(
@@ -251,9 +241,7 @@ def _handle_integral_calculation(
 
     if payload.lower is not None or payload.upper is not None:
         if payload.lower is None or payload.upper is None:
-            raise ValueError(
-                "Both lower and upper bounds are required for definite integrals"
-            )
+            raise ValueError("Both lower and upper bounds are required for definite integrals")
 
         variable_symbol = sp.Symbol(payload.variable)
         lower = _sympify_value(
@@ -266,9 +254,7 @@ def _handle_integral_calculation(
             calculator=calculator,
             symbols={payload.variable: variable_symbol},
         )
-        return calculator.integral(
-            payload.expression, payload.variable, lower=lower, upper=upper
-        )
+        return calculator.integral(payload.expression, payload.variable, lower=lower, upper=upper)
     return calculator.integral(payload.expression, payload.variable)
 
 
@@ -325,9 +311,7 @@ def _dispatch_calculation(
 
     if payload.operation == "solve_system":
         if not payload.variable:
-            raise ValueError(
-                "Comma-separated variables are required for solving a system"
-            )
+            raise ValueError("Comma-separated variables are required for solving a system")
         variables = [v.strip() for v in payload.variable.split(",") if v.strip()]
         equations = [e.strip() for e in payload.expression.split(";") if e.strip()]
         if not equations or not variables:
@@ -353,12 +337,8 @@ def _dispatch_calculation(
 
     if payload.operation == "solve_ode":
         if not payload.function:
-            raise ValueError(
-                "Function name is required for solving differential equations"
-            )
-        return calculator.solve_differential_equation(
-            payload.expression, payload.function
-        )
+            raise ValueError("Function name is required for solving differential equations")
+        return calculator.solve_differential_equation(payload.expression, payload.function)
 
     raise ValueError("Unsupported operation requested")
 
@@ -405,10 +385,7 @@ def _normalize_variables(
 ) -> Mapping[str, sp.Expr]:
     if not variables:
         return {}
-    return {
-        name: _sympify_value(value, calculator=calculator)
-        for name, value in variables.items()
-    }
+    return {name: _sympify_value(value, calculator=calculator) for name, value in variables.items()}
 
 
 def _sympify_value(

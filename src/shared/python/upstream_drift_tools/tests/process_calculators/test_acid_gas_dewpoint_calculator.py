@@ -22,9 +22,7 @@ def test_calculate_vapor_pressure(dewpoint_calc: AcidGasDewpointCalculator) -> N
     assert hf_vp > 0.0
 
     # Extended antoine
-    h2o_vp_high = dewpoint_calc.calculate_vapor_pressure(
-        150.0, "H2O", "extended_antoine"
-    )
+    h2o_vp_high = dewpoint_calc.calculate_vapor_pressure(150.0, "H2O", "extended_antoine")
     assert h2o_vp_high > 0.0
 
     # Invalid component

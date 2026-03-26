@@ -174,9 +174,7 @@ class FolderPackerPro(
         style.configure("TFrame", background=theme["bg"])
         style.configure("TLabel", background=theme["bg"], foreground=theme["fg"])
         style.configure("TLabelframe", background=theme["bg"], foreground=theme["fg"])
-        style.configure(
-            "TLabelframe.Label", background=theme["bg"], foreground=theme["fg"]
-        )
+        style.configure("TLabelframe.Label", background=theme["bg"], foreground=theme["fg"])
         style.configure(
             "Accent.TButton",
             background=theme["accent"],
@@ -394,13 +392,9 @@ class FolderPackerPro(
                 if sys.platform == "win32":
                     os.startfile(log_path)  # type: ignore[attr-defined]  # noqa: S606
                 elif sys.platform == "darwin":
-                    subprocess.run(
-                        ["open", str(log_path)], check=False
-                    )  # noqa: S603, S607
+                    subprocess.run(["open", str(log_path)], check=False)  # noqa: S603, S607
                 else:
-                    subprocess.run(
-                        ["xdg-open", str(log_path)], check=False
-                    )  # noqa: S603, S607
+                    subprocess.run(["xdg-open", str(log_path)], check=False)  # noqa: S603, S607
             except (OSError, subprocess.SubprocessError) as e:
                 messagebox.showerror("Error", f"Could not open log file: {e}")
         else:

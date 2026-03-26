@@ -89,9 +89,7 @@ class PackTabMixin:
         """Create the output package file input section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
-        frame = ttk.LabelFrame(
-            parent, text="Output Package File", padding=PADDING_MEDIUM
-        )
+        frame = ttk.LabelFrame(parent, text="Output Package File", padding=PADDING_MEDIUM)
         frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         entry_frame = ttk.Frame(frame)
@@ -114,9 +112,7 @@ class PackTabMixin:
         """Create the project statistics display section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
-        frame = ttk.LabelFrame(
-            parent, text="Project Statistics", padding=PADDING_MEDIUM
-        )
+        frame = ttk.LabelFrame(parent, text="Project Statistics", padding=PADDING_MEDIUM)
         frame.pack(fill="both", expand=True, pady=(0, PADDING_MEDIUM))
 
         self.stats_text = scrolledtext.ScrolledText(  # type: ignore[attr-defined]
@@ -326,9 +322,7 @@ class UnpackTabMixin:
         """Create the destination folder input section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
-        frame = ttk.LabelFrame(
-            parent, text="Destination Folder", padding=PADDING_MEDIUM
-        )
+        frame = ttk.LabelFrame(parent, text="Destination Folder", padding=PADDING_MEDIUM)
         frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         entry_frame = ttk.Frame(frame)
@@ -377,9 +371,7 @@ class UnpackTabMixin:
         """Create the package information display section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
-        frame = ttk.LabelFrame(
-            parent, text="Package Information", padding=PADDING_MEDIUM
-        )
+        frame = ttk.LabelFrame(parent, text="Package Information", padding=PADDING_MEDIUM)
         frame.pack(fill="both", expand=True, pady=(0, PADDING_MEDIUM))
 
         self.package_info_text = scrolledtext.ScrolledText(  # type: ignore[attr-defined]
@@ -638,15 +630,7 @@ class LogTabMixin:
         self.log_text.pack(fill="both", expand=True)  # type: ignore[attr-defined]
 
         # Configure log level tags
-        self.log_text.tag_configure(  # type: ignore[attr-defined]
-            "info", foreground="#ffffff"
-        )
-        self.log_text.tag_configure(  # type: ignore[attr-defined]
-            "success", foreground="#28a745"
-        )
-        self.log_text.tag_configure(  # type: ignore[attr-defined]
-            "warning", foreground="#ffc107"
-        )
-        self.log_text.tag_configure(  # type: ignore[attr-defined]
-            "error", foreground="#dc3545"
-        )
+        self.log_text.tag_configure("info", foreground="#ffffff")  # type: ignore[attr-defined]
+        self.log_text.tag_configure("success", foreground="#28a745")  # type: ignore[attr-defined]
+        self.log_text.tag_configure("warning", foreground="#ffc107")  # type: ignore[attr-defined]
+        self.log_text.tag_configure("error", foreground="#dc3545")  # type: ignore[attr-defined]

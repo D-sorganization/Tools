@@ -171,9 +171,7 @@ class TestAnalyticalFKJacobians:
                 J_analytical, J_numerical, atol=1e-5, rtol=1e-4
             ), f"LH Jacobian mismatch at q={q}"
 
-    def test_club_com_jacobian_vs_numerical(
-        self, test_configs: list[np.ndarray]
-    ) -> None:
+    def test_club_com_jacobian_vs_numerical(self, test_configs: list[np.ndarray]) -> None:
         """Club COM Jacobian (depends on q[0], q[1], q[2], q[3], q[7])."""
         from double_pendulum_golf.physics_golfer import analytical_fk_jacobians
 
@@ -192,9 +190,7 @@ class TestAnalyticalFKJacobians:
                 J_analytical, J_numerical, atol=1e-5, rtol=1e-4
             ), f"Club COM Jacobian mismatch at q={q}"
 
-    def test_club_tip_jacobian_vs_numerical(
-        self, test_configs: list[np.ndarray]
-    ) -> None:
+    def test_club_tip_jacobian_vs_numerical(self, test_configs: list[np.ndarray]) -> None:
         """Club tip Jacobian (depends on q[0], q[1], q[2], q[3], q[7])."""
         from double_pendulum_golf.physics_golfer import analytical_fk_jacobians
 
@@ -222,9 +218,7 @@ class TestAnalyticalMassMatrix:
         assert hasattr(physics_golfer, "analytical_mass_matrix")
         assert callable(physics_golfer.analytical_mass_matrix)
 
-    def test_analytical_mass_matrix_parity(
-        self, test_configs: list[np.ndarray]
-    ) -> None:
+    def test_analytical_mass_matrix_parity(self, test_configs: list[np.ndarray]) -> None:
         """Analytical mass matrix matches numerical at 20 configs."""
         from double_pendulum_golf.physics_golfer import analytical_mass_matrix
 
@@ -278,9 +272,7 @@ class TestAnalyticalCoriolis:
                 C_analytical, C_numerical, atol=1e-5, rtol=1e-3
             ), f"Coriolis mismatch at q={q}, qdot={qdot}"
 
-    def test_coriolis_zero_at_zero_velocity(
-        self, test_configs: list[np.ndarray]
-    ) -> None:
+    def test_coriolis_zero_at_zero_velocity(self, test_configs: list[np.ndarray]) -> None:
         """Coriolis is zero when velocity is zero."""
         from double_pendulum_golf.physics_golfer import analytical_coriolis
 
@@ -323,9 +315,7 @@ class TestAnalyticalConstraintJacobian:
         assert hasattr(physics_golfer, "analytical_constraint_jacobian")
         assert callable(physics_golfer.analytical_constraint_jacobian)
 
-    def test_analytical_constraint_jac_parity(
-        self, test_configs: list[np.ndarray]
-    ) -> None:
+    def test_analytical_constraint_jac_parity(self, test_configs: list[np.ndarray]) -> None:
         """Analytical constraint Jacobian matches numerical at 20 configs."""
         from double_pendulum_golf.physics_golfer import (
             analytical_constraint_jacobian,

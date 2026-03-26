@@ -153,9 +153,7 @@ class TestCalculateFittingPressureDrop:
         assert abs(dp - expected) < 1e-10
 
     def test_zero_velocity_zero_drop(self) -> None:
-        dp = calculate_fitting_pressure_drop(
-            k_factor=0.75, density=1000.0, velocity=0.0
-        )
+        dp = calculate_fitting_pressure_drop(k_factor=0.75, density=1000.0, velocity=0.0)
         assert dp == 0.0
 
     def test_proportional_to_k(self) -> None:

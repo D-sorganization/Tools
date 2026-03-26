@@ -163,9 +163,7 @@ class TestCoefficients:
     def se(self) -> SeriesExpansion:
         return SeriesExpansion(max_terms=20)
 
-    def test_exp_coefficients_are_reciprocal_factorials(
-        self, se: SeriesExpansion
-    ) -> None:
+    def test_exp_coefficients_are_reciprocal_factorials(self, se: SeriesExpansion) -> None:
         """e^x Maclaurin coefficients should be 1/n!."""
         coeffs = se.get_coefficients(np.exp, center=0.0, n_terms=6)
         expected = np.array([1.0, 1.0, 1 / 2, 1 / 6, 1 / 24, 1 / 120], dtype=np.float64)

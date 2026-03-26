@@ -10,12 +10,10 @@ try:
 except ImportError:
     from pathlib import Path
 
-    def safe_read_text(
-        path: str | Path, encoding: str = "utf-8", default: str = ""
-    ) -> str:
+    def safe_read_text(path: str | Path, encoding: str = "utf-8", default: str = "") -> str:
         try:
             return Path(path).read_text(encoding=encoding)
-        except Exception as e:
+        except Exception as e:  # noqa: F841
             return default
 
     def safe_write_text(
@@ -79,9 +77,7 @@ def find_and_remove_syntax_error_scripts() -> int:
                 logger.info(f"✅ Removed broken script: {file_path}")
                 removed_count += 1
             except PermissionError as remove_error:
-                logger.error(
-                    f"❌ Permission denied removing {file_path}: {remove_error}"
-                )
+                logger.error(f"❌ Permission denied removing {file_path}: {remove_error}")
             except OSError as remove_error:
                 logger.error(f"❌ OS error removing {file_path}: {remove_error}")
         except (OSError, UnicodeDecodeError) as e:

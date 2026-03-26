@@ -66,9 +66,7 @@ class SignalListWidget(QWidget):
 
         # List widget
         self.list_widget = QListWidget()
-        self.list_widget.setSelectionMode(
-            QAbstractItemView.SelectionMode.MultiSelection
-        )
+        self.list_widget.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
         self.list_widget.setAlternatingRowColors(True)
         self.list_widget.itemSelectionChanged.connect(self._on_selection_changed)
         layout.addWidget(self.list_widget)
@@ -415,9 +413,7 @@ class StatisticsWidget(QWidget):
         # Table for statistics
         self.table = QTableWidget()
         self.table.setColumnCount(6)
-        self.table.setHorizontalHeaderLabels(
-            ["Signal", "Mean", "Std", "Min", "Max", "Median"]
-        )
+        self.table.setHorizontalHeaderLabels(["Signal", "Mean", "Std", "Min", "Max", "Median"])
         header = self.table.horizontalHeader()
         if header is not None:
             header.setStretchLastSection(True)

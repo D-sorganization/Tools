@@ -293,9 +293,7 @@ class MultiParamAnalysisWindow(QMainWindow):
         self.param1_min.setRange(-1e6, 1e6)
         self.param1_min.setDecimals(2)
         self.param1_min.setValue(600)
-        self.param1_min.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
-        )
+        self.param1_min.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         param1_layout.addWidget(self.param1_min, 1, 1)
 
         param1_layout.addWidget(QLabel("Maximum:"), 2, 0)
@@ -336,9 +334,7 @@ class MultiParamAnalysisWindow(QMainWindow):
         self.param2_min.setRange(-1e6, 1e6)
         self.param2_min.setDecimals(3)
         self.param2_min.setValue(0.1)
-        self.param2_min.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
-        )
+        self.param2_min.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         param2_layout.addWidget(self.param2_min, 1, 1)
 
         param2_layout.addWidget(QLabel("Maximum:"), 2, 0)
@@ -477,9 +473,7 @@ class MultiParamAnalysisWindow(QMainWindow):
         self.sensitivity_text = QTextEdit()
         self.sensitivity_text.setReadOnly(True)
         self.sensitivity_text.setMaximumHeight(120)
-        self.sensitivity_text.setPlaceholderText(
-            "Sensitivity indices will appear here..."
-        )
+        self.sensitivity_text.setPlaceholderText("Sensitivity indices will appear here...")
         sens_layout.addWidget(self.sensitivity_text)
         layout.addWidget(sens_group)
 
@@ -516,9 +510,7 @@ class MultiParamAnalysisWindow(QMainWindow):
         )
 
         # Run demo analysis
-        self._run_demo_analysis(
-            param1_name, param2_name, output_name, param1_values, param2_values
-        )
+        self._run_demo_analysis(param1_name, param2_name, output_name, param1_values, param2_values)
 
     def _run_demo_analysis(
         self,
@@ -625,18 +617,12 @@ class MultiParamAnalysisWindow(QMainWindow):
         sens_text = []
         sens_text.append("Variance-Based Sensitivity Indices")
         sens_text.append("=" * 40)
-        sens_text.append(
-            f"\nFirst-order index (S1) for {self.param1_combo.currentText()}:"
-        )
+        sens_text.append(f"\nFirst-order index (S1) for {self.param1_combo.currentText()}:")
         sens_text.append(f"  S1 = {s1:.4f} ({s1 * 100:.1f}% of variance)")
-        sens_text.append(
-            f"\nFirst-order index (S2) for {self.param2_combo.currentText()}:"
-        )
+        sens_text.append(f"\nFirst-order index (S2) for {self.param2_combo.currentText()}:")
         sens_text.append(f"  S2 = {s2:.4f} ({s2 * 100:.1f}% of variance)")
         sens_text.append("\nInteraction effect:")
-        sens_text.append(
-            f"  S12 = {interaction:.4f} ({interaction * 100:.1f}% of variance)"
-        )
+        sens_text.append(f"  S12 = {interaction:.4f} ({interaction * 100:.1f}% of variance)")
 
         self.sensitivity_text.setPlainText("\n".join(sens_text))
 
@@ -653,9 +639,7 @@ class MultiParamAnalysisWindow(QMainWindow):
         lines.append("Multi-Parameter Analysis Results")
         lines.append("=" * 50)
         lines.append(f"\nFunction: {self.demo_func_combo.currentText()}")
-        lines.append(
-            f"Grid: {len(param1_values)} x {len(param2_values)} = {Z.size} points"
-        )
+        lines.append(f"Grid: {len(param1_values)} x {len(param2_values)} = {Z.size} points")
         lines.append(
             f"\n{self.param1_combo.currentText()}: {param1_values[0]:.2f} to {param1_values[-1]:.2f}"
         )

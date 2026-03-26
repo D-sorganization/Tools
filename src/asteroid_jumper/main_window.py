@@ -70,9 +70,7 @@ class AsteroidJumperWindow(QMainWindow):
         splitter.setStretchFactor(2, 0)
 
         # Status bar
-        self._status_msg(
-            "Drag on the asteroid to set jump direction · Click JUMP to launch"
-        )
+        self._status_msg("Drag on the asteroid to set jump direction · Click JUMP to launch")
 
     def _connect_signals(self) -> None:
         self._controls.jump_requested.connect(self._on_jump)
@@ -131,7 +129,7 @@ class _SimpleSignal:
 
     def connect(self, slot: object) -> None:
         if not (callable(slot)):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         self._slots.append(slot)
 
     def emit(self, *args: object) -> None:

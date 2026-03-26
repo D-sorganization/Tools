@@ -51,18 +51,14 @@ class TestRunCommand:
         """Test capturing stderr."""
         from utils.subprocess_utils import run_command
 
-        result = run_command(
-            [sys.executable, "-c", "import sys; sys.stderr.write('error\\n')"]
-        )
+        result = run_command([sys.executable, "-c", "import sys; sys.stderr.write('error\\n')"])
         assert "error" in result.stderr
 
     def test_respects_cwd(self, tmp_path):
         """Test respecting working directory."""
         from utils.subprocess_utils import run_command
 
-        result = run_command(
-            [sys.executable, "-c", "import os; print(os.getcwd())"], cwd=tmp_path
-        )
+        result = run_command([sys.executable, "-c", "import os; print(os.getcwd())"], cwd=tmp_path)
         assert str(tmp_path) in result.stdout or tmp_path.name in result.stdout
 
     def test_raises_on_timeout(self):
