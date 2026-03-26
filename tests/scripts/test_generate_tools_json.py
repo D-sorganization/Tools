@@ -15,9 +15,7 @@ def load_script_module():
     repo_root = Path(__file__).resolve().parents[2]
     script_path = repo_root / "scripts" / "generate_tools_json.py"
 
-    spec = importlib.util.spec_from_file_location(
-        "generate_tools_json_module", script_path
-    )
+    spec = importlib.util.spec_from_file_location("generate_tools_json_module", script_path)
     if spec is None or spec.loader is None:
         raise ImportError(f"Could not load script {script_path}")
     module = importlib.util.module_from_spec(spec)
@@ -152,9 +150,7 @@ class TestManifestGeneration:
         eng_tools = manifest["Engineering Tools"]
         assert len(eng_tools) == 1
         tool = eng_tools[0]
-        assert (
-            tool["name"] == "Pressure Drop"
-        )  # Single surface name, usually just the name
+        assert tool["name"] == "Pressure Drop"  # Single surface name, usually just the name
         assert tool["type"] == "python"
         assert "src/pressure_drop/launch_pyqt6.py" in tool["path"].replace("\\", "/")
 
@@ -226,9 +222,7 @@ class TestContractGeneration:
         pattern = re.compile(r"^[a-z0-9_]+$")
 
         for tool in contract["tools"]:
-            assert pattern.match(tool["id"]), (
-                f"Tool ID '{tool['id']}' is not snake_case"
-            )
+            assert pattern.match(tool["id"]), f"Tool ID '{tool['id']}' is not snake_case"
 
     def test_contract_surfaces_structure(self, manifest_gen_module, mock_repo_root):
         """Each tool's surfaces dict must have exactly pyqt6 and web booleans."""
@@ -268,9 +262,7 @@ class TestContractGeneration:
         assert web_tool["surfaces"]["pyqt6"] is False
         assert web_tool["surfaces"]["web"] is True
 
-    def test_contract_tool_name_fallback(
-        self, manifest_gen_module, mock_repo_no_tool_name
-    ):
+    def test_contract_tool_name_fallback(self, manifest_gen_module, mock_repo_no_tool_name):
         """Tools without tool_name should use directory name as ID."""
         contract = manifest_gen_module.generate_contract_data(mock_repo_no_tool_name)
 
@@ -310,7 +302,7 @@ class TestContractGeneration:
         expected_surface_keys = {"pyqt6", "web", "legacy_gui"}
 
         for tool in contract["tools"]:
-            assert set(tool.keys()) == expected_tool_keys, (
-                f"Unexpected keys in tool entry: {set(tool.keys()) - expected_tool_keys}"
-            )
+            assert (
+                set(tool.keys()) == expected_tool_keys
+            ), f"Unexpected keys in tool entry: {set(tool.keys()) - expected_tool_keys}"
             assert set(tool["surfaces"].keys()) == expected_surface_keys

@@ -704,9 +704,7 @@ def wire_toolstrip(main_window: Any) -> None:
 
     # ── Simulation action signals → active panel only ──────────────
     ts.run_requested.connect(lambda: main_window._active_panel().controls.run_requested.emit())
-    ts.reset_requested.connect(
-        lambda: main_window._active_panel().controls.reset_requested.emit()
-    )
+    ts.reset_requested.connect(lambda: main_window._active_panel().controls.reset_requested.emit())
     ts.play_toggled.connect(
         lambda checked: main_window._active_panel().controls.play_toggled.emit(checked)
     )
@@ -784,9 +782,7 @@ def wire_toolstrip(main_window: Any) -> None:
     # Guard each callback so non-active panels are silently ignored.
     for panel in main_window._panels:
         panel.sim_started.connect(
-            lambda _p=panel: (
-                ts.set_running(True) if _p is main_window._active_panel() else None
-            )
+            lambda _p=panel: (ts.set_running(True) if _p is main_window._active_panel() else None)
         )
         panel.sim_finished.connect(
             lambda _p=panel: (
@@ -799,9 +795,7 @@ def wire_toolstrip(main_window: Any) -> None:
             )
         )
         panel.frame_changed.connect(
-            lambda idx, _p=panel: (
-                ts.set_frame(idx) if _p is main_window._active_panel() else None
-            )
+            lambda idx, _p=panel: (ts.set_frame(idx) if _p is main_window._active_panel() else None)
         )
         # Reset toolstrip play button when playback ends
         panel.playback_ended.connect(

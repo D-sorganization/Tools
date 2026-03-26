@@ -6,9 +6,7 @@ try:
 except ImportError:
     from pathlib import Path
 
-    def safe_read_text(
-        path: str | Path, encoding: str = "utf-8", default: str = ""
-    ) -> str:
+    def safe_read_text(path: str | Path, encoding: str = "utf-8", default: str = "") -> str:
         try:
             return Path(path).read_text(encoding=encoding)
         except Exception:  # noqa: BLE001
