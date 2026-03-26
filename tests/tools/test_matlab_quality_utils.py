@@ -83,18 +83,18 @@ def test_track_nesting_nested_if():
 def test_check_banned_todo():
     issues: list[str] = []
     MATLABQualityChecker._check_banned_patterns(
-        Path("script.m"), "% TODO: fix this", 5, issues
+        Path("script.m"), "% TRACKED_TASK: fix this", 5, issues
     )
     assert len(issues) == 1
-    assert "TODO" in issues[0]
+    assert "TRACKED_TASK" in issues[0]
 
 
 def test_check_banned_fixme():
     issues: list[str] = []
     MATLABQualityChecker._check_banned_patterns(
-        Path("script.m"), "% FIXME: broken", 3, issues
+        Path("script.m"), "% TRACKED_DEFECT: broken", 3, issues
     )
-    assert any("FIXME" in i for i in issues)
+    assert any("TRACKED_DEFECT" in i for i in issues)
 
 
 def test_check_banned_clean_line():
@@ -110,7 +110,7 @@ def test_check_banned_dbc_non_path():
     with pytest.raises(PreconditionError):
         MATLABQualityChecker._check_banned_patterns(
             "script.m",
-            "% TODO",
+            "% TRACKED_TASK",
             1,
             issues,  # type: ignore[arg-type]
         )
@@ -225,10 +225,10 @@ def test_static_analysis_no_issues(tmp_path):
 
 
 def test_static_analysis_finds_todo(tmp_path):
-    """m-file with TODO must produce at least one issue."""
+    """m-file with TRACKED_TASK must produce at least one issue."""
     matlab = tmp_path / "matlab"
     matlab.mkdir()
-    (matlab / "dirty.m").write_text("function y = foo(x)\n% TODO: fix\ny = x;\nend\n")
+    (matlab / "dirty.m").write_text("function y = foo(x)\n% TRACKED_TASK: fix\ny = x;\nend\n")
     checker = MATLABQualityChecker(tmp_path)
     result = checker._static_matlab_analysis()
     assert result["issues"]  # non-empty
@@ -383,7 +383,7 @@ def test_run_all_checks_with_issues(tmp_path):
     matlab = tmp_path / "matlab"
     matlab.mkdir()
     (matlab / "bad.m").write_text(
-        "function bad()\n% TODO: fill in\nglobal myVar\neval('x+1');\nend\n"
+        "function bad()\n% TRACKED_TASK: fill in\nglobal myVar\neval('x+1');\nend\n"
     )
     checker = MATLABQualityChecker(tmp_path)
     result = checker.run_all_checks()

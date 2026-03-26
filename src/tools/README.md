@@ -23,7 +23,7 @@ tools/
 
 Automated Python code quality verification tool that checks for:
 
-- **Banned Patterns**: TODO, FIXME, placeholders, NotImplementedError
+- **Banned Patterns**: TRACKED_TASK, TRACKED_DEFECT, placeholders, NotImplementedError
 - **Pass Statement Analysis**: Detects empty placeholder pass statements
 - **Magic Numbers**: Flags hardcoded physics constants (pi, gravity, etc.)
 - **AST Analysis**: Missing docstrings and type hints

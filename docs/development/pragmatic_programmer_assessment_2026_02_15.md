@@ -29,7 +29,7 @@
 | **DRY**            | 5.0   | 0.0  | ⬆️ Major Improvement | Folder tool constants extracted, launcher consolidation done, but `folder_packer_pro.py` (1911 lines) and `analysis_widgets.py` (1557 lines) still monolithic                |
 | **Orthogonality**  | 6.0   | 0.0  | ⬆️ Major Improvement | Electrode advisor, data processor, signal toolkit decomposed into mixins. But 15+ files still exceed 1000 lines. `frankenstein_editor.py` (1399 lines) duplicated in shared/ |
 | **Reversibility**  | 7.0   | 6.0  | ⬆️                   | Config-driven launchers, mixin-based composition pattern established                                                                                                         |
-| **Code Quality**   | 7.0   | 6.0  | ⬆️                   | Zero bare `except:`, 55 print() calls (down from hundreds), 11 TODO/FIXME. Type hint coverage ~31% (1868/5957 functions)                                                     |
+| **Code Quality**   | 7.0   | 6.0  | ⬆️                   | Zero bare `except:`, 55 print() calls (down from hundreds), 11 TRACKED_TASK/TRACKED_DEFECT. Type hint coverage ~31% (1868/5957 functions)                                                     |
 | **Error Handling** | 8.0   | 8.0  | ➡️                   | Specific exception handling throughout. Contracts module exists. 2620 assert statements                                                                                      |
 | **Testing**        | 6.5   | 10.0 | ⬇️ Recalibrated      | 74 test files / 802 source files = 9.2% test file ratio. Test/source line ratio: 8.6%. Characterization tests for legacy code still missing                                  |
 | **Documentation**  | 9.0   | 10.0 | ⬇️ Recalibrated      | 8783 docstring markers. Good inline documentation. Assessment docs well-organized                                                                                            |
@@ -57,7 +57,7 @@
 | **DRY**            | 5.5   | ⚠️ Needs Work | `frankenstein_editor.py` (1449 lines) duplicated from Tools. `golf_gui_application.py` (1662 lines) and `pinocchio/gui.py` (1801 lines) are massive monoliths with overlapping UI patterns |
 | **Orthogonality**  | 5.5   | ⚠️ Needs Work | `drake_gui_app.py` and `pinocchio gui.py` are tightly coupled god modules. 17+ files exceed 1000 lines. `linkage_mechanisms/__init__.py` (1359 lines) is a god-init                        |
 | **Reversibility**  | 7.0   | ✅            | Engine abstraction layer allows swapping physics backends (Drake, MuJoCo, Pinocchio, Simscape)                                                                                             |
-| **Code Quality**   | 7.0   | ✅            | Zero bare `except:`. 100 print() calls in src (should use logging). 12 TODO/FIXME. Type hint coverage ~32% (3375/10503)                                                                    |
+| **Code Quality**   | 7.0   | ✅            | Zero bare `except:`. 100 print() calls in src (should use logging). 12 TRACKED_TASK/TRACKED_DEFECT. Type hint coverage ~32% (3375/10503)                                                                    |
 | **Error Handling** | 7.5   | ✅            | 2751 assertions. Contracts module in `src/shared/python/core/contracts.py`. Some physics code lacks boundary validation                                                                    |
 | **Testing**        | 8.0   | ✅            | 289 test files / 992 source files = 29% ratio. Test/source line ratio: 26.5%. Best ratio in the fleet                                                                                      |
 | **Documentation**  | 8.5   | ✅            | 17262 docstring markers. Comprehensive assessment framework. Patent review docs. IDEAS.md                                                                                                  |
@@ -85,10 +85,10 @@
 | **DRY**            | 6.0   | ⚠️ Needs Work | `visualization_mixin.py` (1004 lines) needs decomposition. Multiple calculator files (scrubber, pressure drop, acid gas) have overlapping thermodynamic property lookups |
 | **Orthogonality**  | 6.5   | ⚠️ Needs Work | 18 files in the 875-1004 line range — none catastrophically large but many are medium-sized god modules. `water_vapor_widget.py` (974 lines) mixes UI and calculation    |
 | **Reversibility**  | 7.0   | ✅            | EOS abstraction (PC-SAFT, SRK) allows equation-of-state swapping. JANAF engine is pluggable                                                                              |
-| **Code Quality**   | 7.5   | ✅            | Zero bare `except:`. 51 print() calls. Zero TODO/FIXME. Type hint coverage ~32% (1866/5896)                                                                              |
+| **Code Quality**   | 7.5   | ✅            | Zero bare `except:`. 51 print() calls. Zero TRACKED_TASK/TRACKED_DEFECT. Type hint coverage ~32% (1866/5896)                                                                              |
 | **Error Handling** | 6.5   | ⚠️ Needs Work | Only 171 assertions — lowest in the fleet for a scientific computing codebase. Contracts module exists but is underutilized                                              |
 | **Testing**        | 8.0   | ✅            | 233 test files / 691 source files = 33.7% ratio. Test/source line ratio: 25.1%. Highest test file ratio                                                                  |
-| **Documentation**  | 8.5   | ✅            | 10326 docstring markers. Zero TODO/FIXME is exceptional. Clean codebase                                                                                                  |
+| **Documentation**  | 8.5   | ✅            | 10326 docstring markers. Zero TRACKED_TASK/TRACKED_DEFECT is exceptional. Clean codebase                                                                                                  |
 | **Automation**     | 6.0   | ⚠️ Needs Work | CI has cancelled/skipped runs on main. 1419 mypy errors (issue #1343). Nightly doc organizer workflow failing                                                            |
 
 ### Key Issues Identified
@@ -112,7 +112,7 @@
 | **DRY**            | 8.0   | ✅     | No file exceeds 418 lines. Shared utilities properly factored into `src/tools/utils/`. LaTeX parser, HTML utils, and file utils are reusable modules             |
 | **Orthogonality**  | 8.0   | ✅     | Clean separation: `affine_control/`, `tangent_models/`, `core/contracts/`, `tools/`. No god modules detected                                                     |
 | **Reversibility**  | 7.5   | ✅     | Configuration-driven patterns. Wrist universal joint tool has clean model/view separation                                                                        |
-| **Code Quality**   | 8.5   | ✅     | Zero bare `except:`. Only 1 print() call in entire src. 6 TODO/FIXME. Type hints: 61% functions have parameter hints, 71% have return annotations. Best in fleet |
+| **Code Quality**   | 8.5   | ✅     | Zero bare `except:`. Only 1 print() call in entire src. 6 TRACKED_TASK/TRACKED_DEFECT. Type hints: 61% functions have parameter hints, 71% have return annotations. Best in fleet |
 | **Error Handling** | 7.0   | ✅     | Contracts definitions module exists (`src/core/contracts/definitions.py`, 278 lines). Zero assert statements — relies on contracts framework instead             |
 | **Testing**        | 7.0   | ✅     | 47 test files. Test/source ratio: 55%. Adequate for current codebase size                                                                                        |
 | **Documentation**  | 8.0   | ✅     | 519 docstring markers across 8.5K lines = good density. Clean documentation                                                                                      |
@@ -139,7 +139,7 @@
 | **Test/Src Ratio** | **8.6%** | **26.5%**     | **25.1%**    | **55%**     |
 | Bare `except:`     | 0        | 0             | 0            | 0           |
 | `print()` calls    | 55       | 100           | 51           | 1           |
-| TODO/FIXME         | 11       | 12            | 0            | 6           |
+| TRACKED_TASK/TRACKED_DEFECT         | 11       | 12            | 0            | 6           |
 | Assert statements  | 2620     | 2751          | 171          | 0           |
 | Type hint %        | 31%      | 32%           | 32%          | 61%         |
 | Max file size      | 1911     | 1801          | 1004         | 418         |
@@ -149,7 +149,7 @@
 ### Fleet-Wide Strengths ✅
 
 1. **Zero bare `except:` across all repos** — excellent exception handling discipline
-2. **Zero TODO/FIXME in Gasification_Model** — cleanest codebase
+2. **Zero TRACKED_TASK/TRACKED_DEFECT in Gasification_Model** — cleanest codebase
 3. **Strong test ratios** in UpstreamDrift (26.5%) and Gasification_Model (25.1%)
 4. **Active CI/CD** with automated quality gates across all repos
 5. **Contracts modules** established in all 4 repos

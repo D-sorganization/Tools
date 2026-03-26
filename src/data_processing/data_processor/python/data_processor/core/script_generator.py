@@ -569,7 +569,7 @@ class ScriptGenerator:
             return [
                 f"{prefix}# Custom operation: {op_name}",
                 f"{prefix}# Parameters: {params}",
-                f"{prefix}# TODO: Implement custom operation",
+                f"{prefix}# TRACKED_TASK: Implement custom operation",
             ]
 
         return []

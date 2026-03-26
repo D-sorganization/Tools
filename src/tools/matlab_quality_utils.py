@@ -319,15 +319,15 @@ class MATLABQualityChecker:
         line_num: int,
         issues: list[str],
     ) -> None:
-        """Check for TODO, FIXME, HACK, XXX, and placeholders."""
+        """Check for TRACKED_TASK, TRACKED_DEFECT, HACK, XXX, and placeholders."""
         if not (file_path is not None):
             raise ValueError("file_path must be provided")
         require(isinstance(file_path, Path), "file_path must be a Path")
         require(isinstance(line_stripped, str), "line_stripped must be a string")
         require(isinstance(issues, list), "issues must be a list")
         banned = [
-            (r"\bTODO\b", "TODO placeholder found"),
-            (r"\bFIXME\b", "FIXME placeholder found"),
+            (r"\bTODO\b", "TRACKED_TASK placeholder found"),
+            (r"\bFIXME\b", "TRACKED_DEFECT placeholder found"),
             (r"\bHACK\b", "HACK comment found"),
             (r"\bXXX\b", "XXX comment found"),
             (

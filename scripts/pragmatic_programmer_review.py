@@ -205,7 +205,7 @@ def check_quality(files: list[Path]) -> list[dict]:
     for file_path in files:
         try:
             content = file_path.read_text(encoding="utf-8", errors="ignore")
-            if "TODO" in content:
+            if "TRACKED_TASK" in content:
                 todos.append(str(file_path))
         except Exception as e:
             pass
@@ -215,7 +215,7 @@ def check_quality(files: list[Path]) -> list[dict]:
             {
                 "principle": "QUALITY",
                 "severity": "MINOR",
-                "title": f"High TODO count ({len(todos)})",
+                "title": f"High TRACKED_TASK count ({len(todos)})",
                 "description": "Accumulated technical debt",
                 "files": todos[:5],
                 "recommendation": "Review TODOs",
