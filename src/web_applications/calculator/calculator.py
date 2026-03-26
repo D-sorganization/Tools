@@ -737,8 +737,10 @@ class TI89Calculator:
             "simplify": sp.simplify,
             "factorial": TI89Calculator._safe_factorial,
             "nCr": sp.binomial,
-            "nPr": lambda n, r, **k: TI89Calculator._safe_factorial(n)
-            / TI89Calculator._safe_factorial(n - r),
+            "nPr": lambda n, r, **k: (
+                TI89Calculator._safe_factorial(n)
+                / TI89Calculator._safe_factorial(n - r)
+            ),
             "sum": sp.summation,
             "product": sp.product,
         }
@@ -773,9 +775,9 @@ class TI89Calculator:
             "matrix_power": self._matrix_power,
             "eigenvals": lambda matrix, **k: sp.Matrix(matrix).eigenvals(),
             "eigenvects": lambda matrix, **k: sp.Matrix(matrix).eigenvects(),
-            "charpoly": lambda matrix, symbol="\u03bb", **k: sp.Matrix(matrix)
-            .charpoly(sp.Symbol(symbol))
-            .as_expr(),
+            "charpoly": lambda matrix, symbol="\u03bb", **k: (
+                sp.Matrix(matrix).charpoly(sp.Symbol(symbol)).as_expr()
+            ),
             "nullspace": lambda matrix, **k: sp.Matrix(matrix).nullspace(),
             "colspace": lambda matrix, **k: sp.Matrix(matrix).columnspace(),
             "rowspace": lambda matrix, **k: sp.Matrix(matrix).rowspace(),
