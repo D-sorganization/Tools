@@ -1,3 +1,7 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """Command-line interface and sheet generation orchestration.
 
 This module contains the high-level ``generate`` function and the

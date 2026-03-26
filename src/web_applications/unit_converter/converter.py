@@ -1,3 +1,7 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """Unit Converter - Python backend using NIST-standard conversion factors.
 
 Mirrors the conversion logic from the PyQt6 flow rate converter and the
