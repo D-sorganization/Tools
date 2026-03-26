@@ -211,9 +211,7 @@ class TestJointLimitTorqueNDOF:
         assert tau.shape == (2,)
 
     def test_finite(self, wide_limits: JointLimitsNDOF) -> None:
-        tau = joint_limit_torque_ndof(
-            np.array([1.0, -0.5]), np.array([0.5, 0.1]), wide_limits
-        )
+        tau = joint_limit_torque_ndof(np.array([1.0, -0.5]), np.array([0.5, 0.1]), wide_limits)
         assert np.all(np.isfinite(tau))
 
 
@@ -248,9 +246,7 @@ class TestJointVelocities:
         result = joint_velocities(rest_state, params)
         assert isinstance(result, dict)
 
-    def test_has_speed_keys(
-        self, params: PendulumParams, rest_state: np.ndarray
-    ) -> None:
+    def test_has_speed_keys(self, params: PendulumParams, rest_state: np.ndarray) -> None:
         result = joint_velocities(rest_state, params)
         assert "wrist_speed" in result
         assert "tip_speed" in result
@@ -285,9 +281,7 @@ class TestBaseForce:
         result = base_force(rest_state, qddot, params)
         assert isinstance(result, dict)
 
-    def test_has_required_keys(
-        self, params: PendulumParams, rest_state: np.ndarray
-    ) -> None:
+    def test_has_required_keys(self, params: PendulumParams, rest_state: np.ndarray) -> None:
         qddot = np.zeros(2)
         result = base_force(rest_state, qddot, params)
         assert "fx" in result
@@ -323,9 +317,7 @@ class TestZtcfAccelerations:
         qddot = ztcf_accelerations(moving_state, params)
         assert np.all(np.isfinite(qddot))
 
-    def test_zero_at_equilibrium(
-        self, params: PendulumParams, rest_state: np.ndarray
-    ) -> None:
+    def test_zero_at_equilibrium(self, params: PendulumParams, rest_state: np.ndarray) -> None:
         """At equilibrium with no velocity, ZTCF accel should be zero."""
         qddot = ztcf_accelerations(rest_state, params)
         np.testing.assert_allclose(qddot, 0.0, atol=1e-10)
@@ -342,9 +334,7 @@ class TestLinearAccelerations:
         result = linear_accelerations(rest_state, qddot, params)
         assert isinstance(result, dict)
 
-    def test_has_wrist_and_tip(
-        self, params: PendulumParams, rest_state: np.ndarray
-    ) -> None:
+    def test_has_wrist_and_tip(self, params: PendulumParams, rest_state: np.ndarray) -> None:
         qddot = np.zeros(2)
         result = linear_accelerations(rest_state, qddot, params)
         assert "wrist" in result or "ax_wrist" in result or len(result) >= 2
@@ -370,17 +360,13 @@ class TestTotalEnergy:
         E = total_energy(rest_state, params)
         assert np.isfinite(E)
 
-    def test_equals_T_plus_V(
-        self, params: PendulumParams, moving_state: np.ndarray
-    ) -> None:
+    def test_equals_T_plus_V(self, params: PendulumParams, moving_state: np.ndarray) -> None:
         E = total_energy(moving_state, params)
         T = kinetic_energy(moving_state, params)
         V = potential_energy(moving_state, params)
         assert E == pytest.approx(T + V, rel=1e-9)
 
-    def test_rest_equals_pe_only(
-        self, params: PendulumParams, rest_state: np.ndarray
-    ) -> None:
+    def test_rest_equals_pe_only(self, params: PendulumParams, rest_state: np.ndarray) -> None:
         E = total_energy(rest_state, params)
         V = potential_energy(rest_state, params)
         assert E == pytest.approx(V, abs=1e-10)

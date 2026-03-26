@@ -307,9 +307,7 @@ def test_native_double_wrappers_map_rust_outputs(
             return [[5.0, 2.0], [2.0, 1.0]]
 
         @staticmethod
-        def py_double_gravity_vector(
-            q: list[float], params: tuple[float, ...]
-        ) -> list[float]:
+        def py_double_gravity_vector(q: list[float], params: tuple[float, ...]) -> list[float]:
             del q, params
             return [3.0, 1.0]
 
@@ -368,9 +366,7 @@ def test_native_triple_wrappers_map_rust_outputs(
             return [[14.0, 8.0, 3.0], [8.0, 5.0, 2.0], [3.0, 2.0, 1.0]]
 
         @staticmethod
-        def py_triple_gravity_vector(
-            q: list[float], params: tuple[float, ...]
-        ) -> list[float]:
+        def py_triple_gravity_vector(q: list[float], params: tuple[float, ...]) -> list[float]:
             del q, params
             return [1.0, 2.0, 3.0]
 
@@ -403,9 +399,7 @@ def test_native_triple_wrappers_map_rust_outputs(
 
     mass = native_backend.triple_mass_matrix(0.0, 0.0, triple_params)
     gravity = native_backend.triple_gravity_vector(0.0, 0.0, 0.0, triple_params)
-    coriolis = native_backend.triple_coriolis_vector(
-        0.0, 0.0, 0.0, 0.0, 0.0, triple_params
-    )
+    coriolis = native_backend.triple_coriolis_vector(0.0, 0.0, 0.0, 0.0, 0.0, triple_params)
     fk = native_backend.triple_forward_kinematics(0.0, 0.0, 0.0, triple_params)
 
     assert mass is not None
@@ -511,9 +505,7 @@ def test_native_projection_wrappers_map_rust_outputs(
     q_proj = native_backend.golfer_project_to_constraints(
         np.zeros(8), golfer_params, max_iters=5, tol=1e-6
     )
-    qdot_proj = native_backend.golfer_project_velocity(
-        np.zeros(8), np.zeros(8), golfer_params
-    )
+    qdot_proj = native_backend.golfer_project_velocity(np.zeros(8), np.zeros(8), golfer_params)
 
     assert q_proj is not None
     assert qdot_proj is not None

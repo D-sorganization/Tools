@@ -577,10 +577,9 @@ class TestFileSyncIntegrity:
                     "run: cp <root>/X python/urdf_builder_gui/X"
                 )
 
-        assert (
-            not mismatches
-        ), "DRY sync violation! Module copies have drifted:\n" + "\n".join(
-            f"  • {m}" for m in mismatches
+        assert not mismatches, (
+            "DRY sync violation! Module copies have drifted:\n"
+            + "\n".join(f"  • {m}" for m in mismatches)
         )
 
 

@@ -384,9 +384,9 @@ class TrajectoryPlanner:
         # DbC preconditions
         assert origin is not None, "Origin body must not be None"
         assert destination is not None, "Destination body must not be None"
-        assert (
-            departure_date > 0
-        ), f"Departure date must be positive Julian date, got {departure_date}"
+        assert departure_date > 0, (
+            f"Departure date must be positive Julian date, got {departure_date}"
+        )
 
         # Get orbital radii at departure
         origin_state = origin.get_state_at_time(departure_date)

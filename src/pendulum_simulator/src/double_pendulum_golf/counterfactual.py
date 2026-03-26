@@ -114,9 +114,9 @@ def zero_torque_joint_forces_double(
 
     # Postcondition: all outputs finite
     for key, (fx, fy) in forces.items():
-        assert np.isfinite(fx) and np.isfinite(
-            fy
-        ), f"Non-finite zero-torque force at {key}: ({fx}, {fy})"
+        assert np.isfinite(fx) and np.isfinite(fy), (
+            f"Non-finite zero-torque force at {key}: ({fx}, {fy})"
+        )
     return forces
 
 
@@ -125,9 +125,7 @@ def zero_torque_joint_forces_double(
 # ---------------------------------------------------------------------------
 
 
-def _zero_torque_qddot_triple(
-    state: np.ndarray, params: TriplePendulumParams
-) -> np.ndarray:
+def _zero_torque_qddot_triple(state: np.ndarray, params: TriplePendulumParams) -> np.ndarray:
     """Compute angular accel under zero driving torque for triple pendulum.
 
     Preconditions
@@ -176,7 +174,7 @@ def zero_torque_joint_forces_triple(
     forces = net_joint_forces_triple(state, qddot, params)
 
     for key, (fx, fy) in forces.items():
-        assert np.isfinite(fx) and np.isfinite(
-            fy
-        ), f"Non-finite zero-torque force at {key}: ({fx}, {fy})"
+        assert np.isfinite(fx) and np.isfinite(fy), (
+            f"Non-finite zero-torque force at {key}: ({fx}, {fy})"
+        )
     return forces
