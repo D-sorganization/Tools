@@ -1,3 +1,7 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """Pressure Drop Calculator PyQt6 Main Window.
 
 A comprehensive GUI for calculating pipe pressure drops using the

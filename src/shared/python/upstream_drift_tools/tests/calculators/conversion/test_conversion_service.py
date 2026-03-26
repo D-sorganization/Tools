@@ -1,3 +1,7 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """Extended tests for UnitConversionService targeting uncovered lines.
 
 Targets: 41% → ~95%+ coverage of service.py

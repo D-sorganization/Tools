@@ -1,3 +1,7 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """Financial Calculator PyQt6 Main Window.
 
 Provides a comprehensive GUI for financial modeling of plant operations
