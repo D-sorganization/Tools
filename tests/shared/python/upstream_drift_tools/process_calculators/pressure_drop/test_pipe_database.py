@@ -151,9 +151,9 @@ class TestDatabaseIntegrity:
     def test_all_entries_have_consistent_dimensions(self) -> None:
         for key, (od, wall, id_val) in STEEL_PIPE_DIMENSIONS.items():
             expected_id = od - 2 * wall
-            assert abs(id_val - expected_id) < 0.1, (
-                f"Pipe {key}: ID={id_val} != OD-2*wall={expected_id}"
-            )
+            assert (
+                abs(id_val - expected_id) < 0.1
+            ), f"Pipe {key}: ID={id_val} != OD-2*wall={expected_id}"
 
     def test_database_not_empty(self) -> None:
         assert len(STEEL_PIPE_DIMENSIONS) > 50
