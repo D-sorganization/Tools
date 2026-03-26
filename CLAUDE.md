@@ -49,7 +49,7 @@ python3 -m pytest -m dwsim                        # DWSIM integration tests
 5. Manifest validation — adding a module requires a manifest entry
 6. pytest with **10% coverage minimum**, must not regress on touched files
 7. No `print()` in `src/` — use logging
-8. No TODO/FIXME unless tied to a tracked GitHub issue
+8. No TRACKED_TASK/TRACKED_DEFECT unless tied to a tracked GitHub issue
 
 ## Test Markers (13 Total)
 
