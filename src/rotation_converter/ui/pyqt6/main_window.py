@@ -127,7 +127,7 @@ def _get_plot_colors() -> dict[str, Any]:
                 "surface": colors.get("group_bg", _DARK_SURFACE),
                 "axes": CHART_COLORS[:3] if CHART_COLORS else _AXIS_COLORS,
             }
-        except Exception as e:
+        except Exception:
             pass
     return {
         "bg": _DARK_BG,
@@ -589,7 +589,7 @@ class RigidTransformTab(QWidget):
                 f"  pitch: {screw['pitch']:.6f}",
                 f"  theta: {screw['theta']:.6f} rad",
             ]
-        except Exception as e:
+        except Exception:
             pass
 
         self._tf_output.setPlainText("\n".join(lines))
@@ -1185,12 +1185,12 @@ class RotationConverterMainWindow(QMainWindow):
     def _build_menus(self) -> None:
         menu_bar = self.menuBar()
         if not (menu_bar is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
 
         # File menu
         file_menu = menu_bar.addMenu("&File")
         if not (file_menu is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         quit_action = QAction("&Quit", self)
         quit_action.setShortcut("Ctrl+Q")
         quit_action.triggered.connect(self.close)
@@ -1199,7 +1199,7 @@ class RotationConverterMainWindow(QMainWindow):
         # Help menu
         help_menu = menu_bar.addMenu("&Help")
         if not (help_menu is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         about = QAction("&About", self)
         about.triggered.connect(self._show_about)
         help_menu.addAction(about)
@@ -1210,7 +1210,7 @@ class RotationConverterMainWindow(QMainWindow):
                 mgr = get_theme_manager()
                 mgr.apply_theme_to_window(self)
                 mgr.themeChanged.connect(self._on_theme_changed)
-            except Exception as e:
+            except Exception:
                 pass
 
     def _on_theme_changed(self, theme_name: str) -> None:

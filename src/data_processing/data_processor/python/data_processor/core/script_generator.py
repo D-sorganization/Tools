@@ -135,10 +135,10 @@ class ScriptGenerator:
 
         for i, step in enumerate(pipeline.steps):
             if not step.enabled:
-                lines.append(f"    # Step {i+1} (disabled): {step.description}")
+                lines.append(f"    # Step {i + 1} (disabled): {step.description}")
                 continue
 
-            lines.append(f"    # Step {i+1}: {step.description}")
+            lines.append(f"    # Step {i + 1}: {step.description}")
             lines.extend(self._generate_step_code(step, indent=4))
             lines.append("")
 

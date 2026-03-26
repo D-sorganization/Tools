@@ -170,14 +170,14 @@ class TI89Calculator:
     def allowed_functions(self) -> Mapping[str, object]:
         """Return the dictionary of allowed symbolic functions."""
         if not (self._allowed_functions is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         return self._allowed_functions
 
     @property
     def safe_globals(self) -> Mapping[str, object]:
         """Return the sandboxed global dict used during expression parsing."""
         if not (self._SAFE_GLOBALS_CACHE is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         return self._SAFE_GLOBALS_CACHE
 
     def evaluate(
