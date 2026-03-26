@@ -42,7 +42,7 @@ class UICreationMixin:
                 # Fallback to PNG if ICO doesn't exist
                 self._load_png_fallback(base_dir)
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Could not load icon: {e}")
 
     def _set_windows_app_id(self) -> None:
@@ -94,7 +94,7 @@ class UICreationMixin:
                 self.icon_photos = photos
                 logger.info(f"Set iconphoto with {len(photos)} different sizes")
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.warning(f"Could not set iconphoto from ICO: {e}")
 
     def _load_png_fallback(self, base_dir: str) -> None:
@@ -119,7 +119,7 @@ class UICreationMixin:
                     self.root.iconphoto(True, *photos)
                     self.icon_photos = photos
                     logger.info(f"Loaded PNG icon: {png_path}")
-            except (IOError, PermissionError, OSError) as e:
+            except (PermissionError, OSError) as e:
                 logger.warning(f"Failed to load PNG icon: {e}")
 
         else:
@@ -629,7 +629,7 @@ class UICreationMixin:
             else:
                 logger.debug("Folder selection cancelled by user")
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.exception("Error selecting source folder")
             messagebox.showerror("Error", f"Failed to select source folder: {e}")
 
@@ -679,7 +679,7 @@ class UICreationMixin:
 
                 self.update_source_info()
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.exception("Error removing source folders")
             messagebox.showerror("Error", f"Failed to remove source folders: {e}")
 
@@ -725,6 +725,6 @@ class UICreationMixin:
             else:
                 logger.debug("Destination folder selection cancelled by user")
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.exception("Error selecting destination folder")
             messagebox.showerror("Error", f"Failed to select destination folder: {e}")
