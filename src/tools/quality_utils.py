@@ -37,6 +37,8 @@ BANNED_PATTERNS: list[tuple[Pattern, str]] = [
     (re.compile(r"\bREVIEW\b"), "REVIEW placeholder found"),
     (re.compile(r"^\s*\.\.\.\s*$"), "Ellipsis placeholder"),
     (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
+    (re.compile(r"\bTODO\b"), "TODO placeholder found"),
+    (re.compile(r"\bFIXME\b"), "FIXME placeholder found"),
     # More specific angle bracket patterns to avoid Tkinter event bindings
     (
         re.compile(r"<[^<>]*placeholder[^<>]*>", re.IGNORECASE),
