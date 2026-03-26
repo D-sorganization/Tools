@@ -108,9 +108,7 @@ def collect_files(
             break
 
         dirs[:] = [
-            d
-            for d in dirs
-            if not should_exclude(Path(root) / d, exclude_patterns, include_git)
+            d for d in dirs if not should_exclude(Path(root) / d, exclude_patterns, include_git)
         ]
 
         for filename in filenames:
@@ -196,7 +194,7 @@ def _serialize_and_write(
     if encrypt:
         json_data = EncryptionManager.encrypt_data(json_data, password)
 
-    with open(output_path, "wb") as f:  # type: ignore[assignment]
+    with open(output_path, "wb") as f:
         f.write(json_data)
 
 

@@ -174,9 +174,7 @@ class FolderPackerPro(
         style.configure("TFrame", background=theme["bg"])
         style.configure("TLabel", background=theme["bg"], foreground=theme["fg"])
         style.configure("TLabelframe", background=theme["bg"], foreground=theme["fg"])
-        style.configure(
-            "TLabelframe.Label", background=theme["bg"], foreground=theme["fg"]
-        )
+        style.configure("TLabelframe.Label", background=theme["bg"], foreground=theme["fg"])
         style.configure(
             "Accent.TButton",
             background=theme["accent"],
@@ -245,7 +243,7 @@ class FolderPackerPro(
 
     # -- File Selection --------------------------------------------------------
 
-    def _on_file_select(self, event: tk.Event) -> None:  # type: ignore[type-arg]
+    def _on_file_select(self, event: tk.Event) -> None:
         """Handle file selection in preview tree.
 
         Args:

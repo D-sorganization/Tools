@@ -130,8 +130,7 @@ def _default_view_state(
     return (
         SECTION_VIEW_ELEVATION,
         _normalized_azimuth(
-            view_options.normalized_split_angle_degrees
-            + SECTION_VIEW_AZIMUTH_OFFSET_DEGREES
+            view_options.normalized_split_angle_degrees + SECTION_VIEW_AZIMUTH_OFFSET_DEGREES
         ),
     )
 

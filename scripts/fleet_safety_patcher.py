@@ -22,7 +22,9 @@ TARGET_REPOS = [
 ]
 
 BRANCH_NAME = "feat/autofix-safety-guards"
-COMMIT_MSG = "feat(autofix): implement safety guards (CODEOWNERS, lobotomy-guard, environment parity)"
+COMMIT_MSG = (
+    "feat(autofix): implement safety guards (CODEOWNERS, lobotomy-guard, environment parity)"
+)
 PR_TITLE = "Security: Fleet-wide Autofix Safety Guards"
 PR_BODY = """This PR implements critical safety guards to prevent automated regressions:
 1. **CODEOWNERS**: Protects workflows and scripts from unreviewed automated changes.
@@ -131,5 +133,5 @@ if __name__ == "__main__":
         try:
             repo_name = repo  # for logs
             process_repo(repo)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             logger.info(f"Failed to process {repo}: {e}")

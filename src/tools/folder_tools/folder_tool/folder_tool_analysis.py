@@ -88,9 +88,7 @@ class AnalysisMixin:
 
                 file_path = Path(root) / file
                 try:
-                    if not Path(file_path).exists() or not os.access(
-                        file_path, os.R_OK
-                    ):
+                    if not Path(file_path).exists() or not os.access(file_path, os.R_OK):
                         folder_errors += 1
                         continue
 
@@ -158,8 +156,7 @@ class AnalysisMixin:
                 f"  Source folders processed: {num_folders}",
                 f"  Total folders analyzed: {num_folders}",
                 f"  Analysis timestamp: {datetime.now()}",
-                f"  File size limits: {MIN_FILE_SIZE_BYTES} bytes - "
-                f"{MAX_FILE_SIZE_MB} MB",
+                f"  File size limits: {MIN_FILE_SIZE_BYTES} bytes - " f"{MAX_FILE_SIZE_MB} MB",
             ],
         )
         return report
@@ -210,8 +207,7 @@ class AnalysisMixin:
                     )
                 else:
                     report.append(
-                        f"  Files: {folder_files}, "
-                        f"Size: {folder_size / (1024 * 1024):.1f} MB",
+                        f"  Files: {folder_files}, " f"Size: {folder_size / (1024 * 1024):.1f} MB",
                     )
             except (OSError, PermissionError) as e:
                 error_msg = f"Error accessing folder {folder}: {e}"
@@ -232,8 +228,7 @@ class AnalysisMixin:
         )
 
         logger.info(
-            f"Analysis completed: {total_files} files, "
-            f"{total_size / (1024 * 1024):.1f} MB",
+            f"Analysis completed: {total_files} files, " f"{total_size / (1024 * 1024):.1f} MB",
         )
         if analysis_errors:
             logger.warning(f"Analysis completed with {len(analysis_errors)} errors")
@@ -287,8 +282,7 @@ class AnalysisMixin:
                     if ext and not ext.startswith("."):
                         messagebox.showwarning(
                             "Invalid Extension Format",
-                            f"Extension '{ext}' should start with a dot "
-                            "(e.g., '.txt').",
+                            f"Extension '{ext}' should start with a dot " "(e.g., '.txt').",
                         )
                         return False
             except (KeyError, ValueError, TypeError):
@@ -338,12 +332,8 @@ class AnalysisMixin:
                 os.W_OK,
             )
         else:
-            validation_results["destination_exists"] = (
-                True  # Not required for all modes
-            )
-            validation_results["destination_writable"] = (
-                True  # Not required for all modes
-            )
+            validation_results["destination_exists"] = True  # Not required for all modes
+            validation_results["destination_writable"] = True  # Not required for all modes
 
         # Check file size inputs
         try:

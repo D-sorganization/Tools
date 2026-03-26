@@ -112,9 +112,7 @@ class TestAddTextPanel:
         _, msp = doc_and_msp
         ensure_layer(msp.doc, "TEXT")
         ensure_layer(msp.doc, "NOTES")
-        add_text_panel(
-            msp, 0, 0, 40, 20, "Title", ["Line 1", "Line 2"], 1.5, "TEXT", "NOTES"
-        )
+        add_text_panel(msp, 0, 0, 40, 20, "Title", ["Line 1", "Line 2"], 1.5, "TEXT", "NOTES")
         # Should have box + title + content texts
         assert len(msp) > 2
 

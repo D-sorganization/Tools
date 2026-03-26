@@ -68,9 +68,7 @@ class TestBackendModeFunctions:
         monkeypatch.setenv("PENDULUM_DOUBLE_BACKEND", "python")
         assert double_backend_mode() == "python"
 
-    def test_env_override_invalid_defaults_to_python(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_env_override_invalid_defaults_to_python(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """An invalid env value should default to 'python'."""
         monkeypatch.setenv("PENDULUM_GOLFER_BACKEND", "invalid")
         assert golfer_backend_mode() == "python"

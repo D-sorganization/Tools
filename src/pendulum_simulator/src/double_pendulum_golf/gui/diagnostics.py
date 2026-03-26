@@ -323,9 +323,7 @@ class DiagnosticsViewer(QDialog):
         # Events table
         self._table = QTableWidget()
         self._table.setColumnCount(5)
-        self._table.setHorizontalHeaderLabels(
-            ["Time", "Severity", "Category", "Message", "Source"]
-        )
+        self._table.setHorizontalHeaderLabels(["Time", "Severity", "Category", "Message", "Source"])
         header_view = self._table.horizontalHeader()
         if not (header_view is not None):
             raise ValueError("DbC Blocked: Precondition failed.")

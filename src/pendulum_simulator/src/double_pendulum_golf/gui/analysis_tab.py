@@ -424,9 +424,7 @@ class AnalysisTab:
         if self._model_type == "golfer":
             return self._evaluator_golfer(z_key)
 
-        logger.warning(
-            "Surface evaluator not available for model=%s z=%s", self._model_type, z_key
-        )
+        logger.warning("Surface evaluator not available for model=%s z=%s", self._model_type, z_key)
         return None
 
     # ── Double pendulum evaluators ──────────────────────────────────

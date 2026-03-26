@@ -105,9 +105,7 @@ def make_random(
     if not (n_pts >= 6):
         raise ValueError("DbC Blocked: Precondition failed.")
     rng = random.Random(seed)
-    radii = [
-        base_radius * (1.0 + roughness * (rng.random() * 2 - 1)) for _ in range(n_pts)
-    ]
+    radii = [base_radius * (1.0 + roughness * (rng.random() * 2 - 1)) for _ in range(n_pts)]
     verts = tuple(_polar_to_xy(radii[i], 2 * math.pi * i / n_pts) for i in range(n_pts))
     # Estimate bounding semi-axes for MoI
     xs = [v[0] for v in verts]
@@ -122,9 +120,7 @@ def make_random(
     )
 
 
-def surface_normal_at_angle(
-    shape: AsteroidShape, angle_rad: float
-) -> tuple[float, float]:
+def surface_normal_at_angle(shape: AsteroidShape, angle_rad: float) -> tuple[float, float]:
     """Approximate outward surface normal at the given body-frame angle.
 
     Finds the nearest vertex and uses the polygon edge normal.
@@ -162,9 +158,7 @@ def surface_normal_at_angle(
     return nx, ny
 
 
-def surface_point_at_angle(
-    shape: AsteroidShape, angle_rad: float
-) -> tuple[float, float]:
+def surface_point_at_angle(shape: AsteroidShape, angle_rad: float) -> tuple[float, float]:
     """Body-frame point on the asteroid surface at the given angle."""
     if not (shape is not None):
         raise ValueError("shape must be provided")

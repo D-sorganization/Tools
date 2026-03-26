@@ -72,8 +72,7 @@ def read_dbf_tags(file_path: str | Path) -> list[str]:
     """
     if not DBF_AVAILABLE:
         raise ImportError(
-            "simpledbf is required for DBF file support. "
-            "Install with: pip install simpledbf"
+            "simpledbf is required for DBF file support. " "Install with: pip install simpledbf"
         )
 
     file_path = Path(file_path)

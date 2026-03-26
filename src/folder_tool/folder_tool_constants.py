@@ -63,16 +63,10 @@ MAX_ARCHIVE_SIZE_RATIO: Final[float] = (
     0.1  # Minimum extracted size ratio [ratio]
     # - archive size * 0.1 for validation
 )
-MAX_DIALOG_WIDTH: Final[int] = (
-    800  # Maximum dialog width [pixels] - prevents dialog overflow
-)
-MAX_DIALOG_HEIGHT: Final[int] = (
-    600  # Maximum dialog height [pixels] - prevents dialog overflow
-)
+MAX_DIALOG_WIDTH: Final[int] = 800  # Maximum dialog width [pixels] - prevents dialog overflow
+MAX_DIALOG_HEIGHT: Final[int] = 600  # Maximum dialog height [pixels] - prevents dialog overflow
 MIN_DIALOG_WIDTH: Final[int] = 400  # Minimum dialog width [pixels] - ensures usability
-MIN_DIALOG_HEIGHT: Final[int] = (
-    300  # Minimum dialog height [pixels] - ensures usability
-)
+MIN_DIALOG_HEIGHT: Final[int] = 300  # Minimum dialog height [pixels] - ensures usability
 
 # ---------------------------------------------------------------------------
 # Content / text constants
@@ -97,18 +91,10 @@ MAX_FALLBACK_CONTENT_SIZE: Final[int] = (
 # ---------------------------------------------------------------------------
 # Progress tracking constants
 # ---------------------------------------------------------------------------
-PROGRESS_BACKUP_PERCENT: Final[int] = (
-    20  # Progress percentage allocated to backup operations [%]
-)
-PROGRESS_MAIN_OP_PERCENT: Final[int] = (
-    40  # Progress percentage allocated to main operations [%]
-)
-PROGRESS_ZIP_PERCENT: Final[int] = (
-    10  # Progress percentage allocated to ZIP creation [%]
-)
-PROGRESS_START_MAIN: Final[int] = (
-    30  # Starting progress percentage for main operations [%]
-)
+PROGRESS_BACKUP_PERCENT: Final[int] = 20  # Progress percentage allocated to backup operations [%]
+PROGRESS_MAIN_OP_PERCENT: Final[int] = 40  # Progress percentage allocated to main operations [%]
+PROGRESS_ZIP_PERCENT: Final[int] = 10  # Progress percentage allocated to ZIP creation [%]
+PROGRESS_START_MAIN: Final[int] = 30  # Starting progress percentage for main operations [%]
 PROGRESS_START_ZIP: Final[int] = 85  # Starting progress percentage for ZIP creation [%]
 
 # ---------------------------------------------------------------------------
@@ -126,9 +112,7 @@ DIALOG_HEIGHT_OFFSET: Final[int] = (
     100  # Additional height offset for dialog borders [pixels]
     # - accounts for title bar and margins
 )
-LINE_HEIGHT_PIXELS: Final[int] = (
-    20  # Height per line for dialog height calculation [pixels]
-)
+LINE_HEIGHT_PIXELS: Final[int] = 20  # Height per line for dialog height calculation [pixels]
 MAX_TITLE_PREVIEW_LENGTH: Final[int] = (
     50  # Maximum title length for preview in logs [characters]
     # - prevents log overflow
@@ -183,8 +167,7 @@ def validate_constants() -> None:
     # Validate archive constants
     if not 0 < MAX_ARCHIVE_SIZE_RATIO < 1:
         raise ValueError(
-            f"MAX_ARCHIVE_SIZE_RATIO must be between 0 and 1, "
-            f"got {MAX_ARCHIVE_SIZE_RATIO}",
+            f"MAX_ARCHIVE_SIZE_RATIO must be between 0 and 1, " f"got {MAX_ARCHIVE_SIZE_RATIO}",
         )
 
     # Validate retry constants
@@ -221,9 +204,7 @@ def validate_constants() -> None:
             )
 
     # Validate progress flow consistency
-    total_progress = (
-        PROGRESS_BACKUP_PERCENT + PROGRESS_MAIN_OP_PERCENT + PROGRESS_ZIP_PERCENT
-    )
+    total_progress = PROGRESS_BACKUP_PERCENT + PROGRESS_MAIN_OP_PERCENT + PROGRESS_ZIP_PERCENT
     if total_progress > 100:
         raise ValueError(
             f"Total progress allocation exceeds 100%: {total_progress}",

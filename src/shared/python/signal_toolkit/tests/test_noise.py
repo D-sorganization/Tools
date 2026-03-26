@@ -192,17 +192,13 @@ class TestAddNoiseToSignal:
         assert not np.allclose(noisy.values, sine_signal.values)
 
     def test_metadata_contains_noise_info(self, sine_signal: Signal):
-        noisy = add_noise_to_signal(
-            sine_signal, noise_type=NoiseType.PINK, amplitude=0.05, seed=0
-        )
+        noisy = add_noise_to_signal(sine_signal, noise_type=NoiseType.PINK, amplitude=0.05, seed=0)
         assert noisy.metadata["noise_type"] == "pink"
         assert noisy.metadata["noise_amplitude"] == 0.05
 
     def test_with_all_noise_types(self, sine_signal: Signal):
         for noise_type in NoiseType:
-            noisy = add_noise_to_signal(
-                sine_signal, noise_type=noise_type, amplitude=0.1, seed=0
-            )
+            noisy = add_noise_to_signal(sine_signal, noise_type=noise_type, amplitude=0.1, seed=0)
             assert len(noisy.values) == len(sine_signal.values)
 
 
@@ -223,9 +219,7 @@ class TestGenerateDisturbanceProfile:
         assert len(sig.values) == len(t)
 
     def test_pulse_disturbance(self, t: np.ndarray):
-        sig = generate_disturbance_profile(
-            t, "pulse", start_time=0.3, duration=0.1, magnitude=3.0
-        )
+        sig = generate_disturbance_profile(t, "pulse", start_time=0.3, duration=0.1, magnitude=3.0)
         assert sig.name == "pulse_disturbance"
         # Values should be non-zero during pulse window
         assert np.any(sig.values > 0)
@@ -247,9 +241,7 @@ class TestGenerateDisturbanceProfile:
         assert len(sig.values) == len(t)
 
     def test_sine_disturbance(self, t: np.ndarray):
-        sig = generate_disturbance_profile(
-            t, "sine", frequency=2.0, amplitude=1.5, phase=0.0
-        )
+        sig = generate_disturbance_profile(t, "sine", frequency=2.0, amplitude=1.5, phase=0.0)
         assert sig.name == "sine_disturbance"
         assert len(sig.values) == len(t)
 

@@ -88,9 +88,7 @@ class TestFrictionFactorLaminar:
 class TestFrictionFactorColebrook:
     """Colebrook-White implicit correlation."""
 
-    @pytest.mark.parametrize(
-        "method", ["colebrook", "swamee-jain", "churchill", "haaland"]
-    )
+    @pytest.mark.parametrize("method", ["colebrook", "swamee-jain", "churchill", "haaland"])
     def test_all_methods_positive(self, method: str) -> None:
         f = select_friction_factor_method(method, 50_000, 0.0002)
         assert f > 0
@@ -368,9 +366,7 @@ class TestWilkeViscosity:
         mu = calculate_mixture_viscosity_wilke(syngas_composition, 800.0, 1e5)
         assert 1e-5 < mu < 1e-4  # 10-100 µPa·s
 
-    def test_viscosity_increases_with_temperature(
-        self, syngas_composition: dict
-    ) -> None:
+    def test_viscosity_increases_with_temperature(self, syngas_composition: dict) -> None:
         """Gas viscosity increases with temperature (unlike liquids)."""
         mu_low = calculate_mixture_viscosity_wilke(syngas_composition, 300.0, 1e5)
         mu_high = calculate_mixture_viscosity_wilke(syngas_composition, 1000.0, 1e5)

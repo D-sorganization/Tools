@@ -296,8 +296,7 @@ class ColumnOperationCommand(DataFrameCommand):
     def description(self) -> str:
         if self._formula:
             return (
-                f"{self._operation} column '{self._column_name}'"
-                f" using formula: {self._formula}"
+                f"{self._operation} column '{self._column_name}'" f" using formula: {self._formula}"
             )
         return f"{self._operation} column '{self._column_name}'"
 

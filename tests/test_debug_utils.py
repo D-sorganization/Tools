@@ -284,9 +284,7 @@ class TestStackInspection:
         """Test getting call stack with local variables."""
         local_var = 42  # noqa: F841
 
-        frames: list[StackFrame] = get_call_stack(
-            skip_frames=1, max_frames=3, include_locals=True
-        )
+        frames: list[StackFrame] = get_call_stack(skip_frames=1, max_frames=3, include_locals=True)
         assert len(frames) >= 1
 
     def test_get_caller_info(self) -> None:

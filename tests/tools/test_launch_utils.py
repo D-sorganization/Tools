@@ -9,8 +9,8 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+from contracts import PreconditionError
 
-from src.shared.python.contracts import PreconditionError
 from tools.launch_utils import (
     LaunchError,
     PlatformError,
@@ -193,9 +193,7 @@ def test_launch_batch_tool_success_windows(mock_popen, tmp_path):
     assert mock_popen.called
 
 
-@pytest.mark.skipif(
-    sys.platform == "win32", reason="Batch tools only fail on non-Windows"
-)
+@pytest.mark.skipif(sys.platform == "win32", reason="Batch tools only fail on non-Windows")
 def test_launch_batch_tool_fails_on_non_windows(tmp_path):
     f = tmp_path / "script.bat"
     f.write_text("echo hello")

@@ -197,9 +197,7 @@ def compute_sphere_inertia(mass: float, radius: float) -> tuple[float, float, fl
     return i, i, i
 
 
-def interpolate_gender_factor(
-    factor: float, female_val: float, male_val: float
-) -> float:
+def interpolate_gender_factor(factor: float, female_val: float, male_val: float) -> float:
     """Linearly interpolate between female and male values.
 
     ``factor`` = 0 → female, ``factor`` = 1 → male.

@@ -147,21 +147,15 @@ class TestFilterDesigner:
         assert mag[0] < 0.01
 
     def test_butterworth_bandpass(self) -> None:
-        spec = FilterDesigner.butterworth(
-            FilterType.BANDPASS, (50.0, 150.0), 1000.0, order=3
-        )
+        spec = FilterDesigner.butterworth(FilterType.BANDPASS, (50.0, 150.0), 1000.0, order=3)
         assert spec.filter_type == FilterType.BANDPASS
 
     def test_butterworth_bandstop(self) -> None:
-        spec = FilterDesigner.butterworth(
-            FilterType.BANDSTOP, (50.0, 150.0), 1000.0, order=3
-        )
+        spec = FilterDesigner.butterworth(FilterType.BANDSTOP, (50.0, 150.0), 1000.0, order=3)
         assert spec.filter_type == FilterType.BANDSTOP
 
     def test_chebyshev1_lowpass(self) -> None:
-        spec = FilterDesigner.chebyshev1(
-            FilterType.LOWPASS, 100.0, 1000.0, order=4, ripple_db=1.0
-        )
+        spec = FilterDesigner.chebyshev1(FilterType.LOWPASS, 100.0, 1000.0, order=4, ripple_db=1.0)
         assert spec.design == FilterDesign.CHEBYSHEV1
 
     def test_chebyshev2_lowpass(self) -> None:

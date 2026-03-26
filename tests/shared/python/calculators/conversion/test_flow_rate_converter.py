@@ -223,9 +223,7 @@ class TestStandardVolumetricToMass:
     def test_unknown_mass_target_unit_raises_error(self):
         """Test unknown mass target unit reports domain error."""
         with pytest.raises(ValueError, match="Unknown mass flow unit"):
-            standard_volumetric_to_mass(
-                100.0, "SCFM", 29.0, standard="STP", mass_unit="bad_unit"
-            )
+            standard_volumetric_to_mass(100.0, "SCFM", 29.0, standard="STP", mass_unit="bad_unit")
 
 
 class TestMassToStandardVolumetric:
@@ -257,9 +255,7 @@ class TestMassToStandardVolumetric:
     def test_unknown_mass_source_unit_raises_error(self):
         """Test unknown source unit reports domain error."""
         with pytest.raises(ValueError, match="Unknown mass flow unit"):
-            mass_to_standard_volumetric(
-                10.0, "bad_unit", 29.0, standard="STP", vol_unit="Nm3/h"
-            )
+            mass_to_standard_volumetric(10.0, "bad_unit", 29.0, standard="STP", vol_unit="Nm3/h")
 
 
 class TestSCFMToACFM:
@@ -341,9 +337,7 @@ class TestConvertFlowRateToMass:
     def test_molar_to_mass_conversion(self):
         """Test molar to mass conversion."""
         mw = 44.01  # CO2
-        result = convert_flow_rate_to_mass(
-            value=1.0, from_unit="kmol/h", molecular_weight=mw
-        )
+        result = convert_flow_rate_to_mass(value=1.0, from_unit="kmol/h", molecular_weight=mw)
         # 1 kmol/h = 1000 mol/h = 1000/3600 mol/s
         mol_s = 1000.0 / 3600.0
         # mol/s * kg/kmol / 1000 mol/kmol = kg/s

@@ -352,9 +352,7 @@ class TestToSiFromSi:
         """to_si → from_si should recover original value."""
         for cat in UnitCategory:
             val = 5.0
-            assert from_si(to_si(val, cat, si_prefs), cat, si_prefs) == pytest.approx(
-                val, rel=1e-9
-            )
+            assert from_si(to_si(val, cat, si_prefs), cat, si_prefs) == pytest.approx(val, rel=1e-9)
 
     def test_roundtrip_imperial(self, imperial_prefs: UnitPreferences) -> None:
         """to_si → from_si should recover original value in imperial mode."""

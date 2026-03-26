@@ -32,9 +32,7 @@ class TestGetEnvVar:
         with pytest.raises(ValueError, match="Required environment variable"):
             get_env_var(key, required=True)
 
-    def test_required_returns_value_if_set(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_required_returns_value_if_set(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("REQUIRED_KEY", "present")
         assert get_env_var("REQUIRED_KEY", required=True) == "present"
 

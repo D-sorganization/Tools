@@ -139,9 +139,7 @@ def add_control_loops(
         if start_kind == "equipment":
             sx, sy = nearest_equipment_anchor(equipment_by_id[measurement_id], (ex, ey))
         if end_kind == "equipment":
-            ex, ey = nearest_equipment_anchor(
-                equipment_by_id[final_element_id], (sx, sy)
-            )
+            ex, ey = nearest_equipment_anchor(equipment_by_id[final_element_id], (sx, sy))
 
         layer = str(loop.get("line_layer") or "control_lines")
         if layer not in msp.doc.layers:
@@ -164,6 +162,4 @@ def add_control_loops(
         if loop_tag and show_loop_tags:
             mx = sum(p[0] for p in route) / len(route)
             my = sum(p[1] for p in route) / len(route)
-            add_text(
-                msp, loop_tag, mx, my + text_h * 0.8, text_h * 0.9, layer=text_layer
-            )
+            add_text(msp, loop_tag, mx, my + text_h * 0.8, text_h * 0.9, layer=text_layer)

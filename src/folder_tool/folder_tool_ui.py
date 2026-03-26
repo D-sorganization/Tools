@@ -24,9 +24,7 @@ class UICreationMixin:
             # Get the directory where the script/executable is located
             if getattr(sys, "frozen", False):
                 # Running as compiled executable
-                base_dir = getattr(
-                    sys, "_MEIPASS", Path(os.path.abspath(__file__).parent)
-                )
+                base_dir = getattr(sys, "_MEIPASS", Path(os.path.abspath(__file__).parent))
             else:
                 # Running as script
                 base_dir = Path(__file__).parent
@@ -42,7 +40,7 @@ class UICreationMixin:
                 # Fallback to PNG if ICO doesn't exist
                 self._load_png_fallback(base_dir)
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.error(f"Could not load icon: {e}")
 
     def _set_windows_app_id(self) -> None:
@@ -95,7 +93,7 @@ class UICreationMixin:
                 self.icon_photos = photos
                 logger.info(f"Set iconphoto with {len(photos)} different sizes")
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.warning(f"Could not set iconphoto from ICO: {e}")
 
     def _load_png_fallback(self, base_dir: str) -> None:
@@ -121,7 +119,7 @@ class UICreationMixin:
                     self.root.iconphoto(True, *photos)
                     self.icon_photos = photos
                     logger.info(f"Loaded PNG icon: {png_path}")
-            except (IOError, PermissionError, OSError) as e:
+            except (PermissionError, OSError) as e:
                 logger.warning(f"Failed to load PNG icon: {e}")
 
         else:
@@ -557,8 +555,7 @@ class UICreationMixin:
         # Update description
         descriptions = {
             "combine": (
-                "Copies all files from source folders into the single destination "
-                "folder."
+                "Copies all files from source folders into the single destination " "folder."
             ),
             "flatten": (
                 "Finds deeply nested folders and copies them to the top level of "
@@ -642,7 +639,7 @@ class UICreationMixin:
             else:
                 logger.debug("Folder selection cancelled by user")
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.exception("Error selecting source folder")
             messagebox.showerror("Error", f"Failed to select source folder: {e}")
 
@@ -679,8 +676,7 @@ class UICreationMixin:
             else:
                 confirm = messagebox.askyesno(
                     "Confirm Removal",
-                    f"Remove {len(selected_indices)} "
-                    "selected folders from source list?",
+                    f"Remove {len(selected_indices)} " "selected folders from source list?",
                 )
 
             if confirm:
@@ -692,7 +688,7 @@ class UICreationMixin:
 
                 self.update_source_info()
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.exception("Error removing source folders")
             messagebox.showerror("Error", f"Failed to remove source folders: {e}")
 
@@ -738,6 +734,6 @@ class UICreationMixin:
             else:
                 logger.debug("Destination folder selection cancelled by user")
 
-        except (IOError, PermissionError, OSError) as e:
+        except (PermissionError, OSError) as e:
             logger.exception("Error selecting destination folder")
             messagebox.showerror("Error", f"Failed to select destination folder: {e}")

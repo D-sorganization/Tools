@@ -158,9 +158,7 @@ class TestTripleSimulationResultMethods:
         tau_f = result.friction_torques_at(0)
         assert tau_f.shape == (3,)
 
-    def test_friction_torques_at_zero_when_no_damping(
-        self, result: TripleSimulationResult
-    ) -> None:
+    def test_friction_torques_at_zero_when_no_damping(self, result: TripleSimulationResult) -> None:
         """Default params have zero damping; friction torques should be zero at t=0."""
         # At t=0, velocities are zero → friction is zero
         tau_f = result.friction_torques_at(0)

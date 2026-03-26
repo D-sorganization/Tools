@@ -133,7 +133,7 @@ def forward_kinematics_jax(q: JaxArray, p: GolferParamsJAX) -> dict[str, JaxArra
         'club_base', 'club_tip', 'grip_right', 'grip_left'
         Each value is shape (2,) as [x, y]
     """
-    assert q is not None, "q must be provided"
+    if not (q is not None): raise ValueError(f"Assertion failed: { q is not None }, "q must be provided"")
     th_hub = q[0]
     alpha_rs, alpha_re, _alpha_rh = q[1], q[2], q[3]
     alpha_ls, alpha_le, _alpha_lh = q[4], q[5], q[6]
@@ -252,7 +252,7 @@ def analytical_fk_jacobians_jax(q: JaxArray, p: GolferParamsJAX) -> dict[str, Ja
         Each value is shape (2, 8): J[row, col] = d(pos[row])/dq[col]
     """
     # Extract coordinates for clarity
-    assert q is not None, "q must be provided"
+    if not (q is not None): raise ValueError(f"Assertion failed: { q is not None }, "q must be provided"")
     th_hub = q[0]
     alpha_rs, alpha_re = q[1], q[2]
     alpha_ls, alpha_le = q[4], q[5]
@@ -406,7 +406,7 @@ def mass_matrix_jax(q: JaxArray, p: GolferParamsJAX) -> JaxArray:
     -------
     M : JaxArray, shape (8, 8) — symmetric positive semi-definite
     """
-    assert q is not None, "q must be provided"
+    if not (q is not None): raise ValueError(f"Assertion failed: { q is not None }, "q must be provided"")
     jacobians = analytical_fk_jacobians_jax(q, p)
 
     M = jnp.zeros((N_DOF, N_DOF))
@@ -452,7 +452,7 @@ def coriolis_jax(q: JaxArray, qdot: JaxArray, p: GolferParamsJAX) -> JaxArray:
     -------
     C_qdot : JaxArray, shape (8,)
     """
-    assert q is not None, "q must be provided"
+    if not (q is not None): raise ValueError(f"Assertion failed: { q is not None }, "q must be provided"")
     eps = 1e-7
     M0 = mass_matrix_jax(q, p)
 
@@ -485,7 +485,7 @@ def gravity_vector_jax(q: JaxArray, p: GolferParamsJAX) -> JaxArray:
     -------
     G : JaxArray, shape (8,)
     """
-    assert q is not None, "q must be provided"
+    if not (q is not None): raise ValueError(f"Assertion failed: { q is not None }, "q must be provided"")
     jacobians = analytical_fk_jacobians_jax(q, p)
 
     G = jnp.zeros(N_DOF)
@@ -529,7 +529,7 @@ def constraint_vector_jax(q: JaxArray, p: GolferParamsJAX) -> JaxArray:
     -------
     Phi : JaxArray, shape (4,)
     """
-    assert q is not None, "q must be provided"
+    if not (q is not None): raise ValueError(f"Assertion failed: { q is not None }, "q must be provided"")
     fk = forward_kinematics_jax(q, p)
 
     rh = fk["rh"]
@@ -570,7 +570,7 @@ def constraint_jacobian_jax(q: JaxArray, p: GolferParamsJAX) -> JaxArray:
     -------
     Phi_q : JaxArray, shape (4, 8)
     """
-    assert q is not None, "q must be provided"
+    if not (q is not None): raise ValueError(f"Assertion failed: { q is not None }, "q must be provided"")
     jacobians = analytical_fk_jacobians_jax(q, p)
     J_lh = jacobians["lh"]
     J_rh = jacobians["rh"]
@@ -639,7 +639,7 @@ def _constraint_acceleration_bias_jax(
     -------
     gamma : JaxArray, shape (4,)
     """
-    assert q is not None, "q must be provided"
+    if not (q is not None): raise ValueError(f"Assertion failed: { q is not None }, "q must be provided"")
     eps = 1e-7
     Phi_q_0 = constraint_jacobian_jax(q, p)
 

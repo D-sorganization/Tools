@@ -27,9 +27,7 @@ from upstream_drift_tools.process_calculators.optimization import (
 # ============================================================================
 
 
-def _make_surface(
-    n_x: int = 20, n_y: int = 20
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def _make_surface(n_x: int = 20, n_y: int = 20) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Simple quadratic surface: z = -(x-3)^2 - (y-4)^2, max at (3,4)."""
     x = np.linspace(0, 6, n_x)
     y = np.linspace(0, 8, n_y)
@@ -188,9 +186,7 @@ def _make_adam_state(
 class TestAdamUpdate:
     def test_positive_gradient_increases_value_when_maximizing(self) -> None:
         """With a positive gradient and maximize=True, value should increase."""
-        st = _make_adam_state(
-            ["Temperature"], [500.0], [2000.0], [1000.0], maximize=True
-        )
+        st = _make_adam_state(["Temperature"], [500.0], [2000.0], [1000.0], maximize=True)
         grad = np.array([1.0])
         _adam_update(
             st,
@@ -206,9 +202,7 @@ class TestAdamUpdate:
 
     def test_values_clipped_to_bounds(self) -> None:
         """Adam must not push values outside [lower, upper]."""
-        st = _make_adam_state(
-            ["Temperature"], [500.0], [1000.0], [999.0], maximize=True
-        )
+        st = _make_adam_state(["Temperature"], [500.0], [1000.0], [999.0], maximize=True)
         # Massive gradient to push beyond upper bound
         grad = np.array([1e6])
         _adam_update(
@@ -225,9 +219,7 @@ class TestAdamUpdate:
 
     def test_minimize_moves_away_from_gradient(self) -> None:
         """When minimize=True, positive gradient → value decreases."""
-        st = _make_adam_state(
-            ["Temperature"], [0.0], [2000.0], [1000.0], maximize=False
-        )
+        st = _make_adam_state(["Temperature"], [0.0], [2000.0], [1000.0], maximize=False)
         grad = np.array([1.0])
         _adam_update(
             st,

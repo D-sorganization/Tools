@@ -176,9 +176,7 @@ class TestAggregateErrorPath:
 
         engine = _engine_with_data()
         with pytest.raises(TransformationError, match="Aggregation failed"):
-            engine.aggregate(
-                group_by=None, column="nonexistent_xyz", agg_type=AggregationType.MEAN
-            )
+            engine.aggregate(group_by=None, column="nonexistent_xyz", agg_type=AggregationType.MEAN)
 
 
 # ---------------------------------------------------------------------------

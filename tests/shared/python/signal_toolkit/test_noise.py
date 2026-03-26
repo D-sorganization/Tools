@@ -87,9 +87,7 @@ class TestNoiseGenerator:
 
     def test_impulse_noise_mostly_zero(self, time_array: np.ndarray) -> None:
         gen = NoiseGenerator(seed=42)
-        sig = gen.generate(
-            time_array, NoiseType.IMPULSE, amplitude=5.0, probability=0.01
-        )
+        sig = gen.generate(time_array, NoiseType.IMPULSE, amplitude=5.0, probability=0.01)
         zero_count = np.sum(np.abs(sig.values) < 1e-10)
         assert zero_count > len(time_array) * 0.9  # Most should be zero
 
@@ -113,15 +111,11 @@ class TestNoiseGenerator:
 
 class TestAddNoiseToSignal:
     def test_noisy_signal_different(self, constant_signal: Signal) -> None:
-        noisy = add_noise_to_signal(
-            constant_signal, NoiseType.WHITE, amplitude=0.5, seed=42
-        )
+        noisy = add_noise_to_signal(constant_signal, NoiseType.WHITE, amplitude=0.5, seed=42)
         assert not np.allclose(noisy.values, constant_signal.values)
 
     def test_snr_mode(self, constant_signal: Signal) -> None:
-        noisy = add_noise_to_signal(
-            constant_signal, NoiseType.WHITE, snr_db=20.0, seed=42
-        )
+        noisy = add_noise_to_signal(constant_signal, NoiseType.WHITE, snr_db=20.0, seed=42)
         assert isinstance(noisy, Signal)
         assert len(noisy.values) == len(constant_signal.values)
 

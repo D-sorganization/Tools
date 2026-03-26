@@ -107,7 +107,7 @@ export function analyzeSwing(
     videoId: videoId || uuidv4(),
     analysisTimestamp: Date.now(),
     golferStance: stance,
-    swingType: SwingType.UNKNOWN, // TODO: Implement swing type detection
+    swingType: SwingType.UNKNOWN, // DEFERRED: Implement swing type detection
     totalFrames: poseFrames.length,
     fps,
     poseFrames: validFrames,
@@ -438,7 +438,7 @@ function calculatePostureMetrics(
     addressPosture = {
       spineAngle: angles.spineAngle,
       kneeFlexion: (angles.leftKneeFlexion + angles.rightKneeFlexion) / 2,
-      armHang: 'good', // TODO: Implement arm hang detection
+      armHang: 'good', // DEFERRED: Implement arm hang detection
     };
   }
 

@@ -36,13 +36,7 @@ def ensure_import(content: str, import_line: str, fallback: str = "") -> str:
             insert_idx += 1
 
         if fallback:
-            new_lines = (
-                lines[:insert_idx]
-                + [""]
-                + [import_line]
-                + [fallback]
-                + lines[insert_idx:]
-            )
+            new_lines = lines[:insert_idx] + [""] + [import_line] + [fallback] + lines[insert_idx:]
         else:
             new_lines = lines[:insert_idx] + [""] + [import_line] + lines[insert_idx:]
         return "\n".join(new_lines)
@@ -321,9 +315,7 @@ def fix_csv_patterns(content: str) -> tuple[str, int]:
     content = pattern1.sub(replace1, content)
 
     # Pattern: safe_write_csv(df, ...)
-    pattern2 = re.compile(
-        r"(\w+)\.to_csv\s*\(\s*([^,)]+)(?:,\s*([^)]+))?\s*\)", re.MULTILINE
-    )
+    pattern2 = re.compile(r"(\w+)\.to_csv\s*\(\s*([^,)]+)(?:,\s*([^)]+))?\s*\)", re.MULTILINE)
 
     def replace2(match: re.Match) -> str:
         nonlocal fixes
@@ -379,7 +371,7 @@ def process_file(file_path: Path) -> int:
             return total_fixes
 
         return 0
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"Error processing {file_path}: {e}", file=sys.stderr)
         return 0
 

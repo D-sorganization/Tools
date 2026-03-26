@@ -24,9 +24,7 @@ def _load_schema() -> dict[str, Any] | None:
     global _SCHEMA
     if _SCHEMA is not None:
         return _SCHEMA
-    schema_path = (
-        Path(__file__).resolve().parents[2] / "schema" / "pid_spec.schema.json"
-    )
+    schema_path = Path(__file__).resolve().parents[2] / "schema" / "pid_spec.schema.json"
     if schema_path.exists():
         with open(schema_path, encoding="utf-8") as f:
             _SCHEMA = json.load(f)
@@ -56,9 +54,7 @@ def collect_issues(spec: Any) -> list[ValidationIssue]:
         issues.append(ValidationIssue("project.id", "project.id is required"))
     if not (project.get("title") or project.get("document_title")):
         issues.append(
-            ValidationIssue(
-                "project.title", "project.title or project.document_title is required"
-            )
+            ValidationIssue("project.title", "project.title or project.document_title is required")
         )
 
     equipment = spec.get("equipment", [])
@@ -69,15 +65,11 @@ def collect_issues(spec: Any) -> list[ValidationIssue]:
     for idx, eq in enumerate(equipment):
         eq_id = eq.get("id")
         if not eq_id:
-            issues.append(
-                ValidationIssue(f"equipment[{idx}].id", "equipment entry missing id")
-            )
+            issues.append(ValidationIssue(f"equipment[{idx}].id", "equipment entry missing id"))
             continue
         if eq_id in equipment_ids:
             issues.append(
-                ValidationIssue(
-                    f"equipment[{idx}].id", f"duplicate equipment id: {eq_id}"
-                )
+                ValidationIssue(f"equipment[{idx}].id", f"duplicate equipment id: {eq_id}")
             )
         equipment_ids.add(eq_id)
 
@@ -94,15 +86,11 @@ def collect_issues(spec: Any) -> list[ValidationIssue]:
     for idx, ins in enumerate(spec.get("instruments", [])):
         ins_id = ins.get("id")
         if not ins_id:
-            issues.append(
-                ValidationIssue(f"instruments[{idx}].id", "instrument entry missing id")
-            )
+            issues.append(ValidationIssue(f"instruments[{idx}].id", "instrument entry missing id"))
             continue
         if ins_id in instrument_ids:
             issues.append(
-                ValidationIssue(
-                    f"instruments[{idx}].id", f"duplicate instrument id: {ins_id}"
-                )
+                ValidationIssue(f"instruments[{idx}].id", f"duplicate instrument id: {ins_id}")
             )
         instrument_ids.add(ins_id)
 
@@ -175,16 +163,14 @@ def validate_spec(spec: Any) -> None:
             jsonschema.validate(spec, schema)
         except ImportError:
             logger.debug("jsonschema not installed; skipping schema validation")
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             raise SpecValidationError(f"Schema violation: {exc}") from exc
 
     # Referential integrity checks
     issues = collect_issues(spec)
     errors = [i for i in issues if i.severity == "error"]
     if errors:
-        raise SpecValidationError(
-            "Invalid spec:\n- " + "\n- ".join(e.message for e in errors)
-        )
+        raise SpecValidationError("Invalid spec:\n- " + "\n- ".join(e.message for e in errors))
 
 
 def validate_spec_json(spec: Any) -> list[dict[str, str]]:

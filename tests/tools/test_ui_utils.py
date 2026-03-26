@@ -4,8 +4,8 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+from contracts import PreconditionError
 
-from src.shared.python.contracts import PreconditionError
 from tools.ui_utils import find_icon, set_qt_icon, set_tk_icon
 
 # ─── find_icon ─────────────────────────────────────────────────

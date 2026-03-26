@@ -12,9 +12,7 @@ def _pct(x: float) -> float:
     return round(x * 100.0, 2)
 
 
-def parse_coverage(
-    coverage_file: Path, tracked_prefixes: list[str]
-) -> dict[str, object]:
+def parse_coverage(coverage_file: Path, tracked_prefixes: list[str]) -> dict[str, object]:
     root = ET.parse(coverage_file).getroot()
     total_line_rate = float(root.attrib.get("line-rate", "0"))
 
@@ -70,13 +68,9 @@ def main() -> int:
     for pkg, threshold in pkg_min.items():
         cur = float(pkg_current.get(pkg, 0.0))
         if cur < float(threshold):
-            failures.append(
-                f"package {pkg} coverage {cur}% below threshold {threshold}%"
-            )
+            failures.append(f"package {pkg} coverage {cur}% below threshold {threshold}%")
 
-    Path(args.output_json).write_text(
-        json.dumps(current, indent=2) + "\n", encoding="utf-8"
-    )
+    Path(args.output_json).write_text(json.dumps(current, indent=2) + "\n", encoding="utf-8")
 
     sys.stdout.write("Coverage policy evaluation:\n")
     sys.stdout.write(f"- total: {total}%\n")

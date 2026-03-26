@@ -249,14 +249,10 @@ def process_single_file(
 
     except (PermissionError, OSError) as e:
         logger.error(f"Error processing {file_path}: {e}")
-        return ProcessingResult(
-            file_path, False, f"Error processing {file_path.name}: {e}"
-        )
+        return ProcessingResult(file_path, False, f"Error processing {file_path.name}: {e}")
 
 
-def _generate_filename(
-    title: str, author: str, style: str, include_author: bool
-) -> str:
+def _generate_filename(title: str, author: str, style: str, include_author: bool) -> str:
     """
     Generate filename based on title, author, and style.
 
@@ -320,9 +316,7 @@ def _move_to_failed_folder(
 
         with _file_operation_lock:
             file_path.rename(target_path)
-            transaction_log.log_rename(
-                file_path, target_path, True, "Moved to failed folder"
-            )
+            transaction_log.log_rename(file_path, target_path, True, "Moved to failed folder")
 
         return target_path
 

@@ -7,8 +7,8 @@ and precondition violations (DbC contracts).
 from pathlib import Path
 
 import pytest
+from contracts import PreconditionError
 
-from src.shared.python.contracts import PreconditionError
 from tools.quality_utils import (
     check_ast_issues,
     check_banned_patterns,
@@ -58,9 +58,7 @@ def test_tkinter_keyrelease_recognized():
 
 
 def test_tkinter_configure_recognized():
-    assert (
-        is_legitimate_tkinter_binding('widget.bind("<Configure>", on_resize)') is True
-    )
+    assert is_legitimate_tkinter_binding('widget.bind("<Configure>", on_resize)') is True
 
 
 def test_non_tkinter_line_not_legitimate():

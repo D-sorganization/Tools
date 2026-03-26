@@ -125,8 +125,7 @@ async def list_models() -> dict[str, list[str]]:
         files = [
             f
             for f in os.listdir(MODELS_DIR)
-            if (f.endswith(".urdf") or f.endswith(".xml"))
-            and os.path.isfile(MODELS_DIR / f)
+            if (f.endswith(".urdf") or f.endswith(".xml")) and os.path.isfile(MODELS_DIR / f)
         ]
         return {"models": files}
     except (PermissionError, OSError) as e:
@@ -190,7 +189,7 @@ async def generate_urdf(request: URDFGenerateRequest) -> Response:
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         logger.error("URDF generation failed: %s", e)
         raise HTTPException(status_code=500, detail=str(e)) from e
 
@@ -219,7 +218,7 @@ async def preview_model(request: URDFGenerateRequest) -> dict[str, str]:
         preview = generate_preview_text(config)
         return {"preview": preview}
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         logger.error("Preview generation failed: %s", e)
         raise HTTPException(status_code=500, detail=str(e)) from e
 
@@ -231,7 +230,7 @@ async def list_templates() -> dict[str, list[str]]:
         from urdf_builder_gui.anthropometric_model import TEMPLATE_SEGMENTS
 
         return {"templates": list(TEMPLATE_SEGMENTS.keys())}
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         logger.error("Failed to list templates: %s", e)
         raise HTTPException(status_code=500, detail=str(e)) from e
 

@@ -226,9 +226,7 @@ class TestAnalyzeProcessConditions:
 
     def test_returns_expected_keys(self, engine):
         """Lines 425-497: dict keys in analysis output."""
-        analysis = self._run_and_analyze(
-            engine, [_make_stage(1.0, 3.0, 300.0, 0.85, "isentropic")]
-        )
+        analysis = self._run_and_analyze(engine, [_make_stage(1.0, 3.0, 300.0, 0.85, "isentropic")])
         assert "concerns" in analysis
         assert "warnings" in analysis
         assert "recommendations" in analysis
@@ -381,9 +379,7 @@ class TestWorkerAndWidget:
         widget.intercooling_checkbox = mock_checkbox
         stage_active_checkbox = MagicMock()
         stage_active_checkbox.isChecked.return_value = True
-        widget.stage_inputs = [
-            [mock_spinbox, mock_spinbox, mock_combo, stage_active_checkbox]
-        ]
+        widget.stage_inputs = [[mock_spinbox, mock_spinbox, mock_combo, stage_active_checkbox]]
 
         with patch(
             "upstream_drift_tools.process_calculators.syngas_compression_calculator.CompressionCalculationWorker"
@@ -416,9 +412,7 @@ class TestWorkerAndWidget:
         stage_active_checkbox.isChecked.return_value = False
 
         # Mock stages to have one inactive stage
-        widget.stage_inputs = [
-            [mock_spinbox, mock_spinbox, mock_combo, stage_active_checkbox]
-        ]
+        widget.stage_inputs = [[mock_spinbox, mock_spinbox, mock_combo, stage_active_checkbox]]
 
         with patch(
             "upstream_drift_tools.process_calculators.syngas_compression_calculator.QMessageBox.warning"

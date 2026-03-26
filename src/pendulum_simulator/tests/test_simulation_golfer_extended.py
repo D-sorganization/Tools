@@ -147,9 +147,7 @@ class TestGolferSimulationResultMethods:
         cv = result.constraint_violation_at(0)
         assert np.isfinite(cv)
 
-    def test_constraint_violation_at_non_negative(
-        self, result: GolferSimulationResult
-    ) -> None:
+    def test_constraint_violation_at_non_negative(self, result: GolferSimulationResult) -> None:
         cv = result.constraint_violation_at(0)
         assert cv >= 0.0
 

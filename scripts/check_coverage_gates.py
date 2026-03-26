@@ -91,12 +91,8 @@ def main() -> int:
 
     print("All coverage gates passed.")
     for prefix, threshold in COVERAGE_GATES:
-        total = sum(
-            s["num_statements"] for f, s in file_coverage.items() if prefix in f
-        )
-        covered = sum(
-            s["covered_lines"] for f, s in file_coverage.items() if prefix in f
-        )
+        total = sum(s["num_statements"] for f, s in file_coverage.items() if prefix in f)
+        covered = sum(s["covered_lines"] for f, s in file_coverage.items() if prefix in f)
         if total > 0:
             pct = (covered / total) * 100
             print(f"  OK: {prefix} = {pct:.1f}% (>= {threshold:.1f}%)")

@@ -156,8 +156,7 @@ class FolderOperationsMixin:
                         continue
 
                     log.append(
-                        f"Duplicate set for '{base_name}': Keeping "
-                        f"'{Path(file_to_keep).name}'",
+                        f"Duplicate set for '{base_name}': Keeping " f"'{Path(file_to_keep).name}'",
                     )
 
                     for file_path in files:
@@ -165,24 +164,18 @@ class FolderOperationsMixin:
                             try:
                                 if not self.preview_mode_var.get():
                                     Path(file_path).unlink()
-                                mode_str = (
-                                    "WOULD DELETE"
-                                    if self.preview_mode_var.get()
-                                    else "DEL"
-                                )
+                                mode_str = "WOULD DELETE" if self.preview_mode_var.get() else "DEL"
                                 log.append(
                                     f"  - {mode_str}: '{Path(file_path).name}'",
                                 )
                                 deleted_count += 1
                             except OSError as e:
                                 log.append(
-                                    f"  - FAILED to delete '{Path(file_path).name}': "
-                                    f"{e}",
+                                    f"  - FAILED to delete '{Path(file_path).name}': " f"{e}",
                                 )
 
         summary = [
-            f"Deduplication "
-            f"{'preview' if self.preview_mode_var.get() else 'complete'}.",
+            f"Deduplication " f"{'preview' if self.preview_mode_var.get() else 'complete'}.",
             f"{'Would delete' if self.preview_mode_var.get() else 'Deleted'} a total "
             f"of {deleted_count} files.",
             *log[:MAX_LOG_ENTRIES],
@@ -375,9 +368,7 @@ class FolderOperationsMixin:
                     break  # type: ignore[unreachable]
 
                 if not files and not any(
-                    any(Path(root, d).iterdir())
-                    for d in dirs
-                    if (Path(root) / d).exists()
+                    any(Path(root, d).iterdir()) for d in dirs if (Path(root) / d).exists()
                 ):
                     empty_folders_skipped += 1
                     continue

@@ -55,11 +55,7 @@ def test_build_double_panel(mock_run, mock_set_perturb, qapp):
         if hasattr(panel, "_build_params")
         else panel._params_builder(p_dict)
     )
-    (
-        panel._build_state(p_dict)
-        if hasattr(panel, "_build_state")
-        else panel._state_builder(p_dict)
-    )
+    (panel._build_state(p_dict) if hasattr(panel, "_build_state") else panel._state_builder(p_dict))
     (
         panel._build_torque(p_dict)
         if hasattr(panel, "_build_torque")

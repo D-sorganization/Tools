@@ -85,12 +85,8 @@ class TestVaporPressureEdgeCases:
 
     def test_extended_antoine_water_high_temp(self, calculator):
         """Extended Antoine uses different coefficients above 100 C for water."""
-        vp_low = calculator.calculate_vapor_pressure(
-            99.0, "H2O", method="extended_antoine"
-        )
-        vp_high = calculator.calculate_vapor_pressure(
-            101.0, "H2O", method="extended_antoine"
-        )
+        vp_low = calculator.calculate_vapor_pressure(99.0, "H2O", method="extended_antoine")
+        vp_high = calculator.calculate_vapor_pressure(101.0, "H2O", method="extended_antoine")
         # Both should be finite and positive; high temp has higher VP
         assert math.isfinite(vp_low) and vp_low > 0
         assert math.isfinite(vp_high) and vp_high > 0
@@ -241,9 +237,7 @@ class TestInputRangeWarnings:
 
     def test_extreme_low_temperature_warns(self, calculator, typical_composition):
         """Temperature below -100 C should generate a warning."""
-        result = calculator.calculate_dewpoint_mixture(
-            -150.0, 30.0, typical_composition
-        )
+        result = calculator.calculate_dewpoint_mixture(-150.0, 30.0, typical_composition)
         assert any("Temperature outside" in w for w in result.warnings)
 
     def test_extreme_high_temperature_warns(self, calculator, typical_composition):
@@ -264,9 +258,7 @@ class TestInputRangeWarnings:
 
     def test_extreme_high_pressure_warns(self, calculator, typical_composition):
         """Pressure above 300 bar should generate a warning."""
-        result = calculator.calculate_dewpoint_mixture(
-            150.0, 500.0, typical_composition
-        )
+        result = calculator.calculate_dewpoint_mixture(150.0, 500.0, typical_composition)
         assert any("Pressure outside" in w for w in result.warnings)
 
 
@@ -337,17 +329,13 @@ class TestEstimateCondensationRisk:
     def test_critical_risk_below_dewpoint(self):
         """Condensing conditions should be identified as Critical risk."""
         comp = AcidGasComposition(h2o=0.5, hf=0, hcl=0, h2s=0, other=0.5)
-        result = estimate_condensation_risk(
-            temperature_c=10.0, pressure_bar=50.0, composition=comp
-        )
+        result = estimate_condensation_risk(temperature_c=10.0, pressure_bar=50.0, composition=comp)
         assert result["risk_level"] == "Critical"
 
     def test_low_risk_safe_conditions(self):
         """Safe conditions with large margin should be Low risk."""
         comp = AcidGasComposition(h2o=0.001, hf=0, hcl=0, h2s=0, other=0.999)
-        result = estimate_condensation_risk(
-            temperature_c=300.0, pressure_bar=1.0, composition=comp
-        )
+        result = estimate_condensation_risk(temperature_c=300.0, pressure_bar=1.0, composition=comp)
         assert result["risk_level"] == "Low"
 
 

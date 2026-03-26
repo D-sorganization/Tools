@@ -41,9 +41,7 @@ class TestValidateExpression:
             validate_expression("cos(x)", {"sin", "x"})
 
         # attribute call
-        with pytest.raises(
-            ValueError, match="Attribute-based function calls not allowed"
-        ):
+        with pytest.raises(ValueError, match="Attribute-based function calls not allowed"):
             validate_expression("math.sin(x)", {"math", "x"})
 
     def test_allowed_names_none_bypasses_check(self):
@@ -92,9 +90,7 @@ class TestSafeEvalMath:
         # When use_numpy=False, 'math' module is exposed directly in the namespace
         # But wait, our ast validator blocks attribute access like math.sin!
         # Let's verify that using math.sin fails if use_numpy=False is used with explicit string
-        with pytest.raises(
-            ValueError, match="Attribute-based function calls not allowed"
-        ):
+        with pytest.raises(ValueError, match="Attribute-based function calls not allowed"):
             safe_eval_math("math.sin(0)", {}, use_numpy=False)
 
         # but using 'math' as a name works

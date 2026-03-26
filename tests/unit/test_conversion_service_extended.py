@@ -52,9 +52,7 @@ class TestConversionServiceBasic:
         ],
         ids=["kg-to-lb", "m3-to-L", "J-to-kJ", "identity", "K-to-C", "R-to-K"],
     )
-    def test_unit_conversion(
-        self, value, from_unit, to_unit, expected, tolerance
-    ) -> None:
+    def test_unit_conversion(self, value, from_unit, to_unit, expected, tolerance) -> None:
         """Test unit conversion accuracy across categories."""
         val = convert(value, from_unit, to_unit)
         assert val == pytest.approx(expected, **tolerance)

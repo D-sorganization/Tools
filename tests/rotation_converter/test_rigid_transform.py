@@ -76,9 +76,7 @@ class TestRigidTransformConstruction:
     def test_from_rotation_translation(self) -> None:
         R = np.eye(3)
         p = np.array([1.0, 2.0, 3.0])
-        T = RigidTransform.from_rotation_translation(
-            R, p, source="body", target="world"
-        )
+        T = RigidTransform.from_rotation_translation(R, p, source="body", target="world")
         np.testing.assert_allclose(T.translation, p, atol=ATOL)
         np.testing.assert_allclose(T.rotation_matrix, R, atol=ATOL)
 
@@ -86,18 +84,14 @@ class TestRigidTransformConstruction:
         rot = Rotation.from_axis_angle([0, 0, 1], math.pi / 2)
         p = np.array([1.0, 0.0, 0.0])
         T = RigidTransform.from_rotation(rot, p, source="tool", target="base")
-        np.testing.assert_allclose(
-            T.rotation_matrix, rot.as_rotation_matrix(), atol=ATOL
-        )
+        np.testing.assert_allclose(T.rotation_matrix, rot.as_rotation_matrix(), atol=ATOL)
         assert T.source_frame == "tool"
         assert T.target_frame == "base"
 
     def test_from_quaternion_translation(self) -> None:
         q = np.array([1.0, 0.0, 0.0, 0.0])
         p = np.array([5.0, 6.0, 7.0])
-        T = RigidTransform.from_quaternion_translation(
-            q, p, source="sensor", target="base"
-        )
+        T = RigidTransform.from_quaternion_translation(q, p, source="sensor", target="base")
         np.testing.assert_allclose(T.translation, p, atol=ATOL)
         q_out = T.as_quaternion_translation()
         np.testing.assert_allclose(q_out[0], q, atol=ATOL)
@@ -118,9 +112,7 @@ class TestRigidTransformConstruction:
         axis = np.array([0.0, 0.0, 1.0])
         angle = math.pi / 4
         p = np.array([2.0, 3.0, 0.0])
-        T = RigidTransform.from_axis_angle_translation(
-            axis, angle, p, source="a", target="b"
-        )
+        T = RigidTransform.from_axis_angle_translation(axis, angle, p, source="a", target="b")
         ax_out, ang_out, p_out = T.as_axis_angle_translation()
         np.testing.assert_allclose(ax_out, axis, atol=ATOL)
         assert abs(ang_out - angle) < ATOL
@@ -166,9 +158,7 @@ class TestRigidTransformConstruction:
         rot = Rotation.from_axis_angle([0, 0, 1], math.pi / 2)
         T = RigidTransform.pure_rotation(rot, source="a", target="b")
         np.testing.assert_allclose(T.translation, [0, 0, 0], atol=ATOL)
-        np.testing.assert_allclose(
-            T.rotation_matrix, rot.as_rotation_matrix(), atol=ATOL
-        )
+        np.testing.assert_allclose(T.rotation_matrix, rot.as_rotation_matrix(), atol=ATOL)
 
 
 # ===========================================================================
@@ -184,9 +174,7 @@ class TestRigidTransformOutputConversions:
         """A non-trivial rigid transform for conversion testing."""
         R = Rotation.from_euler(0.3, 0.5, 0.7, "xyz").as_rotation_matrix()
         p = np.array([1.0, 2.0, 3.0])
-        return RigidTransform.from_rotation_translation(
-            R, p, source="body", target="world"
-        )
+        return RigidTransform.from_rotation_translation(R, p, source="body", target="world")
 
     def test_as_matrix(self, sample_transform: RigidTransform) -> None:
         M = sample_transform.as_matrix()
@@ -292,9 +280,7 @@ class TestRoundtripConversions:
         axis = np.array([1.0, 0.0, 0.0])
         angle = math.pi / 3
         p = np.array([4.0, 5.0, 6.0])
-        T = RigidTransform.from_axis_angle_translation(
-            axis, angle, p, source="a", target="b"
-        )
+        T = RigidTransform.from_axis_angle_translation(axis, angle, p, source="a", target="b")
         ax_out, ang_out, p_out = T.as_axis_angle_translation()
         np.testing.assert_allclose(ax_out, axis, atol=ATOL)
         assert abs(ang_out - angle) < ATOL
@@ -406,9 +392,7 @@ class TestInverse:
     def test_inverse_compose_gives_identity(self) -> None:
         R = Rotation.from_euler(0.3, 0.5, 0.7, "xyz").as_rotation_matrix()
         p = np.array([1.0, 2.0, 3.0])
-        T = RigidTransform.from_rotation_translation(
-            R, p, source="body", target="world"
-        )
+        T = RigidTransform.from_rotation_translation(R, p, source="body", target="world")
         T_inv = T.inverse()
         result = T @ T_inv
         np.testing.assert_allclose(result.as_matrix(), np.eye(4), atol=ATOL)
@@ -416,9 +400,7 @@ class TestInverse:
         assert result.target_frame == "world"
 
     def test_inverse_of_inverse(self) -> None:
-        T = RigidTransform.from_rotation_translation(
-            np.eye(3), [1, 2, 3], source="a", target="b"
-        )
+        T = RigidTransform.from_rotation_translation(np.eye(3), [1, 2, 3], source="a", target="b")
         T2 = T.inverse().inverse()
         np.testing.assert_allclose(T2.as_matrix(), T.as_matrix(), atol=ATOL)
         assert T2.source_frame == "a"
@@ -445,17 +427,13 @@ class TestPointVectorTransform:
         c, s = math.cos(angle), math.sin(angle)
         R = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
         p = np.array([1.0, 0.0, 0.0])
-        T = RigidTransform.from_rotation_translation(
-            R, p, source="body", target="world"
-        )
+        T = RigidTransform.from_rotation_translation(R, p, source="body", target="world")
         # Point at [1,0,0] in body -> R @ [1,0,0] + [1,0,0] = [0,1,0] + [1,0,0] = [1,1,0]
         result = T.apply_point(np.array([1.0, 0.0, 0.0]))
         np.testing.assert_allclose(result, [1.0, 1.0, 0.0], atol=ATOL)
 
     def test_apply_vector_ignores_translation(self) -> None:
-        T = RigidTransform.pure_translation(
-            [100, 200, 300], source="body", target="world"
-        )
+        T = RigidTransform.pure_translation([100, 200, 300], source="body", target="world")
         v_body = np.array([1.0, 0.0, 0.0])
         v_world = T.apply_vector(v_body)
         np.testing.assert_allclose(v_world, [1, 0, 0], atol=ATOL)
@@ -464,9 +442,7 @@ class TestPointVectorTransform:
         angle = math.pi / 2
         c, s = math.cos(angle), math.sin(angle)
         R = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
-        T = RigidTransform.from_rotation_translation(
-            R, [0, 0, 0], source="body", target="world"
-        )
+        T = RigidTransform.from_rotation_translation(R, [0, 0, 0], source="body", target="world")
         v = T.apply_vector(np.array([1.0, 0.0, 0.0]))
         np.testing.assert_allclose(v, [0.0, 1.0, 0.0], atol=ATOL)
 
@@ -492,9 +468,7 @@ class TestBodySpaceTwistConversions:
         angle = math.pi / 4
         c, s = math.cos(angle), math.sin(angle)
         R = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
-        T = RigidTransform.from_rotation_translation(
-            R, [0, 0, 0], source="body", target="space"
-        )
+        T = RigidTransform.from_rotation_translation(R, [0, 0, 0], source="body", target="space")
         Vb = T.body_twist()
         assert Vb.shape == (6,)
         # For rotation about z by pi/4, body twist omega should be [0,0,pi/4]
@@ -505,9 +479,7 @@ class TestBodySpaceTwistConversions:
         angle = math.pi / 4
         c, s = math.cos(angle), math.sin(angle)
         R = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
-        T = RigidTransform.from_rotation_translation(
-            R, [0, 0, 0], source="body", target="space"
-        )
+        T = RigidTransform.from_rotation_translation(R, [0, 0, 0], source="body", target="space")
         Vs = T.space_twist()
         Vb = T.body_twist()
         # For rotation about origin with no translation, body and space
@@ -518,9 +490,7 @@ class TestBodySpaceTwistConversions:
         """Convert a body-frame twist to space-frame twist via adjoint."""
         R = Rotation.from_axis_angle([0, 0, 1], math.pi / 4).as_rotation_matrix()
         p = np.array([1.0, 0.0, 0.0])
-        T = RigidTransform.from_rotation_translation(
-            R, p, source="body", target="space"
-        )
+        T = RigidTransform.from_rotation_translation(R, p, source="body", target="space")
         # Some arbitrary body twist
         Vb = np.array([0.0, 0.0, 1.0, 0.5, 0.0, 0.0])
         Vs = T.body_to_space_twist(Vb)
@@ -534,9 +504,7 @@ class TestBodySpaceTwistConversions:
         """Convert a space-frame twist to body-frame twist."""
         R = Rotation.from_euler(0.3, 0.5, 0.7, "xyz").as_rotation_matrix()
         p = np.array([1.0, 2.0, 3.0])
-        T = RigidTransform.from_rotation_translation(
-            R, p, source="body", target="space"
-        )
+        T = RigidTransform.from_rotation_translation(R, p, source="body", target="space")
         Vs = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6])
         Vb = T.space_to_body_twist(Vs)
         Vs_back = T.body_to_space_twist(Vb)
@@ -548,9 +516,7 @@ class TestBodySpaceTwistConversions:
 
         R = Rotation.from_euler(0.1, 0.2, 0.3, "zyx").as_rotation_matrix()
         p = np.array([3.0, 4.0, 5.0])
-        T = RigidTransform.from_rotation_translation(
-            R, p, source="body", target="space"
-        )
+        T = RigidTransform.from_rotation_translation(R, p, source="body", target="space")
         Vb = np.array([0.0, 0.0, 1.0, 1.0, 0.0, 0.0])
         Vs = T.body_to_space_twist(Vb)
         # Manually compute
@@ -570,9 +536,7 @@ class TestWrenchTransformations:
     def test_body_to_space_wrench(self) -> None:
         R = Rotation.from_axis_angle([0, 0, 1], math.pi / 4).as_rotation_matrix()
         p = np.array([1.0, 0.0, 0.0])
-        T = RigidTransform.from_rotation_translation(
-            R, p, source="body", target="space"
-        )
+        T = RigidTransform.from_rotation_translation(R, p, source="body", target="space")
         Fb = np.array([0.0, 0.0, 1.0, 1.0, 0.0, 0.0])
         Fs = T.body_to_space_wrench(Fb)
         assert Fs.shape == (6,)
@@ -583,9 +547,7 @@ class TestWrenchTransformations:
     def test_wrench_round_trip(self) -> None:
         R = Rotation.from_euler(0.3, 0.5, 0.7, "xyz").as_rotation_matrix()
         p = np.array([1.0, 2.0, 3.0])
-        T = RigidTransform.from_rotation_translation(
-            R, p, source="body", target="space"
-        )
+        T = RigidTransform.from_rotation_translation(R, p, source="body", target="space")
         Fs = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6])
         Fb = T.space_to_body_wrench(Fs)
         Fs_back = T.body_to_space_wrench(Fb)
@@ -688,15 +650,11 @@ class TestContractViolations:
     def test_from_rotation_translation_bad_R(self) -> None:
         R = np.eye(3) * 2  # Not SO(3)
         with pytest.raises(PreconditionError):
-            RigidTransform.from_rotation_translation(
-                R, [0, 0, 0], source="a", target="b"
-            )
+            RigidTransform.from_rotation_translation(R, [0, 0, 0], source="a", target="b")
 
     def test_from_quaternion_wrong_length(self) -> None:
         with pytest.raises(PreconditionError):
-            RigidTransform.from_quaternion_translation(
-                [1, 0, 0], [0, 0, 0], source="a", target="b"
-            )
+            RigidTransform.from_quaternion_translation([1, 0, 0], [0, 0, 0], source="a", target="b")
 
     def test_from_axis_angle_non_unit_axis(self) -> None:
         with pytest.raises(PreconditionError):
@@ -750,9 +708,7 @@ class TestCrossRepresentationConsistency:
 
         # Via quaternion + translation
         q, p_out = T.as_quaternion_translation()
-        T2 = RigidTransform.from_quaternion_translation(
-            q, p_out, source="a", target="b"
-        )
+        T2 = RigidTransform.from_quaternion_translation(q, p_out, source="a", target="b")
         np.testing.assert_allclose(T2.as_matrix(), M_orig, atol=ATOL)
 
         # Via rotation + translation
@@ -780,16 +736,12 @@ class TestCrossRepresentationConsistency:
 
         # Via axis-angle + translation
         ax, ang, p_out = T.as_axis_angle_translation()
-        T6 = RigidTransform.from_axis_angle_translation(
-            ax, ang, p_out, source="a", target="b"
-        )
+        T6 = RigidTransform.from_axis_angle_translation(ax, ang, p_out, source="a", target="b")
         np.testing.assert_allclose(T6.as_matrix(), M_orig, atol=ATOL)
 
         # Via rodrigues + translation
         rv, p_out = T.as_rodrigues_translation()
-        T7 = RigidTransform.from_rodrigues_translation(
-            rv, p_out, source="a", target="b"
-        )
+        T7 = RigidTransform.from_rodrigues_translation(rv, p_out, source="a", target="b")
         np.testing.assert_allclose(T7.as_matrix(), M_orig, atol=ATOL)
 
     @pytest.mark.parametrize("trial", range(10))
@@ -830,9 +782,7 @@ class TestApplyVectors:
     """Batch direction-vector transformation (Nx3, rotation only)."""
 
     def test_apply_vectors_ignores_translation(self) -> None:
-        T = RigidTransform.pure_translation(
-            [100, 200, 300], source="body", target="world"
-        )
+        T = RigidTransform.pure_translation([100, 200, 300], source="body", target="world")
         vecs = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]], dtype=float)
         result = T.apply_vectors(vecs)
         np.testing.assert_allclose(result, vecs, atol=ATOL)
@@ -841,9 +791,7 @@ class TestApplyVectors:
         angle = math.pi / 2
         c, s = math.cos(angle), math.sin(angle)
         R = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
-        T = RigidTransform.from_rotation_translation(
-            R, [5, 10, 15], source="body", target="world"
-        )
+        T = RigidTransform.from_rotation_translation(R, [5, 10, 15], source="body", target="world")
         vecs = np.array([[1, 0, 0], [0, 1, 0]], dtype=float)
         result = T.apply_vectors(vecs)
         expected = np.array([[0, 1, 0], [-1, 0, 0]], dtype=float)
@@ -883,9 +831,7 @@ class TestHomogeneousCoordinates:
 
     def test_homogeneous_point_w1(self) -> None:
         """w=1 should behave like apply_point."""
-        T = RigidTransform.from_rotation_translation(
-            np.eye(3), [1, 2, 3], source="a", target="b"
-        )
+        T = RigidTransform.from_rotation_translation(np.eye(3), [1, 2, 3], source="a", target="b")
         ph = np.array([10.0, 20.0, 30.0, 1.0])
         result = T.apply_homogeneous(ph)
         np.testing.assert_allclose(result, [11, 22, 33, 1], atol=ATOL)
@@ -903,9 +849,7 @@ class TestHomogeneousCoordinates:
         angle = math.pi / 2
         c, s = math.cos(angle), math.sin(angle)
         R = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
-        T = RigidTransform.from_rotation_translation(
-            R, [1, 0, 0], source="a", target="b"
-        )
+        T = RigidTransform.from_rotation_translation(R, [1, 0, 0], source="a", target="b")
         # Point [1,0,0,1] -> R@[1,0,0]+[1,0,0] = [0,1,0]+[1,0,0] = [1,1,0,1]
         result = T.apply_homogeneous(np.array([1.0, 0.0, 0.0, 1.0]))
         np.testing.assert_allclose(result, [1, 1, 0, 1], atol=ATOL)
@@ -914,9 +858,7 @@ class TestHomogeneousCoordinates:
         angle = math.pi / 2
         c, s = math.cos(angle), math.sin(angle)
         R = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
-        T = RigidTransform.from_rotation_translation(
-            R, [1, 0, 0], source="a", target="b"
-        )
+        T = RigidTransform.from_rotation_translation(R, [1, 0, 0], source="a", target="b")
         # Vector [1,0,0,0] -> R@[1,0,0] = [0,1,0,0] (no translation!)
         result = T.apply_homogeneous(np.array([1.0, 0.0, 0.0, 0.0]))
         np.testing.assert_allclose(result, [0, 1, 0, 0], atol=ATOL)
@@ -928,9 +870,7 @@ class TestHomogeneousCoordinates:
 
     def test_homogeneous_batch(self) -> None:
         """Batch Nx4 homogeneous transform."""
-        T = RigidTransform.from_rotation_translation(
-            np.eye(3), [1, 2, 3], source="a", target="b"
-        )
+        T = RigidTransform.from_rotation_translation(np.eye(3), [1, 2, 3], source="a", target="b")
         phs = np.array(
             [
                 [1, 0, 0, 1],  # point
@@ -959,9 +899,7 @@ class TestHomogeneousCoordinates:
 
     def test_homogeneous_batch_consistent_with_single(self) -> None:
         R = Rotation.from_euler(0.3, 0.5, 0.7, "xyz").as_rotation_matrix()
-        T = RigidTransform.from_rotation_translation(
-            R, [1, 2, 3], source="a", target="b"
-        )
+        T = RigidTransform.from_rotation_translation(R, [1, 2, 3], source="a", target="b")
         rng = np.random.default_rng(77)
         phs = rng.standard_normal((8, 3))
         # Add w column: alternate points and vectors
@@ -985,9 +923,7 @@ class TestBatchTwistWrenchConversions:
     def transform(self) -> RigidTransform:
         R = Rotation.from_euler(0.3, 0.5, 0.7, "xyz").as_rotation_matrix()
         p = np.array([1.0, 2.0, 3.0])
-        return RigidTransform.from_rotation_translation(
-            R, p, source="body", target="space"
-        )
+        return RigidTransform.from_rotation_translation(R, p, source="body", target="space")
 
     def test_body_to_space_twists_batch(self, transform: RigidTransform) -> None:
         rng = np.random.default_rng(42)

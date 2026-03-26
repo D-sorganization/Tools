@@ -89,9 +89,7 @@ def test_double_mass_matrix_prefers_native_backend(
     monkeypatch: pytest.MonkeyPatch, double_params: PendulumParams
 ) -> None:
     sentinel = np.eye(2) * 11.0
-    monkeypatch.setattr(
-        native_backend, "double_mass_matrix", lambda phi, params: sentinel.copy()
-    )
+    monkeypatch.setattr(native_backend, "double_mass_matrix", lambda phi, params: sentinel.copy())
 
     result = double_mass_matrix(0.1, double_params)
     assert np.array_equal(result, sentinel)
@@ -206,9 +204,7 @@ def test_mass_matrix_prefers_native_backend(
     monkeypatch: pytest.MonkeyPatch, golfer_params: GolferParams
 ) -> None:
     sentinel = np.eye(8) * 7.0
-    monkeypatch.setattr(
-        native_backend, "golfer_mass_matrix", lambda q, params: sentinel.copy()
-    )
+    monkeypatch.setattr(native_backend, "golfer_mass_matrix", lambda q, params: sentinel.copy())
 
     result = mass_matrix(np.zeros(8), golfer_params)
     assert np.array_equal(result, sentinel)
@@ -218,9 +214,7 @@ def test_gravity_vector_prefers_native_backend(
     monkeypatch: pytest.MonkeyPatch, golfer_params: GolferParams
 ) -> None:
     sentinel = np.arange(8, dtype=float)
-    monkeypatch.setattr(
-        native_backend, "golfer_gravity_vector", lambda q, params: sentinel.copy()
-    )
+    monkeypatch.setattr(native_backend, "golfer_gravity_vector", lambda q, params: sentinel.copy())
 
     result = gravity_vector(np.zeros(8), golfer_params)
     assert np.array_equal(result, sentinel)
@@ -300,9 +294,7 @@ def test_native_double_wrappers_map_rust_outputs(
             return args
 
         @staticmethod
-        def py_double_mass_matrix(
-            q: list[float], params: tuple[float, ...]
-        ) -> list[list[float]]:
+        def py_double_mass_matrix(q: list[float], params: tuple[float, ...]) -> list[list[float]]:
             del q, params
             return [[5.0, 2.0], [2.0, 1.0]]
 
@@ -359,9 +351,7 @@ def test_native_triple_wrappers_map_rust_outputs(
             return args
 
         @staticmethod
-        def py_triple_mass_matrix(
-            q: list[float], params: tuple[float, ...]
-        ) -> list[list[float]]:
+        def py_triple_mass_matrix(q: list[float], params: tuple[float, ...]) -> list[list[float]]:
             del q, params
             return [[14.0, 8.0, 3.0], [8.0, 5.0, 2.0], [3.0, 2.0, 1.0]]
 

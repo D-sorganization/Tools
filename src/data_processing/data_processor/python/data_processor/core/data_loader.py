@@ -318,11 +318,7 @@ class DataLoader:
             "how must be one of 'inner', 'outer', 'left', 'right'",
             how,
         )
-        dfs = (
-            list(dataframes.values())
-            if isinstance(dataframes, dict)
-            else list(dataframes)
-        )
+        dfs = list(dataframes.values()) if isinstance(dataframes, dict) else list(dataframes)
 
         if not dfs:
             return pd.DataFrame()
@@ -345,9 +341,7 @@ class DataLoader:
                     how=how,
                 )
 
-        logger.info(
-            f"Combined result: {len(result)} rows, {len(result.columns)} columns"
-        )
+        logger.info(f"Combined result: {len(result)} rows, {len(result.columns)} columns")
         return result
 
     def filter_by_time_range(
@@ -368,9 +362,7 @@ class DataLoader:
             t_end = pd.to_datetime(end_time).time()
 
             if t_start > t_end:
-                logger.warning(
-                    f"Start time {t_start} > End time {t_end}, returning empty"
-                )
+                logger.warning(f"Start time {t_start} > End time {t_end}, returning empty")
                 return df.iloc[0:0]
 
             filtered = df.between_time(start_time, end_time)

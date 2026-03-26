@@ -78,9 +78,7 @@ class TestUICreationMixin:
 
     def test_set_windows_app_id_success(self, app):
         with patch("sys.platform", "win32"):
-            with patch(
-                "ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID"
-            ) as mock_set:
+            with patch("ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID") as mock_set:
                 app._set_windows_app_id()
                 mock_set.assert_called_once()
 

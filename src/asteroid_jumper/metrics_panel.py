@@ -19,9 +19,7 @@ if TYPE_CHECKING:
 class MetricsPanel(QWidget):
     """Right-side panel showing live physics metrics and insight bars."""
 
-    def __init__(
-        self, controller: SimController, parent: QWidget | None = None
-    ) -> None:
+    def __init__(self, controller: SimController, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         if not (controller is not None):
             raise ValueError("DbC Blocked: Precondition failed.")
@@ -59,9 +57,7 @@ class MetricsPanel(QWidget):
         eff = 1.0 - offctr
         self._eff_bar.setValue(int(100 * eff))
         self._eff_label.setText(
-            "Max translational efficiency"
-            if eff > 0.95
-            else "Spin induced — efficiency reduced"
+            "Max translational efficiency" if eff > 0.95 else "Spin induced — efficiency reduced"
         )
 
     # ------------------------------------------------------------------
@@ -79,9 +75,7 @@ class MetricsPanel(QWidget):
         group = QGroupBox("Jumper (global frame)")
         grid = QVBoxLayout(group)
 
-        self._jspeed_val, self._jspeed_bar = _metric_row(
-            grid, "Translational v:", "#a6e3a1"
-        )
+        self._jspeed_val, self._jspeed_bar = _metric_row(grid, "Translational v:", "#a6e3a1")
         self._jaw_val, self._jaw_bar = _metric_row(grid, "Angular ω:", "#89b4fa")
         return group
 
@@ -89,9 +83,7 @@ class MetricsPanel(QWidget):
         group = QGroupBox("Asteroid (global frame)")
         grid = QVBoxLayout(group)
 
-        self._aspeed_val, self._aspeed_bar = _metric_row(
-            grid, "Translational v:", "#94e2d5"
-        )
+        self._aspeed_val, self._aspeed_bar = _metric_row(grid, "Translational v:", "#94e2d5")
         self._aaw_val, self._aaw_bar = _metric_row(grid, "Angular ω:", "#cba6f7")
         return group
 
@@ -107,9 +99,7 @@ class MetricsPanel(QWidget):
         self._eff_bar = QProgressBar()
         self._eff_bar.setRange(0, 100)
         self._eff_bar.setValue(100)
-        self._eff_bar.setStyleSheet(
-            "QProgressBar::chunk { background-color: #a6e3a1; }"
-        )
+        self._eff_bar.setStyleSheet("QProgressBar::chunk { background-color: #a6e3a1; }")
         vbox.addWidget(self._eff_bar)
         self._eff_label = QLabel("Max translational efficiency")
         self._eff_label.setWordWrap(True)

@@ -10,7 +10,7 @@ Enforcement Levels (controlled via ``DBC_LEVEL`` environment variable):
 
 Usage (function-call style)::
 
-    from src.shared.python.contracts import require, ensure
+    from contracts import require, ensure
 
     def calculate_pressure_drop(flow_rate: float, diameter: float) -> float:
         require(flow_rate > 0, "flow_rate must be positive", flow_rate)
@@ -21,7 +21,7 @@ Usage (function-call style)::
 
 Usage (decorator style)::
 
-    from src.shared.python.contracts import precondition, postcondition
+    from contracts import precondition, postcondition
 
     @precondition(lambda self, t: t > 0, "temperature must be positive")
     @postcondition(lambda r: r >= 0, "result must be non-negative")
@@ -234,9 +234,7 @@ def _evaluate_precondition(
 
         cond_sig = inspect.signature(condition)
         call_args = {
-            name: all_arguments[name]
-            for name in cond_sig.parameters
-            if name in all_arguments
+            name: all_arguments[name] for name in cond_sig.parameters if name in all_arguments
         }
         return bool(condition(**call_args))
     except (TypeError, ValueError) as exc:
@@ -383,9 +381,7 @@ def _check_class_invariant(
     except InvariantError:
         raise
     except (ValueError, TypeError, KeyError, AttributeError, ArithmeticError) as exc:
-        raise InvariantError(
-            f"Error checking invariant '{message}' {context}: {exc}"
-        ) from exc
+        raise InvariantError(f"Error checking invariant '{message}' {context}: {exc}") from exc
 
 
 def _wrap_method_with_invariant(
@@ -496,8 +492,7 @@ class ContractChecker:
             except (RuntimeError, TypeError, ValueError) as exc:
                 if DBC_LEVEL == ContractLevel.ENFORCE:
                     raise InvariantError(
-                        f"{self.__class__.__name__}: "
-                        f"Failed to evaluate invariant: {exc}"
+                        f"{self.__class__.__name__}: " f"Failed to evaluate invariant: {exc}"
                     ) from exc
 
         return True

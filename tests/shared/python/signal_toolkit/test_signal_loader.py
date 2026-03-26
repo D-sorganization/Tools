@@ -134,9 +134,7 @@ class TestSignalLoaderSupportedFormats:
         """Smoke-test: 2-D .npy files use column 0 as time."""
         with tempfile.TemporaryDirectory() as tmpdir:
             npy_path = Path(tmpdir) / "data.npy"
-            arr = np.column_stack(
-                [np.array([0.0, 1.0, 2.0]), np.array([5.0, 6.0, 7.0])]
-            )
+            arr = np.column_stack([np.array([0.0, 1.0, 2.0]), np.array([5.0, 6.0, 7.0])])
             np.save(npy_path, arr)
 
             signal = SignalLoader.load(npy_path)

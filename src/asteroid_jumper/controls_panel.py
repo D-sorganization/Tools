@@ -34,9 +34,7 @@ class ControlsPanel(QWidget):
     reset_requested = pyqtSignal()
     config_changed = pyqtSignal()
 
-    def __init__(
-        self, controller: SimController, parent: QWidget | None = None
-    ) -> None:
+    def __init__(self, controller: SimController, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         if not (controller is not None):
             raise ValueError("DbC Blocked: Precondition failed.")
@@ -112,9 +110,7 @@ class ControlsPanel(QWidget):
 
         # Mass
         vbox.addWidget(QLabel(f"Asteroid mass (kg)  [jumper = {JUMPER_MASS:.0f} kg]:"))
-        self._asteroid_mass_spin = _make_dspin(
-            20.0, 5000.0, JUMPER_MASS * 2.0, 10.0, decimals=0
-        )
+        self._asteroid_mass_spin = _make_dspin(20.0, 5000.0, JUMPER_MASS * 2.0, 10.0, decimals=0)
         self._asteroid_mass_spin.valueChanged.connect(self._on_mass_changed)
         vbox.addWidget(self._asteroid_mass_spin)
 
@@ -133,9 +129,7 @@ class ControlsPanel(QWidget):
 
         # Impulse slider
         vbox.addWidget(QLabel("Jump impulse (N·s):"))
-        self._impulse_spin = _make_dspin(
-            50.0, 2000.0, DEFAULT_IMPULSE, 10.0, decimals=0
-        )
+        self._impulse_spin = _make_dspin(50.0, 2000.0, DEFAULT_IMPULSE, 10.0, decimals=0)
         self._impulse_spin.valueChanged.connect(self._on_impulse_changed)
         vbox.addWidget(self._impulse_spin)
 
