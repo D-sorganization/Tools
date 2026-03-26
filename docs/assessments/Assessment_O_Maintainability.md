@@ -3,7 +3,7 @@
 ## Grade: 2.0/10
 
 ## Justification
-Technical Debt (TODO+FIXME): 1092
+Technical Debt (TRACKED_TASK+TRACKED_DEFECT): 1092
 
 ## Statistics
 - Total Python Files: 1371

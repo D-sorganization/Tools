@@ -212,9 +212,7 @@ class TestEnergyConservation:
         )
         max_drift = np.max(np.abs(energies - E0))
         relative_drift = max_drift / abs(E0) if abs(E0) > 1e-10 else max_drift
-        assert relative_drift < 1e-3, (
-            f"Energy drift {relative_drift:.2e} exceeds 0.1% threshold"
-        )
+        assert relative_drift < 1e-3, f"Energy drift {relative_drift:.2e} exceeds 0.1% threshold"
 
 
 class TestSimulationAccessors:

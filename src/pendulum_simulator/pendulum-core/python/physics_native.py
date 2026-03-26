@@ -97,9 +97,7 @@ class DoublePendulum:
     ):
         if not (m1 is not None):
             raise ValueError("m1 must be provided")
-        self.params = DoublePendulumParams(
-            m1=m1, m2=m2, l1=l1, l2=l2, g=g, m_clubhead=m_clubhead
-        )
+        self.params = DoublePendulumParams(m1=m1, m2=m2, l1=l1, l2=l2, g=g, m_clubhead=m_clubhead)
         self.use_native = HAS_NATIVE
 
     def mass_matrix(self, q: np.ndarray) -> np.ndarray:
@@ -133,9 +131,7 @@ class DoublePendulum:
             raise ValueError("q must be provided")
         if self.use_native:
             try:
-                result = pendulum_core.py_double_gravity_vector(
-                    q.tolist(), self.params.to_rust()
-                )
+                result = pendulum_core.py_double_gravity_vector(q.tolist(), self.params.to_rust())
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning(
@@ -353,9 +349,7 @@ class Golfer:
             raise ValueError("q must be provided")
         if self.use_native:
             try:
-                result = pendulum_core.py_golfer_gravity_vector(
-                    q.tolist(), self.params.to_rust()
-                )
+                result = pendulum_core.py_golfer_gravity_vector(q.tolist(), self.params.to_rust())
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning("Rust golfer gravity_vector call failed (%s)", type(e).__name__)
@@ -373,9 +367,7 @@ class Golfer:
                 )
                 return {k: tuple(v) for k, v in result.items()}
             except (RuntimeError, AttributeError, TypeError) as e:
-                logger.warning(
-                    "Rust golfer forward_kinematics call failed (%s)", type(e).__name__
-                )
+                logger.warning("Rust golfer forward_kinematics call failed (%s)", type(e).__name__)
 
         raise NotImplementedError("NumPy fallback for golfer FK not yet implemented")
 
@@ -388,9 +380,7 @@ class Golfer:
                 )
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
-                logger.warning(
-                    "Rust golfer constraint_vector call failed (%s)", type(e).__name__
-                )
+                logger.warning("Rust golfer constraint_vector call failed (%s)", type(e).__name__)
 
         raise NotImplementedError("NumPy fallback for constraints not yet implemented")
 
@@ -403,9 +393,7 @@ class Golfer:
                 )
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
-                logger.warning(
-                    "Rust golfer constraint_jacobian call failed (%s)", type(e).__name__
-                )
+                logger.warning("Rust golfer constraint_jacobian call failed (%s)", type(e).__name__)
 
         raise NotImplementedError("NumPy fallback for constraint Jacobian not yet implemented")
 

@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
 #!/usr/bin/env python3
 """Minimal test to verify PyQt signals work."""
 
@@ -34,7 +38,7 @@ class TestWindow(QMainWindow):
         self.run_requested.connect(self.on_run)
 
     def on_run(self):
-        print("[TEST] Signal received!")  # noqa: T201
+        logger.info("[TEST] Signal received!")  # noqa: T201
         QMessageBox.information(self, "Success", "Signal was received!")
 
 

@@ -62,19 +62,17 @@ class TestPlaybackSlider:
 
     def test_frame_slider_exists(self, toolstrip: ToolStrip) -> None:
         """ToolStrip must have a _frame_slider attribute that is a QSlider."""
-        assert hasattr(toolstrip, "_frame_slider"), (
-            "ToolStrip is missing _frame_slider attribute"
-        )
-        assert isinstance(toolstrip._frame_slider, QSlider), (
-            f"_frame_slider is {type(toolstrip._frame_slider)}, expected QSlider"
-        )
+        assert hasattr(toolstrip, "_frame_slider"), "ToolStrip is missing _frame_slider attribute"
+        assert isinstance(
+            toolstrip._frame_slider, QSlider
+        ), f"_frame_slider is {type(toolstrip._frame_slider)}, expected QSlider"
 
     def test_frame_slider_is_child(self, toolstrip: ToolStrip) -> None:
         """Frame slider must be a descendant widget of the ToolStrip."""
         all_sliders = toolstrip.findChildren(QSlider)
-        assert toolstrip._frame_slider in all_sliders, (
-            "Frame slider is not a child widget of ToolStrip"
-        )
+        assert (
+            toolstrip._frame_slider in all_sliders
+        ), "Frame slider is not a child widget of ToolStrip"
 
     def test_frame_slider_has_minimum_width(self, toolstrip: ToolStrip) -> None:
         """Frame slider must have a minimum width >= 200px for visibility."""
@@ -163,15 +161,15 @@ class TestNoGravityCheckbox:
 
     def test_no_gravity_checkbox_in_toolstrip(self, toolstrip: ToolStrip) -> None:
         """ToolStrip must NOT have a chk_gravity attribute."""
-        assert not hasattr(toolstrip, "chk_gravity"), (
-            "chk_gravity still exists in ToolStrip — it must be removed (#1209)"
-        )
+        assert not hasattr(
+            toolstrip, "chk_gravity"
+        ), "chk_gravity still exists in ToolStrip — it must be removed (#1209)"
 
     def test_no_gravity_toggled_signal(self, toolstrip: ToolStrip) -> None:
         """ToolStrip must NOT have gravity_toggled signal."""
-        assert not hasattr(toolstrip, "gravity_toggled"), (
-            "gravity_toggled signal still exists — must be removed (#1209)"
-        )
+        assert not hasattr(
+            toolstrip, "gravity_toggled"
+        ), "gravity_toggled signal still exists — must be removed (#1209)"
 
 
 # ---------------------------------------------------------------------------

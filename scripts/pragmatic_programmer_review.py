@@ -38,9 +38,7 @@ ensure_paths(_REPO_ROOT)
 # Mock imports/utils if shared/python doesn't exist in all repos
 # We will define minimal utils here to ensure standalone execution
 def setup_script_logging(name: str) -> logging.Logger:
-    logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
     return logging.getLogger(name)
 
 

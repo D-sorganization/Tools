@@ -156,9 +156,7 @@ class ConsoleEnvironment:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             if exc_traceback:
                 # Skip the context wrapper internal frames
-                tb_lines = traceback.format_exception(
-                    exc_type, exc_value, exc_traceback
-                )
+                tb_lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
                 # Keep the last portion regarding user code
                 err_buf.write("".join(tb_lines[-3:]))
             elif exc_type:
