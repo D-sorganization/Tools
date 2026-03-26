@@ -304,12 +304,8 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(3)
-        self.inp_d_rs = LabeledInput(
-            "d_RS (m)", "0.20", "Hub bar to right shoulder offset"
-        )
-        self.inp_d_ls = LabeledInput(
-            "d_LS (m)", "0.20", "Hub bar to left shoulder offset"
-        )
+        self.inp_d_rs = LabeledInput("d_RS (m)", "0.20", "Hub bar to right shoulder offset")
+        self.inp_d_ls = LabeledInput("d_LS (m)", "0.20", "Hub bar to left shoulder offset")
         self.inp_grip_right = LabeledInput(
             "Grip R (m)", "0.05", "Right hand grip from club base"
         )
