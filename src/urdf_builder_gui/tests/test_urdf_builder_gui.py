@@ -164,9 +164,7 @@ class TestMassRatios:
 
     def test_torso_equals_lumbar_plus_thorax(self) -> None:
         """Combined torso entry must match lumbar + thorax."""
-        assert MASS_RATIOS["torso"] == pytest.approx(
-            MASS_RATIOS["lumbar"] + MASS_RATIOS["thorax"]
-        )
+        assert MASS_RATIOS["torso"] == pytest.approx(MASS_RATIOS["lumbar"] + MASS_RATIOS["thorax"])
 
 
 class TestComputeSegmentLength:
@@ -577,9 +575,7 @@ class TestFileSyncIntegrity:
                     "run: cp <root>/X python/urdf_builder_gui/X"
                 )
 
-        assert (
-            not mismatches
-        ), "DRY sync violation! Module copies have drifted:\n" + "\n".join(
+        assert not mismatches, "DRY sync violation! Module copies have drifted:\n" + "\n".join(
             f"  • {m}" for m in mismatches
         )
 

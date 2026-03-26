@@ -60,8 +60,7 @@ def add_cors_middleware(
     """
     require(isinstance(app, FastAPI), "app must be a FastAPI instance")
     require(
-        origins is None
-        or (isinstance(origins, list) and all(isinstance(o, str) for o in origins)),
+        origins is None or (isinstance(origins, list) and all(isinstance(o, str) for o in origins)),
         "origins must be a list of strings or None",
     )
     env_origins = os.environ.get("CORS_ORIGINS")

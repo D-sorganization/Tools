@@ -93,21 +93,21 @@ class SimController:
             raise ValueError("Cannot reconfigure mid-flight")
         if asteroid_mass is not None:
             if not (asteroid_mass > 0):
-                raise ValueError('DbC Blocked: Precondition failed.')
+                raise ValueError("DbC Blocked: Precondition failed.")
             self.asteroid_mass = asteroid_mass
         if shape_kind is not None:
             self.asteroid_shape_kind = shape_kind
         if semi_a is not None:
             if not (semi_a > 0):
-                raise ValueError('DbC Blocked: Precondition failed.')
+                raise ValueError("DbC Blocked: Precondition failed.")
             self.asteroid_semi_a = semi_a
         if semi_b is not None:
             if not (semi_b > 0):
-                raise ValueError('DbC Blocked: Precondition failed.')
+                raise ValueError("DbC Blocked: Precondition failed.")
             self.asteroid_semi_b = semi_b
         if impulse is not None:
             if not (impulse >= 0):
-                raise ValueError('DbC Blocked: Precondition failed.')
+                raise ValueError("DbC Blocked: Precondition failed.")
             self.impulse_magnitude = impulse
         self.shape = self._build_shape()
         self.state = self._build_state()
@@ -123,7 +123,7 @@ class SimController:
     def set_impulse(self, n_s: float) -> None:
         """Set the total impulse of the jump."""
         if not (n_s >= 0):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         self.impulse_magnitude = float(n_s)
 
     def start_jump(self) -> None:
@@ -148,7 +148,7 @@ class SimController:
     def tick(self, dt: float) -> None:
         """Advance simulation by *dt* seconds."""
         if not (dt > 0):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         step_simulation(self.state, dt)
 
     def reset(self) -> None:

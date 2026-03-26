@@ -106,11 +106,7 @@ def MatrixExp3(so3mat: Any) -> np.ndarray:
         return np.eye(3)
 
     omega_hat = so3mat / theta
-    R = (
-        np.eye(3)
-        + math.sin(theta) * omega_hat
-        + (1.0 - math.cos(theta)) * (omega_hat @ omega_hat)
-    )
+    R = np.eye(3) + math.sin(theta) * omega_hat + (1.0 - math.cos(theta)) * (omega_hat @ omega_hat)
 
     ensure(abs(np.linalg.det(R) - 1.0) < 1e-9, "result must be SO(3)")
     return R  # type: ignore[no-any-return]
@@ -936,14 +932,9 @@ def IKinSpace(Slist, M, T, thetalist0, eomg, ev):
     maxiterations = 20
     Tsb = FKinSpace(M, Slist, thetalist)
     Vs = np.dot(Adjoint(Tsb), se3ToVec(MatrixLog6(np.dot(TransInv(Tsb), T))))
-    err = (
-        np.linalg.norm([Vs[0], Vs[1], Vs[2]]) > eomg
-        or np.linalg.norm([Vs[3], Vs[4], Vs[5]]) > ev
-    )
+    err = np.linalg.norm([Vs[0], Vs[1], Vs[2]]) > eomg or np.linalg.norm([Vs[3], Vs[4], Vs[5]]) > ev
     while err and i < maxiterations:
-        thetalist = thetalist + np.dot(
-            np.linalg.pinv(JacobianSpace(Slist, thetalist)), Vs
-        )
+        thetalist = thetalist + np.dot(np.linalg.pinv(JacobianSpace(Slist, thetalist)), Vs)
         i = i + 1
         Tsb = FKinSpace(M, Slist, thetalist)
         Vs = np.dot(Adjoint(Tsb), se3ToVec(MatrixLog6(np.dot(TransInv(Tsb), T))))
@@ -973,9 +964,7 @@ def ad(V):
                   [-5,  4,  0, -2,  1,  0]])
     """
     omgmat = VecToso3([V[0], V[1], V[2]])
-    return np.r_[
-        np.c_[omgmat, np.zeros((3, 3))], np.c_[VecToso3([V[3], V[4], V[5]]), omgmat]
-    ]
+    return np.r_[np.c_[omgmat, np.zeros((3, 3))], np.c_[VecToso3([V[3], V[4], V[5]]), omgmat]]
 
 
 def InverseDynamics(thetalist, dthetalist, ddthetalist, g, Ftip, Mlist, Glist, Slist):
@@ -1059,9 +1048,7 @@ def InverseDynamics(thetalist, dthetalist, ddthetalist, g, Ftip, Mlist, Glist, S
         Fi = (
             np.dot(np.array(AdTi[i + 1]).T, Fi)
             + np.dot(np.array(Glist[i]), Vdi[:, i + 1])
-            - np.dot(
-                np.array(ad(Vi[:, i + 1])).T, np.dot(np.array(Glist[i]), Vi[:, i + 1])
-            )
+            - np.dot(np.array(ad(Vi[:, i + 1])).T, np.dot(np.array(Glist[i]), Vi[:, i + 1]))
         )
         taulist[i] = np.dot(np.array(Fi).T, Ai[:, i])
     return taulist
@@ -1240,9 +1227,7 @@ def GravityForces(thetalist, g, Mlist, Glist, Slist):
     if not (thetalist is not None):
         raise ValueError("thetalist must be provided")
     n = len(thetalist)
-    return InverseDynamics(
-        thetalist, [0] * n, [0] * n, g, [0, 0, 0, 0, 0, 0], Mlist, Glist, Slist
-    )
+    return InverseDynamics(thetalist, [0] * n, [0] * n, g, [0, 0, 0, 0, 0, 0], Mlist, Glist, Slist)
 
 
 def EndEffectorForces(thetalist, Ftip, Mlist, Glist, Slist):
@@ -1294,9 +1279,7 @@ def EndEffectorForces(thetalist, Ftip, Mlist, Glist, Slist):
     if not (thetalist is not None):
         raise ValueError("thetalist must be provided")
     n = len(thetalist)
-    return InverseDynamics(
-        thetalist, [0] * n, [0] * n, [0, 0, 0], Ftip, Mlist, Glist, Slist
-    )
+    return InverseDynamics(thetalist, [0] * n, [0] * n, [0, 0, 0], Ftip, Mlist, Glist, Slist)
 
 
 def ForwardDynamics(thetalist, dthetalist, taulist, g, Ftip, Mlist, Glist, Slist):
@@ -1383,14 +1366,10 @@ def EulerStep(thetalist, dthetalist, ddthetalist, dt):
         dthetalistNext:
         array([ 0.3 ,  0.35,  0.4 ])
     """
-    return thetalist + dt * np.array(dthetalist), dthetalist + dt * np.array(
-        ddthetalist
-    )
+    return thetalist + dt * np.array(dthetalist), dthetalist + dt * np.array(ddthetalist)
 
 
-def InverseDynamicsTrajectory(
-    thetamat, dthetamat, ddthetamat, g, Ftipmat, Mlist, Glist, Slist
-):
+def InverseDynamicsTrajectory(thetamat, dthetamat, ddthetamat, g, Ftipmat, Mlist, Glist, Slist):
     """Calculates the joint forces/torques required to move the serial chain
     along the given trajectory using inverse dynamics
 
@@ -1621,9 +1600,7 @@ def ForwardDynamicsTrajectory(
                 Glist,
                 Slist,
             )
-            thetalist, dthetalist = EulerStep(
-                thetalist, dthetalist, ddthetalist, 1.0 * dt / intRes
-            )
+            thetalist, dthetalist = EulerStep(thetalist, dthetalist, ddthetalist, 1.0 * dt / intRes)
         thetamat[:, i + 1] = thetalist
         dthetamat[:, i + 1] = dthetalist
     thetamat = np.array(thetamat).T
@@ -1774,9 +1751,7 @@ def CartesianTrajectory(Xstart, Xend, Tf, N, method):
             s = QuinticTimeScaling(Tf, timegap * i)
         traj[i] = np.r_[
             np.c_[
-                np.dot(
-                    Rstart, MatrixExp3(MatrixLog3(np.dot(np.array(Rstart).T, Rend)) * s)
-                ),
+                np.dot(Rstart, MatrixExp3(MatrixLog3(np.dot(np.array(Rstart).T, Rend)) * s)),
                 s * np.array(pend) + (1 - s) * np.array(pstart),
             ],
             [[0, 0, 0, 1]],

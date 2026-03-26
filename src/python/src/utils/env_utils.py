@@ -58,9 +58,7 @@ def find_env_file(
                 locations.append(repo_root / filename)
             except ImportError:
                 # Last resort fallback
-                locations.append(
-                    Path(__file__).parent.parent.parent.parent.parent / filename
-                )
+                locations.append(Path(__file__).parent.parent.parent.parent.parent / filename)
 
     # Add user home directory
     locations.append(Path.home() / ".pdf_renamer" / filename)

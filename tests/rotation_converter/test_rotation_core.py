@@ -367,9 +367,7 @@ class TestRandomRoundTrips:
         return q
 
     @pytest.mark.parametrize("trial", range(50))
-    def test_quat_matrix_roundtrip_random(
-        self, rng: np.random.Generator, trial: int
-    ) -> None:
+    def test_quat_matrix_roundtrip_random(self, rng: np.random.Generator, trial: int) -> None:
         q = self._random_quaternion(rng)
         R = quaternion_to_rotation_matrix(q)
         q2 = rotation_matrix_to_quaternion(R)
@@ -378,9 +376,7 @@ class TestRandomRoundTrips:
         np.testing.assert_allclose(q2, q, atol=1e-9)
 
     @pytest.mark.parametrize("trial", range(50))
-    def test_quat_axis_angle_roundtrip_random(
-        self, rng: np.random.Generator, trial: int
-    ) -> None:
+    def test_quat_axis_angle_roundtrip_random(self, rng: np.random.Generator, trial: int) -> None:
         q = self._random_quaternion(rng)
         axis, angle = quaternion_to_axis_angle(q)
         q2 = axis_angle_to_quaternion(axis, angle)
@@ -389,9 +385,7 @@ class TestRandomRoundTrips:
         np.testing.assert_allclose(q2, q, atol=1e-9)
 
     @pytest.mark.parametrize("trial", range(50))
-    def test_quat_rodrigues_roundtrip_random(
-        self, rng: np.random.Generator, trial: int
-    ) -> None:
+    def test_quat_rodrigues_roundtrip_random(self, rng: np.random.Generator, trial: int) -> None:
         q = self._random_quaternion(rng)
         r = quaternion_to_rodrigues(q)
         q2 = rodrigues_to_quaternion(r)
@@ -399,12 +393,8 @@ class TestRandomRoundTrips:
             q2 = -q2
         np.testing.assert_allclose(q2, q, atol=1e-9)
 
-    @pytest.mark.parametrize(
-        "convention", ["xyz", "zyx", "zyz", "xyx", "yxy", "yzy", "xzx", "zxz"]
-    )
-    def test_euler_roundtrip_random(
-        self, rng: np.random.Generator, convention: str
-    ) -> None:
+    @pytest.mark.parametrize("convention", ["xyz", "zyx", "zyz", "xyx", "yxy", "yzy", "xzx", "zxz"])
+    def test_euler_roundtrip_random(self, rng: np.random.Generator, convention: str) -> None:
         q = self._random_quaternion(rng)
         e = quaternion_to_euler(q, convention)
         q2 = euler_to_quaternion(*e, convention)

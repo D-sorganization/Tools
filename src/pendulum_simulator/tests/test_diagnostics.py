@@ -30,9 +30,7 @@ class TestDiagnosticsTracker:
         assert t1 is t2
 
     def test_record_event(self, temp_tracker):
-        temp_tracker.record(
-            "test_cat", "test msg", severity="warning", extra={"k": "v"}
-        )
+        temp_tracker.record("test_cat", "test msg", severity="warning", extra={"k": "v"})
         assert len(temp_tracker.events) == 1
         event = temp_tracker.events[0]
         assert event.category == "test_cat"
@@ -83,7 +81,9 @@ class TestDiagnosticsTracker:
 
     def test_load_history_handles_corrupt_lines(self, tmp_path):
         diag_file = tmp_path / "diagnostics.jsonl"
-        content = 'not json\n{"timestamp": "1", "severity": "info", "category": "ok", "message": "m"}\n'
+        content = (
+            'not json\n{"timestamp": "1", "severity": "info", "category": "ok", "message": "m"}\n'
+        )
         diag_file.write_text(content, encoding="utf-8")
 
         with patch("double_pendulum_golf.gui.diagnostics._DIAG_FILE", diag_file):
@@ -145,9 +145,7 @@ class TestDiagnosticsViewer:
 
         viewer._table.setCurrentCell(0, 0)
 
-        with patch(
-            "double_pendulum_golf.gui.diagnostics.QApplication.clipboard"
-        ) as mock_clip:
+        with patch("double_pendulum_golf.gui.diagnostics.QApplication.clipboard") as mock_clip:
             mock_cb = MagicMock()
             mock_clip.return_value = mock_cb
             viewer._copy_details()
@@ -179,9 +177,7 @@ class TestExceptionHook:
 
 class TestDiagnosticsGaps:
     def test_show_viewer(self, temp_tracker):
-        with patch(
-            "double_pendulum_golf.gui.diagnostics.DiagnosticsViewer.exec"
-        ) as mock_exec:
+        with patch("double_pendulum_golf.gui.diagnostics.DiagnosticsViewer.exec") as mock_exec:
             temp_tracker.show_viewer()
             mock_exec.assert_called_once()
 

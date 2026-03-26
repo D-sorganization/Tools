@@ -133,11 +133,7 @@ def twist_angle_to_homogeneous(xi: Any, theta: float) -> np.ndarray:
         )
         K = _skew_symmetric(omega)
         R = np.eye(3) + math.sin(theta) * K + (1.0 - math.cos(theta)) * (K @ K)
-        G = (
-            np.eye(3) * theta
-            + (1.0 - math.cos(theta)) * K
-            + (theta - math.sin(theta)) * (K @ K)
-        )
+        G = np.eye(3) * theta + (1.0 - math.cos(theta)) * K + (theta - math.sin(theta)) * (K @ K)
         T[:3, :3] = R
         T[:3, 3] = G @ v
 
@@ -198,11 +194,7 @@ def homogeneous_to_twist_angle(T: Any) -> tuple[np.ndarray, float]:
             K = _skew_symmetric(omega)
             # G_inv = (1/theta)*I - 0.5*K + (1/theta - 0.5*cot(theta/2))*K^2
             cot_half = math.cos(theta / 2) / math.sin(theta / 2)
-            G_inv = (
-                (1.0 / theta) * np.eye(3)
-                - 0.5 * K
-                + (1.0 / theta - 0.5 * cot_half) * (K @ K)
-            )
+            G_inv = (1.0 / theta) * np.eye(3) - 0.5 * K + (1.0 / theta - 0.5 * cot_half) * (K @ K)
             v = G_inv @ p
             xi = np.concatenate([omega, v])
 
@@ -288,9 +280,7 @@ def screw_to_twist(screw: dict[str, Any]) -> np.ndarray:
     if pitch == float("inf"):
         # Pure translation — normalize axis to unit direction
         axis_norm = np.linalg.norm(axis)
-        require(
-            bool(axis_norm > 1e-12), "screw axis must be non-zero for pure translation"
-        )
+        require(bool(axis_norm > 1e-12), "screw axis must be non-zero for pure translation")
         omega = np.zeros(3)
         v = axis / axis_norm
     else:

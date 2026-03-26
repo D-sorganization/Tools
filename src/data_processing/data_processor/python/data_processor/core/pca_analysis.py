@@ -166,9 +166,7 @@ class PCAAnalyzer:
         n_samples, n_features = X.shape
 
         X_processed, mean, std = self._preprocess(X)
-        components, explained_var, explained_var_ratio, singular_values = self._fit_pca(
-            X_processed
-        )
+        components, explained_var, explained_var_ratio, singular_values = self._fit_pca(X_processed)
 
         pc_labels = [f"PC{i+1}" for i in range(components.shape[0])]
         transformed_df = pd.DataFrame(
@@ -290,9 +288,7 @@ class PCAAnalyzer:
                 if abs(loading) >= loading_threshold
             ]
             # Sort by absolute loading
-            influential.sort(
-                key=lambda x: abs(float(x.split("(")[1].rstrip(")"))), reverse=True
-            )
+            influential.sort(key=lambda x: abs(float(x.split("(")[1].rstrip(")"))), reverse=True)
             interpretations[f"PC{comp.index}"] = influential
 
         return interpretations
@@ -402,10 +398,7 @@ class PCAAnalyzer:
         # Normalize to sum to 1
         importance = importance / np.sum(importance)
 
-        return {
-            name: float(imp)
-            for name, imp in zip(feature_names, importance, strict=False)
-        }
+        return {name: float(imp) for name, imp in zip(feature_names, importance, strict=False)}
 
     def _calculate_feature_contributions(
         self,
@@ -591,12 +584,8 @@ def create_loading_plot(
 
     ax.set_xlim(-1.2, 1.2)
     ax.set_ylim(-1.2, 1.2)
-    ax.set_xlabel(
-        f"PC{pc_x} ({result.components[pc_x-1].explained_variance_ratio*100:.1f}%)"
-    )
-    ax.set_ylabel(
-        f"PC{pc_y} ({result.components[pc_y-1].explained_variance_ratio*100:.1f}%)"
-    )
+    ax.set_xlabel(f"PC{pc_x} ({result.components[pc_x-1].explained_variance_ratio*100:.1f}%)")
+    ax.set_ylabel(f"PC{pc_y} ({result.components[pc_y-1].explained_variance_ratio*100:.1f}%)")
     ax.set_title("PCA Loading Plot")
     ax.axhline(y=0, color="k", linestyle="-", linewidth=0.5)
     ax.axvline(x=0, color="k", linestyle="-", linewidth=0.5)

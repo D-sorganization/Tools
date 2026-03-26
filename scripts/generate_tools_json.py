@@ -45,9 +45,7 @@ def load_gui_info(path: Path) -> dict[str, Any] | None:
     Post-condition: Returns the GUI_INFO dict or None if not loadable.
     """
     try:
-        spec = importlib.util.spec_from_file_location(
-            f"gui_reg_{path.parent.name}", path
-        )
+        spec = importlib.util.spec_from_file_location(f"gui_reg_{path.parent.name}", path)
         if spec is None or spec.loader is None:
             return None
         module = importlib.util.module_from_spec(spec)
@@ -82,9 +80,7 @@ def _discover_registrations(repo_root: Path) -> list[ToolRegistration]:
         has_web = "web" in info and (tool_dir / "launch_web.py").exists()
         # Legacy/Tkinter GUI: explicit launch_gui.py with no PyQt6 surface
         has_legacy_gui = (
-            not has_pyqt6
-            and "tkinter" in info
-            and (tool_dir / "launch_gui.py").exists()
+            not has_pyqt6 and "tkinter" in info and (tool_dir / "launch_gui.py").exists()
         )
 
         # Skip tools with no available surface
@@ -102,9 +98,7 @@ def _discover_registrations(repo_root: Path) -> list[ToolRegistration]:
         )
 
         if tool_id in seen_ids:
-            logger.warning(
-                "Duplicate tool_name '%s' found, skipping %s", tool_id, reg_file
-            )
+            logger.warning("Duplicate tool_name '%s' found, skipping %s", tool_id, reg_file)
         else:
             seen_ids[tool_id] = registration
 
@@ -134,9 +128,7 @@ def generate_manifest_data(repo_root: Path) -> dict[str, list[dict[str, Any]]]:
                 manifest[reg.category].append(
                     {
                         "name": name,
-                        "path": str(launch_script.relative_to(repo_root)).replace(
-                            "\\", "/"
-                        ),
+                        "path": str(launch_script.relative_to(repo_root)).replace("\\", "/"),
                         "type": "python",
                         "desc": reg.description,
                     }
@@ -151,9 +143,7 @@ def generate_manifest_data(repo_root: Path) -> dict[str, list[dict[str, Any]]]:
                 manifest[reg.category].append(
                     {
                         "name": name,
-                        "path": str(launch_script.relative_to(repo_root)).replace(
-                            "\\", "/"
-                        ),
+                        "path": str(launch_script.relative_to(repo_root)).replace("\\", "/"),
                         "type": "python",
                         "desc": reg.description,
                     }
@@ -167,9 +157,7 @@ def generate_manifest_data(repo_root: Path) -> dict[str, list[dict[str, Any]]]:
                 manifest[reg.category].append(
                     {
                         "name": reg.name,
-                        "path": str(launch_script.relative_to(repo_root)).replace(
-                            "\\", "/"
-                        ),
+                        "path": str(launch_script.relative_to(repo_root)).replace("\\", "/"),
                         "type": "python",
                         "desc": reg.description,
                     }

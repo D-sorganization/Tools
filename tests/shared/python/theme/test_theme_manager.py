@@ -23,9 +23,7 @@ def mock_qsettings() -> MagicMock:
 def theme_manager(mock_qsettings: MagicMock) -> ThemeManager:
     """Create a ThemeManager with mocked settings."""
     ThemeManager.reset_instance()
-    with patch(
-        "shared.python.theme.theme_manager.QSettings", return_value=mock_qsettings
-    ):
+    with patch("shared.python.theme.theme_manager.QSettings", return_value=mock_qsettings):
         manager = ThemeManager()
     yield manager
     ThemeManager.reset_instance()
@@ -37,9 +35,7 @@ class TestThemeManagerSingleton:
     def test_instance_returns_same_object(self, mock_qsettings: MagicMock) -> None:
         """Test that instance() returns the same object."""
         ThemeManager.reset_instance()
-        with patch(
-            "shared.python.theme.theme_manager.QSettings", return_value=mock_qsettings
-        ):
+        with patch("shared.python.theme.theme_manager.QSettings", return_value=mock_qsettings):
             manager1 = ThemeManager.instance()
             manager2 = ThemeManager.instance()
         assert manager1 is manager2
@@ -48,9 +44,7 @@ class TestThemeManagerSingleton:
     def test_reset_instance_clears_singleton(self, mock_qsettings: MagicMock) -> None:
         """Test that reset_instance clears the singleton."""
         ThemeManager.reset_instance()
-        with patch(
-            "shared.python.theme.theme_manager.QSettings", return_value=mock_qsettings
-        ):
+        with patch("shared.python.theme.theme_manager.QSettings", return_value=mock_qsettings):
             manager1 = ThemeManager.instance()
             ThemeManager.reset_instance()
             manager2 = ThemeManager.instance()
@@ -147,25 +141,19 @@ class TestCustomThemes:
         assert name == "MyTheme"
         assert "MyTheme" in theme_manager.get_custom_theme_names()
 
-    def test_save_custom_theme_empty_name_raises(
-        self, theme_manager: ThemeManager
-    ) -> None:
+    def test_save_custom_theme_empty_name_raises(self, theme_manager: ThemeManager) -> None:
         """Test that empty theme name raises ValueError."""
         colors = {key: "#ff0000" for key in THEME_COLOR_KEYS}
         with pytest.raises(ValueError, match="empty"):
             theme_manager.save_custom_theme("", colors)
 
-    def test_save_custom_theme_builtin_name_raises(
-        self, theme_manager: ThemeManager
-    ) -> None:
+    def test_save_custom_theme_builtin_name_raises(self, theme_manager: ThemeManager) -> None:
         """Test that built-in theme name raises ValueError."""
         colors = {key: "#ff0000" for key in THEME_COLOR_KEYS}
         with pytest.raises(ValueError, match="conflicts"):
             theme_manager.save_custom_theme("Light", colors)
 
-    def test_save_custom_theme_missing_colors_raises(
-        self, theme_manager: ThemeManager
-    ) -> None:
+    def test_save_custom_theme_missing_colors_raises(self, theme_manager: ThemeManager) -> None:
         """Test that missing colors raise ValueError."""
         colors = {"bg": "#ff0000"}  # Missing other required keys
         with pytest.raises(ValueError, match="Missing"):
@@ -184,9 +172,7 @@ class TestCustomThemes:
         result = theme_manager.delete_custom_theme("NonexistentTheme")
         assert result is False
 
-    def test_delete_current_theme_switches_to_light(
-        self, theme_manager: ThemeManager
-    ) -> None:
+    def test_delete_current_theme_switches_to_light(self, theme_manager: ThemeManager) -> None:
         """Test that deleting current theme switches to Light."""
         colors = {key: "#ff0000" for key in THEME_COLOR_KEYS}
         theme_manager.save_custom_theme("MyTheme", colors, apply_immediately=True)
@@ -198,14 +184,10 @@ class TestCustomThemes:
 class TestInheritance:
     """Tests for theme inheritance in sub-applications."""
 
-    def test_inherit_option_available_with_context(
-        self, mock_qsettings: MagicMock
-    ) -> None:
+    def test_inherit_option_available_with_context(self, mock_qsettings: MagicMock) -> None:
         """Test that Inherit option is available when app_context is set."""
         ThemeManager.reset_instance()
-        with patch(
-            "shared.python.theme.theme_manager.QSettings", return_value=mock_qsettings
-        ):
+        with patch("shared.python.theme.theme_manager.QSettings", return_value=mock_qsettings):
             manager = ThemeManager(app_context="MyApp")
         themes = manager.get_available_themes()
         assert themes[0] == "Inherit"

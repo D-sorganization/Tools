@@ -58,32 +58,24 @@ class TestSaturationMode:
 
 class TestApplySaturation:
     def test_hard_clipping(self, ramp_signal: Signal) -> None:
-        result = apply_saturation(
-            ramp_signal, lower=-1.0, upper=1.0, mode=SaturationMode.HARD
-        )
+        result = apply_saturation(ramp_signal, lower=-1.0, upper=1.0, mode=SaturationMode.HARD)
         assert np.max(result.values) <= 1.0 + 1e-10
         assert np.min(result.values) >= -1.0 - 1e-10
 
     def test_tanh_reduces_range(self, ramp_signal: Signal) -> None:
         """Tanh saturation should reduce the output range vs the input range."""
-        result = apply_saturation(
-            ramp_signal, lower=-1.0, upper=1.0, mode=SaturationMode.TANH
-        )
+        result = apply_saturation(ramp_signal, lower=-1.0, upper=1.0, mode=SaturationMode.TANH)
         # Output range should be smaller than input range [-3, 3]
         assert np.max(result.values) < 3.0
         assert np.min(result.values) > -3.0
 
     def test_sigmoid_within_limits(self, ramp_signal: Signal) -> None:
-        result = apply_saturation(
-            ramp_signal, lower=-1.0, upper=1.0, mode=SaturationMode.SIGMOID
-        )
+        result = apply_saturation(ramp_signal, lower=-1.0, upper=1.0, mode=SaturationMode.SIGMOID)
         assert np.max(result.values) <= 1.0 + 1e-6
         assert np.min(result.values) >= -1.0 - 1e-6
 
     def test_atan_within_limits(self, ramp_signal: Signal) -> None:
-        result = apply_saturation(
-            ramp_signal, lower=-1.0, upper=1.0, mode=SaturationMode.ATAN
-        )
+        result = apply_saturation(ramp_signal, lower=-1.0, upper=1.0, mode=SaturationMode.ATAN)
         assert np.max(result.values) <= 1.0 + 1e-6
         assert np.min(result.values) >= -1.0 - 1e-6
 

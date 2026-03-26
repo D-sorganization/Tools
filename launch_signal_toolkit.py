@@ -239,7 +239,7 @@ class SignalToolkitLauncher(QMainWindow):
         """Create the application menu bar."""
         menubar = self.menuBar()
         if not (menubar is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
 
         # --- File ---
         file_menu = QMenu("&File", self)

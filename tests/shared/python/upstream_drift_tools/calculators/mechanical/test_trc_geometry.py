@@ -203,9 +203,7 @@ class TestCalculateGeometry:
         engine = TRCGeometryEngine()
         dims = _make_dimensions()
         layers = [
-            LayerConfig(
-                name="Hidden", thickness=2.0, density=100.0, color="red", visible=False
-            ),
+            LayerConfig(name="Hidden", thickness=2.0, density=100.0, color="red", visible=False),
         ]
         result = engine.calculate_geometry(dims, layers)
         assert len(result.layers) == 0

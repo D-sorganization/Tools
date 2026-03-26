@@ -75,9 +75,7 @@ def test_analysis_tab_surface(qapp, monkeypatch):
     tab._on_plot_surface()
 
     # test double exception path LinAlgError
-    tab._get_surface_evaluator = lambda z: (
-        lambda q: np.linalg.cond(np.array([[0, 0], [0, 0]]))
-    )
+    tab._get_surface_evaluator = lambda z: (lambda q: np.linalg.cond(np.array([[0, 0], [0, 0]])))
     tab._on_plot_surface()
     del tab._get_surface_evaluator  # restore
 
@@ -165,7 +163,5 @@ def test_analysis_tab_plot_2d_errors(qapp, monkeypatch):
     def mock_extract(*args):
         raise KeyError()
 
-    monkeypatch.setattr(
-        "double_pendulum_golf.data_extractor.extract_series", mock_extract
-    )
+    monkeypatch.setattr("double_pendulum_golf.data_extractor.extract_series", mock_extract)
     tab._on_plot_2d()

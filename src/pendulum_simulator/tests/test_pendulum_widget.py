@@ -114,9 +114,7 @@ def test_painting(qapp, monkeypatch):
             "force_semi_axes": None,  # coverage branch
         },
     }
-    monkeypatch.setattr(
-        "double_pendulum_golf.jacobians.ellipsoids_double", lambda *args: ell_data
-    )
+    monkeypatch.setattr("double_pendulum_golf.jacobians.ellipsoids_double", lambda *args: ell_data)
 
     w.set_simulation(res)
 
@@ -187,9 +185,7 @@ def test_painting_triple(qapp, monkeypatch):
             "force_semi_axes": None,
         },
     }
-    monkeypatch.setattr(
-        "double_pendulum_golf.jacobians.ellipsoids_triple", lambda *args: ell_data
-    )
+    monkeypatch.setattr("double_pendulum_golf.jacobians.ellipsoids_triple", lambda *args: ell_data)
 
     w.set_simulation(res)
     w.set_show_forces(True)

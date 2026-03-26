@@ -124,14 +124,10 @@ class TestFrictionTorqueVector:
         expected_tau_f1 = -damped_params.b1 * dtheta1
         assert np.isclose(tf[0], expected_tau_f1)
 
-    def test_coulomb_has_constant_magnitude(
-        self, frictional_params: PendulumParams
-    ) -> None:
+    def test_coulomb_has_constant_magnitude(self, frictional_params: PendulumParams) -> None:
         """Coulomb friction magnitude is mu regardless of velocity magnitude."""
         for speed in [0.1, 1.0, 10.0, 100.0]:
-            tf = friction_torque_vector(
-                dtheta1=speed, dphi=speed, params=frictional_params
-            )
+            tf = friction_torque_vector(dtheta1=speed, dphi=speed, params=frictional_params)
             assert np.isclose(
                 abs(tf[0]), frictional_params.mu1
             ), f"Expected |tau_f1|={frictional_params.mu1}, got {abs(tf[0])} at speed={speed}"
@@ -141,16 +137,12 @@ class TestFrictionTorqueVector:
         tf = friction_torque_vector(dtheta1=0.0, dphi=0.0, params=frictional_params)
         assert np.allclose(tf, [0.0, 0.0])
 
-    def test_combined_friction_superposition(
-        self, combined_params: PendulumParams
-    ) -> None:
+    def test_combined_friction_superposition(self, combined_params: PendulumParams) -> None:
         """Combined damping+friction = viscous + Coulomb separately."""
         dtheta1, dphi = 1.5, -0.8
         tf = friction_torque_vector(dtheta1, dphi, combined_params)
 
-        expected_1 = -combined_params.b1 * dtheta1 - combined_params.mu1 * np.sign(
-            dtheta1
-        )
+        expected_1 = -combined_params.b1 * dtheta1 - combined_params.mu1 * np.sign(dtheta1)
         expected_2 = -combined_params.b2 * dphi - combined_params.mu2 * np.sign(dphi)
         assert np.isclose(tf[0], expected_1)
         assert np.isclose(tf[1], expected_2)
@@ -169,9 +161,7 @@ class TestFrictionTorqueVector:
 class TestEquationsOfMotionWithDissipation:
     """Verify that EOM correctly incorporates friction into dynamics."""
 
-    def test_undamped_conserves_energy_approximately(
-        self, base_params: PendulumParams
-    ) -> None:
+    def test_undamped_conserves_energy_approximately(self, base_params: PendulumParams) -> None:
         """Without dissipation, total energy should be nearly conserved."""
         from double_pendulum_golf.physics import total_energy
 
@@ -266,9 +256,7 @@ class TestSimulationResultFrictionAccessors:
         total = friction_result.total_torques_at(idx)
         assert np.allclose(total, drive + friction)
 
-    def test_no_dissipation_zero_friction_torques(
-        self, base_params: PendulumParams
-    ) -> None:
+    def test_no_dissipation_zero_friction_torques(self, base_params: PendulumParams) -> None:
         state0 = np.array([np.radians(45), 0.0, 1.0, 0.0])
         result = run_simulation(
             params=base_params,

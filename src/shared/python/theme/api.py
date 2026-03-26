@@ -110,9 +110,7 @@ def _register_builtin_endpoints(router: APIRouter, theme_manager: Any) -> None:
         for name in theme_manager.get_builtin_themes():
             colors = theme_manager.get_theme_colors(name)
             if colors:
-                themes[name] = ThemeDefinition(
-                    name=name, is_builtin=True, colors=colors
-                )
+                themes[name] = ThemeDefinition(name=name, is_builtin=True, colors=colors)
         return ThemeListResponse(themes=themes)
 
 
@@ -133,9 +131,7 @@ def _register_custom_endpoints(router: APIRouter, theme_manager: Any) -> None:
         for name in theme_manager.get_custom_theme_names():
             colors = theme_manager.get_theme_colors(name)
             if colors:
-                themes[name] = ThemeDefinition(
-                    name=name, is_builtin=False, colors=colors
-                )
+                themes[name] = ThemeDefinition(name=name, is_builtin=False, colors=colors)
         return ThemeListResponse(themes=themes)
 
     @router.post(
@@ -168,9 +164,7 @@ def _register_custom_endpoints(router: APIRouter, theme_manager: Any) -> None:
         """Delete a user-defined custom theme by name."""
         success = theme_manager.delete_custom_theme(theme_id)
         if not success:
-            raise HTTPException(
-                status_code=404, detail=f"Custom theme '{theme_id}' not found"
-            )
+            raise HTTPException(status_code=404, detail=f"Custom theme '{theme_id}' not found")
         return ThemeOperationResponse(
             success=True,
             message=f"Theme '{theme_id}' deleted",
@@ -209,8 +203,7 @@ def _register_active_and_list_endpoints(router: APIRouter, theme_manager: Any) -
         if request.name not in available:
             raise HTTPException(
                 status_code=404,
-                detail=f"Theme '{request.name}' not found. "
-                f"Available: {', '.join(available)}",
+                detail=f"Theme '{request.name}' not found. " f"Available: {', '.join(available)}",
             )
         theme_manager.change_theme(request.name)
         return ThemeOperationResponse(
@@ -231,16 +224,12 @@ def _register_active_and_list_endpoints(router: APIRouter, theme_manager: Any) -
         for name in theme_manager.get_builtin_themes():
             colors = theme_manager.get_theme_colors(name)
             if colors:
-                themes[name] = ThemeDefinition(
-                    name=name, is_builtin=True, colors=colors
-                )
+                themes[name] = ThemeDefinition(name=name, is_builtin=True, colors=colors)
 
         for name in theme_manager.get_custom_theme_names():
             colors = theme_manager.get_theme_colors(name)
             if colors:
-                themes[name] = ThemeDefinition(
-                    name=name, is_builtin=False, colors=colors
-                )
+                themes[name] = ThemeDefinition(name=name, is_builtin=False, colors=colors)
 
         return ThemeListResponse(themes=themes)
 

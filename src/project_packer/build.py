@@ -33,9 +33,7 @@ def main() -> None:
 
     # Run the build script
     try:
-        run_python_script(
-            script_dir / "build_exe.py", cwd=script_dir, capture_output=False
-        )
+        run_python_script(script_dir / "build_exe.py", cwd=script_dir, capture_output=False)
         logger.info("Build process completed.")
 
         exe_path = script_dir / "dist" / "FolderPacker.exe"

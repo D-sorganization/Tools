@@ -51,9 +51,7 @@ except ImportError:
 
 
 # Constants for configuration paths
-TOOLS_ENV_PATH = Path(
-    "c:/Users/diete/Repositories/Tools/document_processing/pdf_renamer/.env"
-)
+TOOLS_ENV_PATH = Path("c:/Users/diete/Repositories/Tools/document_processing/pdf_renamer/.env")
 
 # Try to load from .env file if available
 try:
@@ -176,9 +174,7 @@ def setup_api_key_interactive() -> bool:
     logger.info("\nTo use AI-powered title extraction, you need a Gemini API key.")
     logger.info("Get your free API key at: https://makersuite.google.com/app/apikey")
 
-    response = (
-        input("\nWould you like to set up your API key now? (y/N): ").strip().lower()
-    )
+    response = input("\nWould you like to set up your API key now? (y/N): ").strip().lower()
     if response != "y":
         logger.info("\nSkipping API key setup. You can set it later by:")
         logger.info("  1. Creating a .env file with: GEMINI_API_KEY=your_key")
@@ -266,9 +262,9 @@ def _find_key_location() -> str:
             try:
                 with open(env_path) as f:
                     for line in f:
-                        if line.strip().startswith(
-                            "GEMINI_API_KEY="
-                        ) or line.strip().startswith("GOOGLE_API_KEY="):
+                        if line.strip().startswith("GEMINI_API_KEY=") or line.strip().startswith(
+                            "GOOGLE_API_KEY="
+                        ):
                             return f"{location} ({env_path})"
             except (PermissionError, OSError):
                 continue

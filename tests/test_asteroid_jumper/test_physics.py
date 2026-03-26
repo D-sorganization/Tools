@@ -110,15 +110,15 @@ class TestRigidBody:
         assert body.moment_of_inertia == 5.0
 
     def test_negative_mass_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((AssertionError, ValueError)):
             RigidBody(mass=-1.0, moment_of_inertia=1.0)
 
     def test_zero_mass_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((AssertionError, ValueError)):
             RigidBody(mass=0.0, moment_of_inertia=1.0)
 
     def test_zero_moi_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((AssertionError, ValueError)):
             RigidBody(mass=1.0, moment_of_inertia=0.0)
 
     def test_speed_at_rest(self) -> None:
@@ -159,11 +159,11 @@ class TestMomentOfInertia:
         assert moment_of_inertia_rod(12.0, 1.0) == pytest.approx(1.0)
 
     def test_disk_zero_radius_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((AssertionError, ValueError)):
             moment_of_inertia_disk(1.0, 0.0)
 
     def test_ellipse_zero_axis_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((AssertionError, ValueError)):
             moment_of_inertia_ellipse(1.0, 0.0, 1.0)
 
 
@@ -295,7 +295,7 @@ class TestSpringLaunch:
         assert result is None
 
     def test_invalid_duration_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((AssertionError, ValueError)):
             SpringLaunch(
                 total_impulse=100.0,
                 force_direction_rad=0.0,
@@ -325,7 +325,7 @@ class TestIntegration:
 
     def test_zero_dt_raises(self) -> None:
         body = RigidBody(mass=1.0, moment_of_inertia=1.0)
-        with pytest.raises(AssertionError):
+        with pytest.raises((AssertionError, ValueError)):
             integrate_body(body, 0.0)
 
 

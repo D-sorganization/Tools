@@ -69,9 +69,7 @@ class ScriptGenerator:
         lines.extend(self._generate_script_header(pipeline))
 
         if include_imports:
-            lines.extend(
-                self._generate_imports(pipeline, include_logging, use_argparse)
-            )
+            lines.extend(self._generate_imports(pipeline, include_logging, use_argparse))
 
         if include_logging:
             lines.extend(self._generate_logging_setup())
@@ -403,34 +401,25 @@ class ScriptGenerator:
 
         if OperationType.FILTER in operations:
             imports.append(
-                "from data_processor.vectorized_filter_engine"
-                " import VectorizedFilterEngine"
+                "from data_processor.vectorized_filter_engine" " import VectorizedFilterEngine"
             )
 
-        if (
-            OperationType.INTEGRATE in operations
-            or OperationType.DIFFERENTIATE in operations
-        ):
+        if OperationType.INTEGRATE in operations or OperationType.DIFFERENTIATE in operations:
             imports.append(
                 "from data_processor.core.signal_processing"
                 " import integrate_signals, differentiate_signals"
             )
 
         if OperationType.RESAMPLE in operations:
-            imports.append(
-                "from data_processor.core.signal_processing import resample_data"
-            )
+            imports.append("from data_processor.core.signal_processing import resample_data")
 
         if OperationType.CALCULATE in operations:
             imports.append(
-                "from data_processor.core.signal_processing"
-                " import apply_custom_variable"
+                "from data_processor.core.signal_processing" " import apply_custom_variable"
             )
 
         if OperationType.TRIM in operations:
-            imports.append(
-                "from data_processor.core.signal_processing import trim_time_range"
-            )
+            imports.append("from data_processor.core.signal_processing import trim_time_range")
 
         return imports
 
@@ -512,17 +501,14 @@ class ScriptGenerator:
         elif step.operation == OperationType.CALCULATE:
             col_name = params.get("column_name")
             formula = params.get("formula")
-            return [
-                f"{prefix}df = apply_custom_variable(df, {col_name!r}, {formula!r})"
-            ]
+            return [f"{prefix}df = apply_custom_variable(df, {col_name!r}, {formula!r})"]
 
         elif step.operation == OperationType.RESAMPLE:
             time_col = params.get("time_column")
             rule = params.get("rule")
             method = params.get("method", "mean")
             return [
-                f"{prefix}df = resample_data("
-                f"df, {time_col!r}, {rule!r}, method={method!r})"
+                f"{prefix}df = resample_data(" f"df, {time_col!r}, {rule!r}, method={method!r})"
             ]
 
         elif step.operation == OperationType.INTEGRATE:

@@ -118,9 +118,7 @@ class TestAddControlLoops:
 
     def test_skips_incomplete_loop(self, doc_and_msp):
         _, msp = doc_and_msp
-        spec = {
-            "control_loops": [{"id": "CL-BAD", "measurement": "", "final_element": ""}]
-        }
+        spec = {"control_loops": [{"id": "CL-BAD", "measurement": "", "final_element": ""}]}
         before = len(msp)
         add_control_loops(
             msp,

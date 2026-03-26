@@ -118,9 +118,7 @@ class TestGeometrySynchronisation:
         assert isinstance(fea, GlassBathFEAConfig)
 
     def test_dimensions_match(self) -> None:
-        ec = _make_stub_electrode_config(
-            bath_diameter=100.0, glass_depth=12.0, tip_diameter=8.0
-        )
+        ec = _make_stub_electrode_config(bath_diameter=100.0, glass_depth=12.0, tip_diameter=8.0)
         sync = GeometrySynchronizer(electrode_config=ec)
         fea = sync.sync()
 
@@ -261,9 +259,7 @@ class TestGeometryGeneratorConsistency:
         volumes = gen.calculate_region_volumes()
         assert volumes["glass"] > 0
         assert volumes["metal"] > 0
-        assert volumes["total"] == pytest.approx(
-            volumes["glass"] + volumes["metal"], rel=1e-6
-        )
+        assert volumes["total"] == pytest.approx(volumes["glass"] + volumes["metal"], rel=1e-6)
 
     def test_electrode_geometry_count(self) -> None:
         ec = _make_stub_electrode_config()

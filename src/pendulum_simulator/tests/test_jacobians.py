@@ -173,9 +173,7 @@ class TestJacobianTripleShape:
 class TestJacobianTripleAnalytic:
     """Known values at canonical configurations."""
 
-    def test_straight_down_wrist1_jacobian(
-        self, L3: tuple[float, float, float]
-    ) -> None:
+    def test_straight_down_wrist1_jacobian(self, L3: tuple[float, float, float]) -> None:
         """theta1=phi1=phi2=0 → wrist1: [[L1, 0, 0], [0, 0, 0]]."""
         L1, L2, L3_ = L3
         J = jacobian_triple(0.0, 0.0, 0.0, L1, L2, L3_)["wrist1"]
@@ -338,9 +336,7 @@ class TestEllipsoidsDouble:
         L1, L2 = L
         result = ellipsoids_double(1.0, 0.5, L1, L2)
         for name, data in result.items():
-            assert np.all(
-                data["mob_semi_axes"] >= 0
-            ), f"Negative mobility axis in '{name}'"
+            assert np.all(data["mob_semi_axes"] >= 0), f"Negative mobility axis in '{name}'"
 
 
 class TestEllipsoidsTriple:
@@ -351,9 +347,7 @@ class TestEllipsoidsTriple:
         result = ellipsoids_triple(0.3, 0.2, 0.1, L1, L2, L3_)
         assert set(result.keys()) == {"wrist1", "wrist2", "tip"}
 
-    def test_each_endpoint_has_required_keys(
-        self, L3: tuple[float, float, float]
-    ) -> None:
+    def test_each_endpoint_has_required_keys(self, L3: tuple[float, float, float]) -> None:
         L1, L2, L3_ = L3
         result = ellipsoids_triple(0.3, 0.2, 0.1, L1, L2, L3_)
         required = {

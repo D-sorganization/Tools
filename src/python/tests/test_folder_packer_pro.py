@@ -141,15 +141,9 @@ class TestFileOps:
         patterns: set[str] = set()
 
         # Default: .git excluded
-        assert (
-            should_exclude(Path("path/to/.git/config"), patterns, include_git=False)
-            is True
-        )
+        assert should_exclude(Path("path/to/.git/config"), patterns, include_git=False) is True
         # Include git: .git not excluded
-        assert (
-            should_exclude(Path("path/to/.git/config"), patterns, include_git=True)
-            is False
-        )
+        assert should_exclude(Path("path/to/.git/config"), patterns, include_git=True) is False
 
     def test_collect_folder_stats(self, tmp_path: Path) -> None:
         """Test collect_folder_stats."""
@@ -277,9 +271,7 @@ class TestFolderPackerPro:
             patch("tkinter.ttk.Scrollbar"),
             patch("tkinter.Text"),
             patch("tkinter.ttk.Style"),
-            patch(
-                "tools.folder_tools.folder_packer_pro.app.messagebox.showerror"
-            ) as mock_error,
+            patch("tools.folder_tools.folder_packer_pro.app.messagebox.showerror") as mock_error,
         ):
             app = FolderPackerPro(mock_root)
             app.pack_source_entry = Mock()
@@ -298,9 +290,7 @@ class TestFolderPackerPro:
             app.pack_source_entry.get.return_value = str(tmp_path)
 
             # Mock root.after to execute callback immediately
-            def immediate_after(
-                delay: object, callback: Callable[[], None] | None = None
-            ) -> None:
+            def immediate_after(delay: object, callback: Callable[[], None] | None = None) -> None:
                 """Execute callback immediately."""
                 if callback is not None:
                     callback()
@@ -308,9 +298,7 @@ class TestFolderPackerPro:
             app.root.after.side_effect = immediate_after  # type: ignore[attr-defined]
 
             # Patch Thread to run synchronously
-            with patch(
-                "tools.folder_tools.folder_packer_pro.app.threading.Thread"
-            ) as mock_thread:
+            with patch("tools.folder_tools.folder_packer_pro.app.threading.Thread") as mock_thread:
 
                 def run_sync(**kwargs: object) -> Mock:
                     """Run thread target synchronously."""
@@ -372,17 +360,13 @@ class TestFolderPackerPro:
             mock_save.return_value = str(tmp_path / "pkg.fpp")
             app._browse_pack_output()
             app.pack_output_entry.delete.assert_called()
-            app.pack_output_entry.insert.assert_called_with(
-                0, str(tmp_path / "pkg.fpp")
-            )
+            app.pack_output_entry.insert.assert_called_with(0, str(tmp_path / "pkg.fpp"))
 
             # _browse_unpack_source
             mock_open.return_value = str(tmp_path / "pkg.fpp")
             app._browse_unpack_source()
             app.unpack_source_entry.delete.assert_called()
-            app.unpack_source_entry.insert.assert_called_with(
-                0, str(tmp_path / "pkg.fpp")
-            )
+            app.unpack_source_entry.insert.assert_called_with(0, str(tmp_path / "pkg.fpp"))
 
             # _browse_unpack_dest
             mock_askdir.return_value = str(tmp_path / "dest")

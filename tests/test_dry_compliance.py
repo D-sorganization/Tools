@@ -74,9 +74,10 @@ class TestWebLauncherDRY:
                 rel = str(path.relative_to(REPO_ROOT))
                 problems.append(rel)
 
-        assert problems == [], (
-            "launch_web.py files not using shared launch_web_from_gui_info:\n"
-            + "\n".join(f"  - {p}" for p in problems)
+        assert (
+            problems == []
+        ), "launch_web.py files not using shared launch_web_from_gui_info:\n" + "\n".join(
+            f"  - {p}" for p in problems
         )
 
     def test_launch_web_files_import_gui_info(self) -> None:
@@ -126,7 +127,7 @@ class TestGUIInfoWebConfig:
 
             try:
                 module = _load_module_from_path(f"gui_reg_{tool_dir}", reg_file)
-            except Exception as e:
+            except Exception as e:  # noqa: F841
                 continue
 
             if module is None:
@@ -140,9 +141,10 @@ class TestGUIInfoWebConfig:
                 rel = str(reg_file.relative_to(REPO_ROOT))
                 problems.append(f"{rel}: missing 'web' config")
 
-        assert problems == [], (
-            "gui_registration.py files with sibling launch_web.py but no web config:\n"
-            + "\n".join(f"  - {p}" for p in problems)
+        assert (
+            problems == []
+        ), "gui_registration.py files with sibling launch_web.py but no web config:\n" + "\n".join(
+            f"  - {p}" for p in problems
         )
 
     def test_web_config_has_port(self) -> None:
@@ -153,7 +155,7 @@ class TestGUIInfoWebConfig:
         for path in gui_reg_files:
             try:
                 module = _load_module_from_path(f"gui_reg_{path.stem}", path)
-            except Exception as e:
+            except Exception as e:  # noqa: F841
                 continue
 
             if module is None:
@@ -168,9 +170,7 @@ class TestGUIInfoWebConfig:
                 rel = str(path.relative_to(REPO_ROOT))
                 problems.append(f"{rel}: web config missing 'port'")
 
-        assert problems == [], "web config problems:\n" + "\n".join(
-            f"  - {p}" for p in problems
-        )
+        assert problems == [], "web config problems:\n" + "\n".join(f"  - {p}" for p in problems)
 
 
 # ── Shared launcher function tests ──────────────────────────────────────
@@ -201,9 +201,7 @@ class TestLaunchWebApp:
         assert result == 1
 
     @patch("gui_launcher.launcher.subprocess.run")
-    def test_returns_error_when_node_missing(
-        self, mock_run: MagicMock, tmp_path: Path
-    ) -> None:
+    def test_returns_error_when_node_missing(self, mock_run: MagicMock, tmp_path: Path) -> None:
         from gui_launcher.launcher import launch_web_app
 
         mock_run.side_effect = FileNotFoundError("node not found")

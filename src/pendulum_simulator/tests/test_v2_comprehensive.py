@@ -490,6 +490,4 @@ class TestDiagnosticLogging:
 
         source = inspect.getsource(phys_t)
         matches = re.findall(r"^\s*print\s*\(", source, re.MULTILINE)
-        assert (
-            len(matches) == 0
-        ), f"Found {len(matches)} print() calls in physics_triple.py"
+        assert len(matches) == 0, f"Found {len(matches)} print() calls in physics_triple.py"

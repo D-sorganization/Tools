@@ -110,9 +110,7 @@ class PluginManager:
                         )
                         tool_list.append(tool)
                     except KeyError as e:
-                        logger.warning(
-                            f"Skipping invalid tool entry in {category}: {e}"
-                        )
+                        logger.warning(f"Skipping invalid tool entry in {category}: {e}")
 
                 if tool_list:
                     self.tools[category] = tool_list
@@ -177,23 +175,17 @@ class PluginManager:
                         # Make path relative to repo root
                         if not Path(tool_path).is_absolute():
                             tool_path = str(
-                                (manifest_path.parent / tool_path).relative_to(
-                                    self.repo_root
-                                )
+                                (manifest_path.parent / tool_path).relative_to(self.repo_root)
                             )
 
                     tool_type = manifest_data.get("type", "python")
-                    tool_desc = manifest_data.get(
-                        "description", manifest_data.get("desc", "")
-                    )
+                    tool_desc = manifest_data.get("description", manifest_data.get("desc", ""))
                     tool_category = manifest_data.get("category", "Development Tools")
 
                     # Validate path exists and is within repository (issue #236)
                     is_valid, error_msg = self.validate_tool_path(tool_path)
                     if not is_valid:
-                        logger.warning(
-                            f"Skipping discovered tool '{tool_name}': {error_msg}"
-                        )
+                        logger.warning(f"Skipping discovered tool '{tool_name}': {error_msg}")
                         continue
 
                     tool = Tool(
@@ -208,9 +200,7 @@ class PluginManager:
                         discovered_tools[tool_category] = []
                     discovered_tools[tool_category].append(tool)
 
-                    logger.info(
-                        f"Discovered tool: {tool_name} in {manifest_path.parent}"
-                    )
+                    logger.info(f"Discovered tool: {tool_name} in {manifest_path.parent}")
 
                 except (json.JSONDecodeError, KeyError, Exception) as e:
                     logger.warning(f"Failed to parse manifest at {manifest_path}: {e}")

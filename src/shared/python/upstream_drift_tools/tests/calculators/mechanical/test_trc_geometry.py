@@ -467,9 +467,7 @@ class TestMetalShellSurfaceArea:
             top_refractory_thickness=2.0,
         )
         layers = [
-            LayerConfig(
-                name="Metal Shell", thickness=0.25, density=490.0, color="grey"
-            ),
+            LayerConfig(name="Metal Shell", thickness=0.25, density=490.0, color="grey"),
         ]
         result = engine.calculate_geometry(dimensions, layers)
         assert len(result.layers) == 1

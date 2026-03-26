@@ -124,9 +124,7 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
         tools_config = load_tools_config(self.repo_root)
 
         if not tools_config:
-            self.log(
-                "Warning: No tools configuration found (tools.json missing or invalid)."
-            )
+            self.log("Warning: No tools configuration found (tools.json missing or invalid).")
             no_tools = QLabel(
                 "No tools configuration found.\nPlease ensure tools.json exists in the repository root."
             )

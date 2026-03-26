@@ -20,8 +20,7 @@ try:
     )
 except ImportError:
     logger.error(
-        "Could not import tools.quality_utils. "
-        "Ensure the package is installed: pip install -e ."
+        "Could not import tools.quality_utils. " "Ensure the package is installed: pip install -e ."
     )
     sys.exit(1)
 
@@ -63,16 +62,12 @@ def main() -> None:
 
     # Report
     if all_issues:
-        sys.stderr.write(
-            f"{Colors.FAIL}{Colors.BOLD}❌ Quality check FAILED{Colors.ENDC}\n\n"
-        )
+        sys.stderr.write(f"{Colors.FAIL}{Colors.BOLD}❌ Quality check FAILED{Colors.ENDC}\n\n")
         for filepath, issues in all_issues:
             sys.stderr.write(f"\n{Colors.CYAN}{filepath}:{Colors.ENDC}\n")
             for line_num, message, code in issues:
                 if line_num > 0:
-                    sys.stderr.write(
-                        f"  Line {Colors.BOLD}{line_num}{Colors.ENDC}: {message}\n"
-                    )
+                    sys.stderr.write(f"  Line {Colors.BOLD}{line_num}{Colors.ENDC}: {message}\n")
                     if code:
                         sys.stderr.write(f"    > {Colors.WARNING}{code}{Colors.ENDC}\n")
                 else:

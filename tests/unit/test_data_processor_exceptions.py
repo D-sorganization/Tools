@@ -49,9 +49,7 @@ def sample_df() -> pd.DataFrame:
 
 
 @pytest.fixture
-def loaded_engine(
-    engine: DataProcessorEngine, sample_df: pd.DataFrame
-) -> DataProcessorEngine:
+def loaded_engine(engine: DataProcessorEngine, sample_df: pd.DataFrame) -> DataProcessorEngine:
     """Return an engine pre-loaded with sample data."""
     result = engine.load_dataframe(sample_df)
     assert result.success
@@ -161,15 +159,11 @@ class TestColumnNotFoundErrors:
         with pytest.raises(ColumnNotFoundError):
             loaded_engine.filter_data("nonexistent", "==", 1)
 
-    def test_fit_curve_missing_x_column(
-        self, loaded_engine: DataProcessorEngine
-    ) -> None:
+    def test_fit_curve_missing_x_column(self, loaded_engine: DataProcessorEngine) -> None:
         with pytest.raises(ColumnNotFoundError):
             loaded_engine.fit_curve("nonexistent", "salary", FitType.LINEAR)
 
-    def test_fit_curve_missing_y_column(
-        self, loaded_engine: DataProcessorEngine
-    ) -> None:
+    def test_fit_curve_missing_y_column(self, loaded_engine: DataProcessorEngine) -> None:
         with pytest.raises(ColumnNotFoundError):
             loaded_engine.fit_curve("age", "nonexistent", FitType.LINEAR)
 
@@ -203,9 +197,7 @@ class TestFitErrors:
 
     def test_fit_all_nan_data(self) -> None:
         engine = DataProcessorEngine()
-        engine.load_dataframe(
-            pd.DataFrame({"x": [np.nan, np.nan], "y": [np.nan, np.nan]})
-        )
+        engine.load_dataframe(pd.DataFrame({"x": [np.nan, np.nan], "y": [np.nan, np.nan]}))
         with pytest.raises(FitError, match="Need >= 2"):
             engine.fit_curve("x", "y", FitType.LINEAR)
 
@@ -236,9 +228,7 @@ class TestFileIOErrors:
 
 
 class TestTransformationErrors:
-    def test_add_column_bad_expression(
-        self, loaded_engine: DataProcessorEngine
-    ) -> None:
+    def test_add_column_bad_expression(self, loaded_engine: DataProcessorEngine) -> None:
         with pytest.raises(TransformationError):
             loaded_engine.add_calculated_column("bad", "??? invalid +++")
 
@@ -253,17 +243,13 @@ class TestTransformationErrors:
 class TestDataIntegrityAfterErrors:
     """After a failed operation, data must remain unchanged (undo on error)."""
 
-    def test_data_unchanged_after_bad_transform(
-        self, loaded_engine: DataProcessorEngine
-    ) -> None:
+    def test_data_unchanged_after_bad_transform(self, loaded_engine: DataProcessorEngine) -> None:
         original = loaded_engine.data.copy()
         with pytest.raises(UnsupportedOperationError):
             loaded_engine.transform_column("age", "quantum_transform")
         pd.testing.assert_frame_equal(loaded_engine.data, original)
 
-    def test_data_unchanged_after_bad_filter(
-        self, loaded_engine: DataProcessorEngine
-    ) -> None:
+    def test_data_unchanged_after_bad_filter(self, loaded_engine: DataProcessorEngine) -> None:
         original = loaded_engine.data.copy()
         with pytest.raises(FilterError):
             loaded_engine.filter_data("age", "INVALID_OP", 30)

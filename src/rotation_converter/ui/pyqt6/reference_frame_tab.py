@@ -156,9 +156,7 @@ class ReferenceFrameTab(QWidget):
         if operation == "twist_frame_conversion":
             transform = _read_matrix(self._transform_edits)
             twist = _parse_numbers(self._twist_input.text())
-            return compute_reference_frame_operation(
-                operation, transform=transform, twist=twist
-            )
+            return compute_reference_frame_operation(operation, transform=transform, twist=twist)
         if operation == "homogeneous_transform":
             rotation = _read_matrix(self._rotation_edits)
             translation = _parse_numbers(self._translation_input.text())

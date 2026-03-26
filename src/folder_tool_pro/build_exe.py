@@ -31,11 +31,7 @@ def build_exe() -> int:
         "--onefile",  # Single executable
         "--windowed",  # No console window
         "--name=FolderFixPro",  # Executable name
-        (
-            "--icon=paper_plane_icon.ico"
-            if (script_dir / "paper_plane_icon.ico").exists()
-            else ""
-        ),
+        ("--icon=paper_plane_icon.ico" if (script_dir / "paper_plane_icon.ico").exists() else ""),
         (
             "--add-data=paper_plane_icon.ico;."
             if (script_dir / "paper_plane_icon.ico").exists()

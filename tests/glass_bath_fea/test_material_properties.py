@@ -49,9 +49,7 @@ class TestConductivity:
         comp_factor = model._get_composition_factor()
         assert sigma == pytest.approx(1.0 * comp_factor, rel=0.05)
 
-    def test_power_density_increases_conductivity(
-        self, default_model: GlassMaterialModel
-    ) -> None:
+    def test_power_density_increases_conductivity(self, default_model: GlassMaterialModel) -> None:
         sigma_no_power = default_model.get_conductivity(1200.0, power_density=0)
         sigma_with_power = default_model.get_conductivity(1200.0, power_density=1e6)
         assert sigma_with_power >= sigma_no_power
@@ -96,9 +94,7 @@ class TestViscosity:
         eta = default_model.get_viscosity(1200.0)
         assert eta > 0
 
-    def test_viscosity_decreases_with_temperature(
-        self, default_model: GlassMaterialModel
-    ) -> None:
+    def test_viscosity_decreases_with_temperature(self, default_model: GlassMaterialModel) -> None:
         """Fulcher: viscosity decreases with increasing T."""
         eta_low = default_model.get_viscosity(1000.0)
         eta_high = default_model.get_viscosity(1400.0)

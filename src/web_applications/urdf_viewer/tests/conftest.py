@@ -9,9 +9,7 @@ if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
 # Add shared python dir for cors module direct imports
-_SHARED_DIR = str(
-    Path(__file__).resolve().parent.parent.parent.parent / "shared" / "python"
-)
+_SHARED_DIR = str(Path(__file__).resolve().parent.parent.parent.parent / "shared" / "python")
 if _SHARED_DIR not in sys.path:
     sys.path.insert(0, _SHARED_DIR)
 

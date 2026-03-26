@@ -24,9 +24,7 @@ logger = logging.getLogger(__name__)
 # ─── Strategies ──────────────────────────────────────────────────
 
 # Reasonable floating-point values (no NaN/Inf)
-finite_floats = st.floats(
-    min_value=-1e6, max_value=1e6, allow_nan=False, allow_infinity=False
-)
+finite_floats = st.floats(min_value=-1e6, max_value=1e6, allow_nan=False, allow_infinity=False)
 
 # Small positive integers for array sizes
 array_sizes = st.integers(min_value=10, max_value=500)

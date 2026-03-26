@@ -29,9 +29,7 @@ class TestConfigManagerSaveLoad:
         loaded = config_mgr.load_config("my_filter")
         assert loaded == settings
 
-    def test_overwrite_preserves_created_timestamp(
-        self, config_mgr: ConfigManager
-    ) -> None:
+    def test_overwrite_preserves_created_timestamp(self, config_mgr: ConfigManager) -> None:
         """Overwriting a config preserves the original created timestamp."""
         config_mgr.save_config("cfg", {"v": 1})
         info1 = config_mgr.get_config_info("cfg")
@@ -74,9 +72,7 @@ class TestConfigManagerList:
 class TestConfigManagerExportImport:
     """Test export and import operations."""
 
-    def test_export_import_round_trip(
-        self, config_mgr: ConfigManager, tmp_path: Path
-    ) -> None:
+    def test_export_import_round_trip(self, config_mgr: ConfigManager, tmp_path: Path) -> None:
         """Export then import should recover the original settings."""
         settings = {"rate": 1000, "method": "fft"}
         config_mgr.save_config("exportable", settings)

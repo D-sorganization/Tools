@@ -212,9 +212,7 @@ class TestIntegratedCSVProcessorApp(unittest.TestCase):
         importlib.reload(Data_Processor_Integrated)
 
         cls.module = Data_Processor_Integrated
-        cls.IntegratedCSVProcessorApp = (
-            Data_Processor_Integrated.IntegratedCSVProcessorApp
-        )
+        cls.IntegratedCSVProcessorApp = Data_Processor_Integrated.IntegratedCSVProcessorApp
         cls.SplitConfig = Data_Processor_Integrated.SplitConfig
         cls.SplitMethod = Data_Processor_Integrated.SplitMethod
         cls.FileFormatDetector = Data_Processor_Integrated.FileFormatDetector

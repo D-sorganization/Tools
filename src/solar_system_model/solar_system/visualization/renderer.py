@@ -242,9 +242,7 @@ class Renderer:
         self.clock = pygame.time.Clock()
 
         # Initialize UI Renderer
-        self.ui_renderer = UIRenderer(
-            self.settings.window_width, self.settings.window_height
-        )
+        self.ui_renderer = UIRenderer(self.settings.window_width, self.settings.window_height)
 
         # OpenGL setup
         self._setup_opengl()
@@ -433,9 +431,7 @@ class Renderer:
 
             self.star_batches.append((float(size), n_stars, coords, colors))
 
-    def begin_frame(
-        self, camera_state: CameraState | None = None, clear: bool = True
-    ) -> None:
+    def begin_frame(self, camera_state: CameraState | None = None, clear: bool = True) -> None:
         """Begin a new frame."""
         if not (clear is not None):
             raise ValueError("clear must be provided")
@@ -484,9 +480,7 @@ class Renderer:
         glDisableClientState(GL_COLOR_ARRAY)
         glEnable(GL_LIGHTING)
 
-    def render_body(
-        self, body: CelestialBody, julian_date: float, highlight: bool = False
-    ) -> None:
+    def render_body(self, body: CelestialBody, julian_date: float, highlight: bool = False) -> None:
         """
         Render a celestial body.
 
@@ -563,9 +557,7 @@ class Renderer:
         if texturing_active:
             glDisable(GL_TEXTURE_2D)
 
-    def _render_star_glow(
-        self, body_size: float, color: tuple[float, float, float]
-    ) -> None:
+    def _render_star_glow(self, body_size: float, color: tuple[float, float, float]) -> None:
         """Render a soft halo to make the Sun feel more luminous."""
         if not (body_size is not None):
             raise ValueError("body_size must be provided")
@@ -579,9 +571,7 @@ class Renderer:
         glVertex3f(0.0, 0.0, 0.0)
         for i in range(segments + 1):
             angle = 2 * math.pi * i / segments
-            glVertex3f(
-                glow_radius * math.cos(angle), 0.0, glow_radius * math.sin(angle)
-            )
+            glVertex3f(glow_radius * math.cos(angle), 0.0, glow_radius * math.sin(angle))
         glEnd()
         glDisable(GL_BLEND)
 
@@ -598,9 +588,7 @@ class Renderer:
         glBegin(GL_LINE_LOOP)
         for i in range(segments):
             angle = 2 * math.pi * i / segments
-            glVertex3f(
-                ring_radius * math.cos(angle), 0.0, ring_radius * math.sin(angle)
-            )
+            glVertex3f(ring_radius * math.cos(angle), 0.0, ring_radius * math.sin(angle))
         glEnd()
 
     def _render_rings(self, body: CelestialBody, body_size: float) -> None:
@@ -660,9 +648,7 @@ class Renderer:
         if color is None:
             # Use body color with reduced alpha
             body_color = body.color
-            glColor4f(
-                body_color[0] * 0.6, body_color[1] * 0.6, body_color[2] * 0.6, 0.4
-            )
+            glColor4f(body_color[0] * 0.6, body_color[1] * 0.6, body_color[2] * 0.6, 0.4)
         else:
             glColor4f(*color)
 
@@ -887,9 +873,7 @@ class Renderer:
         except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return None
 
-    def render_info_panel(
-        self, info: dict[str, Any], position: tuple[int, int] = (20, 20)
-    ) -> None:
+    def render_info_panel(self, info: dict[str, Any], position: tuple[int, int] = (20, 20)) -> None:
         """Render info panel (Delegated to UIRenderer)."""
         pass  # UI Renderer handles panels now via render_sidebar or similar
 
@@ -943,9 +927,7 @@ class Renderer:
         if self.ui_renderer:
             self.ui_renderer.render_sidebar(sidebar_data, content_data)
 
-    def render_unified_controls(
-        self, ctrl_data: dict[str, Any], time_data: dict[str, Any]
-    ) -> None:
+    def render_unified_controls(self, ctrl_data: dict[str, Any], time_data: dict[str, Any]) -> None:
         """Render unified controls (Delegated to UIRenderer)."""
         if self.ui_renderer:
             self.ui_renderer.render_unified_controls(ctrl_data, time_data)

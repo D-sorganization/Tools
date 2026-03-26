@@ -40,7 +40,7 @@ class AsteroidShape:
         if not (len(self.vertices) >= 3):
             raise ValueError("Need at least 3 vertices")
         if not (self.semi_a > 0 and self.semi_b > 0):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
 
 
 def _polar_to_xy(r: float, theta: float) -> tuple[float, float]:
@@ -53,7 +53,7 @@ def make_circle(radius: float, n_pts: int = 32) -> AsteroidShape:
     if not (radius > 0):
         raise ValueError(f"radius must be positive, got {radius}")
     if not (n_pts >= 8):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
     verts = tuple(_polar_to_xy(radius, 2 * math.pi * i / n_pts) for i in range(n_pts))
     return AsteroidShape(
         kind=ShapeKind.CIRCLE,
@@ -66,9 +66,9 @@ def make_circle(radius: float, n_pts: int = 32) -> AsteroidShape:
 def make_ellipse(semi_a: float, semi_b: float, n_pts: int = 32) -> AsteroidShape:
     """Create an elliptical asteroid shape."""
     if not (semi_a > 0 and semi_b > 0):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
     if not (n_pts >= 8):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
     verts = tuple(
         (
             semi_a * math.cos(2 * math.pi * i / n_pts),
@@ -99,15 +99,13 @@ def make_random(
         seed: RNG seed for reproducibility.
     """
     if not (base_radius > 0):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
     if not (0.0 <= roughness <= 1.0):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
     if not (n_pts >= 6):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
     rng = random.Random(seed)
-    radii = [
-        base_radius * (1.0 + roughness * (rng.random() * 2 - 1)) for _ in range(n_pts)
-    ]
+    radii = [base_radius * (1.0 + roughness * (rng.random() * 2 - 1)) for _ in range(n_pts)]
     verts = tuple(_polar_to_xy(radii[i], 2 * math.pi * i / n_pts) for i in range(n_pts))
     # Estimate bounding semi-axes for MoI
     xs = [v[0] for v in verts]
@@ -122,16 +120,14 @@ def make_random(
     )
 
 
-def surface_normal_at_angle(
-    shape: AsteroidShape, angle_rad: float
-) -> tuple[float, float]:
+def surface_normal_at_angle(shape: AsteroidShape, angle_rad: float) -> tuple[float, float]:
     """Approximate outward surface normal at the given body-frame angle.
 
     Finds the nearest vertex and uses the polygon edge normal.
     Returns a unit vector (nx, ny).
     """
     if not (len(shape.vertices) >= 3):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
     n = len(shape.vertices)
     # Find vertex index closest to the desired angle
     best_idx = 0
@@ -162,9 +158,7 @@ def surface_normal_at_angle(
     return nx, ny
 
 
-def surface_point_at_angle(
-    shape: AsteroidShape, angle_rad: float
-) -> tuple[float, float]:
+def surface_point_at_angle(shape: AsteroidShape, angle_rad: float) -> tuple[float, float]:
     """Body-frame point on the asteroid surface at the given angle."""
     if not (shape is not None):
         raise ValueError("shape must be provided")

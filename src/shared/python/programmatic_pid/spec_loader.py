@@ -108,23 +108,13 @@ class SpecAccessor:
             layout = {}
         return {
             "style": str(layout.get("style", "clean")).lower(),
-            "show_inline_equipment_notes": bool(
-                layout.get("show_inline_equipment_notes", False)
-            ),
+            "show_inline_equipment_notes": bool(layout.get("show_inline_equipment_notes", False)),
             "show_instrument_suffix": bool(layout.get("show_instrument_suffix", False)),
-            "show_control_tags_on_lines": bool(
-                layout.get("show_control_tags_on_lines", False)
-            ),
+            "show_control_tags_on_lines": bool(layout.get("show_control_tags_on_lines", False)),
             "gap": max(to_float(layout.get("gap"), 8.0), 2.0),
-            "right_panel_width": max(
-                to_float(layout.get("right_panel_width"), 84.0), 45.0
-            ),
-            "bottom_panel_height": max(
-                to_float(layout.get("bottom_panel_height"), 34.0), 18.0
-            ),
-            "title_block_height": max(
-                to_float(layout.get("title_block_height"), 11.0), 6.0
-            ),
+            "right_panel_width": max(to_float(layout.get("right_panel_width"), 84.0), 45.0),
+            "bottom_panel_height": max(to_float(layout.get("bottom_panel_height"), 34.0), 18.0),
+            "title_block_height": max(to_float(layout.get("title_block_height"), 11.0), 6.0),
             "panel_text_chars": max(int(layout.get("panel_text_chars", 42)), 24),
             "stream_label_scale": min(
                 max(to_float(layout.get("stream_label_scale"), 0.76), 0.45), 1.5

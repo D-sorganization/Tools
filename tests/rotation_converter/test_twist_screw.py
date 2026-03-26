@@ -286,9 +286,7 @@ class TestRandomTwistScrewRoundTrips:
         return np.random.default_rng(seed=123)
 
     @pytest.mark.parametrize("trial", range(30))
-    def test_twist_homogeneous_roundtrip_random(
-        self, rng: np.random.Generator, trial: int
-    ) -> None:
+    def test_twist_homogeneous_roundtrip_random(self, rng: np.random.Generator, trial: int) -> None:
         omega = rng.normal(size=3)
         omega /= np.linalg.norm(omega)
         v = rng.normal(size=3)
@@ -300,9 +298,7 @@ class TestRandomTwistScrewRoundTrips:
         np.testing.assert_allclose(T2, T, atol=1e-9)
 
     @pytest.mark.parametrize("trial", range(30))
-    def test_twist_screw_roundtrip_random(
-        self, rng: np.random.Generator, trial: int
-    ) -> None:
+    def test_twist_screw_roundtrip_random(self, rng: np.random.Generator, trial: int) -> None:
         omega = rng.normal(size=3)
         omega /= np.linalg.norm(omega)
         v = rng.normal(size=3)

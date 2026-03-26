@@ -94,9 +94,7 @@ class TestGolferForwardKinematics:
         }
         assert expected_keys.issubset(set(fk.keys()))
 
-    def test_origin_is_zero(
-        self, default_params: GolferParams, zero_state: np.ndarray
-    ) -> None:
+    def test_origin_is_zero(self, default_params: GolferParams, zero_state: np.ndarray) -> None:
         """Origin must always be at (0, 0)."""
         fk = forward_kinematics(zero_state, default_params)
         assert fk["origin"] == (0.0, 0.0)
@@ -110,9 +108,7 @@ class TestGolferForwardKinematics:
         dist = np.linalg.norm(hub)
         assert dist == pytest.approx(default_params.L_hub, rel=1e-10)
 
-    def test_club_tip_finite(
-        self, default_params: GolferParams, random_state: np.ndarray
-    ) -> None:
+    def test_club_tip_finite(self, default_params: GolferParams, random_state: np.ndarray) -> None:
         """Club tip must be at a finite position."""
         fk = forward_kinematics(random_state, default_params)
         tip = np.array(fk["club_tip"])
@@ -146,16 +142,12 @@ class TestGolferForwardKinematics:
 class TestGolferConstraints:
     """Tests for loop-closure constraint vector and Jacobian."""
 
-    def test_constraint_size(
-        self, default_params: GolferParams, zero_state: np.ndarray
-    ) -> None:
+    def test_constraint_size(self, default_params: GolferParams, zero_state: np.ndarray) -> None:
         """Constraint vector must have 4 components."""
         phi = constraint_vector(zero_state, default_params)
         assert phi.shape == (4,)
 
-    def test_jacobian_shape(
-        self, default_params: GolferParams, zero_state: np.ndarray
-    ) -> None:
+    def test_jacobian_shape(self, default_params: GolferParams, zero_state: np.ndarray) -> None:
         """Constraint Jacobian must be (4, N_DOF)."""
         J = numerical_constraint_jacobian(zero_state, default_params)
         assert J.shape == (4, N_DOF)
@@ -249,21 +241,15 @@ class TestGolferDynamics:
         M = analytical_mass_matrix(random_state, default_params)
         np.testing.assert_allclose(M, M.T, atol=1e-12)
 
-    def test_mass_matrix_psd(
-        self, default_params: GolferParams, random_state: np.ndarray
-    ) -> None:
+    def test_mass_matrix_psd(self, default_params: GolferParams, random_state: np.ndarray) -> None:
         """Mass matrix eigenvalues must be non-negative (PSD)."""
         from double_pendulum_golf.golfer_dynamics import analytical_mass_matrix
 
         M = analytical_mass_matrix(random_state, default_params)
         eigenvalues = np.linalg.eigvalsh(M)
-        assert np.all(
-            eigenvalues >= -1e-10
-        ), f"Negative eigenvalue in mass matrix: {eigenvalues}"
+        assert np.all(eigenvalues >= -1e-10), f"Negative eigenvalue in mass matrix: {eigenvalues}"
 
-    def test_mass_matrix_shape(
-        self, default_params: GolferParams, zero_state: np.ndarray
-    ) -> None:
+    def test_mass_matrix_shape(self, default_params: GolferParams, zero_state: np.ndarray) -> None:
         """Mass matrix must be (N_DOF, N_DOF)."""
         from double_pendulum_golf.golfer_dynamics import analytical_mass_matrix
 

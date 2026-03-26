@@ -65,9 +65,7 @@ class CacheConfig:
     """Configuration for model cache."""
 
     # Cache location
-    cache_dir: Path = field(
-        default_factory=lambda: Path.home() / ".model_generation" / "cache"
-    )
+    cache_dir: Path = field(default_factory=lambda: Path.home() / ".model_generation" / "cache")
 
     # Size limits
     max_size_mb: int = 1000  # 1GB default
@@ -282,8 +280,7 @@ class ModelCache:
             "total_size_bytes": total_size,
             "total_size_mb": total_size / (1024 * 1024),
             "max_size_mb": self.config.max_size_mb,
-            "usage_percent": (total_size / (self.config.max_size_mb * 1024 * 1024))
-            * 100,
+            "usage_percent": (total_size / (self.config.max_size_mb * 1024 * 1024)) * 100,
             "cache_dir": str(self.config.cache_dir),
         }
 

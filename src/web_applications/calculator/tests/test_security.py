@@ -20,9 +20,7 @@ class TestSecurity(unittest.TestCase):
         if response.status_code == 200:
             self.fail("VULNERABILITY CONFIRMED: Large input accepted")
 
-        self.assertEqual(
-            response.status_code, 400, "Should reject excessively large input"
-        )
+        self.assertEqual(response.status_code, 400, "Should reject excessively large input")
 
     def test_security_headers(self) -> None:
         """Test that security headers are present in responses."""

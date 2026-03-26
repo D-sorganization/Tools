@@ -294,9 +294,7 @@ class TestTripleFrictionTorqueVector:
         dtheta1, dphi1, dphi2 = 1.5, -0.8, 0.3
         tf = friction_torque_vector(dtheta1, dphi1, dphi2, combined_params)
 
-        expected_1 = -combined_params.b1 * dtheta1 - combined_params.mu1 * np.sign(
-            dtheta1
-        )
+        expected_1 = -combined_params.b1 * dtheta1 - combined_params.mu1 * np.sign(dtheta1)
         expected_2 = -combined_params.b2 * dphi1 - combined_params.mu2 * np.sign(dphi1)
         expected_3 = -combined_params.b3 * dphi2 - combined_params.mu3 * np.sign(dphi2)
         assert np.isclose(tf[0], expected_1)
@@ -379,9 +377,7 @@ class TestTripleEOMWithDissipation:
         combined_params: TriplePendulumParams,
     ) -> None:
         """Simulation with both friction types must remain numerically stable."""
-        state0 = np.array(
-            [np.radians(90), np.radians(-45), np.radians(30), 0.0, 0.0, 0.0]
-        )
+        state0 = np.array([np.radians(90), np.radians(-45), np.radians(30), 0.0, 0.0, 0.0])
         torque_func = make_polynomial_torque([-15.0, 5.0], [0.0], [0.0])
 
         result = run_simulation(
@@ -475,26 +471,20 @@ class TestMassMatrixCorrectness:
     def equal_params(self) -> TriplePendulumParams:
         return TriplePendulumParams(m1=1.0, m2=1.0, m3=1.0, L1=1.0, L2=1.0, L3=1.0)
 
-    def test_symmetric_at_random_angles(
-        self, equal_params: TriplePendulumParams
-    ) -> None:
+    def test_symmetric_at_random_angles(self, equal_params: TriplePendulumParams) -> None:
         rng = np.random.default_rng(42)
         for _ in range(20):
             phi1, phi2 = rng.uniform(-np.pi, np.pi, size=2)
             M = mass_matrix(phi1, phi2, equal_params)
             assert np.allclose(M, M.T), f"Not symmetric at phi1={phi1}, phi2={phi2}"
 
-    def test_positive_definite_at_random_angles(
-        self, equal_params: TriplePendulumParams
-    ) -> None:
+    def test_positive_definite_at_random_angles(self, equal_params: TriplePendulumParams) -> None:
         rng = np.random.default_rng(123)
         for _ in range(20):
             phi1, phi2 = rng.uniform(-np.pi, np.pi, size=2)
             M = mass_matrix(phi1, phi2, equal_params)
             eigvals = np.linalg.eigvalsh(M)
-            assert all(
-                eigvals > 0
-            ), f"Not positive definite at phi1={phi1}, phi2={phi2}"
+            assert all(eigvals > 0), f"Not positive definite at phi1={phi1}, phi2={phi2}"
 
     def test_aligned_configuration_known_value(self) -> None:
         """When phi1=phi2=0 (all segments aligned), M has a known closed form."""
@@ -557,11 +547,7 @@ class TestEnergyConservation:
             rtol=1e-10,
             atol=1e-12,
         )
-        energies = [
-            total_energy(result.states[i], params) for i in range(result.n_steps)
-        ]
+        energies = [total_energy(result.states[i], params) for i in range(result.n_steps)]
         e0 = energies[0]
         max_drift = max(abs(e - e0) for e in energies)
-        assert (
-            max_drift < 1e-6
-        ), f"Energy drift {max_drift:.2e} exceeds 1e-6 for state0={state0}"
+        assert max_drift < 1e-6, f"Energy drift {max_drift:.2e} exceeds 1e-6 for state0={state0}"

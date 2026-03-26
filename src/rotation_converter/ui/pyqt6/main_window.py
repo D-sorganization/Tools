@@ -127,7 +127,7 @@ def _get_plot_colors() -> dict[str, Any]:
                 "surface": colors.get("group_bg", _DARK_SURFACE),
                 "axes": CHART_COLORS[:3] if CHART_COLORS else _AXIS_COLORS,
             }
-        except Exception as e:
+        except Exception as e:  # noqa: F841
             pass
     return {
         "bg": _DARK_BG,
@@ -247,9 +247,7 @@ class RotationConverterTab(QWidget):
         self._toolbar = NavigationToolbar(self._canvas, self)
         self._toolbar.setMaximumHeight(30)
         plot_layout.addWidget(self._toolbar)
-        self._canvas.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
-        )
+        self._canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         plot_layout.addWidget(self._canvas)
         right.addWidget(plot_group, 3)
 
@@ -485,9 +483,7 @@ class RigidTransformTab(QWidget):
         self._tf_toolbar = NavigationToolbar(self._tf_canvas, self)
         self._tf_toolbar.setMaximumHeight(30)
         plot_layout.addWidget(self._tf_toolbar)
-        self._tf_canvas.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
-        )
+        self._tf_canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         plot_layout.addWidget(self._tf_canvas)
         right.addWidget(plot_group, 3)
         layout.addLayout(right, 2)
@@ -509,9 +505,7 @@ class RigidTransformTab(QWidget):
             if idx == 0:  # Quaternion + translation
                 if len(v) != 7:
                     raise ValueError("Need 7 values: w x y z tx ty tz")
-                T = RigidTransform.from_quaternion_translation(
-                    v[:4], v[4:], source=src, target=tgt
-                )
+                T = RigidTransform.from_quaternion_translation(v[:4], v[4:], source=src, target=tgt)
             elif idx == 1:  # Euler + translation
                 if len(v) != 6:
                     raise ValueError("Need 6 values: a b c tx ty tz")
@@ -589,7 +583,7 @@ class RigidTransformTab(QWidget):
                 f"  pitch: {screw['pitch']:.6f}",
                 f"  theta: {screw['theta']:.6f} rad",
             ]
-        except Exception as e:
+        except Exception as e:  # noqa: F841
             pass
 
         self._tf_output.setPlainText("\n".join(lines))
@@ -927,9 +921,7 @@ class TrajectoryPlotsTab(QWidget):
         for i in range(min(n - 1, len(self._traj) - 1)):
             T1 = self._traj[i]
             T2 = self._traj[i + 1]
-            dT = RigidTransform.from_matrix(
-                np.linalg.inv(T1) @ T2, source="b", target="a"
-            )
+            dT = RigidTransform.from_matrix(np.linalg.inv(T1) @ T2, source="b", target="a")
             body_tw[i] = dT.body_twist()
             space_tw[i] = dT.space_twist()
 
@@ -1142,9 +1134,7 @@ class ScrewVisualiserTab(QWidget):
 
         self._fig.tight_layout()
         self._canvas.draw()
-        self._frame_label.setText(
-            f"Frame: {self._frame_idx + 1}/{self._animator.n_frames}"
-        )
+        self._frame_label.setText(f"Frame: {self._frame_idx + 1}/{self._animator.n_frames}")
 
 
 # =====================================================================
@@ -1185,12 +1175,12 @@ class RotationConverterMainWindow(QMainWindow):
     def _build_menus(self) -> None:
         menu_bar = self.menuBar()
         if not (menu_bar is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
 
         # File menu
         file_menu = menu_bar.addMenu("&File")
         if not (file_menu is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         quit_action = QAction("&Quit", self)
         quit_action.setShortcut("Ctrl+Q")
         quit_action.triggered.connect(self.close)
@@ -1199,7 +1189,7 @@ class RotationConverterMainWindow(QMainWindow):
         # Help menu
         help_menu = menu_bar.addMenu("&Help")
         if not (help_menu is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         about = QAction("&About", self)
         about.triggered.connect(self._show_about)
         help_menu.addAction(about)
@@ -1210,7 +1200,7 @@ class RotationConverterMainWindow(QMainWindow):
                 mgr = get_theme_manager()
                 mgr.apply_theme_to_window(self)
                 mgr.themeChanged.connect(self._on_theme_changed)
-            except Exception as e:
+            except Exception as e:  # noqa: F841
                 pass
 
     def _on_theme_changed(self, theme_name: str) -> None:

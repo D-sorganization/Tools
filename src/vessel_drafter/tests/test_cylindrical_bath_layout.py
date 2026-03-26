@@ -29,9 +29,7 @@ def test_radial_electrodes_are_evenly_spaced_and_centered() -> None:
     placements = layout.placements
 
     assert len(placements) == 3
-    assert [item.angle_degrees for item in placements] == pytest.approx(
-        [0.0, 120.0, 240.0]
-    )
+    assert [item.angle_degrees for item in placements] == pytest.approx([0.0, 120.0, 240.0])
 
     expected_center_radius_mm = 36.0 * 25.4
     expected_inner_tip_radius_mm = 11.0 * 25.4
@@ -39,12 +37,8 @@ def test_radial_electrodes_are_evenly_spaced_and_centered() -> None:
 
     for placement in placements:
         center_radius_mm = sqrt((placement.center_x_mm**2) + (placement.center_y_mm**2))
-        inner_tip_radius_mm = sqrt(
-            (placement.inner_tip_x_mm**2) + (placement.inner_tip_y_mm**2)
-        )
-        outer_tip_radius_mm = sqrt(
-            (placement.outer_tip_x_mm**2) + (placement.outer_tip_y_mm**2)
-        )
+        inner_tip_radius_mm = sqrt((placement.inner_tip_x_mm**2) + (placement.inner_tip_y_mm**2))
+        outer_tip_radius_mm = sqrt((placement.outer_tip_x_mm**2) + (placement.outer_tip_y_mm**2))
 
         assert center_radius_mm == pytest.approx(expected_center_radius_mm)
         assert inner_tip_radius_mm == pytest.approx(expected_inner_tip_radius_mm)

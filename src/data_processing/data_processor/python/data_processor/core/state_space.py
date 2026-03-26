@@ -212,13 +212,9 @@ class BaseStateSpaceModel(ABC):
 
         # Optimize parameters
         if self.config.optimization_method == OptimizationMethod.EM:
-            opt_params, log_lik, converged, n_iter = self._em_algorithm(
-                y, initial_params
-            )
+            opt_params, log_lik, converged, n_iter = self._em_algorithm(y, initial_params)
         else:
-            opt_params, log_lik, converged, n_iter = self._optimize_parameters(
-                y, initial_params
-            )
+            opt_params, log_lik, converged, n_iter = self._optimize_parameters(y, initial_params)
 
         # Update matrices with optimal parameters
         self._update_matrices(opt_params)
@@ -226,9 +222,7 @@ class BaseStateSpaceModel(ABC):
 
         # Run Kalman filter and smoother
         filtered_states, filtered_cov, log_lik = self._kalman_filter(y)
-        smoothed_states, smoothed_cov = self._kalman_smoother(
-            y, filtered_states, filtered_cov
-        )
+        smoothed_states, smoothed_cov = self._kalman_smoother(y, filtered_states, filtered_cov)
 
         # Calculate fitted values and residuals
         fitted = np.zeros(n)
@@ -432,9 +426,7 @@ class BaseStateSpaceModel(ABC):
             smoothed_states[t] = filtered_states[t] + J @ (
                 smoothed_states[t + 1] - state_pred.flatten()
             )
-            smoothed_cov[t] = (
-                filtered_cov[t] + J @ (smoothed_cov[t + 1] - cov_pred) @ J.T
-            )
+            smoothed_cov[t] = filtered_cov[t] + J @ (smoothed_cov[t + 1] - cov_pred) @ J.T
 
         return smoothed_states, smoothed_cov
 
@@ -473,9 +465,7 @@ class BaseStateSpaceModel(ABC):
         )
 
         # Fallback to Nelder-Mead if BFGS fails
-        if not res.success and (
-            self.config.optimization_method == OptimizationMethod.BFGS
-        ):
+        if not res.success and (self.config.optimization_method == OptimizationMethod.BFGS):
             res = minimize(
                 objective,
                 initial_params,
@@ -510,9 +500,7 @@ class BaseStateSpaceModel(ABC):
             # E-step: Run Kalman filter and smoother
             self._update_matrices(params)
             filtered_states, filtered_cov, ll = self._kalman_filter(y)
-            smoothed_states, smoothed_cov = self._kalman_smoother(
-                y, filtered_states, filtered_cov
-            )
+            smoothed_states, smoothed_cov = self._kalman_smoother(y, filtered_states, filtered_cov)
 
             # Check convergence
             if abs(ll - prev_ll) < tol:
@@ -650,9 +638,7 @@ class LocalLinearTrendModel(BaseStateSpaceModel):
     """
 
     def __init__(self, config: StateSpaceConfig | None = None) -> None:
-        config = config or StateSpaceConfig(
-            model_type=StateSpaceModelType.LOCAL_LINEAR_TREND
-        )
+        config = config or StateSpaceConfig(model_type=StateSpaceModelType.LOCAL_LINEAR_TREND)
         super().__init__(config)
         self.n_states = 2
         self.n_obs = 1

@@ -44,17 +44,13 @@ class DataOperationsMixin:
             params = self.filter_config.get_parameters()
 
             config = FilterConfig(filter_type=filter_type, parameters=params)
-            self.current_data = self.signal_processor.apply_filter(
-                self.current_data, config
-            )
+            self.current_data = self.signal_processor.apply_filter(self.current_data, config)
 
             self.preview_widget.update_preview(self.current_data)
             self.status_bar.hide_progress()
             self.status_bar.set_status(f"Applied {filter_type}")
 
-            QMessageBox.information(
-                self, "Success", f"{filter_type} applied successfully"
-            )
+            QMessageBox.information(self, "Success", f"{filter_type} applied successfully")
 
         except (RuntimeError, AttributeError) as e:
             self.status_bar.hide_progress()
@@ -89,9 +85,7 @@ class DataOperationsMixin:
             )
 
             # Update available signals
-            self.available_signals = self.data_loader.get_numeric_signals(
-                self.current_data
-            )
+            self.available_signals = self.data_loader.get_numeric_signals(self.current_data)
             self.signal_list.set_signals(self.available_signals)
             self.preview_widget.update_preview(self.current_data)
             self.analysis_panel.set_dataframe(self.current_data)
@@ -100,9 +94,7 @@ class DataOperationsMixin:
             QMessageBox.information(
                 self,
                 "Success",
-                f"Integration complete\n"
-                f"Method: {method}\n"
-                f"Signals: {len(signals)}",
+                f"Integration complete\n" f"Method: {method}\n" f"Signals: {len(signals)}",
             )
         except (RuntimeError, AttributeError) as e:
             logger.error(f"Integration error: {e}", exc_info=True)
@@ -145,9 +137,7 @@ class DataOperationsMixin:
             )
 
             # Update available signals
-            self.available_signals = self.data_loader.get_numeric_signals(
-                self.current_data
-            )
+            self.available_signals = self.data_loader.get_numeric_signals(self.current_data)
             self.signal_list.set_signals(self.available_signals)
             self.preview_widget.update_preview(self.current_data)
             self.analysis_panel.set_dataframe(self.current_data)
@@ -175,9 +165,7 @@ class DataOperationsMixin:
         formula = self.formula_edit.text().strip()
 
         if not name or not formula:
-            QMessageBox.warning(
-                self, "Invalid Input", "Please enter both name and formula."
-            )
+            QMessageBox.warning(self, "Invalid Input", "Please enter both name and formula.")
             return
 
         try:
@@ -192,9 +180,7 @@ class DataOperationsMixin:
             )
 
             # Update available signals
-            self.available_signals = self.data_loader.get_numeric_signals(
-                self.current_data
-            )
+            self.available_signals = self.data_loader.get_numeric_signals(self.current_data)
             self.signal_list.set_signals(self.available_signals)
             self.preview_widget.update_preview(self.current_data)
             self.analysis_panel.set_dataframe(self.current_data)

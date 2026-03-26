@@ -63,9 +63,7 @@ def test_orbital_period_planets(
     ],
     ids=["Mercury", "Earth", "Mars", "Jupiter"],
 )
-def test_circular_velocity(
-    r_au: float, expected_v_kms: float, tolerance: float
-) -> None:
+def test_circular_velocity(r_au: float, expected_v_kms: float, tolerance: float) -> None:
     """Circular velocity at various orbital radii."""
     r = r_au * AU
     v = OrbitalMechanics.circular_velocity(r, GM["Sun"])
@@ -167,9 +165,7 @@ def test_celestial_body_types(body_type: BodyType) -> None:
     ],
     ids=["3-4-5", "x-axis", "origin", "diagonal"],
 )
-def test_state_vector_distance(
-    pos: list[float], vel: list[float], expected_dist: float
-) -> None:
+def test_state_vector_distance(pos: list[float], vel: list[float], expected_dist: float) -> None:
     """State vector distance from origin."""
     state = StateVector(position=pos, velocity=vel, time=J2000)
     np.testing.assert_allclose(state.distance, expected_dist, rtol=1e-10)
