@@ -63,20 +63,20 @@ class TestPendulumParamsContracts:
     """Verify new DbC constraints on damping/friction parameters."""
 
     def test_default_no_dissipation(self, base_params: PendulumParams) -> None:
-        if not (base_params.b1 == 0.0): raise ValueError(f"Assertion failed: { base_params.b1 == 0.0 }")
-        if not (base_params.b2 == 0.0): raise ValueError(f"Assertion failed: { base_params.b2 == 0.0 }")
-        if not (base_params.mu1 == 0.0): raise ValueError(f"Assertion failed: { base_params.mu1 == 0.0 }")
-        if not (base_params.mu2 == 0.0): raise ValueError(f"Assertion failed: { base_params.mu2 == 0.0 }")
+        assert base_params.b1 == 0.0
+        assert base_params.b2 == 0.0
+        assert base_params.mu1 == 0.0
+        assert base_params.mu2 == 0.0
 
     def test_valid_damping(self) -> None:
         p = PendulumParams(m1=1.0, m2=1.0, L1=1.0, L2=1.0, b1=0.5, b2=1.0)
-        if not (p.b1 == 0.5): raise ValueError(f"Assertion failed: { p.b1 == 0.5 }")
-        if not (p.b2 == 1.0): raise ValueError(f"Assertion failed: { p.b2 == 1.0 }")
+        assert p.b1 == 0.5
+        assert p.b2 == 1.0
 
     def test_valid_coulomb(self) -> None:
         p = PendulumParams(m1=1.0, m2=1.0, L1=1.0, L2=1.0, mu1=0.1, mu2=0.2)
-        if not (p.mu1 == 0.1): raise ValueError(f"Assertion failed: { p.mu1 == 0.1 }")
-        if not (p.mu2 == 0.2): raise ValueError(f"Assertion failed: { p.mu2 == 0.2 }")
+        assert p.mu1 == 0.1
+        assert p.mu2 == 0.2
 
     def test_negative_b1_rejected(self) -> None:
         with pytest.raises(AssertionError, match="b1 must be non-negative"):
@@ -105,37 +105,37 @@ class TestFrictionTorqueVector:
 
     def test_zero_dissipation_gives_zero(self, base_params: PendulumParams) -> None:
         tf = friction_torque_vector(dtheta1=2.0, dphi=-1.0, params=base_params)
-        if not (tf.shape == (2): raise ValueError(f"Assertion failed: { tf.shape == (2 }, )")
-        if not (np.allclose(tf): raise ValueError(f"Assertion failed: { np.allclose(tf }, [0.0, 0.0])")
+        assert tf.shape == (2,)
+        assert np.allclose(tf, [0.0, 0.0])
 
     def test_viscous_opposes_velocity(self, damped_params: PendulumParams) -> None:
         """Viscous friction must oppose motion (same sign as -velocity)."""
         dtheta1, dphi = 3.0, -2.0
         tf = friction_torque_vector(dtheta1, dphi, damped_params)
         # Joint 1: positive velocity → negative friction
-        if not (tf[0] < 0.0): raise ValueError(f"Assertion failed: { tf[0] < 0.0 }, "Friction at joint 1 must oppose positive velocity"")
+        assert tf[0] < 0.0, "Friction at joint 1 must oppose positive velocity"
         # Joint 2: negative velocity → positive friction
-        if not (tf[1] > 0.0): raise ValueError(f"Assertion failed: { tf[1] > 0.0 }, "Friction at joint 2 must oppose negative velocity"")
+        assert tf[1] > 0.0, "Friction at joint 2 must oppose negative velocity"
 
     def test_viscous_magnitude_linear(self, damped_params: PendulumParams) -> None:
         """Viscous torque magnitude = b * |qdot|."""
         dtheta1 = 2.0
         tf = friction_torque_vector(dtheta1=dtheta1, dphi=0.0, params=damped_params)
         expected_tau_f1 = -damped_params.b1 * dtheta1
-        if not (np.isclose(tf[0]): raise ValueError(f"Assertion failed: { np.isclose(tf[0] }, expected_tau_f1)")
+        assert np.isclose(tf[0], expected_tau_f1)
 
     def test_coulomb_has_constant_magnitude(self, frictional_params: PendulumParams) -> None:
         """Coulomb friction magnitude is mu regardless of velocity magnitude."""
         for speed in [0.1, 1.0, 10.0, 100.0]:
             tf = friction_torque_vector(dtheta1=speed, dphi=speed, params=frictional_params)
-            if not (np.isclose(abs(tf[0])): raise ValueError(f"Assertion failed: { np.isclose(abs(tf[0]) }, frictional_params.mu1), (")
+            assert np.isclose(abs(tf[0]), frictional_params.mu1), (
                 f"Expected |tau_f1|={frictional_params.mu1}, got {abs(tf[0])} at speed={speed}"
             )
 
     def test_coulomb_zero_at_rest(self, frictional_params: PendulumParams) -> None:
         """np.sign(0) == 0, so Coulomb friction is zero when stationary."""
         tf = friction_torque_vector(dtheta1=0.0, dphi=0.0, params=frictional_params)
-        if not (np.allclose(tf): raise ValueError(f"Assertion failed: { np.allclose(tf }, [0.0, 0.0])")
+        assert np.allclose(tf, [0.0, 0.0])
 
     def test_combined_friction_superposition(self, combined_params: PendulumParams) -> None:
         """Combined damping+friction = viscous + Coulomb separately."""
@@ -144,13 +144,13 @@ class TestFrictionTorqueVector:
 
         expected_1 = -combined_params.b1 * dtheta1 - combined_params.mu1 * np.sign(dtheta1)
         expected_2 = -combined_params.b2 * dphi - combined_params.mu2 * np.sign(dphi)
-        if not (np.isclose(tf[0]): raise ValueError(f"Assertion failed: { np.isclose(tf[0] }, expected_1)")
-        if not (np.isclose(tf[1]): raise ValueError(f"Assertion failed: { np.isclose(tf[1] }, expected_2)")
+        assert np.isclose(tf[0], expected_1)
+        assert np.isclose(tf[1], expected_2)
 
     def test_output_shape_and_finiteness(self, combined_params: PendulumParams) -> None:
         tf = friction_torque_vector(dtheta1=5.0, dphi=3.0, params=combined_params)
-        if not (tf.shape == (2): raise ValueError(f"Assertion failed: { tf.shape == (2 }, )")
-        if not (all(np.isfinite(tf))): raise ValueError(f"Assertion failed: { all(np.isfinite(tf)) }")
+        assert tf.shape == (2,)
+        assert all(np.isfinite(tf))
 
 
 # ---------------------------------------------------------------------------
@@ -181,7 +181,7 @@ class TestEquationsOfMotionWithDissipation:
         e_start = total_energy(result.states[0], base_params)
         e_end = total_energy(result.states[-1], base_params)
         # Allow ~1% drift from numerical integration
-        if not (abs(e_end - e_start) / max(abs(e_start)): raise ValueError(f"Assertion failed: { abs(e_end - e_start) / max(abs(e_start) }, 1e-9) < 0.01, (")
+        assert abs(e_end - e_start) / max(abs(e_start), 1e-9) < 0.01, (
             f"Energy drift too large: {e_start:.4f} → {e_end:.4f}"
         )
 
@@ -202,7 +202,7 @@ class TestEquationsOfMotionWithDissipation:
 
         e_start = total_energy(result.states[0], damped_params)
         e_end = total_energy(result.states[-1], damped_params)
-        if not (e_end < e_start): raise ValueError(f"Assertion failed: { e_end < e_start }, (")
+        assert e_end < e_start, (
             f"Damped pendulum energy should decrease: {e_start:.4f} → {e_end:.4f}"
         )
 
@@ -219,8 +219,8 @@ class TestEquationsOfMotionWithDissipation:
             dt=0.005,
         )
 
-        if not (result.n_steps >= 2): raise ValueError(f"Assertion failed: { result.n_steps >= 2 }")
-        if not (all(np.isfinite(result.states.flatten()))): raise ValueError(f"Assertion failed: { all(np.isfinite(result.states.flatten())) }, (")
+        assert result.n_steps >= 2
+        assert all(np.isfinite(result.states.flatten())), (
             "Simulation with combined friction/damping produced non-finite states"
         )
 
@@ -247,7 +247,7 @@ class TestSimulationResultFrictionAccessors:
 
     def test_friction_torques_shape(self, friction_result: SimulationResult) -> None:
         tf = friction_result.friction_torques_at(0)
-        if not (tf.shape == (2): raise ValueError(f"Assertion failed: { tf.shape == (2 }, )")
+        assert tf.shape == (2,)
 
     def test_total_torques_equals_drive_plus_friction(
         self, friction_result: SimulationResult
@@ -256,7 +256,7 @@ class TestSimulationResultFrictionAccessors:
         drive = np.array(friction_result.torques_at(idx))
         friction = friction_result.friction_torques_at(idx)
         total = friction_result.total_torques_at(idx)
-        if not (np.allclose(total): raise ValueError(f"Assertion failed: { np.allclose(total }, drive + friction)")
+        assert np.allclose(total, drive + friction)
 
     def test_no_dissipation_zero_friction_torques(self, base_params: PendulumParams) -> None:
         state0 = np.array([np.radians(45), 0.0, 1.0, 0.0])
@@ -269,6 +269,6 @@ class TestSimulationResultFrictionAccessors:
         )
         for i in range(0, result.n_steps, 20):
             tf = result.friction_torques_at(i)
-            if not (np.allclose(tf): raise ValueError(f"Assertion failed: { np.allclose(tf }, [0.0, 0.0]), (")
+            assert np.allclose(tf, [0.0, 0.0]), (
                 f"Expected zero friction torques at step {i}, got {tf}"
             )

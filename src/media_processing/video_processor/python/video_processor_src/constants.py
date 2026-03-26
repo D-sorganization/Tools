@@ -27,7 +27,9 @@ GOLF_BALL_MASS_KG: float = 0.04593  # [kg] USGA Rule 5-1 (1.620 oz max)
 GOLF_BALL_DIAMETER_M: float = 0.04267  # [m] USGA Rule 5-2 (1.680 in min)
 # Smooth ball at Re~150,000 per Bearman & Harvey 1976
 GOLF_BALL_DRAG_COEFFICIENT: float = 0.25  # [dimensionless]
-GOLF_BALL_LIFT_COEFFICIENT: float = 0.15  # [dimensionless] Typical for golf ball dimples  # noqa: E501
+GOLF_BALL_LIFT_COEFFICIENT: float = (
+    0.15  # [dimensionless] Typical for golf ball dimples  # noqa: E501
+)
 
 # Club specifications
 DRIVER_LENGTH_MAX_M: float = 1.1684  # [m] USGA Rule 1-1c (46 inches)
@@ -50,7 +52,9 @@ TITANIUM_DENSITY_KG_M3: float = 4506  # [kg/m³] Ti-6Al-4V alloy
 ALUMINUM_DENSITY_KG_M3: float = 2700  # [kg/m³] 6061-T6 aluminum
 
 # Aerodynamic coefficients
-MAGNUS_COEFFICIENT: float = 0.25  # [dimensionless] Typical for golf ball, per Bearman & Harvey  # noqa: E501
+MAGNUS_COEFFICIENT: float = (
+    0.25  # [dimensionless] Typical for golf ball, per Bearman & Harvey  # noqa: E501
+)
 SPIN_DECAY_RATE_S: float = 0.05  # [1/s] Typical spin decay, per Trackman data
 AIR_VISCOSITY_KG_M_S: float = 1.789e-5  # [kg/(m·s)] Dynamic viscosity at 15°C
 

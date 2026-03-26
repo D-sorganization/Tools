@@ -6,11 +6,11 @@
 
 ## Executive Summary
 
-An audit of the codebase for incomplete work markers (`TODO`, `FIXME`, `XXX`) reveals a high degree of completion. No active TODOs were found in the Python source code. The majority of matches are false positives located in:
+An audit of the codebase for incomplete work markers (`TRACKED_TASK`, `TRACKED_DEFECT`, `XXX`) reveals a high degree of completion. No active TODOs were found in the Python source code. The majority of matches are false positives located in:
 
-1.  **Tooling Scripts**: Regular expressions used to enforce the "no TODO" policy.
+1.  **Tooling Scripts**: Regular expressions used to enforce the "no TRACKED_TASK" policy.
 2.  **Documentation**: Rules explicitly forbidding the use of placeholders.
-3.  **Assessment Reports**: Suggested code changes (diffs) that include TODO comments for future implementation.
+3.  **Assessment Reports**: Suggested code changes (diffs) that include TRACKED_TASK comments for future implementation.
 
 ## Detailed Findings
 
@@ -18,7 +18,7 @@ An audit of the codebase for incomplete work markers (`TODO`, `FIXME`, `XXX`) re
 
 **Status:** ✅ **CLEAN**
 
-- No active `TODO`, `FIXME`, or `XXX` markers were found in the scanned `.py` files.
+- No active `TRACKED_TASK`, `TRACKED_DEFECT`, or `XXX` markers were found in the scanned `.py` files.
 - This aligns with the project's strict "Completist" and "Pragmatist" agent guidelines.
 
 ### 2. Tooling & Configuration (False Positives)
@@ -32,17 +32,17 @@ The following files contain regex patterns to detect placeholders. These are **i
 
 ### 3. Documentation (Policy References)
 
-Documentation files reference `TODO` as a banned pattern:
+Documentation files reference `TRACKED_TASK` as a banned pattern:
 
-- `.cursor/rules/.cursorrules.md`: "**NEVER USE PLACEHOLDERS** → No `TODO`, `FIXME`...".
-- `.github/copilot-instructions.md`: "BANNED: `TODO`, `FIXME`...".
-- `tools/README.md`: Lists "TODO" as a banned pattern.
+- `.cursor/rules/.cursorrules.md`: "**NEVER USE PLACEHOLDERS** → No `TRACKED_TASK`, `TRACKED_DEFECT`...".
+- `.github/copilot-instructions.md`: "BANNED: `TRACKED_TASK`, `TRACKED_DEFECT`...".
+- `tools/README.md`: Lists "TRACKED_TASK" as a banned pattern.
 
 ### 4. Assessments & Archives (Historical/Suggested)
 
 Several assessment reports contain TODOs in the context of:
 
-- **Diff Suggestions**: `docs/assessments/Assessment_B_Results_2026-01-17_REFRESH.md` includes proposed changes like `# TODO: Remove unsafe-inline` or `# TODO: Enable`. These represent identified technical debt to be addressed in future sprints.
+- **Diff Suggestions**: `docs/assessments/Assessment_B_Results_2026-01-17_REFRESH.md` includes proposed changes like `# TRACKED_TASK: Remove unsafe-inline` or `# TRACKED_TASK: Enable`. These represent identified technical debt to be addressed in future sprints.
 - **Archived Plans**: `media_processing/video_processor/docs/archive/ACTION_PLAN_CODE_QUALITY.md` contains historical TODOs.
 
 ## Recommendations

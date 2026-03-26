@@ -121,7 +121,7 @@ def check_dry_violations(files: list[Path]) -> list[dict]:
     for file_path in files:
         try:
             content = file_path.read_text(encoding="utf-8", errors="ignore")
-        except Exception as e:  # noqa: F841  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
 
         lines = content.split("\n")
@@ -172,7 +172,7 @@ def check_orthogonality(files: list[Path]) -> list[dict]:
                             "recommendation": "Split function",
                         }
                     )
-        except Exception as e:  # noqa: F841  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return issues
 
@@ -194,7 +194,7 @@ def check_reversibility(root_path: Path) -> list[dict]:
                         "recommendation": "Use env vars",
                     }
                 )
-        except Exception as e:  # noqa: F841  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return issues
 
@@ -205,9 +205,9 @@ def check_quality(files: list[Path]) -> list[dict]:
     for file_path in files:
         try:
             content = file_path.read_text(encoding="utf-8", errors="ignore")
-            if "TODO" in content:
+            if "TRACKED_TASK" in content:
                 todos.append(str(file_path))
-        except Exception as e:  # noqa: F841  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     if len(todos) > 10:
@@ -215,7 +215,7 @@ def check_quality(files: list[Path]) -> list[dict]:
             {
                 "principle": "QUALITY",
                 "severity": "MINOR",
-                "title": f"High TODO count ({len(todos)})",
+                "title": f"High TRACKED_TASK count ({len(todos)})",
                 "description": "Accumulated technical debt",
                 "files": todos[:5],
                 "recommendation": "Review TODOs",

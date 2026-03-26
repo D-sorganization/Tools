@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from PIL import Image
 
-from contracts import require
+from src.shared.python.contracts import require
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +85,9 @@ def convert_image_mode(img: Image.Image) -> Image.Image:
         return img
 
 
-def create_resized_images(img: Image.Image, sizes: list[tuple[int, int]]) -> list[Image.Image]:
+def create_resized_images(
+    img: Image.Image, sizes: list[tuple[int, int]]
+) -> list[Image.Image]:
     """Create resized versions of an image for ICO format.
 
     Args:
@@ -97,7 +99,9 @@ def create_resized_images(img: Image.Image, sizes: list[tuple[int, int]]) -> lis
     """
     if not (img is not None):
         raise ValueError("img must be provided")
-    require(isinstance(sizes, list) and len(sizes) > 0, "sizes must be a non-empty list")
+    require(
+        isinstance(sizes, list) and len(sizes) > 0, "sizes must be a non-empty list"
+    )
 
     from PIL import Image
 

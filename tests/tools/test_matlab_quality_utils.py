@@ -7,8 +7,8 @@ banned patterns, workspace pollution detection, and DbC violations.
 from pathlib import Path
 
 import pytest
-from contracts import PreconditionError
 
+from src.shared.python.contracts import PreconditionError
 from tools.matlab_quality_utils import MATLABQualityChecker
 
 # ─── __init__ DbC ──────────────────────────────────────────────
@@ -58,7 +58,9 @@ def test_check_matlab_files_found(tmp_path):
 
 
 def test_track_nesting_enters_function():
-    in_func, level = MATLABQualityChecker._track_nesting("function y = foo(x)", False, 0)
+    in_func, level = MATLABQualityChecker._track_nesting(
+        "function y = foo(x)", False, 0
+    )
     assert in_func is True
     assert level == 1
 
@@ -80,20 +82,26 @@ def test_track_nesting_nested_if():
 
 def test_check_banned_todo():
     issues: list[str] = []
-    MATLABQualityChecker._check_banned_patterns(Path("script.m"), "% TODO: fix this", 5, issues)
+    MATLABQualityChecker._check_banned_patterns(
+        Path("script.m"), "% TRACKED_TASK: fix this", 5, issues
+    )
     assert len(issues) == 1
-    assert "TODO" in issues[0]
+    assert "TRACKED_TASK" in issues[0]
 
 
 def test_check_banned_fixme():
     issues: list[str] = []
-    MATLABQualityChecker._check_banned_patterns(Path("script.m"), "% FIXME: broken", 3, issues)
-    assert any("FIXME" in i for i in issues)
+    MATLABQualityChecker._check_banned_patterns(
+        Path("script.m"), "% TRACKED_DEFECT: broken", 3, issues
+    )
+    assert any("TRACKED_DEFECT" in i for i in issues)
 
 
 def test_check_banned_clean_line():
     issues: list[str] = []
-    MATLABQualityChecker._check_banned_patterns(Path("script.m"), "y = x + 1;", 1, issues)
+    MATLABQualityChecker._check_banned_patterns(
+        Path("script.m"), "y = x + 1;", 1, issues
+    )
     assert issues == []
 
 
@@ -102,7 +110,7 @@ def test_check_banned_dbc_non_path():
     with pytest.raises(PreconditionError):
         MATLABQualityChecker._check_banned_patterns(
             "script.m",
-            "% TODO",
+            "% TRACKED_TASK",
             1,
             issues,  # type: ignore[arg-type]
         )
@@ -217,10 +225,12 @@ def test_static_analysis_no_issues(tmp_path):
 
 
 def test_static_analysis_finds_todo(tmp_path):
-    """m-file with TODO must produce at least one issue."""
+    """m-file with TRACKED_TASK must produce at least one issue."""
     matlab = tmp_path / "matlab"
     matlab.mkdir()
-    (matlab / "dirty.m").write_text("function y = foo(x)\n% TODO: fix\ny = x;\nend\n")
+    (matlab / "dirty.m").write_text(
+        "function y = foo(x)\n% TRACKED_TASK: fix\ny = x;\nend\n"
+    )
     checker = MATLABQualityChecker(tmp_path)
     result = checker._static_matlab_analysis()
     assert result["issues"]  # non-empty
@@ -278,14 +288,18 @@ def test_anti_pattern_clean_ok(tmp_path):
 def test_magic_number_pi_detected(tmp_path):
     checker = MATLABQualityChecker(tmp_path)
     issues: list[str] = []
-    checker._check_magic_numbers(Path("f.m"), "r = 3.14159 * d;", "r = 3.14159 * d;", 1, issues)
+    checker._check_magic_numbers(
+        Path("f.m"), "r = 3.14159 * d;", "r = 3.14159 * d;", 1, issues
+    )
     assert any("3.14159" in i or "pi" in i.lower() for i in issues)
 
 
 def test_magic_number_gravity_detected(tmp_path):
     checker = MATLABQualityChecker(tmp_path)
     issues: list[str] = []
-    checker._check_magic_numbers(Path("f.m"), "f = m * 9.81;", "f = m * 9.81;", 1, issues)
+    checker._check_magic_numbers(
+        Path("f.m"), "f = m * 9.81;", "f = m * 9.81;", 1, issues
+    )
     assert any("9.81" in i for i in issues)
 
 
@@ -315,7 +329,9 @@ def test_magic_number_in_comment_ignored(tmp_path):
 def test_magic_number_unlabeled_constant(tmp_path):
     checker = MATLABQualityChecker(tmp_path)
     issues: list[str] = []
-    checker._check_magic_numbers(Path("f.m"), "timeout = 3600;", "timeout = 3600;", 1, issues)
+    checker._check_magic_numbers(
+        Path("f.m"), "timeout = 3600;", "timeout = 3600;", 1, issues
+    )
     assert any("3600" in i for i in issues)
 
 
@@ -341,7 +357,9 @@ def test_run_matlab_quality_checks_with_error(tmp_path):
     # Force PermissionError via patching
     from unittest.mock import patch
 
-    with patch.object(checker, "_static_matlab_analysis", side_effect=OSError("denied")):
+    with patch.object(
+        checker, "_static_matlab_analysis", side_effect=OSError("denied")
+    ):
         with patch.object(
             checker,
             "run_matlab_quality_checks",
@@ -367,7 +385,7 @@ def test_run_all_checks_with_issues(tmp_path):
     matlab = tmp_path / "matlab"
     matlab.mkdir()
     (matlab / "bad.m").write_text(
-        "function bad()\n% TODO: fill in\nglobal myVar\neval('x+1');\nend\n"
+        "function bad()\n% TRACKED_TASK: fill in\nglobal myVar\neval('x+1');\nend\n"
     )
     checker = MATLABQualityChecker(tmp_path)
     result = checker.run_all_checks()

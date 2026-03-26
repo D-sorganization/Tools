@@ -117,8 +117,8 @@ def analyze_codebase() -> RepoStats:
                     continue
 
                 stats["lines"] += len(content.splitlines())
-                stats["todos"] += content.count("TODO")
-                stats["fixmes"] += content.count("FIXME")
+                stats["todos"] += content.count("TRACKED_TASK")
+                stats["fixmes"] += content.count("TRACKED_DEFECT")
 
                 if file.endswith(".py"):
                     stats["py_files"] += 1

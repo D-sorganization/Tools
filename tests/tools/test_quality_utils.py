@@ -102,10 +102,10 @@ def test_strip_dbc_rejects_non_string():
 
 
 def test_check_banned_finds_todo():
-    lines = ["# TODO: fix this eventually"]
+    lines = ["# TRACKED_TASK: fix this eventually"]
     issues = check_banned_patterns(lines, Path("myfile.py"))
     assert len(issues) == 1
-    assert "TODO" in issues[0][1]
+    assert "TRACKED_TASK" in issues[0][1]
 
 
 def test_check_banned_finds_ellipsis():
@@ -115,7 +115,7 @@ def test_check_banned_finds_ellipsis():
 
 
 def test_check_banned_skips_quality_utils_itself():
-    lines = ["# TODO: something"]
+    lines = ["# TRACKED_TASK: something"]
     issues = check_banned_patterns(lines, Path("quality_utils.py"))
     assert issues == []
 
@@ -187,7 +187,7 @@ def test_check_file_clean(tmp_path):
 
 def test_check_file_with_todo(tmp_path):
     f = tmp_path / "dirty.py"
-    f.write_text("# TODO: clean me up\n", encoding="utf-8")
+    f.write_text("# TRACKED_TASK: clean me up\n", encoding="utf-8")
     issues = check_file(f)
     assert len(issues) >= 1
 

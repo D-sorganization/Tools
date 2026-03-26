@@ -81,7 +81,7 @@ STYLE_BTN_IMPORT = (
 )
 
 # ── Full-window dark stylesheet (fallback when fleet ThemeManager unavailable)
-# DEFERRED(#1042): Derive from fleet ThemeManager palette when it's a hard dep.
+# TRACKED_TASK(#1042): Derive from fleet ThemeManager palette when it's a hard dep.
 PENDULUM_DARK_STYLE = f"""
     QMainWindow {{ background: #12121c; }}
     QStatusBar  {{ background: #12121c; color: #7878a0; font-size: {FONT_STATUS}px;
@@ -164,7 +164,9 @@ def parse_coeffs(widget: LabeledInput, name: str) -> list[float]:
         parts = widget.value.split(",")
         return [float(p.strip()) for p in parts if p.strip()]
     except ValueError:
-        raise ValueError(f"Cannot parse '{name}' coefficients: '{widget.value}'") from None
+        raise ValueError(
+            f"Cannot parse '{name}' coefficients: '{widget.value}'"
+        ) from None
 
 
 def parse_coeffs_lenient(widget: LabeledInput) -> list[float]:

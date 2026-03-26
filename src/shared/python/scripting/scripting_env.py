@@ -128,7 +128,7 @@ class ConsoleEnvironment:
         Returns:
             (stdout_output, stderr_output)
         """
-        if not (source is not None): raise ValueError(f"Assertion failed: { source is not None }, "source must be provided"")  # noqa: E701
+        assert source is not None, "source must be provided"
         if not source.strip():
             return "", ""
 
@@ -151,7 +151,7 @@ class ConsoleEnvironment:
                     code_obj = compile(source, "<console>", "exec")
                     exec(code_obj, self.namespace)
 
-        except Exception as e:  # noqa: F841  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             # Format exception similar to REPL
             exc_type, exc_value, exc_traceback = sys.exc_info()
             if exc_traceback:

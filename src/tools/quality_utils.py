@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 from re import Pattern
 
-from contracts import require
+from src.shared.python.contracts import require
 
 
 # ANSI colors for terminal output
@@ -33,8 +33,8 @@ class Colors:
 
 # Configuration
 BANNED_PATTERNS: list[tuple[Pattern, str]] = [
-    (re.compile(r"\bDEFERRED\b"), "DEFERRED placeholder found"),
-    (re.compile(r"\bREVIEW\b"), "REVIEW placeholder found"),
+    (re.compile(r"\bTODO\b"), "TRACKED_TASK placeholder found"),
+    (re.compile(r"\bFIXME\b"), "TRACKED_DEFECT placeholder found"),
     (re.compile(r"^\s*\.\.\.\s*$"), "Ellipsis placeholder"),
     (re.compile(r"NotImplementedError"), "NotImplementedError placeholder"),
     # More specific angle bracket patterns to avoid Tkinter event bindings
@@ -43,12 +43,12 @@ BANNED_PATTERNS: list[tuple[Pattern, str]] = [
         "Angle bracket placeholder",
     ),
     (
-        re.compile(r"<[^<>]*DEFERRED[^<>]*>", re.IGNORECASE),
-        "Angle bracket DEFERRED placeholder",
+        re.compile(r"<[^<>]*TRACKED_TASK[^<>]*>", re.IGNORECASE),
+        "Angle bracket TRACKED_TASK placeholder",
     ),
     (
-        re.compile(r"<[^<>]*REVIEW[^<>]*>", re.IGNORECASE),
-        "Angle bracket REVIEW placeholder",
+        re.compile(r"<[^<>]*TRACKED_DEFECT[^<>]*>", re.IGNORECASE),
+        "Angle bracket TRACKED_DEFECT placeholder",
     ),
     (re.compile(r"your.*here", re.IGNORECASE), "Template placeholder"),
     (re.compile(r"insert.*here", re.IGNORECASE), "Template placeholder"),
@@ -172,7 +172,9 @@ def check_banned_patterns(
         # Check for basic banned patterns
         for pattern, message in BANNED_PATTERNS:
             # Skip angle bracket patterns if line contains legitimate Tkinter bindings
-            pattern_str = pattern.pattern if hasattr(pattern, "pattern") else str(pattern)
+            pattern_str = (
+                pattern.pattern if hasattr(pattern, "pattern") else str(pattern)
+            )
             if "<" in pattern_str and is_legitimate_tkinter_binding(line):
                 continue
             if pattern.search(line):

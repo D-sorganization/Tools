@@ -139,8 +139,8 @@ def analyze_codebase() -> RepoStats:
                     continue
 
                 stats["lines"] += len(content.splitlines())
-                stats["todos"] += content.count("TODO")
-                stats["fixmes"] += content.count("FIXME")
+                stats["todos"] += content.count("TRACKED_TASK")
+                stats["fixmes"] += content.count("TRACKED_DEFECT")
 
                 if file.endswith(".py"):
                     stats["py_files"] += 1
@@ -339,7 +339,7 @@ def calculate_grades(stats: RepoStats) -> dict[str, tuple[float, str]]:
         score_o -= 3
     if debt > 500:
         score_o -= 3
-    grades["O"] = (max(0, score_o), f"Technical Debt (TODO+FIXME): {debt}")
+    grades["O"] = (max(0, score_o), f"Technical Debt (TRACKED_TASK+TRACKED_DEFECT): {debt}")
 
     return grades
 

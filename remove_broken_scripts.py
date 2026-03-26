@@ -15,7 +15,7 @@ except ImportError:
     ) -> str:
         try:
             return Path(path).read_text(encoding=encoding)
-        except Exception as e:  # noqa: F841  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return default
 
     def safe_write_text(

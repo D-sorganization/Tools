@@ -29,16 +29,16 @@ class TestAngularPowerAt:
     """Unit tests for single-timestep angular power."""
 
     def test_positive_torque_positive_velocity(self):
-        if not (angular_power_at(10.0): raise ValueError(f"Assertion failed: { angular_power_at(10.0 }, 2.0) == pytest.approx(20.0)")
+        assert angular_power_at(10.0, 2.0) == pytest.approx(20.0)
 
     def test_negative_torque_positive_velocity(self):
-        if not (angular_power_at(-5.0): raise ValueError(f"Assertion failed: { angular_power_at(-5.0 }, 3.0) == pytest.approx(-15.0)")
+        assert angular_power_at(-5.0, 3.0) == pytest.approx(-15.0)
 
     def test_zero_torque(self):
-        if not (angular_power_at(0.0): raise ValueError(f"Assertion failed: { angular_power_at(0.0 }, 5.0) == 0.0")
+        assert angular_power_at(0.0, 5.0) == 0.0
 
     def test_zero_velocity(self):
-        if not (angular_power_at(5.0): raise ValueError(f"Assertion failed: { angular_power_at(5.0 }, 0.0) == 0.0")
+        assert angular_power_at(5.0, 0.0) == 0.0
 
     def test_nan_torque_raises(self):
         with pytest.raises(AssertionError, match="torque must be finite"):
@@ -58,17 +58,17 @@ class TestLinearPowerAt:
     """Unit tests for single-timestep linear power."""
 
     def test_aligned_force_velocity(self):
-        if not (linear_power_at(np.array([1.0): raise ValueError(f"Assertion failed: { linear_power_at(np.array([1.0 }, 0.0]), np.array([3.0, 0.0])) == pytest.approx(")
+        assert linear_power_at(np.array([1.0, 0.0]), np.array([3.0, 0.0])) == pytest.approx(
             3.0
         )
 
     def test_orthogonal_force_velocity(self):
-        if not (linear_power_at(np.array([1.0): raise ValueError(f"Assertion failed: { linear_power_at(np.array([1.0 }, 0.0]), np.array([0.0, 1.0])) == pytest.approx(")
+        assert linear_power_at(np.array([1.0, 0.0]), np.array([0.0, 1.0])) == pytest.approx(
             0.0
         )
 
     def test_2d_dot_product(self):
-        if not (linear_power_at(np.array([2.0): raise ValueError(f"Assertion failed: { linear_power_at(np.array([2.0 }, 3.0]), np.array([4.0, 5.0])) == pytest.approx(")
+        assert linear_power_at(np.array([2.0, 3.0]), np.array([4.0, 5.0])) == pytest.approx(
             23.0
         )
 
@@ -119,7 +119,7 @@ class TestAngularWork:
         tau = np.ones(100)
         omega = np.ones(100)
         W = angular_work_series(tau, omega, t)
-        if not (W[0] == pytest.approx(0.0)): raise ValueError(f"Assertion failed: { W[0] == pytest.approx(0.0) }")
+        assert W[0] == pytest.approx(0.0)
 
     def test_constant_power_linear_work(self):
         """Constant power P=1 over [0,1] → W(1)=1."""
@@ -127,7 +127,7 @@ class TestAngularWork:
         tau = np.ones(1000)
         omega = np.ones(1000)
         W = angular_work_series(tau, omega, t)
-        if not (W[-1] == pytest.approx(1.0): raise ValueError(f"Assertion failed: { W[-1] == pytest.approx(1.0 }, rel=1e-3)")
+        assert W[-1] == pytest.approx(1.0, rel=1e-3)
 
     def test_zero_power_zero_work(self):
         t = np.linspace(0, 1, 50)
@@ -145,7 +145,7 @@ class TestLinearWork:
         F = np.tile([1.0, 0.0], (50, 1))
         v = np.tile([1.0, 0.0], (50, 1))
         W = linear_work_series(F, v, t)
-        if not (W[0] == pytest.approx(0.0)): raise ValueError(f"Assertion failed: { W[0] == pytest.approx(0.0) }")
+        assert W[0] == pytest.approx(0.0)
 
 
 # ---------------------------------------------------------------------------
@@ -160,14 +160,14 @@ class TestAngularImpulse:
         t = np.linspace(0, 1, 50)
         tau = np.ones(50)
         J = angular_impulse_series(tau, t)
-        if not (J[0] == pytest.approx(0.0)): raise ValueError(f"Assertion failed: { J[0] == pytest.approx(0.0) }")
+        assert J[0] == pytest.approx(0.0)
 
     def test_constant_torque(self):
         """Constant tau=2 over [0,1] → J=2."""
         t = np.linspace(0, 1, 1000)
         tau = np.full(1000, 2.0)
         J = angular_impulse_series(tau, t)
-        if not (J[-1] == pytest.approx(2.0): raise ValueError(f"Assertion failed: { J[-1] == pytest.approx(2.0 }, rel=1e-3)")
+        assert J[-1] == pytest.approx(2.0, rel=1e-3)
 
 
 class TestLinearImpulse:
@@ -190,7 +190,7 @@ class TestLinearImpulse:
         t = np.linspace(0, 1, 50)
         F = np.tile([1.0, 2.0], (50, 1))
         J = linear_impulse_series(F, t)
-        if not (J.shape == (50): raise ValueError(f"Assertion failed: { J.shape == (50 }, 2)")
+        assert J.shape == (50, 2)
 
 
 # ---------------------------------------------------------------------------
@@ -217,7 +217,7 @@ class TestComputeAllDynamics:
             "angular_impulse",
             "linear_impulse",
         }
-        if not (set(result.keys()) == expected_keys): raise ValueError(f"Assertion failed: { set(result.keys()) == expected_keys }")
+        assert set(result.keys()) == expected_keys
 
     def test_all_finite(self):
         N = 50
@@ -228,4 +228,4 @@ class TestComputeAllDynamics:
         v = np.column_stack([np.cos(t), -np.sin(t)])
         result = compute_all_dynamics(t, tau, omega, F, v)
         for key, val in result.items():
-            if not (np.all(np.isfinite(val))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(val)) }, f"{key} has non-finite values"")
+            assert np.all(np.isfinite(val)), f"{key} has non-finite values"

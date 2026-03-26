@@ -32,7 +32,7 @@ The Pendulum Simulator is a **scientifically rigorous, multi-model dynamics tool
 | `print()` statements | 0 | ✅ All logging-based |
 | Bare `except:` | 0 | ✅ Clean error handling |
 | Wildcard imports | 0 | ✅ Explicit imports |
-| TODO/FIXME | 1 | ✅ Nearly tech-debt free |
+| TRACKED_TASK/TRACKED_DEFECT | 1 | ✅ Nearly tech-debt free |
 | Max module size | 1,155 lines | ✅ Under 1,500-line budget |
 | Logging calls | 97 | Good observability |
 
@@ -188,7 +188,7 @@ The Pendulum Simulator is a **scientifically rigorous, multi-model dynamics tool
 
 ### 🅼 Maintainability (8/10)
 
-- Only 1 TODO in entire codebase
+- Only 1 TRACKED_TASK in entire codebase
 - Small, focused modules (max 1,155 lines)
 - Clear naming conventions
 - But: package name is misleading (`double_pendulum_golf` ≠ actual scope)
@@ -261,7 +261,7 @@ The Pendulum Simulator is a **scientifically rigorous, multi-model dynamics tool
 | **Can someone extend it?** | 8/10 | Model registry and clean architecture make this straightforward |
 | **Can someone trust it?** | 9/10 | 630 tests, analytical validation, energy conservation tests |
 | **Does it look professional?** | 7/10 | Dark theme is good but inconsistent sizing/spacing |
-| **Is it well-maintained?** | 8/10 | Full CI, only 1 TODO, active development |
+| **Is it well-maintained?** | 8/10 | Full CI, only 1 TRACKED_TASK, active development |
 | **Overall Shareability** | **7.5/10** | Ready for technical users; needs polish for general audience |
 
 ---
