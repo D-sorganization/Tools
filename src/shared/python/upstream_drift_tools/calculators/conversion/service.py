@@ -60,8 +60,7 @@ class UnitConversionService:
 
     def __init__(self, enable_validation: bool = True) -> None:
         """Initialize the unit conversion service."""
-        if not (enable_validation is not None):
-            raise ValueError("enable_validation must be provided")
+        assert enable_validation is not None, "enable_validation must be provided"
         self.enable_validation = enable_validation
         self.user_defined_units: dict[str, set[str]] = {}
         self.user_defined_aliases: dict[str, list[str]] = {}
@@ -101,7 +100,9 @@ class UnitConversionService:
 
     def _init_tables(self) -> None:
         """Initialize conversion tables from constants."""
-        self.category_map = {category: dict(table) for category, table in CATEGORY_TABLES.items()}
+        self.category_map = {
+            category: dict(table) for category, table in CATEGORY_TABLES.items()
+        }
         self.length_factors = self.category_map["length"]
         self.volume_factors = self.category_map["volume"]
         self.mass_factors = self.category_map["mass"]
@@ -144,21 +145,26 @@ class UnitConversionService:
     def convert(
         self, value: float, from_unit: str, to_unit: str, **kwargs: Any
     ) -> ConversionResult:
-        if not (value is not None):
-            raise ValueError("value must be provided")
+        assert value is not None, "value must be provided"
         self._validate_convert_value(value)
         from_unit_norm = self._normalize_unit(from_unit)
         to_unit_norm = self._normalize_unit(to_unit)
         from_category, to_category = self._resolve_categories(
             from_unit, to_unit, from_unit_norm, to_unit_norm
         )
-        self._ensure_compatible_categories(from_unit, to_unit, from_category, to_category)
-        warnings = self._collect_conversion_warnings(value, from_category, from_unit_norm)
+        self._ensure_compatible_categories(
+            from_unit, to_unit, from_category, to_category
+        )
+        warnings = self._collect_conversion_warnings(
+            value, from_category, from_unit_norm
+        )
         converted = self._dispatch_conversion(
             value, from_unit_norm, to_unit_norm, from_category, kwargs
         )
         warnings.extend(
-            self._user_unit_warnings(from_category, to_category, from_unit_norm, to_unit_norm)
+            self._user_unit_warnings(
+                from_category, to_category, from_unit_norm, to_unit_norm
+            )
         )
         return ConversionResult(converted, from_unit, to_unit, warnings=warnings)
 
@@ -190,7 +196,9 @@ class UnitConversionService:
         self, from_unit: str, to_unit: str, from_category: str, to_category: str
     ) -> None:
         """Validate category compatibility for conversion."""
-        if from_category != to_category and {from_category, to_category} != {"temperature"}:
+        if from_category != to_category and {from_category, to_category} != {
+            "temperature"
+        }:
             msg = f"Cannot convert from {from_unit} to {to_unit}"
             raise IncompatibleUnitsError(msg)
 
@@ -198,8 +206,7 @@ class UnitConversionService:
         self, value: float, from_category: str, from_unit_norm: str
     ) -> list[str]:
         """Collect validation warnings for the conversion."""
-        if not (value is not None):
-            raise ValueError("value must be provided")
+        assert value is not None, "value must be provided"
         warnings: list[str] = []
         if self.enable_validation:
             warnings.extend(self._validate_value(value, from_category, from_unit_norm))
@@ -227,7 +234,9 @@ class UnitConversionService:
                 temperature=kwargs.get("temperature"),
                 pressure=kwargs.get("pressure"),
                 gas_type=kwargs.get("gas_type", "air"),
-                standard_condition=kwargs.get("standard_condition", StandardCondition.SCFM_60F),
+                standard_condition=kwargs.get(
+                    "standard_condition", StandardCondition.SCFM_60F
+                ),
             )
         msg = f"Unsupported unit category for {from_unit_norm}"
         raise UnknownUnitError(msg)
@@ -235,8 +244,7 @@ class UnitConversionService:
     def _normalize_unit(self, unit: str) -> str:
         """Normalize unit string to canonical form."""
         # Fast path 1: Check exact cache
-        if not (unit is not None):
-            raise ValueError("unit must be provided")
+        assert unit is not None, "unit must be provided"
         if unit in self._normalized_cache:
             return self._normalized_cache[unit]
 
@@ -282,8 +290,7 @@ class UnitConversionService:
 
     def _get_category(self, unit: str) -> str | None:
         """Get the category for a given unit."""
-        if not (unit is not None):
-            raise ValueError("unit must be provided")
+        assert unit is not None, "unit must be provided"
         for category, factors in self.category_map.items():
             if unit in factors:
                 return category
@@ -293,10 +300,11 @@ class UnitConversionService:
             return "gas_flow"
         return None
 
-    def _validate_value(self, value: float, category: str, unit: str | None = None) -> list[str]:
+    def _validate_value(
+        self, value: float, category: str, unit: str | None = None
+    ) -> list[str]:
         """Validate input value against physical constraints."""
-        if not (value is not None):
-            raise ValueError("value must be provided")
+        assert value is not None, "value must be provided"
         if category == "temperature" and unit:
             # Convert to Kelvin to check if below absolute zero
             # Negative values in C/F are valid, so we need to convert first
@@ -325,7 +333,9 @@ class UnitConversionService:
         """Convert temperature value."""
         try:
             return convert_temperature(value, from_unit, to_unit)
-        except ValueError as exc:  # pragma: no cover - converted to domain-specific error
+        except (
+            ValueError
+        ) as exc:  # pragma: no cover - converted to domain-specific error
             msg = str(exc)
             raise UnknownUnitError(msg) from exc
 
@@ -375,8 +385,7 @@ class UnitConversionService:
         standard_condition: StandardCondition = StandardCondition.SCFM_60F,
     ) -> float:
         """Convert gas flow rate."""
-        if not (value is not None):
-            raise ValueError("value must be provided")
+        assert value is not None, "value must be provided"
         gas_props = GAS_DATABASE.get(gas_type.lower(), GAS_DATABASE["air"])
         self._ensure_acfm_inputs(from_unit, to_unit, temperature, pressure)
         m3_hr_std = self._gas_flow_to_standard_m3h(
@@ -404,7 +413,9 @@ class UnitConversionService:
         pressure: float | None,
     ) -> None:
         """Validate required inputs when ACFM is involved."""
-        if (from_unit == "ACFM" or to_unit == "ACFM") and (temperature is None or pressure is None):
+        if (from_unit == "ACFM" or to_unit == "ACFM") and (
+            temperature is None or pressure is None
+        ):
             msg = "Temperature and pressure are required for ACFM conversions"
             raise ValueError(msg)
 
@@ -419,14 +430,18 @@ class UnitConversionService:
     ) -> float:
         """Convert gas flow value to STP-normalized m³/hr."""
         if from_unit == "SCFM":
-            return scfm_to_standard_m3_per_hour(value, standard_condition, StandardCondition.STP)
+            return scfm_to_standard_m3_per_hour(
+                value, standard_condition, StandardCondition.STP
+            )
         if from_unit == "ACFM":
-            if not (temperature is not None):
-                raise ValueError("DbC Blocked: Precondition failed.")
-            if not (pressure is not None):
-                raise ValueError("DbC Blocked: Precondition failed.")
-            scfm = actual_to_standard_flow(value, temperature, pressure, standard_condition)
-            return scfm_to_standard_m3_per_hour(scfm, standard_condition, StandardCondition.STP)
+            assert temperature is not None
+            assert pressure is not None
+            scfm = actual_to_standard_flow(
+                value, temperature, pressure, standard_condition
+            )
+            return scfm_to_standard_m3_per_hour(
+                scfm, standard_condition, StandardCondition.STP
+            )
         if from_unit in {"Nm3/hr", "Nm³/hr"}:
             return value
         if from_unit in self.mass_flow_factors:
@@ -450,14 +465,14 @@ class UnitConversionService:
                 m3_hr_std, StandardCondition.STP, standard_condition
             )
         if to_unit == "ACFM":
-            if not (temperature is not None):
-                raise ValueError("DbC Blocked: Precondition failed.")
-            if not (pressure is not None):
-                raise ValueError("DbC Blocked: Precondition failed.")
+            assert temperature is not None
+            assert pressure is not None
             scfm = standard_m3_per_hour_to_scfm(
                 m3_hr_std, StandardCondition.STP, standard_condition
             )
-            return standard_to_actual_flow(scfm, temperature, pressure, standard_condition)
+            return standard_to_actual_flow(
+                scfm, temperature, pressure, standard_condition
+            )
         if to_unit in {"Nm3/hr", "Nm³/hr"}:
             return m3_hr_std
         if to_unit in self.mass_flow_factors:
@@ -475,8 +490,7 @@ class UnitConversionService:
     ) -> list[str]:
         """Return warnings when user-defined units participate in conversions."""
 
-        if not (from_unit is not None):
-            raise ValueError("from_unit must be provided")
+        assert from_unit is not None, "from_unit must be provided"
         warnings: list[str] = []
         seen: set[str] = set()
 
@@ -508,12 +522,13 @@ class UnitConversionService:
         compressibility_factor: float = 1.0,
     ) -> float:
         """Convert gas flow between SCFM and ACFM."""
-        if not (value is not None):
-            raise ValueError("value must be provided")
+        assert value is not None, "value must be provided"
         std_temp, std_pressure_pa, _ = standard_condition.value
         temperature = actual_temp_K or std_temp
         pressure_pa = (
-            actual_pressure_kPa * 1000.0 if actual_pressure_kPa is not None else std_pressure_pa
+            actual_pressure_kPa * 1000.0
+            if actual_pressure_kPa is not None
+            else std_pressure_pa
         )
 
         result = self._convert_gas_flow(
@@ -542,8 +557,7 @@ class UnitConversionService:
         gas_density_stp: float | None = None,
     ) -> float:
         """Convert heating value."""
-        if not (value is not None):
-            raise ValueError("value must be provided")
+        assert value is not None, "value must be provided"
         if gas_density_stp is not None:
             self._require_positive_finite(gas_density_stp, "Gas density")
         from_key = from_unit.lower()
@@ -552,7 +566,9 @@ class UnitConversionService:
             return value
         self._ensure_known_heating_unit(from_key, from_unit)
         self._ensure_known_heating_unit(to_key, to_unit)
-        mj_per_kg = self._heating_to_mj_per_kg(value, from_key, from_unit, gas_density_stp)
+        mj_per_kg = self._heating_to_mj_per_kg(
+            value, from_key, from_unit, gas_density_stp
+        )
         return self._heating_from_mj_per_kg(mj_per_kg, to_key, to_unit, gas_density_stp)
 
     def _ensure_known_heating_unit(self, unit_key: str, raw_unit: str) -> None:
@@ -603,7 +619,9 @@ class UnitConversionService:
         msg = f"Conversion to {to_unit} not implemented"
         raise ValueError(msg)
 
-    def _require_gas_density(self, gas_density_stp: float | None, unit_name: str) -> float:
+    def _require_gas_density(
+        self, gas_density_stp: float | None, unit_name: str
+    ) -> float:
         """Require gas density for volumetric heating value conversions."""
         if gas_density_stp is None:
             msg = f"Gas density required for {unit_name} conversion"
@@ -620,14 +638,15 @@ class UnitConversionService:
         molecular_weight: float | None = None,
     ) -> float:
         """Convert tar concentration."""
-        if not (value is not None):
-            raise ValueError("value must be provided")
+        assert value is not None, "value must be provided"
         self._validate_tar_inputs(temperature, pressure)
         from_key = from_unit.lower()
         to_key = to_unit.lower()
         if from_key == to_key:
             return value
-        molecular_weight = self._resolve_molecular_weight(from_key, to_key, molecular_weight)
+        molecular_weight = self._resolve_molecular_weight(
+            from_key, to_key, molecular_weight
+        )
         self._ensure_known_concentration_unit(from_key, from_unit)
         self._ensure_known_concentration_unit(to_key, to_unit)
         mg_nm3_value = self._tar_to_mg_nm3(
@@ -683,8 +702,7 @@ class UnitConversionService:
         if from_key in {"g/m³", "g/m3"}:
             return value * 1000.0 * (temperature / 273.15) * (101.325 / pressure)
         if from_key == "ppm_mass":
-            if not (molecular_weight is not None):
-                raise ValueError("DbC Blocked: Precondition failed.")
+            assert molecular_weight is not None
             return value * molecular_weight / 24.45
         msg = f"Conversion from {from_unit} not implemented"
         raise ValueError(msg)
@@ -707,8 +725,7 @@ class UnitConversionService:
         if to_key in {"g/m³", "g/m3"}:
             return mg_nm3_value / 1000.0 * (273.15 / temperature) * (pressure / 101.325)
         if to_key == "ppm_mass":
-            if not (molecular_weight is not None):
-                raise ValueError("DbC Blocked: Precondition failed.")
+            assert molecular_weight is not None
             return mg_nm3_value * 24.45 / molecular_weight
         msg = f"Conversion to {to_unit} not implemented"
         raise ValueError(msg)
@@ -786,8 +803,7 @@ class UnitConversionService:
         pressure: float,
     ) -> float:
         """Calculate compressibility factor."""
-        if not (gas_type is not None):
-            raise ValueError("gas_type must be provided")
+        assert gas_type is not None, "gas_type must be provided"
         self._require_positive_finite(temperature, "temperature")
         self._require_positive_finite(pressure, "pressure")
         gas_props = GAS_DATABASE.get(gas_type.lower(), GAS_DATABASE["air"])
@@ -811,10 +827,14 @@ class UnitConversionService:
             if category == "heating_value":
                 return {"heating_value": list(self.heating_value_conversions.keys())}
             if category == "tar_concentration":
-                return {"tar_concentration": list(self.concentration_conversions.keys())}
+                return {
+                    "tar_concentration": list(self.concentration_conversions.keys())
+                }
             if category == "performance":
                 return {
-                    "performance": [u for units in self.performance_units.values() for u in units]
+                    "performance": [
+                        u for units in self.performance_units.values() for u in units
+                    ]
                 }
             return {}
 
@@ -825,7 +845,9 @@ class UnitConversionService:
         result["gas_flow"] = ["SCFM", "ACFM", "Nm3/hr", "Nm³/hr"]
         result["heating_value"] = list(self.heating_value_conversions.keys())
         result["tar_concentration"] = list(self.concentration_conversions.keys())
-        result["performance"] = [u for units in self.performance_units.values() for u in units]
+        result["performance"] = [
+            u for units in self.performance_units.values() for u in units
+        ]
         return result
 
 
@@ -844,6 +866,5 @@ def get_service() -> UnitConversionService:
 
 def convert(value: float, from_unit: str, to_unit: str, **kwargs: Any) -> float:
     """Convert a value between units using the global service."""
-    if not (value is not None):
-        raise ValueError("value must be provided")
+    assert value is not None, "value must be provided"
     return get_service().convert(value, from_unit, to_unit, **kwargs).value

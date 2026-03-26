@@ -47,7 +47,7 @@ class TestGUIInfoPattern:
                 module = importlib.util.module_from_spec(spec)
                 try:
                     spec.loader.exec_module(module)
-                except Exception as e:  # noqa: F841
+                except Exception:  # noqa: BLE001
                     # Some modules may fail to import; skip them
                     continue
                 gui_info = getattr(module, "GUI_INFO", None)
@@ -68,7 +68,7 @@ class TestGUIInfoPattern:
                 module = importlib.util.module_from_spec(spec)
                 try:
                     spec.loader.exec_module(module)
-                except Exception as e:  # noqa: F841
+                except Exception:  # noqa: BLE001
                     continue
                 gui_info = getattr(module, "GUI_INFO", None)
                 if gui_info is None:
@@ -91,7 +91,7 @@ class TestGUIInfoPattern:
                 module = importlib.util.module_from_spec(spec)
                 try:
                     spec.loader.exec_module(module)
-                except Exception as e:  # noqa: F841
+                except Exception:  # noqa: BLE001
                     continue
                 gui_info = getattr(module, "GUI_INFO", None)
                 if gui_info is None or "pyqt6" not in gui_info:
@@ -114,7 +114,7 @@ class TestGUIInfoPattern:
                 module = importlib.util.module_from_spec(spec)
                 try:
                     spec.loader.exec_module(module)
-                except Exception as e:  # noqa: F841
+                except Exception:  # noqa: BLE001
                     continue
                 if not hasattr(module, "get_gui_info"):
                     rel = str(path.relative_to(REPO_ROOT))

@@ -51,7 +51,7 @@ class TestZeroTorqueAccelerations:
             result = zero_torque_accelerations(state, params)
             assert isinstance(result, np.ndarray)
             assert result.ndim == 1
-        except Exception as e:
+        except Exception:
             pytest.skip("Golfer model requires specific valid state")
 
     def test_finite_output(self):
@@ -61,7 +61,7 @@ class TestZeroTorqueAccelerations:
         try:
             result = zero_torque_accelerations(state, params)
             assert np.all(np.isfinite(result)), f"Non-finite accelerations: {result}"
-        except Exception as e:
+        except Exception:
             pytest.skip("Golfer model requires specific valid state")
 
 
@@ -75,5 +75,5 @@ class TestZeroTorqueJointForces:
         try:
             result = zero_torque_joint_forces(state, params)
             assert isinstance(result, dict)
-        except Exception as e:
+        except Exception:
             pytest.skip("Golfer model requires specific valid state")

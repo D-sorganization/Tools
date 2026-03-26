@@ -61,8 +61,12 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
         elif request.type == "axis_angle":
             val = request.value
             if not isinstance(val, list) or len(val) != 4:
-                raise ValueError("Axis-angle must be a list of 4 floats: [x, y, z, angle].")
-            axis = np.array([float(str(val[0])), float(str(val[1])), float(str(val[2]))])
+                raise ValueError(
+                    "Axis-angle must be a list of 4 floats: [x, y, z, angle]."
+                )
+            axis = np.array(
+                [float(str(val[0])), float(str(val[1])), float(str(val[2]))]
+            )
             norm = np.linalg.norm(axis)
             if norm > 1e-12:
                 axis = axis / norm
@@ -75,8 +79,10 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
             rot = Rotation.from_rotation_matrix(request.value)
         else:
             raise ValueError(f"Unknown representation type: {request.type}")
-    except Exception as exc:
-        raise HTTPException(status_code=422, detail=f"Invalid rotation input: {exc}") from exc
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(
+            status_code=422, detail=f"Invalid rotation input: {exc}"
+        ) from exc
 
     try:
         # Generate outputs
@@ -86,7 +92,7 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
         try:
             eul = list(rot.as_euler(request.euler_convention))
             conv = request.euler_convention
-        except Exception as e:  # noqa: F841
+        except Exception:  # noqa: BLE001
             eul = list(rot.as_euler("xyz"))
             conv = "xyz"
 
@@ -108,8 +114,10 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
 
         return RotationConverterResponse(representations=rep_model)
 
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Failed building outputs: {exc}") from exc
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(
+            status_code=500, detail=f"Failed building outputs: {exc}"
+        ) from exc
 
 
 @router.post("/reference-frame", response_model=ReferenceFrameConversionResponse)
@@ -129,7 +137,7 @@ def compute_reference_frame_conversion(
         )
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
-    except Exception as error:
+    except Exception as error:  # noqa: BLE001
         raise HTTPException(
             status_code=500,
             detail="Failed to compute reference-frame conversion.",
