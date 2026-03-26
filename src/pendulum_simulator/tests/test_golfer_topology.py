@@ -62,9 +62,9 @@ class TestStandoffMassless:
 
     def test_standoff_mass_near_zero(self, address_params: GolferParams) -> None:
         """Standoff mass must be near zero (< 0.01 kg)."""
-        assert (
-            address_params.m_hub < 0.01
-        ), f"Standoff mass should be near-zero, got {address_params.m_hub}"
+        assert address_params.m_hub < 0.01, (
+            f"Standoff mass should be near-zero, got {address_params.m_hub}"
+        )
 
     def test_standoff_mass_positive(self, address_params: GolferParams) -> None:
         """Standoff mass must be positive (required by solver numerics)."""
@@ -153,12 +153,12 @@ class TestMassDistribution:
             address_params.m_club,
             address_params.m_clubhead,
         ]
-        assert address_params.m_rscap >= max(
-            all_masses
-        ), "Right upper body should be the heaviest individual segment"
-        assert address_params.m_lscap >= max(
-            all_masses
-        ), "Left upper body should be the heaviest individual segment"
+        assert address_params.m_rscap >= max(all_masses), (
+            "Right upper body should be the heaviest individual segment"
+        )
+        assert address_params.m_lscap >= max(all_masses), (
+            "Left upper body should be the heaviest individual segment"
+        )
 
 
 class TestGolferParamsValidation:

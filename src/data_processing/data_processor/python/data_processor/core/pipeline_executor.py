@@ -61,10 +61,10 @@ class PipelineExecutor:
         # Execute each step
         for i, step in enumerate(pipeline.steps):
             if not step.enabled:
-                logger.debug(f"Skipping disabled step {i+1}: {step.description}")
+                logger.debug(f"Skipping disabled step {i + 1}: {step.description}")
                 continue
 
-            logger.info(f"Executing step {i+1}: {step.description}")
+            logger.info(f"Executing step {i + 1}: {step.description}")
             df = self._execute_step(df, step)
 
         # Export if output path provided

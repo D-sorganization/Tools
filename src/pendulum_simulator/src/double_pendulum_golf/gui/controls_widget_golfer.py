@@ -306,8 +306,12 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
         layout.setSpacing(3)
         self.inp_d_rs = LabeledInput("d_RS (m)", "0.20", "Hub bar to right shoulder offset")
         self.inp_d_ls = LabeledInput("d_LS (m)", "0.20", "Hub bar to left shoulder offset")
-        self.inp_grip_right = LabeledInput("Grip R (m)", "0.05", "Right hand grip from club base")
-        self.inp_grip_left = LabeledInput("Grip L (m)", "0.25", "Left hand grip from club base")
+        self.inp_grip_right = LabeledInput(
+            "Grip R (m)", "0.05", "Right hand grip from club base"
+        )
+        self.inp_grip_left = LabeledInput(
+            "Grip L (m)", "0.25", "Left hand grip from club base"
+        )
         self.inp_L_rscap = LabeledInput(
             "R UBody (m)",
             "0.18",
@@ -456,8 +460,7 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
         }
 
     def _apply_preset(self, name: str) -> None:
-        if not (name is not None):
-            raise ValueError("name must be provided")
+        if not (name is not None): raise ValueError(f"Assertion failed: { name is not None }, "name must be provided"")
         if name not in self.PRESETS:
             return
         p = self.PRESETS[name]

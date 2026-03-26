@@ -38,7 +38,9 @@ ensure_paths(_REPO_ROOT)
 # Mock imports/utils if shared/python doesn't exist in all repos
 # We will define minimal utils here to ensure standalone execution
 def setup_script_logging(name: str) -> logging.Logger:
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    )
     return logging.getLogger(name)
 
 
@@ -119,7 +121,7 @@ def check_dry_violations(files: list[Path]) -> list[dict]:
     for file_path in files:
         try:
             content = file_path.read_text(encoding="utf-8", errors="ignore")
-        except Exception as e:  # noqa: F841
+        except Exception as e:  # noqa: F841  # noqa: BLE001
             continue
 
         lines = content.split("\n")
@@ -170,7 +172,7 @@ def check_orthogonality(files: list[Path]) -> list[dict]:
                             "recommendation": "Split function",
                         }
                     )
-        except Exception as e:  # noqa: F841
+        except Exception as e:  # noqa: F841  # noqa: BLE001
             pass
     return issues
 
@@ -192,7 +194,7 @@ def check_reversibility(root_path: Path) -> list[dict]:
                         "recommendation": "Use env vars",
                     }
                 )
-        except Exception as e:  # noqa: F841
+        except Exception as e:  # noqa: F841  # noqa: BLE001
             pass
     return issues
 
@@ -205,7 +207,7 @@ def check_quality(files: list[Path]) -> list[dict]:
             content = file_path.read_text(encoding="utf-8", errors="ignore")
             if "TODO" in content:
                 todos.append(str(file_path))
-        except Exception as e:  # noqa: F841
+        except Exception as e:  # noqa: F841  # noqa: BLE001
             pass
 
     if len(todos) > 10:

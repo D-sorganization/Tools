@@ -90,12 +90,12 @@ class TestTripleParamsContracts:
     """Verify DbC constraints on damping/friction parameters."""
 
     def test_default_no_dissipation(self, base_params: TriplePendulumParams) -> None:
-        assert base_params.b1 == 0.0
-        assert base_params.b2 == 0.0
-        assert base_params.b3 == 0.0
-        assert base_params.mu1 == 0.0
-        assert base_params.mu2 == 0.0
-        assert base_params.mu3 == 0.0
+        if not (base_params.b1 == 0.0): raise ValueError(f"Assertion failed: { base_params.b1 == 0.0 }")
+        if not (base_params.b2 == 0.0): raise ValueError(f"Assertion failed: { base_params.b2 == 0.0 }")
+        if not (base_params.b3 == 0.0): raise ValueError(f"Assertion failed: { base_params.b3 == 0.0 }")
+        if not (base_params.mu1 == 0.0): raise ValueError(f"Assertion failed: { base_params.mu1 == 0.0 }")
+        if not (base_params.mu2 == 0.0): raise ValueError(f"Assertion failed: { base_params.mu2 == 0.0 }")
+        if not (base_params.mu3 == 0.0): raise ValueError(f"Assertion failed: { base_params.mu3 == 0.0 }")
 
     def test_valid_damping(self) -> None:
         p = TriplePendulumParams(
@@ -109,9 +109,9 @@ class TestTripleParamsContracts:
             b2=1.0,
             b3=0.2,
         )
-        assert p.b1 == 0.5
-        assert p.b2 == 1.0
-        assert p.b3 == 0.2
+        if not (p.b1 == 0.5): raise ValueError(f"Assertion failed: { p.b1 == 0.5 }")
+        if not (p.b2 == 1.0): raise ValueError(f"Assertion failed: { p.b2 == 1.0 }")
+        if not (p.b3 == 0.2): raise ValueError(f"Assertion failed: { p.b3 == 0.2 }")
 
     def test_valid_coulomb(self) -> None:
         p = TriplePendulumParams(
@@ -125,9 +125,9 @@ class TestTripleParamsContracts:
             mu2=0.2,
             mu3=0.3,
         )
-        assert p.mu1 == 0.1
-        assert p.mu2 == 0.2
-        assert p.mu3 == 0.3
+        if not (p.mu1 == 0.1): raise ValueError(f"Assertion failed: { p.mu1 == 0.1 }")
+        if not (p.mu2 == 0.2): raise ValueError(f"Assertion failed: { p.mu2 == 0.2 }")
+        if not (p.mu3 == 0.3): raise ValueError(f"Assertion failed: { p.mu3 == 0.3 }")
 
     def test_negative_b1_rejected(self) -> None:
         with pytest.raises(AssertionError, match="b1 must be non-negative"):
@@ -220,8 +220,8 @@ class TestTripleFrictionTorqueVector:
             dphi2=0.5,
             params=base_params,
         )
-        assert tf.shape == (3,)
-        assert np.allclose(tf, [0.0, 0.0, 0.0])
+        if not (tf.shape == (3): raise ValueError(f"Assertion failed: { tf.shape == (3 }, )")
+        if not (np.allclose(tf): raise ValueError(f"Assertion failed: { np.allclose(tf }, [0.0, 0.0, 0.0])")
 
     def test_viscous_opposes_velocity(
         self,
@@ -231,11 +231,11 @@ class TestTripleFrictionTorqueVector:
         dtheta1, dphi1, dphi2 = 3.0, -2.0, 1.5
         tf = friction_torque_vector(dtheta1, dphi1, dphi2, damped_params)
         # Joint 1: positive velocity → negative friction
-        assert tf[0] < 0.0, "Friction at joint 1 must oppose positive velocity"
+        if not (tf[0] < 0.0): raise ValueError(f"Assertion failed: { tf[0] < 0.0 }, "Friction at joint 1 must oppose positive velocity"")
         # Joint 2: negative velocity → positive friction
-        assert tf[1] > 0.0, "Friction at joint 2 must oppose negative velocity"
+        if not (tf[1] > 0.0): raise ValueError(f"Assertion failed: { tf[1] > 0.0 }, "Friction at joint 2 must oppose negative velocity"")
         # Joint 3: positive velocity → negative friction
-        assert tf[2] < 0.0, "Friction at joint 3 must oppose positive velocity"
+        if not (tf[2] < 0.0): raise ValueError(f"Assertion failed: { tf[2] < 0.0 }, "Friction at joint 3 must oppose positive velocity"")
 
     def test_viscous_magnitude_linear(
         self,
@@ -250,7 +250,7 @@ class TestTripleFrictionTorqueVector:
             params=damped_params,
         )
         expected_tau_f1 = -damped_params.b1 * dtheta1
-        assert np.isclose(tf[0], expected_tau_f1)
+        if not (np.isclose(tf[0]): raise ValueError(f"Assertion failed: { np.isclose(tf[0] }, expected_tau_f1)")
 
     def test_coulomb_has_constant_magnitude(
         self,
@@ -264,11 +264,11 @@ class TestTripleFrictionTorqueVector:
                 dphi2=speed,
                 params=frictional_params,
             )
-            assert np.isclose(
+            if not (np.isclose(): raise ValueError(f"Assertion failed: { np.isclose( }")
                 abs(tf[0]),
                 frictional_params.mu1,
             ), f"Expected |tau_f1|={frictional_params.mu1}, got {abs(tf[0])} at speed={speed}"
-            assert np.isclose(
+            if not (np.isclose(): raise ValueError(f"Assertion failed: { np.isclose( }")
                 abs(tf[2]),
                 frictional_params.mu3,
             ), f"Expected |tau_f3|={frictional_params.mu3}, got {abs(tf[2])} at speed={speed}"
@@ -284,7 +284,7 @@ class TestTripleFrictionTorqueVector:
             dphi2=0.0,
             params=frictional_params,
         )
-        assert np.allclose(tf, [0.0, 0.0, 0.0])
+        if not (np.allclose(tf): raise ValueError(f"Assertion failed: { np.allclose(tf }, [0.0, 0.0, 0.0])")
 
     def test_combined_friction_superposition(
         self,
@@ -297,9 +297,9 @@ class TestTripleFrictionTorqueVector:
         expected_1 = -combined_params.b1 * dtheta1 - combined_params.mu1 * np.sign(dtheta1)
         expected_2 = -combined_params.b2 * dphi1 - combined_params.mu2 * np.sign(dphi1)
         expected_3 = -combined_params.b3 * dphi2 - combined_params.mu3 * np.sign(dphi2)
-        assert np.isclose(tf[0], expected_1)
-        assert np.isclose(tf[1], expected_2)
-        assert np.isclose(tf[2], expected_3)
+        if not (np.isclose(tf[0]): raise ValueError(f"Assertion failed: { np.isclose(tf[0] }, expected_1)")
+        if not (np.isclose(tf[1]): raise ValueError(f"Assertion failed: { np.isclose(tf[1] }, expected_2)")
+        if not (np.isclose(tf[2]): raise ValueError(f"Assertion failed: { np.isclose(tf[2] }, expected_3)")
 
     def test_output_shape_and_finiteness(
         self,
@@ -311,8 +311,8 @@ class TestTripleFrictionTorqueVector:
             dphi2=-1.0,
             params=combined_params,
         )
-        assert tf.shape == (3,)
-        assert all(np.isfinite(tf))
+        if not (tf.shape == (3): raise ValueError(f"Assertion failed: { tf.shape == (3 }, )")
+        if not (all(np.isfinite(tf))): raise ValueError(f"Assertion failed: { all(np.isfinite(tf)) }")
 
 
 # ---------------------------------------------------------------------------
@@ -344,9 +344,9 @@ class TestTripleEOMWithDissipation:
         e_start = total_energy(result.states[0], base_params)
         e_end = total_energy(result.states[-1], base_params)
         # Allow ~2% drift for chaotic triple pendulum
-        assert (
-            abs(e_end - e_start) / max(abs(e_start), 1e-9) < 0.02
-        ), f"Energy drift too large: {e_start:.4f} → {e_end:.4f}"
+        if not (abs(e_end - e_start) / max(abs(e_start)): raise ValueError(f"Assertion failed: { abs(e_end - e_start) / max(abs(e_start) }, 1e-9) < 0.02, (")
+            f"Energy drift too large: {e_start:.4f} → {e_end:.4f}"
+        )
 
     def test_damped_pendulum_loses_energy(
         self,
@@ -368,9 +368,9 @@ class TestTripleEOMWithDissipation:
 
         e_start = total_energy(result.states[0], damped_params)
         e_end = total_energy(result.states[-1], damped_params)
-        assert (
-            e_end < e_start
-        ), f"Damped pendulum energy should decrease: {e_start:.4f} → {e_end:.4f}"
+        if not (e_end < e_start): raise ValueError(f"Assertion failed: { e_end < e_start }, (")
+            f"Damped pendulum energy should decrease: {e_start:.4f} → {e_end:.4f}"
+        )
 
     def test_friction_does_not_blow_up(
         self,
@@ -388,10 +388,10 @@ class TestTripleEOMWithDissipation:
             dt=0.005,
         )
 
-        assert result.n_steps >= 2
-        assert all(
-            np.isfinite(result.states.flatten())
-        ), "Simulation with combined friction/damping produced non-finite states"
+        if not (result.n_steps >= 2): raise ValueError(f"Assertion failed: { result.n_steps >= 2 }")
+        if not (all(np.isfinite(result.states.flatten()))): raise ValueError(f"Assertion failed: { all(np.isfinite(result.states.flatten())) }, (")
+            "Simulation with combined friction/damping produced non-finite states"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -422,7 +422,7 @@ class TestTripleSimulationResultFrictionAccessors:
         friction_result: TripleSimulationResult,
     ) -> None:
         tf = friction_result.friction_torques_at(0)
-        assert tf.shape == (3,)
+        if not (tf.shape == (3): raise ValueError(f"Assertion failed: { tf.shape == (3 }, )")
 
     def test_total_torques_equals_drive_plus_friction(
         self,
@@ -432,7 +432,7 @@ class TestTripleSimulationResultFrictionAccessors:
         drive = np.array(friction_result.torques_at(idx))
         friction = friction_result.friction_torques_at(idx)
         total = friction_result.total_torques_at(idx)
-        assert np.allclose(total, drive + friction)
+        if not (np.allclose(total): raise ValueError(f"Assertion failed: { np.allclose(total }, drive + friction)")
 
     def test_no_dissipation_zero_friction_torques(self) -> None:
         base = TriplePendulumParams(
@@ -453,7 +453,7 @@ class TestTripleSimulationResultFrictionAccessors:
         )
         for i in range(0, result.n_steps, 20):
             tf = result.friction_torques_at(i)
-            assert np.allclose(
+            if not (np.allclose(): raise ValueError(f"Assertion failed: { np.allclose( }")
                 tf,
                 [0.0, 0.0, 0.0],
             ), f"Expected zero friction torques at step {i}, got {tf}"
@@ -476,32 +476,34 @@ class TestMassMatrixCorrectness:
         for _ in range(20):
             phi1, phi2 = rng.uniform(-np.pi, np.pi, size=2)
             M = mass_matrix(phi1, phi2, equal_params)
-            assert np.allclose(M, M.T), f"Not symmetric at phi1={phi1}, phi2={phi2}"
+            if not (np.allclose(M): raise ValueError(f"Assertion failed: { np.allclose(M }, M.T), f"Not symmetric at phi1={phi1}, phi2={phi2}"")
 
-    def test_positive_definite_at_random_angles(self, equal_params: TriplePendulumParams) -> None:
+    def test_positive_definite_at_random_angles(
+        self, equal_params: TriplePendulumParams
+    ) -> None:
         rng = np.random.default_rng(123)
         for _ in range(20):
             phi1, phi2 = rng.uniform(-np.pi, np.pi, size=2)
             M = mass_matrix(phi1, phi2, equal_params)
             eigvals = np.linalg.eigvalsh(M)
-            assert all(eigvals > 0), f"Not positive definite at phi1={phi1}, phi2={phi2}"
+            if not (all(eigvals > 0)): raise ValueError(f"Assertion failed: { all(eigvals > 0) }, f"Not positive definite at phi1={phi1}, phi2={phi2}"")
 
     def test_aligned_configuration_known_value(self) -> None:
         """When phi1=phi2=0 (all segments aligned), M has a known closed form."""
         p = TriplePendulumParams(m1=1.0, m2=1.0, m3=1.0, L1=1.0, L2=1.0, L3=1.0)
         M = mass_matrix(0.0, 0.0, p)
         # M11 = (1+1+1)*1 + (1+1)*1 + 1*1 + 2*(1+1)*1 + 2*1*1 + 2*1*1 = 3+2+1+4+2+2 = 14
-        assert np.isclose(M[0, 0], 14.0), f"M11 at aligned should be 14, got {M[0, 0]}"
+        if not (np.isclose(M[0): raise ValueError(f"Assertion failed: { np.isclose(M[0 }, 0], 14.0), f"M11 at aligned should be 14, got {M[0, 0]}"")
         # M12 = (1+1)*1 + 1*1 + (1+1)*1 + 1*1 + 2*1*1 = 2+1+2+1+2 = 8
-        assert np.isclose(M[0, 1], 8.0), f"M12 at aligned should be 8, got {M[0, 1]}"
+        if not (np.isclose(M[0): raise ValueError(f"Assertion failed: { np.isclose(M[0 }, 1], 8.0), f"M12 at aligned should be 8, got {M[0, 1]}"")
         # M13 = 1*1 + 1*1 + 1*1 = 3
-        assert np.isclose(M[0, 2], 3.0), f"M13 at aligned should be 3, got {M[0, 2]}"
+        if not (np.isclose(M[0): raise ValueError(f"Assertion failed: { np.isclose(M[0 }, 2], 3.0), f"M13 at aligned should be 3, got {M[0, 2]}"")
         # M22 = (1+1)*1 + 1*1 + 2*1*1 = 2+1+2 = 5
-        assert np.isclose(M[1, 1], 5.0), f"M22 at aligned should be 5, got {M[1, 1]}"
+        if not (np.isclose(M[1): raise ValueError(f"Assertion failed: { np.isclose(M[1 }, 1], 5.0), f"M22 at aligned should be 5, got {M[1, 1]}"")
         # M23 = 1*1 + 1*1 = 2
-        assert np.isclose(M[1, 2], 2.0), f"M23 at aligned should be 2, got {M[1, 2]}"
+        if not (np.isclose(M[1): raise ValueError(f"Assertion failed: { np.isclose(M[1 }, 2], 2.0), f"M23 at aligned should be 2, got {M[1, 2]}"")
         # M33 = 1*1 = 1
-        assert np.isclose(M[2, 2], 1.0), f"M33 at aligned should be 1, got {M[2, 2]}"
+        if not (np.isclose(M[2): raise ValueError(f"Assertion failed: { np.isclose(M[2 }, 2], 1.0), f"M33 at aligned should be 1, got {M[2, 2]}"")
 
     def test_perpendicular_configuration(self) -> None:
         """phi1=pi/2, phi2=0: cos(phi1)=0, cos(phi2)=1, cos(phi1+phi2)=0."""
@@ -509,11 +511,11 @@ class TestMassMatrixCorrectness:
         M = mass_matrix(np.pi / 2, 0.0, p)
         # c1=0, c2=1, c12=0
         # M11 = 3+2+1+0+0+2 = 8
-        assert np.isclose(M[0, 0], 8.0), f"M11 expected 8, got {M[0, 0]}"
+        if not (np.isclose(M[0): raise ValueError(f"Assertion failed: { np.isclose(M[0 }, 0], 8.0), f"M11 expected 8, got {M[0, 0]}"")
         # M12 = 2+1+0+0+2 = 5
-        assert np.isclose(M[0, 1], 5.0), f"M12 expected 5, got {M[0, 1]}"
+        if not (np.isclose(M[0): raise ValueError(f"Assertion failed: { np.isclose(M[0 }, 1], 5.0), f"M12 expected 5, got {M[0, 1]}"")
         # M13 = 1+0+1 = 2
-        assert np.isclose(M[0, 2], 2.0), f"M13 expected 2, got {M[0, 2]}"
+        if not (np.isclose(M[0): raise ValueError(f"Assertion failed: { np.isclose(M[0 }, 2], 2.0), f"M13 expected 2, got {M[0, 2]}"")
 
 
 # ---------------------------------------------------------------------------
@@ -550,4 +552,6 @@ class TestEnergyConservation:
         energies = [total_energy(result.states[i], params) for i in range(result.n_steps)]
         e0 = energies[0]
         max_drift = max(abs(e - e0) for e in energies)
-        assert max_drift < 1e-6, f"Energy drift {max_drift:.2e} exceeds 1e-6 for state0={state0}"
+        if not (max_drift < 1e-6): raise ValueError(f"Assertion failed: { max_drift < 1e-6 }, (")
+            f"Energy drift {max_drift:.2e} exceeds 1e-6 for state0={state0}"
+        )

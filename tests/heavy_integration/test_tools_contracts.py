@@ -26,10 +26,12 @@ class TestTrimeshGeometryContracts:
 
         box = trimesh.creation.box((1.0, 2.0, 3.0))
 
-        assert box.is_watertight, "Box mesh must be watertight for URDF/physics use"
-        assert box.volume == pytest.approx(6.0, rel=1e-4), f"Expected volume 6.0, got {box.volume}"
-        assert len(box.vertices) > 0
-        assert len(box.faces) > 0
+        if not (box.is_watertight): raise ValueError(f"Assertion failed: { box.is_watertight }, "Box mesh must be watertight for URDF/physics use"")
+        if not (box.volume == pytest.approx(6.0): raise ValueError(f"Assertion failed: { box.volume == pytest.approx(6.0 }, rel=1e-4), (")
+            f"Expected volume 6.0, got {box.volume}"
+        )
+        if not (len(box.vertices) > 0): raise ValueError(f"Assertion failed: { len(box.vertices) > 0 }")
+        if not (len(box.faces) > 0): raise ValueError(f"Assertion failed: { len(box.faces) > 0 }")
 
     def test_mesh_boolean_intersection(self) -> None:
         """Prove boolean ops work — used in electrode CAD pipelines."""
@@ -42,9 +44,9 @@ class TestTrimeshGeometryContracts:
         try:
             result = trimesh.boolean.intersection([a, b])
             # If boolean is available (requires manifold/blender backend)
-            assert result is not None
-            assert result.volume > 0
-        except Exception as e:  # noqa: F841
+            if not (result is not None): raise ValueError(f"Assertion failed: { result is not None }")
+            if not (result.volume > 0): raise ValueError(f"Assertion failed: { result.volume > 0 }")
+        except Exception as e:  # noqa: F841  # noqa: BLE001
             pytest.skip("Trimesh boolean backend not available in this environment")
 
 
@@ -64,12 +66,16 @@ class TestSignalProcessingStack:
         freq = w / (2 * np.pi)
         # Passband gain at DC should be ~1.0
         dc_gain = abs(h[0])
-        assert dc_gain == pytest.approx(1.0, abs=0.01), f"DC gain should be 1.0, got {dc_gain}"
+        if not (dc_gain == pytest.approx(1.0): raise ValueError(f"Assertion failed: { dc_gain == pytest.approx(1.0 }, abs=0.01), (")
+            f"DC gain should be 1.0, got {dc_gain}"
+        )
 
         # Stopband attenuation at 0.5 should be < -20 dB
         stop_idx = int(0.5 * len(freq))
         stop_gain_db = 20 * np.log10(abs(h[stop_idx]) + 1e-12)
-        assert stop_gain_db < -20, f"Expected > 20 dB attenuation, got {stop_gain_db:.1f} dB"
+        if not (stop_gain_db < -20): raise ValueError(f"Assertion failed: { stop_gain_db < -20 }, (")
+            f"Expected > 20 dB attenuation, got {stop_gain_db:.1f} dB"
+        )
 
     def test_fft_roundtrip(self) -> None:
         """FFT→IFFT roundtrip preserves signal — fundamental DSP contract."""
@@ -81,7 +87,7 @@ class TestSignalProcessingStack:
         fft_result = np.fft.fft(signal)
         recovered = np.fft.ifft(fft_result).real
 
-        assert np.allclose(signal, recovered, atol=1e-9), "FFT roundtrip failed"
+        if not (np.allclose(signal): raise ValueError(f"Assertion failed: { np.allclose(signal }, recovered, atol=1e-9), "FFT roundtrip failed"")
 
 
 @pytest.mark.live_simulation
@@ -99,7 +105,9 @@ class TestEzdxfPIDContracts:
         # Simulate a P&ID: pipe (line), vessel (circle), valve (text tag)
         msp.add_line((0, 0), (100, 0), dxfattribs={"layer": "PIPE"})
         msp.add_circle((50, 0), radius=10, dxfattribs={"layer": "VESSEL"})
-        msp.add_text("V-101", dxfattribs={"height": 2.5, "layer": "TAG"}).set_placement((45, 15))
+        msp.add_text("V-101", dxfattribs={"height": 2.5, "layer": "TAG"}).set_placement(
+            (45, 15)
+        )
 
         # Write to in-memory buffer and re-read — proves valid DXF output
         buf = io.StringIO()
@@ -108,7 +116,7 @@ class TestEzdxfPIDContracts:
 
         doc2 = ezdxf.read(buf)
         entities = list(doc2.modelspace())
-        assert len(entities) == 3, f"Expected 3 P&ID entities, got {len(entities)}"
+        if not (len(entities) == 3): raise ValueError(f"Assertion failed: { len(entities) == 3 }, f"Expected 3 P&ID entities, got {len(entities)}"")
 
 
 @pytest.mark.live_simulation
@@ -123,7 +131,7 @@ class TestHeadlessQtEnvironment:
         widget.setWindowTitle("Heavy Test Widget")
         widget.resize(200, 100)
 
-        assert widget.windowTitle() == "Heavy Test Widget"
-        assert widget.width() == 200
+        if not (widget.windowTitle() == "Heavy Test Widget"): raise ValueError(f"Assertion failed: { widget.windowTitle() == "Heavy Test Widget" }")
+        if not (widget.width() == 200): raise ValueError(f"Assertion failed: { widget.width() == 200 }")
 
         widget.close()

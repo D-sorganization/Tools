@@ -135,9 +135,9 @@ class TestJacobianDoubleAnalytic:
         L1, L2 = L
         for phi in [0.0, 0.3, 1.0, -0.8]:
             J_wrist = jacobian_double(0.5, phi, L1, L2)["wrist"]
-            assert np.isclose(
-                J_wrist[0, 1], 0.0
-            ), f"J_wrist[:,1] should be zero for any phi, got {J_wrist[:, 1]}"
+            assert np.isclose(J_wrist[0, 1], 0.0), (
+                f"J_wrist[:,1] should be zero for any phi, got {J_wrist[:, 1]}"
+            )
 
 
 class TestJacobianDoubleContinuity:
@@ -149,9 +149,9 @@ class TestJacobianDoubleContinuity:
         for theta1 in np.linspace(-1.0, 1.0, 10):
             J0 = jacobian_double(theta1, 0.5, L1, L2)["tip"]
             J1 = jacobian_double(theta1 + eps, 0.5, L1, L2)["tip"]
-            assert np.allclose(
-                J0, J1, atol=(L1 + L2) * eps * 2
-            ), f"Jacobian discontinuity at theta1={theta1}"
+            assert np.allclose(J0, J1, atol=(L1 + L2) * eps * 2), (
+                f"Jacobian discontinuity at theta1={theta1}"
+            )
 
 
 # ============================================================================
@@ -328,9 +328,9 @@ class TestEllipsoidsDouble:
             "singular_values",
         }
         for name, data in result.items():
-            assert (
-                set(data.keys()) == expected_keys
-            ), f"Missing keys in '{name}': {expected_keys - set(data.keys())}"
+            assert set(data.keys()) == expected_keys, (
+                f"Missing keys in '{name}': {expected_keys - set(data.keys())}"
+            )
 
     def test_mob_axes_positive_full_rank(self, L: tuple[float, float]) -> None:
         L1, L2 = L

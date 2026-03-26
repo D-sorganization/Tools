@@ -157,15 +157,15 @@ class TestDoubleProperties:
 
         # Shoulder at origin, wrist distance = L1
         wrist_dist = np.linalg.norm(wrist)
-        assert np.isclose(
-            wrist_dist, params.L1, atol=1e-8
-        ), f"Wrist distance {wrist_dist} != L1 {params.L1}"
+        assert np.isclose(wrist_dist, params.L1, atol=1e-8), (
+            f"Wrist distance {wrist_dist} != L1 {params.L1}"
+        )
 
         # Wrist-to-tip distance = L2
         tip_dist = np.linalg.norm(tip - wrist)
-        assert np.isclose(
-            tip_dist, params.L2, atol=1e-8
-        ), f"Tip distance {tip_dist} != L2 {params.L2}"
+        assert np.isclose(tip_dist, params.L2, atol=1e-8), (
+            f"Tip distance {tip_dist} != L2 {params.L2}"
+        )
 
 
 # ---------------------------------------------------------------------------
