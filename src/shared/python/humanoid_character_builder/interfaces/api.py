@@ -152,7 +152,8 @@ class CharacterBuildResult:
         Returns:
             Path to the generated URDF file
         """
-        assert output_dir is not None, "output_dir must be provided"
+        if not (output_dir is not None):
+            raise ValueError("output_dir must be provided")
         options = options or ExportOptions()
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -233,7 +234,8 @@ class CharacterBuildResult:
         Returns:
             True if stable, False otherwise.
         """
-        assert duration is not None, "duration must be provided"
+        if not (duration is not None):
+            raise ValueError("duration must be provided")
         if not self.urdf_xml:
             logger.error("No URDF generated to simulate.")
             return False
@@ -267,7 +269,8 @@ class CharacterBuildResult:
         Args:
             animate: If True, applies control signals to joints.
         """
-        assert animate is not None, "animate must be provided"
+        if not (animate is not None):
+            raise ValueError("animate must be provided")
         if not self.urdf_xml:
             logger.error("No URDF generated to preview.")
             return
@@ -342,7 +345,8 @@ class CharacterBuilder:
             urdf_config: Configuration for URDF generation
             mesh_backend: Backend to use for mesh generation
         """
-        assert mesh_backend is not None, "mesh_backend must be provided"
+        if not (mesh_backend is not None):
+            raise ValueError("mesh_backend must be provided")
         self.urdf_config = urdf_config or URDFGeneratorConfig()
         self.mesh_backend = mesh_backend
 
@@ -454,7 +458,8 @@ class CharacterBuilder:
             InertiaResult with computed inertia
         """
         # Get default dimensions if not provided
-        assert segment_name is not None, "segment_name must be provided"
+        if not (segment_name is not None):
+            raise ValueError("segment_name must be provided")
         if dimensions is None:
             all_dims = estimate_segment_dimensions(1.75, 0.5)  # Default height, neutral
             dimensions = all_dims.get(
@@ -509,7 +514,8 @@ class CharacterBuilder:
         Returns:
             Dict mapping segment name to InertiaResult
         """
-        assert params is not None, "params must be provided"
+        if not (params is not None):
+            raise ValueError("params must be provided")
         gender_factor = params.get_effective_gender_factor()
         masses = estimate_segment_masses(params.mass_kg, gender_factor)
         dimensions = estimate_segment_dimensions(params.height_m, gender_factor)
@@ -538,7 +544,8 @@ class CharacterBuilder:
         mesh_result: GeneratedMeshResult | None,
     ) -> dict[str, SegmentMeshInfo]:
         """Build segment information dictionary."""
-        assert params is not None, "params must be provided"
+        if not (params is not None):
+            raise ValueError("params must be provided")
         gender_factor = params.get_effective_gender_factor()
         masses = estimate_segment_masses(params.mass_kg, gender_factor)
         dimensions = estimate_segment_dimensions(params.height_m, gender_factor)
@@ -594,7 +601,8 @@ class CharacterBuilder:
         Returns:
             BodyParameters configured for the preset
         """
-        assert preset_name is not None, "preset_name must be provided"
+        if not (preset_name is not None):
+            raise ValueError("preset_name must be provided")
         from humanoid_character_builder.presets.loader import load_body_preset
 
         return load_body_preset(preset_name, height_m=height_m, mass_kg=mass_kg)
@@ -647,7 +655,8 @@ def quick_build(
     Returns:
         CharacterBuildResult
     """
-    assert height_m is not None, "height_m must be provided"
+    if not (height_m is not None):
+        raise ValueError("height_m must be provided")
     builder = CharacterBuilder()
 
     if preset:
@@ -679,7 +688,8 @@ def quick_urdf(
     Returns:
         URDF XML string
     """
-    assert height_m is not None, "height_m must be provided"
+    if not (height_m is not None):
+        raise ValueError("height_m must be provided")
     builder = CharacterBuilder()
 
     if preset:

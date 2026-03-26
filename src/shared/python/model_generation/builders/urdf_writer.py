@@ -120,7 +120,8 @@ class URDFWriter:
 
     def _write_link(self, link: Link, level: int) -> list[str]:
         """Generate XML for a link."""
-        assert link is not None, "link must be provided"
+        if not (link is not None):
+            raise ValueError("link must be provided")
         lines: list[str] = []
         indent = self.indent * level
         indent2 = self.indent * (level + 1)
@@ -178,7 +179,8 @@ class URDFWriter:
 
     def _write_joint(self, joint: Joint, level: int) -> list[str]:
         """Generate XML for a joint."""
-        assert joint is not None, "joint must be provided"
+        if not (joint is not None):
+            raise ValueError("joint must be provided")
         lines: list[str] = []
         indent = self.indent * level
         indent2 = self.indent * (level + 1)
@@ -236,7 +238,8 @@ class URDFWriter:
 
     def _write_geometry(self, geometry: Geometry, level: int) -> list[str]:
         """Generate XML for geometry."""
-        assert geometry is not None, "geometry must be provided"
+        if not (geometry is not None):
+            raise ValueError("geometry must be provided")
         lines: list[str] = []
         indent = self.indent * level
         indent2 = self.indent * (level + 1)
@@ -277,7 +280,8 @@ class URDFWriter:
 
     def _write_material_definition(self, material: Material, level: int) -> list[str]:
         """Generate XML for material definition."""
-        assert material is not None, "material must be provided"
+        if not (material is not None):
+            raise ValueError("material must be provided")
         lines: list[str] = []
         indent = self.indent * level
         indent2 = self.indent * (level + 1)
@@ -306,7 +310,8 @@ class URDFWriter:
         first definition wins; subsequent conflicting definitions are
         logged at WARNING level.
         """
-        assert links is not None, "links must be provided"
+        if not (links is not None):
+            raise ValueError("links must be provided")
         materials: dict[str, Material] = {}
 
         # Add materials from links — detect color collisions
@@ -344,7 +349,8 @@ class URDFWriter:
     ) -> list[Link]:
         """Sort links so parents come before children."""
         # Build parent map
-        assert links is not None, "links must be provided"
+        if not (links is not None):
+            raise ValueError("links must be provided")
         parent_map: dict[str, str | None] = {}
         for joint in joints:
             parent_map[joint.child] = joint.parent
@@ -382,7 +388,8 @@ class URDFWriter:
         self, links: list[Link], joints: list[Joint]
     ) -> tuple[list[Link], list[Joint]]:
         """Expand composite joints (gimbal, universal) to multiple revolute joints."""
-        assert links is not None, "links must be provided"
+        if not (links is not None):
+            raise ValueError("links must be provided")
         if not self.expand_composite_joints:
             return links, joints
 
@@ -410,7 +417,8 @@ class URDFWriter:
     def _expand_gimbal_joint(self, joint: Joint) -> tuple[list[Link], list[Joint]]:
         """Expand gimbal joint to 3 revolute joints."""
         # Default axes: Z-Y-X Euler sequence
-        assert joint is not None, "joint must be provided"
+        if not (joint is not None):
+            raise ValueError("joint must be provided")
         default_axes = [(0, 0, 1), (0, 1, 0), (1, 0, 0)]
         axes = self._normalize_composite_axes(
             joint.name, joint.composite_axes, default_axes
@@ -468,7 +476,8 @@ class URDFWriter:
     def _expand_universal_joint(self, joint: Joint) -> tuple[list[Link], list[Joint]]:
         """Expand universal joint to 2 revolute joints."""
         # Default axes: perpendicular
-        assert joint is not None, "joint must be provided"
+        if not (joint is not None):
+            raise ValueError("joint must be provided")
         default_axes = [(1, 0, 0), (0, 1, 0)]
         axes = self._normalize_composite_axes(
             joint.name, joint.composite_axes, default_axes
@@ -591,7 +600,8 @@ class URDFWriter:
         defaults: list[tuple[float, float, float]],
     ) -> list[tuple[float, float, float]]:
         """Return a full axis list, replacing missing entries with defaults."""
-        assert joint_name is not None, "joint_name must be provided"
+        if not (joint_name is not None):
+            raise ValueError("joint_name must be provided")
         normalized: list[tuple[float, float, float]] = []
         source = list(axes or [])
 
@@ -614,7 +624,8 @@ class URDFWriter:
         dof_count: int,
     ) -> list[JointLimits]:
         """Return a full limit list, replacing missing entries with defaults."""
-        assert dof_count is not None, "dof_count must be provided"
+        if not (dof_count is not None):
+            raise ValueError("dof_count must be provided")
         normalized: list[JointLimits] = []
         source = list(composite_limits or [])
 

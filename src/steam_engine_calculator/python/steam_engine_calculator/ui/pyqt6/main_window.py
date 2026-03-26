@@ -77,7 +77,8 @@ def validate_pressure_pa(value: float) -> tuple[bool, str]:
 
 def format_temperature(value: float, unit: str = "K") -> str:
     """Format temperature with units."""
-    assert value is not None, "value must be provided"
+    if not (value is not None):
+        raise ValueError("value must be provided")
     if unit == "C":
         return f"{value - 273.15:.2f} °C"
     return f"{value:.2f} K"
@@ -85,7 +86,8 @@ def format_temperature(value: float, unit: str = "K") -> str:
 
 def format_pressure(value: float, unit: str = "Pa") -> str:
     """Format pressure with units."""
-    assert value is not None, "value must be provided"
+    if not (value is not None):
+        raise ValueError("value must be provided")
     if unit == "bar":
         return f"{value / 1e5:.4f} bar"
     if unit == "kPa":
@@ -370,21 +372,24 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
 
     def _create_group(self, title: str) -> QGroupBox:
         """Create a styled group box."""
-        assert title is not None, "title must be provided"
+        if not (title is not None):
+            raise ValueError("title must be provided")
         group = QGroupBox(title)
         group.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
         return group
 
     def _create_label(self, text: str) -> QLabel:
         """Create a styled label."""
-        assert text is not None, "text must be provided"
+        if not (text is not None):
+            raise ValueError("text must be provided")
         label = QLabel(text)
         label.setStyleSheet(f"color: {COLORS['text']};")
         return label
 
     def _create_result_card(self, name: str, key: str, color: str) -> QFrame:
         """Create a result display card."""
-        assert name is not None, "name must be provided"
+        if not (name is not None):
+            raise ValueError("name must be provided")
         card = QFrame()
         card.setFrameShape(QFrame.Shape.StyledPanel)
         card.setMinimumHeight(60)
@@ -638,7 +643,8 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
     def _display_results(self, result: SteamProperties) -> None:
         """Display calculation results."""
         # Phase state
-        assert result is not None, "result must be provided"
+        if not (result is not None):
+            raise ValueError("result must be provided")
         phase_colors = {
             "liquid": COLORS["blue"],
             "vapor": COLORS["peach"],

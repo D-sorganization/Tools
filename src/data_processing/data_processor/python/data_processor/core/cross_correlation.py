@@ -186,7 +186,8 @@ class CrossCorrelationAnalyzer:
         Returns:
             CrossCorrelationResult with CCF values and analysis
         """
-        assert x is not None, "x must be provided"
+        if not (x is not None):
+            raise ValueError("x must be provided")
         x = np.asarray(x, dtype=np.float64)
         y = np.asarray(y, dtype=np.float64)
 
@@ -260,7 +261,8 @@ class CrossCorrelationAnalyzer:
         Returns:
             Tuple of (correlation, p-value)
         """
-        assert x is not None, "x must be provided"
+        if not (x is not None):
+            raise ValueError("x must be provided")
         x = np.asarray(x, dtype=np.float64)
         y = np.asarray(y, dtype=np.float64)
 
@@ -309,7 +311,8 @@ class CrossCorrelationAnalyzer:
         Returns:
             Tuple of (optimal_lag, correlation_at_lag)
         """
-        assert x is not None, "x must be provided"
+        if not (x is not None):
+            raise ValueError("x must be provided")
         result = self.cross_correlate(x, y, max_lag)
 
         if criterion == "max":
@@ -342,7 +345,8 @@ class CrossCorrelationAnalyzer:
         Returns:
             RollingCorrelationResult with time-varying correlations
         """
-        assert x is not None, "x must be provided"
+        if not (x is not None):
+            raise ValueError("x must be provided")
         x = np.asarray(x, dtype=np.float64)
         y = np.asarray(y, dtype=np.float64)
 
@@ -409,7 +413,8 @@ class CrossCorrelationAnalyzer:
         Returns:
             GrangerCausalityResult with causality test results
         """
-        assert x is not None, "x must be provided"
+        if not (x is not None):
+            raise ValueError("x must be provided")
         x = np.asarray(x, dtype=np.float64)
         y = np.asarray(y, dtype=np.float64)
 
@@ -475,7 +480,8 @@ class CrossCorrelationAnalyzer:
         Returns:
             TransferEntropyResult with transfer entropy values
         """
-        assert x is not None, "x must be provided"
+        if not (x is not None):
+            raise ValueError("x must be provided")
         x = np.asarray(x, dtype=np.float64)
         y = np.asarray(y, dtype=np.float64)
 
@@ -531,7 +537,8 @@ class CrossCorrelationAnalyzer:
         Returns:
             CrossCorrelationResult for partial correlation
         """
-        assert x is not None, "x must be provided"
+        if not (x is not None):
+            raise ValueError("x must be provided")
         x = np.asarray(x, dtype=np.float64)
         y = np.asarray(y, dtype=np.float64)
         z = np.asarray(z, dtype=np.float64)
@@ -557,7 +564,8 @@ class CrossCorrelationAnalyzer:
         Returns:
             Tuple of (correlation_matrix, series_names)
         """
-        assert series_dict is not None, "series_dict must be provided"
+        if not (series_dict is not None):
+            raise ValueError("series_dict must be provided")
         names = list(series_dict.keys())
         n_series = len(names)
 
@@ -587,7 +595,8 @@ class CrossCorrelationAnalyzer:
         Returns:
             Dictionary with pairwise lead-lag relationships
         """
-        assert series_dict is not None, "series_dict must be provided"
+        if not (series_dict is not None):
+            raise ValueError("series_dict must be provided")
         names = list(series_dict.keys())
         results = {}
 
@@ -618,7 +627,8 @@ class CrossCorrelationAnalyzer:
 
     def _compute_ccf_at_lag(self, x: np.ndarray, y: np.ndarray, lag: int) -> float:
         """Compute cross-correlation at a specific lag."""
-        assert x is not None, "x must be provided"
+        if not (x is not None):
+            raise ValueError("x must be provided")
         n = len(x)
 
         if abs(lag) >= n:
@@ -650,7 +660,8 @@ class CrossCorrelationAnalyzer:
 
     def _detrend(self, data: np.ndarray) -> np.ndarray:
         """Remove linear trend from data."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n = len(data)
         x = np.arange(n)
         slope, intercept = np.polyfit(x, data, 1)
@@ -659,7 +670,8 @@ class CrossCorrelationAnalyzer:
     def _compute_confidence_interval(self, n: int, alpha: float) -> tuple[float, float]:
         """Compute confidence interval for CCF."""
         # Approximate using normal distribution
-        assert n is not None, "n must be provided"
+        if not (n is not None):
+            raise ValueError("n must be provided")
         z = self._normal_ppf(1 - alpha / 2)
         ci = z / np.sqrt(n)
         return (-ci, ci)
@@ -667,7 +679,8 @@ class CrossCorrelationAnalyzer:
     def _compute_pvalues(self, ccf: np.ndarray, n: int) -> np.ndarray:
         """Compute p-values for CCF values."""
         # Using Fisher's z-transformation approximation
-        assert ccf is not None, "ccf must be provided"
+        if not (ccf is not None):
+            raise ValueError("ccf must be provided")
         p_values = np.zeros(len(ccf))
 
         for i, r in enumerate(ccf):
@@ -683,7 +696,8 @@ class CrossCorrelationAnalyzer:
     def _normal_ppf(self, p: float) -> float:
         """Approximate inverse normal CDF."""
         # Rational approximation
-        assert p is not None, "p must be provided"
+        if not (p is not None):
+            raise ValueError("p must be provided")
         if p <= 0 or p >= 1:
             return 0.0
 
@@ -699,7 +713,8 @@ class CrossCorrelationAnalyzer:
     def _t_cdf(self, t: float, df: int) -> float:
         """Approximate t-distribution CDF."""
         # Use normal approximation for large df
-        assert t is not None, "t must be provided"
+        if not (t is not None):
+            raise ValueError("t must be provided")
         if df > 30:
             return self._normal_cdf(t)
 
@@ -714,7 +729,8 @@ class CrossCorrelationAnalyzer:
     def _incomplete_beta(self, a: float, b: float, x: float) -> float:
         """Approximate incomplete beta function."""
         # Simple numerical integration
-        assert a is not None, "a must be provided"
+        if not (a is not None):
+            raise ValueError("a must be provided")
         if x <= 0:
             return 0.0
         if x >= 1:
@@ -737,7 +753,8 @@ class CrossCorrelationAnalyzer:
     def _log_gamma(self, x: float) -> float:
         """Approximate log gamma function."""
         # Stirling's approximation
-        assert x is not None, "x must be provided"
+        if not (x is not None):
+            raise ValueError("x must be provided")
         if x <= 0:
             return 0.0
         return (x - 0.5) * np.log(x) - x + 0.5 * np.log(2 * np.pi)
@@ -746,7 +763,8 @@ class CrossCorrelationAnalyzer:
         self, y: np.ndarray, x: np.ndarray, lag: int
     ) -> tuple[float, float]:
         """Perform Granger causality F-test."""
-        assert y is not None, "y must be provided"
+        if not (y is not None):
+            raise ValueError("y must be provided")
         if lag < 1:
             lag = 1
 
@@ -783,7 +801,8 @@ class CrossCorrelationAnalyzer:
         self, y: np.ndarray, x: np.ndarray, max_lag: int, criterion: str
     ) -> int:
         """Select optimal lag order using information criterion."""
-        assert y is not None, "y must be provided"
+        if not (y is not None):
+            raise ValueError("y must be provided")
         n = len(y)
         best_lag = 1
         best_ic = np.inf
@@ -818,7 +837,8 @@ class CrossCorrelationAnalyzer:
 
     def _create_lag_matrix(self, data: np.ndarray, lag: int) -> np.ndarray:
         """Create matrix of lagged values."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n = len(data)
         matrix = np.zeros((n - lag, lag))
 
@@ -830,7 +850,8 @@ class CrossCorrelationAnalyzer:
     def _ols_residual_ss(self, y: np.ndarray, X: np.ndarray) -> float:
         """Compute residual sum of squares from OLS."""
         # Add constant
-        assert y is not None, "y must be provided"
+        if not (y is not None):
+            raise ValueError("y must be provided")
         n = len(y)
         X_with_const = np.hstack([np.ones((n, 1)), X])
 
@@ -844,7 +865,8 @@ class CrossCorrelationAnalyzer:
 
     def _f_cdf(self, f: float, df1: int, df2: int) -> float:
         """Approximate F-distribution CDF."""
-        assert f is not None, "f must be provided"
+        if not (f is not None):
+            raise ValueError("f must be provided")
         if f <= 0:
             return 0.0
 
@@ -861,7 +883,8 @@ class CrossCorrelationAnalyzer:
     ) -> float:
         """Compute transfer entropy from source to target."""
         # Discretize
-        assert source is not None, "source must be provided"
+        if not (source is not None):
+            raise ValueError("source must be provided")
         source_binned = self._discretize(source, bins)
         target_binned = self._discretize(target, bins)
 
@@ -885,7 +908,8 @@ class CrossCorrelationAnalyzer:
 
     def _discretize(self, data: np.ndarray, bins: int) -> np.ndarray:
         """Discretize continuous data into bins."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         percentiles = np.linspace(0, 100, bins + 1)
         edges = np.percentile(data, percentiles)
         return np.digitize(data, edges[1:-1])
@@ -893,7 +917,8 @@ class CrossCorrelationAnalyzer:
     def _conditional_entropy(self, x: np.ndarray, y: np.ndarray, y_bins: int) -> float:
         """Compute conditional entropy H(X|Y)."""
         # Joint probability
-        assert x is not None, "x must be provided"
+        if not (x is not None):
+            raise ValueError("x must be provided")
         n = len(x)
         x_bins = int(np.max(x)) + 1
 
@@ -926,7 +951,8 @@ class CrossCorrelationAnalyzer:
         observed_te: float,
     ) -> float:
         """Permutation test for transfer entropy significance."""
-        assert source is not None, "source must be provided"
+        if not (source is not None):
+            raise ValueError("source must be provided")
         n_perms = min(self.config.num_permutations, 100)  # Limit for speed
         count_greater = 0
 
@@ -942,7 +968,8 @@ class CrossCorrelationAnalyzer:
     def _residualize(self, y: np.ndarray, x: np.ndarray) -> np.ndarray:
         """Compute residuals of y regressed on x."""
         # Add constant
-        assert y is not None, "y must be provided"
+        if not (y is not None):
+            raise ValueError("y must be provided")
         n = len(y)
         X = np.column_stack([np.ones(n), x])
 
@@ -974,7 +1001,8 @@ def cross_correlate(
         >>> result = cross_correlate(x, y)
         >>> print(f"Optimal lag: {result.optimal_lag}")
     """
-    assert x is not None, "x must be provided"
+    if not (x is not None):
+        raise ValueError("x must be provided")
     analyzer = CrossCorrelationAnalyzer()
     return analyzer.cross_correlate(x, y, max_lag)
 
@@ -994,7 +1022,8 @@ def granger_causality(
     Returns:
         GrangerCausalityResult with causality test results
     """
-    assert x is not None, "x must be provided"
+    if not (x is not None):
+        raise ValueError("x must be provided")
     config = CrossCorrelationConfig(granger_max_lag=max_lag)
     analyzer = CrossCorrelationAnalyzer(config)
     return analyzer.granger_causality_test(x, y, max_lag)

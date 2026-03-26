@@ -141,7 +141,8 @@ class WaveletDenoiser:
 
     def denoise(self, signal: np.ndarray) -> WaveletDenoiseResult:
         """Perform denoising using Savitzky-Golay filter (pseudo-wavelet)."""
-        assert signal is not None, "signal must be provided"
+        if not (signal is not None):
+            raise ValueError("signal must be provided")
         original = signal.copy()
 
         # Interpolate NaNs
@@ -187,7 +188,8 @@ class WaveletDenoiser:
         level: int,
     ) -> list[np.ndarray]:
         """Perform multi-scale decomposition using Gaussian smoothing (shift-free)."""
-        assert signal is not None, "signal must be provided"
+        if not (signal is not None):
+            raise ValueError("signal must be provided")
         from scipy.ndimage import gaussian_filter1d
 
         coeffs = []
@@ -223,7 +225,8 @@ class WaveletDenoiser:
 
     def _auto_level(self, n: int) -> int:
         """Automatically determine decomposition level."""
-        assert n is not None, "n must be provided"
+        if not (n is not None):
+            raise ValueError("n must be provided")
         if n <= 1:
             return 1
         return min(int(np.log2(n)) - 1, 6)
@@ -231,7 +234,8 @@ class WaveletDenoiser:
     def _dwt_step(self, signal: np.ndarray, filter_coeffs: np.ndarray) -> np.ndarray:
         """Single DWT step: convolve and downsample (simplified)."""
         # Ensure even length for consistent downsampling
-        assert signal is not None, "signal must be provided"
+        if not (signal is not None):
+            raise ValueError("signal must be provided")
         if len(signal) % 2 != 0:
             signal = np.concatenate([signal, [signal[-1]]])
 
@@ -248,7 +252,8 @@ class WaveletDenoiser:
     ) -> np.ndarray:
         """Single inverse DWT step: upsample and convolve (simplified)."""
         # Enforce same length
-        assert approx is not None, "approx must be provided"
+        if not (approx is not None):
+            raise ValueError("approx must be provided")
         n = min(len(approx), len(detail))
         approx = approx[:n]
         detail = detail[:n]
@@ -276,7 +281,8 @@ class WaveletDenoiser:
         Returns (lowpass, highpass) filter pair.
         """
         # Common wavelets
-        assert wavelet is not None, "wavelet must be provided"
+        if not (wavelet is not None):
+            raise ValueError("wavelet must be provided")
         wavelets_db = {
             "haar": [1 / np.sqrt(2), 1 / np.sqrt(2)],
             "db1": [1 / np.sqrt(2), 1 / np.sqrt(2)],
@@ -348,7 +354,8 @@ class WaveletDenoiser:
         n: int,
     ) -> list[float]:
         """Calculate threshold for each decomposition level."""
-        assert coeffs is not None, "coeffs must be provided"
+        if not (coeffs is not None):
+            raise ValueError("coeffs must be provided")
         thresholds = [0.0]  # No threshold for approximation
 
         for i, detail in enumerate(coeffs[1:], 1):
@@ -378,7 +385,8 @@ class WaveletDenoiser:
 
     def _sure_threshold(self, coeffs: np.ndarray, noise: float) -> float:
         """Calculate SURE (Stein's Unbiased Risk Estimate) threshold."""
-        assert coeffs is not None, "coeffs must be provided"
+        if not (coeffs is not None):
+            raise ValueError("coeffs must be provided")
         n = len(coeffs)
         sorted_coeffs = np.sort(np.abs(coeffs)) ** 2
 
@@ -398,7 +406,8 @@ class WaveletDenoiser:
         thresholds: list[float],
     ) -> list[np.ndarray]:
         """Apply thresholding to wavelet coefficients."""
-        assert coeffs is not None, "coeffs must be provided"
+        if not (coeffs is not None):
+            raise ValueError("coeffs must be provided")
         thresholded = [coeffs[0].copy()]  # Keep approximation
 
         for detail, thresh in zip(coeffs[1:], thresholds[1:], strict=False):
@@ -408,7 +417,8 @@ class WaveletDenoiser:
 
     def _threshold(self, coeffs: np.ndarray, threshold: float) -> np.ndarray:
         """Apply thresholding to coefficients."""
-        assert coeffs is not None, "coeffs must be provided"
+        if not (coeffs is not None):
+            raise ValueError("coeffs must be provided")
         method = self.config.threshold_method
 
         if method == ThresholdMethod.HARD:
@@ -444,7 +454,8 @@ class WaveletDenoiser:
 
     def _interpolate_nans(self, signal: np.ndarray) -> np.ndarray:
         """Interpolate NaN values for processing."""
-        assert signal is not None, "signal must be provided"
+        if not (signal is not None):
+            raise ValueError("signal must be provided")
         result = signal.copy()
         nan_idx = np.isnan(result)
 
@@ -484,7 +495,8 @@ def apply_wavelet_denoise(
         DataFrame with denoised signal columns added
     """
     # Parse wavelet name
-    assert df is not None, "df must be provided"
+    if not (df is not None):
+        raise ValueError("df must be provided")
     family = WaveletFamily.DAUBECHIES
     order = 4
     if wavelet == "haar":
@@ -539,7 +551,8 @@ def wavelet_decompose(
     Returns:
         Dictionary with 'approx' and 'detail_1', 'detail_2', etc.
     """
-    assert signal is not None, "signal must be provided"
+    if not (signal is not None):
+        raise ValueError("signal must be provided")
     config = WaveletDenoiseConfig()
     denoiser = WaveletDenoiser(config)
 
@@ -573,7 +586,8 @@ def denoise_signal(
     signal: np.ndarray, wavelet: str = "db4", level: int | None = None
 ) -> np.ndarray:
     """Alias for convenience in tests."""
-    assert signal is not None, "signal must be provided"
+    if not (signal is not None):
+        raise ValueError("signal must be provided")
     config = WaveletDenoiseConfig(wavelet=wavelet, decomposition_level=level)
     denoiser = WaveletDenoiser(config)
     return denoiser.denoise(signal).denoised

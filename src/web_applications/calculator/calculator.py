@@ -96,7 +96,8 @@ class TI89Calculator:
     def _safe_pow(base: object, exp: object, **kwargs: object) -> sp.Expr:
         """Secure exponentiation with magnitude checking to prevent DoS."""
         # Check if both are numbers (either primitive or SymPy)
-        assert base is not None, "base must be provided"
+        if not (base is not None):
+            raise ValueError("base must be provided")
         is_num_base = isinstance(base, int | float | sp.Number)
         is_num_exp = isinstance(exp, int | float | sp.Number)
 
@@ -168,13 +169,15 @@ class TI89Calculator:
     @property
     def allowed_functions(self) -> Mapping[str, object]:
         """Return the dictionary of allowed symbolic functions."""
-        assert self._allowed_functions is not None
+        if not (self._allowed_functions is not None):
+            raise ValueError('DbC Blocked: Precondition failed.')
         return self._allowed_functions
 
     @property
     def safe_globals(self) -> Mapping[str, object]:
         """Return the sandboxed global dict used during expression parsing."""
-        assert self._SAFE_GLOBALS_CACHE is not None
+        if not (self._SAFE_GLOBALS_CACHE is not None):
+            raise ValueError('DbC Blocked: Precondition failed.')
         return self._SAFE_GLOBALS_CACHE
 
     def evaluate(
@@ -183,7 +186,8 @@ class TI89Calculator:
         variables: Mapping[str, float | int | sp.Expr] | None = None,
     ) -> CalculatorResult:
         """Evaluate an expression with optional substitutions for symbols."""
-        assert expression is not None, "expression must be provided"
+        if not (expression is not None):
+            raise ValueError("expression must be provided")
         cleaned_variables = variables or {}
         # Convert variables to a sorted tuple of items for caching
         vars_tuple = tuple(sorted(cleaned_variables.items()))
@@ -201,7 +205,8 @@ class TI89Calculator:
         expression: str,
         variables_tuple: tuple[tuple[str, float | int | sp.Expr], ...],
     ) -> CalculatorResult:
-        assert expression is not None, "expression must be provided"
+        if not (expression is not None):
+            raise ValueError("expression must be provided")
         cleaned_variables = dict(variables_tuple)
         variable_names = tuple(sorted(cleaned_variables.keys()))
         parsed_expression, expression_symbols = (
@@ -241,7 +246,8 @@ class TI89Calculator:
             The symbol map is returned because parsed_expression contains references
             to these specific Symbol objects.
         """
-        assert expression is not None, "expression must be provided"
+        if not (expression is not None):
+            raise ValueError("expression must be provided")
         expression_symbols = TI89Calculator._build_symbol_map(variable_names)
         parsed_expression = TI89Calculator.parse_expression(
             expression, expression_symbols
@@ -253,14 +259,16 @@ class TI89Calculator:
     ) -> CalculatorResult:
         """Compute the matrix exponential for a square matrix."""
 
-        assert matrix is not None, "matrix must be provided"
+        if not (matrix is not None):
+            raise ValueError("matrix must be provided")
         result = self._matrix_exp(matrix)
         return CalculatorResult("matrix_exp", result)
 
     def matrix_logarithm(self, matrix: Iterable[Iterable[object]]) -> CalculatorResult:
         """Compute the principal matrix logarithm when defined."""
 
-        assert matrix is not None, "matrix must be provided"
+        if not (matrix is not None):
+            raise ValueError("matrix must be provided")
         result = self._matrix_log(matrix)
         return CalculatorResult("matrix_log", result)
 
@@ -286,7 +294,8 @@ class TI89Calculator:
     @staticmethod
     @lru_cache(maxsize=1024)
     def _solve_equation_cached(equation: str, variable: str) -> CalculatorResult:
-        assert equation is not None, "equation must be provided"
+        if not (equation is not None):
+            raise ValueError("equation must be provided")
         target_symbol = sp.Symbol(variable)
         equation_object = TI89Calculator.parse_equation(
             equation, {variable: target_symbol}
@@ -305,7 +314,8 @@ class TI89Calculator:
     def _solve_system_cached(
         equations: tuple[str, ...], variables: tuple[str, ...]
     ) -> CalculatorResult:
-        assert equations is not None, "equations must be provided"
+        if not (equations is not None):
+            raise ValueError("equations must be provided")
         symbol_map = TI89Calculator._build_symbol_map(variables)
         parsed_equations = [
             TI89Calculator.parse_equation(equation, symbol_map)
@@ -358,7 +368,8 @@ class TI89Calculator:
         upper: float | int | sp.Expr | None,
     ) -> CalculatorResult:
         # Optimization: Use shared parsing cache for ~3.5% performance boost
-        assert expression is not None, "expression must be provided"
+        if not (expression is not None):
+            raise ValueError("expression must be provided")
         parsed_expression, sym_map = TI89Calculator._parse_expression_structure(
             expression, (variable,)
         )
@@ -389,7 +400,8 @@ class TI89Calculator:
         value: float | int | sp.Expr,
         direction: str,
     ) -> CalculatorResult:
-        assert expression is not None, "expression must be provided"
+        if not (expression is not None):
+            raise ValueError("expression must be provided")
         direction_token = TI89Calculator._normalize_limit_direction(direction)
         # Optimization: Use shared parsing cache for ~3.5% performance boost
         parsed_expression, sym_map = TI89Calculator._parse_expression_structure(
@@ -442,7 +454,8 @@ class TI89Calculator:
         # We assume it is populated. If not, we should populate it.
         # However, calling TI89Calculator() populates it.
         # To be safe, we can check.
-        assert equation is not None, "equation must be provided"
+        if not (equation is not None):
+            raise ValueError("equation must be provided")
         if TI89Calculator._ALLOWED_FUNCTIONS_CACHE is None:
             # This is slightly tricky as _build_allowed_functions uses 'self' methods for hat/vee etc?
             # Wait, _hat, _vee are instance methods. They should be static too.
@@ -476,7 +489,8 @@ class TI89Calculator:
     ) -> sp.Expr:
         """Parse a mathematical expression string into a validated SymPy tree."""
         # Optimization: fast-path for simple numbers to avoid expensive parse_expr
-        assert expression is not None, "expression must be provided"
+        if not (expression is not None):
+            raise ValueError("expression must be provided")
         if expression:
             # Strip whitespace for accurate numeric checks
             clean_expr = expression.strip()
@@ -535,7 +549,8 @@ class TI89Calculator:
         equation: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
     ) -> sp.Eq:
         """Parse an equation string (``lhs = rhs``) into a SymPy ``Eq`` object."""
-        assert equation is not None, "equation must be provided"
+        if not (equation is not None):
+            raise ValueError("equation must be provided")
         if "=" in equation:
             lhs, rhs = equation.split("=", maxsplit=1)
         else:

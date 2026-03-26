@@ -227,7 +227,8 @@ class ProcessingWorker(QThread):
         processor: SignalProcessor,
         config: dict,
     ) -> None:
-        assert operation is not None, "operation must be provided"
+        if not (operation is not None):
+            raise ValueError("operation must be provided")
         super().__init__()
         self.operation = operation
         self.data = data
@@ -525,7 +526,8 @@ class DataProcessorMainWindow(
 
     def closeEvent(self, event) -> None:
         """Handle window close."""
-        assert event is not None, "event must be provided"
+        if not (event is not None):
+            raise ValueError("event must be provided")
         self._save_state()
         super().closeEvent(event)
 
@@ -658,7 +660,8 @@ class DataProcessorMainWindow(
 
     def _on_signal_selection_changed(self, signals: list[str]) -> None:
         """Handle signal selection change."""
-        assert signals is not None, "signals must be provided"
+        if not (signals is not None):
+            raise ValueError("signals must be provided")
         logger.debug(f"Selected signals: {signals}")
 
         self.available_signals = []

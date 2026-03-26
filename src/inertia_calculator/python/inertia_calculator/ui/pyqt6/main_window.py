@@ -500,7 +500,8 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         description: str,
     ) -> None:
         """Display calculation results."""
-        assert ixx is not None, "ixx must be provided"
+        if not (ixx is not None):
+            raise ValueError("ixx must be provided")
         results = []
         results.append("Inertia Calculation Results")
         results.append("=" * 50)
@@ -555,7 +556,8 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         iyz: float,
     ) -> list[str]:
         """Validate inertia tensor."""
-        assert ixx is not None, "ixx must be provided"
+        if not (ixx is not None):
+            raise ValueError("ixx must be provided")
         errors = []
 
         # Check positive diagonal

@@ -26,7 +26,8 @@ def check_dependency(name: str, import_statement: str) -> bool:
                 match = re.search(r"\((\d+),\s*(\d+)\)", import_statement)
                 if match:
                     major, minor = int(match.group(1)), int(match.group(2))
-                    assert sys.version_info >= (major, minor)
+                    if not (sys.version_info >= (major):
+                        raise ValueError(minor))
                 else:
                     raise ValueError(
                         f"Cannot parse version assertion: {import_statement}"

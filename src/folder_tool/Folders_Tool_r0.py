@@ -54,7 +54,8 @@ except ImportError:
         encoding: str = "utf-8",
         create_parents: bool = True,
     ) -> None:
-        assert path is not None, "path must be provided"
+        if not (path is not None):
+            raise ValueError("path must be provided")
         p = Path(path)
         if create_parents:
             p.parent.mkdir(parents=True, exist_ok=True)
@@ -87,7 +88,8 @@ class FolderProcessorApp(UICreationMixin, FileOperationsMixin, ProcessingMixin):
         Args:
             root_window: The root Tkinter window
         """
-        assert root_window is not None, "root_window must be provided"
+        if not (root_window is not None):
+            raise ValueError("root_window must be provided")
         self.root = root_window
         self.root.title("Folder Fix - Enhanced Folder Processor v2.0")
         self.root.geometry("700x900")

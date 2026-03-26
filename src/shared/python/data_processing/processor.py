@@ -104,7 +104,8 @@ class DataProcessor:
 
         Returns *self* for method chaining.
         """
-        assert path is not None, "path must be provided"
+        if not (path is not None):
+            raise ValueError("path must be provided")
         path = Path(path)
         suffix = path.suffix.lower()
 
@@ -141,7 +142,8 @@ class DataProcessor:
 
     def load_dataframe(self, df: pd.DataFrame, name: str = "inline") -> DataProcessor:
         """Load from an existing DataFrame."""
-        assert df is not None, "df must be provided"
+        if not (df is not None):
+            raise ValueError("df must be provided")
         require(isinstance(df, pd.DataFrame), "df must be a pandas DataFrame")
         require(isinstance(name, str) and bool(name), "name must be a non-empty string")
         self._df = df.copy()
@@ -162,7 +164,8 @@ class DataProcessor:
         time_column: str | None = None,
     ) -> DataProcessor:
         """Trim data to a time range.  Auto-detects the time column if not given."""
-        assert start is not None, "start must be provided"
+        if not (start is not None):
+            raise ValueError("start must be provided")
         require(isinstance(start, int | float), "start must be numeric")
         require(isinstance(end, int | float), "end must be numeric")
         require(end >= start, "end must be >= start")
@@ -190,7 +193,8 @@ class DataProcessor:
             time_column: Column containing time values. Auto-detected if None.
             method: Interpolation method ('linear', 'cubic', etc.).
         """
-        assert target_rate is not None, "target_rate must be provided"
+        if not (target_rate is not None):
+            raise ValueError("target_rate must be provided")
         require(
             isinstance(target_rate, int | float) and target_rate > 0,
             "target_rate must be a positive number",
@@ -247,7 +251,8 @@ class DataProcessor:
         window_size : int
             Window size for moving_average / median / savgol.
         """
-        assert filter_type is not None, "filter_type must be provided"
+        if not (filter_type is not None):
+            raise ValueError("filter_type must be provided")
         self._validate_filter_contract(filter_type, window_size)
         df = self.dataframe
         selected_columns = self._resolve_filter_columns(df, columns)
@@ -317,7 +322,8 @@ class DataProcessor:
         window_size: int,
     ) -> None:
         """Apply filter implementation backed by scipy.signal."""
-        assert df is not None, "df must be provided"
+        if not (df is not None):
+            raise ValueError("df must be provided")
         from scipy.signal import butter, filtfilt, medfilt, savgol_filter
 
         for column in columns:
@@ -355,7 +361,8 @@ class DataProcessor:
 
         Example: ``dp.apply_formula("speed", "distance / time")``
         """
-        assert new_column is not None, "new_column must be provided"
+        if not (new_column is not None):
+            raise ValueError("new_column must be provided")
         require(
             isinstance(new_column, str) and bool(new_column),
             "new_column must be a non-empty string",
@@ -373,7 +380,8 @@ class DataProcessor:
 
     def drop_columns(self, columns: list[str]) -> DataProcessor:
         """Drop specified columns."""
-        assert columns is not None, "columns must be provided"
+        if not (columns is not None):
+            raise ValueError("columns must be provided")
         require(
             isinstance(columns, list) and bool(columns),
             "columns must be a non-empty list",
@@ -384,7 +392,8 @@ class DataProcessor:
 
     def rename_columns(self, mapping: dict[str, str]) -> DataProcessor:
         """Rename columns."""
-        assert mapping is not None, "mapping must be provided"
+        if not (mapping is not None):
+            raise ValueError("mapping must be provided")
         require(
             isinstance(mapping, dict) and bool(mapping),
             "mapping must be a non-empty dict",
@@ -395,7 +404,8 @@ class DataProcessor:
 
     def sort(self, by: str, ascending: bool = True) -> DataProcessor:
         """Sort by a column."""
-        assert by is not None, "by must be provided"
+        if not (by is not None):
+            raise ValueError("by must be provided")
         require(isinstance(by, str) and bool(by), "by must be a non-empty string")
         require(isinstance(ascending, bool), "ascending must be a boolean")
         self._df = self.dataframe.sort_values(by=by, ascending=ascending).reset_index(
@@ -494,7 +504,8 @@ class DataProcessor:
 
         Supported formats: .csv, .xlsx, .parquet, .json
         """
-        assert path is not None, "path must be provided"
+        if not (path is not None):
+            raise ValueError("path must be provided")
         path = Path(path)
         suffix = path.suffix.lower()
         df = self.dataframe

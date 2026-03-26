@@ -32,7 +32,8 @@ class MATLABQualityChecker:
 
     def __init__(self, project_root: Path) -> None:
         """Initialize the MATLAB quality checker."""
-        assert project_root is not None, "project_root must be provided"
+        if not (project_root is not None):
+            raise ValueError("project_root must be provided")
         require(isinstance(project_root, Path), "project_root must be a Path")
         require(
             project_root.is_absolute(),
@@ -167,7 +168,8 @@ class MATLABQualityChecker:
 
     def _analyze_matlab_file(self, file_path: Path) -> list[str]:
         """Analyze a single MATLAB file for quality issues."""
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         issues: list[str] = []
 
         try:
@@ -244,7 +246,8 @@ class MATLABQualityChecker:
         nesting_level: int,
     ) -> tuple[bool, int]:
         """Update nesting state based on current line."""
-        assert line_stripped is not None, "line_stripped must be provided"
+        if not (line_stripped is not None):
+            raise ValueError("line_stripped must be provided")
         if re.match(
             r"\b(function|if|for|while|switch|try|parfor|"
             r"classdef|arguments|properties|methods|events)\b",
@@ -270,7 +273,8 @@ class MATLABQualityChecker:
         issues: list[str],
     ) -> None:
         """Check for function docstring and arguments block."""
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         require(isinstance(file_path, Path), "file_path must be a Path")
         require(isinstance(lines, list), "lines must be a list")
         require(
@@ -316,7 +320,8 @@ class MATLABQualityChecker:
         issues: list[str],
     ) -> None:
         """Check for TODO, FIXME, HACK, XXX, and placeholders."""
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         require(isinstance(file_path, Path), "file_path must be a Path")
         require(isinstance(line_stripped, str), "line_stripped must be a string")
         require(isinstance(issues, list), "issues must be a list")
@@ -345,7 +350,8 @@ class MATLABQualityChecker:
         issues: list[str],
     ) -> None:
         """Check for eval, assignin, evalin, global, load."""
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         anti_patterns = [
             (
                 r"\beval\s*\(",
@@ -435,7 +441,8 @@ class MATLABQualityChecker:
         issues: list[str],
     ) -> None:
         """Detect magic numbers that should be named constants."""
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         pattern = r"(?<![.\w])(?:\d+\.\d+|\d+)(?![.\w])"
         magic_numbers = re.findall(pattern, line_stripped)
 
@@ -466,7 +473,8 @@ class MATLABQualityChecker:
         issues: list[str],
     ) -> None:
         """Check for clear all, clc, close all, addpath in functions."""
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         require(isinstance(file_path, Path), "file_path must be a Path")
         require(isinstance(line_stripped, str), "line_stripped must be a string")
         require(isinstance(issues, list), "issues must be a list")

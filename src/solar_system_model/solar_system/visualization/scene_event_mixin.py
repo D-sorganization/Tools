@@ -94,7 +94,8 @@ class SceneEventMixin:
         Returns:
             False if should quit, True otherwise.
         """
-        assert key is not None, "key must be provided"
+        if not (key is not None):
+            raise ValueError("key must be provided")
         if key == K_ESCAPE:
             return False
         if not self.renderer:
@@ -201,7 +202,8 @@ class SceneEventMixin:
 
     def _select_planet_by_number(self, key: int) -> None:
         """Select a planet using the number key (1-9)."""
-        assert key is not None, "key must be provided"
+        if not (key is not None):
+            raise ValueError("key must be provided")
         planet_index = key - K_1
         if planet_index < len(PLANET_ORDER):
             planet_name = PLANET_ORDER[planet_index]
@@ -225,7 +227,8 @@ class SceneEventMixin:
 
     def _handle_mouse_motion(self, pos: tuple[int, int], rel: tuple[int, int]) -> None:
         """Handle mouse motion."""
-        assert pos is not None, "pos must be provided"
+        if not (pos is not None):
+            raise ValueError("pos must be provided")
         if not self.renderer:
             return
         if self._mouse_dragging:
@@ -248,7 +251,8 @@ class SceneEventMixin:
 
     def _handle_mouse_wheel(self, y_offset: float) -> None:
         """Handle mouse wheel events."""
-        assert y_offset is not None, "y_offset must be provided"
+        if not (y_offset is not None):
+            raise ValueError("y_offset must be provided")
         if not self.renderer:
             return
         mode = "Orbit"
@@ -275,7 +279,8 @@ class SceneEventMixin:
 
     def _handle_ui_click(self, pos: tuple[int, int]) -> bool:
         """Handle clicks on UI overlays."""
-        assert pos is not None, "pos must be provided"
+        if not (pos is not None):
+            raise ValueError("pos must be provided")
         x, y = pos
 
         # 1. Check Date Picker
@@ -298,7 +303,8 @@ class SceneEventMixin:
         Returns:
             True if the click was consumed by the sidebar.
         """
-        assert x is not None, "x must be provided"
+        if not (x is not None):
+            raise ValueError("x must be provided")
         if not self.sidebar_panel:
             return False
 
@@ -353,7 +359,8 @@ class SceneEventMixin:
         Returns:
             True if the click was consumed by the control panel.
         """
-        assert x is not None, "x must be provided"
+        if not (x is not None):
+            raise ValueError("x must be provided")
         if not self.unified_controls:
             return False
 

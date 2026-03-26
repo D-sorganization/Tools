@@ -23,7 +23,8 @@ class MetricsPanel(QWidget):
         self, controller: SimController, parent: QWidget | None = None
     ) -> None:
         super().__init__(parent)
-        assert controller is not None
+        if not (controller is not None):
+            raise ValueError('DbC Blocked: Precondition failed.')
         self._ctrl = controller
         self._max_speed: float = 0.1  # for bar scaling
         self._build_ui()
@@ -146,7 +147,8 @@ def _metric_row(
     bar_color: str,
 ) -> tuple[QLabel, QProgressBar]:
     """Add a label+value+bar row to *layout*. Returns (value_label, bar)."""
-    assert layout is not None, "layout must be provided"
+    if not (layout is not None):
+        raise ValueError("layout must be provided")
     layout.addWidget(QLabel(label))
     val_label = QLabel("0.0000")
     layout.addWidget(val_label)

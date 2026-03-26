@@ -541,7 +541,7 @@ class TestRobustness:
         try:
             J = jacobian_golfer(q, p)
             assert len(J) == 6
-        except Exception:
+        except Exception as e:
             pass  # Some configs may be singular
 
     def test_large_angle_values(self):

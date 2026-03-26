@@ -129,7 +129,8 @@ def _markdown_to_html(markdown_text: str) -> str:
 
 def _handle_code_block(line: str, s: _MarkdownState) -> bool:
     """Handle fenced code block start/end and code block content."""
-    assert line is not None, "line must be provided"
+    if not (line is not None):
+        raise ValueError("line must be provided")
     if line.strip().startswith("```"):
         if s.in_code_block:
             s.html_lines.append("</pre>")
@@ -150,7 +151,8 @@ def _handle_code_block(line: str, s: _MarkdownState) -> bool:
 
 def _handle_horizontal_rule(line: str, s: _MarkdownState) -> bool:
     """Handle --- and *** horizontal rules."""
-    assert line is not None, "line must be provided"
+    if not (line is not None):
+        raise ValueError("line must be provided")
     if line.strip() in ("---", "***"):
         s.close_list()
         s.html_lines.append("<hr>")
@@ -160,7 +162,8 @@ def _handle_horizontal_rule(line: str, s: _MarkdownState) -> bool:
 
 def _handle_table_line(line: str, s: _MarkdownState) -> bool:
     """Handle markdown table rows and separators."""
-    assert line is not None, "line must be provided"
+    if not (line is not None):
+        raise ValueError("line must be provided")
     if "|" in line and not line.strip().startswith("|--"):
         if "|--" in line or "| --" in line or "|:--" in line:
             s.table_has_header = True
@@ -202,7 +205,8 @@ _HEADER_MAP: list[tuple[str, str, str, str]] = [
 
 def _handle_header(line: str, s: _MarkdownState) -> bool:
     """Handle # through #### headers."""
-    assert line is not None, "line must be provided"
+    if not (line is not None):
+        raise ValueError("line must be provided")
     for prefix, tag, color, margin in _HEADER_MAP:
         if line.startswith(prefix):
             s.close_list()
@@ -216,7 +220,8 @@ def _handle_header(line: str, s: _MarkdownState) -> bool:
 
 def _handle_list_item(line: str, s: _MarkdownState) -> bool:
     """Handle unordered and ordered list items."""
-    assert line is not None, "line must be provided"
+    if not (line is not None):
+        raise ValueError("line must be provided")
     stripped = line.strip()
     if stripped.startswith("- ") or stripped.startswith("* "):
         if not s.in_list:
@@ -242,7 +247,8 @@ def _handle_list_item(line: str, s: _MarkdownState) -> bool:
 
 def _handle_paragraph(line: str, s: _MarkdownState) -> None:
     """Handle regular paragraphs and blank lines."""
-    assert line is not None, "line must be provided"
+    if not (line is not None):
+        raise ValueError("line must be provided")
     stripped = line.strip()
     if stripped:
         content = _process_inline_formatting(stripped)
@@ -309,7 +315,8 @@ class HelpDialog(QDialog):
             content: Markdown content to display
             topics: Optional dict mapping topic IDs to content for navigation
         """
-        assert title is not None, "title must be provided"
+        if not (title is not None):
+            raise ValueError("title must be provided")
         super().__init__(parent)
         self.setWindowTitle(f"Help - {title}")
         self.resize(900, 650)
@@ -491,7 +498,8 @@ class HelpDialog(QDialog):
             title: Topic title
             content: Markdown content
         """
-        assert title is not None, "title must be provided"
+        if not (title is not None):
+            raise ValueError("title must be provided")
         self.title_label.setText(title)
         html_content = _markdown_to_html(content)
         self.content_browser.setHtml(html_content)
@@ -514,7 +522,8 @@ class HelpDialog(QDialog):
         Args:
             topic: Topic ID/title to navigate to
         """
-        assert topic is not None, "topic must be provided"
+        if not (topic is not None):
+            raise ValueError("topic must be provided")
         if topic not in self.topics:
             return
 
@@ -578,7 +587,8 @@ class HelpButton(QToolButton):
             parent: Parent widget
             tooltip: Tooltip text for the button
         """
-        assert topic_id is not None, "topic_id must be provided"
+        if not (topic_id is not None):
+            raise ValueError("topic_id must be provided")
         super().__init__(parent)
         self.topic_id = topic_id
 
@@ -644,7 +654,8 @@ class TooltipManager:
             widget: Widget to apply tooltip to
             key: Tooltip key (must be registered first)
         """
-        assert widget is not None, "widget must be provided"
+        if not (widget is not None):
+            raise ValueError("widget must be provided")
         if key not in self._widgets:
             self._widgets[key] = []
         self._widgets[key].append(widget)
@@ -660,7 +671,8 @@ class TooltipManager:
             text: Tooltip text
         """
         # Wrap in styled HTML for consistent appearance
-        assert widget is not None, "widget must be provided"
+        if not (widget is not None):
+            raise ValueError("widget must be provided")
         styled_text = f"""
             <div style="
                 background-color: #313244;
@@ -681,7 +693,8 @@ class TooltipManager:
             key: Tooltip key
             text: New tooltip text
         """
-        assert key is not None, "key must be provided"
+        if not (key is not None):
+            raise ValueError("key must be provided")
         self._tooltips[key] = text
         if key in self._widgets:
             for widget in self._widgets[key]:
@@ -725,7 +738,8 @@ class HelpManager:
         Args:
             path: Path to the help directory
         """
-        assert path is not None, "path must be provided"
+        if not (path is not None):
+            raise ValueError("path must be provided")
         self._help_dir = Path(path)
         self._scan_help_files()
 
@@ -735,7 +749,8 @@ class HelpManager:
         Args:
             path: Path to USER_MANUAL.md
         """
-        assert path is not None, "path must be provided"
+        if not (path is not None):
+            raise ValueError("path must be provided")
         manual_path = Path(path)
         if manual_path.exists():
             self._user_manual = load_help_from_file(manual_path)
@@ -777,7 +792,8 @@ class HelpManager:
             Topic content or error message
         """
         # Check registered topics first
-        assert topic_id is not None, "topic_id must be provided"
+        if not (topic_id is not None):
+            raise ValueError("topic_id must be provided")
         if topic_id in self._topics:
             return self._topics[topic_id]
 
@@ -819,7 +835,8 @@ class HelpManager:
             topic_id: Topic to display
             parent: Parent widget for the dialog
         """
-        assert topic_id is not None, "topic_id must be provided"
+        if not (topic_id is not None):
+            raise ValueError("topic_id must be provided")
         content = self.get_topic_content(topic_id)
         all_topics = self.get_all_topics()
 
@@ -923,7 +940,8 @@ def create_help_menu_actions(
     Returns:
         List of QAction objects for the help menu
     """
-    assert parent is not None, "parent must be provided"
+    if not (parent is not None):
+        raise ValueError("parent must be provided")
     actions: list[QAction] = []
 
     # User Manual action

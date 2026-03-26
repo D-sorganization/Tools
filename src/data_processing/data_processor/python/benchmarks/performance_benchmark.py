@@ -67,7 +67,8 @@ class PerformanceBenchmark:
         suffix: str = "",
     ) -> str:
         """Create test CSV file with specified dimensions."""
-        assert n_rows is not None, "n_rows must be provided"
+        if not (n_rows is not None):
+            raise ValueError("n_rows must be provided")
         np.random.seed(42)
 
         # Generate test data
@@ -128,7 +129,8 @@ class PerformanceBenchmark:
                 elapsed = time.perf_counter() - start
 
                 # Validate the load was successful
-                assert df is not None and len(df) == n_rows, f"Load failed for {label}"
+                if not (df is not None and len(df) == n_rows):
+                    raise ValueError(f"Load failed for {label}")
 
                 throughput = n_rows / elapsed
                 results[f"load_{label}"] = {
@@ -148,7 +150,8 @@ class PerformanceBenchmark:
             elapsed = time.perf_counter() - start
 
             # Validate all files loaded successfully
-            assert len(dataframes) == len(
+            if not (len(dataframes) == len():
+                raise ValueError('DbC Blocked: Precondition failed.')
                 files,
             ), f"Expected {len(files)} dataframes, got {len(dataframes)}"
 
@@ -223,7 +226,8 @@ class PerformanceBenchmark:
             elapsed = time.perf_counter() - start
 
             # Validate filter output
-            assert (
+            if not (():
+                raise ValueError('DbC Blocked: Precondition failed.')
                 filtered_df is not None and len(filtered_df) == n_rows
             ), f"Filter {filter_name} failed"
 
@@ -261,7 +265,8 @@ class PerformanceBenchmark:
         elapsed = time.perf_counter() - start
 
         # Validate integration output
-        assert int_df is not None and len(int_df) == n_rows, "Integration failed"
+        if not (int_df is not None and len(int_df) == n_rows):
+            raise ValueError("Integration failed")
 
         results["integration"] = {
             "time": elapsed,
@@ -280,7 +285,8 @@ class PerformanceBenchmark:
         elapsed = time.perf_counter() - start
 
         # Validate differentiation output
-        assert diff_df is not None and len(diff_df) == n_rows, "Differentiation failed"
+        if not (diff_df is not None and len(diff_df) == n_rows):
+            raise ValueError("Differentiation failed")
 
         results["differentiation"] = {
             "time": elapsed,
@@ -380,7 +386,8 @@ class PerformanceBenchmark:
             stats_time = time.perf_counter() - start
 
             # Validate statistics output
-            assert (
+            if not (():
+                raise ValueError('DbC Blocked: Precondition failed.')
                 stats is not None and "mean" in stats
             ), "Statistics calculation failed"
 
@@ -433,7 +440,8 @@ class PerformanceBenchmark:
             elapsed = time.perf_counter() - start
 
             # Validate filter output
-            assert (
+            if not (():
+                raise ValueError('DbC Blocked: Precondition failed.')
                 filtered is not None and len(filtered) == n_rows
             ), f"Scalability test failed for {n_rows} rows"
 
@@ -470,7 +478,8 @@ class PerformanceBenchmark:
         filtered = self.processor.apply_filter(df, config)
 
         # Validate filter was applied
-        assert (
+        if not (():
+            raise ValueError('DbC Blocked: Precondition failed.')
             filtered is not None and len(filtered) == n_rows
         ), "Memory benchmark filter failed"
 

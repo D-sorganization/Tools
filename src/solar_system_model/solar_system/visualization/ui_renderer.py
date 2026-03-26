@@ -100,7 +100,8 @@ class TextCache:
         Returns:
             Tuple of (pixel_data, width, height)
         """
-        assert text is not None, "text must be provided"
+        if not (text is not None):
+            raise ValueError("text must be provided")
         key = (text, font_name, color)
         if key in self._cache:
             return self._cache[key]
@@ -126,7 +127,8 @@ class TextCache:
         color: tuple[int, int, int] = (255, 255, 255),
     ) -> tuple[int, int]:
         """Render text at position."""
-        assert text is not None, "text must be provided"
+        if not (text is not None):
+            raise ValueError("text must be provided")
         data, width, height = self.get_text_data(text, font_name, color)
         glRasterPos2i(x, y + height)  # OpenGL draws from bottom-left
         glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_BYTE, data)
@@ -139,7 +141,8 @@ class UIRenderer:
     """
 
     def __init__(self, window_width: int, window_height: int) -> None:
-        assert window_width is not None, "window_width must be provided"
+        if not (window_width is not None):
+            raise ValueError("window_width must be provided")
         self.window_width = window_width
         self.window_height = window_height
         self.theme = UITheme()
@@ -148,7 +151,8 @@ class UIRenderer:
 
     def update_dimensions(self, width: int, height: int) -> None:
         """Update window dimensions for UI rendering."""
-        assert width is not None, "width must be provided"
+        if not (width is not None):
+            raise ValueError("width must be provided")
         self.window_width = width
         self.window_height = height
 
@@ -188,7 +192,8 @@ class UIRenderer:
         filled: bool = True,
     ) -> None:
         """Draw a rectangle."""
-        assert x is not None, "x must be provided"
+        if not (x is not None):
+            raise ValueError("x must be provided")
         glColor4f(*color)
         if filled:
             glBegin(GL_QUADS)
@@ -217,7 +222,8 @@ class UIRenderer:
             font_name: Font size key -- "default" (large), "small", or "title".
         """
         # Get dimensions without drawing
-        assert text is not None, "text must be provided"
+        if not (text is not None):
+            raise ValueError("text must be provided")
         _, width, height = self.text_cache.get_text_data(text, font_name, color)
 
         rect = pygame.Rect(position[0], position[1], width, height)
@@ -256,7 +262,8 @@ class UIRenderer:
 
     def render_status_bar(self, text: str) -> None:
         """Render a status bar at the bottom of the screen."""
-        assert text is not None, "text must be provided"
+        if not (text is not None):
+            raise ValueError("text must be provided")
         self.begin_2d()
         y = self.window_height - 30
         self.draw_rect(0, y - 5, self.window_width, 35, (0.0, 0.0, 0.0, 0.7))
@@ -265,7 +272,8 @@ class UIRenderer:
 
     def render_help_overlay(self, help_data: dict[str, Any]) -> None:
         """Render the help overlay with controls list."""
-        assert help_data is not None, "help_data must be provided"
+        if not (help_data is not None):
+            raise ValueError("help_data must be provided")
         if not help_data.get("visible", False):
             return
 
@@ -316,7 +324,8 @@ class UIRenderer:
 
     def render_date_picker(self, picker_data: dict[str, Any]) -> None:
         """Render the date picker widget."""
-        assert picker_data is not None, "picker_data must be provided"
+        if not (picker_data is not None):
+            raise ValueError("picker_data must be provided")
         if not picker_data.get("visible", False):
             return
 
@@ -349,7 +358,8 @@ class UIRenderer:
         self, sidebar_data: dict[str, Any], content_data: dict[str, Any] | None
     ) -> None:
         """Render the sidebar with tabs and content."""
-        assert sidebar_data is not None, "sidebar_data must be provided"
+        if not (sidebar_data is not None):
+            raise ValueError("sidebar_data must be provided")
         if not sidebar_data.get("visible", False):
             return
 
@@ -415,7 +425,8 @@ class UIRenderer:
 
     def render_mission_list(self, data: dict[str, Any]) -> None:
         """Render the list of famous space missions."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         if not data.get("visible", False):
             return
 
@@ -496,7 +507,8 @@ class UIRenderer:
 
     def render_educational_panel(self, edu_data: dict[str, Any]) -> None:
         """Render educational information about selected body."""
-        assert edu_data is not None, "edu_data must be provided"
+        if not (edu_data is not None):
+            raise ValueError("edu_data must be provided")
         if not edu_data.get("visible", False):
             return
 
@@ -552,7 +564,8 @@ class UIRenderer:
 
     def render_historical_events(self, events_data: dict[str, Any]) -> None:
         """Render list of historical events."""
-        assert events_data is not None, "events_data must be provided"
+        if not (events_data is not None):
+            raise ValueError("events_data must be provided")
         if not events_data.get("visible", False):
             return
 
@@ -587,7 +600,8 @@ class UIRenderer:
 
     def render_immersion_checklist(self, checklist_data: dict[str, Any]) -> None:
         """Render the immersion checklist."""
-        assert checklist_data is not None, "checklist_data must be provided"
+        if not (checklist_data is not None):
+            raise ValueError("checklist_data must be provided")
         if not checklist_data.get("visible", False):
             return
 
@@ -625,7 +639,8 @@ class UIRenderer:
         self, ctrl_data: dict[str, Any], time_data: dict[str, Any]
     ) -> None:
         """Render the unified control panel."""
-        assert ctrl_data is not None, "ctrl_data must be provided"
+        if not (ctrl_data is not None):
+            raise ValueError("ctrl_data must be provided")
         if not ctrl_data.get("visible", False):
             return
 
@@ -693,7 +708,8 @@ class UIRenderer:
 
     def render_planet_selector(self, data: dict[str, Any]) -> None:
         """Render a clickable list of planets."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         if not data.get("visible", False):
             return
 
@@ -721,7 +737,8 @@ class UIRenderer:
 
     def render_speed_indicator(self, time_warp: float) -> None:
         """Render a visual bar indicating time speed."""
-        assert time_warp is not None, "time_warp must be provided"
+        if not (time_warp is not None):
+            raise ValueError("time_warp must be provided")
         self.begin_2d()
 
         w, h = 200, 10
@@ -760,7 +777,8 @@ class UIRenderer:
 
     def render_compass(self, camera_yaw: float) -> None:
         """Render a small N compass."""
-        assert camera_yaw is not None, "camera_yaw must be provided"
+        if not (camera_yaw is not None):
+            raise ValueError("camera_yaw must be provided")
         self.begin_2d()
 
         cx, cy = self.window_width - 50, 50

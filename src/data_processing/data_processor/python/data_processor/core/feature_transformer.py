@@ -42,7 +42,8 @@ class FeatureTransformer:
         Returns:
             Transformed features
         """
-        assert features is not None, "features must be provided"
+        if not (features is not None):
+            raise ValueError("features must be provided")
         features = np.atleast_2d(features)
 
         if method == TransformationType.LOG:
@@ -120,7 +121,8 @@ class FeatureTransformer:
         Returns:
             Transformed features
         """
-        assert features is not None, "features must be provided"
+        if not (features is not None):
+            raise ValueError("features must be provided")
         features = np.atleast_2d(features)
 
         if method == TransformationType.STANDARDIZE:

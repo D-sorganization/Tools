@@ -254,7 +254,8 @@ class ANOVAAnalyzer:
             Tuple of (ss_between, ss_within, ss_total, ms_between, ms_within,
                        f_stat, df_between, df_within, df_total, grand_mean)
         """
-        assert group_arrays is not None, "group_arrays must be provided"
+        if not (group_arrays is not None):
+            raise ValueError("group_arrays must be provided")
         k = len(group_arrays)
         n_total = sum(len(arr) for arr in group_arrays.values())
         grand_mean = np.mean(np.concatenate(list(group_arrays.values())))
@@ -309,7 +310,8 @@ class ANOVAAnalyzer:
         Returns:
             Complete one-way ANOVA results
         """
-        assert df is not None, "df must be provided"
+        if not (df is not None):
+            raise ValueError("df must be provided")
         group_arrays = self._validate_and_prepare_groups(df, dependent_var, group_var)
 
         (
@@ -401,7 +403,8 @@ class ANOVAAnalyzer:
         Returns:
             Complete two-way ANOVA results
         """
-        assert df is not None, "df must be provided"
+        if not (df is not None):
+            raise ValueError("df must be provided")
         data = df[[dependent_var, factor_a, factor_b]].dropna()
         y: np.ndarray = np.asarray(data[dependent_var].values)
 
@@ -521,7 +524,8 @@ class ANOVAAnalyzer:
         test_interaction: bool,
     ) -> dict[str, float]:
         """Compute SS_total, SS_A, SS_B, SS_AB, SS_error."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         ss_total = float(np.sum((y - grand_mean) ** 2))
 
         ss_a = sum(
@@ -556,7 +560,8 @@ class ANOVAAnalyzer:
         ss: dict[str, float], a: int, b: int, n_total: int
     ) -> dict[str, float]:
         """Compute degrees of freedom, mean squares, F-statistics, and p-values."""
-        assert ss is not None, "ss must be provided"
+        if not (ss is not None):
+            raise ValueError("ss must be provided")
         df_a = a - 1
         df_b = b - 1
         df_ab = df_a * df_b
@@ -619,7 +624,8 @@ class ANOVAAnalyzer:
         test_assumptions: bool,
     ) -> list:
         """Run assumption tests for two-way ANOVA if requested."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         if not test_assumptions:
             return []
         cell_data = {}
@@ -649,7 +655,8 @@ class ANOVAAnalyzer:
             Repeated measures ANOVA results
         """
         # Reshape data to long format
-        assert df is not None, "df must be provided"
+        if not (df is not None):
+            raise ValueError("df must be provided")
         data = df[[subject_id] + dependent_vars].dropna()
         n_subjects = len(data)
         k = len(dependent_vars)
@@ -737,7 +744,8 @@ class ANOVAAnalyzer:
         groups: dict[str, np.ndarray],
     ) -> list[AssumptionTestResult]:
         """Test ANOVA assumptions."""
-        assert groups is not None, "groups must be provided"
+        if not (groups is not None):
+            raise ValueError("groups must be provided")
         results = []
 
         # 1. Normality test (Shapiro-Wilk for each group)
@@ -807,7 +815,8 @@ class ANOVAAnalyzer:
         method: PostHocMethod,
     ) -> list[PostHocComparison]:
         """Perform post-hoc pairwise comparisons."""
-        assert groups is not None, "groups must be provided"
+        if not (groups is not None):
+            raise ValueError("groups must be provided")
         results = []
         group_names = list(groups.keys())
         n_groups = len(group_names)
@@ -877,7 +886,8 @@ class ANOVAAnalyzer:
         Returns:
             W statistic, p-value, GG epsilon, HF epsilon
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n, k = data.shape
 
         if k < 3:

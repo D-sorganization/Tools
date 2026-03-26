@@ -128,7 +128,8 @@ class ConsoleEnvironment:
         Returns:
             (stdout_output, stderr_output)
         """
-        assert source is not None, "source must be provided"
+        if not (source is not None):
+            raise ValueError("source must be provided")
         if not source.strip():
             return "", ""
 
@@ -151,7 +152,7 @@ class ConsoleEnvironment:
                     code_obj = compile(source, "<console>", "exec")
                     exec(code_obj, self.namespace)
 
-        except Exception:
+        except Exception as e:
             # Format exception similar to REPL
             exc_type, exc_value, exc_traceback = sys.exc_info()
             if exc_traceback:

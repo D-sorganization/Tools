@@ -184,7 +184,8 @@ class MouseWheelZoom:
     ) -> None:
         """Perform 2D zoom operation."""
         # Get current limits
-        assert zoom_factor is not None, "zoom_factor must be provided"
+        if not (zoom_factor is not None):
+            raise ValueError("zoom_factor must be provided")
         x_min, x_max = ax.get_xlim()
         y_min, y_max = ax.get_ylim()
 
@@ -238,7 +239,8 @@ class MouseWheelZoom:
         # centered on the current view center
 
         # Get current limits
-        assert zoom_factor is not None, "zoom_factor must be provided"
+        if not (zoom_factor is not None):
+            raise ValueError("zoom_factor must be provided")
         x_min, x_max = ax.get_xlim()
         y_min, y_max = ax.get_ylim()
         z_min, z_max = ax.get_zlim()
@@ -314,7 +316,8 @@ class InteractivePlotManager:
             enable_pan: Enable panning (already supported by toolbar)
             zoom_config: Configuration for zoom behavior
         """
-        assert enable_zoom is not None, "enable_zoom must be provided"
+        if not (enable_zoom is not None):
+            raise ValueError("enable_zoom must be provided")
         fig_id = id(fig)
         self._figures[fig_id] = fig
 

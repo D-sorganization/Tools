@@ -27,15 +27,18 @@ class Vec2(NamedTuple):
     y: float = 0.0
 
     def __add__(self, other: object) -> Vec2:  # noqa: PYI034  # override with wider type
-        assert isinstance(other, Vec2), "Vec2 + Vec2 required"
+        if not (isinstance(other):
+            raise ValueError(Vec2), "Vec2 + Vec2 required")
         return Vec2(self.x + other.x, self.y + other.y)
 
     def __sub__(self, other: object) -> Vec2:  # noqa: PYI034  # override with wider type
-        assert isinstance(other, Vec2), "Vec2 - Vec2 required"
+        if not (isinstance(other):
+            raise ValueError(Vec2), "Vec2 - Vec2 required")
         return Vec2(self.x - other.x, self.y - other.y)
 
     def __mul__(self, scalar: object) -> Vec2:
-        assert isinstance(scalar, int | float), "Vec2 * scalar required"
+        if not (isinstance(scalar):
+            raise ValueError(int | float), "Vec2 * scalar required")
         return Vec2(self.x * scalar, self.y * scalar)
 
     def __rmul__(self, scalar: object) -> Vec2:
@@ -97,8 +100,10 @@ class RigidBody:
     angular_vel: float = 0.0  # rad/s
 
     def __post_init__(self) -> None:
-        assert self.mass > 0, f"mass must be positive, got {self.mass}"
-        assert self.moment_of_inertia > 0, (
+        if not (self.mass > 0):
+            raise ValueError(f"mass must be positive, got {self.mass}")
+        if not (self.moment_of_inertia > 0):
+            raise ValueError(()
             f"moment_of_inertia must be positive, got {self.moment_of_inertia}"
         )
 
@@ -125,20 +130,24 @@ class RigidBody:
 
 def moment_of_inertia_ellipse(mass: float, a: float, b: float) -> float:
     """Moment of inertia for a solid ellipse with semi-axes a, b."""
-    assert mass > 0
-    assert a > 0 and b > 0
+    if not (mass > 0):
+        raise ValueError('DbC Blocked: Precondition failed.')
+    if not (a > 0 and b > 0):
+        raise ValueError('DbC Blocked: Precondition failed.')
     return 0.25 * mass * (a**2 + b**2)
 
 
 def moment_of_inertia_disk(mass: float, radius: float) -> float:
     """Moment of inertia for a solid disk."""
-    assert mass > 0 and radius > 0
+    if not (mass > 0 and radius > 0):
+        raise ValueError('DbC Blocked: Precondition failed.')
     return 0.5 * mass * radius**2
 
 
 def moment_of_inertia_rod(mass: float, length: float) -> float:
     """Moment of inertia for a thin rod about its centre."""
-    assert mass > 0 and length > 0
+    if not (mass > 0 and length > 0):
+        raise ValueError('DbC Blocked: Precondition failed.')
     return mass * length**2 / 12.0
 
 
@@ -171,7 +180,8 @@ def compute_jump_impulse(
         (jumper_impulse, asteroid_torque_impulse, jumper_torque_impulse)
         where torques are scalar (z-component of r Ã— J).
     """
-    assert force_magnitude >= 0, "force_magnitude must be non-negative"
+    if not (force_magnitude >= 0):
+        raise ValueError("force_magnitude must be non-negative")
 
     J = Vec2(
         force_magnitude * math.cos(force_direction_rad),
@@ -204,7 +214,8 @@ GRAVITY: Vec2 = Vec2(0.0, 0.0)  # Deep space â€” no gravity by default
 
 def integrate_body(body: RigidBody, dt: float) -> None:
     """Semi-implicit Euler integration step for *body* (mutates in place)."""
-    assert dt > 0, f"dt must be positive, got {dt}"
+    if not (dt > 0):
+        raise ValueError(f"dt must be positive, got {dt}")
     body.pos = body.pos + body.vel * dt
     body.angle += body.angular_vel * dt
 
@@ -233,8 +244,10 @@ class SpringLaunch:
     elapsed: float = 0.0
 
     def __post_init__(self) -> None:
-        assert self.total_impulse >= 0
-        assert self.duration > 0
+        if not (self.total_impulse >= 0):
+            raise ValueError('DbC Blocked: Precondition failed.')
+        if not (self.duration > 0):
+            raise ValueError('DbC Blocked: Precondition failed.')
 
     @property
     def is_complete(self) -> bool:
@@ -247,7 +260,8 @@ class SpringLaunch:
         Returns the (impulse, asteroid_torque, jumper_torque) for this step,
         or None if the launch is already complete.
         """
-        assert dt > 0
+        if not (dt > 0):
+            raise ValueError('DbC Blocked: Precondition failed.')
         if self.is_complete:
             return None
         remaining = self.duration - self.elapsed
@@ -287,7 +301,8 @@ class SimState:
     time: float = 0.0
 
     def __post_init__(self) -> None:
-        assert self.asteroid is not self.jumper, "asteroid and jumper must differ"
+        if not (self.asteroid is not self.jumper):
+            raise ValueError("asteroid and jumper must differ")
 
     @property
     def total_linear_momentum(self) -> Vec2:
@@ -312,7 +327,8 @@ class SimState:
 
 def step_simulation(state: SimState, dt: float) -> None:
     """Advance the simulation by *dt* seconds (mutates *state*)."""
-    assert dt > 0
+    if not (dt > 0):
+        raise ValueError('DbC Blocked: Precondition failed.')
 
     if state.spring is not None and not state.spring.is_complete:
         result = state.spring.step(dt)

@@ -77,7 +77,8 @@ def _build_vessel_3d_scene_cached(
     split_enabled: bool,
     split_angle_degrees: float,
 ) -> Vessel3DScene:
-    assert layout is not None, "layout must be provided"
+    if not (layout is not None):
+        raise ValueError("layout must be provided")
     view_options = Vessel3DViewOptions(
         split_enabled=split_enabled,
         split_angle_degrees=split_angle_degrees,
@@ -108,7 +109,8 @@ def _build_glass_mesh(
     visible_labels: set[str] | None,
     view_options: Vessel3DViewOptions,
 ) -> VesselSceneMesh | None:
-    assert layout is not None, "layout must be provided"
+    if not (layout is not None):
+        raise ValueError("layout must be provided")
     layer = layout.layers[0]
     if not _is_visible(layer.name, layer.name, visible_labels):
         return None
@@ -130,7 +132,8 @@ def _build_shell_meshes(
     visible_labels: set[str] | None,
     view_options: Vessel3DViewOptions,
 ) -> tuple[VesselSceneMesh, ...]:
-    assert layout is not None, "layout must be provided"
+    if not (layout is not None):
+        raise ValueError("layout must be provided")
     meshes: list[VesselSceneMesh] = []
     for profile in build_shell_band_profiles(layout):
         band = profile.band
@@ -168,7 +171,8 @@ def _build_electrode_meshes(
     visible_labels: set[str] | None,
     view_options: Vessel3DViewOptions,
 ) -> tuple[VesselSceneMesh, ...]:
-    assert layout is not None, "layout must be provided"
+    if not (layout is not None):
+        raise ValueError("layout must be provided")
     if not _is_visible("electrodes", "electrodes", visible_labels):
         return ()
     meshes: list[VesselSceneMesh] = []
@@ -221,7 +225,8 @@ def _build_exact_meshes(
     visible_labels: set[str] | None,
     view_options: Vessel3DViewOptions,
 ) -> tuple[VesselSceneMesh, ...]:
-    assert layout is not None, "layout must be provided"
+    if not (layout is not None):
+        raise ValueError("layout must be provided")
     from vessel_drafter.projects.vessel_drafter_layout import (  # lazy: needs build123d
         build_vessel_drafter_components,
     )
@@ -306,7 +311,8 @@ def _revolved_profile_mesh(
     half_profile: tuple[ProfilePoint, ...],
     view_options: Vessel3DViewOptions,
 ) -> tuple[FloatArray, IntArray]:
-    assert half_profile is not None, "half_profile must be provided"
+    if not (half_profile is not None):
+        raise ValueError("half_profile must be provided")
     angles = _preview_angles(view_options)
     angle_count = len(angles)
     cos_theta = np.cos(angles)
@@ -376,7 +382,8 @@ def _segment_faces(
     *,
     wrap_around: bool,
 ) -> IntArray:
-    assert start_group is not None, "start_group must be provided"
+    if not (start_group is not None):
+        raise ValueError("start_group must be provided")
     if isinstance(start_group, int) and isinstance(end_group, int):
         return np.empty((0, 3), dtype=np.int32)
 
@@ -424,7 +431,8 @@ def _cylinder_mesh(
     end_point: FloatArray,
     radius_in: float,
 ) -> tuple[FloatArray, IntArray]:
-    assert start_point is not None, "start_point must be provided"
+    if not (start_point is not None):
+        raise ValueError("start_point must be provided")
     axis_vector = end_point - start_point
     axis_length = np.linalg.norm(axis_vector)
     axis_unit = axis_vector / axis_length
@@ -511,7 +519,8 @@ def _section_cap_mesh(
     half_profile: tuple[ProfilePoint, ...],
     view_options: Vessel3DViewOptions,
 ) -> tuple[FloatArray, IntArray]:
-    assert half_profile is not None, "half_profile must be provided"
+    if not (half_profile is not None):
+        raise ValueError("half_profile must be provided")
     triangles = _triangulate_profile_loop(half_profile)
     if not triangles:
         return np.empty((0, 3), dtype=np.float64), np.empty((0, 3), dtype=np.int32)
@@ -624,7 +633,8 @@ def _is_convex(
 
 
 def _point_in_triangle(point: FloatArray, triangle: FloatArray) -> bool:
-    assert point is not None, "point must be provided"
+    if not (point is not None):
+        raise ValueError("point must be provided")
     first_sign = _edge_sign(point, triangle[0], triangle[1])
     second_sign = _edge_sign(point, triangle[1], triangle[2])
     third_sign = _edge_sign(point, triangle[2], triangle[0])
@@ -641,7 +651,8 @@ def _edge_sign(point: FloatArray, first: FloatArray, second: FloatArray) -> floa
 
 
 def _cross_z(previous: FloatArray, current: FloatArray, following: FloatArray) -> float:
-    assert previous is not None, "previous must be provided"
+    if not (previous is not None):
+        raise ValueError("previous must be provided")
     first = current - previous
     second = following - current
     return float((first[0] * second[1]) - (first[1] * second[0]))
@@ -672,7 +683,8 @@ def _maybe_apply_section_cut(
     vertices_faces: tuple[FloatArray, IntArray],
     view_options: Vessel3DViewOptions,
 ) -> tuple[FloatArray, IntArray]:
-    assert vertices_faces is not None, "vertices_faces must be provided"
+    if not (vertices_faces is not None):
+        raise ValueError("vertices_faces must be provided")
     if not view_options.split_enabled:
         return vertices_faces
     vertices, faces = vertices_faces

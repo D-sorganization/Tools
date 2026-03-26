@@ -32,7 +32,8 @@ def prepare_spec(spec_path: str | Path, profile: str | None) -> SpecDict:
 
     Postcondition: returned spec has passed validation twice (pre- and post-profile).
     """
-    assert spec_path is not None, "spec_path must be provided"
+    if not (spec_path is not None):
+        raise ValueError("spec_path must be provided")
     raw = load_spec(spec_path)
     validate_spec(raw)
     prepared = apply_profile(raw, profile)

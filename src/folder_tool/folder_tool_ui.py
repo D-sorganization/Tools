@@ -59,7 +59,8 @@ class UICreationMixin:
     def _load_ico_icon(self, ico_path: str) -> None:
         """Loads and sets the ICO icon for the application."""
         # Use iconbitmap for Windows taskbar integration
-        assert ico_path is not None, "ico_path must be provided"
+        if not (ico_path is not None):
+            raise ValueError("ico_path must be provided")
         self.root.iconbitmap(ico_path)  # type: ignore[no-untyped-call]
         logger.info(f"Loaded ICO icon for taskbar: {ico_path}")
 
@@ -99,7 +100,8 @@ class UICreationMixin:
 
     def _load_png_fallback(self, base_dir: str) -> None:
         """Loads PNG icon as fallback when ICO is not available."""
-        assert base_dir is not None, "base_dir must be provided"
+        if not (base_dir is not None):
+            raise ValueError("base_dir must be provided")
         png_path = Path(base_dir) / "paper_plane_icon.png"
         if Path(png_path).exists():
             from PIL import Image, ImageTk
@@ -199,7 +201,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the source widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         self.source_frame = ttk.LabelFrame(
             parent,
             text="1. Select Folder(s) to Process",
@@ -249,7 +252,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the destination widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         self.dest_frame = ttk.LabelFrame(
             parent,
             text="2. Select Final Destination Folder",
@@ -274,7 +278,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the filtering widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         filter_frame = ttk.LabelFrame(
             parent,
             text="3. File Filtering Options",
@@ -317,7 +322,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the preprocessing widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         self.pre_process_frame = ttk.LabelFrame(
             parent,
             text="4. Pre-processing Options (On Source)",
@@ -342,7 +348,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the main operation widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         self.mode_frame = ttk.LabelFrame(
             parent,
             text="5. Choose Main Operation",
@@ -400,7 +407,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the organization widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         org_frame = ttk.LabelFrame(
             parent,
             text="6. File Organization Options",
@@ -425,7 +433,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the postprocessing widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         self.post_process_frame = ttk.LabelFrame(
             parent,
             text="7. Post-processing Options (On Destination)",
@@ -445,7 +454,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the output options widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         output_frame = ttk.LabelFrame(parent, text="8. Output Options", padding="10")
         output_frame.pack(fill=tk.X, pady=5)
 
@@ -461,7 +471,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the advanced options widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         advanced_frame = ttk.LabelFrame(
             parent,
             text="9. Advanced Options",
@@ -486,7 +497,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the progress widgets
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         progress_frame = ttk.LabelFrame(parent, text="Progress", padding="10")
         progress_frame.pack(fill=tk.X, pady=5)
 
@@ -507,7 +519,8 @@ class UICreationMixin:
         Args:
             parent: Parent widget to contain the run button
         """
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         button_frame = ttk.Frame(parent)
         button_frame.pack(fill=tk.X, pady=(10, 5))
 

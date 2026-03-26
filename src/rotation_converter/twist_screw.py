@@ -109,7 +109,8 @@ def twist_angle_to_homogeneous(xi: Any, theta: float) -> np.ndarray:
     Precondition: xi has 6 elements, for rotation case ||omega||=1.
     Postcondition: T is in SE(3).
     """
-    assert theta is not None, "theta must be provided"
+    if not (theta is not None):
+        raise ValueError("theta must be provided")
     xi = np.asarray(xi, dtype=float)
     require(xi.shape == (6,), "twist must have 6 elements", xi.shape)
     require_finite(xi, "twist")

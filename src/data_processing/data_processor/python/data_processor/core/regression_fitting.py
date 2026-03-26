@@ -35,7 +35,8 @@ class FittingMixin:
         names: list[str],
     ) -> tuple[np.ndarray, list[str]]:
         """Build feature matrix with polynomial and interaction terms."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         features = [X]
         feature_names = list(names)
 
@@ -63,7 +64,8 @@ class FittingMixin:
         y: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray, float, float]:
         """Standardize features and target."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         if self.config.standardize:
             x_mean = np.mean(X, axis=0)
             x_std = np.std(X, axis=0)
@@ -90,7 +92,8 @@ class FittingMixin:
     ) -> tuple[np.ndarray, float]:
         """Fit ordinary least squares regression."""
         # Add intercept column
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         X_with_intercept = np.column_stack([np.ones(len(y)), X])
 
         # Solve normal equations
@@ -111,7 +114,8 @@ class FittingMixin:
         y: np.ndarray,
     ) -> tuple[np.ndarray, float]:
         """Fit ridge regression (L2 regularization)."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
         alpha = self.config.alpha
 
@@ -136,7 +140,8 @@ class FittingMixin:
         y: np.ndarray,
     ) -> tuple[np.ndarray, float]:
         """Fit LASSO regression (L1 regularization) using coordinate descent."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
         alpha = self.config.alpha
 
@@ -176,7 +181,8 @@ class FittingMixin:
         y: np.ndarray,
     ) -> tuple[np.ndarray, float]:
         """Fit elastic net regression (L1 + L2 regularization)."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
         alpha = self.config.alpha
         l1_ratio = self.config.l1_ratio
@@ -208,7 +214,8 @@ class FittingMixin:
 
     def _soft_threshold(self, x: float, threshold: float) -> float:
         """Soft thresholding operator for LASSO."""
-        assert x is not None, "x must be provided"
+        if not (x is not None):
+            raise ValueError("x must be provided")
         if x > threshold:
             return x - threshold
         elif x < -threshold:
@@ -222,7 +229,8 @@ class FittingMixin:
         names: list[str],
     ) -> tuple[np.ndarray, list[str]]:
         """Perform feature selection."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         method = self.config.selection_method
         criterion = self.config.selection_criterion
 
@@ -243,7 +251,8 @@ class FittingMixin:
         criterion: str,
     ) -> tuple[np.ndarray, list[str]]:
         """Forward stepwise selection."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
         selected: list[int] = []
         remaining = list(range(p))
@@ -282,7 +291,8 @@ class FittingMixin:
         criterion: str,
     ) -> tuple[np.ndarray, list[str]]:
         """Backward stepwise selection."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
         selected = list(range(p))
         best_score = self._calculate_criterion(X, y, criterion)
@@ -317,7 +327,8 @@ class FittingMixin:
     ) -> tuple[np.ndarray, list[str]]:
         """Bidirectional stepwise selection."""
         # Start with forward selection, then try backward at each step
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
         selected: list[int] = []
         remaining = list(range(p))
@@ -378,7 +389,8 @@ class FittingMixin:
         criterion: str,
     ) -> float:
         """Calculate model selection criterion."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n = len(y)
         k = X.shape[1] + 1  # +1 for intercept
 

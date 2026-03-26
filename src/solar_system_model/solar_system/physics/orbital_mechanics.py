@@ -166,7 +166,8 @@ class OrbitalMechanics:
         Returns:
             Tuple of (periapsis, apoapsis) in meters
         """
-        assert a is not None, "a must be provided"
+        if not (a is not None):
+            raise ValueError("a must be provided")
         periapsis = a * (1 - e)
         apoapsis = a * (1 + e)
         return periapsis, apoapsis
@@ -234,7 +235,8 @@ class OrbitalMechanics:
         Returns:
             Synodic period in the same time unit
         """
-        assert period_one is not None, "period_one must be provided"
+        if not (period_one is not None):
+            raise ValueError("period_one must be provided")
         if period_one == period_two:
             return float("inf")
         return abs(1 / (1 / period_one - 1 / period_two))
@@ -254,7 +256,8 @@ class OrbitalMechanics:
         Returns:
             Phase angle in radians (-π to π)
         """
-        assert r1 is not None, "r1 must be provided"
+        if not (r1 is not None):
+            raise ValueError("r1 must be provided")
         if reference_up is None:
             reference_up = np.array([0, 0, 1])
 
@@ -342,7 +345,8 @@ class OrbitalMechanics:
             Time of flight in seconds
         """
         # Convert to eccentric anomalies
-        assert nu1 is not None, "nu1 must be provided"
+        if not (nu1 is not None):
+            raise ValueError("nu1 must be provided")
         eccentric_anomaly_start = OrbitalMechanics.eccentric_anomaly_from_true(nu1, e)
         eccentric_anomaly_end = OrbitalMechanics.eccentric_anomaly_from_true(nu2, e)
 
@@ -397,7 +401,8 @@ class OrbitalMechanics:
         Returns:
             Tuple of (radial velocity, tangential velocity) in m/s
         """
-        assert a is not None, "a must be provided"
+        if not (a is not None):
+            raise ValueError("a must be provided")
         h = OrbitalMechanics.specific_angular_momentum(a, e, mu)
         r = OrbitalMechanics.radius_at_true_anomaly(a, e, nu)
 
@@ -419,7 +424,8 @@ class OrbitalMechanics:
         Returns:
             OrbitalParameters dataclass with all computed values
         """
-        assert a is not None, "a must be provided"
+        if not (a is not None):
+            raise ValueError("a must be provided")
         periapsis, apoapsis = OrbitalMechanics.periapsis_apoapsis(a, e)
 
         return OrbitalParameters(
@@ -449,7 +455,8 @@ class OrbitalMechanics:
         Returns:
             Dictionary with orbital elements
         """
-        assert position is not None, "position must be provided"
+        if not (position is not None):
+            raise ValueError("position must be provided")
         r = np.linalg.norm(position)
         v = np.linalg.norm(velocity)
 
@@ -537,7 +544,8 @@ class OrbitalMechanics:
             Tuple of (position, velocity) vectors in meters and m/s
         """
         # Distance
-        assert a is not None, "a must be provided"
+        if not (a is not None):
+            raise ValueError("a must be provided")
         r = a * (1 - e**2) / (1 + e * math.cos(nu))
 
         # Position in orbital plane

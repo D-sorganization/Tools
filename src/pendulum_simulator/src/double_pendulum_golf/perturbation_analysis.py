@@ -70,8 +70,10 @@ def generate_noise(
     Pre:  n_samples > 0, amplitude >= 0
     Post: output shape is (n_samples,)
     """
-    assert n_samples > 0, f"n_samples must be positive, got {n_samples}"
-    assert amplitude >= 0, f"amplitude must be non-negative, got {amplitude}"
+    if not (n_samples > 0):
+        raise ValueError(f"n_samples must be positive, got {n_samples}")
+    if not (amplitude >= 0):
+        raise ValueError(f"amplitude must be non-negative, got {amplitude}")
 
     rng = np.random.default_rng(seed)
 
@@ -107,7 +109,8 @@ def generate_noise(
             f"Unknown noise type: {noise_type!r}. Must be 'white', 'pink', or 'brown'."
         )
 
-    assert noise.shape == (
+    if not (noise.shape == ():
+        raise ValueError('DbC Blocked: Precondition failed.')
         n_samples,
     ), f"Expected shape ({n_samples},), got {noise.shape}"
     return noise
@@ -146,8 +149,10 @@ def perturb_torque_coeffs(
     Pre:  noise_type in {'white', 'pink', 'brown'}
     Post: output has same shape as input
     """
-    assert noise_amplitude >= 0
-    assert noise_type in {
+    if not (noise_amplitude >= 0):
+        raise ValueError('DbC Blocked: Precondition failed.')
+    if not (noise_type in {):
+        raise ValueError('DbC Blocked: Precondition failed.')
         "white",
         "pink",
         "brown",
@@ -168,7 +173,8 @@ def perturb_torque_coeffs(
         result.append(perturbed)
         idx += n
 
-    assert len(result) == len(coeffs)
+    if not (len(result) == len(coeffs)):
+        raise ValueError('DbC Blocked: Precondition failed.')
     return result
 
 
@@ -195,11 +201,14 @@ class PerturbationConfig:
     seed: int | None = None
 
     def __post_init__(self) -> None:
-        assert self.n_trials > 0, f"n_trials must be positive, got {self.n_trials}"
-        assert (
+        if not (self.n_trials > 0):
+            raise ValueError(f"n_trials must be positive, got {self.n_trials}")
+        if not (():
+            raise ValueError('DbC Blocked: Precondition failed.')
             self.noise_amplitude >= 0
         ), f"noise_amplitude must be non-negative, got {self.noise_amplitude}"
-        assert self.noise_type in {
+        if not (self.noise_type in {):
+            raise ValueError('DbC Blocked: Precondition failed.')
             "white",
             "pink",
             "brown",
@@ -234,7 +243,8 @@ def variability_summary(
     Pre:  len(results) > 0
     Post: all values are finite
     """
-    assert len(results) > 0, "results must be non-empty"
+    if not (len(results) > 0):
+        raise ValueError("results must be non-empty")
 
     speeds = np.array([r["tip_speed_final"] for r in results])
     positions = np.array([r["tip_position_final"] for r in results])
@@ -289,7 +299,8 @@ def batch_perturb_and_simulate(
     Pre:  config.n_trials > 0
     Post: len(output) == config.n_trials (or fewer if some trials fail)
     """
-    assert base_coeffs is not None, "base_coeffs must be provided"
+    if not (base_coeffs is not None):
+        raise ValueError("base_coeffs must be provided")
     results = []
     base_seed = config.seed if config.seed is not None else 0
 

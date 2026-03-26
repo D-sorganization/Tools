@@ -62,7 +62,8 @@ class ScanPreviewMixin:
         Args:
             stats: Dictionary with folder statistics.
         """
-        assert stats is not None, "stats must be provided"
+        if not (stats is not None):
+            raise ValueError("stats must be provided")
         self.stats_text.configure(state="normal")
         self.stats_text.delete("1.0", "end")
 
@@ -142,7 +143,8 @@ class ScanPreviewMixin:
             files: List of (path, stat_result) tuples.
             base_path: Root path for relative path calculation.
         """
-        assert files is not None, "files must be provided"
+        if not (files is not None):
+            raise ValueError("files must be provided")
         from datetime import datetime as dt
 
         for file_path, stat in files:
@@ -219,7 +221,8 @@ class PackOperationMixin:
 
             def progress_callback(filename: str, current: int, total: int) -> None:
                 """Report pack progress to UI."""
-                assert filename is not None, "filename must be provided"
+                if not (filename is not None):
+                    raise ValueError("filename must be provided")
                 progress = (current / total) * 100
                 self.root.after(
                     0,
@@ -326,7 +329,8 @@ class UnpackOperationMixin:
 
             def progress_callback(filename: str, current: int, total: int) -> None:
                 """Report unpack progress to UI."""
-                assert filename is not None, "filename must be provided"
+                if not (filename is not None):
+                    raise ValueError("filename must be provided")
                 progress = (current / total) * 100
                 self.root.after(
                     0,

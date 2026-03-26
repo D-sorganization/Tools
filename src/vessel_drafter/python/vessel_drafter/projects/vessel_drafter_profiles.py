@@ -169,7 +169,8 @@ def _offset_ellipse_point(
     theta_radians: float,
     top: bool,
 ) -> ProfilePoint:
-    assert radius_in is not None, "radius_in must be provided"
+    if not (radius_in is not None):
+        raise ValueError("radius_in must be provided")
     base_x_in = radius_in * cos(theta_radians)
     axial_multiplier = 1.0 if top else -1.0
     base_z_in = springline_z_in + (axial_multiplier * depth_in * sin(theta_radians))

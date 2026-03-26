@@ -197,7 +197,8 @@ def calculate_ideal_gas_cp(component: str, temperature: float) -> float:
     Reference:
         NIST Chemistry WebBook, Shomate Equation
     """
-    assert component is not None, "component must be provided"
+    if not (component is not None):
+        raise ValueError("component must be provided")
     if component not in GAS_DATABASE:
         logger.warning(f"Component '{component}' not in database, using Air Cp")
         component = "Air"
@@ -225,7 +226,8 @@ def calculate_mixture_cp(composition: dict[str, float], temperature: float) -> f
     Returns:
         Mixture Cp in J/(mol·K)
     """
-    assert composition is not None, "composition must be provided"
+    if not (composition is not None):
+        raise ValueError("composition must be provided")
     cp_mix = 0.0
 
     for component, mole_frac in composition.items():
@@ -263,7 +265,8 @@ def calculate_heat_capacity_ratio(
     Reference:
         Ideal gas relations: Cp - Cv = R (universal gas constant per mole)
     """
-    assert composition is not None, "composition must be provided"
+    if not (composition is not None):
+        raise ValueError("composition must be provided")
     R_GAS = R_UNIVERSAL_J_MOL_K  # J/(mol·K)
 
     cp_mix = calculate_mixture_cp(composition, temperature)
@@ -308,7 +311,8 @@ def calculate_speed_of_sound(
     Reference:
         Ideal gas isentropic speed of sound formula
     """
-    assert composition is not None, "composition must be provided"
+    if not (composition is not None):
+        raise ValueError("composition must be provided")
     if molecular_weight is None:
         molecular_weight = calculate_mixture_molecular_weight(composition)
 
@@ -375,7 +379,8 @@ def calculate_ideal_gas_density(
     Reference:
         Ideal Gas Law: PV = nRT
     """
-    assert molecular_weight is not None, "molecular_weight must be provided"
+    if not (molecular_weight is not None):
+        raise ValueError("molecular_weight must be provided")
     density = (pressure * molecular_weight) / (R_UNIVERSAL * temperature)
     logger.debug(f"Ideal gas density = {density:.4f} kg/m³")
     return float(density)
@@ -407,7 +412,8 @@ def calculate_compressibility_factor(
         >>> logger.debug(f"Z = {z:.4f}")
     """
     # Calculate pseudocritical properties using Kay's rule
-    assert composition is not None, "composition must be provided"
+    if not (composition is not None):
+        raise ValueError("composition must be provided")
     T_pc = 0.0  # Pseudocritical temperature
     P_pc = 0.0  # Pseudocritical pressure
     omega_mix = 0.0  # Mixture acentric factor
@@ -463,7 +469,8 @@ def calculate_real_gas_density(
     Returns:
         Density (kg/m³)
     """
-    assert molecular_weight is not None, "molecular_weight must be provided"
+    if not (molecular_weight is not None):
+        raise ValueError("molecular_weight must be provided")
     density = (pressure * molecular_weight) / (
         compressibility * R_UNIVERSAL * temperature
     )
@@ -499,7 +506,8 @@ def calculate_pure_gas_viscosity_lucas(
         More accurate than Sutherland's law for high-temperature applications.
     """
     # Low pressure viscosity (dilute gas)
-    assert temperature is not None, "temperature must be provided"
+    if not (temperature is not None):
+        raise ValueError("temperature must be provided")
     T_r = temperature / props.critical_temp
     M = props.molecular_weight
 
@@ -604,7 +612,8 @@ def calculate_pure_gas_viscosity_sutherland(
         O2: S = 127 K
         CO2: S = 240 K
     """
-    assert temperature is not None, "temperature must be provided"
+    if not (temperature is not None):
+        raise ValueError("temperature must be provided")
     mu = mu_ref * ((temperature / T_ref) ** 1.5) * (T_ref + S) / (temperature + S)
     return float(mu)
 
@@ -636,7 +645,8 @@ def _compute_pure_viscosities(
     Returns:
         Dictionary of {component: viscosity_Pa_s}
     """
-    assert composition is not None, "composition must be provided"
+    if not (composition is not None):
+        raise ValueError("composition must be provided")
     pure_viscosities: dict[str, float] = {}
     for component in composition.keys():
         if component not in GAS_DATABASE:
@@ -676,7 +686,8 @@ def _wilke_mixing_rule(
     Returns:
         Mixture dynamic viscosity (Pa·s)
     """
-    assert composition is not None, "composition must be provided"
+    if not (composition is not None):
+        raise ValueError("composition must be provided")
     components = list(composition.keys())
     component_data: dict[str, dict[str, float]] = {}
     for comp in components:
@@ -767,7 +778,8 @@ def calculate_mixture_viscosity_wilke(
         >>> mu = calculate_mixture_viscosity_wilke(comp, 800, 1e5)
         >>> logger.debug(f"Viscosity = {mu:.6f} Pa·s = {mu*1e6:.2f} µPa·s")
     """
-    assert composition is not None, "composition must be provided"
+    if not (composition is not None):
+        raise ValueError("composition must be provided")
     pure_viscosities = _compute_pure_viscosities(composition, temperature, pressure)
     mu_mix = _wilke_mixing_rule(composition, pure_viscosities)
     logger.debug(f"Mixture viscosity = {mu_mix:.6e} Pa·s = {mu_mix * 1e6:.3f} µPa·s")
@@ -789,7 +801,8 @@ def calculate_mixture_viscosity_simple(
     Returns:
         Mixture dynamic viscosity (Pa·s)
     """
-    assert composition is not None, "composition must be provided"
+    if not (composition is not None):
+        raise ValueError("composition must be provided")
     mu_mix = 0.0
     for component, mole_frac in composition.items():
         if component in SUTHERLAND_CONSTANTS:
@@ -841,7 +854,8 @@ def calculate_gas_properties(
         >>> logger.debug(f"Gamma: {props['heat_capacity_ratio']:.3f}")
     """
     # Molecular weight
-    assert composition is not None, "composition must be provided"
+    if not (composition is not None):
+        raise ValueError("composition must be provided")
     mw = calculate_mixture_molecular_weight(composition)
 
     # Compressibility factor

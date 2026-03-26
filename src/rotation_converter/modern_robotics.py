@@ -514,7 +514,8 @@ def IKinBody(
     Returns:
         Tuple of (thetalist, success) where success indicates convergence.
     """
-    assert eomg is not None, "eomg must be provided"
+    if not (eomg is not None):
+        raise ValueError("eomg must be provided")
     Blist = np.asarray(Blist, dtype=float)
     M = np.asarray(M, dtype=float)
     T_desired = np.asarray(T_desired, dtype=float)
@@ -585,7 +586,8 @@ def ScrewTrajectory(
     Returns:
         List of N 4x4 SE(3) matrices along the trajectory.
     """
-    assert Tf is not None, "Tf must be provided"
+    if not (Tf is not None):
+        raise ValueError("Tf must be provided")
     Xstart = np.asarray(Xstart, dtype=float)
     Xend = np.asarray(Xend, dtype=float)
     require(Xstart.shape == (4, 4), "Xstart must be 4x4")
@@ -927,7 +929,8 @@ def IKinSpace(Slist, M, T, thetalist0, eomg, ev):
     Output:
         (np.array([ 1.57073783,  2.99966384,  3.1415342 ]), True)
     """
-    assert Slist is not None, "Slist must be provided"
+    if not (Slist is not None):
+        raise ValueError("Slist must be provided")
     thetalist = np.array(thetalist0).copy()
     i = 0
     maxiterations = 20
@@ -1028,7 +1031,8 @@ def InverseDynamics(thetalist, dthetalist, ddthetalist, g, Ftip, Mlist, Glist, S
     Output:
         np.array([74.69616155, -33.06766016, -3.23057314])
     """
-    assert thetalist is not None, "thetalist must be provided"
+    if not (thetalist is not None):
+        raise ValueError("thetalist must be provided")
     n = len(thetalist)
     Mi = np.eye(4)
     Ai = np.zeros((6, n))
@@ -1111,7 +1115,8 @@ def MassMatrix(thetalist, Mlist, Glist, Slist):
                   [-3.07146754e-01,  1.96850717e+00,  4.32157368e-01]
                   [-7.18426391e-03,  4.32157368e-01,  1.91630858e-01]])
     """
-    assert thetalist is not None, "thetalist must be provided"
+    if not (thetalist is not None):
+        raise ValueError("thetalist must be provided")
     n = len(thetalist)
     M = np.zeros((n, n))
     for i in range(n):
@@ -1232,7 +1237,8 @@ def GravityForces(thetalist, g, Mlist, Glist, Slist):
     Output:
         np.array([28.40331262, -37.64094817, -5.4415892])
     """
-    assert thetalist is not None, "thetalist must be provided"
+    if not (thetalist is not None):
+        raise ValueError("thetalist must be provided")
     n = len(thetalist)
     return InverseDynamics(
         thetalist, [0] * n, [0] * n, g, [0, 0, 0, 0, 0, 0], Mlist, Glist, Slist
@@ -1285,7 +1291,8 @@ def EndEffectorForces(thetalist, Ftip, Mlist, Glist, Slist):
     Output:
         np.array([1.40954608, 1.85771497, 1.392409])
     """
-    assert thetalist is not None, "thetalist must be provided"
+    if not (thetalist is not None):
+        raise ValueError("thetalist must be provided")
     n = len(thetalist)
     return InverseDynamics(
         thetalist, [0] * n, [0] * n, [0, 0, 0], Ftip, Mlist, Glist, Slist
@@ -1471,7 +1478,8 @@ def InverseDynamicsTrajectory(
             plt.title("Plot of Torque Trajectories")
             plt.show()
     """
-    assert thetamat is not None, "thetamat must be provided"
+    if not (thetamat is not None):
+        raise ValueError("thetamat must be provided")
     thetamat = np.array(thetamat).T
     dthetamat = np.array(dthetamat).T
     ddthetamat = np.array(ddthetamat).T
@@ -1593,7 +1601,8 @@ def ForwardDynamicsTrajectory(
             plt.title("Plot of Joint Angles and Joint Velocities")
             plt.show()
     """
-    assert thetalist is not None, "thetalist must be provided"
+    if not (thetalist is not None):
+        raise ValueError("thetalist must be provided")
     taumat = np.array(taumat).T
     Ftipmat = np.array(Ftipmat).T
     thetamat = taumat.copy().astype(float)
@@ -1687,7 +1696,8 @@ def JointTrajectory(thetastart, thetaend, Tf, N, method):
                   [1.1792, 0.448, 0.5376, 1.0896, 1.896, 1.8128, 0.8064, 1]
                   [   1.2,   0.5,    0.6,    1.1,     2,      2,    0.9, 1]])
     """
-    assert thetastart is not None, "thetastart must be provided"
+    if not (thetastart is not None):
+        raise ValueError("thetastart must be provided")
     N = int(N)
     timegap = Tf / (N - 1.0)
     traj = np.zeros((len(thetastart), N))
@@ -1750,7 +1760,8 @@ def CartesianTrajectory(Xstart, Xend, Tf, N, method):
                    [0, 1, 0, 4.1]
                    [0, 0, 0,   1]])]
     """
-    assert Xstart is not None, "Xstart must be provided"
+    if not (Xstart is not None):
+        raise ValueError("Xstart must be provided")
     N = int(N)
     timegap = Tf / (N - 1.0)
     traj = [[None]] * N
@@ -1846,7 +1857,8 @@ def ComputedTorque(
     Output:
         np.array([133.00525246, -29.94223324, -3.03276856])
     """
-    assert thetalist is not None, "thetalist must be provided"
+    if not (thetalist is not None):
+        raise ValueError("thetalist must be provided")
     e = np.subtract(thetalistd, thetalist)
     return np.dot(
         MassMatrix(thetalist, Mlist, Glist, Slist),
@@ -1996,7 +2008,8 @@ def SimulateControl(
                              ddthetamatd, gtilde, Mtildelist, Gtildelist, \
                              Kp, Ki, Kd, dt, intRes)
     """
-    assert thetalist is not None, "thetalist must be provided"
+    if not (thetalist is not None):
+        raise ValueError("thetalist must be provided")
     Ftipmat = np.array(Ftipmat).T
     thetamatd = np.array(thetamatd).T
     dthetamatd = np.array(dthetamatd).T

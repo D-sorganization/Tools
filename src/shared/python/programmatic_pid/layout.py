@@ -69,7 +69,8 @@ class LabelPlacer:
             - Always returns a valid (x, y, align) — falls back to first
               preferred offset if all collide.
         """
-        assert preferred, "preferred positions list must not be empty"
+        if not (preferred):
+            raise ValueError("preferred positions list must not be empty")
 
         ax, ay = to_float(anchor[0]), to_float(anchor[1])
         for dx, dy, align in preferred:
@@ -107,7 +108,8 @@ def spread_instrument_positions(
         - Returned list has the same length as *instruments*.
         - Each returned dict is a shallow copy with updated ``x`` / ``y``.
     """
-    assert instruments is not None, "instruments must be provided"
+    if not (instruments is not None):
+        raise ValueError("instruments must be provided")
     placed: list[tuple[float, float]] = []
     output: list[dict[str, Any]] = []
     ring = [

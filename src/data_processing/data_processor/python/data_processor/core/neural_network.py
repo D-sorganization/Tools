@@ -131,7 +131,8 @@ class NeuralNetworkInterface:
         include_evaluation: bool = True,
     ) -> Path:
         """Export training script for a specific framework."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         self._exporter.normalization_params = self._trainer.normalization_params
         return self._exporter.export_script(
             config=config,
@@ -149,13 +150,15 @@ class NeuralNetworkInterface:
         output_path: Path | str,
     ) -> Path:
         """Export network configuration to JSON."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         self._exporter.normalization_params = self._trainer.normalization_params
         return self._exporter.export_config(config=config, output_path=output_path)
 
     def import_config(self, config_path: Path | str) -> NetworkConfig:
         """Import network configuration from JSON."""
-        assert config_path is not None, "config_path must be provided"
+        if not (config_path is not None):
+            raise ValueError("config_path must be provided")
         config = self._exporter.import_config(config_path)
         self._trainer.config = config
         self._trainer._normalization_params = self._exporter.normalization_params

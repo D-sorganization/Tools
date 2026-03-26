@@ -389,7 +389,8 @@ class ODESolverWindow(QMainWindow):
 
     def _on_preset_changed(self, preset_name: str) -> None:
         """Handle preset selection change."""
-        assert preset_name is not None, "preset_name must be provided"
+        if not (preset_name is not None):
+            raise ValueError("preset_name must be provided")
         if preset_name == "Custom":
             self.preset_description.setText("")
             return
@@ -416,7 +417,8 @@ class ODESolverWindow(QMainWindow):
 
     def _parse_dict_input(self, text: str) -> dict[str, str]:
         """Parse colon-separated key-value pairs from text."""
-        assert text is not None, "text must be provided"
+        if not (text is not None):
+            raise ValueError("text must be provided")
         result = {}
         for line in text.strip().split("\n"):
             line = line.strip()

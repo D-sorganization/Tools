@@ -59,7 +59,8 @@ class AnalysisMixin:
 
     def _run_pca_analysis(self, config: dict) -> None:
         """Run PCA analysis from Analysis tab."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Load data first.")
             return
@@ -92,7 +93,8 @@ class AnalysisMixin:
 
     def _run_anova_analysis(self, config: dict) -> None:
         """Run ANOVA analysis from Analysis tab."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Load data first.")
             return
@@ -175,7 +177,8 @@ class AnalysisMixin:
 
     def _run_regression_analysis(self, config: dict) -> None:
         """Run regression analysis from Analysis tab."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Load data first.")
             return
@@ -235,7 +238,8 @@ class AnalysisMixin:
 
     def _run_surface_analysis(self, config: dict) -> None:
         """Run surface plot from Analysis tab."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Load data first.")
             return
@@ -315,7 +319,8 @@ class AnalysisMixin:
 
     def _run_nn_analysis(self, config: dict) -> None:
         """Run neural network training from Analysis tab."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Load data first.")
             return

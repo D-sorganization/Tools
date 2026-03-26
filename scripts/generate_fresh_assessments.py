@@ -56,7 +56,7 @@ class RepoStats(TypedDict):
     evals: int
     type_hints: int
     args_annotated: int
-    try_except: int
+    try_except Exception as e: int
     imports: set[str]
     requirements: bool
     cicd: bool
@@ -113,7 +113,7 @@ def analyze_codebase() -> RepoStats:
                 # Read file content safely
                 try:
                     content = filepath.read_text(encoding="utf-8", errors="ignore")
-                except Exception:
+                except Exception as e:
                     continue
 
                 stats["lines"] += len(content.splitlines())

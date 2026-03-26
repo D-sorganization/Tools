@@ -39,7 +39,8 @@ except ImportError:
         timeout: int | None = None,
         check: bool = False,
     ):
-        assert script_path is not None, "script_path must be provided"
+        if not (script_path is not None):
+            raise ValueError("script_path must be provided")
         command = [sys.executable, str(script_path)]
         if args:
             command.extend(args)

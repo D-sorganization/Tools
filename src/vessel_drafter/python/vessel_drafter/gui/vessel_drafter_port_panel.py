@@ -20,7 +20,8 @@ from PyQt6.QtWidgets import (
 
 
 def make_double_spin(value: float, minimum: float, maximum: float) -> QDoubleSpinBox:
-    assert value is not None, "value must be provided"
+    if not (value is not None):
+        raise ValueError("value must be provided")
     spin = QDoubleSpinBox()
     spin.setRange(minimum, maximum)
     spin.setDecimals(2)
@@ -39,7 +40,8 @@ class PortFieldSpec:
 
 class PortValueDialog(QDialog):
     def __init__(self, title: str, fields: tuple[PortFieldSpec, ...], parent: QWidget):
-        assert title is not None, "title must be provided"
+        if not (title is not None):
+            raise ValueError("title must be provided")
         super().__init__(parent)
         self.setWindowTitle(title)
         self._spins = tuple(
@@ -67,7 +69,8 @@ class PortValueDialog(QDialog):
 
 class PortTableSection(QGroupBox):
     def __init__(self, title: str, headers: tuple[str, str, str]):
-        assert title is not None, "title must be provided"
+        if not (title is not None):
+            raise ValueError("title must be provided")
         super().__init__(title)
         self.table = QTableWidget(0, len(headers))
         self.table.setHorizontalHeaderLabels(list(headers))
@@ -89,7 +92,8 @@ class PortTableSection(QGroupBox):
         root.addLayout(button_row)
 
     def append_row(self, values: tuple[float, float, float]) -> None:
-        assert values is not None, "values must be provided"
+        if not (values is not None):
+            raise ValueError("values must be provided")
         row_index = self.table.rowCount()
         self.table.insertRow(row_index)
         for column_index, value in enumerate(values):

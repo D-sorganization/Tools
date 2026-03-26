@@ -30,7 +30,8 @@ class RenameProposal:
         author: str = "",
         confidence: float = 0.0,
     ):
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         self.file_path = file_path
         self.current_name = current_name
         self.proposed_name = proposed_name
@@ -54,7 +55,8 @@ class APIRenameManager:
         include_author: bool = False,
         recursive: bool = True,
     ):
-        assert directory is not None, "directory must be provided"
+        if not (directory is not None):
+            raise ValueError("directory must be provided")
         self.directory = directory
         self.cache = cache
         self.llm = llm
@@ -174,7 +176,8 @@ class APIRenameManager:
 
     def approve_proposal(self, index: int, custom_name: str | None = None) -> bool:
         """Approve a rename proposal, optionally with a custom name."""
-        assert index is not None, "index must be provided"
+        if not (index is not None):
+            raise ValueError("index must be provided")
         if 0 <= index < len(self.proposals):
             proposal = self.proposals[index]
             proposal.approved = True
@@ -189,7 +192,8 @@ class APIRenameManager:
 
     def reject_proposal(self, index: int) -> bool:
         """Reject a rename proposal."""
-        assert index is not None, "index must be provided"
+        if not (index is not None):
+            raise ValueError("index must be provided")
         if 0 <= index < len(self.proposals):
             proposal = self.proposals[index]
             proposal.approved = False
@@ -208,7 +212,8 @@ class APIRenameManager:
 
     def execute_approved_renames(self, dry_run: bool = True) -> dict[str, int]:
         """Execute all approved rename operations."""
-        assert dry_run is not None, "dry_run must be provided"
+        if not (dry_run is not None):
+            raise ValueError("dry_run must be provided")
         approved = self.get_approved_proposals()
         results = {"success": 0, "failed": 0, "skipped": 0}
 
@@ -252,7 +257,8 @@ class APIRenameManager:
 
     def export_proposals_csv(self, output_path: Path) -> None:
         """Export proposals to CSV for external review."""
-        assert output_path is not None, "output_path must be provided"
+        if not (output_path is not None):
+            raise ValueError("output_path must be provided")
         import csv
 
         with open(output_path, "w", newline="", encoding="utf-8") as csvfile:

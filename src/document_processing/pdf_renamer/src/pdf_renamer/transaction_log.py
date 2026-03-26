@@ -36,7 +36,8 @@ class TransactionLog:
             success: Whether operation succeeded
             error: Error message if failed
         """
-        assert original_path is not None, "original_path must be provided"
+        if not (original_path is not None):
+            raise ValueError("original_path must be provided")
         entry = {
             "session_id": self.session_id,
             "timestamp": datetime.now().isoformat(),
@@ -57,7 +58,8 @@ class TransactionLog:
             success: Whether operation succeeded
             error: Error message if failed
         """
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         entry = {
             "session_id": self.session_id,
             "timestamp": datetime.now().isoformat(),
@@ -119,7 +121,8 @@ class TransactionLog:
             session_id: Session ID to rollback. If None, uses current session.
             dry_run: If True, only show what would be rolled back
         """
-        assert dry_run is not None, "dry_run must be provided"
+        if not (dry_run is not None):
+            raise ValueError("dry_run must be provided")
         operations = self.get_session_operations(session_id)
 
         # Reverse the operations to undo in reverse order

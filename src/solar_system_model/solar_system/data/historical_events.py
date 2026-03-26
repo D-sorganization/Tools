@@ -857,7 +857,8 @@ def get_events_for_date(dt: datetime, window_days: int = 3) -> list[dict[str, An
     Returns:
         List of matching events
     """
-    assert dt is not None, "dt must be provided"
+    if not (dt is not None):
+        raise ValueError("dt must be provided")
     matching_events = []
 
     for event in SPACE_EVENTS:

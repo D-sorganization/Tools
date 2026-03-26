@@ -94,7 +94,8 @@ def _fmt_vec(v: np.ndarray, decimals: int = 6) -> str:
 
 def _fmt_mat(M: np.ndarray, decimals: int = 6) -> str:
     """Format a numpy matrix as a multi-line string."""
-    assert M is not None, "M must be provided"
+    if not (M is not None):
+        raise ValueError("M must be provided")
     lines = []
     for row in M:
         lines.append("  ".join(f"{x: .{decimals}f}" for x in row))
@@ -126,7 +127,7 @@ def _get_plot_colors() -> dict[str, Any]:
                 "surface": colors.get("group_bg", _DARK_SURFACE),
                 "axes": CHART_COLORS[:3] if CHART_COLORS else _AXIS_COLORS,
             }
-        except Exception:
+        except Exception as e:
             pass
     return {
         "bg": _DARK_BG,
@@ -139,7 +140,8 @@ def _get_plot_colors() -> dict[str, Any]:
 
 def _style_figure(fig: Figure, ax: Any = None) -> None:
     """Apply current theme colours to a matplotlib figure."""
-    assert fig is not None, "fig must be provided"
+    if not (fig is not None):
+        raise ValueError("fig must be provided")
     c = _get_plot_colors()
     fig.set_facecolor(c["bg"])
     if ax is not None:
@@ -310,7 +312,8 @@ class RotationConverterTab(QWidget):
         self._draw_rotation(rot)
 
     def _update_main_result(self, rot: Rotation) -> None:
-        assert rot is not None, "rot must be provided"
+        if not (rot is not None):
+            raise ValueError("rot must be provided")
         idx = self._target_repr.currentIndex()
         conv = self._target_euler_conv.currentText()
         try:
@@ -334,7 +337,8 @@ class RotationConverterTab(QWidget):
             self._main_result.setText(f"Error: {e}")
 
     def _display_all(self, rot: Rotation, conv: str) -> None:
-        assert rot is not None, "rot must be provided"
+        if not (rot is not None):
+            raise ValueError("rot must be provided")
         q = rot.as_quaternion()
         R = rot.as_rotation_matrix()
         axis, angle = rot.as_axis_angle()
@@ -351,7 +355,7 @@ class RotationConverterTab(QWidget):
                 e = rot.as_euler(c)
                 marker = " ◀" if c == conv else ""
                 lines.append(f"  {c}: {e[0]: .6f}  {e[1]: .6f}  {e[2]: .6f}{marker}")
-            except Exception:
+            except Exception as e:
                 lines.append(f"  {c}: (error)")
         lines += [
             "",
@@ -368,7 +372,8 @@ class RotationConverterTab(QWidget):
         self._output_text.setPlainText("\n".join(lines))
 
     def _draw_rotation(self, rot: Rotation) -> None:
-        assert rot is not None, "rot must be provided"
+        if not (rot is not None):
+            raise ValueError("rot must be provided")
         self._fig.clear()
         ax = self._fig.add_subplot(111, projection="3d")
         _style_figure(self._fig, ax)
@@ -534,7 +539,8 @@ class RigidTransformTab(QWidget):
         self._draw_transform(T)
 
     def _display_transform(self, T: RigidTransform) -> None:
-        assert T is not None, "T must be provided"
+        if not (T is not None):
+            raise ValueError("T must be provided")
         q, p = T.as_quaternion_translation()
         R, p2 = T.as_rotation_translation()
         euler, _ = T.as_euler_translation("xyz")
@@ -583,13 +589,14 @@ class RigidTransformTab(QWidget):
                 f"  pitch: {screw['pitch']:.6f}",
                 f"  theta: {screw['theta']:.6f} rad",
             ]
-        except Exception:
+        except Exception as e:
             pass
 
         self._tf_output.setPlainText("\n".join(lines))
 
     def _draw_transform(self, T: RigidTransform) -> None:
-        assert T is not None, "T must be provided"
+        if not (T is not None):
+            raise ValueError("T must be provided")
         self._tf_fig.clear()
         ax = self._tf_fig.add_subplot(111, projection="3d")
         _style_figure(self._tf_fig, ax)
@@ -1177,11 +1184,13 @@ class RotationConverterMainWindow(QMainWindow):
 
     def _build_menus(self) -> None:
         menu_bar = self.menuBar()
-        assert menu_bar is not None
+        if not (menu_bar is not None):
+            raise ValueError('DbC Blocked: Precondition failed.')
 
         # File menu
         file_menu = menu_bar.addMenu("&File")
-        assert file_menu is not None
+        if not (file_menu is not None):
+            raise ValueError('DbC Blocked: Precondition failed.')
         quit_action = QAction("&Quit", self)
         quit_action.setShortcut("Ctrl+Q")
         quit_action.triggered.connect(self.close)
@@ -1189,7 +1198,8 @@ class RotationConverterMainWindow(QMainWindow):
 
         # Help menu
         help_menu = menu_bar.addMenu("&Help")
-        assert help_menu is not None
+        if not (help_menu is not None):
+            raise ValueError('DbC Blocked: Precondition failed.')
         about = QAction("&About", self)
         about.triggered.connect(self._show_about)
         help_menu.addAction(about)
@@ -1200,7 +1210,7 @@ class RotationConverterMainWindow(QMainWindow):
                 mgr = get_theme_manager()
                 mgr.apply_theme_to_window(self)
                 mgr.themeChanged.connect(self._on_theme_changed)
-            except Exception:
+            except Exception as e:
                 pass
 
     def _on_theme_changed(self, theme_name: str) -> None:

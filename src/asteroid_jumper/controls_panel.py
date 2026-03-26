@@ -38,7 +38,8 @@ class ControlsPanel(QWidget):
         self, controller: SimController, parent: QWidget | None = None
     ) -> None:
         super().__init__(parent)
-        assert controller is not None
+        if not (controller is not None):
+            raise ValueError('DbC Blocked: Precondition failed.')
         self._ctrl = controller
         self._build_ui()
 
@@ -48,7 +49,8 @@ class ControlsPanel(QWidget):
 
     def set_force_angle(self, angle_deg: float) -> None:
         """Update force-angle display when mouse drag triggers change."""
-        assert angle_deg is not None, "angle_deg must be provided"
+        if not (angle_deg is not None):
+            raise ValueError("angle_deg must be provided")
         self._force_angle_spin.blockSignals(True)
         self._force_angle_spin.setValue(angle_deg)
         self._force_angle_spin.blockSignals(False)
@@ -61,7 +63,8 @@ class ControlsPanel(QWidget):
 
     def enable_controls(self, enabled: bool) -> None:
         """Lock controls during flight."""
-        assert enabled is not None, "enabled must be provided"
+        if not (enabled is not None):
+            raise ValueError("enabled must be provided")
         self._asteroid_mass_spin.setEnabled(enabled)
         self._shape_combo.setEnabled(enabled)
         self._semi_a_spin.setEnabled(enabled)
@@ -167,7 +170,8 @@ class ControlsPanel(QWidget):
     # ------------------------------------------------------------------
 
     def _on_shape_changed(self, index: int) -> None:
-        assert index is not None, "index must be provided"
+        if not (index is not None):
+            raise ValueError("index must be provided")
         shapes = [ShapeKind.ELLIPSE, ShapeKind.CIRCLE, ShapeKind.RANDOM]
         self._ctrl.configure(shape_kind=shapes[index])
         self._update_offcentre()
@@ -186,7 +190,8 @@ class ControlsPanel(QWidget):
         self.config_changed.emit()
 
     def _on_force_angle_changed(self, value: float) -> None:
-        assert value is not None, "value must be provided"
+        if not (value is not None):
+            raise ValueError("value must be provided")
         self._ctrl.set_force_angle(value)
         self._ctrl.set_jump_direction(value)
         self._ctrl.state = self._ctrl._build_state()
@@ -210,7 +215,8 @@ def _make_dspin(
     decimals: int = 2,
 ) -> QDoubleSpinBox:
     """Create a configured QDoubleSpinBox."""
-    assert lo is not None, "lo must be provided"
+    if not (lo is not None):
+        raise ValueError("lo must be provided")
     spin = QDoubleSpinBox()
     spin.setRange(lo, hi)
     spin.setValue(default)

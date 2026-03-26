@@ -179,7 +179,8 @@ class MultivariateRegressor(FittingMixin, DiagnosticsMixin):
             X grid, Y grid, Z predictions
         """
         # Create grid
-        assert result is not None, "result must be provided"
+        if not (result is not None):
+            raise ValueError("result must be provided")
         x_lin = np.linspace(x_range[0], x_range[1], grid_size)
         y_lin = np.linspace(y_range[0], y_range[1], grid_size)
         x_grid, y_grid = np.meshgrid(x_lin, y_lin)

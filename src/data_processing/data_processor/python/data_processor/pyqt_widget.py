@@ -170,7 +170,8 @@ class DataProcessorWidget(QWidget):
             QMessageBox.critical(self, "Error", f"Processing failed: {e}")
 
     def _update_table(self, df: pd.DataFrame) -> None:
-        assert df is not None, "df must be provided"
+        if not (df is not None):
+            raise ValueError("df must be provided")
         self.result_table.clear()
         # Show max 100 rows for preview
         self.result_table.setRowCount(min(100, len(df)))

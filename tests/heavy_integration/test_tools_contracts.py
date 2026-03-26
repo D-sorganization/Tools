@@ -46,7 +46,7 @@ class TestTrimeshGeometryContracts:
             # If boolean is available (requires manifold/blender backend)
             assert result is not None
             assert result.volume > 0
-        except Exception:
+        except Exception as e:
             pytest.skip("Trimesh boolean backend not available in this environment")
 
 

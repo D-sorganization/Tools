@@ -61,7 +61,8 @@ class AsteroidJumperRenderer(QWidget):
         self, controller: SimController, parent: QWidget | None = None
     ) -> None:
         super().__init__(parent)
-        assert controller is not None, "controller must not be None"
+        if not (controller is not None):
+            raise ValueError("controller must not be None")
         self._ctrl = controller
         self._scale = VIEWPORT_SCALE
         self._pan = QPointF(0.0, 0.0)  # world-space offset (m)
@@ -104,7 +105,8 @@ class AsteroidJumperRenderer(QWidget):
 
     def set_scale(self, scale: float) -> None:
         """Set zoom level (pixels per metre)."""
-        assert scale > 0
+        if not (scale > 0):
+            raise ValueError('DbC Blocked: Precondition failed.')
         self._scale = scale
         self.update()
 
@@ -114,14 +116,16 @@ class AsteroidJumperRenderer(QWidget):
 
     def _world_to_screen(self, wx: float, wy: float) -> QPointF:
         """World (m) → screen (px), y-flipped for Qt."""
-        assert wx is not None, "wx must be provided"
+        if not (wx is not None):
+            raise ValueError("wx must be provided")
         cx = self.width() / 2 + self._pan.x()
         cy = self.height() / 2 + self._pan.y()
         return QPointF(cx + wx * self._scale, cy - wy * self._scale)
 
     def _screen_to_world(self, sx: float, sy: float) -> tuple[float, float]:
         """Screen (px) → world (m)."""
-        assert sx is not None, "sx must be provided"
+        if not (sx is not None):
+            raise ValueError("sx must be provided")
         cx = self.width() / 2 + self._pan.x()
         cy = self.height() / 2 + self._pan.y()
         return (sx - cx) / self._scale, -(sy - cy) / self._scale
@@ -131,7 +135,8 @@ class AsteroidJumperRenderer(QWidget):
     # ------------------------------------------------------------------
 
     def paintEvent(self, _event: object) -> None:  # noqa: N802
-        assert _event is not None, "_event must be provided"
+        if not (_event is not None):
+            raise ValueError("_event must be provided")
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         self._draw_background(painter)
@@ -145,7 +150,8 @@ class AsteroidJumperRenderer(QWidget):
         painter.end()
 
     def mousePressEvent(self, event: object) -> None:  # noqa: N802
-        assert isinstance(event, type(event))
+        if not (isinstance(event):
+            raise ValueError(type(event)))
         from PyQt6.QtGui import QMouseEvent
 
         if isinstance(event, QMouseEvent):
@@ -181,7 +187,8 @@ class AsteroidJumperRenderer(QWidget):
 
     def _update_force_from_mouse(self, pos: QPointF) -> None:
         """Set force angle based on mouse position relative to asteroid."""
-        assert pos is not None, "pos must be provided"
+        if not (pos is not None):
+            raise ValueError("pos must be provided")
         ast = self._ctrl.state.asteroid
         asteroid_screen = self._world_to_screen(ast.pos.x, ast.pos.y)
         dx = pos.x() - asteroid_screen.x()
@@ -219,7 +226,8 @@ class AsteroidJumperRenderer(QWidget):
 
     def _draw_background(self, p: QPainter) -> None:
         """Fill with deep-space gradient."""
-        assert p is not None, "p must be provided"
+        if not (p is not None):
+            raise ValueError("p must be provided")
         grad = QLinearGradient(0, 0, 0, self.height())
         grad.setColorAt(0.0, C_CRUST)
         grad.setColorAt(1.0, C_MANTLE)
@@ -227,7 +235,8 @@ class AsteroidJumperRenderer(QWidget):
 
     def _draw_stars(self, p: QPainter) -> None:
         """Scatter small white dots as background stars."""
-        assert p is not None, "p must be provided"
+        if not (p is not None):
+            raise ValueError("p must be provided")
         p.save()
         w, h = self.width(), self.height()
         for fx, fy in STAR_POSITIONS:
@@ -240,7 +249,8 @@ class AsteroidJumperRenderer(QWidget):
 
     def _draw_trails(self, p: QPainter) -> None:
         """Draw position trails for asteroid and jumper."""
-        assert p is not None, "p must be provided"
+        if not (p is not None):
+            raise ValueError("p must be provided")
         self._draw_single_trail(p, self._asteroid_trail, C_TEAL)
         self._draw_single_trail(p, self._jumper_trail, C_PEACH)
 
@@ -248,7 +258,8 @@ class AsteroidJumperRenderer(QWidget):
         self, p: QPainter, trail: list[tuple[float, float]], color: QColor
     ) -> None:
         """Draw a single fading trail."""
-        assert p is not None, "p must be provided"
+        if not (p is not None):
+            raise ValueError("p must be provided")
         if len(trail) < 2:
             return
         p.save()
@@ -264,7 +275,8 @@ class AsteroidJumperRenderer(QWidget):
 
     def _draw_asteroid(self, p: QPainter) -> None:
         """Draw the asteroid as a textured polygon."""
-        assert p is not None, "p must be provided"
+        if not (p is not None):
+            raise ValueError("p must be provided")
         ast = self._ctrl.state.asteroid
         shape = self._ctrl.shape
         p.save()
@@ -311,7 +323,8 @@ class AsteroidJumperRenderer(QWidget):
         """Draw decorative craters on the asteroid surface."""
         from asteroid_jumper.physics import RigidBody
 
-        assert isinstance(ast, RigidBody)
+        if not (isinstance(ast):
+            raise ValueError(RigidBody))
         crater_angles = [0.5, 1.8, 3.1, 4.7, 5.5]
         crater_sizes = [0.6, 0.4, 0.5, 0.3, 0.7]
         p.save()
@@ -331,7 +344,8 @@ class AsteroidJumperRenderer(QWidget):
 
     def _draw_jumper(self, p: QPainter) -> None:
         """Draw the astronaut-style jumper with animated legs."""
-        assert p is not None, "p must be provided"
+        if not (p is not None):
+            raise ValueError("p must be provided")
         jmp = self._ctrl.state.jumper
         phase = self._ctrl.leg_phase()
         p.save()
@@ -348,7 +362,8 @@ class AsteroidJumperRenderer(QWidget):
 
     def _draw_jumper_body(self, p: QPainter, scale: float, phase: float) -> None:
         """Draw human figure: head, torso, arms, animated legs."""
-        assert p is not None, "p must be provided"
+        if not (p is not None):
+            raise ValueError("p must be provided")
         h = scale * JUMPER_HEIGHT_REF  # reference heights in pixels
         head_r = h * 0.12
         torso_h = h * 0.30
@@ -384,7 +399,8 @@ class AsteroidJumperRenderer(QWidget):
         self, p: QPainter, scale: float, arm_angle: float, *, left: bool
     ) -> None:
         """Draw one arm."""
-        assert p is not None, "p must be provided"
+        if not (p is not None):
+            raise ValueError("p must be provided")
         h = scale * JUMPER_HEIGHT_REF
         torso_w = h * 0.14
         arm_len = h * 0.22
@@ -403,7 +419,8 @@ class AsteroidJumperRenderer(QWidget):
 
     def _draw_legs(self, p: QPainter, scale: float, phase: float) -> None:
         """Draw two animated legs: crouch on ground, extend at jump, tuck in flight."""
-        assert p is not None, "p must be provided"
+        if not (p is not None):
+            raise ValueError("p must be provided")
         h = scale * JUMPER_HEIGHT_REF
         hip_y = -h * 0.05  # hip position (bottom of torso)
         thigh = h * 0.20
@@ -438,7 +455,8 @@ class AsteroidJumperRenderer(QWidget):
 
     def _draw_force_indicator(self, p: QPainter) -> None:
         """Draw the adjustable force vector arrow on the asteroid."""
-        assert p is not None, "p must be provided"
+        if not (p is not None):
+            raise ValueError("p must be provided")
         if self._ctrl.state.phase != "ready":
             return
         ast = self._ctrl.state.asteroid
@@ -482,7 +500,8 @@ class AsteroidJumperRenderer(QWidget):
         size: float = 8,
     ) -> None:
         """Draw a filled arrowhead at *tip* pointing away from *start*."""
-        assert p is not None, "p must be provided"
+        if not (p is not None):
+            raise ValueError("p must be provided")
         dx = tip.x() - start.x()
         dy = tip.y() - start.y()
         length = math.hypot(dx, dy)
@@ -507,7 +526,8 @@ class AsteroidJumperRenderer(QWidget):
 
     def _draw_hud(self, p: QPainter) -> None:
         """Draw HUD overlay with key metrics."""
-        assert p is not None, "p must be provided"
+        if not (p is not None):
+            raise ValueError("p must be provided")
         p.save()
         p.setFont(QFont("monospace", 9))
         phase = self._ctrl.state.phase
@@ -558,7 +578,8 @@ class _SimpleSignal:
         self._slots: list[object] = []
 
     def connect(self, slot: object) -> None:
-        assert callable(slot)
+        if not (callable(slot)):
+            raise ValueError('DbC Blocked: Precondition failed.')
         self._slots.append(slot)
 
     def emit(self, *args: object) -> None:

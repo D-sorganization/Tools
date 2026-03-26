@@ -263,12 +263,12 @@ class TestFunctionGeneratorDialog:
 
 
 # ---------------------------------------------------------------------------
-# #1157, #1158 — No print() and no bare except: in pendulum code
+# #1157, #1158 — No print() and no bare except Exception as e: in pendulum code
 # ---------------------------------------------------------------------------
 
 
 class TestCodeQuality:
-    """Code quality: no print() or bare except: in GUI code."""
+    """Code quality: no print() or bare except Exception as e: in GUI code."""
 
     def test_no_print_in_optimizer_gpu(self) -> None:
         """optimizer_gpu.py should use logging, not print()."""
@@ -291,7 +291,7 @@ class TestCodeQuality:
             pytest.skip("optimizer_gpu not available")
 
     def test_no_bare_except_in_gui(self) -> None:
-        """GUI modules should not use bare except: clauses."""
+        """GUI modules should not use bare except Exception as e: clauses."""
         import importlib
         import inspect
 
@@ -308,8 +308,8 @@ class TestCodeQuality:
                 lines = source.split("\n")
                 for i, line in enumerate(lines, 1):
                     stripped = line.strip()
-                    if stripped == "except:":
-                        pytest.fail(f"{mod_name} line {i}: bare 'except:' found")
+                    if stripped == "except Exception as e:":
+                        pytest.fail(f"{mod_name} line {i}: bare 'except Exception as e:' found")
             except ImportError:
                 continue
 

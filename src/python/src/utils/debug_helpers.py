@@ -113,7 +113,8 @@ def format_exception_with_locals(
     Returns:
         Formatted exception string
     """
-    assert exc is not None, "exc must be provided"
+    if not (exc is not None):
+        raise ValueError("exc must be provided")
     lines = ["Exception: " + str(exc), ""]
 
     tb = exc.__traceback__
@@ -158,7 +159,8 @@ def debug_exception(
         exc: Exception to debug (or None to use current exception)
         log_level: Level to log at
     """
-    assert log_level is not None, "log_level must be provided"
+    if not (log_level is not None):
+        raise ValueError("log_level must be provided")
     from utils.debug_utils import is_debug_mode
 
     if exc is None:
@@ -234,7 +236,8 @@ def get_system_diagnostics(
         SystemDiagnostics object
     """
     # Safe environment variables to include by default
-    assert include_env is not None, "include_env must be provided"
+    if not (include_env is not None):
+        raise ValueError("include_env must be provided")
     safe_env_vars = env_filter or [
         "PATH",
         "PYTHONPATH",
@@ -352,7 +355,8 @@ class PerformanceWatchdog:
             warn_threshold_ms: Threshold for warning (ms)
             error_threshold_ms: Threshold for error (ms)
         """
-        assert warn_threshold_ms is not None, "warn_threshold_ms must be provided"
+        if not (warn_threshold_ms is not None):
+            raise ValueError("warn_threshold_ms must be provided")
         self.warn_threshold = warn_threshold_ms
         self.error_threshold = error_threshold_ms
         self._timings: dict[str, list[float]] = {}
@@ -364,7 +368,8 @@ class PerformanceWatchdog:
             name: Name of the operation
             elapsed_ms: Elapsed time in milliseconds
         """
-        assert name is not None, "name must be provided"
+        if not (name is not None):
+            raise ValueError("name must be provided")
         if name not in self._timings:
             self._timings[name] = []
         self._timings[name].append(elapsed_ms)
@@ -394,7 +399,8 @@ class PerformanceWatchdog:
         Yields:
             None
         """
-        assert name is not None, "name must be provided"
+        if not (name is not None):
+            raise ValueError("name must be provided")
         start = time.perf_counter()
         try:
             yield
@@ -411,7 +417,8 @@ class PerformanceWatchdog:
         Returns:
             Dictionary with min, max, avg, count
         """
-        assert name is not None, "name must be provided"
+        if not (name is not None):
+            raise ValueError("name must be provided")
         timings = self._timings.get(name, [])
         if not timings:
             return {"min": 0.0, "max": 0.0, "avg": 0.0, "count": 0}
@@ -463,7 +470,8 @@ def deprecated(
         Decorator function
     """
 
-    assert reason is not None, "reason must be provided"
+    if not (reason is not None):
+        raise ValueError("reason must be provided")
 
     def decorator(func: F) -> F:
         @functools.wraps(func)

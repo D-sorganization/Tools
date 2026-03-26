@@ -26,7 +26,8 @@ class OptimizedFileScanner:
 
     def __init__(self, max_workers: int = -1) -> None:
         """Initialize the scanner with specified number of workers."""
-        assert max_workers is not None, "max_workers must be provided"
+        if not (max_workers is not None):
+            raise ValueError("max_workers must be provided")
         self.max_workers = (
             max_workers if max_workers != -1 else min(32, (os.cpu_count() or 1) + 4)
         )
@@ -47,7 +48,8 @@ class OptimizedFileScanner:
         Yields:
             Path objects for matching files
         """
-        assert root_path is not None, "root_path must be provided"
+        if not (root_path is not None):
+            raise ValueError("root_path must be provided")
         if not root_path.exists():
             return
 
@@ -66,7 +68,8 @@ class OptimizedFileScanner:
 
         def scan_subdirectory(directory: Path, depth: int) -> list[Path]:
             """Scan a single subdirectory."""
-            assert directory is not None, "directory must be provided"
+            if not (directory is not None):
+                raise ValueError("directory must be provided")
             if depth > max_depth:
                 return []
 

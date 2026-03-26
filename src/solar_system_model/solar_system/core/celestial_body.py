@@ -114,7 +114,8 @@ class CelestialBody:
             physical_properties: Physical characteristics
             parent: Parent body for orbit (None for Sun, Sun for planets)
         """
-        assert name is not None, "name must be provided"
+        if not (name is not None):
+            raise ValueError("name must be provided")
         self.name = name
         self.body_type = body_type
         self.orbital_elements = orbital_elements
@@ -220,7 +221,8 @@ class CelestialBody:
         Returns:
             Tuple of (omega, true_anomaly, eccentric_anomaly, semi_major_axis_m)
         """
-        assert elem is not None, "elem must be provided"
+        if not (elem is not None):
+            raise ValueError("elem must be provided")
         omega_bar = math.radians(elem.longitude_perihelion)
         ascending_longitude = math.radians(elem.longitude_ascending)
         mean_longitude = math.radians(elem.mean_longitude)
@@ -256,7 +258,8 @@ class CelestialBody:
         Returns:
             Tuple of (x, y, z) in heliocentric ecliptic frame
         """
-        assert x_orb is not None, "x_orb must be provided"
+        if not (x_orb is not None):
+            raise ValueError("x_orb must be provided")
         cos_omega = math.cos(omega)
         sin_omega = math.sin(omega)
         cos_asc = math.cos(ascending_longitude)
@@ -275,7 +278,8 @@ class CelestialBody:
 
     def _cache_state(self, julian_date: float, state: StateVector) -> None:
         """Store a state vector in the cache, evicting old entries if needed."""
-        assert julian_date is not None, "julian_date must be provided"
+        if not (julian_date is not None):
+            raise ValueError("julian_date must be provided")
         self._state_cache[julian_date] = state
         if len(self._state_cache) > 1000:
             oldest_keys = sorted(self._state_cache.keys())[:500]
@@ -295,7 +299,8 @@ class CelestialBody:
         Returns:
             State vector with position and velocity in heliocentric frame
         """
-        assert julian_date is not None, "julian_date must be provided"
+        if not (julian_date is not None):
+            raise ValueError("julian_date must be provided")
         if julian_date in self._state_cache:
             return self._state_cache[julian_date]
 
@@ -353,7 +358,8 @@ class CelestialBody:
             Eccentric anomaly in radians
         """
         # Initial guess
-        assert mean_anomaly is not None, "mean_anomaly must be provided"
+        if not (mean_anomaly is not None):
+            raise ValueError("mean_anomaly must be provided")
         eccentric_anomaly = mean_anomaly if eccentricity < 0.8 else math.pi
 
         # Newton-Raphson iteration
@@ -384,7 +390,8 @@ class CelestialBody:
         Returns:
             Array of shape (num_points, 3) with positions in meters
         """
-        assert julian_date is not None, "julian_date must be provided"
+        if not (julian_date is not None):
+            raise ValueError("julian_date must be provided")
         if self.orbital_elements is None:
             return np.zeros((1, 3))
 
@@ -482,7 +489,8 @@ class CelestialBody:
 
     def get_info_dict_at_time(self, julian_date: float) -> dict[str, Any]:
         """Return display info enriched with time-aware orbital context."""
-        assert julian_date is not None, "julian_date must be provided"
+        if not (julian_date is not None):
+            raise ValueError("julian_date must be provided")
         from ..physics.orbital_mechanics import OrbitalMechanics
 
         info = self.get_info_dict()
@@ -532,7 +540,8 @@ class Star(CelestialBody):
     def __init__(
         self, name: str = "Sun", physical_properties: PhysicalProperties | None = None
     ):
-        assert name is not None, "name must be provided"
+        if not (name is not None):
+            raise ValueError("name must be provided")
         if physical_properties is None:
             physical_properties = PHYSICAL_PROPERTIES.get(name)
 
@@ -559,7 +568,8 @@ class Planet(CelestialBody):
         physical_properties: PhysicalProperties | None = None,
         is_dwarf: bool = False,
     ):
-        assert name is not None, "name must be provided"
+        if not (name is not None):
+            raise ValueError("name must be provided")
         if orbital_elements is None:
             orbital_elements = ORBITAL_ELEMENTS.get(name)
         if physical_properties is None:
@@ -604,7 +614,8 @@ class Moon(CelestialBody):
         orbital_elements: OrbitalElements,
         physical_properties: PhysicalProperties | None = None,
     ):
-        assert name is not None, "name must be provided"
+        if not (name is not None):
+            raise ValueError("name must be provided")
         if physical_properties is None:
             physical_properties = PHYSICAL_PROPERTIES.get(name)
 
@@ -624,7 +635,8 @@ class Moon(CelestialBody):
         then add the parent's position to get heliocentric coordinates.
         """
         # Get moon's position relative to parent
-        assert julian_date is not None, "julian_date must be provided"
+        if not (julian_date is not None):
+            raise ValueError("julian_date must be provided")
         relative_state = super().get_state_at_time(julian_date)
 
         # Get parent's heliocentric position
@@ -649,7 +661,8 @@ class Spacecraft(CelestialBody):
     """
 
     def __init__(self, name: str, trajectory: list[StateVector] | None = None) -> None:
-        assert name is not None, "name must be provided"
+        if not (name is not None):
+            raise ValueError("name must be provided")
         super().__init__(
             name=name,
             body_type=BodyType.SPACECRAFT,
@@ -685,7 +698,8 @@ class Spacecraft(CelestialBody):
 
     def set_trajectory(self, trajectory: list[StateVector]) -> None:
         """Set or update the spacecraft trajectory."""
-        assert trajectory is not None, "trajectory must be provided"
+        if not (trajectory is not None):
+            raise ValueError("trajectory must be provided")
         self.trajectory = trajectory
         self._build_trajectory_arrays()
 
@@ -699,7 +713,8 @@ class Spacecraft(CelestialBody):
         Returns:
             Interpolated state vector
         """
-        assert julian_date is not None, "julian_date must be provided"
+        if not (julian_date is not None):
+            raise ValueError("julian_date must be provided")
         if (
             not self.trajectory
             or self._trajectory_times is None

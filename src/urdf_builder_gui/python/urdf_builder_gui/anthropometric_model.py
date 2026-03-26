@@ -110,7 +110,8 @@ def compute_segment_length(
       - ``segment_key`` must be in HEIGHT_RATIOS.
       - ``proportion_factor`` must be positive.
     """
-    assert total_height is not None, "total_height must be provided"
+    if not (total_height is not None):
+        raise ValueError("total_height must be provided")
     require(total_height > 0, "total_height must be positive", total_height)
     require(
         segment_key in HEIGHT_RATIOS,
@@ -133,7 +134,8 @@ def compute_segment_mass(total_mass: float, segment_key: str, count: int = 1) ->
       - ``segment_key`` must be in MASS_RATIOS.
       - ``count`` must be >= 1.
     """
-    assert total_mass is not None, "total_mass must be provided"
+    if not (total_mass is not None):
+        raise ValueError("total_mass must be provided")
     require(total_mass > 0, "total_mass must be positive", total_mass)
     require(
         segment_key in MASS_RATIOS,
@@ -155,7 +157,8 @@ def compute_box_inertia(
     Returns:
         Tuple of (ixx, iyy, izz) in kg·m².
     """
-    assert mass is not None, "mass must be provided"
+    if not (mass is not None):
+        raise ValueError("mass must be provided")
     require(mass > 0, "mass must be positive", mass)
     require(width > 0, "width must be positive", width)
     require(height > 0, "height must be positive", height)
@@ -173,7 +176,8 @@ def compute_cylinder_inertia(
 
     z-axis is the cylinder axis.
     """
-    assert mass is not None, "mass must be provided"
+    if not (mass is not None):
+        raise ValueError("mass must be provided")
     require(mass > 0, "mass must be positive", mass)
     require(radius > 0, "radius must be positive", radius)
     require(length > 0, "length must be positive", length)
@@ -185,7 +189,8 @@ def compute_cylinder_inertia(
 
 def compute_sphere_inertia(mass: float, radius: float) -> tuple[float, float, float]:
     """Compute sphere inertia tensor (ixx, iyy, izz)."""
-    assert mass is not None, "mass must be provided"
+    if not (mass is not None):
+        raise ValueError("mass must be provided")
     require(mass > 0, "mass must be positive", mass)
     require(radius > 0, "radius must be positive", radius)
     i = (2.0 / 5.0) * mass * radius**2
@@ -199,7 +204,8 @@ def interpolate_gender_factor(
 
     ``factor`` = 0 → female, ``factor`` = 1 → male.
     """
-    assert factor is not None, "factor must be provided"
+    if not (factor is not None):
+        raise ValueError("factor must be provided")
     clamped = max(0.0, min(1.0, factor))
     return female_val + clamped * (male_val - female_val)
 

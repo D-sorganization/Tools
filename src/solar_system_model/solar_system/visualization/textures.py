@@ -57,7 +57,8 @@ class TextureManager:
     """Load and bind NASA-sourced textures for planets and moons."""
 
     def __init__(self, asset_root: pathlib.Path, auto_download: bool = True) -> None:
-        assert asset_root is not None, "asset_root must be provided"
+        if not (asset_root is not None):
+            raise ValueError("asset_root must be provided")
         self.asset_root = asset_root
         self.auto_download = auto_download
         self.textures: dict[str, TextureHandle] = {}
@@ -67,7 +68,8 @@ class TextureManager:
         return self.asset_root / "textures" / f"{safe_name}.jpg"
 
     def ensure_texture(self, body_name: str) -> pathlib.Path | None:
-        assert body_name is not None, "body_name must be provided"
+        if not (body_name is not None):
+            raise ValueError("body_name must be provided")
         path = self._texture_path(body_name)
         if path.exists():
             return path
@@ -85,7 +87,8 @@ class TextureManager:
         return path if path.exists() else None
 
     def load_texture(self, body_name: str) -> TextureHandle | None:
-        assert body_name is not None, "body_name must be provided"
+        if not (body_name is not None):
+            raise ValueError("body_name must be provided")
         if not TEXTURE_BACKEND_AVAILABLE:
             return None
 
@@ -126,7 +129,8 @@ class TextureManager:
         return handle
 
     def bind(self, body_name: str) -> bool:
-        assert body_name is not None, "body_name must be provided"
+        if not (body_name is not None):
+            raise ValueError("body_name must be provided")
         if not TEXTURE_BACKEND_AVAILABLE:
             return False
 
