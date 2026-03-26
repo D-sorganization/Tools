@@ -218,7 +218,9 @@ class TestNativeConstraintBackend:
                 return np.ones(N_CONSTRAINTS)
             return np.zeros(N_CONSTRAINTS)
 
-        monkeypatch.setattr(constraint_solver_module, "constraint_vector", fake_constraint_vector)
+        monkeypatch.setattr(
+            constraint_solver_module, "constraint_vector", fake_constraint_vector
+        )
         monkeypatch.setattr(
             constraint_solver_module,
             "constraint_jacobian",

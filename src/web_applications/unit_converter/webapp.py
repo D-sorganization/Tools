@@ -43,7 +43,9 @@ def _add_security_headers(response: Response) -> Response:
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"  # noqa: E501
+    response.headers["Strict-Transport-Security"] = (
+        "max-age=31536000; includeSubDomains"  # noqa: E501
+    )
     response.headers["Permissions-Policy"] = (
         "geolocation=(), camera=(), microphone=(), payment=(), usb=()"
     )
@@ -78,7 +80,9 @@ def _parse_convert_payload(payload: dict[str, Any]) -> dict[str, Any]:
         "pressure": float(pressure) if pressure is not None else None,
         "gas_type": str(payload.get("gas_type", "air")),
         "standard_condition": str(payload.get("standard_condition", "SCFM_60F")),
-        "gas_density_stp": (float(gas_density_stp) if gas_density_stp is not None else None),  # noqa: E501
+        "gas_density_stp": (
+            float(gas_density_stp) if gas_density_stp is not None else None
+        ),  # noqa: E501
     }
 
 

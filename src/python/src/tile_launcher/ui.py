@@ -52,7 +52,9 @@ class SelectionDialog(QDialog):
 
         layout = QVBoxLayout()
         self.list_widget = QListWidget()
-        self.list_widget.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.list_widget.setSelectionMode(
+            QAbstractItemView.SelectionMode.SingleSelection
+        )
         for app in apps:
             item = QListWidgetItem(f"{app.name} — {app.relative_path}")
             item.setData(Qt.ItemDataRole.UserRole, app.id)
@@ -71,7 +73,9 @@ class SelectionDialog(QDialog):
         """Handle OK button click."""
         selected_items = self.list_widget.selectedItems()
         if not selected_items:
-            QMessageBox.information(self, "Select an app", "Choose an app before continuing.")
+            QMessageBox.information(
+                self, "Select an app", "Choose an app before continuing."
+            )
             return
 
         self.selected_id = selected_items[0].data(Qt.ItemDataRole.UserRole)
@@ -206,7 +210,9 @@ class LauncherWindow(QMainWindow):
             raise ValueError("app must be provided")
         icon_path = self._logo_path(app)
         if icon_path and icon_path.exists():
-            pixmap = QPixmap(str(icon_path)).scaled(96, 96, Qt.AspectRatioMode.KeepAspectRatio)
+            pixmap = QPixmap(str(icon_path)).scaled(
+                96, 96, Qt.AspectRatioMode.KeepAspectRatio
+            )
             return QIcon(pixmap)
 
         fallback = QPixmap(96, 96)
@@ -342,7 +348,9 @@ class LauncherWindow(QMainWindow):
         """Launch a script with GNU Octave."""
         sanitized = str(target_path).replace("'", "''")
         script = f"run('{sanitized}');"
-        subprocess.Popen(["octave", "--quiet", "--eval", script], cwd=target_path.parent)
+        subprocess.Popen(
+            ["octave", "--quiet", "--eval", script], cwd=target_path.parent
+        )
 
 
 def run() -> None:

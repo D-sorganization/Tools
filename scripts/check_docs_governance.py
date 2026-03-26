@@ -42,13 +42,17 @@ def main() -> int:
     changed_set = set(changed)
 
     if any(
-        p.startswith("docs/assessments/") and p != "docs/assessments/README.md" for p in changed
+        p.startswith("docs/assessments/") and p != "docs/assessments/README.md"
+        for p in changed
     ):
         if "docs/assessments/README.md" not in changed_set:
-            return _fail("Assessment docs changed without updating docs/assessments/README.md")
+            return _fail(
+                "Assessment docs changed without updating docs/assessments/README.md"
+            )
 
     if any(
-        p.startswith("docs/adr/") and p not in {"docs/adr/README.md", "docs/adr/ADR_TEMPLATE.md"}
+        p.startswith("docs/adr/")
+        and p not in {"docs/adr/README.md", "docs/adr/ADR_TEMPLATE.md"}
         for p in changed
     ):
         if "docs/adr/README.md" not in changed_set:

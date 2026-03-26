@@ -33,9 +33,13 @@ def test_input_validator_require_positive():
 def test_input_validator_require_in_range():
     validator = InputValidator()
     validator.require_in_range("temp", 50.0, 0.0, 100.0)
-    with pytest.raises(ValueError, match=r"temp must be in range \[0.0, 100.0\], got -10.0"):
+    with pytest.raises(
+        ValueError, match=r"temp must be in range \[0.0, 100.0\], got -10.0"
+    ):
         validator.require_in_range("temp", -10.0, 0.0, 100.0)
-    with pytest.raises(ValueError, match=r"temp must be in range \[0.0, 100.0\], got 110.0"):
+    with pytest.raises(
+        ValueError, match=r"temp must be in range \[0.0, 100.0\], got 110.0"
+    ):
         validator.require_in_range("temp", 110.0, 0.0, 100.0)
 
 
@@ -71,7 +75,9 @@ def test_input_validator_validate_composition():
     validator.validate_composition({"H2": 0.5, "CO": 0.5})
 
     # Negative fraction
-    with pytest.raises(ValueError, match="Composition fraction for 'H2' is negative: -0.1"):
+    with pytest.raises(
+        ValueError, match="Composition fraction for 'H2' is negative: -0.1"
+    ):
         validator.validate_composition({"H2": -0.1, "CO": 1.1})
 
     # Sum != 1.0

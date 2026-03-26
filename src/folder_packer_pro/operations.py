@@ -78,7 +78,9 @@ class ScanPreviewMixin:
             key=lambda x: x[1],
             reverse=True,
         )[:15]:
-            percentage = (count / stats["total_files"] * 100) if stats["total_files"] > 0 else 0
+            percentage = (
+                (count / stats["total_files"] * 100) if stats["total_files"] > 0 else 0
+            )
             output += f"  {ext:20s} {count:5,} files ({percentage:5.1f}%)\n"
 
         self.stats_text.insert("1.0", output)
@@ -132,7 +134,9 @@ class ScanPreviewMixin:
 
         threading.Thread(target=scan, daemon=True).start()
 
-    def _populate_tree(self, files: list[tuple[Path, os.stat_result]], base_path: Path) -> None:
+    def _populate_tree(
+        self, files: list[tuple[Path, os.stat_result]], base_path: Path
+    ) -> None:
         """Populate tree with file list.
 
         Args:
@@ -232,7 +236,9 @@ class PackOperationMixin:
                 files_to_pack=files_to_pack,
                 compression=self.compression_var.get(),
                 encrypt=self.encrypt_var.get(),
-                password=(self.pack_password_entry.get() if self.encrypt_var.get() else ""),
+                password=(
+                    self.pack_password_entry.get() if self.encrypt_var.get() else ""
+                ),
                 create_manifest=self.create_manifest_var.get(),
                 progress_callback=progress_callback,
                 cancel_check=lambda: self.cancel_operation,
@@ -242,7 +248,9 @@ class PackOperationMixin:
                 self._log_message(error, "error")
 
             if result.success:
-                self._log_message(f"Package created successfully: {output_path}", "success")
+                self._log_message(
+                    f"Package created successfully: {output_path}", "success"
+                )
                 self._log_message(
                     f"Package size: {format_size(result.package_size)}",
                     "info",
@@ -261,7 +269,9 @@ class PackOperationMixin:
                 error_msg = result.error or "Unknown error"
                 self.root.after(
                     0,
-                    lambda: messagebox.showerror("Error", f"Pack failed:\n\n{error_msg}"),
+                    lambda: messagebox.showerror(
+                        "Error", f"Pack failed:\n\n{error_msg}"
+                    ),
                 )
 
         except (PermissionError, OSError) as e:
@@ -332,7 +342,9 @@ class UnpackOperationMixin:
                 package_path=package_path,
                 dest_path=dest_path,
                 encrypted=self.encrypted_var.get(),
-                password=(self.unpack_password_entry.get() if self.encrypted_var.get() else ""),
+                password=(
+                    self.unpack_password_entry.get() if self.encrypted_var.get() else ""
+                ),
                 progress_callback=progress_callback,
                 cancel_check=lambda: self.cancel_operation,
             )
@@ -359,7 +371,9 @@ class UnpackOperationMixin:
                 error_msg = result.error or "Unknown error"
                 self.root.after(
                     0,
-                    lambda: messagebox.showerror("Error", f"Unpack failed:\n\n{error_msg}"),
+                    lambda: messagebox.showerror(
+                        "Error", f"Unpack failed:\n\n{error_msg}"
+                    ),
                 )
 
         except (PermissionError, OSError) as e:

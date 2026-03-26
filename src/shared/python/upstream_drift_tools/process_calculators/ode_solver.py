@@ -14,7 +14,9 @@ if TYPE_CHECKING:
 class ODESolver:
     """Numerical solver for systems of ODEs defined symbolically."""
 
-    def __init__(self, derivatives: dict[str, str], parameters: dict[str, float]) -> None:
+    def __init__(
+        self, derivatives: dict[str, str], parameters: dict[str, float]
+    ) -> None:
         """Create an ODESolver.
 
         Parameters

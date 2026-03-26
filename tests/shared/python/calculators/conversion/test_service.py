@@ -168,7 +168,9 @@ def test_heating_value_requires_density_for_volumetric(
 
 def test_heating_value_volumetric_roundtrip(service: UnitConversionService) -> None:
     mj_per_kg = service.heating_value(20.0, "mj/nm3", "mj/kg", gas_density_stp=0.8)
-    mj_per_nm3 = service.heating_value(mj_per_kg, "mj/kg", "mj/nm3", gas_density_stp=0.8)
+    mj_per_nm3 = service.heating_value(
+        mj_per_kg, "mj/kg", "mj/nm3", gas_density_stp=0.8
+    )
     assert mj_per_nm3 == pytest.approx(20.0)
 
 

@@ -188,7 +188,8 @@ class MJCFConverter:
 
         # Assets (materials, meshes)
         if model.materials or any(
-            link.visual_geometry and link.visual_geometry.geometry_type == GeometryType.MESH
+            link.visual_geometry
+            and link.visual_geometry.geometry_type == GeometryType.MESH
             for link in model.links
         ):
             lines.append("  <asset>")
@@ -198,7 +199,10 @@ class MJCFConverter:
 
             # Collect mesh references
             for link in model.links:
-                if link.visual_geometry and link.visual_geometry.geometry_type == GeometryType.MESH:
+                if (
+                    link.visual_geometry
+                    and link.visual_geometry.geometry_type == GeometryType.MESH
+                ):
                     filename = link.visual_geometry.mesh_filename
                     mesh_name = Path(filename).stem if filename else link.name
                     lines.append(f'    <mesh name="{mesh_name}" file="{filename}"/>')
@@ -270,7 +274,8 @@ class MJCFConverter:
 
             if link.inertia.is_diagonal():
                 inertia_str = (
-                    f"{link.inertia.ixx:.6g} {link.inertia.iyy:.6g} " f"{link.inertia.izz:.6g}"
+                    f"{link.inertia.ixx:.6g} {link.inertia.iyy:.6g} "
+                    f"{link.inertia.izz:.6g}"
                 )
                 lines.append(
                     f'{indent}  <inertial mass="{link.inertia.mass:.6g}" '
@@ -368,7 +373,9 @@ class MJCFConverter:
             )
 
         elif geometry.geometry_type == GeometryType.MESH:
-            mesh_name = Path(geometry.mesh_filename).stem if geometry.mesh_filename else "mesh"
+            mesh_name = (
+                Path(geometry.mesh_filename).stem if geometry.mesh_filename else "mesh"
+            )
             return f'{indent}<geom type="mesh" mesh="{mesh_name}" pos="{pos_str}"/>'
 
         else:
@@ -405,7 +412,9 @@ class MJCFConverter:
 
         proper_materials = {}
         for name, mat in materials.items():
-            proper_materials[name] = Material(name=mat.name, color=mat.color, texture=mat.texture)
+            proper_materials[name] = Material(
+                name=mat.name, color=mat.color, texture=mat.texture
+            )
 
         return ParsedModel(
             name=model_name,
@@ -567,7 +576,9 @@ class MJCFConverter:
             links.append(link)
 
             if parent_name:
-                joints.append(self._parse_body_joint(body_elem, parent_name, body_name, pos))
+                joints.append(
+                    self._parse_body_joint(body_elem, parent_name, body_name, pos)
+                )
 
             self._parse_mjcf_body(body_elem, body_name, links, joints)
 

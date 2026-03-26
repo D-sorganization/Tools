@@ -90,7 +90,9 @@ class TestPrepareInitialMoles:
 
     def test_zero_steam_ratio(self) -> None:
         inlet = {"CO": 10.0, "H2O": 5.0}
-        n_CO, n_H2O, _, _, _ = WGSReactorEngine._prepare_initial_moles(inlet, steam_ratio=0.0)
+        n_CO, n_H2O, _, _, _ = WGSReactorEngine._prepare_initial_moles(
+            inlet, steam_ratio=0.0
+        )
         assert n_CO == 10.0
         assert n_H2O == 5.0  # No additional steam
 
@@ -106,7 +108,9 @@ class TestPrepareInitialMoles:
 
     def test_empty_inlet(self) -> None:
         inlet: dict[str, float] = {}
-        _, _, _, _, n_total = WGSReactorEngine._prepare_initial_moles(inlet, steam_ratio=2.0)
+        _, _, _, _, n_total = WGSReactorEngine._prepare_initial_moles(
+            inlet, steam_ratio=2.0
+        )
         assert n_total == 0.0
 
 
@@ -165,8 +169,12 @@ class TestEquilibriumComposition:
         """Higher steam ratio should push equilibrium toward higher conversion."""
         engine = WGSReactorEngine()
         inlet = {"CO": 25.0, "H2": 20.0, "CO2": 5.0}
-        low = engine.calculate_equilibrium_composition(inlet, 673.0, 25.0, steam_ratio=1.0)
-        high = engine.calculate_equilibrium_composition(inlet, 673.0, 25.0, steam_ratio=4.0)
+        low = engine.calculate_equilibrium_composition(
+            inlet, 673.0, 25.0, steam_ratio=1.0
+        )
+        high = engine.calculate_equilibrium_composition(
+            inlet, 673.0, 25.0, steam_ratio=4.0
+        )
         assert high["conversion"] >= low["conversion"]
 
 

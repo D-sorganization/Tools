@@ -22,7 +22,9 @@ def read_requirements() -> list[str]:
     requirements_path = Path(Path(__file__).parent, "requirements.txt")
     if Path(requirements_path).exists():
         with open(requirements_path, encoding="utf-8") as f:
-            return [line.strip() for line in f if line.strip() and not line.startswith("#")]
+            return [
+                line.strip() for line in f if line.strip() and not line.startswith("#")
+            ]
     return []
 
 

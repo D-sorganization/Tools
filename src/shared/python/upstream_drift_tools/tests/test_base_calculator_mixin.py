@@ -20,7 +20,8 @@ def test_base_calculator_mixin_init_default():
     assert isinstance(calc._copyable_widgets, list)
     assert isinstance(calc._state, dict)
     assert (
-        calc._logger.name == "upstream_drift_tools.ui.mixins.base_calculator_mixin.MockCalculator"
+        calc._logger.name
+        == "upstream_drift_tools.ui.mixins.base_calculator_mixin.MockCalculator"
     )
 
 
@@ -28,7 +29,8 @@ def test_base_calculator_mixin_init_with_name():
     calc = MockCalculator("CustomName")
     assert calc.calculator_name == "CustomName"
     assert (
-        calc._logger.name == "upstream_drift_tools.ui.mixins.base_calculator_mixin.MockCalculator"
+        calc._logger.name
+        == "upstream_drift_tools.ui.mixins.base_calculator_mixin.MockCalculator"
     )
 
 

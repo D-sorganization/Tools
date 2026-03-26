@@ -73,15 +73,21 @@ class CylindricalBathLayout:
 
     @property
     def electrode_inner_tip_radius_mm(self) -> float:
-        return self.inner_radius_mm - (self.electrodes.insertion_into_inner_circle_in * MM_PER_INCH)
+        return self.inner_radius_mm - (
+            self.electrodes.insertion_into_inner_circle_in * MM_PER_INCH
+        )
 
     @property
     def electrode_outer_tip_radius_mm(self) -> float:
-        return self.inner_radius_mm + (self.electrodes.extension_past_inner_circle_in * MM_PER_INCH)
+        return self.inner_radius_mm + (
+            self.electrodes.extension_past_inner_circle_in * MM_PER_INCH
+        )
 
     @property
     def electrode_center_radius_mm(self) -> float:
-        return (self.electrode_inner_tip_radius_mm + self.electrode_outer_tip_radius_mm) * 0.5
+        return (
+            self.electrode_inner_tip_radius_mm + self.electrode_outer_tip_radius_mm
+        ) * 0.5
 
     def to_manifest(self) -> dict[str, Any]:
         return {
@@ -98,8 +104,12 @@ class CylindricalBathLayout:
             "electrodes": {
                 "count": self.electrodes.count,
                 "diameter_in": self.electrodes.diameter_in,
-                "insertion_into_inner_circle_in": (self.electrodes.insertion_into_inner_circle_in),
-                "extension_past_inner_circle_in": (self.electrodes.extension_past_inner_circle_in),
+                "insertion_into_inner_circle_in": (
+                    self.electrodes.insertion_into_inner_circle_in
+                ),
+                "extension_past_inner_circle_in": (
+                    self.electrodes.extension_past_inner_circle_in
+                ),
                 "modeled_length_in": (
                     self.electrodes.insertion_into_inner_circle_in
                     + self.electrodes.extension_past_inner_circle_in

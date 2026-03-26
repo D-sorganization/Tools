@@ -270,7 +270,9 @@ if PYQT6_AVAILABLE:
             type_layout = QVBoxLayout(type_group)
 
             self.type_combo = QComboBox()
-            self.type_combo.addItems(["One-Way ANOVA", "Two-Way ANOVA", "Repeated Measures"])
+            self.type_combo.addItems(
+                ["One-Way ANOVA", "Two-Way ANOVA", "Repeated Measures"]
+            )
             self.type_combo.currentIndexChanged.connect(self._update_config_ui)
             type_layout.addWidget(self.type_combo)
 
@@ -308,7 +310,9 @@ if PYQT6_AVAILABLE:
             self.subject_combo = QComboBox()
             rm_layout.addRow("Subject ID:", self.subject_combo)
             self.measures_list = QListWidget()
-            self.measures_list.setSelectionMode(QListWidget.SelectionMode.MultiSelection)
+            self.measures_list.setSelectionMode(
+                QListWidget.SelectionMode.MultiSelection
+            )
             rm_layout.addRow("Measures:", self.measures_list)
             self.config_stack.addWidget(rm_widget)
 
@@ -387,7 +391,9 @@ if PYQT6_AVAILABLE:
                 config["interaction"] = self.interaction_check.isChecked()
             else:  # Repeated measures
                 config["subject"] = self.subject_combo.currentText()
-                config["measures"] = [item.text() for item in self.measures_list.selectedItems()]
+                config["measures"] = [
+                    item.text() for item in self.measures_list.selectedItems()
+                ]
 
             self.analysis_requested.emit(config)
 
@@ -428,7 +434,9 @@ if PYQT6_AVAILABLE:
             options_layout = QFormLayout(options_group)
 
             self.regularization_combo = QComboBox()
-            self.regularization_combo.addItems(["None", "Ridge", "Lasso", "Elastic Net"])
+            self.regularization_combo.addItems(
+                ["None", "Ridge", "Lasso", "Elastic Net"]
+            )
             options_layout.addRow("Regularization:", self.regularization_combo)
 
             self.alpha_spin = QDoubleSpinBox()
@@ -509,13 +517,25 @@ if PYQT6_AVAILABLE:
 
             # Intercept row
             self.coefficients_table.setItem(0, 0, QTableWidgetItem("(Intercept)"))
-            self.coefficients_table.setItem(0, 1, QTableWidgetItem(f"{result.intercept:.4f}"))
+            self.coefficients_table.setItem(
+                0, 1, QTableWidgetItem(f"{result.intercept:.4f}")
+            )
 
             for i, coef in enumerate(result.coefficients):
                 row = i + 1
                 self.coefficients_table.setItem(row, 0, QTableWidgetItem(coef.name))
-                self.coefficients_table.setItem(row, 1, QTableWidgetItem(f"{coef.estimate:.4f}"))
-                self.coefficients_table.setItem(row, 2, QTableWidgetItem(f"{coef.std_error:.4f}"))
-                self.coefficients_table.setItem(row, 3, QTableWidgetItem(f"{coef.t_statistic:.4f}"))
-                self.coefficients_table.setItem(row, 4, QTableWidgetItem(f"{coef.p_value:.4e}"))
-                self.coefficients_table.setItem(row, 5, QTableWidgetItem(f"{coef.vif:.2f}"))
+                self.coefficients_table.setItem(
+                    row, 1, QTableWidgetItem(f"{coef.estimate:.4f}")
+                )
+                self.coefficients_table.setItem(
+                    row, 2, QTableWidgetItem(f"{coef.std_error:.4f}")
+                )
+                self.coefficients_table.setItem(
+                    row, 3, QTableWidgetItem(f"{coef.t_statistic:.4f}")
+                )
+                self.coefficients_table.setItem(
+                    row, 4, QTableWidgetItem(f"{coef.p_value:.4e}")
+                )
+                self.coefficients_table.setItem(
+                    row, 5, QTableWidgetItem(f"{coef.vif:.2f}")
+                )

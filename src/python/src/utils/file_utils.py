@@ -144,7 +144,9 @@ def find_file_upwards(
     return None
 
 
-def safe_read_text(file_path: Path | str, encoding: str = "utf-8", default: str = "") -> str:
+def safe_read_text(
+    file_path: Path | str, encoding: str = "utf-8", default: str = ""
+) -> str:
     """Safely read a text file with error handling.
 
     Args:

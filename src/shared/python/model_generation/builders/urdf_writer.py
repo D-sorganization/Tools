@@ -133,7 +133,8 @@ class URDFWriter:
         lines.append(f"{indent2}<inertial>")
         com = link.inertia.center_of_mass
         lines.append(
-            f'{indent3}<origin xyz="{com[0]:.6g} {com[1]:.6g} {com[2]:.6g}" ' f'rpy="0 0 0"/>'
+            f'{indent3}<origin xyz="{com[0]:.6g} {com[1]:.6g} {com[2]:.6g}" '
+            f'rpy="0 0 0"/>'
         )
         lines.append(f'{indent3}<mass value="{link.inertia.mass:.6g}"/>')
         lines.append(
@@ -189,7 +190,9 @@ class URDFWriter:
         if joint_type in ("gimbal", "universal"):
             joint_type = "revolute"
 
-        lines.append(f'{indent}<joint name="{self._escape(joint.name)}" type="{joint_type}">')
+        lines.append(
+            f'{indent}<joint name="{self._escape(joint.name)}" type="{joint_type}">'
+        )
 
         # Parent and child
         lines.append(f'{indent2}<parent link="{self._escape(joint.parent)}"/>')
@@ -247,7 +250,9 @@ class URDFWriter:
 
         if geometry.geometry_type == GeometryType.BOX:
             size = geometry.dimensions
-            lines.append(f'{indent2}<box size="{size[0]:.6g} {size[1]:.6g} {size[2]:.6g}"/>')
+            lines.append(
+                f'{indent2}<box size="{size[0]:.6g} {size[1]:.6g} {size[2]:.6g}"/>'
+            )
         elif geometry.geometry_type == GeometryType.CYLINDER:
             lines.append(
                 f'{indent2}<cylinder radius="{geometry.dimensions[0]:.6g}" '
@@ -284,10 +289,13 @@ class URDFWriter:
         lines.append(f'{indent}<material name="{self._escape(material.name)}">')
         rgba = material.color
         lines.append(
-            f'{indent2}<color rgba="{rgba[0]:.4g} {rgba[1]:.4g} ' f'{rgba[2]:.4g} {rgba[3]:.4g}"/>'
+            f'{indent2}<color rgba="{rgba[0]:.4g} {rgba[1]:.4g} '
+            f'{rgba[2]:.4g} {rgba[3]:.4g}"/>'
         )
         if material.texture:
-            lines.append(f'{indent2}<texture filename="{self._escape(material.texture)}"/>')
+            lines.append(
+                f'{indent2}<texture filename="{self._escape(material.texture)}"/>'
+            )
         lines.append(f"{indent}</material>")
 
         return lines
@@ -336,7 +344,9 @@ class URDFWriter:
 
         return materials
 
-    def _sort_links_by_hierarchy(self, links: list[Link], joints: list[Joint]) -> list[Link]:
+    def _sort_links_by_hierarchy(
+        self, links: list[Link], joints: list[Joint]
+    ) -> list[Link]:
         """Sort links so parents come before children."""
         # Build parent map
         if not (links is not None):
@@ -394,7 +404,9 @@ class URDFWriter:
                 new_joints.extend(revolute_joints)
             elif joint.joint_type == JointType.UNIVERSAL:
                 # Expand to 2 revolute joints
-                intermediate_links, revolute_joints = self._expand_universal_joint(joint)
+                intermediate_links, revolute_joints = self._expand_universal_joint(
+                    joint
+                )
                 new_links.extend(intermediate_links)
                 new_joints.extend(revolute_joints)
             else:
@@ -408,8 +420,12 @@ class URDFWriter:
         if not (joint is not None):
             raise ValueError("joint must be provided")
         default_axes = [(0, 0, 1), (0, 1, 0), (1, 0, 0)]
-        axes = self._normalize_composite_axes(joint.name, joint.composite_axes, default_axes)
-        limits = self._normalize_composite_limits(joint.composite_limits, joint.limits, 3)
+        axes = self._normalize_composite_axes(
+            joint.name, joint.composite_axes, default_axes
+        )
+        limits = self._normalize_composite_limits(
+            joint.composite_limits, joint.limits, 3
+        )
 
         intermediate_links: list[Link] = []
         revolute_joints: list[Joint] = []
@@ -463,8 +479,12 @@ class URDFWriter:
         if not (joint is not None):
             raise ValueError("joint must be provided")
         default_axes = [(1, 0, 0), (0, 1, 0)]
-        axes = self._normalize_composite_axes(joint.name, joint.composite_axes, default_axes)
-        limits = self._normalize_composite_limits(joint.composite_limits, joint.limits, 2)
+        axes = self._normalize_composite_axes(
+            joint.name, joint.composite_axes, default_axes
+        )
+        limits = self._normalize_composite_limits(
+            joint.composite_limits, joint.limits, 2
+        )
 
         intermediate_links: list[Link] = []
         revolute_joints: list[Joint] = []
@@ -518,9 +538,13 @@ class URDFWriter:
         link_names = {link.name for link in links}
         for joint in joints:
             if not isinstance(joint.parent, str) or not joint.parent.strip():
-                raise ValueError(f"Joint '{joint.name}' must define a non-empty parent link")
+                raise ValueError(
+                    f"Joint '{joint.name}' must define a non-empty parent link"
+                )
             if not isinstance(joint.child, str) or not joint.child.strip():
-                raise ValueError(f"Joint '{joint.name}' must define a non-empty child link")
+                raise ValueError(
+                    f"Joint '{joint.name}' must define a non-empty child link"
+                )
             if joint.parent not in link_names:
                 raise ValueError(
                     f"Joint '{joint.name}' references unknown parent link '{joint.parent}'"
@@ -626,12 +650,20 @@ class URDFWriter:
                 )
         else:
             if "://" in normalized:
-                raise ValueError(f"Mesh filename '{mesh_filename}' uses an unsupported URI scheme")
-            if normalized.startswith("/") or URDFWriter._has_windows_drive_prefix(normalized):
-                raise ValueError(f"Mesh filename '{mesh_filename}' must be relative or package://")
+                raise ValueError(
+                    f"Mesh filename '{mesh_filename}' uses an unsupported URI scheme"
+                )
+            if normalized.startswith("/") or URDFWriter._has_windows_drive_prefix(
+                normalized
+            ):
+                raise ValueError(
+                    f"Mesh filename '{mesh_filename}' must be relative or package://"
+                )
             first_segment = normalized.split("/", 1)[0]
             if ":" in first_segment:
-                raise ValueError(f"Mesh filename '{mesh_filename}' uses an unsupported URI scheme")
+                raise ValueError(
+                    f"Mesh filename '{mesh_filename}' uses an unsupported URI scheme"
+                )
             candidate = normalized
 
         if any(part == ".." for part in PurePosixPath(candidate).parts):
@@ -642,7 +674,9 @@ class URDFWriter:
     @staticmethod
     def _has_windows_drive_prefix(path: str) -> bool:
         """Return True when the path starts with a Windows drive prefix."""
-        return len(path) >= 3 and path[0].isalpha() and path[1] == ":" and path[2] == "/"
+        return (
+            len(path) >= 3 and path[0].isalpha() and path[1] == ":" and path[2] == "/"
+        )
 
     def _escape(self, text: str) -> str:
         """Escape special XML characters."""

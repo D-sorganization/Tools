@@ -34,7 +34,9 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 
-def ensure_layer(doc: Any, name: str, color: int = 7, linetype: str = "CONTINUOUS") -> None:
+def ensure_layer(
+    doc: Any, name: str, color: int = 7, linetype: str = "CONTINUOUS"
+) -> None:
     """Create a layer if it doesn't already exist.
 
     Preconditions:
@@ -267,7 +269,9 @@ def add_arrow(
     if color is not None:
         attrs["color"] = int(color)
     msp.add_line((sx, sy), (ex, ey), dxfattribs=attrs)
-    add_arrow_head(msp, (sx, sy), (ex, ey), layer=layer, color=color, arrow_size=arrow_size)
+    add_arrow_head(
+        msp, (sx, sy), (ex, ey), layer=layer, color=color, arrow_size=arrow_size
+    )
 
 
 def add_poly_arrow(
@@ -287,7 +291,9 @@ def add_poly_arrow(
     if color is not None:
         attrs["color"] = int(color)
     msp.add_lwpolyline(points, dxfattribs=attrs)
-    add_arrow_head(msp, points[-2], points[-1], layer, color=color, arrow_size=arrow_size)
+    add_arrow_head(
+        msp, points[-2], points[-1], layer, color=color, arrow_size=arrow_size
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -333,7 +339,9 @@ def export_svg_from_dxf(
             "pt": layout.Units.pt,
             "px": layout.Units.px,
         }
-        page = layout.Page(page_width, page_height, units=unit_map.get(unit_name, layout.Units.mm))
+        page = layout.Page(
+            page_width, page_height, units=unit_map.get(unit_name, layout.Units.mm)
+        )
         Path(svg_path).write_text(backend.get_string(page), encoding="utf-8")
     except Exception as exc:
         logger.warning("DXF created, but SVG export failed: %s", exc)

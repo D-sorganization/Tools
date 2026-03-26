@@ -21,7 +21,9 @@ def test_wgs_reactor_engine_equilibrium_composition() -> None:
     }
 
     # 500 C = 773.15 K
-    result = engine.calculate_equilibrium_composition(inlet_comp, 773.15, 25.0, steam_ratio=2.0)
+    result = engine.calculate_equilibrium_composition(
+        inlet_comp, 773.15, 25.0, steam_ratio=2.0
+    )
 
     # Check that reaction shifted
     assert result["conversion"] > 0

@@ -176,14 +176,20 @@ class VesselDrafterWindow(QMainWindow):
 
         self.side_port_panel.add_button.clicked.connect(self._prompt_add_side_port)
         self.lid_port_panel.add_button.clicked.connect(self._prompt_add_lid_port)
-        self.side_port_panel.remove_button.clicked.connect(self._remove_selected_side_ports)
-        self.lid_port_panel.remove_button.clicked.connect(self._remove_selected_lid_ports)
+        self.side_port_panel.remove_button.clicked.connect(
+            self._remove_selected_side_ports
+        )
+        self.lid_port_panel.remove_button.clicked.connect(
+            self._remove_selected_lid_ports
+        )
         self.side_port_panel.table.itemChanged.connect(self.update_preview)
         self.lid_port_panel.table.itemChanged.connect(self.update_preview)
         for checkbox in self.layer_visibility_checkboxes.values():
             checkbox.toggled.connect(self.refresh_three_d_preview)
         self.section_cut_checkbox.toggled.connect(self._handle_section_cut_toggled)
-        self.section_cut_angle_spin.valueChanged.connect(self._handle_section_cut_angle_changed)
+        self.section_cut_angle_spin.valueChanged.connect(
+            self._handle_section_cut_angle_changed
+        )
         self.preview_tabs.currentChanged.connect(self._handle_preview_tab_changed)
 
     def write_layout(self, layout: VesselDrafterLayout) -> None:
@@ -200,8 +206,12 @@ class VesselDrafterWindow(QMainWindow):
         self.steel_spin.setValue(layout.steel_thickness_in)
         self.electrode_count_spin.setValue(layout.electrode_count)
         self.electrode_diameter_spin.setValue(layout.electrode_diameter_in)
-        self.electrode_insertion_spin.setValue(layout.electrode_insertion_into_inner_circle_in)
-        self.electrode_extension_spin.setValue(layout.electrode_extension_past_inner_circle_in)
+        self.electrode_insertion_spin.setValue(
+            layout.electrode_insertion_into_inner_circle_in
+        )
+        self.electrode_extension_spin.setValue(
+            layout.electrode_extension_past_inner_circle_in
+        )
         self.side_port_panel.set_rows(
             tuple(
                 (
@@ -343,7 +353,9 @@ class VesselDrafterWindow(QMainWindow):
         try:
             from vessel_drafter.exporters.vessel_export import export_vessel
 
-            export_vessel(layout, output_dir=path.parent, stem=path.stem, formats=(fmt,))
+            export_vessel(
+                layout, output_dir=path.parent, stem=path.stem, formats=(fmt,)
+            )
             QMessageBox.information(self, "Export Complete", f"Exported to {path}")
         except Exception as exc:
             QMessageBox.critical(self, "Export Failed", str(exc))
@@ -448,7 +460,9 @@ class VesselDrafterWindow(QMainWindow):
     def _build_three_d_sidebar(self) -> QWidget:
         panel = QWidget()
         layout = QVBoxLayout(panel)
-        instructions = QLabel("Drag to rotate the model. Use the checkboxes to hide layers.")
+        instructions = QLabel(
+            "Drag to rotate the model. Use the checkboxes to hide layers."
+        )
         instructions.setWordWrap(True)
         reset_view_button = QPushButton("Reset 3D View")
         reset_view_button.clicked.connect(self.three_d_canvas.reset_view)

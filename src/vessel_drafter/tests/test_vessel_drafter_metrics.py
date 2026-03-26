@@ -27,10 +27,18 @@ def test_material_metrics_report_includes_refractory_totals() -> None:
     assert report.refractory_total_surface_area_ft2 > 0.0
     assert report.refractory_total_mass_lb > 0.0
     assert report.refractory_total_volume_in3 == pytest.approx(
-        sum(item.volume_in3 for item in report.component_metrics if item.category == "refractory")
+        sum(
+            item.volume_in3
+            for item in report.component_metrics
+            if item.category == "refractory"
+        )
     )
     assert report.refractory_total_volume_ft3 == pytest.approx(
-        sum(item.volume_ft3 for item in report.component_metrics if item.category == "refractory")
+        sum(
+            item.volume_ft3
+            for item in report.component_metrics
+            if item.category == "refractory"
+        )
     )
 
 
@@ -99,6 +107,10 @@ def test_three_d_scene_split_adds_material_faces_on_section_plane() -> None:
             split_angle_degrees=0.0,
         ),
     )
-    hot_face_mesh = next(mesh for mesh in split_scene.meshes if mesh.label == "hot_face_refractory")
+    hot_face_mesh = next(
+        mesh for mesh in split_scene.meshes if mesh.label == "hot_face_refractory"
+    )
 
-    assert any(np.all(np.abs(polygon[:, 1]) < 1e-6) for polygon in hot_face_mesh.polygons)
+    assert any(
+        np.all(np.abs(polygon[:, 1]) < 1e-6) for polygon in hot_face_mesh.polygons
+    )

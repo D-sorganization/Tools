@@ -117,7 +117,8 @@ def handle_import_error(
     except ImportError:
         install_name = package_name or module_name
         logger.warning(
-            f"Module '{module_name}' not found. " f"Install with: pip install {install_name}"
+            f"Module '{module_name}' not found. "
+            f"Install with: pip install {install_name}"
         )
         return default
 

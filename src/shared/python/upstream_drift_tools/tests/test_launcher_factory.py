@@ -120,7 +120,9 @@ class TestValidateLauncherConfig:
 
     def test_zero_dimensions_are_valid(self):
         """min_width=0 and min_height=0 are allowed (>= 0 constraint)."""
-        cfg = LauncherConfig(app_module="a.b", window_title="T", min_width=0, min_height=0)
+        cfg = LauncherConfig(
+            app_module="a.b", window_title="T", min_width=0, min_height=0
+        )
         validate_launcher_config(cfg)  # Should not raise
 
 

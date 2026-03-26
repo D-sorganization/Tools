@@ -24,7 +24,9 @@ class TestEvaluateOutput:
             "state": {"temperature": 1200.0},
             "composition": {"CO2": 0.15},
         }
-        value, state, composition = evaluate_output(self.engine, {"flow": 100.0}, 0.0, "efficiency")
+        value, state, composition = evaluate_output(
+            self.engine, {"flow": 100.0}, 0.0, "efficiency"
+        )
         assert value == pytest.approx(0.85)
         assert state == {"temperature": 1200.0}
         assert composition == {"CO2": 0.15}
@@ -46,7 +48,9 @@ class TestEvaluateOutput:
     def test_overrides_applied_to_params(self):
         """Overrides are merged on top of base_params."""
         self.engine.calculate.return_value = {"out": 3.0}
-        evaluate_output(self.engine, {"a": 1.0, "b": 2.0}, 0.0, "out", overrides={"b": 99.0})
+        evaluate_output(
+            self.engine, {"a": 1.0, "b": 2.0}, 0.0, "out", overrides={"b": 99.0}
+        )
         called_kwargs = self.engine.calculate.call_args.kwargs
         assert called_kwargs.get("b") == 99.0
 

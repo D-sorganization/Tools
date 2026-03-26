@@ -140,7 +140,9 @@ class ProcessingThread(QThread):
             if self.delete_dups:
                 self._delete_duplicate_set(paths)
             else:
-                self.log_message.emit(f"Duplicate set: {[p.name for p in paths]}", "WARNING")
+                self.log_message.emit(
+                    f"Duplicate set: {[p.name for p in paths]}", "WARNING"
+                )
 
     def _delete_duplicate_set(self, paths: list[Path]) -> None:
         """Delete all but the first file in a duplicate set."""
@@ -164,14 +166,20 @@ class ProcessingThread(QThread):
         """Scan directory for PDF files, returning None if none found."""
         self.log_message.emit("Scanning for PDF files...", "INFO")
         pattern = "**/*.pdf" if self.recursive else "*.pdf"
-        pdf_files = [f for f in self.directory.glob(pattern) if f.is_file() and not f.is_symlink()]
+        pdf_files = [
+            f
+            for f in self.directory.glob(pattern)
+            if f.is_file() and not f.is_symlink()
+        ]
 
         if not pdf_files:
             self.log_message.emit("No PDF files found", "WARNING")
             self.finished.emit(True, "No files to process")
             return None
 
-        self.log_message.emit(f"Found {len(pdf_files)} PDF files. Starting processing...", "INFO")
+        self.log_message.emit(
+            f"Found {len(pdf_files)} PDF files. Starting processing...", "INFO"
+        )
         return pdf_files
 
     def _process_pdf_files(self, pdf_files: list[Path]) -> None:
@@ -229,7 +237,9 @@ class ProcessingThread(QThread):
                     self.log_message.emit(result.message, level)
                 except (OSError, ValueError, RuntimeError) as e:
                     fail_count += 1
-                    self.log_message.emit(f"Executor failed for {pdf_file.name}: {e}", "ERROR")
+                    self.log_message.emit(
+                        f"Executor failed for {pdf_file.name}: {e}", "ERROR"
+                    )
 
                 self.progress_updated.emit(
                     processed_count,
@@ -579,7 +589,9 @@ class PDFRenamerGUI(QMainWindow):
         self.default_failed_input.setText(
             self.preferences.get("failed_folder_name", "failed_renames")
         )
-        self.remember_settings_check.setChecked(self.preferences.get("remember_settings", True))
+        self.remember_settings_check.setChecked(
+            self.preferences.get("remember_settings", True)
+        )
 
     def save_preferences(self) -> None:
         """Save current preferences."""
@@ -637,7 +649,9 @@ class PDFRenamerGUI(QMainWindow):
         cursor = self.log_output.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.End)
         self.log_output.setTextCursor(cursor)
-        self.log_output.insertHtml(f'<span style="color:{color};">[{level}] {message}</span><br>')
+        self.log_output.insertHtml(
+            f'<span style="color:{color};">[{level}] {message}</span><br>'
+        )
         self.log_output.ensureCursorVisible()
 
     def update_progress(self, current: int, total: int, message: str) -> None:
@@ -652,7 +666,9 @@ class PDFRenamerGUI(QMainWindow):
         """Start the PDF processing."""
         directory = self.dir_input.text()
         if not directory or not Path(directory).exists():
-            QMessageBox.warning(self, "Invalid Directory", "Please select a valid directory.")
+            QMessageBox.warning(
+                self, "Invalid Directory", "Please select a valid directory."
+            )
             return
 
         # Clear log
@@ -717,7 +733,9 @@ class PDFRenamerGUI(QMainWindow):
         """Generate API-based rename proposals."""
         directory = self.api_dir_input.text()
         if not directory or not Path(directory).exists():
-            QMessageBox.warning(self, "Invalid Directory", "Please select a valid directory.")
+            QMessageBox.warning(
+                self, "Invalid Directory", "Please select a valid directory."
+            )
             return
 
         # Check if API key is available
@@ -802,7 +820,9 @@ class PDFRenamerGUI(QMainWindow):
 
             # Approve button
             approve_btn = QPushButton("✅ Approve")
-            approve_btn.clicked.connect(lambda checked, idx=i: self.approve_proposal(idx))
+            approve_btn.clicked.connect(
+                lambda checked, idx=i: self.approve_proposal(idx)
+            )
             self.proposals_table.setCellWidget(i, 4, approve_btn)
 
             # Reject button
@@ -839,7 +859,9 @@ class PDFRenamerGUI(QMainWindow):
                     self, "Export Complete", f"Proposals exported to: {filename}"
                 )
             except (PermissionError, OSError) as e:
-                QMessageBox.critical(self, "Export Failed", f"Failed to export proposals: {e}")
+                QMessageBox.critical(
+                    self, "Export Failed", f"Failed to export proposals: {e}"
+                )
 
     def execute_approved(self) -> None:
         """Execute approved rename operations."""
@@ -879,7 +901,9 @@ class PDFRenamerGUI(QMainWindow):
                         status_item.setText("✅ Completed")
 
             except (KeyError, ValueError, TypeError) as e:
-                QMessageBox.critical(self, "Execution Failed", f"Failed to execute renames: {e}")
+                QMessageBox.critical(
+                    self, "Execution Failed", f"Failed to execute renames: {e}"
+                )
 
     def setup_api_key(self) -> None:
         """Setup API key interactively."""
@@ -888,7 +912,9 @@ class PDFRenamerGUI(QMainWindow):
         try:
             success = setup_api_key_interactive()
             if success:
-                QMessageBox.information(self, "API Key Setup", "API key configured successfully!")
+                QMessageBox.information(
+                    self, "API Key Setup", "API key configured successfully!"
+                )
             else:
                 QMessageBox.information(
                     self, "API Key Setup", "API key setup was cancelled or failed."
@@ -911,7 +937,9 @@ class PDFRenamerGUI(QMainWindow):
             # Test with a simple LLM call
             llm = GeminiTitleLLM()
             if llm.genai:
-                QMessageBox.information(self, "API Key Test", "✅ API key is working correctly!")
+                QMessageBox.information(
+                    self, "API Key Test", "✅ API key is working correctly!"
+                )
             else:
                 QMessageBox.warning(
                     self,

@@ -16,7 +16,9 @@ from upstream_drift_tools.process_calculators.scrubber_calculator import (
 
 
 def test_calculate_gas_density() -> None:
-    rho = calculate_gas_density(temperature_k=298.15, pressure_pa=101325.0, molecular_weight=28.97)
+    rho = calculate_gas_density(
+        temperature_k=298.15, pressure_pa=101325.0, molecular_weight=28.97
+    )
     assert rho == pytest.approx(1.18, abs=0.1)
 
 

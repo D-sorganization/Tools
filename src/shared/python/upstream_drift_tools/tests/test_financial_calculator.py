@@ -114,8 +114,14 @@ class TestCalculateVolumesAndRevenues:
         params = _make_params()
         results = FinancialResults()
         calc._calculate_volumes_and_revenues(params, results)
-        assert abs(results.annual_product_tons - results.annual_feedstock_tons * 0.85) < 0.01
-        assert abs(results.annual_byproduct_tons - results.annual_feedstock_tons * 0.10) < 0.01
+        assert (
+            abs(results.annual_product_tons - results.annual_feedstock_tons * 0.85)
+            < 0.01
+        )
+        assert (
+            abs(results.annual_byproduct_tons - results.annual_feedstock_tons * 0.10)
+            < 0.01
+        )
 
     def test_revenues(self):
         """Lines 134-140: product_revenue and byproduct_revenue add to total."""

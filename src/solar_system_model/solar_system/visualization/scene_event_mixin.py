@@ -183,7 +183,9 @@ class SceneEventMixin:
         elif key == K_m:
             if self.immersion_checklist:
                 self.immersion_checklist.toggle()
-            self.view_state.show_immersion_checklist = not self.view_state.show_immersion_checklist
+            self.view_state.show_immersion_checklist = (
+                not self.view_state.show_immersion_checklist
+            )
 
     def _handle_trajectory_plan(self) -> None:
         """Plan an Earth-to-Mars trajectory and display the result."""
@@ -308,7 +310,8 @@ class SceneEventMixin:
 
         sx, sy = self.sidebar_panel.position
         if not (
-            sx <= x <= sx + self.sidebar_panel.width and sy <= y <= sy + self.sidebar_panel.height
+            sx <= x <= sx + self.sidebar_panel.width
+            and sy <= y <= sy + self.sidebar_panel.height
         ):
             return False
 

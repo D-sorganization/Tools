@@ -619,7 +619,10 @@ class URDFTextEditor(TextEditorDiffMixin):
                 messages,
             )
 
-            if joint_type in {"revolute", "prismatic"} and joint_elem.find("limit") is None:
+            if (
+                joint_type in {"revolute", "prismatic"}
+                and joint_elem.find("limit") is None
+            ):
                 messages.append(
                     ValidationMessage(
                         severity=ValidationSeverity.WARNING,
@@ -690,7 +693,9 @@ class URDFTextEditor(TextEditorDiffMixin):
                             severity=ValidationSeverity.WARNING,
                             line=1,
                             column=0,
-                            message=(f"Link '{link_name}' is not connected to any joint"),
+                            message=(
+                                f"Link '{link_name}' is not connected to any joint"
+                            ),
                             element=link_name,
                         )
                     )
@@ -867,7 +872,9 @@ class URDFTextEditor(TextEditorDiffMixin):
             return lines[line_number - 1]
         return None
 
-    def find_text(self, pattern: str, regex: bool = False) -> list[tuple[int, int, str]]:
+    def find_text(
+        self, pattern: str, regex: bool = False
+    ) -> list[tuple[int, int, str]]:
         """
         Find all occurrences of text.
 

@@ -113,7 +113,9 @@ class SurfacePlotEngine:
         """Initialize the surface plot engine."""
         self._interpolators: dict[
             InterpolationMethod,
-            Callable[[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray], np.ndarray],
+            Callable[
+                [np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray], np.ndarray
+            ],
         ] = {
             InterpolationMethod.LINEAR: self._interpolate_linear,
             InterpolationMethod.CUBIC: self._interpolate_cubic,
@@ -279,7 +281,9 @@ class SurfacePlotEngine:
         """Interpolate data to grid."""
         interpolator = self._interpolators.get(config.interpolation_method)
         if not interpolator:
-            raise ValueError(f"Unknown interpolation method: {config.interpolation_method}")
+            raise ValueError(
+                f"Unknown interpolation method: {config.interpolation_method}"
+            )
         return interpolator(x, y, z, x_grid, y_grid)
 
     def _apply_smoothing(
@@ -624,7 +628,9 @@ def plot_surface_matplotlib(
     ax.set_xlabel(config.x_label or config.x_column)
     ax.set_ylabel(config.y_label or config.y_column)
     ax.set_zlabel(config.z_label or config.z_column)
-    ax.set_title(config.title or f"{config.z_column} vs {config.x_column}, {config.y_column}")
+    ax.set_title(
+        config.title or f"{config.z_column} vs {config.x_column}, {config.y_column}"
+    )
 
     # Colorbar
     if fig is not None:

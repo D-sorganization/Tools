@@ -197,8 +197,12 @@ def _build_lid_port_cutter(
 
 
 def _port_cutters(layout: VesselDrafterLayout) -> tuple[Solid, ...]:
-    side_cutters = tuple(_build_side_port_cutter(port, layout) for port in layout.side_ports)
-    lid_cutters = tuple(_build_lid_port_cutter(port, layout) for port in layout.lid_ports)
+    side_cutters = tuple(
+        _build_side_port_cutter(port, layout) for port in layout.side_ports
+    )
+    lid_cutters = tuple(
+        _build_lid_port_cutter(port, layout) for port in layout.lid_ports
+    )
     return side_cutters + lid_cutters
 
 
@@ -221,8 +225,12 @@ def build_vessel_drafter_components(
             color_hex=materials["glass_bath"].color_hex,
             category=materials["glass_bath"].category,
             density_lb_per_ft3=materials["glass_bath"].density_lb_per_ft3,
-            thermal_conductivity_w_per_mk=(materials["glass_bath"].thermal_conductivity_w_per_mk),
-            thermal_expansion_um_per_m_c=(materials["glass_bath"].thermal_expansion_um_per_m_c),
+            thermal_conductivity_w_per_mk=(
+                materials["glass_bath"].thermal_conductivity_w_per_mk
+            ),
+            thermal_expansion_um_per_m_c=(
+                materials["glass_bath"].thermal_expansion_um_per_m_c
+            ),
             preview_alpha=materials["glass_bath"].preview_alpha,
             shape=_apply_style(
                 _cut_ports(_build_glass_bath(layout), cutters),
@@ -248,7 +256,9 @@ def build_vessel_drafter_components(
                 thermal_conductivity_w_per_mk=properties.thermal_conductivity_w_per_mk,
                 thermal_expansion_um_per_m_c=(properties.thermal_expansion_um_per_m_c),
                 preview_alpha=properties.preview_alpha,
-                shape=_apply_style(_cut_ports(shape, cutters), band.label, band.color_hex),
+                shape=_apply_style(
+                    _cut_ports(shape, cutters), band.label, band.color_hex
+                ),
             )
         )
     electrode_properties = materials["electrodes"]
@@ -261,8 +271,12 @@ def build_vessel_drafter_components(
                 color_hex=electrode_properties.color_hex,
                 category=electrode_properties.category,
                 density_lb_per_ft3=electrode_properties.density_lb_per_ft3,
-                thermal_conductivity_w_per_mk=(electrode_properties.thermal_conductivity_w_per_mk),
-                thermal_expansion_um_per_m_c=(electrode_properties.thermal_expansion_um_per_m_c),
+                thermal_conductivity_w_per_mk=(
+                    electrode_properties.thermal_conductivity_w_per_mk
+                ),
+                thermal_expansion_um_per_m_c=(
+                    electrode_properties.thermal_expansion_um_per_m_c
+                ),
                 preview_alpha=electrode_properties.preview_alpha,
                 shape=_build_electrode(item, layout),
             )
@@ -275,5 +289,7 @@ def build_vessel_drafter_shape(
 ) -> Compound:
     return Compound(
         label="vessel_drafter_default",
-        children=[component.shape for component in build_vessel_drafter_components(layout)],
+        children=[
+            component.shape for component in build_vessel_drafter_components(layout)
+        ],
     )

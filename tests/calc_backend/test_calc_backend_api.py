@@ -310,7 +310,9 @@ class TestWGSReactorEndpoint:
         if resp.status_code in (503, 422):
             detail = resp.json().get("detail", "")
             if "not available" in detail or "get_species" in detail:
-                pytest.skip("WGS engine not fully available (missing scipy or species DB)")
+                pytest.skip(
+                    "WGS engine not fully available (missing scipy or species DB)"
+                )
 
     def test_wgs_equilibrium(self) -> None:
         resp = client.post("/api/calc/wgs-reactor", json=self.PAYLOAD)

@@ -165,7 +165,9 @@ def build_animation_frames(
         raise ValueError("trajectory must be provided")
     require(len(trajectory) >= 1, "need at least 1 frame")
 
-    screw_axes = extract_screw_axes_from_trajectory(trajectory) if len(trajectory) > 1 else []
+    screw_axes = (
+        extract_screw_axes_from_trajectory(trajectory) if len(trajectory) > 1 else []
+    )
     frames: list[dict[str, Any]] = []
 
     for i, T in enumerate(trajectory):
@@ -401,7 +403,9 @@ class ScrewAxisAnimator:
         if self.show_screw_axis and screw is not None:
             theta_deg = math.degrees(screw["theta"])
             pitch_str = (
-                "pitch=inf" if screw["pitch"] == float("inf") else f"pitch={screw['pitch']:.3f}"
+                "pitch=inf"
+                if screw["pitch"] == float("inf")
+                else f"pitch={screw['pitch']:.3f}"
             )
             ax.text2D(
                 0.02,

@@ -22,7 +22,9 @@ try:
 except ImportError:
     PYARROW_AVAILABLE = False
 
-requires_pyarrow = pytest.mark.skipif(not PYARROW_AVAILABLE, reason="pyarrow not installed")
+requires_pyarrow = pytest.mark.skipif(
+    not PYARROW_AVAILABLE, reason="pyarrow not installed"
+)
 
 
 @pytest.fixture
@@ -48,7 +50,9 @@ class TestReadData:
         result = read_data(tsv_path)
         assert list(result.columns) == ["a", "b"]
 
-    def test_read_csv_with_prefer_parquet_false(self, sample_df: pd.DataFrame, tmp_path: Path):
+    def test_read_csv_with_prefer_parquet_false(
+        self, sample_df: pd.DataFrame, tmp_path: Path
+    ):
         """prefer_parquet=False should read the CSV directly."""
         from upstream_drift_tools.data_io import read_data
 
@@ -58,7 +62,9 @@ class TestReadData:
         assert len(result) == 3
 
     @requires_pyarrow
-    def test_read_csv_prefers_parquet_sibling(self, sample_df: pd.DataFrame, tmp_path: Path):
+    def test_read_csv_prefers_parquet_sibling(
+        self, sample_df: pd.DataFrame, tmp_path: Path
+    ):
         """When parquet sibling exists, it should be used over CSV."""
         from upstream_drift_tools.data_io import read_data
 
@@ -142,7 +148,9 @@ class TestWriteData:
         write_data(sample_df, nested)
         assert nested.exists()
 
-    def test_write_unsupported_extension_raises(self, sample_df: pd.DataFrame, tmp_path: Path):
+    def test_write_unsupported_extension_raises(
+        self, sample_df: pd.DataFrame, tmp_path: Path
+    ):
         """ensure() contract violation on bad extension."""
         from contracts import PostconditionError, PreconditionError
         from upstream_drift_tools.data_io import write_data

@@ -65,7 +65,9 @@ class SceneRenderMixin:
         glClear(GL_DEPTH_BUFFER_BIT)
         self._render_view_contents(jd)
 
-        glViewport(0, 0, renderer.settings.window_width, renderer.settings.window_height)
+        glViewport(
+            0, 0, renderer.settings.window_width, renderer.settings.window_height
+        )
         renderer.begin_frame(clear=False)
         self._render_overlays(jd)
         renderer.end_frame()
@@ -194,7 +196,9 @@ class SceneRenderMixin:
             elif julian_date > end_time:
                 state = spacecraft.get_state_at_time(julian_date)
                 pos = state.position * renderer.distance_scale
-                renderer.render_label("\u2b50 " + spacecraft.name, pos, (150, 150, 150), priority=1)
+                renderer.render_label(
+                    "\u2b50 " + spacecraft.name, pos, (150, 150, 150), priority=1
+                )
 
     def _render_overlays(self, julian_date: float) -> None:
         """Render 2D UI overlays (sidebar, controls, HUD).
@@ -267,7 +271,9 @@ class SceneRenderMixin:
         if not self.unified_controls:
             return
         time_data = self.time_nav_panel.get_render_data() if self.time_nav_panel else {}
-        renderer.render_unified_controls(self.unified_controls.get_render_data(), time_data)
+        renderer.render_unified_controls(
+            self.unified_controls.get_render_data(), time_data
+        )
 
     def _render_floating_overlays(self, renderer: Any) -> None:
         """Render floating overlays (status bar, help, date picker)."""
@@ -276,7 +282,11 @@ class SceneRenderMixin:
             status += f"  |  Selected: {self.selected_body.name}"
         renderer.render_status_bar(status)
 
-        if self.view_state.show_help and hasattr(self, "help_overlay") and self.help_overlay:
+        if (
+            self.view_state.show_help
+            and hasattr(self, "help_overlay")
+            and self.help_overlay
+        ):
             renderer.render_help_overlay(self.help_overlay.get_render_data())
 
         if self.date_picker and self.date_picker.visible:

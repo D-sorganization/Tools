@@ -159,10 +159,12 @@ def build_plan_preview(
                 label=f"lid_port_{index + 1}",
                 color_hex="#CFE8FF",
                 center_x_in=(
-                    cos(port.normalized_clock_angle_radians) * port.radial_distance_from_center_in
+                    cos(port.normalized_clock_angle_radians)
+                    * port.radial_distance_from_center_in
                 ),
                 center_y_in=(
-                    sin(port.normalized_clock_angle_radians) * port.radial_distance_from_center_in
+                    sin(port.normalized_clock_angle_radians)
+                    * port.radial_distance_from_center_in
                 ),
                 diameter_in=port.diameter_in,
             )

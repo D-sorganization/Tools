@@ -195,7 +195,9 @@ class GitHubImporter:
         results = []
 
         for url in urls:
-            results.append(self._import_single_url(url, flatten_structure, skip_existing))
+            results.append(
+                self._import_single_url(url, flatten_structure, skip_existing)
+            )
 
         return results
 
@@ -263,7 +265,9 @@ class GitHubImporter:
                 name=url,
             )
 
-    def _fetch_repo_metadata(self, url: str, owner: str, repo_name: str) -> tuple[str, str]:
+    def _fetch_repo_metadata(
+        self, url: str, owner: str, repo_name: str
+    ) -> tuple[str, str]:
         """Fetch repository metadata (branch and description) from GitHub API."""
         if not (url is not None):
             raise ValueError("url must be provided")
@@ -282,7 +286,9 @@ class GitHubImporter:
                 branch = repo_data.get("default_branch", "main")
                 description = repo_data.get("description", "")
         except (PermissionError, OSError):
-            logger.warning(f"Could not fetch repo metadata for {url}, assuming branch '{branch}'")
+            logger.warning(
+                f"Could not fetch repo metadata for {url}, assuming branch '{branch}'"
+            )
             description = f"Imported from {url}"
 
         return branch, description

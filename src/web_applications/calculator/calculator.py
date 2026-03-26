@@ -66,7 +66,9 @@ class TI89Calculator:
             }
 
         if TI89Calculator._TRANSFORMATIONS_CACHE is None:
-            TI89Calculator._TRANSFORMATIONS_CACHE = standard_transformations + (convert_xor,)
+            TI89Calculator._TRANSFORMATIONS_CACHE = standard_transformations + (
+                convert_xor,
+            )
 
     @staticmethod
     def _safe_factorial(n: object, **kwargs: object) -> sp.Expr:
@@ -145,7 +147,9 @@ class TI89Calculator:
                     if bf is not None and ef is not None and abs(bf) > 1 and ef > 0:
                         digits = ef * math.log10(abs(bf))
                         if digits > 6000:
-                            raise ValueError("Exponentiation result exceeds safety limits")
+                            raise ValueError(
+                                "Exponentiation result exceeds safety limits"
+                            )
 
             # Handle containers (lists, tuples, dicts) returned by some functions
             if isinstance(current, dict):
@@ -205,10 +209,12 @@ class TI89Calculator:
             raise ValueError("expression must be provided")
         cleaned_variables = dict(variables_tuple)
         variable_names = tuple(sorted(cleaned_variables.keys()))
-        parsed_expression, expression_symbols = TI89Calculator._parse_expression_structure(
-            expression, variable_names
+        parsed_expression, expression_symbols = (
+            TI89Calculator._parse_expression_structure(expression, variable_names)
         )
-        substitutions = {expression_symbols[key]: value for key, value in cleaned_variables.items()}
+        substitutions = {
+            expression_symbols[key]: value for key, value in cleaned_variables.items()
+        }
         substituted = (
             parsed_expression.subs(substitutions)
             if hasattr(parsed_expression, "subs")
@@ -220,7 +226,11 @@ class TI89Calculator:
         if isinstance(substituted, sp.Number):
             return CalculatorResult(expression, substituted)
 
-        simplified = sp.simplify(substituted) if isinstance(substituted, sp.Basic) else substituted
+        simplified = (
+            sp.simplify(substituted)
+            if isinstance(substituted, sp.Basic)
+            else substituted
+        )
         return CalculatorResult(expression, simplified)
 
     @staticmethod
@@ -239,10 +249,14 @@ class TI89Calculator:
         if not (expression is not None):
             raise ValueError("expression must be provided")
         expression_symbols = TI89Calculator._build_symbol_map(variable_names)
-        parsed_expression = TI89Calculator.parse_expression(expression, expression_symbols)
+        parsed_expression = TI89Calculator.parse_expression(
+            expression, expression_symbols
+        )
         return parsed_expression, expression_symbols
 
-    def matrix_exponential(self, matrix: Iterable[Iterable[object]]) -> CalculatorResult:
+    def matrix_exponential(
+        self, matrix: Iterable[Iterable[object]]
+    ) -> CalculatorResult:
         """Compute the matrix exponential for a square matrix."""
 
         if not (matrix is not None):
@@ -283,11 +297,15 @@ class TI89Calculator:
         if not (equation is not None):
             raise ValueError("equation must be provided")
         target_symbol = sp.Symbol(variable)
-        equation_object = TI89Calculator.parse_equation(equation, {variable: target_symbol})
+        equation_object = TI89Calculator.parse_equation(
+            equation, {variable: target_symbol}
+        )
         solutions = sp.solve(equation_object, target_symbol)
         return CalculatorResult(equation, sp.Tuple(*solutions))
 
-    def solve_system(self, equations: Sequence[str], variables: Sequence[str]) -> CalculatorResult:
+    def solve_system(
+        self, equations: Sequence[str], variables: Sequence[str]
+    ) -> CalculatorResult:
         """Solve a system of equations for the provided variables."""
         return TI89Calculator._solve_system_cached(tuple(equations), tuple(variables))
 
@@ -300,19 +318,24 @@ class TI89Calculator:
             raise ValueError("equations must be provided")
         symbol_map = TI89Calculator._build_symbol_map(variables)
         parsed_equations = [
-            TI89Calculator.parse_equation(equation, symbol_map) for equation in equations
+            TI89Calculator.parse_equation(equation, symbol_map)
+            for equation in equations
         ]
         solution_symbols = [symbol_map[variable] for variable in variables]
         solutions = sp.solve(parsed_equations, solution_symbols, dict=True)
         return CalculatorResult("; ".join(equations), tuple(solutions))
 
-    def derivative(self, expression: str, variable: str, order: int = 1) -> CalculatorResult:
+    def derivative(
+        self, expression: str, variable: str, order: int = 1
+    ) -> CalculatorResult:
         """Compute the symbolic derivative of an expression with respect to a variable."""
         return TI89Calculator._derivative_cached(expression, variable, order)
 
     @staticmethod
     @lru_cache(maxsize=1024)
-    def _derivative_cached(expression: str, variable: str, order: int) -> CalculatorResult:
+    def _derivative_cached(
+        expression: str, variable: str, order: int
+    ) -> CalculatorResult:
         if order <= 0:
             raise ValueError("Derivative order must be a positive integer")
 
@@ -385,7 +408,9 @@ class TI89Calculator:
             expression, (variable,)
         )
         variable_symbol = sym_map[variable]
-        result = sp.limit(parsed_expression, variable_symbol, value, dir=direction_token)
+        result = sp.limit(
+            parsed_expression, variable_symbol, value, dir=direction_token
+        )
         return CalculatorResult(expression, result)
 
     def taylor_series(
@@ -406,17 +431,23 @@ class TI89Calculator:
             expression, (variable,)
         )
         variable_symbol = sym_map[variable]
-        series_expansion = sp.series(parsed_expression, variable_symbol, around, order + 1)
+        series_expansion = sp.series(
+            parsed_expression, variable_symbol, around, order + 1
+        )
         truncated = sp.simplify(series_expansion.removeO())
         return CalculatorResult(expression, truncated)
 
-    def solve_differential_equation(self, equation: str, function: str) -> CalculatorResult:
+    def solve_differential_equation(
+        self, equation: str, function: str
+    ) -> CalculatorResult:
         """Solve an ordinary differential equation for the specified function."""
         return TI89Calculator._solve_differential_equation_cached(equation, function)
 
     @staticmethod
     @lru_cache(maxsize=1024)
-    def _solve_differential_equation_cached(equation: str, function: str) -> CalculatorResult:
+    def _solve_differential_equation_cached(
+        equation: str, function: str
+    ) -> CalculatorResult:
         # Note: We need to access _allowed_functions. It is a class attribute but populated in init or static?
         # In this static context, we should use the class-level caches if available.
         # But _ALLOWED_FUNCTIONS_CACHE is populated in __init__ if None.
@@ -453,7 +484,9 @@ class TI89Calculator:
         return TI89Calculator.parse_expression(expression, symbols)
 
     @staticmethod
-    def parse_expression(expression: str, symbols: Mapping[str, sp.Symbol | sp.Expr]) -> sp.Expr:
+    def parse_expression(
+        expression: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
+    ) -> sp.Expr:
         """Parse a mathematical expression string into a validated SymPy tree."""
         # Optimization: fast-path for simple numbers to avoid expensive parse_expr
         if not (expression is not None):
@@ -506,11 +539,15 @@ class TI89Calculator:
         # will handle evaluation naturally. This reduces parsing overhead by ~50%.
         return expr_tree
 
-    def _parse_equation(self, equation: str, symbols: Mapping[str, sp.Symbol | sp.Expr]) -> sp.Eq:
+    def _parse_equation(
+        self, equation: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
+    ) -> sp.Eq:
         return TI89Calculator.parse_equation(equation, symbols)
 
     @staticmethod
-    def parse_equation(equation: str, symbols: Mapping[str, sp.Symbol | sp.Expr]) -> sp.Eq:
+    def parse_equation(
+        equation: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
+    ) -> sp.Eq:
         """Parse an equation string (``lhs = rhs``) into a SymPy ``Eq`` object."""
         if not (equation is not None):
             raise ValueError("equation must be provided")
@@ -558,7 +595,9 @@ class TI89Calculator:
         upper = sp.Matrix.hstack(angular_skew, linear)
         return sp.Matrix.vstack(upper, sp.Matrix([[0, 0, 0, 0]]))
 
-    def _se3_vee(self, matrix: Iterable[Iterable[object]], **kwargs: object) -> sp.Matrix:
+    def _se3_vee(
+        self, matrix: Iterable[Iterable[object]], **kwargs: object
+    ) -> sp.Matrix:
         transform = sp.Matrix(matrix)
         if transform.shape != (4, 4):
             raise ValueError("se3_vee expects a 4x4 matrix")
@@ -587,10 +626,14 @@ class TI89Calculator:
         linear = -self._hat(angular) * origin + twist_pitch * angular
         return sp.Matrix.vstack(angular, linear)
 
-    def _matrix_exp(self, matrix: Iterable[Iterable[object]], **kwargs: object) -> sp.Matrix:
+    def _matrix_exp(
+        self, matrix: Iterable[Iterable[object]], **kwargs: object
+    ) -> sp.Matrix:
         return sp.Matrix(matrix).exp()
 
-    def _matrix_log(self, matrix: Iterable[Iterable[object]], **kwargs: object) -> sp.Matrix:
+    def _matrix_log(
+        self, matrix: Iterable[Iterable[object]], **kwargs: object
+    ) -> sp.Matrix:
         return sp.Matrix(matrix).log()
 
     def _matrix_power(
@@ -617,7 +660,9 @@ class TI89Calculator:
         lower = sp.Matrix.hstack(translation_hat * rotation, rotation)
         return sp.Matrix.vstack(upper, lower)
 
-    def _block_diag(self, *blocks: Iterable[Iterable[object]], **kwargs: object) -> sp.Matrix:
+    def _block_diag(
+        self, *blocks: Iterable[Iterable[object]], **kwargs: object
+    ) -> sp.Matrix:
         matrices = [sp.Matrix(block) for block in blocks]
         return sp.diag(*matrices)
 
@@ -717,8 +762,12 @@ class TI89Calculator:
         """Return matrix and linear algebra function mappings."""
         return {
             "Matrix": sp.Matrix,
-            "dot": lambda vector_a, vector_b, **k: sp.Matrix(vector_a).dot(sp.Matrix(vector_b)),
-            "cross": lambda vector_a, vector_b, **k: sp.Matrix(vector_a).cross(sp.Matrix(vector_b)),
+            "dot": lambda vector_a, vector_b, **k: sp.Matrix(vector_a).dot(
+                sp.Matrix(vector_b)
+            ),
+            "cross": lambda vector_a, vector_b, **k: sp.Matrix(vector_a).cross(
+                sp.Matrix(vector_b)
+            ),
             "det": lambda matrix, **k: sp.Matrix(matrix).det(),
             "transpose": lambda matrix, **k: sp.Matrix(matrix).T,
             "inv": lambda matrix, **k: sp.Matrix(matrix).inv(),
@@ -748,7 +797,9 @@ class TI89Calculator:
             "qr": lambda matrix, **k: sp.Matrix(matrix).QRdecomposition(),
             "lu": lambda matrix, **k: sp.Matrix(matrix).LUdecomposition(),
             "svd": lambda matrix, **k: sp.Matrix(matrix).SVD(),
-            "solve_linear": lambda matrix, rhs, **k: sp.Matrix(matrix).LUsolve(sp.Matrix(rhs)),
+            "solve_linear": lambda matrix, rhs, **k: sp.Matrix(matrix).LUsolve(
+                sp.Matrix(rhs)
+            ),
             "linsolve": sp.linsolve,
         }
 

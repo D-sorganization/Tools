@@ -52,7 +52,9 @@ def rects_overlap(
         raise ValueError("a must be provided")
     ax1, ay1, ax2, ay2 = a
     bx1, by1, bx2, by2 = b
-    return not (ax2 + pad <= bx1 or bx2 + pad <= ax1 or ay2 + pad <= by1 or by2 + pad <= ay1)
+    return not (
+        ax2 + pad <= bx1 or bx2 + pad <= ax1 or ay2 + pad <= by1 or by2 + pad <= ay1
+    )
 
 
 def text_box(

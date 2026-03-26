@@ -220,7 +220,9 @@ class TestSetupPythonPath:
             with warnings.catch_warnings(record=True) as w:
                 warnings.simplefilter("always")
                 setup_python_path(repo_root=tmp_path)
-            deprecation_warnings = [x for x in w if issubclass(x.category, DeprecationWarning)]
+            deprecation_warnings = [
+                x for x in w if issubclass(x.category, DeprecationWarning)
+            ]
             assert len(deprecation_warnings) >= 1
         finally:
             os.environ["PYTHONPATH"] = original_env
@@ -255,7 +257,9 @@ class TestAddUtilsToPath:
             with warnings.catch_warnings(record=True) as w:
                 warnings.simplefilter("always")
                 add_utils_to_path()
-            deprecation_warnings = [x for x in w if issubclass(x.category, DeprecationWarning)]
+            deprecation_warnings = [
+                x for x in w if issubclass(x.category, DeprecationWarning)
+            ]
             assert len(deprecation_warnings) >= 1
         finally:
             os.environ["PYTHONPATH"] = original_env

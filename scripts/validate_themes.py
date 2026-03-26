@@ -138,15 +138,21 @@ def validate() -> list[str]:
             lum = luminance(colors["bg"])
             is_dark = theme_def.get("isDark", False)
             if is_dark and lum >= 0.5:
-                errors.append(f"{prefix}: isDark=true but bg luminance={lum:.2f} (>=0.5)")
+                errors.append(
+                    f"{prefix}: isDark=true but bg luminance={lum:.2f} (>=0.5)"
+                )
             elif not is_dark and lum < 0.5:
-                errors.append(f"{prefix}: isDark=false but bg luminance={lum:.2f} (<0.5)")
+                errors.append(
+                    f"{prefix}: isDark=false but bg luminance={lum:.2f} (<0.5)"
+                )
 
         # WCAG AA contrast check (text on background, 4.5:1 minimum)
         if "text" in colors and "bg" in colors:
             ratio = contrast_ratio(colors["text"], colors["bg"])
             if ratio < 4.5:
-                errors.append(f"{prefix}: text/bg contrast {ratio:.1f}:1 < 4.5:1 (WCAG AA)")
+                errors.append(
+                    f"{prefix}: text/bg contrast {ratio:.1f}:1 < 4.5:1 (WCAG AA)"
+                )
 
     return errors
 

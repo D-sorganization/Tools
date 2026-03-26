@@ -210,7 +210,9 @@ class TimeSeriesDecomposer:
         elif method == DecompositionMethod.CLASSICAL_ADDITIVE:
             result = self._classical_decompose(data, period, SeasonalModel.ADDITIVE)
         elif method == DecompositionMethod.CLASSICAL_MULTIPLICATIVE:
-            result = self._classical_decompose(data, period, SeasonalModel.MULTIPLICATIVE)
+            result = self._classical_decompose(
+                data, period, SeasonalModel.MULTIPLICATIVE
+            )
         elif method == DecompositionMethod.MOVING_AVERAGE:
             result = self._ma_decompose(data, period)
         elif method == DecompositionMethod.LOWESS:
@@ -265,7 +267,9 @@ class TimeSeriesDecomposer:
         if period_strengths:
             max_strength = max(period_strengths.values())
             # Get all periods with strength at least 95% of max
-            candidates = [p for p, s in period_strengths.items() if s >= 0.95 * max_strength]
+            candidates = [
+                p for p, s in period_strengths.items() if s >= 0.95 * max_strength
+            ]
             dominant_period = min(candidates)
 
         # Determine if data is seasonal
@@ -670,7 +674,9 @@ class TimeSeriesDecomposer:
             period=period,
         )
 
-    def _hp_filter_decompose(self, data: np.ndarray, period: int) -> DecompositionResult:
+    def _hp_filter_decompose(
+        self, data: np.ndarray, period: int
+    ) -> DecompositionResult:
         """Hodrick-Prescott filter decomposition."""
         # Trend using HP filter
         if not (data is not None):
@@ -885,7 +891,9 @@ class TimeSeriesDecomposer:
         acf[0] = 1.0
 
         for lag in range(1, max_lag + 1):
-            acf[lag] = np.sum(data_centered[lag:] * data_centered[:-lag]) / ((n - lag) * var)
+            acf[lag] = np.sum(data_centered[lag:] * data_centered[:-lag]) / (
+                (n - lag) * var
+            )
 
         return acf
 

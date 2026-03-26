@@ -436,7 +436,9 @@ class TestSyngasWater:
             "coal_syngas",
             "natural_gas_reforming",
         ):
-            r = client.post("/api/calc/syngas-water", json=self._payload(composition_key=key))
+            r = client.post(
+                "/api/calc/syngas-water", json=self._payload(composition_key=key)
+            )
             assert r.status_code == 200, f"Failed for composition_key={key}"
 
     def test_all_methods(self, client: TestClient):
@@ -744,7 +746,9 @@ class TestODEContracts:
     def test_thermal_profile_request_defaults(self):
         from calc_backend.contracts.thermal_profile import ThermalProfileRequest
 
-        req = ThermalProfileRequest(thermal_mass_j_per_k=1000.0, heat_loss_coeff_w_per_k=5.0)
+        req = ThermalProfileRequest(
+            thermal_mass_j_per_k=1000.0, heat_loss_coeff_w_per_k=5.0
+        )
         assert req.power_w == 5000.0
         assert req.power_profile == "constant"
         assert req.num_points == 100

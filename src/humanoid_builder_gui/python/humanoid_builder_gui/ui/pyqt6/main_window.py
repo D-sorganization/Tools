@@ -380,7 +380,9 @@ class HumanoidBuilderWindow(QMainWindow):
         self.height_spin.setDecimals(2)
         self.height_spin.setValue(1.75)
         self.height_spin.setSingleStep(0.01)
-        self.height_spin.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.height_spin.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
+        )
         primary_layout.addWidget(self.height_spin, 0, 1)
 
         # Mass
@@ -505,7 +507,9 @@ class HumanoidBuilderWindow(QMainWindow):
             value_label.setMinimumWidth(40)
             props_layout.addWidget(value_label, row, 2)
 
-            slider.valueChanged.connect(lambda v, lbl=value_label: lbl.setText(f"{v / 100:.2f}"))
+            slider.valueChanged.connect(
+                lambda v, lbl=value_label: lbl.setText(f"{v / 100:.2f}")
+            )
 
             self.proportion_sliders[key] = (slider, value_label)
 
@@ -605,7 +609,9 @@ class HumanoidBuilderWindow(QMainWindow):
 
         self.preview_text = QTextEdit()
         self.preview_text.setReadOnly(True)
-        self.preview_text.setPlaceholderText("Build character to see configuration preview...")
+        self.preview_text.setPlaceholderText(
+            "Build character to see configuration preview..."
+        )
         preview_layout.addWidget(self.preview_text)
 
         layout.addWidget(preview_group)
@@ -788,7 +794,9 @@ class HumanoidBuilderWindow(QMainWindow):
     def _export_character(self) -> None:
         """Export the character configuration."""
         if not self._segments:
-            self.preview_text.setPlainText("Error: Build character first before export.")
+            self.preview_text.setPlainText(
+                "Error: Build character first before export."
+            )
             return
 
         # In a full implementation, this would save to file

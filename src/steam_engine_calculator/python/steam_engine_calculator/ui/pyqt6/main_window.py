@@ -547,7 +547,9 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
             status_parts.append("Engine: Not available")
 
         self.engine_status.setText(" | ".join(status_parts))
-        self.engine_status.setStyleSheet(f"color: {COLORS['subtext0']}; font-size: 10px;")
+        self.engine_status.setStyleSheet(
+            f"color: {COLORS['subtext0']}; font-size: 10px;"
+        )
 
     def _get_temperature_k(self) -> float:
         """Get temperature in Kelvin from input."""
@@ -651,10 +653,14 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         }
         phase_color = phase_colors.get(result.phase.lower(), COLORS["text"])
         self.phase_label.setText(result.phase.upper())
-        self.phase_label.setStyleSheet(f"color: {phase_color}; font-size: 16px; font-weight: bold;")
+        self.phase_label.setStyleSheet(
+            f"color: {phase_color}; font-size: 16px; font-weight: bold;"
+        )
 
         quality_text = (
-            f"Quality: {result.quality:.4f}" if result.quality is not None else "Quality: N/A"
+            f"Quality: {result.quality:.4f}"
+            if result.quality is not None
+            else "Quality: N/A"
         )
         self.quality_label.setText(quality_text)
 
@@ -669,19 +675,25 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         self.result_labels["spec_vol"].setText(f"{result.specific_volume:.6f} m³/kg")
         self.result_labels["enthalpy"].setText(f"{result.enthalpy / 1000:.2f} kJ/kg")
         self.result_labels["entropy"].setText(f"{result.entropy / 1000:.4f} kJ/kg-K")
-        self.result_labels["int_energy"].setText(f"{result.internal_energy / 1000:.2f} kJ/kg")
+        self.result_labels["int_energy"].setText(
+            f"{result.internal_energy / 1000:.2f} kJ/kg"
+        )
         self.result_labels["cp"].setText(f"{result.cp:.2f} J/kg-K")
         self.result_labels["cv"].setText(f"{result.cv:.2f} J/kg-K")
 
         # Transport properties
         self.result_labels["sound"].setText(f"{result.speed_of_sound:.2f} m/s")
-        self.result_labels["therm_cond"].setText(f"{result.thermal_conductivity:.6f} W/m-K")
+        self.result_labels["therm_cond"].setText(
+            f"{result.thermal_conductivity:.6f} W/m-K"
+        )
         self.result_labels["dyn_visc"].setText(f"{result.dynamic_viscosity:.2e} Pa·s")
         self.result_labels["kin_visc"].setText(f"{result.kinematic_viscosity:.2e} m²/s")
 
         # Derived properties
         if result.compressibility_factor is not None:
-            self.result_labels["compress"].setText(f"{result.compressibility_factor:.4f}")
+            self.result_labels["compress"].setText(
+                f"{result.compressibility_factor:.4f}"
+            )
         else:
             self.result_labels["compress"].setText("--")
 

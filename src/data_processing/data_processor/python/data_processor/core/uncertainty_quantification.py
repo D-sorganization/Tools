@@ -315,7 +315,9 @@ class UncertaintyQuantifier:
         # Generate samples for each parameter
         param_samples = {}
         for name, (dist_type, params) in param_distributions.items():
-            param_samples[name] = self._sample_distribution(dist_type, params, n_samples)
+            param_samples[name] = self._sample_distribution(
+                dist_type, params, n_samples
+            )
 
         # Evaluate function for each sample
         outputs = np.zeros(n_samples)
@@ -335,7 +337,8 @@ class UncertaintyQuantifier:
 
         # Percentiles
         percentiles = {
-            p: float(np.percentile(outputs, p)) for p in [1, 5, 10, 25, 50, 75, 90, 95, 99]
+            p: float(np.percentile(outputs, p))
+            for p in [1, 5, 10, 25, 50, 75, 90, 95, 99]
         }
 
         # Higher moments
@@ -449,14 +452,20 @@ class UncertaintyQuantifier:
             AB_i = A.copy()
             AB_i[:, i] = B[:, i]
 
-            y_AB_i = np.array([func(**dict(zip(params, row, strict=False))) for row in AB_i])
+            y_AB_i = np.array(
+                [func(**dict(zip(params, row, strict=False))) for row in AB_i]
+            )
 
             # First-order index
             if total_variance > 0:
-                first_order[param] = float(np.mean(y_B * (y_AB_i - y_A)) / total_variance)
+                first_order[param] = float(
+                    np.mean(y_B * (y_AB_i - y_A)) / total_variance
+                )
 
                 # Total-order index
-                total_order[param] = float(0.5 * np.mean((y_A - y_AB_i) ** 2) / total_variance)
+                total_order[param] = float(
+                    0.5 * np.mean((y_A - y_AB_i) ** 2) / total_variance
+                )
             else:
                 first_order[param] = 0.0
                 total_order[param] = 0.0
@@ -599,7 +608,9 @@ class UncertaintyQuantifier:
 
         # Posterior parameters (conjugate update)
         posterior_var = 1 / (1 / prior_var + n / sample_var)
-        posterior_mean = posterior_var * (prior_mean / prior_var + n * sample_mean / sample_var)
+        posterior_mean = posterior_var * (
+            prior_mean / prior_var + n * sample_mean / sample_var
+        )
         posterior_std = np.sqrt(posterior_var)
 
         # Credible interval
@@ -648,7 +659,9 @@ class UncertaintyQuantifier:
             estimates_minus = estimates.copy()
             estimates_minus[name] -= step
 
-            gradient[i] = (func(**estimates_plus) - func(**estimates_minus)) / (2 * step)
+            gradient[i] = (func(**estimates_plus) - func(**estimates_minus)) / (
+                2 * step
+            )
 
         # Point estimate
         theta = func(**estimates)
@@ -776,7 +789,9 @@ class UncertaintyQuantifier:
 
         return float(ci_lower), float(ci_upper)
 
-    def _sample_distribution(self, dist_type: str, params: dict[str, Any], n: int) -> np.ndarray:
+    def _sample_distribution(
+        self, dist_type: str, params: dict[str, Any], n: int
+    ) -> np.ndarray:
         """Sample from a distribution."""
         if dist_type == "normal":
             return self._rng.normal(params.get("loc", 0), params.get("scale", 1), n)

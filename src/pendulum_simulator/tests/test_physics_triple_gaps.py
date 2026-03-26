@@ -32,7 +32,9 @@ def zero_torque():
 
 
 class TestEquationsOfMotionWithTorqueLimits:
-    def test_with_torque_limits_clamps(self, params: TriplePendulumParams, zero_torque) -> None:
+    def test_with_torque_limits_clamps(
+        self, params: TriplePendulumParams, zero_torque
+    ) -> None:
         """Passing torque_limits clamps huge torques and still produces finite derivatives."""
         state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
         limits = np.array([0.001, 0.001, 0.001])  # tiny limits
@@ -56,7 +58,9 @@ class TestEquationsOfMotionWithTorqueLimits:
         assert state_dot.shape == (6,)
         assert np.all(np.isfinite(state_dot))
 
-    def test_no_torque_limits_same_as_none(self, params: TriplePendulumParams, zero_torque) -> None:
+    def test_no_torque_limits_same_as_none(
+        self, params: TriplePendulumParams, zero_torque
+    ) -> None:
         """Without limits, result should match None path."""
         state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
         sd_no_limits = equations_of_motion(state, 0.0, params, zero_torque, torque_limits=None)

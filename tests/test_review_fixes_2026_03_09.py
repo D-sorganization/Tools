@@ -444,7 +444,9 @@ except ImportError:
     _has_scipy = False
 
 
-@pytest.mark.skipif(not _has_scipy, reason="scipy required for humanoid_character_builder")
+@pytest.mark.skipif(
+    not _has_scipy, reason="scipy required for humanoid_character_builder"
+)
 class TestBodyParametersStrictValidation:
     """H-02: No bounds on anthropometric params."""
 
@@ -506,7 +508,9 @@ except ImportError:
     _has_defusedxml = False
 
 
-@pytest.mark.skipif(not _has_defusedxml, reason="defusedxml required for MJCF converter")
+@pytest.mark.skipif(
+    not _has_defusedxml, reason="defusedxml required for MJCF converter"
+)
 class TestMJCFCapsuleParsing:
     """H-14: MJCF capsule parsing IndexError."""
 

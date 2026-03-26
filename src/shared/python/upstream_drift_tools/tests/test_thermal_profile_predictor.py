@@ -136,7 +136,9 @@ class TestFitHeatingParameters:
         )
 
         # Add tiny noise so fit is not degenerate
-        observed_noisy = observed + np.random.default_rng(42).normal(0, 0.01, len(observed))
+        observed_noisy = observed + np.random.default_rng(42).normal(
+            0, 0.01, len(observed)
+        )
 
         fitted_mass, fitted_loss = fit_heating_parameters(
             times=t_eval,

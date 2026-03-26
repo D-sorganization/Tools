@@ -159,7 +159,9 @@ class TestVaporPressureProperties:
         delta=st.floats(min_value=0.1, max_value=20.0),
     )
     @_HYP
-    def test_vapor_pressure_monotonically_increasing(self, t1: float, delta: float) -> None:
+    def test_vapor_pressure_monotonically_increasing(
+        self, t1: float, delta: float
+    ) -> None:
         """Vapor pressure must increase with temperature (Clausius-Clapeyron)."""
 
         t2 = t1 + delta
@@ -182,7 +184,9 @@ class TestWaterContentProperties:
         pressure_bar=st.floats(min_value=0.5, max_value=50.0),
     )
     @_HYP
-    def test_mole_fraction_in_unit_interval(self, temp_c: float, pressure_bar: float) -> None:
+    def test_mole_fraction_in_unit_interval(
+        self, temp_c: float, pressure_bar: float
+    ) -> None:
         """Water mole fraction must be in [0, 1]."""
 
         calc = _get_calc()
@@ -194,7 +198,9 @@ class TestWaterContentProperties:
         pressure_bar=st.floats(min_value=0.5, max_value=50.0),
     )
     @_HYP
-    def test_mass_fraction_in_unit_interval(self, temp_c: float, pressure_bar: float) -> None:
+    def test_mass_fraction_in_unit_interval(
+        self, temp_c: float, pressure_bar: float
+    ) -> None:
         """Water mass fraction must be in [0, 1]."""
 
         calc = _get_calc()
@@ -206,7 +212,9 @@ class TestWaterContentProperties:
         pressure_bar=st.floats(min_value=0.5, max_value=50.0),
     )
     @_HYP
-    def test_ppmv_consistent_with_mole_fraction(self, temp_c: float, pressure_bar: float) -> None:
+    def test_ppmv_consistent_with_mole_fraction(
+        self, temp_c: float, pressure_bar: float
+    ) -> None:
         """ppmv must equal mole_fraction * 1e6."""
 
         calc = _get_calc()
@@ -233,7 +241,9 @@ class TestWaterContentProperties:
         delta=st.floats(min_value=0.5, max_value=10.0),
     )
     @_HYP
-    def test_higher_pressure_means_less_water_fraction(self, p1: float, delta: float) -> None:
+    def test_higher_pressure_means_less_water_fraction(
+        self, p1: float, delta: float
+    ) -> None:
         """At constant T, higher pressure → lower mole fraction (Dalton's law)."""
 
         p2 = p1 + delta

@@ -256,7 +256,9 @@ class TestJointVelocities:
         assert result["wrist_speed"] == pytest.approx(0.0, abs=1e-12)
         assert result["tip_speed"] == pytest.approx(0.0, abs=1e-12)
 
-    def test_positive_with_motion(self, params: PendulumParams, moving_state: np.ndarray) -> None:
+    def test_positive_with_motion(
+        self, params: PendulumParams, moving_state: np.ndarray
+    ) -> None:
         result = joint_velocities(moving_state, params)
         # Speeds should be non-negative
         assert result["wrist_speed"] >= 0
@@ -293,7 +295,9 @@ class TestBaseForce:
         assert np.isfinite(result["fy"])
         assert np.isfinite(result["magnitude"])
 
-    def test_magnitude_non_negative(self, params: PendulumParams, moving_state: np.ndarray) -> None:
+    def test_magnitude_non_negative(
+        self, params: PendulumParams, moving_state: np.ndarray
+    ) -> None:
         qddot = np.array([1.0, -0.5])
         result = base_force(moving_state, qddot, params)
         assert result["magnitude"] >= 0

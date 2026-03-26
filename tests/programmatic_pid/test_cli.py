@@ -8,7 +8,11 @@ import pytest
 from programmatic_pid.cli import derive_related_path, generate
 
 _BIOCHAR_SPEC = (
-    Path(__file__).resolve().parents[2] / "examples" / "pid" / "biochar" / "biochar_pid_spec.yml"
+    Path(__file__).resolve().parents[2]
+    / "examples"
+    / "pid"
+    / "biochar"
+    / "biochar_pid_spec.yml"
 )
 
 

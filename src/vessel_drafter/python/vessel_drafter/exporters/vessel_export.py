@@ -47,7 +47,9 @@ def export_vessel(
     for fmt in formats:
         fmt = fmt.lower()
         if fmt not in _SUPPORTED_FORMATS:
-            raise ValueError(f"Unsupported format {fmt!r}. Choose from {_SUPPORTED_FORMATS}")
+            raise ValueError(
+                f"Unsupported format {fmt!r}. Choose from {_SUPPORTED_FORMATS}"
+            )
         out_file = output_path / f"{stem}.{fmt}"
         _export_compound(compound, out_file, fmt)
         results[fmt] = out_file

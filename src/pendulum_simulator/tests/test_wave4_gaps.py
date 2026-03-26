@@ -137,7 +137,9 @@ class TestGolferDynamicsInputValidation:
         with pytest.raises(TypeError, match="GolferParams"):
             kinetic_energy(q8, np.zeros(N_DOF), "not_a_params")  # type: ignore[arg-type]
 
-    def test_kinetic_energy_state_vector_truncated(self, q16: np.ndarray, gp: GolferParams) -> None:
+    def test_kinetic_energy_state_vector_truncated(
+        self, q16: np.ndarray, gp: GolferParams
+    ) -> None:
         from double_pendulum_golf.golfer_dynamics import kinetic_energy
 
         qdot = np.zeros(N_DOF)
@@ -225,7 +227,9 @@ class TestConstraintSolverGaps:
 
 
 class TestClubForcesStateVectorTruncation:
-    def test_club_force_decomposition_state_vector(self, q16: np.ndarray, gp: GolferParams) -> None:
+    def test_club_force_decomposition_state_vector(
+        self, q16: np.ndarray, gp: GolferParams
+    ) -> None:
         """Line 70: q.shape[0] > N_DOF → q = q[:N_DOF]."""
         from double_pendulum_golf.club_forces import club_force_decomposition
 

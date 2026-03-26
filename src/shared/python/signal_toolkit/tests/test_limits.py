@@ -131,7 +131,9 @@ class TestApplySaturationValues:
 
 class TestApplySaturation:
     def test_hard_saturation(self, ramp_signal: Signal):
-        result = apply_saturation(ramp_signal, lower=-0.5, upper=0.5, mode=SaturationMode.HARD)
+        result = apply_saturation(
+            ramp_signal, lower=-0.5, upper=0.5, mode=SaturationMode.HARD
+        )
         assert result.name == "ramp_saturated"
         assert np.all(result.values >= -0.5)
         assert np.all(result.values <= 0.5)
@@ -213,7 +215,9 @@ class TestApplyRateLimiter:
     def test_rate_limiter_negative_rate_limiting(self, t: np.ndarray):
         """Test the negative rate branch (delta < -max_delta)."""
         # Steeply decreasing signal
-        steep_down = Signal(time=t, values=np.linspace(10.0, -10.0, len(t)), name="steepdown")
+        steep_down = Signal(
+            time=t, values=np.linspace(10.0, -10.0, len(t)), name="steepdown"
+        )
         result = apply_rate_limiter(steep_down, max_rate=1.0, smooth_transition=False)
         assert len(result.values) == len(t)
 
@@ -263,7 +267,9 @@ class TestApplyHysteresis:
     def test_hysteresis_initial_state_high(self, t: np.ndarray):
         # Start high – values above threshold_down stay high initially
         sig = Signal(time=t, values=np.zeros(len(t)), name="zero")
-        result = apply_hysteresis(sig, threshold_up=0.5, threshold_down=-0.5, initial_state=True)
+        result = apply_hysteresis(
+            sig, threshold_up=0.5, threshold_down=-0.5, initial_state=True
+        )
         assert result.values[0] == 1.0
 
     def test_hysteresis_smooth(self, t: np.ndarray):
@@ -297,14 +303,18 @@ class TestApplyBacklash:
         result = apply_backlash(ramp_signal, backlash_width=0.0, smooth=False)
         assert result.name == "ramp_backlash"
         # Zero backlash → output tracks input exactly
-        np.testing.assert_array_almost_equal(result.values, ramp_signal.values, decimal=5)
+        np.testing.assert_array_almost_equal(
+            result.values, ramp_signal.values, decimal=5
+        )
 
     def test_backlash_with_width(self, ramp_signal: Signal):
         result = apply_backlash(ramp_signal, backlash_width=0.5, smooth=False)
         assert len(result.values) == len(ramp_signal.values)
 
     def test_backlash_smooth_mode(self, ramp_signal: Signal):
-        result = apply_backlash(ramp_signal, backlash_width=0.2, smooth=True, smoothness=5.0)
+        result = apply_backlash(
+            ramp_signal, backlash_width=0.2, smooth=True, smoothness=5.0
+        )
         assert len(result.values) == len(ramp_signal.values)
 
     def test_backlash_negative_width_raises(self, sine_signal: Signal):

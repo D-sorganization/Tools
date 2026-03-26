@@ -390,7 +390,9 @@ class TestAnalyticalCoriolis:
             C = analytical_coriolis(zero_q, zero_qdot, params)
         np.testing.assert_allclose(C, 0.0, atol=1e-8)
 
-    def test_shape(self, params: GolferParams, zero_q: np.ndarray, zero_qdot: np.ndarray) -> None:
+    def test_shape(
+        self, params: GolferParams, zero_q: np.ndarray, zero_qdot: np.ndarray
+    ) -> None:
         with patch(
             "double_pendulum_golf.golfer_dynamics._native_backend.golfer_mass_matrix",
             return_value=None,
@@ -463,7 +465,9 @@ class TestKineticEnergy:
         with pytest.raises(TypeError):
             kinetic_energy([0.0] * N_DOF, zero_qdot, params)
 
-    def test_value_error_wrong_shape_q(self, params: GolferParams, zero_qdot: np.ndarray) -> None:
+    def test_value_error_wrong_shape_q(
+        self, params: GolferParams, zero_qdot: np.ndarray
+    ) -> None:
         with pytest.raises(ValueError):
             kinetic_energy(np.zeros(2), zero_qdot, params)
 

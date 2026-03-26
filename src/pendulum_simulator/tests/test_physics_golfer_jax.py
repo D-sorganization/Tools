@@ -296,7 +296,9 @@ class TestConstraintVector:
 
         np.testing.assert_allclose(phi_np, phi_jax_array, rtol=1e-8, atol=1e-10)
 
-    def test_constraint_near_zero_for_projected_configs(self, random_config: np.ndarray) -> None:
+    def test_constraint_near_zero_for_projected_configs(
+        self, random_config: np.ndarray
+    ) -> None:
         """Constraint is near zero for properly projected configs."""
         q_jax = jnp.array(random_config)
         phi_jax = constraint_vector_jax(q_jax, _PARAMS_JAX)
@@ -315,7 +317,9 @@ class TestConstraintJacobian:
         Phi_q_jax = constraint_jacobian_jax(q_jax, _PARAMS_JAX)
         assert Phi_q_jax.shape == (4, N_DOF)
 
-    def test_constraint_jacobian_parity_random_configs(self, random_config: np.ndarray) -> None:
+    def test_constraint_jacobian_parity_random_configs(
+        self, random_config: np.ndarray
+    ) -> None:
         """JAX Jacobian matches numpy."""
         q_jax = jnp.array(random_config)
 

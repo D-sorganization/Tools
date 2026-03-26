@@ -95,7 +95,9 @@ class TestValidateComposition:
     def test_custom_tolerance_tight(self):
         """Very tight tolerance should fail fractions that sum to 0.9999."""
         with pytest.raises(ValueError, match="sum"):
-            InputValidator.validate_composition({"CO2": 0.4999, "N2": 0.4999}, tolerance=1e-6)
+            InputValidator.validate_composition(
+                {"CO2": 0.4999, "N2": 0.4999}, tolerance=1e-6
+            )
 
     def test_custom_tolerance_loose(self):
         """Loose tolerance should accept fractions that sum to ~0.99."""

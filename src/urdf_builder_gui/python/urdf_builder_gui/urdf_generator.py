@@ -52,7 +52,9 @@ class _SegmentDef:
 
 _SEGMENT_DEFS: dict[str, _SegmentDef] = {
     "pelvis": _SegmentDef("pelvis", "", 0.0, 2.0, 1.2, "fixed", proportion_key=None),
-    "torso": _SegmentDef("torso", "pelvis", 0.078, 1.5, 1.0, proportion_key="torso_length"),
+    "torso": _SegmentDef(
+        "torso", "pelvis", 0.078, 1.5, 1.0, proportion_key="torso_length"
+    ),
     "head": _SegmentDef(
         "head",
         "torso",
@@ -84,7 +86,9 @@ _SEGMENT_DEFS: dict[str, _SegmentDef] = {
         limit_upper=0.0,
         proportion_key="arm_length",
     ),
-    "hand_l": _SegmentDef("hand", "forearm_l", 0.146, 0.5, 0.3, proportion_key="arm_length"),
+    "hand_l": _SegmentDef(
+        "hand", "forearm_l", 0.146, 0.5, 0.3, proportion_key="arm_length"
+    ),
     "upper_arm_r": _SegmentDef(
         "upper_arm",
         "torso",
@@ -106,7 +110,9 @@ _SEGMENT_DEFS: dict[str, _SegmentDef] = {
         limit_upper=0.0,
         proportion_key="arm_length",
     ),
-    "hand_r": _SegmentDef("hand", "forearm_r", 0.146, 0.5, 0.3, proportion_key="arm_length"),
+    "hand_r": _SegmentDef(
+        "hand", "forearm_r", 0.146, 0.5, 0.3, proportion_key="arm_length"
+    ),
     "thigh_l": _SegmentDef(
         "thigh",
         "pelvis",
@@ -128,7 +134,9 @@ _SEGMENT_DEFS: dict[str, _SegmentDef] = {
         limit_upper=0.0,
         proportion_key="leg_length",
     ),
-    "foot_l": _SegmentDef("foot", "shin_l", -0.246, 1.5, 0.6, "fixed", proportion_key="leg_length"),
+    "foot_l": _SegmentDef(
+        "foot", "shin_l", -0.246, 1.5, 0.6, "fixed", proportion_key="leg_length"
+    ),
     "thigh_r": _SegmentDef(
         "thigh",
         "pelvis",
@@ -150,7 +158,9 @@ _SEGMENT_DEFS: dict[str, _SegmentDef] = {
         limit_upper=0.0,
         proportion_key="leg_length",
     ),
-    "foot_r": _SegmentDef("foot", "shin_r", -0.246, 1.5, 0.6, "fixed", proportion_key="leg_length"),
+    "foot_r": _SegmentDef(
+        "foot", "shin_r", -0.246, 1.5, 0.6, "fixed", proportion_key="leg_length"
+    ),
 }
 
 
@@ -205,7 +215,9 @@ def generate_urdf_xml(config: URDFConfig) -> str:
             continue
 
         prop_factor = config.proportions.get(seg_def.proportion_key or "", 1.0)
-        seg_length = compute_segment_length(config.height_m, seg_def.base_key, prop_factor)
+        seg_length = compute_segment_length(
+            config.height_m, seg_def.base_key, prop_factor
+        )
         seg_mass = compute_segment_mass(config.mass_kg, seg_def.base_key)
         seg_width = seg_length * seg_def.width_frac
         seg_depth = seg_length * seg_def.depth_frac
@@ -216,7 +228,9 @@ def generate_urdf_xml(config: URDFConfig) -> str:
         lines.append(f'  <link name="{seg_name}">')
         lines.append("    <visual>")
         lines.append("      <geometry>")
-        lines.append(f'        <box size="{seg_width:.4f} {seg_depth:.4f} {seg_length:.4f}"/>')
+        lines.append(
+            f'        <box size="{seg_width:.4f} {seg_depth:.4f} {seg_length:.4f}"/>'
+        )
         lines.append("      </geometry>")
         lines.append('      <material name="skin">')
         lines.append('        <color rgba="0.8 0.6 0.5 1.0"/>')
@@ -227,7 +241,8 @@ def generate_urdf_xml(config: URDFConfig) -> str:
             lines.append("    <collision>")
             lines.append("      <geometry>")
             lines.append(
-                f'        <box size="{seg_width:.4f} {seg_depth:.4f}' f' {seg_length:.4f}"/>'
+                f'        <box size="{seg_width:.4f} {seg_depth:.4f}'
+                f' {seg_length:.4f}"/>'
             )
             lines.append("      </geometry>")
             lines.append("    </collision>")
@@ -309,13 +324,15 @@ def validate_urdf_structure(urdf_xml: str) -> tuple[bool, list[str]]:
             parent_link = parent_el.get("link", "")
             if parent_link not in link_names:
                 errors.append(
-                    f"Joint '{joint.get('name')}' references unknown" f" parent link: {parent_link}"
+                    f"Joint '{joint.get('name')}' references unknown"
+                    f" parent link: {parent_link}"
                 )
         if child_el is not None:
             child_link = child_el.get("link", "")
             if child_link not in link_names:
                 errors.append(
-                    f"Joint '{joint.get('name')}' references unknown" f" child link: {child_link}"
+                    f"Joint '{joint.get('name')}' references unknown"
+                    f" child link: {child_link}"
                 )
 
     return len(errors) == 0, errors

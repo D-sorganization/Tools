@@ -73,7 +73,9 @@ class LoadingConfig:
     sample_size: int = 1000  # Number of rows to sample for analysis
     cache_ttl: int = 3600  # Cache time-to-live in seconds
     max_files_per_batch: int = 50
-    use_process_pool: bool = False  # Use processes instead of threads for CPU-bound tasks
+    use_process_pool: bool = (
+        False  # Use processes instead of threads for CPU-bound tasks
+    )
 
 
 class HighPerformanceDataLoader:
@@ -172,7 +174,9 @@ class HighPerformanceDataLoader:
         file_metadata = {}
 
         # Use appropriate executor based on configuration
-        executor_class = ProcessPoolExecutor if self.config.use_process_pool else ThreadPoolExecutor
+        executor_class = (
+            ProcessPoolExecutor if self.config.use_process_pool else ThreadPoolExecutor
+        )
 
         with executor_class(max_workers=self.config.max_workers) as executor:
             # Submit all file processing tasks
@@ -308,7 +312,9 @@ class HighPerformanceDataLoader:
         if not (file_path is not None):
             raise ValueError("file_path must be provided")
         try:
-            cache_file = self.cache_dir / f"{hashlib.md5(file_path.encode()).hexdigest()}.json"
+            cache_file = (
+                self.cache_dir / f"{hashlib.md5(file_path.encode()).hexdigest()}.json"
+            )
             if cache_file.exists():
                 data = safe_read_json(cache_file, default=None)
                 if data:
@@ -324,7 +330,10 @@ class HighPerformanceDataLoader:
     def _cache_metadata(self, metadata: FileMetadata) -> None:
         """Cache file metadata (using secure JSON storage)."""
         try:
-            cache_file = self.cache_dir / f"{hashlib.md5(metadata.path.encode()).hexdigest()}.json"
+            cache_file = (
+                self.cache_dir
+                / f"{hashlib.md5(metadata.path.encode()).hexdigest()}.json"
+            )
             with open(cache_file, "w", encoding="utf-8") as f:
                 data = asdict(metadata)
                 # Convert set to list for JSON serialization

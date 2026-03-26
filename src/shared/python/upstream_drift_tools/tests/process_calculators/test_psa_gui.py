@@ -86,8 +86,12 @@ def test_results_panel_initialization(dummy_qapp):
     assert panel.h2_recovery_label.text() == "85.50%"
 
 
-@patch("upstream_drift_tools.process_calculators.psa_package.psa_gui.calculate_o2_safety_analysis")
-@patch("upstream_drift_tools.process_calculators.psa_package.psa_gui.calculate_sensitivity")
+@patch(
+    "upstream_drift_tools.process_calculators.psa_package.psa_gui.calculate_o2_safety_analysis"
+)
+@patch(
+    "upstream_drift_tools.process_calculators.psa_package.psa_gui.calculate_sensitivity"
+)
 def test_sensitivity_plot_widget(mock_calc_sens, mock_calc_o2, dummy_qapp):
     """Test the sensitivity plot widget."""
     import numpy as np

@@ -146,7 +146,9 @@ class TestReversedHubStandoff:
                 f"Hub Jacobian mismatch:\nAnalytical:\n{jacs['hub']}\nNumerical:\n{J_hub_num}"
             )
 
-    def test_all_analytical_jacobians_match_numerical(self, golfer_params: GolferParams) -> None:
+    def test_all_analytical_jacobians_match_numerical(
+        self, golfer_params: GolferParams
+    ) -> None:
         """All analytical Jacobians must match numerical for several configs."""
         rng = np.random.default_rng(123)
         eps = 1e-7

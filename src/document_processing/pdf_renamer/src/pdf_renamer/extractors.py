@@ -78,7 +78,9 @@ def title_from_first_page(pdf_path: Path) -> TitleResult:
                 for sp in line.get("spans", []):
                     text = clean_title(sp.get("text", ""))
                     if text:
-                        spans.append((sp.get("size", 0.0), sp.get("bbox", [0, 0, 0, 0]), text))
+                        spans.append(
+                            (sp.get("size", 0.0), sp.get("bbox", [0, 0, 0, 0]), text)
+                        )
 
         if not spans:
             return TitleResult(None, 0.0, "heuristic", "no text spans on page 1")
@@ -114,7 +116,9 @@ def title_from_first_page(pdf_path: Path) -> TitleResult:
         conf = BASE_CONFIDENCE + min(
             MAX_BONUS, (best_size - MIN_FONT_THRESHOLD) / FONT_SCALE_FACTOR
         )
-        return TitleResult(guess, min(conf, 0.9), "heuristic", "largest-font spans near top")
+        return TitleResult(
+            guess, min(conf, 0.9), "heuristic", "largest-font spans near top"
+        )
     except ImportError:
         logger.warning("PyMuPDF (fitz) not installed. Skipping heuristic layer.")
         return TitleResult(None, 0.0, "heuristic", "pymupdf not installed")
@@ -145,7 +149,8 @@ def author_from_metadata(pdf_path: Path) -> str | None:
             if author and len(author) > 0 and len(author) < 100:
                 # Remove common garbage
                 if not any(
-                    bad in author.lower() for bad in ["unknown", "user", "admin", "default"]
+                    bad in author.lower()
+                    for bad in ["unknown", "user", "admin", "default"]
                 ):
                     return author
         return None

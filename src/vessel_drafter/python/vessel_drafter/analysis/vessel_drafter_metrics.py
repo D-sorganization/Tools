@@ -50,12 +50,16 @@ def build_material_metrics_report(
         for component in build_vessel_drafter_components(layout)
         if component.category != "electrode"
     )
-    refractory_metrics = tuple(item for item in metrics if item.category == "refractory")
+    refractory_metrics = tuple(
+        item for item in metrics if item.category == "refractory"
+    )
     return MaterialMetricsReport(
         component_metrics=metrics,
         refractory_total_volume_in3=sum(item.volume_in3 for item in refractory_metrics),
         refractory_total_volume_ft3=sum(item.volume_ft3 for item in refractory_metrics),
-        refractory_total_surface_area_ft2=sum(item.surface_area_ft2 for item in refractory_metrics),
+        refractory_total_surface_area_ft2=sum(
+            item.surface_area_ft2 for item in refractory_metrics
+        ),
         refractory_total_mass_lb=sum(item.mass_lb for item in refractory_metrics),
     )
 

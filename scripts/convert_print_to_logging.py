@@ -123,6 +123,8 @@ if __name__ == "__main__":
 
     if conversions > 0:
         file_path.write_text(new_content, encoding="utf-8")
-        sys.stdout.write(f"Converted {conversions} print() statements to logging in {file_path}\n")
+        sys.stdout.write(
+            f"Converted {conversions} print() statements to logging in {file_path}\n"
+        )
     else:
         sys.stdout.write(f"No print() statements found in {file_path}\n")
