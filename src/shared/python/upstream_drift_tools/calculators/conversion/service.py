@@ -442,9 +442,9 @@ class UnitConversionService:
             )
         if from_unit == "ACFM":
             if not (temperature is not None):
-                raise ValueError('DbC Blocked: Precondition failed.')
+                raise ValueError("DbC Blocked: Precondition failed.")
             if not (pressure is not None):
-                raise ValueError('DbC Blocked: Precondition failed.')
+                raise ValueError("DbC Blocked: Precondition failed.")
             scfm = actual_to_standard_flow(
                 value, temperature, pressure, standard_condition
             )
@@ -475,9 +475,9 @@ class UnitConversionService:
             )
         if to_unit == "ACFM":
             if not (temperature is not None):
-                raise ValueError('DbC Blocked: Precondition failed.')
+                raise ValueError("DbC Blocked: Precondition failed.")
             if not (pressure is not None):
-                raise ValueError('DbC Blocked: Precondition failed.')
+                raise ValueError("DbC Blocked: Precondition failed.")
             scfm = standard_m3_per_hour_to_scfm(
                 m3_hr_std, StandardCondition.STP, standard_condition
             )
@@ -718,7 +718,7 @@ class UnitConversionService:
             return value * 1000.0 * (temperature / 273.15) * (101.325 / pressure)
         if from_key == "ppm_mass":
             if not (molecular_weight is not None):
-                raise ValueError('DbC Blocked: Precondition failed.')
+                raise ValueError("DbC Blocked: Precondition failed.")
             return value * molecular_weight / 24.45
         msg = f"Conversion from {from_unit} not implemented"
         raise ValueError(msg)
@@ -742,7 +742,7 @@ class UnitConversionService:
             return mg_nm3_value / 1000.0 * (273.15 / temperature) * (pressure / 101.325)
         if to_key == "ppm_mass":
             if not (molecular_weight is not None):
-                raise ValueError('DbC Blocked: Precondition failed.')
+                raise ValueError("DbC Blocked: Precondition failed.")
             return mg_nm3_value * 24.45 / molecular_weight
         msg = f"Conversion to {to_unit} not implemented"
         raise ValueError(msg)

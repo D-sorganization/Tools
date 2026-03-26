@@ -152,7 +152,7 @@ class ConsoleEnvironment:
                     code_obj = compile(source, "<console>", "exec")
                     exec(code_obj, self.namespace)
 
-        except Exception as e:
+        except Exception:
             # Format exception similar to REPL
             exc_type, exc_value, exc_traceback = sys.exc_info()
             if exc_traceback:

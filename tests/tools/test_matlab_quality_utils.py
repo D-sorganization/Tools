@@ -228,7 +228,9 @@ def test_static_analysis_finds_todo(tmp_path):
     """m-file with TRACKED_TASK must produce at least one issue."""
     matlab = tmp_path / "matlab"
     matlab.mkdir()
-    (matlab / "dirty.m").write_text("function y = foo(x)\n% TRACKED_TASK: fix\ny = x;\nend\n")
+    (matlab / "dirty.m").write_text(
+        "function y = foo(x)\n% TRACKED_TASK: fix\ny = x;\nend\n"
+    )
     checker = MATLABQualityChecker(tmp_path)
     result = checker._static_matlab_analysis()
     assert result["issues"]  # non-empty

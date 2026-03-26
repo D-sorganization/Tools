@@ -165,7 +165,5 @@ def test_analysis_tab_plot_2d_errors(qapp, monkeypatch):
     def mock_extract(*args):
         raise KeyError()
 
-    monkeypatch.setattr(
-        "double_pendulum_golf.data_extractor.extract_series", mock_extract
-    )
+    monkeypatch.setattr("double_pendulum_golf.data_extractor.extract_series", mock_extract)
     tab._on_plot_2d()

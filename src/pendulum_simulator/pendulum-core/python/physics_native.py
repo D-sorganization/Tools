@@ -108,9 +108,7 @@ class DoublePendulum:
             raise ValueError("q must be provided")
         if self.use_native:
             try:
-                result = pendulum_core.py_double_mass_matrix(
-                    q.tolist(), self.params.to_rust()
-                )
+                result = pendulum_core.py_double_mass_matrix(q.tolist(), self.params.to_rust())
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning(
@@ -337,9 +335,7 @@ class Golfer:
             raise ValueError("q must be provided")
         if self.use_native:
             try:
-                result = pendulum_core.py_golfer_mass_matrix(
-                    q.tolist(), self.params.to_rust()
-                )
+                result = pendulum_core.py_golfer_mass_matrix(q.tolist(), self.params.to_rust())
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning(
@@ -349,9 +345,7 @@ class Golfer:
                 )
 
         # NumPy fallback would be implemented by porting the Rust analytical code
-        raise NotImplementedError(
-            "NumPy fallback for golfer mass matrix not yet implemented"
-        )
+        raise NotImplementedError("NumPy fallback for golfer mass matrix not yet implemented")
 
     def gravity_vector(self, q: np.ndarray) -> np.ndarray:
         """Compute the gravity vector G(q)."""
@@ -364,13 +358,9 @@ class Golfer:
                 )
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
-                logger.warning(
-                    "Rust golfer gravity_vector call failed (%s)", type(e).__name__
-                )
+                logger.warning("Rust golfer gravity_vector call failed (%s)", type(e).__name__)
 
-        raise NotImplementedError(
-            "NumPy fallback for golfer gravity not yet implemented"
-        )
+        raise NotImplementedError("NumPy fallback for golfer gravity not yet implemented")
 
     def forward_kinematics(self, q: np.ndarray) -> Dict[str, Tuple[float, float]]:
         """Compute forward kinematics."""
@@ -417,9 +407,7 @@ class Golfer:
                     "Rust golfer constraint_jacobian call failed (%s)", type(e).__name__
                 )
 
-        raise NotImplementedError(
-            "NumPy fallback for constraint Jacobian not yet implemented"
-        )
+        raise NotImplementedError("NumPy fallback for constraint Jacobian not yet implemented")
 
 
 def get_native_info() -> Dict[str, object]:

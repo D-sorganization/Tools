@@ -279,9 +279,9 @@ class BasePendulumWidget(QWidget):
         if not isinstance(event, QMouseEvent):
             return
         if event.button() == Qt.MouseButton.LeftButton:
-            if hasattr(
-                self, "_handle_zoom_button_click"
-            ) and self._handle_zoom_button_click(event.pos()):
+            if hasattr(self, "_handle_zoom_button_click") and self._handle_zoom_button_click(
+                event.pos()
+            ):
                 return
             self._drag_start = event.pos()
             self._drag_pan_start = (self._pan_x, self._pan_y)
@@ -351,7 +351,7 @@ class BasePendulumWidget(QWidget):
         h_scale = usable_h / total_len
         result = max(30.0, min(w_scale, h_scale))
         if not (result >= 30.0):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         return result
 
     def _world_to_pixel(self, x_world: float, y_world: float) -> QPointF:

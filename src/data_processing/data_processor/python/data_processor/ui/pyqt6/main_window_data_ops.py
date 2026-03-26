@@ -100,9 +100,7 @@ class DataOperationsMixin:
             QMessageBox.information(
                 self,
                 "Success",
-                f"Integration complete\n"
-                f"Method: {method}\n"
-                f"Signals: {len(signals)}",
+                f"Integration complete\nMethod: {method}\nSignals: {len(signals)}",
             )
         except (RuntimeError, AttributeError) as e:
             logger.error(f"Integration error: {e}", exc_info=True)
@@ -204,7 +202,7 @@ class DataOperationsMixin:
             QMessageBox.information(
                 self,
                 "Success",
-                f"Signal '{name}' created successfully\n" f"Formula: {formula}",
+                f"Signal '{name}' created successfully\nFormula: {formula}",
             )
 
         except (RuntimeError, AttributeError) as e:

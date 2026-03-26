@@ -170,7 +170,7 @@ class PCAAnalyzer:
             X_processed
         )
 
-        pc_labels = [f"PC{i+1}" for i in range(components.shape[0])]
+        pc_labels = [f"PC{i + 1}" for i in range(components.shape[0])]
         transformed_df = pd.DataFrame(
             X_processed @ components.T,
             columns=pc_labels,
@@ -509,7 +509,7 @@ def create_scree_plot(result: PCAResult, ax: Any = None) -> Any:
         color="g",
         linestyle="--",
         alpha=0.5,
-        label=f"Kaiser threshold ({100/result.n_features:.1f}%)",
+        label=f"Kaiser threshold ({100 / result.n_features:.1f}%)",
     )
 
     # Mark elbow point
@@ -592,10 +592,10 @@ def create_loading_plot(
     ax.set_xlim(-1.2, 1.2)
     ax.set_ylim(-1.2, 1.2)
     ax.set_xlabel(
-        f"PC{pc_x} ({result.components[pc_x-1].explained_variance_ratio*100:.1f}%)"
+        f"PC{pc_x} ({result.components[pc_x - 1].explained_variance_ratio * 100:.1f}%)"
     )
     ax.set_ylabel(
-        f"PC{pc_y} ({result.components[pc_y-1].explained_variance_ratio*100:.1f}%)"
+        f"PC{pc_y} ({result.components[pc_y - 1].explained_variance_ratio * 100:.1f}%)"
     )
     ax.set_title("PCA Loading Plot")
     ax.axhline(y=0, color="k", linestyle="-", linewidth=0.5)

@@ -292,9 +292,7 @@ class TestAnalyticalMassMatrix:
                 M = analytical_mass_matrix(q, params)
             np.testing.assert_allclose(M, M.T, atol=1e-8)
 
-    def test_positive_semidefinite(
-        self, params: GolferParams, zero_q: np.ndarray
-    ) -> None:
+    def test_positive_semidefinite(self, params: GolferParams, zero_q: np.ndarray) -> None:
         with patch(
             "double_pendulum_golf.golfer_dynamics._native_backend.golfer_mass_matrix",
             return_value=None,
@@ -441,9 +439,7 @@ class TestKineticEnergy:
             T = kinetic_energy(zero_q, zero_qdot, params)
         assert T == pytest.approx(0.0, abs=1e-12)
 
-    def test_positive_with_velocity(
-        self, params: GolferParams, zero_q: np.ndarray
-    ) -> None:
+    def test_positive_with_velocity(self, params: GolferParams, zero_q: np.ndarray) -> None:
         qdot = np.ones(N_DOF) * 0.5
         with patch(
             "double_pendulum_golf.golfer_dynamics._native_backend.golfer_mass_matrix",
@@ -465,9 +461,7 @@ class TestKineticEnergy:
             T2 = kinetic_energy(zero_q, 2 * qdot, params)
         assert T2 == pytest.approx(4 * T1, rel=1e-6)
 
-    def test_type_error_non_array_q(
-        self, params: GolferParams, zero_qdot: np.ndarray
-    ) -> None:
+    def test_type_error_non_array_q(self, params: GolferParams, zero_qdot: np.ndarray) -> None:
         with pytest.raises(TypeError):
             kinetic_energy([0.0] * N_DOF, zero_qdot, params)
 
@@ -495,9 +489,7 @@ class TestPotentialEnergy:
         V = potential_energy(full_state, params)
         assert isinstance(V, float)
 
-    def test_different_configurations_give_different_pe(
-        self, params: GolferParams
-    ) -> None:
+    def test_different_configurations_give_different_pe(self, params: GolferParams) -> None:
         q1 = np.zeros(N_DOF)
         state1 = np.concatenate([q1, np.zeros(N_DOF)])
         q2 = np.zeros(N_DOF)
@@ -561,9 +553,7 @@ class TestTotalEnergy:
 
 
 class TestMassPointPositions:
-    def test_returns_seven_points(
-        self, params: GolferParams, zero_q: np.ndarray
-    ) -> None:
+    def test_returns_seven_points(self, params: GolferParams, zero_q: np.ndarray) -> None:
         points = _mass_point_positions(zero_q, params)
         assert len(points) == 7
 
@@ -573,18 +563,14 @@ class TestMassPointPositions:
             result = pos_func(zero_q)
             assert len(result) == 2
 
-    def test_masses_match_params(
-        self, params: GolferParams, zero_q: np.ndarray
-    ) -> None:
+    def test_masses_match_params(self, params: GolferParams, zero_q: np.ndarray) -> None:
         points = _mass_point_positions(zero_q, params)
         masses = [m for m, _ in points]
         assert params.m_hub in masses
         assert params.m_r_upper in masses
         assert params.m_club in masses
 
-    def test_all_positions_finite(
-        self, params: GolferParams, zero_q: np.ndarray
-    ) -> None:
+    def test_all_positions_finite(self, params: GolferParams, zero_q: np.ndarray) -> None:
         points = _mass_point_positions(zero_q, params)
         for _, pos_func in points:
             x, y = pos_func(zero_q)

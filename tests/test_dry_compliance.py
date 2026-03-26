@@ -126,7 +126,7 @@ class TestGUIInfoWebConfig:
 
             try:
                 module = _load_module_from_path(f"gui_reg_{tool_dir}", reg_file)
-            except Exception as e:
+            except Exception:
                 continue
 
             if module is None:
@@ -153,7 +153,7 @@ class TestGUIInfoWebConfig:
         for path in gui_reg_files:
             try:
                 module = _load_module_from_path(f"gui_reg_{path.stem}", path)
-            except Exception as e:
+            except Exception:
                 continue
 
             if module is None:
