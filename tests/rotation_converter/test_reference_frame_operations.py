@@ -23,9 +23,7 @@ def test_twist_frame_conversion_identity() -> None:
 def test_homogeneous_transform_inverse_roundtrip() -> None:
     rotation_matrix = np.eye(3).tolist()
     translation = [1.0, -2.0, 3.5]
-    result = compute_homogeneous_transform(
-        rotation_matrix=rotation_matrix, translation=translation
-    )
+    result = compute_homogeneous_transform(rotation_matrix=rotation_matrix, translation=translation)
     transform = np.asarray(result.results["homogeneous_transform"], dtype=float)
     inverse = np.asarray(result.results["inverse_transform"], dtype=float)
     assert result.operation == "homogeneous_transform"

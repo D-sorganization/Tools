@@ -10,9 +10,7 @@ try:
 except ImportError:
     from pathlib import Path
 
-    def safe_read_text(
-        path: str | Path, encoding: str = "utf-8", default: str = ""
-    ) -> str:
+    def safe_read_text(path: str | Path, encoding: str = "utf-8", default: str = "") -> str:
         try:
             return Path(path).read_text(encoding=encoding)
         except (PermissionError, OSError):
@@ -24,7 +22,8 @@ except ImportError:
         encoding: str = "utf-8",
         create_parents: bool = True,
     ) -> None:
-        assert path is not None, "path must be provided"
+        if not (path is not None):
+            raise ValueError("path must be provided")
         p = Path(path)
         if create_parents:
             p.parent.mkdir(parents=True, exist_ok=True)

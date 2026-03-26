@@ -166,7 +166,8 @@ class OrbitalMechanics:
         Returns:
             Tuple of (periapsis, apoapsis) in meters
         """
-        assert a is not None, "a must be provided"
+        if not (a is not None):
+            raise ValueError("a must be provided")
         periapsis = a * (1 - e)
         apoapsis = a * (1 + e)
         return periapsis, apoapsis
@@ -234,7 +235,8 @@ class OrbitalMechanics:
         Returns:
             Synodic period in the same time unit
         """
-        assert period_one is not None, "period_one must be provided"
+        if not (period_one is not None):
+            raise ValueError("period_one must be provided")
         if period_one == period_two:
             return float("inf")
         return abs(1 / (1 / period_one - 1 / period_two))
@@ -254,7 +256,8 @@ class OrbitalMechanics:
         Returns:
             Phase angle in radians (-π to π)
         """
-        assert r1 is not None, "r1 must be provided"
+        if not (r1 is not None):
+            raise ValueError("r1 must be provided")
         if reference_up is None:
             reference_up = np.array([0, 0, 1])
 
@@ -342,7 +345,8 @@ class OrbitalMechanics:
             Time of flight in seconds
         """
         # Convert to eccentric anomalies
-        assert nu1 is not None, "nu1 must be provided"
+        if not (nu1 is not None):
+            raise ValueError("nu1 must be provided")
         eccentric_anomaly_start = OrbitalMechanics.eccentric_anomaly_from_true(nu1, e)
         eccentric_anomaly_end = OrbitalMechanics.eccentric_anomaly_from_true(nu2, e)
 
@@ -350,9 +354,7 @@ class OrbitalMechanics:
         mean_anomaly_start = OrbitalMechanics.mean_anomaly_from_eccentric(
             eccentric_anomaly_start, e
         )
-        mean_anomaly_end = OrbitalMechanics.mean_anomaly_from_eccentric(
-            eccentric_anomaly_end, e
-        )
+        mean_anomaly_end = OrbitalMechanics.mean_anomaly_from_eccentric(eccentric_anomaly_end, e)
 
         # Handle wrap-around
         delta_mean_anomaly = mean_anomaly_end - mean_anomaly_start
@@ -382,9 +384,7 @@ class OrbitalMechanics:
         return a * (1 - e**2) / (1 + e * math.cos(nu))
 
     @staticmethod
-    def velocity_at_true_anomaly(
-        a: float, e: float, nu: float, mu: float
-    ) -> tuple[float, float]:
+    def velocity_at_true_anomaly(a: float, e: float, nu: float, mu: float) -> tuple[float, float]:
         """
         Calculate radial and tangential velocity components at true anomaly.
 
@@ -397,7 +397,8 @@ class OrbitalMechanics:
         Returns:
             Tuple of (radial velocity, tangential velocity) in m/s
         """
-        assert a is not None, "a must be provided"
+        if not (a is not None):
+            raise ValueError("a must be provided")
         h = OrbitalMechanics.specific_angular_momentum(a, e, mu)
         r = OrbitalMechanics.radius_at_true_anomaly(a, e, nu)
 
@@ -419,7 +420,8 @@ class OrbitalMechanics:
         Returns:
             OrbitalParameters dataclass with all computed values
         """
-        assert a is not None, "a must be provided"
+        if not (a is not None):
+            raise ValueError("a must be provided")
         periapsis, apoapsis = OrbitalMechanics.periapsis_apoapsis(a, e)
 
         return OrbitalParameters(
@@ -435,9 +437,7 @@ class OrbitalMechanics:
         )
 
     @staticmethod
-    def state_to_elements(
-        position: np.ndarray, velocity: np.ndarray, mu: float
-    ) -> dict:
+    def state_to_elements(position: np.ndarray, velocity: np.ndarray, mu: float) -> dict:
         """
         Convert state vectors to orbital elements.
 
@@ -449,7 +449,8 @@ class OrbitalMechanics:
         Returns:
             Dictionary with orbital elements
         """
-        assert position is not None, "position must be provided"
+        if not (position is not None):
+            raise ValueError("position must be provided")
         r = np.linalg.norm(position)
         v = np.linalg.norm(velocity)
 
@@ -462,9 +463,7 @@ class OrbitalMechanics:
         n = np.linalg.norm(n_vec)
 
         # Eccentricity vector
-        e_vec = (
-            (v**2 - mu / r) * position - np.dot(position, velocity) * velocity
-        ) / mu
+        e_vec = ((v**2 - mu / r) * position - np.dot(position, velocity) * velocity) / mu
         e = np.linalg.norm(e_vec)
 
         # Specific energy
@@ -537,7 +536,8 @@ class OrbitalMechanics:
             Tuple of (position, velocity) vectors in meters and m/s
         """
         # Distance
-        assert a is not None, "a must be provided"
+        if not (a is not None):
+            raise ValueError("a must be provided")
         r = a * (1 - e**2) / (1 + e * math.cos(nu))
 
         # Position in orbital plane
@@ -566,14 +566,10 @@ class OrbitalMechanics:
         ) * y_orb
         z = (sin_omega * sin_i) * x_orb + (cos_omega * sin_i) * y_orb
 
-        vx = (
-            cos_omega * cos_ascending - sin_omega * sin_ascending * cos_i
-        ) * vx_orb + (
+        vx = (cos_omega * cos_ascending - sin_omega * sin_ascending * cos_i) * vx_orb + (
             -sin_omega * cos_ascending - cos_omega * sin_ascending * cos_i
         ) * vy_orb
-        vy = (
-            cos_omega * sin_ascending + sin_omega * cos_ascending * cos_i
-        ) * vx_orb + (
+        vy = (cos_omega * sin_ascending + sin_omega * cos_ascending * cos_i) * vx_orb + (
             -sin_omega * sin_ascending + cos_omega * cos_ascending * cos_i
         ) * vy_orb
         vz = (sin_omega * sin_i) * vx_orb + (cos_omega * sin_i) * vy_orb

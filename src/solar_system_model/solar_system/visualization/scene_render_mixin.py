@@ -51,7 +51,8 @@ class SceneRenderMixin:
 
     def _render_stereo(self, renderer: Any, jd: float) -> None:
         """Render a stereo/VR split-screen frame."""
-        assert jd is not None, "jd must be provided"
+        if not (jd is not None):
+            raise ValueError("jd must be provided")
         left_eye, right_eye = renderer.camera.stereo_states()
         half_width = renderer.settings.window_width // 2
 
@@ -64,9 +65,7 @@ class SceneRenderMixin:
         glClear(GL_DEPTH_BUFFER_BIT)
         self._render_view_contents(jd)
 
-        glViewport(
-            0, 0, renderer.settings.window_width, renderer.settings.window_height
-        )
+        glViewport(0, 0, renderer.settings.window_width, renderer.settings.window_height)
         renderer.begin_frame(clear=False)
         self._render_overlays(jd)
         renderer.end_frame()
@@ -77,7 +76,8 @@ class SceneRenderMixin:
         Args:
             julian_date: The current simulation time.
         """
-        assert julian_date is not None, "julian_date must be provided"
+        if not (julian_date is not None):
+            raise ValueError("julian_date must be provided")
         if not self.renderer:
             return
         renderer = self.renderer
@@ -100,7 +100,8 @@ class SceneRenderMixin:
 
     def _render_sun(self, renderer: Any, julian_date: float) -> None:
         """Render the Sun body and label."""
-        assert julian_date is not None, "julian_date must be provided"
+        if not (julian_date is not None):
+            raise ValueError("julian_date must be provided")
         if self.sun:
             renderer.render_body(self.sun, julian_date, self.selected_body == self.sun)
         if self.view_state.show_labels:
@@ -121,7 +122,8 @@ class SceneRenderMixin:
 
     def _render_minor_bodies(self, renderer: Any, julian_date: float) -> None:
         """Render asteroids, comets, and the asteroid belt."""
-        assert julian_date is not None, "julian_date must be provided"
+        if not (julian_date is not None):
+            raise ValueError("julian_date must be provided")
         if not self.view_state.show_minor_bodies:
             return
 
@@ -161,7 +163,8 @@ class SceneRenderMixin:
 
     def _render_trajectories(self, renderer: Any, julian_date: float) -> None:
         """Render active transfer trajectories and famous mission paths."""
-        assert julian_date is not None, "julian_date must be provided"
+        if not (julian_date is not None):
+            raise ValueError("julian_date must be provided")
         if not self.view_state.show_trajectories:
             return
         for trajectory in self.trajectories:
@@ -191,9 +194,7 @@ class SceneRenderMixin:
             elif julian_date > end_time:
                 state = spacecraft.get_state_at_time(julian_date)
                 pos = state.position * renderer.distance_scale
-                renderer.render_label(
-                    "\u2b50 " + spacecraft.name, pos, (150, 150, 150), priority=1
-                )
+                renderer.render_label("\u2b50 " + spacecraft.name, pos, (150, 150, 150), priority=1)
 
     def _render_overlays(self, julian_date: float) -> None:
         """Render 2D UI overlays (sidebar, controls, HUD).
@@ -201,7 +202,8 @@ class SceneRenderMixin:
         Args:
             julian_date: The current simulation time.
         """
-        assert julian_date is not None, "julian_date must be provided"
+        if not (julian_date is not None):
+            raise ValueError("julian_date must be provided")
         if not self.renderer:
             return
         renderer = self.renderer
@@ -213,7 +215,8 @@ class SceneRenderMixin:
 
     def _render_sidebar(self, renderer: Any, julian_date: float) -> None:
         """Render the sidebar panel with active-tab content."""
-        assert julian_date is not None, "julian_date must be provided"
+        if not (julian_date is not None):
+            raise ValueError("julian_date must be provided")
         if not self.sidebar_panel:
             return
 
@@ -227,7 +230,8 @@ class SceneRenderMixin:
         self, content_key: str, julian_date: float
     ) -> dict[str, Any] | None:
         """Build the content data dict for the active sidebar tab."""
-        assert content_key is not None, "content_key must be provided"
+        if not (content_key is not None):
+            raise ValueError("content_key must be provided")
         if content_key == "educational" and self.educational_panel:
             if self.selected_body:
                 info = self.selected_body.get_info_dict_at_time(julian_date)
@@ -263,9 +267,7 @@ class SceneRenderMixin:
         if not self.unified_controls:
             return
         time_data = self.time_nav_panel.get_render_data() if self.time_nav_panel else {}
-        renderer.render_unified_controls(
-            self.unified_controls.get_render_data(), time_data
-        )
+        renderer.render_unified_controls(self.unified_controls.get_render_data(), time_data)
 
     def _render_floating_overlays(self, renderer: Any) -> None:
         """Render floating overlays (status bar, help, date picker)."""
@@ -274,11 +276,7 @@ class SceneRenderMixin:
             status += f"  |  Selected: {self.selected_body.name}"
         renderer.render_status_bar(status)
 
-        if (
-            self.view_state.show_help
-            and hasattr(self, "help_overlay")
-            and self.help_overlay
-        ):
+        if self.view_state.show_help and hasattr(self, "help_overlay") and self.help_overlay:
             renderer.render_help_overlay(self.help_overlay.get_render_data())
 
         if self.date_picker and self.date_picker.visible:

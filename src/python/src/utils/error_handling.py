@@ -32,7 +32,8 @@ def handle_file_errors(
         Decorator function
     """
 
-    assert log_error is not None, "log_error must be provided"
+    if not (log_error is not None):
+        raise ValueError("log_error must be provided")
 
     def decorator(func: Callable[..., T]) -> Callable[..., T | None]:
         @wraps(func)
@@ -116,8 +117,7 @@ def handle_import_error(
     except ImportError:
         install_name = package_name or module_name
         logger.warning(
-            f"Module '{module_name}' not found. "
-            f"Install with: pip install {install_name}"
+            f"Module '{module_name}' not found. " f"Install with: pip install {install_name}"
         )
         return default
 
@@ -138,7 +138,8 @@ def log_and_continue(
         Decorator function
     """
 
-    assert error_message is not None, "error_message must be provided"
+    if not (error_message is not None):
+        raise ValueError("error_message must be provided")
 
     def decorator(func: Callable[..., T]) -> Callable[..., T | None]:
         @wraps(func)
@@ -170,7 +171,8 @@ def exit_on_error(
         Decorator function
     """
 
-    assert error_message is not None, "error_message must be provided"
+    if not (error_message is not None):
+        raise ValueError("error_message must be provided")
 
     def decorator(func: Callable[..., T]) -> Callable[..., T]:
         @wraps(func)

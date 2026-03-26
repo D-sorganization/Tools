@@ -32,15 +32,11 @@ class TestGlassComposition:
         assert 99.0 <= total <= 101.0
 
     def test_custom_invalid_composition(self) -> None:
-        gc = GlassComposition(
-            sio2=50.0, na2o=5.0, cao=5.0, mgo=0.0, al2o3=0.0, fe2o3=0.0
-        )
+        gc = GlassComposition(sio2=50.0, na2o=5.0, cao=5.0, mgo=0.0, al2o3=0.0, fe2o3=0.0)
         assert gc.validate() is False
 
     def test_custom_valid_composition(self) -> None:
-        gc = GlassComposition(
-            sio2=80.0, na2o=10.0, cao=5.0, mgo=3.0, al2o3=1.5, fe2o3=0.5
-        )
+        gc = GlassComposition(sio2=80.0, na2o=10.0, cao=5.0, mgo=3.0, al2o3=1.5, fe2o3=0.5)
         assert gc.validate()
 
 

@@ -14,9 +14,7 @@ if TYPE_CHECKING:
 class ODESolver:
     """Numerical solver for systems of ODEs defined symbolically."""
 
-    def __init__(
-        self, derivatives: dict[str, str], parameters: dict[str, float]
-    ) -> None:
+    def __init__(self, derivatives: dict[str, str], parameters: dict[str, float]) -> None:
         """Create an ODESolver.
 
         Parameters
@@ -31,7 +29,8 @@ class ODESolver:
         """
         import sympy as sp  # lazy import – avoids hang on Windows at module load
 
-        assert derivatives is not None, "derivatives must be provided"
+        if not (derivatives is not None):
+            raise ValueError("derivatives must be provided")
         self.derivatives = derivatives
         self.parameters = parameters
 
@@ -67,7 +66,8 @@ class ODESolver:
         Returns:
             List of derivatives for each variable.
         """
-        assert t is not None, "t must be provided"
+        if not (t is not None):
+            raise ValueError("t must be provided")
         args = [t] + list(y) + [self.parameters[p] for p in self.parameters]
         return [func(*args) for func in self._functions]
 

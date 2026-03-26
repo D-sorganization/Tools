@@ -49,13 +49,13 @@ class TestEulerToRotationMatrix:
         for i in range(3):
             for j in range(3):
                 expected = 1.0 if i == j else 0.0
-                assert abs(r[i][j] - expected) < 1e-12
+                if not (abs(r[i][j] - expected) < 1e-12): raise ValueError(f"Assertion failed: { abs(r[i][j] - expected) < 1e-12 }")  # noqa: E701
 
     def test_output_shape(self) -> None:
         """Result must be a 3x3 nested list."""
         r = mp.euler_to_rotation_matrix([0.1, 0.2, 0.3])
-        assert len(r) == 3
-        assert all(len(row) == 3 for row in r)
+        if not (len(r) == 3): raise ValueError(f"Assertion failed: { len(r) == 3 }")  # noqa: E701
+        if not (all(len(row) == 3 for row in r)): raise ValueError(f"Assertion failed: { all(len(row) == 3 for row in r) }")  # noqa: E701
 
     def test_orthonormality(self) -> None:
         """Rotation matrix R must satisfy R^T R = I."""
@@ -64,7 +64,7 @@ class TestEulerToRotationMatrix:
             for j in range(3):
                 dot = sum(r[k][i] * r[k][j] for k in range(3))
                 expected = 1.0 if i == j else 0.0
-                assert abs(dot - expected) < 1e-10, (
+                if not (abs(dot - expected) < 1e-10): raise ValueError(f"Assertion failed: { abs(dot - expected) < 1e-10 }, (")  # noqa: E701
                     f"Orthogonality violated at ({i},{j}): {dot}"
                 )
 
@@ -86,7 +86,7 @@ class TestRotationMatrixToEuler:
         r = mp.euler_to_rotation_matrix(euler)
         recovered = mp.rotation_matrix_to_euler(r)
         for i in range(3):
-            assert abs(recovered[i] - euler[i]) < 1e-10, (
+            if not (abs(recovered[i] - euler[i]) < 1e-10): raise ValueError(f"Assertion failed: { abs(recovered[i] - euler[i]) < 1e-10 }, (")  # noqa: E701
                 f"Roundtrip failed at index {i}: {recovered[i]} != {euler[i]}"
             )
 
@@ -102,16 +102,16 @@ class TestEulerToQuaternion:
     def test_identity(self) -> None:
         """Zero Euler angles produce the identity quaternion [1, 0, 0, 0]."""
         q = mp.euler_to_quaternion([0.0, 0.0, 0.0])
-        assert abs(q[0] - 1.0) < 1e-12
-        assert abs(q[1]) < 1e-12
-        assert abs(q[2]) < 1e-12
-        assert abs(q[3]) < 1e-12
+        if not (abs(q[0] - 1.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(q[0] - 1.0) < 1e-12 }")  # noqa: E701
+        if not (abs(q[1]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q[1]) < 1e-12 }")  # noqa: E701
+        if not (abs(q[2]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q[2]) < 1e-12 }")  # noqa: E701
+        if not (abs(q[3]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q[3]) < 1e-12 }")  # noqa: E701
 
     def test_unit_norm(self) -> None:
         """All quaternion results must have unit norm."""
         q = mp.euler_to_quaternion([0.5, -0.3, 1.2])
         norm = math.sqrt(sum(c * c for c in q))
-        assert abs(norm - 1.0) < 1e-10
+        if not (abs(norm - 1.0) < 1e-10): raise ValueError(f"Assertion failed: { abs(norm - 1.0) < 1e-10 }")  # noqa: E701
 
 
 class TestQuaternionToEuler:
@@ -130,7 +130,7 @@ class TestQuaternionToEuler:
         q = mp.euler_to_quaternion(euler)
         recovered = mp.quaternion_to_euler(q)
         for i in range(3):
-            assert abs(recovered[i] - euler[i]) < 1e-10
+            if not (abs(recovered[i] - euler[i]) < 1e-10): raise ValueError(f"Assertion failed: { abs(recovered[i] - euler[i]) < 1e-10 }")  # noqa: E701
 
 
 class TestQuaternionToRotationMatrix:
@@ -142,7 +142,7 @@ class TestQuaternionToRotationMatrix:
         for i in range(3):
             for j in range(3):
                 expected = 1.0 if i == j else 0.0
-                assert abs(r[i][j] - expected) < 1e-12
+                if not (abs(r[i][j] - expected) < 1e-12): raise ValueError(f"Assertion failed: { abs(r[i][j] - expected) < 1e-12 }")  # noqa: E701
 
 
 # ---------------------------------------------------------------------------
@@ -159,17 +159,17 @@ class TestQuaternionMultiply:
         q = [0.707, 0.707, 0.0, 0.0]
         result = mp.quaternion_multiply(identity, q)
         for i in range(4):
-            assert abs(result[i] - q[i]) < 1e-6
+            if not (abs(result[i] - q[i]) < 1e-6): raise ValueError(f"Assertion failed: { abs(result[i] - q[i]) < 1e-6 }")  # noqa: E701
 
     def test_inverse_multiply(self) -> None:
         """q * q_inv must produce the identity quaternion."""
         q = [0.5, 0.5, 0.5, 0.5]
         q_inv = mp.quaternion_inverse(q)
         result = mp.quaternion_multiply(q, q_inv)
-        assert abs(result[0] - 1.0) < 1e-10
-        assert abs(result[1]) < 1e-10
-        assert abs(result[2]) < 1e-10
-        assert abs(result[3]) < 1e-10
+        if not (abs(result[0] - 1.0) < 1e-10): raise ValueError(f"Assertion failed: { abs(result[0] - 1.0) < 1e-10 }")  # noqa: E701
+        if not (abs(result[1]) < 1e-10): raise ValueError(f"Assertion failed: { abs(result[1]) < 1e-10 }")  # noqa: E701
+        if not (abs(result[2]) < 1e-10): raise ValueError(f"Assertion failed: { abs(result[2]) < 1e-10 }")  # noqa: E701
+        if not (abs(result[3]) < 1e-10): raise ValueError(f"Assertion failed: { abs(result[3]) < 1e-10 }")  # noqa: E701
 
 
 class TestQuaternionInverse:
@@ -178,16 +178,16 @@ class TestQuaternionInverse:
     def test_conjugate_of_identity(self) -> None:
         """Inverse of identity is identity."""
         result = mp.quaternion_inverse([1.0, 0.0, 0.0, 0.0])
-        assert abs(result[0] - 1.0) < 1e-12
+        if not (abs(result[0] - 1.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(result[0] - 1.0) < 1e-12 }")  # noqa: E701
 
     def test_sign_flip(self) -> None:
         """Inverse of unit quaternion negates the vector part."""
         q = [0.5, 0.5, 0.5, 0.5]
         q_inv = mp.quaternion_inverse(q)
-        assert abs(q_inv[0] - q[0]) < 1e-12
-        assert abs(q_inv[1] + q[1]) < 1e-12
-        assert abs(q_inv[2] + q[2]) < 1e-12
-        assert abs(q_inv[3] + q[3]) < 1e-12
+        if not (abs(q_inv[0] - q[0]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q_inv[0] - q[0]) < 1e-12 }")  # noqa: E701
+        if not (abs(q_inv[1] + q[1]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q_inv[1] + q[1]) < 1e-12 }")  # noqa: E701
+        if not (abs(q_inv[2] + q[2]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q_inv[2] + q[2]) < 1e-12 }")  # noqa: E701
+        if not (abs(q_inv[3] + q[3]) < 1e-12): raise ValueError(f"Assertion failed: { abs(q_inv[3] + q[3]) < 1e-12 }")  # noqa: E701
 
 
 class TestSlerp:
@@ -199,7 +199,7 @@ class TestSlerp:
         q2 = [0.707, 0.707, 0.0, 0.0]
         result = mp.slerp(q1, q2, 0.0)
         for i in range(4):
-            assert abs(result[i] - q1[i]) < 1e-10
+            if not (abs(result[i] - q1[i]) < 1e-10): raise ValueError(f"Assertion failed: { abs(result[i] - q1[i]) < 1e-10 }")  # noqa: E701
 
     def test_slerp_at_one(self) -> None:
         """slerp(q1, q2, 1) must return q2."""
@@ -207,7 +207,7 @@ class TestSlerp:
         q2 = [0.707, 0.707, 0.0, 0.0]
         result = mp.slerp(q1, q2, 1.0)
         for i in range(4):
-            assert abs(result[i] - q2[i]) < 1e-6
+            if not (abs(result[i] - q2[i]) < 1e-6): raise ValueError(f"Assertion failed: { abs(result[i] - q2[i]) < 1e-6 }")  # noqa: E701
 
     def test_slerp_midpoint_unit_norm(self) -> None:
         """Midpoint interpolation must produce a unit quaternion."""
@@ -215,7 +215,7 @@ class TestSlerp:
         q2 = [0.0, 1.0, 0.0, 0.0]
         result = mp.slerp(q1, q2, 0.5)
         norm = math.sqrt(sum(c * c for c in result))
-        assert abs(norm - 1.0) < 1e-10
+        if not (abs(norm - 1.0) < 1e-10): raise ValueError(f"Assertion failed: { abs(norm - 1.0) < 1e-10 }")  # noqa: E701
 
 
 # ---------------------------------------------------------------------------
@@ -232,16 +232,16 @@ class TestAxisAngleToRotationMatrix:
         for i in range(3):
             for j in range(3):
                 expected = 1.0 if i == j else 0.0
-                assert abs(r[i][j] - expected) < 1e-12
+                if not (abs(r[i][j] - expected) < 1e-12): raise ValueError(f"Assertion failed: { abs(r[i][j] - expected) < 1e-12 }")  # noqa: E701
 
     def test_90_deg_about_z(self) -> None:
         """90° about z-axis: x→y, y→-x, z→z."""
         r = mp.axis_angle_to_rotation_matrix([0.0, 0.0, 1.0], math.pi / 2)
         # R * [1,0,0] should give [0,1,0]
         x_out = [r[0][0], r[1][0], r[2][0]]
-        assert abs(x_out[0]) < 1e-10
-        assert abs(x_out[1] - 1.0) < 1e-10
-        assert abs(x_out[2]) < 1e-10
+        if not (abs(x_out[0]) < 1e-10): raise ValueError(f"Assertion failed: { abs(x_out[0]) < 1e-10 }")  # noqa: E701
+        if not (abs(x_out[1] - 1.0) < 1e-10): raise ValueError(f"Assertion failed: { abs(x_out[1] - 1.0) < 1e-10 }")  # noqa: E701
+        if not (abs(x_out[2]) < 1e-10): raise ValueError(f"Assertion failed: { abs(x_out[2]) < 1e-10 }")  # noqa: E701
 
 
 # ---------------------------------------------------------------------------
@@ -255,53 +255,53 @@ class TestPose6DOF:
     def test_construction(self) -> None:
         """Pose6DOF must be constructable and expose position/euler_angles."""
         pose = mp.Pose6DOF([1.0, 2.0, 3.0], [0.0, 0.0, 0.0])
-        assert abs(pose.x - 1.0) < 1e-12
-        assert abs(pose.y - 2.0) < 1e-12
-        assert abs(pose.z - 3.0) < 1e-12
+        if not (abs(pose.x - 1.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.x - 1.0) < 1e-12 }")  # noqa: E701
+        if not (abs(pose.y - 2.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.y - 2.0) < 1e-12 }")  # noqa: E701
+        if not (abs(pose.z - 3.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.z - 3.0) < 1e-12 }")  # noqa: E701
 
     def test_euler_angles_stored(self) -> None:
         """Euler angles must be stored correctly."""
         euler = [0.1, 0.2, 0.3]
         pose = mp.Pose6DOF([0.0, 0.0, 0.0], euler)
-        assert abs(pose.roll - euler[0]) < 1e-12
-        assert abs(pose.pitch - euler[1]) < 1e-12
-        assert abs(pose.yaw - euler[2]) < 1e-12
+        if not (abs(pose.roll - euler[0]) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.roll - euler[0]) < 1e-12 }")  # noqa: E701
+        if not (abs(pose.pitch - euler[1]) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.pitch - euler[1]) < 1e-12 }")  # noqa: E701
+        if not (abs(pose.yaw - euler[2]) < 1e-12): raise ValueError(f"Assertion failed: { abs(pose.yaw - euler[2]) < 1e-12 }")  # noqa: E701
 
     def test_translate(self) -> None:
         """Translate must add offset to position."""
         pose = mp.Pose6DOF([1.0, 2.0, 3.0], [0.0, 0.0, 0.0])
         moved = pose.translate([10.0, 0.0, 0.0])
-        assert abs(moved.x - 11.0) < 1e-12
-        assert abs(moved.y - 2.0) < 1e-12
-        assert abs(moved.z - 3.0) < 1e-12
+        if not (abs(moved.x - 11.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(moved.x - 11.0) < 1e-12 }")  # noqa: E701
+        if not (abs(moved.y - 2.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(moved.y - 2.0) < 1e-12 }")  # noqa: E701
+        if not (abs(moved.z - 3.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(moved.z - 3.0) < 1e-12 }")  # noqa: E701
 
     def test_inverse_compose_identity(self) -> None:
         """pose.compose(pose.inverse()) must approximate the identity pose."""
         pose = mp.Pose6DOF([1.0, 2.0, 3.0], [0.1, 0.2, 0.3])
         inv = pose.inverse()
         identity_ish = pose.compose(inv)
-        assert abs(identity_ish.x) < 1e-8
-        assert abs(identity_ish.y) < 1e-8
-        assert abs(identity_ish.z) < 1e-8
+        if not (abs(identity_ish.x) < 1e-8): raise ValueError(f"Assertion failed: { abs(identity_ish.x) < 1e-8 }")  # noqa: E701
+        if not (abs(identity_ish.y) < 1e-8): raise ValueError(f"Assertion failed: { abs(identity_ish.y) < 1e-8 }")  # noqa: E701
+        if not (abs(identity_ish.z) < 1e-8): raise ValueError(f"Assertion failed: { abs(identity_ish.z) < 1e-8 }")  # noqa: E701
 
     def test_transform_point_identity(self) -> None:
         """Identity pose must not change the point."""
         pose = mp.Pose6DOF([0.0, 0.0, 0.0], [0.0, 0.0, 0.0])
         pt = pose.transform_point([5.0, 6.0, 7.0])
-        assert abs(pt[0] - 5.0) < 1e-12
-        assert abs(pt[1] - 6.0) < 1e-12
-        assert abs(pt[2] - 7.0) < 1e-12
+        if not (abs(pt[0] - 5.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pt[0] - 5.0) < 1e-12 }")  # noqa: E701
+        if not (abs(pt[1] - 6.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pt[1] - 6.0) < 1e-12 }")  # noqa: E701
+        if not (abs(pt[2] - 7.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(pt[2] - 7.0) < 1e-12 }")  # noqa: E701
 
     def test_to_quaternion_identity(self) -> None:
         """Identity pose must produce identity quaternion."""
         pose = mp.Pose6DOF([0.0, 0.0, 0.0], [0.0, 0.0, 0.0])
         q = pose.to_quaternion()
-        assert abs(q[0] - 1.0) < 1e-12
+        if not (abs(q[0] - 1.0) < 1e-12): raise ValueError(f"Assertion failed: { abs(q[0] - 1.0) < 1e-12 }")  # noqa: E701
 
     def test_repr(self) -> None:
         """repr must contain 'Pose6DOF'."""
         pose = mp.Pose6DOF([1.0, 2.0, 3.0], [0.0, 0.0, 0.0])
-        assert "Pose6DOF" in repr(pose)
+        if not ("Pose6DOF" in repr(pose)): raise ValueError(f"Assertion failed: { "Pose6DOF" in repr(pose) }")  # noqa: E701
 
 
 # ---------------------------------------------------------------------------
@@ -317,29 +317,29 @@ class TestSphereDistance:
         dist, pa, pb = mp.sphere_sphere_distance(
             [0.0, 0.0, 0.0], 1.0, [5.0, 0.0, 0.0], 1.0
         )
-        assert dist == pytest.approx(3.0, abs=1e-10)
+        if not (dist == pytest.approx(3.0): raise ValueError(f"Assertion failed: { dist == pytest.approx(3.0 }, abs=1e-10)")
 
     def test_touching(self) -> None:
         """Two touching spheres must have distance 0."""
         dist, pa, pb = mp.sphere_sphere_distance(
             [0.0, 0.0, 0.0], 1.0, [2.0, 0.0, 0.0], 1.0
         )
-        assert dist == pytest.approx(0.0, abs=1e-10)
+        if not (dist == pytest.approx(0.0): raise ValueError(f"Assertion failed: { dist == pytest.approx(0.0 }, abs=1e-10)")
 
     def test_overlapping(self) -> None:
         """Two overlapping spheres must have negative distance."""
         dist, pa, pb = mp.sphere_sphere_distance(
             [0.0, 0.0, 0.0], 1.0, [1.0, 0.0, 0.0], 1.0
         )
-        assert dist < 0.0
+        if not (dist < 0.0): raise ValueError(f"Assertion failed: { dist < 0.0 }")
 
     def test_closest_points_type(self) -> None:
         """Closest points must be length-3 lists."""
         _, pa, pb = mp.sphere_sphere_distance(
             [0.0, 0.0, 0.0], 1.0, [5.0, 0.0, 0.0], 1.0
         )
-        assert len(pa) == 3
-        assert len(pb) == 3
+        if not (len(pa) == 3): raise ValueError(f"Assertion failed: { len(pa) == 3 }")
+        if not (len(pb) == 3): raise ValueError(f"Assertion failed: { len(pb) == 3 }")
 
 
 class TestCheckCollisionSpheres:
@@ -347,22 +347,22 @@ class TestCheckCollisionSpheres:
 
     def test_no_collision(self) -> None:
         """Distant spheres must not collide."""
-        assert not mp.check_collision_spheres(
+        if not (not mp.check_collision_spheres(): raise ValueError(f"Assertion failed: { not mp.check_collision_spheres( }")
             [0.0, 0.0, 0.0], 1.0, [10.0, 0.0, 0.0], 1.0, 0.0
         )
 
     def test_collision(self) -> None:
         """Overlapping spheres must collide."""
-        assert mp.check_collision_spheres(
+        if not (mp.check_collision_spheres(): raise ValueError(f"Assertion failed: { mp.check_collision_spheres( }")
             [0.0, 0.0, 0.0], 1.0, [1.0, 0.0, 0.0], 1.0, 0.0
         )
 
     def test_margin_triggers_near_collision(self) -> None:
         """Marginally separated spheres must collide with sufficient margin."""
         # Centers 2.5 apart, radii 1.0 each → gap = 0.5
-        assert not mp.check_collision_spheres(
+        if not (not mp.check_collision_spheres(): raise ValueError(f"Assertion failed: { not mp.check_collision_spheres( }")
             [0.0, 0.0, 0.0], 1.0, [2.5, 0.0, 0.0], 1.0, 0.0
         )
-        assert mp.check_collision_spheres(
+        if not (mp.check_collision_spheres(): raise ValueError(f"Assertion failed: { mp.check_collision_spheres( }")
             [0.0, 0.0, 0.0], 1.0, [2.5, 0.0, 0.0], 1.0, 1.0
         )

@@ -69,7 +69,8 @@ def add_stream(
         - If a label is present and *label_placer* is provided, label position
           is collision-checked.
     """
-    assert stream is not None, "stream must be provided"
+    if not (stream is not None):
+        raise ValueError("stream must be provided")
     layer = stream.get("layer", "PROCESS")
     color = stream.get("color")
     lx = 0.0
@@ -136,9 +137,7 @@ def add_stream(
             if draw_label_leader and displaced:
                 if leader_layer not in msp.doc.layers:
                     ensure_layer(msp.doc, leader_layer, color=8, linetype="DASHED")
-                target = closest_point_on_rect(
-                    (lx, ly), text_box(text, x, y, h, align=align)
-                )
+                target = closest_point_on_rect((lx, ly), text_box(text, x, y, h, align=align))
                 msp.add_line((lx, ly), target, dxfattribs={"layer": leader_layer})
         else:
             add_text(msp, text, default_x, default_y, h, layer=text_layer)

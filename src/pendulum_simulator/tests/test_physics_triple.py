@@ -71,9 +71,7 @@ class TestTripleMassMatrixSymmetry:
 class TestTripleMassMatrixPositiveDefinite:
     """The 3x3 mass matrix must be positive definite."""
 
-    def test_positive_definite_at_various_angles(
-        self, triple_params: TriplePendulumParams
-    ) -> None:
+    def test_positive_definite_at_various_angles(self, triple_params: TriplePendulumParams) -> None:
         test_angles = list(np.linspace(-np.pi, np.pi, 15))
         for phi1 in test_angles:
             for phi2 in test_angles:
@@ -98,9 +96,7 @@ class TestTripleCoriolisZeroAtRest:
 class TestTripleGravityVectorDirection:
     """Gravity should pull the system downward."""
 
-    def test_gravity_points_downward_at_rest(
-        self, triple_params: TriplePendulumParams
-    ) -> None:
+    def test_gravity_points_downward_at_rest(self, triple_params: TriplePendulumParams) -> None:
         # At theta1 = 0 (straight down), gravity should be zero
         theta1, phi1, phi2 = 0.0, 0.0, 0.0
         G = gravity_vector_triple(theta1, phi1, phi2, triple_params)

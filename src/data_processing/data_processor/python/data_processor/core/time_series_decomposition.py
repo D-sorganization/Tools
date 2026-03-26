@@ -210,9 +210,7 @@ class TimeSeriesDecomposer:
         elif method == DecompositionMethod.CLASSICAL_ADDITIVE:
             result = self._classical_decompose(data, period, SeasonalModel.ADDITIVE)
         elif method == DecompositionMethod.CLASSICAL_MULTIPLICATIVE:
-            result = self._classical_decompose(
-                data, period, SeasonalModel.MULTIPLICATIVE
-            )
+            result = self._classical_decompose(data, period, SeasonalModel.MULTIPLICATIVE)
         elif method == DecompositionMethod.MOVING_AVERAGE:
             result = self._ma_decompose(data, period)
         elif method == DecompositionMethod.LOWESS:
@@ -241,7 +239,8 @@ class TimeSeriesDecomposer:
         Returns:
             SeasonalityDetectionResult with detected periods
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
         n = len(data)
 
@@ -266,9 +265,7 @@ class TimeSeriesDecomposer:
         if period_strengths:
             max_strength = max(period_strengths.values())
             # Get all periods with strength at least 95% of max
-            candidates = [
-                p for p, s in period_strengths.items() if s >= 0.95 * max_strength
-            ]
+            candidates = [p for p, s in period_strengths.items() if s >= 0.95 * max_strength]
             dominant_period = min(candidates)
 
         # Determine if data is seasonal
@@ -298,7 +295,8 @@ class TimeSeriesDecomposer:
         Returns:
             Trend component array
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
 
         if method == TrendModel.MOVING_AVERAGE:
@@ -340,7 +338,8 @@ class TimeSeriesDecomposer:
         Returns:
             Seasonal component array
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
         n = len(data)
 
@@ -386,7 +385,8 @@ class TimeSeriesDecomposer:
         Returns:
             DecompositionResult with multiple seasonal components
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
         n = len(data)
 
@@ -447,7 +447,8 @@ class TimeSeriesDecomposer:
         Returns:
             Dictionary with forecasted components and combined forecast
         """
-        assert result is not None, "result must be provided"
+        if not (result is not None):
+            raise ValueError("result must be provided")
         n = len(result.observed)
 
         # Forecast trend
@@ -496,7 +497,8 @@ class TimeSeriesDecomposer:
         Returns:
             Dictionary with anomaly information
         """
-        assert result is not None, "result must be provided"
+        if not (result is not None):
+            raise ValueError("result must be provided")
         residuals = result.residual
         mean = np.nanmean(residuals)
         std = np.nanstd(residuals)
@@ -527,7 +529,8 @@ class TimeSeriesDecomposer:
     def _stl_decompose(self, data: np.ndarray, period: int) -> DecompositionResult:
         """STL decomposition implementation."""
         # Initial trend using moving average
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         trend = self._moving_average(data, period)
 
         # Iterate for robustness
@@ -564,7 +567,8 @@ class TimeSeriesDecomposer:
         model: SeasonalModel,
     ) -> DecompositionResult:
         """Classical decomposition."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n = len(data)
 
         # Step 1: Calculate trend using centered moving average
@@ -617,7 +621,8 @@ class TimeSeriesDecomposer:
     def _ma_decompose(self, data: np.ndarray, period: int) -> DecompositionResult:
         """Moving average based decomposition."""
         # Trend
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         trend = self._moving_average(data, period)
 
         # Detrend
@@ -642,7 +647,8 @@ class TimeSeriesDecomposer:
     def _lowess_decompose(self, data: np.ndarray, period: int) -> DecompositionResult:
         """LOWESS-based decomposition."""
         # Trend using LOWESS
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         trend = self._lowess_smooth(data, frac=0.3)
 
         # Detrend
@@ -664,12 +670,11 @@ class TimeSeriesDecomposer:
             period=period,
         )
 
-    def _hp_filter_decompose(
-        self, data: np.ndarray, period: int
-    ) -> DecompositionResult:
+    def _hp_filter_decompose(self, data: np.ndarray, period: int) -> DecompositionResult:
         """Hodrick-Prescott filter decomposition."""
         # Trend using HP filter
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         trend = self._hp_filter(data, self.config.hp_lambda)
 
         # Cycle (detrended)
@@ -695,7 +700,8 @@ class TimeSeriesDecomposer:
 
     def _moving_average(self, data: np.ndarray, window: int) -> np.ndarray:
         """Calculate moving average."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         if window < 1:
             window = 1
         if window > len(data):
@@ -715,7 +721,8 @@ class TimeSeriesDecomposer:
 
     def _centered_moving_average(self, data: np.ndarray, period: int) -> np.ndarray:
         """Calculate centered moving average for classical decomposition."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n = len(data)
         result = np.full(n, np.nan)
 
@@ -743,7 +750,8 @@ class TimeSeriesDecomposer:
 
     def _lowess_smooth(self, data: np.ndarray, frac: float = 0.3) -> np.ndarray:
         """LOWESS (Locally Weighted Scatterplot Smoothing)."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n = len(data)
         x = np.arange(n)
         result = np.zeros(n)
@@ -793,7 +801,8 @@ class TimeSeriesDecomposer:
 
     def _polynomial_trend(self, data: np.ndarray, degree: int) -> np.ndarray:
         """Fit polynomial trend."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n = len(data)
         x = np.arange(n)
         coeffs = np.polyfit(x, data, degree)
@@ -801,7 +810,8 @@ class TimeSeriesDecomposer:
 
     def _exponential_smooth(self, data: np.ndarray, alpha: float) -> np.ndarray:
         """Exponential smoothing."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n = len(data)
         result = np.zeros(n)
         result[0] = data[0]
@@ -813,7 +823,8 @@ class TimeSeriesDecomposer:
 
     def _hp_filter(self, data: np.ndarray, lambd: float) -> np.ndarray:
         """Hodrick-Prescott filter implementation."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n = len(data)
 
         # Construct the penalty matrix
@@ -838,7 +849,8 @@ class TimeSeriesDecomposer:
 
     def _extract_stl_seasonal(self, detrended: np.ndarray, period: int) -> np.ndarray:
         """Extract seasonal component for STL."""
-        assert detrended is not None, "detrended must be provided"
+        if not (detrended is not None):
+            raise ValueError("detrended must be provided")
         n = len(detrended)
 
         # Calculate cycle-subseries
@@ -860,7 +872,8 @@ class TimeSeriesDecomposer:
 
     def _autocorrelation(self, data: np.ndarray, max_lag: int) -> np.ndarray:
         """Calculate autocorrelation function."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n = len(data)
         data_centered = data - np.mean(data)
         var = np.var(data_centered)
@@ -872,15 +885,14 @@ class TimeSeriesDecomposer:
         acf[0] = 1.0
 
         for lag in range(1, max_lag + 1):
-            acf[lag] = np.sum(data_centered[lag:] * data_centered[:-lag]) / (
-                (n - lag) * var
-            )
+            acf[lag] = np.sum(data_centered[lag:] * data_centered[:-lag]) / ((n - lag) * var)
 
         return acf
 
     def _find_acf_peaks(self, acf: np.ndarray) -> list[int]:
         """Find peaks in autocorrelation function."""
-        assert acf is not None, "acf must be provided"
+        if not (acf is not None):
+            raise ValueError("acf must be provided")
         peaks = []
         n = len(acf)
 
@@ -893,7 +905,8 @@ class TimeSeriesDecomposer:
     def _extrapolate_exponential(self, trend: np.ndarray, horizon: int) -> np.ndarray:
         """Extrapolate trend exponentially."""
         # Fit exponential to last portion of trend
-        assert trend is not None, "trend must be provided"
+        if not (trend is not None):
+            raise ValueError("trend must be provided")
         n = len(trend)
         fit_length = min(n, 50)
 
@@ -915,7 +928,8 @@ class TimeSeriesDecomposer:
     def _calculate_metrics(self, result: DecompositionResult) -> DecompositionResult:
         """Calculate quality metrics for decomposition."""
         # Variance of detrended data
-        assert result is not None, "result must be provided"
+        if not (result is not None):
+            raise ValueError("result must be provided")
         detrended_var = np.var(result.observed - result.trend)
         residual_var = np.var(result.residual)
 
@@ -962,7 +976,8 @@ def decompose_time_series(
         >>> result = decompose_time_series(data, period=25)
         >>> print(f"Trend strength: {result.trend_strength:.2f}")
     """
-    assert data is not None, "data must be provided"
+    if not (data is not None):
+        raise ValueError("data must be provided")
     method_map = {
         "stl": DecompositionMethod.STL,
         "classical": DecompositionMethod.CLASSICAL_ADDITIVE,

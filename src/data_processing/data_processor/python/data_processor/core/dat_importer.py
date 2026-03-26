@@ -72,8 +72,7 @@ def read_dbf_tags(file_path: str | Path) -> list[str]:
     """
     if not DBF_AVAILABLE:
         raise ImportError(
-            "simpledbf is required for DBF file support. "
-            "Install with: pip install simpledbf"
+            "simpledbf is required for DBF file support. " "Install with: pip install simpledbf"
         )
 
     file_path = Path(file_path)
@@ -113,7 +112,8 @@ def get_dat_columns(
     Returns:
         List of column names
     """
-    assert file_path is not None, "file_path must be provided"
+    if not (file_path is not None):
+        raise ValueError("file_path must be provided")
     df = read_dat_file(file_path, delimiter=delimiter, nrows=nrows)
     return df.columns.tolist()
 
@@ -181,7 +181,8 @@ def export_dat_to_csv(
     Returns:
         Path to the created CSV file
     """
-    assert dat_path is not None, "dat_path must be provided"
+    if not (dat_path is not None):
+        raise ValueError("dat_path must be provided")
     df = import_dat_with_tags(
         dat_path,
         selected_tags=selected_tags,
@@ -252,7 +253,8 @@ def get_dat_file_info(file_path: str | Path, delimiter: str = "\t") -> dict[str,
         - file_size: File size in bytes
         - has_time_column: Whether a time column was detected
     """
-    assert file_path is not None, "file_path must be provided"
+    if not (file_path is not None):
+        raise ValueError("file_path must be provided")
     file_path = Path(file_path)
 
     # Get basic file info

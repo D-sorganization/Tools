@@ -307,9 +307,7 @@ class UnitPreferencesManager(QObject):
         except json.JSONDecodeError:
             self._preferences = {}
 
-        self._preset_name = (
-            str(self.settings.value("preset_name", "Default")) or "Default"
-        )
+        self._preset_name = str(self.settings.value("preset_name", "Default")) or "Default"
 
         for cat_name, cat_info in UNIT_CATEGORIES.items():
             if cat_name not in self._preferences:
@@ -324,17 +322,12 @@ class UnitPreferencesManager(QObject):
         """Get the user's preferred unit for a category."""
         return self._preferences.get(
             category,
-            UNIT_CATEGORIES.get(
-                category, UnitCategory("", "", "", "")
-            ).default_display_unit,
+            UNIT_CATEGORIES.get(category, UnitCategory("", "", "", "")).default_display_unit,
         )
 
     def set_preferred_unit(self, category: str, unit: str) -> None:
         """Set the user's preferred unit for a category."""
-        if (
-            category in UNIT_CATEGORIES
-            and unit in UNIT_CATEGORIES[category].available_units
-        ):
+        if category in UNIT_CATEGORIES and unit in UNIT_CATEGORIES[category].available_units:
             old_unit = self._preferences.get(category)
             if old_unit != unit:
                 self._preferences[category] = unit
@@ -346,11 +339,10 @@ class UnitPreferencesManager(QObject):
         """Get the SI base unit for a category."""
         return UNIT_CATEGORIES[category].si_unit if category in UNIT_CATEGORIES else ""
 
-    def convert_to_si(
-        self, value: float, category: str, from_unit: str | None = None
-    ) -> float:
+    def convert_to_si(self, value: float, category: str, from_unit: str | None = None) -> float:
         """Convert a value to SI units."""
-        assert value is not None, "value must be provided"
+        if not (value is not None):
+            raise ValueError("value must be provided")
         from_unit = from_unit or self.get_preferred_unit(category)
         si_unit = self.get_si_unit(category)
         if not from_unit or not si_unit or from_unit == si_unit:
@@ -360,11 +352,10 @@ class UnitPreferencesManager(QObject):
         except (ValueError, KeyError, ZeroDivisionError):
             return value
 
-    def convert_from_si(
-        self, value: float, category: str, to_unit: str | None = None
-    ) -> float:
+    def convert_from_si(self, value: float, category: str, to_unit: str | None = None) -> float:
         """Convert a value from SI units to display units."""
-        assert value is not None, "value must be provided"
+        if not (value is not None):
+            raise ValueError("value must be provided")
         to_unit = to_unit or self.get_preferred_unit(category)
         si_unit = self.get_si_unit(category)
         if not to_unit or not si_unit or to_unit == si_unit:

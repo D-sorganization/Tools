@@ -43,10 +43,9 @@ logger = logging.getLogger(__name__)
 class ThemeListItem(QListWidgetItem):
     """Custom list item for themes with additional metadata."""
 
-    def __init__(
-        self, theme_name: str, is_builtin: bool = False, is_current: bool = False
-    ):
-        assert theme_name is not None, "theme_name must be provided"
+    def __init__(self, theme_name: str, is_builtin: bool = False, is_current: bool = False):
+        if not (theme_name is not None):
+            raise ValueError("theme_name must be provided")
         super().__init__()
         self.theme_name = theme_name
         self.is_builtin = is_builtin
@@ -89,7 +88,8 @@ class ThemeManagerDialog(QDialog):
     theme_changed = pyqtSignal(str)  # Emits when theme is changed
 
     def __init__(self, theme_manager: ThemeManager, parent: QWidget | None = None):
-        assert theme_manager is not None, "theme_manager must be provided"
+        if not (theme_manager is not None):
+            raise ValueError("theme_manager must be provided")
         super().__init__(parent)
         self.theme_manager = theme_manager
         self.theme_items: dict[str, ThemeListItem] = {}
@@ -420,9 +420,7 @@ class ThemeManagerDialog(QDialog):
                     logger.info(f"Exported theme {item.theme_name} to {filename}")
 
                 except (PermissionError, OSError) as e:
-                    QMessageBox.critical(
-                        self, "Export Error", f"Failed to export theme: {e}"
-                    )
+                    QMessageBox.critical(self, "Export Error", f"Failed to export theme: {e}")
                     logger.exception("Failed to export theme")
 
     def _import_theme(self) -> None:
@@ -479,14 +477,13 @@ class ThemeManagerDialog(QDialog):
                 logger.info(f"Imported theme {theme_name} from {filename}")
 
             except (PermissionError, OSError) as e:
-                QMessageBox.critical(
-                    self, "Import Error", f"Failed to import theme: {e}"
-                )
+                QMessageBox.critical(self, "Import Error", f"Failed to import theme: {e}")
                 logger.exception("Failed to import theme")
 
     def _on_theme_created(self, theme_name: str) -> None:
         """Handle new theme creation."""
-        assert theme_name is not None, "theme_name must be provided"
+        if not (theme_name is not None):
+            raise ValueError("theme_name must be provided")
         self._populate_themes()
 
         if theme_name in self.theme_items:
@@ -494,7 +491,8 @@ class ThemeManagerDialog(QDialog):
 
     def _on_theme_updated(self, theme_name: str) -> None:
         """Handle theme update."""
-        assert theme_name is not None, "theme_name must be provided"
+        if not (theme_name is not None):
+            raise ValueError("theme_name must be provided")
         self._populate_themes()
         self._update_current_theme_info()
 

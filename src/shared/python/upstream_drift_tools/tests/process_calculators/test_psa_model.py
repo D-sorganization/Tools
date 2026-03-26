@@ -491,9 +491,7 @@ class TestPSAModelConsistency:
 
         for i in range(len(results.component_names)):
             # Interstage = Mixed feed - Exhaust
-            calculated_interstage = (
-                results.flows.mixed_feed[i] - results.flows.exhaust[i]
-            )
+            calculated_interstage = results.flows.mixed_feed[i] - results.flows.exhaust[i]
             assert_allclose(
                 results.flows.interstage[i],
                 calculated_interstage,

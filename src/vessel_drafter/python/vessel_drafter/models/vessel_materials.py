@@ -30,9 +30,7 @@ class MaterialProperties:
         )
         require_nonnegative("preview_alpha", self.preview_alpha)
         if self.preview_alpha > 1.0:
-            raise ValueError(
-                f"preview_alpha must be <= 1.0, got {self.preview_alpha!r}"
-            )
+            raise ValueError(f"preview_alpha must be <= 1.0, got {self.preview_alpha!r}")
 
 
 DEFAULT_VESSEL_MATERIALS = (

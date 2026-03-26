@@ -38,7 +38,8 @@ def _build_override_mapping(
 ) -> dict[str, float]:
     """Create a mapping of parameter names to their associated values."""
 
-    assert parameter_names is not None, "parameter_names must be provided"
+    if not (parameter_names is not None):
+        raise ValueError("parameter_names must be provided")
     override: dict[str, float] = {}
     for name, value in zip(parameter_names, values, strict=False):
         if name in {"Temperature", "O2/Feed Ratio", "Steam/Feed Ratio", "Pressure"}:
@@ -63,7 +64,8 @@ def _compute_gradient_component(
     Selects forward, backward, or central differencing depending on
     whether the current value lies at a parameter bound.
     """
-    assert index is not None, "index must be provided"
+    if not (index is not None):
+        raise ValueError("index must be provided")
     lower = float(cfg["min"])
     upper = float(cfg["max"])
     if np.isclose(lower, upper):
@@ -153,7 +155,8 @@ def _init_adam_state(
     maximize: bool,
 ) -> _AdamState:
     """Extract parameters, build bounds, and initialise Adam moment vectors."""
-    assert analysis_params is not None, "analysis_params must be provided"
+    if not (analysis_params is not None):
+        raise ValueError("analysis_params must be provided")
     parameter_names = [cfg["name"] for cfg in parameter_configs]
     lower_bounds = np.array([cfg["min"] for cfg in parameter_configs], dtype=float)
     upper_bounds = np.array([cfg["max"] for cfg in parameter_configs], dtype=float)
@@ -187,7 +190,8 @@ def _evaluate_and_record(
 
     Returns the (possibly clamped) objective value.
     """
-    assert st is not None, "st must be provided"
+    if not (st is not None):
+        raise ValueError("st must be provided")
     overrides = _build_override_mapping(st.parameter_names, st.values.tolist())
     objective, composition, state = evaluate_output(
         engine, st.base_params, manual_hhv, st.output_name, overrides
@@ -198,8 +202,7 @@ def _evaluate_and_record(
         composition, state = {}, {}
 
     if np.isfinite(objective) and (
-        (maximize and objective > st.best_output)
-        or (not maximize and objective < st.best_output)
+        (maximize and objective > st.best_output) or (not maximize and objective < st.best_output)
     ):
         st.best_output = objective
         st.best_parameters = overrides.copy()
@@ -228,7 +231,8 @@ def _adam_update(
     epsilon: float,
 ) -> None:
     """Apply one Adam parameter update in-place."""
-    assert st is not None, "st must be provided"
+    if not (st is not None):
+        raise ValueError("st must be provided")
     st.m = beta1 * st.m + (1 - beta1) * gradient
     st.v = beta2 * st.v + (1 - beta2) * (gradient**2)
     m_hat = st.m / (1 - beta1**iteration)
@@ -379,7 +383,8 @@ def find_optimal_on_surface(
     """
     # Prepare data for interpolation
     # Ensure 1D unique sorted arrays for RegularGridInterpolator
-    assert x_grid is not None, "x_grid must be provided"
+    if not (x_grid is not None):
+        raise ValueError("x_grid must be provided")
     x_vals = np.unique(x_grid) if x_grid.ndim > 1 else x_grid
 
     y_vals = np.unique(y_grid) if y_grid.ndim > 1 else y_grid
@@ -527,9 +532,7 @@ def _run_differential_evolution(objective: Any, bounds: Any, callback: Any) -> d
 
     from scipy.optimize import differential_evolution  # lazy import
 
-    res = differential_evolution(
-        tracked_obj, bounds, maxiter=50, popsize=10, atol=0.01, tol=0.01
-    )
+    res = differential_evolution(tracked_obj, bounds, maxiter=50, popsize=10, atol=0.01, tol=0.01)
 
     return {
         "success": res.success,

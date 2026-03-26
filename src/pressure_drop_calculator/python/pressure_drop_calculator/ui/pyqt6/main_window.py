@@ -391,9 +391,7 @@ class PressureDropCalculatorWidget(QWidget):
         if warnings:
             self.warnings_text.setText("\n".join(f"⚠ {w}" for w in warnings))
         else:
-            self.warnings_text.setText(
-                "✓ No warnings. All parameters within acceptable ranges."
-            )
+            self.warnings_text.setText("✓ No warnings. All parameters within acceptable ranges.")
 
         # Update chart
         self._update_chart()

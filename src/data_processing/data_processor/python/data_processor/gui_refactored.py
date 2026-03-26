@@ -87,7 +87,8 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
 
     def _set_cursor_recursive(self, widget: Any, cursor: str) -> None:
         """Set cursor recursively for widget and all children."""
-        assert cursor is not None, "cursor must be provided"
+        if not (cursor is not None):
+            raise ValueError("cursor must be provided")
         try:
             widget.configure(cursor=cursor)
         except (TclError, AttributeError):
@@ -466,9 +467,7 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
                     )
                 else:
                     # Load multiple files and combine
-                    dataframes = self.data_loader.load_multiple_files(
-                        self.selected_files
-                    )
+                    dataframes = self.data_loader.load_multiple_files(self.selected_files)
                     self.current_data = self.data_loader.combine_dataframes(dataframes)
 
                 if self.current_data is not None:
@@ -779,7 +778,8 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
 
     def update_status(self, message: str) -> None:
         """Update status bar."""
-        assert message is not None, "message must be provided"
+        if not (message is not None):
+            raise ValueError("message must be provided")
         self.status_label.configure(text=message)
         logger.debug(f"Status: {message}")
 

@@ -129,18 +129,14 @@ class TestCalculateOutletThermal:
     def test_zero_heat_loss_no_temp_drop(self):
         """Lines 264-268: heat_loss_w=0 → temp_drop=0."""
         calc = _calc()
-        outlet_c, _, _ = calc._calculate_outlet_thermal(
-            1.0, 700.0, 101325.0, SYNGAS_COMP, 0.0
-        )
+        outlet_c, _, _ = calc._calculate_outlet_thermal(1.0, 700.0, 101325.0, SYNGAS_COMP, 0.0)
         expected = 700.0 - 273.15
         assert abs(outlet_c - expected) < 0.01
 
     def test_zero_flow_no_temperature_drop(self):
         """Lines 264-268: gas_flow==0 → temp_drop=0 (guard against div by zero)."""
         calc = _calc()
-        outlet_c, _, _ = calc._calculate_outlet_thermal(
-            0.001, 700.0, 101325.0, SYNGAS_COMP, 1e9
-        )
+        outlet_c, _, _ = calc._calculate_outlet_thermal(0.001, 700.0, 101325.0, SYNGAS_COMP, 1e9)
         # Flow is very small — outlet temp could be near absolute zero but should return
         assert isinstance(outlet_c, float)
 
@@ -313,9 +309,7 @@ class TestBaghouseCalculate:
     def test_efficiency_out_of_range_raises(self):
         """Lines 354-359: efficiency > 1 → AssertionError."""
         calc = _calc()
-        with pytest.raises(
-            AssertionError, match="Carbon removal efficiency must be 0-1"
-        ):
+        with pytest.raises(AssertionError, match="Carbon removal efficiency must be 0-1"):
             calc.calculate(
                 gas_flow_kg_s=1.0,
                 inlet_temp_k=700.0,

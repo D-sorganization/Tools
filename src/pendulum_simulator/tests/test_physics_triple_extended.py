@@ -155,9 +155,7 @@ class TestLinearAccelerations:
         for key, val in result.items():
             assert len(val) == 2, f"{key}: expected 2-tuple, got {len(val)}"
 
-    def test_finite_at_rest(
-        self, params: TriplePendulumParams, rest_state: np.ndarray
-    ) -> None:
+    def test_finite_at_rest(self, params: TriplePendulumParams, rest_state: np.ndarray) -> None:
         qddot = np.zeros(3)
         result = linear_accelerations(rest_state, qddot, params)
         for key, (ax, ay) in result.items():

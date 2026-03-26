@@ -71,18 +71,14 @@ class TestScrubberEngine(unittest.TestCase):
 
     def test_zero_flow(self) -> None:
         """Test behavior with zero gas flow."""
-        zero_inputs = ScrubberInputs(
-            **{**self.standard_inputs.__dict__, "gas_flow_kg_hr": 0}
-        )
+        zero_inputs = ScrubberInputs(**{**self.standard_inputs.__dict__, "gas_flow_kg_hr": 0})
         results = ScrubberEngine.calculate(zero_inputs)
         self.assertEqual(results.column_diameter_m, 0.0)
         self.assertEqual(results.packed_height_m, 0.0)
 
     def test_calculate_column_sizing_invalid_packing(self) -> None:
         """Test column sizing with unknown packing."""
-        inputs = ScrubberInputs(
-            **{**self.standard_inputs.__dict__, "packing_name": "UnknownXYZ"}
-        )
+        inputs = ScrubberInputs(**{**self.standard_inputs.__dict__, "packing_name": "UnknownXYZ"})
         with self.assertRaisesRegex(ValueError, "Unknown packing type: UnknownXYZ"):
             ScrubberEngine._calculate_column_sizing(inputs, 1.2)
 
@@ -115,8 +111,8 @@ class TestScrubberEngine(unittest.TestCase):
     def test_calculate_thermal_valid(self) -> None:
         """Test thermal calculations."""
         acid_gas_removed = {"HCl": 10.0, "HF": 1.0}
-        naoh_pure, naoh_sol, heat_kw, cw_flow, warnings = (
-            ScrubberEngine._calculate_thermal(self.standard_inputs, acid_gas_removed)
+        naoh_pure, naoh_sol, heat_kw, cw_flow, warnings = ScrubberEngine._calculate_thermal(
+            self.standard_inputs, acid_gas_removed
         )
         self.assertGreater(naoh_pure, 0)
         self.assertGreater(naoh_sol, 0)

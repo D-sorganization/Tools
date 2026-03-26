@@ -34,9 +34,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 
-def ensure_layer(
-    doc: Any, name: str, color: int = 7, linetype: str = "CONTINUOUS"
-) -> None:
+def ensure_layer(doc: Any, name: str, color: int = 7, linetype: str = "CONTINUOUS") -> None:
     """Create a layer if it doesn't already exist.
 
     Preconditions:
@@ -46,7 +44,8 @@ def ensure_layer(
     Postconditions:
         - ``name`` exists in ``doc.layers``.
     """
-    assert name is not None, "name must be provided"
+    if not (name is not None):
+        raise ValueError("name must be provided")
     if not name:
         return
     if name in doc.layers:
@@ -61,7 +60,8 @@ def ensure_layer(
 
 def ensure_layers(doc: Any, spec: dict[str, Any]) -> None:
     """Create all layers declared in the spec plus standard defaults."""
-    assert spec is not None, "spec must be provided"
+    if not (spec is not None):
+        raise ValueError("spec must be provided")
     for name, cfg in get_layer_config(spec).items():
         cfg = cfg or {}
         ensure_layer(
@@ -117,7 +117,8 @@ def parse_alignment(align: Any) -> TextEntityAlignment:
 
 def wrap_text_lines(text: str, width: int) -> list[str]:
     """Wrap *text* to *width* characters, returning a list of lines."""
-    assert text is not None, "text must be provided"
+    if not (text is not None):
+        raise ValueError("text must be provided")
     chunks = textwrap.wrap(
         str(text),
         width=max(int(width), 12),
@@ -142,7 +143,8 @@ def add_text(
     align: str = "MIDDLE_CENTER",
 ) -> Any:
     """Add a text entity to the modelspace."""
-    assert text is not None, "text must be provided"
+    if not (text is not None):
+        raise ValueError("text must be provided")
     t = msp.add_text(
         str(text),
         dxfattribs={
@@ -168,7 +170,8 @@ def add_text_panel(
     max_chars: int = 42,
 ) -> None:
     """Draw a bordered panel with a title and wrapped text lines."""
-    assert x is not None, "x must be provided"
+    if not (x is not None):
+        raise ValueError("x must be provided")
     add_box(msp, x, y, w, h, border_layer)
     inset_x = x + 1.1
     inset_top = y + h - 1.0
@@ -200,7 +203,8 @@ def add_text_panel(
 
 def add_box(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
     """Draw a rectangular outline on the given layer."""
-    assert x is not None, "x must be provided"
+    if not (x is not None):
+        raise ValueError("x must be provided")
     x = to_float(x)
     y = to_float(y)
     w = to_float(w)
@@ -223,7 +227,8 @@ def add_arrow_head(
     arrow_size: float = 1.6,
 ) -> None:
     """Draw a filled arrowhead at the end of a line from *s* to *e*."""
-    assert s is not None, "s must be provided"
+    if not (s is not None):
+        raise ValueError("s must be provided")
     sx, sy = to_float(s[0]), to_float(s[1])
     ex, ey = to_float(e[0]), to_float(e[1])
     attrs: dict[str, Any] = {"layer": layer}
@@ -254,16 +259,15 @@ def add_arrow(
     arrow_size: float = 1.6,
 ) -> None:
     """Draw a line with an arrowhead at the end."""
-    assert s is not None, "s must be provided"
+    if not (s is not None):
+        raise ValueError("s must be provided")
     sx, sy = to_float(s[0]), to_float(s[1])
     ex, ey = to_float(e[0]), to_float(e[1])
     attrs: dict[str, Any] = {"layer": layer}
     if color is not None:
         attrs["color"] = int(color)
     msp.add_line((sx, sy), (ex, ey), dxfattribs=attrs)
-    add_arrow_head(
-        msp, (sx, sy), (ex, ey), layer=layer, color=color, arrow_size=arrow_size
-    )
+    add_arrow_head(msp, (sx, sy), (ex, ey), layer=layer, color=color, arrow_size=arrow_size)
 
 
 def add_poly_arrow(
@@ -274,7 +278,8 @@ def add_poly_arrow(
     arrow_size: float = 1.6,
 ) -> None:
     """Draw a polyline with an arrowhead on the last segment."""
-    assert verts is not None, "verts must be provided"
+    if not (verts is not None):
+        raise ValueError("verts must be provided")
     points = [(to_float(v[0]), to_float(v[1])) for v in verts if len(v) >= 2]
     if len(points) < 2:
         return
@@ -282,9 +287,7 @@ def add_poly_arrow(
     if color is not None:
         attrs["color"] = int(color)
     msp.add_lwpolyline(points, dxfattribs=attrs)
-    add_arrow_head(
-        msp, points[-2], points[-1], layer, color=color, arrow_size=arrow_size
-    )
+    add_arrow_head(msp, points[-2], points[-1], layer, color=color, arrow_size=arrow_size)
 
 
 # ---------------------------------------------------------------------------
@@ -304,7 +307,8 @@ def export_svg_from_dxf(
         - If *svg_path* is not ``None`` and export succeeds, the SVG file exists.
         - On failure, a warning is logged (never raises).
     """
-    assert spec is not None, "spec must be provided"
+    if not (spec is not None):
+        raise ValueError("spec must be provided")
     if not svg_path:
         return
     x_min, y_min, x_max, y_max = fallback_extent
@@ -329,9 +333,7 @@ def export_svg_from_dxf(
             "pt": layout.Units.pt,
             "px": layout.Units.px,
         }
-        page = layout.Page(
-            page_width, page_height, units=unit_map.get(unit_name, layout.Units.mm)
-        )
+        page = layout.Page(page_width, page_height, units=unit_map.get(unit_name, layout.Units.mm))
         Path(svg_path).write_text(backend.get_string(page), encoding="utf-8")
     except Exception as exc:  # noqa: BLE001
         logger.warning("DXF created, but SVG export failed: %s", exc)

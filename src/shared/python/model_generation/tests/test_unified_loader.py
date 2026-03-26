@@ -22,35 +22,35 @@ class TestFormatDetection:
         f.write_text("<robot name='test'></robot>")
         from model_generation.library.unified_loader import ModelFormat, detect_format
 
-        assert detect_format(f) == ModelFormat.URDF
+        if not (detect_format(f) == ModelFormat.URDF): raise ValueError(f"Assertion failed: { detect_format(f) == ModelFormat.URDF }")  # noqa: E701
 
     def test_mjcf_extension_detected(self, tmp_path: Path) -> None:
         f = tmp_path / "model.mjcf"
         f.write_text("<mujoco model='test'></mujoco>")
         from model_generation.library.unified_loader import ModelFormat, detect_format
 
-        assert detect_format(f) == ModelFormat.MJCF
+        if not (detect_format(f) == ModelFormat.MJCF): raise ValueError(f"Assertion failed: { detect_format(f) == ModelFormat.MJCF }")  # noqa: E701
 
     def test_xml_with_mujoco_content(self, tmp_path: Path) -> None:
         f = tmp_path / "humanoid.xml"
         f.write_text('<mujoco model="humanoid"><worldbody/></mujoco>')
         from model_generation.library.unified_loader import ModelFormat, detect_format
 
-        assert detect_format(f) == ModelFormat.MJCF
+        if not (detect_format(f) == ModelFormat.MJCF): raise ValueError(f"Assertion failed: { detect_format(f) == ModelFormat.MJCF }")  # noqa: E701
 
     def test_xml_with_urdf_content(self, tmp_path: Path) -> None:
         f = tmp_path / "robot.xml"
         f.write_text('<robot name="test"><link name="base"/></robot>')
         from model_generation.library.unified_loader import ModelFormat, detect_format
 
-        assert detect_format(f) == ModelFormat.URDF
+        if not (detect_format(f) == ModelFormat.URDF): raise ValueError(f"Assertion failed: { detect_format(f) == ModelFormat.URDF }")  # noqa: E701
 
     def test_unknown_extension(self, tmp_path: Path) -> None:
         f = tmp_path / "model.txt"
         f.write_text("not a model")
         from model_generation.library.unified_loader import ModelFormat, detect_format
 
-        assert detect_format(f) == ModelFormat.UNKNOWN
+        if not (detect_format(f) == ModelFormat.UNKNOWN): raise ValueError(f"Assertion failed: { detect_format(f) == ModelFormat.UNKNOWN }")  # noqa: E701
 
 
 class TestUserPreferences:
@@ -60,12 +60,12 @@ class TestUserPreferences:
         from model_generation.library.unified_loader import UserPreferences
 
         prefs = UserPreferences()
-        assert prefs.default_model_id == "mujoco_humanoid"
-        assert prefs.show_segments is True
-        assert prefs.show_joints is True
-        assert prefs.show_collisions is True
-        assert prefs.show_inertias is True
-        assert prefs.show_frames is False
+        if not (prefs.default_model_id == "mujoco_humanoid"): raise ValueError(f"Assertion failed: { prefs.default_model_id == "mujoco_humanoid" }")  # noqa: E701
+        if not (prefs.show_segments is True): raise ValueError(f"Assertion failed: { prefs.show_segments is True }")  # noqa: E701
+        if not (prefs.show_joints is True): raise ValueError(f"Assertion failed: { prefs.show_joints is True }")  # noqa: E701
+        if not (prefs.show_collisions is True): raise ValueError(f"Assertion failed: { prefs.show_collisions is True }")  # noqa: E701
+        if not (prefs.show_inertias is True): raise ValueError(f"Assertion failed: { prefs.show_inertias is True }")  # noqa: E701
+        if not (prefs.show_frames is False): raise ValueError(f"Assertion failed: { prefs.show_frames is False }")  # noqa: E701
 
     def test_preferences_roundtrip(self) -> None:
         from model_generation.library.unified_loader import UserPreferences
@@ -77,9 +77,9 @@ class TestUserPreferences:
         )
         data = prefs.to_dict()
         restored = UserPreferences.from_dict(data)
-        assert restored.default_model_id == "simple_arm"
-        assert restored.show_frames is True
-        assert restored.show_segments is False
+        if not (restored.default_model_id == "simple_arm"): raise ValueError(f"Assertion failed: { restored.default_model_id == "simple_arm" }")  # noqa: E701
+        if not (restored.show_frames is True): raise ValueError(f"Assertion failed: { restored.show_frames is True }")  # noqa: E701
+        if not (restored.show_segments is False): raise ValueError(f"Assertion failed: { restored.show_segments is False }")  # noqa: E701
 
     def test_recent_models_tracking(self) -> None:
         from model_generation.library.unified_loader import UserPreferences
@@ -89,9 +89,9 @@ class TestUserPreferences:
         prefs.add_recent("model_b")
         prefs.add_recent("model_a")  # Should move to front
 
-        assert prefs.recent_models[0] == "model_a"
-        assert prefs.recent_models[1] == "model_b"
-        assert len(prefs.recent_models) == 2
+        if not (prefs.recent_models[0] == "model_a"): raise ValueError(f"Assertion failed: { prefs.recent_models[0] == "model_a" }")  # noqa: E701
+        if not (prefs.recent_models[1] == "model_b"): raise ValueError(f"Assertion failed: { prefs.recent_models[1] == "model_b" }")  # noqa: E701
+        if not (len(prefs.recent_models) == 2): raise ValueError(f"Assertion failed: { len(prefs.recent_models) == 2 }")  # noqa: E701
 
     def test_recent_models_max_limit(self) -> None:
         from model_generation.library.unified_loader import UserPreferences
@@ -99,7 +99,7 @@ class TestUserPreferences:
         prefs = UserPreferences(max_recent=3)
         for i in range(5):
             prefs.add_recent(f"model_{i}")
-        assert len(prefs.recent_models) == 3
+        if not (len(prefs.recent_models) == 3): raise ValueError(f"Assertion failed: { len(prefs.recent_models) == 3 }")  # noqa: E701
 
     def test_save_and_load_preferences(self, tmp_path: Path) -> None:
         from model_generation.library.unified_loader import UnifiedModelLoader
@@ -109,7 +109,7 @@ class TestUserPreferences:
 
         # Create a new loader from same dir to test persistence
         loader2 = UnifiedModelLoader(prefs_dir=tmp_path)
-        assert loader2.preferences.default_model_id == "simple_arm"
+        if not (loader2.preferences.default_model_id == "simple_arm"): raise ValueError(f"Assertion failed: { loader2.preferences.default_model_id == "simple_arm" }")  # noqa: E701
 
 
 class TestBundledManifest:
@@ -119,22 +119,22 @@ class TestBundledManifest:
         manifest_path = (
             Path(__file__).parent.parent / "library" / "bundled" / "manifest.json"
         )
-        assert manifest_path.exists(), "Bundled manifest.json must exist"
+        if not (manifest_path.exists()): raise ValueError(f"Assertion failed: { manifest_path.exists() }, "Bundled manifest.json must exist"")  # noqa: E701
 
     def test_manifest_valid_json(self) -> None:
         manifest_path = (
             Path(__file__).parent.parent / "library" / "bundled" / "manifest.json"
         )
         data = json.loads(manifest_path.read_text())
-        assert "models" in data
-        assert len(data["models"]) >= 4
+        if not ("models" in data): raise ValueError(f"Assertion failed: { "models" in data }")  # noqa: E701
+        if not (len(data["models"]) >= 4): raise ValueError(f"Assertion failed: { len(data["models"]) >= 4 }")  # noqa: E701
 
     def test_all_manifest_files_exist(self) -> None:
         bundled_dir = Path(__file__).parent.parent / "library" / "bundled"
         manifest = json.loads((bundled_dir / "manifest.json").read_text())
         for entry in manifest["models"]:
             model_path = bundled_dir / entry["file"]
-            assert model_path.exists(), f"Missing bundled file: {entry['file']}"
+            if not (model_path.exists()): raise ValueError(f"Assertion failed: { model_path.exists() }, f"Missing bundled file: {entry['file']}"")  # noqa: E701
 
     def test_manifest_entries_have_required_fields(self) -> None:
         bundled_dir = Path(__file__).parent.parent / "library" / "bundled"
@@ -142,14 +142,14 @@ class TestBundledManifest:
         required = {"id", "name", "format", "file", "category"}
         for entry in manifest["models"]:
             missing = required - set(entry.keys())
-            assert not missing, f"Entry {entry.get('id', '?')} missing: {missing}"
+            if not (not missing): raise ValueError(f"Assertion failed: { not missing }, f"Entry {entry.get('id', '?')} missing: {missing}"")  # noqa: E701
 
     def test_mujoco_humanoid_is_default(self) -> None:
         """The MuJoCo humanoid must be present and tagged as default."""
         bundled_dir = Path(__file__).parent.parent / "library" / "bundled"
         manifest = json.loads((bundled_dir / "manifest.json").read_text())
         ids = [e["id"] for e in manifest["models"]]
-        assert "mujoco_humanoid" in ids
+        if not ("mujoco_humanoid" in ids): raise ValueError(f"Assertion failed: { "mujoco_humanoid" in ids }")  # noqa: E701
 
 
 class TestUnifiedLoader:
@@ -163,70 +163,70 @@ class TestUnifiedLoader:
     def test_list_bundled_models(self, tmp_path: Path) -> None:
         loader = self._make_loader(tmp_path)
         models = loader.list_bundled_models()
-        assert len(models) >= 4
+        if not (len(models) >= 4): raise ValueError(f"Assertion failed: { len(models) >= 4 }")  # noqa: E701
         ids = {m["id"] for m in models}
-        assert "mujoco_humanoid" in ids
-        assert "simple_humanoid" in ids
-        assert "simple_arm" in ids
-        assert "simple_quadruped" in ids
+        if not ("mujoco_humanoid" in ids): raise ValueError(f"Assertion failed: { "mujoco_humanoid" in ids }")  # noqa: E701
+        if not ("simple_humanoid" in ids): raise ValueError(f"Assertion failed: { "simple_humanoid" in ids }")  # noqa: E701
+        if not ("simple_arm" in ids): raise ValueError(f"Assertion failed: { "simple_arm" in ids }")  # noqa: E701
+        if not ("simple_quadruped" in ids): raise ValueError(f"Assertion failed: { "simple_quadruped" in ids }")  # noqa: E701
 
     def test_load_mujoco_humanoid(self, tmp_path: Path) -> None:
         loader = self._make_loader(tmp_path)
         result = loader.load_bundled("mujoco_humanoid")
-        assert result.success, f"Failed to load mujoco_humanoid: {result.error}"
-        assert result.model is not None
-        assert result.source_format.value == "mjcf"
-        assert len(result.model.links) > 0
-        assert len(result.model.joints) > 0
+        if not (result.success): raise ValueError(f"Assertion failed: { result.success }, f"Failed to load mujoco_humanoid: {result.error}"")  # noqa: E701
+        if not (result.model is not None): raise ValueError(f"Assertion failed: { result.model is not None }")  # noqa: E701
+        if not (result.source_format.value == "mjcf"): raise ValueError(f"Assertion failed: { result.source_format.value == "mjcf" }")  # noqa: E701
+        if not (len(result.model.links) > 0): raise ValueError(f"Assertion failed: { len(result.model.links) > 0 }")  # noqa: E701
+        if not (len(result.model.joints) > 0): raise ValueError(f"Assertion failed: { len(result.model.joints) > 0 }")  # noqa: E701
 
     def test_load_simple_humanoid(self, tmp_path: Path) -> None:
         loader = self._make_loader(tmp_path)
         result = loader.load_bundled("simple_humanoid")
-        assert result.success, f"Failed to load simple_humanoid: {result.error}"
-        assert result.model is not None
-        assert result.source_format.value == "urdf"
-        assert len(result.model.links) >= 13
+        if not (result.success): raise ValueError(f"Assertion failed: { result.success }, f"Failed to load simple_humanoid: {result.error}"")  # noqa: E701
+        if not (result.model is not None): raise ValueError(f"Assertion failed: { result.model is not None }")  # noqa: E701
+        if not (result.source_format.value == "urdf"): raise ValueError(f"Assertion failed: { result.source_format.value == "urdf" }")  # noqa: E701
+        if not (len(result.model.links) >= 13): raise ValueError(f"Assertion failed: { len(result.model.links) >= 13 }")  # noqa: E701
 
     def test_load_simple_arm(self, tmp_path: Path) -> None:
         loader = self._make_loader(tmp_path)
         result = loader.load_bundled("simple_arm")
-        assert result.success, f"Failed to load simple_arm: {result.error}"
-        assert result.model is not None
-        assert len(result.model.links) >= 5
+        if not (result.success): raise ValueError(f"Assertion failed: { result.success }, f"Failed to load simple_arm: {result.error}"")  # noqa: E701
+        if not (result.model is not None): raise ValueError(f"Assertion failed: { result.model is not None }")  # noqa: E701
+        if not (len(result.model.links) >= 5): raise ValueError(f"Assertion failed: { len(result.model.links) >= 5 }")  # noqa: E701
 
     def test_load_simple_quadruped(self, tmp_path: Path) -> None:
         loader = self._make_loader(tmp_path)
         result = loader.load_bundled("simple_quadruped")
-        assert result.success, f"Failed to load simple_quadruped: {result.error}"
-        assert result.model is not None
-        assert len(result.model.links) >= 9
+        if not (result.success): raise ValueError(f"Assertion failed: { result.success }, f"Failed to load simple_quadruped: {result.error}"")  # noqa: E701
+        if not (result.model is not None): raise ValueError(f"Assertion failed: { result.model is not None }")  # noqa: E701
+        if not (len(result.model.links) >= 9): raise ValueError(f"Assertion failed: { len(result.model.links) >= 9 }")  # noqa: E701
 
     def test_load_default_is_mujoco_humanoid(self, tmp_path: Path) -> None:
         loader = self._make_loader(tmp_path)
         result = loader.load_default()
-        assert result.success
-        assert result.model is not None
-        assert result.model.name == "humanoid"
+        if not (result.success): raise ValueError(f"Assertion failed: { result.success }")  # noqa: E701
+        if not (result.model is not None): raise ValueError(f"Assertion failed: { result.model is not None }")  # noqa: E701
+        if not (result.model.name == "humanoid"): raise ValueError(f"Assertion failed: { result.model.name == "humanoid" }")  # noqa: E701
 
     def test_load_nonexistent_bundled_model(self, tmp_path: Path) -> None:
         loader = self._make_loader(tmp_path)
         result = loader.load_bundled("nonexistent_model_xyz")
-        assert not result.success
-        assert result.error is not None
+        if not (not result.success): raise ValueError(f"Assertion failed: { not result.success }")  # noqa: E701
+        if not (result.error is not None): raise ValueError(f"Assertion failed: { result.error is not None }")  # noqa: E701
 
     def test_load_nonexistent_file(self, tmp_path: Path) -> None:
         loader = self._make_loader(tmp_path)
         result = loader.load_file(tmp_path / "nope.urdf")
-        assert not result.success
-        assert "not found" in (result.error or "").lower()
+        if not (not result.success): raise ValueError(f"Assertion failed: { not result.success }")  # noqa: E701
+        if not ("not found" in (result.error or "").lower()): raise ValueError(f"Assertion failed: { "not found" in (result.error or "").lower() }")  # noqa: E701
 
     def test_fallback_when_default_missing(self, tmp_path: Path) -> None:
         """If configured default is invalid, fall back to mujoco_humanoid."""
         loader = self._make_loader(tmp_path)
         loader._preferences.default_model_id = "nonexistent_model"
         result = loader.load_default()
-        assert result.success
-        assert result.model is not None
+        if not (result.success): raise ValueError(f"Assertion failed: { result.success }")  # noqa: E701
+        if not (result.model is not None): raise ValueError(f"Assertion failed: { result.model is not None }")  # noqa: E701
 
     def test_load_arbitrary_urdf_file(self, tmp_path: Path) -> None:
         urdf_content = """<?xml version="1.0"?>
@@ -243,9 +243,9 @@ class TestUnifiedLoader:
 
         loader = self._make_loader(tmp_path)
         result = loader.load_file(f)
-        assert result.success
-        assert result.model is not None
-        assert result.model.name == "test_bot"
+        if not (result.success): raise ValueError(f"Assertion failed: { result.success }")  # noqa: E701
+        if not (result.model is not None): raise ValueError(f"Assertion failed: { result.model is not None }")  # noqa: E701
+        if not (result.model.name == "test_bot"): raise ValueError(f"Assertion failed: { result.model.name == "test_bot" }")  # noqa: E701
 
     def test_load_arbitrary_mjcf_file(self, tmp_path: Path) -> None:
         mjcf_content = """<mujoco model="test_mj">
@@ -261,9 +261,9 @@ class TestUnifiedLoader:
 
         loader = self._make_loader(tmp_path)
         result = loader.load_file(f)
-        assert result.success
-        assert result.model is not None
-        assert result.model.name == "test_mj"
+        if not (result.success): raise ValueError(f"Assertion failed: { result.success }")  # noqa: E701
+        if not (result.model is not None): raise ValueError(f"Assertion failed: { result.model is not None }")  # noqa: E701
+        if not (result.model.name == "test_mj"): raise ValueError(f"Assertion failed: { result.model.name == "test_mj" }")  # noqa: E701
 
 
 class TestMJCFParsing:
@@ -274,15 +274,15 @@ class TestMJCFParsing:
 
         loader = UnifiedModelLoader(prefs_dir=tmp_path)
         result = loader.load_bundled("mujoco_humanoid")
-        assert result.success
+        if not (result.success): raise ValueError(f"Assertion failed: { result.success }")  # noqa: E701
         model = result.model
         link_names = {link.name for link in model.links}
         # Key bodies from the MuJoCo humanoid
-        assert "torso" in link_names
-        assert "pelvis" in link_names
-        assert "right_thigh" in link_names
-        assert "left_thigh" in link_names
-        assert "head" not in link_names  # head is a geom, not a body
+        if not ("torso" in link_names): raise ValueError(f"Assertion failed: { "torso" in link_names }")  # noqa: E701
+        if not ("pelvis" in link_names): raise ValueError(f"Assertion failed: { "pelvis" in link_names }")  # noqa: E701
+        if not ("right_thigh" in link_names): raise ValueError(f"Assertion failed: { "right_thigh" in link_names }")  # noqa: E701
+        if not ("left_thigh" in link_names): raise ValueError(f"Assertion failed: { "left_thigh" in link_names }")  # noqa: E701
+        if not ("head" not in link_names  # head is a geom): raise ValueError(f"Assertion failed: { "head" not in link_names  # head is a geom }, not a body")
 
     def test_mujoco_humanoid_has_joints(self, tmp_path: Path) -> None:
         from model_generation.library.unified_loader import UnifiedModelLoader
@@ -292,7 +292,7 @@ class TestMJCFParsing:
         model = result.model
         joint_names = {j.name for j in model.joints}
         # Key joints
-        assert "right_hip_y" in joint_names or any(
+        if not ("right_hip_y" in joint_names or any(): raise ValueError(f"Assertion failed: { "right_hip_y" in joint_names or any( }")
             "hip" in name for name in joint_names
         )
 
@@ -311,10 +311,10 @@ class TestMJCFParsing:
 </mujoco>"""
         root = ET.fromstring(xml)
         model = converter._parse_mjcf(root)
-        assert len(model.links) == 1
+        if not (len(model.links) == 1): raise ValueError(f"Assertion failed: { len(model.links) == 1 }")  # noqa: E701
         link = model.links[0]
-        assert link.visual_geometry is not None
-        assert link.visual_geometry.geometry_type.value == "capsule"
+        if not (link.visual_geometry is not None): raise ValueError(f"Assertion failed: { link.visual_geometry is not None }")  # noqa: E701
+        if not (link.visual_geometry.geometry_type.value == "capsule"): raise ValueError(f"Assertion failed: { link.visual_geometry.geometry_type.value == "capsule" }")  # noqa: E701
 
     def test_capsule_fromto_non_numeric_returns_none(self) -> None:
         """Non-numeric fromto values must be rejected gracefully (#1073)."""
@@ -333,7 +333,7 @@ class TestMJCFParsing:
         model = converter._parse_mjcf(root)
         link = model.links[0]
         # Non-numeric fromto should be rejected: geometry is None
-        assert link.visual_geometry is None
+        if not (link.visual_geometry is None): raise ValueError(f"Assertion failed: { link.visual_geometry is None }")  # noqa: E701
 
     def test_capsule_fromto_short_values_returns_none(self) -> None:
         """fromto with fewer than 6 values must be rejected (#1073)."""
@@ -351,7 +351,7 @@ class TestMJCFParsing:
         root = ET.fromstring(xml)
         model = converter._parse_mjcf(root)
         link = model.links[0]
-        assert link.visual_geometry is None
+        if not (link.visual_geometry is None): raise ValueError(f"Assertion failed: { link.visual_geometry is None }")  # noqa: E701
 
     def test_capsule_zero_length_degrades_to_sphere(self) -> None:
         """Zero-length capsule (identical from/to) must degrade to sphere (#1073)."""
@@ -369,9 +369,9 @@ class TestMJCFParsing:
         root = ET.fromstring(xml)
         model = converter._parse_mjcf(root)
         link = model.links[0]
-        assert link.visual_geometry is not None
-        assert link.visual_geometry.geometry_type.value == "sphere"
-        assert abs(link.visual_geometry.dimensions[0] - 0.03) < 0.001
+        if not (link.visual_geometry is not None): raise ValueError(f"Assertion failed: { link.visual_geometry is not None }")  # noqa: E701
+        if not (link.visual_geometry.geometry_type.value == "sphere"): raise ValueError(f"Assertion failed: { link.visual_geometry.geometry_type.value == "sphere" }")  # noqa: E701
+        if not (abs(link.visual_geometry.dimensions[0] - 0.03) < 0.001): raise ValueError(f"Assertion failed: { abs(link.visual_geometry.dimensions[0] - 0.03) < 0.001 }")  # noqa: E701
 
     def test_mjcf_geom_parsing_box(self) -> None:
         import defusedxml.ElementTree as ET
@@ -388,12 +388,12 @@ class TestMJCFParsing:
         root = ET.fromstring(xml)
         model = converter._parse_mjcf(root)
         link = model.links[0]
-        assert link.visual_geometry is not None
-        assert link.visual_geometry.geometry_type.value == "box"
+        if not (link.visual_geometry is not None): raise ValueError(f"Assertion failed: { link.visual_geometry is not None }")  # noqa: E701
+        if not (link.visual_geometry.geometry_type.value == "box"): raise ValueError(f"Assertion failed: { link.visual_geometry.geometry_type.value == "box" }")  # noqa: E701
         # MuJoCo uses half-sizes, parser should convert to full sizes
         dims = link.visual_geometry.dimensions
-        assert abs(dims[0] - 0.15) < 0.001  # 0.075 * 2
-        assert abs(dims[1] - 0.09) < 0.001  # 0.045 * 2
+        if not (abs(dims[0] - 0.15) < 0.001  # 0.075 * 2): raise ValueError(f"Assertion failed: { abs(dims[0] - 0.15) < 0.001  # 0.075 * 2 }")
+        if not (abs(dims[1] - 0.09) < 0.001  # 0.045 * 2): raise ValueError(f"Assertion failed: { abs(dims[1] - 0.09) < 0.001  # 0.045 * 2 }")
 
     def test_mjcf_geom_parsing_sphere(self) -> None:
         import defusedxml.ElementTree as ET
@@ -410,9 +410,9 @@ class TestMJCFParsing:
         root = ET.fromstring(xml)
         model = converter._parse_mjcf(root)
         link = model.links[0]
-        assert link.visual_geometry is not None
-        assert link.visual_geometry.geometry_type.value == "sphere"
-        assert abs(link.visual_geometry.dimensions[0] - 0.09) < 0.001
+        if not (link.visual_geometry is not None): raise ValueError(f"Assertion failed: { link.visual_geometry is not None }")
+        if not (link.visual_geometry.geometry_type.value == "sphere"): raise ValueError(f"Assertion failed: { link.visual_geometry.geometry_type.value == "sphere" }")
+        if not (abs(link.visual_geometry.dimensions[0] - 0.09) < 0.001): raise ValueError(f"Assertion failed: { abs(link.visual_geometry.dimensions[0] - 0.09) < 0.001 }")
 
 
 class TestModelLibraryBundled:
@@ -424,23 +424,23 @@ class TestModelLibraryBundled:
         library = ModelLibrary()
         models = library.list_models()
         ids = {m.id for m in models}
-        assert "mujoco_humanoid" in ids
+        if not ("mujoco_humanoid" in ids): raise ValueError(f"Assertion failed: { "mujoco_humanoid" in ids }")  # noqa: E701
 
     def test_library_loads_bundled_mjcf(self) -> None:
         from model_generation.library import ModelLibrary
 
         library = ModelLibrary()
         model = library.load_model("mujoco_humanoid")
-        assert model is not None
-        assert len(model.links) > 0
+        if not (model is not None): raise ValueError(f"Assertion failed: { model is not None }")  # noqa: E701
+        if not (len(model.links) > 0): raise ValueError(f"Assertion failed: { len(model.links) > 0 }")  # noqa: E701
 
     def test_library_loads_bundled_urdf(self) -> None:
         from model_generation.library import ModelLibrary
 
         library = ModelLibrary()
         model = library.load_model("simple_humanoid")
-        assert model is not None
-        assert len(model.links) >= 13
+        if not (model is not None): raise ValueError(f"Assertion failed: { model is not None }")  # noqa: E701
+        if not (len(model.links) >= 13): raise ValueError(f"Assertion failed: { len(model.links) >= 13 }")  # noqa: E701
 
 
 class TestDisplayDefaults:
@@ -450,8 +450,8 @@ class TestDisplayDefaults:
         """The first display option must be 'Segments', not 'Collisions'."""
         from model_generation.explorer.display_config import DISPLAY_OPTIONS
 
-        assert DISPLAY_OPTIONS[0][0] == "segments"
-        assert DISPLAY_OPTIONS[0][1] == "Segments"
+        if not (DISPLAY_OPTIONS[0][0] == "segments"): raise ValueError(f"Assertion failed: { DISPLAY_OPTIONS[0][0] == "segments" }")  # noqa: E701
+        if not (DISPLAY_OPTIONS[0][1] == "Segments"): raise ValueError(f"Assertion failed: { DISPLAY_OPTIONS[0][1] == "Segments" }")  # noqa: E701
 
     def test_all_checked_except_frames(self) -> None:
         """All boxes checked by default except Frames."""
@@ -459,26 +459,26 @@ class TestDisplayDefaults:
 
         for key, label, default in DISPLAY_OPTIONS:
             if key == "frames":
-                assert default is False, "Frames should be unchecked by default"
+                if not (default is False): raise ValueError(f"Assertion failed: { default is False }, "Frames should be unchecked by default"")  # noqa: E701
             else:
-                assert default is True, f"{label} should be checked by default"
+                if not (default is True): raise ValueError(f"Assertion failed: { default is True }, f"{label} should be checked by default"")  # noqa: E701
 
     def test_checkbox_order(self) -> None:
         from model_generation.explorer.display_config import DISPLAY_OPTIONS
 
         expected_order = ["segments", "joints", "collisions", "inertias", "frames"]
         actual_order = [opt[0] for opt in DISPLAY_OPTIONS]
-        assert actual_order == expected_order
+        if not (actual_order == expected_order): raise ValueError(f"Assertion failed: { actual_order == expected_order }")  # noqa: E701
 
     def test_preferences_match_display_defaults(self) -> None:
         from model_generation.library.unified_loader import UserPreferences
 
         prefs = UserPreferences()
-        assert prefs.show_segments is True
-        assert prefs.show_joints is True
-        assert prefs.show_collisions is True
-        assert prefs.show_inertias is True
-        assert prefs.show_frames is False
+        if not (prefs.show_segments is True): raise ValueError(f"Assertion failed: { prefs.show_segments is True }")  # noqa: E701
+        if not (prefs.show_joints is True): raise ValueError(f"Assertion failed: { prefs.show_joints is True }")  # noqa: E701
+        if not (prefs.show_collisions is True): raise ValueError(f"Assertion failed: { prefs.show_collisions is True }")  # noqa: E701
+        if not (prefs.show_inertias is True): raise ValueError(f"Assertion failed: { prefs.show_inertias is True }")  # noqa: E701
+        if not (prefs.show_frames is False): raise ValueError(f"Assertion failed: { prefs.show_frames is False }")  # noqa: E701
 
 
 class TestURDFDeterministicFormatting:
@@ -533,7 +533,7 @@ class TestURDFDeterministicFormatting:
         writer = URDFWriter()
         output_1 = writer.write("test_robot", [link_a, link_b], [joint])
         output_2 = writer.write("test_robot", [link_a, link_b], [joint])
-        assert output_1 == output_2, "URDF output is not deterministic across writes"
+        if not (output_1 == output_2): raise ValueError(f"Assertion failed: { output_1 == output_2 }, "URDF output is not deterministic across writes"")  # noqa: E701
 
     def test_urdf_uses_bounded_precision(self) -> None:
         """Numeric values must not exceed 6 significant figures."""
@@ -588,7 +588,7 @@ class TestURDFDeterministicFormatting:
                     stripped = part.lstrip("-").lstrip("0").replace(".", "")
                     stripped = stripped.lstrip("0")
                     # :.6g can produce up to 6 sig figs
-                    assert len(stripped) <= 6, (
+                    if not (len(stripped) <= 6): raise ValueError(f"Assertion failed: { len(stripped) <= 6 }, (")  # noqa: E701
                         f"Value '{part}' has more than 6 significant digits"
                     )
                 except ValueError:

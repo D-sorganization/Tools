@@ -90,7 +90,8 @@ class MatplotlibRenderer:
         ax: Axes | None = None,
     ) -> Figure:
         """Render a line/scatter plot."""
-        assert spec is not None, "spec must be provided"
+        if not (spec is not None):
+            raise ValueError("spec must be provided")
         fig, ax = self._ensure_fig_ax(fig, ax, spec)
 
         colors = self._get_theme_colors()
@@ -116,7 +117,8 @@ class MatplotlibRenderer:
         fig: Figure | None = None,
     ) -> Figure:
         """Render a 3D surface plot."""
-        assert spec is not None, "spec must be provided"
+        if not (spec is not None):
+            raise ValueError("spec must be provided")
         if fig is None:
             fig = plt.figure(
                 figsize=(spec.width / 100, spec.height / 100),
@@ -170,7 +172,8 @@ class MatplotlibRenderer:
         ax: Axes | None = None,
     ) -> Figure:
         """Render a contour plot."""
-        assert spec is not None, "spec must be provided"
+        if not (spec is not None):
+            raise ValueError("spec must be provided")
         fig, ax = self._ensure_fig_ax(fig, ax, spec)
 
         x_grid = np.asarray(spec.x_grid)
@@ -205,7 +208,8 @@ class MatplotlibRenderer:
         ax: Axes | None = None,
     ) -> Figure:
         """Render a heatmap."""
-        assert spec is not None, "spec must be provided"
+        if not (spec is not None):
+            raise ValueError("spec must be provided")
         fig, ax = self._ensure_fig_ax(fig, ax, spec)
 
         z_data = np.asarray(spec.z_data)
@@ -252,7 +256,8 @@ class MatplotlibRenderer:
         ax: Axes | None = None,
     ) -> Figure:
         """Render a histogram."""
-        assert spec is not None, "spec must be provided"
+        if not (spec is not None):
+            raise ValueError("spec must be provided")
         fig, ax = self._ensure_fig_ax(fig, ax, spec)
 
         colors = self._get_theme_colors()
@@ -292,7 +297,8 @@ class MatplotlibRenderer:
         fig: Figure | None = None,
     ) -> Figure:
         """Render a filter comparison with optional difference subplot."""
-        assert spec is not None, "spec must be provided"
+        if not (spec is not None):
+            raise ValueError("spec must be provided")
         n_rows = 2 if spec.show_difference else 1
         height_ratios = [3, 1] if spec.show_difference else [1]
 
@@ -362,7 +368,8 @@ class MatplotlibRenderer:
         dpi: int = 150,
     ) -> bytes:
         """Render a PlotSpec to image bytes."""
-        assert spec is not None, "spec must be provided"
+        if not (spec is not None):
+            raise ValueError("spec must be provided")
         fig = self.render(spec)
         buf = io.BytesIO()
         fig.savefig(buf, format=fmt, dpi=dpi, bbox_inches="tight")
@@ -379,7 +386,8 @@ class MatplotlibRenderer:
         spec: PlotSpec,
     ) -> tuple[Figure, Axes]:
         """Create or reuse figure and axes."""
-        assert spec is not None, "spec must be provided"
+        if not (spec is not None):
+            raise ValueError("spec must be provided")
         if fig is None:
             fig, ax = plt.subplots(
                 figsize=(spec.width / 100, spec.height / 100),
@@ -411,7 +419,8 @@ class MatplotlibRenderer:
     @staticmethod
     def _cycle_color(colors: list[str], index: int) -> str:
         """Get a color from the cycle by index."""
-        assert colors is not None, "colors must be provided"
+        if not (colors is not None):
+            raise ValueError("colors must be provided")
         if not colors:
             return "#1f77b4"
         return colors[index % len(colors)]
@@ -425,7 +434,8 @@ class MatplotlibRenderer:
         override_linestyle: str | None = None,
     ) -> None:
         """Plot a single data series on an axes."""
-        assert ax is not None, "ax must be provided"
+        if not (ax is not None):
+            raise ValueError("ax must be provided")
         x = np.asarray(series.x)
         y = np.asarray(series.y)
         style = series.style
@@ -473,7 +483,8 @@ class MatplotlibRenderer:
         base_color: str,
     ) -> None:
         """Render a trendline for a series."""
-        assert ax is not None, "ax must be provided"
+        if not (ax is not None):
+            raise ValueError("ax must be provided")
         if series.trendline is None:
             return
 
@@ -523,7 +534,8 @@ class MatplotlibRenderer:
     @staticmethod
     def _apply_axis_spec(ax: Axes, spec: PlotSpec) -> None:
         """Apply axis configuration from spec."""
-        assert ax is not None, "ax must be provided"
+        if not (ax is not None):
+            raise ValueError("ax must be provided")
         if spec.title:
             ax.set_title(spec.title)
 
@@ -545,7 +557,8 @@ class MatplotlibRenderer:
     @staticmethod
     def _apply_legend(ax: Axes, spec: PlotSpec) -> None:
         """Apply legend configuration from spec."""
-        assert ax is not None, "ax must be provided"
+        if not (ax is not None):
+            raise ValueError("ax must be provided")
         if not spec.legend.visible or spec.legend.position == "none":
             return
 

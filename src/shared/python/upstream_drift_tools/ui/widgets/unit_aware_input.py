@@ -47,7 +47,8 @@ class UnitAwareInput(QWidget):
         show_label: bool = False,
         compact: bool = False,
     ) -> None:
-        assert category is not None, "category must be provided"
+        if not (category is not None):
+            raise ValueError("category must be provided")
         super().__init__(parent)
         self._category = category
         self._decimals = decimals
@@ -67,9 +68,7 @@ class UnitAwareInput(QWidget):
         self._value_input = QDoubleSpinBox()
         self._value_input.setRange(min_value, max_value)
         self._value_input.setDecimals(decimals)
-        self._value_input.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
-        )
+        self._value_input.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self._layout.addWidget(self._value_input)
 
         self._unit_combo = QComboBox()
@@ -78,9 +77,7 @@ class UnitAwareInput(QWidget):
         if cat_info:
             self._unit_combo.addItems(cat_info.available_units)
 
-        self._current_unit = default_unit or self._preferences.get_preferred_unit(
-            category
-        )
+        self._current_unit = default_unit or self._preferences.get_preferred_unit(category)
         if cat_info and self._current_unit in cat_info.available_units:
             self._unit_combo.setCurrentText(self._current_unit)
 
@@ -95,17 +92,17 @@ class UnitAwareInput(QWidget):
         self.set_value(default_value, unit=self._current_unit)
 
     def _on_value_changed(self, value: float) -> None:
-        assert value is not None, "value must be provided"
+        if not (value is not None):
+            raise ValueError("value must be provided")
         if self._updating:
             return
-        self._si_value = self._preferences.convert_to_si(
-            value, self._category, self._current_unit
-        )
+        self._si_value = self._preferences.convert_to_si(value, self._category, self._current_unit)
         self.value_changed.emit(self._si_value)
         self.input_changed.emit(self._si_value, self._current_unit)
 
     def _on_unit_changed(self, new_unit: str) -> None:
-        assert new_unit is not None, "new_unit must be provided"
+        if not (new_unit is not None):
+            raise ValueError("new_unit must be provided")
         if self._updating or not new_unit:
             return
         self._updating = True
@@ -125,9 +122,7 @@ class UnitAwareInput(QWidget):
         if category == self._category:
             self.set_unit(new_unit)
 
-    def set_value(
-        self, value: float, unit: str | None = None, is_si: bool = False
-    ) -> None:
+    def set_value(self, value: float, unit: str | None = None, is_si: bool = False) -> None:
         self._updating = True
         try:
             if is_si:
@@ -138,9 +133,7 @@ class UnitAwareInput(QWidget):
                 self._value_input.setValue(display)
             else:
                 unit = unit or self._current_unit
-                self._si_value = self._preferences.convert_to_si(
-                    value, self._category, unit
-                )
+                self._si_value = self._preferences.convert_to_si(value, self._category, unit)
                 if unit != self._current_unit:
                     self._current_unit = unit
                     self._unit_combo.setCurrentText(unit)
@@ -154,13 +147,15 @@ class UnitAwareInput(QWidget):
 
     def set_decimals(self, decimals: int) -> None:
         """Set number of displayed decimals."""
-        assert decimals is not None, "decimals must be provided"
+        if not (decimals is not None):
+            raise ValueError("decimals must be provided")
         self._decimals = decimals
         self._value_input.setDecimals(decimals)
 
     def set_readonly(self, readonly: bool) -> None:
         """Set widget to read-only mode."""
-        assert readonly is not None, "readonly must be provided"
+        if not (readonly is not None):
+            raise ValueError("readonly must be provided")
         self._value_input.setReadOnly(readonly)
         self._unit_combo.setEnabled(not readonly)
 
@@ -189,7 +184,8 @@ class UnitAwareDisplay(QWidget):
         decimals: int = 2,
         show_label: bool = False,
     ) -> None:
-        assert category is not None, "category must be provided"
+        if not (category is not None):
+            raise ValueError("category must be provided")
         super().__init__(parent)
         self._category = category
         self._decimals = decimals
@@ -203,9 +199,7 @@ class UnitAwareDisplay(QWidget):
             self._layout.addWidget(QLabel(label))
 
         self._value_label = QLabel("0.00")
-        self._value_label.setAlignment(
-            Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
-        )
+        self._value_label.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         self._layout.addWidget(self._value_label)
 
         self._unit_combo = QComboBox()
@@ -221,7 +215,8 @@ class UnitAwareDisplay(QWidget):
         self._preferences.category_unit_changed.connect(self._on_preference_changed)
 
     def _on_unit_changed(self, new_unit: str) -> None:
-        assert new_unit is not None, "new_unit must be provided"
+        if not (new_unit is not None):
+            raise ValueError("new_unit must be provided")
         if new_unit:
             self._current_unit = new_unit
             self._update_display()

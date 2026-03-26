@@ -39,7 +39,8 @@ class VesselDrafterThreeDCanvas(FigureCanvasQTAgg):
         scene: Vessel3DScene,
         view_options: Vessel3DViewOptions | None = None,
     ) -> None:
-        assert scene is not None, "scene must be provided"
+        if not (scene is not None):
+            raise ValueError("scene must be provided")
         resolved_view_options = view_options or self._view_options
         self._prepare_view_state_for_draw(resolved_view_options)
         self._scene = scene
@@ -78,7 +79,8 @@ class VesselDrafterThreeDCanvas(FigureCanvasQTAgg):
         self,
         view_options: Vessel3DViewOptions,
     ) -> None:
-        assert view_options is not None, "view_options must be provided"
+        if not (view_options is not None):
+            raise ValueError("view_options must be provided")
         if self._pending_view_state is not None:
             self._view_state = self._pending_view_state
             self._pending_view_state = None
@@ -100,7 +102,8 @@ class VesselDrafterThreeDCanvas(FigureCanvasQTAgg):
         scene: Vessel3DScene,
         view_options: Vessel3DViewOptions,
     ) -> None:
-        assert scene is not None, "scene must be provided"
+        if not (scene is not None):
+            raise ValueError("scene must be provided")
         min_x, max_x, min_y, max_y, min_z, max_z = scene.bounds
         span_x = max(max_x - min_x, 1.0)
         span_y = max(max_y - min_y, 1.0)
@@ -127,8 +130,7 @@ def _default_view_state(
     return (
         SECTION_VIEW_ELEVATION,
         _normalized_azimuth(
-            view_options.normalized_split_angle_degrees
-            + SECTION_VIEW_AZIMUTH_OFFSET_DEGREES
+            view_options.normalized_split_angle_degrees + SECTION_VIEW_AZIMUTH_OFFSET_DEGREES
         ),
     )
 

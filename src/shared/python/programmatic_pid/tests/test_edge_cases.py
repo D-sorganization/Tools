@@ -110,9 +110,7 @@ class TestValidateSpecWithJsonschema:
 
         mock_schema = {"type": "object", "required": ["REQUIRED_FIELD"]}
         mock_jsonschema = MagicMock()
-        mock_jsonschema.validate.side_effect = Exception(
-            "Schema violation: missing field"
-        )
+        mock_jsonschema.validate.side_effect = Exception("Schema violation: missing field")
 
         with patch.object(_val, "_load_schema", return_value=mock_schema):
             with patch.dict("sys.modules", {"jsonschema": mock_jsonschema}):

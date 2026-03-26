@@ -78,7 +78,8 @@ def check_python_dependencies(
     Returns:
         DependencyStatus with results
     """
-    assert packages is not None, "packages must be provided"
+    if not (packages is not None):
+        raise ValueError("packages must be provided")
     install_hints = {
         "PyQt6": "pip install PyQt6",
         "numpy": "pip install numpy",
@@ -298,7 +299,8 @@ class GUILauncher:
 
     def _print_missing_deps(self, status: DependencyStatus) -> None:
         """Print missing dependency information."""
-        assert status is not None, "status must be provided"
+        if not (status is not None):
+            raise ValueError("status must be provided")
         logger.info("Missing dependencies detected:")
         for pkg in status.missing:
             hint = status.guidance.get(pkg, "")
@@ -327,7 +329,8 @@ def create_launcher(
     Returns:
         Configured GUILauncher instance
     """
-    assert tool_name is not None, "tool_name must be provided"
+    if not (tool_name is not None):
+        raise ValueError("tool_name must be provided")
     config = LaunchConfig(tool_name=tool_name, gui_type=gui_type, **kwargs)
     return GUILauncher(config=config)
 
@@ -364,9 +367,7 @@ def launch_pyqt6_app(config: LaunchConfig) -> int:
         return 1
 
     if not config.module_path or not config.class_name:
-        logger.error(
-            "launch_pyqt6_app requires both module_path and class_name in config"
-        )
+        logger.error("launch_pyqt6_app requires both module_path and class_name in config")
         return 1
 
     try:
@@ -403,9 +404,7 @@ def launch_pyqt6_app(config: LaunchConfig) -> int:
         try:
             from shared.python.theme import setup_themed_app
 
-            settings_app = config.settings_app or config.tool_name.replace(
-                " ", ""
-            ).replace("_", "")
+            settings_app = config.settings_app or config.tool_name.replace(" ", "").replace("_", "")
             setup_themed_app(app, window, settings_app=settings_app)
         except ImportError:
             logger.warning("Theme system not available, launching without theme")
@@ -438,9 +437,7 @@ def launch_from_gui_info(gui_info: dict[str, Any]) -> int:
     """
     pyqt6 = gui_info.get("pyqt6")
     if not pyqt6:
-        logger.info(
-            f"No pyqt6 config found in GUI_INFO for {gui_info.get('name', '?')}"
-        )
+        logger.info(f"No pyqt6 config found in GUI_INFO for {gui_info.get('name', '?')}")
         return 1
 
     min_size = pyqt6.get("min_size")
@@ -484,7 +481,8 @@ def launch_web_app(
         Process exit code (0 for success, 1 for error).
     """
     # Check Node.js / npm
-    assert tool_name is not None, "tool_name must be provided"
+    if not (tool_name is not None):
+        raise ValueError("tool_name must be provided")
     for cmd_name in ("node", "npm"):
         try:
             subprocess.run(
@@ -566,7 +564,8 @@ def launch_web_from_gui_info(gui_info: dict[str, Any], caller_file: str) -> int:
     Returns:
         Application exit code.
     """
-    assert gui_info is not None, "gui_info must be provided"
+    if not (gui_info is not None):
+        raise ValueError("gui_info must be provided")
     web_cfg = gui_info.get("web", {})
     tool_name = gui_info.get("name", gui_info.get("tool_name", "Unknown"))
 

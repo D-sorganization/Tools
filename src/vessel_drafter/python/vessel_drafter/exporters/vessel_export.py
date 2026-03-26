@@ -30,7 +30,8 @@ def export_vessel(
 
     Returns a mapping of format name to output path.
     """
-    assert layout is not None, "layout must be provided"
+    if not (layout is not None):
+        raise ValueError("layout must be provided")
     from build123d import Compound  # lazy import — optional dep
 
     output_path = Path(output_dir)
@@ -46,9 +47,7 @@ def export_vessel(
     for fmt in formats:
         fmt = fmt.lower()
         if fmt not in _SUPPORTED_FORMATS:
-            raise ValueError(
-                f"Unsupported format {fmt!r}. Choose from {_SUPPORTED_FORMATS}"
-            )
+            raise ValueError(f"Unsupported format {fmt!r}. Choose from {_SUPPORTED_FORMATS}")
         out_file = output_path / f"{stem}.{fmt}"
         _export_compound(compound, out_file, fmt)
         results[fmt] = out_file
@@ -107,7 +106,8 @@ def _write_manifest(
     output_path: Path,
     stem: str,
 ) -> Path:
-    assert layout is not None, "layout must be provided"
+    if not (layout is not None):
+        raise ValueError("layout must be provided")
     report = build_material_metrics_report(layout)
     manifest = {
         "layout": layout.__dict__ if hasattr(layout, "__dict__") else str(layout),

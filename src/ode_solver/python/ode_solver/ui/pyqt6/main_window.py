@@ -380,16 +380,15 @@ class ODESolverWindow(QMainWindow):
         self.results_text = QTextEdit()
         self.results_text.setReadOnly(True)
         self.results_text.setMinimumHeight(250)
-        self.results_text.setPlaceholderText(
-            "Click 'Solve ODE System' to see results..."
-        )
+        self.results_text.setPlaceholderText("Click 'Solve ODE System' to see results...")
         layout.addWidget(self.results_text)
 
         return group
 
     def _on_preset_changed(self, preset_name: str) -> None:
         """Handle preset selection change."""
-        assert preset_name is not None, "preset_name must be provided"
+        if not (preset_name is not None):
+            raise ValueError("preset_name must be provided")
         if preset_name == "Custom":
             self.preset_description.setText("")
             return
@@ -405,9 +404,7 @@ class ODESolverWindow(QMainWindow):
         self.derivatives_edit.setPlainText("\n".join(deriv_lines))
 
         # Fill in parameters
-        param_lines = [
-            f"{name}: {value}" for name, value in preset["parameters"].items()
-        ]
+        param_lines = [f"{name}: {value}" for name, value in preset["parameters"].items()]
         self.parameters_edit.setPlainText("\n".join(param_lines))
 
         # Fill in initial conditions
@@ -416,7 +413,8 @@ class ODESolverWindow(QMainWindow):
 
     def _parse_dict_input(self, text: str) -> dict[str, str]:
         """Parse colon-separated key-value pairs from text."""
-        assert text is not None, "text must be provided"
+        if not (text is not None):
+            raise ValueError("text must be provided")
         result = {}
         for line in text.strip().split("\n"):
             line = line.strip()
@@ -496,9 +494,7 @@ class ODESolverWindow(QMainWindow):
             results.append("-" * 50)
 
             # Header
-            header = "    t    |" + "|".join(
-                f"  {var:^10}  " for var in derivatives.keys()
-            )
+            header = "    t    |" + "|".join(f"  {var:^10}  " for var in derivatives.keys())
             results.append(header)
             results.append("-" * len(header))
 

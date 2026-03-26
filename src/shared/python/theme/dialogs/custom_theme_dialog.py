@@ -81,7 +81,8 @@ class ColorFieldEditor(QWidget):
     """Composite widget that allows text or colour-wheel selection."""
 
     def __init__(self, initial_colour: str, parent: QWidget | None = None) -> None:
-        assert initial_colour is not None, "initial_colour must be provided"
+        if not (initial_colour is not None):
+            raise ValueError("initial_colour must be provided")
         super().__init__(parent)
 
         self._current_colour = "#000000"
@@ -132,7 +133,8 @@ class ColorFieldEditor(QWidget):
     # ------------------------------------------------------------------
     def _handle_text_changed(self, text: str) -> None:
         """Update preview when text changes."""
-        assert text is not None, "text must be provided"
+        if not (text is not None):
+            raise ValueError("text must be provided")
         colour = _colour_from_text(text)
         if colour is None:
             self._update_button_style(self._current_colour)
@@ -155,7 +157,8 @@ class ColorFieldEditor(QWidget):
 
     def _update_button_style(self, hex_colour: str) -> None:
         """Update button background and text colour for contrast."""
-        assert hex_colour is not None, "hex_colour must be provided"
+        if not (hex_colour is not None):
+            raise ValueError("hex_colour must be provided")
         try:
             r, g, b = (int(hex_colour[i : i + 2], 16) for i in (1, 3, 5))
         except ValueError:  # pragma: no cover - defensive
@@ -193,7 +196,8 @@ class CustomThemeDialog(QDialog):
         theme_manager: ThemeManager,
         parent: QWidget | None = None,
     ) -> None:
-        assert theme_manager is not None, "theme_manager must be provided"
+        if not (theme_manager is not None):
+            raise ValueError("theme_manager must be provided")
         super().__init__(parent)
 
         self.theme_manager = theme_manager
@@ -219,9 +223,7 @@ class CustomThemeDialog(QDialog):
         form_layout.addRow("Theme name:", self.theme_name_edit)
 
         self.base_theme_combo = QComboBox()
-        self.base_theme_combo.currentIndexChanged.connect(
-            self._handle_base_theme_changed
-        )
+        self.base_theme_combo.currentIndexChanged.connect(self._handle_base_theme_changed)
         form_layout.addRow("Base theme:", self.base_theme_combo)
         main_layout.addLayout(form_layout)
 
@@ -252,8 +254,7 @@ class CustomThemeDialog(QDialog):
         main_layout.addWidget(self.apply_checkbox)
 
         button_box = QDialogButtonBox(
-            QDialogButtonBox.StandardButton.Save
-            | QDialogButtonBox.StandardButton.Cancel
+            QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel
         )
         button_box.accepted.connect(self._handle_accept)
         button_box.rejected.connect(self.reject)
@@ -286,7 +287,8 @@ class CustomThemeDialog(QDialog):
 
     def _initialise_default_name(self, current_theme: str) -> None:
         """Suggest a unique name for the new theme."""
-        assert current_theme is not None, "current_theme must be provided"
+        if not (current_theme is not None):
+            raise ValueError("current_theme must be provided")
         suggestion = f"{current_theme} Custom"
         reserved = set(self.theme_manager.get_builtin_themes())
         reserved.update(self.theme_manager.get_custom_theme_names())
@@ -358,9 +360,7 @@ class CustomThemeDialog(QDialog):
             try:
                 colours[key] = editor.get_colour()
             except ValueError as exc:
-                QMessageBox.warning(
-                    self, "Invalid colour", f"{self.COLOR_LABELS[key]}: {exc}"
-                )
+                QMessageBox.warning(self, "Invalid colour", f"{self.COLOR_LABELS[key]}: {exc}")
                 editor.line_edit.setFocus()
                 return False
 

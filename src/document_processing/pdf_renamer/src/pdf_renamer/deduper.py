@@ -19,7 +19,8 @@ class DuplicateFinder:
             directory: Root directory to scan
             recursive: Whether to scan subdirectories
         """
-        assert directory is not None, "directory must be provided"
+        if not (directory is not None):
+            raise ValueError("directory must be provided")
         self.directory = directory
         self.recursive = recursive
 
@@ -63,9 +64,7 @@ class DuplicateFinder:
             for file_hash, paths in hash_map.items():
                 if len(paths) > 1:
                     # Sort by path length and name for deterministic ordering
-                    duplicates[file_hash] = sorted(
-                        paths, key=lambda p: (len(str(p)), p.name)
-                    )
+                    duplicates[file_hash] = sorted(paths, key=lambda p: (len(str(p)), p.name))
 
         return duplicates
 
@@ -80,7 +79,8 @@ class DuplicateFinder:
         Returns:
             Hexadecimal SHA256 hash string
         """
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         sha256 = hashlib.sha256()
         with open(file_path, "rb") as f:
             while chunk := f.read(chunk_size):

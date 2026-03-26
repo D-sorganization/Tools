@@ -42,9 +42,7 @@ class PrimitiveInertiaCalculator:
     """
 
     @staticmethod
-    def compute_box(
-        mass: float, size_x: float, size_y: float, size_z: float
-    ) -> InertiaResult:
+    def compute_box(mass: float, size_x: float, size_y: float, size_z: float) -> InertiaResult:
         """
         Compute inertia for a solid box (rectangular parallelepiped).
 
@@ -62,7 +60,8 @@ class PrimitiveInertiaCalculator:
         # I_xx = (1/12) * m * (y^2 + z^2)
         # I_yy = (1/12) * m * (x^2 + z^2)
         # I_zz = (1/12) * m * (x^2 + y^2)
-        assert mass is not None, "mass must be provided"
+        if not (mass is not None):
+            raise ValueError("mass must be provided")
         factor = mass / 12.0
 
         ixx = factor * (size_y**2 + size_z**2)
@@ -103,7 +102,8 @@ class PrimitiveInertiaCalculator:
         # I_xx = I_yy = (1/12) * m * (3*r^2 + h^2)
         # I_zz = (1/2) * m * r^2
 
-        assert mass is not None, "mass must be provided"
+        if not (mass is not None):
+            raise ValueError("mass must be provided")
         r2 = radius**2
         h2 = length**2
 
@@ -142,7 +142,8 @@ class PrimitiveInertiaCalculator:
             InertiaResult for the sphere
         """
         # I = (2/5) * m * r^2 for all axes
-        assert mass is not None, "mass must be provided"
+        if not (mass is not None):
+            raise ValueError("mass must be provided")
         i_sphere = 0.4 * mass * radius**2
         volume = (4.0 / 3.0) * math.pi * radius**3
 
@@ -174,7 +175,8 @@ class PrimitiveInertiaCalculator:
         Returns:
             InertiaResult for the capsule
         """
-        assert mass is not None, "mass must be provided"
+        if not (mass is not None):
+            raise ValueError("mass must be provided")
         r = radius
         h = length  # Cylinder length (not including caps)
 
@@ -251,7 +253,8 @@ class PrimitiveInertiaCalculator:
         # I_xx = (1/5) * m * (b^2 + c^2)
         # I_yy = (1/5) * m * (a^2 + c^2)
         # I_zz = (1/5) * m * (a^2 + b^2)
-        assert mass is not None, "mass must be provided"
+        if not (mass is not None):
+            raise ValueError("mass must be provided")
         factor = mass / 5.0
 
         ixx = factor * (semi_b**2 + semi_c**2)
@@ -294,7 +297,8 @@ class PrimitiveInertiaCalculator:
         Returns:
             InertiaResult for the shape
         """
-        assert shape is not None, "shape must be provided"
+        if not (shape is not None):
+            raise ValueError("shape must be provided")
         if isinstance(shape, str):
             shape = PrimitiveShape(shape.lower())
 
@@ -336,11 +340,10 @@ class PrimitiveInertiaCalculator:
             raise ValueError(f"Unknown shape: {shape}")
 
     @staticmethod
-    def _tuple_to_dict(
-        shape: PrimitiveShape, dims: tuple[float, ...]
-    ) -> dict[str, float]:
+    def _tuple_to_dict(shape: PrimitiveShape, dims: tuple[float, ...]) -> dict[str, float]:
         """Convert dimension tuple to dictionary."""
-        assert shape is not None, "shape must be provided"
+        if not (shape is not None):
+            raise ValueError("shape must be provided")
         if shape == PrimitiveShape.BOX:
             if len(dims) >= 3:
                 return {"x": dims[0], "y": dims[1], "z": dims[2]}
@@ -381,16 +384,15 @@ def estimate_segment_primitive(
     Returns:
         Tuple of (PrimitiveShape, dimension_dict)
     """
-    assert segment_type is not None, "segment_type must be provided"
+    if not (segment_type is not None):
+        raise ValueError("segment_type must be provided")
     width, depth = _normalize_dimensions(length, width, depth)
     segment_lower = segment_type.lower()
 
     if _matches_category(segment_lower, ["head"]):
         return _create_sphere_primitive(length)
 
-    if _matches_category(
-        segment_lower, ["arm", "forearm", "thigh", "shin", "shank", "leg"]
-    ):
+    if _matches_category(segment_lower, ["arm", "forearm", "thigh", "shin", "shank", "leg"]):
         return _create_limb_capsule_primitive(length, width, depth)
 
     if _matches_category(segment_lower, ["torso", "thorax", "lumbar", "pelvis"]):
@@ -410,7 +412,8 @@ def _normalize_dimensions(
     length: float, width: float | None, depth: float | None
 ) -> tuple[float, float]:
     """Normalize width/depth to default fractions of length if not specified."""
-    assert length is not None, "length must be provided"
+    if not (length is not None):
+        raise ValueError("length must be provided")
     if width is None:
         width = length * 0.2
     if depth is None:
@@ -432,7 +435,8 @@ def _create_limb_capsule_primitive(
     length: float, width: float, depth: float
 ) -> tuple[PrimitiveShape, dict[str, float]]:
     """Create capsule primitive for limb segments."""
-    assert length is not None, "length must be provided"
+    if not (length is not None):
+        raise ValueError("length must be provided")
     radius = (width + depth) / 4
     cyl_length = max(0.01, length - 2 * radius)
     return PrimitiveShape.CAPSULE, {"radius": radius, "length": cyl_length}
@@ -456,6 +460,7 @@ def _create_neck_cylinder_primitive(
     length: float, width: float, depth: float
 ) -> tuple[PrimitiveShape, dict[str, float]]:
     """Create cylinder primitive for neck segment."""
-    assert length is not None, "length must be provided"
+    if not (length is not None):
+        raise ValueError("length must be provided")
     radius = (width + depth) / 4
     return PrimitiveShape.CYLINDER, {"radius": radius, "length": length}

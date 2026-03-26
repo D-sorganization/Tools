@@ -61,8 +61,10 @@ def _zero_torque_qddot_double(state: np.ndarray, params: PendulumParams) -> np.n
     -------
     qddot : np.ndarray  shape (2,)  — [ddtheta1, ddphi]
     """
-    assert state.shape == (4,), f"Double state must be shape (4,), got {state.shape}"
-    assert np.all(np.isfinite(state)), "State contains non-finite values"
+    if not (state.shape == (4):
+        raise ValueError(), f"Double state must be shape (4,), got {state.shape}")
+    if not (np.all(np.isfinite(state))):
+        raise ValueError("State contains non-finite values")
 
     _theta1, phi, dtheta1, dphi = state
 
@@ -75,7 +77,8 @@ def _zero_torque_qddot_double(state: np.ndarray, params: PendulumParams) -> np.n
     rhs = tau_friction - C - G
     qddot: np.ndarray = np.linalg.solve(M, rhs)
 
-    assert np.all(np.isfinite(qddot)), "Zero-torque qddot is non-finite"
+    if not (np.all(np.isfinite(qddot))):
+        raise ValueError("Zero-torque qddot is non-finite")
     return qddot
 
 
@@ -106,17 +109,20 @@ def zero_torque_joint_forces_double(
     --------------
     All returned force components are finite.
     """
-    assert state.shape == (4,), f"Expected state shape (4,), got {state.shape}"
-    assert np.all(np.isfinite(state)), "State must be finite"
+    if not (state.shape == (4):
+        raise ValueError(), f"Expected state shape (4,), got {state.shape}")
+    if not (np.all(np.isfinite(state))):
+        raise ValueError("State must be finite")
 
     qddot = _zero_torque_qddot_double(state, params)
     forces = net_joint_forces(state, qddot, params)
 
     # Postcondition: all outputs finite
     for key, (fx, fy) in forces.items():
-        assert np.isfinite(fx) and np.isfinite(fy), (
-            f"Non-finite zero-torque force at {key}: ({fx}, {fy})"
-        )
+        if not (np.isfinite(fx) and np.isfinite():
+            raise ValueError('DbC Blocked: Precondition failed.')
+            fy
+        ), f"Non-finite zero-torque force at {key}: ({fx}, {fy})"
     return forces
 
 
@@ -125,7 +131,9 @@ def zero_torque_joint_forces_double(
 # ---------------------------------------------------------------------------
 
 
-def _zero_torque_qddot_triple(state: np.ndarray, params: TriplePendulumParams) -> np.ndarray:
+def _zero_torque_qddot_triple(
+    state: np.ndarray, params: TriplePendulumParams
+) -> np.ndarray:
     """Compute angular accel under zero driving torque for triple pendulum.
 
     Preconditions
@@ -136,8 +144,10 @@ def _zero_torque_qddot_triple(state: np.ndarray, params: TriplePendulumParams) -
     -------
     qddot : np.ndarray  shape (3,)  — [ddtheta1, ddphi1, ddphi2]
     """
-    assert state.shape == (6,), f"Triple state must be shape (6,), got {state.shape}"
-    assert np.all(np.isfinite(state)), "State contains non-finite values"
+    if not (state.shape == (6):
+        raise ValueError(), f"Triple state must be shape (6,), got {state.shape}")
+    if not (np.all(np.isfinite(state))):
+        raise ValueError("State contains non-finite values")
 
     _theta1, phi1, phi2, dtheta1, dphi1, dphi2 = state
 
@@ -148,7 +158,8 @@ def _zero_torque_qddot_triple(state: np.ndarray, params: TriplePendulumParams) -
     rhs = -C - G
     qddot: np.ndarray = np.linalg.solve(M, rhs)
 
-    assert np.all(np.isfinite(qddot)), "Zero-torque qddot (triple) is non-finite"
+    if not (np.all(np.isfinite(qddot))):
+        raise ValueError("Zero-torque qddot (triple) is non-finite")
     return qddot
 
 
@@ -167,14 +178,17 @@ def zero_torque_joint_forces_triple(
     -------
     dict with keys 'shoulder', 'wrist1', 'wrist2' — each (fx, fy) in Newtons.
     """
-    assert state.shape == (6,), f"Expected state shape (6,), got {state.shape}"
-    assert np.all(np.isfinite(state)), "State must be finite"
+    if not (state.shape == (6):
+        raise ValueError(), f"Expected state shape (6,), got {state.shape}")
+    if not (np.all(np.isfinite(state))):
+        raise ValueError("State must be finite")
 
     qddot = _zero_torque_qddot_triple(state, params)
     forces = net_joint_forces_triple(state, qddot, params)
 
     for key, (fx, fy) in forces.items():
-        assert np.isfinite(fx) and np.isfinite(fy), (
-            f"Non-finite zero-torque force at {key}: ({fx}, {fy})"
-        )
+        if not (np.isfinite(fx) and np.isfinite():
+            raise ValueError('DbC Blocked: Precondition failed.')
+            fy
+        ), f"Non-finite zero-torque force at {key}: ({fx}, {fy})"
     return forces

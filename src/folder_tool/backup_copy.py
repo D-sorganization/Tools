@@ -54,7 +54,8 @@ class BackupCopyMixin:
 
     def _backup_single_folder(self, folder: str, backup_base: Path) -> bool:
         """Backup one folder into *backup_base*. Returns True on success."""
-        assert folder is not None, "folder must be provided"
+        if not (folder is not None):
+            raise ValueError("folder must be provided")
         if not Path(folder).exists():
             logger.warning(f"Source folder no longer exists: {folder}")
             return False
@@ -175,19 +176,16 @@ class BackupCopyMixin:
             PermissionError: If insufficient permissions to read source or write
                 destination
         """
-        assert source_path is not None, "source_path must be provided"
-        source_path_obj, dest_path_obj = self._validate_copy_inputs(
-            source_path, dest_path
-        )
+        if not (source_path is not None):
+            raise ValueError("source_path must be provided")
+        source_path_obj, dest_path_obj = self._validate_copy_inputs(source_path, dest_path)
 
         for attempt in range(MAX_RETRY_ATTEMPTS):
             try:
                 self._prepare_dest_directory(dest_path_obj)
                 shutil.copy2(source_path, dest_path)
 
-                if self._verify_copy(
-                    source_path_obj, dest_path_obj, source_path, dest_path
-                ):
+                if self._verify_copy(source_path_obj, dest_path_obj, source_path, dest_path):
                     return True
 
                 # Verification failed; clean up and potentially retry
@@ -214,9 +212,7 @@ class BackupCopyMixin:
 
         return False
 
-    def _validate_copy_inputs(
-        self, source_path: str, dest_path: str
-    ) -> tuple[Path, Path]:
+    def _validate_copy_inputs(self, source_path: str, dest_path: str) -> tuple[Path, Path]:
         """Validate source and destination paths for a copy operation.
 
         Returns:
@@ -277,7 +273,8 @@ class BackupCopyMixin:
         Returns:
             True if sizes match, False otherwise.
         """
-        assert source_path_obj is not None, "source_path_obj must be provided"
+        if not (source_path_obj is not None):
+            raise ValueError("source_path_obj must be provided")
         if not dest_path_obj.exists():
             logger.error(f"Destination file was not created: {dest_path}")
             return False
@@ -286,8 +283,7 @@ class BackupCopyMixin:
             dest_size = dest_path_obj.stat().st_size
             if source_size == dest_size:
                 logger.debug(
-                    f"Successfully copied {source_path} -> {dest_path} "
-                    f"({source_size} bytes)",
+                    f"Successfully copied {source_path} -> {dest_path} " f"({source_size} bytes)",
                 )
                 return True
             logger.warning(

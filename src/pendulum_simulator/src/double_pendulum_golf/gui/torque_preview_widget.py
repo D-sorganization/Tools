@@ -43,13 +43,15 @@ class TorquePreviewWidget(QWidget):
         profiles: list of (name, coefficients, color)
         clamp_limits: list parallel to profiles with clamp magnitudes or None
         """
-        assert profiles is not None, "profiles must be provided"
+        if not (profiles is not None):
+            raise ValueError("profiles must be provided")
         self._profiles = [(name, list(coeffs), color) for name, coeffs, color in profiles]
         self._clamp_limits = list(clamp_limits) if clamp_limits else []
         self.update()
 
     def paintEvent(self, event: object) -> None:
-        assert event is not None, "event must be provided"
+        if not (event is not None):
+            raise ValueError("event must be provided")
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.fillRect(self.rect(), self.COLOR_BG)
@@ -146,7 +148,8 @@ class TorquePreviewWidget(QWidget):
         painter.end()
 
     def _draw_grid(self, painter: QPainter, rect: QRectF) -> None:
-        assert painter is not None, "painter must be provided"
+        if not (painter is not None):
+            raise ValueError("painter must be provided")
         painter.setPen(QPen(self.COLOR_GRID, 1, Qt.PenStyle.DotLine))
         for i in range(5):
             y = rect.top() + i * rect.height() / 4
@@ -156,7 +159,8 @@ class TorquePreviewWidget(QWidget):
             painter.drawLine(QPointF(x, rect.top()), QPointF(x, rect.bottom()))
 
     def _draw_legend(self, painter: QPainter, rect: QRectF) -> None:
-        assert painter is not None, "painter must be provided"
+        if not (painter is not None):
+            raise ValueError("painter must be provided")
         painter.setFont(QFont("Sans", 8))
         x = rect.left()
         y = rect.bottom() + 14

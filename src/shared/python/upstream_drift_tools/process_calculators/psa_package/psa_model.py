@@ -153,9 +153,7 @@ class PSAModel:
     total_feed_scfm: float = 1100.0
     s2_tail_recycle_frac: float = 1.0
     product_recycle_frac: float = 0.0
-    components: list[ComponentData] = field(
-        default_factory=lambda: list(DEFAULT_COMPONENTS)
-    )
+    components: list[ComponentData] = field(default_factory=lambda: list(DEFAULT_COMPONENTS))
 
     def _compute_stream_flows(
         self,
@@ -166,12 +164,8 @@ class PSAModel:
             StreamFlows with computed flow arrays for each stream.
         """
         feed_pct = np.array([c["feed_pct"] for c in self.components], dtype=np.float64)
-        r1 = np.array(
-            [c["stage1_removal_pct"] / 100.0 for c in self.components], dtype=np.float64
-        )
-        r2 = np.array(
-            [c["stage2_removal_pct"] / 100.0 for c in self.components], dtype=np.float64
-        )
+        r1 = np.array([c["stage1_removal_pct"] / 100.0 for c in self.components], dtype=np.float64)
+        r2 = np.array([c["stage2_removal_pct"] / 100.0 for c in self.components], dtype=np.float64)
 
         r_tail = self.s2_tail_recycle_frac
         r_prod = self.product_recycle_frac
@@ -207,9 +201,7 @@ class PSAModel:
         component_names: list[str],
         flows: StreamFlows,
         n_components: int,
-    ) -> tuple[
-        StreamCompositions, float, float, float, float, float, float, float, float
-    ]:
+    ) -> tuple[StreamCompositions, float, float, float, float, float, float, float, float]:
         """Compute compositions and key performance metrics from stream flows.
 
         Returns:
@@ -218,7 +210,8 @@ class PSAModel:
             mass_balance_error, s2_tail_h2_pct, s2_tail_o2_pct)
         """
 
-        assert component_names is not None, "component_names must be provided"
+        if not (component_names is not None):
+            raise ValueError("component_names must be provided")
 
         def calc_composition(flow_array: NDArray[np.float64]) -> NDArray[np.float64]:
             total = np.sum(flow_array)
@@ -251,9 +244,7 @@ class PSAModel:
         )
 
         h2_idx = component_names.index("H2")
-        h2_recovery_pct = float(
-            flows.net_product[h2_idx] / flows.fresh_feed[h2_idx] * 100.0
-        )
+        h2_recovery_pct = float(flows.net_product[h2_idx] / flows.fresh_feed[h2_idx] * 100.0)
         h2_purity_pct = float(compositions.net_product[h2_idx])
 
         s2_tail_h2_pct = float(compositions.s2_tail[h2_idx])
@@ -329,7 +320,8 @@ def calculate_sensitivity(
     Returns:
         Dictionary with arrays for each metric vs recycle fractions
     """
-    assert total_feed is not None, "total_feed must be provided"
+    if not (total_feed is not None):
+        raise ValueError("total_feed must be provided")
 
     _s2_tail = s2_tail_recycle_range
     if _s2_tail is None:
@@ -393,7 +385,8 @@ def calculate_o2_safety_analysis(
     Returns:
         Dictionary with S2 Tail O2% for each inlet O2% and S1 removal%
     """
-    assert total_feed is not None, "total_feed must be provided"
+    if not (total_feed is not None):
+        raise ValueError("total_feed must be provided")
     if inlet_o2_pcts is None:
         inlet_o2_pcts = np.array([0.5, 1.0, 2.0, 5.0], dtype=np.float64)
     if stage1_o2_removal_range is None:
@@ -457,7 +450,8 @@ def get_flammability_status(h2_pct: float, o2_pct: float) -> str:
     Returns:
         Status string indicating safety level
     """
-    assert h2_pct is not None, "h2_pct must be provided"
+    if not (h2_pct is not None):
+        raise ValueError("h2_pct must be provided")
     if o2_pct < 0.1:
         return "Safe-Low O2"
     if h2_pct > 4 and o2_pct > 2:

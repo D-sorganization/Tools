@@ -94,7 +94,8 @@ class ScrubberEngine:
 
         Returns (packed_height, max_ntu, acid_gas_details, acid_gas_removed).
         """
-        assert inputs is not None, "inputs must be provided"
+        if not (inputs is not None):
+            raise ValueError("inputs must be provided")
         mw_gases = {"HCl": 36.458, "SO2": 64.06, "H2S": 34.08, "HF": 20.01}
         acid_gas_details: list[dict[str, Any]] = []
         acid_gas_removed: dict[str, float] = {}
@@ -148,7 +149,8 @@ class ScrubberEngine:
 
         Returns (naoh_pure, naoh_solution, heat_kw, cooling_L_min, warnings).
         """
-        assert inputs is not None, "inputs must be provided"
+        if not (inputs is not None):
+            raise ValueError("inputs must be provided")
         warnings: list[str] = []
         caustic_req = calculate_caustic_requirement(
             acid_gas_removed=acid_gas_removed,
@@ -156,9 +158,7 @@ class ScrubberEngine:
         )
 
         water_condensed = (
-            inputs.gas_flow_kg_hr
-            * 0.0015
-            * (inputs.inlet_temp_c - inputs.target_outlet_temp_c)
+            inputs.gas_flow_kg_hr * 0.0015 * (inputs.inlet_temp_c - inputs.target_outlet_temp_c)
         )
         heat_duty = calculate_heat_transfer_duty(
             gas_flow_kg_hr=inputs.gas_flow_kg_hr,
@@ -205,9 +205,7 @@ class ScrubberEngine:
         # 1. Physical properties
         temp_k = inputs.inlet_temp_c + 273.15
         pressure_pa = inputs.pressure_bar * 1e5
-        gas_density = calculate_gas_density(
-            temp_k, pressure_pa, inputs.molecular_weight
-        )
+        gas_density = calculate_gas_density(temp_k, pressure_pa, inputs.molecular_weight)
 
         # 2. Column sizing
         (
@@ -244,8 +242,8 @@ class ScrubberEngine:
             )
 
         # 5. Thermal & caustic
-        naoh_pure, naoh_sol, heat_kw, cw_flow, therm_warnings = (
-            ScrubberEngine._calculate_thermal(inputs, acid_gas_removed)
+        naoh_pure, naoh_sol, heat_kw, cw_flow, therm_warnings = ScrubberEngine._calculate_thermal(
+            inputs, acid_gas_removed
         )
 
         packing_obj = PACKING_DATABASE.get(inputs.packing_name)

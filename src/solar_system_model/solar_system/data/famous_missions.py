@@ -46,9 +46,7 @@ def get_voyager1_trajectory() -> list[StateVector]:
     # Interstellar: 2012-08-25 (JD 2456164.5)
 
     waypoints = [
-        StateVector(
-            np.array([1.0, 0.0, 0.0]) * AU, np.array([0, 30000, 0]), 2443391.5
-        ),  # Earth
+        StateVector(np.array([1.0, 0.0, 0.0]) * AU, np.array([0, 30000, 0]), 2443391.5),  # Earth
         StateVector(
             np.array([-3.0, 4.0, 0.1]) * AU, np.array([-15000, 10000, 500]), 2443937.5
         ),  # Jupiter
@@ -67,21 +65,11 @@ def get_voyager2_trajectory() -> list[StateVector]:
     # Uranus: 1986-01-24 (JD 2446454.5)
     # Neptune: 1989-08-25 (JD 2447763.5)
     waypoints = [
-        StateVector(
-            np.array([1.0, 0.0, 0.0]) * AU, np.array([0, 30000, 0]), 2443375.5
-        ),  # Earth
-        StateVector(
-            np.array([-3.5, -4.2, 0.0]) * AU, np.array([0, 0, 0]), 2444063.5
-        ),  # Jupiter
-        StateVector(
-            np.array([-9.0, -2.0, -0.2]) * AU, np.array([0, 0, 0]), 2444843.5
-        ),  # Saturn
-        StateVector(
-            np.array([-18.0, 5.0, -0.5]) * AU, np.array([0, 0, 0]), 2446454.5
-        ),  # Uranus
-        StateVector(
-            np.array([-25.0, 15.0, -1.0]) * AU, np.array([0, 0, 0]), 2447763.5
-        ),  # Neptune
+        StateVector(np.array([1.0, 0.0, 0.0]) * AU, np.array([0, 30000, 0]), 2443375.5),  # Earth
+        StateVector(np.array([-3.5, -4.2, 0.0]) * AU, np.array([0, 0, 0]), 2444063.5),  # Jupiter
+        StateVector(np.array([-9.0, -2.0, -0.2]) * AU, np.array([0, 0, 0]), 2444843.5),  # Saturn
+        StateVector(np.array([-18.0, 5.0, -0.5]) * AU, np.array([0, 0, 0]), 2446454.5),  # Uranus
+        StateVector(np.array([-25.0, 15.0, -1.0]) * AU, np.array([0, 0, 0]), 2447763.5),  # Neptune
     ]
     return waypoints
 
@@ -213,9 +201,7 @@ def get_curiosity_trajectory() -> list[StateVector]:
     midpoint = (earth_launch + mars_arrival) / 2 + np.array([0.3, 0.1, 0.005]) * AU
 
     waypoints = [
-        StateVector(
-            earth_launch, np.array([5000, 25000, 0]), 2455891.5
-        ),  # Earth launch
+        StateVector(earth_launch, np.array([5000, 25000, 0]), 2455891.5),  # Earth launch
         StateVector(
             midpoint, np.array([15000, 15000, 100]), 2456018.0
         ),  # Hohmann transfer midpoint

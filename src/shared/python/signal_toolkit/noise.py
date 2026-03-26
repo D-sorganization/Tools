@@ -61,7 +61,8 @@ class NoiseGenerator:
         Returns:
             Signal containing the noise.
         """
-        assert t is not None, "t must be provided"
+        if not (t is not None):
+            raise ValueError("t must be provided")
         n = len(t)
 
         if noise_type == NoiseType.WHITE:
@@ -114,7 +115,8 @@ class NoiseGenerator:
     def _generate_pink_noise(self, n: int, amplitude: float) -> np.ndarray:
         """Generate pink (1/f) noise using the Voss-McCartney algorithm."""
         # Number of random number generators
-        assert n is not None, "n must be provided"
+        if not (n is not None):
+            raise ValueError("n must be provided")
         num_sources = 16
 
         # Initialize sources
@@ -145,7 +147,8 @@ class NoiseGenerator:
 
     def _generate_brown_noise(self, n: int, amplitude: float) -> np.ndarray:
         """Generate brown (Brownian) noise - integrated white noise."""
-        assert n is not None, "n must be provided"
+        if not (n is not None):
+            raise ValueError("n must be provided")
         white = self.rng.standard_normal(n)
         brown = np.cumsum(white)
 
@@ -158,7 +161,8 @@ class NoiseGenerator:
 
     def _generate_blue_noise(self, n: int, amplitude: float) -> np.ndarray:
         """Generate blue noise (differentiated white noise)."""
-        assert n is not None, "n must be provided"
+        if not (n is not None):
+            raise ValueError("n must be provided")
         white = self.rng.standard_normal(n)
         blue = np.diff(white, prepend=white[0])
 
@@ -169,7 +173,8 @@ class NoiseGenerator:
 
     def _generate_violet_noise(self, n: int, amplitude: float) -> np.ndarray:
         """Generate violet noise (second derivative of white noise)."""
-        assert n is not None, "n must be provided"
+        if not (n is not None):
+            raise ValueError("n must be provided")
         white = self.rng.standard_normal(n)
         violet = np.diff(white, n=2, prepend=[white[0], white[0]])
 
@@ -181,7 +186,8 @@ class NoiseGenerator:
     def _generate_uniform_noise(self, n: int, amplitude: float) -> np.ndarray:
         """Generate uniform distribution noise."""
         # Uniform in [-amplitude*sqrt(3), amplitude*sqrt(3)] to have RMS = amplitude
-        assert n is not None, "n must be provided"
+        if not (n is not None):
+            raise ValueError("n must be provided")
         half_range = amplitude * np.sqrt(3)
         return self.rng.uniform(-half_range, half_range, n)
 
@@ -192,7 +198,8 @@ class NoiseGenerator:
         probability: float,
     ) -> np.ndarray:
         """Generate impulse (spike) noise."""
-        assert n is not None, "n must be provided"
+        if not (n is not None):
+            raise ValueError("n must be provided")
         values = np.zeros(n)
         impulse_mask = self.rng.random(n) < probability
         impulse_signs = self.rng.choice([-1, 1], size=n)
@@ -207,7 +214,8 @@ class NoiseGenerator:
         levels: int,
     ) -> np.ndarray:
         """Generate quantization noise (uniform within quantization step)."""
-        assert n is not None, "n must be provided"
+        if not (n is not None):
+            raise ValueError("n must be provided")
         step = 2 * amplitude / levels
         return self.rng.uniform(-step / 2, step / 2, n)
 
@@ -219,19 +227,16 @@ class NoiseGenerator:
         fs: float,
     ) -> np.ndarray:
         """Generate periodic disturbance (like power line noise)."""
-        assert n is not None, "n must be provided"
+        if not (n is not None):
+            raise ValueError("n must be provided")
         t = np.arange(n) / fs
         # Add some harmonics for realism
         values = amplitude * np.sin(2 * np.pi * frequency * t)
         values += (
-            PERIODIC_NOISE_2ND_HARMONIC
-            * amplitude
-            * np.sin(2 * np.pi * 2 * frequency * t)
+            PERIODIC_NOISE_2ND_HARMONIC * amplitude * np.sin(2 * np.pi * 2 * frequency * t)
         )  # 2nd harmonic
         values += (
-            PERIODIC_NOISE_3RD_HARMONIC
-            * amplitude
-            * np.sin(2 * np.pi * 3 * frequency * t)
+            PERIODIC_NOISE_3RD_HARMONIC * amplitude * np.sin(2 * np.pi * 3 * frequency * t)
         )  # 3rd harmonic
 
         return values
@@ -258,7 +263,8 @@ def add_noise_to_signal(
     Returns:
         Signal with noise added.
     """
-    assert signal is not None, "signal must be provided"
+    if not (signal is not None):
+        raise ValueError("signal must be provided")
     generator = NoiseGenerator(seed)
 
     if snr_db is not None:
@@ -308,7 +314,8 @@ def generate_disturbance_profile(
     Returns:
         Signal containing the disturbance.
     """
-    assert t is not None, "t must be provided"
+    if not (t is not None):
+        raise ValueError("t must be provided")
     n = len(t)
     values = np.zeros(n)
 
@@ -409,7 +416,8 @@ class DisturbanceSimulator:
         Returns:
             Self for method chaining.
         """
-        assert noise_type is not None, "noise_type must be provided"
+        if not (noise_type is not None):
+            raise ValueError("noise_type must be provided")
         self.disturbances.append(
             ("noise", {"noise_type": noise_type, "amplitude": amplitude, **kwargs})
         )
@@ -429,7 +437,8 @@ class DisturbanceSimulator:
         Returns:
             Self for method chaining.
         """
-        assert step_time is not None, "step_time must be provided"
+        if not (step_time is not None):
+            raise ValueError("step_time must be provided")
         self.disturbances.append(
             (
                 "disturbance",
@@ -454,7 +463,8 @@ class DisturbanceSimulator:
         Returns:
             Self for method chaining.
         """
-        assert start_time is not None, "start_time must be provided"
+        if not (start_time is not None):
+            raise ValueError("start_time must be provided")
         self.disturbances.append(
             (
                 "disturbance",
@@ -482,7 +492,8 @@ class DisturbanceSimulator:
         Returns:
             Self for method chaining.
         """
-        assert frequency is not None, "frequency must be provided"
+        if not (frequency is not None):
+            raise ValueError("frequency must be provided")
         self.disturbances.append(
             (
                 "disturbance",
@@ -500,7 +511,8 @@ class DisturbanceSimulator:
         Returns:
             Signal with all disturbances combined.
         """
-        assert t is not None, "t must be provided"
+        if not (t is not None):
+            raise ValueError("t must be provided")
         combined = np.zeros(len(t))
 
         for dist_type, params in self.disturbances:
@@ -530,7 +542,8 @@ class DisturbanceSimulator:
         Returns:
             Signal with disturbances applied.
         """
-        assert signal is not None, "signal must be provided"
+        if not (signal is not None):
+            raise ValueError("signal must be provided")
         disturbance = self.generate(signal.time)
         result = signal.copy()
         result.values = signal.values + disturbance.values

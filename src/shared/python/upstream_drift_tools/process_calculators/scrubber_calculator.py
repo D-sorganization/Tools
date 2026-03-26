@@ -130,9 +130,7 @@ SULFATE_CONVERSION: Final[float] = MW_SULFATE / MW_SO2  # SO₂ → SO₄²⁻ (
 
 # Moles NaOH required per mole of acid gas (theoretical)
 NAOH_STOICH_HCL: Final[float] = 1.0  # HCl + NaOH → NaCl + H₂O
-NAOH_STOICH_SO2: Final[float] = (
-    2.0  # SO₂ + 2NaOH → Na₂SO₃ + H₂O (further oxidized to Na₂SO₄)
-)
+NAOH_STOICH_SO2: Final[float] = 2.0  # SO₂ + 2NaOH → Na₂SO₃ + H₂O (further oxidized to Na₂SO₄)
 NAOH_STOICH_H2S: Final[float] = 2.0  # H₂S + 2NaOH → Na₂S + 2H₂O
 NAOH_STOICH_HF: Final[float] = 1.0  # HF + NaOH → NaF + H₂O
 NAOH_STOICH_CO2: Final[float] = 2.0  # CO₂ + 2NaOH → Na₂CO₃ + H₂O
@@ -255,9 +253,7 @@ class HenryConstant:
 HENRY_CONSTANTS: dict[str, HenryConstant] = {
     "HCl": HenryConstant(h_ref=2.04e6, t_ref=298.15, dh_soln=-17600),  # Very soluble
     "SO2": HenryConstant(h_ref=4.39e4, t_ref=298.15, dh_soln=-26700),  # Soluble
-    "H2S": HenryConstant(
-        h_ref=5.68e5, t_ref=298.15, dh_soln=-19300
-    ),  # Moderately soluble
+    "H2S": HenryConstant(h_ref=5.68e5, t_ref=298.15, dh_soln=-19300),  # Moderately soluble
     "HF": HenryConstant(h_ref=1.27e7, t_ref=298.15, dh_soln=-15200),  # Very soluble
     "CO2": HenryConstant(h_ref=1.64e8, t_ref=298.15, dh_soln=-20100),  # Less soluble
 }
@@ -306,7 +302,8 @@ def calculate_gas_viscosity(temperature_k: float, molecular_weight: float) -> fl
         Approximate correlation for light gas mixtures
     """
     # Base viscosity at 300K for syngas (approximately air-like)
-    assert temperature_k is not None, "temperature_k must be provided"
+    if not (temperature_k is not None):
+        raise ValueError("temperature_k must be provided")
     mu_ref = SYNGAS_VISCOSITY_REF  # Pa·s at 300K
     t_ref = SUTHERLAND_T_REF  # K
     s = SUTHERLAND_CONSTANT_AIR  # Sutherland constant for air-like gases
@@ -348,7 +345,8 @@ def calculate_flooding_velocity(
         Perry's Chemical Engineers' Handbook, 9th Edition, Eq. 14-139
     """
     # Flow parameter (Eckert abscissa)
-    assert liquid_mass_flux is not None, "liquid_mass_flux must be provided"
+    if not (liquid_mass_flux is not None):
+        raise ValueError("liquid_mass_flux must be provided")
     flow_param = (liquid_mass_flux / 1.0) * np.sqrt(gas_density / liquid_density)
 
     # Capacity parameter at flooding (Eckert ordinate)
@@ -401,18 +399,17 @@ def calculate_pressure_drop(
         Perry's Chemical Engineers' Handbook, 9th Edition, Figure 14-55
     """
     # Gas mass flux
-    assert gas_velocity is not None, "gas_velocity must be provided"
+    if not (gas_velocity is not None):
+        raise ValueError("gas_velocity must be provided")
     g_gas = gas_velocity * gas_density  # kg/(m²·s)
 
     # Flow parameter
-    flow_param = (liquid_mass_flux / max(g_gas, 0.001)) * np.sqrt(
-        gas_density / liquid_density
-    )
+    flow_param = (liquid_mass_flux / max(g_gas, 0.001)) * np.sqrt(gas_density / liquid_density)
 
     # Capacity parameter
-    y = (
-        g_gas**2 * packing.packing_factor * (liquid_viscosity / WATER_VISCOSITY) ** 0.1
-    ) / (gas_density * liquid_density * GRAVITY)
+    y = (g_gas**2 * packing.packing_factor * (liquid_viscosity / WATER_VISCOSITY) ** 0.1) / (
+        gas_density * liquid_density * GRAVITY
+    )
 
     # Pressure drop per unit height (empirical correlation)
     # ΔP/Z ≈ α * Y^β * (1 + γ*X)
@@ -449,7 +446,8 @@ def calculate_ntu_removal(inlet_conc: float, outlet_conc: float) -> float:
     Reference:
         Treybal, R.E., "Mass Transfer Operations", 3rd Edition, Chapter 8
     """
-    assert inlet_conc is not None, "inlet_conc must be provided"
+    if not (inlet_conc is not None):
+        raise ValueError("inlet_conc must be provided")
     if outlet_conc <= 0 or inlet_conc <= 0:
         return 0.0
 
@@ -494,7 +492,8 @@ def calculate_htu(
         Strigle, R.F., "Packed Tower Design and Applications", 2nd Edition
     """
     # Convert kla from 1/hr to 1/s
-    assert gas_mass_flux is not None, "gas_mass_flux must be provided"
+    if not (gas_mass_flux is not None):
+        raise ValueError("gas_mass_flux must be provided")
     kla_per_s = kla / SECONDS_PER_HOUR
 
     if kla_per_s <= 0:
@@ -567,7 +566,8 @@ def calculate_caustic_requirement(
         - salt_produced_kg_hr: Total salt produced [kg/hr]
     """
     # Stoichiometric ratios and molecular weights
-    assert acid_gas_removed is not None, "acid_gas_removed must be provided"
+    if not (acid_gas_removed is not None):
+        raise ValueError("acid_gas_removed must be provided")
     stoich_data = {
         "hcl": (NAOH_STOICH_HCL, MW_HCL, MW_NACL),
         "so2": (NAOH_STOICH_SO2, MW_SO2, MW_NA2SO4),
@@ -594,9 +594,7 @@ def calculate_caustic_requirement(
             naoh_total_kg_hr += naoh_kg_hr
 
             # Salt produced (kg/hr)
-            salt_mol_hr = moles_gas_hr * (
-                stoich_ratio / 2.0 if stoich_ratio == 2.0 else 1.0
-            )
+            salt_mol_hr = moles_gas_hr * (stoich_ratio / 2.0 if stoich_ratio == 2.0 else 1.0)
             salt_kg_hr = salt_mol_hr * mw_salt / 1000.0
             salt_total_kg_hr += salt_kg_hr
 
@@ -650,7 +648,8 @@ def calculate_heat_transfer_duty(
         - total_heat_kj_hr: Total heat duty [kJ/hr]
     """
     # Convert flow to kg/s
-    assert gas_flow_kg_hr is not None, "gas_flow_kg_hr must be provided"
+    if not (gas_flow_kg_hr is not None):
+        raise ValueError("gas_flow_kg_hr must be provided")
     gas_flow_kg_s = gas_flow_kg_hr / SECONDS_PER_HOUR
     water_condensed_kg_s = water_condensed_kg_hr / SECONDS_PER_HOUR
 
@@ -699,7 +698,8 @@ def calculate_cooling_water_requirement(
         - delta_t_water: Water temperature rise [°C]
     """
     # Water outlet temperature (limited by approach to gas outlet)
-    assert heat_duty_kw is not None, "heat_duty_kw must be provided"
+    if not (heat_duty_kw is not None):
+        raise ValueError("heat_duty_kw must be provided")
     water_outlet_temp_c = outlet_gas_temp_c - approach_temp_c
     delta_t_water = water_outlet_temp_c - water_inlet_temp_c
 
@@ -721,9 +721,7 @@ def calculate_cooling_water_requirement(
 
     # Convert to practical units
     water_flow_kg_hr = water_flow_kg_s * SECONDS_PER_HOUR
-    water_flow_L_min = (
-        water_flow_kg_s * SECONDS_PER_MINUTE
-    )  # Assuming water density = 1 kg/L
+    water_flow_L_min = water_flow_kg_s * SECONDS_PER_MINUTE  # Assuming water density = 1 kg/L
 
     return {
         "water_outlet_temp_c": water_outlet_temp_c,
@@ -759,7 +757,8 @@ def calculate_column_diameter(
         - diameter_ft: Column diameter [ft]
     """
     # Design velocity
-    assert gas_flow_kg_hr is not None, "gas_flow_kg_hr must be provided"
+    if not (gas_flow_kg_hr is not None):
+        raise ValueError("gas_flow_kg_hr must be provided")
     design_velocity = flooding_velocity * (percent_of_flood / 100.0)
 
     if design_velocity <= 0:

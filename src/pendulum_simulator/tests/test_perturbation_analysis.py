@@ -74,25 +74,19 @@ class TestPerturbTorqueCoeffs:
 
     def test_preserves_shape(self):
         coeffs = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
-        perturbed = perturb_torque_coeffs(
-            coeffs, noise_amplitude=0.1, noise_type="white", seed=42
-        )
+        perturbed = perturb_torque_coeffs(coeffs, noise_amplitude=0.1, noise_type="white", seed=42)
         assert len(perturbed) == 2
         assert len(perturbed[0]) == 3
         assert len(perturbed[1]) == 3
 
     def test_zero_amplitude_no_change(self):
         coeffs = [[1.0, 2.0], [3.0, 4.0]]
-        perturbed = perturb_torque_coeffs(
-            coeffs, noise_amplitude=0.0, noise_type="white", seed=42
-        )
+        perturbed = perturb_torque_coeffs(coeffs, noise_amplitude=0.0, noise_type="white", seed=42)
         np.testing.assert_allclose(perturbed, coeffs)
 
     def test_perturbation_changes_values(self):
         coeffs = [[1.0, 2.0, 3.0]]
-        perturbed = perturb_torque_coeffs(
-            coeffs, noise_amplitude=0.5, noise_type="white", seed=42
-        )
+        perturbed = perturb_torque_coeffs(coeffs, noise_amplitude=0.5, noise_type="white", seed=42)
         assert not np.allclose(perturbed, coeffs)
 
     def test_seed_reproducibility(self):

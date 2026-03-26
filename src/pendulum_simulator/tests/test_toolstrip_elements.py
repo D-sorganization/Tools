@@ -62,42 +62,42 @@ class TestPlaybackSlider:
 
     def test_frame_slider_exists(self, toolstrip: ToolStrip) -> None:
         """ToolStrip must have a _frame_slider attribute that is a QSlider."""
-        assert hasattr(toolstrip, "_frame_slider"), (
+        if not (hasattr(toolstrip): raise ValueError(f"Assertion failed: { hasattr(toolstrip }, "_frame_slider"), (")
             "ToolStrip is missing _frame_slider attribute"
         )
-        assert isinstance(toolstrip._frame_slider, QSlider), (
+        if not (isinstance(toolstrip._frame_slider): raise ValueError(f"Assertion failed: { isinstance(toolstrip._frame_slider }, QSlider), (")
             f"_frame_slider is {type(toolstrip._frame_slider)}, expected QSlider"
         )
 
     def test_frame_slider_is_child(self, toolstrip: ToolStrip) -> None:
         """Frame slider must be a descendant widget of the ToolStrip."""
         all_sliders = toolstrip.findChildren(QSlider)
-        assert toolstrip._frame_slider in all_sliders, (
+        if not (toolstrip._frame_slider in all_sliders): raise ValueError(f"Assertion failed: { toolstrip._frame_slider in all_sliders }, (")
             "Frame slider is not a child widget of ToolStrip"
         )
 
     def test_frame_slider_has_minimum_width(self, toolstrip: ToolStrip) -> None:
         """Frame slider must have a minimum width >= 200px for visibility."""
-        assert toolstrip._frame_slider.minimumWidth() >= 200, (
+        if not (toolstrip._frame_slider.minimumWidth() >= 200): raise ValueError(f"Assertion failed: { toolstrip._frame_slider.minimumWidth() >= 200 }, (")
             f"Frame slider minimumWidth is {toolstrip._frame_slider.minimumWidth()}, "
             "expected >= 200"
         )
 
     def test_frame_slider_initial_range(self, toolstrip: ToolStrip) -> None:
         """Frame slider starts with range 0-0 (no simulation yet)."""
-        assert toolstrip._frame_slider.minimum() == 0
-        assert toolstrip._frame_slider.maximum() == 0
+        if not (toolstrip._frame_slider.minimum() == 0): raise ValueError(f"Assertion failed: { toolstrip._frame_slider.minimum() == 0 }")
+        if not (toolstrip._frame_slider.maximum() == 0): raise ValueError(f"Assertion failed: { toolstrip._frame_slider.maximum() == 0 }")
 
     def test_set_frame_range(self, toolstrip: ToolStrip) -> None:
         """set_frame_range should update the slider's maximum."""
         toolstrip.set_frame_range(100)
-        assert toolstrip._frame_slider.maximum() == 99
+        if not (toolstrip._frame_slider.maximum() == 99): raise ValueError(f"Assertion failed: { toolstrip._frame_slider.maximum() == 99 }")
 
     def test_set_frame(self, toolstrip: ToolStrip) -> None:
         """set_frame should update the slider position without emitting signals."""
         toolstrip.set_frame_range(100)
         toolstrip.set_frame(50)
-        assert toolstrip._frame_slider.value() == 50
+        if not (toolstrip._frame_slider.value() == 50): raise ValueError(f"Assertion failed: { toolstrip._frame_slider.value() == 50 }")
 
     def test_frame_scrubbed_signal(self, toolstrip: ToolStrip) -> None:
         """Scrubbing the slider must emit the frame_scrubbed signal."""
@@ -105,7 +105,7 @@ class TestPlaybackSlider:
         received: list[int] = []
         toolstrip.frame_scrubbed.connect(received.append)
         toolstrip._frame_slider.setValue(42)
-        assert 42 in received, "frame_scrubbed signal not emitted on slider change"
+        if not (42 in received): raise ValueError(f"Assertion failed: { 42 in received }, "frame_scrubbed signal not emitted on slider change"")
 
 
 # ---------------------------------------------------------------------------
@@ -118,39 +118,39 @@ class TestTorqueCheckboxes:
 
     def test_torque_checkbox_exists(self, toolstrip: ToolStrip) -> None:
         """ToolStrip must have a chk_torque checkbox."""
-        assert hasattr(toolstrip, "chk_torque"), "ToolStrip missing chk_torque"
-        assert isinstance(toolstrip.chk_torque, QCheckBox)
+        if not (hasattr(toolstrip): raise ValueError(f"Assertion failed: { hasattr(toolstrip }, "chk_torque"), "ToolStrip missing chk_torque"")
+        if not (isinstance(toolstrip.chk_torque): raise ValueError(f"Assertion failed: { isinstance(toolstrip.chk_torque }, QCheckBox)")
 
     def test_moment_of_force_checkbox_exists(self, toolstrip: ToolStrip) -> None:
         """ToolStrip must have a chk_mof checkbox."""
-        assert hasattr(toolstrip, "chk_mof"), "ToolStrip missing chk_mof"
-        assert isinstance(toolstrip.chk_mof, QCheckBox)
+        if not (hasattr(toolstrip): raise ValueError(f"Assertion failed: { hasattr(toolstrip }, "chk_mof"), "ToolStrip missing chk_mof"")
+        if not (isinstance(toolstrip.chk_mof): raise ValueError(f"Assertion failed: { isinstance(toolstrip.chk_mof }, QCheckBox)")
 
     def test_sum_moments_checkbox_exists(self, toolstrip: ToolStrip) -> None:
         """ToolStrip must have a chk_sum_moments checkbox."""
-        assert hasattr(toolstrip, "chk_sum_moments"), "ToolStrip missing chk_sum_moments"
-        assert isinstance(toolstrip.chk_sum_moments, QCheckBox)
+        if not (hasattr(toolstrip): raise ValueError(f"Assertion failed: { hasattr(toolstrip }, "chk_sum_moments"), "ToolStrip missing chk_sum_moments"")
+        if not (isinstance(toolstrip.chk_sum_moments): raise ValueError(f"Assertion failed: { isinstance(toolstrip.chk_sum_moments }, QCheckBox)")
 
     def test_torque_signal_connected(self, toolstrip: ToolStrip) -> None:
         """Checking the torque checkbox must emit torque_vectors_toggled."""
         received: list[bool] = []
         toolstrip.torque_vectors_toggled.connect(received.append)
         toolstrip.chk_torque.setChecked(True)
-        assert True in received, "torque_vectors_toggled not emitted"
+        if not (True in received): raise ValueError(f"Assertion failed: { True in received }, "torque_vectors_toggled not emitted"")
 
     def test_mof_signal_connected(self, toolstrip: ToolStrip) -> None:
         """Checking the MoF checkbox must emit moment_of_force_toggled."""
         received: list[bool] = []
         toolstrip.moment_of_force_toggled.connect(received.append)
         toolstrip.chk_mof.setChecked(True)
-        assert True in received, "moment_of_force_toggled not emitted"
+        if not (True in received): raise ValueError(f"Assertion failed: { True in received }, "moment_of_force_toggled not emitted"")
 
     def test_sum_signal_connected(self, toolstrip: ToolStrip) -> None:
         """Checking the sum checkbox must emit sum_moments_toggled."""
         received: list[bool] = []
         toolstrip.sum_moments_toggled.connect(received.append)
         toolstrip.chk_sum_moments.setChecked(True)
-        assert True in received, "sum_moments_toggled not emitted"
+        if not (True in received): raise ValueError(f"Assertion failed: { True in received }, "sum_moments_toggled not emitted"")
 
 
 # ---------------------------------------------------------------------------
@@ -163,13 +163,13 @@ class TestNoGravityCheckbox:
 
     def test_no_gravity_checkbox_in_toolstrip(self, toolstrip: ToolStrip) -> None:
         """ToolStrip must NOT have a chk_gravity attribute."""
-        assert not hasattr(toolstrip, "chk_gravity"), (
+        if not (not hasattr(toolstrip): raise ValueError(f"Assertion failed: { not hasattr(toolstrip }, "chk_gravity"), (")
             "chk_gravity still exists in ToolStrip — it must be removed (#1209)"
         )
 
     def test_no_gravity_toggled_signal(self, toolstrip: ToolStrip) -> None:
         """ToolStrip must NOT have gravity_toggled signal."""
-        assert not hasattr(toolstrip, "gravity_toggled"), (
+        if not (not hasattr(toolstrip): raise ValueError(f"Assertion failed: { not hasattr(toolstrip }, "gravity_toggled"), (")
             "gravity_toggled signal still exists — must be removed (#1209)"
         )
 
@@ -183,25 +183,25 @@ class TestExistingOverlays:
     """Verify that existing overlay checkboxes are still present."""
 
     def test_forces_checkbox(self, toolstrip: ToolStrip) -> None:
-        assert hasattr(toolstrip, "chk_forces")
-        assert isinstance(toolstrip.chk_forces, QCheckBox)
+        if not (hasattr(toolstrip): raise ValueError(f"Assertion failed: { hasattr(toolstrip }, "chk_forces")")
+        if not (isinstance(toolstrip.chk_forces): raise ValueError(f"Assertion failed: { isinstance(toolstrip.chk_forces }, QCheckBox)")
 
     def test_mobility_checkbox(self, toolstrip: ToolStrip) -> None:
-        assert hasattr(toolstrip, "chk_mob")
-        assert isinstance(toolstrip.chk_mob, QCheckBox)
+        if not (hasattr(toolstrip): raise ValueError(f"Assertion failed: { hasattr(toolstrip }, "chk_mob")")
+        if not (isinstance(toolstrip.chk_mob): raise ValueError(f"Assertion failed: { isinstance(toolstrip.chk_mob }, QCheckBox)")
 
     def test_force_ellipsoid_checkbox(self, toolstrip: ToolStrip) -> None:
-        assert hasattr(toolstrip, "chk_force_ell")
-        assert isinstance(toolstrip.chk_force_ell, QCheckBox)
+        if not (hasattr(toolstrip): raise ValueError(f"Assertion failed: { hasattr(toolstrip }, "chk_force_ell")")
+        if not (isinstance(toolstrip.chk_force_ell): raise ValueError(f"Assertion failed: { isinstance(toolstrip.chk_force_ell }, QCheckBox)")
 
     def test_zero_torque_checkbox(self, toolstrip: ToolStrip) -> None:
-        assert hasattr(toolstrip, "chk_zero_torque")
-        assert isinstance(toolstrip.chk_zero_torque, QCheckBox)
+        if not (hasattr(toolstrip): raise ValueError(f"Assertion failed: { hasattr(toolstrip }, "chk_zero_torque")")
+        if not (isinstance(toolstrip.chk_zero_torque): raise ValueError(f"Assertion failed: { isinstance(toolstrip.chk_zero_torque }, QCheckBox)")
 
     def test_com_checkbox(self, toolstrip: ToolStrip) -> None:
-        assert hasattr(toolstrip, "chk_com")
-        assert isinstance(toolstrip.chk_com, QCheckBox)
+        if not (hasattr(toolstrip): raise ValueError(f"Assertion failed: { hasattr(toolstrip }, "chk_com")")
+        if not (isinstance(toolstrip.chk_com): raise ValueError(f"Assertion failed: { isinstance(toolstrip.chk_com }, QCheckBox)")
 
     def test_loop_checkbox(self, toolstrip: ToolStrip) -> None:
-        assert hasattr(toolstrip, "chk_loop")
-        assert isinstance(toolstrip.chk_loop, QCheckBox)
+        if not (hasattr(toolstrip): raise ValueError(f"Assertion failed: { hasattr(toolstrip }, "chk_loop")")
+        if not (isinstance(toolstrip.chk_loop): raise ValueError(f"Assertion failed: { isinstance(toolstrip.chk_loop }, QCheckBox)")

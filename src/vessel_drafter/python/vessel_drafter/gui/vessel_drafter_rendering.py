@@ -24,7 +24,8 @@ PREVIEW_MARGIN = 24.0
 
 
 def render_cross_section(scene: QGraphicsScene, preview: CrossSectionPreview) -> None:
-    assert scene is not None, "scene must be provided"
+    if not (scene is not None):
+        raise ValueError("scene must be provided")
     scene.clear()
     top_z_in = preview.straight_shell_height_in + preview.outer_head_depth_in
     bottom_z_in = -preview.outer_head_depth_in
@@ -74,17 +75,13 @@ def render_cross_section(scene: QGraphicsScene, preview: CrossSectionPreview) ->
         _add_path(scene, path, feature.color_hex, 20.0)
 
     for port in preview.projected_side_ports:
-        center_y = PREVIEW_MARGIN + (
-            (top_z_in - port.centerline_height_in) * PREVIEW_SCALE
-        )
+        center_y = PREVIEW_MARGIN + ((top_z_in - port.centerline_height_in) * PREVIEW_SCALE)
         radius_px = port.diameter_in * 0.5 * PREVIEW_SCALE
         for direction in (-1.0, 1.0):
             center = QPointF(
                 center_x
                 + (
-                    direction
-                    * (preview.outer_radius_in - (port.diameter_in * 0.5))
-                    * PREVIEW_SCALE
+                    direction * (preview.outer_radius_in - (port.diameter_in * 0.5)) * PREVIEW_SCALE
                 ),
                 center_y,
             )
@@ -100,7 +97,8 @@ def render_cross_section(scene: QGraphicsScene, preview: CrossSectionPreview) ->
 
 
 def render_plan(scene: QGraphicsScene, preview: PlanPreview) -> None:
-    assert scene is not None, "scene must be provided"
+    if not (scene is not None):
+        raise ValueError("scene must be provided")
     scene.clear()
     diameter_px = preview.outer_radius_in * 2.0 * PREVIEW_SCALE
     center_x = PREVIEW_MARGIN + (diameter_px * 0.5)
@@ -155,7 +153,8 @@ def _add_band_polygon(
     map_point: Callable[[Any], QPointF],
     z_value: float,
 ) -> None:
-    assert scene is not None, "scene must be provided"
+    if not (scene is not None):
+        raise ValueError("scene must be provided")
     path = _loop_path(polygon.outer_loop, map_point)
     if polygon.inner_loop is not None:
         path.addPath(_loop_path(polygon.inner_loop, map_point))
@@ -163,10 +162,9 @@ def _add_band_polygon(
     _add_path(scene, path, polygon.color_hex, z_value)
 
 
-def _loop_path(
-    loop: tuple[ProfilePoint, ...], map_point: Callable[[Any], QPointF]
-) -> QPainterPath:
-    assert loop is not None, "loop must be provided"
+def _loop_path(loop: tuple[ProfilePoint, ...], map_point: Callable[[Any], QPointF]) -> QPainterPath:
+    if not (loop is not None):
+        raise ValueError("loop must be provided")
     path = QPainterPath()
     first_point = map_point(loop[0])
     path.moveTo(first_point)
@@ -182,7 +180,8 @@ def _add_path(
     color_hex: str,
     z_value: float,
 ) -> None:
-    assert scene is not None, "scene must be provided"
+    if not (scene is not None):
+        raise ValueError("scene must be provided")
     item = QGraphicsPathItem(path)
     item.setPen(_band_pen())
     item.setBrush(QBrush(QColor(color_hex)))
@@ -203,7 +202,8 @@ def _add_plan_circle(
     feature: PlanCircularFeature,
     z_value: float,
 ) -> None:
-    assert scene is not None, "scene must be provided"
+    if not (scene is not None):
+        raise ValueError("scene must be provided")
     radius_px = feature.diameter_in * 0.5 * PREVIEW_SCALE
     item = scene.addEllipse(
         center_x + (feature.center_x_in * PREVIEW_SCALE) - radius_px,
@@ -224,19 +224,16 @@ def _add_radial_feature(
     feature: PlanRadialFeature,
     z_value: float,
 ) -> None:
-    assert scene is not None, "scene must be provided"
+    if not (scene is not None):
+        raise ValueError("scene must be provided")
     pen = _accent_pen(feature.color_hex)
     pen.setWidth(max(2, int(round(feature.diameter_in * PREVIEW_SCALE))))
     pen.setCapStyle(Qt.PenCapStyle.RoundCap)
     item = scene.addLine(
-        center_x
-        + (feature.inner_tip_radius_in * cos(feature.angle_radians) * PREVIEW_SCALE),
-        center_y
-        - (feature.inner_tip_radius_in * sin(feature.angle_radians) * PREVIEW_SCALE),
-        center_x
-        + (feature.outer_tip_radius_in * cos(feature.angle_radians) * PREVIEW_SCALE),
-        center_y
-        - (feature.outer_tip_radius_in * sin(feature.angle_radians) * PREVIEW_SCALE),
+        center_x + (feature.inner_tip_radius_in * cos(feature.angle_radians) * PREVIEW_SCALE),
+        center_y - (feature.inner_tip_radius_in * sin(feature.angle_radians) * PREVIEW_SCALE),
+        center_x + (feature.outer_tip_radius_in * cos(feature.angle_radians) * PREVIEW_SCALE),
+        center_y - (feature.outer_tip_radius_in * sin(feature.angle_radians) * PREVIEW_SCALE),
         pen,
     )
     if item is not None:

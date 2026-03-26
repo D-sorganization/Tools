@@ -32,9 +32,7 @@ except ImportError:
     logger = logging.getLogger(__name__)
     if not logger.handlers:
         handler = logging.StreamHandler()
-        handler.setFormatter(
-            logging.Formatter("%(name)s - %(levelname)s - %(message)s")
-        )
+        handler.setFormatter(logging.Formatter("%(name)s - %(levelname)s - %(message)s"))
         logger.addHandler(handler)
         logger.setLevel(logging.INFO)
 
@@ -50,7 +48,8 @@ class MplCanvas(FigureCanvasQTAgg):
         dpi: int = 100,
     ) -> None:
         """Initialize the canvas."""
-        assert width is not None, "width must be provided"
+        if not (width is not None):
+            raise ValueError("width must be provided")
         self.fig = Figure(figsize=(width, height), dpi=dpi)
         self.axes = self.fig.add_subplot(111)
         super().__init__(self.fig)
@@ -148,7 +147,8 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
 
     def _setup_joint_selector(self, parent_layout: QtWidgets.QVBoxLayout) -> None:
         """Create the target joint selection group."""
-        assert parent_layout is not None, "parent_layout must be provided"
+        if not (parent_layout is not None):
+            raise ValueError("parent_layout must be provided")
         joint_group = QtWidgets.QGroupBox("Target Joint")
         joint_layout = QtWidgets.QVBoxLayout(joint_group)
         self.joint_combo = QtWidgets.QComboBox()
@@ -160,7 +160,8 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
 
     def _setup_scale_controls(self, parent_layout: QtWidgets.QVBoxLayout) -> None:
         """Create the plot scale controls group."""
-        assert parent_layout is not None, "parent_layout must be provided"
+        if not (parent_layout is not None):
+            raise ValueError("parent_layout must be provided")
         scale_group = QtWidgets.QGroupBox("Plot Scale")
         scale_layout = QtWidgets.QGridLayout(scale_group)
 
@@ -183,7 +184,8 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
 
     def _setup_input_methods(self, parent_layout: QtWidgets.QVBoxLayout) -> None:
         """Create the input method selection group."""
-        assert parent_layout is not None, "parent_layout must be provided"
+        if not (parent_layout is not None):
+            raise ValueError("parent_layout must be provided")
         input_group = QtWidgets.QGroupBox("Input Method")
         input_layout = QtWidgets.QVBoxLayout(input_group)
 
@@ -199,9 +201,7 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
         self.btn_points.setToolTip("Click on the plot to add individual points")
 
         self.btn_drag = QtWidgets.QRadioButton("Drag Trend")
-        self.btn_drag.setToolTip(
-            "Drag the entire curve to shift it vertically/horizontally"
-        )
+        self.btn_drag.setToolTip("Drag the entire curve to shift it vertically/horizontally")
 
         self.mode_group.addButton(self.btn_equation)
         self.mode_group.addButton(self.btn_draw)
@@ -234,7 +234,8 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
 
     def _setup_action_controls(self, parent_layout: QtWidgets.QVBoxLayout) -> None:
         """Create the fitting and action controls group."""
-        assert parent_layout is not None, "parent_layout must be provided"
+        if not (parent_layout is not None):
+            raise ValueError("parent_layout must be provided")
         action_group = QtWidgets.QGroupBox("Fitting & Actions")
         action_layout = QtWidgets.QVBoxLayout(action_group)
 
@@ -252,15 +253,11 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
         self.clear_btn.setAccessibleName("Clear all points")
         style = self.style()
         if style:
-            self.clear_btn.setIcon(
-                style.standardIcon(QtWidgets.QStyle.StandardPixmap.SP_TrashIcon)
-            )
+            self.clear_btn.setIcon(style.standardIcon(QtWidgets.QStyle.StandardPixmap.SP_TrashIcon))
 
         self.fit_btn = QtWidgets.QPushButton("Fit Polynomial")
         self.fit_btn.setObjectName("fitBtn")
-        self.fit_btn.setToolTip(
-            "Calculate and plot a polynomial fit for the current points"
-        )
+        self.fit_btn.setToolTip("Calculate and plot a polynomial fit for the current points")
         self.fit_btn.setAccessibleName("Fit polynomial to points")
         if style:
             self.fit_btn.setIcon(
@@ -273,7 +270,8 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
 
     def _setup_result_display(self, parent_layout: QtWidgets.QVBoxLayout) -> None:
         """Create the result display group."""
-        assert parent_layout is not None, "parent_layout must be provided"
+        if not (parent_layout is not None):
+            raise ValueError("parent_layout must be provided")
         result_group = QtWidgets.QGroupBox("Result")
         result_layout = QtWidgets.QVBoxLayout(result_group)
         self.result_text = QtWidgets.QTextEdit()
@@ -287,7 +285,8 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
         self, min_val: float, max_val: float, val: float, tooltip: str
     ) -> QtWidgets.QDoubleSpinBox:
         """Create a configured double spin box."""
-        assert min_val is not None, "min_val must be provided"
+        if not (min_val is not None):
+            raise ValueError("min_val must be provided")
         spin = QtWidgets.QDoubleSpinBox()
         spin.setRange(min_val, max_val)
         spin.setValue(val)
@@ -313,7 +312,8 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
 
     def _set_mode(self, mode: str, checked: bool) -> None:
         """Set the current interaction mode."""
-        assert mode is not None, "mode must be provided"
+        if not (mode is not None):
+            raise ValueError("mode must be provided")
         if not checked:
             return
         self.mode = mode
@@ -364,12 +364,9 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
 
     def _on_canvas_click(self, event: matplotlib.backend_bases.MouseEvent) -> None:
         """Handle mouse click events on the canvas."""
-        assert event is not None, "event must be provided"
-        if (
-            event.inaxes != self.canvas.axes
-            or event.xdata is None
-            or event.ydata is None
-        ):
+        if not (event is not None):
+            raise ValueError("event must be provided")
+        if event.inaxes != self.canvas.axes or event.xdata is None or event.ydata is None:
             return
 
         if self.mode == "add_points":
@@ -381,11 +378,7 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
             if event.button == 1:
                 self.drawn_points = [(event.xdata, event.ydata)]
 
-        elif (
-            self.mode == "drag"
-            and event.button == 1
-            and self.polynomial_coeffs is not None
-        ):
+        elif self.mode == "drag" and event.button == 1 and self.polynomial_coeffs is not None:
             self.dragging_curve = True
             self.drag_start_pos = (event.xdata, event.ydata)
             self.drag_start_coeffs = self.polynomial_coeffs.copy()
@@ -416,12 +409,9 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
 
     def _on_canvas_motion(self, event: matplotlib.backend_bases.MouseEvent) -> None:
         """Handle mouse motion events."""
-        assert event is not None, "event must be provided"
-        if (
-            event.inaxes != self.canvas.axes
-            or event.xdata is None
-            or event.ydata is None
-        ):
+        if not (event is not None):
+            raise ValueError("event must be provided")
+        if event.inaxes != self.canvas.axes or event.xdata is None or event.ydata is None:
             return
 
         if self.mode == "draw" and event.button == 1:
@@ -435,9 +425,7 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
 
             # Sync points with 2D shift and re-fit
             if self.drag_start_points:
-                self.current_points = [
-                    (x + dx, y + dy) for x, y in self.drag_start_points
-                ]
+                self.current_points = [(x + dx, y + dy) for x, y in self.drag_start_points]
                 self._calculate_poly_fit()
                 self._update_plot()
 
@@ -468,7 +456,8 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
         Returns:
             List of (x, y) tuples with uniform x spacing.
         """
-        assert points is not None, "points must be provided"
+        if not (points is not None):
+            raise ValueError("points must be provided")
         if len(points) < 2:
             return list(points)
 
@@ -536,9 +525,7 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
             if self.polynomial_coeffs is not None:
                 self.polynomial_generated.emit(joint, list(self.polynomial_coeffs))
         else:
-            QtWidgets.QMessageBox.warning(
-                self, "Fit Error", "Failed to fit polynomial to points."
-            )
+            QtWidgets.QMessageBox.warning(self, "Fit Error", "Failed to fit polynomial to points.")
 
     def _generate_from_equation(self) -> None:
         """Generate points from the user-provided equation."""
@@ -585,9 +572,7 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
             self._fit_polynomial()
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
-            QtWidgets.QMessageBox.warning(
-                self, "Equation Error", f"Invalid equation: {e}"
-            )
+            QtWidgets.QMessageBox.warning(self, "Equation Error", f"Invalid equation: {e}")
 
     def _display_results(self) -> None:
         """Display the polynomial coefficients."""
@@ -614,7 +599,8 @@ class PolynomialGeneratorWidget(QtWidgets.QWidget):
 
     def set_joints(self, joints: list[str]) -> None:
         """Set the list of available joints."""
-        assert joints is not None, "joints must be provided"
+        if not (joints is not None):
+            raise ValueError("joints must be provided")
         self.joint_names = joints
         self.joint_combo.clear()
         self.joint_combo.addItems(joints)

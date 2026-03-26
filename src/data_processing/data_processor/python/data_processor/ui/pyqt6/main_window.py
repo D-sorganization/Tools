@@ -227,7 +227,8 @@ class ProcessingWorker(QThread):
         processor: SignalProcessor,
         config: dict,
     ) -> None:
-        assert operation is not None, "operation must be provided"
+        if not (operation is not None):
+            raise ValueError("operation must be provided")
         super().__init__()
         self.operation = operation
         self.data = data
@@ -481,18 +482,12 @@ class DataProcessorMainWindow(
 
         # Analysis tab (PCA, ANOVA, Regression, Surface, Neural Network)
         self.analysis_panel = AnalysisPanel()
-        self.analysis_panel.pca_widget.analysis_requested.connect(
-            self._run_pca_analysis
-        )
-        self.analysis_panel.anova_widget.analysis_requested.connect(
-            self._run_anova_analysis
-        )
+        self.analysis_panel.pca_widget.analysis_requested.connect(self._run_pca_analysis)
+        self.analysis_panel.anova_widget.analysis_requested.connect(self._run_anova_analysis)
         self.analysis_panel.regression_widget.analysis_requested.connect(
             self._run_regression_analysis
         )
-        self.analysis_panel.surface_widget.plot_requested.connect(
-            self._run_surface_analysis
-        )
+        self.analysis_panel.surface_widget.plot_requested.connect(self._run_surface_analysis)
         self.analysis_panel.nn_widget.train_requested.connect(self._run_nn_analysis)
         self.tab_widget.addTab(self.analysis_panel, "Analysis")
 
@@ -525,7 +520,8 @@ class DataProcessorMainWindow(
 
     def closeEvent(self, event) -> None:
         """Handle window close."""
-        assert event is not None, "event must be provided"
+        if not (event is not None):
+            raise ValueError("event must be provided")
         self._save_state()
         super().closeEvent(event)
 
@@ -584,9 +580,7 @@ class DataProcessorMainWindow(
                     self.time_column = time_col
 
                 # Get signals
-                self.available_signals = self.data_loader.get_numeric_signals(
-                    self.current_data
-                )
+                self.available_signals = self.data_loader.get_numeric_signals(self.current_data)
 
                 # Update UI
                 self._update_data_info()
@@ -603,9 +597,7 @@ class DataProcessorMainWindow(
                 self.status_bar.hide_progress()
                 row_count = len(self.current_data)
                 signal_count = len(self.available_signals)
-                self.status_bar.set_status(
-                    f"Loaded {row_count} rows, {signal_count} signals"
-                )
+                self.status_bar.set_status(f"Loaded {row_count} rows, {signal_count} signals")
 
                 QMessageBox.information(
                     self,
@@ -658,7 +650,8 @@ class DataProcessorMainWindow(
 
     def _on_signal_selection_changed(self, signals: list[str]) -> None:
         """Handle signal selection change."""
-        assert signals is not None, "signals must be provided"
+        if not (signals is not None):
+            raise ValueError("signals must be provided")
         logger.debug(f"Selected signals: {signals}")
 
         self.available_signals = []

@@ -18,11 +18,7 @@ class GeminiTitleLLM:
 
             self.genai = genai
             # Try multiple sources for API key - check both old and new env var names
-            key = (
-                api_key
-                or get_api_key("GEMINI_API_KEY")
-                or get_api_key("GOOGLE_API_KEY")
-            )
+            key = api_key or get_api_key("GEMINI_API_KEY") or get_api_key("GOOGLE_API_KEY")
             if not key:
                 logger.warning(
                     "API key not found. Checked: GEMINI_API_KEY, GOOGLE_API_KEY in environment variables, "
@@ -51,9 +47,7 @@ class GeminiTitleLLM:
                             logger.info(f"Successfully using model: {fallback}")
                             break
                         except (ValueError, RuntimeError, OSError) as fallback_error:
-                            logger.warning(
-                                f"Fallback model '{fallback}' failed: {fallback_error}"
-                            )
+                            logger.warning(f"Fallback model '{fallback}' failed: {fallback_error}")
                             continue
                     else:
                         logger.error("All model attempts failed")
@@ -63,7 +57,8 @@ class GeminiTitleLLM:
             logger.error("google-generativeai package not installed")
 
     def extract_title(self, pdf_path: Path) -> TitleResult:
-        assert pdf_path is not None, "pdf_path must be provided"
+        if not (pdf_path is not None):
+            raise ValueError("pdf_path must be provided")
         if not self.genai or not self.model:
             return TitleResult(
                 None, 0.0, "llm", "Gemini API not available or model not initialized"
@@ -72,9 +67,7 @@ class GeminiTitleLLM:
         uploaded_file = None
         try:
             logger.info(f"Uploading {pdf_path.name} to Gemini...")
-            uploaded_file = self.genai.upload_file(
-                path=str(pdf_path), mime_type="application/pdf"
-            )
+            uploaded_file = self.genai.upload_file(path=str(pdf_path), mime_type="application/pdf")
 
             # Wait for processing state if needed (usually fast for small PDFs)
             while uploaded_file.state.name == "PROCESSING":
@@ -110,9 +103,7 @@ class GeminiTitleLLM:
                 if title:
                     return TitleResult(title, conf, "llm", f"Gemini: {details}")
                 else:
-                    return TitleResult(
-                        None, 0.0, "llm", f"Gemini found no title: {details}"
-                    )
+                    return TitleResult(None, 0.0, "llm", f"Gemini found no title: {details}")
 
             except json.JSONDecodeError:
                 return TitleResult(
@@ -130,6 +121,4 @@ class GeminiTitleLLM:
                 try:
                     self.genai.delete_file(uploaded_file.name)
                 except (RuntimeError, ValueError, OSError) as e:
-                    logger.debug(
-                        "Failed to delete uploaded file %s: %s", uploaded_file.name, e
-                    )
+                    logger.debug("Failed to delete uploaded file %s: %s", uploaded_file.name, e)

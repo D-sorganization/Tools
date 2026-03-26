@@ -144,9 +144,7 @@ class TestAssertionHelpers:
         def raise_error() -> None:
             raise ValueError("test error 123")
 
-        exc = assert_helpers.assert_raises_with_message(
-            ValueError, r"test error \d+", raise_error
-        )
+        exc = assert_helpers.assert_raises_with_message(ValueError, r"test error \d+", raise_error)
         assert "123" in str(exc)
 
     def test_assert_raises_with_message_wrong_exception(self) -> None:
@@ -194,17 +192,13 @@ class TestMockFactory:
 
     def test_create_mock_file(self) -> None:
         """Test creating mock file."""
-        mock_file = MockFactory.create_mock_file(
-            content="test content", name="test.txt"
-        )
+        mock_file = MockFactory.create_mock_file(content="test content", name="test.txt")
         assert mock_file.name == "test.txt"
         assert mock_file.read() == "test content"
 
     def test_create_mock_response_success(self) -> None:
         """Test creating successful mock response."""
-        mock_resp = MockFactory.create_mock_response(
-            status_code=200, json_data={"key": "value"}
-        )
+        mock_resp = MockFactory.create_mock_response(status_code=200, json_data={"key": "value"})
         assert mock_resp.status_code == 200
         assert mock_resp.json() == {"key": "value"}
         assert mock_resp.ok is True

@@ -50,19 +50,16 @@ def _build_electrode_assembly(
     placement: ElectrodePlacement,
     layout: ElectrodeAdvisorLayout,
 ) -> Solid:
-    assert placement is not None, "placement must be provided"
+    if not (placement is not None):
+        raise ValueError("placement must be provided")
     holder_height = layout.drafting.electrode_holder_height_mm
-    holder_radius = (
-        placement.diameter_mm * 0.5 * layout.drafting.electrode_holder_radius_factor
-    )
+    holder_radius = placement.diameter_mm * 0.5 * layout.drafting.electrode_holder_radius_factor
     body_radius = placement.diameter_mm * 0.5
     tip_band_height = layout.drafting.tip_band_height_mm
 
     body_center_z = placement.cad_z_mm - (placement.effective_length_mm * 0.5)
     holder_center_z = placement.cad_z_mm + (holder_height * 0.5)
-    tip_band_center_z = (
-        placement.cad_z_mm - placement.effective_length_mm + (tip_band_height * 0.5)
-    )
+    tip_band_center_z = placement.cad_z_mm - placement.effective_length_mm + (tip_band_height * 0.5)
 
     with BuildPart() as electrode_assembly:
         with Locations((placement.cad_x_mm, placement.cad_y_mm, holder_center_z)):
@@ -80,7 +77,5 @@ def build_default_layout_shape(
     layout: ElectrodeAdvisorLayout = DEFAULT_ELECTRODE_ADVISOR_LAYOUT,
 ) -> Compound:
     children = [_build_bath_shell(layout), _build_glass_volume(layout)]
-    children.extend(
-        _build_electrode_assembly(item, layout) for item in layout.placements
-    )
+    children.extend(_build_electrode_assembly(item, layout) for item in layout.placements)
     return Compound(label="electrode_advisor_default_layout", children=children)

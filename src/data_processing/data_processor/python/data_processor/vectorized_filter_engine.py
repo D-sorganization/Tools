@@ -114,9 +114,7 @@ class VectorizedFilterEngine:
     - Optimized for large datasets (1M+ points)
     """
 
-    def __init__(
-        self, logger: Callable[..., Any] | None = None, n_jobs: int = -1
-    ) -> None:
+    def __init__(self, logger: Callable[..., Any] | None = None, n_jobs: int = -1) -> None:
         """
         Initialize the vectorized filter engine.
 
@@ -127,7 +125,8 @@ class VectorizedFilterEngine:
             logger: Optional logging function. If None, uses print.
             n_jobs: Number of parallel jobs (-1 for all cores, 1 for sequential)
         """
-        assert n_jobs is not None, "n_jobs must be provided"
+        if not (n_jobs is not None):
+            raise ValueError("n_jobs must be provided")
         require(
             n_jobs == -1 or (isinstance(n_jobs, int) and n_jobs >= 1),
             "n_jobs must be -1 (auto) or a positive integer",
@@ -174,7 +173,8 @@ class VectorizedFilterEngine:
         Returns:
             DataFrame with filtered signals
         """
-        assert df is not None, "df must be provided"
+        if not (df is not None):
+            raise ValueError("df must be provided")
         require(
             isinstance(df, pd.DataFrame) and not df.empty,
             "df must be a non-empty DataFrame",
@@ -246,12 +246,12 @@ class VectorizedFilterEngine:
     ) -> pd.Series:
         """Apply filter to a single signal."""
         # Validate signal
-        assert signal is not None, "signal must be provided"
+        if not (signal is not None):
+            raise ValueError("signal must be provided")
         clean_signal = signal.dropna()
         if len(clean_signal) < MIN_SIGNAL_DATA_POINTS:
             self.logger(
-                f"Warning: {signal_name} too short for filtering "
-                f"({len(clean_signal)} points)",
+                f"Warning: {signal_name} too short for filtering " f"({len(clean_signal)} points)",
             )
             return signal
 
@@ -268,7 +268,8 @@ class VectorizedFilterEngine:
         params: dict[str, Any],
     ) -> pd.Series:
         """Vectorized moving average filter using scipy.ndimage.uniform_filter1d."""
-        assert signal is not None, "signal must be provided"
+        if not (signal is not None):
+            raise ValueError("signal must be provided")
         window = self._safe_get_param(
             params,
             "ma_window",
@@ -349,7 +350,8 @@ class VectorizedFilterEngine:
         params: dict[str, Any],
     ) -> pd.Series:
         """Vectorized Butterworth filter."""
-        assert signal is not None, "signal must be provided"
+        if not (signal is not None):
+            raise ValueError("signal must be provided")
         order = self._safe_get_param(
             params,
             "bw_order",
@@ -371,10 +373,7 @@ class VectorizedFilterEngine:
 
         # Calculate sampling rate
         sr = self._calculate_sampling_rate(signal)
-        if (
-            sr is None
-            or len(signal.dropna()) <= order * MIN_BUTTERWORTH_DATA_MULTIPLIER
-        ):
+        if sr is None or len(signal.dropna()) <= order * MIN_BUTTERWORTH_DATA_MULTIPLIER:
             self.logger("Warning: Insufficient data for Butterworth filter")
             return signal
 
@@ -393,7 +392,8 @@ class VectorizedFilterEngine:
         params: dict[str, Any],
     ) -> pd.Series:
         """Vectorized median filter using scipy.ndimage."""
-        assert signal is not None, "signal must be provided"
+        if not (signal is not None):
+            raise ValueError("signal must be provided")
         kernel = self._safe_get_param(
             params,
             "median_kernel",
@@ -432,7 +432,8 @@ class VectorizedFilterEngine:
         Uses sliding window vectorized operations instead of loops.
         Performance: O(n) instead of O(n×w) for large datasets.
         """
-        assert signal is not None, "signal must be provided"
+        if not (signal is not None):
+            raise ValueError("signal must be provided")
         window = self._safe_get_param(
             params,
             "hampel_window",
@@ -461,10 +462,7 @@ class VectorizedFilterEngine:
             # This is a compromise between exactness and performance
             rolling_median = clean_data.rolling(window=window, center=True).median()
             rolling_mad = (
-                (clean_data - rolling_median)
-                .abs()
-                .rolling(window=window, center=True)
-                .median()
+                (clean_data - rolling_median).abs().rolling(window=window, center=True).median()
             )
             threshold_values = threshold * NORMAL_DISTRIBUTION_CONSTANT * rolling_mad
 
@@ -473,9 +471,7 @@ class VectorizedFilterEngine:
 
             # Create filtered signal
             filtered_signal = signal.copy()
-            filtered_signal.loc[clean_data.index[outlier_mask]] = rolling_median[
-                outlier_mask
-            ]
+            filtered_signal.loc[clean_data.index[outlier_mask]] = rolling_median[outlier_mask]
 
             return filtered_signal
 
@@ -490,7 +486,8 @@ class VectorizedFilterEngine:
         params: dict[str, Any],
     ) -> pd.Series:
         """Simplified Hampel filter fallback."""
-        assert signal is not None, "signal must be provided"
+        if not (signal is not None):
+            raise ValueError("signal must be provided")
         window = self._safe_get_param(
             params,
             "hampel_window",
@@ -512,17 +509,12 @@ class VectorizedFilterEngine:
         # Simplified approach using pandas rolling
         rolling_median = clean_data.rolling(window=window, center=True).median()
         rolling_mad = (
-            (clean_data - rolling_median)
-            .abs()
-            .rolling(window=window, center=True)
-            .median()
+            (clean_data - rolling_median).abs().rolling(window=window, center=True).median()
         )
         threshold_values = threshold * NORMAL_DISTRIBUTION_CONSTANT * rolling_mad
 
         outlier_mask = (clean_data - rolling_median).abs() > threshold_values
-        filtered_signal.loc[clean_data.index[outlier_mask]] = rolling_median[
-            outlier_mask
-        ]
+        filtered_signal.loc[clean_data.index[outlier_mask]] = rolling_median[outlier_mask]
 
         return filtered_signal
 
@@ -532,7 +524,8 @@ class VectorizedFilterEngine:
         params: dict[str, Any],
     ) -> pd.Series:
         """Vectorized Z-score filter."""
-        assert signal is not None, "signal must be provided"
+        if not (signal is not None):
+            raise ValueError("signal must be provided")
         threshold = self._safe_get_param(
             params,
             "zscore_threshold",
@@ -577,9 +570,7 @@ class VectorizedFilterEngine:
                 # Calculate clipped values: center + sign * threshold * scale
                 clipped_values = center + signs * threshold * scale
 
-                filtered_signal.loc[clean_data.index[outlier_mask]] = clipped_values[
-                    outlier_mask
-                ]
+                filtered_signal.loc[clean_data.index[outlier_mask]] = clipped_values[outlier_mask]
 
             elif method == "Replace with Median":
                 # Replace with median of the entire signal
@@ -601,7 +592,8 @@ class VectorizedFilterEngine:
         params: dict[str, Any],
     ) -> pd.Series:
         """Vectorized Savitzky-Golay filter."""
-        assert signal is not None, "signal must be provided"
+        if not (signal is not None):
+            raise ValueError("signal must be provided")
         window = self._safe_get_param(
             params,
             "savgol_window",
@@ -628,8 +620,7 @@ class VectorizedFilterEngine:
         clean_data = signal.dropna()
         if len(clean_data) <= window:
             self.logger(
-                f"Warning: Signal too short for Savitzky-Golay filter "
-                f"(window={window})",
+                f"Warning: Signal too short for Savitzky-Golay filter " f"(window={window})",
             )
             return signal
 
@@ -651,7 +642,8 @@ class VectorizedFilterEngine:
         params: dict[str, Any],
     ) -> pd.Series:
         """Vectorized Gaussian filter."""
-        assert signal is not None, "signal must be provided"
+        if not (signal is not None):
+            raise ValueError("signal must be provided")
         sigma = self._safe_get_param(
             params,
             "gaussian_sigma",
@@ -688,7 +680,8 @@ class VectorizedFilterEngine:
         max_val: float | None = None,
     ) -> Any:
         """Safely extract and validate parameter."""
-        assert params is not None, "params must be provided"
+        if not (params is not None):
+            raise ValueError("params must be provided")
         value = params.get(key, default)
 
         # Convert string to float if possible
@@ -744,7 +737,8 @@ class VectorizedFilterEngine:
         - Phase-preserving option (zero-phase filtering)
         """
         # Extract parameters
-        assert signal is not None, "signal must be provided"
+        if not (signal is not None):
+            raise ValueError("signal must be provided")
         filter_type = params.get("filter_type", "FFT Low-pass")
         window_shape = params.get("fft_window_shape", DEFAULT_FFT_WINDOW_SHAPE)
         freq_low = self._safe_get_param(
@@ -783,8 +777,7 @@ class VectorizedFilterEngine:
                 sample_rate = self._calculate_sampling_rate(signal)
                 if sample_rate is None:
                     self.logger(
-                        "Warning: Cannot determine sample rate, using "
-                        "normalized frequencies",
+                        "Warning: Cannot determine sample rate, using " "normalized frequencies",
                     )
                     freq_unit = "normalized"
 
@@ -845,7 +838,8 @@ class VectorizedFilterEngine:
             Frequency domain filter coefficients
         """
         # Create frequency array
-        assert filter_type is not None, "filter_type must be provided"
+        if not (filter_type is not None):
+            raise ValueError("filter_type must be provided")
         freqs = np.fft.fftfreq(n_samples)
         freqs = np.abs(freqs)  # Use positive frequencies only
 
@@ -868,9 +862,7 @@ class VectorizedFilterEngine:
             filter_response[transition_mask] = 0.5 * (
                 1
                 - np.cos(
-                    np.pi
-                    * (freqs[transition_mask] - freq_high + transition_bw)
-                    / transition_bw,
+                    np.pi * (freqs[transition_mask] - freq_high + transition_bw) / transition_bw,
                 )
             )
 
@@ -882,9 +874,7 @@ class VectorizedFilterEngine:
             filter_response[low_transition] = 0.5 * (
                 1
                 + np.cos(
-                    np.pi
-                    * (freqs[low_transition] - freq_low + transition_bw)
-                    / transition_bw,
+                    np.pi * (freqs[low_transition] - freq_low + transition_bw) / transition_bw,
                 )
             )
             filter_response[high_transition] = 0.5 * (
@@ -902,9 +892,7 @@ class VectorizedFilterEngine:
             filter_response[high_transition] = 0.5 * (
                 1
                 + np.cos(
-                    np.pi
-                    * (freqs[high_transition] - freq_high + transition_bw)
-                    / transition_bw,
+                    np.pi * (freqs[high_transition] - freq_high + transition_bw) / transition_bw,
                 )
             )
 
@@ -920,7 +908,8 @@ class VectorizedFilterEngine:
         window_shape: str,
     ) -> np.ndarray[Any, Any]:
         """Apply window function to smooth frequency response."""
-        assert filter_response is not None, "filter_response must be provided"
+        if not (filter_response is not None):
+            raise ValueError("filter_response must be provided")
         n = len(filter_response)
 
         if window_shape == "Gaussian":
@@ -977,7 +966,8 @@ class VectorizedFilterEngine:
             Filtered signal data
         """
         # Ensure filter coefficients match signal length
-        assert signal_data is not None, "signal_data must be provided"
+        if not (signal_data is not None):
+            raise ValueError("signal_data must be provided")
         if len(filter_coeffs) != len(signal_data):
             # Interpolate filter coefficients to match signal length
             old_indices = np.linspace(0, len(filter_coeffs) - 1, len(filter_coeffs))
@@ -1082,7 +1072,8 @@ class FilterEngine(VectorizedFilterEngine):
         signal_name: str = "",
     ) -> pd.Series:
         """Apply filter to a single signal (backward compatibility)."""
-        assert signal is not None, "signal must be provided"
+        if not (signal is not None):
+            raise ValueError("signal must be provided")
         return self._apply_single_filter(signal, filter_type, params, signal_name)
 
 
@@ -1095,6 +1086,7 @@ def apply_filter(
     logger: Callable[..., Any] | None = None,
 ) -> pd.Series:
     """Convenience function to apply a filter to a signal."""
-    assert signal is not None, "signal must be provided"
+    if not (signal is not None):
+        raise ValueError("signal must be provided")
     engine = VectorizedFilterEngine(logger)
     return engine._apply_single_filter(signal, filter_type, params, signal_name)

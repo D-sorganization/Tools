@@ -120,7 +120,8 @@ class URDFWriter:
 
     def _write_link(self, link: Link, level: int) -> list[str]:
         """Generate XML for a link."""
-        assert link is not None, "link must be provided"
+        if not (link is not None):
+            raise ValueError("link must be provided")
         lines: list[str] = []
         indent = self.indent * level
         indent2 = self.indent * (level + 1)
@@ -132,8 +133,7 @@ class URDFWriter:
         lines.append(f"{indent2}<inertial>")
         com = link.inertia.center_of_mass
         lines.append(
-            f'{indent3}<origin xyz="{com[0]:.6g} {com[1]:.6g} {com[2]:.6g}" '
-            f'rpy="0 0 0"/>'
+            f'{indent3}<origin xyz="{com[0]:.6g} {com[1]:.6g} {com[2]:.6g}" ' f'rpy="0 0 0"/>'
         )
         lines.append(f'{indent3}<mass value="{link.inertia.mass:.6g}"/>')
         lines.append(
@@ -178,7 +178,8 @@ class URDFWriter:
 
     def _write_joint(self, joint: Joint, level: int) -> list[str]:
         """Generate XML for a joint."""
-        assert joint is not None, "joint must be provided"
+        if not (joint is not None):
+            raise ValueError("joint must be provided")
         lines: list[str] = []
         indent = self.indent * level
         indent2 = self.indent * (level + 1)
@@ -188,9 +189,7 @@ class URDFWriter:
         if joint_type in ("gimbal", "universal"):
             joint_type = "revolute"
 
-        lines.append(
-            f'{indent}<joint name="{self._escape(joint.name)}" type="{joint_type}">'
-        )
+        lines.append(f'{indent}<joint name="{self._escape(joint.name)}" type="{joint_type}">')
 
         # Parent and child
         lines.append(f'{indent2}<parent link="{self._escape(joint.parent)}"/>')
@@ -236,7 +235,8 @@ class URDFWriter:
 
     def _write_geometry(self, geometry: Geometry, level: int) -> list[str]:
         """Generate XML for geometry."""
-        assert geometry is not None, "geometry must be provided"
+        if not (geometry is not None):
+            raise ValueError("geometry must be provided")
         lines: list[str] = []
         indent = self.indent * level
         indent2 = self.indent * (level + 1)
@@ -247,9 +247,7 @@ class URDFWriter:
 
         if geometry.geometry_type == GeometryType.BOX:
             size = geometry.dimensions
-            lines.append(
-                f'{indent2}<box size="{size[0]:.6g} {size[1]:.6g} {size[2]:.6g}"/>'
-            )
+            lines.append(f'{indent2}<box size="{size[0]:.6g} {size[1]:.6g} {size[2]:.6g}"/>')
         elif geometry.geometry_type == GeometryType.CYLINDER:
             lines.append(
                 f'{indent2}<cylinder radius="{geometry.dimensions[0]:.6g}" '
@@ -277,7 +275,8 @@ class URDFWriter:
 
     def _write_material_definition(self, material: Material, level: int) -> list[str]:
         """Generate XML for material definition."""
-        assert material is not None, "material must be provided"
+        if not (material is not None):
+            raise ValueError("material must be provided")
         lines: list[str] = []
         indent = self.indent * level
         indent2 = self.indent * (level + 1)
@@ -285,13 +284,10 @@ class URDFWriter:
         lines.append(f'{indent}<material name="{self._escape(material.name)}">')
         rgba = material.color
         lines.append(
-            f'{indent2}<color rgba="{rgba[0]:.4g} {rgba[1]:.4g} '
-            f'{rgba[2]:.4g} {rgba[3]:.4g}"/>'
+            f'{indent2}<color rgba="{rgba[0]:.4g} {rgba[1]:.4g} ' f'{rgba[2]:.4g} {rgba[3]:.4g}"/>'
         )
         if material.texture:
-            lines.append(
-                f'{indent2}<texture filename="{self._escape(material.texture)}"/>'
-            )
+            lines.append(f'{indent2}<texture filename="{self._escape(material.texture)}"/>')
         lines.append(f"{indent}</material>")
 
         return lines
@@ -306,7 +302,8 @@ class URDFWriter:
         first definition wins; subsequent conflicting definitions are
         logged at WARNING level.
         """
-        assert links is not None, "links must be provided"
+        if not (links is not None):
+            raise ValueError("links must be provided")
         materials: dict[str, Material] = {}
 
         # Add materials from links — detect color collisions
@@ -339,12 +336,11 @@ class URDFWriter:
 
         return materials
 
-    def _sort_links_by_hierarchy(
-        self, links: list[Link], joints: list[Joint]
-    ) -> list[Link]:
+    def _sort_links_by_hierarchy(self, links: list[Link], joints: list[Joint]) -> list[Link]:
         """Sort links so parents come before children."""
         # Build parent map
-        assert links is not None, "links must be provided"
+        if not (links is not None):
+            raise ValueError("links must be provided")
         parent_map: dict[str, str | None] = {}
         for joint in joints:
             parent_map[joint.child] = joint.parent
@@ -382,7 +378,8 @@ class URDFWriter:
         self, links: list[Link], joints: list[Joint]
     ) -> tuple[list[Link], list[Joint]]:
         """Expand composite joints (gimbal, universal) to multiple revolute joints."""
-        assert links is not None, "links must be provided"
+        if not (links is not None):
+            raise ValueError("links must be provided")
         if not self.expand_composite_joints:
             return links, joints
 
@@ -397,9 +394,7 @@ class URDFWriter:
                 new_joints.extend(revolute_joints)
             elif joint.joint_type == JointType.UNIVERSAL:
                 # Expand to 2 revolute joints
-                intermediate_links, revolute_joints = self._expand_universal_joint(
-                    joint
-                )
+                intermediate_links, revolute_joints = self._expand_universal_joint(joint)
                 new_links.extend(intermediate_links)
                 new_joints.extend(revolute_joints)
             else:
@@ -410,14 +405,11 @@ class URDFWriter:
     def _expand_gimbal_joint(self, joint: Joint) -> tuple[list[Link], list[Joint]]:
         """Expand gimbal joint to 3 revolute joints."""
         # Default axes: Z-Y-X Euler sequence
-        assert joint is not None, "joint must be provided"
+        if not (joint is not None):
+            raise ValueError("joint must be provided")
         default_axes = [(0, 0, 1), (0, 1, 0), (1, 0, 0)]
-        axes = self._normalize_composite_axes(
-            joint.name, joint.composite_axes, default_axes
-        )
-        limits = self._normalize_composite_limits(
-            joint.composite_limits, joint.limits, 3
-        )
+        axes = self._normalize_composite_axes(joint.name, joint.composite_axes, default_axes)
+        limits = self._normalize_composite_limits(joint.composite_limits, joint.limits, 3)
 
         intermediate_links: list[Link] = []
         revolute_joints: list[Joint] = []
@@ -468,14 +460,11 @@ class URDFWriter:
     def _expand_universal_joint(self, joint: Joint) -> tuple[list[Link], list[Joint]]:
         """Expand universal joint to 2 revolute joints."""
         # Default axes: perpendicular
-        assert joint is not None, "joint must be provided"
+        if not (joint is not None):
+            raise ValueError("joint must be provided")
         default_axes = [(1, 0, 0), (0, 1, 0)]
-        axes = self._normalize_composite_axes(
-            joint.name, joint.composite_axes, default_axes
-        )
-        limits = self._normalize_composite_limits(
-            joint.composite_limits, joint.limits, 2
-        )
+        axes = self._normalize_composite_axes(joint.name, joint.composite_axes, default_axes)
+        limits = self._normalize_composite_limits(joint.composite_limits, joint.limits, 2)
 
         intermediate_links: list[Link] = []
         revolute_joints: list[Joint] = []
@@ -529,13 +518,9 @@ class URDFWriter:
         link_names = {link.name for link in links}
         for joint in joints:
             if not isinstance(joint.parent, str) or not joint.parent.strip():
-                raise ValueError(
-                    f"Joint '{joint.name}' must define a non-empty parent link"
-                )
+                raise ValueError(f"Joint '{joint.name}' must define a non-empty parent link")
             if not isinstance(joint.child, str) or not joint.child.strip():
-                raise ValueError(
-                    f"Joint '{joint.name}' must define a non-empty child link"
-                )
+                raise ValueError(f"Joint '{joint.name}' must define a non-empty child link")
             if joint.parent not in link_names:
                 raise ValueError(
                     f"Joint '{joint.name}' references unknown parent link '{joint.parent}'"
@@ -591,7 +576,8 @@ class URDFWriter:
         defaults: list[tuple[float, float, float]],
     ) -> list[tuple[float, float, float]]:
         """Return a full axis list, replacing missing entries with defaults."""
-        assert joint_name is not None, "joint_name must be provided"
+        if not (joint_name is not None):
+            raise ValueError("joint_name must be provided")
         normalized: list[tuple[float, float, float]] = []
         source = list(axes or [])
 
@@ -614,7 +600,8 @@ class URDFWriter:
         dof_count: int,
     ) -> list[JointLimits]:
         """Return a full limit list, replacing missing entries with defaults."""
-        assert dof_count is not None, "dof_count must be provided"
+        if not (dof_count is not None):
+            raise ValueError("dof_count must be provided")
         normalized: list[JointLimits] = []
         source = list(composite_limits or [])
 
@@ -639,20 +626,12 @@ class URDFWriter:
                 )
         else:
             if "://" in normalized:
-                raise ValueError(
-                    f"Mesh filename '{mesh_filename}' uses an unsupported URI scheme"
-                )
-            if normalized.startswith("/") or URDFWriter._has_windows_drive_prefix(
-                normalized
-            ):
-                raise ValueError(
-                    f"Mesh filename '{mesh_filename}' must be relative or package://"
-                )
+                raise ValueError(f"Mesh filename '{mesh_filename}' uses an unsupported URI scheme")
+            if normalized.startswith("/") or URDFWriter._has_windows_drive_prefix(normalized):
+                raise ValueError(f"Mesh filename '{mesh_filename}' must be relative or package://")
             first_segment = normalized.split("/", 1)[0]
             if ":" in first_segment:
-                raise ValueError(
-                    f"Mesh filename '{mesh_filename}' uses an unsupported URI scheme"
-                )
+                raise ValueError(f"Mesh filename '{mesh_filename}' uses an unsupported URI scheme")
             candidate = normalized
 
         if any(part == ".." for part in PurePosixPath(candidate).parts):
@@ -663,9 +642,7 @@ class URDFWriter:
     @staticmethod
     def _has_windows_drive_prefix(path: str) -> bool:
         """Return True when the path starts with a Windows drive prefix."""
-        return (
-            len(path) >= 3 and path[0].isalpha() and path[1] == ":" and path[2] == "/"
-        )
+        return len(path) >= 3 and path[0].isalpha() and path[1] == ":" and path[2] == "/"
 
     def _escape(self, text: str) -> str:
         """Escape special XML characters."""

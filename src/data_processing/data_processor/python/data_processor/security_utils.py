@@ -253,7 +253,8 @@ def validate_and_check_file(
         SecurityError: If validation or size check fails
     """
     # Validate path
-    assert file_path is not None, "file_path must be provided"
+    if not (file_path is not None):
+        raise ValueError("file_path must be provided")
     validated_path = validate_file_path(
         file_path,
         allowed_extensions=allowed_extensions,

@@ -72,7 +72,8 @@ class AnalysisMixin:
         Returns:
             (folder_files, folder_size, folder_errors)
         """
-        assert folder is not None, "folder must be provided"
+        if not (folder is not None):
+            raise ValueError("folder must be provided")
         folder_files = 0
         folder_size = 0
         folder_errors = 0
@@ -87,9 +88,7 @@ class AnalysisMixin:
 
                 file_path = Path(root) / file
                 try:
-                    if not Path(file_path).exists() or not os.access(
-                        file_path, os.R_OK
-                    ):
+                    if not Path(file_path).exists() or not os.access(file_path, os.R_OK):
                         folder_errors += 1
                         continue
 
@@ -130,7 +129,8 @@ class AnalysisMixin:
         num_folders: int,
     ) -> list[str]:
         """Build the summary section of the analysis report."""
-        assert total_files is not None, "total_files must be provided"
+        if not (total_files is not None):
+            raise ValueError("total_files must be provided")
         report: list[str] = [
             "",
             f"TOTAL FILES: {total_files}",
@@ -156,8 +156,7 @@ class AnalysisMixin:
                 f"  Source folders processed: {num_folders}",
                 f"  Total folders analyzed: {num_folders}",
                 f"  Analysis timestamp: {datetime.now()}",
-                f"  File size limits: {MIN_FILE_SIZE_BYTES} bytes - "
-                f"{MAX_FILE_SIZE_MB} MB",
+                f"  File size limits: {MIN_FILE_SIZE_BYTES} bytes - " f"{MAX_FILE_SIZE_MB} MB",
             ],
         )
         return report
@@ -208,8 +207,7 @@ class AnalysisMixin:
                     )
                 else:
                     report.append(
-                        f"  Files: {folder_files}, "
-                        f"Size: {folder_size / (1024 * 1024):.1f} MB",
+                        f"  Files: {folder_files}, " f"Size: {folder_size / (1024 * 1024):.1f} MB",
                     )
             except (OSError, PermissionError) as e:
                 error_msg = f"Error accessing folder {folder}: {e}"
@@ -230,8 +228,7 @@ class AnalysisMixin:
         )
 
         logger.info(
-            f"Analysis completed: {total_files} files, "
-            f"{total_size / (1024 * 1024):.1f} MB",
+            f"Analysis completed: {total_files} files, " f"{total_size / (1024 * 1024):.1f} MB",
         )
         if analysis_errors:
             logger.warning(f"Analysis completed with {len(analysis_errors)} errors")
@@ -252,7 +249,8 @@ class AnalysisMixin:
             ValueError: If file size inputs are invalid
             Exception: If extension filter validation fails
         """
-        assert check_destination is not None, "check_destination must be provided"
+        if not (check_destination is not None):
+            raise ValueError("check_destination must be provided")
         from tkinter import messagebox
 
         if not self.source_folders:
@@ -284,8 +282,7 @@ class AnalysisMixin:
                     if ext and not ext.startswith("."):
                         messagebox.showwarning(
                             "Invalid Extension Format",
-                            f"Extension '{ext}' should start with a dot "
-                            "(e.g., '.txt').",
+                            f"Extension '{ext}' should start with a dot " "(e.g., '.txt').",
                         )
                         return False
             except (KeyError, ValueError, TypeError):
@@ -335,12 +332,8 @@ class AnalysisMixin:
                 os.W_OK,
             )
         else:
-            validation_results["destination_exists"] = (
-                True  # Not required for all modes
-            )
-            validation_results["destination_writable"] = (
-                True  # Not required for all modes
-            )
+            validation_results["destination_exists"] = True  # Not required for all modes
+            validation_results["destination_writable"] = True  # Not required for all modes
 
         # Check file size inputs
         try:

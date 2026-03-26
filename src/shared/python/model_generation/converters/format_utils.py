@@ -33,9 +33,7 @@ def detect_format(source: str | Path) -> ModelFormat:
         Detected ModelFormat
     """
     # Check if it's a file path
-    if isinstance(source, Path) or (
-        isinstance(source, str) and not source.strip().startswith("<")
-    ):
+    if isinstance(source, Path) or (isinstance(source, str) and not source.strip().startswith("<")):
         path = Path(source)
         suffix = path.suffix.lower()
 
@@ -89,7 +87,8 @@ def convert_urdf_to_mjcf(
     Example:
         mjcf = convert_urdf_to_mjcf("robot.urdf", output_path="robot.xml")
     """
-    assert source is not None, "source must be provided"
+    if not (source is not None):
+        raise ValueError("source must be provided")
     from model_generation.converters.mjcf_converter import MJCFConfig, MJCFConverter
 
     config = MJCFConfig(**config_options) if config_options else None
@@ -114,7 +113,8 @@ def convert_mjcf_to_urdf(
     Example:
         urdf = convert_mjcf_to_urdf("robot.xml", output_path="robot.urdf")
     """
-    assert source is not None, "source must be provided"
+    if not (source is not None):
+        raise ValueError("source must be provided")
     from model_generation.converters.mjcf_converter import MJCFConverter
 
     converter = MJCFConverter()
@@ -162,10 +162,7 @@ def convert(
             target_format = ModelFormat(target_format.lower())
         except ValueError:
             valid = [f.value for f in ModelFormat if f != ModelFormat.UNKNOWN]
-            msg = (
-                f"Unknown target format {target_format!r}. "
-                f"Valid formats: {', '.join(valid)}"
-            )
+            msg = f"Unknown target format {target_format!r}. " f"Valid formats: {', '.join(valid)}"
             raise ValueError(msg) from None
 
     # -- Preconditions (Design by Contract) --

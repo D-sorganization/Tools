@@ -71,7 +71,8 @@ class DataAugmenter(NoiseMixin, TransformsMixin):
         Returns:
             AugmentationResult with augmented data
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         data = np.asarray(data, dtype=np.float64)
         original_shape = data.shape
 
@@ -108,17 +109,14 @@ class DataAugmenter(NoiseMixin, TransformsMixin):
             augmentation_factor=augmented.shape[0] / original_shape[0],
         )
 
-    def _apply_augmentation(
-        self, data: np.ndarray, method: AugmentationMethod
-    ) -> np.ndarray:
+    def _apply_augmentation(self, data: np.ndarray, method: AugmentationMethod) -> np.ndarray:
         """Apply a single augmentation method."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         method_map = {
             AugmentationMethod.GAUSSIAN_NOISE: self.add_gaussian_noise,
             AugmentationMethod.UNIFORM_NOISE: self.add_uniform_noise,
-            AugmentationMethod.COLORED_NOISE: lambda d: self.add_colored_noise(
-                d, "pink"
-            ),
+            AugmentationMethod.COLORED_NOISE: lambda d: self.add_colored_noise(d, "pink"),
             AugmentationMethod.SALT_PEPPER: self.add_salt_pepper_noise,
             AugmentationMethod.TIME_WARP: self.time_warp,
             AugmentationMethod.MAGNITUDE_WARP: self.magnitude_warp,
@@ -144,7 +142,8 @@ class DataAugmenter(NoiseMixin, TransformsMixin):
 
     def _get_method_params(self, method: AugmentationMethod) -> dict[str, Any]:
         """Get parameters used for a method."""
-        assert method is not None, "method must be provided"
+        if not (method is not None):
+            raise ValueError("method must be provided")
         param_map: dict[AugmentationMethod, dict[str, Any]] = {
             AugmentationMethod.GAUSSIAN_NOISE: {"std": self.config.noise_std},
             AugmentationMethod.UNIFORM_NOISE: {"range": self.config.noise_range},
@@ -184,14 +183,13 @@ def augment_data(
         >>> result = augment_data(data, methods=['gaussian_noise', 'time_warp'])
         >>> print(f"Augmentation factor: {result.augmentation_factor:.1f}x")
     """
-    assert data is not None, "data must be provided"
+    if not (data is not None):
+        raise ValueError("data must be provided")
     if methods is None:
         method_enums = None
     else:
         method_map = {m.value: m for m in AugmentationMethod}
-        method_enums = [
-            method_map.get(m, AugmentationMethod.GAUSSIAN_NOISE) for m in methods
-        ]
+        method_enums = [method_map.get(m, AugmentationMethod.GAUSSIAN_NOISE) for m in methods]
 
     augmenter = DataAugmenter()
     return augmenter.augment(data, method_enums, n_augmentations)

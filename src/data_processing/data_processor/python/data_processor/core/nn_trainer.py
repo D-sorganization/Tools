@@ -80,7 +80,8 @@ class NeuralNetworkTrainer:
         Returns:
             Complete NetworkConfig
         """
-        assert input_features is not None, "input_features must be provided"
+        if not (input_features is not None):
+            raise ValueError("input_features must be provided")
         validated_layers = self._validate_create_config_inputs(
             input_features=input_features,
             output_features=output_features,
@@ -95,9 +96,7 @@ class NeuralNetworkTrainer:
             output_features=output_features,
             task_type=str(kwargs.get("task_type", "regression")),
         )
-        config_kwargs = {
-            key: value for key, value in kwargs.items() if hasattr(NetworkConfig, key)
-        }
+        config_kwargs = {key: value for key, value in kwargs.items() if hasattr(NetworkConfig, key)}
         config = NetworkConfig(
             network_type=network_type,
             layers=layers,
@@ -126,7 +125,8 @@ class NeuralNetworkTrainer:
         Returns:
             Dictionary with X_train, y_train, X_val, y_val, X_test, y_test
         """
-        assert df is not None, "df must be provided"
+        if not (df is not None):
+            raise ValueError("df must be provided")
         split_config = split_config or DataSplitConfig()
         feature_columns = self._validate_prepare_data_inputs(
             df=df,
@@ -136,9 +136,7 @@ class NeuralNetworkTrainer:
         )
         X, y = self._extract_model_arrays(df, feature_columns, target_columns)
         X, y = self._maybe_shuffle_data(X, y, split_config)
-        X_train, y_train, X_val, y_val, X_test, y_test = self._split_data(
-            X, y, split_config
-        )
+        X_train, y_train, X_val, y_val, X_test, y_test = self._split_data(X, y, split_config)
         X_train, X_val, X_test, y_train, y_val, y_test = self._normalize_train_val_test(
             X_train, X_val, X_test, y_train, y_val, y_test
         )
@@ -184,7 +182,8 @@ class NeuralNetworkTrainer:
         task_type: str,
     ) -> list[LayerConfig]:
         """Build hidden + output layers for requested architecture."""
-        assert network_type is not None, "network_type must be provided"
+        if not (network_type is not None):
+            raise ValueError("network_type must be provided")
         layers: list[LayerConfig] = []
         if network_type == NetworkType.MLP:
             self._append_mlp_layers(layers, hidden_layers, activation, dropout_rate)
@@ -193,9 +192,7 @@ class NeuralNetworkTrainer:
         elif network_type == NetworkType.CNN_1D:
             self._append_cnn_layers(layers, hidden_layers, activation)
         output_activation = (
-            ActivationFunction.LINEAR
-            if task_type == "regression"
-            else ActivationFunction.SOFTMAX
+            ActivationFunction.LINEAR if task_type == "regression" else ActivationFunction.SOFTMAX
         )
         layers.append(
             LayerConfig(
@@ -215,13 +212,9 @@ class NeuralNetworkTrainer:
     ) -> None:
         """Append dense/dropout blocks for MLP configuration."""
         for units in hidden_layers:
-            layers.append(
-                LayerConfig(layer_type="dense", units=units, activation=activation)
-            )
+            layers.append(LayerConfig(layer_type="dense", units=units, activation=activation))
             if dropout_rate > 0:
-                layers.append(
-                    LayerConfig(layer_type="dropout", dropout_rate=dropout_rate)
-                )
+                layers.append(LayerConfig(layer_type="dropout", dropout_rate=dropout_rate))
 
     def _append_rnn_layers(
         self,
@@ -231,7 +224,8 @@ class NeuralNetworkTrainer:
         dropout_rate: float,
     ) -> None:
         """Append recurrent/dropout blocks for LSTM/GRU configuration."""
-        assert layers is not None, "layers must be provided"
+        if not (layers is not None):
+            raise ValueError("layers must be provided")
         layer_type = "lstm" if network_type == NetworkType.LSTM else "gru"
         for index, units in enumerate(hidden_layers):
             layers.append(
@@ -242,9 +236,7 @@ class NeuralNetworkTrainer:
                 )
             )
             if dropout_rate > 0:
-                layers.append(
-                    LayerConfig(layer_type="dropout", dropout_rate=dropout_rate)
-                )
+                layers.append(LayerConfig(layer_type="dropout", dropout_rate=dropout_rate))
 
     def _append_cnn_layers(
         self,
@@ -253,7 +245,8 @@ class NeuralNetworkTrainer:
         activation: ActivationFunction,
     ) -> None:
         """Append convolution + dense blocks for 1D CNN configuration."""
-        assert layers is not None, "layers must be provided"
+        if not (layers is not None):
+            raise ValueError("layers must be provided")
         for filters in (32, 64, 128):
             layers.append(
                 LayerConfig(
@@ -265,9 +258,7 @@ class NeuralNetworkTrainer:
             )
         layers.append(LayerConfig(layer_type="flatten"))
         for units in hidden_layers:
-            layers.append(
-                LayerConfig(layer_type="dense", units=units, activation=activation)
-            )
+            layers.append(LayerConfig(layer_type="dense", units=units, activation=activation))
 
     def _validate_prepare_data_inputs(
         self,
@@ -282,18 +273,14 @@ class NeuralNetworkTrainer:
         if not target_columns:
             raise ValueError("target_columns must not be empty")
 
-        missing_targets = [
-            column for column in target_columns if column not in df.columns
-        ]
+        missing_targets = [column for column in target_columns if column not in df.columns]
         if missing_targets:
             raise ValueError(f"Unknown target columns: {missing_targets}")
         if split_config.train_ratio <= 0:
             raise ValueError("train_ratio must be positive")
         if split_config.val_ratio < 0 or split_config.test_ratio < 0:
             raise ValueError("val_ratio and test_ratio must be non-negative")
-        ratio_sum = (
-            split_config.train_ratio + split_config.val_ratio + split_config.test_ratio
-        )
+        ratio_sum = split_config.train_ratio + split_config.val_ratio + split_config.test_ratio
         if ratio_sum > 1.0:
             raise ValueError("split ratios must sum to 1.0 or less")
 
@@ -306,9 +293,7 @@ class NeuralNetworkTrainer:
             raise ValueError("feature_columns must not be empty")
         if set(resolved_features) & set(target_columns):
             raise ValueError("feature_columns and target_columns must not overlap")
-        missing_features = [
-            column for column in resolved_features if column not in df.columns
-        ]
+        missing_features = [column for column in resolved_features if column not in df.columns]
         if missing_features:
             raise ValueError(f"Unknown feature columns: {missing_features}")
         return resolved_features
@@ -330,7 +315,8 @@ class NeuralNetworkTrainer:
         self, X: np.ndarray, y: np.ndarray, split_config: DataSplitConfig
     ) -> tuple[np.ndarray, np.ndarray]:
         """Shuffle data using split config random seed when requested."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         if not split_config.shuffle:
             return X, y
         indices = np.random.default_rng(split_config.random_state).permutation(len(X))
@@ -340,7 +326,8 @@ class NeuralNetworkTrainer:
         self, X: np.ndarray, y: np.ndarray, split_config: DataSplitConfig
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Split arrays into train/validation/test partitions."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n = len(X)
         n_train = int(n * split_config.train_ratio)
         n_val = int(n * split_config.val_ratio)
@@ -365,7 +352,8 @@ class NeuralNetworkTrainer:
         y_test: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Normalize train/val/test arrays according to active config."""
-        assert X_train is not None, "X_train must be provided"
+        if not (X_train is not None):
+            raise ValueError("X_train must be provided")
         if self._config and self._config.normalize_inputs:
             X_train, X_val, X_test = self._normalize_features(X_train, X_val, X_test)
         if self._config and self._config.normalize_outputs:
@@ -379,7 +367,8 @@ class NeuralNetworkTrainer:
         X_test: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Normalize features using training statistics."""
-        assert X_train is not None, "X_train must be provided"
+        if not (X_train is not None):
+            raise ValueError("X_train must be provided")
         mean = np.mean(X_train, axis=0)
         std = np.std(X_train, axis=0)
         std[std == 0] = 1
@@ -400,7 +389,8 @@ class NeuralNetworkTrainer:
         y_test: np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Normalize targets using training statistics."""
-        assert y_train is not None, "y_train must be provided"
+        if not (y_train is not None):
+            raise ValueError("y_train must be provided")
         mean = np.mean(y_train, axis=0) if y_train.ndim > 1 else np.mean(y_train)
         std = np.std(y_train, axis=0) if y_train.ndim > 1 else np.std(y_train)
         if isinstance(std, np.ndarray):
@@ -428,26 +418,21 @@ class NeuralNetworkTrainer:
         config: NetworkConfig,
     ) -> tuple[list[float], list[float], float, int, int, list, list]:
         """Execute mini-batch training with early stopping."""
-        assert X_train is not None, "X_train must be provided"
+        if not (X_train is not None):
+            raise ValueError("X_train must be provided")
         train_losses, val_losses, best_val_loss, best_epoch, patience_counter = (
             self._initialize_training_state()
         )
 
         for epoch in range(config.epochs):
-            train_loss, weights, biases = self._run_epoch(
-                X_train, y_train, weights, biases, config
-            )
+            train_loss, weights, biases = self._run_epoch(X_train, y_train, weights, biases, config)
             train_losses.append(train_loss)
 
-            val_loss = self._calculate_validation_loss(
-                X_val, y_val, weights, biases, config
-            )
+            val_loss = self._calculate_validation_loss(X_val, y_val, weights, biases, config)
             val_losses.append(val_loss)
 
-            best_val_loss, best_epoch, patience_counter = (
-                self._update_early_stopping_state(
-                    val_loss, epoch, best_val_loss, best_epoch, patience_counter
-                )
+            best_val_loss, best_epoch, patience_counter = self._update_early_stopping_state(
+                val_loss, epoch, best_val_loss, best_epoch, patience_counter
             )
             if patience_counter >= config.early_stopping_patience:
                 logger.info("Early stopping at epoch %d", epoch)
@@ -478,7 +463,8 @@ class NeuralNetworkTrainer:
         config: NetworkConfig,
     ) -> tuple[float, list[np.ndarray | None], list[np.ndarray | None]]:
         """Run one training epoch and return average batch loss."""
-        assert X_train is not None, "X_train must be provided"
+        if not (X_train is not None):
+            raise ValueError("X_train must be provided")
         indices = np.random.permutation(len(X_train))
         batch_losses: list[float] = []
         for index in range(0, len(X_train), config.batch_size):
@@ -500,13 +486,12 @@ class NeuralNetworkTrainer:
         config: NetworkConfig,
     ) -> float:
         """Calculate validation loss for current model parameters."""
-        assert X_val is not None, "X_val must be provided"
+        if not (X_val is not None):
+            raise ValueError("X_val must be provided")
         activations = self._forward_pass(X_val, weights, biases, config)
         return self._mean_squared_error(activations[-1], y_val)
 
-    def _mean_squared_error(
-        self, predictions: np.ndarray, targets: np.ndarray
-    ) -> float:
+    def _mean_squared_error(self, predictions: np.ndarray, targets: np.ndarray) -> float:
         """Compute MSE loss with target shape aligned to predictions."""
         return float(np.mean((predictions - targets.reshape(predictions.shape)) ** 2))
 
@@ -519,7 +504,8 @@ class NeuralNetworkTrainer:
         patience_counter: int,
     ) -> tuple[float, int, int]:
         """Update early-stopping state after a validation step."""
-        assert val_loss is not None, "val_loss must be provided"
+        if not (val_loss is not None):
+            raise ValueError("val_loss must be provided")
         if val_loss < best_val_loss:
             return val_loss, epoch, 0
         return best_val_loss, best_epoch, patience_counter + 1
@@ -542,16 +528,15 @@ class NeuralNetworkTrainer:
         Returns:
             Tuple of (test_loss, predictions, actual_values)
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         if "X_test" not in data or len(data["X_test"]) == 0:
             return None, None, None
 
         test_activations = self._forward_pass(data["X_test"], weights, biases, config)
         predictions = test_activations[-1]
         actual_values = data["y_test"]
-        test_loss = float(
-            np.mean((predictions - actual_values.reshape(predictions.shape)) ** 2)
-        )
+        test_loss = float(np.mean((predictions - actual_values.reshape(predictions.shape)) ** 2))
         return test_loss, predictions, actual_values
 
     def train_simple(
@@ -586,9 +571,7 @@ class NeuralNetworkTrainer:
             best_epoch=training_state["best_epoch"],
             best_val_loss=training_state["best_val_loss"],
             final_train_loss=(
-                training_state["train_losses"][-1]
-                if training_state["train_losses"]
-                else 0
+                training_state["train_losses"][-1] if training_state["train_losses"] else 0
             ),
             final_val_loss=(
                 training_state["val_losses"][-1] if training_state["val_losses"] else 0
@@ -596,8 +579,7 @@ class NeuralNetworkTrainer:
             test_loss=test_loss,
             training_time_seconds=training_state["training_time"],
             stopped_early=(
-                training_state["patience_counter"]
-                >= resolved_config.early_stopping_patience
+                training_state["patience_counter"] >= resolved_config.early_stopping_patience
             ),
             predictions=predictions,
             actual_values=actual_values,
@@ -614,7 +596,8 @@ class NeuralNetworkTrainer:
         self, data: dict[str, np.ndarray], config: NetworkConfig
     ) -> dict[str, Any]:
         """Run model training and return state needed for result construction."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         weights, biases = self._initialize_weights(config, data["X_train"].shape[1])
         start_time = time.time()
         (
@@ -651,7 +634,8 @@ class NeuralNetworkTrainer:
         input_dim: int,
     ) -> tuple[list[np.ndarray | None], list[np.ndarray | None]]:
         """Initialize network weights using Xavier/He initialization."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         weights: list[np.ndarray | None] = []
         biases: list[np.ndarray | None] = []
 
@@ -681,7 +665,8 @@ class NeuralNetworkTrainer:
         config: NetworkConfig,
     ) -> list[np.ndarray]:
         """Forward pass through the network."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         activations = [X]
         current = X
 
@@ -710,7 +695,8 @@ class NeuralNetworkTrainer:
         config: NetworkConfig,
     ) -> list[tuple[np.ndarray | None, np.ndarray | None]]:
         """Backward pass to compute gradients."""
-        assert activations is not None, "activations must be provided"
+        if not (activations is not None):
+            raise ValueError("activations must be provided")
         gradients: list[tuple[np.ndarray | None, np.ndarray | None]] = []
         m = len(y_true)
 
@@ -761,7 +747,8 @@ class NeuralNetworkTrainer:
         config: NetworkConfig,
     ) -> tuple[list[np.ndarray | None], list[np.ndarray | None]]:
         """Update weights using gradient descent."""
-        assert weights is not None, "weights must be provided"
+        if not (weights is not None):
+            raise ValueError("weights must be provided")
         lr = config.learning_rate
 
         for i, (dW, db) in enumerate(gradients):
@@ -772,9 +759,7 @@ class NeuralNetworkTrainer:
 
         return weights, biases
 
-    def _apply_activation(
-        self, z: np.ndarray, activation: ActivationFunction
-    ) -> np.ndarray:
+    def _apply_activation(self, z: np.ndarray, activation: ActivationFunction) -> np.ndarray:
         """Apply activation function."""
         if activation == ActivationFunction.RELU:
             return np.maximum(0, z)
@@ -792,9 +777,7 @@ class NeuralNetworkTrainer:
         else:
             return z
 
-    def _activation_derivative(
-        self, a: np.ndarray, activation: ActivationFunction
-    ) -> np.ndarray:
+    def _activation_derivative(self, a: np.ndarray, activation: ActivationFunction) -> np.ndarray:
         """Compute activation derivative."""
         if activation == ActivationFunction.RELU:
             return (a > 0).astype(float)

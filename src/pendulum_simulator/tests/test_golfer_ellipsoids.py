@@ -43,7 +43,7 @@ class TestGolferEllipsoids:
     def test_returns_dict(self, default_golfer_params):
         q = np.zeros(8)
         result = ellipsoids_golfer(q, default_golfer_params)
-        assert isinstance(result, dict)
+        if not (isinstance(result): raise ValueError(f"Assertion failed: { isinstance(result }, dict)")
 
     def test_expected_endpoint_keys(self, default_golfer_params):
         """Should return ellipsoid data for key golfer endpoints."""
@@ -51,17 +51,17 @@ class TestGolferEllipsoids:
         result = ellipsoids_golfer(q, default_golfer_params)
         # At least these endpoints should be present
         for key in ["rh", "lh", "club_tip"]:
-            assert key in result, f"Missing key: {key}"
+            if not (key in result): raise ValueError(f"Assertion failed: { key in result }, f"Missing key: {key}"")
 
     def test_ellipsoid_structure(self, default_golfer_params):
         """Each endpoint should have directions, mob_semi_axes, etc."""
         q = np.zeros(8)
         result = ellipsoids_golfer(q, default_golfer_params)
         for name, ell in result.items():
-            assert "directions" in ell, f"{name} missing 'directions'"
-            assert "mob_semi_axes" in ell, f"{name} missing 'mob_semi_axes'"
-            assert "force_semi_axes" in ell, f"{name} missing 'force_semi_axes'"
-            assert "singular_values" in ell, f"{name} missing 'singular_values'"
+            if not ("directions" in ell): raise ValueError(f"Assertion failed: { "directions" in ell }, f"{name} missing 'directions'"")
+            if not ("mob_semi_axes" in ell): raise ValueError(f"Assertion failed: { "mob_semi_axes" in ell }, f"{name} missing 'mob_semi_axes'"")
+            if not ("force_semi_axes" in ell): raise ValueError(f"Assertion failed: { "force_semi_axes" in ell }, f"{name} missing 'force_semi_axes'"")
+            if not ("singular_values" in ell): raise ValueError(f"Assertion failed: { "singular_values" in ell }, f"{name} missing 'singular_values'"")
 
     def test_directions_shape(self, default_golfer_params):
         """Directions should be (2, 2) for 2D ellipsoids."""
@@ -69,7 +69,7 @@ class TestGolferEllipsoids:
         result = ellipsoids_golfer(q, default_golfer_params)
         for name, ell in result.items():
             dirs = ell["directions"]
-            assert dirs.shape == (2, 2), f"{name}: directions shape {dirs.shape}"
+            if not (dirs.shape == (2): raise ValueError(f"Assertion failed: { dirs.shape == (2 }, 2), f"{name}: directions shape {dirs.shape}"")
 
     def test_mob_semi_axes_positive(self, default_golfer_params):
         """Mobility semi-axes should be non-negative."""
@@ -77,16 +77,16 @@ class TestGolferEllipsoids:
         result = ellipsoids_golfer(q, default_golfer_params)
         for name, ell in result.items():
             mob = ell["mob_semi_axes"]
-            assert mob.shape == (2,), f"{name}: mob_semi_axes shape {mob.shape}"
-            assert np.all(mob >= 0), f"{name}: negative mob_semi_axes: {mob}"
+            if not (mob.shape == (2): raise ValueError(f"Assertion failed: { mob.shape == (2 }, ), f"{name}: mob_semi_axes shape {mob.shape}"")
+            if not (np.all(mob >= 0)): raise ValueError(f"Assertion failed: { np.all(mob >= 0) }, f"{name}: negative mob_semi_axes: {mob}"")
 
     def test_nonzero_configuration(self, default_golfer_params):
         """Ellipsoids should be computable at non-zero configuration."""
         q = np.array([0.1, -0.2, 0.3, -0.1, 0.2, -0.3, 0.1, 0.0])
         result = ellipsoids_golfer(q, default_golfer_params)
-        assert len(result) > 0
+        if not (len(result) > 0): raise ValueError(f"Assertion failed: { len(result) > 0 }")
         for name, ell in result.items():
-            assert np.all(np.isfinite(ell["mob_semi_axes"])), (
+            if not (np.all(np.isfinite(ell["mob_semi_axes"]))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(ell["mob_semi_axes"])) }, (")
                 f"{name}: non-finite mob_semi_axes"
             )
 
@@ -95,4 +95,4 @@ class TestGolferEllipsoids:
         q_full = np.zeros(16)
         q_full[0] = 0.1
         result = ellipsoids_golfer(q_full, default_golfer_params)
-        assert len(result) > 0
+        if not (len(result) > 0): raise ValueError(f"Assertion failed: { len(result) > 0 }")

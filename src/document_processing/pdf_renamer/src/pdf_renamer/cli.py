@@ -18,7 +18,8 @@ logger = logging.getLogger("pdf_renamer")
 
 def apply_style(title: str, style: str) -> str:
     """Sanitize *title* and convert it to the requested naming *style*."""
-    assert title is not None, "title must be provided"
+    if not (title is not None):
+        raise ValueError("title must be provided")
     safe_title = sanitize_filename(title)
     if style == "snake_case":
         return safe_title.lower().replace(" ", "_")
@@ -89,9 +90,7 @@ def process_file(
 
 def main() -> None:
     """CLI entry point: parse arguments and batch-rename PDFs in a directory."""
-    parser = argparse.ArgumentParser(
-        description="Advanced PDF Renamer with AI Fallback"
-    )
+    parser = argparse.ArgumentParser(description="Advanced PDF Renamer with AI Fallback")
     parser.add_argument("directory", type=Path, help="Target directory")
     parser.add_argument("--db", type=Path, default=Path("pdf_titles.sqlite"))
     parser.add_argument(
@@ -100,9 +99,7 @@ def main() -> None:
         default="gemini",
         help="LLM provider for fallback",
     )
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Preview changes without renaming"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Preview changes without renaming")
     parser.add_argument(
         "--style",
         choices=["standard", "snake_case", "kebab_case"],

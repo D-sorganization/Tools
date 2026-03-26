@@ -130,7 +130,8 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
         **kwargs: Any,
     ) -> GeneratedMeshResult:
         """Generate primitive meshes for body segments."""
-        assert params is not None, "params must be provided"
+        if not (params is not None):
+            raise ValueError("params must be provided")
         if not self.is_available:
             return GeneratedMeshResult(
                 success=False,
@@ -160,9 +161,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
 
         for segment_name, segment_def in HUMANOID_SEGMENTS.items():
             try:
-                dims = dimensions.get(
-                    segment_name, {"length": 0.1, "width": 0.05, "depth": 0.05}
-                )
+                dims = dimensions.get(segment_name, {"length": 0.1, "width": 0.05, "depth": 0.05})
                 length = dims["length"]
                 width = dims["width"]
                 depth = dims["depth"]
@@ -174,15 +173,11 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
                     mesh = trimesh.creation.icosphere(radius=length / 2, subdivisions=2)
                 elif geom_type == GeometryType.CYLINDER:
                     radius = (width + depth) / 4
-                    mesh = trimesh.creation.cylinder(
-                        radius=radius, height=length, sections=16
-                    )
+                    mesh = trimesh.creation.cylinder(radius=radius, height=length, sections=16)
                 elif geom_type == GeometryType.CAPSULE:
                     radius = (width + depth) / 4
                     cyl_height = max(0.01, length - 2 * radius)
-                    mesh = trimesh.creation.capsule(
-                        radius=radius, height=cyl_height, count=[8, 8]
-                    )
+                    mesh = trimesh.creation.capsule(radius=radius, height=cyl_height, count=[8, 8])
                 else:  # BOX or default
                     mesh = trimesh.creation.box(extents=(width, depth, length))
 
@@ -267,7 +262,8 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
         Uses MakeHuman's Python API when available, or falls back to
         loading pre-made MakeHuman exports with vertex group segmentation.
         """
-        assert params is not None, "params must be provided"
+        if not (params is not None):
+            raise ValueError("params must be provided")
         if not self.is_available:
             return GeneratedMeshResult(
                 success=False,
@@ -285,17 +281,13 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
 
         # Try to use MakeHuman scripting API
         try:
-            return self._generate_via_api(
-                params, modifiers, visual_dir, collision_dir, **kwargs
-            )
+            return self._generate_via_api(params, modifiers, visual_dir, collision_dir, **kwargs)
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.warning(f"MakeHuman API generation failed: {e}")
 
         # Fallback: Try to load pre-exported MakeHuman mesh
         try:
-            return self._generate_from_presets(
-                params, visual_dir, collision_dir, **kwargs
-            )
+            return self._generate_from_presets(params, visual_dir, collision_dir, **kwargs)
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.warning(f"MakeHuman preset loading failed: {e}")
 
@@ -316,16 +308,15 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
 
         Requires MakeHuman to be installed and accessible via Python.
         """
-        assert params is not None, "params must be provided"
+        if not (params is not None):
+            raise ValueError("params must be provided")
         import subprocess
         import tempfile
 
         # Create MakeHuman script
         script_content = self._create_makehuman_script(modifiers, visual_dir)
 
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".py", delete=False
-        ) as script_file:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as script_file:
             script_file.write(script_content)
             script_path = script_file.name
 
@@ -353,11 +344,10 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
         finally:
             Path(script_path).unlink(missing_ok=True)
 
-    def _create_makehuman_script(
-        self, modifiers: dict[str, float], output_dir: Path
-    ) -> str:
+    def _create_makehuman_script(self, modifiers: dict[str, float], output_dir: Path) -> str:
         """Create a MakeHuman Python script for mesh generation."""
-        assert modifiers is not None, "modifiers must be provided"
+        if not (modifiers is not None):
+            raise ValueError("modifiers must be provided")
         script = f"""
 import mh
 import human
@@ -429,9 +419,7 @@ generate_human()
 
         return self._segment_mesh_from_groups(mesh, visual_dir, collision_dir, params)
 
-    def _segment_mesh(
-        self, visual_dir: Path, collision_dir: Path
-    ) -> GeneratedMeshResult:
+    def _segment_mesh(self, visual_dir: Path, collision_dir: Path) -> GeneratedMeshResult:
         """Segment a generated mesh by vertex groups."""
         try:
             import trimesh
@@ -460,7 +448,8 @@ generate_human()
         vertex_groups: dict[str, list[int]] | None = None,
     ) -> GeneratedMeshResult:
         """Segment mesh into body parts using vertex groups or geometry."""
-        assert visual_dir is not None, "visual_dir must be provided"
+        if not (visual_dir is not None):
+            raise ValueError("visual_dir must be provided")
         from humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
@@ -522,7 +511,8 @@ generate_human()
         valid_segments: Any,
     ) -> tuple[dict[str, Path], dict[str, Path]]:
         """Segment mesh using vertex group indices."""
-        assert visual_dir is not None, "visual_dir must be provided"
+        if not (visual_dir is not None):
+            raise ValueError("visual_dir must be provided")
         mesh_paths: dict[str, Path] = {}
         collision_paths: dict[str, Path] = {}
 
@@ -559,7 +549,8 @@ generate_human()
         valid_segments: Any,
     ) -> tuple[dict[str, Path], dict[str, Path]]:
         """Segment mesh using bounding-box z-range slicing."""
-        assert visual_dir is not None, "visual_dir must be provided"
+        if not (visual_dir is not None):
+            raise ValueError("visual_dir must be provided")
         mesh_paths: dict[str, Path] = {}
         collision_paths: dict[str, Path] = {}
 
@@ -608,7 +599,8 @@ generate_human()
 
     def _parse_obj_vertex_groups(self, obj_file: Path) -> dict[str, list[int]]:
         """Parse vertex groups from OBJ file."""
-        assert obj_file is not None, "obj_file must be provided"
+        if not (obj_file is not None):
+            raise ValueError("obj_file must be provided")
         groups: dict[str, list[int]] = {}
         current_group = "default"
         vertex_index = 0
@@ -639,7 +631,8 @@ generate_human()
     def _convert_params_to_makehuman(self, params: BodyParameters) -> dict[str, float]:
         """Convert BodyParameters to MakeHuman modifier values."""
         # MakeHuman uses modifiers in range [-1, 1] or [0, 1]
-        assert params is not None, "params must be provided"
+        if not (params is not None):
+            raise ValueError("params must be provided")
         modifiers = {}
 
         # Height is handled by overall scale
@@ -650,9 +643,7 @@ generate_human()
         modifiers["macrodetails/Gender"] = params.get_effective_gender_factor()
 
         # Age (MakeHuman: range depends on modifier)
-        modifiers["macrodetails/Age"] = min(
-            1.0, max(0.0, params.appearance.age_years / 80.0)
-        )
+        modifiers["macrodetails/Age"] = min(1.0, max(0.0, params.appearance.age_years / 80.0))
 
         # Muscularity (MakeHuman: muscle definition)
         modifiers["macrodetails-universal/Muscle"] = params.muscularity
@@ -661,9 +652,7 @@ generate_human()
         modifiers["macrodetails-universal/Weight"] = params.body_fat_factor
 
         # Proportions
-        modifiers["macrodetails-proportions/BodyProportions"] = (
-            params.torso_length_factor - 1.0
-        )
+        modifiers["macrodetails-proportions/BodyProportions"] = params.torso_length_factor - 1.0
 
         return modifiers
 
@@ -714,7 +703,8 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
 
         We map our BodyParameters to SMPL-X betas and pose.
         """
-        assert params is not None, "params must be provided"
+        if not (params is not None):
+            raise ValueError("params must be provided")
         if not self.is_available:
             return GeneratedMeshResult(
                 success=False,
@@ -781,9 +771,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
             mesh.export(str(full_mesh_path))
 
             # Segment mesh using SMPL-X vertex groups
-            return self._segment_smplx_mesh(
-                mesh, model, visual_dir, collision_dir, params
-            )
+            return self._segment_smplx_mesh(mesh, model, visual_dir, collision_dir, params)
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error(f"SMPL-X generation failed: {e}")
@@ -822,7 +810,8 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         - beta[4]: Hip width
         - etc.
         """
-        assert params is not None, "params must be provided"
+        if not (params is not None):
+            raise ValueError("params must be provided")
         import numpy as np
 
         betas = np.zeros(10)
@@ -886,7 +875,8 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         params: BodyParameters,
     ) -> GeneratedMeshResult:
         """Segment SMPL-X mesh into body parts using joint positions."""
-        assert visual_dir is not None, "visual_dir must be provided"
+        if not (visual_dir is not None):
+            raise ValueError("visual_dir must be provided")
         import numpy as np
         from humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
@@ -915,9 +905,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.warning(f"Vertex group extraction failed: {e}")
-            return self._fallback_z_segmentation(
-                mesh, visual_dir, collision_dir, params
-            )
+            return self._fallback_z_segmentation(mesh, visual_dir, collision_dir, params)
 
         return GeneratedMeshResult(
             success=len(mesh_paths) > 0,
@@ -939,7 +927,8 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         valid_segments: Any,
     ) -> tuple[dict[str, Path], dict[str, Path]]:
         """Extract and export individual segment meshes from SMPL-X vertex groups."""
-        assert visual_dir is not None, "visual_dir must be provided"
+        if not (visual_dir is not None):
+            raise ValueError("visual_dir must be provided")
         mesh_paths: dict[str, Path] = {}
         collision_paths: dict[str, Path] = {}
 
@@ -950,9 +939,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
             try:
                 vertex_set = set(vertices)
                 face_mask = [
-                    i
-                    for i, face in enumerate(mesh.faces)
-                    if any(v in vertex_set for v in face)
+                    i for i, face in enumerate(mesh.faces) if any(v in vertex_set for v in face)
                 ]
 
                 if not face_mask:
@@ -982,7 +969,8 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
         params: BodyParameters,
     ) -> GeneratedMeshResult:
         """Fallback segmentation using z-coordinate slicing."""
-        assert visual_dir is not None, "visual_dir must be provided"
+        if not (visual_dir is not None):
+            raise ValueError("visual_dir must be provided")
         from humanoid_character_builder.core.segment_definitions import (
             HUMANOID_SEGMENTS,
         )
@@ -1040,9 +1028,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
                 # Find faces using these vertices
                 vertex_set = set(vertex_indices)
                 face_mask = [
-                    i
-                    for i, face in enumerate(mesh.faces)
-                    if any(v in vertex_set for v in face)
+                    i for i, face in enumerate(mesh.faces) if any(v in vertex_set for v in face)
                 ]
 
                 if not face_mask:

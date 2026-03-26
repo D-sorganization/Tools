@@ -262,9 +262,7 @@ class BodyParameters:
         """
         return self.segment_overrides.get(segment_name, SegmentParameters())
 
-    def set_segment_override(
-        self, segment_name: str, params: SegmentParameters
-    ) -> None:
+    def set_segment_override(self, segment_name: str, params: SegmentParameters) -> None:
         """Set override parameters for a specific segment."""
         self.segment_overrides[segment_name] = params
 
@@ -307,7 +305,8 @@ class BodyParameters:
     def from_dict(cls, data: dict[str, Any]) -> BodyParameters:
         """Create from dictionary."""
         # Handle enum conversions
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         if "build_type" in data and isinstance(data["build_type"], str):
             data["build_type"] = BuildType(data["build_type"])
         if "gender_model" in data and isinstance(data["gender_model"], str):
@@ -369,9 +368,7 @@ class BodyParameters:
                         f"{field_name} should be between {min_value:.1f} and {max_value:.1f}"
                     )
                 else:
-                    errors.append(
-                        f"{field_name} is unusually large (> {max_value:.1f})"
-                    )
+                    errors.append(f"{field_name} is unusually large (> {max_value:.1f})")
 
         return errors
 
@@ -410,9 +407,7 @@ class BodyParameters:
 
 
 # Convenience factory functions
-def create_athletic_body(
-    height_m: float = 1.80, mass_kg: float = 80.0
-) -> BodyParameters:
+def create_athletic_body(height_m: float = 1.80, mass_kg: float = 80.0) -> BodyParameters:
     """Create athletic body type parameters."""
     return BodyParameters(
         height_m=height_m,
@@ -425,9 +420,7 @@ def create_athletic_body(
     )
 
 
-def create_average_body(
-    height_m: float = 1.75, mass_kg: float = 75.0
-) -> BodyParameters:
+def create_average_body(height_m: float = 1.75, mass_kg: float = 75.0) -> BodyParameters:
     """Create average body type parameters."""
     return BodyParameters(
         height_m=height_m,

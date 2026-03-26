@@ -60,7 +60,8 @@ class NeuralNetworkScriptExporter:
         include_evaluation: bool = True,
     ) -> Path:
         """Export training script for a specific framework."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         output_path = self._validate_script_output_path(output_path)
         validated_data_path = self._validate_data_path(data_path)
         script = self._build_framework_script(
@@ -82,7 +83,8 @@ class NeuralNetworkScriptExporter:
         output_path: Path | str,
     ) -> Path:
         """Export network configuration to JSON."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         output_path = self._validate_config_output_path(output_path)
         config_dict = config.to_dict()
         config_dict["normalization_params"] = {
@@ -146,7 +148,8 @@ class NeuralNetworkScriptExporter:
         include_evaluation: bool,
     ) -> str:
         """Dispatch framework-specific script generation."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         if framework == Framework.PYTORCH:
             return self._generate_pytorch_script(
                 config,
@@ -184,7 +187,8 @@ class NeuralNetworkScriptExporter:
         include_evaluation: bool,
     ) -> str:
         """Generate PyTorch training script."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         lines = self._pytorch_header(config)
         lines.extend(self._pytorch_model_definition(config))
 
@@ -222,7 +226,8 @@ class NeuralNetworkScriptExporter:
 
     def _pytorch_model_definition(self, config: NetworkConfig) -> list[str]:
         """Generate PyTorch nn.Module class definition."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         lines = [
             "# Model Definition",
             "class NeuralNetwork(nn.Module):",
@@ -235,9 +240,7 @@ class NeuralNetworkScriptExporter:
         for layer in config.layers:
             if layer.layer_type == "dense":
                 act = self._pytorch_activation(layer.activation)
-                lines.append(
-                    f"        layers.append(nn.Linear(prev_size, {layer.units}))"
-                )
+                lines.append(f"        layers.append(nn.Linear(prev_size, {layer.units}))")
                 if act:
                     lines.append(f"        layers.append({act})")
                 lines.append(f"        prev_size = {layer.units}")
@@ -255,11 +258,10 @@ class NeuralNetworkScriptExporter:
         )
         return lines
 
-    def _pytorch_data_loading(
-        self, config: NetworkConfig, data_path: str | None
-    ) -> list[str]:
+    def _pytorch_data_loading(self, config: NetworkConfig, data_path: str | None) -> list[str]:
         """Generate PyTorch data loading and DataLoader creation."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         data_path_str = data_path or DEFAULT_DATA_PATH
         train_fraction = 1 - config.validation_split - 0.15
         lines = [
@@ -311,7 +313,8 @@ class NeuralNetworkScriptExporter:
 
     def _pytorch_training(self, config: NetworkConfig) -> list[str]:
         """Generate PyTorch training loop with early stopping."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         optimizer_name = self._pytorch_optimizer(config.optimizer)
         loss_name = self._pytorch_loss(config.loss_function)
         lines = self._pytorch_training_setup(config, optimizer_name, loss_name)
@@ -326,10 +329,7 @@ class NeuralNetworkScriptExporter:
             "# Training Setup",
             "device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')",  # noqa: E501
             f"model = NeuralNetwork(input_size={config.input_features}, output_size={config.output_features}).to(device)",  # noqa: E501
-            (
-                "optimizer = "
-                f"{optimizer_name}(model.parameters(), lr={config.learning_rate})"
-            ),
+            ("optimizer = " f"{optimizer_name}(model.parameters(), lr={config.learning_rate})"),
             f"criterion = {loss_name}()",
             "",
             "# Early stopping",
@@ -411,7 +411,8 @@ class NeuralNetworkScriptExporter:
         include_evaluation: bool,
     ) -> str:
         """Generate TensorFlow/Keras training script."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         lines = self._tensorflow_header()
         lines.extend(self._tensorflow_model_definition(config))
 
@@ -442,7 +443,8 @@ class NeuralNetworkScriptExporter:
 
     def _tensorflow_model_definition(self, config: NetworkConfig) -> list[str]:
         """Generate Keras Sequential model definition."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         lines = [
             "# Model Definition",
             "def create_model(input_size, output_size):",
@@ -453,9 +455,7 @@ class NeuralNetworkScriptExporter:
         for layer in config.layers[:-1]:  # Skip last layer
             if layer.layer_type == "dense":
                 act = layer.activation.value
-                lines.append(
-                    f"        layers.Dense({layer.units}, activation='{act}'),"
-                )
+                lines.append(f"        layers.Dense({layer.units}, activation='{act}'),")
             elif layer.layer_type == "dropout":
                 lines.append(f"        layers.Dropout({layer.dropout_rate}),")
 
@@ -471,11 +471,10 @@ class NeuralNetworkScriptExporter:
         )
         return lines
 
-    def _tensorflow_data_loading(
-        self, config: NetworkConfig, data_path: str | None
-    ) -> list[str]:
+    def _tensorflow_data_loading(self, config: NetworkConfig, data_path: str | None) -> list[str]:
         """Generate TensorFlow data loading code."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         data_path_str = data_path or DEFAULT_DATA_PATH
         train_fraction = 1 - config.validation_split - 0.15
         return [
@@ -498,7 +497,8 @@ class NeuralNetworkScriptExporter:
 
     def _tensorflow_training(self, config: NetworkConfig) -> list[str]:
         """Generate TensorFlow model compilation, callbacks, and training."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         opt_name = config.optimizer.value
         loss_name = self._keras_loss(config.loss_function)
 
@@ -561,13 +561,12 @@ class NeuralNetworkScriptExporter:
         include_evaluation: bool,
     ) -> str:
         """Generate scikit-learn training script."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         lines = self._sklearn_header()
 
         hidden_sizes = [
-            layer_cfg.units
-            for layer_cfg in config.layers
-            if layer_cfg.layer_type == "dense"
+            layer_cfg.units for layer_cfg in config.layers if layer_cfg.layer_type == "dense"
         ][:-1]
 
         if include_data_loading:
@@ -597,11 +596,10 @@ class NeuralNetworkScriptExporter:
             "",
         ]
 
-    def _sklearn_data_loading(
-        self, config: NetworkConfig, data_path: str | None
-    ) -> list[str]:
+    def _sklearn_data_loading(self, config: NetworkConfig, data_path: str | None) -> list[str]:
         """Generate scikit-learn data loading and split code."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         data_path_str = data_path or DEFAULT_DATA_PATH
         lines = [
             "# Data Loading",
@@ -636,14 +634,11 @@ class NeuralNetworkScriptExporter:
             )
         return lines
 
-    def _sklearn_training(
-        self, config: NetworkConfig, hidden_sizes: list[int]
-    ) -> list[str]:
+    def _sklearn_training(self, config: NetworkConfig, hidden_sizes: list[int]) -> list[str]:
         """Generate scikit-learn MLP model creation and training."""
-        assert config is not None, "config must be provided"
-        model_class = (
-            "MLPRegressor" if config.task_type == "regression" else "MLPClassifier"
-        )
+        if not (config is not None):
+            raise ValueError("config must be provided")
+        model_class = "MLPRegressor" if config.task_type == "regression" else "MLPClassifier"
         return [
             "# Model",
             f"model = {model_class}(",
@@ -685,7 +680,8 @@ class NeuralNetworkScriptExporter:
 
     def _pytorch_activation(self, activation: ActivationFunction) -> str:
         """Convert activation to PyTorch module string."""
-        assert activation is not None, "activation must be provided"
+        if not (activation is not None):
+            raise ValueError("activation must be provided")
         mapping = {
             ActivationFunction.RELU: "nn.ReLU()",
             ActivationFunction.LEAKY_RELU: "nn.LeakyReLU(0.01)",
@@ -700,7 +696,8 @@ class NeuralNetworkScriptExporter:
 
     def _pytorch_optimizer(self, optimizer: Optimizer) -> str:
         """Convert optimizer to PyTorch optimizer string."""
-        assert optimizer is not None, "optimizer must be provided"
+        if not (optimizer is not None):
+            raise ValueError("optimizer must be provided")
         mapping = {
             Optimizer.SGD: "optim.SGD",
             Optimizer.ADAM: "optim.Adam",
@@ -712,7 +709,8 @@ class NeuralNetworkScriptExporter:
 
     def _pytorch_loss(self, loss: LossFunction) -> str:
         """Convert loss to PyTorch loss string."""
-        assert loss is not None, "loss must be provided"
+        if not (loss is not None):
+            raise ValueError("loss must be provided")
         mapping = {
             LossFunction.MSE: "nn.MSELoss",
             LossFunction.MAE: "nn.L1Loss",
@@ -724,7 +722,8 @@ class NeuralNetworkScriptExporter:
 
     def _keras_loss(self, loss: LossFunction) -> str:
         """Convert loss to Keras loss string."""
-        assert loss is not None, "loss must be provided"
+        if not (loss is not None):
+            raise ValueError("loss must be provided")
         mapping = {
             LossFunction.MSE: "mse",
             LossFunction.MAE: "mae",

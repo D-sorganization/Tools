@@ -36,7 +36,8 @@ def _ballistic_position(v0: float, launch_angle: float, t: float) -> np.ndarray:
     Launches along +x with vertical component +z.
     No lateral drift (y = 0).
     """
-    assert v0 is not None, "v0 must be provided"
+    if not (v0 is not None):
+        raise ValueError("v0 must be provided")
     vx = v0 * math.cos(launch_angle)
     vz = v0 * math.sin(launch_angle)
     x = vx * t
@@ -46,7 +47,8 @@ def _ballistic_position(v0: float, launch_angle: float, t: float) -> np.ndarray:
 
 def _time_of_flight(v0: float, launch_angle: float) -> float:
     """Time until the projectile returns to z = 0."""
-    assert v0 is not None, "v0 must be provided"
+    if not (v0 is not None):
+        raise ValueError("v0 must be provided")
     vz = v0 * math.sin(launch_angle)
     if vz <= 0:
         return 0.1
@@ -88,7 +90,8 @@ def football_spiral(
     Returns:
         List of n_frames 4x4 SE(3) matrices.
     """
-    assert n_frames is not None, "n_frames must be provided"
+    if not (n_frames is not None):
+        raise ValueError("n_frames must be provided")
     require(n_frames >= 2, "need at least 2 frames")
     require(speed > 0, "speed must be positive")
 
@@ -167,7 +170,8 @@ def frisbee_flight(
     Returns:
         List of n_frames 4x4 SE(3) matrices.
     """
-    assert n_frames is not None, "n_frames must be provided"
+    if not (n_frames is not None):
+        raise ValueError("n_frames must be provided")
     require(n_frames >= 2, "need at least 2 frames")
     require(speed > 0, "speed must be positive")
 

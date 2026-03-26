@@ -124,9 +124,7 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
         tools_config = load_tools_config(self.repo_root)
 
         if not tools_config:
-            self.log(
-                "Warning: No tools configuration found (tools.json missing or invalid)."
-            )
+            self.log("Warning: No tools configuration found (tools.json missing or invalid).")
             no_tools = QLabel(
                 "No tools configuration found.\nPlease ensure tools.json exists in the repository root."
             )
@@ -152,7 +150,8 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
 
     def setup_category_tab(self, tab: QWidget, tools: list[dict[str, Any]]) -> bool:
         """Set up a tab for a category of tools."""
-        assert tab is not None, "tab must be provided"
+        if not (tab is not None):
+            raise ValueError("tab must be provided")
         if not tools:
             return False
 
@@ -213,7 +212,8 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
 
     def launch_tool_wrapper(self, tool_info: dict[str, Any]) -> None:
         """Wrapper to launch tool in background thread."""
-        assert tool_info is not None, "tool_info must be provided"
+        if not (tool_info is not None):
+            raise ValueError("tool_info must be provided")
         is_debug = self.debug_mode.isChecked()
 
         def run_launch() -> None:

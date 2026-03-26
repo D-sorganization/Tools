@@ -126,7 +126,8 @@ class GUIRegistry:
         Returns:
             GUIRegistration or None if not found
         """
-        assert tool_name is not None, "tool_name must be provided"
+        if not (tool_name is not None):
+            raise ValueError("tool_name must be provided")
         require(
             isinstance(tool_name, str) and bool(tool_name),
             "tool_name must be a non-empty string",
@@ -147,7 +148,8 @@ class GUIRegistry:
         Returns:
             LaunchConfig or None if not found
         """
-        assert tool_name is not None, "tool_name must be provided"
+        if not (tool_name is not None):
+            raise ValueError("tool_name must be provided")
         require(
             isinstance(tool_name, str) and bool(tool_name),
             "tool_name must be a non-empty string",
@@ -190,7 +192,8 @@ class GUIRegistry:
         Returns:
             List of available GUIType values
         """
-        assert tool_name is not None, "tool_name must be provided"
+        if not (tool_name is not None):
+            raise ValueError("tool_name must be provided")
         registration = self._registrations.get(tool_name)
         if registration:
             return list(registration.gui_configs.keys())
@@ -226,7 +229,8 @@ def register_gui(
         gui_configs: Dictionary mapping GUIType to LaunchConfig
         **kwargs: Additional registration options
     """
-    assert tool_name is not None, "tool_name must be provided"
+    if not (tool_name is not None):
+        raise ValueError("tool_name must be provided")
     registry = get_registry()
     registry.register(
         tool_name=tool_name,
@@ -338,8 +342,6 @@ def auto_discover_guis(search_paths: list[Path]) -> int:
                     count += 1
                     logger.debug("Loaded GUI registration from: %s", reg_file)
             except ImportError as e:
-                logger.warning(
-                    "Failed to load GUI registration from %s: %s", reg_file, e
-                )
+                logger.warning("Failed to load GUI registration from %s: %s", reg_file, e)
 
     return count

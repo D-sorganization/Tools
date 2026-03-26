@@ -69,7 +69,8 @@ class ModificationMixin:
         Returns:
             True if deleted
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")
@@ -133,7 +134,8 @@ class ModificationMixin:
         Returns:
             True if deleted
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")
@@ -155,17 +157,13 @@ class ModificationMixin:
 
         # Remove all joints connected to subtree
         model.joints = [
-            j
-            for j in model.joints
-            if j.parent not in subtree and j.child not in subtree
+            j for j in model.joints if j.parent not in subtree and j.child not in subtree
         ]
 
         # Also remove joint connecting subtree to parent
         model.joints = [j for j in model.joints if j.child != root_link]
 
-        logger.info(
-            f"Deleted subtree '{root_link}' ({len(subtree)} links) from '{model_id}'"
-        )
+        logger.info(f"Deleted subtree '{root_link}' ({len(subtree)} links) from '{model_id}'")
         return True
 
     def rename_link(
@@ -185,7 +183,8 @@ class ModificationMixin:
         Returns:
             True if renamed
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         if not new_name or not new_name.strip():
             logger.error("new_name must be a non-empty string")
             return False
@@ -248,7 +247,8 @@ class ModificationMixin:
         Returns:
             True if renamed
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         if not new_name or not new_name.strip():
             logger.error("new_name must be a non-empty string")
             return False
@@ -298,7 +298,8 @@ class ModificationMixin:
         Returns:
             True if modified
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")
@@ -378,7 +379,8 @@ class ModificationMixin:
         Returns:
             True if attached
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")
@@ -439,7 +441,8 @@ class ModificationMixin:
         Returns:
             True if detached
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")
@@ -485,7 +488,8 @@ class ModificationMixin:
         Returns:
             True if applied
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         model = self._models.get(model_id)
         if not model:
             logger.error(f"Model '{model_id}' not found")
@@ -552,7 +556,8 @@ class ModificationMixin:
         Returns:
             List of created link names.
         """
-        assert links is not None, "links must be provided"
+        if not (links is not None):
+            raise ValueError("links must be provided")
         created_links: list[str] = []
         for link in links:
             new_link = Link.from_dict(link.to_dict())
@@ -561,9 +566,7 @@ class ModificationMixin:
             if new_link.visual_origin:
                 xyz = list(new_link.visual_origin.xyz)
                 xyz[axis_idx] = -xyz[axis_idx]
-                new_link.visual_origin = Origin(
-                    xyz=tuple(xyz), rpy=new_link.visual_origin.rpy
-                )
+                new_link.visual_origin = Origin(xyz=tuple(xyz), rpy=new_link.visual_origin.rpy)
 
             if new_link.collision_origin:
                 xyz = list(new_link.collision_origin.xyz)
@@ -634,9 +637,7 @@ class ModificationMixin:
         """
         _VALID_AXES = {"x", "y", "z"}
         if mirror_axis not in _VALID_AXES:
-            raise ValueError(
-                f"mirror_axis must be one of {_VALID_AXES}, got '{mirror_axis}'"
-            )
+            raise ValueError(f"mirror_axis must be one of {_VALID_AXES}, got '{mirror_axis}'")
 
         if not self.copy_subtree(model_id, root_link):
             return []
@@ -685,9 +686,7 @@ class ModificationMixin:
         axis_idx = {"x": 0, "y": 1, "z": 2}[mirror_axis]
 
         created_links = self._mirror_links(links, name_map, axis_idx, model)
-        self._mirror_joints(
-            joints, links, name_map, axis_idx, parent, mirror_name, model
-        )
+        self._mirror_joints(joints, links, name_map, axis_idx, parent, mirror_name, model)
 
         logger.info(f"Created mirrored subtree with {len(created_links)} links")
         return created_links

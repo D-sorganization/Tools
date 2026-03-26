@@ -192,7 +192,8 @@ class InertiaCalculator:
             # Manual values
             calc.compute({"ixx": 0.1, "iyy": 0.1, "izz": 0.05, "mass": 2.0})
         """
-        assert source is not None, "source must be provided"
+        if not (source is not None):
+            raise ValueError("source must be provided")
         mode = mode or self.default_mode
         density = density or self.default_density
 
@@ -249,7 +250,8 @@ class InertiaCalculator:
         Returns:
             InertiaResult
         """
-        assert mesh_path is not None, "mesh_path must be provided"
+        if not (mesh_path is not None):
+            raise ValueError("mesh_path must be provided")
         mode = (
             InertiaMode.MESH_SPECIFIED_MASS
             if mass is not None
@@ -396,7 +398,8 @@ class InertiaCalculator:
         mode: InertiaMode,
     ) -> InertiaResult:
         """Compute from mesh file using trimesh."""
-        assert density is not None, "density must be provided"
+        if not (density is not None):
+            raise ValueError("density must be provided")
         mesh_path = self._resolve_mesh_path(source)
         cache_key = f"{mesh_path}:{density}:{mass}"
 
@@ -411,9 +414,7 @@ class InertiaCalculator:
         if mesh_props is None:
             return self._create_default_inertia_result(mass, mode, str(mesh_path))
 
-        result = self._scale_and_create_result(
-            mesh_props, mass, density, mode, str(mesh_path)
-        )
+        result = self._scale_and_create_result(mesh_props, mass, density, mode, str(mesh_path))
 
         self._cache[cache_key] = result
         return result
@@ -427,11 +428,10 @@ class InertiaCalculator:
         else:
             raise ValueError(f"Mesh mode requires path, got {type(source)}")
 
-    def _load_mesh(
-        self, mesh_path: Path, mode: InertiaMode, mass: float | None
-    ) -> Any | None:
+    def _load_mesh(self, mesh_path: Path, mode: InertiaMode, mass: float | None) -> Any | None:
         """Load mesh from file, returning None on failure."""
-        assert mesh_path is not None, "mesh_path must be provided"
+        if not (mesh_path is not None):
+            raise ValueError("mesh_path must be provided")
         try:
             import trimesh
         except ImportError:
@@ -455,12 +455,11 @@ class InertiaCalculator:
         self, mesh: Any, mesh_path: Path, mode: InertiaMode, mass: float | None
     ) -> dict[str, Any] | None:
         """Extract inertia properties from mesh, returning None on failure."""
-        assert mesh_path is not None, "mesh_path must be provided"
+        if not (mesh_path is not None):
+            raise ValueError("mesh_path must be provided")
         is_watertight = mesh.is_watertight
         if not is_watertight:
-            logger.warning(
-                f"Mesh {mesh_path} is not watertight, inertia may be inaccurate"
-            )
+            logger.warning(f"Mesh {mesh_path} is not watertight, inertia may be inaccurate")
 
         try:
             return {
@@ -482,7 +481,8 @@ class InertiaCalculator:
         source_path: str,
     ) -> InertiaResult:
         """Scale inertia based on mode and create result."""
-        assert mesh_props is not None, "mesh_props must be provided"
+        if not (mesh_props is not None):
+            raise ValueError("mesh_props must be provided")
         raw_inertia = mesh_props["raw_inertia"]
         volume = mesh_props["volume"]
         com = mesh_props["com"]
@@ -551,9 +551,7 @@ class InertiaCalculator:
         **kwargs: Any,
     ) -> InertiaResult:
         """Compute using anthropometric data."""
-        segment_name = kwargs.get(
-            "segment_name", source if isinstance(source, str) else None
-        )
+        segment_name = kwargs.get("segment_name", source if isinstance(source, str) else None)
         gender_factor = kwargs.get("gender_factor", 0.5)
         length = dimensions.get("length", 0.1) if dimensions else 0.1
 
@@ -582,9 +580,7 @@ class InertiaCalculator:
                 source=f"anthropometric:{segment_name}",
             )
         except ImportError:
-            logger.warning(
-                "Anthropometry data not available, falling back to primitive"
-            )
+            logger.warning("Anthropometry data not available, falling back to primitive")
             return self._compute_primitive(
                 Geometry.cylinder(length * 0.1, length),
                 mass,

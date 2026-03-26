@@ -117,9 +117,7 @@ class PathMetrics:
 def _coerce_bounds(bounds: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
     """Validate and normalize the bounds array."""
     if len(bounds) != 6:
-        raise ValueError(
-            "Bounds must contain 6 elements: [xmin, xmax, ymin, ymax, zmin, zmax]"
-        )
+        raise ValueError("Bounds must contain 6 elements: [xmin, xmax, ymin, ymax, zmin, zmax]")
 
     bounds_array = np.asarray(bounds, dtype=np.float64)
     if any(bounds_array[i] >= bounds_array[i + 1] for i in range(0, 6, 2)):
@@ -135,11 +133,10 @@ def _as_point(name: str, point: npt.NDArray[np.float64]) -> Vector3:
     return point_array
 
 
-def distance_to_obstacle_surface(
-    point: npt.NDArray[np.float64], obstacle: Obstacle
-) -> float:
+def distance_to_obstacle_surface(point: npt.NDArray[np.float64], obstacle: Obstacle) -> float:
     """Return signed clearance from a point to an obstacle surface."""
-    assert point is not None, "point must be provided"
+    if not (point is not None):
+        raise ValueError("point must be provided")
     point_array = _as_point("point", point)
 
     if obstacle.type == 0:
@@ -161,7 +158,8 @@ def generate_asteroid_field(
     clearance: float = 0.0,
 ) -> list[Obstacle]:
     """Generate an asteroid field while preserving safe launch corridors."""
-    assert bounds is not None, "bounds must be provided"
+    if not (bounds is not None):
+        raise ValueError("bounds must be provided")
     bounds_array = _coerce_bounds(bounds)
     generator = rng or np.random.default_rng()
     protected_points = [_as_point("reserved_point", p) for p in (reserved_points or [])]
@@ -186,8 +184,7 @@ def generate_asteroid_field(
         obstacle = Obstacle(obstacle_type, position, size, color)
 
         if all(
-            distance_to_obstacle_surface(point, obstacle) >= clearance
-            for point in protected_points
+            distance_to_obstacle_surface(point, obstacle) >= clearance for point in protected_points
         ):
             obstacles.append(obstacle)
 
@@ -205,7 +202,8 @@ class RRTPlanner:
         seed: int | None = None,
     ) -> None:
         """Initialize the planner with validated bounds and parameters."""
-        assert bounds is not None, "bounds must be provided"
+        if not (bounds is not None):
+            raise ValueError("bounds must be provided")
         if max_iterations <= 0:
             raise ValueError("max_iterations must be positive")
 
@@ -234,7 +232,8 @@ class RRTPlanner:
 
     def _sample_point(self, goal: Vector3) -> Vector3:
         """Sample a random point with configurable goal bias."""
-        assert goal is not None, "goal must be provided"
+        if not (goal is not None):
+            raise ValueError("goal must be provided")
         if self._rng.random() < self.goal_bias:
             return goal.copy()
 
@@ -247,33 +246,31 @@ class RRTPlanner:
             dtype=np.float64,
         )
 
-    def _nearest_node_index(
-        self, nodes: list[npt.NDArray[np.float64]], sample: Vector3
-    ) -> int:
+    def _nearest_node_index(self, nodes: list[npt.NDArray[np.float64]], sample: Vector3) -> int:
         """Return the index of the nearest existing tree node."""
-        assert nodes is not None, "nodes must be provided"
+        if not (nodes is not None):
+            raise ValueError("nodes must be provided")
         coordinates = np.array([node[:3] for node in nodes], dtype=np.float64)
         distances = np.linalg.norm(coordinates - sample, axis=1)
         return int(np.argmin(distances))
 
     def _steer(self, origin: Vector3, target: Vector3) -> Vector3:
         """Step from one point toward another by at most ``step_size``."""
-        assert origin is not None, "origin must be provided"
+        if not (origin is not None):
+            raise ValueError("origin must be provided")
         direction = target - origin
         distance = float(np.linalg.norm(direction))
         if distance == 0.0:
             return origin.copy()
         return origin + self.step_size * direction / distance
 
-    def _check_collision(
-        self, point: npt.NDArray[np.float64], obstacles: list[Obstacle]
-    ) -> bool:
+    def _check_collision(self, point: npt.NDArray[np.float64], obstacles: list[Obstacle]) -> bool:
         """Return True if a point lies inside any obstacle."""
-        assert point is not None, "point must be provided"
+        if not (point is not None):
+            raise ValueError("point must be provided")
         point_array = _as_point("point", point)
         return any(
-            distance_to_obstacle_surface(point_array, obstacle) <= 0.0
-            for obstacle in obstacles
+            distance_to_obstacle_surface(point_array, obstacle) <= 0.0 for obstacle in obstacles
         )
 
     def _segment_is_collision_free(
@@ -283,7 +280,8 @@ class RRTPlanner:
         obstacles: list[Obstacle],
     ) -> bool:
         """Sample a segment to ensure shortcutting does not cut through asteroids."""
-        assert start is not None, "start must be provided"
+        if not (start is not None):
+            raise ValueError("start must be provided")
         start_point = _as_point("start", start)
         end_point = _as_point("end", end)
         segment_length = float(np.linalg.norm(end_point - start_point))
@@ -302,7 +300,8 @@ class RRTPlanner:
         obstacles: list[Obstacle],
     ) -> npt.NDArray[np.float64] | None:
         """Plan a collision-free path using the RRT algorithm."""
-        assert start is not None, "start must be provided"
+        if not (start is not None):
+            raise ValueError("start must be provided")
         start_point = self._validate_waypoint("start", start)
         goal_point = self._validate_waypoint("goal", goal)
 
@@ -337,7 +336,8 @@ class RRTPlanner:
         self, nodes: list[npt.NDArray[np.float64]], goal_idx: int
     ) -> npt.NDArray[np.float64]:
         """Backtrack from a tree node to recover the final route."""
-        assert nodes is not None, "nodes must be provided"
+        if not (nodes is not None):
+            raise ValueError("nodes must be provided")
         path: list[npt.NDArray[np.float64]] = []
         current_idx = goal_idx
 
@@ -347,22 +347,17 @@ class RRTPlanner:
 
         return np.array(path[::-1], dtype=np.float64)
 
-    def analyze_path(
-        self, path: npt.NDArray[np.float64], obstacles: list[Obstacle]
-    ) -> PathMetrics:
+    def analyze_path(self, path: npt.NDArray[np.float64], obstacles: list[Obstacle]) -> PathMetrics:
         """Compute route metrics for educational and debugging displays."""
-        assert path is not None, "path must be provided"
+        if not (path is not None):
+            raise ValueError("path must be provided")
         if len(path) == 0:
             return PathMetrics(0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
         diffs = np.diff(path, axis=0)
-        segment_lengths = (
-            np.linalg.norm(diffs, axis=1) if len(path) > 1 else np.array([])
-        )
+        segment_lengths = np.linalg.norm(diffs, axis=1) if len(path) > 1 else np.array([])
         path_length = float(np.sum(segment_lengths))
-        straight_line_distance = (
-            float(np.linalg.norm(path[-1] - path[0])) if len(path) > 1 else 0.0
-        )
+        straight_line_distance = float(np.linalg.norm(path[-1] - path[0])) if len(path) > 1 else 0.0
         efficiency = straight_line_distance / path_length if path_length > 0 else 1.0
 
         if obstacles:
@@ -404,7 +399,8 @@ class RRTPlanner:
         iterations: int = 64,
     ) -> npt.NDArray[np.float64]:
         """Shortcut a path while preserving endpoints and collision safety."""
-        assert path is not None, "path must be provided"
+        if not (path is not None):
+            raise ValueError("path must be provided")
         if len(path) <= 2:
             return np.array(path, dtype=np.float64)
 
@@ -416,9 +412,7 @@ class RRTPlanner:
             start_idx = self._rng.randint(0, len(smoothed) - 3)
             end_idx = self._rng.randint(start_idx + 2, len(smoothed) - 1)
 
-            if self._segment_is_collision_free(
-                smoothed[start_idx], smoothed[end_idx], obstacles
-            ):
+            if self._segment_is_collision_free(smoothed[start_idx], smoothed[end_idx], obstacles):
                 smoothed = smoothed[: start_idx + 1] + smoothed[end_idx:]
 
         return np.array(smoothed, dtype=np.float64)
@@ -428,11 +422,7 @@ class RRTPlanner:
         if metrics is None:
             return "No route yet"
 
-        clearance = (
-            "clear"
-            if math.isinf(metrics.min_clearance)
-            else f"{metrics.min_clearance:.2f}"
-        )
+        clearance = "clear" if math.isinf(metrics.min_clearance) else f"{metrics.min_clearance:.2f}"
         return (
             f"Waypoints {metrics.waypoint_count} | "
             f"Length {metrics.path_length:.2f} | "
@@ -445,10 +435,9 @@ class RRTPlanner:
 class PursuitAI:
     """Simple target behavior model for the pursuit scenario."""
 
-    def __init__(
-        self, bounds: npt.NDArray[np.float64], *, seed: int | None = None
-    ) -> None:
-        assert bounds is not None, "bounds must be provided"
+    def __init__(self, bounds: npt.NDArray[np.float64], *, seed: int | None = None) -> None:
+        if not (bounds is not None):
+            raise ValueError("bounds must be provided")
         self.bounds = _coerce_bounds(bounds)
         self.evasion_radius = 0.15
         self.capture_radius = 0.05
@@ -460,7 +449,8 @@ class PursuitAI:
         self, target: Ship, pursuer: Ship, obstacles: list[Obstacle]
     ) -> Vector3:
         """Move the target away from danger while staying inside the bounds."""
-        assert target is not None, "target must be provided"
+        if not (target is not None):
+            raise ValueError("target must be provided")
         del obstacles
         distance = float(np.linalg.norm(target.position - pursuer.position))
 
@@ -497,7 +487,8 @@ class StarWarsRenderer:
 
     def __init__(self, width: int = 1600, height: int = 900) -> None:
         """Initialize the renderer and fail gracefully if dependencies are missing."""
-        assert width is not None, "width must be provided"
+        if not (width is not None):
+            raise ValueError("width must be provided")
         if not PYGAME_AVAILABLE or not OPENGL_AVAILABLE:
             raise RuntimeError(
                 "Visualization requires pygame and PyOpenGL. "
@@ -529,7 +520,8 @@ class StarWarsRenderer:
         self, num_stars: int
     ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         """Generate a stable starfield shell around the scene."""
-        assert num_stars is not None, "num_stars must be provided"
+        if not (num_stars is not None):
+            raise ValueError("num_stars must be provided")
         rng = np.random.default_rng(42)
         directions = rng.standard_normal((num_stars, 3))
         norms = np.linalg.norm(directions, axis=1, keepdims=True)
@@ -547,7 +539,8 @@ class StarWarsRenderer:
         camera_mode: str = "cinematic",
     ) -> None:
         """Render a frame using the requested camera mode."""
-        assert ships is not None, "ships must be provided"
+        if not (ships is not None):
+            raise ValueError("ships must be provided")
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
         self._update_camera(camera_mode, ships)
@@ -565,7 +558,8 @@ class StarWarsRenderer:
 
     def _update_camera(self, mode: str, ships: list[Ship]) -> None:
         """Switch among a few simple cinematic camera presets."""
-        assert mode is not None, "mode must be provided"
+        if not (mode is not None):
+            raise ValueError("mode must be provided")
         if mode == "top_down":
             gluLookAt(0.0, 0.0, 2.8, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
         elif mode == "chase" and ships:
@@ -612,7 +606,8 @@ class StarWarsRenderer:
 
     def _render_obstacle(self, obstacle: Obstacle) -> None:
         """Render a sphere or cube obstacle."""
-        assert obstacle is not None, "obstacle must be provided"
+        if not (obstacle is not None):
+            raise ValueError("obstacle must be provided")
         glPushMatrix()
         glTranslatef(obstacle.position[0], obstacle.position[1], obstacle.position[2])
         glColor3f(
@@ -664,7 +659,8 @@ class StarWarsRenderer:
 
     def _render_ship(self, ship: Ship) -> None:
         """Render a simple arrowhead spacecraft."""
-        assert ship is not None, "ship must be provided"
+        if not (ship is not None):
+            raise ValueError("ship must be provided")
         glPushMatrix()
         glTranslatef(ship.position[0], ship.position[1], ship.position[2])
         glColor3f(*ship.color)
@@ -683,7 +679,8 @@ class StarWarsRenderer:
 
     def _render_path(self, path: npt.NDArray[np.float64]) -> None:
         """Render the active path and waypoint markers."""
-        assert path is not None, "path must be provided"
+        if not (path is not None):
+            raise ValueError("path must be provided")
         glDisable(GL_LIGHTING)
         glColor3f(1.0, 0.9, 0.2)
         glLineWidth(3.0)
@@ -749,7 +746,8 @@ class StarWarsRRTApp:
 
     def setup_scenario(self, mode: str = "single") -> None:
         """Set up either the single-route or pursuit scenario."""
-        assert mode is not None, "mode must be provided"
+        if not (mode is not None):
+            raise ValueError("mode must be provided")
         self.mode = mode
         if mode == "single":
             self._setup_single_navigation()
@@ -797,12 +795,8 @@ class StarWarsRRTApp:
             reserved_points=[pursuer_start, target_start],
             clearance=0.10,
         )
-        pursuer = Ship(
-            pursuer_start.copy(), np.eye(3), np.zeros(3), color=(0.85, 0.85, 0.85)
-        )
-        target = Ship(
-            target_start.copy(), np.eye(3), np.zeros(3), color=(0.65, 0.8, 1.0)
-        )
+        pursuer = Ship(pursuer_start.copy(), np.eye(3), np.zeros(3), color=(0.85, 0.85, 0.85))
+        target = Ship(target_start.copy(), np.eye(3), np.zeros(3), color=(0.65, 0.8, 1.0))
         self.ships = [pursuer, target]
         self.paths = []
         self._update_window_caption(None)
@@ -812,9 +806,7 @@ class StarWarsRRTApp:
         if not PYGAME_AVAILABLE:
             return
 
-        caption = (
-            f"RRT Asteroid Navigator | Mode: {self.mode} | Camera: {self.camera_mode}"
-        )
+        caption = f"RRT Asteroid Navigator | Mode: {self.mode} | Camera: {self.camera_mode}"
         if metrics is not None:
             caption += f" | {self.planner.format_metrics(metrics)}"
         pygame.display.set_caption(caption)
@@ -858,9 +850,7 @@ class StarWarsRRTApp:
             return
 
         pursuer, target = self.ships[0], self.ships[1]
-        target.position = self.pursuit_ai.update_target_behavior(
-            target, pursuer, self.obstacles
-        )
+        target.position = self.pursuit_ai.update_target_behavior(target, pursuer, self.obstacles)
 
         direction = target.position - pursuer.position
         distance = float(np.linalg.norm(direction))
@@ -875,9 +865,7 @@ class StarWarsRRTApp:
 
 def main() -> int:
     """Run the asteroid navigator application."""
-    logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-    )
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
     try:
         app = StarWarsRRTApp()
     except RuntimeError as exc:

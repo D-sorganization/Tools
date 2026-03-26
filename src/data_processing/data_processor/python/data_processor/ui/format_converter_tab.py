@@ -61,9 +61,7 @@ class FormatConverterMixin:
             first_file = self.converter_input_files[0]
             format_type = FileFormatDetector.detect_format(first_file)
             if not format_type:
-                messagebox.showerror(
-                    "Error", "Could not detect format for the first file."
-                )
+                messagebox.showerror("Error", "Could not detect format for the first file.")
                 return
 
             df = DataReader.read_file(first_file, format_type)
@@ -87,7 +85,8 @@ class FormatConverterMixin:
 
     def create_format_converter_tab(self, parent_tab: ctk.CTkFrame) -> None:
         """Create the format converter tab UI."""
-        assert parent_tab is not None, "parent_tab must be provided"
+        if not (parent_tab is not None):
+            raise ValueError("parent_tab must be provided")
         parent_tab.grid_columnconfigure(0, weight=1)
         parent_tab.grid_rowconfigure(0, weight=1)
 
@@ -103,7 +102,8 @@ class FormatConverterMixin:
 
     def _create_converter_left_panel(self, left_panel: ctk.CTkFrame) -> None:
         """Create the left panel content for the format converter tab."""
-        assert left_panel is not None, "left_panel must be provided"
+        if not (left_panel is not None):
+            raise ValueError("left_panel must be provided")
         left_panel.grid_columnconfigure(0, weight=1)
         left_panel.grid_rowconfigure(0, weight=1)
 
@@ -123,9 +123,7 @@ class FormatConverterMixin:
             command=lambda: self.converter_start_conversion(),
             height=40,
         )
-        self.converter_convert_button.grid(
-            row=4, column=0, sticky="ew", padx=5, pady=10
-        )
+        self.converter_convert_button.grid(row=4, column=0, sticky="ew", padx=5, pady=10)
 
         # Progress
         self.converter_progress = ctk.CTkProgressBar(converter_scrollable_frame)
@@ -133,14 +131,13 @@ class FormatConverterMixin:
         self.converter_progress.set(0)
 
         # Status
-        self.converter_status_label = ctk.CTkLabel(
-            converter_scrollable_frame, text="Ready"
-        )
+        self.converter_status_label = ctk.CTkLabel(converter_scrollable_frame, text="Ready")
         self.converter_status_label.grid(row=6, column=0, sticky="w", padx=5, pady=5)
 
     def _create_input_section(self, parent: ctk.CTkFrame) -> None:
         """Create the input files section of the converter tab."""
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         input_frame = ctk.CTkFrame(parent)
         input_frame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
         input_frame.grid_columnconfigure(0, weight=1)
@@ -152,9 +149,7 @@ class FormatConverterMixin:
         self.converter_input_label.grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
         input_buttons_frame = ctk.CTkFrame(input_frame)
-        input_buttons_frame.grid(
-            row=1, column=0, columnspan=2, padx=5, pady=5, sticky="ew"
-        )
+        input_buttons_frame.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
 
         ctk.CTkButton(
             input_buttons_frame,
@@ -174,7 +169,8 @@ class FormatConverterMixin:
 
     def _create_output_section(self, parent: ctk.CTkFrame) -> None:
         """Create the output format/path section of the converter tab."""
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         output_frame = ctk.CTkFrame(parent)
         output_frame.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
         output_frame.grid_columnconfigure(1, weight=1)
@@ -206,9 +202,7 @@ class FormatConverterMixin:
         ctk.CTkLabel(output_frame, text="Output Path:").grid(
             row=1, column=0, padx=5, pady=5, sticky="w"
         )
-        self.converter_output_label = ctk.CTkLabel(
-            output_frame, text="No output path selected"
-        )
+        self.converter_output_label = ctk.CTkLabel(output_frame, text="No output path selected")
         self.converter_output_label.grid(row=1, column=1, padx=5, pady=5, sticky="w")
 
         ctk.CTkButton(
@@ -217,7 +211,8 @@ class FormatConverterMixin:
 
     def _create_options_section(self, parent: ctk.CTkFrame) -> None:
         """Create the options checkboxes section of the converter tab."""
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         options_frame = ctk.CTkFrame(parent)
         options_frame.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
 
@@ -251,16 +246,13 @@ class FormatConverterMixin:
 
     def _create_column_section(self, parent: ctk.CTkFrame) -> None:
         """Create the column selection section of the converter tab."""
-        assert parent is not None, "parent must be provided"
+        if not (parent is not None):
+            raise ValueError("parent must be provided")
         column_frame = ctk.CTkFrame(parent)
         column_frame.grid(row=3, column=0, sticky="ew", padx=5, pady=5)
 
-        ctk.CTkLabel(column_frame, text="Column Selection:").pack(
-            anchor="w", padx=5, pady=2
-        )
-        self.converter_columns_label = ctk.CTkLabel(
-            column_frame, text="All columns selected"
-        )
+        ctk.CTkLabel(column_frame, text="Column Selection:").pack(anchor="w", padx=5, pady=2)
+        self.converter_columns_label = ctk.CTkLabel(column_frame, text="All columns selected")
         self.converter_columns_label.pack(anchor="w", padx=5, pady=2)
 
         ctk.CTkButton(
@@ -271,7 +263,8 @@ class FormatConverterMixin:
 
     def _create_converter_right_panel(self, right_panel: ctk.CTkFrame) -> None:
         """Create the right panel content for the format converter tab."""
-        assert right_panel is not None, "right_panel must be provided"
+        if not (right_panel is not None):
+            raise ValueError("right_panel must be provided")
         right_panel.grid_rowconfigure(1, weight=1)
         right_panel.grid_columnconfigure(0, weight=1)
 
@@ -279,9 +272,7 @@ class FormatConverterMixin:
         self.converter_file_list_frame = ctk.CTkScrollableFrame(
             right_panel, label_text="Selected Files", height=200
         )
-        self.converter_file_list_frame.grid(
-            row=0, column=0, padx=10, pady=(0, 10), sticky="ew"
-        )
+        self.converter_file_list_frame.grid(row=0, column=0, padx=10, pady=(0, 10), sticky="ew")
 
         # Log area
         log_frame = ctk.CTkFrame(right_panel)
@@ -300,12 +291,12 @@ class FormatConverterMixin:
         ctk.CTkButton(
             button_frame, text="Analyze Parquet", command=self.show_parquet_analyzer
         ).pack(side="left", padx=5)
-        ctk.CTkButton(
-            button_frame, text="Clear Log", command=self.converter_clear_log
-        ).pack(side="left", padx=5)
-        ctk.CTkButton(
-            button_frame, text="Save Log", command=self.converter_save_log
-        ).pack(side="left", padx=5)
+        ctk.CTkButton(button_frame, text="Clear Log", command=self.converter_clear_log).pack(
+            side="left", padx=5
+        )
+        ctk.CTkButton(button_frame, text="Save Log", command=self.converter_save_log).pack(
+            side="left", padx=5
+        )
 
     def converter_browse_files(self) -> None:
         """Browse for input files."""
@@ -338,9 +329,7 @@ class FormatConverterMixin:
             if files:
                 self.converter_input_files = list(files)
                 self.converter_update_file_list()
-                self.converter_input_label.configure(
-                    text=f"{len(files)} files selected"
-                )
+                self.converter_input_label.configure(text=f"{len(files)} files selected")
                 self.converter_update_convert_button()
         except (KeyError, ValueError, TypeError) as e:
             messagebox.showerror("Error", f"Failed to browse files: {str(e)}")
@@ -379,9 +368,7 @@ class FormatConverterMixin:
             if files:
                 self.converter_input_files = files
                 self.converter_update_file_list()
-                self.converter_input_label.configure(
-                    text=f"{len(files)} files found in folder"
-                )
+                self.converter_input_label.configure(text=f"{len(files)} files found in folder")
                 self.converter_update_convert_button()
             else:
                 messagebox.showwarning(
@@ -492,9 +479,12 @@ class FormatConverterMixin:
         - Precondition: converter_input_files must not be empty.
         - Precondition: converter_output_path must be a valid directory string.
         """
-        assert output_format, "output_format cannot be empty"
-        assert self.converter_input_files, "No input files selected"
-        assert self.converter_output_path, "No output path selected"
+        if not (output_format):
+            raise ValueError("output_format cannot be empty")
+        if not (self.converter_input_files):
+            raise ValueError("No input files selected")
+        if not (self.converter_output_path):
+            raise ValueError("No output path selected")
 
         try:
             self.converter_status_label.configure(text="Converting files...")
@@ -523,20 +513,17 @@ class FormatConverterMixin:
         finally:
             self.converter_convert_button.configure(state="normal")
 
-    def _read_and_filter_file(
-        self, file_path: str, use_all_columns: bool
-    ) -> pd.DataFrame | None:
+    def _read_and_filter_file(self, file_path: str, use_all_columns: bool) -> pd.DataFrame | None:
         """Read a file and optionally filter to selected columns.
 
         Returns None if the file cannot be read or has no matching columns.
         """
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         format_type = FileFormatDetector.detect_format(file_path)
         if not format_type:
             fname = Path(file_path).name
-            self._log_conversion_message(
-                f"Warning: Could not detect format for {fname}"
-            )
+            self._log_conversion_message(f"Warning: Could not detect format for {fname}")
             return None
 
         df = DataReader.read_file(file_path, format_type)
@@ -549,21 +536,17 @@ class FormatConverterMixin:
                 df = df[available_columns]
             else:
                 fname = Path(file_path).name
-                self._log_conversion_message(
-                    f"Warning: No selected columns found in {fname}"
-                )
+                self._log_conversion_message(f"Warning: No selected columns found in {fname}")
                 return None
 
         return df
 
-    def _convert_combined(
-        self, output_format: str, use_all_columns: bool, total_files: int
-    ) -> int:
+    def _convert_combined(self, output_format: str, use_all_columns: bool, total_files: int) -> int:
         """Combine all input files into a single output file."""
-        assert output_format is not None, "output_format must be provided"
+        if not (output_format is not None):
+            raise ValueError("output_format must be provided")
         self._log_conversion_message(
-            f"Starting conversion: combining {total_files} files into "
-            f"{output_format.upper()}"
+            f"Starting conversion: combining {total_files} files into " f"{output_format.upper()}"
         )
 
         combined_data: list[pd.DataFrame] = []
@@ -583,16 +566,12 @@ class FormatConverterMixin:
                 processed_files += 1
                 self.converter_progress.set(processed_files / total_files)
             except (PermissionError, OSError) as e:
-                self._log_conversion_message(
-                    f"Error reading {Path(file_path).name}: {str(e)}"
-                )
+                self._log_conversion_message(f"Error reading {Path(file_path).name}: {str(e)}")
 
         if combined_data:
             try:
                 combined_df = pd.concat(combined_data, ignore_index=True)
-                output_filename = self._generate_output_filename(
-                    output_format, "combined_data"
-                )
+                output_filename = self._generate_output_filename(output_format, "combined_data")
                 output_path = Path(self.converter_output_path) / output_filename
                 DataWriter.write_file(combined_df, output_path, output_format)
                 self._log_conversion_message(f"Successfully created: {output_filename}")
@@ -611,7 +590,8 @@ class FormatConverterMixin:
         self, output_format: str, use_all_columns: bool, total_files: int
     ) -> int:
         """Convert each input file to the output format separately."""
-        assert output_format is not None, "output_format must be provided"
+        if not (output_format is not None):
+            raise ValueError("output_format must be provided")
         self._log_conversion_message(
             f"Starting conversion: processing {total_files} files individually"
         )
@@ -624,9 +604,7 @@ class FormatConverterMixin:
                     continue
 
                 base_name = Path(file_path).stem
-                output_filename = self._generate_output_filename(
-                    output_format, base_name
-                )
+                output_filename = self._generate_output_filename(output_format, base_name)
                 output_path = Path(self.converter_output_path) / output_filename
 
                 DataWriter.write_file(df, output_path, output_format)
@@ -636,17 +614,14 @@ class FormatConverterMixin:
                 processed_files += 1
                 self.converter_progress.set(processed_files / total_files)
             except (PermissionError, OSError) as e:
-                self._log_conversion_message(
-                    f"Error converting {Path(file_path).name}: {str(e)}"
-                )
+                self._log_conversion_message(f"Error converting {Path(file_path).name}: {str(e)}")
 
         return processed_files
 
-    def _generate_output_filename(
-        self, output_format: str, base_name: str | None = None
-    ) -> str:
+    def _generate_output_filename(self, output_format: str, base_name: str | None = None) -> str:
         """Generate output filename with proper extension."""
-        assert output_format is not None, "output_format must be provided"
+        if not (output_format is not None):
+            raise ValueError("output_format must be provided")
         if not base_name:
             base_name = "converted_data"
 
@@ -670,7 +645,8 @@ class FormatConverterMixin:
 
     def _log_conversion_message(self, message: str) -> None:
         """Add a message to the conversion log."""
-        assert message is not None, "message must be provided"
+        if not (message is not None):
+            raise ValueError("message must be provided")
         timestamp = datetime.now().strftime("%H:%M:%S")
         log_message = f"[{timestamp}] {message}\n"
         # self.after would be available on the class mixing in this one (ctk.CTkFrame)

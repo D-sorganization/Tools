@@ -63,9 +63,7 @@ def main() -> int:
     packages = sorted({k for p in changed_src if (k := package_key(p)) is not None})
 
     if not packages:
-        sys.stdout.write(
-            "No changed src Python packages; minimum test contract check skipped.\n"
-        )
+        sys.stdout.write("No changed src Python packages; minimum test contract check skipped.\n")
         return 0
 
     # Skip packages that have been removed (deleted from disk) — deletions are not
@@ -99,9 +97,7 @@ def main() -> int:
         "src/shared/python/tests",  # the tests folder itself
         "src/shared/python/gui_launcher",  # tests/shared/python/gui_launcher/test_registry.py
     }
-    violations = [
-        pkg for pkg in packages if pkg not in KNOWN_TESTED and not has_tests(pkg)
-    ]
+    violations = [pkg for pkg in packages if pkg not in KNOWN_TESTED and not has_tests(pkg)]
     if violations:
         sys.stderr.write("Minimum test contract failed for changed packages:\n")
         for pkg in violations:

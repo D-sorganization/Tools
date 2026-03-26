@@ -194,7 +194,8 @@ class AnalysisTab:
 
         Pre: result has .t, .states, and data_extractor-compatible API.
         """
-        assert model_type is not None, "model_type must be provided"
+        if not (model_type is not None):
+            raise ValueError("model_type must be provided")
         self._result = result
         old_model = self._model_type
         self._model_type = model_type
@@ -295,7 +296,8 @@ class AnalysisTab:
         title: str,
     ) -> None:
         """Render a 2D line plot on the embedded canvas."""
-        assert len(x) == len(y), "x and y must have same length"
+        if not (len(x) == len(y)):
+            raise ValueError("x and y must have same length")
 
         ax = self._ax_2d
         ax.clear()
@@ -379,7 +381,8 @@ class AnalysisTab:
         zlabel: str,
     ) -> None:
         """Compute a parameter sweep and render the 3D surface."""
-        assert x_key is not None, "x_key must be provided"
+        if not (x_key is not None):
+            raise ValueError("x_key must be provided")
         x_vals = np.linspace(x_range[0], x_range[1], n_pts)
         y_vals = np.linspace(y_range[0], y_range[1], n_pts)
         X, Y = np.meshgrid(x_vals, y_vals)
@@ -412,7 +415,8 @@ class AnalysisTab:
         Pre:  z_key is a valid surface output key.
         Post: Returns a callable or None.
         """
-        assert z_key is not None, "z_key must be provided"
+        if not (z_key is not None):
+            raise ValueError("z_key must be provided")
         if self._model_type == "double":
             return self._evaluator_double(z_key)
         if self._model_type == "triple":
@@ -420,16 +424,15 @@ class AnalysisTab:
         if self._model_type == "golfer":
             return self._evaluator_golfer(z_key)
 
-        logger.warning(
-            "Surface evaluator not available for model=%s z=%s", self._model_type, z_key
-        )
+        logger.warning("Surface evaluator not available for model=%s z=%s", self._model_type, z_key)
         return None
 
     # ── Double pendulum evaluators ──────────────────────────────────
 
     def _evaluator_double(self, z_key: str) -> Any:
         """Return surface evaluator for the double pendulum model."""
-        assert z_key is not None, "z_key must be provided"
+        if not (z_key is not None):
+            raise ValueError("z_key must be provided")
         from ..physics import (
             PendulumParams,
             forward_kinematics,
@@ -479,7 +482,8 @@ class AnalysisTab:
 
     def _evaluator_triple(self, z_key: str) -> Any:
         """Return surface evaluator for the triple pendulum model."""
-        assert z_key is not None, "z_key must be provided"
+        if not (z_key is not None):
+            raise ValueError("z_key must be provided")
         from ..physics_triple import (
             TriplePendulumParams,
             forward_kinematics as triple_fk,
@@ -542,7 +546,8 @@ class AnalysisTab:
 
     def _evaluator_golfer(self, z_key: str) -> Any:
         """Return surface evaluator for the golfer upper-body model."""
-        assert z_key is not None, "z_key must be provided"
+        if not (z_key is not None):
+            raise ValueError("z_key must be provided")
         from ..physics_golfer import GolferParams, mass_matrix as golfer_mm
         from ..golfer_dynamics import potential_energy_from_q
 
@@ -648,7 +653,8 @@ class AnalysisTab:
         Returns w = sqrt(det(J J^T)) where J is the 2 × n_dof Jacobian
         approximated by central differences.
         """
-        assert tip_key is not None, "tip_key must be provided"
+        if not (tip_key is not None):
+            raise ValueError("tip_key must be provided")
         eps = 1e-7
         n_dof = len(angle_keys)
 
@@ -676,7 +682,8 @@ class AnalysisTab:
         zlabel: str,
     ) -> None:
         """Render a 3D surface on the embedded canvas."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         ax = self._ax_3d
         ax.clear()
 
@@ -713,7 +720,8 @@ class AnalysisTab:
 
     def plot_2d(self, x_key: str, y_key: str) -> None:
         """Programmatic 2D plot (for external callers)."""
-        assert x_key is not None, "x_key must be provided"
+        if not (x_key is not None):
+            raise ValueError("x_key must be provided")
         if self._result is None:
             logger.warning("No result loaded")
             return

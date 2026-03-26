@@ -41,7 +41,8 @@ class SimulationTime:
     @classmethod
     def from_julian_date(cls, jd: float) -> SimulationTime:
         """Create SimulationTime from Julian date."""
-        assert jd is not None, "jd must be provided"
+        if not (jd is not None):
+            raise ValueError("jd must be provided")
         dt = cls.julian_to_datetime(jd)
         year = cls.julian_to_decimal_year(jd)
         return cls(julian_date=jd, datetime_utc=dt, year=year)
@@ -49,7 +50,8 @@ class SimulationTime:
     @classmethod
     def from_datetime(cls, dt: datetime) -> SimulationTime:
         """Create SimulationTime from datetime."""
-        assert dt is not None, "dt must be provided"
+        if not (dt is not None):
+            raise ValueError("dt must be provided")
         jd = cls.datetime_to_julian(dt)
         year = cls.julian_to_decimal_year(jd)
         return cls(julian_date=jd, datetime_utc=dt, year=year)
@@ -72,13 +74,7 @@ class SimulationTime:
         century = int(year / 100)
         correction = 2 - century + int(century / 4)
 
-        jd = (
-            int(365.25 * (year + 4716))
-            + int(30.6001 * (month + 1))
-            + day
-            + correction
-            - 1524.5
-        )
+        jd = int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + day + correction - 1524.5
 
         return jd
 
@@ -203,9 +199,7 @@ class TimeManager:
     @time_warp.setter
     def time_warp(self, value: float) -> None:
         """Set time warp factor."""
-        self._time_warp = max(
-            -365.25 * SECONDS_PER_DAY, min(value, 365.25 * SECONDS_PER_DAY)
-        )
+        self._time_warp = max(-365.25 * SECONDS_PER_DAY, min(value, 365.25 * SECONDS_PER_DAY))
 
     @property
     def is_paused(self) -> bool:
@@ -268,7 +262,8 @@ class TimeManager:
         Args:
             sim_time: Target simulation time
         """
-        assert sim_time is not None, "sim_time must be provided"
+        if not (sim_time is not None):
+            raise ValueError("sim_time must be provided")
         jd = sim_time.julian_date
         jd = max(self._min_julian_date, min(jd, self._max_julian_date))
 
@@ -296,7 +291,8 @@ class TimeManager:
 
     def advance_days(self, days: float) -> None:
         """Advance simulation by specified number of days."""
-        assert days is not None, "days must be provided"
+        if not (days is not None):
+            raise ValueError("days must be provided")
         new_jd = self._simulation_time.julian_date + days
         self.set_julian_date(new_jd)
 
@@ -314,7 +310,8 @@ class TimeManager:
         Returns:
             True if preset was found and set
         """
-        assert preset_name is not None, "preset_name must be provided"
+        if not (preset_name is not None):
+            raise ValueError("preset_name must be provided")
         if preset_name in self.WARP_FACTORS:
             self._time_warp = self.WARP_FACTORS[preset_name]
             return True
@@ -338,15 +335,11 @@ class TimeManager:
         """Reverse the direction of time flow."""
         self._time_warp = -self._time_warp
 
-    def add_time_change_listener(
-        self, callback: Callable[[SimulationTime], None]
-    ) -> None:
+    def add_time_change_listener(self, callback: Callable[[SimulationTime], None]) -> None:
         """Add a callback to be notified of time changes."""
         self._on_time_change.append(callback)
 
-    def remove_time_change_listener(
-        self, callback: Callable[[SimulationTime], None]
-    ) -> None:
+    def remove_time_change_listener(self, callback: Callable[[SimulationTime], None]) -> None:
         """Remove a time change callback."""
         if callback in self._on_time_change:
             self._on_time_change.remove(callback)

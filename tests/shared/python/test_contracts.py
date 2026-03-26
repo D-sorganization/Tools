@@ -199,9 +199,7 @@ class TestPostconditionDecorator:
         set_contract_level(self._orig)
 
     def test_passes_when_condition_met(self) -> None:
-        @postcondition(
-            lambda result: result >= 0, message="result must be non-negative"
-        )
+        @postcondition(lambda result: result >= 0, message="result must be non-negative")
         def abs_val(x: float) -> float:
             return abs(x)
 

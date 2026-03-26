@@ -125,7 +125,8 @@ class PhysicsValidator:
         Returns:
             Detailed InertiaValidationResult
         """
-        assert inertia is not None, "inertia must be provided"
+        if not (inertia is not None):
+            raise ValueError("inertia must be provided")
         result = InertiaValidationResult(
             is_valid=True,
             is_symmetric=True,
@@ -146,9 +147,7 @@ class PhysicsValidator:
         if not np.allclose(tensor, tensor.T, rtol=1e-10):
             result.is_symmetric = False
             result.is_valid = False
-            result.errors.append(
-                f"Inertia tensor is not symmetric for {component or 'unknown'}"
-            )
+            result.errors.append(f"Inertia tensor is not symmetric for {component or 'unknown'}")
 
         # Compute eigenvalues
         try:
@@ -160,8 +159,7 @@ class PhysicsValidator:
                 result.is_positive_definite = False
                 result.is_valid = False
                 result.errors.append(
-                    f"Inertia tensor is not positive definite. "
-                    f"Eigenvalues: {eigenvalues}"
+                    f"Inertia tensor is not positive definite. " f"Eigenvalues: {eigenvalues}"
                 )
 
             # Compute condition number
@@ -199,8 +197,7 @@ class PhysicsValidator:
         min_inertia = min(Ixx, Iyy, Izz)
         if min_inertia < 1e-9:
             result.warnings.append(
-                f"Very small inertia value ({min_inertia:.2e}) may cause "
-                "numerical instability"
+                f"Very small inertia value ({min_inertia:.2e}) may cause " "numerical instability"
             )
 
         return result
@@ -239,7 +236,8 @@ class PhysicsValidator:
         Returns:
             Tuple of (support_points, resolved_support_link_names).
         """
-        assert links is not None, "links must be provided"
+        if not (links is not None):
+            raise ValueError("links must be provided")
         if support_link_names is None:
             link_z_positions = []
             for link in links:
@@ -249,9 +247,7 @@ class PhysicsValidator:
 
             if link_z_positions:
                 min_z = min(z for _, z in link_z_positions)
-                support_link_names = [
-                    name for name, z in link_z_positions if abs(z - min_z) < 0.1
-                ]
+                support_link_names = [name for name, z in link_z_positions if abs(z - min_z) < 0.1]
 
         support_points: list[tuple[float, float]] = []
         for link in links:
@@ -276,7 +272,8 @@ class PhysicsValidator:
         Returns:
             Tuple of (is_stable, margin, support_polygon, tipping_angle_deg).
         """
-        assert com is not None, "com must be provided"
+        if not (com is not None):
+            raise ValueError("com must be provided")
         support_polygon: list[tuple[float, float]] | None = None
 
         if len(support_points) < 3:
@@ -328,7 +325,8 @@ class PhysicsValidator:
         Returns:
             StabilityResult with stability metrics
         """
-        assert links is not None, "links must be provided"
+        if not (links is not None):
+            raise ValueError("links must be provided")
         if not links:
             return StabilityResult(
                 is_stable=False,
@@ -343,9 +341,7 @@ class PhysicsValidator:
             )
 
         com, total_mass = com_result
-        support_points, support_link_names = self._find_support_polygon(
-            links, support_link_names
-        )
+        support_points, support_link_names = self._find_support_polygon(links, support_link_names)
         is_stable, margin, support_polygon, tipping_angle = self._evaluate_stability(
             com, total_mass, support_points
         )
@@ -373,7 +369,8 @@ class PhysicsValidator:
         Returns:
             CollisionCheckResult with intersection data
         """
-        assert links is not None, "links must be provided"
+        if not (links is not None):
+            raise ValueError("links must be provided")
         result = CollisionCheckResult(has_self_intersection=False)
         collision_spheres = []
 
@@ -430,7 +427,8 @@ class PhysicsValidator:
         Returns:
             Complete PhysicsValidationResult
         """
-        assert links is not None, "links must be provided"
+        if not (links is not None):
+            raise ValueError("links must be provided")
         result = PhysicsValidationResult(is_valid=True)
 
         # Validate each link's inertia
@@ -442,14 +440,10 @@ class PhysicsValidator:
                 inertial = link.inertial
 
                 # Check if inertial has full tensor attributes
-                has_inertia_tensor = hasattr(inertial, "ixx") and hasattr(
-                    inertial, "iyy"
-                )
+                has_inertia_tensor = hasattr(inertial, "ixx") and hasattr(inertial, "iyy")
 
                 if has_inertia_tensor:
-                    inertia_result = self.validate_inertia_tensor(
-                        inertial, component=link.name
-                    )
+                    inertia_result = self.validate_inertia_tensor(inertial, component=link.name)
                     result.inertia_results[link.name] = inertia_result
 
                     if not inertia_result.is_valid:
@@ -502,7 +496,8 @@ class PhysicsValidator:
         polygon: list[tuple[float, float]],
     ) -> bool:
         """Check if a 2D point is inside a polygon using ray casting."""
-        assert point is not None, "point must be provided"
+        if not (point is not None):
+            raise ValueError("point must be provided")
         x, y = point
         n = len(polygon)
         inside = False
@@ -524,7 +519,8 @@ class PhysicsValidator:
         polygon: list[tuple[float, float]],
     ) -> float:
         """Compute minimum distance from point to polygon edge."""
-        assert point is not None, "point must be provided"
+        if not (point is not None):
+            raise ValueError("point must be provided")
         min_dist = float("inf")
         n = len(polygon)
 

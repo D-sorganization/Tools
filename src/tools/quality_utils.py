@@ -81,7 +81,8 @@ MAGIC_NUMBERS: list[tuple[Pattern, str]] = [
 
 def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
     """Check if a pass statement is in a legitimate context."""
-    assert lines is not None, "lines must be provided"
+    if not (lines is not None):
+        raise ValueError("lines must be provided")
     require(isinstance(lines, list), "lines must be a list")
     require(isinstance(line_num, int), "line_num must be an integer")
     if line_num <= 0 or line_num > len(lines):
@@ -152,7 +153,8 @@ def check_banned_patterns(
     filepath: Path,
 ) -> list[tuple[int, str, str]]:
     """Check for banned patterns in lines."""
-    assert lines is not None, "lines must be provided"
+    if not (lines is not None):
+        raise ValueError("lines must be provided")
     require(isinstance(lines, list), "lines must be a list of strings")
     require(isinstance(filepath, Path), "filepath must be a Path")
     issues: list[tuple[int, str, str]] = []
@@ -170,9 +172,7 @@ def check_banned_patterns(
         # Check for basic banned patterns
         for pattern, message in BANNED_PATTERNS:
             # Skip angle bracket patterns if line contains legitimate Tkinter bindings
-            pattern_str = (
-                pattern.pattern if hasattr(pattern, "pattern") else str(pattern)
-            )
+            pattern_str = pattern.pattern if hasattr(pattern, "pattern") else str(pattern)
             if "<" in pattern_str and is_legitimate_tkinter_binding(line):
                 continue
             if pattern.search(line):
@@ -243,7 +243,8 @@ def strip_comments_from_line(line: str) -> str:
 
 def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str, str]]:
     """Check for magic numbers in lines."""
-    assert lines is not None, "lines must be provided"
+    if not (lines is not None):
+        raise ValueError("lines must be provided")
     require(isinstance(lines, list), "lines must be a list of strings")
     require(isinstance(filepath, Path), "filepath must be a Path")
     issues: list[tuple[int, str, str]] = []
@@ -266,7 +267,8 @@ def check_magic_numbers(lines: list[str], filepath: Path) -> list[tuple[int, str
 
 def check_ast_issues(content: str, filepath: Path) -> list[tuple[int, str, str]]:
     """Check AST for quality issues."""
-    assert content is not None, "content must be provided"
+    if not (content is not None):
+        raise ValueError("content must be provided")
     issues: list[tuple[int, str, str]] = []
     try:
         tree = ast.parse(content)

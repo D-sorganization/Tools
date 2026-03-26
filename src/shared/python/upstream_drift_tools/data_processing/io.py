@@ -71,9 +71,7 @@ class DataReader:
             data_keys = [k for k in data if not k.startswith("__")]
             if len(data_keys) == 1:
                 return pd.DataFrame(data[data_keys[0]])
-            return pd.DataFrame(
-                {k: v for k, v in data.items() if not k.startswith("__")}
-            )
+            return pd.DataFrame({k: v for k, v in data.items() if not k.startswith("__")})
         if fmt == "sqlite":
             import sqlite3
 
@@ -96,7 +94,8 @@ class DataWriter:
         **kwargs: Any,
     ) -> None:
         """Write a DataFrame to a file."""
-        assert df is not None, "df must be provided"
+        if not (df is not None):
+            raise ValueError("df must be provided")
         path = Path(file_path)
         fmt = (format_type or FileFormatDetector.detect_format(path) or "").lower()
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -121,9 +120,7 @@ class DataWriter:
             import sqlite3
 
             conn = sqlite3.connect(str(path))
-            df.to_sql(
-                kwargs.get("table_name", "data"), conn, if_exists="replace", index=False
-            )
+            df.to_sql(kwargs.get("table_name", "data"), conn, if_exists="replace", index=False)
             conn.close()
         else:
             raise ValueError(f"Unsupported or undetected format for: {path}")
@@ -155,7 +152,8 @@ class FileFormatDetector:
     @classmethod
     def detect_format(cls, file_path: str | Path) -> str | None:
         """Detect format from extension."""
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         path = Path(file_path)
         return cls._FORMAT_MAP.get(path.suffix.lower())
 

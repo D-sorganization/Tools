@@ -26,10 +26,9 @@ class OptimizedFileScanner:
 
     def __init__(self, max_workers: int = -1) -> None:
         """Initialize the scanner with specified number of workers."""
-        assert max_workers is not None, "max_workers must be provided"
-        self.max_workers = (
-            max_workers if max_workers != -1 else min(32, (os.cpu_count() or 1) + 4)
-        )
+        if not (max_workers is not None):
+            raise ValueError("max_workers must be provided")
+        self.max_workers = max_workers if max_workers != -1 else min(32, (os.cpu_count() or 1) + 4)
         self._cache: dict[str, tuple[float, list[Path]]] = {}
         self._cache_lock = threading.Lock()
 
@@ -47,7 +46,8 @@ class OptimizedFileScanner:
         Yields:
             Path objects for matching files
         """
-        assert root_path is not None, "root_path must be provided"
+        if not (root_path is not None):
+            raise ValueError("root_path must be provided")
         if not root_path.exists():
             return
 
@@ -66,7 +66,8 @@ class OptimizedFileScanner:
 
         def scan_subdirectory(directory: Path, depth: int) -> list[Path]:
             """Scan a single subdirectory."""
-            assert directory is not None, "directory must be provided"
+            if not (directory is not None):
+                raise ValueError("directory must be provided")
             if depth > max_depth:
                 return []
 
@@ -91,12 +92,9 @@ class OptimizedFileScanner:
         subdirs = [item for item in root_path.iterdir() if item.is_dir()]
 
         if len(subdirs) > 1 and self.max_workers > 1:
-            with ThreadPoolExecutor(
-                max_workers=min(self.max_workers, len(subdirs))
-            ) as executor:
+            with ThreadPoolExecutor(max_workers=min(self.max_workers, len(subdirs))) as executor:
                 future_to_dir = {
-                    executor.submit(scan_subdirectory, subdir, 1): subdir
-                    for subdir in subdirs
+                    executor.submit(scan_subdirectory, subdir, 1): subdir for subdir in subdirs
                 }
 
                 for future in as_completed(future_to_dir):
@@ -213,9 +211,7 @@ class MemoryOptimizedProcessor:
                 yield chunk
 
     @staticmethod
-    def lazy_file_reader(
-        file_path: Path, chunk_size: int = 8192
-    ) -> Generator[str, None, None]:
+    def lazy_file_reader(file_path: Path, chunk_size: int = 8192) -> Generator[str, None, None]:
         """
         Read large files lazily to avoid loading everything into memory.
 

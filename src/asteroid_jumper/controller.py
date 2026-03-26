@@ -89,20 +89,25 @@ class SimController:
         impulse: float | None = None,
     ) -> None:
         """Reconfigure and reset — call before jumping."""
-        assert self.state.phase == "ready", "Cannot reconfigure mid-flight"
+        if not (self.state.phase == "ready"):
+            raise ValueError("Cannot reconfigure mid-flight")
         if asteroid_mass is not None:
-            assert asteroid_mass > 0
+            if not (asteroid_mass > 0):
+                raise ValueError("DbC Blocked: Precondition failed.")
             self.asteroid_mass = asteroid_mass
         if shape_kind is not None:
             self.asteroid_shape_kind = shape_kind
         if semi_a is not None:
-            assert semi_a > 0
+            if not (semi_a > 0):
+                raise ValueError("DbC Blocked: Precondition failed.")
             self.asteroid_semi_a = semi_a
         if semi_b is not None:
-            assert semi_b > 0
+            if not (semi_b > 0):
+                raise ValueError("DbC Blocked: Precondition failed.")
             self.asteroid_semi_b = semi_b
         if impulse is not None:
-            assert impulse >= 0
+            if not (impulse >= 0):
+                raise ValueError("DbC Blocked: Precondition failed.")
             self.impulse_magnitude = impulse
         self.shape = self._build_shape()
         self.state = self._build_state()
@@ -117,12 +122,14 @@ class SimController:
 
     def set_impulse(self, n_s: float) -> None:
         """Set the total impulse of the jump."""
-        assert n_s >= 0
+        if not (n_s >= 0):
+            raise ValueError("DbC Blocked: Precondition failed.")
         self.impulse_magnitude = float(n_s)
 
     def start_jump(self) -> None:
         """Begin the spring-launch sequence."""
-        assert self.state.phase == "ready", "Already jumping or in flight"
+        if not (self.state.phase == "ready"):
+            raise ValueError("Already jumping or in flight")
         contact_pt = self._contact_point()
         asteroid_com = self.state.asteroid.pos
         jumper_com = self.state.jumper.pos
@@ -140,7 +147,8 @@ class SimController:
 
     def tick(self, dt: float) -> None:
         """Advance simulation by *dt* seconds."""
-        assert dt > 0
+        if not (dt > 0):
+            raise ValueError("DbC Blocked: Precondition failed.")
         step_simulation(self.state, dt)
 
     def reset(self) -> None:

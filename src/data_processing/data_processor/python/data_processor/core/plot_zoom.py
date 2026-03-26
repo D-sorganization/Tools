@@ -184,7 +184,8 @@ class MouseWheelZoom:
     ) -> None:
         """Perform 2D zoom operation."""
         # Get current limits
-        assert zoom_factor is not None, "zoom_factor must be provided"
+        if not (zoom_factor is not None):
+            raise ValueError("zoom_factor must be provided")
         x_min, x_max = ax.get_xlim()
         y_min, y_max = ax.get_ylim()
 
@@ -207,27 +208,19 @@ class MouseWheelZoom:
         y_range = (y_max - y_min) / zoom_factor
 
         # Clamp ranges
-        x_range = np.clip(
-            x_range, self.config.min_zoom_range, self.config.max_zoom_range
-        )
-        y_range = np.clip(
-            y_range, self.config.min_zoom_range, self.config.max_zoom_range
-        )
+        x_range = np.clip(x_range, self.config.min_zoom_range, self.config.max_zoom_range)
+        y_range = np.clip(y_range, self.config.min_zoom_range, self.config.max_zoom_range)
 
         # Calculate new limits centered on cursor
         if self.config.allow_horizontal_zoom and not vertical_only:
             # Maintain relative position of cursor
-            x_ratio = (
-                (x_center - x_min) / (x_max - x_min) if (x_max - x_min) != 0 else 0.5
-            )
+            x_ratio = (x_center - x_min) / (x_max - x_min) if (x_max - x_min) != 0 else 0.5
             new_x_min = x_center - x_ratio * x_range
             new_x_max = x_center + (1 - x_ratio) * x_range
             ax.set_xlim(new_x_min, new_x_max)
 
         if self.config.allow_vertical_zoom and not horizontal_only:
-            y_ratio = (
-                (y_center - y_min) / (y_max - y_min) if (y_max - y_min) != 0 else 0.5
-            )
+            y_ratio = (y_center - y_min) / (y_max - y_min) if (y_max - y_min) != 0 else 0.5
             new_y_min = y_center - y_ratio * y_range
             new_y_max = y_center + (1 - y_ratio) * y_range
             ax.set_ylim(new_y_min, new_y_max)
@@ -238,7 +231,8 @@ class MouseWheelZoom:
         # centered on the current view center
 
         # Get current limits
-        assert zoom_factor is not None, "zoom_factor must be provided"
+        if not (zoom_factor is not None):
+            raise ValueError("zoom_factor must be provided")
         x_min, x_max = ax.get_xlim()
         y_min, y_max = ax.get_ylim()
         z_min, z_max = ax.get_zlim()
@@ -254,15 +248,9 @@ class MouseWheelZoom:
         z_range = (z_max - z_min) / zoom_factor
 
         # Clamp ranges
-        x_range = np.clip(
-            x_range, self.config.min_zoom_range, self.config.max_zoom_range
-        )
-        y_range = np.clip(
-            y_range, self.config.min_zoom_range, self.config.max_zoom_range
-        )
-        z_range = np.clip(
-            z_range, self.config.min_zoom_range, self.config.max_zoom_range
-        )
+        x_range = np.clip(x_range, self.config.min_zoom_range, self.config.max_zoom_range)
+        y_range = np.clip(y_range, self.config.min_zoom_range, self.config.max_zoom_range)
+        z_range = np.clip(z_range, self.config.min_zoom_range, self.config.max_zoom_range)
 
         # Set new limits
         ax.set_xlim(x_center - x_range / 2, x_center + x_range / 2)
@@ -314,7 +302,8 @@ class InteractivePlotManager:
             enable_pan: Enable panning (already supported by toolbar)
             zoom_config: Configuration for zoom behavior
         """
-        assert enable_zoom is not None, "enable_zoom must be provided"
+        if not (enable_zoom is not None):
+            raise ValueError("enable_zoom must be provided")
         fig_id = id(fig)
         self._figures[fig_id] = fig
 

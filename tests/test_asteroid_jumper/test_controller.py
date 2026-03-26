@@ -45,7 +45,7 @@ class TestSimController:
 
     def test_negative_impulse_raises(self) -> None:
         ctrl = SimController()
-        with pytest.raises(AssertionError):
+        with pytest.raises((AssertionError, ValueError)):
             ctrl.set_impulse(-100.0)
 
     def test_start_jump_changes_phase(self) -> None:
@@ -56,7 +56,7 @@ class TestSimController:
     def test_double_jump_raises(self) -> None:
         ctrl = SimController()
         ctrl.start_jump()
-        with pytest.raises(AssertionError):
+        with pytest.raises((AssertionError, ValueError)):
             ctrl.start_jump()
 
     def test_reset_restores_ready_state(self) -> None:

@@ -124,7 +124,8 @@ class ModelEntry:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> ModelEntry:
         """Create from dictionary."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         fmt_str = data.get("model_format", "urdf")
         try:
             model_format = ModelFormat(fmt_str)
@@ -159,9 +160,7 @@ class LibraryConfig:
     """Configuration for the model library."""
 
     # Local storage paths
-    cache_dir: Path = field(
-        default_factory=lambda: Path.home() / ".model_generation" / "cache"
-    )
+    cache_dir: Path = field(default_factory=lambda: Path.home() / ".model_generation" / "cache")
     index_file: Path = field(
         default_factory=lambda: Path.home() / ".model_generation" / "index.json"
     )
@@ -368,9 +367,7 @@ class ModelLibrary:
         """Get a model entry by ID."""
         return self._entries.get(model_id)
 
-    @precondition(
-        lambda self, model_id, **kw: model_id is not None, "Model ID cannot be None"
-    )
+    @precondition(lambda self, model_id, **kw: model_id is not None, "Model ID cannot be None")
     @precondition(
         lambda self, model_id, **kw: len(model_id.strip()) > 0,
         "Model ID cannot be empty",
@@ -390,16 +387,15 @@ class ModelLibrary:
         Returns:
             ParsedModel or None if not found
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         entry = self._entries.get(model_id)
         if not entry:
             logger.warning(f"Model not found: {model_id}")
             return None
 
         # Check if we need to download
-        if (
-            not entry.is_cached or force_download
-        ) and entry.source != RepositorySource.LOCAL:
+        if (not entry.is_cached or force_download) and entry.source != RepositorySource.LOCAL:
             self._download_model(entry)
 
         if not entry.urdf_path or not entry.urdf_path.exists():
@@ -417,7 +413,8 @@ class ModelLibrary:
 
     def _load_mjcf(self, path: Path, read_only: bool = False) -> ParsedModel:
         """Load an MJCF file into a ParsedModel."""
-        assert path is not None, "path must be provided"
+        if not (path is not None):
+            raise ValueError("path must be provided")
         import defusedxml.ElementTree as DefusedET
         from model_generation.converters.mjcf_converter import MJCFConverter
 
@@ -498,9 +495,7 @@ class ModelLibrary:
             source_path=str(urdf_path.parent),
             urdf_path=urdf_path,
             mesh_dir=(
-                urdf_path.parent / "meshes"
-                if (urdf_path.parent / "meshes").exists()
-                else None
+                urdf_path.parent / "meshes" if (urdf_path.parent / "meshes").exists() else None
             ),
             tags=tags or [],
             link_count=link_count,
@@ -556,7 +551,8 @@ class ModelLibrary:
         Returns:
             List of discovered models
         """
-        assert repo_name is not None, "repo_name must be provided"
+        if not (repo_name is not None):
+            raise ValueError("repo_name must be provided")
         if repo_name in self.KNOWN_REPOSITORIES:
             repo_config = self.KNOWN_REPOSITORIES[repo_name]
         elif repo_name in self._repositories:
@@ -580,7 +576,8 @@ class ModelLibrary:
         config: dict[str, Any],
     ) -> list[ModelEntry]:
         """Fetch model list from repository."""
-        assert repo_name is not None, "repo_name must be provided"
+        if not (repo_name is not None):
+            raise ValueError("repo_name must be provided")
         models = []
 
         repo_type = config.get("type", "github")
@@ -598,7 +595,8 @@ class ModelLibrary:
         config: dict[str, Any],
     ) -> list[ModelEntry]:
         """Fetch models from GitHub repository."""
-        assert repo_name is not None, "repo_name must be provided"
+        if not (repo_name is not None):
+            raise ValueError("repo_name must be provided")
         models = []
 
         owner = config.get("owner")
@@ -684,7 +682,8 @@ class ModelLibrary:
         config: dict[str, Any],
     ) -> list[ModelEntry]:
         """Fetch models from direct URL."""
-        assert repo_name is not None, "repo_name must be provided"
+        if not (repo_name is not None):
+            raise ValueError("repo_name must be provided")
         models = []
         url = config.get("url")
 
@@ -705,7 +704,8 @@ class ModelLibrary:
 
     def _download_model(self, entry: ModelEntry) -> bool:
         """Download a model to local cache."""
-        assert entry is not None, "entry must be provided"
+        if not (entry is not None):
+            raise ValueError("entry must be provided")
         if not entry.source_url:
             return False
 
@@ -733,9 +733,7 @@ class ModelLibrary:
             logger.error(f"Failed to download {entry.id}: {e}")
             return False
 
-    @precondition(
-        lambda self, model_id, **kw: model_id is not None, "Model ID cannot be None"
-    )
+    @precondition(lambda self, model_id, **kw: model_id is not None, "Model ID cannot be None")
     @precondition(
         lambda self, model_id, **kw: len(model_id.strip()) > 0,
         "Model ID cannot be empty",
@@ -757,7 +755,8 @@ class ModelLibrary:
         Returns:
             New ModelEntry for the editable copy
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         source_entry = self._entries.get(model_id)
         if not source_entry:
             return None
@@ -814,9 +813,7 @@ class ModelLibrary:
 
         return new_entry
 
-    @precondition(
-        lambda self, model_id, **kw: model_id is not None, "Model ID cannot be None"
-    )
+    @precondition(lambda self, model_id, **kw: model_id is not None, "Model ID cannot be None")
     def remove_model(self, model_id: str, delete_files: bool = False) -> bool:
         """
         Remove a model from the library.
@@ -828,7 +825,8 @@ class ModelLibrary:
         Returns:
             True if removed successfully
         """
-        assert model_id is not None, "model_id must be provided"
+        if not (model_id is not None):
+            raise ValueError("model_id must be provided")
         entry = self._entries.get(model_id)
         if not entry:
             return False

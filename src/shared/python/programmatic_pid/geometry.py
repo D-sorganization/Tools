@@ -35,7 +35,8 @@ def closest_point_on_rect(
     point: tuple[float, float], rect: tuple[float, float, float, float]
 ) -> Point:
     """Return the closest point on *rect* to *point*."""
-    assert point is not None, "point must be provided"
+    if not (point is not None):
+        raise ValueError("point must be provided")
     px, py = to_float(point[0]), to_float(point[1])
     x1, y1, x2, y2 = rect
     return Point(clamp(px, x1, x2), clamp(py, y1, y2))
@@ -47,19 +48,19 @@ def rects_overlap(
     pad: float = 0.0,
 ) -> bool:
     """Return True if axis-aligned rectangles *a* and *b* overlap (with padding)."""
-    assert a is not None, "a must be provided"
+    if not (a is not None):
+        raise ValueError("a must be provided")
     ax1, ay1, ax2, ay2 = a
     bx1, by1, bx2, by2 = b
-    return not (
-        ax2 + pad <= bx1 or bx2 + pad <= ax1 or ay2 + pad <= by1 or by2 + pad <= ay1
-    )
+    return not (ax2 + pad <= bx1 or bx2 + pad <= ax1 or ay2 + pad <= by1 or by2 + pad <= ay1)
 
 
 def text_box(
     text: str, x: float, y: float, h: float, align: str = "MIDDLE_CENTER"
 ) -> tuple[float, float, float, float]:
     """Estimate the bounding box of a text entity given its alignment."""
-    assert text is not None, "text must be provided"
+    if not (text is not None):
+        raise ValueError("text must be provided")
     text = str(text)
     h = max(to_float(h, 1.0), 0.1)
     width = max(len(text), 1) * h * 0.55
@@ -113,7 +114,8 @@ def find_free_region(
     Searches in a spiral pattern outward from *search_origin* (default 0,0).
     Returns None if nothing found within a reasonable search radius.
     """
-    assert occupied is not None, "occupied must be provided"
+    if not (occupied is not None):
+        raise ValueError("occupied must be provided")
     ox = search_origin.x if search_origin else 0.0
     oy = search_origin.y if search_origin else 0.0
 

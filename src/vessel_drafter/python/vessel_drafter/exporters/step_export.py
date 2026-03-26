@@ -38,7 +38,8 @@ def export_default_layout_step(
     manifest_path: Path | None = None,
     layout: ElectrodeAdvisorLayout = DEFAULT_ELECTRODE_ADVISOR_LAYOUT,
 ) -> Path:
-    assert output_path is not None, "output_path must be provided"
+    if not (output_path is not None):
+        raise ValueError("output_path must be provided")
     output_path.parent.mkdir(parents=True, exist_ok=True)
     shape = build_default_layout_shape(layout)
     export_step(shape, output_path)
@@ -58,7 +59,8 @@ def export_cylindrical_bath_layout_step(
     manifest_path: Path | None = None,
     layout: CylindricalBathLayout = DEFAULT_CYLINDRICAL_BATH_LAYOUT,
 ) -> Path:
-    assert output_path is not None, "output_path must be provided"
+    if not (output_path is not None):
+        raise ValueError("output_path must be provided")
     output_path.parent.mkdir(parents=True, exist_ok=True)
     shape = build_cylindrical_bath_layout_shape(layout)
     export_step(shape, output_path)
@@ -78,7 +80,8 @@ def export_vessel_drafter_step(
     manifest_path: Path | None = None,
     layout: VesselDrafterLayout = DEFAULT_VESSEL_DRAFTER_LAYOUT,
 ) -> Path:
-    assert output_path is not None, "output_path must be provided"
+    if not (output_path is not None):
+        raise ValueError("output_path must be provided")
     output_path.parent.mkdir(parents=True, exist_ok=True)
     shape = build_vessel_drafter_shape(layout)
     export_step(shape, output_path)
@@ -97,18 +100,14 @@ def export_vessel_drafter_step(
                     "surface_area_ft2": item.surface_area_ft2,
                     "density_lb_per_ft3": item.density_lb_per_ft3,
                     "mass_lb": item.mass_lb,
-                    "thermal_conductivity_w_per_mk": (
-                        item.thermal_conductivity_w_per_mk
-                    ),
+                    "thermal_conductivity_w_per_mk": (item.thermal_conductivity_w_per_mk),
                     "thermal_expansion_um_per_m_c": (item.thermal_expansion_um_per_m_c),
                 }
                 for item in metrics.component_metrics
             },
             "refractory_total_volume_in3": metrics.refractory_total_volume_in3,
             "refractory_total_volume_ft3": metrics.refractory_total_volume_ft3,
-            "refractory_total_surface_area_ft2": (
-                metrics.refractory_total_surface_area_ft2
-            ),
+            "refractory_total_surface_area_ft2": (metrics.refractory_total_surface_area_ft2),
             "refractory_total_mass_lb": metrics.refractory_total_mass_lb,
         }
         manifest_path.write_text(

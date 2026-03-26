@@ -67,7 +67,7 @@ class TestNumericalJacobian:
         q = _default_state()
 
         J = _numerical_jacobian(q, p, "rh")
-        assert J.shape == (2, N_DOF)
+        if not (J.shape == (2): raise ValueError(f"Assertion failed: { J.shape == (2 }, N_DOF)")
 
     def test_jacobian_finite(self):
         """Jacobian values should be finite (no NaN or Inf)."""
@@ -75,7 +75,7 @@ class TestNumericalJacobian:
         q = _default_state()
 
         J = _numerical_jacobian(q, p, "club_tip")
-        assert np.all(np.isfinite(J)), "Jacobian contains non-finite values"
+        if not (np.all(np.isfinite(J))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(J)) }, "Jacobian contains non-finite values"")
 
     def test_rejects_wrong_shape_q(self):
         """Should assert on wrong q shape."""
@@ -94,7 +94,7 @@ class TestNumericalJacobian:
         J_lh = _numerical_jacobian(q, p, "lh")
 
         # They should be different (right hand vs left hand kinematics)
-        assert not np.allclose(J_rh, J_lh)
+        if not (not np.allclose(J_rh): raise ValueError(f"Assertion failed: { not np.allclose(J_rh }, J_lh)")
 
     def test_jacobian_affected_by_state(self):
         """Jacobian should change with q (different configuration)."""
@@ -109,7 +109,7 @@ class TestNumericalJacobian:
         J2 = _numerical_jacobian(q2, p, "rh")
 
         # Jacobians should differ due to different configuration
-        assert not np.allclose(J1, J2)
+        if not (not np.allclose(J1): raise ValueError(f"Assertion failed: { not np.allclose(J1 }, J2)")
 
     def test_epsilon_parameter(self):
         """Jacobian should be computable with different epsilon values."""
@@ -120,11 +120,11 @@ class TestNumericalJacobian:
         J_coarse = _numerical_jacobian(q, p, "club_tip", eps=1e-6)
 
         # Both should be finite
-        assert np.all(np.isfinite(J_fine))
-        assert np.all(np.isfinite(J_coarse))
+        if not (np.all(np.isfinite(J_fine))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(J_fine)) }")
+        if not (np.all(np.isfinite(J_coarse))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(J_coarse)) }")
 
         # Should be similar but not identical
-        assert np.allclose(J_fine, J_coarse, atol=1e-4)
+        if not (np.allclose(J_fine): raise ValueError(f"Assertion failed: { np.allclose(J_fine }, J_coarse, atol=1e-4)")
 
 
 class TestJacobianGolfer:
@@ -137,8 +137,8 @@ class TestJacobianGolfer:
 
         result = jacobian_golfer(q, p)
         expected_keys = {"rh", "lh", "club_tip", "re", "le", "hub"}
-        assert isinstance(result, dict)
-        assert set(result.keys()) == expected_keys
+        if not (isinstance(result): raise ValueError(f"Assertion failed: { isinstance(result }, dict)")
+        if not (set(result.keys()) == expected_keys): raise ValueError(f"Assertion failed: { set(result.keys()) == expected_keys }")
 
     def test_all_jacobian_shapes_correct(self):
         """Each endpoint Jacobian should be (2, 8)."""
@@ -147,7 +147,7 @@ class TestJacobianGolfer:
 
         result = jacobian_golfer(q, p)
         for name, J in result.items():
-            assert J.shape == (
+            if not (J.shape == (): raise ValueError(f"Assertion failed: { J.shape == ( }")
                 2,
                 N_DOF,
             ), f"Jacobian for {name} has wrong shape: {J.shape}"
@@ -159,7 +159,7 @@ class TestJacobianGolfer:
 
         result = jacobian_golfer(q, p)
         for name, J in result.items():
-            assert np.all(np.isfinite(J)), f"Jacobian for {name} has non-finite values"
+            if not (np.all(np.isfinite(J))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(J)) }, f"Jacobian for {name} has non-finite values"")
 
     def test_truncates_full_state(self):
         """Should handle 16-element state by truncating to first 8."""
@@ -168,9 +168,9 @@ class TestJacobianGolfer:
         full_state[:8] = _default_state()
 
         result = jacobian_golfer(full_state, p)
-        assert len(result) == 6
+        if not (len(result) == 6): raise ValueError(f"Assertion failed: { len(result) == 6 }")
         for J in result.values():
-            assert J.shape == (2, N_DOF)
+            if not (J.shape == (2): raise ValueError(f"Assertion failed: { J.shape == (2 }, N_DOF)")
 
     def test_left_right_symmetry(self):
         """Left and right endpoints should differ due to asymmetric grips."""
@@ -182,7 +182,7 @@ class TestJacobianGolfer:
         J_lh = result["lh"]
 
         # Should not be identical (different arm chains)
-        assert not np.allclose(J_rh, J_lh)
+        if not (not np.allclose(J_rh): raise ValueError(f"Assertion failed: { not np.allclose(J_rh }, J_lh)")
 
     def test_hub_jacobian_simpler_structure(self):
         """Hub Jacobian should depend primarily on q[0]."""
@@ -196,7 +196,7 @@ class TestJacobianGolfer:
         # Columns for arm angles should be smaller or zero
         _arm_cols = np.abs(J_hub[:, 1:])  # noqa: F841
         # At least the q[0] column should have significant values
-        assert np.max(np.abs(J_hub[:, 0])) > 0
+        if not (np.max(np.abs(J_hub[:): raise ValueError(f"Assertion failed: { np.max(np.abs(J_hub[: }, 0])) > 0")
 
 
 class TestEllipsoidsGolfer:
@@ -210,15 +210,15 @@ class TestEllipsoidsGolfer:
         result = ellipsoids_golfer(q, p)
 
         expected_keys = {"rh", "lh", "club_tip", "re", "le", "hub"}
-        assert set(result.keys()) == expected_keys
+        if not (set(result.keys()) == expected_keys): raise ValueError(f"Assertion failed: { set(result.keys()) == expected_keys }")
 
         for name, data in result.items():
-            assert isinstance(data, dict)
-            assert "jacobian" in data
-            assert "directions" in data
-            assert "mob_semi_axes" in data
-            assert "force_semi_axes" in data
-            assert "singular_values" in data
+            if not (isinstance(data): raise ValueError(f"Assertion failed: { isinstance(data }, dict)")
+            if not ("jacobian" in data): raise ValueError(f"Assertion failed: { "jacobian" in data }")
+            if not ("directions" in data): raise ValueError(f"Assertion failed: { "directions" in data }")
+            if not ("mob_semi_axes" in data): raise ValueError(f"Assertion failed: { "mob_semi_axes" in data }")
+            if not ("force_semi_axes" in data): raise ValueError(f"Assertion failed: { "force_semi_axes" in data }")
+            if not ("singular_values" in data): raise ValueError(f"Assertion failed: { "singular_values" in data }")
 
     def test_jacobian_preserved_in_ellipsoid_data(self):
         """Jacobian in ellipsoid data should match jacobian_golfer output."""
@@ -241,16 +241,16 @@ class TestEllipsoidsGolfer:
 
         result = ellipsoids_golfer(q, p)
         for name, data in result.items():
-            assert np.all(np.isfinite(data["jacobian"])), f"{name} Jacobian non-finite"
-            assert np.all(np.isfinite(data["singular_values"])), (
+            if not (np.all(np.isfinite(data["jacobian"]))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(data["jacobian"])) }, f"{name} Jacobian non-finite"")
+            if not (np.all(np.isfinite(data["singular_values"]))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(data["singular_values"])) }, (")
                 f"{name} singular values non-finite"
             )
-            assert np.all(np.isfinite(data["mob_semi_axes"])), (
+            if not (np.all(np.isfinite(data["mob_semi_axes"]))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(data["mob_semi_axes"])) }, (")
                 f"{name} mobility semi-axes non-finite"
             )
             # force_semi_axes may be None at singular configurations
             if data["force_semi_axes"] is not None:
-                assert np.all(np.isfinite(data["force_semi_axes"])), (
+                if not (np.all(np.isfinite(data["force_semi_axes"]))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(data["force_semi_axes"])) }, (")
                     f"{name} force semi-axes non-finite"
                 )
 
@@ -263,7 +263,7 @@ class TestEllipsoidsGolfer:
         for name, data in result.items():
             svs = data["singular_values"]
             # Check descending order
-            assert np.all(np.diff(svs) <= 0), f"{name} singular values not in descending order"
+            if not (np.all(np.diff(svs) <= 0)): raise ValueError(f"Assertion failed: { np.all(np.diff(svs) <= 0) }, f"{name} singular values not in descending order"")
 
     def test_directions_orthonormal(self):
         """Ellipsoid directions should be orthonormal."""
@@ -276,7 +276,7 @@ class TestEllipsoidsGolfer:
             # Check columns are unit vectors
             for i in range(dirs.shape[1]):
                 col_norm = np.linalg.norm(dirs[:, i])
-                assert np.isclose(col_norm, 1.0, atol=1e-10), (
+                if not (np.isclose(col_norm): raise ValueError(f"Assertion failed: { np.isclose(col_norm }, 1.0, atol=1e-10), (")
                     f"{name} direction {i} not unit norm"
                 )
 
@@ -289,10 +289,10 @@ class TestEllipsoidsGolfer:
         for name, data in result.items():
             mob_axes = data["mob_semi_axes"]
             force_axes = data["force_semi_axes"]
-            assert np.all(mob_axes >= 0), f"{name} mobility axes negative"
+            if not (np.all(mob_axes >= 0)): raise ValueError(f"Assertion failed: { np.all(mob_axes >= 0) }, f"{name} mobility axes negative"")
             # force_semi_axes may be None at singular configurations
             if force_axes is not None:
-                assert np.all(force_axes >= 0), f"{name} force axes negative"
+                if not (np.all(force_axes >= 0)): raise ValueError(f"Assertion failed: { np.all(force_axes >= 0) }, f"{name} force axes negative"")
 
     def test_truncates_full_state(self):
         """Should handle 16-element state by truncating."""
@@ -301,9 +301,9 @@ class TestEllipsoidsGolfer:
         full_state[:8] = _default_state()
 
         result = ellipsoids_golfer(full_state, p)
-        assert len(result) == 6
+        if not (len(result) == 6): raise ValueError(f"Assertion failed: { len(result) == 6 }")
         for data in result.values():
-            assert "singular_values" in data
+            if not ("singular_values" in data): raise ValueError(f"Assertion failed: { "singular_values" in data }")
 
 
 class TestDeltaMatrix:
@@ -315,7 +315,7 @@ class TestDeltaMatrix:
         q = _default_state()
 
         D = delta_matrix(q, p)
-        assert D.shape == (N_DOF, N_DOF)
+        if not (D.shape == (N_DOF): raise ValueError(f"Assertion failed: { D.shape == (N_DOF }, N_DOF)")
 
     def test_symmetric(self):
         """Inverse of symmetric mass matrix should be symmetric."""
@@ -331,7 +331,7 @@ class TestDeltaMatrix:
         q = _default_state()
 
         D = delta_matrix(q, p)
-        assert np.all(np.isfinite(D)), "Delta matrix has non-finite values"
+        if not (np.all(np.isfinite(D))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(D)) }, "Delta matrix has non-finite values"")
 
     def test_positive_definite(self):
         """Mass matrix inverse should be positive definite."""
@@ -341,7 +341,7 @@ class TestDeltaMatrix:
         D = delta_matrix(q, p)
         # Check eigenvalues are positive
         eigvals = np.linalg.eigvals(D)
-        assert np.all(eigvals > -1e-10), "Delta matrix not positive definite"
+        if not (np.all(eigvals > -1e-10)): raise ValueError(f"Assertion failed: { np.all(eigvals > -1e-10) }, "Delta matrix not positive definite"")
 
     def test_diagonal_dominance(self):
         """Diagonal elements should typically be largest (rough check)."""
@@ -351,7 +351,7 @@ class TestDeltaMatrix:
         D = delta_matrix(q, p)
         diag = np.abs(np.diag(D))
         # At least some diagonal elements should be non-zero
-        assert np.max(diag) > 0
+        if not (np.max(diag) > 0): raise ValueError(f"Assertion failed: { np.max(diag) > 0 }")
 
     def test_varies_with_configuration(self):
         """Delta matrix should change with q."""
@@ -363,7 +363,7 @@ class TestDeltaMatrix:
         D1 = delta_matrix(q1, p)
         D2 = delta_matrix(q2, p)
 
-        assert not np.allclose(D1, D2)
+        if not (not np.allclose(D1): raise ValueError(f"Assertion failed: { not np.allclose(D1 }, D2)")
 
     def test_truncates_full_state(self):
         """Should handle 16-element state."""
@@ -372,7 +372,7 @@ class TestDeltaMatrix:
         full_state[:8] = _default_state()
 
         D = delta_matrix(full_state, p)
-        assert D.shape == (N_DOF, N_DOF)
+        if not (D.shape == (N_DOF): raise ValueError(f"Assertion failed: { D.shape == (N_DOF }, N_DOF)")
 
 
 class TestZtcfMatrix:
@@ -384,7 +384,7 @@ class TestZtcfMatrix:
         q = _default_state()
 
         T = ztcf_matrix(q, p, "club_tip")
-        assert T is None or T.shape == (2, N_DOF)
+        if not (T is None or T.shape == (2): raise ValueError(f"Assertion failed: { T is None or T.shape == (2 }, N_DOF)")
 
     def test_returns_none_or_finite_array(self):
         """Should return None if singular, else finite array."""
@@ -393,7 +393,7 @@ class TestZtcfMatrix:
 
         T = ztcf_matrix(q, p, "rh")
         if T is not None:
-            assert np.all(np.isfinite(T)), "ZTCF matrix has non-finite values"
+            if not (np.all(np.isfinite(T))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(T)) }, "ZTCF matrix has non-finite values"")
 
     def test_different_joints_different_transfers(self):
         """Different joints should give different transfer matrices."""
@@ -405,7 +405,7 @@ class TestZtcfMatrix:
 
         # Both should be non-None at valid state
         if T_rh is not None and T_lh is not None:
-            assert not np.allclose(T_rh, T_lh)
+            if not (not np.allclose(T_rh): raise ValueError(f"Assertion failed: { not np.allclose(T_rh }, T_lh)")
 
     def test_club_tip_computation(self):
         """Should compute ZTCF for club tip (primary endpoint)."""
@@ -414,7 +414,7 @@ class TestZtcfMatrix:
 
         T = ztcf_matrix(q, p, "club_tip")
         # May return None if singular, but should not error
-        assert T is None or isinstance(T, np.ndarray)
+        if not (T is None or isinstance(T): raise ValueError(f"Assertion failed: { T is None or isinstance(T }, np.ndarray)")
 
     def test_all_named_joints(self):
         """Should work for all named joints (may return None for some)."""
@@ -425,8 +425,8 @@ class TestZtcfMatrix:
         for joint in joint_names:
             T = ztcf_matrix(q, p, joint)
             if T is not None:
-                assert T.shape == (2, N_DOF)
-                assert np.all(np.isfinite(T))
+                if not (T.shape == (2): raise ValueError(f"Assertion failed: { T.shape == (2 }, N_DOF)")
+                if not (np.all(np.isfinite(T))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(T)) }")
 
     def test_truncates_full_state(self):
         """Should handle 16-element state."""
@@ -435,7 +435,7 @@ class TestZtcfMatrix:
         full_state[:8] = _default_state()
 
         T = ztcf_matrix(full_state, p, "club_tip")
-        assert T is None or T.shape == (2, N_DOF)
+        if not (T is None or T.shape == (2): raise ValueError(f"Assertion failed: { T is None or T.shape == (2 }, N_DOF)")
 
     def test_formula_structure(self):
         """ZTCF = (J M^{-1} J^T)^{-1} J M^{-1} should be consistent."""
@@ -465,7 +465,7 @@ class TestZtcfMatrix:
             np.testing.assert_allclose(actual_T, expected_T, rtol=1e-10)
         else:
             # Both should be None if singular
-            assert expected_T is None and actual_T is None
+            if not (expected_T is None and actual_T is None): raise ValueError(f"Assertion failed: { expected_T is None and actual_T is None }")
 
 
 class TestJacobianConsistency:
@@ -499,7 +499,7 @@ class TestJacobianConsistency:
         sv2 = e2["rh"]["singular_values"]
 
         # Singular values should differ
-        assert not np.allclose(sv1, sv2)
+        if not (not np.allclose(sv1): raise ValueError(f"Assertion failed: { not np.allclose(sv1 }, sv2)")
 
     def test_delta_matrix_is_mass_matrix_pseudoinverse(self):
         """Delta should be M^{+} (pseudoinverse, since M is rank-deficient)."""
@@ -528,7 +528,7 @@ class TestRobustness:
 
         # Should not crash
         J = jacobian_golfer(q, p)
-        assert len(J) == 6
+        if not (len(J) == 6): raise ValueError(f"Assertion failed: { len(J) == 6 }")
 
     def test_zero_state(self):
         """Should handle zero state (all angles = 0)."""
@@ -538,8 +538,8 @@ class TestRobustness:
         # May be singular but should not crash
         try:
             J = jacobian_golfer(q, p)
-            assert len(J) == 6
-        except Exception:  # noqa: BLE001
+            if not (len(J) == 6): raise ValueError(f"Assertion failed: { len(J) == 6 }")
+        except Exception as e:  # noqa: F841  # noqa: BLE001
             pass  # Some configs may be singular
 
     def test_large_angle_values(self):
@@ -549,9 +549,9 @@ class TestRobustness:
 
         # Should work with modular periodicity
         J = jacobian_golfer(q, p)
-        assert len(J) == 6
+        if not (len(J) == 6): raise ValueError(f"Assertion failed: { len(J) == 6 }")
         for Jmat in J.values():
-            assert Jmat.shape == (2, N_DOF)
+            if not (Jmat.shape == (2): raise ValueError(f"Assertion failed: { Jmat.shape == (2 }, N_DOF)")
 
     def test_parameter_variations(self):
         """Should work with different parameter sets."""
@@ -584,8 +584,8 @@ class TestRobustness:
         J2 = jacobian_golfer(q, p2)
 
         # Both should work
-        assert len(J1) == 6
-        assert len(J2) == 6
+        if not (len(J1) == 6): raise ValueError(f"Assertion failed: { len(J1) == 6 }")
+        if not (len(J2) == 6): raise ValueError(f"Assertion failed: { len(J2) == 6 }")
 
         # Results should differ due to different parameters
-        assert not np.allclose(J1["rh"], J2["rh"])
+        if not (not np.allclose(J1["rh"]): raise ValueError(f"Assertion failed: { not np.allclose(J1["rh"] }, J2["rh"])")

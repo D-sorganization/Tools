@@ -35,7 +35,8 @@ class ProcessingResult:
         title_result: TitleResult | None = None,
         new_path: Path | None = None,
     ):
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         self.file_path = file_path
         self.success = success
         self.message = message
@@ -60,7 +61,8 @@ def _extract_or_load_title(
     Returns:
         TitleResult from cache or fresh extraction
     """
-    assert file_path is not None, "file_path must be provided"
+    if not (file_path is not None):
+        raise ValueError("file_path must be provided")
     cached = cache.get(file_hash)
     if cached and cached.title:
         logger.debug(f"[CACHE] {file_path.name} -> {cached.title}")
@@ -103,7 +105,8 @@ def _handle_missing_title(
     Returns:
         ProcessingResult indicating failure
     """
-    assert file_path is not None, "file_path must be provided"
+    if not (file_path is not None):
+        raise ValueError("file_path must be provided")
     if move_failed and not dry_run:
         failed_path = _move_to_failed_folder(file_path, failed_folder, transaction_log)
         if failed_path:
@@ -246,14 +249,10 @@ def process_single_file(
 
     except (PermissionError, OSError) as e:
         logger.error(f"Error processing {file_path}: {e}")
-        return ProcessingResult(
-            file_path, False, f"Error processing {file_path.name}: {e}"
-        )
+        return ProcessingResult(file_path, False, f"Error processing {file_path.name}: {e}")
 
 
-def _generate_filename(
-    title: str, author: str, style: str, include_author: bool
-) -> str:
+def _generate_filename(title: str, author: str, style: str, include_author: bool) -> str:
     """
     Generate filename based on title, author, and style.
 
@@ -317,9 +316,7 @@ def _move_to_failed_folder(
 
         with _file_operation_lock:
             file_path.rename(target_path)
-            transaction_log.log_rename(
-                file_path, target_path, True, "Moved to failed folder"
-            )
+            transaction_log.log_rename(file_path, target_path, True, "Moved to failed folder")
 
         return target_path
 

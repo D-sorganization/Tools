@@ -120,7 +120,7 @@ def _cmaes_step(
 
     Returns updated state and fitness values for the population.
     """
-    assert state is not None, "state must be provided"
+    if not (state is not None): raise ValueError(f"Assertion failed: { state is not None }, "state must be provided"")
     n = len(state.mean)
     mu = pop_size // 2  # number of parents
 
@@ -250,7 +250,7 @@ class _OptimizerWorker(QObject):
         use_native_batch: bool = False,
         native_batch_config: dict | None = None,
     ) -> None:
-        assert objective_fn is not None, "objective_fn must be provided"
+        if not (objective_fn is not None): raise ValueError(f"Assertion failed: { objective_fn is not None }, "objective_fn must be provided"")
         super().__init__()
         self._objective = objective_fn
         self._n_params = n_params
@@ -347,7 +347,7 @@ class _OptimizerWorker(QObject):
         history: list[float] = []
 
         def callback(xk: Any, convergence: float = 0.0) -> bool:
-            assert convergence is not None, "convergence must be provided"
+            if not (convergence is not None): raise ValueError(f"Assertion failed: { convergence is not None }, "convergence must be provided"")
             history.append(float(convergence))
             self.iteration_done.emit(len(history), convergence)
             return bool(self._cancelled)
@@ -387,7 +387,7 @@ class _OptimizerWorker(QObject):
 
     def _run_scipy(self, method: str) -> None:
         """Run a scipy.optimize.minimize method."""
-        assert method is not None, "method must be provided"
+        if not (method is not None): raise ValueError(f"Assertion failed: { method is not None }, "method must be provided"")
         from scipy.optimize import minimize
 
         history: list[float] = []
@@ -451,7 +451,7 @@ class OptimizationWidget(QWidget):
         n_torque_params: int = 2,
         parent: QWidget | None = None,
     ) -> None:
-        assert model_name is not None, "model_name must be provided"
+        if not (model_name is not None): raise ValueError(f"Assertion failed: { model_name is not None }, "model_name must be provided"")
         super().__init__(parent)
         self._model_name = model_name
         self._n_torque_params = n_torque_params
@@ -677,7 +677,7 @@ class OptimizationWidget(QWidget):
         self._lbl_status.setText("Cancelling...")
 
     def _on_iteration(self, iteration: int, loss: float) -> None:
-        assert iteration is not None, "iteration must be provided"
+        if not (iteration is not None): raise ValueError(f"Assertion failed: { iteration is not None }, "iteration must be provided"")
         max_iter = self._spin_iters.value()
         pct = min(100, int(100 * iteration / max_iter))
         self._progress.setValue(pct)
@@ -722,7 +722,7 @@ class OptimizationWidget(QWidget):
         self.optimized_coefficients.emit(result)
 
     def _on_error(self, msg: str) -> None:
-        assert msg is not None, "msg must be provided"
+        if not (msg is not None): raise ValueError(f"Assertion failed: { msg is not None }, "msg must be provided"")
         self._btn_run.setEnabled(True)
         self._btn_cancel.setEnabled(False)
         self._progress.setValue(0)

@@ -60,7 +60,8 @@ class FilterConfig:
     @classmethod
     def from_mapping(cls, mapping: Mapping[str, Any]) -> FilterConfig:
         """Construct a FilterConfig from a mapping with validation."""
-        assert mapping is not None, "mapping must be provided"
+        if not (mapping is not None):
+            raise ValueError("mapping must be provided")
         if "filter_type" not in mapping:
             msg = "filter.filter_type is required"
             raise ValueError(msg)
@@ -73,9 +74,7 @@ class FilterConfig:
             )
             raise ValueError(msg)
 
-        parameters = {
-            key: value for key, value in mapping.items() if key != "filter_type"
-        }
+        parameters = {key: value for key, value in mapping.items() if key != "filter_type"}
         validated = cls._validate_parameters(parameters)
         return cls(filter_type=filter_type, parameters=validated)
 
@@ -83,9 +82,7 @@ class FilterConfig:
     def _validate_parameters(raw: Mapping[str, Any]) -> dict[str, Any]:
         cleaned: dict[str, Any] = {}
 
-        allowed_keys = (
-            set(_INT_PARAMETERS) | set(_FLOAT_PARAMETERS) | _STRING_PARAMETERS
-        )
+        allowed_keys = set(_INT_PARAMETERS) | set(_FLOAT_PARAMETERS) | _STRING_PARAMETERS
 
         for key, value in raw.items():
             if key in _INT_PARAMETERS:
@@ -134,7 +131,8 @@ class OutputConfig:
 
     @classmethod
     def from_mapping(cls, mapping: Mapping[str, Any]) -> OutputConfig:
-        assert mapping is not None, "mapping must be provided"
+        if not (mapping is not None):
+            raise ValueError("mapping must be provided")
         if "path" not in mapping:
             msg = "output.path is required when an output section is provided"
             raise ValueError(msg)
@@ -172,13 +170,12 @@ class PipelineConfig:
 
     @classmethod
     def from_mapping(cls, mapping: Mapping[str, Any]) -> PipelineConfig:
-        assert mapping is not None, "mapping must be provided"
+        if not (mapping is not None):
+            raise ValueError("mapping must be provided")
         normalized: MutableMapping[str, Any] = dict(mapping)
         files = _normalize_files(normalized.get("files"))
         combine = bool(normalized.get("combine", True))
-        selected_signals = _normalize_optional_str_list(
-            normalized.get("selected_signals")
-        )
+        selected_signals = _normalize_optional_str_list(normalized.get("selected_signals"))
 
         filter_cfg: FilterConfig | None = None
         if "filter" in normalized and normalized["filter"] is not None:

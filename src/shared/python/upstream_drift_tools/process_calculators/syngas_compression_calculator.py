@@ -226,7 +226,8 @@ class SyngasCompressionEngine:
         composition: dict[str, float],
     ) -> dict[str, Any]:
         """Calculate mixture properties from component composition"""
-        assert composition is not None, "composition must be provided"
+        if not (composition is not None):
+            raise ValueError("composition must be provided")
         mole_fractions = validate_gas_composition(composition, auto_normalize=True)
 
         mix_mw = 0.0
@@ -318,9 +319,7 @@ class SyngasCompressionEngine:
         if stage.inlet_pressure <= 0:
             raise ValueError(f"inlet_pressure must be > 0, got {stage.inlet_pressure}")
         if stage.outlet_pressure <= 0:
-            raise ValueError(
-                f"outlet_pressure must be > 0, got {stage.outlet_pressure}"
-            )
+            raise ValueError(f"outlet_pressure must be > 0, got {stage.outlet_pressure}")
 
         gamma = mixture_props["heat_capacity_ratio"]
         if gamma <= 0:
@@ -341,9 +340,7 @@ class SyngasCompressionEngine:
 
         if stage.compression_type == "isentropic":
             # Isentropic compression
-            temp_out_isentropic = stage.inlet_temperature * (
-                pr ** ((gamma - 1) / gamma)
-            )
+            temp_out_isentropic = stage.inlet_temperature * (pr ** ((gamma - 1) / gamma))
             work_isentropic = (
                 (gamma / (gamma - 1))
                 * self.R
@@ -371,9 +368,7 @@ class SyngasCompressionEngine:
 
         elif stage.compression_type == "isothermal":
             # Isothermal compression
-            work_actual = (
-                self.R * stage.inlet_temperature * math.log(pr) / stage.efficiency
-            )
+            work_actual = self.R * stage.inlet_temperature * math.log(pr) / stage.efficiency
             temp_out_actual = stage.inlet_temperature
 
         else:
@@ -459,7 +454,8 @@ class SyngasCompressionEngine:
         compression_result: dict[str, Any],
     ) -> dict[str, Any]:
         """Analyze process conditions and potential concerns"""
-        assert compression_result is not None, "compression_result must be provided"
+        if not (compression_result is not None):
+            raise ValueError("compression_result must be provided")
         concerns = []
         warnings = []
         recommendations = []
@@ -495,8 +491,7 @@ class SyngasCompressionEngine:
 
         # Water dropout analysis
         total_water_dropout = sum(
-            stage["water_dropout"]["water_dropout"]
-            for stage in compression_result["stages"]
+            stage["water_dropout"]["water_dropout"] for stage in compression_result["stages"]
         )
         if total_water_dropout > ATOL_ZERO:
             warnings.append(f"Water dropout detected: {total_water_dropout:.2f} mol%")
@@ -504,14 +499,11 @@ class SyngasCompressionEngine:
 
         # Efficiency analysis
         isentropic_stages = [
-            stage
-            for stage in compression_result["stages"]
-            if stage["work_isentropic"] is not None
+            stage for stage in compression_result["stages"] if stage["work_isentropic"] is not None
         ]
         if isentropic_stages:
             efficiencies = [
-                stage["work_actual"] / stage["work_isentropic"]
-                for stage in isentropic_stages
+                stage["work_actual"] / stage["work_isentropic"] for stage in isentropic_stages
             ]
             avg_efficiency = sum(efficiencies) / len(efficiencies)
             if avg_efficiency < COMPRESSION_MIN_EFFICIENCY:
@@ -544,7 +536,8 @@ class CompressionCalculationWorker(QThread):
         intercooling: bool,
     ) -> None:
         """Initialize the class."""
-        assert flow_rate is not None, "flow_rate must be provided"
+        if not (flow_rate is not None):
+            raise ValueError("flow_rate must be provided")
         super().__init__()
         self.engine = engine
         self.stages = stages
@@ -602,10 +595,7 @@ if HAS_PYQT:
             for text_edit in self.findChildren(QTextEdit):
                 self.register_copyable_widget(text_edit, "text")
             for label in self.findChildren(QLabel):
-                if (
-                    "result" in label.objectName().lower()
-                    or "value" in label.objectName().lower()
-                ):
+                if "result" in label.objectName().lower() or "value" in label.objectName().lower():
                     self.register_copyable_widget(label, "label")
 
         def closeEvent(self, event: Any) -> None:
@@ -900,8 +890,7 @@ if HAS_PYQT:
             try:
                 # Get input values
                 composition = {
-                    comp: self.composition_inputs[comp].value()
-                    for comp in self.composition_inputs
+                    comp: self.composition_inputs[comp].value() for comp in self.composition_inputs
                 }
 
                 flow_rate = self.flow_rate_input.value()
@@ -917,17 +906,10 @@ if HAS_PYQT:
                 for i, stage_inputs in enumerate(self.stage_inputs):
                     if cast(QCheckBox, stage_inputs[3]).isChecked():  # Active stage
                         stage = CompressionStage(
-                            inlet_pressure=cast(
-                                QDoubleSpinBox, stage_inputs[0]
-                            ).value(),
-                            outlet_pressure=cast(
-                                QDoubleSpinBox, stage_inputs[1]
-                            ).value(),
-                            inlet_temperature=(
-                                inlet_temp if i == 0 else INTERCOOLER_OUTLET_TEMP_K
-                            ),
-                            efficiency=cast(QDoubleSpinBox, stage_inputs[2]).value()
-                            / 100.0,
+                            inlet_pressure=cast(QDoubleSpinBox, stage_inputs[0]).value(),
+                            outlet_pressure=cast(QDoubleSpinBox, stage_inputs[1]).value(),
+                            inlet_temperature=(inlet_temp if i == 0 else INTERCOOLER_OUTLET_TEMP_K),
+                            efficiency=cast(QDoubleSpinBox, stage_inputs[2]).value() / 100.0,
                             compression_type=compression_type,
                         )
                         stages.append(stage)
@@ -966,7 +948,8 @@ if HAS_PYQT:
             Args:
                 data: Dictionary containing calculation results and analysis.
             """
-            assert data is not None, "data must be provided"
+            if not (data is not None):
+                raise ValueError("data must be provided")
             result = data["result"]
             analysis = data["analysis"]
 
@@ -991,9 +974,7 @@ if HAS_PYQT:
                 f"An error occurred: {error_message}",
             )
 
-        def display_results(
-            self, result: dict[str, Any], analysis: dict[str, Any]
-        ) -> None:
+        def display_results(self, result: dict[str, Any], analysis: dict[str, Any]) -> None:
             """Display calculation results.
 
             Args:
@@ -1001,7 +982,8 @@ if HAS_PYQT:
                 analysis: Dictionary containing analysis data.
             """
             # Use list join for O(n) instead of O(n²) string concatenation
-            assert result is not None, "result must be provided"
+            if not (result is not None):
+                raise ValueError("result must be provided")
             output_parts = [
                 "SYNGAS COMPRESSION CALCULATION RESULTS\n",
                 "=" * 50 + "\n\n",
@@ -1075,7 +1057,8 @@ if HAS_PYQT:
                 analysis: Dictionary containing analysis data and warnings.
             """
             # Use list join for O(n) instead of O(n²) string concatenation
-            assert analysis is not None, "analysis must be provided"
+            if not (analysis is not None):
+                raise ValueError("analysis must be provided")
             output_parts = [
                 "PROCESS ANALYSIS & CONCERNS\n",
                 "=" * 40 + "\n\n",
@@ -1128,7 +1111,8 @@ if HAS_PYQT:
         def create_plots(self, result: dict[str, Any]) -> None:
             """Create visualization plots"""
             # Clear previous plots
-            assert result is not None, "result must be provided"
+            if not (result is not None):
+                raise ValueError("result must be provided")
             self.figure.clear()
 
             stages = result["stages"]

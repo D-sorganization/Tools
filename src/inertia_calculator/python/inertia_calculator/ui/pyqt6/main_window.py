@@ -266,9 +266,7 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         self.mass_input.setRange(0.001, 10000)
         self.mass_input.setDecimals(4)
         self.mass_input.setValue(1.0)
-        self.mass_input.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
-        )
+        self.mass_input.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         shape_layout.addWidget(self.mass_input, 1, 1)
 
         # Dimension inputs (labels change based on shape)
@@ -500,7 +498,8 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         description: str,
     ) -> None:
         """Display calculation results."""
-        assert ixx is not None, "ixx must be provided"
+        if not (ixx is not None):
+            raise ValueError("ixx must be provided")
         results = []
         results.append("Inertia Calculation Results")
         results.append("=" * 50)
@@ -555,7 +554,8 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         iyz: float,
     ) -> list[str]:
         """Validate inertia tensor."""
-        assert ixx is not None, "ixx must be provided"
+        if not (ixx is not None):
+            raise ValueError("ixx must be provided")
         errors = []
 
         # Check positive diagonal

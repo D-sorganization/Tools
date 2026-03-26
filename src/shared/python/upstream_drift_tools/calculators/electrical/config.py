@@ -45,9 +45,7 @@ class ElectrodeConfig:
     bath_temperature: float = 1350.0  # °C
 
     # Electrical parameters
-    k_factors: dict[str, float] = field(
-        default_factory=lambda: {"K_tt": 1.0, "K_vert": 1.0}
-    )
+    k_factors: dict[str, float] = field(default_factory=lambda: {"K_tt": 1.0, "K_vert": 1.0})
     electrode_depths: np.ndarray = field(default_factory=lambda: np.zeros(3))
     phase_voltages: np.ndarray = field(default_factory=lambda: np.ones(3) * 100.0)
     phase_currents: np.ndarray = field(default_factory=lambda: np.zeros(3))
@@ -110,7 +108,8 @@ class ElectrodeConfig:
         status_type : str
             One of ``'ok'``, ``'warn'``, or ``'error'``.
         """
-        assert status_type is not None, "status_type must be provided"
+        if not (status_type is not None):
+            raise ValueError("status_type must be provided")
         if self.colors is None:
             return "#C8FFC8"
         key_map = {"ok": "status_ok", "warn": "status_warn", "error": "status_err"}
@@ -130,7 +129,8 @@ class ElectrodeConfig:
         path_type : str
             Path type key, e.g. ``'direct_glass'``.
         """
-        assert scheme is not None, "scheme must be provided"
+        if not (scheme is not None):
+            raise ValueError("scheme must be provided")
         if self.color_schemes is None:
             return "lightblue"
         scheme_dict = self.color_schemes.get(scheme, {})

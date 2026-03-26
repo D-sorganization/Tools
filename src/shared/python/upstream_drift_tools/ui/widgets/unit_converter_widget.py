@@ -57,7 +57,8 @@ class ConversionRow:
         is_saved: bool = False,
         last_used: str | None = None,
     ) -> None:
-        assert row_id is not None, "row_id must be provided"
+        if not (row_id is not None):
+            raise ValueError("row_id must be provided")
         self.row_id = row_id
         self.from_unit = from_unit
         self.to_unit = to_unit
@@ -114,9 +115,7 @@ class TypedConverterWidget(QWidget):
 class CaseInsensitiveCompleter(QCompleter):
     """Case-insensitive completer for unit autocomplete."""
 
-    def __init__(
-        self, units: list[str] | None = None, parent: QObject | None = None
-    ) -> None:
+    def __init__(self, units: list[str] | None = None, parent: QObject | None = None) -> None:
         super().__init__(parent)
         if units is not None:
             model = QStringListModel(units)
@@ -132,7 +131,8 @@ class CaseInsensitiveCompleter(QCompleter):
 
     def updateModel(self, units: list[str]) -> None:
         """Update the completer model with new units."""
-        assert units is not None, "units must be provided"
+        if not (units is not None):
+            raise ValueError("units must be provided")
         model = QStringListModel(units)
         self.setModel(model)
 
@@ -191,15 +191,14 @@ class UnitConverterWidget(BaseCalculatorWindow):
 
     def _get_compatible_units(self, from_unit: str) -> list[str]:
         """Get all units compatible with the given unit."""
-        assert from_unit is not None, "from_unit must be provided"
+        if not (from_unit is not None):
+            raise ValueError("from_unit must be provided")
         if not from_unit:
             return self.all_units
 
         try:
             # Type ignore since _get_category and _normalize_unit might be internal
-            from_category = self.converter._get_category(
-                self.converter._normalize_unit(from_unit)
-            )
+            from_category = self.converter._get_category(self.converter._normalize_unit(from_unit))
             if from_category:
                 all_units_by_category = self.converter.get_supported_units()
                 return all_units_by_category.get(from_category, self.all_units)
@@ -260,7 +259,8 @@ class UnitConverterWidget(BaseCalculatorWindow):
         self, index: int, conv: ConversionRow, is_saved: bool
     ) -> TypedConverterWidget:
         """Create a single-line conversion widget: VALUE UNIT <> VALUE UNIT."""
-        assert index is not None, "index must be provided"
+        if not (index is not None):
+            raise ValueError("index must be provided")
         row_widget = cast(TypedConverterWidget, QWidget())
         row_layout = QHBoxLayout(row_widget)
         row_layout.setContentsMargins(0, 2, 0, 2)
@@ -292,9 +292,7 @@ class UnitConverterWidget(BaseCalculatorWindow):
         row_widget.to_value = QLineEdit()
         row_widget.to_value.setText(conv.to_value)
         row_widget.to_value.setFixedWidth(110)
-        row_widget.to_value.textChanged.connect(
-            lambda t: self._on_value_changed(index, "to", t)
-        )
+        row_widget.to_value.textChanged.connect(lambda t: self._on_value_changed(index, "to", t))
 
         row_widget.to_unit = QComboBox()
         row_widget.to_unit.setEditable(True)
@@ -315,15 +313,11 @@ class UnitConverterWidget(BaseCalculatorWindow):
         style = self.style()
         if not is_saved:
             if style:
-                action_btn.setIcon(
-                    style.standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton)
-                )
+                action_btn.setIcon(style.standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton))
             action_btn.clicked.connect(lambda: self._save_conversion(index))
         else:
             if style:
-                action_btn.setIcon(
-                    style.standardIcon(QStyle.StandardPixmap.SP_TrashIcon)
-                )
+                action_btn.setIcon(style.standardIcon(QStyle.StandardPixmap.SP_TrashIcon))
             action_btn.clicked.connect(lambda: self._delete_saved_conversion(index))
 
         row_layout.addWidget(row_widget.from_value)
@@ -342,14 +336,16 @@ class UnitConverterWidget(BaseCalculatorWindow):
     # Logic Methods (re-integrated from UnitConverterLogicMixin)
 
     def _on_value_changed(self, index: int, direction: str, text: str) -> None:
-        assert index is not None, "index must be provided"
+        if not (index is not None):
+            raise ValueError("index must be provided")
         self.last_edited[index] = direction
         self.pending_conversion = (index, direction)
         self.debounce_timer.stop()
         self.debounce_timer.start()
 
     def _on_unit_changed(self, index: int, direction: str, unit: str) -> None:
-        assert index is not None, "index must be provided"
+        if not (index is not None):
+            raise ValueError("index must be provided")
         conv = self._get_row_by_index(index)
         if not conv:
             return
@@ -381,7 +377,8 @@ class UnitConverterWidget(BaseCalculatorWindow):
             self.pending_conversion = None
 
     def _convert_row(self, index: int, direction: str) -> None:
-        assert index is not None, "index must be provided"
+        if not (index is not None):
+            raise ValueError("index must be provided")
         widget = self._find_widget_by_index(index)
         conv = self._get_row_by_index(index)
         if not widget or not conv:
@@ -421,7 +418,8 @@ class UnitConverterWidget(BaseCalculatorWindow):
             logger.debug("Conversion error: %s", e)
 
     def _swap_values(self, index: int) -> None:
-        assert index is not None, "index must be provided"
+        if not (index is not None):
+            raise ValueError("index must be provided")
         widget = self._find_widget_by_index(index)
         if not widget:
             return
@@ -445,7 +443,8 @@ class UnitConverterWidget(BaseCalculatorWindow):
             QTimer.singleShot(1000, lambda: widget.copy_btn.setText(orig))
 
     def _find_widget_by_index(self, index: int) -> TypedConverterWidget | None:
-        assert index is not None, "index must be provided"
+        if not (index is not None):
+            raise ValueError("index must be provided")
         all_widgets = self.recent_widgets + self.saved_widgets
         for w in all_widgets:
             if w.index == index:
@@ -454,7 +453,8 @@ class UnitConverterWidget(BaseCalculatorWindow):
 
     def _get_row_by_index(self, index: int) -> ConversionRow | None:
         """Get the ConversionRow object associated with a widget index (0-2: recent, 3-5: saved)."""
-        assert index is not None, "index must be provided"
+        if not (index is not None):
+            raise ValueError("index must be provided")
         recent = self.recent_conversions
         saved = self.saved_conversions
         if index < 3:
@@ -464,7 +464,8 @@ class UnitConverterWidget(BaseCalculatorWindow):
             return saved[idx] if idx < len(saved) else None
 
     def _save_conversion(self, index: int) -> None:
-        assert index is not None, "index must be provided"
+        if not (index is not None):
+            raise ValueError("index must be provided")
         if index >= len(self.rows):
             return
         conv = self.rows[index]
@@ -478,7 +479,8 @@ class UnitConverterWidget(BaseCalculatorWindow):
         self._rebuild_ui_and_save()
 
     def _delete_saved_conversion(self, index: int) -> None:
-        assert index is not None, "index must be provided"
+        if not (index is not None):
+            raise ValueError("index must be provided")
         if index >= len(self.rows):
             return
         self.rows[index].is_saved = False
@@ -527,9 +529,7 @@ class UnitConverterWidget(BaseCalculatorWindow):
             self.rows = []
 
         while len(self.rows) < 6:
-            is_saved = (
-                len([r for r in self.rows if r.is_saved]) < 3 and len(self.rows) >= 3
-            )
+            is_saved = len([r for r in self.rows if r.is_saved]) < 3 and len(self.rows) >= 3
             self.rows.append(ConversionRow(f"row_{len(self.rows)}", is_saved=is_saved))
 
     def _save_conversions(self) -> None:

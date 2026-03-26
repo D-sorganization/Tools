@@ -36,13 +36,7 @@ def ensure_import(content: str, import_line: str, fallback: str = "") -> str:
             insert_idx += 1
 
         if fallback:
-            new_lines = (
-                lines[:insert_idx]
-                + [""]
-                + [import_line]
-                + [fallback]
-                + lines[insert_idx:]
-            )
+            new_lines = lines[:insert_idx] + [""] + [import_line] + [fallback] + lines[insert_idx:]
         else:
             new_lines = lines[:insert_idx] + [""] + [import_line] + lines[insert_idx:]
         return "\n".join(new_lines)
@@ -91,7 +85,7 @@ def fix_json_load_patterns(content: str) -> tuple[str, int]:
     if fixes > 0:
         content = ensure_import(
             content,
-            "try:\n    from utils.file_utils import safe_read_json\nexcept ImportError:\n    import json\n    def safe_read_json(path, default=None):\n        try:\n            with open(path, encoding='utf-8') as f:\n                return json.load(f)\n        except Exception:\n            return default",
+            "try:\n    from utils.file_utils import safe_read_json\nexcept ImportError:\n    import json\n    def safe_read_json(path, default=None):\n        try:\n            with open(path, encoding='utf-8') as f:\n                return json.load(f)\n        except Exception as e:\n            return default",
         )
 
     return content, fixes
@@ -293,7 +287,7 @@ def fix_text_file_patterns(content: str) -> tuple[str, int]:
     if fixes > 0:
         content = ensure_import(
             content,
-            "try:\n    from utils.file_utils import safe_read_text, safe_write_text\nexcept ImportError:\n    from pathlib import Path\n    def safe_read_text(path, encoding='utf-8', default=''):\n        try:\n            return Path(path).read_text(encoding=encoding)\n        except Exception:\n            return default\n    def safe_write_text(path, content, encoding='utf-8', create_parents=True):\n        p = Path(path)\n        if create_parents:\n            p.parent.mkdir(parents=True, exist_ok=True)\n        p.write_text(content, encoding=encoding)",
+            "try:\n    from utils.file_utils import safe_read_text, safe_write_text\nexcept ImportError:\n    from pathlib import Path\n    def safe_read_text(path, encoding='utf-8', default=''):\n        try:\n            return Path(path).read_text(encoding=encoding)\n        except Exception as e:\n            return default\n    def safe_write_text(path, content, encoding='utf-8', create_parents=True):\n        p = Path(path)\n        if create_parents:\n            p.parent.mkdir(parents=True, exist_ok=True)\n        p.write_text(content, encoding=encoding)",
         )
 
     return content, fixes
@@ -321,9 +315,7 @@ def fix_csv_patterns(content: str) -> tuple[str, int]:
     content = pattern1.sub(replace1, content)
 
     # Pattern: safe_write_csv(df, ...)
-    pattern2 = re.compile(
-        r"(\w+)\.to_csv\s*\(\s*([^,)]+)(?:,\s*([^)]+))?\s*\)", re.MULTILINE
-    )
+    pattern2 = re.compile(r"(\w+)\.to_csv\s*\(\s*([^,)]+)(?:,\s*([^)]+))?\s*\)", re.MULTILINE)
 
     def replace2(match: re.Match) -> str:
         nonlocal fixes
@@ -341,7 +333,7 @@ def fix_csv_patterns(content: str) -> tuple[str, int]:
     if fixes > 0:
         content = ensure_import(
             content,
-            "try:\n    from utils.csv_utils import safe_read_csv, safe_write_csv\nexcept ImportError:\n    import pandas as pd\n    from pathlib import Path\n    def safe_read_csv(path, default=None, **kwargs):\n        try:\n            return pd.read_csv(path, **kwargs)\n        except Exception:\n            return default if default is not None else pd.DataFrame()\n    def safe_write_csv(df, path, create_parents=True, **kwargs):\n        Path(path).parent.mkdir(parents=True, exist_ok=True)\n        safe_write_csv(df, path, **kwargs)",
+            "try:\n    from utils.csv_utils import safe_read_csv, safe_write_csv\nexcept ImportError:\n    import pandas as pd\n    from pathlib import Path\n    def safe_read_csv(path, default=None, **kwargs):\n        try:\n            return pd.read_csv(path, **kwargs)\n        except Exception as e:\n            return default if default is not None else pd.DataFrame()\n    def safe_write_csv(df, path, create_parents=True, **kwargs):\n        Path(path).parent.mkdir(parents=True, exist_ok=True)\n        safe_write_csv(df, path, **kwargs)",
         )
 
     return content, fixes

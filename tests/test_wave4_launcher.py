@@ -38,7 +38,7 @@ class TestGUIInfoPattern:
     def test_all_gui_registration_files_have_gui_info(self) -> None:
         """Every gui_registration.py must define a GUI_INFO dict."""
         files = self._collect_gui_registrations()
-        assert len(files) > 0, "No gui_registration.py files found"
+        if not (len(files) > 0): raise ValueError(f"Assertion failed: { len(files) > 0 }, "No gui_registration.py files found"")  # noqa: E701
 
         missing = []
         for path in files:
@@ -47,14 +47,14 @@ class TestGUIInfoPattern:
                 module = importlib.util.module_from_spec(spec)
                 try:
                     spec.loader.exec_module(module)
-                except Exception:  # noqa: BLE001
+                except Exception as e:  # noqa: F841  # noqa: BLE001
                     # Some modules may fail to import; skip them
                     continue
                 gui_info = getattr(module, "GUI_INFO", None)
                 if gui_info is None:
                     missing.append(str(path.relative_to(REPO_ROOT)))
 
-        assert missing == [], f"Files missing GUI_INFO: {missing}"
+        if not (missing == []): raise ValueError(f"Assertion failed: { missing == [] }, f"Files missing GUI_INFO: {missing}"")  # noqa: E701
 
     def test_gui_info_has_required_keys(self) -> None:
         """Each GUI_INFO dict must have name, tool_name, description, pyqt6."""
@@ -68,7 +68,7 @@ class TestGUIInfoPattern:
                 module = importlib.util.module_from_spec(spec)
                 try:
                     spec.loader.exec_module(module)
-                except Exception:  # noqa: BLE001
+                except Exception as e:  # noqa: F841  # noqa: BLE001
                     continue
                 gui_info = getattr(module, "GUI_INFO", None)
                 if gui_info is None:
@@ -78,7 +78,7 @@ class TestGUIInfoPattern:
                     rel = str(path.relative_to(REPO_ROOT))
                     problems.append(f"{rel}: missing {missing_keys}")
 
-        assert problems == [], "GUI_INFO problems:\n" + "\n".join(problems)
+        if not (problems == []): raise ValueError(f"Assertion failed: { problems == [] }, "GUI_INFO problems:\n" + "\n".join(problems)")  # noqa: E701
 
     def test_pyqt6_config_has_module_and_class(self) -> None:
         """Each pyqt6 sub-dict must have module and class keys."""
@@ -91,7 +91,7 @@ class TestGUIInfoPattern:
                 module = importlib.util.module_from_spec(spec)
                 try:
                     spec.loader.exec_module(module)
-                except Exception:  # noqa: BLE001
+                except Exception as e:  # noqa: F841  # noqa: BLE001
                     continue
                 gui_info = getattr(module, "GUI_INFO", None)
                 if gui_info is None or "pyqt6" not in gui_info:
@@ -101,7 +101,7 @@ class TestGUIInfoPattern:
                     rel = str(path.relative_to(REPO_ROOT))
                     problems.append(f"{rel}: pyqt6 missing module or class")
 
-        assert problems == [], "pyqt6 config problems:\n" + "\n".join(problems)
+        if not (problems == []): raise ValueError(f"Assertion failed: { problems == [] }, "pyqt6 config problems:\n" + "\n".join(problems)")  # noqa: E701
 
     def test_get_gui_info_function_exists(self) -> None:
         """Each gui_registration.py should have a get_gui_info() function."""
@@ -114,13 +114,13 @@ class TestGUIInfoPattern:
                 module = importlib.util.module_from_spec(spec)
                 try:
                     spec.loader.exec_module(module)
-                except Exception:  # noqa: BLE001
+                except Exception as e:  # noqa: F841  # noqa: BLE001
                     continue
                 if not hasattr(module, "get_gui_info"):
                     rel = str(path.relative_to(REPO_ROOT))
                     missing.append(rel)
 
-        assert missing == [], f"Files missing get_gui_info(): {missing}"
+        if not (missing == []): raise ValueError(f"Assertion failed: { missing == [] }, f"Files missing get_gui_info(): {missing}"")  # noqa: E701
 
 
 # ── LaunchConfig new fields ───────────────────────────────────────────────
@@ -137,7 +137,7 @@ class TestLaunchConfigFields:
             gui_type=GUIType.PYQT6,
             class_name="TestWindow",
         )
-        assert config.class_name == "TestWindow"
+        if not (config.class_name == "TestWindow"): raise ValueError(f"Assertion failed: { config.class_name == "TestWindow" }")  # noqa: E701
 
     def test_launch_config_has_title(self) -> None:
         from gui_launcher import GUIType, LaunchConfig
@@ -147,7 +147,7 @@ class TestLaunchConfigFields:
             gui_type=GUIType.PYQT6,
             title="Test Tool",
         )
-        assert config.title == "Test Tool"
+        if not (config.title == "Test Tool"): raise ValueError(f"Assertion failed: { config.title == "Test Tool" }")  # noqa: E701
 
     def test_launch_config_has_settings_app(self) -> None:
         from gui_launcher import GUIType, LaunchConfig
@@ -157,7 +157,7 @@ class TestLaunchConfigFields:
             gui_type=GUIType.PYQT6,
             settings_app="TestApp",
         )
-        assert config.settings_app == "TestApp"
+        if not (config.settings_app == "TestApp"): raise ValueError(f"Assertion failed: { config.settings_app == "TestApp" }")  # noqa: E701
 
     def test_launch_config_has_min_size(self) -> None:
         from gui_launcher import GUIType, LaunchConfig
@@ -167,17 +167,17 @@ class TestLaunchConfigFields:
             gui_type=GUIType.PYQT6,
             min_size=(800, 600),
         )
-        assert config.min_size == (800, 600)
+        if not (config.min_size == (800): raise ValueError(f"Assertion failed: { config.min_size == (800 }, 600)")
 
     def test_launch_config_defaults(self) -> None:
         from gui_launcher import GUIType, LaunchConfig
 
         config = LaunchConfig(tool_name="test", gui_type=GUIType.PYQT6)
-        assert config.class_name is None
-        assert config.title is None
-        assert config.settings_app is None
-        assert config.min_size is None
-        assert config.organization == "D-sorganization"
+        if not (config.class_name is None): raise ValueError(f"Assertion failed: { config.class_name is None }")  # noqa: E701
+        if not (config.title is None): raise ValueError(f"Assertion failed: { config.title is None }")  # noqa: E701
+        if not (config.settings_app is None): raise ValueError(f"Assertion failed: { config.settings_app is None }")  # noqa: E701
+        if not (config.min_size is None): raise ValueError(f"Assertion failed: { config.min_size is None }")  # noqa: E701
+        if not (config.organization == "D-sorganization"): raise ValueError(f"Assertion failed: { config.organization == "D-sorganization" }")  # noqa: E701
 
 
 # ── launch_from_gui_info ─────────────────────────────────────────────────
@@ -190,7 +190,7 @@ class TestLaunchFromGUIInfo:
         from gui_launcher.launcher import launch_from_gui_info
 
         result = launch_from_gui_info({"name": "Test", "tool_name": "test"})
-        assert result == 1
+        if not (result == 1): raise ValueError(f"Assertion failed: { result == 1 }")  # noqa: E701
 
     @patch("gui_launcher.launcher.check_python_dependencies")
     def test_returns_error_for_missing_deps(self, mock_check: MagicMock) -> None:
@@ -211,7 +211,7 @@ class TestLaunchFromGUIInfo:
             },
         }
         result = launch_from_gui_info(gui_info)
-        assert result == 1
+        if not (result == 1): raise ValueError(f"Assertion failed: { result == 1 }")  # noqa: E701
 
 
 # ── auto_discover_guis ───────────────────────────────────────────────────
@@ -226,11 +226,11 @@ class TestAutoDiscoverGuis:
         # Reset singleton
         GUIRegistry._instance = None
         count = auto_discover_guis([SRC_DIR])
-        assert count > 0, "Should discover at least one tool"
+        if not (count > 0): raise ValueError(f"Assertion failed: { count > 0 }, "Should discover at least one tool"")  # noqa: E701
 
         registry = GUIRegistry.instance()
         tools = registry.list_tools()
-        assert len(tools) > 0, "Registry should have tools after discovery"
+        if not (len(tools) > 0): raise ValueError(f"Assertion failed: { len(tools) > 0 }, "Registry should have tools after discovery"")  # noqa: E701
 
         # Cleanup
         GUIRegistry._instance = None
@@ -246,7 +246,7 @@ class TestAutoDiscoverGuis:
         tools = registry.list_tools()
 
         tools_with_pyqt6 = [t for t in tools if GUIType.PYQT6 in t.gui_configs]
-        assert len(tools_with_pyqt6) > 0, "At least one tool should have PyQt6 config"
+        if not (len(tools_with_pyqt6) > 0): raise ValueError(f"Assertion failed: { len(tools_with_pyqt6) > 0 }, "At least one tool should have PyQt6 config"")  # noqa: E701
 
         # Cleanup
         GUIRegistry._instance = None
@@ -263,14 +263,14 @@ class TestLegacyDeprecation:
         if not launcher_path.exists():
             pytest.skip("Launcher.py not present")
         content = launcher_path.read_text(encoding="utf-8")
-        assert "deprecated" in content.lower()
+        if not ("deprecated" in content.lower()): raise ValueError(f"Assertion failed: { "deprecated" in content.lower() }")  # noqa: E701
 
     def test_launch_tools_main_has_deprecation(self) -> None:
         launcher_path = REPO_ROOT / "launch_tools_main.py"
         if not launcher_path.exists():
             pytest.skip("launch_tools_main.py not present")
         content = launcher_path.read_text(encoding="utf-8")
-        assert "deprecated" in content.lower()
+        if not ("deprecated" in content.lower()): raise ValueError(f"Assertion failed: { "deprecated" in content.lower() }")  # noqa: E701
 
 
 # ── Unified launch.py ────────────────────────────────────────────────────
@@ -280,10 +280,10 @@ class TestUnifiedLaunchPy:
     """launch.py should exist and support --list."""
 
     def test_launch_py_exists(self) -> None:
-        assert (REPO_ROOT / "launch.py").exists()
+        if not ((REPO_ROOT / "launch.py").exists()): raise ValueError(f"Assertion failed: { (REPO_ROOT / "launch.py").exists() }")  # noqa: E701
 
     def test_launch_py_has_argparse(self) -> None:
         content = (REPO_ROOT / "launch.py").read_text(encoding="utf-8")
-        assert "argparse" in content
-        assert "--list" in content
-        assert "--tool" in content
+        if not ("argparse" in content): raise ValueError(f"Assertion failed: { "argparse" in content }")  # noqa: E701
+        if not ("--list" in content): raise ValueError(f"Assertion failed: { "--list" in content }")  # noqa: E701
+        if not ("--tool" in content): raise ValueError(f"Assertion failed: { "--tool" in content }")  # noqa: E701

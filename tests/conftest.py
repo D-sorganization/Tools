@@ -52,28 +52,19 @@ def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line("markers", "e2e: mark test as end-to-end test")
     config.addinivalue_line("markers", "slow: mark test as slow running")
     config.addinivalue_line("markers", "performance: mark test as performance test")
-    config.addinivalue_line(
-        "markers", "requires_network: mark test as requiring network"
-    )
-    config.addinivalue_line(
-        "markers", "requires_database: mark test as requiring database"
-    )
+    config.addinivalue_line("markers", "requires_network: mark test as requiring network")
+    config.addinivalue_line("markers", "requires_database: mark test as requiring database")
     config.addinivalue_line("markers", "requires_gpu: mark test as requiring GPU")
 
 
-def pytest_collection_modifyitems(
-    config: pytest.Config, items: list[pytest.Item]
-) -> None:
+def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
     """Modify collected test items.
 
     Automatically adds 'unit' marker to tests not marked as integration/e2e.
     """
     for item in items:
         # Auto-mark tests without explicit markers as unit tests
-        if not any(
-            marker.name in ("integration", "e2e", "unit")
-            for marker in item.iter_markers()
-        ):
+        if not any(marker.name in ("integration", "e2e", "unit") for marker in item.iter_markers()):
             item.add_marker(pytest.mark.unit)
 
 

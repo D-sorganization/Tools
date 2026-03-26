@@ -56,7 +56,8 @@ class DoublePendulumParams:
             friction2: Friction coefficient for second joint
             m_clubhead: Clubhead point mass at the tip (kg)
         """
-        assert m1 is not None, "m1 must be provided"
+        if not (m1 is not None):
+            raise ValueError("m1 must be provided")
         self.m1 = m1
         self.m2 = m2
         self.l1 = l1
@@ -94,15 +95,15 @@ class DoublePendulum:
         g: float = 9.81,
         m_clubhead: float = 0.0,
     ):
-        assert m1 is not None, "m1 must be provided"
-        self.params = DoublePendulumParams(
-            m1=m1, m2=m2, l1=l1, l2=l2, g=g, m_clubhead=m_clubhead
-        )
+        if not (m1 is not None):
+            raise ValueError("m1 must be provided")
+        self.params = DoublePendulumParams(m1=m1, m2=m2, l1=l1, l2=l2, g=g, m_clubhead=m_clubhead)
         self.use_native = HAS_NATIVE
 
     def mass_matrix(self, q: np.ndarray) -> np.ndarray:
         """Compute the 2x2 mass matrix M(q)."""
-        assert q is not None, "q must be provided"
+        if not (q is not None):
+            raise ValueError("q must be provided")
         if self.use_native:
             try:
                 result = pendulum_core.py_double_mass_matrix(q.tolist(), self.params.to_rust())
@@ -126,12 +127,11 @@ class DoublePendulum:
 
     def gravity_vector(self, q: np.ndarray) -> np.ndarray:
         """Compute the gravity vector G(q)."""
-        assert q is not None, "q must be provided"
+        if not (q is not None):
+            raise ValueError("q must be provided")
         if self.use_native:
             try:
-                result = pendulum_core.py_double_gravity_vector(
-                    q.tolist(), self.params.to_rust()
-                )
+                result = pendulum_core.py_double_gravity_vector(q.tolist(), self.params.to_rust())
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning(
@@ -151,7 +151,8 @@ class DoublePendulum:
 
     def coriolis(self, q: np.ndarray, qdot: np.ndarray) -> np.ndarray:
         """Compute the Coriolis vector C(q, qdot)."""
-        assert q is not None, "q must be provided"
+        if not (q is not None):
+            raise ValueError("q must be provided")
         if self.use_native:
             try:
                 result = pendulum_core.py_double_coriolis(
@@ -174,7 +175,8 @@ class DoublePendulum:
 
     def forward_kinematics(self, q: np.ndarray) -> Dict[str, float]:
         """Compute forward kinematics."""
-        assert q is not None, "q must be provided"
+        if not (q is not None):
+            raise ValueError("q must be provided")
         if self.use_native:
             try:
                 return pendulum_core.py_double_forward_kinematics(  # type: ignore[no-any-return]
@@ -228,7 +230,8 @@ class GolferParams:
         g: float = 9.81,
     ):
         """Initialize golfer model parameters."""
-        assert l_hub is not None, "l_hub must be provided"
+        if not (l_hub is not None):
+            raise ValueError("l_hub must be provided")
         self.l_hub = l_hub
         self.m_hub = m_hub
         self.d_rs = d_rs
@@ -298,7 +301,8 @@ class Golfer:
         grip_left: float,
         g: float = 9.81,
     ):
-        assert l_hub is not None, "l_hub must be provided"
+        if not (l_hub is not None):
+            raise ValueError("l_hub must be provided")
         self.params = GolferParams(
             l_hub=l_hub,
             m_hub=m_hub,
@@ -323,7 +327,8 @@ class Golfer:
 
     def mass_matrix(self, q: np.ndarray) -> np.ndarray:
         """Compute the 8x8 mass matrix M(q)."""
-        assert q is not None, "q must be provided"
+        if not (q is not None):
+            raise ValueError("q must be provided")
         if self.use_native:
             try:
                 result = pendulum_core.py_golfer_mass_matrix(q.tolist(), self.params.to_rust())
@@ -340,12 +345,11 @@ class Golfer:
 
     def gravity_vector(self, q: np.ndarray) -> np.ndarray:
         """Compute the gravity vector G(q)."""
-        assert q is not None, "q must be provided"
+        if not (q is not None):
+            raise ValueError("q must be provided")
         if self.use_native:
             try:
-                result = pendulum_core.py_golfer_gravity_vector(
-                    q.tolist(), self.params.to_rust()
-                )
+                result = pendulum_core.py_golfer_gravity_vector(q.tolist(), self.params.to_rust())
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
                 logger.warning("Rust golfer gravity_vector call failed (%s)", type(e).__name__)
@@ -354,7 +358,8 @@ class Golfer:
 
     def forward_kinematics(self, q: np.ndarray) -> Dict[str, Tuple[float, float]]:
         """Compute forward kinematics."""
-        assert q is not None, "q must be provided"
+        if not (q is not None):
+            raise ValueError("q must be provided")
         if self.use_native:
             try:
                 result = pendulum_core.py_golfer_forward_kinematics(
@@ -362,9 +367,7 @@ class Golfer:
                 )
                 return {k: tuple(v) for k, v in result.items()}
             except (RuntimeError, AttributeError, TypeError) as e:
-                logger.warning(
-                    "Rust golfer forward_kinematics call failed (%s)", type(e).__name__
-                )
+                logger.warning("Rust golfer forward_kinematics call failed (%s)", type(e).__name__)
 
         raise NotImplementedError("NumPy fallback for golfer FK not yet implemented")
 
@@ -377,9 +380,7 @@ class Golfer:
                 )
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
-                logger.warning(
-                    "Rust golfer constraint_vector call failed (%s)", type(e).__name__
-                )
+                logger.warning("Rust golfer constraint_vector call failed (%s)", type(e).__name__)
 
         raise NotImplementedError("NumPy fallback for constraints not yet implemented")
 
@@ -392,9 +393,7 @@ class Golfer:
                 )
                 return np.array(result, dtype=np.float64)
             except (RuntimeError, AttributeError, TypeError) as e:
-                logger.warning(
-                    "Rust golfer constraint_jacobian call failed (%s)", type(e).__name__
-                )
+                logger.warning("Rust golfer constraint_jacobian call failed (%s)", type(e).__name__)
 
         raise NotImplementedError("NumPy fallback for constraint Jacobian not yet implemented")
 

@@ -27,9 +27,7 @@ class NoiseMixin:
     config: AugmentationConfig
     _rng: np.random.Generator
 
-    def add_gaussian_noise(
-        self, data: np.ndarray, std: float | None = None
-    ) -> np.ndarray:
+    def add_gaussian_noise(self, data: np.ndarray, std: float | None = None) -> np.ndarray:
         """Add Gaussian noise to data.
 
         Args:
@@ -39,7 +37,8 @@ class NoiseMixin:
         Returns:
             Noisy data
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         std = std or self.config.noise_std
         data_std = np.std(data)
         if data_std == 0:
@@ -60,12 +59,11 @@ class NoiseMixin:
         Returns:
             Noisy data
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         range_ = range_ or self.config.noise_range
         data_range = np.ptp(data)
-        noise = self._rng.uniform(
-            range_[0] * data_range, range_[1] * data_range, data.shape
-        )
+        noise = self._rng.uniform(range_[0] * data_range, range_[1] * data_range, data.shape)
         return data + noise
 
     def add_colored_noise(
@@ -81,14 +79,13 @@ class NoiseMixin:
         Returns:
             Noisy data
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         noise = self._generate_colored_noise(data.shape, color)
         noise = noise * amplitude * np.std(data)
         return data + noise
 
-    def add_salt_pepper_noise(
-        self, data: np.ndarray, prob: float | None = None
-    ) -> np.ndarray:
+    def add_salt_pepper_noise(self, data: np.ndarray, prob: float | None = None) -> np.ndarray:
         """Add salt and pepper noise.
 
         Args:
@@ -98,7 +95,8 @@ class NoiseMixin:
         Returns:
             Noisy data
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         prob = prob or self.config.salt_pepper_prob
         result = data.copy()
 
@@ -115,7 +113,8 @@ class NoiseMixin:
     def _generate_colored_noise(self, shape: tuple[int, ...], color: str) -> np.ndarray:
         """Generate colored noise."""
         # Start with white noise
-        assert shape is not None, "shape must be provided"
+        if not (shape is not None):
+            raise ValueError("shape must be provided")
         white = self._rng.standard_normal(shape)
 
         if color == "white":

@@ -59,9 +59,7 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
         self.results_text.pack(fill="both", expand=True, padx=10, pady=(0, 10))
 
         # Close button
-        close_btn = ctk.CTkButton(
-            main_frame, text="Close", command=self.destroy, height=35
-        )
+        close_btn = ctk.CTkButton(main_frame, text="Close", command=self.destroy, height=35)
         close_btn.pack(pady=(0, 10))
 
     def select_file(self) -> None:
@@ -160,7 +158,8 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
 
     def format_file_size(self, size_bytes: float) -> str:
         """Format file size in human readable format."""
-        assert size_bytes is not None, "size_bytes must be provided"
+        if not (size_bytes is not None):
+            raise ValueError("size_bytes must be provided")
         for unit in ["B", "KB", "MB", "GB", "TB"]:
             if size_bytes < 1024.0:
                 return f"{size_bytes:.2f} {unit}"

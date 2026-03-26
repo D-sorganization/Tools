@@ -134,7 +134,8 @@ class C3DDataReader:
         Raises:
             PreconditionError: If *file_path* is empty.
         """
-        assert file_path is not None, "file_path must be provided"
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
         if not file_path:
             raise ValueError("file_path must be a non-empty path")
         require(bool(file_path), "file_path must be a non-empty path", file_path)
@@ -147,9 +148,7 @@ class C3DDataReader:
 
         if self._metadata is None:
             point_parameters = self._get_point_parameters()
-            marker_labels = [
-                label.strip() for label in point_parameters["LABELS"]["value"]
-            ]
+            marker_labels = [label.strip() for label in point_parameters["LABELS"]["value"]]
             frame_count = int(point_parameters["FRAMES"]["value"][0])
             frame_rate = float(point_parameters["RATE"]["value"][0])
             units = str(point_parameters["UNITS"]["value"][0])
@@ -195,7 +194,8 @@ class C3DDataReader:
             an optional ``time`` column in seconds.
         """
 
-        assert include_time is not None, "include_time must be provided"
+        if not (include_time is not None):
+            raise ValueError("include_time must be provided")
         c3d_data = self._load()
         metadata = self.get_metadata()
         points = c3d_data["data"]["points"]
@@ -251,8 +251,7 @@ class C3DDataReader:
                 data["time"] = frame_indices / metadata.frame_rate
             else:
                 logger.warning(
-                    "Frame rate is 0. Time column will be omitted "
-                    "despite include_time=True."
+                    "Frame rate is 0. Time column will be omitted " "despite include_time=True."
                 )
 
         dataframe = pd.DataFrame(data)
@@ -323,7 +322,8 @@ class C3DDataReader:
         components can easily plot synchronized sensor traces.
         """
 
-        assert include_time is not None, "include_time must be provided"
+        if not (include_time is not None):
+            raise ValueError("include_time must be provided")
         c3d_data = self._load()
         metadata = self.get_metadata()
         analog_array = c3d_data["data"]["analogs"]
@@ -337,13 +337,10 @@ class C3DDataReader:
         if channel_count == 0:
             return pd.DataFrame(columns=columns)
 
-        values = analog_array.transpose(2, 0, 1).reshape(
-            frame_count * subframes, channel_count
-        )
+        values = analog_array.transpose(2, 0, 1).reshape(frame_count * subframes, channel_count)
         sample_indices = np.arange(values.shape[0])
         channel_names = np.array(
-            metadata.analog_labels
-            or [f"Analog_{idx + 1}" for idx in range(channel_count)]
+            metadata.analog_labels or [f"Analog_{idx + 1}" for idx in range(channel_count)]
         )
 
         dataframe = pd.DataFrame(
@@ -387,16 +384,15 @@ class C3DDataReader:
             CSV output is automatically sanitized to prevent Excel Formula Injection.
         """
 
-        assert output_path is not None, "output_path must be provided"
+        if not (output_path is not None):
+            raise ValueError("output_path must be provided")
         dataframe = self.points_dataframe(
             include_time=include_time,
             markers=markers,
             residual_nan_threshold=residual_nan_threshold,
             target_units=target_units,
         )
-        return self._export_dataframe(
-            dataframe, output_path, file_format, sanitize=True
-        )
+        return self._export_dataframe(dataframe, output_path, file_format, sanitize=True)
 
     def export_analog(
         self,
@@ -420,11 +416,10 @@ class C3DDataReader:
             CSV output is automatically sanitized to prevent Excel Formula Injection.
         """
 
-        assert output_path is not None, "output_path must be provided"
+        if not (output_path is not None):
+            raise ValueError("output_path must be provided")
         dataframe = self.analog_dataframe(include_time=include_time)
-        return self._export_dataframe(
-            dataframe, output_path, file_format, sanitize=True
-        )
+        return self._export_dataframe(dataframe, output_path, file_format, sanitize=True)
 
     def get_force_plate_channels(self) -> dict[int, dict[str, str]]:
         """Detect and map force plate channels by plate number.
@@ -516,7 +511,8 @@ class C3DDataReader:
         Raises:
             PreconditionError: If *plate_number* is not positive.
         """
-        assert include_time is not None, "include_time must be provided"
+        if not (include_time is not None):
+            raise ValueError("include_time must be provided")
         if plate_number is not None:
             require(
                 plate_number > 0,
@@ -530,9 +526,7 @@ class C3DDataReader:
                 "No force plate channels detected in C3D file. "
                 "Expected channels like Fx1, Fy1, Fz1, Mx1, My1, Mz1."
             )
-            return pd.DataFrame(
-                columns=self._force_plate_columns(include_time, compute_cop)
-            )
+            return pd.DataFrame(columns=self._force_plate_columns(include_time, compute_cop))
 
         # Filter to specific plate if requested
         if plate_number is not None:
@@ -570,9 +564,7 @@ class C3DDataReader:
                 result_dfs.append(plate_df)
 
         if not result_dfs:
-            return pd.DataFrame(
-                columns=self._force_plate_columns(include_time, compute_cop)
-            )
+            return pd.DataFrame(columns=self._force_plate_columns(include_time, compute_cop))
 
         result = pd.concat(result_dfs, ignore_index=True)
 
@@ -594,7 +586,8 @@ class C3DDataReader:
         compute_cop: bool,
     ) -> list[str]:
         """Return column names for an empty force plate DataFrame."""
-        assert include_time is not None, "include_time must be provided"
+        if not (include_time is not None):
+            raise ValueError("include_time must be provided")
         columns = ["sample", "plate", "fx", "fy", "fz", "mx", "my", "mz"]
         if include_time:
             columns.insert(1, "time")
@@ -612,12 +605,11 @@ class C3DDataReader:
         ground_height: float,
     ) -> pd.DataFrame | None:
         """Build a DataFrame for a single force plate, or None if channels missing."""
-        assert plate_num is not None, "plate_num must be provided"
+        if not (plate_num is not None):
+            raise ValueError("plate_num must be provided")
         missing_keys = required_keys - set(channels.keys())
         if missing_keys:
-            logger.warning(
-                f"Force plate {plate_num} missing channels: {missing_keys}. Skipping."
-            )
+            logger.warning(f"Force plate {plate_num} missing channels: {missing_keys}. Skipping.")
             return None
 
         plate_df = pd.DataFrame(
@@ -657,17 +649,13 @@ class C3DDataReader:
         try:
             return cast(dict[str, Any], c3d_data["parameters"]["POINT"])
         except KeyError as error:  # pragma: no cover - defensive guard
-            raise ValueError(
-                f"POINT parameters missing from C3D file: {self.file_path}"
-            ) from error
+            raise ValueError(f"POINT parameters missing from C3D file: {self.file_path}") from error
 
     def _get_analog_parameters(self) -> dict[str, Any] | None:
         """Get ANALOG parameters from the C3D file, if present."""
         c3d_data = self._load()
         analog_params = c3d_data["parameters"].get("ANALOG")
-        return (
-            cast(dict[str, Any], analog_params) if analog_params is not None else None
-        )
+        return cast(dict[str, Any], analog_params) if analog_params is not None else None
 
     def _get_analog_details(self) -> tuple[list[str], float | None, list[str]]:
         """Get analog channel labels, sample rate, and units from the C3D file."""
@@ -681,13 +669,9 @@ class C3DDataReader:
             analog_rate = None
         else:
             labels = [
-                label.strip()
-                for label in analog_parameters.get("LABELS", {}).get("value", [])
+                label.strip() for label in analog_parameters.get("LABELS", {}).get("value", [])
             ]
-            units = [
-                unit.strip()
-                for unit in analog_parameters.get("UNITS", {}).get("value", [])
-            ]
+            units = [unit.strip() for unit in analog_parameters.get("UNITS", {}).get("value", [])]
             analog_rate = float(analog_parameters.get("RATE", {}).get("value", [0])[0])
 
         if not labels and channel_count > 0:
@@ -788,16 +772,15 @@ class C3DDataReader:
 
         Includes validation, versioning, and telemetry.
         """
-        assert dataframe is not None, "dataframe must be provided"
+        if not (dataframe is not None):
+            raise ValueError("dataframe must be provided")
         path = Path(output_path).resolve()
 
         self._validate_export_path(path)
 
         if not file_format:
             if not path.suffix:
-                raise ValueError(
-                    "File format could not be inferred from the path suffix."
-                )
+                raise ValueError("File format could not be inferred from the path suffix.")
             file_format = path.suffix.lstrip(".")
 
         normalized_format = file_format.lower()
@@ -871,16 +854,12 @@ class C3DDataReader:
         if fmt == "csv":
             df_to_export = dataframe.copy() if sanitize else dataframe
             if sanitize:
-                for col in df_to_export.select_dtypes(
-                    include=[object, "string"]
-                ).columns:
+                for col in df_to_export.select_dtypes(include=[object, "string"]).columns:
                     df_to_export[col] = df_to_export[col].apply(self._sanitize_for_csv)
             df_to_export.to_csv(path, index=False)
 
             # Sanitize metadata values against CSV/formula injection
-            sanitized_metadata = {
-                k: self._sanitize_for_csv(v) for k, v in metadata.items()
-            }
+            sanitized_metadata = {k: self._sanitize_for_csv(v) for k, v in metadata.items()}
             meta_path = path.with_name(f"{path.stem}_meta.json")
             with open(meta_path, "w") as f:
                 json.dump(sanitized_metadata, f, indent=2)
@@ -899,6 +878,5 @@ class C3DDataReader:
 
         else:
             raise ValueError(
-                f"Unsupported export format: '{fmt}'. "
-                "Supported formats: csv, json, npz."
+                f"Unsupported export format: '{fmt}'. " "Supported formats: csv, json, npz."
             )

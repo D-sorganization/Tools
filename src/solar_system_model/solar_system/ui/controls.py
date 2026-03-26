@@ -149,9 +149,7 @@ class InputHandler:
             KeyBinding(K_g, InputAction.TOGGLE_GRID, description="Toggle grid"),
             KeyBinding(K_h, InputAction.TOGGLE_HELP, description="Toggle help"),
             KeyBinding(K_c, InputAction.CYCLE_CAMERA, description="Cycle camera mode"),
-            KeyBinding(
-                K_f, InputAction.FOCUS_SELECTED, description="Focus on selected"
-            ),
+            KeyBinding(K_f, InputAction.FOCUS_SELECTED, description="Focus on selected"),
             KeyBinding(K_t, InputAction.PLAN_TRAJECTORY, description="Plan trajectory"),
             KeyBinding(K_0, InputAction.SELECT_SUN, description="Select Sun"),
             KeyBinding(K_1, InputAction.SELECT_PLANET_1, description="Select Mercury"),
@@ -167,9 +165,7 @@ class InputHandler:
 
         self._key_bindings = default_bindings
 
-    def register_callback(
-        self, action: InputAction, callback: Callable[..., Any]
-    ) -> None:
+    def register_callback(self, action: InputAction, callback: Callable[..., Any]) -> None:
         """
         Register a callback for an input action.
 
@@ -177,19 +173,15 @@ class InputHandler:
             action: The action to listen for
             callback: Function to call when action is triggered
         """
-        assert action is not None, "action must be provided"
+        if not (action is not None):
+            raise ValueError("action must be provided")
         if action not in self._action_callbacks:
             self._action_callbacks[action] = []
         self._action_callbacks[action].append(callback)
 
-    def unregister_callback(
-        self, action: InputAction, callback: Callable[..., Any]
-    ) -> None:
+    def unregister_callback(self, action: InputAction, callback: Callable[..., Any]) -> None:
         """Remove a callback for an action."""
-        if (
-            action in self._action_callbacks
-            and callback in self._action_callbacks[action]
-        ):
+        if action in self._action_callbacks and callback in self._action_callbacks[action]:
             self._action_callbacks[action].remove(callback)
 
     def _trigger_action(self, action: InputAction, **kwargs: Any) -> None:
@@ -242,11 +234,10 @@ class InputHandler:
         Returns:
             False if should quit
         """
-        assert key is not None, "key must be provided"
+        if not (key is not None):
+            raise ValueError("key must be provided")
         for binding in self._key_bindings:
-            if binding.key == key and (
-                binding.modifiers == 0 or (modifiers & binding.modifiers)
-            ):
+            if binding.key == key and (binding.modifiers == 0 or (modifiers & binding.modifiers)):
                 self._trigger_action(binding.action)
 
                 if binding.action == InputAction.QUIT:
@@ -256,7 +247,8 @@ class InputHandler:
 
     def _handle_mouse_button_down(self, button: int, pos: tuple[int, int]) -> None:
         """Handle mouse button press."""
-        assert button is not None, "button must be provided"
+        if not (button is not None):
+            raise ValueError("button must be provided")
         self.mouse_state.position = pos
 
         if button == 1:  # Left
@@ -270,7 +262,8 @@ class InputHandler:
 
     def _handle_mouse_button_up(self, button: int, pos: tuple[int, int]) -> None:
         """Handle mouse button release."""
-        assert button is not None, "button must be provided"
+        if not (button is not None):
+            raise ValueError("button must be provided")
         self.mouse_state.position = pos
 
         if button == 1:
@@ -282,7 +275,8 @@ class InputHandler:
 
     def _handle_mouse_motion(self, pos: tuple[int, int], rel: tuple[int, int]) -> None:
         """Handle mouse movement."""
-        assert pos is not None, "pos must be provided"
+        if not (pos is not None):
+            raise ValueError("pos must be provided")
         self.mouse_state.position = pos
         self.mouse_state.drag_delta = rel
 
@@ -293,7 +287,8 @@ class InputHandler:
 
     def _handle_mouse_wheel(self, delta: int) -> None:
         """Handle mouse wheel scroll."""
-        assert delta is not None, "delta must be provided"
+        if not (delta is not None):
+            raise ValueError("delta must be provided")
         self.mouse_state.scroll_delta = delta
 
         if delta > 0:

@@ -132,21 +132,15 @@ class PSAModel:
     total_feed_scfm: float = 1100.0
     s2_tail_recycle_frac: float = 1.0
     product_recycle_frac: float = 0.0
-    components: list[ComponentData] = field(
-        default_factory=lambda: list(DEFAULT_COMPONENTS)
-    )
+    components: list[ComponentData] = field(default_factory=lambda: list(DEFAULT_COMPONENTS))
 
     def calculate(self) -> PSAResults:
         """Perform PSA mass balance calculation."""
         n_components = len(self.components)
         component_names = [c["name"] for c in self.components]
         feed_pct = np.array([c["feed_pct"] for c in self.components], dtype=np.float64)
-        r1 = np.array(
-            [c["stage1_removal_pct"] / 100.0 for c in self.components], dtype=np.float64
-        )
-        r2 = np.array(
-            [c["stage2_removal_pct"] / 100.0 for c in self.components], dtype=np.float64
-        )
+        r1 = np.array([c["stage1_removal_pct"] / 100.0 for c in self.components], dtype=np.float64)
+        r2 = np.array([c["stage2_removal_pct"] / 100.0 for c in self.components], dtype=np.float64)
         r_tail = self.s2_tail_recycle_frac
         r_prod = self.product_recycle_frac
 
@@ -208,10 +202,7 @@ class PSAModel:
             total_exhaust_scfm=float(np.sum(exhaust)),
             total_s2_tail_vent_scfm=float(np.sum(s2_tail_vent)),
             mass_balance_error=float(
-                np.sum(fresh_feed)
-                - np.sum(exhaust)
-                - np.sum(s2_tail_vent)
-                - np.sum(net_product)
+                np.sum(fresh_feed) - np.sum(exhaust) - np.sum(s2_tail_vent) - np.sum(net_product)
             ),
             s2_tail_h2_pct=float(compositions.s2_tail[h2_idx]),
             s2_tail_o2_pct=float(compositions.s2_tail[o2_idx]),
@@ -220,7 +211,8 @@ class PSAModel:
 
 def get_flammability_status(h2_pct: float, o2_pct: float) -> tuple[str, str]:
     """Return status and color for flammability."""
-    assert h2_pct is not None, "h2_pct must be provided"
+    if not (h2_pct is not None):
+        raise ValueError("h2_pct must be provided")
     if o2_pct < 0.1:
         return "Safe-Low O2", "green"
     if h2_pct > 4 and o2_pct > 2:
@@ -237,7 +229,8 @@ def get_flammability_status(h2_pct: float, o2_pct: float) -> tuple[str, str]:
 
 def _resolve_plot_mode(show_lines: bool, show_markers: bool) -> str:
     """Resolve Plotly trace mode from boolean flags."""
-    assert show_lines is not None, "show_lines must be provided"
+    if not (show_lines is not None):
+        raise ValueError("show_lines must be provided")
     if show_lines and show_markers:
         return "lines+markers"
     if show_markers:
@@ -331,9 +324,7 @@ def _render_key_metrics(results: PSAResults) -> None:
     with col3:
         st.metric("Net Product", f"{results.total_net_product_scfm:.1f} SCFM")
     with col4:
-        status, color = get_flammability_status(
-            results.s2_tail_h2_pct, results.s2_tail_o2_pct
-        )
+        status, color = get_flammability_status(results.s2_tail_h2_pct, results.s2_tail_o2_pct)
         if color == "red":
             st.error(f"⚠️ {status}")
         elif color == "orange":
@@ -412,7 +403,8 @@ def _render_sensitivity_tab(
     components: list[ComponentData],
 ) -> None:
     """Render Tab 2 — S2 tail recycle sensitivity analysis."""
-    assert total_feed is not None, "total_feed must be provided"
+    if not (total_feed is not None):
+        raise ValueError("total_feed must be provided")
     st.subheader("Sensitivity Analysis")
 
     # Plot options
@@ -490,7 +482,8 @@ def _render_o2_safety_tab(
     components: list[ComponentData],
 ) -> None:
     """Render Tab 3 — O2 flammability / safety analysis."""
-    assert total_feed is not None, "total_feed must be provided"
+    if not (total_feed is not None):
+        raise ValueError("total_feed must be provided")
     st.subheader("O2 Safety Analysis")
     st.markdown("""
     **Critical Thresholds:**
@@ -554,9 +547,7 @@ def _render_o2_safety_tab(
                 marker={"size": 6},
             )
         )
-    fig_line.add_hline(
-        y=2.0, line_dash="dash", line_color="red", annotation_text="Danger (2%)"
-    )
+    fig_line.add_hline(y=2.0, line_dash="dash", line_color="red", annotation_text="Danger (2%)")
     fig_line.update_layout(
         title="S2 Tail O2% vs Stage 1 O2 Removal",
         xaxis_title="Stage 1 O2 Removal (%)",
@@ -587,9 +578,7 @@ def _render_o2_safety_tab(
             return "background-color: #ffffcc"
         return ""
 
-    st.dataframe(
-        df_o2.style.map(highlight_danger, subset=df_o2.columns[1:]).format(precision=2)
-    )
+    st.dataframe(df_o2.style.map(highlight_danger, subset=df_o2.columns[1:]).format(precision=2))
 
 
 def _render_data_tables_tab(results: PSAResults) -> None:
@@ -638,9 +627,7 @@ def main() -> None:
     )
 
     # Sidebar — collect operating parameters
-    total_feed, s2_recycle, prod_recycle, components = _render_sidebar(
-        DEFAULT_COMPONENTS
-    )
+    total_feed, s2_recycle, prod_recycle, components = _render_sidebar(DEFAULT_COMPONENTS)
 
     # Calculate
     model = PSAModel(
@@ -676,8 +663,7 @@ def main() -> None:
     # Footer
     st.markdown("---")
     st.markdown(
-        "*PSA System Analysis Tool - "
-        "All calculations validated against Excel reference model.*"
+        "*PSA System Analysis Tool - " "All calculations validated against Excel reference model.*"
     )
 
 

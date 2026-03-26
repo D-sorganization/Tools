@@ -186,7 +186,8 @@ class FinancialCalculatorEngine:
         tax_rate: float,
     ) -> FinancialDesign:
         """Run financial calculation."""
-        assert plant_capacity is not None, "plant_capacity must be provided"
+        if not (plant_capacity is not None):
+            raise ValueError("plant_capacity must be provided")
         params = self._params_class(
             plant_capacity_tpd=plant_capacity,
             operating_days_per_year=operating_days,
@@ -224,7 +225,8 @@ class FinancialCalculatorEngine:
 
     def generate_projections(self, years: int = 10) -> list[dict]:
         """Generate yearly projections."""
-        assert years is not None, "years must be provided"
+        if not (years is not None):
+            raise ValueError("years must be provided")
         result = self._calculator.generate_yearly_projections(years)
         return list(result)
 
@@ -476,8 +478,7 @@ class FinancialCalculatorMainWindow(QMainWindow):
         # Key metrics grid
         metrics_frame = QFrame()
         metrics_frame.setStyleSheet(
-            f"background-color: {COLORS['surface0']}; "
-            f"border-radius: 8px; padding: 15px;"
+            f"background-color: {COLORS['surface0']}; " f"border-radius: 8px; padding: 15px;"
         )
         metrics_layout = QGridLayout(metrics_frame)
         metrics_layout.setSpacing(20)
@@ -560,10 +561,9 @@ class FinancialCalculatorMainWindow(QMainWindow):
 
     def _update_results(self, results: FinancialDesign) -> None:
         """Update results display."""
-        assert results is not None, "results must be provided"
-        self.metric_labels["annual_tons"].setText(
-            f"{results.annual_feedstock_tons:,.0f} tons"
-        )
+        if not (results is not None):
+            raise ValueError("results must be provided")
+        self.metric_labels["annual_tons"].setText(f"{results.annual_feedstock_tons:,.0f} tons")
         self.metric_labels["revenue"].setText(f"${results.total_revenue:,.0f}")
         self.metric_labels["costs"].setText(f"${results.total_costs:,.0f}")
         self.metric_labels["net_income"].setText(f"${results.net_income:,.0f}")
@@ -573,7 +573,8 @@ class FinancialCalculatorMainWindow(QMainWindow):
 
     def _update_projections(self, projections: list[dict]) -> None:
         """Update projections table."""
-        assert projections is not None, "projections must be provided"
+        if not (projections is not None):
+            raise ValueError("projections must be provided")
         self.projections_table.setRowCount(len(projections))
 
         for row, proj in enumerate(projections):
@@ -581,15 +582,9 @@ class FinancialCalculatorMainWindow(QMainWindow):
             self.projections_table.setItem(
                 row, 1, QTableWidgetItem(f"${proj['total_revenue']:,.0f}")
             )
-            self.projections_table.setItem(
-                row, 2, QTableWidgetItem(f"${proj['total_costs']:,.0f}")
-            )
-            self.projections_table.setItem(
-                row, 3, QTableWidgetItem(f"${proj['ebitda']:,.0f}")
-            )
-            self.projections_table.setItem(
-                row, 4, QTableWidgetItem(f"${proj['net_income']:,.0f}")
-            )
+            self.projections_table.setItem(row, 2, QTableWidgetItem(f"${proj['total_costs']:,.0f}"))
+            self.projections_table.setItem(row, 3, QTableWidgetItem(f"${proj['ebitda']:,.0f}"))
+            self.projections_table.setItem(row, 4, QTableWidgetItem(f"${proj['net_income']:,.0f}"))
             self.projections_table.setItem(
                 row, 5, QTableWidgetItem(f"${proj['cumulative_cash_flow']:,.0f}")
             )

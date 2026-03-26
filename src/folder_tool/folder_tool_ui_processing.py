@@ -55,14 +55,13 @@ class UIProcessingMixin:
             tkinter.TclError: If Tkinter widget creation fails
             Exception: If dialog creation fails for other reasons
         """
-        assert title is not None, "title must be provided"
+        if not (title is not None):
+            raise ValueError("title must be provided")
         content = self._validate_dialog_inputs(title, content)
         logger.info(f"Creating text dialog: '{title}' with {len(content)} characters")
 
         try:
-            dialog, dialog_width, dialog_height = self._create_dialog_window(
-                title, content
-            )
+            dialog, dialog_width, dialog_height = self._create_dialog_window(title, content)
             self._create_text_area(dialog, content)
             self._create_dialog_buttons(dialog, content)
             self._finalize_dialog(dialog, dialog_width, dialog_height)
@@ -97,20 +96,15 @@ class UIProcessingMixin:
             )
         if len(content) > MAX_TEXT_CONTENT_SIZE:
             logger.warning(
-                f"Content is very large ({len(content)} chars), may cause "
-                "performance issues",
+                f"Content is very large ({len(content)} chars), may cause " "performance issues",
             )
-            content = (
-                content[:MAX_TEXT_CONTENT_SIZE]
-                + "\n\n... [Content truncated due to size]"
-            )
+            content = content[:MAX_TEXT_CONTENT_SIZE] + "\n\n... [Content truncated due to size]"
         return content
 
-    def _create_dialog_window(
-        self, title: str, content: str
-    ) -> tuple[tk.Toplevel, int, int]:
+    def _create_dialog_window(self, title: str, content: str) -> tuple[tk.Toplevel, int, int]:
         """Create and configure the dialog window, returning it with dimensions."""
-        assert title is not None, "title must be provided"
+        if not (title is not None):
+            raise ValueError("title must be provided")
         dialog = tk.Toplevel(self.root)
         dialog.title(title)
 
@@ -139,7 +133,8 @@ class UIProcessingMixin:
     @staticmethod
     def _create_text_area(dialog: tk.Toplevel, content: str) -> tk.Text:
         """Create the scrollable text area and insert content."""
-        assert dialog is not None, "dialog must be provided"
+        if not (dialog is not None):
+            raise ValueError("dialog must be provided")
         text_frame = ttk.Frame(dialog)
         text_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
@@ -152,9 +147,7 @@ class UIProcessingMixin:
             selectbackground="lightblue",
             selectforeground="black",
         )
-        scrollbar = ttk.Scrollbar(
-            text_frame, orient="vertical", command=text_widget.yview
-        )
+        scrollbar = ttk.Scrollbar(text_frame, orient="vertical", command=text_widget.yview)
         text_widget.configure(yscrollcommand=scrollbar.set)
         text_widget.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
@@ -167,8 +160,7 @@ class UIProcessingMixin:
         except (KeyError, ValueError, TypeError) as e:
             logger.error(f"Failed to insert content into text widget: {e}")
             safe_content = (
-                content[:MAX_FALLBACK_CONTENT_SIZE]
-                + "\n\n... [Content truncated due to error]"
+                content[:MAX_FALLBACK_CONTENT_SIZE] + "\n\n... [Content truncated due to error]"
             )
             text_widget.insert("1.0", safe_content)
             text_widget.config(state="disabled")
@@ -178,7 +170,8 @@ class UIProcessingMixin:
     @staticmethod
     def _create_dialog_buttons(dialog: tk.Toplevel, content: str) -> ttk.Button:
         """Create Close and Copy All buttons. Returns close_button for focus."""
-        assert dialog is not None, "dialog must be provided"
+        if not (dialog is not None):
+            raise ValueError("dialog must be provided")
         button_frame = ttk.Frame(dialog)
         button_frame.pack(fill=tk.X, padx=10, pady=(0, 10))
 
@@ -193,19 +186,16 @@ class UIProcessingMixin:
             except (RuntimeError, OSError) as e:
                 logger.warning(f"Failed to copy to clipboard: {e}")
 
-        copy_button = ttk.Button(
-            button_frame, text="Copy All", command=copy_to_clipboard
-        )
+        copy_button = ttk.Button(button_frame, text="Copy All", command=copy_to_clipboard)
         copy_button.pack(side="right", padx=(0, 5))
 
         return close_button
 
     @staticmethod
-    def _finalize_dialog(
-        dialog: tk.Toplevel, dialog_width: int, dialog_height: int
-    ) -> None:
+    def _finalize_dialog(dialog: tk.Toplevel, dialog_width: int, dialog_height: int) -> None:
         """Set focus, bind keys, and wait for dialog to close."""
-        assert dialog is not None, "dialog must be provided"
+        if not (dialog is not None):
+            raise ValueError("dialog must be provided")
         dialog.focus_set()
         dialog.bind("<Escape>", lambda event: dialog.destroy())
 
@@ -217,7 +207,8 @@ class UIProcessingMixin:
     @staticmethod
     def _show_fallback_messagebox(title: str, content: str) -> None:
         """Show a simple message box as fallback when dialog creation fails."""
-        assert title is not None, "title must be provided"
+        if not (title is not None):
+            raise ValueError("title must be provided")
         fallback_content = (
             content[:MAX_FALLBACK_CONTENT_SIZE] + "..."
             if len(content) > MAX_FALLBACK_CONTENT_SIZE

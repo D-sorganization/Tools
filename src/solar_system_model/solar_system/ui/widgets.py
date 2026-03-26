@@ -50,7 +50,8 @@ class InfoPanel:
             width: Panel width in pixels
             style: Visual styling
         """
-        assert position is not None, "position must be provided"
+        if not (position is not None):
+            raise ValueError("position must be provided")
         self.position = position
         self.width = width
         self.style = style or PanelStyle()
@@ -66,7 +67,8 @@ class InfoPanel:
             title: Panel title
             data: Dictionary of label -> value pairs
         """
-        assert title is not None, "title must be provided"
+        if not (title is not None):
+            raise ValueError("title must be provided")
         self._title = title
         self._data = data
 
@@ -249,9 +251,7 @@ class TooltipManager:
         self._hover_time: float = 0.0
         self._show_delay: float = 0.5  # Seconds before showing
 
-    def set_hover(
-        self, body_name: str, position: tuple[int, int], info: dict[str, Any]
-    ) -> None:
+    def set_hover(self, body_name: str, position: tuple[int, int], info: dict[str, Any]) -> None:
         """
         Set the currently hovered body.
 
@@ -305,7 +305,8 @@ class DateTimePicker:
             style: Visual styling
             on_date_change: Callback when date is changed
         """
-        assert position is not None, "position must be provided"
+        if not (position is not None):
+            raise ValueError("position must be provided")
         self.position = position
         self.style = style or PanelStyle()
         self.visible = False
@@ -325,7 +326,8 @@ class DateTimePicker:
         Args:
             dt: The datetime to display
         """
-        assert dt is not None, "dt must be provided"
+        if not (dt is not None):
+            raise ValueError("dt must be provided")
         self._current_date = dt
 
     def get_date(self) -> datetime | None:
@@ -342,7 +344,8 @@ class DateTimePicker:
         Returns:
             True if input was handled
         """
-        assert char is not None, "char must be provided"
+        if not (char is not None):
+            raise ValueError("char must be provided")
         if not self._editing_field:
             return False
 
@@ -379,9 +382,7 @@ class DateTimePicker:
                 # Validate that the day exists in the current month/year
                 from calendar import monthrange
 
-                max_days = monthrange(
-                    self._current_date.year, self._current_date.month
-                )[1]
+                max_days = monthrange(self._current_date.year, self._current_date.month)[1]
                 if 1 <= value <= max_days:
                     from contextlib import suppress
 
@@ -407,7 +408,8 @@ class DateTimePicker:
         Args:
             field: Field name ('year', 'month', 'day', 'hour')
         """
-        assert field is not None, "field must be provided"
+        if not (field is not None):
+            raise ValueError("field must be provided")
         self._editing_field = field
         self._input_buffer = ""
 
@@ -433,9 +435,7 @@ class TimeNavigationPanel:
     - Quick time warp presets
     """
 
-    def __init__(
-        self, position: tuple[int, int] = (20, 250), style: PanelStyle | None = None
-    ):
+    def __init__(self, position: tuple[int, int] = (20, 250), style: PanelStyle | None = None):
         """
         Initialize the time navigation panel.
 
@@ -443,7 +443,8 @@ class TimeNavigationPanel:
             position: Top-left position (x, y)
             style: Visual styling
         """
-        assert position is not None, "position must be provided"
+        if not (position is not None):
+            raise ValueError("position must be provided")
         self.position = position
         self.style = style or PanelStyle()
         self.visible = True
@@ -513,7 +514,8 @@ class EducationalInfoPanel:
             width: Panel width in pixels
             style: Visual styling
         """
-        assert position is not None, "position must be provided"
+        if not (position is not None):
+            raise ValueError("position must be provided")
         self.position = position
         self.width = width
         self.style = style or PanelStyle()
@@ -534,7 +536,8 @@ class EducationalInfoPanel:
             properties: Dictionary of properties to display
             fun_facts: Optional list of educational fun facts
         """
-        assert name is not None, "name must be provided"
+        if not (name is not None):
+            raise ValueError("name must be provided")
         self._body_name = name
         self._properties = properties
         self._fun_facts = fun_facts or []
@@ -543,9 +546,7 @@ class EducationalInfoPanel:
     def cycle_fact(self) -> None:
         """Cycle to the next fun fact."""
         if self._fun_facts:
-            self._current_fact_index = (self._current_fact_index + 1) % len(
-                self._fun_facts
-            )
+            self._current_fact_index = (self._current_fact_index + 1) % len(self._fun_facts)
 
     def get_current_fact(self) -> str | None:
         """Get the currently displayed fun fact."""
@@ -594,7 +595,8 @@ class HistoricalEventsPanel:
             width: Panel width in pixels
             style: Visual styling
         """
-        assert position is not None, "position must be provided"
+        if not (position is not None):
+            raise ValueError("position must be provided")
         self.position = position
         self.width = width
         self.style = style or PanelStyle()
@@ -609,7 +611,8 @@ class HistoricalEventsPanel:
         Args:
             dt: Current simulation date
         """
-        assert dt is not None, "dt must be provided"
+        if not (dt is not None):
+            raise ValueError("dt must be provided")
         self._current_date = dt
         self._events = self._find_events_for_date(dt)
 
@@ -668,7 +671,8 @@ class ImmersionChecklistPanel:
         tasks: list[ImmersionTask] | None = None,
     ):
         """Initialize the checklist panel."""
-        assert position is not None, "position must be provided"
+        if not (position is not None):
+            raise ValueError("position must be provided")
         self.position = position
         self.width = width
         self.style = style or PanelStyle()
@@ -683,39 +687,33 @@ class ImmersionChecklistPanel:
                 task_id="select_body",
                 title="Pick a world",
                 description=(
-                    "Use number keys or click to focus a planet and open its"
-                    " fact sheet."
+                    "Use number keys or click to focus a planet and open its" " fact sheet."
                 ),
             ),
             ImmersionTask(
                 task_id="navigate_time",
                 title="Travel through time",
                 description=(
-                    "Use the date picker or time navigation hotkeys to see planetary"
-                    " alignments."
+                    "Use the date picker or time navigation hotkeys to see planetary" " alignments."
                 ),
             ),
             ImmersionTask(
                 task_id="toggle_overlays",
                 title="Tune the overlays",
                 description=(
-                    "Toggle orbits, labels, and the grid to compare scales and"
-                    " visibility."
+                    "Toggle orbits, labels, and the grid to compare scales and" " visibility."
                 ),
             ),
             ImmersionTask(
                 task_id="historical_events",
                 title="Explore mission history",
-                description=(
-                    "Open the historical events panel and jump to milestone dates."
-                ),
+                description=("Open the historical events panel and jump to milestone dates."),
             ),
             ImmersionTask(
                 task_id="plan_transfer",
                 title="Plot a transfer",
                 description=(
-                    "Plan an Earth→Mars Hohmann transfer to visualize interplanetary"
-                    " travel."
+                    "Plan an Earth→Mars Hohmann transfer to visualize interplanetary" " travel."
                 ),
             ),
         ]
@@ -776,11 +774,10 @@ class SettingsPanel:
     Panel for configuring simulation settings.
     """
 
-    def __init__(
-        self, position: tuple[int, int] = (20, 500), style: PanelStyle | None = None
-    ):
+    def __init__(self, position: tuple[int, int] = (20, 500), style: PanelStyle | None = None):
         """Initialize the settings panel."""
-        assert position is not None, "position must be provided"
+        if not (position is not None):
+            raise ValueError("position must be provided")
         self.position = position
         self.style = style or PanelStyle()
         self.visible = False
@@ -792,7 +789,8 @@ class SettingsPanel:
 
     def toggle_checkbox(self, index: int) -> str | None:
         """Toggle a checkbox by index."""
-        assert index is not None, "index must be provided"
+        if not (index is not None):
+            raise ValueError("index must be provided")
         if 0 <= index < len(self.checkboxes):
             self.checkboxes[index].checked = not self.checkboxes[index].checked
             return self.checkboxes[index].action
@@ -817,11 +815,10 @@ class NavigationPanel:
     Panel for changing navigation/interaction modes.
     """
 
-    def __init__(
-        self, position: tuple[int, int] = (20, 300), style: PanelStyle | None = None
-    ):
+    def __init__(self, position: tuple[int, int] = (20, 300), style: PanelStyle | None = None):
         """Initialize navigation panel."""
-        assert position is not None, "position must be provided"
+        if not (position is not None):
+            raise ValueError("position must be provided")
         self.position = position
         self.style = style or PanelStyle()
         self.visible = True
@@ -862,7 +859,8 @@ class SidebarPanel:
         style: PanelStyle | None = None,
     ):
         """Initialize sidebar panel."""
-        assert position is not None, "position must be provided"
+        if not (position is not None):
+            raise ValueError("position must be provided")
         self.position = position
         self.width = 380
         self.height = height
@@ -885,7 +883,8 @@ class SidebarPanel:
     def handle_click(self, rel_x: int, rel_y: int) -> str | None:
         """Handle mouse click on sidebar."""
         # Simple tab hit detection
-        assert rel_x is not None, "rel_x must be provided"
+        if not (rel_x is not None):
+            raise ValueError("rel_x must be provided")
         tab_width = self.width // len(self.tabs)
         header_height = 35
 
@@ -903,9 +902,7 @@ class SidebarPanel:
             "height": self.height,
             "tabs": [t.name for t in self.tabs],
             "current_tab_index": self.current_tab_index,
-            "current_content_key": self.tabs[
-                self.current_tab_index
-            ].content_renderer_key,
+            "current_content_key": self.tabs[self.current_tab_index].content_renderer_key,
             "style": self.style,
             "visible": self.visible,
         }
@@ -931,7 +928,8 @@ class UnifiedControlPanel:
         style: PanelStyle | None = None,
     ):
         """Initialize unified control panel."""
-        assert position is not None, "position must be provided"
+        if not (position is not None):
+            raise ValueError("position must be provided")
         self.position = position
         self.width = width
         self.height = 140  # Increased height for more toggles
@@ -952,7 +950,8 @@ class UnifiedControlPanel:
 
     def toggle_checkbox(self, index: int) -> str | None:
         """Toggle checkbox by index."""
-        assert index is not None, "index must be provided"
+        if not (index is not None):
+            raise ValueError("index must be provided")
         if 0 <= index < len(self.checkboxes):
             self.checkboxes[index].checked = not self.checkboxes[index].checked
             return self.checkboxes[index].action
@@ -985,17 +984,17 @@ class UnifiedControlPanel:
 class MissionListPanel:
     """Panel for selecting famous NASA missions."""
 
-    def __init__(
-        self, position: tuple[int, int] = (0, 0), style: PanelStyle | None = None
-    ):
-        assert position is not None, "position must be provided"
+    def __init__(self, position: tuple[int, int] = (0, 0), style: PanelStyle | None = None):
+        if not (position is not None):
+            raise ValueError("position must be provided")
         self.position = position
         self.style = style or PanelStyle()
         self.visible = True
         self.scroll_offset = 0
 
     def get_render_data(self, missions_dict: dict[str, Any]) -> dict[str, Any]:
-        assert missions_dict is not None, "missions_dict must be provided"
+        if not (missions_dict is not None):
+            raise ValueError("missions_dict must be provided")
         missions_info = []
         for name, data in missions_dict.items():
             highlights = data.get("science_highlights", ())

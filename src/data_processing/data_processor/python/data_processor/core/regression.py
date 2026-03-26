@@ -73,9 +73,7 @@ class MultivariateRegressor(FittingMixin, DiagnosticsMixin):
         """
         # Select predictors
         if predictors is None:
-            predictors = [
-                c for c in df.select_dtypes(include=[np.number]).columns if c != target
-            ]
+            predictors = [c for c in df.select_dtypes(include=[np.number]).columns if c != target]
 
         if not predictors:
             raise ValueError("No predictors available")
@@ -128,9 +126,7 @@ class MultivariateRegressor(FittingMixin, DiagnosticsMixin):
             result.diagnostics = self._calculate_diagnostics(X, y, y_pred, residuals)
 
         # Calculate variable importance
-        result.variable_importance = self._calculate_importance(
-            coeffs, feature_names, X
-        )
+        result.variable_importance = self._calculate_importance(coeffs, feature_names, X)
 
         return result
 
@@ -179,7 +175,8 @@ class MultivariateRegressor(FittingMixin, DiagnosticsMixin):
             X grid, Y grid, Z predictions
         """
         # Create grid
-        assert result is not None, "result must be provided"
+        if not (result is not None):
+            raise ValueError("result must be provided")
         x_lin = np.linspace(x_range[0], x_range[1], grid_size)
         y_lin = np.linspace(y_range[0], y_range[1], grid_size)
         x_grid, y_grid = np.meshgrid(x_lin, y_lin)
@@ -215,10 +212,7 @@ class MultivariateRegressor(FittingMixin, DiagnosticsMixin):
         X_features, _ = self._build_features(X_raw, original_predictors)
 
         # Predict
-        z_pred = (
-            X_features @ np.array([c.estimate for c in result.coefficients])
-            + result.intercept
-        )
+        z_pred = X_features @ np.array([c.estimate for c in result.coefficients]) + result.intercept
         z_grid = z_pred.reshape(x_grid.shape)
 
         return x_grid, y_grid, z_grid
@@ -246,8 +240,7 @@ def format_regression_report(result: RegressionResult) -> str:
 
     # Overall model test
     lines.append(
-        f"F-statistic: {result.f_statistic:.4f} "
-        f"(df={result.df_model}, {result.df_residual})"
+        f"F-statistic: {result.f_statistic:.4f} " f"(df={result.df_model}, {result.df_residual})"
     )
     lines.append(f"p-value: {result.f_p_value:.4e}")
     lines.append("")
@@ -256,15 +249,12 @@ def format_regression_report(result: RegressionResult) -> str:
     lines.append("Coefficients:")
     lines.append("-" * 70)
     lines.append(
-        f"{'Variable':<20} {'Estimate':>12} "
-        f"{'Std.Err':>10} {'t-stat':>10} {'p-value':>10}"
+        f"{'Variable':<20} {'Estimate':>12} " f"{'Std.Err':>10} {'t-stat':>10} {'p-value':>10}"
     )
     lines.append("-" * 70)
 
     # Intercept
-    lines.append(
-        f"{'(Intercept)':<20} {result.intercept:>12.4f} {result.intercept_se:>10.4f}"
-    )
+    lines.append(f"{'(Intercept)':<20} {result.intercept:>12.4f} {result.intercept_se:>10.4f}")
 
     # Coefficients
     for coef in result.coefficients:
@@ -281,9 +271,7 @@ def format_regression_report(result: RegressionResult) -> str:
     if result.variable_importance:
         lines.append("")
         lines.append("Variable Importance (standardized):")
-        sorted_imp = sorted(
-            result.variable_importance.items(), key=lambda x: x[1], reverse=True
-        )
+        sorted_imp = sorted(result.variable_importance.items(), key=lambda x: x[1], reverse=True)
         for name, imp in sorted_imp[:10]:
             lines.append(f"  {name}: {imp:.4f}")
 
@@ -298,8 +286,7 @@ def format_regression_report(result: RegressionResult) -> str:
             f"p = {diag.breusch_pagan_p:.4f}"
         )
         lines.append(
-            f"  Shapiro-Wilk:      W = {diag.shapiro_stat:.4f}, "
-            f"p = {diag.shapiro_p:.4f}"
+            f"  Shapiro-Wilk:      W = {diag.shapiro_stat:.4f}, " f"p = {diag.shapiro_p:.4f}"
         )
 
         if diag.high_leverage_points:

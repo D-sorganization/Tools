@@ -94,7 +94,7 @@ def _fmt_vec(v: np.ndarray, decimals: int = 6) -> str:
 
 def _fmt_mat(M: np.ndarray, decimals: int = 6) -> str:
     """Format a numpy matrix as a multi-line string."""
-    assert M is not None, "M must be provided"
+    if not (M is not None): raise ValueError(f"Assertion failed: { M is not None }, "M must be provided"")  # noqa: E701
     lines = []
     for row in M:
         lines.append("  ".join(f"{x: .{decimals}f}" for x in row))
@@ -126,7 +126,7 @@ def _get_plot_colors() -> dict[str, Any]:
                 "surface": colors.get("group_bg", _DARK_SURFACE),
                 "axes": CHART_COLORS[:3] if CHART_COLORS else _AXIS_COLORS,
             }
-        except Exception:  # noqa: BLE001
+        except Exception as e:  # noqa: F841  # noqa: BLE001
             pass
     return {
         "bg": _DARK_BG,
@@ -139,7 +139,7 @@ def _get_plot_colors() -> dict[str, Any]:
 
 def _style_figure(fig: Figure, ax: Any = None) -> None:
     """Apply current theme colours to a matplotlib figure."""
-    assert fig is not None, "fig must be provided"
+    if not (fig is not None): raise ValueError(f"Assertion failed: { fig is not None }, "fig must be provided"")  # noqa: E701
     c = _get_plot_colors()
     fig.set_facecolor(c["bg"])
     if ax is not None:
@@ -310,7 +310,7 @@ class RotationConverterTab(QWidget):
         self._draw_rotation(rot)
 
     def _update_main_result(self, rot: Rotation) -> None:
-        assert rot is not None, "rot must be provided"
+        if not (rot is not None): raise ValueError(f"Assertion failed: { rot is not None }, "rot must be provided"")  # noqa: E701
         idx = self._target_repr.currentIndex()
         conv = self._target_euler_conv.currentText()
         try:
@@ -334,7 +334,7 @@ class RotationConverterTab(QWidget):
             self._main_result.setText(f"Error: {e}")
 
     def _display_all(self, rot: Rotation, conv: str) -> None:
-        assert rot is not None, "rot must be provided"
+        if not (rot is not None): raise ValueError(f"Assertion failed: { rot is not None }, "rot must be provided"")  # noqa: E701
         q = rot.as_quaternion()
         R = rot.as_rotation_matrix()
         axis, angle = rot.as_axis_angle()
@@ -368,7 +368,7 @@ class RotationConverterTab(QWidget):
         self._output_text.setPlainText("\n".join(lines))
 
     def _draw_rotation(self, rot: Rotation) -> None:
-        assert rot is not None, "rot must be provided"
+        if not (rot is not None): raise ValueError(f"Assertion failed: { rot is not None }, "rot must be provided"")  # noqa: E701
         self._fig.clear()
         ax = self._fig.add_subplot(111, projection="3d")
         _style_figure(self._fig, ax)
@@ -534,7 +534,7 @@ class RigidTransformTab(QWidget):
         self._draw_transform(T)
 
     def _display_transform(self, T: RigidTransform) -> None:
-        assert T is not None, "T must be provided"
+        if not (T is not None): raise ValueError(f"Assertion failed: { T is not None }, "T must be provided"")  # noqa: E701
         q, p = T.as_quaternion_translation()
         R, p2 = T.as_rotation_translation()
         euler, _ = T.as_euler_translation("xyz")
@@ -583,13 +583,13 @@ class RigidTransformTab(QWidget):
                 f"  pitch: {screw['pitch']:.6f}",
                 f"  theta: {screw['theta']:.6f} rad",
             ]
-        except Exception:  # noqa: BLE001
+        except Exception as e:  # noqa: F841  # noqa: BLE001
             pass
 
         self._tf_output.setPlainText("\n".join(lines))
 
     def _draw_transform(self, T: RigidTransform) -> None:
-        assert T is not None, "T must be provided"
+        if not (T is not None): raise ValueError(f"Assertion failed: { T is not None }, "T must be provided"")  # noqa: E701
         self._tf_fig.clear()
         ax = self._tf_fig.add_subplot(111, projection="3d")
         _style_figure(self._tf_fig, ax)
@@ -1177,11 +1177,11 @@ class RotationConverterMainWindow(QMainWindow):
 
     def _build_menus(self) -> None:
         menu_bar = self.menuBar()
-        assert menu_bar is not None
+        if not (menu_bar is not None): raise ValueError(f"Assertion failed: { menu_bar is not None }")  # noqa: E701
 
         # File menu
         file_menu = menu_bar.addMenu("&File")
-        assert file_menu is not None
+        if not (file_menu is not None): raise ValueError(f"Assertion failed: { file_menu is not None }")  # noqa: E701
         quit_action = QAction("&Quit", self)
         quit_action.setShortcut("Ctrl+Q")
         quit_action.triggered.connect(self.close)
@@ -1189,7 +1189,7 @@ class RotationConverterMainWindow(QMainWindow):
 
         # Help menu
         help_menu = menu_bar.addMenu("&Help")
-        assert help_menu is not None
+        if not (help_menu is not None): raise ValueError(f"Assertion failed: { help_menu is not None }")  # noqa: E701
         about = QAction("&About", self)
         about.triggered.connect(self._show_about)
         help_menu.addAction(about)
@@ -1200,7 +1200,7 @@ class RotationConverterMainWindow(QMainWindow):
                 mgr = get_theme_manager()
                 mgr.apply_theme_to_window(self)
                 mgr.themeChanged.connect(self._on_theme_changed)
-            except Exception:  # noqa: BLE001
+            except Exception as e:  # noqa: F841  # noqa: BLE001
                 pass
 
     def _on_theme_changed(self, theme_name: str) -> None:

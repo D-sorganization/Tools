@@ -126,9 +126,7 @@ class TestSharedLibraryBoundaries:
         shared_dir = SRC_DIR / "shared"
         return _collect_python_files(shared_dir)
 
-    def test_shared_does_not_import_tool_packages(
-        self, shared_files: list[Path]
-    ) -> None:
+    def test_shared_does_not_import_tool_packages(self, shared_files: list[Path]) -> None:
         """Shared libraries must not import from tool-specific packages.
 
         Precondition: shared_files is not empty.
@@ -145,9 +143,7 @@ class TestSharedLibraryBoundaries:
                 module_root = imp["module"].split(".")[0]
                 if module_root in TOOL_PACKAGES:
                     rel = filepath.relative_to(REPO_ROOT)
-                    violations.append(
-                        f"  {rel}:{imp['lineno']} imports '{imp['module']}'"
-                    )
+                    violations.append(f"  {rel}:{imp['lineno']} imports '{imp['module']}'")
 
         assert not violations, (
             f"Shared library imports tool-specific code "
@@ -186,14 +182,11 @@ class TestCoreUiBoundary:
                     module_parts = imp["module"].split(".")
                     if "ui" in module_parts or "pyqt6" in module_parts:
                         rel = filepath.relative_to(REPO_ROOT)
-                        violations.append(
-                            f"  {rel}:{imp['lineno']} imports '{imp['module']}'"
-                        )
+                        violations.append(f"  {rel}:{imp['lineno']} imports '{imp['module']}'")
 
-        assert not violations, (
-            f"Core modules import UI code ({len(violations)} violations):\n"
-            + "\n".join(violations)
-        )
+        assert (
+            not violations
+        ), f"Core modules import UI code ({len(violations)} violations):\n" + "\n".join(violations)
 
 
 # ─── Test: Pure calculation engines ──────────────────────────────
@@ -226,10 +219,7 @@ class TestPureCalculationEngines:
                     and "__pycache__" not in parts
                     and "ui" not in parts
                     and "pyqt6" not in parts
-                    and not any(
-                        d in parts
-                        for d in TestPureCalculationEngines.KNOWN_COUPLED_DIRS
-                    )
+                    and not any(d in parts for d in TestPureCalculationEngines.KNOWN_COUPLED_DIRS)
                     and not filepath.name.startswith("test_")
                 ):
                     engine_files.append(filepath)
@@ -248,13 +238,9 @@ class TestPureCalculationEngines:
                 module_root = imp["module"].split(".")[0]
                 if module_root in QT_MODULES:
                     rel = filepath.relative_to(REPO_ROOT)
-                    violations.append(
-                        f"  {rel}:{imp['lineno']} imports '{imp['module']}'"
-                    )
+                    violations.append(f"  {rel}:{imp['lineno']} imports '{imp['module']}'")
 
-        msg = f"Engine files import Qt ({len(violations)} violations):\n" + "\n".join(
-            violations
-        )
+        msg = f"Engine files import Qt ({len(violations)} violations):\n" + "\n".join(violations)
         assert not violations, msg
 
 
@@ -335,9 +321,7 @@ class TestNoWildcardImports:
                 if isinstance(node, ast.ImportFrom):
                     if node.names and any(alias.name == "*" for alias in node.names):
                         rel = filepath.relative_to(REPO_ROOT)
-                        violations.append(
-                            f"  {rel}:{node.lineno} from {node.module} import *"
-                        )
+                        violations.append(f"  {rel}:{node.lineno} from {node.module} import *")
 
         msg = f"Wildcard imports found ({len(violations)}):\n" + "\n".join(violations)
         assert not violations, msg

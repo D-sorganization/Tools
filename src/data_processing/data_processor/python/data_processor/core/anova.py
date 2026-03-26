@@ -254,7 +254,8 @@ class ANOVAAnalyzer:
             Tuple of (ss_between, ss_within, ss_total, ms_between, ms_within,
                        f_stat, df_between, df_within, df_total, grand_mean)
         """
-        assert group_arrays is not None, "group_arrays must be provided"
+        if not (group_arrays is not None):
+            raise ValueError("group_arrays must be provided")
         k = len(group_arrays)
         n_total = sum(len(arr) for arr in group_arrays.values())
         grand_mean = np.mean(np.concatenate(list(group_arrays.values())))
@@ -262,9 +263,7 @@ class ANOVAAnalyzer:
         ss_between = sum(
             len(arr) * (np.mean(arr) - grand_mean) ** 2 for arr in group_arrays.values()
         )
-        ss_within = sum(
-            np.sum((arr - np.mean(arr)) ** 2) for arr in group_arrays.values()
-        )
+        ss_within = sum(np.sum((arr - np.mean(arr)) ** 2) for arr in group_arrays.values())
         ss_total = ss_between + ss_within
 
         df_between = k - 1
@@ -309,7 +308,8 @@ class ANOVAAnalyzer:
         Returns:
             Complete one-way ANOVA results
         """
-        assert df is not None, "df must be provided"
+        if not (df is not None):
+            raise ValueError("df must be provided")
         group_arrays = self._validate_and_prepare_groups(df, dependent_var, group_var)
 
         (
@@ -330,9 +330,7 @@ class ANOVAAnalyzer:
 
         # Effect sizes
         eta_squared = ss_between / ss_total
-        omega_squared = max(
-            0, (ss_between - df_between * ms_within) / (ss_total + ms_within)
-        )
+        omega_squared = max(0, (ss_between - df_between * ms_within) / (ss_total + ms_within))
         cohens_f = np.sqrt(eta_squared / (1 - eta_squared)) if eta_squared < 1 else 0
 
         anova_table = ANOVATable(
@@ -344,18 +342,14 @@ class ANOVAAnalyzer:
             p_value=[p_value, None, None],
         )
 
-        assumption_tests = (
-            self._test_anova_assumptions(group_arrays) if test_assumptions else []
-        )
+        assumption_tests = self._test_anova_assumptions(group_arrays) if test_assumptions else []
         post_hoc_results = (
             self._post_hoc_tests(group_arrays, ms_within, df_within, post_hoc)
             if post_hoc and p_value < self.alpha
             else []
         )
 
-        noncentrality = (
-            np.sqrt(n_total * eta_squared / (1 - eta_squared)) if eta_squared < 1 else 0
-        )
+        noncentrality = np.sqrt(n_total * eta_squared / (1 - eta_squared)) if eta_squared < 1 else 0
 
         return OneWayANOVAResult(
             f_statistic=f_stat,
@@ -367,16 +361,12 @@ class ANOVAAnalyzer:
             omega_squared=omega_squared,
             cohens_f=cohens_f,
             group_means={name: np.mean(arr) for name, arr in group_arrays.items()},
-            group_stds={
-                name: np.std(arr, ddof=1) for name, arr in group_arrays.items()
-            },
+            group_stds={name: np.std(arr, ddof=1) for name, arr in group_arrays.items()},
             group_counts={name: len(arr) for name, arr in group_arrays.items()},
             grand_mean=grand_mean,
             post_hoc_results=post_hoc_results,
             assumption_tests=assumption_tests,
-            observed_power=self._calculate_power(
-                f_stat, df_between, df_within, noncentrality
-            ),
+            observed_power=self._calculate_power(f_stat, df_between, df_within, noncentrality),
         )
 
     def two_way_anova(
@@ -401,7 +391,8 @@ class ANOVAAnalyzer:
         Returns:
             Complete two-way ANOVA results
         """
-        assert df is not None, "df must be provided"
+        if not (df is not None):
+            raise ValueError("df must be provided")
         data = df[[dependent_var, factor_a, factor_b]].dropna()
         y: np.ndarray = np.asarray(data[dependent_var].values)
 
@@ -521,16 +512,15 @@ class ANOVAAnalyzer:
         test_interaction: bool,
     ) -> dict[str, float]:
         """Compute SS_total, SS_A, SS_B, SS_AB, SS_error."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         ss_total = float(np.sum((y - grand_mean) ** 2))
 
         ss_a = sum(
-            len(data[data[factor_a] == lv]) * (marginal_a[lv] - grand_mean) ** 2
-            for lv in levels_a
+            len(data[data[factor_a] == lv]) * (marginal_a[lv] - grand_mean) ** 2 for lv in levels_a
         )
         ss_b = sum(
-            len(data[data[factor_b] == lv]) * (marginal_b[lv] - grand_mean) ** 2
-            for lv in levels_b
+            len(data[data[factor_b] == lv]) * (marginal_b[lv] - grand_mean) ** 2 for lv in levels_b
         )
 
         ss_ab = 0.0
@@ -552,11 +542,10 @@ class ANOVAAnalyzer:
         }
 
     @staticmethod
-    def _two_way_f_tests(
-        ss: dict[str, float], a: int, b: int, n_total: int
-    ) -> dict[str, float]:
+    def _two_way_f_tests(ss: dict[str, float], a: int, b: int, n_total: int) -> dict[str, float]:
         """Compute degrees of freedom, mean squares, F-statistics, and p-values."""
-        assert ss is not None, "ss must be provided"
+        if not (ss is not None):
+            raise ValueError("ss must be provided")
         df_a = a - 1
         df_b = b - 1
         df_ab = df_a * df_b
@@ -603,9 +592,7 @@ class ANOVAAnalyzer:
             "eta_ab": ss["ab"] / ss_t,
             "partial_eta_a": ss["a"] / (ss["a"] + ss_e),
             "partial_eta_b": ss["b"] / (ss["b"] + ss_e),
-            "partial_eta_ab": (
-                ss["ab"] / (ss["ab"] + ss_e) if (ss["ab"] + ss_e) > 0 else 0
-            ),
+            "partial_eta_ab": (ss["ab"] / (ss["ab"] + ss_e) if (ss["ab"] + ss_e) > 0 else 0),
         }
 
     def _two_way_assumption_tests(
@@ -619,7 +606,8 @@ class ANOVAAnalyzer:
         test_assumptions: bool,
     ) -> list:
         """Run assumption tests for two-way ANOVA if requested."""
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         if not test_assumptions:
             return []
         cell_data = {}
@@ -649,7 +637,8 @@ class ANOVAAnalyzer:
             Repeated measures ANOVA results
         """
         # Reshape data to long format
-        assert df is not None, "df must be provided"
+        if not (df is not None):
+            raise ValueError("df must be provided")
         data = df[[subject_id] + dependent_vars].dropna()
         n_subjects = len(data)
         k = len(dependent_vars)
@@ -692,9 +681,7 @@ class ANOVAAnalyzer:
 
         corrected_df_conditions_hf = hf_epsilon * df_conditions
         corrected_df_error_hf = hf_epsilon * df_error
-        p_hf = 1 - stats.f.cdf(
-            f_stat, corrected_df_conditions_hf, corrected_df_error_hf
-        )
+        p_hf = 1 - stats.f.cdf(f_stat, corrected_df_conditions_hf, corrected_df_error_hf)
 
         # Effect sizes
         eta_squared = ss_conditions / ss_total
@@ -737,7 +724,8 @@ class ANOVAAnalyzer:
         groups: dict[str, np.ndarray],
     ) -> list[AssumptionTestResult]:
         """Test ANOVA assumptions."""
-        assert groups is not None, "groups must be provided"
+        if not (groups is not None):
+            raise ValueError("groups must be provided")
         results = []
 
         # 1. Normality test (Shapiro-Wilk for each group)
@@ -807,7 +795,8 @@ class ANOVAAnalyzer:
         method: PostHocMethod,
     ) -> list[PostHocComparison]:
         """Perform post-hoc pairwise comparisons."""
-        assert groups is not None, "groups must be provided"
+        if not (groups is not None):
+            raise ValueError("groups must be provided")
         results = []
         group_names = list(groups.keys())
         n_groups = len(group_names)
@@ -877,7 +866,8 @@ class ANOVAAnalyzer:
         Returns:
             W statistic, p-value, GG epsilon, HF epsilon
         """
-        assert data is not None, "data must be provided"
+        if not (data is not None):
+            raise ValueError("data must be provided")
         n, k = data.shape
 
         if k < 3:
@@ -923,9 +913,7 @@ class ANOVAAnalyzer:
             gg_epsilon = 1.0
 
         # Huynh-Feldt epsilon
-        hf_epsilon = (n * (p - 1) * gg_epsilon - 2) / (
-            (p - 1) * (n - 1 - (p - 1) * gg_epsilon)
-        )
+        hf_epsilon = (n * (p - 1) * gg_epsilon - 2) / ((p - 1) * (n - 1 - (p - 1) * gg_epsilon))
         hf_epsilon = min(1.0, max(gg_epsilon, hf_epsilon))
 
         return w, mauchly_p, gg_epsilon, hf_epsilon

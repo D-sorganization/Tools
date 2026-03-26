@@ -70,7 +70,8 @@ class Camera:
             up: Up vector
             fov: Field of view in degrees
         """
-        assert position is not None, "position must be provided"
+        if not (position is not None):
+            raise ValueError("position must be provided")
         self.position = np.array(position, dtype=np.float64)
         self.target = np.array(target, dtype=np.float64)
         self.up = np.array(up, dtype=np.float64)
@@ -122,7 +123,8 @@ class Camera:
     def apply_state(self, state: CameraState) -> None:
         """Apply a stored camera state."""
         # Use array assignment instead of copy for better performance
-        assert state is not None, "state must be provided"
+        if not (state is not None):
+            raise ValueError("state must be provided")
         self.position[:] = state.position
         self.target[:] = state.target
         self.up[:] = state.up
@@ -130,12 +132,11 @@ class Camera:
         self.near = state.near
         self.far = state.far
 
-    def stereo_states(
-        self, eye_separation: float = 0.4
-    ) -> tuple[CameraState, CameraState]:
+    def stereo_states(self, eye_separation: float = 0.4) -> tuple[CameraState, CameraState]:
         """Generate left/right stereo eye offsets for VR-style rendering."""
 
-        assert eye_separation is not None, "eye_separation must be provided"
+        if not (eye_separation is not None):
+            raise ValueError("eye_separation must be provided")
         base = self.snapshot()
         forward = base.target - base.position
         forward = forward / np.linalg.norm(forward)
@@ -179,9 +180,7 @@ class Camera:
 
         self.position = self.target + np.array([x, y, z])
 
-    def set_mode(
-        self, mode: CameraMode, target_body: CelestialBody | None = None
-    ) -> None:
+    def set_mode(self, mode: CameraMode, target_body: CelestialBody | None = None) -> None:
         """
         Change camera mode.
 
@@ -189,7 +188,8 @@ class Camera:
             mode: New camera mode
             target_body: Body to track (for planet-centric modes)
         """
-        assert mode is not None, "mode must be provided"
+        if not (mode is not None):
+            raise ValueError("mode must be provided")
         self.mode = mode
         self.tracked_body = target_body
 
@@ -204,7 +204,8 @@ class Camera:
 
     def _animate_to(self, position: np.ndarray, target: np.ndarray) -> None:
         """Start smooth animation to new position."""
-        assert position is not None, "position must be provided"
+        if not (position is not None):
+            raise ValueError("position must be provided")
         self._target_position = position
         self._target_target = target
         self._animating = True
@@ -217,14 +218,13 @@ class Camera:
             delta_azimuth: Change in horizontal angle (radians)
             delta_elevation: Change in vertical angle (radians)
         """
-        assert delta_azimuth is not None, "delta_azimuth must be provided"
+        if not (delta_azimuth is not None):
+            raise ValueError("delta_azimuth must be provided")
         self._azimuth += delta_azimuth * self.rotate_speed
         self._elevation += delta_elevation * self.rotate_speed
 
         # Clamp elevation to prevent flipping
-        self._elevation = np.clip(
-            self._elevation, -math.pi / 2 + 0.01, math.pi / 2 - 0.01
-        )
+        self._elevation = np.clip(self._elevation, -math.pi / 2 + 0.01, math.pi / 2 - 0.01)
 
         self._update_position_from_angles()
 
@@ -235,14 +235,13 @@ class Camera:
         Args:
             delta: Zoom amount (positive = zoom in)
         """
-        assert delta is not None, "delta must be provided"
+        if not (delta is not None):
+            raise ValueError("delta must be provided")
         self._distance *= 1 - delta * self.zoom_speed
         self._distance = np.clip(self._distance, self.min_distance, self.max_distance)
         self._update_position_from_angles()
 
-    def zoom_at(
-        self, delta: float, mouse_ndc: tuple[float, float], aspect_ratio: float
-    ) -> None:
+    def zoom_at(self, delta: float, mouse_ndc: tuple[float, float], aspect_ratio: float) -> None:
         """
         Zoom towards a specific point on the screen (mouse cursor).
 
@@ -251,7 +250,8 @@ class Camera:
            mouse_ndc: Mouse coordinates in Normalized Device Coordinates (-1 to 1).
            aspect_ratio: Screen aspect ratio.
         """
-        assert delta is not None, "delta must be provided"
+        if not (delta is not None):
+            raise ValueError("delta must be provided")
         factor = 1.0 - delta * self.zoom_speed
         new_distance = self._distance * factor
         new_distance = np.clip(new_distance, self.min_distance, self.max_distance)
@@ -332,7 +332,8 @@ class Camera:
             delta_y: Vertical pan amount
         """
         # Get right and up vectors in view space
-        assert delta_x is not None, "delta_x must be provided"
+        if not (delta_x is not None):
+            raise ValueError("delta_x must be provided")
         forward = self.target - self.position
         forward = forward / np.linalg.norm(forward)
 
@@ -351,7 +352,8 @@ class Camera:
 
     def move_forward(self, amount: float) -> None:
         """Move camera forward/backward."""
-        assert amount is not None, "amount must be provided"
+        if not (amount is not None):
+            raise ValueError("amount must be provided")
         direction = self.target - self.position
         direction = direction / np.linalg.norm(direction)
         self.position += direction * amount * self.move_speed
@@ -374,15 +376,13 @@ class Camera:
             scale: Scale factor for converting positions
         """
         # Handle smooth animation
-        assert julian_date is not None, "julian_date must be provided"
+        if not (julian_date is not None):
+            raise ValueError("julian_date must be provided")
         if self._animating:
             self.position = (
-                self.position
-                + (self._target_position - self.position) * self.smooth_factor
+                self.position + (self._target_position - self.position) * self.smooth_factor
             )
-            self.target = (
-                self.target + (self._target_target - self.target) * self.smooth_factor
-            )
+            self.target = self.target + (self._target_target - self.target) * self.smooth_factor
 
             if np.linalg.norm(self.position - self._target_position) < 0.01:
                 self._animating = False
@@ -399,18 +399,14 @@ class Camera:
             else:
                 forward = np.array([1, 0, 0])
 
-            camera_offset = -forward * self._distance + np.array(
-                [0, self._distance * 0.3, 0]
-            )
+            camera_offset = -forward * self._distance + np.array([0, self._distance * 0.3, 0])
 
             self._target_target = body_pos
             self._target_position = body_pos + camera_offset
 
             # Smooth follow
             self.target = self.target + (self._target_target - self.target) * 0.1
-            self.position = (
-                self.position + (self._target_position - self.position) * 0.1
-            )
+            self.position = self.position + (self._target_position - self.position) * 0.1
 
         elif self.mode == CameraMode.SPACECRAFT_FOLLOW and self.tracked_spacecraft:
             state = self.tracked_spacecraft.get_state_at_time(julian_date)
@@ -422,9 +418,7 @@ class Camera:
             else:
                 forward = np.array([1, 0, 0])
 
-            camera_offset = -forward * self._distance * 0.5 + np.array(
-                [0, self._distance * 0.2, 0]
-            )
+            camera_offset = -forward * self._distance * 0.5 + np.array([0, self._distance * 0.2, 0])
 
             self.target = spacecraft_pos
             self.position = spacecraft_pos + camera_offset
@@ -435,9 +429,7 @@ class Camera:
             earth_pos = state.position * scale
 
             # Position on Earth's surface (simplified)
-            surface_offset = np.array(
-                [0.0001, 0, 0]
-            )  # Small offset representing surface
+            surface_offset = np.array([0.0001, 0, 0])  # Small offset representing surface
 
             self.position = earth_pos + surface_offset
             self.target = earth_pos + np.array([0, 0, 1])  # Looking up
@@ -482,7 +474,8 @@ class Camera:
         Returns:
             4x4 projection matrix
         """
-        assert aspect_ratio is not None, "aspect_ratio must be provided"
+        if not (aspect_ratio is not None):
+            raise ValueError("aspect_ratio must be provided")
         fov_rad = math.radians(self.fov)
         f = 1.0 / math.tan(fov_rad / 2)
 
@@ -509,7 +502,8 @@ class Camera:
 
     def set_state(self, state: CameraState) -> None:
         """Restore camera from state."""
-        assert state is not None, "state must be provided"
+        if not (state is not None):
+            raise ValueError("state must be provided")
         self.position = state.position.copy()
         self.target = state.target.copy()
         self.up = state.up.copy()
@@ -535,7 +529,8 @@ class Camera:
 
     def set_distance(self, distance: float) -> None:
         """Set distance from target."""
-        assert distance is not None, "distance must be provided"
+        if not (distance is not None):
+            raise ValueError("distance must be provided")
         self._distance = np.clip(distance, self.min_distance, self.max_distance)
         self._update_position_from_angles()
 

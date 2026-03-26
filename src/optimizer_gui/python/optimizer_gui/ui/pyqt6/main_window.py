@@ -501,8 +501,7 @@ class OptimizerWindow(QMainWindow):
         self.history_text = QTextEdit()
         self.history_text.setReadOnly(True)
         self.history_text.setPlaceholderText(
-            "Optimization history will appear here...\n\n"
-            "Click 'Run Optimization' to start."
+            "Optimization history will appear here...\n\n" "Click 'Run Optimization' to start."
         )
         history_layout.addWidget(self.history_text)
         layout.addWidget(history_group)
@@ -573,7 +572,8 @@ class OptimizerWindow(QMainWindow):
 
     def _run_adam_demo(self, params: list[ParameterConfig]) -> None:
         """Run Adam optimization demo."""
-        assert params is not None, "params must be provided"
+        if not (params is not None):
+            raise ValueError("params must be provided")
         maximize = self.maximize_checkbox.isChecked()
         learning_rate = self.learning_rate_input.value()
         beta1 = self.beta1_input.value()
@@ -596,8 +596,7 @@ class OptimizerWindow(QMainWindow):
             if (maximize and obj > best_obj) or (not maximize and obj < best_obj):
                 best_obj = obj
                 best_params = {
-                    p.name: float(values[i])
-                    for i, p in enumerate(params[: len(values)])
+                    p.name: float(values[i]) for i, p in enumerate(params[: len(values)])
                 }
 
             self._history.append(
@@ -605,8 +604,7 @@ class OptimizerWindow(QMainWindow):
                     "iteration": iteration,
                     "objective": obj,
                     "parameters": {
-                        p.name: float(values[i])
-                        for i, p in enumerate(params[: len(values)])
+                        p.name: float(values[i]) for i, p in enumerate(params[: len(values)])
                     },
                 }
             )
@@ -644,7 +642,8 @@ class OptimizerWindow(QMainWindow):
     @staticmethod
     def _eval_rosenbrock(values: np.ndarray, maximize: bool) -> float:
         """Evaluate the Rosenbrock demo objective function."""
-        assert values is not None, "values must be provided"
+        if not (values is not None):
+            raise ValueError("values must be provided")
         if len(values) >= 2:
             x, y = values[0], values[1]
             obj = (1 - x) ** 2 + 100 * (y - x**2) ** 2
@@ -660,7 +659,8 @@ class OptimizerWindow(QMainWindow):
         maximize: bool,
     ) -> np.ndarray:
         """Compute numerical gradient via central differences."""
-        assert values is not None, "values must be provided"
+        if not (values is not None):
+            raise ValueError("values must be provided")
         gradient = np.zeros_like(values)
         step = self.grad_step_input.value()
         for i in range(len(values)):
@@ -683,7 +683,8 @@ class OptimizerWindow(QMainWindow):
         max_iterations: int,
     ) -> None:
         """Update UI with Adam optimization results."""
-        assert best_obj is not None, "best_obj must be provided"
+        if not (best_obj is not None):
+            raise ValueError("best_obj must be provided")
         self.best_objective_label.setText(f"{best_obj:.6f}")
         self.iterations_label.setText(str(len(self._history)))
         self.converged_label.setText(
@@ -696,9 +697,7 @@ class OptimizerWindow(QMainWindow):
         history_lines = ["Iteration | Objective | Parameters"]
         history_lines.append("-" * 60)
         for entry in self._history[-20:]:
-            param_str = ", ".join(
-                [f"{k}={v:.4f}" for k, v in entry["parameters"].items()]
-            )
+            param_str = ", ".join([f"{k}={v:.4f}" for k, v in entry["parameters"].items()])
             history_lines.append(
                 f"{entry['iteration']:4d}      | {entry['objective']:10.6f} | {param_str}"
             )
@@ -712,7 +711,8 @@ class OptimizerWindow(QMainWindow):
 
     def _run_surface_demo(self, params: list[ParameterConfig], method: str) -> None:
         """Run surface optimization demo."""
-        assert params is not None, "params must be provided"
+        if not (params is not None):
+            raise ValueError("params must be provided")
         if len(params) < 2:
             self.history_text.setPlainText(
                 "Error: Surface optimization requires at least 2 parameters."
@@ -743,9 +743,7 @@ class OptimizerWindow(QMainWindow):
         self.iterations_label.setText("Grid: 400 evaluations")
         self.converged_label.setText("N/A (grid search)")
 
-        self.best_params_text.setPlainText(
-            f"{p1.name}: {opt_x:.6f}\n{p2.name}: {opt_y:.6f}"
-        )
+        self.best_params_text.setPlainText(f"{p1.name}: {opt_x:.6f}\n{p2.name}: {opt_y:.6f}")
 
         self.history_text.setPlainText(
             f"Surface Optimization Results ({method})\n"

@@ -59,7 +59,8 @@ class AnalysisMixin:
 
     def _run_pca_analysis(self, config: dict) -> None:
         """Run PCA analysis from Analysis tab."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Load data first.")
             return
@@ -92,7 +93,8 @@ class AnalysisMixin:
 
     def _run_anova_analysis(self, config: dict) -> None:
         """Run ANOVA analysis from Analysis tab."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Load data first.")
             return
@@ -154,9 +156,7 @@ class AnalysisMixin:
                         "Select subject ID and at least 2 measures.",
                     )
                     return
-                result = analyzer.repeated_measures_anova(
-                    self.current_data, measures, subject
-                )
+                result = analyzer.repeated_measures_anova(self.current_data, measures, subject)
             else:
                 QMessageBox.warning(
                     self,
@@ -175,7 +175,8 @@ class AnalysisMixin:
 
     def _run_regression_analysis(self, config: dict) -> None:
         """Run regression analysis from Analysis tab."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Load data first.")
             return
@@ -183,9 +184,7 @@ class AnalysisMixin:
         target = config.get("target", "")
         predictors = config.get("predictors", [])
         if not target or not predictors:
-            QMessageBox.warning(
-                self, "Missing Config", "Select target and predictor variables."
-            )
+            QMessageBox.warning(self, "Missing Config", "Select target and predictor variables.")
             return
 
         try:
@@ -217,17 +216,13 @@ class AnalysisMixin:
                 alpha=config.get("alpha", 1.0),
                 polynomial_degree=config.get("polynomial_degree", 1),
                 include_interactions=config.get("interactions", False),
-                selection_method=sel_map.get(
-                    config.get("selection", "none"), SelectionMethod.NONE
-                ),
+                selection_method=sel_map.get(config.get("selection", "none"), SelectionMethod.NONE),
             )
             regressor = MultivariateRegressor(reg_config)
             result = regressor.fit(self.current_data, target, predictors)
             report = format_regression_report(result)
             self.analysis_panel.regression_widget.display_results(result, report)
-            self.status_bar.set_status(
-                f"Regression complete: R² = {result.r_squared:.4f}"
-            )
+            self.status_bar.set_status(f"Regression complete: R² = {result.r_squared:.4f}")
 
         except ImportError as e:
             logger.error(f"Regression analysis failed: {e}", exc_info=True)
@@ -235,7 +230,8 @@ class AnalysisMixin:
 
     def _run_surface_analysis(self, config: dict) -> None:
         """Run surface plot from Analysis tab."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Load data first.")
             return
@@ -315,7 +311,8 @@ class AnalysisMixin:
 
     def _run_nn_analysis(self, config: dict) -> None:
         """Run neural network training from Analysis tab."""
-        assert config is not None, "config must be provided"
+        if not (config is not None):
+            raise ValueError("config must be provided")
         if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Load data first.")
             return

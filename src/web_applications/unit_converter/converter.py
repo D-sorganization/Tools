@@ -307,7 +307,8 @@ class UnitConverter:
 
     def get_units_for_category(self, category: str) -> list[str]:
         """Return all units available in a category."""
-        assert category is not None, "category must be provided"
+        if not (category is not None):
+            raise ValueError("category must be provided")
         if category == "temperature":
             return ["K", "C", "F", "R"]
         if category == "gas_flow":
@@ -325,7 +326,8 @@ class UnitConverter:
     def get_category(self, unit: str) -> str | None:
         """Determine which category a unit belongs to."""
         # Temperature (highest priority)
-        assert unit is not None, "unit must be provided"
+        if not (unit is not None):
+            raise ValueError("unit must be provided")
         if unit.upper() in ("K", "C", "F", "R"):
             return "temperature"
 
@@ -384,13 +386,12 @@ class UnitConverter:
 
         if from_category != to_category:
             # Allow mass_flow <-> gas_flow cross-category
-            is_gas_flow = (
-                from_category == "gas_flow" and to_category == "mass_flow"
-            ) or (from_category == "mass_flow" and to_category == "gas_flow")
+            is_gas_flow = (from_category == "gas_flow" and to_category == "mass_flow") or (  # noqa: E501
+                from_category == "mass_flow" and to_category == "gas_flow"
+            )
             if not is_gas_flow:
                 raise ValueError(
-                    f"Cannot convert {from_unit} ({from_category}) "
-                    f"to {to_unit} ({to_category})"
+                    f"Cannot convert {from_unit} ({from_category}) " f"to {to_unit} ({to_category})"  # noqa: E501
                 )
 
         category = from_category
@@ -408,9 +409,7 @@ class UnitConverter:
                 standard_condition=standard_condition,
             )
         elif category == "heating_value":
-            result = self._convert_heating_value(
-                value, from_unit, to_unit, gas_density_stp
-            )
+            result = self._convert_heating_value(value, from_unit, to_unit, gas_density_stp)  # noqa: E501
         else:
             result = self._convert_linear(value, from_unit, to_unit, category)
 
@@ -424,7 +423,8 @@ class UnitConverter:
 
     def _convert_temperature(self, value: float, from_unit: str, to_unit: str) -> float:
         """Convert temperature units via Kelvin as intermediate."""
-        assert value is not None, "value must be provided"
+        if not (value is not None):
+            raise ValueError("value must be provided")
         fu = from_unit.upper()
         tu = to_unit.upper()
 
@@ -455,18 +455,14 @@ class UnitConverter:
         else:
             raise ValueError(f"Unknown temperature unit: {to_unit}")
 
-    def _convert_linear(
-        self, value: float, from_unit: str, to_unit: str, category: str
-    ) -> float:
+    def _convert_linear(self, value: float, from_unit: str, to_unit: str, category: str) -> float:  # noqa: E501
         """Convert units with a simple linear factor through base SI unit."""
         factors = CONVERSION_FACTORS[category]
         from_factor = factors.get(from_unit)
         to_factor = factors.get(to_unit)
 
         if from_factor is None or to_factor is None:
-            raise ValueError(
-                f"Conversion factors not found for {from_unit} to {to_unit}"
-            )
+            raise ValueError(f"Conversion factors not found for {from_unit} to {to_unit}")  # noqa: E501
 
         base_value = value * from_factor
         return base_value / to_factor
@@ -484,18 +480,14 @@ class UnitConverter:
     ) -> float:
         """Convert gas flow rates via standard m3/hr as intermediate."""
         gas_props = GAS_DATABASE.get(gas_type.lower(), GAS_DATABASE["air"])
-        standard = STANDARD_CONDITIONS.get(
-            standard_condition, STANDARD_CONDITIONS["SCFM_60F"]
-        )
+        standard = STANDARD_CONDITIONS.get(standard_condition, STANDARD_CONDITIONS["SCFM_60F"])  # noqa: E501
 
         fu = from_unit.upper()
         tu = to_unit.upper()
 
         # Validate ACFM requires T/P
         if (fu == "ACFM" or tu == "ACFM") and (temperature is None or pressure is None):
-            raise ValueError(
-                "Temperature and pressure are required for ACFM conversions"
-            )
+            raise ValueError("Temperature and pressure are required for ACFM conversions")  # noqa: E501
 
         # Convert to standard m3/hr
         std_temp = float(standard["temp"])
@@ -508,17 +500,14 @@ class UnitConverter:
         if fu == "SCFM":
             m3_hr_std = value * SCFM_TO_CU_METER_PER_HOUR_AT_60F
             if std_temp != stp_temp or std_pressure != stp_pressure:
-                m3_hr_std = (
-                    m3_hr_std * (stp_temp / std_temp) * (std_pressure / stp_pressure)
-                )
+                m3_hr_std = m3_hr_std * (stp_temp / std_temp) * (std_pressure / stp_pressure)  # noqa: E501
         elif fu == "ACFM":
-            assert temperature is not None and pressure is not None
+            if not (temperature is not None and pressure is not None):
+                raise ValueError("DbC Blocked: Precondition failed.")
             scfm = value * (std_temp / temperature) * (pressure / std_pressure)
             m3_hr_std = scfm * SCFM_TO_CU_METER_PER_HOUR_AT_60F
             if std_temp != stp_temp or std_pressure != stp_pressure:
-                m3_hr_std = (
-                    m3_hr_std * (stp_temp / std_temp) * (std_pressure / stp_pressure)
-                )
+                m3_hr_std = m3_hr_std * (stp_temp / std_temp) * (std_pressure / stp_pressure)  # noqa: E501
         elif fu in ("NM3/HR", "NM3/HR"):
             m3_hr_std = value
         elif from_unit.lower() in CONVERSION_FACTORS.get("mass_flow", {}):
@@ -532,17 +521,14 @@ class UnitConverter:
         if tu == "SCFM":
             m3_hr_at_scfm = m3_hr_std
             if stp_temp != std_temp or stp_pressure != std_pressure:
-                m3_hr_at_scfm = (
-                    m3_hr_std * (std_temp / stp_temp) * (stp_pressure / std_pressure)
-                )
+                m3_hr_at_scfm = m3_hr_std * (std_temp / stp_temp) * (stp_pressure / std_pressure)  # noqa: E501
             return m3_hr_at_scfm / SCFM_TO_CU_METER_PER_HOUR_AT_60F
         elif tu == "ACFM":
-            assert temperature is not None and pressure is not None
+            if not (temperature is not None and pressure is not None):
+                raise ValueError("DbC Blocked: Precondition failed.")
             m3_hr_at_scfm = m3_hr_std
             if stp_temp != std_temp or stp_pressure != std_pressure:
-                m3_hr_at_scfm = (
-                    m3_hr_std * (std_temp / stp_temp) * (stp_pressure / std_pressure)
-                )
+                m3_hr_at_scfm = m3_hr_std * (std_temp / stp_temp) * (stp_pressure / std_pressure)  # noqa: E501
             scfm_val = m3_hr_at_scfm / SCFM_TO_CU_METER_PER_HOUR_AT_60F
             return scfm_val * (std_pressure / pressure) * (temperature / std_temp)
         elif tu in ("NM3/HR", "NM3/HR"):
@@ -612,7 +598,8 @@ class UnitConverter:
 
     def format_number(self, num: float) -> str:
         """Format a number for display, matching the PyQt6 style."""
-        assert num is not None, "num must be provided"
+        if not (num is not None):
+            raise ValueError("num must be provided")
         if math.isnan(num) or math.isinf(num):
             return str(num)
 

@@ -84,8 +84,7 @@ class ElectrodeAdvisorLayout:
             "project": "electrode_advisor_default_layout",
             "source_viewer": {
                 "component": (
-                    "Tools/src/electrode_advisor/web/src/components/"
-                    "GlassBath3DViewer.tsx"
+                    "Tools/src/electrode_advisor/web/src/components/" "GlassBath3DViewer.tsx"
                 ),
                 "calculator": (
                     "Tools/src/electrode_advisor/web/src/components/"
@@ -113,9 +112,7 @@ class ElectrodeAdvisorLayout:
                 "bath_shell_thickness_mm": self.drafting.bath_shell_thickness_mm,
                 "glass_clearance_mm": self.drafting.glass_clearance_mm,
                 "electrode_holder_height_mm": self.drafting.electrode_holder_height_mm,
-                "electrode_holder_radius_factor": (
-                    self.drafting.electrode_holder_radius_factor
-                ),
+                "electrode_holder_radius_factor": (self.drafting.electrode_holder_radius_factor),
                 "tip_band_height_mm": self.drafting.tip_band_height_mm,
             },
             "placements": [
@@ -144,7 +141,8 @@ def _build_default_placements(
     bath: BathDefaults,
     electrodes: ElectrodeDefaults,
 ) -> tuple[ElectrodePlacement, ...]:
-    assert bath is not None, "bath must be provided"
+    if not (bath is not None):
+        raise ValueError("bath must be provided")
     spacing_m = bath.width_m * 0.6
     radius_m = spacing_m * 0.4
     cad_z_mm = (bath.height_m + electrodes.top_offset_m) * MM_PER_M

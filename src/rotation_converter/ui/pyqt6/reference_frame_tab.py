@@ -38,7 +38,8 @@ def _parse_numbers(value: str) -> np.ndarray:
 
 
 def _make_matrix_grid(parent: QWidget, rows: int, cols: int) -> list[list[QLineEdit]]:
-    assert parent is not None, "parent must be provided"
+    if not (parent is not None):
+        raise ValueError("parent must be provided")
     layout = QGridLayout(parent)
     edits: list[list[QLineEdit]] = []
     for i in range(rows):
@@ -150,13 +151,12 @@ class ReferenceFrameTab(QWidget):
             self._latex.clear()
 
     def _compute_operation(self, operation: OperationName) -> Any:
-        assert operation is not None, "operation must be provided"
+        if not (operation is not None):
+            raise ValueError("operation must be provided")
         if operation == "twist_frame_conversion":
             transform = _read_matrix(self._transform_edits)
             twist = _parse_numbers(self._twist_input.text())
-            return compute_reference_frame_operation(
-                operation, transform=transform, twist=twist
-            )
+            return compute_reference_frame_operation(operation, transform=transform, twist=twist)
         if operation == "homogeneous_transform":
             rotation = _read_matrix(self._rotation_edits)
             translation = _parse_numbers(self._translation_input.text())

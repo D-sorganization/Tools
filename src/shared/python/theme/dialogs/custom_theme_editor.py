@@ -39,10 +39,9 @@ class ColorPickerButton(QPushButton):
 
     color_changed = pyqtSignal(str)  # Emits hex color string
 
-    def __init__(
-        self, initial_color: str = "#ffffff", parent: QWidget | None = None
-    ) -> None:
-        assert initial_color is not None, "initial_color must be provided"
+    def __init__(self, initial_color: str = "#ffffff", parent: QWidget | None = None) -> None:
+        if not (initial_color is not None):
+            raise ValueError("initial_color must be provided")
         super().__init__(parent)
         self._color = initial_color
         self.setFixedSize(60, 30)
@@ -121,7 +120,8 @@ class ThemePreviewWidget(QWidget):
 
     def apply_theme_colors(self, colors: dict[str, str]) -> None:
         """Apply theme colors to preview elements."""
-        assert colors is not None, "colors must be provided"
+        if not (colors is not None):
+            raise ValueError("colors must be provided")
         stylesheet = f"""
             QWidget {{
                 background-color: {colors.get("bg", "#ffffff")};
@@ -178,7 +178,8 @@ class CustomThemeEditor(QDialog):
         parent: QWidget | None = None,
         edit_theme: str | None = None,
     ) -> None:
-        assert theme_manager is not None, "theme_manager must be provided"
+        if not (theme_manager is not None):
+            raise ValueError("theme_manager must be provided")
         super().__init__(parent)
         self.theme_manager = theme_manager
         self.edit_theme = edit_theme
@@ -291,9 +292,7 @@ class CustomThemeEditor(QDialog):
         preset_buttons_layout = QHBoxLayout()
         for theme_name in self.theme_manager.get_builtin_themes():
             btn = QPushButton(theme_name)
-            btn.clicked.connect(
-                lambda checked, name=theme_name: self._load_preset_theme(name)
-            )
+            btn.clicked.connect(lambda checked, name=theme_name: self._load_preset_theme(name))
             preset_buttons_layout.addWidget(btn)
 
         preset_layout.addLayout(preset_buttons_layout)
@@ -315,8 +314,7 @@ class CustomThemeEditor(QDialog):
     def _build_dialog_buttons(self) -> QDialogButtonBox:
         """Build Save/Cancel/Save&Apply button box and connect signals."""
         button_box = QDialogButtonBox(
-            QDialogButtonBox.StandardButton.Save
-            | QDialogButtonBox.StandardButton.Cancel
+            QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel
         )
         self.save_btn = button_box.button(QDialogButtonBox.StandardButton.Save)
         self.save_apply_btn = button_box.addButton(
@@ -349,7 +347,8 @@ class CustomThemeEditor(QDialog):
 
     def _load_preset_theme(self, theme_name: str) -> None:
         """Load colors from a preset theme."""
-        assert theme_name is not None, "theme_name must be provided"
+        if not (theme_name is not None):
+            raise ValueError("theme_name must be provided")
         theme_def = self.theme_manager.get_theme_definition(theme_name)
         if theme_def:
             self.theme_colors = dict(theme_def)
@@ -368,7 +367,8 @@ class CustomThemeEditor(QDialog):
 
     def _on_color_changed(self, key: str, color: str) -> None:
         """Handle color change from color picker."""
-        assert key is not None, "key must be provided"
+        if not (key is not None):
+            raise ValueError("key must be provided")
         self.theme_colors[key] = color
         self._update_preview()
         logger.debug(f"Color changed: {key} = {color}")
@@ -384,11 +384,7 @@ class CustomThemeEditor(QDialog):
 
         valid = bool(name)
 
-        if (
-            valid
-            and not self.edit_theme
-            and name in self.theme_manager.get_builtin_themes()
-        ):
+        if valid and not self.edit_theme and name in self.theme_manager.get_builtin_themes():
             valid = False
 
         if self.save_btn:
@@ -408,7 +404,8 @@ class CustomThemeEditor(QDialog):
 
     def _perform_save(self, apply_immediately: bool = False) -> bool:
         """Perform the actual save operation."""
-        assert apply_immediately is not None, "apply_immediately must be provided"
+        if not (apply_immediately is not None):
+            raise ValueError("apply_immediately must be provided")
         name = self.name_edit.text().strip()
 
         if not name:

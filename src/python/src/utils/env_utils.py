@@ -27,7 +27,8 @@ def find_env_file(
     Returns:
         Path to .env file if found, None otherwise
     """
-    assert filename is not None, "filename must be provided"
+    if not (filename is not None):
+        raise ValueError("filename must be provided")
     locations: list[Path] = []
 
     # Add custom search locations
@@ -57,9 +58,7 @@ def find_env_file(
                 locations.append(repo_root / filename)
             except ImportError:
                 # Last resort fallback
-                locations.append(
-                    Path(__file__).parent.parent.parent.parent.parent / filename
-                )
+                locations.append(Path(__file__).parent.parent.parent.parent.parent / filename)
 
     # Add user home directory
     locations.append(Path.home() / ".pdf_renamer" / filename)
@@ -88,7 +87,8 @@ def load_env_file(
     Returns:
         True if file was loaded, False otherwise
     """
-    assert filename is not None, "filename must be provided"
+    if not (filename is not None):
+        raise ValueError("filename must be provided")
     try:
         from dotenv import load_dotenv
     except ImportError:
@@ -144,7 +144,8 @@ def get_env_bool(key: str, default: bool = False) -> bool:
     Returns:
         Boolean value
     """
-    assert key is not None, "key must be provided"
+    if not (key is not None):
+        raise ValueError("key must be provided")
     value = os.environ.get(key, str(default)).lower()
     return value in ("true", "1", "yes", "on")
 
@@ -162,7 +163,8 @@ def get_env_int(key: str, default: int = 0) -> int:
     Raises:
         ValueError: If value cannot be converted to int
     """
-    assert key is not None, "key must be provided"
+    if not (key is not None):
+        raise ValueError("key must be provided")
     value = os.environ.get(key)
     if value is None:
         return default

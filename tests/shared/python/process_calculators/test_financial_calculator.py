@@ -150,10 +150,7 @@ class TestVolumesAndRevenues:
         params = _make_typical_params()
         results = calc.calculate_financial_model(params)
         assert (
-            abs(
-                results.total_revenue
-                - (results.product_revenue + results.byproduct_revenue)
-            )
+            abs(results.total_revenue - (results.product_revenue + results.byproduct_revenue))
             < 0.01
         )
 
@@ -220,10 +217,7 @@ class TestIncomeStatement:
         calc = FinancialModelCalculator()
         params = _make_typical_params()
         results = calc.calculate_financial_model(params)
-        assert (
-            abs(results.ebitda - (results.gross_margin - results.total_fixed_costs))
-            < 0.01
-        )
+        assert abs(results.ebitda - (results.gross_margin - results.total_fixed_costs)) < 0.01
 
     def test_depreciation(self) -> None:
         calc = FinancialModelCalculator()

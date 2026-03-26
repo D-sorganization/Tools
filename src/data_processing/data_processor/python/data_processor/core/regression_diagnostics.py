@@ -64,7 +64,8 @@ class DiagnosticsMixin:
         Returns:
             Tuple of (intercept_se, coefficient_se_array)
         """
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         X_with_intercept = np.column_stack([np.ones(n), X])
         try:
             var_covar = mse * np.linalg.inv(X_with_intercept.T @ X_with_intercept)
@@ -100,7 +101,8 @@ class DiagnosticsMixin:
         Returns:
             List of CoefficientInfo objects
         """
-        assert coeffs is not None, "coeffs must be provided"
+        if not (coeffs is not None):
+            raise ValueError("coeffs must be provided")
         coef_info = []
         for i, name in enumerate(feature_names):
             t_stat = coeffs[i] / coef_se[i] if coef_se[i] > 0 else 0
@@ -131,7 +133,8 @@ class DiagnosticsMixin:
         feature_names: list[str],
     ) -> RegressionResult:
         """Calculate comprehensive regression statistics."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
 
         ss_res = np.sum(residuals**2)
@@ -139,9 +142,7 @@ class DiagnosticsMixin:
         ss_reg = ss_tot - ss_res
 
         r_squared = 1 - ss_res / ss_tot if ss_tot > 0 else 0
-        adj_r_squared = (
-            1 - (1 - r_squared) * (n - 1) / (n - p - 1) if n > p + 1 else r_squared
-        )
+        adj_r_squared = 1 - (1 - r_squared) * (n - 1) / (n - p - 1) if n > p + 1 else r_squared
         rmse = np.sqrt(ss_res / n)
         mae = np.mean(np.abs(residuals))
         mse = ss_res / (n - p - 1) if n > p + 1 else ss_res / n
@@ -152,9 +153,7 @@ class DiagnosticsMixin:
         t_crit = stats.t.ppf(1 - alpha / 2, n - p - 1) if n > p + 1 else 1.96
         vifs = self._calculate_vif(X)
 
-        coef_info = self._build_coefficient_info(
-            coeffs, coef_se, feature_names, vifs, t_crit, n, p
-        )
+        coef_info = self._build_coefficient_info(coeffs, coef_se, feature_names, vifs, t_crit, n, p)
 
         df_model = p
         df_residual = n - p - 1
@@ -193,7 +192,8 @@ class DiagnosticsMixin:
 
     def _calculate_vif(self, X: np.ndarray) -> np.ndarray:
         """Calculate Variance Inflation Factors."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
         vifs = np.ones(p)
 
@@ -228,7 +228,8 @@ class DiagnosticsMixin:
         residuals: np.ndarray,
     ) -> RegressionDiagnostics:
         """Calculate regression diagnostics."""
-        assert X is not None, "X must be provided"
+        if not (X is not None):
+            raise ValueError("X must be provided")
         n, p = X.shape
 
         # Hat matrix for leverage
@@ -262,9 +263,7 @@ class DiagnosticsMixin:
         # Durbin-Watson statistic
         diff_residuals = np.diff(residuals)
         durbin_watson = (
-            np.sum(diff_residuals**2) / np.sum(residuals**2)
-            if np.sum(residuals**2) > 0
-            else 2
+            np.sum(diff_residuals**2) / np.sum(residuals**2) if np.sum(residuals**2) > 0 else 2
         )
 
         # Breusch-Pagan test for heteroscedasticity
@@ -294,9 +293,7 @@ class DiagnosticsMixin:
         influential = [i for i, c in enumerate(cooks_d) if c > cooks_threshold]
 
         outlier_threshold = 3
-        outliers = [
-            i for i, r in enumerate(student_residuals) if abs(r) > outlier_threshold
-        ]
+        outliers = [i for i, r in enumerate(student_residuals) if abs(r) > outlier_threshold]
 
         return RegressionDiagnostics(
             residuals=residuals,
@@ -322,7 +319,8 @@ class DiagnosticsMixin:
     ) -> dict[str, float]:
         """Calculate variable importance (standardized coefficients)."""
         # Standardize coefficients by feature standard deviation
-        assert coeffs is not None, "coeffs must be provided"
+        if not (coeffs is not None):
+            raise ValueError("coeffs must be provided")
         x_std = np.std(X, axis=0)
         x_std[x_std == 0] = 1
 
@@ -345,7 +343,8 @@ class DiagnosticsMixin:
     ) -> Callable[[np.ndarray], np.ndarray]:
         """Create prediction function for the model."""
 
-        assert coeffs is not None, "coeffs must be provided"
+        if not (coeffs is not None):
+            raise ValueError("coeffs must be provided")
 
         def predict(X: np.ndarray) -> np.ndarray:
             # Build features if needed

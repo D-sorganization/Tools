@@ -114,9 +114,7 @@ def validate_launcher_config(config: LauncherConfig) -> None:
             "app_module must be a non-empty string identifying the application module"
         )
     if not config.window_title or not config.window_title.strip():
-        raise LauncherError(
-            "window_title must be a non-empty string for the window title bar"
-        )
+        raise LauncherError("window_title must be a non-empty string for the window title bar")
     if config.min_width < 0:
         raise LauncherError(f"min_width must be >= 0, got {config.min_width}")
     if config.min_height < 0:
@@ -164,7 +162,8 @@ def launch_app(
     Postconditions:
         - Returns an integer exit code
     """
-    assert config is not None, "config must be provided"
+    if not (config is not None):
+        raise ValueError("config must be provided")
     validate_launcher_config(config)
 
     try:

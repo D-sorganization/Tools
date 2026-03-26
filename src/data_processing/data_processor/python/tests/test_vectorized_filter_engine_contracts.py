@@ -55,18 +55,18 @@ def _make_df(n: int = 200) -> pd.DataFrame:
 class TestVectorizedFilterEngineInit:
     def test_default_construction(self) -> None:
         engine = VectorizedFilterEngine()
-        assert engine is not None
-        assert engine.n_jobs >= 1
+        if not (engine is not None): raise ValueError(f"Assertion failed: { engine is not None }")
+        if not (engine.n_jobs >= 1): raise ValueError(f"Assertion failed: { engine.n_jobs >= 1 }")
 
     def test_n_jobs_minus_one_uses_all_cores(self) -> None:
         import multiprocessing as mp
 
         engine = VectorizedFilterEngine(n_jobs=-1)
-        assert engine.n_jobs == mp.cpu_count()
+        if not (engine.n_jobs == mp.cpu_count()): raise ValueError(f"Assertion failed: { engine.n_jobs == mp.cpu_count() }")
 
     def test_n_jobs_positive_integer_accepted(self) -> None:
         engine = VectorizedFilterEngine(n_jobs=2)
-        assert engine.n_jobs == 2
+        if not (engine.n_jobs == 2): raise ValueError(f"Assertion failed: { engine.n_jobs == 2 }")
 
     def test_n_jobs_zero_raises(self) -> None:
         with pytest.raises((PreconditionError, ValueError)):
@@ -80,7 +80,7 @@ class TestVectorizedFilterEngineInit:
         messages: list[str] = []
         log_fn = messages.append  # capture stable reference
         engine = VectorizedFilterEngine(logger=log_fn, n_jobs=1)
-        assert engine.logger is log_fn
+        if not (engine.logger is log_fn): raise ValueError(f"Assertion failed: { engine.logger is log_fn }")
 
 
 # ── apply_filter_batch DbC ────────────────────────────────────────────────────
@@ -114,12 +114,12 @@ class TestApplyFilterBatchContracts:
 
     def test_returns_dataframe(self, engine) -> None:
         result = engine.apply_filter_batch(_make_df(), "Moving Average", {})
-        assert isinstance(result, pd.DataFrame)
+        if not (isinstance(result): raise ValueError(f"Assertion failed: { isinstance(result }, pd.DataFrame)")
 
     def test_output_shape_matches_input(self, engine) -> None:
         df = _make_df()
         result = engine.apply_filter_batch(df, "Moving Average", {})
-        assert result.shape == df.shape
+        if not (result.shape == df.shape): raise ValueError(f"Assertion failed: { result.shape == df.shape }")
 
 
 # ── Filter correctness ────────────────────────────────────────────────────────
@@ -153,7 +153,7 @@ class TestFilterOutputShapes:
     ) -> None:
         df = _make_df(n=300)
         result = engine.apply_filter_batch(df, filter_type, params)
-        assert list(result.columns) == list(df.columns), (
+        if not (list(result.columns) == list(df.columns)): raise ValueError(f"Assertion failed: { list(result.columns) == list(df.columns) }, (")
             f"{filter_type}: columns changed"
         )
 
@@ -163,7 +163,7 @@ class TestFilterOutputShapes:
     ) -> None:
         df = _make_df(n=300)
         result = engine.apply_filter_batch(df, filter_type, params)
-        assert len(result) == len(df), (
+        if not (len(result) == len(df)): raise ValueError(f"Assertion failed: { len(result) == len(df) }, (")
             f"{filter_type}: row count changed {len(result)} != {len(df)}"
         )
 
@@ -190,7 +190,7 @@ class TestMovingAverageCorrectness:
         noise_out = float(
             np.std(result["x"].dropna().values - clean[: len(result["x"].dropna())])
         )
-        assert noise_out < noise_in, "Moving average should reduce noise"
+        if not (noise_out < noise_in): raise ValueError(f"Assertion failed: { noise_out < noise_in }, "Moving average should reduce noise"")
 
     def test_too_short_signal_returned_unchanged(self, engine) -> None:
         df = pd.DataFrame({"x": [1.0, 2.0]})
@@ -221,7 +221,7 @@ class TestNaNPreservation:
         nan_after = result["x"].index[result["x"].isna()]
         # All original NaN positions should still be NaN
         for idx in nan_idx:
-            assert idx in nan_after, (
+            if not (idx in nan_after): raise ValueError(f"Assertion failed: { idx in nan_after }, (")
                 f"{filter_type}: NaN at index {idx} was filled unexpectedly"
             )
 

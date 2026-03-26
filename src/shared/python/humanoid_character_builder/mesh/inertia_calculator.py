@@ -141,7 +141,8 @@ class InertiaResult:
     def create_default(cls, mass: float = 1.0) -> InertiaResult:
         """Create default inertia (small sphere approximation)."""
         # Default to 0.1 kg*m^2 (reasonable for small-medium rigid body)
-        assert mass is not None, "mass must be provided"
+        if not (mass is not None):
+            raise ValueError("mass must be provided")
         i_default = 0.1 * mass
         return cls(
             ixx=i_default,
@@ -174,7 +175,8 @@ class MeshInertiaCalculator:
         Args:
             default_density: Default density in kg/m^3 for uniform density mode
         """
-        assert default_density is not None, "default_density must be provided"
+        if not (default_density is not None):
+            raise ValueError("default_density must be provided")
         self.default_density = default_density
         self._trimesh_available = self._check_trimesh()
 
@@ -241,9 +243,7 @@ class MeshInertiaCalculator:
                 raise ValueError("Scene contains no geometry")
             mesh = trimesh.util.concatenate(meshes)
 
-        return self.compute_from_trimesh(
-            mesh, mass=mass, density=density, repair_mesh=repair_mesh
-        )
+        return self.compute_from_trimesh(mesh, mass=mass, density=density, repair_mesh=repair_mesh)
 
     def compute_from_trimesh(
         self,
@@ -276,15 +276,12 @@ class MeshInertiaCalculator:
         if mesh_props is None:
             raise ValueError("Failed to compute mesh mass properties")
 
-        return self._create_inertia_result(
-            mesh_props, mass, effective_density, was_watertight
-        )
+        return self._create_inertia_result(mesh_props, mass, effective_density, was_watertight)
 
-    def _validate_and_repair_mesh(
-        self, mesh: Any, repair_mesh: bool
-    ) -> tuple[Any, bool]:
+    def _validate_and_repair_mesh(self, mesh: Any, repair_mesh: bool) -> tuple[Any, bool]:
         """Validate mesh watertightness and optionally repair."""
-        assert repair_mesh is not None, "repair_mesh must be provided"
+        if not (repair_mesh is not None):
+            raise ValueError("repair_mesh must be provided")
         was_watertight = mesh.is_watertight
 
         if not was_watertight and repair_mesh:
@@ -292,15 +289,11 @@ class MeshInertiaCalculator:
             was_watertight = mesh.is_watertight
 
         if not mesh.is_watertight:
-            logger.warning(
-                "Mesh is not watertight. Inertia calculation may be inaccurate."
-            )
+            logger.warning("Mesh is not watertight. Inertia calculation may be inaccurate.")
 
         return mesh, was_watertight
 
-    def _extract_mesh_mass_properties(
-        self, mesh: Any, mass: float | None
-    ) -> dict[str, Any] | None:
+    def _extract_mesh_mass_properties(self, mesh: Any, mass: float | None) -> dict[str, Any] | None:
         """Extract volume, center of mass, and inertia from mesh."""
         try:
             volume = mesh.volume
@@ -332,7 +325,8 @@ class MeshInertiaCalculator:
         was_watertight: bool,
     ) -> InertiaResult:
         """Create InertiaResult from mesh properties."""
-        assert mesh_props is not None, "mesh_props must be provided"
+        if not (mesh_props is not None):
+            raise ValueError("mesh_props must be provided")
         volume = mesh_props["volume"]
         center_mass = mesh_props["center_mass"]
         inertia_unit = mesh_props["inertia_unit"]
@@ -364,9 +358,7 @@ class MeshInertiaCalculator:
     def _validate_inertia_result(self, result: InertiaResult) -> None:
         """Reject inertia tensors that are not physically valid."""
         if result.mass <= 0:
-            raise ValueError(
-                f"Computed inertia mass must be positive, got {result.mass:.3e}"
-            )
+            raise ValueError(f"Computed inertia mass must be positive, got {result.mass:.3e}")
         if not result.is_valid():
             raise ValueError("Computed inertia tensor violates physical constraints")
         if not result.validate_positive_definite():
@@ -473,7 +465,8 @@ class MeshInertiaCalculator:
         Returns:
             New InertiaResult in transformed frame
         """
-        assert inertia is not None, "inertia must be provided"
+        if not (inertia is not None):
+            raise ValueError("inertia must be provided")
         I_original = inertia.as_matrix()
         mass = inertia.mass
         com = np.array(inertia.center_of_mass)
@@ -490,7 +483,8 @@ class MeshInertiaCalculator:
         rotation: NDArray[np.float64] | None,
     ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
         """Apply rotation transformation to inertia matrix and COM."""
-        assert inertia_matrix is not None, "inertia_matrix must be provided"
+        if not (inertia_matrix is not None):
+            raise ValueError("inertia_matrix must be provided")
         if rotation is not None:
             R = np.asarray(rotation)
             return R @ inertia_matrix @ R.T, R @ com
@@ -504,14 +498,13 @@ class MeshInertiaCalculator:
         translation: NDArray[np.float64] | None,
     ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
         """Apply parallel axis theorem for translation."""
-        assert inertia_matrix is not None, "inertia_matrix must be provided"
+        if not (inertia_matrix is not None):
+            raise ValueError("inertia_matrix must be provided")
         if translation is not None:
             d = np.asarray(translation)
             new_com = com - d
             d_sq = np.dot(new_com, new_com)
-            I_translated = inertia_matrix + mass * (
-                d_sq * np.eye(3) - np.outer(new_com, new_com)
-            )
+            I_translated = inertia_matrix + mass * (d_sq * np.eye(3) - np.outer(new_com, new_com))
             return I_translated, new_com
         return inertia_matrix, com
 

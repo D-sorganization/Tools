@@ -70,7 +70,8 @@ def add_equipment(
     show_inline_notes: bool = False,
 ) -> None:
     """Draw one equipment item: symbol + labels + optional inline notes."""
-    assert eq is not None, "eq must be provided"
+    if not (eq is not None):
+        raise ValueError("eq must be provided")
     x = to_float(eq.get("x", 0.0))
     y = to_float(eq.get("y", 0.0))
     w, hh = equipment_dims(eq)
@@ -86,9 +87,7 @@ def add_equipment(
     eq_id = str(eq.get("id", "")).strip()
     service = str(eq.get("service") or eq.get("name") or eq.get("tag") or "").strip()
     if eq_id and service and service != eq_id:
-        add_text(
-            msp, eq_id, x + w / 2, y + hh / 2 + text_h * 0.48, text_h, layer=text_layer
-        )
+        add_text(msp, eq_id, x + w / 2, y + hh / 2 + text_h * 0.48, text_h, layer=text_layer)
         add_text(
             msp,
             service,
@@ -139,7 +138,8 @@ def generate_process_sheet(
     prepared_spec: dict[str, Any] | None = None,
 ) -> None:
     """Generate the process (Sheet 1) DXF and optional SVG."""
-    assert spec_path is not None, "spec_path must be provided"
+    if not (spec_path is not None):
+        raise ValueError("spec_path must be provided")
     if prepared_spec is None:
         spec = prepare_spec(spec_path, profile)
     else:
@@ -156,13 +156,9 @@ def generate_process_sheet(
     eq_min_x, eq_min_y, eq_max_x, eq_max_y = equipment_bbox
 
     layer_index = {layer.dxf.name.lower(): layer.dxf.name for layer in doc.layers}
-    text_layer = layer_name(
-        layer_index, "TEXT", "annotations", "titleblock", default="TEXT"
-    )
+    text_layer = layer_name(layer_index, "TEXT", "annotations", "titleblock", default="TEXT")
     notes_layer = layer_name(layer_index, "NOTES", "annotations", default=text_layer)
-    instrument_layer = layer_name(
-        layer_index, "INSTRUMENTS", "instruments", default="INSTRUMENTS"
-    )
+    instrument_layer = layer_name(layer_index, "INSTRUMENTS", "instruments", default="INSTRUMENTS")
     leader_layer = layer_name(layer_index, "LEADERS", default="LEADERS")
     arrow_size = to_float(
         spec.get("defaults", {}).get("arrow_size"),
@@ -200,9 +196,7 @@ def generate_process_sheet(
         notes_layer,
     )
 
-    add_title_block(
-        msp, spec, t, text_layer, notes_layer, layout_regions["panels"]["title"]
-    )
+    add_title_block(msp, spec, t, text_layer, notes_layer, layout_regions["panels"]["title"])
 
     project = get_project(spec)
     doc_title = (
@@ -228,9 +222,7 @@ def generate_process_sheet(
         layer=text_layer,
     )
 
-    equipment_by_id = {
-        eq.get("id"): eq for eq in spec.get("equipment", []) if eq.get("id")
-    }
+    equipment_by_id = {eq.get("id"): eq for eq in spec.get("equipment", []) if eq.get("id")}
     for eq in spec.get("equipment", []):
         add_equipment(
             msp,
@@ -241,9 +233,7 @@ def generate_process_sheet(
             show_inline_notes=layout_cfg["show_inline_equipment_notes"],
         )
 
-    instrument_by_id = {
-        ins.get("id"): ins for ins in spec.get("instruments", []) if ins.get("id")
-    }
+    instrument_by_id = {ins.get("id"): ins for ins in spec.get("instruments", []) if ins.get("id")}
     for ins in spec.get("instruments", []):
         add_instrument(
             msp,
@@ -312,9 +302,7 @@ def generate_process_sheet(
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     doc.saveas(out_path)
-    export_svg_from_dxf(
-        spec, out_path, svg_path, fallback_extent=(x_min, y_min, x_max, y_max)
-    )
+    export_svg_from_dxf(spec, out_path, svg_path, fallback_extent=(x_min, y_min, x_max, y_max))
 
     logger.info("Created: %s", out_path)
     if svg_path:
@@ -329,7 +317,8 @@ def generate_controls_sheet(
     prepared_spec: dict[str, Any] | None = None,
 ) -> None:
     """Generate the controls and interlocks (Sheet 2) DXF and optional SVG."""
-    assert spec_path is not None, "spec_path must be provided"
+    if not (spec_path is not None):
+        raise ValueError("spec_path must be provided")
     if prepared_spec is None:
         spec = prepare_spec(spec_path, profile)
     else:
@@ -347,9 +336,7 @@ def generate_controls_sheet(
     y_max = y_min + height
 
     layer_index = {layer.dxf.name.lower(): layer.dxf.name for layer in doc.layers}
-    text_layer = layer_name(
-        layer_index, "TEXT", "annotations", "titleblock", default="TEXT"
-    )
+    text_layer = layer_name(layer_index, "TEXT", "annotations", "titleblock", default="TEXT")
     notes_layer = layer_name(layer_index, "NOTES", "annotations", default=text_layer)
     control_layer = layer_name(layer_index, "control_lines", default="control_lines")
     if control_layer not in doc.layers:
@@ -513,8 +500,7 @@ def generate_controls_sheet(
     left_w = table_w * 0.58
     right_w = table_w - left_w - margin
     interlock_lines = [
-        f"{i.get('id', '')}: {i.get('trigger', '')} -> {i.get('action', '')}"
-        for i in interlocks
+        f"{i.get('id', '')}: {i.get('trigger', '')} -> {i.get('action', '')}" for i in interlocks
     ]
     add_text_panel(
         msp,
@@ -552,9 +538,7 @@ def generate_controls_sheet(
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     doc.saveas(out_path)
-    export_svg_from_dxf(
-        spec, out_path, svg_path, fallback_extent=(x_min, y_min, x_max, y_max)
-    )
+    export_svg_from_dxf(spec, out_path, svg_path, fallback_extent=(x_min, y_min, x_max, y_max))
     logger.info("Created: %s", out_path)
     if svg_path:
         logger.info("Attempted SVG: %s", svg_path)
@@ -567,7 +551,8 @@ def generate_controls_sheet(
 
 def derive_related_path(path: str | Path, suffix: str) -> Path:
     """Derive a related file path by appending a suffix before the extension."""
-    assert path is not None, "path must be provided"
+    if not (path is not None):
+        raise ValueError("path must be provided")
     p = Path(path)
     return p.with_name(f"{p.stem}_{suffix}{p.suffix}")
 
@@ -592,7 +577,8 @@ def generate(
         controls_svg: Optional path for the controls sheet SVG.
         profile: Layout profile name (default ``"presentation"``).
     """
-    assert spec_path is not None, "spec_path must be provided"
+    if not (spec_path is not None):
+        raise ValueError("spec_path must be provided")
     prepared_spec = prepare_spec(spec_path, profile)
     generate_process_sheet(
         spec_path,
@@ -620,16 +606,12 @@ def generate(
 
 def main() -> None:
     """CLI entry point for ``generate-pid``."""
-    ap = argparse.ArgumentParser(
-        description="Generate P&ID drawings from YAML specifications"
-    )
+    ap = argparse.ArgumentParser(description="Generate P&ID drawings from YAML specifications")
     ap.add_argument("--spec", required=True, help="Path to YAML spec file")
     ap.add_argument("--out", required=True, help="Output DXF path")
     ap.add_argument("--svg", help="Optional SVG output path")
     ap.add_argument("--sheet-set", choices=["single", "two"], default="two")
-    ap.add_argument(
-        "--profile", choices=sorted(PROFILE_PRESETS), default="presentation"
-    )
+    ap.add_argument("--profile", choices=sorted(PROFILE_PRESETS), default="presentation")
     ap.add_argument("--controls-out", help="Controls sheet DXF output path")
     ap.add_argument("--controls-svg", help="Controls sheet SVG output path")
     args = ap.parse_args()

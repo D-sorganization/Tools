@@ -37,7 +37,8 @@ def should_exclude(
         True if the path should be excluded.
     """
     # Check if .git should be excluded
-    assert path is not None, "path must be provided"
+    if not (path is not None):
+        raise ValueError("path must be provided")
     if not include_git:
         if ".git" in path.parts:
             return True
@@ -69,7 +70,8 @@ def collect_folder_stats(
     Returns:
         Dictionary with file counts, sizes, and type breakdowns.
     """
-    assert folder is not None, "folder must be provided"
+    if not (folder is not None):
+        raise ValueError("folder must be provided")
     stats: dict[str, Any] = {
         "total_files": 0,
         "total_size": 0,
@@ -80,9 +82,7 @@ def collect_folder_stats(
     for root, dirs, files in os.walk(folder):
         # Filter excluded directories
         dirs[:] = [
-            d
-            for d in dirs
-            if not should_exclude(Path(root) / d, exclude_patterns, include_git)
+            d for d in dirs if not should_exclude(Path(root) / d, exclude_patterns, include_git)
         ]
 
         for filename in files:

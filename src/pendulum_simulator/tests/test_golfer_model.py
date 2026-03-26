@@ -92,14 +92,14 @@ class TestGolferForwardKinematics:
             "grip_right",
             "grip_left",
         }
-        assert expected_keys.issubset(set(fk.keys()))
+        if not (expected_keys.issubset(set(fk.keys()))): raise ValueError(f"Assertion failed: { expected_keys.issubset(set(fk.keys())) }")
 
     def test_origin_is_zero(
         self, default_params: GolferParams, zero_state: np.ndarray
     ) -> None:
         """Origin must always be at (0, 0)."""
         fk = forward_kinematics(zero_state, default_params)
-        assert fk["origin"] == (0.0, 0.0)
+        if not (fk["origin"] == (0.0): raise ValueError(f"Assertion failed: { fk["origin"] == (0.0 }, 0.0)")
 
     def test_hub_bounded_by_L_hub(
         self, default_params: GolferParams, random_state: np.ndarray
@@ -108,7 +108,7 @@ class TestGolferForwardKinematics:
         fk = forward_kinematics(random_state, default_params)
         hub = np.array(fk["hub"])
         dist = np.linalg.norm(hub)
-        assert dist == pytest.approx(default_params.L_hub, rel=1e-10)
+        if not (dist == pytest.approx(default_params.L_hub): raise ValueError(f"Assertion failed: { dist == pytest.approx(default_params.L_hub }, rel=1e-10)")
 
     def test_club_tip_finite(
         self, default_params: GolferParams, random_state: np.ndarray
@@ -116,7 +116,7 @@ class TestGolferForwardKinematics:
         """Club tip must be at a finite position."""
         fk = forward_kinematics(random_state, default_params)
         tip = np.array(fk["club_tip"])
-        assert np.all(np.isfinite(tip))
+        if not (np.all(np.isfinite(tip))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(tip)) }")
 
     def test_all_positions_finite(
         self, default_params: GolferParams, random_state: np.ndarray
@@ -125,7 +125,7 @@ class TestGolferForwardKinematics:
         fk = forward_kinematics(random_state, default_params)
         for name, pos in fk.items():
             arr = np.array(pos)
-            assert np.all(np.isfinite(arr)), f"Non-finite position at {name}"
+            if not (np.all(np.isfinite(arr))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(arr)) }, f"Non-finite position at {name}"")
 
     def test_elbow_distance_from_shoulder(
         self, default_params: GolferParams, random_state: np.ndarray
@@ -135,7 +135,7 @@ class TestGolferForwardKinematics:
         rs = np.array(fk["rs"])
         re = np.array(fk["re"])
         dist = np.linalg.norm(re - rs)
-        assert dist == pytest.approx(default_params.L_r_upper, rel=1e-6)
+        if not (dist == pytest.approx(default_params.L_r_upper): raise ValueError(f"Assertion failed: { dist == pytest.approx(default_params.L_r_upper }, rel=1e-6)")
 
 
 # ---------------------------------------------------------------------------
@@ -151,14 +151,14 @@ class TestGolferConstraints:
     ) -> None:
         """Constraint vector must have 4 components."""
         phi = constraint_vector(zero_state, default_params)
-        assert phi.shape == (4,)
+        if not (phi.shape == (4): raise ValueError(f"Assertion failed: { phi.shape == (4 }, )")
 
     def test_jacobian_shape(
         self, default_params: GolferParams, zero_state: np.ndarray
     ) -> None:
         """Constraint Jacobian must be (4, N_DOF)."""
         J = numerical_constraint_jacobian(zero_state, default_params)
-        assert J.shape == (4, N_DOF)
+        if not (J.shape == (4): raise ValueError(f"Assertion failed: { J.shape == (4 }, N_DOF)")
 
     def test_analytical_matches_numerical_jacobian(
         self, default_params: GolferParams, random_state: np.ndarray
@@ -173,7 +173,7 @@ class TestGolferConstraints:
     ) -> None:
         """Constraint vector must be finite for any valid configuration."""
         phi = constraint_vector(random_state, default_params)
-        assert np.all(np.isfinite(phi))
+        if not (np.all(np.isfinite(phi))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(phi)) }")
 
 
 # ---------------------------------------------------------------------------
@@ -188,7 +188,7 @@ class TestGolferJointForces:
         """Friction torque vector must have N_DOF components."""
         qdot = np.ones(N_DOF) * 0.1
         tau = friction_torque_vector(qdot, default_params)
-        assert tau.shape == (N_DOF,)
+        if not (tau.shape == (N_DOF): raise ValueError(f"Assertion failed: { tau.shape == (N_DOF }, )")
 
     def test_friction_opposes_velocity(self, default_params: GolferParams) -> None:
         """Friction torque must oppose joint velocity direction."""
@@ -197,7 +197,7 @@ class TestGolferJointForces:
         # For each DOF with nonzero damping, sign(tau) = -sign(qdot)
         for i in range(N_DOF - 1):  # Skip club DOF (no damping)
             if abs(qdot[i]) > 0 and abs(tau[i]) > 0:
-                assert np.sign(tau[i]) == -np.sign(qdot[i]), (
+                if not (np.sign(tau[i]) == -np.sign(qdot[i])): raise ValueError(f"Assertion failed: { np.sign(tau[i]) == -np.sign(qdot[i]) }, (")
                     f"Friction at DOF {i} does not oppose velocity"
                 )
 
@@ -216,7 +216,7 @@ class TestGolferJointForces:
         forces = net_joint_forces(zero_state, qdot, qddot, default_params)
         for name, f in forces.items():
             f_arr = np.array(f)
-            assert np.all(np.isfinite(f_arr)), f"Non-finite force at {name}"
+            if not (np.all(np.isfinite(f_arr))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(f_arr)) }, f"Non-finite force at {name}"")
 
     def test_gravity_only_forces(
         self, default_params: GolferParams, zero_state: np.ndarray
@@ -229,7 +229,7 @@ class TestGolferJointForces:
         # because F = m*a - m*g_vec = 0 - m*(0, -g) = (0, m*g)
         hub_f = np.array(forces["hub"])
         expected_fy = default_params.m_hub * default_params.g
-        assert hub_f[1] == pytest.approx(expected_fy, rel=0.1)
+        if not (hub_f[1] == pytest.approx(expected_fy): raise ValueError(f"Assertion failed: { hub_f[1] == pytest.approx(expected_fy }, rel=0.1)")
 
 
 # ---------------------------------------------------------------------------
@@ -257,7 +257,7 @@ class TestGolferDynamics:
 
         M = analytical_mass_matrix(random_state, default_params)
         eigenvalues = np.linalg.eigvalsh(M)
-        assert np.all(eigenvalues >= -1e-10), (
+        if not (np.all(eigenvalues >= -1e-10)): raise ValueError(f"Assertion failed: { np.all(eigenvalues >= -1e-10) }, (")
             f"Negative eigenvalue in mass matrix: {eigenvalues}"
         )
 
@@ -268,7 +268,7 @@ class TestGolferDynamics:
         from double_pendulum_golf.golfer_dynamics import analytical_mass_matrix
 
         M = analytical_mass_matrix(zero_state, default_params)
-        assert M.shape == (N_DOF, N_DOF)
+        if not (M.shape == (N_DOF): raise ValueError(f"Assertion failed: { M.shape == (N_DOF }, N_DOF)")
 
     def test_gravity_vector_shape(
         self, default_params: GolferParams, zero_state: np.ndarray
@@ -277,7 +277,7 @@ class TestGolferDynamics:
         from double_pendulum_golf.golfer_dynamics import analytical_gravity_vector
 
         G = analytical_gravity_vector(zero_state, default_params)
-        assert G.shape == (N_DOF,)
+        if not (G.shape == (N_DOF): raise ValueError(f"Assertion failed: { G.shape == (N_DOF }, )")
 
     def test_gravity_vector_finite(
         self, default_params: GolferParams, random_state: np.ndarray
@@ -286,7 +286,7 @@ class TestGolferDynamics:
         from double_pendulum_golf.golfer_dynamics import analytical_gravity_vector
 
         G = analytical_gravity_vector(random_state, default_params)
-        assert np.all(np.isfinite(G))
+        if not (np.all(np.isfinite(G))): raise ValueError(f"Assertion failed: { np.all(np.isfinite(G)) }")
 
     def test_kinetic_energy_non_negative(
         self, default_params: GolferParams, random_state: np.ndarray
@@ -296,7 +296,7 @@ class TestGolferDynamics:
 
         qdot = np.random.default_rng(99).uniform(-2, 2, size=N_DOF)
         T = kinetic_energy(random_state, qdot, default_params)
-        assert T >= 0.0
+        if not (T >= 0.0): raise ValueError(f"Assertion failed: { T >= 0.0 }")
 
     def test_kinetic_energy_zero_at_rest(
         self, default_params: GolferParams, zero_state: np.ndarray
@@ -306,7 +306,7 @@ class TestGolferDynamics:
 
         qdot = np.zeros(N_DOF)
         T = kinetic_energy(zero_state, qdot, default_params)
-        assert T == pytest.approx(0.0, abs=1e-15)
+        if not (T == pytest.approx(0.0): raise ValueError(f"Assertion failed: { T == pytest.approx(0.0 }, abs=1e-15)")
 
 
 # ---------------------------------------------------------------------------
@@ -377,4 +377,4 @@ class TestGolferParamsDbC:
         """Valid parameters must not raise."""
         kw = self._valid_kwargs()
         p = GolferParams(**kw)
-        assert p.m_club == 0.3
+        if not (p.m_club == 0.3): raise ValueError(f"Assertion failed: { p.m_club == 0.3 }")

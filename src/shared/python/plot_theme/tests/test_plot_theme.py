@@ -20,20 +20,20 @@ class TestPlotThemeDataclass:
         from plot_theme.themes import PlotTheme
 
         theme = PlotTheme(name="Test")
-        assert theme.name == "Test"
-        assert theme.description == ""
-        assert theme.figure_facecolor == "#ffffff"
-        assert theme.axes_facecolor == "#ffffff"
-        assert theme.grid_alpha == 0.5
-        assert theme.primary_alpha == 0.8
-        assert theme.line_width == 2.0
-        assert theme.marker_size == 6.0
-        assert theme.font_family == "sans-serif"
-        assert theme.font_size == 10.0
-        assert len(theme.primary_colors) == 3
-        assert len(theme.secondary_colors) == 3
-        assert len(theme.accent_colors) == 3
-        assert theme.rcparams == {}
+        if not (theme.name == "Test"): raise ValueError(f"Assertion failed: { theme.name == "Test" }")  # noqa: E701
+        if not (theme.description == ""): raise ValueError(f"Assertion failed: { theme.description == "" }")  # noqa: E701
+        if not (theme.figure_facecolor == "#ffffff"): raise ValueError(f"Assertion failed: { theme.figure_facecolor == "#ffffff" }")  # noqa: E701
+        if not (theme.axes_facecolor == "#ffffff"): raise ValueError(f"Assertion failed: { theme.axes_facecolor == "#ffffff" }")  # noqa: E701
+        if not (theme.grid_alpha == 0.5): raise ValueError(f"Assertion failed: { theme.grid_alpha == 0.5 }")  # noqa: E701
+        if not (theme.primary_alpha == 0.8): raise ValueError(f"Assertion failed: { theme.primary_alpha == 0.8 }")  # noqa: E701
+        if not (theme.line_width == 2.0): raise ValueError(f"Assertion failed: { theme.line_width == 2.0 }")  # noqa: E701
+        if not (theme.marker_size == 6.0): raise ValueError(f"Assertion failed: { theme.marker_size == 6.0 }")  # noqa: E701
+        if not (theme.font_family == "sans-serif"): raise ValueError(f"Assertion failed: { theme.font_family == "sans-serif" }")  # noqa: E701
+        if not (theme.font_size == 10.0): raise ValueError(f"Assertion failed: { theme.font_size == 10.0 }")  # noqa: E701
+        if not (len(theme.primary_colors) == 3): raise ValueError(f"Assertion failed: { len(theme.primary_colors) == 3 }")  # noqa: E701
+        if not (len(theme.secondary_colors) == 3): raise ValueError(f"Assertion failed: { len(theme.secondary_colors) == 3 }")  # noqa: E701
+        if not (len(theme.accent_colors) == 3): raise ValueError(f"Assertion failed: { len(theme.accent_colors) == 3 }")  # noqa: E701
+        if not (theme.rcparams == {}): raise ValueError(f"Assertion failed: { theme.rcparams == {} }")  # noqa: E701
 
     def test_get_color_cycle(self):
         from plot_theme.themes import PlotTheme
@@ -45,7 +45,7 @@ class TestPlotThemeDataclass:
             accent_colors=["#0000aa"],
         )
         cycle = theme.get_color_cycle()
-        assert cycle == ["#aa0000", "#00aa00", "#0000aa"]
+        if not (cycle == ["#aa0000"): raise ValueError(f"Assertion failed: { cycle == ["#aa0000" }, "#00aa00", "#0000aa"]")
 
     def test_to_rcparams_includes_all_keys(self):
         from plot_theme.themes import PlotTheme
@@ -66,14 +66,14 @@ class TestPlotThemeDataclass:
             "lines.linewidth",
             "lines.markersize",
         }
-        assert required_keys <= params.keys()
+        if not (required_keys <= params.keys()): raise ValueError(f"Assertion failed: { required_keys <= params.keys() }")  # noqa: E701
 
     def test_to_rcparams_with_string_heatmap_cmap(self):
         from plot_theme.themes import PlotTheme
 
         theme = PlotTheme(name="Test", heatmap_cmap="plasma")
         params = theme.to_rcparams()
-        assert params["image.cmap"] == "plasma"
+        if not (params["image.cmap"] == "plasma"): raise ValueError(f"Assertion failed: { params["image.cmap"] == "plasma" }")  # noqa: E701
 
     def test_to_rcparams_with_list_heatmap_cmap_uses_viridis(self):
         from plot_theme.themes import PlotTheme
@@ -81,14 +81,14 @@ class TestPlotThemeDataclass:
         # When cmap is a list, falls back to 'viridis'
         theme = PlotTheme(name="Test", heatmap_cmap=["#000", "#fff"])
         params = theme.to_rcparams()
-        assert params["image.cmap"] == "viridis"
+        if not (params["image.cmap"] == "viridis"): raise ValueError(f"Assertion failed: { params["image.cmap"] == "viridis" }")  # noqa: E701
 
     def test_to_rcparams_merges_custom_rcparams(self):
         from plot_theme.themes import PlotTheme
 
         theme = PlotTheme(name="Test", rcparams={"figure.dpi": 200})
         params = theme.to_rcparams()
-        assert params["figure.dpi"] == 200
+        if not (params["figure.dpi"] == 200): raise ValueError(f"Assertion failed: { params["figure.dpi"] == 200 }")  # noqa: E701
 
     def test_custom_theme_construction(self):
         from plot_theme.themes import PlotTheme
@@ -104,8 +104,8 @@ class TestPlotThemeDataclass:
             line_width=3.5,
             marker_size=10.0,
         )
-        assert theme.primary_color == "#ff0000"
-        assert theme.line_width == 3.5
+        if not (theme.primary_color == "#ff0000"): raise ValueError(f"Assertion failed: { theme.primary_color == "#ff0000" }")  # noqa: E701
+        if not (theme.line_width == 3.5): raise ValueError(f"Assertion failed: { theme.line_width == 3.5 }")  # noqa: E701
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -133,37 +133,37 @@ class TestPredefinedThemes:
             "classic_light",
             "classic_dark",
         }
-        assert expected_keys <= PLOT_THEMES.keys()
+        if not (expected_keys <= PLOT_THEMES.keys()): raise ValueError(f"Assertion failed: { expected_keys <= PLOT_THEMES.keys() }")  # noqa: E701
 
     def test_scientific_violet_properties(self):
         from plot_theme.themes import SCIENTIFIC_VIOLET
 
-        assert SCIENTIFIC_VIOLET.name == "Scientific Violet"
-        assert SCIENTIFIC_VIOLET.primary_color == "#9333EA"
-        assert SCIENTIFIC_VIOLET.contour_cmap == "YlGnBu"
+        if not (SCIENTIFIC_VIOLET.name == "Scientific Violet"): raise ValueError(f"Assertion failed: { SCIENTIFIC_VIOLET.name == "Scientific Violet" }")  # noqa: E701
+        if not (SCIENTIFIC_VIOLET.primary_color == "#9333EA"): raise ValueError(f"Assertion failed: { SCIENTIFIC_VIOLET.primary_color == "#9333EA" }")  # noqa: E701
+        if not (SCIENTIFIC_VIOLET.contour_cmap == "YlGnBu"): raise ValueError(f"Assertion failed: { SCIENTIFIC_VIOLET.contour_cmap == "YlGnBu" }")  # noqa: E701
 
     def test_catppuccin_mocha_is_dark(self):
         from plot_theme.themes import CATPPUCCIN_MOCHA
 
-        assert CATPPUCCIN_MOCHA.figure_facecolor == "#1e1e2e"
+        if not (CATPPUCCIN_MOCHA.figure_facecolor == "#1e1e2e"): raise ValueError(f"Assertion failed: { CATPPUCCIN_MOCHA.figure_facecolor == "#1e1e2e" }")  # noqa: E701
 
     def test_default_theme_exists(self):
         from plot_theme.themes import DEFAULT_THEME, PLOT_THEMES
 
-        assert DEFAULT_THEME in PLOT_THEMES
+        if not (DEFAULT_THEME in PLOT_THEMES): raise ValueError(f"Assertion failed: { DEFAULT_THEME in PLOT_THEMES }")  # noqa: E701
 
     def test_all_themes_have_name(self):
         from plot_theme.themes import PLOT_THEMES
 
         for key, theme in PLOT_THEMES.items():
-            assert theme.name, f"Theme '{key}' has empty name"
+            if not (theme.name): raise ValueError(f"Assertion failed: { theme.name }, f"Theme '{key}' has empty name"")  # noqa: E701
 
     def test_all_themes_to_rcparams_succeeds(self):
         from plot_theme.themes import PLOT_THEMES
 
         for key, theme in PLOT_THEMES.items():
             params = theme.to_rcparams()
-            assert "figure.facecolor" in params, (
+            if not ("figure.facecolor" in params): raise ValueError(f"Assertion failed: { "figure.facecolor" in params }, (")  # noqa: E701
                 f"Theme '{key}' missing figure.facecolor"
             )
 
@@ -178,27 +178,27 @@ class TestThemeFunctions:
         from plot_theme.themes import get_theme
 
         theme = get_theme("scientific_violet")
-        assert theme.name == "Scientific Violet"
+        if not (theme.name == "Scientific Violet"): raise ValueError(f"Assertion failed: { theme.name == "Scientific Violet" }")  # noqa: E701
 
     def test_get_theme_case_insensitive(self):
         from plot_theme.themes import get_theme
 
         t1 = get_theme("SCIENTIFIC_VIOLET")
         t2 = get_theme("scientific_violet")
-        assert t1.name == t2.name
+        if not (t1.name == t2.name): raise ValueError(f"Assertion failed: { t1.name == t2.name }")  # noqa: E701
 
     def test_get_theme_hyphen_normalization(self):
         from plot_theme.themes import get_theme
 
         # Hyphens should be normalized to underscores
         theme = get_theme("scientific-violet")
-        assert theme.name == "Scientific Violet"
+        if not (theme.name == "Scientific Violet"): raise ValueError(f"Assertion failed: { theme.name == "Scientific Violet" }")  # noqa: E701
 
     def test_get_theme_space_normalization(self):
         from plot_theme.themes import get_theme
 
         theme = get_theme("scientific violet")
-        assert theme.name == "Scientific Violet"
+        if not (theme.name == "Scientific Violet"): raise ValueError(f"Assertion failed: { theme.name == "Scientific Violet" }")  # noqa: E701
 
     def test_get_theme_not_found_raises(self):
         from plot_theme.themes import get_theme
@@ -210,16 +210,16 @@ class TestThemeFunctions:
         from plot_theme.themes import get_theme_names
 
         names = get_theme_names()
-        assert names == sorted(names)
-        assert len(names) >= 14
+        if not (names == sorted(names)): raise ValueError(f"Assertion failed: { names == sorted(names) }")  # noqa: E701
+        if not (len(names) >= 14): raise ValueError(f"Assertion failed: { len(names) >= 14 }")  # noqa: E701
 
     def test_register_custom_theme(self):
         from plot_theme.themes import PLOT_THEMES, PlotTheme, register_theme
 
         custom = PlotTheme(name="My Theme", primary_color="#123456")
         register_theme("my_theme_test", custom)
-        assert "my_theme_test" in PLOT_THEMES
-        assert PLOT_THEMES["my_theme_test"].primary_color == "#123456"
+        if not ("my_theme_test" in PLOT_THEMES): raise ValueError(f"Assertion failed: { "my_theme_test" in PLOT_THEMES }")  # noqa: E701
+        if not (PLOT_THEMES["my_theme_test"].primary_color == "#123456"): raise ValueError(f"Assertion failed: { PLOT_THEMES["my_theme_test"].primary_color == "#123456" }")  # noqa: E701
         # Cleanup
         del PLOT_THEMES["my_theme_test"]
 
@@ -228,7 +228,7 @@ class TestThemeFunctions:
 
         custom = PlotTheme(name="Test Theme")
         register_theme("Test-Theme-Foo", custom)
-        assert "test_theme_foo" in PLOT_THEMES
+        if not ("test_theme_foo" in PLOT_THEMES): raise ValueError(f"Assertion failed: { "test_theme_foo" in PLOT_THEMES }")  # noqa: E701
         # Cleanup
         del PLOT_THEMES["test_theme_foo"]
 
@@ -257,27 +257,27 @@ class TestPlotThemeManager:
 
     def test_init_sets_default_theme(self):
         m = self._make_manager()
-        assert m.current_theme_name == "scientific_violet"
-        assert m.current_theme.name == "Scientific Violet"
+        if not (m.current_theme_name == "scientific_violet"): raise ValueError(f"Assertion failed: { m.current_theme_name == "scientific_violet" }")  # noqa: E701
+        if not (m.current_theme.name == "Scientific Violet"): raise ValueError(f"Assertion failed: { m.current_theme.name == "Scientific Violet" }")  # noqa: E701
 
     def test_get_available_themes(self):
         m = self._make_manager()
         themes = m.get_available_themes()
-        assert "scientific_violet" in themes
-        assert themes == sorted(themes)
+        if not ("scientific_violet" in themes): raise ValueError(f"Assertion failed: { "scientific_violet" in themes }")  # noqa: E701
+        if not (themes == sorted(themes)): raise ValueError(f"Assertion failed: { themes == sorted(themes) }")  # noqa: E701
 
     def test_get_theme_display_names(self):
         m = self._make_manager()
         display = m.get_theme_display_names()
-        assert "scientific_violet" in display
-        assert display["scientific_violet"] == "Scientific Violet"
+        if not ("scientific_violet" in display): raise ValueError(f"Assertion failed: { "scientific_violet" in display }")  # noqa: E701
+        if not (display["scientific_violet"] == "Scientific Violet"): raise ValueError(f"Assertion failed: { display["scientific_violet"] == "Scientific Violet" }")  # noqa: E701
 
     def test_set_theme_changes_current(self):
         m = self._make_manager()
         with patch.object(m, "_save_theme"):
             m.set_theme("dracula")
-        assert m.current_theme_name == "dracula"
-        assert m.current_theme.name == "Dracula"
+        if not (m.current_theme_name == "dracula"): raise ValueError(f"Assertion failed: { m.current_theme_name == "dracula" }")  # noqa: E701
+        if not (m.current_theme.name == "Dracula"): raise ValueError(f"Assertion failed: { m.current_theme.name == "Dracula" }")  # noqa: E701
 
     def test_set_theme_without_saving(self):
         m = self._make_manager()
@@ -297,8 +297,8 @@ class TestPlotThemeManager:
         m.add_theme_change_callback(lambda t: called_with.append(t))
         with patch.object(m, "_save_theme"):
             m.set_theme("dracula")
-        assert len(called_with) == 1
-        assert called_with[0].name == "Dracula"
+        if not (len(called_with) == 1): raise ValueError(f"Assertion failed: { len(called_with) == 1 }")  # noqa: E701
+        if not (called_with[0].name == "Dracula"): raise ValueError(f"Assertion failed: { called_with[0].name == "Dracula" }")  # noqa: E701
 
     def test_set_theme_swallows_callback_errors(self):
         m = self._make_manager()
@@ -327,7 +327,7 @@ class TestPlotThemeManager:
         m.add_theme_change_callback(cb)  # second add should be ignored
         with patch.object(m, "_save_theme"):
             m.set_theme("dracula")
-        assert cb.call_count == 1
+        if not (cb.call_count == 1): raise ValueError(f"Assertion failed: { cb.call_count == 1 }")  # noqa: E701
 
     def test_remove_nonexistent_callback_safe(self):
         m = self._make_manager()
@@ -337,45 +337,45 @@ class TestPlotThemeManager:
     def test_get_colors_returns_dict(self):
         m = self._make_manager()
         colors = m.get_colors()
-        assert "primary" in colors
-        assert "secondary" in colors
-        assert "accent" in colors
-        assert "background" in colors
+        if not ("primary" in colors): raise ValueError(f"Assertion failed: { "primary" in colors }")  # noqa: E701
+        if not ("secondary" in colors): raise ValueError(f"Assertion failed: { "secondary" in colors }")  # noqa: E701
+        if not ("accent" in colors): raise ValueError(f"Assertion failed: { "accent" in colors }")  # noqa: E701
+        if not ("background" in colors): raise ValueError(f"Assertion failed: { "background" in colors }")  # noqa: E701
 
     def test_get_histogram_style(self):
         m = self._make_manager()
         style = m.get_histogram_style()
-        assert "color" in style
-        assert "alpha" in style
+        if not ("color" in style): raise ValueError(f"Assertion failed: { "color" in style }")  # noqa: E701
+        if not ("alpha" in style): raise ValueError(f"Assertion failed: { "alpha" in style }")  # noqa: E701
 
     def test_get_scatter_style(self):
         m = self._make_manager()
         style = m.get_scatter_style()
-        assert "c" in style
-        assert "s" in style
+        if not ("c" in style): raise ValueError(f"Assertion failed: { "c" in style }")  # noqa: E701
+        if not ("s" in style): raise ValueError(f"Assertion failed: { "s" in style }")  # noqa: E701
 
     def test_get_line_style(self):
         m = self._make_manager()
         style = m.get_line_style(index=0)
-        assert "color" in style
-        assert "linewidth" in style
+        if not ("color" in style): raise ValueError(f"Assertion failed: { "color" in style }")  # noqa: E701
+        if not ("linewidth" in style): raise ValueError(f"Assertion failed: { "linewidth" in style }")  # noqa: E701
 
     def test_get_line_style_index_wraps(self):
         m = self._make_manager()
         # Index larger than cycle length should wrap
         style = m.get_line_style(index=100)
-        assert "color" in style
+        if not ("color" in style): raise ValueError(f"Assertion failed: { "color" in style }")  # noqa: E701
 
     def test_get_fit_line_style(self):
         m = self._make_manager()
         style = m.get_fit_line_style()
-        assert "color" in style
-        assert style["linestyle"] == "-"
+        if not ("color" in style): raise ValueError(f"Assertion failed: { "color" in style }")  # noqa: E701
+        if not (style["linestyle"] == "-"): raise ValueError(f"Assertion failed: { style["linestyle"] == "-" }")  # noqa: E701
 
     def test_get_contour_style(self):
         m = self._make_manager()
         style = m.get_contour_style()
-        assert "cmap" in style
+        if not ("cmap" in style): raise ValueError(f"Assertion failed: { "cmap" in style }")  # noqa: E701
 
     def test_apply_to_matplotlib(self):
         m = self._make_manager()
@@ -426,7 +426,7 @@ class TestPlotThemeManager:
 
                 m = PlotThemeManager()
         # Just verify construction doesn't raise
-        assert m is not None
+        if not (m is not None): raise ValueError(f"Assertion failed: { m is not None }")  # noqa: E701
 
     def test_save_theme_import_error(self):
         """_save_theme swallows ImportError when PyQt6 is unavailable."""
@@ -449,7 +449,7 @@ class TestGetPlotThemeManager:
 
         with patch("plot_theme.manager.PlotThemeManager._load_saved_theme"):
             m = get_plot_theme_manager()
-        assert m is not None
+        if not (m is not None): raise ValueError(f"Assertion failed: { m is not None }")  # noqa: E701
 
     def test_get_plot_theme_manager_singleton(self):
         from plot_theme.manager import get_plot_theme_manager
@@ -457,7 +457,7 @@ class TestGetPlotThemeManager:
         with patch("plot_theme.manager.PlotThemeManager._load_saved_theme"):
             m1 = get_plot_theme_manager()
             m2 = get_plot_theme_manager()
-        assert m1 is m2
+        if not (m1 is m2): raise ValueError(f"Assertion failed: { m1 is m2 }")  # noqa: E701
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -469,17 +469,17 @@ class TestPackageInit:
     def test_package_exports_plot_theme(self):
         from plot_theme import PlotTheme
 
-        assert PlotTheme is not None
+        if not (PlotTheme is not None): raise ValueError(f"Assertion failed: { PlotTheme is not None }")  # noqa: E701
 
     def test_package_exports_get_theme(self):
         from plot_theme import get_theme
 
-        assert callable(get_theme)
+        if not (callable(get_theme)): raise ValueError(f"Assertion failed: { callable(get_theme) }")  # noqa: E701
 
     def test_package_exports_get_plot_theme_manager(self):
         from plot_theme import get_plot_theme_manager
 
-        assert callable(get_plot_theme_manager)
+        if not (callable(get_plot_theme_manager)): raise ValueError(f"Assertion failed: { callable(get_plot_theme_manager) }")  # noqa: E701
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -509,8 +509,8 @@ class TestIntegration함수:
             patch("plot_theme.manager.PlotThemeManager.apply_to_matplotlib"),
         ):
             m = apply_plot_theme("scientific_violet")
-        assert m is not None
-        assert m.current_theme_name == "scientific_violet"
+        if not (m is not None): raise ValueError(f"Assertion failed: { m is not None }")  # noqa: E701
+        if not (m.current_theme_name == "scientific_violet"): raise ValueError(f"Assertion failed: { m.current_theme_name == "scientific_violet" }")  # noqa: E701
 
     def test_apply_plot_theme_without_name(self):
         from plot_theme.integration import apply_plot_theme
@@ -520,7 +520,7 @@ class TestIntegration함수:
             patch("plot_theme.manager.PlotThemeManager.apply_to_matplotlib"),
         ):
             m = apply_plot_theme()
-        assert m is not None
+        if not (m is not None): raise ValueError(f"Assertion failed: { m is not None }")  # noqa: E701
 
     def test_style_axis_with_current_theme(self):
         from plot_theme.integration import style_axis
@@ -545,16 +545,16 @@ class TestIntegration함수:
 
         with self._make_manager_patch():
             colors = get_theme_colors()
-        assert "primary" in colors
-        assert "secondary" in colors
-        assert "contour_cmap" in colors
+        if not ("primary" in colors): raise ValueError(f"Assertion failed: { "primary" in colors }")  # noqa: E701
+        if not ("secondary" in colors): raise ValueError(f"Assertion failed: { "secondary" in colors }")  # noqa: E701
+        if not ("contour_cmap" in colors): raise ValueError(f"Assertion failed: { "contour_cmap" in colors }")  # noqa: E701
 
     def test_get_theme_colors_named_theme(self):
         from plot_theme.integration import get_theme_colors
 
         with self._make_manager_patch():
             colors = get_theme_colors("dracula")
-        assert colors["primary"] == "#bd93f9"
+        if not (colors["primary"] == "#bd93f9"): raise ValueError(f"Assertion failed: { colors["primary"] == "#bd93f9" }")  # noqa: E701
 
     def test_plot_theme_mixin_setup(self):
         from plot_theme.integration import PlotThemeMixin
@@ -568,7 +568,7 @@ class TestIntegration함수:
             patch("plot_theme.manager.PlotThemeManager.apply_to_matplotlib"),
         ):
             m = widget.setup_plot_theme(apply_immediately=True)
-        assert m is not None
+        if not (m is not None): raise ValueError(f"Assertion failed: { m is not None }")  # noqa: E701
 
     def test_plot_theme_mixin_without_immediate_apply(self):
         from plot_theme.integration import PlotThemeMixin
@@ -579,7 +579,7 @@ class TestIntegration함수:
         widget = MyWidget()
         with self._make_manager_patch():
             m = widget.setup_plot_theme(apply_immediately=False)
-        assert m is not None
+        if not (m is not None): raise ValueError(f"Assertion failed: { m is not None }")  # noqa: E701
 
     def test_plot_theme_mixin_set_plot_theme(self):
         from plot_theme.integration import PlotThemeMixin
@@ -592,7 +592,7 @@ class TestIntegration함수:
             widget.setup_plot_theme(apply_immediately=False)
             with patch.object(widget._plot_theme_manager, "_save_theme"):
                 widget.set_plot_theme("nord")
-        assert widget._plot_theme_manager.current_theme_name == "nord"
+        if not (widget._plot_theme_manager.current_theme_name == "nord"): raise ValueError(f"Assertion failed: { widget._plot_theme_manager.current_theme_name == "nord" }")  # noqa: E701
 
     def test_plot_theme_mixin_set_without_manager(self):
         from plot_theme.integration import PlotThemeMixin
@@ -613,7 +613,7 @@ class TestIntegration함수:
         with self._make_manager_patch():
             widget.setup_plot_theme(apply_immediately=False)
         colors = widget.get_plot_colors()
-        assert "primary" in colors
+        if not ("primary" in colors): raise ValueError(f"Assertion failed: { "primary" in colors }")  # noqa: E701
 
     def test_plot_theme_mixin_get_plot_colors_no_manager(self):
         from plot_theme.integration import PlotThemeMixin
@@ -623,7 +623,7 @@ class TestIntegration함수:
 
         widget = MyWidget()
         colors = widget.get_plot_colors()
-        assert colors == {}
+        if not (colors == {}): raise ValueError(f"Assertion failed: { colors == {} }")  # noqa: E701
 
     def test_plot_theme_mixin_get_manager(self):
         from plot_theme.integration import PlotThemeMixin
@@ -632,7 +632,7 @@ class TestIntegration함수:
             pass
 
         widget = MyWidget()
-        assert widget.get_plot_theme_manager() is None  # before setup
+        if not (widget.get_plot_theme_manager() is None  # before setup): raise ValueError(f"Assertion failed: { widget.get_plot_theme_manager() is None  # before setup }")
 
     def test_plot_theme_mixin_on_changed_callback(self):
         """_on_plot_theme_changed_internal calls subclass on_plot_theme_changed."""
@@ -656,7 +656,7 @@ class TestIntegration함수:
         theme = get_theme("nord")
         with patch.object(widget._plot_theme_manager, "apply_to_matplotlib"):
             widget._on_plot_theme_changed_internal(theme)
-        assert widget._callback_theme is not None
+        if not (widget._callback_theme is not None): raise ValueError(f"Assertion failed: { widget._callback_theme is not None }")  # noqa: E701
 
     def test_setup_plot_theme_for_app(self):
         from plot_theme.integration import setup_plot_theme_for_app
@@ -670,7 +670,7 @@ class TestIntegration함수:
             patch("plot_theme.integration.create_plot_theme_menu", return_value=None),
         ):
             m = setup_plot_theme_for_app(mock_app, mock_window, add_menu=True)
-        assert m is not None
+        if not (m is not None): raise ValueError(f"Assertion failed: { m is not None }")  # noqa: E701
 
     def test_setup_plot_theme_for_app_no_menu(self):
         from plot_theme.integration import setup_plot_theme_for_app
@@ -682,7 +682,7 @@ class TestIntegration함수:
             patch("plot_theme.manager.PlotThemeManager.apply_to_matplotlib"),
         ):
             m = setup_plot_theme_for_app(mock_app, mock_window, add_menu=False)
-        assert m is not None
+        if not (m is not None): raise ValueError(f"Assertion failed: { m is not None }")  # noqa: E701
 
     def test_create_plot_theme_menu_no_pyqt6(self):
         """When PyQt6 unavailable, returns None."""
@@ -693,7 +693,7 @@ class TestIntegration함수:
             "sys.modules", {"PyQt6": None, "PyQt6.QtGui": None, "PyQt6.QtWidgets": None}
         ):
             result = create_plot_theme_menu(mock_parent)
-        assert result is None
+        if not (result is None): raise ValueError(f"Assertion failed: { result is None }")  # noqa: E701
 
     def test_apply_to_matplotlib_with_update_existing(self):
         """apply_to_matplotlib(update_existing=True) iterates open figures."""

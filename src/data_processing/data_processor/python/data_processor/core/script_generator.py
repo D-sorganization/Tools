@@ -62,15 +62,14 @@ class ScriptGenerator:
         Returns:
             Generated script as string
         """
-        assert pipeline is not None, "pipeline must be provided"
+        if not (pipeline is not None):
+            raise ValueError("pipeline must be provided")
         lines: list[str] = []
 
         lines.extend(self._generate_script_header(pipeline))
 
         if include_imports:
-            lines.extend(
-                self._generate_imports(pipeline, include_logging, use_argparse)
-            )
+            lines.extend(self._generate_imports(pipeline, include_logging, use_argparse))
 
         if include_logging:
             lines.extend(self._generate_logging_setup())
@@ -119,7 +118,8 @@ class ScriptGenerator:
 
     def _generate_process_function(self, pipeline: ProcessingPipeline) -> list[str]:
         """Generate the main process_data function."""
-        assert pipeline is not None, "pipeline must be provided"
+        if not (pipeline is not None):
+            raise ValueError("pipeline must be provided")
         lines = [
             "",
             "def process_data(",
@@ -187,7 +187,8 @@ class ScriptGenerator:
         Returns:
             CLI command string
         """
-        assert pipeline is not None, "pipeline must be provided"
+        if not (pipeline is not None):
+            raise ValueError("pipeline must be provided")
         config = pipeline.to_dict()
         config_json = json.dumps(config)
 
@@ -216,7 +217,8 @@ class ScriptGenerator:
         Returns:
             Batch processing script
         """
-        assert pipeline is not None, "pipeline must be provided"
+        if not (pipeline is not None):
+            raise ValueError("pipeline must be provided")
         lines: list[str] = []
         lines.extend(self._generate_batch_header(pipeline))
         lines.extend(self._generate_batch_process_func(pipeline))
@@ -246,7 +248,8 @@ class ScriptGenerator:
 
     def _generate_batch_process_func(self, pipeline: ProcessingPipeline) -> list[str]:
         """Generate the process_single_file function for batch script."""
-        assert pipeline is not None, "pipeline must be provided"
+        if not (pipeline is not None):
+            raise ValueError("pipeline must be provided")
         lines = [
             "def process_single_file(input_path: str, output_dir: str) -> str:",
             '    """Process a single file."""',
@@ -280,7 +283,8 @@ class ScriptGenerator:
         input_patterns: list[str], output_dir: str, parallel: bool
     ) -> list[str]:
         """Generate the main function and entry point for batch script."""
-        assert input_patterns is not None, "input_patterns must be provided"
+        if not (input_patterns is not None):
+            raise ValueError("input_patterns must be provided")
         lines = [
             "def main():",
             f"    input_patterns = {input_patterns}",
@@ -343,7 +347,8 @@ class ScriptGenerator:
         Returns:
             Path to exported file
         """
-        assert pipeline is not None, "pipeline must be provided"
+        if not (pipeline is not None):
+            raise ValueError("pipeline must be provided")
         output_path = Path(output_path)
         config = pipeline.to_dict()
         config["generated_at"] = datetime.now().isoformat()
@@ -362,7 +367,8 @@ class ScriptGenerator:
         Returns:
             ProcessingPipeline object
         """
-        assert config_path is not None, "config_path must be provided"
+        if not (config_path is not None):
+            raise ValueError("config_path must be provided")
         with open(config_path) as f:
             config = json.load(f)
 
@@ -375,7 +381,8 @@ class ScriptGenerator:
         use_argparse: bool,
     ) -> list[str]:
         """Generate import statements based on pipeline operations."""
-        assert pipeline is not None, "pipeline must be provided"
+        if not (pipeline is not None):
+            raise ValueError("pipeline must be provided")
         imports: list[str] = [
             "from __future__ import annotations",
             "",
@@ -394,34 +401,25 @@ class ScriptGenerator:
 
         if OperationType.FILTER in operations:
             imports.append(
-                "from data_processor.vectorized_filter_engine"
-                " import VectorizedFilterEngine"
+                "from data_processor.vectorized_filter_engine" " import VectorizedFilterEngine"
             )
 
-        if (
-            OperationType.INTEGRATE in operations
-            or OperationType.DIFFERENTIATE in operations
-        ):
+        if OperationType.INTEGRATE in operations or OperationType.DIFFERENTIATE in operations:
             imports.append(
                 "from data_processor.core.signal_processing"
                 " import integrate_signals, differentiate_signals"
             )
 
         if OperationType.RESAMPLE in operations:
-            imports.append(
-                "from data_processor.core.signal_processing import resample_data"
-            )
+            imports.append("from data_processor.core.signal_processing import resample_data")
 
         if OperationType.CALCULATE in operations:
             imports.append(
-                "from data_processor.core.signal_processing"
-                " import apply_custom_variable"
+                "from data_processor.core.signal_processing" " import apply_custom_variable"
             )
 
         if OperationType.TRIM in operations:
-            imports.append(
-                "from data_processor.core.signal_processing import trim_time_range"
-            )
+            imports.append("from data_processor.core.signal_processing import trim_time_range")
 
         return imports
 
@@ -431,7 +429,8 @@ class ScriptGenerator:
         prefix: str,
     ) -> list[str]:
         """Generate code for a LOAD operation."""
-        assert params is not None, "params must be provided"
+        if not (params is not None):
+            raise ValueError("params must be provided")
         file_path = params.get("file_path", "input_path")
         file_format = params.get("file_format", "csv")
         reader_map = {
@@ -449,7 +448,8 @@ class ScriptGenerator:
         prefix: str,
     ) -> list[str]:
         """Generate code for a FILTER operation."""
-        assert params is not None, "params must be provided"
+        if not (params is not None):
+            raise ValueError("params must be provided")
         filter_type = params.get("filter_type")
         filter_params = params.get("filter_params", {})
         signals = params.get("signals")
@@ -472,7 +472,8 @@ class ScriptGenerator:
         prefix: str,
     ) -> list[str]:
         """Generate code for an EXPORT operation."""
-        assert params is not None, "params must be provided"
+        if not (params is not None):
+            raise ValueError("params must be provided")
         file_path = params.get("file_path", "output_path")
         file_format = params.get("file_format", "csv")
         writer_map = {
@@ -486,7 +487,8 @@ class ScriptGenerator:
 
     def _generate_step_code(self, step: ProcessingStep, indent: int = 0) -> list[str]:
         """Generate Python code for a processing step."""
-        assert step is not None, "step must be provided"
+        if not (step is not None):
+            raise ValueError("step must be provided")
         prefix = " " * indent
         params = step.parameters
 
@@ -499,17 +501,14 @@ class ScriptGenerator:
         elif step.operation == OperationType.CALCULATE:
             col_name = params.get("column_name")
             formula = params.get("formula")
-            return [
-                f"{prefix}df = apply_custom_variable(df, {col_name!r}, {formula!r})"
-            ]
+            return [f"{prefix}df = apply_custom_variable(df, {col_name!r}, {formula!r})"]
 
         elif step.operation == OperationType.RESAMPLE:
             time_col = params.get("time_column")
             rule = params.get("rule")
             method = params.get("method", "mean")
             return [
-                f"{prefix}df = resample_data("
-                f"df, {time_col!r}, {rule!r}, method={method!r})"
+                f"{prefix}df = resample_data(" f"df, {time_col!r}, {rule!r}, method={method!r})"
             ]
 
         elif step.operation == OperationType.INTEGRATE:

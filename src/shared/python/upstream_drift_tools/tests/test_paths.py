@@ -17,10 +17,7 @@ class TestGetRepoRoot:
         # We're running inside the Tools repo which has .git and pyproject.toml
         root = get_repo_root(Path(__file__).parent)
         assert root.exists()
-        assert any(
-            (root / marker).exists()
-            for marker in (".git", "pyproject.toml", "tools.json")
-        )
+        assert any((root / marker).exists() for marker in (".git", "pyproject.toml", "tools.json"))
 
     def test_finds_from_nested_dir(self):
         """Works from deeply nested dir."""

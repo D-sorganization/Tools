@@ -77,7 +77,8 @@ def validate_pressure_pa(value: float) -> tuple[bool, str]:
 
 def format_temperature(value: float, unit: str = "K") -> str:
     """Format temperature with units."""
-    assert value is not None, "value must be provided"
+    if not (value is not None):
+        raise ValueError("value must be provided")
     if unit == "C":
         return f"{value - 273.15:.2f} °C"
     return f"{value:.2f} K"
@@ -85,7 +86,8 @@ def format_temperature(value: float, unit: str = "K") -> str:
 
 def format_pressure(value: float, unit: str = "Pa") -> str:
     """Format pressure with units."""
-    assert value is not None, "value must be provided"
+    if not (value is not None):
+        raise ValueError("value must be provided")
     if unit == "bar":
         return f"{value / 1e5:.4f} bar"
     if unit == "kPa":
@@ -370,21 +372,24 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
 
     def _create_group(self, title: str) -> QGroupBox:
         """Create a styled group box."""
-        assert title is not None, "title must be provided"
+        if not (title is not None):
+            raise ValueError("title must be provided")
         group = QGroupBox(title)
         group.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
         return group
 
     def _create_label(self, text: str) -> QLabel:
         """Create a styled label."""
-        assert text is not None, "text must be provided"
+        if not (text is not None):
+            raise ValueError("text must be provided")
         label = QLabel(text)
         label.setStyleSheet(f"color: {COLORS['text']};")
         return label
 
     def _create_result_card(self, name: str, key: str, color: str) -> QFrame:
         """Create a result display card."""
-        assert name is not None, "name must be provided"
+        if not (name is not None):
+            raise ValueError("name must be provided")
         card = QFrame()
         card.setFrameShape(QFrame.Shape.StyledPanel)
         card.setMinimumHeight(60)
@@ -542,9 +547,7 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
             status_parts.append("Engine: Not available")
 
         self.engine_status.setText(" | ".join(status_parts))
-        self.engine_status.setStyleSheet(
-            f"color: {COLORS['subtext0']}; font-size: 10px;"
-        )
+        self.engine_status.setStyleSheet(f"color: {COLORS['subtext0']}; font-size: 10px;")
 
     def _get_temperature_k(self) -> float:
         """Get temperature in Kelvin from input."""
@@ -638,7 +641,8 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
     def _display_results(self, result: SteamProperties) -> None:
         """Display calculation results."""
         # Phase state
-        assert result is not None, "result must be provided"
+        if not (result is not None):
+            raise ValueError("result must be provided")
         phase_colors = {
             "liquid": COLORS["blue"],
             "vapor": COLORS["peach"],
@@ -647,14 +651,10 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         }
         phase_color = phase_colors.get(result.phase.lower(), COLORS["text"])
         self.phase_label.setText(result.phase.upper())
-        self.phase_label.setStyleSheet(
-            f"color: {phase_color}; font-size: 16px; font-weight: bold;"
-        )
+        self.phase_label.setStyleSheet(f"color: {phase_color}; font-size: 16px; font-weight: bold;")
 
         quality_text = (
-            f"Quality: {result.quality:.4f}"
-            if result.quality is not None
-            else "Quality: N/A"
+            f"Quality: {result.quality:.4f}" if result.quality is not None else "Quality: N/A"
         )
         self.quality_label.setText(quality_text)
 
@@ -669,25 +669,19 @@ class SteamEngineCalculatorWindow(BaseCalculatorWindow):
         self.result_labels["spec_vol"].setText(f"{result.specific_volume:.6f} m³/kg")
         self.result_labels["enthalpy"].setText(f"{result.enthalpy / 1000:.2f} kJ/kg")
         self.result_labels["entropy"].setText(f"{result.entropy / 1000:.4f} kJ/kg-K")
-        self.result_labels["int_energy"].setText(
-            f"{result.internal_energy / 1000:.2f} kJ/kg"
-        )
+        self.result_labels["int_energy"].setText(f"{result.internal_energy / 1000:.2f} kJ/kg")
         self.result_labels["cp"].setText(f"{result.cp:.2f} J/kg-K")
         self.result_labels["cv"].setText(f"{result.cv:.2f} J/kg-K")
 
         # Transport properties
         self.result_labels["sound"].setText(f"{result.speed_of_sound:.2f} m/s")
-        self.result_labels["therm_cond"].setText(
-            f"{result.thermal_conductivity:.6f} W/m-K"
-        )
+        self.result_labels["therm_cond"].setText(f"{result.thermal_conductivity:.6f} W/m-K")
         self.result_labels["dyn_visc"].setText(f"{result.dynamic_viscosity:.2e} Pa·s")
         self.result_labels["kin_visc"].setText(f"{result.kinematic_viscosity:.2e} m²/s")
 
         # Derived properties
         if result.compressibility_factor is not None:
-            self.result_labels["compress"].setText(
-                f"{result.compressibility_factor:.4f}"
-            )
+            self.result_labels["compress"].setText(f"{result.compressibility_factor:.4f}")
         else:
             self.result_labels["compress"].setText("--")
 

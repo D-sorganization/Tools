@@ -176,8 +176,7 @@ def load_body_preset(
 
     if preset_name_lower not in _BUILTIN_PRESETS:
         raise ValueError(
-            f"Unknown preset: {preset_name}. "
-            f"Available presets: {', '.join(PRESET_NAMES)}"
+            f"Unknown preset: {preset_name}. " f"Available presets: {', '.join(PRESET_NAMES)}"
         )
 
     preset_data = _BUILTIN_PRESETS[preset_name_lower].copy()
@@ -308,7 +307,8 @@ def save_preset_to_file(
         file_path: Output file path
         format: Output format (yaml or json)
     """
-    assert params is not None, "params must be provided"
+    if not (params is not None):
+        raise ValueError("params must be provided")
     import json
 
     import yaml

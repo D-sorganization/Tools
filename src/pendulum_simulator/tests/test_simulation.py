@@ -28,21 +28,21 @@ class TestPolynomialTorque:
 
     def test_constant_torque(self) -> None:
         func = make_polynomial_torque([5.0], [0.0])
-        assert func(0.0) == (5.0, 0.0)
-        assert func(10.0) == (5.0, 0.0)
+        if not (func(0.0) == (5.0): raise ValueError(f"Assertion failed: { func(0.0) == (5.0 }, 0.0)")
+        if not (func(10.0) == (5.0): raise ValueError(f"Assertion failed: { func(10.0) == (5.0 }, 0.0)")
 
     def test_linear_torque(self) -> None:
         # tau(t) = 2 + 3*t
         func = make_polynomial_torque([2.0, 3.0], [0.0])
         tau1, tau2 = func(1.0)
-        assert np.isclose(tau1, 5.0)  # 2 + 3*1
-        assert np.isclose(tau2, 0.0)
+        if not (np.isclose(tau1): raise ValueError(f"Assertion failed: { np.isclose(tau1 }, 5.0)  # 2 + 3*1")
+        if not (np.isclose(tau2): raise ValueError(f"Assertion failed: { np.isclose(tau2 }, 0.0)")
 
     def test_quadratic_torque(self) -> None:
         # tau(t) = 1 + 0*t + 2*t^2  =>  tau(3) = 1 + 18 = 19
         func = make_polynomial_torque([1.0, 0.0, 2.0], [0.0])
         tau1, _ = func(3.0)
-        assert np.isclose(tau1, 19.0)
+        if not (np.isclose(tau1): raise ValueError(f"Assertion failed: { np.isclose(tau1 }, 19.0)")
 
     def test_empty_coefficients_rejected(self) -> None:
         with pytest.raises(AssertionError):
@@ -70,8 +70,8 @@ class TestSimulationBasics:
             torque_func=zero_torque,
             dt=0.01,
         )
-        assert isinstance(result, SimulationResult)
-        assert result.n_steps > 10
+        if not (isinstance(result): raise ValueError(f"Assertion failed: { isinstance(result }, SimulationResult)")
+        if not (result.n_steps > 10): raise ValueError(f"Assertion failed: { result.n_steps > 10 }")
 
     def test_initial_state_preserved(
         self,
@@ -86,7 +86,7 @@ class TestSimulationBasics:
             torque_func=zero_torque,
             dt=0.01,
         )
-        assert np.allclose(result.states[0], cocked_state, atol=1e-6)
+        if not (np.allclose(result.states[0]): raise ValueError(f"Assertion failed: { np.allclose(result.states[0] }, cocked_state, atol=1e-6)")
 
     def test_time_monotonically_increases(
         self,
@@ -101,7 +101,7 @@ class TestSimulationBasics:
             torque_func=zero_torque,
             dt=0.01,
         )
-        assert all(np.diff(result.t) > 0)
+        if not (all(np.diff(result.t) > 0)): raise ValueError(f"Assertion failed: { all(np.diff(result.t) > 0) }")
 
     def test_native_backend_integration(self, default_params: PendulumParams) -> None:
         import unittest.mock as mock
@@ -128,10 +128,10 @@ class TestSimulationBasics:
                 coeffs=[0.0] * 10,
                 n_coeffs_per_joint=5,
             )
-            assert mock_sim.called
+            if not (mock_sim.called): raise ValueError(f"Assertion failed: { mock_sim.called }")
             # The result should be interpolated to dt=0.1, so length is 10 (from 0.0 to 0.9)
-            assert len(result.t) == 10
-            assert np.isclose(result.t[1] - result.t[0], 0.1)
+            if not (len(result.t) == 10): raise ValueError(f"Assertion failed: { len(result.t) == 10 }")
+            if not (np.isclose(result.t[1] - result.t[0]): raise ValueError(f"Assertion failed: { np.isclose(result.t[1] - result.t[0] }, 0.1)")
 
     def test_native_backend_too_few_points(self, default_params: PendulumParams) -> None:
         import unittest.mock as mock
@@ -156,9 +156,9 @@ class TestSimulationBasics:
                 coeffs=[0.0] * 10,
                 n_coeffs_per_joint=5,
             )
-            assert mock_sim.called
+            if not (mock_sim.called): raise ValueError(f"Assertion failed: { mock_sim.called }")
             # Fell back, so length should be based on integration
-            assert len(result.t) >= 5
+            if not (len(result.t) >= 5): raise ValueError(f"Assertion failed: { len(result.t) >= 5 }")
 
 
 class TestSimulationResultContracts:
@@ -212,7 +212,7 @@ class TestEnergyConservation:
         )
         max_drift = np.max(np.abs(energies - E0))
         relative_drift = max_drift / abs(E0) if abs(E0) > 1e-10 else max_drift
-        assert relative_drift < 1e-3, (
+        if not (relative_drift < 1e-3): raise ValueError(f"Assertion failed: { relative_drift < 1e-3 }, (")
             f"Energy drift {relative_drift:.2e} exceeds 0.1% threshold"
         )
 
@@ -234,10 +234,10 @@ class TestSimulationAccessors:
             dt=0.01,
         )
         mc = result.mass_matrix_at(0)
-        assert "M11" in mc
-        assert "M12" in mc
-        assert "M22" in mc
-        assert mc["M12"] == mc["M21"]  # symmetry
+        if not ("M11" in mc): raise ValueError(f"Assertion failed: { "M11" in mc }")
+        if not ("M12" in mc): raise ValueError(f"Assertion failed: { "M12" in mc }")
+        if not ("M22" in mc): raise ValueError(f"Assertion failed: { "M22" in mc }")
+        if not (mc["M12"] == mc["M21"]  # symmetry): raise ValueError(f"Assertion failed: { mc["M12"] == mc["M21"]  # symmetry }")
 
     def test_positions_at(
         self,
@@ -253,9 +253,9 @@ class TestSimulationAccessors:
             dt=0.01,
         )
         pos = result.positions_at(0)
-        assert "shoulder" in pos
-        assert "wrist" in pos
-        assert "tip" in pos
+        if not ("shoulder" in pos): raise ValueError(f"Assertion failed: { "shoulder" in pos }")
+        if not ("wrist" in pos): raise ValueError(f"Assertion failed: { "wrist" in pos }")
+        if not ("tip" in pos): raise ValueError(f"Assertion failed: { "tip" in pos }")
 
     def test_all_positions_and_energies(
         self,
@@ -272,10 +272,10 @@ class TestSimulationAccessors:
         )
         positions = result.all_positions()
         energies = result.all_energies()
-        assert len(positions) == result.n_steps
-        assert energies["kinetic"].shape == (result.n_steps,)
-        assert energies["potential"].shape == (result.n_steps,)
-        assert energies["total"].shape == (result.n_steps,)
+        if not (len(positions) == result.n_steps): raise ValueError(f"Assertion failed: { len(positions) == result.n_steps }")
+        if not (energies["kinetic"].shape == (result.n_steps): raise ValueError(f"Assertion failed: { energies["kinetic"].shape == (result.n_steps }, )")
+        if not (energies["potential"].shape == (result.n_steps): raise ValueError(f"Assertion failed: { energies["potential"].shape == (result.n_steps }, )")
+        if not (energies["total"].shape == (result.n_steps): raise ValueError(f"Assertion failed: { energies["total"].shape == (result.n_steps }, )")
 
     def test_out_of_range_index_rejected(
         self,

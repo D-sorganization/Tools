@@ -22,9 +22,7 @@ def test_calculate_mixture_properties(engine):
 
 def test_calculate_water_dropout(engine):
     # test water dropout logic
-    res = engine.calculate_water_dropout(
-        temperature=300.0, pressure=10.0, water_content=5.0
-    )
+    res = engine.calculate_water_dropout(temperature=300.0, pressure=10.0, water_content=5.0)
     assert "water_vapor_pressure" in res
     assert "water_dropout" in res
 

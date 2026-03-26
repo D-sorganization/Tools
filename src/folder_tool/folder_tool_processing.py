@@ -75,7 +75,8 @@ class ProcessingMixin(AnalysisMixin, ArchiveMixin, UIProcessingMixin):
 
     def _run_destination_workflow(self, mode: str) -> None:
         """Run source-to-destination workflow (combine, flatten, prune)."""
-        assert mode is not None, "mode must be provided"
+        if not (mode is not None):
+            raise ValueError("mode must be provided")
         if not self.validate_inputs(check_destination=True):
             return
 
@@ -146,7 +147,8 @@ class ProcessingMixin(AnalysisMixin, ArchiveMixin, UIProcessingMixin):
 
     def _run_post_processing(self, final_summary: str, backup_path: str | None) -> str:
         """Run post-processing steps (dedup, zip, backup note)."""
-        assert final_summary is not None, "final_summary must be provided"
+        if not (final_summary is not None):
+            raise ValueError("final_summary must be provided")
         if self.deduplicate_var.get():
             try:
                 self.update_progress(70, "Deduplicating files...")
@@ -161,9 +163,7 @@ class ProcessingMixin(AnalysisMixin, ArchiveMixin, UIProcessingMixin):
             try:
                 self.update_progress(85, "Creating ZIP archive...")
                 zip_path = self.create_output_zip()
-                final_summary += (
-                    f"\n\n--- ZIP Archive Created ---\nLocation: {zip_path}"
-                )
+                final_summary += f"\n\n--- ZIP Archive Created ---\nLocation: {zip_path}"
             except OSError as e:
                 final_summary += f"\n\n--- ZIP Creation FAILED: {e}"
 

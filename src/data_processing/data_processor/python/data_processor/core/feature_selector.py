@@ -44,7 +44,8 @@ class FeatureSelector:
         Returns:
             SelectionResult with selected features
         """
-        assert features is not None, "features must be provided"
+        if not (features is not None):
+            raise ValueError("features must be provided")
         threshold = threshold or self.config.correlation_threshold
         features = np.atleast_2d(features)
         n_features = features.shape[1]
@@ -76,9 +77,7 @@ class FeatureSelector:
                         avg_corr_j = np.mean(np.abs(corr_matrix[j, :]))
                         to_remove.add(j if avg_corr_i <= avg_corr_j else i)
 
-        selected_indices = np.array(
-            [i for i in range(n_features) if i not in to_remove]
-        )
+        selected_indices = np.array([i for i in range(n_features) if i not in to_remove])
         selected_names = [feature_names[i] for i in selected_indices]
         removed_names = [feature_names[i] for i in to_remove]
 
@@ -113,7 +112,8 @@ class FeatureSelector:
         Returns:
             SelectionResult with selected features
         """
-        assert features is not None, "features must be provided"
+        if not (features is not None):
+            raise ValueError("features must be provided")
         threshold = threshold or self.config.variance_threshold
         features = np.atleast_2d(features)
 
@@ -126,9 +126,7 @@ class FeatureSelector:
         selected_names = [feature_names[i] for i in selected_indices]
         removed_names = [feature_names[i] for i, m in enumerate(mask) if not m]
 
-        scores = {
-            feature_names[i]: float(variances[i]) for i in range(len(feature_names))
-        }
+        scores = {feature_names[i]: float(variances[i]) for i in range(len(feature_names))}
 
         return SelectionResult(
             selected_indices=selected_indices,
@@ -158,7 +156,8 @@ class FeatureSelector:
         Returns:
             SelectionResult with selected features
         """
-        assert features is not None, "features must be provided"
+        if not (features is not None):
+            raise ValueError("features must be provided")
         features = np.atleast_2d(features)
         n_features = features.shape[1]
         k = k or n_features // 2
@@ -172,9 +171,7 @@ class FeatureSelector:
         # Sort and select top-k
         sorted_features = sorted(mi_scores.items(), key=lambda x: x[1], reverse=True)
         selected_names = [name for name, _ in sorted_features[:k]]
-        selected_indices = np.array(
-            [feature_names.index(name) for name in selected_names]
-        )
+        selected_indices = np.array([feature_names.index(name) for name in selected_names])
         removed_names = [name for name, _ in sorted_features[k:]]
 
         return SelectionResult(
@@ -189,7 +186,8 @@ class FeatureSelector:
 
     def _mutual_information(self, x: np.ndarray, y: np.ndarray) -> float:
         """Compute mutual information (simplified binning approach)."""
-        assert x is not None, "x must be provided"
+        if not (x is not None):
+            raise ValueError("x must be provided")
         n_bins = self.config.n_bins
 
         # Discretize
@@ -208,9 +206,7 @@ class FeatureSelector:
         for i in range(n_bins):
             for j in range(n_bins):
                 if joint_prob[i, j] > 0 and x_prob[i] > 0 and y_prob[j] > 0:
-                    mi += joint_prob[i, j] * np.log2(
-                        joint_prob[i, j] / (x_prob[i] * y_prob[j])
-                    )
+                    mi += joint_prob[i, j] * np.log2(joint_prob[i, j] / (x_prob[i] * y_prob[j]))
 
         return max(0, mi)
 
@@ -232,16 +228,15 @@ def select_features(
     Returns:
         SelectionResult with selected features
     """
-    assert features is not None, "features must be provided"
+    if not (features is not None):
+        raise ValueError("features must be provided")
     selector = FeatureSelector()
 
     if method == SelectionMethod.CORRELATION or method == "correlation":
         return selector.select_by_correlation(features, feature_names, target)
     elif method == SelectionMethod.VARIANCE or method == "variance":
         return selector.select_by_variance(features, feature_names)
-    elif (
-        method == SelectionMethod.MUTUAL_INFO or method == "mutual_info"
-    ) and target is not None:
+    elif (method == SelectionMethod.MUTUAL_INFO or method == "mutual_info") and target is not None:
         return selector.select_by_mutual_info(features, target, feature_names)
     else:
         return selector.select_by_correlation(features, feature_names, target)

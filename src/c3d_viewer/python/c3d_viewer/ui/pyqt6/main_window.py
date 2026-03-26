@@ -357,9 +357,7 @@ class C3DViewerWindow(QMainWindow):
         self.trajectory_text = QTextEdit()
         self.trajectory_text.setReadOnly(True)
         self.trajectory_text.setMaximumHeight(150)
-        self.trajectory_text.setPlaceholderText(
-            "Select markers to view trajectory statistics..."
-        )
+        self.trajectory_text.setPlaceholderText("Select markers to view trajectory statistics...")
         preview_layout.addWidget(self.trajectory_text)
 
         preview_btn = QPushButton("Analyze Selected Markers")
@@ -592,13 +590,15 @@ class C3DViewerWindow(QMainWindow):
 
     def _update_marker_list(self, labels: list[str]) -> None:
         """Update the marker list widget."""
-        assert labels is not None, "labels must be provided"
+        if not (labels is not None):
+            raise ValueError("labels must be provided")
         self.marker_list.clear()
         self.marker_list.addItems(labels)
 
     def _update_analog_table(self, labels: list[str], units: list[str]) -> None:
         """Update the analog channels table."""
-        assert labels is not None, "labels must be provided"
+        if not (labels is not None):
+            raise ValueError("labels must be provided")
         self.analog_table.setRowCount(len(labels))
         for row, (label, unit) in enumerate(zip(labels, units, strict=True)):
             self.analog_table.setItem(row, 0, QTableWidgetItem(label))
@@ -648,8 +648,7 @@ class C3DViewerWindow(QMainWindow):
 
         except ImportError:
             self.force_text.setPlainText(
-                "Force plate analysis requires ezc3d library.\n"
-                "Install with: pip install ezc3d"
+                "Force plate analysis requires ezc3d library.\n" "Install with: pip install ezc3d"
             )
 
     def _export_points(self) -> None:
@@ -678,7 +677,8 @@ class C3DViewerWindow(QMainWindow):
 
     def _do_export(self, data_type: str) -> None:
         """Perform the export operation."""
-        assert data_type is not None, "data_type must be provided"
+        if not (data_type is not None):
+            raise ValueError("data_type must be provided")
         if self._current_file is None:
             self.export_status.setPlainText("No file loaded.")
             return

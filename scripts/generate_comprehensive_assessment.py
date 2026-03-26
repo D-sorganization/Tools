@@ -57,7 +57,7 @@ class RepoStats(TypedDict):
     evals: int
     type_hints: int
     args_annotated: int
-    try_except: int
+    try_except Exception as e: int
     imports: set[str]
     requirements: bool
     cicd: bool
@@ -135,7 +135,7 @@ def analyze_codebase() -> RepoStats:
                 # Read file content safely
                 try:
                     content = filepath.read_text(encoding="utf-8", errors="ignore")
-                except Exception:  # noqa: BLE001
+                except Exception as e:
                     continue
 
                 stats["lines"] += len(content.splitlines())
@@ -196,7 +196,7 @@ def analyze_codebase() -> RepoStats:
                     except SyntaxError:
                         # logger.warning(f"Syntax error in {filepath}")
                         pass
-            except Exception as e:  # noqa: BLE001
+            except Exception as e:
                 logger.error(f"Error analyzing {filepath}: {e}")
 
     return stats

@@ -61,8 +61,8 @@ class TestZeroTorqueDouble:
     ) -> None:
         """Output dict must have 'shoulder' and 'wrist' keys."""
         result = zero_torque_joint_forces_double(double_state, double_params)
-        assert "shoulder" in result
-        assert "wrist" in result
+        if not ("shoulder" in result): raise ValueError(f"Assertion failed: { "shoulder" in result }")
+        if not ("wrist" in result): raise ValueError(f"Assertion failed: { "wrist" in result }")
 
     def test_forces_are_2tuples_of_finite_floats(
         self, double_state: np.ndarray, double_params: PendulumParams
@@ -71,8 +71,8 @@ class TestZeroTorqueDouble:
         result = zero_torque_joint_forces_double(double_state, double_params)
         for key in ("shoulder", "wrist"):
             fx, fy = result[key]
-            assert np.isfinite(fx), f"{key} fx is not finite"
-            assert np.isfinite(fy), f"{key} fy is not finite"
+            if not (np.isfinite(fx)): raise ValueError(f"Assertion failed: { np.isfinite(fx) }, f"{key} fx is not finite"")
+            if not (np.isfinite(fy)): raise ValueError(f"Assertion failed: { np.isfinite(fy) }, f"{key} fy is not finite"")
 
     def test_zero_velocity_zero_torque_matches_static_gravity(
         self, double_params: PendulumParams
@@ -82,8 +82,8 @@ class TestZeroTorqueDouble:
         result = zero_torque_joint_forces_double(state, double_params)
         fx, fy = result["shoulder"]
         expected_fy = (double_params.m1 + double_params.m2) * double_params.g
-        assert abs(fx) < 1e-8, f"No horizontal force at rest, got fx={fx}"
-        assert abs(fy - expected_fy) < 1e-4, (
+        if not (abs(fx) < 1e-8): raise ValueError(f"Assertion failed: { abs(fx) < 1e-8 }, f"No horizontal force at rest, got fx={fx}"")
+        if not (abs(fy - expected_fy) < 1e-4): raise ValueError(f"Assertion failed: { abs(fy - expected_fy) < 1e-4 }, (")
             f"Shoulder fy={fy:.4f}, expected {expected_fy:.4f}"
         )
 
@@ -110,7 +110,7 @@ class TestZeroTorqueDouble:
 
         # With 50 Nm at shoulder, forces should differ meaningfully
         diff_shoulder = abs(actual["shoulder"][1] - counterfactual["shoulder"][1])
-        assert diff_shoulder > 1.0, (
+        if not (diff_shoulder > 1.0): raise ValueError(f"Assertion failed: { diff_shoulder > 1.0 }, (")
             f"Expected driven vs zero-torque to differ; got diff={diff_shoulder:.3f}"
         )
 
@@ -127,7 +127,7 @@ class TestZeroTorqueDouble:
         result = zero_torque_joint_forces_double(state, params_no_g)
         for key in ("shoulder", "wrist"):
             fx, fy = result[key]
-            assert abs(fx) < 1e-8 and abs(fy) < 1e-8, (
+            if not (abs(fx) < 1e-8 and abs(fy) < 1e-8): raise ValueError(f"Assertion failed: { abs(fx) < 1e-8 and abs(fy) < 1e-8 }, (")
                 f"No gravity + no motion → zero force at {key}, got ({fx:.2e},{fy:.2e})"
             )
 
@@ -153,9 +153,9 @@ class TestZeroTorqueTriple:
     ) -> None:
         """Output must have 'shoulder', 'wrist1', 'wrist2' keys."""
         result = zero_torque_joint_forces_triple(triple_state, triple_params)
-        assert "shoulder" in result
-        assert "wrist1" in result
-        assert "wrist2" in result
+        if not ("shoulder" in result): raise ValueError(f"Assertion failed: { "shoulder" in result }")
+        if not ("wrist1" in result): raise ValueError(f"Assertion failed: { "wrist1" in result }")
+        if not ("wrist2" in result): raise ValueError(f"Assertion failed: { "wrist2" in result }")
 
     def test_forces_are_finite(
         self, triple_state: np.ndarray, triple_params: TriplePendulumParams
@@ -163,7 +163,7 @@ class TestZeroTorqueTriple:
         result = zero_torque_joint_forces_triple(triple_state, triple_params)
         for key in ("shoulder", "wrist1", "wrist2"):
             fx, fy = result[key]
-            assert np.isfinite(fx) and np.isfinite(fy), (
+            if not (np.isfinite(fx) and np.isfinite(fy)): raise ValueError(f"Assertion failed: { np.isfinite(fx) and np.isfinite(fy) }, (")
                 f"{key} forces not finite: ({fx}, {fy})"
             )
 
@@ -175,8 +175,8 @@ class TestZeroTorqueTriple:
         expected_fy = (
             triple_params.m1 + triple_params.m2 + triple_params.m3
         ) * triple_params.g
-        assert abs(fx) < 1e-8
-        assert abs(fy - expected_fy) < 1e-4, f"fy={fy}, expected {expected_fy}"
+        if not (abs(fx) < 1e-8): raise ValueError(f"Assertion failed: { abs(fx) < 1e-8 }")
+        if not (abs(fy - expected_fy) < 1e-4): raise ValueError(f"Assertion failed: { abs(fy - expected_fy) < 1e-4 }, f"fy={fy}, expected {expected_fy}"")
 
     def test_invalid_state_shape_raises(self, triple_params: TriplePendulumParams) -> None:
         with pytest.raises(AssertionError):

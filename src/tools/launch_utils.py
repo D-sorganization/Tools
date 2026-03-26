@@ -24,9 +24,7 @@ def get_repo_root() -> Path:
         # Minimal fallback -- uses same markers as canonical implementation
         current = Path(__file__).resolve().parent
         for _ in range(10):
-            if any(
-                (current / m).exists() for m in (".git", "pyproject.toml", "tools.json")
-            ):
+            if any((current / m).exists() for m in (".git", "pyproject.toml", "tools.json")):
                 return current
             parent = current.parent
             if parent == current:
@@ -100,9 +98,7 @@ def validate_and_sanitize_path(path_str: str, repo_root: Path) -> Path:
     return full_path
 
 
-def _stream_reader(
-    stream: IO[str], prefix: str, log_func: Callable[[str], None]
-) -> None:
+def _stream_reader(stream: IO[str], prefix: str, log_func: Callable[[str], None]) -> None:
     """Read lines from *stream* and forward them to *log_func* with *prefix*.
 
     Extracted from ``launch_python_tool`` to satisfy SRP and enable unit testing.
@@ -131,7 +127,8 @@ def launch_python_tool(
     Issue #930: the stream-reading closure has been extracted to the
     module-level ``_stream_reader`` helper for testability.
     """
-    assert path is not None, "path must be provided"
+    if not (path is not None):
+        raise ValueError("path must be provided")
     require(isinstance(path, Path), "path must be a Path")
     require(
         bool(isinstance(tool_name, str) and tool_name),
@@ -189,7 +186,8 @@ def launch_matlab_tool(
     log_func: Callable[[str], None] | None = None,
 ) -> None:
     """Launch a MATLAB tool."""
-    assert path is not None, "path must be provided"
+    if not (path is not None):
+        raise ValueError("path must be provided")
     require(isinstance(path, Path), "path must be a Path")
     require(
         bool(isinstance(tool_name, str) and tool_name),
@@ -231,7 +229,8 @@ def launch_octave_tool(
     log_func: Callable[[str], None] | None = None,
 ) -> None:
     """Launch an Octave tool."""
-    assert path is not None, "path must be provided"
+    if not (path is not None):
+        raise ValueError("path must be provided")
     require(isinstance(path, Path), "path must be a Path")
     require(
         bool(isinstance(tool_name, str) and tool_name),
@@ -266,11 +265,10 @@ def launch_octave_tool(
             raise LaunchError(f"Could not open file in editor: {e}") from e
 
 
-def launch_browser_tool(
-    path: Path, log_func: Callable[[str], None] | None = None
-) -> None:
+def launch_browser_tool(path: Path, log_func: Callable[[str], None] | None = None) -> None:
     """Launch a browser tool."""
-    assert path is not None, "path must be provided"
+    if not (path is not None):
+        raise ValueError("path must be provided")
     require(isinstance(path, Path), "path must be a Path")
     try:
         uri = path.as_uri()
@@ -288,7 +286,8 @@ def launch_batch_tool(
     log_func: Callable[[str], None] | None = None,
 ) -> None:
     """Launch a batch script."""
-    assert path is not None, "path must be provided"
+    if not (path is not None):
+        raise ValueError("path must be provided")
     require(isinstance(path, Path), "path must be a Path")
     require(
         bool(isinstance(tool_name, str) and tool_name),

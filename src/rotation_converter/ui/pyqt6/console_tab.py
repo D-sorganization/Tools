@@ -151,11 +151,10 @@ class CommandConsoleTab(QWidget):
         if err:
             self._print_output(err, is_error=True)
 
-    def _print_output(
-        self, text: str, is_error: bool = False, is_input: bool = False
-    ) -> None:
+    def _print_output(self, text: str, is_error: bool = False, is_input: bool = False) -> None:
         """Prints text to the console, preserving whitespace and colour."""
-        assert text is not None, "text must be provided"
+        if not (text is not None):
+            raise ValueError("text must be provided")
         cursor = self._output.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.End)
 
