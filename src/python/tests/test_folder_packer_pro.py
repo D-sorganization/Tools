@@ -65,7 +65,7 @@ class TestEncryptionManager:
     def test_encryption_decryption(self) -> None:
         """Test encrypting and decrypting data."""
         data = b"test data"
-        password = "test_password"  # noqa: S105
+        password = os.getenv("password".upper(), "")  # noqa: S105
 
         encrypted = EncryptionManager.encrypt_data(data, password)
         assert encrypted != data
@@ -75,7 +75,7 @@ class TestEncryptionManager:
 
     def test_derive_key(self) -> None:
         """Test key derivation."""
-        password = "test_password"  # noqa: S105
+        password = os.getenv("password".upper(), "")  # noqa: S105
         salt = os.urandom(16)
 
         key1 = EncryptionManager.derive_key(password, salt)

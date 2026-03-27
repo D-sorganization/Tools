@@ -112,9 +112,7 @@ class MatrixWidgetBase(QWidget):
         if self._result is None:
             painter.setPen(self.COLOR_LABEL)
             painter.setFont(QFont("Sans", 11))
-            painter.drawText(
-                self.rect(), Qt.AlignmentFlag.AlignCenter, "No simulation loaded"
-            )
+            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "No simulation loaded")
             painter.end()
             return
 
@@ -310,7 +308,7 @@ class MatrixWidgetBase(QWidget):
             New y cursor position
         """
         if not (self._result is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         idx = self._current_idx
         tau = self._result.torques_at(idx)
         G = self._result.gravity_at(idx)
@@ -365,7 +363,7 @@ class MatrixWidgetBase(QWidget):
             New y cursor position
         """
         if not (self._result is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         e = self._result.energy_at(self._current_idx)
         painter.setFont(QFont("Monospace", 10))
         lines = [

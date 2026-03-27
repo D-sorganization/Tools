@@ -208,9 +208,9 @@ def run_simulation(
     if not (initial_state.shape == (4,)):
         raise ValueError(f"initial_state.shape mismatch, expected (4,)")
     if not (all(np.isfinite(initial_state))):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
     if not (t_end > 0 and 0 < dt < t_end):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
 
     t, states = None, None
     if (
@@ -268,5 +268,5 @@ def run_simulation(
     )
 
     if not (result.n_steps >= 2):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
     return result

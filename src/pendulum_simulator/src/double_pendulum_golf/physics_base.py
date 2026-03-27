@@ -132,9 +132,7 @@ def clamp_torque_ndof(tau: np.ndarray, limits: np.ndarray) -> np.ndarray:
         raise ValueError(f"limits shape {limits.shape} vs tau {tau.shape}")
     if not (np.all(limits > 0)):
         raise ValueError("Torque limits must be positive")
-    result: npt.NDArray[np.float64] = np.asarray(
-        np.clip(tau, -limits, limits), dtype=np.float64
-    )
+    result: npt.NDArray[np.float64] = np.asarray(np.clip(tau, -limits, limits), dtype=np.float64)
     return result
 
 

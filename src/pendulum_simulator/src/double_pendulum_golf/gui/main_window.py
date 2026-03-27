@@ -370,9 +370,7 @@ class MainWindow(QMainWindow):
         widget = panel.pendulum_widget
         new_state = not widget._3d_mode
         widget.set_3d_mode(new_state)
-        self.statusBar().showMessage(
-            f"3D mode {'enabled' if new_state else 'disabled'}", 2000
-        )
+        self.statusBar().showMessage(f"3D mode {'enabled' if new_state else 'disabled'}", 2000)
 
     def _on_shortcut_toggle_forces(self) -> None:
         """F key: toggle force vector display."""
@@ -380,9 +378,7 @@ class MainWindow(QMainWindow):
         widget = panel.pendulum_widget
         new_state = not widget._show_forces
         widget.set_show_forces(new_state)
-        self.statusBar().showMessage(
-            f"Forces {'shown' if new_state else 'hidden'}", 2000
-        )
+        self.statusBar().showMessage(f"Forces {'shown' if new_state else 'hidden'}", 2000)
 
     def _on_shortcut_toggle_gravity(self) -> None:
         """G key: toggle gravity display indicator."""
@@ -390,9 +386,7 @@ class MainWindow(QMainWindow):
         widget = panel.pendulum_widget
         new_state = not widget._gravity_on
         widget.set_gravity_on(new_state)
-        self.statusBar().showMessage(
-            f"Gravity {'on' if new_state else 'off'}", 2000
-        )
+        self.statusBar().showMessage(f"Gravity {'on' if new_state else 'off'}", 2000)
 
     def _on_shortcut_reset_view(self) -> None:
         """Ctrl+0: reset zoom and pan."""

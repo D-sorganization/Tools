@@ -72,9 +72,7 @@ def clubhead_speed_objective(
         raise ValueError(f"dt must be positive, got {dt}")
     if not (initial_state.shape == (16,)):
         raise ValueError(f"Expected (16,) state, got {initial_state.shape}")
-    sol = run_single_simulation_jax(
-        params, initial_state, t_end, torque_coeffs, alpha, beta, dt
-    )
+    sol = run_single_simulation_jax(params, initial_state, t_end, torque_coeffs, alpha, beta, dt)
     final_state = extract_final_state(sol)
 
     q = final_state[:8]
@@ -124,9 +122,7 @@ def clubhead_velocity_at_final_time(
         raise ValueError(f"dt must be positive, got {dt}")
     if not (initial_state.shape == (16,)):
         raise ValueError(f"Expected (16,) state, got {initial_state.shape}")
-    sol = run_single_simulation_jax(
-        params, initial_state, t_end, torque_coeffs, alpha, beta, dt
-    )
+    sol = run_single_simulation_jax(params, initial_state, t_end, torque_coeffs, alpha, beta, dt)
     final_state = extract_final_state(sol)
 
     q = final_state[:8]
@@ -286,9 +282,7 @@ def optimize_simple_torque_profile(
     @jax.jit
     @jax.value_and_grad
     def loss_fn(coeffs):
-        return clubhead_speed_objective(
-            coeffs, params, initial_state, t_end, alpha, beta, dt
-        )
+        return clubhead_speed_objective(coeffs, params, initial_state, t_end, alpha, beta, dt)
 
     history = []
 
@@ -304,7 +298,7 @@ def optimize_simple_torque_profile(
             logger.info("Iteration %d/%d: loss = %.6f", i + 1, n_iterations, loss_val)
 
     if not (len(history) == n_iterations):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
     return torque_coeffs, history
 
 
@@ -341,9 +335,7 @@ def compute_gradient_via_finite_difference(
         raise ValueError(f"eps must be positive, got {eps}")
     grad = jnp.zeros(7)
 
-    f0 = clubhead_speed_objective(
-        torque_coeffs, params, initial_state, t_end, alpha, beta, dt
-    )
+    f0 = clubhead_speed_objective(torque_coeffs, params, initial_state, t_end, alpha, beta, dt)
 
     for i in range(7):
         torque_plus = torque_coeffs.at[i].add(eps)

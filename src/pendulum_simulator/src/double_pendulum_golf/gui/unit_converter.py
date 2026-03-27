@@ -232,7 +232,7 @@ def _get_factor(category: UnitCategory, unit_label: str) -> float:
     for label, factor in _UNIT_OPTIONS[category]:
         if label == unit_label:
             if not (factor > 0):
-                raise ValueError('DbC Blocked: Precondition failed.')
+                raise ValueError("DbC Blocked: Precondition failed.")
             return factor
     raise KeyError(f"Unknown unit '{unit_label}' for {category.value}")
 
