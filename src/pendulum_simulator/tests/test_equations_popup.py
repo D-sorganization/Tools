@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for the mathematical equations popup window."""
 
 import pytest
@@ -7,7 +5,7 @@ from PyQt6.QtWidgets import QDialog, QTextBrowser, QPushButton
 from double_pendulum_golf.gui.equations_popup import show_equations_popup, EquationTopic
 
 
-def test_show_equations_popup(qapp, qtbot) -> Any:
+def test_show_equations_popup(qapp, qtbot):
     # Test valid topic
     dlg = show_equations_popup(None, EquationTopic.MASS_MATRIX)
 
@@ -31,8 +29,6 @@ def test_show_equations_popup(qapp, qtbot) -> Any:
     assert "Mass (Inertia) Matrix" in cb.text()
 
 
-def test_show_equations_popup_invalid_topic(qapp) -> Any:
-    with pytest.raises(AssertionError):
 def test_show_equations_popup_invalid_topic(qapp):
     with pytest.raises((ValueError, TypeError)):
         show_equations_popup(None, "INVALID_TOPIC")
