@@ -258,7 +258,9 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
         self.mass_value_input.setRange(0, 1e12)
         self.mass_value_input.setDecimals(6)
         self.mass_value_input.setValue(1000.0)
-        self.mass_value_input.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.mass_value_input.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
+        )
         input_layout.addWidget(self.mass_value_input, 0, 1)
 
         input_layout.addWidget(QLabel("From Unit:"), 1, 0)
@@ -318,7 +320,9 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
         self.molar_value_input.setRange(0, 1e12)
         self.molar_value_input.setDecimals(6)
         self.molar_value_input.setValue(100.0)
-        self.molar_value_input.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.molar_value_input.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
+        )
         input_layout.addWidget(self.molar_value_input, 0, 1)
 
         input_layout.addWidget(QLabel("From Unit:"), 1, 0)
@@ -398,7 +402,9 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
         self.vol_value_input.setRange(0, 1e12)
         self.vol_value_input.setDecimals(6)
         self.vol_value_input.setValue(1000.0)
-        self.vol_value_input.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.vol_value_input.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
+        )
         input_layout.addWidget(self.vol_value_input, 0, 1)
 
         input_layout.addWidget(QLabel("From Unit:"), 1, 0)
@@ -496,7 +502,9 @@ class FlowRateConverterWindow(BaseCalculatorWindow):
 
             result = molar_to_molar(value, from_unit, to_unit)
             self.molar_result_label.setText(f"{result:,.6g} {to_unit}")
-            self.molar_result_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['green']};")
+            self.molar_result_label.setStyleSheet(
+                f"color: {CATPPUCCIN_MOCHA['green']};"
+            )
         except ImportError as e:
             self.molar_result_label.setText(f"Error: {e}")
             self.molar_result_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['red']};")

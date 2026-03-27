@@ -89,10 +89,14 @@ class TransformsMixin:
             result = np.zeros_like(data)
             for i in range(data.shape[0]):
                 if data.ndim == 2:
-                    warp_factors = self._generate_warp_curve(data.shape[1], sigma, knots)
+                    warp_factors = self._generate_warp_curve(
+                        data.shape[1], sigma, knots
+                    )
                     result[i] = data[i] * warp_factors
                 else:
-                    warp_factors = self._generate_warp_curve(data.shape[1], sigma, knots)
+                    warp_factors = self._generate_warp_curve(
+                        data.shape[1], sigma, knots
+                    )
                     result[i] = data[i] * warp_factors[:, np.newaxis]
             return result
 
@@ -123,14 +127,18 @@ class TransformsMixin:
                     result[i] = self._window_warp_1d(data[i], ratio, scales)
                 else:
                     for j in range(data.shape[2]):
-                        result[i, :, j] = self._window_warp_1d(data[i, :, j], ratio, scales)
+                        result[i, :, j] = self._window_warp_1d(
+                            data[i, :, j], ratio, scales
+                        )
             return result
 
     # =========================================================================
     # Transformation augmentations
     # =========================================================================
 
-    def scale(self, data: np.ndarray, range_: tuple[float, float] | None = None) -> np.ndarray:
+    def scale(
+        self, data: np.ndarray, range_: tuple[float, float] | None = None
+    ) -> np.ndarray:
         """Apply random scaling.
 
         Args:
@@ -282,7 +290,9 @@ class TransformsMixin:
                     result[i] = self._interpolate(sliced[i], data.shape[1])
                 else:
                     for j in range(data.shape[2]):
-                        result[i, :, j] = self._interpolate(sliced[i, :, j], data.shape[1])
+                        result[i, :, j] = self._interpolate(
+                            sliced[i, :, j], data.shape[1]
+                        )
             return result
 
     def subsample(self, data: np.ndarray, keep_ratio: float = 0.5) -> np.ndarray:
@@ -434,7 +444,9 @@ class TransformsMixin:
             else:
                 mixed_labels = np.zeros_like(labels)
                 for i in range(n_samples):
-                    mixed_labels[i] = lambdas[i] * labels[i] + (1 - lambdas[i]) * labels[indices[i]]
+                    mixed_labels[i] = (
+                        lambdas[i] * labels[i] + (1 - lambdas[i]) * labels[indices[i]]
+                    )
 
         return mixed_data, mixed_labels
 
@@ -508,7 +520,9 @@ class TransformsMixin:
                 length = data.shape[1]
                 mask_size = int(length * ratio)
                 start = self._rng.integers(0, length - mask_size + 1)
-                result[i, start : start + mask_size] = data[indices[i], start : start + mask_size]
+                result[i, start : start + mask_size] = data[
+                    indices[i], start : start + mask_size
+                ]
             else:
                 seq_len = data.shape[1]
                 mask_size = int(seq_len * ratio)
@@ -570,7 +584,9 @@ class TransformsMixin:
                         )
             return result
 
-    def frequency_shift(self, data: np.ndarray, max_shift_ratio: float = 0.1) -> np.ndarray:
+    def frequency_shift(
+        self, data: np.ndarray, max_shift_ratio: float = 0.1
+    ) -> np.ndarray:
         """Shift frequencies randomly.
 
         Args:
@@ -589,7 +605,9 @@ class TransformsMixin:
                     result[i] = self._frequency_shift_1d(data[i], max_shift_ratio)
                 else:
                     for j in range(data.shape[2]):
-                        result[i, :, j] = self._frequency_shift_1d(data[i, :, j], max_shift_ratio)
+                        result[i, :, j] = self._frequency_shift_1d(
+                            data[i, :, j], max_shift_ratio
+                        )
             return result
 
     # =========================================================================
@@ -624,7 +642,9 @@ class TransformsMixin:
         # Interpolate to full length
         return np.interp(np.arange(length), knot_positions, knot_values)
 
-    def _window_warp_1d(self, data: np.ndarray, ratio: float, scales: list[float]) -> np.ndarray:
+    def _window_warp_1d(
+        self, data: np.ndarray, ratio: float, scales: list[float]
+    ) -> np.ndarray:
         """Apply window warping to 1D data."""
         if not (data is not None):
             raise ValueError("data must be provided")
@@ -691,7 +711,9 @@ class TransformsMixin:
 
         return np.interp(x_target, x_original, data)
 
-    def _frequency_mask_1d(self, data: np.ndarray, mask_ratio: float, num_masks: int) -> np.ndarray:
+    def _frequency_mask_1d(
+        self, data: np.ndarray, mask_ratio: float, num_masks: int
+    ) -> np.ndarray:
         """Apply frequency masking to 1D data."""
         if not (data is not None):
             raise ValueError("data must be provided")
@@ -706,7 +728,9 @@ class TransformsMixin:
 
         return np.fft.irfft(fft, n)
 
-    def _frequency_shift_1d(self, data: np.ndarray, max_shift_ratio: float) -> np.ndarray:
+    def _frequency_shift_1d(
+        self, data: np.ndarray, max_shift_ratio: float
+    ) -> np.ndarray:
         """Apply frequency shift to 1D data."""
         if not (data is not None):
             raise ValueError("data must be provided")

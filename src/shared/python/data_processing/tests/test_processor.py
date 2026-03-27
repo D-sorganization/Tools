@@ -107,7 +107,9 @@ class TestInfoProperty:
         assert "time" in info.columns
         assert info.memory_mb > 0
 
-    def test_info_name_from_source_path(self, tmp_path: Path, sample_df: pd.DataFrame) -> Any:
+    def test_info_name_from_source_path(
+        self, tmp_path: Path, sample_df: pd.DataFrame
+    ) -> Any:
         csv_file = tmp_path / "my_data.csv"
         sample_df.to_csv(csv_file, index=False)
         proc = DataProcessor()
@@ -500,7 +502,9 @@ class TestExport:
         dp.export(out)
         assert out.exists()
 
-    def test_export_unsupported_format_raises(self, dp: DataProcessor, tmp_path: Path) -> Any:
+    def test_export_unsupported_format_raises(
+        self, dp: DataProcessor, tmp_path: Path
+    ) -> Any:
         out = tmp_path / "out.xyz"
         with pytest.raises(ValueError, match="Unsupported"):
             dp.export(out)

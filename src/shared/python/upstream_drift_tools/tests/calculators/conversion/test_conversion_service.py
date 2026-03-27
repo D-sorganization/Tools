@@ -243,7 +243,9 @@ class TestTarConcentration:
 
     def test_g_m3_to_mg_nm3(self, svc) -> Any:
         """Lines 702-703: g/m³ path."""
-        result = svc.tar_concentration(1.0, "g/m3", "mg/Nm3", temperature=273.15, pressure=101.325)
+        result = svc.tar_concentration(
+            1.0, "g/m3", "mg/Nm3", temperature=273.15, pressure=101.325
+        )
         assert abs(result - 1000.0) < 1.0
 
     def test_ppm_mass_conversion_requires_mw(self, svc) -> Any:
@@ -287,7 +289,9 @@ class TestTarConcentration:
 
     def test_to_ppm_mass(self, svc) -> Any:
         """Lines 727-729: mg/Nm³ → ppm_mass with MW."""
-        result = svc.tar_concentration(92.0, "mg/Nm3", "ppm_mass", molecular_weight=92.0)
+        result = svc.tar_concentration(
+            92.0, "mg/Nm3", "ppm_mass", molecular_weight=92.0
+        )
         assert result > 0
 
 
@@ -330,7 +334,9 @@ class TestSyngasComposition:
 
 class TestGasifierPerformance:
     def test_efficiency_percent_to_fraction(self, svc) -> Any:
-        assert svc.gasifier_performance(100.0, "%", "fraction", "efficiency") == pytest.approx(1.0)
+        assert svc.gasifier_performance(
+            100.0, "%", "fraction", "efficiency"
+        ) == pytest.approx(1.0)
 
     def test_efficiency_fraction_to_percent(self, svc) -> Any:
         assert svc.gasifier_performance(
@@ -339,7 +345,9 @@ class TestGasifierPerformance:
 
     def test_efficiency_same_unit(self, svc) -> Any:
         """Line 777-778: same unit → identity."""
-        assert svc.gasifier_performance(0.9, "fraction", "fraction") == pytest.approx(0.9)
+        assert svc.gasifier_performance(0.9, "fraction", "fraction") == pytest.approx(
+            0.9
+        )
 
     def test_efficiency_unknown_conversion_raises(self, svc) -> Any:
         """Lines 783-784: unknown efficiency pair → ValueError."""
@@ -348,12 +356,16 @@ class TestGasifierPerformance:
 
     def test_specific_production_nm3_kg_to_scf_lb(self, svc) -> Any:
         """Lines 789-790: Nm³/kg → scf/lb."""
-        result = svc.gasifier_performance(1.0, "Nm³/kg", "scf/lb", "specific_production")
+        result = svc.gasifier_performance(
+            1.0, "Nm³/kg", "scf/lb", "specific_production"
+        )
         assert result == pytest.approx(1.0 / 0.0624, rel=1e-3)
 
     def test_specific_production_scf_lb_to_nm3_kg(self, svc) -> Any:
         """Lines 791-792: scf/lb → Nm³/kg."""
-        result = svc.gasifier_performance(1.0, "scf/lb", "Nm³/kg", "specific_production")
+        result = svc.gasifier_performance(
+            1.0, "scf/lb", "Nm³/kg", "specific_production"
+        )
         assert result == pytest.approx(0.0624, rel=1e-3)
 
     def test_specific_production_same_unit(self, svc) -> Any:
@@ -396,7 +408,9 @@ class TestCompressibilityFactor:
 
     def test_unknown_gas_falls_back_to_air(self, svc) -> Any:
         """Line 809: unknown gas uses air props."""
-        Z = svc.compressibility_factor("xenon_gas_xyz", temperature=400.0, pressure=200.0)
+        Z = svc.compressibility_factor(
+            "xenon_gas_xyz", temperature=400.0, pressure=200.0
+        )
         assert isinstance(Z, float)
 
 
@@ -521,7 +535,9 @@ class TestGasFlowDispatch:
 
     def test_convert_gas_flow_scfm_to_scfm_via_convert(self, svc) -> Any:
         """Lines 229-242: gas_flow dispatch in convert()."""
-        result = svc.convert(100.0, "SCFM", "SCFM", temperature=288.71, pressure=101325.0)
+        result = svc.convert(
+            100.0, "SCFM", "SCFM", temperature=288.71, pressure=101325.0
+        )
         assert result.value > 0
 
     def test_gas_flow_nm3_hr_to_scfm(self, svc) -> Any:

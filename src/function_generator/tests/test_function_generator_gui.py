@@ -149,8 +149,12 @@ class TestFunctionGeneratorGUI:
 
             with (
                 patch.object(FunctionGeneratorWidget, "_init_ui", return_value=None),
-                patch.object(FunctionGeneratorWidget, "_apply_styling", return_value=None),
-                patch.object(FunctionGeneratorWidget, "_connect_signals", return_value=None),
+                patch.object(
+                    FunctionGeneratorWidget, "_apply_styling", return_value=None
+                ),
+                patch.object(
+                    FunctionGeneratorWidget, "_connect_signals", return_value=None
+                ),
                 patch.object(
                     FunctionGeneratorWidget,
                     "_generate_signal",

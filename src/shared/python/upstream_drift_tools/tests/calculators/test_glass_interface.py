@@ -22,7 +22,9 @@ def test_glass_interface_conductivity() -> None:
     assert cond_metal == 10000.0
 
     # Test glass conductivity
-    cond_glass_1 = interface.get_conductivity(1200.0)  # Matches reference temp 1473.15 K
+    cond_glass_1 = interface.get_conductivity(
+        1200.0
+    )  # Matches reference temp 1473.15 K
     assert cond_glass_1 == pytest.approx(1.0, abs=0.01)
 
     # Test caching

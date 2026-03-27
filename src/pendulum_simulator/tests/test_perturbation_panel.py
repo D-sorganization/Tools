@@ -167,7 +167,9 @@ class TestPerturbationExecution:
         from unittest.mock import MagicMock
 
         config = PerturbationConfig(n_trials=2, noise_amplitude=0.1, noise_type="white")
-        worker = _PerturbWorker([[1.0]], config, setup_panel._simulate_fn, setup_panel._extract_fn)
+        worker = _PerturbWorker(
+            [[1.0]], config, setup_panel._simulate_fn, setup_panel._extract_fn
+        )
 
         worker.progress = MagicMock()
         worker.finished = MagicMock()
@@ -178,7 +180,9 @@ class TestPerturbationExecution:
         worker.finished.emit.assert_called()
 
         # Test cancel
-        worker2 = _PerturbWorker([[1.0]], config, setup_panel._simulate_fn, setup_panel._extract_fn)
+        worker2 = _PerturbWorker(
+            [[1.0]], config, setup_panel._simulate_fn, setup_panel._extract_fn
+        )
         worker2.cancel()
         worker2.run()
 

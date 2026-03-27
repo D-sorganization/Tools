@@ -36,11 +36,15 @@ class TestSignalIntegration:
             }
         )
 
-    def test_trapezoidal_integration_constant_signal(self, sample_data: pd.DataFrame) -> Any:
+    def test_trapezoidal_integration_constant_signal(
+        self, sample_data: pd.DataFrame
+    ) -> Any:
         """Integral of constant 5 over 1 second intervals should grow linearly."""
         from data_processor.core.signal_processing import integrate_signals
 
-        result = integrate_signals(sample_data, "time", ["constant"], method="trapezoidal")
+        result = integrate_signals(
+            sample_data, "time", ["constant"], method="trapezoidal"
+        )
 
         assert "cumulative_constant" in result.columns
         # After 10 seconds (10 points), integral should be ~50
@@ -53,7 +57,9 @@ class TestSignalIntegration:
         """Test rectangular (left-endpoint) integration."""
         from data_processor.core.signal_processing import integrate_signals
 
-        result = integrate_signals(sample_data, "time", ["constant"], method="rectangular")
+        result = integrate_signals(
+            sample_data, "time", ["constant"], method="rectangular"
+        )
 
         assert "cumulative_constant" in result.columns
         cumulative = result["cumulative_constant"].values
@@ -72,7 +78,9 @@ class TestSignalIntegration:
         from data_processor.core.signal_processing import integrate_signals
 
         sample_data.loc[5, "constant"] = np.nan
-        result = integrate_signals(sample_data, "time", ["constant"], method="trapezoidal")
+        result = integrate_signals(
+            sample_data, "time", ["constant"], method="trapezoidal"
+        )
 
         # Integration should continue past NaN
         assert not np.isnan(result["cumulative_constant"].iloc[-1])
@@ -127,7 +135,9 @@ class TestSignalDifferentiation:
         d1 = result["quadratic_d1"].values
         assert np.isclose(d1[50], 100, rtol=0.1)
 
-    def test_rolling_polynomial_first_derivative(self, sample_data: pd.DataFrame) -> Any:
+    def test_rolling_polynomial_first_derivative(
+        self, sample_data: pd.DataFrame
+    ) -> Any:
         """Test rolling polynomial (causal) first derivative."""
         from data_processor.core.signal_processing import differentiate_signals
 
@@ -219,7 +229,9 @@ class TestTimeResampling:
         result = resample_data(sample_data, "time", "2s")
 
         # Time range should be similar
-        original_duration = (sample_data["time"].max() - sample_data["time"].min()).total_seconds()
+        original_duration = (
+            sample_data["time"].max() - sample_data["time"].min()
+        ).total_seconds()
         result_duration = (result["time"].max() - result["time"].min()).total_seconds()
         assert np.isclose(original_duration, result_duration, rtol=0.1)
 
@@ -292,7 +304,9 @@ class TestCustomVariables:
         expected = np.sqrt(sample_data["pressure"])
         np.testing.assert_array_almost_equal(result["sqrt_pressure"], expected)
 
-    def test_formula_validation_rejects_unsafe_code(self, sample_data: pd.DataFrame) -> Any:
+    def test_formula_validation_rejects_unsafe_code(
+        self, sample_data: pd.DataFrame
+    ) -> Any:
         """Unsafe operations like imports should be rejected."""
         from data_processor.core.signal_processing import apply_custom_variable
 
@@ -303,7 +317,9 @@ class TestCustomVariables:
                 formula="__import__('os').system('rm -rf /')",
             )
 
-    def test_formula_with_unknown_signal_raises_error(self, sample_data: pd.DataFrame) -> Any:
+    def test_formula_with_unknown_signal_raises_error(
+        self, sample_data: pd.DataFrame
+    ) -> Any:
         """Using a non-existent signal should raise an error."""
         from data_processor.core.signal_processing import apply_custom_variable
 
@@ -336,7 +352,9 @@ class TestTrendlineAnalysis:
         """Test linear regression trendline."""
         from data_processor.core.signal_processing import calculate_trendline
 
-        result = calculate_trendline(linear_data, x_col="x", y_col="y", trend_type="linear")
+        result = calculate_trendline(
+            linear_data, x_col="x", y_col="y", trend_type="linear"
+        )
 
         assert "slope" in result
         assert "intercept" in result
@@ -411,7 +429,9 @@ class TestTimeRangeUtilities:
         """Test trimming data to a specific time range."""
         from data_processor.core.signal_processing import trim_time_range
 
-        result = trim_time_range(sample_data, "time", start_time="10:30:00", end_time="11:00:00")
+        result = trim_time_range(
+            sample_data, "time", start_time="10:30:00", end_time="11:00:00"
+        )
 
         assert len(result) < len(sample_data)
         assert result["time"].min().hour == 10

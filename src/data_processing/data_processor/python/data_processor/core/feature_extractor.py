@@ -69,7 +69,9 @@ class FeatureExtractor:
                     sample_names.extend(time_names)
 
                 if self.config.compute_spectral:
-                    freq_feats, freq_names = self._extract_frequency_domain(series, col_name)
+                    freq_feats, freq_names = self._extract_frequency_domain(
+                        series, col_name
+                    )
                     sample_features.extend(freq_feats)
                     sample_names.extend(freq_names)
 
@@ -104,7 +106,9 @@ class FeatureExtractor:
             features_list.append(stat_feats)
             all_names.extend(stat_names)
 
-        features_array = np.column_stack(features_list) if features_list else np.array([])
+        features_array = (
+            np.column_stack(features_list) if features_list else np.array([])
+        )
         return features_array, all_names
 
     def extract_all(
@@ -316,7 +320,9 @@ class FeatureExtractor:
 
     # Private extraction methods
 
-    def _extract_statistical(self, data: np.ndarray, prefix: str) -> tuple[list[float], list[str]]:
+    def _extract_statistical(
+        self, data: np.ndarray, prefix: str
+    ) -> tuple[list[float], list[str]]:
         """Extract statistical features."""
         if not (data is not None):
             raise ValueError("data must be provided")
@@ -377,7 +383,9 @@ class FeatureExtractor:
 
         return features, names
 
-    def _extract_time_domain(self, data: np.ndarray, prefix: str) -> tuple[list[float], list[str]]:
+    def _extract_time_domain(
+        self, data: np.ndarray, prefix: str
+    ) -> tuple[list[float], list[str]]:
         """Extract time domain features."""
         if not (data is not None):
             raise ValueError("data must be provided")
@@ -482,7 +490,8 @@ class FeatureExtractor:
         # Spectral spread
         if np.sum(power_spectrum) > 0:
             spread = np.sqrt(
-                np.sum((freqs - centroid) ** 2 * power_spectrum) / np.sum(power_spectrum)
+                np.sum((freqs - centroid) ** 2 * power_spectrum)
+                / np.sum(power_spectrum)
             )
         else:
             spread = 0
@@ -551,7 +560,9 @@ class FeatureExtractor:
 
     # Helper methods
 
-    def _rolling_stat(self, data: np.ndarray, window: int, func: Callable) -> np.ndarray:
+    def _rolling_stat(
+        self, data: np.ndarray, window: int, func: Callable
+    ) -> np.ndarray:
         """Compute rolling statistic."""
         if not (data is not None):
             raise ValueError("data must be provided")
@@ -647,7 +658,9 @@ class FeatureExtractor:
         if var == 0:
             return 0.0
 
-        return float(np.sum(data_centered[lag:] * data_centered[: n - lag]) / ((n - lag) * var))
+        return float(
+            np.sum(data_centered[lag:] * data_centered[: n - lag]) / ((n - lag) * var)
+        )
 
     def _categorize_feature(self, name: str) -> str:
         """Categorize a feature by its name."""

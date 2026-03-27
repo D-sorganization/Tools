@@ -35,7 +35,9 @@ from upstream_drift_tools.process_calculators.psa_package.psa_webapp import (
 @pytest.fixture
 def mock_streamlit() -> Any:
     """Mock the streamlit module."""
-    with patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp.st") as mock_st:
+    with patch(
+        "upstream_drift_tools.process_calculators.psa_package.psa_webapp.st"
+    ) as mock_st:
         yield mock_st
 
 
@@ -113,12 +115,24 @@ def test_get_flammability_status() -> Any:
 
 @patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp.px.imshow")
 @patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp.go.Figure")
-@patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_data_tables_tab")
-@patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_o2_safety_tab")
-@patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_sensitivity_tab")
-@patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_results_tab")
-@patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_key_metrics")
-@patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_sidebar")
+@patch(
+    "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_data_tables_tab"
+)
+@patch(
+    "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_o2_safety_tab"
+)
+@patch(
+    "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_sensitivity_tab"
+)
+@patch(
+    "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_results_tab"
+)
+@patch(
+    "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_key_metrics"
+)
+@patch(
+    "upstream_drift_tools.process_calculators.psa_package.psa_webapp._render_sidebar"
+)
 def test_webapp_main(
     mock_sidebar,
     mock_key,
@@ -165,7 +179,9 @@ def test_webapp_main(
 def test_render_sidebar(mock_streamlit) -> Any:
     mock_streamlit.sidebar.slider.side_effect = [1100, 100, 0, 18, 81]
     mock_streamlit.sidebar.number_input.side_effect = [32.08, 0.50]
-    total_feed, s2_recycle, prod_recycle, components = _render_sidebar(DEFAULT_COMPONENTS)
+    total_feed, s2_recycle, prod_recycle, components = _render_sidebar(
+        DEFAULT_COMPONENTS
+    )
     assert total_feed == 1100.0
     assert s2_recycle == 100
     assert prod_recycle == 0

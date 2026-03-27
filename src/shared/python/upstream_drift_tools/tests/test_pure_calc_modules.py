@@ -305,11 +305,15 @@ class TestConversionCore:
         )
         from upstream_drift_tools.calculators.conversion.tables import StandardCondition
 
-        result = scfm_to_standard_m3_per_hour(100.0, StandardCondition.NTP, StandardCondition.NTP)
+        result = scfm_to_standard_m3_per_hour(
+            100.0, StandardCondition.NTP, StandardCondition.NTP
+        )
         # Should be 100 * SCFM_TO_CU_METER_PER_HOUR_AT_60F
         assert result > 0
         # Different-standard path (correction branch)
-        result2 = scfm_to_standard_m3_per_hour(100.0, StandardCondition.STP, StandardCondition.NTP)
+        result2 = scfm_to_standard_m3_per_hour(
+            100.0, StandardCondition.STP, StandardCondition.NTP
+        )
         assert result2 > 0
 
     def test_standard_m3_hr_to_scfm_same_standard(self) -> Any:
@@ -318,10 +322,14 @@ class TestConversionCore:
         )
         from upstream_drift_tools.calculators.conversion.tables import StandardCondition
 
-        result = standard_m3_per_hour_to_scfm(100.0, StandardCondition.NTP, StandardCondition.NTP)
+        result = standard_m3_per_hour_to_scfm(
+            100.0, StandardCondition.NTP, StandardCondition.NTP
+        )
         assert result > 0
         # Different reference → uses correction branch
-        result2 = standard_m3_per_hour_to_scfm(100.0, StandardCondition.STP, StandardCondition.NTP)
+        result2 = standard_m3_per_hour_to_scfm(
+            100.0, StandardCondition.STP, StandardCondition.NTP
+        )
         assert result2 > 0
 
 

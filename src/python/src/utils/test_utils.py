@@ -79,12 +79,16 @@ def generate_sample_data(
         return [random.uniform(-1000.0, 1000.0) for _ in range(size)]
     elif data_type == "string":
         chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        return ["".join(random.choices(chars, k=random.randint(5, 20))) for _ in range(size)]
+        return [
+            "".join(random.choices(chars, k=random.randint(5, 20))) for _ in range(size)
+        ]
     else:  # mixed
         generators = [
             lambda: random.randint(-1000, 1000),
             lambda: random.uniform(-1000.0, 1000.0),
-            lambda: "".join(random.choices("abcdefghijklmnopqrstuvwxyz", k=random.randint(5, 15))),
+            lambda: "".join(
+                random.choices("abcdefghijklmnopqrstuvwxyz", k=random.randint(5, 15))
+            ),
             lambda: random.choice([True, False]),
             lambda: None,
         ]
@@ -191,7 +195,9 @@ class AssertionHelpers:
                 error_msg = msg or f"Key '{key}' not found in superset"
                 raise AssertionError(error_msg)
             if superset[key] != value:
-                error_msg = msg or f"Value mismatch for key '{key}': {superset[key]} != {value}"
+                error_msg = (
+                    msg or f"Value mismatch for key '{key}': {superset[key]} != {value}"
+                )
                 raise AssertionError(error_msg)
 
     @staticmethod
@@ -270,7 +276,9 @@ class AssertionHelpers:
 
         content = path.read_text()
         if expected_content not in content:
-            error_msg = msg or f"Expected content not found in {file_path}: {expected_content}"
+            error_msg = (
+                msg or f"Expected content not found in {file_path}: {expected_content}"
+            )
             raise AssertionError(error_msg)
 
     @staticmethod
@@ -289,7 +297,9 @@ class AssertionHelpers:
             msg: Optional message on failure
         """
         for record in logs:
-            if record.levelno == level and re.search(message_pattern, record.getMessage()):
+            if record.levelno == level and re.search(
+                message_pattern, record.getMessage()
+            ):
                 return
         error_msg = (
             msg
@@ -362,7 +372,9 @@ class MockFactory:
         mock_response.ok = 200 <= status_code < 300
         mock_response.raise_for_status = MagicMock()
         if not mock_response.ok:
-            mock_response.raise_for_status.side_effect = Exception(f"HTTP Error: {status_code}")
+            mock_response.raise_for_status.side_effect = Exception(
+                f"HTTP Error: {status_code}"
+            )
         return mock_response
 
     @staticmethod
@@ -445,7 +457,9 @@ def temporary_file(
     Yields:
         Path to temporary file
     """
-    with tempfile.NamedTemporaryFile(mode=mode, suffix=suffix, delete=False) as tmp_file:
+    with tempfile.NamedTemporaryFile(
+        mode=mode, suffix=suffix, delete=False
+    ) as tmp_file:
         if content:
             tmp_file.write(content)
             tmp_file.flush()

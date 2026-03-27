@@ -128,9 +128,9 @@ class TestFrictionTorqueVector:
         """Coulomb friction magnitude is mu regardless of velocity magnitude."""
         for speed in [0.1, 1.0, 10.0, 100.0]:
             tf = friction_torque_vector(dtheta1=speed, dphi=speed, params=frictional_params)
-            assert np.isclose(
-                abs(tf[0]), frictional_params.mu1
-            ), f"Expected |tau_f1|={frictional_params.mu1}, got {abs(tf[0])} at speed={speed}"
+            assert np.isclose(abs(tf[0]), frictional_params.mu1), (
+                f"Expected |tau_f1|={frictional_params.mu1}, got {abs(tf[0])} at speed={speed}"
+            )
 
     def test_coulomb_zero_at_rest(self, frictional_params: PendulumParams) -> None:
         """np.sign(0) == 0, so Coulomb friction is zero when stationary."""
@@ -161,7 +161,9 @@ class TestFrictionTorqueVector:
 class TestEquationsOfMotionWithDissipation:
     """Verify that EOM correctly incorporates friction into dynamics."""
 
-    def test_undamped_conserves_energy_approximately(self, base_params: PendulumParams) -> None:
+    def test_undamped_conserves_energy_approximately(
+        self, base_params: PendulumParams
+    ) -> None:
         """Without dissipation, total energy should be nearly conserved."""
         from double_pendulum_golf.physics import total_energy
 
@@ -179,9 +181,9 @@ class TestEquationsOfMotionWithDissipation:
         e_start = total_energy(result.states[0], base_params)
         e_end = total_energy(result.states[-1], base_params)
         # Allow ~1% drift from numerical integration
-        assert (
-            abs(e_end - e_start) / max(abs(e_start), 1e-9) < 0.01
-        ), f"Energy drift too large: {e_start:.4f} → {e_end:.4f}"
+        assert abs(e_end - e_start) / max(abs(e_start), 1e-9) < 0.01, (
+            f"Energy drift too large: {e_start:.4f} → {e_end:.4f}"
+        )
 
     def test_damped_pendulum_loses_energy(self, damped_params: PendulumParams) -> None:
         """With viscous damping, total energy must decrease over time."""
@@ -200,9 +202,9 @@ class TestEquationsOfMotionWithDissipation:
 
         e_start = total_energy(result.states[0], damped_params)
         e_end = total_energy(result.states[-1], damped_params)
-        assert (
-            e_end < e_start
-        ), f"Damped pendulum energy should decrease: {e_start:.4f} → {e_end:.4f}"
+        assert e_end < e_start, (
+            f"Damped pendulum energy should decrease: {e_start:.4f} → {e_end:.4f}"
+        )
 
     def test_friction_does_not_blow_up(self, combined_params: PendulumParams) -> None:
         """Simulation with both friction types must remain numerically stable."""
@@ -218,9 +220,9 @@ class TestEquationsOfMotionWithDissipation:
         )
 
         assert result.n_steps >= 2
-        assert all(
-            np.isfinite(result.states.flatten())
-        ), "Simulation with combined friction/damping produced non-finite states"
+        assert all(np.isfinite(result.states.flatten())), (
+            "Simulation with combined friction/damping produced non-finite states"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -267,6 +269,6 @@ class TestSimulationResultFrictionAccessors:
         )
         for i in range(0, result.n_steps, 20):
             tf = result.friction_torques_at(i)
-            assert np.allclose(
-                tf, [0.0, 0.0]
-            ), f"Expected zero friction torques at step {i}, got {tf}"
+            assert np.allclose(tf, [0.0, 0.0]), (
+                f"Expected zero friction torques at step {i}, got {tf}"
+            )

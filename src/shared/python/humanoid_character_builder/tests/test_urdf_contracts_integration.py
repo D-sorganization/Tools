@@ -27,7 +27,9 @@ class TestURDFContracts:
         # Since it is a private method, we can call it directly for testing purposes
         # provided we construct valid arguments for other params
 
-        segment_def = SegmentDefinition(name="test", visual_geometry=GeometrySpec(GeometryType.BOX))
+        segment_def = SegmentDefinition(
+            name="test", visual_geometry=GeometrySpec(GeometryType.BOX)
+        )
 
         with pytest.raises(ContractViolationError, match="Mass must be positive"):
             generator._generate_link(
@@ -43,7 +45,9 @@ class TestURDFContracts:
     def test_invalid_inertia_violation(self) -> Any:
         generator = HumanoidURDFGenerator()
         # params is mocked below
-        segment_def = SegmentDefinition(name="test", visual_geometry=GeometrySpec(GeometryType.BOX))
+        segment_def = SegmentDefinition(
+            name="test", visual_geometry=GeometrySpec(GeometryType.BOX)
+        )
 
         # Mock params to have inertia override with negative values
         # We need to ensure we can access the mocked override
@@ -61,7 +65,9 @@ class TestURDFContracts:
             "iyz": 0.0,
         }
 
-        with pytest.raises(ContractViolationError, match="Inertia must be positive definite"):
+        with pytest.raises(
+            ContractViolationError, match="Inertia must be positive definite"
+        ):
             generator._compute_segment_inertia(
                 segment_name="test",
                 segment_def=segment_def,
@@ -96,7 +102,11 @@ class TestURDFContracts:
         with (
             patch.object(HumanoidURDFGenerator, "_generate_link"),
             patch.object(HumanoidURDFGenerator, "_generate_joint"),
-            patch.object(HumanoidURDFGenerator, "_build_urdf_xml", return_value="invalid xml"),
-            pytest.raises(ContractViolationError, match="Generated URDF must be valid XML"),
+            patch.object(
+                HumanoidURDFGenerator, "_build_urdf_xml", return_value="invalid xml"
+            ),
+            pytest.raises(
+                ContractViolationError, match="Generated URDF must be valid XML"
+            ),
         ):
             generator.generate(params)

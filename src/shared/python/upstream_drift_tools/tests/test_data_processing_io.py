@@ -177,7 +177,9 @@ class TestDataWriter:
         with pytest.raises(ValueError, match="Unsupported or undetected"):
             DataWriter.write_file(sample_df, "/tmp/output.xyz_unknown_ext")
 
-    def test_write_creates_parent_dirs(self, sample_df: pd.DataFrame, tmp_path: Path) -> Any:
+    def test_write_creates_parent_dirs(
+        self, sample_df: pd.DataFrame, tmp_path: Path
+    ) -> Any:
         from upstream_drift_tools.data_processing.io import DataWriter
 
         nested = tmp_path / "a" / "b" / "c" / "out.csv"
@@ -264,7 +266,9 @@ try:
 except ImportError:
     _OPENPYXL_HERE = False
 
-requires_openpyxl = pytest.mark.skipif(not _OPENPYXL_HERE, reason="openpyxl not installed")
+requires_openpyxl = pytest.mark.skipif(
+    not _OPENPYXL_HERE, reason="openpyxl not installed"
+)
 
 
 class TestDataReaderAdditionalFormats:
@@ -303,11 +307,15 @@ class TestDataReaderAdditionalFormats:
         # (e.g. NpzFile), and whose .item() returns a dict
         data_dict = {"col_a": [1.0, 2.0], "col_b": [3.0, 4.0]}
         mock_result = MagicMock()  # not an np.ndarray instance
-        mock_result.__class__ = object  # ensure isinstance(mock_result, np.ndarray) is False
+        mock_result.__class__ = (
+            object  # ensure isinstance(mock_result, np.ndarray) is False
+        )
         mock_result.item.return_value = data_dict
 
         # Patch np.load in the io module namespace
-        with patch("upstream_drift_tools.data_processing.io.np.load", return_value=mock_result):
+        with patch(
+            "upstream_drift_tools.data_processing.io.np.load", return_value=mock_result
+        ):
             result = DataReader.read_file(npy_path)
         assert "col_a" in result.columns
 

@@ -46,7 +46,9 @@ except ImportError:
         command = [sys.executable, str(script_path)]
         if args:
             command.extend(args)
-        return subprocess.run(command, cwd=str(cwd) if cwd else None, timeout=timeout, check=check)
+        return subprocess.run(
+            command, cwd=str(cwd) if cwd else None, timeout=timeout, check=check
+        )
 
     def get_logger(name) -> Any:
         return logging.getLogger(name)

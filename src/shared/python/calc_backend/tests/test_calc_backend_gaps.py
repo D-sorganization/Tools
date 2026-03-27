@@ -102,7 +102,9 @@ class TestWGSReactorErrorPaths:
         req = WGSReactorRequest(**self._minimal_payload())
 
         mock_engine = MagicMock()
-        mock_engine.calculate_equilibrium_composition.side_effect = ValueError("bad equilibrium")
+        mock_engine.calculate_equilibrium_composition.side_effect = ValueError(
+            "bad equilibrium"
+        )
         # WGSReactorEngine is imported inside the function; patch the source module
         with patch(
             "upstream_drift_tools.process_calculators.WGSReactorEngine",
@@ -288,7 +290,9 @@ class TestReferenceFrameConversionRequestValidator:
             ReferenceFrameConversionRequest,
         )
 
-        req = ReferenceFrameConversionRequest(operation="so3_so3_maps", so3_vector=[0.0, 0.0, 1.0])
+        req = ReferenceFrameConversionRequest(
+            operation="so3_so3_maps", so3_vector=[0.0, 0.0, 1.0]
+        )
         assert req.so3_vector == [0.0, 0.0, 1.0]
 
     def test_so3_maps_with_rotation_matrix_passes(self) -> Any:
@@ -353,7 +357,9 @@ class TestPressureDropInlineBranches:
         """Re ≈ 2300-4000 → Transitional branch."""
         from calc_backend.routers.pressure_drop import calculate_pressure_drop
 
-        resp = calculate_pressure_drop(self._req(pipe_diameter_m=0.05, flow_rate_kg_s=0.005))
+        resp = calculate_pressure_drop(
+            self._req(pipe_diameter_m=0.05, flow_rate_kg_s=0.005)
+        )
         assert resp.flow_regime in {"Laminar", "Transitional", "Turbulent"}
 
 

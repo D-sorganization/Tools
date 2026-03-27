@@ -671,7 +671,9 @@ class TestFeatureEngineering:
         features = np.column_stack([x1, x2, x3])
 
         selector = FeatureSelector()
-        result = selector.select_by_correlation(features, ["x1", "x2", "x3"], threshold=0.9)
+        result = selector.select_by_correlation(
+            features, ["x1", "x2", "x3"], threshold=0.9
+        )
 
         # Should remove one of x1 or x2
         assert result.n_selected < 3
@@ -689,7 +691,9 @@ class TestFeatureEngineering:
         features = np.column_stack([x1, x2, x3])
 
         selector = FeatureSelector()
-        result = selector.select_by_variance(features, ["x1", "x2", "x3"], threshold=0.1)
+        result = selector.select_by_variance(
+            features, ["x1", "x2", "x3"], threshold=0.1
+        )
 
         # x2 should be removed due to low variance
         assert "x2" in result.removed_names

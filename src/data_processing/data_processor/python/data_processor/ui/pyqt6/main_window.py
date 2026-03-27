@@ -482,12 +482,18 @@ class DataProcessorMainWindow(
 
         # Analysis tab (PCA, ANOVA, Regression, Surface, Neural Network)
         self.analysis_panel = AnalysisPanel()
-        self.analysis_panel.pca_widget.analysis_requested.connect(self._run_pca_analysis)
-        self.analysis_panel.anova_widget.analysis_requested.connect(self._run_anova_analysis)
+        self.analysis_panel.pca_widget.analysis_requested.connect(
+            self._run_pca_analysis
+        )
+        self.analysis_panel.anova_widget.analysis_requested.connect(
+            self._run_anova_analysis
+        )
         self.analysis_panel.regression_widget.analysis_requested.connect(
             self._run_regression_analysis
         )
-        self.analysis_panel.surface_widget.plot_requested.connect(self._run_surface_analysis)
+        self.analysis_panel.surface_widget.plot_requested.connect(
+            self._run_surface_analysis
+        )
         self.analysis_panel.nn_widget.train_requested.connect(self._run_nn_analysis)
         self.tab_widget.addTab(self.analysis_panel, "Analysis")
 
@@ -580,7 +586,9 @@ class DataProcessorMainWindow(
                     self.time_column = time_col
 
                 # Get signals
-                self.available_signals = self.data_loader.get_numeric_signals(self.current_data)
+                self.available_signals = self.data_loader.get_numeric_signals(
+                    self.current_data
+                )
 
                 # Update UI
                 self._update_data_info()
@@ -597,7 +605,9 @@ class DataProcessorMainWindow(
                 self.status_bar.hide_progress()
                 row_count = len(self.current_data)
                 signal_count = len(self.available_signals)
-                self.status_bar.set_status(f"Loaded {row_count} rows, {signal_count} signals")
+                self.status_bar.set_status(
+                    f"Loaded {row_count} rows, {signal_count} signals"
+                )
 
                 QMessageBox.information(
                     self,

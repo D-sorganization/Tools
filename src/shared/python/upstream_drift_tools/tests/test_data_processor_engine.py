@@ -157,7 +157,9 @@ class TestExportData:
 
     def test_export_success(self) -> Any:
         engine = _make_engine_with_data()
-        with patch("upstream_drift_tools.data_processing.core.DataWriter.write_file") as mock_write:
+        with patch(
+            "upstream_drift_tools.data_processing.core.DataWriter.write_file"
+        ) as mock_write:
             result = engine.export_data("/tmp/out.csv", DataFormat.CSV)
         mock_write.assert_called_once()
         assert result.success
@@ -457,7 +459,9 @@ class TestFitCurve:
 
     def test_all_nan_raises(self) -> Any:
         engine = DataProcessorEngine()
-        engine.load_dataframe(pd.DataFrame({"x": [float("nan"), float("nan")], "y": [1.0, 2.0]}))
+        engine.load_dataframe(
+            pd.DataFrame({"x": [float("nan"), float("nan")], "y": [1.0, 2.0]})
+        )
         with pytest.raises(FitError):
             engine.fit_curve("x", "y", FitType.LINEAR)
 

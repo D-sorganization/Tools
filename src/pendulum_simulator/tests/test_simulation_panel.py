@@ -141,7 +141,10 @@ def test_panel_init_and_signals(qapp, mock_sim_kwargs) -> Any:
 
     # Test layout saving
     panel.save_layout()
-    assert QSettings("D-sorganization", "PendulumSimulator").value(panel._settings_key) is not None
+    assert (
+        QSettings("D-sorganization", "PendulumSimulator").value(panel._settings_key)
+        is not None
+    )
 
 
 @patch("PyQt6.QtCore.QThread.start")
