@@ -1,5 +1,4 @@
 import pytest
-from numba import jit
 
 build123d = pytest.importorskip("build123d")
 
@@ -25,7 +24,6 @@ def test_cylindrical_bath_defaults_match_requested_geometry() -> None:
     assert layout.electrodes.extension_past_inner_circle_in == pytest.approx(36.0)
 
 
-@jit(nopython=True, fastmath=True)
 def test_radial_electrodes_are_evenly_spaced_and_centered() -> None:
     layout = DEFAULT_CYLINDRICAL_BATH_LAYOUT
     placements = layout.placements

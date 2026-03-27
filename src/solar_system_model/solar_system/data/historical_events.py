@@ -1,9 +1,3 @@
-from numba import jit
-
-# ARCHITECTURE_DEBT:
-# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
-# It requires domain-aware structural extraction to isolate its internal classes appropriately.
-
 """
 Historical Space Exploration Events
 ====================================
@@ -18,9 +12,9 @@ Each event includes:
 - Category (mission, discovery, observation, etc.)
 """
 
-from calendar import monthrange  # noqa: E402
-from datetime import datetime  # noqa: E402
-from typing import Any  # noqa: E402
+from calendar import monthrange
+from datetime import datetime
+from typing import Any
 
 # List of historical space events
 SPACE_EVENTS: list[dict[str, Any]] = [
@@ -852,7 +846,6 @@ SPACE_EVENTS: list[dict[str, Any]] = [
 ]
 
 
-@jit(nopython=True, fastmath=True)
 def get_events_for_date(dt: datetime, window_days: int = 3) -> list[dict[str, Any]]:
     """
     Get historical events near a specific date.
