@@ -1,3 +1,5 @@
+from typing import Any
+
 # mypy: ignore-errors
 """Integrated version of the Data Processor GUI.
 
@@ -105,7 +107,7 @@ class IntegratedCSVProcessorApp(
 
         logger.info("Integrated CSV Processor App initialized")
 
-    def _create_splitter(self, parent, left_func, right_func, width_attr, default_width):
+    def _create_splitter(self, parent, left_func, right_func, width_attr, default_width) -> Any:
         """Helper to create a split layout with two panels.
 
         This implementation replaces the missing original method.

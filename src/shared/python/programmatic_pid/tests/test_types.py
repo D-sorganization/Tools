@@ -1,3 +1,5 @@
+from typing import Any
+
 """Comprehensive tests for programmatic_pid.types module.
 
 Tests Point, BBox, ValidationIssue, SpecValidationError, LayoutRegions, TextConfig.
@@ -17,70 +19,70 @@ from programmatic_pid.types import (
 
 
 class TestPoint:
-    def test_creation(self):
+    def test_creation(self) -> Any:
         p = Point(1.0, 2.0)
         assert p.x == 1.0
         assert p.y == 2.0
 
-    def test_named_tuple_indexing(self):
+    def test_named_tuple_indexing(self) -> Any:
         p = Point(3.0, 4.0)
         assert p[0] == 3.0
         assert p[1] == 4.0
 
-    def test_equality(self):
+    def test_equality(self) -> Any:
         assert Point(1.0, 2.0) == Point(1.0, 2.0)
         assert Point(1.0, 2.0) != Point(2.0, 1.0)
 
 
 class TestBBox:
-    def test_creation(self):
+    def test_creation(self) -> Any:
         b = BBox(0.0, 0.0, 10.0, 5.0)
         assert b.x_min == 0.0
         assert b.y_min == 0.0
         assert b.x_max == 10.0
         assert b.y_max == 5.0
 
-    def test_width_and_height(self):
+    def test_width_and_height(self) -> Any:
         b = BBox(1.0, 2.0, 5.0, 8.0)
         assert b.width == pytest.approx(4.0)
         assert b.height == pytest.approx(6.0)
 
-    def test_center(self):
+    def test_center(self) -> Any:
         b = BBox(0.0, 0.0, 4.0, 6.0)
         c = b.center
         assert c.x == pytest.approx(2.0)
         assert c.y == pytest.approx(3.0)
 
-    def test_contains_point_inside(self):
+    def test_contains_point_inside(self) -> Any:
         b = BBox(0.0, 0.0, 10.0, 10.0)
         assert b.contains_point(Point(5.0, 5.0))
 
-    def test_contains_point_boundary(self):
+    def test_contains_point_boundary(self) -> Any:
         b = BBox(0.0, 0.0, 10.0, 10.0)
         assert b.contains_point(Point(0.0, 0.0))
         assert b.contains_point(Point(10.0, 10.0))
 
-    def test_contains_point_outside(self):
+    def test_contains_point_outside(self) -> Any:
         b = BBox(0.0, 0.0, 10.0, 10.0)
         assert not b.contains_point(Point(11.0, 5.0))
 
-    def test_overlaps_true(self):
+    def test_overlaps_true(self) -> Any:
         a = BBox(0.0, 0.0, 5.0, 5.0)
         b = BBox(3.0, 3.0, 8.0, 8.0)
         assert a.overlaps(b)
 
-    def test_overlaps_false(self):
+    def test_overlaps_false(self) -> Any:
         a = BBox(0.0, 0.0, 3.0, 3.0)
         b = BBox(4.0, 4.0, 8.0, 8.0)
         assert not a.overlaps(b)
 
-    def test_overlaps_with_pad(self):
+    def test_overlaps_with_pad(self) -> Any:
         a = BBox(0.0, 0.0, 3.0, 3.0)
         b = BBox(4.0, 4.0, 8.0, 8.0)
         # Without pad they don't overlap, but with pad=2 they should
         assert a.overlaps(b, pad=2.0)
 
-    def test_union(self):
+    def test_union(self) -> Any:
         a = BBox(0.0, 0.0, 3.0, 3.0)
         b = BBox(2.0, 2.0, 6.0, 6.0)
         u = a.union(b)
@@ -89,7 +91,7 @@ class TestBBox:
         assert u.x_max == 6.0
         assert u.y_max == 6.0
 
-    def test_expanded(self):
+    def test_expanded(self) -> Any:
         b = BBox(2.0, 2.0, 8.0, 8.0)
         e = b.expanded(1.0)
         assert e.x_min == pytest.approx(1.0)
@@ -99,35 +101,35 @@ class TestBBox:
 
 
 class TestValidationIssue:
-    def test_creation_defaults(self):
+    def test_creation_defaults(self) -> Any:
         vi = ValidationIssue("some.path", "A message")
         assert vi.path == "some.path"
         assert vi.message == "A message"
         assert vi.severity == "error"
 
-    def test_warning_severity(self):
+    def test_warning_severity(self) -> Any:
         vi = ValidationIssue("field", "Something", severity="warning")
         assert vi.severity == "warning"
 
-    def test_to_dict(self):
+    def test_to_dict(self) -> Any:
         vi = ValidationIssue("a.b", "msg", severity="error")
         d = vi.to_dict()
         assert d == {"path": "a.b", "message": "msg", "severity": "error"}
 
 
 class TestSpecValidationError:
-    def test_is_value_error(self):
+    def test_is_value_error(self) -> Any:
         err = SpecValidationError("bad spec")
         assert isinstance(err, ValueError)
         assert "bad spec" in str(err)
 
-    def test_can_be_raised_and_caught(self):
+    def test_can_be_raised_and_caught(self) -> Any:
         with pytest.raises(SpecValidationError, match="invalid"):
             raise SpecValidationError("invalid spec")
 
 
 class TestLayoutRegions:
-    def test_creation(self):
+    def test_creation(self) -> Any:
         bbox = BBox(0.0, 0.0, 100.0, 100.0)
         lr = LayoutRegions(
             layout_cfg={"key": "val"},
@@ -140,7 +142,7 @@ class TestLayoutRegions:
 
 
 class TestTextConfig:
-    def test_creation(self):
+    def test_creation(self) -> Any:
         tc = TextConfig(
             title_height=14.0,
             subtitle_height=12.0,

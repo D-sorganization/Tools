@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for upstream_drift_tools.bootstrap (ensure_paths).
 
 Full coverage of both branches:
@@ -14,7 +16,7 @@ from unittest.mock import patch
 
 
 class TestEnsurePaths:
-    def test_returns_repo_root_auto_detected(self, tmp_path: Path):
+    def test_returns_repo_root_auto_detected(self, tmp_path: Path) -> Any:
         """Auto-detect branch: calls get_repo_root() when no root given."""
         from upstream_drift_tools.bootstrap import ensure_paths
 
@@ -27,21 +29,21 @@ class TestEnsurePaths:
             result = ensure_paths()
         assert result == tmp_path
 
-    def test_explicit_repo_root(self, tmp_path: Path):
+    def test_explicit_repo_root(self, tmp_path: Path) -> Any:
         """Explicit repo_root branch: resolves given Path."""
         from upstream_drift_tools.bootstrap import ensure_paths
 
         result = ensure_paths(repo_root=tmp_path)
         assert result == tmp_path
 
-    def test_explicit_repo_root_as_string(self, tmp_path: Path):
+    def test_explicit_repo_root_as_string(self, tmp_path: Path) -> Any:
         """Accepts string as repo_root."""
         from upstream_drift_tools.bootstrap import ensure_paths
 
         result = ensure_paths(repo_root=str(tmp_path))
         assert result == tmp_path
 
-    def test_does_not_add_nonexistent_paths(self, tmp_path: Path):
+    def test_does_not_add_nonexistent_paths(self, tmp_path: Path) -> Any:
         """Nonexistent paths are not inserted into sys.path."""
         from upstream_drift_tools.bootstrap import ensure_paths
 
@@ -55,7 +57,7 @@ class TestEnsurePaths:
             check_path = Path(entry)
             assert check_path.exists(), f"Non-existent path added: {entry}"
 
-    def test_does_not_insert_duplicate(self, tmp_path: Path):
+    def test_does_not_insert_duplicate(self, tmp_path: Path) -> Any:
         """Already-present paths don't get inserted again."""
         from upstream_drift_tools.bootstrap import ensure_paths
 
@@ -74,7 +76,7 @@ class TestEnsurePaths:
 
         assert count_after == count_before  # Not duplicated
 
-    def test_adds_existing_paths(self, tmp_path: Path):
+    def test_adds_existing_paths(self, tmp_path: Path) -> Any:
         """Creates and registers the standard paths when they exist."""
         from upstream_drift_tools.bootstrap import ensure_paths
 

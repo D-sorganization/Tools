@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
     AcidGasComposition,
@@ -234,7 +236,7 @@ except ImportError:
 
 class TestAcidGasDewpointWidget:
     @pytest.fixture(autouse=True)
-    def prevent_qt_quit(self):
+    def prevent_qt_quit(self) -> Any:
         if HAS_PYQT:
             from PyQt6.QtWidgets import QApplication
 
@@ -243,7 +245,7 @@ class TestAcidGasDewpointWidget:
                 app.setQuitOnLastWindowClosed(False)
 
     @pytest.fixture(autouse=True)
-    def patch_state(self, monkeypatch):
+    def patch_state(self, monkeypatch) -> Any:
         if not HAS_PYQT:
             return
         try:
@@ -251,7 +253,7 @@ class TestAcidGasDewpointWidget:
                 CalculatorStateMixin,
             )
 
-            def mock_init(self, *args, **kwargs):
+            def mock_init(self, *args, **kwargs) -> Any:
                 self.copyable_widgets = []
                 self.input_widgets = []
 
@@ -264,7 +266,7 @@ class TestAcidGasDewpointWidget:
             pass
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
-    def test_widget_initialization(self, qtbot):
+    def test_widget_initialization(self, qtbot) -> Any:
         from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
             AcidGasDewpointCalculatorWidget,
         )
@@ -276,7 +278,7 @@ class TestAcidGasDewpointWidget:
         assert widget.layout() is not None
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
-    def test_widget_calculate(self, qtbot):
+    def test_widget_calculate(self, qtbot) -> Any:
         from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
             AcidGasComposition,
             AcidGasDewpointCalculatorWidget,
@@ -321,7 +323,7 @@ class TestAcidGasDewpointWidget:
             assert "130.00" in widget.result_area.toPlainText()
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
-    def test_widget_calculate_error(self, qtbot):
+    def test_widget_calculate_error(self, qtbot) -> Any:
         from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
             AcidGasDewpointCalculatorWidget,
         )
@@ -339,7 +341,7 @@ class TestAcidGasDewpointWidget:
                 widget.calculate()
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
-    def test_widget_close_event(self, qtbot):
+    def test_widget_close_event(self, qtbot) -> Any:
         from PyQt6.QtGui import QCloseEvent
         from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
             AcidGasDewpointCalculatorWidget,

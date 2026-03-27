@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for jacobians_golfer module.
 
 TDD: Tests verify Jacobian computation, ellipsoid extraction,
@@ -61,7 +63,7 @@ def _default_state() -> np.ndarray:
 class TestNumericalJacobian:
     """Tests for the internal _numerical_jacobian function."""
 
-    def test_shape_single_joint(self):
+    def test_shape_single_joint(self) -> Any:
         """Jacobian should have shape (2, 8) for any joint."""
         p = _default_golfer_params()
         q = _default_state()
@@ -69,7 +71,7 @@ class TestNumericalJacobian:
         J = _numerical_jacobian(q, p, "rh")
         assert J.shape == (2, N_DOF)
 
-    def test_jacobian_finite(self):
+    def test_jacobian_finite(self) -> Any:
         """Jacobian values should be finite (no NaN or Inf)."""
         p = _default_golfer_params()
         q = _default_state()
@@ -77,7 +79,7 @@ class TestNumericalJacobian:
         J = _numerical_jacobian(q, p, "club_tip")
         assert np.all(np.isfinite(J)), "Jacobian contains non-finite values"
 
-    def test_rejects_wrong_shape_q(self):
+    def test_rejects_wrong_shape_q(self) -> Any:
         """Should assert on wrong q shape."""
         p = _default_golfer_params()
         q_wrong = np.zeros(7)  # wrong size
@@ -85,7 +87,7 @@ class TestNumericalJacobian:
         with pytest.raises(AssertionError):
             _numerical_jacobian(q_wrong, p, "rh")
 
-    def test_multiple_joints_independent(self):
+    def test_multiple_joints_independent(self) -> Any:
         """Different joints should return different Jacobians."""
         p = _default_golfer_params()
         q = _default_state()
@@ -96,7 +98,7 @@ class TestNumericalJacobian:
         # They should be different (right hand vs left hand kinematics)
         assert not np.allclose(J_rh, J_lh)
 
-    def test_jacobian_affected_by_state(self):
+    def test_jacobian_affected_by_state(self) -> Any:
         """Jacobian should change with q (different configuration)."""
         p = _default_golfer_params()
         q1 = np.zeros(N_DOF)
@@ -111,7 +113,7 @@ class TestNumericalJacobian:
         # Jacobians should differ due to different configuration
         assert not np.allclose(J1, J2)
 
-    def test_epsilon_parameter(self):
+    def test_epsilon_parameter(self) -> Any:
         """Jacobian should be computable with different epsilon values."""
         p = _default_golfer_params()
         q = _default_state()
@@ -130,7 +132,7 @@ class TestNumericalJacobian:
 class TestJacobianGolfer:
     """Tests for jacobian_golfer which computes all endpoint Jacobians."""
 
-    def test_returns_dict_with_expected_keys(self):
+    def test_returns_dict_with_expected_keys(self) -> Any:
         """Should return dict with 6 endpoint keys."""
         p = _default_golfer_params()
         q = _default_state()
@@ -140,7 +142,7 @@ class TestJacobianGolfer:
         assert isinstance(result, dict)
         assert set(result.keys()) == expected_keys
 
-    def test_all_jacobian_shapes_correct(self):
+    def test_all_jacobian_shapes_correct(self) -> Any:
         """Each endpoint Jacobian should be (2, 8)."""
         p = _default_golfer_params()
         q = _default_state()
@@ -152,7 +154,7 @@ class TestJacobianGolfer:
                 N_DOF,
             ), f"Jacobian for {name} has wrong shape: {J.shape}"
 
-    def test_all_jacobians_finite(self):
+    def test_all_jacobians_finite(self) -> Any:
         """All Jacobian values should be finite."""
         p = _default_golfer_params()
         q = _default_state()
@@ -161,7 +163,7 @@ class TestJacobianGolfer:
         for name, J in result.items():
             assert np.all(np.isfinite(J)), f"Jacobian for {name} has non-finite values"
 
-    def test_truncates_full_state(self):
+    def test_truncates_full_state(self) -> Any:
         """Should handle 16-element state by truncating to first 8."""
         p = _default_golfer_params()
         full_state = np.zeros(16)
@@ -172,7 +174,7 @@ class TestJacobianGolfer:
         for J in result.values():
             assert J.shape == (2, N_DOF)
 
-    def test_left_right_symmetry(self):
+    def test_left_right_symmetry(self) -> Any:
         """Left and right endpoints should differ due to asymmetric grips."""
         p = _default_golfer_params()
         q = _default_state()
@@ -184,7 +186,7 @@ class TestJacobianGolfer:
         # Should not be identical (different arm chains)
         assert not np.allclose(J_rh, J_lh)
 
-    def test_hub_jacobian_simpler_structure(self):
+    def test_hub_jacobian_simpler_structure(self) -> Any:
         """Hub Jacobian should depend primarily on q[0]."""
         p = _default_golfer_params()
         q = _default_state()
@@ -202,7 +204,7 @@ class TestJacobianGolfer:
 class TestEllipsoidsGolfer:
     """Tests for manipulability ellipsoid extraction."""
 
-    def test_returns_expected_structure(self):
+    def test_returns_expected_structure(self) -> Any:
         """Each endpoint should have ellipsoid data dict."""
         p = _default_golfer_params()
         q = _default_state()
@@ -220,7 +222,7 @@ class TestEllipsoidsGolfer:
             assert "force_semi_axes" in data
             assert "singular_values" in data
 
-    def test_jacobian_preserved_in_ellipsoid_data(self):
+    def test_jacobian_preserved_in_ellipsoid_data(self) -> Any:
         """Jacobian in ellipsoid data should match jacobian_golfer output."""
         p = _default_golfer_params()
         q = _default_state()
@@ -234,7 +236,7 @@ class TestEllipsoidsGolfer:
                 jacobian_result[name],
             )
 
-    def test_ellipsoid_data_finite(self):
+    def test_ellipsoid_data_finite(self) -> Any:
         """All ellipsoid values should be finite."""
         p = _default_golfer_params()
         q = _default_state()
@@ -242,19 +244,19 @@ class TestEllipsoidsGolfer:
         result = ellipsoids_golfer(q, p)
         for name, data in result.items():
             assert np.all(np.isfinite(data["jacobian"])), f"{name} Jacobian non-finite"
-            assert np.all(np.isfinite(data["singular_values"])), (
-                f"{name} singular values non-finite"
-            )
-            assert np.all(np.isfinite(data["mob_semi_axes"])), (
-                f"{name} mobility semi-axes non-finite"
-            )
+            assert np.all(
+                np.isfinite(data["singular_values"])
+            ), f"{name} singular values non-finite"
+            assert np.all(
+                np.isfinite(data["mob_semi_axes"])
+            ), f"{name} mobility semi-axes non-finite"
             # force_semi_axes may be None at singular configurations
             if data["force_semi_axes"] is not None:
-                assert np.all(np.isfinite(data["force_semi_axes"])), (
-                    f"{name} force semi-axes non-finite"
-                )
+                assert np.all(
+                    np.isfinite(data["force_semi_axes"])
+                ), f"{name} force semi-axes non-finite"
 
-    def test_singular_values_descending(self):
+    def test_singular_values_descending(self) -> Any:
         """Singular values should be in descending order."""
         p = _default_golfer_params()
         q = _default_state()
@@ -265,7 +267,7 @@ class TestEllipsoidsGolfer:
             # Check descending order
             assert np.all(np.diff(svs) <= 0), f"{name} singular values not in descending order"
 
-    def test_directions_orthonormal(self):
+    def test_directions_orthonormal(self) -> Any:
         """Ellipsoid directions should be orthonormal."""
         p = _default_golfer_params()
         q = _default_state()
@@ -276,11 +278,9 @@ class TestEllipsoidsGolfer:
             # Check columns are unit vectors
             for i in range(dirs.shape[1]):
                 col_norm = np.linalg.norm(dirs[:, i])
-                assert np.isclose(col_norm, 1.0, atol=1e-10), (
-                    f"{name} direction {i} not unit norm"
-                )
+                assert np.isclose(col_norm, 1.0, atol=1e-10), f"{name} direction {i} not unit norm"
 
-    def test_semi_axes_positive(self):
+    def test_semi_axes_positive(self) -> Any:
         """Semi-axes lengths should be positive."""
         p = _default_golfer_params()
         q = _default_state()
@@ -294,7 +294,7 @@ class TestEllipsoidsGolfer:
             if force_axes is not None:
                 assert np.all(force_axes >= 0), f"{name} force axes negative"
 
-    def test_truncates_full_state(self):
+    def test_truncates_full_state(self) -> Any:
         """Should handle 16-element state by truncating."""
         p = _default_golfer_params()
         full_state = np.zeros(16)
@@ -309,7 +309,7 @@ class TestEllipsoidsGolfer:
 class TestDeltaMatrix:
     """Tests for the inverse mass matrix (Delta matrix)."""
 
-    def test_shape_correct(self):
+    def test_shape_correct(self) -> Any:
         """Delta matrix should be (8, 8)."""
         p = _default_golfer_params()
         q = _default_state()
@@ -317,7 +317,7 @@ class TestDeltaMatrix:
         D = delta_matrix(q, p)
         assert D.shape == (N_DOF, N_DOF)
 
-    def test_symmetric(self):
+    def test_symmetric(self) -> Any:
         """Inverse of symmetric mass matrix should be symmetric."""
         p = _default_golfer_params()
         q = _default_state()
@@ -325,7 +325,7 @@ class TestDeltaMatrix:
         D = delta_matrix(q, p)
         np.testing.assert_allclose(D, D.T, atol=1e-10)
 
-    def test_finite_values(self):
+    def test_finite_values(self) -> Any:
         """All matrix values should be finite."""
         p = _default_golfer_params()
         q = _default_state()
@@ -333,7 +333,7 @@ class TestDeltaMatrix:
         D = delta_matrix(q, p)
         assert np.all(np.isfinite(D)), "Delta matrix has non-finite values"
 
-    def test_positive_definite(self):
+    def test_positive_definite(self) -> Any:
         """Mass matrix inverse should be positive definite."""
         p = _default_golfer_params()
         q = _default_state()
@@ -343,7 +343,7 @@ class TestDeltaMatrix:
         eigvals = np.linalg.eigvals(D)
         assert np.all(eigvals > -1e-10), "Delta matrix not positive definite"
 
-    def test_diagonal_dominance(self):
+    def test_diagonal_dominance(self) -> Any:
         """Diagonal elements should typically be largest (rough check)."""
         p = _default_golfer_params()
         q = _default_state()
@@ -353,7 +353,7 @@ class TestDeltaMatrix:
         # At least some diagonal elements should be non-zero
         assert np.max(diag) > 0
 
-    def test_varies_with_configuration(self):
+    def test_varies_with_configuration(self) -> Any:
         """Delta matrix should change with q."""
         p = _default_golfer_params()
         q1 = _default_state()
@@ -365,7 +365,7 @@ class TestDeltaMatrix:
 
         assert not np.allclose(D1, D2)
 
-    def test_truncates_full_state(self):
+    def test_truncates_full_state(self) -> Any:
         """Should handle 16-element state."""
         p = _default_golfer_params()
         full_state = np.zeros(16)
@@ -378,7 +378,7 @@ class TestDeltaMatrix:
 class TestZtcfMatrix:
     """Tests for the zero-torque constraint force transfer matrix."""
 
-    def test_shape_when_nonsingular(self):
+    def test_shape_when_nonsingular(self) -> Any:
         """ZTCF matrix should be (2, 8) or None."""
         p = _default_golfer_params()
         q = _default_state()
@@ -386,7 +386,7 @@ class TestZtcfMatrix:
         T = ztcf_matrix(q, p, "club_tip")
         assert T is None or T.shape == (2, N_DOF)
 
-    def test_returns_none_or_finite_array(self):
+    def test_returns_none_or_finite_array(self) -> Any:
         """Should return None if singular, else finite array."""
         p = _default_golfer_params()
         q = _default_state()
@@ -395,7 +395,7 @@ class TestZtcfMatrix:
         if T is not None:
             assert np.all(np.isfinite(T)), "ZTCF matrix has non-finite values"
 
-    def test_different_joints_different_transfers(self):
+    def test_different_joints_different_transfers(self) -> Any:
         """Different joints should give different transfer matrices."""
         p = _default_golfer_params()
         q = _default_state()
@@ -407,7 +407,7 @@ class TestZtcfMatrix:
         if T_rh is not None and T_lh is not None:
             assert not np.allclose(T_rh, T_lh)
 
-    def test_club_tip_computation(self):
+    def test_club_tip_computation(self) -> Any:
         """Should compute ZTCF for club tip (primary endpoint)."""
         p = _default_golfer_params()
         q = _default_state()
@@ -416,7 +416,7 @@ class TestZtcfMatrix:
         # May return None if singular, but should not error
         assert T is None or isinstance(T, np.ndarray)
 
-    def test_all_named_joints(self):
+    def test_all_named_joints(self) -> Any:
         """Should work for all named joints (may return None for some)."""
         p = _default_golfer_params()
         q = _default_state()
@@ -428,7 +428,7 @@ class TestZtcfMatrix:
                 assert T.shape == (2, N_DOF)
                 assert np.all(np.isfinite(T))
 
-    def test_truncates_full_state(self):
+    def test_truncates_full_state(self) -> Any:
         """Should handle 16-element state."""
         p = _default_golfer_params()
         full_state = np.zeros(16)
@@ -437,7 +437,7 @@ class TestZtcfMatrix:
         T = ztcf_matrix(full_state, p, "club_tip")
         assert T is None or T.shape == (2, N_DOF)
 
-    def test_formula_structure(self):
+    def test_formula_structure(self) -> Any:
         """ZTCF = (J M^{-1} J^T)^{-1} J M^{-1} should be consistent."""
         p = _default_golfer_params()
         q = _default_state()
@@ -471,7 +471,7 @@ class TestZtcfMatrix:
 class TestJacobianConsistency:
     """Integration tests verifying consistency between functions."""
 
-    def test_numerical_jacobian_consistent_with_jacobian_golfer(self):
+    def test_numerical_jacobian_consistent_with_jacobian_golfer(self) -> Any:
         """_numerical_jacobian should match jacobian_golfer output."""
         p = _default_golfer_params()
         q = _default_state()
@@ -485,7 +485,7 @@ class TestJacobianConsistency:
 
         np.testing.assert_allclose(J_internal, J_public, rtol=1e-10)
 
-    def test_jacobian_affects_ellipsoid_singular_values(self):
+    def test_jacobian_affects_ellipsoid_singular_values(self) -> Any:
         """Changing q should change ellipsoid singular values."""
         p = _default_golfer_params()
         q1 = _default_state()
@@ -501,7 +501,7 @@ class TestJacobianConsistency:
         # Singular values should differ
         assert not np.allclose(sv1, sv2)
 
-    def test_delta_matrix_is_mass_matrix_pseudoinverse(self):
+    def test_delta_matrix_is_mass_matrix_pseudoinverse(self) -> Any:
         """Delta should be M^{+} (pseudoinverse, since M is rank-deficient)."""
         p = _default_golfer_params()
         q = _default_state()
@@ -519,7 +519,7 @@ class TestJacobianConsistency:
 class TestRobustness:
     """Robustness tests with edge cases."""
 
-    def test_near_singular_configuration(self):
+    def test_near_singular_configuration(self) -> Any:
         """Should handle near-singular configs gracefully."""
         p = _default_golfer_params()
         # Create a somewhat singular config
@@ -530,7 +530,7 @@ class TestRobustness:
         J = jacobian_golfer(q, p)
         assert len(J) == 6
 
-    def test_zero_state(self):
+    def test_zero_state(self) -> Any:
         """Should handle zero state (all angles = 0)."""
         p = _default_golfer_params()
         q = np.zeros(N_DOF)
@@ -542,7 +542,7 @@ class TestRobustness:
         except Exception:  # noqa: BLE001
             pass  # Some configs may be singular
 
-    def test_large_angle_values(self):
+    def test_large_angle_values(self) -> Any:
         """Should handle large angle values (multiple turns)."""
         p = _default_golfer_params()
         q = np.ones(N_DOF) * 5.0  # > 2*pi
@@ -553,7 +553,7 @@ class TestRobustness:
         for Jmat in J.values():
             assert Jmat.shape == (2, N_DOF)
 
-    def test_parameter_variations(self):
+    def test_parameter_variations(self) -> Any:
         """Should work with different parameter sets."""
         # Create a different parameter set
         p1 = _default_golfer_params()

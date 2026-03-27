@@ -1,3 +1,5 @@
+from typing import Any
+
 """Gap-fill tests for model_registry.py — covers remaining uncovered lines.
 
 Line 78: Warning when overwriting existing model registration
@@ -21,7 +23,7 @@ from double_pendulum_golf.simulation import SimulationResult, run_simulation
 
 
 @pytest.fixture(autouse=True)
-def restore_registry():
+def restore_registry() -> Any:
     """Save and restore the registry state around each test."""
     from double_pendulum_golf import model_registry as reg_module
 

@@ -1,3 +1,5 @@
+from typing import Any
+
 #!/usr/bin/env python3
 """
 Cross-platform launcher for Folder Tool.
@@ -46,7 +48,7 @@ except ImportError:
             command.extend(args)
         return subprocess.run(command, cwd=str(cwd) if cwd else None, timeout=timeout, check=check)
 
-    def get_logger(name):
+    def get_logger(name) -> Any:
         return logging.getLogger(name)
 
 

@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for the web theme bridge module."""
 
 from __future__ import annotations
@@ -151,7 +153,7 @@ class TestThemeApiEndpoints:
     """Test the Flask theme API endpoints."""
 
     @pytest.fixture
-    def client(self):
+    def client(self) -> Any:
         from web_applications.unit_converter.webapp import create_app
 
         app = create_app()

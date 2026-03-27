@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for simulation_panel.py"""
 
 import pytest
@@ -29,16 +31,16 @@ class MockControls(QWidget):
         self.btn_reset = MagicMock()
         self.btn_play = MagicMock()
 
-    def get_params(self):
+    def get_params(self) -> Any:
         return {"t_end": 1.0, "dt": 0.005}
 
-    def set_slider_range(self, val):
+    def set_slider_range(self, val) -> Any:
         pass
 
-    def set_slider_value(self, val):
+    def set_slider_value(self, val) -> Any:
         pass
 
-    def stop_playback(self):
+    def stop_playback(self) -> Any:
         pass
 
 
@@ -66,7 +68,7 @@ class MockViewer(QWidget):
         self.grab = MagicMock()
 
 
-def create_mock_result(n_steps=10, is_triple=False, is_golfer=False):
+def create_mock_result(n_steps=10, is_triple=False, is_golfer=False) -> Any:
     res = MagicMock()
     res.n_steps = n_steps
     res.t = np.linspace(0, 1, n_steps)
@@ -93,7 +95,7 @@ def create_mock_result(n_steps=10, is_triple=False, is_golfer=False):
 
 
 @pytest.fixture
-def mock_sim_kwargs():
+def mock_sim_kwargs() -> Any:
     controls = MockControls()
     pendulum = MockViewer()
     matrix = MockViewer()
@@ -129,7 +131,7 @@ def mock_sim_kwargs():
     }
 
 
-def test_panel_init_and_signals(qapp, mock_sim_kwargs):
+def test_panel_init_and_signals(qapp, mock_sim_kwargs) -> Any:
     QSettings().setValue("splitter_double", QByteArray(b"dummy"))
     panel = SimulationPanel(**mock_sim_kwargs)
 
@@ -143,7 +145,7 @@ def test_panel_init_and_signals(qapp, mock_sim_kwargs):
 
 
 @patch("PyQt6.QtCore.QThread.start")
-def test_on_run_success(mock_start, qapp, mock_sim_kwargs):
+def test_on_run_success(mock_start, qapp, mock_sim_kwargs) -> Any:
     panel = SimulationPanel(**mock_sim_kwargs)
 
     # normal run
@@ -158,7 +160,7 @@ def test_on_run_success(mock_start, qapp, mock_sim_kwargs):
     assert panel._anim_idx == 0
 
 
-def test_on_run_failures(qapp, mock_sim_kwargs):
+def test_on_run_failures(qapp, mock_sim_kwargs) -> Any:
     panel = SimulationPanel(**mock_sim_kwargs)
 
     # param validation fail
@@ -189,14 +191,14 @@ def test_on_run_failures(qapp, mock_sim_kwargs):
         msg.assert_called_once()
 
 
-def test_sim_error(qapp, mock_sim_kwargs):
+def test_sim_error(qapp, mock_sim_kwargs) -> Any:
     panel = SimulationPanel(**mock_sim_kwargs)
     with patch("double_pendulum_golf.gui.simulation_panel.QMessageBox.critical") as msg:
         panel._on_sim_error("test error")
         msg.assert_called_once()
 
 
-def test_playback(qapp, mock_sim_kwargs):
+def test_playback(qapp, mock_sim_kwargs) -> Any:
     panel = SimulationPanel(**mock_sim_kwargs)
     res = create_mock_result(n_steps=5)
     panel._on_sim_done(res)
@@ -258,7 +260,7 @@ def test_playback(qapp, mock_sim_kwargs):
     panel.current_n_steps()
 
 
-def test_export_data(qapp, mock_sim_kwargs, tmp_path):
+def test_export_data(qapp, mock_sim_kwargs, tmp_path) -> Any:
     panel = SimulationPanel(**mock_sim_kwargs)
 
     # show message if no result
@@ -293,7 +295,7 @@ def test_export_data(qapp, mock_sim_kwargs, tmp_path):
     assert out_file3.exists()
 
 
-def test_export_image(qapp, mock_sim_kwargs, tmp_path):
+def test_export_image(qapp, mock_sim_kwargs, tmp_path) -> Any:
     panel = SimulationPanel(**mock_sim_kwargs)
     res = create_mock_result()
     panel._on_sim_done(res)
@@ -326,7 +328,7 @@ def test_export_image(qapp, mock_sim_kwargs, tmp_path):
 
 @patch("double_pendulum_golf.gui.simulation_panel.subprocess.run")
 @patch("shutil.which", return_value="/bin/ffmpeg")
-def test_export_video(mock_which, mock_run, qapp, mock_sim_kwargs, tmp_path):
+def test_export_video(mock_which, mock_run, qapp, mock_sim_kwargs, tmp_path) -> Any:
     panel = SimulationPanel(**mock_sim_kwargs)
     res = create_mock_result(n_steps=2)
     panel._on_sim_done(res)
@@ -342,7 +344,7 @@ def test_export_video(mock_which, mock_run, qapp, mock_sim_kwargs, tmp_path):
             panel._on_export_video()
 
 
-def test_apply_optimized_coefficients(qapp, mock_sim_kwargs):
+def test_apply_optimized_coefficients(qapp, mock_sim_kwargs) -> Any:
     # Test double
     mock_sim_kwargs["controls"] = MockControlsDouble()
     panel_double = SimulationPanel(**mock_sim_kwargs)
@@ -368,7 +370,7 @@ def test_apply_optimized_coefficients(qapp, mock_sim_kwargs):
     panel_golfer._apply_optimized_coefficients({})
 
 
-def test_patched_on_run_optimizer(qapp, mock_sim_kwargs):
+def test_patched_on_run_optimizer(qapp, mock_sim_kwargs) -> Any:
     panel = SimulationPanel(**mock_sim_kwargs)
 
     # Access the patched on run method to cover lines 294-301
@@ -383,7 +385,7 @@ def test_patched_on_run_optimizer(qapp, mock_sim_kwargs):
     panel.optimizer._btn_run.clicked.emit()
 
 
-def test_sim_worker():
+def test_sim_worker() -> Any:
     run_fn = MagicMock(return_value="obj")
     worker = _SimWorker(run_fn, {"a": 1})
 

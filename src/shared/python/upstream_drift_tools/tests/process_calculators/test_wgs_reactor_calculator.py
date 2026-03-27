@@ -1,3 +1,5 @@
+from typing import Any
+
 from upstream_drift_tools.process_calculators.wgs_reactor_calculator import (
     WGSReactorEngine,
 )
@@ -114,7 +116,7 @@ HAS_PYQT = importlib.util.find_spec("PyQt6") is not None
 
 class TestWGSReactorWidget:
     @pytest.fixture(autouse=True)
-    def prevent_qt_quit(self):
+    def prevent_qt_quit(self) -> Any:
         if HAS_PYQT:
             from PyQt6.QtWidgets import QApplication
 
@@ -123,13 +125,13 @@ class TestWGSReactorWidget:
                 app.setQuitOnLastWindowClosed(False)
 
     @pytest.fixture(autouse=True)
-    def patch_state(self, monkeypatch):
+    def patch_state(self, monkeypatch) -> Any:
         try:
             from upstream_drift_tools.ui.mixins.calculator_state_mixin import (
                 CalculatorStateMixin,
             )
 
-            def mock_init(self, *args, **kwargs):
+            def mock_init(self, *args, **kwargs) -> Any:
                 self.copyable_widgets = []
                 self.input_widgets = []
 
@@ -142,7 +144,7 @@ class TestWGSReactorWidget:
             pass
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
-    def test_widget_initialization(self, qtbot):
+    def test_widget_initialization(self, qtbot) -> Any:
         from upstream_drift_tools.process_calculators.wgs_reactor_calculator import (
             WGSReactorCalculatorWidget,
         )
@@ -152,7 +154,7 @@ class TestWGSReactorWidget:
         assert widget.layout() is not None
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
-    def test_widget_setup_state_management(self, qtbot):
+    def test_widget_setup_state_management(self, qtbot) -> Any:
         from upstream_drift_tools.process_calculators.wgs_reactor_calculator import (
             WGSReactorCalculatorWidget,
         )
@@ -164,7 +166,7 @@ class TestWGSReactorWidget:
         widget.setup_state_management()
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
-    def test_widget_close_event(self, qtbot):
+    def test_widget_close_event(self, qtbot) -> Any:
         from PyQt6.QtGui import QCloseEvent
         from upstream_drift_tools.process_calculators.wgs_reactor_calculator import (
             WGSReactorCalculatorWidget,
@@ -179,7 +181,7 @@ class TestWGSReactorWidget:
         widget.save_state.assert_called_once()
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
-    def test_widget_calculate(self, qtbot):
+    def test_widget_calculate(self, qtbot) -> Any:
         from upstream_drift_tools.process_calculators.wgs_reactor_calculator import (
             WGSReactorCalculatorWidget,
         )
@@ -222,7 +224,7 @@ class TestWGSReactorWidget:
                     assert len(widget.results_text.toPlainText()) > 10
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
-    def test_widget_calculate_error(self, qtbot):
+    def test_widget_calculate_error(self, qtbot) -> Any:
         from upstream_drift_tools.process_calculators.wgs_reactor_calculator import (
             WGSReactorCalculatorWidget,
         )
@@ -240,7 +242,7 @@ class TestWGSReactorWidget:
                 mock_msg.assert_called_once()
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
-    def test_widget_create_plots(self, qtbot):
+    def test_widget_create_plots(self, qtbot) -> Any:
         from upstream_drift_tools.process_calculators.wgs_reactor_calculator import (
             WGSReactorCalculatorWidget,
         )
@@ -253,7 +255,7 @@ class TestWGSReactorWidget:
             mock_subplot.assert_called_once()
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
-    def test_create_wgs_reactor_calculator(self, qtbot):
+    def test_create_wgs_reactor_calculator(self, qtbot) -> Any:
         from upstream_drift_tools.process_calculators.wgs_reactor_calculator import (
             create_wgs_reactor_calculator,
         )

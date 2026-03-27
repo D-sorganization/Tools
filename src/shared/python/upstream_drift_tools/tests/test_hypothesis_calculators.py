@@ -1,3 +1,5 @@
+from typing import Any
+
 """Hypothesis property-based tests for Python calculators (#1091).
 
 These tests verify fundamental physical invariants hold across random inputs,
@@ -26,7 +28,7 @@ from hypothesis import strategies as st  # noqa: E402
 _CALC = None
 
 
-def _get_calc():
+def _get_calc() -> Any:
     """Return a module-level SyngasWaterCalculator instance (cached)."""
     global _CALC
     if _CALC is None:

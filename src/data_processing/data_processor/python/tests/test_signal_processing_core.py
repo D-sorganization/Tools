@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for signal processing core functionality.
 
 Tests follow TDD principles - written before implementation.
@@ -34,7 +36,7 @@ class TestSignalIntegration:
             }
         )
 
-    def test_trapezoidal_integration_constant_signal(self, sample_data: pd.DataFrame):
+    def test_trapezoidal_integration_constant_signal(self, sample_data: pd.DataFrame) -> Any:
         """Integral of constant 5 over 1 second intervals should grow linearly."""
         from data_processor.core.signal_processing import integrate_signals
 
@@ -47,7 +49,7 @@ class TestSignalIntegration:
         assert cumulative[0] == 0  # Starts at zero
         assert np.isclose(cumulative[10], 50, rtol=0.01)
 
-    def test_rectangular_integration(self, sample_data: pd.DataFrame):
+    def test_rectangular_integration(self, sample_data: pd.DataFrame) -> Any:
         """Test rectangular (left-endpoint) integration."""
         from data_processor.core.signal_processing import integrate_signals
 
@@ -57,7 +59,7 @@ class TestSignalIntegration:
         cumulative = result["cumulative_constant"].values
         assert cumulative[0] == 0
 
-    def test_simpson_integration(self, sample_data: pd.DataFrame):
+    def test_simpson_integration(self, sample_data: pd.DataFrame) -> Any:
         """Test Simpson's rule integration."""
         from data_processor.core.signal_processing import integrate_signals
 
@@ -65,7 +67,7 @@ class TestSignalIntegration:
 
         assert "cumulative_constant" in result.columns
 
-    def test_integration_preserves_nan(self, sample_data: pd.DataFrame):
+    def test_integration_preserves_nan(self, sample_data: pd.DataFrame) -> Any:
         """NaN values should be handled gracefully."""
         from data_processor.core.signal_processing import integrate_signals
 
@@ -75,7 +77,7 @@ class TestSignalIntegration:
         # Integration should continue past NaN
         assert not np.isnan(result["cumulative_constant"].iloc[-1])
 
-    def test_integration_multiple_signals(self, sample_data: pd.DataFrame):
+    def test_integration_multiple_signals(self, sample_data: pd.DataFrame) -> Any:
         """Test integrating multiple signals at once."""
         from data_processor.core.signal_processing import integrate_signals
 
@@ -111,7 +113,7 @@ class TestSignalDifferentiation:
             }
         )
 
-    def test_spline_first_derivative(self, sample_data: pd.DataFrame):
+    def test_spline_first_derivative(self, sample_data: pd.DataFrame) -> Any:
         """Test spline-based first derivative."""
         from data_processor.core.signal_processing import differentiate_signals
 
@@ -125,7 +127,7 @@ class TestSignalDifferentiation:
         d1 = result["quadratic_d1"].values
         assert np.isclose(d1[50], 100, rtol=0.1)
 
-    def test_rolling_polynomial_first_derivative(self, sample_data: pd.DataFrame):
+    def test_rolling_polynomial_first_derivative(self, sample_data: pd.DataFrame) -> Any:
         """Test rolling polynomial (causal) first derivative."""
         from data_processor.core.signal_processing import differentiate_signals
 
@@ -141,7 +143,7 @@ class TestSignalDifferentiation:
 
         assert "quadratic_d1" in result.columns
 
-    def test_second_derivative(self, sample_data: pd.DataFrame):
+    def test_second_derivative(self, sample_data: pd.DataFrame) -> Any:
         """Test second derivative calculation."""
         from data_processor.core.signal_processing import differentiate_signals
 
@@ -155,7 +157,7 @@ class TestSignalDifferentiation:
         # Should be approximately 2 in the middle of the data
         assert np.isclose(np.nanmean(d2[20:80]), 2, rtol=0.2)
 
-    def test_multiple_derivative_orders(self, sample_data: pd.DataFrame):
+    def test_multiple_derivative_orders(self, sample_data: pd.DataFrame) -> Any:
         """Test computing multiple derivative orders at once."""
         from data_processor.core.signal_processing import differentiate_signals
 
@@ -167,7 +169,7 @@ class TestSignalDifferentiation:
         assert "cubic_d2" in result.columns
         assert "cubic_d3" in result.columns
 
-    def test_differentiation_handles_nan(self, sample_data: pd.DataFrame):
+    def test_differentiation_handles_nan(self, sample_data: pd.DataFrame) -> Any:
         """NaN values should be handled gracefully."""
         from data_processor.core.signal_processing import differentiate_signals
 
@@ -191,7 +193,7 @@ class TestTimeResampling:
         values = np.sin(np.linspace(0, 4 * np.pi, n_points))
         return pd.DataFrame({"time": time, "signal": values})
 
-    def test_resample_to_lower_frequency(self, sample_data: pd.DataFrame):
+    def test_resample_to_lower_frequency(self, sample_data: pd.DataFrame) -> Any:
         """Test downsampling from 1s to 5s intervals."""
         from data_processor.core.signal_processing import resample_data
 
@@ -201,7 +203,7 @@ class TestTimeResampling:
         assert len(result) < len(sample_data)
         assert len(result) == 20
 
-    def test_resample_to_higher_frequency(self, sample_data: pd.DataFrame):
+    def test_resample_to_higher_frequency(self, sample_data: pd.DataFrame) -> Any:
         """Test upsampling from 1s to 500ms intervals."""
         from data_processor.core.signal_processing import resample_data
 
@@ -210,7 +212,7 @@ class TestTimeResampling:
         # Should have more points after upsampling
         assert len(result) > len(sample_data)
 
-    def test_resample_preserves_time_range(self, sample_data: pd.DataFrame):
+    def test_resample_preserves_time_range(self, sample_data: pd.DataFrame) -> Any:
         """Resampling should preserve the overall time range."""
         from data_processor.core.signal_processing import resample_data
 
@@ -221,7 +223,7 @@ class TestTimeResampling:
         result_duration = (result["time"].max() - result["time"].min()).total_seconds()
         assert np.isclose(original_duration, result_duration, rtol=0.1)
 
-    def test_resample_with_aggregation(self, sample_data: pd.DataFrame):
+    def test_resample_with_aggregation(self, sample_data: pd.DataFrame) -> Any:
         """Test resampling with mean aggregation."""
         from data_processor.core.signal_processing import resample_data
 
@@ -246,7 +248,7 @@ class TestCustomVariables:
             }
         )
 
-    def test_simple_arithmetic_formula(self, sample_data: pd.DataFrame):
+    def test_simple_arithmetic_formula(self, sample_data: pd.DataFrame) -> Any:
         """Test simple arithmetic: Celsius to Fahrenheit."""
         from data_processor.core.signal_processing import apply_custom_variable
 
@@ -261,7 +263,7 @@ class TestCustomVariables:
         assert np.isclose(result["temperature_f"].iloc[0], 32)
         assert np.isclose(result["temperature_f"].iloc[-1], 212)
 
-    def test_multi_signal_formula(self, sample_data: pd.DataFrame):
+    def test_multi_signal_formula(self, sample_data: pd.DataFrame) -> Any:
         """Test formula using multiple signals."""
         from data_processor.core.signal_processing import apply_custom_variable
 
@@ -276,7 +278,7 @@ class TestCustomVariables:
         expected = sample_data["pressure"] * sample_data["flow_rate"]
         np.testing.assert_array_almost_equal(result["power"], expected)
 
-    def test_math_functions_in_formula(self, sample_data: pd.DataFrame):
+    def test_math_functions_in_formula(self, sample_data: pd.DataFrame) -> Any:
         """Test using math functions like sqrt, log, sin."""
         from data_processor.core.signal_processing import apply_custom_variable
 
@@ -290,7 +292,7 @@ class TestCustomVariables:
         expected = np.sqrt(sample_data["pressure"])
         np.testing.assert_array_almost_equal(result["sqrt_pressure"], expected)
 
-    def test_formula_validation_rejects_unsafe_code(self, sample_data: pd.DataFrame):
+    def test_formula_validation_rejects_unsafe_code(self, sample_data: pd.DataFrame) -> Any:
         """Unsafe operations like imports should be rejected."""
         from data_processor.core.signal_processing import apply_custom_variable
 
@@ -301,7 +303,7 @@ class TestCustomVariables:
                 formula="__import__('os').system('rm -rf /')",
             )
 
-    def test_formula_with_unknown_signal_raises_error(self, sample_data: pd.DataFrame):
+    def test_formula_with_unknown_signal_raises_error(self, sample_data: pd.DataFrame) -> Any:
         """Using a non-existent signal should raise an error."""
         from data_processor.core.signal_processing import apply_custom_variable
 
@@ -330,7 +332,7 @@ class TestTrendlineAnalysis:
         y = 2 * np.exp(0.3 * x) + np.random.normal(0, 0.1, 50)
         return pd.DataFrame({"x": x, "y": y})
 
-    def test_linear_trendline(self, linear_data: pd.DataFrame):
+    def test_linear_trendline(self, linear_data: pd.DataFrame) -> Any:
         """Test linear regression trendline."""
         from data_processor.core.signal_processing import calculate_trendline
 
@@ -343,7 +345,7 @@ class TestTrendlineAnalysis:
         assert np.isclose(result["intercept"], 5, rtol=0.2)
         assert result["r_squared"] > 0.99
 
-    def test_polynomial_trendline(self, linear_data: pd.DataFrame):
+    def test_polynomial_trendline(self, linear_data: pd.DataFrame) -> Any:
         """Test polynomial trendline."""
         from data_processor.core.signal_processing import calculate_trendline
 
@@ -355,7 +357,7 @@ class TestTrendlineAnalysis:
         assert "r_squared" in result
         assert len(result["coefficients"]) == 3  # degree 2 has 3 coeffs
 
-    def test_exponential_trendline(self, exponential_data: pd.DataFrame):
+    def test_exponential_trendline(self, exponential_data: pd.DataFrame) -> Any:
         """Test exponential trendline."""
         from data_processor.core.signal_processing import calculate_trendline
 
@@ -369,7 +371,7 @@ class TestTrendlineAnalysis:
         assert np.isclose(result["a"], 2, rtol=0.2)
         assert np.isclose(result["b"], 0.3, rtol=0.2)
 
-    def test_power_trendline(self):
+    def test_power_trendline(self) -> Any:
         """Test power trendline: y = a * x^b."""
         from data_processor.core.signal_processing import calculate_trendline
 
@@ -383,7 +385,7 @@ class TestTrendlineAnalysis:
         assert "b" in result
         assert np.isclose(result["b"], 2, rtol=0.2)
 
-    def test_trendline_with_time_window(self, linear_data: pd.DataFrame):
+    def test_trendline_with_time_window(self, linear_data: pd.DataFrame) -> Any:
         """Test calculating trendline over a specific portion of data."""
         from data_processor.core.signal_processing import calculate_trendline
 
@@ -405,7 +407,7 @@ class TestTimeRangeUtilities:
         values = np.arange(100)
         return pd.DataFrame({"time": time, "value": values})
 
-    def test_trim_by_time(self, sample_data: pd.DataFrame):
+    def test_trim_by_time(self, sample_data: pd.DataFrame) -> Any:
         """Test trimming data to a specific time range."""
         from data_processor.core.signal_processing import trim_time_range
 
@@ -416,7 +418,7 @@ class TestTimeRangeUtilities:
         assert result["time"].min().minute >= 30
         assert result["time"].max().hour == 11
 
-    def test_trim_by_date_and_time(self, sample_data: pd.DataFrame):
+    def test_trim_by_date_and_time(self, sample_data: pd.DataFrame) -> Any:
         """Test trimming with date and time specification."""
         from data_processor.core.signal_processing import trim_time_range
 
@@ -434,7 +436,7 @@ class TestTimeRangeUtilities:
 class TestConfigurationManagement:
     """Tests for configuration save/load functionality."""
 
-    def test_save_and_load_config(self, tmp_path):
+    def test_save_and_load_config(self, tmp_path) -> Any:
         """Test saving and loading configuration."""
         from data_processor.core.config_manager import ConfigManager
 
@@ -452,7 +454,7 @@ class TestConfigurationManagement:
 
         assert loaded == settings
 
-    def test_list_configurations(self, tmp_path):
+    def test_list_configurations(self, tmp_path) -> Any:
         """Test listing all saved configurations."""
         from data_processor.core.config_manager import ConfigManager
 
@@ -465,7 +467,7 @@ class TestConfigurationManagement:
         assert "config1" in configs
         assert "config2" in configs
 
-    def test_delete_configuration(self, tmp_path):
+    def test_delete_configuration(self, tmp_path) -> Any:
         """Test deleting a configuration."""
         from data_processor.core.config_manager import ConfigManager
 
@@ -480,7 +482,7 @@ class TestConfigurationManagement:
 class TestSignalListManagement:
     """Tests for signal list save/load functionality."""
 
-    def test_save_and_load_signal_list(self, tmp_path):
+    def test_save_and_load_signal_list(self, tmp_path) -> Any:
         """Test saving and loading signal selections."""
         from data_processor.core.signal_list_manager import SignalListManager
 
@@ -492,7 +494,7 @@ class TestSignalListManagement:
 
         assert loaded == signals
 
-    def test_list_signal_sets(self, tmp_path):
+    def test_list_signal_sets(self, tmp_path) -> Any:
         """Test listing all saved signal sets."""
         from data_processor.core.signal_list_manager import SignalListManager
 
@@ -509,7 +511,7 @@ class TestSignalListManagement:
 class TestPlotConfigurationManagement:
     """Tests for plot configuration management."""
 
-    def test_save_and_load_plot_config(self, tmp_path):
+    def test_save_and_load_plot_config(self, tmp_path) -> Any:
         """Test saving and loading plot configurations."""
         from data_processor.core.plot_config_manager import PlotConfigManager
 
@@ -530,7 +532,7 @@ class TestPlotConfigurationManagement:
 
         assert loaded == plot_config
 
-    def test_list_plot_configs(self, tmp_path):
+    def test_list_plot_configs(self, tmp_path) -> Any:
         """Test listing all saved plot configurations."""
         from data_processor.core.plot_config_manager import PlotConfigManager
 
@@ -547,7 +549,7 @@ class TestPlotConfigurationManagement:
 class TestDatasetNaming:
     """Tests for dataset naming utilities."""
 
-    def test_auto_generate_name(self):
+    def test_auto_generate_name(self) -> Any:
         """Test automatic dataset name generation."""
         from data_processor.core.dataset_naming import generate_dataset_name
 
@@ -561,7 +563,7 @@ class TestDatasetNaming:
         assert "data" in name
         assert "moving_average" in name
 
-    def test_custom_name_validation(self):
+    def test_custom_name_validation(self) -> Any:
         """Test custom name validation."""
         from data_processor.core.dataset_naming import validate_dataset_name
 
@@ -570,7 +572,7 @@ class TestDatasetNaming:
         assert validate_dataset_name("") is False
         assert validate_dataset_name("invalid/name") is False
 
-    def test_unique_name_generation(self, tmp_path):
+    def test_unique_name_generation(self, tmp_path) -> Any:
         """Test generating unique names to avoid overwrites."""
         from data_processor.core.dataset_naming import generate_unique_name
 

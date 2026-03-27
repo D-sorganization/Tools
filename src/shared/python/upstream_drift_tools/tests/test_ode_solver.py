@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for upstream_drift_tools.process_calculators.ode_solver (ODESolver).
 
 Covers all branches:
@@ -19,7 +21,7 @@ import pytest
 class TestODESolver:
     """Full coverage of ODESolver class."""
 
-    def _make_solver(self):
+    def _make_solver(self) -> Any:
         from upstream_drift_tools.process_calculators.ode_solver import ODESolver
 
         # Simple linear ODE: dT/dt = -k*(T - T_env)
@@ -27,29 +29,29 @@ class TestODESolver:
         params = {"k": 0.3, "T_env": 350.0}
         return ODESolver(derivs, params)
 
-    def test_init_stores_derivatives_and_parameters(self):
+    def test_init_stores_derivatives_and_parameters(self) -> Any:
         solver = self._make_solver()
         assert "T" in solver.derivatives
         assert "k" in solver.parameters
         assert solver.parameters["k"] == pytest.approx(0.3)
 
-    def test_init_creates_sympy_symbols(self):
+    def test_init_creates_sympy_symbols(self) -> Any:
         solver = self._make_solver()
         assert solver.t_sym is not None
         assert len(solver.var_syms) == 1  # one variable: T
         assert len(solver.param_syms) == 2  # k, T_env
 
-    def test_init_lambdifies_derivatives(self):
+    def test_init_lambdifies_derivatives(self) -> Any:
         solver = self._make_solver()
         assert len(solver._functions) == 1
 
-    def test_rhs_evaluation(self):
+    def test_rhs_evaluation(self) -> Any:
         solver = self._make_solver()
         # At T=300 K: dT/dt = 0.3*(350-300) = 15.0
         result = solver._rhs(0.0, [300.0])
         assert result[0] == pytest.approx(15.0, rel=1e-3)
 
-    def test_solve_exponential_decay(self):
+    def test_solve_exponential_decay(self) -> Any:
         solver = self._make_solver()
         t_eval = np.linspace(0.0, 10.0, 50)
         sol = solver.solve((0.0, 10.0), [300.0], t_eval=t_eval)
@@ -58,13 +60,13 @@ class TestODESolver:
         assert sol.y[0, -1] > 300.0
         assert sol.y[0, -1] < 350.0
 
-    def test_solve_without_t_eval(self):
+    def test_solve_without_t_eval(self) -> Any:
         solver = self._make_solver()
         sol = solver.solve((0.0, 5.0), [300.0])
         assert sol.success
         assert len(sol.t) > 1
 
-    def test_two_variable_system(self):
+    def test_two_variable_system(self) -> Any:
         """SHO: dx/dt = v, dv/dt = -x."""
         from upstream_drift_tools.process_calculators.ode_solver import ODESolver
 
@@ -76,7 +78,7 @@ class TestODESolver:
         # x should oscillate back near 0 at t=2π
         assert abs(sol.y[0, -1]) < 0.2
 
-    def test_plot_calls_plt_show(self):
+    def test_plot_calls_plt_show(self) -> Any:
         solver = self._make_solver()
         sol = solver.solve((0.0, 5.0), [300.0], t_eval=np.linspace(0, 5, 20))
         with patch("matplotlib.pyplot.show") as mock_show:

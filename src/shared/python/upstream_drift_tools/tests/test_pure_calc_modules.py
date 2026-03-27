@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for pure-math upstream_drift_tools modules to reach 100% coverage.
 
 Targets (all stateless/pure-logic, no external dependencies):
@@ -22,14 +24,14 @@ import pytest
 class TestThermoPropertiesCalculator:
     """Complete coverage of thermo_properties.py."""
 
-    def _calc(self):
+    def _calc(self) -> Any:
         from upstream_drift_tools.calculators.thermo.thermo_properties import (
             ThermoPropertiesCalculator,
         )
 
         return ThermoPropertiesCalculator()
 
-    def test_basic_calculation_air(self):
+    def test_basic_calculation_air(self) -> Any:
         """Standard air at 25 C, 101.325 kPa → non-trivial density."""
         calc = self._calc()
         result = calc.calculate(
@@ -43,7 +45,7 @@ class TestThermoPropertiesCalculator:
         assert result.molecular_weight_g_mol > 0
         assert result.molar_volume_m3_mol > 0
 
-    def test_enthalpy_at_reference_temperature(self):
+    def test_enthalpy_at_reference_temperature(self) -> Any:
         """At 298.15 C → temp_k ≈ 571.3 K → enthalpy = cp*(571.3-298.15)."""
         calc = self._calc()
         result = calc.calculate(
@@ -54,7 +56,7 @@ class TestThermoPropertiesCalculator:
         # enthalpy should be positive (above 298 K reference)
         assert result.enthalpy_j_mol > 0
 
-    def test_entropy_and_gibbs_calculation(self):
+    def test_entropy_and_gibbs_calculation(self) -> Any:
         """Entropy and Gibbs energy should be computed without error."""
         calc = self._calc()
         result = calc.calculate(
@@ -65,7 +67,7 @@ class TestThermoPropertiesCalculator:
         assert math.isfinite(result.entropy_j_molk)
         assert math.isfinite(result.gibbs_energy_j_mol)
 
-    def test_normalization_of_composition(self):
+    def test_normalization_of_composition(self) -> Any:
         """Composition fractions need not sum to 1; should be normalized."""
         calc = self._calc()
         # Supply values summing to 200 (not 100)
@@ -81,7 +83,7 @@ class TestThermoPropertiesCalculator:
         )
         assert r1.molecular_weight_g_mol == pytest.approx(r2.molecular_weight_g_mol)
 
-    def test_unknown_species_uses_defaults(self):
+    def test_unknown_species_uses_defaults(self) -> Any:
         """Unknown species fall back to MW=28, Cp=29."""
         calc = self._calc()
         result = calc.calculate(
@@ -92,7 +94,7 @@ class TestThermoPropertiesCalculator:
         assert result.molecular_weight_g_mol == pytest.approx(28.0, rel=0.01)
         assert result.cp_j_molk == pytest.approx(29.0, rel=0.01)
 
-    def test_zero_total_fraction_uses_default_total(self):
+    def test_zero_total_fraction_uses_default_total(self) -> Any:
         """If all composition values are 0, normalise to total=1 (guard)."""
         calc = self._calc()
         result = calc.calculate(
@@ -103,7 +105,7 @@ class TestThermoPropertiesCalculator:
         # Should return a result without error
         assert math.isfinite(result.density_kg_m3)
 
-    def test_gamma_greater_than_one(self):
+    def test_gamma_greater_than_one(self) -> Any:
         """Cp/Cv ratio should be > 1."""
         calc = self._calc()
         result = calc.calculate(
@@ -113,7 +115,7 @@ class TestThermoPropertiesCalculator:
         )
         assert result.gamma > 1.0
 
-    def test_thermo_result_dataclass(self):
+    def test_thermo_result_dataclass(self) -> Any:
         """ThermoResult fields are accessible and typed correctly."""
         from upstream_drift_tools.calculators.thermo.thermo_properties import (
             ThermoResult,
@@ -144,14 +146,14 @@ class TestThermoPropertiesCalculator:
 class TestConversionCore:
     """Cover all branches of the functional helpers in conversion/core.py."""
 
-    def test_require_positive_finite_passes_positive(self):
+    def test_require_positive_finite_passes_positive(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             _require_positive_finite,
         )
 
         _require_positive_finite(1.0, "x")  # Should not raise
 
-    def test_require_positive_finite_rejects_zero(self):
+    def test_require_positive_finite_rejects_zero(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             _require_positive_finite,
         )
@@ -159,7 +161,7 @@ class TestConversionCore:
         with pytest.raises(ValueError, match="positive and finite"):
             _require_positive_finite(0.0, "x")
 
-    def test_require_positive_finite_rejects_negative(self):
+    def test_require_positive_finite_rejects_negative(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             _require_positive_finite,
         )
@@ -167,7 +169,7 @@ class TestConversionCore:
         with pytest.raises(ValueError, match="positive and finite"):
             _require_positive_finite(-1.0, "x")
 
-    def test_require_positive_finite_rejects_inf(self):
+    def test_require_positive_finite_rejects_inf(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             _require_positive_finite,
         )
@@ -175,27 +177,27 @@ class TestConversionCore:
         with pytest.raises(ValueError, match="positive and finite"):
             _require_positive_finite(float("inf"), "x")
 
-    def test_convert_via_table_same_unit(self):
+    def test_convert_via_table_same_unit(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import convert_via_table
 
         table = {"m": 1.0, "km": 1000.0}
         assert convert_via_table(5.0, "m", "m", table) == 5.0
 
-    def test_convert_via_table_different_units(self):
+    def test_convert_via_table_different_units(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import convert_via_table
 
         table = {"m": 1.0, "km": 1000.0}
         result = convert_via_table(1.0, "km", "m", table)
         assert result == pytest.approx(1000.0)
 
-    def test_temperature_same_unit(self):
+    def test_temperature_same_unit(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             convert_temperature,
         )
 
         assert convert_temperature(100.0, "C", "C") == 100.0
 
-    def test_temperature_kelvin_to_celsius(self):
+    def test_temperature_kelvin_to_celsius(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             convert_temperature,
         )
@@ -203,7 +205,7 @@ class TestConversionCore:
         result = convert_temperature(273.15, "K", "C")
         assert result == pytest.approx(0.0, abs=0.01)
 
-    def test_temperature_celsius_to_kelvin(self):
+    def test_temperature_celsius_to_kelvin(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             convert_temperature,
         )
@@ -211,7 +213,7 @@ class TestConversionCore:
         result = convert_temperature(0.0, "C", "K")
         assert result == pytest.approx(273.15, abs=0.01)
 
-    def test_temperature_fahrenheit_to_kelvin(self):
+    def test_temperature_fahrenheit_to_kelvin(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             convert_temperature,
         )
@@ -219,7 +221,7 @@ class TestConversionCore:
         result = convert_temperature(32.0, "F", "K")
         assert result == pytest.approx(273.15, abs=0.01)
 
-    def test_temperature_rankine_to_kelvin(self):
+    def test_temperature_rankine_to_kelvin(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             convert_temperature,
         )
@@ -227,7 +229,7 @@ class TestConversionCore:
         result = convert_temperature(491.67, "R", "K")
         assert result == pytest.approx(273.15, abs=0.1)
 
-    def test_temperature_kelvin_to_fahrenheit(self):
+    def test_temperature_kelvin_to_fahrenheit(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             convert_temperature,
         )
@@ -235,7 +237,7 @@ class TestConversionCore:
         result = convert_temperature(273.15, "K", "F")
         assert result == pytest.approx(32.0, abs=0.01)
 
-    def test_temperature_kelvin_to_rankine(self):
+    def test_temperature_kelvin_to_rankine(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             convert_temperature,
         )
@@ -243,7 +245,7 @@ class TestConversionCore:
         result = convert_temperature(273.15, "K", "R")
         assert result == pytest.approx(491.67, abs=0.1)
 
-    def test_temperature_unknown_from_unit(self):
+    def test_temperature_unknown_from_unit(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             convert_temperature,
         )
@@ -251,7 +253,7 @@ class TestConversionCore:
         with pytest.raises(ValueError, match="Unknown temperature unit"):
             convert_temperature(100.0, "X", "K")
 
-    def test_temperature_unknown_to_unit(self):
+    def test_temperature_unknown_to_unit(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             convert_temperature,
         )
@@ -259,7 +261,7 @@ class TestConversionCore:
         with pytest.raises(ValueError, match="Unknown temperature unit"):
             convert_temperature(100.0, "K", "X")
 
-    def test_standard_to_actual_flow(self):
+    def test_standard_to_actual_flow(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             standard_to_actual_flow,
         )
@@ -269,7 +271,7 @@ class TestConversionCore:
         result = standard_to_actual_flow(100.0, 400.0, 101325.0, StandardCondition.NTP)
         assert result > 100.0  # Higher T → more volume
 
-    def test_standard_to_actual_flow_rejects_bad_temperature(self):
+    def test_standard_to_actual_flow_rejects_bad_temperature(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             standard_to_actual_flow,
         )
@@ -278,7 +280,7 @@ class TestConversionCore:
         with pytest.raises(ValueError, match="positive and finite"):
             standard_to_actual_flow(100.0, 0.0, 101325.0, StandardCondition.NTP)
 
-    def test_actual_to_standard_flow(self):
+    def test_actual_to_standard_flow(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             actual_to_standard_flow,
         )
@@ -287,7 +289,7 @@ class TestConversionCore:
         result = actual_to_standard_flow(100.0, 293.15, 101325.0, StandardCondition.NTP)
         assert result > 0
 
-    def test_actual_to_standard_flow_rejects_bad_pressure(self):
+    def test_actual_to_standard_flow_rejects_bad_pressure(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             actual_to_standard_flow,
         )
@@ -296,7 +298,7 @@ class TestConversionCore:
         with pytest.raises(ValueError, match="positive and finite"):
             actual_to_standard_flow(100.0, 300.0, 0.0, StandardCondition.NTP)
 
-    def test_scfm_to_standard_m3_hr_same_standard(self):
+    def test_scfm_to_standard_m3_hr_same_standard(self) -> Any:
         """When standard == reference, no temperature/pressure correction needed."""
         from upstream_drift_tools.calculators.conversion.core import (
             scfm_to_standard_m3_per_hour,
@@ -310,7 +312,7 @@ class TestConversionCore:
         result2 = scfm_to_standard_m3_per_hour(100.0, StandardCondition.STP, StandardCondition.NTP)
         assert result2 > 0
 
-    def test_standard_m3_hr_to_scfm_same_standard(self):
+    def test_standard_m3_hr_to_scfm_same_standard(self) -> Any:
         from upstream_drift_tools.calculators.conversion.core import (
             standard_m3_per_hour_to_scfm,
         )
@@ -331,7 +333,7 @@ class TestConversionCore:
 class TestElectrodeAdvancementCalculator:
     """Cover all lines of electrode_advancement_calculator.py."""
 
-    def test_init_default_consumption_rate(self):
+    def test_init_default_consumption_rate(self) -> Any:
         from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (
             ElectrodeAdvancementCalculator,
         )
@@ -339,7 +341,7 @@ class TestElectrodeAdvancementCalculator:
         calc = ElectrodeAdvancementCalculator()
         assert calc.consumption_rate == pytest.approx(0.5)
 
-    def test_calculate_consumption_basic(self):
+    def test_calculate_consumption_basic(self) -> Any:
         from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (
             ElectrodeAdvancementCalculator,
         )
@@ -349,7 +351,7 @@ class TestElectrodeAdvancementCalculator:
         # 0.5 * 10 * 2 = 10.0
         assert result == pytest.approx(10.0)
 
-    def test_calculate_consumption_zero_time(self):
+    def test_calculate_consumption_zero_time(self) -> Any:
         from upstream_drift_tools.process_calculators.electrode_advancement_calculator import (
             ElectrodeAdvancementCalculator,
         )
@@ -366,7 +368,7 @@ class TestElectrodeAdvancementCalculator:
 class TestWaterVaporPressureCalculator:
     """Cover the wrapper around SyngasWaterCalculator."""
 
-    def test_calculate_vapor_pressure_basic(self):
+    def test_calculate_vapor_pressure_basic(self) -> Any:
         from upstream_drift_tools.process_calculators.water_vapor_pressure_calculator import (
             WaterVaporPressureCalculator,
         )
@@ -376,7 +378,7 @@ class TestWaterVaporPressureCalculator:
         # At 25°C, vapor pressure of water ≈ 3169 Pa
         assert pressure_pa == pytest.approx(3169.0, rel=0.1)
 
-    def test_calculate_vapor_pressure_at_100c(self):
+    def test_calculate_vapor_pressure_at_100c(self) -> Any:
         from upstream_drift_tools.process_calculators.water_vapor_pressure_calculator import (
             WaterVaporPressureCalculator,
         )
@@ -386,7 +388,7 @@ class TestWaterVaporPressureCalculator:
         # At 100°C, vapor pressure ≈ 101325 Pa (1 atm)
         assert pressure_pa == pytest.approx(101325.0, rel=0.15)
 
-    def test_calculate_vapor_pressure_with_method(self):
+    def test_calculate_vapor_pressure_with_method(self) -> Any:
         from upstream_drift_tools.process_calculators.water_vapor_pressure_calculator import (
             WaterVaporPressureCalculator,
         )

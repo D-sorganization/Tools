@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for AnalysisTab."""
 
 import numpy as np
@@ -6,7 +8,7 @@ from double_pendulum_golf.gui.analysis_tab import AnalysisTab, _create_fallback_
 import double_pendulum_golf.gui.analysis_tab as at
 
 
-def test_analysis_tab_no_mpl(qapp, monkeypatch):
+def test_analysis_tab_no_mpl(qapp, monkeypatch) -> Any:
     monkeypatch.setattr(at, "_HAS_MPL", False)
 
     # Check fallback UI
@@ -19,7 +21,7 @@ def test_analysis_tab_no_mpl(qapp, monkeypatch):
     tab._on_plot_surface()
 
 
-def test_analysis_tab_plotting(qapp, monkeypatch):
+def test_analysis_tab_plotting(qapp, monkeypatch) -> Any:
     tab = AnalysisTab()
 
     # Mock result
@@ -53,7 +55,7 @@ def test_analysis_tab_plotting(qapp, monkeypatch):
     tab.plot_2d("time", "tip_speed")
 
 
-def test_analysis_tab_surface(qapp, monkeypatch):
+def test_analysis_tab_surface(qapp, monkeypatch) -> Any:
     tab = AnalysisTab()
     res = MagicMock()
     del res.params  # Use default params!
@@ -107,7 +109,7 @@ def test_analysis_tab_surface(qapp, monkeypatch):
     tab.plot_2d("time", "tip_speed")
 
 
-def test_analysis_tab_evaluators(qapp):
+def test_analysis_tab_evaluators(qapp) -> Any:
     tab = AnalysisTab()
 
     # test double
@@ -145,7 +147,7 @@ def test_analysis_tab_evaluators(qapp):
         assert isinstance(mani_eval3({"theta1": 0.0}), float)
 
 
-def test_analysis_tab_plot_2d_errors(qapp, monkeypatch):
+def test_analysis_tab_plot_2d_errors(qapp, monkeypatch) -> Any:
     tab = AnalysisTab()
     tab.set_result(MagicMock(), "double")
 
@@ -160,7 +162,7 @@ def test_analysis_tab_plot_2d_errors(qapp, monkeypatch):
     tab._x_combo.setCurrentIndex(0)
     tab._y_combo.setCurrentIndex(0)
 
-    def mock_extract(*args):
+    def mock_extract(*args) -> Any:
         raise KeyError()
 
     monkeypatch.setattr("double_pendulum_golf.data_extractor.extract_series", mock_extract)

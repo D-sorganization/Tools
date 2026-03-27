@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import numpy as np
@@ -59,7 +60,7 @@ def test_run_multi_parameter_analysis(analysis_params: dict) -> None:
 
 
 class DummyEngine:
-    def calculate(self, **kwargs):
+    def calculate(self, **kwargs) -> Any:
         val = kwargs.get("p1", 0) + kwargs.get("p2", 0)
         return {"out_var": val}
 

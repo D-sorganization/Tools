@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for Financial Calculator GUI components."""
 
 from __future__ import annotations
@@ -9,7 +11,7 @@ class TestFinancialCalculatorEngine:
     """Test the financial calculator engine integration."""
 
     @pytest.fixture
-    def engine(self):
+    def engine(self) -> Any:
         """Create engine instance."""
         from upstream_drift_tools.process_calculators.financial_calculator import (
             FinancialModelCalculator,
@@ -17,13 +19,13 @@ class TestFinancialCalculatorEngine:
 
         return FinancialModelCalculator()
 
-    def test_engine_instantiation(self, engine):
+    def test_engine_instantiation(self, engine) -> Any:
         """Test that engine can be instantiated."""
         assert engine is not None
         assert engine.parameters is not None
         assert engine.results is not None
 
-    def test_calculate_with_default_params(self, engine):
+    def test_calculate_with_default_params(self, engine) -> Any:
         """Test calculation with default (zero) parameters."""
         from upstream_drift_tools.process_calculators.financial_calculator import (
             FinancialParameters,
@@ -35,7 +37,7 @@ class TestFinancialCalculatorEngine:
         assert results.total_revenue == 0
         assert results.net_income == 0
 
-    def test_calculate_with_typical_values(self, engine):
+    def test_calculate_with_typical_values(self, engine) -> Any:
         """Test calculation with typical plant values."""
         from upstream_drift_tools.process_calculators.financial_calculator import (
             FinancialParameters,
@@ -69,7 +71,7 @@ class TestFinancialCalculatorEngine:
         assert results.total_revenue > 0
         assert results.net_income != 0  # Can be positive or negative
 
-    def test_yearly_projections(self, engine):
+    def test_yearly_projections(self, engine) -> Any:
         """Test multi-year projection generation."""
         from upstream_drift_tools.process_calculators.financial_calculator import (
             FinancialParameters,
@@ -95,7 +97,7 @@ class TestFinancialCalculatorMainWindow:
     """Test the main window initialization."""
 
     @pytest.fixture
-    def app(self):
+    def app(self) -> Any:
         """Create QApplication for tests."""
         from PyQt6.QtWidgets import QApplication
 
@@ -104,7 +106,7 @@ class TestFinancialCalculatorMainWindow:
             app = QApplication([])
         yield app
 
-    def test_main_window_creation(self, app):
+    def test_main_window_creation(self, app) -> Any:
         """Test that main window can be created."""
         from financial_calculator.ui.pyqt6.main_window import (
             FinancialCalculatorMainWindow,
@@ -114,7 +116,7 @@ class TestFinancialCalculatorMainWindow:
         assert window is not None
         assert window.windowTitle() == "Financial Calculator"
 
-    def test_main_window_has_engine(self, app):
+    def test_main_window_has_engine(self, app) -> Any:
         """Test that main window has calculation engine."""
         from financial_calculator.ui.pyqt6.main_window import (
             FinancialCalculatorMainWindow,
@@ -123,7 +125,7 @@ class TestFinancialCalculatorMainWindow:
         window = FinancialCalculatorMainWindow()
         assert window.engine is not None
 
-    def test_main_window_has_input_fields(self, app):
+    def test_main_window_has_input_fields(self, app) -> Any:
         """Test that main window has required input fields."""
         from financial_calculator.ui.pyqt6.main_window import (
             FinancialCalculatorMainWindow,
@@ -135,7 +137,7 @@ class TestFinancialCalculatorMainWindow:
         assert hasattr(window, "operating_days_input")
         assert hasattr(window, "product_price_input")
 
-    def test_calculate_button_exists(self, app):
+    def test_calculate_button_exists(self, app) -> Any:
         """Test that calculate button exists."""
         from financial_calculator.ui.pyqt6.main_window import (
             FinancialCalculatorMainWindow,
@@ -148,7 +150,7 @@ class TestFinancialCalculatorMainWindow:
 class TestFinancialCalculations:
     """Test financial calculation logic."""
 
-    def test_revenue_calculation(self):
+    def test_revenue_calculation(self) -> Any:
         """Test basic revenue calculation."""
         # Revenue = product_tons * price + byproduct_tons * byproduct_price
         product_tons = 28050  # 100 tpd * 330 days * 0.85 util * 0.85 yield
@@ -159,7 +161,7 @@ class TestFinancialCalculations:
         revenue = product_tons * product_price + byproduct_tons * byproduct_price
         assert revenue == 14165250  # $14.165M
 
-    def test_payback_period_calculation(self):
+    def test_payback_period_calculation(self) -> Any:
         """Test payback period calculation."""
         capital = 10000000
         net_income = 1000000
@@ -169,7 +171,7 @@ class TestFinancialCalculations:
         payback = capital / cash_flow
         assert payback == 5.0  # 5 years
 
-    def test_roe_calculation(self):
+    def test_roe_calculation(self) -> Any:
         """Test return on equity calculation."""
         capital = 10000000
         debt_ratio = 0.6

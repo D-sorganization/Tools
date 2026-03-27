@@ -26,7 +26,7 @@ from fastapi.testclient import TestClient
 
 
 @pytest.fixture(scope="module")
-def client():
+def client() -> Any:
     from calc_backend.app import app
 
     return TestClient(app)
@@ -38,12 +38,12 @@ def client():
 
 
 class TestAppStartup:
-    def test_health_check(self, client: TestClient):
+    def test_health_check(self, client: TestClient) -> Any:
         r = client.get("/health")
         assert r.status_code == 200
         assert r.json() == {"status": "ok"}
 
-    def test_list_endpoints(self, client: TestClient):
+    def test_list_endpoints(self, client: TestClient) -> Any:
         r = client.get("/api/calc/endpoints")
         assert r.status_code == 200
         body = r.json()
@@ -52,7 +52,7 @@ class TestAppStartup:
         assert any("/api/calc/flare" in s for s in calc_list)
         assert any("/api/calc/pressure-drop" in s for s in calc_list)
 
-    def test_openapi_schema_reachable(self, client: TestClient):
+    def test_openapi_schema_reachable(self, client: TestClient) -> Any:
         r = client.get("/openapi.json")
         assert r.status_code == 200
 
@@ -78,7 +78,7 @@ class TestPressureDrop:
         base.update(overrides)
         return base
 
-    def test_turbulent_flow(self, client: TestClient):
+    def test_turbulent_flow(self, client: TestClient) -> Any:
         r = client.post("/api/calc/pressure-drop", json=self._payload())
         assert r.status_code == 200
         body = r.json()
@@ -89,7 +89,7 @@ class TestPressureDrop:
         assert body["velocity_m_s"] > 0
         assert body["density_kg_m3"] > 0
 
-    def test_laminar_flow(self, client: TestClient):
+    def test_laminar_flow(self, client: TestClient) -> Any:
         # Very small flow rate → laminar
         r = client.post(
             "/api/calc/pressure-drop",
@@ -99,7 +99,7 @@ class TestPressureDrop:
         body = r.json()
         assert body["flow_regime"] == "Laminar"
 
-    def test_transitional_flow(self, client: TestClient):
+    def test_transitional_flow(self, client: TestClient) -> Any:
         # Re ≈ 2300-4000 → transitional
         r = client.post(
             "/api/calc/pressure-drop",
@@ -110,7 +110,7 @@ class TestPressureDrop:
         # Could be laminar or transitional depending on exact Re; just check shape.
         assert body["flow_regime"] in {"Laminar", "Transitional", "Turbulent"}
 
-    def test_response_contains_all_fields(self, client: TestClient):
+    def test_response_contains_all_fields(self, client: TestClient) -> Any:
         r = client.post("/api/calc/pressure-drop", json=self._payload())
         body = r.json()
         required = {
@@ -124,7 +124,7 @@ class TestPressureDrop:
         }
         assert required <= body.keys()
 
-    def test_invalid_payload_missing_field(self, client: TestClient):
+    def test_invalid_payload_missing_field(self, client: TestClient) -> Any:
         payload = self._payload()
         del payload["pipe_diameter_m"]
         r = client.post("/api/calc/pressure-drop", json=payload)
@@ -139,7 +139,7 @@ class TestPressureDrop:
 class TestFlowRate:
     """Tests for the pure flow-rate conversion router."""
 
-    def test_mass_kg_s_to_lb_s(self, client: TestClient):
+    def test_mass_kg_s_to_lb_s(self, client: TestClient) -> Any:
         r = client.post(
             "/api/calc/flow-rate",
             json={
@@ -153,7 +153,7 @@ class TestFlowRate:
         body = r.json()
         assert pytest.approx(body["result"], rel=1e-6) == 1.0
 
-    def test_mass_conversion_round_trip(self, client: TestClient):
+    def test_mass_conversion_round_trip(self, client: TestClient) -> Any:
         # 1 kg/s → lb/s → kg/s should be identity
         r1 = client.post(
             "/api/calc/flow-rate",
@@ -176,7 +176,7 @@ class TestFlowRate:
         )
         assert pytest.approx(r2.json()["result"], rel=1e-5) == 1.0
 
-    def test_volumetric_category(self, client: TestClient):
+    def test_volumetric_category(self, client: TestClient) -> Any:
         r = client.post(
             "/api/calc/flow-rate",
             json={
@@ -189,7 +189,7 @@ class TestFlowRate:
         assert r.status_code == 200
         assert pytest.approx(r.json()["result"], rel=1e-6) == 1.0
 
-    def test_molar_category(self, client: TestClient):
+    def test_molar_category(self, client: TestClient) -> Any:
         r = client.post(
             "/api/calc/flow-rate",
             json={
@@ -202,7 +202,7 @@ class TestFlowRate:
         assert r.status_code == 200
         assert pytest.approx(r.json()["result"], rel=1e-6) == 1.0
 
-    def test_unknown_category_returns_422(self, client: TestClient):
+    def test_unknown_category_returns_422(self, client: TestClient) -> Any:
         r = client.post(
             "/api/calc/flow-rate",
             json={
@@ -214,7 +214,7 @@ class TestFlowRate:
         )
         assert r.status_code == 422
 
-    def test_unknown_from_unit_returns_422(self, client: TestClient):
+    def test_unknown_from_unit_returns_422(self, client: TestClient) -> Any:
         r = client.post(
             "/api/calc/flow-rate",
             json={
@@ -226,7 +226,7 @@ class TestFlowRate:
         )
         assert r.status_code == 422
 
-    def test_unknown_to_unit_returns_422(self, client: TestClient):
+    def test_unknown_to_unit_returns_422(self, client: TestClient) -> Any:
         r = client.post(
             "/api/calc/flow-rate",
             json={
@@ -238,7 +238,7 @@ class TestFlowRate:
         )
         assert r.status_code == 422
 
-    def test_response_shape(self, client: TestClient):
+    def test_response_shape(self, client: TestClient) -> Any:
         r = client.post(
             "/api/calc/flow-rate",
             json={
@@ -272,7 +272,7 @@ class TestODESolver:
         base.update(overrides)
         return base
 
-    def test_exponential_decay_solution(self, client: TestClient):
+    def test_exponential_decay_solution(self, client: TestClient) -> Any:
         r = client.post("/api/calc/ode-solver", json=self._decay_payload())
         assert r.status_code == 200
         body = r.json()
@@ -284,18 +284,18 @@ class TestODESolver:
         expected = 100 * math.exp(-0.1 * 20)
         assert pytest.approx(final_y, rel=0.01) == expected
 
-    def test_times_are_monotone(self, client: TestClient):
+    def test_times_are_monotone(self, client: TestClient) -> Any:
         r = client.post("/api/calc/ode-solver", json=self._decay_payload())
         body = r.json()
         times = body["times"]
         assert all(times[i] <= times[i + 1] for i in range(len(times) - 1))
 
-    def test_num_points_respected(self, client: TestClient):
+    def test_num_points_respected(self, client: TestClient) -> Any:
         r = client.post("/api/calc/ode-solver", json=self._decay_payload(num_points=25))
         body = r.json()
         assert len(body["times"]) == 25
 
-    def test_variable_summaries_present(self, client: TestClient):
+    def test_variable_summaries_present(self, client: TestClient) -> Any:
         r = client.post("/api/calc/ode-solver", json=self._decay_payload())
         body = r.json()
         summaries = body["variable_summaries"]
@@ -305,13 +305,13 @@ class TestODESolver:
         assert s["initial_value"] == pytest.approx(100.0, rel=1e-5)
         assert s["min_value"] <= s["max_value"]
 
-    def test_missing_initial_condition_422(self, client: TestClient):
+    def test_missing_initial_condition_422(self, client: TestClient) -> Any:
         payload = self._decay_payload()
         del payload["initial_conditions"]["y"]
         r = client.post("/api/calc/ode-solver", json=payload)
         assert r.status_code == 422
 
-    def test_multivariable_system(self, client: TestClient):
+    def test_multivariable_system(self, client: TestClient) -> Any:
         # Simple SIR-like: dx/dt = -a*x, dy/dt = a*x - b*y
         payload = {
             "derivatives": {"x": "-a*x", "y": "a*x - b*y"},
@@ -327,7 +327,7 @@ class TestODESolver:
         assert "x" in body["solutions"]
         assert "y" in body["solutions"]
 
-    def test_invalid_expression_422(self, client: TestClient):
+    def test_invalid_expression_422(self, client: TestClient) -> Any:
         payload = self._decay_payload()
         payload["derivatives"]["y"] = "[bad syntax]"
         r = client.post("/api/calc/ode-solver", json=payload)
@@ -357,7 +357,7 @@ class TestThermalProfile:
         base.update(overrides)
         return base
 
-    def test_basic_success(self, client: TestClient):
+    def test_basic_success(self, client: TestClient) -> Any:
         r = client.post("/api/calc/thermal-profile", json=self._payload())
         assert r.status_code == 200
         body = r.json()
@@ -365,32 +365,32 @@ class TestThermalProfile:
         assert len(body["data"]) == 50
         assert "final_temp_c" in body
 
-    def test_temperature_rises_with_power(self, client: TestClient):
+    def test_temperature_rises_with_power(self, client: TestClient) -> Any:
         r = client.post("/api/calc/thermal-profile", json=self._payload())
         body = r.json()
         assert body["final_temp_c"] > body["data"][0]["temperature_c"]
 
-    def test_linear_ramp_profile(self, client: TestClient):
+    def test_linear_ramp_profile(self, client: TestClient) -> Any:
         r = client.post(
             "/api/calc/thermal-profile",
             json=self._payload(power_profile="linear_ramp", ramp_rate_w_per_s=1.0),
         )
         assert r.status_code == 200
 
-    def test_step_profile(self, client: TestClient):
+    def test_step_profile(self, client: TestClient) -> Any:
         r = client.post(
             "/api/calc/thermal-profile",
             json=self._payload(power_profile="step", step_time_s=1800.0),
         )
         assert r.status_code == 200
 
-    def test_missing_required_field_422(self, client: TestClient):
+    def test_missing_required_field_422(self, client: TestClient) -> Any:
         payload = self._payload()
         del payload["thermal_mass_j_per_k"]
         r = client.post("/api/calc/thermal-profile", json=payload)
         assert r.status_code == 422
 
-    def test_response_shape(self, client: TestClient):
+    def test_response_shape(self, client: TestClient) -> Any:
         r = client.post("/api/calc/thermal-profile", json=self._payload())
         body = r.json()
         required = {"data", "final_temp_c", "max_temp_c", "min_temp_c", "temp_change_c"}
@@ -415,21 +415,21 @@ class TestSyngasWater:
         base.update(overrides)
         return base
 
-    def test_basic_success(self, client: TestClient):
+    def test_basic_success(self, client: TestClient) -> Any:
         r = client.post("/api/calc/syngas-water", json=self._payload())
         assert r.status_code == 200
         body = r.json()
         assert "water_content" in body
         assert "risk_assessment" in body
 
-    def test_water_content_positive(self, client: TestClient):
+    def test_water_content_positive(self, client: TestClient) -> Any:
         r = client.post("/api/calc/syngas-water", json=self._payload())
         body = r.json()
         wc = body["water_content"]
         assert wc["mole_fraction_water"] >= 0
         assert wc["vapor_pressure_bar"] >= 0
 
-    def test_all_composition_keys(self, client: TestClient):
+    def test_all_composition_keys(self, client: TestClient) -> Any:
         for key in (
             "typical_syngas",
             "biomass_syngas",
@@ -439,19 +439,19 @@ class TestSyngasWater:
             r = client.post("/api/calc/syngas-water", json=self._payload(composition_key=key))
             assert r.status_code == 200, f"Failed for composition_key={key}"
 
-    def test_all_methods(self, client: TestClient):
+    def test_all_methods(self, client: TestClient) -> Any:
         for method in ("auto", "antoine", "buck", "iapws", "magnus"):
             r = client.post("/api/calc/syngas-water", json=self._payload(method=method))
             assert r.status_code == 200, f"Failed for method={method}"
 
-    def test_high_temp_low_pressure(self, client: TestClient):
+    def test_high_temp_low_pressure(self, client: TestClient) -> Any:
         r = client.post(
             "/api/calc/syngas-water",
             json=self._payload(temperature_c=200.0, pressure_bar=1.0),
         )
         assert r.status_code == 200
 
-    def test_missing_required_field(self, client: TestClient):
+    def test_missing_required_field(self, client: TestClient) -> Any:
         payload = self._payload()
         del payload["pressure_bar"]
         r = client.post("/api/calc/syngas-water", json=payload)
@@ -479,14 +479,14 @@ class TestAcidGasDewpoint:
         base.update(overrides)
         return base
 
-    def test_basic_success(self, client: TestClient):
+    def test_basic_success(self, client: TestClient) -> Any:
         r = client.post("/api/calc/acid-gas-dewpoint", json=self._payload())
         assert r.status_code == 200
         body = r.json()
         assert "components" in body
         assert "condensation_risk" in body
 
-    def test_response_shape(self, client: TestClient):
+    def test_response_shape(self, client: TestClient) -> Any:
         r = client.post("/api/calc/acid-gas-dewpoint", json=self._payload())
         body = r.json()
         required = {
@@ -499,25 +499,25 @@ class TestAcidGasDewpoint:
         }
         assert required <= body.keys()
 
-    def test_components_dict_has_entries(self, client: TestClient):
+    def test_components_dict_has_entries(self, client: TestClient) -> Any:
         r = client.post("/api/calc/acid-gas-dewpoint", json=self._payload())
         body = r.json()
         assert len(body["components"]) > 0
 
-    def test_extended_antoine_method(self, client: TestClient):
+    def test_extended_antoine_method(self, client: TestClient) -> Any:
         r = client.post(
             "/api/calc/acid-gas-dewpoint",
             json=self._payload(method="extended_antoine"),
         )
         assert r.status_code == 200
 
-    def test_missing_required_field(self, client: TestClient):
+    def test_missing_required_field(self, client: TestClient) -> Any:
         payload = self._payload()
         del payload["temperature_c"]
         r = client.post("/api/calc/acid-gas-dewpoint", json=payload)
         assert r.status_code == 422
 
-    def test_zero_concentrations(self, client: TestClient):
+    def test_zero_concentrations(self, client: TestClient) -> Any:
         r = client.post(
             "/api/calc/acid-gas-dewpoint",
             json=self._payload(
@@ -545,18 +545,18 @@ class TestWGSReactorMocked:
             "catalyst_type": "HTS",
         }
 
-    def test_wgs_success(self, client: TestClient):
+    def test_wgs_success(self, client: TestClient) -> Any:
         r = client.post("/api/calc/wgs-reactor", json=self._payload())
         # May succeed or 422 if calculator module unavailable; either way no 500
         assert r.status_code in (200, 422)
 
-    def test_wgs_with_feed_rate(self, client: TestClient):
+    def test_wgs_with_feed_rate(self, client: TestClient) -> Any:
         payload = self._payload()
         payload["feed_rate_kmol_hr"] = 10.0
         r = client.post("/api/calc/wgs-reactor", json=payload)
         assert r.status_code in (200, 422)
 
-    def test_wgs_invalid_payload(self, client: TestClient):
+    def test_wgs_invalid_payload(self, client: TestClient) -> Any:
         r = client.post("/api/calc/wgs-reactor", json={"temperature_k": -1.0})
         assert r.status_code == 422
 
@@ -573,7 +573,7 @@ class TestFlareRouterMocked:
         }
 
     @patch("calc_backend.routers.flare.FlareCalculator", create=True)
-    def test_flare_success_with_mock(self, mock_cls, client: TestClient):
+    def test_flare_success_with_mock(self, mock_cls, client: TestClient) -> Any:
         mock_calc = MagicMock()
         mock_design = MagicMock(
             height=50.0,
@@ -592,7 +592,7 @@ class TestFlareRouterMocked:
         # If the import-path mock doesn't line up exactly, it will fall through to real import
         assert r.status_code in (200, 422, 503)
 
-    def test_flare_invalid_payload(self, client: TestClient):
+    def test_flare_invalid_payload(self, client: TestClient) -> Any:
         r = client.post("/api/calc/flare", json={"total_flow_kg_hr": -1.0})
         assert r.status_code == 422
 
@@ -611,11 +611,11 @@ class TestScrubberRouteMocked:
             "percent_of_flood": 70.0,
         }
 
-    def test_scrubber_call(self, client: TestClient):
+    def test_scrubber_call(self, client: TestClient) -> Any:
         r = client.post("/api/calc/scrubber", json=self._payload())
         assert r.status_code in (200, 422, 503)
 
-    def test_scrubber_invalid_payload(self, client: TestClient):
+    def test_scrubber_invalid_payload(self, client: TestClient) -> Any:
         r = client.post("/api/calc/scrubber", json={"gas_flow_kg_hr": -1.0})
         assert r.status_code == 422
 
@@ -639,11 +639,11 @@ class TestBaghouseRouteMocked:
             "bag_area_ft2": 1000.0,
         }
 
-    def test_baghouse_call(self, client: TestClient):
+    def test_baghouse_call(self, client: TestClient) -> Any:
         r = client.post("/api/calc/baghouse", json=self._payload())
         assert r.status_code in (200, 422, 503)
 
-    def test_baghouse_invalid_payload(self, client: TestClient):
+    def test_baghouse_invalid_payload(self, client: TestClient) -> Any:
         r = client.post("/api/calc/baghouse", json={"gas_flow_kg_s": -5.0})
         assert r.status_code == 422
 
@@ -651,7 +651,7 @@ class TestBaghouseRouteMocked:
 class TestProtocols:
     """Test that the calc_backend protocols work correctly."""
 
-    def test_calculation_engine_protocol(self):
+    def test_calculation_engine_protocol(self) -> Any:
         from calc_backend.protocols import CalculationEngine
         from pydantic import BaseModel
 
@@ -670,7 +670,7 @@ class TestProtocols:
         result = engine.calculate(DummyRequest(x=5.0))
         assert result.result == 10.0
 
-    def test_validation_mixin_protocol(self):
+    def test_validation_mixin_protocol(self) -> Any:
         from calc_backend.protocols import ValidationMixin
 
         class DummyValidator:
@@ -684,7 +684,7 @@ class TestProtocols:
         with pytest.raises(ValueError):
             v.validate_inputs({"x": -1.0})
 
-    def test_expression_evaluator_protocol(self):
+    def test_expression_evaluator_protocol(self) -> Any:
         from calc_backend.protocols import ExpressionEvaluator
 
         class DummyEval:
@@ -708,7 +708,7 @@ class TestProtocols:
 class TestODEContracts:
     """Test Pydantic contracts for ODE solver."""
 
-    def test_ode_request_defaults(self):
+    def test_ode_request_defaults(self) -> Any:
         from calc_backend.contracts.ode_solver import ODESolverRequest
 
         req = ODESolverRequest(
@@ -719,7 +719,7 @@ class TestODEContracts:
         assert req.t_end == 20.0
         assert req.num_points == 100
 
-    def test_ode_response_defaults(self):
+    def test_ode_response_defaults(self) -> Any:
         from calc_backend.contracts.ode_solver import (
             ODESolverResponse,
             ODEVariableSummary,
@@ -741,7 +741,7 @@ class TestODEContracts:
         assert resp.success is True
         assert "computed" in resp.message
 
-    def test_thermal_profile_request_defaults(self):
+    def test_thermal_profile_request_defaults(self) -> Any:
         from calc_backend.contracts.thermal_profile import ThermalProfileRequest
 
         req = ThermalProfileRequest(thermal_mass_j_per_k=1000.0, heat_loss_coeff_w_per_k=5.0)
@@ -749,13 +749,13 @@ class TestODEContracts:
         assert req.power_profile == "constant"
         assert req.num_points == 100
 
-    def test_flow_rate_contracts(self):
+    def test_flow_rate_contracts(self) -> Any:
         from calc_backend.contracts.flow_rate import FlowRateConvertRequest
 
         req = FlowRateConvertRequest(value=10.0, from_unit="kg/s", to_unit="lb/s")
         assert req.category == "mass"
 
-    def test_pressure_drop_contracts(self):
+    def test_pressure_drop_contracts(self) -> Any:
         from calc_backend.contracts.pressure_drop import PressureDropRequest
 
         req = PressureDropRequest(
@@ -768,7 +768,7 @@ class TestODEContracts:
         )
         assert req.roughness_m == pytest.approx(0.000045, rel=1e-5)
 
-    def test_wgs_contracts(self):
+    def test_wgs_contracts(self) -> Any:
         from calc_backend.contracts.wgs_reactor import WGSReactorRequest
 
         req = WGSReactorRequest(
@@ -779,21 +779,21 @@ class TestODEContracts:
         assert req.steam_ratio == 2.0
         assert req.feed_rate_kmol_hr == 0.0
 
-    def test_syngas_water_contracts(self):
+    def test_syngas_water_contracts(self) -> Any:
         from calc_backend.contracts.syngas_water import SyngasWaterRequest
 
         req = SyngasWaterRequest(temperature_c=50.0, pressure_bar=10.0)
         assert req.composition_key == "typical_syngas"
         assert req.method == "auto"
 
-    def test_acid_gas_contracts(self):
+    def test_acid_gas_contracts(self) -> Any:
         from calc_backend.contracts.acid_gas_dewpoint import AcidGasDewpointRequest
 
         req = AcidGasDewpointRequest(temperature_c=150.0, pressure_bar=1.0)
         assert req.method == "antoine"
         assert req.h2o_fraction == 0.0
 
-    def test_rotation_contract_validate_twist(self):
+    def test_rotation_contract_validate_twist(self) -> Any:
         """Test that the model validator fires on bad twist_frame_conversion."""
         import pydantic
         from calc_backend.contracts.rotation_converter import (
@@ -804,7 +804,7 @@ class TestODEContracts:
             # Missing twist/transform → validator raises ValueError
             ReferenceFrameConversionRequest(operation="twist_frame_conversion")
 
-    def test_rotation_contract_validate_homogeneous(self):
+    def test_rotation_contract_validate_homogeneous(self) -> Any:
         import pydantic
         from calc_backend.contracts.rotation_converter import (
             ReferenceFrameConversionRequest,
@@ -814,7 +814,7 @@ class TestODEContracts:
             # Missing rotation_matrix/translation
             ReferenceFrameConversionRequest(operation="homogeneous_transform")
 
-    def test_rotation_contract_validate_so3(self):
+    def test_rotation_contract_validate_so3(self) -> Any:
         import pydantic
         from calc_backend.contracts.rotation_converter import (
             ReferenceFrameConversionRequest,
@@ -824,7 +824,7 @@ class TestODEContracts:
             # Need exactly one of so3_vector, so3_matrix, rotation_matrix
             ReferenceFrameConversionRequest(operation="so3_so3_maps")
 
-    def test_rotation_contract_so3_valid(self):
+    def test_rotation_contract_so3_valid(self) -> Any:
         from calc_backend.contracts.rotation_converter import (
             ReferenceFrameConversionRequest,
         )
@@ -835,7 +835,7 @@ class TestODEContracts:
         )
         assert req.operation == "so3_so3_maps"
 
-    def test_scrubber_contracts(self):
+    def test_scrubber_contracts(self) -> Any:
         from calc_backend.contracts.scrubber import ScrubberRequest
 
         req = ScrubberRequest(
@@ -848,7 +848,7 @@ class TestODEContracts:
         assert req.packing_type == "Metal Pall Rings"
         assert req.percent_of_flood == pytest.approx(70.0)
 
-    def test_flare_contracts(self):
+    def test_flare_contracts(self) -> Any:
         from calc_backend.contracts.flare import FlareRequest
 
         req = FlareRequest(
@@ -859,7 +859,7 @@ class TestODEContracts:
         )
         assert req.total_flow_kg_hr == 10000.0
 
-    def test_baghouse_contracts(self):
+    def test_baghouse_contracts(self) -> Any:
         from calc_backend.contracts.baghouse import BaghouseRequest
 
         req = BaghouseRequest(
@@ -887,7 +887,7 @@ class TestODEContracts:
 class TestSyngasWaterSanitize:
     """Direct unit tests for _sanitize and _fallback helper in syngas_water."""
 
-    def test_sanitize_nan(self):
+    def test_sanitize_nan(self) -> Any:
         from calc_backend.routers.syngas_water import _sanitize
 
         assert _sanitize(float("nan")) == 0.0
@@ -896,7 +896,7 @@ class TestSyngasWaterSanitize:
         assert _sanitize(1.5) == pytest.approx(1.5)
         assert _sanitize(0) == 0.0
 
-    def test_fallback_condensation_critical(self):
+    def test_fallback_condensation_critical(self) -> Any:
         """Very cold temperature hits condensation code paths."""
         from calc_backend.contracts.syngas_water import SyngasWaterRequest
         from calc_backend.routers.syngas_water import _fallback_calculate
@@ -913,7 +913,7 @@ class TestSyngasWaterSanitize:
             "Low",
         }
 
-    def test_fallback_high_risk(self):
+    def test_fallback_high_risk(self) -> Any:
         """Margin < 5C → High risk."""
         from calc_backend.contracts.syngas_water import SyngasWaterRequest
         from calc_backend.routers.syngas_water import _fallback_calculate
@@ -929,7 +929,7 @@ class TestSyngasWaterSanitize:
             "Low",
         }
 
-    def test_fallback_medium_risk(self):
+    def test_fallback_medium_risk(self) -> Any:
         """Moderate conditions."""
         from calc_backend.contracts.syngas_water import SyngasWaterRequest
         from calc_backend.routers.syngas_water import _fallback_calculate
@@ -945,7 +945,7 @@ class TestSyngasWaterSanitize:
             "Low",
         }
 
-    def test_fallback_low_risk(self):
+    def test_fallback_low_risk(self) -> Any:
         """High temperature, high pressure."""
         from calc_backend.contracts.syngas_water import SyngasWaterRequest
         from calc_backend.routers.syngas_water import _fallback_calculate
@@ -956,7 +956,7 @@ class TestSyngasWaterSanitize:
         resp = _fallback_calculate(req)
         assert resp.risk_assessment.condensation_risk == "Low"
 
-    def test_fallback_unknown_composition_key(self):
+    def test_fallback_unknown_composition_key(self) -> Any:
         """Unknown composition key falls back to default 10%."""
         from calc_backend.contracts.syngas_water import SyngasWaterRequest
         from calc_backend.routers.syngas_water import _fallback_calculate
@@ -971,22 +971,22 @@ class TestSyngasWaterSanitize:
 class TestScrubberAsFloat:
     """Direct unit tests for _as_float helper in scrubber router."""
 
-    def test_as_float_int(self):
+    def test_as_float_int(self) -> Any:
         from calc_backend.routers.scrubber import _as_float
 
         assert _as_float(5, "x") == 5.0
 
-    def test_as_float_float(self):
+    def test_as_float_float(self) -> Any:
         from calc_backend.routers.scrubber import _as_float
 
         assert _as_float(3.14, "x") == pytest.approx(3.14)
 
-    def test_as_float_string_valid(self):
+    def test_as_float_string_valid(self) -> Any:
         from calc_backend.routers.scrubber import _as_float
 
         assert _as_float("2.71", "x") == pytest.approx(2.71)
 
-    def test_as_float_string_invalid_raises_422(self):
+    def test_as_float_string_invalid_raises_422(self) -> Any:
         from calc_backend.routers.scrubber import _as_float
         from fastapi import HTTPException
 
@@ -994,7 +994,7 @@ class TestScrubberAsFloat:
             _as_float("not_a_number", "my_field")
         assert exc_info.value.status_code == 422
 
-    def test_as_float_invalid_type_raises_422(self):
+    def test_as_float_invalid_type_raises_422(self) -> Any:
         from calc_backend.routers.scrubber import _as_float
         from fastapi import HTTPException
 
@@ -1006,7 +1006,7 @@ class TestScrubberAsFloat:
 class TestPressureDropEdgeCases:
     """Unit-level tests for pressure-drop edge-case branches."""
 
-    def test_log10_exception_branch(self):
+    def test_log10_exception_branch(self) -> Any:
         """Very rough pipe → a_val + b_val could be ≤ 0 triggering ValueError fallback."""
         from calc_backend.contracts.pressure_drop import PressureDropRequest
         from calc_backend.routers.pressure_drop import calculate_pressure_drop as _fn
@@ -1024,7 +1024,7 @@ class TestPressureDropEdgeCases:
         resp = _fn(req)
         assert resp.friction_factor > 0
 
-    def test_transitional_regime_via_unit(self):
+    def test_transitional_regime_via_unit(self) -> Any:
         """Re between 2300 and 4000 → 'Transitional' regime code path."""
         from calc_backend.contracts.pressure_drop import PressureDropRequest
         from calc_backend.routers.pressure_drop import calculate_pressure_drop as _fn

@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Humanoid model generation components.
 
@@ -47,7 +49,7 @@ except ImportError:
     # humanoid_character_builder not available
     __all__ = []
 
-    def _not_available(*args, **kwargs):
+    def _not_available(*args, **kwargs) -> Any:
         raise ImportError(
             "humanoid_character_builder not available. Ensure it is in the Python path."
         )

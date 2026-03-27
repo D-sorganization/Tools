@@ -77,18 +77,18 @@ class TestProjectToConstraints:
         q = np.zeros(N_DOF)
         q_proj = project_to_constraints(q, golfer_params)
         phi = constraint_vector(q_proj, golfer_params)
-        assert np.linalg.norm(phi) < 1e-6, (
-            f"Constraint violation after projection: {np.linalg.norm(phi)}"
-        )
+        assert (
+            np.linalg.norm(phi) < 1e-6
+        ), f"Constraint violation after projection: {np.linalg.norm(phi)}"
 
     def test_arbitrary_config_projects(self, golfer_params: GolferParams) -> None:
         rng = np.random.default_rng(123)
         q = rng.uniform(-0.5, 0.5, size=N_DOF)
         q_proj = project_to_constraints(q, golfer_params)
         phi = constraint_vector(q_proj, golfer_params)
-        assert np.linalg.norm(phi) < 1e-4, (
-            f"Constraint violation after projection: {np.linalg.norm(phi)}"
-        )
+        assert (
+            np.linalg.norm(phi) < 1e-4
+        ), f"Constraint violation after projection: {np.linalg.norm(phi)}"
 
     def test_idempotent(self, golfer_params: GolferParams) -> None:
         q = np.zeros(N_DOF)
@@ -133,9 +133,9 @@ class TestProjectVelocity:
         qdot_proj = project_velocity(q, qdot, golfer_params)
         Phi_q = constraint_jacobian(q, golfer_params)
         violation = Phi_q @ qdot_proj
-        assert np.linalg.norm(violation) < 1e-6, (
-            f"Velocity constraint violation: {np.linalg.norm(violation)}"
-        )
+        assert (
+            np.linalg.norm(violation) < 1e-6
+        ), f"Velocity constraint violation: {np.linalg.norm(violation)}"
 
 
 class TestConstrainedAccelerations:

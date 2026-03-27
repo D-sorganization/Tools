@@ -1,3 +1,4 @@
+from typing import Any
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -11,13 +12,13 @@ except ImportError:
 
     import pandas as pd
 
-    def safe_read_csv(path, default=None, **kwargs):
+    def safe_read_csv(path, default=None, **kwargs) -> Any:
         try:
             return pd.read_csv(path, **kwargs)
         except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return default if default is not None else pd.DataFrame()
 
-    def safe_write_csv(df, path, create_parents=True, **kwargs):
+    def safe_write_csv(df, path, create_parents=True, **kwargs) -> Any:
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         safe_write_csv(df, path, **kwargs)
 

@@ -344,9 +344,9 @@ class TestTripleEOMWithDissipation:
         e_start = total_energy(result.states[0], base_params)
         e_end = total_energy(result.states[-1], base_params)
         # Allow ~2% drift for chaotic triple pendulum
-        assert abs(e_end - e_start) / max(abs(e_start), 1e-9) < 0.02, (
-            f"Energy drift too large: {e_start:.4f} → {e_end:.4f}"
-        )
+        assert (
+            abs(e_end - e_start) / max(abs(e_start), 1e-9) < 0.02
+        ), f"Energy drift too large: {e_start:.4f} → {e_end:.4f}"
 
     def test_damped_pendulum_loses_energy(
         self,
@@ -368,9 +368,9 @@ class TestTripleEOMWithDissipation:
 
         e_start = total_energy(result.states[0], damped_params)
         e_end = total_energy(result.states[-1], damped_params)
-        assert e_end < e_start, (
-            f"Damped pendulum energy should decrease: {e_start:.4f} → {e_end:.4f}"
-        )
+        assert (
+            e_end < e_start
+        ), f"Damped pendulum energy should decrease: {e_start:.4f} → {e_end:.4f}"
 
     def test_friction_does_not_blow_up(
         self,
@@ -389,9 +389,9 @@ class TestTripleEOMWithDissipation:
         )
 
         assert result.n_steps >= 2
-        assert all(np.isfinite(result.states.flatten())), (
-            "Simulation with combined friction/damping produced non-finite states"
-        )
+        assert all(
+            np.isfinite(result.states.flatten())
+        ), "Simulation with combined friction/damping produced non-finite states"
 
 
 # ---------------------------------------------------------------------------
@@ -478,9 +478,7 @@ class TestMassMatrixCorrectness:
             M = mass_matrix(phi1, phi2, equal_params)
             assert np.allclose(M, M.T), f"Not symmetric at phi1={phi1}, phi2={phi2}"
 
-    def test_positive_definite_at_random_angles(
-        self, equal_params: TriplePendulumParams
-    ) -> None:
+    def test_positive_definite_at_random_angles(self, equal_params: TriplePendulumParams) -> None:
         rng = np.random.default_rng(123)
         for _ in range(20):
             phi1, phi2 = rng.uniform(-np.pi, np.pi, size=2)
@@ -552,6 +550,4 @@ class TestEnergyConservation:
         energies = [total_energy(result.states[i], params) for i in range(result.n_steps)]
         e0 = energies[0]
         max_drift = max(abs(e - e0) for e in energies)
-        assert max_drift < 1e-6, (
-            f"Energy drift {max_drift:.2e} exceeds 1e-6 for state0={state0}"
-        )
+        assert max_drift < 1e-6, f"Energy drift {max_drift:.2e} exceeds 1e-6 for state0={state0}"

@@ -266,9 +266,9 @@ class TestPhysicsTripleEnergy:
         E0 = total_energy(state0, params)
         E_final = total_energy(result.states[-1], params)
         # Energy should be conserved within integration tolerance
-        assert abs(E_final - E0) / max(abs(E0), 1e-10) < 0.01, (
-            f"Energy drift: E0={E0:.4f}, E_final={E_final:.4f}"
-        )
+        assert (
+            abs(E_final - E0) / max(abs(E0), 1e-10) < 0.01
+        ), f"Energy drift: E0={E0:.4f}, E_final={E_final:.4f}"
 
 
 class TestUnitConversionModule:

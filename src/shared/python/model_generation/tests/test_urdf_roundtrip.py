@@ -1,3 +1,5 @@
+from typing import Any
+
 """Round-trip URDF generation and semantic equality tests (#1064).
 
 Tests that a URDF parsed -> to_urdf() -> re-parsed produces
@@ -93,7 +95,7 @@ MULTI_JOINT_URDF = """\
 class TestURDFRoundTrip:
     """Parse -> to_urdf -> re-parse must preserve semantics."""
 
-    def _round_trip(self, urdf_str: str):
+    def _round_trip(self, urdf_str: str) -> Any:
         """Parse, write, re-parse, return both models."""
         from model_generation.converters.urdf_parser import URDFParser
 

@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for psa_gui.py."""
 
 from __future__ import annotations
@@ -17,7 +19,7 @@ from upstream_drift_tools.process_calculators.psa_package.psa_gui import (
 
 
 @pytest.fixture
-def dummy_qapp():
+def dummy_qapp() -> Any:
     """Create a dummy QApplication for UI testing."""
     app = QApplication.instance()
     if app is None:
@@ -25,7 +27,7 @@ def dummy_qapp():
     return app
 
 
-def test_input_panel_initialization(dummy_qapp):
+def test_input_panel_initialization(dummy_qapp) -> Any:
     """Test that the input panel initializes correctly."""
     panel = InputPanel()
     assert panel.feed_input.text() == "1100"
@@ -43,7 +45,7 @@ def test_input_panel_initialization(dummy_qapp):
     assert panel.feed_input.text() == "1100"
 
 
-def test_results_panel_initialization(dummy_qapp):
+def test_results_panel_initialization(dummy_qapp) -> Any:
     """Test that the results panel initializes correctly."""
     panel = ResultsPanel()
     assert panel.h2_recovery_label.text() == "--"
@@ -88,7 +90,7 @@ def test_results_panel_initialization(dummy_qapp):
 
 @patch("upstream_drift_tools.process_calculators.psa_package.psa_gui.calculate_o2_safety_analysis")
 @patch("upstream_drift_tools.process_calculators.psa_package.psa_gui.calculate_sensitivity")
-def test_sensitivity_plot_widget(mock_calc_sens, mock_calc_o2, dummy_qapp):
+def test_sensitivity_plot_widget(mock_calc_sens, mock_calc_o2, dummy_qapp) -> Any:
     """Test the sensitivity plot widget."""
     import numpy as np
 
@@ -121,7 +123,7 @@ def test_sensitivity_plot_widget(mock_calc_sens, mock_calc_o2, dummy_qapp):
 
 @patch("upstream_drift_tools.process_calculators.psa_package.psa_gui.QMessageBox")
 @patch("PyQt6.QtWidgets.QMainWindow.show")
-def test_psa_main_window_initialization(mock_show, mock_msg_box, dummy_qapp):
+def test_psa_main_window_initialization(mock_show, mock_msg_box, dummy_qapp) -> Any:
     """Test PSA main window initialization."""
     with patch(
         "upstream_drift_tools.process_calculators.psa_package.psa_gui.PSAModel"
@@ -211,7 +213,7 @@ def test_psa_main_window_initialization(mock_show, mock_msg_box, dummy_qapp):
         assert mock_msg_box.about.called
 
 
-def test_pfd_widget(dummy_qapp):
+def test_pfd_widget(dummy_qapp) -> Any:
     """Test the Process Flow Diagram widget."""
     widget = PFDWidget()
     assert widget.image_label.text() is not None

@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for the PyQt6 DataProcessorWidget."""
 
 import sys
@@ -17,7 +19,7 @@ from data_processor.pyqt_widget import DataProcessorWidget  # noqa: E402
 
 
 @pytest.fixture
-def widget(qtbot):
+def widget(qtbot) -> Any:
     """Fixture to create the widget with mocked backend."""
     # Patch the backend classes before instantiating the widget
     with (
@@ -40,7 +42,7 @@ def widget(qtbot):
         yield widget
 
 
-def test_widget_initialization(widget):
+def test_widget_initialization(widget) -> Any:
     """Test that the widget initializes with correct UI elements."""
     assert widget.load_btn is not None
     assert widget.signal_list is not None
@@ -49,7 +51,7 @@ def test_widget_initialization(widget):
     assert widget.result_table is not None
 
 
-def test_load_file_cancel(widget):
+def test_load_file_cancel(widget) -> Any:
     """Test loading file cancellation."""
     with patch("PyQt6.QtWidgets.QFileDialog.getOpenFileName", return_value=("", "")):
         widget.load_file()
@@ -57,7 +59,7 @@ def test_load_file_cancel(widget):
         assert widget.file_label.text() == "No file loaded"
 
 
-def test_load_file_success(widget, tmp_path):
+def test_load_file_success(widget, tmp_path) -> Any:
     """Test successful file loading."""
     # Create a dummy DataFrame to return
     df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
@@ -82,7 +84,7 @@ def test_load_file_success(widget, tmp_path):
         assert widget.result_table.rowCount() == 3
 
 
-def test_process_no_file(widget):
+def test_process_no_file(widget) -> Any:
     """Test processing without loading file."""
     with patch("PyQt6.QtWidgets.QMessageBox.warning") as mock_warning:
         widget.process_data()
@@ -90,7 +92,7 @@ def test_process_no_file(widget):
         assert "load a file" in mock_warning.call_args[0][2]
 
 
-def test_process_no_selection(widget, tmp_path):
+def test_process_no_selection(widget, tmp_path) -> Any:
     """Test processing without selecting signals."""
     # Simulate loaded file
     widget.current_df = pd.DataFrame({"A": [1, 2], "B": [3, 4]})
@@ -103,7 +105,7 @@ def test_process_no_selection(widget, tmp_path):
         assert "select at least one signal" in mock_warning.call_args[0][2]
 
 
-def test_process_success(widget):
+def test_process_success(widget) -> Any:
     """Test successful processing."""
     # Simulate loaded file
     df = pd.DataFrame({"A": [1.0, 2.0, 3.0], "B": [4.0, 5.0, 6.0]})

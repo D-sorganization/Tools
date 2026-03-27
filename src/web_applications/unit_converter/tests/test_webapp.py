@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for the Unit Converter Flask web application."""
 
 from __future__ import annotations
@@ -10,7 +12,7 @@ from web_applications.unit_converter.webapp import create_app
 
 
 @pytest.fixture
-def client():
+def client() -> Any:
     app = create_app()
     app.config["TESTING"] = True
     with app.test_client() as client:

@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 from upstream_drift_tools.calculators.electrical.glass_interface import (
     GlassPropertiesInterface,
@@ -37,7 +39,7 @@ def test_glass_interface_resistivity() -> None:
 
 
 def test_glass_interface_external_calculator() -> None:
-    def ext_calc(t, c, p):
+    def ext_calc(t, c, p) -> Any:
         return 50.0
 
     interface = GlassPropertiesInterface(external_calculator=ext_calc)

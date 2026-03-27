@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for Signal Processing Studio.
 
 Tests cross-widget signal routing, polynomial resample logic,
@@ -38,7 +40,7 @@ class TestResampleDrawnPoints:
     """Tests for PolynomialGeneratorWidget._resample_drawn_points."""
 
     @pytest.fixture(autouse=True)
-    def _import_resample(self):
+    def _import_resample(self) -> Any:
         """Import the static method under test."""
         from signal_toolkit.polynomial_generator import PolynomialGeneratorWidget
 

@@ -158,9 +158,9 @@ class TestConstraintViolationPostcondition:
         abort_tol = 1e-2
         for i in range(sim_result.n_steps):
             v = constraint_violation(sim_result.states[i], _GOLFER_PARAMS)
-            assert v < abort_tol, (
-                f"Constraint violation {v:.3e} at step {i} exceeds abort threshold {abort_tol:.3e}"
-            )
+            assert (
+                v < abort_tol
+            ), f"Constraint violation {v:.3e} at step {i} exceeds abort threshold {abort_tol:.3e}"
 
     def test_violation_finite_at_all_steps(self, sim_result: GolferSimulationResult) -> None:
         """Constraint violation must be finite at every trajectory step."""

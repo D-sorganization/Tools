@@ -1,3 +1,5 @@
+from typing import Any
+
 """Parity tests between JAX and numpy golfer physics implementations.
 
 Ensures that the JAX implementations produce results consistent with the
@@ -342,7 +344,7 @@ class TestJITCompilation:
         """FK Jacobians can be JIT-compiled."""
         q_jax = jnp.array(random_config)
 
-        def jac_hub(q):
+        def jac_hub(q) -> Any:
             jacs = analytical_fk_jacobians_jax(q, _PARAMS_JAX)
             return jacs["hub"]
 

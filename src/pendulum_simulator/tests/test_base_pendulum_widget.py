@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for BasePendulumWidget."""
 
 from unittest.mock import MagicMock
@@ -7,23 +9,23 @@ from double_pendulum_golf.gui.base_pendulum_widget import BasePendulumWidget
 
 
 class DummyPendulumWidget(BasePendulumWidget):
-    def _get_total_length(self):
+    def _get_total_length(self) -> Any:
         return 1.0
 
-    def _draw_model(self, painter):
+    def _draw_model(self, painter) -> Any:
         pass
 
-    def _draw_info(self, painter):
+    def _draw_info(self, painter) -> Any:
         pass
 
-    def _draw_placeholder(self, painter):
+    def _draw_placeholder(self, painter) -> Any:
         pass
 
-    def _has_result(self):
+    def _has_result(self) -> Any:
         return True
 
 
-def test_feature_toggles_and_view(qapp):
+def test_feature_toggles_and_view(qapp) -> Any:
     w = DummyPendulumWidget()
     w.set_gravity_on(False)
     assert not w._gravity_on
@@ -66,7 +68,7 @@ def test_feature_toggles_and_view(qapp):
     assert w._pan_x == 0.0
 
 
-def test_compute_base_scale(qapp):
+def test_compute_base_scale(qapp) -> Any:
     w = DummyPendulumWidget()
     w.resize(800, 600)
     w._get_total_length = lambda: 1.0
@@ -74,7 +76,7 @@ def test_compute_base_scale(qapp):
     assert scale >= 30.0
 
 
-def test_mouse_events(qapp):
+def test_mouse_events(qapp) -> Any:
     w = DummyPendulumWidget()
 
     # Non-events early exit
@@ -177,7 +179,7 @@ def test_mouse_events(qapp):
     assert w._pan_x == 0.0
 
 
-def test_drawing_methods(qapp):
+def test_drawing_methods(qapp) -> Any:
     w = DummyPendulumWidget()
     painter = MagicMock(spec=QPainter)
 
@@ -213,7 +215,7 @@ def test_drawing_methods(qapp):
     )  # short branch
 
 
-def test_draw_trail(qapp):
+def test_draw_trail(qapp) -> Any:
     w = DummyPendulumWidget()
     painter = MagicMock(spec=QPainter)
 
@@ -229,7 +231,7 @@ def test_draw_trail(qapp):
     w._draw_trail(painter)  # >= 4
 
 
-def test_catmull_rom_smooth():
+def test_catmull_rom_smooth() -> Any:
     pts = [(0.0, 0.0), (1.0, 1.0), (2.0, 2.0), (3.0, 3.0)]
     smoothed = BasePendulumWidget._catmull_rom_smooth(pts, n_sub=2)
     assert len(smoothed) > len(pts)

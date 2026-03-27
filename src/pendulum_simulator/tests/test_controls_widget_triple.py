@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for ControlsWidgetTriple."""
 
 from PyQt6.QtWidgets import QWidget
@@ -5,7 +7,7 @@ from double_pendulum_golf.gui.controls_widget_triple import ControlsWidgetTriple
 import double_pendulum_golf.gui.controls_widget_triple as cwt
 
 
-def test_controls_triple_init_and_getters(qapp):
+def test_controls_triple_init_and_getters(qapp) -> Any:
     w = ControlsWidgetTriple()
 
     assert len(w._get_joint_names()) == 3
@@ -19,20 +21,20 @@ def test_controls_triple_init_and_getters(qapp):
     assert params["enable_limits"] is False
 
 
-def test_controls_triple_uai_ui(qapp, monkeypatch):
+def test_controls_triple_uai_ui(qapp, monkeypatch) -> Any:
     class MockUAI(QWidget):
         def __init__(self, *args, **kwargs):
             super().__init__()
             self._val = kwargs.get("default_value", 0.0)
 
         @property
-        def value(self):
+        def value(self) -> Any:
             return str(self._val)
 
-        def value_si(self):
+        def value_si(self) -> Any:
             return self._val
 
-        def set_value(self, val, is_si=False):
+        def set_value(self, val, is_si=False) -> Any:
             pass
 
     monkeypatch.setattr(cwt, "_HAS_UAI", True)
@@ -45,7 +47,7 @@ def test_controls_triple_uai_ui(qapp, monkeypatch):
     assert params["m1"] > 0
 
 
-def test_controls_triple_limits_and_clamps(qapp):
+def test_controls_triple_limits_and_clamps(qapp) -> Any:
     w = ControlsWidgetTriple()
 
     w.chk_clamp.setChecked(True)
@@ -68,7 +70,7 @@ def test_controls_triple_limits_and_clamps(qapp):
     assert params["limit_stiffness"] == 300.0
 
 
-def test_controls_triple_preview_error(qapp):
+def test_controls_triple_preview_error(qapp) -> Any:
     w = ControlsWidgetTriple()
     w.inp_tend.set_value("invalid")
     w._update_torque_preview()

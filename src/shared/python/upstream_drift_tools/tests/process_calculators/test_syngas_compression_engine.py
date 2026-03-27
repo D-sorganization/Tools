@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for syngas_compression_calculator.py — SyngasCompressionEngine.
 
 Targets: 15% → ~60%+ coverage (excludes Qt UI widget, only tests pure engine).
@@ -53,7 +55,7 @@ def _make_stage(
 
 
 class TestCalculateMixtureProperties:
-    def test_returns_expected_keys(self, engine):
+    def test_returns_expected_keys(self, engine) -> Any:
         """Lines 192-231: mixture props dict structure."""
         props = engine.calculate_mixture_properties(SYNGAS_COMP)
         assert "molecular_weight" in props
@@ -62,15 +64,15 @@ class TestCalculateMixtureProperties:
         assert "heat_capacity_ratio" in props
         assert "mole_fractions" in props
 
-    def test_molecular_weight_positive(self, engine):
+    def test_molecular_weight_positive(self, engine) -> Any:
         props = engine.calculate_mixture_properties(SYNGAS_COMP)
         assert props["molecular_weight"] > 0
 
-    def test_heat_capacity_ratio_in_range(self, engine):
+    def test_heat_capacity_ratio_in_range(self, engine) -> Any:
         props = engine.calculate_mixture_properties(SYNGAS_COMP)
         assert 1.0 < props["heat_capacity_ratio"] < 2.0
 
-    def test_pure_h2(self, engine):
+    def test_pure_h2(self, engine) -> Any:
         props = engine.calculate_mixture_properties({"H2": 1.0})
         # H2 MW = 2 g/mol
         assert abs(props["molecular_weight"] - 2.0) < 0.5
@@ -82,7 +84,7 @@ class TestCalculateMixtureProperties:
 
 
 class TestCalculateWaterDropout:
-    def test_no_dropout_below_saturation(self, engine):
+    def test_no_dropout_below_saturation(self, engine) -> Any:
         """Lines 262-269: no condensation when RH < 1."""
         result = engine.calculate_water_dropout(
             temperature=400.0,  # K — well above dew point
@@ -92,7 +94,7 @@ class TestCalculateWaterDropout:
         assert result["water_dropout"] == 0.0
         assert result["condensation_rate"] == 0.0
 
-    def test_dropout_when_supersaturated(self, engine):
+    def test_dropout_when_supersaturated(self, engine) -> Any:
         """Lines 262-266: condensation when RH > 1."""
         result = engine.calculate_water_dropout(
             temperature=300.0,  # K — near condensation
@@ -103,7 +105,7 @@ class TestCalculateWaterDropout:
         assert isinstance(result["water_dropout"], float)
         assert isinstance(result["condensation_rate"], float)
 
-    def test_non_positive_pressure_raises(self, engine):
+    def test_non_positive_pressure_raises(self, engine) -> Any:
         """Lines 240-241: pressure <= 0 → ValueError."""
         with pytest.raises(ValueError, match="pressure must be > 0"):
             engine.calculate_water_dropout(300.0, 0.0, 5.0)
@@ -115,7 +117,7 @@ class TestCalculateWaterDropout:
 
 
 class TestCalculateCompressionWork:
-    def test_isentropic(self, engine):
+    def test_isentropic(self, engine) -> Any:
         """Lines 310-326: isentropic compression path."""
         props = engine.calculate_mixture_properties(SYNGAS_COMP)
         stage = _make_stage(kind="isentropic")
@@ -126,7 +128,7 @@ class TestCalculateCompressionWork:
         assert result["temp_out_actual"] > stage.inlet_temperature
         assert result["pressure_ratio"] == pytest.approx(3.0)
 
-    def test_polytropic(self, engine):
+    def test_polytropic(self, engine) -> Any:
         """Lines 328-338: polytropic compression path."""
         props = engine.calculate_mixture_properties(SYNGAS_COMP)
         stage = _make_stage(kind="polytropic")
@@ -135,7 +137,7 @@ class TestCalculateCompressionWork:
         assert result["work_actual"] > 0
         assert result["temp_out_actual"] > stage.inlet_temperature
 
-    def test_isothermal(self, engine):
+    def test_isothermal(self, engine) -> Any:
         """Lines 340-345: isothermal compression path."""
         props = engine.calculate_mixture_properties(SYNGAS_COMP)
         stage = _make_stage(kind="isothermal")
@@ -144,21 +146,21 @@ class TestCalculateCompressionWork:
         assert result["temp_out_actual"] == stage.inlet_temperature
         assert result["work_actual"] > 0
 
-    def test_unknown_compression_type_raises(self, engine):
+    def test_unknown_compression_type_raises(self, engine) -> Any:
         """Lines 347-349: unknown type → ValueError."""
         props = engine.calculate_mixture_properties(SYNGAS_COMP)
         stage = _make_stage(kind="magical_compression")
         with pytest.raises(ValueError, match="Unknown compression type"):
             engine.calculate_compression_work(stage, 100.0, props)
 
-    def test_zero_inlet_pressure_raises(self, engine):
+    def test_zero_inlet_pressure_raises(self, engine) -> Any:
         """Lines 286-287: inlet_pressure <= 0 → ValueError."""
         props = engine.calculate_mixture_properties(SYNGAS_COMP)
         stage = _make_stage(p_in=0.0)
         with pytest.raises(ValueError, match="inlet_pressure must be > 0"):
             engine.calculate_compression_work(stage, 100.0, props)
 
-    def test_zero_outlet_pressure_raises(self, engine):
+    def test_zero_outlet_pressure_raises(self, engine) -> Any:
         """Lines 288-291: outlet_pressure <= 0 → ValueError."""
         props = engine.calculate_mixture_properties(SYNGAS_COMP)
         stage = _make_stage(p_out=0.0)
@@ -172,7 +174,7 @@ class TestCalculateCompressionWork:
 
 
 class TestMultistageCompression:
-    def test_single_stage_isentropic(self, engine):
+    def test_single_stage_isentropic(self, engine) -> Any:
         """Lines 372-423: single stage pipeline."""
         stages = [_make_stage(1.0, 3.0, 300.0, 0.85, "isentropic")]
         result = engine.calculate_multistage_compression(stages, 100.0, SYNGAS_COMP)
@@ -180,7 +182,7 @@ class TestMultistageCompression:
         assert result["total_power_hp"] > 0
         assert result["final_pressure"] == 3.0
 
-    def test_multistage_with_intercooling(self, engine):
+    def test_multistage_with_intercooling(self, engine) -> Any:
         """Lines 388-415 intercooling path."""
         stages = [
             _make_stage(1.0, 3.0, 300.0, 0.85, "isentropic"),
@@ -194,7 +196,7 @@ class TestMultistageCompression:
         stage2_inlet = result["stages"][1]["inlet_temp"]
         assert stage2_inlet < 400.0  # Cooled down
 
-    def test_multistage_without_intercooling(self, engine):
+    def test_multistage_without_intercooling(self, engine) -> Any:
         """Lines 392-393: no intercooling → temperature carries over."""
         stages = [
             _make_stage(1.0, 3.0, 300.0, 0.85, "isentropic"),
@@ -208,7 +210,7 @@ class TestMultistageCompression:
         stage2_inlet = result["stages"][1]["inlet_temp"]
         assert abs(stage2_inlet - stage1_outlet) < 0.01
 
-    def test_empty_stages_raises(self, engine):
+    def test_empty_stages_raises(self, engine) -> Any:
         """Line 380-381: empty stages → ValueError."""
         with pytest.raises(ValueError, match="stages list must not be empty"):
             engine.calculate_multistage_compression([], 100.0, SYNGAS_COMP)
@@ -220,11 +222,11 @@ class TestMultistageCompression:
 
 
 class TestAnalyzeProcessConditions:
-    def _run_and_analyze(self, engine, stages, temp_K=300.0):
+    def _run_and_analyze(self, engine, stages, temp_K=300.0) -> Any:
         result = engine.calculate_multistage_compression(stages, 100.0, SYNGAS_COMP)
         return engine.analyze_process_conditions(result)
 
-    def test_returns_expected_keys(self, engine):
+    def test_returns_expected_keys(self, engine) -> Any:
         """Lines 425-497: dict keys in analysis output."""
         analysis = self._run_and_analyze(engine, [_make_stage(1.0, 3.0, 300.0, 0.85, "isentropic")])
         assert "concerns" in analysis
@@ -233,7 +235,7 @@ class TestAnalyzeProcessConditions:
         assert "total_water_dropout" in analysis
         assert "average_efficiency" in analysis
 
-    def test_high_pressure_adds_concern(self, engine):
+    def test_high_pressure_adds_concern(self, engine) -> Any:
         """Lines 450-456: high pressure → concerns about equipment."""
         # Use moderate temp/pressure to avoid IAPWS range errors
         stages = [_make_stage(1.0, 10.0, 300.0, 0.85, "isothermal")]
@@ -243,13 +245,13 @@ class TestAnalyzeProcessConditions:
         # Should have concerns list (might or might not flag high pressure at 10 bar)
         assert isinstance(analysis["concerns"], list)
 
-    def test_polytropic_avg_efficiency_is_none(self, engine):
+    def test_polytropic_avg_efficiency_is_none(self, engine) -> Any:
         """Lines 488-489: polytropic → no isentropic stages → avg_efficiency = None."""
         stages = [_make_stage(1.0, 3.0, 300.0, 0.85, "polytropic")]
         analysis = self._run_and_analyze(engine, stages)
         assert analysis["average_efficiency"] is None
 
-    def test_isentropic_avg_efficiency_not_none(self, engine):
+    def test_isentropic_avg_efficiency_not_none(self, engine) -> Any:
         """Lines 479-487: isentropic → avg_efficiency computed."""
         stages = [_make_stage(1.0, 3.0, 300.0, 0.85, "isentropic")]
         analysis = self._run_and_analyze(engine, stages)
@@ -259,7 +261,7 @@ class TestAnalyzeProcessConditions:
 
 class TestWorkerAndWidget:
     @pytest.fixture(autouse=True)
-    def prevent_qt_quit(self):
+    def prevent_qt_quit(self) -> Any:
         from PyQt6.QtWidgets import QApplication
 
         app = QApplication.instance()
@@ -267,13 +269,13 @@ class TestWorkerAndWidget:
             app.setQuitOnLastWindowClosed(False)
 
     @pytest.fixture(autouse=True)
-    def patch_state(self, monkeypatch):
+    def patch_state(self, monkeypatch) -> Any:
         try:
             from upstream_drift_tools.ui.mixins.calculator_state_mixin import (
                 CalculatorStateMixin,
             )
 
-            def mock_init(self, *args, **kwargs):
+            def mock_init(self, *args, **kwargs) -> Any:
                 self.copyable_widgets = []
                 self.input_widgets = []
 
@@ -285,12 +287,12 @@ class TestWorkerAndWidget:
         except ImportError:
             pass
 
-    def test_worker_success(self, engine):
+    def test_worker_success(self, engine) -> Any:
         stages = [_make_stage(1.0, 3.0, 300.0, 0.85, "isentropic")]
         worker = CompressionCalculationWorker(engine, stages, 100.0, SYNGAS_COMP, True)
 
         # Mock run since thread execution in pytest is tricky
-        def mock_run():
+        def mock_run() -> Any:
             result = engine.calculate_multistage_compression(stages, 100.0, SYNGAS_COMP)
             analysis = engine.analyze_process_conditions(result)
             worker.finished.emit({"result": result, "analysis": analysis})
@@ -299,11 +301,11 @@ class TestWorkerAndWidget:
             worker.run()
         # Doesn't fail
 
-    def test_worker_error(self, engine):
+    def test_worker_error(self, engine) -> Any:
         stages = [_make_stage(1.0, 3.0, 300.0, 0.85, "isentropic")]
         worker = CompressionCalculationWorker(engine, stages, 100.0, SYNGAS_COMP, True)
 
-        def mock_error_run():
+        def mock_error_run() -> Any:
             worker.error.emit("calculation error")
 
         with patch.object(worker, "run", side_effect=mock_error_run):
@@ -311,7 +313,7 @@ class TestWorkerAndWidget:
         assert not hasattr(worker, "result")
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
-    def test_widget_initialization(self, qtbot):
+    def test_widget_initialization(self, qtbot) -> Any:
         with patch(
             "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
         ) as mock_timer:
@@ -320,7 +322,7 @@ class TestWorkerAndWidget:
             mock_timer.assert_called()
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
-    def test_widget_show_event(self, qtbot):
+    def test_widget_show_event(self, qtbot) -> Any:
         widget = SyngasCompressionCalculatorWidget()
         with patch(
             "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
@@ -332,7 +334,7 @@ class TestWorkerAndWidget:
             mock_timer.assert_called_with(50, widget._refresh_layout)
 
     @pytest.mark.skipif(not HAS_PYQT, reason="PyQt is required to test the widget")
-    def test_widget_refresh_layout(self, qtbot):
+    def test_widget_refresh_layout(self, qtbot) -> Any:
         widget = SyngasCompressionCalculatorWidget()
         mock_curr = MagicMock()
         widget.tab_widget = MagicMock()
@@ -347,7 +349,7 @@ class TestWorkerAndWidget:
     @patch(
         "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
     )
-    def test_widget_setup_state_management(self, mock_timer, qtbot):
+    def test_widget_setup_state_management(self, mock_timer, qtbot) -> Any:
         widget = SyngasCompressionCalculatorWidget()
         widget.findChildren = MagicMock(return_value=[MagicMock()])
 
@@ -355,7 +357,7 @@ class TestWorkerAndWidget:
     @patch(
         "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
     )
-    def test_widget_set_default_values(self, mock_timer, qtbot):
+    def test_widget_set_default_values(self, mock_timer, qtbot) -> Any:
         widget = SyngasCompressionCalculatorWidget()
         widget.set_default_values()
 
@@ -363,7 +365,7 @@ class TestWorkerAndWidget:
     @patch(
         "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
     )
-    def test_widget_calculate_compression(self, mock_timer, qtbot):
+    def test_widget_calculate_compression(self, mock_timer, qtbot) -> Any:
         widget = SyngasCompressionCalculatorWidget()
         mock_spinbox = MagicMock()
         mock_spinbox.value.return_value = 10.0
@@ -393,7 +395,7 @@ class TestWorkerAndWidget:
     @patch(
         "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
     )
-    def test_widget_calculate_compression_no_stages(self, mock_timer, qtbot):
+    def test_widget_calculate_compression_no_stages(self, mock_timer, qtbot) -> Any:
         widget = SyngasCompressionCalculatorWidget()
         # Mock composition inputs to pass the first step
         mock_spinbox = MagicMock()
@@ -424,7 +426,7 @@ class TestWorkerAndWidget:
     @patch(
         "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
     )
-    def test_widget_on_calculation_error(self, mock_timer, qtbot):
+    def test_widget_on_calculation_error(self, mock_timer, qtbot) -> Any:
         widget = SyngasCompressionCalculatorWidget()
         with patch(
             "upstream_drift_tools.process_calculators.syngas_compression_calculator.QMessageBox.critical"
@@ -436,7 +438,7 @@ class TestWorkerAndWidget:
     @patch(
         "upstream_drift_tools.process_calculators.syngas_compression_calculator.QTimer.singleShot"
     )
-    def test_widget_on_calculation_finished(self, mock_timer, qtbot, engine):
+    def test_widget_on_calculation_finished(self, mock_timer, qtbot, engine) -> Any:
         widget = SyngasCompressionCalculatorWidget()
 
         stages = [_make_stage(1.0, 3.0, 300.0, 0.85, "isentropic")]

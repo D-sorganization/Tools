@@ -1,3 +1,5 @@
+from typing import Any
+
 #!/usr/bin/env python3
 """Minimal test to verify PyQt signals work."""
 
@@ -33,7 +35,7 @@ class TestWindow(QMainWindow):
         # Connect our own handler
         self.run_requested.connect(self.on_run)
 
-    def on_run(self):
+    def on_run(self) -> Any:
         print("[TEST] Signal received!")  # noqa: T201
         QMessageBox.information(self, "Success", "Signal was received!")
 

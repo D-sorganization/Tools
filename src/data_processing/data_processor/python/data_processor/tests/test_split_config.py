@@ -1,10 +1,12 @@
+from typing import Any
+
 """Tests for SplitConfig model."""
 
 import pytest
 from data_processor.models.split_config import SplitConfig, SplitMethod
 
 
-def test_split_config_defaults():
+def test_split_config_defaults() -> Any:
     """Test default values of SplitConfig."""
     config = SplitConfig()
     assert config.enabled is False
@@ -13,7 +15,7 @@ def test_split_config_defaults():
     assert config.max_file_size_mb == 100.0
 
 
-def test_split_config_validation():
+def test_split_config_validation() -> Any:
     """Test validation (DbC) in SplitConfig."""
     # Valid config
     config = SplitConfig(rows_per_file=10, max_file_size_mb=1.0)
@@ -34,7 +36,7 @@ def test_split_config_validation():
         SplitConfig(max_file_size_mb=-1.0)
 
 
-def test_get_file_size_bytes():
+def test_get_file_size_bytes() -> Any:
     """Test file size conversion."""
     config = SplitConfig(max_file_size_mb=1.0)
     assert config.get_file_size_bytes() == 1024 * 1024

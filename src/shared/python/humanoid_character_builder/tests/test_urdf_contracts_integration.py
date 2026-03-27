@@ -1,3 +1,5 @@
+from typing import Any
+
 """test_urdf_contracts_integration.py module."""
 
 from unittest.mock import MagicMock, patch
@@ -17,7 +19,7 @@ from humanoid_character_builder.generators.urdf_generator import HumanoidURDFGen
 
 
 class TestURDFContracts:
-    def test_negative_mass_violation(self):
+    def test_negative_mass_violation(self) -> Any:
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
 
@@ -38,7 +40,7 @@ class TestURDFContracts:
                 mesh_dir=None,
             )
 
-    def test_invalid_inertia_violation(self):
+    def test_invalid_inertia_violation(self) -> Any:
         generator = HumanoidURDFGenerator()
         # params is mocked below
         segment_def = SegmentDefinition(name="test", visual_geometry=GeometrySpec(GeometryType.BOX))
@@ -70,7 +72,7 @@ class TestURDFContracts:
                 mesh_dir=None,
             )
 
-    def test_invalid_joint_limits_violation(self):
+    def test_invalid_joint_limits_violation(self) -> Any:
         generator = HumanoidURDFGenerator()
 
         # Create invalid joint definition
@@ -85,7 +87,7 @@ class TestURDFContracts:
         with pytest.raises(ContractViolationError, match="Joint limits invalid"):
             generator._generate_single_joint("bad_joint", joint_def)
 
-    def test_generate_postcondition(self):
+    def test_generate_postcondition(self) -> Any:
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
 

@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for GPU-accelerated torque profile optimization.
 
 Verifies gradient correctness and convergence behavior.
@@ -94,7 +96,7 @@ class TestGradientCorrectness:
         state_jax = jnp.array(initial_state)
 
         # Compute gradient via autodiff
-        def loss_fn(coeffs):
+        def loss_fn(coeffs) -> Any:
             return clubhead_speed_objective(coeffs, _PARAMS, state_jax, t_end=0.5, dt=0.01)
 
         grad_autodiff = jax.grad(loss_fn)(torque_jax)

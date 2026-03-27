@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for ControlsWidgetBase."""
 
 from unittest.mock import MagicMock
@@ -9,29 +11,29 @@ from double_pendulum_golf.gui.controls_widget import LabeledInput
 class DummyControls(ControlsWidgetBase):
     PRESETS = {"Default": {}}
 
-    def _build_model_sections(self, layout):
+    def _build_model_sections(self, layout) -> Any:
         pass
 
-    def _apply_preset(self, name):
+    def _apply_preset(self, name) -> Any:
         pass
 
-    def get_params(self):
+    def get_params(self) -> Any:
         return {}
 
-    def _get_joint_names(self):
+    def _get_joint_names(self) -> Any:
         return ["JointA", "JointB"]
 
-    def _get_torque_inputs(self):
+    def _get_torque_inputs(self) -> Any:
         if not hasattr(self, "ti_a"):
             self.ti_a = MagicMock()
             self.ti_b = MagicMock()
         return {"JointA": self.ti_a, "JointB": self.ti_b}
 
-    def _update_torque_preview(self):
+    def _update_torque_preview(self) -> Any:
         pass
 
 
-def test_controls_base_construction(qapp):
+def test_controls_base_construction(qapp) -> Any:
     w = DummyControls()
 
     # We must attach to prevent garbage collection of the boxes when returning
@@ -95,12 +97,12 @@ def test_controls_base_construction(qapp):
     w._get_torque_inputs()
 
 
-def test_open_function_generator(monkeypatch, qapp):
+def test_open_function_generator(monkeypatch, qapp) -> Any:
     w = DummyControls()
 
     mock_dlg = MagicMock()
 
-    def mock_init(self, *args, **kwargs):
+    def mock_init(self, *args, **kwargs) -> Any:
         pass
 
     import double_pendulum_golf.gui.function_generator_dialog as fgd
@@ -114,7 +116,7 @@ def test_open_function_generator(monkeypatch, qapp):
     mock_dlg.assert_called_once()
 
 
-def test_on_torque_imported(qapp):
+def test_on_torque_imported(qapp) -> Any:
     w = DummyControls()
     inputs = w._get_torque_inputs()
 
@@ -122,14 +124,14 @@ def test_on_torque_imported(qapp):
     inputs["JointA"].set_value.assert_called_with("1, 2.5")
 
 
-def test_playback_methods(qapp):
+def test_playback_methods(qapp) -> Any:
     w = DummyControls()
     w._build_hidden_compat_widgets()
     w._build_gravity_section()
 
     play_emitted = False
 
-    def on_play(checked):
+    def on_play(checked) -> Any:
         nonlocal play_emitted
         play_emitted = checked
 
@@ -150,7 +152,7 @@ def test_playback_methods(qapp):
     assert w.show_forces() is False
 
 
-def test_uai_or_parse(qapp, monkeypatch):
+def test_uai_or_parse(qapp, monkeypatch) -> Any:
     DummyControls()
     li = LabeledInput("Test", "42.0", "")
     assert ControlsWidgetBase._uai_or_parse(li, "Test") == 42.0
@@ -159,7 +161,7 @@ def test_uai_or_parse(qapp, monkeypatch):
     import sys
 
     class MockUAI:
-        def value_si(self):
+        def value_si(self) -> Any:
             return 99.0
 
     mock_module = MagicMock()

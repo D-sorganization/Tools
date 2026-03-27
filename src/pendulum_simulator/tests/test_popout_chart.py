@@ -1,3 +1,4 @@
+from typing import Any
 import numpy as np
 import pytest
 from unittest.mock import patch
@@ -5,7 +6,7 @@ from unittest.mock import patch
 from double_pendulum_golf.gui.popout_chart import PopOutChart, fit_regression
 
 
-def test_fit_regression():
+def test_fit_regression() -> Any:
     x = np.array([0, 1, 2, 3])
     y = np.array([0, 1, 4, 9])
 
@@ -22,7 +23,7 @@ def test_fit_regression():
         fit_regression(x, y, 11)
 
 
-def test_popout_chart(qapp):
+def test_popout_chart(qapp) -> Any:
     chart = PopOutChart()
 
     # Pre-plot regression should return None

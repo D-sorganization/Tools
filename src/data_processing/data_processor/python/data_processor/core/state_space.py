@@ -446,7 +446,7 @@ class BaseStateSpaceModel(ABC):
         if not (y is not None):
             raise ValueError("y must be provided")
 
-        def objective(params):
+        def objective(params) -> Any:
             # Ensure positive variances if needed
             self._update_matrices(params)
             _, _, ll = self._kalman_filter(y)

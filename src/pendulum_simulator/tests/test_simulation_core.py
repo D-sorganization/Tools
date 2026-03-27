@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for the shared ODE integration core."""
 
 from __future__ import annotations
@@ -12,7 +14,7 @@ class TestIntegrateOde:
     def test_simple_exponential_decay(self) -> None:
         """y' = -y, y(0) = 1 => y(t) = e^(-t)"""
 
-        def rhs(t, y):
+        def rhs(t, y) -> Any:
             return -y
 
         t, states = integrate_ode(rhs, np.array([1.0]), t_end=2.0, dt=0.01)
@@ -24,7 +26,7 @@ class TestIntegrateOde:
     def test_harmonic_oscillator(self) -> None:
         """x'' + x = 0 => x(t) = cos(t), v(t) = -sin(t)"""
 
-        def rhs(t, y):
+        def rhs(t, y) -> Any:
             return np.array([y[1], -y[0]])
 
         t, states = integrate_ode(
@@ -41,7 +43,7 @@ class TestIntegrateOde:
         np.testing.assert_allclose(states[-1, 1], 0.0, atol=1e-2)
 
     def test_rejects_bad_inputs(self) -> None:
-        def rhs(t, y):
+        def rhs(t, y) -> Any:
             return -y
 
         with pytest.raises(AssertionError):
@@ -52,7 +54,7 @@ class TestIntegrateOde:
             integrate_ode(rhs, np.array([1.0]), t_end=1.0, dt=2.0)
 
     def test_returns_correct_shapes(self) -> None:
-        def rhs(t, y):
+        def rhs(t, y) -> Any:
             return -y
 
         t, states = integrate_ode(rhs, np.array([1.0, 2.0, 3.0]), t_end=1.0, dt=0.1)

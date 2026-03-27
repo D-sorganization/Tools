@@ -245,9 +245,7 @@ class RotationConverterTab(QWidget):
         self._toolbar = NavigationToolbar(self._canvas, self)
         self._toolbar.setMaximumHeight(30)
         plot_layout.addWidget(self._toolbar)
-        self._canvas.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
-        )
+        self._canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         plot_layout.addWidget(self._canvas)
         right.addWidget(plot_group, 3)
 
@@ -480,9 +478,7 @@ class RigidTransformTab(QWidget):
         self._tf_toolbar = NavigationToolbar(self._tf_canvas, self)
         self._tf_toolbar.setMaximumHeight(30)
         plot_layout.addWidget(self._tf_toolbar)
-        self._tf_canvas.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
-        )
+        self._tf_canvas.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         plot_layout.addWidget(self._tf_canvas)
         right.addWidget(plot_group, 3)
         layout.addLayout(right, 2)
@@ -504,9 +500,7 @@ class RigidTransformTab(QWidget):
             if idx == 0:  # Quaternion + translation
                 if len(v) != 7:
                     raise ValueError("Need 7 values: w x y z tx ty tz")
-                T = RigidTransform.from_quaternion_translation(
-                    v[:4], v[4:], source=src, target=tgt
-                )
+                T = RigidTransform.from_quaternion_translation(v[:4], v[4:], source=src, target=tgt)
             elif idx == 1:  # Euler + translation
                 if len(v) != 6:
                     raise ValueError("Need 6 values: a b c tx ty tz")
@@ -920,9 +914,7 @@ class TrajectoryPlotsTab(QWidget):
         for i in range(min(n - 1, len(self._traj) - 1)):
             T1 = self._traj[i]
             T2 = self._traj[i + 1]
-            dT = RigidTransform.from_matrix(
-                np.linalg.inv(T1) @ T2, source="b", target="a"
-            )
+            dT = RigidTransform.from_matrix(np.linalg.inv(T1) @ T2, source="b", target="a")
             body_tw[i] = dT.body_twist()
             space_tw[i] = dT.space_twist()
 
@@ -1135,9 +1127,7 @@ class ScrewVisualiserTab(QWidget):
 
         self._fig.tight_layout()
         self._canvas.draw()
-        self._frame_label.setText(
-            f"Frame: {self._frame_idx + 1}/{self._animator.n_frames}"
-        )
+        self._frame_label.setText(f"Frame: {self._frame_idx + 1}/{self._animator.n_frames}")
 
 
 # =====================================================================

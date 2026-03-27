@@ -1,3 +1,4 @@
+from typing import Any
 import numpy as np
 import pytest
 
@@ -14,7 +15,7 @@ from double_pendulum_golf.physics_golfer import GolferParams, N_DOF
 
 
 @pytest.fixture
-def params():
+def params() -> Any:
     return GolferParams(
         m_hub=0.01,
         m_r_upper=2.0,
@@ -36,16 +37,16 @@ def params():
 
 
 @pytest.fixture
-def valid_q():
+def valid_q() -> Any:
     return np.zeros(N_DOF)
 
 
 @pytest.fixture
-def valid_qdot():
+def valid_qdot() -> Any:
     return np.zeros(N_DOF)
 
 
-def test_mass_point_positions_dbc(params, valid_q):
+def test_mass_point_positions_dbc(params, valid_q) -> Any:
     """Test standard shape output and DbC checks for mass points."""
     points = _mass_point_positions(valid_q, params)
     assert len(points) == 7
@@ -58,7 +59,7 @@ def test_mass_point_positions_dbc(params, valid_q):
         _mass_point_positions(valid_q, "wrong")
 
 
-def test_potential_energy_from_q_dbc(params, valid_q):
+def test_potential_energy_from_q_dbc(params, valid_q) -> Any:
     """Test standard scalar output and DbC checks."""
     pe = potential_energy_from_q(valid_q, params)
     assert isinstance(pe, float)
@@ -71,7 +72,7 @@ def test_potential_energy_from_q_dbc(params, valid_q):
         potential_energy_from_q(valid_q, None)
 
 
-def test_jacobians_dbc(params, valid_q):
+def test_jacobians_dbc(params, valid_q) -> Any:
     """Test standard dict output and DbC checks."""
     J = analytical_fk_jacobians(valid_q, params)
     assert isinstance(J, dict)
@@ -84,7 +85,7 @@ def test_jacobians_dbc(params, valid_q):
         analytical_fk_jacobians(np.zeros(2), params)
 
 
-def test_mass_matrix_dbc(params, valid_q):
+def test_mass_matrix_dbc(params, valid_q) -> Any:
     """Test standard matrix output and DbC checks."""
     M = analytical_mass_matrix(valid_q, params)
     assert M.shape == (N_DOF, N_DOF)
@@ -97,7 +98,7 @@ def test_mass_matrix_dbc(params, valid_q):
         analytical_mass_matrix(np.zeros(2), params)
 
 
-def test_coriolis_dbc(params, valid_q, valid_qdot):
+def test_coriolis_dbc(params, valid_q, valid_qdot) -> Any:
     """Test standard vector output and DbC checks for coriolis."""
     C = analytical_coriolis(valid_q, valid_qdot, params)
     assert C.shape == (N_DOF,)
@@ -112,7 +113,7 @@ def test_coriolis_dbc(params, valid_q, valid_qdot):
         analytical_coriolis(valid_q, np.zeros(2), params)
 
 
-def test_gravity_vector_dbc(params, valid_q):
+def test_gravity_vector_dbc(params, valid_q) -> Any:
     """Test standard vector output and DbC checks for gravity."""
     G = analytical_gravity_vector(valid_q, params)
     assert G.shape == (N_DOF,)
@@ -123,7 +124,7 @@ def test_gravity_vector_dbc(params, valid_q):
         analytical_gravity_vector(np.zeros(2), params)
 
 
-def test_kinetic_energy_dbc(params, valid_q, valid_qdot):
+def test_kinetic_energy_dbc(params, valid_q, valid_qdot) -> Any:
     """Test standard scalar output and DbC checks for kinetic energy."""
     ke = kinetic_energy(valid_q, valid_qdot, params)
     assert isinstance(ke, float)

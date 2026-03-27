@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for analytical FK Jacobians and derived quantities.
 
 Validates analytical implementations against existing numerical references.
@@ -93,15 +95,15 @@ class TestAnalyticalFKJacobians:
         for q in test_configs:
             J_analytical = analytical_fk_jacobians(q, _PARAMS)["hub"]
 
-            def hub_pos(qq):
+            def hub_pos(qq) -> Any:
                 fk = forward_kinematics(qq, _PARAMS)
                 return fk["hub"]
 
             J_numerical = _numerical_jacobian_point(hub_pos, q)
 
-            assert np.allclose(J_analytical, J_numerical, atol=1e-5, rtol=1e-4), (
-                f"Hub Jacobian mismatch at q={q}"
-            )
+            assert np.allclose(
+                J_analytical, J_numerical, atol=1e-5, rtol=1e-4
+            ), f"Hub Jacobian mismatch at q={q}"
 
     def test_re_jacobian_vs_numerical(self, test_configs: list[np.ndarray]) -> None:
         """RE Jacobian (depends on q[0], q[1])."""
@@ -110,15 +112,15 @@ class TestAnalyticalFKJacobians:
         for q in test_configs:
             J_analytical = analytical_fk_jacobians(q, _PARAMS)["re"]
 
-            def re_pos(qq):
+            def re_pos(qq) -> Any:
                 fk = forward_kinematics(qq, _PARAMS)
                 return fk["re"]
 
             J_numerical = _numerical_jacobian_point(re_pos, q)
 
-            assert np.allclose(J_analytical, J_numerical, atol=1e-5, rtol=1e-4), (
-                f"RE Jacobian mismatch at q={q}"
-            )
+            assert np.allclose(
+                J_analytical, J_numerical, atol=1e-5, rtol=1e-4
+            ), f"RE Jacobian mismatch at q={q}"
 
     def test_rh_jacobian_vs_numerical(self, test_configs: list[np.ndarray]) -> None:
         """RH Jacobian (depends on q[0], q[1], q[2])."""
@@ -127,15 +129,15 @@ class TestAnalyticalFKJacobians:
         for q in test_configs:
             J_analytical = analytical_fk_jacobians(q, _PARAMS)["rh"]
 
-            def rh_pos(qq):
+            def rh_pos(qq) -> Any:
                 fk = forward_kinematics(qq, _PARAMS)
                 return fk["rh"]
 
             J_numerical = _numerical_jacobian_point(rh_pos, q)
 
-            assert np.allclose(J_analytical, J_numerical, atol=1e-5, rtol=1e-4), (
-                f"RH Jacobian mismatch at q={q}"
-            )
+            assert np.allclose(
+                J_analytical, J_numerical, atol=1e-5, rtol=1e-4
+            ), f"RH Jacobian mismatch at q={q}"
 
     def test_le_jacobian_vs_numerical(self, test_configs: list[np.ndarray]) -> None:
         """LE Jacobian (depends on q[0], q[4])."""
@@ -144,15 +146,15 @@ class TestAnalyticalFKJacobians:
         for q in test_configs:
             J_analytical = analytical_fk_jacobians(q, _PARAMS)["le"]
 
-            def le_pos(qq):
+            def le_pos(qq) -> Any:
                 fk = forward_kinematics(qq, _PARAMS)
                 return fk["le"]
 
             J_numerical = _numerical_jacobian_point(le_pos, q)
 
-            assert np.allclose(J_analytical, J_numerical, atol=1e-5, rtol=1e-4), (
-                f"LE Jacobian mismatch at q={q}"
-            )
+            assert np.allclose(
+                J_analytical, J_numerical, atol=1e-5, rtol=1e-4
+            ), f"LE Jacobian mismatch at q={q}"
 
     def test_lh_jacobian_vs_numerical(self, test_configs: list[np.ndarray]) -> None:
         """LH Jacobian (depends on q[0], q[4], q[5])."""
@@ -161,15 +163,15 @@ class TestAnalyticalFKJacobians:
         for q in test_configs:
             J_analytical = analytical_fk_jacobians(q, _PARAMS)["lh"]
 
-            def lh_pos(qq):
+            def lh_pos(qq) -> Any:
                 fk = forward_kinematics(qq, _PARAMS)
                 return fk["lh"]
 
             J_numerical = _numerical_jacobian_point(lh_pos, q)
 
-            assert np.allclose(J_analytical, J_numerical, atol=1e-5, rtol=1e-4), (
-                f"LH Jacobian mismatch at q={q}"
-            )
+            assert np.allclose(
+                J_analytical, J_numerical, atol=1e-5, rtol=1e-4
+            ), f"LH Jacobian mismatch at q={q}"
 
     def test_club_com_jacobian_vs_numerical(self, test_configs: list[np.ndarray]) -> None:
         """Club COM Jacobian (depends on q[0], q[1], q[2], q[3], q[7])."""
@@ -178,7 +180,7 @@ class TestAnalyticalFKJacobians:
         for q in test_configs:
             J_analytical = analytical_fk_jacobians(q, _PARAMS)["club_com"]
 
-            def club_com_pos(qq):
+            def club_com_pos(qq) -> Any:
                 fk = forward_kinematics(qq, _PARAMS)
                 base = fk["club_base"]
                 tip = fk["club_tip"]
@@ -186,9 +188,9 @@ class TestAnalyticalFKJacobians:
 
             J_numerical = _numerical_jacobian_point(club_com_pos, q)
 
-            assert np.allclose(J_analytical, J_numerical, atol=1e-5, rtol=1e-4), (
-                f"Club COM Jacobian mismatch at q={q}"
-            )
+            assert np.allclose(
+                J_analytical, J_numerical, atol=1e-5, rtol=1e-4
+            ), f"Club COM Jacobian mismatch at q={q}"
 
     def test_club_tip_jacobian_vs_numerical(self, test_configs: list[np.ndarray]) -> None:
         """Club tip Jacobian (depends on q[0], q[1], q[2], q[3], q[7])."""
@@ -197,15 +199,15 @@ class TestAnalyticalFKJacobians:
         for q in test_configs:
             J_analytical = analytical_fk_jacobians(q, _PARAMS)["club_tip"]
 
-            def club_tip_pos(qq):
+            def club_tip_pos(qq) -> Any:
                 fk = forward_kinematics(qq, _PARAMS)
                 return fk["club_tip"]
 
             J_numerical = _numerical_jacobian_point(club_tip_pos, q)
 
-            assert np.allclose(J_analytical, J_numerical, atol=1e-5, rtol=1e-4), (
-                f"Club tip Jacobian mismatch at q={q}"
-            )
+            assert np.allclose(
+                J_analytical, J_numerical, atol=1e-5, rtol=1e-4
+            ), f"Club tip Jacobian mismatch at q={q}"
 
 
 class TestAnalyticalMassMatrix:
@@ -226,9 +228,9 @@ class TestAnalyticalMassMatrix:
             M_analytical = analytical_mass_matrix(q, _PARAMS)
             M_numerical = numerical_mass_matrix(q, _PARAMS)
 
-            assert np.allclose(M_analytical, M_numerical, atol=1e-6, rtol=1e-4), (
-                f"Mass matrix mismatch at q={q}"
-            )
+            assert np.allclose(
+                M_analytical, M_numerical, atol=1e-6, rtol=1e-4
+            ), f"Mass matrix mismatch at q={q}"
 
     def test_mass_matrix_symmetric(self, test_configs: list[np.ndarray]) -> None:
         """Analytical mass matrix is symmetric."""
@@ -268,9 +270,9 @@ class TestAnalyticalCoriolis:
             C_analytical = analytical_coriolis(q, qdot, _PARAMS)
             C_numerical = numerical_coriolis(q, qdot, _PARAMS)
 
-            assert np.allclose(C_analytical, C_numerical, atol=1e-5, rtol=1e-3), (
-                f"Coriolis mismatch at q={q}, qdot={qdot}"
-            )
+            assert np.allclose(
+                C_analytical, C_numerical, atol=1e-5, rtol=1e-3
+            ), f"Coriolis mismatch at q={q}, qdot={qdot}"
 
     def test_coriolis_zero_at_zero_velocity(self, test_configs: list[np.ndarray]) -> None:
         """Coriolis is zero when velocity is zero."""
@@ -300,9 +302,9 @@ class TestAnalyticalGravity:
             G_analytical = analytical_gravity_vector(q, _PARAMS)
             G_numerical = numerical_gravity(q, _PARAMS)
 
-            assert np.allclose(G_analytical, G_numerical, atol=1e-5, rtol=1e-4), (
-                f"Gravity mismatch at q={q}"
-            )
+            assert np.allclose(
+                G_analytical, G_numerical, atol=1e-5, rtol=1e-4
+            ), f"Gravity mismatch at q={q}"
 
 
 class TestAnalyticalConstraintJacobian:
@@ -325,9 +327,9 @@ class TestAnalyticalConstraintJacobian:
             Phi_q_analytical = analytical_constraint_jacobian(q, _PARAMS)
             Phi_q_numerical = numerical_constraint_jac(q, _PARAMS)
 
-            assert np.allclose(Phi_q_analytical, Phi_q_numerical, atol=1e-5, rtol=1e-4), (
-                f"Constraint Jacobian mismatch at q={q}"
-            )
+            assert np.allclose(
+                Phi_q_analytical, Phi_q_numerical, atol=1e-5, rtol=1e-4
+            ), f"Constraint Jacobian mismatch at q={q}"
 
     def test_constraint_jac_shape(self) -> None:
         """Constraint Jacobian has shape (4, 8)."""
@@ -362,9 +364,9 @@ class TestAnalyticalConstraintAccelerationBias:
             gamma_analytical = analytical_constraint_acceleration_bias(q, qdot, _PARAMS)
             gamma_numerical = numerical_bias(q, qdot, _PARAMS)
 
-            assert np.allclose(gamma_analytical, gamma_numerical, atol=1e-5, rtol=1e-3), (
-                f"Bias mismatch at q={q}, qdot={qdot}"
-            )
+            assert np.allclose(
+                gamma_analytical, gamma_numerical, atol=1e-5, rtol=1e-3
+            ), f"Bias mismatch at q={q}, qdot={qdot}"
 
     def test_bias_zero_at_zero_velocity(self, test_configs: list[np.ndarray]) -> None:
         """Bias is zero when velocity is zero."""

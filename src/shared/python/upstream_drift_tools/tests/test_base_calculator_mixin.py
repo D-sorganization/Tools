@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from upstream_drift_tools.ui.mixins.base_calculator_mixin import BaseCalculatorMixin
 
@@ -10,7 +11,7 @@ class MockCalculator(BaseCalculatorMixin):
         super().__init__(name)
 
 
-def test_base_calculator_mixin_init_default():
+def test_base_calculator_mixin_init_default() -> Any:
     calc = MockCalculator()
     assert calc.calculator_name == "MockCalculator"
     assert hasattr(calc, "_splitters")
@@ -24,7 +25,7 @@ def test_base_calculator_mixin_init_default():
     )
 
 
-def test_base_calculator_mixin_init_with_name():
+def test_base_calculator_mixin_init_with_name() -> Any:
     calc = MockCalculator("CustomName")
     assert calc.calculator_name == "CustomName"
     assert (
@@ -32,7 +33,7 @@ def test_base_calculator_mixin_init_with_name():
     )
 
 
-def test_base_calculator_mixin_existing_attrs():
+def test_base_calculator_mixin_existing_attrs() -> Any:
     class ExtMockCalculator(BaseCalculatorMixin):
         def __init__(self):
             self._splitters = ["a"]
@@ -46,7 +47,7 @@ def test_base_calculator_mixin_existing_attrs():
     assert calc._state == {"c": 1}
 
 
-def test_base_calculator_mixin_logging(caplog):
+def test_base_calculator_mixin_logging(caplog) -> Any:
     calc = MockCalculator("Test")
     with caplog.at_level(logging.INFO):
         calc.log_info("Info message")
