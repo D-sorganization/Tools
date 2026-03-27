@@ -313,7 +313,8 @@ class HighPerformanceDataLoader:
             raise ValueError("file_path must be provided")
         try:
             cache_file = (
-                self.cache_dir / f"{hashlib.md5(file_path.encode(), usedforsecurity=False).hexdigest()}.json"
+                self.cache_dir
+                / f"{hashlib.md5(file_path.encode(), usedforsecurity=False).hexdigest()}.json"
             )
             if cache_file.exists():
                 data = safe_read_json(cache_file, default=None)
