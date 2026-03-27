@@ -68,7 +68,15 @@ jobs:
         run: |
           if [ -s changed_python_files.txt ]; then
             echo "Linting changed files..."
-            xargs -r -d '\n' ruff check < changed_python_files.txt
+            # Mirror the exclude list from pyproject.toml [tool.ruff]:
+            # When xargs passes files directly, ruff bypasses its own 'exclude' config.
+            grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
+              changed_python_files.txt > ruff_lint_files.txt || true
+            if [ -s ruff_lint_files.txt ]; then
+              xargs -r -d '\n' ruff check < ruff_lint_files.txt
+            else
+              echo "No files to lint after applying exclude list."
+            fi
           else
             echo "No changed files found or not in PR/push context, linting all..."
             ruff check .
@@ -77,7 +85,15 @@ jobs:
       - name: Format Check (ruff-format)
         run: |
           if [ -s changed_python_files.txt ]; then
-            xargs -r -d '\n' ruff format --check < changed_python_files.txt
+            # Mirror the exclude list from pyproject.toml [tool.ruff]:
+            # When xargs passes files directly, ruff bypasses its own 'exclude' config.
+            grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
+              changed_python_files.txt > ruff_format_files.txt || true
+            if [ -s ruff_format_files.txt ]; then
+              xargs -r -d '\n' ruff format --check < ruff_format_files.txt
+            else
+              echo "No changed Python files to format-check."
+            fi
           else
             echo "No changed Python files to format-check."
           fi
