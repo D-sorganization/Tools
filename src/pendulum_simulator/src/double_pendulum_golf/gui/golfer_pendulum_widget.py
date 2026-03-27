@@ -241,7 +241,7 @@ class GolferPendulumWidget(BasePendulumWidget):
     def _draw_golfer(self, painter: QPainter) -> None:
         """Draw the full golfer topology."""
         if not (self._result is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         pos = self._result.positions_at(self._current_idx)
 
         origin = self._world_to_pixel(0.0, 0.0)
@@ -289,9 +289,7 @@ class GolferPendulumWidget(BasePendulumWidget):
             self._draw_3d_segment(painter, ls, le, 12, 9, self.COLOR_LEFT_ARM)
             self._draw_3d_segment(painter, le, lh, 9, 6, self.COLOR_LEFT_ARM)
             # Club shaft — tapered from grip to head
-            self._draw_3d_segment(
-                painter, club_base, club_tip, 10, 4, self.COLOR_CLUB_SHAFT
-            )
+            self._draw_3d_segment(painter, club_base, club_tip, 10, 4, self.COLOR_CLUB_SHAFT)
         else:
             # Original flat-line rendering
             # Standoff (origin -> hub) — massless, COM offset adjustment
@@ -617,7 +615,7 @@ class GolferPendulumWidget(BasePendulumWidget):
         Post: Ellipsoids drawn at each visible endpoint.
         """
         if not (self._result is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         state = self._result.states[self._current_idx]
         params = self._result.params
         ppm = self._pixels_per_meter
@@ -744,7 +742,7 @@ class GolferPendulumWidget(BasePendulumWidget):
 
     def _draw_info(self, painter: QPainter) -> None:
         if not (self._result is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         t = self._result.t[self._current_idx]
         s = self._result.states[self._current_idx]
         theta_deg = np.degrees(s[0])

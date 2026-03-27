@@ -274,9 +274,7 @@ class SimulationPanel(QWidget):
         # Wire real-time rotation controls (#1146)
         if hasattr(self.controls, "tilt_changed") and hasattr(self.pendulum, "set_tilt_angle"):
             self.controls.tilt_changed.connect(self.pendulum.set_tilt_angle)
-        if hasattr(self.controls, "azimuth_changed") and hasattr(
-            self.pendulum, "set_view_azimuth"
-        ):
+        if hasattr(self.controls, "azimuth_changed") and hasattr(self.pendulum, "set_view_azimuth"):
             self.controls.azimuth_changed.connect(self.pendulum.set_view_azimuth)
 
         # Persist splitter when it changes
@@ -594,7 +592,7 @@ class SimulationPanel(QWidget):
 
     def _display_frame(self, idx: int) -> None:
         if not (self._result is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         idx = max(0, min(idx, self._result.n_steps - 1))
         self.pendulum.set_frame(idx)
         self.matrix.set_frame(idx)

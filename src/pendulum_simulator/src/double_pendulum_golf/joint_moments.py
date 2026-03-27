@@ -68,9 +68,7 @@ def moment_of_force(
     """
     if not (joint_position is not None):
         raise ValueError("joint_position must be provided")
-    r = np.asarray(distal_com_position, dtype=float) - np.asarray(
-        joint_position, dtype=float
-    )
+    r = np.asarray(distal_com_position, dtype=float) - np.asarray(joint_position, dtype=float)
     return cross_2d(r, np.asarray(net_force, dtype=float))
 
 
@@ -141,9 +139,7 @@ def double_pendulum_moments(
 
     # Shoulder: moment about arm COM
     m_shoulder = moment_of_force(shoulder, arm_com, f_shoulder)
-    total_shoulder = total_moment_at_joint(
-        applied_torques[0], shoulder, arm_com, f_shoulder
-    )
+    total_shoulder = total_moment_at_joint(applied_torques[0], shoulder, arm_com, f_shoulder)
 
     # Wrist: moment about shaft COM
     m_wrist = moment_of_force(wrist, shaft_com, f_wrist)
@@ -310,7 +306,7 @@ def torque_arrow_direction(
     if not (joint_position.shape == (2,)):
         raise ValueError(f"joint_position.shape mismatch, expected (2,)")
     if not (np.isfinite(torque_value)):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
 
     if abs(torque_value) < 1e-10:
         return joint_position.copy(), joint_position.copy()

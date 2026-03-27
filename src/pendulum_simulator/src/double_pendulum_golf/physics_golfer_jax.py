@@ -465,9 +465,7 @@ def coriolis_jax(q: JaxArray, qdot: JaxArray, p: GolferParamsJAX) -> JaxArray:
     M0 = mass_matrix_jax(q, p)
 
     basis = jnp.eye(N_DOF)
-    dM = jax.vmap(lambda direction: (mass_matrix_jax(q + eps * direction, p) - M0) / eps)(
-        basis
-    )
+    dM = jax.vmap(lambda direction: (mass_matrix_jax(q + eps * direction, p) - M0) / eps)(basis)
     dM = jnp.transpose(dM, (1, 2, 0))
 
     christoffel = 0.5 * (dM + jnp.transpose(dM, (0, 2, 1)) - jnp.transpose(dM, (1, 2, 0)))
@@ -633,9 +631,7 @@ def constraint_jacobian_jax(q: JaxArray, p: GolferParamsJAX) -> JaxArray:
 # ---------------------------------------------------------------------------
 
 
-def _constraint_acceleration_bias_jax(
-    q: JaxArray, qdot: JaxArray, p: GolferParamsJAX
-) -> JaxArray:
+def _constraint_acceleration_bias_jax(q: JaxArray, qdot: JaxArray, p: GolferParamsJAX) -> JaxArray:
     """Compute gamma = Phi_qq * qdot * qdot (centripetal acceleration bias).
 
     Uses finite difference of constraint Jacobian.

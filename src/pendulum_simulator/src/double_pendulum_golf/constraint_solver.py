@@ -103,9 +103,7 @@ def _solve_constrained_dynamics(
 
         tau[:7] = clamp_torque_ndof(tau[:7], torque_limits[:7])
 
-    native_result = _native_backend.golfer_constrained_dynamics(
-        q, qdot, tau, params, alpha, beta
-    )
+    native_result = _native_backend.golfer_constrained_dynamics(q, qdot, tau, params, alpha, beta)
     if native_result is not None:
         qddot, lambda_forces = native_result
         if not (np.all(np.isfinite(qddot))):
@@ -201,9 +199,7 @@ def constraint_forces(
     """
     if not (state is not None):
         raise ValueError("state must be provided")
-    _, lambda_forces = _solve_constrained_dynamics(
-        state, t, params, torque_func, alpha, beta
-    )
+    _, lambda_forces = _solve_constrained_dynamics(state, t, params, torque_func, alpha, beta)
     return lambda_forces
 
 
@@ -269,9 +265,7 @@ def equations_of_motion(
         raise ValueError(f"State has non-finite values: {state}")
 
     qdot = state[N_DOF:]
-    qddot = constrained_accelerations(
-        state, t, params, torque_func, alpha, beta, torque_limits
-    )
+    qddot = constrained_accelerations(state, t, params, torque_func, alpha, beta, torque_limits)
 
     state_dot = np.zeros(2 * N_DOF)
     state_dot[:N_DOF] = qdot
@@ -328,9 +322,7 @@ def project_to_constraints(
     if not (tol > 0):
         raise ValueError(f"tol must be positive, got {tol}")
 
-    native_projection = _native_backend.golfer_project_to_constraints(
-        q, params, max_iter, tol
-    )
+    native_projection = _native_backend.golfer_project_to_constraints(q, params, max_iter, tol)
     if native_projection is not None:
         residual = float(np.linalg.norm(constraint_vector(native_projection, params)))
         if residual < tol:
@@ -343,9 +335,7 @@ def project_to_constraints(
             return q
         Phi_q = constraint_jacobian(q, params)
         # Use pseudoinverse for robustness
-        dq = Phi_q.T @ np.linalg.solve(
-            Phi_q @ Phi_q.T + 1e-12 * np.eye(N_CONSTRAINTS), Phi
-        )
+        dq = Phi_q.T @ np.linalg.solve(Phi_q @ Phi_q.T + 1e-12 * np.eye(N_CONSTRAINTS), Phi)
         q -= dq
 
     residual = float(np.linalg.norm(constraint_vector(q, params)))

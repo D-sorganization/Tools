@@ -173,7 +173,7 @@ def tapered_cylinder_cross_section(
     Post: output shape is (4, 2)
     """
     if not (radius_start > 0 and radius_end > 0):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
 
     direction = end - start
     length = np.linalg.norm(direction)
@@ -293,8 +293,8 @@ def auto_radius_from_mass(mass: float, length: float, scale: float = 0.02) -> fl
     Post: result > 0
     """
     if not (mass > 0 and length > 0 and scale > 0):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
     r = scale * np.sqrt(mass / length)
     if not (r > 0):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
     return float(r)

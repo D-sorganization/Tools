@@ -27,7 +27,9 @@ class TrajectoryResultMixin:
         if not (self.states.shape[0] == self.t.size):
             raise ValueError("states row count must match the number of time samples")
         if not (self.states.shape[1] == expected_state_width):
-            raise ValueError(f"states must have width {expected_state_width}, got {self.states.shape[1]}")
+            raise ValueError(
+                f"states must have width {expected_state_width}, got {self.states.shape[1]}"
+            )
         if not (np.all(np.isfinite(self.t))):
             raise ValueError("Time vector must be finite")
         if not (np.all(np.isfinite(self.states))):
@@ -73,17 +75,13 @@ class TrajectoryResultMixin:
         energy_at = getattr(self, "energy_at")
         first = energy_at(0)
         return {
-            key: np.asarray(
-                [energy_at(i)[key] for i in range(self.n_steps)], dtype=float
-            )
+            key: np.asarray([energy_at(i)[key] for i in range(self.n_steps)], dtype=float)
             for key in first
         }
 
     def all_accelerations(self) -> np.ndarray:
         accelerations_at = getattr(self, "accelerations_at")
-        return np.asarray(
-            [accelerations_at(i) for i in range(self.n_steps)], dtype=float
-        )
+        return np.asarray([accelerations_at(i) for i in range(self.n_steps)], dtype=float)
 
     def all_torques(self) -> np.ndarray:
         torques_at = getattr(self, "torques_at")
