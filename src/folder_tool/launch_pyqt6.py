@@ -40,7 +40,7 @@ except ImportError:
         cwd: Path | str | None = None,
         timeout: int | None = None,
         check: bool = False,
-    ):
+    ) -> subprocess.CompletedProcess[bytes]:
         if not (script_path is not None):
             raise ValueError("script_path must be provided")
         command = [sys.executable, str(script_path)]
@@ -50,7 +50,7 @@ except ImportError:
             command, cwd=str(cwd) if cwd else None, timeout=timeout, check=check
         )
 
-    def get_logger(name) -> Any:
+    def get_logger(name: str) -> Any:
         return logging.getLogger(name)
 
 
