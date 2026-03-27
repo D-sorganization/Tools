@@ -1,6 +1,7 @@
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """Folder Tool Tab and Logic for Data Processor."""
 
 from __future__ import annotations
@@ -115,7 +116,7 @@ class FolderToolMixin:
         )
         self.folder_source_info_label.grid(row=3, column=0, sticky="w", padx=10, pady=5)
 
-    def _create_folder_destination_section(self, parent) -> Any:
+    def _create_folder_destination_section(self, parent):
         """Create the destination folder section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -141,7 +142,7 @@ class FolderToolMixin:
             dest_frame, text="Set Destination", command=self._folder_select_dest_folder
         ).grid(row=1, column=1, padx=10, pady=5)
 
-    def _create_folder_filtering_section(self, parent) -> Any:
+    def _create_folder_filtering_section(self, parent):
         """Create the file filtering section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -157,9 +158,9 @@ class FolderToolMixin:
         ).grid(row=0, column=0, columnspan=2, sticky="w", padx=10, pady=(10, 5))
 
         # Extensions filter
-        ctk.CTkLabel(
-            filter_frame, text="Include only extensions (comma-separated):"
-        ).grid(row=1, column=0, sticky="w", padx=10, pady=2)
+        ctk.CTkLabel(filter_frame, text="Include only extensions (comma-separated):").grid(
+            row=1, column=0, sticky="w", padx=10, pady=2
+        )
         ctk.CTkEntry(
             filter_frame,
             textvariable=self.folder_filter_extensions,
@@ -170,16 +171,16 @@ class FolderToolMixin:
         ctk.CTkLabel(filter_frame, text="Min size (MB):").grid(
             row=2, column=0, sticky="w", padx=10, pady=2
         )
-        ctk.CTkEntry(
-            filter_frame, textvariable=self.folder_min_file_size, width=100
-        ).grid(row=2, column=1, sticky="w", padx=10, pady=2)
+        ctk.CTkEntry(filter_frame, textvariable=self.folder_min_file_size, width=100).grid(
+            row=2, column=1, sticky="w", padx=10, pady=2
+        )
 
         ctk.CTkLabel(filter_frame, text="Max size (MB):").grid(
             row=3, column=0, sticky="w", padx=10, pady=2
         )
-        ctk.CTkEntry(
-            filter_frame, textvariable=self.folder_max_file_size, width=100
-        ).grid(row=3, column=1, sticky="w", padx=10, pady=2)
+        ctk.CTkEntry(filter_frame, textvariable=self.folder_max_file_size, width=100).grid(
+            row=3, column=1, sticky="w", padx=10, pady=2
+        )
 
         # Help text
         ctk.CTkLabel(
@@ -189,7 +190,7 @@ class FolderToolMixin:
             font=ctk.CTkFont(size=12),
         ).grid(row=4, column=0, columnspan=2, sticky="w", padx=10, pady=5)
 
-    def _create_folder_operation_section(self, parent) -> Any:
+    def _create_folder_operation_section(self, parent):
         """Create the main operation section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -229,7 +230,7 @@ class FolderToolMixin:
             row=len(operations) + 1, column=0, sticky="w", padx=10, pady=10
         )
 
-    def _create_folder_organization_section(self, parent) -> Any:
+    def _create_folder_organization_section(self, parent):
         """Create the organization options section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -255,7 +256,7 @@ class FolderToolMixin:
             variable=self.folder_organize_by_date_var,
         ).grid(row=2, column=0, sticky="w", padx=10, pady=2)
 
-    def _create_folder_output_section(self, parent) -> Any:
+    def _create_folder_output_section(self, parent):
         """Create the output options section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -291,7 +292,7 @@ class FolderToolMixin:
             variable=self.folder_backup_before_var,
         ).grid(row=4, column=0, sticky="w", padx=10, pady=2)
 
-    def _create_folder_progress_section(self, parent) -> Any:
+    def _create_folder_progress_section(self, parent):
         """Create the progress section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -309,12 +310,10 @@ class FolderToolMixin:
         self.folder_progress_bar.set(0)
 
         # Status label
-        self.folder_status_label = ctk.CTkLabel(
-            progress_frame, textvariable=self.folder_status_var
-        )
+        self.folder_status_label = ctk.CTkLabel(progress_frame, textvariable=self.folder_status_var)
         self.folder_status_label.grid(row=2, column=0, sticky="w", padx=10, pady=5)
 
-    def _create_folder_run_section(self, parent) -> Any:
+    def _create_folder_run_section(self, parent):
         """Create the run button section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -339,13 +338,12 @@ class FolderToolMixin:
         )
         self.folder_cancel_button.grid(row=0, column=1, padx=10, pady=10)
 
-    def _update_folder_mode_description(self) -> Any:
+    def _update_folder_mode_description(self):
         """Update the mode description based on selected operation."""
         mode = self.folder_operation_mode.get()
         descriptions = {
             "combine": (
-                "Copies all files from source folders"
-                " into the single destination folder."
+                "Copies all files from source folders" " into the single destination folder."
             ),
             "flatten": (
                 "Finds deeply nested folders and copies"
@@ -378,18 +376,18 @@ class FolderToolMixin:
         except (OSError, RuntimeError) as e:
             messagebox.showerror("Error", f"Failed to select source folders: {str(e)}")
 
-    def _folder_remove_selected_source(self) -> Any:
+    def _folder_remove_selected_source(self):
         """Remove selected source folder from the list."""
         if self.folder_source_folders:
             self.folder_source_folders.pop()
             self._folder_update_source_display()
 
-    def _folder_clear_source_folders(self) -> Any:
+    def _folder_clear_source_folders(self):
         """Clear all source folders."""
         self.folder_source_folders = []
         self._folder_update_source_display()
 
-    def _folder_update_source_display(self) -> Any:
+    def _folder_update_source_display(self):
         """Update the source folders display."""
         self.folder_source_listbox.delete("1.0", "end")
         if self.folder_source_folders:
@@ -401,7 +399,7 @@ class FolderToolMixin:
         else:
             self.folder_source_info_label.configure(text="No folders selected")
 
-    def _folder_select_dest_folder(self) -> Any:
+    def _folder_select_dest_folder(self):
         """Select destination folder."""
         try:
             folder = filedialog.askdirectory(title="Select Destination Folder")
@@ -409,23 +407,17 @@ class FolderToolMixin:
                 self.folder_destination = folder
                 self.folder_dest_label.configure(text=folder)
         except (OSError, RuntimeError) as e:
-            messagebox.showerror(
-                "Error", f"Failed to select destination folder: {str(e)}"
-            )
+            messagebox.showerror("Error", f"Failed to select destination folder: {str(e)}")
 
     def _folder_run_processing(self) -> None:
         """Start the folder processing operation."""
         if not self.folder_source_folders:
-            messagebox.showwarning(
-                "No Source Folders", "Please select at least one source folder."
-            )
+            messagebox.showwarning("No Source Folders", "Please select at least one source folder.")
             return
 
         mode = self.folder_operation_mode.get()
         if mode not in ["deduplicate", "analyze"] and not self.folder_destination:
-            messagebox.showwarning(
-                "No Destination", "Please select a destination folder."
-            )
+            messagebox.showwarning("No Destination", "Please select a destination folder.")
             return
 
         self.folder_cancel_flag = False
@@ -483,7 +475,8 @@ class FolderToolMixin:
             all_file_paths = []
             for src in self.folder_source_folders:
                 for root, _, files in os.walk(src):
-                    all_file_paths.extend([Path(root) / file for file in files])
+                    for file in files:
+                        all_file_paths.append(Path(root) / file)
 
             total_files = len(all_file_paths)
             if total_files == 0:
@@ -513,9 +506,7 @@ class FolderToolMixin:
                     )
                     self.after(  # type: ignore
                         0,
-                        lambda p=n, t=tot: self.folder_status_var.set(
-                            f"Processed {p}/{t}"
-                        ),
+                        lambda p=n, t=tot: self.folder_status_var.set(f"Processed {p}/{t}"),
                     )
         except (OSError, PermissionError) as e:
             logger.error(f"Combine failed: {e}")
@@ -527,7 +518,8 @@ class FolderToolMixin:
             all_files = []
             for src in self.folder_source_folders:
                 for root, _, files in os.walk(src):
-                    all_files.extend([(Path(root) / f, f) for f in files])
+                    for f in files:
+                        all_files.append((Path(root) / f, f))
 
             total = len(all_files)
             if total == 0:
@@ -581,9 +573,7 @@ class FolderToolMixin:
                     m = pattern.match(f)
                     if m:
                         base, _, ext = m.groups()
-                        files_by_base.setdefault(f"{base}{ext}", []).append(
-                            Path(root) / f
-                        )
+                        files_by_base.setdefault(f"{base}{ext}", []).append(Path(root) / f)
 
                 for file_list in files_by_base.values():
                     if len(file_list) > 1:
@@ -606,9 +596,7 @@ class FolderToolMixin:
                     info.append((p, sz))
 
         size_mb = total_size / 1e6
-        report = (
-            f"Analysis Report\nTotal Files: {len(info)}\nTotal Size: {size_mb:.2f} MB\n"
-        )
+        report = f"Analysis Report\nTotal Files: {len(info)}\nTotal Size: {size_mb:.2f} MB\n"
         largest = heapq.nlargest(10, info, key=lambda x: x[1])
         report += "\nLargest Files:\n"
         for p, sz in largest:

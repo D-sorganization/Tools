@@ -203,6 +203,11 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "verify_launcher.py" = ["T201"]
 # test_test_utils.py intentionally uses print() to test the captured_output() context manager
 "tests/test_test_utils.py" = ["T201"]
+# src/data_processing and src/pendulum_simulator are legacy directories excluded
+# from ruff via [tool.ruff] exclude, but CI passes changed files directly to ruff
+# (overriding exclude). Suppress the pre-existing violations in these directories.
+"src/data_processing/**/*.py" = ["E402", "E501", "F811", "UP"]
+"src/pendulum_simulator/**/*.py" = ["E402", "E501", "F811"]
 
 [tool.ruff.lint.isort]
 # Tells Ruff how to group your own code vs. libraries
