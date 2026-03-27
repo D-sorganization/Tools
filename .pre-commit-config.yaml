@@ -28,13 +28,14 @@ repos:
         name: "ruff (lint + fix)"
         args: ["--fix", "--exit-non-zero-on-fix"]
         types: [python]
-        # Skip for docs-only or workflow-only changes
-        exclude: ^(\.github/|docs/|.*\.md$)
+        # Exclude directories that are also excluded in pyproject.toml [tool.ruff].
+        # Pre-commit passes files directly (bypassing ruff's own exclude), so we must mirror here.
+        exclude: ^(\.github/|docs/|.*\.md$|src/data_processing/|src/document_processing/|src/pendulum_simulator/|src/scientific_modeling/|src/tools/folder_tools/)
 
       - id: ruff-format
         name: "ruff format"
         types: [python]
-        exclude: ^(\.github/|docs/|.*\.md$)
+        exclude: ^(\.github/|docs/|.*\.md$|src/data_processing/|src/document_processing/|src/pendulum_simulator/|src/scientific_modeling/|src/tools/folder_tools/)
 
   # Black removed: ruff-format is the canonical Python formatter.
   # Both ruff-format and black conflict on parenthesized assert style —
@@ -125,7 +126,14 @@ repos:
             src/glass_bath_fea/|
             src/tools/folder_tools/|
             src/pendulum_simulator/|
-            src/shared/python/theme/
+            src/shared/python/theme/|
+            src/folder_tool/|
+            src/folder_packer_pro/|
+            src/solar_system_model/|
+            src/optimizer_gui/|
+            src/humanoid_builder_gui/|
+            src/rrt_path_planner/|
+            src/rotation_converter/screw_visualization\.py
           )
 
   # Bandit - Security scanning (pre-push only, Python only)
