@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for upstream_drift_tools.utils.paths module.
 
 Covers get_repo_root() with valid repos, missing repos, and default start_path.
@@ -8,6 +6,7 @@ Covers get_repo_root() with valid repos, missing repos, and default start_path.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 from upstream_drift_tools.utils.paths import get_repo_root

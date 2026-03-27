@@ -1,5 +1,3 @@
-from typing import Any
-
 """TDD tests for shared trendline computation module.
 
 Tests accuracy for all 4 trendline types, edge cases,
@@ -7,6 +5,8 @@ and TrendlineResult structure.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import numpy as np
 import pytest

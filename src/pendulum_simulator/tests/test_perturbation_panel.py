@@ -1,5 +1,3 @@
-from typing import Any
-
 """
 Unit tests for the PerturbationPanel GUI widget.
 
@@ -9,6 +7,8 @@ so the tests remain fast and Qt-free of real ODE integration.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import os
 

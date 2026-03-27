@@ -1,5 +1,3 @@
-from typing import Any
-
 """Parity tests between JAX and numpy golfer physics implementations.
 
 Ensures that the JAX implementations produce results consistent with the
@@ -7,6 +5,8 @@ analytical numpy implementations.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import numpy as np
 import pytest

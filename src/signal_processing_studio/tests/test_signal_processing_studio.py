@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for Signal Processing Studio.
 
 Tests cross-widget signal routing, polynomial resample logic,
@@ -11,6 +9,7 @@ from __future__ import annotations
 import importlib.util
 import sys
 from pathlib import Path
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import numpy as np

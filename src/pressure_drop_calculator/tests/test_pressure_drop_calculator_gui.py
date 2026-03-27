@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for Pressure Drop Calculator GUI."""
 
 from __future__ import annotations
@@ -8,6 +6,7 @@ import importlib.util
 import os
 import sys
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 import pytest

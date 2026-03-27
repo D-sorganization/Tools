@@ -178,14 +178,18 @@ class BackupCopyMixin:
         """
         if not (source_path is not None):
             raise ValueError("source_path must be provided")
-        source_path_obj, dest_path_obj = self._validate_copy_inputs(source_path, dest_path)
+        source_path_obj, dest_path_obj = self._validate_copy_inputs(
+            source_path, dest_path
+        )
 
         for attempt in range(MAX_RETRY_ATTEMPTS):
             try:
                 self._prepare_dest_directory(dest_path_obj)
                 shutil.copy2(source_path, dest_path)
 
-                if self._verify_copy(source_path_obj, dest_path_obj, source_path, dest_path):
+                if self._verify_copy(
+                    source_path_obj, dest_path_obj, source_path, dest_path
+                ):
                     return True
 
                 # Verification failed; clean up and potentially retry
@@ -212,7 +216,9 @@ class BackupCopyMixin:
 
         return False
 
-    def _validate_copy_inputs(self, source_path: str, dest_path: str) -> tuple[Path, Path]:
+    def _validate_copy_inputs(
+        self, source_path: str, dest_path: str
+    ) -> tuple[Path, Path]:
         """Validate source and destination paths for a copy operation.
 
         Returns:
@@ -283,7 +289,8 @@ class BackupCopyMixin:
             dest_size = dest_path_obj.stat().st_size
             if source_size == dest_size:
                 logger.debug(
-                    f"Successfully copied {source_path} -> {dest_path} " f"({source_size} bytes)",
+                    f"Successfully copied {source_path} -> {dest_path} "
+                    f"({source_size} bytes)",
                 )
                 return True
             logger.warning(

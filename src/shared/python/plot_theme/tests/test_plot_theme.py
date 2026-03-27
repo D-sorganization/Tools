@@ -1,5 +1,3 @@
-from typing import Any
-
 """Comprehensive tests for the plot_theme module.
 
 Covers PlotTheme dataclass, theme registry, get_theme/register_theme,
@@ -8,6 +6,7 @@ PlotThemeManager, and integration helpers.
 
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest

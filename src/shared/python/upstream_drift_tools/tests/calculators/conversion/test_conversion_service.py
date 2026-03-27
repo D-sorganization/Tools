@@ -1,11 +1,11 @@
-from typing import Any
-
 """Extended tests for UnitConversionService targeting uncovered lines.
 
 Targets: 41% → ~95%+ coverage of service.py
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import pytest
 from upstream_drift_tools.calculators.conversion.service import (

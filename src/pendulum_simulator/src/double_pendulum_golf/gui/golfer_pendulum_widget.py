@@ -237,7 +237,7 @@ class GolferPendulumWidget(BasePendulumWidget):
     def _draw_golfer(self, painter: QPainter) -> None:
         """Draw the full golfer topology."""
         if not (self._result is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         pos = self._result.positions_at(self._current_idx)
 
         origin = self._world_to_pixel(0.0, 0.0)
@@ -596,7 +596,7 @@ class GolferPendulumWidget(BasePendulumWidget):
         Post: Ellipsoids drawn at each visible endpoint.
         """
         if not (self._result is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         state = self._result.states[self._current_idx]
         params = self._result.params
         ppm = self._pixels_per_meter
@@ -689,10 +689,10 @@ class GolferPendulumWidget(BasePendulumWidget):
         Pre: directions.shape == (2, 2)
         Pre: semi_axes_px.shape == (2,)
         """
-        if not (directions.shape == (2):
-            raise ValueError(2), "directions must be (2, 2)")
-        if not (semi_axes_px.shape == (2):
-            raise ValueError(), "semi_axes_px must be (2,)")
+        if not (directions.shape == (2, 2)):
+            raise ValueError("directions must be (2, 2)")
+        if not (semi_axes_px.shape == (2,)):
+            raise ValueError("semi_axes_px must be (2,)")
 
         a = float(semi_axes_px[0])
         b = float(semi_axes_px[1])
@@ -723,7 +723,7 @@ class GolferPendulumWidget(BasePendulumWidget):
 
     def _draw_info(self, painter: QPainter) -> None:
         if not (self._result is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         t = self._result.t[self._current_idx]
         s = self._result.states[self._current_idx]
         theta_deg = np.degrees(s[0])

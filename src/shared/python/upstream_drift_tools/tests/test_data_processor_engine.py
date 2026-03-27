@@ -1,5 +1,3 @@
-from typing import Any
-
 """Comprehensive tests for upstream_drift_tools.data_processing.core.DataProcessorEngine.
 
 Covers all first-party logic: load_dataframe, column ops, smoothing, aggregation,
@@ -12,6 +10,7 @@ integration tests.
 
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import patch
 
 import numpy as np

@@ -1,5 +1,3 @@
-from typing import Any
-
 """Gap-fill tests for physics.py — covers remaining uncovered lines.
 
 Lines 400, 404: joint_limit_torque_ndof angle below lo / above hi
@@ -7,6 +5,8 @@ Lines 461, 467, 474: equations_of_motion with clamp / limits / near-singular M
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import logging
 

@@ -1,11 +1,11 @@
-from typing import Any
-
 """Tests for joint_moments module — torque and moment vector calculations.
 
 TDD: Tests define expected moment computation behavior.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import numpy as np
 import pytest

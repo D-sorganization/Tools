@@ -1,5 +1,3 @@
-from typing import Any
-
 """Comprehensive tests for upstream_drift_tools.data_processing.exceptions module.
 
 Covers all custom exception classes, their hierarchy, and ColumnNotFoundError
@@ -7,6 +5,8 @@ custom formatting.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import pytest
 from upstream_drift_tools.data_processing.exceptions import (

@@ -1,6 +1,6 @@
-from typing import Any
-
 """Tests for the ChartDataDialog dialog."""
+
+from typing import Any
 
 import pytest
 from PyQt6.QtWidgets import QDialogButtonBox

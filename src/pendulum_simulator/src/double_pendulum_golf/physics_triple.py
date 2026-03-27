@@ -177,17 +177,13 @@ def mass_matrix(phi1: float, phi2: float, params: TriplePendulumParams) -> np.nd
     # Postcondition: symmetry
     for i in range(3):
         for j in range(3):
-            if not (np.isclose():
-                raise ValueError('DbC Blocked: Precondition failed.')
-                M[i, j], M[j, i]
-            ), f"Mass matrix not symmetric at [{i},{j}]"
+            if not (np.isclose(M[i, j], M[j, i])):
+                raise ValueError(f"Mass matrix not symmetric at [{i},{j}]")
 
     return M
 
 
-def mass_matrix_components(
-    phi1: float, phi2: float, params: TriplePendulumParams
-) -> dict:
+def mass_matrix_components(phi1: float, phi2: float, params: TriplePendulumParams) -> dict:
     """Return individual mass matrix terms with labels.
 
     Returns
@@ -249,10 +245,8 @@ def coriolis_vector(
     -------
     C_qdot : np.ndarray, shape (3,)
     """
-    if not (all():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        np.isfinite(v) for v in [phi1, phi2, dtheta1, dphi1, dphi2]
-    ), "All inputs must be finite"
+    if not (all(np.isfinite(v) for v in [phi1, phi2, dtheta1, dphi1, dphi2])):
+        raise ValueError("All inputs must be finite")
     native_coriolis = _native_backend.triple_coriolis_vector(
         phi1, phi2, dtheta1, dphi1, dphi2, params
     )
@@ -417,8 +411,8 @@ def equations_of_motion(
     -------
     state_dot : np.ndarray, shape (6,)
     """
-    if not (state.shape == (6):
-        raise ValueError(), f"State must have shape (6,), got {state.shape}")
+    if not (state.shape == (6,)):
+        raise ValueError(f"State must have shape (6,), got {state.shape}")
     if not (all(np.isfinite(state))):
         raise ValueError(f"State values must be finite: {state}")
 
@@ -445,10 +439,8 @@ def equations_of_motion(
 
     state_dot = np.array([dtheta1, dphi1, dphi2, qddot[0], qddot[1], qddot[2]])
 
-    if not (all():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        np.isfinite(state_dot)
-    ), f"State derivative has non-finite values: {state_dot}"
+    if not (all(np.isfinite(state_dot))):
+        raise ValueError(f"State derivative has non-finite values: {state_dot}")
     return state_dot
 
 
@@ -482,9 +474,7 @@ def forward_kinematics(
     """
     if not (theta1 is not None):
         raise ValueError("theta1 must be provided")
-    native_positions = _native_backend.triple_forward_kinematics(
-        theta1, phi1, phi2, params
-    )
+    native_positions = _native_backend.triple_forward_kinematics(theta1, phi1, phi2, params)
     if native_positions is not None:
         return native_positions
 
@@ -534,10 +524,10 @@ def linear_accelerations(
     -------
     dict with keys: 'wrist1', 'wrist2', 'tip' as (ax, ay) tuples.
     """
-    if not (state.shape == (6):
-        raise ValueError(), f"State must have shape (6,), got {state.shape}")
-    if not (qddot.shape == (3):
-        raise ValueError(), f"qddot must have shape (3,), got {qddot.shape}")
+    if not (state.shape == (6,)):
+        raise ValueError(f"State must have shape (6,), got {state.shape}")
+    if not (qddot.shape == (3,)):
+        raise ValueError(f"qddot must have shape (3,), got {qddot.shape}")
 
     theta1, phi1, phi2, dtheta1, dphi1, dphi2 = state
     ddtheta1, ddphi1, ddphi2 = qddot
@@ -567,9 +557,7 @@ def linear_accelerations(
     }
 
 
-def net_joint_forces(
-    state: State, qddot: np.ndarray, params: TriplePendulumParams
-) -> dict:
+def net_joint_forces(state: State, qddot: np.ndarray, params: TriplePendulumParams) -> dict:
     """Compute net joint forces (proximal on distal) in world coordinates.
 
     Returns
@@ -631,9 +619,7 @@ def potential_energy(state: State, params: TriplePendulumParams) -> float:
     V = (
         -m1 * g * L1 * np.cos(theta1)
         - m2 * g * (L1 * np.cos(theta1) + L2 * np.cos(abs_angle2))
-        - m3
-        * g
-        * (L1 * np.cos(theta1) + L2 * np.cos(abs_angle2) + L3 * np.cos(abs_angle3))
+        - m3 * g * (L1 * np.cos(theta1) + L2 * np.cos(abs_angle2) + L3 * np.cos(abs_angle3))
     )
 
     return float(V)

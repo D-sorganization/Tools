@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for the physics module.
 
 Organized by property being tested, following TDD principles:
@@ -8,6 +6,8 @@ a specific physical or mathematical property.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 from collections.abc import Callable
 

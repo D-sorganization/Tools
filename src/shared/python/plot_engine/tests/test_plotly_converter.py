@@ -1,5 +1,3 @@
-from typing import Any
-
 """TDD tests for Plotly.js converter.
 
 Tests that each PlotSpec type produces valid Plotly trace structures
@@ -7,6 +5,8 @@ with correct type fields, data arrays, and layout settings.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import pytest
 from plot_engine.plotly_converter import PlotlyConverter

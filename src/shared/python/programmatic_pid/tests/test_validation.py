@@ -1,11 +1,11 @@
-from typing import Any
-
 """Comprehensive tests for programmatic_pid.validation module.
 
 Tests collect_issues, validate_spec, validate_spec_json.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import pytest
 from programmatic_pid.types import SpecValidationError

@@ -162,8 +162,12 @@ class FolderPackerGUI:
         """Set up the source folders section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
-        source_frame = ttk.LabelFrame(parent, text="Source Folders", padding=str(SMALL_PADDING))
-        source_frame.grid(row=2, column=0, columnspan=3, sticky="ew", pady=(0, DEFAULT_PADDING))
+        source_frame = ttk.LabelFrame(
+            parent, text="Source Folders", padding=str(SMALL_PADDING)
+        )
+        source_frame.grid(
+            row=2, column=0, columnspan=3, sticky="ew", pady=(0, DEFAULT_PADDING)
+        )
         source_frame.columnconfigure(1, weight=GRID_WEIGHT_MAIN)
 
         # Source folders listbox
@@ -203,7 +207,9 @@ class FolderPackerGUI:
 
         # Output directory entry and browse button
         output_frame = ttk.Frame(parent)
-        output_frame.grid(row=4, column=0, columnspan=3, sticky="ew", pady=(0, DEFAULT_PADDING))
+        output_frame.grid(
+            row=4, column=0, columnspan=3, sticky="ew", pady=(0, DEFAULT_PADDING)
+        )
         output_frame.columnconfigure(0, weight=GRID_WEIGHT_MAIN)
 
         self.output_entry = ttk.Entry(output_frame)
@@ -235,7 +241,9 @@ class FolderPackerGUI:
         status_frame.grid(row=6, column=0, columnspan=3, sticky="ew")
         status_frame.columnconfigure(0, weight=GRID_WEIGHT_MAIN)
 
-        self.status_text = tk.Text(status_frame, height=STATUS_TEXT_HEIGHT, wrap=tk.WORD)
+        self.status_text = tk.Text(
+            status_frame, height=STATUS_TEXT_HEIGHT, wrap=tk.WORD
+        )
         self.status_text.grid(row=0, column=0, sticky="ew")
 
         # Scrollbar for status text

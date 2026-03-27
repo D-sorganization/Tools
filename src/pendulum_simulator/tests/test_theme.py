@@ -1,6 +1,6 @@
-from typing import Any
-
 """Tests for the theme module."""
+
+from typing import Any
 
 from double_pendulum_golf.gui import theme
 

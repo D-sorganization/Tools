@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for golfer force/mobility ellipsoid computation.
 
 TDD: These tests verify that ellipsoids_golfer returns the expected
@@ -7,6 +5,8 @@ structure and that the ellipsoid data is physically meaningful.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import numpy as np
 import pytest

@@ -169,7 +169,9 @@ def parse_mypy_output(output: str) -> list[MypyError]:
     """Parse mypy output into structured errors."""
     errors = []
     # Pattern: file.py:line:col: severity: message  [error-code]
-    pattern = re.compile(r"^(.+?):(\d+):(\d+):\s+(error|note):\s+(.+?)(?:\s+\[([^\]]+)\])?\s*$")
+    pattern = re.compile(
+        r"^(.+?):(\d+):(\d+):\s+(error|note):\s+(.+?)(?:\s+\[([^\]]+)\])?\s*$"
+    )
     for line in output.splitlines():
         match = pattern.match(line.strip())
         if match:
@@ -552,7 +554,9 @@ def run_agent(
         if is_safe_path(error.file):
             errors_by_file[error.file].append(error)
         else:
-            report.skipped_reasons.append(f"Skipped {error.file}:{error.line} - outside safe path")
+            report.skipped_reasons.append(
+                f"Skipped {error.file}:{error.line} - outside safe path"
+            )
 
     # Step 3: Apply fixes (file by file, respecting limits)
     files_modified = 0
@@ -569,10 +573,14 @@ def run_agent(
 
     for filepath, file_errors in sorted(errors_by_file.items()):
         if files_modified >= max_files:
-            report.skipped_reasons.append(f"Skipped {filepath} - max files ({max_files}) reached")
+            report.skipped_reasons.append(
+                f"Skipped {filepath} - max files ({max_files}) reached"
+            )
             continue
         if total_fixes >= max_fixes:
-            report.skipped_reasons.append(f"Skipped {filepath} - max fixes ({max_fixes}) reached")
+            report.skipped_reasons.append(
+                f"Skipped {filepath} - max fixes ({max_fixes}) reached"
+            )
             continue
 
         lines = read_file_lines(filepath)
@@ -603,7 +611,9 @@ def run_agent(
                     f"  [{fix.strategy}] {fix.file}:{fix.line} - {fix.description}"
                 )
                 if verbose:
-                    logger.info(f"  FIX: {fix.file}:{fix.line} [{fix.strategy}] {fix.description}")
+                    logger.info(
+                        f"  FIX: {fix.file}:{fix.line} [{fix.strategy}] {fix.description}"
+                    )
             else:
                 report.skipped_reasons.append(
                     f"No fix available: {error.file}:{error.line} [{error.code}] {error.message[:60]}"

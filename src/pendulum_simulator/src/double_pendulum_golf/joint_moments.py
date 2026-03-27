@@ -33,10 +33,10 @@ def cross_2d(r: np.ndarray, f: np.ndarray) -> float:
     """
     r = np.asarray(r, dtype=float)
     f = np.asarray(f, dtype=float)
-    if not (r.shape == (2):
-        raise ValueError(), f"r must be shape (2,), got {r.shape}")
-    if not (f.shape == (2):
-        raise ValueError(), f"f must be shape (2,), got {f.shape}")
+    if not (r.shape == (2,)):
+        raise ValueError(f"r must be shape (2,), got {r.shape}")
+    if not (f.shape == (2,)):
+        raise ValueError(f"f must be shape (2,), got {f.shape}")
     if not (np.all(np.isfinite(r))):
         raise ValueError(f"r must be finite: {r}")
     if not (np.all(np.isfinite(f))):
@@ -68,9 +68,7 @@ def moment_of_force(
     """
     if not (joint_position is not None):
         raise ValueError("joint_position must be provided")
-    r = np.asarray(distal_com_position, dtype=float) - np.asarray(
-        joint_position, dtype=float
-    )
+    r = np.asarray(distal_com_position, dtype=float) - np.asarray(joint_position, dtype=float)
     return cross_2d(r, np.asarray(net_force, dtype=float))
 
 
@@ -141,9 +139,7 @@ def double_pendulum_moments(
 
     # Shoulder: moment about arm COM
     m_shoulder = moment_of_force(shoulder, arm_com, f_shoulder)
-    total_shoulder = total_moment_at_joint(
-        applied_torques[0], shoulder, arm_com, f_shoulder
-    )
+    total_shoulder = total_moment_at_joint(applied_torques[0], shoulder, arm_com, f_shoulder)
 
     # Wrist: moment about shaft COM
     m_wrist = moment_of_force(wrist, shaft_com, f_wrist)
@@ -241,10 +237,8 @@ def golfer_pendulum_moments(
     Pre:  len(applied_torques) >= 7 and all required keys present in positions/forces.
     Post: Returns dict with 21 keys (3 per joint × 7 joints), all finite.
     """
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        len(applied_torques) >= 7
-    ), f"Need >= 7 applied torques, got {len(applied_torques)}"
+    if not (len(applied_torques) >= 7):
+        raise ValueError(f"Need >= 7 applied torques, got {len(applied_torques)}")
     # Joint → distal endpoint pairs (joint connects to next link's endpoint)
     joints = ["hub", "rs", "re", "rh", "ls", "le", "lh"]
     endpoints = ["rs", "re", "rh", "club_tip", "le", "lh", "club_tip"]
@@ -309,10 +303,10 @@ def torque_arrow_direction(
         Start and end points in world coordinates.
     """
     joint_position = np.asarray(joint_position, dtype=float)
-    if not (joint_position.shape == (2):
-        raise ValueError())
+    if not (joint_position.shape == (2,)):
+        raise ValueError("joint_position must have shape (2,)")
     if not (np.isfinite(torque_value)):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
 
     if abs(torque_value) < 1e-10:
         return joint_position.copy(), joint_position.copy()

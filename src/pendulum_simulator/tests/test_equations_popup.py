@@ -1,6 +1,6 @@
-from typing import Any
-
 """Tests for the mathematical equations popup window."""
+
+from typing import Any
 
 import pytest
 from PyQt6.QtWidgets import QDialog, QTextBrowser, QPushButton

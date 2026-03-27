@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for analytical FK Jacobians and derived quantities.
 
 Validates analytical implementations against existing numerical references.
@@ -8,7 +6,9 @@ Follows TDD principles: write tests first, then implement.
 
 from __future__ import annotations
 
+import logging
 import time
+from typing import Any
 
 import numpy as np
 import pytest
@@ -26,6 +26,8 @@ from double_pendulum_golf.physics_golfer import (
     gravity_vector as numerical_gravity,
     mass_matrix as numerical_mass_matrix,
 )
+
+logger = logging.getLogger(__name__)
 
 # Test parameters
 _PARAMS = GolferParams(
@@ -407,9 +409,9 @@ class TestAnalyticalBenchmark:
         t_numerical = time.perf_counter() - start
 
         speedup = t_numerical / t_analytical
-        print(f"\nMass matrix speedup: {speedup:.1f}x")
-        print(f"  Analytical: {t_analytical:.3f}s")
-        print(f"  Numerical:  {t_numerical:.3f}s")
+        logger.info("%s", f"\nMass matrix speedup: {speedup:.1f}x")
+        logger.info("%s", f"  Analytical: {t_analytical:.3f}s")
+        logger.info("%s", f"  Numerical:  {t_numerical:.3f}s")
 
     def test_speed_comparison_coriolis(self, test_configs: list[np.ndarray]) -> None:
         """Print timing comparison for Coriolis."""
@@ -438,9 +440,9 @@ class TestAnalyticalBenchmark:
         t_numerical = time.perf_counter() - start
 
         speedup = t_numerical / t_analytical
-        print(f"\nCoriolis speedup: {speedup:.1f}x")
-        print(f"  Analytical: {t_analytical:.3f}s")
-        print(f"  Numerical:  {t_numerical:.3f}s")
+        logger.info("%s", f"\nCoriolis speedup: {speedup:.1f}x")
+        logger.info("%s", f"  Analytical: {t_analytical:.3f}s")
+        logger.info("%s", f"  Numerical:  {t_numerical:.3f}s")
 
     def test_speed_comparison_gravity(self, test_configs: list[np.ndarray]) -> None:
         """Print timing comparison for gravity."""
@@ -466,6 +468,6 @@ class TestAnalyticalBenchmark:
         t_numerical = time.perf_counter() - start
 
         speedup = t_numerical / t_analytical
-        print(f"\nGravity speedup: {speedup:.1f}x")
-        print(f"  Analytical: {t_analytical:.3f}s")
-        print(f"  Numerical:  {t_numerical:.3f}s")
+        logger.info("%s", f"\nGravity speedup: {speedup:.1f}x")
+        logger.info("%s", f"  Analytical: {t_analytical:.3f}s")
+        logger.info("%s", f"  Numerical:  {t_numerical:.3f}s")

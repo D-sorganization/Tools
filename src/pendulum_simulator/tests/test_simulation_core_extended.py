@@ -1,5 +1,3 @@
-from typing import Any
-
 """Extended tests for simulation_core.py — covering remaining code paths.
 
 Adds tests for:
@@ -10,6 +8,8 @@ Adds tests for:
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 from unittest.mock import MagicMock, patch
 

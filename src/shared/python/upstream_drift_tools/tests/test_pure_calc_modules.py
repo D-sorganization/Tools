@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for pure-math upstream_drift_tools modules to reach 100% coverage.
 
 Targets (all stateless/pure-logic, no external dependencies):
@@ -13,6 +11,7 @@ Targets (all stateless/pure-logic, no external dependencies):
 from __future__ import annotations
 
 import math
+from typing import Any
 
 import pytest
 

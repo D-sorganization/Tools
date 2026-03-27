@@ -55,10 +55,8 @@ def make_polynomial_torque(
 
     polys: list[np.ndarray] = []
     for i, coeffs in enumerate(coeffs_per_joint):
-        if not (():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            len(coeffs) >= 1
-        ), f"Need at least one coefficient for joint {i}, got {len(coeffs)}"
+        if not (len(coeffs) >= 1):
+            raise ValueError(f"Need at least one coefficient for joint {i}, got {len(coeffs)}")
         # Reverse: our convention is [c0, c1, c2, ...] (ascending),
         # np.polyval expects [cN, ..., c1, c0] (descending).
         polys.append(np.array(coeffs[::-1]))

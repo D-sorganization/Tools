@@ -84,8 +84,8 @@ def _solve_constrained_dynamics(
     tuple[np.ndarray, np.ndarray]
         Joint accelerations and constraint multipliers.
     """
-    if not (state.shape == (2 * N_DOF):
-        raise ValueError(), f"State shape must be ({2 * N_DOF},)")
+    if not (state.shape == (2 * N_DOF,)):
+        raise ValueError(f"State shape must be ({2 * N_DOF},)")
     if not (np.all(np.isfinite(state))):
         raise ValueError("State must be finite")
 
@@ -110,10 +110,8 @@ def _solve_constrained_dynamics(
         qddot, lambda_forces = native_result
         if not (np.all(np.isfinite(qddot))):
             raise ValueError(f"qddot has non-finite values: {qddot}")
-        if not (np.all():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            np.isfinite(lambda_forces)
-        ), f"Constraint forces have non-finite values: {lambda_forces}"
+        if not (np.all(np.isfinite(lambda_forces))):
+            raise ValueError(f"Constraint forces have non-finite values: {lambda_forces}")
         return qddot, lambda_forces
 
     # Compute dynamic terms
@@ -164,10 +162,8 @@ def _solve_constrained_dynamics(
 
     if not (np.all(np.isfinite(qddot))):
         raise ValueError(f"qddot has non-finite values: {qddot}")
-    if not (np.all():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        np.isfinite(lambda_forces)
-    ), f"Constraint forces have non-finite values: {lambda_forces}"
+    if not (np.all(np.isfinite(lambda_forces))):
+        raise ValueError(f"Constraint forces have non-finite values: {lambda_forces}")
     return qddot, lambda_forces
 
 
@@ -205,9 +201,7 @@ def constraint_forces(
     """
     if not (state is not None):
         raise ValueError("state must be provided")
-    _, lambda_forces = _solve_constrained_dynamics(
-        state, t, params, torque_func, alpha, beta
-    )
+    _, lambda_forces = _solve_constrained_dynamics(state, t, params, torque_func, alpha, beta)
     return lambda_forces
 
 
@@ -267,8 +261,8 @@ def equations_of_motion(
     -------
     state_dot : np.ndarray, shape (16,)
     """
-    if not (state.shape == (2 * N_DOF):
-        raise ValueError(), f"State shape must be ({2 * N_DOF},)")
+    if not (state.shape == (2 * N_DOF,)):
+        raise ValueError(f"State shape must be ({2 * N_DOF},)")
     if not (np.all(np.isfinite(state))):
         raise ValueError(f"State has non-finite values: {state}")
 
@@ -323,8 +317,8 @@ def project_to_constraints(
     -------
     q_projected : np.ndarray, shape (8,)
     """
-    if not (q.shape == (N_DOF):
-        raise ValueError(), f"q must have shape ({N_DOF},), got {q.shape}")
+    if not (q.shape == (N_DOF,)):
+        raise ValueError(f"q must have shape ({N_DOF},), got {q.shape}")
     if not (np.all(np.isfinite(q))):
         raise ValueError("q must be finite")
     if not (max_iter > 0):
@@ -332,9 +326,7 @@ def project_to_constraints(
     if not (tol > 0):
         raise ValueError(f"tol must be positive, got {tol}")
 
-    native_projection = _native_backend.golfer_project_to_constraints(
-        q, params, max_iter, tol
-    )
+    native_projection = _native_backend.golfer_project_to_constraints(q, params, max_iter, tol)
     if native_projection is not None:
         residual = float(np.linalg.norm(constraint_vector(native_projection, params)))
         if residual < tol:
@@ -347,9 +339,7 @@ def project_to_constraints(
             return q
         Phi_q = constraint_jacobian(q, params)
         # Use pseudoinverse for robustness
-        dq = Phi_q.T @ np.linalg.solve(
-            Phi_q @ Phi_q.T + 1e-12 * np.eye(N_CONSTRAINTS), Phi
-        )
+        dq = Phi_q.T @ np.linalg.solve(Phi_q @ Phi_q.T + 1e-12 * np.eye(N_CONSTRAINTS), Phi)
         q -= dq
 
     residual = float(np.linalg.norm(constraint_vector(q, params)))

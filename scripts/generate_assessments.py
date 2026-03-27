@@ -301,10 +301,14 @@ with open(os.path.join(ASSESSMENT_DIR, "Comprehensive_Assessment.md"), "w") as f
 
     f.write("4.  **Pay Down Technical Debt (Category O)**\n")
     f.write("    - **Issue**: 445 `TRACKED_TASK` markers.\n")
-    f.write("    - **Action**: Conduct a specific sprint to resolve or ticket these items.\n\n")
+    f.write(
+        "    - **Action**: Conduct a specific sprint to resolve or ticket these items.\n\n"
+    )
 
     f.write("5.  **Standardize Logging (Category L)**\n")
     f.write("    - **Issue**: Mixed use of `print()` and `logging`.\n")
-    f.write("    - **Action**: Enforce a linting rule to ban `print()` in library code.\n")
+    f.write(
+        "    - **Action**: Enforce a linting rule to ban `print()` in library code.\n"
+    )
 
 print(f"Generated {os.path.join(ASSESSMENT_DIR, 'Comprehensive_Assessment.md')}")

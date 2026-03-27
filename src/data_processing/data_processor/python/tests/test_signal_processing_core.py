@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for signal processing core functionality.
 
 Tests follow TDD principles - written before implementation.
@@ -7,6 +5,8 @@ Covers: integration, differentiation, resampling, custom variables, trendlines.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import numpy as np
 import pandas as pd

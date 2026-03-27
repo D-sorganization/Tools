@@ -70,12 +70,10 @@ def register_model(name: str, config: ModelConfig) -> None:
     Pre: name is a non-empty string. config is a ModelConfig.
     Post: model is retrievable via get_model(name).
     """
-    if not (name and isinstance():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        name, str
-    ), f"Model name must be non-empty string, got {name!r}"
-    if not (isinstance(config):
-        raise ValueError(ModelConfig), f"Expected ModelConfig, got {type(config)}")
+    if not (name and isinstance(name, str)):
+        raise ValueError(f"Model name must be non-empty string, got {name!r}")
+    if not isinstance(config, ModelConfig):
+        raise ValueError(f"Expected ModelConfig, got {type(config)}")
     if name in _registry:
         logger.warning("Overwriting existing model registration: %s", name)
     _registry[name] = config
@@ -90,9 +88,7 @@ def get_model(name: str) -> ModelConfig:
     Raises: KeyError if not found.
     """
     if name not in _registry:
-        raise KeyError(
-            f"Model {name!r} not registered. Available: {list(_registry.keys())}"
-        )
+        raise KeyError(f"Model {name!r} not registered. Available: {list(_registry.keys())}")
     return _registry[name]
 
 

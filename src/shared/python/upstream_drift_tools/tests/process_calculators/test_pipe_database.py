@@ -1,11 +1,11 @@
-from typing import Any
-
 """Tests for pipe_database.py — get_roughness, get_pipe_spec, etc.
 
 Targets: 29% → 100% coverage.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import pytest
 from upstream_drift_tools.process_calculators.pressure_drop_calculator.utils.pipe_database import (

@@ -57,16 +57,16 @@ def _truncate_q(q: np.ndarray) -> np.ndarray:
     q_arr = np.asarray(q, dtype=float)
     if q_arr.shape[0] > 8:
         q_arr = q_arr[:8]
-    if not (q_arr.shape == (8):
-        raise ValueError(), f"q must have shape (8,), got {q_arr.shape}")
+    if not (q_arr.shape == (8,)):
+        raise ValueError(f"q must have shape (8,), got {q_arr.shape}")
     return q_arr
 
 
 def _vector8(values: np.ndarray, name: str) -> np.ndarray:
     """Normalize a vector argument to a finite length-8 array."""
     arr = np.asarray(values, dtype=float)
-    if not (arr.shape == (8):
-        raise ValueError(), f"{name} must have shape (8,), got {arr.shape}")
+    if not (arr.shape == (8,)):
+        raise ValueError(f"{name} must have shape (8,), got {arr.shape}")
     if not (np.all(np.isfinite(arr))):
         raise ValueError(f"{name} must be finite")
     return arr
@@ -575,9 +575,7 @@ def golfer_constrained_dynamics(
     """Return native golfer accelerations and multipliers when supported."""
     if not (q is not None):
         raise ValueError("q must be provided")
-    if not golfer_native_enabled() or not golfer_native_constraint_dynamics_supported(
-        params
-    ):
+    if not golfer_native_enabled() or not golfer_native_constraint_dynamics_supported(params):
         return None
 
     try:
@@ -691,21 +689,17 @@ def batch_evaluate_double(
     """
     if not (params is not None):
         raise ValueError("params must be provided")
-    if _pendulum_core is None or not hasattr(
-        _pendulum_core, "py_batch_evaluate_double"
-    ):
+    if _pendulum_core is None or not hasattr(_pendulum_core, "py_batch_evaluate_double"):
         return None
 
     try:
-        result: list[tuple[float, float, bool]] = (
-            _pendulum_core.py_batch_evaluate_double(
-                _to_rust_double_params(params),
-                coeffs_batch,
-                n_coeffs_per_joint,
-                q0,
-                qdot0,
-                t_end,
-            )
+        result: list[tuple[float, float, bool]] = _pendulum_core.py_batch_evaluate_double(
+            _to_rust_double_params(params),
+            coeffs_batch,
+            n_coeffs_per_joint,
+            q0,
+            qdot0,
+            t_end,
         )
         return result
     except (RuntimeError, AttributeError, TypeError) as exc:  # pragma: no cover

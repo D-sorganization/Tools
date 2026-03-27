@@ -1,5 +1,3 @@
-from typing import Any
-
 """Extended C3D reader tests: malformed inputs, edge cases, analog edges (#1062).
 
 Design by Contract
@@ -14,6 +12,7 @@ Design by Contract
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 import numpy as np

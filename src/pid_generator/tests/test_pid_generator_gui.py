@@ -1,10 +1,9 @@
-from typing import Any
-
 """Tests for P&ID Generator GUI registration and launcher plumbing."""
 
 from __future__ import annotations
 
 import importlib
+from typing import Any
 
 import pytest
 

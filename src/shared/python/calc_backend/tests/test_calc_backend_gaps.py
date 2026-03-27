@@ -1,5 +1,3 @@
-from typing import Any
-
 """Targeted coverage tests for remaining calc_backend gaps.
 
 Covers first-party code only:
@@ -20,6 +18,7 @@ The model validators in *contracts* are pure first-party logic and safe to test.
 
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest

@@ -1,8 +1,8 @@
-from typing import Any
-
 """Tests for the web theme bridge module."""
 
 from __future__ import annotations
+
+from typing import Any
 
 import pytest
 

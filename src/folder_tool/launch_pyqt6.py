@@ -1,10 +1,10 @@
-from typing import Any
-
 #!/usr/bin/env python3
 """
 Cross-platform launcher for Folder Tool.
 Replaces Launch_FolderFix.bat for better portability.
 """
+
+from typing import Any
 
 import subprocess
 import sys

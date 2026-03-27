@@ -1,5 +1,3 @@
-from typing import Any
-
 # mypy: ignore-errors
 """Integrated version of the Data Processor GUI.
 
@@ -7,6 +5,7 @@ This module combines the various refactored components into a single application
 """
 
 import logging
+from typing import Any
 
 import customtkinter as ctk
 

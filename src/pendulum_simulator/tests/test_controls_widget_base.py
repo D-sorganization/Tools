@@ -1,6 +1,6 @@
-from typing import Any
-
 """Tests for ControlsWidgetBase."""
+
+from typing import Any
 
 from unittest.mock import MagicMock
 

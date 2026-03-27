@@ -1,6 +1,6 @@
-from typing import Any
-
 """Tests for ControlsWidgetGolfer."""
+
+from typing import Any
 
 import pytest
 from double_pendulum_golf.gui.controls_widget_golfer import ControlsWidgetGolfer
