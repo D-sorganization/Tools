@@ -104,7 +104,7 @@ jobs:
             # Filter out legacy directories that are not yet type-safe
             # Exclude: legacy dirs not yet type-safe + src/shared/python/* (namespace pkg
             # structure causes mypy double-module errors; checked via tests instead)
-            grep -v -E "src/electrode_advisor/|src/shared/python/|src/function_generator/|src/data_processing/data_processor/|src/glass_bath_fea/|src/tools/folder_tools/|simulation_golfer_gpu|optimizer_gpu|src/folder_tool/|src/pendulum_simulator/|src/optimizer_gui/|src/solar_system_model/" changed_mypy_files.txt > filtered_mypy_files.txt || true
+            grep -v -E "src/electrode_advisor/|src/shared/python/|src/function_generator/|src/data_processing/data_processor/|src/glass_bath_fea/|src/tools/folder_tools/|simulation_golfer_gpu|optimizer_gpu|src/folder_tool/|src/pendulum_simulator/|src/optimizer_gui/|src/solar_system_model/|src/rotation_converter/ui/|src/rrt_path_planner/|src/vessel_drafter/" changed_mypy_files.txt > filtered_mypy_files.txt || true
 
             if [ -s filtered_mypy_files.txt ]; then
               export MYPYPATH=src:src/python/src
