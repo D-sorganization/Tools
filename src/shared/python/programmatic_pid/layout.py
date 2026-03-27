@@ -15,14 +15,14 @@ Postconditions:
     - ``LabelPlacer.find_position`` always returns a valid (x, y, align) tuple.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from collections.abc import Sequence
-from typing import Any
+from collections.abc import Sequence  # noqa: E402
+from typing import Any  # noqa: E402
 
-from programmatic_pid.equipment import equipment_dims
-from programmatic_pid.geometry import rects_overlap, text_box, to_float
-from programmatic_pid.spec_loader import get_drawing, get_layout_config
+from programmatic_pid.equipment import equipment_dims  # noqa: E402
+from programmatic_pid.geometry import rects_overlap, text_box, to_float  # noqa: E402
+from programmatic_pid.spec_loader import get_drawing, get_layout_config  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Label collision avoidance

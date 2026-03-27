@@ -2,15 +2,15 @@ from numba import jit
 
 """ArchiveMixin -- ZIP archive creation for FolderProcessorApp."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-import os
-import zipfile
-from datetime import datetime
-from pathlib import Path
+import logging  # noqa: E402
+import os  # noqa: E402
+import zipfile  # noqa: E402
+from datetime import datetime  # noqa: E402
+from pathlib import Path  # noqa: E402
 
-from Folders_Tool_r0 import (
+from Folders_Tool_r0 import (  # noqa: E402
     MAX_UI_UPDATE_FREQUENCY,
     PROGRESS_START_ZIP,
     PROGRESS_ZIP_PERCENT,

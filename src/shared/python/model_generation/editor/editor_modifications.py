@@ -6,13 +6,13 @@ Provides link/joint deletion, renaming, modification, attachment/detachment,
 batch prefix application, and subtree mirroring.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-from collections.abc import Callable
-from typing import TYPE_CHECKING, Any
+import logging  # noqa: E402
+from collections.abc import Callable  # noqa: E402
+from typing import TYPE_CHECKING, Any  # noqa: E402
 
-from model_generation.core.types import Joint, JointType, Link, Origin
+from model_generation.core.types import Joint, JointType, Link, Origin  # noqa: E402
 
 if TYPE_CHECKING:
     from model_generation.converters.urdf_parser import ParsedModel

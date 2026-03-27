@@ -16,27 +16,27 @@ Or programmatically::
     generate("spec.yml", "out.dxf", svg_path="out.svg")
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import argparse
-import logging
-from copy import deepcopy
-from pathlib import Path
-from typing import Any
+import argparse  # noqa: E402
+import logging  # noqa: E402
+from copy import deepcopy  # noqa: E402
+from pathlib import Path  # noqa: E402
+from typing import Any  # noqa: E402
 
-import ezdxf
-from programmatic_pid.controls import add_control_loops
-from programmatic_pid.equipment import draw_equipment_symbol, equipment_dims
-from programmatic_pid.geometry import to_float
-from programmatic_pid.instruments import add_instrument
-from programmatic_pid.layout import (
+import ezdxf  # noqa: E402
+from programmatic_pid.controls import add_control_loops  # noqa: E402
+from programmatic_pid.equipment import draw_equipment_symbol, equipment_dims  # noqa: E402
+from programmatic_pid.geometry import to_float  # noqa: E402
+from programmatic_pid.instruments import add_instrument  # noqa: E402
+from programmatic_pid.layout import (  # noqa: E402
     LabelPlacer,
     compute_layout_regions,
     get_modelspace_extent,
     spread_instrument_positions,
 )
-from programmatic_pid.profiles import PROFILE_PRESETS
-from programmatic_pid.rendering import (
+from programmatic_pid.profiles import PROFILE_PRESETS  # noqa: E402
+from programmatic_pid.rendering import (  # noqa: E402
     add_arrow,
     add_box,
     add_text,
@@ -46,14 +46,14 @@ from programmatic_pid.rendering import (
     export_svg_from_dxf,
     layer_name,
 )
-from programmatic_pid.spec_loader import (
+from programmatic_pid.spec_loader import (  # noqa: E402
     get_layout_config,
     get_project,
     get_text_config,
     prepare_spec,
 )
-from programmatic_pid.streams import add_stream
-from programmatic_pid.title_block import add_notes, add_title_block
+from programmatic_pid.streams import add_stream  # noqa: E402
+from programmatic_pid.title_block import add_notes, add_title_block  # noqa: E402
 
 logger = logging.getLogger(__name__)
 

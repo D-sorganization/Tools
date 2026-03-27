@@ -7,15 +7,15 @@ A PyQt6 GUI for building parametric humanoid characters with
 anthropometric calculations and URDF export.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import sys
-from dataclasses import dataclass
-from enum import Enum
+import sys  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
+from enum import Enum  # noqa: E402
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import (
+from PyQt6.QtCore import Qt  # noqa: E402
+from PyQt6.QtGui import QFont  # noqa: E402
+from PyQt6.QtWidgets import (  # noqa: E402
     QApplication,
     QComboBox,
     QDoubleSpinBox,

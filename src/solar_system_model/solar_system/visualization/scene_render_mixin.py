@@ -6,20 +6,20 @@ Extracts 3D and overlay rendering logic from the main scene class
 to reduce class size and improve single-responsibility adherence.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any  # noqa: E402
 
-import numpy as np
+import numpy as np  # noqa: E402
 
-from ..core.celestial_body import BodyType
-from ..core.constants import (
+from ..core.celestial_body import BodyType  # noqa: E402
+from ..core.constants import (  # noqa: E402
     DWARF_PLANETS,
     INNER_PLANETS,
     OUTER_PLANETS,
     PLANET_ORDER,
 )
-from ..data.famous_missions import FAMOUS_MISSIONS
+from ..data.famous_missions import FAMOUS_MISSIONS  # noqa: E402
 
 if TYPE_CHECKING:
     pass

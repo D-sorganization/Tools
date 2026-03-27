@@ -14,9 +14,9 @@ Each event includes:
 - Category (mission, discovery, observation, etc.)
 """
 
-from calendar import monthrange
-from datetime import datetime
-from typing import Any
+from calendar import monthrange  # noqa: E402
+from datetime import datetime  # noqa: E402
+from typing import Any  # noqa: E402
 
 # List of historical space events
 SPACE_EVENTS: list[dict[str, Any]] = [

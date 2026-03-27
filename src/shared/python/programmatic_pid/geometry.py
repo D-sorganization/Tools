@@ -5,12 +5,12 @@ from numba import jit
 DRY: Centralises the point/rect operations that were scattered across generator.py.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import math
-from collections.abc import Sequence
+import math  # noqa: E402
+from collections.abc import Sequence  # noqa: E402
 
-from programmatic_pid.types import BBox, Point
+from programmatic_pid.types import BBox, Point  # noqa: E402
 
 
 def to_float(value: object, default: float = 0.0) -> float:

@@ -7,20 +7,22 @@ This GUI provides interactive visualization and analysis of PSA system
 performance, including sensitivity analysis and O2 safety calculations.
 """
 
-import os
-import subprocess
-import sys
-import webbrowser
-from collections.abc import Callable
+import os  # noqa: E402
+import subprocess  # noqa: E402
+import sys  # noqa: E402
+import webbrowser  # noqa: E402
+from collections.abc import Callable  # noqa: E402
 
-import matplotlib
-import numpy as np
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.figure import Figure
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QAction, QDoubleValidator, QFont, QPixmap
-from PyQt6.QtWidgets import (
+import matplotlib  # noqa: E402
+import numpy as np  # noqa: E402
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas  # noqa: E402
+from matplotlib.backends.backend_qtagg import (
+    NavigationToolbar2QT as NavigationToolbar,
+)  # noqa: E402
+from matplotlib.figure import Figure  # noqa: E402
+from PyQt6.QtCore import Qt  # noqa: E402
+from PyQt6.QtGui import QAction, QDoubleValidator, QFont, QPixmap  # noqa: E402
+from PyQt6.QtWidgets import (  # noqa: E402
     QApplication,
     QCheckBox,
     QComboBox,
@@ -43,7 +45,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from .psa_model import (
+from .psa_model import (  # noqa: E402
     DEFAULT_COMPONENTS,
     ComponentData,
     PSAModel,

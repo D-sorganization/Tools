@@ -8,14 +8,14 @@ Provides high-quality rendering of planets, orbits, trajectories,
 and UI elements.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import math
-import pathlib
-from dataclasses import dataclass
-from typing import Any, cast
+import math  # noqa: E402
+import pathlib  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
+from typing import Any, cast  # noqa: E402
 
-import numpy as np
+import numpy as np  # noqa: E402
 
 try:
     import pygame
@@ -128,13 +128,13 @@ try:
 except ImportError:
     OPENGL_AVAILABLE = False
 
-from ..core.celestial_body import BodyType, CelestialBody, StateVector
-from ..core.constants import AU
-from ..data.star_catalog import iter_catalog
-from .camera import Camera, CameraState
-from .starfield import StarVertex, build_star_vertices, point_size_from_magnitude
-from .textures import TextureManager
-from .ui_renderer import UIRenderer
+from ..core.celestial_body import BodyType, CelestialBody, StateVector  # noqa: E402
+from ..core.constants import AU  # noqa: E402
+from ..data.star_catalog import iter_catalog  # noqa: E402
+from .camera import Camera, CameraState  # noqa: E402
+from .starfield import StarVertex, build_star_vertices, point_size_from_magnitude  # noqa: E402
+from .textures import TextureManager  # noqa: E402
+from .ui_renderer import UIRenderer  # noqa: E402
 
 
 @dataclass

@@ -13,16 +13,16 @@ Addresses:
   - Issue #1348: Hardcoded inertia placeholders
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-import re
-import xml.etree.ElementTree as ET  # nosec B405 — input is self-generated
-from dataclasses import dataclass
+import logging  # noqa: E402
+import re  # noqa: E402
+import xml.etree.ElementTree as ET  # nosec B405 — input is self-generated  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
 
-from urdf_builder_gui.contracts import require
+from urdf_builder_gui.contracts import require  # noqa: E402
 
-from .anthropometric_model import (
+from .anthropometric_model import (  # noqa: E402
     URDFConfig,
     compute_box_inertia,
     compute_segment_length,

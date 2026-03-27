@@ -2,16 +2,16 @@ from numba import jit
 
 """UIProcessingMixin -- UI dialogs, progress, status, threading for FolderProcessorApp."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-import os
-import threading
-import tkinter as tk
-from pathlib import Path
-from tkinter import messagebox, ttk
+import logging  # noqa: E402
+import os  # noqa: E402
+import threading  # noqa: E402
+import tkinter as tk  # noqa: E402
+from pathlib import Path  # noqa: E402
+from tkinter import messagebox, ttk  # noqa: E402
 
-from Folders_Tool_r0 import (
+from Folders_Tool_r0 import (  # noqa: E402
     CHARS_PER_DIALOG_LINE,
     DIALOG_HEIGHT_OFFSET,
     DIALOG_WIDTH_OFFSET,

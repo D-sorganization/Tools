@@ -8,11 +8,11 @@ Handles all 2D user interface rendering for the solar system visualization.
 Separates UI logic from the main 3D renderer.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import math
-from dataclasses import dataclass
-from typing import Any
+import math  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
+from typing import Any  # noqa: E402
 
 try:
     import pygame

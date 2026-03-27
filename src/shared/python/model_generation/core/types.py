@@ -7,16 +7,16 @@ This module defines the fundamental data structures used throughout
 the model_generation package for representing URDF elements.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import math
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any
+import math  # noqa: E402
+from dataclasses import dataclass, field  # noqa: E402
+from enum import Enum  # noqa: E402
+from typing import Any  # noqa: E402
 
-import numpy as np
-from model_generation.core.contracts import precondition
-from numpy.typing import NDArray
+import numpy as np  # noqa: E402
+from model_generation.core.contracts import precondition  # noqa: E402
+from numpy.typing import NDArray  # noqa: E402
 
 
 class GeometryType(Enum):

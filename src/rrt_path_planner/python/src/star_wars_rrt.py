@@ -3,17 +3,17 @@ from numba import jit
 #!/usr/bin/env python3
 """Asteroid-field RRT path planner with optional 3D visualization."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-import math
-import random
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Any
+import logging  # noqa: E402
+import math  # noqa: E402
+import random  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
+from pathlib import Path  # noqa: E402
+from typing import Any  # noqa: E402
 
-import numpy as np
-import numpy.typing as npt
+import numpy as np  # noqa: E402
+import numpy.typing as npt  # noqa: E402
 
 try:
     import pygame

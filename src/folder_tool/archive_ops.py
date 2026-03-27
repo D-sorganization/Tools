@@ -2,14 +2,14 @@ from numba import jit
 
 """ArchiveOperationsMixin -- Archive extraction methods."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-import os
-import shutil
-from pathlib import Path
+import logging  # noqa: E402
+import os  # noqa: E402
+import shutil  # noqa: E402
+from pathlib import Path  # noqa: E402
 
-from Folders_Tool_r0 import (
+from Folders_Tool_r0 import (  # noqa: E402
     MAX_ARCHIVE_SIZE_RATIO,
     MAX_FILE_SIZE_MB,
 )

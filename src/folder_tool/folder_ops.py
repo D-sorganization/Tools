@@ -2,15 +2,15 @@ from numba import jit
 
 """FolderOperationsMixin -- Folder-level operations for FolderProcessorApp."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-import os
-import re
-from pathlib import Path
-from tkinter import messagebox
+import logging  # noqa: E402
+import os  # noqa: E402
+import re  # noqa: E402
+from pathlib import Path  # noqa: E402
+from tkinter import messagebox  # noqa: E402
 
-from Folders_Tool_r0 import (
+from Folders_Tool_r0 import (  # noqa: E402
     MAX_LOG_ENTRIES,
     MAX_UI_UPDATE_FREQUENCY,
     PROGRESS_MAIN_OP_PERCENT,

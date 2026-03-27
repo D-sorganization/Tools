@@ -2,24 +2,24 @@ from numba import jit
 
 """3D preview scene builders for the vessel drafter GUI."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from dataclasses import dataclass
-from functools import lru_cache
-from math import pi
-from typing import Any, TypeAlias, cast
+from dataclasses import dataclass  # noqa: E402
+from functools import lru_cache  # noqa: E402
+from math import pi  # noqa: E402
+from typing import Any, TypeAlias, cast  # noqa: E402
 
-import numpy as np
+import numpy as np  # noqa: E402
 
-from vessel_drafter.models.vessel_drafter import (
+from vessel_drafter.models.vessel_drafter import (  # noqa: E402
     DEFAULT_VESSEL_DRAFTER_LAYOUT,
     MM_PER_INCH,
     VesselDrafterLayout,
 )
-from vessel_drafter.preview.vessel_drafter_view_options import (
+from vessel_drafter.preview.vessel_drafter_view_options import (  # noqa: E402
     Vessel3DViewOptions,
 )
-from vessel_drafter.projects.vessel_drafter_profiles import (
+from vessel_drafter.projects.vessel_drafter_profiles import (  # noqa: E402
     ProfilePoint,
     build_bottom_head_curve,
     build_glass_boundary_half,

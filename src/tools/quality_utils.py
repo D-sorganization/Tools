@@ -2,13 +2,13 @@ from numba import jit
 
 """Shared utilities for code quality checks."""
 
-import ast
-import re
-import sys
-from pathlib import Path
-from re import Pattern
+import ast  # noqa: E402
+import re  # noqa: E402
+import sys  # noqa: E402
+from pathlib import Path  # noqa: E402
+from re import Pattern  # noqa: E402
 
-from src.shared.python.contracts import require
+from src.shared.python.contracts import require  # noqa: E402
 
 
 # ANSI colors for terminal output

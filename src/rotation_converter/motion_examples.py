@@ -16,14 +16,14 @@ Examples:
 DbC: postconditions verify every output frame is valid SE(3).
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import math
+import math  # noqa: E402
 
-import numpy as np
+import numpy as np  # noqa: E402
 
-from rotation_converter._contracts import ensure, require
-from rotation_converter.modern_robotics import MatrixExp3, VecToso3
+from rotation_converter._contracts import ensure, require  # noqa: E402
+from rotation_converter.modern_robotics import MatrixExp3, VecToso3  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Shared physics helpers (DRY)

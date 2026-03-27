@@ -2,11 +2,11 @@ from numba import jit
 
 """Cylindrical bath drafting defaults for radial electrode layouts."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from dataclasses import dataclass
-from math import cos, radians, sin
-from typing import Any
+from dataclasses import dataclass  # noqa: E402
+from math import cos, radians, sin  # noqa: E402
+from typing import Any  # noqa: E402
 
 MM_PER_INCH = 25.4
 

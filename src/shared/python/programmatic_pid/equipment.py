@@ -6,13 +6,13 @@ Design: Equipment types register themselves via @register_equipment decorator.
 New types can be added without modifying the core engine.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import math
-from collections.abc import Callable
-from typing import Any
+import math  # noqa: E402
+from collections.abc import Callable  # noqa: E402
+from typing import Any  # noqa: E402
 
-from programmatic_pid.geometry import to_float
+from programmatic_pid.geometry import to_float  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Registry

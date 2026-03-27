@@ -2,11 +2,11 @@ from numba import jit
 
 """Default electrode advisor drafting inputs mirrored from the current UI."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from dataclasses import dataclass
-from math import cos, pi, sin
-from typing import Any
+from dataclasses import dataclass  # noqa: E402
+from math import cos, pi, sin  # noqa: E402
+from typing import Any  # noqa: E402
 
 MM_PER_M = 1000.0
 

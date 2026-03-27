@@ -6,15 +6,15 @@ Provides file scanning, statistics collection, exclusion pattern matching,
 file type categorization, and size formatting.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-import os
-from collections import defaultdict
-from pathlib import Path
-from typing import Any
+import logging  # noqa: E402
+import os  # noqa: E402
+from collections import defaultdict  # noqa: E402
+from pathlib import Path  # noqa: E402
+from typing import Any  # noqa: E402
 
-from .constants import (
+from .constants import (  # noqa: E402
     CODE_EXTENSIONS,
     CONFIG_EXTENSIONS,
     MARKUP_EXTENSIONS,

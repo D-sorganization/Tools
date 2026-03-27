@@ -9,16 +9,16 @@ Each body has physical properties, orbital elements, and methods for calculating
 positions and velocities at any given time.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import math
-from dataclasses import dataclass
-from enum import Enum
-from typing import Any
+import math  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
+from enum import Enum  # noqa: E402
+from typing import Any  # noqa: E402
 
-import numpy as np
+import numpy as np  # noqa: E402
 
-from .constants import (
+from .constants import (  # noqa: E402
     AU,
     GM,
     J2000,

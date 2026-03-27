@@ -14,14 +14,14 @@ Postconditions:
     - Unresolvable loops are logged and skipped (never raises).
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-from typing import Any
+import logging  # noqa: E402
+from typing import Any  # noqa: E402
 
-from programmatic_pid.equipment import equipment_center, nearest_equipment_anchor
-from programmatic_pid.geometry import dedupe_points, to_float
-from programmatic_pid.rendering import add_arrow_head, add_text, ensure_layer
+from programmatic_pid.equipment import equipment_center, nearest_equipment_anchor  # noqa: E402
+from programmatic_pid.geometry import dedupe_points, to_float  # noqa: E402
+from programmatic_pid.rendering import add_arrow_head, add_text, ensure_layer  # noqa: E402
 
 logger = logging.getLogger(__name__)
 

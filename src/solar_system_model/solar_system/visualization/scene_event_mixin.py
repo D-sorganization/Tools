@@ -6,13 +6,13 @@ Extracts mouse, keyboard, and UI click handling from the main scene class
 to reduce class size and improve single-responsibility adherence.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from datetime import datetime
-from typing import TYPE_CHECKING
+from datetime import datetime  # noqa: E402
+from typing import TYPE_CHECKING  # noqa: E402
 
-from ..core.constants import PLANET_ORDER
-from ..data.famous_missions import FAMOUS_MISSIONS
+from ..core.constants import PLANET_ORDER  # noqa: E402
+from ..data.famous_missions import FAMOUS_MISSIONS  # noqa: E402
 
 if TYPE_CHECKING:
     pass
@@ -62,7 +62,7 @@ try:
 except ImportError:
     _PYGAME_AVAILABLE = False
 
-from .camera import CameraMode
+from .camera import CameraMode  # noqa: E402
 
 
 class SceneEventMixin:

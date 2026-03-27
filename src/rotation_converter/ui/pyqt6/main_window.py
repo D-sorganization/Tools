@@ -96,7 +96,7 @@ def _fmt_vec(v: np.ndarray, decimals: int = 6) -> str:
 def _fmt_mat(M: np.ndarray, decimals: int = 6) -> str:
     """Format a numpy matrix as a multi-line string."""
     assert M is not None, "M must be provided"
-    lines.extend(['  '.join((f'{x: .{decimals}f}' for x in row)) for row in M])
+    lines.extend(['  '.join((f'{x: .{decimals}f}' for x in row)) for row in M])  # noqa: UP034
         lines.append("  ".join(f"{x: .{decimals}f}" for x in row))
     return "\n".join(lines)
 

@@ -8,16 +8,16 @@ This module defines interfaces for mesh generation backends
 mesh generators.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from enum import Enum
-from pathlib import Path
-from typing import Any
+import logging  # noqa: E402
+from abc import ABC, abstractmethod  # noqa: E402
+from dataclasses import dataclass, field  # noqa: E402
+from enum import Enum  # noqa: E402
+from pathlib import Path  # noqa: E402
+from typing import Any  # noqa: E402
 
-from humanoid_character_builder.core.body_parameters import BodyParameters
+from humanoid_character_builder.core.body_parameters import BodyParameters  # noqa: E402
 
 logger = logging.getLogger(__name__)
 

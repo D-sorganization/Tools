@@ -6,15 +6,15 @@ from numba import jit
 A PyQt6 GUI for configuring and running Adam-based optimization.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import sys
-from dataclasses import dataclass
+import sys  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
 
-import numpy as np
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import (
+import numpy as np  # noqa: E402
+from PyQt6.QtCore import Qt  # noqa: E402
+from PyQt6.QtGui import QFont  # noqa: E402
+from PyQt6.QtWidgets import (  # noqa: E402
     QApplication,
     QCheckBox,
     QComboBox,

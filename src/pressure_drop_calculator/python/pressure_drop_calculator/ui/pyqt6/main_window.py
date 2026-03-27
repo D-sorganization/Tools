@@ -6,20 +6,20 @@ A comprehensive GUI for calculating pipe pressure drops using the
 PressureDropCalculationEngine from the shared process calculators.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import os
-from typing import Any
+import os  # noqa: E402
+from typing import Any  # noqa: E402
 
 if os.environ.get("HEADLESS", "false").lower() == "true":
     import matplotlib
 
     matplotlib.use("Agg")
 
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import (
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas  # noqa: E402
+from matplotlib.figure import Figure  # noqa: E402
+from PyQt6.QtCore import Qt  # noqa: E402
+from PyQt6.QtWidgets import (  # noqa: E402
     QComboBox,
     QDoubleSpinBox,
     QFormLayout,
