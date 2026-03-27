@@ -1,5 +1,3 @@
-from typing import Any
-
 """Round-trip URDF generation and semantic equality tests (#1064).
 
 Tests that a URDF parsed -> to_urdf() -> re-parsed produces
@@ -13,6 +11,8 @@ Design by Contract
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import pytest
 

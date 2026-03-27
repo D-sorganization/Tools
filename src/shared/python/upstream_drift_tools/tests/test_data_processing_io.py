@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for data_processing.io - DataReader, DataWriter, FileFormatDetector.
 
 Covers all supported formats using tempfiles:
@@ -13,6 +11,7 @@ from __future__ import annotations
 import sqlite3
 import tempfile
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd

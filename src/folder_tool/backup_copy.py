@@ -100,7 +100,7 @@ class BackupCopyMixin:
         Returns:
             Path to backup directory if successful [str], None if failed.
         """
-        valid_folders = self._validated_source_folders(self.source_folders)
+        valid_folders = self._validated_source_folders(self.source_folders)  # type: ignore[attr-defined]
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         try:
@@ -108,7 +108,7 @@ class BackupCopyMixin:
         except (IOError, PermissionError, OSError) as e:
             raise ValueError(f"Cannot determine backup location: {e}") from e
 
-        self.update_status("Creating backup...")
+        self.update_status("Creating backup...")  # type: ignore[attr-defined]
         logger.info(f"Creating backup at: {backup_base}")
 
         try:
@@ -123,7 +123,7 @@ class BackupCopyMixin:
             successful = 0
             failed = 0
             for i, folder in enumerate(valid_folders):
-                if self.cancel_operation:
+                if self.cancel_operation:  # type: ignore[attr-defined]
                     logger.info("Backup operation cancelled by user")
                     return None
 
@@ -133,7 +133,7 @@ class BackupCopyMixin:
                     failed += 1
 
                 progress = (i + 1) / len(valid_folders) * PROGRESS_BACKUP_PERCENT
-                self.update_progress(
+                self.update_progress(  # type: ignore[attr-defined]
                     progress,
                     f"Backing up folder {i + 1}/{len(valid_folders)}",
                 )
@@ -178,14 +178,18 @@ class BackupCopyMixin:
         """
         if not (source_path is not None):
             raise ValueError("source_path must be provided")
-        source_path_obj, dest_path_obj = self._validate_copy_inputs(source_path, dest_path)
+        source_path_obj, dest_path_obj = self._validate_copy_inputs(
+            source_path, dest_path
+        )
 
         for attempt in range(MAX_RETRY_ATTEMPTS):
             try:
                 self._prepare_dest_directory(dest_path_obj)
                 shutil.copy2(source_path, dest_path)
 
-                if self._verify_copy(source_path_obj, dest_path_obj, source_path, dest_path):
+                if self._verify_copy(
+                    source_path_obj, dest_path_obj, source_path, dest_path
+                ):
                     return True
 
                 # Verification failed; clean up and potentially retry
@@ -212,7 +216,9 @@ class BackupCopyMixin:
 
         return False
 
-    def _validate_copy_inputs(self, source_path: str, dest_path: str) -> tuple[Path, Path]:
+    def _validate_copy_inputs(
+        self, source_path: str, dest_path: str
+    ) -> tuple[Path, Path]:
         """Validate source and destination paths for a copy operation.
 
         Returns:
@@ -283,7 +289,8 @@ class BackupCopyMixin:
             dest_size = dest_path_obj.stat().st_size
             if source_size == dest_size:
                 logger.debug(
-                    f"Successfully copied {source_path} -> {dest_path} " f"({source_size} bytes)",
+                    f"Successfully copied {source_path} -> {dest_path} "
+                    f"({source_size} bytes)",
                 )
                 return True
             logger.warning(

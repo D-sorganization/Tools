@@ -23,7 +23,10 @@ def test_constants_compression_levels_present() -> None:
 
     spec = importlib.util.spec_from_file_location(
         "folder_packer_pro.constants",
-        Path(__file__).resolve().parents[1] / "src" / "folder_packer_pro" / "constants.py",
+        Path(__file__).resolve().parents[1]
+        / "src"
+        / "folder_packer_pro"
+        / "constants.py",
     )
     assert spec is not None
     mod = importlib.util.module_from_spec(spec)
@@ -51,7 +54,10 @@ def _import_file_ops():  # type: ignore[return]
 
     spec = importlib.util.spec_from_file_location(
         "folder_packer_pro.constants",
-        Path(__file__).resolve().parents[1] / "src" / "folder_packer_pro" / "constants.py",
+        Path(__file__).resolve().parents[1]
+        / "src"
+        / "folder_packer_pro"
+        / "constants.py",
     )
     assert spec is not None
     constants_mod = importlib.util.module_from_spec(spec)
@@ -61,7 +67,10 @@ def _import_file_ops():  # type: ignore[return]
 
     spec2 = importlib.util.spec_from_file_location(
         "folder_packer_pro.file_ops",
-        Path(__file__).resolve().parents[1] / "src" / "folder_packer_pro" / "file_ops.py",
+        Path(__file__).resolve().parents[1]
+        / "src"
+        / "folder_packer_pro"
+        / "file_ops.py",
     )
     assert spec2 is not None
     file_ops_mod = importlib.util.module_from_spec(spec2)

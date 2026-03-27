@@ -1,6 +1,6 @@
-from typing import Any
-
 """Tests for ControlsWidgetTriple."""
+
+from typing import Any
 
 from PyQt6.QtWidgets import QWidget
 from double_pendulum_golf.gui.controls_widget_triple import ControlsWidgetTriple

@@ -1,5 +1,3 @@
-from typing import Any
-
 """Gap-fill tests for simulation.py, simulation_triple.py, simulation_golfer.py.
 
 simulation.py line 170: total_torques_at with non-None clamp
@@ -13,6 +11,8 @@ simulation_golfer.py lines 296, 302: postcondition warn/error paths
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import logging
 

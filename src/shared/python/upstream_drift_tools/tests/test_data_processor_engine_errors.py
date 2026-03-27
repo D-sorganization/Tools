@@ -1,5 +1,3 @@
-from typing import Any
-
 """Additional tests for DataProcessorEngine error paths not covered in the main suite.
 
 Targets remaining uncovered lines in core.py:
@@ -15,6 +13,7 @@ Targets remaining uncovered lines in core.py:
 
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import patch
 
 import pandas as pd

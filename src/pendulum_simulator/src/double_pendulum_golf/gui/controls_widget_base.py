@@ -280,10 +280,12 @@ class ControlsWidgetBase(QWidget):
         if not hasattr(self, "chk_limits") or not self.chk_limits.isChecked():
             return None
         mins = [
-            np.radians(parse_float(inp, f"Min {i}")) for i, inp in enumerate(self.limit_min_inputs)
+            np.radians(parse_float(inp, f"Min {i}"))
+            for i, inp in enumerate(self.limit_min_inputs)
         ]
         maxs = [
-            np.radians(parse_float(inp, f"Max {i}")) for i, inp in enumerate(self.limit_max_inputs)
+            np.radians(parse_float(inp, f"Max {i}"))
+            for i, inp in enumerate(self.limit_max_inputs)
         ]
         k = parse_float(self.inp_limit_k, "Limit K")
         return mins, maxs, k
@@ -358,7 +360,7 @@ class ControlsWidgetBase(QWidget):
         inputs = self._get_torque_inputs()
         key = joint.lower()
         valid_keys = {k.lower() for k in inputs}
-        if not (key in valid_keys):
+        if key not in valid_keys:
             raise ValueError(f"Unknown joint '{joint}', expected one of {valid_keys}")
         if not (len(coeffs) >= 1):
             raise ValueError("Coefficients list must not be empty")

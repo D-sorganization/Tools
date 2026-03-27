@@ -1,6 +1,6 @@
-from typing import Any
-
 """Tests for MainWindow."""
+
+from typing import Any
 
 from unittest.mock import MagicMock, patch
 from PyQt6.QtCore import Qt, QSettings

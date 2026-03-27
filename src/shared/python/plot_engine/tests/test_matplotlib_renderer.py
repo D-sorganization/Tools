@@ -1,5 +1,3 @@
-from typing import Any
-
 """TDD tests for matplotlib renderer.
 
 Tests that each plot type produces valid Figure objects with
@@ -8,6 +6,8 @@ and theme integration.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import matplotlib
 

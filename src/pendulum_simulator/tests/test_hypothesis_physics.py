@@ -129,7 +129,9 @@ class TestDoubleProperties:
 
     @given(params=double_params(), state=double_state())
     @settings(max_examples=50)
-    def test_kinetic_energy_non_negative(self, params: PendulumParams, state: np.ndarray) -> None:
+    def test_kinetic_energy_non_negative(
+        self, params: PendulumParams, state: np.ndarray
+    ) -> None:
         T = kinetic_energy(state, params)
         assert T >= -1e-12, f"Negative kinetic energy: {T}"
 
@@ -149,7 +151,9 @@ class TestDoubleProperties:
 
     @given(params=double_params(), theta1=_angle, phi=_angle)
     @settings(max_examples=30)
-    def test_fk_segment_lengths(self, params: PendulumParams, theta1: float, phi: float) -> None:
+    def test_fk_segment_lengths(
+        self, params: PendulumParams, theta1: float, phi: float
+    ) -> None:
         """FK endpoint distances must match segment lengths."""
         pos = forward_kinematics(theta1, phi, params)
         wrist = np.array(pos["wrist"])
@@ -157,15 +161,15 @@ class TestDoubleProperties:
 
         # Shoulder at origin, wrist distance = L1
         wrist_dist = np.linalg.norm(wrist)
-        assert np.isclose(
-            wrist_dist, params.L1, atol=1e-8
-        ), f"Wrist distance {wrist_dist} != L1 {params.L1}"
+        assert np.isclose(wrist_dist, params.L1, atol=1e-8), (
+            f"Wrist distance {wrist_dist} != L1 {params.L1}"
+        )
 
         # Wrist-to-tip distance = L2
         tip_dist = np.linalg.norm(tip - wrist)
-        assert np.isclose(
-            tip_dist, params.L2, atol=1e-8
-        ), f"Tip distance {tip_dist} != L2 {params.L2}"
+        assert np.isclose(tip_dist, params.L2, atol=1e-8), (
+            f"Tip distance {tip_dist} != L2 {params.L2}"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -187,7 +191,9 @@ class TestTripleProperties:
 
     @given(params=triple_params(), phi1=_angle, phi2=_angle)
     @settings(max_examples=50)
-    def test_mass_matrix_psd(self, params: TriplePendulumParams, phi1: float, phi2: float) -> None:
+    def test_mass_matrix_psd(
+        self, params: TriplePendulumParams, phi1: float, phi2: float
+    ) -> None:
         M = triple_mass_matrix(phi1, phi2, params)
         eigenvalues = np.linalg.eigvalsh(M)
         assert np.all(eigenvalues >= -1e-10), f"Negative eigenvalue: {eigenvalues}"
@@ -202,7 +208,9 @@ class TestTripleProperties:
 
     @given(params=triple_params(), state=triple_state())
     @settings(max_examples=50)
-    def test_total_energy_is_sum(self, params: TriplePendulumParams, state: np.ndarray) -> None:
+    def test_total_energy_is_sum(
+        self, params: TriplePendulumParams, state: np.ndarray
+    ) -> None:
         T = triple_ke(state, params)
         V = triple_pe(state, params)
         E = triple_te(state, params)

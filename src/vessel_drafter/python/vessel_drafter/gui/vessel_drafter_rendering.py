@@ -75,13 +75,17 @@ def render_cross_section(scene: QGraphicsScene, preview: CrossSectionPreview) ->
         _add_path(scene, path, feature.color_hex, 20.0)
 
     for port in preview.projected_side_ports:
-        center_y = PREVIEW_MARGIN + ((top_z_in - port.centerline_height_in) * PREVIEW_SCALE)
+        center_y = PREVIEW_MARGIN + (
+            (top_z_in - port.centerline_height_in) * PREVIEW_SCALE
+        )
         radius_px = port.diameter_in * 0.5 * PREVIEW_SCALE
         for direction in (-1.0, 1.0):
             center = QPointF(
                 center_x
                 + (
-                    direction * (preview.outer_radius_in - (port.diameter_in * 0.5)) * PREVIEW_SCALE
+                    direction
+                    * (preview.outer_radius_in - (port.diameter_in * 0.5))
+                    * PREVIEW_SCALE
                 ),
                 center_y,
             )
@@ -162,7 +166,9 @@ def _add_band_polygon(
     _add_path(scene, path, polygon.color_hex, z_value)
 
 
-def _loop_path(loop: tuple[ProfilePoint, ...], map_point: Callable[[Any], QPointF]) -> QPainterPath:
+def _loop_path(
+    loop: tuple[ProfilePoint, ...], map_point: Callable[[Any], QPointF]
+) -> QPainterPath:
     if not (loop is not None):
         raise ValueError("loop must be provided")
     path = QPainterPath()
@@ -230,10 +236,14 @@ def _add_radial_feature(
     pen.setWidth(max(2, int(round(feature.diameter_in * PREVIEW_SCALE))))
     pen.setCapStyle(Qt.PenCapStyle.RoundCap)
     item = scene.addLine(
-        center_x + (feature.inner_tip_radius_in * cos(feature.angle_radians) * PREVIEW_SCALE),
-        center_y - (feature.inner_tip_radius_in * sin(feature.angle_radians) * PREVIEW_SCALE),
-        center_x + (feature.outer_tip_radius_in * cos(feature.angle_radians) * PREVIEW_SCALE),
-        center_y - (feature.outer_tip_radius_in * sin(feature.angle_radians) * PREVIEW_SCALE),
+        center_x
+        + (feature.inner_tip_radius_in * cos(feature.angle_radians) * PREVIEW_SCALE),
+        center_y
+        - (feature.inner_tip_radius_in * sin(feature.angle_radians) * PREVIEW_SCALE),
+        center_x
+        + (feature.outer_tip_radius_in * cos(feature.angle_radians) * PREVIEW_SCALE),
+        center_y
+        - (feature.outer_tip_radius_in * sin(feature.angle_radians) * PREVIEW_SCALE),
         pen,
     )
     if item is not None:

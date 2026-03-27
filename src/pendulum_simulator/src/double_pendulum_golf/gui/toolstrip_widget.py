@@ -1,7 +1,3 @@
-# ARCHITECTURE_DEBT:
-# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
-# It requires domain-aware structural extraction to isolate its internal classes appropriately.
-
 """
 ToolStrip — persistent header bar with stacked overlay controls.
 
@@ -543,7 +539,9 @@ class ToolStrip(QWidget):
         self._lbl_mob_scale = QLabel("1.0×")
         self._lbl_mob_scale.setStyleSheet(_VAL_LBL)
 
-        overlay_layout.addLayout(_overlay_row(self.chk_mob, self._sld_mob, self._lbl_mob_scale))
+        overlay_layout.addLayout(
+            _overlay_row(self.chk_mob, self._sld_mob, self._lbl_mob_scale)
+        )
 
         # Row C: Force Ellipsoids checkbox + scale slider
         self.chk_force_ell = QCheckBox("Force Ellipsoids")
@@ -837,8 +835,7 @@ class ToolStrip(QWidget):
         seg_item = overlay_layout.itemAt(overlay_layout.count() - 1)
         if seg_item is not None and seg_item.layout() is not None:
             seg_layout = seg_item.layout()
-            if not (seg_layout is not None):  # narrowing for mypy
-                raise ValueError("seg_layout must not be None")
+            assert seg_layout is not None  # narrowing for mypy
             # Clear old widgets (keep "Segments:" label at position 0)
             while seg_layout.count() > 1:
                 item = seg_layout.takeAt(1)

@@ -20,7 +20,7 @@ try:
 
     HAS_PANDAS = True
 except ImportError:
-    pd = None  # type: ignore
+    pd = None
     HAS_PANDAS = False
 
 try:
@@ -28,7 +28,7 @@ try:
 
     HAS_SCIPY = True
 except ImportError:
-    scipy = None  # type: ignore
+    scipy = None
     HAS_SCIPY = False
 
 
@@ -115,7 +115,7 @@ class ConsoleEnvironment:
 
         try:
             # Execute within current namespace so imports/functions are persistent
-            exec(code, self.namespace)
+            exec(code, self.namespace)  # nosec B102
         except Exception as e:  # noqa: BLE001
             sys.stderr.write(f"Error loading user library: {e}\n")
 
@@ -143,20 +143,22 @@ class ConsoleEnvironment:
                 # Try to evaluate as an expression first for REPL output behavior
                 try:
                     code_obj = compile(source, "<console>", "eval")
-                    res = eval(code_obj, self.namespace)
+                    res = eval(code_obj, self.namespace)  # nosec B307
                     if res is not None:
                         sys.stdout.write(repr(res) + "\n")
                 except SyntaxError:
                     # Not an expression, try exec
                     code_obj = compile(source, "<console>", "exec")
-                    exec(code_obj, self.namespace)
+                    exec(code_obj, self.namespace)  # nosec B102
 
         except Exception:  # noqa: BLE001
             # Format exception similar to REPL
             exc_type, exc_value, exc_traceback = sys.exc_info()
             if exc_traceback:
                 # Skip the context wrapper internal frames
-                tb_lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
+                tb_lines = traceback.format_exception(
+                    exc_type, exc_value, exc_traceback
+                )
                 # Keep the last portion regarding user code
                 err_buf.write("".join(tb_lines[-3:]))
             elif exc_type:

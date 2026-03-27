@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for the Taylor and Maclaurin series module.
 
 This module contains comprehensive tests for series expansion functionality:
@@ -15,6 +13,7 @@ Following TDD and Design by Contract principles.
 from __future__ import annotations
 
 import math
+from typing import Any
 
 import numpy as np
 import pytest

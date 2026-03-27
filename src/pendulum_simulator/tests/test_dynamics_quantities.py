@@ -1,11 +1,11 @@
-from typing import Any
-
 """Tests for dynamics_quantities module — impulse, work, power.
 
 TDD: These tests define the expected interface and behavior.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import numpy as np
 import pytest

@@ -1,10 +1,9 @@
-from typing import Any
-
 """Tests for the Unit Converter Flask web application."""
 
 from __future__ import annotations
 
 import json
+from typing import Any
 
 import pytest
 

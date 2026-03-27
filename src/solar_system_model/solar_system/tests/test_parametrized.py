@@ -48,9 +48,9 @@ def test_orbital_period_planets(
     a = semi_major_au * AU
     t = OrbitalMechanics.orbital_period(a, GM["Sun"])
     t_days = t / 86400
-    assert (
-        abs(t_days - expected_period_days) < tolerance
-    ), f"{planet_name}: expected ~{expected_period_days}d, got {t_days:.1f}d"
+    assert abs(t_days - expected_period_days) < tolerance, (
+        f"{planet_name}: expected ~{expected_period_days}d, got {t_days:.1f}d"
+    )
 
 
 @pytest.mark.parametrize(
@@ -63,7 +63,9 @@ def test_orbital_period_planets(
     ],
     ids=["Mercury", "Earth", "Mars", "Jupiter"],
 )
-def test_circular_velocity(r_au: float, expected_v_kms: float, tolerance: float) -> None:
+def test_circular_velocity(
+    r_au: float, expected_v_kms: float, tolerance: float
+) -> None:
     """Circular velocity at various orbital radii."""
     r = r_au * AU
     v = OrbitalMechanics.circular_velocity(r, GM["Sun"])
@@ -165,7 +167,9 @@ def test_celestial_body_types(body_type: BodyType) -> None:
     ],
     ids=["3-4-5", "x-axis", "origin", "diagonal"],
 )
-def test_state_vector_distance(pos: list[float], vel: list[float], expected_dist: float) -> None:
+def test_state_vector_distance(
+    pos: list[float], vel: list[float], expected_dist: float
+) -> None:
     """State vector distance from origin."""
     state = StateVector(position=pos, velocity=vel, time=J2000)
     np.testing.assert_allclose(state.distance, expected_dist, rtol=1e-10)

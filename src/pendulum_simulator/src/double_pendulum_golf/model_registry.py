@@ -72,7 +72,7 @@ def register_model(name: str, config: ModelConfig) -> None:
     """
     if not (name and isinstance(name, str)):
         raise ValueError(f"Model name must be non-empty string, got {name!r}")
-    if not (isinstance(config, ModelConfig)):
+    if not isinstance(config, ModelConfig):
         raise ValueError(f"Expected ModelConfig, got {type(config)}")
     if name in _registry:
         logger.warning("Overwriting existing model registration: %s", name)

@@ -1,5 +1,3 @@
-from typing import Any
-
 """Hypothesis property-based tests for Python calculators (#1091).
 
 These tests verify fundamental physical invariants hold across random inputs,
@@ -16,6 +14,7 @@ Design by Contract
 from __future__ import annotations
 
 import math
+from typing import Any
 
 import pytest
 

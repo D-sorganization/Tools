@@ -1,11 +1,11 @@
-from typing import Any
-
 """Tests for upstream_drift_tools.process_calculators.thermal_profile_predictor.
 
 Covers predict_temperature_profile and fit_heating_parameters.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import numpy as np
 import pytest

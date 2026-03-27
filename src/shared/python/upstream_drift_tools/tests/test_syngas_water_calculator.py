@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for syngas_water_calculator.py targeting uncovered lines.
 
 Covers:
@@ -17,6 +15,8 @@ Covers:
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import pytest
 from upstream_drift_tools.process_calculators.syngas_water_calculator import (

@@ -1,5 +1,3 @@
-from typing import Any
-
 """
 Tests for club_forces module — net force & equivalent couple on the club.
 
@@ -13,6 +11,8 @@ Covers:
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import numpy as np
 import pytest

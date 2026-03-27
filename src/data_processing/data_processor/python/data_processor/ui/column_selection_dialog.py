@@ -1,10 +1,9 @@
-from typing import Any
-
 """Column Selection Dialog for Data Processor."""
 
 from __future__ import annotations
 
 from tkinter import messagebox
+from typing import Any
 
 import customtkinter as ctk
 

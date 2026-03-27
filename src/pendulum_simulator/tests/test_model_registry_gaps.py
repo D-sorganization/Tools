@@ -1,5 +1,3 @@
-from typing import Any
-
 """Gap-fill tests for model_registry.py — covers remaining uncovered lines.
 
 Line 78: Warning when overwriting existing model registration
@@ -7,6 +5,8 @@ Lines 133-134, 155-156, 177-178: ImportError handlers (not testable without mock
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import logging
 

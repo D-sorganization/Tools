@@ -113,7 +113,7 @@ def net_force_on_club(
     """
     net = np.array(f_right, dtype=float) + np.array(f_left, dtype=float)
     if not (net.shape == (2,)):
-        raise ValueError(f"net.shape mismatch, expected (2,)")
+        raise ValueError("Net force has wrong shape")
     if not (np.all(np.isfinite(net))):
         raise ValueError(f"Net force is not finite: {net}")
     return net  # type: ignore[no-any-return]
@@ -257,9 +257,9 @@ def club_force_decomposition(
     Pre:  'rh' and 'lh' in forces dict
     Post: all values are finite
     """
-    if not ("rh" in forces):
+    if "rh" not in forces:
         raise ValueError("forces dict must contain 'rh' (right hand)")
-    if not ("lh" in forces):
+    if "lh" not in forces:
         raise ValueError("forces dict must contain 'lh' (left hand)")
 
     if q.shape[0] > N_DOF:

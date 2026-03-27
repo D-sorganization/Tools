@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for upstream_drift_tools.process_calculators.ode_solver (ODESolver).
 
 Covers all branches:
@@ -12,6 +10,7 @@ Covers all branches:
 
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import patch
 
 import numpy as np

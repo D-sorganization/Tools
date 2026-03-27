@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for upstream_drift_tools.protocols.InputValidator.
 
 Covers require_positive, require_in_range, require_keys,
@@ -7,6 +5,8 @@ validate_temperature, validate_pressure, validate_composition.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import pytest
 from upstream_drift_tools.protocols import InputValidator

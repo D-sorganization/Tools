@@ -330,22 +330,20 @@ def calculate_flow_properties(inputs: PressureDropInputs) -> FlowProperties:
         ValueError: If calculations fail
     """
     # DbC preconditions
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        inputs.pipe_diameter > 0
-    ), f"Pipe diameter must be positive, got {inputs.pipe_diameter}"
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        inputs.mass_flow_rate > 0
-    ), f"Mass flow rate must be positive, got {inputs.mass_flow_rate}"
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        inputs.inlet_temperature > 0
-    ), f"Inlet temperature must be positive (K), got {inputs.inlet_temperature}"
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        inputs.inlet_pressure > 0
-    ), f"Inlet pressure must be positive, got {inputs.inlet_pressure}"
+    if not (inputs.pipe_diameter > 0):
+        raise ValueError(f"Pipe diameter must be positive, got {inputs.pipe_diameter}")
+    if not (inputs.mass_flow_rate > 0):
+        raise ValueError(
+            f"Mass flow rate must be positive, got {inputs.mass_flow_rate}"
+        )
+    if not (inputs.inlet_temperature > 0):
+        raise ValueError(
+            f"Inlet temperature must be positive (K), got {inputs.inlet_temperature}"
+        )
+    if not (inputs.inlet_pressure > 0):
+        raise ValueError(
+            f"Inlet pressure must be positive, got {inputs.inlet_pressure}"
+        )
 
     # Calculate gas mixture properties (now includes gamma and speed of sound)
     gas_props = calculate_gas_properties(
@@ -398,18 +396,16 @@ def calculate_flow_properties(inputs: PressureDropInputs) -> FlowProperties:
     )
 
     # DbC postconditions
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        flow_props.velocity > 0
-    ), f"Flow velocity must be positive, got {flow_props.velocity}"
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        flow_props.reynolds_number > 0
-    ), f"Reynolds number must be positive, got {flow_props.reynolds_number}"
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        0 <= flow_props.mach_number < 50
-    ), f"Mach number out of physical range, got {flow_props.mach_number}"
+    if not (flow_props.velocity > 0):
+        raise ValueError(f"Flow velocity must be positive, got {flow_props.velocity}")
+    if not (flow_props.reynolds_number > 0):
+        raise ValueError(
+            f"Reynolds number must be positive, got {flow_props.reynolds_number}"
+        )
+    if not (0 <= flow_props.mach_number < 50):
+        raise ValueError(
+            f"Mach number out of physical range, got {flow_props.mach_number}"
+        )
 
     logger.info("Flow properties calculated:")
     logger.info(f"  Velocity: {velocity:.2f} m/s")
@@ -474,10 +470,8 @@ def calculate_frictional_pressure_drop(
         Darcy, H. (1857), Weisbach, J. (1845): Pipe flow friction equation
     """
     # DbC preconditions
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        friction_factor > 0
-    ), f"friction_factor must be positive, got {friction_factor}"
+    if not (friction_factor > 0):
+        raise ValueError(f"friction_factor must be positive, got {friction_factor}")
     if not (length > 0):
         raise ValueError(f"length must be positive, got {length}")
     if not (diameter > 0):
@@ -681,10 +675,8 @@ def calculate_compressible_flow_correction(
         raise ValueError(f"diameter must be positive, got {diameter}")
     if not (temperature > 0):
         raise ValueError(f"temperature must be positive (K), got {temperature}")
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        molecular_weight > 0
-    ), f"molecular_weight must be positive, got {molecular_weight}"
+    if not (molecular_weight > 0):
+        raise ValueError(f"molecular_weight must be positive, got {molecular_weight}")
 
     area = PI * (diameter**2) / 4.0
     G = mass_flow_rate / area

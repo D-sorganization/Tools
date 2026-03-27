@@ -149,7 +149,7 @@ def perturb_torque_coeffs(
     """
     if not (noise_amplitude >= 0):
         raise ValueError("DbC Blocked: Precondition failed.")
-    if not (noise_type in {"white", "pink", "brown"}):
+    if noise_type not in {"white", "pink", "brown"}:
         raise ValueError(f"noise_type must be 'white', 'pink', or 'brown'; got {noise_type!r}")
 
     if noise_amplitude == 0.0:
@@ -198,8 +198,10 @@ class PerturbationConfig:
         if not (self.n_trials > 0):
             raise ValueError(f"n_trials must be positive, got {self.n_trials}")
         if not (self.noise_amplitude >= 0):
-            raise ValueError(f"noise_amplitude must be non-negative, got {self.noise_amplitude}")
-        if not (self.noise_type in {"white", "pink", "brown"}):
+            raise ValueError(
+                f"noise_amplitude must be non-negative, got {self.noise_amplitude}"
+            )
+        if self.noise_type not in {"white", "pink", "brown"}:
             raise ValueError(
                 f"noise_type must be 'white', 'pink', or 'brown', got {self.noise_type!r}"
             )

@@ -91,7 +91,7 @@ def ellipsoid_from_jacobian(
         If ``J`` does not have shape (2, n) with n ≥ 1, or contains
         non-finite values.
     """
-    if not (isinstance(J, np.ndarray)):
+    if not isinstance(J, np.ndarray):
         raise ValueError("J must be a numpy ndarray")
     if not (J.ndim == 2 and J.shape[0] == 2 and J.shape[1] >= 1):
         raise ValueError(f"J must have shape (2, n) with n≥1, got {J.shape}")

@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for jacobians_golfer module.
 
 TDD: Tests verify Jacobian computation, ellipsoid extraction,
@@ -7,6 +5,8 @@ and ZTCF matrix for the golfer 8-DOF model.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import numpy as np
 import pytest

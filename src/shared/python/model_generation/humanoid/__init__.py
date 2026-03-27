@@ -1,5 +1,3 @@
-from typing import Any
-
 """
 Humanoid model generation components.
 
@@ -8,6 +6,8 @@ for integration with the unified model_generation package.
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 # Import from humanoid_character_builder
 try:

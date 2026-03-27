@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for upstream_drift_tools.process_calculators.constants utility functions.
 
 Covers the remaining uncovered utility functions:
@@ -11,6 +9,8 @@ Covers the remaining uncovered utility functions:
 """
 
 from __future__ import annotations
+
+from typing import Any
 
 import pytest
 

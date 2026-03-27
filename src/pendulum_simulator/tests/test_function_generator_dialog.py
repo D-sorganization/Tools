@@ -1,6 +1,6 @@
-from typing import Any
-
 """Tests for FunctionGeneratorDialog."""
+
+from typing import Any
 
 import pytest
 

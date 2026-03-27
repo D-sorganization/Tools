@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for upstream_drift_tools.bootstrap (ensure_paths).
 
 Full coverage of both branches:
@@ -12,6 +10,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 

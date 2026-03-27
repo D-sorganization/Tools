@@ -1,10 +1,10 @@
-from typing import Any
-
 """Tests for __main__.py and gui.__init__.py in double_pendulum_golf.
 
 This covers the application entry point, logging configuration, and
 global event filters like Ctrl+Wheel UI zooming.
 """
+
+from typing import Any
 
 import logging
 import sys

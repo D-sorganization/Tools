@@ -1,6 +1,6 @@
-from typing import Any
-
 """Tests for simulation_panel.py"""
+
+from typing import Any
 
 import pytest
 import numpy as np
