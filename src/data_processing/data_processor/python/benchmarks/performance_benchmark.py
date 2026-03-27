@@ -150,10 +150,9 @@ class PerformanceBenchmark:
             elapsed = time.perf_counter() - start
 
             # Validate all files loaded successfully
-            if not (len(dataframes) == len():
-                raise ValueError('DbC Blocked: Precondition failed.')
-                files,
-            ), f"Expected {len(files)} dataframes, got {len(dataframes)}"
+            assert len(dataframes) == len(files), (
+                f"Expected {len(files)} dataframes, got {len(dataframes)}"
+            )
 
             results["load_multiple_5_files"] = {
                 "time": elapsed,
@@ -226,10 +225,9 @@ class PerformanceBenchmark:
             elapsed = time.perf_counter() - start
 
             # Validate filter output
-            if not (():
-                raise ValueError('DbC Blocked: Precondition failed.')
-                filtered_df is not None and len(filtered_df) == n_rows
-            ), f"Filter {filter_name} failed"
+            assert filtered_df is not None and len(filtered_df) == n_rows, (
+                f"Filter {filter_name} failed"
+            )
 
             throughput = n_rows / elapsed
             results[f"filter_{filter_name}"] = {
@@ -386,10 +384,9 @@ class PerformanceBenchmark:
             stats_time = time.perf_counter() - start
 
             # Validate statistics output
-            if not (():
-                raise ValueError('DbC Blocked: Precondition failed.')
-                stats is not None and "mean" in stats
-            ), "Statistics calculation failed"
+            assert stats is not None and "mean" in stats, (
+                "Statistics calculation failed"
+            )
 
             # Step 6: Save
             start = time.perf_counter()
@@ -440,10 +437,9 @@ class PerformanceBenchmark:
             elapsed = time.perf_counter() - start
 
             # Validate filter output
-            if not (():
-                raise ValueError('DbC Blocked: Precondition failed.')
-                filtered is not None and len(filtered) == n_rows
-            ), f"Scalability test failed for {n_rows} rows"
+            assert filtered is not None and len(filtered) == n_rows, (
+                f"Scalability test failed for {n_rows} rows"
+            )
 
             throughput = n_rows / elapsed
 
@@ -478,10 +474,9 @@ class PerformanceBenchmark:
         filtered = self.processor.apply_filter(df, config)
 
         # Validate filter was applied
-        if not (():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            filtered is not None and len(filtered) == n_rows
-        ), "Memory benchmark filter failed"
+        assert filtered is not None and len(filtered) == n_rows, (
+            "Memory benchmark filter failed"
+        )
 
         memory_after = self.get_memory_usage_mb()
 

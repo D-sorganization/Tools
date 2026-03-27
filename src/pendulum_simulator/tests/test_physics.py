@@ -1,6 +1,3 @@
-from numba import jit
-from typing import Any
-
 """Tests for the physics module.
 
 Organized by property being tested, following TDD principles:
@@ -308,10 +305,10 @@ class TestDbCViolations:
 class TestHermitePenaltyHelper:
     """Test the extracted _hermite_penalty helper for edge-case correctness."""
 
-    def test_imports(self) -> Any:
+    def test_imports(self):
         from double_pendulum_golf.physics import _hermite_penalty  # noqa: F401
 
-    def test_zero_penetration_gives_zero(self) -> Any:
+    def test_zero_penetration_gives_zero(self):
         from double_pendulum_golf.physics import _hermite_penalty
 
         # pen=0 → blend=0 → smooth=0 → penalty=0
@@ -319,7 +316,7 @@ class TestHermitePenaltyHelper:
             0.0, vel=0.0, transition=0.05, stiffness=500.0, damping=20.0
         ) == pytest.approx(0.0)
 
-    def test_full_penetration_no_blend(self) -> Any:
+    def test_full_penetration_no_blend(self):
         from double_pendulum_golf.physics import _hermite_penalty
 
         # pen >= transition → blend=1 → smooth=1 → full penalty
@@ -327,7 +324,7 @@ class TestHermitePenaltyHelper:
         result = _hermite_penalty(pen, vel=0.0, transition=0.05, stiffness=500.0, damping=0.0)
         assert result == pytest.approx(500.0 * 0.05, rel=1e-9)
 
-    def test_large_penetration_clamps_blend(self) -> Any:
+    def test_large_penetration_clamps_blend(self):
         from double_pendulum_golf.physics import _hermite_penalty
 
         # pen >> transition → blend clamped at 1 → same as full penalty
@@ -336,7 +333,7 @@ class TestHermitePenaltyHelper:
         # Both have blend=1; r2 has larger pen so larger result
         assert r2 > r1
 
-    def test_damping_only_when_velocity_into_limit(self) -> Any:
+    def test_damping_only_when_velocity_into_limit(self):
         from double_pendulum_golf.physics import _hermite_penalty
 
         # vel > 0 means moving into the limit → damping adds
@@ -351,7 +348,7 @@ class TestJointLimitTorqueEdgeCases:
     """Joint limit torque: at-limit, within, and beyond limit cases."""
 
     @pytest.fixture
-    def limits(self) -> Any:
+    def limits(self):
         from double_pendulum_golf.physics import JointLimits
 
         return JointLimits(
@@ -363,27 +360,27 @@ class TestJointLimitTorqueEdgeCases:
             damping=20.0,
         )
 
-    def test_within_limits_gives_zero(self, limits) -> Any:
+    def test_within_limits_gives_zero(self, limits):
         from double_pendulum_golf.physics import joint_limit_torque
 
         tau = joint_limit_torque(phi=0.0, dphi=0.0, limits=limits, theta1=0.0, dtheta1=0.0)
         np.testing.assert_allclose(tau, [0.0, 0.0], atol=1e-12)
 
-    def test_exactly_at_lower_phi_limit_gives_zero(self, limits) -> Any:
+    def test_exactly_at_lower_phi_limit_gives_zero(self, limits):
         from double_pendulum_golf.physics import joint_limit_torque
 
         # phi == phi_min → penetration=0 → penalty=0
         tau = joint_limit_torque(phi=-1.0, dphi=0.0, limits=limits)
         assert tau[1] == pytest.approx(0.0)
 
-    def test_below_lower_phi_limit_gives_positive_torque(self, limits) -> Any:
+    def test_below_lower_phi_limit_gives_positive_torque(self, limits):
         from double_pendulum_golf.physics import joint_limit_torque
 
         # phi < phi_min → positive restoring torque
         tau = joint_limit_torque(phi=-1.1, dphi=0.0, limits=limits)
         assert tau[1] > 0.0
 
-    def test_above_upper_phi_limit_gives_negative_torque(self, limits) -> Any:
+    def test_above_upper_phi_limit_gives_negative_torque(self, limits):
         from double_pendulum_golf.physics import joint_limit_torque
 
         # phi > phi_max → negative restoring torque
@@ -394,9 +391,7 @@ class TestJointLimitTorqueEdgeCases:
 class TestForwardKinematicsPostconditions:
     """Postcondition: segment lengths must match params.L1 and params.L2."""
 
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
-    def test_segment_lengths_arbitrary_angle(self, default_params: PendulumParams) -> Any:
+    def test_segment_lengths_arbitrary_angle(self, default_params: PendulumParams):
         for theta1 in np.linspace(-np.pi, np.pi, 12):
             for phi in np.linspace(-np.pi / 2, np.pi / 2, 6):
                 pos = forward_kinematics(theta1, phi, default_params)

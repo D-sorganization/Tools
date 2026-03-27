@@ -1,5 +1,3 @@
-from typing import Any
-
 """Hypothesis property-based tests for Python calculators (#1091).
 
 These tests verify fundamental physical invariants hold across random inputs,
@@ -13,7 +11,7 @@ Design by Contract
 - Water mole fraction must be in [0, 1].
 """
 
-from __future__ import annotations  # noqa: F404
+from __future__ import annotations
 
 import math
 
@@ -28,7 +26,7 @@ from hypothesis import strategies as st  # noqa: E402
 _CALC = None
 
 
-def _get_calc() -> Any:
+def _get_calc():
     """Return a module-level SyngasWaterCalculator instance (cached)."""
     global _CALC
     if _CALC is None:

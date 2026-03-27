@@ -1,27 +1,25 @@
-from numba import jit
-
 """Pack/Unpack operation runners for Folder Packer Pro.
 
 Extracted from app.py to decompose the monolithic main window class.
 These mixin classes handle the threaded pack and unpack workflows.
 """
 
-from __future__ import annotations  # noqa: E402, F404
+from __future__ import annotations
 
-import logging  # noqa: E402
-import os  # noqa: E402
-import threading  # noqa: E402
-from pathlib import Path  # noqa: E402
-from tkinter import messagebox  # noqa: E402
-from typing import TYPE_CHECKING, Any  # noqa: E402
+import logging
+import os
+import threading
+from pathlib import Path
+from tkinter import messagebox
+from typing import TYPE_CHECKING, Any
 
-from .file_ops import (  # noqa: E402
+from .file_ops import (
     collect_folder_stats,
     format_size,
     get_file_type,
     should_exclude,
 )
-from .pack_engine import (  # noqa: E402
+from .pack_engine import (
     collect_files,
     inspect_package,
     pack_files,
@@ -58,7 +56,6 @@ class ScanPreviewMixin:
 
         threading.Thread(target=scan, daemon=True).start()
 
-    @jit(nopython=True, fastmath=True)
     def _display_stats(self, stats: dict[str, Any]) -> None:
         """Display folder statistics in the stats text widget.
 

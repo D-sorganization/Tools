@@ -1,5 +1,3 @@
-from typing import Any
-
 """Extended tests for simulation_core.py — covering remaining code paths.
 
 Adds tests for:
@@ -10,7 +8,6 @@ Adds tests for:
 """
 
 from __future__ import annotations
-
 
 from unittest.mock import MagicMock, patch
 
@@ -47,7 +44,7 @@ class TestIntegrateOdeExtended:
         calls = []
         orig = sci.solve_ivp
 
-        def capturing_solve_ivp(*args, **kwargs) -> Any:
+        def capturing_solve_ivp(*args, **kwargs):
             calls.append(kwargs)
             return orig(*args, **kwargs)
 
@@ -70,7 +67,7 @@ class TestIntegrateOdeExtended:
         calls = []
         orig = sci.solve_ivp
 
-        def capturing_solve_ivp(*args, **kwargs) -> Any:
+        def capturing_solve_ivp(*args, **kwargs):
             calls.append(kwargs)
             return orig(*args, **kwargs)
 

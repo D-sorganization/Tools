@@ -1,5 +1,3 @@
-from numba import jit
-
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -28,15 +26,15 @@ References:
     Planning, and Control. Cambridge University Press.
 """
 
-from __future__ import annotations  # noqa: E402, F404
+from __future__ import annotations
 
-import logging  # noqa: E402
-import math  # noqa: E402
-from typing import Any  # noqa: E402
+import logging
+import math
+from typing import Any
 
-import numpy as np  # noqa: E402
+import numpy as np
 
-from rotation_converter._contracts import ensure, require, require_finite  # noqa: E402
+from rotation_converter._contracts import ensure, require, require_finite
 
 logger = logging.getLogger(__name__)
 
@@ -428,7 +426,6 @@ def FKinBody(M: Any, Blist: Any, thetalist: Any) -> np.ndarray:
 # ===========================================================================
 
 
-@jit(nopython=True, fastmath=True)
 def JacobianSpace(Slist: Any, thetalist: Any) -> np.ndarray:
     """Compute the space Jacobian for a serial chain.
 
@@ -460,7 +457,6 @@ def JacobianSpace(Slist: Any, thetalist: Any) -> np.ndarray:
     return Js
 
 
-@jit(nopython=True, fastmath=True)
 def JacobianBody(Blist: Any, thetalist: Any) -> np.ndarray:
     """Compute the body Jacobian for a serial chain.
 
@@ -572,7 +568,6 @@ def _quintic_time_scaling(t: float) -> float:
     return 10.0 * t**3 - 15.0 * t**4 + 6.0 * t**5
 
 
-@jit(nopython=True, fastmath=True)
 def ScrewTrajectory(
     Xstart: Any,
     Xend: Any,
@@ -623,7 +618,7 @@ def ScrewTrajectory(
 # ===========================================================================
 
 
-def Normalize(V) -> Any:
+def Normalize(V):
     """Normalizes a vector
 
     :param V: A vector
@@ -637,7 +632,7 @@ def Normalize(V) -> Any:
     return V / np.linalg.norm(V)
 
 
-def RotInv(R) -> Any:
+def RotInv(R):
     """Inverts a rotation matrix
 
     :param R: A rotation matrix
@@ -655,7 +650,7 @@ def RotInv(R) -> Any:
     return np.array(R).T
 
 
-def AxisAng3(expc3) -> Any:
+def AxisAng3(expc3):
     """Converts a 3-vector of exponential coordinates for rotation into
     axis-angle form
 
@@ -671,7 +666,7 @@ def AxisAng3(expc3) -> Any:
     return (Normalize(expc3), np.linalg.norm(expc3))
 
 
-def Adjoint(T) -> Any:
+def Adjoint(T):
     """Computes the adjoint representation of a homogeneous transformation
     matrix
 
@@ -695,7 +690,7 @@ def Adjoint(T) -> Any:
     return np.r_[np.c_[R, np.zeros((3, 3))], np.c_[np.dot(VecToso3(p), R), R]]
 
 
-def ScrewToAxis(q, s, h) -> Any:
+def ScrewToAxis(q, s, h):
     """Takes a parametric description of a screw axis and converts it to a
     normalized screw axis
 
@@ -714,7 +709,7 @@ def ScrewToAxis(q, s, h) -> Any:
     return np.r_[s, np.cross(q, s) + np.dot(h, s)]
 
 
-def AxisAng6(expc6) -> Any:
+def AxisAng6(expc6):
     """Converts a 6-vector of exponential coordinates into screw axis-angle
     form
 
@@ -734,7 +729,7 @@ def AxisAng6(expc6) -> Any:
     return (np.array(expc6 / theta), theta)
 
 
-def ProjectToSO3(mat) -> Any:
+def ProjectToSO3(mat):
     """Returns a projection of mat into SO(3)
 
     :param mat: A matrix near SO(3) to project to SO(3)
@@ -761,7 +756,7 @@ def ProjectToSO3(mat) -> Any:
     return R
 
 
-def ProjectToSE3(mat) -> Any:
+def ProjectToSE3(mat):
     """Returns a projection of mat into SE(3)
 
     :param mat: A 4x4 matrix to project to SE(3)
@@ -786,7 +781,7 @@ def ProjectToSE3(mat) -> Any:
     return RpToTrans(ProjectToSO3(mat[:3, :3]), mat[:3, 3])
 
 
-def DistanceToSO3(mat) -> Any:
+def DistanceToSO3(mat):
     """Returns the Frobenius norm to describe the distance of mat from the
     SO(3) manifold
 
@@ -811,7 +806,7 @@ def DistanceToSO3(mat) -> Any:
         return 1e9
 
 
-def DistanceToSE3(mat) -> Any:
+def DistanceToSE3(mat):
     """Returns the Frobenius norm to describe the distance of mat from the
     SE(3) manifold
 
@@ -847,7 +842,7 @@ def DistanceToSE3(mat) -> Any:
         return 1e9
 
 
-def TestIfSO3(mat) -> Any:
+def TestIfSO3(mat):
     """Returns true if mat is close to or on the manifold SO(3)
 
     :param mat: A 3x3 matrix
@@ -868,7 +863,7 @@ def TestIfSO3(mat) -> Any:
     return abs(DistanceToSO3(mat)) < 1e-3
 
 
-def TestIfSE3(mat) -> Any:
+def TestIfSE3(mat):
     """Returns true if mat is close to or on the manifold SE(3)
 
     :param mat: A 4x4 matrix
@@ -893,7 +888,7 @@ def TestIfSE3(mat) -> Any:
     return abs(DistanceToSE3(mat)) < 1e-3
 
 
-def IKinSpace(Slist, M, T, thetalist0, eomg, ev) -> Any:
+def IKinSpace(Slist, M, T, thetalist0, eomg, ev):
     """Computes inverse kinematics in the space frame for an open chain robot
 
     :param Slist: The joint screw axes in the space frame when the
@@ -963,7 +958,7 @@ def IKinSpace(Slist, M, T, thetalist0, eomg, ev) -> Any:
     return (thetalist, not err)
 
 
-def ad(V) -> Any:
+def ad(V):
     """Calculate the 6x6 matrix [adV] of the given 6-vector
 
     :param V: A 6-vector spatial velocity
@@ -987,11 +982,7 @@ def ad(V) -> Any:
     ]
 
 
-@jit(nopython=True, fastmath=True)
-@jit(nopython=True, fastmath=True)
-def InverseDynamics(
-    thetalist, dthetalist, ddthetalist, g, Ftip, Mlist, Glist, Slist
-) -> Any:
+def InverseDynamics(thetalist, dthetalist, ddthetalist, g, Ftip, Mlist, Glist, Slist):
     """Computes inverse dynamics in the space frame for an open chain robot
 
     :param thetalist: n-vector of joint variables
@@ -1080,7 +1071,7 @@ def InverseDynamics(
     return taulist
 
 
-def MassMatrix(thetalist, Mlist, Glist, Slist) -> Any:
+def MassMatrix(thetalist, Mlist, Glist, Slist):
     """Computes the mass matrix of an open chain robot based on the given
     configuration
 
@@ -1148,7 +1139,7 @@ def MassMatrix(thetalist, Mlist, Glist, Slist) -> Any:
     return M
 
 
-def VelQuadraticForces(thetalist, dthetalist, Mlist, Glist, Slist) -> Any:
+def VelQuadraticForces(thetalist, dthetalist, Mlist, Glist, Slist):
     """Computes the Coriolis and centripetal terms in the inverse dynamics of
     an open chain robot
 
@@ -1205,7 +1196,7 @@ def VelQuadraticForces(thetalist, dthetalist, Mlist, Glist, Slist) -> Any:
     )
 
 
-def GravityForces(thetalist, g, Mlist, Glist, Slist) -> Any:
+def GravityForces(thetalist, g, Mlist, Glist, Slist):
     """Computes the joint forces/torques an open chain robot requires to
     overcome gravity at its configuration
 
@@ -1258,7 +1249,7 @@ def GravityForces(thetalist, g, Mlist, Glist, Slist) -> Any:
     )
 
 
-def EndEffectorForces(thetalist, Ftip, Mlist, Glist, Slist) -> Any:
+def EndEffectorForces(thetalist, Ftip, Mlist, Glist, Slist):
     """Computes the joint forces/torques an open chain robot requires only to
     create the end-effector force Ftip
 
@@ -1312,9 +1303,7 @@ def EndEffectorForces(thetalist, Ftip, Mlist, Glist, Slist) -> Any:
     )
 
 
-def ForwardDynamics(
-    thetalist, dthetalist, taulist, g, Ftip, Mlist, Glist, Slist
-) -> Any:
+def ForwardDynamics(thetalist, dthetalist, taulist, g, Ftip, Mlist, Glist, Slist):
     """Computes forward dynamics in the space frame for an open chain robot
 
     :param thetalist: A list of joint variables
@@ -1374,7 +1363,7 @@ def ForwardDynamics(
     )
 
 
-def EulerStep(thetalist, dthetalist, ddthetalist, dt) -> Any:
+def EulerStep(thetalist, dthetalist, ddthetalist, dt):
     """Compute the joint angles and velocities at the next timestep using            from here
     first order Euler integration
 
@@ -1405,7 +1394,7 @@ def EulerStep(thetalist, dthetalist, ddthetalist, dt) -> Any:
 
 def InverseDynamicsTrajectory(
     thetamat, dthetamat, ddthetamat, g, Ftipmat, Mlist, Glist, Slist
-) -> Any:
+):
     """Calculates the joint forces/torques required to move the serial chain
     along the given trajectory using inverse dynamics
 
@@ -1515,7 +1504,6 @@ def InverseDynamicsTrajectory(
     return taumat
 
 
-@jit(nopython=True, fastmath=True)
 def ForwardDynamicsTrajectory(
     thetalist, dthetalist, taumat, g, Ftipmat, Mlist, Glist, Slist, dt, intRes
 ):
@@ -1647,7 +1635,7 @@ def ForwardDynamicsTrajectory(
     return thetamat, dthetamat
 
 
-def CubicTimeScaling(Tf, t) -> Any:
+def CubicTimeScaling(Tf, t):
     """Computes s(t) for a cubic time scaling
 
     :param Tf: Total time of the motion in seconds from rest to rest
@@ -1664,7 +1652,7 @@ def CubicTimeScaling(Tf, t) -> Any:
     return 3 * (1.0 * t / Tf) ** 2 - 2 * (1.0 * t / Tf) ** 3
 
 
-def QuinticTimeScaling(Tf, t) -> Any:
+def QuinticTimeScaling(Tf, t):
     """Computes s(t) for a quintic time scaling
 
     :param Tf: Total time of the motion in seconds from rest to rest
@@ -1682,8 +1670,7 @@ def QuinticTimeScaling(Tf, t) -> Any:
     return 10 * (1.0 * t / Tf) ** 3 - 15 * (1.0 * t / Tf) ** 4 + 6 * (1.0 * t / Tf) ** 5
 
 
-@jit(nopython=True, fastmath=True)
-def JointTrajectory(thetastart, thetaend, Tf, N, method) -> Any:
+def JointTrajectory(thetastart, thetaend, Tf, N, method):
     """Computes a straight-line trajectory in joint space
 
     :param thetastart: The initial joint variables
@@ -1728,8 +1715,7 @@ def JointTrajectory(thetastart, thetaend, Tf, N, method) -> Any:
     return traj
 
 
-@jit(nopython=True, fastmath=True)
-def CartesianTrajectory(Xstart, Xend, Tf, N, method) -> Any:
+def CartesianTrajectory(Xstart, Xend, Tf, N, method):
     """Computes a trajectory as a list of N SE(3) matrices corresponding to
     the origin of the end-effector frame following a straight line
 
@@ -1886,8 +1872,6 @@ def ComputedTorque(
     )
 
 
-@jit(nopython=True, fastmath=True)
-@jit(nopython=True, fastmath=True)
 def SimulateControl(
     thetalist,
     dthetalist,

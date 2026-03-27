@@ -1,5 +1,3 @@
-from numba import jit
-
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -7,17 +5,17 @@ from numba import jit
 #!/usr/bin/env python3
 """Asteroid-field RRT path planner with optional 3D visualization."""
 
-from __future__ import annotations  # noqa: E402, F404
+from __future__ import annotations
 
-import logging  # noqa: E402
-import math  # noqa: E402
-import random  # noqa: E402
-from dataclasses import dataclass  # noqa: E402
-from pathlib import Path  # noqa: E402
-from typing import Any  # noqa: E402
+import logging
+import math
+import random
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
 
-import numpy as np  # noqa: E402
-import numpy.typing as npt  # noqa: E402
+import numpy as np
+import numpy.typing as npt
 
 try:
     import pygame
@@ -289,7 +287,6 @@ class RRTPlanner:
             for obstacle in obstacles
         )
 
-    @jit(nopython=True, fastmath=True)
     def _segment_is_collision_free(
         self,
         start: npt.NDArray[np.float64],
@@ -364,7 +361,6 @@ class RRTPlanner:
 
         return np.array(path[::-1], dtype=np.float64)
 
-    @jit(nopython=True, fastmath=True)
     def analyze_path(
         self, path: npt.NDArray[np.float64], obstacles: list[Obstacle]
     ) -> PathMetrics:
@@ -415,7 +411,6 @@ class RRTPlanner:
             mean_turn_angle_deg=mean_turn_angle,
         )
 
-    @jit(nopython=True, fastmath=True)
     def smooth_path(
         self,
         path: npt.NDArray[np.float64],

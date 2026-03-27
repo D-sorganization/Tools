@@ -1,5 +1,3 @@
-from typing import Any
-
 """Gap-fill tests for simulation.py, simulation_triple.py, simulation_golfer.py.
 
 simulation.py line 170: total_torques_at with non-None clamp
@@ -13,7 +11,6 @@ simulation_golfer.py lines 296, 302: postcondition warn/error paths
 """
 
 from __future__ import annotations
-
 
 import logging
 
@@ -40,7 +37,7 @@ class TestSimulationTotalTorquesWithClamp:
         params = PendulumParams(m1=5.0, m2=0.5, L1=0.6, L2=1.0)
         clamp = TorqueClamp(max_torque1=0.001, max_torque2=0.001)  # tiny limit
 
-        def big_torque(t) -> Any:
+        def big_torque(t):
             return (1e6, 1e6)
 
         result = run_double_sim(

@@ -1,5 +1,3 @@
-from typing import Any
-
 """
 Tests for club_forces module — net force & equivalent couple on the club.
 
@@ -13,7 +11,6 @@ Covers:
 """
 
 from __future__ import annotations
-
 
 import numpy as np
 import pytest
@@ -31,7 +28,7 @@ from double_pendulum_golf.club_forces import (
 
 
 @pytest.fixture
-def default_params() -> Any:
+def default_params():
     """Create default GolferParams for testing."""
     from double_pendulum_golf.physics_golfer import GolferParams
 
@@ -64,7 +61,7 @@ def default_params() -> Any:
 class TestClubActionPoint:
     """Test the configurable action point on the club."""
 
-    def test_default_midpoint(self, default_params) -> Any:
+    def test_default_midpoint(self, default_params):
         """alpha=0 (default) gives the midpoint between grips."""
         q = np.zeros(8)
         pos = club_action_point(q, default_params, alpha=0.0)
@@ -72,7 +69,7 @@ class TestClubActionPoint:
         # Midpoint between grip_right and grip_left positions
         assert np.isfinite(pos[0]) and np.isfinite(pos[1])
 
-    def test_alpha_zero_is_midpoint(self, default_params) -> Any:
+    def test_alpha_zero_is_midpoint(self, default_params):
         """alpha=0 means midpoint between two grip locations."""
         q = np.zeros(8)
         from double_pendulum_golf.golfer_kinematics import forward_kinematics
@@ -85,7 +82,7 @@ class TestClubActionPoint:
         pos = club_action_point(q, default_params, alpha=0.0)
         np.testing.assert_allclose(pos, expected_mid, atol=1e-10)
 
-    def test_alpha_minus_one_is_right_grip(self, default_params) -> Any:
+    def test_alpha_minus_one_is_right_grip(self, default_params):
         """alpha=-1 means the right grip position."""
         q = np.zeros(8)
         from double_pendulum_golf.golfer_kinematics import forward_kinematics
@@ -96,7 +93,7 @@ class TestClubActionPoint:
         pos = club_action_point(q, default_params, alpha=-1.0)
         np.testing.assert_allclose(pos, expected, atol=1e-10)
 
-    def test_alpha_plus_one_is_left_grip(self, default_params) -> Any:
+    def test_alpha_plus_one_is_left_grip(self, default_params):
         """alpha=+1 means the left grip position."""
         q = np.zeros(8)
         from double_pendulum_golf.golfer_kinematics import forward_kinematics
@@ -116,26 +113,26 @@ class TestClubActionPoint:
 class TestNetForceOnClub:
     """Test the net force vector from two hands acting on the club."""
 
-    def test_returns_2d_vector(self, default_params) -> Any:
+    def test_returns_2d_vector(self, default_params):
         """Net force is a 2D vector (fx, fy)."""
         f_right = (10.0, -5.0)
         f_left = (3.0, 2.0)
         net = net_force_on_club(f_right, f_left)
         assert len(net) == 2
 
-    def test_sum_of_forces(self, default_params) -> Any:
+    def test_sum_of_forces(self, default_params):
         """Net force = F_right + F_left."""
         f_right = (10.0, -5.0)
         f_left = (3.0, 2.0)
         net = net_force_on_club(f_right, f_left)
         np.testing.assert_allclose(net, [13.0, -3.0])
 
-    def test_zero_forces(self, default_params) -> Any:
+    def test_zero_forces(self, default_params):
         """Zero hand forces give zero net force."""
         net = net_force_on_club((0.0, 0.0), (0.0, 0.0))
         np.testing.assert_allclose(net, [0.0, 0.0])
 
-    def test_equal_opposite_cancel(self, default_params) -> Any:
+    def test_equal_opposite_cancel(self, default_params):
         """Equal and opposite forces cancel to zero net force."""
         net = net_force_on_club((5.0, 3.0), (-5.0, -3.0))
         np.testing.assert_allclose(net, [0.0, 0.0], atol=1e-14)
@@ -149,7 +146,7 @@ class TestNetForceOnClub:
 class TestMomentOfNetForce:
     """Test the moment (scalar in 2D) of the net force about the action point."""
 
-    def test_zero_force_zero_moment(self) -> Any:
+    def test_zero_force_zero_moment(self):
         """Zero net force produces zero moment regardless of position."""
         m = moment_of_net_force(
             net_force=np.array([0.0, 0.0]),
@@ -158,7 +155,7 @@ class TestMomentOfNetForce:
         )
         assert m == pytest.approx(0.0)
 
-    def test_force_through_action_point(self) -> Any:
+    def test_force_through_action_point(self):
         """Force acting at the action point has zero moment arm, hence zero moment."""
         m = moment_of_net_force(
             net_force=np.array([10.0, 5.0]),
@@ -167,7 +164,7 @@ class TestMomentOfNetForce:
         )
         assert m == pytest.approx(0.0)
 
-    def test_known_moment(self) -> Any:
+    def test_known_moment(self):
         """Known cross-product: r = (1,0), F = (0,1) -> moment = 1*1 - 0*0 = 1."""
         m = moment_of_net_force(
             net_force=np.array([0.0, 1.0]),
@@ -176,7 +173,7 @@ class TestMomentOfNetForce:
         )
         assert m == pytest.approx(1.0)
 
-    def test_negative_moment(self) -> Any:
+    def test_negative_moment(self):
         """r = (0,1), F = (1,0) -> moment = 0*0 - 1*1 = -1."""
         m = moment_of_net_force(
             net_force=np.array([1.0, 0.0]),
@@ -194,7 +191,7 @@ class TestMomentOfNetForce:
 class TestEquivalentCouple:
     """Test the equivalent couple calculation."""
 
-    def test_couple_definition(self) -> Any:
+    def test_couple_definition(self):
         """Couple = total moment from two hands - moment of net force at action point.
 
         If both hands apply (1, 0) at (0, 1) and (0, -1) respectively about (0, 0):
@@ -214,7 +211,7 @@ class TestEquivalentCouple:
         )
         assert couple == pytest.approx(0.0)
 
-    def test_pure_couple(self) -> Any:
+    def test_pure_couple(self):
         """Equal and opposite forces at different points produce a pure couple.
 
         F_right = (1, 0) at (0, 1)
@@ -233,7 +230,7 @@ class TestEquivalentCouple:
         )
         assert couple == pytest.approx(-2.0)
 
-    def test_zero_forces_zero_couple(self) -> Any:
+    def test_zero_forces_zero_couple(self):
         """Zero forces on both hands produce zero couple."""
         couple = equivalent_couple(
             f_right=np.array([0.0, 0.0]),
@@ -244,7 +241,7 @@ class TestEquivalentCouple:
         )
         assert couple == pytest.approx(0.0)
 
-    def test_collinear_forces_no_couple(self) -> Any:
+    def test_collinear_forces_no_couple(self):
         """Same direction forces at same height produce zero couple.
 
         F_right = (1, 0) at (0, 0)
@@ -276,7 +273,7 @@ class TestEquivalentCouple:
 class TestClubForceDecomposition:
     """Test the club_force_decomposition function with real physics."""
 
-    def test_overall_decomposition_returns_all_keys(self, default_params) -> Any:
+    def test_overall_decomposition_returns_all_keys(self, default_params):
         """Overall decomposition returns all expected keys."""
         from double_pendulum_golf.club_forces import club_force_decomposition
         from double_pendulum_golf.golfer_constraints import net_joint_forces
@@ -299,7 +296,7 @@ class TestClubForceDecomposition:
         }
         assert set(result.keys()) == expected_keys
 
-    def test_net_force_is_sum_of_hands(self, default_params) -> Any:
+    def test_net_force_is_sum_of_hands(self, default_params):
         """Net force in decomposition equals sum of hand forces."""
         from double_pendulum_golf.club_forces import club_force_decomposition
         from double_pendulum_golf.golfer_constraints import net_joint_forces
@@ -313,7 +310,7 @@ class TestClubForceDecomposition:
         expected = np.array(forces["rh"]) + np.array(forces["lh"])
         np.testing.assert_allclose(result["net_force"], expected)
 
-    def test_all_values_finite(self, default_params) -> Any:
+    def test_all_values_finite(self, default_params):
         """All returned values should be finite."""
         from double_pendulum_golf.club_forces import club_force_decomposition
         from double_pendulum_golf.golfer_constraints import net_joint_forces
@@ -334,7 +331,7 @@ class TestClubForceDecomposition:
 class TestZTCFClubDecomposition:
     """Test ZTCF club force decomposition."""
 
-    def test_ztcf_returns_dict(self, default_params) -> Any:
+    def test_ztcf_returns_dict(self, default_params):
         from double_pendulum_golf.club_forces import ztcf_club_decomposition
 
         state = np.zeros(16)
@@ -343,7 +340,7 @@ class TestZTCFClubDecomposition:
         assert "net_force" in result
         assert "couple" in result
 
-    def test_ztcf_finite_values(self, default_params) -> Any:
+    def test_ztcf_finite_values(self, default_params):
         from double_pendulum_golf.club_forces import ztcf_club_decomposition
 
         state = np.zeros(16)
@@ -355,7 +352,7 @@ class TestZTCFClubDecomposition:
 class TestDELTAClubDecomposition:
     """Test DELTA club force decomposition."""
 
-    def test_delta_returns_dict(self, default_params) -> Any:
+    def test_delta_returns_dict(self, default_params):
         from double_pendulum_golf.club_forces import delta_club_decomposition
 
         state = np.zeros(16)
@@ -365,7 +362,7 @@ class TestDELTAClubDecomposition:
         assert "net_force" in result
         assert "couple" in result
 
-    def test_delta_zero_torque_zero_forces(self, default_params) -> Any:
+    def test_delta_zero_torque_zero_forces(self, default_params):
         """With zero torque, DELTA gives zero accelerations, hence only gravity."""
         from double_pendulum_golf.club_forces import delta_club_decomposition
 

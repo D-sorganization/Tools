@@ -1,5 +1,3 @@
-from typing import Any
-
 """Gap-fill tests for physics.py — covers remaining uncovered lines.
 
 Lines 400, 404: joint_limit_torque_ndof angle below lo / above hi
@@ -7,7 +5,6 @@ Lines 461, 467, 474: equations_of_motion with clamp / limits / near-singular M
 """
 
 from __future__ import annotations
-
 
 import logging
 
@@ -32,7 +29,7 @@ def params() -> PendulumParams:
 
 
 @pytest.fixture
-def zero_torque() -> Any:
+def zero_torque():
     return lambda t: (0.0, 0.0)
 
 
@@ -99,7 +96,7 @@ class TestEquationsOfMotionBranches:
         state = np.array([0.1, 0.05, 0.0, 0.0])
 
         # Use large torque that will be clamped
-        def torque_fn(t) -> Any:
+        def torque_fn(t):
             return (1e6, 1e6)
 
         state_dot = equations_of_motion(state, 0.0, params, torque_fn, clamp=clamp)
@@ -115,7 +112,7 @@ class TestEquationsOfMotionBranches:
             damping=10.0,
         )
 
-        def torque_fn(t) -> Any:
+        def torque_fn(t):
             return (0.0, 0.0)
 
         # phi far beyond limit → penalty torques activated
@@ -131,7 +128,7 @@ class TestEquationsOfMotionBranches:
         # Use very small m2 to stress the mass matrix
         p = PendulumParams(m1=1e6, m2=1e-9, L1=0.6, L2=0.001)
 
-        def torque_fn(t) -> Any:
+        def torque_fn(t):
             return (0.0, 0.0)
 
         state = np.array([0.0, 0.0, 0.0, 0.0])

@@ -1,18 +1,16 @@
-from numba import jit
-
 """Event handling mixin for SolarSystemScene.
 
 Extracts mouse, keyboard, and UI click handling from the main scene class
 to reduce class size and improve single-responsibility adherence.
 """
 
-from __future__ import annotations  # noqa: E402, F404
+from __future__ import annotations
 
-from datetime import datetime  # noqa: E402
-from typing import TYPE_CHECKING  # noqa: E402
+from datetime import datetime
+from typing import TYPE_CHECKING
 
-from ..core.constants import PLANET_ORDER  # noqa: E402
-from ..data.famous_missions import FAMOUS_MISSIONS  # noqa: E402
+from ..core.constants import PLANET_ORDER
+from ..data.famous_missions import FAMOUS_MISSIONS
 
 if TYPE_CHECKING:
     pass
@@ -62,7 +60,7 @@ try:
 except ImportError:
     _PYGAME_AVAILABLE = False
 
-from .camera import CameraMode  # noqa: E402
+from .camera import CameraMode
 
 
 class SceneEventMixin:
@@ -355,7 +353,6 @@ class SceneEventMixin:
                         self._focus_on_selected()
         return True
 
-    @jit(nopython=True, fastmath=True)
     def _handle_controls_click(self, x: int, y: int) -> bool:
         """Handle click within the unified control panel.
 

@@ -1,8 +1,6 @@
-from typing import Any
-
 """Tests for Pressure Drop Calculator GUI."""
 
-from __future__ import annotations  # noqa: F404
+from __future__ import annotations
 
 import importlib.util
 import os
@@ -62,7 +60,7 @@ class TestPressureDropGUI:
     """Test suite for Pressure Drop Calculator GUI."""
 
     @pytest.fixture
-    def mock_qt_app(self) -> Any:
+    def mock_qt_app(self):
         """Create a mock Qt application for testing."""
         with patch("PyQt6.QtWidgets.QApplication"):
             yield

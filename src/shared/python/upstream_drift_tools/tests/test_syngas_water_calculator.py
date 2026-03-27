@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for syngas_water_calculator.py targeting uncovered lines.
 
 Covers:
@@ -16,7 +14,7 @@ Covers:
 - estimate_condensation_risk() all branches (lines 697-703)
 """
 
-from __future__ import annotations  # noqa: F404
+from __future__ import annotations
 
 import pytest
 from upstream_drift_tools.process_calculators.syngas_water_calculator import (
@@ -28,12 +26,12 @@ from upstream_drift_tools.process_calculators.syngas_water_calculator import (
 
 
 class TestSyngasCompositionNormalize:
-    def test_normalize_normal(self) -> Any:
+    def test_normalize_normal(self):
         comp = SyngasComposition(h2=0.6, co=0.4)
         normalized = comp.normalize()
         assert abs(normalized.h2 - 0.6) < 1e-10
 
-    def test_normalize_zero_total_returns_self(self) -> Any:
+    def test_normalize_zero_total_returns_self(self):
         """Line 114: total == 0 → return self."""
         comp = SyngasComposition()  # all zeros
         result = comp.normalize()
@@ -41,7 +39,7 @@ class TestSyngasCompositionNormalize:
 
 
 class TestWaterContentResultToDict:
-    def test_to_dict_has_expected_keys(self) -> Any:
+    def test_to_dict_has_expected_keys(self):
         """Line 180: WaterContentResult.to_dict()."""
         calc = SyngasWaterCalculator()
         result = calc.calculate_water_content(25.0, 1.0)
@@ -56,31 +54,31 @@ class TestWaterContentResultToDict:
 
 
 class TestCalculateVaporPressure:
-    def test_auto_select_magnus_range(self) -> Any:
+    def test_auto_select_magnus_range(self):
         """Lines 299-300: 0 <= T <= 100 → Magnus auto."""
         calc = SyngasWaterCalculator()
         _, method = calc.calculate_vapor_pressure(50.0, "auto")
         assert "Magnus" in method
 
-    def test_auto_select_buck_range(self) -> Any:
+    def test_auto_select_buck_range(self):
         """Lines 301-302: -20 <= T < 0 → Buck auto."""
         calc = SyngasWaterCalculator()
         _, method = calc.calculate_vapor_pressure(-10.0, "auto")
         assert "Buck" in method
 
-    def test_auto_select_iapws_range(self) -> Any:
+    def test_auto_select_iapws_range(self):
         """Lines 303-304: 100 < T <= 374 → IAPWS auto."""
         calc = SyngasWaterCalculator()
         _, method = calc.calculate_vapor_pressure(150.0, "auto")
         assert "IAPWS" in method
 
-    def test_auto_select_extreme_temp_antoine(self) -> Any:
+    def test_auto_select_extreme_temp_antoine(self):
         """Line 305: T > 374 → Antoine auto."""
         calc = SyngasWaterCalculator()
         _, method = calc.calculate_vapor_pressure(500.0, "auto")
         assert "Antoine" in method
 
-    def test_iapws_method_directly(self) -> Any:
+    def test_iapws_method_directly(self):
         """Line 295: method='iapws' → _iapws_equation called directly."""
         calc = SyngasWaterCalculator()
         value, method = calc.calculate_vapor_pressure(100.0, "iapws")
@@ -89,13 +87,13 @@ class TestCalculateVaporPressure:
 
 
 class TestMagnusEquation:
-    def test_magnus_out_of_range_raises(self) -> Any:
+    def test_magnus_out_of_range_raises(self):
         """Lines 384-385: T > 100 → ValueError."""
         calc = SyngasWaterCalculator()
         with pytest.raises(ValueError, match="Magnus equation valid"):
             calc._magnus_equation(120.0)
 
-    def test_magnus_below_zero_raises(self) -> Any:
+    def test_magnus_below_zero_raises(self):
         """Lines 383-385: T < 0 → ValueError."""
         calc = SyngasWaterCalculator()
         with pytest.raises(ValueError, match="Magnus equation valid"):
@@ -103,7 +101,7 @@ class TestMagnusEquation:
 
 
 class TestVaporPressureFast:
-    def test_vapor_pressure_fast_uses_table(self) -> Any:
+    def test_vapor_pressure_fast_uses_table(self):
         """Line 421-424: without explicit table init, method initializes it."""
         calc = SyngasWaterCalculator()
         # Delete the table to test the fallback re-init path
@@ -114,7 +112,7 @@ class TestVaporPressureFast:
 
 
 class TestCalculateDewPoint:
-    def test_dew_point_convergence(self) -> Any:
+    def test_dew_point_convergence(self):
         """Basic convergence test for Newton-Raphson."""
         calc = SyngasWaterCalculator()
         partial = calc.calculate_vapor_pressure(25.0)[0]
@@ -122,7 +120,7 @@ class TestCalculateDewPoint:
         dew_pt = calc.calculate_dew_point(partial, total)
         assert isinstance(dew_pt, float)
 
-    def test_dew_point_zero_dp_dt(self) -> Any:
+    def test_dew_point_zero_dp_dt(self):
         """Line 461: dp_dT == 0 guard in Newton-Raphson."""
         from unittest.mock import patch
 
@@ -136,21 +134,21 @@ class TestCalculateDewPoint:
 
 
 class TestCalculateWaterContent:
-    def test_syngas_composition_object_input(self) -> Any:
+    def test_syngas_composition_object_input(self):
         """Lines 492-493: passing SyngasComposition directly (not string)."""
         calc = SyngasWaterCalculator()
         comp = SyngasComposition(h2=0.5, co=0.3, co2=0.2)
         result = calc.calculate_water_content(25.0, 1.0, gas_composition=comp)
         assert result.gas_composition == "custom"
 
-    def test_syngas_composition_object_with_name(self) -> Any:
+    def test_syngas_composition_object_with_name(self):
         """Lines 492-493: SyngasComposition with name set."""
         calc = SyngasWaterCalculator()
         comp = SyngasComposition(h2=0.5, co=0.3, co2=0.2, name="my_gas")
         result = calc.calculate_water_content(25.0, 1.0, gas_composition=comp)
         assert result.gas_composition == "my_gas"
 
-    def test_vapor_pressure_exceeds_total_pressure_warning(self) -> Any:
+    def test_vapor_pressure_exceeds_total_pressure_warning(self):
         """Lines 508-511: warning when vapor_pressure > total_pressure."""
         calc = SyngasWaterCalculator()
         # Very low pressure below vapor pressure → triggers warning
@@ -160,7 +158,7 @@ class TestCalculateWaterContent:
 
 
 class TestGenerateWaterContentCurve:
-    def test_generates_dataframe(self) -> Any:
+    def test_generates_dataframe(self):
         """Lines 636-652: generate_water_content_curve returns DataFrame."""
         calc = SyngasWaterCalculator()
         df = calc.generate_water_content_curve(1.0, temp_range=(0, 50), num_points=5)
@@ -170,19 +168,19 @@ class TestGenerateWaterContentCurve:
 
 
 class TestConvenienceFunctions:
-    def test_quick_water_content(self) -> Any:
+    def test_quick_water_content(self):
         """Lines 667-671: quick_water_content convenience function."""
         result = quick_water_content(25.0, 1.0)
         assert "water_content_mg_nm3" in result
         assert "dew_point_c" in result
         assert "mole_fraction" in result
 
-    def test_estimate_condensation_risk_low(self) -> Any:
+    def test_estimate_condensation_risk_low(self):
         """Lines 697-700: Low risk (large margin)."""
         result = estimate_condensation_risk(60.0, 1.0, safety_margin_c=5.0)
         assert result["condensation_risk"] in ("Low", "Medium", "High")
 
-    def test_estimate_condensation_risk_critical(self) -> Any:
+    def test_estimate_condensation_risk_critical(self):
         """Line 699: Critical - condensation occurring (margin < 0)."""
         from datetime import datetime
         from unittest.mock import patch
@@ -223,7 +221,7 @@ class TestConvenienceFunctions:
         assert "Critical" in result["condensation_risk"]
         assert result["condensation_occurring"] is True
 
-    def test_estimate_condensation_risk_high(self) -> Any:
+    def test_estimate_condensation_risk_high(self):
         """Line 700: High risk (small positive margin)."""
         # Get the dew point and operate just above it
         calc = SyngasWaterCalculator()
@@ -238,7 +236,7 @@ class TestConvenienceFunctions:
             "Critical - Condensation occurring",
         )
 
-    def test_estimate_condensation_risk_medium(self) -> Any:
+    def test_estimate_condensation_risk_medium(self):
         """Line 702-703: Medium risk."""
         calc = SyngasWaterCalculator()
         r = calc.calculate_water_content(30.0, 1.0)

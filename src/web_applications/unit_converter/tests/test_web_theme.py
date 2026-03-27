@@ -1,12 +1,10 @@
-from typing import Any
-
 """Tests for the web theme bridge module."""
 
-from __future__ import annotations  # noqa: E402, F404
+from __future__ import annotations
 
-import pytest  # noqa: E402
+import pytest
 
-from web_applications.unit_converter.web_theme import (  # noqa: E402
+from web_applications.unit_converter.web_theme import (
     all_themes_as_css,
     get_default_theme_name,
     get_theme_by_name,
@@ -153,7 +151,7 @@ class TestThemeApiEndpoints:
     """Test the Flask theme API endpoints."""
 
     @pytest.fixture
-    def client(self) -> Any:
+    def client(self):
         from web_applications.unit_converter.webapp import create_app
 
         app = create_app()

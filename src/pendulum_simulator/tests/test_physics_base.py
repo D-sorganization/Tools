@@ -1,5 +1,3 @@
-from numba import jit
-
 """Tests for shared physics base utilities (DRY — #C1)."""
 
 from __future__ import annotations
@@ -38,7 +36,6 @@ class TestKineticEnergyFromM:
         expected = 0.5 * qdot @ M @ qdot
         assert np.isclose(kinetic_energy_from_M(M, qdot), expected)
 
-    @jit(nopython=True, fastmath=True)
     def test_non_negative(self) -> None:
         rng = np.random.default_rng(42)
         for _ in range(10):

@@ -1,5 +1,3 @@
-from numba import jit
-
 """Constraint handling and joint force computation for golfer model.
 
 Implements closed kinematic loop constraints and methods to compute
@@ -68,7 +66,6 @@ def constraint_vector(q: np.ndarray, p: GolferParams) -> np.ndarray:
     return phi
 
 
-@jit(nopython=True, fastmath=True)
 def numerical_constraint_jacobian(q: np.ndarray, p: GolferParams) -> np.ndarray:
     """Compute the constraint Jacobian Phi_q = dPhi/dq numerically.
 
@@ -153,7 +150,7 @@ def analytical_constraint_jacobian(q: np.ndarray, p: GolferParams) -> np.ndarray
     Phi_q[1, :] -= J_rh[1, :]
 
     # d((grip_left - grip_right) * sin(th_club))/dq_7 = (grip_left - grip_right) * cos(th_club)
-    # d(-(grip_left - grip_right) * cos(th_club))/dq_7 = (grip_left - grip_right) * sin(th_club)
+    # d(-(grip_left - grip_right) * cos(th_club))/dq_7 = (grip_l - grip_r) * sin(th_club)
     Phi_q[0, 7] -= (p.grip_left - p.grip_right) * cos_club
     Phi_q[1, 7] += (p.grip_left - p.grip_right) * sin_club
 
@@ -194,9 +191,6 @@ def analytical_constraint_jacobian(q: np.ndarray, p: GolferParams) -> np.ndarray
     return Phi_q
 
 
-@jit(nopython=True, fastmath=True)
-@jit(nopython=True, fastmath=True)
-@jit(nopython=True, fastmath=True)
 def linear_accelerations(
     q: np.ndarray, qdot: np.ndarray, qddot: np.ndarray, p: GolferParams
 ) -> dict:
@@ -257,7 +251,6 @@ def linear_accelerations(
     return result
 
 
-@jit(nopython=True, fastmath=True)
 def net_joint_forces(
     q: np.ndarray, qdot: np.ndarray, qddot: np.ndarray, p: GolferParams
 ) -> dict:

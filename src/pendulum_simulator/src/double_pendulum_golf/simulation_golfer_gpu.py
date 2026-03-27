@@ -1,5 +1,3 @@
-from numba import jit
-
 """
 GPU-accelerated batch simulation using JAX and diffrax.
 
@@ -137,7 +135,6 @@ def constrained_eom_jax(
     return jnp.concatenate([qdot, qddot])
 
 
-@jit(nopython=True, fastmath=True)
 def _constraint_acceleration_bias_jax(
     q: JaxArray, qdot: JaxArray, p: GolferParamsJAX
 ) -> JaxArray:

@@ -1,12 +1,9 @@
-from typing import Any
-
 """Tests for counterfactual_golfer module.
 
 TDD: Tests verify zero-torque counterfactual for the golfer model.
 """
 
 from __future__ import annotations
-
 
 import numpy as np
 import pytest
@@ -44,7 +41,7 @@ def _default_golfer_params() -> GolferParams:
 class TestZeroTorqueAccelerations:
     """Tests for zero-torque counterfactual accelerations."""
 
-    def test_returns_array(self) -> Any:
+    def test_returns_array(self):
         params = _default_golfer_params()
         # 8 DOF: q + qdot = 16 state variables
         state = np.zeros(16)
@@ -57,7 +54,7 @@ class TestZeroTorqueAccelerations:
         except Exception:  # noqa: BLE001
             pytest.skip("Golfer model requires specific valid state")
 
-    def test_finite_output(self) -> Any:
+    def test_finite_output(self):
         params = _default_golfer_params()
         state = np.zeros(16)
         state[0] = 0.1
@@ -71,7 +68,7 @@ class TestZeroTorqueAccelerations:
 class TestZeroTorqueJointForces:
     """Tests for zero-torque counterfactual joint forces."""
 
-    def test_returns_dict(self) -> Any:
+    def test_returns_dict(self):
         params = _default_golfer_params()
         state = np.zeros(16)
         state[0] = 0.1

@@ -1,5 +1,3 @@
-from numba import jit
-
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -12,14 +10,14 @@ Provides high-quality rendering of planets, orbits, trajectories,
 and UI elements.
 """
 
-from __future__ import annotations  # noqa: E402, F404
+from __future__ import annotations
 
-import math  # noqa: E402
-import pathlib  # noqa: E402
-from dataclasses import dataclass  # noqa: E402
-from typing import Any, cast  # noqa: E402
+import math
+import pathlib
+from dataclasses import dataclass
+from typing import Any, cast
 
-import numpy as np  # noqa: E402
+import numpy as np
 
 try:
     import pygame
@@ -132,17 +130,13 @@ try:
 except ImportError:
     OPENGL_AVAILABLE = False
 
-from ..core.celestial_body import BodyType, CelestialBody, StateVector  # noqa: E402
-from ..core.constants import AU  # noqa: E402
-from ..data.star_catalog import iter_catalog  # noqa: E402
-from .camera import Camera, CameraState  # noqa: E402
-from .starfield import (  # noqa: E402
-    StarVertex,
-    build_star_vertices,
-    point_size_from_magnitude,
-)
-from .textures import TextureManager  # noqa: E402
-from .ui_renderer import UIRenderer  # noqa: E402
+from ..core.celestial_body import BodyType, CelestialBody, StateVector
+from ..core.constants import AU
+from ..data.star_catalog import iter_catalog
+from .camera import Camera, CameraState
+from .starfield import StarVertex, build_star_vertices, point_size_from_magnitude
+from .textures import TextureManager
+from .ui_renderer import UIRenderer
 
 
 @dataclass
@@ -375,7 +369,6 @@ class Renderer:
             self._shader_program = None
             self._shaders_enabled = False
 
-    @jit(nopython=True, fastmath=True)
     def _draw_sphere(self, radius: float, segments: int) -> None:
         """Draw a unit sphere using immediate mode."""
         for i in range(segments):
@@ -387,7 +380,6 @@ class Renderer:
             z1 = math.sin(lat1)
             zr1 = math.cos(lat1)
 
-            # OPTIMIZATION_TARGET: Migrate computationally bound loop to PyO3/Rust Core natively
             glBegin(GL_QUAD_STRIP)
             for j in range(segments + 1):
                 lng = 2 * math.pi * float(j) / segments
@@ -407,7 +399,6 @@ class Renderer:
                 glVertex3f(radius * x * zr1, radius * y * zr1, radius * z1)
             glEnd()
 
-    @jit(nopython=True, fastmath=True)
     def _draw_circle(self, radius: float, segments: int) -> None:
         """Draw a circle in the XY plane."""
         if not (radius is not None):
@@ -576,7 +567,6 @@ class Renderer:
         if texturing_active:
             glDisable(GL_TEXTURE_2D)
 
-    @jit(nopython=True, fastmath=True)
     def _render_star_glow(
         self, body_size: float, color: tuple[float, float, float]
     ) -> None:
@@ -599,7 +589,6 @@ class Renderer:
         glEnd()
         glDisable(GL_BLEND)
 
-    @jit(nopython=True, fastmath=True)
     def _render_selection_ring(self, body_size: float) -> None:
         """Render an orbit-plane selection ring for the chosen body."""
         if not (body_size is not None):
@@ -618,7 +607,6 @@ class Renderer:
             )
         glEnd()
 
-    @jit(nopython=True, fastmath=True)
     def _render_rings(self, body: CelestialBody, body_size: float) -> None:
         """Render planetary rings."""
         # Ring color (semi-transparent)
@@ -749,7 +737,6 @@ class Renderer:
 
         glEnable(GL_LIGHTING)
 
-    @jit(nopython=True, fastmath=True)
     def render_grid(self, size: float = 10.0, divisions: int = 20) -> None:
         """Render a reference grid in the ecliptic plane."""
         if not (size is not None):

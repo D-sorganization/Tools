@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for upstream_drift_tools.data_io - read_data / write_data.
 
 Covers:
@@ -10,7 +8,7 @@ Covers:
   ensure() violation on bad extension
 """
 
-from __future__ import annotations  # noqa: F404
+from __future__ import annotations
 
 from pathlib import Path
 
@@ -35,7 +33,7 @@ def sample_df() -> pd.DataFrame:
 
 
 class TestReadData:
-    def test_read_csv_basic(self, sample_df: pd.DataFrame, tmp_path: Path) -> Any:
+    def test_read_csv_basic(self, sample_df: pd.DataFrame, tmp_path: Path):
         from upstream_drift_tools.data_io import read_data
 
         csv_path = tmp_path / "data.csv"
@@ -44,7 +42,7 @@ class TestReadData:
         assert list(result.columns) == ["a", "b"]
         assert len(result) == 3
 
-    def test_read_tsv_basic(self, sample_df: pd.DataFrame, tmp_path: Path) -> Any:
+    def test_read_tsv_basic(self, sample_df: pd.DataFrame, tmp_path: Path):
         from upstream_drift_tools.data_io import read_data
 
         tsv_path = tmp_path / "data.tsv"
@@ -54,7 +52,7 @@ class TestReadData:
 
     def test_read_csv_with_prefer_parquet_false(
         self, sample_df: pd.DataFrame, tmp_path: Path
-    ) -> Any:
+    ):
         """prefer_parquet=False should read the CSV directly."""
         from upstream_drift_tools.data_io import read_data
 
@@ -66,7 +64,7 @@ class TestReadData:
     @requires_pyarrow
     def test_read_csv_prefers_parquet_sibling(
         self, sample_df: pd.DataFrame, tmp_path: Path
-    ) -> Any:
+    ):
         """When parquet sibling exists, it should be used over CSV."""
         from upstream_drift_tools.data_io import read_data
 
@@ -82,9 +80,7 @@ class TestReadData:
         assert "extra" in result.columns
 
     @requires_pyarrow
-    def test_read_parquet_directly(
-        self, sample_df: pd.DataFrame, tmp_path: Path
-    ) -> Any:
+    def test_read_parquet_directly(self, sample_df: pd.DataFrame, tmp_path: Path):
         from upstream_drift_tools.data_io import read_data
 
         parquet_path = tmp_path / "data.parquet"
@@ -92,19 +88,19 @@ class TestReadData:
         result = read_data(parquet_path)
         assert list(result.columns) == ["a", "b"]
 
-    def test_read_parquet_not_found_raises(self, tmp_path: Path) -> Any:
+    def test_read_parquet_not_found_raises(self, tmp_path: Path):
         from upstream_drift_tools.data_io import read_data
 
         with pytest.raises(FileNotFoundError, match="Parquet file not found"):
             read_data(tmp_path / "nonexistent.parquet")
 
-    def test_read_csv_not_found_raises(self, tmp_path: Path) -> Any:
+    def test_read_csv_not_found_raises(self, tmp_path: Path):
         from upstream_drift_tools.data_io import read_data
 
         with pytest.raises(FileNotFoundError, match="CSV file not found"):
             read_data(tmp_path / "nonexistent.csv")
 
-    def test_read_unsupported_extension_raises(self, tmp_path: Path) -> Any:
+    def test_read_unsupported_extension_raises(self, tmp_path: Path):
         """require() contract violation for unsupported extension."""
         from contracts import PreconditionError
         from upstream_drift_tools.data_io import read_data
@@ -116,7 +112,7 @@ class TestReadData:
 
 
 class TestWriteData:
-    def test_write_csv_basic(self, sample_df: pd.DataFrame, tmp_path: Path) -> Any:
+    def test_write_csv_basic(self, sample_df: pd.DataFrame, tmp_path: Path):
         from upstream_drift_tools.data_io import write_data
 
         csv_path = tmp_path / "out.csv"
@@ -126,7 +122,7 @@ class TestWriteData:
         assert list(loaded.columns) == ["a", "b"]
 
     @requires_pyarrow
-    def test_write_parquet_basic(self, sample_df: pd.DataFrame, tmp_path: Path) -> Any:
+    def test_write_parquet_basic(self, sample_df: pd.DataFrame, tmp_path: Path):
         from upstream_drift_tools.data_io import write_data
 
         pq_path = tmp_path / "out.parquet"
@@ -136,9 +132,7 @@ class TestWriteData:
         assert list(loaded.columns) == ["a", "b"]
 
     @requires_pyarrow
-    def test_write_parquet_also_csv(
-        self, sample_df: pd.DataFrame, tmp_path: Path
-    ) -> Any:
+    def test_write_parquet_also_csv(self, sample_df: pd.DataFrame, tmp_path: Path):
         from upstream_drift_tools.data_io import write_data
 
         pq_path = tmp_path / "out.parquet"
@@ -147,9 +141,7 @@ class TestWriteData:
         csv_sibling = tmp_path / "out.csv"
         assert csv_sibling.exists()
 
-    def test_write_creates_parent_dirs(
-        self, sample_df: pd.DataFrame, tmp_path: Path
-    ) -> Any:
+    def test_write_creates_parent_dirs(self, sample_df: pd.DataFrame, tmp_path: Path):
         from upstream_drift_tools.data_io import write_data
 
         nested = tmp_path / "a" / "b" / "out.csv"
@@ -158,7 +150,7 @@ class TestWriteData:
 
     def test_write_unsupported_extension_raises(
         self, sample_df: pd.DataFrame, tmp_path: Path
-    ) -> Any:
+    ):
         """ensure() contract violation on bad extension."""
         from contracts import PostconditionError, PreconditionError
         from upstream_drift_tools.data_io import write_data
@@ -173,7 +165,7 @@ class TestWriteData:
 
 
 class TestPandasUnavailable:
-    def test_read_data_raises_when_pandas_not_available(self, tmp_path: Path) -> Any:
+    def test_read_data_raises_when_pandas_not_available(self, tmp_path: Path):
         """Lines 66-67: _HAS_PANDAS=False → ImportError in read_data."""
         import upstream_drift_tools.data_io as data_io_mod
 

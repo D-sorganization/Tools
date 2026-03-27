@@ -1,5 +1,3 @@
-from typing import Any
-
 """Tests for the chat module.
 
 Covers:
@@ -13,7 +11,7 @@ Note: PyQt6 widget tests use the qtbot fixture from pytest-qt where
 available; pure function tests need no Qt at all.
 """
 
-from __future__ import annotations  # noqa: F404
+from __future__ import annotations
 
 from pathlib import Path
 from unittest.mock import patch
@@ -26,7 +24,7 @@ import pytest
 
 
 class TestChatModels:
-    def test_chat_message_request_defaults(self) -> Any:
+    def test_chat_message_request_defaults(self):
         from chat.models import ChatMessageRequest
 
         req = ChatMessageRequest(message="hello world")
@@ -34,7 +32,7 @@ class TestChatModels:
         assert req.expertise_level == "beginner"
         assert req.app_context is None
 
-    def test_chat_message_request_with_context(self) -> Any:
+    def test_chat_message_request_with_context(self):
         from chat.models import ChatMessageRequest
 
         req = ChatMessageRequest(
@@ -45,21 +43,21 @@ class TestChatModels:
         assert req.app_context == "mujoco"
         assert req.expertise_level == "advanced"
 
-    def test_chat_message_request_min_length_validation(self) -> Any:
+    def test_chat_message_request_min_length_validation(self):
         import pydantic
         from chat.models import ChatMessageRequest
 
         with pytest.raises(pydantic.ValidationError):
             ChatMessageRequest(message="")  # min_length=1
 
-    def test_chat_message_request_max_length_validation(self) -> Any:
+    def test_chat_message_request_max_length_validation(self):
         import pydantic
         from chat.models import ChatMessageRequest
 
         with pytest.raises(pydantic.ValidationError):
             ChatMessageRequest(message="x" * 10001)  # max_length=10000
 
-    def test_chat_chunk_response_defaults(self) -> Any:
+    def test_chat_chunk_response_defaults(self):
         from chat.models import ChatChunkResponse
 
         chunk = ChatChunkResponse(content="hello")
@@ -67,14 +65,14 @@ class TestChatModels:
         assert chunk.is_final is False
         assert chunk.index == 0
 
-    def test_chat_chunk_response_final(self) -> Any:
+    def test_chat_chunk_response_final(self):
         from chat.models import ChatChunkResponse
 
         chunk = ChatChunkResponse(content="done", is_final=True, index=5)
         assert chunk.is_final is True
         assert chunk.index == 5
 
-    def test_chat_session_info(self) -> Any:
+    def test_chat_session_info(self):
         from chat.models import ChatSessionInfo
 
         info = ChatSessionInfo(
@@ -88,7 +86,7 @@ class TestChatModels:
         assert info.message_count == 10
         assert len(info.app_contexts) == 2
 
-    def test_chat_session_info_defaults(self) -> Any:
+    def test_chat_session_info_defaults(self):
         from chat.models import ChatSessionInfo
 
         info = ChatSessionInfo(
@@ -99,7 +97,7 @@ class TestChatModels:
         )
         assert info.app_contexts == []
 
-    def test_chat_history_response(self) -> Any:
+    def test_chat_history_response(self):
         from chat.models import ChatHistoryResponse
 
         resp = ChatHistoryResponse(
@@ -120,21 +118,21 @@ class TestChatModels:
 
 
 class TestSessionFileFunctions:
-    def test_session_file_path_format(self) -> Any:
+    def test_session_file_path_format(self):
         from chat.chat_dock_widget import _session_file_path
 
         path = _session_file_path("my_app")
         assert path.name == "active_chat_session.txt"
         assert ".my_app" in str(path)
 
-    def test_read_shared_session_id_missing_file(self, tmp_path: Path) -> Any:
+    def test_read_shared_session_id_missing_file(self, tmp_path: Path):
         from chat.chat_dock_widget import _read_shared_session_id
 
         missing = tmp_path / "no_file.txt"
         result = _read_shared_session_id(missing)
         assert result is None
 
-    def test_read_shared_session_id_empty_file(self, tmp_path: Path) -> Any:
+    def test_read_shared_session_id_empty_file(self, tmp_path: Path):
         from chat.chat_dock_widget import _read_shared_session_id
 
         f = tmp_path / "session.txt"
@@ -142,7 +140,7 @@ class TestSessionFileFunctions:
         result = _read_shared_session_id(f)
         assert result is None
 
-    def test_read_shared_session_id_valid(self, tmp_path: Path) -> Any:
+    def test_read_shared_session_id_valid(self, tmp_path: Path):
         from chat.chat_dock_widget import _read_shared_session_id
 
         f = tmp_path / "session.txt"
@@ -150,7 +148,7 @@ class TestSessionFileFunctions:
         result = _read_shared_session_id(f)
         assert result == "my-session-123"
 
-    def test_write_shared_session_id(self, tmp_path: Path) -> Any:
+    def test_write_shared_session_id(self, tmp_path: Path):
         from chat.chat_dock_widget import _write_shared_session_id
 
         f = tmp_path / "subdir" / "session.txt"
@@ -158,14 +156,14 @@ class TestSessionFileFunctions:
         assert f.exists()
         assert f.read_text(encoding="utf-8") == "abc-def"
 
-    def test_write_shared_session_id_creates_parents(self, tmp_path: Path) -> Any:
+    def test_write_shared_session_id_creates_parents(self, tmp_path: Path):
         from chat.chat_dock_widget import _write_shared_session_id
 
         f = tmp_path / "a" / "b" / "c" / "session.txt"
         _write_shared_session_id("xyz", f)
         assert f.exists()
 
-    def test_read_shared_session_id_permission_error(self, tmp_path: Path) -> Any:
+    def test_read_shared_session_id_permission_error(self, tmp_path: Path):
         """PermissionError is swallowed and returns None."""
         from chat.chat_dock_widget import _read_shared_session_id
 
@@ -178,7 +176,7 @@ class TestSessionFileFunctions:
             result = _read_shared_session_id(f)
         assert result is None
 
-    def test_write_shared_session_id_permission_error(self, tmp_path: Path) -> Any:
+    def test_write_shared_session_id_permission_error(self, tmp_path: Path):
         """PermissionError is swallowed silently."""
         from chat.chat_dock_widget import _write_shared_session_id
 
@@ -187,7 +185,7 @@ class TestSessionFileFunctions:
             # Should not raise
             _write_shared_session_id("abc", f)
 
-    def test_roundtrip(self, tmp_path: Path) -> Any:
+    def test_roundtrip(self, tmp_path: Path):
         """Write then read gives back the same session ID."""
         from chat.chat_dock_widget import (
             _read_shared_session_id,

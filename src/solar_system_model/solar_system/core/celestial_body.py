@@ -1,5 +1,3 @@
-from numba import jit
-
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -13,16 +11,16 @@ Each body has physical properties, orbital elements, and methods for calculating
 positions and velocities at any given time.
 """
 
-from __future__ import annotations  # noqa: E402, F404
+from __future__ import annotations
 
-import math  # noqa: E402
-from dataclasses import dataclass  # noqa: E402
-from enum import Enum  # noqa: E402
-from typing import Any  # noqa: E402
+import math
+from dataclasses import dataclass
+from enum import Enum
+from typing import Any
 
-import numpy as np  # noqa: E402
+import numpy as np
 
-from .constants import (  # noqa: E402
+from .constants import (
     AU,
     GM,
     J2000,
@@ -347,7 +345,6 @@ class CelestialBody:
         self._cache_state(julian_date, state)
         return state
 
-    @jit(nopython=True, fastmath=True)
     def _solve_kepler(
         self, mean_anomaly: float, eccentricity: float, tolerance: float = 1e-10
     ) -> float:
@@ -386,7 +383,6 @@ class CelestialBody:
 
         return eccentric_anomaly
 
-    @jit(nopython=True, fastmath=True)
     def get_orbit_points(self, julian_date: float, num_points: int = 360) -> np.ndarray:
         """
         Calculate points along the orbit for visualization.

@@ -1,5 +1,3 @@
-from numba import jit
-
 """
 Torque preview widget for polynomial joint torques.
 """
@@ -51,12 +49,6 @@ class TorquePreviewWidget(QWidget):
         self._clamp_limits = list(clamp_limits) if clamp_limits else []
         self.update()
 
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
     def paintEvent(self, event: object) -> None:
         if not (event is not None):
             raise ValueError("event must be provided")
@@ -155,8 +147,6 @@ class TorquePreviewWidget(QWidget):
         self._draw_legend(painter, qrect)
         painter.end()
 
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
     def _draw_grid(self, painter: QPainter, rect: QRectF) -> None:
         if not (painter is not None):
             raise ValueError("painter must be provided")

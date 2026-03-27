@@ -1,6 +1,3 @@
-from numba import jit
-from typing import Any
-
 """Tests for analytical FK Jacobians and derived quantities.
 
 Validates analytical implementations against existing numerical references.
@@ -63,7 +60,6 @@ def _random_configs(n: int = 20, seed: int = 42) -> list[np.ndarray]:
     return configs
 
 
-@jit(nopython=True, fastmath=True)
 def _numerical_jacobian_point(pos_func, q: np.ndarray, eps: float = 1e-7) -> np.ndarray:
     """Compute 2×8 Jacobian numerically using finite differences."""
     J = np.zeros((2, N_DOF))
@@ -100,7 +96,7 @@ class TestAnalyticalFKJacobians:
         for q in test_configs:
             J_analytical = analytical_fk_jacobians(q, _PARAMS)["hub"]
 
-            def hub_pos(qq) -> Any:
+            def hub_pos(qq):
                 fk = forward_kinematics(qq, _PARAMS)
                 return fk["hub"]
 
@@ -117,7 +113,7 @@ class TestAnalyticalFKJacobians:
         for q in test_configs:
             J_analytical = analytical_fk_jacobians(q, _PARAMS)["re"]
 
-            def re_pos(qq) -> Any:
+            def re_pos(qq):
                 fk = forward_kinematics(qq, _PARAMS)
                 return fk["re"]
 
@@ -134,7 +130,7 @@ class TestAnalyticalFKJacobians:
         for q in test_configs:
             J_analytical = analytical_fk_jacobians(q, _PARAMS)["rh"]
 
-            def rh_pos(qq) -> Any:
+            def rh_pos(qq):
                 fk = forward_kinematics(qq, _PARAMS)
                 return fk["rh"]
 
@@ -151,7 +147,7 @@ class TestAnalyticalFKJacobians:
         for q in test_configs:
             J_analytical = analytical_fk_jacobians(q, _PARAMS)["le"]
 
-            def le_pos(qq) -> Any:
+            def le_pos(qq):
                 fk = forward_kinematics(qq, _PARAMS)
                 return fk["le"]
 
@@ -168,7 +164,7 @@ class TestAnalyticalFKJacobians:
         for q in test_configs:
             J_analytical = analytical_fk_jacobians(q, _PARAMS)["lh"]
 
-            def lh_pos(qq) -> Any:
+            def lh_pos(qq):
                 fk = forward_kinematics(qq, _PARAMS)
                 return fk["lh"]
 
@@ -178,7 +174,6 @@ class TestAnalyticalFKJacobians:
                 f"LH Jacobian mismatch at q={q}"
             )
 
-    @jit(nopython=True, fastmath=True)
     def test_club_com_jacobian_vs_numerical(self, test_configs: list[np.ndarray]) -> None:
         """Club COM Jacobian (depends on q[0], q[1], q[2], q[3], q[7])."""
         from double_pendulum_golf.physics_golfer import analytical_fk_jacobians
@@ -186,7 +181,7 @@ class TestAnalyticalFKJacobians:
         for q in test_configs:
             J_analytical = analytical_fk_jacobians(q, _PARAMS)["club_com"]
 
-            def club_com_pos(qq) -> Any:
+            def club_com_pos(qq):
                 fk = forward_kinematics(qq, _PARAMS)
                 base = fk["club_base"]
                 tip = fk["club_tip"]
@@ -205,7 +200,7 @@ class TestAnalyticalFKJacobians:
         for q in test_configs:
             J_analytical = analytical_fk_jacobians(q, _PARAMS)["club_tip"]
 
-            def club_tip_pos(qq) -> Any:
+            def club_tip_pos(qq):
                 fk = forward_kinematics(qq, _PARAMS)
                 return fk["club_tip"]
 
@@ -413,9 +408,9 @@ class TestAnalyticalBenchmark:
         t_numerical = time.perf_counter() - start
 
         speedup = t_numerical / t_analytical
-        logger.info("%s", f"\nMass matrix speedup: {speedup:.1f}x")
-        logger.info("%s", f"  Analytical: {t_analytical:.3f}s")
-        logger.info("%s", f"  Numerical:  {t_numerical:.3f}s")
+        logger.info(f"\nMass matrix speedup: {speedup:.1f}x")
+        logger.info(f"  Analytical: {t_analytical:.3f}s")
+        logger.info(f"  Numerical:  {t_numerical:.3f}s")
 
     def test_speed_comparison_coriolis(self, test_configs: list[np.ndarray]) -> None:
         """Print timing comparison for Coriolis."""
@@ -444,9 +439,9 @@ class TestAnalyticalBenchmark:
         t_numerical = time.perf_counter() - start
 
         speedup = t_numerical / t_analytical
-        logger.info("%s", f"\nCoriolis speedup: {speedup:.1f}x")
-        logger.info("%s", f"  Analytical: {t_analytical:.3f}s")
-        logger.info("%s", f"  Numerical:  {t_numerical:.3f}s")
+        logger.info(f"\nCoriolis speedup: {speedup:.1f}x")
+        logger.info(f"  Analytical: {t_analytical:.3f}s")
+        logger.info(f"  Numerical:  {t_numerical:.3f}s")
 
     def test_speed_comparison_gravity(self, test_configs: list[np.ndarray]) -> None:
         """Print timing comparison for gravity."""
@@ -472,6 +467,6 @@ class TestAnalyticalBenchmark:
         t_numerical = time.perf_counter() - start
 
         speedup = t_numerical / t_analytical
-        logger.info("%s", f"\nGravity speedup: {speedup:.1f}x")
-        logger.info("%s", f"  Analytical: {t_analytical:.3f}s")
-        logger.info("%s", f"  Numerical:  {t_numerical:.3f}s")
+        logger.info(f"\nGravity speedup: {speedup:.1f}x")
+        logger.info(f"  Analytical: {t_analytical:.3f}s")
+        logger.info(f"  Numerical:  {t_numerical:.3f}s")
