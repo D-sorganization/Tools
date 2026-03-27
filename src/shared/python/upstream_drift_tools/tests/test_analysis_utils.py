@@ -1,12 +1,13 @@
+from typing import Any
+
 """Comprehensive tests for upstream_drift_tools.process_calculators.analysis_utils.
 
 Covers evaluate_output with all branches: successful calculation, engine failure,
 non-dict result, overrides, HHV injection.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
-from typing import Any
 from unittest.mock import MagicMock
 
 import pytest

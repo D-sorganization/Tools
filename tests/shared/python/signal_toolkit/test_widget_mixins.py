@@ -323,7 +323,9 @@ class TestSaturationOperations:
         t = np.linspace(0, 10, 1000)
         signal = SignalGenerator.sinusoid(t, amplitude=2.0, frequency=1.0)
 
-        clipped = apply_saturation(signal, lower=-1.0, upper=1.0, mode=SaturationMode.HARD)
+        clipped = apply_saturation(
+            signal, lower=-1.0, upper=1.0, mode=SaturationMode.HARD
+        )
         assert clipped is not None
         assert np.max(clipped.values) <= 1.0 + 1e-10
         assert np.min(clipped.values) >= -1.0 - 1e-10
@@ -335,7 +337,9 @@ class TestSaturationOperations:
         t = np.linspace(0, 10, 1000)
         signal = SignalGenerator.sinusoid(t, amplitude=2.0, frequency=1.0)
 
-        clipped = apply_saturation(signal, lower=-1.0, upper=1.0, mode=SaturationMode.TANH)
+        clipped = apply_saturation(
+            signal, lower=-1.0, upper=1.0, mode=SaturationMode.TANH
+        )
         assert clipped is not None
         # Tanh is smooth, values should be within bounds (approximately)
         assert np.max(clipped.values) < 2.5  # Should be compressed

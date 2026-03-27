@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for MainWindow."""
 
 from typing import Any

@@ -541,8 +541,7 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         errors = self._validate_inertia(ixx, iyy, izz, ixy, ixz, iyz)
         if errors:
             results.append("  INVALID - Issues found:")
-            for error in errors:
-                results.append(f"    - {error}")
+            results.extend([f"    - {error}" for error in errors])
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['yellow']};")
         else:
             results.append("  VALID - All checks passed")

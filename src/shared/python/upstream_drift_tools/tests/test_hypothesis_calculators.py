@@ -1,3 +1,5 @@
+from typing import Any
+
 """Hypothesis property-based tests for Python calculators (#1091).
 
 These tests verify fundamental physical invariants hold across random inputs,
@@ -11,10 +13,9 @@ Design by Contract
 - Water mole fraction must be in [0, 1].
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import math
-from typing import Any
 
 import pytest
 

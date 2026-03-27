@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for SplitConfig model."""
 
 from typing import Any

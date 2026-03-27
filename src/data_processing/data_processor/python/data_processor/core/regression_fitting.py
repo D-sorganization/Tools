@@ -1,3 +1,5 @@
+from numba import jit
+
 # mypy: disable-error-code="arg-type"
 """Regression fitting methods.
 
@@ -29,6 +31,7 @@ class FittingMixin:
 
     config: RegressionConfig
 
+    @jit(nopython=True, fastmath=True)
     def _build_features(
         self,
         X: np.ndarray,
@@ -134,6 +137,8 @@ class FittingMixin:
 
         return coeffs[1:], coeffs[0]
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def _fit_lasso(
         self,
         X: np.ndarray,
@@ -175,6 +180,7 @@ class FittingMixin:
 
         return beta, intercept
 
+    @jit(nopython=True, fastmath=True)
     def _fit_elastic_net(
         self,
         X: np.ndarray,
@@ -197,6 +203,7 @@ class FittingMixin:
         for _ in range(max_iter):
             beta_old = beta.copy()
 
+            # OPTIMIZATION_TARGET: Migrate computationally bound loop to PyO3/Rust Core natively
             for j in range(p):
                 r_j = y - intercept - X @ beta + X[:, j] * beta[j]
                 rho = X[:, j] @ r_j

@@ -1,3 +1,5 @@
+from typing import Any
+
 # mypy: ignore-errors
 """Integrated version of the Data Processor GUI.
 

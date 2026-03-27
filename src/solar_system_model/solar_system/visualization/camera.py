@@ -132,7 +132,9 @@ class Camera:
         self.near = state.near
         self.far = state.far
 
-    def stereo_states(self, eye_separation: float = 0.4) -> tuple[CameraState, CameraState]:
+    def stereo_states(
+        self, eye_separation: float = 0.4
+    ) -> tuple[CameraState, CameraState]:
         """Generate left/right stereo eye offsets for VR-style rendering."""
 
         if not (eye_separation is not None):
@@ -180,7 +182,9 @@ class Camera:
 
         self.position = self.target + np.array([x, y, z])
 
-    def set_mode(self, mode: CameraMode, target_body: CelestialBody | None = None) -> None:
+    def set_mode(
+        self, mode: CameraMode, target_body: CelestialBody | None = None
+    ) -> None:
         """
         Change camera mode.
 
@@ -224,7 +228,9 @@ class Camera:
         self._elevation += delta_elevation * self.rotate_speed
 
         # Clamp elevation to prevent flipping
-        self._elevation = np.clip(self._elevation, -math.pi / 2 + 0.01, math.pi / 2 - 0.01)
+        self._elevation = np.clip(
+            self._elevation, -math.pi / 2 + 0.01, math.pi / 2 - 0.01
+        )
 
         self._update_position_from_angles()
 
@@ -241,7 +247,9 @@ class Camera:
         self._distance = np.clip(self._distance, self.min_distance, self.max_distance)
         self._update_position_from_angles()
 
-    def zoom_at(self, delta: float, mouse_ndc: tuple[float, float], aspect_ratio: float) -> None:
+    def zoom_at(
+        self, delta: float, mouse_ndc: tuple[float, float], aspect_ratio: float
+    ) -> None:
         """
         Zoom towards a specific point on the screen (mouse cursor).
 
@@ -380,9 +388,12 @@ class Camera:
             raise ValueError("julian_date must be provided")
         if self._animating:
             self.position = (
-                self.position + (self._target_position - self.position) * self.smooth_factor
+                self.position
+                + (self._target_position - self.position) * self.smooth_factor
             )
-            self.target = self.target + (self._target_target - self.target) * self.smooth_factor
+            self.target = (
+                self.target + (self._target_target - self.target) * self.smooth_factor
+            )
 
             if np.linalg.norm(self.position - self._target_position) < 0.01:
                 self._animating = False
@@ -399,14 +410,18 @@ class Camera:
             else:
                 forward = np.array([1, 0, 0])
 
-            camera_offset = -forward * self._distance + np.array([0, self._distance * 0.3, 0])
+            camera_offset = -forward * self._distance + np.array(
+                [0, self._distance * 0.3, 0]
+            )
 
             self._target_target = body_pos
             self._target_position = body_pos + camera_offset
 
             # Smooth follow
             self.target = self.target + (self._target_target - self.target) * 0.1
-            self.position = self.position + (self._target_position - self.position) * 0.1
+            self.position = (
+                self.position + (self._target_position - self.position) * 0.1
+            )
 
         elif self.mode == CameraMode.SPACECRAFT_FOLLOW and self.tracked_spacecraft:
             state = self.tracked_spacecraft.get_state_at_time(julian_date)
@@ -418,7 +433,9 @@ class Camera:
             else:
                 forward = np.array([1, 0, 0])
 
-            camera_offset = -forward * self._distance * 0.5 + np.array([0, self._distance * 0.2, 0])
+            camera_offset = -forward * self._distance * 0.5 + np.array(
+                [0, self._distance * 0.2, 0]
+            )
 
             self.target = spacecraft_pos
             self.position = spacecraft_pos + camera_offset
@@ -429,7 +446,9 @@ class Camera:
             earth_pos = state.position * scale
 
             # Position on Earth's surface (simplified)
-            surface_offset = np.array([0.0001, 0, 0])  # Small offset representing surface
+            surface_offset = np.array(
+                [0.0001, 0, 0]
+            )  # Small offset representing surface
 
             self.position = earth_pos + surface_offset
             self.target = earth_pos + np.array([0, 0, 1])  # Looking up

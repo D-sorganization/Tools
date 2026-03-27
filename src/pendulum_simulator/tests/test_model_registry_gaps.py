@@ -1,3 +1,5 @@
+from typing import Any
+
 """Gap-fill tests for model_registry.py — covers remaining uncovered lines.
 
 Line 78: Warning when overwriting existing model registration

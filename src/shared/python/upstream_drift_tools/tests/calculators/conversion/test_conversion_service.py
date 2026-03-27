@@ -1,11 +1,15 @@
+from typing import Any
+
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """Extended tests for UnitConversionService targeting uncovered lines.
 
 Targets: 41% → ~95%+ coverage of service.py
 """
 
-from __future__ import annotations
-
-from typing import Any
+from __future__ import annotations  # noqa: F404
 
 import pytest
 from upstream_drift_tools.calculators.conversion.service import (

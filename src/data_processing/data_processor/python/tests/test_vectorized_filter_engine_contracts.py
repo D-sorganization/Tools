@@ -1,3 +1,5 @@
+from typing import Any
+
 """TDD / DbC tests for VectorizedFilterEngine — issue #929.
 
 Tests cover:

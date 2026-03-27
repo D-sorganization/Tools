@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for the shared ODE integration core."""
 
 from __future__ import annotations

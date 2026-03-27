@@ -133,7 +133,9 @@ def test_calculate_dew_point_handles_errors(monkeypatch: pytest.MonkeyPatch) -> 
         "calculate_water_vapor_pressure",
         lambda *_args, **_kwargs: (_ for _ in ()).throw(ValueError("x")),
     )
-    result = engine.calculate_dew_point(partial_pressure_pa=1000.0, total_pressure_pa=1e5)
+    result = engine.calculate_dew_point(
+        partial_pressure_pa=1000.0, total_pressure_pa=1e5
+    )
     assert result == pytest.approx(DEFAULT_DEW_POINT_TEMPERATURE_CELSIUS)
 
 

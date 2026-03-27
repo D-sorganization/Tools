@@ -166,13 +166,15 @@ def get_themes_for_api() -> list[dict]:
     """
     data = load_themes()
     result = []
-    for theme_id, theme_def in data.get("themes", {}).items():
-        result.append(
+    result.extend(
+        [
             {
                 "id": theme_id,
                 "name": theme_def["name"],
                 "isDark": theme_def.get("isDark", False),
                 "category": theme_def.get("category", ""),
             }
-        )
+            for (theme_id, theme_def) in data.get("themes", {}).items()
+        ]
+    )
     return result

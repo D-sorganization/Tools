@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for pure-math upstream_drift_tools modules to reach 100% coverage.
 
 Targets (all stateless/pure-logic, no external dependencies):
@@ -8,10 +10,9 @@ Targets (all stateless/pure-logic, no external dependencies):
 - process_calculators.water_vapor_pressure_calculator
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import math
-from typing import Any
 
 import pytest
 

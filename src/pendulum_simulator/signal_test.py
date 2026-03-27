@@ -1,3 +1,8 @@
+from typing import Any
+import logging
+
+logger = logging.getLogger(__name__)
+
 #!/usr/bin/env python3
 """Minimal test to verify PyQt signals work."""
 
@@ -16,7 +21,7 @@ from PyQt6.QtCore import pyqtSignal
 class TestWindow(QMainWindow):
     run_requested = pyqtSignal()
 
-    def __init__(self) -> None:
+    def __init__(self):
         super().__init__()
         self.setWindowTitle("Signal Test")
         self.setGeometry(100, 100, 300, 200)
@@ -33,7 +38,10 @@ class TestWindow(QMainWindow):
         # Connect our own handler
         self.run_requested.connect(self.on_run)
 
-    def on_run(self) -> None:
+    def on_run(self) -> Any:
+        print("[TEST] Signal received!")  # noqa: T201
+    def on_run(self):
+        logger.info("[TEST] Signal received!")  # noqa: T201
         QMessageBox.information(self, "Success", "Signal was received!")
 
 

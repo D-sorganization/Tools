@@ -1,3 +1,5 @@
+from typing import Any
+
 """Extended C3D reader tests: malformed inputs, edge cases, analog edges (#1062).
 
 Design by Contract
@@ -9,10 +11,9 @@ Design by Contract
 - Analog-only files produce valid empty marker DataFrames
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from pathlib import Path
-from typing import Any
 from unittest.mock import patch
 
 import numpy as np

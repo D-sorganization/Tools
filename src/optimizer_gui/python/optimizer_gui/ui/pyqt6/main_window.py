@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -8,15 +10,15 @@
 A PyQt6 GUI for configuring and running Adam-based optimization.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import sys
-from dataclasses import dataclass
+import sys  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
 
-import numpy as np
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import (
+import numpy as np  # noqa: E402
+from PyQt6.QtCore import Qt  # noqa: E402
+from PyQt6.QtGui import QFont  # noqa: E402
+from PyQt6.QtWidgets import (  # noqa: E402
     QApplication,
     QCheckBox,
     QComboBox,
@@ -575,6 +577,7 @@ class OptimizerWindow(QMainWindow):
         else:
             self._run_surface_demo(params, method)
 
+    @jit(nopython=True, fastmath=True)
     def _run_adam_demo(self, params: list[ParameterConfig]) -> None:
         """Run Adam optimization demo."""
         if not (params is not None):
@@ -658,6 +661,7 @@ class OptimizerWindow(QMainWindow):
             obj = (values[0] - 1) ** 2
         return -obj if maximize else obj
 
+    @jit(nopython=True, fastmath=True)
     def _compute_numerical_gradient(
         self,
         values: np.ndarray,

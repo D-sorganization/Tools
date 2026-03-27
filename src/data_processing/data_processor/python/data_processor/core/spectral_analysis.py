@@ -21,6 +21,8 @@ Includes:
 
 from __future__ import annotations
 
+from numba import jit
+
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
@@ -543,6 +545,7 @@ class SpectralAnalyzer:
 
         return freqs, psd
 
+    @jit(nopython=True, fastmath=True)
     def _compute_multitaper(
         self,
         signal: np.ndarray,

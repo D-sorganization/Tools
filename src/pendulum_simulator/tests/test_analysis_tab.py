@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for AnalysisTab."""
 
 from typing import Any

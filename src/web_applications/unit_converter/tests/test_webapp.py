@@ -1,13 +1,14 @@
-"""Tests for the Unit Converter Flask web application."""
-
-from __future__ import annotations
-
-import json
 from typing import Any
 
-import pytest
+"""Tests for the Unit Converter Flask web application."""
 
-from web_applications.unit_converter.webapp import create_app
+from __future__ import annotations  # noqa: E402, F404
+
+import json  # noqa: E402
+
+import pytest  # noqa: E402
+
+from web_applications.unit_converter.webapp import create_app  # noqa: E402
 
 
 @pytest.fixture

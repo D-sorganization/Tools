@@ -82,7 +82,9 @@ def validate_file_extension(
         allowed_extensions = [e.lower() for e in allowed_extensions]
 
     # Normalize extensions (add dot if missing)
-    normalized_allowed = [e if e.startswith(".") else f".{e}" for e in allowed_extensions]
+    normalized_allowed = [
+        e if e.startswith(".") else f".{e}" for e in allowed_extensions
+    ]
 
     if ext not in normalized_allowed:
         return (
@@ -118,7 +120,11 @@ def validate_python_version(
     if (
         version.major < min_major
         or (version.major == min_major and version.minor < min_minor)
-        or (version.major == min_major and version.minor == min_minor and version.micro < min_micro)
+        or (
+            version.major == min_major
+            and version.minor == min_minor
+            and version.micro < min_micro
+        )
     ):
         required = f"{min_major}.{min_minor}.{min_micro}"
         return False, f"Python {required}+ required, found {version_str}"

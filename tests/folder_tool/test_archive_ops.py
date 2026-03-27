@@ -40,7 +40,9 @@ class TestArchiveOperationsMixin:
         archive_path = tmp_path / "test.zip"
         archive_path.write_text("dummy archive")
 
-        with patch.object(app, "_validate_archive_input", return_value=(archive_path, 100)):
+        with patch.object(
+            app, "_validate_archive_input", return_value=(archive_path, 100)
+        ):
             with patch.object(app, "_prepare_extraction_directory"):
                 with patch("folder_tool.archive_ops.shutil.unpack_archive"):
                     with patch.object(app, "_cleanup_original_archive"):
@@ -53,7 +55,9 @@ class TestArchiveOperationsMixin:
         archive_path = tmp_path / "test.zip"
         archive_path.write_text("dummy archive")
 
-        with patch.object(app, "_validate_archive_input", return_value=(archive_path, 100)):
+        with patch.object(
+            app, "_validate_archive_input", return_value=(archive_path, 100)
+        ):
             with patch.object(app, "_prepare_extraction_directory"):
                 with patch("folder_tool.archive_ops.shutil.unpack_archive"):
                     with patch.object(app, "_validate_extraction_result"):
@@ -65,7 +69,9 @@ class TestArchiveOperationsMixin:
         archive_path = tmp_path / "test.zip"
         archive_path.write_text("a")
 
-        with patch.object(app, "_validate_archive_input", return_value=(archive_path, 100)):
+        with patch.object(
+            app, "_validate_archive_input", return_value=(archive_path, 100)
+        ):
             with patch.object(
                 app, "_prepare_extraction_directory", side_effect=OSError("dir error")
             ):
@@ -125,14 +131,18 @@ class TestArchiveOperationsMixin:
         with patch.object(
             Path, "exists", side_effect=[False, False]
         ):  # first for mkdir exist_ok, 2nd for check
-            with pytest.raises(Exception, match="Failed to create extraction directory"):
+            with pytest.raises(
+                Exception, match="Failed to create extraction directory"
+            ):
                 app._prepare_extraction_directory(str(extract_dir), extract_dir)
 
     def test_prepare_extraction_directory_unwritable(self, app, tmp_path):
         extract_dir = tmp_path / "extract"
         extract_dir.mkdir()
         with patch("os.access", return_value=False):
-            with pytest.raises(PermissionError, match="Cannot write to extraction directory"):
+            with pytest.raises(
+                PermissionError, match="Cannot write to extraction directory"
+            ):
                 app._prepare_extraction_directory(str(extract_dir), extract_dir)
 
     def test_validate_extraction_result_no_dir(self, app, tmp_path):
@@ -238,4 +248,6 @@ class TestArchiveOperationsMixin:
 
         with patch.object(Path, "exists", side_effect=mock_exists, autospec=True):
             res = app._bulk_unzip_enhanced()
-            assert "Processed 1 archive(s). Successfully extracted: 0, Failed: 0" in res[0]
+            assert (
+                "Processed 1 archive(s). Successfully extracted: 0, Failed: 0" in res[0]
+            )

@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -25,12 +27,12 @@ Key Features:
 - Comprehensive packing property database
 """
 
-from dataclasses import dataclass
-from typing import Final
+from dataclasses import dataclass  # noqa: E402
+from typing import Final  # noqa: E402
 
-import numpy as np
+import numpy as np  # noqa: E402
 
-from .constants import (
+from .constants import (  # noqa: E402
     COOLING_WATER_APPROACH_TEMP,
     CP_WATER_LIQUID,
     DENSITY_WATER_STD,
@@ -548,6 +550,7 @@ def calculate_required_packed_height(
     return ntu * htu * safety_factor
 
 
+@jit(nopython=True, fastmath=True)
 def calculate_caustic_requirement(
     acid_gas_removed: dict[str, float],
     caustic_concentration: float,

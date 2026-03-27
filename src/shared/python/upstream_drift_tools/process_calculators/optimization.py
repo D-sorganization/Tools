@@ -202,7 +202,8 @@ def _evaluate_and_record(
         composition, state = {}, {}
 
     if np.isfinite(objective) and (
-        (maximize and objective > st.best_output) or (not maximize and objective < st.best_output)
+        (maximize and objective > st.best_output)
+        or (not maximize and objective < st.best_output)
     ):
         st.best_output = objective
         st.best_parameters = overrides.copy()
@@ -532,7 +533,9 @@ def _run_differential_evolution(objective: Any, bounds: Any, callback: Any) -> d
 
     from scipy.optimize import differential_evolution  # lazy import
 
-    res = differential_evolution(tracked_obj, bounds, maxiter=50, popsize=10, atol=0.01, tol=0.01)
+    res = differential_evolution(
+        tracked_obj, bounds, maxiter=50, popsize=10, atol=0.01, tol=0.01
+    )
 
     return {
         "success": res.success,

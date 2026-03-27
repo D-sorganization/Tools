@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for counterfactual_golfer module.
 
 TDD: Tests verify zero-torque counterfactual for the golfer model.

@@ -72,7 +72,9 @@ class PIDDocument:
         return cls(spec, profile=profile)
 
     @classmethod
-    def from_partial(cls, spec_data: SpecDict, profile: str | None = None) -> PIDDocument | None:
+    def from_partial(
+        cls, spec_data: SpecDict, profile: str | None = None
+    ) -> PIDDocument | None:
         """Try to build from a potentially incomplete spec.
 
         Returns None if the spec has fatal errors; otherwise returns
@@ -105,7 +107,9 @@ class PIDDocument:
 
     @property
     def instrument_ids(self) -> list[str]:
-        return [ins.get("id", "") for ins in self._accessor.instruments if ins.get("id")]
+        return [
+            ins.get("id", "") for ins in self._accessor.instruments if ins.get("id")
+        ]
 
     @property
     def stream_ids(self) -> list[str]:
@@ -145,8 +149,12 @@ class PIDDocument:
             return BBox(0.0, 0.0, 240.0, 160.0)
         x_min = min(to_float(eq.get("x", 0.0)) for eq in equipment)
         y_min = min(to_float(eq.get("y", 0.0)) for eq in equipment)
-        x_max = max(to_float(eq.get("x", 0.0)) + equipment_dims(eq)[0] for eq in equipment)
-        y_max = max(to_float(eq.get("y", 0.0)) + equipment_dims(eq)[1] for eq in equipment)
+        x_max = max(
+            to_float(eq.get("x", 0.0)) + equipment_dims(eq)[0] for eq in equipment
+        )
+        y_max = max(
+            to_float(eq.get("y", 0.0)) + equipment_dims(eq)[1] for eq in equipment
+        )
         return BBox(x_min, y_min, x_max, y_max)
 
     def find_free_region(self, width: float, height: float) -> BBox | None:

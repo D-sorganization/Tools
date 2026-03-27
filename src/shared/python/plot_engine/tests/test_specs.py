@@ -1,13 +1,14 @@
+from typing import Any
+
 """TDD tests for PlotSpec Pydantic contract hierarchy.
 
 Tests serialization roundtrips, field validation, defaults,
 and JSON schema generation for all spec types.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import json
-from typing import Any
 
 import pytest
 from plot_engine.specs import (

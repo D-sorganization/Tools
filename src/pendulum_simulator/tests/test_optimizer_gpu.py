@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for GPU-accelerated torque profile optimization.
 
 Verifies gradient correctness and convergence behavior.

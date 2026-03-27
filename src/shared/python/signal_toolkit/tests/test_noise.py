@@ -1,12 +1,12 @@
+from typing import Any
+
 """Comprehensive tests for signal_toolkit.noise module.
 
 Covers NoiseGenerator, add_noise_to_signal, generate_disturbance_profile,
 and DisturbanceSimulator to achieve 100% coverage of the pure-python code.
 """
 
-from __future__ import annotations
-
-from typing import Any
+from __future__ import annotations  # noqa: F404
 
 import numpy as np
 import pytest

@@ -1,3 +1,5 @@
+from typing import Any
+
 """Parity tests between JAX and numpy golfer physics implementations.
 
 Ensures that the JAX implementations produce results consistent with the

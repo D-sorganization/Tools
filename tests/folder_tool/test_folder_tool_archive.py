@@ -37,7 +37,9 @@ class TestArchiveMixin:
 
     def test_validate_dest_folder_not_exist(self, app, tmp_path):
         app.dest_folder = str(tmp_path / "nonexistent")
-        with pytest.raises(FileNotFoundError, match="Destination folder does not exist"):
+        with pytest.raises(
+            FileNotFoundError, match="Destination folder does not exist"
+        ):
             app._validate_dest_folder()
 
     def test_validate_dest_folder_not_dir(self, app, tmp_path):
@@ -55,13 +57,17 @@ class TestArchiveMixin:
 
     def test_validate_dest_folder_empty_dir(self, app, tmp_path):
         app.dest_folder = str(tmp_path)
-        with pytest.raises(ValueError, match="Destination folder is empty - nothing to archive"):
+        with pytest.raises(
+            ValueError, match="Destination folder is empty - nothing to archive"
+        ):
             app._validate_dest_folder()
 
     def test_validate_dest_folder_iterdir_permission(self, app, tmp_path):
         app.dest_folder = str(tmp_path)
         with patch.object(Path, "iterdir", side_effect=PermissionError("denied")):
-            with pytest.raises(PermissionError, match="Cannot access destination folder contents"):
+            with pytest.raises(
+                PermissionError, match="Cannot access destination folder contents"
+            ):
                 app._validate_dest_folder()
 
     def test_validate_dest_folder_success(self, app, tmp_path):
@@ -156,7 +162,9 @@ class TestArchiveMixin:
         zipf.write.side_effect = mock_write
 
         with patch.object(app, "update_progress") as mock_update:
-            processed, size, failed = app._add_files_to_zip(zipf, MAX_UI_UPDATE_FREQUENCY + 1)
+            processed, size, failed = app._add_files_to_zip(
+                zipf, MAX_UI_UPDATE_FREQUENCY + 1
+            )
             assert processed == MAX_UI_UPDATE_FREQUENCY
             assert failed == 1
             mock_update.assert_called()
@@ -243,7 +251,9 @@ class TestArchiveMixin:
         def mock_stat(self_path, **kwargs):
             if "processed_files" in str(self_path.name):
                 stat_calls[0] += 1
-                if stat_calls[0] > 2:  # 1st exists() check, 2nd exists() check, 3rd is stat()
+                if (
+                    stat_calls[0] > 2
+                ):  # 1st exists() check, 2nd exists() check, 3rd is stat()
                     raise OSError("stat error")
             return original_stat(self_path, **kwargs)
 
@@ -276,7 +286,9 @@ class TestArchiveMixin:
 
         # Mock a successful counting, then an error in addition
         with patch.object(app, "_count_zip_contents", return_value=(1, 3)):
-            with patch.object(app, "_add_files_to_zip", side_effect=OSError("count error")):
+            with patch.object(
+                app, "_add_files_to_zip", side_effect=OSError("count error")
+            ):
                 original_exists = Path.exists
 
                 def mock_exists(self_path, *args, **kwargs):
@@ -285,8 +297,12 @@ class TestArchiveMixin:
                     # Let other paths fallback
                     return original_exists(self_path, *args, **kwargs)
 
-                with patch.object(Path, "exists", side_effect=mock_exists, autospec=True):
-                    with patch.object(Path, "unlink", side_effect=OSError("unlink error")):
+                with patch.object(
+                    Path, "exists", side_effect=mock_exists, autospec=True
+                ):
+                    with patch.object(
+                        Path, "unlink", side_effect=OSError("unlink error")
+                    ):
                         with pytest.raises(
                             Exception, match="Failed to create ZIP archive: count error"
                         ):
@@ -301,7 +317,9 @@ class TestArchiveMixin:
         def mock_unlink(*args, **kwargs):
             pass
 
-        with patch.object(app, "_count_zip_contents", side_effect=(OSError("count error"))):
+        with patch.object(
+            app, "_count_zip_contents", side_effect=(OSError("count error"))
+        ):
             original_exists = Path.exists
 
             def mock_exists(self_path, *args, **kwargs):
@@ -323,5 +341,7 @@ class TestArchiveMixin:
         # Make the division operation fail since it is caught in the try block
         # zip_path = dest_path_obj.parent / zip_filename
         with patch.object(Path, "__truediv__", side_effect=TypeError("bad div")):
-            with pytest.raises(ValueError, match="Cannot determine ZIP location: bad div"):
+            with pytest.raises(
+                ValueError, match="Cannot determine ZIP location: bad div"
+            ):
                 app.create_output_zip()

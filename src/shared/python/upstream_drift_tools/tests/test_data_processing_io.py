@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for data_processing.io - DataReader, DataWriter, FileFormatDetector.
 
 Covers all supported formats using tempfiles:
@@ -6,12 +8,11 @@ Covers all supported formats using tempfiles:
 - Error paths: unsupported format, parquet/matlab dependency checks
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import sqlite3
 import tempfile
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 import pandas as pd

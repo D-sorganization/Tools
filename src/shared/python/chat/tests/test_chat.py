@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for the chat module.
 
 Covers:
@@ -11,10 +13,9 @@ Note: PyQt6 widget tests use the qtbot fixture from pytest-qt where
 available; pure function tests need no Qt at all.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from pathlib import Path
-from typing import Any
 from unittest.mock import patch
 
 import pytest

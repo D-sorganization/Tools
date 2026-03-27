@@ -88,7 +88,9 @@ class DialogsMixin:
         ttk.Button(button_frame, text="Reset", command=reset_patterns).pack(
             side="left", padx=(0, PADDING_SMALL)
         )
-        ttk.Button(button_frame, text="Close", command=dialog.destroy).pack(side="right")
+        ttk.Button(button_frame, text="Close", command=dialog.destroy).pack(
+            side="right"
+        )
 
     def _show_about(self) -> None:
         """Show about dialog."""

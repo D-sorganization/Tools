@@ -6,6 +6,8 @@
 
 from __future__ import annotations
 
+from numba import jit
+
 import logging
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -186,6 +188,7 @@ class ProcessingThread(QThread):
         )
         return pdf_files
 
+    @jit(nopython=True, fastmath=True)
     def _process_pdf_files(self, pdf_files: list[Path]) -> None:
         """Process PDF files in parallel using ThreadPoolExecutor."""
         if not (pdf_files is not None):

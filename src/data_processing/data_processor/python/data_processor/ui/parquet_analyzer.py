@@ -59,7 +59,9 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
         self.results_text.pack(fill="both", expand=True, padx=10, pady=(0, 10))
 
         # Close button
-        close_btn = ctk.CTkButton(main_frame, text="Close", command=self.destroy, height=35)
+        close_btn = ctk.CTkButton(
+            main_frame, text="Close", command=self.destroy, height=35
+        )
         close_btn.pack(pady=(0, 10))
 
     def select_file(self) -> None:
@@ -103,8 +105,7 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
             ]
 
             schema = parquet_file.schema_arrow
-            for field in schema:
-                result_lines.append(f"{field.name}: {field.type}")
+            result_lines.extend([f"{field.name}: {field.type}" for field in schema])
 
             result_lines.append("")
             result_lines.append("=== Row Group Details ===")

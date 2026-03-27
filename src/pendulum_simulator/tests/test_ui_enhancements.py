@@ -1,3 +1,5 @@
+from numba import jit
+
 """Tests for pendulum simulator UI enhancements (PR #1114).
 
 Covers issues #1097, #1100-#1102, #1103, #1104, #1108-#1110, #1111, #1113.
@@ -124,6 +126,8 @@ class TestReversedHubStandoff:
         assert pos["hub"][0] < 0, "Hub should be on left side at π/2"
         assert abs(pos["hub"][1]) < 1e-10
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def test_analytical_jacobians_match_numerical(self, golfer_params: GolferParams) -> None:
         """Analytical Jacobians must match numerical finite-diff after hub reversal."""
         rng = np.random.default_rng(42)
@@ -142,10 +146,13 @@ class TestReversedHubStandoff:
                 J_hub_num[0, j] = (fkp["hub"][0] - fk0["hub"][0]) / eps
                 J_hub_num[1, j] = (fkp["hub"][1] - fk0["hub"][1]) / eps
 
-            assert np.allclose(jacs["hub"], J_hub_num, atol=1e-4), (
-                f"Hub Jacobian mismatch:\nAnalytical:\n{jacs['hub']}\nNumerical:\n{J_hub_num}"
-            )
+            assert np.allclose(
+                jacs["hub"], J_hub_num, atol=1e-4
+            ), f"Hub Jacobian mismatch:\nAnalytical:\n{jacs['hub']}\nNumerical:\n{J_hub_num}"
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def test_all_analytical_jacobians_match_numerical(
         self, golfer_params: GolferParams
     ) -> None:
@@ -246,9 +253,9 @@ class TestScapulaJointParameters:
         # Scapula position should be at the original shoulder bar endpoint
         rscap = np.array(pos_scap["rscap"])
         rs_orig = np.array(pos_no["rs"])
-        assert np.allclose(rscap, rs_orig, atol=1e-10), (
-            "Scapula joint should be at original shoulder bar endpoint"
-        )
+        assert np.allclose(
+            rscap, rs_orig, atol=1e-10
+        ), "Scapula joint should be at original shoulder bar endpoint"
 
     def test_mass_matrix_still_valid_with_scapula(
         self,
@@ -303,9 +310,9 @@ class TestSwingPlaneTilt:
         V_tilted = potential_energy_from_q(q, params_tilted)
 
         # PE should be smaller with reduced gravity
-        assert abs(V_tilted) < abs(V_full), (
-            f"Tilted PE ({V_tilted}) should be smaller than full ({V_full})"
-        )
+        assert abs(V_tilted) < abs(
+            V_full
+        ), f"Tilted PE ({V_tilted}) should be smaller than full ({V_full})"
 
 
 # ---------------------------------------------------------------------------
@@ -316,6 +323,7 @@ class TestSwingPlaneTilt:
 class TestAdaptiveStepInterpolation:
     """Frame advance logic must handle fractional accumulation correctly."""
 
+    @jit(nopython=True, fastmath=True)
     def test_fractional_advance_basic(self) -> None:
         """Fractional accumulator should not lose sub-frame position."""
         frac = 0.0
@@ -332,6 +340,7 @@ class TestAdaptiveStepInterpolation:
         # After 10 ticks at 1.5 frames/tick = 15 frames total
         assert idx == 15
 
+    @jit(nopython=True, fastmath=True)
     def test_fractional_advance_no_frames_lost(self) -> None:
         """Even with non-integer speeds, total frames should be accurate."""
         frac = 0.0
@@ -350,6 +359,7 @@ class TestAdaptiveStepInterpolation:
         # Total advance should be close to 100 * 3.7 = 370
         assert 369 <= total_advance <= 371
 
+    @jit(nopython=True, fastmath=True)
     def test_fractional_advance_handles_speed_one(self) -> None:
         """At speed 1.0, should advance exactly 1 frame per tick."""
         frac = 0.0

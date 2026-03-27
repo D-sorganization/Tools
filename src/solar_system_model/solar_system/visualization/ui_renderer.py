@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -10,11 +12,11 @@ Handles all 2D user interface rendering for the solar system visualization.
 Separates UI logic from the main 3D renderer.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import math
-from dataclasses import dataclass
-from typing import Any
+import math  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
+from typing import Any  # noqa: E402
 
 try:
     import pygame
@@ -274,6 +276,7 @@ class UIRenderer:
         self.text_cache.render(text, 10, y, "default", (200, 200, 200))
         self.end_2d()
 
+    @jit(nopython=True, fastmath=True)
     def render_help_overlay(self, help_data: dict[str, Any]) -> None:
         """Render the help overlay with controls list."""
         if not (help_data is not None):
@@ -358,6 +361,7 @@ class UIRenderer:
         )
         self.end_2d()
 
+    @jit(nopython=True, fastmath=True)
     def render_sidebar(
         self, sidebar_data: dict[str, Any], content_data: dict[str, Any] | None
     ) -> None:
@@ -427,6 +431,7 @@ class UIRenderer:
             elif content_key == "missions":
                 self.render_mission_list(content_data)
 
+    @jit(nopython=True, fastmath=True)
     def render_mission_list(self, data: dict[str, Any]) -> None:
         """Render the list of famous space missions."""
         if not (data is not None):
@@ -566,6 +571,7 @@ class UIRenderer:
 
         self.end_2d()
 
+    @jit(nopython=True, fastmath=True)
     def render_historical_events(self, events_data: dict[str, Any]) -> None:
         """Render list of historical events."""
         if not (events_data is not None):
@@ -602,6 +608,7 @@ class UIRenderer:
 
         self.end_2d()
 
+    @jit(nopython=True, fastmath=True)
     def render_immersion_checklist(self, checklist_data: dict[str, Any]) -> None:
         """Render the immersion checklist."""
         if not (checklist_data is not None):
@@ -639,6 +646,8 @@ class UIRenderer:
 
         self.end_2d()
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def render_unified_controls(
         self, ctrl_data: dict[str, Any], time_data: dict[str, Any]
     ) -> None:
@@ -779,6 +788,7 @@ class UIRenderer:
 
         self.end_2d()
 
+    @jit(nopython=True, fastmath=True)
     def render_compass(self, camera_yaw: float) -> None:
         """Render a small N compass."""
         if not (camera_yaw is not None):

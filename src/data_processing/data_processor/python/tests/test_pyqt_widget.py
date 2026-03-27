@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for the PyQt6 DataProcessorWidget."""
 
 import sys

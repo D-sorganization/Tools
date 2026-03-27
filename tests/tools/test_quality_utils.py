@@ -58,7 +58,9 @@ def test_tkinter_keyrelease_recognized():
 
 
 def test_tkinter_configure_recognized():
-    assert is_legitimate_tkinter_binding('widget.bind("<Configure>", on_resize)') is True
+    assert (
+        is_legitimate_tkinter_binding('widget.bind("<Configure>", on_resize)') is True
+    )
 
 
 def test_non_tkinter_line_not_legitimate():

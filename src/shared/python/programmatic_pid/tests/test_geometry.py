@@ -1,12 +1,12 @@
+from typing import Any
+
 """Comprehensive tests for programmatic_pid.geometry module.
 
 Tests to_float, clamp, closest_point_on_rect, rects_overlap, text_box,
 distance, dedupe_points, find_free_region.
 """
 
-from __future__ import annotations
-
-from typing import Any
+from __future__ import annotations  # noqa: F404
 
 import pytest
 from programmatic_pid.geometry import (

@@ -1,11 +1,11 @@
+from typing import Any
+
 """Tests for baghouse_calculator.py — BaghouseCalculator.
 
 Targets: 32% → 100% coverage.
 """
 
-from __future__ import annotations
-
-from typing import Any
+from __future__ import annotations  # noqa: F404
 
 import pytest
 from upstream_drift_tools.process_calculators.baghouse_calculator import (

@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for signal processing core functionality.
 
 Tests follow TDD principles - written before implementation.

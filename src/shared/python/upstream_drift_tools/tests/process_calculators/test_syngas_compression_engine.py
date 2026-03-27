@@ -1,11 +1,12 @@
+from typing import Any
+
 """Tests for syngas_compression_calculator.py — SyngasCompressionEngine.
 
 Targets: 15% → ~60%+ coverage (excludes Qt UI widget, only tests pure engine).
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
-from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest

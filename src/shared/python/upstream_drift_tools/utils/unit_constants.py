@@ -265,7 +265,9 @@ POUND_PER_HOUR_TO_KG_PER_SECOND: Final[float] = POUND_TO_KILOGRAM / 3600.0
 # Volumetric flow for SCFM (Standard Cubic Feet per Minute)
 # 1 ft³ = 0.028316846592 m³, at standard conditions
 # Note: SCFM requires specifying which standard conditions are being used
-SCFM_TO_CU_METER_PER_HOUR_AT_60F: Final[float] = CU_FOOT_TO_CU_METER * 60.0  # 1.699010795
+SCFM_TO_CU_METER_PER_HOUR_AT_60F: Final[float] = (
+    CU_FOOT_TO_CU_METER * 60.0
+)  # 1.699010795
 
 # =============================================================================
 # DENSITY CONVERSIONS (all to kg/m³)

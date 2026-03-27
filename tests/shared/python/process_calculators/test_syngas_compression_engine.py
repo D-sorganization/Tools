@@ -56,7 +56,9 @@ class TestCompressionWork:
         result = engine.calculate_compression_work(isentropic_stage, 100.0, mixture)
         assert result["work_actual"] > 0
 
-    def test_isothermal_outlet_temp_constant(self, engine: SyngasCompressionEngine) -> None:
+    def test_isothermal_outlet_temp_constant(
+        self, engine: SyngasCompressionEngine
+    ) -> None:
         """Isothermal compression means outlet temp equals inlet."""
         stage = CompressionStage(
             inlet_pressure=1.0,
@@ -82,7 +84,9 @@ class TestCompressionWork:
         result = engine.calculate_compression_work(stage, 100.0, mixture)
         assert result["work_actual"] > 0
 
-    def test_unknown_compression_type_raises(self, engine: SyngasCompressionEngine) -> None:
+    def test_unknown_compression_type_raises(
+        self, engine: SyngasCompressionEngine
+    ) -> None:
         """Requesting an undefined compression type must raise ValueError."""
         stage = CompressionStage(
             inlet_pressure=1.0,
@@ -121,7 +125,9 @@ class TestCompressionWork:
 class TestWaterDropout:
     """Tests for water dropout / condensation calculations."""
 
-    def test_no_water_at_low_partial_pressure(self, engine: SyngasCompressionEngine) -> None:
+    def test_no_water_at_low_partial_pressure(
+        self, engine: SyngasCompressionEngine
+    ) -> None:
         """Very low water content at atmospheric pressure should not condense."""
         result = engine.calculate_water_dropout(
             temperature=350.0,  # 77°C
@@ -131,7 +137,9 @@ class TestWaterDropout:
         assert result["water_dropout"] == pytest.approx(0.0, abs=1e-6)
         assert result["condensation_rate"] == pytest.approx(0.0, abs=1e-6)
 
-    def test_water_condenses_at_high_saturation(self, engine: SyngasCompressionEngine) -> None:
+    def test_water_condenses_at_high_saturation(
+        self, engine: SyngasCompressionEngine
+    ) -> None:
         """High water content at elevated pressure should trigger dropout."""
         result = engine.calculate_water_dropout(
             temperature=353.15,  # 80°C
@@ -168,7 +176,9 @@ class TestMultistageCompression:
                 compression_type="isentropic",
             )
         ]
-        result = engine.calculate_multistage_compression(stages, 500.0, syngas_composition)
+        result = engine.calculate_multistage_compression(
+            stages, 500.0, syngas_composition
+        )
         assert "stages" in result
         assert len(result["stages"]) == 1
         assert "total_power_hp" in result
@@ -185,8 +195,12 @@ class TestMultistageCompression:
             CompressionStage(1.0, 5.0, 380.0, 0.85, "isentropic"),
             CompressionStage(5.0, 25.0, 380.0, 0.85, "isentropic"),
         ]
-        r1 = engine.calculate_multistage_compression(single_stage, 100.0, syngas_composition)
-        r2 = engine.calculate_multistage_compression(two_stages, 100.0, syngas_composition)
+        r1 = engine.calculate_multistage_compression(
+            single_stage, 100.0, syngas_composition
+        )
+        r2 = engine.calculate_multistage_compression(
+            two_stages, 100.0, syngas_composition
+        )
         # Both compute positive power
         assert r1["total_power_hp"] > 0
         assert r2["total_power_hp"] > 0
@@ -228,6 +242,8 @@ class TestProcessConditionAnalysis:
         """Very high outlet temp should populate concerns list."""
         # Single-stage from 1 to 500 bar starting at 380K will generate extreme heat
         stages = [CompressionStage(1.0, 500.0, 380.0, 0.85, "isentropic")]
-        result = engine.calculate_multistage_compression(stages, 100.0, syngas_composition)
+        result = engine.calculate_multistage_compression(
+            stages, 100.0, syngas_composition
+        )
         analysis = engine.analyze_process_conditions(result)
         assert len(analysis["concerns"]) > 0 or len(analysis["warnings"]) > 0

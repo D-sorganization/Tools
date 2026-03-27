@@ -87,7 +87,9 @@ def compute_twist_frame_conversion(transform: Any, twist: Any) -> ReferenceFrame
     )
 
 
-def compute_homogeneous_transform(rotation_matrix: Any, translation: Any) -> ReferenceFrameResult:
+def compute_homogeneous_transform(
+    rotation_matrix: Any, translation: Any
+) -> ReferenceFrameResult:
     """Build and invert a homogeneous transform from (R, p)."""
     rotation = Rotation.from_rotation_matrix(rotation_matrix)
     rot = rotation.as_rotation_matrix()

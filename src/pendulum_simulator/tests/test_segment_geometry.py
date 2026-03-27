@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Tests for segment_geometry module — 3D segment rendering geometry.
 

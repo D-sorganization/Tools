@@ -1,15 +1,16 @@
+from typing import Any
+
 """Tests for Function Generator GUI.
 
 Tests the PyQt6 GUI launcher and its integration with the SignalGenerator engine.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import importlib.util
 import os
 import sys
 from pathlib import Path
-from typing import Any
 from unittest.mock import patch
 
 import numpy as np

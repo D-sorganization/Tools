@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for GolferPendulumWidget."""
 
 from typing import Any

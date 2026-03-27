@@ -18,6 +18,8 @@ Following TDD principles with comprehensive edge case coverage.
 
 from __future__ import annotations
 
+from numba import jit
+
 from pathlib import Path
 
 import numpy as np
@@ -437,6 +439,9 @@ class TestANOVA:
         # Should have 3 pairwise comparisons (3 choose 2)
         assert len(result.post_hoc_results) == 3
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def test_two_way_anova(self) -> None:
         """Test two-way ANOVA."""
         from data_processor.core.anova import ANOVAAnalyzer

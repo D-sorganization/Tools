@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Tests for perturbation_analysis module — Monte Carlo consistency analysis.
 
@@ -12,8 +14,6 @@ Covers:
 """
 
 from __future__ import annotations
-
-from typing import Any
 
 import numpy as np
 import pytest
@@ -130,6 +130,12 @@ class TestPerturbationConfig:
 
     def test_invalid_amplitude(self) -> Any:
         with pytest.raises(AssertionError):
+    def test_invalid_n_trials(self):
+        with pytest.raises((ValueError, TypeError)):
+            PerturbationConfig(n_trials=0)
+
+    def test_invalid_amplitude(self):
+        with pytest.raises((ValueError, TypeError)):
             PerturbationConfig(noise_amplitude=-0.1)
 
 

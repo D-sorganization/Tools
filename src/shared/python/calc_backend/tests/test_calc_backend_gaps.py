@@ -1,3 +1,5 @@
+from typing import Any
+
 """Targeted coverage tests for remaining calc_backend gaps.
 
 Covers first-party code only:
@@ -16,9 +18,8 @@ wraps the deprecated `rotation_converter` package (an external dependency).
 The model validators in *contracts* are pure first-party logic and safe to test.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
-from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest

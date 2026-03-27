@@ -23,7 +23,9 @@ class TestCalculator(unittest.TestCase):
 
     def test_simplify(self) -> None:
         """Test algebraic simplification."""
-        self.assertEqual(str(self.calculator.simplify_expression("2 * x + 3 * x").result), "5*x")
+        self.assertEqual(
+            str(self.calculator.simplify_expression("2 * x + 3 * x").result), "5*x"
+        )
 
     def test_solve_equation(self) -> None:
         """Test solving equations."""

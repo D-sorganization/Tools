@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Tests for club_forces module — net force & equivalent couple on the club.
 

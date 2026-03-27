@@ -1,3 +1,5 @@
+from typing import Any
+
 """TDD tests for matplotlib renderer.
 
 Tests that each plot type produces valid Figure objects with
@@ -5,9 +7,7 @@ correct structure, series rendering, trendline annotations,
 and theme integration.
 """
 
-from __future__ import annotations
-
-from typing import Any
+from __future__ import annotations  # noqa: F404
 
 import matplotlib
 

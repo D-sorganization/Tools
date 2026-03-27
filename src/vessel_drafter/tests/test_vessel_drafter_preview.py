@@ -36,7 +36,9 @@ def test_plan_preview_has_three_radial_electrodes() -> None:
     preview = build_plan_preview(DEFAULT_VESSEL_DRAFTER_LAYOUT)
 
     assert preview.outer_radius_in == pytest.approx(37.0)
-    assert [item.angle_degrees for item in preview.electrodes] == pytest.approx([0.0, 120.0, 240.0])
+    assert [item.angle_degrees for item in preview.electrodes] == pytest.approx(
+        [0.0, 120.0, 240.0]
+    )
     assert preview.electrodes[0].outer_tip_radius_in == pytest.approx(61.0)
     assert preview.electrodes[0].diameter_in == pytest.approx(2.0)
 
@@ -63,7 +65,9 @@ def test_preview_includes_side_and_lid_ports() -> None:
     plan = build_plan_preview(layout)
 
     assert len(cross_section.projected_side_ports) == 1
-    assert cross_section.projected_side_ports[0].centerline_height_in == pytest.approx(20.0)
+    assert cross_section.projected_side_ports[0].centerline_height_in == pytest.approx(
+        20.0
+    )
     assert len(plan.side_ports) == 1
     assert len(plan.lid_ports) == 1
     assert plan.lid_ports[0].diameter_in == pytest.approx(4.0)

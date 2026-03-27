@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for launcher_factory.py.
 
 Covers:
@@ -10,9 +12,8 @@ Covers:
 - launch_app: happy path (mocked QApplication + window)
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
-from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest

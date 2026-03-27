@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for torque history and preview widgets."""
 
 from typing import Any

@@ -757,7 +757,8 @@ class TI89Calculator:
             "factorial": TI89Calculator._safe_factorial,
             "nCr": sp.binomial,
             "nPr": lambda n, r, **k: (
-                TI89Calculator._safe_factorial(n) / TI89Calculator._safe_factorial(n - r)
+                TI89Calculator._safe_factorial(n)
+                / TI89Calculator._safe_factorial(n - r)
             ),
             "sum": sp.summation,
             "product": sp.product,

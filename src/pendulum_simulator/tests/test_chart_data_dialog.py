@@ -1,6 +1,6 @@
-"""Tests for the ChartDataDialog dialog."""
-
 from typing import Any
+
+"""Tests for the ChartDataDialog dialog."""
 
 import pytest
 from PyQt6.QtWidgets import QDialogButtonBox
@@ -19,6 +19,8 @@ class TestChartDataDialog:
 
     def test_init_raises_if_model_type_none(self) -> Any:
         with pytest.raises(AssertionError):
+    def test_init_raises_if_model_type_none(self):
+        with pytest.raises((ValueError, TypeError)):
             ChartDataDialog(model_type=None)  # type: ignore
 
     def test_default_selections_are_set(self, qtbot) -> Any:

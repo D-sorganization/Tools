@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for BasePendulumWidget."""
 
 from typing import Any
@@ -226,8 +228,7 @@ def test_draw_trail(qapp) -> Any:
     w._draw_trail(painter)  # < 4
 
     w._trail.clear()
-    for i in range(10):
-        w._trail.append((float(i), float(i)))
+    w._trail.extend([(float(i), float(i)) for i in range(10)])
     w._draw_trail(painter)  # >= 4
 
 

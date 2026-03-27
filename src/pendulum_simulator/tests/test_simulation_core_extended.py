@@ -1,3 +1,5 @@
+from typing import Any
+
 """Extended tests for simulation_core.py — covering remaining code paths.
 
 Adds tests for:

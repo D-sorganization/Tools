@@ -1,3 +1,5 @@
+from numba import jit
+
 """Signal limiting and saturation with smoothing.
 
 This module provides functions for applying limits, saturation, rate limiting,
@@ -5,14 +7,14 @@ deadband, and hysteresis to signals with optional smoothing to prevent
 discontinuities in control applications.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from collections.abc import Callable
-from enum import Enum
+from collections.abc import Callable  # noqa: E402
+from enum import Enum  # noqa: E402
 
-import numpy as np
+import numpy as np  # noqa: E402
 
-from .core import Signal
+from .core import Signal  # noqa: E402
 
 
 class SaturationMode(Enum):
@@ -125,6 +127,7 @@ def _apply_saturation_values(
     return np.clip(result * half_range + center, lower, upper)
 
 
+@jit(nopython=True, fastmath=True)
 def _soft_clip(x: np.ndarray, k: float = 1.0) -> np.ndarray:
     """Soft clipping with smooth polynomial transition.
 
@@ -213,6 +216,7 @@ def _exponential_clip(x: np.ndarray, k: float = 1.0) -> np.ndarray:
     return np.clip(result, -1, 1)
 
 
+@jit(nopython=True, fastmath=True)
 def apply_rate_limiter(
     signal: Signal,
     max_rate: float,
@@ -390,6 +394,8 @@ def apply_hysteresis(
     )
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def apply_backlash(
     signal: Signal,
     backlash_width: float,

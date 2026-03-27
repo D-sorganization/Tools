@@ -37,7 +37,9 @@ class TestDeepRecursion:
             try:
                 TI89Calculator._validate_expression_tree(deep_expr)
             except RecursionError:
-                pytest.fail("RecursionError raised during validation of deep expression")
+                pytest.fail(
+                    "RecursionError raised during validation of deep expression"
+                )
             except (ValueError, TypeError) as e:
                 pytest.fail(f"Validation failed with error: {e}")
 

@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for the theme module."""
 
 from typing import Any

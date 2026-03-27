@@ -218,6 +218,8 @@ class TestGolferPendulumMoments:
         self, full_positions: dict, full_forces: dict
     ) -> None:
         with pytest.raises(AssertionError, match="Need >= 7"):
+    def test_fewer_than_7_torques_raises(self, full_positions: dict, full_forces: dict) -> None:
+        with pytest.raises((ValueError, TypeError), match="Need >= 7"):
             golfer_pendulum_moments(full_positions, full_forces, (1.0, 2.0, 3.0), object())
 
     def test_exactly_7_torques_ok(self, full_positions: dict, full_forces: dict) -> None:

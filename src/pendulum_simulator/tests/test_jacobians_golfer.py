@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for jacobians_golfer module.
 
 TDD: Tests verify Jacobian computation, ellipsoid extraction,

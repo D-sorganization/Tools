@@ -355,7 +355,9 @@ def generate_report() -> None:
     report.append("|---|---|---|---|")
     for item in fixmes:
         text = item.get("text", "").replace("|", "\\|")
-        report.append(f"| `{item['file']}` | {item['line']} | {text[:100]} | {item['type']} |")
+        report.append(
+            f"| `{item['file']}` | {item['line']} | {text[:100]} | {item['type']} |"
+        )
 
     # Recommended Implementation Order
     report.append("\n## Recommended Implementation Order")

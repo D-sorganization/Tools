@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for upstream_drift_tools.data_io - read_data / write_data.
 
 Covers:
@@ -8,10 +10,9 @@ Covers:
   ensure() violation on bad extension
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from pathlib import Path
-from typing import Any
 
 import pandas as pd
 import pytest

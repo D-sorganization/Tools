@@ -18,6 +18,8 @@ Implements:
 
 from __future__ import annotations
 
+from numba import jit
+
 import ast
 import logging
 import re
@@ -168,6 +170,8 @@ def integrate_signals(
     return result
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def _compute_integral(signal_data: pd.Series, dt: pd.Series, method: str) -> np.ndarray:
     """Compute the cumulative integral of a signal."""
     if not (signal_data is not None):

@@ -1,14 +1,16 @@
+from numba import jit
+
 """ArchiveMixin -- ZIP archive creation for FolderProcessorApp."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-import os
-import zipfile
-from datetime import datetime
-from pathlib import Path
+import logging  # noqa: E402
+import os  # noqa: E402
+import zipfile  # noqa: E402
+from datetime import datetime  # noqa: E402
+from pathlib import Path  # noqa: E402
 
-from Folders_Tool_r0 import (
+from Folders_Tool_r0 import (  # noqa: E402
     MAX_UI_UPDATE_FREQUENCY,
     PROGRESS_START_ZIP,
     PROGRESS_ZIP_PERCENT,
@@ -63,6 +65,8 @@ class ArchiveMixin:
 
         return dest
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def _count_zip_contents(self) -> tuple[int, int]:
         """Count accessible files and total size in destination folder.
 
@@ -82,6 +86,8 @@ class ArchiveMixin:
                     continue
         return total_files, total_size
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def _add_files_to_zip(
         self,
         zipf: zipfile.ZipFile,
@@ -163,7 +169,8 @@ class ArchiveMixin:
                 raise ValueError("No accessible files found in destination folder")
 
             logger.info(
-                f"ZIP will contain {total_files} files, " f"{total_size / (1024 * 1024):.1f} MB",
+                f"ZIP will contain {total_files} files, "
+                f"{total_size / (1024 * 1024):.1f} MB",
             )
 
             with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
@@ -200,7 +207,8 @@ class ArchiveMixin:
                     logger.info(f"Cleaned up failed ZIP file: {zip_path}")
                 except OSError as cleanup_error:
                     logger.warning(
-                        f"Failed to cleanup failed ZIP file: {zip_path} - " f"{cleanup_error}",
+                        f"Failed to cleanup failed ZIP file: {zip_path} - "
+                        f"{cleanup_error}",
                     )
             logger.error(f"Failed to create ZIP archive: {e}")
             raise Exception(f"Failed to create ZIP archive: {e}") from e

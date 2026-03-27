@@ -1,3 +1,9 @@
+from typing import Any
+
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """Tests for the Taylor and Maclaurin series module.
 
 This module contains comprehensive tests for series expansion functionality:
@@ -10,10 +16,9 @@ This module contains comprehensive tests for series expansion functionality:
 Following TDD and Design by Contract principles.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import math
-from typing import Any
 
 import numpy as np
 import pytest

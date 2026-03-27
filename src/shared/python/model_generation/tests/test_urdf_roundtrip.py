@@ -1,3 +1,5 @@
+from typing import Any
+
 """Round-trip URDF generation and semantic equality tests (#1064).
 
 Tests that a URDF parsed -> to_urdf() -> re-parsed produces
@@ -10,9 +12,7 @@ Design by Contract
 - Inertia values, joint limits, origins preserved with bounded precision
 """
 
-from __future__ import annotations
-
-from typing import Any
+from __future__ import annotations  # noqa: F404
 
 import pytest
 

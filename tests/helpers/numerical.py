@@ -71,7 +71,9 @@ def assert_conserved(
     if before == 0 and after == 0:
         return
     if before == 0:
-        raise AssertionError(f"{quantity_name} conservation violated: before=0, after={after}")
+        raise AssertionError(
+            f"{quantity_name} conservation violated: before=0, after={after}"
+        )
     relative_change = abs(after - before) / abs(before)
     if relative_change > rtol:
         raise AssertionError(

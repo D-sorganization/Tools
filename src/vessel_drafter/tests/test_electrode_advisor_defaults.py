@@ -1,4 +1,5 @@
 import pytest
+from numba import jit
 
 build123d = pytest.importorskip("build123d")
 
@@ -26,6 +27,7 @@ def test_defaults_match_current_ui_layout() -> None:
     assert layout.electrodes.operating_current_a == pytest.approx(2500.0)
 
 
+@jit(nopython=True, fastmath=True)
 def test_default_positions_are_evenly_spaced() -> None:
     layout = DEFAULT_ELECTRODE_ADVISOR_LAYOUT
     placements = layout.placements

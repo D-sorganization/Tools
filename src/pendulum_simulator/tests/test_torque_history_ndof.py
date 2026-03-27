@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for N-DOF TorqueHistoryWidget.
 
 TDD: These tests verify the TorqueHistoryWidget dynamically supports

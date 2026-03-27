@@ -68,12 +68,16 @@ class TestWaterDropoutPressureValidation:
     def test_negative_pressure_raises_value_error(self, engine):
         """Negative pressure must raise ValueError with descriptive message."""
         with pytest.raises(ValueError, match="pressure must be > 0"):
-            engine.calculate_water_dropout(temperature=313.15, pressure=-1.0, water_content=5.0)
+            engine.calculate_water_dropout(
+                temperature=313.15, pressure=-1.0, water_content=5.0
+            )
 
     def test_zero_pressure_raises_value_error(self, engine):
         """Zero pressure must raise ValueError."""
         with pytest.raises(ValueError, match="pressure must be > 0"):
-            engine.calculate_water_dropout(temperature=313.15, pressure=0.0, water_content=5.0)
+            engine.calculate_water_dropout(
+                temperature=313.15, pressure=0.0, water_content=5.0
+            )
 
     def test_very_small_positive_pressure(self, engine):
         """A very small but positive pressure should not raise."""
@@ -112,7 +116,9 @@ class TestCompressionWorkEdgeCases:
         with pytest.raises(ValueError, match="Unknown compression type"):
             engine.calculate_compression_work(stage, 100.0, default_mixture_props)
 
-    @pytest.mark.parametrize("compression_type", ["isentropic", "polytropic", "isothermal"])
+    @pytest.mark.parametrize(
+        "compression_type", ["isentropic", "polytropic", "isothermal"]
+    )
     def test_all_valid_compression_types_return_results(
         self, engine, default_mixture_props, compression_type
     ):
@@ -300,7 +306,9 @@ class TestMultiStageVsSingleStage:
             efficiency=0.85,
             compression_type="isentropic",
         )
-        single_result = engine.calculate_compression_work(single_stage, 100.0, mixture_props)
+        single_result = engine.calculate_compression_work(
+            single_stage, 100.0, mixture_props
+        )
 
         # Two stages: 1->3 bar, 3->9 bar (with intercooling back to 313.15 K)
         stage1 = CompressionStage(
@@ -347,7 +355,9 @@ class TestMultiStageVsSingleStage:
         )
 
         iso_result = engine.calculate_compression_work(isothermal, 100.0, mixture_props)
-        isen_result = engine.calculate_compression_work(isentropic, 100.0, mixture_props)
+        isen_result = engine.calculate_compression_work(
+            isentropic, 100.0, mixture_props
+        )
 
         assert iso_result["work_actual"] < isen_result["work_actual"]
 
@@ -370,7 +380,9 @@ class TestEfficiencyBoundaries:
             compression_type="isentropic",
         )
         result = engine.calculate_compression_work(stage, 100.0, default_mixture_props)
-        assert result["work_actual"] == pytest.approx(result["work_isentropic"], rel=1e-10)
+        assert result["work_actual"] == pytest.approx(
+            result["work_isentropic"], rel=1e-10
+        )
 
     def test_very_low_efficiency(self, engine, default_mixture_props):
         """Very low efficiency (1%) produces very high actual work."""
@@ -384,7 +396,9 @@ class TestEfficiencyBoundaries:
         result = engine.calculate_compression_work(stage, 100.0, default_mixture_props)
         assert math.isfinite(result["work_actual"])
         # At 1% efficiency, actual work should be ~100x the isentropic work
-        assert result["work_actual"] == pytest.approx(result["work_isentropic"] / 0.01, rel=1e-6)
+        assert result["work_actual"] == pytest.approx(
+            result["work_isentropic"] / 0.01, rel=1e-6
+        )
 
     def test_zero_efficiency_raises(self, engine, default_mixture_props):
         """Zero efficiency causes division by zero."""

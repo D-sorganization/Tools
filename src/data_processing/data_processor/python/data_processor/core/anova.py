@@ -18,6 +18,8 @@ Designed for rigorous statistical analysis of experimental data.
 
 from __future__ import annotations
 
+from numba import jit
+
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
@@ -513,6 +515,8 @@ class ANOVAAnalyzer:
 
     # -- two-way ANOVA helper methods --
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     @staticmethod
     def _two_way_sum_of_squares(
         data: pd.DataFrame,
@@ -811,6 +815,7 @@ class ANOVAAnalyzer:
 
         return results
 
+    @jit(nopython=True, fastmath=True)
     def _post_hoc_tests(
         self,
         groups: dict[str, np.ndarray],
@@ -991,11 +996,12 @@ def format_anova_report(result: OneWayANOVAResult | TwoWayANOVAResult) -> str:
 
         # Group statistics
         lines.append("Group Statistics:")
-        for name in result.group_means:
-            lines.append(
-                f"  {name}: M = {result.group_means[name]:.4f}, "
-                f"SD = {result.group_stds[name]:.4f}, n = {result.group_counts[name]}"
-            )
+        lines.extend(
+            [
+                f"  {name}: M = {result.group_means[name]:.4f}, SD = {result.group_stds[name]:.4f}, n = {result.group_counts[name]}"
+                for name in result.group_means
+            ]
+        )
         lines.append("")
 
         # Post-hoc tests

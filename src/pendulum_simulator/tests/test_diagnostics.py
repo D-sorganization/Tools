@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for the diagnostics tracker and viewer."""
 
 from typing import Any

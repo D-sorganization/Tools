@@ -1,18 +1,20 @@
+from numba import jit
+
 """Three-Phase Electrical Model for Electrode Systems
 
 Enhanced electrical model that calculates system states, resistance, and current
 distribution with support for multiple conductive path geometries.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-from collections import deque
+import logging  # noqa: E402
+from collections import deque  # noqa: E402
 
-import numpy as np
+import numpy as np  # noqa: E402
 
-from .config import ElectrodeConfig
-from .glass_interface import GlassPropertiesInterface
+from .config import ElectrodeConfig  # noqa: E402
+from .glass_interface import GlassPropertiesInterface  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +42,7 @@ class ThreePhaseElectricalModelEnhanced:
         self._position_cache_key: tuple | None = None
         self._position_cache_value: list[dict] | None = None
 
+    @jit(nopython=True, fastmath=True)
     def calculate_system_state(
         self,
         depths: np.ndarray,
@@ -94,7 +97,9 @@ class ThreePhaseElectricalModelEnhanced:
 
         # Calculate actual currents if voltages are provided
         actual_currents = (
-            self._calculate_path_currents(resistances, voltages) if voltages is not None else None
+            self._calculate_path_currents(resistances, voltages)
+            if voltages is not None
+            else None
         )
 
         return {
@@ -147,8 +152,12 @@ class ThreePhaseElectricalModelEnhanced:
             )
 
             if (direct_resistance + via_metal_resistance) > 0:
-                direct_fraction = via_metal_resistance / (direct_resistance + via_metal_resistance)
-                metal_fraction = direct_resistance / (direct_resistance + via_metal_resistance)
+                direct_fraction = via_metal_resistance / (
+                    direct_resistance + via_metal_resistance
+                )
+                metal_fraction = direct_resistance / (
+                    direct_resistance + via_metal_resistance
+                )
             else:
                 direct_fraction = 0.5
                 metal_fraction = 0.5
@@ -168,6 +177,7 @@ class ThreePhaseElectricalModelEnhanced:
 
         return total_resistance, path_info
 
+    @jit(nopython=True, fastmath=True)
     def _calculate_electrode_positions_3d(
         self,
         depths: np.ndarray,
@@ -184,7 +194,10 @@ class ThreePhaseElectricalModelEnhanced:
         cache_key = (tuple(depths), r_bath, metal_depth, self.config.glass_depth)
 
         # Return cached value if parameters match
-        if self._position_cache_key == cache_key and self._position_cache_value is not None:
+        if (
+            self._position_cache_key == cache_key
+            and self._position_cache_value is not None
+        ):
             return self._position_cache_value
 
         # Calculate positions
@@ -438,6 +451,7 @@ class ThreePhaseElectricalModelEnhanced:
             return float(distance_m / (conductivity_metal * area_m2))
         return 0.0001
 
+    @jit(nopython=True, fastmath=True)
     def _analyze_current_distribution_new(self, current_paths: dict) -> dict:
         """Analyze current distribution with new path model"""
         if not (current_paths is not None):
@@ -461,9 +475,13 @@ class ThreePhaseElectricalModelEnhanced:
                 "direct_glass_power_fraction": (
                     direct_power / total_power if total_power > 0 else 0.5
                 ),
-                "via_metal_power_fraction": (metal_power / total_power if total_power > 0 else 0.5),
+                "via_metal_power_fraction": (
+                    metal_power / total_power if total_power > 0 else 0.5
+                ),
                 "resistance_ratio": (
-                    paths["direct_glass"] / paths["via_metal"] if paths["via_metal"] > 0 else np.inf
+                    paths["direct_glass"] / paths["via_metal"]
+                    if paths["via_metal"] > 0
+                    else np.inf
                 ),
             }
 

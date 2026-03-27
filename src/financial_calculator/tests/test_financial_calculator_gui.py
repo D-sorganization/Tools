@@ -1,8 +1,8 @@
+from typing import Any
+
 """Tests for Financial Calculator GUI components."""
 
-from __future__ import annotations
-
-from typing import Any
+from __future__ import annotations  # noqa: F404
 
 import pytest
 

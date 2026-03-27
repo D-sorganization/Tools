@@ -22,7 +22,11 @@ def verify_a11y() -> None:
         expect(gas_density).to_be_visible()
         described_by = gas_density.get_attribute("aria-describedby")
         logger.info(f"gasDensity aria-describedby: {described_by}")
-        if described_by and "gasDensityHint" in described_by and "heatingValHint" in described_by:
+        if (
+            described_by
+            and "gasDensityHint" in described_by
+            and "heatingValHint" in described_by
+        ):
             logger.info("PASS: gasDensity has correct describedby")
         else:
             logger.error("FAIL: gasDensity missing describedby")

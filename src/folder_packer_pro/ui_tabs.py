@@ -93,7 +93,9 @@ class PackTabMixin:
         """Create the output package file input section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
-        frame = ttk.LabelFrame(parent, text="Output Package File", padding=PADDING_MEDIUM)
+        frame = ttk.LabelFrame(
+            parent, text="Output Package File", padding=PADDING_MEDIUM
+        )
         frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         entry_frame = ttk.Frame(frame)
@@ -116,7 +118,9 @@ class PackTabMixin:
         """Create the project statistics display section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
-        frame = ttk.LabelFrame(parent, text="Project Statistics", padding=PADDING_MEDIUM)
+        frame = ttk.LabelFrame(
+            parent, text="Project Statistics", padding=PADDING_MEDIUM
+        )
         frame.pack(fill="both", expand=True, pady=(0, PADDING_MEDIUM))
 
         self.stats_text = scrolledtext.ScrolledText(  # type: ignore[attr-defined]
@@ -326,7 +330,9 @@ class UnpackTabMixin:
         """Create the destination folder input section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
-        frame = ttk.LabelFrame(parent, text="Destination Folder", padding=PADDING_MEDIUM)
+        frame = ttk.LabelFrame(
+            parent, text="Destination Folder", padding=PADDING_MEDIUM
+        )
         frame.pack(fill="x", pady=(0, PADDING_MEDIUM))
 
         entry_frame = ttk.Frame(frame)
@@ -375,7 +381,9 @@ class UnpackTabMixin:
         """Create the package information display section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
-        frame = ttk.LabelFrame(parent, text="Package Information", padding=PADDING_MEDIUM)
+        frame = ttk.LabelFrame(
+            parent, text="Package Information", padding=PADDING_MEDIUM
+        )
         frame.pack(fill="both", expand=True, pady=(0, PADDING_MEDIUM))
 
         self.package_info_text = scrolledtext.ScrolledText(  # type: ignore[attr-defined]

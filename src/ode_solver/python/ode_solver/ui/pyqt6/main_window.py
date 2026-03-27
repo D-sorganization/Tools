@@ -473,30 +473,41 @@ class ODESolverWindow(QMainWindow):
             results.append("=" * 50)
 
             results.append("\nSystem Definition:")
-            for var, expr in derivatives.items():
-                results.append(f"  d{var}/dt = {expr}")
+            results.extend(
+                [f"  d{var}/dt = {expr}" for (var, expr) in derivatives.items()]
+            )
 
             results.append("\nParameters:")
-            for name, value in parameters.items():
-                results.append(f"  {name} = {value}")
+            results.extend(
+                [f"  {name} = {value}" for (name, value) in parameters.items()]
+            )
 
             results.append("\nInitial Conditions:")
-            for var, val in zip(derivatives.keys(), y0, strict=True):
-                results.append(f"  {var}(0) = {val}")
+            results.extend(
+                [
+                    f"  {var}(0) = {val}"
+                    for (var, val) in zip(derivatives.keys(), y0, strict=True)
+                ]
+            )
 
             results.append(f"\nTime Range: [{t_start}, {t_end}]")
             results.append(f"Solution Points: {num_points}")
 
             results.append("\nFinal Values:")
-            for idx, var in enumerate(derivatives.keys()):
-                results.append(f"  {var}({t_end}) = {solution.y[idx][-1]:.6f}")
+            results.extend(
+                [
+                    f"  {var}({t_end}) = {solution.y[idx][-1]:.6f}"
+                    for (idx, var) in enumerate(derivatives.keys())
+                ]
+            )
 
             results.append("\nSolution Summary:")
-            for idx, var in enumerate(derivatives.keys()):
-                results.append(
-                    f"  {var}: min={np.min(solution.y[idx]):.4f}, "
-                    f"max={np.max(solution.y[idx]):.4f}"
-                )
+            results.extend(
+                [
+                    f"  {var}: min={np.min(solution.y[idx]):.4f}, max={np.max(solution.y[idx]):.4f}"
+                    for (idx, var) in enumerate(derivatives.keys())
+                ]
+            )
 
             results.append("\nSample Data Points:")
             results.append("-" * 50)

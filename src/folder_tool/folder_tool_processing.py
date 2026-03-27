@@ -163,7 +163,9 @@ class ProcessingMixin(AnalysisMixin, ArchiveMixin, UIProcessingMixin):
             try:
                 self.update_progress(85, "Creating ZIP archive...")
                 zip_path = self.create_output_zip()
-                final_summary += f"\n\n--- ZIP Archive Created ---\nLocation: {zip_path}"
+                final_summary += (
+                    f"\n\n--- ZIP Archive Created ---\nLocation: {zip_path}"
+                )
             except OSError as e:
                 final_summary += f"\n\n--- ZIP Creation FAILED: {e}"
 

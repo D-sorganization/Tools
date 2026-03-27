@@ -312,7 +312,9 @@ def get_pipe_spec(
     """
     key = (nominal_size, schedule)
     if key not in STEEL_PIPE_DIMENSIONS:
-        raise ValueError(f'Pipe size {nominal_size}" Schedule {schedule} not found in database')
+        raise ValueError(
+            f'Pipe size {nominal_size}" Schedule {schedule} not found in database'
+        )
 
     od, wall, id_val = STEEL_PIPE_DIMENSIONS[key]
 
@@ -337,7 +339,9 @@ def list_available_sizes() -> list[str]:
 
 def list_schedules_for_size(nominal_size: str) -> list[str]:
     """List all available schedules for a given nominal size."""
-    schedules = [sch for nps, sch in STEEL_PIPE_DIMENSIONS.keys() if nps == nominal_size]
+    schedules = [
+        sch for nps, sch in STEEL_PIPE_DIMENSIONS.keys() if nps == nominal_size
+    ]
     return sorted(schedules, key=lambda x: "000" if x in ["STD", "XS", "XXS"] else x)
 
 

@@ -105,7 +105,9 @@ class TestDebtRatioBoundaries:
         baseline_params.debt_ratio = 0.50
         result = calculator.calculate_financial_model(baseline_params)
         expected_interest = (
-            baseline_params.total_capital_investment * 0.50 * baseline_params.interest_rate
+            baseline_params.total_capital_investment
+            * 0.50
+            * baseline_params.interest_rate
         )
         assert result.interest_expense == pytest.approx(expected_interest, rel=1e-6)
 
@@ -171,7 +173,9 @@ class TestNegativeCosts:
         baseline_params_no_credit = FinancialParameters()
         baseline_params_no_credit.__dict__.update(baseline_params.__dict__)
         baseline_params_no_credit.feedstock_cost_per_ton = 0.0
-        result_no_credit = calculator.calculate_financial_model(baseline_params_no_credit)
+        result_no_credit = calculator.calculate_financial_model(
+            baseline_params_no_credit
+        )
         assert result.total_variable_costs < result_no_credit.total_variable_costs
 
     def test_negative_cost_improves_net_income(self, calculator, baseline_params):
@@ -356,7 +360,9 @@ class TestYearlyProjections:
         for i in range(1, len(cumulative_values)):
             assert cumulative_values[i] >= cumulative_values[i - 1]
 
-    def test_projection_revenue_grows_with_escalation(self, calculator, baseline_params):
+    def test_projection_revenue_grows_with_escalation(
+        self, calculator, baseline_params
+    ):
         """Revenue should grow year over year due to 2% price escalation."""
         calculator.calculate_financial_model(baseline_params)
         projections = calculator.generate_yearly_projections(years=5)
@@ -379,13 +385,17 @@ class TestYearlyProjections:
 class TestFinancialModelConsistency:
     """Tests for internal consistency of the financial model."""
 
-    def test_gross_margin_equals_revenue_minus_variable_costs(self, calculator, baseline_params):
+    def test_gross_margin_equals_revenue_minus_variable_costs(
+        self, calculator, baseline_params
+    ):
         """Gross margin must equal total revenue minus total variable costs."""
         result = calculator.calculate_financial_model(baseline_params)
         expected_gm = result.total_revenue - result.total_variable_costs
         assert result.gross_margin == pytest.approx(expected_gm, rel=1e-10)
 
-    def test_ebitda_equals_gross_margin_minus_fixed_costs(self, calculator, baseline_params):
+    def test_ebitda_equals_gross_margin_minus_fixed_costs(
+        self, calculator, baseline_params
+    ):
         """EBITDA must equal gross margin minus fixed costs."""
         result = calculator.calculate_financial_model(baseline_params)
         expected_ebitda = result.gross_margin - result.total_fixed_costs

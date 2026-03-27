@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 Comprehensive Tests for RRT Path Planner with DbC Principles.
 """
@@ -25,13 +27,16 @@ class TestRRTPlannerDbC(unittest.TestCase):
         """Verify initialization preconditions."""
         # Valid bounds
         self.assertEqual(len(self.planner.bounds), 6)
-        self.assertTrue(all(self.bounds[i] < self.bounds[i + 1] for i in range(0, 6, 2)))
+        self.assertTrue(
+            all(self.bounds[i] < self.bounds[i + 1] for i in range(0, 6, 2))
+        )
 
         # Invalid bounds (precondition check)
         invalid_bounds = np.array([1.0, -1.0, 0, 1.0, 0, 1.0])
         with self.assertRaises(ValueError):
             RRTPlanner(invalid_bounds)
 
+    @jit(nopython=True, fastmath=True)
     def test_plan_path_postconditions(self) -> None:
         """Verify that successful paths meet all postconditions."""
         start = np.array([-0.8, -0.8, 0.0])
@@ -57,13 +62,19 @@ class TestRRTPlannerDbC(unittest.TestCase):
         """Exhaustive test of collision detection logic."""
         # Sphere collision
         sphere = Obstacle(0, np.array([0, 0, 0]), 0.5, (1, 0, 0))
-        self.assertTrue(self.planner._check_collision(np.array([0.1, 0.1, 0.1]), [sphere]))
-        self.assertFalse(self.planner._check_collision(np.array([0.6, 0.6, 0.6]), [sphere]))
+        self.assertTrue(
+            self.planner._check_collision(np.array([0.1, 0.1, 0.1]), [sphere])
+        )
+        self.assertFalse(
+            self.planner._check_collision(np.array([0.6, 0.6, 0.6]), [sphere])
+        )
 
         # Cube collision
         cube = Obstacle(1, np.array([0, 0, 0]), 0.5, (0, 1, 0))
         # Inside
-        self.assertTrue(self.planner._check_collision(np.array([0.2, 0.2, 0.2]), [cube]))
+        self.assertTrue(
+            self.planner._check_collision(np.array([0.2, 0.2, 0.2]), [cube])
+        )
         # Outside (just barely)
         self.assertFalse(self.planner._check_collision(np.array([0.3, 0, 0]), [cube]))
 

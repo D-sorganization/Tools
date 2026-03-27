@@ -1,3 +1,5 @@
+from typing import Any
+
 """Additional tests for DataProcessorEngine error paths not covered in the main suite.
 
 Targets remaining uncovered lines in core.py:
@@ -11,9 +13,8 @@ Targets remaining uncovered lines in core.py:
 - Line 572: query exception path
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
-from typing import Any
 from unittest.mock import patch
 
 import pandas as pd

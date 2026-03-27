@@ -1,3 +1,5 @@
+from typing import Any
+
 """Column Selection Dialog for Data Processor."""
 
 from __future__ import annotations

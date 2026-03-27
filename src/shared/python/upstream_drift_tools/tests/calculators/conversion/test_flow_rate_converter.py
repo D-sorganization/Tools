@@ -1,11 +1,11 @@
+from typing import Any
+
 """Tests for flow_rate_converter.py — comprehensive coverage.
 
 Targets: 15% → ~100% coverage
 """
 
-from __future__ import annotations
-
-from typing import Any
+from __future__ import annotations  # noqa: F404
 
 import pytest
 from upstream_drift_tools.calculators.conversion.flow_rate_converter import (

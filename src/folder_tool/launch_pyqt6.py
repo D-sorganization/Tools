@@ -1,14 +1,14 @@
+from typing import Any
+
 #!/usr/bin/env python3
 """
 Cross-platform launcher for Folder Tool.
 Replaces Launch_FolderFix.bat for better portability.
 """
 
-from typing import Any
-
-import subprocess
-import sys
-from pathlib import Path
+import subprocess  # noqa: E402
+import sys  # noqa: E402
+from pathlib import Path  # noqa: E402
 
 # Add utils to path using shared utility
 try:
@@ -40,7 +40,7 @@ except ImportError:
         cwd: Path | str | None = None,
         timeout: int | None = None,
         check: bool = False,
-    ) -> subprocess.CompletedProcess[bytes]:
+    ):
         if not (script_path is not None):
             raise ValueError("script_path must be provided")
         command = [sys.executable, str(script_path)]
@@ -50,7 +50,7 @@ except ImportError:
             command, cwd=str(cwd) if cwd else None, timeout=timeout, check=check
         )
 
-    def get_logger(name: str) -> Any:
+    def get_logger(name) -> Any:
         return logging.getLogger(name)
 
 

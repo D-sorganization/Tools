@@ -17,7 +17,9 @@ import pytest
 # ---------------------------------------------------------------------------
 # Path setup: point at the src tree so we can import without package install
 # ---------------------------------------------------------------------------
-_SRC = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../../src/shared/python"))
+_SRC = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "../../../../../src/shared/python")
+)
 if _SRC not in sys.path:
     sys.path.insert(0, _SRC)
 
@@ -162,12 +164,16 @@ class TestCalculateVaporPressure:
         # At 100°C, water VP should be close to 101325 Pa (1 atm)
         assert 90_000 < p < 115_000
 
-    def test_pressure_increases_with_temperature(self, calc: AcidGasDewpointCalculator) -> None:
+    def test_pressure_increases_with_temperature(
+        self, calc: AcidGasDewpointCalculator
+    ) -> None:
         p_low = calc.calculate_vapor_pressure(50.0, "H2O", "antoine")
         p_high = calc.calculate_vapor_pressure(150.0, "H2O", "antoine")
         assert p_high > p_low
 
-    def test_extended_antoine_returns_positive(self, calc: AcidGasDewpointCalculator) -> None:
+    def test_extended_antoine_returns_positive(
+        self, calc: AcidGasDewpointCalculator
+    ) -> None:
         for component in ["H2O", "HF", "HCl", "H2S"]:
             p = calc.calculate_vapor_pressure(50.0, component, "extended_antoine")
             assert p > 0, f"VP for {component} should be positive"
@@ -199,7 +205,9 @@ class TestCalculateDewpoint:
         t = calc.calculate_dewpoint(101_325.0, "H2O")
         assert 98.0 < t < 102.0
 
-    def test_lower_partial_pressure_lower_dewpoint(self, calc: AcidGasDewpointCalculator) -> None:
+    def test_lower_partial_pressure_lower_dewpoint(
+        self, calc: AcidGasDewpointCalculator
+    ) -> None:
         t_low = calc.calculate_dewpoint(5000.0, "H2O")
         t_high = calc.calculate_dewpoint(50_000.0, "H2O")
         assert t_low < t_high
@@ -218,7 +226,9 @@ class TestCalculateDewpoint:
 
 
 class TestCalculateDewpointMixture:
-    def test_typical_syngas_returns_result(self, calc: AcidGasDewpointCalculator) -> None:
+    def test_typical_syngas_returns_result(
+        self, calc: AcidGasDewpointCalculator
+    ) -> None:
         comp = ACID_GAS_PRESETS["typical_syngas"]
         result = calc.calculate_dewpoint_mixture(
             temperature_c=150.0, pressure_bar=30.0, composition=comp
@@ -227,7 +237,9 @@ class TestCalculateDewpointMixture:
         assert result.overall_dewpoint_c is not None
         assert not math.isnan(result.overall_dewpoint_c)
 
-    def test_margin_is_positive_well_above_dewpoint(self, calc: AcidGasDewpointCalculator) -> None:
+    def test_margin_is_positive_well_above_dewpoint(
+        self, calc: AcidGasDewpointCalculator
+    ) -> None:
         comp = ACID_GAS_PRESETS["typical_syngas"]
         result = calc.calculate_dewpoint_mixture(
             temperature_c=300.0, pressure_bar=10.0, composition=comp
@@ -239,12 +251,16 @@ class TestCalculateDewpointMixture:
         with pytest.raises(ValueError):
             calc.calculate_dewpoint_mixture(150.0, 0.0, comp)
 
-    def test_unphysical_temperature_raises(self, calc: AcidGasDewpointCalculator) -> None:
+    def test_unphysical_temperature_raises(
+        self, calc: AcidGasDewpointCalculator
+    ) -> None:
         comp = AcidGasComposition(h2o=0.1)
         with pytest.raises(ValueError):
             calc.calculate_dewpoint_mixture(-300.0, 10.0, comp)
 
-    def test_warns_on_out_of_range_temperature(self, calc: AcidGasDewpointCalculator) -> None:
+    def test_warns_on_out_of_range_temperature(
+        self, calc: AcidGasDewpointCalculator
+    ) -> None:
         comp = AcidGasComposition(h2o=0.01)  # very low fractions
         result = calc.calculate_dewpoint_mixture(
             temperature_c=-120.0,  # below expected range
@@ -254,7 +270,9 @@ class TestCalculateDewpointMixture:
         # Should have generated at least one warning
         assert len(result.warnings) > 0
 
-    def test_limiting_component_is_known_species(self, calc: AcidGasDewpointCalculator) -> None:
+    def test_limiting_component_is_known_species(
+        self, calc: AcidGasDewpointCalculator
+    ) -> None:
         comp = ACID_GAS_PRESETS["biomass_gasification"]
         result = calc.calculate_dewpoint_mixture(
             temperature_c=200.0, pressure_bar=20.0, composition=comp
@@ -262,7 +280,9 @@ class TestCalculateDewpointMixture:
         if result.limiting_component is not None:
             assert result.limiting_component in ("H2O", "HF", "HCl", "H2S")
 
-    def test_composition_dict_stored_in_result(self, calc: AcidGasDewpointCalculator) -> None:
+    def test_composition_dict_stored_in_result(
+        self, calc: AcidGasDewpointCalculator
+    ) -> None:
         comp = ACID_GAS_PRESETS["typical_syngas"]
         result = calc.calculate_dewpoint_mixture(
             temperature_c=150.0, pressure_bar=30.0, composition=comp
@@ -291,7 +311,9 @@ class TestGenerateDewpointCurves:
         )
         assert len(df) == 7
 
-    def test_overall_dewpoint_column_present(self, calc: AcidGasDewpointCalculator) -> None:
+    def test_overall_dewpoint_column_present(
+        self, calc: AcidGasDewpointCalculator
+    ) -> None:
         comp = ACID_GAS_PRESETS["typical_syngas"]
         df = calc.generate_dewpoint_curves(
             pressure_bar=10.0, composition=comp, temp_range=(80, 200), num_points=5

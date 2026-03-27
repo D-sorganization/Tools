@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for matrix display widgets."""
 
 from typing import Any

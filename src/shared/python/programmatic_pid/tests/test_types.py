@@ -1,11 +1,11 @@
+from typing import Any
+
 """Comprehensive tests for programmatic_pid.types module.
 
 Tests Point, BBox, ValidationIssue, SpecValidationError, LayoutRegions, TextConfig.
 """
 
-from __future__ import annotations
-
-from typing import Any
+from __future__ import annotations  # noqa: F404
 
 import pytest
 from programmatic_pid.types import (

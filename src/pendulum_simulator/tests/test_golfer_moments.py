@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for golfer_pendulum_moments in joint_moments module.
 
 TDD: These tests define expected behavior for golfer joint moments.

@@ -20,6 +20,8 @@ Includes:
 
 from __future__ import annotations
 
+from numba import jit
+
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -214,6 +216,7 @@ class KalmanFilter:
         else:
             self.R = np.asarray(R)
 
+    @jit(nopython=True, fastmath=True)
     def filter(
         self,
         measurements: np.ndarray,
@@ -306,6 +309,7 @@ class KalmanFilter:
             log_likelihood=log_likelihood,
         )
 
+    @jit(nopython=True, fastmath=True)
     def smooth(self, filter_result: KalmanFilterResult) -> KalmanFilterResult:
         """Run Rauch-Tung-Striebel smoother for offline processing.
 
@@ -412,6 +416,7 @@ class ExtendedKalmanFilter:
         self.x0 = x0 if x0 is not None else np.zeros(self.n)
         self.P0 = P0 if P0 is not None else np.eye(self.n)
 
+    @jit(nopython=True, fastmath=True)
     def filter(
         self,
         measurements: np.ndarray,
@@ -559,6 +564,7 @@ class UnscentedKalmanFilter:
         self.Wc[0] = lambda_ / (n + lambda_) + (1 - self.alpha**2 + self.beta)
         self.Wc[1:] = 1 / (2 * (n + lambda_))
 
+    @jit(nopython=True, fastmath=True)
     def _sigma_points(self, x: np.ndarray, P: np.ndarray) -> np.ndarray:
         """Generate sigma points."""
         if not (x is not None):
@@ -577,6 +583,9 @@ class UnscentedKalmanFilter:
 
         return sigma_pts
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def filter(
         self,
         measurements: np.ndarray,

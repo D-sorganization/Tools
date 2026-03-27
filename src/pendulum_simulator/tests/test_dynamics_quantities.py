@@ -1,11 +1,11 @@
+from typing import Any
+
 """Tests for dynamics_quantities module — impulse, work, power.
 
 TDD: These tests define the expected interface and behavior.
 """
 
 from __future__ import annotations
-
-from typing import Any
 
 import numpy as np
 import pytest
@@ -48,6 +48,12 @@ class TestAngularPowerAt:
 
     def test_inf_velocity_raises(self) -> Any:
         with pytest.raises(AssertionError, match="omega must be finite"):
+    def test_nan_torque_raises(self):
+        with pytest.raises((ValueError, TypeError), match="torque must be finite"):
+            angular_power_at(float("nan"), 1.0)
+
+    def test_inf_velocity_raises(self):
+        with pytest.raises((ValueError, TypeError), match="omega must be finite"):
             angular_power_at(1.0, float("inf"))
 
 
@@ -76,6 +82,17 @@ class TestLinearPowerAt:
 
     def test_wrong_shape_raises(self) -> Any:
         with pytest.raises(AssertionError, match="force must be shape"):
+    def test_aligned_force_velocity(self):
+        assert linear_power_at(np.array([1.0, 0.0]), np.array([3.0, 0.0])) == pytest.approx(3.0)
+
+    def test_orthogonal_force_velocity(self):
+        assert linear_power_at(np.array([1.0, 0.0]), np.array([0.0, 1.0])) == pytest.approx(0.0)
+
+    def test_2d_dot_product(self):
+        assert linear_power_at(np.array([2.0, 3.0]), np.array([4.0, 5.0])) == pytest.approx(23.0)
+
+    def test_wrong_shape_raises(self):
+        with pytest.raises((ValueError, TypeError), match="force must be shape"):
             linear_power_at(np.array([1.0, 2.0, 3.0]), np.array([1.0, 2.0]))
 
 
@@ -95,6 +112,8 @@ class TestAngularPowerSeries:
 
     def test_shape_mismatch_raises(self) -> Any:
         with pytest.raises(AssertionError, match="Shape mismatch"):
+    def test_shape_mismatch_raises(self):
+        with pytest.raises((ValueError, TypeError), match="Shape mismatch"):
             angular_power_series(np.ones(5), np.ones(6))
 
 

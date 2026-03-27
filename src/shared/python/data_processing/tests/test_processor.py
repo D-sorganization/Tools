@@ -1,12 +1,13 @@
+from typing import Any
+
 """Comprehensive tests for the data_processing.processor module.
 
 Covers DataProcessor and DatasetInfo to achieve 100% coverage.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from pathlib import Path
-from typing import Any
 from unittest.mock import patch
 
 import numpy as np

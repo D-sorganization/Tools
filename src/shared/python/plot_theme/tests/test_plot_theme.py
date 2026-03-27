@@ -1,12 +1,16 @@
+from typing import Any
+
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """Comprehensive tests for the plot_theme module.
 
 Covers PlotTheme dataclass, theme registry, get_theme/register_theme,
 PlotThemeManager, and integration helpers.
 """
 
-from __future__ import annotations
-
-from typing import Any
+from __future__ import annotations  # noqa: F404
 
 from unittest.mock import MagicMock, patch
 

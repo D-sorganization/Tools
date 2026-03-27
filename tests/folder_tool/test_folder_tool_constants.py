@@ -18,11 +18,15 @@ class TestFolderToolConstants:
 
     def test_validate_min_file_size_invalid(self):
         with patch.object(ftc, "MIN_FILE_SIZE_BYTES", -1):
-            with pytest.raises(ValueError, match="MIN_FILE_SIZE_BYTES must be non-negative"):
+            with pytest.raises(
+                ValueError, match="MIN_FILE_SIZE_BYTES must be non-negative"
+            ):
                 ftc.validate_constants()
 
     def test_validate_min_file_size_greater_than_max(self):
-        with patch.object(ftc, "MIN_FILE_SIZE_BYTES", ftc.MAX_FILE_SIZE_MB * 1024 * 1024 + 1):
+        with patch.object(
+            ftc, "MIN_FILE_SIZE_BYTES", ftc.MAX_FILE_SIZE_MB * 1024 * 1024 + 1
+        ):
             with pytest.raises(
                 ValueError,
                 match="MIN_FILE_SIZE_BYTES must be less than MAX_FILE_SIZE_MB",
@@ -36,7 +40,9 @@ class TestFolderToolConstants:
 
     def test_validate_max_ui_update_frequency_invalid(self):
         with patch.object(ftc, "MAX_UI_UPDATE_FREQUENCY", 0):
-            with pytest.raises(ValueError, match="MAX_UI_UPDATE_FREQUENCY must be positive"):
+            with pytest.raises(
+                ValueError, match="MAX_UI_UPDATE_FREQUENCY must be positive"
+            ):
                 ftc.validate_constants()
 
     def test_validate_dialog_width_invalid(self):
@@ -59,12 +65,16 @@ class TestFolderToolConstants:
 
     def test_validate_archive_size_ratio_invalid_high(self):
         with patch.object(ftc, "MAX_ARCHIVE_SIZE_RATIO", 1.5):
-            with pytest.raises(ValueError, match="MAX_ARCHIVE_SIZE_RATIO must be between 0 and 1"):
+            with pytest.raises(
+                ValueError, match="MAX_ARCHIVE_SIZE_RATIO must be between 0 and 1"
+            ):
                 ftc.validate_constants()
 
     def test_validate_archive_size_ratio_invalid_low(self):
         with patch.object(ftc, "MAX_ARCHIVE_SIZE_RATIO", -0.5):
-            with pytest.raises(ValueError, match="MAX_ARCHIVE_SIZE_RATIO must be between 0 and 1"):
+            with pytest.raises(
+                ValueError, match="MAX_ARCHIVE_SIZE_RATIO must be between 0 and 1"
+            ):
                 ftc.validate_constants()
 
     def test_validate_retry_attempts_invalid(self):
@@ -74,7 +84,9 @@ class TestFolderToolConstants:
 
     def test_validate_max_text_content_size_invalid(self):
         with patch.object(ftc, "MAX_TEXT_CONTENT_SIZE", 0):
-            with pytest.raises(ValueError, match="MAX_TEXT_CONTENT_SIZE must be positive"):
+            with pytest.raises(
+                ValueError, match="MAX_TEXT_CONTENT_SIZE must be positive"
+            ):
                 ftc.validate_constants()
 
     def test_validate_max_title_length_invalid(self):
@@ -84,7 +96,9 @@ class TestFolderToolConstants:
 
     def test_validate_max_counter_attempts_invalid(self):
         with patch.object(ftc, "MAX_COUNTER_ATTEMPTS", 0):
-            with pytest.raises(ValueError, match="MAX_COUNTER_ATTEMPTS must be positive"):
+            with pytest.raises(
+                ValueError, match="MAX_COUNTER_ATTEMPTS must be positive"
+            ):
                 ftc.validate_constants()
 
     def test_validate_progress_negative(self):
@@ -101,7 +115,9 @@ class TestFolderToolConstants:
         with patch.object(ftc, "PROGRESS_BACKUP_PERCENT", 50):
             with patch.object(ftc, "PROGRESS_MAIN_OP_PERCENT", 50):
                 with patch.object(ftc, "PROGRESS_ZIP_PERCENT", 50):
-                    with pytest.raises(ValueError, match="Total progress allocation exceeds 100%"):
+                    with pytest.raises(
+                        ValueError, match="Total progress allocation exceeds 100%"
+                    ):
                         ftc.validate_constants()
 
     def test_get_constants_info(self):

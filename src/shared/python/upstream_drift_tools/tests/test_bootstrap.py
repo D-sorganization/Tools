@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for upstream_drift_tools.bootstrap (ensure_paths).
 
 Full coverage of both branches:
@@ -6,11 +8,10 @@ Full coverage of both branches:
 - Already-present paths not inserted twice
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import sys
 from pathlib import Path
-from typing import Any
 from unittest.mock import patch
 
 

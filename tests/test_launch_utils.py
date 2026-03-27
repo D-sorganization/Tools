@@ -157,7 +157,9 @@ class TestLaunchPythonToolContracts:
             launch_python_tool(f, "")
 
     @patch("subprocess.Popen")
-    def test_launches_in_normal_mode(self, mock_popen: MagicMock, tmp_path: Path) -> None:
+    def test_launches_in_normal_mode(
+        self, mock_popen: MagicMock, tmp_path: Path
+    ) -> None:
         f = tmp_path / "tool.py"
         f.write_text("")
         mock_popen.return_value = MagicMock()
@@ -165,7 +167,9 @@ class TestLaunchPythonToolContracts:
         mock_popen.assert_called_once()
 
     @patch("subprocess.Popen")
-    def test_log_func_called_with_tool_name(self, mock_popen: MagicMock, tmp_path: Path) -> None:
+    def test_log_func_called_with_tool_name(
+        self, mock_popen: MagicMock, tmp_path: Path
+    ) -> None:
         f = tmp_path / "tool.py"
         f.write_text("")
         mock_proc = MagicMock()
@@ -219,7 +223,9 @@ class TestLaunchToolDispatch:
             launch_tool("not-a-dict", tmp_path)  # type: ignore[arg-type]
 
     @patch("tools.launch_utils.launch_python_tool")
-    def test_dispatches_to_launch_python_tool(self, mock_launch: MagicMock, tmp_path: Path) -> None:
+    def test_dispatches_to_launch_python_tool(
+        self, mock_launch: MagicMock, tmp_path: Path
+    ) -> None:
         (tmp_path / "my_tool.py").write_text("")
         launch_tool(
             {"name": "T", "path": "my_tool.py", "type": "python"},
@@ -228,7 +234,9 @@ class TestLaunchToolDispatch:
         mock_launch.assert_called_once()
 
     @patch("webbrowser.open")
-    def test_dispatches_html_type_to_browser(self, mock_open: MagicMock, tmp_path: Path) -> None:
+    def test_dispatches_html_type_to_browser(
+        self, mock_open: MagicMock, tmp_path: Path
+    ) -> None:
         (tmp_path / "index.html").write_text("")
         launch_tool(
             {"name": "Web", "path": "index.html", "type": "html"},

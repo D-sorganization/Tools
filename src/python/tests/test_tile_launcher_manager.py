@@ -34,7 +34,9 @@ def sample_catalog() -> list[AppDefinition]:
     ]
 
 
-def test_defaults_when_layout_missing(sample_catalog: list[AppDefinition], tmp_path: Path) -> None:
+def test_defaults_when_layout_missing(
+    sample_catalog: list[AppDefinition], tmp_path: Path
+) -> None:
     """Ensure that the default layout includes all apps if no layout is saved."""
     manager = AppManager(
         catalog=sample_catalog,
@@ -45,10 +47,14 @@ def test_defaults_when_layout_missing(sample_catalog: list[AppDefinition], tmp_p
     assert [app.id for app in manager.apps_in_layout()] == ["alpha", "beta", "gamma"]
 
 
-def test_add_remove_and_reorder(sample_catalog: list[AppDefinition], tmp_path: Path) -> None:
+def test_add_remove_and_reorder(
+    sample_catalog: list[AppDefinition], tmp_path: Path
+) -> None:
     """Test adding, removing, and reordering apps in the layout."""
     store = InMemoryLayoutStore(["alpha", "beta"])
-    manager = AppManager(catalog=sample_catalog, repository_root=tmp_path, layout_store=store)
+    manager = AppManager(
+        catalog=sample_catalog, repository_root=tmp_path, layout_store=store
+    )
 
     manager.add_app("gamma")
     assert [app.id for app in manager.apps_in_layout()] == ["alpha", "beta", "gamma"]
@@ -63,7 +69,9 @@ def test_add_remove_and_reorder(sample_catalog: list[AppDefinition], tmp_path: P
     assert [app.id for app in manager.apps_in_layout()] == ["alpha", "beta", "gamma"]
 
 
-def test_available_to_add_sorted(sample_catalog: list[AppDefinition], tmp_path: Path) -> None:
+def test_available_to_add_sorted(
+    sample_catalog: list[AppDefinition], tmp_path: Path
+) -> None:
     """Ensure that apps not in the layout are available to add."""
     manager = AppManager(
         catalog=sample_catalog,

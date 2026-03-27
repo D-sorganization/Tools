@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -10,16 +12,16 @@ This module defines interfaces for mesh generation backends
 mesh generators.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from enum import Enum
-from pathlib import Path
-from typing import Any
+import logging  # noqa: E402
+from abc import ABC, abstractmethod  # noqa: E402
+from dataclasses import dataclass, field  # noqa: E402
+from enum import Enum  # noqa: E402
+from pathlib import Path  # noqa: E402
+from typing import Any  # noqa: E402
 
-from humanoid_character_builder.core.body_parameters import BodyParameters
+from humanoid_character_builder.core.body_parameters import BodyParameters  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -127,6 +129,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
         except ImportError:
             return False
 
+    @jit(nopython=True, fastmath=True)
     def generate(
         self,
         params: BodyParameters,
@@ -561,6 +564,7 @@ generate_human()
 
         return mesh_paths, collision_paths
 
+    @jit(nopython=True, fastmath=True)
     @staticmethod
     def _segment_by_geometry(
         mesh: Any,
@@ -991,6 +995,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
 
         return mesh_paths, collision_paths
 
+    @jit(nopython=True, fastmath=True)
     def _fallback_z_segmentation(
         self,
         mesh: Any,

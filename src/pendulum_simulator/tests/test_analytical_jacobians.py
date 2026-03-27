@@ -1,3 +1,6 @@
+from numba import jit
+from typing import Any
+
 """Tests for analytical FK Jacobians and derived quantities.
 
 Validates analytical implementations against existing numerical references.
@@ -61,6 +64,7 @@ def _random_configs(n: int = 20, seed: int = 42) -> list[np.ndarray]:
     return configs
 
 
+@jit(nopython=True, fastmath=True)
 def _numerical_jacobian_point(pos_func, q: np.ndarray, eps: float = 1e-7) -> np.ndarray:
     """Compute 2×8 Jacobian numerically using finite differences."""
     J = np.zeros((2, N_DOF))
@@ -175,6 +179,7 @@ class TestAnalyticalFKJacobians:
                 f"LH Jacobian mismatch at q={q}"
             )
 
+    @jit(nopython=True, fastmath=True)
     def test_club_com_jacobian_vs_numerical(self, test_configs: list[np.ndarray]) -> None:
         """Club COM Jacobian (depends on q[0], q[1], q[2], q[3], q[7])."""
         from double_pendulum_golf.physics_golfer import analytical_fk_jacobians

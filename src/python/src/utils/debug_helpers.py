@@ -287,8 +287,9 @@ def format_diagnostics() -> str:
         f"CPUs: {diag.cpu_count}",
         "\nEnvironment:",
     ]
-    for key, value in diag.environment.items():
-        lines.append(f"  {key}={value[:50]}...")
+    lines.extend(
+        [f"  {key}={value[:50]}..." for (key, value) in diag.environment.items()]
+    )
     lines.append("==========================\n")
     return "\n".join(lines)
 

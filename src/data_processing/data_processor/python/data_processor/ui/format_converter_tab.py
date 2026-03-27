@@ -6,6 +6,8 @@
 
 from __future__ import annotations
 
+from numba import jit
+
 import logging
 import os
 import threading
@@ -623,6 +625,7 @@ class FormatConverterMixin:
 
         return processed_files
 
+    @jit(nopython=True, fastmath=True)
     def _convert_individually(
         self, output_format: str, use_all_columns: bool, total_files: int
     ) -> int:

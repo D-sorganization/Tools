@@ -233,7 +233,9 @@ class TestMergeCsvFiles:
         from utils.csv_utils import merge_csv_files
 
         output = tmp_path / "merged.csv"
-        result = merge_csv_files([tmp_path / "missing1.csv", tmp_path / "missing2.csv"], output)
+        result = merge_csv_files(
+            [tmp_path / "missing1.csv", tmp_path / "missing2.csv"], output
+        )
         assert result is False
 
     def test_skips_empty_files(self, tmp_path):

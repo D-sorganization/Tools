@@ -56,7 +56,9 @@ class TestValidatePath:
         assert valid is True
 
     def test_outside_boundary(self, tmp_path: Path) -> None:
-        valid, msg = validate_path(tmp_path.parent, must_exist=True, must_be_within=tmp_path)
+        valid, msg = validate_path(
+            tmp_path.parent, must_exist=True, must_be_within=tmp_path
+        )
         assert valid is False
         assert "Security" in msg
 

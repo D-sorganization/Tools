@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 SimScape MDL/SLX file parser.
 
@@ -5,18 +7,18 @@ Parses MATLAB Simulink/SimScape model files to extract
 multibody system definitions.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-import re
-import xml.etree.ElementTree as ET  # nosec B405 — type annotations + ParseError only; parsing uses defusedxml
-import zipfile
-from dataclasses import dataclass, field
-from enum import Enum
-from pathlib import Path
-from typing import Any
+import logging  # noqa: E402
+import re  # noqa: E402
+import xml.etree.ElementTree as ET  # nosec B405 — type annotations + ParseError only; parsing uses defusedxml  # noqa: E402
+import zipfile  # noqa: E402
+from dataclasses import dataclass, field  # noqa: E402
+from enum import Enum  # noqa: E402
+from pathlib import Path  # noqa: E402
+from typing import Any  # noqa: E402
 
-import defusedxml.ElementTree as DefusedET
+import defusedxml.ElementTree as DefusedET  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +91,9 @@ class SimscapeParameter:
         except (ValueError, TypeError):
             return default
 
-    def as_vector(self, default: tuple[float, ...] = (0.0, 0.0, 0.0)) -> tuple[float, ...]:
+    def as_vector(
+        self, default: tuple[float, ...] = (0.0, 0.0, 0.0)
+    ) -> tuple[float, ...]:
         """Convert to vector value."""
         try:
             val = self.value.strip()
@@ -207,7 +211,9 @@ class SimscapeModel:
     def get_transform_blocks(self) -> list[SimscapeBlock]:
         """Get all rigid transform blocks."""
         return [
-            b for b in self.blocks.values() if b.block_type == SimscapeBlockType.RIGID_TRANSFORM
+            b
+            for b in self.blocks.values()
+            if b.block_type == SimscapeBlockType.RIGID_TRANSFORM
         ]
 
     def get_connections_to(self, block_name: str) -> list[SimscapeConnection]:
@@ -303,7 +309,10 @@ class MDLParser:
                 # Find the model XML file
                 model_file = None
                 for name in zf.namelist():
-                    if name.endswith("blockdiagram.xml") or name == "simulink/blockdiagram.xml":
+                    if (
+                        name.endswith("blockdiagram.xml")
+                        or name == "simulink/blockdiagram.xml"
+                    ):
                         model_file = name
                         break
 
@@ -450,6 +459,7 @@ class MDLParser:
 
         return model
 
+    @jit(nopython=True, fastmath=True)
     def _parse_mdl_content(self, content: str, model: SimscapeModel) -> None:
         """Parse MDL text content."""
         # Find Model name
@@ -512,17 +522,21 @@ class MDLParser:
             re.MULTILINE,
         )
 
-        for match in line_pattern.finditer(content):
-            model.connections.append(
+        model.connections.extend(
+            [
                 SimscapeConnection(
                     source_block=match.group(1),
                     source_port=match.group(2),
                     dest_block=match.group(3),
                     dest_port=match.group(4),
                 )
-            )
+                for match in line_pattern.finditer(content)
+            ]
+        )
 
-    def _get_block_type(self, block_type_str: str, source_block: str) -> SimscapeBlockType:
+    def _get_block_type(
+        self, block_type_str: str, source_block: str
+    ) -> SimscapeBlockType:
         """Determine SimscapeBlockType from strings."""
         # Check source block mapping first
         if not (block_type_str is not None):

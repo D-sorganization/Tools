@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -8,13 +10,13 @@ Provides link/joint deletion, renaming, modification, attachment/detachment,
 batch prefix application, and subtree mirroring.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-from collections.abc import Callable
-from typing import TYPE_CHECKING, Any
+import logging  # noqa: E402
+from collections.abc import Callable  # noqa: E402
+from typing import TYPE_CHECKING, Any  # noqa: E402
 
-from model_generation.core.types import Joint, JointType, Link, Origin
+from model_generation.core.types import Joint, JointType, Link, Origin  # noqa: E402
 
 if TYPE_CHECKING:
     from model_generation.converters.urdf_parser import ParsedModel
@@ -56,6 +58,7 @@ class ModificationMixin:
     # Direct Modifications
     # ============================================================
 
+    @jit(nopython=True, fastmath=True)
     def delete_link(
         self,
         model_id: str,

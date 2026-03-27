@@ -129,7 +129,9 @@ class TestFolderOperationsMixin:
     def test_perform_deduplication_cancel_dialog(self, app, tmp_path):
         app.preview_mode_var._val = False
         with patch("tkinter.messagebox.askyesno", return_value=False):
-            assert app._perform_deduplication(str(tmp_path)) == ["Deduplication cancelled by user."]
+            assert app._perform_deduplication(str(tmp_path)) == [
+                "Deduplication cancelled by user."
+            ]
 
     def test_perform_deduplication_success(self, app, tmp_path):
         d = tmp_path / "dedup"
@@ -321,25 +323,33 @@ class TestFolderOperationsMixin:
     def test_copy_single_file_in_prune_filter_skip(self, app, tmp_path):
         log = []
         with patch.object(app, "validate_file_filters", return_value=False):
-            res = app._copy_single_file_in_prune(Path("src"), Path("dest"), "f1.txt", log)
+            res = app._copy_single_file_in_prune(
+                Path("src"), Path("dest"), "f1.txt", log
+            )
             assert res == (0, 0)
 
     def test_copy_single_file_in_prune_fail(self, app, tmp_path):
         log = []
         with patch.object(app, "_safe_copy_file", return_value=False):
-            res = app._copy_single_file_in_prune(Path("src"), Path("dest"), "f1.txt", log)
+            res = app._copy_single_file_in_prune(
+                Path("src"), Path("dest"), "f1.txt", log
+            )
             assert res == (0, 1)
 
     def test_copy_single_file_in_prune_exception(self, app, tmp_path):
         log = []
         with patch.object(app, "_safe_copy_file", side_effect=TypeError("err")):
-            res = app._copy_single_file_in_prune(Path("src"), Path("dest"), "f1.txt", log)
+            res = app._copy_single_file_in_prune(
+                Path("src"), Path("dest"), "f1.txt", log
+            )
             assert res == (0, 1)
 
     def test_copy_single_file_in_prune_preview(self, app, tmp_path):
         log = []
         app.preview_mode_var._val = True
         with patch.object(app, "_safe_copy_file") as mock_copy:
-            res = app._copy_single_file_in_prune(Path("src"), Path("dest"), "f1.txt", log)
+            res = app._copy_single_file_in_prune(
+                Path("src"), Path("dest"), "f1.txt", log
+            )
             assert res == (1, 0)
             mock_copy.assert_not_called()

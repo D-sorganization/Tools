@@ -461,8 +461,8 @@ class URDFWriter:
             joint.child,
         ]
 
-        for i in range(3):
-            revolute_joints.append(
+        revolute_joints.extend(
+            [
                 Joint(
                     name=f"{joint.name}_dof{i + 1}",
                     joint_type=JointType.REVOLUTE,
@@ -473,7 +473,9 @@ class URDFWriter:
                     limits=limits[i] if limits and i < len(limits) else JointLimits(),
                     dynamics=joint.dynamics,
                 )
-            )
+                for i in range(3)
+            ]
+        )
 
         return intermediate_links, revolute_joints
 

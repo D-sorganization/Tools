@@ -1,3 +1,5 @@
+from numba import jit
+
 """API-only mode for PDF renaming - manual review and approval workflow."""
 
 import logging
@@ -106,7 +108,9 @@ class APIRenameManager:
             else:
                 # Force API extraction (no local fallback)
                 if not self.llm:
-                    logger.warning(f"No LLM available for API-only mode: {file_path.name}")
+                    logger.warning(
+                        f"No LLM available for API-only mode: {file_path.name}"
+                    )
                     return None
 
                 result = self.llm.extract_title(file_path)
@@ -120,7 +124,9 @@ class APIRenameManager:
                     provider="gemini",
                     model=model_name,
                 )
-                logger.info(f"[API] {file_path.name} -> {result.title} ({result.confidence:.2f})")
+                logger.info(
+                    f"[API] {file_path.name} -> {result.title} ({result.confidence:.2f})"
+                )
 
             if not result.title:
                 logger.warning(f"No title extracted for: {file_path.name}")
@@ -206,6 +212,7 @@ class APIRenameManager:
         """Get all pending (not approved or rejected) proposals."""
         return [p for p in self.proposals if not p.approved and not p.rejected]
 
+    @jit(nopython=True, fastmath=True)
     def execute_approved_renames(self, dry_run: bool = True) -> dict[str, int]:
         """Execute all approved rename operations."""
         if not (dry_run is not None):
@@ -240,7 +247,9 @@ class APIRenameManager:
                     results["success"] += 1
                 else:
                     proposal.file_path.rename(target_path)
-                    logger.info(f"Renamed: {proposal.current_name} -> {target_path.name}")
+                    logger.info(
+                        f"Renamed: {proposal.current_name} -> {target_path.name}"
+                    )
                     results["success"] += 1
 
             except (PermissionError, OSError) as e:

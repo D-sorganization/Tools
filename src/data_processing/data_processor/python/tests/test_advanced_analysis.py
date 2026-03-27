@@ -1,3 +1,4 @@
+from numba import jit
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -351,6 +352,7 @@ class TestCrossCorrelation:
         # Optimal lag should be around 5
         assert abs(result.optimal_lag - 5) < 3
 
+    @jit(nopython=True, fastmath=True)
     def test_granger_causality(self) -> None:
         """Test Granger causality test."""
         from data_processor.core.cross_correlation import CrossCorrelationAnalyzer
@@ -762,6 +764,7 @@ class TestIntegration:
 
         assert result.seasonal_strength > 0.3
 
+    @jit(nopython=True, fastmath=True)
     def test_outlier_detection_then_smoothing(self) -> None:
         """Test outlier detection then Kalman smoothing."""
         from data_processor.core.kalman_filter import kalman_smooth

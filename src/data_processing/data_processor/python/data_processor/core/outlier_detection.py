@@ -21,6 +21,8 @@ Includes:
 
 from __future__ import annotations
 
+from numba import jit
+
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
@@ -268,6 +270,7 @@ class OutlierDetector:
 
         return mask, max_z
 
+    @jit(nopython=True, fastmath=True)
     def _detect_modified_zscore(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Modified Z-score (MAD-based) outlier detection."""
         if not (X is not None):
@@ -289,6 +292,7 @@ class OutlierDetector:
 
         return mask, max_z
 
+    @jit(nopython=True, fastmath=True)
     def _detect_iqr(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """IQR-based outlier detection."""
         if not (X is not None):
@@ -317,6 +321,7 @@ class OutlierDetector:
 
         return mask, scores
 
+    @jit(nopython=True, fastmath=True)
     def _detect_grubbs(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Grubbs test for outliers (iterative)."""
         if not (X is not None):
@@ -568,6 +573,7 @@ class OutlierDetector:
 
         return mask, scores
 
+    @jit(nopython=True, fastmath=True)
     def _dbscan(
         self,
         X: np.ndarray,

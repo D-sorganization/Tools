@@ -1,3 +1,9 @@
+from typing import Any
+
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """Comprehensive tests for upstream_drift_tools.data_processing.core.DataProcessorEngine.
 
 Covers all first-party logic: load_dataframe, column ops, smoothing, aggregation,
@@ -8,9 +14,8 @@ third-party adapters); we test error paths with mocking and leave happy-path I/O
 integration tests.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
-from typing import Any
 from unittest.mock import patch
 
 import numpy as np

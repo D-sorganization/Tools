@@ -16,6 +16,8 @@ Follows Clean Code principles:
 
 from __future__ import annotations
 
+from numba import jit
+
 import json
 import logging
 from dataclasses import dataclass, field
@@ -452,6 +454,7 @@ class DatasetManager:
         logger.info(f"Exported dataset to {output_path}")
         return output_path
 
+    @jit(nopython=True, fastmath=True)
     def save_workspace(self, workspace_path: Path | str | None = None) -> Path:
         """Save the entire workspace state to disk.
 
@@ -501,6 +504,7 @@ class DatasetManager:
         logger.info(f"Saved workspace to {save_dir}")
         return save_dir
 
+    @jit(nopython=True, fastmath=True)
     def load_workspace(self, workspace_path: Path | str) -> None:
         """Load workspace state from disk.
 

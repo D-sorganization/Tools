@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for golfer force/mobility ellipsoid computation.
 
 TDD: These tests verify that ellipsoids_golfer returns the expected

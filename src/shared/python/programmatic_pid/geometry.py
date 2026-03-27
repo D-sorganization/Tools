@@ -1,14 +1,16 @@
+from numba import jit
+
 """Geometry utilities for coordinate math, bounding boxes, and collision detection.
 
 DRY: Centralises the point/rect operations that were scattered across generator.py.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import math
-from collections.abc import Sequence
+import math  # noqa: E402
+from collections.abc import Sequence  # noqa: E402
 
-from programmatic_pid.types import BBox, Point
+from programmatic_pid.types import BBox, Point  # noqa: E402
 
 
 def to_float(value: object, default: float = 0.0) -> float:
@@ -52,7 +54,9 @@ def rects_overlap(
         raise ValueError("a must be provided")
     ax1, ay1, ax2, ay2 = a
     bx1, by1, bx2, by2 = b
-    return not (ax2 + pad <= bx1 or bx2 + pad <= ax1 or ay2 + pad <= by1 or by2 + pad <= ay1)
+    return not (
+        ax2 + pad <= bx1 or bx2 + pad <= ax1 or ay2 + pad <= by1 or by2 + pad <= ay1
+    )
 
 
 def text_box(
@@ -103,6 +107,9 @@ def dedupe_points(points: Sequence[tuple[float, float]]) -> list[tuple[float, fl
     return cleaned
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def find_free_region(
     occupied: list[BBox],
     width: float,

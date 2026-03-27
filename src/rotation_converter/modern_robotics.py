@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -26,15 +28,15 @@ References:
     Planning, and Control. Cambridge University Press.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-import math
-from typing import Any
+import logging  # noqa: E402
+import math  # noqa: E402
+from typing import Any  # noqa: E402
 
-import numpy as np
+import numpy as np  # noqa: E402
 
-from rotation_converter._contracts import ensure, require, require_finite
+from rotation_converter._contracts import ensure, require, require_finite  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -426,6 +428,7 @@ def FKinBody(M: Any, Blist: Any, thetalist: Any) -> np.ndarray:
 # ===========================================================================
 
 
+@jit(nopython=True, fastmath=True)
 def JacobianSpace(Slist: Any, thetalist: Any) -> np.ndarray:
     """Compute the space Jacobian for a serial chain.
 
@@ -457,6 +460,7 @@ def JacobianSpace(Slist: Any, thetalist: Any) -> np.ndarray:
     return Js
 
 
+@jit(nopython=True, fastmath=True)
 def JacobianBody(Blist: Any, thetalist: Any) -> np.ndarray:
     """Compute the body Jacobian for a serial chain.
 
@@ -568,6 +572,7 @@ def _quintic_time_scaling(t: float) -> float:
     return 10.0 * t**3 - 15.0 * t**4 + 6.0 * t**5
 
 
+@jit(nopython=True, fastmath=True)
 def ScrewTrajectory(
     Xstart: Any,
     Xend: Any,
@@ -982,6 +987,8 @@ def ad(V) -> Any:
     ]
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def InverseDynamics(
     thetalist, dthetalist, ddthetalist, g, Ftip, Mlist, Glist, Slist
 ) -> Any:
@@ -1508,6 +1515,7 @@ def InverseDynamicsTrajectory(
     return taumat
 
 
+@jit(nopython=True, fastmath=True)
 def ForwardDynamicsTrajectory(
     thetalist, dthetalist, taumat, g, Ftipmat, Mlist, Glist, Slist, dt, intRes
 ):
@@ -1674,6 +1682,7 @@ def QuinticTimeScaling(Tf, t) -> Any:
     return 10 * (1.0 * t / Tf) ** 3 - 15 * (1.0 * t / Tf) ** 4 + 6 * (1.0 * t / Tf) ** 5
 
 
+@jit(nopython=True, fastmath=True)
 def JointTrajectory(thetastart, thetaend, Tf, N, method) -> Any:
     """Computes a straight-line trajectory in joint space
 
@@ -1719,6 +1728,7 @@ def JointTrajectory(thetastart, thetaend, Tf, N, method) -> Any:
     return traj
 
 
+@jit(nopython=True, fastmath=True)
 def CartesianTrajectory(Xstart, Xend, Tf, N, method) -> Any:
     """Computes a trajectory as a list of N SE(3) matrices corresponding to
     the origin of the end-effector frame following a straight line
@@ -1876,6 +1886,8 @@ def ComputedTorque(
     )
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def SimulateControl(
     thetalist,
     dthetalist,

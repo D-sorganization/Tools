@@ -227,7 +227,9 @@ class TestInstallPackage:
         from utils.dependency_checker import install_package
 
         with patch("utils.dependency_checker.subprocess.run") as mock_run:
-            mock_run.side_effect = subprocess.CalledProcessError(1, "pip", stderr="error")
+            mock_run.side_effect = subprocess.CalledProcessError(
+                1, "pip", stderr="error"
+            )
             result = install_package("bad-package")
 
         assert result is False

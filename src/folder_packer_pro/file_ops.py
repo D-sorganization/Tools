@@ -1,18 +1,20 @@
+from numba import jit
+
 """File operations utilities for Folder Packer Pro.
 
 Provides file scanning, statistics collection, exclusion pattern matching,
 file type categorization, and size formatting.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-import os
-from collections import defaultdict
-from pathlib import Path
-from typing import Any
+import logging  # noqa: E402
+import os  # noqa: E402
+from collections import defaultdict  # noqa: E402
+from pathlib import Path  # noqa: E402
+from typing import Any  # noqa: E402
 
-from .constants import (
+from .constants import (  # noqa: E402
     CODE_EXTENSIONS,
     CONFIG_EXTENSIONS,
     MARKUP_EXTENSIONS,
@@ -55,6 +57,8 @@ def should_exclude(
     return False
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def collect_folder_stats(
     folder: Path,
     exclude_patterns: set[str],
@@ -82,7 +86,9 @@ def collect_folder_stats(
     for root, dirs, files in os.walk(folder):
         # Filter excluded directories
         dirs[:] = [
-            d for d in dirs if not should_exclude(Path(root) / d, exclude_patterns, include_git)
+            d
+            for d in dirs
+            if not should_exclude(Path(root) / d, exclude_patterns, include_git)
         ]
 
         for filename in files:

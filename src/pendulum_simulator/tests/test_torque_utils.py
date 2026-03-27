@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for torque_utils module.
 
 TDD: Tests cover polynomial torque generation for N-joint models.

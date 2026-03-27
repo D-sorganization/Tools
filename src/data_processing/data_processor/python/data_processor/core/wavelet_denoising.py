@@ -1,3 +1,5 @@
+from numba import jit
+
 """Wavelet Denoising Module.
 
 Provides wavelet-based signal denoising that preserves sharp transitions.
@@ -181,6 +183,7 @@ class WaveletDenoiser:
             wavelet_name=wavelet_name,
         )
 
+    @jit(nopython=True, fastmath=True)
     def _wavedec(
         self,
         signal: np.ndarray,
@@ -347,6 +350,7 @@ class WaveletDenoiser:
             # Standard deviation
             return np.std(detail_coeffs)
 
+    @jit(nopython=True, fastmath=True)
     def _calculate_thresholds(
         self,
         coeffs: list[np.ndarray],
@@ -383,6 +387,7 @@ class WaveletDenoiser:
 
         return thresholds
 
+    @jit(nopython=True, fastmath=True)
     def _sure_threshold(self, coeffs: np.ndarray, noise: float) -> float:
         """Calculate SURE (Stein's Unbiased Risk Estimate) threshold."""
         if not (coeffs is not None):
@@ -410,8 +415,12 @@ class WaveletDenoiser:
             raise ValueError("coeffs must be provided")
         thresholded = [coeffs[0].copy()]  # Keep approximation
 
-        for detail, thresh in zip(coeffs[1:], thresholds[1:], strict=False):
-            thresholded.append(self._threshold(detail, thresh))
+        thresholded.extend(
+            [
+                self._threshold(detail, thresh)
+                for (detail, thresh) in zip(coeffs[1:], thresholds[1:], strict=False)
+            ]
+        )
 
         return thresholded
 

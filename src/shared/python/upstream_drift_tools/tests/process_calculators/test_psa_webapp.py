@@ -1,9 +1,10 @@
+from typing import Any
+
 """Tests for psa_webapp.py."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import sys
-from typing import Any
 from unittest.mock import MagicMock, patch
 
 sys.modules["streamlit"] = MagicMock()

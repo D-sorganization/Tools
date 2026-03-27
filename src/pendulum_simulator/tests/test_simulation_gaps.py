@@ -1,3 +1,5 @@
+from typing import Any
+
 """Gap-fill tests for simulation.py, simulation_triple.py, simulation_golfer.py.
 
 simulation.py line 170: total_torques_at with non-None clamp

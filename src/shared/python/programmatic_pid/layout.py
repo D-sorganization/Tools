@@ -1,3 +1,5 @@
+from numba import jit
+
 """Layout computation and label placement.
 
 This module handles spatial layout of the P&ID canvas: computing panel
@@ -13,14 +15,14 @@ Postconditions:
     - ``LabelPlacer.find_position`` always returns a valid (x, y, align) tuple.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from collections.abc import Sequence
-from typing import Any
+from collections.abc import Sequence  # noqa: E402
+from typing import Any  # noqa: E402
 
-from programmatic_pid.equipment import equipment_dims
-from programmatic_pid.geometry import rects_overlap, text_box, to_float
-from programmatic_pid.spec_loader import get_drawing, get_layout_config
+from programmatic_pid.equipment import equipment_dims  # noqa: E402
+from programmatic_pid.geometry import rects_overlap, text_box, to_float  # noqa: E402
+from programmatic_pid.spec_loader import get_drawing, get_layout_config  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Label collision avoidance
@@ -52,6 +54,7 @@ class LabelPlacer:
         """Reserve the bounding box of a text string."""
         self.reserve_rect(text_box(text, x, y, h, align=align))
 
+    @jit(nopython=True, fastmath=True)
     def find_position(
         self,
         text: str,
@@ -77,7 +80,9 @@ class LabelPlacer:
             x = ax + dx
             y = ay + dy
             candidate = text_box(text, x, y, h, align=align)
-            if not any(rects_overlap(candidate, r, pad=h * 0.20) for r in self.occupied):
+            if not any(
+                rects_overlap(candidate, r, pad=h * 0.20) for r in self.occupied
+            ):
                 self.reserve_rect(candidate)
                 return x, y, align
         fallback = preferred[0]
@@ -93,6 +98,9 @@ class LabelPlacer:
 # ---------------------------------------------------------------------------
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def spread_instrument_positions(
     instruments: list[dict[str, Any]],
     min_spacing: float = 3.5,
@@ -131,7 +139,8 @@ def spread_instrument_positions(
             for ox, oy in ring:
                 cand = (base_x + ox * radius, base_y + oy * radius)
                 if all(
-                    (cand[0] - px) ** 2 + (cand[1] - py) ** 2 >= spacing**2 for px, py in placed
+                    (cand[0] - px) ** 2 + (cand[1] - py) ** 2 >= spacing**2
+                    for px, py in placed
                 ):
                     found = cand
                     break
@@ -230,8 +239,12 @@ def get_modelspace_extent(
     if equipment:
         x_min = min(to_float(eq.get("x", 0.0)) for eq in equipment)
         y_min = min(to_float(eq.get("y", 0.0)) for eq in equipment)
-        x_max = max(to_float(eq.get("x", 0.0)) + equipment_dims(eq)[0] for eq in equipment)
-        y_max = max(to_float(eq.get("y", 0.0)) + equipment_dims(eq)[1] for eq in equipment)
+        x_max = max(
+            to_float(eq.get("x", 0.0)) + equipment_dims(eq)[0] for eq in equipment
+        )
+        y_max = max(
+            to_float(eq.get("y", 0.0)) + equipment_dims(eq)[1] for eq in equipment
+        )
         margin = max((x_max - x_min) * 0.08, 5.0)
         return x_min - margin, y_min - margin, x_max + margin, y_max + margin
 

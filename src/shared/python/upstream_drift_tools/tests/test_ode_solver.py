@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for upstream_drift_tools.process_calculators.ode_solver (ODESolver).
 
 Covers all branches:
@@ -8,9 +10,8 @@ Covers all branches:
 - plot: mocked plt.show()
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
-from typing import Any
 from unittest.mock import patch
 
 import numpy as np

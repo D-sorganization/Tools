@@ -104,7 +104,9 @@ class TestRotationComposition:
         r = Rotation.from_axis_angle([0, 0, 1], 0.5)
         identity = Rotation.identity()
         composed = r.compose(identity)
-        np.testing.assert_allclose(composed.as_quaternion(), r.as_quaternion(), atol=ATOL)
+        np.testing.assert_allclose(
+            composed.as_quaternion(), r.as_quaternion(), atol=ATOL
+        )
 
     def test_compose_inverse_gives_identity(self) -> None:
         r = Rotation.from_axis_angle([0, 0, 1], 0.5)

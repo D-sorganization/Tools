@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -9,16 +11,16 @@ This module defines the fundamental data structures used throughout
 the model_generation package for representing URDF elements.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import math
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any
+import math  # noqa: E402
+from dataclasses import dataclass, field  # noqa: E402
+from enum import Enum  # noqa: E402
+from typing import Any  # noqa: E402
 
-import numpy as np
-from model_generation.core.contracts import precondition
-from numpy.typing import NDArray
+import numpy as np  # noqa: E402
+from model_generation.core.contracts import precondition  # noqa: E402
+from numpy.typing import NDArray  # noqa: E402
 
 
 class GeometryType(Enum):
@@ -288,6 +290,7 @@ class Inertia:
         """Check if inertia is diagonal (no off-diagonal elements)."""
         return abs(self.ixy) < 1e-10 and abs(self.ixz) < 1e-10 and abs(self.iyz) < 1e-10
 
+    @jit(nopython=True, fastmath=True)
     def satisfies_triangle_inequality(self) -> bool:
         """
         Check triangle inequality for principal moments.

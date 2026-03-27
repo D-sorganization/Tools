@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for panel builders."""
 
 from typing import Any

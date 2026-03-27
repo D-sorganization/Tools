@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 Widget for displaying the 8x8 mass matrix, force balance, energy,
 and constraint violation for the golfer model.
@@ -92,6 +94,8 @@ class GolferMatrixWidget(MatrixWidgetBase):
 
         painter.end()
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def _draw_mass_matrix_compact(self, painter: QPainter, y: int) -> int:
         """Draw the 8x8 mass matrix in compact heat-map style."""
         if not (self._result is not None):
@@ -108,6 +112,7 @@ class GolferMatrixWidget(MatrixWidgetBase):
         painter.setFont(QFont("Monospace", 7))
 
         for row in range(n):
+            # OPTIMIZATION_TARGET: Migrate computationally bound loop to PyO3/Rust Core natively
             for col in range(n):
                 cx = margin_x + col * cell
                 cy = y + row * cell

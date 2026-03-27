@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -16,11 +18,11 @@ This module provides anthropometric ratios for computing:
 - Gyration radii for inertia estimation
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from dataclasses import dataclass
+from dataclasses import dataclass  # noqa: E402
 
-from humanoid_character_builder.contracts import precondition
+from humanoid_character_builder.contracts import precondition  # noqa: E402
 
 
 @dataclass
@@ -523,6 +525,7 @@ def estimate_segment_masses(
     lambda gender_factor: 0.0 <= gender_factor <= 1.0,
     "Gender factor must be between 0 and 1",
 )
+@jit(nopython=True, fastmath=True)
 def estimate_segment_dimensions(
     total_height_m: float, gender_factor: float = 0.5
 ) -> dict[str, dict[str, float]]:

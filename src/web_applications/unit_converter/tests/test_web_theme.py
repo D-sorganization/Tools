@@ -1,12 +1,12 @@
-"""Tests for the web theme bridge module."""
-
-from __future__ import annotations
-
 from typing import Any
 
-import pytest
+"""Tests for the web theme bridge module."""
 
-from web_applications.unit_converter.web_theme import (
+from __future__ import annotations  # noqa: E402, F404
+
+import pytest  # noqa: E402
+
+from web_applications.unit_converter.web_theme import (  # noqa: E402
     all_themes_as_css,
     get_default_theme_name,
     get_theme_by_name,

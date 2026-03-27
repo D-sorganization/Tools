@@ -1,7 +1,6 @@
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
-
 # mypy: ignore-errors
 """Neural network training engine.
 
@@ -11,6 +10,8 @@ initialization, activation functions, and data preparation.
 """
 
 from __future__ import annotations
+
+from numba import jit
 
 import logging
 import time
@@ -100,9 +101,7 @@ class NeuralNetworkTrainer:
             output_features=output_features,
             task_type=str(kwargs.get("task_type", "regression")),
         )
-        config_kwargs = {
-            key: value for key, value in kwargs.items() if hasattr(NetworkConfig, key)
-        }
+        config_kwargs = {key: value for key, value in kwargs.items() if hasattr(NetworkConfig, key)}
         config = NetworkConfig(
             network_type=network_type,
             layers=layers,
@@ -142,9 +141,7 @@ class NeuralNetworkTrainer:
         )
         X, y = self._extract_model_arrays(df, feature_columns, target_columns)
         X, y = self._maybe_shuffle_data(X, y, split_config)
-        X_train, y_train, X_val, y_val, X_test, y_test = self._split_data(
-            X, y, split_config
-        )
+        X_train, y_train, X_val, y_val, X_test, y_test = self._split_data(X, y, split_config)
         X_train, X_val, X_test, y_train, y_val, y_test = self._normalize_train_val_test(
             X_train, X_val, X_test, y_train, y_val, y_test
         )
@@ -200,9 +197,7 @@ class NeuralNetworkTrainer:
         elif network_type == NetworkType.CNN_1D:
             self._append_cnn_layers(layers, hidden_layers, activation)
         output_activation = (
-            ActivationFunction.LINEAR
-            if task_type == "regression"
-            else ActivationFunction.SOFTMAX
+            ActivationFunction.LINEAR if task_type == "regression" else ActivationFunction.SOFTMAX
         )
         layers.append(
             LayerConfig(
@@ -222,13 +217,9 @@ class NeuralNetworkTrainer:
     ) -> None:
         """Append dense/dropout blocks for MLP configuration."""
         for units in hidden_layers:
-            layers.append(
-                LayerConfig(layer_type="dense", units=units, activation=activation)
-            )
+            layers.append(LayerConfig(layer_type="dense", units=units, activation=activation))
             if dropout_rate > 0:
-                layers.append(
-                    LayerConfig(layer_type="dropout", dropout_rate=dropout_rate)
-                )
+                layers.append(LayerConfig(layer_type="dropout", dropout_rate=dropout_rate))
 
     def _append_rnn_layers(
         self,
@@ -250,9 +241,7 @@ class NeuralNetworkTrainer:
                 )
             )
             if dropout_rate > 0:
-                layers.append(
-                    LayerConfig(layer_type="dropout", dropout_rate=dropout_rate)
-                )
+                layers.append(LayerConfig(layer_type="dropout", dropout_rate=dropout_rate))
 
     def _append_cnn_layers(
         self,
@@ -262,21 +251,10 @@ class NeuralNetworkTrainer:
     ) -> None:
         """Append convolution + dense blocks for 1D CNN configuration."""
         if not (layers is not None):
-            raise ValueError("layers must be provided")
-        for filters in (32, 64, 128):
-            layers.append(
-                LayerConfig(
-                    layer_type="conv1d",
-                    units=filters,
-                    kernel_size=3,
-                    activation=activation,
-                )
+        layers.extend([LayerConfig(layer_type='conv1d', units=filters, kernel_size=3, activation=activation) for filters in (32, 64, 128)])
             )
-        layers.append(LayerConfig(layer_type="flatten"))
-        for units in hidden_layers:
-            layers.append(
-                LayerConfig(layer_type="dense", units=units, activation=activation)
-            )
+        layers.extend([LayerConfig(layer_type='dense', units=units, activation=activation) for units in hidden_layers])
+            layers.append(LayerConfig(layer_type="dense", units=units, activation=activation))
 
     def _validate_prepare_data_inputs(
         self,
@@ -291,18 +269,14 @@ class NeuralNetworkTrainer:
         if not target_columns:
             raise ValueError("target_columns must not be empty")
 
-        missing_targets = [
-            column for column in target_columns if column not in df.columns
-        ]
+        missing_targets = [column for column in target_columns if column not in df.columns]
         if missing_targets:
             raise ValueError(f"Unknown target columns: {missing_targets}")
         if split_config.train_ratio <= 0:
             raise ValueError("train_ratio must be positive")
         if split_config.val_ratio < 0 or split_config.test_ratio < 0:
             raise ValueError("val_ratio and test_ratio must be non-negative")
-        ratio_sum = (
-            split_config.train_ratio + split_config.val_ratio + split_config.test_ratio
-        )
+        ratio_sum = split_config.train_ratio + split_config.val_ratio + split_config.test_ratio
         if ratio_sum > 1.0:
             raise ValueError("split ratios must sum to 1.0 or less")
 
@@ -315,9 +289,7 @@ class NeuralNetworkTrainer:
             raise ValueError("feature_columns must not be empty")
         if set(resolved_features) & set(target_columns):
             raise ValueError("feature_columns and target_columns must not overlap")
-        missing_features = [
-            column for column in resolved_features if column not in df.columns
-        ]
+        missing_features = [column for column in resolved_features if column not in df.columns]
         if missing_features:
             raise ValueError(f"Unknown feature columns: {missing_features}")
         return resolved_features
@@ -449,20 +421,14 @@ class NeuralNetworkTrainer:
         )
 
         for epoch in range(config.epochs):
-            train_loss, weights, biases = self._run_epoch(
-                X_train, y_train, weights, biases, config
-            )
+            train_loss, weights, biases = self._run_epoch(X_train, y_train, weights, biases, config)
             train_losses.append(train_loss)
 
-            val_loss = self._calculate_validation_loss(
-                X_val, y_val, weights, biases, config
-            )
+            val_loss = self._calculate_validation_loss(X_val, y_val, weights, biases, config)
             val_losses.append(val_loss)
 
-            best_val_loss, best_epoch, patience_counter = (
-                self._update_early_stopping_state(
-                    val_loss, epoch, best_val_loss, best_epoch, patience_counter
-                )
+            best_val_loss, best_epoch, patience_counter = self._update_early_stopping_state(
+                val_loss, epoch, best_val_loss, best_epoch, patience_counter
             )
             if patience_counter >= config.early_stopping_patience:
                 logger.info("Early stopping at epoch %d", epoch)
@@ -521,9 +487,7 @@ class NeuralNetworkTrainer:
         activations = self._forward_pass(X_val, weights, biases, config)
         return self._mean_squared_error(activations[-1], y_val)
 
-    def _mean_squared_error(
-        self, predictions: np.ndarray, targets: np.ndarray
-    ) -> float:
+    def _mean_squared_error(self, predictions: np.ndarray, targets: np.ndarray) -> float:
         """Compute MSE loss with target shape aligned to predictions."""
         return float(np.mean((predictions - targets.reshape(predictions.shape)) ** 2))
 
@@ -568,9 +532,7 @@ class NeuralNetworkTrainer:
         test_activations = self._forward_pass(data["X_test"], weights, biases, config)
         predictions = test_activations[-1]
         actual_values = data["y_test"]
-        test_loss = float(
-            np.mean((predictions - actual_values.reshape(predictions.shape)) ** 2)
-        )
+        test_loss = float(np.mean((predictions - actual_values.reshape(predictions.shape)) ** 2))
         return test_loss, predictions, actual_values
 
     def train_simple(
@@ -605,9 +567,7 @@ class NeuralNetworkTrainer:
             best_epoch=training_state["best_epoch"],
             best_val_loss=training_state["best_val_loss"],
             final_train_loss=(
-                training_state["train_losses"][-1]
-                if training_state["train_losses"]
-                else 0
+                training_state["train_losses"][-1] if training_state["train_losses"] else 0
             ),
             final_val_loss=(
                 training_state["val_losses"][-1] if training_state["val_losses"] else 0
@@ -615,8 +575,7 @@ class NeuralNetworkTrainer:
             test_loss=test_loss,
             training_time_seconds=training_state["training_time"],
             stopped_early=(
-                training_state["patience_counter"]
-                >= resolved_config.early_stopping_patience
+                training_state["patience_counter"] >= resolved_config.early_stopping_patience
             ),
             predictions=predictions,
             actual_values=actual_values,
@@ -693,6 +652,7 @@ class NeuralNetworkTrainer:
                 biases.append(None)
 
         return weights, biases
+    @jit(nopython=True, fastmath=True)
 
     def _forward_pass(
         self,
@@ -723,6 +683,7 @@ class NeuralNetworkTrainer:
             activations.append(current)
 
         return activations
+    @jit(nopython=True, fastmath=True)
 
     def _backward_pass(
         self,
@@ -776,6 +737,7 @@ class NeuralNetworkTrainer:
 
         return gradients
 
+    @jit(nopython=True, fastmath=True)
     def _update_weights(
         self,
         weights: list[np.ndarray | None],
@@ -796,9 +758,7 @@ class NeuralNetworkTrainer:
 
         return weights, biases
 
-    def _apply_activation(
-        self, z: np.ndarray, activation: ActivationFunction
-    ) -> np.ndarray:
+    def _apply_activation(self, z: np.ndarray, activation: ActivationFunction) -> np.ndarray:
         """Apply activation function."""
         if activation == ActivationFunction.RELU:
             return np.maximum(0, z)
@@ -816,9 +776,7 @@ class NeuralNetworkTrainer:
         else:
             return z
 
-    def _activation_derivative(
-        self, a: np.ndarray, activation: ActivationFunction
-    ) -> np.ndarray:
+    def _activation_derivative(self, a: np.ndarray, activation: ActivationFunction) -> np.ndarray:
         """Compute activation derivative."""
         if activation == ActivationFunction.RELU:
             return (a > 0).astype(float)

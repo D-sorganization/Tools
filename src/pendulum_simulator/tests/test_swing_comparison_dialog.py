@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Unit tests for SwingComparisonDialog and PerturbationPanel.set_preset_source().
 

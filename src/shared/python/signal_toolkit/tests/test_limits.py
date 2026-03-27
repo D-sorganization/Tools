@@ -1,12 +1,12 @@
+from typing import Any
+
 """Comprehensive tests for signal_toolkit.limits module.
 
 Covers all saturation modes, rate limiting, deadband, hysteresis, backlash,
 plus the factory and visualization helpers.
 """
 
-from __future__ import annotations
-
-from typing import Any
+from __future__ import annotations  # noqa: F404
 
 import numpy as np
 import pytest
