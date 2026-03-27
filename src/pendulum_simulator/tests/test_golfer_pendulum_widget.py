@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for GolferPendulumWidget."""
 
 import numpy as np
@@ -7,7 +9,7 @@ from double_pendulum_golf.gui.golfer_pendulum_widget import GolferPendulumWidget
 from double_pendulum_golf.physics_golfer import GolferParams
 
 
-def create_mock_result():
+def create_mock_result() -> Any:
     res = MagicMock()
     res.n_steps = 2
     res.params = GolferParams(
@@ -47,7 +49,7 @@ def create_mock_result():
         "lscap": (-0.05, 0.05),
     }
 
-    def mock_pos_at(*args):
+    def mock_pos_at(*args) -> Any:
         return pos_dict
 
     res.positions_at.side_effect = mock_pos_at
@@ -62,13 +64,13 @@ def create_mock_result():
     return res
 
 
-def test_golfer_widget_init(qapp):
+def test_golfer_widget_init(qapp) -> Any:
     w = GolferPendulumWidget()
     assert w._get_total_length() == 2.5
     assert not w._has_result()
 
 
-def test_set_simulation_and_frame(qapp, monkeypatch):
+def test_set_simulation_and_frame(qapp, monkeypatch) -> Any:
     w = GolferPendulumWidget()
     res = create_mock_result()
 
@@ -88,7 +90,7 @@ def test_set_simulation_and_frame(qapp, monkeypatch):
     assert not w._has_result()
 
 
-def test_painting(qapp, monkeypatch):
+def test_painting(qapp, monkeypatch) -> Any:
     w = GolferPendulumWidget()
     res = create_mock_result()
 
@@ -130,7 +132,7 @@ def test_painting(qapp, monkeypatch):
     w.resize(400, 400)
 
     # Exception branch for zero_torque_joint_forces
-    def broken_zero(*args):
+    def broken_zero(*args) -> Any:
         raise ValueError()
 
     monkeypatch.setattr(

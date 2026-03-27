@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -10,14 +12,14 @@ Provides high-quality rendering of planets, orbits, trajectories,
 and UI elements.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import math
-import pathlib
-from dataclasses import dataclass
-from typing import Any, cast
+import math  # noqa: E402
+import pathlib  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
+from typing import Any, cast  # noqa: E402
 
-import numpy as np
+import numpy as np  # noqa: E402
 
 try:
     import pygame
@@ -130,13 +132,17 @@ try:
 except ImportError:
     OPENGL_AVAILABLE = False
 
-from ..core.celestial_body import BodyType, CelestialBody, StateVector
-from ..core.constants import AU
-from ..data.star_catalog import iter_catalog
-from .camera import Camera, CameraState
-from .starfield import StarVertex, build_star_vertices, point_size_from_magnitude
-from .textures import TextureManager
-from .ui_renderer import UIRenderer
+from ..core.celestial_body import BodyType, CelestialBody, StateVector  # noqa: E402
+from ..core.constants import AU  # noqa: E402
+from ..data.star_catalog import iter_catalog  # noqa: E402
+from .camera import Camera, CameraState  # noqa: E402
+from .starfield import (  # noqa: E402
+    StarVertex,
+    build_star_vertices,
+    point_size_from_magnitude,
+)
+from .textures import TextureManager  # noqa: E402
+from .ui_renderer import UIRenderer  # noqa: E402
 
 
 @dataclass
@@ -246,7 +252,9 @@ class Renderer:
         self.clock = pygame.time.Clock()
 
         # Initialize UI Renderer
-        self.ui_renderer = UIRenderer(self.settings.window_width, self.settings.window_height)
+        self.ui_renderer = UIRenderer(
+            self.settings.window_width, self.settings.window_height
+        )
 
         # OpenGL setup
         self._setup_opengl()
@@ -367,6 +375,7 @@ class Renderer:
             self._shader_program = None
             self._shaders_enabled = False
 
+    @jit(nopython=True, fastmath=True)
     def _draw_sphere(self, radius: float, segments: int) -> None:
         """Draw a unit sphere using immediate mode."""
         for i in range(segments):
@@ -378,6 +387,7 @@ class Renderer:
             z1 = math.sin(lat1)
             zr1 = math.cos(lat1)
 
+            # OPTIMIZATION_TARGET: Migrate computationally bound loop to PyO3/Rust Core natively
             glBegin(GL_QUAD_STRIP)
             for j in range(segments + 1):
                 lng = 2 * math.pi * float(j) / segments
@@ -397,6 +407,7 @@ class Renderer:
                 glVertex3f(radius * x * zr1, radius * y * zr1, radius * z1)
             glEnd()
 
+    @jit(nopython=True, fastmath=True)
     def _draw_circle(self, radius: float, segments: int) -> None:
         """Draw a circle in the XY plane."""
         if not (radius is not None):
@@ -435,7 +446,9 @@ class Renderer:
 
             self.star_batches.append((float(size), n_stars, coords, colors))
 
-    def begin_frame(self, camera_state: CameraState | None = None, clear: bool = True) -> None:
+    def begin_frame(
+        self, camera_state: CameraState | None = None, clear: bool = True
+    ) -> None:
         """Begin a new frame."""
         if not (clear is not None):
             raise ValueError("clear must be provided")
@@ -484,7 +497,9 @@ class Renderer:
         glDisableClientState(GL_COLOR_ARRAY)
         glEnable(GL_LIGHTING)
 
-    def render_body(self, body: CelestialBody, julian_date: float, highlight: bool = False) -> None:
+    def render_body(
+        self, body: CelestialBody, julian_date: float, highlight: bool = False
+    ) -> None:
         """
         Render a celestial body.
 
@@ -561,7 +576,10 @@ class Renderer:
         if texturing_active:
             glDisable(GL_TEXTURE_2D)
 
-    def _render_star_glow(self, body_size: float, color: tuple[float, float, float]) -> None:
+    @jit(nopython=True, fastmath=True)
+    def _render_star_glow(
+        self, body_size: float, color: tuple[float, float, float]
+    ) -> None:
         """Render a soft halo to make the Sun feel more luminous."""
         if not (body_size is not None):
             raise ValueError("body_size must be provided")
@@ -575,10 +593,13 @@ class Renderer:
         glVertex3f(0.0, 0.0, 0.0)
         for i in range(segments + 1):
             angle = 2 * math.pi * i / segments
-            glVertex3f(glow_radius * math.cos(angle), 0.0, glow_radius * math.sin(angle))
+            glVertex3f(
+                glow_radius * math.cos(angle), 0.0, glow_radius * math.sin(angle)
+            )
         glEnd()
         glDisable(GL_BLEND)
 
+    @jit(nopython=True, fastmath=True)
     def _render_selection_ring(self, body_size: float) -> None:
         """Render an orbit-plane selection ring for the chosen body."""
         if not (body_size is not None):
@@ -592,9 +613,12 @@ class Renderer:
         glBegin(GL_LINE_LOOP)
         for i in range(segments):
             angle = 2 * math.pi * i / segments
-            glVertex3f(ring_radius * math.cos(angle), 0.0, ring_radius * math.sin(angle))
+            glVertex3f(
+                ring_radius * math.cos(angle), 0.0, ring_radius * math.sin(angle)
+            )
         glEnd()
 
+    @jit(nopython=True, fastmath=True)
     def _render_rings(self, body: CelestialBody, body_size: float) -> None:
         """Render planetary rings."""
         # Ring color (semi-transparent)
@@ -652,7 +676,9 @@ class Renderer:
         if color is None:
             # Use body color with reduced alpha
             body_color = body.color
-            glColor4f(body_color[0] * 0.6, body_color[1] * 0.6, body_color[2] * 0.6, 0.4)
+            glColor4f(
+                body_color[0] * 0.6, body_color[1] * 0.6, body_color[2] * 0.6, 0.4
+            )
         else:
             glColor4f(*color)
 
@@ -723,6 +749,7 @@ class Renderer:
 
         glEnable(GL_LIGHTING)
 
+    @jit(nopython=True, fastmath=True)
     def render_grid(self, size: float = 10.0, divisions: int = 20) -> None:
         """Render a reference grid in the ecliptic plane."""
         if not (size is not None):
@@ -877,7 +904,9 @@ class Renderer:
         except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return None
 
-    def render_info_panel(self, info: dict[str, Any], position: tuple[int, int] = (20, 20)) -> None:
+    def render_info_panel(
+        self, info: dict[str, Any], position: tuple[int, int] = (20, 20)
+    ) -> None:
         """Render info panel (Delegated to UIRenderer)."""
         pass  # UI Renderer handles panels now via render_sidebar or similar
 
@@ -931,7 +960,9 @@ class Renderer:
         if self.ui_renderer:
             self.ui_renderer.render_sidebar(sidebar_data, content_data)
 
-    def render_unified_controls(self, ctrl_data: dict[str, Any], time_data: dict[str, Any]) -> None:
+    def render_unified_controls(
+        self, ctrl_data: dict[str, Any], time_data: dict[str, Any]
+    ) -> None:
         """Render unified controls (Delegated to UIRenderer)."""
         if self.ui_renderer:
             self.ui_renderer.render_unified_controls(ctrl_data, time_data)

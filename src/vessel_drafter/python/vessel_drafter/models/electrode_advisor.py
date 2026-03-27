@@ -1,10 +1,12 @@
+from numba import jit
+
 """Default electrode advisor drafting inputs mirrored from the current UI."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from dataclasses import dataclass
-from math import cos, pi, sin
-from typing import Any
+from dataclasses import dataclass  # noqa: E402
+from math import cos, pi, sin  # noqa: E402
+from typing import Any  # noqa: E402
 
 MM_PER_M = 1000.0
 
@@ -84,7 +86,8 @@ class ElectrodeAdvisorLayout:
             "project": "electrode_advisor_default_layout",
             "source_viewer": {
                 "component": (
-                    "Tools/src/electrode_advisor/web/src/components/" "GlassBath3DViewer.tsx"
+                    "Tools/src/electrode_advisor/web/src/components/"
+                    "GlassBath3DViewer.tsx"
                 ),
                 "calculator": (
                     "Tools/src/electrode_advisor/web/src/components/"
@@ -112,7 +115,9 @@ class ElectrodeAdvisorLayout:
                 "bath_shell_thickness_mm": self.drafting.bath_shell_thickness_mm,
                 "glass_clearance_mm": self.drafting.glass_clearance_mm,
                 "electrode_holder_height_mm": self.drafting.electrode_holder_height_mm,
-                "electrode_holder_radius_factor": (self.drafting.electrode_holder_radius_factor),
+                "electrode_holder_radius_factor": (
+                    self.drafting.electrode_holder_radius_factor
+                ),
                 "tip_band_height_mm": self.drafting.tip_band_height_mm,
             },
             "placements": [
@@ -137,6 +142,7 @@ class ElectrodeAdvisorLayout:
         }
 
 
+@jit(nopython=True, fastmath=True)
 def _build_default_placements(
     bath: BathDefaults,
     electrodes: ElectrodeDefaults,

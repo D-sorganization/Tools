@@ -307,7 +307,9 @@ class RigidTransform:
         return cls.from_rotation_translation(np.eye(3), p, source=source, target=target)
 
     @classmethod
-    def pure_rotation(cls, rotation: Rotation, *, source: str, target: str) -> RigidTransform:
+    def pure_rotation(
+        cls, rotation: Rotation, *, source: str, target: str
+    ) -> RigidTransform:
         """Create a pure rotation (zero translation)."""
         return cls.from_rotation(rotation, np.zeros(3), source=source, target=target)
 
@@ -760,7 +762,8 @@ class RigidTransform:
 
     def __repr__(self) -> str:
         return (
-            f"RigidTransform({self._source_frame} -> {self._target_frame}, " f"p={self._T[:3, 3]})"
+            f"RigidTransform({self._source_frame} -> {self._target_frame}, "
+            f"p={self._T[:3, 3]})"
         )
 
     def __eq__(self, other: object) -> bool:

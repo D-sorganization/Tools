@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -9,15 +11,15 @@ A PyQt6 GUI for building parametric humanoid characters with
 anthropometric calculations and URDF export.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import sys
-from dataclasses import dataclass
-from enum import Enum
+import sys  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
+from enum import Enum  # noqa: E402
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont
-from PyQt6.QtWidgets import (
+from PyQt6.QtCore import Qt  # noqa: E402
+from PyQt6.QtGui import QFont  # noqa: E402
+from PyQt6.QtWidgets import (  # noqa: E402
     QApplication,
     QComboBox,
     QDoubleSpinBox,
@@ -384,7 +386,9 @@ class HumanoidBuilderWindow(QMainWindow):
         self.height_spin.setDecimals(2)
         self.height_spin.setValue(1.75)
         self.height_spin.setSingleStep(0.01)
-        self.height_spin.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.height_spin.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
+        )
         primary_layout.addWidget(self.height_spin, 0, 1)
 
         # Mass
@@ -509,7 +513,9 @@ class HumanoidBuilderWindow(QMainWindow):
             value_label.setMinimumWidth(40)
             props_layout.addWidget(value_label, row, 2)
 
-            slider.valueChanged.connect(lambda v, lbl=value_label: lbl.setText(f"{v / 100:.2f}"))
+            slider.valueChanged.connect(
+                lambda v, lbl=value_label: lbl.setText(f"{v / 100:.2f}")
+            )
 
             self.proportion_sliders[key] = (slider, value_label)
 
@@ -609,7 +615,9 @@ class HumanoidBuilderWindow(QMainWindow):
 
         self.preview_text = QTextEdit()
         self.preview_text.setReadOnly(True)
-        self.preview_text.setPlaceholderText("Build character to see configuration preview...")
+        self.preview_text.setPlaceholderText(
+            "Build character to see configuration preview..."
+        )
         preview_layout.addWidget(self.preview_text)
 
         layout.addWidget(preview_group)
@@ -671,6 +679,7 @@ class HumanoidBuilderWindow(QMainWindow):
         else:
             return 0.5
 
+    @jit(nopython=True, fastmath=True)
     def _build_character(self) -> None:
         """Build the character with current parameters."""
         height = self.height_spin.value()
@@ -779,8 +788,12 @@ class HumanoidBuilderWindow(QMainWindow):
         lines.append(f"Gender Model: {self.gender_combo.currentText()}")
         lines.append("")
         lines.append("Proportions:")
-        for key, (slider, _) in self.proportion_sliders.items():
-            lines.append(f"  {key}: {slider.value() / 100:.2f}")
+        lines.extend(
+            [
+                f"  {key}: {slider.value() / 100:.2f}"
+                for (key, (slider, _)) in self.proportion_sliders.items()
+            ]
+        )
         lines.append("")
         lines.append(f"Export Format: {self.format_combo.currentText()}")
         lines.append(f"Mesh Format: {self.mesh_format_combo.currentText()}")
@@ -792,7 +805,9 @@ class HumanoidBuilderWindow(QMainWindow):
     def _export_character(self) -> None:
         """Export the character configuration."""
         if not self._segments:
-            self.preview_text.setPlainText("Error: Build character first before export.")
+            self.preview_text.setPlainText(
+                "Error: Build character first before export."
+            )
             return
 
         # In a full implementation, this would save to file

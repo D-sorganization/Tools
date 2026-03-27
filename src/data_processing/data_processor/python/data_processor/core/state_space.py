@@ -19,6 +19,8 @@ Features:
 
 from __future__ import annotations
 
+from numba import jit
+
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -216,9 +218,13 @@ class BaseStateSpaceModel(ABC):
 
         # Optimize parameters
         if self.config.optimization_method == OptimizationMethod.EM:
-            opt_params, log_lik, converged, n_iter = self._em_algorithm(y, initial_params)
+            opt_params, log_lik, converged, n_iter = self._em_algorithm(
+                y, initial_params
+            )
         else:
-            opt_params, log_lik, converged, n_iter = self._optimize_parameters(y, initial_params)
+            opt_params, log_lik, converged, n_iter = self._optimize_parameters(
+                y, initial_params
+            )
 
         # Update matrices with optimal parameters
         self._update_matrices(opt_params)
@@ -226,7 +232,9 @@ class BaseStateSpaceModel(ABC):
 
         # Run Kalman filter and smoother
         filtered_states, filtered_cov, log_lik = self._kalman_filter(y)
-        smoothed_states, smoothed_cov = self._kalman_smoother(y, filtered_states, filtered_cov)
+        smoothed_states, smoothed_cov = self._kalman_smoother(
+            y, filtered_states, filtered_cov
+        )
 
         # Calculate fitted values and residuals
         fitted = np.zeros(n)
@@ -264,6 +272,7 @@ class BaseStateSpaceModel(ABC):
             n_iterations=n_iter,
         )
 
+    @jit(nopython=True, fastmath=True)
     def forecast(
         self,
         steps: int | None = None,
@@ -325,6 +334,7 @@ class BaseStateSpaceModel(ABC):
             confidence_level=confidence_level,
         )
 
+    @jit(nopython=True, fastmath=True)
     def _kalman_filter(self, y: np.ndarray) -> tuple[np.ndarray, np.ndarray, float]:
         """Run Kalman filter.
 
@@ -390,6 +400,7 @@ class BaseStateSpaceModel(ABC):
 
         return filtered_states, filtered_cov, log_likelihood
 
+    @jit(nopython=True, fastmath=True)
     def _kalman_smoother(
         self,
         y: np.ndarray,
@@ -430,7 +441,9 @@ class BaseStateSpaceModel(ABC):
             smoothed_states[t] = filtered_states[t] + J @ (
                 smoothed_states[t + 1] - state_pred.flatten()
             )
-            smoothed_cov[t] = filtered_cov[t] + J @ (smoothed_cov[t + 1] - cov_pred) @ J.T
+            smoothed_cov[t] = (
+                filtered_cov[t] + J @ (smoothed_cov[t + 1] - cov_pred) @ J.T
+            )
 
         return smoothed_states, smoothed_cov
 
@@ -450,7 +463,7 @@ class BaseStateSpaceModel(ABC):
         if not (y is not None):
             raise ValueError("y must be provided")
 
-        def objective(params):
+        def objective(params) -> Any:
             # Ensure positive variances if needed
             self._update_matrices(params)
             _, _, ll = self._kalman_filter(y)
@@ -469,7 +482,9 @@ class BaseStateSpaceModel(ABC):
         )
 
         # Fallback to Nelder-Mead if BFGS fails
-        if not res.success and (self.config.optimization_method == OptimizationMethod.BFGS):
+        if not res.success and (
+            self.config.optimization_method == OptimizationMethod.BFGS
+        ):
             res = minimize(
                 objective,
                 initial_params,
@@ -504,7 +519,9 @@ class BaseStateSpaceModel(ABC):
             # E-step: Run Kalman filter and smoother
             self._update_matrices(params)
             filtered_states, filtered_cov, ll = self._kalman_filter(y)
-            smoothed_states, smoothed_cov = self._kalman_smoother(y, filtered_states, filtered_cov)
+            smoothed_states, smoothed_cov = self._kalman_smoother(
+                y, filtered_states, filtered_cov
+            )
 
             # Check convergence
             if abs(ll - prev_ll) < tol:
@@ -517,6 +534,7 @@ class BaseStateSpaceModel(ABC):
 
         return params, prev_ll, False, max_iter
 
+    @jit(nopython=True, fastmath=True)
     def _em_m_step(
         self,
         y: np.ndarray,
@@ -548,6 +566,7 @@ class BaseStateSpaceModel(ABC):
 
         return np.array([max(1e-10, state_var), max(1e-10, obs_var)])
 
+    @jit(nopython=True, fastmath=True)
     def _numerical_gradient(
         self, y: np.ndarray, params: np.ndarray, eps: float = 1e-6
     ) -> np.ndarray:
@@ -642,7 +661,9 @@ class LocalLinearTrendModel(BaseStateSpaceModel):
     """
 
     def __init__(self, config: StateSpaceConfig | None = None) -> None:
-        config = config or StateSpaceConfig(model_type=StateSpaceModelType.LOCAL_LINEAR_TREND)
+        config = config or StateSpaceConfig(
+            model_type=StateSpaceModelType.LOCAL_LINEAR_TREND
+        )
         super().__init__(config)
         self.n_states = 2
         self.n_obs = 1
@@ -706,6 +727,7 @@ class SeasonalModel(BaseStateSpaceModel):
         self.n_states = 2 + period - 1  # Level + trend + seasonal
         self.n_obs = 1
 
+    @jit(nopython=True, fastmath=True)
     def _initialize_matrices(self, y: np.ndarray) -> None:
         """Initialize model matrices."""
         if not (y is not None):
@@ -822,6 +844,7 @@ class ARIMAStateSpace(BaseStateSpaceModel):
         self.Q = np.array([[var_y]])
         self.H = np.array([[0.0]])  # Pure ARIMA has no observation noise
 
+    @jit(nopython=True, fastmath=True)
     def _update_matrices(self, parameters: np.ndarray) -> None:
         """Update with parameter values."""
         if not (parameters is not None):
@@ -867,6 +890,7 @@ class ARIMAStateSpace(BaseStateSpaceModel):
         result["sigma_sq"] = float(parameters[idx])
         return result
 
+    @jit(nopython=True, fastmath=True)
     def _estimate_ar(self, y: np.ndarray, p: int) -> np.ndarray:
         """Estimate AR coefficients using Yule-Walker equations."""
         if not (y is not None):

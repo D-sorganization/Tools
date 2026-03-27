@@ -1,3 +1,7 @@
+from typing import Any
+
+from numba import jit
+
 """
 Test suite for PSA Model.
 
@@ -54,7 +58,7 @@ class TestPSAModelBaseCase:
         )
 
     @pytest.fixture
-    def base_results(self, base_model: PSAModel):
+    def base_results(self, base_model: PSAModel) -> Any:
         """Calculate base case results."""
         return base_model.calculate()
 
@@ -132,7 +136,7 @@ class TestPSAModelH2Flows:
     """Test H2 component flows against Excel."""
 
     @pytest.fixture
-    def base_results(self):
+    def base_results(self) -> Any:
         """Calculate base case results."""
         model = PSAModel()
         return model.calculate()
@@ -190,7 +194,7 @@ class TestPSAModelO2Flows:
     """Test O2 component flows against Excel."""
 
     @pytest.fixture
-    def base_results(self):
+    def base_results(self) -> Any:
         """Calculate base case results."""
         model = PSAModel()
         return model.calculate()
@@ -448,6 +452,7 @@ class TestPSAModelEdgeCases:
 class TestPSAModelConsistency:
     """Test consistency between different calculation paths."""
 
+    @jit(nopython=True, fastmath=True)
     def test_flow_conservation_per_component(self) -> None:
         """Test mass conservation for each component."""
         model = PSAModel()
@@ -491,7 +496,9 @@ class TestPSAModelConsistency:
 
         for i in range(len(results.component_names)):
             # Interstage = Mixed feed - Exhaust
-            calculated_interstage = results.flows.mixed_feed[i] - results.flows.exhaust[i]
+            calculated_interstage = (
+                results.flows.mixed_feed[i] - results.flows.exhaust[i]
+            )
             assert_allclose(
                 results.flows.interstage[i],
                 calculated_interstage,

@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Unit tests for SwingComparisonDialog and PerturbationPanel.set_preset_source().
 
@@ -26,7 +28,7 @@ pytestmark = pytest.mark.skipif(not _HAS_QT, reason="PyQt6 not available")
 
 
 @pytest.fixture(scope="module")
-def app():
+def app() -> Any:
     """Headless QApplication fixture (shared across module)."""
     import sys
 
@@ -50,11 +52,11 @@ _COEFFS: dict[str, list[list[float]]] = {
 }
 
 
-def _stub_simulate(coeffs):
+def _stub_simulate(coeffs) -> Any:
     return object()
 
 
-def _stub_extract(result):
+def _stub_extract(result) -> Any:
     return {
         "tip_speed_final": 30.0,
         "tip_position_final": np.array([0.0, 0.0]),
@@ -178,7 +180,7 @@ class TestSwingComparisonDialogContracts:
 
 class TestSwingComparisonExecution:
     @pytest.fixture
-    def dialog(self, app):
+    def dialog(self, app) -> Any:
         from double_pendulum_golf.gui.swing_comparison_dialog import (
             SwingComparisonDialog,
         )
@@ -190,14 +192,14 @@ class TestSwingComparisonExecution:
             extract_fn=_stub_extract,
         )
 
-    def test_run_requires_2_selections(self, dialog):
+    def test_run_requires_2_selections(self, dialog) -> Any:
         # Deselect all
         for i in range(dialog._preset_list.count()):
             dialog._preset_list.item(i).setSelected(False)
         dialog._on_run()
         assert "Select at least 2 presets" in dialog._status.text()
 
-    def test_run_max_4_selections(self, dialog):
+    def test_run_max_4_selections(self, dialog) -> Any:
         from PyQt6.QtWidgets import QListWidgetItem
 
         dialog._preset_names = ["a", "b", "c", "d", "e"]
@@ -209,7 +211,7 @@ class TestSwingComparisonExecution:
         dialog._on_run()
         assert "Select at most 4 presets" in dialog._status.text()
 
-    def test_worker_logic(self, dialog):
+    def test_worker_logic(self, dialog) -> Any:
         from double_pendulum_golf.gui.swing_comparison_dialog import _ComparisonWorker
         from unittest.mock import MagicMock
         from double_pendulum_golf.perturbation_analysis import PerturbationConfig
@@ -237,7 +239,7 @@ class TestSwingComparisonExecution:
         worker.run()
 
         # Test error handling
-        def fail_sim(_):
+        def fail_sim(_) -> Any:
             raise ValueError("Sim failed")
 
         fail_jobs = [("Preset C", [[0.0]], fail_sim, _stub_extract)]
@@ -247,7 +249,7 @@ class TestSwingComparisonExecution:
         f_worker.run()
         f_worker.all_done.emit.assert_called_with([])
 
-    def test_run_flow(self, dialog):
+    def test_run_flow(self, dialog) -> Any:
         from unittest.mock import patch
 
         with patch("PyQt6.QtCore.QThread.start"):
@@ -283,7 +285,7 @@ class TestSwingComparisonExecution:
             dialog._on_error("Test error")
             assert "Error: Test error" in dialog._status.text()
 
-    def test_export(self, dialog, tmp_path):
+    def test_export(self, dialog, tmp_path) -> Any:
         from unittest.mock import patch
 
         dialog._on_export()  # should return early

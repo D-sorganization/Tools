@@ -1,3 +1,5 @@
+from typing import Any
+
 """Column Selection Dialog for Data Processor."""
 
 from __future__ import annotations
@@ -27,7 +29,7 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
 
         self.setup_ui()
 
-    def setup_ui(self):
+    def setup_ui(self) -> Any:
         """Setup the user interface."""
         # Main frame
         main_frame = ctk.CTkFrame(self)
@@ -69,7 +71,9 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
         bottom_frame = ctk.CTkFrame(main_frame)
         bottom_frame.pack(fill="x", padx=10, pady=(10, 0))
 
-        ctk.CTkButton(bottom_frame, text="OK", command=self.ok_clicked).pack(side="right", padx=5)
+        ctk.CTkButton(bottom_frame, text="OK", command=self.ok_clicked).pack(
+            side="right", padx=5
+        )
         ctk.CTkButton(bottom_frame, text="Cancel", command=self.cancel_clicked).pack(
             side="right", padx=5
         )

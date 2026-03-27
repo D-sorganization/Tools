@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Humanoid Character Builder GUI Tests
 ====================================
@@ -16,7 +18,7 @@ class TestHumanoidBuilderMainWindow:
     """Tests for the PyQt6 Humanoid Character Builder main window."""
 
     @pytest.fixture
-    def mock_qt_app(self):
+    def mock_qt_app(self) -> Any:
         """Create mock Qt application for headless testing."""
         with patch.dict(
             sys.modules,
@@ -29,7 +31,7 @@ class TestHumanoidBuilderMainWindow:
         ):
             yield
 
-    def test_main_window_imports(self, mock_qt_app):
+    def test_main_window_imports(self, mock_qt_app) -> Any:
         """Test that main window module can be imported."""
         try:
             from humanoid_builder_gui.ui.pyqt6 import main_window
@@ -38,7 +40,7 @@ class TestHumanoidBuilderMainWindow:
         except ImportError:
             pytest.skip("PyQt6 main window not yet implemented")
 
-    def test_main_window_class_exists(self, mock_qt_app):
+    def test_main_window_class_exists(self, mock_qt_app) -> Any:
         """Test that window class is defined and callable."""
         try:
             from humanoid_builder_gui.ui.pyqt6.main_window import (
@@ -53,7 +55,7 @@ class TestHumanoidBuilderMainWindow:
 class TestAnthropometry:
     """Tests for anthropometric calculations."""
 
-    def test_bmi_calculation(self):
+    def test_bmi_calculation(self) -> Any:
         """Test BMI calculation formula."""
         height_m = 1.75
         mass_kg = 75.0
@@ -62,7 +64,7 @@ class TestAnthropometry:
 
         assert bmi == pytest.approx(24.49, rel=0.01)
 
-    def test_bmi_underweight(self):
+    def test_bmi_underweight(self) -> Any:
         """Test underweight BMI classification."""
         height_m = 1.80
         mass_kg = 55.0
@@ -71,7 +73,7 @@ class TestAnthropometry:
 
         assert bmi < 18.5
 
-    def test_bmi_normal(self):
+    def test_bmi_normal(self) -> Any:
         """Test normal BMI classification."""
         height_m = 1.75
         mass_kg = 70.0
@@ -80,7 +82,7 @@ class TestAnthropometry:
 
         assert 18.5 <= bmi < 25.0
 
-    def test_bmi_overweight(self):
+    def test_bmi_overweight(self) -> Any:
         """Test overweight BMI classification."""
         height_m = 1.70
         mass_kg = 85.0
@@ -89,7 +91,7 @@ class TestAnthropometry:
 
         assert 25.0 <= bmi < 30.0
 
-    def test_segment_mass_calculation(self):
+    def test_segment_mass_calculation(self) -> Any:
         """Test segment mass from total mass."""
         total_mass = 75.0
         head_ratio = 0.0694
@@ -98,7 +100,7 @@ class TestAnthropometry:
 
         assert head_mass == pytest.approx(5.205, rel=0.01)
 
-    def test_segment_length_calculation(self):
+    def test_segment_length_calculation(self) -> Any:
         """Test segment length from total height."""
         total_height = 1.75
         thigh_ratio = 0.245
@@ -111,17 +113,17 @@ class TestAnthropometry:
 class TestDeLevaMassRatios:
     """Tests for de Leva (1996) segment mass ratios."""
 
-    def test_head_mass_ratio(self):
+    def test_head_mass_ratio(self) -> Any:
         """Test head mass ratio value."""
         head_ratio = 0.0694
         assert 0.06 < head_ratio < 0.08
 
-    def test_thigh_mass_ratio(self):
+    def test_thigh_mass_ratio(self) -> Any:
         """Test thigh mass ratio (largest segment)."""
         thigh_ratio = 0.1416
         assert thigh_ratio > 0.10  # Thighs are significant mass
 
-    def test_mass_ratios_sum(self):
+    def test_mass_ratios_sum(self) -> Any:
         """Test that bilateral segment mass ratios approximately sum to 1."""
         ratios = {
             "head": 0.0694,
@@ -144,17 +146,17 @@ class TestDeLevaMassRatios:
 class TestDeLevLengthRatios:
     """Tests for de Leva (1996) segment length ratios."""
 
-    def test_head_length_ratio(self):
+    def test_head_length_ratio(self) -> Any:
         """Test head length ratio."""
         head_ratio = 0.1395
         assert 0.13 < head_ratio < 0.15
 
-    def test_thigh_length_ratio(self):
+    def test_thigh_length_ratio(self) -> Any:
         """Test thigh length ratio."""
         thigh_ratio = 0.245
         assert 0.23 < thigh_ratio < 0.26
 
-    def test_shin_length_ratio(self):
+    def test_shin_length_ratio(self) -> Any:
         """Test shin (lower leg) length ratio."""
         shin_ratio = 0.246
         # Shin and thigh should be similar length
@@ -165,22 +167,22 @@ class TestDeLevLengthRatios:
 class TestGenderFactor:
     """Tests for gender factor calculations."""
 
-    def test_male_factor(self):
+    def test_male_factor(self) -> Any:
         """Test male gender factor."""
         male_factor = 1.0
         assert male_factor == pytest.approx(1.0)
 
-    def test_female_factor(self):
+    def test_female_factor(self) -> Any:
         """Test female gender factor."""
         female_factor = 0.0
         assert female_factor == pytest.approx(0.0)
 
-    def test_neutral_factor(self):
+    def test_neutral_factor(self) -> Any:
         """Test neutral gender factor."""
         neutral_factor = 0.5
         assert neutral_factor == pytest.approx(0.5)
 
-    def test_interpolation(self):
+    def test_interpolation(self) -> Any:
         """Test linear interpolation between male/female values."""
         male_value = 0.0694  # Male head mass ratio
         female_value = 0.0668  # Female head mass ratio
@@ -195,12 +197,12 @@ class TestGenderFactor:
 class TestProportionFactors:
     """Tests for proportion factor adjustments."""
 
-    def test_default_proportion(self):
+    def test_default_proportion(self) -> Any:
         """Test default proportion factor is 1.0."""
         default = 1.0
         assert default == 1.0
 
-    def test_increased_proportion(self):
+    def test_increased_proportion(self) -> Any:
         """Test increased proportion effect."""
         base_length = 0.245  # Thigh length ratio
         factor = 1.1  # 10% increase
@@ -209,7 +211,7 @@ class TestProportionFactors:
 
         assert adjusted == pytest.approx(0.2695, rel=0.01)
 
-    def test_decreased_proportion(self):
+    def test_decreased_proportion(self) -> Any:
         """Test decreased proportion effect."""
         base_length = 0.245
         factor = 0.9  # 10% decrease
@@ -218,7 +220,7 @@ class TestProportionFactors:
 
         assert adjusted == pytest.approx(0.2205, rel=0.01)
 
-    def test_proportion_range(self):
+    def test_proportion_range(self) -> Any:
         """Test proportion factor valid range."""
         min_factor = 0.5
         max_factor = 1.5
@@ -230,7 +232,7 @@ class TestProportionFactors:
 class TestHumanoidBuilderGUIRegistration:
     """Tests for GUI framework registration."""
 
-    def test_gui_registration_exists(self):
+    def test_gui_registration_exists(self) -> Any:
         """Test that gui_registration.py exists and has required metadata."""
         try:
             from humanoid_builder_gui import gui_registration
@@ -245,7 +247,7 @@ class TestHumanoidBuilderGUIRegistration:
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
-    def test_gui_registration_category(self):
+    def test_gui_registration_category(self) -> Any:
         """Test that tool is in robotics category."""
         try:
             from humanoid_builder_gui import gui_registration
@@ -254,7 +256,7 @@ class TestHumanoidBuilderGUIRegistration:
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
-    def test_launcher_exists(self):
+    def test_launcher_exists(self) -> Any:
         """Test that launcher script exists."""
         try:
             from humanoid_builder_gui import launch_pyqt6

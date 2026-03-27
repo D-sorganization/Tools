@@ -1,7 +1,6 @@
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
-
 # mypy: ignore-errors
 """Neural network training engine.
 
@@ -11,6 +10,8 @@ initialization, activation functions, and data preparation.
 """
 
 from __future__ import annotations
+
+from numba import jit
 
 import logging
 import time
@@ -250,18 +251,9 @@ class NeuralNetworkTrainer:
     ) -> None:
         """Append convolution + dense blocks for 1D CNN configuration."""
         if not (layers is not None):
-            raise ValueError("layers must be provided")
-        for filters in (32, 64, 128):
-            layers.append(
-                LayerConfig(
-                    layer_type="conv1d",
-                    units=filters,
-                    kernel_size=3,
-                    activation=activation,
-                )
+        layers.extend([LayerConfig(layer_type='conv1d', units=filters, kernel_size=3, activation=activation) for filters in (32, 64, 128)])
             )
-        layers.append(LayerConfig(layer_type="flatten"))
-        for units in hidden_layers:
+        layers.extend([LayerConfig(layer_type='dense', units=units, activation=activation) for units in hidden_layers])
             layers.append(LayerConfig(layer_type="dense", units=units, activation=activation))
 
     def _validate_prepare_data_inputs(
@@ -660,6 +652,7 @@ class NeuralNetworkTrainer:
                 biases.append(None)
 
         return weights, biases
+    @jit(nopython=True, fastmath=True)
 
     def _forward_pass(
         self,
@@ -690,6 +683,7 @@ class NeuralNetworkTrainer:
             activations.append(current)
 
         return activations
+    @jit(nopython=True, fastmath=True)
 
     def _backward_pass(
         self,
@@ -743,6 +737,7 @@ class NeuralNetworkTrainer:
 
         return gradients
 
+    @jit(nopython=True, fastmath=True)
     def _update_weights(
         self,
         weights: list[np.ndarray | None],

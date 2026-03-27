@@ -1,9 +1,11 @@
+from typing import Any
+
 """Tests for upstream_drift_tools.process_calculators.thermal_profile_predictor.
 
 Covers predict_temperature_profile and fit_heating_parameters.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import numpy as np
 import pytest
@@ -23,7 +25,7 @@ def zero_power(t: float) -> float:
 
 
 class TestHeatingOde:
-    def test_heating_with_power(self):
+    def test_heating_with_power(self) -> Any:
         """With power input, temperature should increase."""
         dTdt = _heating_ode(
             t=0.0,
@@ -36,7 +38,7 @@ class TestHeatingOde:
         # dTdt = (1000 - 10*(25-20)) / 500 = (1000 - 50) / 500 = 1.9
         assert dTdt[0] == pytest.approx(1.9, rel=1e-4)
 
-    def test_cooling_without_power(self):
+    def test_cooling_without_power(self) -> Any:
         """Without power, above ambient temp → cooling (dTdt < 0)."""
         dTdt = _heating_ode(
             t=0.0,
@@ -48,7 +50,7 @@ class TestHeatingOde:
         )
         assert dTdt[0] < 0
 
-    def test_equilibrium_at_ambient(self):
+    def test_equilibrium_at_ambient(self) -> Any:
         """At ambient temp with no power, dTdt ~ 0."""
         dTdt = _heating_ode(
             t=0.0,
@@ -62,7 +64,7 @@ class TestHeatingOde:
 
 
 class TestPredictTemperatureProfile:
-    def test_returns_time_and_temp_arrays(self):
+    def test_returns_time_and_temp_arrays(self) -> Any:
         t_eval = np.linspace(0, 100, 20)
         t_arr, temp_arr = predict_temperature_profile(
             t_span=(0.0, 100.0),
@@ -76,7 +78,7 @@ class TestPredictTemperatureProfile:
         assert len(t_arr) == 20
         assert len(temp_arr) == 20
 
-    def test_temperature_increases_with_power(self):
+    def test_temperature_increases_with_power(self) -> Any:
         t_eval = np.linspace(0, 100, 10)
         _, temp_arr = predict_temperature_profile(
             t_span=(0.0, 100.0),
@@ -90,7 +92,7 @@ class TestPredictTemperatureProfile:
         # Final temp should be higher than initial
         assert temp_arr[-1] > temp_arr[0]
 
-    def test_temperature_constant_at_equilibrium(self):
+    def test_temperature_constant_at_equilibrium(self) -> Any:
         """With no power and initial temp at ambient, temp stays constant."""
         t_eval = np.linspace(0, 50, 10)
         _, temp_arr = predict_temperature_profile(
@@ -104,7 +106,7 @@ class TestPredictTemperatureProfile:
         )
         np.testing.assert_array_almost_equal(temp_arr, 20.0, decimal=6)
 
-    def test_initial_temp_is_first_value(self):
+    def test_initial_temp_is_first_value(self) -> Any:
         t_eval = np.linspace(0, 10, 5)
         _, temp_arr = predict_temperature_profile(
             t_span=(0.0, 10.0),
@@ -119,7 +121,7 @@ class TestPredictTemperatureProfile:
 
 
 class TestFitHeatingParameters:
-    def test_fit_recovers_known_parameters(self):
+    def test_fit_recovers_known_parameters(self) -> Any:
         """Fit should recover approximately the known thermal parameters."""
         # Generate synthetic data with known parameters
         true_mass = 500.0
@@ -136,7 +138,9 @@ class TestFitHeatingParameters:
         )
 
         # Add tiny noise so fit is not degenerate
-        observed_noisy = observed + np.random.default_rng(42).normal(0, 0.01, len(observed))
+        observed_noisy = observed + np.random.default_rng(42).normal(
+            0, 0.01, len(observed)
+        )
 
         fitted_mass, fitted_loss = fit_heating_parameters(
             times=t_eval,

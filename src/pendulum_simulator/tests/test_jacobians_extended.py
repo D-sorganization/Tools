@@ -243,7 +243,9 @@ class TestEllipsoidsGolfer:
         result = ellipsoids_golfer(zero_q, golfer_params)
         assert isinstance(result, dict)
 
-    def test_has_required_subkeys(self, golfer_params: GolferParams, zero_q: np.ndarray) -> None:
+    def test_has_required_subkeys(
+        self, golfer_params: GolferParams, zero_q: np.ndarray
+    ) -> None:
         result = ellipsoids_golfer(zero_q, golfer_params)
         for endpoint, data in result.items():
             for key in ("jacobian", "directions", "mob_semi_axes"):

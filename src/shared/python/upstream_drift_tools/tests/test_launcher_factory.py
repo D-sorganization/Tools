@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for launcher_factory.py.
 
 Covers:
@@ -10,7 +12,7 @@ Covers:
 - launch_app: happy path (mocked QApplication + window)
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from unittest.mock import MagicMock, patch
 
@@ -28,14 +30,14 @@ from upstream_drift_tools.launcher_factory import (
 
 
 class TestLauncherConfig:
-    def test_defaults(self):
+    def test_defaults(self) -> Any:
         cfg = LauncherConfig(app_module="my.app", window_title="My App")
         assert cfg.min_width == 800
         assert cfg.min_height == 600
         assert cfg.icon_path is None
         assert cfg.extra == {}
 
-    def test_custom_values(self):
+    def test_custom_values(self) -> Any:
         cfg = LauncherConfig(
             app_module="a.b",
             window_title="T",
@@ -48,7 +50,7 @@ class TestLauncherConfig:
         assert cfg.icon_path == "/path/icon.png"
         assert cfg.extra["debug"] is True
 
-    def test_frozen(self):
+    def test_frozen(self) -> Any:
         """LauncherConfig is frozen — mutation should raise."""
         cfg = LauncherConfig(app_module="a", window_title="T")
         with pytest.raises((AttributeError, TypeError)):
@@ -61,18 +63,18 @@ class TestLauncherConfig:
 
 
 class TestCreateLauncherConfig:
-    def test_basic_creation(self):
+    def test_basic_creation(self) -> Any:
         cfg = create_launcher_config("my.app", "My App")
         assert isinstance(cfg, LauncherConfig)
         assert cfg.app_module == "my.app"
         assert cfg.window_title == "My App"
 
-    def test_extra_kwargs_stored(self):
+    def test_extra_kwargs_stored(self) -> Any:
         cfg = create_launcher_config("a", "T", theme="dark", debug=True)
         assert cfg.extra["theme"] == "dark"
         assert cfg.extra["debug"] is True
 
-    def test_custom_dimensions_stored(self):
+    def test_custom_dimensions_stored(self) -> Any:
         cfg = create_launcher_config("a", "T", min_width=1920, min_height=1080)
         assert cfg.min_width == 1920
         assert cfg.min_height == 1080
@@ -84,43 +86,45 @@ class TestCreateLauncherConfig:
 
 
 class TestValidateLauncherConfig:
-    def test_valid_config_passes(self):
+    def test_valid_config_passes(self) -> Any:
         cfg = LauncherConfig(app_module="a.b", window_title="Title")
         validate_launcher_config(cfg)  # No exception
 
-    def test_empty_app_module_raises(self):
+    def test_empty_app_module_raises(self) -> Any:
         cfg = LauncherConfig(app_module="", window_title="T")
         with pytest.raises(LauncherError, match="app_module"):
             validate_launcher_config(cfg)
 
-    def test_whitespace_app_module_raises(self):
+    def test_whitespace_app_module_raises(self) -> Any:
         cfg = LauncherConfig(app_module="   ", window_title="T")
         with pytest.raises(LauncherError, match="app_module"):
             validate_launcher_config(cfg)
 
-    def test_empty_window_title_raises(self):
+    def test_empty_window_title_raises(self) -> Any:
         cfg = LauncherConfig(app_module="a.b", window_title="")
         with pytest.raises(LauncherError, match="window_title"):
             validate_launcher_config(cfg)
 
-    def test_whitespace_window_title_raises(self):
+    def test_whitespace_window_title_raises(self) -> Any:
         cfg = LauncherConfig(app_module="a.b", window_title="   ")
         with pytest.raises(LauncherError, match="window_title"):
             validate_launcher_config(cfg)
 
-    def test_negative_min_width_raises(self):
+    def test_negative_min_width_raises(self) -> Any:
         cfg = LauncherConfig(app_module="a.b", window_title="T", min_width=-1)
         with pytest.raises(LauncherError, match="min_width"):
             validate_launcher_config(cfg)
 
-    def test_negative_min_height_raises(self):
+    def test_negative_min_height_raises(self) -> Any:
         cfg = LauncherConfig(app_module="a.b", window_title="T", min_height=-1)
         with pytest.raises(LauncherError, match="min_height"):
             validate_launcher_config(cfg)
 
-    def test_zero_dimensions_are_valid(self):
+    def test_zero_dimensions_are_valid(self) -> Any:
         """min_width=0 and min_height=0 are allowed (>= 0 constraint)."""
-        cfg = LauncherConfig(app_module="a.b", window_title="T", min_width=0, min_height=0)
+        cfg = LauncherConfig(
+            app_module="a.b", window_title="T", min_width=0, min_height=0
+        )
         validate_launcher_config(cfg)  # Should not raise
 
 
@@ -135,7 +139,7 @@ class TestLaunchApp:
         kwargs.update(overrides)
         return LauncherConfig(**kwargs)
 
-    def test_returns_1_when_pyqt6_unavailable(self):
+    def test_returns_1_when_pyqt6_unavailable(self) -> Any:
         """Lines 172-178: ImportError from _import_pyqt6 → return 1."""
         from upstream_drift_tools.launcher_factory import launch_app
 
@@ -147,7 +151,7 @@ class TestLaunchApp:
             result = launch_app(cfg, window_factory=MagicMock())
         assert result == 1
 
-    def test_returns_1_when_window_factory_raises(self):
+    def test_returns_1_when_window_factory_raises(self) -> Any:
         """Lines 198-205: RuntimeError from window_factory → return 1."""
         from upstream_drift_tools.launcher_factory import launch_app
 
@@ -164,7 +168,7 @@ class TestLaunchApp:
             )
         assert result == 1
 
-    def test_happy_path_returns_app_exit_code(self):
+    def test_happy_path_returns_app_exit_code(self) -> Any:
         """Full happy path — mocked QApplication + window."""
         from upstream_drift_tools.launcher_factory import launch_app
 
@@ -181,7 +185,7 @@ class TestLaunchApp:
         assert result == 0
         mock_window.setWindowTitle.assert_called_once_with("Test App")
 
-    def test_icon_path_triggers_icon_set(self):
+    def test_icon_path_triggers_icon_set(self) -> Any:
         """Lines 187-193: icon_path set → QIcon is applied."""
         from upstream_drift_tools.launcher_factory import launch_app
 
@@ -205,7 +209,7 @@ class TestLaunchApp:
             result = launch_app(cfg, window_factory=lambda: mock_window)
         assert result in {0, 1}  # May be 0 or 1 depending on env
 
-    def test_icon_path_import_error_is_logged_not_raised(self):
+    def test_icon_path_import_error_is_logged_not_raised(self) -> Any:
         """Lines 192-193: icon import error is caught and logged, app continues."""
         from upstream_drift_tools.launcher_factory import launch_app
 
@@ -214,7 +218,7 @@ class TestLaunchApp:
         mock_app = MagicMock()
         mock_app.exec.return_value = 42
 
-        def bad_qicon(*args, **kwargs):
+        def bad_qicon(*args, **kwargs) -> Any:
             raise ImportError("QIcon unavailable")
 
         with (
@@ -239,7 +243,7 @@ class TestLaunchApp:
 
 
 class TestImportPyQt6:
-    def test_import_pyqt6_success_path(self):
+    def test_import_pyqt6_success_path(self) -> Any:
         """_import_pyqt6 returns (app_instance, QMainWindow) when Qt is available."""
         import sys
         import types

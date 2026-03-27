@@ -1,10 +1,11 @@
+from typing import Any
 import numpy as np
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 from double_pendulum_golf.gui.pendulum_widget import PendulumWidget
 
 
-def create_mock_result(is_triple=False):
+def create_mock_result(is_triple=False) -> Any:
     res = MagicMock()
     res.n_steps = 2
 
@@ -28,7 +29,7 @@ def create_mock_result(is_triple=False):
 
     res.t = [0.0, 1.0]
 
-    def mock_pos_at(idx):
+    def mock_pos_at(idx) -> Any:
         return pos_dict
 
     res.positions_at.side_effect = mock_pos_at
@@ -45,7 +46,7 @@ def create_mock_result(is_triple=False):
     return res
 
 
-def test_pendulum_widget_init(qapp):
+def test_pendulum_widget_init(qapp) -> Any:
     w = PendulumWidget()
     assert w._get_total_length() == 2.0
     assert not w._has_result()
@@ -59,7 +60,7 @@ def test_pendulum_widget_init(qapp):
     "double_pendulum_golf.counterfactual.zero_torque_joint_forces_triple",
     lambda *args: {"shoulder": (1.0, 1.0)},
 )
-def test_set_simulation_and_frame(qapp):
+def test_set_simulation_and_frame(qapp) -> Any:
     w = PendulumWidget()
 
     # Test double
@@ -91,7 +92,7 @@ def test_set_simulation_and_frame(qapp):
     assert w._get_total_length() == 3.0
 
 
-def test_painting(qapp, monkeypatch):
+def test_painting(qapp, monkeypatch) -> Any:
     w = PendulumWidget()
     res = create_mock_result(is_triple=False)
 
@@ -114,7 +115,9 @@ def test_painting(qapp, monkeypatch):
             "force_semi_axes": None,  # coverage branch
         },
     }
-    monkeypatch.setattr("double_pendulum_golf.jacobians.ellipsoids_double", lambda *args: ell_data)
+    monkeypatch.setattr(
+        "double_pendulum_golf.jacobians.ellipsoids_double", lambda *args: ell_data
+    )
 
     w.set_simulation(res)
 
@@ -138,7 +141,7 @@ def test_painting(qapp, monkeypatch):
     w.paintEvent(MagicMock())
 
     # Handle exception in zero_torque
-    def broken_zero(*args):
+    def broken_zero(*args) -> Any:
         raise ValueError()
 
     monkeypatch.setattr(
@@ -164,7 +167,7 @@ def test_painting(qapp, monkeypatch):
     w.paintEvent(MagicMock())
 
 
-def test_painting_triple(qapp, monkeypatch):
+def test_painting_triple(qapp, monkeypatch) -> Any:
     w = PendulumWidget()
     res = create_mock_result(is_triple=True)
 
@@ -185,7 +188,9 @@ def test_painting_triple(qapp, monkeypatch):
             "force_semi_axes": None,
         },
     }
-    monkeypatch.setattr("double_pendulum_golf.jacobians.ellipsoids_triple", lambda *args: ell_data)
+    monkeypatch.setattr(
+        "double_pendulum_golf.jacobians.ellipsoids_triple", lambda *args: ell_data
+    )
 
     w.set_simulation(res)
     w.set_show_forces(True)
@@ -223,7 +228,7 @@ def test_painting_triple(qapp, monkeypatch):
     "double_pendulum_golf.counterfactual.zero_torque_joint_forces_double",
     lambda *args: {"shoulder": (1.0, 1.0)},
 )
-def test_visible_segments(qapp, monkeypatch):
+def test_visible_segments(qapp, monkeypatch) -> Any:
     w = PendulumWidget()
     res = create_mock_result(is_triple=False)
     w.set_simulation(res)
@@ -235,7 +240,7 @@ def test_visible_segments(qapp, monkeypatch):
     "double_pendulum_golf.counterfactual.zero_torque_joint_forces_double",
     lambda *args: {"shoulder": (1.0, 1.0)},
 )
-def test_zoom_controls(qapp):
+def test_zoom_controls(qapp) -> Any:
     w = PendulumWidget()
     res = create_mock_result()
     w.set_simulation(res)

@@ -131,7 +131,9 @@ class DataProcessorEngine(BaseCalculationEngine):
         operation = kwargs.get("operation", "stats")
 
         operations: dict[str, Callable[..., dict[str, Any]]] = {
-            "load": lambda: self._wrap_result(self.load_file(kwargs.get("file_path", ""))),
+            "load": lambda: self._wrap_result(
+                self.load_file(kwargs.get("file_path", ""))
+            ),
             "stats": lambda: {"stats": self.get_statistics()},
             "filter": lambda: self._wrap_result(
                 self.filter_data(
@@ -258,7 +260,9 @@ class DataProcessorEngine(BaseCalculationEngine):
             self.data[name] = self.data.eval(expression)
             if dtype:
                 self.data[name] = self.data[name].astype(dtype)
-            return ProcessingResult(success=True, message=f"Added '{name}'", data=self.data)
+            return ProcessingResult(
+                success=True, message=f"Added '{name}'", data=self.data
+            )
         except (ValueError, TypeError, SyntaxError, KeyError) as e:
             self._undo()
             raise TransformationError(str(e)) from e
@@ -276,7 +280,9 @@ class DataProcessorEngine(BaseCalculationEngine):
             raise ColumnNotFoundError(old_name, list(self.data.columns))
         self._save_undo_state()
         self.data = self.data.rename(columns={old_name: new_name})
-        return ProcessingResult(success=True, message=f"Renamed to '{new_name}'", data=self.data)
+        return ProcessingResult(
+            success=True, message=f"Renamed to '{new_name}'", data=self.data
+        )
 
     def drop_columns(self, columns: list[str]) -> ProcessingResult:
         """Drop one or more columns.
@@ -294,7 +300,9 @@ class DataProcessorEngine(BaseCalculationEngine):
         self.data = self.data.drop(columns=columns)
         return ProcessingResult(success=True, message="Dropped columns", data=self.data)
 
-    def transform_column(self, column: str, transformation: str, **kwargs: Any) -> ProcessingResult:
+    def transform_column(
+        self, column: str, transformation: str, **kwargs: Any
+    ) -> ProcessingResult:
         """Apply transformation to a column.
 
         Preconditions:
@@ -324,7 +332,9 @@ class DataProcessorEngine(BaseCalculationEngine):
             elif transformation in t_map:
                 self.data[column] = t_map[transformation]()
             else:
-                raise UnsupportedOperationError(f"Unknown transformation: {transformation}")
+                raise UnsupportedOperationError(
+                    f"Unknown transformation: {transformation}"
+                )
             return ProcessingResult(success=True, message="Transformed", data=self.data)
         except (UnsupportedOperationError, ColumnNotFoundError, DataNotLoadedError):
             self._undo()
@@ -335,7 +345,9 @@ class DataProcessorEngine(BaseCalculationEngine):
 
     # ========== Signal Smoothing & Filtering ==========
 
-    def smooth_column(self, column: str, method: str, **kwargs: Any) -> ProcessingResult:
+    def smooth_column(
+        self, column: str, method: str, **kwargs: Any
+    ) -> ProcessingResult:
         """Apply filtering algorithms.
 
         Preconditions:
@@ -355,7 +367,9 @@ class DataProcessorEngine(BaseCalculationEngine):
                 )
 
             if method == "moving_average":
-                result = series.rolling(window=kwargs.get("window", 10), min_periods=1).mean()
+                result = series.rolling(
+                    window=kwargs.get("window", 10), min_periods=1
+                ).mean()
             elif method == "butterworth":
                 order, cutoff = kwargs.get("order", 3), kwargs.get("cutoff", 0.1)
                 dt = (
@@ -364,7 +378,9 @@ class DataProcessorEngine(BaseCalculationEngine):
                     else 1.0
                 )
                 sr = 1.0 / dt if dt > 0 else 1.0
-                b, a = butter(N=order, Wn=cutoff, btype=kwargs.get("btype", "low"), fs=sr)
+                b, a = butter(
+                    N=order, Wn=cutoff, btype=kwargs.get("btype", "low"), fs=sr
+                )
                 result = pd.Series(filtfilt(b, a, series), index=series.index)
             elif method == "median":
                 k = kwargs.get("kernel", 5)
@@ -414,7 +430,9 @@ class DataProcessorEngine(BaseCalculationEngine):
             if group_by:
                 grouped = self.data.groupby(group_by)
                 self.data = (
-                    grouped[column].agg(agg_type.value) if column else grouped.agg(agg_type.value)
+                    grouped[column].agg(agg_type.value)
+                    if column
+                    else grouped.agg(agg_type.value)
                 ).reset_index()
             else:
                 res = (
@@ -422,13 +440,17 @@ class DataProcessorEngine(BaseCalculationEngine):
                     if column
                     else self.data.select_dtypes(np.number).agg(agg_type.value)
                 )
-                self.data = pd.DataFrame([res]) if not column else pd.DataFrame({column: [res]})
+                self.data = (
+                    pd.DataFrame([res]) if not column else pd.DataFrame({column: [res]})
+                )
             return ProcessingResult(success=True, message="Aggregated", data=self.data)
         except (KeyError, TypeError, ValueError) as e:
             self._undo()
             raise TransformationError(f"Aggregation failed: {e}") from e
 
-    def fit_curve(self, x_col: str, y_col: str, fit_type: FitType, degree: int = 2) -> FitResult:
+    def fit_curve(
+        self, x_col: str, y_col: str, fit_type: FitType, degree: int = 2
+    ) -> FitResult:
         """Fit a curve to two columns.
 
         Preconditions:
@@ -464,10 +486,14 @@ class DataProcessorEngine(BaseCalculationEngine):
         elif fit_type == FitType.POLYNOMIAL:
             c = np.polyfit(x, y, degree)
             f = np.polyval(c, x)
-            terms = [f"{c[i]:.4f}x^{degree - i}" for i in range(degree)] + [f"{c[-1]:.4f}"]
+            terms = [f"{c[i]:.4f}x^{degree - i}" for i in range(degree)] + [
+                f"{c[-1]:.4f}"
+            ]
             eq = "y = " + " + ".join(terms)
         else:
-            raise UnsupportedOperationError(f"Fit type '{fit_type.value}' not yet implemented")
+            raise UnsupportedOperationError(
+                f"Fit type '{fit_type.value}' not yet implemented"
+            )
 
         ss_res = np.sum((y - f) ** 2)
         ss_tot = np.sum((y - np.mean(y)) ** 2)
@@ -490,10 +516,14 @@ class DataProcessorEngine(BaseCalculationEngine):
         self._save_undo_state()
         try:
             if operator == "contains":
-                self.data = self.data[self.data[column].str.contains(str(value), na=False)]
+                self.data = self.data[
+                    self.data[column].str.contains(str(value), na=False)
+                ]
             elif operator == "in":
                 self.data = self.data[
-                    self.data[column].isin(value if isinstance(value, list) else [value])
+                    self.data[column].isin(
+                        value if isinstance(value, list) else [value]
+                    )
                 ]
             else:
                 self.data = self.data.query(f"{column} {operator} @value")
@@ -516,7 +546,9 @@ class DataProcessorEngine(BaseCalculationEngine):
         self._save_undo_state()
         try:
             self.data = self.data.query(expression)
-            return ProcessingResult(success=True, message="Query applied", data=self.data)
+            return ProcessingResult(
+                success=True, message="Query applied", data=self.data
+            )
         except (KeyError, ValueError, TypeError, SyntaxError) as e:
             self._undo()
             raise FilterError(str(e)) from e
@@ -527,7 +559,9 @@ class DataProcessorEngine(BaseCalculationEngine):
         res = {}
         for col in self.data.columns:
             s = self.data[col]
-            cs = ColumnStats(col, str(s.dtype), len(s), int(s.isna().sum()), int(s.nunique()))
+            cs = ColumnStats(
+                col, str(s.dtype), len(s), int(s.isna().sum()), int(s.nunique())
+            )
             if pd.api.types.is_numeric_dtype(s) and not s.isna().all():
                 cs.mean, cs.std = float(s.mean()), float(s.std())
                 cs.min_val, cs.max_val, cs.median = (
@@ -561,7 +595,9 @@ class DataProcessorEngine(BaseCalculationEngine):
     def undo(self) -> ProcessingResult:
         """Undo the last operation."""
         if self._undo():
-            return ProcessingResult(success=True, message="Undo successful", data=self.data)
+            return ProcessingResult(
+                success=True, message="Undo successful", data=self.data
+            )
         return ProcessingResult(success=False, message="Nothing to undo")
 
     def redo(self) -> ProcessingResult:
@@ -570,7 +606,9 @@ class DataProcessorEngine(BaseCalculationEngine):
             if self.data is not None:
                 self._undo_stack.append(self.data.copy())
             self.data = self._redo_stack.pop()
-            return ProcessingResult(success=True, message="Redo successful", data=self.data)
+            return ProcessingResult(
+                success=True, message="Redo successful", data=self.data
+            )
         return ProcessingResult(success=False, message="Nothing to redo")
 
     def reset(self) -> ProcessingResult:

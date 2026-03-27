@@ -20,6 +20,8 @@ Features:
 
 from __future__ import annotations
 
+from numba import jit
+
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
@@ -231,7 +233,9 @@ class CrossCorrelationAnalyzer:
         ci = self._compute_confidence_interval(n, self.config.significance_level)
 
         # Find significant lags
-        significant_lags = [int(lag) for lag, c in zip(lags, ccf, strict=False) if abs(c) > ci[1]]
+        significant_lags = [
+            int(lag) for lag, c in zip(lags, ccf, strict=False) if abs(c) > ci[1]
+        ]
 
         # Compute p-values if needed
         p_values = self._compute_pvalues(ccf, n)
@@ -329,6 +333,7 @@ class CrossCorrelationAnalyzer:
         else:
             return result.optimal_lag, result.max_correlation
 
+    @jit(nopython=True, fastmath=True)
     def rolling_cross_correlation(
         self,
         x: np.ndarray,
@@ -374,7 +379,9 @@ class CrossCorrelationAnalyzer:
 
             valid_mask = ~(np.isnan(x_window) | np.isnan(y_window))
             if np.sum(valid_mask) >= min_periods:
-                correlations[i] = np.corrcoef(x_window[valid_mask], y_window[valid_mask])[0, 1]
+                correlations[i] = np.corrcoef(
+                    x_window[valid_mask], y_window[valid_mask]
+                )[0, 1]
 
         timestamps = np.arange(n_work)
 
@@ -421,8 +428,12 @@ class CrossCorrelationAnalyzer:
         max_lag = max_lag or self.config.granger_max_lag
 
         # Find optimal lag using information criterion
-        optimal_lag_xy = self._select_lag_order(y, x, max_lag, self.config.granger_criterion)
-        optimal_lag_yx = self._select_lag_order(x, y, max_lag, self.config.granger_criterion)
+        optimal_lag_xy = self._select_lag_order(
+            y, x, max_lag, self.config.granger_criterion
+        )
+        optimal_lag_yx = self._select_lag_order(
+            x, y, max_lag, self.config.granger_criterion
+        )
 
         # Test X causes Y
         f_stat_xy, p_value_xy = self._granger_test(y, x, optimal_lag_xy)
@@ -569,7 +580,9 @@ class CrossCorrelationAnalyzer:
 
         for i in range(n_series):
             for j in range(i + 1, n_series):
-                corr, _ = self.lagged_correlation(series_dict[names[i]], series_dict[names[j]], lag)
+                corr, _ = self.lagged_correlation(
+                    series_dict[names[i]], series_dict[names[j]], lag
+                )
                 corr_matrix[i, j] = corr
                 corr_matrix[j, i] = corr
 
@@ -670,6 +683,7 @@ class CrossCorrelationAnalyzer:
         ci = z / np.sqrt(n)
         return (-ci, ci)
 
+    @jit(nopython=True, fastmath=True)
     def _compute_pvalues(self, ccf: np.ndarray, n: int) -> np.ndarray:
         """Compute p-values for CCF values."""
         # Using Fisher's z-transformation approximation
@@ -738,7 +752,9 @@ class CrossCorrelationAnalyzer:
         integral = np.sum(integrand) * dt
 
         # Normalize by beta function (approximation)
-        beta_func = np.exp(self._log_gamma(a) + self._log_gamma(b) - self._log_gamma(a + b))
+        beta_func = np.exp(
+            self._log_gamma(a) + self._log_gamma(b) - self._log_gamma(a + b)
+        )
 
         return integral / beta_func if beta_func > 0 else 0.0
 
@@ -751,7 +767,9 @@ class CrossCorrelationAnalyzer:
             return 0.0
         return (x - 0.5) * np.log(x) - x + 0.5 * np.log(2 * np.pi)
 
-    def _granger_test(self, y: np.ndarray, x: np.ndarray, lag: int) -> tuple[float, float]:
+    def _granger_test(
+        self, y: np.ndarray, x: np.ndarray, lag: int
+    ) -> tuple[float, float]:
         """Perform Granger causality F-test."""
         if not (y is not None):
             raise ValueError("y must be provided")
@@ -787,7 +805,10 @@ class CrossCorrelationAnalyzer:
 
         return f_stat, p_value
 
-    def _select_lag_order(self, y: np.ndarray, x: np.ndarray, max_lag: int, criterion: str) -> int:
+    @jit(nopython=True, fastmath=True)
+    def _select_lag_order(
+        self, y: np.ndarray, x: np.ndarray, max_lag: int, criterion: str
+    ) -> int:
         """Select optimal lag order using information criterion."""
         if not (y is not None):
             raise ValueError("y must be provided")
@@ -823,6 +844,7 @@ class CrossCorrelationAnalyzer:
 
         return best_lag
 
+    @jit(nopython=True, fastmath=True)
     def _create_lag_matrix(self, data: np.ndarray, lag: int) -> np.ndarray:
         """Create matrix of lagged values."""
         if not (data is not None):
@@ -880,11 +902,15 @@ class CrossCorrelationAnalyzer:
         # TE(X->Y) = H(Y_t | Y_{t-1:t-k}) - H(Y_t | Y_{t-1:t-k}, X_{t-1:t-k})
 
         # Compute conditional entropies
-        h_y_given_ypast = self._conditional_entropy(target_binned[k:], target_binned[:-k], bins)
+        h_y_given_ypast = self._conditional_entropy(
+            target_binned[k:], target_binned[:-k], bins
+        )
 
         # Combined conditioning
         combined_past = source_binned[:-k] * bins + target_binned[:-k]
-        h_y_given_both = self._conditional_entropy(target_binned[k:], combined_past, bins * bins)
+        h_y_given_both = self._conditional_entropy(
+            target_binned[k:], combined_past, bins * bins
+        )
 
         te = h_y_given_ypast - h_y_given_both
 
@@ -898,6 +924,9 @@ class CrossCorrelationAnalyzer:
         edges = np.percentile(data, percentiles)
         return np.digitize(data, edges[1:-1])
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def _conditional_entropy(self, x: np.ndarray, y: np.ndarray, y_bins: int) -> float:
         """Compute conditional entropy H(X|Y)."""
         # Joint probability

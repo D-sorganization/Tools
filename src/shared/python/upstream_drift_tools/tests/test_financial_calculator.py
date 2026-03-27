@@ -1,9 +1,11 @@
+from typing import Any
+
 """Tests for financial_calculator.py — FinancialModelCalculator.
 
 Targets: 46% → 100% coverage of the financial model calculation engine.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import pytest
 from upstream_drift_tools.process_calculators.financial_calculator import (
@@ -59,7 +61,7 @@ def _make_params(**overrides) -> FinancialParameters:
 
 
 class TestFinancialParameters:
-    def test_default_values_are_zero(self):
+    def test_default_values_are_zero(self) -> Any:
         p = FinancialParameters()
         assert p.plant_capacity_tpd == 0.0
         assert p.operating_days_per_year == 0
@@ -72,7 +74,7 @@ class TestFinancialParameters:
 
 
 class TestFinancialResults:
-    def test_default_result_all_zeros(self):
+    def test_default_result_all_zeros(self) -> Any:
         r = FinancialResults()
         assert r.total_revenue == 0.0
         assert r.net_income == 0.0
@@ -85,7 +87,7 @@ class TestFinancialResults:
 
 
 class TestFinancialModelCalculatorInit:
-    def test_initializes_with_default_params_and_empty_projections(self):
+    def test_initializes_with_default_params_and_empty_projections(self) -> Any:
         """Lines 113-115."""
         calc = FinancialModelCalculator()
         assert calc.parameters is not None
@@ -99,7 +101,7 @@ class TestFinancialModelCalculatorInit:
 
 
 class TestCalculateVolumesAndRevenues:
-    def test_annual_feedstock_tons(self):
+    def test_annual_feedstock_tons(self) -> Any:
         """Lines 124-128: feedstock = capacity × days × utilization."""
         calc = FinancialModelCalculator()
         params = _make_params()
@@ -108,16 +110,22 @@ class TestCalculateVolumesAndRevenues:
         expected = 500.0 * 330 * 0.90
         assert abs(results.annual_feedstock_tons - expected) < 0.01
 
-    def test_product_and_byproduct_tons(self):
+    def test_product_and_byproduct_tons(self) -> Any:
         """Lines 129-132: product = feedstock * 0.85, byproduct = feedstock * factor."""
         calc = FinancialModelCalculator()
         params = _make_params()
         results = FinancialResults()
         calc._calculate_volumes_and_revenues(params, results)
-        assert abs(results.annual_product_tons - results.annual_feedstock_tons * 0.85) < 0.01
-        assert abs(results.annual_byproduct_tons - results.annual_feedstock_tons * 0.10) < 0.01
+        assert (
+            abs(results.annual_product_tons - results.annual_feedstock_tons * 0.85)
+            < 0.01
+        )
+        assert (
+            abs(results.annual_byproduct_tons - results.annual_feedstock_tons * 0.10)
+            < 0.01
+        )
 
-    def test_revenues(self):
+    def test_revenues(self) -> Any:
         """Lines 134-140: product_revenue and byproduct_revenue add to total."""
         calc = FinancialModelCalculator()
         params = _make_params()
@@ -134,7 +142,7 @@ class TestCalculateVolumesAndRevenues:
 
 
 class TestCalculateOperatingCosts:
-    def test_variable_costs_summed(self):
+    def test_variable_costs_summed(self) -> Any:
         """Lines 151-170: variable costs are tons × per-ton rates."""
         calc = FinancialModelCalculator()
         params = _make_params()
@@ -144,7 +152,7 @@ class TestCalculateOperatingCosts:
         assert results.total_variable_costs > 0
         assert results.total_fixed_costs > 0
 
-    def test_fixed_costs_equal_annual_items(self):
+    def test_fixed_costs_equal_annual_items(self) -> Any:
         """Lines 172-181: fixed costs are annual buckets."""
         calc = FinancialModelCalculator()
         params = _make_params()
@@ -166,7 +174,7 @@ class TestCalculateOperatingCosts:
 
 
 class TestCalculateIncomeStatement:
-    def test_depreciation_uses_max_one(self):
+    def test_depreciation_uses_max_one(self) -> Any:
         """Lines 192-195: depreciation_years=0 → divides by 1 (max guard)."""
         calc = FinancialModelCalculator()
         params = _make_params(depreciation_years=0, total_capital_investment=100_000.0)
@@ -177,7 +185,7 @@ class TestCalculateIncomeStatement:
         # depreciation = 100_000 / max(0, 1) = 100_000
         assert abs(results.depreciation - 100_000.0) < 0.01
 
-    def test_taxes_clamped_to_zero_when_ebt_negative(self):
+    def test_taxes_clamped_to_zero_when_ebt_negative(self) -> Any:
         """Line 201: max(0, ebt * tax_rate) → 0 when ebt < 0."""
         calc = FinancialModelCalculator()
         # Make revenue very low so EBT < 0
@@ -195,7 +203,7 @@ class TestCalculateIncomeStatement:
 
 
 class TestCalculateUnitAndReturnMetrics:
-    def test_unit_economics_with_zero_tons(self):
+    def test_unit_economics_with_zero_tons(self) -> Any:
         """Lines 223-227: annual_feedstock_tons == 0 → per-ton metrics = 0."""
         calc = FinancialModelCalculator()
         params = _make_params(
@@ -211,7 +219,7 @@ class TestCalculateUnitAndReturnMetrics:
         assert results.revenue_per_ton == 0.0
         assert results.variable_cost_per_ton == 0.0
 
-    def test_roe_zero_when_equity_zero(self):
+    def test_roe_zero_when_equity_zero(self) -> Any:
         """Line 238: equity == 0 → roe = 0."""
         calc = FinancialModelCalculator()
         # debt_ratio=0 → equity = capital * 1.0, but test equity near 0
@@ -224,7 +232,7 @@ class TestCalculateUnitAndReturnMetrics:
         # When equity == 0 (capital = 0, debt_ratio=0), roe stays 0
         assert results.roe == 0.0
 
-    def test_roa_zero_when_no_capital(self):
+    def test_roa_zero_when_no_capital(self) -> Any:
         """Line 242: total_capital_investment == 0 → roa = 0."""
         calc = FinancialModelCalculator()
         params = _make_params(total_capital_investment=0.0)
@@ -235,7 +243,7 @@ class TestCalculateUnitAndReturnMetrics:
         calc._calculate_unit_and_return_metrics(params, results)
         assert results.roa == 0.0
 
-    def test_payback_zero_when_no_net_income(self):
+    def test_payback_zero_when_no_net_income(self) -> Any:
         """Line 248: net_income <= 0 → payback = 0."""
         calc = FinancialModelCalculator()
         params = _make_params(product_price_per_ton=1.0, byproduct_revenue_per_ton=0.0)
@@ -246,7 +254,7 @@ class TestCalculateUnitAndReturnMetrics:
         calc._calculate_unit_and_return_metrics(params, results)
         assert results.payback_period_years == 0.0
 
-    def test_debt_ratio_ge_one_raises(self):
+    def test_debt_ratio_ge_one_raises(self) -> Any:
         """Lines 229-233: debt_ratio >= 1.0 with capital > 0 → ValueError."""
         calc = FinancialModelCalculator()
         params = _make_params(debt_ratio=1.0, total_capital_investment=1_000_000.0)
@@ -260,7 +268,7 @@ class TestCalculateUnitAndReturnMetrics:
 
 
 class TestCalculateFinancialModel:
-    def test_full_calculation_returns_results(self):
+    def test_full_calculation_returns_results(self) -> Any:
         """Lines 256-272: full pipeline integration test."""
         calc = FinancialModelCalculator()
         params = _make_params()
@@ -269,21 +277,21 @@ class TestCalculateFinancialModel:
         assert results.total_revenue > 0
         assert results.annual_feedstock_tons > 0
 
-    def test_precondition_negative_capital_raises(self):
+    def test_precondition_negative_capital_raises(self) -> Any:
         """Line 256-258: negative capital → AssertionError."""
         calc = FinancialModelCalculator()
         params = _make_params(total_capital_investment=-1.0)
         with pytest.raises(AssertionError, match="Capital investment"):
             calc.calculate_financial_model(params)
 
-    def test_precondition_negative_days_raises(self):
+    def test_precondition_negative_days_raises(self) -> Any:
         """Line 259-261: negative operating_days → AssertionError."""
         calc = FinancialModelCalculator()
         params = _make_params(operating_days_per_year=-1)
         with pytest.raises(AssertionError, match="Operating days"):
             calc.calculate_financial_model(params)
 
-    def test_roe_and_roa_calculated(self):
+    def test_roe_and_roa_calculated(self) -> Any:
         """Lines 235-241: positive capital → roe/roa != 0."""
         calc = FinancialModelCalculator()
         params = _make_params()
@@ -291,7 +299,7 @@ class TestCalculateFinancialModel:
         assert isinstance(results.roe, float)
         assert isinstance(results.roa, float)
 
-    def test_payback_calculated(self):
+    def test_payback_calculated(self) -> Any:
         """Lines 243-246: positive net_income → payback period calculated."""
         calc = FinancialModelCalculator()
         params = _make_params()
@@ -306,7 +314,7 @@ class TestCalculateFinancialModel:
 
 
 class TestGenerateYearlyProjections:
-    def test_returns_correct_number_of_years(self):
+    def test_returns_correct_number_of_years(self) -> Any:
         """Lines 276-317: returns list of length `years`."""
         calc = FinancialModelCalculator()
         params = _make_params()
@@ -314,7 +322,7 @@ class TestGenerateYearlyProjections:
         projections = calc.generate_yearly_projections(years=5)
         assert len(projections) == 5
 
-    def test_projection_has_required_keys(self):
+    def test_projection_has_required_keys(self) -> Any:
         """Lines 298-308: each projection dict has required keys."""
         calc = FinancialModelCalculator()
         params = _make_params()
@@ -328,7 +336,7 @@ class TestGenerateYearlyProjections:
             assert "cash_flow" in proj
             assert "cumulative_cash_flow" in proj
 
-    def test_cumulative_cash_flow_is_cumulative(self):
+    def test_cumulative_cash_flow_is_cumulative(self) -> Any:
         """Lines 310-314: cumulative sums are increasing."""
         calc = FinancialModelCalculator()
         params = _make_params()
@@ -340,7 +348,7 @@ class TestGenerateYearlyProjections:
         # Last cumulative should match the sum
         assert abs(projections[-1]["cumulative_cash_flow"] - cum) < 0.01
 
-    def test_price_escalation_applied(self):
+    def test_price_escalation_applied(self) -> Any:
         """Lines 286-287: product price grows per year."""
         calc = FinancialModelCalculator()
         params = _make_params()

@@ -28,7 +28,9 @@ class UICreationMixin:
             # Get the directory where the script/executable is located
             if getattr(sys, "frozen", False):
                 # Running as compiled executable
-                base_dir = getattr(sys, "_MEIPASS", Path(os.path.abspath(__file__).parent))
+                base_dir = getattr(
+                    sys, "_MEIPASS", Path(os.path.abspath(__file__).parent)
+                )
             else:
                 # Running as script
                 base_dir = Path(__file__).parent
@@ -559,7 +561,8 @@ class UICreationMixin:
         # Update description
         descriptions = {
             "combine": (
-                "Copies all files from source folders into the single destination " "folder."
+                "Copies all files from source folders into the single destination "
+                "folder."
             ),
             "flatten": (
                 "Finds deeply nested folders and copies them to the top level of "
@@ -680,7 +683,8 @@ class UICreationMixin:
             else:
                 confirm = messagebox.askyesno(
                     "Confirm Removal",
-                    f"Remove {len(selected_indices)} " "selected folders from source list?",
+                    f"Remove {len(selected_indices)} "
+                    "selected folders from source list?",
                 )
 
             if confirm:

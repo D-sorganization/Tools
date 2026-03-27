@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for ControlsWidgetGolfer."""
 
 import pytest
@@ -5,7 +7,7 @@ from double_pendulum_golf.gui.controls_widget_golfer import ControlsWidgetGolfer
 import double_pendulum_golf.gui.controls_widget_golfer as cwg
 
 
-def test_controls_golfer_init_and_getters(qapp):
+def test_controls_golfer_init_and_getters(qapp) -> Any:
     w = ControlsWidgetGolfer()
 
     assert len(w._get_joint_names()) == 7
@@ -19,7 +21,7 @@ def test_controls_golfer_init_and_getters(qapp):
     assert params["enable_limits"] is False
 
 
-def test_controls_golfer_uai_ui(qapp, monkeypatch):
+def test_controls_golfer_uai_ui(qapp, monkeypatch) -> Any:
     from PyQt6.QtWidgets import QWidget
 
     class MockUAI(QWidget):
@@ -28,13 +30,13 @@ def test_controls_golfer_uai_ui(qapp, monkeypatch):
             self._val = kwargs.get("default_value", 0.0)
 
         @property
-        def value(self):
+        def value(self) -> Any:
             return str(self._val)
 
-        def value_si(self):
+        def value_si(self) -> Any:
             return self._val
 
-        def set_value(self, val, is_si=False):
+        def set_value(self, val, is_si=False) -> Any:
             pass
 
     monkeypatch.setattr(cwg, "_HAS_UAI", True)
@@ -47,7 +49,7 @@ def test_controls_golfer_uai_ui(qapp, monkeypatch):
     assert params["m_club"] > 0
 
 
-def test_controls_golfer_limits_and_clamps(qapp):
+def test_controls_golfer_limits_and_clamps(qapp) -> Any:
     w = ControlsWidgetGolfer()
     # Check limit boxes
     w.chk_clamp.setChecked(True)
@@ -70,7 +72,7 @@ def test_controls_golfer_limits_and_clamps(qapp):
     assert params["limit_stiffness"] == 300.0
 
 
-def test_invalid_grip(qapp):
+def test_invalid_grip(qapp) -> Any:
     w = ControlsWidgetGolfer()
     w.inp_L_club.set_value("1.0")
     w.inp_grip_right.set_value("1.5")

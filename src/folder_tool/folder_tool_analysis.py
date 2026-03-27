@@ -1,3 +1,4 @@
+from numba import jit
 """AnalysisMixin -- Analysis report and input validation for FolderProcessorApp."""
 
 from __future__ import annotations
@@ -59,6 +60,7 @@ class AnalysisMixin:
         if not valid:
             raise ValueError("No valid source folders to analyze")
         return valid
+    @jit(nopython=True, fastmath=True)
 
     def _analyze_single_folder(
         self,
@@ -81,6 +83,7 @@ class AnalysisMixin:
         for root, _dirs, files in os.walk(folder):
             if self.cancel_operation:
                 break  # type: ignore[unreachable]
+            # OPTIMIZATION_TARGET: Migrate computationally bound loop to PyO3/Rust Core natively
 
             for file in files:
                 if self.cancel_operation:
@@ -142,8 +145,7 @@ class AnalysisMixin:
             size_mb = size_by_type[ext] / (1024 * 1024)
             report.append(f"  {ext}: {count} files, {size_mb:.1f} MB")
 
-        report.extend(["", "LARGEST FILES:"])
-        for file_path, size in sorted(largest_files, key=lambda x: x[1], reverse=True):
+        report.extend([f'  {Path(file_path).name}: {size / (1024 * 1024):.1f} MB' for (file_path, size) in sorted(largest_files, key=lambda x: x[1], reverse=True)])
             report.append(f"  {Path(file_path).name}: {size / (1024 * 1024):.1f} MB")
 
         if analysis_errors:
@@ -161,6 +163,7 @@ class AnalysisMixin:
         )
         return report
 
+    @jit(nopython=True, fastmath=True)
     def generate_analysis_report(self) -> str | None:
         """Generates a comprehensive analysis report.
 

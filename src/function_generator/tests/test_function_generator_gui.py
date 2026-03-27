@@ -1,9 +1,11 @@
+from typing import Any
+
 """Tests for Function Generator GUI.
 
 Tests the PyQt6 GUI launcher and its integration with the SignalGenerator engine.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import importlib.util
 import os
@@ -110,7 +112,7 @@ class TestFunctionGeneratorGUI:
     """Test suite for Function Generator GUI."""
 
     @pytest.fixture
-    def mock_qt_app(self):
+    def mock_qt_app(self) -> Any:
         """Create a mock Qt application for testing."""
         with patch("PyQt6.QtWidgets.QApplication"):
             yield
@@ -147,8 +149,12 @@ class TestFunctionGeneratorGUI:
 
             with (
                 patch.object(FunctionGeneratorWidget, "_init_ui", return_value=None),
-                patch.object(FunctionGeneratorWidget, "_apply_styling", return_value=None),
-                patch.object(FunctionGeneratorWidget, "_connect_signals", return_value=None),
+                patch.object(
+                    FunctionGeneratorWidget, "_apply_styling", return_value=None
+                ),
+                patch.object(
+                    FunctionGeneratorWidget, "_connect_signals", return_value=None
+                ),
                 patch.object(
                     FunctionGeneratorWidget,
                     "_generate_signal",

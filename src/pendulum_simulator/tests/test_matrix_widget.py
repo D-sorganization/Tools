@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for matrix display widgets."""
 
 import pytest
@@ -10,7 +12,7 @@ from double_pendulum_golf.gui.matrix_widget_golfer import GolferMatrixWidget
 
 
 @pytest.fixture
-def mock_double_sim():
+def mock_double_sim() -> Any:
     sim = MagicMock()
     sim.n_steps = 100
     sim.mass_matrix_at.return_value = {"M11": 1.0, "M12": 0.5, "M21": 0.5, "M22": 2.0}
@@ -22,7 +24,7 @@ def mock_double_sim():
 
 
 @pytest.fixture
-def mock_triple_sim():
+def mock_triple_sim() -> Any:
     sim = MagicMock()
     sim.n_steps = 100
     sim.mass_matrix_at.return_value = {
@@ -44,7 +46,7 @@ def mock_triple_sim():
 
 
 @pytest.fixture
-def mock_golfer_sim():
+def mock_golfer_sim() -> Any:
     import numpy as np
 
     sim = MagicMock()  # no spec to avoid SimulationResult constraints if any
@@ -63,7 +65,7 @@ def mock_golfer_sim():
 
 
 class TestMatrixWidgets:
-    def test_double_matrix_methods(self, qapp, mock_double_sim):
+    def test_double_matrix_methods(self, qapp, mock_double_sim) -> Any:
         w = MatrixWidget()
 
         # Test no simulation state
@@ -86,7 +88,7 @@ class TestMatrixWidgets:
         assert w._result is None
         w.paintEvent(pe)
 
-    def test_triple_matrix_methods(self, qapp, mock_triple_sim):
+    def test_triple_matrix_methods(self, qapp, mock_triple_sim) -> Any:
         w = TripleMatrixWidget()
         w.set_simulation(mock_triple_sim)
         w.set_frame(50)
@@ -101,7 +103,7 @@ class TestMatrixWidgets:
 
         w.clear()
 
-    def test_golfer_matrix_methods(self, qapp, mock_golfer_sim):
+    def test_golfer_matrix_methods(self, qapp, mock_golfer_sim) -> Any:
         w = GolferMatrixWidget()
 
         # specific to golfer to cover lines 65-73 and 182

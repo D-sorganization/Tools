@@ -1,5 +1,6 @@
 import ast
 import math
+from typing import Any
 
 import numpy as np
 import pytest
@@ -7,31 +8,31 @@ from safe_eval import safe_eval, safe_eval_math, validate_expression
 
 
 class TestValidateExpression:
-    def test_valid_math_expression(self):
+    def test_valid_math_expression(self) -> Any:
         tree = validate_expression("2 * x + 3 * y", {"x", "y"})
         assert isinstance(tree, ast.Expression)
 
-    def test_empty_expression_raises(self):
+    def test_empty_expression_raises(self) -> Any:
         with pytest.raises(ValueError, match="Expression must not be empty"):
             validate_expression("")
         with pytest.raises(ValueError, match="Expression must not be empty"):
             validate_expression("  ")
 
-    def test_invalid_syntax_raises(self):
+    def test_invalid_syntax_raises(self) -> Any:
         with pytest.raises(ValueError, match="Invalid syntax"):
             validate_expression("2 * +")
 
-    def test_unsafe_operation_raises(self):
+    def test_unsafe_operation_raises(self) -> Any:
         with pytest.raises(ValueError, match="Unsafe operation detected: List"):
             validate_expression("[1, 2, 3]")
         with pytest.raises(ValueError, match="Unsafe operation detected: Lambda"):
             validate_expression("lambda x: x")
 
-    def test_unknown_name_raises(self):
+    def test_unknown_name_raises(self) -> Any:
         with pytest.raises(ValueError, match="Unknown variable or function: z"):
             validate_expression("x + z", {"x"})
 
-    def test_function_calls(self):
+    def test_function_calls(self) -> Any:
         # allowed call
         tree = validate_expression("sin(x)", {"sin", "x"})
         assert isinstance(tree, ast.Expression)
@@ -41,26 +42,28 @@ class TestValidateExpression:
             validate_expression("cos(x)", {"sin", "x"})
 
         # attribute call
-        with pytest.raises(ValueError, match="Attribute-based function calls not allowed"):
+        with pytest.raises(
+            ValueError, match="Attribute-based function calls not allowed"
+        ):
             validate_expression("math.sin(x)", {"math", "x"})
 
-    def test_allowed_names_none_bypasses_check(self):
+    def test_allowed_names_none_bypasses_check(self) -> Any:
         # Should parse without error since name checking is disabled
         tree = validate_expression("unknown_func(unknown_var)", allowed_names=None)
         assert isinstance(tree, ast.Expression)
 
 
 class TestSafeEval:
-    def test_safe_eval_basic(self):
+    def test_safe_eval_basic(self) -> Any:
         result = safe_eval("2 * x", {"x": 21})
         assert result == 42
 
-    def test_safe_eval_explicit_allowlist(self):
+    def test_safe_eval_explicit_allowlist(self) -> Any:
         # Only 'x' is in allowlist, even though namespace also has 'y'
         with pytest.raises(ValueError, match="Unknown variable or function: y"):
             safe_eval("x + y", {"x": 10, "y": 20}, allowed_names={"x"})
 
-    def test_safe_eval_builtins_removed(self):
+    def test_safe_eval_builtins_removed(self) -> Any:
         # Even if allowed_names = None, eval shouldn't find builtins
         # Pass let abs pass name validation, so it reaches eval()
         with pytest.raises(NameError):
@@ -68,7 +71,7 @@ class TestSafeEval:
 
 
 class TestSafeEvalMath:
-    def test_safe_eval_math_numpy(self):
+    def test_safe_eval_math_numpy(self) -> Any:
         x = np.array([1, 2, 3])
         result = safe_eval_math("x * 2 + sum(x)", {"x": x})
         np.testing.assert_array_equal(result, np.array([8, 10, 12]))
@@ -77,20 +80,22 @@ class TestSafeEvalMath:
         res_sin = safe_eval_math("sin(0)")
         assert res_sin == 0.0
 
-    def test_safe_eval_math_scalar(self):
+    def test_safe_eval_math_scalar(self) -> Any:
         # Scalar math module evaluation
         result = safe_eval_math("sin(pi / 2) * x", {"x": 10}, use_numpy=False)
         assert result == 10.0
 
-    def test_safe_eval_math_aliases(self):
+    def test_safe_eval_math_aliases(self) -> Any:
         result = safe_eval_math("np_sqrt(16)")
         assert result == 4.0
 
-    def test_safe_eval_math_math_module_access(self):
+    def test_safe_eval_math_math_module_access(self) -> Any:
         # When use_numpy=False, 'math' module is exposed directly in the namespace
         # But wait, our ast validator blocks attribute access like math.sin!
         # Let's verify that using math.sin fails if use_numpy=False is used with explicit string
-        with pytest.raises(ValueError, match="Attribute-based function calls not allowed"):
+        with pytest.raises(
+            ValueError, match="Attribute-based function calls not allowed"
+        ):
             safe_eval_math("math.sin(0)", {}, use_numpy=False)
 
         # but using 'math' as a name works

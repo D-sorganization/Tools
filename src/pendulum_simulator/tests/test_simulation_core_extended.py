@@ -1,3 +1,5 @@
+from typing import Any
+
 """Extended tests for simulation_core.py — covering remaining code paths.
 
 Adds tests for:
@@ -44,7 +46,7 @@ class TestIntegrateOdeExtended:
         calls = []
         orig = sci.solve_ivp
 
-        def capturing_solve_ivp(*args, **kwargs):
+        def capturing_solve_ivp(*args, **kwargs) -> Any:
             calls.append(kwargs)
             return orig(*args, **kwargs)
 
@@ -67,7 +69,7 @@ class TestIntegrateOdeExtended:
         calls = []
         orig = sci.solve_ivp
 
-        def capturing_solve_ivp(*args, **kwargs):
+        def capturing_solve_ivp(*args, **kwargs) -> Any:
             calls.append(kwargs)
             return orig(*args, **kwargs)
 

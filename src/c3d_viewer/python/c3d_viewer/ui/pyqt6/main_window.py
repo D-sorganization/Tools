@@ -361,7 +361,9 @@ class C3DViewerWindow(QMainWindow):
         self.trajectory_text = QTextEdit()
         self.trajectory_text.setReadOnly(True)
         self.trajectory_text.setMaximumHeight(150)
-        self.trajectory_text.setPlaceholderText("Select markers to view trajectory statistics...")
+        self.trajectory_text.setPlaceholderText(
+            "Select markers to view trajectory statistics..."
+        )
         preview_layout.addWidget(self.trajectory_text)
 
         preview_btn = QPushButton("Analyze Selected Markers")
@@ -619,8 +621,7 @@ class C3DViewerWindow(QMainWindow):
         marker_names = [item.text() for item in selected]
         analysis = []
         analysis.append(f"Selected {len(marker_names)} markers:")
-        for name in marker_names:
-            analysis.append(f"  - {name}")
+        analysis.extend([f"  - {name}" for name in marker_names])
         analysis.append("")
         analysis.append("Note: Full trajectory analysis requires ezc3d library.")
         analysis.append("Install with: pip install ezc3d")
@@ -646,13 +647,15 @@ class C3DViewerWindow(QMainWindow):
                 analysis = [f"Detected {plate_count} force plate(s):"]
                 for plate_num, ch in channels.items():
                     analysis.append(f"\nPlate {plate_num}:")
-                    for key, label in ch.items():
-                        analysis.append(f"  {key.upper()}: {label}")
+                    analysis.extend(
+                        [f"  {key.upper()}: {label}" for (key, label) in ch.items()]
+                    )
                 self.force_text.setPlainText("\n".join(analysis))
 
         except ImportError:
             self.force_text.setPlainText(
-                "Force plate analysis requires ezc3d library.\n" "Install with: pip install ezc3d"
+                "Force plate analysis requires ezc3d library.\n"
+                "Install with: pip install ezc3d"
             )
 
     def _export_points(self) -> None:

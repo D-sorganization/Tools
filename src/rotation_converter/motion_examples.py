@@ -1,3 +1,5 @@
+from numba import jit
+
 """Example rigid-body motion trajectories for screw axis visualization.
 
 Each generator returns a list of 4x4 SE(3) homogeneous transformation
@@ -14,14 +16,14 @@ Examples:
 DbC: postconditions verify every output frame is valid SE(3).
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import math
+import math  # noqa: E402
 
-import numpy as np
+import numpy as np  # noqa: E402
 
-from rotation_converter._contracts import ensure, require
-from rotation_converter.modern_robotics import MatrixExp3, VecToso3
+from rotation_converter._contracts import ensure, require  # noqa: E402
+from rotation_converter.modern_robotics import MatrixExp3, VecToso3  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Shared physics helpers (DRY)
@@ -70,6 +72,7 @@ def _validate_trajectory(traj: list[np.ndarray]) -> None:
 # ===========================================================================
 
 
+@jit(nopython=True, fastmath=True)
 def football_spiral(
     n_frames: int = 60,
     speed: float = 20.0,
@@ -147,6 +150,7 @@ def football_spiral(
 # ===========================================================================
 
 
+@jit(nopython=True, fastmath=True)
 def frisbee_flight(
     n_frames: int = 60,
     speed: float = 14.0,

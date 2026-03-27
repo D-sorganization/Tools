@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import numpy as np
@@ -48,7 +49,9 @@ def test_run_multi_parameter_analysis(analysis_params: dict) -> None:
     ) as mock_eval:
         mock_eval.return_value = (42.0, None, None)
 
-        result = run_multi_parameter_analysis(engine, analysis_params, 15.0, p1_vals, p2_vals)
+        result = run_multi_parameter_analysis(
+            engine, analysis_params, 15.0, p1_vals, p2_vals
+        )
 
         assert result["param1_name"] == "p1"
         assert result["param2_name"] == "p2"
@@ -59,7 +62,7 @@ def test_run_multi_parameter_analysis(analysis_params: dict) -> None:
 
 
 class DummyEngine:
-    def calculate(self, **kwargs):
+    def calculate(self, **kwargs) -> Any:
         val = kwargs.get("p1", 0) + kwargs.get("p2", 0)
         return {"out_var": val}
 

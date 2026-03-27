@@ -1,3 +1,5 @@
+from typing import Any
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -14,7 +16,7 @@ This module contains comprehensive tests for series expansion functionality:
 Following TDD and Design by Contract principles.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import math
 
@@ -76,7 +78,7 @@ class TestTaylorSeriesContract:
 
         expansion = SeriesExpansion()
 
-        def f(x):
+        def f(x) -> Any:
             return np.sin(x)
 
         taylor_func = expansion.taylor_series(f, center=0, n_terms=5)
@@ -89,7 +91,7 @@ class TestTaylorSeriesContract:
 
         expansion = SeriesExpansion()
 
-        def f(x):
+        def f(x) -> Any:
             return np.exp(x)
 
         taylor_func = expansion.taylor_series(f, center=0, n_terms=5)
@@ -103,7 +105,7 @@ class TestTaylorSeriesContract:
 
         expansion = SeriesExpansion()
 
-        def f(x):
+        def f(x) -> Any:
             return np.cos(x)
 
         taylor_func = expansion.taylor_series(f, center=0, n_terms=5)
@@ -127,7 +129,7 @@ class TestTaylorSeriesContract:
 
         expansion = SeriesExpansion()
 
-        def f(x):
+        def f(x) -> Any:
             return x**2
 
         with pytest.raises(ValueError):
@@ -151,7 +153,7 @@ class TestMaclaurinSeriesContract:
 
         expansion = SeriesExpansion()
 
-        def f(x):
+        def f(x) -> Any:
             return np.sin(x)
 
         maclaurin_func = expansion.maclaurin_series(f, n_terms=5)
@@ -164,7 +166,7 @@ class TestMaclaurinSeriesContract:
 
         expansion = SeriesExpansion()
 
-        def f(x):
+        def f(x) -> Any:
             return np.exp(x)
 
         taylor_func = expansion.taylor_series(f, center=0, n_terms=10)
@@ -188,7 +190,7 @@ class TestGetCoefficientsContract:
 
         expansion = SeriesExpansion()
 
-        def f(x):
+        def f(x) -> Any:
             return np.exp(x)
 
         coeffs = expansion.get_coefficients(f, center=0, n_terms=5)
@@ -201,7 +203,7 @@ class TestGetCoefficientsContract:
 
         expansion = SeriesExpansion()
 
-        def f(x):
+        def f(x) -> Any:
             return np.sin(x)
 
         for n in [3, 5, 10]:
@@ -281,7 +283,7 @@ class TestTaylorSeriesFunctional:
         expansion = SeriesExpansion()
 
         # f(x) = 1 + 2x + 3x^2
-        def f(x):
+        def f(x) -> Any:
             return 1 + 2 * x + 3 * x**2
 
         taylor_func = expansion.taylor_series(f, center=0, n_terms=5)
@@ -556,7 +558,9 @@ class TestConvergenceAnalysis:
         # For numerical methods, convergence is reliable close to the center
         # Far from center (|x| > 2), many terms are needed
         for x in [-1, 0, 1]:
-            analysis = expansion.analyze_convergence(np.exp, center=0, x_test=x, tolerance=1e-6)
+            analysis = expansion.analyze_convergence(
+                np.exp, center=0, x_test=x, tolerance=1e-6
+            )
             assert analysis["convergent"]
 
     def test_ln_diverges_outside_radius(self) -> None:
@@ -565,11 +569,13 @@ class TestConvergenceAnalysis:
 
         expansion = SeriesExpansion()
 
-        def f(x):
+        def f(x) -> Any:
             return np.log(1 + x)
 
         # Should diverge for x = 2 (outside |x| < 1)
-        analysis = expansion.analyze_convergence(f, center=0, x_test=2.0, tolerance=1e-6)
+        analysis = expansion.analyze_convergence(
+            f, center=0, x_test=2.0, tolerance=1e-6
+        )
         assert not analysis["convergent"]
 
 
@@ -586,7 +592,9 @@ class TestErrorBounds:
         from signal_toolkit.series import SeriesExpansion
 
         expansion = SeriesExpansion()
-        bound = expansion.estimate_error_bound(f=np.exp, center=0, x_test=1.0, n_terms=10)
+        bound = expansion.estimate_error_bound(
+            f=np.exp, center=0, x_test=1.0, n_terms=10
+        )
 
         assert isinstance(bound, int | float | np.floating)
 
@@ -595,7 +603,9 @@ class TestErrorBounds:
         from signal_toolkit.series import SeriesExpansion
 
         expansion = SeriesExpansion()
-        bound = expansion.estimate_error_bound(f=np.sin, center=0, x_test=0.5, n_terms=10)
+        bound = expansion.estimate_error_bound(
+            f=np.sin, center=0, x_test=0.5, n_terms=10
+        )
 
         assert bound >= 0
 
@@ -627,7 +637,9 @@ class TestErrorBounds:
 
         taylor_func = expansion.taylor_series(f, center=0, n_terms=n_terms)
         actual_error = abs(taylor_func(x_test) - f(x_test))
-        bound = expansion.estimate_error_bound(f, center=0, x_test=x_test, n_terms=n_terms)
+        bound = expansion.estimate_error_bound(
+            f, center=0, x_test=x_test, n_terms=n_terms
+        )
 
         # Bound should be >= actual error (with some margin)
         assert actual_error <= bound * 2  # Allow factor of 2 margin
@@ -743,7 +755,7 @@ class TestUtilityFunctions:
         expansion = SeriesExpansion()
 
         # For polynomial f(x) = x^3, f'(0) = 0, f''(0) = 0, f'''(0) = 6
-        def f(x):
+        def f(x) -> Any:
             return x**3
 
         coeffs = expansion.get_coefficients(f, center=0, n_terms=5)

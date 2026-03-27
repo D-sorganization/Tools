@@ -1,3 +1,5 @@
+from typing import Any
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -8,7 +10,7 @@ Covers PlotTheme dataclass, theme registry, get_theme/register_theme,
 PlotThemeManager, and integration helpers.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from unittest.mock import MagicMock, patch
 
@@ -20,7 +22,7 @@ import pytest
 
 
 class TestPlotThemeDataclass:
-    def test_default_values(self):
+    def test_default_values(self) -> Any:
         from plot_theme.themes import PlotTheme
 
         theme = PlotTheme(name="Test")
@@ -39,7 +41,7 @@ class TestPlotThemeDataclass:
         assert len(theme.accent_colors) == 3
         assert theme.rcparams == {}
 
-    def test_get_color_cycle(self):
+    def test_get_color_cycle(self) -> Any:
         from plot_theme.themes import PlotTheme
 
         theme = PlotTheme(
@@ -51,7 +53,7 @@ class TestPlotThemeDataclass:
         cycle = theme.get_color_cycle()
         assert cycle == ["#aa0000", "#00aa00", "#0000aa"]
 
-    def test_to_rcparams_includes_all_keys(self):
+    def test_to_rcparams_includes_all_keys(self) -> Any:
         from plot_theme.themes import PlotTheme
 
         theme = PlotTheme(name="Test")
@@ -72,14 +74,14 @@ class TestPlotThemeDataclass:
         }
         assert required_keys <= params.keys()
 
-    def test_to_rcparams_with_string_heatmap_cmap(self):
+    def test_to_rcparams_with_string_heatmap_cmap(self) -> Any:
         from plot_theme.themes import PlotTheme
 
         theme = PlotTheme(name="Test", heatmap_cmap="plasma")
         params = theme.to_rcparams()
         assert params["image.cmap"] == "plasma"
 
-    def test_to_rcparams_with_list_heatmap_cmap_uses_viridis(self):
+    def test_to_rcparams_with_list_heatmap_cmap_uses_viridis(self) -> Any:
         from plot_theme.themes import PlotTheme
 
         # When cmap is a list, falls back to 'viridis'
@@ -87,14 +89,14 @@ class TestPlotThemeDataclass:
         params = theme.to_rcparams()
         assert params["image.cmap"] == "viridis"
 
-    def test_to_rcparams_merges_custom_rcparams(self):
+    def test_to_rcparams_merges_custom_rcparams(self) -> Any:
         from plot_theme.themes import PlotTheme
 
         theme = PlotTheme(name="Test", rcparams={"figure.dpi": 200})
         params = theme.to_rcparams()
         assert params["figure.dpi"] == 200
 
-    def test_custom_theme_construction(self):
+    def test_custom_theme_construction(self) -> Any:
         from plot_theme.themes import PlotTheme
 
         theme = PlotTheme(
@@ -118,7 +120,7 @@ class TestPlotThemeDataclass:
 
 
 class TestPredefinedThemes:
-    def test_all_themes_present_in_registry(self):
+    def test_all_themes_present_in_registry(self) -> Any:
         from plot_theme.themes import PLOT_THEMES
 
         expected_keys = {
@@ -139,30 +141,30 @@ class TestPredefinedThemes:
         }
         assert expected_keys <= PLOT_THEMES.keys()
 
-    def test_scientific_violet_properties(self):
+    def test_scientific_violet_properties(self) -> Any:
         from plot_theme.themes import SCIENTIFIC_VIOLET
 
         assert SCIENTIFIC_VIOLET.name == "Scientific Violet"
         assert SCIENTIFIC_VIOLET.primary_color == "#9333EA"
         assert SCIENTIFIC_VIOLET.contour_cmap == "YlGnBu"
 
-    def test_catppuccin_mocha_is_dark(self):
+    def test_catppuccin_mocha_is_dark(self) -> Any:
         from plot_theme.themes import CATPPUCCIN_MOCHA
 
         assert CATPPUCCIN_MOCHA.figure_facecolor == "#1e1e2e"
 
-    def test_default_theme_exists(self):
+    def test_default_theme_exists(self) -> Any:
         from plot_theme.themes import DEFAULT_THEME, PLOT_THEMES
 
         assert DEFAULT_THEME in PLOT_THEMES
 
-    def test_all_themes_have_name(self):
+    def test_all_themes_have_name(self) -> Any:
         from plot_theme.themes import PLOT_THEMES
 
         for key, theme in PLOT_THEMES.items():
             assert theme.name, f"Theme '{key}' has empty name"
 
-    def test_all_themes_to_rcparams_succeeds(self):
+    def test_all_themes_to_rcparams_succeeds(self) -> Any:
         from plot_theme.themes import PLOT_THEMES
 
         for key, theme in PLOT_THEMES.items():
@@ -176,46 +178,46 @@ class TestPredefinedThemes:
 
 
 class TestThemeFunctions:
-    def test_get_theme_by_name(self):
+    def test_get_theme_by_name(self) -> Any:
         from plot_theme.themes import get_theme
 
         theme = get_theme("scientific_violet")
         assert theme.name == "Scientific Violet"
 
-    def test_get_theme_case_insensitive(self):
+    def test_get_theme_case_insensitive(self) -> Any:
         from plot_theme.themes import get_theme
 
         t1 = get_theme("SCIENTIFIC_VIOLET")
         t2 = get_theme("scientific_violet")
         assert t1.name == t2.name
 
-    def test_get_theme_hyphen_normalization(self):
+    def test_get_theme_hyphen_normalization(self) -> Any:
         from plot_theme.themes import get_theme
 
         # Hyphens should be normalized to underscores
         theme = get_theme("scientific-violet")
         assert theme.name == "Scientific Violet"
 
-    def test_get_theme_space_normalization(self):
+    def test_get_theme_space_normalization(self) -> Any:
         from plot_theme.themes import get_theme
 
         theme = get_theme("scientific violet")
         assert theme.name == "Scientific Violet"
 
-    def test_get_theme_not_found_raises(self):
+    def test_get_theme_not_found_raises(self) -> Any:
         from plot_theme.themes import get_theme
 
         with pytest.raises(KeyError, match="not found"):
             get_theme("nonexistent_theme")
 
-    def test_get_theme_names_sorted(self):
+    def test_get_theme_names_sorted(self) -> Any:
         from plot_theme.themes import get_theme_names
 
         names = get_theme_names()
         assert names == sorted(names)
         assert len(names) >= 14
 
-    def test_register_custom_theme(self):
+    def test_register_custom_theme(self) -> Any:
         from plot_theme.themes import PLOT_THEMES, PlotTheme, register_theme
 
         custom = PlotTheme(name="My Theme", primary_color="#123456")
@@ -225,7 +227,7 @@ class TestThemeFunctions:
         # Cleanup
         del PLOT_THEMES["my_theme_test"]
 
-    def test_register_custom_theme_normalizes_name(self):
+    def test_register_custom_theme_normalizes_name(self) -> Any:
         from plot_theme.themes import PLOT_THEMES, PlotTheme, register_theme
 
         custom = PlotTheme(name="Test Theme")
@@ -242,7 +244,7 @@ class TestThemeFunctions:
 
 class TestPlotThemeManager:
     @pytest.fixture(autouse=True)
-    def reset_singleton(self):
+    def reset_singleton(self) -> Any:
         """Reset the global manager singleton before each test."""
         from plot_theme.manager import _ManagerHolder
 
@@ -250,50 +252,50 @@ class TestPlotThemeManager:
         yield
         _ManagerHolder.instance = None
 
-    def _make_manager(self):
+    def _make_manager(self) -> Any:
         """Create a fresh manager without PyQt6 QSettings."""
         with patch("plot_theme.manager.PlotThemeManager._load_saved_theme"):
             from plot_theme.manager import PlotThemeManager
 
             return PlotThemeManager()
 
-    def test_init_sets_default_theme(self):
+    def test_init_sets_default_theme(self) -> Any:
         m = self._make_manager()
         assert m.current_theme_name == "scientific_violet"
         assert m.current_theme.name == "Scientific Violet"
 
-    def test_get_available_themes(self):
+    def test_get_available_themes(self) -> Any:
         m = self._make_manager()
         themes = m.get_available_themes()
         assert "scientific_violet" in themes
         assert themes == sorted(themes)
 
-    def test_get_theme_display_names(self):
+    def test_get_theme_display_names(self) -> Any:
         m = self._make_manager()
         display = m.get_theme_display_names()
         assert "scientific_violet" in display
         assert display["scientific_violet"] == "Scientific Violet"
 
-    def test_set_theme_changes_current(self):
+    def test_set_theme_changes_current(self) -> Any:
         m = self._make_manager()
         with patch.object(m, "_save_theme"):
             m.set_theme("dracula")
         assert m.current_theme_name == "dracula"
         assert m.current_theme.name == "Dracula"
 
-    def test_set_theme_without_saving(self):
+    def test_set_theme_without_saving(self) -> Any:
         m = self._make_manager()
         with patch.object(m, "_save_theme") as mock_save:
             m.set_theme("nord", save=False)
         mock_save.assert_not_called()
 
-    def test_set_theme_with_saving(self):
+    def test_set_theme_with_saving(self) -> Any:
         m = self._make_manager()
         with patch.object(m, "_save_theme") as mock_save:
             m.set_theme("nord", save=True)
         mock_save.assert_called_once()
 
-    def test_set_theme_triggers_callbacks(self):
+    def test_set_theme_triggers_callbacks(self) -> Any:
         m = self._make_manager()
         called_with = []
         m.add_theme_change_callback(lambda t: called_with.append(t))
@@ -302,10 +304,10 @@ class TestPlotThemeManager:
         assert len(called_with) == 1
         assert called_with[0].name == "Dracula"
 
-    def test_set_theme_swallows_callback_errors(self):
+    def test_set_theme_swallows_callback_errors(self) -> Any:
         m = self._make_manager()
 
-        def bad_callback(t):
+        def bad_callback(t) -> Any:
             raise ValueError("boom")
 
         m.add_theme_change_callback(bad_callback)
@@ -313,7 +315,7 @@ class TestPlotThemeManager:
         with patch.object(m, "_save_theme"):
             m.set_theme("nord")
 
-    def test_add_and_remove_callback(self):
+    def test_add_and_remove_callback(self) -> Any:
         m = self._make_manager()
         cb = MagicMock()
         m.add_theme_change_callback(cb)
@@ -322,7 +324,7 @@ class TestPlotThemeManager:
             m.set_theme("dracula")
         cb.assert_not_called()
 
-    def test_add_callback_deduplicates(self):
+    def test_add_callback_deduplicates(self) -> Any:
         m = self._make_manager()
         cb = MagicMock()
         m.add_theme_change_callback(cb)
@@ -331,12 +333,12 @@ class TestPlotThemeManager:
             m.set_theme("dracula")
         assert cb.call_count == 1
 
-    def test_remove_nonexistent_callback_safe(self):
+    def test_remove_nonexistent_callback_safe(self) -> Any:
         m = self._make_manager()
         cb = MagicMock()
         m.remove_theme_change_callback(cb)  # Should not raise
 
-    def test_get_colors_returns_dict(self):
+    def test_get_colors_returns_dict(self) -> Any:
         m = self._make_manager()
         colors = m.get_colors()
         assert "primary" in colors
@@ -344,42 +346,42 @@ class TestPlotThemeManager:
         assert "accent" in colors
         assert "background" in colors
 
-    def test_get_histogram_style(self):
+    def test_get_histogram_style(self) -> Any:
         m = self._make_manager()
         style = m.get_histogram_style()
         assert "color" in style
         assert "alpha" in style
 
-    def test_get_scatter_style(self):
+    def test_get_scatter_style(self) -> Any:
         m = self._make_manager()
         style = m.get_scatter_style()
         assert "c" in style
         assert "s" in style
 
-    def test_get_line_style(self):
+    def test_get_line_style(self) -> Any:
         m = self._make_manager()
         style = m.get_line_style(index=0)
         assert "color" in style
         assert "linewidth" in style
 
-    def test_get_line_style_index_wraps(self):
+    def test_get_line_style_index_wraps(self) -> Any:
         m = self._make_manager()
         # Index larger than cycle length should wrap
         style = m.get_line_style(index=100)
         assert "color" in style
 
-    def test_get_fit_line_style(self):
+    def test_get_fit_line_style(self) -> Any:
         m = self._make_manager()
         style = m.get_fit_line_style()
         assert "color" in style
         assert style["linestyle"] == "-"
 
-    def test_get_contour_style(self):
+    def test_get_contour_style(self) -> Any:
         m = self._make_manager()
         style = m.get_contour_style()
         assert "cmap" in style
 
-    def test_apply_to_matplotlib(self):
+    def test_apply_to_matplotlib(self) -> Any:
         m = self._make_manager()
         mock_mpl = MagicMock()
         with patch.dict(
@@ -393,20 +395,20 @@ class TestPlotThemeManager:
             with patch("plot_theme.manager.PlotThemeManager.apply_to_matplotlib"):
                 m.apply_to_matplotlib()
 
-    def test_apply_to_matplotlib_import_error(self):
+    def test_apply_to_matplotlib_import_error(self) -> Any:
         m = self._make_manager()
         # When matplotlib is unavailable, should not raise
         with patch.dict("sys.modules", {"matplotlib": None, "matplotlib.pyplot": None}):
             m.apply_to_matplotlib()
 
-    def test_apply_to_figure(self):
+    def test_apply_to_figure(self) -> Any:
         m = self._make_manager()
         mock_fig = MagicMock()
         mock_fig.axes = []  # no axes → just sets facecolor
         m.apply_to_figure(mock_fig)
         mock_fig.set_facecolor.assert_called_once()
 
-    def test_apply_to_axes(self):
+    def test_apply_to_axes(self) -> Any:
         m = self._make_manager()
         mock_ax = MagicMock()
         mock_spine = MagicMock()
@@ -416,7 +418,7 @@ class TestPlotThemeManager:
         mock_ax.tick_params.assert_called_once()
         mock_ax.grid.assert_called_once()
 
-    def test_load_saved_theme_via_qsettings(self):
+    def test_load_saved_theme_via_qsettings(self) -> Any:
         """QSettings path: saved theme loaded if it exists in registry."""
         mock_settings = MagicMock()
         mock_settings.value.return_value = "dracula"
@@ -428,7 +430,7 @@ class TestPlotThemeManager:
         # Just verify construction doesn't raise
         assert m is not None
 
-    def test_save_theme_import_error(self):
+    def test_save_theme_import_error(self) -> Any:
         """_save_theme swallows ImportError when PyQt6 is unavailable."""
         m = self._make_manager()
         with patch.dict("sys.modules", {"PyQt6": None, "PyQt6.QtCore": None}):
@@ -437,21 +439,21 @@ class TestPlotThemeManager:
 
 class TestGetPlotThemeManager:
     @pytest.fixture(autouse=True)
-    def reset_singleton(self):
+    def reset_singleton(self) -> Any:
         from plot_theme.manager import _ManagerHolder
 
         _ManagerHolder.instance = None
         yield
         _ManagerHolder.instance = None
 
-    def test_get_plot_theme_manager_creates_instance(self):
+    def test_get_plot_theme_manager_creates_instance(self) -> Any:
         from plot_theme.manager import get_plot_theme_manager
 
         with patch("plot_theme.manager.PlotThemeManager._load_saved_theme"):
             m = get_plot_theme_manager()
         assert m is not None
 
-    def test_get_plot_theme_manager_singleton(self):
+    def test_get_plot_theme_manager_singleton(self) -> Any:
         from plot_theme.manager import get_plot_theme_manager
 
         with patch("plot_theme.manager.PlotThemeManager._load_saved_theme"):
@@ -466,17 +468,17 @@ class TestGetPlotThemeManager:
 
 
 class TestPackageInit:
-    def test_package_exports_plot_theme(self):
+    def test_package_exports_plot_theme(self) -> Any:
         from plot_theme import PlotTheme
 
         assert PlotTheme is not None
 
-    def test_package_exports_get_theme(self):
+    def test_package_exports_get_theme(self) -> Any:
         from plot_theme import get_theme
 
         assert callable(get_theme)
 
-    def test_package_exports_get_plot_theme_manager(self):
+    def test_package_exports_get_plot_theme_manager(self) -> Any:
         from plot_theme import get_plot_theme_manager
 
         assert callable(get_plot_theme_manager)
@@ -491,17 +493,17 @@ class TestIntegration함수:
     """Tests for the integration helper functions in integration.py."""
 
     @pytest.fixture(autouse=True)
-    def reset_singleton(self):
+    def reset_singleton(self) -> Any:
         from plot_theme.manager import _ManagerHolder
 
         _ManagerHolder.instance = None
         yield
         _ManagerHolder.instance = None
 
-    def _make_manager_patch(self):
+    def _make_manager_patch(self) -> Any:
         return patch("plot_theme.manager.PlotThemeManager._load_saved_theme")
 
-    def test_apply_plot_theme_returns_manager(self):
+    def test_apply_plot_theme_returns_manager(self) -> Any:
         from plot_theme.integration import apply_plot_theme
 
         with (
@@ -512,7 +514,7 @@ class TestIntegration함수:
         assert m is not None
         assert m.current_theme_name == "scientific_violet"
 
-    def test_apply_plot_theme_without_name(self):
+    def test_apply_plot_theme_without_name(self) -> Any:
         from plot_theme.integration import apply_plot_theme
 
         with (
@@ -522,7 +524,7 @@ class TestIntegration함수:
             m = apply_plot_theme()
         assert m is not None
 
-    def test_style_axis_with_current_theme(self):
+    def test_style_axis_with_current_theme(self) -> Any:
         from plot_theme.integration import style_axis
 
         mock_ax = MagicMock()
@@ -531,7 +533,7 @@ class TestIntegration함수:
             style_axis(mock_ax)
         mock_ax.set_facecolor.assert_called_once()
 
-    def test_style_axis_with_named_theme(self):
+    def test_style_axis_with_named_theme(self) -> Any:
         from plot_theme.integration import style_axis
 
         mock_ax = MagicMock()
@@ -540,7 +542,7 @@ class TestIntegration함수:
             style_axis(mock_ax, theme_name="dracula")
         mock_ax.set_facecolor.assert_called_once()
 
-    def test_get_theme_colors_current_theme(self):
+    def test_get_theme_colors_current_theme(self) -> Any:
         from plot_theme.integration import get_theme_colors
 
         with self._make_manager_patch():
@@ -549,14 +551,14 @@ class TestIntegration함수:
         assert "secondary" in colors
         assert "contour_cmap" in colors
 
-    def test_get_theme_colors_named_theme(self):
+    def test_get_theme_colors_named_theme(self) -> Any:
         from plot_theme.integration import get_theme_colors
 
         with self._make_manager_patch():
             colors = get_theme_colors("dracula")
         assert colors["primary"] == "#bd93f9"
 
-    def test_plot_theme_mixin_setup(self):
+    def test_plot_theme_mixin_setup(self) -> Any:
         from plot_theme.integration import PlotThemeMixin
 
         class MyWidget(PlotThemeMixin):
@@ -570,7 +572,7 @@ class TestIntegration함수:
             m = widget.setup_plot_theme(apply_immediately=True)
         assert m is not None
 
-    def test_plot_theme_mixin_without_immediate_apply(self):
+    def test_plot_theme_mixin_without_immediate_apply(self) -> Any:
         from plot_theme.integration import PlotThemeMixin
 
         class MyWidget(PlotThemeMixin):
@@ -581,7 +583,7 @@ class TestIntegration함수:
             m = widget.setup_plot_theme(apply_immediately=False)
         assert m is not None
 
-    def test_plot_theme_mixin_set_plot_theme(self):
+    def test_plot_theme_mixin_set_plot_theme(self) -> Any:
         from plot_theme.integration import PlotThemeMixin
 
         class MyWidget(PlotThemeMixin):
@@ -594,7 +596,7 @@ class TestIntegration함수:
                 widget.set_plot_theme("nord")
         assert widget._plot_theme_manager.current_theme_name == "nord"
 
-    def test_plot_theme_mixin_set_without_manager(self):
+    def test_plot_theme_mixin_set_without_manager(self) -> Any:
         from plot_theme.integration import PlotThemeMixin
 
         class MyWidget(PlotThemeMixin):
@@ -603,7 +605,7 @@ class TestIntegration함수:
         widget = MyWidget()
         widget.set_plot_theme("nord")  # should not raise
 
-    def test_plot_theme_mixin_get_plot_colors(self):
+    def test_plot_theme_mixin_get_plot_colors(self) -> Any:
         from plot_theme.integration import PlotThemeMixin
 
         class MyWidget(PlotThemeMixin):
@@ -615,7 +617,7 @@ class TestIntegration함수:
         colors = widget.get_plot_colors()
         assert "primary" in colors
 
-    def test_plot_theme_mixin_get_plot_colors_no_manager(self):
+    def test_plot_theme_mixin_get_plot_colors_no_manager(self) -> Any:
         from plot_theme.integration import PlotThemeMixin
 
         class MyWidget(PlotThemeMixin):
@@ -625,7 +627,7 @@ class TestIntegration함수:
         colors = widget.get_plot_colors()
         assert colors == {}
 
-    def test_plot_theme_mixin_get_manager(self):
+    def test_plot_theme_mixin_get_manager(self) -> Any:
         from plot_theme.integration import PlotThemeMixin
 
         class MyWidget(PlotThemeMixin):
@@ -634,7 +636,7 @@ class TestIntegration함수:
         widget = MyWidget()
         assert widget.get_plot_theme_manager() is None  # before setup
 
-    def test_plot_theme_mixin_on_changed_callback(self):
+    def test_plot_theme_mixin_on_changed_callback(self) -> Any:
         """_on_plot_theme_changed_internal calls subclass on_plot_theme_changed."""
         from plot_theme.integration import PlotThemeMixin
         from plot_theme.themes import get_theme
@@ -643,7 +645,7 @@ class TestIntegration함수:
             def __init__(self):
                 self._callback_theme = None
 
-            def on_plot_theme_changed(self, theme):
+            def on_plot_theme_changed(self, theme) -> Any:
                 self._callback_theme = theme
 
         widget = MyWidget()
@@ -658,7 +660,7 @@ class TestIntegration함수:
             widget._on_plot_theme_changed_internal(theme)
         assert widget._callback_theme is not None
 
-    def test_setup_plot_theme_for_app(self):
+    def test_setup_plot_theme_for_app(self) -> Any:
         from plot_theme.integration import setup_plot_theme_for_app
 
         mock_app = MagicMock()
@@ -672,7 +674,7 @@ class TestIntegration함수:
             m = setup_plot_theme_for_app(mock_app, mock_window, add_menu=True)
         assert m is not None
 
-    def test_setup_plot_theme_for_app_no_menu(self):
+    def test_setup_plot_theme_for_app_no_menu(self) -> Any:
         from plot_theme.integration import setup_plot_theme_for_app
 
         mock_app = MagicMock()
@@ -684,7 +686,7 @@ class TestIntegration함수:
             m = setup_plot_theme_for_app(mock_app, mock_window, add_menu=False)
         assert m is not None
 
-    def test_create_plot_theme_menu_no_pyqt6(self):
+    def test_create_plot_theme_menu_no_pyqt6(self) -> Any:
         """When PyQt6 unavailable, returns None."""
         from plot_theme.integration import create_plot_theme_menu
 
@@ -695,7 +697,7 @@ class TestIntegration함수:
             result = create_plot_theme_menu(mock_parent)
         assert result is None
 
-    def test_apply_to_matplotlib_with_update_existing(self):
+    def test_apply_to_matplotlib_with_update_existing(self) -> Any:
         """apply_to_matplotlib(update_existing=True) iterates open figures."""
         from plot_theme.manager import PlotThemeManager
 

@@ -1,28 +1,33 @@
+from numba import jit
+
 """Scene renderers for the vessel drafter previews."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from collections.abc import Callable
-from math import cos, sin
-from typing import Any
+from collections.abc import Callable  # noqa: E402
+from math import cos, sin  # noqa: E402
+from typing import Any  # noqa: E402
 
-from PyQt6.QtCore import QPointF, QRectF, Qt
-from PyQt6.QtGui import QBrush, QColor, QPainterPath, QPen
-from PyQt6.QtWidgets import QGraphicsPathItem, QGraphicsScene
+from PyQt6.QtCore import QPointF, QRectF, Qt  # noqa: E402
+from PyQt6.QtGui import QBrush, QColor, QPainterPath, QPen  # noqa: E402
+from PyQt6.QtWidgets import QGraphicsPathItem, QGraphicsScene  # noqa: E402
 
-from vessel_drafter.preview.vessel_drafter_preview import (
+from vessel_drafter.preview.vessel_drafter_preview import (  # noqa: E402
     CrossSectionBandPolygon,
     CrossSectionPreview,
     PlanCircularFeature,
     PlanPreview,
     PlanRadialFeature,
 )
-from vessel_drafter.projects.vessel_drafter_profiles import ProfilePoint
+from vessel_drafter.projects.vessel_drafter_profiles import ProfilePoint  # noqa: E402
 
 PREVIEW_SCALE = 8.0
 PREVIEW_MARGIN = 24.0
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def render_cross_section(scene: QGraphicsScene, preview: CrossSectionPreview) -> None:
     if not (scene is not None):
         raise ValueError("scene must be provided")
@@ -96,6 +101,7 @@ def render_cross_section(scene: QGraphicsScene, preview: CrossSectionPreview) ->
             scene.addItem(item)
 
 
+@jit(nopython=True, fastmath=True)
 def render_plan(scene: QGraphicsScene, preview: PlanPreview) -> None:
     if not (scene is not None):
         raise ValueError("scene must be provided")

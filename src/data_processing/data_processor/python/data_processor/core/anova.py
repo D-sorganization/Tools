@@ -18,6 +18,8 @@ Designed for rigorous statistical analysis of experimental data.
 
 from __future__ import annotations
 
+from numba import jit
+
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
@@ -267,7 +269,9 @@ class ANOVAAnalyzer:
         ss_between = sum(
             len(arr) * (np.mean(arr) - grand_mean) ** 2 for arr in group_arrays.values()
         )
-        ss_within = sum(np.sum((arr - np.mean(arr)) ** 2) for arr in group_arrays.values())
+        ss_within = sum(
+            np.sum((arr - np.mean(arr)) ** 2) for arr in group_arrays.values()
+        )
         ss_total = ss_between + ss_within
 
         df_between = k - 1
@@ -334,7 +338,9 @@ class ANOVAAnalyzer:
 
         # Effect sizes
         eta_squared = ss_between / ss_total
-        omega_squared = max(0, (ss_between - df_between * ms_within) / (ss_total + ms_within))
+        omega_squared = max(
+            0, (ss_between - df_between * ms_within) / (ss_total + ms_within)
+        )
         cohens_f = np.sqrt(eta_squared / (1 - eta_squared)) if eta_squared < 1 else 0
 
         anova_table = ANOVATable(
@@ -346,14 +352,18 @@ class ANOVAAnalyzer:
             p_value=[p_value, None, None],
         )
 
-        assumption_tests = self._test_anova_assumptions(group_arrays) if test_assumptions else []
+        assumption_tests = (
+            self._test_anova_assumptions(group_arrays) if test_assumptions else []
+        )
         post_hoc_results = (
             self._post_hoc_tests(group_arrays, ms_within, df_within, post_hoc)
             if post_hoc and p_value < self.alpha
             else []
         )
 
-        noncentrality = np.sqrt(n_total * eta_squared / (1 - eta_squared)) if eta_squared < 1 else 0
+        noncentrality = (
+            np.sqrt(n_total * eta_squared / (1 - eta_squared)) if eta_squared < 1 else 0
+        )
 
         return OneWayANOVAResult(
             f_statistic=f_stat,
@@ -365,12 +375,16 @@ class ANOVAAnalyzer:
             omega_squared=omega_squared,
             cohens_f=cohens_f,
             group_means={name: np.mean(arr) for name, arr in group_arrays.items()},
-            group_stds={name: np.std(arr, ddof=1) for name, arr in group_arrays.items()},
+            group_stds={
+                name: np.std(arr, ddof=1) for name, arr in group_arrays.items()
+            },
             group_counts={name: len(arr) for name, arr in group_arrays.items()},
             grand_mean=grand_mean,
             post_hoc_results=post_hoc_results,
             assumption_tests=assumption_tests,
-            observed_power=self._calculate_power(f_stat, df_between, df_within, noncentrality),
+            observed_power=self._calculate_power(
+                f_stat, df_between, df_within, noncentrality
+            ),
         )
 
     def two_way_anova(
@@ -501,6 +515,8 @@ class ANOVAAnalyzer:
 
     # -- two-way ANOVA helper methods --
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     @staticmethod
     def _two_way_sum_of_squares(
         data: pd.DataFrame,
@@ -521,10 +537,12 @@ class ANOVAAnalyzer:
         ss_total = float(np.sum((y - grand_mean) ** 2))
 
         ss_a = sum(
-            len(data[data[factor_a] == lv]) * (marginal_a[lv] - grand_mean) ** 2 for lv in levels_a
+            len(data[data[factor_a] == lv]) * (marginal_a[lv] - grand_mean) ** 2
+            for lv in levels_a
         )
         ss_b = sum(
-            len(data[data[factor_b] == lv]) * (marginal_b[lv] - grand_mean) ** 2 for lv in levels_b
+            len(data[data[factor_b] == lv]) * (marginal_b[lv] - grand_mean) ** 2
+            for lv in levels_b
         )
 
         ss_ab = 0.0
@@ -546,7 +564,9 @@ class ANOVAAnalyzer:
         }
 
     @staticmethod
-    def _two_way_f_tests(ss: dict[str, float], a: int, b: int, n_total: int) -> dict[str, float]:
+    def _two_way_f_tests(
+        ss: dict[str, float], a: int, b: int, n_total: int
+    ) -> dict[str, float]:
         """Compute degrees of freedom, mean squares, F-statistics, and p-values."""
         if not (ss is not None):
             raise ValueError("ss must be provided")
@@ -596,7 +616,9 @@ class ANOVAAnalyzer:
             "eta_ab": ss["ab"] / ss_t,
             "partial_eta_a": ss["a"] / (ss["a"] + ss_e),
             "partial_eta_b": ss["b"] / (ss["b"] + ss_e),
-            "partial_eta_ab": (ss["ab"] / (ss["ab"] + ss_e) if (ss["ab"] + ss_e) > 0 else 0),
+            "partial_eta_ab": (
+                ss["ab"] / (ss["ab"] + ss_e) if (ss["ab"] + ss_e) > 0 else 0
+            ),
         }
 
     def _two_way_assumption_tests(
@@ -685,7 +707,9 @@ class ANOVAAnalyzer:
 
         corrected_df_conditions_hf = hf_epsilon * df_conditions
         corrected_df_error_hf = hf_epsilon * df_error
-        p_hf = 1 - stats.f.cdf(f_stat, corrected_df_conditions_hf, corrected_df_error_hf)
+        p_hf = 1 - stats.f.cdf(
+            f_stat, corrected_df_conditions_hf, corrected_df_error_hf
+        )
 
         # Effect sizes
         eta_squared = ss_conditions / ss_total
@@ -791,6 +815,7 @@ class ANOVAAnalyzer:
 
         return results
 
+    @jit(nopython=True, fastmath=True)
     def _post_hoc_tests(
         self,
         groups: dict[str, np.ndarray],
@@ -917,7 +942,9 @@ class ANOVAAnalyzer:
             gg_epsilon = 1.0
 
         # Huynh-Feldt epsilon
-        hf_epsilon = (n * (p - 1) * gg_epsilon - 2) / ((p - 1) * (n - 1 - (p - 1) * gg_epsilon))
+        hf_epsilon = (n * (p - 1) * gg_epsilon - 2) / (
+            (p - 1) * (n - 1 - (p - 1) * gg_epsilon)
+        )
         hf_epsilon = min(1.0, max(gg_epsilon, hf_epsilon))
 
         return w, mauchly_p, gg_epsilon, hf_epsilon
@@ -969,11 +996,12 @@ def format_anova_report(result: OneWayANOVAResult | TwoWayANOVAResult) -> str:
 
         # Group statistics
         lines.append("Group Statistics:")
-        for name in result.group_means:
-            lines.append(
-                f"  {name}: M = {result.group_means[name]:.4f}, "
-                f"SD = {result.group_stds[name]:.4f}, n = {result.group_counts[name]}"
-            )
+        lines.extend(
+            [
+                f"  {name}: M = {result.group_means[name]:.4f}, SD = {result.group_stds[name]:.4f}, n = {result.group_counts[name]}"
+                for name in result.group_means
+            ]
+        )
         lines.append("")
 
         # Post-hoc tests

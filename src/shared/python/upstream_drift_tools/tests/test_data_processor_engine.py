@@ -1,3 +1,5 @@
+from typing import Any
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -12,7 +14,7 @@ third-party adapters); we test error paths with mocking and leave happy-path I/O
 integration tests.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from unittest.mock import patch
 
@@ -62,20 +64,20 @@ def _make_engine_with_data(n: int = 20) -> DataProcessorEngine:
 
 
 class TestProcessingResult:
-    def test_success_result(self):
+    def test_success_result(self) -> Any:
         r = ProcessingResult(success=True, message="ok")
         assert r.success
         assert r.message == "ok"
         assert r.data is None
         assert isinstance(r.timestamp, str)
 
-    def test_failure_result(self):
+    def test_failure_result(self) -> Any:
         r = ProcessingResult(success=False, message="nope")
         assert not r.success
 
 
 class TestColumnStats:
-    def test_construction(self):
+    def test_construction(self) -> Any:
         cs = ColumnStats("col", "float64", 100, 5, 95, mean=3.0)
         assert cs.name == "col"
         assert cs.mean == 3.0
@@ -87,7 +89,7 @@ class TestColumnStats:
 
 
 class TestLoadDataframe:
-    def test_loads_correctly(self):
+    def test_loads_correctly(self) -> Any:
         engine = DataProcessorEngine()
         df = pd.DataFrame({"a": [1, 2, 3]})
         result = engine.load_dataframe(df)
@@ -95,14 +97,14 @@ class TestLoadDataframe:
         assert engine.data is not None
         assert len(engine.data) == 3
 
-    def test_original_data_preserved(self):
+    def test_original_data_preserved(self) -> Any:
         engine = DataProcessorEngine()
         df = pd.DataFrame({"a": [1, 2, 3]})
         engine.load_dataframe(df)
         assert engine.original_data is not None
         assert list(engine.original_data["a"]) == [1, 2, 3]
 
-    def test_undo_redo_cleared_on_load(self):
+    def test_undo_redo_cleared_on_load(self) -> Any:
         engine = _make_engine_with_data()
         engine._undo_stack.append(engine.data.copy())  # type: ignore[union-attr]
         engine._redo_stack.append(engine.data.copy())  # type: ignore[union-attr]
@@ -117,17 +119,17 @@ class TestLoadDataframe:
 
 
 class TestLoadFile:
-    def test_empty_filepath_raises(self):
+    def test_empty_filepath_raises(self) -> Any:
         engine = DataProcessorEngine()
         with pytest.raises(FileIOError, match="file_path must not be empty"):
             engine.load_file("")
 
-    def test_file_not_found_raises(self):
+    def test_file_not_found_raises(self) -> Any:
         engine = DataProcessorEngine()
         with pytest.raises(FileIOError):
             engine.load_file("/nonexistent/path/data.csv")
 
-    def test_permission_error_raises(self):
+    def test_permission_error_raises(self) -> Any:
         engine = DataProcessorEngine()
         with patch(
             "upstream_drift_tools.data_processing.core.DataReader.read_file",
@@ -136,7 +138,7 @@ class TestLoadFile:
             with pytest.raises(FileIOError, match="denied"):
                 engine.load_file("/some/file.csv")
 
-    def test_value_error_raises(self):
+    def test_value_error_raises(self) -> Any:
         engine = DataProcessorEngine()
         with patch(
             "upstream_drift_tools.data_processing.core.DataReader.read_file",
@@ -152,19 +154,21 @@ class TestLoadFile:
 
 
 class TestExportData:
-    def test_no_data_raises(self):
+    def test_no_data_raises(self) -> Any:
         engine = DataProcessorEngine()
         with pytest.raises(DataNotLoadedError):
             engine.export_data("/tmp/out.csv")
 
-    def test_export_success(self):
+    def test_export_success(self) -> Any:
         engine = _make_engine_with_data()
-        with patch("upstream_drift_tools.data_processing.core.DataWriter.write_file") as mock_write:
+        with patch(
+            "upstream_drift_tools.data_processing.core.DataWriter.write_file"
+        ) as mock_write:
             result = engine.export_data("/tmp/out.csv", DataFormat.CSV)
         mock_write.assert_called_once()
         assert result.success
 
-    def test_export_oserror_raises(self):
+    def test_export_oserror_raises(self) -> Any:
         engine = _make_engine_with_data()
         with patch(
             "upstream_drift_tools.data_processing.core.DataWriter.write_file",
@@ -180,28 +184,28 @@ class TestExportData:
 
 
 class TestAddCalculatedColumn:
-    def test_adds_column(self):
+    def test_adds_column(self) -> Any:
         engine = _make_engine_with_data()
         result = engine.add_calculated_column("z", "x * 2")
         assert result.success
         assert "z" in engine.data.columns  # type: ignore[union-attr]
 
-    def test_no_data_raises(self):
+    def test_no_data_raises(self) -> Any:
         engine = DataProcessorEngine()
         with pytest.raises(DataNotLoadedError):
             engine.add_calculated_column("z", "x * 2")
 
-    def test_empty_name_raises(self):
+    def test_empty_name_raises(self) -> Any:
         engine = _make_engine_with_data()
         with pytest.raises(TransformationError, match="name must not be empty"):
             engine.add_calculated_column("", "x * 2")
 
-    def test_bad_expression_raises(self):
+    def test_bad_expression_raises(self) -> Any:
         engine = _make_engine_with_data()
         with pytest.raises(TransformationError):
             engine.add_calculated_column("bad", "nonexistent_!@#")
 
-    def test_dtype_cast(self):
+    def test_dtype_cast(self) -> Any:
         engine = _make_engine_with_data()
         engine.add_calculated_column("xi", "x", dtype="int64")
         assert engine.data["xi"].dtype == np.int64  # type: ignore[union-attr]
@@ -213,19 +217,19 @@ class TestAddCalculatedColumn:
 
 
 class TestRenameColumn:
-    def test_rename_success(self):
+    def test_rename_success(self) -> Any:
         engine = _make_engine_with_data()
         result = engine.rename_column("x", "x_renamed")
         assert result.success
         assert "x_renamed" in engine.data.columns  # type: ignore[union-attr]
         assert "x" not in engine.data.columns  # type: ignore[union-attr]
 
-    def test_no_data_raises(self):
+    def test_no_data_raises(self) -> Any:
         engine = DataProcessorEngine()
         with pytest.raises(DataNotLoadedError):
             engine.rename_column("x", "y")
 
-    def test_missing_column_raises(self):
+    def test_missing_column_raises(self) -> Any:
         engine = _make_engine_with_data()
         with pytest.raises(ColumnNotFoundError):
             engine.rename_column("nonexistent", "new")
@@ -237,18 +241,18 @@ class TestRenameColumn:
 
 
 class TestDropColumns:
-    def test_drops_column(self):
+    def test_drops_column(self) -> Any:
         engine = _make_engine_with_data()
         result = engine.drop_columns(["label"])
         assert result.success
         assert "label" not in engine.data.columns  # type: ignore[union-attr]
 
-    def test_no_data_raises(self):
+    def test_no_data_raises(self) -> Any:
         engine = DataProcessorEngine()
         with pytest.raises(DataNotLoadedError):
             engine.drop_columns(["x"])
 
-    def test_missing_column_raises(self):
+    def test_missing_column_raises(self) -> Any:
         engine = _make_engine_with_data()
         with pytest.raises(ColumnNotFoundError):
             engine.drop_columns(["nonexistent"])
@@ -260,68 +264,68 @@ class TestDropColumns:
 
 
 class TestTransformColumn:
-    def test_log_transform(self):
+    def test_log_transform(self) -> Any:
         engine = _make_engine_with_data()
         result = engine.transform_column("x", "log")
         assert result.success
 
-    def test_log10_transform(self):
+    def test_log10_transform(self) -> Any:
         engine = _make_engine_with_data()
         assert engine.transform_column("x", "log10").success
 
-    def test_exp_transform(self):
+    def test_exp_transform(self) -> Any:
         engine = _make_engine_with_data()
         assert engine.transform_column("x", "exp").success
 
-    def test_sqrt_transform(self):
+    def test_sqrt_transform(self) -> Any:
         engine = _make_engine_with_data()
         assert engine.transform_column("x", "sqrt").success
 
-    def test_abs_transform(self):
+    def test_abs_transform(self) -> Any:
         engine = _make_engine_with_data()
         assert engine.transform_column("x", "abs").success
 
-    def test_normalize_transform(self):
+    def test_normalize_transform(self) -> Any:
         engine = _make_engine_with_data()
         engine.transform_column("x", "normalize")
         assert engine.data["x"].max() == pytest.approx(1.0)  # type: ignore[union-attr]
 
-    def test_standardize_transform(self):
+    def test_standardize_transform(self) -> Any:
         engine = _make_engine_with_data()
         engine.transform_column("x", "standardize")
         assert engine.data["x"].mean() == pytest.approx(0.0, abs=1e-10)  # type: ignore[union-attr]
 
-    def test_round_transform(self):
+    def test_round_transform(self) -> Any:
         engine = _make_engine_with_data()
         engine.transform_column("x", "round", decimals=1)
         # All values should have at most 1 decimal place
         assert engine.data["x"].apply(lambda v: len(str(v).split(".")[-1]) <= 1).all()  # type: ignore[union-attr]
 
-    def test_fillna_transform(self):
+    def test_fillna_transform(self) -> Any:
         engine = DataProcessorEngine()
         df = pd.DataFrame({"val": [1.0, float("nan"), 3.0]})
         engine.load_dataframe(df)
         engine.transform_column("val", "fillna", value=0.0)
         assert engine.data["val"].isna().sum() == 0  # type: ignore[union-attr]
 
-    def test_dropna_transform(self):
+    def test_dropna_transform(self) -> Any:
         engine = DataProcessorEngine()
         df = pd.DataFrame({"val": [1.0, float("nan"), 3.0]})
         engine.load_dataframe(df)
         engine.transform_column("val", "dropna")
         assert len(engine.data) == 2  # type: ignore[union-attr]
 
-    def test_unknown_transform_raises(self):
+    def test_unknown_transform_raises(self) -> Any:
         engine = _make_engine_with_data()
         with pytest.raises(UnsupportedOperationError):
             engine.transform_column("x", "magic_transform")
 
-    def test_no_data_raises(self):
+    def test_no_data_raises(self) -> Any:
         engine = DataProcessorEngine()
         with pytest.raises(DataNotLoadedError):
             engine.transform_column("x", "log")
 
-    def test_missing_column_raises(self):
+    def test_missing_column_raises(self) -> Any:
         engine = _make_engine_with_data()
         with pytest.raises(ColumnNotFoundError):
             engine.transform_column("nonexistent", "log")
@@ -333,42 +337,42 @@ class TestTransformColumn:
 
 
 class TestSmoothColumn:
-    def test_moving_average(self):
+    def test_moving_average(self) -> Any:
         engine = _make_engine_with_data(30)
         result = engine.smooth_column("y", "moving_average", window=5)
         assert result.success
 
-    def test_butterworth(self):
+    def test_butterworth(self) -> Any:
         engine = _make_engine_with_data(50)
         result = engine.smooth_column("y", "butterworth", order=2, cutoff=0.2)
         assert result.success
 
-    def test_median_filter(self):
+    def test_median_filter(self) -> Any:
         engine = _make_engine_with_data(30)
         result = engine.smooth_column("y", "median", kernel=5)
         assert result.success
 
-    def test_savgol_filter(self):
+    def test_savgol_filter(self) -> Any:
         engine = _make_engine_with_data(30)
         result = engine.smooth_column("y", "savgol", window=11, polyorder=2)
         assert result.success
 
-    def test_unknown_method_raises(self):
+    def test_unknown_method_raises(self) -> Any:
         engine = _make_engine_with_data()
         with pytest.raises(UnsupportedOperationError):
             engine.smooth_column("y", "magic_filter")
 
-    def test_no_data_raises(self):
+    def test_no_data_raises(self) -> Any:
         engine = DataProcessorEngine()
         with pytest.raises(DataNotLoadedError):
             engine.smooth_column("y", "moving_average")
 
-    def test_missing_column_raises(self):
+    def test_missing_column_raises(self) -> Any:
         engine = _make_engine_with_data()
         with pytest.raises(ColumnNotFoundError):
             engine.smooth_column("nonexistent", "moving_average")
 
-    def test_too_few_values_raises(self):
+    def test_too_few_values_raises(self) -> Any:
         engine = DataProcessorEngine()
         engine.load_dataframe(pd.DataFrame({"v": [1.0]}))
         with pytest.raises(TransformationError, match="2"):
@@ -381,22 +385,22 @@ class TestSmoothColumn:
 
 
 class TestAggregate:
-    def test_sum_without_group(self):
+    def test_sum_without_group(self) -> Any:
         engine = _make_engine_with_data(10)
         result = engine.aggregate(None, "x", AggregationType.SUM)
         assert result.success
 
-    def test_mean_without_group(self):
+    def test_mean_without_group(self) -> Any:
         engine = _make_engine_with_data(10)
         result = engine.aggregate(None, "y", AggregationType.MEAN)
         assert result.success
 
-    def test_aggregate_all_columns(self):
+    def test_aggregate_all_columns(self) -> Any:
         engine = _make_engine_with_data(10)
         result = engine.aggregate(None, None, AggregationType.MEAN)
         assert result.success
 
-    def test_group_by_aggregate(self):
+    def test_group_by_aggregate(self) -> Any:
         engine = DataProcessorEngine()
         df = pd.DataFrame({"cat": ["a", "a", "b", "b"], "val": [1, 2, 3, 4]})
         engine.load_dataframe(df)
@@ -404,14 +408,14 @@ class TestAggregate:
         assert result.success
         assert len(engine.data) == 2  # type: ignore[union-attr]
 
-    def test_group_by_all_columns(self):
+    def test_group_by_all_columns(self) -> Any:
         engine = DataProcessorEngine()
         df = pd.DataFrame({"cat": ["a", "b"], "val": [1.0, 2.0]})
         engine.load_dataframe(df)
         result = engine.aggregate("cat", None, AggregationType.MEAN)
         assert result.success
 
-    def test_no_data_raises(self):
+    def test_no_data_raises(self) -> Any:
         engine = DataProcessorEngine()
         with pytest.raises(DataNotLoadedError):
             engine.aggregate(None, "x", AggregationType.MEAN)
@@ -423,43 +427,45 @@ class TestAggregate:
 
 
 class TestFitCurve:
-    def test_linear_fit(self):
+    def test_linear_fit(self) -> Any:
         engine = _make_engine_with_data(20)
         result = engine.fit_curve("x", "y", FitType.LINEAR)
         assert isinstance(result, FitResult)
         assert result.fit_type == "linear"
         assert result.r_squared > 0.99  # nearly perfect
 
-    def test_polynomial_fit(self):
+    def test_polynomial_fit(self) -> Any:
         engine = _make_engine_with_data(20)
         result = engine.fit_curve("x", "y", FitType.POLYNOMIAL, degree=2)
         assert isinstance(result, FitResult)
         assert result.fit_type == "polynomial"
 
-    def test_unsupported_fit_type_raises(self):
+    def test_unsupported_fit_type_raises(self) -> Any:
         engine = _make_engine_with_data(20)
         with pytest.raises(UnsupportedOperationError):
             engine.fit_curve("x", "y", FitType.EXPONENTIAL)
 
-    def test_missing_column_raises(self):
+    def test_missing_column_raises(self) -> Any:
         engine = _make_engine_with_data(20)
         with pytest.raises(ColumnNotFoundError):
             engine.fit_curve("x", "nonexistent", FitType.LINEAR)
 
-    def test_no_data_raises(self):
+    def test_no_data_raises(self) -> Any:
         engine = DataProcessorEngine()
         with pytest.raises(DataNotLoadedError):
             engine.fit_curve("x", "y", FitType.LINEAR)
 
-    def test_insufficient_data_raises(self):
+    def test_insufficient_data_raises(self) -> Any:
         engine = DataProcessorEngine()
         engine.load_dataframe(pd.DataFrame({"x": [1.0], "y": [2.0]}))
         with pytest.raises(FitError, match="2 valid points"):
             engine.fit_curve("x", "y", FitType.LINEAR)
 
-    def test_all_nan_raises(self):
+    def test_all_nan_raises(self) -> Any:
         engine = DataProcessorEngine()
-        engine.load_dataframe(pd.DataFrame({"x": [float("nan"), float("nan")], "y": [1.0, 2.0]}))
+        engine.load_dataframe(
+            pd.DataFrame({"x": [float("nan"), float("nan")], "y": [1.0, 2.0]})
+        )
         with pytest.raises(FitError):
             engine.fit_curve("x", "y", FitType.LINEAR)
 
@@ -470,35 +476,35 @@ class TestFitCurve:
 
 
 class TestFilterData:
-    def test_greater_than_filter(self):
+    def test_greater_than_filter(self) -> Any:
         engine = _make_engine_with_data(20)
         result = engine.filter_data("x", ">", 5.0)
         assert result.success
         assert all(engine.data["x"] > 5.0)  # type: ignore[union-attr]
 
-    def test_contains_filter(self):
+    def test_contains_filter(self) -> Any:
         engine = _make_engine_with_data(20)
         result = engine.filter_data("label", "contains", "item_1")
         assert result.success
         assert all("item_1" in v for v in engine.data["label"])  # type: ignore[union-attr]
 
-    def test_in_filter(self):
+    def test_in_filter(self) -> Any:
         engine = _make_engine_with_data(5)
         labels = engine.data["label"].tolist()[:2]  # type: ignore[union-attr]
         result = engine.filter_data("label", "in", labels)
         assert result.success
 
-    def test_in_filter_single_value(self):
+    def test_in_filter_single_value(self) -> Any:
         engine = _make_engine_with_data(5)
         result = engine.filter_data("label", "in", "item_0")
         assert result.success
 
-    def test_no_data_raises(self):
+    def test_no_data_raises(self) -> Any:
         engine = DataProcessorEngine()
         with pytest.raises(DataNotLoadedError):
             engine.filter_data("x", ">", 5.0)
 
-    def test_missing_column_raises(self):
+    def test_missing_column_raises(self) -> Any:
         engine = _make_engine_with_data()
         with pytest.raises(ColumnNotFoundError):
             engine.filter_data("nonexistent", ">", 1.0)
@@ -510,22 +516,22 @@ class TestFilterData:
 
 
 class TestQuery:
-    def test_valid_query(self):
+    def test_valid_query(self) -> Any:
         engine = _make_engine_with_data(20)
         result = engine.query("x > 5.0")
         assert result.success
 
-    def test_empty_query_raises(self):
+    def test_empty_query_raises(self) -> Any:
         engine = _make_engine_with_data()
         with pytest.raises(FilterError, match="expression must not be empty"):
             engine.query("")
 
-    def test_no_data_raises(self):
+    def test_no_data_raises(self) -> Any:
         engine = DataProcessorEngine()
         with pytest.raises(DataNotLoadedError):
             engine.query("x > 5")
 
-    def test_invalid_query_raises(self):
+    def test_invalid_query_raises(self) -> Any:
         engine = _make_engine_with_data()
         with pytest.raises(FilterError):
             engine.query("INVALID @@@SYNTAX###")
@@ -537,7 +543,7 @@ class TestQuery:
 
 
 class TestUndoRedoReset:
-    def test_undo_after_rename(self):
+    def test_undo_after_rename(self) -> Any:
         engine = _make_engine_with_data()
         engine.rename_column("x", "x2")
         assert "x2" in engine.data.columns  # type: ignore[union-attr]
@@ -545,7 +551,7 @@ class TestUndoRedoReset:
         assert result.success
         assert "x" in engine.data.columns  # type: ignore[union-attr]
 
-    def test_undo_empty_stack(self):
+    def test_undo_empty_stack(self) -> Any:
         engine = DataProcessorEngine()
         engine.load_dataframe(pd.DataFrame({"a": [1]}))
         # No ops done → undo stack empty
@@ -554,7 +560,7 @@ class TestUndoRedoReset:
         assert not result.success
         assert "Nothing" in result.message
 
-    def test_redo_after_undo(self):
+    def test_redo_after_undo(self) -> Any:
         engine = _make_engine_with_data()
         engine.rename_column("x", "x2")
         engine.undo()
@@ -562,12 +568,12 @@ class TestUndoRedoReset:
         assert result.success
         assert "x2" in engine.data.columns  # type: ignore[union-attr]
 
-    def test_redo_empty_stack(self):
+    def test_redo_empty_stack(self) -> Any:
         engine = _make_engine_with_data()
         result = engine.redo()
         assert not result.success
 
-    def test_reset_restores_original(self):
+    def test_reset_restores_original(self) -> Any:
         engine = _make_engine_with_data()
         original_cols = list(engine.data.columns)  # type: ignore[union-attr]
         engine.drop_columns(["label"])
@@ -575,12 +581,12 @@ class TestUndoRedoReset:
         assert result.success
         assert list(engine.data.columns) == original_cols  # type: ignore[union-attr]
 
-    def test_reset_no_original(self):
+    def test_reset_no_original(self) -> Any:
         engine = DataProcessorEngine()
         result = engine.reset()
         assert not result.success
 
-    def test_undo_stack_max_50(self):
+    def test_undo_stack_max_50(self) -> Any:
         """Undo stack should not grow beyond 50 entries."""
         engine = DataProcessorEngine()
         engine.load_dataframe(pd.DataFrame({"a": list(range(60))}))
@@ -595,14 +601,14 @@ class TestUndoRedoReset:
 
 
 class TestStatistics:
-    def test_get_statistics_numeric(self):
+    def test_get_statistics_numeric(self) -> Any:
         engine = _make_engine_with_data(20)
         stats = engine.get_statistics()
         assert "x" in stats
         assert stats["x"].mean is not None
         assert stats["x"].std is not None
 
-    def test_get_statistics_string_column(self):
+    def test_get_statistics_string_column(self) -> Any:
         """String columns in stats dict should have None for numeric stats."""
         engine = DataProcessorEngine()
         df = pd.DataFrame({"a": [1.0, 2.0], "cat": ["x", "y"]})
@@ -612,42 +618,42 @@ class TestStatistics:
         label_stats = stats["cat"]
         assert label_stats.mean is None  # string → no mean
 
-    def test_get_statistics_no_data(self):
+    def test_get_statistics_no_data(self) -> Any:
         engine = DataProcessorEngine()
         stats = engine.get_statistics()
         assert stats == {}
 
-    def test_get_column_names(self):
+    def test_get_column_names(self) -> Any:
         engine = _make_engine_with_data()
         names = engine.get_column_names()
         assert "x" in names
         assert "y" in names
         assert "label" in names
 
-    def test_get_column_names_no_data(self):
+    def test_get_column_names_no_data(self) -> Any:
         engine = DataProcessorEngine()
         assert engine.get_column_names() == []
 
-    def test_get_numeric_columns(self):
+    def test_get_numeric_columns(self) -> Any:
         engine = _make_engine_with_data()
         num_cols = engine.get_numeric_columns()
         assert "x" in num_cols
         assert "y" in num_cols
         assert "label" not in num_cols
 
-    def test_get_numeric_columns_no_data(self):
+    def test_get_numeric_columns_no_data(self) -> Any:
         engine = DataProcessorEngine()
         assert engine.get_numeric_columns() == []
 
-    def test_has_data_with_data(self):
+    def test_has_data_with_data(self) -> Any:
         engine = _make_engine_with_data()
         assert engine.has_data()
 
-    def test_has_data_no_data(self):
+    def test_has_data_no_data(self) -> Any:
         engine = DataProcessorEngine()
         assert not engine.has_data()
 
-    def test_has_data_empty_df(self):
+    def test_has_data_empty_df(self) -> Any:
         engine = DataProcessorEngine()
         engine.data = pd.DataFrame()  # set directly without load
         assert not engine.has_data()
@@ -671,35 +677,35 @@ class TestCalculateDispatch:
         engine.load_dataframe(df)
         return engine
 
-    def test_stats_operation(self):
+    def test_stats_operation(self) -> Any:
         engine = self._fresh()
         result = engine.calculate(operation="stats")
         assert "stats" in result
 
-    def test_unknown_operation(self):
+    def test_unknown_operation(self) -> Any:
         engine = self._fresh()
         result = engine.calculate(operation="alien_op")
         assert "error" in result
         assert "alien_op" in result["error"]
 
-    def test_filter_operation(self):
+    def test_filter_operation(self) -> Any:
         """filter dispatch: column x > 5.0 should succeed."""
         engine = self._fresh()
         result = engine.filter_data("x", ">", 5.0)
         assert result.success
 
-    def test_aggregate_operation(self):
+    def test_aggregate_operation(self) -> Any:
         engine = self._fresh()
         result = engine.aggregate(None, "x", AggregationType.MEAN)
         assert result.success
 
-    def test_calculate_smooth_dispatch(self):
+    def test_calculate_smooth_dispatch(self) -> Any:
         """Smoke-test the smooth operation path via direct method call."""
         engine = self._fresh()
         result = engine.smooth_column("y", "moving_average", window=5)
         assert result.success
 
-    def test_fit_operation(self):
+    def test_fit_operation(self) -> Any:
         engine = self._fresh()
         result = engine.fit_curve("x", "y", FitType.LINEAR)
         assert isinstance(result, FitResult)

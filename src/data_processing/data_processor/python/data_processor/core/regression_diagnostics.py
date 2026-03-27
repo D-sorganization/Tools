@@ -1,3 +1,5 @@
+from numba import jit
+
 # mypy: disable-error-code="arg-type"
 """Regression diagnostics and statistics.
 
@@ -77,6 +79,7 @@ class DiagnosticsMixin:
         coef_se = se[1:] if len(se) > 1 else np.zeros(p)
         return intercept_se, coef_se
 
+    @jit(nopython=True, fastmath=True)
     def _build_coefficient_info(
         self,
         coeffs: np.ndarray,
@@ -142,7 +145,9 @@ class DiagnosticsMixin:
         ss_reg = ss_tot - ss_res
 
         r_squared = 1 - ss_res / ss_tot if ss_tot > 0 else 0
-        adj_r_squared = 1 - (1 - r_squared) * (n - 1) / (n - p - 1) if n > p + 1 else r_squared
+        adj_r_squared = (
+            1 - (1 - r_squared) * (n - 1) / (n - p - 1) if n > p + 1 else r_squared
+        )
         rmse = np.sqrt(ss_res / n)
         mae = np.mean(np.abs(residuals))
         mse = ss_res / (n - p - 1) if n > p + 1 else ss_res / n
@@ -153,7 +158,9 @@ class DiagnosticsMixin:
         t_crit = stats.t.ppf(1 - alpha / 2, n - p - 1) if n > p + 1 else 1.96
         vifs = self._calculate_vif(X)
 
-        coef_info = self._build_coefficient_info(coeffs, coef_se, feature_names, vifs, t_crit, n, p)
+        coef_info = self._build_coefficient_info(
+            coeffs, coef_se, feature_names, vifs, t_crit, n, p
+        )
 
         df_model = p
         df_residual = n - p - 1
@@ -190,6 +197,7 @@ class DiagnosticsMixin:
             feature_names=feature_names,
         )
 
+    @jit(nopython=True, fastmath=True)
     def _calculate_vif(self, X: np.ndarray) -> np.ndarray:
         """Calculate Variance Inflation Factors."""
         if not (X is not None):
@@ -263,7 +271,9 @@ class DiagnosticsMixin:
         # Durbin-Watson statistic
         diff_residuals = np.diff(residuals)
         durbin_watson = (
-            np.sum(diff_residuals**2) / np.sum(residuals**2) if np.sum(residuals**2) > 0 else 2
+            np.sum(diff_residuals**2) / np.sum(residuals**2)
+            if np.sum(residuals**2) > 0
+            else 2
         )
 
         # Breusch-Pagan test for heteroscedasticity
@@ -293,7 +303,9 @@ class DiagnosticsMixin:
         influential = [i for i, c in enumerate(cooks_d) if c > cooks_threshold]
 
         outlier_threshold = 3
-        outliers = [i for i, r in enumerate(student_residuals) if abs(r) > outlier_threshold]
+        outliers = [
+            i for i, r in enumerate(student_residuals) if abs(r) > outlier_threshold
+        ]
 
         return RegressionDiagnostics(
             residuals=residuals,

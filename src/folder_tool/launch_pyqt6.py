@@ -1,12 +1,14 @@
+from typing import Any
+
 #!/usr/bin/env python3
 """
 Cross-platform launcher for Folder Tool.
 Replaces Launch_FolderFix.bat for better portability.
 """
 
-import subprocess
-import sys
-from pathlib import Path
+import subprocess  # noqa: E402
+import sys  # noqa: E402
+from pathlib import Path  # noqa: E402
 
 # Add utils to path using shared utility
 try:
@@ -44,9 +46,11 @@ except ImportError:
         command = [sys.executable, str(script_path)]
         if args:
             command.extend(args)
-        return subprocess.run(command, cwd=str(cwd) if cwd else None, timeout=timeout, check=check)
+        return subprocess.run(
+            command, cwd=str(cwd) if cwd else None, timeout=timeout, check=check
+        )
 
-    def get_logger(name):
+    def get_logger(name) -> Any:
         return logging.getLogger(name)
 
 

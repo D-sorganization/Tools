@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -18,27 +20,30 @@ Or programmatically::
     generate("spec.yml", "out.dxf", svg_path="out.svg")
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import argparse
-import logging
-from copy import deepcopy
-from pathlib import Path
-from typing import Any
+import argparse  # noqa: E402
+import logging  # noqa: E402
+from copy import deepcopy  # noqa: E402
+from pathlib import Path  # noqa: E402
+from typing import Any  # noqa: E402
 
-import ezdxf
-from programmatic_pid.controls import add_control_loops
-from programmatic_pid.equipment import draw_equipment_symbol, equipment_dims
-from programmatic_pid.geometry import to_float
-from programmatic_pid.instruments import add_instrument
-from programmatic_pid.layout import (
+import ezdxf  # noqa: E402
+from programmatic_pid.controls import add_control_loops  # noqa: E402
+from programmatic_pid.equipment import (  # noqa: E402
+    draw_equipment_symbol,
+    equipment_dims,
+)
+from programmatic_pid.geometry import to_float  # noqa: E402
+from programmatic_pid.instruments import add_instrument  # noqa: E402
+from programmatic_pid.layout import (  # noqa: E402
     LabelPlacer,
     compute_layout_regions,
     get_modelspace_extent,
     spread_instrument_positions,
 )
-from programmatic_pid.profiles import PROFILE_PRESETS
-from programmatic_pid.rendering import (
+from programmatic_pid.profiles import PROFILE_PRESETS  # noqa: E402
+from programmatic_pid.rendering import (  # noqa: E402
     add_arrow,
     add_box,
     add_text,
@@ -48,14 +53,14 @@ from programmatic_pid.rendering import (
     export_svg_from_dxf,
     layer_name,
 )
-from programmatic_pid.spec_loader import (
+from programmatic_pid.spec_loader import (  # noqa: E402
     get_layout_config,
     get_project,
     get_text_config,
     prepare_spec,
 )
-from programmatic_pid.streams import add_stream
-from programmatic_pid.title_block import add_notes, add_title_block
+from programmatic_pid.streams import add_stream  # noqa: E402
+from programmatic_pid.title_block import add_notes, add_title_block  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +70,8 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def add_equipment(
     msp: Any,
     eq: dict[str, Any],
@@ -91,7 +98,9 @@ def add_equipment(
     eq_id = str(eq.get("id", "")).strip()
     service = str(eq.get("service") or eq.get("name") or eq.get("tag") or "").strip()
     if eq_id and service and service != eq_id:
-        add_text(msp, eq_id, x + w / 2, y + hh / 2 + text_h * 0.48, text_h, layer=text_layer)
+        add_text(
+            msp, eq_id, x + w / 2, y + hh / 2 + text_h * 0.48, text_h, layer=text_layer
+        )
         add_text(
             msp,
             service,
@@ -160,9 +169,13 @@ def generate_process_sheet(
     eq_min_x, eq_min_y, eq_max_x, eq_max_y = equipment_bbox
 
     layer_index = {layer.dxf.name.lower(): layer.dxf.name for layer in doc.layers}
-    text_layer = layer_name(layer_index, "TEXT", "annotations", "titleblock", default="TEXT")
+    text_layer = layer_name(
+        layer_index, "TEXT", "annotations", "titleblock", default="TEXT"
+    )
     notes_layer = layer_name(layer_index, "NOTES", "annotations", default=text_layer)
-    instrument_layer = layer_name(layer_index, "INSTRUMENTS", "instruments", default="INSTRUMENTS")
+    instrument_layer = layer_name(
+        layer_index, "INSTRUMENTS", "instruments", default="INSTRUMENTS"
+    )
     leader_layer = layer_name(layer_index, "LEADERS", default="LEADERS")
     arrow_size = to_float(
         spec.get("defaults", {}).get("arrow_size"),
@@ -200,7 +213,9 @@ def generate_process_sheet(
         notes_layer,
     )
 
-    add_title_block(msp, spec, t, text_layer, notes_layer, layout_regions["panels"]["title"])
+    add_title_block(
+        msp, spec, t, text_layer, notes_layer, layout_regions["panels"]["title"]
+    )
 
     project = get_project(spec)
     doc_title = (
@@ -226,7 +241,9 @@ def generate_process_sheet(
         layer=text_layer,
     )
 
-    equipment_by_id = {eq.get("id"): eq for eq in spec.get("equipment", []) if eq.get("id")}
+    equipment_by_id = {
+        eq.get("id"): eq for eq in spec.get("equipment", []) if eq.get("id")
+    }
     for eq in spec.get("equipment", []):
         add_equipment(
             msp,
@@ -237,7 +254,9 @@ def generate_process_sheet(
             show_inline_notes=layout_cfg["show_inline_equipment_notes"],
         )
 
-    instrument_by_id = {ins.get("id"): ins for ins in spec.get("instruments", []) if ins.get("id")}
+    instrument_by_id = {
+        ins.get("id"): ins for ins in spec.get("instruments", []) if ins.get("id")
+    }
     for ins in spec.get("instruments", []):
         add_instrument(
             msp,
@@ -306,13 +325,16 @@ def generate_process_sheet(
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     doc.saveas(out_path)
-    export_svg_from_dxf(spec, out_path, svg_path, fallback_extent=(x_min, y_min, x_max, y_max))
+    export_svg_from_dxf(
+        spec, out_path, svg_path, fallback_extent=(x_min, y_min, x_max, y_max)
+    )
 
     logger.info("Created: %s", out_path)
     if svg_path:
         logger.info("Attempted SVG: %s", svg_path)
 
 
+@jit(nopython=True, fastmath=True)
 def generate_controls_sheet(
     spec_path: str | Path,
     out_path: str | Path,
@@ -340,7 +362,9 @@ def generate_controls_sheet(
     y_max = y_min + height
 
     layer_index = {layer.dxf.name.lower(): layer.dxf.name for layer in doc.layers}
-    text_layer = layer_name(layer_index, "TEXT", "annotations", "titleblock", default="TEXT")
+    text_layer = layer_name(
+        layer_index, "TEXT", "annotations", "titleblock", default="TEXT"
+    )
     notes_layer = layer_name(layer_index, "NOTES", "annotations", default=text_layer)
     control_layer = layer_name(layer_index, "control_lines", default="control_lines")
     if control_layer not in doc.layers:
@@ -504,7 +528,8 @@ def generate_controls_sheet(
     left_w = table_w * 0.58
     right_w = table_w - left_w - margin
     interlock_lines = [
-        f"{i.get('id', '')}: {i.get('trigger', '')} -> {i.get('action', '')}" for i in interlocks
+        f"{i.get('id', '')}: {i.get('trigger', '')} -> {i.get('action', '')}"
+        for i in interlocks
     ]
     add_text_panel(
         msp,
@@ -542,7 +567,9 @@ def generate_controls_sheet(
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     doc.saveas(out_path)
-    export_svg_from_dxf(spec, out_path, svg_path, fallback_extent=(x_min, y_min, x_max, y_max))
+    export_svg_from_dxf(
+        spec, out_path, svg_path, fallback_extent=(x_min, y_min, x_max, y_max)
+    )
     logger.info("Created: %s", out_path)
     if svg_path:
         logger.info("Attempted SVG: %s", svg_path)
@@ -610,12 +637,16 @@ def generate(
 
 def main() -> None:
     """CLI entry point for ``generate-pid``."""
-    ap = argparse.ArgumentParser(description="Generate P&ID drawings from YAML specifications")
+    ap = argparse.ArgumentParser(
+        description="Generate P&ID drawings from YAML specifications"
+    )
     ap.add_argument("--spec", required=True, help="Path to YAML spec file")
     ap.add_argument("--out", required=True, help="Output DXF path")
     ap.add_argument("--svg", help="Optional SVG output path")
     ap.add_argument("--sheet-set", choices=["single", "two"], default="two")
-    ap.add_argument("--profile", choices=sorted(PROFILE_PRESETS), default="presentation")
+    ap.add_argument(
+        "--profile", choices=sorted(PROFILE_PRESETS), default="presentation"
+    )
     ap.add_argument("--controls-out", help="Controls sheet DXF output path")
     ap.add_argument("--controls-svg", help="Controls sheet SVG output path")
     args = ap.parse_args()

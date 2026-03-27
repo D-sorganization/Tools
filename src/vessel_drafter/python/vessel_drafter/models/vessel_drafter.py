@@ -1,19 +1,21 @@
+from numba import jit
+
 """Validated defaults and geometry helpers for the vessel drafter tool."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from dataclasses import dataclass
-from math import radians
-from typing import Any
+from dataclasses import dataclass  # noqa: E402
+from math import radians  # noqa: E402
+from typing import Any  # noqa: E402
 
-from vessel_drafter.contracts import (
+from vessel_drafter.contracts import (  # noqa: E402
     require_fraction,
     require_integer_at_least,
     require_less_or_equal,
     require_nonnegative,
     require_positive,
 )
-from vessel_drafter.models.vessel_materials import (
+from vessel_drafter.models.vessel_materials import (  # noqa: E402
     DEFAULT_VESSEL_MATERIALS_BY_NAME,
     MaterialProperties,
 )
@@ -211,7 +213,11 @@ class VesselDrafterLayout:
 
     @property
     def full_height_in(self) -> float:
-        return self.outer_head_depth_in + self.straight_shell_height_in + self.outer_head_depth_in
+        return (
+            self.outer_head_depth_in
+            + self.straight_shell_height_in
+            + self.outer_head_depth_in
+        )
 
     @property
     def outer_head_depth_in(self) -> float:
@@ -306,6 +312,7 @@ class VesselDrafterLayout:
         )
 
     @property
+    @jit(nopython=True, fastmath=True)
     def electrode_placements(self) -> tuple[VesselElectrodePlacement, ...]:
         placements: list[VesselElectrodePlacement] = []
         for index in range(self.electrode_count):
@@ -366,8 +373,12 @@ class VesselDrafterLayout:
                     "display_name": layer.display_name,
                     "color_hex": layer.color_hex,
                     "density_lb_per_ft3": layer.density_lb_per_ft3,
-                    "thermal_conductivity_w_per_mk": (layer.thermal_conductivity_w_per_mk),
-                    "thermal_expansion_um_per_m_c": (layer.thermal_expansion_um_per_m_c),
+                    "thermal_conductivity_w_per_mk": (
+                        layer.thermal_conductivity_w_per_mk
+                    ),
+                    "thermal_expansion_um_per_m_c": (
+                        layer.thermal_expansion_um_per_m_c
+                    ),
                 }
                 for layer in self.layers[1:]
             },
@@ -376,14 +387,22 @@ class VesselDrafterLayout:
                 "color_hex": self.layers[0].color_hex,
                 "height_in": self.glass_depth_in,
                 "density_lb_per_ft3": self.layers[0].density_lb_per_ft3,
-                "thermal_conductivity_w_per_mk": (self.layers[0].thermal_conductivity_w_per_mk),
-                "thermal_expansion_um_per_m_c": (self.layers[0].thermal_expansion_um_per_m_c),
+                "thermal_conductivity_w_per_mk": (
+                    self.layers[0].thermal_conductivity_w_per_mk
+                ),
+                "thermal_expansion_um_per_m_c": (
+                    self.layers[0].thermal_expansion_um_per_m_c
+                ),
             },
             "electrodes": {
                 "count": self.electrode_count,
                 "diameter_in": self.electrode_diameter_in,
-                "insertion_into_inner_circle_in": (self.electrode_insertion_into_inner_circle_in),
-                "extension_past_inner_circle_in": (self.electrode_extension_past_inner_circle_in),
+                "insertion_into_inner_circle_in": (
+                    self.electrode_insertion_into_inner_circle_in
+                ),
+                "extension_past_inner_circle_in": (
+                    self.electrode_extension_past_inner_circle_in
+                ),
                 "modeled_length_in": self.electrode_length_in,
                 "centerline_height_in": self.electrode_centerline_height_in,
             },
@@ -392,7 +411,9 @@ class VesselDrafterLayout:
                     {
                         "clock_angle_degrees": port.normalized_clock_angle_degrees,
                         "diameter_in": port.diameter_in,
-                        "height_above_glass_surface_in": (port.height_above_glass_surface_in),
+                        "height_above_glass_surface_in": (
+                            port.height_above_glass_surface_in
+                        ),
                         "centerline_height_in": port.centerline_height_in(self),
                     }
                     for port in self.side_ports
@@ -401,7 +422,9 @@ class VesselDrafterLayout:
                     {
                         "clock_angle_degrees": port.normalized_clock_angle_degrees,
                         "diameter_in": port.diameter_in,
-                        "radial_distance_from_center_in": (port.radial_distance_from_center_in),
+                        "radial_distance_from_center_in": (
+                            port.radial_distance_from_center_in
+                        ),
                     }
                     for port in self.lid_ports
                 ],
@@ -410,7 +433,8 @@ class VesselDrafterLayout:
                 "axis_convention": "Z up",
                 "plenum_only_internal_void": True,
                 "dished_heads": (
-                    "Offset elliptical head profiles with " "constant-thickness shell layers"
+                    "Offset elliptical head profiles with "
+                    "constant-thickness shell layers"
                 ),
             },
         }

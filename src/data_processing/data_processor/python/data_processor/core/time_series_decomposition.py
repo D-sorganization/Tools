@@ -19,6 +19,8 @@ Features:
 
 from __future__ import annotations
 
+from numba import jit
+
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
@@ -214,7 +216,9 @@ class TimeSeriesDecomposer:
         elif method == DecompositionMethod.CLASSICAL_ADDITIVE:
             result = self._classical_decompose(data, period, SeasonalModel.ADDITIVE)
         elif method == DecompositionMethod.CLASSICAL_MULTIPLICATIVE:
-            result = self._classical_decompose(data, period, SeasonalModel.MULTIPLICATIVE)
+            result = self._classical_decompose(
+                data, period, SeasonalModel.MULTIPLICATIVE
+            )
         elif method == DecompositionMethod.MOVING_AVERAGE:
             result = self._ma_decompose(data, period)
         elif method == DecompositionMethod.LOWESS:
@@ -269,7 +273,9 @@ class TimeSeriesDecomposer:
         if period_strengths:
             max_strength = max(period_strengths.values())
             # Get all periods with strength at least 95% of max
-            candidates = [p for p, s in period_strengths.items() if s >= 0.95 * max_strength]
+            candidates = [
+                p for p, s in period_strengths.items() if s >= 0.95 * max_strength
+            ]
             dominant_period = min(candidates)
 
         # Determine if data is seasonal
@@ -375,6 +381,7 @@ class TimeSeriesDecomposer:
 
         return seasonal
 
+    @jit(nopython=True, fastmath=True)
     def multi_seasonal_decompose(
         self,
         data: np.ndarray,
@@ -674,7 +681,9 @@ class TimeSeriesDecomposer:
             period=period,
         )
 
-    def _hp_filter_decompose(self, data: np.ndarray, period: int) -> DecompositionResult:
+    def _hp_filter_decompose(
+        self, data: np.ndarray, period: int
+    ) -> DecompositionResult:
         """Hodrick-Prescott filter decomposition."""
         # Trend using HP filter
         if not (data is not None):
@@ -701,7 +710,7 @@ class TimeSeriesDecomposer:
         )
 
     # Helper methods
-
+    @jit(nopython=True, fastmath=True)
     def _moving_average(self, data: np.ndarray, window: int) -> np.ndarray:
         """Calculate moving average."""
         if not (data is not None):
@@ -723,6 +732,7 @@ class TimeSeriesDecomposer:
 
         return ma
 
+    @jit(nopython=True, fastmath=True)
     def _centered_moving_average(self, data: np.ndarray, period: int) -> np.ndarray:
         """Calculate centered moving average for classical decomposition."""
         if not (data is not None):
@@ -752,6 +762,7 @@ class TimeSeriesDecomposer:
 
         return result
 
+    @jit(nopython=True, fastmath=True)
     def _lowess_smooth(self, data: np.ndarray, frac: float = 0.3) -> np.ndarray:
         """LOWESS (Locally Weighted Scatterplot Smoothing)."""
         if not (data is not None):
@@ -812,6 +823,7 @@ class TimeSeriesDecomposer:
         coeffs = np.polyfit(x, data, degree)
         return np.polyval(coeffs, x)
 
+    @jit(nopython=True, fastmath=True)
     def _exponential_smooth(self, data: np.ndarray, alpha: float) -> np.ndarray:
         """Exponential smoothing."""
         if not (data is not None):
@@ -825,6 +837,7 @@ class TimeSeriesDecomposer:
 
         return result
 
+    @jit(nopython=True, fastmath=True)
     def _hp_filter(self, data: np.ndarray, lambd: float) -> np.ndarray:
         """Hodrick-Prescott filter implementation."""
         if not (data is not None):
@@ -874,6 +887,7 @@ class TimeSeriesDecomposer:
 
         return seasonal
 
+    @jit(nopython=True, fastmath=True)
     def _autocorrelation(self, data: np.ndarray, max_lag: int) -> np.ndarray:
         """Calculate autocorrelation function."""
         if not (data is not None):
@@ -889,10 +903,13 @@ class TimeSeriesDecomposer:
         acf[0] = 1.0
 
         for lag in range(1, max_lag + 1):
-            acf[lag] = np.sum(data_centered[lag:] * data_centered[:-lag]) / ((n - lag) * var)
+            acf[lag] = np.sum(data_centered[lag:] * data_centered[:-lag]) / (
+                (n - lag) * var
+            )
 
         return acf
 
+    @jit(nopython=True, fastmath=True)
     def _find_acf_peaks(self, acf: np.ndarray) -> list[int]:
         """Find peaks in autocorrelation function."""
         if not (acf is not None):

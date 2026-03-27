@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for dynamics_quantities module — impulse, work, power.
 
 TDD: These tests define the expected interface and behavior.
@@ -28,18 +30,24 @@ from double_pendulum_golf.dynamics_quantities import (
 class TestAngularPowerAt:
     """Unit tests for single-timestep angular power."""
 
-    def test_positive_torque_positive_velocity(self):
+    def test_positive_torque_positive_velocity(self) -> Any:
         assert angular_power_at(10.0, 2.0) == pytest.approx(20.0)
 
-    def test_negative_torque_positive_velocity(self):
+    def test_negative_torque_positive_velocity(self) -> Any:
         assert angular_power_at(-5.0, 3.0) == pytest.approx(-15.0)
 
-    def test_zero_torque(self):
+    def test_zero_torque(self) -> Any:
         assert angular_power_at(0.0, 5.0) == 0.0
 
-    def test_zero_velocity(self):
+    def test_zero_velocity(self) -> Any:
         assert angular_power_at(5.0, 0.0) == 0.0
 
+    def test_nan_torque_raises(self) -> Any:
+        with pytest.raises(AssertionError, match="torque must be finite"):
+            angular_power_at(float("nan"), 1.0)
+
+    def test_inf_velocity_raises(self) -> Any:
+        with pytest.raises(AssertionError, match="omega must be finite"):
     def test_nan_torque_raises(self):
         with pytest.raises((ValueError, TypeError), match="torque must be finite"):
             angular_power_at(float("nan"), 1.0)
@@ -57,6 +65,23 @@ class TestAngularPowerAt:
 class TestLinearPowerAt:
     """Unit tests for single-timestep linear power."""
 
+    def test_aligned_force_velocity(self) -> Any:
+        assert linear_power_at(np.array([1.0, 0.0]), np.array([3.0, 0.0])) == pytest.approx(
+            3.0
+        )
+
+    def test_orthogonal_force_velocity(self) -> Any:
+        assert linear_power_at(np.array([1.0, 0.0]), np.array([0.0, 1.0])) == pytest.approx(
+            0.0
+        )
+
+    def test_2d_dot_product(self) -> Any:
+        assert linear_power_at(np.array([2.0, 3.0]), np.array([4.0, 5.0])) == pytest.approx(
+            23.0
+        )
+
+    def test_wrong_shape_raises(self) -> Any:
+        with pytest.raises(AssertionError, match="force must be shape"):
     def test_aligned_force_velocity(self):
         assert linear_power_at(np.array([1.0, 0.0]), np.array([3.0, 0.0])) == pytest.approx(3.0)
 
@@ -79,12 +104,14 @@ class TestLinearPowerAt:
 class TestAngularPowerSeries:
     """Tests for vectorised angular power."""
 
-    def test_constant_torque_and_velocity(self):
+    def test_constant_torque_and_velocity(self) -> Any:
         tau = np.full(10, 5.0)
         omega = np.full(10, 2.0)
         result = angular_power_series(tau, omega)
         np.testing.assert_allclose(result, 10.0)
 
+    def test_shape_mismatch_raises(self) -> Any:
+        with pytest.raises(AssertionError, match="Shape mismatch"):
     def test_shape_mismatch_raises(self):
         with pytest.raises((ValueError, TypeError), match="Shape mismatch"):
             angular_power_series(np.ones(5), np.ones(6))
@@ -93,7 +120,7 @@ class TestAngularPowerSeries:
 class TestLinearPowerSeries:
     """Tests for vectorised linear power."""
 
-    def test_constant_force_velocity(self):
+    def test_constant_force_velocity(self) -> Any:
         F = np.tile([1.0, 2.0], (5, 1))
         v = np.tile([3.0, 4.0], (5, 1))
         result = linear_power_series(F, v)
@@ -108,14 +135,14 @@ class TestLinearPowerSeries:
 class TestAngularWork:
     """Tests for cumulative angular work."""
 
-    def test_starts_at_zero(self):
+    def test_starts_at_zero(self) -> Any:
         t = np.linspace(0, 1, 100)
         tau = np.ones(100)
         omega = np.ones(100)
         W = angular_work_series(tau, omega, t)
         assert W[0] == pytest.approx(0.0)
 
-    def test_constant_power_linear_work(self):
+    def test_constant_power_linear_work(self) -> Any:
         """Constant power P=1 over [0,1] → W(1)=1."""
         t = np.linspace(0, 1, 1000)
         tau = np.ones(1000)
@@ -123,7 +150,7 @@ class TestAngularWork:
         W = angular_work_series(tau, omega, t)
         assert W[-1] == pytest.approx(1.0, rel=1e-3)
 
-    def test_zero_power_zero_work(self):
+    def test_zero_power_zero_work(self) -> Any:
         t = np.linspace(0, 1, 50)
         tau = np.zeros(50)
         omega = np.ones(50)
@@ -134,7 +161,7 @@ class TestAngularWork:
 class TestLinearWork:
     """Tests for cumulative linear work."""
 
-    def test_starts_at_zero(self):
+    def test_starts_at_zero(self) -> Any:
         t = np.linspace(0, 1, 50)
         F = np.tile([1.0, 0.0], (50, 1))
         v = np.tile([1.0, 0.0], (50, 1))
@@ -150,13 +177,13 @@ class TestLinearWork:
 class TestAngularImpulse:
     """Tests for cumulative angular impulse."""
 
-    def test_starts_at_zero(self):
+    def test_starts_at_zero(self) -> Any:
         t = np.linspace(0, 1, 50)
         tau = np.ones(50)
         J = angular_impulse_series(tau, t)
         assert J[0] == pytest.approx(0.0)
 
-    def test_constant_torque(self):
+    def test_constant_torque(self) -> Any:
         """Constant tau=2 over [0,1] → J=2."""
         t = np.linspace(0, 1, 1000)
         tau = np.full(1000, 2.0)
@@ -167,20 +194,20 @@ class TestAngularImpulse:
 class TestLinearImpulse:
     """Tests for cumulative linear impulse (2D)."""
 
-    def test_starts_at_zero(self):
+    def test_starts_at_zero(self) -> Any:
         t = np.linspace(0, 1, 50)
         F = np.tile([1.0, 2.0], (50, 1))
         J = linear_impulse_series(F, t)
         np.testing.assert_allclose(J[0], [0.0, 0.0])
 
-    def test_constant_force(self):
+    def test_constant_force(self) -> Any:
         """Constant F=[3,4] over [0,1] → J=[3,4]."""
         t = np.linspace(0, 1, 1000)
         F = np.tile([3.0, 4.0], (1000, 1))
         J = linear_impulse_series(F, t)
         np.testing.assert_allclose(J[-1], [3.0, 4.0], rtol=1e-3)
 
-    def test_shape(self):
+    def test_shape(self) -> Any:
         t = np.linspace(0, 1, 50)
         F = np.tile([1.0, 2.0], (50, 1))
         J = linear_impulse_series(F, t)
@@ -195,7 +222,7 @@ class TestLinearImpulse:
 class TestComputeAllDynamics:
     """Tests for the convenience wrapper."""
 
-    def test_returns_all_keys(self):
+    def test_returns_all_keys(self) -> Any:
         N = 100
         t = np.linspace(0, 1, N)
         tau = np.ones(N)
@@ -213,7 +240,7 @@ class TestComputeAllDynamics:
         }
         assert set(result.keys()) == expected_keys
 
-    def test_all_finite(self):
+    def test_all_finite(self) -> Any:
         N = 50
         t = np.linspace(0, 1, N)
         tau = np.sin(t)

@@ -306,7 +306,9 @@ class ModelGenerationAPI:
         response.headers["Content-Security-Policy"] = "default-src 'self'"
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
-        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        response.headers["Strict-Transport-Security"] = (
+            "max-age=31536000; includeSubDomains"
+        )
 
     def handle_request(self, request: APIRequest) -> APIResponse:
         """Handle an API request."""
@@ -347,7 +349,9 @@ class ModelGenerationAPI:
                     self._add_security_headers(response)
                     return response
 
-        response = APIResponse.not_found(f"No route for {request.method.value} {request.path}")
+        response = APIResponse.not_found(
+            f"No route for {request.method.value} {request.path}"
+        )
         self._add_security_headers(response)
         return response
 
@@ -613,7 +617,9 @@ class ModelGenerationAPI:
         return APIResponse.ok(
             {
                 "valid": not has_errors,
-                "error_count": sum(1 for m in messages if m.severity == ValidationSeverity.ERROR),
+                "error_count": sum(
+                    1 for m in messages if m.severity == ValidationSeverity.ERROR
+                ),
                 "warning_count": sum(
                     1 for m in messages if m.severity == ValidationSeverity.WARNING
                 ),
@@ -696,7 +702,9 @@ class ModelGenerationAPI:
 
             elif shape == "cylinder":
                 if len(dimensions) != 2:
-                    return APIResponse.error("Cylinder requires 2 dimensions (radius, length)")
+                    return APIResponse.error(
+                        "Cylinder requires 2 dimensions (radius, length)"
+                    )
                 inertia = Inertia.from_cylinder(mass, dimensions[0], dimensions[1])
 
             elif shape == "sphere":
@@ -706,7 +714,9 @@ class ModelGenerationAPI:
 
             elif shape == "capsule":
                 if len(dimensions) != 2:
-                    return APIResponse.error("Capsule requires 2 dimensions (radius, length)")
+                    return APIResponse.error(
+                        "Capsule requires 2 dimensions (radius, length)"
+                    )
                 inertia = Inertia.from_capsule(mass, dimensions[0], dimensions[1])
 
             else:

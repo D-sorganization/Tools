@@ -248,7 +248,9 @@ class TestBatchAccessors:
         total = result.all_total_torques()
         assert total.shape == (4, 2)
 
-    def test_all_total_torques_equals_drive_plus_friction(self, result: _ConcreteResult) -> None:
+    def test_all_total_torques_equals_drive_plus_friction(
+        self, result: _ConcreteResult
+    ) -> None:
         """total_torques uses torque_func + friction_torques_at.
 
         Note: torques_at() and total_torques_at() are separate paths.

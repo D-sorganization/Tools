@@ -83,7 +83,9 @@ class TestOverallClubDecomposition:
         assert isinstance(result["net_force"], np.ndarray)
         assert result["net_force"].shape == (2,)
 
-    def test_action_point_is_finite(self, params: GolferParams, zero_state: np.ndarray) -> None:
+    def test_action_point_is_finite(
+        self, params: GolferParams, zero_state: np.ndarray
+    ) -> None:
         result = overall_club_decomposition(zero_state, 0.0, params, zero_torque)
         assert np.all(np.isfinite(result["action_point"]))
 
@@ -155,13 +157,17 @@ class TestGolferPendulumMoments:
     def test_returns_21_keys(
         self, full_positions: dict, full_forces: dict, applied_torques: tuple
     ) -> None:
-        result = golfer_pendulum_moments(full_positions, full_forces, applied_torques, object())
+        result = golfer_pendulum_moments(
+            full_positions, full_forces, applied_torques, object()
+        )
         assert len(result) == 21  # 3 keys x 7 joints
 
     def test_joint_names_in_keys(
         self, full_positions: dict, full_forces: dict, applied_torques: tuple
     ) -> None:
-        result = golfer_pendulum_moments(full_positions, full_forces, applied_torques, object())
+        result = golfer_pendulum_moments(
+            full_positions, full_forces, applied_torques, object()
+        )
         for joint in ("hub", "rs", "re", "rh", "ls", "le", "lh"):
             assert f"{joint}_applied_torque" in result
             assert f"{joint}_moment_of_force" in result
@@ -170,7 +176,9 @@ class TestGolferPendulumMoments:
     def test_applied_torques_preserved(
         self, full_positions: dict, full_forces: dict, applied_torques: tuple
     ) -> None:
-        result = golfer_pendulum_moments(full_positions, full_forces, applied_torques, object())
+        result = golfer_pendulum_moments(
+            full_positions, full_forces, applied_torques, object()
+        )
         joints = ["hub", "rs", "re", "rh", "ls", "le", "lh"]
         for i, joint in enumerate(joints):
             assert result[f"{joint}_applied_torque"] == pytest.approx(applied_torques[i])
@@ -178,14 +186,18 @@ class TestGolferPendulumMoments:
     def test_all_values_finite(
         self, full_positions: dict, full_forces: dict, applied_torques: tuple
     ) -> None:
-        result = golfer_pendulum_moments(full_positions, full_forces, applied_torques, object())
+        result = golfer_pendulum_moments(
+            full_positions, full_forces, applied_torques, object()
+        )
         for key, val in result.items():
             assert np.isfinite(val), f"Non-finite value for {key}: {val}"
 
     def test_total_moment_equals_applied_plus_moment_of_force(
         self, full_positions: dict, full_forces: dict, applied_torques: tuple
     ) -> None:
-        result = golfer_pendulum_moments(full_positions, full_forces, applied_torques, object())
+        result = golfer_pendulum_moments(
+            full_positions, full_forces, applied_torques, object()
+        )
         for joint in ("hub", "rs", "re", "rh", "ls", "le", "lh"):
             total = result[f"{joint}_total_moment"]
             applied = result[f"{joint}_applied_torque"]
@@ -202,6 +214,10 @@ class TestGolferPendulumMoments:
             assert result[f"{joint}_moment_of_force"] == 0.0
             assert result[f"{joint}_total_moment"] == result[f"{joint}_applied_torque"]
 
+    def test_fewer_than_7_torques_raises(
+        self, full_positions: dict, full_forces: dict
+    ) -> None:
+        with pytest.raises(AssertionError, match="Need >= 7"):
     def test_fewer_than_7_torques_raises(self, full_positions: dict, full_forces: dict) -> None:
         with pytest.raises((ValueError, TypeError), match="Need >= 7"):
             golfer_pendulum_moments(full_positions, full_forces, (1.0, 2.0, 3.0), object())

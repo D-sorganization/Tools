@@ -1,3 +1,5 @@
+from numba import jit
+
 """Control loop rendering and signal line routing.
 
 Control loops connect a measurement point to a final element via
@@ -12,14 +14,21 @@ Postconditions:
     - Unresolvable loops are logged and skipped (never raises).
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-from typing import Any
+import logging  # noqa: E402
+from typing import Any  # noqa: E402
 
-from programmatic_pid.equipment import equipment_center, nearest_equipment_anchor
-from programmatic_pid.geometry import dedupe_points, to_float
-from programmatic_pid.rendering import add_arrow_head, add_text, ensure_layer
+from programmatic_pid.equipment import (  # noqa: E402
+    equipment_center,
+    nearest_equipment_anchor,
+)
+from programmatic_pid.geometry import dedupe_points, to_float  # noqa: E402
+from programmatic_pid.rendering import (  # noqa: E402
+    add_arrow_head,
+    add_text,
+    ensure_layer,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +84,7 @@ def resolve_reference_point(
     return None
 
 
+@jit(nopython=True, fastmath=True)
 def add_control_loops(
     msp: Any,
     spec: dict[str, Any],
@@ -139,7 +149,9 @@ def add_control_loops(
         if start_kind == "equipment":
             sx, sy = nearest_equipment_anchor(equipment_by_id[measurement_id], (ex, ey))
         if end_kind == "equipment":
-            ex, ey = nearest_equipment_anchor(equipment_by_id[final_element_id], (sx, sy))
+            ex, ey = nearest_equipment_anchor(
+                equipment_by_id[final_element_id], (sx, sy)
+            )
 
         layer = str(loop.get("line_layer") or "control_lines")
         if layer not in msp.doc.layers:
@@ -162,4 +174,6 @@ def add_control_loops(
         if loop_tag and show_loop_tags:
             mx = sum(p[0] for p in route) / len(route)
             my = sum(p[1] for p in route) / len(route)
-            add_text(msp, loop_tag, mx, my + text_h * 0.8, text_h * 0.9, layer=text_layer)
+            add_text(
+                msp, loop_tag, mx, my + text_h * 0.8, text_h * 0.9, layer=text_layer
+            )

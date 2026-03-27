@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for torque_utils module.
 
 TDD: Tests cover polynomial torque generation for N-joint models.
@@ -14,21 +16,21 @@ from double_pendulum_golf.torque_utils import make_polynomial_torque
 class TestMakePolynomialTorque:
     """Contract and behavior tests for make_polynomial_torque."""
 
-    def test_single_joint_constant(self):
+    def test_single_joint_constant(self) -> Any:
         """Constant torque: tau(t) = 5 for all t."""
         tf = make_polynomial_torque([5.0])
         assert tf(0.0) == pytest.approx((5.0,))
         assert tf(1.0) == pytest.approx((5.0,))
         assert tf(100.0) == pytest.approx((5.0,))
 
-    def test_single_joint_linear(self):
+    def test_single_joint_linear(self) -> Any:
         """Linear torque: tau(t) = 2 + 3*t."""
         tf = make_polynomial_torque([2.0, 3.0])
         assert tf(0.0) == pytest.approx((2.0,))
         assert tf(1.0) == pytest.approx((5.0,))
         assert tf(2.0) == pytest.approx((8.0,))
 
-    def test_two_joints(self):
+    def test_two_joints(self) -> Any:
         """Two joints: tau1 = 1, tau2 = t."""
         tf = make_polynomial_torque([1.0], [0.0, 1.0])
         result = tf(3.0)
@@ -36,7 +38,7 @@ class TestMakePolynomialTorque:
         assert result[0] == pytest.approx(1.0)
         assert result[1] == pytest.approx(3.0)
 
-    def test_seven_joints(self):
+    def test_seven_joints(self) -> Any:
         """Golfer model with 7 joints all constant."""
         coeffs = [[float(i)] for i in range(7)]
         tf = make_polynomial_torque(*coeffs)
@@ -45,28 +47,28 @@ class TestMakePolynomialTorque:
         for i in range(7):
             assert result[i] == pytest.approx(float(i))
 
-    def test_quadratic(self):
+    def test_quadratic(self) -> Any:
         """tau(t) = 1 + 2*t + 3*t^2 at t=2 → 1+4+12 = 17."""
         tf = make_polynomial_torque([1.0, 2.0, 3.0])
         assert tf(2.0) == pytest.approx((17.0,))
 
-    def test_zero_joints_raises(self):
+    def test_zero_joints_raises(self) -> Any:
         """Must have at least one joint."""
         with pytest.raises((ValueError, TypeError), match="Need at least one joint"):
             make_polynomial_torque()
 
-    def test_empty_coefficients_raises(self):
+    def test_empty_coefficients_raises(self) -> Any:
         """Each joint needs at least one coefficient."""
         with pytest.raises((ValueError, TypeError), match="Need at least one coefficient"):
             make_polynomial_torque([])
 
-    def test_returns_tuple(self):
+    def test_returns_tuple(self) -> Any:
         """Return type is always tuple."""
         tf = make_polynomial_torque([1.0])
         result = tf(0.0)
         assert isinstance(result, tuple)
 
-    def test_all_values_finite(self):
+    def test_all_values_finite(self) -> Any:
         """Output must be finite for finite input."""
         tf = make_polynomial_torque([1.0, 2.0], [3.0, 4.0])
         result = tf(1.5)

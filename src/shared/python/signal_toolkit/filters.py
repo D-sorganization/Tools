@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -8,18 +10,18 @@ This module provides a comprehensive set of digital filters for signal
 processing including IIR and FIR filters, smoothing, and specialized filters.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from collections.abc import Callable
-from dataclasses import dataclass
-from enum import Enum
+from collections.abc import Callable  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
+from enum import Enum  # noqa: E402
 
-import numpy as np
-from scipy import signal as scipy_signal
-from scipy.signal import (
+import numpy as np  # noqa: E402
+from scipy import signal as scipy_signal  # noqa: E402
+from scipy.signal import (  # noqa: E402
     bessel as _scipy_bessel,
 )
-from scipy.signal import (
+from scipy.signal import (  # noqa: E402
     butter,
     cheby1,
     cheby2,
@@ -30,7 +32,7 @@ from scipy.signal import (
     savgol_filter,
 )
 
-from .core import Signal
+from .core import Signal  # noqa: E402
 
 
 class FilterType(Enum):
@@ -150,7 +152,9 @@ def _normalize_cutoff(
         if filter_type == FilterType.NOTCH:
             btype = "bandstop"
     else:
-        wn = cutoff / nyquist if isinstance(cutoff, int | float) else cutoff[0] / nyquist
+        wn = (
+            cutoff / nyquist if isinstance(cutoff, int | float) else cutoff[0] / nyquist
+        )
 
     return wn, btype
 
@@ -580,6 +584,7 @@ def apply_median_filter(
     )
 
 
+@jit(nopython=True, fastmath=True)
 def apply_exponential_smoothing(
     signal: Signal,
     alpha: float = 0.3,
@@ -639,6 +644,7 @@ def apply_gaussian_smoothing(
     )
 
 
+@jit(nopython=True, fastmath=True)
 def apply_bilateral_filter(
     signal: Signal,
     window_size: int = 5,
@@ -704,6 +710,7 @@ def apply_bilateral_filter(
 class AdaptiveFilter:
     """Adaptive filter implementations (LMS, RLS)."""
 
+    @jit(nopython=True, fastmath=True)
     @staticmethod
     def lms(
         signal: Signal,
@@ -755,6 +762,7 @@ class AdaptiveFilter:
         return filtered, error
 
     @staticmethod
+    @jit(nopython=True, fastmath=True)
     def rls(
         signal: Signal,
         reference: Signal,

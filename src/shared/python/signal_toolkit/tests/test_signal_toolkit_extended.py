@@ -282,17 +282,23 @@ class TestFilterDbC:
     def test_butterworth_invalid_order_raises(self) -> None:
         """Test that order < 1 raises ValueError."""
         with pytest.raises(ValueError, match="order"):
-            FilterDesigner.butterworth(FilterType.LOWPASS, cutoff=5.0, fs=100.0, order=0)
+            FilterDesigner.butterworth(
+                FilterType.LOWPASS, cutoff=5.0, fs=100.0, order=0
+            )
 
     def test_chebyshev1_invalid_ripple_raises(self) -> None:
         """Test that ripple_db <= 0 raises ValueError."""
         with pytest.raises(ValueError, match="ripple_db"):
-            FilterDesigner.chebyshev1(FilterType.LOWPASS, cutoff=5.0, fs=100.0, ripple_db=0.0)
+            FilterDesigner.chebyshev1(
+                FilterType.LOWPASS, cutoff=5.0, fs=100.0, ripple_db=0.0
+            )
 
     def test_chebyshev2_invalid_attenuation_raises(self) -> None:
         """Test that attenuation_db <= 0 raises ValueError."""
         with pytest.raises(ValueError, match="attenuation_db"):
-            FilterDesigner.chebyshev2(FilterType.LOWPASS, cutoff=5.0, fs=100.0, attenuation_db=-1.0)
+            FilterDesigner.chebyshev2(
+                FilterType.LOWPASS, cutoff=5.0, fs=100.0, attenuation_db=-1.0
+            )
 
     def test_elliptic_invalid_params_raises(self) -> None:
         """Test that invalid elliptic params raise ValueError."""
@@ -640,7 +646,9 @@ class TestFilterSpecFrequencyResponse:
 
     def test_butterworth_freq_response(self) -> None:
         """Butterworth filter should have monotonic magnitude rolloff."""
-        spec = FilterDesigner.butterworth(FilterType.LOWPASS, cutoff=10.0, fs=100.0, order=4)
+        spec = FilterDesigner.butterworth(
+            FilterType.LOWPASS, cutoff=10.0, fs=100.0, order=4
+        )
         freqs, magnitude, phase = spec.get_frequency_response(256)
 
         assert len(freqs) == 256

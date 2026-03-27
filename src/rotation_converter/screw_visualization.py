@@ -1,3 +1,4 @@
+from numba import jit
 """Screw axis visualization for rigid-body motions.
 
 Extracts the instantaneous screw axis between consecutive SE(3) poses
@@ -36,6 +37,7 @@ from rotation_converter.modern_robotics import (
 # Screw axis extraction
 # ===========================================================================
 
+@jit(nopython=True, fastmath=True)
 
 def extract_screw_axes_from_trajectory(
     trajectory: list[np.ndarray],
@@ -171,13 +173,7 @@ def build_animation_frames(
     for i, T in enumerate(trajectory):
         R, p = TransToRp(T)
         # Body frame axes in world coordinates
-        body_axes = []
-        for col in range(3):
-            body_axes.append(
-                {
-                    "origin": p.copy(),
-                    "direction": R[:, col] * body_axis_length,
-                }
+        body_axes.extend([{'origin': p.copy(), 'direction': R[:, col] * body_axis_length} for col in range(3)])
             )
 
         frame: dict[str, Any] = {
@@ -285,6 +281,7 @@ class ScrewAxisAnimator:
         ax.set_ylim(mid_y - max_range / 2, mid_y + max_range / 2)
         ax.set_zlim(mid_z - max_range / 2, mid_z + max_range / 2)
 
+    @jit(nopython=True, fastmath=True)
     def _draw_frame(self, ax: Any, frame_idx: int) -> None:
         """Draw a single animation frame onto the axes."""
         if not (frame_idx is not None):

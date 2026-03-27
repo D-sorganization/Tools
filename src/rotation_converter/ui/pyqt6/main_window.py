@@ -1,7 +1,6 @@
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
-
 # mypy: disable-error-code="attr-defined, misc"
 """Rotation Converter Main Window — PyQt6 GUI.
 
@@ -15,6 +14,8 @@ Integrates with the shared fleet theme system for consistent styling.
 """
 
 from __future__ import annotations
+
+from numba import jit
 
 import math
 from typing import Any
@@ -909,6 +910,7 @@ class TrajectoryPlotsTab(QWidget):
         ax.legend(fontsize=8)
         ax.grid(True, alpha=0.3)
 
+    @jit(nopython=True, fastmath=True)
     def _plot_body_space_twist(self) -> None:
         n = min(len(self._traj) - 1, len(self._traj))
         t = np.arange(n - 1) if n > 1 else np.array([0])

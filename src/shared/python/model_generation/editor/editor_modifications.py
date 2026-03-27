@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -8,13 +10,13 @@ Provides link/joint deletion, renaming, modification, attachment/detachment,
 batch prefix application, and subtree mirroring.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-from collections.abc import Callable
-from typing import TYPE_CHECKING, Any
+import logging  # noqa: E402
+from collections.abc import Callable  # noqa: E402
+from typing import TYPE_CHECKING, Any  # noqa: E402
 
-from model_generation.core.types import Joint, JointType, Link, Origin
+from model_generation.core.types import Joint, JointType, Link, Origin  # noqa: E402
 
 if TYPE_CHECKING:
     from model_generation.converters.urdf_parser import ParsedModel
@@ -56,6 +58,7 @@ class ModificationMixin:
     # Direct Modifications
     # ============================================================
 
+    @jit(nopython=True, fastmath=True)
     def delete_link(
         self,
         model_id: str,
@@ -161,13 +164,17 @@ class ModificationMixin:
 
         # Remove all joints connected to subtree
         model.joints = [
-            j for j in model.joints if j.parent not in subtree and j.child not in subtree
+            j
+            for j in model.joints
+            if j.parent not in subtree and j.child not in subtree
         ]
 
         # Also remove joint connecting subtree to parent
         model.joints = [j for j in model.joints if j.child != root_link]
 
-        logger.info(f"Deleted subtree '{root_link}' ({len(subtree)} links) from '{model_id}'")
+        logger.info(
+            f"Deleted subtree '{root_link}' ({len(subtree)} links) from '{model_id}'"
+        )
         return True
 
     def rename_link(
@@ -570,7 +577,9 @@ class ModificationMixin:
             if new_link.visual_origin:
                 xyz = list(new_link.visual_origin.xyz)
                 xyz[axis_idx] = -xyz[axis_idx]
-                new_link.visual_origin = Origin(xyz=tuple(xyz), rpy=new_link.visual_origin.rpy)
+                new_link.visual_origin = Origin(
+                    xyz=tuple(xyz), rpy=new_link.visual_origin.rpy
+                )
 
             if new_link.collision_origin:
                 xyz = list(new_link.collision_origin.xyz)
@@ -641,7 +650,9 @@ class ModificationMixin:
         """
         _VALID_AXES = {"x", "y", "z"}
         if mirror_axis not in _VALID_AXES:
-            raise ValueError(f"mirror_axis must be one of {_VALID_AXES}, got '{mirror_axis}'")
+            raise ValueError(
+                f"mirror_axis must be one of {_VALID_AXES}, got '{mirror_axis}'"
+            )
 
         if not self.copy_subtree(model_id, root_link):
             return []
@@ -690,7 +701,9 @@ class ModificationMixin:
         axis_idx = {"x": 0, "y": 1, "z": 2}[mirror_axis]
 
         created_links = self._mirror_links(links, name_map, axis_idx, model)
-        self._mirror_joints(joints, links, name_map, axis_idx, parent, mirror_name, model)
+        self._mirror_joints(
+            joints, links, name_map, axis_idx, parent, mirror_name, model
+        )
 
         logger.info(f"Created mirrored subtree with {len(created_links)} links")
         return created_links

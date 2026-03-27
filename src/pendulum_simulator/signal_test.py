@@ -1,3 +1,4 @@
+from typing import Any
 import logging
 
 logger = logging.getLogger(__name__)
@@ -37,6 +38,8 @@ class TestWindow(QMainWindow):
         # Connect our own handler
         self.run_requested.connect(self.on_run)
 
+    def on_run(self) -> Any:
+        print("[TEST] Signal received!")  # noqa: T201
     def on_run(self):
         logger.info("[TEST] Signal received!")  # noqa: T201
         QMessageBox.information(self, "Success", "Signal was received!")

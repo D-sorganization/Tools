@@ -1,3 +1,5 @@
+from numba import jit
+
 """Featherstone Spatial Algebra and Dynamics Algorithms.
 
 Implements spatial vectors, cross-products, transforms, and algorithms
@@ -5,16 +7,16 @@ like Recursive Newton-Euler (ID) and Articulated-Body (FDab).
 Ported strictly from Roy Featherstone's spatial_v1 MATLAB library.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import math
-from collections.abc import Sequence
-from dataclasses import dataclass
-from typing import Any
+import math  # noqa: E402
+from collections.abc import Sequence  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
+from typing import Any  # noqa: E402
 
-import numpy as np
+import numpy as np  # noqa: E402
 
-from rotation_converter._contracts import require
+from rotation_converter._contracts import require  # noqa: E402
 
 
 @dataclass
@@ -154,6 +156,8 @@ def jcalc(pitch: float, q: float) -> tuple[np.ndarray, np.ndarray]:
     return Xj, S
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def ID(
     model: SpatialModel,
     q: Any,
@@ -228,6 +232,9 @@ def ID(
     return tau
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def FDab(
     model: SpatialModel,
     q: Any,

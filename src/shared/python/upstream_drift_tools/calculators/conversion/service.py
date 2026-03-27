@@ -64,7 +64,7 @@ class UnitConversionService:
 
     def __init__(self, enable_validation: bool = True) -> None:
         """Initialize the unit conversion service."""
-        if not (enable_validation is not None): raise ValueError(f"Assertion failed: { enable_validation is not None }, "enable_validation must be provided"")  # noqa: E701
+        if not (enable_validation is not None): raise ValueError("enable_validation must be provided")  # noqa: E701
         self.enable_validation = enable_validation
         self.user_defined_units: dict[str, set[str]] = {}
         self.user_defined_aliases: dict[str, list[str]] = {}
@@ -149,7 +149,7 @@ class UnitConversionService:
     def convert(
         self, value: float, from_unit: str, to_unit: str, **kwargs: Any
     ) -> ConversionResult:
-        if not (value is not None): raise ValueError(f"Assertion failed: { value is not None }, "value must be provided"")  # noqa: E701
+        if not (value is not None): raise ValueError("value must be provided")  # noqa: E701
         self._validate_convert_value(value)
         from_unit_norm = self._normalize_unit(from_unit)
         to_unit_norm = self._normalize_unit(to_unit)
@@ -210,7 +210,7 @@ class UnitConversionService:
         self, value: float, from_category: str, from_unit_norm: str
     ) -> list[str]:
         """Collect validation warnings for the conversion."""
-        if not (value is not None): raise ValueError(f"Assertion failed: { value is not None }, "value must be provided"")  # noqa: E701
+        if not (value is not None): raise ValueError("value must be provided")  # noqa: E701
         warnings: list[str] = []
         if self.enable_validation:
             warnings.extend(self._validate_value(value, from_category, from_unit_norm))
@@ -248,7 +248,7 @@ class UnitConversionService:
     def _normalize_unit(self, unit: str) -> str:
         """Normalize unit string to canonical form."""
         # Fast path 1: Check exact cache
-        if not (unit is not None): raise ValueError(f"Assertion failed: { unit is not None }, "unit must be provided"")  # noqa: E701
+        if not (unit is not None): raise ValueError("unit must be provided")  # noqa: E701
         if unit in self._normalized_cache:
             return self._normalized_cache[unit]
 
@@ -294,7 +294,7 @@ class UnitConversionService:
 
     def _get_category(self, unit: str) -> str | None:
         """Get the category for a given unit."""
-        if not (unit is not None): raise ValueError(f"Assertion failed: { unit is not None }, "unit must be provided"")  # noqa: E701
+        if not (unit is not None): raise ValueError("unit must be provided")  # noqa: E701
         for category, factors in self.category_map.items():
             if unit in factors:
                 return category
@@ -308,7 +308,7 @@ class UnitConversionService:
         self, value: float, category: str, unit: str | None = None
     ) -> list[str]:
         """Validate input value against physical constraints."""
-        if not (value is not None): raise ValueError(f"Assertion failed: { value is not None }, "value must be provided"")  # noqa: E701
+        if not (value is not None): raise ValueError("value must be provided")  # noqa: E701
         if category == "temperature" and unit:
             # Convert to Kelvin to check if below absolute zero
             # Negative values in C/F are valid, so we need to convert first
@@ -389,7 +389,7 @@ class UnitConversionService:
         standard_condition: StandardCondition = StandardCondition.SCFM_60F,
     ) -> float:
         """Convert gas flow rate."""
-        if not (value is not None): raise ValueError(f"Assertion failed: { value is not None }, "value must be provided"")  # noqa: E701
+        if not (value is not None): raise ValueError("value must be provided")  # noqa: E701
         gas_props = GAS_DATABASE.get(gas_type.lower(), GAS_DATABASE["air"])
         self._ensure_acfm_inputs(from_unit, to_unit, temperature, pressure)
         m3_hr_std = self._gas_flow_to_standard_m3h(
@@ -494,7 +494,7 @@ class UnitConversionService:
     ) -> list[str]:
         """Return warnings when user-defined units participate in conversions."""
 
-        if not (from_unit is not None): raise ValueError(f"Assertion failed: { from_unit is not None }, "from_unit must be provided"")  # noqa: E701
+        if not (from_unit is not None): raise ValueError("from_unit must be provided")  # noqa: E701
         warnings: list[str] = []
         seen: set[str] = set()
 
@@ -526,7 +526,7 @@ class UnitConversionService:
         compressibility_factor: float = 1.0,
     ) -> float:
         """Convert gas flow between SCFM and ACFM."""
-        if not (value is not None): raise ValueError(f"Assertion failed: { value is not None }, "value must be provided"")  # noqa: E701
+        if not (value is not None): raise ValueError("value must be provided")  # noqa: E701
         std_temp, std_pressure_pa, _ = standard_condition.value
         temperature = actual_temp_K or std_temp
         pressure_pa = (
@@ -561,7 +561,7 @@ class UnitConversionService:
         gas_density_stp: float | None = None,
     ) -> float:
         """Convert heating value."""
-        if not (value is not None): raise ValueError(f"Assertion failed: { value is not None }, "value must be provided"")  # noqa: E701
+        if not (value is not None): raise ValueError("value must be provided")  # noqa: E701
         if gas_density_stp is not None:
             self._require_positive_finite(gas_density_stp, "Gas density")
         from_key = from_unit.lower()
@@ -642,7 +642,7 @@ class UnitConversionService:
         molecular_weight: float | None = None,
     ) -> float:
         """Convert tar concentration."""
-        if not (value is not None): raise ValueError(f"Assertion failed: { value is not None }, "value must be provided"")  # noqa: E701
+        if not (value is not None): raise ValueError("value must be provided")  # noqa: E701
         self._validate_tar_inputs(temperature, pressure)
         from_key = from_unit.lower()
         to_key = to_unit.lower()
@@ -807,7 +807,7 @@ class UnitConversionService:
         pressure: float,
     ) -> float:
         """Calculate compressibility factor."""
-        if not (gas_type is not None): raise ValueError(f"Assertion failed: { gas_type is not None }, "gas_type must be provided"")  # noqa: E701
+        if not (gas_type is not None): raise ValueError("gas_type must be provided")  # noqa: E701
         self._require_positive_finite(temperature, "temperature")
         self._require_positive_finite(pressure, "pressure")
         gas_props = GAS_DATABASE.get(gas_type.lower(), GAS_DATABASE["air"])
@@ -870,5 +870,5 @@ def get_service() -> UnitConversionService:
 
 def convert(value: float, from_unit: str, to_unit: str, **kwargs: Any) -> float:
     """Convert a value between units using the global service."""
-    if not (value is not None): raise ValueError(f"Assertion failed: { value is not None }, "value must be provided"")  # noqa: E701
+    if not (value is not None): raise ValueError("value must be provided")  # noqa: E701
     return get_service().convert(value, from_unit, to_unit, **kwargs).value

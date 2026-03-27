@@ -1,10 +1,12 @@
+from typing import Any
+
 """Tests for Signal Processing Studio.
 
 Tests cross-widget signal routing, polynomial resample logic,
 and the unified studio launcher.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import importlib.util
 import sys
@@ -38,7 +40,7 @@ class TestResampleDrawnPoints:
     """Tests for PolynomialGeneratorWidget._resample_drawn_points."""
 
     @pytest.fixture(autouse=True)
-    def _import_resample(self):
+    def _import_resample(self) -> Any:
         """Import the static method under test."""
         from signal_toolkit.polynomial_generator import PolynomialGeneratorWidget
 
@@ -47,10 +49,8 @@ class TestResampleDrawnPoints:
     def test_uniform_x_spacing(self) -> None:
         """Output points should have uniformly spaced x values."""
         points: list[tuple[float, float]] = [(0.0, 0.0)]
-        for i in range(1, 50):
-            points.append((i * 0.1, float(i)))
-        for i in range(5):
-            points.append((5.0 + i * 2.0, 50.0 + float(i)))
+        points.extend([(i * 0.1, float(i)) for i in range(1, 50)])
+        points.extend([(5.0 + i * 2.0, 50.0 + float(i)) for i in range(5)])
 
         result = self.resample(points, n=20)
 

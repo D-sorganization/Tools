@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for ControlsWidget."""
 
 from PyQt6.QtWidgets import QWidget
@@ -5,21 +7,21 @@ from double_pendulum_golf.gui.controls_widget import ControlsWidget, LabeledInpu
 import double_pendulum_golf.gui.controls_widget as cw
 
 
-def test_labeled_input(qapp):
+def test_labeled_input(qapp) -> Any:
     li = LabeledInput("Label", "Val", "Tooltip")
     assert li.value == "Val"
     li.set_value("NewVal")
     assert li.value == "NewVal"
 
 
-def test_row(qapp):
+def test_row(qapp) -> Any:
     w1 = QWidget()
     w2 = QWidget()
     lyt = _row(w1, w2)
     assert lyt.count() == 2
 
 
-def test_controls_init_and_getters(qapp):
+def test_controls_init_and_getters(qapp) -> Any:
     w = ControlsWidget()
     assert len(w._get_joint_names()) == 2
     assert len(w._get_torque_inputs()) == 2
@@ -37,20 +39,20 @@ def test_controls_init_and_getters(qapp):
     assert "Play" in w.btn_play.text()
 
 
-def test_controls_uai_ui(qapp, monkeypatch):
+def test_controls_uai_ui(qapp, monkeypatch) -> Any:
     class MockUAI(QWidget):
         def __init__(self, *args, **kwargs):
             super().__init__()
             self._val = kwargs.get("default_value", 0.0)
 
         @property
-        def value(self):
+        def value(self) -> Any:
             return str(self._val)
 
-        def value_si(self):
+        def value_si(self) -> Any:
             return self._val
 
-        def set_value(self, val, is_si=False):
+        def set_value(self, val, is_si=False) -> Any:
             pass
 
     monkeypatch.setattr(cw, "_HAS_UAI", True)
@@ -77,7 +79,7 @@ def test_controls_uai_ui(qapp, monkeypatch):
     assert params["m1"] > 0
 
 
-def test_controls_preview_error(qapp):
+def test_controls_preview_error(qapp) -> Any:
     w = ControlsWidget()
     w.inp_tend.set_value("invalid")
     w._update_torque_preview()
@@ -88,9 +90,9 @@ def test_controls_preview_error(qapp):
     w._update_torque_preview()
 
 
-def test_controls_uai_or_parse(qapp, monkeypatch):
+def test_controls_uai_or_parse(qapp, monkeypatch) -> Any:
     class MockUAI(QWidget):
-        def value_si(self):
+        def value_si(self) -> Any:
             return 99.0
 
     monkeypatch.setattr(cw, "_HAS_UAI", True)

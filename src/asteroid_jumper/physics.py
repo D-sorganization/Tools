@@ -27,18 +27,18 @@ class Vec2(NamedTuple):
     y: float = 0.0
 
     def __add__(self, other: object) -> Vec2:  # noqa: PYI034  # override with wider type
-        if not (isinstance(other):
-            raise ValueError(Vec2), "Vec2 + Vec2 required")
+        if not isinstance(other, Vec2):
+            raise TypeError("Vec2 + Vec2 required")
         return Vec2(self.x + other.x, self.y + other.y)
 
     def __sub__(self, other: object) -> Vec2:  # noqa: PYI034  # override with wider type
-        if not (isinstance(other):
-            raise ValueError(Vec2), "Vec2 - Vec2 required")
+        if not isinstance(other, Vec2):
+            raise TypeError("Vec2 - Vec2 required")
         return Vec2(self.x - other.x, self.y - other.y)
 
     def __mul__(self, scalar: object) -> Vec2:
-        if not (isinstance(scalar):
-            raise ValueError(int | float), "Vec2 * scalar required")
+        if not isinstance(scalar, (int, float)):
+            raise TypeError("Vec2 * scalar required")
         return Vec2(self.x * scalar, self.y * scalar)
 
     def __rmul__(self, scalar: object) -> Vec2:

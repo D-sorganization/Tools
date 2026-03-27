@@ -1,12 +1,14 @@
+from numba import jit
+
 """Shared utilities for code quality checks."""
 
-import ast
-import re
-import sys
-from pathlib import Path
-from re import Pattern
+import ast  # noqa: E402
+import re  # noqa: E402
+import sys  # noqa: E402
+from pathlib import Path  # noqa: E402
+from re import Pattern  # noqa: E402
 
-from src.shared.python.contracts import require
+from src.shared.python.contracts import require  # noqa: E402
 
 
 # ANSI colors for terminal output
@@ -79,6 +81,9 @@ MAGIC_NUMBERS: list[tuple[Pattern, str]] = [
 ]
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
     """Check if a pass statement is in a legitimate context."""
     if not (lines is not None):

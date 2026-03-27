@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for N-DOF TorqueHistoryWidget.
 
 TDD: These tests verify the TorqueHistoryWidget dynamically supports
@@ -25,35 +27,35 @@ from double_pendulum_golf.gui.torque_history_constants import (
 class TestJointLabelsForNdof:
     """Test the joint label lookup function."""
 
-    def test_double_labels(self):
+    def test_double_labels(self) -> Any:
         labels = _joint_labels_for_ndof(2)
         assert labels == ["Shoulder", "Wrist"]
 
-    def test_triple_labels(self):
+    def test_triple_labels(self) -> Any:
         labels = _joint_labels_for_ndof(3)
         assert labels == ["Shoulder", "Elbow", "Wrist"]
 
-    def test_golfer_labels(self):
+    def test_golfer_labels(self) -> Any:
         labels = _joint_labels_for_ndof(7)
         assert len(labels) == 7
         assert labels[0] == "Hub"
         assert "R Shoulder" in labels
         assert "L Wrist" in labels
 
-    def test_arbitrary_ndof_fallback(self):
+    def test_arbitrary_ndof_fallback(self) -> Any:
         labels = _joint_labels_for_ndof(5)
         assert len(labels) == 5
         assert labels[0] == "Joint 1"
         assert labels[4] == "Joint 5"
 
-    def test_returns_new_list_each_call(self):
+    def test_returns_new_list_each_call(self) -> Any:
         """Ensure we get a fresh copy, not the same mutable list."""
         a = _joint_labels_for_ndof(2)
         b = _joint_labels_for_ndof(2)
         assert a == b
         assert a is not b  # distinct objects
 
-    def test_zero_joints_raises(self):
+    def test_zero_joints_raises(self) -> Any:
         """n_joints must be positive."""
         with pytest.raises((ValueError, TypeError)):
             _joint_labels_for_ndof(0)
@@ -66,7 +68,7 @@ class TestTorqueHistoryWidgetContract:
     in headless environments.
     """
 
-    def test_clear_without_simulation_does_not_crash(self):
+    def test_clear_without_simulation_does_not_crash(self) -> Any:
         """clear() on a fresh widget should not raise."""
         pytest.importorskip("pyqtgraph")
         try:
@@ -83,7 +85,7 @@ class TestTorqueHistoryWidgetContract:
         widget = TorqueHistoryWidget()
         widget.clear()  # should not raise
 
-    def test_set_frame_without_simulation_noop(self):
+    def test_set_frame_without_simulation_noop(self) -> Any:
         """set_frame() before set_simulation should be a no-op."""
         pytest.importorskip("pyqtgraph")
         try:
@@ -104,16 +106,16 @@ class TestTorqueHistoryWidgetContract:
 class TestColorPaletteCoverage:
     """Verify color palettes cover at least 7 joints."""
 
-    def test_drive_colors_length(self):
+    def test_drive_colors_length(self) -> Any:
         assert len(_DRIVE_COLORS) >= 7
 
-    def test_friction_colors_length(self):
+    def test_friction_colors_length(self) -> Any:
         assert len(_FRICTION_COLORS) >= 7
 
-    def test_total_colors_length(self):
+    def test_total_colors_length(self) -> Any:
         assert len(_TOTAL_COLORS) >= 7
 
-    def test_colors_are_rgb_tuples(self):
+    def test_colors_are_rgb_tuples(self) -> Any:
         """Each color should be a 3-tuple of ints in [0, 255]."""
         for palette in [_DRIVE_COLORS, _FRICTION_COLORS, _TOTAL_COLORS]:
             for color in palette:

@@ -1,3 +1,5 @@
+from typing import Any
+
 """Gap-fill tests for physics_triple.py — covers remaining uncovered lines.
 
 Lines 410-412: equations_of_motion with torque_limits (clamp_torque_ndof path)
@@ -22,7 +24,7 @@ def params() -> TriplePendulumParams:
 
 
 @pytest.fixture
-def zero_torque():
+def zero_torque() -> Any:
     return lambda t: (0.0, 0.0, 0.0)
 
 
@@ -32,12 +34,14 @@ def zero_torque():
 
 
 class TestEquationsOfMotionWithTorqueLimits:
-    def test_with_torque_limits_clamps(self, params: TriplePendulumParams, zero_torque) -> None:
+    def test_with_torque_limits_clamps(
+        self, params: TriplePendulumParams, zero_torque
+    ) -> None:
         """Passing torque_limits clamps huge torques and still produces finite derivatives."""
         state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
         limits = np.array([0.001, 0.001, 0.001])  # tiny limits
 
-        def huge_torque(t):
+        def huge_torque(t) -> Any:
             return (1e6, 1e6, 1e6)
 
         state_dot = equations_of_motion(state, 0.0, params, huge_torque, torque_limits=limits)
@@ -49,14 +53,16 @@ class TestEquationsOfMotionWithTorqueLimits:
         state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
         limits = np.array([np.inf, np.inf, np.inf])
 
-        def tau_fn(t):
+        def tau_fn(t) -> Any:
             return (5.0, -3.0, 2.0)
 
         state_dot = equations_of_motion(state, 0.0, params, tau_fn, torque_limits=limits)
         assert state_dot.shape == (6,)
         assert np.all(np.isfinite(state_dot))
 
-    def test_no_torque_limits_same_as_none(self, params: TriplePendulumParams, zero_torque) -> None:
+    def test_no_torque_limits_same_as_none(
+        self, params: TriplePendulumParams, zero_torque
+    ) -> None:
         """Without limits, result should match None path."""
         state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
         sd_no_limits = equations_of_motion(state, 0.0, params, zero_torque, torque_limits=None)

@@ -1,6 +1,8 @@
+from typing import Any
+
 """Tests for Pressure Drop Calculator GUI."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import importlib.util
 import os
@@ -60,7 +62,7 @@ class TestPressureDropGUI:
     """Test suite for Pressure Drop Calculator GUI."""
 
     @pytest.fixture
-    def mock_qt_app(self):
+    def mock_qt_app(self) -> Any:
         """Create a mock Qt application for testing."""
         with patch("PyQt6.QtWidgets.QApplication"):
             yield
@@ -68,7 +70,9 @@ class TestPressureDropGUI:
     def test_launcher_dependencies(self) -> None:
         """Test that the launcher can check dependencies."""
         launcher_path = Path(__file__).resolve().parents[1] / "launch_pyqt6.py"
-        spec = importlib.util.spec_from_file_location("pressure_drop_launch_pyqt6", launcher_path)
+        spec = importlib.util.spec_from_file_location(
+            "pressure_drop_launch_pyqt6", launcher_path
+        )
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
 
@@ -97,15 +101,21 @@ class TestPressureDropGUI:
             )
 
             with (
-                patch.object(PressureDropCalculatorWidget, "_init_ui", return_value=None),
-                patch.object(PressureDropCalculatorWidget, "_apply_styling", return_value=None),
+                patch.object(
+                    PressureDropCalculatorWidget, "_init_ui", return_value=None
+                ),
+                patch.object(
+                    PressureDropCalculatorWidget, "_apply_styling", return_value=None
+                ),
                 patch.object(
                     PressureDropCalculatorWidget,
                     "_connect_signals",
                     return_value=None,
                 ),
             ):
-                widget = PressureDropCalculatorWidget.__new__(PressureDropCalculatorWidget)
+                widget = PressureDropCalculatorWidget.__new__(
+                    PressureDropCalculatorWidget
+                )
                 assert widget is not None
         except ImportError as e:
             pytest.skip(f"Qt not available: {e}")

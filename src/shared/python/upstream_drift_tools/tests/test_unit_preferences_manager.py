@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -13,7 +14,7 @@ from upstream_drift_tools.ui.managers.unit_preferences_manager import (
 
 
 @pytest.fixture(autouse=True)
-def clean_preferences():
+def clean_preferences() -> Any:
     # Clear the singleton before and after each test
     _PreferencesHolder.instance = None
     settings = QSettings("UpstreamDriftTools", "UnitPreferences")
@@ -23,19 +24,19 @@ def clean_preferences():
     settings.clear()
 
 
-def test_manager_singleton():
+def test_manager_singleton() -> Any:
     manager1 = get_unit_preferences_manager()
     manager2 = get_unit_preferences_manager()
     assert manager1 is manager2
 
 
-def test_load_preferences_default(qapp):
+def test_load_preferences_default(qapp) -> Any:
     manager = UnitPreferencesManager()
     assert manager._preset_name == "Default"
     assert manager.get_preferred_unit("temperature") == "°C"
 
 
-def test_load_preferences_custom(qapp):
+def test_load_preferences_custom(qapp) -> Any:
     settings = QSettings("UpstreamDriftTools", "UnitPreferences")
     custom_prefs = {"temperature": "K"}
     settings.setValue("unit_preferences", json.dumps(custom_prefs))
@@ -47,18 +48,18 @@ def test_load_preferences_custom(qapp):
     assert manager.get_preferred_unit("pressure") == "atm"  # fell back to default
 
 
-def test_load_preferences_bad_json(qapp):
+def test_load_preferences_bad_json(qapp) -> Any:
     settings = QSettings("UpstreamDriftTools", "UnitPreferences")
     settings.setValue("unit_preferences", "{bad json}")
     manager = UnitPreferencesManager()
     assert manager.get_preferred_unit("temperature") == "°C"  # default recovery
 
 
-def test_set_preferred_unit(qapp):
+def test_set_preferred_unit(qapp) -> Any:
     manager = UnitPreferencesManager()
     settings = QSettings("UpstreamDriftTools", "UnitPreferences")
 
-    def on_changed(cat, unit):
+    def on_changed(cat, unit) -> Any:
         assert cat == "temperature"
         assert unit == "K"
 
@@ -73,21 +74,23 @@ def test_set_preferred_unit(qapp):
     assert saved.get("temperature") == "K"
 
 
-def test_set_preferred_unit_invalid(qapp):
+def test_set_preferred_unit_invalid(qapp) -> Any:
     manager = UnitPreferencesManager()
     manager.set_preferred_unit("invalid_category", "X")
     manager.set_preferred_unit("temperature", "invalid_unit")
     assert manager.get_preferred_unit("temperature") == "°C"
 
 
-def test_get_si_unit():
+def test_get_si_unit() -> Any:
     manager = UnitPreferencesManager()
     assert manager.get_si_unit("temperature") == "K"
     assert manager.get_si_unit("invalid_category") == ""
 
 
-@patch("upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter")
-def test_convert_to_si(mock_converter, qapp):
+@patch(
+    "upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter"
+)
+def test_convert_to_si(mock_converter, qapp) -> Any:
     manager = UnitPreferencesManager()
     # Mock the return of converter.convert().value
     mock_convert_result = MagicMock()
@@ -103,8 +106,10 @@ def test_convert_to_si(mock_converter, qapp):
     assert manager.convert_to_si(100.0, "temperature", "K") == 100.0
 
 
-@patch("upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter")
-def test_convert_from_si(mock_converter, qapp):
+@patch(
+    "upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter"
+)
+def test_convert_from_si(mock_converter, qapp) -> Any:
     manager = UnitPreferencesManager()
     mock_convert_result = MagicMock()
     mock_convert_result.value = 0.0
@@ -118,8 +123,10 @@ def test_convert_from_si(mock_converter, qapp):
     assert manager.convert_from_si(100.0, "temperature", "K") == 100.0
 
 
-@patch("upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter")
-def test_convert_error_handling(mock_converter, qapp):
+@patch(
+    "upstream_drift_tools.ui.managers.unit_preferences_manager.UnitPreferencesManager.converter"
+)
+def test_convert_error_handling(mock_converter, qapp) -> Any:
     manager = UnitPreferencesManager()
     mock_converter.convert.side_effect = ValueError("Bad unit")
 
@@ -128,7 +135,7 @@ def test_convert_error_handling(mock_converter, qapp):
     assert manager.convert_from_si(567.8, "temperature", "°C") == 567.8
 
 
-def test_lazy_converter_property(qapp):
+def test_lazy_converter_property(qapp) -> Any:
     # Tests the lazy property initialization
     manager = UnitPreferencesManager()
     with patch(

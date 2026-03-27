@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Tests for URDF generator module.
 """
@@ -17,11 +19,11 @@ from humanoid_character_builder.generators.urdf_generator import (
 class TestHumanoidURDFGenerator:
     """Tests for HumanoidURDFGenerator class."""
 
-    def test_init_default(self):
+    def test_init_default(self) -> Any:
         generator = HumanoidURDFGenerator()
         assert generator.config.default_density > 0
 
-    def test_generate_default_params(self):
+    def test_generate_default_params(self) -> Any:
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
 
@@ -32,7 +34,7 @@ class TestHumanoidURDFGenerator:
         assert "<link" in urdf
         assert "<joint" in urdf
 
-    def test_generate_custom_params(self):
+    def test_generate_custom_params(self) -> Any:
         generator = HumanoidURDFGenerator()
         params = BodyParameters(name="athlete", height_m=1.9, mass_kg=90.0)
 
@@ -40,7 +42,7 @@ class TestHumanoidURDFGenerator:
 
         assert '<robot name="athlete"' in urdf
 
-    def test_generate_valid_xml(self):
+    def test_generate_valid_xml(self) -> Any:
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
 
@@ -50,7 +52,7 @@ class TestHumanoidURDFGenerator:
         root = ET.fromstring(urdf)
         assert root.tag == "robot"
 
-    def test_generate_has_links(self):
+    def test_generate_has_links(self) -> Any:
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
         urdf = generator.generate(params)
@@ -63,7 +65,7 @@ class TestHumanoidURDFGenerator:
         assert "head" in link_names
         assert "left_foot" in link_names
 
-    def test_generate_has_joints(self):
+    def test_generate_has_joints(self) -> Any:
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
         urdf = generator.generate(params)
@@ -73,7 +75,7 @@ class TestHumanoidURDFGenerator:
         # Should have plenty of joints
         assert len(joints) > 10
 
-    def test_generate_inertial_properties(self):
+    def test_generate_inertial_properties(self) -> Any:
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
         urdf = generator.generate(params)
@@ -88,7 +90,7 @@ class TestHumanoidURDFGenerator:
                 assert inertia is not None
                 assert float(mass.get("value")) > 0
 
-    def test_generate_visual_geometry(self):
+    def test_generate_visual_geometry(self) -> Any:
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
         urdf = generator.generate(params)
@@ -107,7 +109,7 @@ class TestHumanoidURDFGenerator:
                 or geometry.find("mesh") is not None
             )
 
-    def test_generate_collision_geometry(self):
+    def test_generate_collision_geometry(self) -> Any:
         config = URDFGeneratorConfig(generate_collision=True)
         generator = HumanoidURDFGenerator(config)
         params = BodyParameters()
@@ -122,7 +124,7 @@ class TestHumanoidURDFGenerator:
 
         assert collision_count > 0
 
-    def test_generate_no_collision(self):
+    def test_generate_no_collision(self) -> Any:
         config = URDFGeneratorConfig(generate_collision=False)
         generator = HumanoidURDFGenerator(config)
         params = BodyParameters()
@@ -133,7 +135,7 @@ class TestHumanoidURDFGenerator:
         for link in root.findall("link"):
             assert link.find("collision") is None
 
-    def test_generate_write_to_file(self):
+    def test_generate_write_to_file(self) -> Any:
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
 
@@ -144,7 +146,7 @@ class TestHumanoidURDFGenerator:
             assert output_path.exists()
             assert output_path.stat().st_size > 0
 
-    def test_generate_joint_limits(self):
+    def test_generate_joint_limits(self) -> Any:
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
         urdf = generator.generate(params)
@@ -159,7 +161,7 @@ class TestHumanoidURDFGenerator:
                 assert "effort" in limit.attrib
                 assert "velocity" in limit.attrib
 
-    def test_generate_joint_dynamics(self):
+    def test_generate_joint_dynamics(self) -> Any:
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
         urdf = generator.generate(params)
@@ -175,18 +177,18 @@ class TestHumanoidURDFGenerator:
 class TestGenerateHumanoidURDF:
     """Tests for convenience function."""
 
-    def test_basic_call(self):
+    def test_basic_call(self) -> Any:
         params = BodyParameters()
         urdf = generate_humanoid_urdf(params)
         assert "<robot" in urdf
 
-    def test_with_config(self):
+    def test_with_config(self) -> Any:
         params = BodyParameters()
         config = URDFGeneratorConfig(pretty_print=False)
         urdf = generate_humanoid_urdf(params, config=config)
         assert "\n" not in urdf  # Should be one line if not pretty printed (mostly)
 
-    def test_with_output_path(self):
+    def test_with_output_path(self) -> Any:
         params = BodyParameters()
         with tempfile.TemporaryDirectory() as tmpdir:
             output_path = Path(tmpdir) / "humanoid.urdf"
@@ -198,7 +200,7 @@ class TestGenerateHumanoidURDF:
 class TestCompositeJointExpansion:
     """Tests for composite joint expansion."""
 
-    def test_gimbal_joint_expansion(self):
+    def test_gimbal_joint_expansion(self) -> Any:
         # The neck_to_head joint is typically a gimbal joint
         generator = HumanoidURDFGenerator()
         params = BodyParameters()
@@ -210,10 +212,12 @@ class TestCompositeJointExpansion:
 
         # Look for _x, _y, _z suffixes if gimbal was expanded
         # Note: names might differ depending on joint definition
-        expanded = any("_x" in name or "_y" in name or "_z" in name for name in joint_names)
+        expanded = any(
+            "_x" in name or "_y" in name or "_z" in name for name in joint_names
+        )
         assert expanded
 
-    def test_no_expansion(self):
+    def test_no_expansion(self) -> Any:
         config = URDFGeneratorConfig(expand_composite_joints=False)
         generator = HumanoidURDFGenerator(config)
         params = BodyParameters()
@@ -230,7 +234,9 @@ class TestCompositeJointExpansion:
         # So we should see a single revolute joint for the gimbal joint.
 
         # Specifically neck_to_head
-        neck_joints = [j for j in root.findall("joint") if j.get("name").startswith("neck_to_head")]
+        neck_joints = [
+            j for j in root.findall("joint") if j.get("name").startswith("neck_to_head")
+        ]
         assert len(neck_joints) == 1
         assert neck_joints[0].get("type") == "revolute"
 
@@ -238,7 +244,7 @@ class TestCompositeJointExpansion:
 class TestProportionFactors:
     """Tests for proportion scaling."""
 
-    def test_tall_character(self):
+    def test_tall_character(self) -> Any:
         generator = HumanoidURDFGenerator()
 
         # Generate standard and tall
@@ -253,7 +259,7 @@ class TestProportionFactors:
         # Instead, we can inspect the generated link lengths in the generator logic?
         # Or check the <cylinder length="..."> in the XML.
 
-        def get_total_cylinder_length(xml_str):
+        def get_total_cylinder_length(xml_str) -> Any:
             root = ET.fromstring(xml_str)
             total = 0.0
             for geom in root.findall(".//geometry/cylinder"):
@@ -265,7 +271,7 @@ class TestProportionFactors:
 
         assert len_tall > len_std
 
-    def test_wide_shoulders(self):
+    def test_wide_shoulders(self) -> Any:
         generator = HumanoidURDFGenerator()
 
         params = BodyParameters(shoulder_width_factor=1.5)
@@ -274,7 +280,7 @@ class TestProportionFactors:
         # Hard to verify without parsing positions, but execution should succeed
         assert urdf is not None
 
-    def test_muscular_build(self):
+    def test_muscular_build(self) -> Any:
         generator = HumanoidURDFGenerator()
 
         params = BodyParameters(muscularity=0.8, body_fat_factor=0.1)

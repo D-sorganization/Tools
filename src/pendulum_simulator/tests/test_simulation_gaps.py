@@ -1,3 +1,5 @@
+from typing import Any
+
 """Gap-fill tests for simulation.py, simulation_triple.py, simulation_golfer.py.
 
 simulation.py line 170: total_torques_at with non-None clamp
@@ -37,7 +39,7 @@ class TestSimulationTotalTorquesWithClamp:
         params = PendulumParams(m1=5.0, m2=0.5, L1=0.6, L2=1.0)
         clamp = TorqueClamp(max_torque1=0.001, max_torque2=0.001)  # tiny limit
 
-        def big_torque(t):
+        def big_torque(t) -> Any:
             return (1e6, 1e6)
 
         result = run_double_sim(

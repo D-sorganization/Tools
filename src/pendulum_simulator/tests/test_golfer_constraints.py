@@ -1,3 +1,4 @@
+from typing import Any
 import numpy as np
 import pytest
 
@@ -12,7 +13,7 @@ from double_pendulum_golf.physics_golfer import GolferParams, N_DOF
 
 
 @pytest.fixture
-def params():
+def params() -> Any:
     return GolferParams(
         m_hub=0.01,
         m_r_upper=2.0,
@@ -34,21 +35,21 @@ def params():
 
 
 @pytest.fixture
-def valid_q():
+def valid_q() -> Any:
     return np.zeros(N_DOF)
 
 
 @pytest.fixture
-def valid_qdot():
+def valid_qdot() -> Any:
     return np.zeros(N_DOF)
 
 
 @pytest.fixture
-def valid_qddot():
+def valid_qddot() -> Any:
     return np.zeros(N_DOF)
 
 
-def test_constraint_vector_shape_and_dbc(params, valid_q):
+def test_constraint_vector_shape_and_dbc(params, valid_q) -> Any:
     """Test standard shape output and DbC checks for constraint vector calculation."""
     phi = constraint_vector(valid_q, params)
     assert phi.shape == (4,)
@@ -64,7 +65,7 @@ def test_constraint_vector_shape_and_dbc(params, valid_q):
         constraint_vector(valid_q, "fake_params")  # Wrong params
 
 
-def test_numerical_jacobian_shape_and_dbc(params, valid_q):
+def test_numerical_jacobian_shape_and_dbc(params, valid_q) -> Any:
     """Test standard shape output and DbC for numerical jacobian."""
     J = numerical_constraint_jacobian(valid_q, params)
     assert J.shape == (4, N_DOF)
@@ -75,7 +76,7 @@ def test_numerical_jacobian_shape_and_dbc(params, valid_q):
         numerical_constraint_jacobian(np.ones(N_DOF - 1), params)
 
 
-def test_analytical_jacobian_shape_and_dbc(params, valid_q):
+def test_analytical_jacobian_shape_and_dbc(params, valid_q) -> Any:
     """Test standard shape output and DbC for analytical jacobian."""
     J = analytical_constraint_jacobian(valid_q, params)
     assert J.shape == (4, N_DOF)
@@ -86,7 +87,7 @@ def test_analytical_jacobian_shape_and_dbc(params, valid_q):
         analytical_constraint_jacobian(np.ones(N_DOF - 1), params)
 
 
-def test_analytical_vs_numerical_jacobian(params):
+def test_analytical_vs_numerical_jacobian(params) -> Any:
     """TDD check: analytical jacobian closely matches analytical jacobian."""
     # Use a random reachable pose
     q = np.array([0.1, 0.2, 0.3, 0.4, 0.5, -0.1, -0.2, 0.05])
@@ -96,7 +97,7 @@ def test_analytical_vs_numerical_jacobian(params):
     np.testing.assert_allclose(J_num, J_ana, rtol=1e-4, atol=1e-4)
 
 
-def test_linear_accelerations_dbc(params, valid_q, valid_qdot, valid_qddot):
+def test_linear_accelerations_dbc(params, valid_q, valid_qdot, valid_qddot) -> Any:
     """Test DbC type enforcement on linear acceleration vectors."""
     acc = linear_accelerations(valid_q, valid_qdot, valid_qddot, params)
     assert isinstance(acc, dict)
@@ -118,7 +119,7 @@ def test_linear_accelerations_dbc(params, valid_q, valid_qdot, valid_qddot):
         linear_accelerations(valid_q, valid_qdot, np.zeros(2), params)
 
 
-def test_friction_torque_vector_dbc(params, valid_qdot):
+def test_friction_torque_vector_dbc(params, valid_qdot) -> Any:
     """Test DbC checks for friction torques."""
     tau_f = friction_torque_vector(valid_qdot, params)
     assert tau_f.shape == (N_DOF,)

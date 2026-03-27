@@ -1,3 +1,5 @@
+from typing import Any
+
 """TDD / DbC tests for VectorizedFilterEngine — issue #929.
 
 Tests cover:
@@ -88,7 +90,7 @@ class TestVectorizedFilterEngineInit:
 
 class TestApplyFilterBatchContracts:
     @pytest.fixture
-    def engine(self):
+    def engine(self) -> Any:
         return VectorizedFilterEngine(n_jobs=1)
 
     def test_rejects_empty_dataframe(self, engine) -> None:
@@ -144,7 +146,7 @@ class TestFilterOutputShapes:
     """All filters must return a DataFrame with the same columns as input."""
 
     @pytest.fixture
-    def engine(self):
+    def engine(self) -> Any:
         return VectorizedFilterEngine(n_jobs=1)
 
     @pytest.mark.parametrize("filter_type,params", FILTER_TYPES)
@@ -166,7 +168,7 @@ class TestMovingAverageCorrectness:
     """Targeted tests for Moving Average — the most DRY-critical filter."""
 
     @pytest.fixture
-    def engine(self):
+    def engine(self) -> Any:
         return VectorizedFilterEngine(n_jobs=1)
 
     def test_constant_signal_unchanged(self, engine) -> None:
@@ -194,7 +196,7 @@ class TestNaNPreservation:
     """Invariant: NaN positions in the input must be preserved in the output."""
 
     @pytest.fixture
-    def engine(self):
+    def engine(self) -> Any:
         return VectorizedFilterEngine(n_jobs=1)
 
     @pytest.mark.parametrize(

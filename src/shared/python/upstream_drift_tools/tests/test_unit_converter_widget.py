@@ -41,7 +41,7 @@ def test_case_insensitive_completer() -> None:
 
 
 @pytest.fixture
-def clean_settings():
+def clean_settings() -> Any:
     settings = QSettings("UpstreamDriftTools", "UnitConverter_Test")
     settings.clear()
     with patch(

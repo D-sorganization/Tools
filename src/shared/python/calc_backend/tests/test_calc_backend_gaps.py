@@ -1,3 +1,5 @@
+from typing import Any
+
 """Targeted coverage tests for remaining calc_backend gaps.
 
 Covers first-party code only:
@@ -16,7 +18,7 @@ wraps the deprecated `rotation_converter` package (an external dependency).
 The model validators in *contracts* are pure first-party logic and safe to test.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from unittest.mock import MagicMock, patch
 
@@ -33,7 +35,7 @@ class TestThermalProfileErrorPath:
     (power_func fallback when profile is not constant/linear_ramp/step).
     """
 
-    def _valid_request(self, **overrides):
+    def _valid_request(self, **overrides) -> Any:
         from calc_backend.contracts.thermal_profile import ThermalProfileRequest
 
         kwargs = dict(
@@ -50,7 +52,7 @@ class TestThermalProfileErrorPath:
         kwargs.update(overrides)
         return ThermalProfileRequest(**kwargs)
 
-    def test_arithmetic_error_raises_http_422(self):
+    def test_arithmetic_error_raises_http_422(self) -> Any:
         """Trigger the except-HTTPException branch (lines 23-24) in router."""
         from calc_backend.routers.thermal_profile import predict_thermal_profile
 
@@ -65,7 +67,7 @@ class TestThermalProfileErrorPath:
         assert exc_info.value.status_code == 422
         assert "division by zero" in exc_info.value.detail
 
-    def test_power_func_fallback_branch(self):
+    def test_power_func_fallback_branch(self) -> Any:
         """Cover line 43: power_func returns power_w for unknown profile."""
         from calc_backend.routers.thermal_profile import _solve_thermal_profile
 
@@ -84,7 +86,7 @@ class TestThermalProfileErrorPath:
 class TestWGSReactorErrorPaths:
     """Cover equilibrium error path (lines 37-38) and sizing error path (65-66)."""
 
-    def _minimal_payload(self):
+    def _minimal_payload(self) -> Any:
         return {
             "inlet_composition": {"CO": 0.4, "H2O": 0.4, "CO2": 0.1, "H2": 0.1},
             "temperature_k": 700.0,
@@ -93,14 +95,16 @@ class TestWGSReactorErrorPaths:
             "feed_rate_kmol_hr": 0.0,
         }
 
-    def test_equilibrium_error_raises_422(self):
+    def test_equilibrium_error_raises_422(self) -> Any:
         """Lines 37-38: equilibrium ValueError → HTTPException 422."""
         from calc_backend.contracts.wgs_reactor import WGSReactorRequest
 
         req = WGSReactorRequest(**self._minimal_payload())
 
         mock_engine = MagicMock()
-        mock_engine.calculate_equilibrium_composition.side_effect = ValueError("bad equilibrium")
+        mock_engine.calculate_equilibrium_composition.side_effect = ValueError(
+            "bad equilibrium"
+        )
         # WGSReactorEngine is imported inside the function; patch the source module
         with patch(
             "upstream_drift_tools.process_calculators.WGSReactorEngine",
@@ -116,7 +120,7 @@ class TestWGSReactorErrorPaths:
                 _m.calculate_wgs(req)
         assert exc_info.value.status_code == 422
 
-    def test_sizing_error_raises_422(self):
+    def test_sizing_error_raises_422(self) -> Any:
         """Lines 65-66: sizing KeyError → HTTPException 422."""
         from calc_backend.contracts.wgs_reactor import WGSReactorRequest
 
@@ -157,7 +161,7 @@ class TestWGSReactorErrorPaths:
 class TestReferenceFrameConversionRequestValidator:
     """Cover the model_validator branches in contracts.rotation_converter (91-151)."""
 
-    def _twist_frame_payload(self, **overrides):
+    def _twist_frame_payload(self, **overrides) -> Any:
         base = {
             "operation": "twist_frame_conversion",
             "transform": [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]],
@@ -166,7 +170,7 @@ class TestReferenceFrameConversionRequestValidator:
         base.update(overrides)
         return base
 
-    def _homogeneous_payload(self, **overrides):
+    def _homogeneous_payload(self, **overrides) -> Any:
         base = {
             "operation": "homogeneous_transform",
             "rotation_matrix": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
@@ -175,7 +179,7 @@ class TestReferenceFrameConversionRequestValidator:
         base.update(overrides)
         return base
 
-    def test_twist_frame_conversion_missing_transform_raises(self):
+    def test_twist_frame_conversion_missing_transform_raises(self) -> Any:
         from calc_backend.contracts.rotation_converter import (
             ReferenceFrameConversionRequest,
         )
@@ -187,7 +191,7 @@ class TestReferenceFrameConversionRequestValidator:
                 twist=[0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
             )
 
-    def test_twist_frame_conversion_extra_field_raises(self):
+    def test_twist_frame_conversion_extra_field_raises(self) -> Any:
         """Providing rotation_matrix with twist_frame_conversion should fail."""
         from calc_backend.contracts.rotation_converter import (
             ReferenceFrameConversionRequest,
@@ -202,7 +206,7 @@ class TestReferenceFrameConversionRequestValidator:
                 rotation_matrix=[[1, 0, 0], [0, 1, 0], [0, 0, 1]],
             )
 
-    def test_twist_frame_conversion_valid_passes(self):
+    def test_twist_frame_conversion_valid_passes(self) -> Any:
         from calc_backend.contracts.rotation_converter import (
             ReferenceFrameConversionRequest,
         )
@@ -210,7 +214,7 @@ class TestReferenceFrameConversionRequestValidator:
         req = ReferenceFrameConversionRequest(**self._twist_frame_payload())
         assert req.operation == "twist_frame_conversion"
 
-    def test_homogeneous_transform_missing_rotation_raises(self):
+    def test_homogeneous_transform_missing_rotation_raises(self) -> Any:
         from calc_backend.contracts.rotation_converter import (
             ReferenceFrameConversionRequest,
         )
@@ -222,7 +226,7 @@ class TestReferenceFrameConversionRequestValidator:
                 translation=[0.0, 0.0, 1.0],
             )
 
-    def test_homogeneous_transform_extra_field_raises(self):
+    def test_homogeneous_transform_extra_field_raises(self) -> Any:
         """Providing transform with homogeneous_transform should fail."""
         from calc_backend.contracts.rotation_converter import (
             ReferenceFrameConversionRequest,
@@ -237,7 +241,7 @@ class TestReferenceFrameConversionRequestValidator:
                 transform=[[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]],
             )
 
-    def test_homogeneous_transform_valid_passes(self):
+    def test_homogeneous_transform_valid_passes(self) -> Any:
         from calc_backend.contracts.rotation_converter import (
             ReferenceFrameConversionRequest,
         )
@@ -245,7 +249,7 @@ class TestReferenceFrameConversionRequestValidator:
         req = ReferenceFrameConversionRequest(**self._homogeneous_payload())
         assert req.operation == "homogeneous_transform"
 
-    def test_so3_maps_no_source_raises(self):
+    def test_so3_maps_no_source_raises(self) -> Any:
         """so3_so3_maps requires exactly one so3_vector, so3_matrix, or rotation_matrix."""
         from calc_backend.contracts.rotation_converter import (
             ReferenceFrameConversionRequest,
@@ -255,7 +259,7 @@ class TestReferenceFrameConversionRequestValidator:
         with pytest.raises(ValidationError, match="exactly one"):
             ReferenceFrameConversionRequest(operation="so3_so3_maps")
 
-    def test_so3_maps_multiple_sources_raises(self):
+    def test_so3_maps_multiple_sources_raises(self) -> Any:
         from calc_backend.contracts.rotation_converter import (
             ReferenceFrameConversionRequest,
         )
@@ -268,7 +272,7 @@ class TestReferenceFrameConversionRequestValidator:
                 so3_matrix=[[0, -1, 0], [1, 0, 0], [0, 0, 0]],
             )
 
-    def test_so3_maps_extra_field_raises(self):
+    def test_so3_maps_extra_field_raises(self) -> Any:
         from calc_backend.contracts.rotation_converter import (
             ReferenceFrameConversionRequest,
         )
@@ -281,15 +285,17 @@ class TestReferenceFrameConversionRequestValidator:
                 transform=[[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]],
             )
 
-    def test_so3_maps_with_so3_vector_passes(self):
+    def test_so3_maps_with_so3_vector_passes(self) -> Any:
         from calc_backend.contracts.rotation_converter import (
             ReferenceFrameConversionRequest,
         )
 
-        req = ReferenceFrameConversionRequest(operation="so3_so3_maps", so3_vector=[0.0, 0.0, 1.0])
+        req = ReferenceFrameConversionRequest(
+            operation="so3_so3_maps", so3_vector=[0.0, 0.0, 1.0]
+        )
         assert req.so3_vector == [0.0, 0.0, 1.0]
 
-    def test_so3_maps_with_rotation_matrix_passes(self):
+    def test_so3_maps_with_rotation_matrix_passes(self) -> Any:
         from calc_backend.contracts.rotation_converter import (
             ReferenceFrameConversionRequest,
         )
@@ -309,7 +315,7 @@ class TestReferenceFrameConversionRequestValidator:
 class TestPressureDropInlineBranches:
     """Cover laminar/transitional/turbulent regimes — all inline first-party code."""
 
-    def _req(self, **overrides):
+    def _req(self, **overrides) -> Any:
         from calc_backend.contracts.pressure_drop import PressureDropRequest
 
         kwargs = dict(
@@ -324,14 +330,14 @@ class TestPressureDropInlineBranches:
         kwargs.update(overrides)
         return PressureDropRequest(**kwargs)
 
-    def test_zero_flow_rate_laminar(self):
+    def test_zero_flow_rate_laminar(self) -> Any:
         """Very tiny flow rate → Re approaches 0 → laminar."""
         from calc_backend.routers.pressure_drop import calculate_pressure_drop
 
         resp = calculate_pressure_drop(self._req(flow_rate_kg_s=1e-12))
         assert resp.flow_regime == "Laminar"
 
-    def test_laminar_regime(self):
+    def test_laminar_regime(self) -> Any:
         """Re < 2300 → Laminar, friction = 64/Re."""
         from calc_backend.routers.pressure_drop import calculate_pressure_drop
 
@@ -339,7 +345,7 @@ class TestPressureDropInlineBranches:
         resp = calculate_pressure_drop(self._req(flow_rate_kg_s=0.0001))
         assert resp.flow_regime == "Laminar"
 
-    def test_turbulent_regime(self):
+    def test_turbulent_regime(self) -> Any:
         """Re > 4000 → Turbulent."""
         from calc_backend.routers.pressure_drop import calculate_pressure_drop
 
@@ -347,11 +353,13 @@ class TestPressureDropInlineBranches:
         resp = calculate_pressure_drop(self._req(flow_rate_kg_s=5.0))
         assert resp.flow_regime == "Turbulent"
 
-    def test_transitional_regime(self):
+    def test_transitional_regime(self) -> Any:
         """Re ≈ 2300-4000 → Transitional branch."""
         from calc_backend.routers.pressure_drop import calculate_pressure_drop
 
-        resp = calculate_pressure_drop(self._req(pipe_diameter_m=0.05, flow_rate_kg_s=0.005))
+        resp = calculate_pressure_drop(
+            self._req(pipe_diameter_m=0.05, flow_rate_kg_s=0.005)
+        )
         assert resp.flow_regime in {"Laminar", "Transitional", "Turbulent"}
 
 
@@ -363,7 +371,7 @@ class TestPressureDropInlineBranches:
 class TestFlareErrorPath:
     """Cover lines 37-38 in flare.py: except → HTTPException 422."""
 
-    def test_calc_error_raises_422(self):
+    def test_calc_error_raises_422(self) -> Any:
         from calc_backend.contracts.flare import FlareRequest
 
         req = FlareRequest(
@@ -392,7 +400,7 @@ class TestFlareErrorPath:
 class TestBaghouseErrorPath:
     """Cover lines 34-35 in baghouse.py: except → HTTPException 422."""
 
-    def test_calc_error_raises_422(self):
+    def test_calc_error_raises_422(self) -> Any:
         from calc_backend.contracts.baghouse import BaghouseRequest
 
         req = BaghouseRequest(
@@ -429,20 +437,20 @@ class TestBaghouseErrorPath:
 class TestAcidGasDewpointHelpers:
     """Cover _safe_float (NaN/Inf → None) — first-party inline helper."""
 
-    def test_safe_float_nan_returns_none(self):
+    def test_safe_float_nan_returns_none(self) -> Any:
         """Line 21: NaN → None."""
         from calc_backend.routers.acid_gas_dewpoint import _safe_float
 
         assert _safe_float(float("nan")) is None
 
-    def test_safe_float_inf_returns_none(self):
+    def test_safe_float_inf_returns_none(self) -> Any:
         """Line 21: Inf → None."""
         from calc_backend.routers.acid_gas_dewpoint import _safe_float
 
         assert _safe_float(float("inf")) is None
         assert _safe_float(float("-inf")) is None
 
-    def test_safe_float_normal_value_passes_through(self):
+    def test_safe_float_normal_value_passes_through(self) -> Any:
         from calc_backend.routers.acid_gas_dewpoint import _safe_float
 
         assert _safe_float(3.14) == pytest.approx(3.14)
@@ -451,7 +459,7 @@ class TestAcidGasDewpointHelpers:
 class TestScrubberErrorPaths:
     """Cover lines 47-48 (unknown packing) and 87-88 (calc error) in scrubber.py."""
 
-    def test_unknown_packing_type_raises_422(self):
+    def test_unknown_packing_type_raises_422(self) -> Any:
         """Lines 47-48: unknown packing type → HTTPException 422."""
         from calc_backend.contracts.scrubber import ScrubberRequest
         from calc_backend.routers.scrubber import calculate_scrubber
@@ -472,7 +480,7 @@ class TestScrubberErrorPaths:
         assert exc_info.value.status_code == 422
         assert "UNKNOWN_PACKING_XYZ" in exc_info.value.detail
 
-    def test_scrubber_calc_error_raises_422(self):
+    def test_scrubber_calc_error_raises_422(self) -> Any:
         """Lines 87-88: calculate_gas_density error → HTTPException 422."""
         from calc_backend.contracts.scrubber import ScrubberRequest
         from calc_backend.routers.scrubber import calculate_scrubber

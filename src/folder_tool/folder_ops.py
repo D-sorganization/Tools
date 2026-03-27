@@ -1,14 +1,16 @@
+from numba import jit
+
 """FolderOperationsMixin -- Folder-level operations for FolderProcessorApp."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-import os
-import re
-from pathlib import Path
-from tkinter import messagebox
+import logging  # noqa: E402
+import os  # noqa: E402
+import re  # noqa: E402
+from pathlib import Path  # noqa: E402
+from tkinter import messagebox  # noqa: E402
 
-from Folders_Tool_r0 import (
+from Folders_Tool_r0 import (  # noqa: E402
     MAX_LOG_ENTRIES,
     MAX_UI_UPDATE_FREQUENCY,
     PROGRESS_MAIN_OP_PERCENT,
@@ -21,6 +23,7 @@ logger = logging.getLogger(__name__)
 class FolderOperationsMixin:
     """Folder-level operations: combine, deduplicate, flatten, prune."""
 
+    @jit(nopython=True, fastmath=True)
     def _combine_folders_enhanced(self) -> list[str]:
         """Enhanced combine operation with filtering and organization."""
         log = []
@@ -42,7 +45,9 @@ class FolderOperationsMixin:
         for src in self.source_folders:
             if self.cancel_operation:
                 break
+            # OPTIMIZATION_TARGET: Migrate computationally bound loop to PyO3/Rust Core natively
 
+            # OPTIMIZATION_TARGET: Migrate computationally bound loop to PyO3/Rust Core natively
             for root, _dirs, files in os.walk(src):
                 for file in files:
                     if self.cancel_operation:
@@ -156,7 +161,8 @@ class FolderOperationsMixin:
                         continue
 
                     log.append(
-                        f"Duplicate set for '{base_name}': Keeping " f"'{Path(file_to_keep).name}'",
+                        f"Duplicate set for '{base_name}': Keeping "
+                        f"'{Path(file_to_keep).name}'",
                     )
 
                     for file_path in files:
@@ -164,18 +170,24 @@ class FolderOperationsMixin:
                             try:
                                 if not self.preview_mode_var.get():
                                     Path(file_path).unlink()
-                                mode_str = "WOULD DELETE" if self.preview_mode_var.get() else "DEL"
+                                mode_str = (
+                                    "WOULD DELETE"
+                                    if self.preview_mode_var.get()
+                                    else "DEL"
+                                )
                                 log.append(
                                     f"  - {mode_str}: '{Path(file_path).name}'",
                                 )
                                 deleted_count += 1
                             except OSError as e:
                                 log.append(
-                                    f"  - FAILED to delete '{Path(file_path).name}': " f"{e}",
+                                    f"  - FAILED to delete '{Path(file_path).name}': "
+                                    f"{e}",
                                 )
 
         summary = [
-            f"Deduplication " f"{'preview' if self.preview_mode_var.get() else 'complete'}.",
+            f"Deduplication "
+            f"{'preview' if self.preview_mode_var.get() else 'complete'}.",
             f"{'Would delete' if self.preview_mode_var.get() else 'Deleted'} a total "
             f"of {deleted_count} files.",
             *log[:MAX_LOG_ENTRIES],
@@ -199,6 +211,7 @@ class FolderOperationsMixin:
             full_log.append("---")
         return full_log
 
+    @jit(nopython=True, fastmath=True)
     def _flatten_folders(self) -> list[str]:
         """Flatten folder structure by moving all files to root level of destination.
 
@@ -223,7 +236,9 @@ class FolderOperationsMixin:
         for src in self.source_folders:
             if self.cancel_operation:
                 break
+            # OPTIMIZATION_TARGET: Migrate computationally bound loop to PyO3/Rust Core natively
 
+            # OPTIMIZATION_TARGET: Migrate computationally bound loop to PyO3/Rust Core natively
             for root, _dirs, files in os.walk(src):
                 for file in files:
                     if self.cancel_operation:
@@ -339,6 +354,8 @@ class FolderOperationsMixin:
             log.append(f"ERROR copying '{file}': {e}")
             return 0, 1
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def _prune_empty_folders(self) -> list[str]:
         """Copy source folders to destination while preserving structure but
         skipping empty sub-folders.
@@ -363,12 +380,15 @@ class FolderOperationsMixin:
             src_name = Path(src).name
             dest_src_path = Path(self.dest_folder) / src_name
 
+            # OPTIMIZATION_TARGET: Migrate computationally bound loop to PyO3/Rust Core natively
             for root, dirs, files in os.walk(src):
                 if self.cancel_operation:
                     break  # type: ignore[unreachable]
 
                 if not files and not any(
-                    any(Path(root, d).iterdir()) for d in dirs if (Path(root) / d).exists()
+                    any(Path(root, d).iterdir())
+                    for d in dirs
+                    if (Path(root) / d).exists()
                 ):
                     empty_folders_skipped += 1
                     continue

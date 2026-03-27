@@ -1,14 +1,16 @@
+from numba import jit
+
 """Diff computation mixin for URDFTextEditor.
 
 Extracts diff generation and side-by-side comparison logic
 from the main editor class to improve single-responsibility adherence.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import difflib
-import re
-from typing import TYPE_CHECKING
+import difflib  # noqa: E402
+import re  # noqa: E402
+from typing import TYPE_CHECKING  # noqa: E402
 
 if TYPE_CHECKING:
     from .text_editor import DiffResult
@@ -140,6 +142,8 @@ class TextEditorDiffMixin:
             has_changes=original != modified,
         )
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def get_side_by_side_diff(
         self,
         original: str | None = None,
@@ -171,14 +175,20 @@ class TextEditorDiffMixin:
         result: list[tuple[str | None, str | None, str]] = []
         for opcode, i1, i2, j1, j2 in differ.get_opcodes():
             if opcode == "equal":
-                for i, j in zip(range(i1, i2), range(j1, j2), strict=False):
-                    result.append((original_lines[i], modified_lines[j], "equal"))
+                result.extend(
+                    [
+                        (original_lines[i], modified_lines[j], "equal")
+                        for (i, j) in zip(range(i1, i2), range(j1, j2), strict=False)
+                    ]
+                )
             elif opcode == "insert":
-                for j in range(j1, j2):
-                    result.append((None, modified_lines[j], "insert"))
+                result.extend(
+                    [(None, modified_lines[j], "insert") for j in range(j1, j2)]
+                )
             elif opcode == "delete":
-                for i in range(i1, i2):
-                    result.append((original_lines[i], None, "delete"))
+                result.extend(
+                    [(original_lines[i], None, "delete") for i in range(i1, i2)]
+                )
             elif opcode == "replace":
                 max_len = max(i2 - i1, j2 - j1)
                 for k in range(max_len):

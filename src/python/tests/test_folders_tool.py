@@ -88,7 +88,9 @@ class TestFolderProcessorApp:
             assert app.source_folders == []
             assert app.dest_folder == ""
 
-    def test_validate_constants(self, mock_root: Mock, mock_tk_vars: dict[str, Mock]) -> None:
+    def test_validate_constants(
+        self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
+    ) -> None:
         """Test constant validation."""
         with (
             patch("tkinter.ttk.Style"),
@@ -168,7 +170,9 @@ class TestFolderProcessorApp:
             assert app.validate_inputs() is False
             mock_error.assert_called()
 
-    def test_validate_inputs_no_dest(self, mock_root: Mock, mock_tk_vars: dict[str, Mock]) -> None:
+    def test_validate_inputs_no_dest(
+        self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
+    ) -> None:
         """Test validate_inputs with no dest."""
         with (
             patch("tkinter.ttk.Style"),
@@ -325,7 +329,9 @@ class TestFolderProcessorApp:
             with pytest.raises(ValueError, match="Destination folder is empty"):
                 app.create_output_zip()
 
-    def test_validate_size_inputs(self, mock_root: Mock, mock_tk_vars: dict[str, Mock]) -> None:
+    def test_validate_size_inputs(
+        self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
+    ) -> None:
         """Test validate_size_inputs."""
         with (
             patch("tkinter.ttk.Style"),
@@ -381,7 +387,9 @@ class TestFolderProcessorApp:
 
             # Also mock min/max file size for validate_file_filters test requirement
 
-    def test_validate_file_filters(self, mock_root: Mock, mock_tk_vars: dict[str, Mock]) -> None:
+    def test_validate_file_filters(
+        self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
+    ) -> None:
         """Test validate_file_filters."""
         with (
             patch("tkinter.ttk.Style"),
@@ -501,7 +509,9 @@ class TestFolderProcessorApp:
             with (
                 patch("os.access", return_value=True),
                 patch("pathlib.Path.unlink") as mock_unlink,
-                patch("pathlib.Path.iterdir", return_value=[Path("extracted_file.txt")]),
+                patch(
+                    "pathlib.Path.iterdir", return_value=[Path("extracted_file.txt")]
+                ),
                 patch("os.walk") as mock_walk,
                 patch("pathlib.Path.exists", return_value=True),
             ):
@@ -511,7 +521,9 @@ class TestFolderProcessorApp:
                 app._get_unique_path = Mock(return_value=str(tmp_path / "valid"))
 
                 # Setup os.walk to return one file
-                mock_walk.return_value = [(str(tmp_path / "valid"), [], ["extracted_file.txt"])]
+                mock_walk.return_value = [
+                    (str(tmp_path / "valid"), [], ["extracted_file.txt"])
+                ]
 
                 success, msg = app.safe_extract_archive(str(valid_zip))
 
@@ -532,7 +544,9 @@ class TestFolderProcessorApp:
                 assert "Failed to extract" in msg
                 mock_rmtree.assert_called()
 
-    def test_cancel_processing(self, mock_root: Mock, mock_tk_vars: dict[str, Mock]) -> None:
+    def test_cancel_processing(
+        self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
+    ) -> None:
         """Test cancel_processing."""
         with (
             patch("tkinter.ttk.Style"),
@@ -557,7 +571,9 @@ class TestFolderProcessorApp:
             assert app.cancel_operation is True
             app.status_var.set.assert_called_with("Cancelling operation...")
 
-    def test_processing_complete(self, mock_root: Mock, mock_tk_vars: dict[str, Mock]) -> None:
+    def test_processing_complete(
+        self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
+    ) -> None:
         """Test processing_complete."""
         with (
             patch("tkinter.ttk.Style"),
@@ -587,7 +603,9 @@ class TestFolderProcessorApp:
             app.progress_var.set.assert_called_with(0)
             app.status_var.set.assert_called_with("Ready")
 
-    def test_update_progress(self, mock_root: Mock, mock_tk_vars: dict[str, Mock]) -> None:
+    def test_update_progress(
+        self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
+    ) -> None:
         """Test update_progress."""
         with (
             patch("tkinter.ttk.Style"),
@@ -624,7 +642,9 @@ class TestFolderProcessorApp:
             # Invalid type (should log warning but not crash)
             app.update_progress("invalid")
 
-    def test_run_processing_threaded(self, mock_root: Mock, mock_tk_vars: dict[str, Mock]) -> None:
+    def test_run_processing_threaded(
+        self, mock_root: Mock, mock_tk_vars: dict[str, Mock]
+    ) -> None:
         """Test run_processing_threaded."""
         with (
             patch("tkinter.ttk.Style"),

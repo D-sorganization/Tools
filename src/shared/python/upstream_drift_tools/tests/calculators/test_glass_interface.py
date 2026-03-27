@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 from upstream_drift_tools.calculators.electrical.glass_interface import (
     GlassPropertiesInterface,
@@ -20,7 +22,9 @@ def test_glass_interface_conductivity() -> None:
     assert cond_metal == 10000.0
 
     # Test glass conductivity
-    cond_glass_1 = interface.get_conductivity(1200.0)  # Matches reference temp 1473.15 K
+    cond_glass_1 = interface.get_conductivity(
+        1200.0
+    )  # Matches reference temp 1473.15 K
     assert cond_glass_1 == pytest.approx(1.0, abs=0.01)
 
     # Test caching
@@ -37,7 +41,7 @@ def test_glass_interface_resistivity() -> None:
 
 
 def test_glass_interface_external_calculator() -> None:
-    def ext_calc(t, c, p):
+    def ext_calc(t, c, p) -> Any:
         return 50.0
 
     interface = GlassPropertiesInterface(external_calculator=ext_calc)

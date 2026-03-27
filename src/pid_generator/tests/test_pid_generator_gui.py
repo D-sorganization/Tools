@@ -1,13 +1,15 @@
+from typing import Any
+
 """Tests for P&ID Generator GUI registration and launcher plumbing."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import importlib
 
 import pytest
 
 
-def test_gui_info_structure():
+def test_gui_info_structure() -> Any:
     """gui_registration.GUI_INFO has all required canonical keys."""
     from pid_generator.gui_registration import GUI_INFO
 
@@ -24,7 +26,7 @@ def test_gui_info_structure():
     assert "settings_app" in pyqt6
 
 
-def test_get_gui_info_returns_gui_info():
+def test_get_gui_info_returns_gui_info() -> Any:
     """get_gui_info() helper returns the same GUI_INFO dict."""
     from pid_generator.gui_registration import GUI_INFO, get_gui_info
 
@@ -32,17 +34,18 @@ def test_get_gui_info_returns_gui_info():
 
 
 @pytest.mark.skipif(
-    importlib.util.find_spec("PyQt6") is None or importlib.util.find_spec("ezdxf") is None,
+    importlib.util.find_spec("PyQt6") is None
+    or importlib.util.find_spec("ezdxf") is None,
     reason="PyQt6 and ezdxf required",
 )
-def test_main_window_class_importable():
+def test_main_window_class_importable() -> Any:
     """The PIDGeneratorMainWindow class can be imported."""
     from pid_generator.ui.pyqt6.main_window import PIDGeneratorMainWindow
 
     assert callable(PIDGeneratorMainWindow)
 
 
-def test_pid_generator_package_version():
+def test_pid_generator_package_version() -> Any:
     """pid_generator package exposes __version__."""
     import pid_generator
 

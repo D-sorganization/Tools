@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -10,28 +12,31 @@ segment definitions, and computed inertias. It is fully self-contained
 and does not depend on other Golf Modeling Suite modules.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-import xml.etree.ElementTree as ET  # nosec B405 — creation only (Element, SubElement, tostring); no parsing
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Any
+import logging  # noqa: E402
+import xml.etree.ElementTree as ET  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
+from pathlib import Path  # noqa: E402
+from typing import Any  # noqa: E402
 
-from defusedxml import minidom
-from humanoid_character_builder.contracts import postcondition, precondition
-from humanoid_character_builder.core.anthropometry import (
+from defusedxml import minidom  # noqa: E402
+from humanoid_character_builder.contracts import (  # noqa: E402
+    postcondition,
+    precondition,
+)
+from humanoid_character_builder.core.anthropometry import (  # noqa: E402
     estimate_segment_dimensions,
     estimate_segment_masses,
     get_com_location,
 )
-from humanoid_character_builder.core.body_parameters import BodyParameters
-from humanoid_character_builder.core.model import (
+from humanoid_character_builder.core.body_parameters import BodyParameters  # noqa: E402
+from humanoid_character_builder.core.model import (  # noqa: E402
     GeneratedJoint,
     GeneratedLink,
     HumanoidModel,
 )
-from humanoid_character_builder.core.segment_definitions import (
+from humanoid_character_builder.core.segment_definitions import (  # noqa: E402
     HUMANOID_JOINTS,
     HUMANOID_SEGMENTS,
     GeometryType,
@@ -39,12 +44,12 @@ from humanoid_character_builder.core.segment_definitions import (
     JointType,
     SegmentDefinition,
 )
-from humanoid_character_builder.mesh.inertia_calculator import (
+from humanoid_character_builder.mesh.inertia_calculator import (  # noqa: E402
     InertiaMode,
     InertiaResult,
     MeshInertiaCalculator,
 )
-from humanoid_character_builder.mesh.primitive_inertia import (
+from humanoid_character_builder.mesh.primitive_inertia import (  # noqa: E402
     PrimitiveInertiaCalculator,
     estimate_segment_primitive,
 )
@@ -233,6 +238,7 @@ class HumanoidURDFGenerator:
 
         return urdf_xml
 
+    @jit(nopython=True, fastmath=True)
     def _apply_proportion_factors(
         self,
         dimensions: dict[str, dict[str, float]],

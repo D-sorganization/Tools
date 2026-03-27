@@ -1,16 +1,18 @@
+from numba import jit
+
 """Noise generation and disturbance simulation.
 
 This module provides tools for generating various types of noise
 and adding disturbances to signals for simulation and testing.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from enum import Enum
+from enum import Enum  # noqa: E402
 
-import numpy as np
+import numpy as np  # noqa: E402
 
-from .core import Signal
+from .core import Signal  # noqa: E402
 
 # Module-level constants for periodic noise generation
 DEFAULT_LINE_FREQUENCY_HZ: float = 60.0
@@ -112,6 +114,8 @@ class NoiseGenerator:
         """Generate Gaussian white noise."""
         return self.rng.standard_normal(n) * amplitude
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def _generate_pink_noise(self, n: int, amplitude: float) -> np.ndarray:
         """Generate pink (1/f) noise using the Voss-McCartney algorithm."""
         # Number of random number generators
@@ -233,10 +237,14 @@ class NoiseGenerator:
         # Add some harmonics for realism
         values = amplitude * np.sin(2 * np.pi * frequency * t)
         values += (
-            PERIODIC_NOISE_2ND_HARMONIC * amplitude * np.sin(2 * np.pi * 2 * frequency * t)
+            PERIODIC_NOISE_2ND_HARMONIC
+            * amplitude
+            * np.sin(2 * np.pi * 2 * frequency * t)
         )  # 2nd harmonic
         values += (
-            PERIODIC_NOISE_3RD_HARMONIC * amplitude * np.sin(2 * np.pi * 3 * frequency * t)
+            PERIODIC_NOISE_3RD_HARMONIC
+            * amplitude
+            * np.sin(2 * np.pi * 3 * frequency * t)
         )  # 3rd harmonic
 
         return values

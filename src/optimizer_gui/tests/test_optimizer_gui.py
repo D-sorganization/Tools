@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Adam Optimizer GUI Tests
 ========================
@@ -17,7 +19,7 @@ class TestOptimizerMainWindow:
     """Tests for the PyQt6 Optimizer main window."""
 
     @pytest.fixture
-    def mock_qt_app(self):
+    def mock_qt_app(self) -> Any:
         """Create mock Qt application for headless testing."""
         with patch.dict(
             sys.modules,
@@ -30,7 +32,7 @@ class TestOptimizerMainWindow:
         ):
             yield
 
-    def test_main_window_imports(self, mock_qt_app):
+    def test_main_window_imports(self, mock_qt_app) -> Any:
         """Test that main window module can be imported."""
         try:
             from optimizer_gui.ui.pyqt6 import main_window
@@ -39,7 +41,7 @@ class TestOptimizerMainWindow:
         except ImportError:
             pytest.skip("PyQt6 main window not yet implemented")
 
-    def test_main_window_class_exists(self, mock_qt_app):
+    def test_main_window_class_exists(self, mock_qt_app) -> Any:
         """Test that window class is defined and callable."""
         try:
             from optimizer_gui.ui.pyqt6.main_window import OptimizerWindow
@@ -52,7 +54,7 @@ class TestOptimizerMainWindow:
 class TestAdamAlgorithm:
     """Tests for the Adam optimization algorithm."""
 
-    def test_adam_momentum_update(self):
+    def test_adam_momentum_update(self) -> Any:
         """Test Adam first moment (momentum) update."""
         beta1 = 0.9
         m = 0.0
@@ -67,7 +69,7 @@ class TestAdamAlgorithm:
         m_new = beta1 * m + (1 - beta1) * gradient
         assert m_new == pytest.approx(0.19)
 
-    def test_adam_rmsprop_update(self):
+    def test_adam_rmsprop_update(self) -> Any:
         """Test Adam second moment (RMSprop) update."""
         beta2 = 0.999
         v = 0.0
@@ -77,7 +79,7 @@ class TestAdamAlgorithm:
         v_new = beta2 * v + (1 - beta2) * (gradient**2)
         assert v_new == pytest.approx(0.001)
 
-    def test_adam_bias_correction(self):
+    def test_adam_bias_correction(self) -> Any:
         """Test Adam bias correction."""
         beta1 = 0.9
         beta2 = 0.999
@@ -92,7 +94,7 @@ class TestAdamAlgorithm:
         assert m_hat == pytest.approx(1.0)  # 0.1 / (1 - 0.9)
         assert v_hat == pytest.approx(1.0)  # 0.001 / (1 - 0.999)
 
-    def test_adam_parameter_update(self):
+    def test_adam_parameter_update(self) -> Any:
         """Test Adam parameter update step."""
         learning_rate = 0.01
         epsilon = 1e-8
@@ -107,7 +109,7 @@ class TestAdamAlgorithm:
 class TestOptimizationConvergence:
     """Tests for optimization convergence criteria."""
 
-    def test_gradient_norm_convergence(self):
+    def test_gradient_norm_convergence(self) -> Any:
         """Test gradient norm convergence criterion."""
         gradient = np.array([0.001, 0.001, 0.001])
         tolerance = 0.01
@@ -115,7 +117,7 @@ class TestOptimizationConvergence:
         gradient_norm = np.linalg.norm(gradient)
         assert gradient_norm < tolerance
 
-    def test_parameter_change_convergence(self):
+    def test_parameter_change_convergence(self) -> Any:
         """Test parameter change convergence criterion."""
         current = np.array([1.0, 2.0, 3.0])
         previous = np.array([1.0001, 2.0001, 3.0001])
@@ -124,7 +126,7 @@ class TestOptimizationConvergence:
         change = np.linalg.norm(current - previous)
         assert change < tolerance
 
-    def test_bounds_clipping(self):
+    def test_bounds_clipping(self) -> Any:
         """Test parameter bounds clipping."""
         values = np.array([1.5, -0.5, 2.5])
         lower = np.array([0.0, 0.0, 0.0])
@@ -137,14 +139,14 @@ class TestOptimizationConvergence:
 class TestDemoFunctions:
     """Tests for demo optimization functions."""
 
-    def test_rosenbrock_minimum(self):
+    def test_rosenbrock_minimum(self) -> Any:
         """Test Rosenbrock function has minimum at (1, 1)."""
         # f(x, y) = (1-x)^2 + 100*(y-x^2)^2
         x, y = 1.0, 1.0
         f = (1 - x) ** 2 + 100 * (y - x**2) ** 2
         assert f == pytest.approx(0.0)
 
-    def test_rosenbrock_gradient_at_minimum(self):
+    def test_rosenbrock_gradient_at_minimum(self) -> Any:
         """Test Rosenbrock gradient is zero at minimum."""
         x, y = 1.0, 1.0
         step = 1e-6
@@ -164,7 +166,7 @@ class TestDemoFunctions:
 class TestOptimizerGUIRegistration:
     """Tests for GUI framework registration."""
 
-    def test_gui_registration_exists(self):
+    def test_gui_registration_exists(self) -> Any:
         """Test that gui_registration.py exists and has required metadata."""
         try:
             from optimizer_gui import gui_registration
@@ -179,7 +181,7 @@ class TestOptimizerGUIRegistration:
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
-    def test_gui_registration_category(self):
+    def test_gui_registration_category(self) -> Any:
         """Test that optimizer is in optimization category."""
         try:
             from optimizer_gui import gui_registration
@@ -188,7 +190,7 @@ class TestOptimizerGUIRegistration:
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
-    def test_launcher_exists(self):
+    def test_launcher_exists(self) -> Any:
         """Test that launcher script exists."""
         try:
             from optimizer_gui import launch_pyqt6

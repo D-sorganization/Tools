@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Flow Rate Converter GUI Tests
 =============================
@@ -17,7 +19,7 @@ class TestFlowRateConverterMainWindow:
     """Tests for the PyQt6 Flow Rate Converter main window."""
 
     @pytest.fixture
-    def mock_qt_app(self):
+    def mock_qt_app(self) -> Any:
         """Create mock Qt application for headless testing."""
         with patch.dict(
             sys.modules,
@@ -30,7 +32,7 @@ class TestFlowRateConverterMainWindow:
         ):
             yield
 
-    def test_main_window_imports(self, mock_qt_app):
+    def test_main_window_imports(self, mock_qt_app) -> Any:
         """Test that main window module can be imported."""
         try:
             from flow_rate_converter.ui.pyqt6 import main_window
@@ -39,7 +41,7 @@ class TestFlowRateConverterMainWindow:
         except ImportError:
             pytest.skip("PyQt6 main window not yet implemented")
 
-    def test_main_window_has_mass_tab(self, mock_qt_app):
+    def test_main_window_has_mass_tab(self, mock_qt_app) -> Any:
         """Test that window has mass flow tab components."""
         try:
             from flow_rate_converter.ui.pyqt6.main_window import (
@@ -55,7 +57,7 @@ class TestFlowRateConverterMainWindow:
 class TestFlowRateConverterEngineIntegration:
     """Integration tests for flow rate converter engine connection."""
 
-    def test_mass_converter_import(self):
+    def test_mass_converter_import(self) -> Any:
         """Test that mass flow converter can be imported."""
         try:
             from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
@@ -66,7 +68,7 @@ class TestFlowRateConverterEngineIntegration:
         except ImportError:
             pytest.skip("Flow rate converter not available in test environment")
 
-    def test_molar_converter_import(self):
+    def test_molar_converter_import(self) -> Any:
         """Test that molar flow converter can be imported."""
         try:
             from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
@@ -77,7 +79,7 @@ class TestFlowRateConverterEngineIntegration:
         except ImportError:
             pytest.skip("Flow rate converter not available")
 
-    def test_volumetric_conversions_import(self):
+    def test_volumetric_conversions_import(self) -> Any:
         """Test that volumetric conversions can be imported."""
         try:
             from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
@@ -89,7 +91,7 @@ class TestFlowRateConverterEngineIntegration:
         except ImportError:
             pytest.skip("Flow rate converter not available")
 
-    def test_mass_conversion_kg_to_lb(self):
+    def test_mass_conversion_kg_to_lb(self) -> Any:
         """Test mass flow conversion from kg/h to lb/h."""
         try:
             from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
@@ -102,7 +104,7 @@ class TestFlowRateConverterEngineIntegration:
         except ImportError:
             pytest.skip("Flow rate converter not available")
 
-    def test_molar_conversion_kmol_to_lbmol(self):
+    def test_molar_conversion_kmol_to_lbmol(self) -> Any:
         """Test molar flow conversion from kmol/h to lbmol/h."""
         try:
             from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
@@ -115,7 +117,7 @@ class TestFlowRateConverterEngineIntegration:
         except ImportError:
             pytest.skip("Flow rate converter not available")
 
-    def test_volumetric_conversion_m3_to_cfm(self):
+    def test_volumetric_conversion_m3_to_cfm(self) -> Any:
         """Test volumetric flow conversion from m3/h to CFM."""
         try:
             from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
@@ -140,7 +142,7 @@ class TestFlowRateConverterEngineIntegration:
 class TestFlowRateConverterUnits:
     """Tests for unit definitions and conversions."""
 
-    def test_mass_flow_units_defined(self):
+    def test_mass_flow_units_defined(self) -> Any:
         """Test that mass flow units are defined."""
         try:
             from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
@@ -153,7 +155,7 @@ class TestFlowRateConverterUnits:
         except ImportError:
             pytest.skip("Flow rate converter not available")
 
-    def test_molar_flow_units_defined(self):
+    def test_molar_flow_units_defined(self) -> Any:
         """Test that molar flow units are defined."""
         try:
             from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
@@ -166,7 +168,7 @@ class TestFlowRateConverterUnits:
         except ImportError:
             pytest.skip("Flow rate converter not available")
 
-    def test_volumetric_flow_units_defined(self):
+    def test_volumetric_flow_units_defined(self) -> Any:
         """Test that volumetric flow units are defined."""
         try:
             from upstream_drift_tools.calculators.conversion.flow_rate_converter import (
@@ -183,7 +185,7 @@ class TestFlowRateConverterUnits:
 class TestFlowRateConverterGUIRegistration:
     """Tests for GUI framework registration."""
 
-    def test_gui_registration_exists(self):
+    def test_gui_registration_exists(self) -> Any:
         """Test that gui_registration.py exists and has required metadata."""
         try:
             from flow_rate_converter import gui_registration
@@ -198,7 +200,7 @@ class TestFlowRateConverterGUIRegistration:
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
-    def test_gui_registration_category(self):
+    def test_gui_registration_category(self) -> Any:
         """Test that converter is in utilities category."""
         try:
             from flow_rate_converter import gui_registration
@@ -207,7 +209,7 @@ class TestFlowRateConverterGUIRegistration:
         except ImportError:
             pytest.skip("GUI registration not yet implemented")
 
-    def test_launcher_exists(self):
+    def test_launcher_exists(self) -> Any:
         """Test that launcher script exists."""
         try:
             from flow_rate_converter import launch_pyqt6

@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Tests for the REST API module.
 """
@@ -17,7 +19,7 @@ SIMPLE_URDF = """<?xml version="1.0"?>
 class TestAPIClasses:
     """Tests for API data classes."""
 
-    def test_api_request_creation(self):
+    def test_api_request_creation(self) -> Any:
         """Test APIRequest creation."""
         from model_generation.api import APIRequest, HTTPMethod
 
@@ -31,7 +33,7 @@ class TestAPIClasses:
         assert request.path == "/api/v1/health"
         assert request.query_params["key"] == "value"
 
-    def test_api_response_ok(self):
+    def test_api_response_ok(self) -> Any:
         """Test APIResponse.ok factory."""
         from model_generation.api import APIResponse
 
@@ -40,7 +42,7 @@ class TestAPIClasses:
         assert response.status_code == 200
         assert response.body["status"] == "healthy"
 
-    def test_api_response_error(self):
+    def test_api_response_error(self) -> Any:
         """Test APIResponse.error factory."""
         from model_generation.api import APIResponse
 
@@ -49,7 +51,7 @@ class TestAPIClasses:
         assert response.status_code == 400
         assert "error" in response.body
 
-    def test_api_response_not_found(self):
+    def test_api_response_not_found(self) -> Any:
         """Test APIResponse.not_found factory."""
         from model_generation.api import APIResponse
 
@@ -57,7 +59,7 @@ class TestAPIClasses:
 
         assert response.status_code == 404
 
-    def test_api_response_file(self):
+    def test_api_response_file(self) -> Any:
         """Test APIResponse.file factory."""
         from model_generation.api import APIResponse
 
@@ -71,14 +73,14 @@ class TestAPIClasses:
 class TestModelGenerationAPI:
     """Tests for ModelGenerationAPI class."""
 
-    def test_api_creation(self):
+    def test_api_creation(self) -> Any:
         """Test API instantiation."""
         from model_generation.api import ModelGenerationAPI
 
         api = ModelGenerationAPI()
         assert api is not None
 
-    def test_api_routes_registered(self):
+    def test_api_routes_registered(self) -> Any:
         """Test routes are registered."""
         from model_generation.api import ModelGenerationAPI
 
@@ -91,7 +93,7 @@ class TestModelGenerationAPI:
         assert any("/generate" in p for p in paths)
         assert any("/validate" in p for p in paths)
 
-    def test_health_endpoint(self):
+    def test_health_endpoint(self) -> Any:
         """Test health check endpoint."""
         from model_generation.api import APIRequest, HTTPMethod, ModelGenerationAPI
 
@@ -106,7 +108,7 @@ class TestModelGenerationAPI:
         assert response.status_code == 200
         assert response.body["status"] == "healthy"
 
-    def test_info_endpoint(self):
+    def test_info_endpoint(self) -> Any:
         """Test API info endpoint."""
         from model_generation.api import APIRequest, HTTPMethod, ModelGenerationAPI
 
@@ -122,7 +124,7 @@ class TestModelGenerationAPI:
         assert "name" in response.body
         assert "endpoints" in response.body
 
-    def test_generate_humanoid_endpoint(self):
+    def test_generate_humanoid_endpoint(self) -> Any:
         """Test humanoid generation endpoint."""
         from model_generation.api import APIRequest, HTTPMethod, ModelGenerationAPI
 
@@ -144,7 +146,7 @@ class TestModelGenerationAPI:
         assert "links" in response.body
         assert response.body["robot_name"] == "test_humanoid"
 
-    def test_validate_endpoint_valid_urdf(self):
+    def test_validate_endpoint_valid_urdf(self) -> Any:
         """Test validation endpoint with valid URDF."""
         from model_generation.api import APIRequest, HTTPMethod, ModelGenerationAPI
 
@@ -160,7 +162,7 @@ class TestModelGenerationAPI:
         assert response.status_code == 200
         assert response.body["valid"] is True
 
-    def test_validate_endpoint_invalid_urdf(self):
+    def test_validate_endpoint_invalid_urdf(self) -> Any:
         """Test validation endpoint with invalid URDF."""
         from model_generation.api import APIRequest, HTTPMethod, ModelGenerationAPI
 
@@ -177,7 +179,7 @@ class TestModelGenerationAPI:
         assert response.body["valid"] is False
         assert response.body["error_count"] > 0
 
-    def test_parse_endpoint(self):
+    def test_parse_endpoint(self) -> Any:
         """Test URDF parsing endpoint."""
         from model_generation.api import APIRequest, HTTPMethod, ModelGenerationAPI
 
@@ -195,7 +197,7 @@ class TestModelGenerationAPI:
         assert "links" in response.body
         assert "joints" in response.body
 
-    def test_inertia_calculation_endpoint(self):
+    def test_inertia_calculation_endpoint(self) -> Any:
         """Test inertia calculation endpoint."""
         from model_generation.api import APIRequest, HTTPMethod, ModelGenerationAPI
 
@@ -217,7 +219,7 @@ class TestModelGenerationAPI:
         assert "ixx" in response.body["inertia"]
         assert response.body["is_positive_definite"] is True
 
-    def test_inertia_sphere(self):
+    def test_inertia_sphere(self) -> Any:
         """Test inertia calculation for sphere."""
         from model_generation.api import APIRequest, HTTPMethod, ModelGenerationAPI
 
@@ -240,7 +242,7 @@ class TestModelGenerationAPI:
         assert abs(inertia["ixx"] - inertia["iyy"]) < 1e-10
         assert abs(inertia["iyy"] - inertia["izz"]) < 1e-10
 
-    def test_inertia_missing_shape(self):
+    def test_inertia_missing_shape(self) -> Any:
         """Test inertia calculation with missing shape."""
         from model_generation.api import APIRequest, HTTPMethod, ModelGenerationAPI
 
@@ -256,7 +258,7 @@ class TestModelGenerationAPI:
         assert response.status_code == 400
         assert "error" in response.body
 
-    def test_library_list_endpoint(self):
+    def test_library_list_endpoint(self) -> Any:
         """Test library listing endpoint."""
         from model_generation.api import APIRequest, HTTPMethod, ModelGenerationAPI
 
@@ -272,7 +274,7 @@ class TestModelGenerationAPI:
         assert "models" in response.body
         assert "count" in response.body
 
-    def test_diff_endpoint(self):
+    def test_diff_endpoint(self) -> Any:
         """Test diff endpoint."""
         from model_generation.api import APIRequest, HTTPMethod, ModelGenerationAPI
 
@@ -296,7 +298,7 @@ class TestModelGenerationAPI:
         assert response.body["has_changes"] is True
         assert "unified_diff" in response.body
 
-    def test_not_found_route(self):
+    def test_not_found_route(self) -> Any:
         """Test handling of non-existent route."""
         from model_generation.api import APIRequest, HTTPMethod, ModelGenerationAPI
 
@@ -310,7 +312,7 @@ class TestModelGenerationAPI:
 
         assert response.status_code == 404
 
-    def test_generate_from_params_endpoint(self):
+    def test_generate_from_params_endpoint(self) -> Any:
         """Test generation from detailed parameters."""
         from model_generation.api import APIRequest, HTTPMethod, ModelGenerationAPI
 
@@ -363,11 +365,11 @@ class TestModelGenerationAPI:
 class TestRoute:
     """Tests for Route class."""
 
-    def test_route_creation(self):
+    def test_route_creation(self) -> Any:
         """Test Route creation."""
         from model_generation.api import HTTPMethod, Route
 
-        def dummy_handler(request):
+        def dummy_handler(request) -> Any:
             return None
 
         route = Route(
@@ -387,7 +389,7 @@ class TestRoute:
 class TestHTTPMethod:
     """Tests for HTTPMethod enum."""
 
-    def test_http_methods(self):
+    def test_http_methods(self) -> Any:
         """Test HTTP method values."""
         from model_generation.api import HTTPMethod
 

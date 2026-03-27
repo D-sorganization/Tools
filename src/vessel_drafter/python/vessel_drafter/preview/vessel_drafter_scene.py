@@ -1,27 +1,29 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
 
 """3D preview scene builders for the vessel drafter GUI."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from dataclasses import dataclass
-from functools import lru_cache
-from math import pi
-from typing import Any, TypeAlias, cast
+from dataclasses import dataclass  # noqa: E402
+from functools import lru_cache  # noqa: E402
+from math import pi  # noqa: E402
+from typing import Any, TypeAlias, cast  # noqa: E402
 
-import numpy as np
+import numpy as np  # noqa: E402
 
-from vessel_drafter.models.vessel_drafter import (
+from vessel_drafter.models.vessel_drafter import (  # noqa: E402
     DEFAULT_VESSEL_DRAFTER_LAYOUT,
     MM_PER_INCH,
     VesselDrafterLayout,
 )
-from vessel_drafter.preview.vessel_drafter_view_options import (
+from vessel_drafter.preview.vessel_drafter_view_options import (  # noqa: E402
     Vessel3DViewOptions,
 )
-from vessel_drafter.projects.vessel_drafter_profiles import (
+from vessel_drafter.projects.vessel_drafter_profiles import (  # noqa: E402
     ProfilePoint,
     build_bottom_head_curve,
     build_glass_boundary_half,
@@ -153,7 +155,9 @@ def _build_shell_meshes(
             _make_mesh(
                 label=band.label,
                 group_label=band.label,
-                display_name=layout.material_properties_by_name[band.label].display_name,
+                display_name=layout.material_properties_by_name[
+                    band.label
+                ].display_name,
                 color_hex=band.color_hex,
                 alpha=_display_alpha(
                     layout.material_properties_by_name[band.label].preview_alpha,
@@ -168,6 +172,7 @@ def _build_shell_meshes(
     return tuple(meshes)
 
 
+@jit(nopython=True, fastmath=True)
 def _build_electrode_meshes(
     layout: VesselDrafterLayout,
     visible_labels: set[str] | None,
@@ -309,6 +314,7 @@ def _build_shell_boundary_half(
     )
 
 
+@jit(nopython=True, fastmath=True)
 def _revolved_profile_mesh(
     half_profile: tuple[ProfilePoint, ...],
     view_options: Vessel3DViewOptions,
@@ -570,7 +576,9 @@ def _profile_vertices_on_plane(
 def _triangulate_profile_loop(
     half_profile: tuple[ProfilePoint, ...],
 ) -> tuple[tuple[int, int, int], ...]:
-    points = np.array([(point.x_in, point.z_in) for point in half_profile], dtype=np.float64)
+    points = np.array(
+        [(point.x_in, point.z_in) for point in half_profile], dtype=np.float64
+    )
     indices = list(range(len(points)))
     if len(indices) < 3:
         return ()
@@ -596,6 +604,7 @@ def _triangulate_profile_loop(
     return _fan_triangulation(indices)
 
 
+@jit(nopython=True, fastmath=True)
 def _find_ear(
     points: FloatArray,
     indices: list[int],
@@ -604,7 +613,9 @@ def _find_ear(
     for position, current in enumerate(indices):
         previous = indices[position - 1]
         following = indices[(position + 1) % len(indices)]
-        if not _is_convex(points[previous], points[current], points[following], orientation):
+        if not _is_convex(
+            points[previous], points[current], points[following], orientation
+        ):
             continue
         triangle = np.array(
             [points[previous], points[current], points[following]],
@@ -720,7 +731,9 @@ def _is_visible(
 def _scene_bounds(
     meshes: tuple[VesselSceneMesh, ...],
 ) -> tuple[float, float, float, float, float, float]:
-    vertex_parts = [mesh.polygons.reshape(-1, 3) for mesh in meshes if len(mesh.faces) > 0]
+    vertex_parts = [
+        mesh.polygons.reshape(-1, 3) for mesh in meshes if len(mesh.faces) > 0
+    ]
     if not vertex_parts:
         return (-1.0, 1.0, -1.0, 1.0, -1.0, 1.0)
     all_vertices = np.vstack(vertex_parts)

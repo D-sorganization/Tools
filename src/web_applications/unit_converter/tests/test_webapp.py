@@ -1,16 +1,18 @@
+from typing import Any
+
 """Tests for the Unit Converter Flask web application."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import json
+import json  # noqa: E402
 
-import pytest
+import pytest  # noqa: E402
 
-from web_applications.unit_converter.webapp import create_app
+from web_applications.unit_converter.webapp import create_app  # noqa: E402
 
 
 @pytest.fixture
-def client():
+def client() -> Any:
     app = create_app()
     app.config["TESTING"] = True
     with app.test_client() as client:

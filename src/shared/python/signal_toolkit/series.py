@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -15,13 +17,13 @@ expansions of functions, including:
 Following pragmatic programming and Design by Contract principles.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from collections.abc import Callable
-from dataclasses import dataclass
+from collections.abc import Callable  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
 
-import numpy as np
-from numpy.typing import ArrayLike, NDArray
+import numpy as np  # noqa: E402
+from numpy.typing import ArrayLike, NDArray  # noqa: E402
 
 
 @dataclass
@@ -102,6 +104,7 @@ class SeriesExpansion:
         n_terms = min(n_terms, self.max_terms)
         coefficients = self.get_coefficients(f, center, n_terms)
 
+        @jit(nopython=True, fastmath=True)
         def taylor_func(x: ArrayLike) -> float | NDArray[np.floating]:
             """Evaluate the Taylor series at x."""
             x_arr = np.asarray(x)
@@ -362,6 +365,8 @@ class SeriesExpansion:
         # Use Richardson extrapolation for better accuracy
         return self._richardson_derivative(f, x, n)
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def _richardson_derivative(
         self,
         f: Callable[[ArrayLike], ArrayLike],
@@ -406,6 +411,7 @@ class SeriesExpansion:
 
         return estimates[0] if estimates else 0.0
 
+    @jit(nopython=True, fastmath=True)
     def _central_difference_deriv(
         self,
         f: Callable[[ArrayLike], ArrayLike],
@@ -454,6 +460,7 @@ class SeriesExpansion:
             result *= i
         return result
 
+    @jit(nopython=True, fastmath=True)
     @staticmethod
     def _binomial(n: int, k: int) -> int:
         """Compute binomial coefficient C(n, k)."""
@@ -469,6 +476,7 @@ class SeriesExpansion:
             result = result * (n - i) // (i + 1)
         return result
 
+    @jit(nopython=True, fastmath=True)
     @staticmethod
     def _estimate_radius_of_convergence(
         coefficients: NDArray[np.floating],
@@ -513,6 +521,7 @@ def exp_series(
         Callable that computes the exponential series
     """
 
+    @jit(nopython=True, fastmath=True)
     def exp_func(x: ArrayLike) -> float | NDArray[np.floating]:
         """Compute the exponential series approximation for *x*."""
         x_arr = np.asarray(x, dtype=np.float64)
@@ -542,6 +551,7 @@ def sin_series(
         Callable that computes the sine series
     """
 
+    @jit(nopython=True, fastmath=True)
     def sin_func(x: ArrayLike) -> float | NDArray[np.floating]:
         """Compute the sine series approximation for *x*."""
         x_arr = np.asarray(x, dtype=np.float64)
@@ -572,6 +582,7 @@ def cos_series(
         Callable that computes the cosine series
     """
 
+    @jit(nopython=True, fastmath=True)
     def cos_func(x: ArrayLike) -> float | NDArray[np.floating]:
         """Compute the cosine series approximation for *x*."""
         x_arr = np.asarray(x, dtype=np.float64)
@@ -604,6 +615,7 @@ def ln_series(
         Callable that computes the ln(1+x) series
     """
 
+    @jit(nopython=True, fastmath=True)
     def ln_func(x: ArrayLike) -> float | NDArray[np.floating]:
         """Compute the natural logarithm series ln(1+x) for *x*."""
         x_arr = np.asarray(x, dtype=np.float64)
@@ -667,6 +679,7 @@ def arctan_series(
         Callable that computes the arctan series
     """
 
+    @jit(nopython=True, fastmath=True)
     def arctan_func(x: ArrayLike) -> float | NDArray[np.floating]:
         """Compute the arctangent series approximation for *x*."""
         x_arr = np.asarray(x, dtype=np.float64)
@@ -698,6 +711,7 @@ def sinh_series(
         Callable that computes the sinh series
     """
 
+    @jit(nopython=True, fastmath=True)
     def sinh_func(x: ArrayLike) -> float | NDArray[np.floating]:
         """Compute the hyperbolic sine series approximation for *x*."""
         x_arr = np.asarray(x, dtype=np.float64)
@@ -728,6 +742,7 @@ def cosh_series(
         Callable that computes the cosh series
     """
 
+    @jit(nopython=True, fastmath=True)
     def cosh_func(x: ArrayLike) -> float | NDArray[np.floating]:
         """Compute the hyperbolic cosine series approximation for *x*."""
         x_arr = np.asarray(x, dtype=np.float64)

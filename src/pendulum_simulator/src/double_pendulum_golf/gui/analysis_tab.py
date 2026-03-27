@@ -26,6 +26,8 @@ DRY
 
 from __future__ import annotations
 
+from numba import jit
+
 import logging
 from typing import TYPE_CHECKING, Any
 
@@ -428,7 +430,9 @@ class AnalysisTab:
         if self._model_type == "golfer":
             return self._evaluator_golfer(z_key)
 
-        logger.warning("Surface evaluator not available for model=%s z=%s", self._model_type, z_key)
+        logger.warning(
+            "Surface evaluator not available for model=%s z=%s", self._model_type, z_key
+        )
         return None
 
     # ── Double pendulum evaluators ──────────────────────────────────
@@ -662,6 +666,7 @@ class AnalysisTab:
         eps = 1e-7
         n_dof = len(angle_keys)
 
+        @jit(nopython=True, fastmath=True)
         def _eval(angles: dict) -> float:
             fk0 = fk_fn(angles)
             tip0 = np.asarray(fk0[tip_key], dtype=float)

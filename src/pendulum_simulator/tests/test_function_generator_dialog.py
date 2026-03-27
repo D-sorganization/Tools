@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for FunctionGeneratorDialog."""
 
 import pytest
@@ -9,7 +11,7 @@ from PyQt6.QtWidgets import QDialogButtonBox
 from double_pendulum_golf.gui.function_generator_dialog import FunctionGeneratorDialog
 
 
-def test_function_generator_dialog_init(qapp):
+def test_function_generator_dialog_init(qapp) -> Any:
     dlg = FunctionGeneratorDialog(joint_names=["Shoulder", "Elbow"])
     assert dlg.windowTitle() == "Signal Toolkit — Torque Profile Designer"
 
@@ -23,7 +25,7 @@ def test_function_generator_dialog_init(qapp):
     assert btn_box is not None
 
 
-def test_on_signal_applied(qapp):
+def test_on_signal_applied(qapp) -> Any:
     from unittest.mock import MagicMock
 
     dlg = FunctionGeneratorDialog()
@@ -38,7 +40,7 @@ def test_on_signal_applied(qapp):
     assert dlg.result() == 1  # QDialog.DialogCode.Accepted
 
 
-def test_function_generator_no_widgets(qapp, monkeypatch):
+def test_function_generator_no_widgets(qapp, monkeypatch) -> Any:
     import double_pendulum_golf.gui.function_generator_dialog as fgd
 
     monkeypatch.setattr(fgd, "_HAS_POLY_WIDGET", False)

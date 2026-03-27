@@ -1,9 +1,11 @@
+from typing import Any
+
 """Comprehensive tests for programmatic_pid.validation module.
 
 Tests collect_issues, validate_spec, validate_spec_json.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import pytest
 from programmatic_pid.types import SpecValidationError
@@ -30,17 +32,17 @@ VALID_SPEC: dict = {
 
 
 class TestCollectIssues:
-    def test_valid_spec_has_no_issues(self):
+    def test_valid_spec_has_no_issues(self) -> Any:
         issues = collect_issues(VALID_SPEC)
         errors = [i for i in issues if i.severity == "error"]
         assert errors == []
 
-    def test_non_dict_spec_returns_issue(self):
+    def test_non_dict_spec_returns_issue(self) -> Any:
         issues = collect_issues("not a dict")
         assert len(issues) == 1
         assert "mapping" in issues[0].message.lower()
 
-    def test_missing_project_id(self):
+    def test_missing_project_id(self) -> Any:
         spec = dict(VALID_SPEC)
         spec["project"] = {"title": "Test"}
         spec["equipment"] = VALID_SPEC["equipment"]
@@ -48,7 +50,7 @@ class TestCollectIssues:
         paths = [i.path for i in issues]
         assert "project.id" in paths
 
-    def test_missing_project_title(self):
+    def test_missing_project_title(self) -> Any:
         spec = {
             "project": {"id": "P001"},
             "equipment": VALID_SPEC["equipment"],
@@ -57,7 +59,7 @@ class TestCollectIssues:
         paths = [i.path for i in issues]
         assert "project.title" in paths
 
-    def test_empty_equipment_list(self):
+    def test_empty_equipment_list(self) -> Any:
         spec = {
             "project": {"id": "P001", "title": "T"},
             "equipment": [],
@@ -66,7 +68,7 @@ class TestCollectIssues:
         paths = [i.path for i in issues]
         assert "equipment" in paths
 
-    def test_equipment_missing_id(self):
+    def test_equipment_missing_id(self) -> Any:
         spec = {
             "project": {"id": "P001", "title": "T"},
             "equipment": [{"w": 5.0, "h": 5.0}],  # no id
@@ -75,7 +77,7 @@ class TestCollectIssues:
         paths = [i.path for i in issues]
         assert any("equipment[0].id" in p for p in paths)
 
-    def test_duplicate_equipment_id(self):
+    def test_duplicate_equipment_id(self) -> Any:
         spec = {
             "project": {"id": "P001", "title": "T"},
             "equipment": [
@@ -87,7 +89,7 @@ class TestCollectIssues:
         messages = [i.message for i in issues]
         assert any("duplicate" in m for m in messages)
 
-    def test_non_positive_width_height(self):
+    def test_non_positive_width_height(self) -> Any:
         spec = {
             "project": {"id": "P001", "title": "T"},
             "equipment": [{"id": "V101", "w": 0.0, "h": 5.0}],
@@ -96,7 +98,7 @@ class TestCollectIssues:
         messages = [i.message for i in issues]
         assert any("non-positive" in m for m in messages)
 
-    def test_instrument_missing_id(self):
+    def test_instrument_missing_id(self) -> Any:
         spec = {
             "project": {"id": "P001", "title": "T"},
             "equipment": [{"id": "V101", "w": 5.0, "h": 5.0}],
@@ -106,7 +108,7 @@ class TestCollectIssues:
         paths = [i.path for i in issues]
         assert any("instruments[0].id" in p for p in paths)
 
-    def test_duplicate_instrument_id(self):
+    def test_duplicate_instrument_id(self) -> Any:
         spec = {
             "project": {"id": "P001", "title": "T"},
             "equipment": [{"id": "V101", "w": 5.0, "h": 5.0}],
@@ -116,7 +118,7 @@ class TestCollectIssues:
         messages = [i.message for i in issues]
         assert any("duplicate" in m for m in messages)
 
-    def test_stream_unknown_from_equipment(self):
+    def test_stream_unknown_from_equipment(self) -> Any:
         spec = {
             "project": {"id": "P001", "title": "T"},
             "equipment": [{"id": "V101", "w": 5.0, "h": 5.0}],
@@ -126,7 +128,7 @@ class TestCollectIssues:
         messages = [i.message for i in issues]
         assert any("unknown from equipment" in m for m in messages)
 
-    def test_stream_unknown_to_equipment(self):
+    def test_stream_unknown_to_equipment(self) -> Any:
         spec = {
             "project": {"id": "P001", "title": "T"},
             "equipment": [{"id": "V101", "w": 5.0, "h": 5.0}],
@@ -136,7 +138,7 @@ class TestCollectIssues:
         messages = [i.message for i in issues]
         assert any("unknown to equipment" in m for m in messages)
 
-    def test_control_loop_missing_measurement(self):
+    def test_control_loop_missing_measurement(self) -> Any:
         spec = {
             "project": {"id": "P001", "title": "T"},
             "equipment": [{"id": "V101", "w": 5.0, "h": 5.0}],
@@ -146,28 +148,32 @@ class TestCollectIssues:
         messages = [i.message for i in issues]
         assert any("missing measurement" in m for m in messages)
 
-    def test_control_loop_unknown_measurement(self):
+    def test_control_loop_unknown_measurement(self) -> Any:
         spec = {
             "project": {"id": "P001", "title": "T"},
             "equipment": [{"id": "V101", "w": 5.0, "h": 5.0}],
-            "control_loops": [{"id": "FC101", "measurement": "UNKNOWN", "final_element": "V101"}],
+            "control_loops": [
+                {"id": "FC101", "measurement": "UNKNOWN", "final_element": "V101"}
+            ],
         }
         issues = collect_issues(spec)
         messages = [i.message for i in issues]
         assert any("unknown measurement reference" in m for m in messages)
 
-    def test_control_loop_unknown_final_element(self):
+    def test_control_loop_unknown_final_element(self) -> Any:
         spec = {
             "project": {"id": "P001", "title": "T"},
             "equipment": [{"id": "V101", "w": 5.0, "h": 5.0}],
             "instruments": [{"id": "FT101"}],
-            "control_loops": [{"id": "FC101", "measurement": "FT101", "final_element": "UNKNOWN"}],
+            "control_loops": [
+                {"id": "FC101", "measurement": "FT101", "final_element": "UNKNOWN"}
+            ],
         }
         issues = collect_issues(spec)
         messages = [i.message for i in issues]
         assert any("unknown final element" in m for m in messages)
 
-    def test_stream_no_from_or_to_key(self):
+    def test_stream_no_from_or_to_key(self) -> Any:
         """Streams without from/to keys should not cause issues."""
         spec = {
             "project": {"id": "P001", "title": "T"},
@@ -180,31 +186,31 @@ class TestCollectIssues:
 
 
 class TestValidateSpec:
-    def test_valid_spec_passes(self):
+    def test_valid_spec_passes(self) -> Any:
         validate_spec(VALID_SPEC)  # Should not raise
 
-    def test_invalid_spec_raises(self):
+    def test_invalid_spec_raises(self) -> Any:
         with pytest.raises(SpecValidationError, match="Invalid spec"):
             validate_spec({"project": {}, "equipment": []})
 
-    def test_non_dict_raises(self):
+    def test_non_dict_raises(self) -> Any:
         with pytest.raises(SpecValidationError):
             validate_spec("not a dict")
 
 
 class TestValidateSpecJson:
-    def test_valid_spec_returns_empty_list(self):
+    def test_valid_spec_returns_empty_list(self) -> Any:
         result = validate_spec_json(VALID_SPEC)
         errors = [r for r in result if r["severity"] == "error"]
         assert errors == []
 
-    def test_invalid_spec_returns_structured_issues(self):
+    def test_invalid_spec_returns_structured_issues(self) -> Any:
         result = validate_spec_json({"project": {}, "equipment": []})
         assert isinstance(result, list)
         assert len(result) > 0
         assert all("path" in r and "message" in r and "severity" in r for r in result)
 
-    def test_never_raises(self):
+    def test_never_raises(self) -> Any:
         # Should not raise even for completely invalid input
         result = validate_spec_json(None)
         assert isinstance(result, list)

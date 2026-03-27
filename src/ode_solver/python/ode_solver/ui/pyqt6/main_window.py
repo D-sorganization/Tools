@@ -384,7 +384,9 @@ class ODESolverWindow(QMainWindow):
         self.results_text = QTextEdit()
         self.results_text.setReadOnly(True)
         self.results_text.setMinimumHeight(250)
-        self.results_text.setPlaceholderText("Click 'Solve ODE System' to see results...")
+        self.results_text.setPlaceholderText(
+            "Click 'Solve ODE System' to see results..."
+        )
         layout.addWidget(self.results_text)
 
         return group
@@ -408,7 +410,9 @@ class ODESolverWindow(QMainWindow):
         self.derivatives_edit.setPlainText("\n".join(deriv_lines))
 
         # Fill in parameters
-        param_lines = [f"{name}: {value}" for name, value in preset["parameters"].items()]
+        param_lines = [
+            f"{name}: {value}" for name, value in preset["parameters"].items()
+        ]
         self.parameters_edit.setPlainText("\n".join(param_lines))
 
         # Fill in initial conditions
@@ -469,36 +473,49 @@ class ODESolverWindow(QMainWindow):
             results.append("=" * 50)
 
             results.append("\nSystem Definition:")
-            for var, expr in derivatives.items():
-                results.append(f"  d{var}/dt = {expr}")
+            results.extend(
+                [f"  d{var}/dt = {expr}" for (var, expr) in derivatives.items()]
+            )
 
             results.append("\nParameters:")
-            for name, value in parameters.items():
-                results.append(f"  {name} = {value}")
+            results.extend(
+                [f"  {name} = {value}" for (name, value) in parameters.items()]
+            )
 
             results.append("\nInitial Conditions:")
-            for var, val in zip(derivatives.keys(), y0, strict=True):
-                results.append(f"  {var}(0) = {val}")
+            results.extend(
+                [
+                    f"  {var}(0) = {val}"
+                    for (var, val) in zip(derivatives.keys(), y0, strict=True)
+                ]
+            )
 
             results.append(f"\nTime Range: [{t_start}, {t_end}]")
             results.append(f"Solution Points: {num_points}")
 
             results.append("\nFinal Values:")
-            for idx, var in enumerate(derivatives.keys()):
-                results.append(f"  {var}({t_end}) = {solution.y[idx][-1]:.6f}")
+            results.extend(
+                [
+                    f"  {var}({t_end}) = {solution.y[idx][-1]:.6f}"
+                    for (idx, var) in enumerate(derivatives.keys())
+                ]
+            )
 
             results.append("\nSolution Summary:")
-            for idx, var in enumerate(derivatives.keys()):
-                results.append(
-                    f"  {var}: min={np.min(solution.y[idx]):.4f}, "
-                    f"max={np.max(solution.y[idx]):.4f}"
-                )
+            results.extend(
+                [
+                    f"  {var}: min={np.min(solution.y[idx]):.4f}, max={np.max(solution.y[idx]):.4f}"
+                    for (idx, var) in enumerate(derivatives.keys())
+                ]
+            )
 
             results.append("\nSample Data Points:")
             results.append("-" * 50)
 
             # Header
-            header = "    t    |" + "|".join(f"  {var:^10}  " for var in derivatives.keys())
+            header = "    t    |" + "|".join(
+                f"  {var:^10}  " for var in derivatives.keys()
+            )
             results.append(header)
             results.append("-" * len(header))
 

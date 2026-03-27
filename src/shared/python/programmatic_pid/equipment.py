@@ -1,16 +1,18 @@
+from numba import jit
+
 """Equipment symbol rendering with extensible registry pattern.
 
 Design: Equipment types register themselves via @register_equipment decorator.
 New types can be added without modifying the core engine.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import math
-from collections.abc import Callable
-from typing import Any
+import math  # noqa: E402
+from collections.abc import Callable  # noqa: E402
+from typing import Any  # noqa: E402
 
-from programmatic_pid.geometry import to_float
+from programmatic_pid.geometry import to_float  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Registry
@@ -350,6 +352,7 @@ def render_rupture_disk(msp: Any, x: float, y: float, w: float, h: float, layer:
 # ---------------------------------------------------------------------------
 
 
+@jit(nopython=True, fastmath=True)
 @register_equipment("heat_exchanger")
 def render_heat_exchanger(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
     """Shell-and-tube heat exchanger: circle with internal lines."""
@@ -399,6 +402,8 @@ def render_tank(msp: Any, x: float, y: float, w: float, h: float, layer: str) ->
 # ---------------------------------------------------------------------------
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def draw_equipment_symbol(msp: Any, eq: dict[str, Any], layer: str) -> None:
     """Draw the appropriate symbol for an equipment item.
 

@@ -175,7 +175,8 @@ def _handle_table_line(line: str, s: _MarkdownState) -> bool:
 
         if not s.in_table:
             s.html_lines.append(
-                '<table style="border-collapse: collapse; width: 100%; ' 'margin: 10px 0;">'
+                '<table style="border-collapse: collapse; width: 100%; '
+                'margin: 10px 0;">'
             )
             s.in_table = True
             s.table_has_header = False
@@ -184,7 +185,9 @@ def _handle_table_line(line: str, s: _MarkdownState) -> bool:
         if cells:
             tag = "th" if not s.table_has_header else "td"
             style = 'style="border: 1px solid #555; padding: 8px; text-align: left;"'
-            row = "<tr>" + "".join(f"<{tag} {style}>{c}</{tag}>" for c in cells) + "</tr>"
+            row = (
+                "<tr>" + "".join(f"<{tag} {style}>{c}</{tag}>" for c in cells) + "</tr>"
+            )
             s.html_lines.append(row)
             if tag == "th":
                 s.table_has_header = True
@@ -253,7 +256,9 @@ def _handle_paragraph(line: str, s: _MarkdownState) -> None:
     stripped = line.strip()
     if stripped:
         content = _process_inline_formatting(stripped)
-        s.html_lines.append(f'<p style="margin: 8px 0; line-height: 1.5;">{content}</p>')
+        s.html_lines.append(
+            f'<p style="margin: 8px 0; line-height: 1.5;">{content}</p>'
+        )
     elif not s.in_list:
         s.html_lines.append("<br>")
 
@@ -382,7 +387,9 @@ class HelpDialog(QDialog):
             for topic in sorted(self.topics.keys()):
                 item = QListWidgetItem(topic)
                 self.topic_list.addItem(item)
-            self.topic_list.itemClicked.connect(lambda item: self.navigate_to(item.text()))
+            self.topic_list.itemClicked.connect(
+                lambda item: self.navigate_to(item.text())
+            )
             splitter.addWidget(self.topic_list)
 
             # Content browser
@@ -811,7 +818,9 @@ class HelpManager:
         # Load all topic files
         for topic_id in self._topic_files:
             if topic_id not in self._topics:
-                self._topics[topic_id] = load_help_from_file(self._topic_files[topic_id])
+                self._topics[topic_id] = load_help_from_file(
+                    self._topic_files[topic_id]
+                )
 
         return self._topics.copy()
 
@@ -947,7 +956,9 @@ def create_help_menu_actions(
 
     # Tool Help action (shows current category help)
     tool_help_action = QAction("Tool Help...", parent)
-    tool_help_action.triggered.connect(lambda: help_manager.show_topic("getting_started", parent))
+    tool_help_action.triggered.connect(
+        lambda: help_manager.show_topic("getting_started", parent)
+    )
     actions.append(tool_help_action)
 
     # Separator (None represents separator)

@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 Torque history plot widget — N-DOF aware.
 
@@ -170,6 +172,7 @@ class TorqueHistoryWidget(QWidget):
         self._scroll.setWidget(self._plot_container)
         self._outer_layout.addWidget(self._scroll)
 
+    @jit(nopython=True, fastmath=True)
     def _create_plots_for_ndof(self, n_joints: int) -> None:
         """Dynamically create sub-plots for the given joint count.
 

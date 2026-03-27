@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for the ChartDataDialog dialog."""
 
 import pytest
@@ -7,7 +9,7 @@ from double_pendulum_golf.gui.chart_data_dialog import ChartDataDialog
 
 
 class TestChartDataDialog:
-    def test_init_sets_up_ui(self, qtbot):
+    def test_init_sets_up_ui(self, qtbot) -> Any:
         dialog = ChartDataDialog(model_type="double")
         qtbot.addWidget(dialog)
 
@@ -15,11 +17,13 @@ class TestChartDataDialog:
         assert dialog._x_combo.count() > 0
         assert dialog._y_combo.count() > 0
 
+    def test_init_raises_if_model_type_none(self) -> Any:
+        with pytest.raises(AssertionError):
     def test_init_raises_if_model_type_none(self):
         with pytest.raises((ValueError, TypeError)):
             ChartDataDialog(model_type=None)  # type: ignore
 
-    def test_default_selections_are_set(self, qtbot):
+    def test_default_selections_are_set(self, qtbot) -> Any:
         dialog = ChartDataDialog(model_type="double")
         qtbot.addWidget(dialog)
 
@@ -27,7 +31,7 @@ class TestChartDataDialog:
         assert dialog._y_combo.currentData() == "tip_speed"
         assert dialog._reg_degree.value() == 3
 
-    def test_get_selection_returns_values(self, qtbot):
+    def test_get_selection_returns_values(self, qtbot) -> Any:
         dialog = ChartDataDialog(model_type="double")
         qtbot.addWidget(dialog)
 
@@ -46,7 +50,7 @@ class TestChartDataDialog:
         assert y_key == "kinetic_energy"
         assert degree == 5
 
-    def test_buttons_connected(self, qtbot):
+    def test_buttons_connected(self, qtbot) -> Any:
         dialog = ChartDataDialog(model_type="double")
         qtbot.addWidget(dialog)
 

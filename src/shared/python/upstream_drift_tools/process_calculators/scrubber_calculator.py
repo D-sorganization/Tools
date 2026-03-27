@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -25,12 +27,12 @@ Key Features:
 - Comprehensive packing property database
 """
 
-from dataclasses import dataclass
-from typing import Final
+from dataclasses import dataclass  # noqa: E402
+from typing import Final  # noqa: E402
 
-import numpy as np
+import numpy as np  # noqa: E402
 
-from .constants import (
+from .constants import (  # noqa: E402
     COOLING_WATER_APPROACH_TEMP,
     CP_WATER_LIQUID,
     DENSITY_WATER_STD,
@@ -134,7 +136,9 @@ SULFATE_CONVERSION: Final[float] = MW_SULFATE / MW_SO2  # SO₂ → SO₄²⁻ (
 
 # Moles NaOH required per mole of acid gas (theoretical)
 NAOH_STOICH_HCL: Final[float] = 1.0  # HCl + NaOH → NaCl + H₂O
-NAOH_STOICH_SO2: Final[float] = 2.0  # SO₂ + 2NaOH → Na₂SO₃ + H₂O (further oxidized to Na₂SO₄)
+NAOH_STOICH_SO2: Final[float] = (
+    2.0  # SO₂ + 2NaOH → Na₂SO₃ + H₂O (further oxidized to Na₂SO₄)
+)
 NAOH_STOICH_H2S: Final[float] = 2.0  # H₂S + 2NaOH → Na₂S + 2H₂O
 NAOH_STOICH_HF: Final[float] = 1.0  # HF + NaOH → NaF + H₂O
 NAOH_STOICH_CO2: Final[float] = 2.0  # CO₂ + 2NaOH → Na₂CO₃ + H₂O
@@ -257,7 +261,9 @@ class HenryConstant:
 HENRY_CONSTANTS: dict[str, HenryConstant] = {
     "HCl": HenryConstant(h_ref=2.04e6, t_ref=298.15, dh_soln=-17600),  # Very soluble
     "SO2": HenryConstant(h_ref=4.39e4, t_ref=298.15, dh_soln=-26700),  # Soluble
-    "H2S": HenryConstant(h_ref=5.68e5, t_ref=298.15, dh_soln=-19300),  # Moderately soluble
+    "H2S": HenryConstant(
+        h_ref=5.68e5, t_ref=298.15, dh_soln=-19300
+    ),  # Moderately soluble
     "HF": HenryConstant(h_ref=1.27e7, t_ref=298.15, dh_soln=-15200),  # Very soluble
     "CO2": HenryConstant(h_ref=1.64e8, t_ref=298.15, dh_soln=-20100),  # Less soluble
 }
@@ -408,12 +414,14 @@ def calculate_pressure_drop(
     g_gas = gas_velocity * gas_density  # kg/(m²·s)
 
     # Flow parameter
-    flow_param = (liquid_mass_flux / max(g_gas, 0.001)) * np.sqrt(gas_density / liquid_density)
+    flow_param = (liquid_mass_flux / max(g_gas, 0.001)) * np.sqrt(
+        gas_density / liquid_density
+    )
 
     # Capacity parameter
-    y = (g_gas**2 * packing.packing_factor * (liquid_viscosity / WATER_VISCOSITY) ** 0.1) / (
-        gas_density * liquid_density * GRAVITY
-    )
+    y = (
+        g_gas**2 * packing.packing_factor * (liquid_viscosity / WATER_VISCOSITY) ** 0.1
+    ) / (gas_density * liquid_density * GRAVITY)
 
     # Pressure drop per unit height (empirical correlation)
     # ΔP/Z ≈ α * Y^β * (1 + γ*X)
@@ -542,6 +550,7 @@ def calculate_required_packed_height(
     return ntu * htu * safety_factor
 
 
+@jit(nopython=True, fastmath=True)
 def calculate_caustic_requirement(
     acid_gas_removed: dict[str, float],
     caustic_concentration: float,
@@ -598,7 +607,9 @@ def calculate_caustic_requirement(
             naoh_total_kg_hr += naoh_kg_hr
 
             # Salt produced (kg/hr)
-            salt_mol_hr = moles_gas_hr * (stoich_ratio / 2.0 if stoich_ratio == 2.0 else 1.0)
+            salt_mol_hr = moles_gas_hr * (
+                stoich_ratio / 2.0 if stoich_ratio == 2.0 else 1.0
+            )
             salt_kg_hr = salt_mol_hr * mw_salt / 1000.0
             salt_total_kg_hr += salt_kg_hr
 
@@ -725,7 +736,9 @@ def calculate_cooling_water_requirement(
 
     # Convert to practical units
     water_flow_kg_hr = water_flow_kg_s * SECONDS_PER_HOUR
-    water_flow_L_min = water_flow_kg_s * SECONDS_PER_MINUTE  # Assuming water density = 1 kg/L
+    water_flow_L_min = (
+        water_flow_kg_s * SECONDS_PER_MINUTE
+    )  # Assuming water density = 1 kg/L
 
     return {
         "water_outlet_temp_c": water_outlet_temp_c,

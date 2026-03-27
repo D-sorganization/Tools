@@ -1,13 +1,15 @@
+from numba import jit
+
 """ArchiveOperationsMixin -- Archive extraction methods."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-import os
-import shutil
-from pathlib import Path
+import logging  # noqa: E402
+import os  # noqa: E402
+import shutil  # noqa: E402
+from pathlib import Path  # noqa: E402
 
-from Folders_Tool_r0 import (
+from Folders_Tool_r0 import (  # noqa: E402
     MAX_ARCHIVE_SIZE_RATIO,
     MAX_FILE_SIZE_MB,
 )
@@ -54,7 +56,9 @@ class ArchiveOperationsMixin:
 
             # Validate extraction if safe mode is enabled
             if self.safe_extract_var.get():
-                self._validate_extraction_result(extract_dir, extract_dir_obj, archive_size)
+                self._validate_extraction_result(
+                    extract_dir, extract_dir_obj, archive_size
+                )
 
             # Only delete original if extraction was successful
             self._cleanup_original_archive(archive_path_obj)
@@ -109,7 +113,9 @@ class ArchiveOperationsMixin:
 
         return archive_path_obj, archive_size
 
-    def _prepare_extraction_directory(self, extract_dir: str, extract_dir_obj: Path) -> None:
+    def _prepare_extraction_directory(
+        self, extract_dir: str, extract_dir_obj: Path
+    ) -> None:
         """Create extraction directory and verify it is writable."""
         extract_dir_obj.mkdir(parents=True, exist_ok=True)
 
@@ -170,7 +176,9 @@ class ArchiveOperationsMixin:
                 f"Failed to delete original archive: {archive_path_obj} - {e}",
             )
 
-    def _cleanup_failed_extraction(self, extract_dir_obj: Path, extract_dir: str) -> None:
+    def _cleanup_failed_extraction(
+        self, extract_dir_obj: Path, extract_dir: str
+    ) -> None:
         """Remove partially extracted directory on failure."""
         if extract_dir_obj.exists():
             try:
@@ -180,9 +188,11 @@ class ArchiveOperationsMixin:
                 )
             except (PermissionError, OSError) as cleanup_error:
                 logger.warning(
-                    f"Failed to cleanup extraction directory: {extract_dir} - " f"{cleanup_error}",
+                    f"Failed to cleanup extraction directory: {extract_dir} - "
+                    f"{cleanup_error}",
                 )
 
+    @jit(nopython=True, fastmath=True)
     def _bulk_unzip_enhanced(self) -> list[str]:
         """Enhanced bulk extraction with better validation."""
         log = ["Starting enhanced bulk extraction..."]

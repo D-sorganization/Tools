@@ -112,7 +112,9 @@ class PIDGeneratorMainWindow(QMainWindow):
                 self._out_edit.setText(str(Path(path).with_suffix(".dxf")))
 
     def _browse_out(self) -> None:
-        path, _ = QFileDialog.getSaveFileName(self, "Save DXF Output", "", "DXF Files (*.dxf)")
+        path, _ = QFileDialog.getSaveFileName(
+            self, "Save DXF Output", "", "DXF Files (*.dxf)"
+        )
         if path:
             self._out_edit.setText(path)
 
@@ -123,10 +125,14 @@ class PIDGeneratorMainWindow(QMainWindow):
         profile = None if profile_text == "(default)" else profile_text
 
         if not spec_path:
-            QMessageBox.warning(self, "Missing Input", "Please select a spec YAML file.")
+            QMessageBox.warning(
+                self, "Missing Input", "Please select a spec YAML file."
+            )
             return
         if not out_path:
-            QMessageBox.warning(self, "Missing Output", "Please specify an output DXF path.")
+            QMessageBox.warning(
+                self, "Missing Output", "Please specify an output DXF path."
+            )
             return
 
         self._status_label.setText("Generating\u2026")

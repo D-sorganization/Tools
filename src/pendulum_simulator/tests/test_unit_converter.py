@@ -1,3 +1,4 @@
+from typing import Any
 import pytest
 from unittest.mock import MagicMock
 
@@ -14,13 +15,13 @@ from double_pendulum_golf.gui.unit_converter import (
 )
 
 
-def test_unit_preferences_init():
+def test_unit_preferences_init() -> Any:
     prefs = UnitPreferences()
     assert prefs.selections[UnitCategory.LENGTH] == "m"
     assert prefs.selections[UnitCategory.MASS] == "kg"
 
 
-def test_unit_preferences_apply_preset():
+def test_unit_preferences_apply_preset() -> Any:
     prefs = UnitPreferences()
     prefs.apply_preset("Imperial")
     assert prefs.selections[UnitCategory.LENGTH] == "in"
@@ -30,7 +31,7 @@ def test_unit_preferences_apply_preset():
         prefs.apply_preset("Unknown")
 
 
-def test_unit_preferences_get_set():
+def test_unit_preferences_get_set() -> Any:
     prefs = UnitPreferences()
     prefs.set_unit(UnitCategory.LENGTH, "cm")
     assert prefs.get_unit(UnitCategory.LENGTH) == "cm"
@@ -39,7 +40,7 @@ def test_unit_preferences_get_set():
         prefs.set_unit(UnitCategory.LENGTH, "not_a_unit")
 
 
-def test_qsettings_persistence():
+def test_qsettings_persistence() -> Any:
     prefs = UnitPreferences()
     prefs.set_unit(UnitCategory.LENGTH, "cm")
 
@@ -59,7 +60,7 @@ def test_qsettings_persistence():
     assert prefs.get_unit(UnitCategory.LENGTH) == "in"
 
 
-def test_to_from_si():
+def test_to_from_si() -> Any:
     prefs = UnitPreferences()
     prefs.apply_preset("SI")
 
@@ -71,21 +72,21 @@ def test_to_from_si():
     assert from_si(1.0, UnitCategory.LENGTH, prefs) == 100.0
 
 
-def test_unknown_unit_factor():
+def test_unknown_unit_factor() -> Any:
     prefs = UnitPreferences()
     prefs.selections[UnitCategory.LENGTH] = "foo"  # Bypass setter
     with pytest.raises(KeyError):
         to_si(10.0, UnitCategory.LENGTH, prefs)
 
 
-def test_getters():
+def test_getters() -> Any:
     prefs = UnitPreferences()
     assert get_unit_label(UnitCategory.LENGTH, prefs) == "m"
     assert "cm" in get_available_units(UnitCategory.LENGTH)
     assert "SI" in get_preset_names()
 
 
-def test_legacy_converter():
+def test_legacy_converter() -> Any:
     conv_si = UnitConverter(system=UnitSystem.SI)
     assert conv_si.to_si_length(10.0) == 10.0
     assert conv_si.from_si_length(10.0) == 10.0

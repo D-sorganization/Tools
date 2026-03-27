@@ -1,8 +1,10 @@
+from typing import Any
+
 from upstream_drift_tools.process_calculators.analysis_utils import evaluate_output
 
 
 class DummyEngine:
-    def calculate(self, **kwargs):
+    def calculate(self, **kwargs) -> Any:
         if kwargs.get("fail", False):
             raise ValueError("Test failure")
 
@@ -47,7 +49,7 @@ def test_evaluate_output_failure() -> None:
 
 def test_evaluate_output_type_error() -> None:
     class BadEngine:
-        def calculate(self, **kwargs):
+        def calculate(self, **kwargs) -> Any:
             return ["not a dict"]
 
     engine = BadEngine()

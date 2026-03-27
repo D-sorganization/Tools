@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for upstream_drift_tools.process_calculators.constants utility functions.
 
 Covers the remaining uncovered utility functions:
@@ -8,13 +10,13 @@ Covers the remaining uncovered utility functions:
 - psi_to_pa, pa_to_psi (lines 260, 265)
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import pytest
 
 
 class TestGetMolecularWeight:
-    def test_known_species_h2(self):
+    def test_known_species_h2(self) -> Any:
         from upstream_drift_tools.process_calculators.constants import (
             MW_H2,
             get_molecular_weight,
@@ -23,7 +25,7 @@ class TestGetMolecularWeight:
         result = get_molecular_weight("H2")
         assert result == pytest.approx(MW_H2, rel=1e-6)
 
-    def test_known_species_co2(self):
+    def test_known_species_co2(self) -> Any:
         from upstream_drift_tools.process_calculators.constants import (
             MW_CO2,
             get_molecular_weight,
@@ -31,7 +33,7 @@ class TestGetMolecularWeight:
 
         assert get_molecular_weight("CO2") == pytest.approx(MW_CO2, rel=1e-6)
 
-    def test_case_insensitive(self):
+    def test_case_insensitive(self) -> Any:
         """Species lookup should be case-insensitive."""
         from upstream_drift_tools.process_calculators.constants import (
             MW_H2,
@@ -40,7 +42,7 @@ class TestGetMolecularWeight:
 
         assert get_molecular_weight("h2") == pytest.approx(MW_H2, rel=1e-6)
 
-    def test_unknown_species_returns_air_mw(self):
+    def test_unknown_species_returns_air_mw(self) -> Any:
         """Unknown species falls back to air MW."""
         from upstream_drift_tools.process_calculators.constants import (
             MW_AIR,
@@ -52,19 +54,19 @@ class TestGetMolecularWeight:
 
 
 class TestTemperatureConversions:
-    def test_celsius_to_kelvin(self):
+    def test_celsius_to_kelvin(self) -> Any:
         from upstream_drift_tools.process_calculators.constants import celsius_to_kelvin
 
         assert celsius_to_kelvin(0.0) == pytest.approx(273.15, abs=0.001)
         assert celsius_to_kelvin(100.0) == pytest.approx(373.15, abs=0.001)
 
-    def test_kelvin_to_celsius(self):
+    def test_kelvin_to_celsius(self) -> Any:
         from upstream_drift_tools.process_calculators.constants import kelvin_to_celsius
 
         assert kelvin_to_celsius(273.15) == pytest.approx(0.0, abs=0.001)
         assert kelvin_to_celsius(373.15) == pytest.approx(100.0, abs=0.001)
 
-    def test_fahrenheit_to_kelvin(self):
+    def test_fahrenheit_to_kelvin(self) -> Any:
         from upstream_drift_tools.process_calculators.constants import (
             fahrenheit_to_kelvin,
         )
@@ -72,7 +74,7 @@ class TestTemperatureConversions:
         assert fahrenheit_to_kelvin(32.0) == pytest.approx(273.15, abs=0.01)
         assert fahrenheit_to_kelvin(212.0) == pytest.approx(373.15, abs=0.01)
 
-    def test_kelvin_to_fahrenheit(self):
+    def test_kelvin_to_fahrenheit(self) -> Any:
         from upstream_drift_tools.process_calculators.constants import (
             kelvin_to_fahrenheit,
         )
@@ -82,27 +84,27 @@ class TestTemperatureConversions:
 
 
 class TestPressureConversions:
-    def test_bar_to_pa(self):
+    def test_bar_to_pa(self) -> Any:
         from upstream_drift_tools.process_calculators.constants import bar_to_pa
 
         assert bar_to_pa(1.0) == pytest.approx(100000.0, rel=1e-6)
 
-    def test_pa_to_bar(self):
+    def test_pa_to_bar(self) -> Any:
         from upstream_drift_tools.process_calculators.constants import pa_to_bar
 
         assert pa_to_bar(100000.0) == pytest.approx(1.0, rel=1e-6)
 
-    def test_psi_to_pa(self):
+    def test_psi_to_pa(self) -> Any:
         from upstream_drift_tools.process_calculators.constants import psi_to_pa
 
         assert psi_to_pa(14.696) == pytest.approx(101325.0, rel=0.01)
 
-    def test_pa_to_psi(self):
+    def test_pa_to_psi(self) -> Any:
         from upstream_drift_tools.process_calculators.constants import pa_to_psi
 
         assert pa_to_psi(101325.0) == pytest.approx(14.696, rel=0.01)
 
-    def test_roundtrip_bar(self):
+    def test_roundtrip_bar(self) -> Any:
         """bar → Pa → bar should be identity."""
         from upstream_drift_tools.process_calculators.constants import (
             bar_to_pa,
@@ -111,7 +113,7 @@ class TestPressureConversions:
 
         assert pa_to_bar(bar_to_pa(5.0)) == pytest.approx(5.0, rel=1e-10)
 
-    def test_roundtrip_psi(self):
+    def test_roundtrip_psi(self) -> Any:
         """psi → Pa → psi should be identity."""
         from upstream_drift_tools.process_calculators.constants import (
             pa_to_psi,

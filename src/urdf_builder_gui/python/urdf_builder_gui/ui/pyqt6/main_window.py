@@ -127,7 +127,9 @@ class URDFBuilderWindow(QMainWindow):
         self.height_input.setDecimals(2)
         self.height_input.setValue(1.75)
         self.height_input.setSingleStep(0.01)
-        self.height_input.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.height_input.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
+        )
         basic_layout.addWidget(self.height_input, 1, 1)
 
         # Mass
@@ -327,7 +329,8 @@ class URDFBuilderWindow(QMainWindow):
         self.results_text.setReadOnly(True)
         self.results_text.setMinimumHeight(250)
         self.results_text.setPlaceholderText(
-            "Generated URDF will appear here...\n\n" "Click 'Generate URDF' to create a model."
+            "Generated URDF will appear here...\n\n"
+            "Click 'Generate URDF' to create a model."
         )
         layout.addWidget(self.results_text)
 
@@ -353,7 +356,10 @@ class URDFBuilderWindow(QMainWindow):
 
     def _get_proportions(self) -> dict[str, float]:
         """Get current proportion factors."""
-        return {key: slider.value() / 100.0 for key, slider in self.proportion_sliders.items()}
+        return {
+            key: slider.value() / 100.0
+            for key, slider in self.proportion_sliders.items()
+        }
 
     def _get_config(self) -> Any:
         """Collect all GUI settings into a single URDFConfig object.
@@ -415,7 +421,9 @@ class URDFBuilderWindow(QMainWindow):
 
         # Must have generated URDF first
         if not content or not content.strip().startswith("<?xml"):
-            self.results_text.setPlainText("Please generate URDF first before exporting.")
+            self.results_text.setPlainText(
+                "Please generate URDF first before exporting."
+            )
             self.results_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['yellow']};")
             return
 

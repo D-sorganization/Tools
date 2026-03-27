@@ -1,3 +1,5 @@
+from typing import Any
+
 """
 Tests for the unified model loader, bundled library, and model explorer.
 
@@ -151,7 +153,7 @@ class TestBundledManifest:
 class TestUnifiedLoader:
     """Tests for loading bundled models via UnifiedModelLoader."""
 
-    def _make_loader(self, tmp_path: Path):
+    def _make_loader(self, tmp_path: Path) -> Any:
         from model_generation.library.unified_loader import UnifiedModelLoader
 
         return UnifiedModelLoader(prefs_dir=tmp_path)

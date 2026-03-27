@@ -452,7 +452,9 @@ class APITestBase(IntegrationTestBase):
 
         super().setup_class()
 
-    def get_headers(self, extra_headers: dict[str, str] | None = None) -> dict[str, str]:
+    def get_headers(
+        self, extra_headers: dict[str, str] | None = None
+    ) -> dict[str, str]:
         """Get request headers.
 
         Args:
@@ -862,6 +864,8 @@ def compare_dicts_deep(
                 compare_dicts_deep(dict1[key], dict2[key], ignore_keys, current_path)
             )
         elif dict1[key] != dict2[key]:
-            differences.append(f"Value differs at {current_path}: {dict1[key]} != {dict2[key]}")
+            differences.append(
+                f"Value differs at {current_path}: {dict1[key]} != {dict2[key]}"
+            )
 
     return differences

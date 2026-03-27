@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -9,16 +11,16 @@ This module defines the fundamental data structures used throughout
 the model_generation package for representing URDF elements.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import math
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any
+import math  # noqa: E402
+from dataclasses import dataclass, field  # noqa: E402
+from enum import Enum  # noqa: E402
+from typing import Any  # noqa: E402
 
-import numpy as np
-from model_generation.core.contracts import precondition
-from numpy.typing import NDArray
+import numpy as np  # noqa: E402
+from model_generation.core.contracts import precondition  # noqa: E402
+from numpy.typing import NDArray  # noqa: E402
 
 
 class GeometryType(Enum):
@@ -138,7 +140,9 @@ class Inertia:
     @precondition(lambda size_x: size_x > 0, "size_x must be positive")
     @precondition(lambda size_y: size_y > 0, "size_y must be positive")
     @precondition(lambda size_z: size_z > 0, "size_z must be positive")
-    def from_box(cls, mass: float, size_x: float, size_y: float, size_z: float) -> Inertia:
+    def from_box(
+        cls, mass: float, size_x: float, size_y: float, size_z: float
+    ) -> Inertia:
         """
         Create inertia for a solid box.
 
@@ -157,7 +161,9 @@ class Inertia:
     @precondition(lambda mass: mass > 0, "Mass must be positive")
     @precondition(lambda radius: radius > 0, "Radius must be positive")
     @precondition(lambda length: length > 0, "Length must be positive")
-    def from_cylinder(cls, mass: float, radius: float, length: float, axis: str = "z") -> Inertia:
+    def from_cylinder(
+        cls, mass: float, radius: float, length: float, axis: str = "z"
+    ) -> Inertia:
         """
         Create inertia for a solid cylinder.
 
@@ -201,7 +207,9 @@ class Inertia:
     @precondition(lambda mass: mass > 0, "Mass must be positive")
     @precondition(lambda radius: radius > 0, "Radius must be positive")
     @precondition(lambda length: length >= 0, "Length must be non-negative")
-    def from_capsule(cls, mass: float, radius: float, length: float, axis: str = "z") -> Inertia:
+    def from_capsule(
+        cls, mass: float, radius: float, length: float, axis: str = "z"
+    ) -> Inertia:
         """
         Create inertia for a solid capsule (cylinder with hemispherical caps).
 
@@ -282,6 +290,7 @@ class Inertia:
         """Check if inertia is diagonal (no off-diagonal elements)."""
         return abs(self.ixy) < 1e-10 and abs(self.ixz) < 1e-10 and abs(self.iyz) < 1e-10
 
+    @jit(nopython=True, fastmath=True)
     def satisfies_triangle_inequality(self) -> bool:
         """
         Check triangle inequality for principal moments.
@@ -545,7 +554,9 @@ class JointDynamics:
 
     def to_urdf_string(self) -> str:
         """Generate URDF dynamics element string."""
-        return f'<dynamics damping="{self.damping:.6g}" friction="{self.friction:.6g}"/>'
+        return (
+            f'<dynamics damping="{self.damping:.6g}" friction="{self.friction:.6g}"/>'
+        )
 
 
 @dataclass
@@ -591,7 +602,9 @@ class Link:
             inertia=Inertia.from_dict(inertia_data),
             visual_geometry=visual_geom,
             visual_origin=Origin.from_dict(data.get("visual_origin", {})),
-            visual_material=(Material.from_dict(data["material"]) if "material" in data else None),
+            visual_material=(
+                Material.from_dict(data["material"]) if "material" in data else None
+            ),
             collision_geometry=collision_geom,
             collision_origin=Origin.from_dict(data.get("collision_origin", {})),
         )

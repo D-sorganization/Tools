@@ -1,16 +1,18 @@
+from numba import jit
+
 """Event handling mixin for SolarSystemScene.
 
 Extracts mouse, keyboard, and UI click handling from the main scene class
 to reduce class size and improve single-responsibility adherence.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-from datetime import datetime
-from typing import TYPE_CHECKING
+from datetime import datetime  # noqa: E402
+from typing import TYPE_CHECKING  # noqa: E402
 
-from ..core.constants import PLANET_ORDER
-from ..data.famous_missions import FAMOUS_MISSIONS
+from ..core.constants import PLANET_ORDER  # noqa: E402
+from ..data.famous_missions import FAMOUS_MISSIONS  # noqa: E402
 
 if TYPE_CHECKING:
     pass
@@ -60,7 +62,7 @@ try:
 except ImportError:
     _PYGAME_AVAILABLE = False
 
-from .camera import CameraMode
+from .camera import CameraMode  # noqa: E402
 
 
 class SceneEventMixin:
@@ -183,7 +185,9 @@ class SceneEventMixin:
         elif key == K_m:
             if self.immersion_checklist:
                 self.immersion_checklist.toggle()
-            self.view_state.show_immersion_checklist = not self.view_state.show_immersion_checklist
+            self.view_state.show_immersion_checklist = (
+                not self.view_state.show_immersion_checklist
+            )
 
     def _handle_trajectory_plan(self) -> None:
         """Plan an Earth-to-Mars trajectory and display the result."""
@@ -308,7 +312,8 @@ class SceneEventMixin:
 
         sx, sy = self.sidebar_panel.position
         if not (
-            sx <= x <= sx + self.sidebar_panel.width and sy <= y <= sy + self.sidebar_panel.height
+            sx <= x <= sx + self.sidebar_panel.width
+            and sy <= y <= sy + self.sidebar_panel.height
         ):
             return False
 
@@ -350,6 +355,7 @@ class SceneEventMixin:
                         self._focus_on_selected()
         return True
 
+    @jit(nopython=True, fastmath=True)
     def _handle_controls_click(self, x: int, y: int) -> bool:
         """Handle click within the unified control panel.
 

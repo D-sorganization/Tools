@@ -54,8 +54,7 @@ def _make_matrix_grid(parent: QWidget, rows: int, cols: int) -> list[list[QLineE
 
 def _read_matrix(edits: list[list[QLineEdit]]) -> np.ndarray:
     rows = []
-    for row_edits in edits:
-        rows.append([float(edit.text()) for edit in row_edits])
+    rows.extend([[float(edit.text()) for edit in row_edits] for row_edits in edits])
     return np.asarray(rows, dtype=float)
 
 
@@ -156,7 +155,9 @@ class ReferenceFrameTab(QWidget):
         if operation == "twist_frame_conversion":
             transform = _read_matrix(self._transform_edits)
             twist = _parse_numbers(self._twist_input.text())
-            return compute_reference_frame_operation(operation, transform=transform, twist=twist)
+            return compute_reference_frame_operation(
+                operation, transform=transform, twist=twist
+            )
         if operation == "homogeneous_transform":
             rotation = _read_matrix(self._rotation_edits)
             translation = _parse_numbers(self._translation_input.text())

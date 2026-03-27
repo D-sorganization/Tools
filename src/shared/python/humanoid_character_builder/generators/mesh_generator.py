@@ -1,3 +1,5 @@
+from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -10,16 +12,16 @@ This module defines interfaces for mesh generation backends
 mesh generators.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import logging
-from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from enum import Enum
-from pathlib import Path
-from typing import Any
+import logging  # noqa: E402
+from abc import ABC, abstractmethod  # noqa: E402
+from dataclasses import dataclass, field  # noqa: E402
+from enum import Enum  # noqa: E402
+from pathlib import Path  # noqa: E402
+from typing import Any  # noqa: E402
 
-from humanoid_character_builder.core.body_parameters import BodyParameters
+from humanoid_character_builder.core.body_parameters import BodyParameters  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -127,6 +129,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
         except ImportError:
             return False
 
+    @jit(nopython=True, fastmath=True)
     def generate(
         self,
         params: BodyParameters,
@@ -165,7 +168,9 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
 
         for segment_name, segment_def in HUMANOID_SEGMENTS.items():
             try:
-                dims = dimensions.get(segment_name, {"length": 0.1, "width": 0.05, "depth": 0.05})
+                dims = dimensions.get(
+                    segment_name, {"length": 0.1, "width": 0.05, "depth": 0.05}
+                )
                 length = dims["length"]
                 width = dims["width"]
                 depth = dims["depth"]
@@ -177,11 +182,15 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
                     mesh = trimesh.creation.icosphere(radius=length / 2, subdivisions=2)
                 elif geom_type == GeometryType.CYLINDER:
                     radius = (width + depth) / 4
-                    mesh = trimesh.creation.cylinder(radius=radius, height=length, sections=16)
+                    mesh = trimesh.creation.cylinder(
+                        radius=radius, height=length, sections=16
+                    )
                 elif geom_type == GeometryType.CAPSULE:
                     radius = (width + depth) / 4
                     cyl_height = max(0.01, length - 2 * radius)
-                    mesh = trimesh.creation.capsule(radius=radius, height=cyl_height, count=[8, 8])
+                    mesh = trimesh.creation.capsule(
+                        radius=radius, height=cyl_height, count=[8, 8]
+                    )
                 else:  # BOX or default
                     mesh = trimesh.creation.box(extents=(width, depth, length))
 
@@ -285,13 +294,17 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
 
         # Try to use MakeHuman scripting API
         try:
-            return self._generate_via_api(params, modifiers, visual_dir, collision_dir, **kwargs)
+            return self._generate_via_api(
+                params, modifiers, visual_dir, collision_dir, **kwargs
+            )
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.warning(f"MakeHuman API generation failed: {e}")
 
         # Fallback: Try to load pre-exported MakeHuman mesh
         try:
-            return self._generate_from_presets(params, visual_dir, collision_dir, **kwargs)
+            return self._generate_from_presets(
+                params, visual_dir, collision_dir, **kwargs
+            )
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.warning(f"MakeHuman preset loading failed: {e}")
 
@@ -320,7 +333,9 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
         # Create MakeHuman script
         script_content = self._create_makehuman_script(modifiers, visual_dir)
 
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as script_file:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".py", delete=False
+        ) as script_file:
             script_file.write(script_content)
             script_path = script_file.name
 
@@ -348,7 +363,9 @@ class MakeHumanMeshGenerator(MeshGeneratorInterface):
         finally:
             Path(script_path).unlink(missing_ok=True)
 
-    def _create_makehuman_script(self, modifiers: dict[str, float], output_dir: Path) -> str:
+    def _create_makehuman_script(
+        self, modifiers: dict[str, float], output_dir: Path
+    ) -> str:
         """Create a MakeHuman Python script for mesh generation."""
         if not (modifiers is not None):
             raise ValueError("modifiers must be provided")
@@ -423,7 +440,9 @@ generate_human()
 
         return self._segment_mesh_from_groups(mesh, visual_dir, collision_dir, params)
 
-    def _segment_mesh(self, visual_dir: Path, collision_dir: Path) -> GeneratedMeshResult:
+    def _segment_mesh(
+        self, visual_dir: Path, collision_dir: Path
+    ) -> GeneratedMeshResult:
         """Segment a generated mesh by vertex groups."""
         try:
             import trimesh
@@ -545,6 +564,7 @@ generate_human()
 
         return mesh_paths, collision_paths
 
+    @jit(nopython=True, fastmath=True)
     @staticmethod
     def _segment_by_geometry(
         mesh: Any,
@@ -647,7 +667,9 @@ generate_human()
         modifiers["macrodetails/Gender"] = params.get_effective_gender_factor()
 
         # Age (MakeHuman: range depends on modifier)
-        modifiers["macrodetails/Age"] = min(1.0, max(0.0, params.appearance.age_years / 80.0))
+        modifiers["macrodetails/Age"] = min(
+            1.0, max(0.0, params.appearance.age_years / 80.0)
+        )
 
         # Muscularity (MakeHuman: muscle definition)
         modifiers["macrodetails-universal/Muscle"] = params.muscularity
@@ -656,7 +678,9 @@ generate_human()
         modifiers["macrodetails-universal/Weight"] = params.body_fat_factor
 
         # Proportions
-        modifiers["macrodetails-proportions/BodyProportions"] = params.torso_length_factor - 1.0
+        modifiers["macrodetails-proportions/BodyProportions"] = (
+            params.torso_length_factor - 1.0
+        )
 
         return modifiers
 
@@ -775,7 +799,9 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
             mesh.export(str(full_mesh_path))
 
             # Segment mesh using SMPL-X vertex groups
-            return self._segment_smplx_mesh(mesh, model, visual_dir, collision_dir, params)
+            return self._segment_smplx_mesh(
+                mesh, model, visual_dir, collision_dir, params
+            )
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.error(f"SMPL-X generation failed: {e}")
@@ -909,7 +935,9 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             logger.warning(f"Vertex group extraction failed: {e}")
-            return self._fallback_z_segmentation(mesh, visual_dir, collision_dir, params)
+            return self._fallback_z_segmentation(
+                mesh, visual_dir, collision_dir, params
+            )
 
         return GeneratedMeshResult(
             success=len(mesh_paths) > 0,
@@ -943,7 +971,9 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
             try:
                 vertex_set = set(vertices)
                 face_mask = [
-                    i for i, face in enumerate(mesh.faces) if any(v in vertex_set for v in face)
+                    i
+                    for i, face in enumerate(mesh.faces)
+                    if any(v in vertex_set for v in face)
                 ]
 
                 if not face_mask:
@@ -965,6 +995,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
 
         return mesh_paths, collision_paths
 
+    @jit(nopython=True, fastmath=True)
     def _fallback_z_segmentation(
         self,
         mesh: Any,
@@ -1032,7 +1063,9 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
                 # Find faces using these vertices
                 vertex_set = set(vertex_indices)
                 face_mask = [
-                    i for i, face in enumerate(mesh.faces) if any(v in vertex_set for v in face)
+                    i
+                    for i, face in enumerate(mesh.faces)
+                    if any(v in vertex_set for v in face)
                 ]
 
                 if not face_mask:

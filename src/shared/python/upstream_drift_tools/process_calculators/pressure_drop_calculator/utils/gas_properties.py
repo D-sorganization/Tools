@@ -1,3 +1,4 @@
+from numba import jit
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -17,15 +18,15 @@ References:
     - Lee-Kesler correlation for compressibility factor
 """
 
-import logging
-import math
-from dataclasses import dataclass
+import logging  # noqa: E402
+import math  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
 
-from ....utils.unit_constants import R_UNIVERSAL as R_UNIVERSAL_J_MOL_K
-from ....utils.unit_constants import (
+from ....utils.unit_constants import R_UNIVERSAL as R_UNIVERSAL_J_MOL_K  # noqa: E402
+from ....utils.unit_constants import (  # noqa: E402
     R_UNIVERSAL_KMOL,
 )
-from ...constants import DEFAULT_GAMMA_DIATOMIC, GAMMA_UPPER_BOUND
+from ...constants import DEFAULT_GAMMA_DIATOMIC, GAMMA_UPPER_BOUND  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -382,6 +383,7 @@ def calculate_ideal_gas_density(
     return float(density)
 
 
+@jit(nopython=True, fastmath=True)
 def calculate_compressibility_factor(
     composition: dict[str, float], temperature: float, pressure: float
 ) -> float:
@@ -656,6 +658,8 @@ def _compute_pure_viscosities(
     return pure_viscosities
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def _wilke_mixing_rule(
     composition: dict[str, float],
     pure_viscosities: dict[str, float],
@@ -688,6 +692,7 @@ def _wilke_mixing_rule(
             continue
         M_i = component_data[comp_i]["M"]
         mu_i = component_data[comp_i]["mu"]
+        # OPTIMIZATION_TARGET: Migrate computationally bound loop to PyO3/Rust Core natively
 
         for j, comp_j in enumerate(components):
             if comp_j not in component_data:
@@ -771,7 +776,10 @@ def calculate_mixture_viscosity_wilke(
     return mu_mix
 
 
-def calculate_mixture_viscosity_simple(composition: dict[str, float], temperature: float) -> float:
+@jit(nopython=True, fastmath=True)
+def calculate_mixture_viscosity_simple(
+    composition: dict[str, float], temperature: float
+) -> float:
     """Calculate mixture viscosity using simple mole-fraction averaging.
 
     Simpler but less accurate than Wilke's method.

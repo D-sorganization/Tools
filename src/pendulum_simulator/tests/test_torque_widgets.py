@@ -1,3 +1,5 @@
+from typing import Any
+
 """Tests for torque history and preview widgets."""
 
 import pytest
@@ -14,7 +16,7 @@ from double_pendulum_golf.gui.torque_preview_widget import TorquePreviewWidget
 
 
 @pytest.fixture
-def mock_double_sim():
+def mock_double_sim() -> Any:
     sim = MagicMock()
     sim.n_steps = 10
     sim.t = np.linspace(0, 1, 10)
@@ -25,7 +27,7 @@ def mock_double_sim():
 
 
 @pytest.fixture
-def mock_golfer_sim():
+def mock_golfer_sim() -> Any:
     sim = MagicMock()
     sim.n_steps = 10
     sim.t = np.linspace(0, 1, 10)
@@ -36,7 +38,7 @@ def mock_golfer_sim():
 
 
 @pytest.fixture(autouse=True)
-def mock_pyqtgraph(monkeypatch):
+def mock_pyqtgraph(monkeypatch) -> Any:
     import sys
 
     class DummyPlotWidget(QWidget):
@@ -44,16 +46,16 @@ def mock_pyqtgraph(monkeypatch):
             super().__init__()
             self._plot_item = MagicMock()
 
-        def getPlotItem(self):
+        def getPlotItem(self) -> Any:
             return self._plot_item
 
-        def setBackground(self, *args):
+        def setBackground(self, *args) -> Any:
             pass
 
-        def addItem(self, *args):
+        def addItem(self, *args) -> Any:
             pass
 
-        def plot(self, *args, **kwargs):
+        def plot(self, *args, **kwargs) -> Any:
             return MagicMock()
 
     class DummyInfiniteLine(MagicMock):
@@ -75,11 +77,11 @@ def mock_pyqtgraph(monkeypatch):
 
 
 class TestTorqueHistoryWidget:
-    def test_init_and_clear(self, qapp):
+    def test_init_and_clear(self, qapp) -> Any:
         w = TorqueHistoryWidget()
         w.clear()
 
-    def test_set_simulation_double(self, qapp, mock_double_sim):
+    def test_set_simulation_double(self, qapp, mock_double_sim) -> Any:
         w = TorqueHistoryWidget()
         w.set_simulation(mock_double_sim)
         assert w._n_joints == 2
@@ -88,14 +90,14 @@ class TestTorqueHistoryWidget:
         w.clear()
         assert w._result is None
 
-    def test_set_simulation_golfer(self, qapp, mock_golfer_sim):
+    def test_set_simulation_golfer(self, qapp, mock_golfer_sim) -> Any:
         w = TorqueHistoryWidget()
         w.set_simulation(mock_golfer_sim)
         assert w._n_joints == 8
 
         w.set_frame(5)
 
-    def test_theme_changed(self, qapp):
+    def test_theme_changed(self, qapp) -> Any:
         w = TorqueHistoryWidget()
         mock_theme = MagicMock()
         mock_theme.axes_facecolor = "#111111"
@@ -106,7 +108,7 @@ class TestTorqueHistoryWidget:
         if _HAS_PYQTGRAPH:
             assert w._bg_color == "#111111"
 
-    def test_no_pyqtgraph(self, qapp, monkeypatch, mock_double_sim):
+    def test_no_pyqtgraph(self, qapp, monkeypatch, mock_double_sim) -> Any:
         import double_pendulum_golf.gui.torque_history_widget as thw
 
         monkeypatch.setattr(thw, "_HAS_PYQTGRAPH", False)
@@ -130,14 +132,14 @@ class TestTorqueHistoryWidget:
         # Test try_attach_theme exception natively if doing it again
         # We'll just leave this out since the method is not found directly.
 
-    def test_theme_exceptions(self, qapp):
+    def test_theme_exceptions(self, qapp) -> Any:
         w = TorqueHistoryWidget()
         # Pass an object missing axes_facecolor to trigger AttributeError
         w._on_plot_theme_changed(object())
 
 
 class TestTorquePreviewWidget:
-    def test_basic_methods(self, qapp):
+    def test_basic_methods(self, qapp) -> Any:
         w = TorquePreviewWidget()
 
         pe = QPaintEvent(QRegion(w.rect()))
