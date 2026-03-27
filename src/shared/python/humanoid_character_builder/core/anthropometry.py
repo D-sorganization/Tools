@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 Anthropometric data for humanoid character builder.
 
@@ -507,6 +509,7 @@ def estimate_segment_masses(total_mass_kg: float, gender_factor: float = 0.5) ->
     lambda gender_factor: 0.0 <= gender_factor <= 1.0,
     "Gender factor must be between 0 and 1",
 )
+@jit(nopython=True, fastmath=True)
 def estimate_segment_dimensions(
     total_height_m: float, gender_factor: float = 0.5
 ) -> dict[str, dict[str, float]]:

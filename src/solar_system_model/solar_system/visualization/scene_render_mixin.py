@@ -1,3 +1,5 @@
+from numba import jit
+
 """Rendering mixin for SolarSystemScene.
 
 Extracts 3D and overlay rendering logic from the main scene class
@@ -177,6 +179,7 @@ class SceneRenderMixin:
                     line_width=1.5,
                 )
 
+    @jit(nopython=True, fastmath=True)
     def _render_spacecraft(self, renderer: Any, julian_date: float) -> None:
         """Render spacecraft markers and labels based on mission timeline."""
         for spacecraft in self.spacecraft.values():

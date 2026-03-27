@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 Docked Analysis tab for the Pendulum Simulator.
 
@@ -658,6 +660,7 @@ class AnalysisTab:
         eps = 1e-7
         n_dof = len(angle_keys)
 
+        @jit(nopython=True, fastmath=True)
         def _eval(angles: dict) -> float:
             fk0 = fk_fn(angles)
             tip0 = np.asarray(fk0[tip_key], dtype=float)

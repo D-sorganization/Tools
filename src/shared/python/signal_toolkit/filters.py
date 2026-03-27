@@ -1,3 +1,5 @@
+from numba import jit
+
 """Signal filtering utilities.
 
 This module provides a comprehensive set of digital filters for signal
@@ -576,6 +578,7 @@ def apply_median_filter(
     )
 
 
+@jit(nopython=True, fastmath=True)
 def apply_exponential_smoothing(
     signal: Signal,
     alpha: float = 0.3,
@@ -635,6 +638,7 @@ def apply_gaussian_smoothing(
     )
 
 
+@jit(nopython=True, fastmath=True)
 def apply_bilateral_filter(
     signal: Signal,
     window_size: int = 5,
@@ -700,6 +704,7 @@ def apply_bilateral_filter(
 class AdaptiveFilter:
     """Adaptive filter implementations (LMS, RLS)."""
 
+    @jit(nopython=True, fastmath=True)
     @staticmethod
     def lms(
         signal: Signal,
@@ -751,6 +756,7 @@ class AdaptiveFilter:
         return filtered, error
 
     @staticmethod
+    @jit(nopython=True, fastmath=True)
     def rls(
         signal: Signal,
         reference: Signal,

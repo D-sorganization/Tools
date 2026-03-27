@@ -1,3 +1,5 @@
+from numba import jit
+
 # mypy: disable-error-code="arg-type"
 """Regression diagnostics and statistics.
 
@@ -77,6 +79,7 @@ class DiagnosticsMixin:
         coef_se = se[1:] if len(se) > 1 else np.zeros(p)
         return intercept_se, coef_se
 
+    @jit(nopython=True, fastmath=True)
     def _build_coefficient_info(
         self,
         coeffs: np.ndarray,
@@ -190,6 +193,7 @@ class DiagnosticsMixin:
             feature_names=feature_names,
         )
 
+    @jit(nopython=True, fastmath=True)
     def _calculate_vif(self, X: np.ndarray) -> np.ndarray:
         """Calculate Variance Inflation Factors."""
         if not (X is not None):

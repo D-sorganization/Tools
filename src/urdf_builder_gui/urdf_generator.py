@@ -1,3 +1,5 @@
+from numba import jit
+
 """URDF XML generator — pure-Python, GUI-independent.
 
 Generates well-formed URDF XML from a URDFConfig. This module has
@@ -157,6 +159,7 @@ _SEGMENT_DEFS: dict[str, _SegmentDef] = {
 # ── Public API ──────────────────────────────────────────────────────────
 
 
+@jit(nopython=True, fastmath=True)
 def generate_urdf_xml(config: URDFConfig) -> str:
     """Generate a complete URDF XML string from configuration.
 

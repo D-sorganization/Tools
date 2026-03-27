@@ -262,8 +262,7 @@ def format_call_stack(
             lines.append(f"    > {frame.code_context}")
         if frame.local_vars:
             lines.append("    Locals:")
-            for key, value in frame.local_vars.items():
-                lines.append(f"      {key} = {value}")
+            lines.extend([f"      {key} = {value}" for (key, value) in frame.local_vars.items()])
     lines.append("\n==================\n")
     return "\n".join(lines)
 

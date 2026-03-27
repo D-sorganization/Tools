@@ -195,8 +195,7 @@ def add_notes(
             design_notes.insert(0, f"Pressure mode: {mode}")
         if pset is not None:
             design_notes.insert(1, f"Normal operating pressure target: {pset} psig")
-        for note in pressure.get("notes", [])[:2]:
-            design_notes.append(note)
+        design_notes.extend([note for note in pressure.get("notes", [])[:2]])
 
     interlock_lines = [
         f"{i.get('id', '')}: {i.get('trigger', '')}" for i in spec.get("interlocks", [])[:5]

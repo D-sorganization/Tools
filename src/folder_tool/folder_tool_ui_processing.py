@@ -1,3 +1,5 @@
+from numba import jit
+
 """UIProcessingMixin -- UI dialogs, progress, status, threading for FolderProcessorApp."""
 
 from __future__ import annotations
@@ -216,6 +218,9 @@ class UIProcessingMixin:
         )
         messagebox.showinfo(title, fallback_content)
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def update_source_info(self) -> None:
         """Updates the source folder information display."""
         if not self.source_folders:

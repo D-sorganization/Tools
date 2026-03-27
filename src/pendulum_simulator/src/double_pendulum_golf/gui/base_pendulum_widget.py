@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 BasePendulumWidget — shared base class for all pendulum visualization widgets.
 
@@ -531,6 +533,7 @@ class BasePendulumWidget(QWidget):
         painter.setPen(QPen(QColor(160, 160, 160), 1))
         painter.drawEllipse(center, r_px, r_px)
 
+    @jit(nopython=True, fastmath=True)
     def _draw_trail(self, painter: QPainter) -> None:
         """Draw Catmull-Rom smoothed tip trail with fade-in."""
         if not (painter is not None):

@@ -1,3 +1,5 @@
+from numba import jit
+
 """Example rigid-body motion trajectories for screw axis visualization.
 
 Each generator returns a list of 4x4 SE(3) homogeneous transformation
@@ -70,6 +72,7 @@ def _validate_trajectory(traj: list[np.ndarray]) -> None:
 # ===========================================================================
 
 
+@jit(nopython=True, fastmath=True)
 def football_spiral(
     n_frames: int = 60,
     speed: float = 20.0,
@@ -147,6 +150,7 @@ def football_spiral(
 # ===========================================================================
 
 
+@jit(nopython=True, fastmath=True)
 def frisbee_flight(
     n_frames: int = 60,
     speed: float = 14.0,

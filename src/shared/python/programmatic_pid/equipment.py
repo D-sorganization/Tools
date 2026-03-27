@@ -1,3 +1,5 @@
+from numba import jit
+
 """Equipment symbol rendering with extensible registry pattern.
 
 Design: Equipment types register themselves via @register_equipment decorator.
@@ -350,6 +352,7 @@ def render_rupture_disk(msp: Any, x: float, y: float, w: float, h: float, layer:
 # ---------------------------------------------------------------------------
 
 
+@jit(nopython=True, fastmath=True)
 @register_equipment("heat_exchanger")
 def render_heat_exchanger(msp: Any, x: float, y: float, w: float, h: float, layer: str) -> None:
     """Shell-and-tube heat exchanger: circle with internal lines."""
@@ -399,6 +402,8 @@ def render_tank(msp: Any, x: float, y: float, w: float, h: float, layer: str) ->
 # ---------------------------------------------------------------------------
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def draw_equipment_symbol(msp: Any, eq: dict[str, Any], layer: str) -> None:
     """Draw the appropriate symbol for an equipment item.
 

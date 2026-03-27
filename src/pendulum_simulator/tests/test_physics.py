@@ -1,3 +1,4 @@
+from numba import jit
 from typing import Any
 
 """Tests for the physics module.
@@ -393,6 +394,8 @@ class TestJointLimitTorqueEdgeCases:
 class TestForwardKinematicsPostconditions:
     """Postcondition: segment lengths must match params.L1 and params.L2."""
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def test_segment_lengths_arbitrary_angle(self, default_params: PendulumParams) -> Any:
         for theta1 in np.linspace(-np.pi, np.pi, 12):
             for phi in np.linspace(-np.pi / 2, np.pi / 2, 6):

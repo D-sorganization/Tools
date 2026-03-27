@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 Comprehensive Tests for RRT Path Planner with DbC Principles.
 """
@@ -32,6 +34,7 @@ class TestRRTPlannerDbC(unittest.TestCase):
         with self.assertRaises(ValueError):
             RRTPlanner(invalid_bounds)
 
+    @jit(nopython=True, fastmath=True)
     def test_plan_path_postconditions(self) -> None:
         """Verify that successful paths meet all postconditions."""
         start = np.array([-0.8, -0.8, 0.0])

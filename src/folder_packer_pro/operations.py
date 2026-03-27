@@ -1,3 +1,5 @@
+from numba import jit
+
 """Pack/Unpack operation runners for Folder Packer Pro.
 
 Extracted from app.py to decompose the monolithic main window class.
@@ -56,6 +58,7 @@ class ScanPreviewMixin:
 
         threading.Thread(target=scan, daemon=True).start()
 
+    @jit(nopython=True, fastmath=True)
     def _display_stats(self, stats: dict[str, Any]) -> None:
         """Display folder statistics in the stats text widget.
 

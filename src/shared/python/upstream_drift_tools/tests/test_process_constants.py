@@ -10,7 +10,7 @@ Covers the remaining uncovered utility functions:
 - psi_to_pa, pa_to_psi (lines 260, 265)
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import pytest
 

@@ -1,3 +1,5 @@
+from numba import jit
+
 """Modern PyQt6 GUI for PDF Renamer."""
 
 from __future__ import annotations
@@ -174,6 +176,7 @@ class ProcessingThread(QThread):
         self.log_message.emit(f"Found {len(pdf_files)} PDF files. Starting processing...", "INFO")
         return pdf_files
 
+    @jit(nopython=True, fastmath=True)
     def _process_pdf_files(self, pdf_files: list[Path]) -> None:
         """Process PDF files in parallel using ThreadPoolExecutor."""
         if not (pdf_files is not None):

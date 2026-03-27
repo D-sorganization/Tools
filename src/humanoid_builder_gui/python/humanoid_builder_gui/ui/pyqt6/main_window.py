@@ -1,3 +1,5 @@
+from numba import jit
+
 #!/usr/bin/env python3
 """Humanoid Character Builder PyQt6 Main Window.
 
@@ -667,6 +669,7 @@ class HumanoidBuilderWindow(QMainWindow):
         else:
             return 0.5
 
+    @jit(nopython=True, fastmath=True)
     def _build_character(self) -> None:
         """Build the character with current parameters."""
         height = self.height_spin.value()
@@ -775,8 +778,12 @@ class HumanoidBuilderWindow(QMainWindow):
         lines.append(f"Gender Model: {self.gender_combo.currentText()}")
         lines.append("")
         lines.append("Proportions:")
-        for key, (slider, _) in self.proportion_sliders.items():
-            lines.append(f"  {key}: {slider.value() / 100:.2f}")
+        lines.extend(
+            [
+                f"  {key}: {slider.value() / 100:.2f}"
+                for (key, (slider, _)) in self.proportion_sliders.items()
+            ]
+        )
         lines.append("")
         lines.append(f"Export Format: {self.format_combo.currentText()}")
         lines.append(f"Mesh Format: {self.mesh_format_combo.currentText()}")

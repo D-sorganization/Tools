@@ -1,3 +1,5 @@
+from numba import jit
+
 """Modification operations mixin for the Frankenstein Editor.
 
 Provides link/joint deletion, renaming, modification, attachment/detachment,
@@ -52,6 +54,7 @@ class ModificationMixin:
     # Direct Modifications
     # ============================================================
 
+    @jit(nopython=True, fastmath=True)
     def delete_link(
         self,
         model_id: str,

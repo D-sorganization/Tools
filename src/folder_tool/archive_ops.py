@@ -1,3 +1,5 @@
+from numba import jit
+
 """ArchiveOperationsMixin -- Archive extraction methods."""
 
 from __future__ import annotations
@@ -183,6 +185,7 @@ class ArchiveOperationsMixin:
                     f"Failed to cleanup extraction directory: {extract_dir} - " f"{cleanup_error}",
                 )
 
+    @jit(nopython=True, fastmath=True)
     def _bulk_unzip_enhanced(self) -> list[str]:
         """Enhanced bulk extraction with better validation."""
         log = ["Starting enhanced bulk extraction..."]

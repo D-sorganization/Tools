@@ -1,3 +1,5 @@
+from numba import jit
+
 """Time-Series Decomposition Module.
 
 Provides comprehensive time-series decomposition capabilities including
@@ -371,6 +373,7 @@ class TimeSeriesDecomposer:
 
         return seasonal
 
+    @jit(nopython=True, fastmath=True)
     def multi_seasonal_decompose(
         self,
         data: np.ndarray,
@@ -697,7 +700,7 @@ class TimeSeriesDecomposer:
         )
 
     # Helper methods
-
+    @jit(nopython=True, fastmath=True)
     def _moving_average(self, data: np.ndarray, window: int) -> np.ndarray:
         """Calculate moving average."""
         if not (data is not None):
@@ -719,6 +722,7 @@ class TimeSeriesDecomposer:
 
         return ma
 
+    @jit(nopython=True, fastmath=True)
     def _centered_moving_average(self, data: np.ndarray, period: int) -> np.ndarray:
         """Calculate centered moving average for classical decomposition."""
         if not (data is not None):
@@ -748,6 +752,7 @@ class TimeSeriesDecomposer:
 
         return result
 
+    @jit(nopython=True, fastmath=True)
     def _lowess_smooth(self, data: np.ndarray, frac: float = 0.3) -> np.ndarray:
         """LOWESS (Locally Weighted Scatterplot Smoothing)."""
         if not (data is not None):
@@ -808,6 +813,7 @@ class TimeSeriesDecomposer:
         coeffs = np.polyfit(x, data, degree)
         return np.polyval(coeffs, x)
 
+    @jit(nopython=True, fastmath=True)
     def _exponential_smooth(self, data: np.ndarray, alpha: float) -> np.ndarray:
         """Exponential smoothing."""
         if not (data is not None):
@@ -821,6 +827,7 @@ class TimeSeriesDecomposer:
 
         return result
 
+    @jit(nopython=True, fastmath=True)
     def _hp_filter(self, data: np.ndarray, lambd: float) -> np.ndarray:
         """Hodrick-Prescott filter implementation."""
         if not (data is not None):
@@ -870,6 +877,7 @@ class TimeSeriesDecomposer:
 
         return seasonal
 
+    @jit(nopython=True, fastmath=True)
     def _autocorrelation(self, data: np.ndarray, max_lag: int) -> np.ndarray:
         """Calculate autocorrelation function."""
         if not (data is not None):
@@ -889,6 +897,7 @@ class TimeSeriesDecomposer:
 
         return acf
 
+    @jit(nopython=True, fastmath=True)
     def _find_acf_peaks(self, acf: np.ndarray) -> list[int]:
         """Find peaks in autocorrelation function."""
         if not (acf is not None):

@@ -5,7 +5,7 @@ from typing import Any
 Tests collect_issues, validate_spec, validate_spec_json.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import pytest
 from programmatic_pid.types import SpecValidationError

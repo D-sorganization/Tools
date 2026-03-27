@@ -12,7 +12,7 @@ Covers:
 - launch_app: happy path (mocked QApplication + window)
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from unittest.mock import MagicMock, patch
 

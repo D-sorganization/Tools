@@ -6,7 +6,7 @@ Tests accuracy for all 4 trendline types, edge cases,
 and TrendlineResult structure.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import numpy as np
 import pytest

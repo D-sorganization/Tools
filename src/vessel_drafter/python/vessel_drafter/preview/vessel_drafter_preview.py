@@ -101,15 +101,17 @@ def build_cross_section_preview(
             outer_loop=build_full_boundary_loop(build_glass_boundary_half(layout)),
         )
     ]
-    for profile, outer_loop, inner_loop in build_band_boundary_loops(layout):
-        band_polygons.append(
+    band_polygons.extend(
+        [
             CrossSectionBandPolygon(
                 label=profile.band.label,
                 color_hex=profile.band.color_hex,
                 outer_loop=outer_loop,
                 inner_loop=inner_loop,
             )
-        )
+            for (profile, outer_loop, inner_loop) in build_band_boundary_loops(layout)
+        ]
+    )
 
     return CrossSectionPreview(
         inner_radius_in=layout.inner_radius_in,

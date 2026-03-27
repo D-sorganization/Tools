@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 Tests for jacobians.py — Jacobian computation and manipulability ellipsoids.
 
@@ -143,6 +145,7 @@ class TestJacobianDoubleAnalytic:
 class TestJacobianDoubleContinuity:
     """Small angle perturbation should produce small Jacobian change."""
 
+    @jit(nopython=True, fastmath=True)
     def test_continuity_at_various_angles(self, L: tuple[float, float]) -> None:
         L1, L2 = L
         eps = 1e-4
@@ -428,6 +431,7 @@ class TestDbCViolations:
 class TestJacobianConsistency:
     """Cross-check: Jacobian should agree with finite-difference approximation."""
 
+    @jit(nopython=True, fastmath=True)
     def _fd_jacobian(
         self,
         pos_fn: object,

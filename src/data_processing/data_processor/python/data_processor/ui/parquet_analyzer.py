@@ -103,8 +103,7 @@ class ParquetAnalyzerDialog(ctk.CTkToplevel):
             ]
 
             schema = parquet_file.schema_arrow
-            for field in schema:
-                result_lines.append(f"{field.name}: {field.type}")
+            result_lines.extend([f"{field.name}: {field.type}" for field in schema])
 
             result_lines.append("")
             result_lines.append("=== Row Group Details ===")

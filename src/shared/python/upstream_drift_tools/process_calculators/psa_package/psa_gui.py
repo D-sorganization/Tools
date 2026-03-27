@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 PyQt6 GUI for Two-Stage PSA System Analysis.
 
@@ -707,6 +709,7 @@ class PFDWidget(QWidget):
         super().__init__(parent)
         self._setup_ui()
 
+    @jit(nopython=True, fastmath=True)
     def _setup_ui(self) -> None:
         layout = QVBoxLayout(self)
 

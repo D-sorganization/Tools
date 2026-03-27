@@ -11,7 +11,7 @@ Design by Contract
 - Analog-only files produce valid empty marker DataFrames
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from pathlib import Path
 from unittest.mock import patch

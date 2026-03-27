@@ -1,3 +1,4 @@
+from numba import jit
 # mypy: disable-error-code="attr-defined, misc"
 """Rotation Converter Main Window — PyQt6 GUI.
 
@@ -95,8 +96,7 @@ def _fmt_vec(v: np.ndarray, decimals: int = 6) -> str:
 def _fmt_mat(M: np.ndarray, decimals: int = 6) -> str:
     """Format a numpy matrix as a multi-line string."""
     assert M is not None, "M must be provided"
-    lines = []
-    for row in M:
+    lines.extend(['  '.join((f'{x: .{decimals}f}' for x in row)) for row in M])
         lines.append("  ".join(f"{x: .{decimals}f}" for x in row))
     return "\n".join(lines)
 
@@ -905,6 +905,7 @@ class TrajectoryPlotsTab(QWidget):
         ax.legend(fontsize=8)
         ax.grid(True, alpha=0.3)
 
+    @jit(nopython=True, fastmath=True)
     def _plot_body_space_twist(self) -> None:
         n = min(len(self._traj) - 1, len(self._traj))
         t = np.arange(n - 1) if n > 1 else np.array([0])

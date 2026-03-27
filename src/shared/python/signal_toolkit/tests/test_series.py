@@ -12,7 +12,7 @@ This module contains comprehensive tests for series expansion functionality:
 Following TDD and Design by Contract principles.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import math
 

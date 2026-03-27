@@ -2,11 +2,11 @@ from typing import Any
 
 """Tests for the web theme bridge module."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: E402, F404
 
-import pytest
+import pytest  # noqa: E402
 
-from web_applications.unit_converter.web_theme import (
+from web_applications.unit_converter.web_theme import (  # noqa: E402
     all_themes_as_css,
     get_default_theme_name,
     get_theme_by_name,

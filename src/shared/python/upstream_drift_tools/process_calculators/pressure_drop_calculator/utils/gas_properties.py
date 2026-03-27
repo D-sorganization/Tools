@@ -1,3 +1,5 @@
+from numba import jit
+
 #!/usr/bin/env python3
 """Gas mixture property calculations for pressure drop analysis.
 
@@ -378,6 +380,7 @@ def calculate_ideal_gas_density(
     return float(density)
 
 
+@jit(nopython=True, fastmath=True)
 def calculate_compressibility_factor(
     composition: dict[str, float], temperature: float, pressure: float
 ) -> float:
@@ -652,6 +655,8 @@ def _compute_pure_viscosities(
     return pure_viscosities
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def _wilke_mixing_rule(
     composition: dict[str, float],
     pure_viscosities: dict[str, float],
@@ -684,6 +689,7 @@ def _wilke_mixing_rule(
             continue
         M_i = component_data[comp_i]["M"]
         mu_i = component_data[comp_i]["mu"]
+        # OPTIMIZATION_TARGET: Migrate computationally bound loop to PyO3/Rust Core natively
 
         for j, comp_j in enumerate(components):
             if comp_j not in component_data:
@@ -767,6 +773,7 @@ def calculate_mixture_viscosity_wilke(
     return mu_mix
 
 
+@jit(nopython=True, fastmath=True)
 def calculate_mixture_viscosity_simple(composition: dict[str, float], temperature: float) -> float:
     """Calculate mixture viscosity using simple mole-fraction averaging.
 

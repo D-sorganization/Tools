@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 SimScape Multibody to URDF converter.
 
@@ -541,6 +543,8 @@ class SimscapeToURDFConverter:
 
         return joint
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def _get_joint_origin(self, block: SimscapeBlock) -> Origin:
         """Extract joint origin from block parameters."""
         if not (block is not None):
@@ -576,6 +580,7 @@ class SimscapeToURDFConverter:
 
         return Origin(xyz=xyz, rpy=rpy)
 
+    @jit(nopython=True, fastmath=True)
     def _get_joint_axis(self, block: SimscapeBlock) -> tuple[float, float, float]:
         """Extract joint axis from block parameters."""
         # Try common parameter names

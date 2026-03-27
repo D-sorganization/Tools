@@ -13,7 +13,7 @@ Design by Contract
 - Water mole fraction must be in [0, 1].
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import math
 

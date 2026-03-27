@@ -10,7 +10,7 @@ third-party adapters); we test error paths with mocking and leave happy-path I/O
 integration tests.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from unittest.mock import patch
 

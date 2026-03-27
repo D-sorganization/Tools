@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 Core data types for model generation.
 
@@ -278,6 +280,7 @@ class Inertia:
         """Check if inertia is diagonal (no off-diagonal elements)."""
         return abs(self.ixy) < 1e-10 and abs(self.ixz) < 1e-10 and abs(self.iyz) < 1e-10
 
+    @jit(nopython=True, fastmath=True)
     def satisfies_triangle_inequality(self) -> bool:
         """
         Check triangle inequality for principal moments.

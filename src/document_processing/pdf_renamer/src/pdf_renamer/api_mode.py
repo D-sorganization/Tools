@@ -1,3 +1,5 @@
+from numba import jit
+
 """API-only mode for PDF renaming - manual review and approval workflow."""
 
 import logging
@@ -206,6 +208,7 @@ class APIRenameManager:
         """Get all pending (not approved or rejected) proposals."""
         return [p for p in self.proposals if not p.approved and not p.rejected]
 
+    @jit(nopython=True, fastmath=True)
     def execute_approved_renames(self, dry_run: bool = True) -> dict[str, int]:
         """Execute all approved rename operations."""
         if not (dry_run is not None):

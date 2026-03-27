@@ -1,3 +1,5 @@
+from numba import jit
+
 #!/usr/bin/env python3
 """Adam Optimizer PyQt6 Main Window.
 
@@ -570,6 +572,7 @@ class OptimizerWindow(QMainWindow):
         else:
             self._run_surface_demo(params, method)
 
+    @jit(nopython=True, fastmath=True)
     def _run_adam_demo(self, params: list[ParameterConfig]) -> None:
         """Run Adam optimization demo."""
         if not (params is not None):
@@ -651,6 +654,7 @@ class OptimizerWindow(QMainWindow):
             obj = (values[0] - 1) ** 2
         return -obj if maximize else obj
 
+    @jit(nopython=True, fastmath=True)
     def _compute_numerical_gradient(
         self,
         values: np.ndarray,

@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 High-Performance Data Loading System
 
@@ -465,6 +467,7 @@ class HighPerformanceDataLoader:
             logger.warning(f"Could not optimize dtypes: {e}")
             return df
 
+    @jit(nopython=True, fastmath=True)
     def batch_load_files(
         self,
         file_paths: list[str],

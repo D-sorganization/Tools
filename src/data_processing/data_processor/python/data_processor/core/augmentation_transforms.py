@@ -1,3 +1,5 @@
+from numba import jit
+
 """Data transformation augmentations.
 
 Provides warping, scaling, rotation, permutation, windowing,
@@ -183,6 +185,8 @@ class TransformsMixin:
 
         return result
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def permute(self, data: np.ndarray, max_segments: int = 5) -> np.ndarray:
         """Randomly permute segments of the data.
 
@@ -322,7 +326,7 @@ class TransformsMixin:
     # =========================================================================
     # Synthetic data augmentations
     # =========================================================================
-
+    @jit(nopython=True, fastmath=True)
     def smote(
         self,
         data: np.ndarray,
@@ -379,6 +383,9 @@ class TransformsMixin:
 
         return augmented_data, None
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def mixup(
         self,
         data: np.ndarray,
@@ -438,6 +445,7 @@ class TransformsMixin:
 
         return mixed_data, mixed_labels
 
+    @jit(nopython=True, fastmath=True)
     def cutout(self, data: np.ndarray, ratio: float | None = None) -> np.ndarray:
         """Apply cutout augmentation (mask random regions).
 
@@ -473,6 +481,8 @@ class TransformsMixin:
 
         return result
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def cutmix(
         self,
         data: np.ndarray,
@@ -653,6 +663,7 @@ class TransformsMixin:
         combined = np.concatenate([before, scaled_window, after])
         return self._interpolate(combined, n)
 
+    @jit(nopython=True, fastmath=True)
     def _permute_1d(self, data: np.ndarray, max_segments: int) -> np.ndarray:
         """Permute segments of 1D data."""
         if not (data is not None):
@@ -691,6 +702,7 @@ class TransformsMixin:
 
         return np.interp(x_target, x_original, data)
 
+    @jit(nopython=True, fastmath=True)
     def _frequency_mask_1d(self, data: np.ndarray, mask_ratio: float, num_masks: int) -> np.ndarray:
         """Apply frequency masking to 1D data."""
         if not (data is not None):

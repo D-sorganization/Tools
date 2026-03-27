@@ -1,3 +1,5 @@
+from numba import jit
+
 """Pressure Drop Calculator PyQt6 Main Window.
 
 A comprehensive GUI for calculating pipe pressure drops using the
@@ -190,6 +192,7 @@ class PressureDropCalculatorWidget(QWidget):
 
         return flow_group
 
+    @jit(nopython=True, fastmath=True)
     def _create_gas_composition_group(self) -> QGroupBox:
         """Create the gas composition input group."""
         gas_group = QGroupBox("Gas Composition (mol %)")

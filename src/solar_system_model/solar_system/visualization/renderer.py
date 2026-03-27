@@ -1,3 +1,5 @@
+from numba import jit
+
 """3D Renderer
 ===============
 
@@ -363,6 +365,7 @@ class Renderer:
             self._shader_program = None
             self._shaders_enabled = False
 
+    @jit(nopython=True, fastmath=True)
     def _draw_sphere(self, radius: float, segments: int) -> None:
         """Draw a unit sphere using immediate mode."""
         for i in range(segments):
@@ -374,6 +377,7 @@ class Renderer:
             z1 = math.sin(lat1)
             zr1 = math.cos(lat1)
 
+            # OPTIMIZATION_TARGET: Migrate computationally bound loop to PyO3/Rust Core natively
             glBegin(GL_QUAD_STRIP)
             for j in range(segments + 1):
                 lng = 2 * math.pi * float(j) / segments
@@ -393,6 +397,7 @@ class Renderer:
                 glVertex3f(radius * x * zr1, radius * y * zr1, radius * z1)
             glEnd()
 
+    @jit(nopython=True, fastmath=True)
     def _draw_circle(self, radius: float, segments: int) -> None:
         """Draw a circle in the XY plane."""
         if not (radius is not None):
@@ -557,6 +562,7 @@ class Renderer:
         if texturing_active:
             glDisable(GL_TEXTURE_2D)
 
+    @jit(nopython=True, fastmath=True)
     def _render_star_glow(self, body_size: float, color: tuple[float, float, float]) -> None:
         """Render a soft halo to make the Sun feel more luminous."""
         if not (body_size is not None):
@@ -575,6 +581,7 @@ class Renderer:
         glEnd()
         glDisable(GL_BLEND)
 
+    @jit(nopython=True, fastmath=True)
     def _render_selection_ring(self, body_size: float) -> None:
         """Render an orbit-plane selection ring for the chosen body."""
         if not (body_size is not None):
@@ -591,6 +598,7 @@ class Renderer:
             glVertex3f(ring_radius * math.cos(angle), 0.0, ring_radius * math.sin(angle))
         glEnd()
 
+    @jit(nopython=True, fastmath=True)
     def _render_rings(self, body: CelestialBody, body_size: float) -> None:
         """Render planetary rings."""
         # Ring color (semi-transparent)
@@ -719,6 +727,7 @@ class Renderer:
 
         glEnable(GL_LIGHTING)
 
+    @jit(nopython=True, fastmath=True)
     def render_grid(self, size: float = 10.0, divisions: int = 20) -> None:
         """Render a reference grid in the ecliptic plane."""
         if not (size is not None):

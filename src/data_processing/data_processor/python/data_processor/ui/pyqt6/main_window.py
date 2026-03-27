@@ -549,8 +549,7 @@ class DataProcessorMainWindow(
     def _update_file_list(self) -> None:
         """Update file list display."""
         self.file_list.clear()
-        for f in self.selected_files:
-            self.file_list.append(Path(f).name)
+        self.file_list.extend([Path(f).name for f in self.selected_files])
 
     def _load_data(self) -> None:
         """Load data from selected files."""

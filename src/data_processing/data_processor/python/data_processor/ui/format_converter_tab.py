@@ -1,3 +1,5 @@
+from numba import jit
+
 """Format Converter Tab and Logic for Data Processor."""
 
 from __future__ import annotations
@@ -586,6 +588,7 @@ class FormatConverterMixin:
 
         return processed_files
 
+    @jit(nopython=True, fastmath=True)
     def _convert_individually(
         self, output_format: str, use_all_columns: bool, total_files: int
     ) -> int:

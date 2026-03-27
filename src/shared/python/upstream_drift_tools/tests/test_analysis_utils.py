@@ -6,7 +6,7 @@ Covers evaluate_output with all branches: successful calculation, engine failure
 non-dict result, overrides, HHV injection.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from unittest.mock import MagicMock
 

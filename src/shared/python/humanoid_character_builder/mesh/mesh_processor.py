@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 Mesh processing utilities for humanoid character builder.
 
@@ -544,6 +546,7 @@ class LODGenerator:
         """Initialize the LOD generator."""
         self._processor = MeshProcessor()
 
+    @jit(nopython=True, fastmath=True)
     def generate_lods(
         self,
         mesh_path: Path | str,
@@ -736,6 +739,7 @@ class LODGenerator:
                 error_message=str(e),
             )
 
+    @jit(nopython=True, fastmath=True)
     def estimate_memory_savings(self, lod_result: LODGenerationResult) -> dict[str, Any]:
         """Estimate memory savings from LOD generation.
 

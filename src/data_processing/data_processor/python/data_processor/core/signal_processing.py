@@ -1,3 +1,5 @@
+from numba import jit
+
 """Core signal processing functions.
 
 This module provides the shared processing logic for all GUI implementations.
@@ -164,6 +166,8 @@ def integrate_signals(
     return result
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def _compute_integral(signal_data: pd.Series, dt: pd.Series, method: str) -> np.ndarray:
     """Compute the cumulative integral of a signal."""
     if not (signal_data is not None):

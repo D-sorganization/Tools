@@ -1,3 +1,5 @@
+from numba import jit
+
 """Geometry utilities for coordinate math, bounding boxes, and collision detection.
 
 DRY: Centralises the point/rect operations that were scattered across generator.py.
@@ -103,6 +105,9 @@ def dedupe_points(points: Sequence[tuple[float, float]]) -> list[tuple[float, fl
     return cleaned
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def find_free_region(
     occupied: list[BBox],
     width: float,

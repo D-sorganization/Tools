@@ -70,8 +70,7 @@ def generate_preview_text(config: URDFConfig) -> str:
     # Template segments
     segments = get_template_segments(config.template)
     lines.append(f"\nTemplate Segments ({len(segments)}):")
-    for seg in segments:
-        lines.append(f"  • {seg}")
+    lines.extend([f"  • {seg}" for seg in segments])
 
     # Options
     lines.append("\nOptions:")

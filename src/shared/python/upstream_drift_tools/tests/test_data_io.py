@@ -10,7 +10,7 @@ Covers:
   ensure() violation on bad extension
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from pathlib import Path
 

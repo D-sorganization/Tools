@@ -1,3 +1,5 @@
+from numba import jit
+
 """BackupCopyMixin -- Backup creation and safe file copy methods."""
 
 from __future__ import annotations
@@ -94,6 +96,7 @@ class BackupCopyMixin:
             except (IOError, PermissionError, OSError) as e:
                 logger.warning(f"Failed to cleanup {backup_base}: {e}")
 
+    @jit(nopython=True, fastmath=True)
     def create_backup(self) -> str | None:
         """Creates a backup of source folders before processing.
 
@@ -157,6 +160,7 @@ class BackupCopyMixin:
             self._cleanup_backup_dir(backup_base)
             raise
 
+    @jit(nopython=True, fastmath=True)
     def _safe_copy_file(self, source_path: str, dest_path: str) -> bool:
         """Safely copy a file with retry logic and error handling.
 

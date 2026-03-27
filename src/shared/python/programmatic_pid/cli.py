@@ -1,3 +1,5 @@
+from numba import jit
+
 """Command-line interface and sheet generation orchestration.
 
 This module contains the high-level ``generate`` function and the
@@ -61,6 +63,8 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def add_equipment(
     msp: Any,
     eq: dict[str, Any],
@@ -309,6 +313,7 @@ def generate_process_sheet(
         logger.info("Attempted SVG: %s", svg_path)
 
 
+@jit(nopython=True, fastmath=True)
 def generate_controls_sheet(
     spec_path: str | Path,
     out_path: str | Path,

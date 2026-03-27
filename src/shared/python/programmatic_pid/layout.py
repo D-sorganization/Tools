@@ -1,3 +1,5 @@
+from numba import jit
+
 """Layout computation and label placement.
 
 This module handles spatial layout of the P&ID canvas: computing panel
@@ -52,6 +54,7 @@ class LabelPlacer:
         """Reserve the bounding box of a text string."""
         self.reserve_rect(text_box(text, x, y, h, align=align))
 
+    @jit(nopython=True, fastmath=True)
     def find_position(
         self,
         text: str,
@@ -93,6 +96,9 @@ class LabelPlacer:
 # ---------------------------------------------------------------------------
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def spread_instrument_positions(
     instruments: list[dict[str, Any]],
     min_spacing: float = 3.5,

@@ -223,6 +223,5 @@ def moons_by_parent() -> dict[str, list[MoonDescriptor]]:
     """Return a mapping of parent body name to moon descriptors."""
 
     grouped: dict[str, list[MoonDescriptor]] = {}
-    for moon in MOONS:
-        grouped.setdefault(moon.parent, []).append(moon)
+    grouped.setdefault(moon.parent, []).extend([moon for moon in MOONS])
     return grouped

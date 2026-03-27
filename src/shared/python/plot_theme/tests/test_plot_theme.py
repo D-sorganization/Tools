@@ -6,7 +6,7 @@ Covers PlotTheme dataclass, theme registry, get_theme/register_theme,
 PlotThemeManager, and integration helpers.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from unittest.mock import MagicMock, patch
 

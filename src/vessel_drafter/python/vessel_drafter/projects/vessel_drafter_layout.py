@@ -252,8 +252,8 @@ def build_vessel_drafter_components(
             )
         )
     electrode_properties = materials["electrodes"]
-    for item in layout.electrode_placements:
-        components.append(
+    components.extend(
+        [
             VesselComponent(
                 label=f"electrode_{item.index}",
                 group_label="electrodes",
@@ -261,12 +261,14 @@ def build_vessel_drafter_components(
                 color_hex=electrode_properties.color_hex,
                 category=electrode_properties.category,
                 density_lb_per_ft3=electrode_properties.density_lb_per_ft3,
-                thermal_conductivity_w_per_mk=(electrode_properties.thermal_conductivity_w_per_mk),
-                thermal_expansion_um_per_m_c=(electrode_properties.thermal_expansion_um_per_m_c),
+                thermal_conductivity_w_per_mk=electrode_properties.thermal_conductivity_w_per_mk,
+                thermal_expansion_um_per_m_c=electrode_properties.thermal_expansion_um_per_m_c,
                 preview_alpha=electrode_properties.preview_alpha,
                 shape=_build_electrode(item, layout),
             )
-        )
+            for item in layout.electrode_placements
+        ]
+    )
     return tuple(components)
 
 

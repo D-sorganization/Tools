@@ -12,7 +12,7 @@ Design by Contract
 - Inertia values, joint limits, origins preserved with bounded precision
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import pytest
 

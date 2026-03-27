@@ -2,7 +2,7 @@ from typing import Any
 
 """Tests for P&ID Generator GUI registration and launcher plumbing."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import importlib
 

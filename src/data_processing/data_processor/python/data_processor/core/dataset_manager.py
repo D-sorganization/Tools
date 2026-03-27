@@ -1,3 +1,5 @@
+from numba import jit
+
 """Dataset state management with history tracking.
 
 Provides functionality to save, load, and manage filtered datasets
@@ -448,6 +450,7 @@ class DatasetManager:
         logger.info(f"Exported dataset to {output_path}")
         return output_path
 
+    @jit(nopython=True, fastmath=True)
     def save_workspace(self, workspace_path: Path | str | None = None) -> Path:
         """Save the entire workspace state to disk.
 
@@ -497,6 +500,7 @@ class DatasetManager:
         logger.info(f"Saved workspace to {save_dir}")
         return save_dir
 
+    @jit(nopython=True, fastmath=True)
     def load_workspace(self, workspace_path: Path | str) -> None:
         """Load workspace state from disk.
 

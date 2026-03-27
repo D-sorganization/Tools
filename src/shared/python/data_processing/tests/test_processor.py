@@ -5,7 +5,7 @@ from typing import Any
 Covers DataProcessor and DatasetInfo to achieve 100% coverage.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from pathlib import Path
 from unittest.mock import patch

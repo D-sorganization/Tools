@@ -6,9 +6,9 @@ Cross-platform launcher for Folder Tool.
 Replaces Launch_FolderFix.bat for better portability.
 """
 
-import subprocess
-import sys
-from pathlib import Path
+import subprocess  # noqa: E402
+import sys  # noqa: E402
+from pathlib import Path  # noqa: E402
 
 # Add utils to path using shared utility
 try:

@@ -1,3 +1,5 @@
+from numba import jit
+
 """Noise generation and disturbance simulation.
 
 This module provides tools for generating various types of noise
@@ -112,6 +114,8 @@ class NoiseGenerator:
         """Generate Gaussian white noise."""
         return self.rng.standard_normal(n) * amplitude
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def _generate_pink_noise(self, n: int, amplitude: float) -> np.ndarray:
         """Generate pink (1/f) noise using the Voss-McCartney algorithm."""
         # Number of random number generators

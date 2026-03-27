@@ -8,7 +8,7 @@ Covers all supported formats using tempfiles:
 - Error paths: unsupported format, parquet/matlab dependency checks
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import sqlite3
 import tempfile

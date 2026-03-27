@@ -1,3 +1,5 @@
+from numba import jit
+
 """Shared utilities for code quality checks."""
 
 import ast
@@ -79,6 +81,9 @@ MAGIC_NUMBERS: list[tuple[Pattern, str]] = [
 ]
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def is_legitimate_pass_context(lines: list[str], line_num: int) -> bool:
     """Check if a pass statement is in a legitimate context."""
     if not (lines is not None):

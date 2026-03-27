@@ -5,7 +5,7 @@ from typing import Any
 Targets: 29% → 100% coverage.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import pytest
 from upstream_drift_tools.process_calculators.pressure_drop_calculator.utils.pipe_database import (

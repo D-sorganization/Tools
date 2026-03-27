@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 Syngas Water Calculator
 =======================
@@ -410,6 +412,7 @@ class SyngasWaterCalculator:
             self._init_vapor_pressure_table()
         return float(self.vapor_pressure_table(temperature_k))
 
+    @jit(nopython=True, fastmath=True)
     def calculate_dew_point(self, partial_pressure_pa: float, total_pressure_pa: float) -> float:
         """
         Calculate dew point temperature

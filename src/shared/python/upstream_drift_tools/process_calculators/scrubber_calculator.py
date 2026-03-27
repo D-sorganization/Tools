@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 Packed Bed Scrubber Calculator Module
 =====================================
@@ -538,6 +540,7 @@ def calculate_required_packed_height(
     return ntu * htu * safety_factor
 
 
+@jit(nopython=True, fastmath=True)
 def calculate_caustic_requirement(
     acid_gas_removed: dict[str, float],
     caustic_concentration: float,

@@ -5,7 +5,7 @@ from typing import Any
 Tests the PyQt6 GUI launcher and its integration with the SignalGenerator engine.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import importlib.util
 import os

@@ -54,8 +54,7 @@ def _make_matrix_grid(parent: QWidget, rows: int, cols: int) -> list[list[QLineE
 
 def _read_matrix(edits: list[list[QLineEdit]]) -> np.ndarray:
     rows = []
-    for row_edits in edits:
-        rows.append([float(edit.text()) for edit in row_edits])
+    rows.extend([[float(edit.text()) for edit in row_edits] for row_edits in edits])
     return np.asarray(rows, dtype=float)
 
 

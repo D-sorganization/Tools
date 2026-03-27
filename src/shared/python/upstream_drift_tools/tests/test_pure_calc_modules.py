@@ -10,7 +10,7 @@ Targets (all stateless/pure-logic, no external dependencies):
 - process_calculators.water_vapor_pressure_calculator
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import math
 

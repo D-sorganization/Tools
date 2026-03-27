@@ -6,7 +6,7 @@ Covers all custom exception classes, their hierarchy, and ColumnNotFoundError
 custom formatting.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import pytest
 from upstream_drift_tools.data_processing.exceptions import (

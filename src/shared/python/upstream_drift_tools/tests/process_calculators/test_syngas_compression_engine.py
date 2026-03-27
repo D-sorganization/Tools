@@ -5,7 +5,7 @@ from typing import Any
 Targets: 15% → ~60%+ coverage (excludes Qt UI widget, only tests pure engine).
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from unittest.mock import MagicMock, patch
 

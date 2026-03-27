@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 Mesh generation interfaces for humanoid character builder.
 
@@ -123,6 +125,7 @@ class PrimitiveMeshGenerator(MeshGeneratorInterface):
         except ImportError:
             return False
 
+    @jit(nopython=True, fastmath=True)
     def generate(
         self,
         params: BodyParameters,
@@ -541,6 +544,7 @@ generate_human()
 
         return mesh_paths, collision_paths
 
+    @jit(nopython=True, fastmath=True)
     @staticmethod
     def _segment_by_geometry(
         mesh: Any,
@@ -961,6 +965,7 @@ class SMPLXMeshGenerator(MeshGeneratorInterface):
 
         return mesh_paths, collision_paths
 
+    @jit(nopython=True, fastmath=True)
     def _fallback_z_segmentation(
         self,
         mesh: Any,

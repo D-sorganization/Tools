@@ -1,3 +1,5 @@
+from numba import jit
+
 """Cylindrical bath drafting defaults for radial electrode layouts."""
 
 from __future__ import annotations
@@ -129,6 +131,7 @@ class CylindricalBathLayout:
         }
 
 
+@jit(nopython=True, fastmath=True)
 def _build_default_placements(
     layout: CylindricalBathLayout,
 ) -> tuple[RadialElectrodePlacement, ...]:

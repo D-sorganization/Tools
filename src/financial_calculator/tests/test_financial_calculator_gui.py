@@ -2,7 +2,7 @@ from typing import Any
 
 """Tests for Financial Calculator GUI components."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import pytest
 

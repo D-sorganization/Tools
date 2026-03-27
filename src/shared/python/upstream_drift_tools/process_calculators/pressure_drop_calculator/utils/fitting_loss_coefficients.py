@@ -1,3 +1,5 @@
+from numba import jit
+
 #!/usr/bin/env python3
 """Fitting loss coefficients (K-factors) for pressure drop calculations.
 
@@ -180,6 +182,7 @@ def get_fitting_k_factor(fitting_type: str) -> float:
     return FITTING_K_FACTORS[fitting_type]
 
 
+@jit(nopython=True, fastmath=True)
 def get_multiple_fittings_k(fittings: dict[str, int]) -> float:
     """Calculate total K-factor for multiple fittings.
 

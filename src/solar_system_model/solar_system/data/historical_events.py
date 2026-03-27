@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 Historical Space Exploration Events
 ====================================
@@ -800,6 +802,7 @@ SPACE_EVENTS: list[dict[str, Any]] = [
 ]
 
 
+@jit(nopython=True, fastmath=True)
 def get_events_for_date(dt: datetime, window_days: int = 3) -> list[dict[str, Any]]:
     """
     Get historical events near a specific date.

@@ -1,3 +1,5 @@
+from numba import jit
+
 """File operations utilities for Folder Packer Pro.
 
 Provides file scanning, statistics collection, exclusion pattern matching,
@@ -55,6 +57,8 @@ def should_exclude(
     return False
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def collect_folder_stats(
     folder: Path,
     exclude_patterns: set[str],

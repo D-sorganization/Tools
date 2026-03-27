@@ -7,7 +7,7 @@ correct structure, series rendering, trendline annotations,
 and theme integration.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import matplotlib
 

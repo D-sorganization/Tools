@@ -2,7 +2,7 @@ from typing import Any
 
 """Additional tests to hit edge cases in programmatic_pid.geometry and validation."""
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from unittest.mock import MagicMock, patch
 

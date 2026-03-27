@@ -5,7 +5,7 @@ from typing import Any
 Covers predict_temperature_profile and fit_heating_parameters.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import numpy as np
 import pytest

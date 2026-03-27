@@ -5,7 +5,7 @@ from typing import Any
 Tests Point, BBox, ValidationIssue, SpecValidationError, LayoutRegions, TextConfig.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import pytest
 from programmatic_pid.types import (

@@ -1,3 +1,5 @@
+from numba import jit
+
 #!/usr/bin/env python3
 """Asteroid-field RRT path planner with optional 3D visualization."""
 
@@ -273,6 +275,7 @@ class RRTPlanner:
             distance_to_obstacle_surface(point_array, obstacle) <= 0.0 for obstacle in obstacles
         )
 
+    @jit(nopython=True, fastmath=True)
     def _segment_is_collision_free(
         self,
         start: npt.NDArray[np.float64],
@@ -347,6 +350,7 @@ class RRTPlanner:
 
         return np.array(path[::-1], dtype=np.float64)
 
+    @jit(nopython=True, fastmath=True)
     def analyze_path(self, path: npt.NDArray[np.float64], obstacles: list[Obstacle]) -> PathMetrics:
         """Compute route metrics for educational and debugging displays."""
         if not (path is not None):
@@ -391,6 +395,7 @@ class RRTPlanner:
             mean_turn_angle_deg=mean_turn_angle,
         )
 
+    @jit(nopython=True, fastmath=True)
     def smooth_path(
         self,
         path: npt.NDArray[np.float64],

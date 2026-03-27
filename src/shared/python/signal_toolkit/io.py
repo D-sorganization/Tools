@@ -314,8 +314,7 @@ class SignalExporter:
 
             for i in range(len(time)):
                 row = [round(time[i], precision)]
-                for sig in signals:
-                    row.append(round(sig.values[i], precision))
+                row.extend([round(sig.values[i], precision) for sig in signals])
                 writer.writerow(row)
 
     @staticmethod

@@ -5,7 +5,7 @@ from typing import Any
 Covers get_repo_root() with valid repos, missing repos, and default start_path.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from pathlib import Path
 

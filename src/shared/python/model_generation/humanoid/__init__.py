@@ -7,7 +7,7 @@ This module re-exports components from the humanoid_character_builder
 for integration with the unified model_generation package.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 # Import from humanoid_character_builder
 try:

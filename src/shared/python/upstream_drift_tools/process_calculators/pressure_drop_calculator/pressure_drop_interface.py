@@ -1,3 +1,5 @@
+from numba import jit
+
 #!/usr/bin/env python3
 """User-friendly Python interface for advanced pressure drop calculator.
 
@@ -574,6 +576,7 @@ def validate_inputs(
     return is_valid, errors, warnings
 
 
+@jit(nopython=True, fastmath=True)
 def _wrap_text(text: str, width: int) -> list[str]:
     """Wrap text to specified width."""
     if not (text is not None):

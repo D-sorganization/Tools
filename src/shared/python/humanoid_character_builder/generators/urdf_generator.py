@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 Standalone URDF generator for humanoid characters.
 
@@ -229,6 +231,7 @@ class HumanoidURDFGenerator:
 
         return urdf_xml
 
+    @jit(nopython=True, fastmath=True)
     def _apply_proportion_factors(
         self,
         dimensions: dict[str, dict[str, float]],

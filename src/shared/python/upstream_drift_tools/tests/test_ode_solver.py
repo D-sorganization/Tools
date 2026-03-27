@@ -10,7 +10,7 @@ Covers all branches:
 - plot: mocked plt.show()
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from unittest.mock import patch
 

@@ -6,7 +6,7 @@ Covers require_positive, require_in_range, require_keys,
 validate_temperature, validate_pressure, validate_composition.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import pytest
 from upstream_drift_tools.protocols import InputValidator

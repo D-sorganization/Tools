@@ -6,7 +6,7 @@ Covers all saturation modes, rate limiting, deadband, hysteresis, backlash,
 plus the factory and visualization helpers.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import numpy as np
 import pytest

@@ -1,3 +1,5 @@
+from numba import jit
+
 """3D preview scene builders for the vessel drafter GUI."""
 
 from __future__ import annotations
@@ -164,6 +166,7 @@ def _build_shell_meshes(
     return tuple(meshes)
 
 
+@jit(nopython=True, fastmath=True)
 def _build_electrode_meshes(
     layout: VesselDrafterLayout,
     visible_labels: set[str] | None,
@@ -305,6 +308,7 @@ def _build_shell_boundary_half(
     )
 
 
+@jit(nopython=True, fastmath=True)
 def _revolved_profile_mesh(
     half_profile: tuple[ProfilePoint, ...],
     view_options: Vessel3DViewOptions,
@@ -592,6 +596,7 @@ def _triangulate_profile_loop(
     return _fan_triangulation(indices)
 
 
+@jit(nopython=True, fastmath=True)
 def _find_ear(
     points: FloatArray,
     indices: list[int],

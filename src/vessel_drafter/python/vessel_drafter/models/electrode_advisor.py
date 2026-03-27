@@ -1,3 +1,5 @@
+from numba import jit
+
 """Default electrode advisor drafting inputs mirrored from the current UI."""
 
 from __future__ import annotations
@@ -137,6 +139,7 @@ class ElectrodeAdvisorLayout:
         }
 
 
+@jit(nopython=True, fastmath=True)
 def _build_default_placements(
     bath: BathDefaults,
     electrodes: ElectrodeDefaults,

@@ -13,7 +13,7 @@ Targets remaining uncovered lines in core.py:
 - Line 572: query exception path
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 from unittest.mock import patch
 

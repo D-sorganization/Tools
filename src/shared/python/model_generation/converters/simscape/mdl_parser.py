@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 SimScape MDL/SLX file parser.
 
@@ -450,6 +452,7 @@ class MDLParser:
 
         return model
 
+    @jit(nopython=True, fastmath=True)
     def _parse_mdl_content(self, content: str, model: SimscapeModel) -> None:
         """Parse MDL text content."""
         # Find Model name
@@ -512,15 +515,17 @@ class MDLParser:
             re.MULTILINE,
         )
 
-        for match in line_pattern.finditer(content):
-            model.connections.append(
+        model.connections.extend(
+            [
                 SimscapeConnection(
                     source_block=match.group(1),
                     source_port=match.group(2),
                     dest_block=match.group(3),
                     dest_port=match.group(4),
                 )
-            )
+                for match in line_pattern.finditer(content)
+            ]
+        )
 
     def _get_block_type(self, block_type_str: str, source_block: str) -> SimscapeBlockType:
         """Determine SimscapeBlockType from strings."""

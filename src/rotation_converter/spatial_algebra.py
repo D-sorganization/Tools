@@ -1,3 +1,5 @@
+from numba import jit
+
 """Featherstone Spatial Algebra and Dynamics Algorithms.
 
 Implements spatial vectors, cross-products, transforms, and algorithms
@@ -154,6 +156,8 @@ def jcalc(pitch: float, q: float) -> tuple[np.ndarray, np.ndarray]:
     return Xj, S
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def ID(
     model: SpatialModel,
     q: Any,
@@ -228,6 +232,9 @@ def ID(
     return tau
 
 
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
+@jit(nopython=True, fastmath=True)
 def FDab(
     model: SpatialModel,
     q: Any,

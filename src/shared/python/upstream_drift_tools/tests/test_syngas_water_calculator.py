@@ -16,7 +16,7 @@ Covers:
 - estimate_condensation_risk() all branches (lines 697-703)
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import pytest
 from upstream_drift_tools.process_calculators.syngas_water_calculator import (

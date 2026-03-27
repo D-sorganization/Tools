@@ -1,3 +1,5 @@
+from numba import jit
+
 """Three-Phase Electrical Model for Electrode Systems
 
 Enhanced electrical model that calculates system states, resistance, and current
@@ -40,6 +42,7 @@ class ThreePhaseElectricalModelEnhanced:
         self._position_cache_key: tuple | None = None
         self._position_cache_value: list[dict] | None = None
 
+    @jit(nopython=True, fastmath=True)
     def calculate_system_state(
         self,
         depths: np.ndarray,
@@ -168,6 +171,7 @@ class ThreePhaseElectricalModelEnhanced:
 
         return total_resistance, path_info
 
+    @jit(nopython=True, fastmath=True)
     def _calculate_electrode_positions_3d(
         self,
         depths: np.ndarray,
@@ -438,6 +442,7 @@ class ThreePhaseElectricalModelEnhanced:
             return float(distance_m / (conductivity_metal * area_m2))
         return 0.0001
 
+    @jit(nopython=True, fastmath=True)
     def _analyze_current_distribution_new(self, current_paths: dict) -> dict:
         """Analyze current distribution with new path model"""
         if not (current_paths is not None):

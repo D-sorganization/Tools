@@ -1,3 +1,5 @@
+from numba import jit
+
 """ArchiveMixin -- ZIP archive creation for FolderProcessorApp."""
 
 from __future__ import annotations
@@ -63,6 +65,8 @@ class ArchiveMixin:
 
         return dest
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def _count_zip_contents(self) -> tuple[int, int]:
         """Count accessible files and total size in destination folder.
 
@@ -82,6 +86,8 @@ class ArchiveMixin:
                     continue
         return total_files, total_size
 
+    @jit(nopython=True, fastmath=True)
+    @jit(nopython=True, fastmath=True)
     def _add_files_to_zip(
         self,
         zipf: zipfile.ZipFile,

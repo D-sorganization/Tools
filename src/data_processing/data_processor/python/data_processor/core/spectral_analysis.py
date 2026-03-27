@@ -1,3 +1,5 @@
+from numba import jit
+
 """Spectral Analysis Module.
 
 Provides frequency-domain analysis for time-series data.
@@ -535,6 +537,7 @@ class SpectralAnalyzer:
 
         return freqs, psd
 
+    @jit(nopython=True, fastmath=True)
     def _compute_multitaper(
         self,
         signal: np.ndarray,

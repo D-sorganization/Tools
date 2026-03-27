@@ -1,3 +1,5 @@
+from numba import jit
+
 """
 Celestial Body Classes
 ======================
@@ -336,6 +338,7 @@ class CelestialBody:
         self._cache_state(julian_date, state)
         return state
 
+    @jit(nopython=True, fastmath=True)
     def _solve_kepler(
         self, mean_anomaly: float, eccentricity: float, tolerance: float = 1e-10
     ) -> float:
@@ -370,6 +373,7 @@ class CelestialBody:
 
         return eccentric_anomaly
 
+    @jit(nopython=True, fastmath=True)
     def get_orbit_points(self, julian_date: float, num_points: int = 360) -> np.ndarray:
         """
         Calculate points along the orbit for visualization.

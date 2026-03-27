@@ -443,15 +443,13 @@ class CompositeCommand(Command):
     def execute(self) -> list[Any]:
         """Execute all commands in order."""
         results = []
-        for cmd in self._commands:
-            results.append(cmd.execute())
+        results.extend([cmd.execute() for cmd in self._commands])
         return results
 
     def undo(self) -> list[Any]:
         """Undo all commands in reverse order."""
         results = []
-        for cmd in reversed(self._commands):
-            results.append(cmd.undo())
+        results.extend([cmd.undo() for cmd in reversed(self._commands)])
         return results
 
 

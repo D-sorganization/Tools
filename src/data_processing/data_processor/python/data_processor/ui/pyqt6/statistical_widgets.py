@@ -215,10 +215,14 @@ if PYQT6_AVAILABLE:
                 "",
                 "Feature Importance:",
             ]
-            for name, imp in sorted(
-                result.feature_importance.items(), key=lambda x: x[1], reverse=True
-            ):
-                lines.append(f"  {name}: {imp:.4f}")
+            lines.extend(
+                [
+                    f"  {name}: {imp:.4f}"
+                    for (name, imp) in sorted(
+                        result.feature_importance.items(), key=lambda x: x[1], reverse=True
+                    )
+                ]
+            )
 
             self.summary_text.setText("\n".join(lines))
 

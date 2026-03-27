@@ -1,3 +1,5 @@
+from numba import jit
+
 """Event handling mixin for SolarSystemScene.
 
 Extracts mouse, keyboard, and UI click handling from the main scene class
@@ -350,6 +352,7 @@ class SceneEventMixin:
                         self._focus_on_selected()
         return True
 
+    @jit(nopython=True, fastmath=True)
     def _handle_controls_click(self, x: int, y: int) -> bool:
         """Handle click within the unified control panel.
 

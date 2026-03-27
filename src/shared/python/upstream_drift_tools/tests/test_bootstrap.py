@@ -8,7 +8,7 @@ Full coverage of both branches:
 - Already-present paths not inserted twice
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: F404
 
 import sys
 from pathlib import Path

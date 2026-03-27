@@ -1,3 +1,5 @@
+from numba import jit
+
 """Validated defaults and geometry helpers for the vessel drafter tool."""
 
 from __future__ import annotations
@@ -306,6 +308,7 @@ class VesselDrafterLayout:
         )
 
     @property
+    @jit(nopython=True, fastmath=True)
     def electrode_placements(self) -> tuple[VesselElectrodePlacement, ...]:
         placements: list[VesselElectrodePlacement] = []
         for index in range(self.electrode_count):

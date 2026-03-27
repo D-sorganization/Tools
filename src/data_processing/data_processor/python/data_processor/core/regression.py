@@ -272,8 +272,7 @@ def format_regression_report(result: RegressionResult) -> str:
         lines.append("")
         lines.append("Variable Importance (standardized):")
         sorted_imp = sorted(result.variable_importance.items(), key=lambda x: x[1], reverse=True)
-        for name, imp in sorted_imp[:10]:
-            lines.append(f"  {name}: {imp:.4f}")
+        lines.extend([f"  {name}: {imp:.4f}" for (name, imp) in sorted_imp[:10]])
 
     # Diagnostics summary
     if result.diagnostics:
