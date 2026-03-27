@@ -1,3 +1,7 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """Financial Calculator PyQt6 Main Window.
 
 Provides a comprehensive GUI for financial modeling of plant operations
@@ -478,8 +482,7 @@ class FinancialCalculatorMainWindow(QMainWindow):
         # Key metrics grid
         metrics_frame = QFrame()
         metrics_frame.setStyleSheet(
-            f"background-color: {COLORS['surface0']}; "
-            f"border-radius: 8px; padding: 15px;"
+            f"background-color: {COLORS['surface0']}; " f"border-radius: 8px; padding: 15px;"
         )
         metrics_layout = QGridLayout(metrics_frame)
         metrics_layout.setSpacing(20)
@@ -564,9 +567,7 @@ class FinancialCalculatorMainWindow(QMainWindow):
         """Update results display."""
         if not (results is not None):
             raise ValueError("results must be provided")
-        self.metric_labels["annual_tons"].setText(
-            f"{results.annual_feedstock_tons:,.0f} tons"
-        )
+        self.metric_labels["annual_tons"].setText(f"{results.annual_feedstock_tons:,.0f} tons")
         self.metric_labels["revenue"].setText(f"${results.total_revenue:,.0f}")
         self.metric_labels["costs"].setText(f"${results.total_costs:,.0f}")
         self.metric_labels["net_income"].setText(f"${results.net_income:,.0f}")
@@ -585,15 +586,9 @@ class FinancialCalculatorMainWindow(QMainWindow):
             self.projections_table.setItem(
                 row, 1, QTableWidgetItem(f"${proj['total_revenue']:,.0f}")
             )
-            self.projections_table.setItem(
-                row, 2, QTableWidgetItem(f"${proj['total_costs']:,.0f}")
-            )
-            self.projections_table.setItem(
-                row, 3, QTableWidgetItem(f"${proj['ebitda']:,.0f}")
-            )
-            self.projections_table.setItem(
-                row, 4, QTableWidgetItem(f"${proj['net_income']:,.0f}")
-            )
+            self.projections_table.setItem(row, 2, QTableWidgetItem(f"${proj['total_costs']:,.0f}"))
+            self.projections_table.setItem(row, 3, QTableWidgetItem(f"${proj['ebitda']:,.0f}"))
+            self.projections_table.setItem(row, 4, QTableWidgetItem(f"${proj['net_income']:,.0f}"))
             self.projections_table.setItem(
                 row, 5, QTableWidgetItem(f"${proj['cumulative_cash_flow']:,.0f}")
             )

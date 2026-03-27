@@ -170,5 +170,5 @@ class TestTripleSimulationResultMethods:
         assert isinstance(pos, dict)
 
     def test_out_of_bounds_raises(self, result: TripleSimulationResult) -> None:
-        with pytest.raises((IndexError, AssertionError)):
+        with pytest.raises((IndexError, ValueError)):
             result.mass_matrix_at(len(result.t) + 999)

@@ -361,10 +361,8 @@ class ControlsWidgetBase(QWidget):
         inputs = self._get_torque_inputs()
         key = joint.lower()
         valid_keys = {k.lower() for k in inputs}
-        if not (():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            key in valid_keys
-        ), f"Unknown joint '{joint}', expected one of {valid_keys}"
+        if not (key in valid_keys):
+            raise ValueError(f"Unknown joint '{joint}', expected one of {valid_keys}")
         if not (len(coeffs) >= 1):
             raise ValueError("Coefficients list must not be empty")
 
@@ -395,10 +393,8 @@ class ControlsWidgetBase(QWidget):
 
     def set_slider_value(self, val: int) -> None:
         """Pre: 0 <= val <= slider.maximum()"""
-        if not (():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            0 <= val <= self.slider.maximum()
-        ), f"Slider value {val} out of range [0, {self.slider.maximum()}]"
+        if not (0 <= val <= self.slider.maximum()):
+            raise ValueError(f"Slider value {val} out of range [0, {self.slider.maximum()}]")
         self.slider.blockSignals(True)
         self.slider.setValue(val)
         self.slider.blockSignals(False)

@@ -44,10 +44,8 @@ def angular_power_at(
     """
     if not (np.isfinite(joint_torque)):
         raise ValueError(f"torque must be finite, got {joint_torque}")
-    if not (np.isfinite():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        angular_velocity
-    ), f"omega must be finite, got {angular_velocity}"
+    if not (np.isfinite(angular_velocity)):
+        raise ValueError(f"omega must be finite, got {angular_velocity}")
     result = float(joint_torque * angular_velocity)
     if not (np.isfinite(result)):
         raise ValueError(f"angular power is non-finite: {result}")
@@ -67,10 +65,10 @@ def linear_power_at(
     """
     force = np.asarray(force, dtype=float)
     velocity = np.asarray(velocity, dtype=float)
-    if not (force.shape == (2):
-        raise ValueError(), f"force must be shape (2,), got {force.shape}")
-    if not (velocity.shape == (2):
-        raise ValueError(), f"velocity must be shape (2,), got {velocity.shape}")
+    if not (force.shape == (2,)):
+        raise ValueError(f"force must be shape (2,), got {force.shape}")
+    if not (velocity.shape == (2,)):
+        raise ValueError(f"velocity must be shape (2,), got {velocity.shape}")
     if not (np.all(np.isfinite(force))):
         raise ValueError(f"force must be finite: {force}")
     if not (np.all(np.isfinite(velocity))):
@@ -108,10 +106,8 @@ def angular_power_series(
     angular_velocities = np.asarray(angular_velocities, dtype=float)
     if not (torques.ndim == 1):
         raise ValueError(f"torques must be 1-D, got {torques.ndim}-D")
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        torques.shape == angular_velocities.shape
-    ), f"Shape mismatch: {torques.shape} vs {angular_velocities.shape}"
+    if not (torques.shape == angular_velocities.shape):
+        raise ValueError(f"Shape mismatch: {torques.shape} vs {angular_velocities.shape}")
     if not (np.all(np.isfinite(torques))):
         raise ValueError("torques must be all finite")
     if not (np.all(np.isfinite(angular_velocities))):
@@ -143,14 +139,10 @@ def linear_power_series(
     """
     forces = np.asarray(forces, dtype=float)
     velocities = np.asarray(velocities, dtype=float)
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        forces.ndim == 2 and forces.shape[1] == 2
-    ), f"forces must be (N,2), got {forces.shape}"
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        forces.shape == velocities.shape
-    ), f"Shape mismatch: {forces.shape} vs {velocities.shape}"
+    if not (forces.ndim == 2 and forces.shape[1] == 2):
+        raise ValueError(f"forces must be (N,2), got {forces.shape}")
+    if not (forces.shape == velocities.shape):
+        raise ValueError(f"Shape mismatch: {forces.shape} vs {velocities.shape}")
     if not (np.all(np.isfinite(forces))):
         raise ValueError("forces must be finite")
     if not (np.all(np.isfinite(velocities))):
@@ -240,10 +232,8 @@ def angular_impulse_series(
     time = np.asarray(time, dtype=float)
     if not (torques.ndim == 1):
         raise ValueError(f"torques must be 1-D, got {torques.ndim}-D")
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        torques.shape == time.shape
-    ), f"Shape mismatch: {torques.shape} vs {time.shape}"
+    if not (torques.shape == time.shape):
+        raise ValueError(f"Shape mismatch: {torques.shape} vs {time.shape}")
     if not (np.all(np.isfinite(torques))):
         raise ValueError("torques must be finite")
     if not (np.all(np.isfinite(time))):
@@ -273,14 +263,10 @@ def linear_impulse_series(
     """
     forces = np.asarray(forces, dtype=float)
     time = np.asarray(time, dtype=float)
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        forces.ndim == 2 and forces.shape[1] == 2
-    ), f"forces must be (N,2), got {forces.shape}"
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        forces.shape[0] == time.shape[0]
-    ), f"Row mismatch: {forces.shape[0]} vs {time.shape[0]}"
+    if not (forces.ndim == 2 and forces.shape[1] == 2):
+        raise ValueError(f"forces must be (N,2), got {forces.shape}")
+    if not (forces.shape[0] == time.shape[0]):
+        raise ValueError(f"Row mismatch: {forces.shape[0]} vs {time.shape[0]}")
 
     dt = np.diff(time)
     impulse = np.zeros_like(forces)

@@ -273,9 +273,9 @@ class TestForwardKinematics:
             q = rng.uniform(-np.pi / 2, np.pi / 2, N_DOF)
             pos = self._fk(q, sym_params)
             for key, (x, y) in pos.items():
-                assert np.isfinite(x) and np.isfinite(y), (
-                    f"Non-finite position for joint {key!r}: ({x}, {y})"
-                )
+                assert np.isfinite(x) and np.isfinite(
+                    y
+                ), f"Non-finite position for joint {key!r}: ({x}, {y})"
 
     def test_origin_always_zero(self, sym_params: GolferParams) -> None:
         for q in [np.zeros(N_DOF), np.ones(N_DOF) * 0.3]:

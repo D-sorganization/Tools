@@ -82,7 +82,7 @@ class TestNumericalJacobian:
         p = _default_golfer_params()
         q_wrong = np.zeros(7)  # wrong size
 
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             _numerical_jacobian(q_wrong, p, "rh")
 
     def test_multiple_joints_independent(self):
@@ -242,17 +242,17 @@ class TestEllipsoidsGolfer:
         result = ellipsoids_golfer(q, p)
         for name, data in result.items():
             assert np.all(np.isfinite(data["jacobian"])), f"{name} Jacobian non-finite"
-            assert np.all(np.isfinite(data["singular_values"])), (
-                f"{name} singular values non-finite"
-            )
-            assert np.all(np.isfinite(data["mob_semi_axes"])), (
-                f"{name} mobility semi-axes non-finite"
-            )
+            assert np.all(
+                np.isfinite(data["singular_values"])
+            ), f"{name} singular values non-finite"
+            assert np.all(
+                np.isfinite(data["mob_semi_axes"])
+            ), f"{name} mobility semi-axes non-finite"
             # force_semi_axes may be None at singular configurations
             if data["force_semi_axes"] is not None:
-                assert np.all(np.isfinite(data["force_semi_axes"])), (
-                    f"{name} force semi-axes non-finite"
-                )
+                assert np.all(
+                    np.isfinite(data["force_semi_axes"])
+                ), f"{name} force semi-axes non-finite"
 
     def test_singular_values_descending(self):
         """Singular values should be in descending order."""
@@ -276,9 +276,7 @@ class TestEllipsoidsGolfer:
             # Check columns are unit vectors
             for i in range(dirs.shape[1]):
                 col_norm = np.linalg.norm(dirs[:, i])
-                assert np.isclose(col_norm, 1.0, atol=1e-10), (
-                    f"{name} direction {i} not unit norm"
-                )
+                assert np.isclose(col_norm, 1.0, atol=1e-10), f"{name} direction {i} not unit norm"
 
     def test_semi_axes_positive(self):
         """Semi-axes lengths should be positive."""

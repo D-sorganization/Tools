@@ -168,24 +168,18 @@ class GolferParams:
             raise ValueError(f"d_rs must be non-negative, got {self.d_rs}")
         if not (self.d_ls >= 0):
             raise ValueError(f"d_ls must be non-negative, got {self.d_ls}")
-        if not (():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            self.grip_right >= 0
-        ), f"grip_right must be non-negative, got {self.grip_right}"
-        if not (():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            self.grip_left >= 0
-        ), f"grip_left must be non-negative, got {self.grip_left}"
+        if not (self.grip_right >= 0):
+            raise ValueError(f"grip_right must be non-negative, got {self.grip_right}")
+        if not (self.grip_left >= 0):
+            raise ValueError(f"grip_left must be non-negative, got {self.grip_left}")
         if not (self.grip_right <= self.L_club):
             raise ValueError("grip_right must be ≤ L_club")
         if not (self.grip_left <= self.L_club):
             raise ValueError("grip_left must be ≤ L_club")
         if not (self.g >= 0):
             raise ValueError(f"g must be non-negative, got {self.g}")
-        if not (():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            self.m_clubhead >= 0
-        ), f"m_clubhead must be non-negative, got {self.m_clubhead}"
+        if not (self.m_clubhead >= 0):
+            raise ValueError(f"m_clubhead must be non-negative, got {self.m_clubhead}")
 
         for name in ["b_hub", "b_rs", "b_re", "b_rh", "b_ls", "b_le", "b_lh"]:
             val = getattr(self, name)

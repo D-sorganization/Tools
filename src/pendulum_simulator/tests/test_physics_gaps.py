@@ -158,11 +158,11 @@ class TestClampTorqueNdof:
         np.testing.assert_array_equal(result, tau)
 
     def test_shape_mismatch_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             clamp_torque_ndof(np.array([1.0, 2.0]), np.array([10.0]))
 
     def test_non_positive_limit_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             clamp_torque_ndof(np.array([1.0]), np.array([0.0]))
 
 

@@ -86,11 +86,11 @@ class TestSetPresetSource:
         assert panel._compare_btn.isEnabled()
 
     def test_rejects_non_callable_names_fn(self, panel) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             panel.set_preset_source("not_callable", lambda name: [])  # type: ignore[arg-type]
 
     def test_rejects_non_callable_coeffs_fn(self, panel) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             panel.set_preset_source(lambda: [], "not_callable")  # type: ignore[arg-type]
 
     def test_stores_preset_fns(self, panel) -> None:
@@ -167,7 +167,7 @@ class TestSwingComparisonDialogContracts:
             SwingComparisonDialog,
         )
 
-        with pytest.raises(AssertionError, match="Need at least 2 presets"):
+        with pytest.raises((ValueError, TypeError), match="Need at least 2 presets"):
             SwingComparisonDialog(
                 preset_names=["Only One"],
                 get_coeffs_for_preset=lambda name: [[0.0]],

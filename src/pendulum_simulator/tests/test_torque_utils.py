@@ -52,12 +52,12 @@ class TestMakePolynomialTorque:
 
     def test_zero_joints_raises(self):
         """Must have at least one joint."""
-        with pytest.raises(AssertionError, match="Need at least one joint"):
+        with pytest.raises((ValueError, TypeError), match="Need at least one joint"):
             make_polynomial_torque()
 
     def test_empty_coefficients_raises(self):
         """Each joint needs at least one coefficient."""
-        with pytest.raises(AssertionError, match="Need at least one coefficient"):
+        with pytest.raises((ValueError, TypeError), match="Need at least one coefficient"):
             make_polynomial_torque([])
 
     def test_returns_tuple(self):

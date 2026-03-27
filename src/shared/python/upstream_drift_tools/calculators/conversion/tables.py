@@ -1,3 +1,7 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """Reference data for unit conversion tables and gas properties.
 
 These tables are deliberately defined as immutable module-level mappings so that conversion

@@ -16,7 +16,7 @@ class TestChartDataDialog:
         assert dialog._y_combo.count() > 0
 
     def test_init_raises_if_model_type_none(self):
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             ChartDataDialog(model_type=None)  # type: ignore
 
     def test_default_selections_are_set(self, qtbot):

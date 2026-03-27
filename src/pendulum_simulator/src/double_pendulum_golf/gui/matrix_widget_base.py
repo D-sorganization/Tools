@@ -68,10 +68,8 @@ class MatrixWidgetBase(QWidget):
         """
         if not (result is not None):
             raise ValueError(f"{self.__class__.__name__}: result must not be None")
-        if not (():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            result.n_steps >= 1
-        ), f"{self.__class__.__name__}: result must have at least one time step"
+        if not (result.n_steps >= 1):
+            raise ValueError(f"{self.__class__.__name__}: result must have at least one time step")
         self._result = result
         self._current_idx = 0
         logger.debug(

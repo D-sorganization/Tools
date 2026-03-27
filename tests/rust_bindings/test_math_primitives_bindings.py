@@ -64,9 +64,7 @@ class TestEulerToRotationMatrix:
             for j in range(3):
                 dot = sum(r[k][i] * r[k][j] for k in range(3))
                 expected = 1.0 if i == j else 0.0
-                assert abs(dot - expected) < 1e-10, (
-                    f"Orthogonality violated at ({i},{j}): {dot}"
-                )
+                assert abs(dot - expected) < 1e-10, f"Orthogonality violated at ({i},{j}): {dot}"
 
 
 class TestRotationMatrixToEuler:
@@ -86,9 +84,9 @@ class TestRotationMatrixToEuler:
         r = mp.euler_to_rotation_matrix(euler)
         recovered = mp.rotation_matrix_to_euler(r)
         for i in range(3):
-            assert abs(recovered[i] - euler[i]) < 1e-10, (
-                f"Roundtrip failed at index {i}: {recovered[i]} != {euler[i]}"
-            )
+            assert (
+                abs(recovered[i] - euler[i]) < 1e-10
+            ), f"Roundtrip failed at index {i}: {recovered[i]} != {euler[i]}"
 
 
 # ---------------------------------------------------------------------------
@@ -314,30 +312,22 @@ class TestSphereDistance:
 
     def test_non_overlapping(self) -> None:
         """Two separated spheres must have positive distance."""
-        dist, pa, pb = mp.sphere_sphere_distance(
-            [0.0, 0.0, 0.0], 1.0, [5.0, 0.0, 0.0], 1.0
-        )
+        dist, pa, pb = mp.sphere_sphere_distance([0.0, 0.0, 0.0], 1.0, [5.0, 0.0, 0.0], 1.0)
         assert dist == pytest.approx(3.0, abs=1e-10)
 
     def test_touching(self) -> None:
         """Two touching spheres must have distance 0."""
-        dist, pa, pb = mp.sphere_sphere_distance(
-            [0.0, 0.0, 0.0], 1.0, [2.0, 0.0, 0.0], 1.0
-        )
+        dist, pa, pb = mp.sphere_sphere_distance([0.0, 0.0, 0.0], 1.0, [2.0, 0.0, 0.0], 1.0)
         assert dist == pytest.approx(0.0, abs=1e-10)
 
     def test_overlapping(self) -> None:
         """Two overlapping spheres must have negative distance."""
-        dist, pa, pb = mp.sphere_sphere_distance(
-            [0.0, 0.0, 0.0], 1.0, [1.0, 0.0, 0.0], 1.0
-        )
+        dist, pa, pb = mp.sphere_sphere_distance([0.0, 0.0, 0.0], 1.0, [1.0, 0.0, 0.0], 1.0)
         assert dist < 0.0
 
     def test_closest_points_type(self) -> None:
         """Closest points must be length-3 lists."""
-        _, pa, pb = mp.sphere_sphere_distance(
-            [0.0, 0.0, 0.0], 1.0, [5.0, 0.0, 0.0], 1.0
-        )
+        _, pa, pb = mp.sphere_sphere_distance([0.0, 0.0, 0.0], 1.0, [5.0, 0.0, 0.0], 1.0)
         assert len(pa) == 3
         assert len(pb) == 3
 
@@ -347,22 +337,14 @@ class TestCheckCollisionSpheres:
 
     def test_no_collision(self) -> None:
         """Distant spheres must not collide."""
-        assert not mp.check_collision_spheres(
-            [0.0, 0.0, 0.0], 1.0, [10.0, 0.0, 0.0], 1.0, 0.0
-        )
+        assert not mp.check_collision_spheres([0.0, 0.0, 0.0], 1.0, [10.0, 0.0, 0.0], 1.0, 0.0)
 
     def test_collision(self) -> None:
         """Overlapping spheres must collide."""
-        assert mp.check_collision_spheres(
-            [0.0, 0.0, 0.0], 1.0, [1.0, 0.0, 0.0], 1.0, 0.0
-        )
+        assert mp.check_collision_spheres([0.0, 0.0, 0.0], 1.0, [1.0, 0.0, 0.0], 1.0, 0.0)
 
     def test_margin_triggers_near_collision(self) -> None:
         """Marginally separated spheres must collide with sufficient margin."""
         # Centers 2.5 apart, radii 1.0 each → gap = 0.5
-        assert not mp.check_collision_spheres(
-            [0.0, 0.0, 0.0], 1.0, [2.5, 0.0, 0.0], 1.0, 0.0
-        )
-        assert mp.check_collision_spheres(
-            [0.0, 0.0, 0.0], 1.0, [2.5, 0.0, 0.0], 1.0, 1.0
-        )
+        assert not mp.check_collision_spheres([0.0, 0.0, 0.0], 1.0, [2.5, 0.0, 0.0], 1.0, 0.0)
+        assert mp.check_collision_spheres([0.0, 0.0, 0.0], 1.0, [2.5, 0.0, 0.0], 1.0, 1.0)

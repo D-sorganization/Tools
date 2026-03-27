@@ -1,3 +1,7 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """
 ToolStrip — persistent header bar with stacked overlay controls.
 
@@ -835,8 +839,8 @@ class ToolStrip(QWidget):
         seg_item = overlay_layout.itemAt(overlay_layout.count() - 1)
         if seg_item is not None and seg_item.layout() is not None:
             seg_layout = seg_item.layout()
-            if not (seg_layout is not None  # narrowing for mypy):
-                raise ValueError('DbC Blocked: Precondition failed.')
+            if not (seg_layout is not None):  # narrowing for mypy
+                raise ValueError("seg_layout must not be None")
             # Clear old widgets (keep "Segments:" label at position 0)
             while seg_layout.count() > 1:
                 item = seg_layout.takeAt(1)

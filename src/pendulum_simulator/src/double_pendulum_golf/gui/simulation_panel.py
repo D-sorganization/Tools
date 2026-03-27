@@ -1,3 +1,7 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """
 Shared simulation panel for double and triple pendulum tabs.
 """
@@ -393,10 +397,10 @@ class SimulationPanel(QWidget):
         """
         if not (result is not None):
             raise ValueError("Simulation result must not be None")
-        if not (hasattr(result):
-            raise ValueError("n_steps"), "Result must have n_steps attribute")
-        if not (hasattr(result):
-            raise ValueError("t"), "Result must have t attribute")
+        if not (hasattr(result, "n_steps")):
+            raise ValueError("Result must have n_steps attribute")
+        if not (hasattr(result, "t")):
+            raise ValueError("Result must have t attribute")
 
         res: Any = result  # pyqtSignal emits object; cast for attribute access
 

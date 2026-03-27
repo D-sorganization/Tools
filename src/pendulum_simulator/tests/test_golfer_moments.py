@@ -73,13 +73,13 @@ class TestGolferPendulumMoments:
             applied = result[f"{jname}_applied_torque"]
             moment = result[f"{jname}_moment_of_force"]
             total = result[f"{jname}_total_moment"]
-            assert total == pytest.approx(applied + moment), (
-                f"{jname}: total {total} != applied {applied} + moment {moment}"
-            )
+            assert total == pytest.approx(
+                applied + moment
+            ), f"{jname}: total {total} != applied {applied} + moment {moment}"
 
     def test_too_few_torques_raises(self, sample_positions, sample_forces):
         """Must have at least 7 applied torques."""
-        with pytest.raises(AssertionError, match="Need >= 7"):
+        with pytest.raises((ValueError, TypeError), match="Need >= 7"):
             golfer_pendulum_moments(sample_positions, sample_forces, (1.0, 2.0), None)
 
     def test_zero_torques_yield_nonzero_moments(self, sample_positions, sample_forces):
