@@ -49,7 +49,9 @@ def test_run_multi_parameter_analysis(analysis_params: dict) -> None:
     ) as mock_eval:
         mock_eval.return_value = (42.0, None, None)
 
-        result = run_multi_parameter_analysis(engine, analysis_params, 15.0, p1_vals, p2_vals)
+        result = run_multi_parameter_analysis(
+            engine, analysis_params, 15.0, p1_vals, p2_vals
+        )
 
         assert result["param1_name"] == "p1"
         assert result["param2_name"] == "p2"

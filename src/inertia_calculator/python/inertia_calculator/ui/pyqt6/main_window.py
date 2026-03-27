@@ -266,7 +266,9 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         self.mass_input.setRange(0.001, 10000)
         self.mass_input.setDecimals(4)
         self.mass_input.setValue(1.0)
-        self.mass_input.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.mass_input.setSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
+        )
         shape_layout.addWidget(self.mass_input, 1, 1)
 
         # Dimension inputs (labels change based on shape)

@@ -53,7 +53,9 @@ def test_setup_state_management(qapp) -> None:
 
 
 def test_open_file_success(empty_widget) -> None:
-    with patch("PyQt6.QtWidgets.QFileDialog.getOpenFileName", return_value=("test.csv", "")):
+    with patch(
+        "PyQt6.QtWidgets.QFileDialog.getOpenFileName", return_value=("test.csv", "")
+    ):
         with patch.object(empty_widget.engine, "load_file") as mock_load:
             res = MagicMock()
             res.success = True
@@ -67,7 +69,9 @@ def test_open_file_success(empty_widget) -> None:
 
 
 def test_open_file_failure(empty_widget) -> None:
-    with patch("PyQt6.QtWidgets.QFileDialog.getOpenFileName", return_value=("test.csv", "")):
+    with patch(
+        "PyQt6.QtWidgets.QFileDialog.getOpenFileName", return_value=("test.csv", "")
+    ):
         with patch.object(empty_widget.engine, "load_file") as mock_load:
             res = MagicMock()
             res.success = False
@@ -76,7 +80,9 @@ def test_open_file_failure(empty_widget) -> None:
 
             with patch("PyQt6.QtWidgets.QMessageBox.warning") as mock_warn:
                 empty_widget.open_file()
-                mock_warn.assert_called_once_with(empty_widget, "Error", "Failed to load")
+                mock_warn.assert_called_once_with(
+                    empty_widget, "Error", "Failed to load"
+                )
 
 
 def test_open_file_cancel(empty_widget) -> None:
@@ -125,7 +131,9 @@ def test_save_file_no_file(populated_widget) -> None:
 
 
 def test_export_file(populated_widget) -> None:
-    with patch("PyQt6.QtWidgets.QFileDialog.getSaveFileName", return_value=("out.csv", "")):
+    with patch(
+        "PyQt6.QtWidgets.QFileDialog.getSaveFileName", return_value=("out.csv", "")
+    ):
         with patch.object(populated_widget.engine, "export_data") as mock_exp:
             res = MagicMock()
             res.success = True
@@ -198,7 +206,9 @@ def test_show_table_context_menu(populated_widget) -> None:
 def test_copy_selected(populated_widget) -> None:
     from PyQt6.QtWidgets import QTableWidgetSelectionRange
 
-    populated_widget.data_table.setRangeSelected(QTableWidgetSelectionRange(0, 0, 1, 1), True)
+    populated_widget.data_table.setRangeSelected(
+        QTableWidgetSelectionRange(0, 0, 1, 1), True
+    )
 
     with patch("PyQt6.QtWidgets.QApplication.clipboard") as mock_clip:
         clip_obj = MagicMock()

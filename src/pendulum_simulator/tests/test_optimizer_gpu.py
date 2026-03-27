@@ -74,7 +74,9 @@ class TestObjectiveFunction:
         torque_jax = jnp.array(torque_coeffs)
         state_jax = jnp.array(initial_state)
 
-        objective = clubhead_speed_objective(torque_jax, _PARAMS, state_jax, t_end=0.5, dt=0.01)
+        objective = clubhead_speed_objective(
+            torque_jax, _PARAMS, state_jax, t_end=0.5, dt=0.01
+        )
 
         # Objective should be a scalar
         assert objective.shape == ()
@@ -189,7 +191,9 @@ class TestClubheadSpeed:
         torque_jax = jnp.array(torque_coeffs)
         state_jax = jnp.array(initial_state)
 
-        speed = clubhead_velocity_at_final_time(torque_jax, _PARAMS, state_jax, t_end=0.5, dt=0.01)
+        speed = clubhead_velocity_at_final_time(
+            torque_jax, _PARAMS, state_jax, t_end=0.5, dt=0.01
+        )
 
         assert float(speed) >= 0.0
 
@@ -217,7 +221,9 @@ class TestFiniteElementGradient:
     """Test finite difference gradient computation."""
 
     @pytest.mark.slow
-    def test_fd_gradient_shape(self, initial_state: np.ndarray, torque_coeffs: np.ndarray) -> None:
+    def test_fd_gradient_shape(
+        self, initial_state: np.ndarray, torque_coeffs: np.ndarray
+    ) -> None:
         """Finite difference gradient has correct shape."""
         torque_jax = jnp.array(torque_coeffs)
         state_jax = jnp.array(initial_state)

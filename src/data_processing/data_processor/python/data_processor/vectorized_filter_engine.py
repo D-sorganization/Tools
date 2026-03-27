@@ -114,7 +114,9 @@ class VectorizedFilterEngine:
     - Optimized for large datasets (1M+ points)
     """
 
-    def __init__(self, logger: Callable[..., Any] | None = None, n_jobs: int = -1) -> None:
+    def __init__(
+        self, logger: Callable[..., Any] | None = None, n_jobs: int = -1
+    ) -> None:
         """
         Initialize the vectorized filter engine.
 
@@ -251,7 +253,8 @@ class VectorizedFilterEngine:
         clean_signal = signal.dropna()
         if len(clean_signal) < MIN_SIGNAL_DATA_POINTS:
             self.logger(
-                f"Warning: {signal_name} too short for filtering " f"({len(clean_signal)} points)",
+                f"Warning: {signal_name} too short for filtering "
+                f"({len(clean_signal)} points)",
             )
             return signal
 
@@ -373,7 +376,10 @@ class VectorizedFilterEngine:
 
         # Calculate sampling rate
         sr = self._calculate_sampling_rate(signal)
-        if sr is None or len(signal.dropna()) <= order * MIN_BUTTERWORTH_DATA_MULTIPLIER:
+        if (
+            sr is None
+            or len(signal.dropna()) <= order * MIN_BUTTERWORTH_DATA_MULTIPLIER
+        ):
             self.logger("Warning: Insufficient data for Butterworth filter")
             return signal
 
@@ -462,7 +468,10 @@ class VectorizedFilterEngine:
             # This is a compromise between exactness and performance
             rolling_median = clean_data.rolling(window=window, center=True).median()
             rolling_mad = (
-                (clean_data - rolling_median).abs().rolling(window=window, center=True).median()
+                (clean_data - rolling_median)
+                .abs()
+                .rolling(window=window, center=True)
+                .median()
             )
             threshold_values = threshold * NORMAL_DISTRIBUTION_CONSTANT * rolling_mad
 
@@ -471,7 +480,9 @@ class VectorizedFilterEngine:
 
             # Create filtered signal
             filtered_signal = signal.copy()
-            filtered_signal.loc[clean_data.index[outlier_mask]] = rolling_median[outlier_mask]
+            filtered_signal.loc[clean_data.index[outlier_mask]] = rolling_median[
+                outlier_mask
+            ]
 
             return filtered_signal
 
@@ -509,12 +520,17 @@ class VectorizedFilterEngine:
         # Simplified approach using pandas rolling
         rolling_median = clean_data.rolling(window=window, center=True).median()
         rolling_mad = (
-            (clean_data - rolling_median).abs().rolling(window=window, center=True).median()
+            (clean_data - rolling_median)
+            .abs()
+            .rolling(window=window, center=True)
+            .median()
         )
         threshold_values = threshold * NORMAL_DISTRIBUTION_CONSTANT * rolling_mad
 
         outlier_mask = (clean_data - rolling_median).abs() > threshold_values
-        filtered_signal.loc[clean_data.index[outlier_mask]] = rolling_median[outlier_mask]
+        filtered_signal.loc[clean_data.index[outlier_mask]] = rolling_median[
+            outlier_mask
+        ]
 
         return filtered_signal
 
@@ -570,7 +586,9 @@ class VectorizedFilterEngine:
                 # Calculate clipped values: center + sign * threshold * scale
                 clipped_values = center + signs * threshold * scale
 
-                filtered_signal.loc[clean_data.index[outlier_mask]] = clipped_values[outlier_mask]
+                filtered_signal.loc[clean_data.index[outlier_mask]] = clipped_values[
+                    outlier_mask
+                ]
 
             elif method == "Replace with Median":
                 # Replace with median of the entire signal
@@ -620,7 +638,8 @@ class VectorizedFilterEngine:
         clean_data = signal.dropna()
         if len(clean_data) <= window:
             self.logger(
-                f"Warning: Signal too short for Savitzky-Golay filter " f"(window={window})",
+                f"Warning: Signal too short for Savitzky-Golay filter "
+                f"(window={window})",
             )
             return signal
 
@@ -777,7 +796,8 @@ class VectorizedFilterEngine:
                 sample_rate = self._calculate_sampling_rate(signal)
                 if sample_rate is None:
                     self.logger(
-                        "Warning: Cannot determine sample rate, using " "normalized frequencies",
+                        "Warning: Cannot determine sample rate, using "
+                        "normalized frequencies",
                     )
                     freq_unit = "normalized"
 
@@ -862,7 +882,9 @@ class VectorizedFilterEngine:
             filter_response[transition_mask] = 0.5 * (
                 1
                 - np.cos(
-                    np.pi * (freqs[transition_mask] - freq_high + transition_bw) / transition_bw,
+                    np.pi
+                    * (freqs[transition_mask] - freq_high + transition_bw)
+                    / transition_bw,
                 )
             )
 
@@ -874,7 +896,9 @@ class VectorizedFilterEngine:
             filter_response[low_transition] = 0.5 * (
                 1
                 + np.cos(
-                    np.pi * (freqs[low_transition] - freq_low + transition_bw) / transition_bw,
+                    np.pi
+                    * (freqs[low_transition] - freq_low + transition_bw)
+                    / transition_bw,
                 )
             )
             filter_response[high_transition] = 0.5 * (
@@ -892,7 +916,9 @@ class VectorizedFilterEngine:
             filter_response[high_transition] = 0.5 * (
                 1
                 + np.cos(
-                    np.pi * (freqs[high_transition] - freq_high + transition_bw) / transition_bw,
+                    np.pi
+                    * (freqs[high_transition] - freq_high + transition_bw)
+                    / transition_bw,
                 )
             )
 

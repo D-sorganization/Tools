@@ -146,14 +146,16 @@ class TestReversedHubStandoff:
                 J_hub_num[0, j] = (fkp["hub"][0] - fk0["hub"][0]) / eps
                 J_hub_num[1, j] = (fkp["hub"][1] - fk0["hub"][1]) / eps
 
-            assert np.allclose(
-                jacs["hub"], J_hub_num, atol=1e-4
-            ), f"Hub Jacobian mismatch:\nAnalytical:\n{jacs['hub']}\nNumerical:\n{J_hub_num}"
+            assert np.allclose(jacs["hub"], J_hub_num, atol=1e-4), (
+                f"Hub Jacobian mismatch:\nAnalytical:\n{jacs['hub']}\nNumerical:\n{J_hub_num}"
+            )
 
     @jit(nopython=True, fastmath=True)
     @jit(nopython=True, fastmath=True)
     @jit(nopython=True, fastmath=True)
-    def test_all_analytical_jacobians_match_numerical(self, golfer_params: GolferParams) -> None:
+    def test_all_analytical_jacobians_match_numerical(
+        self, golfer_params: GolferParams
+    ) -> None:
         """All analytical Jacobians must match numerical for several configs."""
         rng = np.random.default_rng(123)
         eps = 1e-7
@@ -251,9 +253,9 @@ class TestScapulaJointParameters:
         # Scapula position should be at the original shoulder bar endpoint
         rscap = np.array(pos_scap["rscap"])
         rs_orig = np.array(pos_no["rs"])
-        assert np.allclose(
-            rscap, rs_orig, atol=1e-10
-        ), "Scapula joint should be at original shoulder bar endpoint"
+        assert np.allclose(rscap, rs_orig, atol=1e-10), (
+            "Scapula joint should be at original shoulder bar endpoint"
+        )
 
     def test_mass_matrix_still_valid_with_scapula(
         self,
@@ -308,9 +310,9 @@ class TestSwingPlaneTilt:
         V_tilted = potential_energy_from_q(q, params_tilted)
 
         # PE should be smaller with reduced gravity
-        assert abs(V_tilted) < abs(
-            V_full
-        ), f"Tilted PE ({V_tilted}) should be smaller than full ({V_full})"
+        assert abs(V_tilted) < abs(V_full), (
+            f"Tilted PE ({V_tilted}) should be smaller than full ({V_full})"
+        )
 
 
 # ---------------------------------------------------------------------------

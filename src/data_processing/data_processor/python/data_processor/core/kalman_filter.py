@@ -343,7 +343,9 @@ class KalmanFilter:
 
             # Smooth
             smoothed_states[t] = x_filt + J @ (smoothed_states[t + 1] - x_pred)
-            smoothed_covariances[t] = P_filt + J @ (smoothed_covariances[t + 1] - P_pred) @ J.T
+            smoothed_covariances[t] = (
+                P_filt + J @ (smoothed_covariances[t + 1] - P_pred) @ J.T
+            )
 
         # Update result
         return KalmanFilterResult(

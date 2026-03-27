@@ -250,7 +250,9 @@ class SpectralAnalyzer:
             sampling_freq=fs,
         )
 
-    def compute_fft(self, signal: np.ndarray, fs: float | None = None) -> SpectralResult:
+    def compute_fft(
+        self, signal: np.ndarray, fs: float | None = None
+    ) -> SpectralResult:
         """Compatibility wrapper for FFT computation."""
         if not (signal is not None):
             raise ValueError("signal must be provided")
@@ -271,7 +273,9 @@ class SpectralAnalyzer:
     def power(self) -> np.ndarray:  # For SpectralResult
         return self.psd
 
-    def compute_welch(self, signal: np.ndarray, fs: float | None = None) -> SpectralResult:
+    def compute_welch(
+        self, signal: np.ndarray, fs: float | None = None
+    ) -> SpectralResult:
         """Compatibility wrapper for Welch computation."""
         if not (signal is not None):
             raise ValueError("signal must be provided")
@@ -792,4 +796,6 @@ __all__ = [
 
 def compute_spectrum(signal: np.ndarray, sample_rate: float = 1.0) -> SpectralResult:
     """Alias for compute_psd for backward compatibility."""
-    return compute_psd(pd.DataFrame({"signal": signal}), "signal", sampling_freq=sample_rate)
+    return compute_psd(
+        pd.DataFrame({"signal": signal}), "signal", sampling_freq=sample_rate
+    )

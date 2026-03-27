@@ -86,7 +86,8 @@ class ElectrodeAdvisorLayout:
             "project": "electrode_advisor_default_layout",
             "source_viewer": {
                 "component": (
-                    "Tools/src/electrode_advisor/web/src/components/" "GlassBath3DViewer.tsx"
+                    "Tools/src/electrode_advisor/web/src/components/"
+                    "GlassBath3DViewer.tsx"
                 ),
                 "calculator": (
                     "Tools/src/electrode_advisor/web/src/components/"
@@ -114,7 +115,9 @@ class ElectrodeAdvisorLayout:
                 "bath_shell_thickness_mm": self.drafting.bath_shell_thickness_mm,
                 "glass_clearance_mm": self.drafting.glass_clearance_mm,
                 "electrode_holder_height_mm": self.drafting.electrode_holder_height_mm,
-                "electrode_holder_radius_factor": (self.drafting.electrode_holder_radius_factor),
+                "electrode_holder_radius_factor": (
+                    self.drafting.electrode_holder_radius_factor
+                ),
                 "tip_band_height_mm": self.drafting.tip_band_height_mm,
             },
             "placements": [

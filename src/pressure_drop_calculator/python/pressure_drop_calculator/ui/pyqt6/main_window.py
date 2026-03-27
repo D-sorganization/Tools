@@ -16,7 +16,9 @@ if os.environ.get("HEADLESS", "false").lower() == "true":
 
     matplotlib.use("Agg")
 
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas  # noqa: E402
+from matplotlib.backends.backend_qtagg import (
+    FigureCanvasQTAgg as FigureCanvas,  # noqa: E402
+)
 from matplotlib.figure import Figure  # noqa: E402
 from PyQt6.QtCore import Qt  # noqa: E402
 from PyQt6.QtWidgets import (  # noqa: E402
@@ -394,7 +396,9 @@ class PressureDropCalculatorWidget(QWidget):
         if warnings:
             self.warnings_text.setText("\n".join(f"⚠ {w}" for w in warnings))
         else:
-            self.warnings_text.setText("✓ No warnings. All parameters within acceptable ranges.")
+            self.warnings_text.setText(
+                "✓ No warnings. All parameters within acceptable ranges."
+            )
 
         # Update chart
         self._update_chart()

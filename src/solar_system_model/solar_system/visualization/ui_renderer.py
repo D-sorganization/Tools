@@ -75,7 +75,9 @@ class TextCache:
     """Caches rendered text surfaces to improve performance."""
 
     def __init__(self) -> None:
-        self._cache: dict[tuple[str, str, tuple[int, int, int]], tuple[bytes, int, int]] = {}
+        self._cache: dict[
+            tuple[str, str, tuple[int, int, int]], tuple[bytes, int, int]
+        ] = {}
         self._fonts: dict[str, pygame.font.Font] = {}
 
         # Initialize fonts
@@ -292,16 +294,22 @@ class UIRenderer:
         # Background and Border
         self.draw_rect(x - 15, y - 15, width, height, (0.0, 0.0, 0.0, 0.85))
         glLineWidth(2.0)
-        self.draw_rect(x - 15, y - 15, width, height, (0.3, 0.5, 0.7, 0.8), filled=False)
+        self.draw_rect(
+            x - 15, y - 15, width, height, (0.3, 0.5, 0.7, 0.8), filled=False
+        )
 
         # Title
-        self.text_cache.render("CONTROLS (Press H to hide)", x, y, "default", (100, 200, 255))
+        self.text_cache.render(
+            "CONTROLS (Press H to hide)", x, y, "default", (100, 200, 255)
+        )
 
         current_y = y + 30
         for key, action in controls:
             if action == "":
                 if key:
-                    self.text_cache.render(key, x, current_y, "default", (255, 200, 100))
+                    self.text_cache.render(
+                        key, x, current_y, "default", (255, 200, 100)
+                    )
                 else:
                     current_y += line_height // 2
                     continue
@@ -310,7 +318,9 @@ class UIRenderer:
                     text = f"{key}: {action}"
                     self.text_cache.render(text, x, current_y, "small", (220, 220, 220))
                 else:
-                    self.text_cache.render(action, x, current_y, "small", (180, 180, 180))
+                    self.text_cache.render(
+                        action, x, current_y, "small", (180, 180, 180)
+                    )
             current_y += line_height
 
         self.end_2d()
@@ -454,7 +464,9 @@ class UIRenderer:
             current_y += 20
 
             if mission_type:
-                self.text_cache.render(mission_type, x + 10, current_y, "small", (160, 255, 180))
+                self.text_cache.render(
+                    mission_type, x + 10, current_y, "small", (160, 255, 180)
+                )
                 current_y += 18
 
             # Description (wrapped)
@@ -463,13 +475,17 @@ class UIRenderer:
             for word in words:
                 test_line = f"{line} {word}".strip()
                 if len(test_line) > 40:
-                    self.text_cache.render(line, x + 15, current_y, "small", (220, 220, 220))
+                    self.text_cache.render(
+                        line, x + 15, current_y, "small", (220, 220, 220)
+                    )
                     current_y += 18
                     line = word
                 else:
                     line = test_line
             if line:
-                self.text_cache.render(line, x + 15, current_y, "small", (220, 220, 220))
+                self.text_cache.render(
+                    line, x + 15, current_y, "small", (220, 220, 220)
+                )
                 current_y += 25
 
             if destinations:
@@ -517,7 +533,9 @@ class UIRenderer:
         # height = num_lines * line_height + 20 # unused
 
         current_y = y
-        self.text_cache.render(body_name, x, current_y, "default", self.theme.text_highlight)
+        self.text_cache.render(
+            body_name, x, current_y, "default", self.theme.text_highlight
+        )
         current_y += line_height + 5
 
         for key, value in properties.items():
@@ -529,7 +547,9 @@ class UIRenderer:
 
         if current_fact:
             current_y += 5
-            self.text_cache.render("Did you know?", x, current_y, "small", (255, 255, 100))
+            self.text_cache.render(
+                "Did you know?", x, current_y, "small", (255, 255, 100)
+            )
             current_y += line_height
 
             words = current_fact.split()
@@ -562,7 +582,9 @@ class UIRenderer:
         line_height = 18
 
         current_y = y
-        self.text_cache.render("Historical Events", x, current_y, "default", (255, 200, 100))
+        self.text_cache.render(
+            "Historical Events", x, current_y, "default", (255, 200, 100)
+        )
         current_y += line_height + 5
 
         for event in events[:5]:
@@ -575,7 +597,9 @@ class UIRenderer:
             description = event.get("description", "")
             if len(description) > 55:
                 description = description[:52] + "..."
-            self.text_cache.render(description, x + 10, current_y, "small", (200, 200, 200))
+            self.text_cache.render(
+                description, x + 10, current_y, "small", (200, 200, 200)
+            )
             current_y += line_height + 3
 
         self.end_2d()
@@ -620,7 +644,9 @@ class UIRenderer:
 
     @jit(nopython=True, fastmath=True)
     @jit(nopython=True, fastmath=True)
-    def render_unified_controls(self, ctrl_data: dict[str, Any], time_data: dict[str, Any]) -> None:
+    def render_unified_controls(
+        self, ctrl_data: dict[str, Any], time_data: dict[str, Any]
+    ) -> None:
         """Render the unified control panel."""
         if not (ctrl_data is not None):
             raise ValueError("ctrl_data must be provided")
@@ -647,7 +673,9 @@ class UIRenderer:
 
         # 1. Navigation Modes
         mode_x, mode_y = x + 20, y + 20
-        self.text_cache.render("NAVIGATION", mode_x, mode_y, "small", self.theme.text_highlight)
+        self.text_cache.render(
+            "NAVIGATION", mode_x, mode_y, "small", self.theme.text_highlight
+        )
         mode_y += 25
         for i, mode in enumerate(modes):
             color = (100, 255, 100) if i == curr_mode else self.theme.text_dim
@@ -658,7 +686,9 @@ class UIRenderer:
         # 2. View Settings
         set_x = x + width - 350
         set_y = y + 20
-        self.text_cache.render("VIEW SETTINGS", set_x, set_y, "small", self.theme.text_highlight)
+        self.text_cache.render(
+            "VIEW SETTINGS", set_x, set_y, "small", self.theme.text_highlight
+        )
         set_y += 35
         col1, col2 = set_x, set_x + 160
 
@@ -678,7 +708,9 @@ class UIRenderer:
             _, w, h = self.text_cache.get_text_data(btn.label, "small", (255, 255, 255))
             tx = btn_x + (btn.width - w) // 2
             ty = btn_y + (30 - h) // 2
-            self.text_cache.render(btn.label, int(tx), int(ty), "small", (255, 255, 255))
+            self.text_cache.render(
+                btn.label, int(tx), int(ty), "small", (255, 255, 255)
+            )
             btn_x += btn.width + 10
 
         self.end_2d()
@@ -696,7 +728,9 @@ class UIRenderer:
 
         self.begin_2d()
         current_y = y
-        self.text_cache.render("Select Body", x, current_y, "default", self.theme.text_highlight)
+        self.text_cache.render(
+            "Select Body", x, current_y, "default", self.theme.text_highlight
+        )
         current_y += 30
 
         for body in bodies:
@@ -744,7 +778,9 @@ class UIRenderer:
 
         text = f"{time_warp:.0f}x"
         _, tw, th = self.text_cache.get_text_data(text, "small", (255, 255, 255))
-        self.text_cache.render(text, x + (w - tw) // 2, y - 20, "small", (255, 255, 255))
+        self.text_cache.render(
+            text, x + (w - tw) // 2, y - 20, "small", (255, 255, 255)
+        )
 
         self.end_2d()
 

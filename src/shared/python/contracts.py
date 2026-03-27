@@ -234,7 +234,9 @@ def _evaluate_precondition(
 
         cond_sig = inspect.signature(condition)
         call_args = {
-            name: all_arguments[name] for name in cond_sig.parameters if name in all_arguments
+            name: all_arguments[name]
+            for name in cond_sig.parameters
+            if name in all_arguments
         }
         return bool(condition(**call_args))
     except (TypeError, ValueError) as exc:
@@ -381,7 +383,9 @@ def _check_class_invariant(
     except InvariantError:
         raise
     except (ValueError, TypeError, KeyError, AttributeError, ArithmeticError) as exc:
-        raise InvariantError(f"Error checking invariant '{message}' {context}: {exc}") from exc
+        raise InvariantError(
+            f"Error checking invariant '{message}' {context}: {exc}"
+        ) from exc
 
 
 def _wrap_method_with_invariant(
@@ -492,7 +496,8 @@ class ContractChecker:
             except (RuntimeError, TypeError, ValueError) as exc:
                 if DBC_LEVEL == ContractLevel.ENFORCE:
                     raise InvariantError(
-                        f"{self.__class__.__name__}: " f"Failed to evaluate invariant: {exc}"
+                        f"{self.__class__.__name__}: "
+                        f"Failed to evaluate invariant: {exc}"
                     ) from exc
 
         return True

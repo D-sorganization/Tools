@@ -503,7 +503,8 @@ class OptimizerWindow(QMainWindow):
         self.history_text = QTextEdit()
         self.history_text.setReadOnly(True)
         self.history_text.setPlaceholderText(
-            "Optimization history will appear here...\n\n" "Click 'Run Optimization' to start."
+            "Optimization history will appear here...\n\n"
+            "Click 'Run Optimization' to start."
         )
         history_layout.addWidget(self.history_text)
         layout.addWidget(history_group)
@@ -599,7 +600,8 @@ class OptimizerWindow(QMainWindow):
             if (maximize and obj > best_obj) or (not maximize and obj < best_obj):
                 best_obj = obj
                 best_params = {
-                    p.name: float(values[i]) for i, p in enumerate(params[: len(values)])
+                    p.name: float(values[i])
+                    for i, p in enumerate(params[: len(values)])
                 }
 
             self._history.append(
@@ -607,7 +609,8 @@ class OptimizerWindow(QMainWindow):
                     "iteration": iteration,
                     "objective": obj,
                     "parameters": {
-                        p.name: float(values[i]) for i, p in enumerate(params[: len(values)])
+                        p.name: float(values[i])
+                        for i, p in enumerate(params[: len(values)])
                     },
                 }
             )
@@ -701,7 +704,9 @@ class OptimizerWindow(QMainWindow):
         history_lines = ["Iteration | Objective | Parameters"]
         history_lines.append("-" * 60)
         for entry in self._history[-20:]:
-            param_str = ", ".join([f"{k}={v:.4f}" for k, v in entry["parameters"].items()])
+            param_str = ", ".join(
+                [f"{k}={v:.4f}" for k, v in entry["parameters"].items()]
+            )
             history_lines.append(
                 f"{entry['iteration']:4d}      | {entry['objective']:10.6f} | {param_str}"
             )
@@ -747,7 +752,9 @@ class OptimizerWindow(QMainWindow):
         self.iterations_label.setText("Grid: 400 evaluations")
         self.converged_label.setText("N/A (grid search)")
 
-        self.best_params_text.setPlainText(f"{p1.name}: {opt_x:.6f}\n{p2.name}: {opt_y:.6f}")
+        self.best_params_text.setPlainText(
+            f"{p1.name}: {opt_x:.6f}\n{p2.name}: {opt_y:.6f}"
+        )
 
         self.history_text.setPlainText(
             f"Surface Optimization Results ({method})\n"

@@ -80,7 +80,9 @@ class LabelPlacer:
             x = ax + dx
             y = ay + dy
             candidate = text_box(text, x, y, h, align=align)
-            if not any(rects_overlap(candidate, r, pad=h * 0.20) for r in self.occupied):
+            if not any(
+                rects_overlap(candidate, r, pad=h * 0.20) for r in self.occupied
+            ):
                 self.reserve_rect(candidate)
                 return x, y, align
         fallback = preferred[0]
@@ -137,7 +139,8 @@ def spread_instrument_positions(
             for ox, oy in ring:
                 cand = (base_x + ox * radius, base_y + oy * radius)
                 if all(
-                    (cand[0] - px) ** 2 + (cand[1] - py) ** 2 >= spacing**2 for px, py in placed
+                    (cand[0] - px) ** 2 + (cand[1] - py) ** 2 >= spacing**2
+                    for px, py in placed
                 ):
                     found = cand
                     break
@@ -236,8 +239,12 @@ def get_modelspace_extent(
     if equipment:
         x_min = min(to_float(eq.get("x", 0.0)) for eq in equipment)
         y_min = min(to_float(eq.get("y", 0.0)) for eq in equipment)
-        x_max = max(to_float(eq.get("x", 0.0)) + equipment_dims(eq)[0] for eq in equipment)
-        y_max = max(to_float(eq.get("y", 0.0)) + equipment_dims(eq)[1] for eq in equipment)
+        x_max = max(
+            to_float(eq.get("x", 0.0)) + equipment_dims(eq)[0] for eq in equipment
+        )
+        y_max = max(
+            to_float(eq.get("y", 0.0)) + equipment_dims(eq)[1] for eq in equipment
+        )
         margin = max((x_max - x_min) * 0.08, 5.0)
         return x_min - margin, y_min - margin, x_max + margin, y_max + margin
 

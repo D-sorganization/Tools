@@ -35,8 +35,10 @@ def sample_df() -> pd.DataFrame:
     return pd.DataFrame(
         {
             "time": pd.date_range("2024-01-01", periods=n, freq="s"),
-            "signal_a": np.sin(np.linspace(0, 4 * np.pi, n)) + np.random.normal(0, 0.1, n),
-            "signal_b": np.cos(np.linspace(0, 4 * np.pi, n)) + np.random.normal(0, 0.1, n),
+            "signal_a": np.sin(np.linspace(0, 4 * np.pi, n))
+            + np.random.normal(0, 0.1, n),
+            "signal_b": np.cos(np.linspace(0, 4 * np.pi, n))
+            + np.random.normal(0, 0.1, n),
             "signal_c": np.linspace(0, 10, n) + np.random.normal(0, 0.5, n),
         }
     )
@@ -169,7 +171,9 @@ class TestDatasetManager:
         assert result is not None
         assert all(result["signal_a"] == 0)
 
-    def test_workspace_save_and_load(self, sample_df: pd.DataFrame, temp_dir: Path) -> None:
+    def test_workspace_save_and_load(
+        self, sample_df: pd.DataFrame, temp_dir: Path
+    ) -> None:
         """Test saving and loading workspace."""
         from data_processor.core.dataset_manager import DatasetManager
 
@@ -394,7 +398,9 @@ class TestANOVA:
         from data_processor.core.anova import ANOVAAnalyzer
 
         analyzer = ANOVAAnalyzer()
-        result = analyzer.one_way_anova(anova_df, dependent_var="value", group_var="group")
+        result = analyzer.one_way_anova(
+            anova_df, dependent_var="value", group_var="group"
+        )
 
         assert result.f_statistic > 0
         assert result.p_value < 0.05  # Groups have different means
@@ -406,7 +412,9 @@ class TestANOVA:
         from data_processor.core.anova import ANOVAAnalyzer
 
         analyzer = ANOVAAnalyzer()
-        result = analyzer.one_way_anova(anova_df, dependent_var="value", group_var="group")
+        result = analyzer.one_way_anova(
+            anova_df, dependent_var="value", group_var="group"
+        )
 
         assert 0 <= result.eta_squared <= 1
         assert result.omega_squared <= result.eta_squared
@@ -443,7 +451,9 @@ class TestANOVA:
                 effect_b = 3 if factor_b == "treatment" else 0
                 for _ in range(20):
                     value = 10 + effect_a + effect_b + np.random.normal(0, 2)
-                    data.append({"factor_a": factor_a, "factor_b": factor_b, "value": value})
+                    data.append(
+                        {"factor_a": factor_a, "factor_b": factor_b, "value": value}
+                    )
 
         df = pd.DataFrame(data)
 
@@ -489,7 +499,9 @@ class TestRegression:
         from data_processor.core.regression import MultivariateRegressor
 
         regressor = MultivariateRegressor()
-        result = regressor.fit(multivariate_df, target="y", predictors=["x1", "x2", "x3"])
+        result = regressor.fit(
+            multivariate_df, target="y", predictors=["x1", "x2", "x3"]
+        )
 
         assert result.r_squared > 0.8  # Should explain most variance
         assert len(result.coefficients) == 3
@@ -500,7 +512,9 @@ class TestRegression:
         from data_processor.core.regression import MultivariateRegressor
 
         regressor = MultivariateRegressor()
-        result = regressor.fit(multivariate_df, target="y", predictors=["x1", "x2", "x3"])
+        result = regressor.fit(
+            multivariate_df, target="y", predictors=["x1", "x2", "x3"]
+        )
 
         # Check coefficients are close to true values (2, 3, -1.5)
         coef_dict = {c.name: c.estimate for c in result.coefficients}
@@ -516,7 +530,9 @@ class TestRegression:
 
         config = RegressionConfig(compute_diagnostics=True)
         regressor = MultivariateRegressor(config)
-        result = regressor.fit(multivariate_df, target="y", predictors=["x1", "x2", "x3"])
+        result = regressor.fit(
+            multivariate_df, target="y", predictors=["x1", "x2", "x3"]
+        )
 
         assert result.diagnostics is not None
         assert len(result.diagnostics.residuals) == len(multivariate_df)
@@ -532,7 +548,9 @@ class TestRegression:
 
         config = RegressionConfig(regularization=RegularizationType.RIDGE, alpha=0.1)
         regressor = MultivariateRegressor(config)
-        result = regressor.fit(multivariate_df, target="y", predictors=["x1", "x2", "x3"])
+        result = regressor.fit(
+            multivariate_df, target="y", predictors=["x1", "x2", "x3"]
+        )
 
         assert result.r_squared > 0.5
 
@@ -541,7 +559,9 @@ class TestRegression:
         from data_processor.core.regression import MultivariateRegressor
 
         regressor = MultivariateRegressor()
-        result = regressor.fit(multivariate_df, target="y", predictors=["x1", "x2", "x3"])
+        result = regressor.fit(
+            multivariate_df, target="y", predictors=["x1", "x2", "x3"]
+        )
 
         x_grid, y_grid, z_grid = regressor.predict_surface(
             result,
@@ -828,11 +848,15 @@ class TestIntegration:
 
         # 3. Regression with original features
         regressor = MultivariateRegressor()
-        reg_result = regressor.fit(multivariate_df, target="y", predictors=["x1", "x2", "x3"])
+        reg_result = regressor.fit(
+            multivariate_df, target="y", predictors=["x1", "x2", "x3"]
+        )
 
         assert reg_result.r_squared > 0.8
 
-    def test_dataset_manager_with_filter_workflow(self, sample_df: pd.DataFrame) -> None:
+    def test_dataset_manager_with_filter_workflow(
+        self, sample_df: pd.DataFrame
+    ) -> None:
         """Test dataset manager with filtering workflow."""
         from data_processor.core.dataset_manager import DatasetManager
 

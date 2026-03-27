@@ -83,9 +83,7 @@ class TestDiagnosticsTracker:
 
     def test_load_history_handles_corrupt_lines(self, tmp_path) -> Any:
         diag_file = tmp_path / "diagnostics.jsonl"
-        content = (
-            'not json\n{"timestamp": "1", "severity": "info", "category": "ok", "message": "m"}\n'
-        )
+        content = 'not json\n{"timestamp": "1", "severity": "info", "category": "ok", "message": "m"}\n'
         diag_file.write_text(content, encoding="utf-8")
 
         with patch("double_pendulum_golf.gui.diagnostics._DIAG_FILE", diag_file):

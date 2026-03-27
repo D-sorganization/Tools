@@ -186,7 +186,9 @@ def add_notes(
     )
 
     # --- Design / safety notes panel ---
-    design_notes = list(spec.get("annotations", {}).get("notes_panel", {}).get("bullets", []))
+    design_notes = list(
+        spec.get("annotations", {}).get("notes_panel", {}).get("bullets", [])
+    )
     pressure = spec.get("pressure_control", {})
     if isinstance(pressure, dict):
         mode = pressure.get("mode")
@@ -198,7 +200,8 @@ def add_notes(
         design_notes.extend([note for note in pressure.get("notes", [])[:2]])
 
     interlock_lines = [
-        f"{i.get('id', '')}: {i.get('trigger', '')}" for i in spec.get("interlocks", [])[:5]
+        f"{i.get('id', '')}: {i.get('trigger', '')}"
+        for i in spec.get("interlocks", [])[:5]
     ]
     equipment_note_lines = []
     for eq in spec.get("equipment", []):

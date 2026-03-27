@@ -24,7 +24,9 @@ try:
 except ImportError:
     PYARROW_AVAILABLE = False
 
-requires_pyarrow = pytest.mark.skipif(not PYARROW_AVAILABLE, reason="pyarrow not installed")
+requires_pyarrow = pytest.mark.skipif(
+    not PYARROW_AVAILABLE, reason="pyarrow not installed"
+)
 
 
 @pytest.fixture
@@ -62,7 +64,9 @@ class TestReadData:
         assert len(result) == 3
 
     @requires_pyarrow
-    def test_read_csv_prefers_parquet_sibling(self, sample_df: pd.DataFrame, tmp_path: Path) -> Any:
+    def test_read_csv_prefers_parquet_sibling(
+        self, sample_df: pd.DataFrame, tmp_path: Path
+    ) -> Any:
         """When parquet sibling exists, it should be used over CSV."""
         from upstream_drift_tools.data_io import read_data
 
@@ -78,7 +82,9 @@ class TestReadData:
         assert "extra" in result.columns
 
     @requires_pyarrow
-    def test_read_parquet_directly(self, sample_df: pd.DataFrame, tmp_path: Path) -> Any:
+    def test_read_parquet_directly(
+        self, sample_df: pd.DataFrame, tmp_path: Path
+    ) -> Any:
         from upstream_drift_tools.data_io import read_data
 
         parquet_path = tmp_path / "data.parquet"
@@ -130,7 +136,9 @@ class TestWriteData:
         assert list(loaded.columns) == ["a", "b"]
 
     @requires_pyarrow
-    def test_write_parquet_also_csv(self, sample_df: pd.DataFrame, tmp_path: Path) -> Any:
+    def test_write_parquet_also_csv(
+        self, sample_df: pd.DataFrame, tmp_path: Path
+    ) -> Any:
         from upstream_drift_tools.data_io import write_data
 
         pq_path = tmp_path / "out.parquet"
@@ -139,7 +147,9 @@ class TestWriteData:
         csv_sibling = tmp_path / "out.csv"
         assert csv_sibling.exists()
 
-    def test_write_creates_parent_dirs(self, sample_df: pd.DataFrame, tmp_path: Path) -> Any:
+    def test_write_creates_parent_dirs(
+        self, sample_df: pd.DataFrame, tmp_path: Path
+    ) -> Any:
         from upstream_drift_tools.data_io import write_data
 
         nested = tmp_path / "a" / "b" / "out.csv"

@@ -156,7 +156,9 @@ def test_popout_chart_with_result_dialog_accepted(qapp, monkeypatch) -> Any:
 
         # mock PopOutChart
         mock_chart_class = MagicMock()
-        monkeypatch.setattr("double_pendulum_golf.gui.popout_chart.PopOutChart", mock_chart_class)
+        monkeypatch.setattr(
+            "double_pendulum_golf.gui.popout_chart.PopOutChart", mock_chart_class
+        )
 
         w._on_popout_chart()
 

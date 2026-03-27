@@ -467,7 +467,9 @@ class DataProcessorGUI(ctk.CTk):  # type: ignore
                     )
                 else:
                     # Load multiple files and combine
-                    dataframes = self.data_loader.load_multiple_files(self.selected_files)
+                    dataframes = self.data_loader.load_multiple_files(
+                        self.selected_files
+                    )
                     self.current_data = self.data_loader.combine_dataframes(dataframes)
 
                 if self.current_data is not None:

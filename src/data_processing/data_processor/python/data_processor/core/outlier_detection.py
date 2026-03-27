@@ -346,7 +346,9 @@ class OutlierDetector:
 
                 # Critical value
                 n_curr = len(data)
-                t_crit = stats.t.ppf(1 - self.config.grubbs_alpha / (2 * n_curr), n_curr - 2)
+                t_crit = stats.t.ppf(
+                    1 - self.config.grubbs_alpha / (2 * n_curr), n_curr - 2
+                )
                 g_crit = ((n_curr - 1) / np.sqrt(n_curr)) * np.sqrt(
                     t_crit**2 / (n_curr - 2 + t_crit**2)
                 )
