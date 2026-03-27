@@ -91,7 +91,9 @@ class TestLoadCsvFileContracts:
 
     def test_returns_none_for_missing_file(self, tmp_path) -> None:
         loader = DataLoader(use_high_performance=False)
-        result = loader.load_csv_file(str(tmp_path / "missing.csv"), validate_security=False)
+        result = loader.load_csv_file(
+            str(tmp_path / "missing.csv"), validate_security=False
+        )
         assert result is None
 
 

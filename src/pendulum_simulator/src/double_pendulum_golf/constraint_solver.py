@@ -103,7 +103,9 @@ def _solve_constrained_dynamics(
 
         tau[:7] = clamp_torque_ndof(tau[:7], torque_limits[:7])
 
-    native_result = _native_backend.golfer_constrained_dynamics(q, qdot, tau, params, alpha, beta)
+    native_result = _native_backend.golfer_constrained_dynamics(
+        q, qdot, tau, params, alpha, beta
+    )
     if native_result is not None:
         qddot, lambda_forces = native_result
         if not (np.all(np.isfinite(qddot))):
@@ -265,7 +267,9 @@ def equations_of_motion(
         raise ValueError(f"State has non-finite values: {state}")
 
     qdot = state[N_DOF:]
-    qddot = constrained_accelerations(state, t, params, torque_func, alpha, beta, torque_limits)
+    qddot = constrained_accelerations(
+        state, t, params, torque_func, alpha, beta, torque_limits
+    )
 
     state_dot = np.zeros(2 * N_DOF)
     state_dot[:N_DOF] = qdot

@@ -7,7 +7,6 @@ This module combines the various refactored components into a single application
 """
 
 import logging
-from typing import Any
 
 import customtkinter as ctk
 

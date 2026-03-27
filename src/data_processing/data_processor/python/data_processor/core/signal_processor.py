@@ -33,7 +33,9 @@ class SignalProcessor:
         self.logger = get_logger(__name__)
         if self.filter_engine is None:
             # Default to sequential processing for predictable resource usage.
-            self.filter_engine = VectorizedFilterEngine(logger=self.logger.warning, n_jobs=1)
+            self.filter_engine = VectorizedFilterEngine(
+                logger=self.logger.warning, n_jobs=1
+            )
 
     def apply_filter(self, df: pd.DataFrame, config: FilterConfig) -> pd.DataFrame:
         """Apply the requested filter to the provided dataframe.
@@ -49,7 +51,9 @@ class SignalProcessor:
 
         # Ensure filter_engine is not None before accessing attributes
         if self.filter_engine is None:
-            self.filter_engine = VectorizedFilterEngine(logger=self.logger.warning, n_jobs=1)
+            self.filter_engine = VectorizedFilterEngine(
+                logger=self.logger.warning, n_jobs=1
+            )
 
         require(
             config.filter_type in self.filter_engine.filters,
@@ -126,9 +130,13 @@ class SignalProcessor:
             raise ValueError("df must be provided")
         require(not df.empty, "Cannot differentiate an empty dataframe")
         require(time_col in df.columns, f"time_col '{time_col}' not in df", time_col)
-        return differentiate_signals(df, time_col, signals, method, orders, window_size, poly_order)
+        return differentiate_signals(
+            df, time_col, signals, method, orders, window_size, poly_order
+        )
 
-    def apply_formula(self, df: pd.DataFrame, formula: str, new_column: str) -> pd.DataFrame:
+    def apply_formula(
+        self, df: pd.DataFrame, formula: str, new_column: str
+    ) -> pd.DataFrame:
         """Apply a custom formula to the dataframe.
 
         **Pre-conditions** (DbC):

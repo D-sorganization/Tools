@@ -19,8 +19,6 @@ Features:
 
 from __future__ import annotations
 
-from numba import jit
-
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -28,6 +26,7 @@ from enum import Enum
 from typing import Any
 
 import numpy as np
+from numba import jit
 from scipy.optimize import minimize
 
 logger = logging.getLogger(__name__)

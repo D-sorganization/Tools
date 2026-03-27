@@ -891,7 +891,8 @@ class PendulumWidget(BasePendulumWidget):
             painter.drawText(rect, Qt.AlignmentFlag.AlignCenter, icon)
 
         self._zoom_btn_rects = [
-            QRect(x, y_start + i * (btn_size + 3), btn_size, btn_size) for i in range(len(buttons))
+            QRect(x, y_start + i * (btn_size + 3), btn_size, btn_size)
+            for i in range(len(buttons))
         ]
 
     def _handle_zoom_button_click(self, pos: QPoint) -> bool:

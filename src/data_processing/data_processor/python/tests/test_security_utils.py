@@ -89,7 +89,9 @@ class TestValidatePythonExpression:
     def test_unknown_function_rejected(self) -> None:
         """Test unknown functions are rejected."""
         allowed = {"x", "y"}
-        with pytest.raises(ExpressionValidationError, match="Unknown function: unknown_func"):
+        with pytest.raises(
+            ExpressionValidationError, match="Unknown function: unknown_func"
+        ):
             validate_python_expression("unknown_func(x)", allowed_names=allowed)
 
     def test_comparisons_allowed(self) -> None:
@@ -170,7 +172,9 @@ class TestValidateFilePath:
         test_file.touch()
 
         with patch("pathlib.Path.cwd", return_value=tmp_path):
-            validated = validate_file_path(test_file, allowed_extensions={".csv", ".xlsx"})
+            validated = validate_file_path(
+                test_file, allowed_extensions={".csv", ".xlsx"}
+            )
             assert validated == test_file.resolve()
 
     def test_file_with_disallowed_extension_rejected(self, tmp_path: Path) -> None:
@@ -205,7 +209,9 @@ class TestValidateFilePath:
 
         with patch("pathlib.Path.cwd", return_value=other_dir):
             with patch("pathlib.Path.home", return_value=other_dir):
-                with pytest.raises(PathValidationError, match="Path outside allowed directories"):
+                with pytest.raises(
+                    PathValidationError, match="Path outside allowed directories"
+                ):
                     validate_file_path(test_file, allow_anywhere=False)
 
     def test_file_outside_cwd_allowed_with_flag(self, tmp_path: Path) -> None:

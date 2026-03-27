@@ -2,7 +2,6 @@ from typing import Any
 
 """Tests for ControlsWidget."""
 
-from typing import Any
 
 from PyQt6.QtWidgets import QWidget
 from double_pendulum_golf.gui.controls_widget import ControlsWidget, LabeledInput, _row

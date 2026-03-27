@@ -9,7 +9,6 @@ environment.  Does NOT run a real simulation — all callbacks are stubs.
 
 from __future__ import annotations
 
-from typing import Any
 
 import os
 

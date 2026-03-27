@@ -156,7 +156,9 @@ class AnalysisMixin:
                         "Select subject ID and at least 2 measures.",
                     )
                     return
-                result = analyzer.repeated_measures_anova(self.current_data, measures, subject)
+                result = analyzer.repeated_measures_anova(
+                    self.current_data, measures, subject
+                )
             else:
                 QMessageBox.warning(
                     self,
@@ -184,7 +186,9 @@ class AnalysisMixin:
         target = config.get("target", "")
         predictors = config.get("predictors", [])
         if not target or not predictors:
-            QMessageBox.warning(self, "Missing Config", "Select target and predictor variables.")
+            QMessageBox.warning(
+                self, "Missing Config", "Select target and predictor variables."
+            )
             return
 
         try:
@@ -216,13 +220,17 @@ class AnalysisMixin:
                 alpha=config.get("alpha", 1.0),
                 polynomial_degree=config.get("polynomial_degree", 1),
                 include_interactions=config.get("interactions", False),
-                selection_method=sel_map.get(config.get("selection", "none"), SelectionMethod.NONE),
+                selection_method=sel_map.get(
+                    config.get("selection", "none"), SelectionMethod.NONE
+                ),
             )
             regressor = MultivariateRegressor(reg_config)
             result = regressor.fit(self.current_data, target, predictors)
             report = format_regression_report(result)
             self.analysis_panel.regression_widget.display_results(result, report)
-            self.status_bar.set_status(f"Regression complete: R² = {result.r_squared:.4f}")
+            self.status_bar.set_status(
+                f"Regression complete: R² = {result.r_squared:.4f}"
+            )
 
         except ImportError as e:
             logger.error(f"Regression analysis failed: {e}", exc_info=True)

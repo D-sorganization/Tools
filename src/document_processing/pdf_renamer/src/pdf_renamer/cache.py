@@ -33,7 +33,8 @@ class ResultCache:
         try:
             with sqlite3.connect(self.db_path) as conn:
                 cur = conn.execute(
-                    "SELECT title, confidence, method, error FROM results " "WHERE sha256 = ?",
+                    "SELECT title, confidence, method, error FROM results "
+                    "WHERE sha256 = ?",
                     (sha256,),
                 )
                 row = cur.fetchone()

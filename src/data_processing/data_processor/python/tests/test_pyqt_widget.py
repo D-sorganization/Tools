@@ -3,7 +3,6 @@ from typing import Any
 """Tests for the PyQt6 DataProcessorWidget."""
 
 import sys
-from typing import Any
 from unittest.mock import patch
 
 import pandas as pd

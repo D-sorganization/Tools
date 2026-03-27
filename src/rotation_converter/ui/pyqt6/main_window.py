@@ -15,8 +15,6 @@ Integrates with the shared fleet theme system for consistent styling.
 
 from __future__ import annotations
 
-from numba import jit
-
 import math
 from typing import Any
 

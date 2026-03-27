@@ -333,7 +333,9 @@ class _OptimizerWorker(QObject):
 
         self.finished.emit(
             {
-                "coeffs": (state.best_solution if state.best_solution is not None else state.mean),
+                "coeffs": (
+                    state.best_solution if state.best_solution is not None else state.mean
+                ),
                 "speed": -state.best_fitness,
                 "history": history,
                 "success": state.best_fitness < float("inf"),
@@ -506,7 +508,9 @@ class OptimizationWidget(QWidget):
         method_row = QHBoxLayout()
         method_row.addWidget(QLabel("Method:"))
         self._cmb_method = QComboBox()
-        self._cmb_method.addItems(["CMA-ES", "Differential Evolution", "Nelder-Mead", "L-BFGS-B"])
+        self._cmb_method.addItems(
+            ["CMA-ES", "Differential Evolution", "Nelder-Mead", "L-BFGS-B"]
+        )
         method_row.addWidget(self._cmb_method)
         cfg_lay.addLayout(method_row)
 
@@ -721,7 +725,9 @@ class OptimizationWidget(QWidget):
             self._log.append(f"  Generations: {n_gens}, Best loss: {best:.6f}")
 
         if coeffs is not None:
-            self._log.append(f"  Coefficients: {np.array2string(np.asarray(coeffs), precision=4)}")
+            self._log.append(
+                f"  Coefficients: {np.array2string(np.asarray(coeffs), precision=4)}"
+            )
 
         self.optimized_coefficients.emit(result)
 

@@ -52,9 +52,9 @@ class TestMassMatrixPositiveDefinite:
         for phi in np.linspace(-np.pi, np.pi, 50):
             M = mass_matrix(phi, default_params)
             eigenvalues = np.linalg.eigvalsh(M)
-            assert all(
-                ev > 0 for ev in eigenvalues
-            ), f"Not positive definite at phi={phi}: eigenvalues={eigenvalues}"
+            assert all(ev > 0 for ev in eigenvalues), (
+                f"Not positive definite at phi={phi}: eigenvalues={eigenvalues}"
+            )
 
 
 class TestMassMatrixCouplingMaximum:
@@ -64,9 +64,9 @@ class TestMassMatrixCouplingMaximum:
         M12_at_zero = abs(mass_matrix(0.0, default_params)[0, 1])
         for phi in np.linspace(0.1, np.pi, 30):
             M12 = abs(mass_matrix(phi, default_params)[0, 1])
-            assert (
-                M12 <= M12_at_zero + 1e-10
-            ), f"|M12| at phi={phi:.2f} ({M12:.4f}) exceeds value at phi=0 ({M12_at_zero:.4f})"
+            assert M12 <= M12_at_zero + 1e-10, (
+                f"|M12| at phi={phi:.2f} ({M12:.4f}) exceeds value at phi=0 ({M12_at_zero:.4f})"
+            )
 
 
 class TestMassMatrixDiagonalConstant:
@@ -405,9 +405,9 @@ class TestForwardKinematicsPostconditions:
                 tx, ty = pos["tip"]
                 wrist_dist = np.hypot(wx - sx, wy - sy)
                 tip_dist = np.hypot(tx - wx, ty - wy)
-                assert (
-                    abs(wrist_dist - default_params.L1) < 1e-9
-                ), f"theta1={theta1:.2f}, phi={phi:.2f}: wrist_dist={wrist_dist:.9f}"
-                assert (
-                    abs(tip_dist - default_params.L2) < 1e-9
-                ), f"theta1={theta1:.2f}, phi={phi:.2f}: tip_dist={tip_dist:.9f}"
+                assert abs(wrist_dist - default_params.L1) < 1e-9, (
+                    f"theta1={theta1:.2f}, phi={phi:.2f}: wrist_dist={wrist_dist:.9f}"
+                )
+                assert abs(tip_dist - default_params.L2) < 1e-9, (
+                    f"theta1={theta1:.2f}, phi={phi:.2f}: tip_dist={tip_dist:.9f}"
+                )

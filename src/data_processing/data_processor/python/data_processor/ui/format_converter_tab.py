@@ -6,8 +6,6 @@
 
 from __future__ import annotations
 
-from numba import jit
-
 import logging
 import os
 import threading
@@ -18,6 +16,7 @@ from typing import Any
 
 import customtkinter as ctk
 import pandas as pd
+from numba import jit
 from upstream_drift_tools.data_processing.io import (
     DataReader,
     DataWriter,

@@ -40,6 +40,7 @@ class TestWindow(QMainWindow):
 
     def on_run(self) -> Any:
         print("[TEST] Signal received!")  # noqa: T201
+
     def on_run(self):
         logger.info("[TEST] Signal received!")  # noqa: T201
         QMessageBox.information(self, "Success", "Signal was received!")

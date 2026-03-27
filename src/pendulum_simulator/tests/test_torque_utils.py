@@ -7,7 +7,6 @@ TDD: Tests cover polynomial torque generation for N-joint models.
 
 from __future__ import annotations
 
-from typing import Any
 
 import numpy as np
 import pytest

@@ -109,14 +109,18 @@ class DataAugmenter(NoiseMixin, TransformsMixin):
             augmentation_factor=augmented.shape[0] / original_shape[0],
         )
 
-    def _apply_augmentation(self, data: np.ndarray, method: AugmentationMethod) -> np.ndarray:
+    def _apply_augmentation(
+        self, data: np.ndarray, method: AugmentationMethod
+    ) -> np.ndarray:
         """Apply a single augmentation method."""
         if not (data is not None):
             raise ValueError("data must be provided")
         method_map = {
             AugmentationMethod.GAUSSIAN_NOISE: self.add_gaussian_noise,
             AugmentationMethod.UNIFORM_NOISE: self.add_uniform_noise,
-            AugmentationMethod.COLORED_NOISE: lambda d: self.add_colored_noise(d, "pink"),
+            AugmentationMethod.COLORED_NOISE: lambda d: self.add_colored_noise(
+                d, "pink"
+            ),
             AugmentationMethod.SALT_PEPPER: self.add_salt_pepper_noise,
             AugmentationMethod.TIME_WARP: self.time_warp,
             AugmentationMethod.MAGNITUDE_WARP: self.magnitude_warp,
@@ -189,7 +193,9 @@ def augment_data(
         method_enums = None
     else:
         method_map = {m.value: m for m in AugmentationMethod}
-        method_enums = [method_map.get(m, AugmentationMethod.GAUSSIAN_NOISE) for m in methods]
+        method_enums = [
+            method_map.get(m, AugmentationMethod.GAUSSIAN_NOISE) for m in methods
+        ]
 
     augmenter = DataAugmenter()
     return augmenter.augment(data, method_enums, n_augmentations)

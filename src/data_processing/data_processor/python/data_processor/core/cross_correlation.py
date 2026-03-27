@@ -20,14 +20,13 @@ Features:
 
 from __future__ import annotations
 
-from numba import jit
-
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
 import numpy as np
+from numba import jit
 
 from data_processor.contracts import require
 

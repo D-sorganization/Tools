@@ -63,9 +63,9 @@ class TestTripleMassMatrixSymmetry:
                 M = mass_matrix_triple(phi1, phi2, triple_params)
                 for i in range(3):
                     for j in range(3):
-                        assert np.isclose(
-                            M[i, j], M[j, i]
-                        ), f"Not symmetric at phi1={phi1}, phi2={phi2}"
+                        assert np.isclose(M[i, j], M[j, i]), (
+                            f"Not symmetric at phi1={phi1}, phi2={phi2}"
+                        )
 
 
 class TestTripleMassMatrixPositiveDefinite:
@@ -79,9 +79,9 @@ class TestTripleMassMatrixPositiveDefinite:
             for phi2 in test_angles:
                 M = mass_matrix_triple(phi1, phi2, triple_params)
                 eigenvalues = np.linalg.eigvalsh(M)
-                assert all(
-                    ev > 0 for ev in eigenvalues
-                ), f"Not positive definite at phi1={phi1}, phi2={phi2}"
+                assert all(ev > 0 for ev in eigenvalues), (
+                    f"Not positive definite at phi1={phi1}, phi2={phi2}"
+                )
 
 
 class TestTripleCoriolisZeroAtRest:

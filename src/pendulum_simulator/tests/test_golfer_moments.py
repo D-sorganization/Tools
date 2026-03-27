@@ -8,7 +8,6 @@ They will fail if golfer_pendulum_moments is not implemented correctly.
 
 from __future__ import annotations
 
-from typing import Any
 
 import numpy as np
 import pytest
@@ -77,9 +76,9 @@ class TestGolferPendulumMoments:
             applied = result[f"{jname}_applied_torque"]
             moment = result[f"{jname}_moment_of_force"]
             total = result[f"{jname}_total_moment"]
-            assert total == pytest.approx(
-                applied + moment
-            ), f"{jname}: total {total} != applied {applied} + moment {moment}"
+            assert total == pytest.approx(applied + moment), (
+                f"{jname}: total {total} != applied {applied} + moment {moment}"
+            )
 
     def test_too_few_torques_raises(self, sample_positions, sample_forces) -> Any:
         """Must have at least 7 applied torques."""

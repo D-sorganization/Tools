@@ -11,8 +11,6 @@ Tests cover:
 
 from __future__ import annotations
 
-from typing import Any
-
 import numpy as np
 import pandas as pd
 import pytest
@@ -152,18 +150,24 @@ class TestFilterOutputShapes:
         return VectorizedFilterEngine(n_jobs=1)
 
     @pytest.mark.parametrize("filter_type,params", FILTER_TYPES)
-    def test_output_columns_preserved(self, engine, filter_type: str, params: dict) -> None:
+    def test_output_columns_preserved(
+        self, engine, filter_type: str, params: dict
+    ) -> None:
         df = _make_df(n=300)
         result = engine.apply_filter_batch(df, filter_type, params)
-        assert list(result.columns) == list(df.columns), f"{filter_type}: columns changed"
+        assert list(result.columns) == list(df.columns), (
+            f"{filter_type}: columns changed"
+        )
 
     @pytest.mark.parametrize("filter_type,params", FILTER_TYPES)
-    def test_output_row_count_preserved(self, engine, filter_type: str, params: dict) -> None:
+    def test_output_row_count_preserved(
+        self, engine, filter_type: str, params: dict
+    ) -> None:
         df = _make_df(n=300)
         result = engine.apply_filter_batch(df, filter_type, params)
-        assert len(result) == len(
-            df
-        ), f"{filter_type}: row count changed {len(result)} != {len(df)}"
+        assert len(result) == len(df), (
+            f"{filter_type}: row count changed {len(result)} != {len(df)}"
+        )
 
 
 class TestMovingAverageCorrectness:
@@ -185,7 +189,9 @@ class TestMovingAverageCorrectness:
         df = pd.DataFrame({"x": noisy})
         result = engine.apply_filter_batch(df, "Moving Average", {"ma_window": 21})
         noise_in = float(np.std(noisy - clean))
-        noise_out = float(np.std(result["x"].dropna().values - clean[: len(result["x"].dropna())]))
+        noise_out = float(
+            np.std(result["x"].dropna().values - clean[: len(result["x"].dropna())])
+        )
         assert noise_out < noise_in, "Moving average should reduce noise"
 
     def test_too_short_signal_returned_unchanged(self, engine) -> None:
@@ -217,7 +223,9 @@ class TestNaNPreservation:
         nan_after = result["x"].index[result["x"].isna()]
         # All original NaN positions should still be NaN
         for idx in nan_idx:
-            assert idx in nan_after, f"{filter_type}: NaN at index {idx} was filled unexpectedly"
+            assert idx in nan_after, (
+                f"{filter_type}: NaN at index {idx} was filled unexpectedly"
+            )
 
 
 class TestParallelVsSequentialConsistency:
@@ -227,6 +235,12 @@ class TestParallelVsSequentialConsistency:
         df = _make_df(n=500)
         engine_seq = VectorizedFilterEngine(n_jobs=1)
         engine_par = VectorizedFilterEngine(n_jobs=2)
-        result_seq = engine_seq.apply_filter_batch(df, "Moving Average", {"ma_window": 11})
-        result_par = engine_par.apply_filter_batch(df, "Moving Average", {"ma_window": 11})
-        pd.testing.assert_frame_equal(result_seq, result_par, check_exact=False, rtol=1e-10)
+        result_seq = engine_seq.apply_filter_batch(
+            df, "Moving Average", {"ma_window": 11}
+        )
+        result_par = engine_par.apply_filter_batch(
+            df, "Moving Average", {"ma_window": 11}
+        )
+        pd.testing.assert_frame_equal(
+            result_seq, result_par, check_exact=False, rtol=1e-10
+        )

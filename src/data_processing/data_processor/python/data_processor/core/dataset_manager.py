@@ -16,8 +16,6 @@ Follows Clean Code principles:
 
 from __future__ import annotations
 
-from numba import jit
-
 import json
 import logging
 from dataclasses import dataclass, field
@@ -27,6 +25,7 @@ from typing import Any
 from uuid import uuid4
 
 import pandas as pd
+from numba import jit
 
 from data_processor.contracts import require
 

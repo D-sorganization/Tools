@@ -18,13 +18,12 @@ Following TDD principles with comprehensive edge case coverage.
 
 from __future__ import annotations
 
-from numba import jit
-
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
+from numba import jit
 
 # =============================================================================
 # FIXTURES

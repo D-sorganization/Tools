@@ -90,7 +90,9 @@ def process_file(
 
 def main() -> None:
     """CLI entry point: parse arguments and batch-rename PDFs in a directory."""
-    parser = argparse.ArgumentParser(description="Advanced PDF Renamer with AI Fallback")
+    parser = argparse.ArgumentParser(
+        description="Advanced PDF Renamer with AI Fallback"
+    )
     parser.add_argument("directory", type=Path, help="Target directory")
     parser.add_argument("--db", type=Path, default=Path("pdf_titles.sqlite"))
     parser.add_argument(
@@ -99,7 +101,9 @@ def main() -> None:
         default="gemini",
         help="LLM provider for fallback",
     )
-    parser.add_argument("--dry-run", action="store_true", help="Preview changes without renaming")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Preview changes without renaming"
+    )
     parser.add_argument(
         "--style",
         choices=["standard", "snake_case", "kebab_case"],
