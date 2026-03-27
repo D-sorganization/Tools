@@ -1,6 +1,7 @@
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 # mypy: disable-error-code="attr-defined, misc"
 """Rotation Converter Main Window — PyQt6 GUI.
 
@@ -22,7 +23,6 @@ import numpy as np
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-from numba import jit
 from PyQt6.QtCore import QTimer
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
@@ -915,7 +915,6 @@ class TrajectoryPlotsTab(QWidget):
         ax.legend(fontsize=8)
         ax.grid(True, alpha=0.3)
 
-    @jit(nopython=True, fastmath=True)
     def _plot_body_space_twist(self) -> None:
         n = min(len(self._traj) - 1, len(self._traj))
         t = np.arange(n - 1) if n > 1 else np.array([0])
