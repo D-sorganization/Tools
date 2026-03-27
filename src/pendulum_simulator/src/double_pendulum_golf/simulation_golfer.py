@@ -232,10 +232,8 @@ def run_simulation(
     -------
     GolferSimulationResult
     """
-    if not (initial_state.shape == ():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        2 * N_DOF,
-    ), f"Initial state shape must be ({2 * N_DOF},), got {initial_state.shape}"
+    if not (initial_state.shape == (2 * N_DOF,)):
+        raise ValueError(f"Initial state shape must be ({2 * N_DOF},), got {initial_state.shape}")
     if not (np.all(np.isfinite(initial_state))):
         raise ValueError("Initial state must be finite")
     if not (t_end > 0):

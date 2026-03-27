@@ -64,18 +64,14 @@ def clubhead_speed_objective(
     neg_speed : JaxArray, shape ()
         Negative clubhead speed (for minimization)
     """
-    if not (torque_coeffs.shape == ():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        7,
-    ), f"Expected (7,) coeffs, got {torque_coeffs.shape}"
+    if not (torque_coeffs.shape == (7,)):
+        raise ValueError(f"Expected (7,) coeffs, got {torque_coeffs.shape}")
     if not (t_end > 0):
         raise ValueError(f"t_end must be positive, got {t_end}")
     if not (dt > 0):
         raise ValueError(f"dt must be positive, got {dt}")
-    if not (initial_state.shape == ():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        16,
-    ), f"Expected (16,) state, got {initial_state.shape}"
+    if not (initial_state.shape == (16,)):
+        raise ValueError(f"Expected (16,) state, got {initial_state.shape}")
     sol = run_single_simulation_jax(
         params, initial_state, t_end, torque_coeffs, alpha, beta, dt
     )
@@ -120,18 +116,14 @@ def clubhead_velocity_at_final_time(
     speed : JaxArray, shape ()
         Clubhead speed magnitude (positive)
     """
-    if not (torque_coeffs.shape == ():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        7,
-    ), f"Expected (7,) coeffs, got {torque_coeffs.shape}"
+    if not (torque_coeffs.shape == (7,)):
+        raise ValueError(f"Expected (7,) coeffs, got {torque_coeffs.shape}")
     if not (t_end > 0):
         raise ValueError(f"t_end must be positive, got {t_end}")
     if not (dt > 0):
         raise ValueError(f"dt must be positive, got {dt}")
-    if not (initial_state.shape == ():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        16,
-    ), f"Expected (16,) state, got {initial_state.shape}"
+    if not (initial_state.shape == (16,)):
+        raise ValueError(f"Expected (16,) state, got {initial_state.shape}")
     sol = run_single_simulation_jax(
         params, initial_state, t_end, torque_coeffs, alpha, beta, dt
     )
@@ -231,12 +223,10 @@ def optimize_torque_profile(
             logger.info("Iteration %d/%d: loss = %.6f", i + 1, n_iterations, loss_val)
 
     optimal_coeffs = torque_coeffs.reshape(7, n_coeffs_per_joint)
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        len(history) == n_iterations
-    ), f"Expected {n_iterations} history entries, got {len(history)}"
-    if not (optimal_coeffs.shape == (7):
-        raise ValueError(n_coeffs_per_joint))
+    if not (len(history) == n_iterations):
+        raise ValueError(f"Expected {n_iterations} history entries, got {len(history)}")
+    if not (optimal_coeffs.shape == (7, n_coeffs_per_joint)):
+        raise ValueError(f"optimal_coeffs shape mismatch, got {optimal_coeffs.shape}")
 
     return optimal_coeffs, history
 
@@ -345,10 +335,8 @@ def compute_gradient_via_finite_difference(
     -------
     grad : JaxArray, shape (7,)
     """
-    if not (torque_coeffs.shape == ():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        7,
-    ), f"Expected (7,) coeffs, got {torque_coeffs.shape}"
+    if not (torque_coeffs.shape == (7,)):
+        raise ValueError(f"Expected (7,) coeffs, got {torque_coeffs.shape}")
     if not (eps > 0):
         raise ValueError(f"eps must be positive, got {eps}")
     grad = jnp.zeros(7)
@@ -364,6 +352,6 @@ def compute_gradient_via_finite_difference(
         )
         grad = grad.at[i].set((f_plus - f0) / eps)
 
-    if not (grad.shape == (7):
-        raise ValueError())
+    if not (grad.shape == (7,)):
+        raise ValueError(f"grad.shape mismatch, expected (7,)")
     return grad
