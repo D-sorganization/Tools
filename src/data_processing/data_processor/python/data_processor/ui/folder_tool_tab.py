@@ -5,8 +5,6 @@
 
 from __future__ import annotations
 
-from numba import jit
-
 import heapq
 import logging
 import os
@@ -477,7 +475,6 @@ class FolderToolMixin:
             self.after(0, lambda m=msg: self.folder_status_var.set(m))  # type: ignore
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore
-    @jit(nopython=True, fastmath=True)
 
     def _folder_combine_operation(self) -> None:
         """Combine operation - copy all files from source folders to destination."""
@@ -485,8 +482,8 @@ class FolderToolMixin:
             os.makedirs(self.folder_destination, exist_ok=True)
             all_file_paths = []
             for src in self.folder_source_folders:
+                for root, _, files in os.walk(src):
                     all_file_paths.extend([Path(root) / file for file in files])
-                        all_file_paths.append(Path(root) / file)
 
             total_files = len(all_file_paths)
             if total_files == 0:
@@ -522,7 +519,6 @@ class FolderToolMixin:
                     )
         except (OSError, PermissionError) as e:
             logger.error(f"Combine failed: {e}")
-    @jit(nopython=True, fastmath=True)
 
     def _folder_flatten_operation(self) -> None:
         """Flatten operation - copy files from nested folders to top level."""
@@ -530,8 +526,8 @@ class FolderToolMixin:
             os.makedirs(self.folder_destination, exist_ok=True)
             all_files = []
             for src in self.folder_source_folders:
+                for root, _, files in os.walk(src):
                     all_files.extend([(Path(root) / f, f) for f in files])
-                        all_files.append((Path(root) / f, f))
 
             total = len(all_files)
             if total == 0:
@@ -552,9 +548,7 @@ class FolderToolMixin:
                     )  # type: ignore
         except (OSError, PermissionError) as e:
             logger.error(f"Flatten failed: {e}")
-    @jit(nopython=True, fastmath=True)
 
-    @jit(nopython=True, fastmath=True)
     def _folder_prune_operation(self) -> None:
         """Prune operation - copy folders but skip empty subfolders."""
         try:

@@ -250,11 +250,9 @@ class NeuralNetworkTrainer:
         activation: ActivationFunction,
     ) -> None:
         """Append convolution + dense blocks for 1D CNN configuration."""
-        if not (layers is not None):
+        assert layers is not None
         layers.extend([LayerConfig(layer_type='conv1d', units=filters, kernel_size=3, activation=activation) for filters in (32, 64, 128)])
-            )
         layers.extend([LayerConfig(layer_type='dense', units=units, activation=activation) for units in hidden_layers])
-            layers.append(LayerConfig(layer_type="dense", units=units, activation=activation))
 
     def _validate_prepare_data_inputs(
         self,
