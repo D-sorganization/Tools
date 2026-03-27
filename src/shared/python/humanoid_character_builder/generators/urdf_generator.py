@@ -758,4 +758,4 @@ def generate_humanoid_urdf(
     if not (params is not None):
         raise ValueError("params must be provided")
     generator = HumanoidURDFGenerator(config)
-    return generator.generate(params, output_path)
+    return generator.generate(params, output_path)  # type: ignore[no-any-return]
