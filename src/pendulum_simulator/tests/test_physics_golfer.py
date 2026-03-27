@@ -62,7 +62,7 @@ class TestGolferParamsValidation:
     """Parameter dataclass must enforce physical constraints."""
 
     def test_negative_mass_rejected(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             GolferParams(
                 m_hub=-1.0,
                 m_r_upper=3.0,
@@ -83,7 +83,7 @@ class TestGolferParamsValidation:
             )
 
     def test_negative_length_rejected(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             GolferParams(
                 m_hub=2.0,
                 m_r_upper=3.0,
@@ -104,7 +104,7 @@ class TestGolferParamsValidation:
             )
 
     def test_grip_exceeds_club_rejected(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             GolferParams(
                 m_hub=2.0,
                 m_r_upper=3.0,
@@ -197,9 +197,9 @@ class TestMassMatrix:
         q = np.zeros(N_DOF)
         M = mass_matrix(q, golfer_params)
         eigenvalues = np.linalg.eigvalsh(M)
-        assert np.all(eigenvalues >= -1e-10), (
-            f"M must be positive semi-definite, got eigenvalues {eigenvalues}"
-        )
+        assert np.all(
+            eigenvalues >= -1e-10
+        ), f"M must be positive semi-definite, got eigenvalues {eigenvalues}"
 
     def test_depends_on_configuration(self, golfer_params: GolferParams) -> None:
         q1 = np.zeros(N_DOF)

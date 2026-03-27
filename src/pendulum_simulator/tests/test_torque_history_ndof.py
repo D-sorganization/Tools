@@ -57,7 +57,7 @@ class TestJointLabelsForNdof:
 
     def test_zero_joints_raises(self) -> Any:
         """n_joints must be positive."""
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             _joint_labels_for_ndof(0)
 
 

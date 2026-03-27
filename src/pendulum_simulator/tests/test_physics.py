@@ -51,9 +51,9 @@ class TestMassMatrixPositiveDefinite:
         for phi in np.linspace(-np.pi, np.pi, 50):
             M = mass_matrix(phi, default_params)
             eigenvalues = np.linalg.eigvalsh(M)
-            assert all(ev > 0 for ev in eigenvalues), (
-                f"Not positive definite at phi={phi}: eigenvalues={eigenvalues}"
-            )
+            assert all(
+                ev > 0 for ev in eigenvalues
+            ), f"Not positive definite at phi={phi}: eigenvalues={eigenvalues}"
 
 
 class TestMassMatrixCouplingMaximum:
@@ -63,9 +63,9 @@ class TestMassMatrixCouplingMaximum:
         M12_at_zero = abs(mass_matrix(0.0, default_params)[0, 1])
         for phi in np.linspace(0.1, np.pi, 30):
             M12 = abs(mass_matrix(phi, default_params)[0, 1])
-            assert M12 <= M12_at_zero + 1e-10, (
-                f"|M12| at phi={phi:.2f} ({M12:.4f}) exceeds value at phi=0 ({M12_at_zero:.4f})"
-            )
+            assert (
+                M12 <= M12_at_zero + 1e-10
+            ), f"|M12| at phi={phi:.2f} ({M12:.4f}) exceeds value at phi=0 ({M12_at_zero:.4f})"
 
 
 class TestMassMatrixDiagonalConstant:
@@ -279,15 +279,15 @@ class TestDbCViolations:
     """Verify that precondition violations raise AssertionError."""
 
     def test_negative_mass_rejected(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             PendulumParams(m1=-1, m2=1, L1=1, L2=1)
 
     def test_zero_length_rejected(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             PendulumParams(m1=1, m2=1, L1=0, L2=1)
 
     def test_nan_phi_rejected(self, default_params: PendulumParams) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             mass_matrix(float("nan"), default_params)
 
     def test_wrong_state_shape_rejected(
@@ -295,7 +295,7 @@ class TestDbCViolations:
         default_params: PendulumParams,
         zero_torque: Callable[[float], tuple[float, float]],
     ) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             equations_of_motion(np.array([0, 0, 0]), 0.0, default_params, zero_torque)
 
 
@@ -402,9 +402,9 @@ class TestForwardKinematicsPostconditions:
                 tx, ty = pos["tip"]
                 wrist_dist = np.hypot(wx - sx, wy - sy)
                 tip_dist = np.hypot(tx - wx, ty - wy)
-                assert abs(wrist_dist - default_params.L1) < 1e-9, (
-                    f"theta1={theta1:.2f}, phi={phi:.2f}: wrist_dist={wrist_dist:.9f}"
-                )
-                assert abs(tip_dist - default_params.L2) < 1e-9, (
-                    f"theta1={theta1:.2f}, phi={phi:.2f}: tip_dist={tip_dist:.9f}"
-                )
+                assert (
+                    abs(wrist_dist - default_params.L1) < 1e-9
+                ), f"theta1={theta1:.2f}, phi={phi:.2f}: wrist_dist={wrist_dist:.9f}"
+                assert (
+                    abs(tip_dist - default_params.L2) < 1e-9
+                ), f"theta1={theta1:.2f}, phi={phi:.2f}: tip_dist={tip_dist:.9f}"

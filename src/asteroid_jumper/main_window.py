@@ -1,3 +1,7 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """Main window assembling all panels for the Asteroid Jumper simulation."""
 
 from __future__ import annotations

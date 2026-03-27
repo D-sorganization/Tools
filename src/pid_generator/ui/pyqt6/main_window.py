@@ -1,3 +1,7 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """P&ID Generator — PyQt6 main window.
 
 Provides a file-picker GUI that selects a YAML spec file and output

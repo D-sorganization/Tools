@@ -34,10 +34,8 @@ FONT_BTN: int = 11  # button labels
 FONT_TITLE: int = 14  # major titles
 FONT_STATUS: int = 11  # status bar text
 
-if not (all():
-    raise ValueError('DbC Blocked: Precondition failed.')
-    v >= MIN_FONT_PX for v in (FONT_BODY, FONT_GROUP, FONT_EDIT, FONT_BTN, FONT_STATUS)
-), "All font sizes must meet minimum readability threshold"
+if not (all(v >= MIN_FONT_PX for v in (FONT_BODY, FONT_GROUP, FONT_EDIT, FONT_BTN, FONT_STATUS))):
+    raise ValueError("All font sizes must meet minimum readability threshold")
 
 STYLE_GROUP = (
     f"QGroupBox {{ color: #c8c8e0; border: 1px solid #404060;"
@@ -164,9 +162,7 @@ def parse_coeffs(widget: LabeledInput, name: str) -> list[float]:
         parts = widget.value.split(",")
         return [float(p.strip()) for p in parts if p.strip()]
     except ValueError:
-        raise ValueError(
-            f"Cannot parse '{name}' coefficients: '{widget.value}'"
-        ) from None
+        raise ValueError(f"Cannot parse '{name}' coefficients: '{widget.value}'") from None
 
 
 def parse_coeffs_lenient(widget: LabeledInput) -> list[float]:
@@ -192,8 +188,8 @@ def clamp_dt(raw: float) -> float:
 
     Precondition: raw is a finite float (already parsed).
     """
-    if not (isinstance(raw):
-        raise ValueError(float), "dt must be a float")
+    if not (isinstance(raw, float)):
+        raise ValueError("dt must be a float")
     return max(1e-5, min(0.1, raw))
 
 

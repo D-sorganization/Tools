@@ -76,7 +76,9 @@ STYLE_BTN_FUNCGEN = (
     "QPushButton:hover{background:#32326a;}"
 )
 
-STYLE_COMBO = "background:#2a2a38;color:#e0e0f0;border:1px solid #505068;border-radius:3px;padding:4px;"
+STYLE_COMBO = (
+    "background:#2a2a38;color:#e0e0f0;border:1px solid #505068;border-radius:3px;padding:4px;"
+)
 
 
 class ControlsWidgetBase(QWidget):
@@ -193,7 +195,7 @@ class ControlsWidgetBase(QWidget):
         from .controls_widget import LabeledInput as _LI
 
         if not (len(joint_labels) == len(defaults)):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         box = QGroupBox("Torque Saturation")
         box.setStyleSheet(STYLE_GROUP)
         layout = QVBoxLayout(box)
@@ -231,7 +233,7 @@ class ControlsWidgetBase(QWidget):
         from .controls_widget import LabeledInput as _LI
 
         if not (len(joint_labels) == len(min_defaults) == len(max_defaults)):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         box = QGroupBox("Joint Limits")
         box.setStyleSheet(STYLE_GROUP)
         layout = QVBoxLayout(box)
@@ -266,10 +268,7 @@ class ControlsWidgetBase(QWidget):
 
         if not hasattr(self, "chk_clamp") or not self.chk_clamp.isChecked():
             return None
-        return [
-            parse_float(inp, f"Max torque {i}")
-            for i, inp in enumerate(self.clamp_inputs)
-        ]
+        return [parse_float(inp, f"Max torque {i}") for i, inp in enumerate(self.clamp_inputs)]
 
     def _parse_joint_limits(self) -> tuple[list[float], list[float], float] | None:
         """Parse joint limit values.
@@ -281,12 +280,10 @@ class ControlsWidgetBase(QWidget):
         if not hasattr(self, "chk_limits") or not self.chk_limits.isChecked():
             return None
         mins = [
-            np.radians(parse_float(inp, f"Min {i}"))
-            for i, inp in enumerate(self.limit_min_inputs)
+            np.radians(parse_float(inp, f"Min {i}")) for i, inp in enumerate(self.limit_min_inputs)
         ]
         maxs = [
-            np.radians(parse_float(inp, f"Max {i}"))
-            for i, inp in enumerate(self.limit_max_inputs)
+            np.radians(parse_float(inp, f"Max {i}")) for i, inp in enumerate(self.limit_max_inputs)
         ]
         k = parse_float(self.inp_limit_k, "Limit K")
         return mins, maxs, k
@@ -361,10 +358,8 @@ class ControlsWidgetBase(QWidget):
         inputs = self._get_torque_inputs()
         key = joint.lower()
         valid_keys = {k.lower() for k in inputs}
-        if not (():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            key in valid_keys
-        ), f"Unknown joint '{joint}', expected one of {valid_keys}"
+        if not (key in valid_keys):
+            raise ValueError(f"Unknown joint '{joint}', expected one of {valid_keys}")
         if not (len(coeffs) >= 1):
             raise ValueError("Coefficients list must not be empty")
 
@@ -395,10 +390,8 @@ class ControlsWidgetBase(QWidget):
 
     def set_slider_value(self, val: int) -> None:
         """Pre: 0 <= val <= slider.maximum()"""
-        if not (():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            0 <= val <= self.slider.maximum()
-        ), f"Slider value {val} out of range [0, {self.slider.maximum()}]"
+        if not (0 <= val <= self.slider.maximum()):
+            raise ValueError(f"Slider value {val} out of range [0, {self.slider.maximum()}]")
         self.slider.blockSignals(True)
         self.slider.setValue(val)
         self.slider.blockSignals(False)

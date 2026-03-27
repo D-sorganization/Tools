@@ -95,11 +95,11 @@ class TestSetSimulationCallbacks:
         assert panel._run_btn.isEnabled()
 
     def test_rejects_none_simulate_fn(self, panel) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             panel.set_simulation_callbacks(None, lambda r: {})
 
     def test_rejects_none_extract_fn(self, panel) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             panel.set_simulation_callbacks(lambda c: {}, None)
 
 
@@ -114,7 +114,7 @@ class TestSetCoeffsSource:
         assert panel._get_coeffs_fn is not None
 
     def test_rejects_non_callable(self, panel) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             panel.set_coeffs_source("not a function")  # type: ignore[arg-type]
 
 

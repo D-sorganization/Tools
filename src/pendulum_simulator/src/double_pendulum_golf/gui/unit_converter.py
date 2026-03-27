@@ -193,10 +193,8 @@ class UnitPreferences:
         Pre: unit_label must be a valid option for the category.
         """
         valid = [label for label, _ in _UNIT_OPTIONS[category]]
-        if not (():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            unit_label in valid
-        ), f"Invalid unit '{unit_label}' for {category.value}. Valid: {valid}"
+        if not (unit_label in valid):
+            raise ValueError(f"Invalid unit '{unit_label}' for {category.value}. Valid: {valid}")
         self.selections[category] = unit_label
 
     def save_to_qsettings(self, settings: Any) -> None:
@@ -234,7 +232,7 @@ def _get_factor(category: UnitCategory, unit_label: str) -> float:
     for label, factor in _UNIT_OPTIONS[category]:
         if label == unit_label:
             if not (factor > 0):
-                raise ValueError('DbC Blocked: Precondition failed.')
+                raise ValueError("DbC Blocked: Precondition failed.")
             return factor
     raise KeyError(f"Unknown unit '{unit_label}' for {category.value}")
 
