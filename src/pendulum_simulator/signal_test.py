@@ -16,7 +16,7 @@ from PyQt6.QtCore import pyqtSignal
 class TestWindow(QMainWindow):
     run_requested = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Signal Test")
         self.setGeometry(100, 100, 300, 200)
@@ -33,7 +33,7 @@ class TestWindow(QMainWindow):
         # Connect our own handler
         self.run_requested.connect(self.on_run)
 
-    def on_run(self):
+    def on_run(self) -> None:
         QMessageBox.information(self, "Success", "Signal was received!")
 
 

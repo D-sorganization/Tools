@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 """Quick test to see if simulation runs without GUI."""
 
+import logging
+import traceback
+
 import numpy as np
+
 from src.double_pendulum_golf.physics import PendulumParams
 from src.double_pendulum_golf.simulation import make_polynomial_torque, run_simulation
+
+logger = logging.getLogger(__name__)
 
 # Default preset params
 params = PendulumParams(
@@ -27,7 +33,7 @@ torque_func = make_polynomial_torque(
     [0],  # wrist
 )
 
-print("Running simulation...")
+logger.info("Running simulation...")
 try:
     result = run_simulation(
         params=params,
@@ -36,13 +42,11 @@ try:
         torque_func=torque_func,
         dt=0.005,
     )
-    print("✓ Simulation succeeded!")
-    print(f"  Steps: {result.n_steps}")
-    print(f"  Time range: {result.t[0]:.3f} to {result.t[-1]:.3f} s")
-    print(f"  Initial state: {result.states[0]}")
-    print(f"  Final state: {result.states[-1]}")
+    logger.info("Simulation succeeded!")
+    logger.info("  Steps: %d", result.n_steps)
+    logger.info("  Time range: %.3f to %.3f s", result.t[0], result.t[-1])
+    logger.info("  Initial state: %s", result.states[0])
+    logger.info("  Final state: %s", result.states[-1])
 except Exception as e:  # noqa: BLE001
-    print(f"✗ Simulation failed: {e}")
-    import traceback
-
+    logger.error("Simulation failed: %s", e)
     traceback.print_exc()
