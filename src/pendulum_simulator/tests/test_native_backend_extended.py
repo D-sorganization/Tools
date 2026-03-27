@@ -140,7 +140,7 @@ class TestTruncateQ:
         np.testing.assert_array_equal(result, q[:8])
 
     def test_less_than_8_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             native_backend._truncate_q(np.zeros(4))
 
 

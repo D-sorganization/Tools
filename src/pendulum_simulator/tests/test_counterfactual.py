@@ -131,12 +131,12 @@ class TestZeroTorqueDouble:
 
     def test_invalid_state_shape_raises(self, double_params: PendulumParams) -> None:
         """Non-(4,) state must raise AssertionError."""
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             zero_torque_joint_forces_double(np.zeros(3), double_params)
 
     def test_nonfinite_state_raises(self, double_params: PendulumParams) -> None:
         """NaN state must raise AssertionError."""
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             zero_torque_joint_forces_double(np.array([np.nan, 0.0, 0.0, 0.0]), double_params)
 
 
@@ -173,5 +173,5 @@ class TestZeroTorqueTriple:
         assert abs(fy - expected_fy) < 1e-4, f"fy={fy}, expected {expected_fy}"
 
     def test_invalid_state_shape_raises(self, triple_params: TriplePendulumParams) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             zero_torque_joint_forces_triple(np.zeros(5), triple_params)

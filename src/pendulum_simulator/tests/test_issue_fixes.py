@@ -141,10 +141,10 @@ class TestPopOutChart:
         x = np.array([1, 2, 3])
         y = np.array([1, 2])
 
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             fit_regression(x, y, degree=1)
 
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             fit_regression(x, np.array([1, 2, 3]), degree=11)
 
     def test_plot_data_stores(self) -> None:
@@ -430,19 +430,19 @@ class TestDbCAssertionCoverage:
     def test_pendulum_params_rejects_negative_mass(self) -> None:
         from double_pendulum_golf.physics import PendulumParams
 
-        with pytest.raises(AssertionError, match="m1 must be positive"):
+        with pytest.raises((ValueError, TypeError), match="m1 must be positive"):
             PendulumParams(m1=-1.0, m2=0.5, L1=0.6, L2=1.0)
 
     def test_pendulum_params_rejects_negative_gravity(self) -> None:
         from double_pendulum_golf.physics import PendulumParams
 
-        with pytest.raises(AssertionError, match="g must be non-negative"):
+        with pytest.raises((ValueError, TypeError), match="g must be non-negative"):
             PendulumParams(m1=5.0, m2=0.5, L1=0.6, L2=1.0, g=-1.0)
 
     def test_triple_params_rejects_negative_length(self) -> None:
         from double_pendulum_golf.physics_triple import TriplePendulumParams
 
-        with pytest.raises(AssertionError, match="L2 must be positive"):
+        with pytest.raises((ValueError, TypeError), match="L2 must be positive"):
             TriplePendulumParams(m1=5.0, m2=0.5, m3=0.3, L1=0.6, L2=-1.0, L3=0.5)
 
     def test_simulation_rejects_wrong_state_shape(self) -> None:
@@ -451,7 +451,7 @@ class TestDbCAssertionCoverage:
 
         params = PendulumParams(m1=5.0, m2=0.5, L1=0.6, L2=1.0)
         bad_state = np.array([0.0, 0.0, 0.0])  # Should be shape (4,)
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             run_simulation(params, bad_state, 1.0, lambda t: (0.0, 0.0))
 
     def test_simulation_rejects_nonfinite_state(self) -> None:
@@ -460,19 +460,19 @@ class TestDbCAssertionCoverage:
 
         params = PendulumParams(m1=5.0, m2=0.5, L1=0.6, L2=1.0)
         nan_state = np.array([np.nan, 0.0, 0.0, 0.0])
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             run_simulation(params, nan_state, 1.0, lambda t: (0.0, 0.0))
 
     def test_noise_generator_rejects_negative_amplitude(self) -> None:
         from double_pendulum_golf.perturbation_analysis import generate_noise
 
-        with pytest.raises(AssertionError, match="amplitude must be non-negative"):
+        with pytest.raises((ValueError, TypeError), match="amplitude must be non-negative"):
             generate_noise("white", 100, -1.0)
 
     def test_noise_generator_rejects_zero_samples(self) -> None:
         from double_pendulum_golf.perturbation_analysis import generate_noise
 
-        with pytest.raises(AssertionError, match="n_samples must be positive"):
+        with pytest.raises((ValueError, TypeError), match="n_samples must be positive"):
             generate_noise("white", 0, 1.0)
 
     def test_trajectory_mixin_rejects_nonfinite(self) -> None:
@@ -485,5 +485,5 @@ class TestDbCAssertionCoverage:
         r = FakeResult()
         r.t = np.array([0.0, 0.1])
         r.states = np.array([[0.0, 0.0, 0.0, np.nan], [0.0, 0.0, 0.0, 0.0]])
-        with pytest.raises(AssertionError, match="finite"):
+        with pytest.raises((ValueError, TypeError), match="finite"):
             r._validate_trajectory(expected_state_width=4)

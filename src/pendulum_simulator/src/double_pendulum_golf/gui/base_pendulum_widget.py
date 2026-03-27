@@ -681,3 +681,141 @@ class BasePendulumWidget(QWidget):
         painter.setPen(QPen(QColor(0, 0, 0, 40), 1))
         painter.setBrush(QBrush(grad))
         painter.drawPolygon(poly)
+
+    def _draw_3d_joint_cap(
+        self,
+        painter: QPainter,
+        pos: QPointF,
+        radius: float,
+        color: QColor,
+    ) -> None:
+        """Draw a spherical joint cap with radial gradient for 3D effect.
+
+        Creates a pseudo-3D sphere at the joint using radial gradient shading
+        with a specular highlight offset from center.
+
+        Pre: radius > 0
+        """
+        if not (radius > 0):
+            raise ValueError(f"Joint cap radius must be positive, got {radius}")
+        from PyQt6.QtGui import QRadialGradient
+
+        # Shadow beneath the joint
+        shadow_color = QColor(0, 0, 0, 50)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QBrush(shadow_color))
+        painter.drawEllipse(
+            QPointF(pos.x() + 1.5, pos.y() + 1.5),
+            radius * 1.2,
+            radius * 1.2,
+        )
+
+        # Sphere with specular highlight
+        gradient = QRadialGradient(
+            pos.x() - radius * 0.3,
+            pos.y() - radius * 0.3,
+            radius * 1.5,
+        )
+        highlight = QColor(color)
+        highlight.setAlpha(255)
+        gradient.setColorAt(0.0, highlight.lighter(160))
+        gradient.setColorAt(0.4, color)
+        gradient.setColorAt(0.8, color.darker(140))
+        gradient.setColorAt(1.0, QColor(0, 0, 0, 0))
+
+        painter.setBrush(QBrush(gradient))
+        painter.setPen(QPen(color.darker(130), 0.5))
+        painter.drawEllipse(pos, radius, radius)
+
+    def _draw_shadow_projection(
+        self,
+        painter: QPainter,
+        world_points: list[tuple[float, float]],
+        ground_y: float,
+    ) -> None:
+        """Project a shadow of the pendulum segments onto the ground plane.
+
+        Draws a semi-transparent flattened silhouette at the ground level,
+        giving depth perception even in 2D projection.
+
+        Pre: len(world_points) >= 2
+        """
+        if len(world_points) < 2:
+            return
+        from PyQt6.QtGui import QPolygonF
+
+        shadow_color = QColor(0, 0, 0, 25)
+        painter.setPen(QPen(shadow_color, 2))
+
+        for i in range(len(world_points) - 1):
+            x1, _ = world_points[i]
+            x2, _ = world_points[i + 1]
+            p1 = self._world_to_pixel(x1, ground_y)
+            p2 = self._world_to_pixel(x2, ground_y)
+            painter.drawLine(p1, p2)
+
+    # ------------------------------------------------------------------
+    # Image export (#1779)
+    # ------------------------------------------------------------------
+
+    def export_image(self, file_path: str, width: int = 1920, height: int = 1080) -> None:
+        """Export the current visualization as a high-resolution image.
+
+        Supports PNG, SVG, and PDF formats based on file extension.
+
+        Pre: file_path ends with .png, .svg, or .pdf
+        Pre: width > 0, height > 0
+        Post: File is written to disk.
+        """
+        if not (width > 0 and height > 0):
+            raise ValueError(f"Dimensions must be positive: {width}x{height}")
+
+        ext = file_path.rsplit(".", 1)[-1].lower() if "." in file_path else ""
+
+        if ext == "svg":
+            from PyQt6.QtSvg import QSvgGenerator
+
+            generator = QSvgGenerator()
+            generator.setFileName(file_path)
+            generator.setSize(self.size())
+            generator.setViewBox(self.rect())
+            generator.setTitle("Pendulum Simulator Export")
+            painter = QPainter(generator)
+            self.render(painter)
+            painter.end()
+
+        elif ext == "pdf":
+            from PyQt6.QtGui import QPageLayout, QPageSize
+            from PyQt6.QtCore import QMarginsF
+            from PyQt6.QtPrintSupport import QPrinter
+
+            printer = QPrinter(QPrinter.PrinterMode.HighResolution)
+            printer.setOutputFormat(QPrinter.OutputFormat.PdfFormat)
+            printer.setOutputFileName(file_path)
+            printer.setPageLayout(
+                QPageLayout(
+                    QPageSize(QPageSize.PageSizeId.A4),
+                    QPageLayout.Orientation.Landscape,
+                    QMarginsF(10, 10, 10, 10),
+                )
+            )
+            painter = QPainter(printer)
+            self.render(painter)
+            painter.end()
+
+        else:
+            # Default: PNG raster export
+            from PyQt6.QtGui import QImage
+
+            image = QImage(width, height, QImage.Format.Format_ARGB32_Premultiplied)
+            image.fill(self.COLOR_BG)
+            painter = QPainter(image)
+            painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+            # Scale to fit the export dimensions
+            scale_x = width / max(1, self.width())
+            scale_y = height / max(1, self.height())
+            scale = min(scale_x, scale_y)
+            painter.scale(scale, scale)
+            self.render(painter)
+            painter.end()
+            image.save(file_path)

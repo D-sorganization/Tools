@@ -1,7 +1,3 @@
-import logging
-
-logger = logging.getLogger(__name__)
-
 """Tests for analytical FK Jacobians and derived quantities.
 
 Validates analytical implementations against existing numerical references.
@@ -9,6 +5,10 @@ Follows TDD principles: write tests first, then implement.
 """
 
 from __future__ import annotations
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 import time
 

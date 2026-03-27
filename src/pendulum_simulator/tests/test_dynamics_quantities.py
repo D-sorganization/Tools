@@ -41,11 +41,11 @@ class TestAngularPowerAt:
         assert angular_power_at(5.0, 0.0) == 0.0
 
     def test_nan_torque_raises(self):
-        with pytest.raises(AssertionError, match="torque must be finite"):
+        with pytest.raises((ValueError, TypeError), match="torque must be finite"):
             angular_power_at(float("nan"), 1.0)
 
     def test_inf_velocity_raises(self):
-        with pytest.raises(AssertionError, match="omega must be finite"):
+        with pytest.raises((ValueError, TypeError), match="omega must be finite"):
             angular_power_at(1.0, float("inf"))
 
 
@@ -67,7 +67,7 @@ class TestLinearPowerAt:
         assert linear_power_at(np.array([2.0, 3.0]), np.array([4.0, 5.0])) == pytest.approx(23.0)
 
     def test_wrong_shape_raises(self):
-        with pytest.raises(AssertionError, match="force must be shape"):
+        with pytest.raises((ValueError, TypeError), match="force must be shape"):
             linear_power_at(np.array([1.0, 2.0, 3.0]), np.array([1.0, 2.0]))
 
 
@@ -86,7 +86,7 @@ class TestAngularPowerSeries:
         np.testing.assert_allclose(result, 10.0)
 
     def test_shape_mismatch_raises(self):
-        with pytest.raises(AssertionError, match="Shape mismatch"):
+        with pytest.raises((ValueError, TypeError), match="Shape mismatch"):
             angular_power_series(np.ones(5), np.ones(6))
 
 

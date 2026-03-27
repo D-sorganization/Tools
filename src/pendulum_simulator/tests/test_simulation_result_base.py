@@ -98,43 +98,43 @@ class TestValidateTrajectory:
 
     def test_wrong_state_width_raises(self) -> None:
         r = _make_result(n=5, state_width=4)
-        with pytest.raises(AssertionError, match="width"):
+        with pytest.raises((ValueError, TypeError), match="width"):
             r._validate_trajectory(6)
 
     def test_non_finite_t_raises(self) -> None:
         r = _make_result(n=4, state_width=4)
         r.t[2] = float("nan")
-        with pytest.raises(AssertionError, match="finite"):
+        with pytest.raises((ValueError, TypeError), match="finite"):
             r._validate_trajectory(4)
 
     def test_non_finite_states_raises(self) -> None:
         r = _make_result(n=4, state_width=4)
         r.states[1, 0] = float("inf")
-        with pytest.raises(AssertionError, match="finite"):
+        with pytest.raises((ValueError, TypeError), match="finite"):
             r._validate_trajectory(4)
 
     def test_non_monotonic_t_raises(self) -> None:
         r = _make_result(n=4, state_width=4)
         r.t = np.array([0.0, 0.5, 0.3, 1.0])  # out of order
-        with pytest.raises(AssertionError, match="strictly increasing"):
+        with pytest.raises((ValueError, TypeError), match="strictly increasing"):
             r._validate_trajectory(4)
 
     def test_t_size_mismatch_with_states_raises(self) -> None:
         r = _make_result(n=5, state_width=4)
         r.t = np.linspace(0, 1, 3)  # length 3 but states has 5 rows
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             r._validate_trajectory(4)
 
     def test_1d_t_required(self) -> None:
         r = _make_result(n=5, state_width=4)
         r.t = r.t.reshape(1, -1)  # wrong shape
-        with pytest.raises(AssertionError, match="1D"):
+        with pytest.raises((ValueError, TypeError), match="1D"):
             r._validate_trajectory(4)
 
     def test_2d_states_required(self) -> None:
         r = _make_result(n=5, state_width=4)
         r.states = r.states.flatten()  # wrong shape
-        with pytest.raises(AssertionError, match="2D"):
+        with pytest.raises((ValueError, TypeError), match="2D"):
             r._validate_trajectory(4)
 
 
@@ -158,17 +158,17 @@ class TestCheckIdx:
 
     def test_negative_index_raises(self) -> None:
         r = _make_result(n=5)
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             r._check_idx(-1)
 
     def test_index_equal_to_n_raises(self) -> None:
         r = _make_result(n=5)
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             r._check_idx(5)
 
     def test_large_index_raises(self) -> None:
         r = _make_result(n=5)
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             r._check_idx(100)
 
 
@@ -184,13 +184,13 @@ class TestAssertEnergyFinite:
         )
 
     def test_nan_raises(self) -> None:
-        with pytest.raises(AssertionError, match="Non-finite"):
+        with pytest.raises((ValueError, TypeError), match="Non-finite"):
             TrajectoryResultMixin._assert_energy_finite(
                 {"kinetic": float("nan"), "potential": 2.0, "total": 3.0}, idx=1
             )
 
     def test_inf_raises(self) -> None:
-        with pytest.raises(AssertionError, match="Non-finite"):
+        with pytest.raises((ValueError, TypeError), match="Non-finite"):
             TrajectoryResultMixin._assert_energy_finite(
                 {"kinetic": 1.0, "potential": float("inf"), "total": 3.0}, idx=2
             )
@@ -274,7 +274,7 @@ class TestTotalTorquesAt:
 
     def test_total_torques_at_invalid_index_raises(self) -> None:
         r = _make_result(n=5)
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             r.total_torques_at(10)
 
     def test_total_torques_at_zero_friction(self) -> None:

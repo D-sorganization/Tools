@@ -45,7 +45,7 @@ class TestPolynomialTorque:
         assert np.isclose(tau1, 19.0)
 
     def test_empty_coefficients_rejected(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             make_polynomial_torque([], [1.0])
 
 
@@ -168,7 +168,7 @@ class TestSimulationResultContracts:
         self,
         default_params: PendulumParams,
     ) -> None:
-        with pytest.raises(AssertionError, match="strictly increasing"):
+        with pytest.raises((ValueError, TypeError), match="strictly increasing"):
             SimulationResult(
                 t=np.array([0.0, 0.0]),
                 states=np.zeros((2, 4)),
@@ -180,7 +180,7 @@ class TestSimulationResultContracts:
         self,
         default_params: PendulumParams,
     ) -> None:
-        with pytest.raises(AssertionError, match="states must have width 4"):
+        with pytest.raises((ValueError, TypeError), match="states must have width 4"):
             SimulationResult(
                 t=np.array([0.0, 0.1]),
                 states=np.zeros((2, 3)),
@@ -288,7 +288,7 @@ class TestSimulationAccessors:
             torque_func=zero_torque,
             dt=0.01,
         )
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             result.mass_matrix_at(result.n_steps + 10)
 
 
@@ -301,7 +301,7 @@ class TestSimulationDbC:
         zero_torque: Callable[[float], tuple[float, float]],
         aligned_state: np.ndarray,
     ) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             run_simulation(
                 default_params,
                 aligned_state,
@@ -314,7 +314,7 @@ class TestSimulationDbC:
         default_params: PendulumParams,
         zero_torque: Callable[[float], tuple[float, float]],
     ) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             run_simulation(
                 default_params,
                 np.array([0, 0]),

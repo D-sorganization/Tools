@@ -277,15 +277,15 @@ class TestDbCViolations:
     """Verify that precondition violations raise AssertionError."""
 
     def test_negative_mass_rejected(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             PendulumParams(m1=-1, m2=1, L1=1, L2=1)
 
     def test_zero_length_rejected(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             PendulumParams(m1=1, m2=1, L1=0, L2=1)
 
     def test_nan_phi_rejected(self, default_params: PendulumParams) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             mass_matrix(float("nan"), default_params)
 
     def test_wrong_state_shape_rejected(
@@ -293,7 +293,7 @@ class TestDbCViolations:
         default_params: PendulumParams,
         zero_torque: Callable[[float], tuple[float, float]],
     ) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             equations_of_motion(np.array([0, 0, 0]), 0.0, default_params, zero_torque)
 
 

@@ -15,10 +15,10 @@ def test_fit_regression():
     assert len(coeffs) == 3
 
     # Check assertion error
-    with pytest.raises(AssertionError):
+    with pytest.raises((ValueError, TypeError)):
         fit_regression(x, np.array([0, 1]), 2)
 
-    with pytest.raises(AssertionError):
+    with pytest.raises((ValueError, TypeError)):
         fit_regression(x, y, 11)
 
 
