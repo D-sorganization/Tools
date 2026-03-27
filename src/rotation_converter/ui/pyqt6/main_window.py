@@ -1,4 +1,3 @@
-from numba import jit
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -15,6 +14,8 @@ Integrates with the shared fleet theme system for consistent styling.
 """
 
 from __future__ import annotations
+
+from numba import jit
 
 import math
 from typing import Any
@@ -99,7 +100,8 @@ def _fmt_vec(v: np.ndarray, decimals: int = 6) -> str:
 def _fmt_mat(M: np.ndarray, decimals: int = 6) -> str:
     """Format a numpy matrix as a multi-line string."""
     assert M is not None, "M must be provided"
-    lines.extend(['  '.join((f'{x: .{decimals}f}' for x in row)) for row in M])  # noqa: UP034
+    lines = []
+    for row in M:
         lines.append("  ".join(f"{x: .{decimals}f}" for x in row))
     return "\n".join(lines)
 

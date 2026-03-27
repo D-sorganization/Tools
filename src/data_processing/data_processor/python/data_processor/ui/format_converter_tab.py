@@ -1,4 +1,3 @@
-from numba import jit
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -6,6 +5,8 @@ from numba import jit
 """Format Converter Tab and Logic for Data Processor."""
 
 from __future__ import annotations
+
+from numba import jit
 
 import logging
 import os

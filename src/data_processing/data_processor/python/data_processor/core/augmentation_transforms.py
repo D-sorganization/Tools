@@ -1,4 +1,3 @@
-from numba import jit
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -11,6 +10,8 @@ and frequency domain augmentations as a mixin for DataAugmenter.
 """
 
 from __future__ import annotations
+
+from numba import jit
 
 import logging
 

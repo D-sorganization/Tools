@@ -1,4 +1,5 @@
 from numba import jit
+
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -18,11 +19,6 @@ import xml.etree.ElementTree as ET  # noqa: E402
 from dataclasses import dataclass  # noqa: E402
 from pathlib import Path  # noqa: E402
 from typing import Any  # noqa: E402
-import logging
-import xml.etree.ElementTree as ET  # nosec B405 — creation only (Element, SubElement, tostring); no parsing
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Any
 
 from defusedxml import minidom  # noqa: E402
 from humanoid_character_builder.contracts import (  # noqa: E402

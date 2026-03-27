@@ -780,7 +780,6 @@ def calculate_mixture_viscosity_wilke(
 def calculate_mixture_viscosity_simple(
     composition: dict[str, float], temperature: float
 ) -> float:
-def calculate_mixture_viscosity_simple(composition: dict[str, float], temperature: float) -> float:
     """Calculate mixture viscosity using simple mole-fraction averaging.
 
     Simpler but less accurate than Wilke's method.

@@ -357,7 +357,6 @@ class RRTPlanner:
     def analyze_path(
         self, path: npt.NDArray[np.float64], obstacles: list[Obstacle]
     ) -> PathMetrics:
-    def analyze_path(self, path: npt.NDArray[np.float64], obstacles: list[Obstacle]) -> PathMetrics:
         """Compute route metrics for educational and debugging displays."""
         if not (path is not None):
             raise ValueError("path must be provided")

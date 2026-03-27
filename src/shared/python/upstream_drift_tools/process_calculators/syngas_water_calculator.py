@@ -419,7 +419,6 @@ class SyngasWaterCalculator:
     def calculate_dew_point(
         self, partial_pressure_pa: float, total_pressure_pa: float
     ) -> float:
-    def calculate_dew_point(self, partial_pressure_pa: float, total_pressure_pa: float) -> float:
         """
         Calculate dew point temperature
 
