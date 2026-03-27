@@ -140,7 +140,10 @@ jobs:
           fi
 
       - name: Security Scan (pip-audit)
-        run: pip-audit -r requirements.txt
+        run: |
+          # CVE-2026-4539: pygments 2.19.2 vulnerability with no fix version available yet.
+          # Ignored until a patched release is published upstream.
+          pip-audit -r requirements.txt --ignore-vuln CVE-2026-4539
 
       # - name: Secrets Scan (gitleaks)
       #   if: secrets.GITLEAKS_LICENSE != ''
