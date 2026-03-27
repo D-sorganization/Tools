@@ -766,10 +766,10 @@ class PendulumWidget(BasePendulumWidget):
         Pre: directions.shape == (2, 2)
         Pre: semi_axes_px.shape == (2,)
         """
-        if not (directions.shape == (2):
-            raise ValueError(2), "directions must be (2, 2)")
-        if not (semi_axes_px.shape == (2):
-            raise ValueError(), "semi_axes_px must be (2,)")
+        if not (directions.shape == (2, 2)):
+            raise ValueError("directions must be (2, 2)")
+        if not (semi_axes_px.shape == (2,)):
+            raise ValueError("semi_axes_px must be (2,)")
 
         a = float(semi_axes_px[0])
         b = float(semi_axes_px[1])

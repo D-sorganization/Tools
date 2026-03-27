@@ -84,8 +84,8 @@ def _solve_constrained_dynamics(
     tuple[np.ndarray, np.ndarray]
         Joint accelerations and constraint multipliers.
     """
-    if not (state.shape == (2 * N_DOF):
-        raise ValueError(), f"State shape must be ({2 * N_DOF},)")
+    if not (state.shape == (2 * N_DOF,)):
+        raise ValueError(f"State shape must be ({2 * N_DOF},)")
     if not (np.all(np.isfinite(state))):
         raise ValueError("State must be finite")
 
@@ -110,10 +110,8 @@ def _solve_constrained_dynamics(
         qddot, lambda_forces = native_result
         if not (np.all(np.isfinite(qddot))):
             raise ValueError(f"qddot has non-finite values: {qddot}")
-        if not (np.all():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            np.isfinite(lambda_forces)
-        ), f"Constraint forces have non-finite values: {lambda_forces}"
+        if not (np.all(np.isfinite(lambda_forces))):
+            raise ValueError(f"Constraint forces have non-finite values: {lambda_forces}")
         return qddot, lambda_forces
 
     # Compute dynamic terms
@@ -164,10 +162,8 @@ def _solve_constrained_dynamics(
 
     if not (np.all(np.isfinite(qddot))):
         raise ValueError(f"qddot has non-finite values: {qddot}")
-    if not (np.all():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        np.isfinite(lambda_forces)
-    ), f"Constraint forces have non-finite values: {lambda_forces}"
+    if not (np.all(np.isfinite(lambda_forces))):
+        raise ValueError(f"Constraint forces have non-finite values: {lambda_forces}")
     return qddot, lambda_forces
 
 
@@ -267,8 +263,8 @@ def equations_of_motion(
     -------
     state_dot : np.ndarray, shape (16,)
     """
-    if not (state.shape == (2 * N_DOF):
-        raise ValueError(), f"State shape must be ({2 * N_DOF},)")
+    if not (state.shape == (2 * N_DOF,)):
+        raise ValueError(f"State shape must be ({2 * N_DOF},)")
     if not (np.all(np.isfinite(state))):
         raise ValueError(f"State has non-finite values: {state}")
 
@@ -323,8 +319,8 @@ def project_to_constraints(
     -------
     q_projected : np.ndarray, shape (8,)
     """
-    if not (q.shape == (N_DOF):
-        raise ValueError(), f"q must have shape ({N_DOF},), got {q.shape}")
+    if not (q.shape == (N_DOF,)):
+        raise ValueError(f"q must have shape ({N_DOF},), got {q.shape}")
     if not (np.all(np.isfinite(q))):
         raise ValueError("q must be finite")
     if not (max_iter > 0):

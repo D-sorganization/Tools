@@ -41,8 +41,8 @@ def kinetic_energy_from_M(M: np.ndarray, qdot: np.ndarray) -> float:
         Result is finite and >= 0 (up to floating-point noise).
     """
     n = qdot.shape[0]
-    if not (M.shape == (n):
-        raise ValueError(n), f"M shape {M.shape} vs qdot shape {qdot.shape}")
+    if not (M.shape == (n, n)):
+        raise ValueError(f"M shape {M.shape} vs qdot shape {qdot.shape}")
     if not (np.all(np.isfinite(M))):
         raise ValueError("Mass matrix has non-finite values")
     if not (np.all(np.isfinite(qdot))):
@@ -95,17 +95,15 @@ def friction_torque_ndof(
     Post: opposes motion direction element-wise.
     """
     n = qdot.shape[0]
-    if not (viscous_coeffs.shape == ():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        n,
-    ), f"viscous shape {viscous_coeffs.shape} vs qdot {qdot.shape}"
+    if not (viscous_coeffs.shape == (n,)):
+        raise ValueError(f"viscous shape {viscous_coeffs.shape} vs qdot {qdot.shape}")
     if not (np.all(np.isfinite(qdot))):
         raise ValueError("qdot has non-finite values")
 
     tau: npt.NDArray[np.float64] = np.asarray(-viscous_coeffs * qdot, dtype=np.float64)
     if coulomb_coeffs is not None:
-        if not (coulomb_coeffs.shape == (n):
-            raise ValueError())
+        if not (coulomb_coeffs.shape == (n,)):
+            raise ValueError(f"coulomb_coeffs.shape mismatch, expected (n,)")
         tau -= coulomb_coeffs * np.sign(qdot)
 
     if not (np.all(np.isfinite(tau))):
@@ -130,8 +128,8 @@ def clamp_torque_ndof(tau: np.ndarray, limits: np.ndarray) -> np.ndarray:
     Post: |result[i]| <= limits[i].
     """
     n = tau.shape[0]
-    if not (limits.shape == (n):
-        raise ValueError(), f"limits shape {limits.shape} vs tau {tau.shape}")
+    if not (limits.shape == (n,)):
+        raise ValueError(f"limits shape {limits.shape} vs tau {tau.shape}")
     if not (np.all(limits > 0)):
         raise ValueError("Torque limits must be positive")
     result: npt.NDArray[np.float64] = np.asarray(
@@ -176,10 +174,8 @@ def chain_positions(
     convention y-up (positive cosine), matching the existing physics modules.
     """
     n = absolute_angles.shape[0]
-    if not (lengths.shape == ():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        n,
-    ), f"lengths {lengths.shape} vs angles {absolute_angles.shape}"
+    if not (lengths.shape == (n,)):
+        raise ValueError(f"lengths {lengths.shape} vs angles {absolute_angles.shape}")
 
     positions = np.zeros((n, 2))
     x, y = origin
@@ -220,8 +216,8 @@ def potential_energy_chain(
     Post: result finite.
     """
     n = absolute_angles.shape[0]
-    if not (lengths.shape == (n):
-        raise ValueError() and masses.shape == (n,))
+    if not (lengths.shape == (n,) and masses.shape == (n,)):
+        raise ValueError(f"lengths.shape mismatch or condition failed")
     if not (g >= 0):
         raise ValueError(f"g must be non-negative, got {g}")
 

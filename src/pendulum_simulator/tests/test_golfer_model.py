@@ -328,35 +328,35 @@ class TestGolferParamsDbC:
         """Negative mass must trigger assertion."""
         kw = self._valid_kwargs()
         kw["m_r_upper"] = -1.0
-        with pytest.raises(AssertionError, match="positive"):
+        with pytest.raises((ValueError, TypeError), match="positive"):
             GolferParams(**kw)
 
     def test_zero_mass_raises(self) -> None:
         """Zero mass must trigger assertion."""
         kw = self._valid_kwargs()
         kw["m_club"] = 0.0
-        with pytest.raises(AssertionError, match="positive"):
+        with pytest.raises((ValueError, TypeError), match="positive"):
             GolferParams(**kw)
 
     def test_negative_length_raises(self) -> None:
         """Negative segment length must trigger assertion."""
         kw = self._valid_kwargs()
         kw["L_r_upper"] = -0.1
-        with pytest.raises(AssertionError, match="positive"):
+        with pytest.raises((ValueError, TypeError), match="positive"):
             GolferParams(**kw)
 
     def test_grip_exceeds_club_raises(self) -> None:
         """Grip offset must not exceed club length."""
         kw = self._valid_kwargs()
         kw["grip_right"] = 2.0  # > L_club=1.10
-        with pytest.raises(AssertionError, match="L_club"):
+        with pytest.raises((ValueError, TypeError), match="L_club"):
             GolferParams(**kw)
 
     def test_negative_damping_raises(self) -> None:
         """Negative damping must trigger assertion."""
         kw = self._valid_kwargs()
         kw["b_rs"] = -0.5
-        with pytest.raises(AssertionError, match="non-negative"):
+        with pytest.raises((ValueError, TypeError), match="non-negative"):
             GolferParams(**kw)
 
     def test_valid_params_accepted(self) -> None:

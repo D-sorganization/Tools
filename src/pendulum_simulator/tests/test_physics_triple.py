@@ -181,15 +181,15 @@ class TestTripleParameterValidation:
     """Parameters must satisfy constraints."""
 
     def test_negative_mass_rejected(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             TriplePendulumParams(m1=-1.0, m2=0.5, m3=0.2, L1=0.6, L2=0.6, L3=0.6)
 
     def test_negative_length_rejected(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             TriplePendulumParams(m1=1.0, m2=0.5, m3=0.2, L1=-0.6, L2=0.6, L3=0.6)
 
     def test_zero_mass_rejected(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             TriplePendulumParams(m1=1.0, m2=0.0, m3=0.2, L1=0.6, L2=0.6, L3=0.6)
 
 

@@ -173,7 +173,7 @@ class TestGolferSimulationResultContracts:
     """Trajectory-level DbC validation for GolferSimulationResult."""
 
     def test_constructor_rejects_non_monotonic_time(self) -> None:
-        with pytest.raises(AssertionError, match="strictly increasing"):
+        with pytest.raises((ValueError, TypeError), match="strictly increasing"):
             GolferSimulationResult(
                 t=np.array([0.0, 0.0]),
                 states=np.zeros((2, 2 * N_DOF)),
@@ -182,7 +182,7 @@ class TestGolferSimulationResultContracts:
             )
 
     def test_constructor_rejects_wrong_state_width(self) -> None:
-        with pytest.raises(AssertionError, match="states must have width"):
+        with pytest.raises((ValueError, TypeError), match="states must have width"):
             GolferSimulationResult(
                 t=np.array([0.0, 0.01]),
                 states=np.zeros((2, 2 * N_DOF - 1)),

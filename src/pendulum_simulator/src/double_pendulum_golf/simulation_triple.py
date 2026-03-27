@@ -169,10 +169,8 @@ def run_simulation(
       visualisation-quality results.  Use tighter values only when
       quantitative energy conservation is required.
     """
-    if not (initial_state.shape == ():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        6,
-    ), f"Initial state shape must be (6,), got {initial_state.shape}"
+    if not (initial_state.shape == (6,)):
+        raise ValueError(f"Initial state shape must be (6,), got {initial_state.shape}")
     if not (all(np.isfinite(initial_state))):
         raise ValueError("Initial state must be finite")
     if not (t_end > 0):

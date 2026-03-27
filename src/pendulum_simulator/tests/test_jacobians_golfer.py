@@ -82,7 +82,7 @@ class TestNumericalJacobian:
         p = _default_golfer_params()
         q_wrong = np.zeros(7)  # wrong size
 
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             _numerical_jacobian(q_wrong, p, "rh")
 
     def test_multiple_joints_independent(self):

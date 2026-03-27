@@ -380,43 +380,43 @@ class TestDbCViolations:
     """All public functions must assert invalid inputs."""
 
     def test_jacobian_double_negative_L1(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             jacobian_double(0.0, 0.0, -1.0, 1.0)
 
     def test_jacobian_double_zero_L2(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             jacobian_double(0.0, 0.0, 1.0, 0.0)
 
     def test_jacobian_double_nan_angle(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             jacobian_double(float("nan"), 0.0, 1.0, 1.0)
 
     def test_jacobian_triple_infinite_angle(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             jacobian_triple(float("inf"), 0.0, 0.0, 1.0, 1.0, 1.0)
 
     def test_jacobian_triple_negative_length(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             jacobian_triple(0.0, 0.0, 0.0, 1.0, 0.0, 1.0)
 
     def test_ellipsoid_bad_jacobian_shape(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             ellipsoid_from_jacobian(np.eye(3))  # (3,3) not (2,n)
 
     def test_ellipsoid_1d_jacobian_rejected(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             ellipsoid_from_jacobian(np.array([1.0, 2.0]))  # 1-D
 
     def test_ellipsoid_nan_jacobian(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             ellipsoid_from_jacobian(np.array([[1.0, float("nan")], [0.0, 1.0]]))
 
     def test_ellipsoids_double_nan_angle(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             ellipsoids_double(float("nan"), 0.0, 1.0, 1.0)
 
     def test_ellipsoids_triple_zero_length(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             ellipsoids_triple(0.0, 0.0, 0.0, 1.0, 1.0, 0.0)
 
 

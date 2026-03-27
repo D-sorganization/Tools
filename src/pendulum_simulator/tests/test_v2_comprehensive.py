@@ -72,7 +72,7 @@ class TestTorqueClampAbsValue:
     def test_zero_value_rejected(self) -> None:
         from double_pendulum_golf.physics import TorqueClamp
 
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             TorqueClamp(max_torque1=0.0, max_torque2=10.0)
 
     def test_symmetric_clamping(self) -> None:

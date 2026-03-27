@@ -80,8 +80,8 @@ def club_action_point(
     t = (alpha + 1.0) / 2.0
     result = (1.0 - t) * grip_r + t * grip_l
 
-    if not (result.shape == (2):
-        raise ValueError(), f"Expected shape (2,), got {result.shape}")
+    if not (result.shape == (2,)):
+        raise ValueError(f"Expected shape (2,), got {result.shape}")
     if not (np.all(np.isfinite(result))):
         raise ValueError(f"Action point is not finite: {result}")
     return result
@@ -112,8 +112,8 @@ def net_force_on_club(
     Post: returned array is shape (2,) and finite.
     """
     net = np.array(f_right, dtype=float) + np.array(f_left, dtype=float)
-    if not (net.shape == (2):
-        raise ValueError())
+    if not (net.shape == (2,)):
+        raise ValueError(f"net.shape mismatch, expected (2,)")
     if not (np.all(np.isfinite(net))):
         raise ValueError(f"Net force is not finite: {net}")
     return net  # type: ignore[no-any-return]

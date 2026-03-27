@@ -130,7 +130,7 @@ class TestTripleParamsContracts:
         assert p.mu3 == 0.3
 
     def test_negative_b1_rejected(self) -> None:
-        with pytest.raises(AssertionError, match="b1 must be non-negative"):
+        with pytest.raises((ValueError, TypeError), match="b1 must be non-negative"):
             TriplePendulumParams(
                 m1=1.0,
                 m2=1.0,
@@ -142,7 +142,7 @@ class TestTripleParamsContracts:
             )
 
     def test_negative_b2_rejected(self) -> None:
-        with pytest.raises(AssertionError, match="b2 must be non-negative"):
+        with pytest.raises((ValueError, TypeError), match="b2 must be non-negative"):
             TriplePendulumParams(
                 m1=1.0,
                 m2=1.0,
@@ -154,7 +154,7 @@ class TestTripleParamsContracts:
             )
 
     def test_negative_b3_rejected(self) -> None:
-        with pytest.raises(AssertionError, match="b3 must be non-negative"):
+        with pytest.raises((ValueError, TypeError), match="b3 must be non-negative"):
             TriplePendulumParams(
                 m1=1.0,
                 m2=1.0,
@@ -166,7 +166,7 @@ class TestTripleParamsContracts:
             )
 
     def test_negative_mu1_rejected(self) -> None:
-        with pytest.raises(AssertionError, match="mu1 must be non-negative"):
+        with pytest.raises((ValueError, TypeError), match="mu1 must be non-negative"):
             TriplePendulumParams(
                 m1=1.0,
                 m2=1.0,
@@ -178,7 +178,7 @@ class TestTripleParamsContracts:
             )
 
     def test_negative_mu2_rejected(self) -> None:
-        with pytest.raises(AssertionError, match="mu2 must be non-negative"):
+        with pytest.raises((ValueError, TypeError), match="mu2 must be non-negative"):
             TriplePendulumParams(
                 m1=1.0,
                 m2=1.0,
@@ -190,7 +190,7 @@ class TestTripleParamsContracts:
             )
 
     def test_negative_mu3_rejected(self) -> None:
-        with pytest.raises(AssertionError, match="mu3 must be non-negative"):
+        with pytest.raises((ValueError, TypeError), match="mu3 must be non-negative"):
             TriplePendulumParams(
                 m1=1.0,
                 m2=1.0,
