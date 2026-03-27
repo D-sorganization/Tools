@@ -18,7 +18,9 @@ def test_engine_init() -> None:
 def test_select_best_engine() -> None:
     engine = SteamCalculationEngine()
 
-    with patch("upstream_drift_tools.calculators.thermo.steam_engine.COOLPROP_AVAILABLE", True):
+    with patch(
+        "upstream_drift_tools.calculators.thermo.steam_engine.COOLPROP_AVAILABLE", True
+    ):
         assert engine._select_best_engine("coolprop") == "coolprop"
 
     with (
@@ -68,7 +70,9 @@ def test_calculate_dew_point() -> None:
 def test_calculate_saturated_simplified_from_temp() -> None:
     engine = SteamCalculationEngine()
     # 100 C = 373.15 K
-    props = engine.calculate_saturated_properties_from_temperature(373.15, engine="simplified")
+    props = engine.calculate_saturated_properties_from_temperature(
+        373.15, engine="simplified"
+    )
 
     assert props.temperature == 373.15
     assert 100000.0 < props.pressure < 103000.0
@@ -77,7 +81,9 @@ def test_calculate_saturated_simplified_from_temp() -> None:
 def test_calculate_saturated_simplified_from_pressure() -> None:
     engine = SteamCalculationEngine()
     # 1 atm ~ 101325 Pa -> expect ~ 373.15 K
-    props = engine.calculate_saturated_properties_from_pressure(101325.0, engine="simplified")
+    props = engine.calculate_saturated_properties_from_pressure(
+        101325.0, engine="simplified"
+    )
 
     assert 370.0 < props.temperature < 375.0
     assert props.pressure == 101325.0

@@ -159,9 +159,9 @@ class FolderToolMixin:
         ).grid(row=0, column=0, columnspan=2, sticky="w", padx=10, pady=(10, 5))
 
         # Extensions filter
-        ctk.CTkLabel(filter_frame, text="Include only extensions (comma-separated):").grid(
-            row=1, column=0, sticky="w", padx=10, pady=2
-        )
+        ctk.CTkLabel(
+            filter_frame, text="Include only extensions (comma-separated):"
+        ).grid(row=1, column=0, sticky="w", padx=10, pady=2)
         ctk.CTkEntry(
             filter_frame,
             textvariable=self.folder_filter_extensions,
@@ -172,16 +172,16 @@ class FolderToolMixin:
         ctk.CTkLabel(filter_frame, text="Min size (MB):").grid(
             row=2, column=0, sticky="w", padx=10, pady=2
         )
-        ctk.CTkEntry(filter_frame, textvariable=self.folder_min_file_size, width=100).grid(
-            row=2, column=1, sticky="w", padx=10, pady=2
-        )
+        ctk.CTkEntry(
+            filter_frame, textvariable=self.folder_min_file_size, width=100
+        ).grid(row=2, column=1, sticky="w", padx=10, pady=2)
 
         ctk.CTkLabel(filter_frame, text="Max size (MB):").grid(
             row=3, column=0, sticky="w", padx=10, pady=2
         )
-        ctk.CTkEntry(filter_frame, textvariable=self.folder_max_file_size, width=100).grid(
-            row=3, column=1, sticky="w", padx=10, pady=2
-        )
+        ctk.CTkEntry(
+            filter_frame, textvariable=self.folder_max_file_size, width=100
+        ).grid(row=3, column=1, sticky="w", padx=10, pady=2)
 
         # Help text
         ctk.CTkLabel(
@@ -311,7 +311,9 @@ class FolderToolMixin:
         self.folder_progress_bar.set(0)
 
         # Status label
-        self.folder_status_label = ctk.CTkLabel(progress_frame, textvariable=self.folder_status_var)
+        self.folder_status_label = ctk.CTkLabel(
+            progress_frame, textvariable=self.folder_status_var
+        )
         self.folder_status_label.grid(row=2, column=0, sticky="w", padx=10, pady=5)
 
     def _create_folder_run_section(self, parent) -> Any:
@@ -344,7 +346,8 @@ class FolderToolMixin:
         mode = self.folder_operation_mode.get()
         descriptions = {
             "combine": (
-                "Copies all files from source folders" " into the single destination folder."
+                "Copies all files from source folders"
+                " into the single destination folder."
             ),
             "flatten": (
                 "Finds deeply nested folders and copies"
@@ -408,17 +411,23 @@ class FolderToolMixin:
                 self.folder_destination = folder
                 self.folder_dest_label.configure(text=folder)
         except (OSError, RuntimeError) as e:
-            messagebox.showerror("Error", f"Failed to select destination folder: {str(e)}")
+            messagebox.showerror(
+                "Error", f"Failed to select destination folder: {str(e)}"
+            )
 
     def _folder_run_processing(self) -> None:
         """Start the folder processing operation."""
         if not self.folder_source_folders:
-            messagebox.showwarning("No Source Folders", "Please select at least one source folder.")
+            messagebox.showwarning(
+                "No Source Folders", "Please select at least one source folder."
+            )
             return
 
         mode = self.folder_operation_mode.get()
         if mode not in ["deduplicate", "analyze"] and not self.folder_destination:
-            messagebox.showwarning("No Destination", "Please select a destination folder.")
+            messagebox.showwarning(
+                "No Destination", "Please select a destination folder."
+            )
             return
 
         self.folder_cancel_flag = False
@@ -507,7 +516,9 @@ class FolderToolMixin:
                     )
                     self.after(  # type: ignore
                         0,
-                        lambda p=n, t=tot: self.folder_status_var.set(f"Processed {p}/{t}"),
+                        lambda p=n, t=tot: self.folder_status_var.set(
+                            f"Processed {p}/{t}"
+                        ),
                     )
         except (OSError, PermissionError) as e:
             logger.error(f"Combine failed: {e}")
@@ -576,7 +587,9 @@ class FolderToolMixin:
                     m = pattern.match(f)
                     if m:
                         base, _, ext = m.groups()
-                        files_by_base.setdefault(f"{base}{ext}", []).append(Path(root) / f)
+                        files_by_base.setdefault(f"{base}{ext}", []).append(
+                            Path(root) / f
+                        )
 
                 for file_list in files_by_base.values():
                     if len(file_list) > 1:
@@ -599,7 +612,9 @@ class FolderToolMixin:
                     info.append((p, sz))
 
         size_mb = total_size / 1e6
-        report = f"Analysis Report\nTotal Files: {len(info)}\nTotal Size: {size_mb:.2f} MB\n"
+        report = (
+            f"Analysis Report\nTotal Files: {len(info)}\nTotal Size: {size_mb:.2f} MB\n"
+        )
         largest = heapq.nlargest(10, info, key=lambda x: x[1])
         report += "\nLargest Files:\n"
         for p, sz in largest:

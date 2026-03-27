@@ -90,7 +90,9 @@ class TestMixture:
             pressure_kpa=101.325,
             composition={"N2": 7.9, "O2": 2.1},
         )
-        assert result_100.density_kg_m3 == pytest.approx(result_10.density_kg_m3, rel=1e-10)
+        assert result_100.density_kg_m3 == pytest.approx(
+            result_10.density_kg_m3, rel=1e-10
+        )
 
     def test_ternary_mixture(self, calc: ThermoPropertiesCalculator) -> None:
         """Three-component mixture should compute without error."""
@@ -116,7 +118,9 @@ class TestThermodynamicIdentities:
             pressure_kpa=101.325,
             composition={"N2": 1.0},
         )
-        g_computed = result.enthalpy_j_mol - result.temperature_k * result.entropy_j_molk
+        g_computed = (
+            result.enthalpy_j_mol - result.temperature_k * result.entropy_j_molk
+        )
         assert result.gibbs_energy_j_mol == pytest.approx(g_computed, rel=1e-10)
 
     def test_cv_equals_cp_minus_R(self, calc: ThermoPropertiesCalculator) -> None:
@@ -144,17 +148,23 @@ class TestThermodynamicIdentities:
 class TestTemperaturePressureEffects:
     """Test that density responds correctly to T and P."""
 
-    def test_density_decreases_with_temperature(self, calc: ThermoPropertiesCalculator) -> None:
+    def test_density_decreases_with_temperature(
+        self, calc: ThermoPropertiesCalculator
+    ) -> None:
         r_low = calc.calculate(0.0, 101.325, {"N2": 1.0})
         r_high = calc.calculate(500.0, 101.325, {"N2": 1.0})
         assert r_high.density_kg_m3 < r_low.density_kg_m3
 
-    def test_density_increases_with_pressure(self, calc: ThermoPropertiesCalculator) -> None:
+    def test_density_increases_with_pressure(
+        self, calc: ThermoPropertiesCalculator
+    ) -> None:
         r_low = calc.calculate(25.0, 101.325, {"N2": 1.0})
         r_high = calc.calculate(25.0, 500.0, {"N2": 1.0})
         assert r_high.density_kg_m3 > r_low.density_kg_m3
 
-    def test_enthalpy_increases_with_temperature(self, calc: ThermoPropertiesCalculator) -> None:
+    def test_enthalpy_increases_with_temperature(
+        self, calc: ThermoPropertiesCalculator
+    ) -> None:
         r_low = calc.calculate(25.0, 101.325, {"N2": 1.0})
         r_high = calc.calculate(500.0, 101.325, {"N2": 1.0})
         assert r_high.enthalpy_j_mol > r_low.enthalpy_j_mol

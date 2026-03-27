@@ -13,7 +13,9 @@ class TestLimiter(unittest.TestCase):
     def setUp(self) -> None:
         """Set up the test application and limiter."""
         self.app = Flask(__name__)
-        self.limiter = Limiter(get_remote_address, app=self.app, default_limits=["10 per hour"])
+        self.limiter = Limiter(
+            get_remote_address, app=self.app, default_limits=["10 per hour"]
+        )
 
         @self.app.route("/test")
         @self.limiter.limit("1 per second")

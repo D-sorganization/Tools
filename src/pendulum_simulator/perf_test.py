@@ -1,14 +1,15 @@
-import logging
-
-logger = logging.getLogger(__name__)
-
 #!/usr/bin/env python3
 """Measure simulation performance."""
 
+import logging
 import time
+
 import numpy as np
+
 from src.double_pendulum_golf.physics import PendulumParams
 from src.double_pendulum_golf.simulation import make_polynomial_torque, run_simulation
+
+logger = logging.getLogger(__name__)
 
 # Default preset params
 params = PendulumParams(
@@ -29,7 +30,7 @@ initial_state = np.array(
 
 torque_func = make_polynomial_torque([-25, 10], [0])
 
-logger.info("Running simulation 10 times to measure performance...")  # noqa: T201
+logger.info("Running simulation 10 times to measure performance...")
 times = []
 for i in range(10):
     start = time.time()
@@ -42,8 +43,8 @@ for i in range(10):
     )
     elapsed = time.time() - start
     times.append(elapsed)
-    logger.info(f"  Run {i + 1}: {elapsed:.3f}s")  # noqa: T201
+    logger.info("  Run %d: %.3fs", i + 1, elapsed)
 
-logger.info(f"\nAverage: {np.mean(times):.3f}s")  # noqa: T201
-logger.info(f"Min: {np.min(times):.3f}s")  # noqa: T201
-logger.info(f"Max: {np.max(times):.3f}s")  # noqa: T201
+logger.info("\nAverage: %.3fs", np.mean(times))
+logger.info("Min: %.3fs", np.min(times))
+logger.info("Max: %.3fs", np.max(times))

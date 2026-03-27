@@ -94,7 +94,7 @@ def cylinder_cross_section(
     )
 
     if not (corners.shape == (4, 2)):
-        raise ValueError(f"corners shape mismatch, expected (4, 2), got {corners.shape}")
+        raise ValueError("corners shape must be (4, 2)")
     return corners
 
 
@@ -144,7 +144,7 @@ def ellipsoid_cross_section(
 
     pts = np.column_stack([x_rot, y_rot])
     if not (pts.shape == (n_points, 2)):
-        raise ValueError(f"pts shape mismatch, expected ({n_points}, 2), got {pts.shape}")
+        raise ValueError("pts must have shape (n_points, 2)")
     return pts
 
 
@@ -193,7 +193,7 @@ def tapered_cylinder_cross_section(
     )
 
     if not (corners.shape == (4, 2)):
-        raise ValueError(f"corners shape mismatch, expected (4, 2), got {corners.shape}")
+        raise ValueError("corners shape must be (4, 2)")
     return corners
 
 

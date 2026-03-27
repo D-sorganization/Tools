@@ -2,6 +2,8 @@ from typing import Any
 
 """Tests for BasePendulumWidget."""
 
+from typing import Any
+
 from unittest.mock import MagicMock
 from PyQt6.QtCore import QPointF, Qt
 from PyQt6.QtGui import QPainter, QMouseEvent, QWheelEvent

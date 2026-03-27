@@ -83,7 +83,9 @@ class TestBackupCopyMixin:
                         return True
                     return original_exists(self_path, *args, **kwargs)
 
-                with patch.object(Path, "exists", side_effect=mock_exists, autospec=True):
+                with patch.object(
+                    Path, "exists", side_effect=mock_exists, autospec=True
+                ):
                     assert not app._backup_single_folder(str(src), dest)
 
     def test_backup_single_folder_empty_dest(self, app, tmp_path):

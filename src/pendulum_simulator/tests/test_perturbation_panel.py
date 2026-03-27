@@ -10,6 +10,8 @@ so the tests remain fast and Qt-free of real ODE integration.
 
 from __future__ import annotations
 
+from typing import Any
+
 import os
 
 import numpy as np

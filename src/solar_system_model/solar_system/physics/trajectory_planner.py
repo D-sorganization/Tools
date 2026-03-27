@@ -395,10 +395,10 @@ class TrajectoryPlanner:
             raise ValueError("Origin body must not be None")
         if not (destination is not None):
             raise ValueError("Destination body must not be None")
-        if not (():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            departure_date > 0
-        ), f"Departure date must be positive Julian date, got {departure_date}"
+        if not (departure_date > 0):
+            raise ValueError(
+                f"Departure date must be positive Julian date, got {departure_date}"
+            )
 
         # Get orbital radii at departure
         origin_state = origin.get_state_at_time(departure_date)

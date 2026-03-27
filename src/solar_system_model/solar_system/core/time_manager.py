@@ -74,7 +74,13 @@ class SimulationTime:
         century = int(year / 100)
         correction = 2 - century + int(century / 4)
 
-        jd = int(365.25 * (year + 4716)) + int(30.6001 * (month + 1)) + day + correction - 1524.5
+        jd = (
+            int(365.25 * (year + 4716))
+            + int(30.6001 * (month + 1))
+            + day
+            + correction
+            - 1524.5
+        )
 
         return jd
 
@@ -199,7 +205,9 @@ class TimeManager:
     @time_warp.setter
     def time_warp(self, value: float) -> None:
         """Set time warp factor."""
-        self._time_warp = max(-365.25 * SECONDS_PER_DAY, min(value, 365.25 * SECONDS_PER_DAY))
+        self._time_warp = max(
+            -365.25 * SECONDS_PER_DAY, min(value, 365.25 * SECONDS_PER_DAY)
+        )
 
     @property
     def is_paused(self) -> bool:
@@ -335,11 +343,15 @@ class TimeManager:
         """Reverse the direction of time flow."""
         self._time_warp = -self._time_warp
 
-    def add_time_change_listener(self, callback: Callable[[SimulationTime], None]) -> None:
+    def add_time_change_listener(
+        self, callback: Callable[[SimulationTime], None]
+    ) -> None:
         """Add a callback to be notified of time changes."""
         self._on_time_change.append(callback)
 
-    def remove_time_change_listener(self, callback: Callable[[SimulationTime], None]) -> None:
+    def remove_time_change_listener(
+        self, callback: Callable[[SimulationTime], None]
+    ) -> None:
         """Remove a time change callback."""
         if callback in self._on_time_change:
             self._on_time_change.remove(callback)

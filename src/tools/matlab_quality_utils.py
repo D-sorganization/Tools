@@ -308,7 +308,8 @@ class MATLABQualityChecker:
 
         if not has_arguments:
             issues.append(
-                f"{file_path.name} (line {line_num}): " "Missing arguments validation block",
+                f"{file_path.name} (line {line_num}): "
+                "Missing arguments validation block",
             )
 
     @staticmethod
@@ -486,7 +487,8 @@ class MATLABQualityChecker:
             re.IGNORECASE,
         ):
             issues.append(
-                f"{file_path.name} (line {line_num}): " "Avoid 'clear all/global' in functions",
+                f"{file_path.name} (line {line_num}): "
+                "Avoid 'clear all/global' in functions",
             )
         elif re.search(r"\bclear\b(?!\s+\w+)", line_stripped):
             issues.append(
@@ -518,7 +520,9 @@ class MATLABQualityChecker:
 
         if "error" in matlab_results:
             self.results["passed"] = False
-            self.results["summary"] = f"MATLAB quality checks failed: {matlab_results['error']}"
+            self.results["summary"] = (
+                f"MATLAB quality checks failed: {matlab_results['error']}"
+            )
             self.results["checks"]["matlab"] = matlab_results
         else:
             self.results["checks"]["matlab"] = matlab_results
@@ -585,6 +589,10 @@ def run_matlab_quality_checks_cli() -> None:
     passed = results.get("passed", False)
     has_issues = bool(results.get("issues"))
 
-    exit_code = (0 if (passed and not has_issues) else 1) if args.strict else (0 if passed else 1)
+    exit_code = (
+        (0 if (passed and not has_issues) else 1)
+        if args.strict
+        else (0 if passed else 1)
+    )
 
     sys.exit(exit_code)

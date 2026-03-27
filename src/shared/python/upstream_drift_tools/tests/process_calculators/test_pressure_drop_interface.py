@@ -86,7 +86,9 @@ def test_validate_inputs() -> None:
     assert any("Large diameter" in w for w in warnings)
 
     # Test invalid flow
-    is_valid, errors, warnings = validate_inputs(pipe_diameter=0.1, flow_rate=-10, flow_unit="kg/h")
+    is_valid, errors, warnings = validate_inputs(
+        pipe_diameter=0.1, flow_rate=-10, flow_unit="kg/h"
+    )
     assert not is_valid
 
     is_valid, errors, warnings = validate_inputs(
@@ -114,7 +116,9 @@ def test_validate_inputs() -> None:
         temperature=100,
     )
     assert is_valid
-    assert sum(1 for w in warnings if "High pressure" in w or "Low temperature" in w) >= 2
+    assert (
+        sum(1 for w in warnings if "High pressure" in w or "Low temperature" in w) >= 2
+    )
 
     # Composition and fittings
     is_valid, errors, warnings = validate_inputs(
@@ -150,13 +154,17 @@ def test_resolve_gas_and_flow() -> None:
     assert "Air" in comp.components
     assert mflow > 0
 
-    comp, mflow = _resolve_gas_and_flow(100.0, "CFM", {"H2": 1.0}, 300, 101325, False, "NTP")
+    comp, mflow = _resolve_gas_and_flow(
+        100.0, "CFM", {"H2": 1.0}, 300, 101325, False, "NTP"
+    )
     assert "H2" in comp.components
     assert mflow > 0
 
 
 def test_build_fitting_list() -> None:
-    flist = _build_fitting_list([{"type": "90_elbow_std", "quantity": 2, "k_factor": 0.5}])
+    flist = _build_fitting_list(
+        [{"type": "90_elbow_std", "quantity": 2, "k_factor": 0.5}]
+    )
     assert len(flist) == 1
     assert flist[0].fitting_type == "90_elbow_std"
     assert flist[0].quantity == 2

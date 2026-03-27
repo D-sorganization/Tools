@@ -12,6 +12,8 @@ so they run in any environment including headless CI.
 
 from __future__ import annotations
 
+from typing import Any
+
 
 import pytest
 

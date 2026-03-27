@@ -14,6 +14,8 @@ simulation_golfer.py lines 296, 302: postcondition warn/error paths
 
 from __future__ import annotations
 
+from typing import Any
+
 import logging
 
 import numpy as np

@@ -67,7 +67,9 @@ class TestFootballSpiral:
         assert not np.allclose(R_start, R_end, atol=0.01)
 
     def test_custom_parameters(self) -> None:
-        traj = football_spiral(n_frames=15, speed=25.0, spin_rate=8.0, launch_angle_deg=40.0)
+        traj = football_spiral(
+            n_frames=15, speed=25.0, spin_rate=8.0, launch_angle_deg=40.0
+        )
         assert len(traj) == 15
 
     def test_default_has_reasonable_height(self) -> None:
@@ -108,7 +110,9 @@ class TestFrisbeeFlight:
         assert not np.allclose(R_start, R_end, atol=0.01)
 
     def test_custom_parameters(self) -> None:
-        traj = frisbee_flight(n_frames=25, speed=15.0, spin_rate=12.0, launch_angle_deg=10.0)
+        traj = frisbee_flight(
+            n_frames=25, speed=15.0, spin_rate=12.0, launch_angle_deg=10.0
+        )
         assert len(traj) == 25
 
 

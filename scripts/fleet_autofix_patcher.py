@@ -21,7 +21,9 @@ TARGET_REPOS = [
 ]
 
 BRANCH_NAME = "chore/enhance-autofix-robustness"
-COMMIT_MSG = "fix(autofix): scope fixes to changed files and enhance mypy agent robustness"
+COMMIT_MSG = (
+    "fix(autofix): scope fixes to changed files and enhance mypy agent robustness"
+)
 PR_TITLE = "Fix: Enhance Autofix Robustness and Scope PR Fixes"
 PR_BODY = """This PR updates the Jules PR AutoFix workflow to only target changed files in a PR, preventing it from making unintended changes to unrelated parts of the codebase. It also enhances the Mypy agent to support targeted file analysis and increases timeout/max limits for more robust behavior."""
 

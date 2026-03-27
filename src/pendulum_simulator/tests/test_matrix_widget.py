@@ -2,6 +2,8 @@ from typing import Any
 
 """Tests for matrix display widgets."""
 
+from typing import Any
+
 import pytest
 from PyQt6.QtGui import QPainter, QPaintEvent, QRegion
 from unittest.mock import MagicMock

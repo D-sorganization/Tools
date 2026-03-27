@@ -8,6 +8,8 @@ Lines 133-134, 155-156, 177-178: ImportError handlers (not testable without mock
 
 from __future__ import annotations
 
+from typing import Any
+
 import logging
 
 import pytest

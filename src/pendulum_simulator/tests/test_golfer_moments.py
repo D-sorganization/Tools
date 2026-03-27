@@ -8,6 +8,8 @@ They will fail if golfer_pendulum_moments is not implemented correctly.
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 import pytest
 

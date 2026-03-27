@@ -17,9 +17,7 @@ def run() -> None:
         # Load the local HTML file
         # We need absolute path
         cwd = os.getcwd()
-        file_path = (
-            f"file://{cwd}/src/web_applications/unit_converter/unit-converter-app/index.html"
-        )
+        file_path = f"file://{cwd}/src/web_applications/unit_converter/unit-converter-app/index.html"
         logger.info(f"Loading: {file_path}")
         page.goto(file_path)
 
@@ -43,7 +41,9 @@ def run() -> None:
             logger.error("ERROR: #gasFlowHint not found")
 
         # Check aria-describedby on standardCondition
-        described_by = page.locator("#standardCondition").get_attribute("aria-describedby")
+        described_by = page.locator("#standardCondition").get_attribute(
+            "aria-describedby"
+        )
         logger.info(f"Standard Condition aria-describedby: {described_by}")
 
         if described_by == "gasFlowHint":

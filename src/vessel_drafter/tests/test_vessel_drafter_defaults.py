@@ -28,9 +28,15 @@ def test_defaults_match_requested_vessel_stackup() -> None:
     assert layout.outer_head_depth_in == pytest.approx(24.5)
     assert layout.side_ports == ()
     assert layout.lid_ports == ()
-    assert layout.material_properties_by_name["hot_face_refractory"].density_lb_per_ft3 > 0.0
     assert (
-        layout.material_properties_by_name["hot_face_refractory"].thermal_expansion_um_per_m_c > 0.0
+        layout.material_properties_by_name["hot_face_refractory"].density_lb_per_ft3
+        > 0.0
+    )
+    assert (
+        layout.material_properties_by_name[
+            "hot_face_refractory"
+        ].thermal_expansion_um_per_m_c
+        > 0.0
     )
 
 
@@ -96,6 +102,10 @@ def test_default_json_file_matches_layout_values() -> None:
     data = json.loads(data_path.read_text(encoding="utf-8"))
 
     layout = DEFAULT_VESSEL_DRAFTER_LAYOUT
-    assert data["vessel"]["inner_diameter_in"] == pytest.approx(layout.inner_diameter_in)
-    assert data["vessel"]["outer_diameter_in"] == pytest.approx(layout.outer_diameter_in)
+    assert data["vessel"]["inner_diameter_in"] == pytest.approx(
+        layout.inner_diameter_in
+    )
+    assert data["vessel"]["outer_diameter_in"] == pytest.approx(
+        layout.outer_diameter_in
+    )
     assert data["vessel"]["full_height_in"] == pytest.approx(layout.full_height_in)

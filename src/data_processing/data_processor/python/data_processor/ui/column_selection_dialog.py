@@ -5,6 +5,7 @@ from typing import Any
 from __future__ import annotations
 
 from tkinter import messagebox
+from typing import Any
 
 import customtkinter as ctk
 

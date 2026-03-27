@@ -104,7 +104,9 @@ class TestVaporPressure:
     def engine(self) -> SteamCalculationEngine:
         return SteamCalculationEngine()
 
-    def test_vapor_pressure_increases_with_temp(self, engine: SteamCalculationEngine) -> None:
+    def test_vapor_pressure_increases_with_temp(
+        self, engine: SteamCalculationEngine
+    ) -> None:
         """Vapor pressure is a monotonically increasing function of temperature."""
         p20 = engine.calculate_water_vapor_pressure(20.0, method="buck")
         p50 = engine.calculate_water_vapor_pressure(50.0, method="buck")
@@ -145,7 +147,9 @@ class TestDewPoint:
     def engine(self) -> SteamCalculationEngine:
         return SteamCalculationEngine()
 
-    def test_dew_point_increases_with_humidity(self, engine: SteamCalculationEngine) -> None:
+    def test_dew_point_increases_with_humidity(
+        self, engine: SteamCalculationEngine
+    ) -> None:
         """Higher partial pressure → higher dew point."""
         dp_low = engine.calculate_dew_point(1000.0, 101325.0)
         dp_high = engine.calculate_dew_point(3000.0, 101325.0)
@@ -176,7 +180,9 @@ class TestSimplifiedCalculations:
         props = engine.calculate_properties(473.15, 50000.0, engine="simplified")
         assert isinstance(props, SteamProperties)
 
-    def test_properties_temperature_matches(self, engine: SteamCalculationEngine) -> None:
+    def test_properties_temperature_matches(
+        self, engine: SteamCalculationEngine
+    ) -> None:
         props = engine.calculate_properties(473.15, 200000.0, engine="simplified")
         assert_allclose(props.temperature, 473.15, atol=1.0)
 
@@ -189,7 +195,9 @@ class TestSimplifiedCalculations:
         props = engine.calculate_properties(473.15, 50000.0, engine="simplified")
         assert props.density > 0
 
-    def test_vapor_phase_enthalpy_positive(self, engine: SteamCalculationEngine) -> None:
+    def test_vapor_phase_enthalpy_positive(
+        self, engine: SteamCalculationEngine
+    ) -> None:
         """Steam enthalpy at 200°C, low pressure (vapor) should be positive."""
         # 473.15 K is above boiling at 50000 Pa, so should be vapor
         props = engine.calculate_properties(473.15, 50000.0, engine="simplified")

@@ -47,7 +47,9 @@ class ConfigManager:
         """
         if not (name is not None):
             raise ValueError("name must be provided")
-        require(isinstance(name, str) and bool(name.strip()), "name must be non-empty", name)
+        require(
+            isinstance(name, str) and bool(name.strip()), "name must be non-empty", name
+        )
         require(isinstance(settings, dict), "settings must be a dict", type(settings))
         configs = self._load_all_configs()
 

@@ -174,7 +174,9 @@ class FolderPackerPro(
         style.configure("TFrame", background=theme["bg"])
         style.configure("TLabel", background=theme["bg"], foreground=theme["fg"])
         style.configure("TLabelframe", background=theme["bg"], foreground=theme["fg"])
-        style.configure("TLabelframe.Label", background=theme["bg"], foreground=theme["fg"])
+        style.configure(
+            "TLabelframe.Label", background=theme["bg"], foreground=theme["fg"]
+        )
         style.configure(
             "Accent.TButton",
             background=theme["accent"],

@@ -68,7 +68,9 @@ def test_collect_issues_checks_stream_references():
 def test_collect_issues_checks_control_loop_references():
     spec = _minimal_spec()
     spec["instruments"] = [{"id": "PT-1", "tag": "PT-1"}]
-    spec["control_loops"] = [{"id": "PIC-1", "measurement": "PT-1", "final_element": "MISSING"}]
+    spec["control_loops"] = [
+        {"id": "PIC-1", "measurement": "PT-1", "final_element": "MISSING"}
+    ]
     issues = collect_issues(spec)
     assert any("MISSING" in i.message for i in issues)
 

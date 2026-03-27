@@ -72,7 +72,9 @@ def clubhead_speed_objective(
         raise ValueError(f"dt must be positive, got {dt}")
     if not (initial_state.shape == (16,)):
         raise ValueError(f"Expected (16,) state, got {initial_state.shape}")
-    sol = run_single_simulation_jax(params, initial_state, t_end, torque_coeffs, alpha, beta, dt)
+    sol = run_single_simulation_jax(
+        params, initial_state, t_end, torque_coeffs, alpha, beta, dt
+    )
     final_state = extract_final_state(sol)
 
     q = final_state[:8]
@@ -122,7 +124,9 @@ def clubhead_velocity_at_final_time(
         raise ValueError(f"dt must be positive, got {dt}")
     if not (initial_state.shape == (16,)):
         raise ValueError(f"Expected (16,) state, got {initial_state.shape}")
-    sol = run_single_simulation_jax(params, initial_state, t_end, torque_coeffs, alpha, beta, dt)
+    sol = run_single_simulation_jax(
+        params, initial_state, t_end, torque_coeffs, alpha, beta, dt
+    )
     final_state = extract_final_state(sol)
 
     q = final_state[:8]
@@ -222,7 +226,7 @@ def optimize_torque_profile(
     if not (len(history) == n_iterations):
         raise ValueError(f"Expected {n_iterations} history entries, got {len(history)}")
     if not (optimal_coeffs.shape == (7, n_coeffs_per_joint)):
-        raise ValueError(f"optimal_coeffs shape mismatch, got {optimal_coeffs.shape}")
+        raise ValueError("optimal_coeffs has wrong shape")
 
     return optimal_coeffs, history
 
@@ -345,5 +349,5 @@ def compute_gradient_via_finite_difference(
         grad = grad.at[i].set((f_plus - f0) / eps)
 
     if not (grad.shape == (7,)):
-        raise ValueError(f"grad.shape mismatch, expected (7,)")
+        raise ValueError("grad must have shape (7,)")
     return grad

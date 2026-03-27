@@ -331,14 +331,12 @@ class AcidGasDewpointCalculator:
             Vapor pressure in Pa
         """
         # DbC preconditions
-        if not (isinstance(temperature_c):
-            raise ValueError(int | float), ()
-            f"temperature_c must be numeric, got {type(temperature_c).__name__}"
-        )
-        if not (isinstance(component):
-            raise ValueError(str) and len(component) > 0, ()
-            "component must be a non-empty string"
-        )
+        if not isinstance(temperature_c, (int, float)):
+            raise ValueError(
+                f"temperature_c must be numeric, got {type(temperature_c).__name__}"
+            )
+        if not (isinstance(component, str) and len(component) > 0):
+            raise ValueError("component must be a non-empty string")
 
         if component not in self.antoine_constants:
             msg = f"Unknown component: {component}"

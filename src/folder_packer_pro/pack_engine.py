@@ -108,7 +108,9 @@ def collect_files(
             break
 
         dirs[:] = [
-            d for d in dirs if not should_exclude(Path(root) / d, exclude_patterns, include_git)
+            d
+            for d in dirs
+            if not should_exclude(Path(root) / d, exclude_patterns, include_git)
         ]
 
         for filename in filenames:

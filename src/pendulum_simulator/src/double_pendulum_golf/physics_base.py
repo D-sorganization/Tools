@@ -103,7 +103,7 @@ def friction_torque_ndof(
     tau: npt.NDArray[np.float64] = np.asarray(-viscous_coeffs * qdot, dtype=np.float64)
     if coulomb_coeffs is not None:
         if not (coulomb_coeffs.shape == (n,)):
-            raise ValueError(f"coulomb_coeffs.shape mismatch, expected (n,)")
+            raise ValueError("coulomb_coeffs must have shape (n,)")
         tau -= coulomb_coeffs * np.sign(qdot)
 
     if not (np.all(np.isfinite(tau))):
@@ -132,7 +132,9 @@ def clamp_torque_ndof(tau: np.ndarray, limits: np.ndarray) -> np.ndarray:
         raise ValueError(f"limits shape {limits.shape} vs tau {tau.shape}")
     if not (np.all(limits > 0)):
         raise ValueError("Torque limits must be positive")
-    result: npt.NDArray[np.float64] = np.asarray(np.clip(tau, -limits, limits), dtype=np.float64)
+    result: npt.NDArray[np.float64] = np.asarray(
+        np.clip(tau, -limits, limits), dtype=np.float64
+    )
     return result
 
 
@@ -215,7 +217,7 @@ def potential_energy_chain(
     """
     n = absolute_angles.shape[0]
     if not (lengths.shape == (n,) and masses.shape == (n,)):
-        raise ValueError(f"lengths.shape mismatch or condition failed")
+        raise ValueError("lengths and masses must have shape (n,)")
     if not (g >= 0):
         raise ValueError(f"g must be non-negative, got {g}")
 

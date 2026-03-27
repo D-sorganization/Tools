@@ -146,13 +146,17 @@ class TestTransform:
         with pytest.raises(ValueError, match="Unknown filter type"):
             dp.apply_filter("unknown_filter", columns=["sensor1"])
 
-    def test_apply_filter_nonpositive_window_raises(self, sample_df: pd.DataFrame) -> None:
+    def test_apply_filter_nonpositive_window_raises(
+        self, sample_df: pd.DataFrame
+    ) -> None:
         dp = DataProcessor()
         dp.load_dataframe(sample_df)
         with pytest.raises(ValueError, match="window_size must be positive"):
             dp.apply_filter("moving_average", window_size=0, columns=["sensor1"])
 
-    def test_apply_filter_no_matching_columns_raises(self, sample_df: pd.DataFrame) -> None:
+    def test_apply_filter_no_matching_columns_raises(
+        self, sample_df: pd.DataFrame
+    ) -> None:
         dp = DataProcessor()
         dp.load_dataframe(sample_df)
         with pytest.raises(ValueError, match="No valid columns to filter"):

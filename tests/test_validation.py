@@ -110,7 +110,9 @@ class TestValidatePath:
         subdir = tmp_path / "subdir"
         subdir.mkdir()
 
-        is_valid, error = validate_path(subdir, must_exist=True, must_be_within=tmp_path)
+        is_valid, error = validate_path(
+            subdir, must_exist=True, must_be_within=tmp_path
+        )
 
         assert is_valid is True
 
@@ -121,7 +123,9 @@ class TestValidatePath:
         # Parent directory is outside tmp_path
         outside = tmp_path.parent
 
-        is_valid, error = validate_path(outside, must_exist=True, must_be_within=tmp_path)
+        is_valid, error = validate_path(
+            outside, must_exist=True, must_be_within=tmp_path
+        )
 
         assert is_valid is False
         assert "security" in error.lower() or "outside" in error.lower()
@@ -192,7 +196,9 @@ class TestValidateFileExtension:
         """Test case-sensitive matching when specified."""
         from utils.validation import validate_file_extension
 
-        is_valid, error = validate_file_extension("FILE.PDF", [".pdf"], case_sensitive=True)
+        is_valid, error = validate_file_extension(
+            "FILE.PDF", [".pdf"], case_sensitive=True
+        )
 
         assert is_valid is False
 

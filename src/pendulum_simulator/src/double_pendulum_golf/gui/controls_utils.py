@@ -34,7 +34,9 @@ FONT_BTN: int = 11  # button labels
 FONT_TITLE: int = 14  # major titles
 FONT_STATUS: int = 11  # status bar text
 
-if not (all(v >= MIN_FONT_PX for v in (FONT_BODY, FONT_GROUP, FONT_EDIT, FONT_BTN, FONT_STATUS))):
+if not all(
+    v >= MIN_FONT_PX for v in (FONT_BODY, FONT_GROUP, FONT_EDIT, FONT_BTN, FONT_STATUS)
+):
     raise ValueError("All font sizes must meet minimum readability threshold")
 
 STYLE_GROUP = (
@@ -188,7 +190,7 @@ def clamp_dt(raw: float) -> float:
 
     Precondition: raw is a finite float (already parsed).
     """
-    if not (isinstance(raw, float)):
+    if not isinstance(raw, float):
         raise ValueError("dt must be a float")
     return max(1e-5, min(0.1, raw))
 

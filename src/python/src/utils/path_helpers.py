@@ -66,7 +66,9 @@ def get_relative_path(from_path: Path | str, to_path: Path | str) -> Path:
         return to_p
 
 
-def find_nearest_file(filename: str, start_path: Path | str | None = None) -> Path | None:
+def find_nearest_file(
+    filename: str, start_path: Path | str | None = None
+) -> Path | None:
     """Find the nearest file with given name by searching upwards.
 
     Args:

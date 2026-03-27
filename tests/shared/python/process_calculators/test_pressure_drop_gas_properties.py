@@ -99,7 +99,9 @@ def test_pure_gas_viscosity_sutherland_scaling() -> None:
 
 def test_pure_gas_viscosity_lucas_positive() -> None:
     props = GAS_DATABASE["CO2"]
-    mu = calculate_pure_gas_viscosity_lucas(temperature=600.0, pressure=5e5, props=props)
+    mu = calculate_pure_gas_viscosity_lucas(
+        temperature=600.0, pressure=5e5, props=props
+    )
     assert mu > 0
 
 

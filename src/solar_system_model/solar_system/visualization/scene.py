@@ -239,7 +239,9 @@ class SolarSystemScene(SceneEventMixin, SceneRenderMixin):
         # Sidebar (Right)
         sidebar_height = self.renderer.settings.window_height - 40
         sidebar_x = self.renderer.settings.window_width - 380
-        self.sidebar_panel = SidebarPanel(position=(sidebar_x, 20), height=sidebar_height)
+        self.sidebar_panel = SidebarPanel(
+            position=(sidebar_x, 20), height=sidebar_height
+        )
 
         self.educational_panel = EducationalInfoPanel(width=360)
         self.immersion_checklist = ImmersionChecklistPanel(width=360)
@@ -280,7 +282,9 @@ class SolarSystemScene(SceneEventMixin, SceneRenderMixin):
         self.unified_controls.add_button("Toggle Orbits", "toggle_orbits_btn")
         self.unified_controls.set_mode("Orbit")
 
-        self.help_overlay = HelpOverlay(position=(self.renderer.settings.window_width - 350, 20))
+        self.help_overlay = HelpOverlay(
+            position=(self.renderer.settings.window_width - 350, 20)
+        )
         self.help_overlay.set_controls(self.controls)
         self.missions_panel = MissionListPanel()
 
@@ -568,10 +572,13 @@ class SolarSystemScene(SceneEventMixin, SceneRenderMixin):
         current_jd = self.time_manager.julian_date
 
         if (delta_jd or self._last_ui_sync_jd is None) and (
-            self._last_ui_sync_jd is None or not math.isclose(current_jd, self._last_ui_sync_jd)
+            self._last_ui_sync_jd is None
+            or not math.isclose(current_jd, self._last_ui_sync_jd)
         ):
             self._update_ui_date()
             self._last_ui_sync_jd = current_jd
 
         if self.renderer:
-            self.renderer.camera.update(self.time_manager.julian_date, self.renderer.distance_scale)
+            self.renderer.camera.update(
+                self.time_manager.julian_date, self.renderer.distance_scale
+            )

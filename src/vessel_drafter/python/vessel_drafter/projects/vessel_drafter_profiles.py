@@ -36,7 +36,9 @@ def build_shell_band_profiles(
     profiles: list[ShellBandProfile] = []
     running_offset_in = 0.0
     for band in layout.shell_bands:
-        next_offset_in = running_offset_in + (band.outer_radius_in - band.inner_radius_in)
+        next_offset_in = running_offset_in + (
+            band.outer_radius_in - band.inner_radius_in
+        )
         profiles.append(
             ShellBandProfile(
                 band=band,
@@ -137,8 +139,12 @@ def build_full_boundary_loop(
 
 def build_band_boundary_loops(
     layout: VesselDrafterLayout = DEFAULT_VESSEL_DRAFTER_LAYOUT,
-) -> tuple[tuple[ShellBandProfile, tuple[ProfilePoint, ...], tuple[ProfilePoint, ...]], ...]:
-    loops: list[tuple[ShellBandProfile, tuple[ProfilePoint, ...], tuple[ProfilePoint, ...]]] = []
+) -> tuple[
+    tuple[ShellBandProfile, tuple[ProfilePoint, ...], tuple[ProfilePoint, ...]], ...
+]:
+    loops: list[
+        tuple[ShellBandProfile, tuple[ProfilePoint, ...], tuple[ProfilePoint, ...]]
+    ] = []
     cavity_loop = build_full_boundary_loop(build_cavity_boundary_half(layout))
     for profile in build_shell_band_profiles(layout):
         inner_loop = (

@@ -193,7 +193,9 @@ This issue was identified during automated repository assessment and requires at
 """
 
 
-def _generate_issue_title(repo_short: str, severity: str, category: str, description: str) -> str:
+def _generate_issue_title(
+    repo_short: str, severity: str, category: str, description: str
+) -> str:
     """Generate a standardized issue title."""
     clean_desc = description.replace("**", "").replace("*", "").replace("`", "")
     clean_desc = clean_desc.split("\n")[0]

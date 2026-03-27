@@ -30,7 +30,9 @@ def check_python() -> None:
 def install_python_deps() -> None:
     log_step("Installing Python dependencies...")
     subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", "pip"])
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
+    )
 
 
 def install_node_deps() -> None:
@@ -62,7 +64,9 @@ def install_node_deps() -> None:
         try:
             subprocess.check_call(["pnpm", "install"], cwd=unit_converter_path)
         except subprocess.CalledProcessError:
-            logger.error(f"{RED}Error: Failed to install dependencies in unit_converter.{RESET}")
+            logger.error(
+                f"{RED}Error: Failed to install dependencies in unit_converter.{RESET}"
+            )
     else:
         logger.warning(f"Path not found: {unit_converter_path}")
 

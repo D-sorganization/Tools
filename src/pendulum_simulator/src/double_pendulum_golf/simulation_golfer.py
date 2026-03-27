@@ -229,7 +229,9 @@ def run_simulation(
     GolferSimulationResult
     """
     if not (initial_state.shape == (2 * N_DOF,)):
-        raise ValueError(f"Initial state shape must be ({2 * N_DOF},), got {initial_state.shape}")
+        raise ValueError(
+            f"Initial state shape must be ({2 * N_DOF},), got {initial_state.shape}"
+        )
     if not (np.all(np.isfinite(initial_state))):
         raise ValueError("Initial state must be finite")
     if not (t_end > 0):
@@ -251,7 +253,9 @@ def run_simulation(
     def ode_rhs(t: float, y: np.ndarray) -> np.ndarray:
         if not (t is not None):
             raise ValueError("t must be provided")
-        dydt = equations_of_motion(y, t, params, torque_func, alpha, beta, effective_torque_limits)
+        dydt = equations_of_motion(
+            y, t, params, torque_func, alpha, beta, effective_torque_limits
+        )
         # Apply joint limit penalty torques if enabled
         if limits is not None:
             from .physics import joint_limit_torque_ndof

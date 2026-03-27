@@ -6,6 +6,8 @@ This covers the application entry point, logging configuration, and
 global event filters like Ctrl+Wheel UI zooming.
 """
 
+from typing import Any
+
 import logging
 import sys
 from unittest.mock import MagicMock, patch

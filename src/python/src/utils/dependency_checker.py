@@ -40,7 +40,9 @@ def check_python_version(min_major: int = 3, min_minor: int = 10) -> tuple[bool,
     version = sys.version_info
     version_str = f"{version.major}.{version.minor}.{version.micro}"
 
-    if version.major < min_major or (version.major == min_major and version.minor < min_minor):
+    if version.major < min_major or (
+        version.major == min_major and version.minor < min_minor
+    ):
         return False, version_str
 
     return True, version_str
@@ -114,7 +116,9 @@ def install_package(
     # Map import name to pip name if needed
     if not (package_name is not None):
         raise ValueError("package_name must be provided")
-    pip_name = package_map.get(package_name, package_name) if package_map else package_name
+    pip_name = (
+        package_map.get(package_name, package_name) if package_map else package_name
+    )
 
     cmd = [sys.executable, "-m", "pip", "install"]
     if upgrade:

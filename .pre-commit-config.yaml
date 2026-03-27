@@ -123,7 +123,9 @@ repos:
             src/function_generator/|
             src/data_processing/data_processor/|
             src/glass_bath_fea/|
-            src/tools/folder_tools/
+            src/tools/folder_tools/|
+            src/pendulum_simulator/|
+            src/shared/python/theme/
           )
 
   # Bandit - Security scanning (pre-push only, Python only)

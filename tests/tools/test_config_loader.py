@@ -57,7 +57,9 @@ class TestValidateToolsConfig:
         assert result["Media Processing"][0]["name"] == "My Tool"
 
     def test_rejects_path_traversal(self, tmp_path: Path) -> None:
-        config: dict[str, Any] = {"Cat": [{"name": "Escape", "path": "../../../etc/passwd"}]}
+        config: dict[str, Any] = {
+            "Cat": [{"name": "Escape", "path": "../../../etc/passwd"}]
+        }
         result = validate_tools_config(config, repo_root=tmp_path)
         assert "Cat" not in result or len(result.get("Cat", [])) == 0
 

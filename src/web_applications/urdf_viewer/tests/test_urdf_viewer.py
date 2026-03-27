@@ -13,7 +13,9 @@ import pytest
 
 # ── Path setup (needed when running from this directory) ────────────────
 _REPO_ROOT = str(Path(__file__).resolve().parent.parent.parent.parent.parent)
-_SHARED_DIR = str(Path(__file__).resolve().parent.parent.parent.parent / "shared" / "python")
+_SHARED_DIR = str(
+    Path(__file__).resolve().parent.parent.parent.parent / "shared" / "python"
+)
 _URDF_DIR = str(
     Path(__file__).resolve().parent.parent.parent.parent / "urdf_builder_gui" / "python"
 )

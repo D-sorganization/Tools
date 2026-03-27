@@ -2,6 +2,8 @@ from typing import Any
 
 """Tests for SplitConfig model."""
 
+from typing import Any
+
 import pytest
 from data_processor.models.split_config import SplitConfig, SplitMethod
 

@@ -39,7 +39,9 @@ def sample_df() -> pd.DataFrame:
 
 
 @pytest.fixture
-def loaded_engine(engine: DataProcessorEngine, sample_df: pd.DataFrame) -> DataProcessorEngine:
+def loaded_engine(
+    engine: DataProcessorEngine, sample_df: pd.DataFrame
+) -> DataProcessorEngine:
     """Return an engine pre-loaded with sample data."""
     result = engine.load_dataframe(sample_df)
     assert result.success
@@ -66,7 +68,9 @@ class TestDataProcessorStatistics:
         assert stats["rows"] == 5
         assert stats["columns"] == 4
 
-    def test_get_statistics_returns_column_stats(self, loaded_engine: DataProcessorEngine) -> None:
+    def test_get_statistics_returns_column_stats(
+        self, loaded_engine: DataProcessorEngine
+    ) -> None:
         stats = loaded_engine.get_statistics()
         assert "age" in stats
         age_stats = stats["age"]
@@ -96,7 +100,9 @@ class TestColumnOperations:
     def test_transform_column_log(self, loaded_engine: DataProcessorEngine) -> None:
         result = loaded_engine.transform_column("salary", "log")
         assert result.success
-        assert loaded_engine.data["salary"].iloc[0] == pytest.approx(np.log(70000), abs=0.01)
+        assert loaded_engine.data["salary"].iloc[0] == pytest.approx(
+            np.log(70000), abs=0.01
+        )
 
 
 class TestFiltering:

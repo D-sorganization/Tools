@@ -8,6 +8,8 @@ Lines 469-471: forward_kinematics with non-zero scapula_offset_rad
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 import pytest
 

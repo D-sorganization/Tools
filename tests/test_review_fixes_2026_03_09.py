@@ -55,9 +55,9 @@ class TestC3DReaderBoundsChecking:
             reader._metadata = None
             df = reader.points_dataframe(include_time=False)
             assert "residual" in df.columns
-            assert (
-                df["residual"].isna().all()
-            ), "Residuals should be NaN when only 3 channels present"
+            assert df["residual"].isna().all(), (
+                "Residuals should be NaN when only 3 channels present"
+            )
 
     def test_points_4_channels_has_residuals(self, reader):
         """When C3D has 4 channels, residuals are extracted normally."""
@@ -444,7 +444,9 @@ except ImportError:
     _has_scipy = False
 
 
-@pytest.mark.skipif(not _has_scipy, reason="scipy required for humanoid_character_builder")
+@pytest.mark.skipif(
+    not _has_scipy, reason="scipy required for humanoid_character_builder"
+)
 class TestBodyParametersStrictValidation:
     """H-02: No bounds on anthropometric params."""
 
@@ -506,7 +508,9 @@ except ImportError:
     _has_defusedxml = False
 
 
-@pytest.mark.skipif(not _has_defusedxml, reason="defusedxml required for MJCF converter")
+@pytest.mark.skipif(
+    not _has_defusedxml, reason="defusedxml required for MJCF converter"
+)
 class TestMJCFCapsuleParsing:
     """H-14: MJCF capsule parsing IndexError."""
 

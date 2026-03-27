@@ -304,7 +304,7 @@ def torque_arrow_direction(
     """
     joint_position = np.asarray(joint_position, dtype=float)
     if not (joint_position.shape == (2,)):
-        raise ValueError(f"joint_position.shape mismatch, expected (2,)")
+        raise ValueError("joint_position must have shape (2,)")
     if not (np.isfinite(torque_value)):
         raise ValueError("DbC Blocked: Precondition failed.")
 

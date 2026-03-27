@@ -50,7 +50,9 @@ def analysis_params() -> dict[str, Any]:
 class TestRunMultiParameterAnalysis:
     """Test the sequential multi-parameter sweep."""
 
-    def test_result_shape(self, engine: _GridEngine, analysis_params: dict[str, Any]) -> None:
+    def test_result_shape(
+        self, engine: _GridEngine, analysis_params: dict[str, Any]
+    ) -> None:
         p1 = np.array([400.0, 500.0, 600.0])
         p2 = np.array([100000.0, 200000.0])
 
@@ -141,7 +143,9 @@ class TestRunMultiParameterAnalysis:
 
         np.testing.assert_array_equal(result["convergence_map"], np.ones((2, 2)))
 
-    def test_single_point_grid(self, engine: _GridEngine, analysis_params: dict[str, Any]) -> None:
+    def test_single_point_grid(
+        self, engine: _GridEngine, analysis_params: dict[str, Any]
+    ) -> None:
         result = run_multi_parameter_analysis(
             engine,
             analysis_params,

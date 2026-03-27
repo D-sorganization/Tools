@@ -123,7 +123,9 @@ class TestDataProcessorTransformations:
         dp.apply_formula("double_signal", "signal * 2")
         assert "double_signal" in dp.dataframe.columns
         expected = dp.dataframe["signal"] * 2
-        pd.testing.assert_series_equal(dp.dataframe["double_signal"], expected, check_names=False)
+        pd.testing.assert_series_equal(
+            dp.dataframe["double_signal"], expected, check_names=False
+        )
 
     def test_dropna(self) -> None:
         dp = DataProcessor()
@@ -329,13 +331,17 @@ class TestDataProcessorContracts:
 
     # apply_formula contracts
 
-    def test_apply_formula_empty_column_rejected(self, dp_loaded: DataProcessor) -> None:
+    def test_apply_formula_empty_column_rejected(
+        self, dp_loaded: DataProcessor
+    ) -> None:
         from src.shared.python.contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.apply_formula("", "x + y")
 
-    def test_apply_formula_empty_expression_rejected(self, dp_loaded: DataProcessor) -> None:
+    def test_apply_formula_empty_expression_rejected(
+        self, dp_loaded: DataProcessor
+    ) -> None:
         from src.shared.python.contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
@@ -391,7 +397,9 @@ class TestDataProcessorContracts:
         with pytest.raises(PreconditionError):
             dp_loaded.correlate(method="")
 
-    def test_correlate_non_string_method_rejected(self, dp_loaded: DataProcessor) -> None:
+    def test_correlate_non_string_method_rejected(
+        self, dp_loaded: DataProcessor
+    ) -> None:
         from src.shared.python.contracts import PreconditionError
 
         with pytest.raises(PreconditionError):

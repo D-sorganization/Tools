@@ -61,7 +61,9 @@ class TestFolderProcessorApp:
         with patch.object(FolderProcessorApp, "create_scrollable_interface"):
             with patch.object(FolderProcessorApp, "_setup_application_icon"):
                 app = FolderProcessorApp(root)
-                with patch("folder_tool.Folders_Tool_r0.validate_constants") as mock_val:
+                with patch(
+                    "folder_tool.Folders_Tool_r0.validate_constants"
+                ) as mock_val:
                     app._validate_constants()
                     mock_val.assert_called_once()
         root.destroy()

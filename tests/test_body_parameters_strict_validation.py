@@ -200,7 +200,9 @@ class TestValidateStrictScalingFactors:
 
     def test_coverage_matches_constants(self) -> None:
         """ALL_FACTOR_BOUNDS must include all normalized + proportion bounds."""
-        expected = set(NORMALIZED_FACTOR_BOUNDS.keys()) | set(PROPORTION_FACTOR_BOUNDS.keys())
+        expected = set(NORMALIZED_FACTOR_BOUNDS.keys()) | set(
+            PROPORTION_FACTOR_BOUNDS.keys()
+        )
         assert set(ALL_FACTOR_BOUNDS.keys()) == expected
 
 

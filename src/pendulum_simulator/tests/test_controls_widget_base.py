@@ -2,6 +2,8 @@ from typing import Any
 
 """Tests for ControlsWidgetBase."""
 
+from typing import Any
+
 from unittest.mock import MagicMock
 
 from double_pendulum_golf.gui.controls_widget_base import ControlsWidgetBase

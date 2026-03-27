@@ -104,7 +104,9 @@ def migrate_csv_to_parquet(
 def main() -> int:
     """Entry point for the migration script."""
     parser = argparse.ArgumentParser(description="Migrate CSV files to Parquet")
-    parser.add_argument("--dry-run", action="store_true", help="Show what would be done")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Show what would be done"
+    )
     parser.add_argument(
         "--remove-originals",
         action="store_true",

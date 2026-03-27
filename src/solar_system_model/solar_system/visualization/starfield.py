@@ -27,7 +27,9 @@ def _spectral_color(bv_index: float) -> list[float]:
     bv_clamped = float(np.clip(bv_index, -0.4, 2.0))
 
     # Convert to a temperature-like value and then to RGB using a simple piecewise fit
-    temperature = 4600.0 * ((1.0 / (0.92 * bv_clamped + 1.7)) + (1.0 / (0.92 * bv_clamped + 0.62)))
+    temperature = 4600.0 * (
+        (1.0 / (0.92 * bv_clamped + 1.7)) + (1.0 / (0.92 * bv_clamped + 0.62))
+    )
 
     # Normalize temperature to 3000-12000 K range
     normalized = np.clip((temperature - 3000.0) / 9000.0, 0.0, 1.0)

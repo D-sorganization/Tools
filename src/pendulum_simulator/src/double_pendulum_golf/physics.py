@@ -1,7 +1,3 @@
-# ARCHITECTURE_DEBT:
-# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
-# It requires domain-aware structural extraction to isolate its internal classes appropriately.
-
 """
 Double pendulum golf swing physics using Lagrangian formulation with relative coordinates.
 
@@ -212,13 +208,15 @@ def mass_matrix_components(phi: float, params: PendulumParams) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def coriolis_vector(phi: float, dtheta1: float, dphi: float, params: PendulumParams) -> np.ndarray:
+def coriolis_vector(
+    phi: float, dtheta1: float, dphi: float, params: PendulumParams
+) -> np.ndarray:
     """Compute the Coriolis/centrifugal force vector C(q, qdot) * qdot.
 
     Pre: all inputs finite.
     """
-    if not (all(np.isfinite(v) for v in [phi, dtheta1, dphi])):
-        raise ValueError("Input values must be finite")
+    if not all(np.isfinite(v) for v in [phi, dtheta1, dphi]):
+        raise ValueError("All inputs must be finite")
     native_coriolis = _native_backend.double_coriolis_vector(phi, dtheta1, dphi, params)
     if native_coriolis is not None:
         return native_coriolis
@@ -337,9 +335,13 @@ def joint_limit_torque(
         if not (angle is not None):
             raise ValueError("angle must be provided")
         if angle < lo:
-            return _hermite_penalty(lo - angle, -vel, transition, limits.stiffness, limits.damping)
+            return _hermite_penalty(
+                lo - angle, -vel, transition, limits.stiffness, limits.damping
+            )
         if angle > hi:
-            return -_hermite_penalty(angle - hi, vel, transition, limits.stiffness, limits.damping)
+            return -_hermite_penalty(
+                angle - hi, vel, transition, limits.stiffness, limits.damping
+            )
         return 0.0
 
     tau1 = _penalty(theta1, dtheta1, limits.theta1_min, limits.theta1_max)
@@ -413,9 +415,9 @@ def joint_limit_torque_ndof(
     """
     n = len(angles)
     if not (angles.shape == (n,) and velocities.shape == (n,)):
-        raise ValueError(f"angles.shape mismatch or condition failed")
+        raise ValueError("angles and velocities must have shape (n,)")
     if not (limits.angle_min.shape == (n,)):
-        raise ValueError(f"limits.angle_min.shape mismatch, expected (n,)")
+        raise ValueError("limits.angle_min must have shape (n,)")
     transition = 0.05  # rad (~3 degrees)
     result = np.zeros(n)
     for i in range(n):
@@ -475,7 +477,7 @@ def equations_of_motion(
     Post: state_dot shape (4,), all finite.
     """
     if not (state.shape == (4,) and all(np.isfinite(state))):
-        raise ValueError(f"state.shape mismatch or condition failed")
+        raise ValueError("state must have shape (4,) and be finite")
     theta1, phi, dtheta1, dphi = state
 
     M = mass_matrix(phi, params)
@@ -663,7 +665,7 @@ def control_vector(
 def linear_accelerations(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
     """Compute linear accelerations of joints in world coordinates."""
     if not (state.shape == (4,) and qddot.shape == (2,)):
-        raise ValueError(f"state.shape mismatch or condition failed")
+        raise ValueError("state must be (4,) and qddot must be (2,)")
     theta1, phi, dtheta1, dphi = state
     ddtheta1, ddphi = qddot
     L1, L2 = params.L1, params.L2
@@ -734,4 +736,6 @@ def total_energy(state: State, params: PendulumParams) -> float:
         raise ValueError("state must be provided")
     from .physics_base import total_energy_from_parts
 
-    return total_energy_from_parts(kinetic_energy(state, params), potential_energy(state, params))
+    return total_energy_from_parts(
+        kinetic_energy(state, params), potential_energy(state, params)
+    )

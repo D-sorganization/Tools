@@ -77,11 +77,17 @@ def parse_arguments() -> argparse.Namespace:
         epilog=__doc__,
     )
 
-    parser.add_argument("--fullscreen", action="store_true", help="Start in fullscreen mode")
+    parser.add_argument(
+        "--fullscreen", action="store_true", help="Start in fullscreen mode"
+    )
 
-    parser.add_argument("--width", type=int, default=1600, help="Window width (default: 1600)")
+    parser.add_argument(
+        "--width", type=int, default=1600, help="Window width (default: 1600)"
+    )
 
-    parser.add_argument("--height", type=int, default=900, help="Window height (default: 900)")
+    parser.add_argument(
+        "--height", type=int, default=900, help="Window height (default: 900)"
+    )
 
     parser.add_argument("--no-vsync", action="store_true", help="Disable vertical sync")
 
@@ -89,7 +95,9 @@ def parse_arguments() -> argparse.Namespace:
         "--start-date", type=str, default=None, help="Start date in YYYY-MM-DD format"
     )
 
-    parser.add_argument("--no-antialiasing", action="store_true", help="Disable antialiasing")
+    parser.add_argument(
+        "--no-antialiasing", action="store_true", help="Disable antialiasing"
+    )
 
     parser.add_argument("--no-shaders", action="store_true", help="Disable shaders")
 
@@ -124,8 +132,12 @@ def main() -> int:
     logging.info("\nInitializing...")
 
     if not scene.initialize():
-        logging.error("ERROR: Failed to initialize. Make sure PyGame and PyOpenGL are installed.")
-        logging.error("Install with: pip install pygame PyOpenGL PyOpenGL_accelerate numpy")
+        logging.error(
+            "ERROR: Failed to initialize. Make sure PyGame and PyOpenGL are installed."
+        )
+        logging.error(
+            "Install with: pip install pygame PyOpenGL PyOpenGL_accelerate numpy"
+        )
         return 1
 
     # Set start date if specified
@@ -135,7 +147,9 @@ def main() -> int:
             scene.time_manager.set_datetime(dt)
             logging.info(f"Starting at: {args.start_date}")
         except ValueError:
-            logging.warning(f"Warning: Invalid date format '{args.start_date}', using current date")
+            logging.warning(
+                f"Warning: Invalid date format '{args.start_date}', using current date"
+            )
 
     logging.info("\n✓ Initialization complete!")
     logging.info("\n" + "=" * 70)

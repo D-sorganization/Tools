@@ -169,14 +169,18 @@ class TestWaterContentExtremeConditions:
 
     def test_very_high_pressure_low_water(self, calculator):
         """At very high pressure, water mole fraction should be very small."""
-        result = calculator.calculate_water_content(temperature_c=25.0, pressure_bar=200.0)
+        result = calculator.calculate_water_content(
+            temperature_c=25.0, pressure_bar=200.0
+        )
         assert isinstance(result, WaterContentResult)
         assert result.mole_fraction_water > 0
         assert result.mole_fraction_water < 0.01  # Very small at high pressure
 
     def test_low_pressure_high_water(self, calculator):
         """At low pressure, water mole fraction should be larger."""
-        result = calculator.calculate_water_content(temperature_c=80.0, pressure_bar=0.5)
+        result = calculator.calculate_water_content(
+            temperature_c=80.0, pressure_bar=0.5
+        )
         assert isinstance(result, WaterContentResult)
         assert result.mole_fraction_water > 0.1
 
@@ -203,7 +207,9 @@ class TestWaterContentExtremeConditions:
         """Water content should decrease as pressure increases (at constant T)."""
         contents = []
         for pressure in [1.0, 5.0, 10.0, 50.0]:
-            result = calculator.calculate_water_content(temperature_c=40.0, pressure_bar=pressure)
+            result = calculator.calculate_water_content(
+                temperature_c=40.0, pressure_bar=pressure
+            )
             contents.append(result.mole_fraction_water)
         for i in range(1, len(contents)):
             assert contents[i] < contents[i - 1]
@@ -322,7 +328,9 @@ class TestEstimateCondensationRisk:
             temperature_c=25.0, pressure_bar=1.0, safety_margin_c=15.0
         )
         expected_recommended = result["dew_point_c"] + 15.0
-        assert result["recommended_temperature_c"] == pytest.approx(expected_recommended, rel=1e-6)
+        assert result["recommended_temperature_c"] == pytest.approx(
+            expected_recommended, rel=1e-6
+        )
 
 
 # ---------------------------------------------------------------------------

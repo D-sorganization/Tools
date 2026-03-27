@@ -53,7 +53,9 @@ def get_repo_root(start_path: Path | str | None = None) -> Path:
     # Minimal fallback -- kept thin to avoid duplicating the canonical impl
     current = Path(start_path).resolve()
     for _ in range(10):
-        if any((current / m).exists() for m in (".git", "pyproject.toml", "tools.json")):
+        if any(
+            (current / m).exists() for m in (".git", "pyproject.toml", "tools.json")
+        ):
             return current
         parent = current.parent
         if parent == current:
@@ -95,7 +97,12 @@ def get_standard_paths(repo_root: Path | None = None) -> list[Path]:
     paths_to_add = [
         repo_root,
         repo_root / "src" / "python" / "src",
-        repo_root / "src" / "data_processing" / "data_processor" / "python" / "data_processor",
+        repo_root
+        / "src"
+        / "data_processing"
+        / "data_processor"
+        / "python"
+        / "data_processor",
         repo_root / "src" / "tools",
         repo_root / "src",
     ]

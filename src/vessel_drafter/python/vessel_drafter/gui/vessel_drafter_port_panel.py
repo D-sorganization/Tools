@@ -45,7 +45,8 @@ class PortValueDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle(title)
         self._spins = tuple(
-            make_double_spin(field.default, field.minimum, field.maximum) for field in fields
+            make_double_spin(field.default, field.minimum, field.maximum)
+            for field in fields
         )
 
         form_layout = QFormLayout()

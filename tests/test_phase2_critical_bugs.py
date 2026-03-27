@@ -62,14 +62,18 @@ class TestSteamEngineCalculations:
     def test_saturation_from_temperature(self):
         """Saturated properties from temperature should return valid data."""
         engine = self._get_engine()
-        props = engine.calculate_saturated_properties_from_temperature(373.15, engine="simplified")
+        props = engine.calculate_saturated_properties_from_temperature(
+            373.15, engine="simplified"
+        )
         assert props.pressure > 0
         assert props.temperature == pytest.approx(373.15, abs=1.0)
 
     def test_saturation_from_pressure(self):
         """Saturated properties from pressure should return valid data."""
         engine = self._get_engine()
-        props = engine.calculate_saturated_properties_from_pressure(101325.0, engine="simplified")
+        props = engine.calculate_saturated_properties_from_pressure(
+            101325.0, engine="simplified"
+        )
         assert props.temperature > 273.15
         assert props.pressure > 0
 
@@ -331,7 +335,10 @@ class TestSteamAPIContract:
         """The steam engine API module should be importable."""
         pytest.importorskip("fastapi", reason="fastapi not installed")
         api_path = (
-            Path(__file__).resolve().parent.parent / "src" / "steam_engine_calculator" / "python"
+            Path(__file__).resolve().parent.parent
+            / "src"
+            / "steam_engine_calculator"
+            / "python"
         )
         if str(api_path) not in sys.path:
             sys.path.insert(0, str(api_path))
@@ -348,7 +355,10 @@ class TestSteamAPIContract:
         """SteamResponse should have all expected fields."""
         pytest.importorskip("fastapi", reason="fastapi not installed")
         api_path = (
-            Path(__file__).resolve().parent.parent / "src" / "steam_engine_calculator" / "python"
+            Path(__file__).resolve().parent.parent
+            / "src"
+            / "steam_engine_calculator"
+            / "python"
         )
         if str(api_path) not in sys.path:
             sys.path.insert(0, str(api_path))
@@ -384,7 +394,10 @@ class TestSteamAPIContract:
         """_props_to_response should correctly map Python fields to camelCase."""
         pytest.importorskip("fastapi", reason="fastapi not installed")
         api_path = (
-            Path(__file__).resolve().parent.parent / "src" / "steam_engine_calculator" / "python"
+            Path(__file__).resolve().parent.parent
+            / "src"
+            / "steam_engine_calculator"
+            / "python"
         )
         if str(api_path) not in sys.path:
             sys.path.insert(0, str(api_path))

@@ -205,7 +205,8 @@ class CelestialBody:
         elem = self.orbital_elements
 
         return OrbitalElements(
-            semi_major_axis=elem.semi_major_axis + elem.semi_major_axis_rate * t_centuries,
+            semi_major_axis=elem.semi_major_axis
+            + elem.semi_major_axis_rate * t_centuries,
             eccentricity=elem.eccentricity + elem.eccentricity_rate * t_centuries,
             inclination=elem.inclination + elem.inclination_rate * t_centuries,
             longitude_ascending=elem.longitude_ascending
@@ -215,7 +216,9 @@ class CelestialBody:
             mean_longitude=elem.mean_longitude + elem.mean_longitude_rate * t_centuries,
         )
 
-    def _compute_anomalies(self, elem: OrbitalElements) -> tuple[float, float, float, float]:
+    def _compute_anomalies(
+        self, elem: OrbitalElements
+    ) -> tuple[float, float, float, float]:
         """Compute orbital anomalies from orbital elements.
 
         Args:
@@ -332,7 +335,9 @@ class CelestialBody:
         vx_orb = -parent_gm / h * math.sin(nu)
         vy_orb = parent_gm / h * (e + math.cos(nu))
 
-        vx, vy, vz = self._orbital_to_ecliptic(vx_orb, vy_orb, omega, ascending_longitude, i)
+        vx, vy, vz = self._orbital_to_ecliptic(
+            vx_orb, vy_orb, omega, ascending_longitude, i
+        )
 
         state = StateVector(
             position=np.array([x, y, z]),
@@ -366,7 +371,11 @@ class CelestialBody:
 
         # Newton-Raphson iteration
         for _ in range(50):
-            f_val = eccentric_anomaly - eccentricity * math.sin(eccentric_anomaly) - mean_anomaly
+            f_val = (
+                eccentric_anomaly
+                - eccentricity * math.sin(eccentric_anomaly)
+                - mean_anomaly
+            )
             f_prime = 1 - eccentricity * math.cos(eccentric_anomaly)
 
             delta = f_val / f_prime
@@ -427,10 +436,14 @@ class CelestialBody:
             y_orb = r * math.sin(nu)
 
             # Transform to heliocentric ecliptic coordinates
-            x = (cos_omega * cos_ascending - sin_omega * sin_ascending * cos_i) * x_orb + (
+            x = (
+                cos_omega * cos_ascending - sin_omega * sin_ascending * cos_i
+            ) * x_orb + (
                 -sin_omega * cos_ascending - cos_omega * sin_ascending * cos_i
             ) * y_orb
-            y = (cos_omega * sin_ascending + sin_omega * cos_ascending * cos_i) * x_orb + (
+            y = (
+                cos_omega * sin_ascending + sin_omega * cos_ascending * cos_i
+            ) * x_orb + (
                 -sin_omega * sin_ascending + cos_omega * cos_ascending * cos_i
             ) * y_orb
             z = (sin_omega * sin_i) * x_orb + (cos_omega * sin_i) * y_orb
@@ -505,7 +518,9 @@ class CelestialBody:
             specific_energy = OrbitalMechanics.specific_orbital_energy(
                 semi_major_axis_m, self.parent.gm
             )
-            circular_speed = OrbitalMechanics.circular_velocity(state.distance, self.parent.gm)
+            circular_speed = OrbitalMechanics.circular_velocity(
+                state.distance, self.parent.gm
+            )
 
             info["Circular Speed Here"] = f"{circular_speed / 1000:.2f} km/s"
             info["Specific Orbital Energy"] = f"{specific_energy / 1e6:.2f} MJ/kg"
@@ -516,7 +531,9 @@ class CelestialBody:
                 )
                 info["Sphere of Influence"] = f"{soi / AU:.4f} AU"
             elif self.mass > 0 and self.parent.name == "Sun":
-                soi = OrbitalMechanics.sphere_of_influence(semi_major_axis_m, self.mass, SUN_MASS)
+                soi = OrbitalMechanics.sphere_of_influence(
+                    semi_major_axis_m, self.mass, SUN_MASS
+                )
                 info["Sphere of Influence"] = f"{soi / AU:.4f} AU"
 
         return info
@@ -528,7 +545,9 @@ class CelestialBody:
 class Star(CelestialBody):
     """Specialized class for stars (primarily the Sun)."""
 
-    def __init__(self, name: str = "Sun", physical_properties: PhysicalProperties | None = None):
+    def __init__(
+        self, name: str = "Sun", physical_properties: PhysicalProperties | None = None
+    ):
         if not (name is not None):
             raise ValueError("name must be provided")
         if physical_properties is None:

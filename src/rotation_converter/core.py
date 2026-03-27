@@ -91,7 +91,9 @@ def _validate_rotation_matrix(R: Any, name: str = "rotation matrix") -> np.ndarr
     require(R.shape == (3, 3), f"{name} must be 3x3", R.shape)
     require_finite(R, name)
     orth_err = np.max(np.abs(R @ R.T - np.eye(3)))
-    require(bool(orth_err < 1e-6), f"{name} must be orthogonal (max err={orth_err:.2e})")
+    require(
+        bool(orth_err < 1e-6), f"{name} must be orthogonal (max err={orth_err:.2e})"
+    )
     det = np.linalg.det(R)
     require(bool(abs(det - 1.0) < 1e-6), f"{name} must have det=+1 (got {det:.6f})")
     return R  # type: ignore[no-any-return]
@@ -422,7 +424,9 @@ def quaternion_to_euler(q: Any, convention: str) -> tuple[float, float, float]:
     return _rotation_matrix_to_euler_impl(R, convention.lower())
 
 
-def _rotation_matrix_to_euler_impl(R: np.ndarray, conv: str) -> tuple[float, float, float]:
+def _rotation_matrix_to_euler_impl(
+    R: np.ndarray, conv: str
+) -> tuple[float, float, float]:
     """Extract Euler angles from R for a given convention.
 
     Handles both Tait-Bryan (e.g. xyz) and proper Euler (e.g. zyz).
@@ -481,7 +485,9 @@ def _rotation_matrix_to_euler_impl(R: np.ndarray, conv: str) -> tuple[float, flo
 # ===========================================================================
 
 
-def euler_to_rotation_matrix(a: float, b: float, c: float, convention: str) -> np.ndarray:
+def euler_to_rotation_matrix(
+    a: float, b: float, c: float, convention: str
+) -> np.ndarray:
     """Convert Euler angles to rotation matrix (via quaternion hub, DRY)."""
     if not (a is not None):
         raise ValueError("a must be provided")

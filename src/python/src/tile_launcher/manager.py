@@ -71,7 +71,9 @@ class AppManager:
         catalog_path = Path(__file__).resolve().parent / "app_catalog.json"
         catalog = load_catalog(catalog_path)
         layout_store = cls._default_store()
-        return cls(catalog=catalog, repository_root=base_path, layout_store=layout_store)
+        return cls(
+            catalog=catalog, repository_root=base_path, layout_store=layout_store
+        )
 
     @staticmethod
     def _default_store() -> LayoutStore:
@@ -100,11 +102,15 @@ class AppManager:
 
     def apps_in_layout(self) -> list[AppDefinition]:
         """Return the list of apps currently in the layout."""
-        return [self._catalog[app_id] for app_id in self.layout if app_id in self._catalog]
+        return [
+            self._catalog[app_id] for app_id in self.layout if app_id in self._catalog
+        ]
 
     def available_to_add(self) -> list[AppDefinition]:
         """Return list of apps available to be added to the layout."""
-        available = [app for app_id, app in self._catalog.items() if app_id not in self.layout]
+        available = [
+            app for app_id, app in self._catalog.items() if app_id not in self.layout
+        ]
         return sorted(available, key=lambda app: app.name.lower())
 
     def add_app(self, app_id: str) -> None:

@@ -125,7 +125,8 @@ async def list_models() -> dict[str, list[str]]:
         files = [
             f
             for f in os.listdir(MODELS_DIR)
-            if (f.endswith(".urdf") or f.endswith(".xml")) and os.path.isfile(MODELS_DIR / f)
+            if (f.endswith(".urdf") or f.endswith(".xml"))
+            and os.path.isfile(MODELS_DIR / f)
         ]
         return {"models": files}
     except (PermissionError, OSError) as e:

@@ -67,7 +67,9 @@ except ImportError:
         if not _np.all(_np.isfinite(array)):
             raise PreconditionError(f"{name} contains NaN or Inf values")
 
-    def require_unit_vector(vector: Any, name: str = "vector", tol: float = 1e-6) -> None:
+    def require_unit_vector(
+        vector: Any, name: str = "vector", tol: float = 1e-6
+    ) -> None:
         """Require vector to have unit length."""
         norm = float(_np.linalg.norm(vector))
         if abs(norm - 1.0) > tol:

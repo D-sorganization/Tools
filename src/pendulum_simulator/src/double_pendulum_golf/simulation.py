@@ -206,7 +206,7 @@ def run_simulation(
     Post: result has >= 2 time points, all finite.
     """
     if not (initial_state.shape == (4,)):
-        raise ValueError(f"initial_state.shape mismatch, expected (4,)")
+        raise ValueError("Initial state must have shape (4,)")
     if not (all(np.isfinite(initial_state))):
         raise ValueError("DbC Blocked: Precondition failed.")
     if not (t_end > 0 and 0 < dt < t_end):

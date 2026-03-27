@@ -114,7 +114,9 @@ class TestDataProcessorEngineColumns:
         with pytest.raises(ColumnNotFoundError):
             eng.transform_column("GHOST", "log")
 
-    def test_transform_column_raises_not_loaded(self, empty_engine: DataProcessorEngine) -> None:
+    def test_transform_column_raises_not_loaded(
+        self, empty_engine: DataProcessorEngine
+    ) -> None:
         """Transformation without data loaded raises DataNotLoadedError."""
         with pytest.raises(DataNotLoadedError):
             empty_engine.transform_column("A", "log")

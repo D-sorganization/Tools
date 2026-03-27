@@ -227,7 +227,9 @@ class TestNeuralNetworkTrainer:
         assert len(lstm_layers) == 3
 
     def test_create_config_cnn(self, trainer: NeuralNetworkTrainer) -> None:
-        config = trainer.create_config(input_features=5, network_type=NetworkType.CNN_1D)
+        config = trainer.create_config(
+            input_features=5, network_type=NetworkType.CNN_1D
+        )
         conv_layers = [lyr for lyr in config.layers if lyr.layer_type == "conv1d"]
         assert len(conv_layers) == 3
 
@@ -249,7 +251,9 @@ class TestNeuralNetworkTrainer:
         with pytest.raises(ValueError, match="input_features must be positive"):
             trainer.create_config(input_features=0)
 
-    def test_create_config_invalid_dropout_rate_raises(self, trainer: NeuralNetworkTrainer) -> None:
+    def test_create_config_invalid_dropout_rate_raises(
+        self, trainer: NeuralNetworkTrainer
+    ) -> None:
         with pytest.raises(ValueError, match="dropout_rate must be in \\[0.0, 1.0\\)"):
             trainer.create_config(input_features=4, dropout_rate=1.0)
 
@@ -305,7 +309,9 @@ class TestNeuralNetworkTrainer:
         self, trainer: NeuralNetworkTrainer
     ) -> None:
         trainer.create_config(input_features=2, output_features=1)
-        df = pd.DataFrame({"f1": [np.nan, np.nan], "f2": [np.nan, np.nan], "target": [1, 2]})
+        df = pd.DataFrame(
+            {"f1": [np.nan, np.nan], "f2": [np.nan, np.nan], "target": [1, 2]}
+        )
         with pytest.raises(ValueError, match="No rows available"):
             trainer.prepare_data(df, target_columns=["target"])
 
@@ -538,7 +544,10 @@ class TestNeuralNetworkScriptExporter:
         exporter: NeuralNetworkScriptExporter,
     ) -> None:
         assert exporter._keras_loss(LossFunction.MSE) == "mse"
-        assert exporter._keras_loss(LossFunction.CROSS_ENTROPY) == "categorical_crossentropy"
+        assert (
+            exporter._keras_loss(LossFunction.CROSS_ENTROPY)
+            == "categorical_crossentropy"
+        )
 
     def test_no_data_loading(
         self,

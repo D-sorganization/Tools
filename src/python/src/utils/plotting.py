@@ -149,7 +149,9 @@ def get_colorblind_safe_color(index: int, palette: str = "default") -> str:
     """
     if not (index is not None):
         raise ValueError("index must be provided")
-    color_list = COLORBLIND_SAFE_PALETTE_ALT if palette == "alt" else COLORBLIND_SAFE_PALETTE
+    color_list = (
+        COLORBLIND_SAFE_PALETTE_ALT if palette == "alt" else COLORBLIND_SAFE_PALETTE
+    )
     return color_list[index % len(color_list)]
 
 
