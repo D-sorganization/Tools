@@ -1,5 +1,3 @@
-from numba import jit
-
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -70,8 +68,6 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 
-@jit(nopython=True, fastmath=True)
-@jit(nopython=True, fastmath=True)
 def add_equipment(
     msp: Any,
     eq: dict[str, Any],
@@ -334,7 +330,6 @@ def generate_process_sheet(
         logger.info("Attempted SVG: %s", svg_path)
 
 
-@jit(nopython=True, fastmath=True)
 def generate_controls_sheet(
     spec_path: str | Path,
     out_path: str | Path,

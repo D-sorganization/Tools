@@ -1,5 +1,3 @@
-from numba import jit
-
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -561,8 +559,6 @@ class SimscapeToURDFConverter:
 
         return joint
 
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
     def _get_joint_origin(self, block: SimscapeBlock) -> Origin:
         """Extract joint origin from block parameters."""
         if not (block is not None):
@@ -598,7 +594,6 @@ class SimscapeToURDFConverter:
 
         return Origin(xyz=xyz, rpy=rpy)
 
-    @jit(nopython=True, fastmath=True)
     def _get_joint_axis(self, block: SimscapeBlock) -> tuple[float, float, float]:
         """Extract joint axis from block parameters."""
         # Try common parameter names

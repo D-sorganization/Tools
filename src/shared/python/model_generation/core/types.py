@@ -1,5 +1,3 @@
-from numba import jit
-
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -290,7 +288,6 @@ class Inertia:
         """Check if inertia is diagonal (no off-diagonal elements)."""
         return abs(self.ixy) < 1e-10 and abs(self.ixz) < 1e-10 and abs(self.iyz) < 1e-10
 
-    @jit(nopython=True, fastmath=True)
     def satisfies_triangle_inequality(self) -> bool:
         """
         Check triangle inequality for principal moments.

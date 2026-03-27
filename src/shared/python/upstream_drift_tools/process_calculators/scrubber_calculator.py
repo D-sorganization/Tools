@@ -1,5 +1,3 @@
-from numba import jit
-
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -550,7 +548,6 @@ def calculate_required_packed_height(
     return ntu * htu * safety_factor
 
 
-@jit(nopython=True, fastmath=True)
 def calculate_caustic_requirement(
     acid_gas_removed: dict[str, float],
     caustic_concentration: float,

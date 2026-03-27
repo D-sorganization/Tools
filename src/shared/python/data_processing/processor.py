@@ -1,5 +1,3 @@
-from numba import jit
-
 """DataProcessor facade -- clean API over the extracted core modules.
 
 This is the main entry point for programmatic data processing without any GUI.
@@ -313,7 +311,6 @@ class DataProcessor:
         except ImportError:
             self._apply_filter_fallback(df=df, columns=columns, window_size=window_size)
 
-    @jit(nopython=True, fastmath=True)
     def _apply_filter_with_scipy(
         self,
         df: pd.DataFrame,

@@ -1,5 +1,3 @@
-from numba import jit
-
 """ODE solver router.  See issue #608."""
 
 from __future__ import annotations  # noqa: E402, F404
@@ -84,8 +82,6 @@ def _safe_eval(
     return float(safe_eval(expr, namespace))
 
 
-@jit(nopython=True, fastmath=True)
-@jit(nopython=True, fastmath=True)
 def _rk4_solve(
     var_names: list[str],
     expressions: dict[str, str],

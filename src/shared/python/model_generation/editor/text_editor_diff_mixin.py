@@ -1,5 +1,3 @@
-from numba import jit
-
 """Diff computation mixin for URDFTextEditor.
 
 Extracts diff generation and side-by-side comparison logic
@@ -142,8 +140,6 @@ class TextEditorDiffMixin:
             has_changes=original != modified,
         )
 
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
     def get_side_by_side_diff(
         self,
         original: str | None = None,

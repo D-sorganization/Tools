@@ -1,5 +1,3 @@
-from numba import jit
-
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -240,7 +238,6 @@ class HumanoidURDFGenerator:
 
         return urdf_xml
 
-    @jit(nopython=True, fastmath=True)
     def _apply_proportion_factors(
         self,
         dimensions: dict[str, dict[str, float]],

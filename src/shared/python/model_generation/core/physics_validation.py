@@ -1,5 +1,3 @@
-from numba import jit
-
 """Physics Validation for URDF Models.
 
 This module provides comprehensive physics validation to catch issues
@@ -208,7 +206,6 @@ class PhysicsValidator:
 
         return result
 
-    @jit(nopython=True, fastmath=True)
     @staticmethod
     def _compute_center_of_mass(
         links: list[Link],
@@ -365,8 +362,6 @@ class PhysicsValidator:
             tipping_angle_deg=tipping_angle,
         )
 
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
     def check_collision_geometry(
         self,
         links: list[Link],
@@ -422,7 +417,6 @@ class PhysicsValidator:
 
         return result
 
-    @jit(nopython=True, fastmath=True)
     def validate_physics(
         self,
         links: list[Link],
@@ -508,7 +502,6 @@ class PhysicsValidator:
 
         return result
 
-    @jit(nopython=True, fastmath=True)
     @staticmethod
     def _point_in_polygon(
         point: np.ndarray,
@@ -533,7 +526,6 @@ class PhysicsValidator:
         return inside
 
     @staticmethod
-    @jit(nopython=True, fastmath=True)
     def _distance_to_polygon_edge(
         point: np.ndarray,
         polygon: list[tuple[float, float]],

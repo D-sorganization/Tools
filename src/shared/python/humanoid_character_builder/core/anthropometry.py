@@ -1,5 +1,3 @@
-from numba import jit
-
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -525,7 +523,6 @@ def estimate_segment_masses(
     lambda gender_factor: 0.0 <= gender_factor <= 1.0,
     "Gender factor must be between 0 and 1",
 )
-@jit(nopython=True, fastmath=True)
 def estimate_segment_dimensions(
     total_height_m: float, gender_factor: float = 0.5
 ) -> dict[str, dict[str, float]]:
