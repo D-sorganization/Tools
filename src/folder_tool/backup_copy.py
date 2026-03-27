@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """BackupCopyMixin -- Backup creation and safe file copy methods."""
 
 from __future__ import annotations

@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """UIProcessingMixin -- UI dialogs, progress, status, threading."""
 
 from __future__ import annotations

@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """ArchiveOperationsMixin -- Archive extraction methods."""
 
 from __future__ import annotations

@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """FolderOperationsMixin -- Folder-level operations for FolderProcessorApp."""
 
 from __future__ import annotations

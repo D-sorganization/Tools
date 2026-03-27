@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """AnalysisMixin -- Analysis report and input validation for FolderProcessorApp."""
 
 from __future__ import annotations

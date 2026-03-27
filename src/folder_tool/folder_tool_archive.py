@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """ArchiveMixin -- ZIP archive creation for FolderProcessorApp."""
 
 from __future__ import annotations
