@@ -78,7 +78,9 @@ class TransactionLog:
         except (PermissionError, OSError) as e:
             logger.error(f"Failed to write transaction log: {e}")
 
-    def get_session_operations(self, session_id: str | None = None) -> list[dict[str, Any]]:
+    def get_session_operations(
+        self, session_id: str | None = None
+    ) -> list[dict[str, Any]]:
         """
         Retrieve all operations from a session.
 
@@ -109,7 +111,9 @@ class TransactionLog:
 
         return operations
 
-    def rollback_session(self, session_id: str | None = None, dry_run: bool = True) -> None:
+    def rollback_session(
+        self, session_id: str | None = None, dry_run: bool = True
+    ) -> None:
         """
         Rollback all successful operations from a session.
 
@@ -144,5 +148,6 @@ class TransactionLog:
 
             elif op["operation"] == "delete":
                 logger.warning(
-                    f"Cannot rollback delete: {op['file_path']} " "(file permanently deleted)"
+                    f"Cannot rollback delete: {op['file_path']} "
+                    "(file permanently deleted)"
                 )

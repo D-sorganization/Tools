@@ -32,14 +32,18 @@ def sine_pair() -> tuple[np.ndarray, np.ndarray]:
 class TestCrossCorrelate:
     """Tests for the core cross_correlate method."""
 
-    def test_identical_signals_max_at_zero(self, analyzer: CrossCorrelationAnalyzer) -> None:
+    def test_identical_signals_max_at_zero(
+        self, analyzer: CrossCorrelationAnalyzer
+    ) -> None:
         """Identical signals should have max correlation at lag 0."""
         x = np.sin(np.linspace(0, 4 * np.pi, 100))
         result = analyzer.cross_correlate(x, x)
         assert result.optimal_lag == 0
         assert result.max_correlation == pytest.approx(1.0, abs=0.05)
 
-    def test_result_has_correct_fields(self, analyzer: CrossCorrelationAnalyzer) -> None:
+    def test_result_has_correct_fields(
+        self, analyzer: CrossCorrelationAnalyzer
+    ) -> None:
         """Result should contain all expected fields."""
         rng = np.random.default_rng(42)
         x = rng.standard_normal(50)
@@ -52,7 +56,9 @@ class TestCrossCorrelate:
         assert hasattr(result, "confidence_interval")
         assert len(result.lags) == 21  # -10 to +10
 
-    def test_mismatched_lengths_raises(self, analyzer: CrossCorrelationAnalyzer) -> None:
+    def test_mismatched_lengths_raises(
+        self, analyzer: CrossCorrelationAnalyzer
+    ) -> None:
         """Unequal series should raise ValueError."""
         with pytest.raises(ValueError, match="same length"):
             analyzer.cross_correlate(np.array([1.0, 2.0]), np.array([1.0]))
@@ -61,7 +67,9 @@ class TestCrossCorrelate:
 class TestLaggedCorrelation:
     """Tests for lagged_correlation method."""
 
-    def test_zero_lag_matches_corrcoef(self, analyzer: CrossCorrelationAnalyzer) -> None:
+    def test_zero_lag_matches_corrcoef(
+        self, analyzer: CrossCorrelationAnalyzer
+    ) -> None:
         """Lag-0 correlation should match numpy corrcoef."""
         x = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
         y = np.array([2.0, 4.0, 5.0, 4.0, 5.0])
@@ -93,7 +101,9 @@ class TestFindOptimalLag:
 class TestRollingCrossCorrelation:
     """Tests for rolling_cross_correlation method."""
 
-    def test_returns_correct_window_size(self, analyzer: CrossCorrelationAnalyzer) -> None:
+    def test_returns_correct_window_size(
+        self, analyzer: CrossCorrelationAnalyzer
+    ) -> None:
         """Result should report the window size used."""
         rng = np.random.default_rng(42)
         x = rng.standard_normal(100)

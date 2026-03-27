@@ -21,8 +21,6 @@ Includes:
 
 from __future__ import annotations
 
-from numba import jit
-
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
@@ -30,6 +28,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+from numba import jit
 from scipy import fft as scipy_fft
 from scipy import signal as scipy_signal
 

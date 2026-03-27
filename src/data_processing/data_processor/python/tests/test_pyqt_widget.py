@@ -1,9 +1,6 @@
-from typing import Any
-
 """Tests for the PyQt6 DataProcessorWidget."""
 
 import sys
-from typing import Any
 from unittest.mock import patch
 
 import pandas as pd
@@ -20,13 +17,14 @@ from data_processor.pyqt_widget import DataProcessorWidget  # noqa: E402
 
 
 @pytest.fixture
-def widget(qtbot) -> Any:
+def widget(qtbot):
     """Fixture to create the widget with mocked backend."""
     # Patch the backend classes before instantiating the widget
     with (
         patch("data_processor.pyqt_widget.DataLoader") as MockDataLoader,
         patch("data_processor.pyqt_widget.SignalProcessor") as MockSignalProcessor,
     ):
+
         mock_loader = MockDataLoader.return_value
         mock_processor = MockSignalProcessor.return_value
 
@@ -43,7 +41,7 @@ def widget(qtbot) -> Any:
         yield widget
 
 
-def test_widget_initialization(widget) -> Any:
+def test_widget_initialization(widget):
     """Test that the widget initializes with correct UI elements."""
     assert widget.load_btn is not None
     assert widget.signal_list is not None
@@ -52,7 +50,7 @@ def test_widget_initialization(widget) -> Any:
     assert widget.result_table is not None
 
 
-def test_load_file_cancel(widget) -> Any:
+def test_load_file_cancel(widget):
     """Test loading file cancellation."""
     with patch("PyQt6.QtWidgets.QFileDialog.getOpenFileName", return_value=("", "")):
         widget.load_file()
@@ -60,7 +58,7 @@ def test_load_file_cancel(widget) -> Any:
         assert widget.file_label.text() == "No file loaded"
 
 
-def test_load_file_success(widget, tmp_path) -> Any:
+def test_load_file_success(widget, tmp_path):
     """Test successful file loading."""
     # Create a dummy DataFrame to return
     df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
@@ -85,7 +83,7 @@ def test_load_file_success(widget, tmp_path) -> Any:
         assert widget.result_table.rowCount() == 3
 
 
-def test_process_no_file(widget) -> Any:
+def test_process_no_file(widget):
     """Test processing without loading file."""
     with patch("PyQt6.QtWidgets.QMessageBox.warning") as mock_warning:
         widget.process_data()
@@ -93,7 +91,7 @@ def test_process_no_file(widget) -> Any:
         assert "load a file" in mock_warning.call_args[0][2]
 
 
-def test_process_no_selection(widget, tmp_path) -> Any:
+def test_process_no_selection(widget, tmp_path):
     """Test processing without selecting signals."""
     # Simulate loaded file
     widget.current_df = pd.DataFrame({"A": [1, 2], "B": [3, 4]})
@@ -106,7 +104,7 @@ def test_process_no_selection(widget, tmp_path) -> Any:
         assert "select at least one signal" in mock_warning.call_args[0][2]
 
 
-def test_process_success(widget) -> Any:
+def test_process_success(widget):
     """Test successful processing."""
     # Simulate loaded file
     df = pd.DataFrame({"A": [1.0, 2.0, 3.0], "B": [4.0, 5.0, 6.0]})

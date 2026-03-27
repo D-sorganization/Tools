@@ -1,5 +1,3 @@
-from numba import jit
-
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -560,7 +558,6 @@ class LODGenerator:
         """Initialize the LOD generator."""
         self._processor = MeshProcessor()
 
-    @jit(nopython=True, fastmath=True)
     def generate_lods(
         self,
         mesh_path: Path | str,
@@ -759,7 +756,6 @@ class LODGenerator:
                 error_message=str(e),
             )
 
-    @jit(nopython=True, fastmath=True)
     def estimate_memory_savings(
         self, lod_result: LODGenerationResult
     ) -> dict[str, Any]:

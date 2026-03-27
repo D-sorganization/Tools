@@ -1,5 +1,3 @@
-from numba import jit
-
 """
 Physics validation for humanoid models.
 
@@ -140,7 +138,6 @@ class PhysicsValidator:
             is_stable=is_stable, margin=margin, tipping_angle=tipping_angle
         )
 
-    @jit(nopython=True, fastmath=True)
     def check_self_collisions(self, model: HumanoidModel) -> list[str]:
         """
         Check for self-collisions (intersections) between links.

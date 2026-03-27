@@ -1,5 +1,3 @@
-from typing import Any
-
 """TDD tests for matplotlib renderer.
 
 Tests that each plot type produces valid Figure objects with
@@ -7,7 +5,7 @@ correct structure, series rendering, trendline annotations,
 and theme integration.
 """
 
-from __future__ import annotations  # noqa: F404
+from __future__ import annotations
 
 import matplotlib
 
@@ -33,12 +31,12 @@ from plot_engine.specs import (
 
 
 @pytest.fixture()
-def renderer() -> Any:
+def renderer():
     return MatplotlibRenderer()
 
 
 @pytest.fixture(autouse=True)
-def _close_figs() -> Any:
+def _close_figs():
     """Close all matplotlib figures after each test."""
     yield
     plt.close("all")
@@ -48,12 +46,12 @@ def _close_figs() -> Any:
 
 
 class TestLinePlot:
-    def test_empty_spec(self, renderer) -> Any:
+    def test_empty_spec(self, renderer):
         fig = renderer.render(PlotSpec())
         assert fig is not None
         assert len(fig.axes) >= 1
 
-    def test_single_series(self, renderer) -> Any:
+    def test_single_series(self, renderer):
         spec = PlotSpec(
             title="Test",
             series=[SeriesData(name="s1", x=[0.0, 1.0, 2.0], y=[0.0, 1.0, 4.0])],
@@ -63,7 +61,7 @@ class TestLinePlot:
         assert ax.get_title() == "Test"
         assert len(ax.lines) >= 1
 
-    def test_multiple_series(self, renderer) -> Any:
+    def test_multiple_series(self, renderer):
         spec = PlotSpec(
             series=[
                 SeriesData(name="a", x=[0.0, 1.0], y=[0.0, 1.0]),
@@ -74,7 +72,7 @@ class TestLinePlot:
         ax = fig.axes[0]
         assert len(ax.lines) >= 2
 
-    def test_scatter_mode(self, renderer) -> Any:
+    def test_scatter_mode(self, renderer):
         spec = PlotSpec(
             series=[
                 SeriesData(
@@ -90,7 +88,7 @@ class TestLinePlot:
         # Scatter creates PathCollections, not lines
         assert len(ax.collections) >= 1
 
-    def test_line_plus_scatter(self, renderer) -> Any:
+    def test_line_plus_scatter(self, renderer):
         spec = PlotSpec(
             series=[
                 SeriesData(
@@ -105,7 +103,7 @@ class TestLinePlot:
         ax = fig.axes[0]
         assert len(ax.lines) >= 1
 
-    def test_custom_colors(self, renderer) -> Any:
+    def test_custom_colors(self, renderer):
         spec = PlotSpec(
             series=[
                 SeriesData(
@@ -120,7 +118,7 @@ class TestLinePlot:
         ax = fig.axes[0]
         assert len(ax.lines) >= 1
 
-    def test_axis_labels(self, renderer) -> Any:
+    def test_axis_labels(self, renderer):
         spec = PlotSpec(
             x_axis=AxisSpec(label="Time (s)"),
             y_axis=AxisSpec(label="Voltage (V)"),
@@ -130,7 +128,7 @@ class TestLinePlot:
         assert ax.get_xlabel() == "Time (s)"
         assert ax.get_ylabel() == "Voltage (V)"
 
-    def test_axis_limits(self, renderer) -> Any:
+    def test_axis_limits(self, renderer):
         spec = PlotSpec(
             series=[SeriesData(name="s", x=[0.0, 10.0], y=[0.0, 10.0])],
             x_axis=AxisSpec(min=2.0, max=8.0),
@@ -145,7 +143,7 @@ class TestLinePlot:
         assert ylim[0] == pytest.approx(1.0)
         assert ylim[1] == pytest.approx(9.0)
 
-    def test_log_scale(self, renderer) -> Any:
+    def test_log_scale(self, renderer):
         spec = PlotSpec(
             series=[SeriesData(name="s", x=[1.0, 10.0, 100.0], y=[1.0, 2.0, 3.0])],
             x_axis=AxisSpec(log_scale=True),
@@ -159,7 +157,7 @@ class TestLinePlot:
 
 
 class TestTrendlines:
-    def test_linear_trendline(self, renderer) -> Any:
+    def test_linear_trendline(self, renderer):
         spec = PlotSpec(
             series=[
                 SeriesData(
@@ -175,7 +173,7 @@ class TestTrendlines:
         # Original data + trendline = at least 2 lines
         assert len(ax.lines) >= 2
 
-    def test_trendline_annotation(self, renderer) -> Any:
+    def test_trendline_annotation(self, renderer):
         spec = PlotSpec(
             series=[
                 SeriesData(
@@ -198,7 +196,7 @@ class TestTrendlines:
         has_r2 = any("R\u00b2" in t for t in annotation_texts)
         assert has_equation or has_r2
 
-    def test_trendline_no_equation(self, renderer) -> Any:
+    def test_trendline_no_equation(self, renderer):
         spec = PlotSpec(
             series=[
                 SeriesData(
@@ -219,7 +217,7 @@ class TestTrendlines:
         equation_texts = [t.get_text() for t in ax.texts if "y =" in t.get_text()]
         assert len(equation_texts) == 0
 
-    def test_polynomial_trendline(self, renderer) -> Any:
+    def test_polynomial_trendline(self, renderer):
         spec = PlotSpec(
             series=[
                 SeriesData(
@@ -239,7 +237,7 @@ class TestTrendlines:
 
 
 class TestSurfacePlot:
-    def test_basic_surface(self, renderer) -> Any:
+    def test_basic_surface(self, renderer):
         x = [0.0, 1.0, 2.0]
         y = [0.0, 1.0, 2.0]
         z = [[0.0, 1.0, 2.0], [1.0, 2.0, 3.0], [2.0, 3.0, 4.0]]
@@ -255,7 +253,7 @@ class TestSurfacePlot:
         ax = fig.axes[0]
         assert ax.name == "3d"
 
-    def test_surface_title(self, renderer) -> Any:
+    def test_surface_title(self, renderer):
         spec = SurfacePlotSpec(
             title="My Surface",
             z_data=[[1.0]],
@@ -271,7 +269,7 @@ class TestSurfacePlot:
 
 
 class TestContourPlot:
-    def test_basic_contour(self, renderer) -> Any:
+    def test_basic_contour(self, renderer):
         x = np.linspace(0, 1, 10).tolist()
         y = np.linspace(0, 1, 10).tolist()
         xm, ym = np.meshgrid(x, y)
@@ -287,7 +285,7 @@ class TestContourPlot:
         assert fig is not None
         assert len(fig.axes) >= 1
 
-    def test_filled_contour_has_colorbar(self, renderer) -> Any:
+    def test_filled_contour_has_colorbar(self, renderer):
         x = np.linspace(0, 1, 5).tolist()
         y = np.linspace(0, 1, 5).tolist()
         xm, ym = np.meshgrid(x, y)
@@ -303,7 +301,7 @@ class TestContourPlot:
         # Colorbar adds an extra axes
         assert len(fig.axes) >= 2
 
-    def test_unfilled_contour(self, renderer) -> Any:
+    def test_unfilled_contour(self, renderer):
         x = np.linspace(0, 1, 5).tolist()
         y = np.linspace(0, 1, 5).tolist()
         xm, ym = np.meshgrid(x, y)
@@ -323,7 +321,7 @@ class TestContourPlot:
 
 
 class TestHeatmap:
-    def test_basic_heatmap(self, renderer) -> Any:
+    def test_basic_heatmap(self, renderer):
         spec = HeatmapSpec(
             title="Heatmap",
             z_data=[[1.0, 2.0], [3.0, 4.0]],
@@ -333,7 +331,7 @@ class TestHeatmap:
         ax = fig.axes[0]
         assert len(ax.images) >= 1
 
-    def test_heatmap_with_labels(self, renderer) -> Any:
+    def test_heatmap_with_labels(self, renderer):
         spec = HeatmapSpec(
             z_data=[[1.0, 2.0], [3.0, 4.0]],
             x_labels=["A", "B"],
@@ -343,7 +341,7 @@ class TestHeatmap:
         ax = fig.axes[0]
         assert len(ax.images) >= 1
 
-    def test_heatmap_annotated(self, renderer) -> Any:
+    def test_heatmap_annotated(self, renderer):
         spec = HeatmapSpec(
             z_data=[[1.0, 2.0], [3.0, 4.0]],
             annotate=True,
@@ -353,7 +351,7 @@ class TestHeatmap:
         # 4 text annotations (one per cell)
         assert len(ax.texts) == 4
 
-    def test_heatmap_with_colorbar(self, renderer) -> Any:
+    def test_heatmap_with_colorbar(self, renderer):
         spec = HeatmapSpec(
             z_data=[[1.0, 2.0], [3.0, 4.0]],
             show_colorbar=True,
@@ -366,7 +364,7 @@ class TestHeatmap:
 
 
 class TestHistogram:
-    def test_basic_histogram(self, renderer) -> Any:
+    def test_basic_histogram(self, renderer):
         rng = np.random.default_rng(42)
         data = rng.normal(0, 1, 100).tolist()
         spec = HistogramSpec(
@@ -380,7 +378,7 @@ class TestHistogram:
         # Histogram creates patches (rectangles)
         assert len(ax.patches) > 0
 
-    def test_density_histogram(self, renderer) -> Any:
+    def test_density_histogram(self, renderer):
         rng = np.random.default_rng(42)
         data = rng.normal(0, 1, 50).tolist()
         spec = HistogramSpec(
@@ -395,7 +393,7 @@ class TestHistogram:
 
 
 class TestFilterComparison:
-    def test_basic_comparison(self, renderer) -> Any:
+    def test_basic_comparison(self, renderer):
         x = [0.0, 1.0, 2.0, 3.0, 4.0]
         orig_y = [1.0, 3.0, 2.0, 4.0, 3.0]
         filt_y = [1.2, 2.8, 2.1, 3.8, 3.1]
@@ -409,7 +407,7 @@ class TestFilterComparison:
         assert ax is not None
         assert len(ax.lines) >= 2
 
-    def test_with_difference(self, renderer) -> Any:
+    def test_with_difference(self, renderer):
         x = [0.0, 1.0, 2.0]
         spec = FilterComparisonSpec(
             original_series=[SeriesData(name="o", x=x, y=[1.0, 2.0, 3.0])],
@@ -425,7 +423,7 @@ class TestFilterComparison:
 
 
 class TestLegend:
-    def test_legend_visible(self, renderer) -> Any:
+    def test_legend_visible(self, renderer):
         spec = PlotSpec(
             series=[
                 SeriesData(name="a", x=[0.0, 1.0], y=[0.0, 1.0]),
@@ -438,7 +436,7 @@ class TestLegend:
         legend = ax.get_legend()
         assert legend is not None
 
-    def test_legend_hidden(self, renderer) -> Any:
+    def test_legend_hidden(self, renderer):
         spec = PlotSpec(
             series=[SeriesData(name="a", x=[0.0], y=[0.0])],
             legend=LegendSpec(visible=False),
@@ -453,7 +451,7 @@ class TestLegend:
 
 
 class TestToImage:
-    def test_png_output(self, renderer) -> Any:
+    def test_png_output(self, renderer):
         spec = PlotSpec(
             series=[SeriesData(name="s", x=[0.0, 1.0], y=[0.0, 1.0])],
         )
@@ -463,7 +461,7 @@ class TestToImage:
         # PNG magic number
         assert img_bytes[:4] == b"\x89PNG"
 
-    def test_svg_output(self, renderer) -> Any:
+    def test_svg_output(self, renderer):
         spec = PlotSpec(
             series=[SeriesData(name="s", x=[0.0, 1.0], y=[0.0, 1.0])],
         )
@@ -475,7 +473,7 @@ class TestToImage:
 
 
 class TestDimensions:
-    def test_custom_dimensions(self, renderer) -> Any:
+    def test_custom_dimensions(self, renderer):
         spec = PlotSpec(width=1200, height=400)
         fig = renderer.render(spec)
         w, h = fig.get_size_inches()

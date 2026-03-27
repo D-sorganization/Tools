@@ -17,7 +17,9 @@ def test_signal_processor_applies_moving_average() -> None:
         }
     )
     processor = SignalProcessor()
-    filter_config = FilterConfig.from_mapping({"filter_type": "Moving Average", "ma_window": 3})
+    filter_config = FilterConfig.from_mapping(
+        {"filter_type": "Moving Average", "ma_window": 3}
+    )
 
     result = processor.apply_filter(df, filter_config)
     expected_signal = df["signal"].rolling(window=3, min_periods=1, center=True).mean()
@@ -29,7 +31,9 @@ def test_signal_processor_applies_moving_average() -> None:
 def test_signal_processor_rejects_empty_frame() -> None:
     """Empty dataframes should raise a friendly error."""
     processor = SignalProcessor()
-    filter_config = FilterConfig.from_mapping({"filter_type": "Moving Average", "ma_window": 3})
+    filter_config = FilterConfig.from_mapping(
+        {"filter_type": "Moving Average", "ma_window": 3}
+    )
 
     with pytest.raises(ValueError):
         processor.apply_filter(pd.DataFrame(), filter_config)

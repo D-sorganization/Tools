@@ -17,7 +17,9 @@ class TestVectorizedFilterEngine(unittest.TestCase):
         self.signal = np.sin(2 * np.pi * 1.0 * self.t)  # 1 Hz sine wave
         self.noisy_signal = self.signal + np.random.normal(0, 0.1, 100)
 
-        self.df = pd.DataFrame({"Time": self.t, "Clean": self.signal, "Noisy": self.noisy_signal})
+        self.df = pd.DataFrame(
+            {"Time": self.t, "Clean": self.signal, "Noisy": self.noisy_signal}
+        )
 
     def test_apply_moving_average_vectorized(self) -> None:
         """Test the vectorized moving average filter."""

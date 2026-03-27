@@ -52,7 +52,9 @@ class TestDatasetMetadata:
 
     def test_round_trip_dict(self) -> None:
         """to_dict → from_dict should be lossless."""
-        original = DatasetMetadata.create(name="test", operation="filtered", parameters={"k": 5})
+        original = DatasetMetadata.create(
+            name="test", operation="filtered", parameters={"k": 5}
+        )
         restored = DatasetMetadata.from_dict(original.to_dict())
         assert restored.name == original.name
         assert restored.operation == original.operation
@@ -129,7 +131,9 @@ class TestDatasetManagerLoad:
         assert mgr.active_data is not None
         assert len(mgr.active_data) == 3
 
-    def test_load_from_dataframe(self, mgr: DatasetManager, sample_df: pd.DataFrame) -> None:
+    def test_load_from_dataframe(
+        self, mgr: DatasetManager, sample_df: pd.DataFrame
+    ) -> None:
         ds_id = mgr.load_from_dataframe(sample_df, name="inline")
         assert ds_id in mgr.dataset_ids
         pd.testing.assert_frame_equal(mgr.active_data, sample_df)
@@ -142,7 +146,9 @@ class TestDatasetManagerLoad:
 class TestDatasetManagerVersioning:
     """Tests for save_version and undo/redo."""
 
-    def test_save_version_and_undo(self, mgr: DatasetManager, sample_df: pd.DataFrame) -> None:
+    def test_save_version_and_undo(
+        self, mgr: DatasetManager, sample_df: pd.DataFrame
+    ) -> None:
         mgr.load_from_dataframe(sample_df, name="orig")
         modified = sample_df.copy()
         modified["z"] = [100, 200, 300]
@@ -167,7 +173,9 @@ class TestDatasetManagerVersioning:
 class TestDatasetManagerClose:
     """Tests for closing datasets."""
 
-    def test_close_removes_dataset(self, mgr: DatasetManager, sample_df: pd.DataFrame) -> None:
+    def test_close_removes_dataset(
+        self, mgr: DatasetManager, sample_df: pd.DataFrame
+    ) -> None:
         ds_id = mgr.load_from_dataframe(sample_df, name="to_close")
         mgr.close_dataset(ds_id)
         assert ds_id not in mgr.dataset_ids
@@ -197,4 +205,6 @@ class TestDatasetManagerWorkspace:
         mgr2 = DatasetManager()
         mgr2.load_workspace(ws_path)
         assert mgr2.active_data is not None
-        np.testing.assert_array_almost_equal(mgr2.active_data["x"].values, sample_df["x"].values)
+        np.testing.assert_array_almost_equal(
+            mgr2.active_data["x"].values, sample_df["x"].values
+        )

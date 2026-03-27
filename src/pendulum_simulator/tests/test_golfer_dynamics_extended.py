@@ -1,5 +1,3 @@
-from numba import jit
-
 """Extended tests for golfer_dynamics.py — covering internal helpers and API.
 
 These tests augment test_golfer_dynamics.py to reach >80% coverage by
@@ -154,7 +152,6 @@ class TestTrigCache:
         assert tc.sin_club == pytest.approx(np.sin(np.pi / 3))
         assert tc.cos_club == pytest.approx(np.cos(np.pi / 3))
 
-    @jit(nopython=True, fastmath=True)
     def test_trig_identity(self) -> None:
         """sin^2 + cos^2 = 1 for every joint."""
         q = np.random.default_rng(5).uniform(-np.pi, np.pi, N_DOF)

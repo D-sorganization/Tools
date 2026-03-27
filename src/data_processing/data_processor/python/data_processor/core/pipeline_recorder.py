@@ -19,7 +19,7 @@ class PipelineRecorder:
 
     def __init__(self, pipeline_name: str = "Untitled Pipeline") -> None:
         """Initialize the recorder."""
-        if not (pipeline_name is not None): raise ValueError(f"Assertion failed: { pipeline_name is not None }, "pipeline_name must be provided"")
+        assert pipeline_name is not None, "pipeline_name must be provided"
         self._pipeline = ProcessingPipeline(name=pipeline_name)
         self._recording = True
 
@@ -52,7 +52,7 @@ class PipelineRecorder:
         options: dict[str, Any] | None = None,
     ) -> None:
         """Record a file load operation."""
-        if not (file_path is not None): raise ValueError(f"Assertion failed: { file_path is not None }, "file_path must be provided"")
+        assert file_path is not None, "file_path must be provided"
         if not self._recording:
             return
 
@@ -73,7 +73,7 @@ class PipelineRecorder:
         signals: list[str] | None = None,
     ) -> None:
         """Record a filter operation."""
-        if not (filter_type is not None): raise ValueError(f"Assertion failed: { filter_type is not None }, "filter_type must be provided"")
+        assert filter_type is not None, "filter_type must be provided"
         if not self._recording:
             return
 
@@ -93,7 +93,7 @@ class PipelineRecorder:
         parameters: dict[str, Any],
     ) -> None:
         """Record a transformation operation."""
-        if not (transform_type is not None): raise ValueError(f"Assertion failed: { transform_type is not None }, "transform_type must be provided"")
+        assert transform_type is not None, "transform_type must be provided"
         if not self._recording:
             return
 
@@ -112,7 +112,7 @@ class PipelineRecorder:
         formula: str,
     ) -> None:
         """Record a calculated column operation."""
-        if not (column_name is not None): raise ValueError(f"Assertion failed: { column_name is not None }, "column_name must be provided"")
+        assert column_name is not None, "column_name must be provided"
         if not self._recording:
             return
 
@@ -132,7 +132,7 @@ class PipelineRecorder:
         method: str = "mean",
     ) -> None:
         """Record a resampling operation."""
-        if not (time_column is not None): raise ValueError(f"Assertion failed: { time_column is not None }, "time_column must be provided"")
+        assert time_column is not None, "time_column must be provided"
         if not self._recording:
             return
 
@@ -153,7 +153,7 @@ class PipelineRecorder:
         method: str = "trapezoidal",
     ) -> None:
         """Record an integration operation."""
-        if not (time_column is not None): raise ValueError(f"Assertion failed: { time_column is not None }, "time_column must be provided"")
+        assert time_column is not None, "time_column must be provided"
         if not self._recording:
             return
 
@@ -175,7 +175,7 @@ class PipelineRecorder:
         orders: list[int] | None = None,
     ) -> None:
         """Record a differentiation operation."""
-        if not (time_column is not None): raise ValueError(f"Assertion failed: { time_column is not None }, "time_column must be provided"")
+        assert time_column is not None, "time_column must be provided"
         if not self._recording:
             return
 
@@ -197,7 +197,7 @@ class PipelineRecorder:
         end_time: str | None = None,
     ) -> None:
         """Record a time range trim operation."""
-        if not (time_column is not None): raise ValueError(f"Assertion failed: { time_column is not None }, "time_column must be provided"")
+        assert time_column is not None, "time_column must be provided"
         if not self._recording:
             return
 
@@ -218,7 +218,7 @@ class PipelineRecorder:
         columns: list[str],
     ) -> None:
         """Record a column selection operation."""
-        if not (columns is not None): raise ValueError(f"Assertion failed: { columns is not None }, "columns must be provided"")
+        assert columns is not None, "columns must be provided"
         if not self._recording:
             return
 
@@ -235,7 +235,7 @@ class PipelineRecorder:
         options: dict[str, Any] | None = None,
     ) -> None:
         """Record an export operation."""
-        if not (file_path is not None): raise ValueError(f"Assertion failed: { file_path is not None }, "file_path must be provided"")
+        assert file_path is not None, "file_path must be provided"
         if not self._recording:
             return
 
@@ -256,7 +256,7 @@ class PipelineRecorder:
         description: str = "",
     ) -> None:
         """Record a custom operation."""
-        if not (operation_name is not None): raise ValueError(f"Assertion failed: { operation_name is not None }, "operation_name must be provided"")
+        assert operation_name is not None, "operation_name must be provided"
         if not self._recording:
             return
 

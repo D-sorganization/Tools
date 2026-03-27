@@ -6,13 +6,12 @@
 
 from __future__ import annotations
 
-from numba import jit
-
 import logging
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
+from numba import jit
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QFont, QTextCursor
 from PyQt6.QtWidgets import (

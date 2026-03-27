@@ -1,5 +1,3 @@
-from typing import Any
-
 """
 Tests for massless hub standoff and adjustable rotation centre.
 
@@ -12,8 +10,6 @@ Covers:
 """
 
 from __future__ import annotations
-
-from typing import Any
 
 import numpy as np
 import pytest
@@ -31,7 +27,7 @@ from double_pendulum_golf.hub_options import (
 
 
 @pytest.fixture
-def default_params() -> Any:
+def default_params():
     return GolferParams(
         m_hub=40.0,
         m_r_upper=3.0,
@@ -61,15 +57,15 @@ def default_params() -> Any:
 class TestEffectiveHubMass:
     """Test the hub mass epsilon replacement."""
 
-    def test_normal_mass_unchanged(self) -> Any:
+    def test_normal_mass_unchanged(self):
         assert effective_hub_mass(40.0, massless=False) == 40.0
 
-    def test_massless_gives_epsilon(self) -> Any:
+    def test_massless_gives_epsilon(self):
         m = effective_hub_mass(40.0, massless=True)
         assert m > 0
         assert m < 0.001  # effectively massless
 
-    def test_epsilon_is_positive(self) -> Any:
+    def test_epsilon_is_positive(self):
         """Mass must remain positive for numerical stability."""
         m = effective_hub_mass(0.001, massless=True)
         assert m > 0
@@ -83,16 +79,16 @@ class TestEffectiveHubMass:
 class TestMakeMasslessHubParams:
     """Test creating params with massless hub."""
 
-    def test_returns_golfer_params(self, default_params) -> Any:
+    def test_returns_golfer_params(self, default_params):
         p = make_massless_hub_params(default_params)
         assert isinstance(p, GolferParams)
 
-    def test_hub_mass_is_epsilon(self, default_params) -> Any:
+    def test_hub_mass_is_epsilon(self, default_params):
         p = make_massless_hub_params(default_params)
         assert p.m_hub < 0.001
         assert p.m_hub > 0
 
-    def test_other_params_preserved(self, default_params) -> Any:
+    def test_other_params_preserved(self, default_params):
         p = make_massless_hub_params(default_params)
         assert p.m_r_upper == default_params.m_r_upper
         assert p.L_club == default_params.L_club
@@ -107,24 +103,24 @@ class TestMakeMasslessHubParams:
 class TestComputeSystemCOM:
     """Test centre of mass computation."""
 
-    def test_returns_2d(self, default_params) -> Any:
+    def test_returns_2d(self, default_params):
         q = np.zeros(8)
         com = compute_system_com(q, default_params)
         assert com.shape == (2,)
 
-    def test_finite(self, default_params) -> Any:
+    def test_finite(self, default_params):
         q = np.zeros(8)
         com = compute_system_com(q, default_params)
         assert np.all(np.isfinite(com))
 
-    def test_symmetric_config_x_near_zero(self, default_params) -> Any:
+    def test_symmetric_config_x_near_zero(self, default_params):
         """In the hanging-down config (all angles zero), x-COM should be near zero."""
         q = np.zeros(8)
         com = compute_system_com(q, default_params)
         # With symmetric arms and zero angles, COM should be close to x=0
         assert abs(com[0]) < 0.5  # within half a metre of centre
 
-    def test_different_config_different_com(self, default_params) -> Any:
+    def test_different_config_different_com(self, default_params):
         """Different joint angles should give different COM."""
         q1 = np.zeros(8)
         q2 = np.array([0.5, 0.3, -0.2, 0.1, -0.3, 0.2, -0.1, 0.4])
@@ -141,7 +137,7 @@ class TestComputeSystemCOM:
 class TestMassMatrixWithMasslessHub:
     """Verify mass matrix remains positive-definite with epsilon hub mass."""
 
-    def test_positive_semi_definite(self, default_params) -> Any:
+    def test_positive_semi_definite(self, default_params):
         """Mass matrix should be PSD even with epsilon hub mass.
 
         Note: The golfer 8-DOF mass matrix is rank 6 due to 4 holonomic
@@ -161,7 +157,7 @@ class TestMassMatrixWithMasslessHub:
         positive_count = np.sum(eigenvalues > 1e-10)
         assert positive_count >= 6, f"Only {positive_count} positive eigenvalues"
 
-    def test_symmetric(self, default_params) -> Any:
+    def test_symmetric(self, default_params):
         from double_pendulum_golf.physics_golfer import mass_matrix
 
         p = make_massless_hub_params(default_params)

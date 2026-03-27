@@ -20,8 +20,6 @@ Includes:
 
 from __future__ import annotations
 
-from numba import jit
-
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -29,6 +27,7 @@ from enum import Enum
 
 import numpy as np
 import pandas as pd
+from numba import jit
 
 logger = logging.getLogger(__name__)
 

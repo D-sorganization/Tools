@@ -241,7 +241,9 @@ def double_mass_matrix(phi: float, params: PendulumParams) -> np.ndarray | None:
         return None
 
 
-def double_gravity_vector(theta1: float, phi: float, params: PendulumParams) -> np.ndarray | None:
+def double_gravity_vector(
+    theta1: float, phi: float, params: PendulumParams
+) -> np.ndarray | None:
     """Return the native double-pendulum gravity vector, or ``None`` if unavailable."""
     if not (theta1 is not None):
         raise ValueError("theta1 must be provided")
@@ -334,7 +336,9 @@ def double_forward_kinematics(
     }
 
 
-def triple_mass_matrix(phi1: float, phi2: float, params: TriplePendulumParams) -> np.ndarray | None:
+def triple_mass_matrix(
+    phi1: float, phi2: float, params: TriplePendulumParams
+) -> np.ndarray | None:
     """Return the native triple-pendulum mass matrix, or ``None`` if unavailable."""
     if not (phi1 is not None):
         raise ValueError("phi1 must be provided")

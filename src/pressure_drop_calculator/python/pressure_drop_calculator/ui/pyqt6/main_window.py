@@ -1,5 +1,3 @@
-from numba import jit
-
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -10,10 +8,10 @@ A comprehensive GUI for calculating pipe pressure drops using the
 PressureDropCalculationEngine from the shared process calculators.
 """
 
-from __future__ import annotations  # noqa: E402, F404
+from __future__ import annotations
 
-import os  # noqa: E402
-from typing import Any  # noqa: E402
+import os
+from typing import Any
 
 if os.environ.get("HEADLESS", "false").lower() == "true":
     import matplotlib
@@ -198,7 +196,6 @@ class PressureDropCalculatorWidget(QWidget):
 
         return flow_group
 
-    @jit(nopython=True, fastmath=True)
     def _create_gas_composition_group(self) -> QGroupBox:
         """Create the gas composition input group."""
         gas_group = QGroupBox("Gas Composition (mol %)")

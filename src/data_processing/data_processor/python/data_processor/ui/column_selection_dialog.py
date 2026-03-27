@@ -1,11 +1,8 @@
-from typing import Any
-
 """Column Selection Dialog for Data Processor."""
 
 from __future__ import annotations
 
 from tkinter import messagebox
-from typing import Any
 
 import customtkinter as ctk
 
@@ -30,7 +27,7 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
 
         self.setup_ui()
 
-    def setup_ui(self) -> Any:
+    def setup_ui(self):
         """Setup the user interface."""
         # Main frame
         main_frame = ctk.CTkFrame(self)

@@ -244,7 +244,9 @@ class NeuralNetworkScriptExporter:
         for layer in config.layers:
             if layer.layer_type == "dense":
                 act = self._pytorch_activation(layer.activation)
-                lines.append(f"        layers.append(nn.Linear(prev_size, {layer.units}))")
+                lines.append(
+                    f"        layers.append(nn.Linear(prev_size, {layer.units}))"
+                )
                 if act:
                     lines.append(f"        layers.append({act})")
                 lines.append(f"        prev_size = {layer.units}")
@@ -262,7 +264,9 @@ class NeuralNetworkScriptExporter:
         )
         return lines
 
-    def _pytorch_data_loading(self, config: NetworkConfig, data_path: str | None) -> list[str]:
+    def _pytorch_data_loading(
+        self, config: NetworkConfig, data_path: str | None
+    ) -> list[str]:
         """Generate PyTorch data loading and DataLoader creation."""
         if not (config is not None):
             raise ValueError("config must be provided")
@@ -333,7 +337,10 @@ class NeuralNetworkScriptExporter:
             "# Training Setup",
             "device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')",  # noqa: E501
             f"model = NeuralNetwork(input_size={config.input_features}, output_size={config.output_features}).to(device)",  # noqa: E501
-            ("optimizer = " f"{optimizer_name}(model.parameters(), lr={config.learning_rate})"),
+            (
+                "optimizer = "
+                f"{optimizer_name}(model.parameters(), lr={config.learning_rate})"
+            ),
             f"criterion = {loss_name}()",
             "",
             "# Early stopping",
@@ -459,7 +466,9 @@ class NeuralNetworkScriptExporter:
         for layer in config.layers[:-1]:  # Skip last layer
             if layer.layer_type == "dense":
                 act = layer.activation.value
-                lines.append(f"        layers.Dense({layer.units}, activation='{act}'),")
+                lines.append(
+                    f"        layers.Dense({layer.units}, activation='{act}'),"
+                )
             elif layer.layer_type == "dropout":
                 lines.append(f"        layers.Dropout({layer.dropout_rate}),")
 
@@ -475,7 +484,9 @@ class NeuralNetworkScriptExporter:
         )
         return lines
 
-    def _tensorflow_data_loading(self, config: NetworkConfig, data_path: str | None) -> list[str]:
+    def _tensorflow_data_loading(
+        self, config: NetworkConfig, data_path: str | None
+    ) -> list[str]:
         """Generate TensorFlow data loading code."""
         if not (config is not None):
             raise ValueError("config must be provided")
@@ -570,7 +581,9 @@ class NeuralNetworkScriptExporter:
         lines = self._sklearn_header()
 
         hidden_sizes = [
-            layer_cfg.units for layer_cfg in config.layers if layer_cfg.layer_type == "dense"
+            layer_cfg.units
+            for layer_cfg in config.layers
+            if layer_cfg.layer_type == "dense"
         ][:-1]
 
         if include_data_loading:
@@ -600,7 +613,9 @@ class NeuralNetworkScriptExporter:
             "",
         ]
 
-    def _sklearn_data_loading(self, config: NetworkConfig, data_path: str | None) -> list[str]:
+    def _sklearn_data_loading(
+        self, config: NetworkConfig, data_path: str | None
+    ) -> list[str]:
         """Generate scikit-learn data loading and split code."""
         if not (config is not None):
             raise ValueError("config must be provided")
@@ -638,11 +653,15 @@ class NeuralNetworkScriptExporter:
             )
         return lines
 
-    def _sklearn_training(self, config: NetworkConfig, hidden_sizes: list[int]) -> list[str]:
+    def _sklearn_training(
+        self, config: NetworkConfig, hidden_sizes: list[int]
+    ) -> list[str]:
         """Generate scikit-learn MLP model creation and training."""
         if not (config is not None):
             raise ValueError("config must be provided")
-        model_class = "MLPRegressor" if config.task_type == "regression" else "MLPClassifier"
+        model_class = (
+            "MLPRegressor" if config.task_type == "regression" else "MLPClassifier"
+        )
         return [
             "# Model",
             f"model = {model_class}(",

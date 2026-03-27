@@ -1,5 +1,3 @@
-from numba import jit
-
 """
 SimScape MDL/SLX file parser.
 
@@ -459,7 +457,6 @@ class MDLParser:
 
         return model
 
-    @jit(nopython=True, fastmath=True)
     def _parse_mdl_content(self, content: str, model: SimscapeModel) -> None:
         """Parse MDL text content."""
         # Find Model name

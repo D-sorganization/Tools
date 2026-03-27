@@ -1,25 +1,23 @@
-from numba import jit
-
 """Rendering mixin for SolarSystemScene.
 
 Extracts 3D and overlay rendering logic from the main scene class
 to reduce class size and improve single-responsibility adherence.
 """
 
-from __future__ import annotations  # noqa: E402, F404
+from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any  # noqa: E402
+from typing import TYPE_CHECKING, Any
 
-import numpy as np  # noqa: E402
+import numpy as np
 
-from ..core.celestial_body import BodyType  # noqa: E402
-from ..core.constants import (  # noqa: E402
+from ..core.celestial_body import BodyType
+from ..core.constants import (
     DWARF_PLANETS,
     INNER_PLANETS,
     OUTER_PLANETS,
     PLANET_ORDER,
 )
-from ..data.famous_missions import FAMOUS_MISSIONS  # noqa: E402
+from ..data.famous_missions import FAMOUS_MISSIONS
 
 if TYPE_CHECKING:
     pass
@@ -181,7 +179,6 @@ class SceneRenderMixin:
                     line_width=1.5,
                 )
 
-    @jit(nopython=True, fastmath=True)
     def _render_spacecraft(self, renderer: Any, julian_date: float) -> None:
         """Render spacecraft markers and labels based on mission timeline."""
         for spacecraft in self.spacecraft.values():

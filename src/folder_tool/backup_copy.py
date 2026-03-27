@@ -1,18 +1,17 @@
-from numba import jit
-
+# mypy: ignore-errors
 """BackupCopyMixin -- Backup creation and safe file copy methods."""
 
-from __future__ import annotations  # noqa: E402, F404
+from __future__ import annotations
 
-import logging  # noqa: E402
-import os  # noqa: E402
-import shutil  # noqa: E402
-import sys  # noqa: E402
-import time  # noqa: E402
-from datetime import datetime  # noqa: E402
-from pathlib import Path  # noqa: E402
+import logging
+import os
+import shutil
+import sys
+import time
+from datetime import datetime
+from pathlib import Path
 
-from Folders_Tool_r0 import (  # noqa: E402
+from Folders_Tool_r0 import (
     MAX_COUNTER_ATTEMPTS,
     MAX_FILE_SIZE_MB,
     MAX_RETRY_ATTEMPTS,
@@ -96,14 +95,13 @@ class BackupCopyMixin:
             except (IOError, PermissionError, OSError) as e:
                 logger.warning(f"Failed to cleanup {backup_base}: {e}")
 
-    @jit(nopython=True, fastmath=True)
     def create_backup(self) -> str | None:
         """Creates a backup of source folders before processing.
 
         Returns:
             Path to backup directory if successful [str], None if failed.
         """
-        valid_folders = self._validated_source_folders(self.source_folders)  # type: ignore[attr-defined]
+        valid_folders = self._validated_source_folders(self.source_folders)
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         try:
@@ -111,7 +109,7 @@ class BackupCopyMixin:
         except (IOError, PermissionError, OSError) as e:
             raise ValueError(f"Cannot determine backup location: {e}") from e
 
-        self.update_status("Creating backup...")  # type: ignore[attr-defined]
+        self.update_status("Creating backup...")
         logger.info(f"Creating backup at: {backup_base}")
 
         try:
@@ -126,7 +124,7 @@ class BackupCopyMixin:
             successful = 0
             failed = 0
             for i, folder in enumerate(valid_folders):
-                if self.cancel_operation:  # type: ignore[attr-defined]
+                if self.cancel_operation:
                     logger.info("Backup operation cancelled by user")
                     return None
 
@@ -136,7 +134,7 @@ class BackupCopyMixin:
                     failed += 1
 
                 progress = (i + 1) / len(valid_folders) * PROGRESS_BACKUP_PERCENT
-                self.update_progress(  # type: ignore[attr-defined]
+                self.update_progress(
                     progress,
                     f"Backing up folder {i + 1}/{len(valid_folders)}",
                 )
@@ -160,7 +158,6 @@ class BackupCopyMixin:
             self._cleanup_backup_dir(backup_base)
             raise
 
-    @jit(nopython=True, fastmath=True)
     def _safe_copy_file(self, source_path: str, dest_path: str) -> bool:
         """Safely copy a file with retry logic and error handling.
 

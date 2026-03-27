@@ -1,5 +1,3 @@
-from typing import Any
-
 """Round-trip URDF generation and semantic equality tests (#1064).
 
 Tests that a URDF parsed -> to_urdf() -> re-parsed produces
@@ -12,7 +10,7 @@ Design by Contract
 - Inertia values, joint limits, origins preserved with bounded precision
 """
 
-from __future__ import annotations  # noqa: F404
+from __future__ import annotations
 
 import pytest
 
@@ -95,7 +93,7 @@ MULTI_JOINT_URDF = """\
 class TestURDFRoundTrip:
     """Parse -> to_urdf -> re-parse must preserve semantics."""
 
-    def _round_trip(self, urdf_str: str) -> Any:
+    def _round_trip(self, urdf_str: str):
         """Parse, write, re-parse, return both models."""
         from model_generation.converters.urdf_parser import URDFParser
 

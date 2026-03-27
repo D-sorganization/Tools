@@ -1,11 +1,10 @@
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """Folder Tool Tab and Logic for Data Processor."""
 
 from __future__ import annotations
-
-from numba import jit
 
 import heapq
 import logging
@@ -117,7 +116,7 @@ class FolderToolMixin:
         )
         self.folder_source_info_label.grid(row=3, column=0, sticky="w", padx=10, pady=5)
 
-    def _create_folder_destination_section(self, parent) -> Any:
+    def _create_folder_destination_section(self, parent):
         """Create the destination folder section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -143,7 +142,7 @@ class FolderToolMixin:
             dest_frame, text="Set Destination", command=self._folder_select_dest_folder
         ).grid(row=1, column=1, padx=10, pady=5)
 
-    def _create_folder_filtering_section(self, parent) -> Any:
+    def _create_folder_filtering_section(self, parent):
         """Create the file filtering section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -191,7 +190,7 @@ class FolderToolMixin:
             font=ctk.CTkFont(size=12),
         ).grid(row=4, column=0, columnspan=2, sticky="w", padx=10, pady=5)
 
-    def _create_folder_operation_section(self, parent) -> Any:
+    def _create_folder_operation_section(self, parent):
         """Create the main operation section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -231,7 +230,7 @@ class FolderToolMixin:
             row=len(operations) + 1, column=0, sticky="w", padx=10, pady=10
         )
 
-    def _create_folder_organization_section(self, parent) -> Any:
+    def _create_folder_organization_section(self, parent):
         """Create the organization options section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -257,7 +256,7 @@ class FolderToolMixin:
             variable=self.folder_organize_by_date_var,
         ).grid(row=2, column=0, sticky="w", padx=10, pady=2)
 
-    def _create_folder_output_section(self, parent) -> Any:
+    def _create_folder_output_section(self, parent):
         """Create the output options section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -293,7 +292,7 @@ class FolderToolMixin:
             variable=self.folder_backup_before_var,
         ).grid(row=4, column=0, sticky="w", padx=10, pady=2)
 
-    def _create_folder_progress_section(self, parent) -> Any:
+    def _create_folder_progress_section(self, parent):
         """Create the progress section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -316,7 +315,7 @@ class FolderToolMixin:
         )
         self.folder_status_label.grid(row=2, column=0, sticky="w", padx=10, pady=5)
 
-    def _create_folder_run_section(self, parent) -> Any:
+    def _create_folder_run_section(self, parent):
         """Create the run button section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -341,7 +340,7 @@ class FolderToolMixin:
         )
         self.folder_cancel_button.grid(row=0, column=1, padx=10, pady=10)
 
-    def _update_folder_mode_description(self) -> Any:
+    def _update_folder_mode_description(self):
         """Update the mode description based on selected operation."""
         mode = self.folder_operation_mode.get()
         descriptions = {
@@ -380,18 +379,18 @@ class FolderToolMixin:
         except (OSError, RuntimeError) as e:
             messagebox.showerror("Error", f"Failed to select source folders: {str(e)}")
 
-    def _folder_remove_selected_source(self) -> Any:
+    def _folder_remove_selected_source(self):
         """Remove selected source folder from the list."""
         if self.folder_source_folders:
             self.folder_source_folders.pop()
             self._folder_update_source_display()
 
-    def _folder_clear_source_folders(self) -> Any:
+    def _folder_clear_source_folders(self):
         """Clear all source folders."""
         self.folder_source_folders = []
         self._folder_update_source_display()
 
-    def _folder_update_source_display(self) -> Any:
+    def _folder_update_source_display(self):
         """Update the source folders display."""
         self.folder_source_listbox.delete("1.0", "end")
         if self.folder_source_folders:
@@ -403,7 +402,7 @@ class FolderToolMixin:
         else:
             self.folder_source_info_label.configure(text="No folders selected")
 
-    def _folder_select_dest_folder(self) -> Any:
+    def _folder_select_dest_folder(self):
         """Select destination folder."""
         try:
             folder = filedialog.askdirectory(title="Select Destination Folder")
@@ -477,7 +476,6 @@ class FolderToolMixin:
             self.after(0, lambda m=msg: self.folder_status_var.set(m))  # type: ignore
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore
-    @jit(nopython=True, fastmath=True)
 
     def _folder_combine_operation(self) -> None:
         """Combine operation - copy all files from source folders to destination."""
@@ -485,7 +483,8 @@ class FolderToolMixin:
             os.makedirs(self.folder_destination, exist_ok=True)
             all_file_paths = []
             for src in self.folder_source_folders:
-                    all_file_paths.extend([Path(root) / file for file in files])
+                for root, _, files in os.walk(src):
+                    for file in files:
                         all_file_paths.append(Path(root) / file)
 
             total_files = len(all_file_paths)
@@ -522,7 +521,6 @@ class FolderToolMixin:
                     )
         except (OSError, PermissionError) as e:
             logger.error(f"Combine failed: {e}")
-    @jit(nopython=True, fastmath=True)
 
     def _folder_flatten_operation(self) -> None:
         """Flatten operation - copy files from nested folders to top level."""
@@ -530,7 +528,8 @@ class FolderToolMixin:
             os.makedirs(self.folder_destination, exist_ok=True)
             all_files = []
             for src in self.folder_source_folders:
-                    all_files.extend([(Path(root) / f, f) for f in files])
+                for root, _, files in os.walk(src):
+                    for f in files:
                         all_files.append((Path(root) / f, f))
 
             total = len(all_files)
@@ -552,9 +551,7 @@ class FolderToolMixin:
                     )  # type: ignore
         except (OSError, PermissionError) as e:
             logger.error(f"Flatten failed: {e}")
-    @jit(nopython=True, fastmath=True)
 
-    @jit(nopython=True, fastmath=True)
     def _folder_prune_operation(self) -> None:
         """Prune operation - copy folders but skip empty subfolders."""
         try:

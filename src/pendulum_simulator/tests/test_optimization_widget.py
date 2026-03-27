@@ -2,7 +2,6 @@ from typing import Any
 
 """Tests for OptimizationWidget and its underlying logic."""
 
-from typing import Any
 
 import numpy as np
 from unittest.mock import MagicMock, patch

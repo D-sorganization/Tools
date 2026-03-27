@@ -1,5 +1,3 @@
-from numba import jit
-
 """
 Analytical inertia formulas for primitive shapes.
 
@@ -396,7 +394,6 @@ def parallel_axis(
     }
 
 
-@jit(nopython=True, fastmath=True)
 def combine_inertias(
     inertias: list[tuple[dict[str, float], float, tuple[float, float, float]]],
 ) -> dict[str, float]:

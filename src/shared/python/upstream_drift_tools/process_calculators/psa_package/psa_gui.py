@@ -1,5 +1,3 @@
-from numba import jit
-
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -19,12 +17,12 @@ from collections.abc import Callable  # noqa: E402
 
 import matplotlib  # noqa: E402
 import numpy as np  # noqa: E402
-from matplotlib.backends.backend_qtagg import (
-    FigureCanvasQTAgg as FigureCanvas,  # noqa: E402
+from matplotlib.backends.backend_qtagg import (  # noqa: E402
+    FigureCanvasQTAgg as FigureCanvas,
 )
-from matplotlib.backends.backend_qtagg import (
+from matplotlib.backends.backend_qtagg import (  # noqa: E402
     NavigationToolbar2QT as NavigationToolbar,
-)  # noqa: E402
+)
 from matplotlib.figure import Figure  # noqa: E402
 from PyQt6.QtCore import Qt  # noqa: E402
 from PyQt6.QtGui import QAction, QDoubleValidator, QFont, QPixmap  # noqa: E402
@@ -735,7 +733,6 @@ class PFDWidget(QWidget):
         super().__init__(parent)
         self._setup_ui()
 
-    @jit(nopython=True, fastmath=True)
     def _setup_ui(self) -> None:
         layout = QVBoxLayout(self)
 

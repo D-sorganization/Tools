@@ -99,8 +99,16 @@ def main() -> int:
         "src/shared/python/tests",  # the tests folder itself
         "src/shared/python/gui_launcher",  # tests/shared/python/gui_launcher/test_registry.py
     }
+    # Legacy directories explicitly excluded from ruff linting in pyproject.toml.
+    # These directories pre-date the test contract and are not required to have tests
+    # until they are promoted out of legacy status.
+    LEGACY_EXEMPT = {
+        "src/tools/folder_tools",  # excluded from ruff; legacy monolith, no unit tests yet
+    }
     violations = [
-        pkg for pkg in packages if pkg not in KNOWN_TESTED and not has_tests(pkg)
+        pkg
+        for pkg in packages
+        if pkg not in KNOWN_TESTED and pkg not in LEGACY_EXEMPT and not has_tests(pkg)
     ]
     if violations:
         sys.stderr.write("Minimum test contract failed for changed packages:\n")

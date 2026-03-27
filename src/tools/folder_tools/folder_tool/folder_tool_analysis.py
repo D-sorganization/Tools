@@ -1,4 +1,3 @@
-from numba import jit
 """AnalysisMixin -- Analysis report and input validation for FolderProcessorApp."""
 
 from __future__ import annotations
@@ -60,7 +59,6 @@ class AnalysisMixin:
         if not valid:
             raise ValueError("No valid source folders to analyze")
         return valid
-    @jit(nopython=True, fastmath=True)
 
     def _analyze_single_folder(
         self,
@@ -83,7 +81,6 @@ class AnalysisMixin:
         for root, _dirs, files in os.walk(folder):
             if self.cancel_operation:
                 break  # type: ignore[unreachable]
-            # OPTIMIZATION_TARGET: Migrate computationally bound loop to PyO3/Rust Core natively
 
             for file in files:
                 if self.cancel_operation:
@@ -91,7 +88,9 @@ class AnalysisMixin:
 
                 file_path = Path(root) / file
                 try:
-                    if not Path(file_path).exists() or not os.access(file_path, os.R_OK):
+                    if not Path(file_path).exists() or not os.access(
+                        file_path, os.R_OK
+                    ):
                         folder_errors += 1
                         continue
 
@@ -145,7 +144,8 @@ class AnalysisMixin:
             size_mb = size_by_type[ext] / (1024 * 1024)
             report.append(f"  {ext}: {count} files, {size_mb:.1f} MB")
 
-        report.extend([f'  {Path(file_path).name}: {size / (1024 * 1024):.1f} MB' for (file_path, size) in sorted(largest_files, key=lambda x: x[1], reverse=True)])
+        report.extend(["", "LARGEST FILES:"])
+        for file_path, size in sorted(largest_files, key=lambda x: x[1], reverse=True):
             report.append(f"  {Path(file_path).name}: {size / (1024 * 1024):.1f} MB")
 
         if analysis_errors:
@@ -158,12 +158,12 @@ class AnalysisMixin:
                 f"  Source folders processed: {num_folders}",
                 f"  Total folders analyzed: {num_folders}",
                 f"  Analysis timestamp: {datetime.now()}",
-                f"  File size limits: {MIN_FILE_SIZE_BYTES} bytes - " f"{MAX_FILE_SIZE_MB} MB",
+                f"  File size limits: {MIN_FILE_SIZE_BYTES} bytes - "
+                f"{MAX_FILE_SIZE_MB} MB",
             ],
         )
         return report
 
-    @jit(nopython=True, fastmath=True)
     def generate_analysis_report(self) -> str | None:
         """Generates a comprehensive analysis report.
 
@@ -210,7 +210,8 @@ class AnalysisMixin:
                     )
                 else:
                     report.append(
-                        f"  Files: {folder_files}, " f"Size: {folder_size / (1024 * 1024):.1f} MB",
+                        f"  Files: {folder_files}, "
+                        f"Size: {folder_size / (1024 * 1024):.1f} MB",
                     )
             except (OSError, PermissionError) as e:
                 error_msg = f"Error accessing folder {folder}: {e}"
@@ -231,7 +232,8 @@ class AnalysisMixin:
         )
 
         logger.info(
-            f"Analysis completed: {total_files} files, " f"{total_size / (1024 * 1024):.1f} MB",
+            f"Analysis completed: {total_files} files, "
+            f"{total_size / (1024 * 1024):.1f} MB",
         )
         if analysis_errors:
             logger.warning(f"Analysis completed with {len(analysis_errors)} errors")
@@ -285,7 +287,8 @@ class AnalysisMixin:
                     if ext and not ext.startswith("."):
                         messagebox.showwarning(
                             "Invalid Extension Format",
-                            f"Extension '{ext}' should start with a dot " "(e.g., '.txt').",
+                            f"Extension '{ext}' should start with a dot "
+                            "(e.g., '.txt').",
                         )
                         return False
             except (KeyError, ValueError, TypeError):
@@ -335,8 +338,12 @@ class AnalysisMixin:
                 os.W_OK,
             )
         else:
-            validation_results["destination_exists"] = True  # Not required for all modes
-            validation_results["destination_writable"] = True  # Not required for all modes
+            validation_results["destination_exists"] = (
+                True  # Not required for all modes
+            )
+            validation_results["destination_writable"] = (
+                True  # Not required for all modes
+            )
 
         # Check file size inputs
         try:

@@ -1,5 +1,3 @@
-from numba import jit
-
 """URDF XML generator — pure-Python, GUI-independent.
 
 Generates well-formed URDF XML from a URDFConfig. This module has
@@ -13,16 +11,16 @@ Addresses:
   - Issue #1348: Hardcoded inertia placeholders
 """
 
-from __future__ import annotations  # noqa: E402, F404
+from __future__ import annotations
 
-import logging  # noqa: E402
-import re  # noqa: E402
-import xml.etree.ElementTree as ET  # nosec B405 — input is self-generated  # noqa: E402
-from dataclasses import dataclass  # noqa: E402
+import logging
+import re
+import xml.etree.ElementTree as ET  # nosec B405 — input is self-generated
+from dataclasses import dataclass
 
-from urdf_builder_gui.contracts import require  # noqa: E402
+from urdf_builder_gui.contracts import require
 
-from .anthropometric_model import (  # noqa: E402
+from .anthropometric_model import (
     URDFConfig,
     compute_box_inertia,
     compute_segment_length,
@@ -169,7 +167,6 @@ _SEGMENT_DEFS: dict[str, _SegmentDef] = {
 # ── Public API ──────────────────────────────────────────────────────────
 
 
-@jit(nopython=True, fastmath=True)
 def generate_urdf_xml(config: URDFConfig) -> str:
     """Generate a complete URDF XML string from configuration.
 

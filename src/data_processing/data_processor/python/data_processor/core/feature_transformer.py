@@ -133,7 +133,9 @@ class FeatureTransformer:
 
         elif method == TransformationType.NORMALIZE:
             min_val = self._fit_params.get("normalize_min", np.min(features, axis=0))
-            range_val = self._fit_params.get("normalize_range", np.max(features, axis=0) - min_val)
+            range_val = self._fit_params.get(
+                "normalize_range", np.max(features, axis=0) - min_val
+            )
             range_val[range_val == 0] = 1
             return (features - min_val) / range_val
 

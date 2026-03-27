@@ -62,7 +62,9 @@ class TestPipelineExecutorDisabledSteps:
 class TestPipelineExecutorSelect:
     """Test SELECT operation."""
 
-    def test_select_columns(self, executor: PipelineExecutor, sample_df: pd.DataFrame) -> None:
+    def test_select_columns(
+        self, executor: PipelineExecutor, sample_df: pd.DataFrame
+    ) -> None:
         """SELECT should keep only the specified columns."""
         pipeline = ProcessingPipeline(
             name="select_test",
@@ -82,7 +84,9 @@ class TestPipelineExecutorSelect:
 class TestPipelineExecutorRename:
     """Test RENAME operation."""
 
-    def test_rename_column(self, executor: PipelineExecutor, sample_df: pd.DataFrame) -> None:
+    def test_rename_column(
+        self, executor: PipelineExecutor, sample_df: pd.DataFrame
+    ) -> None:
         """RENAME should apply the column mapping."""
         pipeline = ProcessingPipeline(
             name="rename_test",

@@ -1,8 +1,6 @@
-from typing import Any
-
 """Tests for psa_webapp.py."""
 
-from __future__ import annotations  # noqa: F404
+from __future__ import annotations
 
 import sys
 from unittest.mock import MagicMock, patch
@@ -33,7 +31,7 @@ from upstream_drift_tools.process_calculators.psa_package.psa_webapp import (
 
 
 @pytest.fixture
-def mock_streamlit() -> Any:
+def mock_streamlit():
     """Mock the streamlit module."""
     with patch(
         "upstream_drift_tools.process_calculators.psa_package.psa_webapp.st"
@@ -42,7 +40,7 @@ def mock_streamlit() -> Any:
 
 
 @pytest.fixture
-def sample_results() -> Any:
+def sample_results():
     """Create a sample PSAResults object."""
     flows = StreamFlows(
         fresh_feed=np.array([10.0, 5.0]),
@@ -84,14 +82,14 @@ def sample_results() -> Any:
     )
 
 
-def test_resolve_plot_mode() -> Any:
+def test_resolve_plot_mode():
     assert _resolve_plot_mode(True, True) == "lines+markers"
     assert _resolve_plot_mode(False, True) == "markers"
     assert _resolve_plot_mode(True, False) == "lines"
     assert _resolve_plot_mode(False, False) == "lines"
 
 
-def test_get_flammability_status() -> Any:
+def test_get_flammability_status():
     status, color = get_flammability_status(5.0, 0.05)
     assert status == "Safe-Low O2"
     assert color == "green"
@@ -176,7 +174,7 @@ def test_webapp_main(
     mock_streamlit.tabs.assert_called()
 
 
-def test_render_sidebar(mock_streamlit) -> Any:
+def test_render_sidebar(mock_streamlit):
     mock_streamlit.sidebar.slider.side_effect = [1100, 100, 0, 18, 81]
     mock_streamlit.sidebar.number_input.side_effect = [32.08, 0.50]
     total_feed, s2_recycle, prod_recycle, components = _render_sidebar(
@@ -188,7 +186,7 @@ def test_render_sidebar(mock_streamlit) -> Any:
     assert len(components) == 7
 
 
-def test_render_key_metrics(mock_streamlit, sample_results) -> Any:
+def test_render_key_metrics(mock_streamlit, sample_results):
     mock_streamlit.columns.return_value = (
         MagicMock(),
         MagicMock(),
@@ -203,7 +201,7 @@ def test_render_key_metrics(mock_streamlit, sample_results) -> Any:
     assert mock_streamlit.success.called
 
 
-def test_render_key_metrics_flammable(mock_streamlit, sample_results) -> Any:
+def test_render_key_metrics_flammable(mock_streamlit, sample_results):
     mock_streamlit.columns.return_value = (
         MagicMock(),
         MagicMock(),
@@ -216,7 +214,7 @@ def test_render_key_metrics_flammable(mock_streamlit, sample_results) -> Any:
     assert mock_streamlit.error.called
 
 
-def test_render_key_metrics_caution(mock_streamlit, sample_results) -> Any:
+def test_render_key_metrics_caution(mock_streamlit, sample_results):
     mock_streamlit.columns.return_value = (
         MagicMock(),
         MagicMock(),
@@ -230,7 +228,7 @@ def test_render_key_metrics_caution(mock_streamlit, sample_results) -> Any:
 
 
 @patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp.go.Figure")
-def test_render_results_tab(mock_figure, mock_streamlit, sample_results) -> Any:
+def test_render_results_tab(mock_figure, mock_streamlit, sample_results):
     mock_streamlit.columns.return_value = (MagicMock(), MagicMock())
     _render_results_tab(sample_results)
     assert mock_streamlit.subheader.called
@@ -240,7 +238,7 @@ def test_render_results_tab(mock_figure, mock_streamlit, sample_results) -> Any:
 
 
 @patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp.go.Figure")
-def test_render_sensitivity_tab(mock_figure, mock_streamlit) -> Any:
+def test_render_sensitivity_tab(mock_figure, mock_streamlit):
     mock_streamlit.columns.side_effect = [
         (MagicMock(), MagicMock(), MagicMock()),
         (MagicMock(), MagicMock()),
@@ -253,14 +251,14 @@ def test_render_sensitivity_tab(mock_figure, mock_streamlit) -> Any:
 
 @patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp.px.imshow")
 @patch("upstream_drift_tools.process_calculators.psa_package.psa_webapp.go.Figure")
-def test_render_o2_safety_tab(mock_figure, mock_imshow, mock_streamlit) -> Any:
+def test_render_o2_safety_tab(mock_figure, mock_imshow, mock_streamlit):
     mock_streamlit.columns.return_value = (MagicMock(), MagicMock(), MagicMock())
     mock_streamlit.slider.return_value = 2
     _render_o2_safety_tab(1100.0, DEFAULT_COMPONENTS)
     assert mock_streamlit.plotly_chart.called
 
 
-def test_render_data_tables_tab(mock_streamlit, sample_results) -> Any:
+def test_render_data_tables_tab(mock_streamlit, sample_results):
     _render_data_tables_tab(sample_results)
     assert mock_streamlit.dataframe.called
     assert mock_streamlit.markdown.called

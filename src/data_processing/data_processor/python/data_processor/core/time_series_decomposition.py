@@ -19,14 +19,13 @@ Features:
 
 from __future__ import annotations
 
-from numba import jit
-
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
 import numpy as np
+from numba import jit
 
 logger = logging.getLogger(__name__)
 

@@ -64,7 +64,9 @@ class DataProcessorWidget(QWidget):
         # Signal Selection Section
         layout.addWidget(QLabel("Select Signals:"))
         self.signal_list = QListWidget()
-        self.signal_list.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
+        self.signal_list.setSelectionMode(
+            QAbstractItemView.SelectionMode.MultiSelection
+        )
         layout.addWidget(self.signal_list)
 
         # Filter Configuration Section

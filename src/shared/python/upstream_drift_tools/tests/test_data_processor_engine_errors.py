@@ -1,5 +1,3 @@
-from typing import Any
-
 """Additional tests for DataProcessorEngine error paths not covered in the main suite.
 
 Targets remaining uncovered lines in core.py:
@@ -13,7 +11,7 @@ Targets remaining uncovered lines in core.py:
 - Line 572: query exception path
 """
 
-from __future__ import annotations  # noqa: F404
+from __future__ import annotations
 
 from unittest.mock import patch
 
@@ -21,7 +19,7 @@ import pandas as pd
 import pytest
 
 
-def _engine_with_data(**extra_cols) -> Any:
+def _engine_with_data(**extra_cols):
     """Helper: create a fresh DataProcessorEngine with a simple DataFrame loaded."""
     from upstream_drift_tools.data_processing.core import DataProcessorEngine
 
@@ -39,7 +37,7 @@ def _engine_with_data(**extra_cols) -> Any:
 
 
 class TestWrapResult:
-    def test_wrap_result_returns_correct_dict(self) -> Any:
+    def test_wrap_result_returns_correct_dict(self):
         """_wrap_result converts ProcessingResult to dict with the correct keys."""
         from upstream_drift_tools.data_processing.core import (
             DataProcessorEngine,
@@ -63,7 +61,7 @@ class TestWrapResult:
 
 
 class TestLoadFileErrorPath:
-    def test_load_file_with_invalid_format_raises(self) -> Any:
+    def test_load_file_with_invalid_format_raises(self):
         """DataReader.read_file raising ValueError → re-raises as FileIOError."""
         from upstream_drift_tools.data_processing.core import DataProcessorEngine
         from upstream_drift_tools.data_processing.exceptions import FileIOError
@@ -76,7 +74,7 @@ class TestLoadFileErrorPath:
             with pytest.raises((FileIOError, ValueError)):
                 engine.load_file("/tmp/bad.xyz")
 
-    def test_load_file_empty_path_raises(self) -> Any:
+    def test_load_file_empty_path_raises(self):
         from upstream_drift_tools.data_processing.core import DataProcessorEngine
         from upstream_drift_tools.data_processing.exceptions import FileIOError
 
@@ -84,7 +82,7 @@ class TestLoadFileErrorPath:
         with pytest.raises(FileIOError, match="file_path must not be empty"):
             engine.load_file("")
 
-    def test_load_file_success_path(self) -> Any:
+    def test_load_file_success_path(self):
         """Lines 191-196: successful load_file sets data, original_data, path."""
         from upstream_drift_tools.data_processing.core import DataProcessorEngine
 
@@ -110,7 +108,7 @@ class TestLoadFileErrorPath:
 
 
 class TestGetBasicStatsNull:
-    def test_get_basic_stats_returns_empty_when_no_data(self) -> Any:
+    def test_get_basic_stats_returns_empty_when_no_data(self):
         """Line 572: _get_basic_stats returns {} when self.data is None."""
         from upstream_drift_tools.data_processing.core import DataProcessorEngine
 
@@ -127,14 +125,14 @@ class TestGetBasicStatsNull:
 
 
 class TestTransformColumnErrorPath:
-    def test_transform_invalid_column_raises_column_not_found(self) -> Any:
+    def test_transform_invalid_column_raises_column_not_found(self):
         from upstream_drift_tools.data_processing.exceptions import ColumnNotFoundError
 
         engine = _engine_with_data()
         with pytest.raises(ColumnNotFoundError):
             engine.transform_column("nonexistent_col", "log")
 
-    def test_transform_value_error_raises_transformation_error(self) -> Any:
+    def test_transform_value_error_raises_transformation_error(self):
         """TypeError/ValueError during transform → undo + TransformationError."""
         from upstream_drift_tools.data_processing.exceptions import TransformationError
 
@@ -151,7 +149,7 @@ class TestTransformColumnErrorPath:
 
 
 class TestSmoothColumnErrorPath:
-    def test_smooth_value_error_raises_transformation_error(self) -> Any:
+    def test_smooth_value_error_raises_transformation_error(self):
         """ValueError during moving_average → undo + TransformationError."""
         from upstream_drift_tools.data_processing.exceptions import TransformationError
 
@@ -171,7 +169,7 @@ class TestSmoothColumnErrorPath:
 
 
 class TestAggregateErrorPath:
-    def test_aggregate_missing_column_raises_transformation_error(self) -> Any:
+    def test_aggregate_missing_column_raises_transformation_error(self):
         """aggregate() with unknown column raises TransformationError."""
         from upstream_drift_tools.data_processing.core import AggregationType
         from upstream_drift_tools.data_processing.exceptions import TransformationError
@@ -189,7 +187,7 @@ class TestAggregateErrorPath:
 
 
 class TestFitCurveErrorPath:
-    def test_fit_curve_non_numeric_raises_fit_error(self) -> Any:
+    def test_fit_curve_non_numeric_raises_fit_error(self):
         """Non-numeric column data raises FitError."""
         from upstream_drift_tools.data_processing.core import (
             DataProcessorEngine,
@@ -211,7 +209,7 @@ class TestFitCurveErrorPath:
 
 
 class TestFilterDataErrorPath:
-    def test_filter_query_expression_error_raises_filter_error(self) -> Any:
+    def test_filter_query_expression_error_raises_filter_error(self):
         """A bad pandas query expression raises FilterError."""
         from upstream_drift_tools.data_processing.exceptions import FilterError
 
@@ -219,7 +217,7 @@ class TestFilterDataErrorPath:
         with pytest.raises(FilterError):
             engine.filter_data("x", ">", "not_a_number")
 
-    def test_filter_bad_query_operator_raises_filter_error(self) -> Any:
+    def test_filter_bad_query_operator_raises_filter_error(self):
         """Using a pandas query op with a non-numeric value raises FilterError."""
         from upstream_drift_tools.data_processing.exceptions import FilterError
 
@@ -235,14 +233,14 @@ class TestFilterDataErrorPath:
 
 
 class TestQueryErrorPath:
-    def test_query_bad_expression_raises_filter_error(self) -> Any:
+    def test_query_bad_expression_raises_filter_error(self):
         from upstream_drift_tools.data_processing.exceptions import FilterError
 
         engine = _engine_with_data()
         with pytest.raises(FilterError):
             engine.query("this is not valid pandas query syntax @@@")
 
-    def test_query_empty_expression_raises_filter_error(self) -> Any:
+    def test_query_empty_expression_raises_filter_error(self):
         from upstream_drift_tools.data_processing.exceptions import FilterError
 
         engine = _engine_with_data()
@@ -256,7 +254,7 @@ class TestQueryErrorPath:
 
 
 class TestColumnNotFoundError:
-    def test_without_available_list(self) -> Any:
+    def test_without_available_list(self):
         """Lines 22-25: no available columns → message without suffix."""
         from upstream_drift_tools.data_processing.exceptions import ColumnNotFoundError
 
@@ -266,7 +264,7 @@ class TestColumnNotFoundError:
         assert "missing_col" in str(err)
         assert "Available" not in str(err)
 
-    def test_with_available_list(self) -> Any:
+    def test_with_available_list(self):
         """Lines 26-27: available columns → message with 'Available' suffix."""
         from upstream_drift_tools.data_processing.exceptions import ColumnNotFoundError
 
@@ -276,7 +274,7 @@ class TestColumnNotFoundError:
         assert "Available" in str(err)
         assert "col_a" in str(err)
 
-    def test_is_data_processing_error(self) -> Any:
+    def test_is_data_processing_error(self):
         """ColumnNotFoundError is a DataProcessingError subclass."""
         from upstream_drift_tools.data_processing.exceptions import (
             ColumnNotFoundError,

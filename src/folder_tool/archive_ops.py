@@ -1,15 +1,14 @@
-from numba import jit
-
+# mypy: ignore-errors
 """ArchiveOperationsMixin -- Archive extraction methods."""
 
-from __future__ import annotations  # noqa: E402, F404
+from __future__ import annotations
 
-import logging  # noqa: E402
-import os  # noqa: E402
-import shutil  # noqa: E402
-from pathlib import Path  # noqa: E402
+import logging
+import os
+import shutil
+from pathlib import Path
 
-from Folders_Tool_r0 import (  # noqa: E402
+from Folders_Tool_r0 import (
     MAX_ARCHIVE_SIZE_RATIO,
     MAX_FILE_SIZE_MB,
 )
@@ -192,7 +191,6 @@ class ArchiveOperationsMixin:
                     f"{cleanup_error}",
                 )
 
-    @jit(nopython=True, fastmath=True)
     def _bulk_unzip_enhanced(self) -> list[str]:
         """Enhanced bulk extraction with better validation."""
         log = ["Starting enhanced bulk extraction..."]

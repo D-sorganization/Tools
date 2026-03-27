@@ -1,5 +1,3 @@
-from numba import jit
-
 """
 High-Performance Data Loading System
 
@@ -305,7 +303,7 @@ class HighPerformanceDataLoader:
             # Use file size and modification time for quick hash
             stat = os.stat(file_path)
             content = f"{stat.st_size}_{stat.st_mtime}_{Path(file_path).name}"
-            return hashlib.md5(content.encode()).hexdigest()
+            return hashlib.md5(content.encode(), usedforsecurity=False).hexdigest()
         except (PermissionError, OSError):
             return "unknown"
 
@@ -315,7 +313,8 @@ class HighPerformanceDataLoader:
             raise ValueError("file_path must be provided")
         try:
             cache_file = (
-                self.cache_dir / f"{hashlib.md5(file_path.encode()).hexdigest()}.json"
+                self.cache_dir
+                / f"{hashlib.md5(file_path.encode(), usedforsecurity=False).hexdigest()}.json"
             )
             if cache_file.exists():
                 data = safe_read_json(cache_file, default=None)
@@ -334,7 +333,7 @@ class HighPerformanceDataLoader:
         try:
             cache_file = (
                 self.cache_dir
-                / f"{hashlib.md5(metadata.path.encode()).hexdigest()}.json"
+                / f"{hashlib.md5(metadata.path.encode(), usedforsecurity=False).hexdigest()}.json"
             )
             with open(cache_file, "w", encoding="utf-8") as f:
                 data = asdict(metadata)
@@ -476,7 +475,6 @@ class HighPerformanceDataLoader:
             logger.warning(f"Could not optimize dtypes: {e}")
             return df
 
-    @jit(nopython=True, fastmath=True)
     def batch_load_files(
         self,
         file_paths: list[str],

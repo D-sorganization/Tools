@@ -1,7 +1,5 @@
 from typing import Any
 
-from numba import jit
-
 """
 Test suite for PSA Model.
 
@@ -452,7 +450,6 @@ class TestPSAModelEdgeCases:
 class TestPSAModelConsistency:
     """Test consistency between different calculation paths."""
 
-    @jit(nopython=True, fastmath=True)
     def test_flow_conservation_per_component(self) -> None:
         """Test mass conservation for each component."""
         model = PSAModel()

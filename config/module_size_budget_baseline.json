@@ -1,13 +1,13 @@
 {
-    "src/data_processing/data_processor/python/data_processor/Data_Processor_Integrated.py": 2717,
-    "src/data_processing/data_processor/python/data_processor/ui/pyqt6/analysis_widgets.py": 1557,
-    "src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window.py": 2734,
-    "src/electrode_advisor/python/electrode_advisor/ui/pyqt6/main_window.py": 4386,
-    "src/shared/python/signal_toolkit/widget.py": 1794,
-    "src/tools/folder_tools/folder_packer_pro/folder_packer_pro.py": 1911,
-    "src/tools/folder_tools/folder_tool/Folders_Tool_r0.py": 3288,
-    "src/rotation_converter/modern_robotics.py": 2090,
-    "src/electrode_advisor/tests/test_electrode_advisor_contracts.py": 1562,
-    "src/rotation_converter/ui/pyqt6/main_window.py": 1234,
-    "src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/pressure_drop_interface.py": 1390
+  "src/data_processing/data_processor/python/data_processor/Data_Processor_Integrated.py": 2717,
+  "src/data_processing/data_processor/python/data_processor/ui/pyqt6/analysis_widgets.py": 1557,
+  "src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window.py": 2734,
+  "src/electrode_advisor/python/electrode_advisor/ui/pyqt6/main_window.py": 4386,
+  "src/electrode_advisor/tests/test_electrode_advisor_contracts.py": 1562,
+  "src/rotation_converter/modern_robotics.py": 2099,
+  "src/rotation_converter/ui/pyqt6/main_window.py": 1239,
+  "src/shared/python/signal_toolkit/widget.py": 1794,
+  "src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/pressure_drop_interface.py": 1407,
+  "src/tools/folder_tools/folder_packer_pro/folder_packer_pro.py": 1911,
+  "src/tools/folder_tools/folder_tool/Folders_Tool_r0.py": 3288
 }

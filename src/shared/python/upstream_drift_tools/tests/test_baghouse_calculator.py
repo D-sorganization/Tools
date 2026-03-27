@@ -1,11 +1,9 @@
-from typing import Any
-
 """Tests for baghouse_calculator.py — BaghouseCalculator.
 
 Targets: 32% → 100% coverage.
 """
 
-from __future__ import annotations  # noqa: F404
+from __future__ import annotations
 
 import pytest
 from upstream_drift_tools.process_calculators.baghouse_calculator import (
@@ -56,12 +54,12 @@ def _default_result() -> BaghouseResult:
 
 
 class TestBaghouseCalculatorInit:
-    def test_init_without_thermo(self) -> Any:
+    def test_init_without_thermo(self):
         """Lines 109-114: thermo_calc=None → self.thermo_calc is None."""
         calc = BaghouseCalculator(thermo_calc=None)
         assert calc.thermo_calc is None
 
-    def test_init_with_mock_thermo(self) -> Any:
+    def test_init_with_mock_thermo(self):
         """Line 109-110: thermo passed directly."""
         mock = object()
         calc = BaghouseCalculator(thermo_calc=mock)
@@ -74,18 +72,18 @@ class TestBaghouseCalculatorInit:
 
 
 class TestEstimateCpIdeal:
-    def test_syngas_cp_returns_positive(self) -> Any:
+    def test_syngas_cp_returns_positive(self):
         calc = _calc()
         cp = calc._estimate_cp_ideal(SYNGAS_COMP)
         assert cp > 0
 
-    def test_empty_composition_returns_fallback(self) -> Any:
+    def test_empty_composition_returns_fallback(self):
         """Line 159: mw_avg == 0 → returns CP_MASS_DEFAULT_FALLBACK."""
         calc = _calc()
         cp = calc._estimate_cp_ideal({})
         assert cp > 0  # Returns fallback
 
-    def test_unknown_species_uses_defaults(self) -> Any:
+    def test_unknown_species_uses_defaults(self):
         """Lines 154-155: unknown species uses CP_DEFAULT_FALLBACK and MW_DEFAULT_KG."""
         calc = _calc()
         cp = calc._estimate_cp_ideal({"EXOTIC_GAS": 1.0})
@@ -98,13 +96,13 @@ class TestEstimateCpIdeal:
 
 
 class TestEstimateVolumeFlow:
-    def test_returns_positive_flows(self) -> Any:
+    def test_returns_positive_flows(self):
         calc = _calc()
         acfm, scfm = calc._estimate_volume_flow(1.0, 700.0, 101325.0, SYNGAS_COMP)
         assert acfm > 0
         assert scfm > 0
 
-    def test_zero_mw_fallback(self) -> Any:
+    def test_zero_mw_fallback(self):
         """Line 194: mw_avg == 0 → assume N2-like."""
         calc = _calc()
         acfm, scfm = calc._estimate_volume_flow(1.0, 300.0, 101325.0, {})
@@ -118,7 +116,7 @@ class TestEstimateVolumeFlow:
 
 
 class TestCalculateOutletThermal:
-    def test_simplified_mode_returns_valid_outputs(self) -> Any:
+    def test_simplified_mode_returns_valid_outputs(self):
         """Lines 262-273: simplified path (no thermo_calc)."""
         calc = _calc()
         outlet_c, acfm, scfm = calc._calculate_outlet_thermal(
@@ -128,7 +126,7 @@ class TestCalculateOutletThermal:
         assert acfm > 0
         assert scfm > 0
 
-    def test_zero_heat_loss_no_temp_drop(self) -> Any:
+    def test_zero_heat_loss_no_temp_drop(self):
         """Lines 264-268: heat_loss_w=0 → temp_drop=0."""
         calc = _calc()
         outlet_c, _, _ = calc._calculate_outlet_thermal(
@@ -137,7 +135,7 @@ class TestCalculateOutletThermal:
         expected = 700.0 - 273.15
         assert abs(outlet_c - expected) < 0.01
 
-    def test_zero_flow_no_temperature_drop(self) -> Any:
+    def test_zero_flow_no_temperature_drop(self):
         """Lines 264-268: gas_flow==0 → temp_drop=0 (guard against div by zero)."""
         calc = _calc()
         outlet_c, _, _ = calc._calculate_outlet_thermal(
@@ -153,7 +151,7 @@ class TestCalculateOutletThermal:
 
 
 class TestCalculateDrumSizing:
-    def test_normal_case(self) -> Any:
+    def test_normal_case(self):
         result = BaghouseCalculator._calculate_drum_sizing(
             solid_carbon_in_kg_hr=50.0,
             ash_in_kg_hr=30.0,
@@ -179,7 +177,7 @@ class TestCalculateDrumSizing:
         assert c_fill > 0
         assert a_fill > 0
 
-    def test_zero_total_solids_gives_inf_fill_time(self) -> Any:
+    def test_zero_total_solids_gives_inf_fill_time(self):
         """Line 299: total_solids == 0 → fill_hrs = inf."""
         result = BaghouseCalculator._calculate_drum_sizing(
             solid_carbon_in_kg_hr=0.0,
@@ -192,7 +190,7 @@ class TestCalculateDrumSizing:
         fill_hrs = result[3]
         assert fill_hrs == float("inf")
 
-    def test_zero_carbon_removed_gives_inf_c_fill(self) -> Any:
+    def test_zero_carbon_removed_gives_inf_c_fill(self):
         """Line 303: carbon_removed == 0 → c_fill = inf."""
         result = BaghouseCalculator._calculate_drum_sizing(
             solid_carbon_in_kg_hr=0.0,  # no carbon
@@ -205,7 +203,7 @@ class TestCalculateDrumSizing:
         c_fill = result[5]
         assert c_fill == float("inf")
 
-    def test_zero_ash_removed_gives_inf_a_fill(self) -> Any:
+    def test_zero_ash_removed_gives_inf_a_fill(self):
         """Line 304: ash_removed == 0 → a_fill = inf."""
         result = BaghouseCalculator._calculate_drum_sizing(
             solid_carbon_in_kg_hr=50.0,
@@ -225,7 +223,7 @@ class TestCalculateDrumSizing:
 
 
 class TestBaghouseCalculate:
-    def test_full_calculation_returns_result(self) -> Any:
+    def test_full_calculation_returns_result(self):
         """Lines 316-417: end-to-end pipeline."""
         result = _default_result()
         assert isinstance(result, BaghouseResult)
@@ -233,19 +231,19 @@ class TestBaghouseCalculate:
         assert result.flow_acfm > 0
         assert result.flow_scfm > 0
 
-    def test_removal_efficiencies_in_result(self) -> Any:
+    def test_removal_efficiencies_in_result(self):
         """Lines 413-416: efficiency stored as percent."""
         result = _default_result()
         assert result.removal_efficiency["carbon"] == pytest.approx(99.0)
         assert result.removal_efficiency["ash"] == pytest.approx(95.0)
 
-    def test_air_to_cloth_ratio_calculated(self) -> Any:
+    def test_air_to_cloth_ratio_calculated(self):
         """Line 390: air_to_cloth = flow_acfm / bag_area."""
         result = _default_result()
         expected = result.flow_acfm / 200.0
         assert abs(result.air_to_cloth_ratio - expected) < 0.001
 
-    def test_bag_area_zero_gives_zero_atc(self) -> Any:
+    def test_bag_area_zero_gives_zero_atc(self):
         """Line 390: bag_area=0 → air_to_cloth = 0."""
         calc = _calc()
         result = calc.calculate(
@@ -264,7 +262,7 @@ class TestBaghouseCalculate:
         )
         assert result.air_to_cloth_ratio == 0.0
 
-    def test_ash_stream_composition_sums_to_one(self) -> Any:
+    def test_ash_stream_composition_sums_to_one(self):
         """Lines 392-397: carbon_fraction + ash_fraction should sum to 1.0."""
         result = _default_result()
         total = (
@@ -273,7 +271,7 @@ class TestBaghouseCalculate:
         )
         assert abs(total - 1.0) < 1e-10
 
-    def test_zero_feed_gives_zero_stream_composition(self) -> Any:
+    def test_zero_feed_gives_zero_stream_composition(self):
         """Lines 393-396: total_solids == 0 → fractions = 0."""
         calc = _calc()
         result = calc.calculate(
@@ -293,7 +291,7 @@ class TestBaghouseCalculate:
         assert result.ash_stream_composition["carbon_fraction"] == 0.0
         assert result.ash_stream_composition["ash_fraction"] == 0.0
 
-    def test_negative_gas_flow_raises(self) -> Any:
+    def test_negative_gas_flow_raises(self):
         """Line 351: gas_flow <= 0 → AssertionError."""
         calc = _calc()
         with pytest.raises(AssertionError, match="Gas flow must be positive"):
@@ -312,7 +310,7 @@ class TestBaghouseCalculate:
                 bag_area_ft2=200.0,
             )
 
-    def test_efficiency_out_of_range_raises(self) -> Any:
+    def test_efficiency_out_of_range_raises(self):
         """Lines 354-359: efficiency > 1 → AssertionError."""
         calc = _calc()
         with pytest.raises(
@@ -333,7 +331,7 @@ class TestBaghouseCalculate:
                 bag_area_ft2=200.0,
             )
 
-    def test_clean_gas_flow_rate_in_kg_hr(self) -> Any:
+    def test_clean_gas_flow_rate_in_kg_hr(self):
         """Line 407: clean_gas_flow_rate = gas_flow_kg_s * SECONDS_PER_HOUR."""
         result = _default_result()
         assert abs(result.clean_gas_flow_rate - 1.0 * 3600.0) < 0.01
@@ -347,7 +345,7 @@ class TestBaghouseCalculate:
 class TestConvertFallback:
     """Tests that the local fallback convert() in baghouse works correctly."""
 
-    def test_k_to_c(self) -> Any:
+    def test_k_to_c(self):
         """Lines 61-62: K → C conversion."""
         from upstream_drift_tools.process_calculators import (
             baghouse_calculator as bh_mod,
@@ -357,7 +355,7 @@ class TestConvertFallback:
             result = bh_mod.convert(273.15, "K", "C")
             assert abs(result - 0.0) < 0.01
 
-    def test_c_to_k(self) -> Any:
+    def test_c_to_k(self):
         """Lines 63-64: C → K conversion."""
         from upstream_drift_tools.process_calculators import (
             baghouse_calculator as bh_mod,
@@ -367,7 +365,7 @@ class TestConvertFallback:
             result = bh_mod.convert(0.0, "C", "K")
             assert abs(result - 273.15) < 0.01
 
-    def test_identity_fallback(self) -> Any:
+    def test_identity_fallback(self):
         """Line 65: unknown units → identity."""
         from upstream_drift_tools.process_calculators import (
             baghouse_calculator as bh_mod,

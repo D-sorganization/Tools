@@ -10,12 +10,11 @@ time domain, frequency domain, rolling window, lag, and polynomial features.
 
 from __future__ import annotations
 
-from numba import jit
-
 import logging
 from collections.abc import Callable
 
 import numpy as np
+from numba import jit
 
 from .feature_types import FeatureConfig, FeatureResult
 

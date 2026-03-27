@@ -1,5 +1,3 @@
-from numba import jit
-
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -664,7 +662,6 @@ def validate_inputs(
     return is_valid, errors, warnings
 
 
-@jit(nopython=True, fastmath=True)
 def _wrap_text(text: str, width: int) -> list[str]:
     """Wrap text to specified width."""
     if not (text is not None):

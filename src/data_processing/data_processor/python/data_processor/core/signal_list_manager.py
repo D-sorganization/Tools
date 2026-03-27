@@ -141,7 +141,9 @@ class SignalListManager:
         with open(export_path, "w", encoding="utf-8") as f:
             json.dump({"name": name, "signals": signals}, f, indent=2)
 
-    def import_signal_list(self, import_path: Path | str, name: str | None = None) -> str:
+    def import_signal_list(
+        self, import_path: Path | str, name: str | None = None
+    ) -> str:
         """Import a signal list from a file.
 
         Args:

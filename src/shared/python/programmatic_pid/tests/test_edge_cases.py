@@ -1,19 +1,20 @@
-from typing import Any
-
 """Additional tests to hit edge cases in programmatic_pid.geometry and validation."""
 
-from __future__ import annotations  # noqa: F404
+from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
 import pytest
+
+pytest.importorskip("ezdxf", reason="ezdxf not installed")
+
 from programmatic_pid.geometry import find_free_region
 from programmatic_pid.types import BBox, SpecValidationError
 from programmatic_pid.validation import _load_schema, validate_spec
 
 
 class TestFindFreeRegionNone:
-    def test_returns_none_when_fully_blocked(self) -> Any:
+    def test_returns_none_when_fully_blocked(self):
         """Artificially force no free region by making every candidate overlap."""
         # Fill a huge area so find_free_region can't place anything
         occupied = [BBox(-600.0, -600.0, 600.0, 600.0)]
@@ -22,7 +23,7 @@ class TestFindFreeRegionNone:
 
 
 class TestValidationSchemaLoading:
-    def test_load_schema_cached(self) -> Any:
+    def test_load_schema_cached(self):
         """Calling _load_schema() twice returns cached result (no re-read)."""
         import programmatic_pid.validation as _val
 
@@ -37,7 +38,7 @@ class TestValidationSchemaLoading:
 
         _val._SCHEMA = original  # restore
 
-    def test_load_schema_returns_cached_non_none(self) -> Any:
+    def test_load_schema_returns_cached_non_none(self):
         """When _SCHEMA is already set (non-None), the cached value is returned."""
 
         import programmatic_pid.validation as _val
@@ -51,7 +52,7 @@ class TestValidationSchemaLoading:
 
         _val._SCHEMA = original
 
-    def test_load_schema_reads_file_when_exists(self, tmp_path) -> Any:
+    def test_load_schema_reads_file_when_exists(self, tmp_path):
         """When schema file exists, read and cache it (covers lines 31-32)."""
         import json
 
@@ -67,8 +68,8 @@ class TestValidationSchemaLoading:
         # Patch the Path used inside _load_schema so it finds our temp file
         original_fn = _val._load_schema
 
-        def patched_load_schema() -> Any:
-            global _SCHEMA  # noqa: PLW0602
+        def patched_load_schema():
+            global _SCHEMA
             if _val._SCHEMA is not None:
                 return _val._SCHEMA
             if schema_file.exists():
@@ -85,7 +86,7 @@ class TestValidationSchemaLoading:
 
 
 class TestValidateSpecWithJsonschema:
-    def test_validate_spec_with_jsonschema_available(self) -> Any:
+    def test_validate_spec_with_jsonschema_available(self):
         """When jsonschema validates successfully, no error raised."""
         import programmatic_pid.validation as _val
 
@@ -95,13 +96,13 @@ class TestValidateSpecWithJsonschema:
         }
         # Patch schema to return truthy value so jsonschema path is exercised
         with patch.object(_val, "_load_schema", return_value={"type": "object"}):
-            # jsonschema may or may not be installed; either way should not crash for valid spec
+            # jsonschema may or may not be installed; either way should not crash for valid spec  # noqa: E501
             try:
                 validate_spec(valid_spec)
             except SpecValidationError:
                 pass  # may raise for missing fields, but not from schema
 
-    def test_validate_spec_schema_violation_raises(self) -> Any:
+    def test_validate_spec_schema_violation_raises(self):
         """When jsonschema raises, SpecValidationError is re-raised."""
         import programmatic_pid.validation as _val
 
@@ -121,7 +122,7 @@ class TestValidateSpecWithJsonschema:
                 with pytest.raises(SpecValidationError, match="Schema violation"):
                     validate_spec(valid_spec)
 
-    def test_validate_spec_import_error_skipped(self) -> Any:
+    def test_validate_spec_import_error_skipped(self):
         """When jsonschema ImportError, validation continues without schema check."""
         import programmatic_pid.validation as _val
 

@@ -1,21 +1,19 @@
-from numba import jit
-
 """Validated defaults and geometry helpers for the vessel drafter tool."""
 
-from __future__ import annotations  # noqa: E402, F404
+from __future__ import annotations
 
-from dataclasses import dataclass  # noqa: E402
-from math import radians  # noqa: E402
-from typing import Any  # noqa: E402
+from dataclasses import dataclass
+from math import radians
+from typing import Any
 
-from vessel_drafter.contracts import (  # noqa: E402
+from vessel_drafter.contracts import (
     require_fraction,
     require_integer_at_least,
     require_less_or_equal,
     require_nonnegative,
     require_positive,
 )
-from vessel_drafter.models.vessel_materials import (  # noqa: E402
+from vessel_drafter.models.vessel_materials import (
     DEFAULT_VESSEL_MATERIALS_BY_NAME,
     MaterialProperties,
 )
@@ -312,7 +310,6 @@ class VesselDrafterLayout:
         )
 
     @property
-    @jit(nopython=True, fastmath=True)
     def electrode_placements(self) -> tuple[VesselElectrodePlacement, ...]:
         placements: list[VesselElectrodePlacement] = []
         for index in range(self.electrode_count):

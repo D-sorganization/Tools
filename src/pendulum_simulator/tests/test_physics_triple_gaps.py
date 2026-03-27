@@ -1,5 +1,3 @@
-from typing import Any
-
 """Gap-fill tests for physics_triple.py — covers remaining uncovered lines.
 
 Lines 410-412: equations_of_motion with torque_limits (clamp_torque_ndof path)
@@ -7,8 +5,6 @@ Lines 469-471: forward_kinematics with non-zero scapula_offset_rad
 """
 
 from __future__ import annotations
-
-from typing import Any
 
 import numpy as np
 import pytest
@@ -26,7 +22,7 @@ def params() -> TriplePendulumParams:
 
 
 @pytest.fixture
-def zero_torque() -> Any:
+def zero_torque():
     return lambda t: (0.0, 0.0, 0.0)
 
 
@@ -43,7 +39,7 @@ class TestEquationsOfMotionWithTorqueLimits:
         state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
         limits = np.array([0.001, 0.001, 0.001])  # tiny limits
 
-        def huge_torque(t) -> Any:
+        def huge_torque(t):
             return (1e6, 1e6, 1e6)
 
         state_dot = equations_of_motion(state, 0.0, params, huge_torque, torque_limits=limits)
@@ -55,7 +51,7 @@ class TestEquationsOfMotionWithTorqueLimits:
         state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
         limits = np.array([np.inf, np.inf, np.inf])
 
-        def tau_fn(t) -> Any:
+        def tau_fn(t):
             return (5.0, -3.0, 2.0)
 
         state_dot = equations_of_motion(state, 0.0, params, tau_fn, torque_limits=limits)

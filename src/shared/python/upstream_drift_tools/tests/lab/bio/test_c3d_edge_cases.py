@@ -1,5 +1,3 @@
-from typing import Any
-
 """Extended C3D reader tests: malformed inputs, edge cases, analog edges (#1062).
 
 Design by Contract
@@ -11,7 +9,7 @@ Design by Contract
 - Analog-only files produce valid empty marker DataFrames
 """
 
-from __future__ import annotations  # noqa: F404
+from __future__ import annotations
 
 from pathlib import Path
 from unittest.mock import patch
@@ -153,12 +151,12 @@ class TestAnalogEdgeCases:
     """Tests for analog channel edge cases."""
 
     @pytest.fixture()
-    def mock_ezc3d(self) -> Any:
+    def mock_ezc3d(self):
         with patch("upstream_drift_tools.lab.bio.c3d_reader.ezc3d") as mock:
             yield mock
 
     @pytest.fixture()
-    def c3d_no_analog(self) -> Any:
+    def c3d_no_analog(self):
         """C3D data with markers but no analog channels."""
         return {
             "parameters": {
@@ -185,7 +183,7 @@ class TestAnalogEdgeCases:
         }
 
     @pytest.fixture()
-    def c3d_many_analog(self) -> Any:
+    def c3d_many_analog(self):
         """C3D data with many analog channels (high analog ratio)."""
         n_analog = 32
         n_frames = 100

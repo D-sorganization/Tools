@@ -74,7 +74,9 @@ class FilterConfig:
             )
             raise ValueError(msg)
 
-        parameters = {key: value for key, value in mapping.items() if key != "filter_type"}
+        parameters = {
+            key: value for key, value in mapping.items() if key != "filter_type"
+        }
         validated = cls._validate_parameters(parameters)
         return cls(filter_type=filter_type, parameters=validated)
 
@@ -82,7 +84,9 @@ class FilterConfig:
     def _validate_parameters(raw: Mapping[str, Any]) -> dict[str, Any]:
         cleaned: dict[str, Any] = {}
 
-        allowed_keys = set(_INT_PARAMETERS) | set(_FLOAT_PARAMETERS) | _STRING_PARAMETERS
+        allowed_keys = (
+            set(_INT_PARAMETERS) | set(_FLOAT_PARAMETERS) | _STRING_PARAMETERS
+        )
 
         for key, value in raw.items():
             if key in _INT_PARAMETERS:
@@ -175,7 +179,9 @@ class PipelineConfig:
         normalized: MutableMapping[str, Any] = dict(mapping)
         files = _normalize_files(normalized.get("files"))
         combine = bool(normalized.get("combine", True))
-        selected_signals = _normalize_optional_str_list(normalized.get("selected_signals"))
+        selected_signals = _normalize_optional_str_list(
+            normalized.get("selected_signals")
+        )
 
         filter_cfg: FilterConfig | None = None
         if "filter" in normalized and normalized["filter"] is not None:

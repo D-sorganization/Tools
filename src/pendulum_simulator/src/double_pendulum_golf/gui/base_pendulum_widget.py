@@ -749,7 +749,6 @@ class BasePendulumWidget(QWidget):
         """
         if len(world_points) < 2:
             return
-        from PyQt6.QtGui import QPolygonF
 
         shadow_color = QColor(0, 0, 0, 25)
         painter.setPen(QPen(shadow_color, 2))

@@ -1,5 +1,3 @@
-from numba import jit
-
 """Control loop rendering and signal line routing.
 
 Control loops connect a measurement point to a final element via
@@ -84,7 +82,6 @@ def resolve_reference_point(
     return None
 
 
-@jit(nopython=True, fastmath=True)
 def add_control_loops(
     msp: Any,
     spec: dict[str, Any],

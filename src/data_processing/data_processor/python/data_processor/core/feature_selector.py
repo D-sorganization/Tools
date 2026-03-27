@@ -1,5 +1,3 @@
-from numba import jit
-
 """Feature selection based on various statistical criteria.
 
 Provides methods to select relevant features using correlation analysis,
@@ -192,8 +190,6 @@ class FeatureSelector:
             n_selected=k,
         )
 
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
     def _mutual_information(self, x: np.ndarray, y: np.ndarray) -> float:
         """Compute mutual information (simplified binning approach)."""
         if not (x is not None):

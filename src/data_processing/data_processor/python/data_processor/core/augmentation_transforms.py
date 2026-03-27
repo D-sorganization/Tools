@@ -11,11 +11,10 @@ and frequency domain augmentations as a mixin for DataAugmenter.
 
 from __future__ import annotations
 
-from numba import jit
-
 import logging
 
 import numpy as np
+from numba import jit
 
 from data_processor.core.augmentation_types import AugmentationConfig
 

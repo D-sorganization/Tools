@@ -1,5 +1,3 @@
-from numba import jit
-
 """Scrubber Calculation Engine."""
 
 import logging  # noqa: E402
@@ -86,7 +84,6 @@ class ScrubberEngine:
         )
 
     @staticmethod
-    @jit(nopython=True, fastmath=True)
     def _calculate_mass_transfer(
         inputs: ScrubberInputs,
         gas_density: float,

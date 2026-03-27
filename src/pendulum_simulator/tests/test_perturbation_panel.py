@@ -1,5 +1,3 @@
-from typing import Any
-
 """
 Unit tests for the PerturbationPanel GUI widget.
 
@@ -9,8 +7,6 @@ so the tests remain fast and Qt-free of real ODE integration.
 """
 
 from __future__ import annotations
-
-from typing import Any
 
 import os
 
@@ -33,7 +29,7 @@ pytestmark = pytest.mark.skipif(not _HAS_QT, reason="PyQt6 not available")
 
 
 @pytest.fixture(scope="module")
-def app() -> Any:
+def app():
     """Headless QApplication fixture (shared across module)."""
     import sys
 
@@ -148,22 +144,22 @@ class TestDisplaySummary:
 
 class TestPerturbationExecution:
     @pytest.fixture
-    def setup_panel(self, app) -> Any:
+    def setup_panel(self, app):
         from double_pendulum_golf.gui.perturbation_panel import PerturbationPanel
 
         p = PerturbationPanel()
 
-        def mock_sim(coeffs) -> Any:
+        def mock_sim(coeffs):
             return object()
 
-        def mock_ext(res) -> Any:
+        def mock_ext(res):
             return {"tip_speed_final": 40.0, "tip_position_final": np.array([0, 0])}
 
         p.set_simulation_callbacks(mock_sim, mock_ext)
         p.set_coeffs_source(lambda: [[1.0, 2.0]])
         return p
 
-    def test_worker_logic(self, setup_panel) -> Any:
+    def test_worker_logic(self, setup_panel):
         from double_pendulum_golf.gui.perturbation_panel import _PerturbWorker
         from double_pendulum_golf.perturbation_analysis import PerturbationConfig
         from unittest.mock import MagicMock
@@ -189,7 +185,7 @@ class TestPerturbationExecution:
         worker2.run()
 
         # Test failure
-        def fail_sim(_) -> Any:
+        def fail_sim(_):
             raise ValueError("Sim failed")
 
         worker3 = _PerturbWorker([[1.0]], config, fail_sim, setup_panel._extract_fn)
@@ -197,7 +193,7 @@ class TestPerturbationExecution:
         worker3.finished = MagicMock()
         worker3.run()
 
-    def test_run_flow(self, setup_panel) -> Any:
+    def test_run_flow(self, setup_panel):
         from unittest.mock import patch
 
         with patch("PyQt6.QtCore.QThread.start"):

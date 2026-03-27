@@ -519,7 +519,9 @@ def forward_kinematics(
     }
 
 
-def linear_accelerations(state: State, qddot: np.ndarray, params: TriplePendulumParams) -> dict:
+def linear_accelerations(
+    state: State, qddot: np.ndarray, params: TriplePendulumParams
+) -> dict:
     """Compute linear accelerations of joints in world coordinates.
 
     Returns
@@ -633,4 +635,6 @@ def total_energy(state: State, params: TriplePendulumParams) -> float:
         raise ValueError("state must be provided")
     from .physics_base import total_energy_from_parts
 
-    return total_energy_from_parts(kinetic_energy(state, params), potential_energy(state, params))
+    return total_energy_from_parts(
+        kinetic_energy(state, params), potential_energy(state, params)
+    )
