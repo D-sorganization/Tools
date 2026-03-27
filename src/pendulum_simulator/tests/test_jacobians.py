@@ -137,9 +137,9 @@ class TestJacobianDoubleAnalytic:
         L1, L2 = L
         for phi in [0.0, 0.3, 1.0, -0.8]:
             J_wrist = jacobian_double(0.5, phi, L1, L2)["wrist"]
-            assert np.isclose(J_wrist[0, 1], 0.0), (
-                f"J_wrist[:,1] should be zero for any phi, got {J_wrist[:, 1]}"
-            )
+            assert np.isclose(
+                J_wrist[0, 1], 0.0
+            ), f"J_wrist[:,1] should be zero for any phi, got {J_wrist[:, 1]}"
 
 
 class TestJacobianDoubleContinuity:
@@ -152,9 +152,9 @@ class TestJacobianDoubleContinuity:
         for theta1 in np.linspace(-1.0, 1.0, 10):
             J0 = jacobian_double(theta1, 0.5, L1, L2)["tip"]
             J1 = jacobian_double(theta1 + eps, 0.5, L1, L2)["tip"]
-            assert np.allclose(J0, J1, atol=(L1 + L2) * eps * 2), (
-                f"Jacobian discontinuity at theta1={theta1}"
-            )
+            assert np.allclose(
+                J0, J1, atol=(L1 + L2) * eps * 2
+            ), f"Jacobian discontinuity at theta1={theta1}"
 
 
 # ============================================================================
@@ -331,9 +331,9 @@ class TestEllipsoidsDouble:
             "singular_values",
         }
         for name, data in result.items():
-            assert set(data.keys()) == expected_keys, (
-                f"Missing keys in '{name}': {expected_keys - set(data.keys())}"
-            )
+            assert (
+                set(data.keys()) == expected_keys
+            ), f"Missing keys in '{name}': {expected_keys - set(data.keys())}"
 
     def test_mob_axes_positive_full_rank(self, L: tuple[float, float]) -> None:
         L1, L2 = L
@@ -383,43 +383,43 @@ class TestDbCViolations:
     """All public functions must assert invalid inputs."""
 
     def test_jacobian_double_negative_L1(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             jacobian_double(0.0, 0.0, -1.0, 1.0)
 
     def test_jacobian_double_zero_L2(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             jacobian_double(0.0, 0.0, 1.0, 0.0)
 
     def test_jacobian_double_nan_angle(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             jacobian_double(float("nan"), 0.0, 1.0, 1.0)
 
     def test_jacobian_triple_infinite_angle(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             jacobian_triple(float("inf"), 0.0, 0.0, 1.0, 1.0, 1.0)
 
     def test_jacobian_triple_negative_length(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             jacobian_triple(0.0, 0.0, 0.0, 1.0, 0.0, 1.0)
 
     def test_ellipsoid_bad_jacobian_shape(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             ellipsoid_from_jacobian(np.eye(3))  # (3,3) not (2,n)
 
     def test_ellipsoid_1d_jacobian_rejected(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             ellipsoid_from_jacobian(np.array([1.0, 2.0]))  # 1-D
 
     def test_ellipsoid_nan_jacobian(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             ellipsoid_from_jacobian(np.array([[1.0, float("nan")], [0.0, 1.0]]))
 
     def test_ellipsoids_double_nan_angle(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             ellipsoids_double(float("nan"), 0.0, 1.0, 1.0)
 
     def test_ellipsoids_triple_zero_length(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             ellipsoids_triple(0.0, 0.0, 0.0, 1.0, 1.0, 0.0)
 
 

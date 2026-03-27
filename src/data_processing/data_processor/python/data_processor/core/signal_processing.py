@@ -1,4 +1,7 @@
 from numba import jit
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
 
 """Core signal processing functions.
 
@@ -270,9 +273,7 @@ def differentiate_signals(
     return result
 
 
-def _spline_derivative(
-    time_numeric: pd.Series, signal_data: pd.Series, order: int
-) -> np.ndarray:
+def _spline_derivative(time_numeric: pd.Series, signal_data: pd.Series, order: int) -> np.ndarray:
     """Compute derivative using spline interpolation (acausal)."""
     if not (time_numeric is not None):
         raise ValueError("time_numeric must be provided")
@@ -483,9 +484,7 @@ def apply_custom_variable(
     return result
 
 
-def _parse_formula(
-    formula: str, columns: pd.Index, time_col: str | None
-) -> tuple[str, set[str]]:
+def _parse_formula(formula: str, columns: pd.Index, time_col: str | None) -> tuple[str, set[str]]:
     """Parse formula and extract signal references.
 
     Converts [signal_name] syntax to plain variable names.
@@ -587,12 +586,8 @@ def calculate_trendline(
     # DbC preconditions
     if not (df is not None):
         raise ValueError("df must be provided")
-    require(
-        x_col in df.columns, f"x_col '{x_col}' not found in DataFrame columns", x_col
-    )
-    require(
-        y_col in df.columns, f"y_col '{y_col}' not found in DataFrame columns", y_col
-    )
+    require(x_col in df.columns, f"x_col '{x_col}' not found in DataFrame columns", x_col)
+    require(y_col in df.columns, f"y_col '{y_col}' not found in DataFrame columns", y_col)
     require(degree >= 1, f"Polynomial degree must be >= 1, got {degree}", degree)
     valid_trends = {t.value for t in TrendlineType}
     require(

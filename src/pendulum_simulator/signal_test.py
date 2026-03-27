@@ -1,4 +1,7 @@
 from typing import Any
+import logging
+
+logger = logging.getLogger(__name__)
 
 #!/usr/bin/env python3
 """Minimal test to verify PyQt signals work."""
@@ -37,6 +40,8 @@ class TestWindow(QMainWindow):
 
     def on_run(self) -> Any:
         print("[TEST] Signal received!")  # noqa: T201
+    def on_run(self):
+        logger.info("[TEST] Signal received!")  # noqa: T201
         QMessageBox.information(self, "Success", "Signal was received!")
 
 

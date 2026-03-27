@@ -1,3 +1,7 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """
 Double pendulum golf swing physics using Lagrangian formulation with relative coordinates.
 
@@ -108,13 +112,13 @@ class JointLimits:
 
     def __post_init__(self) -> None:
         if not (self.phi_min < self.phi_max):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         if not (self.theta1_min < self.theta1_max):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         if not (self.stiffness > 0):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         if not (self.damping >= 0):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
 
 
 @dataclass(frozen=True)
@@ -135,14 +139,10 @@ class TorqueClamp:
         # Accept negative inputs by taking abs (#1138)
         object.__setattr__(self, "max_torque1", abs(self.max_torque1))
         object.__setattr__(self, "max_torque2", abs(self.max_torque2))
-        if not (():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            self.max_torque1 > 0
-        ), f"|max_torque1| must be positive, got {self.max_torque1}"
-        if not (():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            self.max_torque2 > 0
-        ), f"|max_torque2| must be positive, got {self.max_torque2}"
+        if not (self.max_torque1 > 0):
+            raise ValueError(f"|max_torque1| must be positive, got {self.max_torque1}")
+        if not (self.max_torque2 > 0):
+            raise ValueError(f"|max_torque2| must be positive, got {self.max_torque2}")
 
 
 # Type aliases
@@ -188,8 +188,8 @@ def mass_matrix(phi: float, params: PendulumParams) -> np.ndarray:
     M22 = me * L2**2
 
     M = np.array([[M11, M12], [M12, M22]])
-    if not (np.isclose(M[0):
-        raise ValueError(1], M[1, 0]), "Mass matrix must be symmetric")
+    if not (np.isclose(M[0, 1], M[1, 0])):
+        raise ValueError("Mass matrix must be symmetric")
     return M
 
 
@@ -212,15 +212,13 @@ def mass_matrix_components(phi: float, params: PendulumParams) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def coriolis_vector(
-    phi: float, dtheta1: float, dphi: float, params: PendulumParams
-) -> np.ndarray:
+def coriolis_vector(phi: float, dtheta1: float, dphi: float, params: PendulumParams) -> np.ndarray:
     """Compute the Coriolis/centrifugal force vector C(q, qdot) * qdot.
 
     Pre: all inputs finite.
     """
-    if not (all(np.isfinite(v) for v in [phi):
-        raise ValueError(dtheta1, dphi]))
+    if not (all(np.isfinite(v) for v in [phi, dtheta1, dphi])):
+        raise ValueError("Input values must be finite")
     native_coriolis = _native_backend.double_coriolis_vector(phi, dtheta1, dphi, params)
     if native_coriolis is not None:
         return native_coriolis
@@ -263,16 +261,14 @@ def gravity_vector(theta1: float, phi: float, params: PendulumParams) -> np.ndar
 # ---------------------------------------------------------------------------
 
 
-def friction_torque_vector(
-    dtheta1: float, dphi: float, params: PendulumParams
-) -> np.ndarray:
+def friction_torque_vector(dtheta1: float, dphi: float, params: PendulumParams) -> np.ndarray:
     """Compute dissipative torque vector (viscous + Coulomb).
 
     Pre: dtheta1, dphi finite.
     Post: opposes motion direction.
     """
     if not (np.isfinite(dtheta1) and np.isfinite(dphi)):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
     tau_f1 = -params.b1 * dtheta1 - params.mu1 * np.sign(dtheta1)
     tau_f2 = -params.b2 * dphi - params.mu2 * np.sign(dphi)
     result = np.array([tau_f1, tau_f2])
@@ -333,7 +329,7 @@ def joint_limit_torque(
     Returns shape (2,): [tau_penalty_shoulder, tau_penalty_wrist].
     """
     if not (np.isfinite(phi) and np.isfinite(dphi)):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
     transition = 0.05  # rad (~3 degrees)
 
     def _penalty(angle: float, vel: float, lo: float, hi: float) -> float:
@@ -341,13 +337,9 @@ def joint_limit_torque(
         if not (angle is not None):
             raise ValueError("angle must be provided")
         if angle < lo:
-            return _hermite_penalty(
-                lo - angle, -vel, transition, limits.stiffness, limits.damping
-            )
+            return _hermite_penalty(lo - angle, -vel, transition, limits.stiffness, limits.damping)
         if angle > hi:
-            return -_hermite_penalty(
-                angle - hi, vel, transition, limits.stiffness, limits.damping
-            )
+            return -_hermite_penalty(angle - hi, vel, transition, limits.stiffness, limits.damping)
         return 0.0
 
     tau1 = _penalty(theta1, dtheta1, limits.theta1_min, limits.theta1_max)
@@ -400,10 +392,8 @@ class JointLimitsNDOF:
             raise ValueError("angle_max must be 1D")
         if not (self.angle_min.shape == self.angle_max.shape):
             raise ValueError("Shape mismatch")
-        if not (np.all():
-            raise ValueError('DbC Blocked: Precondition failed.')
-            self.angle_min < self.angle_max
-        ), "min must be < max for all joints"
+        if not (np.all(self.angle_min < self.angle_max)):
+            raise ValueError("min must be < max for all joints")
         if not (self.stiffness > 0):
             raise ValueError(f"stiffness must be positive, got {self.stiffness}")
         if not (self.damping >= 0):
@@ -422,10 +412,10 @@ def joint_limit_torque_ndof(
     Returns shape (n_dof,).
     """
     n = len(angles)
-    if not (angles.shape == (n):
-        raise ValueError() and velocities.shape == (n,))
-    if not (limits.angle_min.shape == (n):
-        raise ValueError())
+    if not (angles.shape == (n,) and velocities.shape == (n,)):
+        raise ValueError(f"angles.shape mismatch or condition failed")
+    if not (limits.angle_min.shape == (n,)):
+        raise ValueError(f"limits.angle_min.shape mismatch, expected (n,)")
     transition = 0.05  # rad (~3 degrees)
     result = np.zeros(n)
     for i in range(n):
@@ -456,10 +446,8 @@ def clamp_torque_ndof(tau: np.ndarray, limits: np.ndarray) -> np.ndarray:
     Pre: tau.shape == limits.shape, all limits > 0.
     Post: |result[i]| <= limits[i] for all i.
     """
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        tau.shape == limits.shape
-    ), f"Shape mismatch: tau={tau.shape}, limits={limits.shape}"
+    if not (tau.shape == limits.shape):
+        raise ValueError(f"Shape mismatch: tau={tau.shape}, limits={limits.shape}")
     if not (np.all(limits > 0)):
         raise ValueError("All limits must be positive")
     result: np.ndarray = np.clip(tau, -limits, limits)
@@ -486,8 +474,8 @@ def equations_of_motion(
     Pre: state shape (4,), all finite.
     Post: state_dot shape (4,), all finite.
     """
-    if not (state.shape == (4):
-        raise ValueError() and all(np.isfinite(state)))
+    if not (state.shape == (4,) and all(np.isfinite(state))):
+        raise ValueError(f"state.shape mismatch or condition failed")
     theta1, phi, dtheta1, dphi = state
 
     M = mass_matrix(phi, params)
@@ -502,9 +490,7 @@ def equations_of_motion(
 
     tau_limits = np.zeros(2)
     if limits is not None:
-        tau_limits = joint_limit_torque(
-            phi, dphi, limits, theta1=theta1, dtheta1=dtheta1
-        )
+        tau_limits = joint_limit_torque(phi, dphi, limits, theta1=theta1, dtheta1=dtheta1)
 
     rhs = tau_drive + tau_friction + tau_limits - C - G
     cond = np.linalg.cond(M)
@@ -541,10 +527,8 @@ def forward_kinematics(theta1: float, phi: float, params: PendulumParams) -> dic
     result = {"shoulder": (0.0, 0.0), "wrist": (wx, wy), "tip": (tx, ty)}
     _wrist_dist = np.hypot(wx, wy)
     _tip_dist = np.hypot(tx - wx, ty - wy)
-    if not (():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        abs(_wrist_dist - L1) < 1e-9
-    ), f"Wrist distance {_wrist_dist:.6f} ≠ L1={L1:.6f}"
+    if not (abs(_wrist_dist - L1) < 1e-9):
+        raise ValueError(f"Wrist distance {_wrist_dist:.6f} ≠ L1={L1:.6f}")
     if not (abs(_tip_dist - L2) < 1e-9):
         raise ValueError(f"Tip distance {_tip_dist:.6f} ≠ L2={L2:.6f}")
     return result
@@ -607,28 +591,15 @@ def base_force(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
     awy = params.L1 * (np.sin(theta1) * qdd1 + np.cos(theta1) * dtheta1**2)
 
     # Tip acceleration (clubhead)
-    atx = awx + params.L2 * (
-        np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2
-    )
-    aty = awy + params.L2 * (
-        np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2
-    )
+    atx = awx + params.L2 * (np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2)
+    aty = awy + params.L2 * (np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2)
 
     # Shaft COM at L2/2 from wrist
-    asx = awx + (params.L2 / 2) * (
-        np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2
-    )
-    asy = awy + (params.L2 / 2) * (
-        np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2
-    )
+    asx = awx + (params.L2 / 2) * (np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2)
+    asy = awy + (params.L2 / 2) * (np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2)
 
     fx = params.m1 * ax1 + params.m2 * asx + params.mClub * atx
-    fy = (
-        params.m1 * ay1
-        + params.m2 * asy
-        + params.mClub * aty
-        - (params.m1 + me) * params.g
-    )
+    fy = params.m1 * ay1 + params.m2 * asy + params.mClub * aty - (params.m1 + me) * params.g
 
     return {
         "fx": float(fx),
@@ -689,12 +660,10 @@ def control_vector(
 # ---------------------------------------------------------------------------
 
 
-def linear_accelerations(
-    state: State, qddot: np.ndarray, params: PendulumParams
-) -> dict:
+def linear_accelerations(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
     """Compute linear accelerations of joints in world coordinates."""
-    if not (state.shape == (4):
-        raise ValueError() and qddot.shape == (2,))
+    if not (state.shape == (4,) and qddot.shape == (2,)):
+        raise ValueError(f"state.shape mismatch or condition failed")
     theta1, phi, dtheta1, dphi = state
     ddtheta1, ddphi = qddot
     L1, L2 = params.L1, params.L2
@@ -765,6 +734,4 @@ def total_energy(state: State, params: PendulumParams) -> float:
         raise ValueError("state must be provided")
     from .physics_base import total_energy_from_parts
 
-    return total_energy_from_parts(
-        kinetic_energy(state, params), potential_energy(state, params)
-    )
+    return total_energy_from_parts(kinetic_energy(state, params), potential_energy(state, params))

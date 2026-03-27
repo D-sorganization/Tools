@@ -1,3 +1,7 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """calculator.py module."""
 
 from __future__ import annotations
@@ -753,8 +757,7 @@ class TI89Calculator:
             "factorial": TI89Calculator._safe_factorial,
             "nCr": sp.binomial,
             "nPr": lambda n, r, **k: (
-                TI89Calculator._safe_factorial(n)
-                / TI89Calculator._safe_factorial(n - r)
+                TI89Calculator._safe_factorial(n) / TI89Calculator._safe_factorial(n - r)
             ),
             "sum": sp.summation,
             "product": sp.product,

@@ -158,9 +158,9 @@ class TestConstraintViolationPostcondition:
         abort_tol = 1e-2
         for i in range(sim_result.n_steps):
             v = constraint_violation(sim_result.states[i], _GOLFER_PARAMS)
-            assert v < abort_tol, (
-                f"Constraint violation {v:.3e} at step {i} exceeds abort threshold {abort_tol:.3e}"
-            )
+            assert (
+                v < abort_tol
+            ), f"Constraint violation {v:.3e} at step {i} exceeds abort threshold {abort_tol:.3e}"
 
     def test_violation_finite_at_all_steps(self, sim_result: GolferSimulationResult) -> None:
         """Constraint violation must be finite at every trajectory step."""
@@ -173,7 +173,7 @@ class TestGolferSimulationResultContracts:
     """Trajectory-level DbC validation for GolferSimulationResult."""
 
     def test_constructor_rejects_non_monotonic_time(self) -> None:
-        with pytest.raises(AssertionError, match="strictly increasing"):
+        with pytest.raises((ValueError, TypeError), match="strictly increasing"):
             GolferSimulationResult(
                 t=np.array([0.0, 0.0]),
                 states=np.zeros((2, 2 * N_DOF)),
@@ -182,7 +182,7 @@ class TestGolferSimulationResultContracts:
             )
 
     def test_constructor_rejects_wrong_state_width(self) -> None:
-        with pytest.raises(AssertionError, match="states must have width"):
+        with pytest.raises((ValueError, TypeError), match="states must have width"):
             GolferSimulationResult(
                 t=np.array([0.0, 0.01]),
                 states=np.zeros((2, 2 * N_DOF - 1)),

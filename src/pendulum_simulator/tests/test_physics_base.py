@@ -51,7 +51,7 @@ class TestKineticEnergyFromM:
     def test_shape_mismatch_raises(self) -> None:
         M = np.eye(3)
         qdot = np.zeros(2)
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             kinetic_energy_from_M(M, qdot)
 
 
@@ -60,7 +60,7 @@ class TestTotalEnergy:
         assert total_energy_from_parts(5.0, -3.0) == 2.0
 
     def test_nan_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             total_energy_from_parts(float("nan"), 1.0)
 
 
@@ -91,7 +91,7 @@ class TestFrictionTorqueNDOF:
         assert np.isclose(tau[0], expected)
 
     def test_shape_mismatch_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             friction_torque_ndof(np.zeros(2), np.ones(3))
 
 

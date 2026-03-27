@@ -1,4 +1,7 @@
 from typing import Any
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
 
 """Comprehensive tests for the plot_theme module.
 
@@ -165,9 +168,7 @@ class TestPredefinedThemes:
 
         for key, theme in PLOT_THEMES.items():
             params = theme.to_rcparams()
-            assert "figure.facecolor" in params, (
-                f"Theme '{key}' missing figure.facecolor"
-            )
+            assert "figure.facecolor" in params, f"Theme '{key}' missing figure.facecolor"
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -420,9 +421,7 @@ class TestPlotThemeManager:
         """QSettings path: saved theme loaded if it exists in registry."""
         mock_settings = MagicMock()
         mock_settings.value.return_value = "dracula"
-        with patch.dict(
-            "sys.modules", {"PyQt6": MagicMock(), "PyQt6.QtCore": MagicMock()}
-        ):
+        with patch.dict("sys.modules", {"PyQt6": MagicMock(), "PyQt6.QtCore": MagicMock()}):
             with patch("plot_theme.manager.PlotThemeManager._load_saved_theme"):
                 from plot_theme.manager import PlotThemeManager
 

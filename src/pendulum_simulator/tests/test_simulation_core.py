@@ -46,11 +46,11 @@ class TestIntegrateOde:
         def rhs(t, y) -> Any:
             return -y
 
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             integrate_ode(rhs, np.array([float("nan")]), t_end=1.0)
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             integrate_ode(rhs, np.array([1.0]), t_end=-1.0)
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             integrate_ode(rhs, np.array([1.0]), t_end=1.0, dt=2.0)
 
     def test_returns_correct_shapes(self) -> None:

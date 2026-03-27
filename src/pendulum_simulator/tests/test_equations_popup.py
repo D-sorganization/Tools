@@ -33,4 +33,6 @@ def test_show_equations_popup(qapp, qtbot) -> Any:
 
 def test_show_equations_popup_invalid_topic(qapp) -> Any:
     with pytest.raises(AssertionError):
+def test_show_equations_popup_invalid_topic(qapp):
+    with pytest.raises((ValueError, TypeError)):
         show_equations_popup(None, "INVALID_TOPIC")

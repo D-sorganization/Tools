@@ -32,17 +32,15 @@ def zero_torque_accelerations(state: State, params: GolferParams) -> np.ndarray:
     -------
     qddot : np.ndarray, shape (8,)
     """
-    if not (state.shape == (2 * N_DOF):
-        raise ValueError())
+    if not (state.shape == (2 * N_DOF,)):
+        raise ValueError(f"state.shape shape mismatch")
     if not (np.all(np.isfinite(state))):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
 
     return constrained_accelerations(state, 0.0, params, _zero_torque)
 
 
-def zero_torque_joint_forces(
-    state: State, params: GolferParams
-) -> dict[str, tuple[float, float]]:
+def zero_torque_joint_forces(state: State, params: GolferParams) -> dict[str, tuple[float, float]]:
     """Joint forces that would exist with zero driving torques.
 
     Parameters
@@ -54,10 +52,10 @@ def zero_torque_joint_forces(
     -------
     dict with joint name → (fx, fy) tuples.
     """
-    if not (state.shape == (2 * N_DOF):
-        raise ValueError())
+    if not (state.shape == (2 * N_DOF,)):
+        raise ValueError(f"state.shape shape mismatch")
     if not (np.all(np.isfinite(state))):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
 
     q = state[:N_DOF]
     qdot = state[N_DOF:]

@@ -27,7 +27,7 @@ def test_unit_preferences_apply_preset() -> Any:
     assert prefs.selections[UnitCategory.LENGTH] == "in"
     assert prefs.selections[UnitCategory.MASS] == "lb"
 
-    with pytest.raises(AssertionError):
+    with pytest.raises((ValueError, TypeError)):
         prefs.apply_preset("Unknown")
 
 
@@ -36,7 +36,7 @@ def test_unit_preferences_get_set() -> Any:
     prefs.set_unit(UnitCategory.LENGTH, "cm")
     assert prefs.get_unit(UnitCategory.LENGTH) == "cm"
 
-    with pytest.raises(AssertionError):
+    with pytest.raises((ValueError, TypeError)):
         prefs.set_unit(UnitCategory.LENGTH, "not_a_unit")
 
 

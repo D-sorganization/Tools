@@ -82,12 +82,12 @@ class TestCatmullRomSmooth:
 
     def test_n_sub_zero_raises(self) -> None:
         pts = [(0.0, 0.0), (1.0, 1.0), (2.0, 2.0), (3.0, 3.0)]
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             catmull_rom_smooth(pts, n_sub=0)
 
     def test_negative_n_sub_raises(self) -> None:
         pts = [(0.0, 0.0), (1.0, 1.0), (2.0, 2.0), (3.0, 3.0)]
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             catmull_rom_smooth(pts, n_sub=-1)
 
     # --- Mathematical: straight line should be smooth ---
@@ -201,7 +201,7 @@ class TestTorqueHistoryConstants:
         assert len(labels) == 1
 
     def test_zero_ndof_raises(self) -> None:
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             thc._joint_labels_for_ndof(0)
 
     def test_colors_are_copies(self) -> None:
@@ -245,7 +245,7 @@ class TestUnitPreferences:
 
     def test_invalid_preset_raises(self) -> None:
         prefs = UnitPreferences()
-        with pytest.raises(AssertionError, match="Unknown preset"):
+        with pytest.raises((ValueError, TypeError), match="Unknown preset"):
             prefs.apply_preset("ByteImperial")
 
     def test_set_unit_valid(self) -> None:
@@ -255,7 +255,7 @@ class TestUnitPreferences:
 
     def test_set_unit_invalid_raises(self) -> None:
         prefs = UnitPreferences()
-        with pytest.raises(AssertionError, match="Invalid unit"):
+        with pytest.raises((ValueError, TypeError), match="Invalid unit"):
             prefs.set_unit(UnitCategory.LENGTH, "parsec")
 
     def test_get_unit_default_for_missing_category(self) -> None:

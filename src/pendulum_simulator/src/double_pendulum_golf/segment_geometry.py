@@ -93,8 +93,8 @@ def cylinder_cross_section(
         ]
     )
 
-    if not (corners.shape == (4):
-        raise ValueError(2))
+    if not (corners.shape == (4, 2)):
+        raise ValueError(f"corners shape mismatch, expected (4, 2), got {corners.shape}")
     return corners
 
 
@@ -143,8 +143,8 @@ def ellipsoid_cross_section(
     y_rot = sin_a * x + cos_a * y + centre[1]
 
     pts = np.column_stack([x_rot, y_rot])
-    if not (pts.shape == (n_points):
-        raise ValueError(2))
+    if not (pts.shape == (n_points, 2)):
+        raise ValueError(f"pts shape mismatch, expected ({n_points}, 2), got {pts.shape}")
     return pts
 
 
@@ -173,7 +173,7 @@ def tapered_cylinder_cross_section(
     Post: output shape is (4, 2)
     """
     if not (radius_start > 0 and radius_end > 0):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
 
     direction = end - start
     length = np.linalg.norm(direction)
@@ -192,8 +192,8 @@ def tapered_cylinder_cross_section(
         ]
     )
 
-    if not (corners.shape == (4):
-        raise ValueError(2))
+    if not (corners.shape == (4, 2)):
+        raise ValueError(f"corners shape mismatch, expected (4, 2), got {corners.shape}")
     return corners
 
 
@@ -293,8 +293,8 @@ def auto_radius_from_mass(mass: float, length: float, scale: float = 0.02) -> fl
     Post: result > 0
     """
     if not (mass > 0 and length > 0 and scale > 0):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
     r = scale * np.sqrt(mass / length)
     if not (r > 0):
-        raise ValueError('DbC Blocked: Precondition failed.')
+        raise ValueError("DbC Blocked: Precondition failed.")
     return float(r)

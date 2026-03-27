@@ -96,9 +96,7 @@ class GolferSimulationResult(TrajectoryResultMixin):
         self._check_idx(idx)
         return forward_kinematics(self.q_at(idx), self.params)  # type: ignore[no-any-return]
 
-    def torques_at(
-        self, idx: int
-    ) -> tuple[float, float, float, float, float, float, float]:
+    def torques_at(self, idx: int) -> tuple[float, float, float, float, float, float, float]:
         """Applied driving torques at time index."""
         if not (idx is not None):
             raise ValueError("idx must be provided")
@@ -129,9 +127,7 @@ class GolferSimulationResult(TrajectoryResultMixin):
         if not (idx is not None):
             raise ValueError("idx must be provided")
         self._check_idx(idx)
-        return constraint_forces(
-            self.states[idx], self.t[idx], self.params, self.torque_func
-        )
+        return constraint_forces(self.states[idx], self.t[idx], self.params, self.torque_func)
 
     def constraint_violation_at(self, idx: int) -> float:
         """Constraint violation magnitude at time index."""
@@ -232,10 +228,8 @@ def run_simulation(
     -------
     GolferSimulationResult
     """
-    if not (initial_state.shape == ():
-        raise ValueError('DbC Blocked: Precondition failed.')
-        2 * N_DOF,
-    ), f"Initial state shape must be ({2 * N_DOF},), got {initial_state.shape}"
+    if not (initial_state.shape == (2 * N_DOF,)):
+        raise ValueError(f"Initial state shape must be ({2 * N_DOF},), got {initial_state.shape}")
     if not (np.all(np.isfinite(initial_state))):
         raise ValueError("Initial state must be finite")
     if not (t_end > 0):
@@ -257,9 +251,7 @@ def run_simulation(
     def ode_rhs(t: float, y: np.ndarray) -> np.ndarray:
         if not (t is not None):
             raise ValueError("t must be provided")
-        dydt = equations_of_motion(
-            y, t, params, torque_func, alpha, beta, effective_torque_limits
-        )
+        dydt = equations_of_motion(y, t, params, torque_func, alpha, beta, effective_torque_limits)
         # Apply joint limit penalty torques if enabled
         if limits is not None:
             from .physics import joint_limit_torque_ndof

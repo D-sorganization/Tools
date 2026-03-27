@@ -1,3 +1,7 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """
 Custom QWidget that draws the double/triple pendulum animation.
 
@@ -277,7 +281,7 @@ class PendulumWidget(BasePendulumWidget):
         Otherwise falls back to flat-line rendering.
         """
         if not (self._result is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         pos = self._result.positions_at(self._current_idx)
         shoulder = self._world_to_pixel(*pos["shoulder"])
         tip = self._world_to_pixel(*pos["tip"])
@@ -356,7 +360,7 @@ class PendulumWidget(BasePendulumWidget):
 
     def _draw_info(self, painter: QPainter) -> None:
         if not (self._result is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         t = self._result.t[self._current_idx]
         s = self._result.states[self._current_idx]
         theta1_deg = np.degrees(s[0])
@@ -659,7 +663,7 @@ class PendulumWidget(BasePendulumWidget):
     def _draw_ellipsoids_at_frame(self, painter: QPainter) -> None:
         """Compute and draw mobility/force ellipsoids for the current frame."""
         if not (self._result is not None):
-            raise ValueError('DbC Blocked: Precondition failed.')
+            raise ValueError("DbC Blocked: Precondition failed.")
         state = self._result.states[self._current_idx]
         params = self._result.params
         ppm = self._pixels_per_meter
@@ -762,10 +766,10 @@ class PendulumWidget(BasePendulumWidget):
         Pre: directions.shape == (2, 2)
         Pre: semi_axes_px.shape == (2,)
         """
-        if not (directions.shape == (2):
-            raise ValueError(2), "directions must be (2, 2)")
-        if not (semi_axes_px.shape == (2):
-            raise ValueError(), "semi_axes_px must be (2,)")
+        if not (directions.shape == (2, 2)):
+            raise ValueError("directions must be (2, 2)")
+        if not (semi_axes_px.shape == (2,)):
+            raise ValueError("semi_axes_px must be (2,)")
 
         a = float(semi_axes_px[0])
         b = float(semi_axes_px[1])
@@ -887,8 +891,7 @@ class PendulumWidget(BasePendulumWidget):
             painter.drawText(rect, Qt.AlignmentFlag.AlignCenter, icon)
 
         self._zoom_btn_rects = [
-            QRect(x, y_start + i * (btn_size + 3), btn_size, btn_size)
-            for i in range(len(buttons))
+            QRect(x, y_start + i * (btn_size + 3), btn_size, btn_size) for i in range(len(buttons))
         ]
 
     def _handle_zoom_button_click(self, pos: QPoint) -> bool:

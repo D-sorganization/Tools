@@ -72,7 +72,7 @@ class TestTorqueClampAbsValue:
     def test_zero_value_rejected(self) -> None:
         from double_pendulum_golf.physics import TorqueClamp
 
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             TorqueClamp(max_torque1=0.0, max_torque2=10.0)
 
     def test_symmetric_clamping(self) -> None:
@@ -266,9 +266,9 @@ class TestPhysicsTripleEnergy:
         E0 = total_energy(state0, params)
         E_final = total_energy(result.states[-1], params)
         # Energy should be conserved within integration tolerance
-        assert abs(E_final - E0) / max(abs(E0), 1e-10) < 0.01, (
-            f"Energy drift: E0={E0:.4f}, E_final={E_final:.4f}"
-        )
+        assert (
+            abs(E_final - E0) / max(abs(E0), 1e-10) < 0.01
+        ), f"Energy drift: E0={E0:.4f}, E_final={E_final:.4f}"
 
 
 class TestUnitConversionModule:

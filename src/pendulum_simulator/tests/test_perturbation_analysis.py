@@ -130,6 +130,12 @@ class TestPerturbationConfig:
 
     def test_invalid_amplitude(self) -> Any:
         with pytest.raises(AssertionError):
+    def test_invalid_n_trials(self):
+        with pytest.raises((ValueError, TypeError)):
+            PerturbationConfig(n_trials=0)
+
+    def test_invalid_amplitude(self):
+        with pytest.raises((ValueError, TypeError)):
             PerturbationConfig(noise_amplitude=-0.1)
 
 
@@ -238,7 +244,7 @@ class TestPerturbTorqueCoeffsDbC:
     def test_invalid_noise_type_rejected_at_public_boundary(self) -> Any:
         """Invalid noise_type must raise AssertionError at function entry, not deep inside."""
         coeffs = [[1.0, 2.0], [3.0, 4.0]]
-        with pytest.raises(AssertionError, match="noise_type"):
+        with pytest.raises((ValueError, TypeError), match="noise_type"):
             perturb_torque_coeffs(coeffs, noise_amplitude=0.1, noise_type="red")
 
     def test_all_valid_noise_types_accepted(self) -> Any:
@@ -251,7 +257,7 @@ class TestPerturbTorqueCoeffsDbC:
 
     def test_negative_amplitude_rejected(self) -> Any:
         coeffs = [[1.0]]
-        with pytest.raises(AssertionError):
+        with pytest.raises((ValueError, TypeError)):
             perturb_torque_coeffs(coeffs, noise_amplitude=-0.1)
 
 

@@ -37,6 +37,8 @@ class TestCross2D:
 
     def test_wrong_shape_raises(self) -> Any:
         with pytest.raises(AssertionError, match="r must be shape"):
+    def test_wrong_shape_raises(self):
+        with pytest.raises((ValueError, TypeError), match="r must be shape"):
             cross_2d(np.array([1.0, 2.0, 3.0]), np.array([1.0, 2.0]))
 
 
@@ -85,6 +87,8 @@ class TestTotalMomentAtJoint:
 
     def test_nan_torque_raises(self) -> Any:
         with pytest.raises(AssertionError, match="torque must be finite"):
+    def test_nan_torque_raises(self):
+        with pytest.raises((ValueError, TypeError), match="torque must be finite"):
             total_moment_at_joint(
                 float("nan"),
                 np.array([0.0, 0.0]),
