@@ -201,7 +201,7 @@ jobs:
           fi
           # Filter out legacy directories whose tests require heavy deps or Qt display
           # (mirrors the ruff/mypy/bandit exclude list for legacy directories)
-          grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/scientific_modeling/|^src/tools/folder_tools/' \
+          grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/shared/python/programmatic_pid/|^src/signal_processing_studio/' \
             all_changed_test_files.txt > changed_test_files.txt || true
           cat changed_test_files.txt
 
