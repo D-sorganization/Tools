@@ -19,11 +19,16 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 # ── Ensure urdf_builder_gui is importable ───────────────────────────────
-_URDF_BUILDER_DIR = str(
-    Path(__file__).resolve().parent.parent.parent / "urdf_builder_gui" / "python"
-)
-if _URDF_BUILDER_DIR not in sys.path:
-    sys.path.insert(0, _URDF_BUILDER_DIR)
+# The urdf_builder_gui package lives under src/urdf_builder_gui/python/.
+# We add it to sys.path only if it's not already importable.
+try:
+    import urdf_builder_gui  # noqa: F401
+except ImportError:
+    _URDF_BUILDER_DIR = str(
+        Path(__file__).resolve().parent.parent.parent / "urdf_builder_gui" / "python"
+    )
+    if _URDF_BUILDER_DIR not in sys.path:
+        sys.path.insert(0, _URDF_BUILDER_DIR)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

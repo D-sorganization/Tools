@@ -18,13 +18,18 @@ for _ in range(10):
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from _bootstrap import bootstrap
+from _bootstrap import bootstrap  # noqa: E402
 
 REPO_ROOT = bootstrap(__file__)
+
+# Add the RRT package source directory so star_wars_rrt is importable
 PYTHON_SRC = (
     REPO_ROOT / "src" / "scientific_modeling" / "rrt_path_planner" / "python" / "src"
 )
-if str(PYTHON_SRC) not in sys.path:
+if not PYTHON_SRC.exists():
+    # Fallback: try without scientific_modeling prefix
+    PYTHON_SRC = REPO_ROOT / "src" / "rrt_path_planner" / "python" / "src"
+if PYTHON_SRC.exists() and str(PYTHON_SRC) not in sys.path:
     sys.path.insert(0, str(PYTHON_SRC))
 
 from star_wars_rrt import main  # noqa: E402

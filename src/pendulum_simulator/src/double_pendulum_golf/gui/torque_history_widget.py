@@ -37,20 +37,6 @@ except ImportError:
 _PLOT_THEME_AVAILABLE = False
 _get_plot_theme_manager: Any = None
 try:
-    import sys
-    from pathlib import Path
-
-    _shared_root = None
-    _p = Path(__file__).resolve().parent
-    for _ in range(10):
-        _candidate = _p / "shared" / "python"
-        if _candidate.exists():
-            _shared_root = _candidate
-            break
-        _p = _p.parent
-    if _shared_root is not None and str(_shared_root) not in sys.path:
-        sys.path.insert(0, str(_shared_root))
-
     from plot_theme.manager import (
         get_plot_theme_manager as _shared_get_plot_theme_manager,
     )
@@ -58,7 +44,27 @@ try:
     _get_plot_theme_manager = _shared_get_plot_theme_manager
     _PLOT_THEME_AVAILABLE = True
 except ImportError:
-    pass
+    # plot_theme not on sys.path — try to locate shared/python dynamically
+    try:
+        import sys
+        from pathlib import Path
+
+        _p = Path(__file__).resolve().parent
+        for _ in range(10):
+            _candidate = _p / "shared" / "python"
+            if _candidate.exists():
+                if str(_candidate) not in sys.path:
+                    sys.path.insert(0, str(_candidate))
+                from plot_theme.manager import (
+                    get_plot_theme_manager as _shared_get_plot_theme_manager,
+                )
+
+                _get_plot_theme_manager = _shared_get_plot_theme_manager
+                _PLOT_THEME_AVAILABLE = True
+                break
+            _p = _p.parent
+    except ImportError:
+        pass
 
 
 # ---------------------------------------------------------------------------

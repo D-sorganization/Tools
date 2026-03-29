@@ -27,12 +27,13 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
-# Bootstrap imports for development mode (before pip install -e .)
+# Bootstrap imports — use the sanctioned _bootstrap module
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
-from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+from _bootstrap import bootstrap  # noqa: E402
 
-ensure_paths(_REPO_ROOT)
+bootstrap(__file__)
 
 
 # Mock imports/utils if shared/python doesn't exist in all repos
