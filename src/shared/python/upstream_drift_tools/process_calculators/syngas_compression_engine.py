@@ -86,7 +86,7 @@ except ImportError:
             s = _SPECIES_TABLE.get(species)
             return s.molecular_weight if s else None
 
-        def get_species(self, species: str) -> "_SpeciesData | None":
+        def get_species(self, species: str) -> _SpeciesData | None:
             return _SPECIES_TABLE.get(species)
 
     def get_species_database() -> Any:  # type: ignore[misc]
@@ -320,7 +320,9 @@ class SyngasCompressionEngine:
                 stage.inlet_temperature = current_temp
 
             stage_result = self.calculate_compression_work(
-                stage, flow_rate, mixture_props,
+                stage,
+                flow_rate,
+                mixture_props,
             )
             stage_result["stage_number"] = i + 1
             stage_result["inlet_temp"] = stage.inlet_temperature

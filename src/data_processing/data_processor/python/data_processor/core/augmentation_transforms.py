@@ -557,7 +557,7 @@ class TransformsMixin:
                     one_hot[i, label_map[lbl]] = 1.0
 
                 # Vectorized label mixing
-                lam_2d = lam.reshape(-1, 1) if hasattr(lam, 'reshape') else lam
+                lam_2d = lam.reshape(-1, 1) if hasattr(lam, "reshape") else lam
                 mixed_labels = lam_2d * one_hot + (1 - lam_2d) * one_hot[indices]
             else:
                 mixed_labels = lam * labels + (1 - lam) * labels[indices]

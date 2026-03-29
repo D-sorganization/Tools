@@ -312,13 +312,15 @@ def export_constants_documentation(output_path: str) -> bool:
         ]
 
         for const_name, info in constants_info.items():
-            content.extend([
-                f"### {const_name}",
-                f"- **Value**: {info['value']}",
-                f"- **Units**: {info['units']}",
-                f"- **Source**: {info['source']}",
-                "",
-            ])
+            content.extend(
+                [
+                    f"### {const_name}",
+                    f"- **Value**: {info['value']}",
+                    f"- **Units**: {info['units']}",
+                    f"- **Source**: {info['source']}",
+                    "",
+                ]
+            )
 
         p = Path(output_path)
         p.parent.mkdir(parents=True, exist_ok=True)

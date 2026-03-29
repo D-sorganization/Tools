@@ -21,7 +21,6 @@ from .se3 import (
     _Adjoint,
     se3ToVec,
 )
-from .so3 import so3ToVec
 
 logger = logging.getLogger(__name__)
 
@@ -172,7 +171,9 @@ def IKinBody(
     return thetalist, False
 
 
-def IKinSpace(Slist: Any, M: Any, T: Any, thetalist0: Any, eomg: float, ev: float) -> tuple[np.ndarray, bool]:
+def IKinSpace(
+    Slist: Any, M: Any, T: Any, thetalist0: Any, eomg: float, ev: float
+) -> tuple[np.ndarray, bool]:
     """Computes inverse kinematics in the space frame for an open chain robot."""
     if not (Slist is not None):
         raise ValueError("Slist must be provided")

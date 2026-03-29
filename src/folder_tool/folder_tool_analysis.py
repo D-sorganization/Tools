@@ -148,7 +148,9 @@ class AnalysisMixin:
         report.extend(["", "LARGEST FILES:"])
         report.extend(
             f"  {Path(file_path).name}: {size / (1024 * 1024):.1f} MB"
-            for file_path, size in sorted(largest_files, key=lambda x: x[1], reverse=True)
+            for file_path, size in sorted(
+                largest_files, key=lambda x: x[1], reverse=True
+            )
         )
 
         if analysis_errors:

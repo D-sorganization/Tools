@@ -13,10 +13,8 @@ from typing import Any
 
 import numpy as np
 
-from .kinematics import FKinSpace, JacobianSpace
 from .se3 import Adjoint, MatrixExp6, TransInv, VecTose3
 from .so3 import VecToso3
-from .trajectory import CubicTimeScaling, QuinticTimeScaling
 
 logger = logging.getLogger(__name__)
 
@@ -300,7 +298,9 @@ def SimulateControl(
     m, n = np.array(thetamatd).shape
     thetacurrent = np.array(thetalist).copy()
     dthetacurrent = np.array(dthetalist).copy()
-    eint = np.zeros((m, 1)).reshape(m,)
+    eint = np.zeros((m, 1)).reshape(
+        m,
+    )
     taumat = np.zeros(np.array(thetamatd).shape)
     thetamat = np.zeros(np.array(thetamatd).shape)
     for i in range(n):

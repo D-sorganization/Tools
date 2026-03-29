@@ -25,8 +25,8 @@ and Control*. Cambridge University Press.
 from rotation_converter.modern_robotics_pkg._helpers import _near_zero  # noqa: F401
 from rotation_converter.modern_robotics_pkg.dynamics import (  # noqa: F401
     ComputedTorque,
-    EulerStep,
     EndEffectorForces,
+    EulerStep,
     ForwardDynamics,
     ForwardDynamicsTrajectory,
     GravityForces,

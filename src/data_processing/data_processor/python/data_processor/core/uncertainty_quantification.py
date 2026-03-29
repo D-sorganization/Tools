@@ -562,7 +562,7 @@ class UncertaintyQuantifier:
 
         # Standard errors and intervals (vectorized)
         # var_mean_diag[i] = X_new_design[i] @ XtX_inv @ X_new_design[i].T
-        var_mean_diag = np.einsum('ij,jk,ik->i', X_new_design, XtX_inv, X_new_design)
+        var_mean_diag = np.einsum("ij,jk,ik->i", X_new_design, XtX_inv, X_new_design)
         se_mean = np.sqrt(mse * var_mean_diag)
         se_pred = np.sqrt(mse * (1 + var_mean_diag))
 

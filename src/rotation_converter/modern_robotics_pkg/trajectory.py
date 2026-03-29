@@ -12,9 +12,8 @@ import numpy as np
 
 from rotation_converter._contracts import ensure, require
 
-from .se3 import MatrixExp6, MatrixLog6, TransInv, TransToRp, RpToTrans
+from .se3 import MatrixExp6, MatrixLog6, TransInv, TransToRp
 from .so3 import MatrixExp3, MatrixLog3
-
 
 # ---------------------------------------------------------------------------
 # Time-scaling functions

@@ -10,8 +10,7 @@ from __future__ import annotations
 import numpy as np
 
 from ._helpers import _near_zero
-from .se3 import RpToTrans, TransToRp
-from .so3 import VecToso3
+from .se3 import RpToTrans
 
 
 def Normalize(V: np.ndarray) -> np.ndarray:

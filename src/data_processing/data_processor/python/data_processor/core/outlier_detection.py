@@ -515,15 +515,15 @@ class OutlierDetector:
                 reach_dist[i, j] = max(k_distances[j], distances[i, j])
 
         # Local reachability density (vectorized)
-        neighbor_reach_sums = np.array([
-            np.sum(reach_dist[i, k_neighbors[i]]) for i in range(n)
-        ])
+        neighbor_reach_sums = np.array(
+            [np.sum(reach_dist[i, k_neighbors[i]]) for i in range(n)]
+        )
         lrd = k / neighbor_reach_sums
 
         # Local outlier factor (vectorized)
-        lof = np.array([
-            np.mean(lrd[k_neighbors[i]]) / (lrd[i] + 1e-10) for i in range(n)
-        ])
+        lof = np.array(
+            [np.mean(lrd[k_neighbors[i]]) / (lrd[i] + 1e-10) for i in range(n)]
+        )
 
         # Threshold based on contamination
         threshold = np.percentile(lof, 100 * (1 - self.config.lof_contamination))

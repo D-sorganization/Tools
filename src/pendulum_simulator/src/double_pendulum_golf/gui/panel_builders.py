@@ -511,8 +511,14 @@ def _build_golfer_state(p: dict) -> np.ndarray:
             p["alpha_le_rad"],
             p["alpha_lh_rad"],
             0.0,  # theta_club (computed by projection)
-            0.0, 0.0, 0.0, 0.0,  # qdot (all zero)
-            0.0, 0.0, 0.0, 0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,  # qdot (all zero)
+            0.0,
+            0.0,
+            0.0,
+            0.0,
         ]
     )
 
@@ -520,8 +526,12 @@ def _build_golfer_state(p: dict) -> np.ndarray:
 def _build_golfer_torque(p: dict) -> object:
     """Build the golfer polynomial torque function."""
     return make_polynomial_torque_golfer(
-        p["hub_coeffs"], p["rs_coeffs"], p["re_coeffs"],
-        p["rh_coeffs"], p["ls_coeffs"], p["le_coeffs"],
+        p["hub_coeffs"],
+        p["rs_coeffs"],
+        p["re_coeffs"],
+        p["rh_coeffs"],
+        p["ls_coeffs"],
+        p["le_coeffs"],
         p["lh_coeffs"],
     )
 
@@ -545,9 +555,12 @@ def _wire_golfer_perturbation(
         clamp = build_clamp(p)
         torque_func = make_polynomial_torque_golfer(*coeffs)  # type: ignore[arg-type]
         return run_simulation_golfer(
-            params=params, initial_state=initial_state,
-            t_end=p["t_end"], torque_func=torque_func,  # type: ignore[arg-type]
-            limits=limits, clamp=clamp,
+            params=params,
+            initial_state=initial_state,
+            t_end=p["t_end"],
+            torque_func=torque_func,  # type: ignore[arg-type]
+            limits=limits,
+            clamp=clamp,
         )
 
     def _golfer_extract_fn(result: object) -> dict:
@@ -569,15 +582,24 @@ def _wire_golfer_perturbation(
         }
 
     _GOLFER_TAU_KEYS = [
-        "tau_hub", "tau_rs", "tau_re", "tau_rh",
-        "tau_ls", "tau_le", "tau_lh",
+        "tau_hub",
+        "tau_rs",
+        "tau_re",
+        "tau_rh",
+        "tau_ls",
+        "tau_le",
+        "tau_lh",
     ]
 
     def _golfer_coeffs_fn() -> list:
         p = controls.get_params()
         joint_keys = [
-            "hip_coeffs", "spine_coeffs", "r_shoulder_coeffs",
-            "r_elbow_coeffs", "l_shoulder_coeffs", "l_elbow_coeffs",
+            "hip_coeffs",
+            "spine_coeffs",
+            "r_shoulder_coeffs",
+            "r_elbow_coeffs",
+            "l_shoulder_coeffs",
+            "l_elbow_coeffs",
             "wrist_coeffs",
         ]
         return [p.get(k, [0.0]) for k in joint_keys]
@@ -694,7 +716,12 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
     panel._settings_key = "splitter_golfer"
 
     _wire_golfer_perturbation(
-        panel, controls, build_params, build_state, build_limits, build_clamp,
+        panel,
+        controls,
+        build_params,
+        build_state,
+        build_limits,
+        build_clamp,
     )
     return panel
 
