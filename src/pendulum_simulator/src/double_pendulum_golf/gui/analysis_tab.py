@@ -650,7 +650,7 @@ class AnalysisTab:
                 q[idx] = val
         return q
 
-    @staticmethod  # noqa: B027
+    @staticmethod
     def _numerical_manipulability(
         fk_fn: Any,
         tip_key: str,

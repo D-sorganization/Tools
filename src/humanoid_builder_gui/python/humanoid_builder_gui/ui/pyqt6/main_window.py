@@ -785,8 +785,10 @@ class HumanoidBuilderWindow(QMainWindow):
         lines.append(f"Gender Model: {self.gender_combo.currentText()}")
         lines.append("")
         lines.append("Proportions:")
-        for key, (slider, _) in self.proportion_sliders.items():
-            lines.append(f"  {key}: {slider.value() / 100:.2f}")
+        lines.extend(
+            f"  {key}: {slider.value() / 100:.2f}"
+            for key, (slider, _) in self.proportion_sliders.items()
+        )
         lines.append("")
         lines.append(f"Export Format: {self.format_combo.currentText()}")
         lines.append(f"Mesh Format: {self.mesh_format_combo.currentText()}")

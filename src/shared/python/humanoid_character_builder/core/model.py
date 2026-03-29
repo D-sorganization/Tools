@@ -304,11 +304,12 @@ class HumanoidModel:
         if not (size is not None):
             raise ValueError("size must be provided")
         sx, sy, sz = size
-        footprint = []
-        for dx in [-sx / 2, sx / 2]:
-            for dy in [-sy / 2, sy / 2]:
-                for dz in [-sz / 2, sz / 2]:
-                    footprint.append([dx, dy, dz])
+        footprint = [
+            [dx, dy, dz]
+            for dx in [-sx / 2, sx / 2]
+            for dy in [-sy / 2, sy / 2]
+            for dz in [-sz / 2, sz / 2]
+        ]
         return footprint
 
     def _compute_cylinder_footprint(
@@ -317,14 +318,11 @@ class HumanoidModel:
         """Compute footprint points for cylinder/capsule geometry."""
         if not (radius is not None):
             raise ValueError("radius must be provided")
-        footprint = []
-        for theta in [0, np.pi / 2, np.pi, 3 * np.pi / 2]:
-            footprint.append(
-                [radius * np.cos(theta), radius * np.sin(theta), -length / 2]
-            )
-            footprint.append(
-                [radius * np.cos(theta), radius * np.sin(theta), length / 2]
-            )
+        footprint = [
+            [radius * np.cos(theta), radius * np.sin(theta), z_offset]
+            for theta in [0, np.pi / 2, np.pi, 3 * np.pi / 2]
+            for z_offset in [-length / 2, length / 2]
+        ]
         return footprint
 
     def _create_support_polygon_from_points(

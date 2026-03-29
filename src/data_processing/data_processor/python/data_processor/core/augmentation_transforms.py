@@ -426,11 +426,9 @@ class TransformsMixin:
         # Random permutation for mixing pairs
         indices = self._rng.permutation(n_samples)
 
-        # Mix data
-        mixed_data = np.zeros_like(data)
-        for i in range(n_samples):
-            lam = lambdas[i]
-            mixed_data[i] = lam * data[i] + (1 - lam) * data[indices[i]]
+        # Mix data (vectorized)
+        lam_col = lambdas.reshape(-1, *([1] * (data.ndim - 1)))
+        mixed_data = lam_col * data + (1 - lam_col) * data[indices]
 
         # Mix labels if provided
         mixed_labels = None
@@ -558,9 +556,9 @@ class TransformsMixin:
                 for i, lbl in enumerate(labels):
                     one_hot[i, label_map[lbl]] = 1.0
 
-                mixed_labels = np.zeros((n_samples, n_classes))
-                for i in range(n_samples):
-                    mixed_labels[i] = lam * one_hot[i] + (1 - lam) * one_hot[indices[i]]
+                # Vectorized label mixing
+                lam_2d = lam.reshape(-1, 1) if hasattr(lam, "reshape") else lam
+                mixed_labels = lam_2d * one_hot + (1 - lam_2d) * one_hot[indices]
             else:
                 mixed_labels = lam * labels + (1 - lam) * labels[indices]
 

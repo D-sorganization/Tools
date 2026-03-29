@@ -481,11 +481,12 @@ class FolderToolMixin:
         """Combine operation - copy all files from source folders to destination."""
         try:
             os.makedirs(self.folder_destination, exist_ok=True)
-            all_file_paths = []
-            for src in self.folder_source_folders:
-                for root, _, files in os.walk(src):
-                    for file in files:
-                        all_file_paths.append(Path(root) / file)
+            all_file_paths = [
+                Path(root) / file
+                for src in self.folder_source_folders
+                for root, _, files in os.walk(src)
+                for file in files
+            ]
 
             total_files = len(all_file_paths)
             if total_files == 0:
@@ -526,11 +527,12 @@ class FolderToolMixin:
         """Flatten operation - copy files from nested folders to top level."""
         try:
             os.makedirs(self.folder_destination, exist_ok=True)
-            all_files = []
-            for src in self.folder_source_folders:
-                for root, _, files in os.walk(src):
-                    for f in files:
-                        all_files.append((Path(root) / f, f))
+            all_files = [
+                (Path(root) / f, f)
+                for src in self.folder_source_folders
+                for root, _, files in os.walk(src)
+                for f in files
+            ]
 
             total = len(all_files)
             if total == 0:
