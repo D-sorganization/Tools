@@ -4,45 +4,25 @@
 import sys
 from pathlib import Path
 
-# Try to find the tools package
+# Bootstrap imports — use the sanctioned _bootstrap module
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+
 try:
-    from tools.quality_utils import (
-        Colors,
-        check_file,
-    )
+    from _bootstrap import bootstrap
+
+    bootstrap(__file__)
 except ImportError:
-    # Walk up until we find the repo root or give up
-    current = Path(__file__).resolve().parent
-    repo_root = None
-    for _ in range(5):
-        if (current / "pyproject.toml").exists() or (current / ".git").exists():
-            repo_root = current
-            break
-        current = current.parent
+    # Fallback: add src/ directly if _bootstrap is not available
+    _src = _REPO_ROOT / "src"
+    if _src.exists() and str(_src) not in sys.path:
+        sys.path.insert(0, str(_src))
 
-    if repo_root:
-        # Add src paths to resolve tools and utils packages
-        src_path = repo_root / "src"
-        if src_path.exists():
-            sys.path.append(str(src_path))
-
-        # Add src/python/src for utils package if it exists
-        python_src_path = repo_root / "src" / "python" / "src"
-        if python_src_path.exists():
-            sys.path.append(str(python_src_path))
-
-        if not src_path.exists() and not python_src_path.exists():
-            # Fallback if src doesn't exist (unlikely in this repo structure)
-            sys.path.append(str(repo_root))
-
-        from tools.quality_utils import (
-            Colors,
-            check_file,
-        )
-    else:
-        # Fallback for when running from elsewhere
-        sys.stderr.write("Error: Could not locate tools package.\n")
-        sys.exit(1)
+from tools.quality_utils import (  # noqa: E402
+    Colors,
+    check_file,
+)
 
 
 def main() -> None:
