@@ -20,6 +20,9 @@ from .constants import (
 # Re-export engine classes so existing ``from ...syngas_compression_calculator import X``
 # imports continue to work.
 from .syngas_compression_engine import (  # noqa: F401
+    ATOL_ZERO,
+    CELSIUS_TO_KELVIN_OFFSET,
+    INTERCOOLER_OUTLET_TEMP_K,
     CompressionStage,
     SyngasCompressionEngine,
 )
