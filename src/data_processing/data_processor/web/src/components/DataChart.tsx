@@ -62,10 +62,15 @@ export function DataChart({ data, selectedSignals, title = 'Signal Plot' }: Data
     const maxPoints = 1000;
     const step = Math.ceil(data.length / maxPoints);
 
-    return data.filter((_, i) => i % step === 0).map((row, index) => ({
-      index: index * step,
-      ...row,
-    }));
+    // O(K) loop to extract points, vastly faster than O(N) filter().map()
+    const result = [];
+    for (let i = 0; i < data.length; i += step) {
+      result.push({
+        index: i,
+        ...data[i],
+      });
+    }
+    return result;
   }, [data]);
 
   if (data.length === 0) {
