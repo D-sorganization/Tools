@@ -14,6 +14,8 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
 
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+
 _INNER_PYTHON_DIR = str(Path(__file__).resolve().parents[1] / "python")
 
 

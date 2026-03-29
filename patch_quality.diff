@@ -1,0 +1,74 @@
+--- src/python/src/utils/secrets_scanner.py
++++ src/python/src/utils/secrets_scanner.py
+@@ -14,7 +14,7 @@
+ import os
+ import re
+-from dataclasses import dataclass, field
++from dataclasses import dataclass
+ from pathlib import Path
+
+--- src/rotation_converter/ui/pyqt6/main_window.py
++++ src/rotation_converter/ui/pyqt6/main_window.py
+@@ -20,8 +20,6 @@
+
+ from __future__ import annotations
+
+-from typing import Any
+-
+ from PyQt6.QtGui import QAction
+ from PyQt6.QtWidgets import (
+@@ -60,11 +58,11 @@
+   # Backward-compatible aliases for the helper functions that were
+   # previously defined here (used by tests and external callers).
+-from rotation_converter.ui.pyqt6.plot_helpers import (  # noqa: E402, F401
+-    EULER_CONVENTIONS,
+-    fmt_mat as _fmt_mat,
+-    fmt_vec as _fmt_vec,
+-    get_plot_colors as _get_plot_colors,
+-    parse_vec as _parse_vec,
+-    style_figure as _style_figure,
+-)
++from rotation_converter.ui.pyqt6.plot_helpers import EULER_CONVENTIONS  # noqa: E402, F401
++from rotation_converter.ui.pyqt6.plot_helpers import fmt_mat as _fmt_mat  # noqa: E402, F401
++from rotation_converter.ui.pyqt6.plot_helpers import fmt_vec as _fmt_vec  # noqa: E402, F401
++from rotation_converter.ui.pyqt6.plot_helpers import get_plot_colors as _get_plot_colors  # noqa: E402, F401
++from rotation_converter.ui.pyqt6.plot_helpers import parse_vec as _parse_vec  # noqa: E402, F401
++from rotation_converter.ui.pyqt6.plot_helpers import style_figure as _style_figure  # noqa: E402, F401
+
+--- src/rotation_converter/ui/pyqt6/screw_visualiser_tab.py
++++ src/rotation_converter/ui/pyqt6/screw_visualiser_tab.py
+@@ -5,4 +5,3 @@
+
+ from __future__ import annotations
+
+-import rotation_converter as rc
+ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+@@ -21,4 +20,5 @@
+     QWidget,
+ )
+
++import rotation_converter as rc
+ from rotation_converter.ui.pyqt6.plot_helpers import get_plot_colors
+
+--- src/shared/python/upstream_drift_tools/process_calculators/syngas_compression_calculator.py
++++ src/shared/python/upstream_drift_tools/process_calculators/syngas_compression_calculator.py
+@@ -16,6 +16,8 @@
+     syngas_compression_engine as engine,
+ )
+ from .constants import (
++    ATOL_ZERO,
++    CELSIUS_TO_KELVIN_OFFSET,
+     IDEAL_GAS_CONSTANT_SI,
+     STANDARD_PRESSURE_BAR,
+     STANDARD_TEMP_K,
++    INTERCOOLER_OUTLET_TEMP_K,
+ )
+
+--- src/signal_processing_studio/tests/test_signal_processing_studio.py
++++ src/signal_processing_studio/tests/test_signal_processing_studio.py
+@@ -15,4 +15,6 @@
+ import pytest
+
++_REPO_ROOT = Path(__file__).parent.parent.parent.parent.parent
++
+ from signal_toolkit.core import Signal

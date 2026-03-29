@@ -20,8 +20,6 @@ Shared plotting helpers live in plot_helpers.py.
 
 from __future__ import annotations
 
-from typing import Any
-
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QMainWindow,
@@ -61,11 +59,6 @@ __all__ = [
 # previously defined here (used by tests and external callers).
 from rotation_converter.ui.pyqt6.plot_helpers import (  # noqa: E402, F401
     EULER_CONVENTIONS,
-    fmt_mat as _fmt_mat,
-    fmt_vec as _fmt_vec,
-    get_plot_colors as _get_plot_colors,
-    parse_vec as _parse_vec,
-    style_figure as _style_figure,
 )
 
 
