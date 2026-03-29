@@ -20,7 +20,7 @@ from .physics_golfer import (
 )
 
 
-def _zero_torque(t: float) -> tuple:  # noqa: ARG001
+def _zero_torque(_t: float) -> tuple:
     """Zero torque for all 7 joints."""
     return (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 

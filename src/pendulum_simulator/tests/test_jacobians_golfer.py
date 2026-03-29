@@ -194,7 +194,6 @@ class TestJacobianGolfer:
 
         # Hub primarily depends on theta_hub (q[0])
         # Columns for arm angles should be smaller or zero
-        _arm_cols = np.abs(J_hub[:, 1:])  # noqa: F841
         # At least the q[0] column should have significant values
         assert np.max(np.abs(J_hub[:, 0])) > 0
 

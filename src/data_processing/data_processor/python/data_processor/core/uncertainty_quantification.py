@@ -560,15 +560,11 @@ class UncertaintyQuantifier:
         alpha = 1 - self.config.confidence_level
         t_val = self._t_ppf(1 - alpha / 2, n - p - 1)
 
-        # Standard errors and intervals
-        se_mean = np.zeros(n_new)
-        se_pred = np.zeros(n_new)
-
-        for i in range(n_new):
-            x_i = X_new_design[i : i + 1, :]
-            var_mean = x_i @ XtX_inv @ x_i.T
-            se_mean[i] = np.sqrt(mse * var_mean[0, 0])
-            se_pred[i] = np.sqrt(mse * (1 + var_mean[0, 0]))
+        # Standard errors and intervals (vectorized)
+        # var_mean_diag[i] = X_new_design[i] @ XtX_inv @ X_new_design[i].T
+        var_mean_diag = np.einsum('ij,jk,ik->i', X_new_design, XtX_inv, X_new_design)
+        se_mean = np.sqrt(mse * var_mean_diag)
+        se_pred = np.sqrt(mse * (1 + var_mean_diag))
 
         # Intervals
         mean_lower = y_new_pred - t_val * se_mean

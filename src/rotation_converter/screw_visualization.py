@@ -173,14 +173,13 @@ def build_animation_frames(
     for i, T in enumerate(trajectory):
         R, p = TransToRp(T)
         # Body frame axes in world coordinates
-        body_axes = []
-        for col in range(3):
-            body_axes.append(
-                {
-                    "origin": p.copy(),
-                    "direction": R[:, col] * body_axis_length,
-                }
-            )
+        body_axes = [
+            {
+                "origin": p.copy(),
+                "direction": R[:, col] * body_axis_length,
+            }
+            for col in range(3)
+        ]
 
         frame: dict[str, Any] = {
             "position": p,

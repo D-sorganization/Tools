@@ -54,7 +54,7 @@ except ImportError:
         try:
             import numpy as np
 
-            np.random.seed(seed)  # noqa: NPY002
+            np.random.seed(seed)  # noqa: NPY002 — legacy compat required here
         except ImportError:
             pass
 

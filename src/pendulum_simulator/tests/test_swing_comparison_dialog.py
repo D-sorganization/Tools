@@ -68,7 +68,7 @@ def _stub_extract(result):
 
 class TestSetPresetSource:
     @pytest.fixture
-    def panel(self, app):  # noqa: ARG002
+    def panel(self, _app):
         from double_pendulum_golf.gui.perturbation_panel import PerturbationPanel
 
         p = PerturbationPanel()
@@ -112,7 +112,7 @@ class TestSetPresetSource:
 
 class TestSwingComparisonDialogConstruction:
     @pytest.fixture
-    def dialog(self, app):  # noqa: ARG002
+    def dialog(self, _app):
         from double_pendulum_golf.gui.swing_comparison_dialog import (
             SwingComparisonDialog,
         )
@@ -162,7 +162,7 @@ class TestSwingComparisonDialogConstruction:
 
 
 class TestSwingComparisonDialogContracts:
-    def test_init_rejects_single_preset(self, app) -> None:  # noqa: ARG002
+    def test_init_rejects_single_preset(self, _app) -> None:
         from double_pendulum_golf.gui.swing_comparison_dialog import (
             SwingComparisonDialog,
         )

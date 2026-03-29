@@ -408,10 +408,10 @@ class WaveletDenoiser:
         """Apply thresholding to wavelet coefficients."""
         if not (coeffs is not None):
             raise ValueError("coeffs must be provided")
-        thresholded = [coeffs[0].copy()]  # Keep approximation
-
-        for detail, thresh in zip(coeffs[1:], thresholds[1:], strict=False):
-            thresholded.append(self._threshold(detail, thresh))
+        thresholded = [coeffs[0].copy()] + [
+            self._threshold(detail, thresh)
+            for detail, thresh in zip(coeffs[1:], thresholds[1:], strict=False)
+        ]
 
         return thresholded
 

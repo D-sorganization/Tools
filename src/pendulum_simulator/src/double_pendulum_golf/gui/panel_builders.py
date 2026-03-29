@@ -443,6 +443,164 @@ def build_triple_panel(main_window: Any) -> SimulationPanel:
     return panel
 
 
+def _build_golfer_widgets() -> tuple:
+    """Create the core widgets for the golfer panel.
+
+    Returns
+    -------
+    tuple
+        (controls, pendulum, matrix, torque_history)
+    """
+    return (
+        ControlsWidgetGolfer(),
+        GolferPendulumWidget(),
+        GolferMatrixWidget(),
+        TorqueHistoryWidget(),
+    )
+
+
+def _build_golfer_params(p: dict, pendulum: Any) -> GolferParams:
+    """Build GolferParams from a parameter dict and update the pendulum widget."""
+    tilt_rad = np.radians(p.get("tilt_deg", 0.0))
+    g = GRAVITY_MSS if p.get("gravity_on", True) else 0.0
+    g_eff = g * float(np.cos(tilt_rad))  # (#1113)
+    pendulum.set_tilt_angle(tilt_rad)
+    pendulum.set_view_azimuth(np.radians(p.get("azimuth_deg", 0.0)))  # (#1118)
+    return GolferParams(
+        m_hub=p["m_hub"],
+        m_r_upper=p["m_r_upper"],
+        m_r_fore=p["m_r_fore"],
+        m_l_upper=p["m_l_upper"],
+        m_l_fore=p["m_l_fore"],
+        m_club=p["m_club"],
+        L_hub=p["L_hub"],
+        L_r_upper=p["L_r_upper"],
+        L_r_fore=p["L_r_fore"],
+        L_l_upper=p["L_l_upper"],
+        L_l_fore=p["L_l_fore"],
+        L_club=p["L_club"],
+        d_rs=p["d_rs"],
+        d_ls=p["d_ls"],
+        grip_right=p["grip_right"],
+        grip_left=p["grip_left"],
+        m_clubhead=p.get("m_clubhead", 0.2),
+        g=g_eff,
+        b_hub=p.get("b_hub", 0.0),
+        b_rs=p.get("b_rs", 0.0),
+        b_re=p.get("b_re", 0.0),
+        b_rh=p.get("b_rh", 0.0),
+        b_ls=p.get("b_ls", 0.0),
+        b_le=p.get("b_le", 0.0),
+        b_lh=p.get("b_lh", 0.0),
+        L_rscap=p.get("L_rscap", 0.12),
+        L_lscap=p.get("L_lscap", 0.12),
+        m_rscap=p.get("m_rscap", 0.5),
+        m_lscap=p.get("m_lscap", 0.5),
+    )
+
+
+def _build_golfer_state(p: dict) -> np.ndarray:
+    """Build the initial state vector for the golfer model."""
+    return np.array(
+        [
+            p["theta_hub_rad"],
+            p["alpha_rs_rad"],
+            p["alpha_re_rad"],
+            p["alpha_rh_rad"],
+            p["alpha_ls_rad"],
+            p["alpha_le_rad"],
+            p["alpha_lh_rad"],
+            0.0,  # theta_club (computed by projection)
+            0.0, 0.0, 0.0, 0.0,  # qdot (all zero)
+            0.0, 0.0, 0.0, 0.0,
+        ]
+    )
+
+
+def _build_golfer_torque(p: dict) -> object:
+    """Build the golfer polynomial torque function."""
+    return make_polynomial_torque_golfer(
+        p["hub_coeffs"], p["rs_coeffs"], p["re_coeffs"],
+        p["rh_coeffs"], p["ls_coeffs"], p["le_coeffs"],
+        p["lh_coeffs"],
+    )
+
+
+def _wire_golfer_perturbation(
+    panel: SimulationPanel,
+    controls: Any,
+    build_params: Callable,
+    build_state: Callable,
+    build_limits: Callable,
+    build_clamp: Callable,
+) -> None:
+    """Wire the perturbation panel for the golfer model."""
+    perturb = PerturbationPanel()
+
+    def _golfer_simulate_fn(coeffs: list) -> object:
+        p = controls.get_params()
+        params = build_params(p)
+        initial_state = build_state(p)
+        limits = build_limits(p)
+        clamp = build_clamp(p)
+        torque_func = make_polynomial_torque_golfer(*coeffs)  # type: ignore[arg-type]
+        return run_simulation_golfer(
+            params=params, initial_state=initial_state,
+            t_end=p["t_end"], torque_func=torque_func,  # type: ignore[arg-type]
+            limits=limits, clamp=clamp,
+        )
+
+    def _golfer_extract_fn(result: object) -> dict:
+        res = result  # type: ignore[assignment]
+        pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
+        tip_xy = pos.get("club_tip", pos.get("tip", (0.0, 0.0)))
+        if res.n_steps >= 2:  # type: ignore[attr-defined]
+            dt = float(res.t[-1] - res.t[-2])  # type: ignore[attr-defined]
+            pos_prev = res.positions_at(res.n_steps - 2)  # type: ignore[attr-defined]
+            tip_prev = pos_prev.get("club_tip", pos_prev.get("tip", (0.0, 0.0)))
+            vx = (tip_xy[0] - tip_prev[0]) / max(dt, 1e-9)
+            vy = (tip_xy[1] - tip_prev[1]) / max(dt, 1e-9)
+        else:
+            vx, vy = 0.0, 0.0
+        speed = float(np.hypot(vx, vy))
+        return {
+            "tip_speed_final": speed,
+            "tip_position_final": np.array([tip_xy[0], tip_xy[1]]),
+        }
+
+    _GOLFER_TAU_KEYS = [
+        "tau_hub", "tau_rs", "tau_re", "tau_rh",
+        "tau_ls", "tau_le", "tau_lh",
+    ]
+
+    def _golfer_coeffs_fn() -> list:
+        p = controls.get_params()
+        joint_keys = [
+            "hip_coeffs", "spine_coeffs", "r_shoulder_coeffs",
+            "r_elbow_coeffs", "l_shoulder_coeffs", "l_elbow_coeffs",
+            "wrist_coeffs",
+        ]
+        return [p.get(k, [0.0]) for k in joint_keys]
+
+    def _golfer_preset_coeffs(name: str) -> list[list[float]]:
+        preset = controls.PRESETS.get(name)
+        if preset is None:
+            return [[0.0]] * len(_GOLFER_TAU_KEYS)
+
+        def _parse(s: str) -> list[float]:
+            return [float(x.strip()) for x in s.split(",") if x.strip()] or [0.0]
+
+        return [_parse(str(preset.get(k, "0"))) for k in _GOLFER_TAU_KEYS]
+
+    perturb.set_coeffs_source(_golfer_coeffs_fn)
+    perturb.set_preset_source(
+        lambda: list(controls.PRESETS.keys()),
+        _golfer_preset_coeffs,
+    )
+    perturb.set_simulation_callbacks(_golfer_simulate_fn, _golfer_extract_fn)
+    panel.set_perturbation_panel(perturb)
+
+
 def build_golfer_panel(main_window: Any) -> SimulationPanel:
     """Build and return the golfer upper body simulation panel.
 
@@ -456,81 +614,13 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
     SimulationPanel
         A fully wired simulation panel for the golfer upper body model.
     """
-    controls = ControlsWidgetGolfer()
-    pendulum = GolferPendulumWidget()
-    matrix = GolferMatrixWidget()
-    torque_history = TorqueHistoryWidget()
+    controls, pendulum, matrix, torque_history = _build_golfer_widgets()
 
     def build_params(p: dict) -> GolferParams:
-        tilt_rad = np.radians(p.get("tilt_deg", 0.0))
-        g = GRAVITY_MSS if p.get("gravity_on", True) else 0.0
-        g_eff = g * float(np.cos(tilt_rad))  # (#1113)
-        pendulum.set_tilt_angle(tilt_rad)
-        pendulum.set_view_azimuth(np.radians(p.get("azimuth_deg", 0.0)))  # (#1118)
-        return GolferParams(
-            m_hub=p["m_hub"],
-            m_r_upper=p["m_r_upper"],
-            m_r_fore=p["m_r_fore"],
-            m_l_upper=p["m_l_upper"],
-            m_l_fore=p["m_l_fore"],
-            m_club=p["m_club"],
-            L_hub=p["L_hub"],
-            L_r_upper=p["L_r_upper"],
-            L_r_fore=p["L_r_fore"],
-            L_l_upper=p["L_l_upper"],
-            L_l_fore=p["L_l_fore"],
-            L_club=p["L_club"],
-            d_rs=p["d_rs"],
-            d_ls=p["d_ls"],
-            grip_right=p["grip_right"],
-            grip_left=p["grip_left"],
-            m_clubhead=p.get("m_clubhead", 0.2),
-            g=g_eff,
-            b_hub=p.get("b_hub", 0.0),
-            b_rs=p.get("b_rs", 0.0),
-            b_re=p.get("b_re", 0.0),
-            b_rh=p.get("b_rh", 0.0),
-            b_ls=p.get("b_ls", 0.0),
-            b_le=p.get("b_le", 0.0),
-            b_lh=p.get("b_lh", 0.0),
-            L_rscap=p.get("L_rscap", 0.12),
-            L_lscap=p.get("L_lscap", 0.12),
-            m_rscap=p.get("m_rscap", 0.5),
-            m_lscap=p.get("m_lscap", 0.5),
-        )
+        return _build_golfer_params(p, pendulum)
 
-    def build_state(p: dict) -> np.ndarray:
-        return np.array(
-            [
-                p["theta_hub_rad"],
-                p["alpha_rs_rad"],
-                p["alpha_re_rad"],
-                p["alpha_rh_rad"],
-                p["alpha_ls_rad"],
-                p["alpha_le_rad"],
-                p["alpha_lh_rad"],
-                0.0,  # theta_club (computed by projection)
-                0.0,
-                0.0,
-                0.0,
-                0.0,  # qdot (all zero)
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-            ]
-        )
-
-    def build_torque(p: dict) -> object:
-        return make_polynomial_torque_golfer(
-            p["hub_coeffs"],
-            p["rs_coeffs"],
-            p["re_coeffs"],
-            p["rh_coeffs"],
-            p["ls_coeffs"],
-            p["le_coeffs"],
-            p["lh_coeffs"],
-        )
+    build_state = _build_golfer_state
+    build_torque = _build_golfer_torque
 
     def build_limits(p: dict) -> JointLimitsNDOF | None:
         if not p.get("enable_limits", False):
@@ -603,84 +693,9 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
     )
     panel._settings_key = "splitter_golfer"
 
-    # Wire perturbation panel (#1284)
-    perturb = PerturbationPanel()
-
-    def _golfer_simulate_fn(coeffs: list) -> object:
-        p = controls.get_params()
-        params = build_params(p)
-        initial_state = build_state(p)
-        limits = build_limits(p)
-        clamp = build_clamp(p)
-        torque_func = make_polynomial_torque_golfer(*coeffs)  # type: ignore[arg-type]
-        return run_simulation_golfer(
-            params=params,
-            initial_state=initial_state,
-            t_end=p["t_end"],
-            torque_func=torque_func,  # type: ignore[arg-type]
-            limits=limits,
-            clamp=clamp,
-        )
-
-    def _golfer_extract_fn(result: object) -> dict:
-        res = result  # type: ignore[assignment]
-        pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
-        tip_xy = pos.get("club_tip", pos.get("tip", (0.0, 0.0)))
-        if res.n_steps >= 2:  # type: ignore[attr-defined]
-            dt = float(res.t[-1] - res.t[-2])  # type: ignore[attr-defined]
-            pos_prev = res.positions_at(res.n_steps - 2)  # type: ignore[attr-defined]
-            tip_prev = pos_prev.get("club_tip", pos_prev.get("tip", (0.0, 0.0)))
-            vx = (tip_xy[0] - tip_prev[0]) / max(dt, 1e-9)
-            vy = (tip_xy[1] - tip_prev[1]) / max(dt, 1e-9)
-        else:
-            vx, vy = 0.0, 0.0
-        speed = float(np.hypot(vx, vy))
-        return {
-            "tip_speed_final": speed,
-            "tip_position_final": np.array([tip_xy[0], tip_xy[1]]),
-        }
-
-    def _golfer_coeffs_fn() -> list:
-        p = controls.get_params()
-        joint_keys = [
-            "hip_coeffs",
-            "spine_coeffs",
-            "r_shoulder_coeffs",
-            "r_elbow_coeffs",
-            "l_shoulder_coeffs",
-            "l_elbow_coeffs",
-            "wrist_coeffs",
-        ]
-        return [p.get(k, [0.0]) for k in joint_keys]
-
-    perturb.set_coeffs_source(_golfer_coeffs_fn)
-
-    _GOLFER_TAU_KEYS = [
-        "tau_hub",
-        "tau_rs",
-        "tau_re",
-        "tau_rh",
-        "tau_ls",
-        "tau_le",
-        "tau_lh",
-    ]
-
-    def _golfer_preset_coeffs(name: str) -> list[list[float]]:
-        preset = controls.PRESETS.get(name)
-        if preset is None:
-            return [[0.0]] * len(_GOLFER_TAU_KEYS)
-
-        def _parse(s: str) -> list[float]:
-            return [float(x.strip()) for x in s.split(",") if x.strip()] or [0.0]
-
-        return [_parse(str(preset.get(k, "0"))) for k in _GOLFER_TAU_KEYS]
-
-    perturb.set_preset_source(
-        lambda: list(controls.PRESETS.keys()),
-        _golfer_preset_coeffs,
+    _wire_golfer_perturbation(
+        panel, controls, build_params, build_state, build_limits, build_clamp,
     )
-    perturb.set_simulation_callbacks(_golfer_simulate_fn, _golfer_extract_fn)
-    panel.set_perturbation_panel(perturb)
     return panel
 
 

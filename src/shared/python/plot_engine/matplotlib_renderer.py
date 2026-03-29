@@ -261,12 +261,8 @@ class MatplotlibRenderer:
         fig, ax = self._ensure_fig_ax(fig, ax, spec)
 
         colors = self._get_theme_colors()
-        data_arrays = []
-        labels = []
-
-        for series in spec.series:
-            data_arrays.append(series.y)
-            labels.append(series.name)
+        data_arrays = [series.y for series in spec.series]
+        labels = [series.name for series in spec.series]
 
         if data_arrays:
             hist_colors = [

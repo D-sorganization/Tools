@@ -146,8 +146,10 @@ class AnalysisMixin:
             report.append(f"  {ext}: {count} files, {size_mb:.1f} MB")
 
         report.extend(["", "LARGEST FILES:"])
-        for file_path, size in sorted(largest_files, key=lambda x: x[1], reverse=True):
-            report.append(f"  {Path(file_path).name}: {size / (1024 * 1024):.1f} MB")
+        report.extend(
+            f"  {Path(file_path).name}: {size / (1024 * 1024):.1f} MB"
+            for file_path, size in sorted(largest_files, key=lambda x: x[1], reverse=True)
+        )
 
         if analysis_errors:
             report.extend(["", "ANALYSIS ERRORS:", *analysis_errors])

@@ -559,9 +559,8 @@ class FeatureExtractor:
 
         # Histogram-based features
         hist, _ = np.histogram(column, bins=self.config.n_bins, density=True)
-        for i, h in enumerate(hist):
-            features.append(float(h))
-            names.append(f"{prefix}_hist_bin{i}")
+        features.extend(float(h) for h in hist)
+        names.extend(f"{prefix}_hist_bin{i}" for i in range(len(hist)))
 
         return np.array(features), names
 

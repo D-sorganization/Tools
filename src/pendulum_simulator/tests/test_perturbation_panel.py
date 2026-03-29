@@ -43,7 +43,7 @@ def app():
 
 
 @pytest.fixture
-def panel(app):  # noqa: ARG001 — app fixture ensures QApplication exists
+def panel(_app):  # app fixture ensures QApplication exists
     from double_pendulum_golf.gui.perturbation_panel import PerturbationPanel
 
     return PerturbationPanel()
