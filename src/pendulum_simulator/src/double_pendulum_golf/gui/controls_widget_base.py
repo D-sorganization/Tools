@@ -44,7 +44,7 @@ from PyQt6.QtWidgets import (
 from .controls_utils import STYLE_CHECK, STYLE_GROUP
 
 if TYPE_CHECKING:
-    from .controls_widget import LabeledInput
+    from .controls_utils import LabeledInput
 
 
 # ---------------------------------------------------------------------------

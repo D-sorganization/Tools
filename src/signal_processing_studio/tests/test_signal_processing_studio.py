@@ -14,30 +14,33 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
 
-_REPO_ROOT = Path(__file__).resolve().parents[3]
 _INNER_PYTHON_DIR = str(Path(__file__).resolve().parents[1] / "python")
 
-# Force the inner signal_processing_studio package to take precedence.
-# pytest may have already resolved the outer __init__.py from src/.
-# Ensure the inner python/ dir is at position 0 so the real package is found
-# before the outer namespace package in src/.
-if _INNER_PYTHON_DIR in sys.path:
-    sys.path.remove(_INNER_PYTHON_DIR)
-sys.path.insert(0, _INNER_PYTHON_DIR)
 
-for _mod in list(sys.modules.keys()):
-    # Only clear the core package and its modules — not the tests subpackage
-    # (which pytest has already registered under signal_processing_studio.tests.*).
-    if _mod in (
-        "signal_processing_studio",
-        "signal_processing_studio.signal_bus",
-        "signal_processing_studio.main_window",
-    ):
-        del sys.modules[_mod]
+def _ensure_inner_package() -> None:
+    """Force the inner signal_processing_studio package to take precedence.
 
-# Invalidate Python's path finder caches so the repositioned sys.path entry
-# takes effect. importlib is accessible via the `import importlib.util` above.
-importlib.invalidate_caches()
+    pytest may have already resolved the outer __init__.py from src/.
+    We ensure the inner python/ dir is at position 0 so the real package
+    is found before the outer namespace package.
+    """
+    if _INNER_PYTHON_DIR in sys.path:
+        sys.path.remove(_INNER_PYTHON_DIR)
+    sys.path.insert(0, _INNER_PYTHON_DIR)
+
+    # Clear cached module objects so Python re-discovers from new path
+    for mod_name in list(sys.modules.keys()):
+        if mod_name in (
+            "signal_processing_studio",
+            "signal_processing_studio.signal_bus",
+            "signal_processing_studio.main_window",
+        ):
+            del sys.modules[mod_name]
+
+    importlib.invalidate_caches()
+
+
+_ensure_inner_package()
 
 from signal_toolkit.core import Signal
 

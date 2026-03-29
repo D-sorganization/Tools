@@ -13,20 +13,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-try:
-    from data_processor.contracts import PreconditionError
-    from data_processor.vectorized_filter_engine import VectorizedFilterEngine
-except ImportError:
-    import os
-    import sys
-
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "data_processor"))
-    from vectorized_filter_engine import VectorizedFilterEngine
-
-    try:
-        from contracts import PreconditionError
-    except ImportError:
-        PreconditionError = ValueError  # type: ignore[misc,assignment]
+# conftest.py ensures data_processor is on sys.path via utils.path_helpers.
+from data_processor.contracts import PreconditionError
+from data_processor.vectorized_filter_engine import VectorizedFilterEngine
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
