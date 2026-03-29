@@ -1,0 +1,245 @@
+# Pragmatic Programmer Review: app
+**Date**: 2026-03-29
+**Files**: 1372
+
+## Findings
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch.py, /app/scripts/migrate_csv_to_parquet.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 3 locations
+  - Files: /app/launch.py, /app/scripts/migrate_csv_to_parquet.py, /app/src/vessel_drafter/python/vessel_drafter/cli.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 23 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/c3d_viewer/launch_pyqt6.py, /app/src/data_processing/data_processor/launch_pyqt6.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 18 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/c3d_viewer/launch_pyqt6.py, /app/src/data_processing/data_processor/launch_pyqt6.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/signal_processing_studio/python/signal_processing_studio/main_window.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/signal_processing_studio/python/signal_processing_studio/main_window.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/signal_processing_studio/python/signal_processing_studio/main_window.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 4 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/function_generator/python/function_generator/ui/pyqt6/main_window.py, /app/src/pressure_drop_calculator/python/pressure_drop_calculator/ui/pyqt6/main_window.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 3 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/python/src/help/help_system.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 3 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/python/src/help/help_system.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 3 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/python/src/help/help_system.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 3 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/asteroid_jumper/app.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 3 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/function_generator/python/function_generator/ui/pyqt6/main_window.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 3 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/function_generator/python/function_generator/ui/pyqt6/main_window.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 3 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/function_generator/python/function_generator/ui/pyqt6/main_window.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 3 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/function_generator/python/function_generator/ui/pyqt6/main_window.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **DRY** [MAJOR]: Duplicate code block
+  - Found in 2 locations
+  - Files: /app/launch_signal_toolkit.py, /app/src/shared/python/signal_toolkit/widget.py
+- **ORTHOGONALITY** [MAJOR]: God function: calculate_grades
+  - Length 55 > 50 lines
+  - Files: /app/scripts/generate_comprehensive_assessment.py
+- **ORTHOGONALITY** [MAJOR]: God function: _create_body_params_tab
+  - Length 72 > 50 lines
+  - Files: /app/src/humanoid_builder_gui/python/humanoid_builder_gui/ui/pyqt6/main_window.py
+- **ORTHOGONALITY** [MAJOR]: God function: _create_adam_settings_tab
+  - Length 65 > 50 lines
+  - Files: /app/src/optimizer_gui/python/optimizer_gui/ui/pyqt6/main_window.py
+- **ORTHOGONALITY** [MAJOR]: God function: _create_advanced_tab
+  - Length 67 > 50 lines
+  - Files: /app/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window_tabs.py
+- **ORTHOGONALITY** [MAJOR]: God function: _create_plot_config_tab
+  - Length 64 > 50 lines
+  - Files: /app/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window_tabs.py
+- **ORTHOGONALITY** [MAJOR]: God function: _create_menu_bar
+  - Length 54 > 50 lines
+  - Files: /app/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window.py
+- **ORTHOGONALITY** [MAJOR]: God function: _setup_ui
+  - Length 54 > 50 lines
+  - Files: /app/src/data_processing/data_processor/python/data_processor/ui/pyqt6/statistical_widgets.py
+- **ORTHOGONALITY** [MAJOR]: God function: forward_kinematics_jax
+  - Length 53 > 50 lines
+  - Files: /app/src/pendulum_simulator/src/double_pendulum_golf/physics_golfer_jax.py
+- **ORTHOGONALITY** [MAJOR]: God function: analytical_fk_jacobians_jax
+  - Length 88 > 50 lines
+  - Files: /app/src/pendulum_simulator/src/double_pendulum_golf/physics_golfer_jax.py
+- **ORTHOGONALITY** [MAJOR]: God function: __init__
+  - Length 64 > 50 lines
+  - Files: /app/src/pendulum_simulator/src/double_pendulum_golf/gui/analysis_tab.py
+- **ORTHOGONALITY** [MAJOR]: God function: _build_ui
+  - Length 98 > 50 lines
+  - Files: /app/src/pendulum_simulator/src/double_pendulum_golf/gui/optimization_widget.py
+- **ORTHOGONALITY** [MAJOR]: God function: _build_row1
+  - Length 104 > 50 lines
+  - Files: /app/src/pendulum_simulator/src/double_pendulum_golf/gui/toolstrip_widget.py
+- **ORTHOGONALITY** [MAJOR]: God function: _build_overlay_section
+  - Length 127 > 50 lines
+  - Files: /app/src/pendulum_simulator/src/double_pendulum_golf/gui/toolstrip_widget.py
+- **ORTHOGONALITY** [MAJOR]: God function: _build_ui
+  - Length 54 > 50 lines
+  - Files: /app/src/pendulum_simulator/src/double_pendulum_golf/gui/diagnostics.py
+- **ORTHOGONALITY** [MAJOR]: God function: _create_manual_tab
+  - Length 59 > 50 lines
+  - Files: /app/src/inertia_calculator/python/inertia_calculator/ui/pyqt6/main_window.py
+- **ORTHOGONALITY** [MAJOR]: God function: _create_parameters_tab
+  - Length 66 > 50 lines
+  - Files: /app/src/multi_param_analysis/python/multi_param_analysis/ui/pyqt6/main_window.py
+- **ORTHOGONALITY** [MAJOR]: God function: _init_ui
+  - Length 65 > 50 lines
+  - Files: /app/src/function_generator/python/function_generator/ui/pyqt6/main_window.py
+- **ORTHOGONALITY** [MAJOR]: God function: _create_parameter_widgets
+  - Length 74 > 50 lines
+  - Files: /app/src/function_generator/python/function_generator/ui/pyqt6/main_window.py
+- **ORTHOGONALITY** [MAJOR]: God function: generate_controls_sheet
+  - Length 58 > 50 lines
+  - Files: /app/src/shared/python/programmatic_pid/cli.py
+- **ORTHOGONALITY** [MAJOR]: God function: _create_left_panel
+  - Length 52 > 50 lines
+  - Files: /app/src/shared/python/signal_toolkit/widget_ui.py
+- **ORTHOGONALITY** [MAJOR]: God function: _create_generation_tab
+  - Length 54 > 50 lines
+  - Files: /app/src/shared/python/signal_toolkit/widget_ui.py
+- **ORTHOGONALITY** [MAJOR]: God function: _create_calculus_tab
+  - Length 59 > 50 lines
+  - Files: /app/src/shared/python/signal_toolkit/widget_ui.py
+- **ORTHOGONALITY** [MAJOR]: God function: create_input_tab
+  - Length 58 > 50 lines
+  - Files: /app/src/shared/python/upstream_drift_tools/process_calculators/wgs_reactor_calculator.py
+- **ORTHOGONALITY** [MAJOR]: God function: _setup_ui
+  - Length 54 > 50 lines
+  - Files: /app/src/shared/python/upstream_drift_tools/process_calculators/psa_package/psa_gui.py
+- **ORTHOGONALITY** [MAJOR]: God function: _setup_ui
+  - Length 55 > 50 lines
+  - Files: /app/src/shared/python/theme/dialogs/theme_manager_dialog.py
+- **ORTHOGONALITY** [MAJOR]: God function: _create_input_panel
+  - Length 51 > 50 lines
+  - Files: /app/src/steam_engine_calculator/python/steam_engine_calculator/ui/pyqt6/main_window.py
+- **ORTHOGONALITY** [MAJOR]: God function: _create_body_params_tab
+  - Length 54 > 50 lines
+  - Files: /app/src/urdf_builder_gui/python/urdf_builder_gui/ui/pyqt6/main_window.py
+- **ORTHOGONALITY** [MAJOR]: God function: create_api_tab
+  - Length 56 > 50 lines
+  - Files: /app/src/document_processing/pdf_renamer/src/pdf_renamer/gui.py
+- **ORTHOGONALITY** [MAJOR]: God function: _build_ui
+  - Length 51 > 50 lines
+  - Files: /app/src/rotation_converter/ui/pyqt6/main_window.py
+- **ORTHOGONALITY** [MAJOR]: God function: _build_ui
+  - Length 55 > 50 lines
+  - Files: /app/src/rotation_converter/ui/pyqt6/main_window.py
