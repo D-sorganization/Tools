@@ -22,15 +22,20 @@ from _bootstrap import bootstrap  # noqa: E402
 
 REPO_ROOT = bootstrap(__file__)
 
-# Add the RRT package source directory so star_wars_rrt is importable
-PYTHON_SRC = (
-    REPO_ROOT / "src" / "scientific_modeling" / "rrt_path_planner" / "python" / "src"
-)
-if not PYTHON_SRC.exists():
-    # Fallback: try without scientific_modeling prefix
-    PYTHON_SRC = REPO_ROOT / "src" / "rrt_path_planner" / "python" / "src"
-if PYTHON_SRC.exists() and str(PYTHON_SRC) not in sys.path:
-    sys.path.insert(0, str(PYTHON_SRC))
+
+def _find_rrt_package() -> None:
+    """Locate and add the RRT package source directory to sys.path."""
+    candidates = [
+        REPO_ROOT / "src" / "scientific_modeling" / "rrt_path_planner" / "python" / "src",
+        REPO_ROOT / "src" / "rrt_path_planner" / "python" / "src",
+    ]
+    for candidate in candidates:
+        if candidate.exists() and str(candidate) not in sys.path:
+            sys.path.insert(0, str(candidate))
+            return
+
+
+_find_rrt_package()
 
 from star_wars_rrt import main  # noqa: E402
 

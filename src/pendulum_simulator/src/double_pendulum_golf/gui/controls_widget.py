@@ -30,11 +30,14 @@ from PyQt6.QtWidgets import (
 )
 
 from .controls_utils import (
+    HAS_UNIT_AWARE_INPUT as _HAS_UAI,
     STYLE_CHECK,
     STYLE_EDIT,
     STYLE_GROUP,
     STYLE_LABEL,
+    LabeledInput,
     clamp_dt,
+    make_row as _row,
     parse_coeffs,
     parse_coeffs_lenient,
     parse_float,
@@ -44,65 +47,8 @@ from .controls_utils import (
 from .controls_widget_base import ControlsWidgetBase
 from .torque_preview_widget import TorquePreviewWidget
 
-try:
+if _HAS_UAI:
     from upstream_drift_tools.ui.widgets.unit_aware_input import UnitAwareInput
-
-    _HAS_UAI = True
-except ImportError:
-    _HAS_UAI = False
-
-
-# ---------------------------------------------------------------------------
-# Reusable widgets (imported by triple / golfer variants)
-# ---------------------------------------------------------------------------
-
-
-class LabeledInput(QWidget):
-    """A label + line-edit pair used throughout the control panel."""
-
-    def __init__(
-        self,
-        label: str,
-        default: str,
-        tooltip: str = "",
-        label_width: int = 80,
-        parent: QWidget | None = None,
-    ) -> None:
-        if not (label is not None):
-            raise ValueError("label must be provided")
-        super().__init__(parent)
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(3)
-
-        lbl = QLabel(label)
-        lbl.setFixedWidth(label_width)
-        lbl.setStyleSheet(STYLE_LABEL)
-        layout.addWidget(lbl)
-
-        self.edit = QLineEdit(default)
-        self.edit.setStyleSheet(STYLE_EDIT)
-        self.edit.setMinimumHeight(22)
-        if tooltip:
-            self.edit.setToolTip(tooltip)
-        layout.addWidget(self.edit)
-
-    @property
-    def value(self) -> str:
-        return self.edit.text().strip()
-
-    def set_value(self, text: str) -> None:
-        self.edit.setText(text)
-
-
-def _row(*widgets: QWidget) -> QHBoxLayout:
-    """Helper: pack widgets into a horizontal row with no margin."""
-    row = QHBoxLayout()
-    row.setContentsMargins(0, 0, 0, 0)
-    row.setSpacing(4)
-    for w in widgets:
-        row.addWidget(w, stretch=1)
-    return row
 
 
 # ---------------------------------------------------------------------------

@@ -36,35 +36,35 @@ except ImportError:
 # ── Try to import shared PlotThemeManager ──────────────────────────────────
 _PLOT_THEME_AVAILABLE = False
 _get_plot_theme_manager: Any = None
-try:
-    from plot_theme.manager import (
-        get_plot_theme_manager as _shared_get_plot_theme_manager,
-    )
 
-    _get_plot_theme_manager = _shared_get_plot_theme_manager
-    _PLOT_THEME_AVAILABLE = True
-except ImportError:
-    # plot_theme not on sys.path — try to locate shared/python dynamically
+
+def _try_load_plot_theme() -> tuple[bool, Any]:
+    """Attempt to import PlotThemeManager, searching shared/python if needed."""
+    try:
+        from plot_theme.manager import get_plot_theme_manager
+        return True, get_plot_theme_manager
+    except ImportError:
+        pass
+    # plot_theme not on sys.path -- try to locate shared/python dynamically
     try:
         import sys
         from pathlib import Path
 
-        _p = Path(__file__).resolve().parent
+        search = Path(__file__).resolve().parent
         for _ in range(10):
-            _candidate = _p / "shared" / "python"
-            if _candidate.exists():
-                if str(_candidate) not in sys.path:
-                    sys.path.insert(0, str(_candidate))
-                from plot_theme.manager import (
-                    get_plot_theme_manager as _shared_get_plot_theme_manager,
-                )
-
-                _get_plot_theme_manager = _shared_get_plot_theme_manager
-                _PLOT_THEME_AVAILABLE = True
-                break
-            _p = _p.parent
+            candidate = search / "shared" / "python"
+            if candidate.exists():
+                if str(candidate) not in sys.path:
+                    sys.path.insert(0, str(candidate))
+                from plot_theme.manager import get_plot_theme_manager
+                return True, get_plot_theme_manager
+            search = search.parent
     except ImportError:
         pass
+    return False, None
+
+
+_PLOT_THEME_AVAILABLE, _get_plot_theme_manager = _try_load_plot_theme()
 
 
 # ---------------------------------------------------------------------------

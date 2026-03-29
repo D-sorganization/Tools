@@ -23,21 +23,18 @@ from PyQt6.QtWidgets import (
 )
 
 from .controls_utils import (
+    HAS_UNIT_AWARE_INPUT as _HAS_UAI,
     STYLE_GROUP,
+    LabeledInput,
     parse_coeffs,
     parse_float,
     require_non_negative,
     require_positive,
 )
-from .controls_widget import LabeledInput
 from .controls_widget_base import ControlsWidgetBase
 
-try:
+if _HAS_UAI:
     from upstream_drift_tools.ui.widgets.unit_aware_input import UnitAwareInput
-
-    _HAS_UAI = True
-except ImportError:
-    _HAS_UAI = False
 
 
 class ControlsWidgetGolfer(ControlsWidgetBase):

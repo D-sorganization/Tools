@@ -13,10 +13,20 @@ Design by Contract
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from PyQt6.QtWidgets import (
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QWidget,
+)
 
-if TYPE_CHECKING:
-    from .controls_widget import LabeledInput
+# ── UnitAwareInput availability (DRY: single check shared by all widgets) ──
+try:
+    from upstream_drift_tools.ui.widgets.unit_aware_input import UnitAwareInput  # noqa: F401
+
+    HAS_UNIT_AWARE_INPUT = True
+except ImportError:
+    HAS_UNIT_AWARE_INPUT = False
 
 # ---------------------------------------------------------------------------
 # Stylesheet tokens shared by both control panels
@@ -112,6 +122,59 @@ PENDULUM_DARK_STYLE = f"""
             font-size: {FONT_BODY}px; }}
     QMenu::item:selected {{ background: #383868; }}
 """
+
+
+# ---------------------------------------------------------------------------
+# Reusable widgets (DRY: shared across double, triple, and golfer panels)
+# ---------------------------------------------------------------------------
+
+
+class LabeledInput(QWidget):
+    """A label + line-edit pair used throughout the control panel."""
+
+    def __init__(
+        self,
+        label: str,
+        default: str,
+        tooltip: str = "",
+        label_width: int = 80,
+        parent: QWidget | None = None,
+    ) -> None:
+        if not (label is not None):
+            raise ValueError("label must be provided")
+        super().__init__(parent)
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(3)
+
+        lbl = QLabel(label)
+        lbl.setFixedWidth(label_width)
+        lbl.setStyleSheet(STYLE_LABEL)
+        layout.addWidget(lbl)
+
+        self.edit = QLineEdit(default)
+        self.edit.setStyleSheet(STYLE_EDIT)
+        self.edit.setMinimumHeight(22)
+        if tooltip:
+            self.edit.setToolTip(tooltip)
+        layout.addWidget(self.edit)
+
+    @property
+    def value(self) -> str:
+        return self.edit.text().strip()
+
+    def set_value(self, text: str) -> None:
+        self.edit.setText(text)
+
+
+def make_row(*widgets: QWidget) -> QHBoxLayout:
+    """Pack widgets into a horizontal row with no margin."""
+    row = QHBoxLayout()
+    row.setContentsMargins(0, 0, 0, 0)
+    row.setSpacing(4)
+    for w in widgets:
+        row.addWidget(w, stretch=1)
+    return row
 
 
 # ---------------------------------------------------------------------------

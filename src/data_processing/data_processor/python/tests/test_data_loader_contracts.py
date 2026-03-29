@@ -15,20 +15,10 @@ import os
 import pandas as pd
 import pytest
 
-# ── Imports with graceful fallback ────────────────────────────────────────────
-try:
-    from data_processor.contracts import PreconditionError
-    from data_processor.core.data_loader import DataLoader, load_csv_files
-except ImportError:
-    # Running from the package root without editable install
-    import sys
-
-    sys.path.insert(
-        0,
-        os.path.join(os.path.dirname(__file__), "..", "data_processor"),
-    )
-    from contracts import PreconditionError
-    from core.data_loader import DataLoader, load_csv_files
+# ── Imports ──────────────────────────────────────────────────────────────────
+# conftest.py ensures data_processor is on sys.path via utils.path_helpers.
+from data_processor.contracts import PreconditionError
+from data_processor.core.data_loader import DataLoader, load_csv_files
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 

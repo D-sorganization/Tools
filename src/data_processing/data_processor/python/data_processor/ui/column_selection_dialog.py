@@ -10,7 +10,7 @@ import customtkinter as ctk
 class ColumnSelectionDialog(ctk.CTkToplevel):
     """Simple dialog for column selection."""
 
-    def __init__(self, parent, columns):
+    def __init__(self, parent: ctk.CTk, columns: list[str]) -> None:
         if not (parent is not None):
             raise ValueError("parent must be provided")
         super().__init__(parent)
@@ -22,12 +22,12 @@ class ColumnSelectionDialog(ctk.CTkToplevel):
         self.transient(parent)
         self.grab_set()
 
-        self.columns = columns
-        self.result = None
+        self.columns: list[str] = columns
+        self.result: list[str] | None = None
 
         self.setup_ui()
 
-    def setup_ui(self):
+    def setup_ui(self) -> None:
         """Setup the user interface."""
         # Main frame
         main_frame = ctk.CTkFrame(self)

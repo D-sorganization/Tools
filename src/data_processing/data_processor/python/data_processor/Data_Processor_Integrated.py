@@ -42,7 +42,7 @@ class IntegratedCSVProcessorApp(
 ):
     """Extended application class with integrated compiler converter functionality."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         # Initialize converter variables BEFORE calling parent class
         self.converter_input_files = []
         self.converter_output_path = ""

@@ -116,7 +116,7 @@ class FolderToolMixin:
         )
         self.folder_source_info_label.grid(row=3, column=0, sticky="w", padx=10, pady=5)
 
-    def _create_folder_destination_section(self, parent):
+    def _create_folder_destination_section(self, parent: ctk.CTkFrame) -> None:
         """Create the destination folder section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -142,7 +142,7 @@ class FolderToolMixin:
             dest_frame, text="Set Destination", command=self._folder_select_dest_folder
         ).grid(row=1, column=1, padx=10, pady=5)
 
-    def _create_folder_filtering_section(self, parent):
+    def _create_folder_filtering_section(self, parent: ctk.CTkFrame) -> None:
         """Create the file filtering section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -190,7 +190,7 @@ class FolderToolMixin:
             font=ctk.CTkFont(size=12),
         ).grid(row=4, column=0, columnspan=2, sticky="w", padx=10, pady=5)
 
-    def _create_folder_operation_section(self, parent):
+    def _create_folder_operation_section(self, parent: ctk.CTkFrame) -> None:
         """Create the main operation section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -230,7 +230,7 @@ class FolderToolMixin:
             row=len(operations) + 1, column=0, sticky="w", padx=10, pady=10
         )
 
-    def _create_folder_organization_section(self, parent):
+    def _create_folder_organization_section(self, parent: ctk.CTkFrame) -> None:
         """Create the organization options section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -256,7 +256,7 @@ class FolderToolMixin:
             variable=self.folder_organize_by_date_var,
         ).grid(row=2, column=0, sticky="w", padx=10, pady=2)
 
-    def _create_folder_output_section(self, parent):
+    def _create_folder_output_section(self, parent: ctk.CTkFrame) -> None:
         """Create the output options section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -292,7 +292,7 @@ class FolderToolMixin:
             variable=self.folder_backup_before_var,
         ).grid(row=4, column=0, sticky="w", padx=10, pady=2)
 
-    def _create_folder_progress_section(self, parent):
+    def _create_folder_progress_section(self, parent: ctk.CTkFrame) -> None:
         """Create the progress section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -315,7 +315,7 @@ class FolderToolMixin:
         )
         self.folder_status_label.grid(row=2, column=0, sticky="w", padx=10, pady=5)
 
-    def _create_folder_run_section(self, parent):
+    def _create_folder_run_section(self, parent: ctk.CTkFrame) -> None:
         """Create the run button section."""
         if not (parent is not None):
             raise ValueError("parent must be provided")
@@ -340,7 +340,7 @@ class FolderToolMixin:
         )
         self.folder_cancel_button.grid(row=0, column=1, padx=10, pady=10)
 
-    def _update_folder_mode_description(self):
+    def _update_folder_mode_description(self) -> None:
         """Update the mode description based on selected operation."""
         mode = self.folder_operation_mode.get()
         descriptions = {
@@ -379,18 +379,18 @@ class FolderToolMixin:
         except (OSError, RuntimeError) as e:
             messagebox.showerror("Error", f"Failed to select source folders: {str(e)}")
 
-    def _folder_remove_selected_source(self):
+    def _folder_remove_selected_source(self) -> None:
         """Remove selected source folder from the list."""
         if self.folder_source_folders:
             self.folder_source_folders.pop()
             self._folder_update_source_display()
 
-    def _folder_clear_source_folders(self):
+    def _folder_clear_source_folders(self) -> None:
         """Clear all source folders."""
         self.folder_source_folders = []
         self._folder_update_source_display()
 
-    def _folder_update_source_display(self):
+    def _folder_update_source_display(self) -> None:
         """Update the source folders display."""
         self.folder_source_listbox.delete("1.0", "end")
         if self.folder_source_folders:
@@ -402,7 +402,7 @@ class FolderToolMixin:
         else:
             self.folder_source_info_label.configure(text="No folders selected")
 
-    def _folder_select_dest_folder(self):
+    def _folder_select_dest_folder(self) -> None:
         """Select destination folder."""
         try:
             folder = filedialog.askdirectory(title="Select Destination Folder")
