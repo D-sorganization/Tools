@@ -1,0 +1,873 @@
+{
+  "timestamp": "2026-03-29T08:09:19.507932",
+  "repository": "Tools",
+  "files_analyzed": 1372,
+  "issues": [
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 23 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/c3d_viewer/launch_pyqt6.py",
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/launch_pyqt6.py",
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/launch_web.py",
+        "/home/runner/work/Tools/Tools/src/financial_calculator/launch_pyqt6.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 18 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/c3d_viewer/launch_pyqt6.py",
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/launch_pyqt6.py",
+        "/home/runner/work/Tools/Tools/src/financial_calculator/launch_pyqt6.py",
+        "/home/runner/work/Tools/Tools/src/flow_rate_converter/launch_pyqt6.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/signal_processing_studio/python/signal_processing_studio/main_window.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/signal_processing_studio/python/signal_processing_studio/main_window.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/signal_processing_studio/python/signal_processing_studio/main_window.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 4 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/function_generator/python/function_generator/ui/pyqt6/main_window.py",
+        "/home/runner/work/Tools/Tools/src/pressure_drop_calculator/python/pressure_drop_calculator/ui/pyqt6/main_window.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/python/src/help/help_system.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/python/src/help/help_system.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/python/src/help/help_system.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/asteroid_jumper/app.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/function_generator/python/function_generator/ui/pyqt6/main_window.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/function_generator/python/function_generator/ui/pyqt6/main_window.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/function_generator/python/function_generator/ui/pyqt6/main_window.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 3 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/function_generator/python/function_generator/ui/pyqt6/main_window.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/runner/work/Tools/Tools/launch_signal_toolkit.py",
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: calculate_grades",
+      "description": "Length 55 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/scripts/generate_comprehensive_assessment.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: forward_kinematics_jax",
+      "description": "Length 53 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/pendulum_simulator/src/double_pendulum_golf/physics_golfer_jax.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: analytical_fk_jacobians_jax",
+      "description": "Length 88 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/pendulum_simulator/src/double_pendulum_golf/physics_golfer_jax.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_ui",
+      "description": "Length 98 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/pendulum_simulator/src/double_pendulum_golf/gui/optimization_widget.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_row1",
+      "description": "Length 104 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/pendulum_simulator/src/double_pendulum_golf/gui/toolstrip_widget.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_overlay_section",
+      "description": "Length 127 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/pendulum_simulator/src/double_pendulum_golf/gui/toolstrip_widget.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_ui",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/pendulum_simulator/src/double_pendulum_golf/gui/diagnostics.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: __init__",
+      "description": "Length 64 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/pendulum_simulator/src/double_pendulum_golf/gui/analysis_tab.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_body_params_tab",
+      "description": "Length 72 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/humanoid_builder_gui/python/humanoid_builder_gui/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_manual_tab",
+      "description": "Length 59 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/inertia_calculator/python/inertia_calculator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_parameters_tab",
+      "description": "Length 66 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/multi_param_analysis/python/multi_param_analysis/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_adam_settings_tab",
+      "description": "Length 65 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/optimizer_gui/python/optimizer_gui/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: create_api_tab",
+      "description": "Length 56 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/document_processing/pdf_renamer/src/pdf_renamer/gui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_advanced_tab",
+      "description": "Length 67 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window_tabs.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_plot_config_tab",
+      "description": "Length 64 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window_tabs.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_menu_bar",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/statistical_widgets.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_input_panel",
+      "description": "Length 51 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/steam_engine_calculator/python/steam_engine_calculator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_ui",
+      "description": "Length 51 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/rotation_converter/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_ui",
+      "description": "Length 55 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/rotation_converter/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_left_panel",
+      "description": "Length 52 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget_ui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_generation_tab",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget_ui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_calculus_tab",
+      "description": "Length 59 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/shared/python/signal_toolkit/widget_ui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: create_input_tab",
+      "description": "Length 58 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/shared/python/upstream_drift_tools/process_calculators/wgs_reactor_calculator.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/shared/python/upstream_drift_tools/process_calculators/psa_package/psa_gui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 55 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/shared/python/theme/dialogs/theme_manager_dialog.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: generate_controls_sheet",
+      "description": "Length 58 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/shared/python/programmatic_pid/cli.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_body_params_tab",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/urdf_builder_gui/python/urdf_builder_gui/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _init_ui",
+      "description": "Length 65 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/function_generator/python/function_generator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_parameter_widgets",
+      "description": "Length 74 > 50 lines",
+      "files": [
+        "/home/runner/work/Tools/Tools/src/function_generator/python/function_generator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    }
+  ]
+}
