@@ -14,11 +14,13 @@ def test_sim():
     xml = build_lower_body_xml()
     return LowerBodySimulator(xml)
 
+
 @pytest.fixture
 def mock_viewer():
     viewer = MagicMock()
     viewer.is_running.return_value = True
     return viewer
+
 
 def test_control_panel_init_and_properties(test_sim, mock_viewer):
     """Test that the PyQt6 control panel initializes correctly without crashing."""

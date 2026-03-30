@@ -113,7 +113,7 @@ def analyze_codebase() -> RepoStats:
                 # Read file content safely
                 try:
                     content = filepath.read_text(encoding="utf-8", errors="ignore")
-                except Exception:  # noqa: BLE001
+                except Exception:  # noqa: BLE001  # noqa: BLE001
                     continue
 
                 stats["lines"] += len(content.splitlines())

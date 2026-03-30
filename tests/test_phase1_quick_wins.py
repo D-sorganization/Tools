@@ -162,8 +162,9 @@ class TestDataIO:
         bad_file = tmp_path / "data.xyz"
         bad_file.write_text("some data")
 
-        from contracts import PreconditionError
         from upstream_drift_tools.data_io import read_data
+
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError, match="Unsupported file extension"):
             read_data(bad_file)

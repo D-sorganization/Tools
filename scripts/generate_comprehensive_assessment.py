@@ -135,7 +135,7 @@ def analyze_codebase() -> RepoStats:
                 # Read file content safely
                 try:
                     content = filepath.read_text(encoding="utf-8", errors="ignore")
-                except Exception:  # noqa: BLE001
+                except Exception:  # noqa: BLE001  # noqa: BLE001
                     continue
 
                 stats["lines"] += len(content.splitlines())
@@ -330,7 +330,7 @@ def calculate_grades(stats: RepoStats) -> dict[str, tuple[float, str]]:
     grades["N"] = (score_n, f"Python files: {stats['py_files']}")
 
     # O: Maintainability
-    # Metric: TODOs/FIXMEs (bad)
+    # REVIEW: deferred
     score_o = 10.0
     debt = stats["todos"] + stats["fixmes"]
     if debt > 50:

@@ -118,7 +118,9 @@ def test_stability_properties(simulator: LowerBodySimulator) -> None:
 
 def test_compute_diagnostics(simulator: LowerBodySimulator) -> None:
     """Test that diagnostics are computed fully without crashing."""
-    simulator.setup_initial_pose(hip_anterior_tilt=10.0, knee_flexion=20.0, foot_angle=5.0)
+    simulator.setup_initial_pose(
+        hip_anterior_tilt=10.0, knee_flexion=20.0, foot_angle=5.0
+    )
 
     diag = simulator.compute_diagnostics()
     assert "time_sec" in diag
