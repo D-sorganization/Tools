@@ -11,6 +11,12 @@ import logging
 import os
 from typing import TYPE_CHECKING, Any, cast
 
+from .constants import (
+    ATOL_ZERO,
+    CELSIUS_TO_KELVIN_OFFSET,
+    INTERCOOLER_OUTLET_TEMP_K,
+)
+
 # Re-export engine classes so existing ``from ...syngas_compression_calculator import X``
 # imports continue to work.
 from .syngas_compression_engine import (  # noqa: F401

@@ -14,7 +14,7 @@ Usage:
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 # Patterns that indicate potential hardcoded secrets
@@ -23,21 +23,24 @@ _SECRET_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("GitHub Token", re.compile(r"ghp_[A-Za-z0-9]{36}")),
     ("OpenAI API Key", re.compile(r"sk-[A-Za-z0-9]{20,}")),
     ("Slack Token", re.compile(r"xox[bpsa]-[A-Za-z0-9-]+")),
-    ("Generic API Key Assignment", re.compile(
-        r"""(?:api[_-]?key|secret[_-]?key|auth[_-]?token|password|private[_-]?key)\s*=\s*["'][A-Za-z0-9+/=@#$%^&*!]{8,}["']""",
-        re.IGNORECASE,
-    )),
+    (
+        "Generic API Key Assignment",
+        re.compile(
+            r"""(?:api[_-]?key|secret[_-]?key|auth[_-]?token|password|private[_-]?key)\s*=\s*["'][A-Za-z0-9+/=@#$%^&*!]{8,}["']""",
+            re.IGNORECASE,
+        ),
+    ),
     ("Bearer Token", re.compile(r"""["\']Bearer\s+[A-Za-z0-9._-]{20,}["\']""")),
     ("Base64 Private Key", re.compile(r"-----BEGIN\s+(RSA\s+)?PRIVATE\s+KEY-----")),
 ]
 
 # Lines matching these patterns are false positives (examples, docs, tests)
 _IGNORE_PATTERNS: list[re.Pattern[str]] = [
-    re.compile(r"^\s*#"),          # Comments
-    re.compile(r"^\s*>>>"),        # Doctest examples
-    re.compile(r"example", re.I), # Example text
+    re.compile(r"^\s*#"),  # Comments
+    re.compile(r"^\s*>>>"),  # Doctest examples
+    re.compile(r"example", re.I),  # Example text
     re.compile(r"placeholder", re.I),
-    re.compile(r"xxxx", re.I),    # Redacted values
+    re.compile(r"xxxx", re.I),  # Redacted values
 ]
 
 
@@ -67,13 +70,15 @@ def scan_line(line: str, line_num: int, filepath: str) -> list[SecretFinding]:
     for name, pattern in _SECRET_PATTERNS:
         if pattern.search(line):
             is_fp = any(ip.search(line) for ip in _IGNORE_PATTERNS)
-            findings.append(SecretFinding(
-                file=filepath,
-                line=line_num,
-                pattern=name,
-                snippet=line.strip()[:120],
-                is_likely_false_positive=is_fp,
-            ))
+            findings.append(
+                SecretFinding(
+                    file=filepath,
+                    line=line_num,
+                    pattern=name,
+                    snippet=line.strip()[:120],
+                    is_likely_false_positive=is_fp,
+                )
+            )
     return findings
 
 
@@ -129,7 +134,9 @@ def scan_directory(
     return findings
 
 
-def report_findings(findings: list[SecretFinding], show_false_positives: bool = False) -> str:
+def report_findings(
+    findings: list[SecretFinding], show_false_positives: bool = False
+) -> str:
     """Format findings into a human-readable report.
 
     Args:
@@ -139,9 +146,11 @@ def report_findings(findings: list[SecretFinding], show_false_positives: bool = 
     Returns:
         Formatted report string.
     """
-    filtered = findings if show_false_positives else [
-        f for f in findings if not f.is_likely_false_positive
-    ]
+    filtered = (
+        findings
+        if show_false_positives
+        else [f for f in findings if not f.is_likely_false_positive]
+    )
 
     if not filtered:
         return "No hardcoded secrets detected."

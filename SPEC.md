@@ -17,6 +17,8 @@
   Write clearly, use concrete examples, and avoid ambiguity.
 -->
 
+- **2026-03-29 (Bolt)**: Optimized `movingAverage` function in `useDataProcessor.ts` to use a running sum sliding window algorithm, reducing computational complexity from O(N * W) to O(N).
+
 ## 1. Identity
 
 | Field | Value |
@@ -27,7 +29,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License** | MIT |
 | **Current Version** | N/A |
-| **Spec Version** | 1.0.0 |
+| **Spec Version** | 1.0.1 |
 | **Last Spec Update** | 2026-03-28 |
 
 ## 2. Purpose & Mission

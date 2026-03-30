@@ -639,15 +639,36 @@ function applyFilterToSignal(values: number[], config: FilterConfig): number[] {
 }
 
 function movingAverage(values: number[], windowSize: number): number[] {
-  const result: number[] = [];
+  // Bolt: Optimize moving average to use an O(N) running sum instead of O(N * W) slice/reduce
+  const result = new Array<number>(values.length);
   const halfWindow = Math.floor(windowSize / 2);
 
+  let currentSum = 0;
+  let currentCount = 0;
+
   for (let i = 0; i < values.length; i++) {
-    const start = Math.max(0, i - halfWindow);
-    const end = Math.min(values.length, i + halfWindow + 1);
-    const window = values.slice(start, end);
-    const avg = window.reduce((a, b) => a + b, 0) / window.length;
-    result.push(avg);
+    if (i === 0) {
+      // Initialize first window
+      const end = Math.min(values.length, halfWindow + 1);
+      for (let j = 0; j < end; j++) {
+        currentSum += values[j];
+        currentCount++;
+      }
+    } else {
+      // Slide the window
+      const removedIndex = i - halfWindow - 1;
+      const addedIndex = i + halfWindow;
+
+      if (removedIndex >= 0) {
+        currentSum -= values[removedIndex];
+        currentCount--;
+      }
+      if (addedIndex < values.length) {
+        currentSum += values[addedIndex];
+        currentCount++;
+      }
+    }
+    result[i] = currentSum / currentCount;
   }
 
   return result;

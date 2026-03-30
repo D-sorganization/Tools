@@ -5,7 +5,6 @@ Extracted from the former monolithic main_window.py for god-class decomposition.
 
 from __future__ import annotations
 
-import rotation_converter as rc
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
@@ -22,6 +21,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+import rotation_converter as rc
 from rotation_converter.ui.pyqt6.plot_helpers import get_plot_colors
 
 

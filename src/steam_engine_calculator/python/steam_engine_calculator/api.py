@@ -13,7 +13,7 @@ Usage:
 from __future__ import annotations
 
 import logging
-from enum import Enum
+from enum import StrEnum
 
 from cors import add_cors_middleware
 from fastapi import FastAPI, HTTPException
@@ -45,7 +45,7 @@ _engine = SteamCalculationEngine()
 # ---------------------------------------------------------------------------
 
 
-class CalculationMode(str, Enum):
+class CalculationMode(StrEnum):
     """Supported calculation modes."""
 
     TP = "tp"
