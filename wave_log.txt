@@ -1,0 +1,15 @@
+﻿Running: gh issue list --state open --json number,title,body
+Running: gh issue close 1843
+Running: gh issue close 1842
+Running: gh issue close 1841
+Running: gh issue close 1840
+Running: gh issue close 1839
+Running: gh issue close 1838
+Running: gh issue close 1837
+
+--- Processing Issue #1851: [A-N Assessment] Comprehensive Remediation for LOD ---
+Running: git reset --hard
+Running: git checkout main || git checkout master
+Running: git pull --rebase
+Running: git checkout -b fix/a-n-issue-1851
+Invoking Claude Code Autonomous Resolver...
