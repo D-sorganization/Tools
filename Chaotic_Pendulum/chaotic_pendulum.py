@@ -5,6 +5,7 @@ matplotlib.use("TkAgg")
 import argparse
 import logging
 import sys
+import time
 from typing import Any
 
 import matplotlib.gridspec as gridspec
@@ -18,26 +19,37 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 
 def equations_of_motion(
-    t: float, state: list[float], m1: float, m2: float, l1: float, l2: float, g: float
+    t: float,
+    state: list[float],
+    m1: float,
+    m2: float,
+    l1: float,
+    l2: float,
+    g: float,
+    b1: float,
+    b2: float,
+    A1: float,
+    nu1: float,
+    A2: float,
+    nu2: float,
 ) -> list[float]:
     """
-    Computes derivatives for the double pendulum using Lagrangian mechanics.
-    state: [theta1, omega1, theta2, omega2]
+    Computes derivatives for the double pendulum strictly utilizing an augmented
+    non-conservative Lagrangian solver mapping standard chaos plus external driving torques (Q).
     """
     theta1, omega1, theta2, omega2 = state
-
     delta = theta1 - theta2
 
-    # Lagrangian derivatives
+    # Base Conservative Lagrangian Free Dynamics
     den1 = l1 * (2 * m1 + m2 - m2 * np.cos(2 * theta1 - 2 * theta2))
-    domega1 = (
+    alpha1_free = (
         -g * (2 * m1 + m2) * np.sin(theta1)
         - m2 * g * np.sin(theta1 - 2 * theta2)
         - 2 * np.sin(delta) * m2 * (omega2**2 * l2 + omega1**2 * l1 * np.cos(delta))
     ) / den1
 
     den2 = l2 * (2 * m1 + m2 - m2 * np.cos(2 * theta1 - 2 * theta2))
-    domega2 = (
+    alpha2_free = (
         2
         * np.sin(delta)
         * (
@@ -47,7 +59,26 @@ def equations_of_motion(
         )
     ) / den2
 
-    return [omega1, domega1, omega2, domega2]
+    # Generalized Non-Conservative Forces (Damping + Driven Oscillating Torque)
+    Q1 = -b1 * omega1 + A1 * np.sin(nu1 * t)
+    Q2 = -b2 * omega2 + A2 * np.sin(nu2 * t)
+
+    # Augment Free Accelerations with the Mass Matrix M^{-1} * Q projection
+    det = m2 * l1**2 * l2**2 * (m1 + m2 * np.sin(delta) ** 2)
+    if det > 1e-12:
+        M22 = m2 * l2**2
+        M11 = (m1 + m2) * l1**2
+        M12 = m2 * l1 * l2 * np.cos(delta)
+
+        alpha1_q = (M22 * Q1 - M12 * Q2) / det
+        alpha2_q = (-M12 * Q1 + M11 * Q2) / det
+    else:
+        alpha1_q, alpha2_q = 0.0, 0.0
+
+    alpha1 = alpha1_free + alpha1_q
+    alpha2 = alpha2_free + alpha2_q
+
+    return [omega1, alpha1, omega2, alpha2]
 
 
 def simulate(
@@ -59,6 +90,12 @@ def simulate(
     l1: float,
     l2: float,
     g: float,
+    b1: float,
+    b2: float,
+    A1: float,
+    nu1: float,
+    A2: float,
+    nu2: float,
 ) -> tuple[
     np.ndarray,
     np.ndarray,
@@ -75,7 +112,9 @@ def simulate(
     """Integrates Lagrangian equations over time and calculates physical forces."""
     t_eval = np.arange(0, t_max, dt)
     res = solve_ivp(
-        fun=lambda t, y: equations_of_motion(t, y, m1, m2, l1, l2, g),
+        fun=lambda t, y: equations_of_motion(
+            t, y, m1, m2, l1, l2, g, b1, b2, A1, nu1, A2, nu2
+        ),
         t_span=[0, t_max],
         y0=initial_state,
         t_eval=t_eval,
@@ -93,13 +132,25 @@ def simulate(
     theta2 = res.y[2, :]
     omega2 = res.y[3, :]
 
-    # Recalculate angular accelerations to derive forces
+    # Recalculate angular accelerations to track exact forces along interval bounds
     alpha1 = np.zeros_like(theta1)
     alpha2 = np.zeros_like(theta2)
 
     for i in range(len(theta1)):
         derivs = equations_of_motion(
-            0, [theta1[i], omega1[i], theta2[i], omega2[i]], m1, m2, l1, l2, g
+            t_eval[i],
+            [theta1[i], omega1[i], theta2[i], omega2[i]],
+            m1,
+            m2,
+            l1,
+            l2,
+            g,
+            b1,
+            b2,
+            A1,
+            nu1,
+            A2,
+            nu2,
         )
         alpha1[i] = derivs[1]
         alpha2[i] = derivs[3]
@@ -145,17 +196,71 @@ def main() -> None:
         default=30,
         help="Simulation time in seconds. Default 30.",
     )
+
+    # Weight & Physical setup
     parser.add_argument("--m1", type=float, default=1.0, help="Mass 1.")
     parser.add_argument("--m2", type=float, default=2.5, help="Mass 2 (End effector).")
     parser.add_argument("--l1", type=float, default=1.0, help="Length 1.")
     parser.add_argument("--l2", type=float, default=1.0, help="Length 2.")
     parser.add_argument("--gravity", type=float, default=9.81, help="Gravity.")
+
+    # Initial energy states
+    parser.add_argument(
+        "--theta1", type=float, default=np.pi / 1.1, help="Initial position joint 1"
+    )
+    parser.add_argument(
+        "--omega1", type=float, default=2.5, help="Initial velocity joint 1"
+    )
+    parser.add_argument(
+        "--theta2", type=float, default=np.pi / 1.5, help="Initial position joint 2"
+    )
+    parser.add_argument(
+        "--omega2", type=float, default=4.0, help="Initial velocity joint 2"
+    )
+
+    # Non-conservative modifiers (damping & driven)
+    parser.add_argument(
+        "--damp1",
+        type=float,
+        default=0.0,
+        help="Viscous damping factor on inner joint.",
+    )
+    parser.add_argument(
+        "--damp2",
+        type=float,
+        default=0.0,
+        help="Viscous damping factor on outer joint.",
+    )
+    parser.add_argument(
+        "--amp1",
+        type=float,
+        default=0.0,
+        help="Driven oscillating torque amplitude (Node 1).",
+    )
+    parser.add_argument(
+        "--freq1",
+        type=float,
+        default=1.0,
+        help="Driven oscillating torque frequency (Node 1).",
+    )
+    parser.add_argument(
+        "--amp2",
+        type=float,
+        default=0.0,
+        help="Driven oscillating torque amplitude (Node 2).",
+    )
+    parser.add_argument(
+        "--freq2",
+        type=float,
+        default=1.0,
+        help="Driven oscillating torque frequency (Node 2).",
+    )
     args = parser.parse_args()
 
     dt = 1.0 / args.fps
 
-    # Start with high energy (elevated angles and initial velocities)
-    initial_state = [np.pi / 1.1, 2.5, np.pi / 1.5, 4.0]
+    # Apply dynamic initial states
+    initial_state = [args.theta1, args.omega1, args.theta2, args.omega2]
 
     logging.info("Calculating Lagrangian mechanics & Force Tensors...")
     try:
@@ -168,6 +273,12 @@ def main() -> None:
             args.l1,
             args.l2,
             args.gravity,
+            args.damp1,
+            args.damp2,
+            args.amp1,
+            args.freq1,
+            args.amp2,
+            args.freq2,
         )
     except Exception as e:
         logging.error(f"Failed to simulate: {e}")
@@ -250,6 +361,17 @@ def main() -> None:
         labelcolor="white",
     )
 
+    time_text = ax.text(
+        0.04,
+        0.94,
+        "",
+        transform=ax.transAxes,
+        color="#45A29E",
+        fontsize=12,
+        weight="bold",
+        fontfamily="monospace",
+    )
+
     # ==========================================
     # Viewport 2: Rolling Force Tensors Plot
     # ==========================================
@@ -312,8 +434,11 @@ def main() -> None:
     )
 
     trail_length = int(args.fps * history_sec)
+    start_time_ref: float = -1.0
 
     def init() -> tuple[Any, ...]:
+        nonlocal start_time_ref
+        start_time_ref = -1.0
         trail.set_data([], [])
         f1_line.set_data([], [])
         f2_line.set_data([], [])
@@ -325,6 +450,7 @@ def main() -> None:
         f2_curve.set_data([], [])
         t1_curve.set_data([], [])
         t2_curve.set_data([], [])
+        time_text.set_text("")
         return (
             trail,
             arm1,
@@ -338,9 +464,23 @@ def main() -> None:
             f2_curve,
             t1_curve,
             t2_curve,
+            time_text,
         )
 
-    def animate(i: int) -> tuple[Any, ...]:
+    def animate(frame_i: int) -> tuple[Any, ...]:
+        nonlocal start_time_ref
+        if args.save:
+            i = frame_i
+        else:
+            if start_time_ref < 0:
+                start_time_ref = time.time()
+            elapsed = time.time() - start_time_ref
+            i = int(elapsed / dt)
+            if i >= len(x1):
+                start_time_ref = time.time()
+                i = 0
+            i = min(i, len(x1) - 1)
+
         start_idx = max(0, i - trail_length)
 
         # Pendulum updates
@@ -361,6 +501,8 @@ def main() -> None:
         fx2 = x2[i] + F2_x[i] * force_scale
         fy2 = y2[i] + F2_y[i] * force_scale
         f2_line.set_data([x2[i], fx2], [y2[i], fy2])
+
+        time_text.set_text(f"T: {t_eval[i]:.2f}s")
 
         # Rolling plot sliding updates
         window_t = t_eval[start_idx : i + 1]
@@ -385,13 +527,18 @@ def main() -> None:
             f2_curve,
             t1_curve,
             t2_curve,
+            time_text,
         )
+
+    def live_frames() -> Any:
+        while True:
+            yield 0
 
     logging.info("Building animation sequence...")
     anim = FuncAnimation(
         fig,
         animate,
-        frames=len(x1),
+        frames=len(x1) if args.save else live_frames(),
         init_func=init,
         interval=dt * 1000,
         blit=True,
@@ -400,6 +547,7 @@ def main() -> None:
 
     if args.save:
         logging.info(f"Saving video to {args.save} ...")
+        writer: Any
         if args.save.endswith(".gif"):
             writer = PillowWriter(fps=args.fps)
         else:
