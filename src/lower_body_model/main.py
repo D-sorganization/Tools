@@ -40,9 +40,7 @@ def main() -> None:
             print("Launching MuJoCo Viewer. Press ESC to exit.")  # noqa: T201
             mujoco.viewer.launch(sim.model, sim.data)
         except ImportError:
-            print(
-                "mujoco.viewer not available. Make sure you install correctly."
-            )  # noqa: T201
+            print("mujoco.viewer not available. Make sure you install correctly.")  # noqa: T201
 
     if not args.gui and not args.demo_iaa:
         parser.print_help()
