@@ -219,43 +219,70 @@ class LowerBodySimulator:
             "yaw": np.degrees(yaw),
         }
 
-    def compute_diagnostics(self) -> dict[str, str | float | bool]:
+    def compute_diagnostics(self) -> dict[str, str | float | bool | dict]:
         """Comprehensive system diagnostics for stability, telemetry, and debugging."""
         mujoco.mj_kinematics(self.model, self.data)
 
-        # 1. Base telemetry
+        # Base telemetry
         pelvis_pos = self.data.xpos[
             mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "pelvis")
         ]
-
-        # 2. Max errors and potential divergence (NaN)
         div = bool(np.any(np.isnan(self.data.qpos)) or np.any(np.isnan(self.data.qvel)))
 
-        # 3. Calculate max tracking error currently held by the controllers
         max_err = 0.0
         active_torques = 0.0
+        joint_torques = {}
+        history_len = len(self.history)
 
-        if self.qpos_target is not None and not div:
+        # Ground reaction force extraction (Right and Left Foot)
+        grf = {"right_z": 0.0, "left_z": 0.0}
+
+        if not div:
             for act_name, q_idx in self.jnt_qpos_idx.items():
-                err = abs(self.data.qpos[q_idx] - self.qpos_target[q_idx])
-                if err > max_err:
-                    max_err = err
+                if self.qpos_target is not None:
+                    err = abs(self.data.qpos[q_idx] - self.qpos_target[q_idx])
+                    if err > max_err:
+                        max_err = err
 
                 # Check control commands
-                act_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, f"act_{act_name}")
+                act_id = mujoco.mj_name2id(
+                    self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, f"act_{act_name}"
+                )
                 if act_id != -1:
-                    active_torques += abs(self.data.ctrl[act_id])
+                    trq = float(self.data.ctrl[act_id])
+                    active_torques += abs(trq)
+                    joint_torques[act_name] = trq
 
-        # 4. Joint angles explicitly for Knees / Hips
+            # Ground Reaction Forces explicitly
+            right_foot_geom = mujoco.mj_name2id(
+                self.model, mujoco.mjtObj.mjOBJ_GEOM, "r_foot"
+            )
+            left_foot_geom = mujoco.mj_name2id(
+                self.model, mujoco.mjtObj.mjOBJ_GEOM, "l_foot"
+            )
+            floor_geom = mujoco.mj_name2id(
+                self.model, mujoco.mjtObj.mjOBJ_GEOM, "floor"
+            )
+
+            for i in range(self.data.ncon):
+                contact = self.data.contact[i]
+                is_floor = contact.geom1 == floor_geom or contact.geom2 == floor_geom
+                is_r_foot = (
+                    contact.geom1 == right_foot_geom or contact.geom2 == right_foot_geom
+                )
+                is_l_foot = (
+                    contact.geom1 == left_foot_geom or contact.geom2 == left_foot_geom
+                )
+
+                if is_floor and is_r_foot:
+                    grf["right_z"] += float(
+                        self.data.efc_force[contact.efc_address]
+                    )  # Primary normal force
+                elif is_floor and is_l_foot:
+                    grf["left_z"] += float(self.data.efc_force[contact.efc_address])
+
         r_knee_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, "r_knee")
         r_knee_qpos_adr = self.model.jnt_qposadr[r_knee_id]
-
-        # Guard if diverged to prevent math exceptions
-        r_knee_deg = (
-            float(np.degrees(self.data.qpos[r_knee_qpos_adr]))
-            if not div
-            else float("nan")
-        )
 
         return {
             "time_sec": float(self.data.time),
@@ -267,8 +294,12 @@ class LowerBodySimulator:
             "total_applied_torque_nm": float(active_torques)
             if not div
             else float("nan"),
-            "r_knee_deg": r_knee_deg,
-            "history_frames": len(self.history),
+            "r_knee_deg": float(np.degrees(self.data.qpos[r_knee_qpos_adr]))
+            if not div
+            else float("nan"),
+            "history_frames": history_len,
+            "grf": grf,
+            "joint_torques": joint_torques,
         }
 
     def analyze_induced_acceleration(
