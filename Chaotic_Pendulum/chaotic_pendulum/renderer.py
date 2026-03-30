@@ -483,28 +483,28 @@ class PendulumRenderer:
         self.btn_toggle.on_clicked(self.toggle_menu)
 
         self.ax_check = self.fig.add_axes((0.85, 0.77, 0.13, 0.15))
-        self.ax_check.set_facecolor(menu_bg_color)
-        self.ax_check.patch.set_alpha(0.85)
+        self.ax_check.set_facecolor("white")
+        self.ax_check.patch.set_alpha(1.0)
 
         labels = ["Total Force", "Centrifugal", "Coriolis", "Show Charts"]
         visibility = [True, True, True, True]
         self.check = CheckButtons(self.ax_check, labels, visibility)
 
-        # Polish CheckBox aesthetics for dark theme
+        # Polish CheckBox aesthetics for high contrast
         if hasattr(self.check, "rectangles"):
             for rect in self.check.rectangles:
-                rect.set_edgecolor("#66FCF1")
-                rect.set_facecolor("#0B0C10")
+                rect.set_edgecolor("black")
+                rect.set_facecolor("white")
                 rect.set_linewidth(1.5)
         if hasattr(self.check, "lines"):
             for line_tup in self.check.lines:
-                line_tup[0].set_color("#66FCF1")
-                line_tup[1].set_color("#66FCF1")
+                line_tup[0].set_color("black")
+                line_tup[1].set_color("black")
                 line_tup[0].set_linewidth(2.0)
                 line_tup[1].set_linewidth(2.0)
 
         for t in self.check.labels:
-            t.set_color("white")
+            t.set_color("black")
             t.set_fontsize(9)
             t.set_fontweight("bold")
             t.set_fontfamily("monospace")
