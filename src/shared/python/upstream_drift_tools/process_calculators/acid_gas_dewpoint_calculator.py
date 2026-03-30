@@ -331,7 +331,7 @@ class AcidGasDewpointCalculator:
             Vapor pressure in Pa
         """
         # DbC preconditions
-        if not isinstance(temperature_c, (int, float)):
+        if not isinstance(temperature_c, int | float):
             raise ValueError(
                 f"temperature_c must be numeric, got {type(temperature_c).__name__}"
             )
