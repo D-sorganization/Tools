@@ -218,9 +218,17 @@ class RigidTransformTab(QWidget):
             d = np.zeros(3)
             d[i] = 1.0
             ax.quiver(
-                0, 0, 0, d[0], d[1], d[2],
-                color=colors[i], linewidth=1, alpha=0.3,
-                arrow_length_ratio=0.08, linestyle="--",
+                0,
+                0,
+                0,
+                d[0],
+                d[1],
+                d[2],
+                color=colors[i],
+                linewidth=1,
+                alpha=0.3,
+                arrow_length_ratio=0.08,
+                linestyle="--",
             )
 
         # Transformed frame
@@ -230,16 +238,28 @@ class RigidTransformTab(QWidget):
         for i in range(3):
             d = R[:, i] * scale
             ax.quiver(
-                p[0], p[1], p[2], d[0], d[1], d[2],
-                color=colors[i], linewidth=2.5,
-                arrow_length_ratio=0.12, label=f"{labels[i]}'",
+                p[0],
+                p[1],
+                p[2],
+                d[0],
+                d[1],
+                d[2],
+                color=colors[i],
+                linewidth=2.5,
+                arrow_length_ratio=0.12,
+                label=f"{labels[i]}'",
             )
 
         # Connection line
         c = get_plot_colors()
         ax.plot(
-            [0, p[0]], [0, p[1]], [0, p[2]],
-            color=c["accent"], linewidth=1.5, alpha=0.5, linestyle=":",
+            [0, p[0]],
+            [0, p[1]],
+            [0, p[2]],
+            color=c["accent"],
+            linewidth=1.5,
+            alpha=0.5,
+            linestyle=":",
         )
         ax.scatter(*p, color=c["accent"], s=40, zorder=5)  # Axes3D
 

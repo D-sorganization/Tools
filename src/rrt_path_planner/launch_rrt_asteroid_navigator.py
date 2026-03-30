@@ -26,7 +26,12 @@ REPO_ROOT = bootstrap(__file__)
 def _find_rrt_package() -> None:
     """Locate and add the RRT package source directory to sys.path."""
     candidates = [
-        REPO_ROOT / "src" / "scientific_modeling" / "rrt_path_planner" / "python" / "src",
+        REPO_ROOT
+        / "src"
+        / "scientific_modeling"
+        / "rrt_path_planner"
+        / "python"
+        / "src",
         REPO_ROOT / "src" / "rrt_path_planner" / "python" / "src",
     ]
     for candidate in candidates:

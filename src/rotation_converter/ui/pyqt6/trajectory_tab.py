@@ -195,8 +195,11 @@ class TrajectoryPlotsTab(QWidget):
         c = get_plot_colors()
         for j, lbl in enumerate(["Roll (X)", "Pitch (Y)", "Yaw (Z)"]):
             ax.plot(
-                t, np.degrees(angles[:, j]),
-                color=c["axes"][j], linewidth=1.5, label=lbl,
+                t,
+                np.degrees(angles[:, j]),
+                color=c["axes"][j],
+                linewidth=1.5,
+                label=lbl,
             )
         ax.set_title("Euler Angles (XYZ) Over Time", fontsize=10)
         ax.set_xlabel("Frame")
@@ -295,12 +298,18 @@ class TrajectoryPlotsTab(QWidget):
         labels_v = ["vx", "vy", "vz"]
         for j in range(3):
             ax1.plot(
-                t, body_tw[: len(t), j],
-                color=c["axes"][j], linewidth=1.5, label=f"body {labels_w[j]}",
+                t,
+                body_tw[: len(t), j],
+                color=c["axes"][j],
+                linewidth=1.5,
+                label=f"body {labels_w[j]}",
             )
             ax1.plot(
-                t, space_tw[: len(t), j],
-                color=c["axes"][j], linewidth=1.5, linestyle="--",
+                t,
+                space_tw[: len(t), j],
+                color=c["axes"][j],
+                linewidth=1.5,
+                linestyle="--",
                 label=f"space {labels_w[j]}",
             )
         ax1.set_title("Angular: Body (solid) vs Space (dashed)", fontsize=9)
@@ -310,12 +319,18 @@ class TrajectoryPlotsTab(QWidget):
 
         for j in range(3):
             ax2.plot(
-                t, body_tw[: len(t), 3 + j],
-                color=c["axes"][j], linewidth=1.5, label=f"body {labels_v[j]}",
+                t,
+                body_tw[: len(t), 3 + j],
+                color=c["axes"][j],
+                linewidth=1.5,
+                label=f"body {labels_v[j]}",
             )
             ax2.plot(
-                t, space_tw[: len(t), 3 + j],
-                color=c["axes"][j], linewidth=1.5, linestyle="--",
+                t,
+                space_tw[: len(t), 3 + j],
+                color=c["axes"][j],
+                linewidth=1.5,
+                linestyle="--",
                 label=f"space {labels_v[j]}",
             )
         ax2.set_title("Linear: Body (solid) vs Space (dashed)", fontsize=9)
