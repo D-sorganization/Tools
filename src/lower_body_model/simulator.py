@@ -26,8 +26,8 @@ class LowerBodySimulator:
 
         # Stability control target (rest pose)
         self.qpos_target: np.ndarray | None = None
-        self.kp_stability = 100.0
-        self.kd_stability = 10.0
+        self.kp_stability = 1000.0
+        self.kd_stability = 100.0
 
         mujoco.mj_forward(self.model, self.data)
 
@@ -74,14 +74,16 @@ class LowerBodySimulator:
 
         mujoco.mj_kinematics(self.model, self.data)
 
-        # Drop the pelvis until feet touch the ground (z=0 for foot center)
+        # Drop the pelvis until feet touch the ground
+        # foot_z is the current site Z height. The site is at local z=-0.04 in the foot ellipsoid.
+        # So when the site is at global Z=0.04, the bottom of the foot ellipsoid (z=-0.08 local) is at global Z=0.
         r_foot_id = mujoco.mj_name2id(
             self.model, mujoco.mjtObj.mjOBJ_SITE, "r_foot_center"
         )
         foot_z = self.data.site_xpos[r_foot_id][2]
 
         # Free joint first 3 qpos are root x, y, z
-        self.data.qpos[2] -= foot_z + 0.04  # Foot thickness compensation
+        self.data.qpos[2] -= foot_z - 0.04
 
         mujoco.mj_forward(self.model, self.data)
 

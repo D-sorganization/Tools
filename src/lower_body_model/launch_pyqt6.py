@@ -38,6 +38,7 @@ class ControlPanel(QMainWindow):
 
         self.setWindowTitle("Lower Body Control Panel")
         self.setMinimumWidth(300)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
 
         main_widget = QWidget()
         self.setCentralWidget(main_widget)
