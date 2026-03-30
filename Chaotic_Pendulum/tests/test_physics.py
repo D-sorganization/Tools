@@ -39,3 +39,32 @@ def test_equations_of_motion() -> None:
 
     derivatives = engine.equations_of_motion(0.0, [0.0, 1.0, 0.0, -1.0])
     assert len(derivatives) == 4
+
+
+import numpy as np
+
+
+def test_physics_force_vectors_tdd() -> None:
+    """Verify analytical magnitude of Cartesian Centrifugal and Coriolis forces for first frame."""
+    cfg = PhysicsConfig(
+        m1=1.0,
+        m2=2.0,
+        l1=1.0,
+        l2=1.0,
+        theta1=np.pi / 2,
+        omega1=1.0,
+        theta2=0.0,
+        omega2=2.0,
+    )
+    engine = PhysicsEngine(cfg)
+    res = engine.solve(0.1, 0.05)
+
+    # Intial values (t=0): w1 = 1.0, w2 = 2.0
+    # CF_1 magnitude expected: m1 * l1 * w1^2 = 1.0 * 1.0 * 1.0 = 1.0
+    c1_x, c1_y = res["v1"]["centrifugal"][0][0], res["v1"]["centrifugal"][1][0]
+    assert np.isclose(np.hypot(c1_x, c1_y), 1.0)
+
+    # Coriolis Force on 2: 2 * m2 * l2 * w1 * (w2 - w1)
+    # 2 * 2.0 * 1.0 * 1.0 * (2.0 - 1.0) = 4.0
+    cor2_x, cor2_y = res["v2"]["coriolis"][0][0], res["v2"]["coriolis"][1][0]
+    assert np.isclose(np.hypot(cor2_x, cor2_y), 4.0)
