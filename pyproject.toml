@@ -122,6 +122,7 @@ include = [
     "tools*",
     "web_applications*",
     "contracts*",
+    "lower_body_model*",
 ]
 exclude = [
     "*.tests*",
