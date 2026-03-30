@@ -402,10 +402,11 @@ class TestSteamAPIContract:
         if str(api_path) not in sys.path:
             sys.path.insert(0, str(api_path))
 
-        from steam_engine_calculator.api import _props_to_response
         from upstream_drift_tools.calculators.thermo.steam_engine import (
             SteamProperties,
         )
+
+        from steam_engine_calculator.api import _props_to_response
 
         props = SteamProperties(
             temperature=400.0,

@@ -80,3 +80,58 @@ def test_induced_acceleration_analysis(simulator: LowerBodySimulator) -> None:
     assert total_accel > 1e-4, (
         "Applied torque should induce some acceleration on the root body."
     )
+
+
+def test_history_recording_and_restoring(simulator: LowerBodySimulator) -> None:
+    """Test that simulator tracks history and can restore previous frames for scrubbing."""
+    assert len(simulator.history) == 0
+
+    simulator.step()
+    assert len(simulator.history) == 1
+
+    # Run a few steps
+    for _ in range(5):
+        simulator.step()
+
+    assert len(simulator.history) == 6
+
+    # Store current state
+    current_time = simulator.data.time
+
+    # Restore an old frame
+    simulator.restore_frame(0)
+    assert simulator.data.time < current_time
+    assert simulator.data.time == simulator.history[0]["time"]
+
+    simulator.clear_history()
+    assert len(simulator.history) == 0
+
+
+def test_stability_properties(simulator: LowerBodySimulator) -> None:
+    """Test that setting pd controls updates the variables correctly."""
+    simulator.kp_stability = 250.0
+    simulator.kd_stability = 25.0
+
+    assert simulator.kp_stability == 250.0
+    assert simulator.kd_stability == 25.0
+
+
+def test_compute_diagnostics(simulator: LowerBodySimulator) -> None:
+    """Test that diagnostics are computed fully without crashing."""
+    simulator.setup_initial_pose(hip_anterior_tilt=10.0, knee_flexion=20.0, foot_angle=5.0)
+
+    diag = simulator.compute_diagnostics()
+    assert "time_sec" in diag
+    assert "pelvis_z_m" in diag
+    assert "is_diverged" in diag
+    assert "max_tracking_err_deg" in diag
+    assert "total_applied_torque_nm" in diag
+    assert "r_knee_deg" in diag
+    assert not diag["is_diverged"]
+
+    # ensure it updates during playback
+    for _ in range(50):
+        simulator.step()
+
+    diag_later = simulator.compute_diagnostics()
+    assert float(diag_later["time_sec"]) > float(diag["time_sec"])

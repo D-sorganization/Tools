@@ -12,6 +12,7 @@ Covers:
 from __future__ import annotations
 
 import pytest
+
 from glass_bath_fea.core.config import GlassComposition
 from glass_bath_fea.core.material_properties import (
     DEFAULT_METAL_CONDUCTIVITY,

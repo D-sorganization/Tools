@@ -26,8 +26,12 @@ class LowerBodySimulator:
 
         # Stability control target (rest pose)
         self.qpos_target: np.ndarray | None = None
-        self.kp_stability = 100.0
-        self.kd_stability = 10.0
+        self.kp_stability = 0.0
+        self.kd_stability = 0.0
+
+        # Simulation history for scrubbing (QPOS, QVEL, TIME)
+        self.history: list[dict[str, np.ndarray | float]] = []
+        self.max_history_length = 5000
 
         mujoco.mj_forward(self.model, self.data)
 
@@ -74,14 +78,16 @@ class LowerBodySimulator:
 
         mujoco.mj_kinematics(self.model, self.data)
 
-        # Drop the pelvis until feet touch the ground (z=0 for foot center)
+        # Drop the pelvis until feet touch the ground
+        # foot_z is the current site Z height. The site is at local z=-0.04 in the foot ellipsoid.
+        # So when the site is at global Z=0.04, the bottom of the foot ellipsoid (z=-0.08 local) is at global Z=0.
         r_foot_id = mujoco.mj_name2id(
             self.model, mujoco.mjtObj.mjOBJ_SITE, "r_foot_center"
         )
         foot_z = self.data.site_xpos[r_foot_id][2]
 
         # Free joint first 3 qpos are root x, y, z
-        self.data.qpos[2] -= foot_z + 0.04  # Foot thickness compensation
+        self.data.qpos[2] -= foot_z - 0.04
 
         mujoco.mj_forward(self.model, self.data)
 
@@ -180,16 +186,120 @@ class LowerBodySimulator:
             yaw = np.arctan2(mat[1, 0], mat[0, 0])
         else:
             roll = np.arctan2(-mat[1, 2], mat[1, 1])
-            pitch = np.arctan2(-mat[2, 0], sy)
-            yaw = 0
+            # Free-body rotation offsets
+        yaw = 0.0
+        pitch = 0.0
+        roll = 0.0
+
+        # Check qpos bounds securely since free joints have 7 dims (3 pos, 4 quat)
+        if len(self.data.qpos) >= 7:
+            # Simple Euler from quaternion approximation for root tracking
+            qw, qx, qy, qz = self.data.qpos[3:7]
+            # Roll (x-axis)
+            sinr_cosp = 2 * (qw * qx + qy * qz)
+            cosr_cosp = 1 - 2 * (qx * qx + qy * qy)
+            roll = np.arctan2(sinr_cosp, cosr_cosp)
+
+            # Pitch (y-axis)
+            sinp = np.sqrt(1 + 2 * (qw * qy - qx * qz))
+            cosp = np.sqrt(1 - 2 * (qw * qy - qx * qz))
+            pitch = 2 * np.arctan2(sinp, cosp) - np.pi / 2
+
+            # Yaw (z-axis)
+            siny_cosp = 2 * (qw * qz + qx * qy)
+            cosy_cosp = 1 - 2 * (qy * qy + qz * qz)
+            yaw = np.arctan2(siny_cosp, cosy_cosp)
 
         return {
             "x_forward": pos[0],
             "y_lateral": pos[1],
             "z_vertical": pos[2],
-            "roll": roll,
-            "pitch": pitch,
-            "yaw": yaw,
+            "roll": np.degrees(roll),
+            "pitch": np.degrees(pitch),
+            "yaw": np.degrees(yaw),
+        }
+
+    def compute_diagnostics(self) -> dict[str, str | float | bool | dict]:
+        """Comprehensive system diagnostics for stability, telemetry, and debugging."""
+        mujoco.mj_kinematics(self.model, self.data)
+
+        # Base telemetry
+        pelvis_pos = self.data.xpos[
+            mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "pelvis")
+        ]
+        div = bool(np.any(np.isnan(self.data.qpos)) or np.any(np.isnan(self.data.qvel)))
+
+        max_err = 0.0
+        active_torques = 0.0
+        joint_torques = {}
+        history_len = len(self.history)
+
+        # Ground reaction force extraction (Right and Left Foot)
+        grf = {"right_z": 0.0, "left_z": 0.0}
+
+        if not div:
+            for act_name, q_idx in self.jnt_qpos_idx.items():
+                if self.qpos_target is not None:
+                    err = abs(self.data.qpos[q_idx] - self.qpos_target[q_idx])
+                    if err > max_err:
+                        max_err = err
+
+                # Check control commands
+                act_id = mujoco.mj_name2id(
+                    self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, f"act_{act_name}"
+                )
+                if act_id != -1:
+                    trq = float(self.data.ctrl[act_id])
+                    active_torques += abs(trq)
+                    joint_torques[act_name] = trq
+
+            # Ground Reaction Forces explicitly
+            right_foot_geom = mujoco.mj_name2id(
+                self.model, mujoco.mjtObj.mjOBJ_GEOM, "r_foot"
+            )
+            left_foot_geom = mujoco.mj_name2id(
+                self.model, mujoco.mjtObj.mjOBJ_GEOM, "l_foot"
+            )
+            floor_geom = mujoco.mj_name2id(
+                self.model, mujoco.mjtObj.mjOBJ_GEOM, "floor"
+            )
+
+            for i in range(self.data.ncon):
+                contact = self.data.contact[i]
+                is_floor = contact.geom1 == floor_geom or contact.geom2 == floor_geom
+                is_r_foot = (
+                    contact.geom1 == right_foot_geom or contact.geom2 == right_foot_geom
+                )
+                is_l_foot = (
+                    contact.geom1 == left_foot_geom or contact.geom2 == left_foot_geom
+                )
+
+                if is_floor and is_r_foot:
+                    grf["right_z"] += float(
+                        self.data.efc_force[contact.efc_address]
+                    )  # Primary normal force
+                elif is_floor and is_l_foot:
+                    grf["left_z"] += float(self.data.efc_force[contact.efc_address])
+
+        r_knee_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, "r_knee")
+        r_knee_qpos_adr = self.model.jnt_qposadr[r_knee_id]
+
+        return {
+            "time_sec": float(self.data.time),
+            "pelvis_z_m": float(pelvis_pos[2]) if not div else float("nan"),
+            "is_diverged": div,
+            "max_tracking_err_deg": float(np.degrees(max_err))
+            if not div
+            else float("nan"),
+            "total_applied_torque_nm": float(active_torques)
+            if not div
+            else float("nan"),
+            "r_knee_deg": float(np.degrees(self.data.qpos[r_knee_qpos_adr]))
+            if not div
+            else float("nan"),
+            "history_frames": history_len,
+            "grf": grf,
+            "joint_torques": joint_torques,
         }
 
     def analyze_induced_acceleration(
@@ -353,3 +463,32 @@ class LowerBodySimulator:
             self.data.ctrl[act_id] = ctrl_val
 
         mujoco.mj_step(self.model, self.data)
+
+        # Record state
+        self.history.append(
+            {
+                "time": self.data.time,
+                "qpos": self.data.qpos.copy(),
+                "qvel": self.data.qvel.copy(),
+                "ctrl": self.data.ctrl.copy(),
+            }
+        )
+
+        if len(self.history) > self.max_history_length:
+            self.history.pop(0)
+
+    def restore_frame(self, index: int) -> None:
+        """Restores the simulator completely to a cached history frame state."""
+        if not self.history or index < 0 or index >= len(self.history):
+            return
+
+        frame = self.history[index]
+        self.data.time = frame["time"]
+        self.data.qpos[:] = frame["qpos"]
+        self.data.qvel[:] = frame["qvel"]
+        self.data.ctrl[:] = frame["ctrl"]
+        mujoco.mj_forward(self.model, self.data)
+
+    def clear_history(self) -> None:
+        """Empties execution memory logs."""
+        self.history.clear()
