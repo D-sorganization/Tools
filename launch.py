@@ -27,7 +27,8 @@ from pathlib import Path
 
 # Bootstrap imports for development mode
 _REPO_ROOT = Path(__file__).resolve().parent
-sys.path.insert(0, str(_REPO_ROOT / "src" / "shared" / "python"))
+_SHARED_PYTHON = _REPO_ROOT / "src" / "shared" / "python"
+sys.path.insert(0, str(_SHARED_PYTHON))
 from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
 ensure_paths(_REPO_ROOT)
@@ -75,7 +76,16 @@ def launch_tool(tool_identifier: str) -> int:
 
     Returns:
         Exit code.
+
+    Raises:
+        TypeError: If tool_identifier is not a string.
+        ValueError: If tool_identifier is an empty string.
     """
+    if not isinstance(tool_identifier, str):
+        raise TypeError(f"tool_identifier must be a str, got {type(tool_identifier)}")
+    if not tool_identifier:
+        raise ValueError("tool_identifier must not be an empty string")
+
     discover_all_tools()
     registry = get_registry()
 
@@ -84,8 +94,9 @@ def launch_tool(tool_identifier: str) -> int:
 
     # If not found, try matching by display name (case-insensitive)
     if registration is None:
+        needle_lower = tool_identifier.lower()
         for tool in registry.list_tools():
-            if tool.display_name.lower() == tool_identifier.lower():
+            if tool.display_name.lower() == needle_lower:
                 registration = tool
                 break
 
@@ -94,7 +105,9 @@ def launch_tool(tool_identifier: str) -> int:
         matches = []
         needle = tool_identifier.lower()
         for tool in registry.list_tools():
-            if needle in tool.tool_name.lower() or needle in tool.display_name.lower():
+            tool_name_lower = tool.tool_name.lower()
+            display_name_lower = tool.display_name.lower()
+            if needle in tool_name_lower or needle in display_name_lower:
                 matches.append(tool)
         if len(matches) == 1:
             registration = matches[0]
@@ -111,12 +124,15 @@ def launch_tool(tool_identifier: str) -> int:
 
     from gui_launcher.launcher import GUIType
 
-    config = registration.gui_configs.get(GUIType.PYQT6)
+    gui_configs = registration.gui_configs
+    config = gui_configs.get(GUIType.PYQT6)
     if config is None:
-        print(f"Tool '{registration.display_name}' has no PyQt6 configuration.")  # noqa: T201
+        display_name = registration.display_name
+        print(f"Tool '{display_name}' has no PyQt6 configuration.")  # noqa: T201
         return 1
 
-    print(f"Launching: {registration.display_name}")  # noqa: T201
+    display_name = registration.display_name
+    print(f"Launching: {display_name}")  # noqa: T201
     return int(launch_pyqt6_app(config))
 
 

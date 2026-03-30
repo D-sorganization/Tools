@@ -11,23 +11,45 @@ except ImportError:
     from pathlib import Path
 
     def safe_read_text(
-        path: str | Path, encoding: str = "utf-8", default: str = ""
+        file_path: Path | str, encoding: str = "utf-8", default: str = ""
     ) -> str:
+        """Read a file as text, returning default on any error.
+
+        Args:
+            file_path: Path to the file to read.
+            encoding: Text encoding to use (default: utf-8).
+            default: Value to return if the file cannot be read.
+
+        Returns:
+            File contents as a string, or default on error.
+        """
         try:
-            return Path(path).read_text(encoding=encoding)
+            return Path(file_path).read_text(encoding=encoding)
         except Exception:  # noqa: BLE001
             return default
 
     def safe_write_text(
-        path: str | Path,
+        file_path: Path | str,
         content: str,
         encoding: str = "utf-8",
         create_parents: bool = True,
-    ) -> None:
-        p = Path(path)
+    ) -> bool:
+        """Write text content to a file, optionally creating parent directories.
+
+        Args:
+            file_path: Destination file path.
+            content: Text content to write.
+            encoding: Text encoding to use (default: utf-8).
+            create_parents: If True, create parent directories as needed.
+
+        Returns:
+            True if the write succeeded.
+        """
+        p = Path(file_path)
         if create_parents:
             p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(content, encoding=encoding)
+        return True
 
 
 # Configure logging
