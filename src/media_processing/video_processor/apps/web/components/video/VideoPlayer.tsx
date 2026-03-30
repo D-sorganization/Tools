@@ -122,6 +122,7 @@ export default function VideoPlayer({
         <video
           ref={videoRef}
           src={videoUrl}
+          role="video"
           className="w-full h-auto max-h-[600px]"
           playsInline
         />

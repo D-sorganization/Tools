@@ -88,10 +88,13 @@ describe('VideoPlayer', () => {
     it('should update time when timeline is seeked', async () => {
       render(<VideoPlayer {...defaultProps} />);
 
+      const video = screen.getByRole('video') as HTMLVideoElement;
+      Object.defineProperty(video, 'duration', { value: 10, writable: true });
+      fireEvent.loadedMetadata(video);
+
       const seekBar = screen.getAllByRole('slider')[0]; // First slider is timeline
       fireEvent.change(seekBar, { target: { value: '5' } });
 
-      const video = screen.getByRole('video') as HTMLVideoElement;
       expect(video.currentTime).toBe(5);
     });
 
