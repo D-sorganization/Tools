@@ -161,15 +161,26 @@ jobs:
         # Tracked: https://github.com/D-sorganization/Tools/issues — re-evaluate when pygments>=2.19.3 or similar is available.
         run: pip-audit -r requirements.txt --ignore-vuln CVE-2026-4539
 
+      - name: Check gitleaks license
+        id: gitleaks-check
+        env:
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+        run: |
+          if [ -n "$GITLEAKS_LICENSE" ]; then
+            echo "has_license=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_license=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Secrets Scan (gitleaks)
-        if: secrets.GITLEAKS_LICENSE != ''
+        if: steps.gitleaks-check.outputs.has_license == 'true'
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
 
       - name: Skip Secrets Scan (missing license)
-        if: secrets.GITLEAKS_LICENSE == ''
+        if: steps.gitleaks-check.outputs.has_license != 'true'
         run: echo "::warning::Skipping gitleaks because GITLEAKS_LICENSE is not configured."
 
       - name: Module Size Budget
