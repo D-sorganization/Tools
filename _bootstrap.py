@@ -36,7 +36,15 @@ def bootstrap(caller_file: str) -> Path:
 
     Returns:
         The resolved repository root directory.
+
+    Raises:
+        TypeError: If caller_file is not a str.
+        ValueError: If caller_file is an empty string.
     """
+    if not isinstance(caller_file, str):
+        raise TypeError(f"caller_file must be a str, got {type(caller_file)}")
+    if not caller_file:
+        raise ValueError("caller_file must not be an empty string")
     caller = Path(caller_file).resolve()
     # Walk up until we find pyproject.toml (repo root marker)
     repo_root = caller.parent

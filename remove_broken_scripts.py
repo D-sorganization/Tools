@@ -13,6 +13,16 @@ except ImportError:
     def safe_read_text(
         path: str | Path, encoding: str = "utf-8", default: str = ""
     ) -> str:
+        """Read a file as text, returning default on any error.
+
+        Args:
+            path: Path to the file to read.
+            encoding: Text encoding to use (default: utf-8).
+            default: Value to return if the file cannot be read.
+
+        Returns:
+            File contents as a string, or default on error.
+        """
         try:
             return Path(path).read_text(encoding=encoding)
         except Exception:  # noqa: BLE001
@@ -24,6 +34,14 @@ except ImportError:
         encoding: str = "utf-8",
         create_parents: bool = True,
     ) -> None:
+        """Write text content to a file, optionally creating parent directories.
+
+        Args:
+            path: Destination file path.
+            content: Text content to write.
+            encoding: Text encoding to use (default: utf-8).
+            create_parents: If True, create parent directories as needed.
+        """
         p = Path(path)
         if create_parents:
             p.parent.mkdir(parents=True, exist_ok=True)

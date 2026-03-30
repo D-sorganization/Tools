@@ -36,8 +36,10 @@ def main() -> None:
         # Update the shortcut script to use the new high-quality ICO
         shortcut_script = Path("create_launcher_shortcut.ps1")
         if shortcut_script.exists():
-            content = shortcut_script.read_text()
-            updated_content = content.replace("tools_icon.ico", "tools_icon_hq.ico")
+            script_content = shortcut_script.read_text()
+            updated_content = script_content.replace(
+                "tools_icon.ico", "tools_icon_hq.ico"
+            )
             shortcut_script.write_text(updated_content)
             logger.info("Updated shortcut script to use high-quality ICO")
     else:

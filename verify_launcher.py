@@ -11,7 +11,16 @@ from pathlib import Path
 
 
 def _print_environment_info(current_file: Path) -> None:
-    """Print current environment information."""
+    """Print current environment information.
+
+    Args:
+        current_file: Resolved path to this script file.
+
+    Raises:
+        TypeError: If current_file is not a Path.
+    """
+    if not isinstance(current_file, Path):
+        raise TypeError(f"current_file must be a Path, got {type(current_file)}")
     print("=" * 60)
     print("🔍 LAUNCHER VERIFICATION SCRIPT")
     print("=" * 60)
@@ -22,13 +31,23 @@ def _print_environment_info(current_file: Path) -> None:
 
 
 def _check_launcher_file(launcher_path: Path) -> None:
-    """Check and display info about a launcher file."""
+    """Check and display info about a launcher file.
+
+    Args:
+        launcher_path: Path to the launcher file to inspect.
+
+    Raises:
+        TypeError: If launcher_path is not a Path.
+    """
+    if not isinstance(launcher_path, Path):
+        raise TypeError(f"launcher_path must be a Path, got {type(launcher_path)}")
     if not launcher_path.exists():
         print(f"❌ {launcher_path.name} - NOT FOUND")
         return
 
-    size = launcher_path.stat().st_size
-    modified = launcher_path.stat().st_mtime
+    stat = launcher_path.stat()
+    size = stat.st_size
+    modified = stat.st_mtime
     mod_time = datetime.fromtimestamp(modified).strftime("%Y-%m-%d %H:%M:%S")
 
     print(f"✅ {launcher_path.name}")
@@ -48,7 +67,16 @@ def _check_launcher_file(launcher_path: Path) -> None:
 
 
 def _print_recommendations(current_dir: Path) -> None:
-    """Print recommendations for which launcher to use."""
+    """Print recommendations for which launcher to use.
+
+    Args:
+        current_dir: The repository root directory to check.
+
+    Raises:
+        TypeError: If current_dir is not a Path.
+    """
+    if not isinstance(current_dir, Path):
+        raise TypeError(f"current_dir must be a Path, got {type(current_dir)}")
     print("=" * 60)
     print("💡 RECOMMENDATIONS")
     print("=" * 60)

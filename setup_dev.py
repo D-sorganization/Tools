@@ -19,15 +19,22 @@ RESET = "\033[0m"
 
 
 def log_step(message: str) -> None:
+    """Log a setup step with a coloured [SETUP] prefix.
+
+    Args:
+        message: The step description to log.
+    """
     logger.info(f"\n{CYAN}[SETUP] {message}{RESET}")
 
 
 def check_python() -> None:
+    """Log the current Python version to verify the environment."""
     log_step("Checking Python environment...")
     logger.info(f"Python version: {sys.version}")
 
 
 def install_python_deps() -> None:
+    """Upgrade pip and install all Python dependencies from requirements.txt."""
     log_step("Installing Python dependencies...")
     subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", "pip"])
     subprocess.check_call(
@@ -36,6 +43,7 @@ def install_python_deps() -> None:
 
 
 def install_node_deps() -> None:
+    """Install Node.js dependencies via pnpm, falling back to npm if pnpm is absent."""
     log_step("Installing Node.js dependencies...")
 
     # Check for pnpm
@@ -72,6 +80,7 @@ def install_node_deps() -> None:
 
 
 def main() -> None:
+    """Run the full dev setup: check Python, install Python deps, install Node deps."""
     try:
         check_python()
         install_python_deps()

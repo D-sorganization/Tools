@@ -179,6 +179,11 @@ class SignalToolkitLauncher(QMainWindow):
     """
 
     def __init__(self) -> None:
+        """Initialise the combined Polynomial Generator + Signal Toolkit window.
+
+        Creates the two-tab layout, connects the polynomial_generated signal,
+        builds the menu bar, and shows a 'Ready' status message.
+        """
         super().__init__()
         self.setWindowTitle("Signal Toolkit — Standalone Launcher")
         self.setMinimumSize(1200, 800)
@@ -200,9 +205,9 @@ class SignalToolkitLauncher(QMainWindow):
         self.poly_gen.polynomial_generated.connect(self._on_poly_generated)
 
         self._build_menus()
-        sb = self.statusBar()
-        if sb is not None:
-            sb.showMessage("Ready")
+        status_bar = self.statusBar()
+        if status_bar is not None:
+            status_bar.showMessage("Ready")
 
     # ------------------------------------------------------------------
     # Signal routing
@@ -215,10 +220,19 @@ class SignalToolkitLauncher(QMainWindow):
             joint_name: Name of the joint / channel from the polynomial widget.
             coeffs: Polynomial coefficients in highest-degree-first order
                 (as returned by ``numpy.polyfit``).
+
+        Raises:
+            TypeError: If joint_name is not a str or coeffs is not a list.
         """
+        if not isinstance(joint_name, str):
+            raise TypeError(f"joint_name must be a str, got {type(joint_name)}")
+        if not isinstance(coeffs, list):
+            raise TypeError(f"coeffs must be a list, got {type(coeffs)}")
+
         # Use the toolkit's current time axis when available so the scales match.
-        if self.toolkit.current_signal is not None:
-            t = self.toolkit.current_signal.time
+        current_signal = self.toolkit.current_signal
+        if current_signal is not None:
+            t = current_signal.time
         else:
             t = np.linspace(0, 10, 1000)
 
@@ -227,9 +241,11 @@ class SignalToolkitLauncher(QMainWindow):
         signal.name = f"Polynomial ({joint_name})"
         self.toolkit.load_external_signal(signal)
 
-        sb = self.statusBar()
-        if sb is not None:
-            sb.showMessage(f"Polynomial ({joint_name}) sent to Signal Toolkit", 5000)
+        status_bar = self.statusBar()
+        if status_bar is not None:
+            status_bar.showMessage(
+                f"Polynomial ({joint_name}) sent to Signal Toolkit", 5000
+            )
 
     # ------------------------------------------------------------------
     # Menu bar
