@@ -8,8 +8,8 @@ import ast
 from pathlib import Path
 
 import pytest
-from contracts import PreconditionError
 
+from contracts import PreconditionError
 from tools.scientific_auditor import ScienceAuditor, audit_directory, audit_file
 
 # ─── ScienceAuditor.visit_BinOp ────────────────────────────────

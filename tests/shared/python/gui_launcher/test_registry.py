@@ -304,8 +304,9 @@ class TestGUIRegistryContracts:
     # auto_discover_guis contracts
 
     def test_auto_discover_non_list(self) -> None:
-        from contracts import PreconditionError
         from gui_launcher.registry import auto_discover_guis
+
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             auto_discover_guis("/not/a/list")  # type: ignore[arg-type]

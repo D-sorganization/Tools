@@ -92,7 +92,7 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
         try:
             eul = list(rot.as_euler(request.euler_convention))
             conv = request.euler_convention
-        except Exception:  # noqa: BLE001
+        except Exception:  # noqa: BLE001  # noqa: BLE001
             eul = list(rot.as_euler("xyz"))
             conv = "xyz"
 

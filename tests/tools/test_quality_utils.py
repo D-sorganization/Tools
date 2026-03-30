@@ -7,8 +7,8 @@ and precondition violations (DbC contracts).
 from pathlib import Path
 
 import pytest
-from contracts import PreconditionError
 
+from contracts import PreconditionError
 from tools.quality_utils import (
     check_ast_issues,
     check_banned_patterns,
