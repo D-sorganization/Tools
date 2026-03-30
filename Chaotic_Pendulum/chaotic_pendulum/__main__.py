@@ -21,7 +21,9 @@ def main() -> None:
         sys.exit(1)
 
     logging.info("Building animation sequence...")
-    renderer = PendulumRenderer(render_cfg, phys_cfg, physics_data)
+    renderer = PendulumRenderer(
+        render_cfg, phys_cfg, physics_data, solve_func=engine.solve
+    )
     renderer.render()
 
 

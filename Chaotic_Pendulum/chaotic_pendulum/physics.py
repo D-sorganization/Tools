@@ -164,8 +164,8 @@ class PhysicsEngine:
         )
 
         # Coriolis Force in Cartesian (on Node 2 from Node 1 frame):
-        # 2 * m2 * (omega1 k x v_rel) = 2 * m2 * l2 * omega1 * omega2 * e_r2
-        cor2_mag = 2 * self.cfg.m2 * self.cfg.l2 * omega1 * omega2
+        # 2 * m2 * (omega1 k x v_rel) = 2 * m2 * l2 * omega1 * (omega2 - omega1) * e_r2
+        cor2_mag = 2 * self.cfg.m2 * self.cfg.l2 * omega1 * (omega2 - omega1)
         cor2_x = cor2_mag * e_r2_x
         cor2_y = cor2_mag * e_r2_y
 
