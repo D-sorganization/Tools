@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import {
   SwingAnalysis,
   BalanceMetrics,
@@ -15,6 +16,40 @@ interface MetricsPanelProps {
   posture: PostureMetrics;
 }
 
+const MetricCard = React.memo(({
+  title,
+  value,
+  unit,
+  description,
+  good,
+}: {
+  title: string;
+  value: string | number;
+  unit?: string;
+  description?: string;
+  good?: boolean;
+}) => (
+  <div className="bg-gray-50 rounded-lg p-4">
+    <p className="text-sm text-gray-500 mb-1">{title}</p>
+    <p className="text-2xl font-bold text-gray-900">
+      {value}
+      {unit && <span className="text-sm font-normal text-gray-500 ml-1">{unit}</span>}
+    </p>
+    {description && <p className="text-xs text-gray-500 mt-1">{description}</p>}
+    {good !== undefined && (
+      <div className="flex items-center mt-2">
+        <div
+          className={`w-2 h-2 rounded-full ${good ? 'bg-green-500' : 'bg-yellow-500'}`}
+        />
+        <span className="text-xs text-gray-500 ml-1">
+          {good ? 'Good' : 'Needs attention'}
+        </span>
+      </div>
+    )}
+  </div>
+));
+MetricCard.displayName = 'MetricCard';
+
 export default function MetricsPanel({
   analysis,
   keyPositions,
@@ -22,39 +57,6 @@ export default function MetricsPanel({
   plane,
   posture,
 }: MetricsPanelProps) {
-  const MetricCard = ({
-    title,
-    value,
-    unit,
-    description,
-    good,
-  }: {
-    title: string;
-    value: string | number;
-    unit?: string;
-    description?: string;
-    good?: boolean;
-  }) => (
-    <div className="bg-gray-50 rounded-lg p-4">
-      <p className="text-sm text-gray-500 mb-1">{title}</p>
-      <p className="text-2xl font-bold text-gray-900">
-        {value}
-        {unit && <span className="text-sm font-normal text-gray-500 ml-1">{unit}</span>}
-      </p>
-      {description && <p className="text-xs text-gray-500 mt-1">{description}</p>}
-      {good !== undefined && (
-        <div className="flex items-center mt-2">
-          <div
-            className={`w-2 h-2 rounded-full ${good ? 'bg-green-500' : 'bg-yellow-500'}`}
-          />
-          <span className="text-xs text-gray-500 ml-1">
-            {good ? 'Good' : 'Needs attention'}
-          </span>
-        </div>
-      )}
-    </div>
-  );
-
   return (
     <div className="space-y-6">
       {/* Key Position Angles */}
