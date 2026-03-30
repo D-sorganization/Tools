@@ -3,6 +3,7 @@ import matplotlib
 matplotlib.use("TkAgg")
 import logging
 import time
+from collections.abc import Callable
 from typing import Any
 
 import matplotlib.gridspec as gridspec
@@ -10,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.animation import FFMpegWriter, FuncAnimation, PillowWriter
 from matplotlib.patches import Ellipse
-from matplotlib.widgets import Button, CheckButtons, Slider
+from matplotlib.widgets import Button, CheckButtons, Slider, TextBox
 
 from .config import PhysicsConfig, RenderConfig
 
@@ -19,15 +20,29 @@ class PendulumRenderer:
     """DbC focused renderer isolating Matplotlib spaghetti logic from physics engine."""
 
     def __init__(
-        self, render_cfg: RenderConfig, phys_cfg: PhysicsConfig, data: dict[str, Any]
+        self,
+        render_cfg: RenderConfig,
+        phys_cfg: PhysicsConfig,
+        data: dict[str, Any],
+        solve_func: Callable[[int, float], dict[str, Any]] | None = None,
     ):
         self.r_cfg = render_cfg
         self.p_cfg = phys_cfg
-        self.data = data
-        self.t_eval = data["t_eval"]
+        self.solve_func = solve_func
         self.dt = 1.0 / self.r_cfg.fps
 
-        # Unpack
+        self.playback_speed = 1.0
+        self.menu_visible = True
+        self.time_text: Any = None
+        self._default_pos: Any = None
+
+        self.unpack_data(data)
+
+    def unpack_data(self, data: dict[str, Any]) -> None:
+        """DbC: Safely unpack physics tensors into renderer namespace."""
+        self.data = data
+        self.t_eval = data["t_eval"]
+
         self.x1 = data["pos"]["x1"]
         self.y1 = data["pos"]["y1"]
         self.x2 = data["pos"]["x2"]
@@ -41,7 +56,6 @@ class PendulumRenderer:
         self.f2_cf = data["v2"]["centrifugal"]
         self.f2_cor = data["v2"]["coriolis"]
 
-        # Precompute Mag
         self.mag_tot1 = np.hypot(self.f1_tot[0], self.f1_tot[1])
         self.mag_tot2 = np.hypot(self.f2_tot[0], self.f2_tot[1])
         self.mag_cf1 = np.hypot(self.f1_cf[0], self.f1_cf[1])
@@ -61,9 +75,16 @@ class PendulumRenderer:
             + 1e-3
         )
 
-        self.playback_speed = 1.0
-        self.menu_visible = True
-        self.time_text: Any = None
+        if hasattr(self, "ax_f"):
+            self.ax_f.set_ylim(0, self.max_F)
+            max_T = (
+                max(
+                    np.max(np.abs(self.data["tau1"])), np.max(np.abs(self.data["tau2"]))
+                )
+                * 1.05
+                + 1e-3
+            )
+            self.ax_t.set_ylim(-max_T, max_T)
 
     def render(self) -> None:
         """Launches drawing environment."""
@@ -80,8 +101,7 @@ class PendulumRenderer:
 
         self.fig.canvas.mpl_connect("scroll_event", self.on_scroll)
 
-        trail_length = int(self.r_cfg.fps * self.r_cfg.history_sec)
-
+        self.trail_length = int(self.r_cfg.fps * self.r_cfg.history_sec)
         self.start_time_ref: float = -1.0
         self.virtual_time: float = 0.0
 
@@ -115,7 +135,7 @@ class PendulumRenderer:
                     i = 0
                 i = min(i, len(self.x1) - 1)
 
-            start_idx = max(0, i - trail_length)
+            start_idx = max(0, i - self.trail_length)
             self._update_elements(i, start_idx)
             return self.trail, self.time_text
 
@@ -146,8 +166,16 @@ class PendulumRenderer:
                 logging.error(f"Failed to output video. Error: {e}")
         else:
             logging.info("Spawning live display panel (Close window to exit)...")
+            self.fig.canvas.mpl_connect("resize_event", self.on_resize)
             plt.tight_layout()
+            self.fig.canvas.draw()
+            self._default_pos = self.ax_pend.get_position()
             plt.show()
+
+    def on_resize(self, event: Any) -> None:
+        """Dynamically captures standard positions when window changes size."""
+        if self.menu_visible and self.ax_pend:
+            self._default_pos = self.ax_pend.get_position()
 
     def _update_elements(self, i: int, start: int) -> None:
         """Internal updater to keep logic DRY."""
@@ -167,8 +195,12 @@ class PendulumRenderer:
         status = self.check.get_status()
         show_tot, show_cf, show_cor, show_charts = status
 
-        self.ax_f.set_visible(show_charts)
-        self.ax_t.set_visible(show_charts)
+        if self.menu_visible:
+            self.ax_f.set_visible(show_charts)
+            self.ax_t.set_visible(show_charts)
+        else:
+            self.ax_f.set_visible(False)
+            self.ax_t.set_visible(False)
 
         fscale = 0.012
         if show_tot:
@@ -215,40 +247,44 @@ class PendulumRenderer:
 
         self.plot_f1_tot.set_data(
             (active_t, self.mag_tot1[start : i + 1])
-            if show_tot and show_charts
+            if show_tot and show_charts and self.menu_visible
             else ([], [])
         )
         self.plot_f2_tot.set_data(
             (active_t, self.mag_tot2[start : i + 1])
-            if show_tot and show_charts
+            if show_tot and show_charts and self.menu_visible
             else ([], [])
         )
         self.plot_f1_cf.set_data(
             (active_t, self.mag_cf1[start : i + 1])
-            if show_cf and show_charts
+            if show_cf and show_charts and self.menu_visible
             else ([], [])
         )
         self.plot_f2_cf.set_data(
             (active_t, self.mag_cf2[start : i + 1])
-            if show_cf and show_charts
+            if show_cf and show_charts and self.menu_visible
             else ([], [])
         )
         self.plot_f1_cor.set_data(
             (active_t, self.mag_cor1[start : i + 1])
-            if show_cor and show_charts
+            if show_cor and show_charts and self.menu_visible
             else ([], [])
         )
         self.plot_f2_cor.set_data(
             (active_t, self.mag_cor2[start : i + 1])
-            if show_cor and show_charts
+            if show_cor and show_charts and self.menu_visible
             else ([], [])
         )
 
         self.plot_t1.set_data(
-            (active_t, self.data["tau1"][start : i + 1]) if show_charts else ([], [])
+            (active_t, self.data["tau1"][start : i + 1])
+            if show_charts and self.menu_visible
+            else ([], [])
         )
         self.plot_t2.set_data(
-            (active_t, self.data["tau2"][start : i + 1]) if show_charts else ([], [])
+            (active_t, self.data["tau2"][start : i + 1])
+            if show_charts and self.menu_visible
+            else ([], [])
         )
 
     def setup_pendulum_axes(self, gs: Any) -> None:
@@ -416,7 +452,7 @@ class PendulumRenderer:
         )
 
     def setup_widgets(self) -> None:
-        """Sets up UI check buttons, collapsible menu, and speed slider."""
+        """Sets up UI inputs, menu, and speed slider."""
         self.ax_toggle = self.fig.add_axes((0.02, 0.92, 0.15, 0.04))
         self.btn_toggle = Button(
             self.ax_toggle, "Toggle Menu", color="#333333", hovercolor="#555555"
@@ -426,9 +462,12 @@ class PendulumRenderer:
         self.btn_toggle.label.set_fontweight("bold")
         self.btn_toggle.on_clicked(self.toggle_menu)
 
-        self.ax_check = self.fig.add_axes((0.02, 0.72, 0.18, 0.18))
-        self.ax_check.set_facecolor("#1F2833")
-        self.ax_check.patch.set_alpha(0.85)
+        menu_bg_color = "#1F2833"
+        alpha_val = 0.85
+
+        self.ax_check = self.fig.add_axes((0.02, 0.76, 0.18, 0.14))
+        self.ax_check.set_facecolor(menu_bg_color)
+        self.ax_check.patch.set_alpha(alpha_val)
 
         labels = ["Total Forces", "Centrifugal", "Coriolis", "Show Charts"]
         visibility = [True, True, True, True]
@@ -436,18 +475,17 @@ class PendulumRenderer:
 
         for t in self.check.labels:
             t.set_color("white")
-            t.set_fontsize(11)
+            t.set_fontsize(10)
             t.set_fontweight("bold")
             t.set_fontfamily("monospace")
 
-        self.ax_speed = self.fig.add_axes((0.02, 0.68, 0.15, 0.03))
-        self.ax_speed.set_facecolor("#1F2833")
+        self.ax_speed = self.fig.add_axes((0.02, 0.71, 0.14, 0.03))
+        self.ax_speed.set_facecolor(menu_bg_color)
         self.speed_slider = Slider(
             self.ax_speed, "", 0.1, 5.0, valinit=1.0, color="#66FCF1"
         )
         self.speed_slider.valtext.set_color("white")
         self.speed_slider.valtext.set_fontsize(10)
-
         self.ax_speed.text(
             -0.05,
             0.5,
@@ -460,15 +498,107 @@ class PendulumRenderer:
         )
         self.speed_slider.on_changed(self.update_speed)
 
+        # Inputs for Initial Conditions
+        self._input_axes: list[Any] = []
+        self._tb_dur = self._make_input(
+            (0.08, 0.65, 0.10, 0.03), "Dur (s) ", str(self.r_cfg.duration)
+        )
+        self._tb_th1 = self._make_input(
+            (0.08, 0.60, 0.10, 0.03), "θ1 (rad) ", f"{self.p_cfg.theta1:.2f}"
+        )
+        self._tb_w1 = self._make_input(
+            (0.08, 0.55, 0.10, 0.03), "ω1 (r/s) ", f"{self.p_cfg.omega1:.2f}"
+        )
+        self._tb_th2 = self._make_input(
+            (0.08, 0.50, 0.10, 0.03), "θ2 (rad) ", f"{self.p_cfg.theta2:.2f}"
+        )
+        self._tb_w2 = self._make_input(
+            (0.08, 0.45, 0.10, 0.03), "ω2 (r/s) ", f"{self.p_cfg.omega2:.2f}"
+        )
+
+        # Recalculate Button
+        self.ax_recalc = self.fig.add_axes((0.02, 0.38, 0.16, 0.05))
+        self.btn_recalc = Button(
+            self.ax_recalc, "Simulate", color="#CC00FF", hovercolor="#AA00FF"
+        )
+        self.btn_recalc.label.set_color("white")
+        self.btn_recalc.label.set_fontsize(11)
+        self.btn_recalc.label.set_fontweight("bold")
+        self.btn_recalc.on_clicked(self.recalculate)
+        self._input_axes.append(self.ax_recalc)
+
+    def _make_input(
+        self, rect: tuple[float, float, float, float], label: str, init_val: str
+    ) -> TextBox:
+        ax = self.fig.add_axes(rect)
+        ax.set_facecolor("#0B0C10")
+        for spine in ax.spines.values():
+            spine.set_color("#66FCF1")
+
+        tb = TextBox(
+            ax, label, initial=init_val, color="#0B0C10", textalignment="center"
+        )
+        tb.label.set_color("white")
+        tb.label.set_fontsize(10)
+        tb.label.set_fontweight("bold")
+        tb.label.set_position((-0.1, 0.5))
+        self._input_axes.append(ax)
+        return tb
+
     def toggle_menu(self, event: Any) -> None:
-        """DbC: Safely toggles menu geometries."""
+        """DbC: Safely toggles menu geometries and expands screen."""
         self.menu_visible = not getattr(self, "menu_visible", True)
         self.ax_check.set_visible(self.menu_visible)
         self.ax_speed.set_visible(self.menu_visible)
+
+        for ax in self._input_axes:
+            ax.set_visible(self.menu_visible)
+
         for child in self.ax_speed.get_children():
             if hasattr(child, "set_visible"):
                 child.set_visible(self.menu_visible)
+
+        if self.menu_visible:
+            if self._default_pos:
+                self.ax_pend.set_position(self._default_pos)
+        else:
+            self.ax_pend.set_position((0.05, 0.05, 0.9, 0.9))
+
         self.fig.canvas.draw_idle()
+
+    def recalculate(self, event: Any) -> None:
+        """Re-runs physics calculations interactively."""
+        if not self.solve_func:
+            return
+
+        self.btn_recalc.label.set_text("Thinking...")
+        self.ax_recalc.set_facecolor("#FF0055")
+        self.btn_recalc.color = "#FF0055"
+        self.fig.canvas.draw_idle()
+        self.fig.canvas.flush_events()
+
+        try:
+            dur = int(self._tb_dur.text)
+            self.p_cfg.theta1 = float(self._tb_th1.text)
+            self.p_cfg.omega1 = float(self._tb_w1.text)
+            self.p_cfg.theta2 = float(self._tb_th2.text)
+            self.p_cfg.omega2 = float(self._tb_w2.text)
+            self.r_cfg.duration = dur
+
+            new_data = self.solve_func(self.r_cfg.duration, self.dt)
+            self.unpack_data(new_data)
+
+            self.start_time_ref = -1.0
+            self.virtual_time = 0.0
+            self.trail.set_data([], [])
+
+        except Exception as e:
+            logging.error(f"Failed to recalculate: {e}")
+        finally:
+            self.btn_recalc.label.set_text("Simulate")
+            self.ax_recalc.set_facecolor("#CC00FF")
+            self.btn_recalc.color = "#CC00FF"
+            self.fig.canvas.draw_idle()
 
     def update_speed(self, val: float) -> None:
         """DbC: Sets playback speed dynamically."""
