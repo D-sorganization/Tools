@@ -18,6 +18,7 @@
 -->
 
 - **2026-03-29 (Bolt)**: Optimized `movingAverage` function in `useDataProcessor.ts` to use a running sum sliding window algorithm, reducing computational complexity from O(N * W) to O(N).
+- **2026-03-30 (Bolt)**: Optimized `applyFormula` method in `useDataProcessor.ts` by pre-compiling `new Function()` outside of `.map` loop, significantly reducing main thread UI blocking on large datasets.
 
 ## 1. Identity
 
@@ -440,6 +441,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 |------|---------|---------|
 | 2026-03-28 | 1.0.0 | Initial specification |
 | 2026-03-30 | 1.0.1 | Improve ToolsPanel accessibility (ARIA labels/states) |
+| 2026-03-30 | 1.0.2 | Data processor Custom Formula performance optimization |
 
 ---
 
