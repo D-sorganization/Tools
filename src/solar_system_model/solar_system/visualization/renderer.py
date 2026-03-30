@@ -8,6 +8,7 @@ and UI elements.
 
 from __future__ import annotations
 
+import logging
 import math
 import pathlib
 from dataclasses import dataclass
@@ -133,6 +134,8 @@ from .camera import Camera, CameraState
 from .starfield import StarVertex, build_star_vertices, point_size_from_magnitude
 from .textures import TextureManager
 from .ui_renderer import UIRenderer
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass

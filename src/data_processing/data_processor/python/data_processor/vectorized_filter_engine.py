@@ -13,6 +13,7 @@ Design by Contract (DbC) guards are applied at the public API boundary
 
 from __future__ import annotations
 
+import logging
 import multiprocessing as mp
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -21,7 +22,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from scipy.ndimage import gaussian_filter1d, uniform_filter1d
-from scipy.signal import butter, filtfilt, medfilt, windows
+from scipy.signal import butter, filtfilt, medfilt
 
 # Import constants
 try:
@@ -87,6 +88,20 @@ try:
 except ImportError:
     _savgol_filter = None
 
+# FFT filter operations extracted to follow SRP (issue #1822)
+try:
+    from .fft_filter_ops import (
+        apply_fft_filter_core,
+        apply_window_function,
+        design_frequency_window,
+    )
+except ImportError:
+    from fft_filter_ops import (  # type: ignore[no-redef]
+        apply_fft_filter_core,
+        apply_window_function,
+        design_frequency_window,
+    )
+
 try:
     from data_processor.contracts import require
 except ImportError:
@@ -100,6 +115,9 @@ except ImportError:
                     f"[DbC pre-condition] {message}"
                     + (f" (got: {value!r})" if value is not None else "")
                 )
+
+
+logger = logging.getLogger(__name__)
 
 
 class VectorizedFilterEngine:
@@ -830,134 +848,24 @@ class VectorizedFilterEngine:
         n_samples: int,
         transition_bw: float,
     ) -> np.ndarray[Any, Any]:
+        """Design frequency domain window for FFT filtering.
+
+        Delegates to :func:`fft_filter_ops.design_frequency_window`.
         """
-        Design frequency domain window for FFT filtering.
-
-        Args:
-            filter_type: Type of filter (Low-pass, High-pass, Band-pass, Band-stop)
-            freq_low: Lower cutoff frequency (normalized)
-            freq_high: Upper cutoff frequency (normalized)
-            window_shape: Window function type
-            n_samples: Number of samples in signal
-            transition_bw: Transition bandwidth (normalized)
-
-        Returns:
-            Frequency domain filter coefficients
-        """
-        # Create frequency array
-        assert filter_type is not None, "filter_type must be provided"
-        freqs = np.fft.fftfreq(n_samples)
-        freqs = np.abs(freqs)  # Use positive frequencies only
-
-        # Initialize filter response
-        filter_response = np.zeros_like(freqs)
-
-        # Design ideal filter response
-        if filter_type == "FFT Low-pass":
-            filter_response[freqs <= freq_low] = 1.0
-            # Add transition band
-            transition_mask = (freqs > freq_low) & (freqs <= freq_low + transition_bw)
-            filter_response[transition_mask] = 0.5 * (
-                1 + np.cos(np.pi * (freqs[transition_mask] - freq_low) / transition_bw)
-            )
-
-        elif filter_type == "FFT High-pass":
-            filter_response[freqs >= freq_high] = 1.0
-            # Add transition band
-            transition_mask = (freqs >= freq_high - transition_bw) & (freqs < freq_high)
-            filter_response[transition_mask] = 0.5 * (
-                1
-                - np.cos(
-                    np.pi
-                    * (freqs[transition_mask] - freq_high + transition_bw)
-                    / transition_bw,
-                )
-            )
-
-        elif filter_type == "FFT Band-pass":
-            filter_response[(freqs >= freq_low) & (freqs <= freq_high)] = 1.0
-            # Add transition bands
-            low_transition = (freqs > freq_low - transition_bw) & (freqs <= freq_low)
-            high_transition = (freqs >= freq_high) & (freqs < freq_high + transition_bw)
-            filter_response[low_transition] = 0.5 * (
-                1
-                + np.cos(
-                    np.pi
-                    * (freqs[low_transition] - freq_low + transition_bw)
-                    / transition_bw,
-                )
-            )
-            filter_response[high_transition] = 0.5 * (
-                1 - np.cos(np.pi * (freqs[high_transition] - freq_high) / transition_bw)
-            )
-
-        elif filter_type == "FFT Band-stop":
-            filter_response[(freqs < freq_low) | (freqs > freq_high)] = 1.0
-            # Add transition bands
-            low_transition = (freqs >= freq_low) & (freqs < freq_low + transition_bw)
-            high_transition = (freqs > freq_high - transition_bw) & (freqs <= freq_high)
-            filter_response[low_transition] = 0.5 * (
-                1 - np.cos(np.pi * (freqs[low_transition] - freq_low) / transition_bw)
-            )
-            filter_response[high_transition] = 0.5 * (
-                1
-                + np.cos(
-                    np.pi
-                    * (freqs[high_transition] - freq_high + transition_bw)
-                    / transition_bw,
-                )
-            )
-
-        # Apply window function to smooth the response
-        if window_shape != "Rectangular":
-            filter_response = self._apply_window_function(filter_response, window_shape)
-
-        return filter_response
+        return design_frequency_window(
+            filter_type, freq_low, freq_high, window_shape, n_samples, transition_bw
+        )
 
     def _apply_window_function(
         self,
         filter_response: np.ndarray[Any, Any],
         window_shape: str,
     ) -> np.ndarray[Any, Any]:
-        """Apply window function to smooth frequency response."""
-        assert filter_response is not None, "filter_response must be provided"
-        n = len(filter_response)
+        """Apply window function to smooth frequency response.
 
-        if window_shape == "Gaussian":
-            # Gaussian window
-            sigma = n / 8  # Adjust sigma for smoothness
-            window = np.exp(-0.5 * ((np.arange(n) - n / 2) / sigma) ** 2)
-
-        elif window_shape == "Hamming":
-            window = windows.hamming(n)
-
-        elif window_shape == "Hann":
-            window = windows.hann(n)
-
-        elif window_shape == "Blackman":
-            window = windows.blackman(n)
-
-        elif window_shape == "Kaiser":
-            window = windows.kaiser(n, beta=8.6)  # Beta for good stopband attenuation
-
-        elif window_shape == "Tukey":
-            window = windows.tukey(n, alpha=0.5)
-
-        elif window_shape == "Bartlett":
-            window = windows.bartlett(n)
-
-        else:  # Rectangular or unknown
-            return filter_response
-
-        # Apply window smoothing (convolve with window)
-        # Use FFT-based convolution for efficiency
-        window_fft = np.fft.fft(window)
-        response_fft = np.fft.fft(filter_response)
-        smoothed_fft = response_fft * window_fft
-        smoothed_response = np.real(np.fft.ifft(smoothed_fft))
-
-        # Normalize to maintain magnitude
-        return smoothed_response / np.max(smoothed_response)
+        Delegates to :func:`fft_filter_ops.apply_window_function`.
+        """
+        return apply_window_function(filter_response, window_shape)
 
     def _apply_fft_filter_core(
         self,
@@ -965,44 +873,11 @@ class VectorizedFilterEngine:
         filter_coeffs: np.ndarray[Any, Any],
         zero_phase: bool,
     ) -> np.ndarray[Any, Any]:
+        """Core FFT filtering implementation.
+
+        Delegates to :func:`fft_filter_ops.apply_fft_filter_core`.
         """
-        Core FFT filtering implementation.
-
-        Args:
-            signal_data: Input signal data
-            filter_coeffs: Frequency domain filter coefficients
-            zero_phase: Whether to use zero-phase filtering
-
-        Returns:
-            Filtered signal data
-        """
-        # Ensure filter coefficients match signal length
-        assert signal_data is not None, "signal_data must be provided"
-        if len(filter_coeffs) != len(signal_data):
-            # Interpolate filter coefficients to match signal length
-            old_indices = np.linspace(0, len(filter_coeffs) - 1, len(filter_coeffs))
-            new_indices = np.linspace(0, len(filter_coeffs) - 1, len(signal_data))
-            filter_coeffs = np.interp(new_indices, old_indices, filter_coeffs).astype(
-                np.float64,
-            )
-
-        # Apply filter in frequency domain
-        signal_fft = np.fft.fft(signal_data)
-        filtered_fft = signal_fft * filter_coeffs
-
-        if zero_phase:
-            # Zero-phase filtering: apply filter forward and backward
-            filtered_signal = np.real(np.fft.ifft(filtered_fft))
-            # Apply filter again in reverse direction
-            filtered_fft_rev = np.fft.fft(filtered_signal[::-1])
-            filtered_fft_rev = filtered_fft_rev * filter_coeffs
-            filtered_signal_rev = np.real(np.fft.ifft(filtered_fft_rev))
-            filtered_signal = filtered_signal_rev[::-1]
-        else:
-            # Linear phase filtering
-            filtered_signal = np.real(np.fft.ifft(filtered_fft))
-
-        return filtered_signal
+        return apply_fft_filter_core(signal_data, filter_coeffs, zero_phase)
 
     def calculate_frequency_response(
         self,

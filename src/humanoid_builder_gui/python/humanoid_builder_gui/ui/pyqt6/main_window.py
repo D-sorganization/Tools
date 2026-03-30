@@ -7,6 +7,7 @@ anthropometric calculations and URDF export.
 
 from __future__ import annotations
 
+import logging
 import sys
 from dataclasses import dataclass
 from enum import Enum
@@ -34,6 +35,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+logger = logging.getLogger(__name__)
 
 # PyQt6 enum aliases — eliminate 3-level deep attribute chains (LoD compliance)
 _SCROLL_BAR_ALWAYS_OFF = Qt.ScrollBarPolicy.ScrollBarAlwaysOff

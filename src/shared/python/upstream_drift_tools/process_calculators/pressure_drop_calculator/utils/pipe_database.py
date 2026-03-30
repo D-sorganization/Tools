@@ -12,7 +12,11 @@ References:
     - Colebrook, C.F. (1939): "Turbulent flow in pipes"
 """
 
+import logging
+
 from ..models.pressure_drop_data_models import PipeSpecification
+
+logger = logging.getLogger(__name__)
 
 # ============================================================================
 # MATERIAL ROUGHNESS VALUES

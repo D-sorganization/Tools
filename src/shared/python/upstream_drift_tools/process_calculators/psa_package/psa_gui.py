@@ -5,6 +5,7 @@ This GUI provides interactive visualization and analysis of PSA system
 performance, including sensitivity analysis and O2 safety calculations.
 """
 
+import logging
 import os
 import subprocess
 import sys
@@ -51,6 +52,8 @@ from .psa_model import (
     calculate_sensitivity,
     get_flammability_status,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def create_slider(

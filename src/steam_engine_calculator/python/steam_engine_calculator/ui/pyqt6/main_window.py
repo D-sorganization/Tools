@@ -8,6 +8,7 @@ Uses Catppuccin Mocha dark theme for modern appearance.
 
 from __future__ import annotations
 
+import logging
 import sys
 from typing import TYPE_CHECKING, Any
 
@@ -32,6 +33,8 @@ from upstream_drift_tools.ui.widgets.base_calculator_widget import BaseCalculato
 
 if TYPE_CHECKING:
     from upstream_drift_tools.calculators.thermo.steam_engine import SteamProperties
+
+logger = logging.getLogger(__name__)
 
 # LoD: module-level aliases for Qt enum chains (avoids 3-level deep attribute access)
 _SCROLL_BAR_AS_NEEDED = Qt.ScrollBarPolicy.ScrollBarAsNeeded
