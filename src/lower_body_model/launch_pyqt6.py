@@ -106,15 +106,15 @@ class ControlPanel(QMainWindow):
         play_group = QGroupBox("Playback")
         play_layout = QVBoxLayout(play_group)
 
-        self.is_playing = True
-        self.play_btn = QPushButton("Pause")
+        self.is_playing = False
+        self.play_btn = QPushButton("Play")
         self.play_btn.clicked.connect(self.toggle_play)
         play_layout.addWidget(self.play_btn)
 
         self.timeline_slider = QSlider(Qt.Orientation.Horizontal)
         self.timeline_slider.setMinimum(0)
         self.timeline_slider.setMaximum(0)
-        self.timeline_slider.setEnabled(False)
+        self.timeline_slider.setEnabled(True)
         self.timeline_slider.valueChanged.connect(self.scrub_timeline)
         play_layout.addWidget(QLabel("Scrub History:"))
         play_layout.addWidget(self.timeline_slider)
@@ -131,10 +131,10 @@ class ControlPanel(QMainWindow):
         iaa_btn.clicked.connect(self.run_iaa)
         layout.addWidget(iaa_btn)
 
-        # Setup timer for simulator stepping
+        # Setup timer for simulator stepping (40 Hz = 25ms)
         self.timer = QTimer()
         self.timer.timeout.connect(self.step_sim)
-        self.timer.start(int(sim.model.opt.timestep * 1000))
+        self.timer.start(25)
 
         # Lock for sim access
         self.sim_lock = threading.Lock()
@@ -204,7 +204,9 @@ class ControlPanel(QMainWindow):
 
         with self.sim_lock:
             if self.is_playing:
-                self.sim.step()
+                # 25ms timer / 5ms physics = 5 steps per visual frame
+                for _ in range(5):
+                    self.sim.step()
 
                 # Update UI scrubber bounds sporadically
                 self.ui_update_counter += 1

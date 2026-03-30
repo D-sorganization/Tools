@@ -26,8 +26,8 @@ class LowerBodySimulator:
 
         # Stability control target (rest pose)
         self.qpos_target: np.ndarray | None = None
-        self.kp_stability = 1000.0
-        self.kd_stability = 100.0
+        self.kp_stability = 0.0
+        self.kd_stability = 0.0
 
         # Simulation history for scrubbing (QPOS, QVEL, TIME)
         self.history: list[dict[str, np.ndarray | float]] = []
