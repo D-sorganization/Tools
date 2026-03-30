@@ -9,7 +9,22 @@ logger = logging.getLogger(__name__)
 
 
 def migrate_file(fpath: str) -> bool:
-    """Replace print() with logger.debug() in a single file. Returns True if changed."""
+    """Replace print() with logger.debug() in a single file. Returns True if changed.
+
+    Args:
+        fpath: Path to the Python source file to migrate.
+
+    Returns:
+        True if the file was modified, False otherwise.
+
+    Raises:
+        TypeError: If fpath is not a str.
+        ValueError: If fpath is an empty string.
+    """
+    if not isinstance(fpath, str):
+        raise TypeError(f"fpath must be a str, got {type(fpath)}")
+    if not fpath:
+        raise ValueError("fpath must not be an empty string")
     try:
         with open(fpath, encoding="utf-8", errors="ignore") as f:
             content = f.read()
@@ -51,6 +66,7 @@ def migrate_file(fpath: str) -> bool:
 
 
 def main() -> None:
+    """Walk the src/ directory and migrate print() calls to logger.debug()."""
     src_dir = r"c:\Users\diete\Repositories\Tools\src"
     fixed = 0
     for root, dirs, files in os.walk(src_dir):
