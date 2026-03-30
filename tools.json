@@ -9,6 +9,12 @@
     ],
     "Biomechanics": [
         {
+            "name": "Lower Body Model",
+            "path": "src/lower_body_model/launch_pyqt6.py",
+            "type": "python",
+            "desc": "3D lower body model for golf swing induced acceleration and zero torque counterfactual analysis"
+        },
+        {
             "name": "C3D Motion Capture Viewer",
             "path": "src/c3d_viewer/launch_pyqt6.py",
             "type": "python",
