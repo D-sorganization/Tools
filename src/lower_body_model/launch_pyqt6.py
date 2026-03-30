@@ -38,7 +38,8 @@ class ControlPanel(QMainWindow):
         self.viewer = mujoco_viewer
 
         self.setWindowTitle("Lower Body Control Panel")
-        self.setMinimumWidth(350)
+        self.setMinimumWidth(400)
+        self.setGeometry(50, 50, 400, 700)
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
 
         main_widget = QWidget()
@@ -132,13 +133,20 @@ class ControlPanel(QMainWindow):
         iaa_btn.clicked.connect(self.run_iaa)
         layout.addWidget(iaa_btn)
 
+        # Diagnostics Area
+        diag_group = QGroupBox("System Diagnostics")
+        diag_layout = QVBoxLayout(diag_group)
+        self.diag_lbl = QLabel("Initializing Telemetry...")
+        diag_layout.addWidget(self.diag_lbl)
+        layout.addWidget(diag_group)
+
         # Low frequency UI updater
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_ui_state)
         self.timer.start(100)
 
         # Lock for sim access
-        self.sim_lock = threading.Lock()
+        self.sim_lock = threading.RLock()
 
         self.ui_update_counter = 0
 
@@ -218,8 +226,22 @@ class ControlPanel(QMainWindow):
                 current_max = self.timeline_slider.maximum()
                 actual_max = len(self.sim.history) - 1
                 if current_max != actual_max:
+                    self.timeline_slider.blockSignals(True)
                     self.timeline_slider.setMaximum(actual_max)
-                    # Don't overwrite value if user is about to interact
+                    self.timeline_slider.blockSignals(False)
+
+            # Update Diagnostics
+            if hasattr(self, "diag_lbl"):
+                diag = self.sim.compute_diagnostics()
+                text = (
+                    f"Time: {diag['time_sec']:.2f} s | Frames: {diag['history_frames']}\n"
+                    f"Z Height: {diag['pelvis_z_m']:.3f} m\n"
+                    f"R. Knee: {diag['r_knee_deg']:.1f} deg\n"
+                    f"Tracking Err: {diag['max_tracking_err_deg']:.1f} deg\n"
+                    f"Total Torque: {diag['total_applied_torque_nm']:.1f} Nm\n"
+                    f"Status: {'DIVERGED (NaN)' if diag['is_diverged'] else 'Stable'}"
+                )
+                self.diag_lbl.setText(text)
 
     def physics_loop(self) -> None:
         """Dedicated background thread immune to PySide deadlocks."""

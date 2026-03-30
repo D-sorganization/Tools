@@ -186,16 +186,89 @@ class LowerBodySimulator:
             yaw = np.arctan2(mat[1, 0], mat[0, 0])
         else:
             roll = np.arctan2(-mat[1, 2], mat[1, 1])
-            pitch = np.arctan2(-mat[2, 0], sy)
-            yaw = 0
+            # Free-body rotation offsets
+        yaw = 0.0
+        pitch = 0.0
+        roll = 0.0
+
+        # Check qpos bounds securely since free joints have 7 dims (3 pos, 4 quat)
+        if len(self.data.qpos) >= 7:
+            # Simple Euler from quaternion approximation for root tracking
+            qw, qx, qy, qz = self.data.qpos[3:7]
+            # Roll (x-axis)
+            sinr_cosp = 2 * (qw * qx + qy * qz)
+            cosr_cosp = 1 - 2 * (qx * qx + qy * qy)
+            roll = np.arctan2(sinr_cosp, cosr_cosp)
+
+            # Pitch (y-axis)
+            sinp = np.sqrt(1 + 2 * (qw * qy - qx * qz))
+            cosp = np.sqrt(1 - 2 * (qw * qy - qx * qz))
+            pitch = 2 * np.arctan2(sinp, cosp) - np.pi / 2
+
+            # Yaw (z-axis)
+            siny_cosp = 2 * (qw * qz + qx * qy)
+            cosy_cosp = 1 - 2 * (qy * qy + qz * qz)
+            yaw = np.arctan2(siny_cosp, cosy_cosp)
 
         return {
             "x_forward": pos[0],
             "y_lateral": pos[1],
             "z_vertical": pos[2],
-            "roll": roll,
-            "pitch": pitch,
-            "yaw": yaw,
+            "roll": np.degrees(roll),
+            "pitch": np.degrees(pitch),
+            "yaw": np.degrees(yaw),
+        }
+
+    def compute_diagnostics(self) -> dict[str, str | float | bool]:
+        """Comprehensive system diagnostics for stability, telemetry, and debugging."""
+        mujoco.mj_kinematics(self.model, self.data)
+
+        # 1. Base telemetry
+        pelvis_pos = self.data.xpos[
+            mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "pelvis")
+        ]
+
+        # 2. Max errors and potential divergence (NaN)
+        div = bool(np.any(np.isnan(self.data.qpos)) or np.any(np.isnan(self.data.qvel)))
+
+        # 3. Calculate max tracking error currently held by the controllers
+        max_err = 0.0
+        active_torques = 0.0
+
+        if self.qpos_target is not None and not div:
+            for act_name, q_idx in self.jnt_qpos_idx.items():
+                err = abs(self.data.qpos[q_idx] - self.qpos_target[q_idx])
+                if err > max_err:
+                    max_err = err
+
+                # Check control commands
+                act_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, f"act_{act_name}")
+                if act_id != -1:
+                    active_torques += abs(self.data.ctrl[act_id])
+
+        # 4. Joint angles explicitly for Knees / Hips
+        r_knee_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, "r_knee")
+        r_knee_qpos_adr = self.model.jnt_qposadr[r_knee_id]
+
+        # Guard if diverged to prevent math exceptions
+        r_knee_deg = (
+            float(np.degrees(self.data.qpos[r_knee_qpos_adr]))
+            if not div
+            else float("nan")
+        )
+
+        return {
+            "time_sec": float(self.data.time),
+            "pelvis_z_m": float(pelvis_pos[2]) if not div else float("nan"),
+            "is_diverged": div,
+            "max_tracking_err_deg": float(np.degrees(max_err))
+            if not div
+            else float("nan"),
+            "total_applied_torque_nm": float(active_torques)
+            if not div
+            else float("nan"),
+            "r_knee_deg": r_knee_deg,
+            "history_frames": len(self.history),
         }
 
     def analyze_induced_acceleration(

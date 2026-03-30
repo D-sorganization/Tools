@@ -114,3 +114,24 @@ def test_stability_properties(simulator: LowerBodySimulator) -> None:
 
     assert simulator.kp_stability == 250.0
     assert simulator.kd_stability == 25.0
+
+
+def test_compute_diagnostics(simulator: LowerBodySimulator) -> None:
+    """Test that diagnostics are computed fully without crashing."""
+    simulator.setup_initial_pose(hip_anterior_tilt=10.0, knee_flexion=20.0, foot_angle=5.0)
+    
+    diag = simulator.compute_diagnostics()
+    assert "time_sec" in diag
+    assert "pelvis_z_m" in diag
+    assert "is_diverged" in diag
+    assert "max_tracking_err_deg" in diag
+    assert "total_applied_torque_nm" in diag
+    assert "r_knee_deg" in diag
+    assert not diag["is_diverged"]
+    
+    # ensure it updates during playback
+    for _ in range(50):
+        simulator.step()
+        
+    diag_later = simulator.compute_diagnostics()
+    assert float(diag_later["time_sec"]) > float(diag["time_sec"])
