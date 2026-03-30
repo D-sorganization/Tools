@@ -6,6 +6,7 @@ A PyQt6 GUI for configuring and running Adam-based optimization.
 
 from __future__ import annotations
 
+import logging
 import sys
 from dataclasses import dataclass
 
@@ -32,6 +33,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+logger = logging.getLogger(__name__)
 
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {

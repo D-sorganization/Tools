@@ -6,6 +6,7 @@ exponential, linear, polynomial, and custom function fitting.
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable
 from dataclasses import dataclass
 
@@ -15,6 +16,8 @@ from scipy import optimize
 from shared.python.safe_eval import safe_eval
 
 from .core import Signal
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass

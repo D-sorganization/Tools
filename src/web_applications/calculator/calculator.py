@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+import logging
 import math
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
@@ -10,6 +11,8 @@ from functools import lru_cache
 
 import sympy as sp
 from sympy.parsing.sympy_parser import convert_xor, parse_expr, standard_transformations
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)

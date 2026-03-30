@@ -9,6 +9,7 @@ This module provides:
 
 from __future__ import annotations
 
+import logging
 import re
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -33,6 +34,8 @@ from PyQt6.QtWidgets import (
 
 if TYPE_CHECKING:
     pass
+
+logger = logging.getLogger(__name__)
 
 
 # Module-level singleton holder (avoids mutable global + global keyword)

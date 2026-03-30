@@ -8,10 +8,13 @@ This module provides interactive widgets for controlling the simulation,
 displaying information, and enhancing the educational experience.
 """
 
+import logging
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
