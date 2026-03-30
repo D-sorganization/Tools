@@ -37,7 +37,7 @@ class ControlPanel(QMainWindow):
         self.viewer = mujoco_viewer
 
         self.setWindowTitle("Lower Body Control Panel")
-        self.setMinimumWidth(300)
+        self.setMinimumWidth(350)
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
 
         main_widget = QWidget()
@@ -78,7 +78,48 @@ class ControlPanel(QMainWindow):
         posture_layout.addRow("Foot Extern Rot:", self.foot_slider)
         posture_layout.addRow("", self.foot_lbl)
 
-        layout.addWidget(posture_group)
+        # PD Gains
+        pd_group = QGroupBox("Control Gains")
+        pd_layout = QFormLayout(pd_group)
+
+        self.kp_slider = QSlider(Qt.Orientation.Horizontal)
+        self.kp_slider.setMinimum(0)
+        self.kp_slider.setMaximum(2000)
+        self.kp_slider.setValue(int(self.sim.kp_stability))
+        self.kp_lbl = QLabel(str(int(self.sim.kp_stability)))
+        self.kp_slider.valueChanged.connect(self.update_gains)
+        pd_layout.addRow("Kp Stiffness:", self.kp_slider)
+        pd_layout.addRow("", self.kp_lbl)
+
+        self.kd_slider = QSlider(Qt.Orientation.Horizontal)
+        self.kd_slider.setMinimum(0)
+        self.kd_slider.setMaximum(300)
+        self.kd_slider.setValue(int(self.sim.kd_stability))
+        self.kd_lbl = QLabel(str(int(self.sim.kd_stability)))
+        self.kd_slider.valueChanged.connect(self.update_gains)
+        pd_layout.addRow("Kd Damping:", self.kd_slider)
+        pd_layout.addRow("", self.kd_lbl)
+
+        layout.addWidget(pd_group)
+
+        # Playback Controls
+        play_group = QGroupBox("Playback")
+        play_layout = QVBoxLayout(play_group)
+
+        self.is_playing = True
+        self.play_btn = QPushButton("Pause")
+        self.play_btn.clicked.connect(self.toggle_play)
+        play_layout.addWidget(self.play_btn)
+
+        self.timeline_slider = QSlider(Qt.Orientation.Horizontal)
+        self.timeline_slider.setMinimum(0)
+        self.timeline_slider.setMaximum(0)
+        self.timeline_slider.setEnabled(False)
+        self.timeline_slider.valueChanged.connect(self.scrub_timeline)
+        play_layout.addWidget(QLabel("Scrub History:"))
+        play_layout.addWidget(self.timeline_slider)
+
+        layout.addWidget(play_group)
 
         # Re-apply Button
         apply_btn = QPushButton("Apply Initial Stance & Reset")
@@ -98,8 +139,36 @@ class ControlPanel(QMainWindow):
         # Lock for sim access
         self.sim_lock = threading.Lock()
 
+        self.ui_update_counter = 0
+
         # Initial apply
         self.apply_stance()
+
+    def update_gains(self) -> None:
+        val_kp = self.kp_slider.value()
+        val_kd = self.kd_slider.value()
+        self.kp_lbl.setText(str(val_kp))
+        self.kd_lbl.setText(str(val_kd))
+        with self.sim_lock:
+            self.sim.kp_stability = float(val_kp)
+            self.sim.kd_stability = float(val_kd)
+
+    def toggle_play(self) -> None:
+        self.is_playing = not self.is_playing
+        self.play_btn.setText("Pause" if self.is_playing else "Play")
+        self.timeline_slider.setEnabled(not self.is_playing)
+        with self.sim_lock:
+            if not self.is_playing and self.sim.history:
+                self.timeline_slider.setMaximum(len(self.sim.history) - 1)
+                self.timeline_slider.setValue(len(self.sim.history) - 1)
+
+    def scrub_timeline(self) -> None:
+        if self.is_playing:
+            return
+        idx = self.timeline_slider.value()
+        with self.sim_lock:
+            self.sim.restore_frame(idx)
+            self.viewer.sync()
 
     def apply_stance(self) -> None:
         tilt = self.tilt_slider.value()
@@ -107,15 +176,19 @@ class ControlPanel(QMainWindow):
         foot = self.foot_slider.value()
 
         with self.sim_lock:
-            # We reset physics time and state entirely
             mujoco.mj_resetData(self.sim.model, self.sim.data)
+            self.sim.clear_history()
 
-            # Re-apply requested stance constraints
             self.sim.setup_initial_pose(
                 hip_anterior_tilt=tilt,
                 knee_flexion=knee,
                 foot_angle=foot,
             )
+
+            # Reset timeline state
+            if not self.is_playing:
+                self.timeline_slider.setMaximum(0)
+                self.timeline_slider.setValue(0)
 
     def run_iaa(self) -> None:
         with self.sim_lock:
@@ -130,8 +203,19 @@ class ControlPanel(QMainWindow):
             return
 
         with self.sim_lock:
-            # Step the simulation mathematically with our stability controls
-            self.sim.step()
+            if self.is_playing:
+                self.sim.step()
+
+                # Update UI scrubber bounds sporadically
+                self.ui_update_counter += 1
+                if self.ui_update_counter >= 10:
+                    self.ui_update_counter = 0
+                    if (
+                        not self.timeline_slider.underMouse()
+                        and self.timeline_slider.isEnabled()
+                    ):
+                        # Just to keep max range correct occasionally
+                        pass
 
             # Periodically sync to the visualizer
             self.viewer.sync()

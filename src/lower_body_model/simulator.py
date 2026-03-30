@@ -29,6 +29,10 @@ class LowerBodySimulator:
         self.kp_stability = 1000.0
         self.kd_stability = 100.0
 
+        # Simulation history for scrubbing (QPOS, QVEL, TIME)
+        self.history: list[dict[str, np.ndarray | float]] = []
+        self.max_history_length = 5000
+
         mujoco.mj_forward(self.model, self.data)
 
     def setup_initial_pose(
@@ -355,3 +359,32 @@ class LowerBodySimulator:
             self.data.ctrl[act_id] = ctrl_val
 
         mujoco.mj_step(self.model, self.data)
+
+        # Record state
+        self.history.append(
+            {
+                "time": self.data.time,
+                "qpos": self.data.qpos.copy(),
+                "qvel": self.data.qvel.copy(),
+                "ctrl": self.data.ctrl.copy(),
+            }
+        )
+
+        if len(self.history) > self.max_history_length:
+            self.history.pop(0)
+
+    def restore_frame(self, index: int) -> None:
+        """Restores the simulator completely to a cached history frame state."""
+        if not self.history or index < 0 or index >= len(self.history):
+            return
+
+        frame = self.history[index]
+        self.data.time = frame["time"]
+        self.data.qpos[:] = frame["qpos"]
+        self.data.qvel[:] = frame["qvel"]
+        self.data.ctrl[:] = frame["ctrl"]
+        mujoco.mj_forward(self.model, self.data)
+
+    def clear_history(self) -> None:
+        """Empties execution memory logs."""
+        self.history.clear()
