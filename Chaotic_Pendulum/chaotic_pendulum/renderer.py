@@ -388,8 +388,9 @@ class PendulumRenderer:
         self.ax_f.set_xlim(-self.r_cfg.history_sec, 0)
         self.ax_f.set_ylim(0, self.max_F)
         self.ax_f.set_title(
-            r"Force Magnitude Logs", color="#66FCF1", fontsize=12, weight="bold"
+            r"Force Magnitudes", color="#66FCF1", fontsize=12, weight="bold"
         )
+        self.ax_f.set_ylabel(r"Force (N)", color="#66FCF1", fontsize=9, weight="bold")
         self.ax_f.tick_params(colors="#C5C6C7", labelsize=8)
         self.ax_f.yaxis.set_major_formatter(
             matplotlib.ticker.ScalarFormatter(useMathText=True)
@@ -439,7 +440,10 @@ class PendulumRenderer:
         )
         self.ax_t.set_ylim(-max_T, max_T)
         self.ax_t.set_title(
-            r"Nodal Torques ($\tau$)", color="#4A90E2", fontsize=12, weight="bold"
+            r"Moment of Force", color="#4A90E2", fontsize=12, weight="bold"
+        )
+        self.ax_t.set_ylabel(
+            r"Moment (N$\cdot$m)", color="#4A90E2", fontsize=9, weight="bold"
         )
         self.ax_t.tick_params(colors="#C5C6C7", labelsize=8)
         self.ax_t.yaxis.set_major_formatter(
@@ -479,15 +483,28 @@ class PendulumRenderer:
         self.btn_toggle.on_clicked(self.toggle_menu)
 
         self.ax_check = self.fig.add_axes((0.85, 0.77, 0.13, 0.15))
-        self.ax_check.set_facecolor(menu_bg_color)
-        self.ax_check.patch.set_alpha(0.85)
+        self.ax_check.set_facecolor("white")
+        self.ax_check.patch.set_alpha(1.0)
 
         labels = ["Total Force", "Centrifugal", "Coriolis", "Show Charts"]
         visibility = [True, True, True, True]
         self.check = CheckButtons(self.ax_check, labels, visibility)
 
+        # Polish CheckBox aesthetics for high contrast
+        if hasattr(self.check, "rectangles"):
+            for rect in self.check.rectangles:
+                rect.set_edgecolor("black")
+                rect.set_facecolor("white")
+                rect.set_linewidth(1.5)
+        if hasattr(self.check, "lines"):
+            for line_tup in self.check.lines:
+                line_tup[0].set_color("black")
+                line_tup[1].set_color("black")
+                line_tup[0].set_linewidth(2.0)
+                line_tup[1].set_linewidth(2.0)
+
         for t in self.check.labels:
-            t.set_color("white")
+            t.set_color("black")
             t.set_fontsize(9)
             t.set_fontweight("bold")
             t.set_fontfamily("monospace")
@@ -538,19 +555,23 @@ class PendulumRenderer:
         # Inputs for Initial Conditions
         self._input_axes: list[Any] = []
         self._tb_dur = self._make_input(
-            (0.895, 0.50, 0.06, 0.03), "Dur (s) ", str(self.r_cfg.duration)
+            (0.895, 0.50, 0.06, 0.03), r"Dur (s) ", str(self.r_cfg.duration)
         )
         self._tb_th1 = self._make_input(
-            (0.895, 0.45, 0.06, 0.03), "th1 (r) ", f"{self.p_cfg.theta1:.2f}"
+            (0.895, 0.45, 0.06, 0.03), r"$\theta_1$ (rad) ", f"{self.p_cfg.theta1:.2f}"
         )
         self._tb_w1 = self._make_input(
-            (0.895, 0.40, 0.06, 0.03), "w1 (r/s)", f"{self.p_cfg.omega1:.2f}"
+            (0.895, 0.40, 0.06, 0.03),
+            r"$\omega_1$ (rad/s) ",
+            f"{self.p_cfg.omega1:.2f}",
         )
         self._tb_th2 = self._make_input(
-            (0.895, 0.35, 0.06, 0.03), "th2 (r) ", f"{self.p_cfg.theta2:.2f}"
+            (0.895, 0.35, 0.06, 0.03), r"$\theta_2$ (rad) ", f"{self.p_cfg.theta2:.2f}"
         )
         self._tb_w2 = self._make_input(
-            (0.895, 0.30, 0.06, 0.03), "w2 (r/s)", f"{self.p_cfg.omega2:.2f}"
+            (0.895, 0.30, 0.06, 0.03),
+            r"$\omega_2$ (rad/s) ",
+            f"{self.p_cfg.omega2:.2f}",
         )
 
         # Recalculate Button

@@ -103,6 +103,7 @@ class PhysicsEngine:
             y0=initial_state,
             t_eval=t_eval,
             method="RK45",
+            max_step=0.01,
             rtol=1e-8,
             atol=1e-8,
         )

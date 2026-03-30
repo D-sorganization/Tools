@@ -44,7 +44,7 @@ class RenderConfig:
     """DbC container for visualization settings."""
 
     save_path: str | None = None
-    fps: int = 60
+    fps: int = 120
     duration: int = 30
     history_sec: float = 10.0
 
@@ -58,7 +58,7 @@ def parse_args() -> tuple[PhysicsConfig, RenderConfig]:
     """Parse unified arguments."""
     parser = argparse.ArgumentParser(description="Chaotic Pendulum Screensaver")
     parser.add_argument("--save", type=str, default=None, help="Path for output")
-    parser.add_argument("--fps", type=int, default=60, help="Frames per second")
+    parser.add_argument("--fps", type=int, default=120, help="Frames per second")
     parser.add_argument("--duration", type=int, default=30, help="Simulation time (s)")
 
     parser.add_argument("--m1", type=float, default=1.0, help="Mass 1")
