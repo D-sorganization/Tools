@@ -48,7 +48,7 @@ export default function ToolsPanel({
     <div className="space-y-4">
       <div>
         <h3 className="text-sm font-medium text-gray-700 mb-2">Drawing Tools</h3>
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-5 gap-2" role="group" aria-label="Drawing tools">
           {TOOLS.map((tool) => (
             <button
               key={tool.id}
@@ -64,8 +64,10 @@ export default function ToolsPanel({
                 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
               `}
               title={tool.label}
+              aria-label={tool.label}
+              aria-pressed={currentTool === tool.id}
             >
-              <div className="text-lg">{tool.icon}</div>
+              <div className="text-lg" aria-hidden="true">{tool.icon}</div>
             </button>
           ))}
         </div>
@@ -73,7 +75,7 @@ export default function ToolsPanel({
 
       <div>
         <h3 className="text-sm font-medium text-gray-700 mb-2">Color</h3>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-4 gap-2" role="group" aria-label="Standard colors">
           {COLORS.map((color) => (
             <button
               key={color}
@@ -90,6 +92,8 @@ export default function ToolsPanel({
               `}
               style={{ backgroundColor: color }}
               title={color}
+              aria-label={`Select color ${color}`}
+              aria-pressed={currentColor === color}
             />
           ))}
         </div>
@@ -99,11 +103,12 @@ export default function ToolsPanel({
           onChange={(e) => !disabled && onColorChange(e.target.value)}
           disabled={disabled}
           className="mt-2 w-full h-10 rounded-md border border-gray-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label="Custom color picker"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-2" id="stroke-width-label">
           Stroke Width: {strokeWidth}px
         </label>
         <input
@@ -116,6 +121,7 @@ export default function ToolsPanel({
           }
           disabled={disabled}
           className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-labelledby="stroke-width-label"
         />
       </div>
 

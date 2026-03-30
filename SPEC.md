@@ -439,6 +439,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 |------|---------|---------|
 | 2026-03-28 | 1.0.0 | Initial specification |
+| 2026-03-30 | 1.0.1 | Improve ToolsPanel accessibility (ARIA labels/states) |
 
 ---
 
@@ -458,3 +459,4 @@ Active development with stable core, continuous tool expansion, and web API in p
   5. VERSION: Bump the Spec Version field when making substantive changes.
      Use semver: major (structure change), minor (new features), patch (corrections).
 -->
+- **2026-03-30 (Palette)**: Added ARIA labels and `aria-pressed` states to the drawing tools, color swatches, and inputs within the `ToolsPanel` component (`src/media_processing/video_processor/apps/web/components/tools/ToolsPanel.tsx`) to improve screen reader compatibility and overall accessibility.
