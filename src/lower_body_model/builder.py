@@ -145,7 +145,7 @@ def build_lower_body_xml(
 
             <body name="pelvis" pos="0 0 {thigh_length + calf_length + 0.1}">
                 <freejoint name="root"/>
-                <geom type="box" size="0.1 {hip_offset} 0.1" mass="{pelvis_mass}" material="matgeom"/>
+                <geom type="ellipsoid" size="0.15 {hip_offset + 0.05} 0.12" mass="{pelvis_mass}" material="matgeom"/>
 
                 <!-- RIGHT LEG -->
                 <body name="r_thigh" pos="0 -{hip_offset} -0.05">
@@ -159,8 +159,8 @@ def build_lower_body_xml(
                         <body name="r_foot" pos="0 0 -{calf_length}">
                             <joint name="r_ankle_x" type="hinge" axis="1 0 0" range="-30 30"/>
                             <joint name="r_ankle_y" type="hinge" axis="0 1 0" range="-30 30"/>
-                            <geom type="box" size="0.12 0.06 0.03" pos="0.05 0 -0.03" mass="{foot_mass}" material="matfoot" condim="3"/>
-                            <site name="r_foot_center" type="sphere" size="0.01" pos="0.05 0 -0.03" rgba="1 0 0 1"/>
+                            <geom type="ellipsoid" size="0.13 0.05 0.04" pos="0.06 0 -0.04" mass="{foot_mass}" material="matfoot" condim="3"/>
+                            <site name="r_foot_center" type="sphere" size="0.01" pos="0.06 0 -0.04" rgba="1 0 0 1"/>
                         </body>
                     </body>
                 </body>
@@ -177,8 +177,8 @@ def build_lower_body_xml(
                         <body name="l_foot" pos="0 0 -{calf_length}">
                             <joint name="l_ankle_x" type="hinge" axis="1 0 0" range="-30 30"/>
                             <joint name="l_ankle_y" type="hinge" axis="0 1 0" range="-30 30"/>
-                            <geom type="box" size="0.12 0.06 0.03" pos="0.05 0 -0.03" mass="{foot_mass}" material="matfoot" condim="3"/>
-                            <site name="l_foot_center" type="sphere" size="0.01" pos="0.05 0 -0.03" rgba="1 0 0 1"/>
+                            <geom type="ellipsoid" size="0.13 0.05 0.04" pos="0.06 0 -0.04" mass="{foot_mass}" material="matfoot" condim="3"/>
+                            <site name="l_foot_center" type="sphere" size="0.01" pos="0.06 0 -0.04" rgba="1 0 0 1"/>
                         </body>
                     </body>
                 </body>

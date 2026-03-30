@@ -23,7 +23,55 @@ class LowerBodySimulator:
 
         self._cache_indices()
         self._polynomial_drivers: dict[int, np.ndarray] = {}
+
+        # Stability control target (rest pose)
+        self.qpos_target: np.ndarray | None = None
+        self.kp_stability = 100.0
+        self.kd_stability = 10.0
+
         mujoco.mj_forward(self.model, self.data)
+
+    def setup_initial_pose(
+        self,
+        hip_anterior_tilt: float = 30.0,
+        knee_flexion: float = 120.0,
+        foot_angle: float = 20.0,
+    ) -> None:
+        """
+        Sets the model to the requested initial pose and computes stability targets.
+        Parameters are in degrees.
+        """
+        self.data.qpos[self.jnt_qpos_idx["r_hip_y"]] = np.radians(hip_anterior_tilt)
+        self.data.qpos[self.jnt_qpos_idx["l_hip_y"]] = np.radians(hip_anterior_tilt)
+
+        self.data.qpos[self.jnt_qpos_idx["r_knee"]] = np.radians(knee_flexion)
+        self.data.qpos[self.jnt_qpos_idx["l_knee"]] = np.radians(knee_flexion)
+
+        self.data.qpos[self.jnt_qpos_idx["r_hip_z"]] = np.radians(-foot_angle)
+        self.data.qpos[self.jnt_qpos_idx["l_hip_z"]] = np.radians(foot_angle)
+
+        # Ankle adjustment so feet stay relatively flat
+        # If hip is tilted forward and knee bent backward, ankle must flex to compensate
+        # Approximate: ankle_y = knee_flexion - hip_anterior_tilt (basic 2D closed chain)
+        ankle_compensation = np.radians(knee_flexion - hip_anterior_tilt)
+        self.data.qpos[self.jnt_qpos_idx["r_ankle_y"]] = -ankle_compensation
+        self.data.qpos[self.jnt_qpos_idx["l_ankle_y"]] = -ankle_compensation
+
+        mujoco.mj_kinematics(self.model, self.data)
+
+        # Drop the pelvis until feet touch the ground (z=0 for foot center)
+        r_foot_id = mujoco.mj_name2id(
+            self.model, mujoco.mjtObj.mjOBJ_SITE, "r_foot_center"
+        )
+        foot_z = self.data.site_xpos[r_foot_id][2]
+
+        # Free joint first 3 qpos are root x, y, z
+        self.data.qpos[2] -= foot_z + 0.04  # Foot thickness compensation
+
+        mujoco.mj_forward(self.model, self.data)
+
+        # Save as the stability target
+        self.qpos_target = self.data.qpos.copy()
 
     def _cache_indices(self) -> None:
         """Pre-compute indices for fast lookup."""
@@ -245,13 +293,47 @@ class LowerBodySimulator:
 
             mujoco.mj_integratePos(self.model, self.data.qpos, dq, 1.0)
 
+        self.qpos_target = self.data.qpos.copy()
+
         return False
 
     def step(self) -> None:
-        """Advance the simulation by one timestep, applying polynomial controls."""
+        """Advance the simulation by one timestep, applying polynomial controls and basic stability."""
         t = self.data.time
+
+        # Basic stability control (PD) to hold the target posture if no polynomial is provided
+        if self.qpos_target is not None:
+            # We want to apply controls for all named actuators to track qpos_target
+            # Root DOFs (first 7 in qpos) shouldn't be controlled by joint actuators
+            for joint_name, q_idx in self.jnt_qpos_idx.items():
+                act_name = f"act_{joint_name}"
+                act_id = mujoco.mj_name2id(
+                    self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, act_name
+                )
+
+                if act_id == -1:
+                    continue
+
+                if act_id in self._polynomial_drivers:
+                    continue  # Driven by polynomial instead
+
+                # Joint DOF index in qvel is q_idx - 1 (since root has 7 qpos but 6 qvel)
+                # But a cleaner way is mapping joint id to qvel index:
+                jnt_id = mujoco.mj_name2id(
+                    self.model, mujoco.mjtObj.mjOBJ_JOINT, joint_name
+                )
+                v_idx = self.model.jnt_dofadr[jnt_id]
+
+                q_err = self.data.qpos[q_idx] - self.qpos_target[q_idx]
+                v_err = self.data.qvel[v_idx]
+
+                # PD control
+                self.data.ctrl[act_id] = (
+                    -self.kp_stability * q_err - self.kd_stability * v_err
+                )
+
+        # Overlay polynomials on top
         for act_id, coeffs in self._polynomial_drivers.items():
-            # Evaluate polynomial: p[0]*x**(N-1) + ... + p[N-1]
             ctrl_val = np.polyval(coeffs, t)
             self.data.ctrl[act_id] = ctrl_val
 

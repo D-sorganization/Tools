@@ -24,6 +24,9 @@ def main() -> None:
     xml = build_lower_body_xml()
     sim = LowerBodySimulator(xml)
 
+    # Initialize posture and set stability targets
+    sim.setup_initial_pose(hip_anterior_tilt=30.0, knee_flexion=120.0, foot_angle=20.0)
+
     if args.demo_iaa:
         print(
             "Running Induced Acceleration Analysis on right hip (X axis) with 10.0 Nm torque..."
