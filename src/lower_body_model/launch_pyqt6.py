@@ -5,6 +5,7 @@ Lower Body Model - PyQt6/PySide6 GUI Launcher
 import logging
 import sys
 import threading
+import time
 
 import mujoco
 from mujoco import viewer
@@ -131,15 +132,19 @@ class ControlPanel(QMainWindow):
         iaa_btn.clicked.connect(self.run_iaa)
         layout.addWidget(iaa_btn)
 
-        # Setup timer for simulator stepping (40 Hz = 25ms)
+        # Low frequency UI updater
         self.timer = QTimer()
-        self.timer.timeout.connect(self.step_sim)
-        self.timer.start(25)
+        self.timer.timeout.connect(self.update_ui_state)
+        self.timer.start(100)
 
         # Lock for sim access
         self.sim_lock = threading.Lock()
 
         self.ui_update_counter = 0
+
+        # Background decoupled physics thread
+        self.physics_thread = threading.Thread(target=self.physics_loop, daemon=True)
+        self.physics_thread.start()
 
         # Initial apply
         self.apply_stance()
@@ -197,30 +202,41 @@ class ControlPanel(QMainWindow):
             for k, v in iaa.items():
                 logging.info(f"  {k}: {v:.4f}")
 
-    def step_sim(self) -> None:
+    def update_ui_state(self) -> None:
+        """Runs on the main PyQt thread just to synchronize UI and check exit conditions."""
         if not self.viewer.is_running():
-            self.close()
+            QApplication.quit()
             return
 
         with self.sim_lock:
-            if self.is_playing:
-                # 25ms timer / 5ms physics = 5 steps per visual frame
-                for _ in range(5):
-                    self.sim.step()
+            # Update scrubber bounds gracefully preventing deadlocks
+            if (
+                not self.is_playing
+                and self.sim.history
+                and not self.timeline_slider.underMouse()
+            ):
+                current_max = self.timeline_slider.maximum()
+                actual_max = len(self.sim.history) - 1
+                if current_max != actual_max:
+                    self.timeline_slider.setMaximum(actual_max)
+                    # Don't overwrite value if user is about to interact
 
-                # Update UI scrubber bounds sporadically
-                self.ui_update_counter += 1
-                if self.ui_update_counter >= 10:
-                    self.ui_update_counter = 0
-                    if (
-                        not self.timeline_slider.underMouse()
-                        and self.timeline_slider.isEnabled()
-                    ):
-                        # Just to keep max range correct occasionally
-                        pass
+    def physics_loop(self) -> None:
+        """Dedicated background thread immune to PySide deadlocks."""
+        while self.viewer.is_running():
+            start_t = time.perf_counter()
+            with self.sim_lock:
+                if self.is_playing:
+                    for _ in range(5):
+                        self.sim.step()
 
-            # Periodically sync to the visualizer
-            self.viewer.sync()
+                # Periodically sync to the visualizer
+                self.viewer.sync()
+
+            # Throttle accurately to 40Hz (25ms) minus execution time overhead
+            elapsed = time.perf_counter() - start_t
+            sleep_time = max(0.001, 0.025 - elapsed)
+            time.sleep(sleep_time)
 
 
 def main() -> None:
