@@ -117,7 +117,7 @@ class RotationConverterMainWindow(QMainWindow):
                 mgr = get_theme_manager()
                 mgr.apply_theme_to_window(self)
                 mgr.themeChanged.connect(self._on_theme_changed)
-            except Exception:  # noqa: BLE001
+            except Exception:  # noqa: BLE001  # noqa: BLE001
                 pass
 
     def _on_theme_changed(self, theme_name: str) -> None:

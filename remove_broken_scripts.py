@@ -25,7 +25,7 @@ except ImportError:
         """
         try:
             return Path(file_path).read_text(encoding=encoding)
-        except Exception:  # noqa: BLE001
+        except Exception:  # noqa: BLE001  # noqa: BLE001
             return default
 
     def safe_write_text(

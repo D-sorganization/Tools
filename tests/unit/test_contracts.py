@@ -11,6 +11,7 @@ from collections.abc import Callable
 from unittest.mock import patch
 
 import pytest
+
 from contracts import (
     ContractChecker,
     ContractLevel,

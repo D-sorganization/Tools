@@ -1,5 +1,4 @@
 import pytest
-
 from vessel_drafter.models.vessel_drafter import (
     DEFAULT_VESSEL_DRAFTER_LAYOUT,
     VesselDrafterLayout,

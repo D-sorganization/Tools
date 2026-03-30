@@ -2,10 +2,11 @@ import os
 from typing import Any
 
 import pytest
-from contracts import PreconditionError, set_contracts_enabled
 from cors import DEFAULT_ORIGINS, add_cors_middleware
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from contracts import PreconditionError, set_contracts_enabled
 
 
 @pytest.fixture

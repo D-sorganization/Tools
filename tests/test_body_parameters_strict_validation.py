@@ -10,7 +10,6 @@ Validates:
 from __future__ import annotations
 
 import pytest
-from contracts import PreconditionError
 from humanoid_character_builder.core.body_parameters import (
     ALL_FACTOR_BOUNDS,
     HEIGHT_RANGE_M,
@@ -19,6 +18,8 @@ from humanoid_character_builder.core.body_parameters import (
     PROPORTION_FACTOR_BOUNDS,
     BodyParameters,
 )
+
+from contracts import PreconditionError
 
 
 class TestValidateStrictExists:
