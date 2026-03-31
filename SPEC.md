@@ -459,3 +459,7 @@ Active development with stable core, continuous tool expansion, and web API in p
   5. VERSION: Bump the Spec Version field when making substantive changes.
      Use semver: major (structure change), minor (new features), patch (corrections).
 -->
+
+### Performance
+
+- The application uses `Float64Array` and iterative loops instead of `Array.prototype.map`/`filter`/`reduce` to optimize memory and processing speed for large numerical datasets, particularly in hooks like `useDataProcessor.ts`.

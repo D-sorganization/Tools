@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ARCHITECTURE_DEBT:
 # This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
 # It requires domain-aware structural extraction to isolate its internal classes appropriately.
@@ -46,8 +47,16 @@ from typing import Any, TypeVar, cast
 logger = logging.getLogger(__name__)
 
 F = TypeVar("F", bound=Callable[..., Any])
+=======
+"""Top-level contracts module — re-exports the shared contracts API.
+>>>>>>> origin/main
 
+All contract primitives live in ``src/shared/python/contracts.py``.
+This module re-exports the full public API so that ``from contracts import
+require`` continues to work for callers that rely on the short import path.
+"""
 
+<<<<<<< HEAD
 # ─── Contract Enforcement Level ────────────────────────────────
 
 
@@ -647,3 +656,74 @@ def has_finite_elements(array: Any) -> bool:
     import numpy as np
 
     return bool(np.all(np.isfinite(array)))
+=======
+from shared.python.contracts import (
+    CONTRACTS_ENABLED,
+    DBC_LEVEL,
+    ContractChecker,
+    ContractLevel,
+    ContractViolationError,
+    InvariantError,
+    PostconditionError,
+    PreconditionError,
+    check_non_negative,
+    check_positive,
+    check_pressure,
+    check_range,
+    check_temperature,
+    class_invariant,
+    contract,
+    ensure,
+    ensure_valid_result,
+    get_contract_level,
+    has_finite_elements,
+    invariant,
+    invariant_checked,
+    is_non_negative,
+    is_positive,
+    is_valid_result,
+    postcondition,
+    precondition,
+    require,
+    require_finite,
+    require_positive,
+    require_unit_vector,
+    set_contract_level,
+    set_contracts_enabled,
+)
+
+__all__ = [
+    "CONTRACTS_ENABLED",
+    "DBC_LEVEL",
+    "ContractChecker",
+    "ContractLevel",
+    "ContractViolationError",
+    "InvariantError",
+    "PostconditionError",
+    "PreconditionError",
+    "check_non_negative",
+    "check_positive",
+    "check_pressure",
+    "check_range",
+    "check_temperature",
+    "class_invariant",
+    "contract",
+    "ensure",
+    "ensure_valid_result",
+    "get_contract_level",
+    "has_finite_elements",
+    "invariant",
+    "invariant_checked",
+    "is_non_negative",
+    "is_positive",
+    "is_valid_result",
+    "postcondition",
+    "precondition",
+    "require",
+    "require_finite",
+    "require_positive",
+    "require_unit_vector",
+    "set_contract_level",
+    "set_contracts_enabled",
+]
+>>>>>>> origin/main
