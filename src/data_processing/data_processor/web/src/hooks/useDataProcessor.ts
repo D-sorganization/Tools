@@ -53,10 +53,23 @@ export function useDataProcessor() {
 
       if (values.length === 0) continue;
 
-      const sorted = [...values].sort((a, b) => a - b);
-      const sum = values.reduce((a, b) => a + b, 0);
-      const mean = sum / values.length;
-      const variance = values.reduce((acc, v) => acc + (v - mean) ** 2, 0) / values.length;
+      // ⚡ Bolt Optimization: Replace O(N log N) generic Array.sort with Float64Array.sort (significantly faster in V8)
+      // and compute mean/variance in a single O(N) pass using Welford's online algorithm
+      // to avoid catastrophic cancellation/precision loss, rather than two map/reduce passes.
+      const sorted = new Float64Array(values).sort();
+      let mean = 0;
+      let M2 = 0;
+      const len = values.length;
+
+      for (let i = 0; i < len; i++) {
+        const v = values[i];
+        const delta = v - mean;
+        mean += delta / (i + 1);
+        const delta2 = v - mean;
+        M2 += delta * delta2;
+      }
+
+      const variance = M2 / len;
 
       stats[signal] = {
         mean,
