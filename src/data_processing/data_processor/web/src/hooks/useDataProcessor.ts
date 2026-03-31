@@ -53,23 +53,10 @@ export function useDataProcessor() {
 
       if (values.length === 0) continue;
 
-      // ⚡ Bolt Optimization: Replace O(N log N) generic Array.sort with Float64Array.sort (significantly faster in V8)
-      // and compute mean/variance in a single O(N) pass using Welford's online algorithm
-      // to avoid catastrophic cancellation/precision loss, rather than two map/reduce passes.
-      const sorted = new Float64Array(values).sort();
-      let mean = 0;
-      let M2 = 0;
-      const len = values.length;
-
-      for (let i = 0; i < len; i++) {
-        const v = values[i];
-        const delta = v - mean;
-        mean += delta / (i + 1);
-        const delta2 = v - mean;
-        M2 += delta * delta2;
-      }
-
-      const variance = M2 / len;
+      const sorted = [...values].sort((a, b) => a - b);
+      const sum = values.reduce((a, b) => a + b, 0);
+      const mean = sum / values.length;
+      const variance = values.reduce((acc, v) => acc + (v - mean) ** 2, 0) / values.length;
 
       stats[signal] = {
         mean,
@@ -711,14 +698,15 @@ function movingAverage(values: number[], windowSize: number): number[] {
 }
 
 function medianFilter(values: number[], kernelSize: number): number[] {
-  const result: number[] = [];
+  // ⚡ Bolt Optimization: Pre-allocate array to avoid O(N) amortized .push() reallocations in tight loops
+  const result = new Array<number>(values.length);
   const halfKernel = Math.floor(kernelSize / 2);
 
   for (let i = 0; i < values.length; i++) {
     const start = Math.max(0, i - halfKernel);
     const end = Math.min(values.length, i + halfKernel + 1);
     const window = values.slice(start, end).sort((a, b) => a - b);
-    result.push(window[Math.floor(window.length / 2)]);
+    result[i] = window[Math.floor(window.length / 2)];
   }
 
   return result;
@@ -742,14 +730,15 @@ function gaussianFilter(values: number[], sigma: number): number[] {
   }
 
   // Apply convolution
-  const result: number[] = [];
+  // ⚡ Bolt Optimization: Pre-allocate array to avoid O(N) amortized .push() reallocations in tight loops
+  const result = new Array<number>(values.length);
   for (let i = 0; i < values.length; i++) {
     let val = 0;
     for (let j = 0; j < kernel.length; j++) {
       const idx = Math.min(Math.max(0, i - halfKernel + j), values.length - 1);
       val += values[idx] * kernel[j];
     }
-    result.push(val);
+    result[i] = val;
   }
 
   return result;
