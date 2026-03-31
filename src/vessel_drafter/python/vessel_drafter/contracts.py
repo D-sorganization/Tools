@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 # ── Re-export shared contracts primitives (monorepo path) ──────────────────
 
 try:
-    from contracts import (  # type: ignore[import-not-found]
+    from contracts import (
         PreconditionError,
         ensure,
         require,
@@ -46,12 +46,12 @@ except ImportError:
                 detail += f" (got: {value!r})"
             super().__init__(detail)
 
-    def require(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]
+    def require(condition: bool, message: str, value: Any = None) -> None:
         """Assert a pre-condition (standard bool-style API)."""
         if not condition:
             raise PreconditionError(message, value)
 
-    def ensure(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]
+    def ensure(condition: bool, message: str, value: Any = None) -> None:
         """Assert a post-condition (standard bool-style API)."""
         if not condition:
             raise ValueError(f"[DbC post-condition] {message}")
