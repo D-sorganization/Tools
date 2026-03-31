@@ -28,7 +28,7 @@ from typing import Any
 
 import numpy as np
 
-from contracts import require
+from shared.python.contracts import require
 
 __all__ = [
     "safe_eval",
@@ -231,7 +231,7 @@ def safe_eval(
 
     tree = validate_expression(expression, allowed_names)
     code = compile(tree, "<safe_eval>", "eval")
-    return eval(code, {"__builtins__": {}}, namespace)  # noqa: S307
+    return eval(code, {"__builtins__": {}}, namespace)  # nosec B307  # noqa: S307
 
 
 def safe_eval_math(
