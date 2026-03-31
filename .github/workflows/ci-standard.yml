@@ -251,6 +251,9 @@ jobs:
             "tests/shared/python/process_calculators/test_constants.py"
             # Tools manifest integrity
             "tests/scripts/test_generate_tools_json.py"
+            # GUI launcher: data-driven manifest loader (issue #1863)
+            "tests/shared/python/gui_launcher/test_manifest_loader.py"
+            "tests/shared/python/gui_launcher/test_registry.py"
           )
           if [ -s changed_test_files.txt ]; then
             mapfile -t changed_test_files < changed_test_files.txt
