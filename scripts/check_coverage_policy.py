@@ -104,7 +104,7 @@ def main() -> int:
     baseline_total = float(baseline.get("total_percent", 0.0))
 
     failures: list[str] = []
-    total = float(current["total_percent"])
+    total = float(current["total_percent"])  # type: ignore[arg-type]
     if total < min_total:
         failures.append(f"total coverage {total}% below minimum {min_total}%")
     if total < (baseline_total - max_drop):
