@@ -112,7 +112,7 @@ export default function VideoPlayer({
         <h2 className="text-lg font-semibold text-gray-900">Video Player</h2>
         <button
           onClick={onClear}
-          className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+          className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         >
           Upload New Video
         </button>
@@ -127,10 +127,11 @@ export default function VideoPlayer({
           playsInline
         />
 
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-black bg-opacity-30">
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 focus-within:opacity-100 transition-opacity bg-black bg-opacity-30">
           <button
             onClick={togglePlay}
-            className="p-4 bg-white bg-opacity-90 rounded-full hover:bg-opacity-100 transition-opacity"
+            aria-label={isPlaying ? 'Pause video' : 'Play video'}
+            className="p-4 bg-white bg-opacity-90 rounded-full hover:bg-opacity-100 transition-opacity focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500"
           >
             {isPlaying ? (
               <svg
@@ -161,7 +162,8 @@ export default function VideoPlayer({
             max={duration || 0}
             value={currentTime}
             onChange={handleSeek}
-            className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+            aria-label="Seek video"
+            className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
           />
           <span className="text-sm text-gray-600 min-w-[80px] text-right">
             {formatTime(currentTime)} / {formatTime(duration)}
@@ -172,7 +174,7 @@ export default function VideoPlayer({
           <div className="flex items-center space-x-4">
             <button
               onClick={togglePlay}
-              className="p-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+              className="p-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               aria-label={isPlaying ? 'Pause' : 'Play'}
             >
               {isPlaying ? (
@@ -189,7 +191,7 @@ export default function VideoPlayer({
             <div className="flex items-center space-x-2">
               <button
                 onClick={toggleMute}
-                className="p-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                className="p-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                 aria-label={isMuted ? 'Unmute' : 'Mute'}
               >
                 {isMuted || volume === 0 ? (
@@ -217,7 +219,8 @@ export default function VideoPlayer({
                 step="0.01"
                 value={isMuted ? 0 : volume}
                 onChange={handleVolumeChange}
-                className="w-24 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                aria-label="Volume"
+                className="w-24 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               />
             </div>
           </div>

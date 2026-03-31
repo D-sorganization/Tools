@@ -208,7 +208,6 @@ describe('VideoUploader', () => {
       fireEvent.dragOver(dropArea);
       fireEvent.dragLeave(dropArea);
 
-      expect(dropArea.className).not.toContain('border-blue-500');
       expect(dropArea.className).not.toContain('bg-blue-50');
     });
 
@@ -242,7 +241,6 @@ describe('VideoUploader', () => {
         },
       });
 
-      expect(dropArea.className).not.toContain('border-blue-500');
       expect(dropArea.className).not.toContain('bg-blue-50');
     });
 

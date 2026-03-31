@@ -1,0 +1,3 @@
+## 2026-03-31 - Visually Hidden Icon-Only Buttons Keyboard Discoverability
+**Learning:** Icon-only buttons that are visually hidden (e.g. `opacity-0` hover overlays in `VideoPlayer`) become completely invisible and undiscoverable to sighted keyboard users because standard `focus-visible` styles apply to the invisible element itself, but not its containing overlay.
+**Action:** When creating hover overlays containing interactive elements, always add `focus-within:opacity-100` to the overlay container so it becomes visible when a user tabs into any child element, ensuring keyboard discoverability matches pointer discoverability.
