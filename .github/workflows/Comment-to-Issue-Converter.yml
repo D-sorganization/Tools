@@ -143,20 +143,33 @@ jobs:
           created_issues = []
           archived_comments = []
 
+          def load_json_file(path: Path, default):
+              if not path.exists():
+                  return default
+              try:
+                  with open(path, 'r') as f:
+                      raw = f.read().strip()
+                  if not raw:
+                      return default
+                  data = json.loads(raw)
+              except json.JSONDecodeError:
+                  return default
+              return data
+
           # Load existing issue tracking to avoid duplicates
           tracking_file = archive_dir / 'comment_tracking.json'
-          if tracking_file.exists():
-              with open(tracking_file, 'r') as f:
-                  tracking = json.load(f)
-          else:
-              tracking = {'processed_comments': [], 'created_issues': {}}
+          tracking = load_json_file(
+              tracking_file,
+              {'processed_comments': [], 'created_issues': {}},
+          )
 
           # Find all PR details files
           for details_file in comments_dir.glob('pr_*_details.json'):
               pr_num = details_file.stem.split('_')[1]
 
-              with open(details_file, 'r') as f:
-                  pr_details = json.load(f)
+              pr_details = load_json_file(details_file, {})
+              if not isinstance(pr_details, dict):
+                  continue
 
               pr_title = pr_details.get('title', f'PR #{pr_num}')
               pr_author = pr_details.get('author', {}).get('login', 'unknown')
@@ -164,10 +177,8 @@ jobs:
 
               # Load review comments
               review_file = comments_dir / f'pr_{pr_num}_review_comments.json'
-              if review_file.exists():
-                  with open(review_file, 'r') as f:
-                      review_comments = json.load(f)
-              else:
+              review_comments = load_json_file(review_file, [])
+              if not isinstance(review_comments, list):
                   review_comments = []
 
               # Process each review comment
