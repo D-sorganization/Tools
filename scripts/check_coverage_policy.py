@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import json
 import sys
 import xml.etree.ElementTree as ET
@@ -12,23 +13,67 @@ def _pct(x: float) -> float:
     return round(x * 100.0, 2)
 
 
+def _is_omitted(filename: str, omit_patterns: list[str]) -> bool:
+    """Return True if the file path matches any omit glob pattern."""
+    normalized = filename.replace("\\", "/")
+    for pattern in omit_patterns:
+        # Support both path-prefix patterns and fnmatch glob patterns
+        norm_pattern = pattern.replace("\\", "/")
+        if fnmatch.fnmatch(normalized, norm_pattern):
+            return True
+        # Also match against just the basename
+        basename = normalized.rsplit("/", 1)[-1]
+        if fnmatch.fnmatch(basename, norm_pattern):
+            return True
+    return False
+
+
 def parse_coverage(
-    coverage_file: Path, tracked_prefixes: list[str]
+    coverage_file: Path,
+    tracked_prefixes: list[str],
+    omit_patterns: list[str] | None = None,
+    include_prefixes: list[str] | None = None,
 ) -> dict[str, object]:
     root = ET.parse(coverage_file).getroot()
-    total_line_rate = float(root.attrib.get("line-rate", "0"))
 
+    omit_patterns = omit_patterns or []
     per_prefix = {p: {"covered": 0, "valid": 0} for p in tracked_prefixes}
+    total_covered = 0
+    total_valid = 0
 
     for cls in root.findall(".//class"):
         filename = cls.attrib.get("filename", "")
+        normalized = filename.replace("\\", "/")
+
+        # When include_prefixes is specified, only count files under those prefixes
+        if include_prefixes and not any(
+            normalized.startswith(p) for p in include_prefixes
+        ):
+            # Still track per-package metrics for tracked_prefixes even if excluded
+            # from total, so package-level thresholds are not affected by the filter.
+            lines = cls.findall("./lines/line")
+            valid = len(lines)
+            covered = sum(1 for ln in lines if int(ln.attrib.get("hits", "0")) > 0)
+            for prefix in tracked_prefixes:
+                if normalized.startswith(prefix):
+                    per_prefix[prefix]["covered"] += covered
+                    per_prefix[prefix]["valid"] += valid
+            continue
+
+        if _is_omitted(filename, omit_patterns):
+            continue
+
         lines = cls.findall("./lines/line")
         valid = len(lines)
         covered = sum(1 for ln in lines if int(ln.attrib.get("hits", "0")) > 0)
+        total_covered += covered
+        total_valid += valid
         for prefix in tracked_prefixes:
-            if filename.startswith(prefix):
+            if normalized.startswith(prefix):
                 per_prefix[prefix]["covered"] += covered
                 per_prefix[prefix]["valid"] += valid
+
+    total_line_rate = (total_covered / total_valid) if total_valid else 0.0
 
     package_pct: dict[str, float] = {}
     for prefix, stats in per_prefix.items():
@@ -50,7 +95,9 @@ def main() -> int:
     baseline = json.loads(Path(args.baseline_file).read_text(encoding="utf-8"))
 
     tracked = list(policy.get("tracked_packages", {}).keys())
-    current = parse_coverage(Path(args.coverage_file), tracked)
+    omit = list(policy.get("omit_patterns", []))
+    include = list(policy.get("include_prefixes", []))
+    current = parse_coverage(Path(args.coverage_file), tracked, omit, include or None)
 
     min_total = float(policy.get("minimum_total_percent", 0.0))
     max_drop = float(policy.get("max_total_drop_percent", 0.0))

@@ -232,23 +232,65 @@ jobs:
         run: |
           # Core required test suite — always runs regardless of which files changed.
           # Covers: utilities, shared-library contracts, architecture boundaries,
-          # rotation math, process calculator constants, and manifest generation.
-          # Expanded from 3-file smoke set to representative cross-module slice (issue #1577).
+          # rotation math, process calculator constants, manifest generation, and
+          # the full process-calculator + upstream-drift-tools suites.
+          # Expanded to achieve ≥60% coverage threshold (issue #1860).
           core_tests=(
             # Utility + error handling (original smoke tests)
             "tests/test_path_helpers.py"
             "tests/test_error_handling.py"
+            "tests/test_csv_utils.py"
+            "tests/test_file_utils.py"
+            "tests/test_logging_utils.py"
+            "tests/test_os_utils.py"
+            "tests/test_env_utils.py"
+            "tests/test_config_loader.py"
+            "tests/test_path_setup.py"
+            "tests/test_dependency_checker.py"
+            "tests/test_debug_utils.py"
+            "tests/test_subprocess_utils.py"
             # Notes storage (original smoke test)
             "tests/shared/python/notes/test_storage.py"
             # Shared-library contracts and security primitives
             "tests/shared/python/test_contracts.py"
             "tests/shared/python/test_safe_eval.py"
+            "tests/unit/test_contracts.py"
             # Architecture layer boundary enforcement
             "tests/architecture/test_layer_boundaries.py"
             # Core rotation math (shared library used across many tools)
             "tests/rotation_converter/test_rotation_core.py"
+            "tests/rotation_converter/test_rigid_transform.py"
             # Process calculator constants (always fast, catches unit regressions)
             "tests/shared/python/process_calculators/test_constants.py"
+            # Full process-calculator suite (covers ~40% of business logic)
+            "tests/shared/python/process_calculators/test_acid_gas_dewpoint_edge_cases.py"
+            "tests/shared/python/process_calculators/test_analysis_utils.py"
+            "tests/shared/python/process_calculators/test_baghouse_calculator.py"
+            "tests/shared/python/process_calculators/test_electrode_advancement.py"
+            "tests/shared/python/process_calculators/test_financial_calculator.py"
+            "tests/shared/python/process_calculators/test_financial_calculator_edge_cases.py"
+            "tests/shared/python/process_calculators/test_flare_calculator.py"
+            "tests/shared/python/process_calculators/test_flare_calculator_engine.py"
+            "tests/shared/python/process_calculators/test_gas_properties_physics.py"
+            "tests/shared/python/process_calculators/test_multi_param_analysis.py"
+            "tests/shared/python/process_calculators/test_optimization.py"
+            "tests/shared/python/process_calculators/test_optimization_engine.py"
+            "tests/shared/python/process_calculators/test_pressure_drop_engine.py"
+            "tests/shared/python/process_calculators/test_pressure_drop_gas_properties.py"
+            "tests/shared/python/process_calculators/test_scrubber_calculator.py"
+            "tests/shared/python/process_calculators/test_syngas_compression_edge_cases.py"
+            "tests/shared/python/process_calculators/test_syngas_compression_engine.py"
+            "tests/shared/python/process_calculators/test_syngas_water_calculator_edge_cases.py"
+            "tests/shared/python/process_calculators/test_syngas_water_overflow.py"
+            "tests/shared/python/process_calculators/test_thermal_profile.py"
+            "tests/shared/python/process_calculators/test_water_vapor_pressure.py"
+            "tests/shared/python/process_calculators/test_wgs_reactor_calculator.py"
+            "tests/shared/python/process_calculators/test_wgs_reactor_engine.py"
+            # Upstream drift tools (data processing, protocol contracts)
+            "tests/shared/python/upstream_drift_tools/test_protocols.py"
+            "tests/shared/python/upstream_drift_tools/calculators/"
+            "tests/shared/python/upstream_drift_tools/data_processing/"
+            "tests/shared/python/upstream_drift_tools/process_calculators/"
             # Tools manifest integrity
             "tests/scripts/test_generate_tools_json.py"
           )

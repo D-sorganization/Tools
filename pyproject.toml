@@ -170,10 +170,26 @@ omit = [
     "*/test_*",
     "*/__pycache__/*",
     "*/node_modules/*",
+    # GUI/Qt widgets require a display — not measurable in headless CI
+    "*/ui/widgets/*",
+    "*/ui/mixins/*",
+    "*/ui/managers/*",
+    "*/ui/dialogs/*",
+    "*/ui/panels/*",
+    "*_widget.py",
+    "*_dialog.py",
+    "*_panel.py",
+    # Top-level launcher scripts are entry points, not library code
+    "launch.py",
+    "launch_signal_toolkit.py",
+    "verify_launcher.py",
+    "remove_broken_scripts.py",
+    "setup_dev.py",
+    "wave_solver.py",
 ]
 
 [tool.coverage.report]
-fail_under = 30
+fail_under = 60
 show_missing = true
 skip_empty = true
 exclude_lines = [
