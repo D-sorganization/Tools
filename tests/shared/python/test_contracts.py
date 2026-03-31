@@ -16,7 +16,7 @@ from typing import Any
 
 import pytest
 
-from contracts import (
+from shared.python.contracts import (
     ContractChecker,
     ContractLevel,
     ContractViolationError,
