@@ -28,7 +28,7 @@ from typing import Any
 
 import numpy as np
 
-from contracts import require
+from shared.python.contracts import require
 
 __all__ = [
     "safe_eval",

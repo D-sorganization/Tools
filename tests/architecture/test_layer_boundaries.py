@@ -266,7 +266,7 @@ class TestContractModuleConsistency:
 
     def test_contracts_module_importable(self) -> None:
         """The contracts module must be importable."""
-        from contracts import (  # noqa: F401
+        from shared.python.contracts import (  # noqa: F401
             ContractLevel,
             ContractViolationError,
             InvariantError,
@@ -279,34 +279,34 @@ class TestContractModuleConsistency:
 
     def test_require_raises_on_false(self) -> None:
         """require() must raise PreconditionError on False condition."""
-        from contracts import PreconditionError, require
+        from shared.python.contracts import PreconditionError, require
 
         with pytest.raises(PreconditionError):
             require(False, "test precondition")
 
     def test_ensure_raises_on_false(self) -> None:
         """ensure() must raise PostconditionError on False condition."""
-        from contracts import PostconditionError, ensure
+        from shared.python.contracts import PostconditionError, ensure
 
         with pytest.raises(PostconditionError):
             ensure(False, "test postcondition")
 
     def test_invariant_raises_on_false(self) -> None:
         """invariant() must raise InvariantError on False condition."""
-        from contracts import InvariantError, invariant
+        from shared.python.contracts import InvariantError, invariant
 
         with pytest.raises(InvariantError):
             invariant(False, "test invariant")
 
     def test_require_passes_on_true(self) -> None:
         """require() must not raise on True condition."""
-        from contracts import require
+        from shared.python.contracts import require
 
         require(True, "should pass")  # No exception
 
     def test_ensure_passes_on_true(self) -> None:
         """ensure() must not raise on True condition."""
-        from contracts import ensure
+        from shared.python.contracts import ensure
 
         ensure(True, "should pass")  # No exception
 
