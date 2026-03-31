@@ -1,26 +1,76 @@
-from collections.abc import Callable
+"""Top-level contracts module — re-exports the shared contracts API.
 
+All contract primitives live in ``src/shared/python/contracts.py``.
+This module re-exports the full public API so that ``from contracts import
+require`` continues to work for callers that rely on the short import path.
+"""
 
-def require(condition: Callable[..., bool], message: str = "Precondition failed"):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            if not condition(*args, **kwargs):
-                raise ValueError(message)
-            return func(*args, **kwargs)
+from shared.python.contracts import (
+    CONTRACTS_ENABLED,
+    DBC_LEVEL,
+    ContractChecker,
+    ContractLevel,
+    ContractViolationError,
+    InvariantError,
+    PostconditionError,
+    PreconditionError,
+    check_non_negative,
+    check_positive,
+    check_pressure,
+    check_range,
+    check_temperature,
+    class_invariant,
+    contract,
+    ensure,
+    ensure_valid_result,
+    get_contract_level,
+    has_finite_elements,
+    invariant,
+    invariant_checked,
+    is_non_negative,
+    is_positive,
+    is_valid_result,
+    postcondition,
+    precondition,
+    require,
+    require_finite,
+    require_positive,
+    require_unit_vector,
+    set_contract_level,
+    set_contracts_enabled,
+)
 
-        return wrapper
-
-    return decorator
-
-
-def ensure(condition: Callable[..., bool], message: str = "Postcondition failed"):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            result = func(*args, **kwargs)
-            if not condition(result):
-                raise RuntimeError(message)
-            return result
-
-        return wrapper
-
-    return decorator
+__all__ = [
+    "CONTRACTS_ENABLED",
+    "DBC_LEVEL",
+    "ContractChecker",
+    "ContractLevel",
+    "ContractViolationError",
+    "InvariantError",
+    "PostconditionError",
+    "PreconditionError",
+    "check_non_negative",
+    "check_positive",
+    "check_pressure",
+    "check_range",
+    "check_temperature",
+    "class_invariant",
+    "contract",
+    "ensure",
+    "ensure_valid_result",
+    "get_contract_level",
+    "has_finite_elements",
+    "invariant",
+    "invariant_checked",
+    "is_non_negative",
+    "is_positive",
+    "is_valid_result",
+    "postcondition",
+    "precondition",
+    "require",
+    "require_finite",
+    "require_positive",
+    "require_unit_vector",
+    "set_contract_level",
+    "set_contracts_enabled",
+]
