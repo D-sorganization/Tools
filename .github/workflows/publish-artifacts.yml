@@ -19,9 +19,33 @@ permissions:
   id-token: write # Required for PyPI trusted publishing
 
 jobs:
-  build-python-wheel:
-    name: Build Python Wheel
+
+  # ── Dispatcher: route to self-hosted if available ──────────────────────────
+  pick-runner:
     runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      runner: ${{ steps.check.outputs.runner }}
+    steps:
+      - name: Check for self-hosted runner
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ONLINE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
+            --jq '[.runners[] | select(.status == "online") | select(.labels[].name == "d-sorg-fleet")] | length' \
+            2>/dev/null || echo "0")
+          if [[ "$ONLINE" -gt 0 ]]; then
+            echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+            echo "Self-hosted runner online — routing locally"
+          else
+            echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+            echo "No self-hosted runner — using GitHub-hosted"
+          fi
+  build-python-wheel:
+    needs: pick-runner
+    name: Build Python Wheel
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     steps:
       - uses: actions/checkout@v6
 
@@ -51,8 +75,9 @@ jobs:
           retention-days: 30
 
   build-wasm-package:
+    needs: pick-runner
     name: Build WASM/NPM Package
-    runs-on: ubuntu-latest
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     steps:
       - uses: actions/checkout@v6
 
@@ -80,8 +105,8 @@ jobs:
 
   publish-pypi:
     name: Publish to PyPI
-    needs: [build-python-wheel]
-    runs-on: ubuntu-latest
+    needs: [pick-runner, build-python-wheel]
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     if: >-
       github.event_name == 'release' ||
       (github.event_name == 'workflow_dispatch' && inputs.dry_run == 'false')
@@ -113,8 +138,8 @@ jobs:
 
   publish-npm:
     name: Publish to NPM
-    needs: [build-wasm-package]
-    runs-on: ubuntu-latest
+    needs: [pick-runner, build-wasm-package]
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     if: >-
       github.event_name == 'release' ||
       (github.event_name == 'workflow_dispatch' && inputs.dry_run == 'false')
@@ -147,8 +172,8 @@ jobs:
 
   publish-summary:
     name: Publish Summary
-    needs: [build-python-wheel, build-wasm-package]
-    runs-on: ubuntu-latest
+    needs: [pick-runner, build-python-wheel, build-wasm-package]
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     steps:
       - name: Generate Summary
         run: |
