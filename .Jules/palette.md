@@ -29,3 +29,7 @@
 ## 2026-02-18 - [Interactive Lists Accessibility]
 **Learning:** List items that function as buttons (like "Recent Conversions") implemented as `<div>`s with click handlers are invisible to screen readers and keyboard users.
 **Action:** Always use `<button>` elements for interactive list items, ensuring `width: 100%` and `text-align: left` in CSS to maintain the list appearance while gaining native accessibility benefits (keyboard focus, role activation).
+
+## 2026-03-30 - [Hover Overlays Keyboard Accessibility]
+**Learning:** Container elements that rely on `opacity-0 hover:opacity-100` to reveal interactive children (like a play button over a video) make those children completely invisible to keyboard users who tab to them, as `focus` does not trigger `hover`.
+**Action:** Always add `focus-within:opacity-100` to such container elements to ensure the interactive elements become visible when they receive keyboard focus.
