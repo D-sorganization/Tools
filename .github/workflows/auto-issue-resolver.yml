@@ -68,9 +68,33 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  analyze-issues:
-    name: Analyze and Prioritize Issues
+
+  # ── Dispatcher: route to self-hosted if available ──────────────────────────
+  pick-runner:
     runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      runner: ${{ steps.check.outputs.runner }}
+    steps:
+      - name: Check for self-hosted runner
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+        run: |
+          ONLINE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
+            --jq '[.runners[] | select(.status == "online") | select(.labels[].name == "d-sorg-fleet")] | length' \
+            2>/dev/null || echo "0")
+          if [[ "$ONLINE" -gt 0 ]]; then
+            echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+            echo "Self-hosted runner online — routing locally"
+          else
+            echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+            echo "No self-hosted runner — using GitHub-hosted"
+          fi
+  analyze-issues:
+    needs: pick-runner
+    name: Analyze and Prioritize Issues
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     outputs:
       issue_list: ${{ steps.prioritize.outputs.issue_list }}
       total_issues: ${{ steps.prioritize.outputs.total_issues }}
@@ -232,9 +256,9 @@ jobs:
 
   resolve-issues:
     name: Resolve Issue #${{ matrix.issue.number }}
-    needs: analyze-issues
+    needs: [pick-runner, analyze-issues]
     if: ${{ needs.analyze-issues.outputs.total_issues != '0' && github.event.inputs.mode != 'analysis-only' }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
 
     strategy:
       matrix:
@@ -499,9 +523,9 @@ jobs:
 
   summary:
     name: Generate Summary Report
-    needs: [analyze-issues, resolve-issues]
+    needs: [pick-runner, analyze-issues, resolve-issues]
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
 
     steps:
       - name: Download prioritized issues

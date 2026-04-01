@@ -38,9 +38,33 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  determine-assessment:
-    name: Determine Assessment Type
+
+  # ── Dispatcher: route to self-hosted if available ──────────────────────────
+  pick-runner:
     runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      runner: ${{ steps.check.outputs.runner }}
+    steps:
+      - name: Check for self-hosted runner
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+        run: |
+          ONLINE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
+            --jq '[.runners[] | select(.status == "online") | select(.labels[].name == "d-sorg-fleet")] | length' \
+            2>/dev/null || echo "0")
+          if [[ "$ONLINE" -gt 0 ]]; then
+            echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+            echo "Self-hosted runner online — routing locally"
+          else
+            echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+            echo "No self-hosted runner — using GitHub-hosted"
+          fi
+  determine-assessment:
+    needs: pick-runner
+    name: Determine Assessment Type
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     outputs:
       assessment: ${{ steps.select.outputs.assessment }}
       prompt_file: ${{ steps.select.outputs.prompt_file }}
@@ -78,8 +102,8 @@ jobs:
 
   run-assessment:
     name: Run Assessment ${{ needs.determine-assessment.outputs.assessment }}
-    needs: determine-assessment
-    runs-on: ubuntu-latest
+    needs: [pick-runner, determine-assessment]
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
 
     # Skip if triggered by Jules bot (loop prevention)
     if: github.actor != 'jules-bot'

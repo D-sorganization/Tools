@@ -55,8 +55,32 @@ env:
   DEFAULT_ISSUE_COUNT: 5
 
 jobs:
-  remediate:
+
+  # ── Dispatcher: route to self-hosted if available ──────────────────────────
+  pick-runner:
     runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      runner: ${{ steps.check.outputs.runner }}
+    steps:
+      - name: Check for self-hosted runner
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+        run: |
+          ONLINE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
+            --jq '[.runners[] | select(.status == "online") | select(.labels[].name == "d-sorg-fleet")] | length' \
+            2>/dev/null || echo "0")
+          if [[ "$ONLINE" -gt 0 ]]; then
+            echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+            echo "Self-hosted runner online — routing locally"
+          else
+            echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+            echo "No self-hosted runner — using GitHub-hosted"
+          fi
+  remediate:
+    needs: pick-runner
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     timeout-minutes: 45
 
     steps:
@@ -88,7 +112,7 @@ jobs:
       - name: Fetch and Select Issues
         id: select
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
           ISSUE_COUNT: ${{ github.event.inputs.issue_count || env.DEFAULT_ISSUE_COUNT }}
           PRIORITY_FILTER: ${{ github.event.inputs.priority_filter || 'both' }}
         run: |
@@ -146,7 +170,7 @@ jobs:
         if: steps.select.outputs.selected != ''
         id: analyze
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
           SELECTED_ISSUES: ${{ steps.select.outputs.selected }}
         run: |
           echo "Analyzing selected issues..."
@@ -187,7 +211,7 @@ jobs:
         if: steps.select.outputs.selected != ''
         id: fixes
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
           SELECTED_ISSUES: ${{ steps.select.outputs.selected }}
           BRANCH_NAME: ${{ steps.branch.outputs.branch || 'dry-run' }}
           DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
@@ -364,7 +388,7 @@ jobs:
         if: steps.fixes.outputs.fixes_applied == 'true' && github.event.inputs.dry_run != 'true'
         id: pr
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
           BRANCH_NAME: ${{ steps.branch.outputs.branch }}
           ISSUE_COUNT: ${{ steps.select.outputs.count }}
           SELECTED_ISSUES: ${{ steps.select.outputs.selected }}
@@ -450,7 +474,7 @@ jobs:
       - name: Comment on Issues
         if: steps.pr.outputs.url != ''
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
           SELECTED_ISSUES: ${{ steps.select.outputs.selected }}
           PR_URL: ${{ steps.pr.outputs.url }}
         run: |
@@ -515,7 +539,7 @@ jobs:
       - name: Rollback on Failure
         if: failure() && steps.branch.outputs.branch != ''
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
           BRANCH_NAME: ${{ steps.branch.outputs.branch }}
         run: |
           echo "Workflow failed. Cleaning up..."

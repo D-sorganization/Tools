@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { DrawingTool } from '@/components/video/EditorCanvas';
 
 interface ToolsPanelProps {
@@ -33,7 +34,12 @@ const COLORS = [
   '#000000',
 ];
 
-export default function ToolsPanel({
+// ⚡ Bolt Optimization: Added React.memo() to prevent unnecessary re-renders.
+// What: Wraps the ToolsPanel component in memo().
+// Why: The parent component (HomePage) has many state updates (e.g., video time updates) that would normally cause this entire panel to re-render.
+// Impact: Reduces re-renders of the ToolsPanel by preventing updates when unrelated state changes in the parent.
+// Measurement: Use React Profiler to observe fewer render cycles for this component when interacting with the video player.
+const ToolsPanel = memo(function ToolsPanel({
   currentTool,
   onToolChange,
   currentColor,
@@ -143,4 +149,6 @@ export default function ToolsPanel({
       </div>
     </div>
   );
-}
+});
+
+export default ToolsPanel;

@@ -171,7 +171,6 @@ def validate_expression(
     require(
         isinstance(expression, str),
         "expression must be a string",
-        type(expression).__name__,
     )
 
     try:
