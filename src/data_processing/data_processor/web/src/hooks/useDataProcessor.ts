@@ -722,28 +722,37 @@ function movingAverage(values: number[], windowSize: number): number[] {
 }
 
 function medianFilter(values: number[], kernelSize: number): number[] {
-  const result: number[] = [];
+  // Bolt: Optimize medianFilter by pre-allocating the result array and using a Float64Array for sorting
+  const result = new Array<number>(values.length);
   const halfKernel = Math.floor(kernelSize / 2);
 
   for (let i = 0; i < values.length; i++) {
     const start = Math.max(0, i - halfKernel);
     const end = Math.min(values.length, i + halfKernel + 1);
-    const window = values.slice(start, end).sort((a, b) => a - b);
-    result.push(window[Math.floor(window.length / 2)]);
+    const len = end - start;
+
+    const window = new Float64Array(len);
+    for (let j = 0; j < len; j++) {
+      window[j] = values[start + j];
+    }
+    window.sort(); // Typed array sort is faster
+
+    result[i] = window[Math.floor(len / 2)];
   }
 
   return result;
 }
 
 function gaussianFilter(values: number[], sigma: number): number[] {
+  // Bolt: Optimize gaussianFilter array allocations to reduce GC pressure
   const kernelSize = Math.ceil(sigma * 6) | 1;
   const halfKernel = Math.floor(kernelSize / 2);
-  const kernel: number[] = [];
+  const kernel = new Float64Array(kernelSize);
 
   let sum = 0;
   for (let i = -halfKernel; i <= halfKernel; i++) {
     const g = Math.exp(-(i * i) / (2 * sigma * sigma));
-    kernel.push(g);
+    kernel[i + halfKernel] = g;
     sum += g;
   }
 
@@ -753,14 +762,14 @@ function gaussianFilter(values: number[], sigma: number): number[] {
   }
 
   // Apply convolution
-  const result: number[] = [];
+  const result = new Array<number>(values.length);
   for (let i = 0; i < values.length; i++) {
     let val = 0;
     for (let j = 0; j < kernel.length; j++) {
       const idx = Math.min(Math.max(0, i - halfKernel + j), values.length - 1);
       val += values[idx] * kernel[j];
     }
-    result.push(val);
+    result[i] = val;
   }
 
   return result;
