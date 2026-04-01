@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License** | MIT |
 | **Current Version** | N/A |
-| **Spec Version** | 1.0.4 |
+| **Spec Version** | 1.0.5 |
 | **Last Spec Update** | 2026-04-01 |
 
 ## 2. Purpose & Mission
@@ -441,6 +441,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-03-30 | 1.0.2 | A-N assessment remediation: LoD refactoring in convert_tools_icon.py, launch.py, launch_signal_toolkit.py, verify_launcher.py; DbC input validation added to launch_tool, bootstrap, migrate_file, _print_environment_info, _check_launcher_file, _print_recommendations, _on_poly_generated; docstrings added to __init__ and missing functions in setup_dev.py, remove_broken_scripts.py, migrate_print_to_logging.py, launch_signal_toolkit.py. |
 | 2026-03-31 | 1.0.3 | Fix CI import error in tests/shared/python/test_contracts.py and optimize React rendering in ToolsPanel. |
 | 2026-04-01 | 1.0.4 | Add keyboard accessibility (focus-within) to video player controls in web application. |
+| 2026-04-01 | 1.0.5 | Optimize the data processor median filter to reuse a `Float64Array` buffer and preallocate result storage, reducing per-window allocations during large CSV filtering workflows. |
 
 ---
 
@@ -463,4 +464,4 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ### Performance
 
-- The application uses `Float64Array` and iterative loops instead of `Array.prototype.map`/`filter`/`reduce` to optimize memory and processing speed for large numerical datasets, particularly in hooks like `useDataProcessor.ts`.
+- The application uses `Float64Array` and iterative loops instead of `Array.prototype.map`/`filter`/`reduce` to optimize memory and processing speed for large numerical datasets, including reusable typed-array buffering for median-filter windows in `useDataProcessor.ts`.
