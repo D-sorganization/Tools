@@ -23,20 +23,35 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  quality-gate:
+  pick-runner:
     runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      runner: ${{ steps.check.outputs.runner }}
+    steps:
+      - name: Check for self-hosted runner
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+        run: "ONLINE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \\\n  --jq '[.runners[] | select(.status == \"online\") | select(.labels[].name == \"d-sorg-fleet\")] | length' \\\n  2>/dev/null || echo \"0\")\nif [[ \"$ONLINE\" -gt 0 ]]; then\n  echo \"runner=d-sorg-fleet\" >> $GITHUB_OUTPUT\n  echo \"Self-hosted runner online — routing locally\"\nelse\n  echo \"runner=ubuntu-latest\" >> $GITHUB_OUTPUT\n  echo \"No self-hosted runner — using GitHub-hosted\"\nfi"
+  quality-gate:
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v6
-        with: { python-version: "3.12" }
+        with: {python-version: "3.12"}
 
       - name: Install System Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+        run: |-
+          if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+          else
+            echo "Using preinstalled Linux dependencies on self-hosted runner"
+          fi
 
       - name: Install Dependencies
         run: |
@@ -159,9 +174,12 @@ jobs:
       - name: Module Size Budget
         run: python3 scripts/check_module_size_budget.py --max-lines 1200 --include src
 
+    needs: pick-runner
   tests:
-    needs: quality-gate
-    runs-on: ubuntu-latest
+    needs:
+      - pick-runner
+      - quality-gate
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
@@ -174,9 +192,13 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install System Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+        run: |-
+          if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+          else
+            echo "Using preinstalled Linux dependencies on self-hosted runner"
+          fi
 
       - name: Install Dependencies
         run: |
@@ -254,7 +276,7 @@ jobs:
   # Only runs when Rust source files or Cargo manifests change.
   # Enforces: format (rustfmt), lint (clippy), tests (cargo test).
   rust-quality-gate:
-    runs-on: ubuntu-latest
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
@@ -387,3 +409,4 @@ jobs:
           echo "- ✅ cargo audit: no known vulnerabilities" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ maturin build: Python wheel built" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ wasm-pack build: WASM + NPM package produced" >> $GITHUB_STEP_SUMMARY
+    needs: pick-runner
