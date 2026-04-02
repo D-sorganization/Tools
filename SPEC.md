@@ -465,3 +465,4 @@ Active development with stable core, continuous tool expansion, and web API in p
 ### Performance
 
 - The application uses `Float64Array` and iterative loops instead of `Array.prototype.map`/`filter`/`reduce` to optimize memory and processing speed for large numerical datasets, including reusable typed-array buffering for median-filter windows in `useDataProcessor.ts`.
+| 2026-04-02 | 1.0.6 | Add keyboard accessibility and focus management to the Data Processor web application file upload dropzone. |
