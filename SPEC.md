@@ -442,6 +442,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-03-31 | 1.0.3 | Fix CI import error in tests/shared/python/test_contracts.py and optimize React rendering in ToolsPanel. |
 | 2026-04-01 | 1.0.4 | Add keyboard accessibility (focus-within) to video player controls in web application. |
 | 2026-04-01 | 1.0.5 | Optimize the data processor median filter to reuse a `Float64Array` buffer and preallocate result storage, reducing per-window allocations during large CSV filtering workflows. |
+| 2026-04-02 | 1.0.6 | Run comprehensive assessments and apply auto-fixes across the repository.  to reuse a `Float64Array` buffer and preallocate result storage, reducing per-window allocations during large CSV filtering workflows. |
 
 ---
 
