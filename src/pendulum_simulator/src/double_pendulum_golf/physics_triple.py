@@ -187,7 +187,9 @@ def mass_matrix(phi1: float, phi2: float, params: TriplePendulumParams) -> np.nd
     return M
 
 
-def mass_matrix_components(phi1: float, phi2: float, params: TriplePendulumParams) -> dict:
+def mass_matrix_components(
+    phi1: float, phi2: float, params: TriplePendulumParams
+) -> dict:
     """Return individual mass matrix terms with labels.
 
     Returns
@@ -478,7 +480,9 @@ def forward_kinematics(
     """
     if not (theta1 is not None):
         raise ValueError("theta1 must be provided")
-    native_positions = _native_backend.triple_forward_kinematics(theta1, phi1, phi2, params)
+    native_positions = _native_backend.triple_forward_kinematics(
+        theta1, phi1, phi2, params
+    )
     if native_positions is not None:
         return native_positions
 
@@ -561,7 +565,9 @@ def linear_accelerations(
     }
 
 
-def net_joint_forces(state: State, qddot: np.ndarray, params: TriplePendulumParams) -> dict:
+def net_joint_forces(
+    state: State, qddot: np.ndarray, params: TriplePendulumParams
+) -> dict:
     """Compute net joint forces (proximal on distal) in world coordinates.
 
     Returns
@@ -623,7 +629,9 @@ def potential_energy(state: State, params: TriplePendulumParams) -> float:
     V = (
         -m1 * g * L1 * np.cos(theta1)
         - m2 * g * (L1 * np.cos(theta1) + L2 * np.cos(abs_angle2))
-        - m3 * g * (L1 * np.cos(theta1) + L2 * np.cos(abs_angle2) + L3 * np.cos(abs_angle3))
+        - m3
+        * g
+        * (L1 * np.cos(theta1) + L2 * np.cos(abs_angle2) + L3 * np.cos(abs_angle3))
     )
 
     return float(V)
