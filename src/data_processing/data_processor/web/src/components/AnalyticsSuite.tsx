@@ -125,17 +125,29 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
     return s === 0 ? 1 : s;
   });
 
-  // Standardized matrix (n x p)
-  const Z: number[][] = Array.from({ length: n }, (_, i) =>
-    cols.map((c, j) => (c[i] - means[j]) / stds[j]),
-  );
+  // Standardized column matrix (p x n) using Float64Array for performance
+  // This avoids O(N) row allocations and speeds up covariance / score calculations
+  const Z_cols: Float64Array[] = Array.from({ length: p }, (_, j) => {
+    const colBuffer = new Float64Array(n);
+    const mean = means[j];
+    const std = stds[j];
+    const c = cols[j];
+    for (let i = 0; i < n; i++) {
+      colBuffer[i] = (c[i] - mean) / std;
+    }
+    return colBuffer;
+  });
 
   // Covariance matrix (p x p)
   const cov: number[][] = Array.from({ length: p }, () => Array(p).fill(0));
   for (let i = 0; i < p; i++) {
+    const zi = Z_cols[i];
     for (let j = i; j < p; j++) {
+      const zj = Z_cols[j];
       let s = 0;
-      for (let k = 0; k < n; k++) s += Z[k][i] * Z[k][j];
+      for (let k = 0; k < n; k++) {
+        s += zi[k] * zj[k];
+      }
       s /= n - 1 || 1;
       cov[i][j] = s;
       cov[j][i] = s;
@@ -179,9 +191,17 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
   }, 0);
 
   // Scores (n x nc)
-  const scores = Z.map((row) =>
-    eigenvectors.map((ev) => row.reduce((s, z, j) => s + z * ev[j], 0)),
-  );
+  const scores: number[][] = Array.from({ length: n }, () => new Array(nc));
+  for (let i = 0; i < n; i++) {
+    for (let c = 0; c < nc; c++) {
+      let s = 0;
+      const ev = eigenvectors[c];
+      for (let j = 0; j < p; j++) {
+        s += Z_cols[j][i] * ev[j];
+      }
+      scores[i][c] = s;
+    }
+  }
 
   // Loadings (p x nc)
   const loadings = eigenvectors.map((ev) => [...ev]);
