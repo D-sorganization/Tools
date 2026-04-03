@@ -48,20 +48,37 @@ type AnalyticsTab = 'correlation' | 'pca' | 'regression';
 // ---------------------------------------------------------------------------
 
 function pearsonCorrelation(x: number[], y: number[]): number {
-  const n = x.length;
-  if (n < 2) return NaN;
-  const meanX = x.reduce((a, b) => a + b, 0) / n;
-  const meanY = y.reduce((a, b) => a + b, 0) / n;
-  let num = 0;
-  let denX = 0;
-  let denY = 0;
-  for (let i = 0; i < n; i++) {
-    const dx = x[i] - meanX;
-    const dy = y[i] - meanY;
-    num += dx * dy;
-    denX += dx * dx;
-    denY += dy * dy;
+  const len = x.length;
+  let sumX = 0, sumY = 0, count = 0;
+
+  for (let i = 0; i < len; i++) {
+    const vx = x[i];
+    const vy = y[i];
+    if (!Number.isNaN(vx) && !Number.isNaN(vy)) {
+      sumX += vx;
+      sumY += vy;
+      count++;
+    }
   }
+
+  if (count < 2) return NaN;
+
+  const meanX = sumX / count;
+  const meanY = sumY / count;
+
+  let num = 0, denX = 0, denY = 0;
+  for (let i = 0; i < len; i++) {
+    const vx = x[i];
+    const vy = y[i];
+    if (!Number.isNaN(vx) && !Number.isNaN(vy)) {
+      const dx = vx - meanX;
+      const dy = vy - meanY;
+      num += dx * dy;
+      denX += dx * dx;
+      denY += dy * dy;
+    }
+  }
+
   const den = Math.sqrt(denX * denY);
   return den === 0 ? 0 : num / den;
 }
@@ -70,19 +87,15 @@ function computeCorrelation(data: DataRow[], signals: string[]): CorrelationMatr
   const n = signals.length;
   const matrix: number[][] = Array.from({ length: n }, () => Array(n).fill(0));
 
+  // O(N) extraction for columns instead of repeatedly looking up fields
   const columns = signals.map((sig) =>
     data.map((row) => (typeof row[sig] === 'number' ? (row[sig] as number) : NaN)),
   );
 
   for (let i = 0; i < n; i++) {
     for (let j = i; j < n; j++) {
-      const valid = columns[i]
-        .map((v, k) => ({ x: v, y: columns[j][k] }))
-        .filter(({ x, y }) => !isNaN(x) && !isNaN(y));
-      const r = pearsonCorrelation(
-        valid.map((d) => d.x),
-        valid.map((d) => d.y),
-      );
+      // Avoid massive map/filter arrays for every pair calculation
+      const r = pearsonCorrelation(columns[i], columns[j]);
       matrix[i][j] = r;
       matrix[j][i] = r;
     }
@@ -189,15 +202,21 @@ function computeRegression(
   ySignal: string,
   degree: number,
 ): RegressionResult {
-  const pairs = data
-    .map((row) => ({
-      x: typeof row[xSignal] === 'number' ? (row[xSignal] as number) : NaN,
-      y: typeof row[ySignal] === 'number' ? (row[ySignal] as number) : NaN,
-    }))
-    .filter(({ x, y }) => !isNaN(x) && !isNaN(y));
+  // Avoid massive intermediate objects from map -> filter -> map
+  const xs: number[] = [];
+  const ys: number[] = [];
 
-  const xs = pairs.map((d) => d.x);
-  const ys = pairs.map((d) => d.y);
+  for (let i = 0; i < data.length; i++) {
+    const row = data[i];
+    const x = row[xSignal];
+    const y = row[ySignal];
+
+    if (typeof x === 'number' && typeof y === 'number' && !Number.isNaN(x) && !Number.isNaN(y)) {
+      xs.push(x);
+      ys.push(y);
+    }
+  }
+
   const n = xs.length;
 
   let coefficients: number[];
