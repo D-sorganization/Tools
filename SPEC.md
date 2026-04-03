@@ -448,6 +448,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-10 | 1.0.9 | Optimize Math Functions using single-pass loops. |
 | 2026-04-10 | 1.1.0 | Add keyboard accessibility and focus management to the Data Processor web application file upload dropzone. |
 | 2026-05-18 | 1.1.1 | Fix command injection vulnerability in MATLAB Quality Utils by escaping single quotes in paths passed to MATLAB and Octave shells. |
+| 2026-05-19 | 1.1.2 | Refactor `gaussianFilter` in `useDataProcessor.ts` to replace array `.push()` calls with pre-allocated Float64Array for kernels and mapped indexes to improve performance. |
 
 ---
 
