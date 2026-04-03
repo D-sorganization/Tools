@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License** | MIT |
 | **Current Version** | N/A |
-| **Spec Version** | 1.1.0 |
+| **Spec Version** | 1.1.1 |
 | **Last Spec Update** | 2026-05-18 |
 
 ## 2. Purpose & Mission
@@ -446,7 +446,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-02 | 1.0.7 | Run comprehensive assessments and apply auto-fixes across the repository. |
 | 2026-04-03 | 1.0.8 | Refactor `linearRegression` and `polynomialRegression` in `useDataProcessor.ts` to replace multiple consecutive `.reduce()` and `.map()` array iteration methods with single-pass `for` loops, improving performance for large datasets. |
 | 2026-04-10 | 1.0.9 | Optimize Math Functions using single-pass loops. |
-| 2026-05-18 | 1.1.0 | Fix command injection vulnerability in MATLAB Quality Utils by escaping single quotes in paths passed to MATLAB and Octave shells. |
+| 2026-04-10 | 1.1.0 | Add keyboard accessibility and focus management to the Data Processor web application file upload dropzone. |
+| 2026-05-18 | 1.1.1 | Fix command injection vulnerability in MATLAB Quality Utils by escaping single quotes in paths passed to MATLAB and Octave shells. |
 
 ---
 
