@@ -285,9 +285,9 @@ class BasePendulumWidget(QWidget):
         if not isinstance(event, QMouseEvent):
             return
         if event.button() == Qt.MouseButton.LeftButton:
-            if hasattr(self, "_handle_zoom_button_click") and self._handle_zoom_button_click(
-                event.pos()
-            ):
+            if hasattr(
+                self, "_handle_zoom_button_click"
+            ) and self._handle_zoom_button_click(event.pos()):
                 return
             self._drag_start = event.pos()
             self._drag_pan_start = (self._pan_x, self._pan_y)
@@ -764,7 +764,9 @@ class BasePendulumWidget(QWidget):
     # Image export (#1779)
     # ------------------------------------------------------------------
 
-    def export_image(self, file_path: str, width: int = 1920, height: int = 1080) -> None:
+    def export_image(
+        self, file_path: str, width: int = 1920, height: int = 1080
+    ) -> None:
         """Export the current visualization as a high-resolution image.
 
         Supports PNG, SVG, and PDF formats based on file extension.

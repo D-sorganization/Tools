@@ -19,7 +19,9 @@ def _has_optimizer() -> bool:
         return False
 
 
-pytestmark = pytest.mark.skipif(not _has_optimizer(), reason="PyQt6/optimizer not available")
+pytestmark = pytest.mark.skipif(
+    not _has_optimizer(), reason="PyQt6/optimizer not available"
+)
 
 
 class TestCMAESStep:
@@ -111,7 +113,9 @@ class TestCMAESStep:
             state_cold, _ = _cmaes_step(state_cold, self._sphere, pop_size=10, rng=rng)
         rng_w = np.random.default_rng(42)
         for _ in range(20):
-            state_warm, _ = _cmaes_step(state_warm, self._sphere, pop_size=10, rng=rng_w)
+            state_warm, _ = _cmaes_step(
+                state_warm, self._sphere, pop_size=10, rng=rng_w
+            )
 
         assert state_warm.best_fitness < state_cold.best_fitness
 

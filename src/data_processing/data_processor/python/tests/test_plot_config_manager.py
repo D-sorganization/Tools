@@ -46,7 +46,9 @@ class TestPlotConfigManagerInit:
 class TestSaveAndLoad:
     """Test save and load operations."""
 
-    def test_save_and_load(self, manager: PlotConfigManager, sample_config: dict) -> None:
+    def test_save_and_load(
+        self, manager: PlotConfigManager, sample_config: dict
+    ) -> None:
         manager.save_plot_config("my_plot", sample_config)
         loaded = manager.load_plot_config("my_plot")
         assert loaded["name"] == "Temperature Plot"
@@ -56,7 +58,9 @@ class TestSaveAndLoad:
         with pytest.raises(KeyError, match="not found"):
             manager.load_plot_config("nonexistent")
 
-    def test_overwrite_config(self, manager: PlotConfigManager, sample_config: dict) -> None:
+    def test_overwrite_config(
+        self, manager: PlotConfigManager, sample_config: dict
+    ) -> None:
         manager.save_plot_config("plot1", sample_config)
         updated = {**sample_config, "name": "Updated Plot"}
         manager.save_plot_config("plot1", updated)
@@ -67,7 +71,9 @@ class TestSaveAndLoad:
 class TestDeleteAndList:
     """Test delete and listing operations."""
 
-    def test_delete_config(self, manager: PlotConfigManager, sample_config: dict) -> None:
+    def test_delete_config(
+        self, manager: PlotConfigManager, sample_config: dict
+    ) -> None:
         manager.save_plot_config("to_delete", sample_config)
         manager.delete_plot_config("to_delete")
         assert "to_delete" not in manager.list_plot_configs()
@@ -75,7 +81,9 @@ class TestDeleteAndList:
     def test_delete_nonexistent_no_error(self, manager: PlotConfigManager) -> None:
         manager.delete_plot_config("nonexistent")  # Should not raise
 
-    def test_list_configs(self, manager: PlotConfigManager, sample_config: dict) -> None:
+    def test_list_configs(
+        self, manager: PlotConfigManager, sample_config: dict
+    ) -> None:
         manager.save_plot_config("plot_a", sample_config)
         manager.save_plot_config("plot_b", sample_config)
         names = manager.list_plot_configs()
