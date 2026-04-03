@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License** | MIT |
 | **Current Version** | N/A |
-| **Spec Version** | 1.0.6 |
-| **Last Spec Update** | 2026-04-02 |
+| **Spec Version** | 1.0.7 |
+| **Last Spec Update** | 2026-04-10 |
 
 ## 2. Purpose & Mission
 
@@ -443,6 +443,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-01 | 1.0.4 | Add keyboard accessibility (focus-within) to video player controls in web application. |
 | 2026-04-01 | 1.0.5 | Optimize the data processor median filter to reuse a `Float64Array` buffer and preallocate result storage, reducing per-window allocations during large CSV filtering workflows. |
 | 2026-04-02 | 1.0.6 | Refactored AnalyticsSuite (computeCorrelation, computeRegression, pearsonCorrelation) to use iterative primitive arrays and eliminate chained .map/.filter mapping overhead, vastly reducing garbage collection pressure. |
+| 2026-04-10 | 1.0.7 | Optimize Math Functions using single-pass loops. |
 
 ---
 
@@ -465,4 +466,4 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ### Performance
 
-- The application uses `Float64Array` and iterative loops instead of `Array.prototype.map`/`filter`/`reduce` to optimize memory and processing speed for large numerical datasets, including reusable typed-array buffering for median-filter windows in `useDataProcessor.ts`.
+- The application uses `Float64Array` and iterative loops instead of `Array.prototype.map`/`filter`/`reduce` to optimize memory and processing speed for large numerical datasets, including reusable typed-array buffering for median-filter windows in `useDataProcessor.ts`. Chained array functional methods like `reduce` and `map` have been largely replaced with standard iterative loops in mathematical computation methods such as `zScoreFilter`, `linearRegression` and `polynomialRegression`.
