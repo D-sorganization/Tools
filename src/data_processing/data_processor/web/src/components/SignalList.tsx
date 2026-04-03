@@ -115,15 +115,17 @@ export function SignalList({ signals, selectedSignals, onSelectionChange }: Sign
         <div className="flex gap-2">
           <button
             onClick={loadSignalSet}
-            className="text-xs text-blue-500 hover:text-blue-400"
+            className="text-xs text-blue-500 hover:text-blue-400 rounded p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             title="Load Signal Set"
+            aria-label="Load Signal Set"
           >
             <Upload className="w-3 h-3" />
           </button>
           <button
             onClick={saveSignalSet}
-            className="text-xs text-blue-500 hover:text-blue-400"
+            className="text-xs text-blue-500 hover:text-blue-400 rounded p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             title="Save Signal Set"
+            aria-label="Save Signal Set"
           >
             <Download className="w-3 h-3" />
           </button>
