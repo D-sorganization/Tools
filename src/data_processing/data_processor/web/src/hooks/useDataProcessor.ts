@@ -608,7 +608,12 @@ function linearRegression(x: number[], y: number[]): { slope: number; intercept:
   // ⚡ Bolt: Optimize linearRegression by replacing .reduce() chains with single-pass for loops.
   // Performance impact: Speeds up regression calculations by >20x for large datasets by avoiding callback overhead.
   const n = x.length;
-  let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+
+  // ⚡ Bolt Optimization: Replace multiple .reduce() calls with a single-pass loop
+  let sumX = 0;
+  let sumY = 0;
+  let sumXY = 0;
+  let sumXX = 0;
 
   for (let i = 0; i < n; i++) {
     const xi = x[i];
@@ -622,15 +627,17 @@ function linearRegression(x: number[], y: number[]): { slope: number; intercept:
   const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
   const intercept = (sumY - slope * sumX) / n;
 
-  // Calculate R²
+  // Calculate R² in a separate single-pass loop
   const meanY = sumY / n;
-  let ssTotal = 0, ssResidual = 0;
+  let ssTotal = 0;
+  let ssResidual = 0;
 
   for (let i = 0; i < n; i++) {
     const yi = y[i];
     ssTotal += (yi - meanY) ** 2;
     ssResidual += (yi - (slope * x[i] + intercept)) ** 2;
   }
+
   const rSquared = 1 - ssResidual / ssTotal;
 
   return { slope, intercept, rSquared };
@@ -650,8 +657,15 @@ function polynomialRegression(x: number[], y: number[], degree: number): { coeff
     // ⚡ Bolt: Optimize polynomialRegression by replacing .map() and .reduce() chains with single-pass for loops.
     // Performance impact: Drastically reduces array allocations and callback overhead for quadratic regressions.
     const n = x.length;
-    let sumX = 0, sumX2 = 0, sumX3 = 0, sumX4 = 0;
-    let sumY = 0, sumXY = 0, sumX2Y = 0;
+
+    // ⚡ Bolt Optimization: Replace multiple .reduce()/.map() calls with a single-pass loop
+    let sumX = 0;
+    let sumX2 = 0;
+    let sumX3 = 0;
+    let sumX4 = 0;
+    let sumY = 0;
+    let sumXY = 0;
+    let sumX2Y = 0;
 
     for (let i = 0; i < n; i++) {
       const xi = x[i];
@@ -675,14 +689,16 @@ function polynomialRegression(x: number[], y: number[], degree: number): { coeff
 
     // Calculate R²
     const meanY = sumY / n;
-    let ssTotal = 0, ssResidual = 0;
+    let ssTotal = 0;
+    let ssResidual = 0;
 
     for (let i = 0; i < n; i++) {
       const yi = y[i];
       const xi = x[i];
       ssTotal += (yi - meanY) ** 2;
-      ssResidual += (yi - (a0 + a1 * xi + a2 * (xi * xi))) ** 2;
+      ssResidual += (yi - (a0 + a1 * xi + a2 * xi * xi)) ** 2;
     }
+
     const rSquared = 1 - ssResidual / ssTotal;
 
     return { coefficients: [a0, a1, a2], rSquared };
