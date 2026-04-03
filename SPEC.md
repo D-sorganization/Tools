@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License** | MIT |
 | **Current Version** | N/A |
-| **Spec Version** | 1.0.8 |
-| **Last Spec Update** | 2026-04-10 |
+| **Spec Version** | 1.0.9 |
+| **Last Spec Update** | 2026-05-18 |
 
 ## 2. Purpose & Mission
 
@@ -445,6 +445,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-02 | 1.0.6 | Refactored AnalyticsSuite (computeCorrelation, computeRegression, pearsonCorrelation) to use iterative primitive arrays and eliminate chained .map/.filter mapping overhead, vastly reducing garbage collection pressure. |
 | 2026-04-02 | 1.0.7 | Run comprehensive assessments and apply auto-fixes across the repository. |
 | 2026-04-10 | 1.0.8 | Optimize Math Functions using single-pass loops. |
+| 2026-05-18 | 1.0.9 | Fix command injection vulnerability in MATLAB Quality Utils by escaping single quotes in paths passed to MATLAB and Octave shells. |
 
 ---
 
