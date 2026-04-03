@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-03-28
+  LAST UPDATED: 2026-05-18
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -448,6 +448,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-10 | 1.0.9 | Optimize Math Functions using single-pass loops. |
 | 2026-04-10 | 1.1.0 | Add keyboard accessibility and focus management to the Data Processor web application file upload dropzone. |
 | 2026-05-18 | 1.1.1 | Fix command injection vulnerability in MATLAB Quality Utils by escaping single quotes in paths passed to MATLAB and Octave shells. |
+| 2026-05-18 | 1.1.2 | Optimize PCA mathematical matrix calculations in AnalyticsSuite to use column-wise typed Float64Array to prevent large O(N) allocation overhead. |
 
 ---
 
@@ -471,3 +472,4 @@ Active development with stable core, continuous tool expansion, and web API in p
 ### Performance
 
 - The application uses `Float64Array` and iterative loops instead of `Array.prototype.map`/`filter`/`reduce` to optimize memory and processing speed for large numerical datasets, including reusable typed-array buffering for median-filter windows in `useDataProcessor.ts`. Chained array functional methods like `reduce` and `map` have been largely replaced with standard iterative loops in mathematical computation methods such as `zScoreFilter`, `linearRegression` and `polynomialRegression`.
+- Mathematical matrix calculations such as Principal Component Analysis (PCA) utilize column-wise typed arrays (e.g. `Float64Array` buffers) rather than traditional N x P row-wise arrays, drastically reducing O(N) allocation overheads and mitigating garbage collection pauses on large scale analysis.
