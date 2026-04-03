@@ -42,6 +42,7 @@ def _try_load_plot_theme() -> tuple[bool, Any]:
     """Attempt to import PlotThemeManager, searching shared/python if needed."""
     try:
         from plot_theme.manager import get_plot_theme_manager
+
         return True, get_plot_theme_manager
     except ImportError:
         pass
@@ -57,6 +58,7 @@ def _try_load_plot_theme() -> tuple[bool, Any]:
                 if str(candidate) not in sys.path:
                     sys.path.insert(0, str(candidate))
                 from plot_theme.manager import get_plot_theme_manager
+
                 return True, get_plot_theme_manager
             search = search.parent
     except ImportError:
@@ -159,7 +161,9 @@ class TorqueHistoryWidget(QWidget):
         self._outer_layout.addWidget(title)
 
         if not _HAS_PYQTGRAPH:
-            fallback = QLabel("Install pyqtgraph for torque plots:\n  pip install pyqtgraph")
+            fallback = QLabel(
+                "Install pyqtgraph for torque plots:\n  pip install pyqtgraph"
+            )
             fallback.setAlignment(Qt.AlignmentFlag.AlignCenter)
             fallback.setStyleSheet("color: #808090; font-size: 11px;")
             self._outer_layout.addWidget(fallback)

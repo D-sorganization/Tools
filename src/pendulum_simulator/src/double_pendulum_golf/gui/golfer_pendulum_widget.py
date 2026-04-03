@@ -289,7 +289,9 @@ class GolferPendulumWidget(BasePendulumWidget):
             self._draw_3d_segment(painter, ls, le, 12, 9, self.COLOR_LEFT_ARM)
             self._draw_3d_segment(painter, le, lh, 9, 6, self.COLOR_LEFT_ARM)
             # Club shaft — tapered from grip to head
-            self._draw_3d_segment(painter, club_base, club_tip, 10, 4, self.COLOR_CLUB_SHAFT)
+            self._draw_3d_segment(
+                painter, club_base, club_tip, 10, 4, self.COLOR_CLUB_SHAFT
+            )
         else:
             # Original flat-line rendering
             # Standoff (origin -> hub) — massless, COM offset adjustment
@@ -505,7 +507,10 @@ class GolferPendulumWidget(BasePendulumWidget):
         for i, jname in enumerate(joint_keys):
             if i >= len(torque_list):
                 break
-            if self._visible_segments is not None and jname not in self._visible_segments:
+            if (
+                self._visible_segments is not None
+                and jname not in self._visible_segments
+            ):
                 continue
             jp = pos.get(jname)
             if jp is None:
@@ -638,7 +643,10 @@ class GolferPendulumWidget(BasePendulumWidget):
         }
 
         for name, ell in data.items():
-            if self._visible_segments is not None and name not in self._visible_segments:
+            if (
+                self._visible_segments is not None
+                and name not in self._visible_segments
+            ):
                 continue
             world_pos = endpoint_map.get(name)
             if world_pos is None:
@@ -688,7 +696,9 @@ class GolferPendulumWidget(BasePendulumWidget):
                         QPointF(cx_px + dx_line, cy_px + dy_line),
                     )
                     painter.setFont(QFont("Monospace", 7))
-                    painter.drawText(QPointF(cx_px + dx_line + 4, cy_px + dy_line), "F\u221e")
+                    painter.drawText(
+                        QPointF(cx_px + dx_line + 4, cy_px + dy_line), "F\u221e"
+                    )
 
     def _draw_ellipse_axes(
         self,

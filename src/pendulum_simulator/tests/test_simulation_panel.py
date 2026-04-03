@@ -268,7 +268,9 @@ def test_export_data(qapp, mock_sim_kwargs, tmp_path) -> Any:
     panel = SimulationPanel(**mock_sim_kwargs)
 
     # show message if no result
-    with patch("double_pendulum_golf.gui.simulation_panel.QMessageBox.information") as info:
+    with patch(
+        "double_pendulum_golf.gui.simulation_panel.QMessageBox.information"
+    ) as info:
         panel._on_export_data()
         info.assert_called_once()
 
@@ -362,7 +364,9 @@ def test_apply_optimized_coefficients(qapp, mock_sim_kwargs) -> Any:
     panel_triple.controls.inp_tau_shoulder = MagicMock()
     panel_triple.controls.inp_tau_elbow = MagicMock()
     panel_triple.controls.inp_tau_wrist = MagicMock()
-    panel_triple._apply_optimized_coefficients({"coeffs": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]})
+    panel_triple._apply_optimized_coefficients(
+        {"coeffs": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]}
+    )
 
     # Test golfer
     mock_sim_kwargs["controls"] = MockControlsGolfer()

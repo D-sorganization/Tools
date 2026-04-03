@@ -142,7 +142,9 @@ class TestTripleEnergyConservation:
         and that energy drift stays below 2% for a 1-second free-pendulum run.
         The 2% bound is appropriate for DOP853 on a chaotic triple pendulum.
         """
-        state0 = np.array([np.radians(45), np.radians(30), np.radians(-15), 0.0, 0.0, 0.0])
+        state0 = np.array(
+            [np.radians(45), np.radians(30), np.radians(-15), 0.0, 0.0, 0.0]
+        )
         result = run_simulation(
             triple_params,
             state0,
