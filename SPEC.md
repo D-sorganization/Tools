@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License** | MIT |
 | **Current Version** | N/A |
-| **Spec Version** | 1.1.1 |
+| **Spec Version** | 1.1.2 |
 | **Last Spec Update** | 2026-05-18 |
 
 ## 2. Purpose & Mission
@@ -448,6 +448,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-10 | 1.0.9 | Optimize Math Functions using single-pass loops. |
 | 2026-04-10 | 1.1.0 | Add keyboard accessibility and focus management to the Data Processor web application file upload dropzone. |
 | 2026-05-18 | 1.1.1 | Fix command injection vulnerability in MATLAB Quality Utils by escaping single quotes in paths passed to MATLAB and Octave shells. |
+| 2026-05-18 | 1.1.2 | Optimize performance of `PlotView.tsx` data transformation by using typed arrays (`Int32Array`, `Float64Array`) and single-pass loops instead of `Array.map` to reduce memory overhead and garbage collection. |
 
 ---
 
