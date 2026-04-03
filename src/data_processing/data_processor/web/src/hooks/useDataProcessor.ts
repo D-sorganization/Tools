@@ -795,31 +795,36 @@ function medianFilter(values: number[], kernelSize: number): number[] {
 }
 
 function gaussianFilter(values: number[], sigma: number): number[] {
+  // ⚡ Bolt: Optimize gaussian filtering by pre-allocating result array and using a Float64Array for the kernel.
+  // This avoids massive garbage collection from Array.push() inside the tight loop.
+  // Performance impact: Reduces execution time significantly for large arrays and minimizes memory allocation.
   const kernelSize = Math.ceil(sigma * 6) | 1;
   const halfKernel = Math.floor(kernelSize / 2);
-  const kernel: number[] = [];
+  const kernel = new Float64Array(kernelSize);
 
   let sum = 0;
+  let kIdx = 0;
   for (let i = -halfKernel; i <= halfKernel; i++) {
     const g = Math.exp(-(i * i) / (2 * sigma * sigma));
-    kernel.push(g);
+    kernel[kIdx++] = g;
     sum += g;
   }
 
   // Normalize kernel
-  for (let i = 0; i < kernel.length; i++) {
+  for (let i = 0; i < kernelSize; i++) {
     kernel[i] /= sum;
   }
 
   // Apply convolution
-  const result: number[] = [];
-  for (let i = 0; i < values.length; i++) {
+  const len = values.length;
+  const result = new Array<number>(len);
+  for (let i = 0; i < len; i++) {
     let val = 0;
-    for (let j = 0; j < kernel.length; j++) {
-      const idx = Math.min(Math.max(0, i - halfKernel + j), values.length - 1);
+    for (let j = 0; j < kernelSize; j++) {
+      const idx = Math.min(Math.max(0, i - halfKernel + j), len - 1);
       val += values[idx] * kernel[j];
     }
-    result.push(val);
+    result[i] = val;
   }
 
   return result;
