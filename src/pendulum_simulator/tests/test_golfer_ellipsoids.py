@@ -86,9 +86,9 @@ class TestGolferEllipsoids:
         result = ellipsoids_golfer(q, default_golfer_params)
         assert len(result) > 0
         for name, ell in result.items():
-            assert np.all(np.isfinite(ell["mob_semi_axes"])), (
-                f"{name}: non-finite mob_semi_axes"
-            )
+            assert np.all(
+                np.isfinite(ell["mob_semi_axes"])
+            ), f"{name}: non-finite mob_semi_axes"
 
     def test_handles_full_state_vector(self, default_golfer_params):
         """Should accept q with shape (16,) and use only first 8."""

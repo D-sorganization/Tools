@@ -288,15 +288,17 @@ class LowerBodySimulator:
             "time_sec": float(self.data.time),
             "pelvis_z_m": float(pelvis_pos[2]) if not div else float("nan"),
             "is_diverged": div,
-            "max_tracking_err_deg": float(np.degrees(max_err))
-            if not div
-            else float("nan"),
-            "total_applied_torque_nm": float(active_torques)
-            if not div
-            else float("nan"),
-            "r_knee_deg": float(np.degrees(self.data.qpos[r_knee_qpos_adr]))
-            if not div
-            else float("nan"),
+            "max_tracking_err_deg": (
+                float(np.degrees(max_err)) if not div else float("nan")
+            ),
+            "total_applied_torque_nm": (
+                float(active_torques) if not div else float("nan")
+            ),
+            "r_knee_deg": (
+                float(np.degrees(self.data.qpos[r_knee_qpos_adr]))
+                if not div
+                else float("nan")
+            ),
             "history_frames": history_len,
             "grf": grf,
             "joint_torques": joint_torques,
