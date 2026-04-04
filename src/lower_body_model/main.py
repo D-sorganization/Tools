@@ -4,9 +4,12 @@ Lower Body Model - MuJoCo Simulation Viewer
 """
 
 import argparse
+import logging
 
 from lower_body_model.builder import build_lower_body_xml
 from lower_body_model.simulator import LowerBodySimulator
+
+logger = logging.getLogger(__name__)
 
 
 def main() -> None:
@@ -28,26 +31,29 @@ def main() -> None:
     sim.setup_initial_pose(hip_anterior_tilt=30.0, knee_flexion=120.0, foot_angle=20.0)
 
     if args.demo_iaa:
-        print(
+        logger.info(
             "Running Induced Acceleration Analysis on right hip (X axis) with 10.0 Nm torque..."
-        )  # noqa: T201
+        )
         iaa = sim.analyze_induced_acceleration("act_r_hip_x", 10.0)
-        print("Pelvis Induced Accelerations:")  # noqa: T201
+        logger.info("Pelvis Induced Accelerations:")
         for k, v in iaa.items():
-            print(f"  {k}: {v:.4f}")  # noqa: T201
+            logger.info(f"  {k}: {v:.4f}")
 
     if args.gui:
         try:
             import mujoco.viewer
 
-            print("Launching MuJoCo Viewer. Press ESC to exit.")  # noqa: T201
+            logger.info("Launching MuJoCo Viewer. Press ESC to exit.")
             mujoco.viewer.launch(sim.model, sim.data)
         except ImportError:
-            print("mujoco.viewer not available. Make sure you install correctly.")  # noqa: T201
+            logger.warning(
+                "mujoco.viewer not available. Make sure you install correctly."
+            )
 
     if not args.gui and not args.demo_iaa:
         parser.print_help()
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     main()
