@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License** | MIT |
 | **Current Version** | N/A |
-| **Spec Version** | 1.1.2 |
+| **Spec Version** | 1.1.4 |
 | **Last Spec Update** | 2026-05-19 |
 
 ## 2. Purpose & Mission
@@ -449,6 +449,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-10 | 1.1.0 | Add keyboard accessibility and focus management to the Data Processor web application file upload dropzone. |
 | 2026-05-18 | 1.1.1 | Fix command injection vulnerability in MATLAB Quality Utils by escaping single quotes in paths passed to MATLAB and Octave shells. |
 | 2026-05-18 | 1.1.2 | Optimize PCA mathematical matrix calculations in AnalyticsSuite to use column-wise typed Float64Array to prevent large O(N) allocation overhead. |
+| 2026-05-18 | 1.1.3 | Optimize linear regression calculation in AnalyticsSuite using single-pass loops instead of map/reduce to minimize garbage collection pauses. |
+| 2026-05-19 | 1.1.4 | Add inline error message handling to SignalList to avoid blocking native alert dialogs and added comprehensive focus-visible states across all signal list interface buttons for enhanced keyboard accessibility. |
 
 ---
 
