@@ -1,414 +1,426 @@
 name: CI Standard
 on:
+  repository_dispatch:
+    types: [fleet_ci_verify]
   push:
-    branches: [main, master]
+    branches:
+    - main
+    - master
     paths-ignore:
-      - "docs/**"
-      - "**.md"
-      - "LICENSE"
-      - ".gitignore"
-      - ".github/**"
+    - docs/**
+    - '**.md'
+    - LICENSE
+    - .gitignore
   pull_request:
-    types: [opened, synchronize, reopened]
+    types:
+    - opened
+    - synchronize
+    - reopened
     paths-ignore:
-      - "docs/**"
-      - "**.md"
-      - "LICENSE"
-      - ".gitignore"
-      - ".github/**"
-  workflow_dispatch:
-
+    - docs/**
+    - '**.md'
+    - LICENSE
+    - .gitignore
+  workflow_dispatch: null
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
 jobs:
-
-  # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: ubuntu-latest
-    timeout-minutes: 2
+    name: pick-runner
+    runs-on:
+  repository_dispatch:
+    types: [fleet_ci_verify] ubuntu-latest
+    timeout-minutes: 3
     outputs:
-      runner: ${{ steps.check.outputs.runner }}
+      runner: ${{ steps.pick.outputs.runner }}
+      mode: ${{ steps.pick.outputs.mode }}
+      online: ${{ steps.pick.outputs.online }}
+      idle: ${{ steps.pick.outputs.idle }}
+      busy: ${{ steps.pick.outputs.busy }}
+      queued_runs: ${{ steps.pick.outputs.queued_runs }}
+      threshold: ${{ steps.pick.outputs.threshold }}
     steps:
-      - name: Check for self-hosted runner
-        id: check
-        env:
-          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
-        run: |
-          ONLINE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
-            --jq '[.runners[] | select(.status == "online") | select(.labels[].name == "d-sorg-fleet")] | length' \
-            2>/dev/null || echo "0")
-          if [[ "$ONLINE" -gt 0 ]]; then
-            echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
-            echo "Self-hosted runner online — routing locally"
-          else
-            echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
-            echo "No self-hosted runner — using GitHub-hosted"
-          fi
+    - name: Select runner target
+      id: pick
+      shell: bash
+      env:
+        GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN || secrets.GITHUB_TOKEN }}
+        RUNNER_OWNER: D-sorganization
+        RUNNER_LABEL: d-sorg-fleet
+        RUNNER_QUEUE_THRESHOLD: '12'
+      run: |-
+        python3 <<'PY'
+        import json
+        import os
+        import subprocess
+
+        owner = os.environ["RUNNER_OWNER"]
+        label = os.environ["RUNNER_LABEL"]
+        threshold = int(os.environ["RUNNER_QUEUE_THRESHOLD"])
+
+
+        def run_json(command: list[str], default):
+            result = subprocess.run(command, capture_output=True, text=True, check=False)
+            if result.returncode != 0 or not result.stdout.strip():
+                return default
+            try:
+                return json.loads(result.stdout)
+            except json.JSONDecodeError:
+                return default
+
+
+        runners_response = run_json(
+            ["gh", "api", f"/orgs/{owner}/actions/runners?per_page=100"],
+            {"runners": []},
+        )
+        runners = [
+            runner
+            for runner in runners_response.get("runners", [])
+            if any(item.get("name") == label for item in runner.get("labels", []))
+        ]
+        online = sum(1 for runner in runners if runner.get("status") == "online")
+        idle = sum(
+            1
+            for runner in runners
+            if runner.get("status") == "online" and not runner.get("busy", False)
+        )
+        busy = sum(
+            1
+            for runner in runners
+            if runner.get("status") == "online" and runner.get("busy", False)
+        )
+
+        repos = run_json(
+            [
+                "gh",
+                "repo",
+                "list",
+                owner,
+                "--limit",
+                "100",
+                "--json",
+                "name,isArchived",
+            ],
+            [],
+        )
+        queued_runs = 0
+        for repo in repos:
+            if repo.get("isArchived"):
+                continue
+            repo_name = repo.get("name")
+            if not repo_name:
+                continue
+            result = subprocess.run(
+                [
+                    "gh",
+                    "api",
+                    f"/repos/{owner}/{repo_name}/actions/runs?status=queued&per_page=1",
+                    "--jq",
+                    ".total_count",
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if result.returncode == 0 and result.stdout.strip().isdigit():
+                queued_runs += int(result.stdout.strip())
+
+        if online == 0:
+            runner = "ubuntu-latest"
+            mode = "cloud-no-self-hosted"
+        elif idle > 0:
+            runner = label
+            mode = "self-hosted-idle"
+        elif queued_runs < threshold:
+            runner = label
+            mode = "self-hosted-queue"
+        else:
+            runner = "ubuntu-latest"
+            mode = "cloud-queue-threshold"
+
+        output_path = os.environ["GITHUB_OUTPUT"]
+        with open(output_path, "a", encoding="utf-8") as handle:
+            handle.write(f"runner={runner}\n")
+            handle.write(f"mode={mode}\n")
+            handle.write(f"online={online}\n")
+            handle.write(f"idle={idle}\n")
+            handle.write(f"busy={busy}\n")
+            handle.write(f"queued_runs={queued_runs}\n")
+            handle.write(f"threshold={threshold}\n")
+
+        summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+        if summary_path:
+            with open(summary_path, "a", encoding="utf-8") as handle:
+                handle.write("## Runner Selection\n")
+                handle.write(f"- label: `{label}`\n")
+                handle.write(f"- online: `{online}`\n")
+                handle.write(f"- idle: `{idle}`\n")
+                handle.write(f"- busy: `{busy}`\n")
+                handle.write(f"- queued workflow runs (fleet): `{queued_runs}`\n")
+                handle.write(f"- queue threshold: `{threshold}`\n")
+                handle.write(f"- selected target: `{runner}` (`{mode}`)\n")
+
+        print(
+            f"Selected {runner} ({mode}); online={online}, idle={idle}, "
+            f"busy={busy}, queued_runs={queued_runs}, threshold={threshold}"
+        )
+        PY
   quality-gate:
     needs: pick-runner
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on:
+  repository_dispatch:
+    types: [fleet_ci_verify] ${{ needs.pick-runner.outputs.runner }}
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v6
-        with: { python-version: "3.12" }
-
-      - name: Install System Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
-
-      - name: Install Dependencies
-        run: |
-          pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install fastapi
-          pip install httpx
-          pip install ruff==0.14.10 mypy==1.13.0 bandit==1.7.7 pip-audit types-PyYAML types-requests
-
-      - name: Collect Changed Python Files
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            git fetch origin "${{ github.base_ref }}"
-            BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" HEAD || true)
-            if [ -z "$BASE_SHA" ]; then
-              BASE_SHA="${{ github.event.pull_request.base.sha }}"
-            fi
-            git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt
-          elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
-            git diff --diff-filter=ACMRT --name-only "${{ github.event.before }}" HEAD -- '*.py' > changed_python_files.txt
-          else
-            # Fallback for new branches or force pushes where before is null/zero
-            git diff --diff-filter=ACMRT --name-only HEAD~1 HEAD -- '*.py' > changed_python_files.txt || echo "No previous commit found (initial commit?)"
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-python@v6
+      with:
+        python-version:
+  repository_dispatch:
+    types: [fleet_ci_verify] '3.12'
+    - name: Install System Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+    - name: Install Dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install fastapi
+        pip install httpx
+        pip install ruff==0.14.10 mypy==1.13.0 bandit==1.7.7 pip-audit types-PyYAML types-requests
+    - name: Collect Changed Python Files
+      run: |
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          git fetch origin "${{ github.base_ref }}"
+          BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" HEAD || true)
+          if [ -z "$BASE_SHA" ]; then
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
           fi
-          grep -v -E '^tests/|/tests/' changed_python_files.txt > changed_mypy_files.txt || true
-          cat changed_python_files.txt
-
-      - name: Lint (Ruff)
-        run: |
-          if [ -s changed_python_files.txt ]; then
-            echo "Linting changed files..."
-            # Mirror the exclude list from pyproject.toml [tool.ruff]:
-            # When xargs passes files directly, ruff bypasses its own 'exclude' config.
-            grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
-              changed_python_files.txt > ruff_lint_files.txt || true
-            if [ -s ruff_lint_files.txt ]; then
-              xargs -r -d '\n' ruff check < ruff_lint_files.txt
-            else
-              echo "No files to lint after applying exclude list."
-            fi
+          git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt
+        elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+          git diff --diff-filter=ACMRT --name-only "${{ github.event.before }}" HEAD -- '*.py' > changed_python_files.txt
+        else
+          # Fallback for new branches or force pushes where before is null/zero
+          git diff --diff-filter=ACMRT --name-only HEAD~1 HEAD -- '*.py' > changed_python_files.txt || echo "No previous commit found (initial commit?)"
+        fi
+        grep -v -E '^tests/|/tests/' changed_python_files.txt > changed_mypy_files.txt || true
+        cat changed_python_files.txt
+    - name: Lint (Ruff)
+      run: |
+        if [ -s changed_python_files.txt ]; then
+          echo "Linting changed files..."
+          # Mirror the exclude list from pyproject.toml [tool.ruff]:
+          # When xargs passes files directly, ruff bypasses its own 'exclude' config.
+          grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
+            changed_python_files.txt > ruff_lint_files.txt || true
+          if [ -s ruff_lint_files.txt ]; then
+            xargs -r -d '\n' ruff check < ruff_lint_files.txt
           else
-            echo "No changed files found or not in PR/push context, linting all..."
-            ruff check .
+            echo "No files to lint after applying exclude list."
           fi
-
-      - name: Format Check (ruff-format)
-        run: |
-          if [ -s changed_python_files.txt ]; then
-            # Mirror the exclude list from pyproject.toml [tool.ruff]:
-            # When xargs passes files directly, ruff bypasses its own 'exclude' config.
-            grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
-              changed_python_files.txt > ruff_format_files.txt || true
-            if [ -s ruff_format_files.txt ]; then
-              xargs -r -d '\n' ruff format --check < ruff_format_files.txt
-            else
-              echo "No changed Python files to format-check."
-            fi
+        else
+          echo "No changed files found or not in PR/push context, linting all..."
+          ruff check .
+        fi
+    - name: Format Check (ruff-format)
+      run: |
+        if [ -s changed_python_files.txt ]; then
+          # Mirror the exclude list from pyproject.toml [tool.ruff]:
+          # When xargs passes files directly, ruff bypasses its own 'exclude' config.
+          grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
+            changed_python_files.txt > ruff_format_files.txt || true
+          if [ -s ruff_format_files.txt ]; then
+            xargs -r -d '\n' ruff format --check < ruff_format_files.txt
           else
             echo "No changed Python files to format-check."
           fi
+        else
+          echo "No changed Python files to format-check."
+        fi
+    - name: Type Check (Mypy)
+      run: |
+        if [ -s changed_mypy_files.txt ]; then
+          # Filter out legacy directories that are not yet type-safe
+          # Exclude: legacy dirs not yet type-safe + src/shared/python/* (namespace pkg
+          # structure causes mypy double-module errors; checked via tests instead)
+          grep -v -E "src/electrode_advisor/|src/shared/python/|src/function_generator/|src/data_processing/data_processor/|src/glass_bath_fea/|src/tools/folder_tools/|simulation_golfer_gpu|optimizer_gpu|src/folder_tool/|src/pendulum_simulator/|src/optimizer_gui/|src/solar_system_model/|src/rotation_converter/ui/|src/rrt_path_planner/|src/vessel_drafter/" changed_mypy_files.txt > filtered_mypy_files.txt || true
 
-      - name: Type Check (Mypy)
-        run: |
-          if [ -s changed_mypy_files.txt ]; then
-            # Filter out legacy directories that are not yet type-safe
-            # Exclude: legacy dirs not yet type-safe + src/shared/python/* (namespace pkg
-            # structure causes mypy double-module errors; checked via tests instead)
-            grep -v -E "src/electrode_advisor/|src/shared/python/|src/function_generator/|src/data_processing/data_processor/|src/glass_bath_fea/|src/tools/folder_tools/|simulation_golfer_gpu|optimizer_gpu|src/folder_tool/|src/pendulum_simulator/|src/optimizer_gui/|src/solar_system_model/|src/rotation_converter/ui/|src/rrt_path_planner/|src/vessel_drafter/" changed_mypy_files.txt > filtered_mypy_files.txt || true
-
-            if [ -s filtered_mypy_files.txt ]; then
-              export MYPYPATH=src:src/python/src
-              echo "Linting changed files with Mypy..."
-              xargs -r -d '\n' mypy --ignore-missing-imports --install-types --non-interactive < filtered_mypy_files.txt
-            else
-              echo "No changed source Python files to type-check (after filtering legacy)."
-            fi
+          if [ -s filtered_mypy_files.txt ]; then
+            export MYPYPATH=src:src/python/src
+            echo "Linting changed files with Mypy..."
+            xargs -r -d '\n' mypy --ignore-missing-imports --install-types --non-interactive < filtered_mypy_files.txt
           else
-            echo "No changed source Python files to type-check."
+            echo "No changed source Python files to type-check (after filtering legacy)."
           fi
-
-      - name: Minimum Test Contract Check
-        run: python3 scripts/check_minimum_test_contract.py
-
-      - name: Security Scan (bandit)
-        run: |
-          if [ -s changed_mypy_files.txt ]; then
-            # Filter src files, then remove legacy directories excluded from ruff
-            # (src/data_processing/, src/document_processing/, src/pendulum_simulator/,
-            # src/scientific_modeling/, src/tools/folder_tools/) — pre-existing issues
-            # in these directories are not blocking concerns for this CI gate.
-            grep '^src/.*\.py$' changed_mypy_files.txt \
-              | grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/scientific_modeling/|^src/tools/folder_tools/' \
-              > changed_bandit_files.txt || true
-            if [ -s changed_bandit_files.txt ]; then
-              xargs -r -d '\n' bandit -ll -ii < changed_bandit_files.txt
-            else
-              echo "No changed src Python files to security-scan."
-            fi
-          else
-            echo "No changed source Python files to security-scan."
-          fi
-
-      - name: Security Scan (pip-audit)
-        run: |
-          # CVE-2026-4539: pygments 2.19.2 vulnerability with no fix version available yet.
-          # Ignored until a patched release is published upstream.
-          pip-audit -r requirements.txt --ignore-vuln CVE-2026-4539
-
-      # - name: Secrets Scan (gitleaks)
-      #   if: secrets.GITLEAKS_LICENSE != ''
-      #   uses: gitleaks/gitleaks-action@v2
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
-      #     GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
-      #
-      # - name: Skip Secrets Scan (missing license)
-      #   if: secrets.GITLEAKS_LICENSE == ''
-      #   run: echo "::warning::Skipping gitleaks because GITLEAKS_LICENSE is not configured."
-
-      - name: Module Size Budget
-        run: python3 scripts/check_module_size_budget.py --max-lines 1200 --include src
-
+        else
+          echo "No changed source Python files to type-check."
+        fi
+    - name: Minimum Test Contract Check
+      run: python3 scripts/check_minimum_test_contract.py
+    - name: Security Scan (bandit)
+      run: "if [ -s changed_mypy_files.txt ]; then\n  # Filter src files, then remove legacy directories excluded from ruff\n  # (src/data_processing/, src/document_processing/, src/pendulum_simulator/,\n  # src/scientific_modeling/, src/tools/folder_tools/) \u2014 pre-existing issues\n  # in these directories are not blocking concerns for this CI gate.\n  grep '^src/.*\\.py$' changed_mypy_files.txt \\\n    | grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/scientific_modeling/|^src/tools/folder_tools/' \\\n    > changed_bandit_files.txt || true\n  if [ -s changed_bandit_files.txt ]; then\n    xargs -r -d '\\n' bandit -ll -ii < changed_bandit_files.txt\n  else\n    echo \"No changed src Python files to security-scan.\"\n  fi\nelse\n  echo \"No changed source Python files to security-scan.\"\nfi\n"
+    - name: Security Scan (pip-audit)
+      run: |
+        # CVE-2026-4539: pygments 2.19.2 vulnerability with no fix version available yet.
+        # Ignored until a patched release is published upstream.
+        pip-audit -r requirements.txt --ignore-vuln CVE-2026-4539
+    - name: Module Size Budget
+      run: python3 scripts/check_module_size_budget.py --max-lines 1200 --include src
   tests:
-    needs: [pick-runner, quality-gate]
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    needs:
+    - pick-runner
+    - quality-gate
+    runs-on:
+  repository_dispatch:
+    types: [fleet_ci_verify] ${{ needs.pick-runner.outputs.runner }}
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version:
+  repository_dispatch:
+    types: [fleet_ci_verify]
+        - '3.10'
+        - '3.11'
+        - '3.12'
     steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v6
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install System Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
-
-      - name: Install Dependencies
-        run: |
-          pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install fastapi
-          pip install httpx
-
-      - name: Collect Changed Test Files
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            git fetch origin "${{ github.base_ref }}"
-            BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" HEAD || true)
-            if [ -z "$BASE_SHA" ]; then
-              BASE_SHA="${{ github.event.pull_request.base.sha }}"
-            fi
-            # Only collect changed tests from the repo-level tests/ directory.
-            # src/**/tests/ are package-local tests requiring per-package deps
-            # (ezdxf, signal_bus, GPU libs, Qt display, etc.) not installed in CI.
-            git diff --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/*test.py' > changed_test_files.txt
-          elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
-            git diff --name-only "${{ github.event.before }}" HEAD -- 'tests/test_*.py' 'tests/**/*test.py' > changed_test_files.txt
-          else
-            git diff --name-only HEAD~1 HEAD -- 'tests/test_*.py' 'tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-python@v6
+      with:
+        python-version:
+  repository_dispatch:
+    types: [fleet_ci_verify] ${{ matrix.python-version }}
+    - name: Install System Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+    - name: Install Dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install fastapi
+        pip install httpx
+    - name: Collect Changed Test Files
+      run: |
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          git fetch origin "${{ github.base_ref }}"
+          BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" HEAD || true)
+          if [ -z "$BASE_SHA" ]; then
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
           fi
-          cat changed_test_files.txt
-
-      - name: Run Tests with Coverage (Python ${{ matrix.python-version }})
-        run: |
-          # Core required test suite — always runs regardless of which files changed.
-          # Covers: utilities, shared-library contracts, architecture boundaries,
-          # rotation math, process calculator constants, and manifest generation.
-          # Expanded from 3-file smoke set to representative cross-module slice (issue #1577).
-          core_tests=(
-            # Utility + error handling (original smoke tests)
-            "tests/test_path_helpers.py"
-            "tests/test_error_handling.py"
-            # Notes storage (original smoke test)
-            "tests/shared/python/notes/test_storage.py"
-            # Shared-library contracts and security primitives
-            "tests/shared/python/test_contracts.py"
-            "tests/shared/python/test_safe_eval.py"
-            # Architecture layer boundary enforcement
-            "tests/architecture/test_layer_boundaries.py"
-            # Core rotation math (shared library used across many tools)
-            "tests/rotation_converter/test_rotation_core.py"
-            # Process calculator constants (always fast, catches unit regressions)
-            "tests/shared/python/process_calculators/test_constants.py"
-            # Tools manifest integrity
-            "tests/scripts/test_generate_tools_json.py"
-          )
-          if [ -s changed_test_files.txt ]; then
-            mapfile -t changed_test_files < changed_test_files.txt
-            pytest "${changed_test_files[@]}" "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
-          else
-            pytest "${core_tests[@]}" -m "not live_simulation" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0
-          fi
-
-      - name: Coverage Policy Gate
-        run: python3 scripts/check_coverage_policy.py --coverage-file coverage.xml --policy-file config/coverage_policy.json --baseline-file config/coverage_baseline.json --output-json coverage_trend_${{ matrix.python-version }}.json
-
-      - name: Upload Coverage Trend
-        uses: actions/upload-artifact@v6
-        with:
-          name: coverage-trend-${{ matrix.python-version }}
-          path: coverage_trend_${{ matrix.python-version }}.json
-
-      - name: Coverage Summary
-        if: always()
-        run: |
-          echo "## Coverage Report (Python ${{ matrix.python-version }})" >> $GITHUB_STEP_SUMMARY
-          echo "Coverage policy gate enforced via scripts/check_coverage_policy.py (minimum + non-regression)." >> $GITHUB_STEP_SUMMARY
-
-  # ── Rust Quality Gate ─────────────────────────────────────────────────────
-  # Only runs when Rust source files or Cargo manifests change.
-  # Enforces: format (rustfmt), lint (clippy), tests (cargo test).
+          # Only collect changed tests from the repo-level tests/ directory.
+          # src/**/tests/ are package-local tests requiring per-package deps
+          # (ezdxf, signal_bus, GPU libs, Qt display, etc.) not installed in CI.
+          git diff --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/*test.py' > changed_test_files.txt
+        elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+          git diff --name-only "${{ github.event.before }}" HEAD -- 'tests/test_*.py' 'tests/**/*test.py' > changed_test_files.txt
+        else
+          git diff --name-only HEAD~1 HEAD -- 'tests/test_*.py' 'tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
+        fi
+        cat changed_test_files.txt
+    - name: Run Tests with Coverage (Python ${{ matrix.python-version }})
+      run: "# Core required test suite \u2014 always runs regardless of which files changed.\n# Covers: utilities, shared-library contracts, architecture boundaries,\n# rotation math, process calculator constants, and manifest generation.\n# Expanded from 3-file smoke set to representative cross-module slice (issue #1577).\ncore_tests=(\n  # Utility + error handling (original smoke tests)\n  \"tests/test_path_helpers.py\"\n  \"tests/test_error_handling.py\"\n  # Notes storage (original smoke test)\n  \"tests/shared/python/notes/test_storage.py\"\n  # Shared-library contracts and security primitives\n  \"tests/shared/python/test_contracts.py\"\n  \"tests/shared/python/test_safe_eval.py\"\n  # Architecture layer boundary enforcement\n  \"tests/architecture/test_layer_boundaries.py\"\n  # Core rotation math (shared library used across many tools)\n  \"tests/rotation_converter/test_rotation_core.py\"\n  # Process calculator constants (always fast, catches unit regressions)\n  \"tests/shared/python/process_calculators/test_constants.py\"\
+        \n  # Tools manifest integrity\n  \"tests/scripts/test_generate_tools_json.py\"\n)\nif [ -s changed_test_files.txt ]; then\n  mapfile -t changed_test_files < changed_test_files.txt\n  pytest \"${changed_test_files[@]}\" \"${core_tests[@]}\" -m \"not live_simulation\" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0\nelse\n  pytest \"${core_tests[@]}\" -m \"not live_simulation\" --import-mode=importlib --cov=. --cov-report=xml:coverage.xml --cov-fail-under=0\nfi\n"
+    - name: Coverage Policy Gate
+      run: python3 scripts/check_coverage_policy.py --coverage-file coverage.xml --policy-file config/coverage_policy.json --baseline-file config/coverage_baseline.json --output-json coverage_trend_${{ matrix.python-version }}.json
+    - name: Upload Coverage Trend
+      uses: actions/upload-artifact@v6
+      with:
+        name: coverage-trend-${{ matrix.python-version }}
+        path: coverage_trend_${{ matrix.python-version }}.json
+    - name: Coverage Summary
+      if: always()
+      run: |
+        echo "## Coverage Report (Python ${{ matrix.python-version }})" >> $GITHUB_STEP_SUMMARY
+        echo "Coverage policy gate enforced via scripts/check_coverage_policy.py (minimum + non-regression)." >> $GITHUB_STEP_SUMMARY
   rust-quality-gate:
     needs: pick-runner
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on:
+  repository_dispatch:
+    types: [fleet_ci_verify] ${{ needs.pick-runner.outputs.runner }}
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v6
-
-      - name: Check for Rust changes
-        id: rust-changes
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            git fetch origin "${{ github.base_ref }}"
-            BASE_SHA=$(git merge-base "origin/${{ github.base_ref }}" HEAD || true)
-            if [ -z "$BASE_SHA" ]; then
-              BASE_SHA="${{ github.event.pull_request.base.sha }}"
-            fi
-            RUST_FILES=$(git diff --name-only "$BASE_SHA" HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' || true)
-          elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
-            RUST_FILES=$(git diff --name-only "${{ github.event.before }}" HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' || true)
-          else
-            RUST_FILES=$(git diff --name-only HEAD~1 HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' || echo "")
-          fi
-
-          if [ -n "$RUST_FILES" ]; then
-            if [ -f "Cargo.toml" ]; then
-              echo "has_changes=true" >> "$GITHUB_OUTPUT"
-              echo "Changed Rust files:"
-              echo "$RUST_FILES"
-            else
-              echo "has_changes=false" >> "$GITHUB_OUTPUT"
-              echo "Rust files changed but no Cargo.toml found — skipping quality gate."
-            fi
-          else
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-            echo "No Rust changes detected — skipping Rust quality gate."
-          fi
-
-      - name: Install Rust toolchain
-        if: steps.rust-changes.outputs.has_changes == 'true'
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
-
-      - name: Cache Cargo registry and build
-        if: steps.rust-changes.outputs.has_changes == 'true'
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
-
-      - name: Format Check (rustfmt)
-        if: steps.rust-changes.outputs.has_changes == 'true'
-        run: cargo fmt --all -- --check
-
-      - name: Lint (Clippy)
-        if: steps.rust-changes.outputs.has_changes == 'true'
-        run: cargo clippy --all-targets -- -D warnings
-
-      - name: Run Rust Tests
-        if: steps.rust-changes.outputs.has_changes == 'true'
-        run: |
-          # Features `python` and `wasm` use mutually-exclusive FFI systems
-          # (PyO3 vs wasm-bindgen), so we test them individually.
-          cargo test
-          cargo test --features python
-
-      - name: Security Audit (cargo-audit)
-        if: steps.rust-changes.outputs.has_changes == 'true'
-        run: |
-          cargo install cargo-audit --locked || true
-          cargo audit
-
-      - name: Build Python Wheel (Maturin)
-        if: steps.rust-changes.outputs.has_changes == 'true'
-        run: |
-          pip install maturin
-          cd rust_core/tools-core
-          maturin build --release
-
-      - name: Verify Python Wheel
-        if: steps.rust-changes.outputs.has_changes == 'true'
-        run: |
-          pip install target/wheels/*.whl --force-reinstall
-          python -c "import tools_core; v = tools_core.Vector3(1.0, 2.0, 3.0); assert v.magnitude() > 0; print('tools_core wheel verified')"
-
-      - name: Build WASM Module (wasm-pack)
-        if: steps.rust-changes.outputs.has_changes == 'true'
-        run: |
-          rustup target add wasm32-unknown-unknown
-          curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-          cd rust_core/tools-core
-          wasm-pack build --target web --features wasm --no-default-features
-          echo "wasm-pack build completed"
-          ls pkg/
-
-      - name: Verify WASM Module
-        if: steps.rust-changes.outputs.has_changes == 'true'
-        run: |
-          # Verify the WASM package was produced with expected files
-          test -f rust_core/tools-core/pkg/tools_core_bg.wasm && echo "✅ WASM binary exists"
-          test -f rust_core/tools-core/pkg/package.json && echo "✅ package.json exists"
-          test -f rust_core/tools-core/pkg/tools_core.js && echo "✅ JS glue exists"
-
-      - name: Run Benchmarks (Criterion)
-        if: steps.rust-changes.outputs.has_changes == 'true'
-        run: |
-          cargo bench --manifest-path rust_core/tools-core/Cargo.toml --bench math_benchmarks 2>&1 | tee benchmark_results.txt
-          echo "## Benchmark Results" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          cat benchmark_results.txt >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload Benchmark Results
-        if: steps.rust-changes.outputs.has_changes == 'true'
-        uses: actions/upload-artifact@v6
-        with:
-          name: rust-benchmarks
-          path: benchmark_results.txt
-          retention-days: 30
-
-      - name: Rust Quality Gate Summary
-        if: steps.rust-changes.outputs.has_changes == 'true'
-        run: |
-          echo "## Rust Quality Gate" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ rustfmt: formatted" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ clippy: no warnings" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ cargo test: all tests pass" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ cargo audit: no known vulnerabilities" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ maturin build: Python wheel built" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ wasm-pack build: WASM + NPM package produced" >> $GITHUB_STEP_SUMMARY
+    - uses: actions/checkout@v6
+    - name: Check for Rust changes
+      id: rust-changes
+      run: "if [ \"${{ github.event_name }}\" = \"pull_request\" ]; then\n  git fetch origin \"${{ github.base_ref }}\"\n  BASE_SHA=$(git merge-base \"origin/${{ github.base_ref }}\" HEAD || true)\n  if [ -z \"$BASE_SHA\" ]; then\n    BASE_SHA=\"${{ github.event.pull_request.base.sha }}\"\n  fi\n  RUST_FILES=$(git diff --name-only \"$BASE_SHA\" HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' || true)\nelif [ -n \"${{ github.event.before }}\" ] && [ \"${{ github.event.before }}\" != \"0000000000000000000000000000000000000000\" ]; then\n  RUST_FILES=$(git diff --name-only \"${{ github.event.before }}\" HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' || true)\nelse\n  RUST_FILES=$(git diff --name-only HEAD~1 HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' || echo \"\")\nfi\n\nif [ -n \"$RUST_FILES\" ]; then\n  if [ -f \"Cargo.toml\" ]; then\n    echo \"has_changes=true\" >> \"$GITHUB_OUTPUT\"\n    echo \"Changed Rust files:\"\n    echo \"$RUST_FILES\"\
+        \n  else\n    echo \"has_changes=false\" >> \"$GITHUB_OUTPUT\"\n    echo \"Rust files changed but no Cargo.toml found \u2014 skipping quality gate.\"\n  fi\nelse\n  echo \"has_changes=false\" >> \"$GITHUB_OUTPUT\"\n  echo \"No Rust changes detected \u2014 skipping Rust quality gate.\"\nfi\n"
+    - name: Install Rust toolchain
+      if: steps.rust-changes.outputs.has_changes == 'true'
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        components: rustfmt, clippy
+    - name: Cache Cargo registry and build
+      if: steps.rust-changes.outputs.has_changes == 'true'
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock', '**/Cargo.toml') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-
+    - name: Format Check (rustfmt)
+      if: steps.rust-changes.outputs.has_changes == 'true'
+      run: cargo fmt --all -- --check
+    - name: Lint (Clippy)
+      if: steps.rust-changes.outputs.has_changes == 'true'
+      run: cargo clippy --all-targets -- -D warnings
+    - name: Run Rust Tests
+      if: steps.rust-changes.outputs.has_changes == 'true'
+      run: |
+        # Features `python` and `wasm` use mutually-exclusive FFI systems
+        # (PyO3 vs wasm-bindgen), so we test them individually.
+        cargo test
+        cargo test --features python
+    - name: Security Audit (cargo-audit)
+      if: steps.rust-changes.outputs.has_changes == 'true'
+      run: |
+        cargo install cargo-audit --locked || true
+        cargo audit
+    - name: Build Python Wheel (Maturin)
+      if: steps.rust-changes.outputs.has_changes == 'true'
+      run: |
+        pip install maturin
+        cd rust_core/tools-core
+        maturin build --release
+    - name: Verify Python Wheel
+      if: steps.rust-changes.outputs.has_changes == 'true'
+      run: |
+        pip install target/wheels/*.whl --force-reinstall
+        python -c "import tools_core; v = tools_core.Vector3(1.0, 2.0, 3.0); assert v.magnitude() > 0; print('tools_core wheel verified')"
+    - name: Build WASM Module (wasm-pack)
+      if: steps.rust-changes.outputs.has_changes == 'true'
+      run: |
+        rustup target add wasm32-unknown-unknown
+        curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+        cd rust_core/tools-core
+        wasm-pack build --target web --features wasm --no-default-features
+        echo "wasm-pack build completed"
+        ls pkg/
+    - name: Verify WASM Module
+      if: steps.rust-changes.outputs.has_changes == 'true'
+      run: "# Verify the WASM package was produced with expected files\ntest -f rust_core/tools-core/pkg/tools_core_bg.wasm && echo \"\u2705 WASM binary exists\"\ntest -f rust_core/tools-core/pkg/package.json && echo \"\u2705 package.json exists\"\ntest -f rust_core/tools-core/pkg/tools_core.js && echo \"\u2705 JS glue exists\"\n"
+    - name: Run Benchmarks (Criterion)
+      if: steps.rust-changes.outputs.has_changes == 'true'
+      run: |
+        cargo bench --manifest-path rust_core/tools-core/Cargo.toml --bench math_benchmarks 2>&1 | tee benchmark_results.txt
+        echo "## Benchmark Results" >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        cat benchmark_results.txt >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+    - name: Upload Benchmark Results
+      if: steps.rust-changes.outputs.has_changes == 'true'
+      uses: actions/upload-artifact@v6
+      with:
+        name: rust-benchmarks
+        path: benchmark_results.txt
+        retention-days: 30
+    - name: Rust Quality Gate Summary
+      if: steps.rust-changes.outputs.has_changes == 'true'
+      run: "echo \"## Rust Quality Gate\" >> $GITHUB_STEP_SUMMARY\necho \"- \u2705 rustfmt: formatted\" >> $GITHUB_STEP_SUMMARY\necho \"- \u2705 clippy: no warnings\" >> $GITHUB_STEP_SUMMARY\necho \"- \u2705 cargo test: all tests pass\" >> $GITHUB_STEP_SUMMARY\necho \"- \u2705 cargo audit: no known vulnerabilities\" >> $GITHUB_STEP_SUMMARY\necho \"- \u2705 maturin build: Python wheel built\" >> $GITHUB_STEP_SUMMARY\necho \"- \u2705 wasm-pack build: WASM + NPM package produced\" >> $GITHUB_STEP_SUMMARY\n"

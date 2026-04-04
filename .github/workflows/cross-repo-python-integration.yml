@@ -10,9 +10,6 @@ on:
     paths:
       - "src/shared/python/**"
       - ".github/workflows/cross-repo-python-integration.yml"
-  schedule:
-    - cron: "0 7 * * 1"
-  workflow_dispatch:
 
 concurrency:
   group: cross-repo-python-${{ github.ref }}

@@ -8,28 +8,6 @@ on:
   workflow_run:
     workflows: ["CI Standard"]
     types: [completed]
-  schedule:
-    # OVERNIGHT SCHEDULE - Runs Mon/Thu (effectively every 3-4 days) at 8 AM UTC (midnight PST)
-    # IMPORTANT: Only ONE schedule line needed - routing is done by time in the triage step
-    - cron: "0 8 * * 1,4" # Monday and Thursday at midnight PST
-  workflow_dispatch:
-    inputs:
-      target:
-        description: "Worker to dispatch (auto uses schedule routing)"
-        required: false
-        default: "auto"
-        type: choice
-        options:
-          - auto
-          - assessment-generator
-          - code-quality-reviewer
-          - completist
-          - documentation-auditor
-          - sentinel
-          - auto-refactor
-          - auto-rebase
-          - issue-resolver
-          - pr-compiler
 
 # SAFEGUARD: Maximum iterations to prevent infinite repair loops
 env:
