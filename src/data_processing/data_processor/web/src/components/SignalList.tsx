@@ -20,6 +20,12 @@ const SIGNAL_COLORS = [
 
 export function SignalList({ signals, selectedSignals, onSelectionChange }: SignalListProps) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const showError = useCallback((msg: string) => {
+    setErrorMessage(msg);
+    setTimeout(() => setErrorMessage(null), 3000);
+  }, []);
 
   const filteredSignals = useMemo(() => {
     if (!searchTerm.trim()) return signals;
@@ -48,7 +54,7 @@ export function SignalList({ signals, selectedSignals, onSelectionChange }: Sign
 
   const saveSignalSet = useCallback(() => {
     if (selectedSignals.length === 0) {
-      alert('Please select signals to save.');
+      showError('Please select signals to save.');
       return;
     }
     const signalSet = {
@@ -83,13 +89,13 @@ export function SignalList({ signals, selectedSignals, onSelectionChange }: Sign
             onSelectionChange(validSignals);
           }
         } catch (err) {
-          alert('Invalid signal set file.');
+          showError('Invalid signal set file.');
         }
       };
       reader.readAsText(file);
     };
     input.click();
-  }, [signals, onSelectionChange]);
+  }, [signals, onSelectionChange, showError]);
 
   if (signals.length === 0) {
     return (
@@ -115,27 +121,33 @@ export function SignalList({ signals, selectedSignals, onSelectionChange }: Sign
         <div className="flex gap-2">
           <button
             onClick={loadSignalSet}
-            className="text-xs text-blue-500 hover:text-blue-400"
+            className="text-xs text-blue-500 hover:text-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1"
             title="Load Signal Set"
           >
             <Upload className="w-3 h-3" />
           </button>
           <button
             onClick={saveSignalSet}
-            className="text-xs text-blue-500 hover:text-blue-400"
+            className="text-xs text-blue-500 hover:text-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded p-1"
             title="Save Signal Set"
           >
             <Download className="w-3 h-3" />
           </button>
-          <button onClick={selectAll} className="text-xs text-blue-500 hover:text-blue-400">
+          <button onClick={selectAll} className="text-xs text-blue-500 hover:text-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1">
             All
           </button>
-          <button onClick={deselectAll} className="text-xs text-dark-400 hover:text-dark-300">
+          <button onClick={deselectAll} className="text-xs text-dark-400 hover:text-dark-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1">
             None
           </button>
         </div>
       </div>
       <div className="card-body">
+        {/* Error message */}
+        {errorMessage && (
+          <div className="mb-3 p-2 bg-red-500/10 border border-red-500/50 rounded text-red-400 text-sm" role="alert">
+            {errorMessage}
+          </div>
+        )}
         {/* Search field */}
         <div className="relative mb-3">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" />
@@ -161,7 +173,7 @@ export function SignalList({ signals, selectedSignals, onSelectionChange }: Sign
                   onClick={() => toggleSignal(signal)}
                   className={`
                     w-full flex items-center gap-2 px-3 py-2 rounded-lg
-                    text-left text-sm transition-colors duration-150
+                    text-left text-sm transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500
                     ${isSelected ? 'bg-dark-700' : 'hover:bg-dark-700/50'}
                   `}
                 >
