@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License** | MIT |
 | **Current Version** | N/A |
-| **Spec Version** | 1.1.4 |
-| **Last Spec Update** | 2026-05-19 |
+| **Spec Version** | 1.1.5 |
+| **Last Spec Update** | 2026-04-04 |
 
 ## 2. Purpose & Mission
 
@@ -451,6 +451,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-05-18 | 1.1.2 | Optimize PCA mathematical matrix calculations in AnalyticsSuite to use column-wise typed Float64Array to prevent large O(N) allocation overhead. |
 | 2026-05-18 | 1.1.3 | Optimize linear regression calculation in AnalyticsSuite using single-pass loops instead of map/reduce to minimize garbage collection pauses. |
 | 2026-05-19 | 1.1.4 | Add inline error message handling to SignalList to avoid blocking native alert dialogs and added comprehensive focus-visible states across all signal list interface buttons for enhanced keyboard accessibility. |
+| 2026-04-04 | 1.1.5 | Replace print statements with logger calls in lower_body_model main entry point to comply with no-print policy and improve production logging. |
 
 ---
 
