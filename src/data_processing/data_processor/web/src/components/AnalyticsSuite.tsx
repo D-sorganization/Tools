@@ -243,19 +243,31 @@ function computeRegression(
   let predictions: number[];
 
   if (degree === 1) {
-    // Simple linear regression
-    const meanX = xs.reduce((a, b) => a + b, 0) / n;
-    const meanY = ys.reduce((a, b) => a + b, 0) / n;
-    let num = 0;
-    let den = 0;
+    // ⚡ Bolt Optimization: Calculate linear regression in single pass
+    // instead of chained reduce and map to prevent allocation overhead
+    let sumX = 0;
+    let sumY = 0;
+    let sumXY = 0;
+    let sumXX = 0;
+
     for (let i = 0; i < n; i++) {
-      num += (xs[i] - meanX) * (ys[i] - meanY);
-      den += (xs[i] - meanX) ** 2;
+      const x = xs[i];
+      const y = ys[i];
+      sumX += x;
+      sumY += y;
+      sumXY += x * y;
+      sumXX += x * x;
     }
-    const slope = den === 0 ? 0 : num / den;
-    const intercept = meanY - slope * meanX;
+
+    const denom = n * sumXX - sumX * sumX;
+    const slope = denom === 0 ? 0 : (n * sumXY - sumX * sumY) / denom;
+    const intercept = (sumY - slope * sumX) / n;
     coefficients = [intercept, slope];
-    predictions = xs.map((x) => intercept + slope * x);
+
+    predictions = new Array(n);
+    for (let i = 0; i < n; i++) {
+      predictions[i] = intercept + slope * xs[i];
+    }
   } else {
     // Polynomial regression via normal equations
     // Build Vandermonde matrix
@@ -280,10 +292,25 @@ function computeRegression(
     );
   }
 
-  const residuals = ys.map((y, i) => y - predictions[i]);
-  const meanY = ys.reduce((a, b) => a + b, 0) / n;
-  const ssTotal = ys.reduce((s, y) => s + (y - meanY) ** 2, 0);
-  const ssResidual = residuals.reduce((s, r) => s + r * r, 0);
+  // ⚡ Bolt Optimization: Use single-pass loops for residuals and sum of squares
+  // to avoid .map() allocations and chained .reduce() callback overhead
+  const residuals = new Array(n);
+  let sumY = 0;
+  let ssResidual = 0;
+
+  for (let i = 0; i < n; i++) {
+    const y = ys[i];
+    const r = y - predictions[i];
+    residuals[i] = r;
+    sumY += y;
+    ssResidual += r * r;
+  }
+
+  const meanY = sumY / n;
+  let ssTotal = 0;
+  for (let i = 0; i < n; i++) {
+    ssTotal += (ys[i] - meanY) ** 2;
+  }
   const rSquared = ssTotal === 0 ? 1 : 1 - ssResidual / ssTotal;
   const p = coefficients.length;
   const adjustedRSquared = n <= p ? rSquared : 1 - ((1 - rSquared) * (n - 1)) / (n - p);
