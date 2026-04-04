@@ -11,6 +11,7 @@ from lower_body_model.simulator import LowerBodySimulator
 
 logger = logging.getLogger(__name__)
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Lower Body Model Simulation")
     parser.add_argument(
@@ -45,7 +46,9 @@ def main() -> None:
             logger.info("Launching MuJoCo Viewer. Press ESC to exit.")
             mujoco.viewer.launch(sim.model, sim.data)
         except ImportError:
-            logger.warning("mujoco.viewer not available. Make sure you install correctly.")
+            logger.warning(
+                "mujoco.viewer not available. Make sure you install correctly."
+            )
 
     if not args.gui and not args.demo_iaa:
         parser.print_help()
