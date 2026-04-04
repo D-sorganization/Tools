@@ -119,11 +119,28 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
     data.map((row) => (typeof row[sig] === 'number' ? (row[sig] as number) : 0)),
   );
 
-  const means = cols.map((c) => c.reduce((a, b) => a + b, 0) / n);
-  const stds = cols.map((c, ci) => {
-    const s = Math.sqrt(c.reduce((a, v) => a + (v - means[ci]) ** 2, 0) / n);
-    return s === 0 ? 1 : s;
-  });
+  // ⚡ Bolt Optimization: Replace map/reduce chains with a single-pass loop for variance
+  // Reduces O(N*P) array allocations and amortized callback execution overhead
+  const means: number[] = new Array(p);
+  const stds: number[] = new Array(p);
+
+  for (let ci = 0; ci < p; ci++) {
+    const c = cols[ci];
+    let sum = 0;
+    for (let i = 0; i < n; i++) {
+      sum += c[i];
+    }
+    const mean = sum / n;
+    means[ci] = mean;
+
+    let sqSum = 0;
+    for (let i = 0; i < n; i++) {
+      const diff = c[i] - mean;
+      sqSum += diff * diff;
+    }
+    const s = Math.sqrt(sqSum / n);
+    stds[ci] = s === 0 ? 1 : s;
+  }
 
   // Standardized column matrix (p x n) using Float64Array for performance
   // This avoids O(N) row allocations and speeds up covariance / score calculations
