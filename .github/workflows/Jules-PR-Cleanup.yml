@@ -4,22 +4,17 @@ name: Jules PR Cleanup
 # Preserves PRs that are actively being iterated on (recent commits)
 
 on:
-  schedule:
-    - cron: "0 8 * * 0,4" # Weekly on Sundays at 5 AM PST (13 UTC)
   workflow_dispatch:
     inputs:
-      dry_run:
-        description: "Dry run - show what would be closed without acting"
-        required: false
-        default: "true"
-        type: choice
-        options:
-          - "true"
-          - "false"
       max_age_days:
-        description: "Close PRs older than this many days"
+        description: "Maximum age in days before a PR is considered stale"
         required: false
         default: "7"
+        type: string
+      dry_run:
+        description: "If true, only report stale PRs without closing them"
+        required: false
+        default: "true"
         type: string
 
 permissions:
@@ -31,7 +26,6 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
     runs-on: ubuntu-latest

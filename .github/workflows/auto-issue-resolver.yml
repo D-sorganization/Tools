@@ -60,15 +60,12 @@ on:
       - main
 
   # Weekly scheduled run
-  schedule:
-    - cron: "0 8 * * 0,4" # Monday at 3 AM UTC
 
 concurrency:
   group: auto-issue-resolver
   cancel-in-progress: false
 
 jobs:
-
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
     runs-on: ubuntu-latest

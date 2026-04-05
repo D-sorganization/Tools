@@ -1,70 +1,175 @@
 name: Convert Review Comments to Issues
-
-# Converts PR review comments (from Copilot, Cursor, Jules, etc.) into GitHub Issues
-# This ensures no feedback is lost and creates a trackable work queue
-
 on:
-  # Run when PRs are updated or closed
   pull_request:
-    types: [opened, synchronize, closed]
-  # Run when review comments are created
+    types:
+      - opened
+      - synchronize
+      - closed
   pull_request_review_comment:
-    types: [created]
-  # Manual trigger to process all open PRs
+    types:
+      - created
   workflow_dispatch:
     inputs:
       pr_number:
-        description: "Specific PR to process (leave empty for all open PRs)"
+        description: Specific PR to process (leave empty for all open PRs)
         required: false
         type: string
       archive_only:
-        description: "Only archive to markdown, do not create issues"
+        description: Only archive to markdown, do not create issues
         required: false
         default: false
         type: boolean
-
 permissions:
   contents: write
   pull-requests: read
   issues: write
-
-# HARDENING: Prevent concurrent runs and limit frequency
 concurrency:
   group: comment-to-issue-${{ github.repository }}
   cancel-in-progress: false
-
 env:
-  # HARDENING: Rate limit - max issues to create per run
   MAX_ISSUES_PER_RUN: 5
-
 jobs:
-
-  # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
+    name: pick-runner
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 3
     outputs:
-      runner: ${{ steps.check.outputs.runner }}
+      runner: ${{ steps.pick.outputs.runner }}
+      mode: ${{ steps.pick.outputs.mode }}
+      online: ${{ steps.pick.outputs.online }}
+      idle: ${{ steps.pick.outputs.idle }}
+      busy: ${{ steps.pick.outputs.busy }}
+      queued_runs: ${{ steps.pick.outputs.queued_runs }}
+      threshold: ${{ steps.pick.outputs.threshold }}
     steps:
-      - name: Check for self-hosted runner
-        id: check
+      - name: Select runner target
+        id: pick
+        shell: bash
         env:
-          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
-        run: |
-          ONLINE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
-            --jq '[.runners[] | select(.status == "online") | select(.labels[].name == "d-sorg-fleet")] | length' \
-            2>/dev/null || echo "0")
-          if [[ "$ONLINE" -gt 0 ]]; then
-            echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
-            echo "Self-hosted runner online — routing locally"
-          else
-            echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
-            echo "No self-hosted runner — using GitHub-hosted"
-          fi
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN || secrets.GITHUB_TOKEN }}
+          RUNNER_OWNER: D-sorganization
+          RUNNER_LABEL: d-sorg-fleet
+          RUNNER_QUEUE_THRESHOLD: "12"
+        run: |-
+          python3 <<'PY'
+          import json
+          import os
+          import subprocess
+
+          owner = os.environ["RUNNER_OWNER"]
+          label = os.environ["RUNNER_LABEL"]
+          threshold = int(os.environ["RUNNER_QUEUE_THRESHOLD"])
+
+
+          def run_json(command: list[str], default):
+              result = subprocess.run(command, capture_output=True, text=True, check=False)
+              if result.returncode != 0 or not result.stdout.strip():
+                  return default
+              try:
+                  return json.loads(result.stdout)
+              except json.JSONDecodeError:
+                  return default
+
+
+          runners_response = run_json(
+              ["gh", "api", f"/orgs/{owner}/actions/runners?per_page=100"],
+              {"runners": []},
+          )
+          runners = [
+              runner
+              for runner in runners_response.get("runners", [])
+              if any(item.get("name") == label for item in runner.get("labels", []))
+          ]
+          online = sum(1 for runner in runners if runner.get("status") == "online")
+          idle = sum(
+              1
+              for runner in runners
+              if runner.get("status") == "online" and not runner.get("busy", False)
+          )
+          busy = sum(
+              1
+              for runner in runners
+              if runner.get("status") == "online" and runner.get("busy", False)
+          )
+
+          repos = run_json(
+              [
+                  "gh",
+                  "repo",
+                  "list",
+                  owner,
+                  "--limit",
+                  "100",
+                  "--json",
+                  "name,isArchived",
+              ],
+              [],
+          )
+          queued_runs = 0
+          for repo in repos:
+              if repo.get("isArchived"):
+                  continue
+              repo_name = repo.get("name")
+              if not repo_name:
+                  continue
+              result = subprocess.run(
+                  [
+                      "gh",
+                      "api",
+                      f"/repos/{owner}/{repo_name}/actions/runs?status=queued&per_page=1",
+                      "--jq",
+                      ".total_count",
+                  ],
+                  capture_output=True,
+                  text=True,
+                  check=False,
+              )
+              if result.returncode == 0 and result.stdout.strip().isdigit():
+                  queued_runs += int(result.stdout.strip())
+
+          if online == 0:
+              runner = "ubuntu-latest"
+              mode = "cloud-no-self-hosted"
+          elif idle > 0:
+              runner = label
+              mode = "self-hosted-idle"
+          elif queued_runs < threshold:
+              runner = label
+              mode = "self-hosted-queue"
+          else:
+              runner = "ubuntu-latest"
+              mode = "cloud-queue-threshold"
+
+          output_path = os.environ["GITHUB_OUTPUT"]
+          with open(output_path, "a", encoding="utf-8") as handle:
+              handle.write(f"runner={runner}\n")
+              handle.write(f"mode={mode}\n")
+              handle.write(f"online={online}\n")
+              handle.write(f"idle={idle}\n")
+              handle.write(f"busy={busy}\n")
+              handle.write(f"queued_runs={queued_runs}\n")
+              handle.write(f"threshold={threshold}\n")
+
+          summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+          if summary_path:
+              with open(summary_path, "a", encoding="utf-8") as handle:
+                  handle.write("## Runner Selection\n")
+                  handle.write(f"- label: `{label}`\n")
+                  handle.write(f"- online: `{online}`\n")
+                  handle.write(f"- idle: `{idle}`\n")
+                  handle.write(f"- busy: `{busy}`\n")
+                  handle.write(f"- queued workflow runs (fleet): `{queued_runs}`\n")
+                  handle.write(f"- queue threshold: `{threshold}`\n")
+                  handle.write(f"- selected target: `{runner}` (`{mode}`)\n")
+
+          print(
+              f"Selected {runner} ({mode}); online={online}, idle={idle}, "
+              f"busy={busy}, queued_runs={queued_runs}, threshold={threshold}"
+          )
+          PY
   process-comments:
     needs: pick-runner
     runs-on: ${{ needs.pick-runner.outputs.runner }}
-    # HARDENING: Skip bot-triggered events to prevent cascades
     if: |
       github.event_name == 'workflow_dispatch' ||
       (github.actor != 'github-actions[bot]' &&
@@ -78,11 +183,9 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
-
       - name: Collect Review Comments
         id: collect
         env:
@@ -119,7 +222,6 @@ jobs:
             gh api "repos/${{ github.repository }}/issues/${PR_NUM}/comments" \
               > ".github/review_comments/pr_${PR_NUM}_issue_comments.json" 2>/dev/null || echo "[]" > ".github/review_comments/pr_${PR_NUM}_issue_comments.json"
           done
-
       - name: Process and Create Issues
         id: process
         env:
@@ -337,7 +439,6 @@ jobs:
           SCRIPT_EOF
 
           python3 /tmp/process_comments.py
-
       - name: Commit Archive
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
@@ -353,7 +454,6 @@ jobs:
           else
             echo "No changes to commit"
           fi
-
       - name: Summary
         run: |
           echo "## Review Comment Processing Complete" >> $GITHUB_STEP_SUMMARY

@@ -2,8 +2,6 @@ name: Heavy Integration Tests (Opt-In)
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 2 * * 0'  # Weekly on Sunday at 2am
 
 jobs:
   run-heavy-tests:

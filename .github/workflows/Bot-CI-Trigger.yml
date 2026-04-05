@@ -19,8 +19,6 @@ on:
     types: [opened, synchronize, reopened]
 
   # Also run on a schedule to catch any missed PRs
-  schedule:
-    - cron: "0 8 * * 0,4" # Every 2 hours (reduced from 15 min for cost control)
 
   workflow_dispatch:
     inputs:
@@ -38,7 +36,6 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
     runs-on: ubuntu-latest
