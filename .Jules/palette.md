@@ -33,3 +33,7 @@
 ## 2026-03-30 - [Hover Overlays Keyboard Accessibility]
 **Learning:** Container elements that rely on `opacity-0 hover:opacity-100` to reveal interactive children (like a play button over a video) make those children completely invisible to keyboard users who tab to them, as `focus` does not trigger `hover`.
 **Action:** Always add `focus-within:opacity-100` to such container elements to ensure the interactive elements become visible when they receive keyboard focus.
+
+## 2026-04-05 - Expandable Accordion Accessibility
+**Learning:** React state-driven toggle components that lack `aria-expanded` and `aria-controls` fail to announce their state to screen readers, making accordions effectively invisible to non-visual users. Furthermore, relying entirely on hover states without `focus-visible` styles makes them unusable via keyboard navigation.
+**Action:** When implementing expandable content sections, always pair the trigger button with `aria-expanded={isExpanded}` and `aria-controls={contentId}`, while ensuring the content block has the corresponding `id={contentId}`. Provide explicit visual focus indicators (`focus-visible:ring-2`) for all interactive elements.
