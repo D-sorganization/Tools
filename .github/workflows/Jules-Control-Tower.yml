@@ -27,7 +27,6 @@ permissions:
   checks: read
 
 jobs:
-
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
     runs-on: ubuntu-latest
