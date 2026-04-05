@@ -176,20 +176,48 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
   const eigenvectors: number[][] = [];
   const A = cov.map((row) => [...row]);
 
+  // ⚡ Bolt Optimization: Pre-allocate Av to avoid thousands of array allocations inside the tight iteration loop.
+  const Av = new Array<number>(p);
+
   for (let comp = 0; comp < nc; comp++) {
     let v = Array.from({ length: p }, () => Math.random());
-    let norm = Math.sqrt(v.reduce((a, b) => a + b * b, 0));
-    v = v.map((x) => x / norm);
 
+    // Initial norm
+    let sqSum = 0;
+    for (let i = 0; i < p; i++) {
+      sqSum += v[i] * v[i];
+    }
+    let norm = Math.sqrt(sqSum);
+    if (norm > 0) {
+      for (let i = 0; i < p; i++) {
+        v[i] /= norm;
+      }
+    }
+
+    // ⚡ Bolt: Replaced .map() and .reduce() with standard loops.
+    // Performance impact: Eliminates thousands of array allocations per PCA execution and avoids callback overhead.
     for (let iter = 0; iter < 300; iter++) {
-      const Av = A.map((row) => row.reduce((s, aij, j) => s + aij * v[j], 0));
-      norm = Math.sqrt(Av.reduce((a, b) => a + b * b, 0));
+      let nextSqSum = 0;
+      for (let i = 0; i < p; i++) {
+        let s = 0;
+        const row = A[i];
+        for (let j = 0; j < p; j++) {
+          s += row[j] * v[j];
+        }
+        Av[i] = s;
+        nextSqSum += s * s;
+      }
+
+      norm = Math.sqrt(nextSqSum);
       if (norm === 0) break;
-      v = Av.map((x) => x / norm);
+
+      for (let i = 0; i < p; i++) {
+        v[i] = Av[i] / norm;
+      }
     }
 
     eigenvalues.push(norm);
-    eigenvectors.push(v);
+    eigenvectors.push([...v]);
 
     // Deflate
     for (let i = 0; i < p; i++) {
