@@ -165,14 +165,14 @@ export function HelpPanel() {
         </div>
         <div className="flex gap-2">
           <button
-            className="text-xs text-dark-400 hover:text-dark-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+            className="text-xs text-dark-400 hover:text-dark-200"
             onClick={expandAll}
           >
             Expand All
           </button>
           <span className="text-dark-600">|</span>
           <button
-            className="text-xs text-dark-400 hover:text-dark-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded"
+            className="text-xs text-dark-400 hover:text-dark-200"
             onClick={collapseAll}
           >
             Collapse All
@@ -182,14 +182,11 @@ export function HelpPanel() {
       <div className="card-body space-y-2">
         {helpSections.map((section) => {
           const isExpanded = expandedSections.has(section.title);
-          const sectionId = `sect-${section.title.replace(/\s+/g, '-')}`;
           return (
             <div key={section.title} className="border border-dark-700 rounded-lg">
               <button
-                className="w-full p-3 flex items-center justify-between text-left hover:bg-dark-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg"
+                className="w-full p-3 flex items-center justify-between text-left hover:bg-dark-700/50"
                 onClick={() => toggleSection(section.title)}
-                aria-expanded={isExpanded}
-                aria-controls={sectionId}
               >
                 <span className="font-medium text-dark-200">{section.title}</span>
                 {isExpanded ? (
@@ -199,10 +196,7 @@ export function HelpPanel() {
                 )}
               </button>
               {isExpanded && (
-                <div
-                  id={sectionId}
-                  className="px-3 pb-3 text-sm text-dark-300 whitespace-pre-line"
-                >
+                <div className="px-3 pb-3 text-sm text-dark-300 whitespace-pre-line">
                   {section.content.trim()}
                 </div>
               )}
