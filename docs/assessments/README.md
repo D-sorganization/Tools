@@ -12,7 +12,7 @@
 
 This document defines the comprehensive 16-point assessment framework (A-O + Highlight) for evaluating repository health, user experience, and production readiness.
 
-**Version**: 2.0 (January 2026)
+**Version**: 2.1 (April 2026)
 **Based On**: Fleet-wide adversarial review analysis identifying strategic gaps
 
 ---
