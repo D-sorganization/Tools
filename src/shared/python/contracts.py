@@ -255,11 +255,13 @@ def precondition(
     assert condition is not None, "condition must be provided"
 
     def decorator(func: F) -> F:
-        if DBC_LEVEL == ContractLevel.OFF:
+        if _ContractState.level == ContractLevel.OFF:
             return func
 
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
+            if _ContractState.level == ContractLevel.OFF:
+                return func(*args, **kwargs)
             try:
                 result = _evaluate_precondition(condition, func, args, kwargs)
             except (TypeError, ValueError) as exc:
@@ -288,12 +290,14 @@ def postcondition(
     assert condition is not None, "condition must be provided"
 
     def decorator(func: F) -> F:
-        if DBC_LEVEL == ContractLevel.OFF:
+        if _ContractState.level == ContractLevel.OFF:
             return func
 
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             result = func(*args, **kwargs)
+            if _ContractState.level == ContractLevel.OFF:
+                return result
 
             try:
                 check = condition(result)
@@ -429,7 +433,7 @@ def class_invariant(
     assert condition is not None, "condition must be provided"
 
     def class_decorator(cls: type) -> type:
-        if DBC_LEVEL == ContractLevel.OFF:
+        if _ContractState.level == ContractLevel.OFF:
             return cls
 
         # Wrap __init__
@@ -471,13 +475,14 @@ class ContractChecker:
 
     def verify_invariants(self) -> bool:
         """Verify all class invariants hold."""
-        if DBC_LEVEL == ContractLevel.OFF:
+        level = _ContractState.level
+        if level == ContractLevel.OFF:
             return True
 
         for condition_fn, message in self._get_invariants():
             try:
                 if not condition_fn():
-                    if DBC_LEVEL == ContractLevel.ENFORCE:
+                    if level == ContractLevel.ENFORCE:
                         raise InvariantError(f"{self.__class__.__name__}: {message}")
                     else:
                         logger.warning(
@@ -488,7 +493,7 @@ class ContractChecker:
             except InvariantError:
                 raise
             except (RuntimeError, TypeError, ValueError) as exc:
-                if DBC_LEVEL == ContractLevel.ENFORCE:
+                if level == ContractLevel.ENFORCE:
                     raise InvariantError(
                         f"{self.__class__.__name__}: "
                         f"Failed to evaluate invariant: {exc}"
@@ -499,7 +504,7 @@ class ContractChecker:
 
 def invariant_checked(func: F) -> F:
     """Decorator to check class invariants after method execution."""
-    if DBC_LEVEL == ContractLevel.OFF:
+    if _ContractState.level == ContractLevel.OFF:
         return func
 
     @functools.wraps(func)
@@ -566,7 +571,7 @@ def require_positive(value: float, name: str = "value") -> None:
     Raises:
         PreconditionError: If *value* ``<= 0``.
     """
-    if not CONTRACTS_ENABLED:
+    if _ContractState.level == ContractLevel.OFF:
         return
     if value <= 0:
         raise PreconditionError(f"{name} must be positive (got {value})")
@@ -580,7 +585,7 @@ def require_finite(array: Any, name: str = "array") -> None:
     """
     import numpy as np
 
-    if not CONTRACTS_ENABLED:
+    if _ContractState.level == ContractLevel.OFF:
         return
     if not np.all(np.isfinite(array)):
         raise PreconditionError(f"{name} contains NaN or Inf values")
@@ -594,7 +599,7 @@ def require_unit_vector(vector: Any, name: str = "vector", tol: float = 1e-6) ->
     """
     import numpy as np
 
-    if not CONTRACTS_ENABLED:
+    if _ContractState.level == ContractLevel.OFF:
         return
     norm = np.linalg.norm(vector)
     if abs(norm - 1.0) > tol:
@@ -607,7 +612,7 @@ def ensure_valid_result(result: Any) -> None:
     Raises:
         PostconditionError: If ``result.is_valid`` is falsy.
     """
-    if not CONTRACTS_ENABLED:
+    if _ContractState.level == ContractLevel.OFF:
         return
     if not result.is_valid:
         errors = "; ".join(result.get_error_messages())
