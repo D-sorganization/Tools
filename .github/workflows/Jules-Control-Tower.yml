@@ -238,38 +238,14 @@ jobs:
     uses: ./.github/workflows/Jules-Sentinel.yml
     secrets: inherit
 
-  call-code-quality-reviewer:
-    needs: triage
-    if: needs.triage.outputs.target == 'code-quality-reviewer'
-    uses: ./.github/workflows/Jules-Code-Quality-Reviewer.yml
-    secrets: inherit
-
-  call-assessment-generator:
-    needs: triage
-    if: needs.triage.outputs.target == 'assessment-generator'
-    uses: ./.github/workflows/Jules-Assessment-Generator.yml
-    secrets: inherit
-
   call-issue-resolver:
     needs: triage
     if: needs.triage.outputs.target == 'issue-resolver'
     uses: ./.github/workflows/Jules-Issue-Resolver.yml
     secrets: inherit
 
-  call-completist:
-    needs: triage
-    if: needs.triage.outputs.target == 'completist'
-    uses: ./.github/workflows/Jules-Completist.yml
-    secrets: inherit
-
   call-documentation-auditor:
     needs: triage
     if: needs.triage.outputs.target == 'documentation-auditor'
     uses: ./.github/workflows/Jules-Documentation-Auditor.yml
-    secrets: inherit
-
-  call-pr-compiler:
-    needs: triage
-    if: needs.triage.outputs.target == 'pr-compiler'
-    uses: ./.github/workflows/Jules-PR-Compiler.yml
     secrets: inherit

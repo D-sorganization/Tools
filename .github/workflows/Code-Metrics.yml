@@ -5,6 +5,7 @@ name: Code Metrics
 
 on:
   # COST OPTIMIZATION: Removed pull_request and push triggers to reduce CI costs
+  workflow_dispatch:
 
 permissions:
   contents: read
