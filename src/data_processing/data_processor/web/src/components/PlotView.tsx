@@ -79,21 +79,36 @@ export function PlotView({
       return [];
     }
 
-    // Build x-axis from index or time column
-    const xValues = data.map((_, i) => i);
+    // ⚡ Bolt: Optimize WebGL plotting by pre-allocating Float64Array buffers instead of
+    // using array.map() which creates standard JS arrays and causes massive O(N) GC overhead.
+    // We use assertions (as unknown as number[]) because Plotly accepts typed arrays at runtime.
+    // Performance impact: Eliminates intermediate array allocations, reducing GC pauses and speeding up rendering.
+    const len = data.length;
+    const xValues = new Float64Array(len);
+    for (let i = 0; i < len; i++) {
+      xValues[i] = i;
+    }
 
-    return selectedSignals.map((signal, i) => ({
-      type: 'scattergl' as const,
-      x: xValues,
-      y: data.map((row) => (typeof row[signal] === 'number' ? row[signal] as number : NaN)),
-      name: signal,
-      mode: 'lines' as const,
-      line: {
-        color: CHART_COLORS[i % CHART_COLORS.length],
-        width: 1.5,
-      },
-      hovertemplate: `%{fullData.name}: %{y:.4f}<extra></extra>`,
-    }));
+    return selectedSignals.map((signal, i) => {
+      const yValues = new Float64Array(len);
+      for (let j = 0; j < len; j++) {
+        const val = data[j][signal];
+        yValues[j] = typeof val === 'number' ? val : NaN;
+      }
+
+      return {
+        type: 'scattergl' as const,
+        x: xValues as unknown as number[],
+        y: yValues as unknown as number[],
+        name: signal,
+        mode: 'lines' as const,
+        line: {
+          color: CHART_COLORS[i % CHART_COLORS.length],
+          width: 1.5,
+        },
+        hovertemplate: `%{fullData.name}: %{y:.4f}<extra></extra>`,
+      };
+    });
   }, [data, selectedSignals, plotlyData]);
 
   // Build layout

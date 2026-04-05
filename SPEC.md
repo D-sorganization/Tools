@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.7                                      |
+| **Spec Version**        | 1.1.8                                      |
 | **Last Spec Update**    | 2026-04-05                                 |
 
 ## 2. Purpose & Mission
@@ -462,6 +462,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-04 | 1.1.5   | Replace print statements with logger calls in lower_body_model main entry point to comply with no-print policy and improve production logging.                                                                                                                                                                                                                                                                                                         |
 | 2026-04-05 | 1.1.6   | Optimize DataChart point extraction loop to explicitly map selected properties instead of using an object spread on the entire row in `src/data_processing/data_processor/web/src/components/DataChart.tsx`.                                                                                                                                                                                                                                           |
 | 2026-04-05 | 1.1.7   | Improve HelpPanel accessibility by adding ARIA expanded states and control links to accordion toggles, and adding explicit focus-visible rings for keyboard users.                                                                                                                                                                                                                                                                                     |
+| 2026-04-05 | 1.1.8   | Optimize PlotView WebGL rendering to use Float64Array and bypass map array creation overhead.                                                                                                                                                                                                                                                                                                                                                          |
 
 ---
 
@@ -488,3 +489,4 @@ Active development with stable core, continuous tool expansion, and web API in p
 - Mathematical matrix calculations such as Principal Component Analysis (PCA) utilize column-wise typed arrays (e.g. `Float64Array` buffers) rather than traditional N x P row-wise arrays, drastically reducing O(N) allocation overheads and mitigating garbage collection pauses on large scale analysis.
 - Linear regression and sum-of-squares calculations in `AnalyticsSuite` leverage pre-allocated arrays and single-pass loops to prevent allocation and garbage collection overhead typical of functional `.map()` and `.reduce()` operations in large dataset pipelines.
 - The PCA power iteration algorithm in `AnalyticsSuite` has been optimized to remove `.map()` and `.reduce()` from the tight inner loop, using pre-allocated arrays and standard `for` loops to eliminate thousands of allocations per execution.
+- PlotView WebGL rendering uses pre-allocated `Float64Array` buffers and single-pass loops instead of `data.map()`, eliminating O(N) intermediate array allocations for large datasets.
