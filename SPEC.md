@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License** | MIT |
 | **Current Version** | N/A |
-| **Spec Version** | 1.1.5 |
-| **Last Spec Update** | 2026-04-04 |
+| **Spec Version** | 1.1.6 |
+| **Last Spec Update** | 2026-04-05 |
 
 ## 2. Purpose & Mission
 
@@ -452,6 +452,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-05-18 | 1.1.3 | Optimize linear regression calculation in AnalyticsSuite using single-pass loops instead of map/reduce to minimize garbage collection pauses. |
 | 2026-05-19 | 1.1.4 | Add inline error message handling to SignalList to avoid blocking native alert dialogs and added comprehensive focus-visible states across all signal list interface buttons for enhanced keyboard accessibility. |
 | 2026-04-04 | 1.1.5 | Replace print statements with logger calls in lower_body_model main entry point to comply with no-print policy and improve production logging. |
+| 2026-04-05 | 1.1.6 | Optimize DataChart point extraction loop to explicitly map selected properties instead of using an object spread on the entire row in `src/data_processing/data_processor/web/src/components/DataChart.tsx`. |
 
 ---
 
