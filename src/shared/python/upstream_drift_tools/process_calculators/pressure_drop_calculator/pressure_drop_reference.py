@@ -136,9 +136,7 @@ def compare_friction_methods(
         raise ValueError("reynolds_number must be provided")
     return {
         "colebrook": friction_factor_colebrook(reynolds_number, relative_roughness),
-        "swamee-jain": friction_factor_swamee_jain(
-            reynolds_number, relative_roughness
-        ),
+        "swamee-jain": friction_factor_swamee_jain(reynolds_number, relative_roughness),
         "churchill": friction_factor_churchill(reynolds_number, relative_roughness),
         "haaland": friction_factor_haaland(reynolds_number, relative_roughness),
     }

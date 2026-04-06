@@ -129,7 +129,9 @@ def _validate_composition_and_fittings(
             warnings.append(
                 f"Gas composition sums to {total:.4f}, expected ~1.0. Will be auto-normalized."
             )
-        unknown = [component for component in gas_composition if component not in GAS_DATABASE]
+        unknown = [
+            component for component in gas_composition if component not in GAS_DATABASE
+        ]
         if unknown:
             errors.append(
                 f"Unknown gas components: {', '.join(unknown)}. "
@@ -139,7 +141,11 @@ def _validate_composition_and_fittings(
         for index, fitting in enumerate(fittings):
             fitting_type = fitting.get("type", "")
             if fitting_type and fitting_type not in FITTING_K_FACTORS:
-                similar = [candidate for candidate in FITTING_K_FACTORS if fitting_type in candidate]
+                similar = [
+                    candidate
+                    for candidate in FITTING_K_FACTORS
+                    if fitting_type in candidate
+                ]
                 warnings.append(
                     f"Fitting[{index}] type '{fitting_type}' not in database. "
                     f"Similar: {', '.join(similar[:3]) if similar else 'see list_fittings()'}"
