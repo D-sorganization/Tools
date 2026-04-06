@@ -152,18 +152,30 @@ export function useDataProcessor() {
           return { success: false, error: 'No data or signals selected' };
         }
 
-        const filteredData = data.map((row) => {
-          const newRow = { ...row };
-          return newRow;
-        });
+        const len = data.length;
+
+        // ⚡ Bolt Optimization: Avoid multiple array maps and object spreads.
+        // Allocate a column-oriented buffer for each signal, apply filters, and build the output array in a single pass.
+        // This drastically reduces garbage collection by avoiding O(N) object allocations per signal.
+        const filteredSignals = new Map<string, number[]>();
 
         // Apply filter based on type
         for (const signal of selectedSignals) {
-          const values = filteredData.map((row) => row[signal] as number);
+          const values = new Array<number>(len);
+          for (let i = 0; i < len; i++) {
+            values[i] = data[i][signal] as number;
+          }
           const filtered = applyFilterToSignal(values, config);
-          filteredData.forEach((row, i) => {
-            row[signal] = filtered[i];
-          });
+          filteredSignals.set(signal, filtered);
+        }
+
+        const filteredData = new Array<DataRow>(len);
+        for (let i = 0; i < len; i++) {
+          const newRow = { ...data[i] };
+          for (const signal of selectedSignals) {
+            newRow[signal] = filteredSignals.get(signal)![i];
+          }
+          filteredData[i] = newRow;
         }
 
         const statistics = calculateStatistics(filteredData, selectedSignals);
