@@ -37,3 +37,7 @@
 ## 2026-04-05 - Expandable Accordion Accessibility
 **Learning:** React state-driven toggle components that lack `aria-expanded` and `aria-controls` fail to announce their state to screen readers, making accordions effectively invisible to non-visual users. Furthermore, relying entirely on hover states without `focus-visible` styles makes them unusable via keyboard navigation.
 **Action:** When implementing expandable content sections, always pair the trigger button with `aria-expanded={isExpanded}` and `aria-controls={contentId}`, while ensuring the content block has the corresponding `id={contentId}`. Provide explicit visual focus indicators (`focus-visible:ring-2`) for all interactive elements.
+
+## 2026-04-06 - [Visually Hidden File Inputs and Focus]
+**Learning:** Components that use a click-forwarding container around a visually hidden (`sr-only`) `<input type="file">` become inaccessible to keyboard navigation because the hidden input receives focus but has no visible area to display a focus ring. This creates a "focus trap" where users tab, the focus seemingly disappears, and they don't know what is active.
+**Action:** Always add `focus-within` styles (e.g., `focus-within:ring-2`) to the outer container of the hidden file input. This ensures that when the input natively receives keyboard focus, the parent container visually highlights, providing a clear indication to the user.
