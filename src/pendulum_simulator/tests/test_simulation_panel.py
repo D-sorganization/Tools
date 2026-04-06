@@ -109,10 +109,8 @@ def mock_sim_kwargs() -> Any:
 
         def __init__(self):
             super().__init__()
-            self._btn_run = MagicMock()
-            self._log = MagicMock()
+            self.bind_objective_builder = MagicMock()
             self.set_objective_function = MagicMock()
-            self._on_run = MagicMock()
 
     opt = MockOpt()
 
@@ -381,16 +379,13 @@ def test_apply_optimized_coefficients(qapp, mock_sim_kwargs) -> Any:
 def test_patched_on_run_optimizer(qapp, mock_sim_kwargs) -> Any:
     panel = SimulationPanel(**mock_sim_kwargs)
 
-    # Access the patched on run method to cover lines 294-301
-    panel.optimizer._btn_run.clicked.emit()
+    panel.optimizer.bind_objective_builder.assert_called_once()
+    params_getter, objective_builder = panel.optimizer.bind_objective_builder.call_args[
+        0
+    ]
 
-    # Test ValueError
-    panel.controls.get_params = MagicMock(side_effect=ValueError("test val"))
-    panel.optimizer._btn_run.clicked.emit()
-
-    # Test AssertionError
-    panel.controls.get_params = MagicMock(side_effect=AssertionError("test err"))
-    panel.optimizer._btn_run.clicked.emit()
+    assert params_getter is panel.controls.get_params
+    assert objective_builder is panel.objective_builder
 
 
 def test_sim_worker() -> Any:

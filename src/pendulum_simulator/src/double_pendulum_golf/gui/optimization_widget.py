@@ -473,6 +473,8 @@ class OptimizationWidget(QWidget):
         self._model_name = model_name
         self._n_torque_params = n_torque_params
         self._objective_fn: Callable | None = None
+        self._params_getter: Callable[[], dict[str, Any]] | None = None
+        self._objective_builder: Callable[[dict[str, Any]], Callable] | None = None
         self._result: dict | None = None
         self._last_best_coeffs: np.ndarray | None = None
         self._convergence_history: list[float] = []
@@ -638,9 +640,40 @@ class OptimizationWidget(QWidget):
         """
         self._objective_fn = fn
 
+    def bind_objective_builder(
+        self,
+        params_getter: Callable[[], dict[str, Any]],
+        objective_builder: Callable[[dict[str, Any]], Callable],
+    ) -> None:
+        """Bind callables that rebuild the objective from current UI params."""
+        self._params_getter = params_getter
+        self._objective_builder = objective_builder
+
+    def append_status_message(self, message: str) -> None:
+        """Append a status message to the optimizer log."""
+        if not (message is not None):
+            raise ValueError("message must be provided")
+        self._log.append(message)
+
+    def _refresh_bound_objective(self) -> bool:
+        """Refresh the objective function from bound UI providers when present."""
+        if self._params_getter is None or self._objective_builder is None:
+            return True
+        try:
+            params = self._params_getter()
+            self.set_objective_function(self._objective_builder(params))
+        except (ValueError, AssertionError) as exc:
+            self.append_status_message(f"⚠ Cannot build objective: {exc}")
+            return False
+        return True
+
     def _on_run(self) -> None:
+        if not self._refresh_bound_objective():
+            return
         if self._objective_fn is None:
-            self._log.append("⚠ No objective function set. Run a simulation first.")
+            self.append_status_message(
+                "⚠ No objective function set. Run a simulation first."
+            )
             return
 
         n_params = self._n_torque_params * self._spin_degree.value()
@@ -654,17 +687,19 @@ class OptimizationWidget(QWidget):
         if self._chk_warm.isChecked() and self._last_best_coeffs is not None:
             if len(self._last_best_coeffs) == n_params:
                 warm_start = self._last_best_coeffs.copy()
-                self._log.append("🔄 Warm-starting from previous best solution")
+                self.append_status_message(
+                    "🔄 Warm-starting from previous best solution"
+                )
 
         self._log.clear()
-        self._log.append(f"Starting {method} optimization...")
-        self._log.append(
+        self.append_status_message(f"Starting {method} optimization...")
+        self.append_status_message(
             f"  Params: {n_params}, Generations: {n_iters}, Pop: {pop_size}"
         )
         if _HAS_NATIVE_BATCH and self._chk_native.isChecked():
-            self._log.append("  Backend: 🦀 Rust parallel (rayon)")
+            self.append_status_message("  Backend: 🦀 Rust parallel (rayon)")
         else:
-            self._log.append("  Backend: 🐍 Python sequential")
+            self.append_status_message("  Backend: 🐍 Python sequential")
         self._progress.setValue(0)
         self._convergence_history.clear()
         self._btn_run.setEnabled(False)
@@ -730,18 +765,22 @@ class OptimizationWidget(QWidget):
             self._last_best_coeffs = np.array(coeffs).copy()
 
         self._lbl_status.setText(f"{'✓' if success else '⚠'} Speed: {speed:.4f} m/s")
-        self._log.append(f"\n{'✓' if success else '⚠'} {method} optimization complete:")
-        self._log.append(f"  Max speed: {speed:.4f} m/s")
-        self._log.append(f"  Status: {msg}")
+        self.append_status_message(
+            f"\n{'✓' if success else '⚠'} {method} optimization complete:"
+        )
+        self.append_status_message(f"  Max speed: {speed:.4f} m/s")
+        self.append_status_message(f"  Status: {msg}")
 
         # Convergence summary
         if self._convergence_history:
             n_gens = len(self._convergence_history)
             best = min(self._convergence_history)
-            self._log.append(f"  Generations: {n_gens}, Best loss: {best:.6f}")
+            self.append_status_message(
+                f"  Generations: {n_gens}, Best loss: {best:.6f}"
+            )
 
         if coeffs is not None:
-            self._log.append(
+            self.append_status_message(
                 f"  Coefficients: {np.array2string(np.asarray(coeffs), precision=4)}"
             )
 
@@ -754,10 +793,12 @@ class OptimizationWidget(QWidget):
         self._btn_cancel.setEnabled(False)
         self._progress.setValue(0)
         self._lbl_status.setText("⚠ Error")
-        self._log.append(f"\n⚠ Optimization error: {msg}")
+        self.append_status_message(f"\n⚠ Optimization error: {msg}")
         logger.error("Optimization error: %s", msg)
 
     def _on_apply(self) -> None:
         if self._result is not None:
             self.optimized_coefficients.emit(self._result)
-            self._log.append("\n✓ Applied optimized coefficients to controls.")
+            self.append_status_message(
+                "\n✓ Applied optimized coefficients to controls."
+            )

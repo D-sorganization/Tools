@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.12                                     |
+| **Spec Version**        | 1.1.13                                     |
 | **Last Spec Update**    | 2026-04-05                                 |
 
 ## 2. Purpose & Mission
@@ -467,6 +467,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-05 | 1.1.10  | Standardize vessel drafter `require_positive` usage onto the fleet-wide `(value, name)` argument order while keeping guarded support for the legacy local order and adding regression tests for the signature normalization.                                                                                                                                                                                                                         |
 | 2026-04-05 | 1.1.11  | Deduplicate repeated scalar surface evaluator closures in `analysis_tab.py` by routing matrix and transformed-value cases through shared helper builders, with regression coverage for the new helper paths.                                                                                                                                                                                                                                          |
 | 2026-04-05 | 1.1.12  | Expand the embedded-suite discovery policy so root-level pytest ignores bridged `src/` suites by default while `pytest tests/` includes both pendulum and solar-system embedded tests through top-level bridge directories.                                                                                                                                                                                                                          |
+| 2026-04-05 | 1.1.13  | Move pendulum optimizer objective-refresh wiring behind a public `OptimizationWidget` API so `SimulationPanel` no longer reaches through private optimizer button and log internals before optimization runs.                                                                                                                                                                                                                                         |
 
 ---
 
