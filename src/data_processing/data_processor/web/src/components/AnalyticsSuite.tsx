@@ -315,26 +315,48 @@ function computeRegression(
     }
   } else {
     // Polynomial regression via normal equations
-    // Build Vandermonde matrix
-    const X: number[][] = xs.map((x) =>
-      Array.from({ length: degree + 1 }, (_, d) => x ** d),
-    );
-    // X^T X
-    const XtX: number[][] = Array.from({ length: degree + 1 }, (_, i) =>
-      Array.from({ length: degree + 1 }, (__, j) =>
-        X.reduce((s, row) => s + row[i] * row[j], 0),
-      ),
-    );
-    // X^T y
-    const XtY: number[] = Array.from({ length: degree + 1 }, (_, i) =>
-      X.reduce((s, row, k) => s + row[i] * ys[k], 0),
-    );
+    // ⚡ Bolt Optimization: Replace multiple .reduce()/.map() calls with a single-pass loop
+    // Performance impact: Drastically reduces array allocations and callback overhead for quadratic regressions.
+    const cols = degree + 1;
+    const XtX: number[][] = Array.from({ length: cols }, () => new Array(cols).fill(0));
+    const XtY: number[] = new Array(cols).fill(0);
+
+    for (let k = 0; k < n; k++) {
+      const x = xs[k];
+      const y = ys[k];
+
+      let x_i = 1;
+      for (let i = 0; i < cols; i++) {
+        XtY[i] += x_i * y;
+        let x_ij = x_i * x_i;
+        for (let j = i; j < cols; j++) {
+          XtX[i][j] += x_ij;
+          if (i !== j) {
+            XtX[j][i] += x_ij;
+          }
+          x_ij *= x;
+        }
+        x_i *= x;
+      }
+    }
 
     // Solve via Gaussian elimination
     coefficients = solveLinearSystem(XtX, XtY);
-    predictions = xs.map((x) =>
-      coefficients.reduce((s, c, d) => s + c * x ** d, 0),
-    );
+
+    // ⚡ Bolt Optimization: Replace map/reduce chains with a single-pass loop for predictions
+    // Performance impact: Speeds up prediction calculation by avoiding map/reduce allocations and optimizing polynomial evaluation.
+    predictions = new Array(n);
+    const p = coefficients.length;
+    for (let i = 0; i < n; i++) {
+      const x = xs[i];
+      let s = coefficients[0];
+      let x_pow = x;
+      for (let d = 1; d < p; d++) {
+        s += coefficients[d] * x_pow;
+        x_pow *= x;
+      }
+      predictions[i] = s;
+    }
   }
 
   // ⚡ Bolt Optimization: Use single-pass loops for residuals and sum of squares
