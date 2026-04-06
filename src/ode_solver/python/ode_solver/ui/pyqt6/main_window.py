@@ -32,6 +32,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.contracts import require
+
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {
     "rosewater": "#f5e0dc",
@@ -433,7 +435,12 @@ class ODESolverWindow(QMainWindow):
         return result
 
     def _solve(self) -> None:
-        """Solve the ODE system."""
+        """Solve the ODE system.
+
+        Pre: derivatives must be non-empty
+        Pre: t_end > t_start
+        Pre: num_points >= 2
+        """
         try:
             from upstream_drift_tools.process_calculators.ode_solver import (
                 ODESolver,
@@ -444,8 +451,7 @@ class ODESolverWindow(QMainWindow):
             parameters_str = self._parse_dict_input(self.parameters_edit.toPlainText())
             initial_str = self._parse_dict_input(self.initial_edit.toPlainText())
 
-            if not derivatives:
-                raise ValueError("No derivatives defined")
+            require(bool(derivatives), "No derivatives defined")
 
             # Convert parameters to floats
             parameters = {k: float(v) for k, v in parameters_str.items()}
@@ -461,6 +467,8 @@ class ODESolverWindow(QMainWindow):
             t_start = self.t_start_input.value()
             t_end = self.t_end_input.value()
             num_points = self.num_points_input.value()
+            require(t_end > t_start, "t_end must be greater than t_start", t_end)
+            require(num_points >= 2, "Need at least 2 points", num_points)
             t_eval = np.linspace(t_start, t_end, num_points)
 
             # Solve

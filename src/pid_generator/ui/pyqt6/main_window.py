@@ -29,6 +29,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.contracts import require
+
 logger = logging.getLogger(__name__)
 
 
@@ -119,6 +121,11 @@ class PIDGeneratorMainWindow(QMainWindow):
             self._out_edit.setText(path)
 
     def _generate(self) -> None:
+        """Generate P&ID from spec file.
+
+        Pre: spec_path must be a non-empty string pointing to an existing file
+        Pre: out_path must be a non-empty string
+        """
         spec_path = self._spec_edit.text().strip()
         out_path = self._out_edit.text().strip()
         profile_text = self._profile_combo.currentText()
@@ -134,6 +141,12 @@ class PIDGeneratorMainWindow(QMainWindow):
                 self, "Missing Output", "Please specify an output DXF path."
             )
             return
+
+        require(
+            Path(spec_path).exists(),
+            f"Spec file does not exist: {spec_path}",
+            spec_path,
+        )
 
         self._status_label.setText("Generating\u2026")
         QApplication.processEvents()

@@ -624,6 +624,72 @@ def launch_tool_by_name(tool_name: str) -> int:
     return launch_pyqt6_app(config)
 
 
+def make_launcher(gui_info_module: str) -> int:
+    """Convenience alias for ``make_pyqt6_launcher``.
+
+    Provided for symmetry with the ``launch_from_gui_info`` and
+    ``launch_web_from_gui_info`` helpers, and to establish a clear
+    single-name entry point for the launcher factory pattern::
+
+        #!/usr/bin/env python3
+        from _bootstrap import bootstrap
+        bootstrap(__file__)
+        import sys
+        from gui_launcher import make_launcher
+        if __name__ == "__main__":
+            sys.exit(make_launcher("my_tool.gui_registration"))
+
+    Args:
+        gui_info_module: Dotted module path to the gui_registration module.
+
+    Returns:
+        Application exit code (0 for success, 1 for error).
+    """
+    return make_pyqt6_launcher(gui_info_module)
+
+
+def generate_launch_script(
+    gui_info_module: str,
+    tool_display_name: str,
+) -> str:
+    """Generate the source text for a standard ``launch_pyqt6.py`` script.
+
+    Use this to create or update launch scripts programmatically::
+
+        text = generate_launch_script(
+            "my_tool.gui_registration",
+            "My Tool",
+        )
+        Path("launch_pyqt6.py").write_text(text)
+
+    Args:
+        gui_info_module: Dotted module path, e.g. ``"ode_solver.gui_registration"``.
+        tool_display_name: Human-readable name for the docstring.
+
+    Returns:
+        Complete Python source text for a launch_pyqt6.py file.
+    """
+    if not (gui_info_module is not None):
+        raise ValueError("gui_info_module must be provided")
+    return (
+        "#!/usr/bin/env python3\n"
+        f'"""Standalone PyQt6 launcher for {tool_display_name}."""\n'
+        "\n"
+        "from __future__ import annotations\n"
+        "\n"
+        "import sys\n"
+        "\n"
+        "from _bootstrap import bootstrap  # noqa: E402\n"
+        "\n"
+        "bootstrap(__file__)\n"
+        "\n"
+        "from gui_launcher import make_launcher  # noqa: E402\n"
+        "\n"
+        'if __name__ == "__main__":\n'
+        f'    sys.exit(make_launcher("{gui_info_module}"))\n'
+    )
+
+
 def make_pyqt6_launcher(gui_info_module: str) -> int:
     """Generic launcher factory that eliminates duplicate launch_pyqt6.py files.
 

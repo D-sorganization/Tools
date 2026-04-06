@@ -22,6 +22,8 @@ References:
 import logging
 import math
 
+from shared.python.contracts import require_positive
+
 from ....utils.unit_constants import R_UNIVERSAL_KMOL, STANDARD_GRAVITY
 from ...constants import (
     API_14E_C_CONTINUOUS,
@@ -330,20 +332,10 @@ def calculate_flow_properties(inputs: PressureDropInputs) -> FlowProperties:
         ValueError: If calculations fail
     """
     # DbC preconditions
-    if not (inputs.pipe_diameter > 0):
-        raise ValueError(f"Pipe diameter must be positive, got {inputs.pipe_diameter}")
-    if not (inputs.mass_flow_rate > 0):
-        raise ValueError(
-            f"Mass flow rate must be positive, got {inputs.mass_flow_rate}"
-        )
-    if not (inputs.inlet_temperature > 0):
-        raise ValueError(
-            f"Inlet temperature must be positive (K), got {inputs.inlet_temperature}"
-        )
-    if not (inputs.inlet_pressure > 0):
-        raise ValueError(
-            f"Inlet pressure must be positive, got {inputs.inlet_pressure}"
-        )
+    require_positive(inputs.pipe_diameter, "pipe_diameter")
+    require_positive(inputs.mass_flow_rate, "mass_flow_rate")
+    require_positive(inputs.inlet_temperature, "inlet_temperature")
+    require_positive(inputs.inlet_pressure, "inlet_pressure")
 
     # Calculate gas mixture properties (now includes gamma and speed of sound)
     gas_props = calculate_gas_properties(
@@ -362,12 +354,9 @@ def calculate_flow_properties(inputs: PressureDropInputs) -> FlowProperties:
     heat_capacity_ratio = gas_props["heat_capacity_ratio"]  # γ = Cp/Cv
 
     # DbC: intermediate invariants on physical properties
-    if not (density > 0):
-        raise ValueError(f"Gas density must be positive, got {density}")
-    if not (viscosity > 0):
-        raise ValueError(f"Gas viscosity must be positive, got {viscosity}")
-    if not (speed_of_sound > 0):
-        raise ValueError(f"Speed of sound must be positive, got {speed_of_sound}")
+    require_positive(density, "gas_density")
+    require_positive(viscosity, "gas_viscosity")
+    require_positive(speed_of_sound, "speed_of_sound")
 
     # Calculate flow velocity
     pipe_area = PI * (inputs.pipe_diameter**2) / 4.0

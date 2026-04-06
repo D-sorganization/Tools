@@ -480,5 +480,105 @@ class ControlsWidgetBase(QWidget):
             pass
         return parse_float(widget, label)  # type: ignore[arg-type]
 
+    def _build_sim_section_simple(self, default_duration: str = "2.0") -> QGroupBox:
+        """Build a simple Simulation section with just a Duration input.
+
+        Shared across triple and golfer models.  Double pendulum overrides
+        with its own version that includes dt.
+
+        Creates ``self.inp_tend`` (LabeledInput).
+        """
+        from .controls_utils import LabeledInput as _LI
+
+        box = QGroupBox("Simulation")
+        box.setStyleSheet(STYLE_GROUP)
+        layout = QVBoxLayout(box)
+        layout.setContentsMargins(4, 12, 4, 4)
+        self.inp_tend = _LI("Duration (s)", default_duration, "Total simulation time")
+        layout.addWidget(self.inp_tend)
+        return box
+
+    def _build_dissipation_section_ndof(
+        self,
+        joint_labels: list[str],
+        *,
+        viscous_prefix: str = "b",
+        coulomb_prefix: str = "μ",
+        default: str = "0.0",
+        include_coulomb: bool = True,
+    ) -> QGroupBox:
+        """Build an N-DOF dissipation section.
+
+        Parameters
+        ----------
+        joint_labels : list of joint display labels
+        viscous_prefix : attribute prefix for viscous damping inputs
+        coulomb_prefix : attribute prefix for Coulomb friction inputs
+        default : default value string
+        include_coulomb : whether to include Coulomb friction rows
+
+        Creates:
+            self.dissipation_viscous : list[LabeledInput]
+            self.dissipation_coulomb : list[LabeledInput] (if include_coulomb)
+        """
+        from .controls_utils import LabeledInput as _LI
+
+        box = QGroupBox("Dissipation")
+        box.setStyleSheet(STYLE_GROUP)
+        layout = QVBoxLayout(box)
+        layout.setContentsMargins(4, 12, 4, 4)
+        layout.setSpacing(3)
+
+        self.dissipation_viscous: list[_LI] = []
+        for i, label in enumerate(joint_labels):
+            attr_name = f"inp_{viscous_prefix}{i + 1}"
+            inp = _LI(
+                f"{viscous_prefix}{i + 1}",
+                default,
+                f"Viscous damping {label} (N·m·s)",
+            )
+            setattr(self, attr_name, inp)
+            self.dissipation_viscous.append(inp)
+            layout.addWidget(inp)
+
+        self.dissipation_coulomb: list[_LI] = []
+        if include_coulomb:
+            for i, label in enumerate(joint_labels):
+                attr_name = f"inp_{coulomb_prefix}{i + 1}"
+                inp = _LI(
+                    f"{coulomb_prefix}{i + 1}",
+                    default,
+                    f"Coulomb friction {label} (N·m)",
+                )
+                setattr(self, attr_name, inp)
+                self.dissipation_coulomb.append(inp)
+                layout.addWidget(inp)
+        return box
+
+    def _merge_ndof_limits_into_params(self, params: dict) -> dict:
+        """Merge torque clamp and joint limit results into params dict.
+
+        DRY helper for get_params() — the triple and golfer models both
+        use the same pattern to fold _parse_torque_limits() and
+        _parse_joint_limits() results into the parameter dict.
+        """
+        torque_lims = self._parse_torque_limits()
+        if torque_lims is not None:
+            params["enable_clamp"] = True
+            params["torque_limits"] = torque_lims
+        else:
+            params["enable_clamp"] = False
+
+        joint_lims = self._parse_joint_limits()
+        if joint_lims is not None:
+            mins_rad, maxs_rad, stiffness = joint_lims
+            params["enable_limits"] = True
+            params["limit_mins_rad"] = mins_rad
+            params["limit_maxs_rad"] = maxs_rad
+            params["limit_stiffness"] = stiffness
+        else:
+            params["enable_limits"] = False
+        return params
+
     def _update_torque_preview(self) -> None:
         """Update the torque preview widget.  Override in subclass if needed."""

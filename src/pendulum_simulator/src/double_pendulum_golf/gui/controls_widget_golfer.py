@@ -407,37 +407,25 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
         return box
 
     def _build_sim_section(self) -> QGroupBox:
-        box = QGroupBox("Simulation")
-        box.setStyleSheet(STYLE_GROUP)
-        layout = QVBoxLayout(box)
-        layout.setContentsMargins(4, 12, 4, 4)
-        self.inp_tend = LabeledInput("Duration (s)", "2.0", "Total time")
-        layout.addWidget(self.inp_tend)
-        return box
+        return self._build_sim_section_simple("2.0")
 
     def _build_dissipation_section(self) -> QGroupBox:
+        """Build dissipation section for 7-joint golfer model.
+
+        Uses named attributes (b_hub, b_rs, ...) for backward compatibility
+        with get_params() field access.
+        """
         box = QGroupBox("Dissipation")
         box.setStyleSheet(STYLE_GROUP)
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(3)
-        self.inp_b_hub = LabeledInput("b hub", "0.0", "Viscous (N·m·s)")
-        self.inp_b_rs = LabeledInput("b RS", "0.0", "Viscous (N·m·s)")
-        self.inp_b_re = LabeledInput("b RE", "0.0", "Viscous (N·m·s)")
-        self.inp_b_rh = LabeledInput("b RH", "0.0", "Viscous (N·m·s)")
-        self.inp_b_ls = LabeledInput("b LS", "0.0", "Viscous (N·m·s)")
-        self.inp_b_le = LabeledInput("b LE", "0.0", "Viscous (N·m·s)")
-        self.inp_b_lh = LabeledInput("b LH", "0.0", "Viscous (N·m·s)")
-        for w in [
-            self.inp_b_hub,
-            self.inp_b_rs,
-            self.inp_b_re,
-            self.inp_b_rh,
-            self.inp_b_ls,
-            self.inp_b_le,
-            self.inp_b_lh,
-        ]:
-            layout.addWidget(w)
+        _joint_suffixes = ["hub", "rs", "re", "rh", "ls", "le", "lh"]
+        _joint_labels = ["Hub", "RS", "RE", "RH", "LS", "LE", "LH"]
+        for suffix, label in zip(_joint_suffixes, _joint_labels):
+            inp = LabeledInput(f"b {label}", "0.0", "Viscous (N·m·s)")
+            setattr(self, f"inp_b_{suffix}", inp)
+            layout.addWidget(inp)
         return box
 
     # ── Abstract interface implementation ────────────────────────────
@@ -601,23 +589,5 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
         if params["grip_left"] > params["L_club"]:
             raise ValueError("grip_left must be ≤ L_club")
 
-        # Torque saturation — flat list → np.ndarray for physics
-        torque_lims = self._parse_torque_limits()
-        if torque_lims is not None:
-            params["enable_clamp"] = True
-            params["torque_limits"] = torque_lims  # list[float], len 7
-        else:
-            params["enable_clamp"] = False
-
-        # Joint angle limits — (mins_rad, maxs_rad, stiffness)
-        joint_lims = self._parse_joint_limits()
-        if joint_lims is not None:
-            mins_rad, maxs_rad, stiffness = joint_lims
-            params["enable_limits"] = True
-            params["limit_mins_rad"] = mins_rad
-            params["limit_maxs_rad"] = maxs_rad
-            params["limit_stiffness"] = stiffness
-        else:
-            params["enable_limits"] = False
-
-        return params
+        # Torque clamp / joint limits (DRY base class helper)
+        return self._merge_ndof_limits_into_params(params)

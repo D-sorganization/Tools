@@ -46,6 +46,8 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from shared.python.contracts import require, require_positive
+
 # Optional thermodynamic libraries for more accurate vapor pressure
 try:
     import thermo
@@ -433,16 +435,13 @@ class AcidGasDewpointCalculator:
         Returns:
             Dewpoint temperature in Celsius
         """
-        if partial_pressure_pa <= 0:
-            raise ValueError(
-                f"partial_pressure_pa must be > 0, got {partial_pressure_pa}"
-            )
-
-        if component not in self.antoine_constants:
-            raise ValueError(
-                f"unknown component: {component!r}, "
-                f"expected one of {list(self.antoine_constants.keys())}"
-            )
+        require_positive(partial_pressure_pa, "partial_pressure_pa")
+        require(
+            component in self.antoine_constants,
+            f"unknown component: {component!r}, "
+            f"expected one of {list(self.antoine_constants.keys())}",
+            component,
+        )
 
         # Convert partial pressure to mmHg for the Antoine equation
         p_mmHg = partial_pressure_pa / MMHG_TO_PA_CONV
@@ -527,13 +526,12 @@ class AcidGasDewpointCalculator:
         Returns:
             Comprehensive dewpoint results
         """
-        if pressure_bar <= 0:
-            raise ValueError(f"pressure_bar must be > 0, got {pressure_bar}")
-        if temperature_c + CELSIUS_TO_KELVIN_OFFSET <= 0:
-            raise ValueError(
-                f"temperature must yield a positive Kelvin value, "
-                f"got {temperature_c} C ({temperature_c + CELSIUS_TO_KELVIN_OFFSET} K)"
-            )
+        require_positive(pressure_bar, "pressure_bar")
+        require(
+            temperature_c + CELSIUS_TO_KELVIN_OFFSET > 0,
+            "temperature must yield a positive Kelvin value",
+            temperature_c,
+        )
 
         # Convert units
         pressure_pa = pressure_bar * BAR_TO_PA
