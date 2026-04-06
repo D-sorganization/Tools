@@ -1,31 +1,21 @@
-"""Unit conversion utilities for the pressure drop interface.
+"""Temperature and pressure unit converters for the pressure drop calculator.
 
-Internal submodule extracted from pressure_drop_interface.py to keep file
-size within the line budget.  Import these symbols via
-``pressure_drop_calculator.pressure_drop_interface`` (the public module)
-rather than directly from this private module.
+This module provides unit-conversion helpers that are used internally by
+pressure_drop_interface.py and may be imported directly by callers that only
+need unit conversion utilities.
 """
+
+from __future__ import annotations
 
 
 def _convert_temperature(value: float, from_unit: str, to_unit: str) -> float:
-    """Convert temperature between units.
-
-    Args:
-        value: Temperature value to convert
-        from_unit: Source unit ('K', 'C', 'F')
-        to_unit: Target unit ('K', 'C', 'F')
-
-    Returns:
-        Converted temperature value
-
-    Raises:
-        ValueError: If unit is not recognised
-    """
+    """Convert temperature between units."""
     if not (value is not None):
         raise ValueError("value must be provided")
     from_unit = from_unit.upper()
     to_unit = to_unit.upper()
 
+    # Convert to Kelvin first
     if from_unit == "K":
         temp_k = value
     elif from_unit == "C":
@@ -35,6 +25,7 @@ def _convert_temperature(value: float, from_unit: str, to_unit: str) -> float:
     else:
         raise ValueError(f"Unknown temperature unit: {from_unit}")
 
+    # Convert from Kelvin to target
     if to_unit == "K":
         return temp_k
     elif to_unit == "C":
@@ -46,19 +37,8 @@ def _convert_temperature(value: float, from_unit: str, to_unit: str) -> float:
 
 
 def _convert_pressure(value: float, from_unit: str, to_unit: str) -> float:
-    """Convert pressure between units.
-
-    Args:
-        value: Pressure value to convert
-        from_unit: Source unit (Pa, kPa, MPa, bar, mbar, atm, psi, psia, psig)
-        to_unit: Target unit (same options)
-
-    Returns:
-        Converted pressure value
-
-    Raises:
-        ValueError: If unit is not recognised
-    """
+    """Convert pressure between units."""
+    # Conversion factors to Pa
     to_pa = {
         "Pa": 1.0,
         "kPa": 1000.0,
@@ -68,7 +48,7 @@ def _convert_pressure(value: float, from_unit: str, to_unit: str) -> float:
         "atm": 101325.0,
         "psi": 6894.76,
         "psia": 6894.76,
-        "psig": 6894.76,  # Note: gauge pressure, caller should handle offset
+        "psig": 6894.76,  # Note: gauge pressure, user should handle
     }
 
     if from_unit not in to_pa:
