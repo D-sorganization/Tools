@@ -4,28 +4,25 @@ Convert tools_icon.png to high-quality ICO format for Windows shortcuts.
 """
 
 import logging
+from collections.abc import Callable
+from importlib import import_module
 from pathlib import Path
-
-# Use shared utility
-try:
-    from tools.icon_utils import convert_png_to_ico
-except ImportError:
-    # If package import fails (e.g. running script directly from repo root without install),
-    # try to import relative to script location
-    import sys
-
-    src_path = Path(__file__).resolve().parent / "src"
-    if src_path.exists():
-        sys.path.append(str(src_path))
-    from tools.icon_utils import convert_png_to_ico
+from typing import cast
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
+def load_convert_png_to_ico() -> Callable[[Path, Path], bool]:
+    """Load the icon conversion helper from the installed Tools package."""
+    module = import_module("tools.icon_utils")
+    return cast(Callable[[Path, Path], bool], module.convert_png_to_ico)
+
+
 def main() -> None:
     """Main conversion function."""
+    convert_png_to_ico = load_convert_png_to_ico()
     png_path = Path("tools_icon.png")
     ico_path = Path("tools_icon_hq.ico")
 

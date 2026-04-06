@@ -1,9 +1,12 @@
 import json
 import subprocess
 import time
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent
 
 
-def run_cmd(cmd, cwd=None, ignore_err=False):
+def run_cmd(cmd: str, cwd: Path | None = None, ignore_err: bool = False) -> str | None:
     try:
         result = subprocess.run(
             cmd,
@@ -20,8 +23,8 @@ def run_cmd(cmd, cwd=None, ignore_err=False):
         return None
 
 
-def main():
-    repo_path = "C:/Users/diete/Repositories/Tools"
+def main() -> None:
+    repo_path = REPO_ROOT
 
     # Fetch issues
     raw_issues = run_cmd(
