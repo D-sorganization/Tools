@@ -384,26 +384,23 @@ export function useDataProcessor() {
         const { filteredData } = state;
         if (filteredData.length === 0) return null;
 
-        let xData = filteredData.map((row) => row[config.xColumn] as number);
-        let yData = filteredData.map((row) => row[config.yColumn] as number);
+        // ⚡ Bolt Optimization: Replace 10 chained map/filter passes and intermediate object allocations
+        // with a single-pass loop. This drastically reduces massive GC overhead during interaction.
+        const xData: number[] = [];
+        const yData: number[] = [];
 
-        // Filter by range if specified
-        if (config.xMin !== undefined || config.xMax !== undefined) {
-          const filtered = xData.map((x, i) => ({ x, y: yData[i] }))
-            .filter(({ x }) => {
-              if (config.xMin !== undefined && x < config.xMin) return false;
-              if (config.xMax !== undefined && x > config.xMax) return false;
-              return true;
-            });
-          xData = filtered.map((d) => d.x);
-          yData = filtered.map((d) => d.y);
+        for (let i = 0; i < filteredData.length; i++) {
+          const row = filteredData[i];
+          const x = row[config.xColumn] as number;
+          const y = row[config.yColumn] as number;
+
+          if (Number.isNaN(x) || Number.isNaN(y)) continue;
+          if (config.xMin !== undefined && x < config.xMin) continue;
+          if (config.xMax !== undefined && x > config.xMax) continue;
+
+          xData.push(x);
+          yData.push(y);
         }
-
-        // Filter out NaN values
-        const validData = xData.map((x, i) => ({ x, y: yData[i] }))
-          .filter(({ x, y }) => !isNaN(x) && !isNaN(y));
-        xData = validData.map((d) => d.x);
-        yData = validData.map((d) => d.y);
 
         if (xData.length < 2) return null;
 
