@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.8                                      |
+| **Spec Version**        | 1.1.9                                      |
 | **Last Spec Update**    | 2026-04-05                                 |
 
 ## 2. Purpose & Mission
@@ -463,6 +463,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-05 | 1.1.6   | Optimize DataChart point extraction loop to explicitly map selected properties instead of using an object spread on the entire row in `src/data_processing/data_processor/web/src/components/DataChart.tsx`.                                                                                                                                                                                                                                           |
 | 2026-04-05 | 1.1.7   | Improve HelpPanel accessibility by adding ARIA expanded states and control links to accordion toggles, and adding explicit focus-visible rings for keyboard users.                                                                                                                                                                                                                                                                                     |
 | 2026-04-05 | 1.1.8   | Optimize PlotView WebGL rendering to use Float64Array and bypass map array creation overhead.                                                                                                                                                                                                                                                                                                                                                          |
+| 2026-04-05 | 1.1.9   | Bridge the embedded `src/pendulum_simulator/tests` suite into the top-level `tests/` tree so standard `pytest tests/` collection includes pendulum coverage without double-collecting the same files during root-level pytest runs.                                                                                                                                                                                                                 |
 
 ---
 
