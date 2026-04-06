@@ -180,3 +180,27 @@ def test_optimization_widget_ui(mock_start, qapp) -> Any:
     # Clean up what happens when cancel is pressed
     # the worker internally receives cancel
     assert w._worker._cancelled is True
+
+
+def test_optimization_widget_bound_objective_builder(qapp) -> Any:
+    w = OptimizationWidget("Test Model", 2)
+    params_getter = MagicMock(return_value={"gain": 3.0})
+    objective_builder = MagicMock(return_value=dummy_objective)
+
+    w.bind_objective_builder(params_getter, objective_builder)
+    assert w._refresh_bound_objective() is True
+
+    params_getter.assert_called_once()
+    objective_builder.assert_called_once_with({"gain": 3.0})
+    assert w._objective_fn is dummy_objective
+
+
+def test_optimization_widget_bound_objective_builder_error(qapp) -> Any:
+    w = OptimizationWidget("Test Model", 2)
+    params_getter = MagicMock(side_effect=ValueError("bad params"))
+    objective_builder = MagicMock()
+
+    w.bind_objective_builder(params_getter, objective_builder)
+
+    assert w._refresh_bound_objective() is False
+    assert "Cannot build objective" in w._log.toPlainText()
