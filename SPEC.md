@@ -473,6 +473,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-06 | 1.1.14 | Remove developer-machine repository paths from maintenance scripts and eliminate the local sys.path bootstrap fallback from convert_tools_icon.py. |
 | 2026-04-06 | 1.1.15 | Replace chained array map and filter operations with a single loop in the calculateTrendline algorithm to prevent memory allocation and garbage collection overhead. |
 | 2026-04-06 | 1.1.16 | Add focus-within styles to video uploader dropzone and missing aria-labels to the volume and seek range inputs in the video processor web application to improve keyboard navigation visibility. |
+| 2026-04-06 | 1.1.17 | Optimize Polynomial Regression Matrix Construction in AnalyticsSuite using single-pass loops. |
 
 ---
 
