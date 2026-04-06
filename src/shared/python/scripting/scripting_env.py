@@ -37,20 +37,6 @@ from typing import Any
 
 import numpy as np
 
-USER_CODE_ERROR_TYPES = (
-    ArithmeticError,
-    AssertionError,
-    AttributeError,
-    ImportError,
-    LookupError,
-    NameError,
-    OSError,
-    RuntimeError,
-    SyntaxError,
-    TypeError,
-    ValueError,
-)
-
 try:
     import pandas as pd
 
@@ -152,12 +138,10 @@ class ConsoleEnvironment:
         try:
             # Execute within current namespace so imports/functions are persistent
             exec(code, self.namespace)  # nosec B102
-        except Exception:  # noqa: BLE001
-            import traceback
+        except Exception as e:  # noqa: BLE001
+            sys.stderr.write(f"Error loading user library: {e}\n")
 
-            traceback.print_exc(file=sys.stderr)
-
-    def execute(self, source: str | None) -> tuple[str, str]:
+    def execute(self, source: str) -> tuple[str, str]:
         """Execute a block of source code, capturing stdout and stderr.
 
         Args:
@@ -166,8 +150,7 @@ class ConsoleEnvironment:
         Returns:
             (stdout_output, stderr_output)
         """
-        if source is None:
-            raise ValueError("source must be provided")
+        assert source is not None, "source must be provided"
         if not source.strip():
             return "", ""
 
@@ -190,11 +173,10 @@ class ConsoleEnvironment:
                     code_obj = compile(source, "<console>", "exec")
                     exec(code_obj, self.namespace)  # nosec B102
 
-        except (KeyboardInterrupt, SystemExit):
-            raise
-        except USER_CODE_ERROR_TYPES:
-            # Expected user-code failures are formatted REPL-style so the
-            # console displays them without crashing the host application.
+        except Exception:  # noqa: BLE001
+            # Intentional broad catch: any user-code error is captured and
+            # formatted REPL-style so the console displays it rather than
+            # crashing the host application.
             exc_type, exc_value, exc_traceback = sys.exc_info()
             if exc_traceback:
                 # Skip the context wrapper internal frames
