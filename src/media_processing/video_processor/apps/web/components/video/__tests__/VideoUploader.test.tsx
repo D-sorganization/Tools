@@ -9,7 +9,7 @@ import VideoUploader from '../VideoUploader';
 import { createMockFile } from '@/test/utils';
 
 describe('VideoUploader', () => {
-  let onVideoUpload: ReturnType<typeof vi.fn>;
+  let onVideoUpload: (file: File) => void;
 
   beforeEach(() => {
     onVideoUpload = vi.fn();

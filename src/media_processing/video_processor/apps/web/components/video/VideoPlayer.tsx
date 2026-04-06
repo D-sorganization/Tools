@@ -162,7 +162,8 @@ export default function VideoPlayer({
             max={duration || 0}
             value={currentTime}
             onChange={handleSeek}
-            className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+            aria-label="Seek video"
+            className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
           />
           <span className="text-sm text-gray-600 min-w-[80px] text-right">
             {formatTime(currentTime)} / {formatTime(duration)}
@@ -218,7 +219,8 @@ export default function VideoPlayer({
                 step="0.01"
                 value={isMuted ? 0 : volume}
                 onChange={handleVolumeChange}
-                className="w-24 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                aria-label="Volume"
+                className="w-24 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               />
             </div>
           </div>
