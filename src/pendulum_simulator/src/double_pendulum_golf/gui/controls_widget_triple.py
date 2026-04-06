@@ -290,36 +290,14 @@ class ControlsWidgetTriple(ControlsWidgetBase):
         return box
 
     def _build_sim_section(self) -> QGroupBox:
-        box = QGroupBox("Simulation")
-        box.setStyleSheet(STYLE_GROUP)
-        layout = QVBoxLayout(box)
-        layout.setContentsMargins(4, 12, 4, 4)
-        self.inp_tend = LabeledInput("Duration (s)", "2.0", "Total simulation time")
-        layout.addWidget(self.inp_tend)
-        return box
+        return self._build_sim_section_simple("2.0")
 
     def _build_dissipation_section(self) -> QGroupBox:
-        box = QGroupBox("Dissipation")
-        box.setStyleSheet(STYLE_GROUP)
-        layout = QVBoxLayout(box)
-        layout.setContentsMargins(4, 12, 4, 4)
-        layout.setSpacing(3)
-        self.inp_b1 = LabeledInput("b1", "0.0", "Viscous damping shoulder (N·m·s)")
-        self.inp_b2 = LabeledInput("b2", "0.0", "Viscous damping elbow (N·m·s)")
-        self.inp_b3 = LabeledInput("b3", "0.0", "Viscous damping wrist (N·m·s)")
-        self.inp_mu1 = LabeledInput("μ1", "0.0", "Coulomb friction shoulder (N·m)")
-        self.inp_mu2 = LabeledInput("μ2", "0.0", "Coulomb friction elbow (N·m)")
-        self.inp_mu3 = LabeledInput("μ3", "0.0", "Coulomb friction wrist (N·m)")
-        for w in [
-            self.inp_b1,
-            self.inp_b2,
-            self.inp_b3,
-            self.inp_mu1,
-            self.inp_mu2,
-            self.inp_mu3,
-        ]:
-            layout.addWidget(w)
-        return box
+        return self._build_dissipation_section_ndof(
+            ["shoulder", "elbow", "wrist"],
+            viscous_prefix="b",
+            coulomb_prefix="mu",
+        )
 
     # ── Abstract interface implementation ────────────────────────────
 
@@ -406,10 +384,6 @@ class ControlsWidgetTriple(ControlsWidgetBase):
         require_positive(L2, "L2")
         require_positive(L3, "L3")
 
-        # Torque clamp / joint limits (N-DOF base class helpers)
-        torque_lims = self._parse_torque_limits()
-        joint_lims = self._parse_joint_limits()
-
         result = {
             "m1": m1,
             "m2": m2,
@@ -437,24 +411,8 @@ class ControlsWidgetTriple(ControlsWidgetBase):
             "scapula_deg": parse_float(self.inp_scapula, "Scapula"),
         }
 
-        # Torque saturation — flat list → np.ndarray for physics
-        if torque_lims is not None:
-            result["enable_clamp"] = True
-            result["torque_limits"] = torque_lims  # list[float], len 3
-        else:
-            result["enable_clamp"] = False
-
-        # Joint angle limits — (mins_rad, maxs_rad, stiffness)
-        if joint_lims is not None:
-            mins_rad, maxs_rad, stiffness = joint_lims
-            result["enable_limits"] = True
-            result["limit_mins_rad"] = mins_rad
-            result["limit_maxs_rad"] = maxs_rad
-            result["limit_stiffness"] = stiffness
-        else:
-            result["enable_limits"] = False
-
-        return result
+        # Torque clamp / joint limits (DRY base class helper)
+        return self._merge_ndof_limits_into_params(result)
 
     def _update_torque_preview(self) -> None:
         try:

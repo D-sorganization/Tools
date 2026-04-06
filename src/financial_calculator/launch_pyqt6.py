@@ -9,7 +9,7 @@ from _bootstrap import bootstrap  # noqa: E402
 
 bootstrap(__file__)
 
-from gui_launcher import make_pyqt6_launcher  # noqa: E402
+from gui_launcher import make_launcher  # noqa: E402
 
 if __name__ == "__main__":
-    sys.exit(make_pyqt6_launcher("financial_calculator.gui_registration"))
+    sys.exit(make_launcher("financial_calculator.gui_registration"))

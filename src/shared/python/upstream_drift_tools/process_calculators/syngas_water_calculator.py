@@ -21,6 +21,8 @@ from typing import Any  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
+from shared.python.contracts import require, require_positive  # noqa: E402
+
 from .constants import (  # noqa: E402
     ANTOINE_WATER_A,
     ANTOINE_WATER_B,
@@ -446,8 +448,8 @@ class SyngasWaterCalculator:
             Dew point temperature in Celsius
         """
         # Use Buck equation inverse
-        if not (partial_pressure_pa is not None):
-            raise ValueError("partial_pressure_pa must be provided")
+        require_positive(partial_pressure_pa, "partial_pressure_pa")
+        require_positive(total_pressure_pa, "total_pressure_pa")
         p_kpa = partial_pressure_pa / 1000
 
         # Newton-Raphson iteration for dew point
@@ -493,9 +495,14 @@ class SyngasWaterCalculator:
         Returns:
             WaterContentResult with all calculated values
         """
+        # DbC preconditions
+        require_positive(pressure_bar, "pressure_bar")
+        require(
+            temperature_c + CELSIUS_TO_KELVIN_OFFSET > 0,
+            "temperature must yield a positive Kelvin value",
+            temperature_c,
+        )
         # Get composition
-        if not (temperature_c is not None):
-            raise ValueError("temperature_c must be provided")
         if isinstance(gas_composition, str):
             comp = SYNGAS_PRESETS.get(gas_composition, SYNGAS_PRESETS["typical_syngas"])
             comp_name = gas_composition
