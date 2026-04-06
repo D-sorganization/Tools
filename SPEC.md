@@ -471,6 +471,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-05 | 1.1.12  | Expand the embedded-suite discovery policy so root-level pytest ignores bridged `src/` suites by default while `pytest tests/` includes both pendulum and solar-system embedded tests through top-level bridge directories.                                                                                                                                                                                                                          |
 | 2026-04-05 | 1.1.13 | Move pendulum optimizer objective-refresh wiring behind a public `OptimizationWidget` API so `SimulationPanel` no longer reaches through private optimizer button and log internals before optimization runs. |
 | 2026-04-06 | 1.1.14 | Remove developer-machine repository paths from maintenance scripts and eliminate the local sys.path bootstrap fallback from convert_tools_icon.py. |
+| 2026-04-06 | 1.1.15 | Replace chained array map and filter operations with a single loop in the calculateTrendline algorithm to prevent memory allocation and garbage collection overhead. |
 
 ---
 
