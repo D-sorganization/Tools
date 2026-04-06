@@ -395,8 +395,10 @@ class AnalysisTab:
             raise ValueError("x_key must be provided")
         x_vals = np.linspace(x_range[0], x_range[1], n_pts)
         y_vals = np.linspace(y_range[0], y_range[1], n_pts)
+        X: np.ndarray
+        Y: np.ndarray
         X, Y = np.meshgrid(x_vals, y_vals)
-        Z = np.zeros_like(X)
+        Z: np.ndarray = np.zeros_like(X)
 
         # Compute Z values via the appropriate physics function
         evaluator = self._get_surface_evaluator(z_key)
@@ -462,28 +464,22 @@ class AnalysisTab:
         )
 
         if z_key == "mass_matrix_det":
-
-            def _eval(angles: dict) -> float:
-                M = mass_matrix(angles.get("phi", 0.0), params)
-                return float(np.linalg.det(M))
-
-            return _eval
+            return self._matrix_metric_evaluator(
+                lambda angles: mass_matrix(angles.get("phi", 0.0), params),
+                np.linalg.det,
+            )
         if z_key == "mass_matrix_cond":
-
-            def _eval(angles: dict) -> float:
-                M = mass_matrix(angles.get("phi", 0.0), params)
-                return float(np.linalg.cond(M))
-
-            return _eval
+            return self._matrix_metric_evaluator(
+                lambda angles: mass_matrix(angles.get("phi", 0.0), params),
+                np.linalg.cond,
+            )
         if z_key == "potential_energy":
-
-            def _eval(angles: dict) -> float:
-                state = np.array(
+            return self._transformed_scalar_evaluator(
+                lambda angles: np.array(
                     [angles.get("theta1", 0.0), angles.get("phi", 0.0), 0.0, 0.0]
-                )
-                return potential_energy(state, params)
-
-            return _eval
+                ),
+                lambda state: potential_energy(state, params),
+            )
         if z_key == "manipulability":
             return self._numerical_manipulability(
                 lambda a: forward_kinematics(a["theta1"], a["phi"], params),
@@ -517,23 +513,22 @@ class AnalysisTab:
         )
 
         if z_key == "mass_matrix_det":
-
-            def _eval(angles: dict) -> float:
-                M = triple_mm(angles.get("phi1", 0.0), angles.get("phi2", 0.0), params)
-                return float(np.linalg.det(M))
-
-            return _eval
+            return self._matrix_metric_evaluator(
+                lambda angles: triple_mm(
+                    angles.get("phi1", 0.0), angles.get("phi2", 0.0), params
+                ),
+                np.linalg.det,
+            )
         if z_key == "mass_matrix_cond":
-
-            def _eval(angles: dict) -> float:
-                M = triple_mm(angles.get("phi1", 0.0), angles.get("phi2", 0.0), params)
-                return float(np.linalg.cond(M))
-
-            return _eval
+            return self._matrix_metric_evaluator(
+                lambda angles: triple_mm(
+                    angles.get("phi1", 0.0), angles.get("phi2", 0.0), params
+                ),
+                np.linalg.cond,
+            )
         if z_key == "potential_energy":
-
-            def _eval(angles: dict) -> float:
-                state = np.array(
+            return self._transformed_scalar_evaluator(
+                lambda angles: np.array(
                     [
                         angles.get("theta1", 0.0),
                         angles.get("phi1", 0.0),
@@ -542,10 +537,9 @@ class AnalysisTab:
                         0.0,
                         0.0,
                     ]
-                )
-                return triple_pe(state, params)
-
-            return _eval
+                ),
+                lambda state: triple_pe(state, params),
+            )
         if z_key == "manipulability":
             return self._numerical_manipulability(
                 lambda a: triple_fk(
@@ -587,28 +581,20 @@ class AnalysisTab:
         )
 
         if z_key == "mass_matrix_det":
-
-            def _eval(angles: dict) -> float:
-                q = self._golfer_q_from_angles(angles)
-                M = golfer_mm(q, params)
-                return float(np.linalg.det(M))
-
-            return _eval
+            return self._q_scalar_evaluator(
+                self._golfer_q_from_angles,
+                lambda q: np.linalg.det(golfer_mm(q, params)),
+            )
         if z_key == "mass_matrix_cond":
-
-            def _eval(angles: dict) -> float:
-                q = self._golfer_q_from_angles(angles)
-                M = golfer_mm(q, params)
-                return float(np.linalg.cond(M))
-
-            return _eval
+            return self._q_scalar_evaluator(
+                self._golfer_q_from_angles,
+                lambda q: np.linalg.cond(golfer_mm(q, params)),
+            )
         if z_key == "potential_energy":
-
-            def _eval(angles: dict) -> float:
-                q = self._golfer_q_from_angles(angles)
-                return potential_energy_from_q(q, params)
-
-            return _eval
+            return self._q_scalar_evaluator(
+                self._golfer_q_from_angles,
+                lambda q: potential_energy_from_q(q, params),
+            )
         if z_key == "manipulability":
             try:
                 from ..golfer_dynamics import analytical_fk_jacobians
@@ -635,6 +621,33 @@ class AnalysisTab:
         except AttributeError:
             pass
         return default_factory()
+
+    @staticmethod
+    def _matrix_metric_evaluator(matrix_builder: Any, metric: Any) -> Any:
+        """Return an evaluator that applies a scalar metric to a matrix."""
+
+        def _eval(angles: dict) -> float:
+            return float(metric(matrix_builder(angles)))
+
+        return _eval
+
+    @staticmethod
+    def _transformed_scalar_evaluator(value_builder: Any, scalar_fn: Any) -> Any:
+        """Return an evaluator that transforms angles before a scalar call."""
+
+        def _eval(angles: dict) -> float:
+            return float(scalar_fn(value_builder(angles)))
+
+        return _eval
+
+    @staticmethod
+    def _q_scalar_evaluator(q_builder: Any, scalar_fn: Any) -> Any:
+        """Return an evaluator that computes a q vector before a scalar call."""
+
+        def _eval(angles: dict) -> float:
+            return float(scalar_fn(q_builder(angles)))
+
+        return _eval
 
     @staticmethod
     def _golfer_q_from_angles(angles: dict) -> np.ndarray:
@@ -713,7 +726,7 @@ class AnalysisTab:
         ax.zaxis.pane.fill = False  # type: ignore[attr-defined]
 
         # Mask NaN for cleaner rendering
-        Z_masked = np.ma.array(Z, mask=~np.isfinite(Z))
+        Z_masked: np.ma.MaskedArray[Any] = np.ma.array(Z, mask=~np.isfinite(Z))
 
         ax.plot_surface(  # type: ignore[attr-defined]
             X,
