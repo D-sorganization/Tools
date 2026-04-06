@@ -28,6 +28,8 @@ try:
         PreconditionError,
         ensure,
         require,
+    )
+    from contracts import (
         require_positive as _shared_require_positive,
     )
 except ImportError:
@@ -42,17 +44,17 @@ except ImportError:
                 detail += f" (got: {value!r})"
             super().__init__(detail)
 
-    def require(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]
+    def require(condition: bool, message: str, value: Any = None) -> None:
         """Assert a pre-condition (standard bool-style API)."""
         if not condition:
             raise PreconditionError(message, value)
 
-    def ensure(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]
+    def ensure(condition: bool, message: str, value: Any = None) -> None:
         """Assert a post-condition (standard bool-style API)."""
         if not condition:
             raise ValueError(f"[DbC post-condition] {message}")
 
-    def _shared_require_positive(value: float, name: str = "value") -> None:  # type: ignore[misc]
+    def _shared_require_positive(value: float, name: str = "value") -> None:
         """Require that *value* is strictly positive."""
         if value <= 0:
             raise PreconditionError(f"{name} must be positive (got {value})")
