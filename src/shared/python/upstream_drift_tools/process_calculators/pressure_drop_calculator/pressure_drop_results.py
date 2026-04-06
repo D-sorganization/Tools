@@ -1,11 +1,10 @@
-#!/usr/bin/env python3
-"""Result-formatting and print helpers for the pressure drop interface.
+"""Result formatting and rendering helpers for the pressure drop calculator.
 
-Internal submodule extracted from pressure_drop_interface.py to keep file size
-within the 1200-line budget.  Import these symbols via
-``pressure_drop_calculator.pressure_drop_interface`` (the public module)
-rather than directly from this private module.
+This module contains ``_format_results``, all ``_print_*`` helpers,
+``print_results``, ``_generate_recommendations``, and ``_wrap_text``.
 """
+
+from __future__ import annotations
 
 import logging
 from typing import Any
@@ -13,14 +12,10 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 
-# ============================================================================
-# RESULT FORMATTING UTILITIES
-# ============================================================================
-
-
 def _wrap_text(text: str, width: int) -> list[str]:
     """Wrap text to specified width."""
-    assert text is not None, "text must be provided"
+    if not (text is not None):
+        raise ValueError("text must be provided")
     words = text.split()
     lines = []
     current_line = ""
@@ -165,11 +160,11 @@ def _print_safety_section(results: dict[str, Any]) -> None:
 
     erosion_ratio = results["erosion_ratio_percent"]
     if erosion_ratio < 50:
-        erosion_status = "SAFE"
+        erosion_status = "✅ SAFE"
     elif erosion_ratio < 80:
-        erosion_status = "CAUTION"
+        erosion_status = "⚠️  CAUTION"
     else:
-        erosion_status = "DANGER"
+        erosion_status = "❌ DANGER"
 
     logger.info(
         f"│  Erosional Velocity: {results['erosional_velocity_m_s']:9.2f} m/s   │  Status: {erosion_status:26s}  │"
@@ -178,6 +173,64 @@ def _print_safety_section(results: dict[str, Any]) -> None:
         f"│  Erosion Ratio:      {erosion_ratio:9.1f} %     │  (Velocity/Erosional limit)         │"
     )
     logger.info("└" + "─" * 38 + "┴" + "─" * 39 + "┘")
+
+
+def _print_warnings_and_recommendations(
+    results: dict[str, Any], show_recommendations: bool
+) -> None:
+    """Log warnings and engineering recommendations."""
+    if not (results is not None):
+        raise ValueError("results must be provided")
+    if results.get("warnings"):
+        warnings = results["warnings"]
+        if isinstance(warnings, list) and len(warnings) > 0:
+            logger.info("\n┌" + "─" * 78 + "┐")
+            logger.warning("│" + " ⚠️  WARNINGS ".center(78) + "│")
+            logger.info("├" + "─" * 78 + "┤")
+            for warning in warnings:
+                wrapped = _wrap_text(warning, 74)
+                for line in wrapped:
+                    logger.info(f"│  {line:74s}  │")
+            logger.info("└" + "─" * 78 + "┘")
+
+    if show_recommendations:
+        recommendations = _generate_recommendations(results)
+        if recommendations:
+            logger.info("\n┌" + "─" * 78 + "┐")
+            logger.info("│" + " 💡 RECOMMENDATIONS ".center(78) + "│")
+            logger.info("├" + "─" * 78 + "┤")
+            for rec in recommendations:
+                wrapped = _wrap_text(rec, 74)
+                for line in wrapped:
+                    logger.info(f"│  {line:74s}  │")
+            logger.info("└" + "─" * 78 + "┘")
+
+
+def print_results(
+    results: dict[str, Any],
+    title: str = "PRESSURE DROP CALCULATION RESULTS",
+    show_recommendations: bool = True,
+) -> None:
+    """Print results in a beautifully formatted table with recommendations.
+
+    Args:
+        results: Results dictionary from calculate_pressure_drop
+        title: Title for the output
+        show_recommendations: Whether to show engineering recommendations
+    """
+    if not (results is not None):
+        raise ValueError("results must be provided")
+    logger.info("\n" + "═" * 80)
+    logger.info(f"  {title}  ".center(80, "═"))
+    logger.info("═" * 80)
+
+    _print_summary_section(results)
+    _print_breakdown_section(results)
+    _print_flow_and_gas_sections(results)
+    _print_safety_section(results)
+    _print_warnings_and_recommendations(results, show_recommendations)
+
+    logger.info("═" * 80 + "\n")
 
 
 def _generate_recommendations(results: dict[str, Any]) -> list[str]:
@@ -236,59 +289,3 @@ def _generate_recommendations(results: dict[str, Any]) -> list[str]:
         )
 
     return recommendations
-
-
-def _print_warnings_and_recommendations(
-    results: dict[str, Any], show_recommendations: bool
-) -> None:
-    """Log warnings and engineering recommendations."""
-    assert results is not None, "results must be provided"
-    if results.get("warnings"):
-        warnings = results["warnings"]
-        if isinstance(warnings, list) and len(warnings) > 0:
-            logger.info("\n┌" + "─" * 78 + "┐")
-            logger.warning("│" + " WARNINGS ".center(78) + "│")
-            logger.info("├" + "─" * 78 + "┤")
-            for warning in warnings:
-                wrapped = _wrap_text(warning, 74)
-                for line in wrapped:
-                    logger.info(f"│  {line:74s}  │")
-            logger.info("└" + "─" * 78 + "┘")
-
-    if show_recommendations:
-        recommendations = _generate_recommendations(results)
-        if recommendations:
-            logger.info("\n┌" + "─" * 78 + "┐")
-            logger.info("│" + " RECOMMENDATIONS ".center(78) + "│")
-            logger.info("├" + "─" * 78 + "┤")
-            for rec in recommendations:
-                wrapped = _wrap_text(rec, 74)
-                for line in wrapped:
-                    logger.info(f"│  {line:74s}  │")
-            logger.info("└" + "─" * 78 + "┘")
-
-
-def print_results(
-    results: dict[str, Any],
-    title: str = "PRESSURE DROP CALCULATION RESULTS",
-    show_recommendations: bool = True,
-) -> None:
-    """Print results in a beautifully formatted table with recommendations.
-
-    Args:
-        results: Results dictionary from calculate_pressure_drop
-        title: Title for the output
-        show_recommendations: Whether to show engineering recommendations
-    """
-    assert results is not None, "results must be provided"
-    logger.info("\n" + "=" * 80)
-    logger.info(f"  {title}  ".center(80, "="))
-    logger.info("=" * 80)
-
-    _print_summary_section(results)
-    _print_breakdown_section(results)
-    _print_flow_and_gas_sections(results)
-    _print_safety_section(results)
-    _print_warnings_and_recommendations(results, show_recommendations)
-
-    logger.info("=" * 80 + "\n")

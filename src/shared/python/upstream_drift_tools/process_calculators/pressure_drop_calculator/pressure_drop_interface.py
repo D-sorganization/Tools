@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 """User-friendly Python interface for advanced pressure drop calculator.
 
-This module was refactored from a single 1390-line file into focused submodules
-to comply with the line budget:
+Refactored from a single 1407-line file into focused submodules (issue #1952):
 
-    _pdi_helpers         — show_help, list_*, compare_friction_methods
-    _pdi_formatters      — _format_results, print_results, _print_*,
-                           _generate_recommendations
-    _pdi_validators      — validate_inputs, _validate_* helpers
-    _pdi_unit_converters — _convert_temperature, _convert_pressure
+    pressure_drop_units.py      — _convert_temperature, _convert_pressure
+    pressure_drop_validation.py — validate_inputs, _validate_* helpers
+    pressure_drop_results.py    — _format_results, print_results, _print_*,
+                                   _generate_recommendations, _wrap_text
 
 All public symbols remain importable from this module.
 
@@ -26,7 +24,6 @@ QUICK START:
     ...     pressure=10,  # bar
     ...     temperature=500  # K
     ... )
-    >>> print(f"Pressure drop: {result['pressure_drop_bar']:.4f} bar")
 
 AVAILABLE UNITS:
     - Temperature: K, C, F
@@ -48,7 +45,21 @@ GAS COMPONENTS:
 import logging
 from typing import Any
 
-from ._pdi_formatters import (  # noqa: F401
+from .engine.pressure_drop_calculation_engine import (
+    PressureDropCalculationEngine,
+    friction_factor_churchill,
+    friction_factor_colebrook,
+    friction_factor_haaland,
+    friction_factor_swamee_jain,
+)
+from .models.pressure_drop_data_models import (
+    GasComposition,
+    PipeFitting,
+    PressureDropInputs,
+)
+
+# Re-export submodule symbols so callers that import from here continue to work
+from .pressure_drop_results import (  # noqa: F401
     _format_results,
     _generate_recommendations,
     _print_breakdown_section,
@@ -59,22 +70,11 @@ from ._pdi_formatters import (  # noqa: F401
     _wrap_text,
     print_results,
 )
-
-# Re-export helpers and formatters (public API unchanged)
-from ._pdi_helpers import (  # noqa: F401
-    compare_friction_methods,
-    list_fittings,
-    list_flow_units,
-    list_gas_components,
-    list_materials,
-    list_pipe_sizes,
-    show_help,
-)
-from ._pdi_unit_converters import (  # noqa: F401
+from .pressure_drop_units import (  # noqa: F401
     _convert_pressure,
     _convert_temperature,
 )
-from ._pdi_validators import (  # noqa: F401
+from .pressure_drop_validation import (  # noqa: F401
     _log_validation_report,
     _validate_composition_and_fittings,
     _validate_conditions,
@@ -82,27 +82,343 @@ from ._pdi_validators import (  # noqa: F401
     _validate_pipe_params,
     validate_inputs,
 )
-from .engine.pressure_drop_calculation_engine import (
-    PressureDropCalculationEngine,
-)
-from .models.pressure_drop_data_models import (
-    GasComposition,
-    PipeFitting,
-    PressureDropInputs,
-)
 from .utils.fitting_loss_coefficients import FITTING_K_FACTORS
 from .utils.flow_rate_converter import (
+    MASS_FLOW_CONVERSIONS,
+    MOLAR_FLOW_CONVERSIONS,
+    STANDARD_CONDITIONS,
+    VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S,
     convert_flow_rate_to_mass,
 )
 from .utils.gas_properties import (
+    GAS_DATABASE,
     calculate_mixture_molecular_weight,
 )
 from .utils.pipe_database import (
+    MATERIAL_ROUGHNESS,
     get_pipe_spec,
     get_roughness,
+    list_available_sizes,
+    list_schedules_for_size,
 )
 
 logger = logging.getLogger(__name__)
+
+
+# ============================================================================
+# QUICK REFERENCE HELPERS
+# ============================================================================
+
+
+def show_help() -> None:
+    """Display comprehensive help with available options and examples."""
+    help_text = """
+\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557
+\u2551               ADVANCED PRESSURE DROP CALCULATOR - QUICK REFERENCE            \u2551
+\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563
+\u2551                                                                              \u2551
+\u2551  BASIC USAGE:                                                                \u2551
+\u2551  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500                                                               \u2551
+\u2551    result = calculate_pressure_drop(                                         \u2551
+\u2551        pipe_size="4", pipe_schedule="40",     # Use standard pipe OR         \u2551
+\u2551        pipe_diameter=0.1,                      # specify diameter (m)        \u2551
+\u2551        pipe_length=100,                        # meters                      \u2551
+\u2551        flow_rate=1000, flow_unit='kg/h',      # flow with units             \u2551
+\u2551        pressure=10, pressure_unit='bar',       # inlet pressure             \u2551
+\u2551        temperature=500, temperature_unit='K',  # inlet temperature          \u2551
+\u2551        gas_composition={'H2': 0.3, 'CO': 0.7}, # optional (default: air)    \u2551
+\u2551    )                                                                         \u2551
+\u2551                                                                              \u2551
+\u2551  AVAILABLE PIPE SIZES:                                                       \u2551
+\u2551    1/2, 3/4, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 14, 16, 18, 20, 24 inches       \u2551
+\u2551                                                                              \u2551
+\u2551  FRICTION METHODS:                                                           \u2551
+\u2551    'colebrook'   - Most accurate (default)                                  \u2551
+\u2551    'swamee-jain' - Fast, ~1% of Colebrook                                   \u2551
+\u2551    'churchill'   - All flow regimes                                         \u2551
+\u2551    'haaland'     - Simple, ~1.5% accuracy                                   \u2551
+\u2551                                                                              \u2551
+\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d
+"""
+    logger.info(help_text)
+
+
+def list_gas_components() -> dict[str, dict[str, Any]]:
+    """List all available gas components with their properties.
+
+    Returns:
+        Dictionary of gas components with MW, Tc, Pc, and acentric factor
+    """
+    components = {}
+    logger.info(
+        "\n\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557"
+    )
+    logger.info(
+        "\u2551                    AVAILABLE GAS COMPONENTS                        \u2551"
+    )
+    logger.info(
+        "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563"
+    )
+    logger.info(
+        "\u2551 Component   \u2551  MW       \u2551   Tc (K) \u2551  Pc (bar) \u2551 Acentric Factor  \u2551"
+    )
+    logger.info(
+        "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563"
+    )
+
+    for name, props in sorted(GAS_DATABASE.items()):
+        logger.info(
+            f"\u2551 {name:11s} \u2551 {props.molecular_weight:9.3f} \u2551 {props.critical_temp:8.1f} \u2551"
+            f" {props.critical_pressure / 1e5:9.2f} \u2551 {props.acentric_factor:16.3f} \u2551"
+        )
+        components[name] = {
+            "molecular_weight": props.molecular_weight,
+            "critical_temp": props.critical_temp,
+            "critical_pressure": props.critical_pressure,
+            "acentric_factor": props.acentric_factor,
+        }
+
+    logger.info(
+        "\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d"
+    )
+    return components
+
+
+def list_fittings(category: str | None = None) -> dict[str, float]:
+    """List available fittings with their K-factors.
+
+    Args:
+        category: Optional filter ('elbow', 'tee', 'valve', 'entrance', 'exit', 'bend')
+
+    Returns:
+        Dictionary of fitting types and K-factors
+    """
+    logger.info(
+        "\n\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557"
+    )
+    logger.info(
+        "\u2551                    AVAILABLE FITTINGS (K-factors)                  \u2551"
+    )
+    logger.info(
+        "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563"
+    )
+    logger.info(
+        "\u2551 Fitting Type                             \u2551 K-factor\u2551  Category    \u2551"
+    )
+    logger.info(
+        "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563"
+    )
+
+    result = {}
+    categories = {
+        "elbow": ["elbow", "miter"],
+        "tee": ["tee"],
+        "valve": ["valve"],
+        "entrance": ["entrance"],
+        "exit": ["exit"],
+        "bend": ["bend"],
+        "reducer": ["reducer", "expander"],
+    }
+
+    for fitting_type, k_factor in sorted(FITTING_K_FACTORS.items()):
+        cat = "other"
+        for cat_name, keywords in categories.items():
+            if any(kw in fitting_type for kw in keywords):
+                cat = cat_name
+                break
+
+        if category and cat != category:
+            continue
+
+        result[fitting_type] = k_factor
+        name = fitting_type.replace("_", " ").title()
+        logger.info(f"\u2551 {name:40s} \u2551 {k_factor:7.2f} \u2551 {cat:12s} \u2551")
+
+    logger.info(
+        "\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d"
+    )
+    return result
+
+
+def list_pipe_sizes() -> dict[str, list[str]]:
+    """List available standard pipe sizes and schedules.
+
+    Returns:
+        Dictionary mapping pipe sizes to available schedules
+    """
+    sizes = list_available_sizes()
+    result = {}
+
+    logger.info(
+        "\n\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557"
+    )
+    logger.info(
+        "\u2551                    AVAILABLE PIPE SIZES (ASME B36.10M)             \u2551"
+    )
+    logger.info(
+        "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563"
+    )
+
+    for size in sizes:
+        schedules = list_schedules_for_size(size)
+        result[size] = schedules
+        sch_str = ", ".join(schedules)
+        logger.info(f"\u2551 NPS {size:5s} : {sch_str:56s}\u2551")
+
+    logger.info(
+        "\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d"
+    )
+    return result
+
+
+def list_flow_units() -> dict[str, list[str]]:
+    """List all available flow rate units.
+
+    Returns:
+        Dictionary of unit categories and available units
+    """
+    logger.info(
+        "\n\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557"
+    )
+    logger.info(
+        "\u2551                    AVAILABLE FLOW RATE UNITS                       \u2551"
+    )
+    logger.info(
+        "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563"
+    )
+    logger.info(
+        "\u2551 MASS FLOW UNITS:                                                   \u2551"
+    )
+    mass_units = list(MASS_FLOW_CONVERSIONS.keys())
+    logger.info(f"\u2551   {', '.join(mass_units):63s}\u2551")
+
+    logger.info(
+        "\u2551                                                                    \u2551"
+    )
+    logger.info(
+        "\u2551 MOLAR FLOW UNITS:                                                  \u2551"
+    )
+    molar_units = list(MOLAR_FLOW_CONVERSIONS.keys())
+    logger.info(f"\u2551   {', '.join(molar_units):63s}\u2551")
+
+    logger.info(
+        "\u2551                                                                    \u2551"
+    )
+    logger.info(
+        "\u2551 VOLUMETRIC FLOW UNITS:                                             \u2551"
+    )
+    vol_units = list(VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S.keys())
+    vol_str = ", ".join(vol_units)
+    while len(vol_str) > 63:
+        idx = vol_str[:63].rfind(",")
+        logger.info(f"\u2551   {vol_str[: idx + 1]:63s}\u2551")
+        vol_str = vol_str[idx + 2 :]
+    logger.info(f"\u2551   {vol_str:63s}\u2551")
+
+    logger.info(
+        "\u2551                                                                    \u2551"
+    )
+    logger.info(
+        "\u2551 STANDARD CONDITIONS FOR VOLUMETRIC FLOWS:                          \u2551"
+    )
+    for name, (T, P, desc) in STANDARD_CONDITIONS.items():
+        logger.info(f"\u2551   {name:6s}: T={T:.2f}K, P={P:.0f}Pa - {desc:34s}\u2551")
+
+    logger.info(
+        "\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d"
+    )
+
+    return {
+        "mass": mass_units,
+        "molar": molar_units,
+        "volumetric": vol_units,
+        "standard_conditions": list(STANDARD_CONDITIONS.keys()),
+    }
+
+
+def list_materials() -> dict[str, dict[str, float]]:
+    """List available pipe materials with roughness values.
+
+    Returns:
+        Dictionary of materials with roughness values
+    """
+    logger.info(
+        "\n\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557"
+    )
+    logger.info(
+        "\u2551                    PIPE MATERIAL ROUGHNESS VALUES                  \u2551"
+    )
+    logger.info(
+        "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2566\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563"
+    )
+    logger.info(
+        "\u2551 Material                          \u2551  \u03b5 (mm)     \u2551  \u03b5 (m)           \u2551"
+    )
+    logger.info(
+        "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u256c\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2563"
+    )
+
+    result = {}
+    for material, (roughness_mm, _roughness_ft, _desc) in sorted(
+        MATERIAL_ROUGHNESS.items()
+    ):
+        result[material] = {
+            "roughness_mm": roughness_mm,
+            "roughness_m": roughness_mm / 1000,
+        }
+        logger.info(
+            f"\u2551 {material:33s} \u2551 {roughness_mm:11.4f} \u2551 {roughness_mm / 1000:16.6f} \u2551"
+        )
+
+    logger.info(
+        "\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2569\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d"
+    )
+    return result
+
+
+def compare_friction_methods(
+    reynolds_number: float,
+    relative_roughness: float = 0.0001,
+) -> dict[str, float]:
+    """Compare friction factor correlations for given conditions.
+
+    Args:
+        reynolds_number: Reynolds number
+        relative_roughness: epsilon/D ratio (default 0.0001)
+
+    Returns:
+        Dictionary of friction factors from each method
+
+    Example:
+        >>> compare_friction_methods(100000, 0.001)
+    """
+    if not (reynolds_number is not None):
+        raise ValueError("reynolds_number must be provided")
+
+    f_colebrook = friction_factor_colebrook(reynolds_number, relative_roughness)
+    f_swamee = friction_factor_swamee_jain(reynolds_number, relative_roughness)
+    f_churchill = friction_factor_churchill(reynolds_number, relative_roughness)
+    f_haaland = friction_factor_haaland(reynolds_number, relative_roughness)
+
+    results = {
+        "colebrook": f_colebrook,
+        "swamee-jain": f_swamee,
+        "churchill": f_churchill,
+        "haaland": f_haaland,
+    }
+
+    if reynolds_number < 2300:
+        regime = "Laminar"
+    elif reynolds_number < 4000:
+        regime = "Transitional"
+    else:
+        regime = "Turbulent"
+    logger.info(f"\nFlow regime: {regime}")
+
+    if reynolds_number < 4000:
+        logger.info("Note: For transitional flow, Churchill method is recommended.")
+
+    return results
 
 
 # ============================================================================
@@ -166,14 +482,13 @@ def _resolve_gas_and_flow(
     molecular_weight = calculate_mixture_molecular_weight(composition.components)
 
     if flow_unit.upper() in ["ACFM", "CFM"]:
+        from .utils.flow_rate_converter import volumetric_actual_to_mass
         from .utils.gas_properties import calculate_gas_properties
 
         props = calculate_gas_properties(
             composition.components, temp_k, pressure_pa, compressibility_correction
         )
         density = props["density"]
-        from .utils.flow_rate_converter import volumetric_actual_to_mass
-
         mass_flow_kg_s = volumetric_actual_to_mass(
             flow_rate, flow_unit, density, "kg/s"
         )
@@ -212,23 +527,23 @@ def _build_fitting_list(
 
 
 def _build_pressure_drop_inputs(
-    pipe_size,
-    pipe_schedule,
-    pipe_diameter,
-    pipe_length,
-    pipe_material,
-    pipe_roughness,
-    elevation_change,
-    flow_rate,
-    flow_unit,
-    gas_composition,
-    fittings,
-    friction_method,
-    compressibility_correction,
-    standard_condition,
-    temp_k,
-    pressure_pa,
-) -> "PressureDropInputs":
+    pipe_size: str | None,
+    pipe_schedule: str | None,
+    pipe_diameter: float | None,
+    pipe_length: float,
+    pipe_material: str,
+    pipe_roughness: float | None,
+    elevation_change: float,
+    flow_rate: float,
+    flow_unit: str,
+    gas_composition: dict[str, float] | None,
+    fittings: list[dict[str, Any]] | None,
+    friction_method: str,
+    compressibility_correction: bool,
+    standard_condition: str,
+    temp_k: float,
+    pressure_pa: float,
+) -> PressureDropInputs:
     """Resolve all parameters and construct a PressureDropInputs object."""
     pipe_diameter, roughness = _resolve_pipe_geometry(
         pipe_size, pipe_schedule, pipe_diameter, pipe_material, pipe_roughness
@@ -312,7 +627,6 @@ def calculate_pressure_drop(
         >>> result = calculate_pressure_drop(pipe_size='4', pipe_schedule='40',
         ...     pipe_length=100, flow_rate=1500, flow_unit='SCFM',
         ...     pressure=10, temperature=500)
-        >>> print(f"dP = {result['pressure_drop_bar']:.4f} bar")
     """
     assert pipe_length is not None, "pipe_length must be provided"
     temp_k = _convert_temperature(temperature, temperature_unit, "K")
@@ -374,7 +688,7 @@ def calculate_pressure_drop_custom_gas(
     Example:
         >>> syngas = {'H2': 0.3, 'CO': 0.4, 'CO2': 0.2, 'N2': 0.1}
         >>> result = calculate_pressure_drop_custom_gas(
-        ...     pipe_diameter=0.1543,  # 6" Schedule 40
+        ...     pipe_diameter=0.1543,
         ...     pipe_length=50,
         ...     gas_composition=syngas,
         ...     flow_rate=2000,
@@ -437,13 +751,8 @@ def calculate_pressure_drop_syngas(
 
     Example:
         >>> result = calculate_pressure_drop_syngas(
-        ...     pipe_size='6',
-        ...     pipe_schedule='40',
-        ...     pipe_length=100,
-        ...     flow_rate=5000,
-        ...     flow_unit='kg/h',
-        ...     pressure=20,
-        ...     temperature=750
+        ...     pipe_size='6', pipe_schedule='40', pipe_length=100,
+        ...     flow_rate=5000, flow_unit='kg/h', pressure=20, temperature=750
         ... )
     """
     assert pipe_size is not None, "pipe_size must be provided"
@@ -532,3 +841,5 @@ def main() -> None:
 if __name__ == "__main__":
     # Setup logging
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+
+    main()

@@ -1,15 +1,16 @@
-"""Input validation helpers for the pressure drop interface.
+"""Input validation helpers for the pressure drop calculator.
 
-Internal submodule extracted from pressure_drop_interface.py to keep file
-size within the line budget.  Import these symbols via
-``pressure_drop_calculator.pressure_drop_interface`` (the public module)
-rather than directly from this private module.
+This module groups all ``_validate_*``, ``_log_validation_report``, and the
+public ``validate_inputs`` function so they can be maintained and tested
+independently of the main calculation interface.
 """
+
+from __future__ import annotations
 
 import logging
 from typing import Any
 
-from ._pdi_formatters import _wrap_text
+from .pressure_drop_results import _wrap_text
 from .utils.fitting_loss_coefficients import FITTING_K_FACTORS
 from .utils.flow_rate_converter import (
     MASS_FLOW_CONVERSIONS,
@@ -55,7 +56,8 @@ def _validate_flow_params(
     errors: list[str],
 ) -> None:
     """Validate flow rate value and unit."""
-    assert errors is not None, "errors must be provided"
+    if not (errors is not None):
+        raise ValueError("errors must be provided")
     if flow_rate is not None:
         if flow_rate <= 0:
             errors.append(f"flow_rate must be positive, got {flow_rate}")
@@ -67,14 +69,13 @@ def _validate_flow_params(
             list(MASS_FLOW_CONVERSIONS.keys())
             + list(MOLAR_FLOW_CONVERSIONS.keys())
             + list(VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S.keys())
-            + ["SCFM", "ACFM", "Nm3/h", "Nm\u00b3/h"]
+            + ["SCFM", "ACFM", "Nm3/h", "Nm³/h"]
         )
         if flow_unit not in all_units and flow_unit.upper() not in ["SCFM", "ACFM"]:
             similar = [u for u in all_units if flow_unit.lower() in u.lower()]
             errors.append(
                 f"Unknown flow_unit '{flow_unit}'. "
-                f"Did you mean: "
-                f"{', '.join(similar[:5]) if similar else 'see list_flow_units()'}"
+                f"Did you mean: {', '.join(similar[:5]) if similar else 'see list_flow_units()'}"
             )
 
 
@@ -85,7 +86,8 @@ def _validate_conditions(
     warnings: list[str],
 ) -> None:
     """Validate pressure and temperature values."""
-    assert errors is not None, "errors must be provided"
+    if not (errors is not None):
+        raise ValueError("errors must be provided")
     if pressure is not None:
         if pressure <= 0:
             errors.append(f"pressure must be positive, got {pressure}")
@@ -99,8 +101,7 @@ def _validate_conditions(
             errors.append(f"temperature must be positive (Kelvin), got {temperature}")
         elif temperature < 200:
             warnings.append(
-                f"Low temperature ({temperature}K). "
-                "Did you mean Celsius? Use temperature_unit='C'"
+                f"Low temperature ({temperature}K). Did you mean Celsius? Use temperature_unit='C'"
             )
         elif temperature > 2000:
             warnings.append(
@@ -115,13 +116,13 @@ def _validate_composition_and_fittings(
     warnings: list[str],
 ) -> None:
     """Validate gas composition and fitting specifications."""
-    assert errors is not None, "errors must be provided"
+    if not (errors is not None):
+        raise ValueError("errors must be provided")
     if gas_composition:
         total = sum(gas_composition.values())
         if not (0.99 <= total <= 1.01):
             warnings.append(
-                f"Gas composition sums to {total:.4f}, expected ~1.0. "
-                "Will be auto-normalized."
+                f"Gas composition sums to {total:.4f}, expected ~1.0. Will be auto-normalized."
             )
 
         unknown = [c for c in gas_composition.keys() if c not in GAS_DATABASE]
@@ -138,8 +139,7 @@ def _validate_composition_and_fittings(
                 similar = [f for f in FITTING_K_FACTORS.keys() if fitting_type in f]
                 warnings.append(
                     f"Fitting[{i}] type '{fitting_type}' not in database. "
-                    f"Similar: "
-                    f"{', '.join(similar[:3]) if similar else 'see list_fittings()'}"
+                    f"Similar: {', '.join(similar[:3]) if similar else 'see list_fittings()'}"
                 )
 
 
@@ -147,63 +147,38 @@ def _log_validation_report(
     is_valid: bool, errors: list[str], warnings: list[str]
 ) -> None:
     """Log a formatted validation report."""
-    assert is_valid is not None, "is_valid must be provided"
+    if not (is_valid is not None):
+        raise ValueError("is_valid must be provided")
     logger.info(
-        "\n\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2557"
+        "\n╔═══════════════════════════════════════════════════════════════════╗"
     )
     logger.info(
-        "\u2551                        INPUT VALIDATION"
-        "                            \u2551"
+        "║                        INPUT VALIDATION                            ║"
     )
-    logger.info(
-        "\u2560\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2563"
-    )
+    logger.info("╠═══════════════════════════════════════════════════════════════════╣")
 
     if errors:
         logger.error(
-            "\u2551 ERRORS (must fix):"
-            "                                                \u2551"
+            "║ ERRORS (must fix):                                                ║"
         )
         for error in errors:
             for line in _wrap_text(error, 64):
-                logger.info(f"\u2551   X {line:62s}\u2551")
+                logger.info(f"║   ❌ {line:62s}║")
 
     if warnings:
         logger.warning(
-            "\u2551 WARNINGS (review):"
-            "                                                \u2551"
+            "║ WARNINGS (review):                                                ║"
         )
         for warning in warnings:
             for line in _wrap_text(warning, 64):
-                logger.info(f"\u2551   ! {line:62s}\u2551")
+                logger.info(f"║   ⚠️  {line:61s}║")
 
     if is_valid:
         logger.info(
-            "\u2551   All inputs valid - ready to calculate"
-            "                          \u2551"
+            "║   ✅ All inputs valid - ready to calculate                       ║"
         )
 
-    logger.info(
-        "\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550"
-        "\u2550\u255d"
-    )
+    logger.info("╚═══════════════════════════════════════════════════════════════════╝")
 
 
 def validate_inputs(
