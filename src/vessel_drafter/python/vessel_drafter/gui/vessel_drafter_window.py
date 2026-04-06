@@ -174,16 +174,13 @@ class VesselDrafterWindow(QMainWindow):
         for widget in widgets:
             widget.valueChanged.connect(self.update_preview)
 
-        self.side_port_panel.add_button.clicked.connect(self._prompt_add_side_port)
-        self.lid_port_panel.add_button.clicked.connect(self._prompt_add_lid_port)
-        self.side_port_panel.remove_button.clicked.connect(
-            self._remove_selected_side_ports
-        )
-        self.lid_port_panel.remove_button.clicked.connect(
-            self._remove_selected_lid_ports
-        )
-        self.side_port_panel.table.itemChanged.connect(self.update_preview)
-        self.lid_port_panel.table.itemChanged.connect(self.update_preview)
+        # Connect via panel-level signals (LOD: never touch internal widgets).
+        self.side_port_panel.add_requested.connect(self._prompt_add_side_port)
+        self.lid_port_panel.add_requested.connect(self._prompt_add_lid_port)
+        self.side_port_panel.remove_requested.connect(self._remove_selected_side_ports)
+        self.lid_port_panel.remove_requested.connect(self._remove_selected_lid_ports)
+        self.side_port_panel.data_changed.connect(self.update_preview)
+        self.lid_port_panel.data_changed.connect(self.update_preview)
         for checkbox in self.layer_visibility_checkboxes.values():
             checkbox.toggled.connect(self.refresh_three_d_preview)
         self.section_cut_checkbox.toggled.connect(self._handle_section_cut_toggled)

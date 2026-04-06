@@ -1,10 +1,24 @@
 #!/usr/bin/env python3
-"""Advanced Syngas Compression Calculator — GUI widget.
+"""Advanced Syngas Compression Calculator — GUI widget and worker thread.
 
-The core calculation engine has been extracted to ``syngas_compression_engine.py``
-(issue #1806).  This module contains the PyQt6 GUI widget and worker thread.
-``CompressionStage`` and ``SyngasCompressionEngine`` are re-exported here for
-backward compatibility.
+Separation of concerns (closes #1943)
+--------------------------------------
+The original 1,218-line file previously mixed three concerns in one module.
+They have been fully separated:
+
+* **Calculation engine** → ``syngas_compression_engine.py``
+  ``SyngasCompressionEngine`` and ``CompressionStage`` live there.  No Qt
+  dependency.  Safe to import headlessly (tests, API handlers, batch jobs).
+
+* **Worker thread** → ``CompressionCalculationWorker`` (this file)
+  Thin ``QThread`` subclass that delegates to the engine and emits signals.
+
+* **GUI widget** → ``SyngasCompressionCalculatorWidget`` (this file)
+  PyQt6 widget.  Imports from the engine module and uses the worker.
+
+``CompressionStage`` and ``SyngasCompressionEngine`` are re-exported here so
+existing ``from ...syngas_compression_calculator import X`` imports continue
+to work without changes.
 """
 
 import logging

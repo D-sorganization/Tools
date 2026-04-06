@@ -1,6 +1,12 @@
-# ARCHITECTURE_DEBT:
-# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
-# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+# ARCHITECTURE_DEBT — tracked as GitHub issue #1937
+# This file is 1,407 lines and mixes the user-facing calculation API, unit
+# conversion helpers, and result formatting logic.
+# Recommended split (do not attempt without a full test suite for each piece):
+#   pressure_drop_units.py   — unit conversion helpers (UnitConverter, _parse_*)
+#   pressure_drop_results.py — PressureDropResult formatting / rendering
+#   pressure_drop_interface.py — thin public API delegating to engine + above
+# Risk: high — downstream repos (UpstreamDrift, Gasification_Model) import this.
+# Required: coordinated PRs and contract test coverage before splitting.
 
 #!/usr/bin/env python3
 """User-friendly Python interface for advanced pressure drop calculator.

@@ -85,7 +85,9 @@ def get_plot_colors() -> dict[str, Any]:
                 "surface": colors.get("group_bg", _DARK_SURFACE),
                 "axes": CHART_COLORS[:3] if CHART_COLORS else _AXIS_COLORS,
             }
-        except Exception:  # noqa: BLE001  # noqa: BLE001
+        except Exception:  # noqa: BLE001
+            # Theme manager may be unavailable or return unexpected data;
+            # fall through to the hardcoded dark-theme defaults below.
             pass
     return {
         "bg": _DARK_BG,

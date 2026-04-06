@@ -199,8 +199,10 @@ class RigidTransformTab(QWidget):
                 f"  pitch: {screw['pitch']:.6f}",
                 f"  theta: {screw['theta']:.6f} rad",
             ]
-        except Exception:  # noqa: BLE001  # noqa: BLE001
-            pass
+        except (ValueError, ArithmeticError, AttributeError):
+            # Screw decomposition is undefined for pure translations (pitch → ∞);
+            # silently omit the section rather than crashing the display.
+            lines.append("  (screw axis undefined for this transform)")
 
         self._tf_output.setPlainText("\n".join(lines))
 
