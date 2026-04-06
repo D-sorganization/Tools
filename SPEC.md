@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.2.0                                      |
-| **Last Spec Update**    | 2026-04-06                                 |
+| **Spec Version**        | 1.1.12                                     |
+| **Last Spec Update**    | 2026-04-05                                 |
 
 ## 2. Purpose & Mission
 
@@ -466,7 +466,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-05 | 1.1.9   | Bridge the embedded `src/pendulum_simulator/tests` suite into the top-level `tests/` tree so standard `pytest tests/` collection includes pendulum coverage without double-collecting the same files during root-level pytest runs.                                                                                                                                                                                                                 |
 | 2026-04-05 | 1.1.10  | Standardize vessel drafter `require_positive` usage onto the fleet-wide `(value, name)` argument order while keeping guarded support for the legacy local order and adding regression tests for the signature normalization.                                                                                                                                                                                                                         |
 | 2026-04-05 | 1.1.11  | Deduplicate repeated scalar surface evaluator closures in `analysis_tab.py` by routing matrix and transformed-value cases through shared helper builders, with regression coverage for the new helper paths.                                                                                                                                                                                                                                          |
-| 2026-04-06 | 1.2.0   | DRY pendulum controls (extract 3 shared methods to base), add require() contracts to 5 process calculators and 3 tool modules, add make_launcher() factory to gui_launcher, add smoke tests for 5 data_processor core modules, add contract tests for calculator preconditions.                                                                                                                                                                        |
+| 2026-04-05 | 1.1.12  | Expand the embedded-suite discovery policy so root-level pytest ignores bridged `src/` suites by default while `pytest tests/` includes both pendulum and solar-system embedded tests through top-level bridge directories.                                                                                                                                                                                                                          |
 
 ---
 
