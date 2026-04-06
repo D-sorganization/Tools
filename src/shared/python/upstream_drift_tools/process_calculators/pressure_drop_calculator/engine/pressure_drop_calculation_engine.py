@@ -1,6 +1,12 @@
-# ARCHITECTURE_DEBT:
-# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
-# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+# ARCHITECTURE_DEBT — tracked as GitHub issue #1937
+# This file is 1,163 lines of pure calculation functions plus the engine class.
+# Recommended split:
+#   friction_factors.py           — friction_factor_* functions
+#   flow_properties.py            — calculate_flow_properties, classify_flow_regime
+#   fittings.py                   — calculate_fitting_pressure_drop
+#   compressible_flow.py          — compressible correction + expansion factor
+#   pressure_drop_calculation_engine.py — PressureDropCalculationEngine (thin facade)
+# Risk: medium — many internal cross-calls; extract incrementally with contract tests.
 
 #!/usr/bin/env python3
 """Advanced pressure drop calculation engine for combustion and gasification gases.

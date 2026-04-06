@@ -1,6 +1,13 @@
-# ARCHITECTURE_DEBT:
-# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
-# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+# ARCHITECTURE_DEBT — tracked as GitHub issue #1937
+# This file is 1,192 lines and mixes route logic, adapter code (Flask/FastAPI),
+# and data transformation.
+# Recommended split:
+#   rest_api_routes.py  — ModelGenerationAPI route handlers only
+#   rest_api_flask.py   — FlaskAdapter
+#   rest_api_fastapi.py — FastAPIAdapter
+#   rest_api.py         — re-export shim for backward compatibility
+# Risk: medium — adapters are concrete implementations, not part of the public API.
+# Prerequisite: integration tests for both Flask and FastAPI adapters.
 
 """
 REST API for model_generation package.

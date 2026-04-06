@@ -1,6 +1,11 @@
-# ARCHITECTURE_DEBT:
-# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
-# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+# ARCHITECTURE_DEBT — tracked as GitHub issue #1937
+# This file is 1,160 lines with 2 classes — almost all lines are inline HTML/LaTeX
+# equation strings embedded in Python list literals.
+# Recommended split:
+#   equations_data.py   — all equation string constants (pure data, no Qt)
+#   equations_popup.py  — EquationsPopup widget, imports from equations_data
+# Risk: low — data and widget are clearly separated; no downstream imports.
+# Prerequisite: none — safe to split at any time.
 
 """
 LaTeX-quality math popup for the Pendulum Simulator.

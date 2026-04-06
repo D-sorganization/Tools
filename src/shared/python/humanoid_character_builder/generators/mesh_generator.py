@@ -1,6 +1,13 @@
-# ARCHITECTURE_DEBT:
-# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
-# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+# ARCHITECTURE_DEBT — tracked as GitHub issue #1937
+# This file is 1,173 lines and contains 4 distinct mesh generator backends
+# (Primitive, MakeHuman, SMPLX) plus the public MeshGenerator facade.
+# Recommended split:
+#   mesh_generator_primitive.py  — PrimitiveMeshGenerator
+#   mesh_generator_makehuman.py  — MakeHumanMeshGenerator
+#   mesh_generator_smplx.py      — SMPLXMeshGenerator
+#   mesh_generator.py            — MeshGenerator facade + MeshGeneratorBackend enum
+# Risk: low-medium — backends are independent; facade is the only public API.
+# Prerequisite: parametrize existing tests over all backends before splitting.
 
 """
 Mesh generation interfaces for humanoid character builder.

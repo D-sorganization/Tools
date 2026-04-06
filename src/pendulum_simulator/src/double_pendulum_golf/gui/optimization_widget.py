@@ -655,6 +655,41 @@ class OptimizationWidget(QWidget):
             raise ValueError("message must be provided")
         self._log.append(message)
 
+    def append_log(self, message: str) -> None:
+        """Append *message* to the optimizer's status log.
+
+        Public interface replacing direct ``opt._log.append(...)`` access.
+        Callers (e.g. SimulationPanel) should use this instead of touching
+        the private ``_log`` widget.
+        """
+        self._log.append(message)
+
+    def reconnect_run(self, new_slot: Callable) -> None:
+        """Disconnect the default run handler and connect *new_slot* instead.
+
+        Public interface replacing direct ``opt._btn_run.clicked`` manipulation.
+        Restoring the original handler is the caller's responsibility via
+        :meth:`restore_run_handler`.
+        """
+        self._btn_run.clicked.disconnect()
+        self._btn_run.clicked.connect(new_slot)
+
+    def restore_run_handler(self) -> None:
+        """Restore the built-in run handler on the Optimize button.
+
+        Call this to undo a previous :meth:`reconnect_run`.
+        """
+        self._btn_run.clicked.disconnect()
+        self._btn_run.clicked.connect(self._on_run)
+
+    def run_optimization(self) -> None:
+        """Programmatically trigger the optimizer run as if the button was clicked.
+
+        Public interface replacing direct ``opt._on_run()`` invocations from
+        external code.
+        """
+        self._on_run()
+
     def _refresh_bound_objective(self) -> bool:
         """Refresh the objective function from bound UI providers when present."""
         if self._params_getter is None or self._objective_builder is None:
