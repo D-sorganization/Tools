@@ -61,7 +61,7 @@ const ToolsPanel = memo(function ToolsPanel({
               onClick={() => !disabled && onToolChange(tool.id)}
               disabled={disabled}
               className={`
-                px-3 py-2 text-sm font-medium rounded-md transition-colors
+                px-3 py-2 text-sm font-medium rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500
                 ${
                   currentTool === tool.id
                     ? 'bg-blue-600 text-white'
@@ -88,7 +88,7 @@ const ToolsPanel = memo(function ToolsPanel({
               onClick={() => !disabled && onColorChange(color)}
               disabled={disabled}
               className={`
-                w-full h-10 rounded-md border-2 transition-all
+                w-full h-10 rounded-md border-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500
                 ${
                   currentColor === color
                     ? 'border-gray-900 ring-2 ring-offset-2 ring-blue-500'
@@ -108,7 +108,7 @@ const ToolsPanel = memo(function ToolsPanel({
           value={currentColor}
           onChange={(e) => !disabled && onColorChange(e.target.value)}
           disabled={disabled}
-          className="mt-2 w-full h-10 rounded-md border border-gray-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-2 w-full h-10 rounded-md border border-gray-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
           aria-label="Custom color picker"
         />
       </div>
@@ -126,7 +126,7 @@ const ToolsPanel = memo(function ToolsPanel({
             !disabled && onStrokeWidthChange(parseInt(e.target.value))
           }
           disabled={disabled}
-          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
           aria-labelledby="stroke-width-label"
         />
       </div>
@@ -135,14 +135,14 @@ const ToolsPanel = memo(function ToolsPanel({
         <button
           onClick={onDeleteSelected}
           disabled={disabled || currentTool !== 'select'}
-          className="w-full px-4 py-2 text-sm font-medium text-red-700 bg-red-50 rounded-md hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="w-full px-4 py-2 text-sm font-medium text-red-700 bg-red-50 rounded-md hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         >
           Delete Selected
         </button>
         <button
           onClick={onClear}
           disabled={disabled}
-          className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         >
           Clear All
         </button>

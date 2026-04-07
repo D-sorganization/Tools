@@ -14,6 +14,7 @@ from shared.python.contracts import (
     InvariantError,
     PostconditionError,
     PreconditionError,
+    _resolve_contract_level,
     check_non_negative,
     check_positive,
     check_pressure,
@@ -41,6 +42,7 @@ from shared.python.contracts import (
 )
 
 __all__ = [
+    "_resolve_contract_level",
     "CONTRACTS_ENABLED",
     "DBC_LEVEL",
     "ContractChecker",
