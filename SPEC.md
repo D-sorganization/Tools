@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.28                                     |
+| **Spec Version**        | 1.1.29                                     |
 | **Last Spec Update**    | 2026-04-07                                 |
 
 ## 2. Purpose & Mission
@@ -486,6 +486,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-07 | 1.1.26  | Extracted the double-pendulum golf equations popup string literals into `equations_data.py`, leaving the popup module focused on presentation and control wiring while preserving the existing dialog behavior.                                                                                                                                                                                                                                        |
 | 2026-04-07 | 1.1.27  | Optimized `AnalyticsSuite` regression filtering by staging selected x/y series values into `Float64Array` buffers before converting them back to plain arrays for the existing result contract, reducing repeated push-allocation overhead in large regression workloads.                                                                                                                                                                              |
 | 2026-04-07 | 1.1.28  | Optimized `AnalyticsSuite` Pearson correlation by preserving the PR's single-pass accumulation and variance-clamping path while widening the helper to accept pre-allocated `Float64Array` inputs from the newer analytics data flow.                                                                                                                                                                                                                  |
+| 2026-04-07 | 1.1.29  | Decomposed the PSA GUI into focused `ui/` modules while tightening the compatibility export surface to immutable `__all__` tuples in both the facade module and the extracted UI package.                                                                                                                                                                                                                                                              |
 
 ---
 

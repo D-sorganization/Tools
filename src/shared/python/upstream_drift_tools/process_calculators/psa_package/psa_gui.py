@@ -11,20 +11,21 @@ performance, including sensitivity analysis and O2 safety calculations.
 """
 
 import sys
+
 from PyQt6.QtWidgets import QApplication
 
 # Expose components for backward compatibility
 from .ui import (
     InputPanel,
-    ResultsPanel,
-    SensitivityPlotWidget,
+    MplCanvas,
     PFDWidget,
     PSAMainWindow,
+    ResultsPanel,
+    SensitivityPlotWidget,
     create_slider,
-    MplCanvas,
 )
 
-__all__ = [
+__all__ = (
     "InputPanel",
     "ResultsPanel",
     "SensitivityPlotWidget",
@@ -33,7 +34,8 @@ __all__ = [
     "create_slider",
     "MplCanvas",
     "main",
-]
+)
+
 
 def main() -> None:
     """Main entry point for the GUI application."""
