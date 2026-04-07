@@ -32,6 +32,11 @@ COVERAGE_GATES: list[tuple[str, float]] = [
 ]
 
 
+def _emit_stdout(message: str) -> None:
+    """Write a single line to stdout for the script contract."""
+    sys.stdout.write(f"{message}\n")
+
+
 def parse_coverage_json(coverage_json_path: Path) -> dict[str, dict[str, int]]:
     """Parse coverage.json into a mapping of file -> {covered, total}."""
     data = json.loads(coverage_json_path.read_text())
@@ -77,19 +82,21 @@ def main() -> int:
     args = parser.parse_args()
 
     if not args.coverage_json.exists():
-        print(f"ERROR: {args.coverage_json} not found. Run pytest --cov first.")
+        _emit_stdout(f"ERROR: {args.coverage_json} not found. Run pytest --cov first.")
         return 1
 
     file_coverage = parse_coverage_json(args.coverage_json)
     failures = check_gates(file_coverage, COVERAGE_GATES)
 
     if failures:
-        print("COVERAGE GATE FAILURES:")
+        _emit_stdout("COVERAGE GATE FAILURES:")
         for prefix, actual, threshold in failures:
-            print(f"  FAIL: {prefix} = {actual:.1f}% (minimum: {threshold:.1f}%)")
+            _emit_stdout(
+                f"  FAIL: {prefix} = {actual:.1f}% (minimum: {threshold:.1f}%)"
+            )
         return 1
 
-    print("All coverage gates passed.")
+    _emit_stdout("All coverage gates passed.")
     for prefix, threshold in COVERAGE_GATES:
         total = sum(
             s["num_statements"] for f, s in file_coverage.items() if prefix in f
@@ -99,7 +106,7 @@ def main() -> int:
         )
         if total > 0:
             pct = (covered / total) * 100
-            print(f"  OK: {prefix} = {pct:.1f}% (>= {threshold:.1f}%)")
+            _emit_stdout(f"  OK: {prefix} = {pct:.1f}% (>= {threshold:.1f}%)")
     return 0
 
 
