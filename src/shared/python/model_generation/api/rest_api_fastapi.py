@@ -13,6 +13,15 @@ from .rest_api_routes import APIRequest, HTTPMethod, ModelGenerationAPI, Route
 logger = logging.getLogger(__name__)
 
 
+def _request_uses_form_parsing(request: Request) -> bool:
+    """Return True when the incoming request may contain form-backed uploads."""
+    content_type = request.headers.get("content-type", "").lower()
+    return (
+        "multipart/form-data" in content_type
+        or "application/x-www-form-urlencoded" in content_type
+    )
+
+
 class FastAPIAdapter:
     """Adapter for FastAPI framework."""
 
@@ -34,10 +43,11 @@ class FastAPIAdapter:
                         logger.debug("Failed to parse request JSON body: %s", exc)
 
                     files: dict[str, bytes] = {}
-                    form = await request.form()
-                    for key, value in form.items():
-                        if hasattr(value, "read"):
-                            files[key] = await value.read()
+                    if _request_uses_form_parsing(request):
+                        form = await request.form()
+                        for key, value in form.items():
+                            if hasattr(value, "read"):
+                                files[key] = await value.read()
 
                     api_request = APIRequest(
                         method=HTTPMethod(request.method),
