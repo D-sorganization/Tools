@@ -37,6 +37,11 @@ from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 ensure_paths(_REPO_ROOT)
 
 
+def _emit_stderr(message: str) -> None:
+    """Write a single line to stderr for explicit CLI/bootstrap failures."""
+    sys.stderr.write(f"{message}\n")
+
+
 def main() -> None:
     """Entry point for the Unified Tools Launcher application."""
     try:
@@ -44,9 +49,7 @@ def main() -> None:
     except ImportError as e:
         logger.error(f"Failed to import GUI components: {e}")
         # Could show a simple Tkinter error box here if PyQt imports fail entirely
-        print(  # noqa: T201
-            f"CRITICAL ERROR: Failed to load launcher components: {e}", file=sys.stderr
-        )
+        _emit_stderr(f"CRITICAL ERROR: Failed to load launcher components: {e}")
         sys.exit(1)
 
     app = QApplication(sys.argv)

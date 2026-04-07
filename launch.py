@@ -37,6 +37,11 @@ from gui_launcher import launch_pyqt6_app  # noqa: E402
 from gui_launcher.registry import auto_discover_guis, get_registry  # noqa: E402
 
 
+def _emit_stdout(message: str = "") -> None:
+    """Write a single line to stdout for the CLI contract."""
+    sys.stdout.write(f"{message}\n")
+
+
 def discover_all_tools() -> int:
     """Discover all tools from gui_registration.py files.
 
@@ -53,19 +58,20 @@ def list_tools() -> None:
     registry = get_registry()
 
     if count == 0:
-        print("No tools found.")  # noqa: T201
+        _emit_stdout("No tools found.")
         return
 
-    print(f"Discovered {count} tool registrations.\n")  # noqa: T201
+    _emit_stdout(f"Discovered {count} tool registrations.")
+    _emit_stdout()
 
     categories = registry.list_categories()
     for category in categories:
         tools = registry.list_tools(category=category)
         if tools:
-            print(f"  [{category}]")  # noqa: T201
+            _emit_stdout(f"  [{category}]")
             for tool in tools:
-                print(f"    {tool.tool_name:40s} {tool.display_name}")  # noqa: T201
-            print()  # noqa: T201
+                _emit_stdout(f"    {tool.tool_name:40s} {tool.display_name}")
+            _emit_stdout()
 
 
 def launch_tool(tool_identifier: str) -> int:
@@ -112,14 +118,15 @@ def launch_tool(tool_identifier: str) -> int:
         if len(matches) == 1:
             registration = matches[0]
         elif len(matches) > 1:
-            print(f"Ambiguous tool name '{tool_identifier}'. Matches:")  # noqa: T201
+            _emit_stdout(f"Ambiguous tool name '{tool_identifier}'. Matches:")
             for m in matches:
-                print(f"  - {m.tool_name} ({m.display_name})")  # noqa: T201
+                _emit_stdout(f"  - {m.tool_name} ({m.display_name})")
             return 1
 
     if registration is None:
-        print(f"Tool '{tool_identifier}' not found.")  # noqa: T201
-        print("\nUse --list to see all available tools.")  # noqa: T201
+        _emit_stdout(f"Tool '{tool_identifier}' not found.")
+        _emit_stdout()
+        _emit_stdout("Use --list to see all available tools.")
         return 1
 
     from gui_launcher.launcher import GUIType
@@ -128,11 +135,11 @@ def launch_tool(tool_identifier: str) -> int:
     config = gui_configs.get(GUIType.PYQT6)
     if config is None:
         display_name = registration.display_name
-        print(f"Tool '{display_name}' has no PyQt6 configuration.")  # noqa: T201
+        _emit_stdout(f"Tool '{display_name}' has no PyQt6 configuration.")
         return 1
 
     display_name = registration.display_name
-    print(f"Launching: {display_name}")  # noqa: T201
+    _emit_stdout(f"Launching: {display_name}")
     return int(launch_pyqt6_app(config))
 
 
