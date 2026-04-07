@@ -9,6 +9,7 @@ This script scans all gui_registration.py files under src/ and produces:
 import importlib.util
 import json
 import logging
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -16,6 +17,11 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 CONTRACT_VERSION = "1.0.0"
+
+
+def _emit_stdout(message: str) -> None:
+    """Write a single line to stdout for the CLI contract."""
+    sys.stdout.write(f"{message}\n")
 
 
 @dataclass(frozen=True)
@@ -263,9 +269,11 @@ def main() -> int:
         len(contract["tools"]),
     )
 
-    # Print summary to stdout for CI visibility
-    print(f"Generated tools.json with {tool_count} tools.")
-    print(f"Generated tool_surface_contract.json with {len(contract['tools'])} tools.")
+    # Keep the CLI contract explicit for CI callers without using raw print().
+    _emit_stdout(f"Generated tools.json with {tool_count} tools.")
+    _emit_stdout(
+        f"Generated tool_surface_contract.json with {len(contract['tools'])} tools."
+    )
 
     return 0
 
