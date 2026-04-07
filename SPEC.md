@@ -28,8 +28,8 @@
 <<<<<<< HEAD
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.19                                     |
-| **Last Spec Update**    | 2026-04-06                                 |
+| **Spec Version**        | 1.1.20                                     |
+| **Last Spec Update**    | 2026-04-07                                 |
 
 ## 2. Purpose & Mission
 
@@ -478,6 +478,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-06 | 1.1.17 | Optimize Polynomial Regression Matrix Construction in AnalyticsSuite using single-pass loops. |
 | 2026-04-06 | 1.1.18 | Refactored `applyFilter` inside `useDataProcessor.ts` to pre-allocate buffers and run the mapping in a single loop. |
 | 2026-04-06 | 1.1.19 | Split `pressure_drop_interface.py` into facade-oriented `pressure_drop_api`, `pressure_drop_validation`, `pressure_drop_reference`, and `pressure_drop_results` modules while preserving the public interface and extending regression coverage for the pressure-drop calculator. |
+| 2026-04-07 | 1.1.20 | Optimize regression filtering with Float64Array buffers in AnalyticsSuite. |
 
 ---
 
