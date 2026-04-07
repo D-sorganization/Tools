@@ -7,7 +7,9 @@ from pathlib import Path
 def _load_module():
     repo_root = Path(__file__).resolve().parents[2]
     module_path = repo_root / "scripts" / "check_coverage_gates.py"
-    spec = importlib.util.spec_from_file_location("tools_check_coverage_gates", module_path)
+    spec = importlib.util.spec_from_file_location(
+        "tools_check_coverage_gates", module_path
+    )
     assert spec is not None
     assert spec.loader is not None
     module = importlib.util.module_from_spec(spec)

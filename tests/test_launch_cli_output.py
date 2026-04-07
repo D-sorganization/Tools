@@ -7,7 +7,9 @@ from types import SimpleNamespace
 
 def _load_launch_module():
     repo_root = Path(__file__).resolve().parent.parent
-    spec = importlib.util.spec_from_file_location("tools_repo_launch", repo_root / "launch.py")
+    spec = importlib.util.spec_from_file_location(
+        "tools_repo_launch", repo_root / "launch.py"
+    )
     assert spec is not None
     assert spec.loader is not None
     module = importlib.util.module_from_spec(spec)

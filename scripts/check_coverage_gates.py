@@ -91,7 +91,9 @@ def main() -> int:
     if failures:
         _emit_stdout("COVERAGE GATE FAILURES:")
         for prefix, actual, threshold in failures:
-            _emit_stdout(f"  FAIL: {prefix} = {actual:.1f}% (minimum: {threshold:.1f}%)")
+            _emit_stdout(
+                f"  FAIL: {prefix} = {actual:.1f}% (minimum: {threshold:.1f}%)"
+            )
         return 1
 
     _emit_stdout("All coverage gates passed.")

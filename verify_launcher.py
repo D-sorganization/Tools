@@ -88,7 +88,9 @@ def _print_recommendations(current_dir: Path) -> None:
 
     unified_launcher = current_dir / "UnifiedToolsLauncher.py"
     if unified_launcher.exists():
-        _emit_stdout("✅ Use 'UnifiedToolsLauncher.py' - This is the PRIMARY launcher with:")
+        _emit_stdout(
+            "✅ Use 'UnifiedToolsLauncher.py' - This is the PRIMARY launcher with:"
+        )
         _emit_stdout("   • Modern PyQt6 GUI interface")
         _emit_stdout("   • Full plugin system support")
         _emit_stdout("   • Comprehensive error handling")
@@ -101,7 +103,9 @@ def _print_recommendations(current_dir: Path) -> None:
 
     _emit_stdout()
     _emit_stdout("⚠️  Note: 'tools_launcher.py' does not exist.")
-    _emit_stdout("   Any references to it are outdated. Use UnifiedToolsLauncher.py instead.")
+    _emit_stdout(
+        "   Any references to it are outdated. Use UnifiedToolsLauncher.py instead."
+    )
 
 
 def _check_desktop_shortcuts() -> None:
