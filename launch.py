@@ -23,23 +23,33 @@ from __future__ import annotations
 
 import argparse
 import sys
+from importlib import import_module
 from pathlib import Path
+from typing import Any
 
 # Bootstrap imports for development mode
 _REPO_ROOT = Path(__file__).resolve().parent
 _SHARED_PYTHON = _REPO_ROOT / "src" / "shared" / "python"
 sys.path.insert(0, str(_SHARED_PYTHON))
-from upstream_drift_tools.bootstrap import ensure_paths  # noqa: E402
 
-ensure_paths(_REPO_ROOT)
 
-from gui_launcher import launch_pyqt6_app  # noqa: E402
-from gui_launcher.registry import auto_discover_guis, get_registry  # noqa: E402
+def _ensure_bootstrap_paths() -> None:
+    """Load the bootstrap helper lazily to avoid static type-check import churn."""
+    bootstrap = import_module("upstream_drift_tools.bootstrap")
+    bootstrap.ensure_paths(_REPO_ROOT)
+
+
+_ensure_bootstrap_paths()
 
 
 def _emit_stdout(message: str = "") -> None:
     """Write a single line to stdout for the CLI contract."""
     sys.stdout.write(f"{message}\n")
+
+
+def get_registry() -> Any:
+    """Return the GUI registry module singleton."""
+    return import_module("gui_launcher.registry").get_registry()
 
 
 def discover_all_tools() -> int:
@@ -48,6 +58,7 @@ def discover_all_tools() -> int:
     Returns:
         Number of tools discovered.
     """
+    auto_discover_guis = import_module("gui_launcher.registry").auto_discover_guis
     src_dir = _REPO_ROOT / "src"
     return int(auto_discover_guis([src_dir]))
 
@@ -129,7 +140,8 @@ def launch_tool(tool_identifier: str) -> int:
         _emit_stdout("Use --list to see all available tools.")
         return 1
 
-    from gui_launcher.launcher import GUIType
+    GUIType = import_module("gui_launcher.launcher").GUIType
+    launch_pyqt6_app = import_module("gui_launcher").launch_pyqt6_app
 
     gui_configs = registration.gui_configs
     config = gui_configs.get(GUIType.PYQT6)
