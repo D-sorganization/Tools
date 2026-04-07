@@ -82,8 +82,9 @@ function computeCorrelation(data: DataRow[], signals: string[]): CorrelationMatr
   const rowCount = data.length;
   const matrix: number[][] = Array.from({ length: n }, () => Array(n).fill(0));
 
-  // ⚡ Bolt Optimization: Use Float64Array for column extraction instead of standard JS arrays.
-  // Performance impact: Drastically reduces garbage collection and improves pearsonCorrelation calculation speed by avoiding number boxing.
+  // ⚡ Bolt Optimization: Allocate column-wise buffers using Float64Array
+  // instead of allocating standard array rows (N x P) via chained map() calls.
+  // This avoids massive garbage collection pauses and O(N) allocations.
   const columns = signals.map((sig) => {
     const col = new Float64Array(rowCount);
     for (let i = 0; i < rowCount; i++) {
@@ -115,10 +116,17 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
   const p = signals.length;
   const nc = Math.min(numComponents ?? p, p);
 
-  // Build centered/scaled column matrix
-  const cols = signals.map((sig) =>
-    data.map((row) => (typeof row[sig] === 'number' ? (row[sig] as number) : 0)),
-  );
+  // ⚡ Bolt Optimization: Allocate column-wise buffers using Float64Array
+  // instead of allocating standard array rows (N x P) via chained map() calls.
+  // This drastically reduces garbage collection overhead and improves execution speed.
+  const cols = signals.map((sig) => {
+    const col = new Float64Array(n);
+    for (let i = 0; i < n; i++) {
+      const val = data[i][sig];
+      col[i] = typeof val === 'number' ? val : 0;
+    }
+    return col;
+  });
 
   // ⚡ Bolt Optimization: Replace map/reduce chains with a single-pass loop for variance
   // Reduces O(N*P) array allocations and amortized callback execution overhead
