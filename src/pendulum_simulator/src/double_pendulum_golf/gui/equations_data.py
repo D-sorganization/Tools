@@ -34,14 +34,7 @@ HTML template and styling are defined once. Topic content is pluggable.
 
 from __future__ import annotations
 
-import logging
 from enum import Enum
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    pass
-
-logger = logging.getLogger(__name__)
 
 
 class EquationTopic(Enum):
