@@ -478,6 +478,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-06 | 1.1.17 | Optimize Polynomial Regression Matrix Construction in AnalyticsSuite using single-pass loops. |
 | 2026-04-06 | 1.1.18 | Refactored `applyFilter` inside `useDataProcessor.ts` to pre-allocate buffers and run the mapping in a single loop. |
 | 2026-04-06 | 1.1.19 | Split `pressure_drop_interface.py` into facade-oriented `pressure_drop_api`, `pressure_drop_validation`, `pressure_drop_reference`, and `pressure_drop_results` modules while preserving the public interface and extending regression coverage for the pressure-drop calculator. |
+| 2026-04-07 | 1.1.20 | Optimize Pearson correlation calculation in AnalyticsSuite using a single-pass sum loop and clamping variance to prevent floating-point inaccuracies. |
 
 ---
 
@@ -505,3 +506,4 @@ Active development with stable core, continuous tool expansion, and web API in p
 - Linear regression and sum-of-squares calculations in `AnalyticsSuite` leverage pre-allocated arrays and single-pass loops to prevent allocation and garbage collection overhead typical of functional `.map()` and `.reduce()` operations in large dataset pipelines.
 - The PCA power iteration algorithm in `AnalyticsSuite` has been optimized to remove `.map()` and `.reduce()` from the tight inner loop, using pre-allocated arrays and standard `for` loops to eliminate thousands of allocations per execution.
 - PlotView WebGL rendering uses pre-allocated `Float64Array` buffers and single-pass loops instead of `data.map()`, eliminating O(N) intermediate array allocations for large datasets.
+- Pearson correlation matrix computations utilize a single-pass loop algorithm, calculating sums concurrently to drastically reduce iteration overhead compared to two-pass implementations, while carefully mitigating numerical instability via clamping.
