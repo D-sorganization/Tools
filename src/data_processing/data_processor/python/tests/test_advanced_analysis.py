@@ -278,6 +278,49 @@ class TestOutlierDetection:
 class TestTimeSeriesDecomposition:
     """Tests for time series decomposition module."""
 
+    def test_contracts_module_re_exports_public_types(self) -> None:
+        """Time-series contracts remain importable from a focused support module."""
+        from data_processor.core.time_series_decomposition import (
+            DecompositionConfig,
+            DecompositionMethod,
+            DecompositionResult,
+            SeasonalModel,
+            TrendModel,
+        )
+        from data_processor.core.time_series_decomposition_contracts import (
+            DecompositionConfig as ContractsDecompositionConfig,
+        )
+        from data_processor.core.time_series_decomposition_contracts import (
+            DecompositionMethod as ContractsDecompositionMethod,
+        )
+        from data_processor.core.time_series_decomposition_contracts import (
+            DecompositionResult as ContractsDecompositionResult,
+        )
+        from data_processor.core.time_series_decomposition_contracts import (
+            SeasonalModel as ContractsSeasonalModel,
+        )
+        from data_processor.core.time_series_decomposition_contracts import (
+            TrendModel as ContractsTrendModel,
+        )
+
+        assert ContractsDecompositionConfig is DecompositionConfig
+        assert ContractsDecompositionMethod is DecompositionMethod
+        assert ContractsDecompositionResult is DecompositionResult
+        assert ContractsSeasonalModel is SeasonalModel
+        assert ContractsTrendModel is TrendModel
+
+    def test_helper_module_exposes_moving_average_kernel(self) -> None:
+        """Low-level smoothing helpers remain importable outside the facade."""
+        from data_processor.core.time_series_decomposition_helpers import (
+            moving_average,
+        )
+
+        data = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+        result = moving_average(data, 3)
+
+        assert result.shape == data.shape
+        assert np.isclose(result[2], 3.0)
+
     def test_stl_decomposition(self) -> None:
         """Test STL decomposition."""
         from data_processor.core.time_series_decomposition import (
