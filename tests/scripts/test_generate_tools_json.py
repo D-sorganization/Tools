@@ -314,3 +314,25 @@ class TestContractGeneration:
                 f"Unexpected keys in tool entry: {set(tool.keys()) - expected_tool_keys}"
             )
             assert set(tool["surfaces"].keys()) == expected_surface_keys
+
+
+def test_main_emits_cli_summary_and_writes_outputs(
+    manifest_gen_module,
+    mock_repo_root,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+):
+    """The CLI entrypoint should emit a stable stdout summary and write both files."""
+    script_path = mock_repo_root / "scripts" / "generate_tools_json.py"
+    script_path.parent.mkdir()
+    script_path.write_text("# stub entrypoint\n", encoding="utf-8")
+    monkeypatch.setattr(manifest_gen_module, "__file__", str(script_path))
+
+    result = manifest_gen_module.main()
+
+    output = capsys.readouterr().out
+    assert result == 0
+    assert "Generated tools.json with 3 tools." in output
+    assert "Generated tool_surface_contract.json with 2 tools." in output
+    assert (mock_repo_root / "tools.json").exists()
+    assert (mock_repo_root / "tool_surface_contract.json").exists()

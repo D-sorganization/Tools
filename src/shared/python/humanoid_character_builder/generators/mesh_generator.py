@@ -24,9 +24,13 @@ from abc import ABC, abstractmethod  # noqa: E402
 from dataclasses import dataclass, field  # noqa: E402
 from enum import Enum  # noqa: E402
 from pathlib import Path  # noqa: E402
-from typing import Any  # noqa: E402
+from typing import Any, cast  # noqa: E402
 
 from humanoid_character_builder.core.body_parameters import BodyParameters  # noqa: E402
+
+from .mesh_generator_makehuman import PrimitiveMeshGenerator as MakeHumanMeshGenerator
+from .mesh_generator_primitive import PrimitiveMeshGenerator
+from .mesh_generator_smplx import PrimitiveMeshGenerator as SMPLXMeshGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -112,11 +116,6 @@ class MeshGeneratorInterface(ABC):
         ...
 
 
-from .mesh_generator_makehuman import MakeHumanMeshGenerator  # noqa: E402
-from .mesh_generator_primitive import PrimitiveMeshGenerator  # noqa: E402
-from .mesh_generator_smplx import SMPLXMeshGenerator  # noqa: E402
-
-
 class MeshGenerator:
     """
     Factory class for creating mesh generators.
@@ -124,7 +123,7 @@ class MeshGenerator:
     Provides a unified interface to multiple mesh generation backends.
     """
 
-    _generators: dict[MeshGeneratorBackend, type[MeshGeneratorInterface]] = {
+    _generators: dict[MeshGeneratorBackend, type[Any]] = {
         MeshGeneratorBackend.PRIMITIVE: PrimitiveMeshGenerator,
         MeshGeneratorBackend.MAKEHUMAN: MakeHumanMeshGenerator,
         MeshGeneratorBackend.SMPLX: SMPLXMeshGenerator,
@@ -153,7 +152,7 @@ class MeshGenerator:
         if generator_class is None:
             raise ValueError(f"Unknown backend: {backend}")
 
-        return generator_class(**kwargs)
+        return cast(MeshGeneratorInterface, generator_class(**kwargs))
 
     @classmethod
     def get_available_backends(cls) -> list[MeshGeneratorBackend]:
@@ -191,4 +190,4 @@ class MeshGenerator:
                 continue
 
         # Final fallback
-        return PrimitiveMeshGenerator()
+        return cast(MeshGeneratorInterface, PrimitiveMeshGenerator())
