@@ -12,6 +12,15 @@ from model_generation.api.rest_api_core import ModelGenerationAPI
 logger = logging.getLogger(__name__)
 
 
+def _request_uses_form_parsing(request: Any) -> bool:
+    """Return True when the incoming request may contain form-backed uploads."""
+    content_type = request.headers.get("content-type", "").lower()
+    return bool(getattr(request, "_form_data", None)) or (
+        "multipart/form-data" in content_type
+        or "application/x-www-form-urlencoded" in content_type
+    )
+
+
 class FastAPIAdapter:
     """Register model_generation routes on a FastAPI application."""
 
@@ -32,7 +41,7 @@ class FastAPIAdapter:
                 summary=route.description,
             )
 
-    def _make_handler(self, route: Route) -> Callable[..., Any]:
+    def _make_handler(self, _route: Route) -> Callable[..., Any]:
         """Build an async FastAPI handler for a route definition."""
         from fastapi import Request, Response
         from fastapi.responses import JSONResponse
@@ -74,7 +83,8 @@ class FastAPIAdapter:
     async def _uploaded_files(self, request: Any) -> dict[str, bytes]:
         """Collect uploaded file payloads from a FastAPI form body."""
         files: dict[str, bytes] = {}
-        for key, value in (await request.form()).items():
-            if hasattr(value, "read"):
-                files[key] = await value.read()
+        if _request_uses_form_parsing(request):
+            for key, value in (await request.form()).items():
+                if hasattr(value, "read"):
+                    files[key] = await value.read()
         return files
