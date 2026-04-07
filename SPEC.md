@@ -488,7 +488,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-07 | 1.1.28  | Optimized `AnalyticsSuite` Pearson correlation by preserving the PR's single-pass accumulation and variance-clamping path while widening the helper to accept pre-allocated `Float64Array` inputs from the newer analytics data flow.                                                                                                                                                                                                                  |
 | 2026-04-07 | 1.1.29  | Decomposed the PSA GUI into focused `ui/` modules while tightening the compatibility export surface to immutable `__all__` tuples in both the facade module and the extracted UI package.                                                                                                                                                                                                                                                              |
 | 2026-04-07 | 1.1.30  | Extracted the public enums/dataclass contracts and low-level helper kernels for `time_series_decomposition` into focused support modules, leaving the main module centered on decomposition orchestration while preserving the existing public import surface through the compatibility facade.                                                                                                                                                      |
-
 ---
 
 <!--
