@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.25                                     |
+| **Spec Version**        | 1.1.27                                     |
 | **Last Spec Update**    | 2026-04-07                                 |
 
 ## 2. Purpose & Mission
@@ -483,6 +483,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-07 | 1.1.22  | Formalize stdout/stderr helper usage for CLI-facing launcher and coverage-gate scripts so terminal output remains explicit while avoiding ad hoc `print()` usage in those entry points.                                                                                                                                                                                                                                                                |
 | 2026-04-07 | 1.1.23  | Split the data-processor neural-network script exporter, ANOVA analyzer, and vectorized filter engine into smaller domain modules behind backward-compatible facades, and add focused regression tests for the preserved public and compatibility interfaces.                                                                                                                                                                                          |
 | 2026-04-07 | 1.1.25  | Replaced raw `print()` summary emission in `scripts/generate_tools_json.py` with an explicit stdout helper, added regression coverage for the CLI entrypoint's generated-file summary contract, and aligned the humanoid mesh-generator facade with the split backend modules so refreshed type-checking stays green after the backend extraction on `main`.                                                                                           |
+| 2026-04-07 | 1.1.26  | Extracted the double-pendulum golf equations popup string literals into `equations_data.py`, leaving the popup module focused on presentation and control wiring while preserving the existing dialog behavior.                                                                                                                                                                                                                                        |
+| 2026-04-07 | 1.1.27  | Optimized `AnalyticsSuite` regression filtering by staging selected x/y series values into `Float64Array` buffers before converting them back to plain arrays for the existing result contract, reducing repeated push-allocation overhead in large regression workloads.                                                                                                                                                                              |
 
 ---
 
