@@ -1,14 +1,14 @@
-"""Backward-compatible re-export shim for the model_generation REST API."""
+"""Backward-compatible re-export shim for the split model_generation REST API."""
 
-from .rest_api_fastapi import FastAPIAdapter
-from .rest_api_flask import FlaskAdapter
-from .rest_api_routes import (
+from model_generation.api.rest_api_contracts import (
     APIRequest,
     APIResponse,
     HTTPMethod,
-    ModelGenerationAPI,
     Route,
 )
+from model_generation.api.rest_api_core import ModelGenerationAPI
+from model_generation.api.rest_api_fastapi import FastAPIAdapter
+from model_generation.api.rest_api_flask import FlaskAdapter
 
 __all__ = [
     "APIRequest",
