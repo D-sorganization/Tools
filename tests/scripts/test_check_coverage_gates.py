@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import importlib.util
 from pathlib import Path
+from types import ModuleType
+
+import pytest
 
 
-def _load_module():
+def _load_module() -> ModuleType:
     repo_root = Path(__file__).resolve().parents[2]
     module_path = repo_root / "scripts" / "check_coverage_gates.py"
     spec = importlib.util.spec_from_file_location(
@@ -17,7 +20,11 @@ def _load_module():
     return module
 
 
-def test_main_reports_missing_coverage_file(monkeypatch, tmp_path, capsys) -> None:
+def test_main_reports_missing_coverage_file(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     module = _load_module()
     missing_path = tmp_path / "missing-coverage.json"
 
@@ -33,7 +40,11 @@ def test_main_reports_missing_coverage_file(monkeypatch, tmp_path, capsys) -> No
     assert "not found" in output
 
 
-def test_main_reports_passing_gates(monkeypatch, tmp_path, capsys) -> None:
+def test_main_reports_passing_gates(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     module = _load_module()
     coverage_path = tmp_path / "coverage.json"
     coverage_path.write_text(
@@ -62,7 +73,11 @@ def test_main_reports_passing_gates(monkeypatch, tmp_path, capsys) -> None:
     assert "OK:" in output
 
 
-def test_main_reports_gate_failures(monkeypatch, tmp_path, capsys) -> None:
+def test_main_reports_gate_failures(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     module = _load_module()
     coverage_path = tmp_path / "coverage.json"
     coverage_path.write_text(

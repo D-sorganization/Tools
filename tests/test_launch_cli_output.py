@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import importlib.util
 from pathlib import Path
-from types import SimpleNamespace
+from types import ModuleType, SimpleNamespace
+
+import pytest
 
 
-def _load_launch_module():
+def _load_launch_module() -> ModuleType:
     repo_root = Path(__file__).resolve().parent.parent
     spec = importlib.util.spec_from_file_location(
         "tools_repo_launch", repo_root / "launch.py"
@@ -29,14 +31,16 @@ class _FakeRegistry:
             return list(self._tools)
         return [tool for tool in self._tools if tool.category == category]
 
-    def get(self, tool_name: str):
+    def get(self, tool_name: str) -> SimpleNamespace | None:
         for tool in self._tools:
             if tool.tool_name == tool_name:
                 return tool
         return None
 
 
-def test_list_tools_writes_cli_output_without_print(monkeypatch, capsys) -> None:
+def test_list_tools_writes_cli_output_without_print(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
     launch = _load_launch_module()
     fake_tools = [
         SimpleNamespace(
@@ -58,7 +62,9 @@ def test_list_tools_writes_cli_output_without_print(monkeypatch, capsys) -> None
     assert "pressure_drop_calculator" in output
 
 
-def test_launch_tool_reports_missing_tool_via_stdout(monkeypatch, capsys) -> None:
+def test_launch_tool_reports_missing_tool_via_stdout(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
     launch = _load_launch_module()
     registry = _FakeRegistry([])
 
@@ -73,7 +79,9 @@ def test_launch_tool_reports_missing_tool_via_stdout(monkeypatch, capsys) -> Non
     assert "Use --list to see all available tools." in output
 
 
-def test_launch_tool_reports_ambiguous_match_via_stdout(monkeypatch, capsys) -> None:
+def test_launch_tool_reports_ambiguous_match_via_stdout(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
     launch = _load_launch_module()
     fake_tools = [
         SimpleNamespace(
