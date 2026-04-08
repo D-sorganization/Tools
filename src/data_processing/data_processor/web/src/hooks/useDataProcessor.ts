@@ -397,11 +397,14 @@ export function useDataProcessor() {
         if (filteredData.length === 0) return null;
 
         // ⚡ Bolt Optimization: Replace 10 chained map/filter passes and intermediate object allocations
-        // with a single-pass loop. This drastically reduces massive GC overhead during interaction.
-        const xData: number[] = [];
-        const yData: number[] = [];
+        // with a single-pass loop using pre-allocated Float64Array buffers to eliminate amortized
+        // reallocation overhead and massive GC pauses during interaction.
+        const len = filteredData.length;
+        const xBuffer = new Float64Array(len);
+        const yBuffer = new Float64Array(len);
+        let validCount = 0;
 
-        for (let i = 0; i < filteredData.length; i++) {
+        for (let i = 0; i < len; i++) {
           const row = filteredData[i];
           const x = row[config.xColumn] as number;
           const y = row[config.yColumn] as number;
@@ -410,11 +413,15 @@ export function useDataProcessor() {
           if (config.xMin !== undefined && x < config.xMin) continue;
           if (config.xMax !== undefined && x > config.xMax) continue;
 
-          xData.push(x);
-          yData.push(y);
+          xBuffer[validCount] = x;
+          yBuffer[validCount] = y;
+          validCount++;
         }
 
-        if (xData.length < 2) return null;
+        if (validCount < 2) return null;
+
+        const xData = Array.from(xBuffer.subarray(0, validCount));
+        const yData = Array.from(yBuffer.subarray(0, validCount));
 
         let result: TrendlineResult;
 
@@ -440,9 +447,23 @@ export function useDataProcessor() {
           };
         } else if (config.type === 'exponential') {
           // y = a * e^(bx), linearize: ln(y) = ln(a) + bx
-          const lnY = yData.filter((y) => y > 0).map((y) => Math.log(y));
-          const xFiltered = xData.filter((_, i) => yData[i] > 0);
-          if (lnY.length < 2) return null;
+          // ⚡ Bolt Optimization: Replace chained map/filter with a single-pass loop over typed array buffers.
+          const xFilteredBuf = new Float64Array(validCount);
+          const lnYBuf = new Float64Array(validCount);
+          let count = 0;
+
+          for (let i = 0; i < validCount; i++) {
+            const y = yData[i];
+            if (y > 0) {
+              xFilteredBuf[count] = xData[i];
+              lnYBuf[count] = Math.log(y);
+              count++;
+            }
+          }
+          if (count < 2) return null;
+
+          const xFiltered = Array.from(xFilteredBuf.subarray(0, count));
+          const lnY = Array.from(lnYBuf.subarray(0, count));
 
           const { slope: b, intercept: lnA, rSquared } = linearRegression(xFiltered, lnY);
           const a = Math.exp(lnA);
@@ -454,12 +475,24 @@ export function useDataProcessor() {
           };
         } else {
           // Power: y = a * x^b, linearize: ln(y) = ln(a) + b*ln(x)
-          const validPower = xData.map((x, i) => ({ x, y: yData[i] }))
-            .filter(({ x, y }) => x > 0 && y > 0);
-          if (validPower.length < 2) return null;
+          // ⚡ Bolt Optimization: Replace chained map/filter and object allocations with a single-pass loop.
+          const lnXBuf = new Float64Array(validCount);
+          const lnYBuf = new Float64Array(validCount);
+          let count = 0;
 
-          const lnX = validPower.map((d) => Math.log(d.x));
-          const lnY = validPower.map((d) => Math.log(d.y));
+          for (let i = 0; i < validCount; i++) {
+            const x = xData[i];
+            const y = yData[i];
+            if (x > 0 && y > 0) {
+              lnXBuf[count] = Math.log(x);
+              lnYBuf[count] = Math.log(y);
+              count++;
+            }
+          }
+          if (count < 2) return null;
+
+          const lnX = Array.from(lnXBuf.subarray(0, count));
+          const lnY = Array.from(lnYBuf.subarray(0, count));
 
           const { slope: b, intercept: lnA, rSquared } = linearRegression(lnX, lnY);
           const a = Math.exp(lnA);
