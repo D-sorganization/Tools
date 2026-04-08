@@ -415,12 +415,12 @@ export function useDataProcessor() {
         if (filteredData.length === 0) return null;
 
         // ⚡ Bolt Optimization: Avoid using standard Array.push() which creates garbage collection
-        // pauses due to amortized resizing on large datasets. We pre-allocate Float64Array buffers
-        // in a single pass and extract the final size using .subarray().
+        // pauses due to amortized resizing on large datasets. We pre-allocate arrays in a single pass
+        // and extract the final size using truncation.
         // Performance impact: Minimizes GC stuttering entirely during interactive filtering.
         const len = filteredData.length;
-        const xBuffer = new Float64Array(len);
-        const yBuffer = new Float64Array(len);
+        const xData = new Array<number>(len);
+        const yData = new Array<number>(len);
         let count = 0;
 
         for (let i = 0; i < len; i++) {
@@ -432,15 +432,15 @@ export function useDataProcessor() {
           if (config.xMin !== undefined && x < config.xMin) continue;
           if (config.xMax !== undefined && x > config.xMax) continue;
 
-          xBuffer[count] = x;
-          yBuffer[count] = y;
+          xData[count] = x;
+          yData[count] = y;
           count++;
         }
 
         if (count < 2) return null;
 
-        const xData = Array.from(xBuffer.subarray(0, count));
-        const yData = Array.from(yBuffer.subarray(0, count));
+        xData.length = count;
+        yData.length = count;
 
         let result: TrendlineResult;
 
