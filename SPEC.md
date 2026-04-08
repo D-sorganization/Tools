@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.30                                     |
-| **Last Spec Update**    | 2026-04-07                                 |
+| **Spec Version**        | 1.1.31                                     |
+| **Last Spec Update**    | 2026-04-08                                 |
 
 ## 2. Purpose & Mission
 
@@ -488,6 +488,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-07 | 1.1.28  | Optimized `AnalyticsSuite` Pearson correlation by preserving the PR's single-pass accumulation and variance-clamping path while widening the helper to accept pre-allocated `Float64Array` inputs from the newer analytics data flow.                                                                                                                                                                                                                  |
 | 2026-04-07 | 1.1.29  | Decomposed the PSA GUI into focused `ui/` modules while tightening the compatibility export surface to immutable `__all__` tuples in both the facade module and the extracted UI package.                                                                                                                                                                                                                                                              |
 | 2026-04-07 | 1.1.30  | Extracted the public enums/dataclass contracts and low-level helper kernels for `time_series_decomposition` into focused support modules, leaving the main module centered on decomposition orchestration while preserving the existing public import surface through the compatibility facade.                                                                                                                                                      |
+| 2026-04-08 | 1.1.31  | Optimized data array filtering in `useDataProcessor.ts` by replacing `Array.push()` calls with `Float64Array` buffers in `calculateTrendline`, and replacing chained `filter()` passes in `trimTimeRange` with a single-pass `for` loop that avoids creating and resizing intermediate arrays.                                                                                                                                                                        |
 ---
 
 <!--
