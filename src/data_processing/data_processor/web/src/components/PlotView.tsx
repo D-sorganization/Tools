@@ -7,7 +7,7 @@
  * No 1000-point downsampling limit — Plotly handles large datasets via WebGL.
  */
 
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import Plot from 'react-plotly.js';
 import { BarChart2 } from 'lucide-react';
 import type { DataRow } from '../types';
@@ -64,7 +64,7 @@ interface PlotViewProps {
 
 // ── Component ───────────────────────────────────────────────────────────────
 
-export function PlotView({
+export const PlotView = memo(function PlotView({
   data,
   selectedSignals,
   plotlyData,
@@ -182,6 +182,6 @@ export function PlotView({
       </div>
     </div>
   );
-}
+});
 
 export default PlotView;

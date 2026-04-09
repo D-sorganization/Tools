@@ -8,7 +8,7 @@
  *
  * See issue #607.
  */
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, memo } from 'react';
 import {
   BarChart,
   Bar,
@@ -471,13 +471,15 @@ function correlationColor(r: number): string {
   return r >= 0 ? COLORS_POSITIVE[4 - idx] : COLORS_NEGATIVE[4 - idx];
 }
 
-export function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuiteProps) {
+export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuiteProps) {
   const [tab, setTab] = useState<AnalyticsTab>('correlation');
   const [regXSignal, setRegXSignal] = useState<string>(selectedSignals[0] ?? '');
   const [regYSignal, setRegYSignal] = useState<string>(selectedSignals[1] ?? selectedSignals[0] ?? '');
   const [regDegree, setRegDegree] = useState<number>(1);
 
-  const activeSignals = selectedSignals.length > 0 ? selectedSignals : signals.slice(0, 5);
+  const activeSignals = useMemo(() => {
+    return selectedSignals.length > 0 ? selectedSignals : signals.slice(0, 5);
+  }, [selectedSignals, signals]);
 
   // Correlation
   const correlation = useMemo<CorrelationMatrix | null>(() => {
@@ -826,6 +828,6 @@ export function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuit
       )}
     </div>
   );
-}
+});
 
 export default AnalyticsSuite;
