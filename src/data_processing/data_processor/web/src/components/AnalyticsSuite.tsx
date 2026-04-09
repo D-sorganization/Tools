@@ -500,6 +500,42 @@ export function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuit
     setRegression(result);
   }, [data, regXSignal, regYSignal, regDegree]);
 
+  // Memoize PCA chart data
+  const pcaScreeData = useMemo(() => {
+    if (!pca) return [];
+    return pca.explainedVariance.map((ev, i) => ({
+      name: `PC${i + 1}`,
+      variance: +(ev * 100).toFixed(1),
+      cumulative: +(pca.cumulativeVariance[i] * 100).toFixed(1),
+    }));
+  }, [pca]);
+
+  const pcaScatterData = useMemo(() => {
+    if (!pca || pca.numComponents < 2) return [];
+    return pca.scores.map((s) => ({ x: s[0], y: s[1] }));
+  }, [pca]);
+
+  // Memoize Regression chart data
+  const regressionScatterData = useMemo(() => {
+    if (!regression) return [];
+    // ⚡ Bolt Optimization: Use single-pass for loop to build scatter data, avoiding chained .map().filter() and GC overhead
+    const result = [];
+    for (let i = 0; i < data.length; i++) {
+      const row = data[i];
+      const x = row[regression.xSignal];
+      const y = row[regression.ySignal];
+      if (typeof x === 'number' && typeof y === 'number') {
+        result.push({ x, y });
+      }
+    }
+    return result;
+  }, [data, regression]);
+
+  const regressionResidualsData = useMemo(() => {
+    if (!regression) return [];
+    return regression.residuals.map((r, i) => ({ index: i, residual: r }));
+  }, [regression]);
+
   if (data.length === 0 || activeSignals.length < 2) {
     return (
       <div className="card">
@@ -580,13 +616,7 @@ export function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuit
             <div className="card-header">Scree Plot (Variance Explained)</div>
             <div className="card-body h-56">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={pca.explainedVariance.map((ev, i) => ({
-                    name: `PC${i + 1}`,
-                    variance: +(ev * 100).toFixed(1),
-                    cumulative: +(pca.cumulativeVariance[i] * 100).toFixed(1),
-                  }))}
-                >
+                <BarChart data={pcaScreeData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                   <XAxis dataKey="name" stroke="#94a3b8" />
                   <YAxis stroke="#94a3b8" label={{ value: '%', angle: -90, position: 'insideLeft', fill: '#94a3b8' }} />
@@ -624,11 +654,8 @@ export function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuit
                       label={{ value: `PC2 (${(pca.explainedVariance[1] * 100).toFixed(1)}%)`, angle: -90, position: 'insideLeft', fill: '#94a3b8' }}
                     />
                     <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none' }} />
-                    <Scatter
-                      data={pca.scores.map((s) => ({ x: s[0], y: s[1] }))}
-                      fill="#3b82f6"
-                    >
-                      {pca.scores.map((_, i) => (
+                    <Scatter data={pcaScatterData} fill="#3b82f6">
+                      {pcaScatterData.map((_, i) => (
                         <Cell key={i} fill="#3b82f6" opacity={0.6} />
                       ))}
                     </Scatter>
@@ -763,13 +790,7 @@ export function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuit
                       <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none' }} />
                       <Scatter
                         name="Data"
-                        data={data
-                          .map((row) => ({
-                            x: typeof row[regression.xSignal] === 'number' ? row[regression.xSignal] : undefined,
-                            y: typeof row[regression.ySignal] === 'number' ? row[regression.ySignal] : undefined,
-                          }))
-                          .filter((d) => d.x !== undefined && d.y !== undefined)
-                        }
+                        data={regressionScatterData}
                         fill="#3b82f6"
                         opacity={0.5}
                       />
@@ -783,9 +804,7 @@ export function AnalyticsSuite({ data, signals, selectedSignals }: AnalyticsSuit
                 <div className="card-header">Residual Plot</div>
                 <div className="card-body h-48">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart
-                      data={regression.residuals.map((r, i) => ({ index: i, residual: r }))}
-                    >
+                    <LineChart data={regressionResidualsData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                       <XAxis dataKey="index" stroke="#94a3b8" />
                       <YAxis stroke="#94a3b8" />
