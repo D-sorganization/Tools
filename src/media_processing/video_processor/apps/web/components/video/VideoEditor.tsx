@@ -166,7 +166,8 @@ export default function VideoEditor({
                 })
               }
               disabled={disabled || videoDuration === 0}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 disabled:opacity-50"
+              aria-label="Trim start time"
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
             />
           </div>
           <div>
@@ -186,7 +187,8 @@ export default function VideoEditor({
                 })
               }
               disabled={disabled || videoDuration === 0}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 disabled:opacity-50"
+              aria-label="Trim end time"
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
             />
           </div>
         </div>
@@ -202,8 +204,9 @@ export default function VideoEditor({
               key={angle}
               onClick={() => setRotation(angle)}
               disabled={disabled}
+              aria-label={`Rotate ${angle} degrees`}
               className={`
-                px-3 py-2 text-sm font-medium rounded-md transition-colors
+                px-3 py-2 text-sm font-medium rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none
                 ${
                   rotation === angle
                     ? 'bg-blue-600 text-white'
@@ -221,7 +224,7 @@ export default function VideoEditor({
       <button
         onClick={handleExport}
         disabled={disabled || isProcessing || !videoFile}
-        className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
       >
         {isProcessing ? 'Processing...' : 'Export Video'}
       </button>
