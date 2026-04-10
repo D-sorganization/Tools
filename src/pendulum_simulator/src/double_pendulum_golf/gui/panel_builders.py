@@ -370,23 +370,8 @@ def _wire_panel_sim_signals(
         )
 
 
-def build_double_panel(main_window: Any) -> SimulationPanel:
-    """Build and return the double pendulum simulation panel.
-
-    Parameters
-    ----------
-    main_window : MainWindow
-        The main window instance (used to access state if needed).
-
-    Returns
-    -------
-    SimulationPanel
-        A fully wired simulation panel for the double pendulum model.
-    """
-    controls = ControlsWidget()
-    pendulum = PendulumWidget()
-    matrix = MatrixWidget()
-    torque_history = TorqueHistoryWidget()
+def _make_double_params_builder(pendulum: PendulumWidget) -> Callable[[dict], PendulumParams]:
+    """Return a params builder closure for the double pendulum."""
 
     def build_params(p: dict) -> PendulumParams:
         tilt_rad = np.radians(p.get("tilt_deg", 0.0))
@@ -409,44 +394,50 @@ def build_double_panel(main_window: Any) -> SimulationPanel:
             mu2=p.get("mu2", 0.0),
         )
 
-    def build_state(p: dict) -> np.ndarray:
-        return np.array([p["theta1_rad"], p["phi_rad"], p["dtheta1"], p["dphi"]])
+    return build_params
 
-    def build_torque(p: dict) -> object:
-        return make_polynomial_torque(p["shoulder_coeffs"], p["wrist_coeffs"])
 
-    def build_limits(p: dict) -> JointLimits | None:
-        if not p.get("enable_limits", False):
-            return None
-        return JointLimits(
-            phi_min=p.get("phi_min_rad", -np.pi / 2),
-            phi_max=p.get("phi_max_rad", np.pi / 2),
-            theta1_min=p.get("theta1_min_rad", -np.pi),
-            theta1_max=p.get("theta1_max_rad", np.pi),
-            stiffness=p.get("limit_stiffness", 500.0),
-        )
+def _build_double_state(p: dict) -> np.ndarray:
+    return np.array([p["theta1_rad"], p["phi_rad"], p["dtheta1"], p["dphi"]])
 
-    def build_clamp(p: dict) -> TorqueClamp | None:
-        if not p.get("enable_clamp", False):
-            return None
-        return TorqueClamp(
-            max_torque1=p.get("max_torque1", 50.0),
-            max_torque2=p.get("max_torque2", 20.0),
-        )
 
-    # Optimizer (#1108)
-    optimizer = OptimizationWidget(
-        model_name="Double Pendulum",
-        n_torque_params=2,
+def _build_double_torque(p: dict) -> object:
+    return make_polynomial_torque(p["shoulder_coeffs"], p["wrist_coeffs"])
+
+
+def _build_double_limits(p: dict) -> JointLimits | None:
+    if not p.get("enable_limits", False):
+        return None
+    return JointLimits(
+        phi_min=p.get("phi_min_rad", -np.pi / 2),
+        phi_max=p.get("phi_max_rad", np.pi / 2),
+        theta1_min=p.get("theta1_min_rad", -np.pi),
+        theta1_max=p.get("theta1_max_rad", np.pi),
+        stiffness=p.get("limit_stiffness", 500.0),
     )
+
+
+def _build_double_clamp(p: dict) -> TorqueClamp | None:
+    if not p.get("enable_clamp", False):
+        return None
+    return TorqueClamp(
+        max_torque1=p.get("max_torque1", 50.0),
+        max_torque2=p.get("max_torque2", 20.0),
+    )
+
+
+def _make_double_objective_factory(
+    build_params: Callable[[dict], PendulumParams],
+) -> Callable[[dict], Callable]:
+    """Return an objective-builder for the double pendulum optimizer."""
 
     def _make_double_objective(p: dict) -> Callable:
         """Build a tip-speed objective from current controls."""
         params = build_params(p)
-        initial_state = build_state(p)
+        initial_state = _build_double_state(p)
         t_end = p["t_end"]
-        limits = build_limits(p)
-        clamp = build_clamp(p)
+        limits = _build_double_limits(p)
+        clamp = _build_double_clamp(p)
 
         def objective(coeffs: np.ndarray) -> float:
             n_half = len(coeffs) // 2
@@ -477,6 +468,40 @@ def build_double_panel(main_window: Any) -> SimulationPanel:
 
         return objective
 
+    return _make_double_objective
+
+
+def build_double_panel(main_window: Any) -> SimulationPanel:
+    """Build and return the double pendulum simulation panel.
+
+    Parameters
+    ----------
+    main_window : MainWindow
+        The main window instance (used to access state if needed).
+
+    Returns
+    -------
+    SimulationPanel
+        A fully wired simulation panel for the double pendulum model.
+    """
+    controls = ControlsWidget()
+    pendulum = PendulumWidget()
+    matrix = MatrixWidget()
+    torque_history = TorqueHistoryWidget()
+
+    build_params = _make_double_params_builder(pendulum)
+    build_state = _build_double_state
+    build_torque = _build_double_torque
+    build_limits = _build_double_limits
+    build_clamp = _build_double_clamp
+
+    # Optimizer (#1108)
+    optimizer = OptimizationWidget(
+        model_name="Double Pendulum",
+        n_torque_params=2,
+    )
+    objective_builder = _make_double_objective_factory(build_params)
+
     panel = SimulationPanel(
         controls=controls,
         pendulum=pendulum,  # type: ignore[arg-type]
@@ -489,7 +514,7 @@ def build_double_panel(main_window: Any) -> SimulationPanel:
         limits_builder=build_limits,
         clamp_builder=build_clamp,
         optimizer=optimizer,
-        objective_builder=_make_double_objective,
+        objective_builder=objective_builder,
     )
     panel._settings_key = "splitter_double"
 
@@ -501,23 +526,10 @@ def build_double_panel(main_window: Any) -> SimulationPanel:
     return panel
 
 
-def build_triple_panel(main_window: Any) -> SimulationPanel:
-    """Build and return the triple pendulum simulation panel.
-
-    Parameters
-    ----------
-    main_window : MainWindow
-        The main window instance (used to access state if needed).
-
-    Returns
-    -------
-    SimulationPanel
-        A fully wired simulation panel for the triple pendulum model.
-    """
-    controls = ControlsWidgetTriple()
-    pendulum = PendulumWidget()
-    matrix = TripleMatrixWidget()
-    torque_history = TorqueHistoryWidget()
+def _make_triple_params_builder(
+    pendulum: PendulumWidget,
+) -> Callable[[dict], TriplePendulumParams]:
+    """Return a params builder closure for the triple pendulum."""
 
     def build_params(p: dict) -> TriplePendulumParams:
         tilt_rad = np.radians(p.get("tilt_deg", 0.0))
@@ -542,52 +554,58 @@ def build_triple_panel(main_window: Any) -> SimulationPanel:
             scapula_offset_rad=np.radians(p.get("scapula_deg", 0.0)),
         )
 
-    def build_state(p: dict) -> np.ndarray:
-        return np.array(
-            [
-                p["theta1_rad"],
-                p["phi1_rad"],
-                p["phi2_rad"],
-                p["dtheta1"],
-                p["dphi1"],
-                p["dphi2"],
-            ],
-        )
+    return build_params
 
-    def build_torque(p: dict) -> object:
-        return make_polynomial_torque_triple(
-            p["shoulder_coeffs"],
-            p["elbow_coeffs"],
-            p["wrist_coeffs"],
-        )
 
-    def build_limits(p: dict) -> JointLimitsNDOF | None:
-        if not p.get("enable_limits", False):
-            return None
-        return JointLimitsNDOF(
-            angle_min=np.array(p["limit_mins_rad"]),
-            angle_max=np.array(p["limit_maxs_rad"]),
-            stiffness=p.get("limit_stiffness", 500.0),
-        )
-
-    def build_clamp(p: dict) -> np.ndarray | None:
-        if not p.get("enable_clamp", False):
-            return None
-        return np.array(p["torque_limits"])
-
-    # Optimizer (#1109)
-    optimizer = OptimizationWidget(
-        model_name="Triple Pendulum",
-        n_torque_params=3,
+def _build_triple_state(p: dict) -> np.ndarray:
+    return np.array(
+        [
+            p["theta1_rad"],
+            p["phi1_rad"],
+            p["phi2_rad"],
+            p["dtheta1"],
+            p["dphi1"],
+            p["dphi2"],
+        ],
     )
+
+
+def _build_triple_torque(p: dict) -> object:
+    return make_polynomial_torque_triple(
+        p["shoulder_coeffs"],
+        p["elbow_coeffs"],
+        p["wrist_coeffs"],
+    )
+
+
+def _build_triple_limits(p: dict) -> JointLimitsNDOF | None:
+    if not p.get("enable_limits", False):
+        return None
+    return JointLimitsNDOF(
+        angle_min=np.array(p["limit_mins_rad"]),
+        angle_max=np.array(p["limit_maxs_rad"]),
+        stiffness=p.get("limit_stiffness", 500.0),
+    )
+
+
+def _build_triple_clamp(p: dict) -> np.ndarray | None:
+    if not p.get("enable_clamp", False):
+        return None
+    return np.array(p["torque_limits"])
+
+
+def _make_triple_objective_factory(
+    build_params: Callable[[dict], TriplePendulumParams],
+) -> Callable[[dict], Callable]:
+    """Return an objective-builder for the triple pendulum optimizer."""
 
     def _make_triple_objective(p: dict) -> Callable:
         """Build a tip-speed objective from current controls."""
         params = build_params(p)
-        initial_state = build_state(p)
+        initial_state = _build_triple_state(p)
         t_end = p["t_end"]
-        limits = build_limits(p)
-        clamp = build_clamp(p)
+        limits = _build_triple_limits(p)
+        clamp = _build_triple_clamp(p)
 
         def objective(coeffs: np.ndarray) -> float:
             n_third = len(coeffs) // 3
@@ -618,6 +636,40 @@ def build_triple_panel(main_window: Any) -> SimulationPanel:
 
         return objective
 
+    return _make_triple_objective
+
+
+def build_triple_panel(main_window: Any) -> SimulationPanel:
+    """Build and return the triple pendulum simulation panel.
+
+    Parameters
+    ----------
+    main_window : MainWindow
+        The main window instance (used to access state if needed).
+
+    Returns
+    -------
+    SimulationPanel
+        A fully wired simulation panel for the triple pendulum model.
+    """
+    controls = ControlsWidgetTriple()
+    pendulum = PendulumWidget()
+    matrix = TripleMatrixWidget()
+    torque_history = TorqueHistoryWidget()
+
+    build_params = _make_triple_params_builder(pendulum)
+    build_state = _build_triple_state
+    build_torque = _build_triple_torque
+    build_limits = _build_triple_limits
+    build_clamp = _build_triple_clamp
+
+    # Optimizer (#1109)
+    optimizer = OptimizationWidget(
+        model_name="Triple Pendulum",
+        n_torque_params=3,
+    )
+    objective_builder = _make_triple_objective_factory(build_params)
+
     panel = SimulationPanel(
         controls=controls,
         pendulum=pendulum,  # type: ignore[arg-type]
@@ -630,7 +682,7 @@ def build_triple_panel(main_window: Any) -> SimulationPanel:
         limits_builder=build_limits,
         clamp_builder=build_clamp,
         optimizer=optimizer,
-        objective_builder=_make_triple_objective,
+        objective_builder=objective_builder,
     )
     panel._settings_key = "splitter_triple"
 

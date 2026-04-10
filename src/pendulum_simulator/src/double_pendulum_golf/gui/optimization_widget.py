@@ -131,14 +131,10 @@ def _cmaes_step(
 
     # Learning rates
     c_sigma = (mu_eff + 2.0) / (n + mu_eff + 5.0)
-    d_sigma = (
-        1.0 + 2.0 * max(0.0, math.sqrt((mu_eff - 1.0) / (n + 1.0)) - 1.0) + c_sigma
-    )
+    d_sigma = 1.0 + 2.0 * max(0.0, math.sqrt((mu_eff - 1.0) / (n + 1.0)) - 1.0) + c_sigma
     c_c = (4.0 + mu_eff / n) / (n + 4.0 + 2.0 * mu_eff / n)
     c1 = 2.0 / ((n + 1.3) ** 2 + mu_eff)
-    c_mu_lr = min(
-        1.0 - c1, 2.0 * (mu_eff - 2.0 + 1.0 / mu_eff) / ((n + 2.0) ** 2 + mu_eff)
-    )
+    c_mu_lr = min(1.0 - c1, 2.0 * (mu_eff - 2.0 + 1.0 / mu_eff) / ((n + 2.0) ** 2 + mu_eff))
 
     # Sample population
     try:
@@ -186,9 +182,9 @@ def _cmaes_step(
         else 0.0
     )
 
-    p_c_new = (1.0 - c_c) * state.p_c + h_sigma * math.sqrt(
-        c_c * (2.0 - c_c) * mu_eff
-    ) * (new_mean - old_mean) / state.sigma
+    p_c_new = (1.0 - c_c) * state.p_c + h_sigma * math.sqrt(c_c * (2.0 - c_c) * mu_eff) * (
+        new_mean - old_mean
+    ) / state.sigma
 
     # Update covariance matrix
     artmp = (selected - old_mean) / state.sigma
@@ -261,9 +257,7 @@ class _OptimizerWorker(QObject):
         self._n_iterations = n_iterations
         self._method = method
         self._warm_start = warm_start
-        self._population_size = population_size or max(
-            10, 4 + int(3 * np.log(n_params))
-        )
+        self._population_size = population_size or max(10, 4 + int(3 * np.log(n_params)))
         self._plateau_patience = plateau_patience
         self._use_native_batch = use_native_batch
         self._native_config = native_batch_config or {}
@@ -334,9 +328,7 @@ class _OptimizerWorker(QObject):
         self.finished.emit(
             {
                 "coeffs": (
-                    state.best_solution
-                    if state.best_solution is not None
-                    else state.mean
+                    state.best_solution if state.best_solution is not None else state.mean
                 ),
                 "speed": -state.best_fitness,
                 "history": history,
@@ -475,23 +467,29 @@ class OptimizationWidget(QWidget):
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
 
-        # Title
+        self._build_ui_header(layout)
+        layout.addWidget(self._build_ui_config_group())
+        layout.addWidget(self._build_ui_options_group())
+        self._build_ui_action_buttons(layout)
+        self._build_ui_progress_status(layout)
+        layout.addStretch()
+
+    def _build_ui_header(self, layout: QVBoxLayout) -> None:
+        """Build the title and backend-status labels."""
         title = QLabel(f"⚡ {self._model_name} Optimizer")
         title.setStyleSheet("color:#a0a0e0;font-size:11px;font-weight:bold;")
         layout.addWidget(title)
 
-        # Backend status
         backend_lbl = QLabel(
-            "🦀 Rust parallel batch enabled"
-            if _HAS_NATIVE_BATCH
-            else "🐍 Python sequential"
+            "🦀 Rust parallel batch enabled" if _HAS_NATIVE_BATCH else "🐍 Python sequential"
         )
         backend_lbl.setStyleSheet(
             f"color:{'#60c060' if _HAS_NATIVE_BATCH else '#c0a060'};font-size:9px;"
         )
         layout.addWidget(backend_lbl)
 
-        # Config group
+    def _build_ui_config_group(self) -> QGroupBox:
+        """Build the 'Configuration' group with objective/method/numeric spinners."""
         config = QGroupBox("Configuration")
         cfg_lay = QVBoxLayout(config)
         cfg_lay.setContentsMargins(4, 14, 4, 4)
@@ -501,9 +499,7 @@ class OptimizationWidget(QWidget):
         obj_row = QHBoxLayout()
         obj_row.addWidget(QLabel("Objective:"))
         self._cmb_objective = QComboBox()
-        self._cmb_objective.addItems(
-            ["Max Tip Speed", "Max Height", "Min Control Effort"]
-        )
+        self._cmb_objective.addItems(["Max Tip Speed", "Max Height", "Min Control Effort"])
         obj_row.addWidget(self._cmb_objective)
         cfg_lay.addLayout(obj_row)
 
@@ -552,15 +548,14 @@ class OptimizationWidget(QWidget):
         self._spin_patience = QSpinBox()
         self._spin_patience.setRange(5, 200)
         self._spin_patience.setValue(20)
-        self._spin_patience.setToolTip(
-            "Stop if no improvement for this many generations"
-        )
+        self._spin_patience.setToolTip("Stop if no improvement for this many generations")
         pat_row.addWidget(self._spin_patience)
         cfg_lay.addLayout(pat_row)
 
-        layout.addWidget(config)
+        return config
 
-        # Options group
+    def _build_ui_options_group(self) -> QGroupBox:
+        """Build the 'Options' group with warm-start / constraint / native checkboxes."""
         opts = QGroupBox("Options")
         opts_lay = QVBoxLayout(opts)
         opts_lay.setContentsMargins(4, 14, 4, 4)
@@ -579,9 +574,10 @@ class OptimizationWidget(QWidget):
         self._chk_native.setEnabled(_HAS_NATIVE_BATCH)
         opts_lay.addWidget(self._chk_native)
 
-        layout.addWidget(opts)
+        return opts
 
-        # Controls
+    def _build_ui_action_buttons(self, layout: QVBoxLayout) -> None:
+        """Build the Optimize/Cancel/Apply button row."""
         btn_row = QHBoxLayout()
         self._btn_run = QPushButton("▶ Optimize")
         self._btn_run.clicked.connect(self._on_run)
@@ -599,24 +595,21 @@ class OptimizationWidget(QWidget):
         btn_row.addWidget(self._btn_apply)
         layout.addLayout(btn_row)
 
-        # Progress
+    def _build_ui_progress_status(self, layout: QVBoxLayout) -> None:
+        """Build the progress bar, status label, and log view."""
         self._progress = QProgressBar()
         self._progress.setRange(0, 100)
         self._progress.setValue(0)
         layout.addWidget(self._progress)
 
-        # Status
         self._lbl_status = QLabel("Ready")
         self._lbl_status.setStyleSheet("color:#606080;font-size:9px;")
         layout.addWidget(self._lbl_status)
 
-        # Log
         self._log = QTextEdit()
         self._log.setReadOnly(True)
         self._log.setMaximumHeight(150)
         layout.addWidget(self._log)
-
-        layout.addStretch()
 
     def set_objective_function(self, fn: Callable) -> None:
         """Set the objective function for optimization.
@@ -649,9 +642,7 @@ class OptimizationWidget(QWidget):
 
         self._log.clear()
         self._log.append(f"Starting {method} optimization...")
-        self._log.append(
-            f"  Params: {n_params}, Generations: {n_iters}, Pop: {pop_size}"
-        )
+        self._log.append(f"  Params: {n_params}, Generations: {n_iters}, Pop: {pop_size}")
         if _HAS_NATIVE_BATCH and self._chk_native.isChecked():
             self._log.append("  Backend: 🦀 Rust parallel (rayon)")
         else:

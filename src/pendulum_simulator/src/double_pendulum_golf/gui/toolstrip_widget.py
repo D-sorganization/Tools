@@ -505,16 +505,41 @@ class ToolStrip(QWidget):
         All three overlay types (Force Vectors, Mobility Ellipsoids, Force Ellipsoids)
         are stacked vertically in a compact section.
         """
-        # --- Overlay section container ---
         assert layout is not None, "layout must be provided"
+        overlay_frame, overlay_layout = self._create_overlay_frame()
+
+        overlay_layout.addLayout(self._build_force_vectors_row())
+        overlay_layout.addLayout(self._build_mobility_ellipsoids_row())
+        overlay_layout.addLayout(self._build_force_ellipsoids_row())
+        overlay_layout.addLayout(self._build_segment_visibility_row())
+
+        layout.addWidget(overlay_frame)
+        layout.addWidget(_vline())
+
+        # --- Extra toggles column (vertical, right of overlay section) ---
+        extra_col = self._build_extra_toggles_col()
+        layout.addLayout(extra_col)
+
+        layout.addWidget(_vline())
+
+        self._status_lbl = QLabel("Ready")
+        self._status_lbl.setStyleSheet("color:#404060;font-size:11px;")
+        layout.addWidget(self._status_lbl)
+
+        layout.addStretch()
+
+    def _create_overlay_frame(self) -> tuple[QFrame, QVBoxLayout]:
+        """Create the overlay section container frame and its vertical layout."""
         overlay_frame = QFrame()
         overlay_frame.setObjectName("overlay_section")
         overlay_frame.setStyleSheet(_OVERLAY_SECTION)
         overlay_layout = QVBoxLayout(overlay_frame)
         overlay_layout.setContentsMargins(4, 2, 4, 2)
         overlay_layout.setSpacing(1)
+        return overlay_frame, overlay_layout
 
-        # Row A: Force Vectors checkbox + scale slider
+    def _build_force_vectors_row(self) -> QHBoxLayout:
+        """Row A: Force Vectors checkbox + scale slider."""
         self.chk_forces = QCheckBox("Force Vectors")
         self.chk_forces.setStyleSheet(_CHK_FORCE)
         self.chk_forces.setToolTip(
@@ -530,11 +555,10 @@ class ToolStrip(QWidget):
         self._lbl_force_scale = QLabel("1.0×")
         self._lbl_force_scale.setStyleSheet(_VAL_LBL)
 
-        overlay_layout.addLayout(
-            _overlay_row(self.chk_forces, self._sld_force, self._lbl_force_scale)
-        )
+        return _overlay_row(self.chk_forces, self._sld_force, self._lbl_force_scale)
 
-        # Row B: Mobility Ellipsoids checkbox + scale slider
+    def _build_mobility_ellipsoids_row(self) -> QHBoxLayout:
+        """Row B: Mobility Ellipsoids checkbox + scale slider."""
         self.chk_mob = QCheckBox("Mobility Ellipsoids")
         self.chk_mob.setStyleSheet(_CHK_MOB)
         self.chk_mob.setToolTip(
@@ -550,11 +574,10 @@ class ToolStrip(QWidget):
         self._lbl_mob_scale = QLabel("1.0×")
         self._lbl_mob_scale.setStyleSheet(_VAL_LBL)
 
-        overlay_layout.addLayout(
-            _overlay_row(self.chk_mob, self._sld_mob, self._lbl_mob_scale)
-        )
+        return _overlay_row(self.chk_mob, self._sld_mob, self._lbl_mob_scale)
 
-        # Row C: Force Ellipsoids checkbox + scale slider
+    def _build_force_ellipsoids_row(self) -> QHBoxLayout:
+        """Row C: Force Ellipsoids checkbox + scale slider."""
         self.chk_force_ell = QCheckBox("Force Ellipsoids")
         self.chk_force_ell.setStyleSheet(_CHK_FELL)
         self.chk_force_ell.setToolTip(
@@ -570,11 +593,10 @@ class ToolStrip(QWidget):
         self._lbl_force_ell_scale = QLabel("1.0×")
         self._lbl_force_ell_scale.setStyleSheet(_VAL_LBL)
 
-        overlay_layout.addLayout(
-            _overlay_row(self.chk_force_ell, self._sld_force_ell, self._lbl_force_ell_scale)
-        )
+        return _overlay_row(self.chk_force_ell, self._sld_force_ell, self._lbl_force_ell_scale)
 
-        # Row D: Per-segment visibility sub-checkboxes (#1100, #1101, #1102)
+    def _build_segment_visibility_row(self) -> QHBoxLayout:
+        """Row D: Per-segment visibility sub-checkboxes (#1100, #1101, #1102)."""
         seg_row = QHBoxLayout()
         seg_row.setContentsMargins(0, 1, 0, 0)
         seg_row.setSpacing(2)
@@ -597,22 +619,7 @@ class ToolStrip(QWidget):
             seg_row.addWidget(chk)
             self._segment_checks[name] = chk
         seg_row.addStretch()
-        overlay_layout.addLayout(seg_row)
-
-        layout.addWidget(overlay_frame)
-        layout.addWidget(_vline())
-
-        # --- Extra toggles column (vertical, right of overlay section) ---
-        extra_col = self._build_extra_toggles_col()
-        layout.addLayout(extra_col)
-
-        layout.addWidget(_vline())
-
-        self._status_lbl = QLabel("Ready")
-        self._status_lbl.setStyleSheet("color:#404060;font-size:11px;")
-        layout.addWidget(self._status_lbl)
-
-        layout.addStretch()
+        return seg_row
 
     def _build_physics_checkboxes(self, layout: QVBoxLayout) -> None:
         """Create and wire the six physics-toggle checkboxes into *layout*.
