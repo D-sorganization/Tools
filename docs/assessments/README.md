@@ -202,6 +202,7 @@ _See individual Assessment_Prompt_X.md files for detailed prompts._
 | 4.10 | 2026-04 | Executed Completist Audit (Apr 02) |
 | 5.0 | 2026-04 | Generated Comprehensive Assessments and applied AUTO-FIXED changes |
 | 5.1 | 2026-04 | Executed Completist Audit (Apr 05) |
+| 5.2 | 2026-04 | A-N comprehensive review 2026-04-09 (see `A-N_Assessment_2026-04-09.md`) |
 
 ---
 
