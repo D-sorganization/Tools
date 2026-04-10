@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-05-19
+  LAST UPDATED: 2026-04-09
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.33                                     |
+| **Spec Version**        | 1.1.34                                     |
 | **Last Spec Update**    | 2026-04-09                                 |
 
 ## 2. Purpose & Mission
@@ -490,7 +490,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-07 | 1.1.30  | Extracted the public enums/dataclass contracts and low-level helper kernels for `time_series_decomposition` into focused support modules, leaving the main module centered on decomposition orchestration while preserving the existing public import surface through the compatibility facade.                                                                                                                                                      |
 | 2026-04-08 | 1.1.31  | Memoize AnalyticsSuite chart data using useMemo and optimize the scatter regression component with a single-pass loop, drastically reducing React rendering and GC overhead.                                                                                                                                                                                                                                                                        |
 | 2026-04-08 | 1.1.32  | Optimized data array filtering in `useDataProcessor.ts` by replacing `Array.push()` calls with `Float64Array` buffers in `calculateTrendline`, and replacing chained `filter()` passes in `trimTimeRange` with a single-pass `for` loop that avoids creating and resizing intermediate arrays.                                                                                                                                                                        |
-| 2026-04-09 | 1.1.33  | Wrapped DataTableView, PlotView, and AnalyticsSuite in `React.memo`, and memoized activeSignals with `useMemo` to prevent expensive visualization re-renders on unrelated UI state changes. |
+| 2026-04-09 | 1.1.33  | Added a loading spinner and `aria-pressed` states to the `VideoEditor.tsx` component in the video processor web application to improve user experience and accessibility during video export operations.                                                                                                                                                                        |
+| 2026-04-09 | 1.1.34  | Wrapped DataTableView, PlotView, and AnalyticsSuite in `React.memo`, and memoized activeSignals with `useMemo` to prevent expensive visualization re-renders on unrelated UI state changes. |
 ---
 
 <!--
