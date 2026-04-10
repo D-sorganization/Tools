@@ -476,7 +476,7 @@ class SwingComparisonDialog(QDialog):
             error_kw={"ecolor": "#d0d0d0", "linewidth": 1.5},
         )
         self._ax.set_xticks(x)
-        self._ax.set_xticklabels(names, rotation=15, ha="right", fontsize=8)
+        self._ax.set_xticklabels(names, rotation=15, ha="right", fontsize=8)  # type: ignore[operator]
         self._ax.set_ylabel("Tip speed (m/s)", color="#8080b0", fontsize=9)
         self._ax.tick_params(colors="#8080b0", labelsize=9)
         for spine in self._ax.spines.values():

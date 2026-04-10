@@ -14,11 +14,11 @@ Factored out of the original ``simulation_panel.py`` to keep the main
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 from PyQt6.QtCore import Qt, QThread
-from PyQt6.QtWidgets import QLabel, QMessageBox, QProgressBar
+from PyQt6.QtWidgets import QLabel, QMessageBox, QProgressBar, QWidget
 
 from ._worker import _SimWorker
 
@@ -196,9 +196,9 @@ class _SimulationLifecycleMixin:
     def _show_busy(self, busy: bool) -> None:
         """Show / hide a 'Simulating…' indicator in the top-right."""
         assert busy is not None, "busy must be provided"
-        host = self  # QWidget-compatible
+        host = cast(QWidget, self)  # Mixin used only on QWidget subclasses
         if not hasattr(self, "_busy_label"):
-            self._busy_label = QLabel("⏳  Simulating…", host)  # type: ignore[arg-type]
+            self._busy_label = QLabel("⏳  Simulating…", host)
             self._busy_label.setStyleSheet(
                 "background: #202040; color: #b0b0e8; border: 1px solid #404070;"
                 "border-radius: 4px; padding: 4px 10px; font-size: 12px;"
@@ -208,7 +208,7 @@ class _SimulationLifecycleMixin:
             # Position top-centre of this panel
             self._busy_label.setFixedWidth(160)
             self._busy_label.move(
-                (self.width() - 160) // 2,  # type: ignore[attr-defined]
+                (host.width() - 160) // 2,
                 8,
             )
             self._busy_label.raise_()
@@ -218,10 +218,11 @@ class _SimulationLifecycleMixin:
 
     def _show_progress(self, show: bool) -> None:
         """Show / hide the progress bar during simulation."""
+        host = cast(QWidget, self)  # Mixin used only on QWidget subclasses
         if show:
             # Position below busy indicator
             self._progress_bar.move(
-                (self.width() - 200) // 2,  # type: ignore[attr-defined]
+                (host.width() - 200) // 2,
                 38,
             )
             self._progress_bar.raise_()
