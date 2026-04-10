@@ -177,7 +177,7 @@ class PopOutChart:
 
         # Create figure
         self._fig = Figure(figsize=(8, 5), dpi=100)
-        self._fig.patch.set_facecolor("#1a1a28")  # type: ignore[attr-defined]
+        self._fig.patch.set_facecolor("#1a1a28")
         self._ax = self._fig.add_subplot(111)
 
         ax = self._ax
@@ -185,7 +185,7 @@ class PopOutChart:
         ax.tick_params(colors="#c0c0d8")
         ax.xaxis.label.set_color("#c0c0d8")
         ax.yaxis.label.set_color("#c0c0d8")
-        ax.title.set_color("#c0c0d8")  # type: ignore[attr-defined]
+        ax.title.set_color("#c0c0d8")
         for spine in ax.spines.values():
             spine.set_color("#505070")
 
