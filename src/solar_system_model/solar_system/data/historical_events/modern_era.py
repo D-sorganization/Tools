@@ -232,8 +232,7 @@ MODERN_ERA_EVENTS: list[dict[str, Any]] = [
         "day": 14,
         "title": "Pale Blue Dot Photo",
         "description": (
-            "Voyager 1 takes the famous photo of Earth from 6 billion km"
-            " away"
+            "Voyager 1 takes the famous photo of Earth from 6 billion km away"
         ),
         "category": "observation",
     },
@@ -243,8 +242,7 @@ MODERN_ERA_EVENTS: list[dict[str, Any]] = [
         "day": 16,
         "title": "Comet Shoemaker-Levy 9 Impacts Jupiter",
         "description": (
-            "First time scientists observe a collision between two solar"
-            " system bodies"
+            "First time scientists observe a collision between two solar system bodies"
         ),
         "category": "discovery",
     },
@@ -270,8 +268,7 @@ MODERN_ERA_EVENTS: list[dict[str, Any]] = [
         "day": 6,
         "title": "Falcon Heavy Maiden Flight",
         "description": (
-            "World's most powerful operational rocket launches Starman"
-            " into solar orbit"
+            "World's most powerful operational rocket launches Starman into solar orbit"
         ),
         "category": "mission",
     },

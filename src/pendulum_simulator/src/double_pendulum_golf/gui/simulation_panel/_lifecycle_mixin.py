@@ -18,7 +18,7 @@ from typing import Any
 
 import numpy as np
 from PyQt6.QtCore import Qt, QThread
-from PyQt6.QtWidgets import QLabel, QMessageBox, QProgressBar, QWidget
+from PyQt6.QtWidgets import QLabel, QMessageBox, QProgressBar
 
 from ._worker import _SimWorker
 
@@ -64,9 +64,7 @@ class _SimulationLifecycleMixin:
             p = self.controls.get_params()
         except ValueError as e:
             logger.warning("Parameter validation failed: %s", e)
-            get_tracker().record_exception(
-                "simulation", e, context="Parameter validation"
-            )
+            get_tracker().record_exception("simulation", e, context="Parameter validation")
             QMessageBox.warning(self, "Input Error", str(e))  # type: ignore[arg-type]
             return
 
@@ -87,9 +85,7 @@ class _SimulationLifecycleMixin:
             torque_func = self._torque_builder(p)
         except (ValueError, TypeError, KeyError) as e:
             logger.warning("State/torque build failed: %s", e, exc_info=True)
-            get_tracker().record_exception(
-                "simulation", e, context="State/torque build"
-            )
+            get_tracker().record_exception("simulation", e, context="State/torque build")
             QMessageBox.warning(self, "Build Error", str(e))  # type: ignore[arg-type]
             return
 
@@ -275,9 +271,7 @@ class _SimulationLifecycleMixin:
             # Triple: split into 3 groups (shoulder, elbow, wrist)
             n_third = len(coeffs) // 3
             self.controls.inp_tau_shoulder.set_value(_fmt_coeffs(coeffs[:n_third]))
-            self.controls.inp_tau_elbow.set_value(
-                _fmt_coeffs(coeffs[n_third : 2 * n_third])
-            )
+            self.controls.inp_tau_elbow.set_value(_fmt_coeffs(coeffs[n_third : 2 * n_third]))
             self.controls.inp_tau_wrist.set_value(_fmt_coeffs(coeffs[2 * n_third :]))
             _log.info("Applied triple pendulum optimizer coefficients")
 

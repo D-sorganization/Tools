@@ -184,8 +184,7 @@ CREWED_PROGRAM_EVENTS: list[dict[str, Any]] = [
         "day": 18,
         "title": "First American Woman in Space",
         "description": (
-            "Sally Ride flies aboard STS-7, becoming the first American woman"
-            " in space"
+            "Sally Ride flies aboard STS-7, becoming the first American woman in space"
         ),
         "category": "mission",
     },

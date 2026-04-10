@@ -37,9 +37,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class SimulationPanel(
-    _SimulationLifecycleMixin, _SimulationExportMixin, QWidget
-):
+class SimulationPanel(_SimulationLifecycleMixin, _SimulationExportMixin, QWidget):
     """Reusable panel that hosts controls, pendulum, and matrix widgets."""
 
     ANIMATION_INTERVAL_MS = 16  # ~60 fps
@@ -218,9 +216,7 @@ class SimulationPanel(
             self.controls.force_scale_changed.connect(self.pendulum.set_force_scale)
 
         # Wire real-time rotation controls (#1146)
-        if hasattr(self.controls, "tilt_changed") and hasattr(
-            self.pendulum, "set_tilt_angle"
-        ):
+        if hasattr(self.controls, "tilt_changed") and hasattr(self.pendulum, "set_tilt_angle"):
             self.controls.tilt_changed.connect(self.pendulum.set_tilt_angle)
         if hasattr(self.controls, "azimuth_changed") and hasattr(
             self.pendulum, "set_view_azimuth"
