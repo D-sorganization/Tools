@@ -292,39 +292,53 @@ export function useDataProcessor() {
         }
 
         const windowSize = config.windowSize || 11;
-        const result = filteredData.map((row, i) => {
+
+        // ⚡ Bolt Optimization: Replace .map() with a single-pass loop and pre-allocate result array.
+        // Hoist suffix, window boundaries, and time delta (dt) calculations out of the inner loop over signals.
+        // This avoids O(N*M) time calculations and excessive garbage collection overhead.
+        const len = filteredData.length;
+        const result = new Array<DataRow>(len);
+        const suffix = config.order === 1 ? 'd' : config.order === 2 ? 'd2' : `d${config.order}`;
+        const halfWindow = Math.floor(windowSize / 2);
+
+        for (let i = 0; i < len; i++) {
+          const row = filteredData[i];
           const newRow = { ...row };
-          for (const signal of config.signals) {
-            const suffix = config.order === 1 ? 'd' : config.order === 2 ? 'd2' : `d${config.order}`;
-            const derivName = `${signal}_${suffix}`;
 
-            if (i === 0 || i === filteredData.length - 1) {
-              newRow[derivName] = 0;
-            } else if (config.method === 'spline') {
-              // Simple central difference for spline approximation
-              const dt = getTimeDelta(filteredData[i + 1][timeColumn], filteredData[i - 1][timeColumn]);
+          if (i === 0 || i === len - 1) {
+            for (let j = 0; j < config.signals.length; j++) {
+              newRow[`${config.signals[j]}_${suffix}`] = 0;
+            }
+          } else if (config.method === 'spline') {
+            // Simple central difference for spline approximation
+            const dt = getTimeDelta(filteredData[i + 1][timeColumn], filteredData[i - 1][timeColumn]);
+            for (let j = 0; j < config.signals.length; j++) {
+              const signal = config.signals[j];
               const dy = (filteredData[i + 1][signal] as number) - (filteredData[i - 1][signal] as number);
-              newRow[derivName] = dy / dt;
-            } else {
-              // Rolling polynomial using moving average approximation
-              const halfWindow = Math.floor(windowSize / 2);
-              const start = Math.max(0, i - halfWindow);
-              const end = Math.min(filteredData.length, i + halfWindow + 1);
+              newRow[`${signal}_${suffix}`] = dt !== 0 ? dy / dt : 0;
+            }
+          } else {
+            // Rolling polynomial using moving average approximation
+            const start = Math.max(0, i - halfWindow);
+            const end = Math.min(len, i + halfWindow + 1);
 
-              if (end - start >= 3) {
-                const dt = getTimeDelta(filteredData[end - 1][timeColumn], filteredData[start][timeColumn]);
+            if (end - start >= 3) {
+              const dt = getTimeDelta(filteredData[end - 1][timeColumn], filteredData[start][timeColumn]);
+              for (let j = 0; j < config.signals.length; j++) {
+                const signal = config.signals[j];
                 const dy = (filteredData[end - 1][signal] as number) - (filteredData[start][signal] as number);
-                newRow[derivName] = dy / dt;
-              } else {
-                newRow[derivName] = 0;
+                newRow[`${signal}_${suffix}`] = dt !== 0 ? dy / dt : 0;
+              }
+            } else {
+              for (let j = 0; j < config.signals.length; j++) {
+                newRow[`${config.signals[j]}_${suffix}`] = 0;
               }
             }
           }
-          return newRow;
-        });
+          result[i] = newRow;
+        }
 
         // Update signals list
-        const suffix = config.order === 1 ? 'd' : config.order === 2 ? 'd2' : `d${config.order}`;
         const newSignals = [
           ...state.signals,
           ...config.signals.map((s) => `${s}_${suffix}`),
