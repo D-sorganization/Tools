@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.33                                     |
+| **Spec Version**        | 1.1.34                                     |
 | **Last Spec Update**    | 2026-04-09                                 |
 
 ## 2. Purpose & Mission
@@ -491,6 +491,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-08 | 1.1.31  | Memoize AnalyticsSuite chart data using useMemo and optimize the scatter regression component with a single-pass loop, drastically reducing React rendering and GC overhead.                                                                                                                                                                                                                                                                        |
 | 2026-04-08 | 1.1.32  | Optimized data array filtering in `useDataProcessor.ts` by replacing `Array.push()` calls with `Float64Array` buffers in `calculateTrendline`, and replacing chained `filter()` passes in `trimTimeRange` with a single-pass `for` loop that avoids creating and resizing intermediate arrays.                                                                                                                                                                        |
 | 2026-04-09 | 1.1.33  | Added a loading spinner and `aria-pressed` states to the `VideoEditor.tsx` component in the video processor web application to improve user experience and accessibility during video export operations.                                                                                                                                                                        |
+| 2026-04-09 | 1.1.34  | Wrapped DataTableView, PlotView, and AnalyticsSuite in `React.memo`, and memoized activeSignals with `useMemo` to prevent expensive visualization re-renders on unrelated UI state changes. |
 ---
 
 <!--
