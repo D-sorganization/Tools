@@ -216,6 +216,11 @@ class KalmanFilter:
     ) -> KalmanFilterResult:
         """Run the Kalman filter on measurements.
 
+        Thin orchestrator that loops over time steps, delegating the
+        prediction, measurement-update, and bookkeeping work to
+        ``_predict_state``, ``_update_state``, and ``_accumulate_results``.
+        Fix for issue #2000: decomposition of the former 90-LOC monolith.
+
         Args:
             measurements: Array of measurements (T x m)
             control_inputs: Optional control inputs (T x p)
@@ -224,26 +229,10 @@ class KalmanFilter:
             KalmanFilterResult with filtered states and diagnostics
         """
         assert measurements is not None, "measurements must be provided"
-        if measurements.ndim == 1:
-            measurements = measurements.reshape(-1, self.config.measurement_dim)
-        elif (
-            measurements.ndim == 2
-            and measurements.shape[1] != self.config.measurement_dim
-            and measurements.shape[0] == self.config.measurement_dim
-        ):
-            measurements = measurements.T
+        measurements = self._normalize_measurements(measurements)
 
         T = measurements.shape[0]
-        n = self.config.state_dim
-        m = self.config.measurement_dim
-
-        # Storage
-        filtered_states = np.zeros((T, n))
-        filtered_covariances = np.zeros((T, n, n))
-        predicted_states = np.zeros((T, n))
-        kalman_gains = np.zeros((T, n, m))
-        innovations = np.zeros((T, m))
-        innovation_covariances = np.zeros((T, m, m))
+        storage = self._allocate_storage(T)
 
         # Initialize
         x = self.x0.copy()
@@ -251,54 +240,132 @@ class KalmanFilter:
         log_likelihood = 0.0
 
         for t in range(T):
-            # Predict
-            x_pred = self.A @ x
-            if self.B is not None and control_inputs is not None:
-                x_pred += self.B @ control_inputs[t]
-            P_pred = self.A @ P @ self.A.T + self.Q
-
-            predicted_states[t] = x_pred
-
-            # Update (if measurement is not NaN)
-            z = measurements[t]
-            if not np.any(np.isnan(z)):
-                # Innovation
-                y = z - self.H @ x_pred
-                S = self.H @ P_pred @ self.H.T + self.R
-
-                # Kalman gain
-                K = P_pred @ self.H.T @ np.linalg.inv(S)
-
-                # Update
-                x = x_pred + K @ y
-                P = (np.eye(n) - K @ self.H) @ P_pred
-
-                # Store innovation info
-                innovations[t] = y
-                innovation_covariances[t] = S
-                kalman_gains[t] = K
-
-                # Log likelihood
-                log_likelihood += self._log_likelihood_contribution(y, S)
-            else:
-                # No measurement - use prediction
-                x = x_pred
-                P = P_pred
-                innovations[t] = np.nan
-                innovation_covariances[t] = np.nan
-
-            filtered_states[t] = x
-            filtered_covariances[t] = P
+            u_t = control_inputs[t] if control_inputs is not None else None
+            x_pred, P_pred = self._predict_state(x, P, u_t)
+            x, P, y, S, K, ll_contrib = self._update_state(
+                x_pred, P_pred, measurements[t]
+            )
+            log_likelihood += ll_contrib
+            self._accumulate_results(storage, t, x, P, x_pred, y, S, K)
 
         return KalmanFilterResult(
-            filtered_states=filtered_states,
-            filtered_covariances=filtered_covariances,
-            predicted_states=predicted_states,
-            kalman_gains=kalman_gains,
-            innovations=innovations,
-            innovation_covariances=innovation_covariances,
+            filtered_states=storage["filtered_states"],
+            filtered_covariances=storage["filtered_covariances"],
+            predicted_states=storage["predicted_states"],
+            kalman_gains=storage["kalman_gains"],
+            innovations=storage["innovations"],
+            innovation_covariances=storage["innovation_covariances"],
             log_likelihood=log_likelihood,
         )
+
+    def _normalize_measurements(self, measurements: np.ndarray) -> np.ndarray:
+        """Reshape measurements to the canonical ``(T, measurement_dim)`` form.
+
+        Accepts a 1D array or a 2D array that may be transposed.
+        """
+        if measurements.ndim == 1:
+            return measurements.reshape(-1, self.config.measurement_dim)
+        if (
+            measurements.ndim == 2
+            and measurements.shape[1] != self.config.measurement_dim
+            and measurements.shape[0] == self.config.measurement_dim
+        ):
+            return measurements.T
+        return measurements
+
+    def _allocate_storage(self, T: int) -> dict[str, np.ndarray]:
+        """Pre-allocate the per-timestep result arrays for a filter run."""
+        n = self.config.state_dim
+        m = self.config.measurement_dim
+        return {
+            "filtered_states": np.zeros((T, n)),
+            "filtered_covariances": np.zeros((T, n, n)),
+            "predicted_states": np.zeros((T, n)),
+            "kalman_gains": np.zeros((T, n, m)),
+            "innovations": np.zeros((T, m)),
+            "innovation_covariances": np.zeros((T, m, m)),
+        }
+
+    def _predict_state(
+        self,
+        x: np.ndarray,
+        P: np.ndarray,
+        u: np.ndarray | None,
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """Prediction step: propagate state and covariance forward one step.
+
+        Computes the prior state ``x_pred = A x (+ B u)`` and the prior
+        covariance ``P_pred = A P Aᵀ + Q``.
+
+        Args:
+            x: Posterior state from previous step.
+            P: Posterior covariance from previous step.
+            u: Optional control input for this step.
+
+        Returns:
+            Tuple ``(x_pred, P_pred)`` of prior state and covariance.
+        """
+        x_pred = self.A @ x
+        if self.B is not None and u is not None:
+            x_pred = x_pred + self.B @ u
+        P_pred = self.A @ P @ self.A.T + self.Q
+        return x_pred, P_pred
+
+    def _update_state(
+        self,
+        x_pred: np.ndarray,
+        P_pred: np.ndarray,
+        z: np.ndarray,
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, float]:
+        """Measurement update: innovation, Kalman gain, posterior.
+
+        If ``z`` contains any NaN values, no measurement is incorporated
+        and the prior is used as the posterior (innovations are marked NaN).
+
+        Args:
+            x_pred: Prior state estimate from ``_predict_state``.
+            P_pred: Prior covariance from ``_predict_state``.
+            z: Measurement vector for this step.
+
+        Returns:
+            Tuple ``(x, P, y, S, K, ll_contrib)`` of posterior state,
+            posterior covariance, innovation, innovation covariance,
+            Kalman gain, and log-likelihood contribution.
+        """
+        n = self.config.state_dim
+        m = self.config.measurement_dim
+        if np.any(np.isnan(z)):
+            nan_y = np.full(m, np.nan)
+            nan_S = np.full((m, m), np.nan)
+            nan_K = np.zeros((n, m))
+            return x_pred, P_pred, nan_y, nan_S, nan_K, 0.0
+
+        y = z - self.H @ x_pred
+        S = self.H @ P_pred @ self.H.T + self.R
+        K = P_pred @ self.H.T @ np.linalg.inv(S)
+        x = x_pred + K @ y
+        P = (np.eye(n) - K @ self.H) @ P_pred
+        ll_contrib = self._log_likelihood_contribution(y, S)
+        return x, P, y, S, K, ll_contrib
+
+    def _accumulate_results(
+        self,
+        storage: dict[str, np.ndarray],
+        t: int,
+        x: np.ndarray,
+        P: np.ndarray,
+        x_pred: np.ndarray,
+        y: np.ndarray,
+        S: np.ndarray,
+        K: np.ndarray,
+    ) -> None:
+        """Write per-step results into the pre-allocated storage arrays."""
+        storage["predicted_states"][t] = x_pred
+        storage["filtered_states"][t] = x
+        storage["filtered_covariances"][t] = P
+        storage["innovations"][t] = y
+        storage["innovation_covariances"][t] = S
+        storage["kalman_gains"][t] = K
 
     def smooth(self, filter_result: KalmanFilterResult) -> KalmanFilterResult:
         """Run Rauch-Tung-Striebel smoother for offline processing.

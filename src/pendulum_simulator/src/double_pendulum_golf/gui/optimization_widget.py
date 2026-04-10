@@ -475,12 +475,19 @@ class OptimizationWidget(QWidget):
         layout.setContentsMargins(4, 4, 4, 4)
         layout.setSpacing(4)
 
-        # Title
+        self._build_ui_header(layout)
+        layout.addWidget(self._build_ui_config_group())
+        layout.addWidget(self._build_ui_options_group())
+        self._build_ui_action_buttons(layout)
+        self._build_ui_progress_status(layout)
+        layout.addStretch()
+
+    def _build_ui_header(self, layout: QVBoxLayout) -> None:
+        """Build the title and backend-status labels."""
         title = QLabel(f"⚡ {self._model_name} Optimizer")
         title.setStyleSheet("color:#a0a0e0;font-size:11px;font-weight:bold;")
         layout.addWidget(title)
 
-        # Backend status
         backend_lbl = QLabel(
             "🦀 Rust parallel batch enabled"
             if _HAS_NATIVE_BATCH
@@ -491,7 +498,8 @@ class OptimizationWidget(QWidget):
         )
         layout.addWidget(backend_lbl)
 
-        # Config group
+    def _build_ui_config_group(self) -> QGroupBox:
+        """Build the 'Configuration' group with objective/method/numeric spinners."""
         config = QGroupBox("Configuration")
         cfg_lay = QVBoxLayout(config)
         cfg_lay.setContentsMargins(4, 14, 4, 4)
@@ -558,9 +566,10 @@ class OptimizationWidget(QWidget):
         pat_row.addWidget(self._spin_patience)
         cfg_lay.addLayout(pat_row)
 
-        layout.addWidget(config)
+        return config
 
-        # Options group
+    def _build_ui_options_group(self) -> QGroupBox:
+        """Build the 'Options' group with warm-start / constraint / native checkboxes."""
         opts = QGroupBox("Options")
         opts_lay = QVBoxLayout(opts)
         opts_lay.setContentsMargins(4, 14, 4, 4)
@@ -579,9 +588,10 @@ class OptimizationWidget(QWidget):
         self._chk_native.setEnabled(_HAS_NATIVE_BATCH)
         opts_lay.addWidget(self._chk_native)
 
-        layout.addWidget(opts)
+        return opts
 
-        # Controls
+    def _build_ui_action_buttons(self, layout: QVBoxLayout) -> None:
+        """Build the Optimize/Cancel/Apply button row."""
         btn_row = QHBoxLayout()
         self._btn_run = QPushButton("▶ Optimize")
         self._btn_run.clicked.connect(self._on_run)
@@ -599,24 +609,21 @@ class OptimizationWidget(QWidget):
         btn_row.addWidget(self._btn_apply)
         layout.addLayout(btn_row)
 
-        # Progress
+    def _build_ui_progress_status(self, layout: QVBoxLayout) -> None:
+        """Build the progress bar, status label, and log view."""
         self._progress = QProgressBar()
         self._progress.setRange(0, 100)
         self._progress.setValue(0)
         layout.addWidget(self._progress)
 
-        # Status
         self._lbl_status = QLabel("Ready")
         self._lbl_status.setStyleSheet("color:#606080;font-size:9px;")
         layout.addWidget(self._lbl_status)
 
-        # Log
         self._log = QTextEdit()
         self._log.setReadOnly(True)
         self._log.setMaximumHeight(150)
         layout.addWidget(self._log)
-
-        layout.addStretch()
 
     def set_objective_function(self, fn: Callable) -> None:
         """Set the objective function for optimization.

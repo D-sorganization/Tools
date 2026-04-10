@@ -68,17 +68,11 @@ class AnalysisTab:
     def __init__(self, parent: Any = None) -> None:
         from PyQt6.QtCore import Qt
         from PyQt6.QtWidgets import (
-            QComboBox,
-            QGroupBox,
             QHBoxLayout,
-            QLabel,
-            QPushButton,
             QSplitter,
             QTabWidget,
-            QVBoxLayout,
             QWidget,
         )
-        from .no_scroll_widgets import NoScrollSpinBox
 
         self._parent = parent
         self._result: Any = None
@@ -92,11 +86,52 @@ class AnalysisTab:
         splitter = QSplitter(Qt.Orientation.Horizontal)
 
         # --- Left sidebar: series selection ---
+        sidebar = self._build_sidebar_widget()
+        splitter.addWidget(sidebar)
+
+        # --- Right side: plot tabs ---
+        self._plot_tabs = QTabWidget()
+        self._build_plot_tabs()
+
+        splitter.addWidget(self._plot_tabs)
+        splitter.setStretchFactor(0, 1)  # sidebar
+        splitter.setStretchFactor(1, 3)  # plots
+
+        main_layout.addWidget(splitter)
+
+        # Surface outputs shared by all models
+        self._surface_outputs = [
+            ("mass_matrix_det", "det(M)"),
+            ("mass_matrix_cond", "cond(M)"),
+            ("potential_energy", "Potential energy"),
+            ("manipulability", "Manipulability index"),
+        ]
+        self._populate_surface_combos()
+
+    def _build_sidebar_widget(self) -> Any:
+        """Build the left sidebar widget containing the 2D and 3D control groups."""
+        from PyQt6.QtWidgets import QVBoxLayout, QWidget
+
         sidebar = QWidget()
         sidebar_layout = QVBoxLayout(sidebar)
         sidebar_layout.setContentsMargins(4, 4, 4, 4)
 
-        # 2D controls
+        sidebar_layout.addWidget(self._build_2d_controls_group())
+        sidebar_layout.addWidget(self._build_3d_controls_group())
+        sidebar_layout.addStretch()
+        return sidebar
+
+    def _build_2d_controls_group(self) -> Any:
+        """Build the 2D line plot control group (X/Y axes, regression, plot button)."""
+        from PyQt6.QtWidgets import (
+            QComboBox,
+            QGroupBox,
+            QLabel,
+            QPushButton,
+            QVBoxLayout,
+        )
+        from .no_scroll_widgets import NoScrollSpinBox
+
         group_2d = QGroupBox("2D Line Plot")
         form_2d = QVBoxLayout()
 
@@ -118,9 +153,19 @@ class AnalysisTab:
         btn_plot_2d.clicked.connect(self._on_plot_2d)
         form_2d.addWidget(btn_plot_2d)
         group_2d.setLayout(form_2d)
-        sidebar_layout.addWidget(group_2d)
+        return group_2d
 
-        # 3D surface controls
+    def _build_3d_controls_group(self) -> Any:
+        """Build the 3D surface plot control group (X/Y/Z axes, grid points, plot button)."""
+        from PyQt6.QtWidgets import (
+            QComboBox,
+            QGroupBox,
+            QLabel,
+            QPushButton,
+            QVBoxLayout,
+        )
+        from .no_scroll_widgets import NoScrollSpinBox
+
         group_3d = QGroupBox("3D Surface Plot")
         form_3d = QVBoxLayout()
 
@@ -145,14 +190,10 @@ class AnalysisTab:
         btn_plot_3d.clicked.connect(self._on_plot_surface)
         form_3d.addWidget(btn_plot_3d)
         group_3d.setLayout(form_3d)
-        sidebar_layout.addWidget(group_3d)
+        return group_3d
 
-        sidebar_layout.addStretch()
-        splitter.addWidget(sidebar)
-
-        # --- Right side: plot tabs ---
-        self._plot_tabs = QTabWidget()
-
+    def _build_plot_tabs(self) -> None:
+        """Populate self._plot_tabs with 2D + 3D matplotlib canvases (or a fallback)."""
         if _HAS_MPL:
             # 2D canvas
             self._fig_2d = Figure(figsize=(7, 5), dpi=100)
@@ -169,21 +210,6 @@ class AnalysisTab:
             self._plot_tabs.addTab(self._canvas_3d, "3D Surface")
         else:
             self._plot_tabs.addTab(_create_fallback_widget(), "Plotting")
-
-        splitter.addWidget(self._plot_tabs)
-        splitter.setStretchFactor(0, 1)  # sidebar
-        splitter.setStretchFactor(1, 3)  # plots
-
-        main_layout.addWidget(splitter)
-
-        # Surface outputs shared by all models
-        self._surface_outputs = [
-            ("mass_matrix_det", "det(M)"),
-            ("mass_matrix_cond", "cond(M)"),
-            ("potential_energy", "Potential energy"),
-            ("manipulability", "Manipulability index"),
-        ]
-        self._populate_surface_combos()
 
     def widget(self) -> Any:
         """Return the top-level QWidget for embedding."""
