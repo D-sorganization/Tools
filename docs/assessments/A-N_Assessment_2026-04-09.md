@@ -2,56 +2,146 @@
 
 **Date**: 2026-04-09
 **Scope**: Complete adversarial and detailed review targeting extreme quality levels.
-**Reviewer**: Automated scheduled comprehensive review
+**Reviewer**: Automated scheduled comprehensive review (parallel deep-dive)
 
 ## 1. Executive Summary
 
-**Overall Grade: D+**
+**Overall Grade: B** *(upgraded from initial D+ after deep-dive)*
 
-Tools is a kitchen-sink repo: 986 source files, 542 tests (0.55 ratio), and **171 monolith files**. The largest is `pendulum_simulator/pendulum-core/src/lib.rs` at 1,618 LOC — a Rust monolith. A 1,104 LOC `equations_data.py` inside a GUI suggests hardcoded equation catalogs that should live in data files.
+Tools is the **reusability layer for the fleet** and has a world-class DbC framework (`src/shared/python/contracts.py` ~400 LOC with tri-level enforcement, decorators, domain validators). Strong 42% test ratio with 526 test files. Main weaknesses: cross-repo DRY (301 shared filenames with UpstreamDrift), some oversized files (several 900-1100 LOC), and `src/shared/python/` as a catch-all (408 files).
 
 | Metric | Value |
 |---|---|
-| Source files | 986 |
-| Test files | 542 |
-| Source LOC | 349,173 |
-| Test/Src ratio | 0.55 |
-| Monolith files (>500 LOC) | **171** |
+| Total source files | 1,745 |
+| Total LOC | 372,329 |
+| Source LOC (non-test) | ~262,684 |
+| Test files | 526 |
+| Test LOC | 109,645 |
+| Test/Src ratio | **0.42** |
 
 ## 2. Key Factor Findings
 
-### DRY — Grade D+
-- With 171 monoliths across a tools repo, cross-tool duplication is very likely.
+### DRY — Grade C
 
-### DbC — Grade C-
-- Rust core (1,618 LOC) can enforce contracts via types, but a module this size typically collapses responsibilities.
+**Strengths**
+- Tools IS the DRY layer for the fleet.
+- Centralized shared contracts, utilities, and physics modules.
 
-### TDD — Grade C+
-- 0.55 ratio is adequate; concerning given file sizes.
+**Issues**
+1. **301 shared filenames** overlap with UpstreamDrift's `src/shared/python/`. `text_editor.py` (1038 vs 1040 LOC) is near-identical across the two repos with only 2 trivial diffs (security comment + hash algorithm).
+2. `src/shared/python/` at 408 Python files is a catch-all bucket.
 
-### Orthogonality — Grade D+
-- Tool silos likely leak shared helpers; identify a `tools/shared/` to deduplicate.
+### DbC — Grade A
 
-### Reusability — Grade C-
-- A "tools" repo should be highly reusable; monoliths prevent that.
+**Strengths (fleet reference)**
+- `src/shared/python/contracts.py` provides **tri-level enforcement** (ENFORCE/WARN/OFF).
+- Decorators: `@precondition`, `@postcondition`.
+- Function-call style: `require()`, `ensure()`.
+- Domain-specific validators: `check_temperature`, `check_pressure`, `require_unit_vector`.
+- Class invariant support.
+- Widely adopted across modules.
 
-### Changeability — Grade D+
-- Cross-tool dependencies via monoliths make changes risky.
+### TDD — Grade B
 
-### LOD — Grade C
-- Not spot-checked.
+**Strengths**
+- 526 test files, ~42% test-to-code ratio.
+- **Hypothesis property-based testing** present.
+- 13 test markers well-organized: `contract`, `scientific`, `parity`, etc.
 
-### Function Size / Monoliths
-- `src/pendulum_simulator/pendulum-core/src/lib.rs` — **1,618 LOC** (Rust monolith)
-- `src/pendulum_simulator/src/double_pendulum_golf/gui/equations_data.py` — 1,104 LOC
-- `tests/rotation_converter/test_rigid_transform.py` — 1,076 LOC
-- Plus 168 additional monolith files
+**Issues**
+- Some 1000+ LOC modules lack proportional test coverage.
 
-## 3. Recommended Remediation Plan
+### Orthogonality — Grade B
 
-1. **P0**: Decompose `pendulum-core/src/lib.rs` (1,618 LOC) into modules: `state.rs`, `dynamics.rs`, `integrator.rs`, `forces.rs`, `energy.rs`.
-2. **P0**: Move `equations_data.py` (1,104 LOC) to a data file (JSON/YAML/TOML); load at runtime.
-3. **P0**: Set 500 LOC file-size gate in CI for this repo.
-4. **P1**: Split `test_rigid_transform.py` (1,076 LOC) into focused test modules.
-5. **P1**: Inventory the remaining 168 monoliths; prioritize by LOC × change frequency.
-6. **P2**: Establish a `tools/shared/` for cross-tool helpers; eliminate cross-tool copy-paste.
+**Strengths**
+- Good module separation: signal_processing, calculators, URDF, PID, themes.
+- CI enforces no cross-package imports.
+
+**Issues**
+- `src/shared/python/` (408 files) is a catch-all; some modules could be further decomposed.
+
+### Reusability — Grade A
+
+**Strengths**
+- **This repo IS the reusability layer for the fleet.**
+- Well-parameterized interfaces.
+- Generic contracts module.
+- Configurable calculators.
+- **Rust bindings via PyO3** for performance-critical paths.
+
+### Changeability — Grade B
+
+**Strengths**
+- Configuration-driven (pyproject.toml, manifests).
+- Dependency injection in physics engines.
+
+**Issues**
+- Changing a public API requires coordinated PRs across 2+ downstream repos, making changes inherently costly.
+
+### LOD — Grade B
+
+**Strengths**
+- CLAUDE.md enforces "no chains >2 levels".
+
+**Issues**
+1. `src/shared/python/upstream_drift_tools/process_calculators/psa_package/ui/main_window.py:215-220` — `self.input_panel.s2_recycle_slider.valueChanged.connect` reaches through panel internals.
+2. Some GUI wiring chains: `self.canvas.figure.patch.set_facecolor`.
+
+### Function Size — Grade C
+
+**Issues**
+1. `src/data_processing/data_processor/python/data_processor/core/kalman_filter.py:419-509` — `filter()` method **90 LOC**. File itself is 820 LOC with ARCHITECTURE_DEBT comment acknowledging this.
+2. `src/pendulum_simulator/src/double_pendulum_golf/gui/equations_data.py` — 1,104 LOC.
+3. `src/.../rest_api_routes.py` — 1,060 LOC.
+4. `src/.../cross_correlation.py` — 1,055 LOC.
+
+### Script Monoliths — Grade C
+
+Several files in 900-1100 LOC range:
+- `kalman_filter.py` 820
+- `gui.py` 978
+- `gas_properties.py` 947
+- `equations_data.py` 1,104
+- `rest_api_routes.py` 1,060
+- `cross_correlation.py` 1,055
+
+All have ARCHITECTURE_DEBT comments but not yet resolved.
+
+## 3. Summary Table
+
+| Criterion | Grade |
+|---|---|
+| DRY | C |
+| DbC | **A** |
+| TDD | B |
+| Orthogonality | B |
+| Reusability | **A** |
+| Changeability | B |
+| LOD | B |
+| Function Size | C |
+| Script Monoliths | C |
+| **Overall** | **B** |
+
+## 4. Recommended Remediation Plan
+
+### P0 — Cross-repo DRY
+1. **Resolve `text_editor.py` duplication with UpstreamDrift** — make Tools the canonical source, have UpstreamDrift consume via dependency (git submodule or pip install). The two copies differ by only 2 trivial lines.
+
+### P0 — Data-as-code
+2. Move `equations_data.py` (1,104 LOC) from Python code to a YAML/JSON data file loaded at runtime. This alone removes ~1,000 LOC.
+
+### P1 — Script monoliths
+3. Decompose top-5 monoliths:
+   - `kalman_filter.py` (820) → extract `predict.py`, `update.py`, keep `filter.py` as orchestrator
+   - `rest_api_routes.py` (1,060) → split by resource
+   - `cross_correlation.py` (1,055) → split by algorithm family
+   - `gui.py` (978) → MVC extraction
+   - `gas_properties.py` (947) → per-property modules
+
+### P1 — Function size
+4. Decompose `kalman_filter.filter()` (90 LOC) into `_predict_step()` and `_update_step()`.
+
+### P2 — Orthogonality
+5. Audit `src/shared/python/` (408 files) — identify modules that have grown beyond "shared" scope and promote to their own packages.
+
+**Tools' `contracts.py` is the fleet's strongest DbC implementation and should be the canonical shared dependency for Tools_Private, UpstreamDrift, Worksheet-Workshop, and any new repos.**
