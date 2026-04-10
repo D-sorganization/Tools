@@ -315,7 +315,7 @@ export function useDataProcessor() {
             for (let j = 0; j < config.signals.length; j++) {
               const signal = config.signals[j];
               const dy = (filteredData[i + 1][signal] as number) - (filteredData[i - 1][signal] as number);
-              newRow[derivNames[j]] = dt !== 0 ? dy / dt : 0;
+              newRow[derivNames[j]] = dy / dt;
             }
           } else {
             // Rolling polynomial using moving average approximation
@@ -329,7 +329,7 @@ export function useDataProcessor() {
               for (let j = 0; j < config.signals.length; j++) {
                 const signal = config.signals[j];
                 const dy = (filteredData[end - 1][signal] as number) - (filteredData[start][signal] as number);
-                newRow[derivNames[j]] = dt !== 0 ? dy / dt : 0;
+                newRow[derivNames[j]] = dy / dt;
               }
             } else {
               for (let j = 0; j < config.signals.length; j++) {
