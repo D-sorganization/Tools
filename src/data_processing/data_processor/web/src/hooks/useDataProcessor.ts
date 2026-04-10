@@ -291,43 +291,67 @@ export function useDataProcessor() {
           return { success: false, error: 'No data or time column' };
         }
 
+        // ⚡ Bolt Optimization: Replace filteredData.map() with a single-pass for loop.
+        // Hoist time delta calculations (dt) and bounds checks outside the inner signal loop.
+        // Performance impact: Drastically reduces differentiation execution time by preventing
+        // O(N * M) redundant timestamp evaluations and massive garbage collection overhead.
         const windowSize = config.windowSize || 11;
-        const result = filteredData.map((row, i) => {
+        const len = filteredData.length;
+        const result = new Array<DataRow>(len);
+        const halfWindow = Math.floor(windowSize / 2);
+        const isSpline = config.method === 'spline';
+
+        const suffix = config.order === 1 ? 'd' : config.order === 2 ? 'd2' : `d${config.order}`;
+        const derivNames = config.signals.map(s => `${s}_${suffix}`);
+
+        for (let i = 0; i < len; i++) {
+          const row = filteredData[i];
           const newRow = { ...row };
-          for (const signal of config.signals) {
-            const suffix = config.order === 1 ? 'd' : config.order === 2 ? 'd2' : `d${config.order}`;
-            const derivName = `${signal}_${suffix}`;
 
-            if (i === 0 || i === filteredData.length - 1) {
-              newRow[derivName] = 0;
-            } else if (config.method === 'spline') {
-              // Simple central difference for spline approximation
-              const dt = getTimeDelta(filteredData[i + 1][timeColumn], filteredData[i - 1][timeColumn]);
-              const dy = (filteredData[i + 1][signal] as number) - (filteredData[i - 1][signal] as number);
-              newRow[derivName] = dy / dt;
-            } else {
-              // Rolling polynomial using moving average approximation
-              const halfWindow = Math.floor(windowSize / 2);
-              const start = Math.max(0, i - halfWindow);
-              const end = Math.min(filteredData.length, i + halfWindow + 1);
+          if (i === 0 || i === len - 1) {
+            for (let j = 0; j < config.signals.length; j++) {
+              newRow[derivNames[j]] = 0;
+            }
+          } else {
+            let dtCache: number | undefined = undefined;
+            let start = 0;
+            let end = 0;
 
-              if (end - start >= 3) {
-                const dt = getTimeDelta(filteredData[end - 1][timeColumn], filteredData[start][timeColumn]);
-                const dy = (filteredData[end - 1][signal] as number) - (filteredData[start][signal] as number);
-                newRow[derivName] = dy / dt;
+            if (!isSpline) {
+              start = Math.max(0, i - halfWindow);
+              end = Math.min(len, i + halfWindow + 1);
+            }
+
+            for (let j = 0; j < config.signals.length; j++) {
+              const signal = config.signals[j];
+              const derivName = derivNames[j];
+
+              if (isSpline) {
+                if (dtCache === undefined) {
+                  dtCache = getTimeDelta(filteredData[i + 1][timeColumn], filteredData[i - 1][timeColumn]);
+                }
+                const dy = (filteredData[i + 1][signal] as number) - (filteredData[i - 1][signal] as number);
+                newRow[derivName] = dy / dtCache;
               } else {
-                newRow[derivName] = 0;
+                if (end - start >= 3) {
+                  if (dtCache === undefined) {
+                    dtCache = getTimeDelta(filteredData[end - 1][timeColumn], filteredData[start][timeColumn]);
+                  }
+                  const dy = (filteredData[end - 1][signal] as number) - (filteredData[start][signal] as number);
+                  newRow[derivName] = dy / dtCache;
+                } else {
+                  newRow[derivName] = 0;
+                }
               }
             }
           }
-          return newRow;
-        });
+          result[i] = newRow;
+        }
 
         // Update signals list
-        const suffix = config.order === 1 ? 'd' : config.order === 2 ? 'd2' : `d${config.order}`;
         const newSignals = [
           ...state.signals,
-          ...config.signals.map((s) => `${s}_${suffix}`),
+          ...derivNames,
         ];
 
         setState((prev) => ({
