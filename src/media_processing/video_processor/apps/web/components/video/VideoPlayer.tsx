@@ -112,7 +112,7 @@ export default function VideoPlayer({
         <h2 className="text-lg font-semibold text-gray-900">Video Player</h2>
         <button
           onClick={onClear}
-          className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+          className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         >
           Upload New Video
         </button>
@@ -174,7 +174,7 @@ export default function VideoPlayer({
           <div className="flex items-center space-x-4">
             <button
               onClick={togglePlay}
-              className="p-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+              className="p-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               aria-label={isPlaying ? 'Pause' : 'Play'}
             >
               {isPlaying ? (
@@ -191,7 +191,7 @@ export default function VideoPlayer({
             <div className="flex items-center space-x-2">
               <button
                 onClick={toggleMute}
-                className="p-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                className="p-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                 aria-label={isMuted ? 'Unmute' : 'Mute'}
               >
                 {isMuted || volume === 0 ? (
