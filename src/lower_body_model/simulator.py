@@ -1,3 +1,5 @@
+from typing import Any
+
 import mujoco
 import numpy as np
 
@@ -261,7 +263,7 @@ class LowerBodySimulator:
             "yaw": np.degrees(yaw),
         }
 
-    def compute_diagnostics(self) -> dict[str, str | float | bool | dict]:
+    def compute_diagnostics(self) -> dict[str, str | float | bool | dict[str, Any]]:
         """Comprehensive system diagnostics for stability, telemetry, and debugging."""
         mujoco.mj_kinematics(self.model, self.data)
 
@@ -326,7 +328,7 @@ class LowerBodySimulator:
         r_knee_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, "r_knee")
         r_knee_qpos_adr = self.model.jnt_qposadr[r_knee_id]
 
-        diagnostics = {
+        diagnostics: dict[str, str | float | bool | dict[str, Any]] = {
             "time_sec": float(self.data.time),
             "pelvis_z_m": float(pelvis_pos[2]) if not div else float("nan"),
             "is_diverged": div,
