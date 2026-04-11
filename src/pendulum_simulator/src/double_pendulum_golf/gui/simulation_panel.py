@@ -177,9 +177,7 @@ class SimulationPanel(QWidget):
         splitter.addWidget(cast("QWidget", self.pendulum))
 
         # ── RIGHT: tabbed side panels ──
-        self._side_tabs = SidePanelTabs(
-            settings_key=f"{self._settings_key}/active_tab"
-        )
+        self._side_tabs = SidePanelTabs(settings_key=f"{self._settings_key}/active_tab")
         self._side_tabs.add_panel(
             self.TAB_SETUP,
             self.controls,

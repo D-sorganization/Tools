@@ -441,8 +441,7 @@ def test_plots_tab_present_when_torque_history_supplied(qapp, mock_sim_kwargs) -
     labels = panel._side_tabs.panel_labels()
     assert SimulationPanel.TAB_PLOTS in labels
     assert (
-        panel._side_tabs.panel_widget(SimulationPanel.TAB_PLOTS)
-        is panel.torque_history
+        panel._side_tabs.panel_widget(SimulationPanel.TAB_PLOTS) is panel.torque_history
     )
 
 

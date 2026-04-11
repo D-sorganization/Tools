@@ -99,9 +99,9 @@ def test_each_panel_is_wrapped_in_scroll_area(qapp) -> Any:
     tabs.add_panel("Plots", QLabel("b"))
     for i in range(tabs.count()):
         wrapper = tabs.widget(i)
-        assert isinstance(wrapper, QScrollArea), (
-            f"Tab {i} is {type(wrapper).__name__}, expected QScrollArea"
-        )
+        assert isinstance(
+            wrapper, QScrollArea
+        ), f"Tab {i} is {type(wrapper).__name__}, expected QScrollArea"
 
 
 def test_added_widget_reachable_through_panel_widget(qapp) -> Any:

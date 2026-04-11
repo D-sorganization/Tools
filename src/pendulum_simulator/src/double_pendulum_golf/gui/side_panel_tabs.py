@@ -44,9 +44,7 @@ from PyQt6.QtWidgets import QScrollArea, QTabWidget, QWidget
 logger = logging.getLogger(__name__)
 
 
-_SCROLL_STYLE: Final[str] = (
-    "QScrollArea { border: none; background: transparent; }"
-)
+_SCROLL_STYLE: Final[str] = "QScrollArea { border: none; background: transparent; }"
 _QSETTINGS_ORG: Final[str] = "D-sorganization"
 _QSETTINGS_APP: Final[str] = "PendulumSimulator"
 
@@ -155,9 +153,7 @@ class SidePanelTabs(QTabWidget):
             If ``label`` is not a current panel.
         """
         if label not in self._panels:
-            raise KeyError(
-                f"no panel labeled {label!r}; known labels: {self._labels}"
-            )
+            raise KeyError(f"no panel labeled {label!r}; known labels: {self._labels}")
         return self._panels[label]
 
     def active_tab_label(self) -> str:
@@ -179,9 +175,7 @@ class SidePanelTabs(QTabWidget):
             If ``label`` is not a current panel.
         """
         if label not in self._panels:
-            raise KeyError(
-                f"no panel labeled {label!r}; known labels: {self._labels}"
-            )
+            raise KeyError(f"no panel labeled {label!r}; known labels: {self._labels}")
         self.setCurrentIndex(self._labels.index(label))
 
     def save_state(self) -> None:
@@ -189,9 +183,7 @@ class SidePanelTabs(QTabWidget):
         active = self.active_tab_label()
         if not active:
             return
-        QSettings(_QSETTINGS_ORG, _QSETTINGS_APP).setValue(
-            self._settings_key, active
-        )
+        QSettings(_QSETTINGS_ORG, _QSETTINGS_APP).setValue(self._settings_key, active)
 
     def restore_state(self) -> None:
         """Restore the active tab from QSettings, if a saved value exists.

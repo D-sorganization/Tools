@@ -130,9 +130,7 @@ def apply_toolstrip_overlay_state(
         try:
             value = extract(src)
         except Exception as exc:  # noqa: BLE001
-            logger.debug(
-                "extractor for %s failed (%s); skipping", src_attr, exc
-            )
+            logger.debug("extractor for %s failed (%s); skipping", src_attr, exc)
             continue
         try:
             setter(value)

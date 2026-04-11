@@ -305,6 +305,7 @@ def test_export_image_png(qapp, tmp_path):
 # Bulletproof view-fitting regression tests
 # ----------------------------------------------------------------------
 
+
 def test_auto_fit_default_state(qapp):
     """Fresh widget with no trajectory still produces a valid view."""
     w = DummyPendulumWidget()
@@ -460,8 +461,6 @@ def test_compute_base_scale_uses_bbox_when_available(qapp):
     assert legacy >= 30.0
 
     # With a small bbox: should produce a larger scale (more pixels per meter)
-    w.compute_and_store_trajectory_bbox(
-        [{"a": (-0.1, -0.1), "b": (0.1, 0.1)}]
-    )
+    w.compute_and_store_trajectory_bbox([{"a": (-0.1, -0.1), "b": (0.1, 0.1)}])
     bbox_scale = w._compute_base_scale()
     assert bbox_scale > legacy

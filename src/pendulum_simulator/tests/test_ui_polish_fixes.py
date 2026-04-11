@@ -49,9 +49,7 @@ class TestFontZoomOffset:
 
     def test_loaded_offset_is_clamped(self, qapp) -> None:
         """If a corrupt/large offset was saved, it must be clamped on load."""
-        QSettings("D-sorganization", "PendulumSimulator").setValue(
-            "font_zoom_pt", 24
-        )
+        QSettings("D-sorganization", "PendulumSimulator").setValue("font_zoom_pt", 24)
         from double_pendulum_golf.gui.main_window import MainWindow
 
         win = MainWindow()
@@ -60,9 +58,7 @@ class TestFontZoomOffset:
         win.close()
 
     def test_negative_offset_is_clamped(self, qapp) -> None:
-        QSettings("D-sorganization", "PendulumSimulator").setValue(
-            "font_zoom_pt", -100
-        )
+        QSettings("D-sorganization", "PendulumSimulator").setValue("font_zoom_pt", -100)
         from double_pendulum_golf.gui.main_window import MainWindow
 
         win = MainWindow()
@@ -111,9 +107,7 @@ class TestTabLabelsRenderable:
                     f"requires an emoji font; pick a BMP-range symbol instead."
                 )
 
-    def test_all_label_glyphs_in_default_font(
-        self, font_metrics: QFontMetrics
-    ) -> None:
+    def test_all_label_glyphs_in_default_font(self, font_metrics: QFontMetrics) -> None:
         """Every glyph must render in the default font (no missing-glyph boxes)."""
         for label in self._all_tab_labels():
             for ch in label:
@@ -133,9 +127,9 @@ class TestTabLabelsRenderable:
             assert stripped, f"Empty label: {label!r}"
             first = stripped[0]
             # First non-space char must be non-ASCII (a symbol/icon)
-            assert not first.isascii(), (
-                f"Label {label!r} should start with a symbol prefix, not {first!r}"
-            )
+            assert (
+                not first.isascii()
+            ), f"Label {label!r} should start with a symbol prefix, not {first!r}"
 
 
 # ──────────────────────────────────────────────────────────────────────

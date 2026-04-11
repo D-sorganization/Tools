@@ -188,13 +188,9 @@ class MainWindow(QMainWindow):
         if mods & Qt.KeyboardModifier.ControlModifier:
             delta = event.angleDelta().y()
             if delta > 0:
-                self._font_zoom_pt = min(
-                    self._FONT_OFFSET_MAX, self._font_zoom_pt + 1
-                )
+                self._font_zoom_pt = min(self._FONT_OFFSET_MAX, self._font_zoom_pt + 1)
             elif delta < 0:
-                self._font_zoom_pt = max(
-                    self._FONT_OFFSET_MIN, self._font_zoom_pt - 1
-                )
+                self._font_zoom_pt = max(self._FONT_OFFSET_MIN, self._font_zoom_pt - 1)
             self._apply_font_zoom()
             event.accept()
             return
@@ -235,9 +231,7 @@ class MainWindow(QMainWindow):
         """
         from PyQt6.QtWidgets import QApplication
 
-        clamped = max(
-            cls._FONT_OFFSET_MIN, min(cls._FONT_OFFSET_MAX, int(offset_pt))
-        )
+        clamped = max(cls._FONT_OFFSET_MIN, min(cls._FONT_OFFSET_MAX, int(offset_pt)))
         app = QApplication.instance()
         if not isinstance(app, QApplication):
             return clamped

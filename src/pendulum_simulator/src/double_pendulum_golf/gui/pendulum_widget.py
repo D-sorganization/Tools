@@ -301,9 +301,7 @@ class PendulumWidget(BasePendulumWidget):
         try:
             current = self._result.positions_at(self._current_idx)
             joint_points = [
-                (float(v[0]), float(v[1]))
-                for v in current.values()
-                if v is not None
+                (float(v[0]), float(v[1])) for v in current.values() if v is not None
             ]
             in_view, centroid = self._world_points_in_view(joint_points)
             if not in_view:

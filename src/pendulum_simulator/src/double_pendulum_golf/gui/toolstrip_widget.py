@@ -206,9 +206,7 @@ def _make_scale_slider(
     if divisor <= 0:
         raise ValueError(f"divisor must be > 0, got {divisor}")
     if max_val <= 0 or default <= 0 or default > max_val:
-        raise ValueError(
-            f"invalid slider bounds: default={default}, max_val={max_val}"
-        )
+        raise ValueError(f"invalid slider bounds: default={default}, max_val={max_val}")
     s = QSlider(Qt.Orientation.Horizontal)
     s.setRange(1, max_val)
     s.setValue(default)
@@ -372,10 +370,7 @@ class ToolStrip(QWidget):
         self.cmb_model.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToContents)
         _cmb_fm = self.cmb_model.fontMetrics()
         _longest = max(
-            (
-                self.cmb_model.itemText(i)
-                for i in range(self.cmb_model.count())
-            ),
+            (self.cmb_model.itemText(i) for i in range(self.cmb_model.count())),
             key=len,
         )
         self.cmb_model.setMinimumWidth(_cmb_fm.horizontalAdvance(_longest) + 40)
