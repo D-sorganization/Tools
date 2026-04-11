@@ -591,20 +591,28 @@ export function useDataProcessor() {
         }
 
         // Fast evaluation map loop
-        const result = filteredData.map((row) => {
+        // ⚡ Bolt Optimization: Replace filteredData.map() with a single-pass loop pre-allocating the array.
+        // Also avoid chained safeUsedSignals.map() inside the inner loop which triggers massive GC overhead.
+        const len = filteredData.length;
+        const result = new Array<DataRow>(len);
+        const argsCount = safeUsedSignals.length;
+
+        for (let i = 0; i < len; i++) {
+          const row = filteredData[i];
           const newRow = { ...row };
           try {
-            const args = safeUsedSignals.map((s) => {
-              const val = row[s.original];
-              return typeof val === 'number' ? val : NaN;
-            });
+            const args = new Array<number>(argsCount);
+            for (let j = 0; j < argsCount; j++) {
+              const val = row[safeUsedSignals[j].original];
+              args[j] = typeof val === 'number' ? val : NaN;
+            }
             const evalResult = evalFunc(...args);
             newRow[config.name] = typeof evalResult === 'number' ? evalResult : NaN;
           } catch {
             newRow[config.name] = NaN;
           }
-          return newRow;
-        });
+          result[i] = newRow;
+        }
 
         const newSignals = [...new Set([...signals, config.name])];
 
