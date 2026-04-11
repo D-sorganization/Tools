@@ -1,6 +1,8 @@
 import mujoco
 import numpy as np
 
+from lower_body_model.hip_rotation import InclinedPlaneHipRotationTarget
+
 
 class LowerBodySimulator:
     """
@@ -23,6 +25,7 @@ class LowerBodySimulator:
 
         self._cache_indices()
         self._polynomial_drivers: dict[int, np.ndarray] = {}
+        self.hip_rotation_target: InclinedPlaneHipRotationTarget | None = None
 
         # Stability control target (rest pose)
         self.qpos_target: np.ndarray | None = None
@@ -128,6 +131,41 @@ class LowerBodySimulator:
             raise ValueError(f"No actuator found for {joint_name}")
 
         self._polynomial_drivers[act_id] = np.array(coeffs)
+
+    def configure_hip_rotation_target(
+        self,
+        duration_sec: float,
+        *,
+        backswing_degrees: float = 45.0,
+        counterclockwise_degrees: float = 90.0,
+        incline_degrees: float = 12.0,
+        sample_count: int = 181,
+    ) -> InclinedPlaneHipRotationTarget:
+        """Configure the deterministic inclined-plane golf hip rotation target."""
+        self.hip_rotation_target = InclinedPlaneHipRotationTarget(
+            duration_sec=duration_sec,
+            backswing_degrees=backswing_degrees,
+            counterclockwise_degrees=counterclockwise_degrees,
+            incline_degrees=incline_degrees,
+            sample_count=sample_count,
+        )
+        return self.hip_rotation_target
+
+    def apply_hip_rotation_target(self, time_sec: float | None = None) -> dict[str, float]:
+        """Apply the configured hip target to both hip sockets without per-side duplication."""
+        if self.hip_rotation_target is None:
+            raise ValueError("No hip rotation target configured")
+
+        sample_time = self.data.time if time_sec is None else time_sec
+        rotation_deg = self.hip_rotation_target.rotation_degrees_at(sample_time)
+        incline_deg = self.hip_rotation_target.incline_degrees
+
+        for side in ("r", "l"):
+            self.data.qpos[self.jnt_qpos_idx[f"{side}_hip_z"]] = np.radians(rotation_deg)
+            self.data.qpos[self.jnt_qpos_idx[f"{side}_hip_x"]] = np.radians(incline_deg)
+
+        mujoco.mj_forward(self.model, self.data)
+        return {"rotation_deg": rotation_deg, "incline_deg": incline_deg}
 
     def compute_zero_torque_counterfactual(self) -> dict[str, np.ndarray]:
         """
@@ -284,7 +322,7 @@ class LowerBodySimulator:
         r_knee_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, "r_knee")
         r_knee_qpos_adr = self.model.jnt_qposadr[r_knee_id]
 
-        return {
+        diagnostics = {
             "time_sec": float(self.data.time),
             "pelvis_z_m": float(pelvis_pos[2]) if not div else float("nan"),
             "is_diverged": div,
@@ -303,6 +341,12 @@ class LowerBodySimulator:
             "grf": grf,
             "joint_torques": joint_torques,
         }
+        if self.hip_rotation_target is not None:
+            diagnostics["hip_rotation_target"] = {
+                "rotation_deg": self.hip_rotation_target.rotation_degrees_at(self.data.time),
+                "incline_deg": self.hip_rotation_target.incline_degrees,
+            }
+        return diagnostics
 
     def analyze_induced_acceleration(
         self, actuator_name: str, torque_value: float = 1.0
@@ -427,6 +471,8 @@ class LowerBodySimulator:
     def step(self) -> None:
         """Advance the simulation by one timestep, applying polynomial controls and basic stability."""
         t = self.data.time
+        if self.hip_rotation_target is not None:
+            self.apply_hip_rotation_target(t)
 
         # Basic stability control (PD) to hold the target posture if no polynomial is provided
         if self.qpos_target is not None:
