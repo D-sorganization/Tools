@@ -7,7 +7,7 @@ The **Lower Body Model** is a 3D biomechanical simulation of a golfer's lower bo
 - **DRY (Don't Repeat Yourself)**: The MuJoCo XML is constructed dynamically by `builder.py`, generating symmetrical left/right leg elements parametrically based on identical sub-routines mapped onto python strings.
 - **LOD (Law of Demeter)**: Components interact precisely through restricted interfaces. `main.py` interfaces with `LowerBodySimulator`, and only `LowerBodySimulator` manipulates `mujoco.MjData` and `mujoco.MjModel`.
 - **TDD (Test-Driven Development)**: Comprehensive coverage validates ZTCF calculation outputs, inverse kinematics stability, valid polynomial joint drivers, and mass-integrity matching inside XML generation.
-- **DbC (Design by Contract)**: Public entry points raise `TypeError` for wrong types and `ValueError` for out-of-range values, per the repository-wide CLAUDE.md rule. `setup_initial_pose`, `inverse_kinematics`, `build_lower_body_xml`, `InclinedPlaneHipRotationTarget.__post_init__`, and `set_pelvis_inclined_rotation` enforce all preconditions this way.
+- **DbC (Design by Contract)**: Public entry points raise `TypeError` for wrong types and `ValueError` for out-of-range values per the repository-wide CLAUDE.md rule. `setup_initial_pose`, `inverse_kinematics`, `build_lower_body_xml`, `InclinedPlaneHipRotationTarget.__post_init__`, and `set_pelvis_inclined_rotation` all validate preconditions this way, including the lateral shift range.
 
 ## 3. Kinematic Implementation
 
