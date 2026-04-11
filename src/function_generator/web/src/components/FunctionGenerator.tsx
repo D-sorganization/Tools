@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -7,22 +7,22 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-} from 'recharts';
+} from "recharts";
 
 // Waveform types
 type WaveformType =
-  | 'sinusoid'
-  | 'cosine'
-  | 'square'
-  | 'triangle'
-  | 'sawtooth'
-  | 'pulse'
-  | 'step'
-  | 'exponential'
-  | 'linear'
-  | 'polynomial'
-  | 'chirp'
-  | 'constant';
+  | "sinusoid"
+  | "cosine"
+  | "square"
+  | "triangle"
+  | "sawtooth"
+  | "pulse"
+  | "step"
+  | "exponential"
+  | "linear"
+  | "polynomial"
+  | "chirp"
+  | "constant";
 
 interface WaveformParams {
   amplitude: number;
@@ -38,7 +38,7 @@ interface WaveformParams {
   pulseDuration: number;
   chirpF0: number;
   chirpF1: number;
-  chirpMethod: 'linear' | 'exponential';
+  chirpMethod: "linear" | "exponential";
   constantValue: number;
   polyCoeffs: number[];
 }
@@ -53,27 +53,38 @@ interface SignalLayer {
   id: string;
   waveformType: WaveformType;
   params: WaveformParams;
-  operation: 'add' | 'subtract';
+  operation: "add" | "subtract";
   enabled: boolean;
   color: string;
 }
 
-const LAYER_COLORS = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+const LAYER_COLORS = [
+  "#3b82f6",
+  "#22c55e",
+  "#f59e0b",
+  "#ef4444",
+  "#8b5cf6",
+  "#ec4899",
+];
 
 // Signal generation functions
 function generateSinusoid(t: number[], params: WaveformParams): number[] {
   const { amplitude, frequency, phase, offset } = params;
-  return t.map(ti => amplitude * Math.sin(2 * Math.PI * frequency * ti + phase) + offset);
+  return t.map(
+    (ti) => amplitude * Math.sin(2 * Math.PI * frequency * ti + phase) + offset,
+  );
 }
 
 function generateCosine(t: number[], params: WaveformParams): number[] {
   const { amplitude, frequency, phase, offset } = params;
-  return t.map(ti => amplitude * Math.cos(2 * Math.PI * frequency * ti + phase) + offset);
+  return t.map(
+    (ti) => amplitude * Math.cos(2 * Math.PI * frequency * ti + phase) + offset,
+  );
 }
 
 function generateSquare(t: number[], params: WaveformParams): number[] {
   const { amplitude, frequency, dutyCycle, offset } = params;
-  return t.map(ti => {
+  return t.map((ti) => {
     const period = 1 / frequency;
     const phase = (ti % period) / period;
     return (phase < dutyCycle ? amplitude : -amplitude) + offset;
@@ -82,19 +93,20 @@ function generateSquare(t: number[], params: WaveformParams): number[] {
 
 function generateTriangle(t: number[], params: WaveformParams): number[] {
   const { amplitude, frequency, offset } = params;
-  return t.map(ti => {
+  return t.map((ti) => {
     const period = 1 / frequency;
     const phase = (ti % period) / period;
-    const value = phase < 0.5
-      ? 4 * amplitude * phase - amplitude
-      : -4 * amplitude * phase + 3 * amplitude;
+    const value =
+      phase < 0.5
+        ? 4 * amplitude * phase - amplitude
+        : -4 * amplitude * phase + 3 * amplitude;
     return value + offset;
   });
 }
 
 function generateSawtooth(t: number[], params: WaveformParams): number[] {
   const { amplitude, frequency, offset } = params;
-  return t.map(ti => {
+  return t.map((ti) => {
     const period = 1 / frequency;
     const phase = (ti % period) / period;
     return 2 * amplitude * phase - amplitude + offset;
@@ -103,29 +115,31 @@ function generateSawtooth(t: number[], params: WaveformParams): number[] {
 
 function generatePulse(t: number[], params: WaveformParams): number[] {
   const { amplitude, pulseStart, pulseDuration, offset } = params;
-  return t.map(ti =>
-    ti >= pulseStart && ti < pulseStart + pulseDuration ? amplitude + offset : offset
+  return t.map((ti) =>
+    ti >= pulseStart && ti < pulseStart + pulseDuration
+      ? amplitude + offset
+      : offset,
   );
 }
 
 function generateStep(t: number[], params: WaveformParams): number[] {
   const { amplitude, stepTime, offset } = params;
-  return t.map(ti => (ti >= stepTime ? amplitude : offset));
+  return t.map((ti) => (ti >= stepTime ? amplitude : offset));
 }
 
 function generateExponential(t: number[], params: WaveformParams): number[] {
   const { amplitude, decayRate, offset } = params;
-  return t.map(ti => amplitude * Math.exp(-decayRate * ti) + offset);
+  return t.map((ti) => amplitude * Math.exp(-decayRate * ti) + offset);
 }
 
 function generateLinear(t: number[], params: WaveformParams): number[] {
   const { slope, intercept } = params;
-  return t.map(ti => slope * ti + intercept);
+  return t.map((ti) => slope * ti + intercept);
 }
 
 function generatePolynomial(t: number[], params: WaveformParams): number[] {
   const { polyCoeffs } = params;
-  return t.map(ti => {
+  return t.map((ti) => {
     let value = 0;
     for (let i = 0; i < polyCoeffs.length; i++) {
       value += polyCoeffs[i] * Math.pow(ti, i);
@@ -137,10 +151,10 @@ function generatePolynomial(t: number[], params: WaveformParams): number[] {
 function generateChirp(t: number[], params: WaveformParams): number[] {
   const { amplitude, chirpF0, chirpF1, chirpMethod } = params;
   const duration = t[t.length - 1];
-  return t.map(ti => {
+  return t.map((ti) => {
     let freq: number;
-    if (chirpMethod === 'linear') {
-      freq = chirpF0 + (chirpF1 - chirpF0) * ti / duration;
+    if (chirpMethod === "linear") {
+      freq = chirpF0 + ((chirpF1 - chirpF0) * ti) / duration;
     } else {
       freq = chirpF0 * Math.pow(chirpF1 / chirpF0, ti / duration);
     }
@@ -163,7 +177,10 @@ function hanningWindow(n: number): number[] {
 }
 
 // FFT implementation with windowing for accurate frequency visualization
-function computeFFT(values: number[], sampleRate: number): { freq: number[]; magnitude: number[] } {
+function computeFFT(
+  values: number[],
+  sampleRate: number,
+): { freq: number[]; magnitude: number[] } {
   const n = values.length;
   const freq: number[] = [];
   const magnitude: number[] = [];
@@ -187,43 +204,62 @@ function computeFFT(values: number[], sampleRate: number): { freq: number[]; mag
     freq.push((k * sampleRate) / n);
     // Apply correct scaling: 2/n for one-sided spectrum, but DC (k=0) uses 1/n
     const scale = k === 0 ? 1 / n : 2 / n;
-    magnitude.push(Math.sqrt(real * real + imag * imag) * scale * windowCorrection);
+    magnitude.push(
+      Math.sqrt(real * real + imag * imag) * scale * windowCorrection,
+    );
   }
 
   return { freq, magnitude };
 }
 
 const WAVEFORM_OPTIONS: { value: WaveformType; label: string }[] = [
-  { value: 'sinusoid', label: 'Sinusoid' },
-  { value: 'cosine', label: 'Cosine' },
-  { value: 'square', label: 'Square Wave' },
-  { value: 'triangle', label: 'Triangle Wave' },
-  { value: 'sawtooth', label: 'Sawtooth' },
-  { value: 'pulse', label: 'Pulse' },
-  { value: 'step', label: 'Step' },
-  { value: 'exponential', label: 'Exponential' },
-  { value: 'linear', label: 'Linear' },
-  { value: 'polynomial', label: 'Polynomial' },
-  { value: 'chirp', label: 'Chirp (Sweep)' },
-  { value: 'constant', label: 'Constant' },
+  { value: "sinusoid", label: "Sinusoid" },
+  { value: "cosine", label: "Cosine" },
+  { value: "square", label: "Square Wave" },
+  { value: "triangle", label: "Triangle Wave" },
+  { value: "sawtooth", label: "Sawtooth" },
+  { value: "pulse", label: "Pulse" },
+  { value: "step", label: "Step" },
+  { value: "exponential", label: "Exponential" },
+  { value: "linear", label: "Linear" },
+  { value: "polynomial", label: "Polynomial" },
+  { value: "chirp", label: "Chirp (Sweep)" },
+  { value: "constant", label: "Constant" },
 ];
 
 // Helper to generate signal values for a given waveform type and params
-function generateSignalValues(time: number[], waveformType: WaveformType, params: WaveformParams): number[] {
+function generateSignalValues(
+  time: number[],
+  waveformType: WaveformType,
+  params: WaveformParams,
+): number[] {
   switch (waveformType) {
-    case 'sinusoid': return generateSinusoid(time, params);
-    case 'cosine': return generateCosine(time, params);
-    case 'square': return generateSquare(time, params);
-    case 'triangle': return generateTriangle(time, params);
-    case 'sawtooth': return generateSawtooth(time, params);
-    case 'pulse': return generatePulse(time, params);
-    case 'step': return generateStep(time, params);
-    case 'exponential': return generateExponential(time, params);
-    case 'linear': return generateLinear(time, params);
-    case 'polynomial': return generatePolynomial(time, params);
-    case 'chirp': return generateChirp(time, params);
-    case 'constant': return generateConstant(time, params);
-    default: return time.map(() => 0);
+    case "sinusoid":
+      return generateSinusoid(time, params);
+    case "cosine":
+      return generateCosine(time, params);
+    case "square":
+      return generateSquare(time, params);
+    case "triangle":
+      return generateTriangle(time, params);
+    case "sawtooth":
+      return generateSawtooth(time, params);
+    case "pulse":
+      return generatePulse(time, params);
+    case "step":
+      return generateStep(time, params);
+    case "exponential":
+      return generateExponential(time, params);
+    case "linear":
+      return generateLinear(time, params);
+    case "polynomial":
+      return generatePolynomial(time, params);
+    case "chirp":
+      return generateChirp(time, params);
+    case "constant":
+      return generateConstant(time, params);
+    default:
+      return time.map(() => 0);
   }
 }
 
@@ -241,13 +277,13 @@ const defaultParams: WaveformParams = {
   pulseDuration: 0.3,
   chirpF0: 1,
   chirpF1: 20,
-  chirpMethod: 'linear',
+  chirpMethod: "linear",
   constantValue: 1,
   polyCoeffs: [0, 1, -0.5],
 };
 
 export function FunctionGenerator() {
-  const [activeTab, setActiveTab] = useState<'time' | 'frequency'>('time');
+  const [activeTab, setActiveTab] = useState<"time" | "frequency">("time");
   const [duration, setDuration] = useState(1);
   const [sampleRate, setSampleRate] = useState(1000);
   const [showLayers, setShowLayers] = useState(true);
@@ -255,30 +291,34 @@ export function FunctionGenerator() {
   // Signal layers for stacking
   const [layers, setLayers] = useState<SignalLayer[]>([
     {
-      id: '1',
-      waveformType: 'sinusoid',
+      id: "1",
+      waveformType: "sinusoid",
       params: { ...defaultParams },
-      operation: 'add',
+      operation: "add",
       enabled: true,
       color: LAYER_COLORS[0],
     },
   ]);
 
-  const [selectedLayerId, setSelectedLayerId] = useState('1');
+  const [selectedLayerId, setSelectedLayerId] = useState("1");
 
   // Get the currently selected layer
-  const selectedLayer = layers.find(l => l.id === selectedLayerId) || layers[0];
-  const waveformType = selectedLayer?.waveformType || 'sinusoid';
+  const selectedLayer =
+    layers.find((l) => l.id === selectedLayerId) || layers[0];
+  const waveformType = selectedLayer?.waveformType || "sinusoid";
   const params = selectedLayer?.params || defaultParams;
 
-  const [polyCoeffsText, setPolyCoeffsText] = useState('0, 1, -0.5');
+  const [polyCoeffsText, setPolyCoeffsText] = useState("0, 1, -0.5");
 
   // Update poly coeffs from text for selected layer
   useEffect(() => {
     try {
-      const coeffs = polyCoeffsText.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+      const coeffs = polyCoeffsText
+        .split(",")
+        .map((s) => parseFloat(s.trim()))
+        .filter((n) => !isNaN(n));
       if (coeffs.length > 0) {
-        updateLayerParams('polyCoeffs', coeffs);
+        updateLayerParams("polyCoeffs", coeffs);
       }
     } catch {
       // Invalid input, ignore
@@ -289,71 +329,96 @@ export function FunctionGenerator() {
   const addLayer = useCallback(() => {
     const newId = String(Date.now());
     const colorIndex = layers.length % LAYER_COLORS.length;
-    setLayers(prev => [...prev, {
-      id: newId,
-      waveformType: 'sinusoid',
-      params: { ...defaultParams, frequency: 10 }, // Different frequency for variety
-      operation: 'add',
-      enabled: true,
-      color: LAYER_COLORS[colorIndex],
-    }]);
+    setLayers((prev) => [
+      ...prev,
+      {
+        id: newId,
+        waveformType: "sinusoid",
+        params: { ...defaultParams, frequency: 10 }, // Different frequency for variety
+        operation: "add",
+        enabled: true,
+        color: LAYER_COLORS[colorIndex],
+      },
+    ]);
     setSelectedLayerId(newId);
   }, [layers.length]);
 
-  const removeLayer = useCallback((id: string) => {
-    if (layers.length <= 1) return; // Keep at least one layer
-    setLayers(prev => prev.filter(l => l.id !== id));
-    if (selectedLayerId === id) {
-      setSelectedLayerId(layers[0].id === id ? layers[1]?.id || layers[0].id : layers[0].id);
-    }
-  }, [layers, selectedLayerId]);
+  const removeLayer = useCallback(
+    (id: string) => {
+      if (layers.length <= 1) return; // Keep at least one layer
+      setLayers((prev) => prev.filter((l) => l.id !== id));
+      if (selectedLayerId === id) {
+        setSelectedLayerId(
+          layers[0].id === id ? layers[1]?.id || layers[0].id : layers[0].id,
+        );
+      }
+    },
+    [layers, selectedLayerId],
+  );
 
-  const updateLayerWaveform = useCallback((type: WaveformType) => {
-    setLayers(prev => prev.map(l =>
-      l.id === selectedLayerId ? { ...l, waveformType: type } : l
-    ));
-  }, [selectedLayerId]);
+  const updateLayerWaveform = useCallback(
+    (type: WaveformType) => {
+      setLayers((prev) =>
+        prev.map((l) =>
+          l.id === selectedLayerId ? { ...l, waveformType: type } : l,
+        ),
+      );
+    },
+    [selectedLayerId],
+  );
 
-  const updateLayerParams = useCallback(<K extends keyof WaveformParams>(key: K, value: WaveformParams[K]) => {
-    setLayers(prev => prev.map(l =>
-      l.id === selectedLayerId ? { ...l, params: { ...l.params, [key]: value } } : l
-    ));
-  }, [selectedLayerId]);
+  const updateLayerParams = useCallback(
+    <K extends keyof WaveformParams>(key: K, value: WaveformParams[K]) => {
+      setLayers((prev) =>
+        prev.map((l) =>
+          l.id === selectedLayerId
+            ? { ...l, params: { ...l.params, [key]: value } }
+            : l,
+        ),
+      );
+    },
+    [selectedLayerId],
+  );
 
-  const updateLayerOperation = useCallback((id: string, operation: 'add' | 'subtract') => {
-    setLayers(prev => prev.map(l =>
-      l.id === id ? { ...l, operation } : l
-    ));
-  }, []);
+  const updateLayerOperation = useCallback(
+    (id: string, operation: "add" | "subtract") => {
+      setLayers((prev) =>
+        prev.map((l) => (l.id === id ? { ...l, operation } : l)),
+      );
+    },
+    [],
+  );
 
   const toggleLayerEnabled = useCallback((id: string) => {
-    setLayers(prev => prev.map(l =>
-      l.id === id ? { ...l, enabled: !l.enabled } : l
-    ));
+    setLayers((prev) =>
+      prev.map((l) => (l.id === id ? { ...l, enabled: !l.enabled } : l)),
+    );
   }, []);
 
   // Generate individual layer signals
   const layerSignals = useMemo(() => {
     const n = Math.floor(duration * sampleRate);
-    const time = Array.from({ length: n }, (_, i) => (i / sampleRate));
+    const time = Array.from({ length: n }, (_, i) => i / sampleRate);
 
-    return layers.map(layer => ({
+    return layers.map((layer) => ({
       layer,
-      values: layer.enabled ? generateSignalValues(time, layer.waveformType, layer.params) : time.map(() => 0),
+      values: layer.enabled
+        ? generateSignalValues(time, layer.waveformType, layer.params)
+        : time.map(() => 0),
     }));
   }, [layers, duration, sampleRate]);
 
   // Generate combined signal
   const signal = useMemo((): SignalData => {
     const n = Math.floor(duration * sampleRate);
-    const time = Array.from({ length: n }, (_, i) => (i / sampleRate));
+    const time = Array.from({ length: n }, (_, i) => i / sampleRate);
 
     // Combine all enabled layers
     const values = time.map((_, i) => {
       let sum = 0;
       for (const { layer, values: layerVals } of layerSignals) {
         if (layer.enabled) {
-          if (layer.operation === 'add') {
+          if (layer.operation === "add") {
             sum += layerVals[i];
           } else {
             sum -= layerVals[i];
@@ -398,13 +463,15 @@ export function FunctionGenerator() {
     const nyquist = sampleRate / 2;
     // Use max frequency from all enabled layers
     const maxLayerFreq = Math.max(
-      ...layers.filter(l => l.enabled).map(l => l.params.frequency || l.params.chirpF1 || 10)
+      ...layers
+        .filter((l) => l.enabled)
+        .map((l) => l.params.frequency || l.params.chirpF1 || 10),
     );
     const maxFreq = Math.min(nyquist, Math.max(maxLayerFreq * 8, 50));
 
     return fftData.freq
       .map((f, i) => ({ freq: f, magnitude: fftData.magnitude[i] }))
-      .filter(d => d.freq <= maxFreq && d.freq >= 0);
+      .filter((d) => d.freq <= maxFreq && d.freq >= 0);
   }, [fftData, sampleRate, layers]);
 
   // Signal statistics
@@ -414,7 +481,14 @@ export function FunctionGenerator() {
     const max = Math.max(...vals);
     const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
     const rms = Math.sqrt(vals.reduce((a, b) => a + b * b, 0) / vals.length);
-    return { min, max, mean, rms, samples: vals.length, layers: layers.filter(l => l.enabled).length };
+    return {
+      min,
+      max,
+      mean,
+      rms,
+      samples: vals.length,
+      layers: layers.filter((l) => l.enabled).length,
+    };
   }, [signal, layers]);
 
   // Alias for backward compatibility in renderParams
@@ -423,91 +497,218 @@ export function FunctionGenerator() {
   // Parameter inputs based on waveform type
   const renderParams = () => {
     switch (waveformType) {
-      case 'sinusoid':
-      case 'cosine':
+      case "sinusoid":
+      case "cosine":
         return (
           <>
-            <ParamInput label="Amplitude" value={params.amplitude} onChange={v => updateParam('amplitude', v)} />
-            <ParamInput label="Frequency (Hz)" value={params.frequency} onChange={v => updateParam('frequency', v)} min={0.01} />
-            <ParamInput label="Phase (rad)" value={params.phase} onChange={v => updateParam('phase', v)} step={0.1} />
-            <ParamInput label="DC Offset" value={params.offset} onChange={v => updateParam('offset', v)} />
+            <ParamInput
+              label="Amplitude"
+              value={params.amplitude}
+              onChange={(v) => updateParam("amplitude", v)}
+            />
+            <ParamInput
+              label="Frequency (Hz)"
+              value={params.frequency}
+              onChange={(v) => updateParam("frequency", v)}
+              min={0.01}
+            />
+            <ParamInput
+              label="Phase (rad)"
+              value={params.phase}
+              onChange={(v) => updateParam("phase", v)}
+              step={0.1}
+            />
+            <ParamInput
+              label="DC Offset"
+              value={params.offset}
+              onChange={(v) => updateParam("offset", v)}
+            />
           </>
         );
-      case 'square':
+      case "square":
         return (
           <>
-            <ParamInput label="Amplitude" value={params.amplitude} onChange={v => updateParam('amplitude', v)} />
-            <ParamInput label="Frequency (Hz)" value={params.frequency} onChange={v => updateParam('frequency', v)} min={0.01} />
-            <ParamInput label="Duty Cycle" value={params.dutyCycle} onChange={v => updateParam('dutyCycle', v)} min={0.01} max={0.99} step={0.01} />
-            <ParamInput label="DC Offset" value={params.offset} onChange={v => updateParam('offset', v)} />
+            <ParamInput
+              label="Amplitude"
+              value={params.amplitude}
+              onChange={(v) => updateParam("amplitude", v)}
+            />
+            <ParamInput
+              label="Frequency (Hz)"
+              value={params.frequency}
+              onChange={(v) => updateParam("frequency", v)}
+              min={0.01}
+            />
+            <ParamInput
+              label="Duty Cycle"
+              value={params.dutyCycle}
+              onChange={(v) => updateParam("dutyCycle", v)}
+              min={0.01}
+              max={0.99}
+              step={0.01}
+            />
+            <ParamInput
+              label="DC Offset"
+              value={params.offset}
+              onChange={(v) => updateParam("offset", v)}
+            />
           </>
         );
-      case 'triangle':
-      case 'sawtooth':
+      case "triangle":
+      case "sawtooth":
         return (
           <>
-            <ParamInput label="Amplitude" value={params.amplitude} onChange={v => updateParam('amplitude', v)} />
-            <ParamInput label="Frequency (Hz)" value={params.frequency} onChange={v => updateParam('frequency', v)} min={0.01} />
-            <ParamInput label="DC Offset" value={params.offset} onChange={v => updateParam('offset', v)} />
+            <ParamInput
+              label="Amplitude"
+              value={params.amplitude}
+              onChange={(v) => updateParam("amplitude", v)}
+            />
+            <ParamInput
+              label="Frequency (Hz)"
+              value={params.frequency}
+              onChange={(v) => updateParam("frequency", v)}
+              min={0.01}
+            />
+            <ParamInput
+              label="DC Offset"
+              value={params.offset}
+              onChange={(v) => updateParam("offset", v)}
+            />
           </>
         );
-      case 'pulse':
+      case "pulse":
         return (
           <>
-            <ParamInput label="Amplitude" value={params.amplitude} onChange={v => updateParam('amplitude', v)} />
-            <ParamInput label="Start Time (s)" value={params.pulseStart} onChange={v => updateParam('pulseStart', v)} min={0} />
-            <ParamInput label="Duration (s)" value={params.pulseDuration} onChange={v => updateParam('pulseDuration', v)} min={0.001} />
-            <ParamInput label="Baseline" value={params.offset} onChange={v => updateParam('offset', v)} />
+            <ParamInput
+              label="Amplitude"
+              value={params.amplitude}
+              onChange={(v) => updateParam("amplitude", v)}
+            />
+            <ParamInput
+              label="Start Time (s)"
+              value={params.pulseStart}
+              onChange={(v) => updateParam("pulseStart", v)}
+              min={0}
+            />
+            <ParamInput
+              label="Duration (s)"
+              value={params.pulseDuration}
+              onChange={(v) => updateParam("pulseDuration", v)}
+              min={0.001}
+            />
+            <ParamInput
+              label="Baseline"
+              value={params.offset}
+              onChange={(v) => updateParam("offset", v)}
+            />
           </>
         );
-      case 'step':
+      case "step":
         return (
           <>
-            <ParamInput label="Step Value" value={params.amplitude} onChange={v => updateParam('amplitude', v)} />
-            <ParamInput label="Step Time (s)" value={params.stepTime} onChange={v => updateParam('stepTime', v)} min={0} />
-            <ParamInput label="Initial Value" value={params.offset} onChange={v => updateParam('offset', v)} />
+            <ParamInput
+              label="Step Value"
+              value={params.amplitude}
+              onChange={(v) => updateParam("amplitude", v)}
+            />
+            <ParamInput
+              label="Step Time (s)"
+              value={params.stepTime}
+              onChange={(v) => updateParam("stepTime", v)}
+              min={0}
+            />
+            <ParamInput
+              label="Initial Value"
+              value={params.offset}
+              onChange={(v) => updateParam("offset", v)}
+            />
           </>
         );
-      case 'exponential':
+      case "exponential":
         return (
           <>
-            <ParamInput label="Amplitude" value={params.amplitude} onChange={v => updateParam('amplitude', v)} />
-            <ParamInput label="Decay Rate" value={params.decayRate} onChange={v => updateParam('decayRate', v)} />
-            <ParamInput label="DC Offset" value={params.offset} onChange={v => updateParam('offset', v)} />
+            <ParamInput
+              label="Amplitude"
+              value={params.amplitude}
+              onChange={(v) => updateParam("amplitude", v)}
+            />
+            <ParamInput
+              label="Decay Rate"
+              value={params.decayRate}
+              onChange={(v) => updateParam("decayRate", v)}
+            />
+            <ParamInput
+              label="DC Offset"
+              value={params.offset}
+              onChange={(v) => updateParam("offset", v)}
+            />
           </>
         );
-      case 'linear':
+      case "linear":
         return (
           <>
-            <ParamInput label="Slope" value={params.slope} onChange={v => updateParam('slope', v)} />
-            <ParamInput label="Intercept" value={params.intercept} onChange={v => updateParam('intercept', v)} />
+            <ParamInput
+              label="Slope"
+              value={params.slope}
+              onChange={(v) => updateParam("slope", v)}
+            />
+            <ParamInput
+              label="Intercept"
+              value={params.intercept}
+              onChange={(v) => updateParam("intercept", v)}
+            />
           </>
         );
-      case 'polynomial':
+      case "polynomial":
         return (
           <div>
-            <label className="block text-sm text-slate-400 mb-1">Coefficients (c₀, c₁, c₂, ...)</label>
+            <label className="block text-sm text-slate-400 mb-1">
+              Coefficients (c₀, c₁, c₂, ...)
+            </label>
             <input
               type="text"
               value={polyCoeffsText}
-              onChange={e => setPolyCoeffsText(e.target.value)}
+              onChange={(e) => setPolyCoeffsText(e.target.value)}
               placeholder="e.g., 1, 2, 0.5"
               className="w-full bg-slate-700 text-white rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
             />
-            <p className="text-xs text-slate-500 mt-1">y = c₀ + c₁t + c₂t² + ...</p>
+            <p className="text-xs text-slate-500 mt-1">
+              y = c₀ + c₁t + c₂t² + ...
+            </p>
           </div>
         );
-      case 'chirp':
+      case "chirp":
         return (
           <>
-            <ParamInput label="Amplitude" value={params.amplitude} onChange={v => updateParam('amplitude', v)} />
-            <ParamInput label="Start Freq (Hz)" value={params.chirpF0} onChange={v => updateParam('chirpF0', v)} min={0.01} />
-            <ParamInput label="End Freq (Hz)" value={params.chirpF1} onChange={v => updateParam('chirpF1', v)} min={0.01} />
+            <ParamInput
+              label="Amplitude"
+              value={params.amplitude}
+              onChange={(v) => updateParam("amplitude", v)}
+            />
+            <ParamInput
+              label="Start Freq (Hz)"
+              value={params.chirpF0}
+              onChange={(v) => updateParam("chirpF0", v)}
+              min={0.01}
+            />
+            <ParamInput
+              label="End Freq (Hz)"
+              value={params.chirpF1}
+              onChange={(v) => updateParam("chirpF1", v)}
+              min={0.01}
+            />
             <div>
-              <label className="block text-sm text-slate-400 mb-1">Sweep Method</label>
+              <label className="block text-sm text-slate-400 mb-1">
+                Sweep Method
+              </label>
               <select
                 value={params.chirpMethod}
-                onChange={e => updateParam('chirpMethod', e.target.value as 'linear' | 'exponential')}
+                onChange={(e) =>
+                  updateParam(
+                    "chirpMethod",
+                    e.target.value as "linear" | "exponential",
+                  )
+                }
                 className="w-full bg-slate-700 text-white rounded px-3 py-2"
               >
                 <option value="linear">Linear</option>
@@ -516,9 +717,13 @@ export function FunctionGenerator() {
             </div>
           </>
         );
-      case 'constant':
+      case "constant":
         return (
-          <ParamInput label="Value" value={params.constantValue} onChange={v => updateParam('constantValue', v)} />
+          <ParamInput
+            label="Value"
+            value={params.constantValue}
+            onChange={(v) => updateParam("constantValue", v)}
+          />
         );
       default:
         return null;
@@ -547,8 +752,8 @@ export function FunctionGenerator() {
                 onClick={() => setSelectedLayerId(layer.id)}
                 className={`p-2 rounded cursor-pointer border-2 transition-colors ${
                   selectedLayerId === layer.id
-                    ? 'border-blue-500 bg-slate-700'
-                    : 'border-transparent bg-slate-700/50 hover:bg-slate-700'
+                    ? "border-blue-500 bg-slate-700"
+                    : "border-transparent bg-slate-700/50 hover:bg-slate-700"
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -558,21 +763,34 @@ export function FunctionGenerator() {
                       style={{ backgroundColor: layer.color }}
                     />
                     <span className="text-white text-sm font-medium">
-                      {idx === 0 ? '' : layer.operation === 'add' ? '+' : '−'} {WAVEFORM_OPTIONS.find(o => o.value === layer.waveformType)?.label}
+                      {idx === 0 ? "" : layer.operation === "add" ? "+" : "−"}{" "}
+                      {
+                        WAVEFORM_OPTIONS.find(
+                          (o) => o.value === layer.waveformType,
+                        )?.label
+                      }
                     </span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <button
-                      onClick={(e) => { e.stopPropagation(); toggleLayerEnabled(layer.id); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleLayerEnabled(layer.id);
+                      }}
                       className={`px-2 py-0.5 rounded text-xs ${
-                        layer.enabled ? 'bg-green-600 text-white' : 'bg-slate-600 text-slate-400'
+                        layer.enabled
+                          ? "bg-green-600 text-white"
+                          : "bg-slate-600 text-slate-400"
                       }`}
                     >
-                      {layer.enabled ? 'ON' : 'OFF'}
+                      {layer.enabled ? "ON" : "OFF"}
                     </button>
                     {layers.length > 1 && (
                       <button
-                        onClick={(e) => { e.stopPropagation(); removeLayer(layer.id); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeLayer(layer.id);
+                        }}
                         className="px-2 py-0.5 bg-red-600 text-white rounded text-xs hover:bg-red-500"
                       >
                         ×
@@ -583,17 +801,27 @@ export function FunctionGenerator() {
                 {idx > 0 && selectedLayerId === layer.id && (
                   <div className="mt-2 flex space-x-2">
                     <button
-                      onClick={(e) => { e.stopPropagation(); updateLayerOperation(layer.id, 'add'); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        updateLayerOperation(layer.id, "add");
+                      }}
                       className={`flex-1 px-2 py-1 rounded text-xs ${
-                        layer.operation === 'add' ? 'bg-blue-600 text-white' : 'bg-slate-600 text-slate-300'
+                        layer.operation === "add"
+                          ? "bg-blue-600 text-white"
+                          : "bg-slate-600 text-slate-300"
                       }`}
                     >
                       Add (+)
                     </button>
                     <button
-                      onClick={(e) => { e.stopPropagation(); updateLayerOperation(layer.id, 'subtract'); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        updateLayerOperation(layer.id, "subtract");
+                      }}
                       className={`flex-1 px-2 py-1 rounded text-xs ${
-                        layer.operation === 'subtract' ? 'bg-blue-600 text-white' : 'bg-slate-600 text-slate-300'
+                        layer.operation === "subtract"
+                          ? "bg-blue-600 text-white"
+                          : "bg-slate-600 text-slate-300"
                       }`}
                     >
                       Subtract (−)
@@ -608,7 +836,7 @@ export function FunctionGenerator() {
               <input
                 type="checkbox"
                 checked={showLayers}
-                onChange={e => setShowLayers(e.target.checked)}
+                onChange={(e) => setShowLayers(e.target.checked)}
                 className="rounded bg-slate-700 border-slate-600"
               />
               <span>Show individual layers on chart</span>
@@ -621,26 +849,45 @@ export function FunctionGenerator() {
           <h3 className="text-lg font-semibold text-white mb-3">
             Waveform Type
             <span className="text-sm font-normal text-slate-400 ml-2">
-              (Layer {layers.findIndex(l => l.id === selectedLayerId) + 1})
+              (Layer {layers.findIndex((l) => l.id === selectedLayerId) + 1})
             </span>
           </h3>
           <select
             value={waveformType}
-            onChange={e => updateLayerWaveform(e.target.value as WaveformType)}
+            onChange={(e) =>
+              updateLayerWaveform(e.target.value as WaveformType)
+            }
             className="w-full bg-slate-700 text-white rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
           >
-            {WAVEFORM_OPTIONS.map(opt => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            {WAVEFORM_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
             ))}
           </select>
         </div>
 
         {/* Time Parameters */}
         <div className="bg-slate-800 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-white mb-3">Time Parameters</h3>
+          <h3 className="text-lg font-semibold text-white mb-3">
+            Time Parameters
+          </h3>
           <div className="space-y-3">
-            <ParamInput label="Duration (s)" value={duration} onChange={setDuration} min={0.01} max={100} />
-            <ParamInput label="Sample Rate (Hz)" value={sampleRate} onChange={setSampleRate} min={10} max={100000} step={10} />
+            <ParamInput
+              label="Duration (s)"
+              value={duration}
+              onChange={setDuration}
+              min={0.01}
+              max={100}
+            />
+            <ParamInput
+              label="Sample Rate (Hz)"
+              value={sampleRate}
+              onChange={setSampleRate}
+              min={10}
+              max={100000}
+              step={10}
+            />
           </div>
         </div>
 
@@ -649,17 +896,17 @@ export function FunctionGenerator() {
           <h3 className="text-lg font-semibold text-white mb-3">
             Waveform Parameters
             <span className="text-sm font-normal text-slate-400 ml-2">
-              (Layer {layers.findIndex(l => l.id === selectedLayerId) + 1})
+              (Layer {layers.findIndex((l) => l.id === selectedLayerId) + 1})
             </span>
           </h3>
-          <div className="space-y-3">
-            {renderParams()}
-          </div>
+          <div className="space-y-3">{renderParams()}</div>
         </div>
 
         {/* Signal Info */}
         <div className="bg-slate-800 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-white mb-3">Combined Signal Info</h3>
+          <h3 className="text-lg font-semibold text-white mb-3">
+            Combined Signal Info
+          </h3>
           <div className="text-sm space-y-1">
             <div className="flex justify-between">
               <span className="text-slate-400">Active Layers:</span>
@@ -694,21 +941,21 @@ export function FunctionGenerator() {
         {/* Tabs */}
         <div className="flex space-x-2">
           <button
-            onClick={() => setActiveTab('time')}
+            onClick={() => setActiveTab("time")}
             className={`px-4 py-2 rounded font-medium transition-colors ${
-              activeTab === 'time'
-                ? 'bg-blue-600 text-white'
-                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              activeTab === "time"
+                ? "bg-blue-600 text-white"
+                : "bg-slate-700 text-slate-300 hover:bg-slate-600"
             }`}
           >
             Time Domain
           </button>
           <button
-            onClick={() => setActiveTab('frequency')}
+            onClick={() => setActiveTab("frequency")}
             className={`px-4 py-2 rounded font-medium transition-colors ${
-              activeTab === 'frequency'
-                ? 'bg-blue-600 text-white'
-                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              activeTab === "frequency"
+                ? "bg-blue-600 text-white"
+                : "bg-slate-700 text-slate-300 hover:bg-slate-600"
             }`}
           >
             Frequency Domain
@@ -716,13 +963,12 @@ export function FunctionGenerator() {
         </div>
 
         {/* Time Domain Chart */}
-        {activeTab === 'time' && (
+        {activeTab === "time" && (
           <div className="bg-slate-800 rounded-lg p-4">
             <h3 className="text-lg font-semibold text-white mb-4">
               {layers.length === 1
-                ? `${WAVEFORM_OPTIONS.find(o => o.value === waveformType)?.label} - Time Domain`
-                : `Combined Signal (${layers.filter(l => l.enabled).length} layers) - Time Domain`
-              }
+                ? `${WAVEFORM_OPTIONS.find((o) => o.value === waveformType)?.label} - Time Domain`
+                : `Combined Signal (${layers.filter((l) => l.enabled).length} layers) - Time Domain`}
             </h3>
             <div className="h-96">
               <ResponsiveContainer width="100%" height="100%">
@@ -731,37 +977,57 @@ export function FunctionGenerator() {
                   <XAxis
                     dataKey="time"
                     stroke="#94a3b8"
-                    tickFormatter={v => v.toFixed(2)}
-                    label={{ value: 'Time (s)', position: 'insideBottom', offset: -5, fill: '#94a3b8' }}
+                    tickFormatter={(v) => v.toFixed(2)}
+                    label={{
+                      value: "Time (s)",
+                      position: "insideBottom",
+                      offset: -5,
+                      fill: "#94a3b8",
+                    }}
                   />
                   <YAxis
                     stroke="#94a3b8"
-                    label={{ value: 'Amplitude', angle: -90, position: 'insideLeft', fill: '#94a3b8' }}
+                    label={{
+                      value: "Amplitude",
+                      angle: -90,
+                      position: "insideLeft",
+                      fill: "#94a3b8",
+                    }}
                   />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px' }}
-                    labelStyle={{ color: '#e2e8f0' }}
+                    contentStyle={{
+                      backgroundColor: "#1e293b",
+                      border: "none",
+                      borderRadius: "8px",
+                    }}
+                    labelStyle={{ color: "#e2e8f0" }}
                     formatter={(value: number, name: string) => {
-                      const displayName = name === 'combined' ? 'Combined' :
-                        `Layer ${layers.findIndex(l => `layer_${l.id}` === name) + 1}`;
+                      const displayName =
+                        name === "combined"
+                          ? "Combined"
+                          : `Layer ${layers.findIndex((l) => `layer_${l.id}` === name) + 1}`;
                       return [value.toFixed(4), displayName];
                     }}
-                    labelFormatter={(label: number) => `t = ${label.toFixed(4)} s`}
+                    labelFormatter={(label: number) =>
+                      `t = ${label.toFixed(4)} s`
+                    }
                   />
                   {/* Individual layer lines (dashed, thinner) */}
-                  {showLayers && layers.length > 1 && layers.map(layer => (
-                    <Line
-                      key={layer.id}
-                      type="monotone"
-                      dataKey={`layer_${layer.id}`}
-                      stroke={layer.color}
-                      strokeWidth={1}
-                      strokeDasharray="4 2"
-                      dot={false}
-                      isAnimationActive={false}
-                      opacity={layer.enabled ? 0.6 : 0.2}
-                    />
-                  ))}
+                  {showLayers &&
+                    layers.length > 1 &&
+                    layers.map((layer) => (
+                      <Line
+                        key={layer.id}
+                        type="monotone"
+                        dataKey={`layer_${layer.id}`}
+                        stroke={layer.color}
+                        strokeWidth={1}
+                        strokeDasharray="4 2"
+                        dot={false}
+                        isAnimationActive={false}
+                        opacity={layer.enabled ? 0.6 : 0.2}
+                      />
+                    ))}
                   {/* Combined signal line (solid, thicker) */}
                   <Line
                     type="monotone"
@@ -783,9 +1049,20 @@ export function FunctionGenerator() {
                 </div>
                 {layers.map((layer, idx) => (
                   <div key={layer.id} className="flex items-center space-x-2">
-                    <div className="w-6 h-0.5" style={{ backgroundColor: layer.color, opacity: layer.enabled ? 0.8 : 0.3 }} />
-                    <span className={layer.enabled ? 'text-slate-300' : 'text-slate-500'}>
-                      Layer {idx + 1} ({layer.operation === 'add' || idx === 0 ? '+' : '−'})
+                    <div
+                      className="w-6 h-0.5"
+                      style={{
+                        backgroundColor: layer.color,
+                        opacity: layer.enabled ? 0.8 : 0.3,
+                      }}
+                    />
+                    <span
+                      className={
+                        layer.enabled ? "text-slate-300" : "text-slate-500"
+                      }
+                    >
+                      Layer {idx + 1} (
+                      {layer.operation === "add" || idx === 0 ? "+" : "−"})
                     </span>
                   </div>
                 ))}
@@ -795,9 +1072,11 @@ export function FunctionGenerator() {
         )}
 
         {/* Frequency Domain Chart */}
-        {activeTab === 'frequency' && (
+        {activeTab === "frequency" && (
           <div className="bg-slate-800 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-white mb-4">Frequency Spectrum</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Frequency Spectrum
+            </h3>
             <div className="h-96">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={freqChartData}>
@@ -805,18 +1084,37 @@ export function FunctionGenerator() {
                   <XAxis
                     dataKey="freq"
                     stroke="#94a3b8"
-                    tickFormatter={v => v.toFixed(1)}
-                    label={{ value: 'Frequency (Hz)', position: 'insideBottom', offset: -5, fill: '#94a3b8' }}
+                    tickFormatter={(v) => v.toFixed(1)}
+                    label={{
+                      value: "Frequency (Hz)",
+                      position: "insideBottom",
+                      offset: -5,
+                      fill: "#94a3b8",
+                    }}
                   />
                   <YAxis
                     stroke="#94a3b8"
-                    label={{ value: 'Magnitude', angle: -90, position: 'insideLeft', fill: '#94a3b8' }}
+                    label={{
+                      value: "Magnitude",
+                      angle: -90,
+                      position: "insideLeft",
+                      fill: "#94a3b8",
+                    }}
                   />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px' }}
-                    labelStyle={{ color: '#e2e8f0' }}
-                    formatter={(value: number) => [value.toFixed(4), 'Magnitude']}
-                    labelFormatter={(label: number) => `f = ${label.toFixed(2)} Hz`}
+                    contentStyle={{
+                      backgroundColor: "#1e293b",
+                      border: "none",
+                      borderRadius: "8px",
+                    }}
+                    labelStyle={{ color: "#e2e8f0" }}
+                    formatter={(value: number) => [
+                      value.toFixed(4),
+                      "Magnitude",
+                    ]}
+                    labelFormatter={(label: number) =>
+                      `f = ${label.toFixed(2)} Hz`
+                    }
                   />
                   <Line
                     type="monotone"
@@ -834,15 +1132,54 @@ export function FunctionGenerator() {
 
         {/* Quick Presets */}
         <div className="bg-slate-800 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-white mb-3">Quick Presets</h3>
+          <h3 className="text-lg font-semibold text-white mb-3">
+            Quick Presets
+          </h3>
           <p className="text-xs text-slate-500 mb-2">Single signals:</p>
           <div className="flex flex-wrap gap-2 mb-3">
-            <PresetButton label="1 Hz Sine" onClick={() => { updateLayerWaveform('sinusoid'); updateParam('frequency', 1); }} />
-            <PresetButton label="10 Hz Sine" onClick={() => { updateLayerWaveform('sinusoid'); updateParam('frequency', 10); }} />
-            <PresetButton label="50 Hz Square" onClick={() => { updateLayerWaveform('square'); updateParam('frequency', 50); }} />
-            <PresetButton label="Chirp 1-50 Hz" onClick={() => { updateLayerWaveform('chirp'); updateParam('chirpF0', 1); updateParam('chirpF1', 50); }} />
-            <PresetButton label="Decay τ=0.5" onClick={() => { updateLayerWaveform('exponential'); updateParam('decayRate', 2); }} />
-            <PresetButton label="Parabola" onClick={() => { updateLayerWaveform('polynomial'); setPolyCoeffsText('0, 0, 1'); }} />
+            <PresetButton
+              label="1 Hz Sine"
+              onClick={() => {
+                updateLayerWaveform("sinusoid");
+                updateParam("frequency", 1);
+              }}
+            />
+            <PresetButton
+              label="10 Hz Sine"
+              onClick={() => {
+                updateLayerWaveform("sinusoid");
+                updateParam("frequency", 10);
+              }}
+            />
+            <PresetButton
+              label="50 Hz Square"
+              onClick={() => {
+                updateLayerWaveform("square");
+                updateParam("frequency", 50);
+              }}
+            />
+            <PresetButton
+              label="Chirp 1-50 Hz"
+              onClick={() => {
+                updateLayerWaveform("chirp");
+                updateParam("chirpF0", 1);
+                updateParam("chirpF1", 50);
+              }}
+            />
+            <PresetButton
+              label="Decay τ=0.5"
+              onClick={() => {
+                updateLayerWaveform("exponential");
+                updateParam("decayRate", 2);
+              }}
+            />
+            <PresetButton
+              label="Parabola"
+              onClick={() => {
+                updateLayerWaveform("polynomial");
+                setPolyCoeffsText("0, 0, 1");
+              }}
+            />
           </div>
           <p className="text-xs text-slate-500 mb-2">Stacked signals:</p>
           <div className="flex flex-wrap gap-2">
@@ -850,48 +1187,133 @@ export function FunctionGenerator() {
               label="Sine + Harmonic"
               onClick={() => {
                 setLayers([
-                  { id: '1', waveformType: 'sinusoid', params: { ...defaultParams, amplitude: 1, frequency: 5 }, operation: 'add', enabled: true, color: LAYER_COLORS[0] },
-                  { id: '2', waveformType: 'sinusoid', params: { ...defaultParams, amplitude: 0.5, frequency: 15 }, operation: 'add', enabled: true, color: LAYER_COLORS[1] },
+                  {
+                    id: "1",
+                    waveformType: "sinusoid",
+                    params: { ...defaultParams, amplitude: 1, frequency: 5 },
+                    operation: "add",
+                    enabled: true,
+                    color: LAYER_COLORS[0],
+                  },
+                  {
+                    id: "2",
+                    waveformType: "sinusoid",
+                    params: { ...defaultParams, amplitude: 0.5, frequency: 15 },
+                    operation: "add",
+                    enabled: true,
+                    color: LAYER_COLORS[1],
+                  },
                 ]);
-                setSelectedLayerId('1');
+                setSelectedLayerId("1");
               }}
             />
             <PresetButton
               label="AM Modulation"
               onClick={() => {
                 setLayers([
-                  { id: '1', waveformType: 'sinusoid', params: { ...defaultParams, amplitude: 1, frequency: 20 }, operation: 'add', enabled: true, color: LAYER_COLORS[0] },
-                  { id: '2', waveformType: 'sinusoid', params: { ...defaultParams, amplitude: 0.5, frequency: 2, offset: 0.5 }, operation: 'add', enabled: true, color: LAYER_COLORS[1] },
+                  {
+                    id: "1",
+                    waveformType: "sinusoid",
+                    params: { ...defaultParams, amplitude: 1, frequency: 20 },
+                    operation: "add",
+                    enabled: true,
+                    color: LAYER_COLORS[0],
+                  },
+                  {
+                    id: "2",
+                    waveformType: "sinusoid",
+                    params: {
+                      ...defaultParams,
+                      amplitude: 0.5,
+                      frequency: 2,
+                      offset: 0.5,
+                    },
+                    operation: "add",
+                    enabled: true,
+                    color: LAYER_COLORS[1],
+                  },
                 ]);
-                setSelectedLayerId('1');
+                setSelectedLayerId("1");
               }}
             />
             <PresetButton
               label="Square − Sine"
               onClick={() => {
                 setLayers([
-                  { id: '1', waveformType: 'square', params: { ...defaultParams, amplitude: 1, frequency: 5 }, operation: 'add', enabled: true, color: LAYER_COLORS[0] },
-                  { id: '2', waveformType: 'sinusoid', params: { ...defaultParams, amplitude: 0.8, frequency: 5 }, operation: 'subtract', enabled: true, color: LAYER_COLORS[1] },
+                  {
+                    id: "1",
+                    waveformType: "square",
+                    params: { ...defaultParams, amplitude: 1, frequency: 5 },
+                    operation: "add",
+                    enabled: true,
+                    color: LAYER_COLORS[0],
+                  },
+                  {
+                    id: "2",
+                    waveformType: "sinusoid",
+                    params: { ...defaultParams, amplitude: 0.8, frequency: 5 },
+                    operation: "subtract",
+                    enabled: true,
+                    color: LAYER_COLORS[1],
+                  },
                 ]);
-                setSelectedLayerId('1');
+                setSelectedLayerId("1");
               }}
             />
             <PresetButton
               label="3-Tone Chord"
               onClick={() => {
                 setLayers([
-                  { id: '1', waveformType: 'sinusoid', params: { ...defaultParams, amplitude: 1, frequency: 5 }, operation: 'add', enabled: true, color: LAYER_COLORS[0] },
-                  { id: '2', waveformType: 'sinusoid', params: { ...defaultParams, amplitude: 0.8, frequency: 6.25 }, operation: 'add', enabled: true, color: LAYER_COLORS[1] },
-                  { id: '3', waveformType: 'sinusoid', params: { ...defaultParams, amplitude: 0.6, frequency: 7.5 }, operation: 'add', enabled: true, color: LAYER_COLORS[2] },
+                  {
+                    id: "1",
+                    waveformType: "sinusoid",
+                    params: { ...defaultParams, amplitude: 1, frequency: 5 },
+                    operation: "add",
+                    enabled: true,
+                    color: LAYER_COLORS[0],
+                  },
+                  {
+                    id: "2",
+                    waveformType: "sinusoid",
+                    params: {
+                      ...defaultParams,
+                      amplitude: 0.8,
+                      frequency: 6.25,
+                    },
+                    operation: "add",
+                    enabled: true,
+                    color: LAYER_COLORS[1],
+                  },
+                  {
+                    id: "3",
+                    waveformType: "sinusoid",
+                    params: {
+                      ...defaultParams,
+                      amplitude: 0.6,
+                      frequency: 7.5,
+                    },
+                    operation: "add",
+                    enabled: true,
+                    color: LAYER_COLORS[2],
+                  },
                 ]);
-                setSelectedLayerId('1');
+                setSelectedLayerId("1");
               }}
             />
             <PresetButton
               label="Reset (1 Layer)"
               onClick={() => {
-                setLayers([{ id: '1', waveformType: 'sinusoid', params: { ...defaultParams }, operation: 'add', enabled: true, color: LAYER_COLORS[0] }]);
-                setSelectedLayerId('1');
+                setLayers([
+                  {
+                    id: "1",
+                    waveformType: "sinusoid",
+                    params: { ...defaultParams },
+                    operation: "add",
+                    enabled: true,
+                    color: LAYER_COLORS[0],
+                  },
+                ]);
+                setSelectedLayerId("1");
               }}
             />
           </div>
@@ -911,14 +1333,21 @@ interface ParamInputProps {
   step?: number;
 }
 
-function ParamInput({ label, value, onChange, min, max, step = 0.1 }: ParamInputProps) {
+function ParamInput({
+  label,
+  value,
+  onChange,
+  min,
+  max,
+  step = 0.1,
+}: ParamInputProps) {
   return (
     <div>
       <label className="block text-sm text-slate-400 mb-1">{label}</label>
       <input
         type="number"
         value={value}
-        onChange={e => onChange(parseFloat(e.target.value) || 0)}
+        onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
         min={min}
         max={max}
         step={step}

@@ -16,20 +16,17 @@ The Audio Signal Processor is a **well-architected** system with solid fundament
 ### ✅ **Strengths**
 
 1. **Excellent DSP Foundation**
-
    - FFT-based filters with multiple window functions
    - Comprehensive time-domain filtering (Butterworth, moving average, median)
    - Professional effects library (reverb, compression, EQ, modulation)
 
 2. **Strong Analysis Tools**
-
    - Real-time spectrogram generation
    - FFT spectrum analyzer
    - Phase correlation metering
    - Loudness metering (Peak, RMS, LUFS)
 
 3. **Solid Architecture**
-
    - Modular design with clean separation of concerns
    - Well-documented API
    - Proper error handling
@@ -405,21 +402,18 @@ batcher.process();
 **Features:**
 
 - **Wavelet Denoising Panel**
-
   - Noise reduction using wavelet thresholding
   - Multiple wavelet families (db, coif, sym, bior)
   - Soft/hard thresholding
   - Level-dependent thresholding
 
 - **Wavelet Analysis Panel**
-
   - Continuous wavelet transform (CWT)
   - Scalogram visualization
   - Wavelet synchrosqueezing transform (WSST)
   - Wavelet coherence between two signals
 
 - **Component Separation Panel**
-
   - Transient/tonal separation
   - Harmonic/percussive separation
   - Multi-resolution decomposition
@@ -438,28 +432,24 @@ batcher.process();
 **Features:**
 
 - **Pitch Analysis & Correction**
-
   - Neural network pitch detection (`pitchnn`)
   - Pitch tracking over time
   - Pitch correction/auto-tune
   - Harmonicity analysis
 
 - **Onset & Beat Detection**
-
   - Spectral flux onset detection
   - Beat tracking
   - Tempo estimation
   - Auto-align tracks to beats
 
 - **Psychoacoustic Analysis**
-
   - Acoustic loudness modeling
   - Sound pressure level metering
   - Bark/ERB scale analysis
   - Gammatone filterbank processing
 
 - **Feature Extraction**
-
   - MFCC (Mel-frequency cepstral coefficients)
   - Spectral descriptors (centroid, rolloff, flux, entropy)
   - Zero-crossing rate
@@ -467,7 +457,6 @@ batcher.process();
   - Export features for machine learning
 
 - **Advanced Filters**
-
   - Octave and 1/3-octave band filters
   - Parametric EQ with Q control
   - Graphic EQ (31-band, etc.)
@@ -517,13 +506,11 @@ batcher.process();
 ### **Phase 1: Critical Functionality** (DO FIRST)
 
 1. ✅ **Enhanced MixerCore with time offsets**
-
    - Add `StartOffset` property to tracks
    - Modify `processMix()` to handle offsets
    - GUI controls for offset adjustment
 
 2. ✅ **AudioEditor class**
-
    - Selection mechanism
    - Trim, cut, copy, paste
    - Fade in/out
@@ -538,7 +525,6 @@ batcher.process();
 ### **Phase 2: Advanced Processing** (HIGH VALUE)
 
 4. ✅ **Wavelet Processing Tab**
-
    - Wavelet denoising (immediate value for research)
    - CWT analysis and scalogram
    - Component separation

@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Scissors, Copy } from 'lucide-react';
-import type { TimeRangeConfig, DataRow } from '../types';
+import { useState, useEffect } from "react";
+import { Scissors, Copy } from "lucide-react";
+import type { TimeRangeConfig, DataRow } from "../types";
 
 interface TimeRangePanelProps {
   data: DataRow[];
@@ -15,8 +15,8 @@ export function TimeRangePanel({
   disabled,
   onTrimRange,
 }: TimeRangePanelProps) {
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [dataStart, setDataStart] = useState<string | number | null>(null);
   const [dataEnd, setDataEnd] = useState<string | number | null>(null);
 
@@ -39,7 +39,7 @@ export function TimeRangePanel({
     }
 
     // Handle numeric or date values
-    if (typeof timeValues[0] === 'number') {
+    if (typeof timeValues[0] === "number") {
       const numValues = timeValues as number[];
       setDataStart(Math.min(...numValues));
       setDataEnd(Math.max(...numValues));
@@ -64,8 +64,8 @@ export function TimeRangePanel({
   };
 
   const formatValue = (value: string | number | null): string => {
-    if (value === null) return '-';
-    if (typeof value === 'number') return value.toFixed(4);
+    if (value === null) return "-";
+    if (typeof value === "number") return value.toFixed(4);
     return String(value);
   };
 
@@ -78,11 +78,15 @@ export function TimeRangePanel({
       <div className="card-body space-y-4">
         {/* Current Data Range */}
         <div className="bg-dark-700/50 rounded-lg p-3 space-y-2">
-          <h4 className="text-xs font-medium text-dark-400">Current Data Range</h4>
+          <h4 className="text-xs font-medium text-dark-400">
+            Current Data Range
+          </h4>
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div>
               <span className="text-dark-500">Start:</span>
-              <span className="ml-2 text-dark-200">{formatValue(dataStart)}</span>
+              <span className="ml-2 text-dark-200">
+                {formatValue(dataStart)}
+              </span>
             </div>
             <div>
               <span className="text-dark-500">End:</span>

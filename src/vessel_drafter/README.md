@@ -13,6 +13,7 @@ Refractory vessel design tool with STEP, STL, BREP, and GLTF export.
 ## Quick Start
 
 ### PyQt6 GUI
+
 ```bash
 python src/vessel_drafter/launch_pyqt6.py
 ```

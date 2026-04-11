@@ -1,6 +1,6 @@
-import { useState, useCallback, useMemo } from 'react';
-import { Filter, Play, RotateCcw } from 'lucide-react';
-import type { FilterConfig, FilterType, FilterParameters } from '../types';
+import { useState, useCallback, useMemo } from "react";
+import { Filter, Play, RotateCcw } from "lucide-react";
+import type { FilterConfig, FilterType, FilterParameters } from "../types";
 
 interface FilterPanelProps {
   onApply: (config: FilterConfig) => void;
@@ -9,17 +9,17 @@ interface FilterPanelProps {
 }
 
 const FILTER_TYPES: FilterType[] = [
-  'Moving Average',
-  'Butterworth Low-pass',
-  'Butterworth High-pass',
-  'Butterworth Band-pass',
-  'Median Filter',
-  'Gaussian Filter',
-  'Hampel Filter',
-  'Z-Score Filter',
-  'Savitzky-Golay',
-  'FFT Low-pass',
-  'FFT High-pass',
+  "Moving Average",
+  "Butterworth Low-pass",
+  "Butterworth High-pass",
+  "Butterworth Band-pass",
+  "Median Filter",
+  "Gaussian Filter",
+  "Hampel Filter",
+  "Z-Score Filter",
+  "Savitzky-Golay",
+  "FFT Low-pass",
+  "FFT High-pass",
 ];
 
 const DEFAULT_PARAMETERS: FilterParameters = {
@@ -39,12 +39,16 @@ const DEFAULT_PARAMETERS: FilterParameters = {
 };
 
 export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
-  const [filterType, setFilterType] = useState<FilterType>('Moving Average');
-  const [parameters, setParameters] = useState<FilterParameters>(DEFAULT_PARAMETERS);
+  const [filterType, setFilterType] = useState<FilterType>("Moving Average");
+  const [parameters, setParameters] =
+    useState<FilterParameters>(DEFAULT_PARAMETERS);
 
-  const handleParamChange = useCallback((key: keyof FilterParameters, value: number) => {
-    setParameters((prev) => ({ ...prev, [key]: value }));
-  }, []);
+  const handleParamChange = useCallback(
+    (key: keyof FilterParameters, value: number) => {
+      setParameters((prev) => ({ ...prev, [key]: value }));
+    },
+    [],
+  );
 
   const handleApply = useCallback(() => {
     onApply({ type: filterType, parameters });
@@ -52,7 +56,7 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
 
   const parameterInputs = useMemo(() => {
     switch (filterType) {
-      case 'Moving Average':
+      case "Moving Average":
         return (
           <div>
             <label className="label">Window Size</label>
@@ -60,15 +64,17 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
               type="number"
               className="input"
               value={parameters.ma_window}
-              onChange={(e) => handleParamChange('ma_window', parseInt(e.target.value) || 5)}
+              onChange={(e) =>
+                handleParamChange("ma_window", parseInt(e.target.value) || 5)
+              }
               min={1}
               max={100}
             />
           </div>
         );
 
-      case 'Butterworth Low-pass':
-      case 'Butterworth High-pass':
+      case "Butterworth Low-pass":
+      case "Butterworth High-pass":
         return (
           <>
             <div>
@@ -77,7 +83,9 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
                 type="number"
                 className="input"
                 value={parameters.bw_order}
-                onChange={(e) => handleParamChange('bw_order', parseInt(e.target.value) || 4)}
+                onChange={(e) =>
+                  handleParamChange("bw_order", parseInt(e.target.value) || 4)
+                }
                 min={1}
                 max={10}
               />
@@ -88,7 +96,12 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
                 type="number"
                 className="input"
                 value={parameters.bw_cutoff}
-                onChange={(e) => handleParamChange('bw_cutoff', parseFloat(e.target.value) || 0.1)}
+                onChange={(e) =>
+                  handleParamChange(
+                    "bw_cutoff",
+                    parseFloat(e.target.value) || 0.1,
+                  )
+                }
                 min={0.01}
                 max={0.99}
                 step={0.01}
@@ -97,7 +110,7 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
           </>
         );
 
-      case 'Butterworth Band-pass':
+      case "Butterworth Band-pass":
         return (
           <>
             <div>
@@ -106,7 +119,9 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
                 type="number"
                 className="input"
                 value={parameters.bw_order}
-                onChange={(e) => handleParamChange('bw_order', parseInt(e.target.value) || 4)}
+                onChange={(e) =>
+                  handleParamChange("bw_order", parseInt(e.target.value) || 4)
+                }
                 min={1}
                 max={10}
               />
@@ -117,7 +132,12 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
                 type="number"
                 className="input"
                 value={parameters.bw_low}
-                onChange={(e) => handleParamChange('bw_low', parseFloat(e.target.value) || 0.05)}
+                onChange={(e) =>
+                  handleParamChange(
+                    "bw_low",
+                    parseFloat(e.target.value) || 0.05,
+                  )
+                }
                 min={0.01}
                 max={0.99}
                 step={0.01}
@@ -129,7 +149,12 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
                 type="number"
                 className="input"
                 value={parameters.bw_high}
-                onChange={(e) => handleParamChange('bw_high', parseFloat(e.target.value) || 0.3)}
+                onChange={(e) =>
+                  handleParamChange(
+                    "bw_high",
+                    parseFloat(e.target.value) || 0.3,
+                  )
+                }
                 min={0.01}
                 max={0.99}
                 step={0.01}
@@ -138,7 +163,7 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
           </>
         );
 
-      case 'Median Filter':
+      case "Median Filter":
         return (
           <div>
             <label className="label">Kernel Size</label>
@@ -146,7 +171,12 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
               type="number"
               className="input"
               value={parameters.median_kernel}
-              onChange={(e) => handleParamChange('median_kernel', parseInt(e.target.value) || 5)}
+              onChange={(e) =>
+                handleParamChange(
+                  "median_kernel",
+                  parseInt(e.target.value) || 5,
+                )
+              }
               min={3}
               max={51}
               step={2}
@@ -154,7 +184,7 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
           </div>
         );
 
-      case 'Gaussian Filter':
+      case "Gaussian Filter":
         return (
           <div>
             <label className="label">Sigma</label>
@@ -162,7 +192,12 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
               type="number"
               className="input"
               value={parameters.gaussian_sigma}
-              onChange={(e) => handleParamChange('gaussian_sigma', parseFloat(e.target.value) || 1.0)}
+              onChange={(e) =>
+                handleParamChange(
+                  "gaussian_sigma",
+                  parseFloat(e.target.value) || 1.0,
+                )
+              }
               min={0.1}
               max={10}
               step={0.1}
@@ -170,7 +205,7 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
           </div>
         );
 
-      case 'Hampel Filter':
+      case "Hampel Filter":
         return (
           <>
             <div>
@@ -179,7 +214,12 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
                 type="number"
                 className="input"
                 value={parameters.hampel_window}
-                onChange={(e) => handleParamChange('hampel_window', parseInt(e.target.value) || 5)}
+                onChange={(e) =>
+                  handleParamChange(
+                    "hampel_window",
+                    parseInt(e.target.value) || 5,
+                  )
+                }
                 min={3}
                 max={51}
               />
@@ -190,7 +230,12 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
                 type="number"
                 className="input"
                 value={parameters.hampel_threshold}
-                onChange={(e) => handleParamChange('hampel_threshold', parseFloat(e.target.value) || 3.0)}
+                onChange={(e) =>
+                  handleParamChange(
+                    "hampel_threshold",
+                    parseFloat(e.target.value) || 3.0,
+                  )
+                }
                 min={0.5}
                 max={10}
                 step={0.1}
@@ -199,7 +244,7 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
           </>
         );
 
-      case 'Z-Score Filter':
+      case "Z-Score Filter":
         return (
           <div>
             <label className="label">Threshold</label>
@@ -207,7 +252,12 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
               type="number"
               className="input"
               value={parameters.zscore_threshold}
-              onChange={(e) => handleParamChange('zscore_threshold', parseFloat(e.target.value) || 3.0)}
+              onChange={(e) =>
+                handleParamChange(
+                  "zscore_threshold",
+                  parseFloat(e.target.value) || 3.0,
+                )
+              }
               min={1}
               max={10}
               step={0.1}
@@ -215,7 +265,7 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
           </div>
         );
 
-      case 'Savitzky-Golay':
+      case "Savitzky-Golay":
         return (
           <>
             <div>
@@ -224,7 +274,12 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
                 type="number"
                 className="input"
                 value={parameters.savgol_window}
-                onChange={(e) => handleParamChange('savgol_window', parseInt(e.target.value) || 5)}
+                onChange={(e) =>
+                  handleParamChange(
+                    "savgol_window",
+                    parseInt(e.target.value) || 5,
+                  )
+                }
                 min={5}
                 max={51}
                 step={2}
@@ -236,7 +291,12 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
                 type="number"
                 className="input"
                 value={parameters.savgol_polyorder}
-                onChange={(e) => handleParamChange('savgol_polyorder', parseInt(e.target.value) || 2)}
+                onChange={(e) =>
+                  handleParamChange(
+                    "savgol_polyorder",
+                    parseInt(e.target.value) || 2,
+                  )
+                }
                 min={1}
                 max={5}
               />
@@ -244,8 +304,8 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
           </>
         );
 
-      case 'FFT Low-pass':
-      case 'FFT High-pass':
+      case "FFT Low-pass":
+      case "FFT High-pass":
         return (
           <div>
             <label className="label">Cutoff Frequency (0-1)</label>
@@ -253,7 +313,12 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
               type="number"
               className="input"
               value={parameters.fft_cutoff}
-              onChange={(e) => handleParamChange('fft_cutoff', parseFloat(e.target.value) || 0.1)}
+              onChange={(e) =>
+                handleParamChange(
+                  "fft_cutoff",
+                  parseFloat(e.target.value) || 0.1,
+                )
+              }
               min={0.01}
               max={0.99}
               step={0.01}

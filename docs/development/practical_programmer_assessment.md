@@ -211,14 +211,12 @@
 ### Immediate (This Week)
 
 1. **Increase calculator test coverage to 50%+**
-
    - Write parametric tests for each of the 15 process calculators
    - Use `pytest.mark.parametrize` with physical test cases (known good inputs/outputs)
    - Estimated effort: 3 days
    - Files: Add `tests/calculators/test_flare.py`, `test_baghouse.py`, etc.
 
 2. **Replace `eval()` with safe alternatives**
-
    - Install `simpleeval` (or use `numexpr`)
    - Replace `eval(parsed_formula, {"__builtins__": {}}, eval_context)` with safe evaluation
    - Estimated effort: 2 hours
@@ -233,13 +231,11 @@
 ### Short-Term (2 Weeks)
 
 4. **Narrow exception handling in routers**
-
    - Differentiate `ValueError`/`TypeError` (422) from `KeyError`/`AttributeError` (500)
    - Add structured error response model
    - Files: All 11 router files in `src/shared/python/calc_backend/routers/`
 
 5. **Add React test infrastructure**
-
    - Add Vitest + React Testing Library to 3 highest-priority web apps
    - Add `npm test` step to CI
    - Files: `src/flare_calculator/web/`, `src/electrode_advisor/web/`, `src/data_processing/data_processor/web/`
@@ -252,13 +248,11 @@
 ### Medium-Term (6 Weeks)
 
 7. **Decompose legacy monoliths**
-
    - `Data_Processor_r0.py`: Extract into `parsing.py`, `filtering.py`, `plotting.py`, `export.py`
    - `electrode_advisor/main_window.py`: Extract each tab into a separate widget class
    - `Folders_Tool_r0.py`: Refactor into modules
 
 8. **Properly pin dependencies**
-
    - Use `pip-tools` to generate `requirements-lock.txt` from `requirements.txt`
    - Add Dependabot or Renovate for automated updates
 

@@ -15,7 +15,6 @@ on:
       - "tool_surface_contract.json"
 
 jobs:
-
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
     runs-on: ubuntu-latest

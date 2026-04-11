@@ -431,7 +431,6 @@ jobs:
 ## Boundaries
 
 - ✅ **Always do:**
-
   - **ALWAYS** reference `UNIFIED_CI_APPROACH.md` when documenting CI/CD practices
   - Update `UNIFIED_CI_APPROACH.md` when CI practices change
   - Document workflow examples for all tech stacks
@@ -446,7 +445,6 @@ jobs:
   - Add "Last Updated" dates to documentation
 
 - ⚠️ **Ask first:**
-
   - Before changing CI/CD standards affecting all 15 repositories
   - Before recommending major tool changes (e.g., replacing pytest)
   - Before suggesting version upgrades that may break compatibility

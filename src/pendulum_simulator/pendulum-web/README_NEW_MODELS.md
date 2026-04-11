@@ -44,17 +44,20 @@ pendulum-web/
 **What it is**: A 3-segment chain (shoulder→elbow→wrist→tip)
 
 **Coordinates**:
+
 - θ₁ = shoulder angle
 - φ₂ = elbow relative angle
 - φ₃ = wrist relative angle
 
 **Key features**:
+
 - 3×3 analytical mass matrix with full coupling
 - Coriolis and gravity forces
 - 3 independent torque actuators
 - Forward kinematics for all 4 joints
 
 **Presets**:
+
 1. Three-Segment Swing (passive) — shoulder-driven
 2. Three-Segment Swing (active) — all joints active
 3. Free Triple Pendulum — no torques
@@ -66,11 +69,13 @@ pendulum-web/
 **What it is**: A full-body model with constrained club grip
 
 **Coordinates**:
+
 - θ_hub = torso rotation
 - 3 DOF per arm (shoulder + elbow + hand) × 2
 - θ_club = club rotation
 
 **Key features**:
+
 - Hub standoff (vertical torso)
 - Two complete arm chains (3 joints each)
 - Club with clubhead mass
@@ -78,12 +83,14 @@ pendulum-web/
 - Constraint Jacobians and simplified KKT solver
 
 **Constraints**:
+
 1. Right hand x = left hand x (horizontal alignment)
 2. Right hand y = left hand y (vertical alignment)
 3. Left hand on club shaft (lateral)
 4. Left hand on club shaft (distance from grip)
 
 **Presets**:
+
 1. Golfer Upper Body (symmetric) — balanced arms
 2. Golfer Upper Body (asymmetric) — right-arm dominant
 3. Free Golfer Body (no torques) — constraint-driven
@@ -110,16 +117,19 @@ See [DEPLOY.md](./DEPLOY.md) for detailed instructions.
 ## Using the App
 
 ### Model Selection
+
 - Click the **"Double Pendulum (2-DOF)"**, **"Triple Pendulum (3-DOF)"**, or **"Golfer (8-DOF)"** tab
 - Each model has its own control panel and presets
 
 ### Running a Simulation
+
 1. Select a preset from the dropdown
 2. (Optional) Adjust parameters with sliders
 3. Click **"Run Simulation"**
 4. Click **"Play"** to animate
 
 ### Customization
+
 - Edit presets in `presets_triple.ts` or `presets_golfer.ts`
 - Modify physics in `physics_triple.ts` or `physics_golfer.ts`
 - See [INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md) for details
@@ -127,23 +137,27 @@ See [DEPLOY.md](./DEPLOY.md) for detailed instructions.
 ## Physics Details
 
 All models use:
+
 - **Integration**: 4th-order Runge-Kutta (RK4)
 - **Timestep**: dt = 0.005 seconds (200 Hz)
 - **Torques**: Polynomial functions τ(t) = c₀ + c₁t + c₂t² + …
 
 ### Double Pendulum
+
 - Mass matrix: 2×2 (analytical)
 - Friction: viscous (b) + Coulomb (μ)
 - Joint limits: smooth penalty barriers
 - Torque clamping: saturation limits
 
 ### Triple Pendulum
+
 - Mass matrix: 3×3 (analytical with full coupling)
 - Damping: 3 independent coefficients (b1, b2, b3)
 - No constraints
 - No joint limits (can add if needed)
 
 ### Golfer
+
 - Mass matrix: 8×8 (simplified, ready for full analytical)
 - Damping: 7 independent coefficients
 - Constraints: 4 holonomic equations
@@ -152,12 +166,14 @@ All models use:
 ## Canvas Animations
 
 ### TriplePendulumCanvas
+
 - **Segments**: 3 (shoulder→elbow→wrist→tip)
 - **Colors**: Blue (seg 1), Orange (seg 2), Green (seg 3)
 - **Features**: Joint markers, trail, grid, crosshair
 - **Responsive**: Auto-scales to viewport
 
 ### GolferCanvas
+
 - **Structure**: Hub + 2 arm chains + club
 - **Colors**:
   - Gray: hub standoff
@@ -172,11 +188,13 @@ All models use:
 ## Performance
 
 Expected framerates on modern hardware:
+
 - **Double Pendulum**: ~60 FPS
 - **Triple Pendulum**: ~50 FPS
 - **Golfer**: ~40 FPS
 
 If slower, check:
+
 1. Browser console for errors
 2. GPU acceleration (usually automatic)
 3. Background processes consuming CPU
@@ -184,6 +202,7 @@ If slower, check:
 ## Troubleshooting
 
 ### App won't start
+
 ```bash
 rm -rf node_modules package-lock.json
 npm install
@@ -191,17 +210,20 @@ npm run dev
 ```
 
 ### TypeScript errors
+
 ```bash
 npx tsc --noEmit
 # Should show 0 errors
 ```
 
 ### Simulation won't run
+
 - Check torque coefficient format (comma-separated numbers)
 - Verify initial angles in valid range
 - See DEPLOY.md for detailed troubleshooting
 
 ### Canvas is blank
+
 - Ensure "Play" button is clicked
 - Check browser console (F12) for errors
 - Verify simulation produced states (> 2 timesteps)
@@ -226,17 +248,20 @@ npx tsc --noEmit
 ## References
 
 ### Documentation Files
+
 - **QUICK_START.md** — 5-minute overview and checklist
 - **DEPLOY.md** — Deployment and testing procedures
 - **INTEGRATION_GUIDE.md** — Complete technical guide
 - **FILES_CREATED.md** — File inventory with line counts
 
 ### Physics Theory
+
 - Double/Triple Pendulum: Lagrange mechanics (Goldstein, "Classical Mechanics")
 - Constraints: Baumgarte stabilization method (1972)
 - Integration: RK4 (Hairer & Wanner, "Solving ODEs")
 
 ### Code
+
 - Inline comments in `physics_triple.ts` and `physics_golfer.ts`
 - Preset examples in `presets_triple.ts` and `presets_golfer.ts`
 - Component examples in `TriplePendulumCanvas.tsx` and `GolferCanvas.tsx`
@@ -244,6 +269,7 @@ npx tsc --noEmit
 ## Support
 
 Questions? Check:
+
 1. **QUICK_START.md** — Common setup issues
 2. **INTEGRATION_GUIDE.md** — Detailed explanations
 3. **Code comments** — Physics derivations

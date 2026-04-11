@@ -5,8 +5,8 @@
  * Runs on the Edge Runtime for optimal performance.
  */
 
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   const response = NextResponse.next();
@@ -15,22 +15,22 @@ export function middleware(request: NextRequest) {
   // See: https://securityheaders.com/
 
   // Prevent clickjacking attacks
-  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set("X-Frame-Options", "DENY");
 
   // Prevent MIME type sniffing
-  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set("X-Content-Type-Options", "nosniff");
 
   // Enable XSS protection (legacy browsers)
-  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set("X-XSS-Protection", "1; mode=block");
 
   // Control what information is sent in the Referer header
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
 
   // Permissions Policy (formerly Feature Policy)
   // Disable features we don't use
   response.headers.set(
-    'Permissions-Policy',
-    'camera=(), microphone=(self), geolocation=(), interest-cohort=()'
+    "Permissions-Policy",
+    "camera=(), microphone=(self), geolocation=(), interest-cohort=()",
   );
 
   // Content Security Policy (CSP)
@@ -47,41 +47,41 @@ export function middleware(request: NextRequest) {
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-  ].join('; ');
+  ].join("; ");
 
-  response.headers.set('Content-Security-Policy', csp);
+  response.headers.set("Content-Security-Policy", csp);
 
   // Strict-Transport-Security (HSTS)
   // Only in production with HTTPS
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     response.headers.set(
-      'Strict-Transport-Security',
-      'max-age=31536000; includeSubDomains; preload'
+      "Strict-Transport-Security",
+      "max-age=31536000; includeSubDomains; preload",
     );
   }
 
   // CORS headers for API routes
-  if (request.nextUrl.pathname.startsWith('/api/')) {
-    const origin = request.headers.get('origin');
-    const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS?.split(',') || [
-      'http://localhost:3000',
+  if (request.nextUrl.pathname.startsWith("/api/")) {
+    const origin = request.headers.get("origin");
+    const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS?.split(",") || [
+      "http://localhost:3000",
     ];
 
     if (origin && allowedOrigins.includes(origin)) {
-      response.headers.set('Access-Control-Allow-Origin', origin);
-      response.headers.set('Access-Control-Allow-Credentials', 'true');
+      response.headers.set("Access-Control-Allow-Origin", origin);
+      response.headers.set("Access-Control-Allow-Credentials", "true");
       response.headers.set(
-        'Access-Control-Allow-Methods',
-        'GET, POST, PUT, DELETE, OPTIONS'
+        "Access-Control-Allow-Methods",
+        "GET, POST, PUT, DELETE, OPTIONS",
       );
       response.headers.set(
-        'Access-Control-Allow-Headers',
-        'Content-Type, Authorization, X-CSRF-Token'
+        "Access-Control-Allow-Headers",
+        "Content-Type, Authorization, X-CSRF-Token",
       );
     }
 
     // Handle preflight requests
-    if (request.method === 'OPTIONS') {
+    if (request.method === "OPTIONS") {
       return new NextResponse(null, { status: 200, headers: response.headers });
     }
   }
@@ -99,6 +99,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

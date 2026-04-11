@@ -43,7 +43,6 @@ The following items have been verified as active functional gaps or technical de
 A significant number of "TRACKED_TASK" markers found in the audit data are intentional and compliant. They fall into two categories:
 
 1.  **Quality Assurance Tools**:
-
     - Scripts like `src/tools/code_quality_check.py`, `scripts/quality-check.py`, and `matlab_quality_check.py` contain regex patterns (e.g., `re.compile(r"\bTODO\b")`) to _detect_ these markers. These are not TODOs themselves.
 
 2.  **Policy Documentation**:

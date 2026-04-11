@@ -191,7 +191,6 @@ Evaluate directory structure per AGENTS.md:
    ```
 
 2. Review dependency age and maintenance:
-
    - Last update dates
    - Known security advisories
 

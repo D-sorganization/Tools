@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import Papa from 'papaparse';
+import { useState, useCallback } from "react";
+import Papa from "papaparse";
 import type {
   DataRow,
   FilterConfig,
@@ -12,7 +12,7 @@ import type {
   TrendlineResult,
   FormulaConfig,
   PlotConfig,
-} from '../types';
+} from "../types";
 
 interface DataProcessorState {
   data: DataRow[];
@@ -43,56 +43,59 @@ const initialState: DataProcessorState = {
 export function useDataProcessor() {
   const [state, setState] = useState<DataProcessorState>(initialState);
 
-  const calculateStatistics = useCallback((data: DataRow[], signals: string[]): Statistics => {
-    // Bolt: Optimize calculateStatistics using Float64Array and single-pass iterations instead of map/filter/reduce
-    // Performance impact: Reduces execution time by ~80% for large datasets and minimizes memory allocation
-    const stats: Statistics = {};
+  const calculateStatistics = useCallback(
+    (data: DataRow[], signals: string[]): Statistics => {
+      // Bolt: Optimize calculateStatistics using Float64Array and single-pass iterations instead of map/filter/reduce
+      // Performance impact: Reduces execution time by ~80% for large datasets and minimizes memory allocation
+      const stats: Statistics = {};
 
-    for (const signal of signals) {
-      let count = 0;
-      let sum = 0;
+      for (const signal of signals) {
+        let count = 0;
+        let sum = 0;
 
-      // Pass 1: count and sum
-      for (let i = 0; i < data.length; i++) {
-        const v = data[i][signal];
-        if (typeof v === 'number' && !Number.isNaN(v)) {
-          sum += v;
-          count++;
+        // Pass 1: count and sum
+        for (let i = 0; i < data.length; i++) {
+          const v = data[i][signal];
+          if (typeof v === "number" && !Number.isNaN(v)) {
+            sum += v;
+            count++;
+          }
         }
+
+        if (count === 0) continue;
+
+        const mean = sum / count;
+
+        let varianceSum = 0;
+        const vals = new Float64Array(count);
+        let j = 0;
+
+        // Pass 2: calculate variance and collect for sorting
+        for (let i = 0; i < data.length; i++) {
+          const v = data[i][signal];
+          if (typeof v === "number" && !Number.isNaN(v)) {
+            varianceSum += (v - mean) ** 2;
+            vals[j++] = v;
+          }
+        }
+
+        const variance = varianceSum / count;
+
+        vals.sort(); // Typed array sort is faster and numeric by default
+
+        stats[signal] = {
+          mean,
+          std: Math.sqrt(variance),
+          min: vals[0],
+          max: vals[count - 1],
+          median: vals[Math.floor(count / 2)],
+        };
       }
 
-      if (count === 0) continue;
-
-      const mean = sum / count;
-
-      let varianceSum = 0;
-      const vals = new Float64Array(count);
-      let j = 0;
-
-      // Pass 2: calculate variance and collect for sorting
-      for (let i = 0; i < data.length; i++) {
-        const v = data[i][signal];
-        if (typeof v === 'number' && !Number.isNaN(v)) {
-          varianceSum += (v - mean) ** 2;
-          vals[j++] = v;
-        }
-      }
-
-      const variance = varianceSum / count;
-
-      vals.sort(); // Typed array sort is faster and numeric by default
-
-      stats[signal] = {
-        mean,
-        std: Math.sqrt(variance),
-        min: vals[0],
-        max: vals[count - 1],
-        median: vals[Math.floor(count / 2)],
-      };
-    }
-
-    return stats;
-  }, []);
+      return stats;
+    },
+    [],
+  );
 
   const loadFile = useCallback(
     async (file: File): Promise<ProcessingResult> => {
@@ -108,14 +111,22 @@ export function useDataProcessor() {
             const allColumns = Object.keys(data[0] || {});
             const signals = allColumns.filter((key) => {
               const firstValue = data[0]?.[key];
-              return typeof firstValue === 'number';
+              return typeof firstValue === "number";
             });
 
             // Detect time column
-            const timeKeywords = ['time', 'timestamp', 'date', 't', 'seconds', 'datetime'];
-            const timeColumn = allColumns.find((col) =>
-              timeKeywords.some((kw) => col.toLowerCase().includes(kw))
-            ) || (signals.length > 0 ? signals[0] : null);
+            const timeKeywords = [
+              "time",
+              "timestamp",
+              "date",
+              "t",
+              "seconds",
+              "datetime",
+            ];
+            const timeColumn =
+              allColumns.find((col) =>
+                timeKeywords.some((kw) => col.toLowerCase().includes(kw)),
+              ) || (signals.length > 0 ? signals[0] : null);
 
             const statistics = calculateStatistics(data, signals);
 
@@ -135,13 +146,17 @@ export function useDataProcessor() {
           },
           error: (error) => {
             const errorMsg = `Failed to parse CSV: ${error.message}`;
-            setState((prev) => ({ ...prev, isLoading: false, error: errorMsg }));
+            setState((prev) => ({
+              ...prev,
+              isLoading: false,
+              error: errorMsg,
+            }));
             resolve({ success: false, error: errorMsg });
           },
         });
       });
     },
-    [calculateStatistics]
+    [calculateStatistics],
   );
 
   const applyFilter = useCallback(
@@ -149,7 +164,7 @@ export function useDataProcessor() {
       try {
         const { data, selectedSignals } = state;
         if (data.length === 0 || selectedSignals.length === 0) {
-          return { success: false, error: 'No data or signals selected' };
+          return { success: false, error: "No data or signals selected" };
         }
 
         const len = data.length;
@@ -188,12 +203,13 @@ export function useDataProcessor() {
 
         return { success: true, data: filteredData };
       } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : 'Filter application failed';
+        const errorMsg =
+          error instanceof Error ? error.message : "Filter application failed";
         setState((prev) => ({ ...prev, error: errorMsg }));
         return { success: false, error: errorMsg };
       }
     },
-    [state, calculateStatistics]
+    [state, calculateStatistics],
   );
 
   const setSelectedSignals = useCallback((signals: string[]) => {
@@ -218,7 +234,7 @@ export function useDataProcessor() {
       try {
         const { filteredData, timeColumn } = state;
         if (filteredData.length === 0 || !timeColumn) {
-          return { success: false, error: 'No data or time column' };
+          return { success: false, error: "No data or time column" };
         }
 
         // ⚡ Bolt Optimization: Replace filteredData.map() with a single-pass for loop
@@ -238,16 +254,19 @@ export function useDataProcessor() {
               newRow[`cumulative_${config.signals[j]}`] = 0;
             }
           } else {
-            const dt = getTimeDelta(row[timeColumn], filteredData[i - 1][timeColumn]);
+            const dt = getTimeDelta(
+              row[timeColumn],
+              filteredData[i - 1][timeColumn],
+            );
             for (let j = 0; j < config.signals.length; j++) {
               const signal = config.signals[j];
               const y0 = filteredData[i - 1][signal] as number;
               const y1 = row[signal] as number;
 
               let integral = 0;
-              if (config.method === 'trapezoidal') {
+              if (config.method === "trapezoidal") {
                 integral = ((y0 + y1) / 2) * dt;
-              } else if (config.method === 'rectangular') {
+              } else if (config.method === "rectangular") {
                 integral = y0 * dt;
               } else {
                 integral = ((y0 + y1) / 2) * dt; // Default to trapezoidal
@@ -274,12 +293,13 @@ export function useDataProcessor() {
 
         return { success: true, data: result };
       } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : 'Integration failed';
+        const errorMsg =
+          error instanceof Error ? error.message : "Integration failed";
         setState((prev) => ({ ...prev, error: errorMsg }));
         return { success: false, error: errorMsg };
       }
     },
-    [state]
+    [state],
   );
 
   // Differentiation
@@ -288,7 +308,7 @@ export function useDataProcessor() {
       try {
         const { filteredData, timeColumn } = state;
         if (filteredData.length === 0 || !timeColumn) {
-          return { success: false, error: 'No data or time column' };
+          return { success: false, error: "No data or time column" };
         }
 
         // ⚡ Bolt Optimization: Replace filteredData.map() with a single-pass for loop.
@@ -299,10 +319,15 @@ export function useDataProcessor() {
         const len = filteredData.length;
         const result = new Array<DataRow>(len);
         const halfWindow = Math.floor(windowSize / 2);
-        const isSpline = config.method === 'spline';
+        const isSpline = config.method === "spline";
 
-        const suffix = config.order === 1 ? 'd' : config.order === 2 ? 'd2' : `d${config.order}`;
-        const derivNames = config.signals.map(s => `${s}_${suffix}`);
+        const suffix =
+          config.order === 1
+            ? "d"
+            : config.order === 2
+              ? "d2"
+              : `d${config.order}`;
+        const derivNames = config.signals.map((s) => `${s}_${suffix}`);
 
         for (let i = 0; i < len; i++) {
           const row = filteredData[i];
@@ -328,16 +353,26 @@ export function useDataProcessor() {
 
               if (isSpline) {
                 if (dtCache === undefined) {
-                  dtCache = getTimeDelta(filteredData[i + 1][timeColumn], filteredData[i - 1][timeColumn]);
+                  dtCache = getTimeDelta(
+                    filteredData[i + 1][timeColumn],
+                    filteredData[i - 1][timeColumn],
+                  );
                 }
-                const dy = (filteredData[i + 1][signal] as number) - (filteredData[i - 1][signal] as number);
+                const dy =
+                  (filteredData[i + 1][signal] as number) -
+                  (filteredData[i - 1][signal] as number);
                 newRow[derivName] = dy / dtCache;
               } else {
                 if (end - start >= 3) {
                   if (dtCache === undefined) {
-                    dtCache = getTimeDelta(filteredData[end - 1][timeColumn], filteredData[start][timeColumn]);
+                    dtCache = getTimeDelta(
+                      filteredData[end - 1][timeColumn],
+                      filteredData[start][timeColumn],
+                    );
                   }
-                  const dy = (filteredData[end - 1][signal] as number) - (filteredData[start][signal] as number);
+                  const dy =
+                    (filteredData[end - 1][signal] as number) -
+                    (filteredData[start][signal] as number);
                   newRow[derivName] = dy / dtCache;
                 } else {
                   newRow[derivName] = 0;
@@ -349,10 +384,7 @@ export function useDataProcessor() {
         }
 
         // Update signals list
-        const newSignals = [
-          ...state.signals,
-          ...derivNames,
-        ];
+        const newSignals = [...state.signals, ...derivNames];
 
         setState((prev) => ({
           ...prev,
@@ -362,12 +394,13 @@ export function useDataProcessor() {
 
         return { success: true, data: result };
       } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : 'Differentiation failed';
+        const errorMsg =
+          error instanceof Error ? error.message : "Differentiation failed";
         setState((prev) => ({ ...prev, error: errorMsg }));
         return { success: false, error: errorMsg };
       }
     },
-    [state]
+    [state],
   );
 
   // Time Range Trimming
@@ -376,7 +409,7 @@ export function useDataProcessor() {
       try {
         const { filteredData } = state;
         if (filteredData.length === 0) {
-          return { success: false, error: 'No data' };
+          return { success: false, error: "No data" };
         }
 
         // ⚡ Bolt Optimization: Replace [...filteredData] and multiple chained .filter() passes
@@ -387,14 +420,16 @@ export function useDataProcessor() {
         let count = 0;
 
         const hasStart = config.startTime !== undefined;
-        const startVal = hasStart && typeof config.startTime === 'string'
-          ? parseFloat(config.startTime) || config.startTime
-          : config.startTime;
+        const startVal =
+          hasStart && typeof config.startTime === "string"
+            ? parseFloat(config.startTime) || config.startTime
+            : config.startTime;
 
         const hasEnd = config.endTime !== undefined;
-        const endVal = hasEnd && typeof config.endTime === 'string'
-          ? parseFloat(config.endTime) || config.endTime
-          : config.endTime;
+        const endVal =
+          hasEnd && typeof config.endTime === "string"
+            ? parseFloat(config.endTime) || config.endTime
+            : config.endTime;
 
         for (let i = 0; i < len; i++) {
           const row = filteredData[i];
@@ -403,7 +438,7 @@ export function useDataProcessor() {
           let isValid = true;
 
           if (hasStart) {
-            if (typeof time === 'number' && typeof startVal === 'number') {
+            if (typeof time === "number" && typeof startVal === "number") {
               if (time < startVal) isValid = false;
             } else if (String(time) < String(startVal)) {
               isValid = false;
@@ -411,7 +446,7 @@ export function useDataProcessor() {
           }
 
           if (isValid && hasEnd) {
-            if (typeof time === 'number' && typeof endVal === 'number') {
+            if (typeof time === "number" && typeof endVal === "number") {
               if (time > endVal) isValid = false;
             } else if (String(time) > String(endVal)) {
               isValid = false;
@@ -433,12 +468,13 @@ export function useDataProcessor() {
 
         return { success: true, data: result };
       } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : 'Time range trim failed';
+        const errorMsg =
+          error instanceof Error ? error.message : "Time range trim failed";
         setState((prev) => ({ ...prev, error: errorMsg }));
         return { success: false, error: errorMsg };
       }
     },
-    [state, calculateStatistics]
+    [state, calculateStatistics],
   );
 
   // Trendline Calculation
@@ -478,53 +514,71 @@ export function useDataProcessor() {
 
         let result: TrendlineResult;
 
-        if (config.type === 'linear') {
+        if (config.type === "linear") {
           const { slope, intercept, rSquared } = linearRegression(xData, yData);
           result = {
-            type: 'linear',
+            type: "linear",
             equation: `y = ${slope.toFixed(4)}x + ${intercept.toFixed(4)}`,
             rSquared,
             coefficients: [slope, intercept],
           };
-        } else if (config.type === 'polynomial') {
+        } else if (config.type === "polynomial") {
           const degree = config.degree || 2;
-          const { coefficients, rSquared } = polynomialRegression(xData, yData, degree);
-          const terms = coefficients.map((c, i) =>
-            i === 0 ? c.toFixed(4) : `${c >= 0 ? '+' : ''}${c.toFixed(4)}x${i > 1 ? `^${i}` : ''}`
-          ).reverse().join('');
+          const { coefficients, rSquared } = polynomialRegression(
+            xData,
+            yData,
+            degree,
+          );
+          const terms = coefficients
+            .map((c, i) =>
+              i === 0
+                ? c.toFixed(4)
+                : `${c >= 0 ? "+" : ""}${c.toFixed(4)}x${i > 1 ? `^${i}` : ""}`,
+            )
+            .reverse()
+            .join("");
           result = {
-            type: 'polynomial',
+            type: "polynomial",
             equation: `y = ${terms}`,
             rSquared,
             coefficients,
           };
-        } else if (config.type === 'exponential') {
+        } else if (config.type === "exponential") {
           // y = a * e^(bx), linearize: ln(y) = ln(a) + bx
           const lnY = yData.filter((y) => y > 0).map((y) => Math.log(y));
           const xFiltered = xData.filter((_, i) => yData[i] > 0);
           if (lnY.length < 2) return null;
 
-          const { slope: b, intercept: lnA, rSquared } = linearRegression(xFiltered, lnY);
+          const {
+            slope: b,
+            intercept: lnA,
+            rSquared,
+          } = linearRegression(xFiltered, lnY);
           const a = Math.exp(lnA);
           result = {
-            type: 'exponential',
+            type: "exponential",
             equation: `y = ${a.toFixed(4)}e^(${b.toFixed(4)}x)`,
             rSquared,
             coefficients: [a, b],
           };
         } else {
           // Power: y = a * x^b, linearize: ln(y) = ln(a) + b*ln(x)
-          const validPower = xData.map((x, i) => ({ x, y: yData[i] }))
+          const validPower = xData
+            .map((x, i) => ({ x, y: yData[i] }))
             .filter(({ x, y }) => x > 0 && y > 0);
           if (validPower.length < 2) return null;
 
           const lnX = validPower.map((d) => Math.log(d.x));
           const lnY = validPower.map((d) => Math.log(d.y));
 
-          const { slope: b, intercept: lnA, rSquared } = linearRegression(lnX, lnY);
+          const {
+            slope: b,
+            intercept: lnA,
+            rSquared,
+          } = linearRegression(lnX, lnY);
           const a = Math.exp(lnA);
           result = {
-            type: 'power',
+            type: "power",
             equation: `y = ${a.toFixed(4)}x^${b.toFixed(4)}`,
             rSquared,
             coefficients: [a, b],
@@ -533,11 +587,11 @@ export function useDataProcessor() {
 
         return result;
       } catch (error) {
-        console.error('Trendline calculation error:', error);
+        console.error("Trendline calculation error:", error);
         return null;
       }
     },
-    [state]
+    [state],
   );
 
   // Custom Formula
@@ -546,11 +600,12 @@ export function useDataProcessor() {
       try {
         const { filteredData, signals } = state;
         if (filteredData.length === 0) {
-          return { success: false, error: 'No data' };
+          return { success: false, error: "No data" };
         }
 
         // Helper to escape regex special characters in signal names
-        const escapeRegExp = (string: string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const escapeRegExp = (string: string) =>
+          string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
         // ⚡ Bolt Optimization: Pre-compile formula evaluation function outside the loop.
         // This avoids O(N * M) string replacements and runtime compilations where N is rows and M is signals.
@@ -559,21 +614,21 @@ export function useDataProcessor() {
 
         // Replace math functions first
         baseExpr = baseExpr
-          .replace(/\bsqrt\b/g, 'Math.sqrt')
-          .replace(/\bsin\b/g, 'Math.sin')
-          .replace(/\bcos\b/g, 'Math.cos')
-          .replace(/\btan\b/g, 'Math.tan')
-          .replace(/\babs\b/g, 'Math.abs')
-          .replace(/\blog\b/g, 'Math.log')
-          .replace(/\blog10\b/g, 'Math.log10')
-          .replace(/\bexp\b/g, 'Math.exp')
-          .replace(/\*\*/g, '**');
+          .replace(/\bsqrt\b/g, "Math.sqrt")
+          .replace(/\bsin\b/g, "Math.sin")
+          .replace(/\bcos\b/g, "Math.cos")
+          .replace(/\btan\b/g, "Math.tan")
+          .replace(/\babs\b/g, "Math.abs")
+          .replace(/\blog\b/g, "Math.log")
+          .replace(/\blog10\b/g, "Math.log10")
+          .replace(/\bexp\b/g, "Math.exp")
+          .replace(/\*\*/g, "**");
 
         let safeExpr = baseExpr;
         const safeUsedSignals: { original: string; safeName: string }[] = [];
 
         signals.forEach((signal, idx) => {
-          const regex = new RegExp(`\\b${escapeRegExp(signal)}\\b`, 'g');
+          const regex = new RegExp(`\\b${escapeRegExp(signal)}\\b`, "g");
           if (regex.test(safeExpr)) {
             const safeName = `_sig_${idx}`;
             safeUsedSignals.push({ original: signal, safeName });
@@ -583,9 +638,13 @@ export function useDataProcessor() {
 
         let evalFunc: Function;
         try {
-          evalFunc = new Function(...safeUsedSignals.map((s) => s.safeName), `"use strict"; return (${safeExpr});`);
+          evalFunc = new Function(
+            ...safeUsedSignals.map((s) => s.safeName),
+            `"use strict"; return (${safeExpr});`,
+          );
         } catch (error) {
-          const errorMsg = error instanceof Error ? error.message : 'Invalid formula syntax';
+          const errorMsg =
+            error instanceof Error ? error.message : "Invalid formula syntax";
           setState((prev) => ({ ...prev, error: errorMsg }));
           return { success: false, error: errorMsg };
         }
@@ -604,10 +663,11 @@ export function useDataProcessor() {
             const args = new Array<number>(argsCount);
             for (let j = 0; j < argsCount; j++) {
               const val = row[safeUsedSignals[j].original];
-              args[j] = typeof val === 'number' ? val : NaN;
+              args[j] = typeof val === "number" ? val : NaN;
             }
             const evalResult = evalFunc(...args);
-            newRow[config.name] = typeof evalResult === 'number' ? evalResult : NaN;
+            newRow[config.name] =
+              typeof evalResult === "number" ? evalResult : NaN;
           } catch {
             newRow[config.name] = NaN;
           }
@@ -625,12 +685,13 @@ export function useDataProcessor() {
 
         return { success: true, data: result };
       } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : 'Formula application failed';
+        const errorMsg =
+          error instanceof Error ? error.message : "Formula application failed";
         setState((prev) => ({ ...prev, error: errorMsg }));
         return { success: false, error: errorMsg };
       }
     },
-    [state, calculateStatistics]
+    [state, calculateStatistics],
   );
 
   // Plot Config Management
@@ -648,7 +709,7 @@ export function useDataProcessor() {
     (name: string): PlotConfig | null => {
       return state.savedPlotConfigs[name] || null;
     },
-    [state.savedPlotConfigs]
+    [state.savedPlotConfigs],
   );
 
   return {
@@ -671,7 +732,7 @@ export function useDataProcessor() {
 
 // Helper function to calculate time delta in seconds
 function getTimeDelta(t1: string | number, t2: string | number): number {
-  if (typeof t1 === 'number' && typeof t2 === 'number') {
+  if (typeof t1 === "number" && typeof t2 === "number") {
     return t1 - t2;
   }
   // For date strings, calculate difference in seconds
@@ -681,7 +742,10 @@ function getTimeDelta(t1: string | number, t2: string | number): number {
 }
 
 // Linear regression helper
-function linearRegression(x: number[], y: number[]): { slope: number; intercept: number; rSquared: number } {
+function linearRegression(
+  x: number[],
+  y: number[],
+): { slope: number; intercept: number; rSquared: number } {
   // ⚡ Bolt: Optimize linearRegression by replacing .reduce() chains with single-pass for loops.
   // Performance impact: Speeds up regression calculations by >20x for large datasets by avoiding callback overhead.
   const n = x.length;
@@ -721,7 +785,11 @@ function linearRegression(x: number[], y: number[]): { slope: number; intercept:
 }
 
 // Polynomial regression helper (simplified)
-function polynomialRegression(x: number[], y: number[], degree: number): { coefficients: number[]; rSquared: number } {
+function polynomialRegression(
+  x: number[],
+  y: number[],
+  degree: number,
+): { coefficients: number[]; rSquared: number } {
   // For simplicity, use linear regression for degree 1
   if (degree === 1) {
     const { slope, intercept, rSquared } = linearRegression(x, y);
@@ -789,19 +857,19 @@ function polynomialRegression(x: number[], y: number[], degree: number): { coeff
 // Filter implementations
 function applyFilterToSignal(values: number[], config: FilterConfig): number[] {
   switch (config.type) {
-    case 'Moving Average':
+    case "Moving Average":
       return movingAverage(values, config.parameters.ma_window || 5);
-    case 'Median Filter':
+    case "Median Filter":
       return medianFilter(values, config.parameters.median_kernel || 5);
-    case 'Gaussian Filter':
+    case "Gaussian Filter":
       return gaussianFilter(values, config.parameters.gaussian_sigma || 1.0);
-    case 'Z-Score Filter':
+    case "Z-Score Filter":
       return zScoreFilter(values, config.parameters.zscore_threshold || 3.0);
-    case 'Savitzky-Golay':
+    case "Savitzky-Golay":
       return savitzkyGolay(
         values,
         config.parameters.savgol_window || 5,
-        config.parameters.savgol_polyorder || 2
+        config.parameters.savgol_polyorder || 2,
       );
     default:
       return values;
@@ -966,7 +1034,11 @@ function zScoreFilter(values: number[], threshold: number): number[] {
   return result;
 }
 
-function savitzkyGolay(values: number[], windowSize: number, polyOrder: number): number[] {
+function savitzkyGolay(
+  values: number[],
+  windowSize: number,
+  polyOrder: number,
+): number[] {
   // Simplified Savitzky-Golay using moving average as fallback
   // Full implementation would require matrix operations
   if (windowSize < polyOrder + 1) {

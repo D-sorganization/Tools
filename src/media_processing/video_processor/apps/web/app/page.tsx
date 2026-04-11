@@ -1,28 +1,37 @@
-'use client';
+"use client";
 
-import PoseDetector from '@/components/ai/PoseDetector';
-import AnnotationExportComponent from '@/components/annotations/AnnotationExport';
-import AudioRecorder from '@/components/audio/AudioRecorder';
-import ToolsPanel from '@/components/tools/ToolsPanel';
-import EditorCanvas, { DrawingTool, EditorCanvasHandle } from '@/components/video/EditorCanvas';
-import FrameNavigator from '@/components/video/FrameNavigator';
-import VideoEditor from '@/components/video/VideoEditor';
-import VideoPlayer from '@/components/video/VideoPlayer';
-import VideoUploader from '@/components/video/VideoUploader';
-import { useVideoFrame } from '@/hooks/useVideoFrame';
-import { logger } from '@/lib/logger';
-import { AudioRecordingError, VideoProcessingError, getUserMessage } from '@/lib/errors';
-import * as fabric from 'fabric';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { toast } from 'sonner';
+import PoseDetector from "@/components/ai/PoseDetector";
+import AnnotationExportComponent from "@/components/annotations/AnnotationExport";
+import AudioRecorder from "@/components/audio/AudioRecorder";
+import ToolsPanel from "@/components/tools/ToolsPanel";
+import EditorCanvas, {
+  DrawingTool,
+  EditorCanvasHandle,
+} from "@/components/video/EditorCanvas";
+import FrameNavigator from "@/components/video/FrameNavigator";
+import VideoEditor from "@/components/video/VideoEditor";
+import VideoPlayer from "@/components/video/VideoPlayer";
+import VideoUploader from "@/components/video/VideoUploader";
+import { useVideoFrame } from "@/hooks/useVideoFrame";
+import { logger } from "@/lib/logger";
+import {
+  AudioRecordingError,
+  VideoProcessingError,
+  getUserMessage,
+} from "@/lib/errors";
+import * as fabric from "fabric";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 export default function HomePage() {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
-  const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(null);
-  const [currentTool, setCurrentTool] = useState<DrawingTool>('select');
-  const [currentColor, setCurrentColor] = useState('#FF0000');
+  const [videoElement, setVideoElement] = useState<HTMLVideoElement | null>(
+    null,
+  );
+  const [currentTool, setCurrentTool] = useState<DrawingTool>("select");
+  const [currentColor, setCurrentColor] = useState("#FF0000");
   const [strokeWidth, setStrokeWidth] = useState(2);
   const [annotations, setAnnotations] = useState<fabric.Object[]>([]);
   const [currentFrame, setCurrentFrame] = useState(0);
@@ -46,14 +55,14 @@ export default function HomePage() {
       // Note: File validation is performed by VideoUploader component
       // before this handler is called (quickValidateVideoFile)
       if (!file) {
-        throw new VideoProcessingError('No file provided');
+        throw new VideoProcessingError("No file provided");
       }
 
       setVideoFile(file);
       const url = URL.createObjectURL(file);
       setVideoUrl(url);
 
-      logger.info('Video uploaded successfully', {
+      logger.info("Video uploaded successfully", {
         fileName: file.name,
         fileSize: file.size,
         fileType: file.type,
@@ -61,7 +70,7 @@ export default function HomePage() {
 
       toast.success(`Video loaded: ${file.name}`);
     } catch (error) {
-      logger.error('Failed to upload video', { error, file });
+      logger.error("Failed to upload video", { error, file });
       toast.error(getUserMessage(error));
     }
   }, []);
@@ -79,109 +88,131 @@ export default function HomePage() {
     setPoseDetectionEnabled(false);
   }, [videoUrl]);
 
-  const handleTimeUpdate = useCallback((time: number) => {
-    setCurrentTime(time);
-    const frame = getCurrentFrame();
-    setCurrentFrame(frame);
-  }, [getCurrentFrame]);
+  const handleTimeUpdate = useCallback(
+    (time: number) => {
+      setCurrentTime(time);
+      const frame = getCurrentFrame();
+      setCurrentFrame(frame);
+    },
+    [getCurrentFrame],
+  );
 
-  const handleVideoElementReady = useCallback((element: HTMLVideoElement | null) => {
-    setVideoElement(element);
-    videoRef.current = element;
-    if (element) {
-      const frames = getTotalFrames();
-      setTotalFrames(frames);
-    }
-  }, [getTotalFrames]);
+  const handleVideoElementReady = useCallback(
+    (element: HTMLVideoElement | null) => {
+      setVideoElement(element);
+      videoRef.current = element;
+      if (element) {
+        const frames = getTotalFrames();
+        setTotalFrames(frames);
+      }
+    },
+    [getTotalFrames],
+  );
 
-  const handleAnnotationChange = useCallback((newAnnotations: fabric.Object[]) => {
-    setAnnotations(newAnnotations);
-  }, []);
+  const handleAnnotationChange = useCallback(
+    (newAnnotations: fabric.Object[]) => {
+      setAnnotations(newAnnotations);
+    },
+    [],
+  );
 
-  const handleAudioRecorded = useCallback((audioBlob: Blob, startTime: number) => {
-    try {
-      // Validate input
-      if (!audioBlob || audioBlob.size === 0) {
-        throw new AudioRecordingError('Empty audio blob received', {
+  const handleAudioRecorded = useCallback(
+    (audioBlob: Blob, startTime: number) => {
+      try {
+        // Validate input
+        if (!audioBlob || audioBlob.size === 0) {
+          throw new AudioRecordingError("Empty audio blob received", {
+            startTime,
+            blobSize: audioBlob?.size,
+          });
+        }
+
+        const audioUrl = URL.createObjectURL(audioBlob);
+
+        logger.info("Audio recorded successfully", {
+          audioUrl,
           startTime,
-          blobSize: audioBlob?.size,
+          duration: audioBlob.size,
+          videoId: videoFile?.name,
         });
-      }
 
-      const audioUrl = URL.createObjectURL(audioBlob);
+        toast.success("Audio commentary recorded successfully");
 
-      logger.info('Audio recorded successfully', {
-        audioUrl,
-        startTime,
-        duration: audioBlob.size,
-        videoId: videoFile?.name,
-      });
-
-      toast.success('Audio commentary recorded successfully');
-
-      // DEFERRED(#663): Save to database when backend API is available.
-      // Expected endpoint: POST /api/audio-tracks
-      // Expected payload: { videoId: string, url: string, startTime: number, duration: number }
-      // await fetch('/api/audio-tracks', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ videoId: videoFile?.name, url: audioUrl, startTime, duration: audioBlob.size }),
-      // });
-    } catch (error) {
-      logger.error('Failed to process audio recording', { error, audioBlob, startTime });
-      toast.error(getUserMessage(error));
-    }
-  }, [videoFile]);
-
-  const handleVideoExport = useCallback((blob: Blob) => {
-    try {
-      // Validate input
-      if (!blob || blob.size === 0) {
-        throw new VideoProcessingError('Empty video blob received', {
-          blobSize: blob?.size,
+        // DEFERRED(#663): Save to database when backend API is available.
+        // Expected endpoint: POST /api/audio-tracks
+        // Expected payload: { videoId: string, url: string, startTime: number, duration: number }
+        // await fetch('/api/audio-tracks', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify({ videoId: videoFile?.name, url: audioUrl, startTime, duration: audioBlob.size }),
+        // });
+      } catch (error) {
+        logger.error("Failed to process audio recording", {
+          error,
+          audioBlob,
+          startTime,
         });
+        toast.error(getUserMessage(error));
       }
+    },
+    [videoFile],
+  );
 
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `edited-${videoFile?.name || 'video.mp4'}`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+  const handleVideoExport = useCallback(
+    (blob: Blob) => {
+      try {
+        // Validate input
+        if (!blob || blob.size === 0) {
+          throw new VideoProcessingError("Empty video blob received", {
+            blobSize: blob?.size,
+          });
+        }
 
-      logger.info('Video exported successfully', {
-        fileName: a.download,
-        fileSize: blob.size,
-      });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `edited-${videoFile?.name || "video.mp4"}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
 
-      toast.success(`Video exported: ${a.download}`);
-    } catch (error) {
-      logger.error('Failed to export video', { error, blob });
-      toast.error(getUserMessage(error));
-    }
-  }, [videoFile]);
+        logger.info("Video exported successfully", {
+          fileName: a.download,
+          fileSize: blob.size,
+        });
 
-  const handlePoseDetected = useCallback((landmarks: unknown) => {
-    try {
-      logger.debug('Pose detected', {
-        landmarks,
-        videoId: videoFile?.name,
-        currentTime,
-        currentFrame,
-      });
+        toast.success(`Video exported: ${a.download}`);
+      } catch (error) {
+        logger.error("Failed to export video", { error, blob });
+        toast.error(getUserMessage(error));
+      }
+    },
+    [videoFile],
+  );
 
-      // DEFERRED(#663): Save pose data to database when backend API is available.
-      // Expected endpoint: POST /api/pose-data
-      // Expected payload: { videoId: string, frame: number, timestamp: number, landmarks: unknown }
-      // For now, just log for debugging
-    } catch (error) {
-      logger.error('Failed to process pose detection', { error, landmarks });
-      // Don't show toast for pose detection errors (they're continuous)
-      // toast.error(getUserMessage(error));
-    }
-  }, [videoFile, currentTime, currentFrame]);
+  const handlePoseDetected = useCallback(
+    (landmarks: unknown) => {
+      try {
+        logger.debug("Pose detected", {
+          landmarks,
+          videoId: videoFile?.name,
+          currentTime,
+          currentFrame,
+        });
+
+        // DEFERRED(#663): Save pose data to database when backend API is available.
+        // Expected endpoint: POST /api/pose-data
+        // Expected payload: { videoId: string, frame: number, timestamp: number, landmarks: unknown }
+        // For now, just log for debugging
+      } catch (error) {
+        logger.error("Failed to process pose detection", { error, landmarks });
+        // Don't show toast for pose detection errors (they're continuous)
+        // toast.error(getUserMessage(error));
+      }
+    },
+    [videoFile, currentTime, currentFrame],
+  );
 
   useEffect(() => {
     return () => {
@@ -202,27 +233,33 @@ export default function HomePage() {
   useEffect(() => {
     if (videoElement && canvasRef.current) {
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        if (
+          e.target instanceof HTMLInputElement ||
+          e.target instanceof HTMLTextAreaElement
+        ) {
           return;
         }
 
         switch (e.key) {
-          case 'ArrowLeft':
+          case "ArrowLeft":
             e.preventDefault();
             if (videoElement) {
-              videoElement.currentTime = Math.max(0, videoElement.currentTime - 1 / 30);
+              videoElement.currentTime = Math.max(
+                0,
+                videoElement.currentTime - 1 / 30,
+              );
             }
             break;
-          case 'ArrowRight':
+          case "ArrowRight":
             e.preventDefault();
             if (videoElement) {
               videoElement.currentTime = Math.min(
                 videoElement.duration,
-                videoElement.currentTime + 1 / 30
+                videoElement.currentTime + 1 / 30,
               );
             }
             break;
-          case ' ':
+          case " ":
             e.preventDefault();
             if (videoElement) {
               if (videoElement.paused) {
@@ -232,16 +269,16 @@ export default function HomePage() {
               }
             }
             break;
-          case 'Delete':
-          case 'Backspace':
+          case "Delete":
+          case "Backspace":
             e.preventDefault();
             canvasRef.current?.deleteSelected();
             break;
         }
       };
 
-      window.addEventListener('keydown', handleKeyDown);
-      return () => window.removeEventListener('keydown', handleKeyDown);
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
     }
   }, [videoElement]);
 
@@ -263,7 +300,8 @@ export default function HomePage() {
             Upload and analyze your golf swing videos with AI-powered tools
           </p>
           <p className="text-sm text-gray-500 mt-2">
-            Keyboard shortcuts: Space (play/pause), ← → (frame navigation), Delete (remove annotation)
+            Keyboard shortcuts: Space (play/pause), ← → (frame navigation),
+            Delete (remove annotation)
           </p>
         </header>
 
@@ -320,7 +358,9 @@ export default function HomePage() {
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium text-gray-700">AI Features</h3>
+                <h3 className="text-sm font-medium text-gray-700">
+                  AI Features
+                </h3>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
@@ -342,7 +382,8 @@ export default function HomePage() {
               )}
               {!poseDetectionEnabled && (
                 <p className="text-xs text-gray-500">
-                  Enable pose detection to analyze body movements in your swing video
+                  Enable pose detection to analyze body movements in your swing
+                  video
                 </p>
               )}
             </div>
@@ -384,20 +425,20 @@ export default function HomePage() {
                     <span className="font-medium">Name:</span> {videoFile.name}
                   </p>
                   <p>
-                    <span className="font-medium">Size:</span>{' '}
+                    <span className="font-medium">Size:</span>{" "}
                     {(videoFile.size / (1024 * 1024)).toFixed(2)} MB
                   </p>
                   <p>
                     <span className="font-medium">Type:</span> {videoFile.type}
                   </p>
                   <p>
-                    <span className="font-medium">Annotations:</span>{' '}
+                    <span className="font-medium">Annotations:</span>{" "}
                     {annotations.length}
                   </p>
                   {totalFrames > 0 && (
                     <p>
-                      <span className="font-medium">Frames:</span> {totalFrames} (
-                      {totalFrames / 30}s @ 30fps)
+                      <span className="font-medium">Frames:</span> {totalFrames}{" "}
+                      ({totalFrames / 30}s @ 30fps)
                     </p>
                   )}
                 </div>

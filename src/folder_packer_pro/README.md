@@ -148,33 +148,28 @@ python build_exe.py
 ### Packing a Project
 
 1. **Select Source Folder**
-
    - Click "Browse" in the Source Folder section
    - Choose the project folder to pack
    - Or type the path directly
 
 2. **Choose Output Location**
-
    - Click "Browse" in Output Package File section
    - Select where to save the .fpp package
    - File extension will be added automatically
 
 3. **Configure Compression**
-
    - **None**: Fastest, largest size
    - **Fast**: Quick compression
    - **Balanced**: Recommended for most cases
    - **Best**: Slowest, smallest size
 
 4. **Enable Encryption (Optional)**
-
    - Check "Enable AES-256 Encryption"
    - Enter a strong password
    - Confirm password
    - Remember it - there's no recovery!
 
 5. **Advanced Options**
-
    - **Include .git folder**: For repositories
    - **Create manifest file**: Generate file catalog
    - **Verify package**: Check integrity after creation
@@ -187,25 +182,21 @@ python build_exe.py
 ### Unpacking a Package
 
 1. **Select Package File**
-
    - Click "Browse" in Package File section
    - Choose the .fpp package to extract
    - Verify file exists
 
 2. **Choose Destination**
-
    - Click "Browse" in Destination Folder section
    - Select where to extract files
    - Folder will be created if needed
 
 3. **Decryption (If Encrypted)**
-
    - Check "Package is encrypted"
    - Enter the decryption password
    - Must match the original password
 
 4. **Inspect Package (Optional)**
-
    - Click "🔍 Inspect Package"
    - View package metadata
    - Check encryption status
@@ -219,13 +210,11 @@ python build_exe.py
 ### Preview Files
 
 1. **Navigate to Preview Tab**
-
    - View files that will be packed
    - See file sizes, types, and dates
    - Browse folder structure
 
 2. **Select File**
-
    - Click on any file in the tree
    - View content in preview pane
    - See basic syntax highlighting

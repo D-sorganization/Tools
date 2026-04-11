@@ -195,13 +195,11 @@ Individual Tools (Launched as subprocesses)
 ### Immediate Actions (1-2 weeks)
 
 1. **Fix import path fragility**
-
    - Enforce `ensure_utils_in_path()` pattern
    - Remove fallback implementations once imports work
    - Target: Eliminate ~45 files with sys.path manipulation
 
 2. **Consolidate JSON utilities**
-
    - Keep primary in `utils.file_utils`
    - Remove duplicate implementations
    - Update imports in affected modules
@@ -213,12 +211,10 @@ Individual Tools (Launched as subprocesses)
 ### Short-term (2-4 weeks)
 
 4. **Consolidate logging implementations**
-
    - Migrate `upstream_drift_tools/utils/logging.py` to use primary
    - Complete deprecation of legacy wrappers
 
 5. **Create centralized constants module**
-
    - Add `utils/constants.py` for physical/standard constants
    - Migrate shared constants from domain files
 
@@ -229,7 +225,6 @@ Individual Tools (Launched as subprocesses)
 ### Medium-term (1-2 months)
 
 7. **Enhance configuration management**
-
    - Create `utils/config_manager.py` pattern
    - Migrate per-module configs to use shared pattern
 
@@ -240,7 +235,6 @@ Individual Tools (Launched as subprocesses)
 ### Long-term (ongoing)
 
 9. **Architecture documentation**
-
    - Document separation of concerns patterns
    - Create guidelines for new module additions
 

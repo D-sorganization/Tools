@@ -9,12 +9,16 @@
  * - Response formatting
  */
 
-import { NextResponse } from 'next/server';
-import { rateLimit, uploadRateLimiter, addRateLimitHeaders } from '@/lib/rate-limit';
-import { requireCsrfToken } from '@/lib/csrf';
-import { logger } from '@/lib/logger';
-import { ValidationError } from '@/lib/errors';
-import { z } from 'zod';
+import { NextResponse } from "next/server";
+import {
+  rateLimit,
+  uploadRateLimiter,
+  addRateLimitHeaders,
+} from "@/lib/rate-limit";
+import { requireCsrfToken } from "@/lib/csrf";
+import { logger } from "@/lib/logger";
+import { ValidationError } from "@/lib/errors";
+import { z } from "zod";
 
 // Request validation schema
 const RequestSchema = z.object({
@@ -29,18 +33,18 @@ const RequestSchema = z.object({
  */
 export async function GET(_request: Request) {
   try {
-    logger.info('GET /api/example');
+    logger.info("GET /api/example");
 
     return NextResponse.json({
-      message: 'This is an example API endpoint',
+      message: "This is an example API endpoint",
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    logger.error('GET /api/example failed', { error });
+    logger.error("GET /api/example failed", { error });
 
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -54,9 +58,9 @@ export async function POST(request: Request) {
     // 1. Rate limiting
     const rateLimitResult = await rateLimit(request, uploadRateLimiter);
     if (!rateLimitResult.allowed) {
-      logger.warn('Rate limit exceeded', {
-        ip: request.headers.get('x-forwarded-for'),
-        path: '/api/example',
+      logger.warn("Rate limit exceeded", {
+        ip: request.headers.get("x-forwarded-for"),
+        path: "/api/example",
       });
       return rateLimitResult.response!;
     }
@@ -64,9 +68,9 @@ export async function POST(request: Request) {
     // 2. CSRF protection
     const csrfError = requireCsrfToken(request);
     if (csrfError) {
-      logger.warn('CSRF validation failed', {
-        ip: request.headers.get('x-forwarded-for'),
-        path: '/api/example',
+      logger.warn("CSRF validation failed", {
+        ip: request.headers.get("x-forwarded-for"),
+        path: "/api/example",
       });
       return csrfError;
     }
@@ -75,7 +79,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validatedData = RequestSchema.parse(body);
 
-    logger.info('POST /api/example', {
+    logger.info("POST /api/example", {
       name: validatedData.name,
       email: validatedData.email,
     });
@@ -86,42 +90,42 @@ export async function POST(request: Request) {
     // 5. Return response with rate limit headers
     const response = NextResponse.json({
       success: true,
-      message: 'Request processed successfully',
+      message: "Request processed successfully",
       data: validatedData,
     });
 
     return addRateLimitHeaders(
       response,
       rateLimitResult,
-      uploadRateLimiter['maxRequests']
+      uploadRateLimiter["maxRequests"],
     );
   } catch (error) {
     // Handle validation errors
     if (error instanceof z.ZodError) {
-      logger.warn('Validation error', { error: error.errors });
+      logger.warn("Validation error", { error: error.errors });
       return NextResponse.json(
         {
-          error: 'Validation failed',
+          error: "Validation failed",
           details: error.errors,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Handle application errors
     if (error instanceof ValidationError) {
-      logger.warn('Application validation error', { error });
+      logger.warn("Application validation error", { error });
       return NextResponse.json(
         { error: error.message },
-        { status: error.statusCode }
+        { status: error.statusCode },
       );
     }
 
     // Handle unexpected errors
-    logger.error('POST /api/example failed', { error });
+    logger.error("POST /api/example failed", { error });
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: "Internal server error" },
+      { status: 500 },
     );
   }
 }
@@ -134,8 +138,8 @@ export async function OPTIONS(_request: Request) {
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, X-CSRF-Token',
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, X-CSRF-Token",
     },
   });
 }

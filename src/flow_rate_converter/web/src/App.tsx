@@ -1,4 +1,4 @@
-import { FlowRateConverter } from './components/FlowRateConverter'
+import { FlowRateConverter } from "./components/FlowRateConverter";
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
         <FlowRateConverter />
       </main>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

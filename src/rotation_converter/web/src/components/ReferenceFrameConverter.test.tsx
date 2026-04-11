@@ -17,11 +17,12 @@ const DEFAULT_RESPONSE: MockResponsePayload = {
   explanation_latex: "ok",
 };
 
-const mockedFetch = vi.fn<
-  (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
->();
+const mockedFetch =
+  vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>();
 
-function mockSuccessfulResponse(payload: MockResponsePayload = DEFAULT_RESPONSE): void {
+function mockSuccessfulResponse(
+  payload: MockResponsePayload = DEFAULT_RESPONSE,
+): void {
   mockedFetch.mockResolvedValue({
     ok: true,
     json: async () => payload,
@@ -100,4 +101,3 @@ describe("ReferenceFrameConverter", () => {
     });
   });
 });
-

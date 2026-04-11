@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useVideoFrame } from '@/hooks/useVideoFrame';
+import { useVideoFrame } from "@/hooks/useVideoFrame";
 
 interface FrameNavigatorProps {
   videoElement: HTMLVideoElement | null;
@@ -50,7 +50,7 @@ export default function FrameNavigator({
     const seconds = frame / fps;
     const mins = Math.floor(seconds / 60);
     const secs = (seconds % 60).toFixed(2);
-    return `${mins}:${secs.padStart(5, '0')}`;
+    return `${mins}:${secs.padStart(5, "0")}`;
   };
 
   return (

@@ -14,14 +14,12 @@ Continuously scan the existing website, tools, and workflows to identify **high-
 >
 > 1. Analyze the provided article, tool, or page.
 > 2. Identify **missing but natural next features** that:
->
 >    - deepen understanding,
 >    - reduce ambiguity,
 >    - improve interpretability,
 >    - or expose latent structure in the models.
 >
 > 3. Propose features that:
->
 >    - require minimal new assumptions,
 >    - reuse existing data/models where possible,
 >    - avoid large architectural changes.

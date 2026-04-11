@@ -9,6 +9,7 @@ A complete, production-grade Rust physics library implementing 3 pendulum models
 ### 1. Core Physics Modules
 
 #### `types.rs` (296 lines)
+
 - **DoublePendulumParams**: 7 fields (m1, m2, l1, l2, g, friction coefficients)
 - **TriplePendulumParams**: 11 fields (masses, lengths, gravity, friction array)
 - **GolferParams**: 18 fields (hub, arms, club geometry and masses)
@@ -17,6 +18,7 @@ A complete, production-grade Rust physics library implementing 3 pendulum models
 - **Validation methods** on all parameter types
 
 #### `double.rs` (179 lines)
+
 - **mass_matrix(q, p)**: 2×2 M(q) with cos(φ) coupling term
 - **coriolis(q, qdot, p)**: Centrifugal terms from cos(φ)
 - **gravity_vector(q, p)**: Gravitational torques at both joints
@@ -25,6 +27,7 @@ A complete, production-grade Rust physics library implementing 3 pendulum models
 - **Unit tests**: Mass matrix symmetry, FK validation
 
 #### `triple.rs` (254 lines)
+
 - **3-DOF model**: q = [θ₁, φ₂, φ₃]
 - **mass_matrix(q, p)**: Full 3×3 with all coupling terms
 - **coriolis(q, qdot, p)**: 8 distinct Coriolis terms
@@ -33,6 +36,7 @@ A complete, production-grade Rust physics library implementing 3 pendulum models
 - **Jacobians**: jacobian_joint1, jacobian_joint2, jacobian_joint3 (all 2×3)
 
 #### `golfer.rs` (520 lines) — **Most Complex**
+
 - **Generalized coordinates**: q = [θ_hub, α_rs, α_re, α_rh, α_ls, α_le, α_lh, θ_club]
 - **7 mass points**: hub, r_shoulder, r_elbow, r_wrist, l_shoulder, l_elbow, l_wrist, club_com, club_tip
 - **analytical_fk_jacobians(q, p)**: HashMap with 9 entries (hub, 4 arm joints, club_com, club_tip)
@@ -46,15 +50,17 @@ A complete, production-grade Rust physics library implementing 3 pendulum models
 - **constraint_jacobian(q, p)**: 4×8 (numerical finite-difference)
 
 #### `golfer_constraints.rs` (288 lines)
+
 - **BaumgarteGains**: struct with α, β (default 10, 10)
 - **constraint_acceleration_bias(q, qdot, p)**: Computes γ term via finite-diff
-- **constrained_accelerations(q, qdot, τ, p, gains)**: 
+- **constrained_accelerations(q, qdot, τ, p, gains)**:
   - Solves 12×12 KKT system: [M J^T; J 0][a; λ] = rhs
   - Returns (accelerations, Lagrange multipliers)
 - **project_to_constraints(q, p)**: Newton projection to Φ(q)=0
 - **project_velocity(q, qdot, p)**: Minimum-norm velocity correction
 
 #### `integrator.rs` (328 lines)
+
 - **RK45Config**: h0, h_min, h_max, rtol, atol, max_steps
 - **integrate_rk45<F, N>(f, t0, t_end, y0, config)**: Generic N-D Dormand-Prince solver
   - 7-stage method with 5th/4th order pair
@@ -66,6 +72,7 @@ A complete, production-grade Rust physics library implementing 3 pendulum models
 - **IntegrationStep<N>**: t, y, h results
 
 #### `lib.rs` (495 lines)
+
 - **Module re-exports**: All physics functions under qualified names
 - **PyO3 bindings** (feature = "python"):
   - PyDoublePendulumParams, PyGolferParams classes
@@ -81,6 +88,7 @@ A complete, production-grade Rust physics library implementing 3 pendulum models
 ### 2. Python Wrapper
 
 #### `python/physics_native.py` (490 lines)
+
 - **HAS_NATIVE**: Flag indicating if Rust module available
 - **DoublePendulumParams**: Python dataclass matching Rust
 - **DoublePendulum**: Model class with methods:
@@ -95,6 +103,7 @@ A complete, production-grade Rust physics library implementing 3 pendulum models
 ### 3. Configuration Files
 
 #### `Cargo.toml`
+
 ```toml
 [dependencies]
 nalgebra = "0.33"
@@ -133,6 +142,7 @@ serde = ["dep:serde"]
 **Coordinates:** q = [θ₁, φ] (shoulder, club relative to arm)
 
 **Mass Matrix:**
+
 ```
 M[0,0] = (m1 + m2) L1²
 M[0,1] = m2 L1 L2 cos(φ)
@@ -140,6 +150,7 @@ M[1,1] = m2 L2²
 ```
 
 **Gravity:**
+
 ```
 G[0] = (m1 + m2) g L1 sin(θ₁)
 G[1] = m2 g L2 sin(θ₁ + φ)
@@ -154,17 +165,20 @@ G[1] = m2 g L2 sin(θ₁ + φ)
 ### Golfer (8-DOF)
 
 **Coordinates:**
+
 - q[0]: θ_hub (torso rotation)
 - q[1-3]: α_rs, α_re, α_rh (right arm relative angles)
 - q[4-6]: α_ls, α_le, α_lh (left arm relative angles)
 - q[7]: θ_club (club angle)
 
 **Absolute angles:**
+
 - Right: θ_rs = θ_hub + α_rs, θ_re = θ_hub + α_rs + α_re, θ_rh = θ_hub + α_rs + α_re + α_rh
 - Left: θ_ls = θ_hub + α_ls, θ_le = θ_hub + α_ls + α_le, θ_lh = θ_hub + α_ls + α_le + α_lh
 
 **Mass Matrix:**
 Computed via M = Σ mᵢ Jᵢᵀ Jᵢ where:
+
 - J_hub is 2×8 Jacobian of hub position
 - J_r_elbow is 2×8 for right elbow (m_r_upper mass)
 - J_r_wrist is 2×8 for right wrist (m_r_fore mass)
@@ -176,6 +190,7 @@ Computed via M = Σ mᵢ Jᵢᵀ Jᵢ where:
 All Jacobians computed analytically via forward kinematics chain rule.
 
 **Constraints:**
+
 1. Right hand x = Left hand x
 2. Right hand y = Left hand y
 3. Left hand on club shaft (x)
@@ -197,12 +212,14 @@ All Jacobians computed analytically via forward kinematics chain rule.
 ## Build Instructions
 
 ### Default (Library)
+
 ```bash
 cd pendulum-core
 cargo build --lib
 ```
 
 ### Python (PyO3)
+
 ```bash
 # Option 1: Using maturin (recommended)
 pip install maturin
@@ -213,6 +230,7 @@ cargo build --features python --release
 ```
 
 ### WASM
+
 ```bash
 # Option 1: Using wasm-pack (recommended)
 wasm-pack build --target web --features wasm
@@ -229,6 +247,7 @@ cargo test --lib --all-features
 ```
 
 Tests included:
+
 - Mass matrix symmetry for all models
 - Forward kinematics validation
 - Jacobian dimensions and correctness
@@ -238,14 +257,14 @@ Tests included:
 
 ## Performance Characteristics
 
-| Operation | Time |
-|-----------|------|
-| Double pendulum mass_matrix | ~1 μs |
-| Triple pendulum mass_matrix | ~2 μs |
-| Golfer mass_matrix (8×8) | ~10 μs |
-| Golfer FK Jacobians (9 points) | ~5 μs |
-| Golfer constraint solve (12×12 KKT) | ~50 μs |
-| RK45 step (golfer 16-state) | ~100-200 μs |
+| Operation                           | Time        |
+| ----------------------------------- | ----------- |
+| Double pendulum mass_matrix         | ~1 μs       |
+| Triple pendulum mass_matrix         | ~2 μs       |
+| Golfer mass_matrix (8×8)            | ~10 μs      |
+| Golfer FK Jacobians (9 points)      | ~5 μs       |
+| Golfer constraint solve (12×12 KKT) | ~50 μs      |
+| RK45 step (golfer 16-state)         | ~100-200 μs |
 
 ## Accuracy
 
@@ -281,6 +300,7 @@ Total: 2,360 lines Rust + 490 lines Python
 The library is designed to be imported by:
 
 1. **Python backend** (`pendulum-physics/`):
+
    ```python
    from pendulum_core import PyDoublePendulumParams, py_double_mass_matrix
    # or via physics_native.py wrapper

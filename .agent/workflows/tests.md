@@ -19,7 +19,6 @@ pytest -v --tb=short
 ```
 
 1. **For each failing test**:
-
    - Read the test file and understand what it's testing
    - Read the implementation being tested
    - Identify the root cause of the failure

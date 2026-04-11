@@ -1,4 +1,4 @@
-import * as fabric from 'fabric';
+import * as fabric from "fabric";
 
 type AnnotationObject = fabric.Object & {
   fill?: string;
@@ -30,16 +30,16 @@ export function exportAnnotationsToJSON(
   annotations: fabric.Object[],
   currentFrame: number,
   videoId?: string,
-  totalFrames?: number
+  totalFrames?: number,
 ): AnnotationExport {
   const annotationData: AnnotationData[] = annotations.map((obj, index) => {
     const annotationObject = obj as AnnotationObject;
 
     return {
       id: annotationObject.name || `annotation-${index}`,
-      type: annotationObject.type || 'unknown',
+      type: annotationObject.type || "unknown",
       frame: currentFrame,
-      data: annotationObject.toObject(['name', 'selectable', 'evented']),
+      data: annotationObject.toObject(["name", "selectable", "evented"]),
       style: {
         stroke: annotationObject.stroke,
         strokeWidth: annotationObject.strokeWidth,
@@ -49,7 +49,7 @@ export function exportAnnotationsToJSON(
   });
 
   return {
-    version: '1.0.0',
+    version: "1.0.0",
     videoId,
     annotations: annotationData,
     metadata: {
@@ -62,13 +62,15 @@ export function exportAnnotationsToJSON(
 
 export async function importAnnotationsFromJSON(
   exportData: AnnotationExport,
-  canvas: fabric.Canvas
+  canvas: fabric.Canvas,
 ): Promise<void> {
   canvas.clear();
 
   for (const annotation of exportData.annotations) {
     try {
-      const objects = await fabric.util.enlivenObjects<fabric.Object>([annotation.data]);
+      const objects = await fabric.util.enlivenObjects<fabric.Object>([
+        annotation.data,
+      ]);
       objects.forEach((obj: fabric.Object) => {
         const annotationObject = obj as AnnotationObject;
         if (annotation.style) {
@@ -76,7 +78,8 @@ export async function importAnnotationsFromJSON(
             annotationObject.stroke = annotation.style.stroke as string;
           }
           if (annotation.style.strokeWidth) {
-            annotationObject.strokeWidth = annotation.style.strokeWidth as number;
+            annotationObject.strokeWidth = annotation.style
+              .strokeWidth as number;
           }
           if (annotation.style.fill) {
             annotationObject.fill = annotation.style.fill as string;
@@ -92,11 +95,14 @@ export async function importAnnotationsFromJSON(
   canvas.renderAll();
 }
 
-export function downloadAnnotationJSON(exportData: AnnotationExport, filename?: string): void {
+export function downloadAnnotationJSON(
+  exportData: AnnotationExport,
+  filename?: string,
+): void {
   const jsonStr = JSON.stringify(exportData, null, 2);
-  const blob = new Blob([jsonStr], { type: 'application/json' });
+  const blob = new Blob([jsonStr], { type: "application/json" });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
   a.download = filename || `annotations-${new Date().toISOString()}.json`;
   document.body.appendChild(a);

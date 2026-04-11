@@ -239,12 +239,12 @@ except AssertionError:
 
 Confirm the PR description references these issues and the fixes are present:
 
-| Issue | Fix location | What to verify |
-|-------|-------------|----------------|
-| #1041 | DRY base class extraction | `base_pendulum_widget.py` exists, both widgets inherit from it |
-| #1097 | Fractional frame accumulator | `_advance_frame` uses `_anim_frac` |
-| #1100-#1102 | Segment visibility | `_visible_segments` in base class, synced in `_on_tab_changed` |
-| #1113 | Tilt plane | `_draw_tilt_plane()` in base class, called in paintEvent |
-| #1115 | Real-time playback | `frames_per_tick` uses `_sim_dt` |
-| #1116 | Catmull-Rom trails | `_catmull_rom_smooth()` in base class |
-| #1118 | View azimuth | `_view_azimuth` in base class, used in `_world_to_pixel` |
+| Issue       | Fix location                 | What to verify                                                 |
+| ----------- | ---------------------------- | -------------------------------------------------------------- |
+| #1041       | DRY base class extraction    | `base_pendulum_widget.py` exists, both widgets inherit from it |
+| #1097       | Fractional frame accumulator | `_advance_frame` uses `_anim_frac`                             |
+| #1100-#1102 | Segment visibility           | `_visible_segments` in base class, synced in `_on_tab_changed` |
+| #1113       | Tilt plane                   | `_draw_tilt_plane()` in base class, called in paintEvent       |
+| #1115       | Real-time playback           | `frames_per_tick` uses `_sim_dt`                               |
+| #1116       | Catmull-Rom trails           | `_catmull_rom_smooth()` in base class                          |
+| #1118       | View azimuth                 | `_view_azimuth` in base class, used in `_world_to_pixel`       |

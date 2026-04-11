@@ -428,7 +428,6 @@ More content following the same structure.
 ## Boundaries
 
 - ✅ **Always do:**
-
   - Run markdownlint before suggesting documentation changes
   - Fix formatting issues automatically when possible
   - Validate internal links point to existing files
@@ -439,7 +438,6 @@ More content following the same structure.
   - Ensure consistent list formatting
 
 - ⚠️ **Ask first:**
-
   - Before restructuring major documentation sections
   - Before changing heading levels (may break internal links)
   - Before removing content (even if poorly formatted)

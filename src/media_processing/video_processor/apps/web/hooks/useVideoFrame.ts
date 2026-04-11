@@ -1,20 +1,26 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef } from "react";
 
 interface UseVideoFrameOptions {
   videoElement: HTMLVideoElement | null;
   fps?: number;
 }
 
-export function useVideoFrame({ videoElement, fps = 30 }: UseVideoFrameOptions) {
+export function useVideoFrame({
+  videoElement,
+  fps = 30,
+}: UseVideoFrameOptions) {
   const frameCountRef = useRef(0);
 
   const goToFrame = useCallback(
     (frameNumber: number) => {
       if (!videoElement) return;
       const frameTime = frameNumber / fps;
-      videoElement.currentTime = Math.max(0, Math.min(frameTime, videoElement.duration));
+      videoElement.currentTime = Math.max(
+        0,
+        Math.min(frameTime, videoElement.duration),
+      );
     },
-    [videoElement, fps]
+    [videoElement, fps],
   );
 
   const getCurrentFrame = useCallback((): number => {
@@ -47,11 +53,14 @@ export function useVideoFrame({ videoElement, fps = 30 }: UseVideoFrameOptions) 
       const frameTime = targetFrame / fps;
       const originalTime = videoElement.currentTime;
 
-      videoElement.currentTime = Math.max(0, Math.min(frameTime, videoElement.duration));
+      videoElement.currentTime = Math.max(
+        0,
+        Math.min(frameTime, videoElement.duration),
+      );
 
       return new Promise((resolve) => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
         if (!ctx) {
           videoElement.currentTime = originalTime;
           resolve(null);
@@ -65,15 +74,15 @@ export function useVideoFrame({ videoElement, fps = 30 }: UseVideoFrameOptions) 
 
           canvas.toBlob((blob) => {
             videoElement!.currentTime = originalTime;
-            videoElement!.removeEventListener('seeked', handleSeeked);
+            videoElement!.removeEventListener("seeked", handleSeeked);
             resolve(blob);
-          }, 'image/png');
+          }, "image/png");
         };
 
-        videoElement.addEventListener('seeked', handleSeeked);
+        videoElement.addEventListener("seeked", handleSeeked);
       });
     },
-    [videoElement, fps, getCurrentFrame]
+    [videoElement, fps, getCurrentFrame],
   );
 
   return {

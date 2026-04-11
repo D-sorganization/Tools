@@ -13,7 +13,6 @@ Perform **conservative, incremental refactoring** that improves structure while 
 > Your tasks:
 >
 > 1. Identify structural smells:
->
 >    - overly long functions,
 >    - tangled responsibilities,
 >    - implicit contracts,
@@ -21,7 +20,6 @@ Perform **conservative, incremental refactoring** that improves structure while 
 >    - fragile interfaces.
 >
 > 2. Propose refactorings that:
->
 >    - preserve behavior exactly,
 >    - are reversible,
 >    - can be done in small commits.

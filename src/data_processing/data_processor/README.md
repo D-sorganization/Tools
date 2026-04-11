@@ -64,20 +64,17 @@ python -m data_processor.cli --help
 ### Basic Workflow
 
 1. **File Selection Tab**:
-
    - Click "Select Files" (Ctrl+O)
    - Choose one or more CSV files
    - Click "Load Data" (Ctrl+L)
    - Click "Detect Signals" to identify columns
 
 2. **Signal Processing Tab**:
-
    - Select filter type from dropdown
    - Configure filter parameters
    - Click "Apply Filter"
 
 3. **Advanced Operations Tab**:
-
    - Integrate or differentiate signals
    - Apply custom formulas
 

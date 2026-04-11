@@ -18,7 +18,7 @@ export class RateLimiter {
 
   constructor(
     private readonly maxRequests: number = 10,
-    private readonly windowMs: number = 60 * 1000 // 1 minute
+    private readonly windowMs: number = 60 * 1000, // 1 minute
   ) {
     // Clean up old entries every minute
     this.cleanupInterval = setInterval(() => this.cleanup(), 60 * 1000);
@@ -29,7 +29,11 @@ export class RateLimiter {
    * @param identifier - Unique identifier (IP address, user ID, etc.)
    * @returns true if request should be allowed, false if rate limited
    */
-  check(identifier: string): { allowed: boolean; remaining: number; resetAt: number } {
+  check(identifier: string): {
+    allowed: boolean;
+    remaining: number;
+    resetAt: number;
+  } {
     const now = Date.now();
     const entry = this.store.get(identifier);
 
@@ -109,18 +113,18 @@ export const authRateLimiter = new RateLimiter(10, 15 * 60 * 1000); // 10 attemp
  */
 export function getClientIp(request: Request): string {
   // Try to get real IP from headers (if behind proxy)
-  const forwardedFor = request.headers.get('x-forwarded-for');
+  const forwardedFor = request.headers.get("x-forwarded-for");
   if (forwardedFor) {
-    return forwardedFor.split(',')[0].trim();
+    return forwardedFor.split(",")[0].trim();
   }
 
-  const realIp = request.headers.get('x-real-ip');
+  const realIp = request.headers.get("x-real-ip");
   if (realIp) {
     return realIp;
   }
 
   // Fallback to 'unknown' (for development)
-  return 'unknown';
+  return "unknown";
 }
 
 /**
@@ -140,7 +144,7 @@ export function getClientIp(request: Request): string {
  */
 export async function rateLimit(
   request: Request,
-  limiter: RateLimiter = globalRateLimiter
+  limiter: RateLimiter = globalRateLimiter,
 ): Promise<{
   allowed: boolean;
   response?: Response;
@@ -157,20 +161,20 @@ export async function rateLimit(
       allowed: false,
       response: new Response(
         JSON.stringify({
-          error: 'Too many requests',
-          message: 'Rate limit exceeded. Please try again later.',
+          error: "Too many requests",
+          message: "Rate limit exceeded. Please try again later.",
           retryAfter,
         }),
         {
           status: 429,
           headers: {
-            'Content-Type': 'application/json',
-            'Retry-After': retryAfter.toString(),
-            'X-RateLimit-Limit': limiter['maxRequests'].toString(),
-            'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': new Date(result.resetAt).toISOString(),
+            "Content-Type": "application/json",
+            "Retry-After": retryAfter.toString(),
+            "X-RateLimit-Limit": limiter["maxRequests"].toString(),
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": new Date(result.resetAt).toISOString(),
           },
-        }
+        },
       ),
       remaining: 0,
       resetAt: result.resetAt,
@@ -190,11 +194,14 @@ export async function rateLimit(
 export function addRateLimitHeaders(
   response: Response,
   result: { remaining: number; resetAt: number },
-  maxRequests: number
+  maxRequests: number,
 ): Response {
-  response.headers.set('X-RateLimit-Limit', maxRequests.toString());
-  response.headers.set('X-RateLimit-Remaining', result.remaining.toString());
-  response.headers.set('X-RateLimit-Reset', new Date(result.resetAt).toISOString());
+  response.headers.set("X-RateLimit-Limit", maxRequests.toString());
+  response.headers.set("X-RateLimit-Remaining", result.remaining.toString());
+  response.headers.set(
+    "X-RateLimit-Reset",
+    new Date(result.resetAt).toISOString(),
+  );
 
   return response;
 }

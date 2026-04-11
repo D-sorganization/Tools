@@ -8,10 +8,10 @@
  * @see https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary
  */
 
-'use client';
+"use client";
 
-import { Component, ReactNode } from 'react';
-import { logger } from '@/lib/logger';
+import { Component, ReactNode } from "react";
+import { logger } from "@/lib/logger";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -24,7 +24,10 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -37,14 +40,14 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Log error with full context
-    logger.error('Error caught by boundary', {
+    logger.error("Error caught by boundary", {
       error,
       errorInfo,
       componentStack: errorInfo.componentStack,
     });
 
     // Send to error tracking service
-    if (typeof window !== 'undefined' && (window as any).Sentry) {
+    if (typeof window !== "undefined" && (window as any).Sentry) {
       (window as any).Sentry.captureException(error, {
         contexts: {
           react: {
@@ -102,10 +105,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
             <p className="text-sm text-gray-600 mb-4">
               {this.state.error?.message ||
-                'An unexpected error occurred. Please try again.'}
+                "An unexpected error occurred. Please try again."}
             </p>
 
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {process.env.NODE_ENV === "development" && this.state.error && (
               <details className="mb-4 bg-gray-50 rounded p-3">
                 <summary className="text-xs text-gray-500 cursor-pointer font-medium mb-2">
                   Error details (development only)
@@ -148,7 +151,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
  */
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
-  fallback?: ReactNode
+  fallback?: ReactNode,
 ): React.ComponentType<P> {
   return function WithErrorBoundary(props: P) {
     return (

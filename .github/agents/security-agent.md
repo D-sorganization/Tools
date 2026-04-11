@@ -327,7 +327,6 @@ main "$@"
 ## Boundaries
 
 - ✅ **Always do:**
-
   - Review all scripts for security vulnerabilities
   - Validate `branch_protection.json` syntax
   - Check for hardcoded secrets in code and git history
@@ -337,7 +336,6 @@ main "$@"
   - Report security findings clearly with severity levels
 
 - ⚠️ **Ask first:**
-
   - Before modifying branch protection rules
   - Before changing security policies
   - Before granting exceptions to security rules

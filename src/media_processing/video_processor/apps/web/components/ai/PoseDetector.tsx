@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 interface PoseDetectorProps {
   videoElement: HTMLVideoElement | null;
@@ -27,9 +27,10 @@ export default function PoseDetector({
 
     const initializeMediaPipe = async () => {
       try {
-        const { Pose } = await import('@mediapipe/pose');
-        const { drawConnectors, drawLandmarks } = await import('@mediapipe/drawing_utils');
-        const { POSE_CONNECTIONS } = await import('@mediapipe/pose');
+        const { Pose } = await import("@mediapipe/pose");
+        const { drawConnectors, drawLandmarks } =
+          await import("@mediapipe/drawing_utils");
+        const { POSE_CONNECTIONS } = await import("@mediapipe/pose");
 
         const pose = new Pose({
           locateFile: (file: string) => {
@@ -49,7 +50,7 @@ export default function PoseDetector({
         pose.onResults((results: any) => {
           if (canvasRef.current && videoElement) {
             const canvas = canvasRef.current;
-            const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext("2d");
             if (!ctx) return;
 
             canvas.width = videoElement.videoWidth;
@@ -65,11 +66,11 @@ export default function PoseDetector({
               }
 
               drawConnectors(ctx, results.poseLandmarks, POSE_CONNECTIONS, {
-                color: '#00FF00',
+                color: "#00FF00",
                 lineWidth: 2,
               });
               drawLandmarks(ctx, results.poseLandmarks, {
-                color: '#FF0000',
+                color: "#FF0000",
                 lineWidth: 1,
                 radius: 3,
               });
@@ -80,7 +81,7 @@ export default function PoseDetector({
         poseRef.current = pose;
         setIsInitialized(true);
       } catch (error) {
-        console.error('Failed to initialize MediaPipe:', error);
+        console.error("Failed to initialize MediaPipe:", error);
       }
     };
 
@@ -113,7 +114,7 @@ export default function PoseDetector({
       try {
         await poseRef.current.send({ image: videoElement });
       } catch (error) {
-        console.error('Pose detection error:', error);
+        console.error("Pose detection error:", error);
       }
 
       animationFrameRef.current = requestAnimationFrame(detectPose);
@@ -140,18 +141,20 @@ export default function PoseDetector({
           {isDetecting && (
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
           )}
-          <span className="text-xs text-gray-500">{detectionCount} detections</span>
+          <span className="text-xs text-gray-500">
+            {detectionCount} detections
+          </span>
         </div>
       </div>
       <canvas
         ref={canvasRef}
         className="absolute top-0 left-0 z-20 pointer-events-none"
-        style={{ display: enabled ? 'block' : 'none' }}
+        style={{ display: enabled ? "block" : "none" }}
       />
       <p className="text-xs text-gray-500">
         {isInitialized
-          ? 'Pose detection active - landmarks shown on video'
-          : 'Initializing MediaPipe...'}
+          ? "Pose detection active - landmarks shown on video"
+          : "Initializing MediaPipe..."}
       </p>
     </div>
   );

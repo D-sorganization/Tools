@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -8,9 +8,9 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from 'recharts';
-import { BarChart2 } from 'lucide-react';
-import type { DataRow } from '../types';
+} from "recharts";
+import { BarChart2 } from "lucide-react";
+import type { DataRow } from "../types";
 
 interface DataChartProps {
   data: DataRow[];
@@ -19,14 +19,14 @@ interface DataChartProps {
 }
 
 const CHART_COLORS = [
-  '#3b82f6', // blue
-  '#22c55e', // green
-  '#f59e0b', // amber
-  '#ef4444', // red
-  '#8b5cf6', // purple
-  '#06b6d4', // cyan
-  '#ec4899', // pink
-  '#84cc16', // lime
+  "#3b82f6", // blue
+  "#22c55e", // green
+  "#f59e0b", // amber
+  "#ef4444", // red
+  "#8b5cf6", // purple
+  "#06b6d4", // cyan
+  "#ec4899", // pink
+  "#84cc16", // lime
 ];
 
 interface TooltipProps {
@@ -47,14 +47,21 @@ function CustomTooltip({ active, payload, label }: TooltipProps) {
       <p className="text-dark-300 text-xs mb-1">Index: {label}</p>
       {payload.map((entry, index) => (
         <p key={index} className="text-sm" style={{ color: entry.color }}>
-          {entry.name}: {typeof entry.value === 'number' ? entry.value.toFixed(4) : entry.value}
+          {entry.name}:{" "}
+          {typeof entry.value === "number"
+            ? entry.value.toFixed(4)
+            : entry.value}
         </p>
       ))}
     </div>
   );
 }
 
-export function DataChart({ data, selectedSignals, title = 'Signal Plot' }: DataChartProps) {
+export function DataChart({
+  data,
+  selectedSignals,
+  title = "Signal Plot",
+}: DataChartProps) {
   const chartData = useMemo(() => {
     if (data.length === 0) return [];
 
@@ -116,23 +123,25 @@ export function DataChart({ data, selectedSignals, title = 'Signal Plot' }: Data
       </div>
       <div className="card-body">
         <ResponsiveContainer width="100%" height={350}>
-          <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <LineChart
+            data={chartData}
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          >
             <CartesianGrid strokeDasharray="3 3" stroke="#343541" />
             <XAxis
               dataKey="index"
-              tick={{ fill: '#8e8ea0', fontSize: 12 }}
-              axisLine={{ stroke: '#4a4a5a' }}
+              tick={{ fill: "#8e8ea0", fontSize: 12 }}
+              axisLine={{ stroke: "#4a4a5a" }}
             />
             <YAxis
-              tick={{ fill: '#8e8ea0', fontSize: 12 }}
-              axisLine={{ stroke: '#4a4a5a' }}
-              tickFormatter={(value: number | string) => Number(value).toFixed(2)}
+              tick={{ fill: "#8e8ea0", fontSize: 12 }}
+              axisLine={{ stroke: "#4a4a5a" }}
+              tickFormatter={(value: number | string) =>
+                Number(value).toFixed(2)
+              }
             />
             <Tooltip content={<CustomTooltip />} />
-            <Legend
-              wrapperStyle={{ paddingTop: 10 }}
-              iconType="line"
-            />
+            <Legend wrapperStyle={{ paddingTop: 10 }} iconType="line" />
             {selectedSignals.map((signal, index) => (
               <Line
                 key={signal}

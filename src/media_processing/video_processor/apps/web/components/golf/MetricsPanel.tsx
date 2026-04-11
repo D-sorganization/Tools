@@ -1,54 +1,60 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 import {
   SwingAnalysis,
   BalanceMetrics,
   PlaneMetrics,
   PostureMetrics,
-} from '@/lib/golf/types';
+} from "@/lib/golf/types";
 
 interface MetricsPanelProps {
   analysis: SwingAnalysis;
-  keyPositions: SwingAnalysis['keyPositions'];
+  keyPositions: SwingAnalysis["keyPositions"];
   balance: BalanceMetrics;
   plane: PlaneMetrics;
   posture: PostureMetrics;
 }
 
-const MetricCard = React.memo(({
-  title,
-  value,
-  unit,
-  description,
-  good,
-}: {
-  title: string;
-  value: string | number;
-  unit?: string;
-  description?: string;
-  good?: boolean;
-}) => (
-  <div className="bg-gray-50 rounded-lg p-4">
-    <p className="text-sm text-gray-500 mb-1">{title}</p>
-    <p className="text-2xl font-bold text-gray-900">
-      {value}
-      {unit && <span className="text-sm font-normal text-gray-500 ml-1">{unit}</span>}
-    </p>
-    {description && <p className="text-xs text-gray-500 mt-1">{description}</p>}
-    {good !== undefined && (
-      <div className="flex items-center mt-2">
-        <div
-          className={`w-2 h-2 rounded-full ${good ? 'bg-green-500' : 'bg-yellow-500'}`}
-        />
-        <span className="text-xs text-gray-500 ml-1">
-          {good ? 'Good' : 'Needs attention'}
-        </span>
-      </div>
-    )}
-  </div>
-));
-MetricCard.displayName = 'MetricCard';
+const MetricCard = React.memo(
+  ({
+    title,
+    value,
+    unit,
+    description,
+    good,
+  }: {
+    title: string;
+    value: string | number;
+    unit?: string;
+    description?: string;
+    good?: boolean;
+  }) => (
+    <div className="bg-gray-50 rounded-lg p-4">
+      <p className="text-sm text-gray-500 mb-1">{title}</p>
+      <p className="text-2xl font-bold text-gray-900">
+        {value}
+        {unit && (
+          <span className="text-sm font-normal text-gray-500 ml-1">{unit}</span>
+        )}
+      </p>
+      {description && (
+        <p className="text-xs text-gray-500 mt-1">{description}</p>
+      )}
+      {good !== undefined && (
+        <div className="flex items-center mt-2">
+          <div
+            className={`w-2 h-2 rounded-full ${good ? "bg-green-500" : "bg-yellow-500"}`}
+          />
+          <span className="text-xs text-gray-500 ml-1">
+            {good ? "Good" : "Needs attention"}
+          </span>
+        </div>
+      )}
+    </div>
+  ),
+);
+MetricCard.displayName = "MetricCard";
 
 export default function MetricsPanel({
   analysis,
@@ -218,7 +224,9 @@ export default function MetricsPanel({
 
       {/* Balance Metrics */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Balance & Weight Shift</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Balance & Weight Shift
+        </h3>
 
         {/* Weight Distribution Visualization */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
@@ -232,7 +240,8 @@ export default function MetricsPanel({
                 />
               </div>
               <span className="text-xs text-gray-500">
-                {balance.addressWeight.left.toFixed(0)}:{balance.addressWeight.right.toFixed(0)}
+                {balance.addressWeight.left.toFixed(0)}:
+                {balance.addressWeight.right.toFixed(0)}
               </span>
             </div>
           </div>
@@ -246,7 +255,8 @@ export default function MetricsPanel({
                 />
               </div>
               <span className="text-xs text-gray-500">
-                {balance.topWeight.left.toFixed(0)}:{balance.topWeight.right.toFixed(0)}
+                {balance.topWeight.left.toFixed(0)}:
+                {balance.topWeight.right.toFixed(0)}
               </span>
             </div>
           </div>
@@ -260,7 +270,8 @@ export default function MetricsPanel({
                 />
               </div>
               <span className="text-xs text-gray-500">
-                {balance.impactWeight.left.toFixed(0)}:{balance.impactWeight.right.toFixed(0)}
+                {balance.impactWeight.left.toFixed(0)}:
+                {balance.impactWeight.right.toFixed(0)}
               </span>
             </div>
           </div>
@@ -274,7 +285,8 @@ export default function MetricsPanel({
                 />
               </div>
               <span className="text-xs text-gray-500">
-                {balance.finishWeight.left.toFixed(0)}:{balance.finishWeight.right.toFixed(0)}
+                {balance.finishWeight.left.toFixed(0)}:
+                {balance.finishWeight.right.toFixed(0)}
               </span>
             </div>
           </div>
@@ -307,7 +319,9 @@ export default function MetricsPanel({
 
       {/* Plane Metrics */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Swing Plane Analysis</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Swing Plane Analysis
+        </h3>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <MetricCard
@@ -328,7 +342,7 @@ export default function MetricsPanel({
           />
           <MetricCard
             title="On Plane"
-            value={plane.onPlane ? 'Yes' : 'No'}
+            value={plane.onPlane ? "Yes" : "No"}
             good={plane.onPlane}
           />
         </div>
@@ -354,7 +368,9 @@ export default function MetricsPanel({
 
       {/* Posture Metrics */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Posture Analysis</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Posture Analysis
+        </h3>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <MetricCard
@@ -365,23 +381,25 @@ export default function MetricsPanel({
           />
           <MetricCard
             title="Early Extension"
-            value={posture.earlyExtension ? 'Detected' : 'None'}
+            value={posture.earlyExtension ? "Detected" : "None"}
             good={!posture.earlyExtension}
           />
           <MetricCard
             title="Loss of Posture"
-            value={posture.lossOfPosture ? 'Detected' : 'None'}
+            value={posture.lossOfPosture ? "Detected" : "None"}
             good={!posture.lossOfPosture}
           />
           <MetricCard
             title="Reverse Spine"
-            value={posture.reverseSpineTilt ? 'Detected' : 'None'}
+            value={posture.reverseSpineTilt ? "Detected" : "None"}
             good={!posture.reverseSpineTilt}
           />
         </div>
 
         <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">Address Posture</h4>
+          <h4 className="text-sm font-medium text-gray-700 mb-2">
+            Address Posture
+          </h4>
           <div className="grid grid-cols-3 gap-4">
             <div>
               <p className="text-xs text-gray-500">Spine Angle</p>
@@ -398,7 +416,7 @@ export default function MetricsPanel({
             <div>
               <p className="text-xs text-gray-500">Arm Hang</p>
               <p className="text-lg font-medium text-gray-900 capitalize">
-                {posture.addressPosture.armHang.replace('_', ' ')}
+                {posture.addressPosture.armHang.replace("_", " ")}
               </p>
             </div>
           </div>

@@ -18,7 +18,6 @@ on:
       - ".github/workflows/topology-governance.yml"
 
 jobs:
-
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
     runs-on: ubuntu-latest

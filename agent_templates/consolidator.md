@@ -46,26 +46,22 @@ The Consolidator is responsible for the daily task of combining multiple pending
 ### Daily Consolidation Process
 
 1. **Discovery Phase**
-
    - List all open PRs targeting main/master
    - Filter out WIP, blocked, or do-not-consolidate PRs
    - Identify PRs that are approved or from trusted sources (jules-bot with passing CI)
 
 2. **Analysis Phase**
-
    - Check for conflicting changes between PRs
    - Identify dependency order (some PRs may depend on others)
    - Estimate consolidation complexity
 
 3. **Consolidation Phase**
-
    - Create fresh branch: `consolidated-prs-YYYY-MM-DD`
    - Merge PRs in dependency order
    - Resolve conflicts with documented decisions
    - Run local CI checks if possible
 
 4. **Verification Phase**
-
    - Push consolidated branch
    - Wait for CI/CD to complete
    - If failures: identify culprit PR, exclude it, retry

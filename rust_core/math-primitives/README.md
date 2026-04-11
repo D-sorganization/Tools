@@ -4,13 +4,13 @@ SE3/SO3 math kernel and geometric collision primitives for the fleet.
 
 ## Modules
 
-| Module | Purpose |
-|---|---|
-| `quaternion.rs` | Unit quaternion type, Hamilton product, SLERP, inverse, normalize |
-| `rotation.rs` | Euler ↔ rotation matrix ↔ quaternion ↔ axis-angle conversions |
-| `transform.rs` | `Pose6DOF` and `Transform6DOF` structs with compose, inverse, interpolate |
-| `geometry.rs` | Sphere, OrientedBox, Capsule, Cylinder with AABB, containment, support mapping, distance/collision |
-| `py_bindings.rs` | PyO3 Python bindings (feature-gated behind `python`) |
+| Module           | Purpose                                                                                            |
+| ---------------- | -------------------------------------------------------------------------------------------------- |
+| `quaternion.rs`  | Unit quaternion type, Hamilton product, SLERP, inverse, normalize                                  |
+| `rotation.rs`    | Euler ↔ rotation matrix ↔ quaternion ↔ axis-angle conversions                                      |
+| `transform.rs`   | `Pose6DOF` and `Transform6DOF` structs with compose, inverse, interpolate                          |
+| `geometry.rs`    | Sphere, OrientedBox, Capsule, Cylinder with AABB, containment, support mapping, distance/collision |
+| `py_bindings.rs` | PyO3 Python bindings (feature-gated behind `python`)                                               |
 
 ## Quick Start
 
@@ -39,8 +39,8 @@ println!("Distance: {}", result.distance);
 
 ## Feature Flags
 
-| Flag | Description |
-|---|---|
+| Flag     | Description                              |
+| -------- | ---------------------------------------- |
 | `python` | Enables PyO3 bindings for Python interop |
 
 ## Design by Contract

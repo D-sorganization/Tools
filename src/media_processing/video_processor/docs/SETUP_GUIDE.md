@@ -81,24 +81,20 @@ All documentation is in the `docs/` folder:
 ### Phase 1: MVP (Start Here)
 
 1. **Video Upload** (`apps/web/components/video/VideoUploader.tsx`)
-
    - Drag-and-drop upload
    - File validation
    - Upload to Cloudflare R2
 
 2. **Video Player** (`apps/web/components/video/VideoPlayer.tsx`)
-
    - Playback controls
    - Timeline scrubber
    - Frame-by-frame navigation
 
 3. **Basic Drawing** (`apps/web/components/tools/LineTool.tsx`)
-
    - Line drawing on video
    - Save annotations
 
 4. **User Authentication** (`apps/web/app/(auth)/`)
-
    - NextAuth.js setup
    - Email/password auth
 
