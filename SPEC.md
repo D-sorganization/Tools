@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.40                                     |
+| **Spec Version**        | 1.1.41                                     |
 | **Last Spec Update**    | 2026-04-11                                 |
 
 ## 2. Purpose & Mission
@@ -449,6 +449,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 2026-04-11 | 1.1.41  | Added a full reset control to the lower-body PyQt panel that stops playback, clears history, returns MuJoCo time to zero, preserves loaded golf hip rotation targets, and reapplies the target pose at `t=0`. |
 | 2026-04-11 | 1.1.40  | Added `tools.shared.python.model_generation.editor` compatibility exports (including `TextEditor` alias) to support removing duplicate model editor implementations in downstream repos that consume Tools as a dependency. |
 | 2026-04-11 | 1.1.39  | Extended lower-body simulator history playback diagnostics so cached frames expose the configured inclined-plane hip rotation target for scrub-based analysis and verification. |
 | 2026-04-11 | 1.1.38  | Added the lower-body inclined-plane hip rotation target profile with deterministic sampling, DbC validation, both-socket simulator application, and diagnostics/history coverage for the first golf lower-body rotation slice. |
