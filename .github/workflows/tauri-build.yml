@@ -35,6 +35,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
     runs-on: ubuntu-latest

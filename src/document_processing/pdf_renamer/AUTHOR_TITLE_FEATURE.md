@@ -172,10 +172,12 @@ _generate_filename('machine learning basics', 'John Smith', 'kebab_case', True)
 ## Limitations
 
 1. **Author Detection**: Only works if PDF has author metadata
+
    - Many PDFs don't include author information
    - No heuristic/AI author extraction (could be added later)
 
 2. **Multi-Author Papers**: Takes only last name of first author
+
    - "John Smith and Jane Doe" → "Smith"
    - Could add logic to handle "et al." in future
 

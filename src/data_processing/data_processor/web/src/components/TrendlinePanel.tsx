@@ -1,11 +1,6 @@
-import { useEffect, useState } from "react";
-import { TrendingUp, LineChart, Save, Folder } from "lucide-react";
-import type {
-  TrendlineType,
-  TrendlineConfig,
-  TrendlineResult,
-  PlotConfig,
-} from "../types";
+import { useEffect, useState } from 'react';
+import { TrendingUp, LineChart, Save, Folder } from 'lucide-react';
+import type { TrendlineType, TrendlineConfig, TrendlineResult, PlotConfig } from '../types';
 
 interface TrendlinePanelProps {
   signals: string[];
@@ -28,15 +23,15 @@ export function TrendlinePanel({
   savedConfigs,
   onLoadPlotConfig,
 }: TrendlinePanelProps) {
-  const [trendlineType, setTrendlineType] = useState<TrendlineType>("linear");
+  const [trendlineType, setTrendlineType] = useState<TrendlineType>('linear');
   const [degree, setDegree] = useState(2);
-  const [xColumn, setXColumn] = useState(timeColumn || "");
-  const [yColumn, setYColumn] = useState(selectedSignals[0] || "");
-  const [xMin, setXMin] = useState("");
-  const [xMax, setXMax] = useState("");
+  const [xColumn, setXColumn] = useState(timeColumn || '');
+  const [yColumn, setYColumn] = useState(selectedSignals[0] || '');
+  const [xMin, setXMin] = useState('');
+  const [xMax, setXMax] = useState('');
   const [result, setResult] = useState<TrendlineResult | null>(null);
-  const [configName, setConfigName] = useState("");
-  const [selectedConfig, setSelectedConfig] = useState("");
+  const [configName, setConfigName] = useState('');
+  const [selectedConfig, setSelectedConfig] = useState('');
 
   // Update xColumn when timeColumn changes
   useEffect(() => {
@@ -55,7 +50,7 @@ export function TrendlinePanel({
       type: trendlineType,
       xColumn,
       yColumn,
-      degree: trendlineType === "polynomial" ? degree : undefined,
+      degree: trendlineType === 'polynomial' ? degree : undefined,
       xMin: xMin ? parseFloat(xMin) : undefined,
       xMax: xMax ? parseFloat(xMax) : undefined,
     };
@@ -84,7 +79,7 @@ export function TrendlinePanel({
     };
 
     onSavePlotConfig(config);
-    setConfigName("");
+    setConfigName('');
   };
 
   const handleLoadConfig = () => {
@@ -94,8 +89,8 @@ export function TrendlinePanel({
       setXColumn(config.xAxis);
       if (config.trendline) {
         setTrendlineType(config.trendline.type);
-        setXMin(config.trendline.xMin?.toString() || "");
-        setXMax(config.trendline.xMax?.toString() || "");
+        setXMin(config.trendline.xMin?.toString() || '');
+        setXMax(config.trendline.xMax?.toString() || '');
         if (config.trendline.degree) setDegree(config.trendline.degree);
       }
     }
@@ -146,15 +141,11 @@ export function TrendlinePanel({
           </div>
 
           <div className="space-y-1">
-            <label className="block text-xs text-dark-400">
-              Trendline Type
-            </label>
+            <label className="block text-xs text-dark-400">Trendline Type</label>
             <select
               className="select w-full"
               value={trendlineType}
-              onChange={(e) =>
-                setTrendlineType(e.target.value as TrendlineType)
-              }
+              onChange={(e) => setTrendlineType(e.target.value as TrendlineType)}
               disabled={disabled}
             >
               <option value="linear">Linear</option>
@@ -164,11 +155,9 @@ export function TrendlinePanel({
             </select>
           </div>
 
-          {trendlineType === "polynomial" && (
+          {trendlineType === 'polynomial' && (
             <div className="space-y-1">
-              <label className="block text-xs text-dark-400">
-                Polynomial Degree
-              </label>
+              <label className="block text-xs text-dark-400">Polynomial Degree</label>
               <input
                 type="number"
                 className="input w-full"
@@ -183,9 +172,7 @@ export function TrendlinePanel({
 
           <div className="grid grid-cols-2 gap-2">
             <div className="space-y-1">
-              <label className="block text-xs text-dark-400">
-                X Min (optional)
-              </label>
+              <label className="block text-xs text-dark-400">X Min (optional)</label>
               <input
                 type="number"
                 className="input w-full"
@@ -196,9 +183,7 @@ export function TrendlinePanel({
               />
             </div>
             <div className="space-y-1">
-              <label className="block text-xs text-dark-400">
-                X Max (optional)
-              </label>
+              <label className="block text-xs text-dark-400">X Max (optional)</label>
               <input
                 type="number"
                 className="input w-full"
@@ -223,9 +208,7 @@ export function TrendlinePanel({
         {/* Results */}
         {result && (
           <div className="bg-dark-700/50 rounded-lg p-3 space-y-2">
-            <h4 className="text-xs font-medium text-dark-400">
-              Trendline Result
-            </h4>
+            <h4 className="text-xs font-medium text-dark-400">Trendline Result</h4>
             <div className="text-sm space-y-1">
               <div className="flex justify-between">
                 <span className="text-dark-500">Type:</span>
@@ -233,15 +216,11 @@ export function TrendlinePanel({
               </div>
               <div className="flex justify-between">
                 <span className="text-dark-500">Equation:</span>
-                <span className="text-dark-200 font-mono text-xs">
-                  {result.equation}
-                </span>
+                <span className="text-dark-200 font-mono text-xs">{result.equation}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-dark-500">R²:</span>
-                <span className="text-dark-200">
-                  {result.rSquared.toFixed(6)}
-                </span>
+                <span className="text-dark-200">{result.rSquared.toFixed(6)}</span>
               </div>
             </div>
           </div>
@@ -249,9 +228,7 @@ export function TrendlinePanel({
 
         {/* Save/Load Plot Config */}
         <div className="pt-4 border-t border-dark-700 space-y-3">
-          <h4 className="text-xs font-medium text-dark-400">
-            Plot Configuration
-          </h4>
+          <h4 className="text-xs font-medium text-dark-400">Plot Configuration</h4>
 
           <div className="flex gap-2">
             <input

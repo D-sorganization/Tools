@@ -6,170 +6,102 @@
  *   Shaft: m2 = 0.30 kg, L2 = 1.10 m (golf club shaft length)
  *   Clubhead: mClub = 0.20 kg (200g driver head)
  */
-import type { PendulumParams, TorqueFunc } from "./physics";
-import { makePolynomialTorque, makePendulumParams } from "./physics";
+import type { PendulumParams, TorqueFunc } from './physics';
+import { makePolynomialTorque, makePendulumParams } from './physics';
 
 export interface Preset {
-  name: string;
-  params: PendulumParams;
-  theta1Deg: number;
-  phiDeg: number;
-  dtheta1: number;
-  dphi: number;
-  torqueFunc: TorqueFunc;
-  coeffsShoulder: number[];
-  coeffsWrist: number[];
-  tEnd: number;
-  description: string;
+    name: string;
+    params: PendulumParams;
+    theta1Deg: number;
+    phiDeg: number;
+    dtheta1: number;
+    dphi: number;
+    torqueFunc: TorqueFunc;
+    coeffsShoulder: number[];
+    coeffsWrist: number[];
+    tEnd: number;
+    description: string;
 }
 
 /** Small factory for building presets (DRY). */
 const _preset = (
-  name: string,
-  m1: number,
-  m2: number,
-  mClub: number,
-  L1: number,
-  L2: number,
-  b1: number,
-  b2: number,
-  mu1: number,
-  mu2: number,
-  theta1Deg: number,
-  phiDeg: number,
-  dtheta1: number,
-  dphi: number,
-  cShoulder: number[],
-  cWrist: number[],
-  tEnd: number,
-  description: string,
+    name: string,
+    m1: number, m2: number, mClub: number,
+    L1: number, L2: number,
+    b1: number, b2: number, mu1: number, mu2: number,
+    theta1Deg: number, phiDeg: number,
+    dtheta1: number, dphi: number,
+    cShoulder: number[], cWrist: number[],
+    tEnd: number,
+    description: string,
 ): Preset => {
-  const params = makePendulumParams({
-    m1,
-    m2,
-    mClub,
-    L1,
-    L2,
-    g: 9.81,
-    b1,
-    b2,
-    mu1,
-    mu2,
-  });
-  return {
-    name,
-    params,
-    theta1Deg,
-    phiDeg,
-    dtheta1,
-    dphi,
-    torqueFunc: makePolynomialTorque(cShoulder, cWrist),
-    coeffsShoulder: cShoulder,
-    coeffsWrist: cWrist,
-    tEnd,
-    description,
-  };
+    const params = makePendulumParams({
+        m1, m2, mClub, L1, L2, g: 9.81, b1, b2, mu1, mu2,
+    });
+    return {
+        name,
+        params,
+        theta1Deg,
+        phiDeg,
+        dtheta1,
+        dphi,
+        torqueFunc: makePolynomialTorque(cShoulder, cWrist),
+        coeffsShoulder: cShoulder,
+        coeffsWrist: cWrist,
+        tEnd,
+        description,
+    };
 };
 
 export const PRESETS: Preset[] = [
-  _preset(
-    "Golf Swing (passive wrist)",
-    5.0,
-    0.3,
-    0.2, // arms 5 kg, shaft 0.3 kg, clubhead 0.2 kg
-    0.65,
-    1.1, // arms 0.65 m, shaft 1.10 m
-    0.1,
-    0.05,
-    0.02,
-    0.01,
-    -60,
-    80,
-    0,
-    0,
-    [-25, 10],
-    [0],
-    2.0,
-    "Shoulder-driven swing with zero wrist torque — demonstrates passive release via inertial coupling.",
-  ),
-  _preset(
-    "Golf Swing (active wrist)",
-    5.0,
-    0.3,
-    0.2,
-    0.65,
-    1.1,
-    0.1,
-    0.05,
-    0.02,
-    0.01,
-    -60,
-    80,
-    0,
-    0,
-    [-25, 10],
-    [5, -3],
-    2.0,
-    "Adds a small wrist torque for comparison with the passive case.",
-  ),
-  _preset(
-    "Heavy Clubhead",
-    5.0,
-    0.3,
-    0.35, // heavier clubhead (350g)
-    0.65,
-    1.1,
-    0.1,
-    0.05,
-    0.02,
-    0.01,
-    -60,
-    80,
-    0,
-    0,
-    [-30, 12],
-    [0],
-    2.0,
-    "Heavier clubhead (350g) — more momentum transfer, slower release.",
-  ),
-  _preset(
-    "Free Double Pendulum",
-    1.0,
-    1.0,
-    0.0, // no clubhead for classic pendulum
-    1.0,
-    1.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    90,
-    0,
-    0,
-    0,
-    [0],
-    [0],
-    5.0,
-    "No torques, no clubhead — chaotic dynamics demonstrating energy-conserving Lagrangian mechanics.",
-  ),
-  _preset(
-    "Straight Drop",
-    2.0,
-    1.0,
-    0.0,
-    0.8,
-    0.8,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    5,
-    0,
-    0,
-    0,
-    [0],
-    [0],
-    3.0,
-    "Near-vertical release with no driving torques.",
-  ),
+    _preset(
+        'Golf Swing (passive wrist)',
+        5.0, 0.30, 0.20,  // arms 5 kg, shaft 0.3 kg, clubhead 0.2 kg
+        0.65, 1.10,        // arms 0.65 m, shaft 1.10 m
+        0.1, 0.05, 0.02, 0.01,
+        -60, 80, 0, 0,
+        [-25, 10], [0],
+        2.0,
+        'Shoulder-driven swing with zero wrist torque — demonstrates passive release via inertial coupling.',
+    ),
+    _preset(
+        'Golf Swing (active wrist)',
+        5.0, 0.30, 0.20,
+        0.65, 1.10,
+        0.1, 0.05, 0.02, 0.01,
+        -60, 80, 0, 0,
+        [-25, 10], [5, -3],
+        2.0,
+        'Adds a small wrist torque for comparison with the passive case.',
+    ),
+    _preset(
+        'Heavy Clubhead',
+        5.0, 0.30, 0.35,  // heavier clubhead (350g)
+        0.65, 1.10,
+        0.1, 0.05, 0.02, 0.01,
+        -60, 80, 0, 0,
+        [-30, 12], [0],
+        2.0,
+        'Heavier clubhead (350g) — more momentum transfer, slower release.',
+    ),
+    _preset(
+        'Free Double Pendulum',
+        1.0, 1.0, 0.0,    // no clubhead for classic pendulum
+        1.0, 1.0,
+        0.0, 0.0, 0.0, 0.0,
+        90, 0, 0, 0,
+        [0], [0],
+        5.0,
+        'No torques, no clubhead — chaotic dynamics demonstrating energy-conserving Lagrangian mechanics.',
+    ),
+    _preset(
+        'Straight Drop',
+        2.0, 1.0, 0.0,
+        0.8, 0.8,
+        0.0, 0.0, 0.0, 0.0,
+        5, 0, 0, 0,
+        [0], [0],
+        3.0,
+        'Near-vertical release with no driving torques.',
+    ),
 ];

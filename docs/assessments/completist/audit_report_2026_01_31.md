@@ -45,9 +45,11 @@ The `todo_markers.txt` file contains entries that no longer exist in the codebas
 The audit identified several non-actionable matches:
 
 1.  **Quality Assurance Tools**:
+
     - Regex patterns in `tools/code_quality_check.py`, `scripts/quality-check.py`, and `matlab_quality_check.py` used for enforcement.
 
 2.  **Documentation & Policies**:
+
     - `README.md`, `.cursor/rules/.cursorrules.md`, and `copilot-instructions.md` mentioning "TRACKED_TASK" as a banned pattern.
 
 3.  **Archived Assessments**:

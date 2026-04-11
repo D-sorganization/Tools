@@ -5,7 +5,6 @@ This guide explains how to integrate the new triple pendulum (3-DOF) and golfer 
 ## Files Created
 
 ### Physics Implementations
-
 1. **`src/physics_triple.ts`** - Triple pendulum physics (3-DOF)
    - 3×3 mass matrix with analytical expressions
    - Coriolis and gravity vectors
@@ -19,7 +18,6 @@ This guide explains how to integrate the new triple pendulum (3-DOF) and golfer 
    - Forward kinematics for all 7 mass points + club tip
 
 ### Presets
-
 3. **`src/presets_triple.ts`** - Triple pendulum presets
    - "Three-Segment Swing (passive)"
    - "Three-Segment Swing (active)"
@@ -31,7 +29,6 @@ This guide explains how to integrate the new triple pendulum (3-DOF) and golfer 
    - "Free Golfer Body (no torques)"
 
 ### React Components
-
 5. **`src/components/TriplePendulumCanvas.tsx`** - 3-segment canvas renderer
    - Renders shoulder → elbow → wrist → tip chain
    - Color-coded segments (blue, orange, green)
@@ -46,7 +43,6 @@ This guide explains how to integrate the new triple pendulum (3-DOF) and golfer 
    - Club trail
 
 ### Updated App
-
 7. **`src/AppNew.tsx`** - Refactored main app with model selector
    - Model tabs at top: Double / Triple / Golfer
    - Model-specific control panels
@@ -56,23 +52,18 @@ This guide explains how to integrate the new triple pendulum (3-DOF) and golfer 
 ## Integration Steps
 
 ### Step 1: Backup Current App
-
 ```bash
 cp src/App.tsx src/App.backup.tsx
 ```
 
 ### Step 2: Update `src/App.tsx`
-
 Replace the existing `src/App.tsx` with `AppNew.tsx`:
-
 ```bash
 mv src/AppNew.tsx src/App.tsx
 ```
 
 ### Step 3: Verify Imports
-
 The new App.tsx imports the new physics modules and components:
-
 - `import { TriplePendulumCanvas } from './components/TriplePendulumCanvas';`
 - `import { GolferCanvas } from './components/GolferCanvas';`
 - `import { PRESETS_TRIPLE } from './presets_triple';`
@@ -83,9 +74,7 @@ The new App.tsx imports the new physics modules and components:
 These imports are already in the new AppNew.tsx file.
 
 ### Step 4: Install TypeScript (if not done)
-
 The app uses TypeScript. Ensure your project has:
-
 ```json
 {
   "devDependencies": {
@@ -95,13 +84,11 @@ The app uses TypeScript. Ensure your project has:
 ```
 
 ### Step 5: Run Type Check (optional)
-
 ```bash
 npx tsc --noEmit
 ```
 
 ### Step 6: Start Dev Server
-
 ```bash
 npm run dev
 ```
@@ -137,32 +124,26 @@ pendulum-web/src/
 ## Key Design Decisions
 
 ### 1. Physics Models
-
 - **Double**: 2 DOF, 2×2 mass matrix, no constraints
 - **Triple**: 3 DOF, 3×3 mass matrix, no constraints
 - **Golfer**: 8 DOF, 4 holonomic constraints, simplified KKT solver
 
 ### 2. Coordinate Systems
-
 All models use the same local coordinate frame:
-
 - Origin at shoulder/hub
 - x-axis: horizontal (right positive)
 - y-axis: vertical (up positive)
 - Angles measured counterclockwise from downward vertical
 
 ### 3. Simulation Timestep
-
 All models use RK4 integration with dt = 0.005 s (200 Hz)
 
 ### 4. Torque Functions
-
 Each model supports polynomial torque functions: τ(t) = c₀ + c₁t + c₂t² + …
 
 For golfer (8 DOF), the preset provides zero torques to show constraint-driven dynamics.
 
 ### 5. Canvas Rendering
-
 - **PendulumCanvas**: 2-segment (existing)
 - **TriplePendulumCanvas**: 3-segment chain
 - **GolferCanvas**: Hub + 2 arms + club (skeletal animation)
@@ -172,14 +153,12 @@ All scale to fit viewport and animate smoothly.
 ## Testing Each Model
 
 ### Double Pendulum (Existing)
-
 1. Select "Double Pendulum" tab
 2. Choose preset: "Golf Swing (passive wrist)"
 3. Run simulation
 4. Verify: arms and shaft rotate, clubhead swings
 
 ### Triple Pendulum (New)
-
 1. Select "Triple Pendulum" tab
 2. Choose preset: "Three-Segment Swing (passive)"
 3. Run simulation
@@ -187,7 +166,6 @@ All scale to fit viewport and animate smoothly.
 5. Watch tip trace move in canvas
 
 ### Golfer Upper-Body (New)
-
 1. Select "Golfer" tab
 2. Choose preset: "Golfer Upper Body (symmetric swing)"
 3. Run simulation
@@ -199,106 +177,46 @@ All scale to fit viewport and animate smoothly.
 ### Adding New Presets
 
 #### For Triple:
-
 ```typescript
 // In presets_triple.ts
 _preset_triple(
-  "My Triple Swing",
-  2.0,
-  1.5,
-  0.5,
-  0.2, // masses
-  0.35,
-  0.25,
-  0.15, // lengths
-  0.05,
-  0.04,
-  0.03, // damping
-  -45,
-  30,
-  45,
-  0,
-  0,
-  0, // initial angles & velocities
-  [-15, 5],
-  [3, -1],
-  [1], // torque coeffs (shoulder, elbow, wrist)
-  2.0, // duration
-  "My custom swing description",
+  'My Triple Swing',
+  2.0, 1.5, 0.5, 0.20,   // masses
+  0.35, 0.25, 0.15,       // lengths
+  0.05, 0.04, 0.03,       // damping
+  -45, 30, 45, 0, 0, 0,   // initial angles & velocities
+  [-15, 5], [3, -1], [1], // torque coeffs (shoulder, elbow, wrist)
+  2.0,                     // duration
+  'My custom swing description'
 );
 ```
 
 #### For Golfer:
-
 ```typescript
 // In presets_golfer.ts
 _preset_golfer(
-  "My Golfer Swing",
-  3.0,
-  3.0,
-  1.5,
-  3.0,
-  1.5,
-  0.3,
-  0.2, // masses
-  0.25,
-  0.3,
-  0.25,
-  0.3,
-  0.25,
-  1.1, // lengths
-  0.15,
-  0.15,
-  0.1,
-  0.1, // offsets & grips
-  0.1,
-  0.08,
-  0.06,
-  0.04,
-  0.08,
-  0.06,
-  0.04, // damping
-  -30,
-  -45,
-  30,
-  0,
-  -45,
-  30,
-  0,
-  0, // initial angles
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0, // initial velocities
-  [-15, 5],
-  [0],
-  [0],
-  [0],
-  [0],
-  [0],
-  [0], // torques
+  'My Golfer Swing',
+  3.0, 3.0, 1.5, 3.0, 1.5, 0.30, 0.20,  // masses
+  0.25, 0.30, 0.25, 0.30, 0.25, 1.10,    // lengths
+  0.15, 0.15, 0.10, 0.10,                 // offsets & grips
+  0.1, 0.08, 0.06, 0.04, 0.08, 0.06, 0.04, // damping
+  -30, -45, 30, 0, -45, 30, 0, 0,        // initial angles
+  0, 0, 0, 0, 0, 0, 0, 0,                // initial velocities
+  [-15, 5], [0], [0], [0], [0], [0], [0], // torques
   2.0,
-  "Custom golfer preset",
+  'Custom golfer preset'
 );
 ```
 
 ### Modifying Mass Matrix Computation
-
 The triple and golfer models compute M(q) analytically:
-
 - **Triple**: See `massMatrix3()` in physics_triple.ts
 - **Golfer**: See `massMatrix_golfer()` in physics_golfer.ts (currently simplified)
 
 To improve the golfer model's mass matrix, implement full analytical Jacobians for each mass point.
 
 ### Extending Constraints (Golfer)
-
 The golfer model uses simplified constraint penalties. To implement full KKT:
-
 1. Compute constraint Jacobian Φ_q (done in `constraintJacobian()`)
 2. Assemble 12×12 KKT matrix: [M Φ_q^T; Φ_q 0]
 3. Solve for accelerations and Lagrange multipliers
@@ -329,24 +247,20 @@ For better golfer performance, implement analytical Jacobians and reduce constra
 ## Troubleshooting
 
 ### "Cannot find module" errors
-
 - Ensure all 6 new TypeScript files are in `src/`
 - Run `npm install` if package.json dependencies are missing
 
 ### Simulation won't run
-
 - Check browser console for errors
 - Verify torque coefficient parsing (comma-separated values)
 - Ensure initial angles are in valid range (radians after conversion)
 
 ### Canvas doesn't animate
-
 - Verify "Play" button is clicked (controls panel bottom)
 - Check that simulation produced states (> 2 timesteps)
 - Inspect browser console for canvas context errors
 
 ### Performance issues
-
 - Reduce simulation dt (make smaller for faster playback)
 - Lower animation frame rate by increasing speed slider
 - For golfer, reduce constraint penalty gain K in equationsOfMotion_golfer()
@@ -376,20 +290,17 @@ For better golfer performance, implement analytical Jacobians and reduce constra
 ## References
 
 ### Physics
-
 - Lagrange equations: Goldstein, "Classical Mechanics" (3rd ed.)
 - Constrained dynamics: Baumgarte, "Stabilization of constraints..." (1972)
 - RK4 integration: Hairer & Wanner, "Solving Ordinary Differential Equations"
 
 ### Code
-
 - See comments in `physics_triple.ts` and `physics_golfer.ts` for detailed derivations
 - Mass matrix formulas are inline-documented
 
 ## Support
 
 For questions or issues:
-
 1. Check the integration guide above
 2. Review comments in physics files
 3. Examine preset configurations for examples

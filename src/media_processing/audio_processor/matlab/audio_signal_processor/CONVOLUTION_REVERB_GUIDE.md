@@ -58,16 +58,19 @@ processed = reverb.process(audio, fs);
 **Free IR Libraries:**
 
 1. **OpenAIR** (University of York)
+
    - URL: https://www.openair.hosted.york.ac.uk/
    - 100+ free IRs from real spaces
    - Concert halls, churches, studios, stairwells, etc.
 
 2. **EchoThief** (Audioease)
+
    - URL: http://www.echothief.com/
    - Free IRs from famous spaces
    - Very high quality
 
 3. **Voxengo Impulses**
+
    - Free IR library
    - Various spaces and vintage hardware
 

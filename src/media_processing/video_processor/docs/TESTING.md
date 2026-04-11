@@ -288,6 +288,7 @@ Run `npm run test:coverage` to see current coverage.
    ```
 
 2. **Focus on critical paths:**
+
    - Video upload and validation
    - Error handling
    - User interactions

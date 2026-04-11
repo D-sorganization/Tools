@@ -153,16 +153,19 @@ python build_exe.py
 ### Basic Workflow
 
 1. **Add Source Folders**
+
    - Click "➕ Add Folder" to add folders to process
    - Add multiple folders for batch operations
    - Remove unwanted folders with "➖ Remove"
 
 2. **Select Destination**
+
    - Click "Browse" next to destination field
    - Choose where processed files should go
    - Not needed for "Analyze Only" mode
 
 3. **Choose Operation Mode**
+
    - **Combine & Copy**: Merge files from all sources
    - **Flatten & Tidy**: Remove directory nesting
    - **Copy & Prune Empty**: Skip empty folders
@@ -170,6 +173,7 @@ python build_exe.py
    - **Analyze Only**: Scan without changes
 
 4. **Configure Options**
+
    - Enable desired processing options
    - Set deduplication method if needed
    - Configure filters in the Filters tab

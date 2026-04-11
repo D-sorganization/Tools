@@ -11,15 +11,15 @@ import {
   PoseLandmark,
   StanceDirection,
   SwingPhase,
-} from "./types";
+} from './types';
 import {
   calculateBodyAngles,
   calculateAngularVelocity,
   getMidpoint,
   calculateDistance,
-} from "./angleCalculator";
+} from './angleCalculator';
 
-export type { PhaseTransition } from "./types";
+export type { PhaseTransition } from './types';
 
 export interface PhaseDetectionResult {
   phases: PhaseTransition[];
@@ -42,7 +42,7 @@ export interface PhaseDetectionResult {
 export function detectSwingPhases(
   poseFrames: PoseFrame[],
   fps: number = 30,
-  stance: StanceDirection = StanceDirection.RIGHT_HANDED,
+  stance: StanceDirection = StanceDirection.RIGHT_HANDED
 ): PhaseDetectionResult {
   if (poseFrames.length < 10) {
     return {
@@ -57,7 +57,7 @@ export function detectSwingPhases(
     (frame) => ({
       frame: frame.frameNumber,
       angles: calculateBodyAngles(frame.landmarks, stance),
-    }),
+    })
   );
 
   // Calculate velocities
@@ -84,20 +84,10 @@ export function detectSwingPhases(
  */
 function calculateVelocityProfile(
   angleHistory: { frame: number; angles: BodyAngles }[],
-  fps: number,
-): {
-  frame: number;
-  shoulderVelocity: number;
-  hipVelocity: number;
-  handVelocity: number;
-}[] {
+  fps: number
+): { frame: number; shoulderVelocity: number; hipVelocity: number; handVelocity: number }[] {
   const frameDuration = 1000 / fps;
-  const velocities: {
-    frame: number;
-    shoulderVelocity: number;
-    hipVelocity: number;
-    handVelocity: number;
-  }[] = [];
+  const velocities: { frame: number; shoulderVelocity: number; hipVelocity: number; handVelocity: number }[] = [];
 
   for (let i = 1; i < angleHistory.length; i++) {
     const prev = angleHistory[i - 1];
@@ -106,20 +96,20 @@ function calculateVelocityProfile(
     const shoulderVelocity = calculateAngularVelocity(
       prev.angles.shoulderRotation,
       curr.angles.shoulderRotation,
-      frameDuration,
+      frameDuration
     );
 
     const hipVelocity = calculateAngularVelocity(
       prev.angles.hipRotation,
       curr.angles.hipRotation,
-      frameDuration,
+      frameDuration
     );
 
     // Approximate hand velocity using wrist angle changes
     const handVelocity = calculateAngularVelocity(
       prev.angles.leftWristAngle + prev.angles.rightWristAngle,
       curr.angles.leftWristAngle + curr.angles.rightWristAngle,
-      frameDuration,
+      frameDuration
     );
 
     velocities.push({
@@ -138,12 +128,8 @@ function calculateVelocityProfile(
  */
 function findKeyFrames(
   angleHistory: { frame: number; angles: BodyAngles }[],
-  velocityHistory: {
-    frame: number;
-    shoulderVelocity: number;
-    hipVelocity: number;
-  }[],
-  stance: StanceDirection,
+  velocityHistory: { frame: number; shoulderVelocity: number; hipVelocity: number }[],
+  stance: StanceDirection
 ): {
   address?: number;
   takeaway?: number;
@@ -175,53 +161,32 @@ function findKeyFrames(
 
   // Find transition: where hip starts moving toward target before shoulders
   if (keyFrames.top !== undefined) {
-    keyFrames.transition = findTransitionFrame(
-      angleHistory,
-      velocityHistory,
-      keyFrames.top,
-    );
+    keyFrames.transition = findTransitionFrame(angleHistory, velocityHistory, keyFrames.top);
   }
 
   // Find impact: maximum downswing velocity and return to address-like angles
   if (keyFrames.top !== undefined) {
-    keyFrames.impact = findImpactFrame(
-      angleHistory,
-      velocityHistory,
-      keyFrames.top,
-    );
+    keyFrames.impact = findImpactFrame(angleHistory, velocityHistory, keyFrames.top);
   }
 
   // Find takeaway: first significant movement from address
   if (keyFrames.address !== undefined && keyFrames.top !== undefined) {
-    keyFrames.takeaway = findTakeawayFrame(
-      angleHistory,
-      velocityHistory,
-      keyFrames.address,
-    );
+    keyFrames.takeaway = findTakeawayFrame(angleHistory, velocityHistory, keyFrames.address);
   }
 
   // Find mid-backswing
   if (keyFrames.takeaway !== undefined && keyFrames.top !== undefined) {
-    keyFrames.midBackswing = Math.floor(
-      (keyFrames.takeaway + keyFrames.top) / 2,
-    );
+    keyFrames.midBackswing = Math.floor((keyFrames.takeaway + keyFrames.top) / 2);
   }
 
   // Find follow-through: after impact, shoulder rotation continues
   if (keyFrames.impact !== undefined) {
-    keyFrames.followThrough = findFollowThroughFrame(
-      angleHistory,
-      keyFrames.impact,
-    );
+    keyFrames.followThrough = findFollowThroughFrame(angleHistory, keyFrames.impact);
   }
 
   // Find finish: velocity near zero, rotated past impact
   if (keyFrames.followThrough !== undefined) {
-    keyFrames.finish = findFinishFrame(
-      angleHistory,
-      velocityHistory,
-      keyFrames.followThrough,
-    );
+    keyFrames.finish = findFinishFrame(angleHistory, velocityHistory, keyFrames.followThrough);
   }
 
   return keyFrames;
@@ -232,11 +197,7 @@ function findKeyFrames(
  */
 function findAddressFrame(
   angleHistory: { frame: number; angles: BodyAngles }[],
-  velocityHistory: {
-    frame: number;
-    shoulderVelocity: number;
-    hipVelocity: number;
-  }[],
+  velocityHistory: { frame: number; shoulderVelocity: number; hipVelocity: number }[]
 ): number | undefined {
   // Look for frames with minimal velocity in the first 30% of the video
   const searchEndIdx = Math.floor(angleHistory.length * 0.3);
@@ -246,8 +207,7 @@ function findAddressFrame(
 
   for (let i = 0; i < Math.min(searchEndIdx, velocityHistory.length); i++) {
     const vel = velocityHistory[i];
-    const velocitySum =
-      Math.abs(vel.shoulderVelocity) + Math.abs(vel.hipVelocity);
+    const velocitySum = Math.abs(vel.shoulderVelocity) + Math.abs(vel.hipVelocity);
 
     if (velocitySum < minVelocitySum) {
       minVelocitySum = velocitySum;
@@ -257,11 +217,7 @@ function findAddressFrame(
 
   // Verify address has reasonable spine angle (20-50 degrees)
   const addressAngles = angleHistory[addressIdx]?.angles;
-  if (
-    addressAngles &&
-    addressAngles.spineAngle >= 15 &&
-    addressAngles.spineAngle <= 55
-  ) {
+  if (addressAngles && addressAngles.spineAngle >= 15 && addressAngles.spineAngle <= 55) {
     return angleHistory[addressIdx].frame;
   }
 
@@ -273,7 +229,7 @@ function findAddressFrame(
  */
 function findTopOfBackswing(
   angleHistory: { frame: number; angles: BodyAngles }[],
-  stance: StanceDirection,
+  stance: StanceDirection
 ): number | undefined {
   let maxRotation = -Infinity;
   let topIdx = -1;
@@ -302,12 +258,8 @@ function findTopOfBackswing(
  */
 function findTransitionFrame(
   angleHistory: { frame: number; angles: BodyAngles }[],
-  velocityHistory: {
-    frame: number;
-    shoulderVelocity: number;
-    hipVelocity: number;
-  }[],
-  topFrame: number,
+  velocityHistory: { frame: number; shoulderVelocity: number; hipVelocity: number }[],
+  topFrame: number
 ): number | undefined {
   // Find the index of the top frame
   const topIdx = angleHistory.findIndex((a) => a.frame === topFrame);
@@ -337,12 +289,8 @@ function findTransitionFrame(
  */
 function findImpactFrame(
   angleHistory: { frame: number; angles: BodyAngles }[],
-  velocityHistory: {
-    frame: number;
-    shoulderVelocity: number;
-    hipVelocity: number;
-  }[],
-  topFrame: number,
+  velocityHistory: { frame: number; shoulderVelocity: number; hipVelocity: number }[],
+  topFrame: number
 ): number | undefined {
   const topIdx = angleHistory.findIndex((a) => a.frame === topFrame);
   if (topIdx < 0) return undefined;
@@ -393,12 +341,8 @@ function findImpactFrame(
  */
 function findTakeawayFrame(
   angleHistory: { frame: number; angles: BodyAngles }[],
-  velocityHistory: {
-    frame: number;
-    shoulderVelocity: number;
-    hipVelocity: number;
-  }[],
-  addressFrame: number,
+  velocityHistory: { frame: number; shoulderVelocity: number; hipVelocity: number }[],
+  addressFrame: number
 ): number | undefined {
   const addressIdx = angleHistory.findIndex((a) => a.frame === addressFrame);
   if (addressIdx < 0) return undefined;
@@ -421,7 +365,7 @@ function findTakeawayFrame(
  */
 function findFollowThroughFrame(
   angleHistory: { frame: number; angles: BodyAngles }[],
-  impactFrame: number,
+  impactFrame: number
 ): number | undefined {
   const impactIdx = angleHistory.findIndex((a) => a.frame === impactFrame);
   if (impactIdx < 0) return undefined;
@@ -450,12 +394,8 @@ function findFollowThroughFrame(
  */
 function findFinishFrame(
   angleHistory: { frame: number; angles: BodyAngles }[],
-  velocityHistory: {
-    frame: number;
-    shoulderVelocity: number;
-    hipVelocity: number;
-  }[],
-  followThroughFrame: number,
+  velocityHistory: { frame: number; shoulderVelocity: number; hipVelocity: number }[],
+  followThroughFrame: number
 ): number | undefined {
   const ftIdx = angleHistory.findIndex((a) => a.frame === followThroughFrame);
   if (ftIdx < 0) return undefined;
@@ -492,7 +432,7 @@ function buildPhaseTransitions(
     finish?: number;
   },
   poseFrames: PoseFrame[],
-  fps: number,
+  fps: number
 ): PhaseTransition[] {
   const phases: PhaseTransition[] = [];
   const frameDuration = 1000 / fps;
@@ -500,7 +440,7 @@ function buildPhaseTransitions(
   const addPhase = (
     phase: SwingPhase,
     startFrame: number | undefined,
-    endFrame: number | undefined,
+    endFrame: number | undefined
   ) => {
     if (startFrame === undefined || endFrame === undefined) return;
     if (startFrame > endFrame) return;
@@ -519,22 +459,10 @@ function buildPhaseTransitions(
   addPhase(SwingPhase.TAKEAWAY, keyFrames.takeaway, keyFrames.midBackswing);
   addPhase(SwingPhase.BACKSWING, keyFrames.midBackswing, keyFrames.top);
   addPhase(SwingPhase.TOP_OF_BACKSWING, keyFrames.top, keyFrames.transition);
-  addPhase(
-    SwingPhase.TRANSITION,
-    keyFrames.transition,
-    keyFrames.transition !== undefined ? keyFrames.transition + 2 : undefined,
-  );
+  addPhase(SwingPhase.TRANSITION, keyFrames.transition, keyFrames.transition !== undefined ? keyFrames.transition + 2 : undefined);
   addPhase(SwingPhase.DOWNSWING, keyFrames.transition, keyFrames.impact);
-  addPhase(
-    SwingPhase.IMPACT,
-    keyFrames.impact,
-    keyFrames.impact !== undefined ? keyFrames.impact + 1 : undefined,
-  );
-  addPhase(
-    SwingPhase.FOLLOW_THROUGH,
-    keyFrames.impact,
-    keyFrames.followThrough,
-  );
+  addPhase(SwingPhase.IMPACT, keyFrames.impact, keyFrames.impact !== undefined ? keyFrames.impact + 1 : undefined);
+  addPhase(SwingPhase.FOLLOW_THROUGH, keyFrames.impact, keyFrames.followThrough);
   addPhase(SwingPhase.FINISH, keyFrames.followThrough, keyFrames.finish);
 
   return phases;
@@ -550,7 +478,7 @@ function calculatePhaseConfidence(
     impact?: number;
     finish?: number;
   },
-  poseFrames: PoseFrame[],
+  poseFrames: PoseFrame[]
 ): number {
   let confidence = 0;
   let weights = 0;
@@ -585,7 +513,7 @@ function calculatePhaseConfidence(
  */
 export function getPhaseAtFrame(
   phases: PhaseTransition[],
-  frameNumber: number,
+  frameNumber: number
 ): SwingPhase {
   for (const phase of phases) {
     if (frameNumber >= phase.startFrame && frameNumber <= phase.endFrame) {
@@ -600,26 +528,14 @@ export function getPhaseAtFrame(
  */
 export function calculateTempoQuality(phases: PhaseTransition[]): number {
   const backswingPhases = phases.filter((p) =>
-    [
-      SwingPhase.TAKEAWAY,
-      SwingPhase.BACKSWING,
-      SwingPhase.TOP_OF_BACKSWING,
-    ].includes(p.phase),
+    [SwingPhase.TAKEAWAY, SwingPhase.BACKSWING, SwingPhase.TOP_OF_BACKSWING].includes(p.phase)
   );
   const downswingPhases = phases.filter((p) =>
-    [SwingPhase.TRANSITION, SwingPhase.DOWNSWING, SwingPhase.IMPACT].includes(
-      p.phase,
-    ),
+    [SwingPhase.TRANSITION, SwingPhase.DOWNSWING, SwingPhase.IMPACT].includes(p.phase)
   );
 
-  const backswingDuration = backswingPhases.reduce(
-    (sum, p) => sum + p.duration,
-    0,
-  );
-  const downswingDuration = downswingPhases.reduce(
-    (sum, p) => sum + p.duration,
-    0,
-  );
+  const backswingDuration = backswingPhases.reduce((sum, p) => sum + p.duration, 0);
+  const downswingDuration = downswingPhases.reduce((sum, p) => sum + p.duration, 0);
 
   if (downswingDuration === 0) return 0;
 

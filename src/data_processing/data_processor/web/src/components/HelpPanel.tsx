@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { HelpCircle, ChevronDown, ChevronRight } from "lucide-react";
+import { useState } from 'react';
+import { HelpCircle, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface HelpSection {
   title: string;
@@ -8,7 +8,7 @@ interface HelpSection {
 
 const helpSections: HelpSection[] = [
   {
-    title: "Getting Started",
+    title: 'Getting Started',
     content: `
       1. **Load Data**: Click "Select CSV File" or drag a file to load your data.
       2. **Select Signals**: Use the signal list to choose which signals to analyze.
@@ -18,7 +18,7 @@ const helpSections: HelpSection[] = [
     `,
   },
   {
-    title: "Filters",
+    title: 'Filters',
     content: `
       **Moving Average**: Smooths data by averaging nearby points.
 
@@ -32,7 +32,7 @@ const helpSections: HelpSection[] = [
     `,
   },
   {
-    title: "Integration",
+    title: 'Integration',
     content: `
       Calculate the cumulative integral of signals over time.
 
@@ -43,7 +43,7 @@ const helpSections: HelpSection[] = [
     `,
   },
   {
-    title: "Differentiation",
+    title: 'Differentiation',
     content: `
       Calculate derivatives (rate of change) of signals.
 
@@ -58,7 +58,7 @@ const helpSections: HelpSection[] = [
     `,
   },
   {
-    title: "Resampling",
+    title: 'Resampling',
     content: `
       Change the time resolution of your data.
 
@@ -75,7 +75,7 @@ const helpSections: HelpSection[] = [
     `,
   },
   {
-    title: "Time Range",
+    title: 'Time Range',
     content: `
       Trim data to a specific time window.
 
@@ -84,7 +84,7 @@ const helpSections: HelpSection[] = [
     `,
   },
   {
-    title: "Trendlines",
+    title: 'Trendlines',
     content: `
       Fit mathematical models to your data.
 
@@ -98,7 +98,7 @@ const helpSections: HelpSection[] = [
     `,
   },
   {
-    title: "Custom Formulas",
+    title: 'Custom Formulas',
     content: `
       Create new signals using mathematical expressions.
 
@@ -115,7 +115,7 @@ const helpSections: HelpSection[] = [
     `,
   },
   {
-    title: "Export Formats",
+    title: 'Export Formats',
     content: `
       **CSV**: Universal compatibility, opens in any spreadsheet.
 
@@ -125,7 +125,7 @@ const helpSections: HelpSection[] = [
     `,
   },
   {
-    title: "Keyboard Shortcuts",
+    title: 'Keyboard Shortcuts',
     content: `
       - **Ctrl+O**: Open file
       - **Ctrl+S**: Export data
@@ -136,9 +136,7 @@ const helpSections: HelpSection[] = [
 ];
 
 export function HelpPanel() {
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(),
-  );
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
 
   const toggleSection = (title: string) => {
     const newExpanded = new Set(expandedSections);
@@ -184,21 +182,16 @@ export function HelpPanel() {
       <div className="card-body space-y-2">
         {helpSections.map((section) => {
           const isExpanded = expandedSections.has(section.title);
-          const sectionId = `sect-${section.title.replace(/\s+/g, "-")}`;
+          const sectionId = `sect-${section.title.replace(/\s+/g, '-')}`;
           return (
-            <div
-              key={section.title}
-              className="border border-dark-700 rounded-lg"
-            >
+            <div key={section.title} className="border border-dark-700 rounded-lg">
               <button
                 className="w-full p-3 flex items-center justify-between text-left hover:bg-dark-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg"
                 onClick={() => toggleSection(section.title)}
                 aria-expanded={isExpanded}
                 aria-controls={sectionId}
               >
-                <span className="font-medium text-dark-200">
-                  {section.title}
-                </span>
+                <span className="font-medium text-dark-200">{section.title}</span>
                 {isExpanded ? (
                   <ChevronDown className="w-4 h-4 text-dark-400" />
                 ) : (

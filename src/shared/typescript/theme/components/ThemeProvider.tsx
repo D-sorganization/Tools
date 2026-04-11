@@ -5,13 +5,8 @@
  * Works with the shared createThemeStore factory.
  */
 
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  type ReactNode,
-} from "react";
-import type { ThemeColors, ThemeId } from "../themeDefinitions";
+import React, { createContext, useContext, useEffect, type ReactNode } from 'react';
+import type { ThemeColors, ThemeId } from '../themeDefinitions';
 
 /** Theme context value */
 export interface ThemeContextValue {
@@ -27,7 +22,7 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 export function useTheme(): ThemeContextValue {
   const ctx = useContext(ThemeContext);
   if (!ctx) {
-    throw new Error("useTheme must be used within a ThemeProvider");
+    throw new Error('useTheme must be used within a ThemeProvider');
   }
   return ctx;
 }
@@ -70,6 +65,8 @@ export function ThemeProvider({ useStore, children }: ThemeProviderProps) {
   };
 
   return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>
+      {children}
+    </ThemeContext.Provider>
   );
 }

@@ -21,17 +21,17 @@ export interface FilterConfig {
 }
 
 export type FilterType =
-  | "Moving Average"
-  | "Butterworth Low-pass"
-  | "Butterworth High-pass"
-  | "Butterworth Band-pass"
-  | "Median Filter"
-  | "Gaussian Filter"
-  | "Hampel Filter"
-  | "Z-Score Filter"
-  | "Savitzky-Golay"
-  | "FFT Low-pass"
-  | "FFT High-pass";
+  | 'Moving Average'
+  | 'Butterworth Low-pass'
+  | 'Butterworth High-pass'
+  | 'Butterworth Band-pass'
+  | 'Median Filter'
+  | 'Gaussian Filter'
+  | 'Hampel Filter'
+  | 'Z-Score Filter'
+  | 'Savitzky-Golay'
+  | 'FFT Low-pass'
+  | 'FFT High-pass';
 
 export interface FilterParameters {
   ma_window?: number;
@@ -66,10 +66,10 @@ export interface Statistics {
   };
 }
 
-export type ExportFormat = "csv" | "json" | "excel";
+export type ExportFormat = 'csv' | 'json' | 'excel';
 
 // Integration types
-export type IntegrationMethod = "trapezoidal" | "simpson" | "rectangular";
+export type IntegrationMethod = 'trapezoidal' | 'simpson' | 'rectangular';
 
 export interface IntegrationConfig {
   method: IntegrationMethod;
@@ -78,7 +78,7 @@ export interface IntegrationConfig {
 }
 
 // Differentiation types
-export type DifferentiationMethod = "spline" | "rolling_polynomial";
+export type DifferentiationMethod = 'spline' | 'rolling_polynomial';
 
 export interface DifferentiationConfig {
   method: DifferentiationMethod;
@@ -90,14 +90,7 @@ export interface DifferentiationConfig {
 }
 
 // Resampling types
-export type ResampleMethod =
-  | "mean"
-  | "median"
-  | "first"
-  | "last"
-  | "min"
-  | "max"
-  | "sum";
+export type ResampleMethod = 'mean' | 'median' | 'first' | 'last' | 'min' | 'max' | 'sum';
 
 export interface ResampleConfig {
   targetFrequency: string;
@@ -114,7 +107,7 @@ export interface TimeRangeConfig {
 }
 
 // Trendline types
-export type TrendlineType = "linear" | "polynomial" | "exponential" | "power";
+export type TrendlineType = 'linear' | 'polynomial' | 'exponential' | 'power';
 
 export interface TrendlineConfig {
   type: TrendlineType;
@@ -187,7 +180,7 @@ export interface PCAResult {
 
 /** Result of a regression analysis. */
 export interface RegressionResult {
-  type: "linear" | "polynomial";
+  type: 'linear' | 'polynomial';
   equation: string;
   rSquared: number;
   adjustedRSquared: number;

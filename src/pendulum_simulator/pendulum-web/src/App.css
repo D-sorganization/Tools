@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 /* ── Global reset ─────────────────────────────────────────────────────────── */
 *,
@@ -21,7 +21,7 @@
   --success: #44ddaa;
   --error: #ff5566;
   --radius: 8px;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
 }
 
 html,
@@ -175,7 +175,7 @@ body {
   border-radius: 4px;
   padding: 4px 6px;
   font-size: 11px;
-  font-family: "Consolas", monospace;
+  font-family: 'Consolas', monospace;
 }
 
 /* ── Unit selectors ──────────────────────────────────────────────────────── */
@@ -215,9 +215,7 @@ body {
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition:
-    filter 0.15s,
-    transform 0.1s;
+  transition: filter 0.15s, transform 0.1s;
 }
 
 .btn:hover {
@@ -281,9 +279,7 @@ body {
   color: var(--text-dim);
   cursor: pointer;
   border-bottom: 2px solid transparent;
-  transition:
-    color 0.15s,
-    border-color 0.15s;
+  transition: color 0.15s, border-color 0.15s;
 }
 
 .tab-btn.active {
@@ -567,7 +563,7 @@ body {
 .result-coeffs {
   font-size: 10px;
   color: var(--text-dim);
-  font-family: "Consolas", monospace;
+  font-family: 'Consolas', monospace;
   display: flex;
   flex-direction: column;
   gap: 2px;

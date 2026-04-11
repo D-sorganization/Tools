@@ -797,16 +797,19 @@ All process engineering calculators need expanded documentation including mathem
 ### Root Causes
 
 1. **Dependency Issues**
+
    - Missing packages in requirements
    - Version conflicts between tools
    - Platform-specific dependencies not declared
 
 2. **Path Resolution**
+
    - Hardcoded paths failing on different runners
    - Windows/Linux path separator issues
    - Missing working directory specifications
 
 3. **Error Masking**
+
    - `|| true` patterns hiding failures
    - `continue-on-error: true` overused
    - Warning echoes instead of proper errors
@@ -926,11 +929,13 @@ Tools/
 ### Module Organization Issues
 
 1. **Inconsistent Package Structure**
+
    - Some tools have `python/` subdirectory, others don't
    - Test directories inconsistently named (`tests/`, `tests_*/`)
    - No standard for web assets location
 
 2. **Shared Code Duplication**
+
    - Utility functions duplicated across tools
    - Theme/styling code repeated
    - Configuration loading reimplemented
@@ -959,16 +964,19 @@ Tools/
 ### Missing Test Categories
 
 1. **Unit Tests**
+
    - All process engineering calculators
    - ODE solver methods
    - Thermal profile algorithms
 
 2. **Integration Tests**
+
    - GUI launcher workflows
    - Cross-tool data pipelines
    - Web application endpoints
 
 3. **End-to-End Tests**
+
    - Complete calculation workflows
    - File processing pipelines
    - Report generation
@@ -1027,6 +1035,7 @@ Tools/
 **Goal**: Get CI/CD passing and critical blockers resolved
 
 1. **Week 1: CI/CD Fixes**
+
    - Fix ci-standard.yml workflow
    - Fix Jules-Control-Tower.yml workflow
    - Remove all `|| true` workarounds
@@ -1042,6 +1051,7 @@ Tools/
 **Goal**: Establish quality baseline and security fixes
 
 3. **Weeks 3-4: Testing Infrastructure**
+
    - Add test fixtures for all tools
    - Mock external API dependencies
    - Achieve 60% coverage baseline
@@ -1056,6 +1066,7 @@ Tools/
 **Goal**: Document all tools and APIs
 
 5. **Weeks 7-8: Process Engineering Docs**
+
    - Create README for each tool
    - Document mathematical models
    - Add configuration guides
@@ -1070,6 +1081,7 @@ Tools/
 **Goal**: Performance and architecture improvements
 
 7. **Week 11: Performance**
+
    - Implement chunked data loading
    - Add parallel processing
    - Optimize memory usage

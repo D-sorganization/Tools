@@ -5,10 +5,10 @@
  * It sets up custom matchers, mocks, and global test utilities.
  */
 
-import "@testing-library/jest-dom";
-import { expect, afterEach, vi } from "vitest";
-import { cleanup } from "@testing-library/react";
-import React from "react";
+import '@testing-library/jest-dom';
+import { expect, afterEach, vi } from 'vitest';
+import { cleanup } from '@testing-library/react';
+import React from 'react';
 
 // Cleanup after each test
 afterEach(() => {
@@ -24,7 +24,7 @@ const mockBack = vi.fn();
 const mockForward = vi.fn();
 const mockRefresh = vi.fn();
 
-vi.mock("next/navigation", () => ({
+vi.mock('next/navigation', () => ({
   useRouter: () => ({
     push: mockPush,
     replace: mockReplace,
@@ -33,18 +33,18 @@ vi.mock("next/navigation", () => ({
     forward: mockForward,
     refresh: mockRefresh,
   }),
-  usePathname: () => "/",
+  usePathname: () => '/',
   useSearchParams: () => new URLSearchParams(),
   useParams: () => ({}),
 }));
 
 // Mock Next.js image component
-vi.mock("next/image", () => ({
-  default: (props: any) => React.createElement("img", props),
+vi.mock('next/image', () => ({
+  default: (props: any) => React.createElement('img', props),
 }));
 
 // Mock window.matchMedia
-Object.defineProperty(window, "matchMedia", {
+Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({
     matches: false,
@@ -59,7 +59,7 @@ Object.defineProperty(window, "matchMedia", {
 });
 
 // Mock URL.createObjectURL and URL.revokeObjectURL
-global.URL.createObjectURL = vi.fn(() => "blob:mock-url");
+global.URL.createObjectURL = vi.fn(() => 'blob:mock-url');
 global.URL.revokeObjectURL = vi.fn();
 
 // Mock HTMLMediaElement (for video/audio testing)

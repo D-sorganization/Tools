@@ -103,12 +103,14 @@
 The 12 PRs follow a clear remediation plan:
 
 1. **Phase 1 Quick Wins** (from Assessment_DBC_DRY_TDD):
+
    - [x] Replace `print()` with `logging` (#704, #707) — Score: +1.0 to Cleanup
    - [x] Extract constants for magic numbers (#706) — Score: +1.0 to Magic Numbers
    - [x] Consolidate 3 contracts.py into 1 (#699) — Score: +2.0 to DbC
    - [x] Remove sys.path hacks (#701) — Score: already done in #680
 
 2. **Phase 2 Structural:**
+
    - [x] Add @precondition to critical APIs (#710 via imperative guards) — Score: +2.0 to DbC
    - [x] Add tests for uncovered calculators (#710) — Score: +2.0 to TDD
    - [ ] Decompose Data_Processor_r0.py — **Not started** (deferred to next sprint)

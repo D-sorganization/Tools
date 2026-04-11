@@ -19,6 +19,7 @@ Please refer to [AGENTS.md](AGENTS.md) for the authoritative guide on:
     - Install the editable package and dev tools: `python -m pip install -e ".[dev]"`
     - Optional: Run `python setup_dev.py` for additional development setup
 2.  **Linting**: Ensure your code passes quality checks before committing.
+
     - Run `python -m ruff check .` and `python -m ruff format .` before committing
     - Run `python -m black --check .` to verify formatting
     - Run `python -m mypy . --config-file mypy.ini` for type checking (advisory - see note below)

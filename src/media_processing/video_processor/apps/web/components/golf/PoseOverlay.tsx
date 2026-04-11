@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useRef, useEffect, useCallback } from "react";
-import { Landmark, PoseLandmark, SwingPhase } from "@/lib/golf/types";
-import { getPhaseAtFrame, PhaseTransition } from "@/lib/golf/phaseDetector";
+import { useRef, useEffect, useCallback } from 'react';
+import { Landmark, PoseLandmark, SwingPhase } from '@/lib/golf/types';
+import { getPhaseAtFrame, PhaseTransition } from '@/lib/golf/phaseDetector';
 
 interface PoseOverlayProps {
   landmarks: Landmark[];
@@ -79,8 +79,8 @@ export default function PoseOverlay({
   showPhase = false,
   currentPhase,
   highlightDifferences = false,
-  primaryColor = "#00FF00",
-  referenceColor = "#FF6600",
+  primaryColor = '#00FF00',
+  referenceColor = '#FF6600',
   referenceOpacity = 0.5,
 }: PoseOverlayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -89,20 +89,14 @@ export default function PoseOverlay({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     ctx.clearRect(0, 0, width, height);
 
     // Draw reference pose first (underneath)
     if (referenceLandmarks) {
-      drawSkeleton(
-        ctx,
-        referenceLandmarks,
-        referenceColor,
-        referenceOpacity,
-        2,
-      );
+      drawSkeleton(ctx, referenceLandmarks, referenceColor, referenceOpacity, 2);
       drawJoints(ctx, referenceLandmarks, referenceColor, referenceOpacity, 4);
     }
 
@@ -147,12 +141,12 @@ export default function PoseOverlay({
     lm: Landmark[],
     color: string,
     opacity: number,
-    lineWidth: number,
+    lineWidth: number
   ) => {
     ctx.globalAlpha = opacity;
     ctx.strokeStyle = color;
     ctx.lineWidth = lineWidth;
-    ctx.lineCap = "round";
+    ctx.lineCap = 'round';
 
     POSE_CONNECTIONS.forEach(([start, end]) => {
       const startPoint = lm[start];
@@ -179,7 +173,7 @@ export default function PoseOverlay({
     lm: Landmark[],
     color: string,
     opacity: number,
-    radius: number,
+    radius: number
   ) => {
     ctx.globalAlpha = opacity;
     ctx.fillStyle = color;
@@ -192,15 +186,9 @@ export default function PoseOverlay({
         ctx.fill();
 
         // White center for visibility
-        ctx.fillStyle = "white";
+        ctx.fillStyle = 'white';
         ctx.beginPath();
-        ctx.arc(
-          point.x * width,
-          point.y * height,
-          radius * 0.4,
-          0,
-          2 * Math.PI,
-        );
+        ctx.arc(point.x * width, point.y * height, radius * 0.4, 0, 2 * Math.PI);
         ctx.fill();
         ctx.fillStyle = color;
       }
@@ -212,7 +200,7 @@ export default function PoseOverlay({
   const drawDifferenceIndicators = (
     ctx: CanvasRenderingContext2D,
     current: Landmark[],
-    reference: Landmark[],
+    reference: Landmark[]
   ) => {
     const threshold = 0.05; // 5% difference threshold
 
@@ -252,27 +240,24 @@ export default function PoseOverlay({
         ctx.moveTo(endX, endY);
         ctx.lineTo(
           endX - arrowLength * Math.cos(angle - Math.PI / 6),
-          endY - arrowLength * Math.sin(angle - Math.PI / 6),
+          endY - arrowLength * Math.sin(angle - Math.PI / 6)
         );
         ctx.moveTo(endX, endY);
         ctx.lineTo(
           endX - arrowLength * Math.cos(angle + Math.PI / 6),
-          endY - arrowLength * Math.sin(angle + Math.PI / 6),
+          endY - arrowLength * Math.sin(angle + Math.PI / 6)
         );
         ctx.stroke();
       }
     });
   };
 
-  const drawAngleIndicators = (
-    ctx: CanvasRenderingContext2D,
-    lm: Landmark[],
-  ) => {
+  const drawAngleIndicators = (ctx: CanvasRenderingContext2D, lm: Landmark[]) => {
     const drawAngle = (
       joint: PoseLandmark,
       point1: PoseLandmark,
       point2: PoseLandmark,
-      label: string,
+      label: string
     ) => {
       const j = lm[joint];
       const p1 = lm[point1];
@@ -292,16 +277,16 @@ export default function PoseOverlay({
       if (angleDiff > 180) angleDiff = 360 - angleDiff;
 
       // Draw arc
-      ctx.strokeStyle = "rgba(255, 255, 0, 0.8)";
+      ctx.strokeStyle = 'rgba(255, 255, 0, 0.8)';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.arc(jx, jy, 20, angle1, angle2);
       ctx.stroke();
 
       // Draw label
-      ctx.font = "12px sans-serif";
-      ctx.fillStyle = "yellow";
-      ctx.textAlign = "center";
+      ctx.font = '12px sans-serif';
+      ctx.fillStyle = 'yellow';
+      ctx.textAlign = 'center';
       const labelX = jx + 35 * Math.cos((angle1 + angle2) / 2);
       const labelY = jy + 35 * Math.sin((angle1 + angle2) / 2);
       ctx.fillText(`${angleDiff.toFixed(0)}°`, labelX, labelY);
@@ -312,63 +297,60 @@ export default function PoseOverlay({
       PoseLandmark.LEFT_ELBOW,
       PoseLandmark.LEFT_SHOULDER,
       PoseLandmark.LEFT_WRIST,
-      "L Elbow",
+      'L Elbow'
     );
     drawAngle(
       PoseLandmark.RIGHT_ELBOW,
       PoseLandmark.RIGHT_SHOULDER,
       PoseLandmark.RIGHT_WRIST,
-      "R Elbow",
+      'R Elbow'
     );
     drawAngle(
       PoseLandmark.LEFT_KNEE,
       PoseLandmark.LEFT_HIP,
       PoseLandmark.LEFT_ANKLE,
-      "L Knee",
+      'L Knee'
     );
     drawAngle(
       PoseLandmark.RIGHT_KNEE,
       PoseLandmark.RIGHT_HIP,
       PoseLandmark.RIGHT_ANKLE,
-      "R Knee",
+      'R Knee'
     );
   };
 
-  const drawPhaseIndicator = (
-    ctx: CanvasRenderingContext2D,
-    phase: SwingPhase,
-  ) => {
+  const drawPhaseIndicator = (ctx: CanvasRenderingContext2D, phase: SwingPhase) => {
     const phaseLabels: Record<SwingPhase, string> = {
-      [SwingPhase.ADDRESS]: "Address",
-      [SwingPhase.TAKEAWAY]: "Takeaway",
-      [SwingPhase.BACKSWING]: "Backswing",
-      [SwingPhase.TOP_OF_BACKSWING]: "Top",
-      [SwingPhase.TRANSITION]: "Transition",
-      [SwingPhase.DOWNSWING]: "Downswing",
-      [SwingPhase.IMPACT]: "Impact",
-      [SwingPhase.FOLLOW_THROUGH]: "Follow Through",
-      [SwingPhase.FINISH]: "Finish",
-      [SwingPhase.UNKNOWN]: "",
+      [SwingPhase.ADDRESS]: 'Address',
+      [SwingPhase.TAKEAWAY]: 'Takeaway',
+      [SwingPhase.BACKSWING]: 'Backswing',
+      [SwingPhase.TOP_OF_BACKSWING]: 'Top',
+      [SwingPhase.TRANSITION]: 'Transition',
+      [SwingPhase.DOWNSWING]: 'Downswing',
+      [SwingPhase.IMPACT]: 'Impact',
+      [SwingPhase.FOLLOW_THROUGH]: 'Follow Through',
+      [SwingPhase.FINISH]: 'Finish',
+      [SwingPhase.UNKNOWN]: '',
     };
 
     const phaseColors: Record<SwingPhase, string> = {
-      [SwingPhase.ADDRESS]: "#64748B",
-      [SwingPhase.TAKEAWAY]: "#3B82F6",
-      [SwingPhase.BACKSWING]: "#6366F1",
-      [SwingPhase.TOP_OF_BACKSWING]: "#8B5CF6",
-      [SwingPhase.TRANSITION]: "#A855F7",
-      [SwingPhase.DOWNSWING]: "#F97316",
-      [SwingPhase.IMPACT]: "#EF4444",
-      [SwingPhase.FOLLOW_THROUGH]: "#22C55E",
-      [SwingPhase.FINISH]: "#10B981",
-      [SwingPhase.UNKNOWN]: "#9CA3AF",
+      [SwingPhase.ADDRESS]: '#64748B',
+      [SwingPhase.TAKEAWAY]: '#3B82F6',
+      [SwingPhase.BACKSWING]: '#6366F1',
+      [SwingPhase.TOP_OF_BACKSWING]: '#8B5CF6',
+      [SwingPhase.TRANSITION]: '#A855F7',
+      [SwingPhase.DOWNSWING]: '#F97316',
+      [SwingPhase.IMPACT]: '#EF4444',
+      [SwingPhase.FOLLOW_THROUGH]: '#22C55E',
+      [SwingPhase.FINISH]: '#10B981',
+      [SwingPhase.UNKNOWN]: '#9CA3AF',
     };
 
     const label = phaseLabels[phase];
     if (!label) return;
 
     // Draw phase badge
-    ctx.font = "bold 16px sans-serif";
+    ctx.font = 'bold 16px sans-serif';
     const textWidth = ctx.measureText(label).width;
     const padding = 12;
     const badgeWidth = textWidth + padding * 2;
@@ -383,9 +365,9 @@ export default function PoseOverlay({
     ctx.fill();
 
     // Badge text
-    ctx.fillStyle = "white";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
     ctx.fillText(label, x + badgeWidth / 2, y + badgeHeight / 2);
   };
 

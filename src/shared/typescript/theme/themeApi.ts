@@ -5,18 +5,15 @@
  * Works with both Tauri and pure web applications.
  */
 
-import type { ThemeColors } from "./themeDefinitions";
+import type { ThemeColors } from './themeDefinitions';
 
 /** API response for theme lists */
 export interface ThemeListResponse {
-  themes: Record<
-    string,
-    {
-      name: string;
-      is_builtin: boolean;
-      colors: Record<string, string>;
-    }
-  >;
+  themes: Record<string, {
+    name: string;
+    is_builtin: boolean;
+    colors: Record<string, string>;
+  }>;
 }
 
 /** API response for active theme */
@@ -35,22 +32,22 @@ export interface ThemeOperationResponse {
 
 /** Snake-to-camel case key mapping */
 const SNAKE_TO_CAMEL: Record<string, string> = {
-  group_bg: "groupBg",
-  text_secondary: "textSecondary",
-  input_bg: "inputBg",
-  title_bg: "titleBg",
-  title_border: "titleBorder",
-  table_header: "tableHeader",
-  table_alt: "tableAlt",
-  button_hover: "buttonHover",
-  link_hover: "linkHover",
-  selection_bg: "selectionBg",
-  selection_text: "selectionText",
+  group_bg: 'groupBg',
+  text_secondary: 'textSecondary',
+  input_bg: 'inputBg',
+  title_bg: 'titleBg',
+  title_border: 'titleBorder',
+  table_header: 'tableHeader',
+  table_alt: 'tableAlt',
+  button_hover: 'buttonHover',
+  link_hover: 'linkHover',
+  selection_bg: 'selectionBg',
+  selection_text: 'selectionText',
 };
 
 /** Camel-to-snake case key mapping */
 const CAMEL_TO_SNAKE: Record<string, string> = Object.fromEntries(
-  Object.entries(SNAKE_TO_CAMEL).map(([k, v]) => [v, k]),
+  Object.entries(SNAKE_TO_CAMEL).map(([k, v]) => [v, k])
 );
 
 /** Transform API (snake_case) colors to TypeScript (camelCase) */
@@ -83,7 +80,7 @@ export class ThemeApiClient {
 
   constructor(baseUrl: string) {
     // Remove trailing slash
-    this.baseUrl = baseUrl.replace(/\/+$/, "");
+    this.baseUrl = baseUrl.replace(/\/+$/, '');
   }
 
   private get url(): string {
@@ -93,8 +90,7 @@ export class ThemeApiClient {
   /** List all built-in themes (camelCase colors). */
   async getBuiltinThemes(): Promise<Record<string, ThemeColors>> {
     const resp = await fetch(`${this.url}/builtin`);
-    if (!resp.ok)
-      throw new Error(`Failed to fetch builtin themes: ${resp.statusText}`);
+    if (!resp.ok) throw new Error(`Failed to fetch builtin themes: ${resp.statusText}`);
     const data: ThemeListResponse = await resp.json();
     return this.transformThemeList(data);
   }
@@ -102,8 +98,7 @@ export class ThemeApiClient {
   /** List all custom themes (camelCase colors). */
   async getCustomThemes(): Promise<Record<string, ThemeColors>> {
     const resp = await fetch(`${this.url}/custom`);
-    if (!resp.ok)
-      throw new Error(`Failed to fetch custom themes: ${resp.statusText}`);
+    if (!resp.ok) throw new Error(`Failed to fetch custom themes: ${resp.statusText}`);
     const data: ThemeListResponse = await resp.json();
     return this.transformThemeList(data);
   }
@@ -117,14 +112,9 @@ export class ThemeApiClient {
   }
 
   /** Get the currently active theme. */
-  async getActiveTheme(): Promise<{
-    name: string;
-    isBuiltin: boolean;
-    colors: ThemeColors;
-  }> {
+  async getActiveTheme(): Promise<{ name: string; isBuiltin: boolean; colors: ThemeColors }> {
     const resp = await fetch(`${this.url}/active`);
-    if (!resp.ok)
-      throw new Error(`Failed to fetch active theme: ${resp.statusText}`);
+    if (!resp.ok) throw new Error(`Failed to fetch active theme: ${resp.statusText}`);
     const data: ActiveThemeResponse = await resp.json();
     const camelColors = apiColorsToTs(data.colors);
     return {
@@ -137,12 +127,11 @@ export class ThemeApiClient {
   /** Set the active theme on the backend. */
   async setActiveTheme(name: string): Promise<ThemeOperationResponse> {
     const resp = await fetch(`${this.url}/active`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name }),
     });
-    if (!resp.ok)
-      throw new Error(`Failed to set active theme: ${resp.statusText}`);
+    if (!resp.ok) throw new Error(`Failed to set active theme: ${resp.statusText}`);
     return resp.json();
   }
 
@@ -153,8 +142,8 @@ export class ThemeApiClient {
     apply = false,
   ): Promise<ThemeOperationResponse> {
     const resp = await fetch(`${this.url}/custom`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name,
         colors: tsColorsToApi(colors),
@@ -163,9 +152,7 @@ export class ThemeApiClient {
     });
     if (!resp.ok) {
       const err = await resp.json().catch(() => ({ detail: resp.statusText }));
-      throw new Error(
-        err.detail ?? `Failed to save custom theme: ${resp.statusText}`,
-      );
+      throw new Error(err.detail ?? `Failed to save custom theme: ${resp.statusText}`);
     }
     return resp.json();
   }
@@ -173,17 +160,14 @@ export class ThemeApiClient {
   /** Delete a custom theme by name. */
   async deleteCustomTheme(name: string): Promise<ThemeOperationResponse> {
     const resp = await fetch(`${this.url}/custom/${encodeURIComponent(name)}`, {
-      method: "DELETE",
+      method: 'DELETE',
     });
-    if (!resp.ok)
-      throw new Error(`Failed to delete custom theme: ${resp.statusText}`);
+    if (!resp.ok) throw new Error(`Failed to delete custom theme: ${resp.statusText}`);
     return resp.json();
   }
 
   /** Transform API response to camelCase ThemeColors map. */
-  private transformThemeList(
-    data: ThemeListResponse,
-  ): Record<string, ThemeColors> {
+  private transformThemeList(data: ThemeListResponse): Record<string, ThemeColors> {
     const result: Record<string, ThemeColors> = {};
     for (const [key, theme] of Object.entries(data.themes)) {
       const camelColors = apiColorsToTs(theme.colors);

@@ -60,27 +60,32 @@ python launch_pyqt6.py
 ### Setting Up an Optimization
 
 1. **Define Parameters** (Parameters tab):
+
    - View/edit default parameters in the table
    - Click "Add Parameter" to add new variables
    - Set Name, Initial value, Min, and Max for each
    - Remove unwanted parameters with "Remove Selected"
 
 2. **Configure Optimization Goal**:
+
    - Check "Maximize" for maximization problems
    - Uncheck for minimization (default)
 
 3. **Set Algorithm Settings** (Adam Settings tab):
+
    - Learning Rate: Step size (default: 0.01)
    - Beta1: Momentum coefficient (default: 0.9)
    - Beta2: RMSprop coefficient (default: 0.999)
    - Epsilon: Numerical stability (default: 1e-8)
 
 4. **Configure Convergence**:
+
    - Max Iterations: Upper limit on iterations
    - Tolerance: Convergence threshold
    - Gradient Step: Finite difference step size
 
 5. **Select Method**:
+
    - Adam: Gradient-based with momentum
    - Grid Search: Exhaustive search
    - L-BFGS-B: Quasi-Newton method

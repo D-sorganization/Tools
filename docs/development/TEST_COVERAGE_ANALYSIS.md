@@ -153,11 +153,13 @@ The Tools monorepo has an **overall test coverage of approximately 11%** by line
 ### Phase 1: Critical Security & Data Integrity (Highest Priority)
 
 1. **Add tests for `vectorized_filter_engine.py`** (Data Processing)
+
    - Test all 12 filtering algorithms with edge cases (NaN, short signals, parameter bounds)
    - Add FFT filtering tests with known frequency responses
    - Test parallel execution with ThreadPoolExecutor
 
 2. **Add tests for `folder_packer_pro.py` encryption** (Tools)
+
    - Test encryption/decryption round-trips
    - Test key derivation (PBKDF2)
    - Test thread safety of shared state
@@ -170,16 +172,19 @@ The Tools monorepo has an **overall test coverage of approximately 11%** by line
 ### Phase 2: Core Functionality (High Priority)
 
 4. **Add tests for `high_performance_loader.py`** (Data Processing)
+
    - Test parallel file loading with mocked filesystem
    - Test cache invalidation logic
    - Test cancellation flag behavior
 
 5. **Add tests for `data_loader.py`** (Data Processing)
+
    - Test time column detection heuristics
    - Test DataFrame merging strategies (outer/inner/left/right)
    - Test edge case: start_time > end_time
 
 6. **Add tests for `worker.py`** (PDF Renamer)
+
    - Test parallel file processing
    - Test collision resolution with hash suffixes
    - Mock cache and transaction_log dependencies
@@ -192,11 +197,13 @@ The Tools monorepo has an **overall test coverage of approximately 11%** by line
 ### Phase 3: Integration & Orchestration (Medium Priority)
 
 8. **Add integration tests for `cli.py`** (Data Processing)
+
    - Test both `detect` and `run` commands
    - Test JSON config parsing and override logic
    - Test error handling paths
 
 9. **Add tests for `llm_layer.py`** (PDF Renamer)
+
    - Mock Gemini API responses
    - Test model fallback logic (5 attempts)
    - Test JSON parsing error recovery
@@ -209,6 +216,7 @@ The Tools monorepo has an **overall test coverage of approximately 11%** by line
 ### Phase 4: UI & Visualization (Lower Priority)
 
 11. **Refactor GUI business logic** (Data Processing, Tools)
+
     - Extract testable business logic from:
       - `Data_Processor_r0.py` (8,958 lines)
       - `Folders_Tool_r0.py` (3,273 lines)

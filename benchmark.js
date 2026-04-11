@@ -4,7 +4,7 @@ const values = new Array(1000000).fill(0).map(() => Math.random() * 100);
 function zScoreFilterOriginal(values, threshold) {
   const mean = values.reduce((a, b) => a + b, 0) / values.length;
   const std = Math.sqrt(
-    values.reduce((acc, v) => acc + (v - mean) ** 2, 0) / values.length,
+    values.reduce((acc, v) => acc + (v - mean) ** 2, 0) / values.length
   );
 
   if (std === 0) return values;
@@ -44,9 +44,9 @@ function zScoreFilterOptimized(values, threshold) {
 }
 
 console.time("Original");
-for (let i = 0; i < 10; i++) zScoreFilterOriginal(values, 3.0);
+for (let i=0; i<10; i++) zScoreFilterOriginal(values, 3.0);
 console.timeEnd("Original");
 
 console.time("Optimized");
-for (let i = 0; i < 10; i++) zScoreFilterOptimized(values, 3.0);
+for (let i=0; i<10; i++) zScoreFilterOptimized(values, 3.0);
 console.timeEnd("Optimized");

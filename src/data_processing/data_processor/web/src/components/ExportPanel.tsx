@@ -1,7 +1,7 @@
-import { useCallback, useState } from "react";
-import { Download, FileJson, FileSpreadsheet, FileText } from "lucide-react";
-import Papa from "papaparse";
-import type { DataRow, ExportFormat } from "../types";
+import { useCallback, useState } from 'react';
+import { Download, FileJson, FileSpreadsheet, FileText } from 'lucide-react';
+import Papa from 'papaparse';
+import type { DataRow, ExportFormat } from '../types';
 
 interface ExportPanelProps {
   data: DataRow[];
@@ -10,34 +10,34 @@ interface ExportPanelProps {
 }
 
 export function ExportPanel({ data, fileName, disabled }: ExportPanelProps) {
-  const [exportFormat, setExportFormat] = useState<ExportFormat>("csv");
+  const [exportFormat, setExportFormat] = useState<ExportFormat>('csv');
 
   const handleExport = useCallback(() => {
     if (data.length === 0) return;
 
-    const baseName = fileName?.replace(/\.[^/.]+$/, "") || "data";
+    const baseName = fileName?.replace(/\.[^/.]+$/, '') || 'data';
     let content: string;
     let mimeType: string;
     let extension: string;
 
     switch (exportFormat) {
-      case "csv":
+      case 'csv':
         content = Papa.unparse(data);
-        mimeType = "text/csv";
-        extension = "csv";
+        mimeType = 'text/csv';
+        extension = 'csv';
         break;
 
-      case "json":
+      case 'json':
         content = JSON.stringify(data, null, 2);
-        mimeType = "application/json";
-        extension = "json";
+        mimeType = 'application/json';
+        extension = 'json';
         break;
 
-      case "excel":
+      case 'excel':
         // Export as CSV with .xls extension for basic Excel compatibility
         content = Papa.unparse(data);
-        mimeType = "application/vnd.ms-excel";
-        extension = "xls";
+        mimeType = 'application/vnd.ms-excel';
+        extension = 'xls';
         break;
 
       default:
@@ -46,7 +46,7 @@ export function ExportPanel({ data, fileName, disabled }: ExportPanelProps) {
 
     const blob = new Blob([content], { type: mimeType });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
     link.download = `${baseName}_processed.${extension}`;
     document.body.appendChild(link);
@@ -55,18 +55,10 @@ export function ExportPanel({ data, fileName, disabled }: ExportPanelProps) {
     URL.revokeObjectURL(url);
   }, [data, fileName, exportFormat]);
 
-  const formatOptions: {
-    value: ExportFormat;
-    label: string;
-    icon: React.ReactNode;
-  }[] = [
-    { value: "csv", label: "CSV", icon: <FileText className="w-4 h-4" /> },
-    { value: "json", label: "JSON", icon: <FileJson className="w-4 h-4" /> },
-    {
-      value: "excel",
-      label: "Excel",
-      icon: <FileSpreadsheet className="w-4 h-4" />,
-    },
+  const formatOptions: { value: ExportFormat; label: string; icon: React.ReactNode }[] = [
+    { value: 'csv', label: 'CSV', icon: <FileText className="w-4 h-4" /> },
+    { value: 'json', label: 'JSON', icon: <FileJson className="w-4 h-4" /> },
+    { value: 'excel', label: 'Excel', icon: <FileSpreadsheet className="w-4 h-4" /> },
   ];
 
   return (
@@ -88,10 +80,10 @@ export function ExportPanel({ data, fileName, disabled }: ExportPanelProps) {
                   flex flex-col items-center gap-1 p-3 rounded-lg border transition-colors
                   ${
                     exportFormat === option.value
-                      ? "border-blue-500 bg-blue-500/10 text-blue-400"
-                      : "border-dark-600 bg-dark-800 text-dark-400 hover:border-dark-500"
+                      ? 'border-blue-500 bg-blue-500/10 text-blue-400'
+                      : 'border-dark-600 bg-dark-800 text-dark-400 hover:border-dark-500'
                   }
-                  ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+                  ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                 `}
               >
                 {option.icon}
@@ -107,7 +99,7 @@ export function ExportPanel({ data, fileName, disabled }: ExportPanelProps) {
           className="btn btn-success w-full flex items-center justify-center gap-2"
         >
           <Download className="w-4 h-4" />
-          Export {data.length > 0 ? `(${data.length} rows)` : ""}
+          Export {data.length > 0 ? `(${data.length} rows)` : ''}
         </button>
       </div>
     </div>

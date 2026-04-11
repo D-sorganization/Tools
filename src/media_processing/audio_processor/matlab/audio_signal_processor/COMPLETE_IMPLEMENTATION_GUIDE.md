@@ -265,6 +265,7 @@ Tab 9 (Settings)   → Configuration management
 ### Key Improvements
 
 1. **MixerCoreEnhanced** replaces `MixerCore`
+
    - Time offsets for tracks
    - Per-track fades
    - Automation (framework ready)
@@ -272,18 +273,21 @@ Tab 9 (Settings)   → Configuration management
    - Markers
 
 2. **AudioEditor** integration
+
    - Non-destructive editing
    - 50-level undo/redo
    - Professional fades
    - LUFS normalization
 
 3. **Complete Effects Access**
+
    - All 11 effects in GUI
    - Effect chain management
    - Per-effect parameters
    - Preset system
 
 4. **Music Production**
+
    - Full autotune implementation
    - Key/tempo/chord detection
    - Harmonizer, vocoder

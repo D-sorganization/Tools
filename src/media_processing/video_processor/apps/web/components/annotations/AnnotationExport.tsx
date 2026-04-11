@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
 import {
-  AnnotationExport,
-  downloadAnnotationJSON,
-  exportAnnotationsToJSON,
-  importAnnotationsFromJSON,
-} from "@/lib/video/annotationExporter";
-import * as fabric from "fabric";
-import { useRef } from "react";
+    AnnotationExport,
+    downloadAnnotationJSON,
+    exportAnnotationsToJSON,
+    importAnnotationsFromJSON,
+} from '@/lib/video/annotationExporter';
+import * as fabric from 'fabric';
+import { useRef } from 'react';
 
 interface AnnotationExportProps {
   annotations: fabric.Object[];
@@ -35,7 +35,7 @@ export default function AnnotationExportComponent({
       annotations,
       currentFrame,
       videoId,
-      totalFrames,
+      totalFrames
     );
     downloadAnnotationJSON(exportData);
   };
@@ -51,19 +51,17 @@ export default function AnnotationExportComponent({
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const jsonData = JSON.parse(
-          e.target?.result as string,
-        ) as AnnotationExport;
+        const jsonData = JSON.parse(e.target?.result as string) as AnnotationExport;
         void importAnnotationsFromJSON(jsonData, canvas);
       } catch (error) {
-        console.error("Failed to import annotations:", error);
-        alert("Failed to import annotations. Please check the file format.");
+        console.error('Failed to import annotations:', error);
+        alert('Failed to import annotations. Please check the file format.');
       }
     };
     reader.readAsText(file);
 
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = '';
     }
   };
 
@@ -94,8 +92,7 @@ export default function AnnotationExportComponent({
         />
       </div>
       <div className="text-xs text-gray-500">
-        {annotations.length} annotation{annotations.length !== 1 ? "s" : ""} on
-        current frame
+        {annotations.length} annotation{annotations.length !== 1 ? 's' : ''} on current frame
       </div>
     </div>
   );

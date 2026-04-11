@@ -11,10 +11,10 @@ export default defineConfig({
   server: {
     port: 5192,
     strictPort: true,
-    open: false,
+    open: false
   },
   build: {
     outDir: "dist",
-    sourcemap: true,
-  },
+    sourcemap: true
+  }
 });

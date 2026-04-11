@@ -10,17 +10,17 @@ import {
   SwingComparison,
   SwingReport,
   PoseFrame,
-} from "./types";
+} from './types';
 
-const DB_NAME = "GolfSwingAnalyzer";
+const DB_NAME = 'GolfSwingAnalyzer';
 const DB_VERSION = 1;
 
 // Store names
 const STORES = {
-  SESSIONS: "sessions",
-  ANALYSES: "analyses",
-  POSE_DATA: "poseData",
-  USER_SETTINGS: "userSettings",
+  SESSIONS: 'sessions',
+  ANALYSES: 'analyses',
+  POSE_DATA: 'poseData',
+  USER_SETTINGS: 'userSettings',
 } as const;
 
 /**
@@ -31,7 +31,7 @@ export async function initDatabase(): Promise<IDBDatabase> {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onerror = () => {
-      reject(new Error("Failed to open IndexedDB"));
+      reject(new Error('Failed to open IndexedDB'));
     };
 
     request.onsuccess = () => {
@@ -43,31 +43,27 @@ export async function initDatabase(): Promise<IDBDatabase> {
 
       // Sessions store
       if (!db.objectStoreNames.contains(STORES.SESSIONS)) {
-        const sessionsStore = db.createObjectStore(STORES.SESSIONS, {
-          keyPath: "id",
-        });
-        sessionsStore.createIndex("timestamp", "timestamp");
-        sessionsStore.createIndex("userId", "userId");
-        sessionsStore.createIndex("videoFileName", "videoFileName");
+        const sessionsStore = db.createObjectStore(STORES.SESSIONS, { keyPath: 'id' });
+        sessionsStore.createIndex('timestamp', 'timestamp');
+        sessionsStore.createIndex('userId', 'userId');
+        sessionsStore.createIndex('videoFileName', 'videoFileName');
       }
 
       // Analyses store
       if (!db.objectStoreNames.contains(STORES.ANALYSES)) {
-        const analysesStore = db.createObjectStore(STORES.ANALYSES, {
-          keyPath: "sessionId",
-        });
-        analysesStore.createIndex("analysisTimestamp", "analysisTimestamp");
-        analysesStore.createIndex("scores.overall", "scores.overall");
+        const analysesStore = db.createObjectStore(STORES.ANALYSES, { keyPath: 'sessionId' });
+        analysesStore.createIndex('analysisTimestamp', 'analysisTimestamp');
+        analysesStore.createIndex('scores.overall', 'scores.overall');
       }
 
       // Pose data store (for large pose frame arrays)
       if (!db.objectStoreNames.contains(STORES.POSE_DATA)) {
-        db.createObjectStore(STORES.POSE_DATA, { keyPath: "sessionId" });
+        db.createObjectStore(STORES.POSE_DATA, { keyPath: 'sessionId' });
       }
 
       // User settings store
       if (!db.objectStoreNames.contains(STORES.USER_SETTINGS)) {
-        db.createObjectStore(STORES.USER_SETTINGS, { keyPath: "key" });
+        db.createObjectStore(STORES.USER_SETTINGS, { keyPath: 'key' });
       }
     };
   });
@@ -78,7 +74,7 @@ export async function initDatabase(): Promise<IDBDatabase> {
  */
 export async function saveSession(
   session: SwingSession,
-  analysis: SwingAnalysis,
+  analysis: SwingAnalysis
 ): Promise<void> {
   const db = await initDatabase();
 
@@ -92,7 +88,7 @@ export async function saveSession(
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(
       [STORES.SESSIONS, STORES.ANALYSES, STORES.POSE_DATA],
-      "readwrite",
+      'readwrite'
     );
 
     transaction.onerror = () => reject(transaction.error);
@@ -110,13 +106,11 @@ export async function saveSession(
 /**
  * Get a session by ID
  */
-export async function getSession(
-  sessionId: string,
-): Promise<SwingSession | undefined> {
+export async function getSession(sessionId: string): Promise<SwingSession | undefined> {
   const db = await initDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORES.SESSIONS, "readonly");
+    const transaction = db.transaction(STORES.SESSIONS, 'readonly');
     const request = transaction.objectStore(STORES.SESSIONS).get(sessionId);
 
     request.onsuccess = () => resolve(request.result);
@@ -128,22 +122,15 @@ export async function getSession(
  * Get analysis with pose frames
  */
 export async function getAnalysisWithFrames(
-  sessionId: string,
+  sessionId: string
 ): Promise<SwingAnalysis | undefined> {
   const db = await initDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(
-      [STORES.ANALYSES, STORES.POSE_DATA],
-      "readonly",
-    );
+    const transaction = db.transaction([STORES.ANALYSES, STORES.POSE_DATA], 'readonly');
 
-    const analysisRequest = transaction
-      .objectStore(STORES.ANALYSES)
-      .get(sessionId);
-    const poseRequest = transaction
-      .objectStore(STORES.POSE_DATA)
-      .get(sessionId);
+    const analysisRequest = transaction.objectStore(STORES.ANALYSES).get(sessionId);
+    const poseRequest = transaction.objectStore(STORES.POSE_DATA).get(sessionId);
 
     let analysis: SwingAnalysis | undefined;
     let poseData: { sessionId: string; frames: PoseFrame[] } | undefined;
@@ -177,17 +164,17 @@ export async function getAnalysisWithFrames(
  */
 export async function getAllSessions(
   limit: number = 50,
-  userId?: string,
+  userId?: string
 ): Promise<SwingSession[]> {
   const db = await initDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORES.SESSIONS, "readonly");
+    const transaction = db.transaction(STORES.SESSIONS, 'readonly');
     const store = transaction.objectStore(STORES.SESSIONS);
-    const index = store.index("timestamp");
+    const index = store.index('timestamp');
 
     const sessions: SwingSession[] = [];
-    const request = index.openCursor(null, "prev"); // Descending order
+    const request = index.openCursor(null, 'prev'); // Descending order
 
     request.onsuccess = () => {
       const cursor = request.result;
@@ -215,7 +202,7 @@ export async function deleteSession(sessionId: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(
       [STORES.SESSIONS, STORES.ANALYSES, STORES.POSE_DATA],
-      "readwrite",
+      'readwrite'
     );
 
     transaction.onerror = () => reject(transaction.error);
@@ -232,7 +219,7 @@ export async function deleteSession(sessionId: string): Promise<void> {
  */
 export async function compareSwings(
   sessionId1: string,
-  sessionId2: string,
+  sessionId2: string
 ): Promise<SwingComparison | undefined> {
   const [analysis1, analysis2] = await Promise.all([
     getAnalysisWithFrames(sessionId1),
@@ -243,28 +230,26 @@ export async function compareSwings(
     return undefined;
   }
 
-  const differences: SwingComparison["differences"] = [];
+  const differences: SwingComparison['differences'] = [];
 
   // Compare tempo
   differences.push({
-    metric: "Tempo Ratio",
+    metric: 'Tempo Ratio',
     value1: analysis1.tempo.tempoRatio,
     value2: analysis2.tempo.tempoRatio,
     delta: analysis2.tempo.tempoRatio - analysis1.tempo.tempoRatio,
-    improvement:
-      Math.abs(analysis2.tempo.tempoRatio - 3) <
-      Math.abs(analysis1.tempo.tempoRatio - 3),
+    improvement: Math.abs(analysis2.tempo.tempoRatio - 3) < Math.abs(analysis1.tempo.tempoRatio - 3),
   });
 
   // Compare scores
   const scoreMetrics: (keyof typeof analysis1.scores)[] = [
-    "overall",
-    "tempo",
-    "balance",
-    "plane",
-    "posture",
-    "rotation",
-    "timing",
+    'overall',
+    'tempo',
+    'balance',
+    'plane',
+    'posture',
+    'rotation',
+    'timing',
   ];
 
   for (const metric of scoreMetrics) {
@@ -279,7 +264,7 @@ export async function compareSwings(
 
   // Compare balance metrics
   differences.push({
-    metric: "Sway Amount (cm)",
+    metric: 'Sway Amount (cm)',
     value1: analysis1.balance.swayAmount,
     value2: analysis2.balance.swayAmount,
     delta: analysis2.balance.swayAmount - analysis1.balance.swayAmount,
@@ -287,20 +272,13 @@ export async function compareSwings(
   });
 
   // Compare key angles if available
-  if (
-    analysis1.keyPositions.top?.angles &&
-    analysis2.keyPositions.top?.angles
-  ) {
+  if (analysis1.keyPositions.top?.angles && analysis2.keyPositions.top?.angles) {
     differences.push({
-      metric: "X-Factor at Top",
+      metric: 'X-Factor at Top',
       value1: analysis1.keyPositions.top.angles.xFactor,
       value2: analysis2.keyPositions.top.angles.xFactor,
-      delta:
-        analysis2.keyPositions.top.angles.xFactor -
-        analysis1.keyPositions.top.angles.xFactor,
-      improvement:
-        analysis2.keyPositions.top.angles.xFactor >
-        analysis1.keyPositions.top.angles.xFactor,
+      delta: analysis2.keyPositions.top.angles.xFactor - analysis1.keyPositions.top.angles.xFactor,
+      improvement: analysis2.keyPositions.top.angles.xFactor > analysis1.keyPositions.top.angles.xFactor,
     });
   }
 
@@ -326,7 +304,7 @@ export async function exportSessionToJSON(sessionId: string): Promise<string> {
   ]);
 
   if (!session || !analysis) {
-    throw new Error("Session not found");
+    throw new Error('Session not found');
   }
 
   const report: SwingReport = {
@@ -347,7 +325,7 @@ export async function importSessionFromJSON(jsonData: string): Promise<string> {
   const report = JSON.parse(jsonData) as SwingReport;
 
   if (!report.session || !report.analysis) {
-    throw new Error("Invalid import data");
+    throw new Error('Invalid import data');
   }
 
   // Generate new IDs to avoid conflicts
@@ -374,61 +352,54 @@ export function generateSummary(analysis: SwingAnalysis): string {
   const lines: string[] = [];
 
   lines.push(`Golf Swing Analysis Report`);
-  lines.push(
-    `Generated: ${new Date(analysis.analysisTimestamp).toLocaleString()}`,
-  );
-  lines.push("");
+  lines.push(`Generated: ${new Date(analysis.analysisTimestamp).toLocaleString()}`);
+  lines.push('');
 
   lines.push(`Overall Score: ${analysis.scores.overall.toFixed(0)}/100`);
-  lines.push("");
+  lines.push('');
 
-  lines.push("Component Scores:");
+  lines.push('Component Scores:');
   lines.push(`  Tempo: ${analysis.scores.tempo.toFixed(0)}`);
   lines.push(`  Balance: ${analysis.scores.balance.toFixed(0)}`);
   lines.push(`  Plane: ${analysis.scores.plane.toFixed(0)}`);
   lines.push(`  Posture: ${analysis.scores.posture.toFixed(0)}`);
   lines.push(`  Rotation: ${analysis.scores.rotation.toFixed(0)}`);
   lines.push(`  Timing: ${analysis.scores.timing.toFixed(0)}`);
-  lines.push("");
+  lines.push('');
 
-  lines.push("Tempo Analysis:");
+  lines.push('Tempo Analysis:');
   lines.push(`  Backswing: ${analysis.tempo.backswingDuration.toFixed(0)}ms`);
   lines.push(`  Downswing: ${analysis.tempo.downswingDuration.toFixed(0)}ms`);
   lines.push(`  Ratio: ${analysis.tempo.tempoRatio.toFixed(2)}:1`);
   lines.push(`  Rhythm: ${analysis.tempo.rhythm}`);
-  lines.push("");
+  lines.push('');
 
   if (analysis.issues.length > 0) {
-    lines.push("Identified Issues:");
+    lines.push('Identified Issues:');
     for (const issue of analysis.issues) {
-      lines.push(
-        `  [${issue.severity.toUpperCase()}] ${issue.name}: ${issue.description}`,
-      );
+      lines.push(`  [${issue.severity.toUpperCase()}] ${issue.name}: ${issue.description}`);
     }
-    lines.push("");
+    lines.push('');
   }
 
   if (analysis.recommendations.length > 0) {
-    lines.push("Recommendations:");
+    lines.push('Recommendations:');
     for (const rec of analysis.recommendations) {
       lines.push(`  - ${rec}`);
     }
   }
 
-  return lines.join("\n");
+  return lines.join('\n');
 }
 
 /**
  * Get user settings
  */
-export async function getUserSetting<T>(
-  key: string,
-  defaultValue: T,
-): Promise<T> {
+export async function getUserSetting<T>(key: string, defaultValue: T): Promise<T> {
   const db = await initDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORES.USER_SETTINGS, "readonly");
+    const transaction = db.transaction(STORES.USER_SETTINGS, 'readonly');
     const request = transaction.objectStore(STORES.USER_SETTINGS).get(key);
 
     request.onsuccess = () => {
@@ -445,10 +416,8 @@ export async function setUserSetting<T>(key: string, value: T): Promise<void> {
   const db = await initDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORES.USER_SETTINGS, "readwrite");
-    const request = transaction
-      .objectStore(STORES.USER_SETTINGS)
-      .put({ key, value });
+    const transaction = db.transaction(STORES.USER_SETTINGS, 'readwrite');
+    const request = transaction.objectStore(STORES.USER_SETTINGS).put({ key, value });
 
     request.onsuccess = () => resolve();
     request.onerror = () => reject(request.error);
@@ -463,13 +432,8 @@ export async function clearAllData(): Promise<void> {
 
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(
-      [
-        STORES.SESSIONS,
-        STORES.ANALYSES,
-        STORES.POSE_DATA,
-        STORES.USER_SETTINGS,
-      ],
-      "readwrite",
+      [STORES.SESSIONS, STORES.ANALYSES, STORES.POSE_DATA, STORES.USER_SETTINGS],
+      'readwrite'
     );
 
     transaction.onerror = () => reject(transaction.error);
@@ -494,10 +458,10 @@ export async function getStorageStats(): Promise<{
   const db = await initDatabase();
 
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORES.SESSIONS, "readonly");
+    const transaction = db.transaction(STORES.SESSIONS, 'readonly');
     const store = transaction.objectStore(STORES.SESSIONS);
     const countRequest = store.count();
-    const cursorRequest = store.index("timestamp").openCursor();
+    const cursorRequest = store.index('timestamp').openCursor();
 
     let sessionCount = 0;
     let oldestSession: number | null = null;

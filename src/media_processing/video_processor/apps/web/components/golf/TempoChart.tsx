@@ -1,76 +1,64 @@
-"use client";
+'use client';
 
-import { TempoMetrics } from "@/lib/golf/types";
+import { TempoMetrics } from '@/lib/golf/types';
 
 interface TempoChartProps {
   tempo: TempoMetrics;
 }
 
 export default function TempoChart({ tempo }: TempoChartProps) {
-  const getTempoQuality = (): {
-    label: string;
-    color: string;
-    description: string;
-  } => {
+  const getTempoQuality = (): { label: string; color: string; description: string } => {
     const ratio = tempo.tempoRatio;
     if (ratio >= 2.5 && ratio <= 3.5) {
       return {
-        label: "Excellent",
-        color: "text-green-600",
-        description:
-          "Your tempo is in the ideal 3:1 range used by most professional golfers.",
+        label: 'Excellent',
+        color: 'text-green-600',
+        description: 'Your tempo is in the ideal 3:1 range used by most professional golfers.',
       };
     }
     if (ratio >= 2 && ratio <= 4) {
       return {
-        label: "Good",
-        color: "text-yellow-600",
-        description:
-          "Your tempo is close to ideal. Minor adjustments could improve consistency.",
+        label: 'Good',
+        color: 'text-yellow-600',
+        description: 'Your tempo is close to ideal. Minor adjustments could improve consistency.',
       };
     }
     if (ratio < 2) {
       return {
-        label: "Too Quick",
-        color: "text-red-600",
-        description:
-          "Your downswing is too fast relative to your backswing. Try slowing down the transition.",
+        label: 'Too Quick',
+        color: 'text-red-600',
+        description: 'Your downswing is too fast relative to your backswing. Try slowing down the transition.',
       };
     }
     return {
-      label: "Too Slow",
-      color: "text-orange-600",
-      description:
-        "Your backswing is too slow. This can cause timing issues and loss of power.",
+      label: 'Too Slow',
+      color: 'text-orange-600',
+      description: 'Your backswing is too slow. This can cause timing issues and loss of power.',
     };
   };
 
   const getRhythmColor = (): string => {
     switch (tempo.rhythm) {
-      case "smooth":
-        return "bg-green-500";
-      case "quick":
-        return "bg-yellow-500";
-      case "slow":
-        return "bg-orange-500";
-      case "uneven":
-        return "bg-red-500";
+      case 'smooth':
+        return 'bg-green-500';
+      case 'quick':
+        return 'bg-yellow-500';
+      case 'slow':
+        return 'bg-orange-500';
+      case 'uneven':
+        return 'bg-red-500';
       default:
-        return "bg-gray-500";
+        return 'bg-gray-500';
     }
   };
 
   const quality = getTempoQuality();
-  const backswingPercent =
-    (tempo.backswingDuration / tempo.totalSwingDuration) * 100;
-  const downswingPercent =
-    (tempo.downswingDuration / tempo.totalSwingDuration) * 100;
+  const backswingPercent = (tempo.backswingDuration / tempo.totalSwingDuration) * 100;
+  const downswingPercent = (tempo.downswingDuration / tempo.totalSwingDuration) * 100;
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        Tempo Analysis
-      </h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">Tempo Analysis</h3>
 
       {/* Main Tempo Display */}
       <div className="flex items-center justify-center space-x-8 mb-6">
@@ -125,9 +113,7 @@ export default function TempoChart({ tempo }: TempoChartProps) {
       {/* Quality Assessment */}
       <div className="bg-gray-50 rounded-lg p-4 mb-6">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-700">
-            Tempo Quality
-          </span>
+          <span className="text-sm font-medium text-gray-700">Tempo Quality</span>
           <span className={`font-bold ${quality.color}`}>{quality.label}</span>
         </div>
         <p className="text-sm text-gray-600">{quality.description}</p>
@@ -144,7 +130,7 @@ export default function TempoChart({ tempo }: TempoChartProps) {
 
         <div className="text-center p-4 bg-gray-50 rounded-lg">
           <p className="text-2xl font-bold text-gray-900">
-            {tempo.transitionPause.toFixed(0)}ms
+            {(tempo.transitionPause).toFixed(0)}ms
           </p>
           <p className="text-sm text-gray-500">Transition Pause</p>
         </div>
@@ -152,9 +138,7 @@ export default function TempoChart({ tempo }: TempoChartProps) {
         <div className="text-center p-4 bg-gray-50 rounded-lg">
           <div className="flex items-center justify-center space-x-2">
             <div className={`w-3 h-3 rounded-full ${getRhythmColor()}`} />
-            <p className="text-lg font-bold text-gray-900 capitalize">
-              {tempo.rhythm}
-            </p>
+            <p className="text-lg font-bold text-gray-900 capitalize">{tempo.rhythm}</p>
           </div>
           <p className="text-sm text-gray-500">Rhythm</p>
         </div>
@@ -162,9 +146,7 @@ export default function TempoChart({ tempo }: TempoChartProps) {
 
       {/* Pro Comparison */}
       <div className="mt-6 pt-6 border-t border-gray-200">
-        <h4 className="text-sm font-medium text-gray-700 mb-3">
-          Compare to Tour Pros
-        </h4>
+        <h4 className="text-sm font-medium text-gray-700 mb-3">Compare to Tour Pros</h4>
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">Rory McIlroy</span>
@@ -180,9 +162,7 @@ export default function TempoChart({ tempo }: TempoChartProps) {
           </div>
           <div className="flex items-center justify-between text-sm font-bold">
             <span className="text-blue-600">Your Tempo</span>
-            <span className="text-blue-600">
-              {tempo.tempoRatio.toFixed(1)}:1
-            </span>
+            <span className="text-blue-600">{tempo.tempoRatio.toFixed(1)}:1</span>
           </div>
         </div>
       </div>

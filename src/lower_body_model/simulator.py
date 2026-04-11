@@ -1,9 +1,5 @@
-from typing import Any
-
 import mujoco
 import numpy as np
-
-from lower_body_model.hip_rotation import InclinedPlaneHipRotationTarget
 
 
 class LowerBodySimulator:
@@ -27,7 +23,6 @@ class LowerBodySimulator:
 
         self._cache_indices()
         self._polynomial_drivers: dict[int, np.ndarray] = {}
-        self.hip_rotation_target: InclinedPlaneHipRotationTarget | None = None
 
         # Stability control target (rest pose)
         self.qpos_target: np.ndarray | None = None
@@ -35,22 +30,10 @@ class LowerBodySimulator:
         self.kd_stability = 0.0
 
         # Simulation history for scrubbing (QPOS, QVEL, TIME)
-        self.history: list[dict[str, Any]] = []
+        self.history: list[dict[str, np.ndarray | float]] = []
         self.max_history_length = 5000
 
         mujoco.mj_forward(self.model, self.data)
-
-    def _current_hip_rotation_target_diagnostics(
-        self, time_sec: float
-    ) -> dict[str, float] | None:
-        """Return the configured hip rotation target diagnostics for a sample time."""
-        if self.hip_rotation_target is None:
-            return None
-
-        return {
-            "rotation_deg": self.hip_rotation_target.rotation_degrees_at(time_sec),
-            "incline_deg": self.hip_rotation_target.incline_degrees,
-        }
 
     def setup_initial_pose(
         self,
@@ -67,15 +50,15 @@ class LowerBodySimulator:
             - 0.0 <= knee_flexion <= 150.0
             - -90.0 <= foot_angle <= 90.0
         """
-        assert (
-            -90.0 <= hip_anterior_tilt <= 90.0
-        ), "DbC PRE: Anterior tilt out of physiological bounds (-90 to 90)"
-        assert (
-            0.0 <= knee_flexion <= 150.0
-        ), "DbC PRE: Knee flexion out of bounds (0 to 150)"
-        assert (
-            -90.0 <= foot_angle <= 90.0
-        ), "DbC PRE: Foot angle out of bounds (-90 to 90)"
+        assert -90.0 <= hip_anterior_tilt <= 90.0, (
+            "DbC PRE: Anterior tilt out of physiological bounds (-90 to 90)"
+        )
+        assert 0.0 <= knee_flexion <= 150.0, (
+            "DbC PRE: Knee flexion out of bounds (0 to 150)"
+        )
+        assert -90.0 <= foot_angle <= 90.0, (
+            "DbC PRE: Foot angle out of bounds (-90 to 90)"
+        )
 
         self.data.qpos[self.jnt_qpos_idx["r_hip_y"]] = np.radians(hip_anterior_tilt)
         self.data.qpos[self.jnt_qpos_idx["l_hip_y"]] = np.radians(hip_anterior_tilt)
@@ -145,45 +128,6 @@ class LowerBodySimulator:
             raise ValueError(f"No actuator found for {joint_name}")
 
         self._polynomial_drivers[act_id] = np.array(coeffs)
-
-    def configure_hip_rotation_target(
-        self,
-        duration_sec: float,
-        *,
-        backswing_degrees: float = 45.0,
-        counterclockwise_degrees: float = 90.0,
-        incline_degrees: float = 12.0,
-        sample_count: int = 181,
-    ) -> InclinedPlaneHipRotationTarget:
-        """Configure the deterministic inclined-plane golf hip rotation target."""
-        self.hip_rotation_target = InclinedPlaneHipRotationTarget(
-            duration_sec=duration_sec,
-            backswing_degrees=backswing_degrees,
-            counterclockwise_degrees=counterclockwise_degrees,
-            incline_degrees=incline_degrees,
-            sample_count=sample_count,
-        )
-        return self.hip_rotation_target
-
-    def apply_hip_rotation_target(
-        self, time_sec: float | None = None
-    ) -> dict[str, float]:
-        """Apply the configured hip target to both hip sockets without per-side duplication."""
-        if self.hip_rotation_target is None:
-            raise ValueError("No hip rotation target configured")
-
-        sample_time = self.data.time if time_sec is None else time_sec
-        rotation_deg = self.hip_rotation_target.rotation_degrees_at(sample_time)
-        incline_deg = self.hip_rotation_target.incline_degrees
-
-        for side in ("r", "l"):
-            self.data.qpos[self.jnt_qpos_idx[f"{side}_hip_z"]] = np.radians(
-                rotation_deg
-            )
-            self.data.qpos[self.jnt_qpos_idx[f"{side}_hip_x"]] = np.radians(incline_deg)
-
-        mujoco.mj_forward(self.model, self.data)
-        return {"rotation_deg": rotation_deg, "incline_deg": incline_deg}
 
     def compute_zero_torque_counterfactual(self) -> dict[str, np.ndarray]:
         """
@@ -275,7 +219,7 @@ class LowerBodySimulator:
             "yaw": np.degrees(yaw),
         }
 
-    def compute_diagnostics(self) -> dict[str, str | float | bool | dict[str, Any]]:
+    def compute_diagnostics(self) -> dict[str, str | float | bool | dict]:
         """Comprehensive system diagnostics for stability, telemetry, and debugging."""
         mujoco.mj_kinematics(self.model, self.data)
 
@@ -340,7 +284,7 @@ class LowerBodySimulator:
         r_knee_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, "r_knee")
         r_knee_qpos_adr = self.model.jnt_qposadr[r_knee_id]
 
-        diagnostics: dict[str, str | float | bool | dict[str, Any]] = {
+        return {
             "time_sec": float(self.data.time),
             "pelvis_z_m": float(pelvis_pos[2]) if not div else float("nan"),
             "is_diverged": div,
@@ -359,12 +303,6 @@ class LowerBodySimulator:
             "grf": grf,
             "joint_torques": joint_torques,
         }
-        hip_rotation_target = self._current_hip_rotation_target_diagnostics(
-            self.data.time
-        )
-        if hip_rotation_target is not None:
-            diagnostics["hip_rotation_target"] = hip_rotation_target
-        return diagnostics
 
     def analyze_induced_acceleration(
         self, actuator_name: str, torque_value: float = 1.0
@@ -489,8 +427,6 @@ class LowerBodySimulator:
     def step(self) -> None:
         """Advance the simulation by one timestep, applying polynomial controls and basic stability."""
         t = self.data.time
-        if self.hip_rotation_target is not None:
-            self.apply_hip_rotation_target(t)
 
         # Basic stability control (PD) to hold the target posture if no polynomial is provided
         if self.qpos_target is not None:
@@ -537,9 +473,6 @@ class LowerBodySimulator:
                 "qpos": self.data.qpos.copy(),
                 "qvel": self.data.qvel.copy(),
                 "ctrl": self.data.ctrl.copy(),
-                "hip_rotation_target": self._current_hip_rotation_target_diagnostics(
-                    self.data.time
-                ),
             }
         )
 
@@ -557,18 +490,6 @@ class LowerBodySimulator:
         self.data.qvel[:] = frame["qvel"]
         self.data.ctrl[:] = frame["ctrl"]
         mujoco.mj_forward(self.model, self.data)
-
-    def get_history_diagnostics(self, index: int) -> dict[str, Any]:
-        """Return playback diagnostics for a cached history frame."""
-        if not self.history or index < 0 or index >= len(self.history):
-            raise IndexError("History frame index out of range")
-
-        frame = self.history[index]
-        diagnostics: dict[str, Any] = {
-            "time_sec": float(frame["time"]),
-            "hip_rotation_target": frame["hip_rotation_target"],
-        }
-        return diagnostics
 
     def clear_history(self) -> None:
         """Empties execution memory logs."""

@@ -9,26 +9,26 @@
 
 // ── Series styling ──────────────────────────────────────────────────────────
 
-export type LineStyle = "solid" | "dashed" | "dotted" | "dashdot";
+export type LineStyle = 'solid' | 'dashed' | 'dotted' | 'dashdot';
 export type MarkerShape =
-  | "none"
-  | "circle"
-  | "square"
-  | "triangle"
-  | "diamond"
-  | "cross"
-  | "plus"
-  | "star";
-export type DisplayMode = "line" | "scatter" | "line+scatter";
-export type TrendlineType = "linear" | "polynomial" | "exponential" | "power";
-export type LegendPosition = "right" | "left" | "top" | "bottom" | "none";
+  | 'none'
+  | 'circle'
+  | 'square'
+  | 'triangle'
+  | 'diamond'
+  | 'cross'
+  | 'plus'
+  | 'star';
+export type DisplayMode = 'line' | 'scatter' | 'line+scatter';
+export type TrendlineType = 'linear' | 'polynomial' | 'exponential' | 'power';
+export type LegendPosition = 'right' | 'left' | 'top' | 'bottom' | 'none';
 export type InterpolationMethod =
-  | "linear"
-  | "cubic"
-  | "nearest"
-  | "multiquadric"
-  | "inverse"
-  | "gaussian";
+  | 'linear'
+  | 'cubic'
+  | 'nearest'
+  | 'multiquadric'
+  | 'inverse'
+  | 'gaussian';
 
 export interface SeriesStyle {
   color?: string | null;
@@ -165,16 +165,16 @@ export interface PlotlyData {
 
 export const DEFAULT_SERIES_STYLE: SeriesStyle = {
   color: null,
-  line_style: "solid",
+  line_style: 'solid',
   line_width: 1.5,
-  marker: "none",
+  marker: 'none',
   marker_size: 6.0,
   opacity: 1.0,
-  display_mode: "line",
+  display_mode: 'line',
 };
 
 export const DEFAULT_AXIS_SPEC: AxisSpec = {
-  label: "",
+  label: '',
   min: null,
   max: null,
   log_scale: false,
@@ -183,6 +183,6 @@ export const DEFAULT_AXIS_SPEC: AxisSpec = {
 
 export const DEFAULT_LEGEND_SPEC: LegendSpec = {
   visible: true,
-  position: "right",
+  position: 'right',
   labels: {},
 };

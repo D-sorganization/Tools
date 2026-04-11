@@ -1,13 +1,7 @@
-"use client";
+'use client';
 
-import * as fabric from "fabric";
-import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import * as fabric from 'fabric';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 interface EditorCanvasProps {
   videoElement: HTMLVideoElement | null;
@@ -15,7 +9,7 @@ interface EditorCanvasProps {
   onAnnotationChange?: (annotations: fabric.Object[]) => void;
 }
 
-export type DrawingTool = "select" | "line" | "arrow" | "text" | "freehand";
+export type DrawingTool = 'select' | 'line' | 'arrow' | 'text' | 'freehand';
 export type DrawingColor = string;
 export type DrawingStrokeWidth = number;
 
@@ -34,8 +28,8 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
   ({ videoElement, currentTime: _currentTime, onAnnotationChange }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
-    const [currentTool, setCurrentTool] = useState<DrawingTool>("select");
-    const [currentColor, setCurrentColor] = useState<DrawingColor>("#FF0000");
+    const [currentTool, setCurrentTool] = useState<DrawingTool>('select');
+    const [currentColor, setCurrentColor] = useState<DrawingColor>('#FF0000');
     const [strokeWidth, setStrokeWidth] = useState<DrawingStrokeWidth>(2);
     const [isDrawing, setIsDrawing] = useState(false);
 
@@ -73,7 +67,7 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
       const canvas = new fabric.Canvas(canvasRef.current, {
         width: 800,
         height: 600,
-        backgroundColor: "transparent",
+        backgroundColor: 'transparent',
       });
 
       fabricCanvasRef.current = canvas;
@@ -88,8 +82,7 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
         if (!container) return;
 
         const containerWidth = container.clientWidth;
-        const videoAspectRatio =
-          videoElement.videoWidth / videoElement.videoHeight;
+        const videoAspectRatio = videoElement.videoWidth / videoElement.videoHeight;
         const canvasHeight = containerWidth / videoAspectRatio;
 
         canvas.setDimensions({
@@ -101,11 +94,11 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
 
       if (videoElement) {
         resizeCanvas();
-        window.addEventListener("resize", resizeCanvas);
+        window.addEventListener('resize', resizeCanvas);
       }
 
       return () => {
-        window.removeEventListener("resize", resizeCanvas);
+        window.removeEventListener('resize', resizeCanvas);
         canvas.dispose();
       };
     }, [videoElement]);
@@ -132,14 +125,14 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
         }
       };
 
-      canvas.on("object:added", handleObjectAdded);
-      canvas.on("object:removed", handleObjectRemoved);
-      canvas.on("object:modified", handleObjectModified);
+      canvas.on('object:added', handleObjectAdded);
+      canvas.on('object:removed', handleObjectRemoved);
+      canvas.on('object:modified', handleObjectModified);
 
       return () => {
-        canvas.off("object:added", handleObjectAdded);
-        canvas.off("object:removed", handleObjectRemoved);
-        canvas.off("object:modified", handleObjectModified);
+        canvas.off('object:added', handleObjectAdded);
+        canvas.off('object:removed', handleObjectRemoved);
+        canvas.off('object:modified', handleObjectModified);
       };
     }, [onAnnotationChange]);
 
@@ -147,7 +140,7 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
       const canvas = fabricCanvasRef.current;
       if (!canvas) return;
 
-      canvas.isDrawingMode = currentTool === "freehand";
+      canvas.isDrawingMode = currentTool === 'freehand';
       if (canvas.isDrawingMode && !canvas.freeDrawingBrush) {
         canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
       }
@@ -157,21 +150,21 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
         canvas.freeDrawingBrush.color = currentColor;
       }
 
-      if (currentTool === "select") {
+      if (currentTool === 'select') {
         canvas.selection = true;
-        canvas.defaultCursor = "default";
-      } else if (currentTool === "line") {
+        canvas.defaultCursor = 'default';
+      } else if (currentTool === 'line') {
         canvas.selection = false;
-        canvas.defaultCursor = "crosshair";
-      } else if (currentTool === "arrow") {
+        canvas.defaultCursor = 'crosshair';
+      } else if (currentTool === 'arrow') {
         canvas.selection = false;
-        canvas.defaultCursor = "crosshair";
-      } else if (currentTool === "text") {
+        canvas.defaultCursor = 'crosshair';
+      } else if (currentTool === 'text') {
         canvas.selection = false;
-        canvas.defaultCursor = "text";
-      } else if (currentTool === "freehand") {
+        canvas.defaultCursor = 'text';
+      } else if (currentTool === 'freehand') {
         canvas.selection = false;
-        canvas.defaultCursor = "crosshair";
+        canvas.defaultCursor = 'crosshair';
       }
     }, [currentTool, currentColor, strokeWidth]);
 
@@ -182,7 +175,7 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
       let startPoint: { x: number; y: number } | null = null;
 
       const handleMouseDown = (options: fabric.TPointerEventInfo) => {
-        if (currentTool === "line" || currentTool === "arrow") {
+        if (currentTool === 'line' || currentTool === 'arrow') {
           const pointer = canvas.getScenePoint(options.e);
           startPoint = { x: pointer.x, y: pointer.y };
           setIsDrawing(true);
@@ -191,7 +184,7 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
 
       const handleMouseMove = (options: fabric.TPointerEventInfo) => {
         if (
-          (currentTool === "line" || currentTool === "arrow") &&
+          (currentTool === 'line' || currentTool === 'arrow') &&
           isDrawing &&
           startPoint
         ) {
@@ -199,14 +192,14 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
           const objects = canvas.getObjects();
           const existingLine = objects[objects.length - 1];
 
-          if (existingLine && existingLine.type === "line") {
+          if (existingLine && existingLine.type === 'line') {
             canvas.remove(existingLine);
           }
 
-          if (currentTool === "arrow") {
+          if (currentTool === 'arrow') {
             const angle = Math.atan2(
               pointer.y - startPoint.y,
-              pointer.x - startPoint.x,
+              pointer.x - startPoint.x
             );
             const arrowHeadLength = 15;
             const arrowHeadAngle = Math.PI / 6;
@@ -217,7 +210,7 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
             const arrow = new fabric.Path(pathData, {
               stroke: currentColor,
               strokeWidth: strokeWidth,
-              fill: "",
+              fill: '',
               selectable: true,
               evented: true,
             });
@@ -230,7 +223,7 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
                 strokeWidth: strokeWidth,
                 selectable: true,
                 evented: true,
-              },
+              }
             );
             canvas.add(line);
           }
@@ -238,23 +231,23 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
       };
 
       const handleMouseUp = () => {
-        if (currentTool === "line" || currentTool === "arrow") {
+        if (currentTool === 'line' || currentTool === 'arrow') {
           setIsDrawing(false);
           startPoint = null;
         }
       };
 
-      canvas.on("mouse:down", handleMouseDown);
-      canvas.on("mouse:move", handleMouseMove);
-      canvas.on("mouse:up", handleMouseUp);
+      canvas.on('mouse:down', handleMouseDown);
+      canvas.on('mouse:move', handleMouseMove);
+      canvas.on('mouse:up', handleMouseUp);
 
       const handleTextClick = (options: fabric.TPointerEventInfo) => {
-        if (currentTool === "text") {
+        if (currentTool === 'text') {
           const pointer = canvas.getScenePoint(options.e);
-          const text = new fabric.IText("Double click to edit", {
+          const text = new fabric.IText('Double click to edit', {
             left: pointer.x,
             top: pointer.y,
-            fontFamily: "Arial",
+            fontFamily: 'Arial',
             fontSize: 20,
             fill: currentColor,
             selectable: true,
@@ -266,24 +259,24 @@ const EditorCanvas = forwardRef<EditorCanvasHandle, EditorCanvasProps>(
         }
       };
 
-      if (currentTool === "text") {
-        canvas.on("mouse:down", handleTextClick);
+      if (currentTool === 'text') {
+        canvas.on('mouse:down', handleTextClick);
       }
 
       return () => {
-        canvas.off("mouse:down", handleMouseDown);
-        canvas.off("mouse:move", handleMouseMove);
-        canvas.off("mouse:up", handleMouseUp);
-        if (currentTool === "text") {
-          canvas.off("mouse:down", handleTextClick);
+        canvas.off('mouse:down', handleMouseDown);
+        canvas.off('mouse:move', handleMouseMove);
+        canvas.off('mouse:up', handleMouseUp);
+        if (currentTool === 'text') {
+          canvas.off('mouse:down', handleTextClick);
         }
       };
     }, [currentTool, currentColor, strokeWidth, isDrawing]);
 
     return <canvas ref={canvasRef} className="absolute top-0 left-0 z-10" />;
-  },
+  }
 );
 
-EditorCanvas.displayName = "EditorCanvas";
+EditorCanvas.displayName = 'EditorCanvas';
 
 export default EditorCanvas;

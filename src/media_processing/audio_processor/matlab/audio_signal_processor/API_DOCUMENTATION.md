@@ -719,10 +719,12 @@ fprintf('RMS level: %.2f dB\n', metadata.RMSLevel);
    ```
 
 2. **Chain effects carefully** - order matters:
+
    - EQ → Compression → Reverb is typically best
    - Distortion → EQ → Delay for creative effects
 
 3. **Use appropriate FFT sizes**:
+
    - 1024-2048 for real-time applications
    - 4096-8192 for offline analysis
    - Larger = better frequency resolution, slower

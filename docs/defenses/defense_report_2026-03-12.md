@@ -19,9 +19,9 @@ The most valid and actionable critiques stem from clear violations of software e
 
 To robustly defend the architecture and improve the overall health of the monorepo, we must prioritize the following technical debt remediation efforts, tracked under the `thesis-defense,needs-work` label:
 
-- **Architectural Refactoring:** Enforce the `utils.path_helpers.ensure_utils_in_path()` pattern universally to eliminate import fragility. Consolidate duplicate JSON I/O, logging, and constants into a single, authoritative `utils/` implementation. Establish a centralized configuration manager.
-- **Physics Consolidation:** Refactor inertia primitives to ensure a single source of truth in the `model_generation` package.
-- **Documentation & Standardization:** Create `PLATFORM_PARITY.md` to track feature coverage across UI targets (PyQt6, React, Tauri). Progressively enforce `mypy --strict` for core packages to ensure type safety. Standardize all XML parsing on `defusedxml`.
+*   **Architectural Refactoring:** Enforce the `utils.path_helpers.ensure_utils_in_path()` pattern universally to eliminate import fragility. Consolidate duplicate JSON I/O, logging, and constants into a single, authoritative `utils/` implementation. Establish a centralized configuration manager.
+*   **Physics Consolidation:** Refactor inertia primitives to ensure a single source of truth in the `model_generation` package.
+*   **Documentation & Standardization:** Create `PLATFORM_PARITY.md` to track feature coverage across UI targets (PyQt6, React, Tauri). Progressively enforce `mypy --strict` for core packages to ensure type safety. Standardize all XML parsing on `defusedxml`.
 
 ## Conclusion
 

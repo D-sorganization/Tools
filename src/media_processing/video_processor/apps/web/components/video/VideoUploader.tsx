@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { ChangeEvent, DragEvent, useRef, useState } from "react";
-import { quickValidateVideoFile, MAX_FILE_SIZE } from "@/lib/validation/video";
-import { ValidationError } from "@/lib/errors";
+import { ChangeEvent, DragEvent, useRef, useState } from 'react';
+import { quickValidateVideoFile, MAX_FILE_SIZE } from '@/lib/validation/video';
+import { ValidationError } from '@/lib/errors';
 
 interface VideoUploaderProps {
   onVideoUpload: (file: File) => void;
@@ -31,7 +31,7 @@ export default function VideoUploader({ onVideoUpload }: VideoUploaderProps) {
       } else if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Invalid video file. Please try another file.");
+        setError('Invalid video file. Please try another file.');
       }
     }
   };
@@ -54,13 +54,11 @@ export default function VideoUploader({ onVideoUpload }: VideoUploaderProps) {
     setIsDragging(false);
 
     const files = Array.from(e.dataTransfer.files) as File[];
-    const videoFile = files.find((file: File) =>
-      file.type.startsWith("video/"),
-    );
+    const videoFile = files.find((file: File) => file.type.startsWith('video/'));
     if (videoFile) {
       handleFile(videoFile);
     } else {
-      setError("Please drop a video file");
+      setError('Please drop a video file');
     }
   };
 
@@ -87,10 +85,10 @@ export default function VideoUploader({ onVideoUpload }: VideoUploaderProps) {
           transition-colors duration-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2
           ${
             isDragging
-              ? "border-blue-500 bg-blue-50"
-              : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+              ? 'border-blue-500 bg-blue-50'
+              : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
           }
-          ${error ? "border-red-300 bg-red-50" : ""}
+          ${error ? 'border-red-300 bg-red-50' : ''}
         `}
       >
         <input

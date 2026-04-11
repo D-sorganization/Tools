@@ -23,6 +23,7 @@ gh issue list --state open --limit 100 --json number,title,body,labels
 ```
 
 3. **Parse assessment findings**:
+
    - Extract issues/findings from each assessment
    - Categorize by priority and type
 

@@ -50,11 +50,13 @@ python src/star_wars_rrt.py
 ### **High Priority**
 
 1. **Performance Optimization**
+
    - Faster path planning algorithms
    - Improved rendering performance
    - Memory usage optimization
 
 2. **AI Enhancement**
+
    - More sophisticated pursuit behavior
    - Machine learning integration
    - Advanced evasion strategies
@@ -67,11 +69,13 @@ python src/star_wars_rrt.py
 ### **Medium Priority**
 
 1. **New Features**
+
    - Additional ship types
    - Multiplayer support
    - Mission editor
 
 2. **Documentation**
+
    - API documentation
    - Tutorial videos
    - Code examples
@@ -84,6 +88,7 @@ python src/star_wars_rrt.py
 ### **Low Priority**
 
 1. **Platform Support**
+
    - Mobile versions
    - VR integration
    - Web version

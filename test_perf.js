@@ -1,13 +1,7 @@
 const n_rows = 100000;
-const signals = ["A", "B", "C", "D", "E"];
+const signals = ['A', 'B', 'C', 'D', 'E'];
 const data = Array.from({ length: n_rows }, () => {
-  return {
-    A: Math.random(),
-    B: Math.random(),
-    C: Math.random(),
-    D: Math.random(),
-    E: Math.random(),
-  };
+  return { A: Math.random(), B: Math.random(), C: Math.random(), D: Math.random(), E: Math.random() };
 });
 
 function computeCorrelationOld(data, signals) {
@@ -15,7 +9,7 @@ function computeCorrelationOld(data, signals) {
   const matrix = Array.from({ length: n }, () => Array(n).fill(0));
 
   const columns = signals.map((sig) =>
-    data.map((row) => (typeof row[sig] === "number" ? row[sig] : NaN)),
+    data.map((row) => (typeof row[sig] === 'number' ? row[sig] : NaN)),
   );
 
   for (let i = 0; i < n; i++) {
@@ -56,7 +50,7 @@ function computeCorrelationNew(data, signals) {
   const matrix = Array.from({ length: n }, () => Array(n).fill(0));
 
   const columns = signals.map((sig) =>
-    data.map((row) => (typeof row[sig] === "number" ? row[sig] : NaN)),
+    data.map((row) => (typeof row[sig] === 'number' ? row[sig] : NaN)),
   );
 
   for (let i = 0; i < n; i++) {
@@ -65,9 +59,7 @@ function computeCorrelationNew(data, signals) {
       const colJ = columns[j];
       const len = colI.length;
 
-      let sumX = 0,
-        sumY = 0,
-        count = 0;
+      let sumX = 0, sumY = 0, count = 0;
       for (let k = 0; k < len; k++) {
         const vx = colI[k];
         const vy = colJ[k];
@@ -87,9 +79,7 @@ function computeCorrelationNew(data, signals) {
       const meanX = sumX / count;
       const meanY = sumY / count;
 
-      let num = 0,
-        denX = 0,
-        denY = 0;
+      let num = 0, denX = 0, denY = 0;
       for (let k = 0; k < len; k++) {
         const vx = colI[k];
         const vy = colJ[k];
@@ -113,10 +103,10 @@ function computeCorrelationNew(data, signals) {
   return matrix;
 }
 
-console.time("old");
-for (let i = 0; i < 10; i++) computeCorrelationOld(data, signals);
-console.timeEnd("old");
+console.time('old');
+for(let i=0; i<10; i++) computeCorrelationOld(data, signals);
+console.timeEnd('old');
 
-console.time("new");
-for (let i = 0; i < 10; i++) computeCorrelationNew(data, signals);
-console.timeEnd("new");
+console.time('new');
+for(let i=0; i<10; i++) computeCorrelationNew(data, signals);
+console.timeEnd('new');

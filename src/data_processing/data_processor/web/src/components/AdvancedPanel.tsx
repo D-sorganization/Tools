@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { Calculator, TrendingUp, TrendingDown } from "lucide-react";
+import { useState } from 'react';
+import { Calculator, TrendingUp, TrendingDown } from 'lucide-react';
 import type {
   IntegrationMethod,
   DifferentiationMethod,
   IntegrationConfig,
   DifferentiationConfig,
   FormulaConfig,
-} from "../types";
+} from '../types';
 
 interface AdvancedPanelProps {
   signals: string[];
@@ -26,13 +26,13 @@ export function AdvancedPanel({
   onDifferentiate,
   onApplyFormula,
 }: AdvancedPanelProps) {
-  const [intMethod, setIntMethod] = useState<IntegrationMethod>("trapezoidal");
-  const [diffMethod, setDiffMethod] = useState<DifferentiationMethod>("spline");
+  const [intMethod, setIntMethod] = useState<IntegrationMethod>('trapezoidal');
+  const [diffMethod, setDiffMethod] = useState<DifferentiationMethod>('spline');
   const [diffOrder, setDiffOrder] = useState(1);
   const [diffWindowSize, setDiffWindowSize] = useState(11);
   const [diffPolyOrder, setDiffPolyOrder] = useState(3);
-  const [formulaName, setFormulaName] = useState("");
-  const [formula, setFormula] = useState("");
+  const [formulaName, setFormulaName] = useState('');
+  const [formula, setFormula] = useState('');
 
   const handleIntegrate = () => {
     if (!timeColumn || selectedSignals.length === 0) return;
@@ -78,9 +78,7 @@ export function AdvancedPanel({
             <select
               className="select w-full"
               value={intMethod}
-              onChange={(e) =>
-                setIntMethod(e.target.value as IntegrationMethod)
-              }
+              onChange={(e) => setIntMethod(e.target.value as IntegrationMethod)}
               disabled={disabled}
             >
               <option value="trapezoidal">Trapezoidal</option>
@@ -108,15 +106,11 @@ export function AdvancedPanel({
             <select
               className="select w-full"
               value={diffMethod}
-              onChange={(e) =>
-                setDiffMethod(e.target.value as DifferentiationMethod)
-              }
+              onChange={(e) => setDiffMethod(e.target.value as DifferentiationMethod)}
               disabled={disabled}
             >
               <option value="spline">Spline (Acausal)</option>
-              <option value="rolling_polynomial">
-                Rolling Polynomial (Causal)
-              </option>
+              <option value="rolling_polynomial">Rolling Polynomial (Causal)</option>
             </select>
           </div>
           <div className="grid grid-cols-3 gap-2">
@@ -138,9 +132,7 @@ export function AdvancedPanel({
                 type="number"
                 className="input w-full"
                 value={diffWindowSize}
-                onChange={(e) =>
-                  setDiffWindowSize(parseInt(e.target.value) || 11)
-                }
+                onChange={(e) => setDiffWindowSize(parseInt(e.target.value) || 11)}
                 min={3}
                 max={51}
                 step={2}
@@ -153,9 +145,7 @@ export function AdvancedPanel({
                 type="number"
                 className="input w-full"
                 value={diffPolyOrder}
-                onChange={(e) =>
-                  setDiffPolyOrder(parseInt(e.target.value) || 3)
-                }
+                onChange={(e) => setDiffPolyOrder(parseInt(e.target.value) || 3)}
                 min={2}
                 max={6}
                 disabled={disabled}
@@ -178,9 +168,7 @@ export function AdvancedPanel({
             Custom Formula
           </h4>
           <div className="space-y-2">
-            <label className="block text-xs text-dark-400">
-              New Signal Name
-            </label>
+            <label className="block text-xs text-dark-400">New Signal Name</label>
             <input
               type="text"
               className="input w-full"

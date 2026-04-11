@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Clock } from "lucide-react";
-import type { ResampleMethod, ResampleConfig } from "../types";
+import { useState } from 'react';
+import { Clock } from 'lucide-react';
+import type { ResampleMethod, ResampleConfig } from '../types';
 
 interface ResamplePanelProps {
   timeColumn: string | null;
@@ -9,20 +9,20 @@ interface ResamplePanelProps {
 }
 
 const frequencyOptions = [
-  "100ms",
-  "250ms",
-  "500ms",
-  "1s",
-  "2s",
-  "5s",
-  "10s",
-  "30s",
-  "1min",
-  "5min",
-  "10min",
-  "15min",
-  "30min",
-  "1h",
+  '100ms',
+  '250ms',
+  '500ms',
+  '1s',
+  '2s',
+  '5s',
+  '10s',
+  '30s',
+  '1min',
+  '5min',
+  '10min',
+  '15min',
+  '30min',
+  '1h',
 ];
 
 export function ResamplePanel({
@@ -30,9 +30,9 @@ export function ResamplePanel({
   disabled,
   onResample,
 }: ResamplePanelProps) {
-  const [targetFrequency, setTargetFrequency] = useState("1s");
-  const [customFrequency, setCustomFrequency] = useState("");
-  const [method, setMethod] = useState<ResampleMethod>("mean");
+  const [targetFrequency, setTargetFrequency] = useState('1s');
+  const [customFrequency, setCustomFrequency] = useState('');
+  const [method, setMethod] = useState<ResampleMethod>('mean');
   const [interpolate, setInterpolate] = useState(true);
 
   const handleResample = () => {
@@ -55,9 +55,7 @@ export function ResamplePanel({
       </div>
       <div className="card-body space-y-4">
         <div className="space-y-2">
-          <label className="block text-xs text-dark-400">
-            Target Frequency
-          </label>
+          <label className="block text-xs text-dark-400">Target Frequency</label>
           <select
             className="select w-full"
             value={targetFrequency}
@@ -73,9 +71,7 @@ export function ResamplePanel({
         </div>
 
         <div className="space-y-2">
-          <label className="block text-xs text-dark-400">
-            Custom Frequency
-          </label>
+          <label className="block text-xs text-dark-400">Custom Frequency</label>
           <input
             type="text"
             className="input w-full"
@@ -84,15 +80,11 @@ export function ResamplePanel({
             placeholder="e.g., 2.5s, 100ms"
             disabled={disabled}
           />
-          <p className="text-xs text-dark-500">
-            Leave empty to use selection above
-          </p>
+          <p className="text-xs text-dark-500">Leave empty to use selection above</p>
         </div>
 
         <div className="space-y-2">
-          <label className="block text-xs text-dark-400">
-            Aggregation Method
-          </label>
+          <label className="block text-xs text-dark-400">Aggregation Method</label>
           <select
             className="select w-full"
             value={method}

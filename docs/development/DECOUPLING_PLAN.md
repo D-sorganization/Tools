@@ -81,6 +81,7 @@ source of coupling in the repository because:
    `pythonpath` setting but it's incomplete.
 
 3. **Remove all `sys.path.insert` / `sys.path.append` calls** from:
+
    - All `launch_pyqt6.py` scripts (replace with package-relative imports)
    - All `conftest.py` files in sub-tools
    - Library code (`config_loader.py`, `state_manager.py`)
@@ -218,12 +219,14 @@ inconsistent.
 
 1. **Complete the `gui_registration.py` pattern** across all tools. Each tool registers
    itself with a `LaunchConfig` that specifies:
+
    - Module and class to import
    - Required dependencies
    - Window title and minimum size
    - Settings app name for theming
 
 2. **Create a single `launch.py` entry point** at the repo root that:
+
    - Auto-discovers registered tools via `gui_registration.py` modules
    - Creates the `QApplication` once
    - Handles dependency checking centrally
@@ -382,6 +385,7 @@ if the physical path changes.
    ```
 
 3. **Each calculator tool should have exactly two importable units**:
+
    - **Core**: `upstream_drift_tools.process_calculators.<name>` — no UI dependencies
    - **GUI**: `src/<name>/python/<name>/ui/` — depends on core + PyQt6
 

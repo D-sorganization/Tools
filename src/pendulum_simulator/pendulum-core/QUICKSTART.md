@@ -3,7 +3,6 @@
 ## Setup
 
 ### Prerequisites
-
 - Rust 1.70+ (for nalgebra 0.33)
 - For Python: `pip install maturin pyo3`
 - For WASM: `npm install -g wasm-pack`
@@ -88,23 +87,12 @@ print("Wrist:", fk["wrist_x"], fk["wrist_y"])
 ### JavaScript/WASM
 
 ```javascript
-import init, {
-  WasmDoublePendulumParams,
-  wasm_double_mass_matrix,
-} from "./pkg/pendulum_core.js";
+import init, { WasmDoublePendulumParams, wasm_double_mass_matrix } from './pkg/pendulum_core.js';
 
 async function main() {
   await init();
 
-  const params = new WasmDoublePendulumParams(
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    9.81,
-    0.0,
-    0.0,
-  );
+  const params = new WasmDoublePendulumParams(1.0, 1.0, 1.0, 1.0, 9.81, 0.0, 0.0);
   const q = new Float64Array([0.1, 0.2]);
 
   const M = wasm_double_mass_matrix(q, params);
@@ -269,7 +257,6 @@ cargo bench
 ### ImportError: No module named 'pendulum_core'
 
 **Solution:** Compile with Python feature:
-
 ```bash
 pip install maturin
 maturin develop -r --features python
@@ -278,7 +265,6 @@ maturin develop -r --features python
 ### Missing nalgebra dependency
 
 **Solution:** Already included in Cargo.toml, cargo will fetch automatically:
-
 ```bash
 cargo build --lib
 ```
@@ -286,7 +272,6 @@ cargo build --lib
 ### WASM module too large
 
 **Solution:** Build in release mode and strip:
-
 ```bash
 wasm-pack build --target web --features wasm --release
 wasm-opt -Oz -o pkg/pendulum_core_bg.wasm pkg/pendulum_core_bg.wasm

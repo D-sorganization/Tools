@@ -107,6 +107,7 @@ Based on your requirements for an advanced AI-based golf swing video editor, I r
 #### **Primary: MediaPipe (Google)**
 
 - **Pros:**
+
   - Pre-trained pose estimation models
   - Real-time tracking (30+ FPS)
   - 33 body landmarks
@@ -159,6 +160,7 @@ const golfKeyPoints = {
 #### **Physics Simulation Library: Matter.js or Cannon.js**
 
 - **Matter.js**: 2D physics engine
+
   - Constraint-based pendulum
   - Joint constraints for arm/club
   - Real-time fitting to tracked points
@@ -517,6 +519,7 @@ callbacks: {
 #### **AI Processing: Railway or Modal**
 
 - **Railway**:
+
   - Docker containers
   - Python AI services
   - GPU support
@@ -745,23 +748,27 @@ class SwingSegmenter {
 ### Workflow 1: Coach Creates Video Analysis
 
 1. **Upload Video**
+
    - Drag-and-drop MP4 file
    - Automatic thumbnail generation
    - Video processing queue
 
 2. **AI Processing (Automatic)**
+
    - Pose detection with MediaPipe
    - Swing segmentation
    - Pendulum model fitting
    - Club tracking
 
 3. **Manual Annotation**
+
    - Draw swing plane overlay
    - Add lines on body segments
    - Annotate key positions
    - Add text callouts
 
 4. **Record Commentary**
+
    - Play video
    - Click record button
    - Speak while video plays
@@ -776,11 +783,13 @@ class SwingSegmenter {
 ### Workflow 2: Student Views Analysis
 
 1. **Receive Link**
+
    - Email with link
    - Click to open in browser
    - No login required (for view-only)
 
 2. **Interactive Playback**
+
    - Play video with overlays
    - Hear coach commentary
    - Scrub timeline

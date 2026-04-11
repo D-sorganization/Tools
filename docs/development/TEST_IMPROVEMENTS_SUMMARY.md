@@ -299,6 +299,7 @@ Fixed and improved tests for PDF processing:
 ### Large Files Needing Coverage Increases
 
 1. **Folders_Tool_r0.py** - 36% coverage (target: 70%)
+
    - 1430 statements total
    - 912 statements uncovered
    - Large sections untested (lines 1512-1667, 1682-1850)
@@ -365,6 +366,7 @@ Fixed and improved tests for PDF processing:
 ## Commits Made
 
 1. **f5eb064** - "Improve test coverage: Fix failing tests and add comprehensive security tests"
+
    - Fixed 7 failing tests
    - Added 40 security tests
    - Created conftest.py

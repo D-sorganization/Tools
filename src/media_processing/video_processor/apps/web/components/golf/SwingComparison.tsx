@@ -1,19 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import {
-  SwingAnalysis,
-  SwingSession,
-  PoseFrame,
-  Landmark,
-  PoseLandmark,
-} from "@/lib/golf/types";
-import {
-  getAllSessions,
-  getAnalysisWithFrames,
-  compareSwings,
-} from "@/lib/golf/persistence";
-import { SwingComparison as SwingComparisonType } from "@/lib/golf/types";
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { SwingAnalysis, SwingSession, PoseFrame, Landmark, PoseLandmark } from '@/lib/golf/types';
+import { getAllSessions, getAnalysisWithFrames, compareSwings } from '@/lib/golf/persistence';
+import { SwingComparison as SwingComparisonType } from '@/lib/golf/types';
 
 interface SwingComparisonProps {
   currentAnalysis: SwingAnalysis;
@@ -25,16 +15,10 @@ export default function SwingComparisonComponent({
   onClose,
 }: SwingComparisonProps) {
   const [sessions, setSessions] = useState<SwingSession[]>([]);
-  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
-    null,
-  );
-  const [comparison, setComparison] = useState<SwingComparisonType | null>(
-    null,
-  );
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
+  const [comparison, setComparison] = useState<SwingComparisonType | null>(null);
   const [loading, setLoading] = useState(true);
-  const [overlayMode, setOverlayMode] = useState<"side-by-side" | "overlay">(
-    "side-by-side",
-  );
+  const [overlayMode, setOverlayMode] = useState<'side-by-side' | 'overlay'>('side-by-side');
   const [syncedFrame, setSyncedFrame] = useState(0);
   const [overlayOpacity, setOverlayOpacity] = useState(0.5);
 
@@ -46,7 +30,7 @@ export default function SwingComparisonComponent({
       .then((allSessions) => {
         // Filter out current session
         const otherSessions = allSessions.filter(
-          (s) => s.id !== currentAnalysis.sessionId,
+          (s) => s.id !== currentAnalysis.sessionId
         );
         setSessions(otherSessions);
       })
@@ -60,19 +44,17 @@ export default function SwingComparisonComponent({
       return;
     }
 
-    compareSwings(currentAnalysis.sessionId, selectedSessionId).then(
-      (result) => {
-        setComparison(result ?? null);
-      },
-    );
+    compareSwings(currentAnalysis.sessionId, selectedSessionId).then((result) => {
+      setComparison(result ?? null);
+    });
   }, [selectedSessionId, currentAnalysis.sessionId]);
 
   // Draw overlay visualization
   const drawOverlay = useCallback(() => {
-    if (!canvasRef.current || !comparison || overlayMode !== "overlay") return;
+    if (!canvasRef.current || !comparison || overlayMode !== 'overlay') return;
 
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     const width = canvas.width;
@@ -82,32 +64,31 @@ export default function SwingComparisonComponent({
 
     // Get frames at synced position
     const frame1 = comparison.swing1.poseFrames[syncedFrame];
-    const frame2 =
-      comparison.swing2.poseFrames[
-        Math.min(syncedFrame, comparison.swing2.poseFrames.length - 1)
-      ];
+    const frame2 = comparison.swing2.poseFrames[
+      Math.min(syncedFrame, comparison.swing2.poseFrames.length - 1)
+    ];
 
     if (!frame1 || !frame2) return;
 
     // Draw first swing (current) in blue
-    drawPose(ctx, frame1.landmarks, "#3B82F6", 1, width, height);
+    drawPose(ctx, frame1.landmarks, '#3B82F6', 1, width, height);
 
     // Draw second swing (comparison) in orange with opacity
-    drawPose(ctx, frame2.landmarks, "#F97316", overlayOpacity, width, height);
+    drawPose(ctx, frame2.landmarks, '#F97316', overlayOpacity, width, height);
 
     // Draw legend
-    ctx.font = "14px sans-serif";
-    ctx.fillStyle = "#3B82F6";
+    ctx.font = '14px sans-serif';
+    ctx.fillStyle = '#3B82F6';
     ctx.fillRect(10, 10, 20, 20);
-    ctx.fillStyle = "#1F2937";
-    ctx.fillText("Current Swing", 35, 25);
+    ctx.fillStyle = '#1F2937';
+    ctx.fillText('Current Swing', 35, 25);
 
-    ctx.fillStyle = "#F97316";
+    ctx.fillStyle = '#F97316';
     ctx.globalAlpha = overlayOpacity;
     ctx.fillRect(10, 35, 20, 20);
     ctx.globalAlpha = 1;
-    ctx.fillStyle = "#1F2937";
-    ctx.fillText("Comparison Swing", 35, 50);
+    ctx.fillStyle = '#1F2937';
+    ctx.fillText('Comparison Swing', 35, 50);
   }, [comparison, syncedFrame, overlayMode, overlayOpacity]);
 
   useEffect(() => {
@@ -121,7 +102,7 @@ export default function SwingComparisonComponent({
     color: string,
     opacity: number,
     width: number,
-    height: number,
+    height: number
   ) => {
     ctx.globalAlpha = opacity;
 
@@ -193,18 +174,8 @@ export default function SwingComparisonComponent({
             onClick={onClose}
             className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
@@ -213,9 +184,7 @@ export default function SwingComparisonComponent({
         <div className="flex-1 overflow-auto p-4">
           {sessions.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-500">
-                No other sessions available for comparison.
-              </p>
+              <p className="text-gray-500">No other sessions available for comparison.</p>
               <p className="text-sm text-gray-400 mt-2">
                 Record more swings to enable comparison.
               </p>
@@ -234,8 +203,8 @@ export default function SwingComparisonComponent({
                       onClick={() => setSelectedSessionId(session.id)}
                       className={`p-4 border rounded-lg text-left transition-all ${
                         selectedSessionId === session.id
-                          ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200"
-                          : "border-gray-200 hover:border-gray-300"
+                          ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200'
+                          : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
                       <p className="font-medium text-gray-900 truncate">
@@ -245,8 +214,7 @@ export default function SwingComparisonComponent({
                         {new Date(session.timestamp).toLocaleDateString()}
                       </p>
                       <p className="text-lg font-bold text-blue-600 mt-1">
-                        Score:{" "}
-                        {Math.round(session.analysis?.scores?.overall || 0)}
+                        Score: {Math.round(session.analysis?.scores?.overall || 0)}
                       </p>
                     </button>
                   ))}
@@ -259,21 +227,21 @@ export default function SwingComparisonComponent({
                   {/* View Mode Toggle */}
                   <div className="flex items-center justify-center space-x-4">
                     <button
-                      onClick={() => setOverlayMode("side-by-side")}
+                      onClick={() => setOverlayMode('side-by-side')}
                       className={`px-4 py-2 rounded-lg font-medium ${
-                        overlayMode === "side-by-side"
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        overlayMode === 'side-by-side'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                     >
                       Side by Side
                     </button>
                     <button
-                      onClick={() => setOverlayMode("overlay")}
+                      onClick={() => setOverlayMode('overlay')}
                       className={`px-4 py-2 rounded-lg font-medium ${
-                        overlayMode === "overlay"
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        overlayMode === 'overlay'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                     >
                       Overlay
@@ -281,7 +249,7 @@ export default function SwingComparisonComponent({
                   </div>
 
                   {/* Overlay Controls */}
-                  {overlayMode === "overlay" && (
+                  {overlayMode === 'overlay' && (
                     <div className="bg-gray-50 rounded-lg p-4 space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -292,19 +260,16 @@ export default function SwingComparisonComponent({
                           min="0"
                           max={Math.max(
                             comparison.swing1.poseFrames.length - 1,
-                            comparison.swing2.poseFrames.length - 1,
+                            comparison.swing2.poseFrames.length - 1
                           )}
                           value={syncedFrame}
-                          onChange={(e) =>
-                            setSyncedFrame(parseInt(e.target.value))
-                          }
+                          onChange={(e) => setSyncedFrame(parseInt(e.target.value))}
                           className="w-full"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Comparison Opacity: {Math.round(overlayOpacity * 100)}
-                          %
+                          Comparison Opacity: {Math.round(overlayOpacity * 100)}%
                         </label>
                         <input
                           type="range"
@@ -312,9 +277,7 @@ export default function SwingComparisonComponent({
                           max="1"
                           step="0.1"
                           value={overlayOpacity}
-                          onChange={(e) =>
-                            setOverlayOpacity(parseFloat(e.target.value))
-                          }
+                          onChange={(e) => setOverlayOpacity(parseFloat(e.target.value))}
                           className="w-full"
                         />
                       </div>
@@ -331,15 +294,13 @@ export default function SwingComparisonComponent({
                   <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm opacity-90">
-                          Overall Improvement
-                        </p>
+                        <p className="text-sm opacity-90">Overall Improvement</p>
                         <p className="text-4xl font-bold">
                           {comparison.overallImprovement.toFixed(1)}%
                         </p>
                       </div>
                       <div className="text-6xl">
-                        {comparison.overallImprovement >= 50 ? "📈" : "📉"}
+                        {comparison.overallImprovement >= 50 ? '📈' : '📉'}
                       </div>
                     </div>
                   </div>
@@ -370,12 +331,12 @@ export default function SwingComparisonComponent({
                               {diff.metric}
                             </td>
                             <td className="px-4 py-3 text-sm text-center text-gray-600">
-                              {typeof diff.value1 === "number"
+                              {typeof diff.value1 === 'number'
                                 ? diff.value1.toFixed(2)
                                 : diff.value1}
                             </td>
                             <td className="px-4 py-3 text-sm text-center text-gray-900 font-medium">
-                              {typeof diff.value2 === "number"
+                              {typeof diff.value2 === 'number'
                                 ? diff.value2.toFixed(2)
                                 : diff.value2}
                             </td>
@@ -383,15 +344,15 @@ export default function SwingComparisonComponent({
                               <span
                                 className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                                   diff.improvement
-                                    ? "bg-green-100 text-green-700"
+                                    ? 'bg-green-100 text-green-700'
                                     : diff.delta === 0
-                                      ? "bg-gray-100 text-gray-700"
-                                      : "bg-red-100 text-red-700"
+                                    ? 'bg-gray-100 text-gray-700'
+                                    : 'bg-red-100 text-red-700'
                                 }`}
                               >
-                                {diff.delta > 0 ? "+" : ""}
+                                {diff.delta > 0 ? '+' : ''}
                                 {diff.delta.toFixed(2)}
-                                {diff.improvement ? " ✓" : ""}
+                                {diff.improvement ? ' ✓' : ''}
                               </span>
                             </td>
                           </tr>
@@ -401,7 +362,7 @@ export default function SwingComparisonComponent({
                   </div>
 
                   {/* Side by Side Score Cards */}
-                  {overlayMode === "side-by-side" && (
+                  {overlayMode === 'side-by-side' && (
                     <div className="grid grid-cols-2 gap-4">
                       <div className="bg-gray-50 rounded-xl p-4">
                         <h4 className="text-sm font-medium text-gray-500 mb-3">
@@ -411,9 +372,7 @@ export default function SwingComparisonComponent({
                           <p className="text-5xl font-bold text-gray-400">
                             {Math.round(comparison.swing1.scores.overall)}
                           </p>
-                          <p className="text-sm text-gray-500 mt-1">
-                            Overall Score
-                          </p>
+                          <p className="text-sm text-gray-500 mt-1">Overall Score</p>
                         </div>
                         <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
                           <div className="text-center">
@@ -439,9 +398,7 @@ export default function SwingComparisonComponent({
                           <p className="text-5xl font-bold text-blue-600">
                             {Math.round(comparison.swing2.scores.overall)}
                           </p>
-                          <p className="text-sm text-blue-500 mt-1">
-                            Overall Score
-                          </p>
+                          <p className="text-sm text-blue-500 mt-1">Overall Score</p>
                         </div>
                         <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
                           <div className="text-center">

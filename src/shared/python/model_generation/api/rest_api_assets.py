@@ -105,11 +105,9 @@ class AssetLibraryEditorRoutesMixin:
             category=query_params.get("category"),
             source=query_params.get("source"),
             search=query_params.get("search"),
-            tags=(
-                query_params.get("tags", "").split(",")
-                if query_params.get("tags")
-                else None
-            ),
+            tags=query_params.get("tags", "").split(",")
+            if query_params.get("tags")
+            else None,
         )
         return APIResponse.ok(
             {

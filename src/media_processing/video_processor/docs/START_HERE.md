@@ -126,6 +126,7 @@ Read these 3 docs (30 minutes):
    Takes 2-5 minutes
 
 2. **Open VS Code**:
+
    - Install recommended extensions
    - VS Code will prompt you
    - Click "Install All"
@@ -230,6 +231,7 @@ Once checked, we can start building features!
    ```
 
 2. **Read Docs**:
+
    - `docs/GOLF_VIDEO_ACTION_PLAN.md` (Phase 1 tasks)
 
 3. **Start Building**:

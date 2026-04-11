@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 interface RecommendationsPanelProps {
   recommendations: string[];
@@ -12,16 +12,14 @@ export default function RecommendationsPanel({
   }
 
   // Categorize recommendations
-  const prioritized = recommendations.filter(
-    (r) =>
-      r.toLowerCase().includes("focus") || r.toLowerCase().includes("major"),
+  const prioritized = recommendations.filter((r) =>
+    r.toLowerCase().includes('focus') || r.toLowerCase().includes('major')
   );
-  const drills = recommendations.filter(
-    (r) =>
-      r.toLowerCase().includes("drill") || r.toLowerCase().includes("practice"),
+  const drills = recommendations.filter((r) =>
+    r.toLowerCase().includes('drill') || r.toLowerCase().includes('practice')
   );
   const general = recommendations.filter(
-    (r) => !prioritized.includes(r) && !drills.includes(r),
+    (r) => !prioritized.includes(r) && !drills.includes(r)
   );
 
   return (
@@ -151,47 +149,33 @@ export default function RecommendationsPanel({
 
       {/* Quick Tips Section */}
       <div className="mt-6 pt-6 border-t border-gray-200">
-        <h4 className="text-sm font-medium text-gray-700 mb-3">
-          Quick Reference
-        </h4>
+        <h4 className="text-sm font-medium text-gray-700 mb-3">Quick Reference</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
             <span className="text-2xl">🎯</span>
             <div>
               <p className="text-sm font-medium text-green-800">Ideal Tempo</p>
-              <p className="text-xs text-green-600">
-                3:1 ratio (backswing to downswing)
-              </p>
+              <p className="text-xs text-green-600">3:1 ratio (backswing to downswing)</p>
             </div>
           </div>
           <div className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
             <span className="text-2xl">🔄</span>
             <div>
-              <p className="text-sm font-medium text-green-800">
-                Ideal X-Factor
-              </p>
-              <p className="text-xs text-green-600">
-                45-60° shoulder-hip separation
-              </p>
+              <p className="text-sm font-medium text-green-800">Ideal X-Factor</p>
+              <p className="text-xs text-green-600">45-60° shoulder-hip separation</p>
             </div>
           </div>
           <div className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
             <span className="text-2xl">🧍</span>
             <div>
-              <p className="text-sm font-medium text-green-800">
-                Ideal Spine Angle
-              </p>
-              <p className="text-xs text-green-600">
-                30-45° forward tilt at address
-              </p>
+              <p className="text-sm font-medium text-green-800">Ideal Spine Angle</p>
+              <p className="text-xs text-green-600">30-45° forward tilt at address</p>
             </div>
           </div>
           <div className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
             <span className="text-2xl">⚖️</span>
             <div>
-              <p className="text-sm font-medium text-green-800">
-                Weight at Impact
-              </p>
+              <p className="text-sm font-medium text-green-800">Weight at Impact</p>
               <p className="text-xs text-green-600">70-80% on lead side</p>
             </div>
           </div>

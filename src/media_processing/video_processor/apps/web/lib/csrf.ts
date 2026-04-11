@@ -5,11 +5,11 @@
  * Uses the "Double Submit Cookie" pattern for stateless CSRF protection.
  */
 
-import { cookies } from "next/headers";
+import { cookies } from 'next/headers';
 
 const CSRF_TOKEN_LENGTH = 32;
-const CSRF_COOKIE_NAME = "csrf_token";
-const CSRF_HEADER_NAME = "x-csrf-token";
+const CSRF_COOKIE_NAME = 'csrf_token';
+const CSRF_HEADER_NAME = 'x-csrf-token';
 
 /**
  * Generate a random CSRF token
@@ -17,9 +17,7 @@ const CSRF_HEADER_NAME = "x-csrf-token";
 export function generateCsrfToken(): string {
   const array = new Uint8Array(CSRF_TOKEN_LENGTH);
   crypto.getRandomValues(array);
-  return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
-    "",
-  );
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join('');
 }
 
 /**
@@ -36,9 +34,9 @@ export async function getCsrfToken(): Promise<string> {
   const newToken = generateCsrfToken();
   cookieStore.set(CSRF_COOKIE_NAME, newToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/',
     maxAge: 60 * 60 * 24, // 24 hours
   });
 
@@ -56,16 +54,16 @@ export function validateCsrfToken(request: Request): boolean {
   }
 
   // Get token from cookie
-  const cookieHeader = request.headers.get("cookie");
+  const cookieHeader = request.headers.get('cookie');
   if (!cookieHeader) {
     return false;
   }
 
   const cookies = Object.fromEntries(
-    cookieHeader.split(";").map((cookie) => {
-      const [key, value] = cookie.trim().split("=");
+    cookieHeader.split(';').map((cookie) => {
+      const [key, value] = cookie.trim().split('=');
       return [key, value];
-    }),
+    })
   );
 
   const cookieToken = cookies[CSRF_COOKIE_NAME];
@@ -112,15 +110,15 @@ export function requireCsrfToken(request: Request): Response | null {
   if (!validateCsrfToken(request)) {
     return new Response(
       JSON.stringify({
-        error: "CSRF Validation Failed",
-        message: "Invalid or missing CSRF token",
+        error: 'CSRF Validation Failed',
+        message: 'Invalid or missing CSRF token',
       }),
       {
         status: 403,
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-      },
+      }
     );
   }
 
@@ -171,12 +169,12 @@ export function requireCsrfToken(request: Request): Response | null {
  * Use this when making fetch requests
  */
 export function getClientCsrfToken(): string | null {
-  if (typeof document === "undefined") {
+  if (typeof document === 'undefined') {
     return null;
   }
 
   const meta = document.querySelector('meta[name="csrf-token"]');
-  return meta?.getAttribute("content") || null;
+  return meta?.getAttribute('content') || null;
 }
 
 /**
@@ -192,7 +190,7 @@ export function getClientCsrfToken(): string | null {
  */
 export async function fetchWithCsrf(
   url: string,
-  options: RequestInit = {},
+  options: RequestInit = {}
 ): Promise<Response> {
   const token = getClientCsrfToken();
 

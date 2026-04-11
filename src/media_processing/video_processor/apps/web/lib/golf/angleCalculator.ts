@@ -3,7 +3,12 @@
  * Provides precise biomechanical angle measurements from pose landmarks
  */
 
-import { BodyAngles, Landmark, PoseLandmark, StanceDirection } from "./types";
+import {
+  BodyAngles,
+  Landmark,
+  PoseLandmark,
+  StanceDirection,
+} from './types';
 
 /**
  * Calculate angle between three points (in degrees)
@@ -26,20 +31,17 @@ export function calculateAngle(a: Landmark, b: Landmark, c: Landmark): number {
     vectorBA.x * vectorBC.x + vectorBA.y * vectorBC.y + vectorBA.z * vectorBC.z;
 
   const magnitudeBA = Math.sqrt(
-    vectorBA.x ** 2 + vectorBA.y ** 2 + vectorBA.z ** 2,
+    vectorBA.x ** 2 + vectorBA.y ** 2 + vectorBA.z ** 2
   );
   const magnitudeBC = Math.sqrt(
-    vectorBC.x ** 2 + vectorBC.y ** 2 + vectorBC.z ** 2,
+    vectorBC.x ** 2 + vectorBC.y ** 2 + vectorBC.z ** 2
   );
 
   if (magnitudeBA === 0 || magnitudeBC === 0) {
     return 0;
   }
 
-  const cosAngle = Math.max(
-    -1,
-    Math.min(1, dotProduct / (magnitudeBA * magnitudeBC)),
-  );
+  const cosAngle = Math.max(-1, Math.min(1, dotProduct / (magnitudeBA * magnitudeBC)));
   return Math.acos(cosAngle) * (180 / Math.PI);
 }
 
@@ -48,7 +50,7 @@ export function calculateAngle(a: Landmark, b: Landmark, c: Landmark): number {
  */
 export function calculateAngleFromHorizontal(
   start: Landmark,
-  end: Landmark,
+  end: Landmark
 ): number {
   const deltaX = end.x - start.x;
   const deltaY = end.y - start.y;
@@ -61,7 +63,7 @@ export function calculateAngleFromHorizontal(
  */
 export function calculateHorizontalRotation(
   left: Landmark,
-  right: Landmark,
+  right: Landmark
 ): number {
   const deltaX = right.x - left.x;
   const deltaZ = right.z - left.z;
@@ -84,7 +86,9 @@ export function getMidpoint(a: Landmark, b: Landmark): Landmark {
  * Calculate distance between two landmarks
  */
 export function calculateDistance(a: Landmark, b: Landmark): number {
-  return Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2 + (b.z - a.z) ** 2);
+  return Math.sqrt(
+    (b.x - a.x) ** 2 + (b.y - a.y) ** 2 + (b.z - a.z) ** 2
+  );
 }
 
 /**
@@ -92,7 +96,7 @@ export function calculateDistance(a: Landmark, b: Landmark): number {
  */
 export function calculateBodyAngles(
   landmarks: Landmark[],
-  stance: StanceDirection = StanceDirection.RIGHT_HANDED,
+  stance: StanceDirection = StanceDirection.RIGHT_HANDED
 ): BodyAngles {
   // Key landmarks
   const leftShoulder = landmarks[PoseLandmark.LEFT_SHOULDER];
@@ -117,15 +121,11 @@ export function calculateBodyAngles(
   const spineAngle = 90 - calculateAngleFromHorizontal(hipMid, shoulderMid);
 
   // Spine lateral bend
-  const spineLateral =
-    calculateAngleFromHorizontal(leftHip, leftShoulder) -
+  const spineLateral = calculateAngleFromHorizontal(leftHip, leftShoulder) -
     calculateAngleFromHorizontal(rightHip, rightShoulder);
 
   // Spine rotation (using z-depth)
-  const spineRotation = calculateHorizontalRotation(
-    leftShoulder,
-    rightShoulder,
-  );
+  const spineRotation = calculateHorizontalRotation(leftShoulder, rightShoulder);
 
   // Hip rotation
   const hipRotation = calculateHorizontalRotation(leftHip, rightHip);
@@ -137,14 +137,8 @@ export function calculateBodyAngles(
   const hipSlide = (hipMid.x - 0.5) * 100; // Normalized to cm (assuming 1 unit = 100cm)
 
   // Shoulder rotation and tilt
-  const shoulderRotation = calculateHorizontalRotation(
-    leftShoulder,
-    rightShoulder,
-  );
-  const shoulderTilt = calculateAngleFromHorizontal(
-    leftShoulder,
-    rightShoulder,
-  );
+  const shoulderRotation = calculateHorizontalRotation(leftShoulder, rightShoulder);
+  const shoulderTilt = calculateAngleFromHorizontal(leftShoulder, rightShoulder);
 
   // X-Factor: differential between shoulder and hip rotation
   const xFactor = Math.abs(shoulderRotation - hipRotation);
@@ -162,8 +156,7 @@ export function calculateBodyAngles(
 
   // Knee flexion angles
   const leftKneeFlexion = 180 - calculateAngle(leftHip, leftKnee, leftAnkle);
-  const rightKneeFlexion =
-    180 - calculateAngle(rightHip, rightKnee, rightAnkle);
+  const rightKneeFlexion = 180 - calculateAngle(rightHip, rightKnee, rightAnkle);
 
   return {
     spineAngle,
@@ -188,13 +181,8 @@ export function calculateBodyAngles(
 /**
  * Calculate ideal angle ranges for different swing phases
  */
-export function getIdealAngleRanges(
-  phase: string,
-): Partial<Record<keyof BodyAngles, [number, number]>> {
-  const ranges: Record<
-    string,
-    Partial<Record<keyof BodyAngles, [number, number]>>
-  > = {
+export function getIdealAngleRanges(phase: string): Partial<Record<keyof BodyAngles, [number, number]>> {
+  const ranges: Record<string, Partial<Record<keyof BodyAngles, [number, number]>>> = {
     address: {
       spineAngle: [25, 45],
       hipRotation: [-5, 5],
@@ -232,7 +220,7 @@ export function getIdealAngleRanges(
  */
 export function isAngleInRange(
   angle: number,
-  idealRange: [number, number],
+  idealRange: [number, number]
 ): boolean {
   return angle >= idealRange[0] && angle <= idealRange[1];
 }
@@ -242,7 +230,7 @@ export function isAngleInRange(
  */
 export function calculateAngleDeviation(
   angle: number,
-  idealRange: [number, number],
+  idealRange: [number, number]
 ): number {
   if (angle < idealRange[0]) {
     return idealRange[0] - angle;
@@ -258,7 +246,7 @@ export function calculateAngleDeviation(
  */
 export function smoothAngles(
   angleHistory: number[],
-  windowSize: number = 5,
+  windowSize: number = 5
 ): number[] {
   if (angleHistory.length < windowSize) {
     return angleHistory;
@@ -281,7 +269,7 @@ export function smoothAngles(
 export function calculateAngularVelocity(
   angle1: number,
   angle2: number,
-  timeDeltaMs: number,
+  timeDeltaMs: number
 ): number {
   if (timeDeltaMs === 0) return 0;
   return ((angle2 - angle1) / timeDeltaMs) * 1000;
@@ -292,7 +280,7 @@ export function calculateAngularVelocity(
  */
 export function detectStanceDirection(
   landmarks: Landmark[],
-  targetLineAngle: number = 0,
+  targetLineAngle: number = 0
 ): StanceDirection {
   const leftShoulder = landmarks[PoseLandmark.LEFT_SHOULDER];
   const rightShoulder = landmarks[PoseLandmark.RIGHT_SHOULDER];
@@ -300,10 +288,7 @@ export function detectStanceDirection(
   const rightHip = landmarks[PoseLandmark.RIGHT_HIP];
 
   // Calculate body orientation
-  const shoulderAngle = calculateHorizontalRotation(
-    leftShoulder,
-    rightShoulder,
-  );
+  const shoulderAngle = calculateHorizontalRotation(leftShoulder, rightShoulder);
   const hipAngle = calculateHorizontalRotation(leftHip, rightHip);
 
   // Average body rotation

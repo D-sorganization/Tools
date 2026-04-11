@@ -9,15 +9,15 @@
 
 ## Summary Scorecard
 
-| Dimension  | Grade | Key Issue                                                         |
-| ---------- | ----- | ----------------------------------------------------------------- |
-| Optimized  | B+    | 8-DOF Coriolis is O(N³) Python loops; duplicated KKT solve        |
-| DRY        | B-    | 3 physics engines, 3 SimResult classes, JAX copy-paste of NumPy   |
-| DbC        | A-    | Excellent preconditions; `assert` in GUI should be `raise`        |
-| TDD        | B+    | 156 tests, property-based; no GUI tests, thin web tests           |
-| Vectorized | C+    | Coriolis should use `einsum`; SimResult accessors are scalar-only |
-| UI/UX      | B     | Inconsistent tab paradigms; no validation feedback; web behind    |
-| Changeable | B-    | Adding a model requires ~3000 lines of boilerplate                |
+| Dimension     | Grade | Key Issue                                                        |
+|---------------|-------|------------------------------------------------------------------|
+| Optimized     | B+    | 8-DOF Coriolis is O(N³) Python loops; duplicated KKT solve      |
+| DRY           | B-    | 3 physics engines, 3 SimResult classes, JAX copy-paste of NumPy  |
+| DbC           | A-    | Excellent preconditions; `assert` in GUI should be `raise`       |
+| TDD           | B+    | 156 tests, property-based; no GUI tests, thin web tests          |
+| Vectorized    | C+    | Coriolis should use `einsum`; SimResult accessors are scalar-only |
+| UI/UX         | B     | Inconsistent tab paradigms; no validation feedback; web behind   |
+| Changeable    | B-    | Adding a model requires ~3000 lines of boilerplate               |
 
 ## Tracking Status (Updated 2026-03-09)
 
@@ -25,20 +25,20 @@ The review findings that were already implemented have now been normalized into
 GitHub issue tracking, so every addressed pendulum follow-up item has a
 corresponding issue.
 
-| Review item                                                | Issue | Status |
-| ---------------------------------------------------------- | ----- | ------ |
-| Triple pendulum friction model and dissipation UI          | #1048 | Closed |
+| Review item | Issue | Status |
+|-------------|-------|--------|
+| Triple pendulum friction model and dissipation UI | #1048 | Closed |
 | TripleSimulationResult friction and total torque accessors | #1049 | Closed |
-| Generic `make_polynomial_torque` extraction                | #1041 | Closed |
-| Elbow torque import support in `FunctionGeneratorDialog`   | #1050 | Closed |
-| `PlotThemeManager` integration for torque history plots    | #1051 | Closed |
-| Theme-derived pendulum styling cleanup                     | #1042 | Closed |
-| Typing import modernization in pendulum physics modules    | #1043 | Closed |
-| DbC postconditions for gravity and friction helpers        | #1044 | Closed |
-| Triple pendulum friction regression coverage               | #1052 | Closed |
+| Generic `make_polynomial_torque` extraction | #1041 | Closed |
+| Elbow torque import support in `FunctionGeneratorDialog` | #1050 | Closed |
+| `PlotThemeManager` integration for torque history plots | #1051 | Closed |
+| Theme-derived pendulum styling cleanup | #1042 | Closed |
+| Typing import modernization in pendulum physics modules | #1043 | Closed |
+| DbC postconditions for gravity and friction helpers | #1044 | Closed |
+| Triple pendulum friction regression coverage | #1052 | Closed |
 | Repo-root discovery instead of fragile `sys.path` climbing | #1053 | Closed |
-| Function Generator button on triple pendulum controls      | #1054 | Closed |
-| Removal of pendulum GUI `type: ignore` debt                | #1045 | Closed |
+| Function Generator button on triple pendulum controls | #1054 | Closed |
+| Removal of pendulum GUI `type: ignore` debt | #1045 | Closed |
 
 - `PR #982` implemented the main pendulum follow-up wave on `main`.
 - `PR #1046` performed cleanup and closed `#1041`, `#1042`, and `#1044`.
@@ -50,7 +50,6 @@ corresponding issue.
 ## 1. Optimization — Grade: B+
 
 ### Strengths
-
 - 2/3-DOF physics use closed-form analytical Lagrangian mechanics — O(1) per evaluation
 - 8-DOF golfer upgraded from numerical to analytical Jacobians (14.7× speedup)
 - `scipy.solve_ivp` with adaptive RK45 is the right integrator choice
@@ -59,7 +58,6 @@ corresponding issue.
 ### Critical Bottlenecks
 
 #### 1.1 Coriolis Triple Loop (physics_golfer.py:953-997)
-
 `analytical_coriolis` computes `dM/dq_k` via 8 finite-difference mass-matrix calls, then
 runs a **triple-nested Python loop** (8×8×8 = 512 iterations) for Christoffel symbols.
 This is the hottest function in the ODE RHS, running pure interpreted Python.
@@ -79,24 +77,20 @@ C_qdot = np.einsum('ijk,j,k->i',
 ```
 
 #### 1.2 Duplicated KKT Solve (constraint_solver.py:135-188)
-
 `constraint_forces()` rebuilds the entire 12×12 KKT system identically to
 `constrained_accelerations()` just to extract `sol[n:]`. Both should return
 `(qddot, lambda)` from a single solve.
 
 #### 1.3 Identical "Analytical" Bias Functions (constraint_solver.py:191-230)
-
 `_constraint_acceleration_bias` and `analytical_constraint_acceleration_bias` are
 byte-for-byte identical. The "analytical" version is a dead misnomer using the same
 finite-difference approach.
 
 #### 1.4 ODE RHS Cost Per Step (~13 FK evaluations)
-
 Each RHS evaluation requires: 8 for Coriolis FD + 1 bias FD + 1 mass + 1 gravity +
 2 constraint = ~13 forward-kinematics evaluations.
 
 ### Speed-Up Recommendations (ranked by impact)
-
 1. **`einsum` for Coriolis** — 50-100× faster for 8-DOF
 2. **Analytical `dM/dq`** — chain rule on J^T J gives closed-form derivatives; eliminates 8 mass-matrix evals/step
 3. **Merge `constrained_accelerations` + `constraint_forces`** — 2× fewer evals when both needed
@@ -108,7 +102,6 @@ Each RHS evaluation requires: 8 for Coriolis FD + 1 bias FD + 1 mass + 1 gravity
 ## 2. DRY — Grade: B-
 
 ### Strengths
-
 - `_m2eff()` helper avoids repeating `m2 + mClub`
 - `controls_utils.py` consolidates parse helpers and style constants
 - `LabeledInput` defined once, reused by all control panels
@@ -117,7 +110,6 @@ Each RHS evaluation requires: 8 for Coriolis FD + 1 bias FD + 1 mass + 1 gravity
 ### Violations
 
 #### 2.1 Three Independent Physics Engines
-
 `physics.py`, `physics_triple.py`, `physics_golfer.py` each implement:
 `mass_matrix`, `coriolis_vector`, `gravity_vector`, `forward_kinematics`,
 `kinetic_energy`, `potential_energy`, `total_energy`, `equations_of_motion`,
@@ -127,28 +119,23 @@ The structure is identical; only DOF count and formulas differ. A generic N-DOF
 Lagrangian base could eliminate ~60% of this code.
 
 #### 2.2 JAX Module is Verbatim Copy (~600 lines)
-
 `physics_golfer_jax.py` duplicates `physics_golfer.py` with `np` → `jnp` and
 `.at[].set()` syntax. Fix: backend-agnostic approach (pass `xp` module) or thin adapter.
 
 #### 2.3 Three SimulationResult Classes
-
 `SimulationResult`, `TripleSimulationResult`, `GolferSimulationResult` have identical
 accessor patterns. Should share a base class.
 
 #### 2.4 Three `make_polynomial_torque` Functions
-
 `simulation.py:43-65`, `simulation_triple.py`, `simulation_golfer.py:44-75` — identical
 logic, different arity.
 
 #### 2.5 GUI Stylesheet Duplication
-
 - `controls_widget_triple.py:317-322` defines `_STYLE_CHECK` locally, duplicating
   `STYLE_CHECK` from `controls_utils.py`
 - `controls_widget_golfer.py:383-389` does the same
 
 #### 2.6 Playback/Export Boilerplate
-
 All three control widgets copy-paste: `_on_play_toggled`, `set_slider_range`,
 `set_slider_value`, `stop_playback`, and identical signal declarations. A `PlaybackMixin`
 would eliminate this.
@@ -158,7 +145,6 @@ would eliminate this.
 ## 3. Design by Contract — Grade: A-
 
 ### Strengths (strongest dimension)
-
 - Every `@dataclass(frozen=True)` has `__post_init__` with comprehensive precondition
   assertions
 - Every physics function asserts finiteness of inputs and outputs
@@ -167,7 +153,6 @@ would eliminate this.
 - Docstrings document Pre/Post contracts
 
 ### Gaps
-
 1. **`assert` used for GUI validation** (`controls_widget.py:495-499`) — disabled by
    Python `-O`. Should be `raise ValueError(...)`.
 2. **No invariant on `SimulationResult`** — no validation of `states.shape[1]` vs DOF
@@ -180,7 +165,6 @@ would eliminate this.
 ## 4. TDD — Grade: B+
 
 ### Strengths
-
 - 156 tests across 14 test files
 - Property-based: symmetry, PSD, energy conservation, velocity scaling, singularity
 - Parametric fixtures (`conftest.py`)
@@ -189,7 +173,6 @@ would eliminate this.
 - GPU optimizer validation (10 tests)
 
 ### Gaps
-
 1. **No GUI tests** — 14 widgets (~200KB) are untested
 2. **No performance regression tests** — `perf_test.py` not in CI
 3. **No constraint solver edge cases** — no near-singular KKT, drift, or gain sensitivity tests
@@ -200,7 +183,6 @@ would eliminate this.
 ## 5. Vectorization — Grade: C+
 
 ### Strengths
-
 - 2/3-DOF inherently scalar; NumPy vectorizes at BLAS level
 - JAX module with `vmap`-compatible pure functions
 - GPU batch simulation via JAX/diffrax
@@ -208,21 +190,17 @@ would eliminate this.
 ### Weaknesses
 
 #### 5.1 Coriolis Triple Loop
-
 Both NumPy and JAX versions use O(N³) Python loops instead of `einsum`.
 
 #### 5.2 Scalar-Only SimulationResult
-
 All accessors (`mass_matrix_at`, `positions_at`, `energy_at`) are single-index.
 No batch trajectory computation.
 
 #### 5.3 Numerical Mass Matrix Fallback
-
 `numerical_mass_matrix` runs 7 mass points × 8 DOFs = 56 FK evaluations. Catastrophically
 slow if called.
 
 #### 5.4 JAX Python Loops
-
 `physics_golfer_jax.py:465-470` uses Python `for` loops inside JIT-intended code.
 Should use `jnp.einsum` or `jax.lax.fori_loop`.
 
@@ -231,7 +209,6 @@ Should use `jnp.einsum` or `jax.lax.fori_loop`.
 ## 6. UI/UX — Grade: B
 
 ### Strengths
-
 - Cohesive dark theme
 - Comprehensive desktop feature set: animation, matrices, ellipsoids, torque history
 - Good presets for each model
@@ -242,23 +219,19 @@ Should use `jnp.einsum` or `jax.lax.fori_loop`.
 ### Weaknesses
 
 #### 6.1 Inconsistent Tab Paradigms
-
 - Double: toolstrip-driven playback (hidden compat widgets)
 - Triple/Golfer: embedded Run/Reset + inline playback controls
 - Users get different interaction patterns across tabs
 
 #### 6.2 No Input Validation Feedback
-
 Entering a negative mass produces a Python `AssertionError` traceback. No inline error
 highlighting, red borders, or status bar messages.
 
 #### 6.3 Web Version Far Behind
-
 No triple pendulum, no golfer, no force ellipsoids, no function generator, no export.
 Two app files (`App.tsx`, `AppNew.tsx`) suggest incomplete migration.
 
 #### 6.4 Missing Features
-
 - No undo/redo for parameter changes
 - Torque preview only on double/triple tabs, not golfer
 - Preset format inconsistent (tuples vs dicts)
@@ -268,7 +241,6 @@ Two app files (`App.tsx`, `AppNew.tsx`) suggest incomplete migration.
 ## 7. Changeability — Grade: B-
 
 ### Strengths
-
 - `frozen=True` dataclasses — immutable params safe to pass around
 - Pure-function physics (no global state)
 - Clean separation: physics → simulation → GUI
@@ -277,9 +249,7 @@ Two app files (`App.tsx`, `AppNew.tsx`) suggest incomplete migration.
 ### Weaknesses
 
 #### 7.1 High Cost to Add Models
-
 Adding a 4th model requires ~3000+ lines across:
-
 - `physics_*.py` (~500 lines)
 - `simulation_*.py` (~250 lines)
 - `controls_widget_*.py` (~500 lines)
@@ -291,20 +261,16 @@ Adding a 4th model requires ~3000+ lines across:
 An N-DOF generalized architecture + model registry would reduce this to ~500 lines.
 
 #### 7.2 No Plugin/Registry Pattern
-
 Models hardcoded into main window tab structure. A factory pattern would allow declarative
 model registration.
 
 #### 7.3 Fragile Module-Level Aliasing (physics_golfer.py:1131-1134)
-
 ```python
 mass_matrix = analytical_mass_matrix
 ```
-
 Shadows the function name, preventing debugging access to numerical version.
 
 #### 7.4 Zero Shared Physics Code (Web/Desktop)
-
 TypeScript and Python physics are independent reimplementations. Rust core exists to bridge
 this but isn't integrated into Python desktop app.
 

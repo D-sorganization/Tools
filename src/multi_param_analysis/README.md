@@ -59,18 +59,22 @@ python launch_pyqt6.py
 ### Running an Analysis
 
 1. **Configure Parameter 1 (X-Axis)**:
+
    - Select variable from dropdown (Temperature, O2/Feed Ratio, etc.)
    - Set minimum and maximum values
    - Choose number of steps (2-100)
 
 2. **Configure Parameter 2 (Y-Axis)**:
+
    - Select a different variable
    - Define range and step count
 
 3. **Select Output Variable**:
+
    - Choose the response variable to analyze (Efficiency, H2 Yield, etc.)
 
 4. **Set Analysis Options** (Options tab):
+
    - Enable/disable parallel processing
    - Configure max workers
    - Toggle sensitivity calculations

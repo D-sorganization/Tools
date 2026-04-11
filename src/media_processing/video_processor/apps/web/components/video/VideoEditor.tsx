@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { fetchFile } from "@ffmpeg/util";
-import { useRef, useState } from "react";
+import { FFmpeg } from '@ffmpeg/ffmpeg';
+import { fetchFile } from '@ffmpeg/util';
+import { useRef, useState } from 'react';
 
 interface VideoEditorProps {
   videoFile: File | null;
@@ -43,7 +43,7 @@ export default function VideoEditor({
     const ffmpeg = new FFmpeg();
     ffmpegRef.current = ffmpeg;
 
-    ffmpeg.on("log", ({ message }) => {
+    ffmpeg.on('log', ({ message }) => {
       // eslint-disable-next-line no-console
       console.log(message);
     });
@@ -74,60 +74,59 @@ export default function VideoEditor({
     try {
       await loadFFmpeg();
       const ffmpeg = ffmpegRef.current;
-      if (!ffmpeg) throw new Error("FFmpeg not loaded");
+      if (!ffmpeg) throw new Error('FFmpeg not loaded');
 
-      await ffmpeg.writeFile("input.mp4", await fetchFile(videoFile));
+      await ffmpeg.writeFile('input.mp4', await fetchFile(videoFile));
 
-      const outputArgs: string[] = ["-i", "input.mp4"];
+      const outputArgs: string[] = ['-i', 'input.mp4'];
 
       if (trimRange.start > 0 || trimRange.end < videoDuration) {
-        outputArgs.push("-ss", trimRange.start.toString());
-        outputArgs.push("-t", (trimRange.end - trimRange.start).toString());
+        outputArgs.push('-ss', trimRange.start.toString());
+        outputArgs.push('-t', (trimRange.end - trimRange.start).toString());
       }
 
       if (cropArea) {
         outputArgs.push(
-          "-vf",
-          `crop=${cropArea.width}:${cropArea.height}:${cropArea.x}:${cropArea.y}`,
+          '-vf',
+          `crop=${cropArea.width}:${cropArea.height}:${cropArea.x}:${cropArea.y}`
         );
       }
 
       if (rotation !== 0) {
         const rotationFilter =
           rotation === 90
-            ? "transpose=1"
+            ? 'transpose=1'
             : rotation === 180
-              ? "transpose=1,transpose=1"
-              : rotation === 270
-                ? "transpose=2"
-                : "";
+            ? 'transpose=1,transpose=1'
+            : rotation === 270
+            ? 'transpose=2'
+            : '';
         if (rotationFilter) {
           if (cropArea) {
-            const currentFilter = outputArgs[outputArgs.indexOf("-vf") + 1];
-            outputArgs[outputArgs.indexOf("-vf") + 1] =
-              `${currentFilter},${rotationFilter}`;
+            const currentFilter = outputArgs[outputArgs.indexOf('-vf') + 1];
+            outputArgs[outputArgs.indexOf('-vf') + 1] = `${currentFilter},${rotationFilter}`;
           } else {
-            outputArgs.push("-vf", rotationFilter);
+            outputArgs.push('-vf', rotationFilter);
           }
         }
       }
 
-      outputArgs.push("-c:v", "libx264");
-      outputArgs.push("-c:a", "copy");
-      outputArgs.push("output.mp4");
+      outputArgs.push('-c:v', 'libx264');
+      outputArgs.push('-c:a', 'copy');
+      outputArgs.push('output.mp4');
 
       await ffmpeg.exec(outputArgs);
 
-      const data = await ffmpeg.readFile("output.mp4");
-      const blob = new Blob([data as any], { type: "video/mp4" });
+      const data = await ffmpeg.readFile('output.mp4');
+      const blob = new Blob([data as any], { type: 'video/mp4' });
 
-      await ffmpeg.deleteFile("input.mp4");
-      await ffmpeg.deleteFile("output.mp4");
+      await ffmpeg.deleteFile('input.mp4');
+      await ffmpeg.deleteFile('output.mp4');
 
       onExport(blob);
     } catch (error) {
-      console.error("Export error:", error);
-      alert("Failed to export video. Please try again.");
+      console.error('Export error:', error);
+      alert('Failed to export video. Please try again.');
     } finally {
       setIsProcessing(false);
     }
@@ -136,7 +135,7 @@ export default function VideoEditor({
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   if (videoFile) {
@@ -153,9 +152,7 @@ export default function VideoEditor({
         </label>
         <div className="space-y-2">
           <div>
-            <label className="text-xs text-gray-600">
-              Start: {formatTime(trimRange.start)}
-            </label>
+            <label className="text-xs text-gray-600">Start: {formatTime(trimRange.start)}</label>
             <input
               type="range"
               min="0"
@@ -213,10 +210,10 @@ export default function VideoEditor({
                 px-3 py-2 text-sm font-medium rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none
                 ${
                   rotation === angle
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }
-                ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+                ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
               `}
             >
               {angle}°
@@ -232,35 +229,22 @@ export default function VideoEditor({
       >
         {isProcessing ? (
           <>
-            <svg
-              className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
+            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
             Processing...
           </>
         ) : (
-          "Export Video"
+          'Export Video'
         )}
       </button>
 
-      <video ref={videoPreviewRef} className="hidden" preload="metadata" />
+      <video
+        ref={videoPreviewRef}
+        className="hidden"
+        preload="metadata"
+      />
     </div>
   );
 }

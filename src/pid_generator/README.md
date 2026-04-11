@@ -13,13 +13,11 @@ Generate P&ID drawings from YAML specifications (DXF + SVG output)
 ## Quick Start
 
 ### PyQt6 GUI
-
 ```bash
 python src/pid_generator/launch_pyqt6.py
 ```
 
 ### CLI
-
 ```bash
 generate-pid spec.yml -o output.dxf
 ```

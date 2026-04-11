@@ -4,16 +4,16 @@
  * Reusable utilities for testing components.
  */
 
-import { ReactElement } from "react";
-import { render, RenderOptions } from "@testing-library/react";
-import { vi, beforeEach, afterEach } from "vitest";
+import { ReactElement } from 'react';
+import { render, RenderOptions } from '@testing-library/react';
+import { vi, beforeEach, afterEach } from 'vitest';
 
 /**
  * Custom render function that wraps components with providers
  */
 export function renderWithProviders(
   ui: ReactElement,
-  options?: Omit<RenderOptions, "wrapper">,
+  options?: Omit<RenderOptions, 'wrapper'>
 ) {
   // Add providers here when needed (e.g., Context providers, Router, etc.)
   // For now, just use the default render
@@ -24,15 +24,15 @@ export function renderWithProviders(
  * Create a mock File object for testing
  */
 export function createMockFile(
-  name: string = "test-video.mp4",
+  name: string = 'test-video.mp4',
   size: number = 1024 * 1024, // 1MB
-  type: string = "video/mp4",
+  type: string = 'video/mp4'
 ): File {
-  const blob = new Blob(["mock video content"], { type });
+  const blob = new Blob(['mock video content'], { type });
   const file = new File([blob], name, { type });
 
   // Override the size property
-  Object.defineProperty(file, "size", {
+  Object.defineProperty(file, 'size', {
     value: size,
     configurable: true,
   });
@@ -44,7 +44,7 @@ export function createMockFile(
  * Create a mock HTMLVideoElement for testing
  */
 export function createMockVideoElement(
-  overrides?: Partial<HTMLVideoElement>,
+  overrides?: Partial<HTMLVideoElement>
 ): Partial<HTMLVideoElement> {
   return {
     currentTime: 0,
@@ -65,8 +65,8 @@ export function createMockVideoElement(
  * Create a mock Blob for testing
  */
 export function createMockBlob(
-  content: string = "mock content",
-  type: string = "application/octet-stream",
+  content: string = 'mock content',
+  type: string = 'application/octet-stream'
 ): Blob {
   return new Blob([content], { type });
 }
@@ -76,13 +76,13 @@ export function createMockBlob(
  */
 export async function waitForCondition(
   condition: () => boolean,
-  timeout: number = 5000,
+  timeout: number = 5000
 ): Promise<void> {
   const startTime = Date.now();
 
   while (!condition()) {
     if (Date.now() - startTime > timeout) {
-      throw new Error("Timeout waiting for condition");
+      throw new Error('Timeout waiting for condition');
     }
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
@@ -137,20 +137,18 @@ export function createMockFabricCanvas(): any {
     })),
     freeDrawingBrush: {
       width: 2,
-      color: "#000000",
+      color: '#000000',
     },
     isDrawingMode: false,
     selection: true,
-    defaultCursor: "default",
+    defaultCursor: 'default',
   };
 }
 
 /**
  * Suppress console methods during tests
  */
-export function suppressConsole(
-  methods: ("log" | "warn" | "error")[] = ["error"],
-) {
+export function suppressConsole(methods: ('log' | 'warn' | 'error')[] = ['error']) {
   const original: Record<string, any> = {};
 
   beforeEach(() => {
@@ -168,5 +166,5 @@ export function suppressConsole(
 }
 
 // Re-export commonly used testing library utilities
-export * from "@testing-library/react";
-export { default as userEvent } from "@testing-library/user-event";
+export * from '@testing-library/react';
+export { default as userEvent } from '@testing-library/user-event';

@@ -93,6 +93,7 @@ If a counterexample exists in principle, the text must either:
 You are expected to be aware of:
 
 - recent (last ~10–15 years) literature in:
+
   - nonlinear optimal control
   - motor control and biomechanics
   - redundancy resolution

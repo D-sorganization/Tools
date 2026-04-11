@@ -7,14 +7,12 @@ A high-performance Rust physics library for pendulum and golfer body dynamics. C
 ### Core Modules
 
 **`types.rs`** (296 lines)
-
 - Parameter structs: `DoublePendulumParams`, `TriplePendulumParams`, `GolferParams`
 - Result types: `DoubleFKResult`, `TripleFKResult`, `GolferFKResult`
 - 2D vector utilities (`Vec2`)
 - Parameter validation
 
 **`double.rs`** (179 lines)
-
 - 2-DOF double pendulum physics (arm + club)
 - Generalized coordinates: q = [θ₁, φ]
   - θ₁: arm angle from vertical
@@ -27,7 +25,6 @@ A high-performance Rust physics library for pendulum and golfer body dynamics. C
   - Jacobian functions
 
 **`triple.rs`** (254 lines)
-
 - 3-DOF triple pendulum physics (three segments)
 - Generalized coordinates: q = [θ₁, φ₂, φ₃]
 - Three segments with individual masses and lengths
@@ -35,7 +32,6 @@ A high-performance Rust physics library for pendulum and golfer body dynamics. C
 - FK jacobians for each joint
 
 **`golfer.rs`** (520 lines) — **Most Critical**
-
 - 8-DOF golfer upper body model
 - Generalized coordinates: q = [θ_hub, α_rs, α_re, α_rh, α_ls, α_le, α_lh, θ_club]
 - 7 mass points:
@@ -55,7 +51,6 @@ A high-performance Rust physics library for pendulum and golfer body dynamics. C
   - `constraint_jacobian(q, p)` → 4×8
 
 **`golfer_constraints.rs`** (288 lines)
-
 - KKT constraint solver for 4 hand/club grip constraints
 - Baumgarte stabilization (α, β gains)
 - Functions:
@@ -65,7 +60,6 @@ A high-performance Rust physics library for pendulum and golfer body dynamics. C
   - `project_velocity(q, qdot, p)` → minimum-norm correction
 
 **`integrator.rs`** (328 lines)
-
 - Dormand-Prince RK45 adaptive ODE solver
 - Functions:
   - `integrate_rk45(f, t0, t_end, y0, config)` → generic n-D
@@ -76,7 +70,6 @@ A high-performance Rust physics library for pendulum and golfer body dynamics. C
 - Configurable tolerances
 
 **`lib.rs`** (495 lines)
-
 - Module exports and public API
 - **PyO3 bindings** (feature-gated)
   - `PyDoublePendulumParams`, `PyGolferParams` classes
@@ -108,7 +101,6 @@ Similar structure but 3×3 mass matrix, three relative angles.
 ### Golfer (8-DOF)
 
 **Forward Kinematics Chain:**
-
 ```
 Hub:       (L_hub·sin(θ_hub), -L_hub·cos(θ_hub))
 R.Shoulder: Hub + d_rs·(cos(θ_hub), sin(θ_hub))
@@ -125,7 +117,6 @@ Each mass point's 2D Jacobian = ∂position/∂q computed analytically via chain
 M = Σᵢ mᵢ Jᵢᵀ Jᵢ (summed over all 7 mass points)
 
 **Constraints (4):**
-
 1. Right hand x position = Left hand x position
 2. Right hand y position = Left hand y position
 3. Left hand on club shaft (x)
@@ -134,13 +125,11 @@ M = Σᵢ mᵢ Jᵢᵀ Jᵢ (summed over all 7 mass points)
 ## Compilation
 
 ### Default (Library)
-
 ```bash
 cargo build --lib
 ```
 
 ### Python FFI
-
 ```bash
 # Requires maturin or manual PyO3 setup
 maturin develop -f
@@ -148,7 +137,6 @@ maturin develop -f
 ```
 
 ### WASM
-
 ```bash
 # Requires wasm-pack
 wasm-pack build --target web --features wasm
@@ -160,7 +148,6 @@ wasm-pack build --target web --features wasm
 **File:** `python/physics_native.py`
 
 High-level Python classes that automatically:
-
 1. Try to import compiled Rust module
 2. Fall back to NumPy if native unavailable
 3. Provide consistent interface
@@ -190,7 +177,6 @@ cargo test --lib --all-features
 ```
 
 Included tests:
-
 - Mass matrix symmetry
 - Forward kinematics validation
 - Jacobian dimensions
@@ -227,20 +213,17 @@ Total Python: 490 lines (wrapper)
 ## Export Surface
 
 ### Pure Rust API (no features)
-
 - All `types::*` structs
 - Physics functions: `double::*`, `triple::*`, `golfer::*`
 - Constraint solver: `golfer_constraints::*`
 - Integrator: `integrator::*`
 
 ### Python API (feature = "python")
-
 - `PyDoublePendulumParams`, `PyGolferParams` classes
 - `py_*_mass_matrix`, `py_*_gravity_vector`, etc. functions
 - Module name: `pendulum_core`
 
 ### WASM API (feature = "wasm")
-
 - `WasmDoublePendulumParams`, `WasmGolferParams` classes
 - `wasm_*_mass_matrix`, `wasm_*_forward_kinematics`, etc. functions
 - Returns Vec<f64> or Result<Vec<f64>, JsValue>

@@ -23,6 +23,7 @@ The repository is organized into several key areas:
 **Directory Structure:**
 
 - **`src/python/`**: Core infrastructure and shared utilities
+
   - **`src/python/src/core/`**: Plugin system and core launcher functionality
   - **`src/python/src/utils/`**: Shared utilities (compatibility shims, logger utils)
   - **`src/python/src/tile_launcher/`**: Tile launcher components
@@ -30,6 +31,7 @@ The repository is organized into several key areas:
   - **`tests/`**: Canonical root test suite for the shared monorepo surface
 
 - **`src/tools/`**: Tool implementations and utilities
+
   - **`src/tools/folder_tools/`**: Folder management tools (folder_tool, folder_packer_pro, project_packer)
   - **`src/tools/matlab_utilities/`**: MATLAB quality checking and testing utilities
   - **`src/tools/matlab_code_analyzer_gui/`**: MATLAB code analyzer GUI
@@ -62,6 +64,7 @@ The repository provides a unified launcher system for accessing all tools. The c
   ```
 
   **Features:**
+
   - Full plugin system support via `core/plugin_manager.py`
   - Comprehensive error handling and user feedback
   - Tool path validation and sanitization
@@ -74,12 +77,14 @@ See [Launcher Hierarchy & Guide](docs/LAUNCHERS.md) for detailed documentation.
 #### Launcher Hierarchy
 
 1. **`UnifiedToolsLauncher.py`** (Primary) - Use this for all new development and general usage
+
    - Location: Repository root
    - Type: PyQt6 GUI application
    - Status: ✅ Active and maintained
    - Entry point: `python UnifiedToolsLauncher.py`
 
 2. **`launch_tools_main.py`** (Legacy CLI) - Deprecated
+
    - Location: Repository root
    - Type: Command-line interface
    - Status: ⚠️ Deprecated - retained for backwards compatibility only
@@ -239,6 +244,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
 **Solutions:**
 
 1. **Install MATLAB**
+
    - Download from [MathWorks](https://www.mathworks.com/products/matlab.html)
    - Ensure R2020a or later is installed
    - Install required toolboxes during setup
@@ -268,6 +274,7 @@ For more details, please read the [Development Guidelines](docs/development/GUAR
    ```
 
 4. **Tool Availability**
+
    - **Audio Processor**: Requires MATLAB + Signal Processing Toolbox
    - **RRT Path Planner**: Requires MATLAB + Statistics Toolbox
    - **Solar System Model**: Requires MATLAB (basic installation sufficient)

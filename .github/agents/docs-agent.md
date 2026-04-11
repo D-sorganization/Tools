@@ -149,6 +149,7 @@ When updating `PROTECT_REPLICANT_BRANCHES.md`:
 ## Boundaries
 
 - ✅ **Always do:**
+
   - Write to `.md` files in root and `CI_Documentation/`
   - Include command examples with flags and options
   - Update "Last Updated" dates when modifying docs
@@ -157,6 +158,7 @@ When updating `PROTECT_REPLICANT_BRANCHES.md`:
   - Keep REPOSITORY_SUMMARY.md statistics accurate
 
 - ⚠️ **Ask first:**
+
   - Before removing entire sections from documentation
   - Before changing repository management workflows
   - Before modifying branch protection policies

@@ -3,27 +3,22 @@
 ## File Locations (All Created Files)
 
 ### Physics Implementations
-
 - `/sessions/vigilant-admiring-franklin/mnt/Tools/src/pendulum_simulator/pendulum-web/src/physics_triple.ts` (467 lines)
 - `/sessions/vigilant-admiring-franklin/mnt/Tools/src/pendulum_simulator/pendulum-web/src/physics_golfer.ts` (588 lines)
 
 ### Presets
-
 - `/sessions/vigilant-admiring-franklin/mnt/Tools/src/pendulum_simulator/pendulum-web/src/presets_triple.ts` (92 lines)
 - `/sessions/vigilant-admiring-franklin/mnt/Tools/src/pendulum_simulator/pendulum-web/src/presets_golfer.ts` (155 lines)
 
 ### React Components
-
 - `/sessions/vigilant-admiring-franklin/mnt/Tools/src/pendulum_simulator/pendulum-web/src/components/TriplePendulumCanvas.tsx` (187 lines)
 - `/sessions/vigilant-admiring-franklin/mnt/Tools/src/pendulum_simulator/pendulum-web/src/components/GolferCanvas.tsx` (286 lines)
 
 ### Updated App
-
 - `/sessions/vigilant-admiring-franklin/mnt/Tools/src/pendulum_simulator/pendulum-web/src/AppNew.tsx` (816 lines)
   - **Action**: Copy this to replace `src/App.tsx`
 
 ### Documentation
-
 - `/sessions/vigilant-admiring-franklin/mnt/Tools/src/pendulum_simulator/pendulum-web/INTEGRATION_GUIDE.md`
 - `/sessions/vigilant-admiring-franklin/mnt/Tools/src/pendulum_simulator/pendulum-web/FILES_CREATED.md`
 - `/sessions/vigilant-admiring-franklin/mnt/Tools/src/pendulum_simulator/pendulum-web/QUICK_START.md`
@@ -76,7 +71,6 @@ ls -l INTEGRATION_GUIDE.md FILES_CREATED.md QUICK_START.md DEPLOY.md
 ```
 
 Expected output:
-
 - 2 physics files (total ~1,055 lines)
 - 2 preset files (total ~247 lines)
 - 2 component files (total ~473 lines)
@@ -90,7 +84,6 @@ Expected output:
 After running `npm run dev`, open the browser and test:
 
 ### 1. Double Pendulum (Existing - should still work)
-
 - Click "Double Pendulum (2-DOF)" tab
 - Select preset: "Golf Swing (passive wrist)"
 - Click "Run Simulation"
@@ -100,7 +93,6 @@ After running `npm run dev`, open the browser and test:
 **Expected**: Smooth animation of 2-segment pendulum with clubhead at tip
 
 ### 2. Triple Pendulum (New)
-
 - Click "Triple Pendulum (3-DOF)" tab
 - Select preset: "Three-Segment Swing (passive)"
 - Click "Run Simulation"
@@ -110,7 +102,6 @@ After running `npm run dev`, open the browser and test:
 **Expected**: Smooth animation of 3-segment chain with shoulder, elbow, wrist joints
 
 ### 3. Golfer Upper-Body (New)
-
 - Click "Golfer (8-DOF)" tab
 - Select preset: "Golfer Upper Body (symmetric swing)"
 - Click "Run Simulation"
@@ -124,34 +115,28 @@ After running `npm run dev`, open the browser and test:
 ## Troubleshooting
 
 ### TypeScript Errors
-
 ```bash
 npm install
 npx tsc --noEmit
 ```
 
 Should have 0 errors. If not, check:
-
 - All 6 source files are present (physics_triple.ts, physics_golfer.ts, presets_triple.ts, presets_golfer.ts, TriplePendulumCanvas.tsx, GolferCanvas.tsx)
 - AppNew.tsx has correct import statements
 - No files were partially copied
 
 ### Runtime Errors
-
 Check browser console (F12 → Console tab) for:
-
 - "Cannot find module" → files not in correct directory
 - "Cannot read property" → missing physics implementation
 - "Canvas context error" → React component issue
 
 ### Performance Issues
-
 - If animation is slow, reduce timestep dt (0.005 → 0.01)
 - Reduce trail length in canvas (trailLength prop)
 - Close other browser tabs
 
 ### App Won't Load
-
 ```bash
 # Clean install
 rm -rf node_modules package-lock.json
@@ -181,7 +166,6 @@ src/
 ```
 
 **Documentation (optional but recommended):**
-
 ```
 /
 ├── INTEGRATION_GUIDE.md           (308 lines) ✓
@@ -206,7 +190,6 @@ npm run dev
 ```
 
 The new files won't interfere if not imported, so you can keep them or delete:
-
 ```bash
 rm src/physics_triple.ts src/physics_golfer.ts
 rm src/presets_triple.ts src/presets_golfer.ts
@@ -234,7 +217,6 @@ The bundle will include all three models. To reduce bundle size, you can tree-sh
 ## Browser Compatibility
 
 All files use ES2020+ syntax. Requires:
-
 - Chrome/Edge 88+
 - Firefox 87+
 - Safari 14+
@@ -246,13 +228,11 @@ For older browsers, add transpilation config to Vite/webpack.
 ## Performance Benchmarks
 
 After deployment, you should see:
-
 - **Double Pendulum**: ~60 FPS (2×2 matrix solve)
 - **Triple Pendulum**: ~50 FPS (3×3 matrix solve)
 - **Golfer Model**: ~40 FPS (8×8 with constraints)
 
 If performance is lower, check:
-
 1. Browser DevTools Performance tab for frame time
 2. GPU acceleration enabled (usually automatic)
 3. No console warnings or errors

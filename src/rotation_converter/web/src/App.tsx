@@ -3,9 +3,7 @@ import { RotationConverter } from "./components/RotationConverter";
 import { ReferenceFrameConverter } from "./components/ReferenceFrameConverter";
 
 function App() {
-  const [activeTab, setActiveTab] = useState<"rotation" | "reference">(
-    "rotation",
-  );
+  const [activeTab, setActiveTab] = useState<"rotation" | "reference">("rotation");
 
   return (
     <div className="min-h-screen bg-slate-900">
@@ -13,15 +11,12 @@ function App() {
         <div className="mx-auto max-w-7xl px-4 py-4">
           <h1 className="text-2xl font-bold text-white">Rotation Converter</h1>
           <p className="mt-1 text-sm text-slate-400">
-            Educational conversion tool for rotations, twists, SE(3), and
-            so(3)/SO(3) maps.
+            Educational conversion tool for rotations, twists, SE(3), and so(3)/SO(3) maps.
           </p>
           <div className="mt-4 flex gap-2">
             <button
               className={`px-3 py-1 rounded text-sm ${
-                activeTab === "rotation"
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-700 text-slate-200"
+                activeTab === "rotation" ? "bg-blue-600 text-white" : "bg-slate-700 text-slate-200"
               }`}
               onClick={() => setActiveTab("rotation")}
             >
@@ -29,9 +24,7 @@ function App() {
             </button>
             <button
               className={`px-3 py-1 rounded text-sm ${
-                activeTab === "reference"
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-700 text-slate-200"
+                activeTab === "reference" ? "bg-blue-600 text-white" : "bg-slate-700 text-slate-200"
               }`}
               onClick={() => setActiveTab("reference")}
             >
@@ -41,11 +34,7 @@ function App() {
         </div>
       </header>
       <main className="mx-auto max-w-7xl px-4 py-6">
-        {activeTab === "rotation" ? (
-          <RotationConverter />
-        ) : (
-          <ReferenceFrameConverter />
-        )}
+        {activeTab === "rotation" ? <RotationConverter /> : <ReferenceFrameConverter />}
       </main>
     </div>
   );

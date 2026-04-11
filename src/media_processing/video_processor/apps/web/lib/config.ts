@@ -8,28 +8,26 @@
  * @see .env.example for all available configuration options
  */
 
-import { z } from "zod";
+import { z } from 'zod';
 
 // ============================================================================
 // Validation Schemas
 // ============================================================================
 
-const NodeEnvSchema = z.enum(["development", "production", "test"]);
+const NodeEnvSchema = z.enum(['development', 'production', 'test']);
 
 const DatabaseConfigSchema = z.object({
-  url: z
-    .string()
-    .url("DATABASE_URL must be a valid PostgreSQL connection string"),
+  url: z.string().url('DATABASE_URL must be a valid PostgreSQL connection string'),
   directUrl: z.string().url().optional(),
 });
 
 const StorageConfigSchema = z.object({
-  accountId: z.string().min(1, "R2_ACCOUNT_ID is required"),
-  accessKeyId: z.string().min(1, "R2_ACCESS_KEY_ID is required"),
-  secretAccessKey: z.string().min(1, "R2_SECRET_ACCESS_KEY is required"),
-  bucketName: z.string().min(1, "R2_BUCKET_NAME is required"),
-  publicUrl: z.string().url("R2_PUBLIC_URL must be a valid URL"),
-  endpoint: z.string().url("R2_ENDPOINT must be a valid URL"),
+  accountId: z.string().min(1, 'R2_ACCOUNT_ID is required'),
+  accessKeyId: z.string().min(1, 'R2_ACCESS_KEY_ID is required'),
+  secretAccessKey: z.string().min(1, 'R2_SECRET_ACCESS_KEY is required'),
+  bucketName: z.string().min(1, 'R2_BUCKET_NAME is required'),
+  publicUrl: z.string().url('R2_PUBLIC_URL must be a valid URL'),
+  endpoint: z.string().url('R2_ENDPOINT must be a valid URL'),
 });
 
 const VideoConfigSchema = z.object({
@@ -55,21 +53,15 @@ const FeatureFlagsSchema = z.object({
 
 const AuthConfigSchema = z.object({
   nextAuthUrl: z.string().url(),
-  nextAuthSecret: z
-    .string()
-    .min(32, "NEXTAUTH_SECRET must be at least 32 characters"),
-  google: z
-    .object({
-      clientId: z.string().optional(),
-      clientSecret: z.string().optional(),
-    })
-    .optional(),
-  github: z
-    .object({
-      clientId: z.string().optional(),
-      clientSecret: z.string().optional(),
-    })
-    .optional(),
+  nextAuthSecret: z.string().min(32, 'NEXTAUTH_SECRET must be at least 32 characters'),
+  google: z.object({
+    clientId: z.string().optional(),
+    clientSecret: z.string().optional(),
+  }).optional(),
+  github: z.object({
+    clientId: z.string().optional(),
+    clientSecret: z.string().optional(),
+  }).optional(),
 });
 
 const MonitoringConfigSchema = z.object({
@@ -82,7 +74,7 @@ const MonitoringConfigSchema = z.object({
     key: z.string().optional(),
     host: z.string().url().optional(),
   }),
-  logLevel: z.enum(["debug", "info", "warn", "error"]),
+  logLevel: z.enum(['debug', 'info', 'warn', 'error']),
 });
 
 const RateLimitConfigSchema = z.object({
@@ -116,12 +108,12 @@ class Config {
     this.validateRequiredEnvVars();
 
     // Environment
-    this.env = NodeEnvSchema.parse(process.env.NODE_ENV || "development");
+    this.env = NodeEnvSchema.parse(process.env.NODE_ENV || 'development');
 
     // Application
     this.app = {
-      url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-      name: process.env.NEXT_PUBLIC_APP_NAME || "Golf Swing Video Analyzer",
+      url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+      name: process.env.NEXT_PUBLIC_APP_NAME || 'Golf Swing Video Analyzer',
     };
 
     // Database
@@ -137,55 +129,31 @@ class Config {
       secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
       bucketName: process.env.R2_BUCKET_NAME,
       publicUrl: process.env.R2_PUBLIC_URL,
-      endpoint:
-        process.env.R2_ENDPOINT ||
-        `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+      endpoint: process.env.R2_ENDPOINT || `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
     });
 
     // Video Configuration
     this.video = VideoConfigSchema.parse({
-      maxFileSizeMB: parseInt(
-        process.env.NEXT_PUBLIC_MAX_VIDEO_FILE_SIZE_MB || "500",
-        10,
-      ),
-      defaultFPS: parseInt(
-        process.env.NEXT_PUBLIC_DEFAULT_VIDEO_FPS || "30",
-        10,
-      ),
-      supportedTypes: (
-        process.env.NEXT_PUBLIC_SUPPORTED_VIDEO_TYPES ||
-        "video/mp4,video/webm,video/ogg"
-      ).split(","),
-      retentionDays: process.env.VIDEO_RETENTION_DAYS
-        ? parseInt(process.env.VIDEO_RETENTION_DAYS, 10)
-        : undefined,
+      maxFileSizeMB: parseInt(process.env.NEXT_PUBLIC_MAX_VIDEO_FILE_SIZE_MB || '500', 10),
+      defaultFPS: parseInt(process.env.NEXT_PUBLIC_DEFAULT_VIDEO_FPS || '30', 10),
+      supportedTypes: (process.env.NEXT_PUBLIC_SUPPORTED_VIDEO_TYPES || 'video/mp4,video/webm,video/ogg').split(','),
+      retentionDays: process.env.VIDEO_RETENTION_DAYS ? parseInt(process.env.VIDEO_RETENTION_DAYS, 10) : undefined,
     });
 
     // AI Configuration
     this.ai = AiConfigSchema.parse({
-      mediaPipeModelPath:
-        process.env.NEXT_PUBLIC_MEDIAPIPE_MODEL_PATH ||
-        "https://cdn.jsdelivr.net/npm/@mediapipe/pose",
-      enablePoseDetection:
-        process.env.NEXT_PUBLIC_ENABLE_POSE_DETECTION === "true",
-      modelComplexity: parseInt(
-        process.env.NEXT_PUBLIC_MEDIAPIPE_MODEL_COMPLEXITY || "1",
-        10,
-      ),
-      minConfidence: parseFloat(
-        process.env.NEXT_PUBLIC_POSE_DETECTION_MIN_CONFIDENCE || "0.5",
-      ),
+      mediaPipeModelPath: process.env.NEXT_PUBLIC_MEDIAPIPE_MODEL_PATH || 'https://cdn.jsdelivr.net/npm/@mediapipe/pose',
+      enablePoseDetection: process.env.NEXT_PUBLIC_ENABLE_POSE_DETECTION === 'true',
+      modelComplexity: parseInt(process.env.NEXT_PUBLIC_MEDIAPIPE_MODEL_COMPLEXITY || '1', 10),
+      minConfidence: parseFloat(process.env.NEXT_PUBLIC_POSE_DETECTION_MIN_CONFIDENCE || '0.5'),
     });
 
     // Feature Flags
     this.features = FeatureFlagsSchema.parse({
-      matlabIntegration:
-        process.env.NEXT_PUBLIC_FEATURE_MATLAB_INTEGRATION === "true",
-      visualization3D:
-        process.env.NEXT_PUBLIC_FEATURE_3D_VISUALIZATION === "true",
-      advancedEditing:
-        process.env.NEXT_PUBLIC_FEATURE_ADVANCED_EDITING !== "false",
-      videoSharing: process.env.NEXT_PUBLIC_FEATURE_VIDEO_SHARING !== "false",
+      matlabIntegration: process.env.NEXT_PUBLIC_FEATURE_MATLAB_INTEGRATION === 'true',
+      visualization3D: process.env.NEXT_PUBLIC_FEATURE_3D_VISUALIZATION === 'true',
+      advancedEditing: process.env.NEXT_PUBLIC_FEATURE_ADVANCED_EDITING !== 'false',
+      videoSharing: process.env.NEXT_PUBLIC_FEATURE_VIDEO_SHARING !== 'false',
     });
 
     // Authentication
@@ -213,23 +181,19 @@ class Config {
         key: process.env.NEXT_PUBLIC_POSTHOG_KEY,
         host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
       },
-      logLevel: (process.env.LOG_LEVEL || "info") as z.infer<
-        typeof MonitoringConfigSchema
-      >["logLevel"],
+      logLevel: (process.env.LOG_LEVEL || 'info') as z.infer<typeof MonitoringConfigSchema>['logLevel'],
     });
 
     // Rate Limiting
     this.rateLimit = RateLimitConfigSchema.parse({
       redisUrl: process.env.UPSTASH_REDIS_URL,
       redisToken: process.env.UPSTASH_REDIS_TOKEN,
-      requests: process.env.RATE_LIMIT_REQUESTS
-        ? parseInt(process.env.RATE_LIMIT_REQUESTS, 10)
-        : 10,
-      window: process.env.RATE_LIMIT_WINDOW || "10s",
+      requests: process.env.RATE_LIMIT_REQUESTS ? parseInt(process.env.RATE_LIMIT_REQUESTS, 10) : 10,
+      window: process.env.RATE_LIMIT_WINDOW || '10s',
     });
 
     // Debug
-    this.debug = process.env.DEBUG === "true";
+    this.debug = process.env.DEBUG === 'true';
 
     this.logConfiguration();
   }
@@ -239,15 +203,17 @@ class Config {
    * Fails fast on startup if any are missing.
    */
   private validateRequiredEnvVars(): void {
-    const requiredEnvVars = ["DATABASE_URL"] as const;
+    const requiredEnvVars = [
+      'DATABASE_URL',
+    ] as const;
 
     const requiredInProduction = [
-      "R2_ACCOUNT_ID",
-      "R2_ACCESS_KEY_ID",
-      "R2_SECRET_ACCESS_KEY",
-      "R2_BUCKET_NAME",
-      "R2_PUBLIC_URL",
-      "NEXTAUTH_SECRET",
+      'R2_ACCOUNT_ID',
+      'R2_ACCESS_KEY_ID',
+      'R2_SECRET_ACCESS_KEY',
+      'R2_BUCKET_NAME',
+      'R2_PUBLIC_URL',
+      'NEXTAUTH_SECRET',
     ] as const;
 
     const missing: string[] = [];
@@ -260,7 +226,7 @@ class Config {
     }
 
     // Check production-required variables
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === 'production') {
       for (const key of requiredInProduction) {
         if (!process.env[key]) {
           missing.push(key);
@@ -270,15 +236,15 @@ class Config {
 
     if (missing.length > 0) {
       const errorMessage = [
-        "❌ Missing required environment variables:",
-        "",
-        ...missing.map((key) => `  - ${key}`),
-        "",
-        "📝 Please copy .env.example to .env and fill in the values:",
-        "   cp .env.example .env",
-        "",
-        "📚 See .env.example for documentation on each variable.",
-      ].join("\n");
+        '❌ Missing required environment variables:',
+        '',
+        ...missing.map(key => `  - ${key}`),
+        '',
+        '📝 Please copy .env.example to .env and fill in the values:',
+        '   cp .env.example .env',
+        '',
+        '📚 See .env.example for documentation on each variable.',
+      ].join('\n');
 
       throw new Error(errorMessage);
     }
@@ -289,38 +255,35 @@ class Config {
    * In production, NEXTAUTH_SECRET must be explicitly set.
    */
   private generateDevSecret(): string {
-    if (this.env === "production") {
+    if (this.env === 'production') {
       throw new Error(
-        "NEXTAUTH_SECRET must be set in production. Generate one with: openssl rand -base64 32",
+        'NEXTAUTH_SECRET must be set in production. Generate one with: openssl rand -base64 32'
       );
     }
 
     console.warn(
-      "⚠️  Using auto-generated NEXTAUTH_SECRET for development. " +
-        "Set NEXTAUTH_SECRET in .env for production.",
+      '⚠️  Using auto-generated NEXTAUTH_SECRET for development. ' +
+      'Set NEXTAUTH_SECRET in .env for production.'
     );
 
-    const { randomBytes } = require("crypto");
-    return "dev-secret-" + randomBytes(24).toString("base64url");
+    const { randomBytes } = require('crypto');
+    return 'dev-secret-' + randomBytes(24).toString('base64url');
   }
 
   /**
    * Log configuration on startup (excluding secrets).
    */
   private logConfiguration(): void {
-    if (this.env === "development" && this.debug) {
-      console.log("📋 Configuration loaded:");
-      console.log("  Environment:", this.env);
-      console.log("  App URL:", this.app.url);
-      console.log("  Database:", this.database.url.split("@")[1]); // Hide credentials
-      console.log("  Storage:", this.storage.bucketName);
-      console.log("  Video max size:", this.video.maxFileSizeMB, "MB");
-      console.log("  Default FPS:", this.video.defaultFPS);
-      console.log(
-        "  Pose detection:",
-        this.ai.enablePoseDetection ? "enabled" : "disabled",
-      );
-      console.log("  Feature flags:", this.features);
+    if (this.env === 'development' && this.debug) {
+      console.log('📋 Configuration loaded:');
+      console.log('  Environment:', this.env);
+      console.log('  App URL:', this.app.url);
+      console.log('  Database:', this.database.url.split('@')[1]); // Hide credentials
+      console.log('  Storage:', this.storage.bucketName);
+      console.log('  Video max size:', this.video.maxFileSizeMB, 'MB');
+      console.log('  Default FPS:', this.video.defaultFPS);
+      console.log('  Pose detection:', this.ai.enablePoseDetection ? 'enabled' : 'disabled');
+      console.log('  Feature flags:', this.features);
     }
   }
 
@@ -328,21 +291,21 @@ class Config {
    * Check if running in production environment.
    */
   public isProduction(): boolean {
-    return this.env === "production";
+    return this.env === 'production';
   }
 
   /**
    * Check if running in development environment.
    */
   public isDevelopment(): boolean {
-    return this.env === "development";
+    return this.env === 'development';
   }
 
   /**
    * Check if running in test environment.
    */
   public isTest(): boolean {
-    return this.env === "test";
+    return this.env === 'test';
   }
 
   /**
@@ -362,9 +325,7 @@ class Config {
   /**
    * Check if a feature is enabled.
    */
-  public isFeatureEnabled(
-    feature: keyof z.infer<typeof FeatureFlagsSchema>,
-  ): boolean {
+  public isFeatureEnabled(feature: keyof z.infer<typeof FeatureFlagsSchema>): boolean {
     return this.features[feature];
   }
 }
@@ -380,7 +341,7 @@ let configInstance: Config;
 try {
   configInstance = new Config();
 } catch (error) {
-  console.error("Failed to load configuration:", error);
+  console.error('Failed to load configuration:', error);
   throw error;
 }
 

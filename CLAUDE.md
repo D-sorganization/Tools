@@ -57,7 +57,6 @@ python3 -m pytest -m dwsim                        # DWSIM integration tests
 `benchmark`, `scientific`, `live_simulation`, `headless_safe`, `requires_gl`, `parity`
 
 Key markers:
-
 - `contract` — API surface tests that downstream repos depend on. Breaking a contract test means you broke UpstreamDrift or Gasification_Model.
 - `dwsim` — requires DWSIM integration environment
 - `e2e` — full pipeline tests across module boundaries

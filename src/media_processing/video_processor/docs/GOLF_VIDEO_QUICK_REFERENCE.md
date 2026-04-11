@@ -446,11 +446,13 @@ golf-swing-analyzer/
 ## 🎬 Next 3 Steps
 
 1. **Validate** (1 week)
+
    - Interview 5-10 golf coaches
    - Confirm feature priorities
    - Test willingness to pay ($29-99/month)
 
 2. **Build POC** (2 weeks)
+
    - Set up Next.js project
    - Implement video upload + playback
    - Integrate MediaPipe (pose detection)

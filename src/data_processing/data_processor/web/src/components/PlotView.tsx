@@ -7,46 +7,42 @@
  * No 1000-point downsampling limit — Plotly handles large datasets via WebGL.
  */
 
-import { useMemo, memo } from "react";
-import Plot from "react-plotly.js";
-import { BarChart2 } from "lucide-react";
-import type { DataRow } from "../types";
-import type {
-  PlotlyData,
-  PlotlyTrace,
-  PlotlyLayout,
-} from "../types/plot-specs";
+import { useMemo, memo } from 'react';
+import Plot from 'react-plotly.js';
+import { BarChart2 } from 'lucide-react';
+import type { DataRow } from '../types';
+import type { PlotlyData, PlotlyTrace, PlotlyLayout } from '../types/plot-specs';
 
 const CHART_COLORS = [
-  "#3b82f6", // blue
-  "#22c55e", // green
-  "#f59e0b", // amber
-  "#ef4444", // red
-  "#8b5cf6", // purple
-  "#06b6d4", // cyan
-  "#ec4899", // pink
-  "#84cc16", // lime
+  '#3b82f6', // blue
+  '#22c55e', // green
+  '#f59e0b', // amber
+  '#ef4444', // red
+  '#8b5cf6', // purple
+  '#06b6d4', // cyan
+  '#ec4899', // pink
+  '#84cc16', // lime
 ];
 
 // ── Dark theme layout defaults ──────────────────────────────────────────────
 
 const DARK_LAYOUT: Partial<PlotlyLayout> = {
-  paper_bgcolor: "#1e1e1e",
-  plot_bgcolor: "#252526",
-  font: { color: "#d4d4d4", family: "Segoe UI, sans-serif", size: 12 },
+  paper_bgcolor: '#1e1e1e',
+  plot_bgcolor: '#252526',
+  font: { color: '#d4d4d4', family: 'Segoe UI, sans-serif', size: 12 },
   xaxis: {
-    gridcolor: "#343541",
-    zerolinecolor: "#4a4a5a",
-    tickfont: { color: "#8e8ea0" },
+    gridcolor: '#343541',
+    zerolinecolor: '#4a4a5a',
+    tickfont: { color: '#8e8ea0' },
   },
   yaxis: {
-    gridcolor: "#343541",
-    zerolinecolor: "#4a4a5a",
-    tickfont: { color: "#8e8ea0" },
+    gridcolor: '#343541',
+    zerolinecolor: '#4a4a5a',
+    tickfont: { color: '#8e8ea0' },
   },
   legend: {
-    font: { color: "#d4d4d4" },
-    bgcolor: "rgba(37, 37, 38, 0.8)",
+    font: { color: '#d4d4d4' },
+    bgcolor: 'rgba(37, 37, 38, 0.8)',
   },
   margin: { t: 40, r: 20, b: 40, l: 60 },
 };
@@ -72,19 +68,14 @@ export const PlotView = memo(function PlotView({
   data,
   selectedSignals,
   plotlyData,
-  title = "Signal Plot",
+  title = 'Signal Plot',
   height = 400,
 }: PlotViewProps) {
   // Build traces from raw data (backward-compatible with DataChart)
   const traces: PlotlyTrace[] = useMemo(() => {
     if (plotlyData) return plotlyData.data;
 
-    if (
-      !data ||
-      data.length === 0 ||
-      !selectedSignals ||
-      selectedSignals.length === 0
-    ) {
+    if (!data || data.length === 0 || !selectedSignals || selectedSignals.length === 0) {
       return [];
     }
 
@@ -102,15 +93,15 @@ export const PlotView = memo(function PlotView({
       const yValues = new Float64Array(len);
       for (let j = 0; j < len; j++) {
         const val = data[j][signal];
-        yValues[j] = typeof val === "number" ? val : NaN;
+        yValues[j] = typeof val === 'number' ? val : NaN;
       }
 
       return {
-        type: "scattergl" as const,
+        type: 'scattergl' as const,
         x: xValues as unknown as number[],
         y: yValues as unknown as number[],
         name: signal,
-        mode: "lines" as const,
+        mode: 'lines' as const,
         line: {
           color: CHART_COLORS[i % CHART_COLORS.length],
           width: 1.5,
@@ -175,18 +166,18 @@ export const PlotView = memo(function PlotView({
           config={{
             responsive: true,
             displayModeBar: true,
-            modeBarButtonsToRemove: ["lasso2d", "select2d"],
+            modeBarButtonsToRemove: ['lasso2d', 'select2d'],
             displaylogo: false,
             toImageButtonOptions: {
-              format: "png",
-              filename: title.replace(/\s+/g, "_"),
+              format: 'png',
+              filename: title.replace(/\s+/g, '_'),
               height: 800,
               width: 1200,
               scale: 2,
             },
           }}
           useResizeHandler
-          style={{ width: "100%", height: `${height}px` }}
+          style={{ width: '100%', height: `${height}px` }}
         />
       </div>
     </div>

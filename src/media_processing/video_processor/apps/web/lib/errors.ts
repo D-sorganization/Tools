@@ -16,7 +16,7 @@ export class AppError extends Error {
     message: string,
     public readonly code: string,
     public readonly statusCode: number = 500,
-    public readonly metadata?: Record<string, unknown>,
+    public readonly metadata?: Record<string, unknown>
   ) {
     super(message);
     this.name = this.constructor.name;
@@ -58,7 +58,7 @@ export class AppError extends Error {
  */
 export class ValidationError extends AppError {
   constructor(message: string, metadata?: Record<string, unknown>) {
-    super(message, "VALIDATION_ERROR", 400, metadata);
+    super(message, 'VALIDATION_ERROR', 400, metadata);
   }
 
   getUserMessage(): string {
@@ -72,11 +72,11 @@ export class ValidationError extends AppError {
  */
 export class VideoProcessingError extends AppError {
   constructor(message: string, metadata?: Record<string, unknown>) {
-    super(message, "VIDEO_PROCESSING_ERROR", 500, metadata);
+    super(message, 'VIDEO_PROCESSING_ERROR', 500, metadata);
   }
 
   getUserMessage(): string {
-    return "Failed to process video. Please try again or use a different file.";
+    return 'Failed to process video. Please try again or use a different file.';
   }
 }
 
@@ -86,11 +86,11 @@ export class VideoProcessingError extends AppError {
  */
 export class AudioRecordingError extends AppError {
   constructor(message: string, metadata?: Record<string, unknown>) {
-    super(message, "AUDIO_RECORDING_ERROR", 500, metadata);
+    super(message, 'AUDIO_RECORDING_ERROR', 500, metadata);
   }
 
   getUserMessage(): string {
-    return "Failed to record audio. Please check your microphone permissions and try again.";
+    return 'Failed to record audio. Please check your microphone permissions and try again.';
   }
 }
 
@@ -100,11 +100,11 @@ export class AudioRecordingError extends AppError {
  */
 export class AnnotationError extends AppError {
   constructor(message: string, metadata?: Record<string, unknown>) {
-    super(message, "ANNOTATION_ERROR", 500, metadata);
+    super(message, 'ANNOTATION_ERROR', 500, metadata);
   }
 
   getUserMessage(): string {
-    return "Failed to save annotation. Please try again.";
+    return 'Failed to save annotation. Please try again.';
   }
 }
 
@@ -114,11 +114,11 @@ export class AnnotationError extends AppError {
  */
 export class PoseDetectionError extends AppError {
   constructor(message: string, metadata?: Record<string, unknown>) {
-    super(message, "POSE_DETECTION_ERROR", 500, metadata);
+    super(message, 'POSE_DETECTION_ERROR', 500, metadata);
   }
 
   getUserMessage(): string {
-    return "Failed to detect pose. The video may not contain a visible person.";
+    return 'Failed to detect pose. The video may not contain a visible person.';
   }
 }
 
@@ -128,11 +128,11 @@ export class PoseDetectionError extends AppError {
  */
 export class StorageError extends AppError {
   constructor(message: string, metadata?: Record<string, unknown>) {
-    super(message, "STORAGE_ERROR", 500, metadata);
+    super(message, 'STORAGE_ERROR', 500, metadata);
   }
 
   getUserMessage(): string {
-    return "Failed to upload/download file. Please check your connection and try again.";
+    return 'Failed to upload/download file. Please check your connection and try again.';
   }
 }
 
@@ -142,11 +142,11 @@ export class StorageError extends AppError {
  */
 export class DatabaseError extends AppError {
   constructor(message: string, metadata?: Record<string, unknown>) {
-    super(message, "DATABASE_ERROR", 500, metadata);
+    super(message, 'DATABASE_ERROR', 500, metadata);
   }
 
   getUserMessage(): string {
-    return "A database error occurred. Please try again later.";
+    return 'A database error occurred. Please try again later.';
   }
 }
 
@@ -156,11 +156,11 @@ export class DatabaseError extends AppError {
  */
 export class AuthenticationError extends AppError {
   constructor(message: string, metadata?: Record<string, unknown>) {
-    super(message, "AUTHENTICATION_ERROR", 401, metadata);
+    super(message, 'AUTHENTICATION_ERROR', 401, metadata);
   }
 
   getUserMessage(): string {
-    return "Authentication failed. Please sign in again.";
+    return 'Authentication failed. Please sign in again.';
   }
 }
 
@@ -170,11 +170,11 @@ export class AuthenticationError extends AppError {
  */
 export class AuthorizationError extends AppError {
   constructor(message: string, metadata?: Record<string, unknown>) {
-    super(message, "AUTHORIZATION_ERROR", 403, metadata);
+    super(message, 'AUTHORIZATION_ERROR', 403, metadata);
   }
 
   getUserMessage(): string {
-    return "You do not have permission to perform this action.";
+    return 'You do not have permission to perform this action.';
   }
 }
 
@@ -185,15 +185,15 @@ export class AuthorizationError extends AppError {
 export class NotFoundError extends AppError {
   constructor(resource: string, id?: string) {
     super(
-      `${resource}${id ? ` with id ${id}` : ""} not found`,
-      "NOT_FOUND_ERROR",
+      `${resource}${id ? ` with id ${id}` : ''} not found`,
+      'NOT_FOUND_ERROR',
       404,
-      { resource, id },
+      { resource, id }
     );
   }
 
   getUserMessage(): string {
-    return "The requested resource was not found.";
+    return 'The requested resource was not found.';
   }
 }
 
@@ -203,11 +203,11 @@ export class NotFoundError extends AppError {
  */
 export class RateLimitError extends AppError {
   constructor(message: string, metadata?: Record<string, unknown>) {
-    super(message, "RATE_LIMIT_ERROR", 429, metadata);
+    super(message, 'RATE_LIMIT_ERROR', 429, metadata);
   }
 
   getUserMessage(): string {
-    return "Too many requests. Please slow down and try again later.";
+    return 'Too many requests. Please slow down and try again later.';
   }
 }
 
@@ -228,10 +228,10 @@ export function getUserMessage(error: unknown): string {
 
   if (error instanceof Error) {
     // Don't expose internal error messages to users
-    return "An unexpected error occurred. Please try again.";
+    return 'An unexpected error occurred. Please try again.';
   }
 
-  return "An unknown error occurred. Please try again.";
+  return 'An unknown error occurred. Please try again.';
 }
 
 /**
@@ -241,7 +241,7 @@ export function getUserMessage(error: unknown): string {
 export function assert(
   condition: unknown,
   message: string,
-  metadata?: Record<string, unknown>,
+  metadata?: Record<string, unknown>
 ): asserts condition {
   if (!condition) {
     throw new ValidationError(message, metadata);
@@ -253,7 +253,7 @@ export function assert(
  */
 export function assertDefined<T>(
   value: T | null | undefined,
-  name: string,
+  name: string
 ): asserts value is T {
   if (value === null || value === undefined) {
     throw new ValidationError(`${name} is required`, { name, value });
@@ -266,29 +266,24 @@ export function assertDefined<T>(
 export function assertNumber(
   value: unknown,
   name: string,
-  options?: { min?: number; max?: number },
+  options?: { min?: number; max?: number }
 ): asserts value is number {
-  if (typeof value !== "number" || isNaN(value)) {
-    throw new ValidationError(`${name} must be a valid number`, {
-      name,
-      value,
-    });
+  if (typeof value !== 'number' || isNaN(value)) {
+    throw new ValidationError(`${name} must be a valid number`, { name, value });
   }
 
   if (options?.min !== undefined && value < options.min) {
-    throw new ValidationError(`${name} must be at least ${options.min}`, {
-      name,
-      value,
-      min: options.min,
-    });
+    throw new ValidationError(
+      `${name} must be at least ${options.min}`,
+      { name, value, min: options.min }
+    );
   }
 
   if (options?.max !== undefined && value > options.max) {
-    throw new ValidationError(`${name} must be at most ${options.max}`, {
-      name,
-      value,
-      max: options.max,
-    });
+    throw new ValidationError(
+      `${name} must be at most ${options.max}`,
+      { name, value, max: options.max }
+    );
   }
 }
 
@@ -298,23 +293,23 @@ export function assertNumber(
 export function assertString(
   value: unknown,
   name: string,
-  options?: { minLength?: number; maxLength?: number },
+  options?: { minLength?: number; maxLength?: number }
 ): asserts value is string {
-  if (typeof value !== "string") {
+  if (typeof value !== 'string') {
     throw new ValidationError(`${name} must be a string`, { name, value });
   }
 
   if (options?.minLength !== undefined && value.length < options.minLength) {
     throw new ValidationError(
       `${name} must be at least ${options.minLength} characters`,
-      { name, value, minLength: options.minLength },
+      { name, value, minLength: options.minLength }
     );
   }
 
   if (options?.maxLength !== undefined && value.length > options.maxLength) {
     throw new ValidationError(
       `${name} must be at most ${options.maxLength} characters`,
-      { name, value, maxLength: options.maxLength },
+      { name, value, maxLength: options.maxLength }
     );
   }
 }

@@ -12,8 +12,8 @@
  * @see PROFESSIONAL_CODE_REVIEW.md section "Design by Contract"
  */
 
-import { ValidationError } from "@/lib/errors";
-import { z } from "zod";
+import { ValidationError } from '@/lib/errors';
+import { z } from 'zod';
 
 // ============================================================================
 // Constants
@@ -24,18 +24,18 @@ const MAX_FILE_SIZE = 500 * 1024 * 1024;
 
 // Allowed video MIME types
 const ALLOWED_MIME_TYPES = [
-  "video/mp4",
-  "video/webm",
-  "video/ogg",
-  "video/quicktime", // .mov
-  "video/x-msvideo", // .avi
-  "video/x-matroska", // .mkv
+  'video/mp4',
+  'video/webm',
+  'video/ogg',
+  'video/quicktime',      // .mov
+  'video/x-msvideo',      // .avi
+  'video/x-matroska',     // .mkv
 ] as const;
 
 // Magic bytes for video file format detection
 // These are the first few bytes of each video format
 const MAGIC_BYTES: Record<string, Uint8Array[]> = {
-  "video/mp4": [
+  'video/mp4': [
     // MP4 files start with an 'ftyp' atom/box (0x66 0x74 0x79 0x70 = 'ftyp' in ASCII)
     // The first 4 bytes represent the box size in big-endian format:
     // 0x18 (24 bytes), 0x1c (28 bytes), 0x20 (32 bytes) are common ftyp box sizes
@@ -44,25 +44,23 @@ const MAGIC_BYTES: Record<string, Uint8Array[]> = {
     new Uint8Array([0x00, 0x00, 0x00, 0x1c, 0x66, 0x74, 0x79, 0x70]), // 28-byte ftyp
     new Uint8Array([0x00, 0x00, 0x00, 0x20, 0x66, 0x74, 0x79, 0x70]), // 32-byte ftyp
   ],
-  "video/webm": [
+  'video/webm': [
     // WebM files start with EBML header
     new Uint8Array([0x1a, 0x45, 0xdf, 0xa3]),
   ],
-  "video/ogg": [
+  'video/ogg': [
     // OGG files start with 'OggS'
     new Uint8Array([0x4f, 0x67, 0x67, 0x53]),
   ],
-  "video/quicktime": [
+  'video/quicktime': [
     // QuickTime MOV files
-    new Uint8Array([
-      0x00, 0x00, 0x00, 0x14, 0x66, 0x74, 0x79, 0x70, 0x71, 0x74,
-    ]),
+    new Uint8Array([0x00, 0x00, 0x00, 0x14, 0x66, 0x74, 0x79, 0x70, 0x71, 0x74]),
   ],
-  "video/x-msvideo": [
+  'video/x-msvideo': [
     // AVI files start with 'RIFF....AVI'
     new Uint8Array([0x52, 0x49, 0x46, 0x46]),
   ],
-  "video/x-matroska": [
+  'video/x-matroska': [
     // MKV files start with EBML header
     new Uint8Array([0x1a, 0x45, 0xdf, 0xa3]),
   ],
@@ -76,7 +74,7 @@ const MAGIC_BYTES: Record<string, Uint8Array[]> = {
  * Get human-readable file size
  */
 export function formatFileSize(bytes: number): string {
-  const units = ["B", "KB", "MB", "GB"];
+  const units = ['B', 'KB', 'MB', 'GB'];
   let size = bytes;
   let unitIndex = 0;
 
@@ -100,20 +98,12 @@ export function getMaxFileSize(): string {
 // ============================================================================
 
 const VideoFileSchema = z.object({
-  name: z
-    .string()
-    .min(1, "File name is required")
-    .max(255, "File name is too long"),
-  size: z
-    .number()
-    .int()
+  name: z.string().min(1, "File name is required").max(255, "File name is too long"),
+  size: z.number().int()
     .min(1, "File is empty")
-    .max(
-      MAX_FILE_SIZE,
-      `File size too large. Maximum size: ${getMaxFileSize()}`,
-    ),
+    .max(MAX_FILE_SIZE, `File size too large. Maximum size: ${getMaxFileSize()}`),
   type: z.enum(ALLOWED_MIME_TYPES as any, {
-    errorMap: () => ({ message: "File type not supported" }),
+    errorMap: () => ({ message: "File type not supported" })
   }),
 });
 
@@ -158,9 +148,7 @@ async function detectFileType(file: File): Promise<string | null> {
 
     return null;
   } catch (error) {
-    throw new ValidationError("Failed to read file for type detection", {
-      error,
-    });
+    throw new ValidationError('Failed to read file for type detection', { error });
   }
 }
 
@@ -176,7 +164,7 @@ function validateVideoMetadata(file: File): void {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const issues = error.issues.map((i) => i.message).join(", ");
+      const issues = error.issues.map(i => i.message).join(', ');
       throw new ValidationError(`Invalid video file: ${issues}`, {
         fileName: file.name,
         fileSize: file.size,
@@ -197,21 +185,21 @@ async function validateFileTypeMatch(file: File): Promise<void> {
 
   if (!actualType) {
     throw new ValidationError(
-      "Unable to determine file type. The file may be corrupted or unsupported.",
-      { fileName: file.name, declaredType },
+      'Unable to determine file type. The file may be corrupted or unsupported.',
+      { fileName: file.name, declaredType }
     );
   }
 
   // For video formats that share magic bytes (WebM and MKV both use EBML),
   // we accept either
   const isWebmOrMkv =
-    (declaredType === "video/webm" || declaredType === "video/x-matroska") &&
-    (actualType === "video/webm" || actualType === "video/x-matroska");
+    (declaredType === 'video/webm' || declaredType === 'video/x-matroska') &&
+    (actualType === 'video/webm' || actualType === 'video/x-matroska');
 
   if (actualType !== declaredType && !isWebmOrMkv) {
     throw new ValidationError(
       `File type mismatch. Expected ${declaredType}, but file appears to be ${actualType}.`,
-      { fileName: file.name, declaredType, actualType },
+      { fileName: file.name, declaredType, actualType }
     );
   }
 }
@@ -221,11 +209,11 @@ async function validateFileTypeMatch(file: File): Promise<void> {
  */
 async function validateVideoPlayability(file: File): Promise<void> {
   return new Promise((resolve, reject) => {
-    const video = document.createElement("video");
+    const video = document.createElement('video');
     const url = URL.createObjectURL(file);
     let timeoutId: NodeJS.Timeout | null = null;
 
-    video.preload = "metadata";
+    video.preload = 'metadata';
     video.src = url;
 
     const cleanup = () => {
@@ -245,13 +233,10 @@ async function validateVideoPlayability(file: File): Promise<void> {
     video.onerror = (error) => {
       cleanup();
       reject(
-        new ValidationError(
-          "Invalid or corrupted video file. Unable to load video metadata.",
-          {
-            fileName: file.name,
-            error,
-          },
-        ),
+        new ValidationError('Invalid or corrupted video file. Unable to load video metadata.', {
+          fileName: file.name,
+          error,
+        })
       );
     };
 
@@ -259,13 +244,10 @@ async function validateVideoPlayability(file: File): Promise<void> {
     timeoutId = setTimeout(() => {
       cleanup();
       reject(
-        new ValidationError(
-          "Video validation timeout. The file may be corrupted or too large.",
-          {
-            fileName: file.name,
-            fileSize: file.size,
-          },
-        ),
+        new ValidationError('Video validation timeout. The file may be corrupted or too large.', {
+          fileName: file.name,
+          fileSize: file.size,
+        })
       );
     }, 10000);
   });

@@ -7,9 +7,9 @@
  * @see https://sonner.emilkowal.ski/
  */
 
-"use client";
+'use client';
 
-import { Toaster as SonnerToaster } from "sonner";
+import { Toaster as SonnerToaster } from 'sonner';
 
 export function Toaster() {
   return (
@@ -21,11 +21,11 @@ export function Toaster() {
       duration={5000}
       toastOptions={{
         style: {
-          background: "white",
-          color: "#1f2937", // gray-800
-          border: "1px solid #e5e7eb", // gray-200
+          background: 'white',
+          color: '#1f2937', // gray-800
+          border: '1px solid #e5e7eb', // gray-200
         },
-        className: "shadow-lg",
+        className: 'shadow-lg',
       }}
     />
   );

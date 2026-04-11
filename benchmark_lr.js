@@ -13,10 +13,7 @@ function linearRegressionOriginal(x, y) {
 
   const meanY = sumY / n;
   const ssTotal = y.reduce((sum, yi) => sum + (yi - meanY) ** 2, 0);
-  const ssResidual = y.reduce(
-    (sum, yi, i) => sum + (yi - (slope * x[i] + intercept)) ** 2,
-    0,
-  );
+  const ssResidual = y.reduce((sum, yi, i) => sum + (yi - (slope * x[i] + intercept)) ** 2, 0);
   const rSquared = 1 - ssResidual / ssTotal;
 
   return { slope, intercept, rSquared };
@@ -24,10 +21,7 @@ function linearRegressionOriginal(x, y) {
 
 function linearRegressionOptimized(x, y) {
   const n = x.length;
-  let sumX = 0,
-    sumY = 0,
-    sumXY = 0,
-    sumXX = 0;
+  let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
 
   for (let i = 0; i < n; i++) {
     const xi = x[i];
@@ -42,8 +36,7 @@ function linearRegressionOptimized(x, y) {
   const intercept = (sumY - slope * sumX) / n;
 
   const meanY = sumY / n;
-  let ssTotal = 0,
-    ssResidual = 0;
+  let ssTotal = 0, ssResidual = 0;
 
   for (let i = 0; i < n; i++) {
     const yi = y[i];
@@ -56,9 +49,9 @@ function linearRegressionOptimized(x, y) {
 }
 
 console.time("LR Original");
-for (let i = 0; i < 10; i++) linearRegressionOriginal(x, y);
+for (let i=0; i<10; i++) linearRegressionOriginal(x, y);
 console.timeEnd("LR Original");
 
 console.time("LR Optimized");
-for (let i = 0; i < 10; i++) linearRegressionOptimized(x, y);
+for (let i=0; i<10; i++) linearRegressionOptimized(x, y);
 console.timeEnd("LR Optimized");

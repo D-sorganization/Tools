@@ -7,15 +7,12 @@ labels: jules:assessment, needs-attention
 ## Grade: 2.0/10
 
 ## Problem
-
 The assessment for **Maintainability** returned a score below the acceptable threshold of 5.0.
 
 ## Justification
-
 Technical Debt (TRACKED_TASK+TRACKED_DEFECT): 1092
 
 ## Action Items
-
 1. Review the generated assessment in `docs/assessments/Assessment_O_Maintainability.md`.
 2. Address the specific metrics highlighted in the justification.
 3. Run `scripts/generate_comprehensive_assessment.py` to verify improvements.
