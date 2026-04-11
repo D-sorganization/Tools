@@ -219,11 +219,15 @@ class ControlPanel(QMainWindow):
             self.sim.reset()
             self.sim.clear_history()
 
-            self.sim.setup_initial_pose(
-                hip_anterior_tilt=tilt,
-                knee_flexion=knee,
-                foot_angle=foot,
-            )
+            try:
+                self.sim.setup_initial_pose(
+                    hip_anterior_tilt=tilt,
+                    knee_flexion=knee,
+                    foot_angle=foot,
+                )
+            except ValueError as exc:
+                logging.warning("Infeasible pose: %s", exc)
+                return
             if self.sim.hip_rotation_target is not None:
                 self.sim.apply_hip_rotation_target(0.0)
                 self.sim.qpos_target = self.sim.data.qpos.copy()
