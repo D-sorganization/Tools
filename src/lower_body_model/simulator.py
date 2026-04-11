@@ -122,13 +122,10 @@ class LowerBodySimulator:
 
         mujoco.mj_kinematics(self.model, self.data)
 
-        # Drop the pelvis until feet touch the ground
-        # foot_z is the current site Z height. The site is at local z=-0.04 in the foot ellipsoid.
-        # So when the site is at global Z=0.04, the bottom of the foot ellipsoid (z=-0.08 local) is at global Z=0.
-        r_foot_id = mujoco.mj_name2id(
-            self.model, mujoco.mjtObj.mjOBJ_SITE, "r_foot_center"
-        )
-        foot_z = self.data.site_xpos[r_foot_id][2]
+        # Drop the pelvis until feet touch the ground.
+        # The foot site is at local z=-0.04 in the foot ellipsoid, so when the
+        # site's global Z equals 0.04 the bottom of the ellipsoid touches z=0.
+        foot_z = self.data.site_xpos[self.site_ids["r_foot_center"]][2]
 
         # Free joint first 3 qpos are root x, y, z
         self.data.qpos[2] -= foot_z - 0.04
@@ -139,13 +136,40 @@ class LowerBodySimulator:
         self.qpos_target = self.data.qpos.copy()
 
     def _cache_indices(self) -> None:
-        """Pre-compute indices for fast lookup."""
-        self.jnt_qpos_idx = {}
+        """Pre-compute MuJoCo ids so hot paths don't reach into name lookups.
+
+        Everything the simulator needs to reference by id is looked up exactly
+        once, here. `compute_diagnostics`, `analyze_induced_acceleration`,
+        `step`, and `inverse_kinematics` all read from these caches instead
+        of calling ``mj_name2id`` repeatedly on every frame.
+        """
+        self.jnt_qpos_idx: dict[str, int] = {}
+        self.jnt_dof_idx: dict[str, int] = {}
+        self.act_ids: dict[str, int] = {}
+        self.site_ids: dict[str, int] = {}
+        self.geom_ids: dict[str, int] = {}
+
         for name in self.joint_names:
             if name is None:
                 continue
-            idx = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, name)
-            self.jnt_qpos_idx[name] = self.model.jnt_qposadr[idx]
+            jnt_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, name)
+            self.jnt_qpos_idx[name] = int(self.model.jnt_qposadr[jnt_id])
+            self.jnt_dof_idx[name] = int(self.model.jnt_dofadr[jnt_id])
+
+        for i in range(self.model.nu):
+            act_name = mujoco.mj_id2name(self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, i)
+            if act_name is not None:
+                self.act_ids[act_name] = i
+
+        for site in ("r_foot_center", "l_foot_center"):
+            self.site_ids[site] = mujoco.mj_name2id(
+                self.model, mujoco.mjtObj.mjOBJ_SITE, site
+            )
+
+        for geom in ("floor", "r_foot_geom", "l_foot_geom"):
+            self.geom_ids[geom] = mujoco.mj_name2id(
+                self.model, mujoco.mjtObj.mjOBJ_GEOM, geom
+            )
 
         self.pelvis_body_id = mujoco.mj_name2id(
             self.model, mujoco.mjtObj.mjOBJ_BODY, "pelvis"
@@ -156,21 +180,16 @@ class LowerBodySimulator:
         mujoco.mj_forward(self.model, self.data)
 
     def set_joint_polynomial(self, joint_name: str, coeffs: list[float]) -> None:
-        """
-        Drive a joint using a polynomial function evaluated over time.
-        coeffs: highest degree first (e.g. polyval format) or lowest degree first.
-        We will assume standard np.polyval format: highest degree first.
-        """
-        if joint_name not in self.actuator_names:
-            # Maybe the actuator is named act_{joint_name}
-            act_name = f"act_{joint_name}"
-        else:
-            act_name = joint_name
+        """Drive the named joint's actuator with a polynomial ``np.polyval``.
 
-        act_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, act_name)
+        ``joint_name`` may be either the bare joint name (``r_hip_x``) or the
+        full actuator name (``act_r_hip_x``). Raises ``ValueError`` if no
+        actuator exists for the joint.
+        """
+        act_name = joint_name if joint_name.startswith("act_") else f"act_{joint_name}"
+        act_id = self.act_ids.get(act_name, -1)
         if act_id == -1:
             raise ValueError(f"No actuator found for {joint_name}")
-
         self._polynomial_drivers[act_id] = np.array(coeffs)
 
     def configure_hip_rotation_target(
@@ -393,70 +412,23 @@ class LowerBodySimulator:
         }
 
     def compute_diagnostics(self) -> dict[str, str | float | bool | dict[str, Any]]:
-        """Comprehensive system diagnostics for stability, telemetry, and debugging."""
+        """Return a telemetry snapshot: pose, tracking error, torques, GRF."""
         mujoco.mj_kinematics(self.model, self.data)
-
-        # Base telemetry
-        pelvis_pos = self.data.xpos[
-            mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "pelvis")
-        ]
+        pelvis_pos = self.data.xpos[self.pelvis_body_id]
         div = bool(np.any(np.isnan(self.data.qpos)) or np.any(np.isnan(self.data.qvel)))
-
-        max_err = 0.0
-        active_torques = 0.0
-        joint_torques = {}
         history_len = len(self.history)
 
-        # Ground reaction force extraction (Right and Left Foot)
-        grf = {"right_z": 0.0, "left_z": 0.0}
+        if div:
+            max_err = 0.0
+            active_torques = 0.0
+            joint_torques: dict[str, float] = {}
+            grf = {"right_z": 0.0, "left_z": 0.0}
+        else:
+            max_err = self._collect_tracking_error()
+            active_torques, joint_torques = self._collect_joint_torques()
+            grf = self._collect_ground_reaction_forces()
 
-        if not div:
-            for act_name, q_idx in self.jnt_qpos_idx.items():
-                if self.qpos_target is not None:
-                    err = abs(self.data.qpos[q_idx] - self.qpos_target[q_idx])
-                    if err > max_err:
-                        max_err = err
-
-                # Check control commands
-                act_id = mujoco.mj_name2id(
-                    self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, f"act_{act_name}"
-                )
-                if act_id != -1:
-                    trq = float(self.data.ctrl[act_id])
-                    active_torques += abs(trq)
-                    joint_torques[act_name] = trq
-
-            # Ground Reaction Forces explicitly. Geom names come from builder.py;
-            # using geom-scope names avoids collisions with the body names.
-            right_foot_geom = mujoco.mj_name2id(
-                self.model, mujoco.mjtObj.mjOBJ_GEOM, "r_foot_geom"
-            )
-            left_foot_geom = mujoco.mj_name2id(
-                self.model, mujoco.mjtObj.mjOBJ_GEOM, "l_foot_geom"
-            )
-            floor_geom = mujoco.mj_name2id(
-                self.model, mujoco.mjtObj.mjOBJ_GEOM, "floor"
-            )
-
-            for i in range(self.data.ncon):
-                contact = self.data.contact[i]
-                is_floor = contact.geom1 == floor_geom or contact.geom2 == floor_geom
-                is_r_foot = (
-                    contact.geom1 == right_foot_geom or contact.geom2 == right_foot_geom
-                )
-                is_l_foot = (
-                    contact.geom1 == left_foot_geom or contact.geom2 == left_foot_geom
-                )
-
-                if is_floor and is_r_foot:
-                    grf["right_z"] += float(
-                        self.data.efc_force[contact.efc_address]
-                    )  # Primary normal force
-                elif is_floor and is_l_foot:
-                    grf["left_z"] += float(self.data.efc_force[contact.efc_address])
-
-        r_knee_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_JOINT, "r_knee")
-        r_knee_qpos_adr = self.model.jnt_qposadr[r_knee_id]
+        r_knee_qpos_adr = self.jnt_qpos_idx["r_knee"]
 
         diagnostics: dict[str, str | float | bool | dict[str, Any]] = {
             "time_sec": float(self.data.time),
@@ -484,6 +456,47 @@ class LowerBodySimulator:
             diagnostics["hip_rotation_target"] = hip_rotation_target
         return diagnostics
 
+    def _collect_tracking_error(self) -> float:
+        """Return the largest per-joint qpos error against the stability target."""
+        if self.qpos_target is None:
+            return 0.0
+        max_err = 0.0
+        for q_idx in self.jnt_qpos_idx.values():
+            err = abs(float(self.data.qpos[q_idx] - self.qpos_target[q_idx]))
+            if err > max_err:
+                max_err = err
+        return max_err
+
+    def _collect_joint_torques(self) -> tuple[float, dict[str, float]]:
+        """Return (sum |torque|, per-actuator torque dict) from data.ctrl."""
+        active = 0.0
+        torques: dict[str, float] = {}
+        for joint_name in self.jnt_qpos_idx:
+            act_id = self.act_ids.get(f"act_{joint_name}")
+            if act_id is None:
+                continue
+            trq = float(self.data.ctrl[act_id])
+            active += abs(trq)
+            torques[joint_name] = trq
+        return active, torques
+
+    def _collect_ground_reaction_forces(self) -> dict[str, float]:
+        """Return vertical GRF on each foot accumulated over current contacts."""
+        grf = {"right_z": 0.0, "left_z": 0.0}
+        floor = self.geom_ids.get("floor", -1)
+        r_foot = self.geom_ids.get("r_foot_geom", -1)
+        l_foot = self.geom_ids.get("l_foot_geom", -1)
+        for i in range(self.data.ncon):
+            contact = self.data.contact[i]
+            touches_floor = contact.geom1 == floor or contact.geom2 == floor
+            if not touches_floor:
+                continue
+            if contact.geom1 == r_foot or contact.geom2 == r_foot:
+                grf["right_z"] += float(self.data.efc_force[contact.efc_address])
+            elif contact.geom1 == l_foot or contact.geom2 == l_foot:
+                grf["left_z"] += float(self.data.efc_force[contact.efc_address])
+        return grf
+
     def analyze_induced_acceleration(
         self, actuator_name: str, torque_value: float = 1.0
     ) -> dict[str, float]:
@@ -494,9 +507,7 @@ class LowerBodySimulator:
 
         Returns the induced linear and angular acceleration of the pelvis.
         """
-        act_id = mujoco.mj_name2id(
-            self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, actuator_name
-        )
+        act_id = self.act_ids.get(actuator_name, -1)
         if act_id == -1:
             raise ValueError(f"No actuator found for {actuator_name}")
 
@@ -583,12 +594,8 @@ class LowerBodySimulator:
         self.data.qpos[0:3] = target_pos_arr
         self.data.qpos[3:7] = target_quat_arr
 
-        r_foot_id = mujoco.mj_name2id(
-            self.model, mujoco.mjtObj.mjOBJ_SITE, "r_foot_center"
-        )
-        l_foot_id = mujoco.mj_name2id(
-            self.model, mujoco.mjtObj.mjOBJ_SITE, "l_foot_center"
-        )
+        r_foot_id = self.site_ids["r_foot_center"]
+        l_foot_id = self.site_ids["l_foot_center"]
 
         # Nominal foot site targets (match the rest-pose builder placement).
         r_target = np.array([0.05, -0.15, -0.03])
@@ -639,33 +646,16 @@ class LowerBodySimulator:
         if self._pelvis_driver_target is not None:
             self._apply_pelvis_inclined_driver()
 
-        # Basic stability control (PD) to hold the target posture if no polynomial is provided
+        # PD stability loop to hold the target posture. Everything here reads
+        # from pre-cached indices; no mj_name2id calls in the hot path.
         if self.qpos_target is not None:
-            # We want to apply controls for all named actuators to track qpos_target
-            # Root DOFs (first 7 in qpos) shouldn't be controlled by joint actuators
             for joint_name, q_idx in self.jnt_qpos_idx.items():
-                act_name = f"act_{joint_name}"
-                act_id = mujoco.mj_name2id(
-                    self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, act_name
-                )
-
-                if act_id == -1:
+                act_id = self.act_ids.get(f"act_{joint_name}")
+                if act_id is None or act_id in self._polynomial_drivers:
                     continue
-
-                if act_id in self._polynomial_drivers:
-                    continue  # Driven by polynomial instead
-
-                # Joint DOF index in qvel is q_idx - 1 (since root has 7 qpos but 6 qvel)
-                # But a cleaner way is mapping joint id to qvel index:
-                jnt_id = mujoco.mj_name2id(
-                    self.model, mujoco.mjtObj.mjOBJ_JOINT, joint_name
-                )
-                v_idx = self.model.jnt_dofadr[jnt_id]
-
+                v_idx = self.jnt_dof_idx[joint_name]
                 q_err = self.data.qpos[q_idx] - self.qpos_target[q_idx]
                 v_err = self.data.qvel[v_idx]
-
-                # PD control
                 self.data.ctrl[act_id] = (
                     -self.kp_stability * q_err - self.kd_stability * v_err
                 )

@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.43                                     |
+| **Spec Version**        | 1.1.44                                     |
 | **Last Spec Update**    | 2026-04-11                                 |
 
 ## 2. Purpose & Mission
@@ -449,6 +449,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 2026-04-11 | 1.1.44  | Lower-body simulator DRY/LOD refactor: centralized mj_name2id lookups into a single cache populated in `_cache_indices` (joints, actuators, sites, geoms, bodies), eliminated reflective lookups from hot paths (`step`, `compute_diagnostics`, `inverse_kinematics`, `set_joint_polynomial`, `analyze_induced_acceleration`), and decomposed `compute_diagnostics` into `_collect_tracking_error`, `_collect_joint_torques`, `_collect_ground_reaction_forces`. Added contract test suite locking down the public API surface (`-m contract`). |
 | 2026-04-11 | 1.1.43  | Added inclined-plane pelvis rotation driver to the lower-body simulator: `set_pelvis_inclined_rotation(target, ...)` wrenches the pelvis free joint via `data.xfrc_applied` each step so the body tracks an inclined rotation axis (spine angle) plus a smoothstep-ramped lateral weight shift during the downswing. New `InclinedPlaneHipRotationTarget.lateral_shift_m`, `lateral_shift_at(t)`, and `target_quaternion_at(t)` with full DbC. |
 | 2026-04-11 | 1.1.42  | Anatomically-shaped lower-body pelvis: composite of inertial host ellipsoid plus five mass=0 visual-only landmark geoms (sacrum, bilateral iliac wings, bright-red ASIS spheres, pubic symphysis) so pelvic tilt is visually unambiguous in the viewer without any change to dynamics. |
 | 2026-04-11 | 1.1.41  | Added a full reset control to the lower-body PyQt panel that stops playback, clears history, returns MuJoCo time to zero, preserves loaded golf hip rotation targets, and reapplies the target pose at `t=0`. |
