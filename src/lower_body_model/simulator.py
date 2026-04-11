@@ -29,6 +29,16 @@ class LowerBodySimulator:
         self._polynomial_drivers: dict[int, np.ndarray] = {}
         self.hip_rotation_target: InclinedPlaneHipRotationTarget | None = None
 
+        # Inclined-plane pelvis driver state.
+        self._pelvis_driver_target: InclinedPlaneHipRotationTarget | None = None
+        self._pelvis_driver_origin: np.ndarray | None = None
+        self._pelvis_driver_gains: dict[str, float] = {
+            "position_kp": 500.0,
+            "position_kd": 50.0,
+            "orientation_kp": 200.0,
+            "orientation_kd": 20.0,
+        }
+
         # Stability control target (rest pose)
         self.qpos_target: np.ndarray | None = None
         self.kp_stability = 0.0
@@ -181,6 +191,117 @@ class LowerBodySimulator:
             sample_count=sample_count,
         )
         return self.hip_rotation_target
+
+    def set_pelvis_inclined_rotation(
+        self,
+        target: InclinedPlaneHipRotationTarget,
+        *,
+        position_kp: float = 500.0,
+        position_kd: float = 50.0,
+        orientation_kp: float = 200.0,
+        orientation_kd: float = 20.0,
+    ) -> None:
+        """Configure an inclined-plane driver that actuates the pelvis free joint.
+
+        Each call to :meth:`step` will apply a PD tracking force/torque to the
+        pelvis body via ``data.xfrc_applied``, driving the free joint towards
+        ``target.target_quaternion_at(t)`` and the lateral position towards
+        ``origin + target.lateral_shift_at(t) * Y``. The current pelvis x,y,z
+        position is captured as the origin at the moment of the call.
+
+        Args:
+            target: The inclined-plane rotation target to drive.
+            position_kp: Proportional gain on pelvis linear position error (N/m).
+            position_kd: Derivative gain on pelvis linear velocity (Ns/m).
+            orientation_kp: Proportional gain on pelvis rotation error (Nm/rad).
+            orientation_kd: Derivative gain on pelvis angular velocity (Nms/rad).
+
+        Raises:
+            TypeError: If ``target`` is not an ``InclinedPlaneHipRotationTarget``
+                or any gain is not a real number.
+            ValueError: If any gain is negative.
+        """
+        if not isinstance(target, InclinedPlaneHipRotationTarget):
+            raise TypeError(
+                "target must be an InclinedPlaneHipRotationTarget, got "
+                f"{type(target).__name__}"
+            )
+        for name, value in (
+            ("position_kp", position_kp),
+            ("position_kd", position_kd),
+            ("orientation_kp", orientation_kp),
+            ("orientation_kd", orientation_kd),
+        ):
+            if isinstance(value, bool) or not isinstance(value, (int, float)):
+                raise TypeError(
+                    f"{name} must be a real number, got {type(value).__name__}"
+                )
+            if value < 0.0:
+                raise ValueError(f"{name} must be non-negative, got {value}")
+
+        self._pelvis_driver_target = target
+        self._pelvis_driver_origin = self.data.xpos[self.pelvis_body_id].copy()
+        self._pelvis_driver_gains = {
+            "position_kp": float(position_kp),
+            "position_kd": float(position_kd),
+            "orientation_kp": float(orientation_kp),
+            "orientation_kd": float(orientation_kd),
+        }
+
+    def clear_pelvis_inclined_rotation(self) -> None:
+        """Remove any configured inclined-plane pelvis driver and zero forces."""
+        self._pelvis_driver_target = None
+        self._pelvis_driver_origin = None
+        if self.data.xfrc_applied.shape[0] > self.pelvis_body_id:
+            self.data.xfrc_applied[self.pelvis_body_id] = 0.0
+
+    def _apply_pelvis_inclined_driver(self) -> None:
+        """Apply the PD tracking wrench for the configured pelvis driver."""
+        target = self._pelvis_driver_target
+        origin = self._pelvis_driver_origin
+        if target is None or origin is None:
+            return
+
+        t = float(self.data.time)
+        gains = self._pelvis_driver_gains
+
+        # Linear tracking: origin + lateral_shift_at(t) * +Y.
+        desired_pos = origin.copy()
+        desired_pos[1] += target.lateral_shift_at(t)
+        cur_pos = self.data.xpos[self.pelvis_body_id]
+        lin_err = desired_pos - cur_pos
+        lin_vel = self.data.qvel[0:3]
+        lin_force = gains["position_kp"] * lin_err - gains["position_kd"] * lin_vel
+
+        # Angular tracking: body quat -> target quat -> error quat -> axis-angle.
+        target_quat = target.target_quaternion_at(t)
+        cur_quat = self.data.xquat[self.pelvis_body_id].copy()
+
+        # err_quat = target * conj(cur)
+        cur_conj = np.array([cur_quat[0], -cur_quat[1], -cur_quat[2], -cur_quat[3]])
+        err_quat = np.zeros(4)
+        mujoco.mju_mulQuat(err_quat, target_quat, cur_conj)
+
+        # Ensure shortest-arc (positive w).
+        if err_quat[0] < 0.0:
+            err_quat = -err_quat
+
+        # Axis-angle: angle = 2 * acos(w); axis = vec / sin(angle/2).
+        w = float(np.clip(err_quat[0], -1.0, 1.0))
+        vec = err_quat[1:4]
+        vec_norm = float(np.linalg.norm(vec))
+        if vec_norm > 1e-9:
+            angle = 2.0 * float(np.arccos(w))
+            if angle > np.pi:
+                angle -= 2.0 * np.pi
+            ang_err = (vec / vec_norm) * angle
+        else:
+            ang_err = np.zeros(3)
+        ang_vel = self.data.qvel[3:6]
+        torque = gains["orientation_kp"] * ang_err - gains["orientation_kd"] * ang_vel
+
+        self.data.xfrc_applied[self.pelvis_body_id, 0:3] = lin_force
+        self.data.xfrc_applied[self.pelvis_body_id, 3:6] = torque
 
     def apply_hip_rotation_target(
         self, time_sec: float | None = None
@@ -512,6 +633,11 @@ class LowerBodySimulator:
         t = self.data.time
         if self.hip_rotation_target is not None:
             self.apply_hip_rotation_target(t)
+
+        # Apply the inclined-plane pelvis driver before mj_step so its wrench
+        # is integrated along with every other external force this tick.
+        if self._pelvis_driver_target is not None:
+            self._apply_pelvis_inclined_driver()
 
         # Basic stability control (PD) to hold the target posture if no polynomial is provided
         if self.qpos_target is not None:
