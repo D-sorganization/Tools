@@ -7,10 +7,11 @@ The **Lower Body Model** is a 3D biomechanical simulation of a golfer's lower bo
 - **DRY (Don't Repeat Yourself)**: The MuJoCo XML is constructed dynamically by `builder.py`, generating symmetrical left/right leg elements parametrically based on identical sub-routines mapped onto python strings.
 - **LOD (Law of Demeter)**: Components interact precisely through restricted interfaces. `main.py` interfaces with `LowerBodySimulator`, and only `LowerBodySimulator` manipulates `mujoco.MjData` and `mujoco.MjModel`.
 - **TDD (Test-Driven Development)**: Comprehensive coverage validates ZTCF calculation outputs, inverse kinematics stability, valid polynomial joint drivers, and mass-integrity matching inside XML generation.
-- **DbC (Design by Contract)**: Methods like `setup_initial_pose` use pre-condition assertions (e.g., `-90 <= foot_angle <= 90`) to prevent unrealistic biomechanical configurations that break structural simulation limits.
+- **DbC (Design by Contract)**: Public entry points raise `TypeError` for wrong types and `ValueError` for out-of-range values, per the repository-wide CLAUDE.md rule. `setup_initial_pose`, `inverse_kinematics`, `build_lower_body_xml`, `InclinedPlaneHipRotationTarget.__post_init__`, and `set_pelvis_inclined_rotation` enforce all preconditions this way.
 
 ## 3. Kinematic Implementation
-- **Pelvis (Root)**: 6-DOF Free Joint. Modeled as a tailored ellipsoid.
+
+- **Pelvis (Root)**: 6-DOF Free Joint. The pelvis body is rendered as an anatomically-inspired composite: a single inertial ellipsoid (`pelvis_body`, carrying all `pelvis_mass`) hosts five mass=0 visual-only landmark geoms — `pelvis_sacrum`, bilateral `pelvis_r_ilium`/`pelvis_l_ilium`, bright-red `pelvis_r_asis`/`pelvis_l_asis` spheres, and `pelvis_pubis`. Markers make anterior, posterior, obliquity, and axial rotation visually unambiguous without affecting dynamics.
 - **Hips**: Gimbal Joints (3 independent hinge actuators: X, Y, Z).
 - **Knees**: Revolute Joints (1 hinge actuator, 0 to 150 flexion range).
 - **Ankles**: Universal Joints (2 hinge actuators, X and Y). Flat ellipsoids replace basic box feet for anatomical resemblance.
