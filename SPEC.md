@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-04-09
+  LAST UPDATED: 2026-04-11
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.37                                     |
+| **Spec Version**        | 1.1.38                                     |
 | **Last Spec Update**    | 2026-04-10                                 |
 
 ## 2. Purpose & Mission
@@ -448,6 +448,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 2026-04-11 | 1.1.38  | Optimize applyFormula in useDataProcessor.ts by replacing chained array map methods with a single-pass loop and explicitly allocating temporary arguments arrays to prevent massive GC overhead during dynamic formula evaluation.                                                                                             |
 | 2026-03-28 | 1.0.0   | Initial specification                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 2026-03-29 | 1.0.1   | Document performance improvement in DataChart downsampling algorithm                                                                                                                                                                                                                                                                                                                                                                                   |
 | 2026-03-30 | 1.0.2   | A-N assessment remediation: LoD refactoring in convert_tools_icon.py, launch.py, launch_signal_toolkit.py, verify_launcher.py; DbC input validation added to launch_tool, bootstrap, migrate_file, \_print_environment_info, \_check_launcher_file, \_print_recommendations, \_on_poly_generated; docstrings added to **init** and missing functions in setup_dev.py, remove_broken_scripts.py, migrate_print_to_logging.py, launch_signal_toolkit.py. |
