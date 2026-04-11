@@ -64,13 +64,19 @@ class LowerBodySimulator:
 
     def setup_initial_pose(
         self,
-        hip_anterior_tilt: float = 30.0,
-        knee_flexion: float = 120.0,
+        hip_anterior_tilt: float = 20.0,
+        knee_flexion: float = 30.0,
         foot_angle: float = 20.0,
     ) -> None:
         """Set the model to the requested initial pose and compute stability targets.
 
-        All angles are in degrees.
+        All angles are in degrees. The hip and knee angles are applied directly;
+        the ankle angles are then solved by a closed-form 2-DOF IK so both feet
+        land flat on the ground (world Z-axis of each foot body == (0, 0, 1))
+        regardless of the hip/knee configuration. If the required ankle angles
+        exceed the ±30° joint limits declared in builder.py the pose is
+        infeasible and :class:`ValueError` is raised identifying the offending
+        axis.
 
         Args:
             hip_anterior_tilt: Anterior pelvic tilt applied to both hip_y axes.
@@ -80,9 +86,9 @@ class LowerBodySimulator:
         Raises:
             TypeError: If any argument is not a real number.
             ValueError: If any argument is outside its physiological range:
-                -90 <= hip_anterior_tilt <= 90,
-                0 <= knee_flexion <= 150,
-                -90 <= foot_angle <= 90.
+                -90 <= hip_anterior_tilt <= 90, 0 <= knee_flexion <= 150,
+                -90 <= foot_angle <= 90; or if the resulting pose requires an
+                ankle angle outside ±30°.
         """
         for name, value in (
             ("hip_anterior_tilt", hip_anterior_tilt),
@@ -111,15 +117,17 @@ class LowerBodySimulator:
         self.data.qpos[self.jnt_qpos_idx["r_hip_z"]] = np.radians(-foot_angle)
         self.data.qpos[self.jnt_qpos_idx["l_hip_z"]] = np.radians(foot_angle)
 
-        # Approximate 2D sagittal closed chain: the ankle must flex backward by the
-        # amount the knee is bent minus the hip forward lean so the foot stays flat.
-        # Clamp to the ankle_y joint limit (±30°) declared in builder.py; full
-        # closed-chain IK is tracked in issue #2023.
-        ankle_deg = np.clip(knee_flexion - hip_anterior_tilt, -30.0, 30.0)
-        ankle_compensation = np.radians(ankle_deg)
-        self.data.qpos[self.jnt_qpos_idx["r_ankle_y"]] = -ankle_compensation
-        self.data.qpos[self.jnt_qpos_idx["l_ankle_y"]] = -ankle_compensation
+        # Solve per-side ankle angles so each foot's world Z axis is (0, 0, 1).
+        self.data.qpos[self.jnt_qpos_idx["r_ankle_x"]] = 0.0
+        self.data.qpos[self.jnt_qpos_idx["r_ankle_y"]] = 0.0
+        self.data.qpos[self.jnt_qpos_idx["l_ankle_x"]] = 0.0
+        self.data.qpos[self.jnt_qpos_idx["l_ankle_y"]] = 0.0
+        mujoco.mj_kinematics(self.model, self.data)
 
+        for side in ("r", "l"):
+            qx, qy = self._solve_flat_foot_ankle(side)
+            self.data.qpos[self.jnt_qpos_idx[f"{side}_ankle_x"]] = qx
+            self.data.qpos[self.jnt_qpos_idx[f"{side}_ankle_y"]] = qy
         mujoco.mj_kinematics(self.model, self.data)
 
         # Drop the pelvis until feet touch the ground.
@@ -134,6 +142,53 @@ class LowerBodySimulator:
 
         # Save as the stability target
         self.qpos_target = self.data.qpos.copy()
+
+    def _solve_flat_foot_ankle(self, side: str) -> tuple[float, float]:
+        """Return the (ankle_x, ankle_y) radians that put the foot's world Z at +Z.
+
+        Closed-form 2-DOF decomposition. With the hip and knee joints already
+        set and ankles zeroed, ``data.xmat[calf]`` is the calf's world rotation.
+        The foot body's world rotation is::
+
+            R_world_foot = R_world_calf @ R_x(qx) @ R_y(qy)
+
+        so setting ``R_world_foot @ (0,0,1) = (0,0,1)`` gives::
+
+            R_x(qx) @ R_y(qy) @ (0,0,1) = R_world_calf.T @ (0,0,1)
+
+        The right-hand side is the calf-local view of world Z, which equals
+        the third row of ``data.xmat[calf]``. Expanding the left-hand side::
+
+            R_x(qx) @ R_y(qy) @ (0,0,1) = (sy, -sx*cy, cx*cy)
+
+        with ``sx=sin(qx), cx=cos(qx), sy=sin(qy), cy=cos(qy)``. Solve for
+        ``qy = arcsin(sy)`` and then ``qx = atan2(-(-sx*cy), cx*cy)``.
+
+        Raises ``ValueError`` if either solved angle exceeds the ±30° joint
+        limit declared in ``builder.py``, identifying the axis and overshoot.
+        """
+        calf_mat = self.data.xmat[self.body_ids[f"{side}_calf"]].reshape(3, 3)
+        target_local_z = calf_mat[2, :]  # world Z expressed in calf-local frame
+        sy = float(np.clip(target_local_z[0], -1.0, 1.0))
+        qy = float(np.arcsin(sy))
+        cy = float(np.cos(qy))
+        if abs(cy) < 1e-9:
+            qx = 0.0
+        else:
+            qx = float(np.arctan2(-float(target_local_z[1]), float(target_local_z[2])))
+
+        limit_rad = np.radians(30.0)
+        if abs(qy) > limit_rad + 1e-9:
+            raise ValueError(
+                f"{side}_ankle_y required {np.degrees(qy):.1f}° exceeds ±30° limit; "
+                "reduce knee_flexion or hip_anterior_tilt"
+            )
+        if abs(qx) > limit_rad + 1e-9:
+            raise ValueError(
+                f"{side}_ankle_x required {np.degrees(qx):.1f}° exceeds ±30° limit; "
+                "reduce foot_angle"
+            )
+        return qx, qy
 
     def _cache_indices(self) -> None:
         """Pre-compute MuJoCo ids so hot paths don't reach into name lookups.
@@ -171,9 +226,12 @@ class LowerBodySimulator:
                 self.model, mujoco.mjtObj.mjOBJ_GEOM, geom
             )
 
-        self.pelvis_body_id = mujoco.mj_name2id(
-            self.model, mujoco.mjtObj.mjOBJ_BODY, "pelvis"
-        )
+        self.body_ids: dict[str, int] = {}
+        for body in ("pelvis", "r_calf", "l_calf", "r_foot", "l_foot"):
+            self.body_ids[body] = mujoco.mj_name2id(
+                self.model, mujoco.mjtObj.mjOBJ_BODY, body
+            )
+        self.pelvis_body_id = self.body_ids["pelvis"]
 
     def reset(self) -> None:
         mujoco.mj_resetData(self.model, self.data)
