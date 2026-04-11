@@ -24,9 +24,9 @@ def test_build_lower_body_xml_generates_valid_mjcf() -> None:
     ]
 
     # We expect floating base / pelvis joints, hip, knee, ankle joints
-    assert "r_hip_x" in joint_names or "r_hip" in joint_names, (
-        "Should have right hip joint"
-    )
+    assert (
+        "r_hip_x" in joint_names or "r_hip" in joint_names
+    ), "Should have right hip joint"
     assert "r_knee" in joint_names, "Should have right knee joint"
     assert "l_knee" in joint_names, "Should have left knee joint"
 

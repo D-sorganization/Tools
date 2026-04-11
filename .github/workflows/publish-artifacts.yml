@@ -19,7 +19,6 @@ permissions:
   id-token: write # Required for PyPI trusted publishing
 
 jobs:
-
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
     runs-on: ubuntu-latest

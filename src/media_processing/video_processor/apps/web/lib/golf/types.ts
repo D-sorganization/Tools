@@ -58,16 +58,16 @@ export interface PoseFrame {
 
 // Swing phases based on professional golf instruction
 export enum SwingPhase {
-  ADDRESS = 'address',
-  TAKEAWAY = 'takeaway',
-  BACKSWING = 'backswing',
-  TOP_OF_BACKSWING = 'top_of_backswing',
-  TRANSITION = 'transition',
-  DOWNSWING = 'downswing',
-  IMPACT = 'impact',
-  FOLLOW_THROUGH = 'follow_through',
-  FINISH = 'finish',
-  UNKNOWN = 'unknown',
+  ADDRESS = "address",
+  TAKEAWAY = "takeaway",
+  BACKSWING = "backswing",
+  TOP_OF_BACKSWING = "top_of_backswing",
+  TRANSITION = "transition",
+  DOWNSWING = "downswing",
+  IMPACT = "impact",
+  FOLLOW_THROUGH = "follow_through",
+  FINISH = "finish",
+  UNKNOWN = "unknown",
 }
 
 export interface PhaseTransition {
@@ -80,19 +80,19 @@ export interface PhaseTransition {
 
 // Golfer's stance direction
 export enum StanceDirection {
-  RIGHT_HANDED = 'right_handed',
-  LEFT_HANDED = 'left_handed',
-  UNKNOWN = 'unknown',
+  RIGHT_HANDED = "right_handed",
+  LEFT_HANDED = "left_handed",
+  UNKNOWN = "unknown",
 }
 
 // Swing type categorization
 export enum SwingType {
-  DRIVER = 'driver',
-  IRON = 'iron',
-  WEDGE = 'wedge',
-  PUTTER = 'putter',
-  HYBRID = 'hybrid',
-  UNKNOWN = 'unknown',
+  DRIVER = "driver",
+  IRON = "iron",
+  WEDGE = "wedge",
+  PUTTER = "putter",
+  HYBRID = "hybrid",
+  UNKNOWN = "unknown",
 }
 
 // Angle measurements in degrees
@@ -141,7 +141,7 @@ export interface TempoMetrics {
   totalSwingDuration: number;
   tempoRatio: number; // backswing:downswing (e.g., 3:1 = 3.0)
   transitionPause: number; // milliseconds at top
-  rhythm: 'smooth' | 'quick' | 'slow' | 'uneven';
+  rhythm: "smooth" | "quick" | "slow" | "uneven";
 }
 
 // Balance and weight shift
@@ -183,7 +183,7 @@ export interface PostureMetrics {
   addressPosture: {
     spineAngle: number;
     kneeFlexion: number;
-    armHang: 'good' | 'too_far' | 'too_close';
+    armHang: "good" | "too_far" | "too_close";
   };
   headStability: number; // 0-100, higher is more stable
   earlyExtension: boolean;
@@ -255,7 +255,7 @@ export interface SwingScores {
 export interface SwingIssue {
   id: string;
   name: string;
-  severity: 'minor' | 'moderate' | 'major';
+  severity: "minor" | "moderate" | "major";
   phase: SwingPhase;
   description: string;
   detectedAt: number; // frame number
@@ -298,7 +298,7 @@ export interface SwingReport {
   analysis: SwingAnalysis;
   comparison?: SwingComparison;
   charts: {
-    type: 'tempo' | 'angles' | 'velocity' | 'balance' | 'trajectory';
+    type: "tempo" | "angles" | "velocity" | "balance" | "trajectory";
     data: unknown;
   }[];
   summary: string;

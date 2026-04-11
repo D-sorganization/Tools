@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { SwingIssue, SwingPhase } from '@/lib/golf/types';
-import { useState } from 'react';
+import { SwingIssue, SwingPhase } from "@/lib/golf/types";
+import { useState } from "react";
 
 interface IssuesPanelProps {
   issues: SwingIssue[];
@@ -10,47 +10,47 @@ interface IssuesPanelProps {
 export default function IssuesPanel({ issues }: IssuesPanelProps) {
   const [expandedIssue, setExpandedIssue] = useState<string | null>(null);
 
-  const getSeverityStyles = (severity: SwingIssue['severity']) => {
+  const getSeverityStyles = (severity: SwingIssue["severity"]) => {
     switch (severity) {
-      case 'major':
+      case "major":
         return {
-          bg: 'bg-red-50',
-          border: 'border-red-200',
-          icon: 'bg-red-500',
-          text: 'text-red-700',
-          badge: 'bg-red-100 text-red-700',
+          bg: "bg-red-50",
+          border: "border-red-200",
+          icon: "bg-red-500",
+          text: "text-red-700",
+          badge: "bg-red-100 text-red-700",
         };
-      case 'moderate':
+      case "moderate":
         return {
-          bg: 'bg-yellow-50',
-          border: 'border-yellow-200',
-          icon: 'bg-yellow-500',
-          text: 'text-yellow-700',
-          badge: 'bg-yellow-100 text-yellow-700',
+          bg: "bg-yellow-50",
+          border: "border-yellow-200",
+          icon: "bg-yellow-500",
+          text: "text-yellow-700",
+          badge: "bg-yellow-100 text-yellow-700",
         };
-      case 'minor':
+      case "minor":
         return {
-          bg: 'bg-green-50',
-          border: 'border-green-200',
-          icon: 'bg-green-500',
-          text: 'text-green-700',
-          badge: 'bg-green-100 text-green-700',
+          bg: "bg-green-50",
+          border: "border-green-200",
+          icon: "bg-green-500",
+          text: "text-green-700",
+          badge: "bg-green-100 text-green-700",
         };
     }
   };
 
   const getPhaseLabel = (phase: SwingPhase): string => {
     const labels: Record<SwingPhase, string> = {
-      [SwingPhase.ADDRESS]: 'Address',
-      [SwingPhase.TAKEAWAY]: 'Takeaway',
-      [SwingPhase.BACKSWING]: 'Backswing',
-      [SwingPhase.TOP_OF_BACKSWING]: 'Top of Backswing',
-      [SwingPhase.TRANSITION]: 'Transition',
-      [SwingPhase.DOWNSWING]: 'Downswing',
-      [SwingPhase.IMPACT]: 'Impact',
-      [SwingPhase.FOLLOW_THROUGH]: 'Follow Through',
-      [SwingPhase.FINISH]: 'Finish',
-      [SwingPhase.UNKNOWN]: 'Unknown',
+      [SwingPhase.ADDRESS]: "Address",
+      [SwingPhase.TAKEAWAY]: "Takeaway",
+      [SwingPhase.BACKSWING]: "Backswing",
+      [SwingPhase.TOP_OF_BACKSWING]: "Top of Backswing",
+      [SwingPhase.TRANSITION]: "Transition",
+      [SwingPhase.DOWNSWING]: "Downswing",
+      [SwingPhase.IMPACT]: "Impact",
+      [SwingPhase.FOLLOW_THROUGH]: "Follow Through",
+      [SwingPhase.FINISH]: "Finish",
+      [SwingPhase.UNKNOWN]: "Unknown",
     };
     return labels[phase];
   };
@@ -61,14 +61,16 @@ export default function IssuesPanel({ issues }: IssuesPanelProps) {
     return severityOrder[a.severity] - severityOrder[b.severity];
   });
 
-  const majorCount = issues.filter((i) => i.severity === 'major').length;
-  const moderateCount = issues.filter((i) => i.severity === 'moderate').length;
-  const minorCount = issues.filter((i) => i.severity === 'minor').length;
+  const majorCount = issues.filter((i) => i.severity === "major").length;
+  const moderateCount = issues.filter((i) => i.severity === "moderate").length;
+  const minorCount = issues.filter((i) => i.severity === "minor").length;
 
   if (issues.length === 0) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Swing Issues</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Swing Issues
+        </h3>
         <div className="text-center py-8">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg
@@ -85,7 +87,9 @@ export default function IssuesPanel({ issues }: IssuesPanelProps) {
               />
             </svg>
           </div>
-          <p className="text-lg font-medium text-gray-900">No Issues Detected</p>
+          <p className="text-lg font-medium text-gray-900">
+            No Issues Detected
+          </p>
           <p className="text-sm text-gray-500 mt-1">
             Your swing mechanics look great! Keep up the good work.
           </p>
@@ -137,16 +141,20 @@ export default function IssuesPanel({ issues }: IssuesPanelProps) {
                   />
                   <div>
                     <p className={`font-medium ${styles.text}`}>{issue.name}</p>
-                    <p className="text-sm text-gray-600 mt-1">{issue.description}</p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {issue.description}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2 ml-4">
-                  <span className={`px-2 py-1 text-xs font-medium rounded ${styles.badge}`}>
+                  <span
+                    className={`px-2 py-1 text-xs font-medium rounded ${styles.badge}`}
+                  >
                     {getPhaseLabel(issue.phase)}
                   </span>
                   <svg
                     className={`w-5 h-5 text-gray-400 transition-transform ${
-                      isExpanded ? 'rotate-180' : ''
+                      isExpanded ? "rotate-180" : ""
                     }`}
                     fill="none"
                     stroke="currentColor"
@@ -189,7 +197,9 @@ export default function IssuesPanel({ issues }: IssuesPanelProps) {
                         <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">
                           Recommended Drill
                         </p>
-                        <p className="text-sm text-gray-700">{issue.drillRecommendation}</p>
+                        <p className="text-sm text-gray-700">
+                          {issue.drillRecommendation}
+                        </p>
                       </div>
                     )}
                   </div>

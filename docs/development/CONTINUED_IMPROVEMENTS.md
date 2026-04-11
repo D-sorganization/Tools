@@ -39,7 +39,6 @@
 #### High Priority
 
 - ~40 files still manually manipulate sys.path
-
   - Can use `ensure_utils_in_path()` from path_helpers
   - Files: Test files, some modules, launchers
 
@@ -50,7 +49,6 @@
 #### Medium Priority
 
 - ~240 OS path operations
-
   - Many are legitimate, but could be standardized
   - Can use `os_utils` functions where appropriate
 

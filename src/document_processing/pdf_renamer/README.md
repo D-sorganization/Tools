@@ -55,20 +55,17 @@ A professional-grade tool to intelligently rename PDF files using a layered extr
 ### Core Capabilities
 
 - **Multi-Layer Title Extraction**
-
   - **Layer 0**: PDF metadata extraction (fast, free)
   - **Layer 1**: Layout-aware heuristic analysis using PyMuPDF (robust, intelligent)
   - **Layer 2**: AI fallback using Google Gemini (highest accuracy for difficult PDFs)
 
 - **Advanced Duplicate Detection**
-
   - SHA256-based content hashing (cryptographically secure)
   - Size-based pre-filtering for performance
   - Automatic or manual duplicate deletion
   - Recursive subfolder scanning
 
 - **Smart File Processing**
-
   - Intelligent caching to avoid re-processing files
   - Thread-safe parallel processing with configurable workers
   - Transaction logging for rollback capability
@@ -87,7 +84,6 @@ A professional-grade tool to intelligently rename PDF files using a layered extr
 ### User Interface
 
 - **Modern PyQt6 GUI**
-
   - **Tabbed Interface**: Separate modes for different workflows
   - **Batch Processing Tab**: Traditional automated processing
   - **API Mode Tab**: Manual review and approval workflow
@@ -173,14 +169,12 @@ python launch_gui.py
 ### 📋 API-Only Workflow Example
 
 1. **Generate Proposals**:
-
    - Select directory in API Mode tab
    - Choose naming style and options
    - Click "Generate Proposals" to create AI suggestions
    - Review proposals with confidence scores
 
 2. **Review and Approve**:
-
    - Examine each proposed rename
    - Approve good suggestions with ✅ button
    - Reject problematic ones with ❌ button

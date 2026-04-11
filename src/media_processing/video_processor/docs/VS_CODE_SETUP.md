@@ -9,22 +9,18 @@ I've created `.vscode/extensions.json` which will prompt you to install these au
 #### Core Development
 
 1. **ESLint** (`dbaeumer.vscode-eslint`)
-
    - JavaScript/TypeScript linting
    - Shows errors in real-time
 
 2. **Prettier** (`esbenp.prettier-vscode`)
-
    - Code formatter
    - Automatically formats on save
 
 3. **TypeScript Hero** (`ms-vscode.vscode-typescript-next`)
-
    - Enhanced TypeScript support
    - Better IntelliSense
 
 4. **Tailwind CSS IntelliSense** (`bradlc.vscode-tailwindcss`)
-
    - Autocomplete for Tailwind classes
    - Hover to see actual CSS
 
@@ -35,7 +31,6 @@ I've created `.vscode/extensions.json` which will prompt you to install these au
 #### React/Next.js Specific
 
 6. **ES7+ React/Redux/React-Native snippets** (`dsznajder.es7-react-js-snippets`)
-
    - Code snippets for React
    - Speeds up development
 
@@ -51,7 +46,6 @@ I've created `.vscode/extensions.json` which will prompt you to install these au
 #### Code Quality
 
 9. **Error Lens** (`usernamehw.errorlens`)
-
    - Shows errors inline
    - No need to open Problems panel
 
@@ -68,12 +62,10 @@ I've created `.vscode/extensions.json` which will prompt you to install these au
 ### Optional (Nice to Have)
 
 14. **MATLAB** (`mathworks.matlab`)
-
     - If you want MATLAB syntax highlighting
     - Note: MATLAB itself runs separately
 
 15. **Thunder Client** (`rangav.vscode-thunder-client`)
-
     - API testing inside VS Code
     - Alternative to Postman
 
@@ -203,12 +195,10 @@ Syntax highlighting for `.prisma` files
 ### Formatting Not Working?
 
 1. **Check Default Formatter**:
-
    - Right-click in file → "Format Document With..."
    - Select Prettier
 
 2. **Check Settings**: Open `.vscode/settings.json`
-
    - Should have `"editor.formatOnSave": true`
 
 3. **Check Prettier**:
@@ -218,7 +208,6 @@ Syntax highlighting for `.prisma` files
 ### ESLint Not Working?
 
 1. **Check Output**:
-
    - `View` → `Output`
    - Select "ESLint" from dropdown
    - Look for errors
@@ -228,7 +217,6 @@ Syntax highlighting for `.prisma` files
 ### IntelliSense Not Working?
 
 1. **Check TypeScript**:
-
    - Bottom-right corner
    - Should show TypeScript version
 

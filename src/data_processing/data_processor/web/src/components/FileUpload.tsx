@@ -1,5 +1,5 @@
-import { useCallback, useRef } from 'react';
-import { Upload, FileText, X } from 'lucide-react';
+import { useCallback, useRef } from "react";
+import { Upload, FileText, X } from "lucide-react";
 
 interface FileUploadProps {
   onFileSelect: (file: File) => void;
@@ -8,18 +8,23 @@ interface FileUploadProps {
   isLoading: boolean;
 }
 
-export function FileUpload({ onFileSelect, fileName, onClear, isLoading }: FileUploadProps) {
+export function FileUpload({
+  onFileSelect,
+  fileName,
+  onClear,
+  isLoading,
+}: FileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
       const file = e.dataTransfer.files[0];
-      if (file && file.name.endsWith('.csv')) {
+      if (file && file.name.endsWith(".csv")) {
         onFileSelect(file);
       }
     },
-    [onFileSelect]
+    [onFileSelect],
   );
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -30,12 +35,15 @@ export function FileUpload({ onFileSelect, fileName, onClear, isLoading }: FileU
     inputRef.current?.click();
   }, []);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleClick();
-    }
-  }, [handleClick]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        handleClick();
+      }
+    },
+    [handleClick],
+  );
 
   const handleFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,7 +52,7 @@ export function FileUpload({ onFileSelect, fileName, onClear, isLoading }: FileU
         onFileSelect(file);
       }
     },
-    [onFileSelect]
+    [onFileSelect],
   );
 
   if (fileName) {
@@ -79,7 +87,7 @@ export function FileUpload({ onFileSelect, fileName, onClear, isLoading }: FileU
         border-2 border-dashed border-dark-600 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500
         bg-dark-800/50 hover:bg-dark-800 hover:border-blue-500
         cursor-pointer transition-all duration-200
-        ${isLoading ? 'opacity-50 cursor-wait' : ''}
+        ${isLoading ? "opacity-50 cursor-wait" : ""}
       `}
     >
       <input
@@ -92,7 +100,7 @@ export function FileUpload({ onFileSelect, fileName, onClear, isLoading }: FileU
       />
       <Upload className="w-12 h-12 text-dark-500 mb-4" />
       <p className="text-dark-200 font-medium mb-1">
-        {isLoading ? 'Loading...' : 'Drop your CSV file here'}
+        {isLoading ? "Loading..." : "Drop your CSV file here"}
       </p>
       <p className="text-dark-400 text-sm">or click to browse</p>
     </div>

@@ -380,7 +380,6 @@ create_feature_branch "feature/add-new-agent" "main"
 ## Boundaries
 
 - ✅ **Always do:**
-
   - Pull before pushing
   - Check for uncommitted changes before switching branches
   - Write descriptive commit messages
@@ -393,7 +392,6 @@ create_feature_branch "feature/add-new-agent" "main"
   - Reference `UNIFIED_CI_APPROACH.md` when working with CI-related git operations
 
 - ⚠️ **Ask first:**
-
   - Before force-pushing to any branch
   - Before deleting remote branches
   - Before merging without PR

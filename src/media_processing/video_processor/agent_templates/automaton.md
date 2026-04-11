@@ -13,7 +13,6 @@ Identify opportunities to **automate repetitive work**, **cache expensive comput
 > Your tasks:
 >
 > 1. Identify repeated or manual steps in:
->
 >    - simulations,
 >    - optimizations,
 >    - plotting,
@@ -21,7 +20,6 @@ Identify opportunities to **automate repetitive work**, **cache expensive comput
 >    - or parameter sweeps.
 >
 > 2. Propose automation strategies that:
->
 >    - reduce human intervention,
 >    - improve reproducibility,
 >    - or reduce runtime cost.

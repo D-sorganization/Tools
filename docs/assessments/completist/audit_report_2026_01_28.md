@@ -43,11 +43,9 @@ The following items represent active incomplete work that requires attention:
 The audit identified several non-actionable matches:
 
 1.  **Hash Collision (New)**:
-
     - `media_processing/video_processor/package-lock.json`: A SHA-512 integrity hash contained the substring `XXX` (`...1XXXevb...`), triggering the scanner. This is a pure coincidence.
 
 2.  **Quality Assurance Tools**:
-
     - Regex patterns in `src/tools/code_quality_check.py`, `scripts/quality-check.py`, and `matlab_quality_check.py` are used to enforce the policy, not violate it.
 
 3.  **Policy Documentation**:

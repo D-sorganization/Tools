@@ -67,15 +67,15 @@ class LowerBodySimulator:
             - 0.0 <= knee_flexion <= 150.0
             - -90.0 <= foot_angle <= 90.0
         """
-        assert -90.0 <= hip_anterior_tilt <= 90.0, (
-            "DbC PRE: Anterior tilt out of physiological bounds (-90 to 90)"
-        )
-        assert 0.0 <= knee_flexion <= 150.0, (
-            "DbC PRE: Knee flexion out of bounds (0 to 150)"
-        )
-        assert -90.0 <= foot_angle <= 90.0, (
-            "DbC PRE: Foot angle out of bounds (-90 to 90)"
-        )
+        assert (
+            -90.0 <= hip_anterior_tilt <= 90.0
+        ), "DbC PRE: Anterior tilt out of physiological bounds (-90 to 90)"
+        assert (
+            0.0 <= knee_flexion <= 150.0
+        ), "DbC PRE: Knee flexion out of bounds (0 to 150)"
+        assert (
+            -90.0 <= foot_angle <= 90.0
+        ), "DbC PRE: Foot angle out of bounds (-90 to 90)"
 
         self.data.qpos[self.jnt_qpos_idx["r_hip_y"]] = np.radians(hip_anterior_tilt)
         self.data.qpos[self.jnt_qpos_idx["l_hip_y"]] = np.radians(hip_anterior_tilt)

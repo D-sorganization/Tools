@@ -89,13 +89,13 @@ Lagrange multipliers, and α,β the Baumgarte gains.
 All physics computations use closed-form analytical derivatives instead of
 numerical finite differences, achieving a **14.7x overall speedup**:
 
-| Operation          | Numerical | Analytical | Speedup |
-|--------------------|-----------|------------|---------|
-| Mass Matrix        | 40 ms     | 2 ms       | 23.6x   |
-| Gravity Vector     | 36 ms     | 1 ms       | 35.9x   |
-| Coriolis Forces    | 369 ms    | 26 ms      | 14.4x   |
-| Constraint Jacobian| 8 ms      | 3 ms       | 3.1x    |
-| **Total per RHS**  | **453 ms**| **31 ms**  | **14.7x**|
+| Operation           | Numerical  | Analytical | Speedup   |
+| ------------------- | ---------- | ---------- | --------- |
+| Mass Matrix         | 40 ms      | 2 ms       | 23.6x     |
+| Gravity Vector      | 36 ms      | 1 ms       | 35.9x     |
+| Coriolis Forces     | 369 ms     | 26 ms      | 14.4x     |
+| Constraint Jacobian | 8 ms       | 3 ms       | 3.1x      |
+| **Total per RHS**   | **453 ms** | **31 ms**  | **14.7x** |
 
 The analytical FK Jacobians compute 2×8 position derivatives for each of
 7 mass points using direct chain-rule trig derivatives. The mass matrix is
@@ -186,6 +186,7 @@ python -m double_pendulum_golf
 ```
 
 Notes:
+
 - Double and triple pendulum execution now have parity-validated Rust kernels
   for mass matrix, gravity, Coriolis, and forward kinematics behind their
   respective opt-in backend flags.

@@ -1,6 +1,9 @@
 import { useCallback, useState } from "react";
 
-type Operation = "twist_frame_conversion" | "homogeneous_transform" | "so3_so3_maps";
+type Operation =
+  | "twist_frame_conversion"
+  | "homogeneous_transform"
+  | "so3_so3_maps";
 
 interface ReferenceFrameResponse {
   operation: string;
@@ -23,17 +26,26 @@ const IDENTITY_3X3 = [
 ];
 
 export function ReferenceFrameConverter() {
-  const [operation, setOperation] = useState<Operation>("twist_frame_conversion");
+  const [operation, setOperation] = useState<Operation>(
+    "twist_frame_conversion",
+  );
   const [transform, setTransform] = useState<number[][]>(IDENTITY_4X4);
   const [twist, setTwist] = useState<number[]>([0, 0, 1, 0.5, 0, 0]);
-  const [rotationMatrix, setRotationMatrix] = useState<number[][]>(IDENTITY_3X3);
+  const [rotationMatrix, setRotationMatrix] =
+    useState<number[][]>(IDENTITY_3X3);
   const [translation, setTranslation] = useState<number[]>([0, 0, 0]);
   const [so3Vector, setSo3Vector] = useState<number[]>([0, 0, 0.5]);
   const [result, setResult] = useState<ReferenceFrameResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const updateMatrix = useCallback(
-    (setter: (rows: number[][]) => void, rows: number[][], i: number, j: number, value: number) => {
+    (
+      setter: (rows: number[][]) => void,
+      rows: number[][],
+      i: number,
+      j: number,
+      value: number,
+    ) => {
       const next = rows.map((row) => [...row]);
       next[i][j] = value;
       setter(next);
@@ -57,18 +69,22 @@ export function ReferenceFrameConverter() {
     }
 
     try {
-      const response = await fetch("/api/calc/rotation-converter/reference-frame", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        "/api/calc/rotation-converter/reference-frame",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        },
+      );
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.detail || "Reference-frame conversion failed");
       }
       setResult(data as ReferenceFrameResponse);
     } catch (caught) {
-      const message = caught instanceof Error ? caught.message : "Unknown error";
+      const message =
+        caught instanceof Error ? caught.message : "Unknown error";
       setError(message);
     }
   }, [operation, rotationMatrix, so3Vector, transform, translation, twist]);
@@ -80,7 +96,11 @@ export function ReferenceFrameConverter() {
           Reference-Frame Operations
         </h2>
 
-        {error && <div className="bg-red-900/40 border border-red-500 rounded p-3 text-red-200">{error}</div>}
+        {error && (
+          <div className="bg-red-900/40 border border-red-500 rounded p-3 text-red-200">
+            {error}
+          </div>
+        )}
 
         <div>
           <label className="block text-sm text-slate-300 mb-1">Operation</label>
@@ -89,15 +109,23 @@ export function ReferenceFrameConverter() {
             onChange={(event) => setOperation(event.target.value as Operation)}
             className="w-full bg-slate-700 rounded px-3 py-2 border border-slate-600 outline-none"
           >
-            <option value="twist_frame_conversion">Twist Frame Conversion (Adjoint)</option>
-            <option value="homogeneous_transform">Homogeneous Transform Builder</option>
-            <option value="so3_so3_maps">so(3) ↔ SO(3) Exponential / Log</option>
+            <option value="twist_frame_conversion">
+              Twist Frame Conversion (Adjoint)
+            </option>
+            <option value="homogeneous_transform">
+              Homogeneous Transform Builder
+            </option>
+            <option value="so3_so3_maps">
+              so(3) ↔ SO(3) Exponential / Log
+            </option>
           </select>
         </div>
 
         {operation === "twist_frame_conversion" && (
           <div className="space-y-3">
-            <p className="text-sm text-slate-300">Homogeneous Transform T (4x4)</p>
+            <p className="text-sm text-slate-300">
+              Homogeneous Transform T (4x4)
+            </p>
             <div className="grid grid-cols-4 gap-2">
               {transform.map((row, i) =>
                 row.map((entry, j) => (
@@ -105,13 +133,23 @@ export function ReferenceFrameConverter() {
                     key={`${i}-${j}`}
                     type="number"
                     value={entry}
-                    onChange={(event) => updateMatrix(setTransform, transform, i, j, Number(event.target.value))}
+                    onChange={(event) =>
+                      updateMatrix(
+                        setTransform,
+                        transform,
+                        i,
+                        j,
+                        Number(event.target.value),
+                      )
+                    }
                     className="bg-slate-700 rounded px-2 py-1 text-sm border border-slate-600 outline-none"
                   />
                 )),
               )}
             </div>
-            <p className="text-sm text-slate-300">Twist [ωx, ωy, ωz, vx, vy, vz]</p>
+            <p className="text-sm text-slate-300">
+              Twist [ωx, ωy, ωz, vx, vy, vz]
+            </p>
             <div className="grid grid-cols-3 gap-2">
               {twist.map((entry, i) => (
                 <input
@@ -141,7 +179,13 @@ export function ReferenceFrameConverter() {
                     type="number"
                     value={entry}
                     onChange={(event) =>
-                      updateMatrix(setRotationMatrix, rotationMatrix, i, j, Number(event.target.value))
+                      updateMatrix(
+                        setRotationMatrix,
+                        rotationMatrix,
+                        i,
+                        j,
+                        Number(event.target.value),
+                      )
                     }
                     className="bg-slate-700 rounded px-2 py-1 text-sm border border-slate-600 outline-none"
                   />
@@ -169,7 +213,9 @@ export function ReferenceFrameConverter() {
 
         {operation === "so3_so3_maps" && (
           <div className="space-y-3">
-            <p className="text-sm text-slate-300">so(3) Vector (rotation vector / ωθ)</p>
+            <p className="text-sm text-slate-300">
+              so(3) Vector (rotation vector / ωθ)
+            </p>
             <div className="grid grid-cols-3 gap-2">
               {so3Vector.map((entry, i) => (
                 <input
@@ -197,24 +243,35 @@ export function ReferenceFrameConverter() {
       </div>
 
       <div className="bg-slate-800 rounded-lg p-6 text-white space-y-4">
-        <h2 className="text-xl font-semibold border-b border-slate-700 pb-2">Educational Output</h2>
+        <h2 className="text-xl font-semibold border-b border-slate-700 pb-2">
+          Educational Output
+        </h2>
         {!result ? (
           <p className="text-slate-400 text-sm italic">
-            Choose an operation and compute to see matrices, vectors, and derivations.
+            Choose an operation and compute to see matrices, vectors, and
+            derivations.
           </p>
         ) : (
           <div className="space-y-4">
             <div className="bg-slate-700/50 p-3 rounded">
               <p className="text-xs text-slate-400 mb-1">Results (JSON)</p>
-              <pre className="font-mono text-xs whitespace-pre-wrap">{JSON.stringify(result.results, null, 2)}</pre>
+              <pre className="font-mono text-xs whitespace-pre-wrap">
+                {JSON.stringify(result.results, null, 2)}
+              </pre>
             </div>
             <div className="bg-slate-700/50 p-3 rounded">
-              <p className="text-xs text-slate-400 mb-1">Explanation (Markdown)</p>
-              <pre className="font-mono text-xs whitespace-pre-wrap">{result.explanation_markdown}</pre>
+              <p className="text-xs text-slate-400 mb-1">
+                Explanation (Markdown)
+              </p>
+              <pre className="font-mono text-xs whitespace-pre-wrap">
+                {result.explanation_markdown}
+              </pre>
             </div>
             <div className="bg-slate-700/50 p-3 rounded">
               <p className="text-xs text-slate-400 mb-1">Formulas (LaTeX)</p>
-              <pre className="font-mono text-xs whitespace-pre-wrap">{result.explanation_latex}</pre>
+              <pre className="font-mono text-xs whitespace-pre-wrap">
+                {result.explanation_latex}
+              </pre>
             </div>
           </div>
         )}

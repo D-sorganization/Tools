@@ -19,7 +19,6 @@ The following files contain active `TRACKED_TASK` markers indicating unimplement
 #### Media Processing Subsystem
 
 - **Video Processor Web App (`src/media_processing/video_processor/apps/web/`)**:
-
   - `app/page.tsx`:
     - `// TRACKED_TASK: Move fps to client-side config or use from video metadata`
     - `// TRACKED_TASK: Save to database when backend is ready`

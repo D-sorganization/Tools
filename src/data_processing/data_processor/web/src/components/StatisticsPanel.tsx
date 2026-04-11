@@ -1,5 +1,5 @@
-import { Calculator, TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import type { Statistics } from '../types';
+import { Calculator, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import type { Statistics } from "../types";
 
 interface StatisticsPanelProps {
   statistics: Statistics;
@@ -13,7 +13,10 @@ function formatNumber(value: number): string {
   return value.toFixed(4);
 }
 
-export function StatisticsPanel({ statistics, selectedSignals }: StatisticsPanelProps) {
+export function StatisticsPanel({
+  statistics,
+  selectedSignals,
+}: StatisticsPanelProps) {
   if (selectedSignals.length === 0 || Object.keys(statistics).length === 0) {
     return (
       <div className="card">
@@ -52,8 +55,13 @@ export function StatisticsPanel({ statistics, selectedSignals }: StatisticsPanel
               if (!stats) return null;
 
               return (
-                <tr key={signal} className="border-b border-dark-800 hover:bg-dark-700/30">
-                  <td className="py-2 px-2 font-medium text-dark-100">{signal}</td>
+                <tr
+                  key={signal}
+                  className="border-b border-dark-800 hover:bg-dark-700/30"
+                >
+                  <td className="py-2 px-2 font-medium text-dark-100">
+                    {signal}
+                  </td>
                   <td className="text-right py-2 px-2 text-dark-300 font-mono">
                     {formatNumber(stats.mean)}
                   </td>

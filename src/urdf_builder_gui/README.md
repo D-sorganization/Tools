@@ -24,14 +24,14 @@ urdf_builder_gui/
 
 ### Design Principles
 
-| Principle | Implementation |
-|-----------|---------------|
-| **DRY** | Shared `HEIGHT_RATIOS`, `MASS_RATIOS` constants; no duplicate logic |
-| **DbC** | `require()`/`ensure()` contracts on all public functions |
-| **LoD** | `_get_config()` gateway prevents generator from touching GUI widgets |
-| **TDD** | 75+ tests covering all modules, boundaries, and integration |
-| **Orthogonality** | Core modules have zero GUI dependencies |
-| **Reusability** | Web viewer API reuses same core modules as PyQt6 GUI |
+| Principle         | Implementation                                                       |
+| ----------------- | -------------------------------------------------------------------- |
+| **DRY**           | Shared `HEIGHT_RATIOS`, `MASS_RATIOS` constants; no duplicate logic  |
+| **DbC**           | `require()`/`ensure()` contracts on all public functions             |
+| **LoD**           | `_get_config()` gateway prevents generator from touching GUI widgets |
+| **TDD**           | 75+ tests covering all modules, boundaries, and integration          |
+| **Orthogonality** | Core modules have zero GUI dependencies                              |
+| **Reusability**   | Web viewer API reuses same core modules as PyQt6 GUI                 |
 
 ## Key Features
 
@@ -128,29 +128,29 @@ python -m urdf_builder_gui.ui.pyqt6.main_window
 Segment lengths are calculated from total height using de Leva (1996) anthropometric ratios
 (defined in `anthropometric_model.HEIGHT_RATIOS`):
 
-| Segment    | Ratio  |
-|------------|--------|
-| Pelvis     | 0.078  |
-| Torso      | 0.278  |
-| Head       | 0.139  |
-| Thigh      | 0.245  |
-| Shin       | 0.246  |
-| Upper Arm  | 0.186  |
-| Forearm    | 0.146  |
+| Segment   | Ratio |
+| --------- | ----- |
+| Pelvis    | 0.078 |
+| Torso     | 0.278 |
+| Head      | 0.139 |
+| Thigh     | 0.245 |
+| Shin      | 0.246 |
+| Upper Arm | 0.186 |
+| Forearm   | 0.146 |
 
 ### Mass Distribution
 
 Segment masses distributed per `MASS_RATIOS` (de Leva 1996):
 
-| Segment    | Ratio | Note      |
-|------------|-------|-----------|
-| Pelvis     | 0.112 |           |
-| Torso      | 0.355 | Combined  |
-| Head       | 0.069 |           |
-| Thigh      | 0.142 | Per leg   |
-| Shin       | 0.043 | Per leg   |
-| Upper Arm  | 0.027 | Per arm   |
-| Forearm    | 0.016 | Per arm   |
+| Segment   | Ratio | Note     |
+| --------- | ----- | -------- |
+| Pelvis    | 0.112 |          |
+| Torso     | 0.355 | Combined |
+| Head      | 0.069 |          |
+| Thigh     | 0.142 | Per leg  |
+| Shin      | 0.043 | Per leg  |
+| Upper Arm | 0.027 | Per arm  |
+| Forearm   | 0.016 | Per arm  |
 
 ### Inertia Calculation
 
@@ -169,14 +169,14 @@ Cylinder and sphere inertia formulae also available in `anthropometric_model.py`
 The URDF Viewer web application (`src/web_applications/urdf_viewer/`) exposes API
 endpoints that reuse the same core modules:
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/generate` | POST | Generate URDF XML from parameters |
-| `/api/preview` | POST | Generate human-readable preview |
-| `/api/templates` | GET | List available templates |
-| `/api/models` | GET | List uploaded models |
-| `/api/upload` | POST | Upload a URDF file |
-| `/api/models/{name}` | GET | Download a model file |
+| Endpoint             | Method | Description                       |
+| -------------------- | ------ | --------------------------------- |
+| `/api/generate`      | POST   | Generate URDF XML from parameters |
+| `/api/preview`       | POST   | Generate human-readable preview   |
+| `/api/templates`     | GET    | List available templates          |
+| `/api/models`        | GET    | List uploaded models              |
+| `/api/upload`        | POST   | Upload a URDF file                |
+| `/api/models/{name}` | GET    | Download a model file             |
 
 ## Testing
 

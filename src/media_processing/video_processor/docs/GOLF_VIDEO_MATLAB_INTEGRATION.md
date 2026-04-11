@@ -373,13 +373,11 @@ export async function analyzeSwingWithMATLAB(poseData: any) {
 ### For Production (No MATLAB License Needed for Users)
 
 1. **Convert MATLAB Models to JavaScript**
-
    - Rewrite pendulum physics in TypeScript
    - Use same algorithms but in JavaScript
    - No MATLAB dependency
 
 2. **Use MATLAB Runtime** (Free, No License)
-
    - Deploy MATLAB Runtime on server
    - Python bridge calls MATLAB Runtime
    - Users don't need MATLAB

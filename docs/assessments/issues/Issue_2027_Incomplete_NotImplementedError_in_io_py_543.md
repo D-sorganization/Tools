@@ -1,14 +1,16 @@
 ---
 title: "Incomplete NotImplementedError in io.py:543"
-labels: ['incomplete-implementation', 'critical', 'high-impact']
+labels: ["incomplete-implementation", "critical", "high-impact"]
 assignee: "unassigned"
 status: "open"
 ---
 
 # Issue Description
+
 Found critical incomplete implementation in `./src/shared/python/signal_toolkit/io.py` at line 543.
 
 ## Context
+
 **Type**: NotImplementedError | **Location**: `./src/shared/python/signal_toolkit/io.py:543`
 
 ```python
@@ -16,7 +18,9 @@ raise NotImplementedError(msg)
 ```
 
 ## Audit Metrics
+
 - **Impact**: 5/5 | **Coverage**: 3/5 | **Complexity**: 4/5
 
 ## Recommendation
+
 Implement missing logic or document the rationale for the gap.

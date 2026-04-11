@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
-import { Activity, Check, Search, Download, Upload } from 'lucide-react';
+import { useCallback, useMemo, useState } from "react";
+import { Activity, Check, Search, Download, Upload } from "lucide-react";
 
 interface SignalListProps {
   signals: string[];
@@ -8,18 +8,22 @@ interface SignalListProps {
 }
 
 const SIGNAL_COLORS = [
-  '#3b82f6', // blue
-  '#22c55e', // green
-  '#f59e0b', // amber
-  '#ef4444', // red
-  '#8b5cf6', // purple
-  '#06b6d4', // cyan
-  '#ec4899', // pink
-  '#84cc16', // lime
+  "#3b82f6", // blue
+  "#22c55e", // green
+  "#f59e0b", // amber
+  "#ef4444", // red
+  "#8b5cf6", // purple
+  "#06b6d4", // cyan
+  "#ec4899", // pink
+  "#84cc16", // lime
 ];
 
-export function SignalList({ signals, selectedSignals, onSelectionChange }: SignalListProps) {
-  const [searchTerm, setSearchTerm] = useState('');
+export function SignalList({
+  signals,
+  selectedSignals,
+  onSelectionChange,
+}: SignalListProps) {
+  const [searchTerm, setSearchTerm] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const showError = useCallback((msg: string) => {
@@ -41,7 +45,7 @@ export function SignalList({ signals, selectedSignals, onSelectionChange }: Sign
         onSelectionChange([...selectedSignals, signal]);
       }
     },
-    [selectedSignals, onSelectionChange]
+    [selectedSignals, onSelectionChange],
   );
 
   const selectAll = useCallback(() => {
@@ -54,26 +58,28 @@ export function SignalList({ signals, selectedSignals, onSelectionChange }: Sign
 
   const saveSignalSet = useCallback(() => {
     if (selectedSignals.length === 0) {
-      showError('Please select signals to save.');
+      showError("Please select signals to save.");
       return;
     }
     const signalSet = {
       selected_signals: selectedSignals,
       total_available: signals.length,
     };
-    const blob = new Blob([JSON.stringify(signalSet, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(signalSet, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'signal_set.json';
+    a.download = "signal_set.json";
     a.click();
     URL.revokeObjectURL(url);
   }, [selectedSignals, signals.length]);
 
   const loadSignalSet = useCallback(() => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
@@ -82,14 +88,17 @@ export function SignalList({ signals, selectedSignals, onSelectionChange }: Sign
         try {
           const content = event.target?.result as string;
           const signalSet = JSON.parse(content);
-          if (signalSet.selected_signals && Array.isArray(signalSet.selected_signals)) {
-            const validSignals = signalSet.selected_signals.filter((s: string) =>
-              signals.includes(s)
+          if (
+            signalSet.selected_signals &&
+            Array.isArray(signalSet.selected_signals)
+          ) {
+            const validSignals = signalSet.selected_signals.filter(
+              (s: string) => signals.includes(s),
             );
             onSelectionChange(validSignals);
           }
         } catch (err) {
-          showError('Invalid signal set file.');
+          showError("Invalid signal set file.");
         }
       };
       reader.readAsText(file);
@@ -133,10 +142,16 @@ export function SignalList({ signals, selectedSignals, onSelectionChange }: Sign
           >
             <Download className="w-3 h-3" />
           </button>
-          <button onClick={selectAll} className="text-xs text-blue-500 hover:text-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1">
+          <button
+            onClick={selectAll}
+            className="text-xs text-blue-500 hover:text-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1"
+          >
             All
           </button>
-          <button onClick={deselectAll} className="text-xs text-dark-400 hover:text-dark-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1">
+          <button
+            onClick={deselectAll}
+            className="text-xs text-dark-400 hover:text-dark-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded px-1"
+          >
             None
           </button>
         </div>
@@ -144,7 +159,10 @@ export function SignalList({ signals, selectedSignals, onSelectionChange }: Sign
       <div className="card-body">
         {/* Error message */}
         {errorMessage && (
-          <div className="mb-3 p-2 bg-red-500/10 border border-red-500/50 rounded text-red-400 text-sm" role="alert">
+          <div
+            className="mb-3 p-2 bg-red-500/10 border border-red-500/50 rounded text-red-400 text-sm"
+            role="alert"
+          >
             {errorMessage}
           </div>
         )}
@@ -174,19 +192,23 @@ export function SignalList({ signals, selectedSignals, onSelectionChange }: Sign
                   className={`
                     w-full flex items-center gap-2 px-3 py-2 rounded-lg
                     text-left text-sm transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500
-                    ${isSelected ? 'bg-dark-700' : 'hover:bg-dark-700/50'}
+                    ${isSelected ? "bg-dark-700" : "hover:bg-dark-700/50"}
                   `}
                 >
                   <div
                     className={`
                       w-4 h-4 rounded border-2 flex items-center justify-center
-                      ${isSelected ? 'border-transparent' : 'border-dark-500'}
+                      ${isSelected ? "border-transparent" : "border-dark-500"}
                     `}
-                    style={{ backgroundColor: isSelected ? color : 'transparent' }}
+                    style={{
+                      backgroundColor: isSelected ? color : "transparent",
+                    }}
                   >
                     {isSelected && <Check className="w-3 h-3 text-white" />}
                   </div>
-                  <span className={isSelected ? 'text-dark-100' : 'text-dark-400'}>
+                  <span
+                    className={isSelected ? "text-dark-100" : "text-dark-400"}
+                  >
                     {signal}
                   </span>
                 </button>

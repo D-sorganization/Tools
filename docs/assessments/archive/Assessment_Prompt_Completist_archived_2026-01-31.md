@@ -11,14 +11,12 @@ You will base your assessment on the data collected in `.jules/completist_data/`
 ## Instructions
 
 1. **Review Collected Data**:
-
    - `todo_markers.txt`: Contains `TODO`, `FIXME`, `XXX` tags.
    - `not_implemented.txt`: Contains `NotImplementedError` and empty method bodies.
    - `stub_functions.txt`: Contains signatures with only `pass` or `...`.
    - `incomplete_docs.txt`: Contains placeholders in docstrings.
 
 2. **Analyze the Generated Report**:
-
    - Read the latest `Completist_Report_DATE.md`.
    - Pay attention to the **Mermaid Visualization** to gauge the scale of technical debt.
    - Review the **Critical Incomplete** table.

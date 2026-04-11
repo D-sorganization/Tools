@@ -64,7 +64,6 @@ A comprehensive MATLAB-based audio signal processing and multi-track mixing appl
 ## Installation
 
 1. **MATLAB Requirements**:
-
    - MATLAB R2020b or later
    - Signal Processing Toolbox
    - Audio Toolbox (recommended)

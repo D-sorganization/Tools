@@ -28,15 +28,15 @@ class InclinedPlaneHipRotationTarget:
 
     def __post_init__(self) -> None:
         assert self.duration_sec > 0.0, "DbC PRE: duration_sec must be positive"
-        assert 0.0 < self.backswing_degrees <= 90.0, (
-            "DbC PRE: backswing_degrees must be in (0, 90]"
-        )
-        assert 0.0 < self.counterclockwise_degrees <= 180.0, (
-            "DbC PRE: counterclockwise_degrees must be in (0, 180]"
-        )
-        assert -60.0 <= self.incline_degrees <= 60.0, (
-            "DbC PRE: incline_degrees must be in [-60, 60]"
-        )
+        assert (
+            0.0 < self.backswing_degrees <= 90.0
+        ), "DbC PRE: backswing_degrees must be in (0, 90]"
+        assert (
+            0.0 < self.counterclockwise_degrees <= 180.0
+        ), "DbC PRE: counterclockwise_degrees must be in (0, 180]"
+        assert (
+            -60.0 <= self.incline_degrees <= 60.0
+        ), "DbC PRE: incline_degrees must be in [-60, 60]"
         assert self.sample_count >= 2, "DbC PRE: sample_count must be at least 2"
 
     @property

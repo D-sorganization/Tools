@@ -1,4 +1,4 @@
-  # PR Instructions: Pendulum Simulator Comprehensive Review & Fixes
+# PR Instructions: Pendulum Simulator Comprehensive Review & Fixes
 
 ## Pre-Flight: Fix Stale Git State
 
@@ -308,19 +308,19 @@ This is expected when the shared theme packages aren't on PYTHONPATH. All theme 
 
 ## Summary of All Changes
 
-| Priority | Category | Description | Status |
-|----------|----------|-------------|--------|
-| P0 | Parity | Triple pendulum friction model | ✅ Done |
-| P0 | Parity | Triple dissipation UI controls | ✅ Done |
-| P0 | Parity | Function Generator for triple | ✅ Done |
-| P0 | Parity | Elbow torque import button | ✅ Done |
-| P0 | Testing | Triple friction test suite (22 tests) | ✅ Done |
-| P1 | DRY | Consolidate style constants | ✅ Done |
-| P1 | DbC | Postconditions on physics functions | ✅ Done |
-| P1 | Quality | Modern Python imports | ✅ Done |
-| P1 | Quality | Robust shared import paths | ✅ Done |
-| P1 | Theme | PlotThemeManager in torque history | ✅ Done |
-| P1 | Theme | Plot Theme menu in main window | ✅ Done |
-| P2 | Theme | Replace _PENDULUM_DARK_STYLE entirely | Future PR |
-| P2 | Parity | Web version (TypeScript/React) updates | Future PR |
-| P3 | Testing | GUI widget integration tests | Future PR |
+| Priority | Category | Description                            | Status    |
+| -------- | -------- | -------------------------------------- | --------- |
+| P0       | Parity   | Triple pendulum friction model         | ✅ Done   |
+| P0       | Parity   | Triple dissipation UI controls         | ✅ Done   |
+| P0       | Parity   | Function Generator for triple          | ✅ Done   |
+| P0       | Parity   | Elbow torque import button             | ✅ Done   |
+| P0       | Testing  | Triple friction test suite (22 tests)  | ✅ Done   |
+| P1       | DRY      | Consolidate style constants            | ✅ Done   |
+| P1       | DbC      | Postconditions on physics functions    | ✅ Done   |
+| P1       | Quality  | Modern Python imports                  | ✅ Done   |
+| P1       | Quality  | Robust shared import paths             | ✅ Done   |
+| P1       | Theme    | PlotThemeManager in torque history     | ✅ Done   |
+| P1       | Theme    | Plot Theme menu in main window         | ✅ Done   |
+| P2       | Theme    | Replace \_PENDULUM_DARK_STYLE entirely | Future PR |
+| P2       | Parity   | Web version (TypeScript/React) updates | Future PR |
+| P3       | Testing  | GUI widget integration tests           | Future PR |

@@ -13,11 +13,15 @@
  *   });
  */
 
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-import { THEME_PRESETS, type ThemeColors, type ThemeId } from './themeDefinitions';
-import { ThemeApiClient } from './themeApi';
+import {
+  THEME_PRESETS,
+  type ThemeColors,
+  type ThemeId,
+} from "./themeDefinitions";
+import { ThemeApiClient } from "./themeApi";
 
 /** Custom theme definition */
 export interface CustomTheme {
@@ -50,7 +54,11 @@ export interface ThemeState {
   setTheme: (themeId: ThemeId | string) => void;
   saveCustomTheme: (name: string, colors: ThemeColors) => void;
   deleteCustomTheme: (name: string) => void;
-  setModuleTheme: (moduleId: string, themeId: ThemeId | string, useGlobal: boolean) => void;
+  setModuleTheme: (
+    moduleId: string,
+    themeId: ThemeId | string,
+    useGlobal: boolean,
+  ) => void;
   getModuleTheme: (moduleId: string) => ThemeColors;
 
   // API sync
@@ -77,9 +85,9 @@ export interface ThemeStoreConfig {
 function generateCSSVariables(theme: ThemeColors): Record<string, string> {
   const vars: Record<string, string> = {};
   for (const [key, value] of Object.entries(theme)) {
-    if (key === 'name' || typeof value !== 'string') continue;
+    if (key === "name" || typeof value !== "string") continue;
     // Convert camelCase to kebab-case: titleBg -> title-bg
-    const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+    const cssKey = key.replace(/([A-Z])/g, "-$1").toLowerCase();
     vars[`--theme-${cssKey}`] = value;
   }
   return vars;
@@ -94,14 +102,14 @@ function applyVarsToDocument(theme: ThemeColors): void {
   }
   // Set dark mode class
   const isDark = isThemeDark(theme);
-  root.classList.toggle('dark', isDark);
-  root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  root.classList.toggle("dark", isDark);
+  root.setAttribute("data-theme", isDark ? "dark" : "light");
 }
 
 /** Check if a theme is dark based on background luminance */
 function isThemeDark(theme: ThemeColors): boolean {
   const bg = theme.bg;
-  if (!bg || !bg.startsWith('#')) return false;
+  if (!bg || !bg.startsWith("#")) return false;
   const r = parseInt(bg.slice(1, 3), 16);
   const g = parseInt(bg.slice(3, 5), 16);
   const b = parseInt(bg.slice(5, 7), 16);
@@ -124,7 +132,7 @@ function isThemeDark(theme: ThemeColors): boolean {
 export function createThemeStore(config: ThemeStoreConfig) {
   const {
     storageKey,
-    defaultTheme = 'light',
+    defaultTheme = "light",
     apiBaseUrl,
     syncOnFocus = !!apiBaseUrl,
   } = config;
@@ -177,7 +185,7 @@ export function createThemeStore(config: ThemeStoreConfig) {
           // Sync with API if available
           if (apiClient) {
             apiClient.setActiveTheme(themeId).catch((err) => {
-              console.warn('Failed to sync theme with API:', err);
+              console.warn("Failed to sync theme with API:", err);
             });
           }
         },
@@ -200,7 +208,7 @@ export function createThemeStore(config: ThemeStoreConfig) {
             // Strip 'name' from colors before sending to API
             const { name: _name, ...colorData } = colors;
             apiClient.saveCustomTheme(name, colorData).catch((err) => {
-              console.warn('Failed to sync custom theme with API:', err);
+              console.warn("Failed to sync custom theme with API:", err);
             });
           }
         },
@@ -212,12 +220,14 @@ export function createThemeStore(config: ThemeStoreConfig) {
               customThemes: rest,
               // If deleted theme was active, switch to default
               currentThemeId:
-                state.currentThemeId === name ? defaultTheme : state.currentThemeId,
+                state.currentThemeId === name
+                  ? defaultTheme
+                  : state.currentThemeId,
             };
           });
           if (apiClient) {
             apiClient.deleteCustomTheme(name).catch((err) => {
-              console.warn('Failed to sync theme deletion with API:', err);
+              console.warn("Failed to sync theme deletion with API:", err);
             });
           }
         },
@@ -277,7 +287,7 @@ export function createThemeStore(config: ThemeStoreConfig) {
               applyVarsToDocument(get().getCurrentTheme());
             }
           } catch (err) {
-            console.warn('Failed to sync with theme API:', err);
+            console.warn("Failed to sync with theme API:", err);
           }
         },
 
@@ -292,7 +302,7 @@ export function createThemeStore(config: ThemeStoreConfig) {
             // Set active theme
             await apiClient.setActiveTheme(get().currentThemeId);
           } catch (err) {
-            console.warn('Failed to push themes to API:', err);
+            console.warn("Failed to push themes to API:", err);
           }
         },
 
@@ -312,8 +322,8 @@ export function createThemeStore(config: ThemeStoreConfig) {
   );
 
   // Set up sync-on-focus if API is available
-  if (syncOnFocus && apiClient && typeof window !== 'undefined') {
-    window.addEventListener('focus', () => {
+  if (syncOnFocus && apiClient && typeof window !== "undefined") {
+    window.addEventListener("focus", () => {
       store.getState().syncWithApi();
     });
 
@@ -325,4 +335,4 @@ export function createThemeStore(config: ThemeStoreConfig) {
 }
 
 /** Re-export types for convenience */
-export type { ThemeColors, ThemeId } from './themeDefinitions';
+export type { ThemeColors, ThemeId } from "./themeDefinitions";

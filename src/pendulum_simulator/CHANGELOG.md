@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [Unreleased]
 
 ### Added
+
 - Centralized theme module (`gui/theme.py`) for DRY stylesheet management (#1197)
 - Advanced diagnostics tracker with JSONL persistence and viewer dialog
 - Golfer topology validation tests — 18 tests covering mass distribution, FK, and DbC contracts (#1204)
@@ -24,6 +25,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Keyboard shortcuts: Ctrl+R (run), Space (play/pause), Ctrl+E (export), Escape (reset) (#1206)
 
 ### Changed
+
 - Golfer model topology corrected: standoff is now massless (0.001 kg default), upper body segments carry ~7 kg each (#1195)
 - UI labels updated: Hub → Standoff, R/L Scap → R/L UBody
 - Unit dropdown boxes standardized to fixed width (60px)
@@ -34,12 +36,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Assessment score increased from 7.2 → 8.2 / 10
 
 ### Removed
+
 - Redundant local CI workflow (`src/pendulum_simulator/.github/workflows/ci.yml`) — CI managed by top-level `ci-standard.yml` (#1205)
 - **Gravity checkbox permanently removed** from toolstrip AND controls panel — gravity is always on (#1209)
 - Gravity toggle signal removed from toolstrip
 - 43 of 55 pendulum-simulator GitHub issues closed and verified
 
 ### Fixed
+
 - Golfer simulation not starting when clicking Run button
 - Animation frame slider trace persistence across scrub operations
 - `eventFilter` signature mismatch with PyQt6 type stubs
@@ -50,6 +54,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [0.1.0] - 2026-03-01
 
 ### Added
+
 - Double pendulum (2-DOF) model with Lagrangian dynamics
 - Triple pendulum (3-DOF) model
 - Golfer upper-body (8-DOF) model with closed kinematic loop

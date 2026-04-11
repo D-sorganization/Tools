@@ -546,25 +546,21 @@ batch.process();
 **Meters Needed:**
 
 1. **VU Meter**
-
    - Average level, -20 to +3 dB
    - 300ms integration time
    - Classic analog ballistics
 
 2. **Peak Meter (PPM)**
-
    - True peak detection
    - Fast attack, slow release
    - Overload indication
 
 3. **K-Meter** (Bob Katz system)
-
    - K-12 (broadcast)
    - K-14 (mastering)
    - K-20 (film)
 
 4. **LUFS Meter** (EBU R128)
-
    - Integrated LUFS
    - Short-term LUFS
    - Momentary LUFS
@@ -572,13 +568,11 @@ batch.process();
    - Loudness range (LRA)
 
 5. **Phase Meter**
-
    - Correlation meter (-1 to +1)
    - Out-of-phase warning
    - Mono compatibility
 
 6. **Stereo Width**
-
    - Width percentage
    - L/R balance
 
@@ -640,18 +634,15 @@ batch.process();
 ### **Audio Forensics Toolkit**
 
 1. **ENF Analysis**
-
    - Extract Electric Network Frequency (50/60 Hz variations)
    - Timestamps recording based on power grid fluctuations
    - Detect editing by ENF discontinuities
 
 2. **Noise Profile Analysis**
-
    - Extract and compare noise characteristics
    - Detect inconsistent noise (sign of editing)
 
 3. **Compression Artifact Detection**
-
    - Identify MP3/AAC artifacts
    - Estimate compression parameters
    - Detect re-encoding
@@ -670,12 +661,10 @@ batch.process();
 **Methods:**
 
 1. **ICA** (Independent Component Analysis)
-
    - Separate statistically independent sources
    - 2+ microphones required
 
 2. **NMF** (Non-negative Matrix Factorization)
-
    - Separate based on spectral patterns
    - Single channel possible
 
@@ -688,13 +677,11 @@ batch.process();
 ### **Audio Enhancement**
 
 1. **Bandwidth Extension**
-
    - Extend frequency range of limited audio
    - Regenerate high frequencies
    - HMM or neural network based
 
 2. **Noise Suppression**
-
    - Deep learning noise reduction
    - Wiener filtering
    - Spectral subtraction

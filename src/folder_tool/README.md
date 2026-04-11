@@ -7,7 +7,6 @@ Folder Fix is a comprehensive Windows application for advanced folder processing
 ## Features
 
 - **Multiple Processing Modes:**
-
   - Combine & Copy files from multiple sources
   - Flatten & Tidy deeply nested folder structures
   - Copy & Prune empty folders
@@ -15,7 +14,6 @@ Folder Fix is a comprehensive Windows application for advanced folder processing
   - Analyze & Report only (no changes)
 
 - **Advanced Options:**
-
   - File filtering by extension and size
   - Organization by file type or date
   - Bulk archive extraction (.zip, .rar, .7z)

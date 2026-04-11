@@ -13,6 +13,7 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 **Purpose**: Triple pendulum (3-DOF) physics engine
 
 **Key Exports**:
+
 - `interface TripleParams` - Physical parameters (m1, m2, m3, mClub, L1, L2, L3, b1, b2, b3, g)
 - `type StateTriple` - State vector [θ₁, φ₂, φ₃, θ̇₁, φ̇₂, φ̇₃]
 - `type TorqueFuncTriple` - Torque function (t) → [τ₁, τ₂, τ₃]
@@ -24,6 +25,7 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 - `runSimulation3(params, init, tEnd, torqueFunc, dt)` → `SimulationResult3` - RK4 integration
 
 **Features**:
+
 - Full analytical 3×3 mass matrix with coupling terms
 - Coriolis and gravity forces
 - RK4 integration with fixed timestep
@@ -31,6 +33,7 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 - Design by Contract (DbC) with pre/post-condition checks
 
 **Coordinate System**:
+
 - q = [θ₁, φ₂, φ₃]
 - θ₁ = shoulder angle (absolute)
 - φ₂ = elbow relative angle (θ₂ = θ₁ + φ₂)
@@ -43,6 +46,7 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 **Purpose**: Golfer upper-body (8-DOF) physics with 4 holonomic constraints
 
 **Key Exports**:
+
 - `interface GolferParams` - Physical parameters (m_hub, m_r_upper, m_r_fore, m_l_upper, m_l_fore, m_club, m_clubhead, lengths, damping)
 - `type StateGolfer` - State vector [8 positions + 8 velocities]
 - `type TorqueFuncGolfer` - Torque function (t) → [τ_hub, τ_rs, τ_re, τ_rh, τ_ls, τ_le, τ_lh]
@@ -52,6 +56,7 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 - `runSimulation_golfer(params, init, tEnd, torqueFunc, dt)` → `SimulationResult_golfer` - RK4 integration
 
 **Features**:
+
 - 8 degrees of freedom: hub rotation + 3 per arm + club angle
 - 4 holonomic constraints enforcing closed kinematic loop (both hands grip club)
 - Constraint Jacobians computed analytically
@@ -60,6 +65,7 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 - Forward kinematics for 7 mass points + club tip
 
 **Coordinate System**:
+
 - q = [θ_hub, α_rs, α_re, α_rh, α_ls, α_le, α_lh, θ_club] (8 DOFs)
 - Hub: torso rotation angle
 - Right arm: θ_rs = θ_hub + α_rs, θ_re = θ_rs + α_re, θ_rh = θ_re + α_rh
@@ -67,6 +73,7 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 - Club: rotation angle θ_club
 
 **Constraints** (4 equations):
+
 1. φ₁: rh_x = lh_x (horizontal hand alignment)
 2. φ₂: rh_y = lh_y (vertical hand alignment)
 3. φ₃: Left hand on club shaft (lateral)
@@ -81,10 +88,12 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 **Purpose**: Configuration presets for triple pendulum model
 
 **Key Exports**:
+
 - `interface PresetTriple` - Preset structure
 - `PRESETS_TRIPLE: PresetTriple[]` - Array of 3 presets
 
 **Presets Included**:
+
 1. **"Three-Segment Swing (passive)"**
    - Shoulder-driven with passive elbow/wrist
    - Good for demonstrating energy coupling
@@ -104,10 +113,12 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 **Purpose**: Configuration presets for golfer upper-body model
 
 **Key Exports**:
+
 - `interface PresetGolfer` - Preset structure
 - `PRESETS_GOLFER: PresetGolfer[]` - Array of 3 presets
 
 **Presets Included**:
+
 1. **"Golfer Upper Body (symmetric swing)"**
    - Equal arm torques, symmetric posture
    - Balanced, realistic golf swing
@@ -129,10 +140,12 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 **Purpose**: Canvas animation renderer for triple pendulum
 
 **Key Exports**:
+
 - `interface TriplePendulumCanvasProps` - Props type
 - `TriplePendulumCanvas` - React FC component
 
 **Features**:
+
 - 3-segment skeletal animation
 - Color coding: blue (segment 1), orange (segment 2), green (segment 3)
 - Joint markers at shoulder, elbow, wrist
@@ -142,6 +155,7 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 - Auto-scales to viewport
 
 **Props**:
+
 - `states: StateTriple[]` - Simulation states
 - `params: TripleParams` - Physical parameters
 - `currentIdx: number` - Frame index
@@ -156,10 +170,12 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 **Purpose**: Canvas animation renderer for golfer upper-body model
 
 **Key Exports**:
+
 - `interface GolferCanvasProps` - Props type
 - `GolferCanvas` - React FC component
 
 **Features**:
+
 - Skeletal animation of full golfer posture
 - Color coding:
   - Gray: hub standoff
@@ -176,6 +192,7 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 - Grid and crosshair
 
 **Props**:
+
 - `states: StateGolfer[]` - Simulation states
 - `params: GolferParams` - Physical parameters
 - `currentIdx: number` - Frame index
@@ -192,6 +209,7 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 **Purpose**: Refactored main app with model selector and support for all 3 models
 
 **Key Features**:
+
 - **Model Selector Tabs** at top: Double / Triple / Golfer
 - **Model-Specific Control Panels**:
   - Double: Arms, shaft, clubhead, friction, joint limits, torque clamping
@@ -203,11 +221,13 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 - **Canvas Rendering**: Selects correct canvas based on active model
 
 **Key State Variables**:
+
 - `modelType: 'double' | 'triple' | 'golfer'` - Current model
 - Separate sets of parameters for each model
 - Unified `result`, `playing`, `frameIdx` for animation
 
 **Integration Notes**:
+
 - Import statements already include all new modules
 - To deploy: replace existing App.tsx with this file
 - Maintains backward compatibility with existing double pendulum functionality
@@ -221,6 +241,7 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 **Purpose**: Step-by-step integration instructions and reference
 
 **Contents**:
+
 1. Overview of all files created
 2. 6-step integration process
 3. File structure diagram
@@ -236,20 +257,21 @@ Created 8 new files to add 3-DOF triple pendulum and 8-DOF golfer upper-body mod
 
 ## Summary Statistics
 
-| Category | Files | Lines of Code |
-|----------|-------|----------------|
-| Physics | 2 | 1,055 |
-| Presets | 2 | 247 |
-| Components | 2 | 473 |
-| App | 1 | 816 |
-| Docs | 1 | 308+ |
-| **TOTAL** | **8** | **~2,900** |
+| Category   | Files | Lines of Code |
+| ---------- | ----- | ------------- |
+| Physics    | 2     | 1,055         |
+| Presets    | 2     | 247           |
+| Components | 2     | 473           |
+| App        | 1     | 816           |
+| Docs       | 1     | 308+          |
+| **TOTAL**  | **8** | **~2,900**    |
 
 ---
 
 ## TypeScript Type Safety
 
 All files use full TypeScript with no `any` types:
+
 - Strict interfaces for all data structures
 - Proper generic types for utility functions
 - Type-safe React components with TSX
@@ -296,6 +318,7 @@ npm run build
 ## Files Already in Repo (Unchanged)
 
 These existing files remain unchanged:
+
 - `src/physics.ts` - Double pendulum (existing)
 - `src/presets.ts` - Double presets (existing)
 - `src/optimizer.ts` - Optimizer (existing)

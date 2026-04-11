@@ -9,7 +9,7 @@
  * @see PROFESSIONAL_CODE_REVIEW.md section "Security Assessment"
  */
 
-import DOMPurify from 'dompurify';
+import DOMPurify from "dompurify";
 
 /**
  * Sanitize plain text input
@@ -17,7 +17,7 @@ import DOMPurify from 'dompurify';
  */
 export function sanitizeText(text: string): string {
   if (!text) {
-    return '';
+    return "";
   }
 
   // Use DOMPurify with no allowed tags to strip all HTML
@@ -26,9 +26,9 @@ export function sanitizeText(text: string): string {
   return (
     purified
       // Remove null bytes
-      .replace(/\0/g, '')
+      .replace(/\0/g, "")
       // Remove control characters (except newlines and tabs)
-      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '')
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "")
       // Trim whitespace
       .trim()
   );
@@ -40,19 +40,19 @@ export function sanitizeText(text: string): string {
  */
 export function sanitizeFilename(filename: string): string {
   if (!filename) {
-    return '';
+    return "";
   }
 
   return (
     filename
       // Remove path separators
-      .replace(/[/\\]/g, '')
+      .replace(/[/\\]/g, "")
       // Remove null bytes
-      .replace(/\0/g, '')
+      .replace(/\0/g, "")
       // Remove control characters
-      .replace(/[\x00-\x1F]/g, '')
+      .replace(/[\x00-\x1F]/g, "")
       // Remove leading/trailing dots and spaces
-      .replace(/^[.\s]+|[.\s]+$/g, '')
+      .replace(/^[.\s]+|[.\s]+$/g, "")
       // Limit length
       .substring(0, 255)
       .trim()
@@ -65,18 +65,24 @@ export function sanitizeFilename(filename: string): string {
  */
 export function sanitizeUrl(url: string): string {
   if (!url) {
-    return '';
+    return "";
   }
 
   const trimmedUrl = url.trim();
 
   // Check if URL starts with a safe protocol
-  const safeProtocols = ['http:', 'https:', 'mailto:', 'tel:'];
-  const hasProtocol = safeProtocols.some((protocol) => trimmedUrl.startsWith(protocol));
+  const safeProtocols = ["http:", "https:", "mailto:", "tel:"];
+  const hasProtocol = safeProtocols.some((protocol) =>
+    trimmedUrl.startsWith(protocol),
+  );
 
-  if (!hasProtocol && !trimmedUrl.startsWith('/') && !trimmedUrl.startsWith('#')) {
+  if (
+    !hasProtocol &&
+    !trimmedUrl.startsWith("/") &&
+    !trimmedUrl.startsWith("#")
+  ) {
     // If no protocol and not a relative URL, it might be dangerous (javascript:, data:, etc.)
-    return '';
+    return "";
   }
 
   return trimmedUrl;
@@ -88,16 +94,37 @@ export function sanitizeUrl(url: string): string {
  */
 export function sanitizeHTML(html: string): string {
   if (!html) {
-    return '';
+    return "";
   }
 
   return DOMPurify.sanitize(html, {
     ALLOWED_TAGS: [
-      'b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li',
-      'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-      'blockquote', 'code', 'pre', 'hr', 'sub', 'sup',
+      "b",
+      "i",
+      "em",
+      "strong",
+      "a",
+      "p",
+      "br",
+      "ul",
+      "ol",
+      "li",
+      "span",
+      "div",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "blockquote",
+      "code",
+      "pre",
+      "hr",
+      "sub",
+      "sup",
     ],
-    ALLOWED_ATTR: ['href', 'title', 'class', 'id', 'target', 'rel'],
+    ALLOWED_ATTR: ["href", "title", "class", "id", "target", "rel"],
     ALLOW_DATA_ATTR: false,
   });
 }
@@ -109,18 +136,18 @@ export function sanitizeHTML(html: string): string {
  * Source: https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html
  */
 export function escapeHTML(text: string): string {
-  if (typeof text !== 'string' || !text) {
-    return '';
+  if (typeof text !== "string" || !text) {
+    return "";
   }
 
   // OWASP recommended HTML entity encoding
   const ESCAPE_MAP: { [char: string]: string } = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#x27;', // &apos; is not recommended by OWASP
-    '/': '&#x2F;', // Prevents closing script tags
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#x27;", // &apos; is not recommended by OWASP
+    "/": "&#x2F;", // Prevents closing script tags
   };
 
   return text.replace(/[&<>"'/]/g, (char) => ESCAPE_MAP[char]);
@@ -132,7 +159,7 @@ export function escapeHTML(text: string): string {
  */
 export function sanitizeJSON(jsonString: string): string {
   if (!jsonString) {
-    return '';
+    return "";
   }
 
   try {
@@ -140,7 +167,7 @@ export function sanitizeJSON(jsonString: string): string {
     const parsed = JSON.parse(jsonString);
     return JSON.stringify(parsed);
   } catch {
-    throw new Error('Invalid JSON string');
+    throw new Error("Invalid JSON string");
   }
 }
 
@@ -149,7 +176,7 @@ export function sanitizeJSON(jsonString: string): string {
  */
 export function sanitizeEmail(email: string): string {
   if (!email) {
-    return '';
+    return "";
   }
 
   const sanitized = email.trim().toLowerCase();
@@ -158,7 +185,7 @@ export function sanitizeEmail(email: string): string {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailRegex.test(sanitized)) {
-    throw new Error('Invalid email address');
+    throw new Error("Invalid email address");
   }
 
   return sanitized;
@@ -174,12 +201,12 @@ export function sanitizeNumber(
     min?: number;
     max?: number;
     decimals?: number;
-  }
+  },
 ): number {
-  const num = typeof value === 'string' ? parseFloat(value) : value;
+  const num = typeof value === "string" ? parseFloat(value) : value;
 
   if (isNaN(num)) {
-    throw new Error('Invalid number');
+    throw new Error("Invalid number");
   }
 
   let result = num;
@@ -205,7 +232,7 @@ export function sanitizeNumber(
  */
 export function sanitizeColor(color: string): string {
   if (!color) {
-    return '#000000';
+    return "#000000";
   }
 
   const trimmed = color.trim();
@@ -225,14 +252,14 @@ export function sanitizeColor(color: string): string {
   }
 
   // Check if rgb/rgba
-  if (trimmed.startsWith('rgb')) {
+  if (trimmed.startsWith("rgb")) {
     // For now, just return as-is if it looks like rgb
     // DEFERRED: Parse and validate RGB values
     return trimmed;
   }
 
   // Invalid color, return default
-  return '#000000';
+  return "#000000";
 }
 
 /**
@@ -240,7 +267,7 @@ export function sanitizeColor(color: string): string {
  * Ensures annotation objects don't contain malicious code
  */
 export function sanitizeAnnotation(annotation: any): any {
-  if (!annotation || typeof annotation !== 'object') {
+  if (!annotation || typeof annotation !== "object") {
     return annotation;
   }
 
@@ -249,36 +276,36 @@ export function sanitizeAnnotation(annotation: any): any {
 
   // Allowed properties for annotations
   const allowedProps = [
-    'type',
-    'left',
-    'top',
-    'width',
-    'height',
-    'fill',
-    'stroke',
-    'strokeWidth',
-    'opacity',
-    'angle',
-    'scaleX',
-    'scaleY',
-    'x1',
-    'y1',
-    'x2',
-    'y2',
-    'text',
-    'fontSize',
-    'fontFamily',
+    "type",
+    "left",
+    "top",
+    "width",
+    "height",
+    "fill",
+    "stroke",
+    "strokeWidth",
+    "opacity",
+    "angle",
+    "scaleX",
+    "scaleY",
+    "x1",
+    "y1",
+    "x2",
+    "y2",
+    "text",
+    "fontSize",
+    "fontFamily",
   ];
 
   for (const prop of allowedProps) {
     if (prop in annotation) {
-      if (prop === 'text') {
+      if (prop === "text") {
         // Sanitize text content
         safe[prop] = sanitizeText(annotation[prop]);
-      } else if (prop === 'fill' || prop === 'stroke') {
+      } else if (prop === "fill" || prop === "stroke") {
         // Sanitize color
         safe[prop] = sanitizeColor(annotation[prop]);
-      } else if (typeof annotation[prop] === 'number') {
+      } else if (typeof annotation[prop] === "number") {
         // Sanitize number (ensure it's valid)
         safe[prop] = isNaN(annotation[prop]) ? 0 : annotation[prop];
       } else {

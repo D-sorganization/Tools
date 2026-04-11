@@ -117,7 +117,6 @@ This document summarizes the improvements made to enhance orthogonality and foll
 **New Utilities Created**:
 
 - **`dependency_checker.py`**: Unified dependency checking and installation
-
   - `check_python_version()` - Version validation
   - `check_dependencies()` - Module availability checking
   - `install_missing_packages()` - Automated package installation
@@ -125,14 +124,12 @@ This document summarizes the improvements made to enhance orthogonality and foll
   - `format_missing_dependencies()` - User-friendly error messages
 
 - **`file_utils.py`**: Safe file operations
-
   - `safe_read_json()` / `safe_write_json()` - JSON with error handling
   - `safe_read_text()` / `safe_write_text()` - Text file operations
   - `ensure_directory()` - Directory creation
   - `find_file_upwards()` - File discovery
 
 - **`config_loader.py`**: Configuration management
-
   - `ConfigLoader` class - Load/save configuration with dot notation
   - `load_config()` - Convenience function
 

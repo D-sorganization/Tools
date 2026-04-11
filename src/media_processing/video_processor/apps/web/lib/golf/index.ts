@@ -6,7 +6,7 @@
  */
 
 // Types
-export * from './types';
+export * from "./types";
 
 // Angle calculations
 export {
@@ -22,7 +22,7 @@ export {
   smoothAngles,
   calculateAngularVelocity,
   detectStanceDirection,
-} from './angleCalculator';
+} from "./angleCalculator";
 
 // Phase detection
 export {
@@ -31,13 +31,10 @@ export {
   calculateTempoQuality,
   type PhaseTransition,
   type PhaseDetectionResult,
-} from './phaseDetector';
+} from "./phaseDetector";
 
 // Main analyzer
-export {
-  analyzeSwing,
-  quickAnalyze,
-} from './swingAnalyzer';
+export { analyzeSwing, quickAnalyze } from "./swingAnalyzer";
 
 // Persistence
 export {
@@ -55,7 +52,7 @@ export {
   setUserSetting,
   clearAllData,
   getStorageStats,
-} from './persistence';
+} from "./persistence";
 
 // Report generation
 export {
@@ -65,8 +62,8 @@ export {
   downloadHTMLReport,
   downloadCSVReport,
   downloadJSONExport,
-} from './reportGenerator';
+} from "./reportGenerator";
 
 // Version info
-export const VERSION = '1.0.0';
-export const LIBRARY_NAME = '@upstreamdrift/golf-analyzer';
+export const VERSION = "1.0.0";
+export const LIBRARY_NAME = "@upstreamdrift/golf-analyzer";

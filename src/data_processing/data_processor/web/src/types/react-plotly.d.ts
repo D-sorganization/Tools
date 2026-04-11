@@ -1,5 +1,5 @@
-declare module 'react-plotly.js' {
-  import { Component } from 'react';
+declare module "react-plotly.js" {
+  import { Component } from "react";
 
   interface PlotParams {
     data: Array<Record<string, unknown>>;
@@ -9,7 +9,10 @@ declare module 'react-plotly.js' {
     useResizeHandler?: boolean;
     style?: React.CSSProperties;
     className?: string;
-    onInitialized?: (figure: Record<string, unknown>, graphDiv: HTMLElement) => void;
+    onInitialized?: (
+      figure: Record<string, unknown>,
+      graphDiv: HTMLElement,
+    ) => void;
     onUpdate?: (figure: Record<string, unknown>, graphDiv: HTMLElement) => void;
     onPurge?: (figure: Record<string, unknown>, graphDiv: HTMLElement) => void;
     onError?: (err: Error) => void;

@@ -6,9 +6,9 @@
  * Uses pino for high-performance structured logging.
  */
 
-import pino from 'pino';
+import pino from "pino";
 
-type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+type LogLevel = "debug" | "info" | "warn" | "error";
 
 interface LogMetadata {
   [key: string]: unknown;
@@ -20,15 +20,16 @@ interface LogMetadata {
  */
 function getLogLevel(): LogLevel {
   // Check if we're on the client (browser)
-  const isClient = typeof window !== 'undefined';
+  const isClient = typeof window !== "undefined";
 
   if (isClient) {
     // Client: Use NEXT_PUBLIC_LOG_LEVEL (safe to expose to browser)
-    const level = process.env.NEXT_PUBLIC_LOG_LEVEL || 'info';
+    const level = process.env.NEXT_PUBLIC_LOG_LEVEL || "info";
     return level as LogLevel;
   } else {
     // Server: Can access all env vars, try both public and private
-    const level = process.env.LOG_LEVEL || process.env.NEXT_PUBLIC_LOG_LEVEL || 'info';
+    const level =
+      process.env.LOG_LEVEL || process.env.NEXT_PUBLIC_LOG_LEVEL || "info";
     return level as LogLevel;
   }
 }
@@ -38,7 +39,7 @@ function getLogLevel(): LogLevel {
  */
 function createPinoLogger(): pino.Logger {
   const level = getLogLevel();
-  const isClient = typeof window !== 'undefined';
+  const isClient = typeof window !== "undefined";
 
   if (isClient) {
     // Browser: use pino browser mode
@@ -70,8 +71,14 @@ class Logger {
    */
   debug(message: string, metadata?: LogMetadata): void;
   debug(metadata: LogMetadata, message: string): void;
-  debug(messageOrMetadata: string | LogMetadata, metadataOrMessage?: LogMetadata | string): void {
-    const [message, metadata] = this.parseArgs(messageOrMetadata, metadataOrMessage);
+  debug(
+    messageOrMetadata: string | LogMetadata,
+    metadataOrMessage?: LogMetadata | string,
+  ): void {
+    const [message, metadata] = this.parseArgs(
+      messageOrMetadata,
+      metadataOrMessage,
+    );
     if (metadata) {
       this.pino.debug(metadata, message);
     } else {
@@ -85,8 +92,14 @@ class Logger {
    */
   info(message: string, metadata?: LogMetadata): void;
   info(metadata: LogMetadata, message: string): void;
-  info(messageOrMetadata: string | LogMetadata, metadataOrMessage?: LogMetadata | string): void {
-    const [message, metadata] = this.parseArgs(messageOrMetadata, metadataOrMessage);
+  info(
+    messageOrMetadata: string | LogMetadata,
+    metadataOrMessage?: LogMetadata | string,
+  ): void {
+    const [message, metadata] = this.parseArgs(
+      messageOrMetadata,
+      metadataOrMessage,
+    );
     if (metadata) {
       this.pino.info(metadata, message);
     } else {
@@ -100,8 +113,14 @@ class Logger {
    */
   warn(message: string, metadata?: LogMetadata): void;
   warn(metadata: LogMetadata, message: string): void;
-  warn(messageOrMetadata: string | LogMetadata, metadataOrMessage?: LogMetadata | string): void {
-    const [message, metadata] = this.parseArgs(messageOrMetadata, metadataOrMessage);
+  warn(
+    messageOrMetadata: string | LogMetadata,
+    metadataOrMessage?: LogMetadata | string,
+  ): void {
+    const [message, metadata] = this.parseArgs(
+      messageOrMetadata,
+      metadataOrMessage,
+    );
     if (metadata) {
       this.pino.warn(metadata, message);
     } else {
@@ -115,11 +134,17 @@ class Logger {
    */
   error(message: string, metadata?: LogMetadata): void;
   error(metadata: LogMetadata, message: string): void;
-  error(messageOrMetadata: string | LogMetadata, metadataOrMessage?: LogMetadata | string): void {
-    const [message, metadata] = this.parseArgs(messageOrMetadata, metadataOrMessage);
+  error(
+    messageOrMetadata: string | LogMetadata,
+    metadataOrMessage?: LogMetadata | string,
+  ): void {
+    const [message, metadata] = this.parseArgs(
+      messageOrMetadata,
+      metadataOrMessage,
+    );
 
     // If metadata contains an Error object, extract stack trace
-    if (metadata && 'error' in metadata && metadata.error instanceof Error) {
+    if (metadata && "error" in metadata && metadata.error instanceof Error) {
       metadata.error = {
         name: metadata.error.name,
         message: metadata.error.message,
@@ -135,17 +160,17 @@ class Logger {
 
     // Send to error tracking service if configured
     const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
-    if (sentryDsn && typeof window !== 'undefined') {
+    if (sentryDsn && typeof window !== "undefined") {
       try {
         if ((window as any).Sentry) {
           (window as any).Sentry.captureMessage(message, {
-            level: 'error',
+            level: "error",
             extra: metadata,
           });
         }
       } catch (error) {
         // Silently fail if Sentry is not available
-        this.pino.error('Failed to send error to Sentry');
+        this.pino.error("Failed to send error to Sentry");
       }
     }
   }
@@ -157,9 +182,9 @@ class Logger {
    */
   private parseArgs(
     messageOrMetadata: string | LogMetadata,
-    metadataOrMessage?: LogMetadata | string
+    metadataOrMessage?: LogMetadata | string,
   ): [string, LogMetadata | undefined] {
-    if (typeof messageOrMetadata === 'string') {
+    if (typeof messageOrMetadata === "string") {
       return [messageOrMetadata, metadataOrMessage as LogMetadata | undefined];
     } else {
       return [metadataOrMessage as string, messageOrMetadata];

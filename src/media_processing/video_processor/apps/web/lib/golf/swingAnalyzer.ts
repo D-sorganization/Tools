@@ -3,7 +3,7 @@
  * Main analysis engine that combines all metrics and generates comprehensive reports
  */
 
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import {
   AnalysisConfig,
   BalanceMetrics,
@@ -22,7 +22,7 @@ import {
   SwingScores,
   SwingType,
   TempoMetrics,
-} from './types';
+} from "./types";
 import {
   calculateBodyAngles,
   calculateAngularVelocity,
@@ -31,11 +31,8 @@ import {
   detectStanceDirection,
   getIdealAngleRanges,
   calculateAngleDeviation,
-} from './angleCalculator';
-import {
-  detectSwingPhases,
-  PhaseDetectionResult,
-} from './phaseDetector';
+} from "./angleCalculator";
+import { detectSwingPhases, PhaseDetectionResult } from "./phaseDetector";
 
 const DEFAULT_CONFIG: AnalysisConfig = {
   detectStance: true,
@@ -53,22 +50,25 @@ export function analyzeSwing(
   poseFrames: PoseFrame[],
   fps: number = 30,
   videoId?: string,
-  config: Partial<AnalysisConfig> = {}
+  config: Partial<AnalysisConfig> = {},
 ): SwingAnalysis {
   const fullConfig = { ...DEFAULT_CONFIG, ...config };
 
   // Filter frames by confidence
   const validFrames = poseFrames.filter(
-    (f) => f.confidence >= fullConfig.minConfidenceThreshold
+    (f) => f.confidence >= fullConfig.minConfidenceThreshold,
   );
 
   if (validFrames.length < 10) {
-    throw new Error('Insufficient valid pose frames for analysis');
+    throw new Error("Insufficient valid pose frames for analysis");
   }
 
   // Detect golfer stance
   const stance = fullConfig.detectStance
-    ? detectStanceDirection(validFrames[0].landmarks, fullConfig.targetLineAngle)
+    ? detectStanceDirection(
+        validFrames[0].landmarks,
+        fullConfig.targetLineAngle,
+      )
     : StanceDirection.RIGHT_HANDED;
 
   // Detect swing phases
@@ -77,7 +77,12 @@ export function analyzeSwing(
     : { phases: [], keyFrames: {}, analysisConfidence: 0 };
 
   // Get metrics at key positions
-  const keyPositions = extractKeyPositionMetrics(validFrames, phaseResult, fps, stance);
+  const keyPositions = extractKeyPositionMetrics(
+    validFrames,
+    phaseResult,
+    fps,
+    stance,
+  );
 
   // Calculate tempo metrics
   const tempo = calculateTempoMetrics(phaseResult, fps);
@@ -92,7 +97,13 @@ export function analyzeSwing(
   const posture = calculatePostureMetrics(validFrames, phaseResult, stance);
 
   // Identify issues
-  const issues = identifySwingIssues(keyPositions, tempo, balance, plane, posture);
+  const issues = identifySwingIssues(
+    keyPositions,
+    tempo,
+    balance,
+    plane,
+    posture,
+  );
 
   // Generate recommendations
   const recommendations = fullConfig.generateRecommendations
@@ -130,11 +141,13 @@ function extractKeyPositionMetrics(
   frames: PoseFrame[],
   phaseResult: PhaseDetectionResult,
   fps: number,
-  stance: StanceDirection
-): SwingAnalysis['keyPositions'] {
-  const keyPositions: SwingAnalysis['keyPositions'] = {};
+  stance: StanceDirection,
+): SwingAnalysis["keyPositions"] {
+  const keyPositions: SwingAnalysis["keyPositions"] = {};
 
-  const getMetricsAtFrame = (frameNumber: number | undefined): SwingPositionMetrics | undefined => {
+  const getMetricsAtFrame = (
+    frameNumber: number | undefined,
+  ): SwingPositionMetrics | undefined => {
     if (frameNumber === undefined) return undefined;
 
     const frame = frames.find((f) => f.frameNumber === frameNumber);
@@ -151,21 +164,28 @@ function extractKeyPositionMetrics(
       const nextFrame = frames[frameIdx + 1];
       const prevAngles = calculateBodyAngles(prevFrame.landmarks, stance);
       const nextAngles = calculateBodyAngles(nextFrame.landmarks, stance);
-      const frameDuration = (2000 / fps); // Time between prev and next
+      const frameDuration = 2000 / fps; // Time between prev and next
 
       velocities = {
         hipRotationalVelocity: calculateAngularVelocity(
           prevAngles.hipRotation,
           nextAngles.hipRotation,
-          frameDuration
+          frameDuration,
         ),
         shoulderRotationalVelocity: calculateAngularVelocity(
           prevAngles.shoulderRotation,
           nextAngles.shoulderRotation,
-          frameDuration
+          frameDuration,
         ),
-        handSpeed: calculateHandSpeed(prevFrame.landmarks, nextFrame.landmarks, frameDuration),
-        headMovement: calculateHeadMovement(frames[0].landmarks, frame.landmarks),
+        handSpeed: calculateHandSpeed(
+          prevFrame.landmarks,
+          nextFrame.landmarks,
+          frameDuration,
+        ),
+        headMovement: calculateHeadMovement(
+          frames[0].landmarks,
+          frame.landmarks,
+        ),
       };
     }
 
@@ -192,7 +212,7 @@ function extractKeyPositionMetrics(
 function calculateHandSpeed(
   prevLandmarks: Landmark[],
   nextLandmarks: Landmark[],
-  timeDeltaMs: number
+  timeDeltaMs: number,
 ): number {
   const prevLeftWrist = prevLandmarks[PoseLandmark.LEFT_WRIST];
   const prevRightWrist = prevLandmarks[PoseLandmark.RIGHT_WRIST];
@@ -212,7 +232,7 @@ function calculateHandSpeed(
  */
 function calculateHeadMovement(
   addressLandmarks: Landmark[],
-  currentLandmarks: Landmark[]
+  currentLandmarks: Landmark[],
 ): number {
   const addressNose = addressLandmarks[PoseLandmark.NOSE];
   const currentNose = currentLandmarks[PoseLandmark.NOSE];
@@ -226,22 +246,34 @@ function calculateHeadMovement(
  */
 function calculateTempoMetrics(
   phaseResult: PhaseDetectionResult,
-  fps: number
+  fps: number,
 ): TempoMetrics {
   const phases = phaseResult.phases;
 
   // Find backswing phases
   const backswingPhases = phases.filter((p) =>
-    [SwingPhase.TAKEAWAY, SwingPhase.BACKSWING, SwingPhase.TOP_OF_BACKSWING].includes(p.phase)
+    [
+      SwingPhase.TAKEAWAY,
+      SwingPhase.BACKSWING,
+      SwingPhase.TOP_OF_BACKSWING,
+    ].includes(p.phase),
   );
 
   // Find downswing phases
   const downswingPhases = phases.filter((p) =>
-    [SwingPhase.TRANSITION, SwingPhase.DOWNSWING, SwingPhase.IMPACT].includes(p.phase)
+    [SwingPhase.TRANSITION, SwingPhase.DOWNSWING, SwingPhase.IMPACT].includes(
+      p.phase,
+    ),
   );
 
-  const backswingDuration = backswingPhases.reduce((sum, p) => sum + p.duration, 0);
-  const downswingDuration = downswingPhases.reduce((sum, p) => sum + p.duration, 0);
+  const backswingDuration = backswingPhases.reduce(
+    (sum, p) => sum + p.duration,
+    0,
+  );
+  const downswingDuration = downswingPhases.reduce(
+    (sum, p) => sum + p.duration,
+    0,
+  );
   const totalSwingDuration = backswingDuration + downswingDuration;
 
   // Find transition phase for pause calculation
@@ -249,16 +281,17 @@ function calculateTempoMetrics(
   const transitionPause = transitionPhase?.duration || 0;
 
   // Calculate tempo ratio
-  const tempoRatio = downswingDuration > 0 ? backswingDuration / downswingDuration : 0;
+  const tempoRatio =
+    downswingDuration > 0 ? backswingDuration / downswingDuration : 0;
 
   // Categorize rhythm
-  let rhythm: 'smooth' | 'quick' | 'slow' | 'uneven' = 'smooth';
+  let rhythm: "smooth" | "quick" | "slow" | "uneven" = "smooth";
   if (tempoRatio < 2) {
-    rhythm = 'quick';
+    rhythm = "quick";
   } else if (tempoRatio > 4) {
-    rhythm = 'slow';
+    rhythm = "slow";
   } else if (Math.abs(tempoRatio - 3) > 1) {
-    rhythm = 'uneven';
+    rhythm = "uneven";
   }
 
   return {
@@ -277,9 +310,11 @@ function calculateTempoMetrics(
 function calculateBalanceMetrics(
   frames: PoseFrame[],
   phaseResult: PhaseDetectionResult,
-  stance: StanceDirection
+  stance: StanceDirection,
 ): BalanceMetrics {
-  const getWeightDistribution = (landmarks: Landmark[]): { left: number; right: number } => {
+  const getWeightDistribution = (
+    landmarks: Landmark[],
+  ): { left: number; right: number } => {
     const leftHip = landmarks[PoseLandmark.LEFT_HIP];
     const rightHip = landmarks[PoseLandmark.RIGHT_HIP];
     const hipMid = getMidpoint(leftHip, rightHip);
@@ -301,10 +336,18 @@ function calculateBalanceMetrics(
   };
 
   // Get frames at key positions
-  const addressFrame = frames.find((f) => f.frameNumber === phaseResult.keyFrames.address);
-  const topFrame = frames.find((f) => f.frameNumber === phaseResult.keyFrames.top);
-  const impactFrame = frames.find((f) => f.frameNumber === phaseResult.keyFrames.impact);
-  const finishFrame = frames.find((f) => f.frameNumber === phaseResult.keyFrames.finish);
+  const addressFrame = frames.find(
+    (f) => f.frameNumber === phaseResult.keyFrames.address,
+  );
+  const topFrame = frames.find(
+    (f) => f.frameNumber === phaseResult.keyFrames.top,
+  );
+  const impactFrame = frames.find(
+    (f) => f.frameNumber === phaseResult.keyFrames.impact,
+  );
+  const finishFrame = frames.find(
+    (f) => f.frameNumber === phaseResult.keyFrames.finish,
+  );
 
   // Calculate weight at each position
   const addressWeight = addressFrame
@@ -328,15 +371,15 @@ function calculateBalanceMetrics(
   if (addressFrame && topFrame && impactFrame) {
     const addressHipMid = getMidpoint(
       addressFrame.landmarks[PoseLandmark.LEFT_HIP],
-      addressFrame.landmarks[PoseLandmark.RIGHT_HIP]
+      addressFrame.landmarks[PoseLandmark.RIGHT_HIP],
     );
     const topHipMid = getMidpoint(
       topFrame.landmarks[PoseLandmark.LEFT_HIP],
-      topFrame.landmarks[PoseLandmark.RIGHT_HIP]
+      topFrame.landmarks[PoseLandmark.RIGHT_HIP],
     );
     const impactHipMid = getMidpoint(
       impactFrame.landmarks[PoseLandmark.LEFT_HIP],
-      impactFrame.landmarks[PoseLandmark.RIGHT_HIP]
+      impactFrame.landmarks[PoseLandmark.RIGHT_HIP],
     );
 
     // Sway: lateral hip movement in backswing (in cm, assuming 200cm reference)
@@ -366,7 +409,7 @@ function calculateBalanceMetrics(
 function calculatePlaneMetrics(
   frames: PoseFrame[],
   phaseResult: PhaseDetectionResult,
-  stance: StanceDirection
+  stance: StanceDirection,
 ): PlaneMetrics {
   // Calculate shaft angles at key positions
   const calculateShaftAngle = (landmarks: Landmark[]): number => {
@@ -382,9 +425,15 @@ function calculatePlaneMetrics(
     return Math.atan2(deltaY, deltaX) * (180 / Math.PI);
   };
 
-  const addressFrame = frames.find((f) => f.frameNumber === phaseResult.keyFrames.address);
-  const topFrame = frames.find((f) => f.frameNumber === phaseResult.keyFrames.top);
-  const impactFrame = frames.find((f) => f.frameNumber === phaseResult.keyFrames.impact);
+  const addressFrame = frames.find(
+    (f) => f.frameNumber === phaseResult.keyFrames.address,
+  );
+  const topFrame = frames.find(
+    (f) => f.frameNumber === phaseResult.keyFrames.top,
+  );
+  const impactFrame = frames.find(
+    (f) => f.frameNumber === phaseResult.keyFrames.impact,
+  );
 
   const shaftAngleAtAddress = addressFrame
     ? calculateShaftAngle(addressFrame.landmarks)
@@ -420,17 +469,23 @@ function calculatePlaneMetrics(
 function calculatePostureMetrics(
   frames: PoseFrame[],
   phaseResult: PhaseDetectionResult,
-  stance: StanceDirection
+  stance: StanceDirection,
 ): PostureMetrics {
-  const addressFrame = frames.find((f) => f.frameNumber === phaseResult.keyFrames.address);
-  const topFrame = frames.find((f) => f.frameNumber === phaseResult.keyFrames.top);
-  const impactFrame = frames.find((f) => f.frameNumber === phaseResult.keyFrames.impact);
+  const addressFrame = frames.find(
+    (f) => f.frameNumber === phaseResult.keyFrames.address,
+  );
+  const topFrame = frames.find(
+    (f) => f.frameNumber === phaseResult.keyFrames.top,
+  );
+  const impactFrame = frames.find(
+    (f) => f.frameNumber === phaseResult.keyFrames.impact,
+  );
 
   // Address posture
-  let addressPosture: PostureMetrics['addressPosture'] = {
+  let addressPosture: PostureMetrics["addressPosture"] = {
     spineAngle: 35,
     kneeFlexion: 25,
-    armHang: 'good',
+    armHang: "good",
   };
 
   if (addressFrame) {
@@ -438,7 +493,7 @@ function calculatePostureMetrics(
     addressPosture = {
       spineAngle: angles.spineAngle,
       kneeFlexion: (angles.leftKneeFlexion + angles.rightKneeFlexion) / 2,
-      armHang: 'good', // DEFERRED: Implement arm hang detection
+      armHang: "good", // DEFERRED: Implement arm hang detection
     };
   }
 
@@ -471,7 +526,8 @@ function calculatePostureMetrics(
     earlyExtension = impactAngles.spineAngle < addressAngles.spineAngle - 10;
 
     // Loss of posture: significant change in spine angle
-    lossOfPosture = Math.abs(impactAngles.spineAngle - addressAngles.spineAngle) > 15;
+    lossOfPosture =
+      Math.abs(impactAngles.spineAngle - addressAngles.spineAngle) > 15;
 
     // Reverse spine tilt: spine tilts toward target in backswing (wrong direction)
     if (topFrame) {
@@ -493,11 +549,11 @@ function calculatePostureMetrics(
  * Identify swing issues and faults
  */
 function identifySwingIssues(
-  keyPositions: SwingAnalysis['keyPositions'],
+  keyPositions: SwingAnalysis["keyPositions"],
   tempo: TempoMetrics,
   balance: BalanceMetrics,
   plane: PlaneMetrics,
-  posture: PostureMetrics
+  posture: PostureMetrics,
 ): SwingIssue[] {
   const issues: SwingIssue[] = [];
 
@@ -505,26 +561,27 @@ function identifySwingIssues(
   if (tempo.tempoRatio < 2) {
     issues.push({
       id: uuidv4(),
-      name: 'Quick Tempo',
-      severity: 'moderate',
+      name: "Quick Tempo",
+      severity: "moderate",
       phase: SwingPhase.BACKSWING,
-      description: 'Backswing is too fast relative to downswing',
+      description: "Backswing is too fast relative to downswing",
       detectedAt: 0,
       measurementValue: tempo.tempoRatio,
       expectedRange: [2.5, 3.5],
-      drillRecommendation: 'Practice counting "1-2-3" during backswing, "1" during downswing',
+      drillRecommendation:
+        'Practice counting "1-2-3" during backswing, "1" during downswing',
     });
   } else if (tempo.tempoRatio > 4) {
     issues.push({
       id: uuidv4(),
-      name: 'Slow Tempo',
-      severity: 'minor',
+      name: "Slow Tempo",
+      severity: "minor",
       phase: SwingPhase.BACKSWING,
-      description: 'Backswing is too slow, may cause timing issues',
+      description: "Backswing is too slow, may cause timing issues",
       detectedAt: 0,
       measurementValue: tempo.tempoRatio,
       expectedRange: [2.5, 3.5],
-      drillRecommendation: 'Use a metronome at 80 BPM to practice rhythm',
+      drillRecommendation: "Use a metronome at 80 BPM to practice rhythm",
     });
   }
 
@@ -532,28 +589,30 @@ function identifySwingIssues(
   if (balance.swayAmount > 15) {
     issues.push({
       id: uuidv4(),
-      name: 'Excessive Sway',
-      severity: 'major',
+      name: "Excessive Sway",
+      severity: "major",
       phase: SwingPhase.BACKSWING,
       description: `Lateral hip movement of ${balance.swayAmount.toFixed(1)}cm during backswing`,
       detectedAt: keyPositions.top?.frameNumber || 0,
       measurementValue: balance.swayAmount,
       expectedRange: [0, 10],
-      drillRecommendation: 'Place a club against your trail hip and practice rotating without moving it',
+      drillRecommendation:
+        "Place a club against your trail hip and practice rotating without moving it",
     });
   }
 
   if (balance.slideAmount > 20) {
     issues.push({
       id: uuidv4(),
-      name: 'Excessive Slide',
-      severity: 'moderate',
+      name: "Excessive Slide",
+      severity: "moderate",
       phase: SwingPhase.DOWNSWING,
       description: `Lateral movement of ${balance.slideAmount.toFixed(1)}cm during downswing`,
       detectedAt: keyPositions.impact?.frameNumber || 0,
       measurementValue: balance.slideAmount,
       expectedRange: [5, 15],
-      drillRecommendation: 'Practice with a stability ball between your lead knee and a wall',
+      drillRecommendation:
+        "Practice with a stability ball between your lead knee and a wall",
     });
   }
 
@@ -561,42 +620,46 @@ function identifySwingIssues(
   if (posture.earlyExtension) {
     issues.push({
       id: uuidv4(),
-      name: 'Early Extension',
-      severity: 'major',
+      name: "Early Extension",
+      severity: "major",
       phase: SwingPhase.DOWNSWING,
-      description: 'Hips move toward the ball and spine becomes more upright before impact',
+      description:
+        "Hips move toward the ball and spine becomes more upright before impact",
       detectedAt: keyPositions.impact?.frameNumber || 0,
       measurementValue: 0,
       expectedRange: [0, 0],
-      drillRecommendation: 'Practice with your glutes touching a wall throughout the swing',
+      drillRecommendation:
+        "Practice with your glutes touching a wall throughout the swing",
     });
   }
 
   if (posture.reverseSpineTilt) {
     issues.push({
       id: uuidv4(),
-      name: 'Reverse Spine Tilt',
-      severity: 'major',
+      name: "Reverse Spine Tilt",
+      severity: "major",
       phase: SwingPhase.BACKSWING,
-      description: 'Spine tilts toward target during backswing instead of away',
+      description: "Spine tilts toward target during backswing instead of away",
       detectedAt: keyPositions.top?.frameNumber || 0,
       measurementValue: 0,
       expectedRange: [0, 0],
-      drillRecommendation: 'Keep your head behind the ball and feel your weight move into your trail side',
+      drillRecommendation:
+        "Keep your head behind the ball and feel your weight move into your trail side",
     });
   }
 
   if (posture.headStability < 60) {
     issues.push({
       id: uuidv4(),
-      name: 'Head Movement',
-      severity: 'moderate',
+      name: "Head Movement",
+      severity: "moderate",
       phase: SwingPhase.BACKSWING,
-      description: 'Excessive head movement during swing',
+      description: "Excessive head movement during swing",
       detectedAt: 0,
       measurementValue: 100 - posture.headStability,
       expectedRange: [0, 40],
-      drillRecommendation: 'Practice swinging with a mirror or video to monitor head position',
+      drillRecommendation:
+        "Practice swinging with a mirror or video to monitor head position",
     });
   }
 
@@ -604,14 +667,15 @@ function identifySwingIssues(
   if (!plane.onPlane && plane.planeDifferential > 10) {
     issues.push({
       id: uuidv4(),
-      name: 'Swing Plane Inconsistency',
-      severity: 'moderate',
+      name: "Swing Plane Inconsistency",
+      severity: "moderate",
       phase: SwingPhase.DOWNSWING,
       description: `Downswing plane differs from backswing by ${plane.planeDifferential.toFixed(1)}°`,
       detectedAt: 0,
       measurementValue: plane.planeDifferential,
       expectedRange: [0, 8],
-      drillRecommendation: 'Use alignment sticks to visualize and practice consistent plane',
+      drillRecommendation:
+        "Use alignment sticks to visualize and practice consistent plane",
     });
   }
 
@@ -621,14 +685,15 @@ function identifySwingIssues(
     if (xFactor < 30) {
       issues.push({
         id: uuidv4(),
-        name: 'Insufficient X-Factor',
-        severity: 'minor',
+        name: "Insufficient X-Factor",
+        severity: "minor",
         phase: SwingPhase.TOP_OF_BACKSWING,
         description: `X-Factor of ${xFactor.toFixed(1)}° is below optimal range`,
         detectedAt: keyPositions.top.frameNumber,
         measurementValue: xFactor,
         expectedRange: [40, 60],
-        drillRecommendation: 'Practice shoulder rotation with hips stable to increase separation',
+        drillRecommendation:
+          "Practice shoulder rotation with hips stable to increase separation",
       });
     }
   }
@@ -643,12 +708,12 @@ function generateRecommendations(issues: SwingIssue[]): string[] {
   const recommendations: string[] = [];
 
   // Prioritize major issues
-  const majorIssues = issues.filter((i) => i.severity === 'major');
-  const moderateIssues = issues.filter((i) => i.severity === 'moderate');
+  const majorIssues = issues.filter((i) => i.severity === "major");
+  const moderateIssues = issues.filter((i) => i.severity === "moderate");
 
   if (majorIssues.length > 0) {
     recommendations.push(
-      `Focus on fixing ${majorIssues.length} major issue${majorIssues.length > 1 ? 's' : ''}: ${majorIssues.map((i) => i.name).join(', ')}`
+      `Focus on fixing ${majorIssues.length} major issue${majorIssues.length > 1 ? "s" : ""}: ${majorIssues.map((i) => i.name).join(", ")}`,
     );
   }
 
@@ -661,12 +726,16 @@ function generateRecommendations(issues: SwingIssue[]): string[] {
 
   // Add general recommendations
   if (issues.length === 0) {
-    recommendations.push('Great swing! Focus on consistency and maintaining good fundamentals.');
+    recommendations.push(
+      "Great swing! Focus on consistency and maintaining good fundamentals.",
+    );
   } else if (issues.length <= 2) {
-    recommendations.push('Good overall swing mechanics. Work on the identified areas for improvement.');
+    recommendations.push(
+      "Good overall swing mechanics. Work on the identified areas for improvement.",
+    );
   } else {
     recommendations.push(
-      'Consider working with a PGA professional to address multiple swing issues systematically.'
+      "Consider working with a PGA professional to address multiple swing issues systematically.",
     );
   }
 
@@ -681,7 +750,7 @@ function calculateSwingScores(
   balance: BalanceMetrics,
   plane: PlaneMetrics,
   posture: PostureMetrics,
-  issues: SwingIssue[]
+  issues: SwingIssue[],
 ): SwingScores {
   // Tempo score (ideal ratio ~3:1)
   const tempoDeviation = Math.abs(tempo.tempoRatio - 3);
@@ -706,20 +775,29 @@ function calculateSwingScores(
   const rotationScore = 75; // Default, would be calculated from actual measurements
 
   // Timing score (based on sequence)
-  const timingScore = tempo.rhythm === 'smooth' ? 90 : tempo.rhythm === 'uneven' ? 50 : 70;
+  const timingScore =
+    tempo.rhythm === "smooth" ? 90 : tempo.rhythm === "uneven" ? 50 : 70;
 
   // Consistency score (based on variance in metrics)
   const consistencyScore = 80; // Would need multiple swings to calculate
 
   // Issue penalty
   const issuePenalty =
-    issues.filter((i) => i.severity === 'major').length * 10 +
-    issues.filter((i) => i.severity === 'moderate').length * 5 +
-    issues.filter((i) => i.severity === 'minor').length * 2;
+    issues.filter((i) => i.severity === "major").length * 10 +
+    issues.filter((i) => i.severity === "moderate").length * 5 +
+    issues.filter((i) => i.severity === "minor").length * 2;
 
   // Overall score
-  const componentScores = [tempoScore, balanceScore, planeScore, postureScore, rotationScore, timingScore];
-  const avgScore = componentScores.reduce((sum, s) => sum + s, 0) / componentScores.length;
+  const componentScores = [
+    tempoScore,
+    balanceScore,
+    planeScore,
+    postureScore,
+    rotationScore,
+    timingScore,
+  ];
+  const avgScore =
+    componentScores.reduce((sum, s) => sum + s, 0) / componentScores.length;
   const overall = Math.max(0, Math.min(100, avgScore - issuePenalty / 2));
 
   return {
@@ -740,7 +818,7 @@ function calculateSwingScores(
 export function quickAnalyze(
   landmarks: Landmark[],
   previousLandmarks?: Landmark[],
-  stance: StanceDirection = StanceDirection.RIGHT_HANDED
+  stance: StanceDirection = StanceDirection.RIGHT_HANDED,
 ): {
   angles: BodyAngles;
   currentPhase: SwingPhase;
@@ -750,7 +828,10 @@ export function quickAnalyze(
 
   // Simple phase detection based on current angles
   let currentPhase = SwingPhase.UNKNOWN;
-  if (Math.abs(angles.shoulderRotation) < 15 && Math.abs(angles.hipRotation) < 10) {
+  if (
+    Math.abs(angles.shoulderRotation) < 15 &&
+    Math.abs(angles.hipRotation) < 10
+  ) {
     currentPhase = SwingPhase.ADDRESS;
   } else if (angles.shoulderRotation > 60) {
     currentPhase = SwingPhase.BACKSWING;
@@ -761,10 +842,10 @@ export function quickAnalyze(
   // Quick issue detection
   const issues: string[] = [];
   if (angles.spineAngle < 20 || angles.spineAngle > 50) {
-    issues.push('Check spine angle');
+    issues.push("Check spine angle");
   }
   if (Math.abs(angles.spineLateral) > 15) {
-    issues.push('Excessive lateral bend');
+    issues.push("Excessive lateral bend");
   }
 
   return { angles, currentPhase, issues };
