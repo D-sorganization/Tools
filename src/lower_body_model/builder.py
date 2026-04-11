@@ -46,6 +46,7 @@ def build_lower_body_xml(
 
     hip_offset = pelvis_width / 2.0
     pelvis_z = thigh_length + calf_length + 0.1
+    pelvis_geoms = _pelvis_anatomical_geoms(hip_offset, pelvis_mass)
 
     xml = f"""
     <mujoco model="lower_body_model">
@@ -64,7 +65,7 @@ def build_lower_body_xml(
 
             <body name="pelvis" pos="0 0 {pelvis_z}">
                 <freejoint name="root"/>
-                <geom type="ellipsoid" size="0.15 {hip_offset + 0.05} 0.12" mass="{pelvis_mass}" material="matgeom"/>
+{pelvis_geoms}
 
                 <!-- RIGHT LEG -->
                 <body name="r_thigh" pos="0 -{hip_offset} -0.05">
@@ -135,3 +136,64 @@ def _validate_positive_float(name: str, value: float) -> None:
         raise TypeError(f"{name} must be a real number, got {type(value).__name__}")
     if value <= 0.0:
         raise ValueError(f"{name} must be strictly positive, got {value}")
+
+
+# Anatomical pelvis marker geometry.
+#
+# All visual markers are declared with mass="0" and contype="0" conaffinity="0"
+# so they don't contribute to inertia or generate contacts. All mass is held by
+# the single "pelvis_body" ellipsoid, preserving the dynamics of the original
+# simple pelvis exactly while making pelvic tilt visually unambiguous.
+#
+# Coordinate convention for the pelvis body frame: +X forward, +Y left, +Z up.
+#
+# Landmarks (relative to the pelvis body origin):
+#   sacrum         — posterior-superior midline
+#   iliac wings    — bilateral flattened ellipsoids forming the "butterfly" top
+#   ASIS markers   — anterior-superior iliac spines, bright so tilt reads clearly
+#   pubic symphysis — anterior-inferior midline
+_PELVIS_SEMI_X = 0.15  # Semi-axis of the inertial host ellipsoid (forward).
+_PELVIS_SEMI_Z = 0.12  # Semi-axis of the inertial host ellipsoid (up).
+
+
+def _pelvis_anatomical_geoms(hip_offset: float, pelvis_mass: float) -> str:
+    """Return the indented MJCF geom fragment for an anatomical pelvis shape."""
+    host_semi_y = hip_offset + 0.05
+
+    # Landmark positions scale laterally with hip_offset so the markers track
+    # pelvis_width. X/Z positions are fixed relative to the host ellipsoid.
+    sacrum_pos_x = -0.10
+    sacrum_pos_z = 0.04
+    ilium_pos_x = 0.02
+    ilium_pos_y = 0.65 * hip_offset
+    ilium_pos_z = 0.04
+    asis_pos_x = 0.13
+    asis_pos_y = 0.80 * hip_offset
+    asis_pos_z = 0.06
+    pubis_pos_x = 0.12
+    pubis_pos_z = -0.08
+
+    return (
+        f'                <geom name="pelvis_body" type="ellipsoid" '
+        f'size="{_PELVIS_SEMI_X} {host_semi_y} {_PELVIS_SEMI_Z}" '
+        f'mass="{pelvis_mass}" rgba="0.82 0.72 0.55 0.35" '
+        f'contype="0" conaffinity="0"/>\n'
+        f'                <geom name="pelvis_sacrum" type="ellipsoid" '
+        f'size="0.035 0.05 0.08" pos="{sacrum_pos_x} 0 {sacrum_pos_z}" '
+        f'mass="0" rgba="0.55 0.40 0.28 1" contype="0" conaffinity="0"/>\n'
+        f'                <geom name="pelvis_r_ilium" type="ellipsoid" '
+        f'size="0.10 0.025 0.10" pos="{ilium_pos_x} -{ilium_pos_y} {ilium_pos_z}" '
+        f'mass="0" rgba="0.95 0.90 0.78 1" contype="0" conaffinity="0"/>\n'
+        f'                <geom name="pelvis_l_ilium" type="ellipsoid" '
+        f'size="0.10 0.025 0.10" pos="{ilium_pos_x} {ilium_pos_y} {ilium_pos_z}" '
+        f'mass="0" rgba="0.95 0.90 0.78 1" contype="0" conaffinity="0"/>\n'
+        f'                <geom name="pelvis_r_asis" type="sphere" '
+        f'size="0.025" pos="{asis_pos_x} -{asis_pos_y} {asis_pos_z}" '
+        f'mass="0" rgba="0.95 0.15 0.15 1" contype="0" conaffinity="0"/>\n'
+        f'                <geom name="pelvis_l_asis" type="sphere" '
+        f'size="0.025" pos="{asis_pos_x} {asis_pos_y} {asis_pos_z}" '
+        f'mass="0" rgba="0.95 0.15 0.15 1" contype="0" conaffinity="0"/>\n'
+        f'                <geom name="pelvis_pubis" type="ellipsoid" '
+        f'size="0.03 0.04 0.025" pos="{pubis_pos_x} 0 {pubis_pos_z}" '
+        f'mass="0" rgba="0.85 0.78 0.65 1" contype="0" conaffinity="0"/>'
+    )
