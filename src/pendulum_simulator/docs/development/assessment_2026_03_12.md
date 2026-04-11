@@ -205,7 +205,7 @@ The Pendulum Simulator is a **scientifically rigorous, multi-model dynamics tool
 - App icon/favicon implemented
 - Model dropdown labels improved
 - ✅ About dialog added (#1206)
-- ✅ Keyboard shortcuts functional (#1206) 
+- ✅ Keyboard shortcuts functional (#1206)
 - ✅ CHANGELOG.md created (#1201)
 - ✅ Gravity checkbox removed — cleaner UI (#1209)
 - ✅ 21 new tests verify toolstrip elements exist permanently
