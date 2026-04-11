@@ -100,7 +100,7 @@ else:
     logger.error(  # pragma: no cover
         "Function generator UNAVAILABLE: %s (searched from %s)",
         _WIDGET_IMPORT_ERROR,
-        _this_file,
+        Path(__file__).resolve(),
     )
 
 
@@ -181,9 +181,9 @@ class FunctionGeneratorDialog(QDialog):
             note = QTextEdit()
             note.setReadOnly(True)
             note.setPlainText(
-                f"⚠ Signal Toolkit widgets not available.\n\n"
+                "⚠ Signal Toolkit widgets not available.\n\n"
                 f"Reason: {error_detail}\n\n"
-                f"Searched from: {_this_file}\n\n"
+                f"Searched from: {Path(__file__).resolve()}\n\n"
                 "Ensure the signal_toolkit package is on the Python path.\n"
                 "You can select and copy this text for troubleshooting."
             )

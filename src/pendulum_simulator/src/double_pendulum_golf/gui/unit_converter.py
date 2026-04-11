@@ -192,9 +192,9 @@ class UnitPreferences:
         Pre: unit_label must be a valid option for the category.
         """
         valid = [label for label, _ in _UNIT_OPTIONS[category]]
-        assert (
-            unit_label in valid
-        ), f"Invalid unit '{unit_label}' for {category.value}. Valid: {valid}"
+        assert unit_label in valid, (
+            f"Invalid unit '{unit_label}' for {category.value}. Valid: {valid}"
+        )
         self.selections[category] = unit_label
 
     def save_to_qsettings(self, settings: Any) -> None:
@@ -204,13 +204,18 @@ class UnitPreferences:
         logger.debug("Saved unit preferences to QSettings")
 
     def load_from_qsettings(self, settings: Any) -> None:
-        """Restore selections from QSettings."""
+        """Restore selections from QSettings.
+
+        Invalid saved values (e.g. left over from an older build that
+        offered different units) are silently ignored — the category
+        keeps its current default rather than crashing.
+        """
         for cat in UnitCategory:
             val = settings.value(f"units/{cat.value}")
             if val is not None and isinstance(val, str):
                 try:
                     self.set_unit(cat, val)
-                except AssertionError:
+                except (ValueError, AssertionError):
                     logger.warning(
                         "Ignoring invalid saved unit '%s' for %s",
                         val,
