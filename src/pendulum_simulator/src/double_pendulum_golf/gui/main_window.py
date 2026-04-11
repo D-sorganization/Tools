@@ -123,8 +123,15 @@ class MainWindow(QMainWindow):
     WINDOW_TITLE = "Pendulums"
 
     # Font zoom bounds (#1147)
-    _FONT_MIN_PT = 8
-    _FONT_MAX_PT = 24
+    # _FONT_BASE_PT is the application's nominal font size; the user's
+    # offset is added to it. The OFFSET range is intentionally tight so
+    # users cannot zoom themselves out of being able to read controls
+    # or persist a runaway value across launches.
+    _FONT_BASE_PT = 10
+    _FONT_OFFSET_MIN = -2  # → 8 pt absolute minimum
+    _FONT_OFFSET_MAX = 6  # → 16 pt absolute maximum
+    _FONT_MIN_PT = _FONT_BASE_PT + _FONT_OFFSET_MIN
+    _FONT_MAX_PT = _FONT_BASE_PT + _FONT_OFFSET_MAX
     _panels: tuple[SimulationPanel, ...]
 
     def __init__(self) -> None:
@@ -149,8 +156,18 @@ class MainWindow(QMainWindow):
         self._unit_converter = UnitConverter()
 
         # Ctrl+mousewheel font zoom (#1147)
+        # Clamp the loaded offset on read so a corrupt or out-of-range
+        # value (e.g. from a previous build that used a wider range) is
+        # snapped back into the supported window before it propagates
+        # anywhere else.
         settings = QSettings(_SETTINGS_ORG, _SETTINGS_APP)
-        self._font_zoom_pt: int = int(settings.value("font_zoom_pt", 0))
+        try:
+            raw_offset = int(settings.value("font_zoom_pt", 0))
+        except (TypeError, ValueError):
+            raw_offset = 0
+        self._font_zoom_pt: int = max(
+            self._FONT_OFFSET_MIN, min(self._FONT_OFFSET_MAX, raw_offset)
+        )
         if self._font_zoom_pt:
             self._apply_font_zoom()
 
@@ -171,32 +188,89 @@ class MainWindow(QMainWindow):
         if mods & Qt.KeyboardModifier.ControlModifier:
             delta = event.angleDelta().y()
             if delta > 0:
-                self._font_zoom_pt = min(self._FONT_MAX_PT, self._font_zoom_pt + 1)
+                self._font_zoom_pt = min(
+                    self._FONT_OFFSET_MAX, self._font_zoom_pt + 1
+                )
             elif delta < 0:
-                self._font_zoom_pt = max(self._FONT_MIN_PT - 10, self._font_zoom_pt - 1)
+                self._font_zoom_pt = max(
+                    self._FONT_OFFSET_MIN, self._font_zoom_pt - 1
+                )
             self._apply_font_zoom()
             event.accept()
             return
         super().wheelEvent(event)
 
     def _apply_font_zoom(self) -> None:
-        """Apply font zoom offset to the application font."""
+        """Apply font zoom offset to the application font.
+
+        Pre:  ``self._font_zoom_pt`` is in
+              ``[_FONT_OFFSET_MIN, _FONT_OFFSET_MAX]``.
+        Post: the application font has been resized; the *clamped* offset
+              has been written back to QSettings so the next launch starts
+              from the same value, never larger.
+        """
+        # Re-clamp defensively so this method is safe to call from any
+        # path (loaded value, wheel event, programmatic).
+        self._font_zoom_pt = max(
+            self._FONT_OFFSET_MIN,
+            min(self._FONT_OFFSET_MAX, self._font_zoom_pt),
+        )
+        type(self)._apply_offset_to_app_font(self._font_zoom_pt)
+
+    # ------------------------------------------------------------------
+    # Static font-zoom helpers (used by both MainWindow.wheelEvent and the
+    # global wheel filter in __main__.py). Owning bounds + persistence
+    # in one place keeps the two paths from drifting.
+    # ------------------------------------------------------------------
+
+    @classmethod
+    def _apply_offset_to_app_font(cls, offset_pt: int) -> int:
+        """Set the application font and persist the (clamped) offset.
+
+        Pre:  -100 ≤ offset_pt ≤ 100 (so the input is at least sane)
+        Post: the offset is clamped to ``[_FONT_OFFSET_MIN, _FONT_OFFSET_MAX]``,
+              the QApplication font's point size is the base + clamped offset,
+              and the clamped offset is written to QSettings under
+              ``font_zoom_pt``. Returns the clamped offset that was applied.
+        """
         from PyQt6.QtWidgets import QApplication
 
+        clamped = max(
+            cls._FONT_OFFSET_MIN, min(cls._FONT_OFFSET_MAX, int(offset_pt))
+        )
         app = QApplication.instance()
         if not isinstance(app, QApplication):
-            return
+            return clamped
         font = app.font()
-        base_pt = 10  # default base
-        new_pt = max(
-            self._FONT_MIN_PT, min(self._FONT_MAX_PT, base_pt + self._font_zoom_pt)
-        )
+        new_pt = cls._FONT_BASE_PT + clamped
         font.setPointSize(new_pt)
         app.setFont(font)
-        # Persist
-        settings = QSettings(_SETTINGS_ORG, _SETTINGS_APP)
-        settings.setValue("font_zoom_pt", self._font_zoom_pt)
-        logger.info("Font zoom: %d pt (offset %+d)", new_pt, self._font_zoom_pt)
+        QSettings(_SETTINGS_ORG, _SETTINGS_APP).setValue("font_zoom_pt", clamped)
+        logger.info("Font zoom: %d pt (offset %+d)", new_pt, clamped)
+        return clamped
+
+    @classmethod
+    def adjust_global_font_zoom(cls, delta_steps: int) -> int:
+        """Increment / decrement the global font offset by ``delta_steps`` pt.
+
+        Used by the global wheel-event filter in ``__main__`` so that
+        Ctrl+wheel anywhere in the app routes through the same bounded
+        + persisted code path as ``MainWindow.wheelEvent``.
+
+        Returns the resulting (clamped) offset.
+        """
+        try:
+            current = int(
+                QSettings(_SETTINGS_ORG, _SETTINGS_APP).value("font_zoom_pt", 0)
+            )
+        except (TypeError, ValueError):
+            current = 0
+        return cls._apply_offset_to_app_font(current + int(delta_steps))
+
+    @classmethod
+    def reset_global_font_zoom(cls) -> None:
+        """Reset the application font to the base size and clear persistence."""
+        cls._apply_offset_to_app_font(0)
 
     # ------------------------------------------------------------------
     # Menu bar
@@ -215,7 +289,7 @@ class MainWindow(QMainWindow):
         view_menu: QMenu = _view
 
         # Quick theme submenu
-        self._quick_theme_menu = view_menu.addMenu("🎨 Quick Theme")
+        self._quick_theme_menu = view_menu.addMenu("Quick Theme")
 
         # Full theme manager action
         self._action_theme_mgr = QAction("Theme Manager…", self)
@@ -226,7 +300,7 @@ class MainWindow(QMainWindow):
         view_menu.addSeparator()
 
         # Analysis dock toggle
-        self._action_analysis = QAction("📊 Analysis Panel", self)
+        self._action_analysis = QAction("Analysis Panel", self)
         self._action_analysis.setCheckable(True)
         self._action_analysis.setChecked(False)
         self._action_analysis.setShortcut("Ctrl+Shift+A")
@@ -283,7 +357,7 @@ class MainWindow(QMainWindow):
 
         # ── Analysis dock (docked bottom by default) ──────────────────
         self._analysis_tab = AnalysisTab(self)
-        self._analysis_dock = QDockWidget("📊 Analysis", self)
+        self._analysis_dock = QDockWidget("Analysis", self)
         self._analysis_dock.setWidget(self._analysis_tab.widget())
         self._analysis_dock.setAllowedAreas(
             Qt.DockWidgetArea.BottomDockWidgetArea
@@ -616,7 +690,19 @@ class MainWindow(QMainWindow):
     # ------------------------------------------------------------------
 
     def _setup_theme(self) -> None:
-        """Wire fleet ThemeManager if available; populate quick-theme menu."""
+        """Wire fleet ThemeManager if available; populate quick-theme menu.
+
+        On first launch (no saved theme preference), seeds ``"Dark"`` as
+        the default *before* the fleet ThemeManager resolves the
+        effective theme. After that the fleet manager handles
+        persistence as usual — user choices are respected forever.
+        """
+        # Seed the dark default for first-launch users only. This is a
+        # no-op for any user who has already chosen a theme.
+        from .theme_defaults import ensure_default_theme_seeded
+
+        ensure_default_theme_seeded()
+
         if not _THEME_AVAILABLE or ThemeManager is None:
             logger.info("theme package unavailable — using Pendulum Dark built-in")
             return

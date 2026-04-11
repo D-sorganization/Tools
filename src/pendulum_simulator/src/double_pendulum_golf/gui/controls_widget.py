@@ -656,5 +656,5 @@ class ControlsWidget(ControlsWidgetBase):
         if not (checked is not None):
             raise ValueError("checked must be provided")
         self._is_playing = checked
-        self.btn_play.setText("⏸ Pause" if checked else "▶ Play")
+        self.btn_play.setText("‖ Pause" if checked else "▶ Play")
         self.play_toggled.emit(checked)

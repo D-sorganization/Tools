@@ -334,7 +334,7 @@ class ControlsWidgetBase(QWidget):
 
     def _build_funcgen_button(self) -> QPushButton:
         """Build a "Signal Toolkit…" button.  Shared across all models."""
-        btn = QPushButton("📈 Signal Toolkit…")
+        btn = QPushButton("∿ Signal Toolkit…")
         btn.setToolTip("Design a waveform and import as torque coefficients")
         btn.setStyleSheet(STYLE_BTN_FUNCGEN)
         btn.clicked.connect(self._open_function_generator)

@@ -26,8 +26,6 @@ DRY
 
 from __future__ import annotations
 
-from numba import jit
-
 import logging
 from typing import TYPE_CHECKING, Any
 
@@ -685,7 +683,10 @@ class AnalysisTab:
         eps = 1e-7
         n_dof = len(angle_keys)
 
-        @jit(nopython=True, fastmath=True)
+        # Note: this closure cannot be JIT-compiled — it captures Python
+        # callables (fk_fn) and uses dict types that numba cannot infer.
+        # A prior @jit(nopython=True) decorator here crashed the analysis
+        # tab the moment manipulability was computed.
         def _eval(angles: dict) -> float:
             fk0 = fk_fn(angles)
             tip0 = np.asarray(fk0[tip_key], dtype=float)

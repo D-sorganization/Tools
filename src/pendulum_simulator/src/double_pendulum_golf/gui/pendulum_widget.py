@@ -108,6 +108,9 @@ class PendulumWidget(BasePendulumWidget):
     def set_simulation(self, result: SimulationResult) -> None:
         """Load a new simulation result, precompute caches, and reset display.
 
+        Always re-fits the view to the trajectory bbox so the system is
+        guaranteed to be visible regardless of prior pan/zoom state.
+
         Pre: result is not None
         """
         if not (result is not None):
@@ -118,6 +121,17 @@ class PendulumWidget(BasePendulumWidget):
 
         self._tip_positions_cache = self._precompute_tips(result)
         self._zero_torque_forces = self._precompute_zero_torque_forces(result)
+
+        # Sample joint positions across the trajectory and fit the view.
+        # We sample up to 60 evenly-spaced frames — enough to capture the
+        # bbox accurately without paying for every frame.
+        n = result.n_steps
+        if n > 0:
+            stride = max(1, n // 60)
+            samples = [result.positions_at(i) for i in range(0, n, stride)]
+            self.compute_and_store_trajectory_bbox(samples)
+        else:
+            self.compute_and_store_trajectory_bbox([])
 
         self.update()
 
@@ -224,6 +238,23 @@ class PendulumWidget(BasePendulumWidget):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.fillRect(self.rect(), self.COLOR_BG)
 
+        try:
+            self._paint_scene(painter)
+        except Exception as exc:  # noqa: BLE001 — never let paint blank the GUI
+            logger.exception("PendulumWidget paint failed: %s", exc)
+            painter.setPen(QColor(255, 120, 120))
+            painter.setFont(QFont("Monospace", 9))
+            painter.drawText(
+                self.rect().adjusted(8, 8, -8, -8),
+                Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft,
+                f"⚠ Render error: {type(exc).__name__}: {exc}\n\n"
+                "Press F or double-click to fit view.",
+            )
+        finally:
+            painter.end()
+
+    def _paint_scene(self, painter: QPainter) -> None:
+        """Inner paint that may raise; wrapped by paintEvent."""
         self._draw_grid(painter)
 
         # Ground plane + tilt plane + ball visualization
@@ -236,7 +267,6 @@ class PendulumWidget(BasePendulumWidget):
         if self._result is None:
             self._draw_placeholder(painter)
             self._draw_zoom_controls(painter)
-            painter.end()
             return
 
         self._draw_trail(painter)
@@ -265,10 +295,26 @@ class PendulumWidget(BasePendulumWidget):
         self._draw_info(painter)
         self._draw_zoom_controls(painter)
 
+        # Off-screen indicator: scan all current joint positions and
+        # show a recovery banner + arrow if every joint is outside the
+        # widget. Cheap (handful of joints, simple rect contains).
+        try:
+            current = self._result.positions_at(self._current_idx)
+            joint_points = [
+                (float(v[0]), float(v[1]))
+                for v in current.values()
+                if v is not None
+            ]
+            in_view, centroid = self._world_points_in_view(joint_points)
+            if not in_view:
+                self._draw_offscreen_indicator(painter, centroid)
+        except Exception:  # noqa: BLE001
+            # Off-screen detection is purely diagnostic; never let it
+            # break the main render path.
+            pass
+
         if not self._gravity_on:
             self._draw_no_gravity_badge(painter)
-
-        painter.end()
 
     # ------------------------------------------------------------------
     # Pendulum segment drawing
@@ -873,7 +919,13 @@ class PendulumWidget(BasePendulumWidget):
     # ------------------------------------------------------------------
 
     def _draw_zoom_controls(self, painter: QPainter) -> None:
-        """Draw a small zoom toolbar in the top-right corner."""
+        """Draw a small zoom toolbar in the top-right corner.
+
+        Buttons (top to bottom):
+            ⊕  zoom in
+            ⊖  zoom out
+            ⤢  fit view to trajectory (always recoverable; press F)
+        """
         if not (painter is not None):
             raise ValueError("painter must be provided")
         r = self.rect()
@@ -885,7 +937,7 @@ class PendulumWidget(BasePendulumWidget):
         buttons = [
             ("\u2295", "Zoom in"),
             ("\u2296", "Zoom out"),
-            ("\u2922", "Reset view"),
+            ("\u2922", "Fit view (F)"),
         ]
         painter.setFont(QFont("Sans", 11))
 
@@ -894,11 +946,18 @@ class PendulumWidget(BasePendulumWidget):
             by = y_start + i * (btn_size + 3)
             rect = QRect(bx, by, btn_size, btn_size)
 
-            painter.setPen(Qt.PenStyle.NoPen)
-            painter.setBrush(QBrush(self.COLOR_OVERLAY_BG))
+            # Highlight the fit button when auto-fit is active so the
+            # user can tell at a glance whether their view is the
+            # canonical default or a manually-set custom view.
+            if i == 2 and self.is_view_auto_fit():
+                painter.setPen(Qt.PenStyle.NoPen)
+                painter.setBrush(QBrush(QColor(60, 120, 180, 220)))
+            else:
+                painter.setPen(Qt.PenStyle.NoPen)
+                painter.setBrush(QBrush(self.COLOR_OVERLAY_BG))
             painter.drawRoundedRect(rect, 4, 4)
 
-            painter.setPen(QColor(180, 180, 210))
+            painter.setPen(QColor(220, 230, 245) if i == 2 else QColor(180, 180, 210))
             painter.drawText(rect, Qt.AlignmentFlag.AlignCenter, icon)
 
         self._zoom_btn_rects = [
@@ -915,12 +974,13 @@ class PendulumWidget(BasePendulumWidget):
             if rect.contains(pos):
                 if i == 0:
                     self._zoom = min(20.0, self._zoom * 1.3)
+                    self._release_auto_fit()
                 elif i == 1:
                     self._zoom = max(0.1, self._zoom / 1.3)
+                    self._release_auto_fit()
                 else:
-                    self._zoom = 1.0
-                    self._pan_x = 0.0
-                    self._pan_y = 0.0
+                    # Fit view: full recovery to canonical auto-fit.
+                    self.reset_view()
                 self.update()
                 return True
         return False

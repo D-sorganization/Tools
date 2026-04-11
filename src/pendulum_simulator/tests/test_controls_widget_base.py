@@ -92,7 +92,9 @@ def test_controls_base_construction(qapp) -> Any:
     assert w.btn_export_image is not None
 
     btn_funcgen = w._build_funcgen_button()
-    assert btn_funcgen.text() == "📈 Signal Toolkit…"
+    # Label uses a BMP-range sine-wave symbol so it renders without an
+    # emoji font on bare Linux/WSL.
+    assert btn_funcgen.text() == "∿ Signal Toolkit…"
 
     # Expose inputs
     w._get_torque_inputs()

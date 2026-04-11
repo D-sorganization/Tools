@@ -106,6 +106,9 @@ class GolferPendulumWidget(BasePendulumWidget):
     def set_simulation(self, result: GolferSimulationResult) -> None:
         """Load a new golfer simulation result.
 
+        Always re-fits the view to the trajectory bbox so the system is
+        guaranteed to be visible regardless of prior pan/zoom state.
+
         Pre: result is not None
         """
         if not (result is not None):
@@ -119,6 +122,15 @@ class GolferPendulumWidget(BasePendulumWidget):
 
         # Pre-compute zero-torque counterfactual forces (#1148)
         self._zero_torque_forces = self._precompute_zero_torque_forces(result)
+
+        # Sample joint positions across the trajectory and fit the view.
+        n = result.n_steps
+        if n > 0:
+            stride = max(1, n // 60)
+            samples = [result.positions_at(i) for i in range(0, n, stride)]
+            self.compute_and_store_trajectory_bbox(samples)
+        else:
+            self.compute_and_store_trajectory_bbox([])
 
         self.update()
 
@@ -195,6 +207,23 @@ class GolferPendulumWidget(BasePendulumWidget):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.fillRect(self.rect(), self.COLOR_BG)
 
+        try:
+            self._paint_scene(painter)
+        except Exception as exc:  # noqa: BLE001 — never blank the GUI
+            logger.exception("GolferPendulumWidget paint failed: %s", exc)
+            painter.setPen(QColor(255, 120, 120))
+            painter.setFont(QFont("Monospace", 9))
+            painter.drawText(
+                self.rect().adjusted(8, 8, -8, -8),
+                Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft,
+                f"⚠ Render error: {type(exc).__name__}: {exc}\n\n"
+                "Press F or double-click to fit view.",
+            )
+        finally:
+            painter.end()
+
+    def _paint_scene(self, painter: QPainter) -> None:
+        """Inner paint that may raise; wrapped by paintEvent."""
         self._draw_grid(painter)
 
         # Ground plane + tilt plane + ball visualization
@@ -206,7 +235,6 @@ class GolferPendulumWidget(BasePendulumWidget):
 
         if self._result is None:
             self._draw_placeholder(painter)
-            painter.end()
             return
 
         self._draw_trail(painter)
@@ -229,10 +257,22 @@ class GolferPendulumWidget(BasePendulumWidget):
 
         self._draw_info(painter)
 
+        # Off-screen indicator
+        try:
+            current = self._result.positions_at(self._current_idx)
+            joint_points = [
+                (float(v[0]), float(v[1]))
+                for v in current.values()
+                if v is not None
+            ]
+            in_view, centroid = self._world_points_in_view(joint_points)
+            if not in_view:
+                self._draw_offscreen_indicator(painter, centroid)
+        except Exception:  # noqa: BLE001
+            pass
+
         if not self._gravity_on:
             self._draw_no_gravity_badge(painter)
-
-        painter.end()
 
     # ------------------------------------------------------------------
     # Golfer topology drawing

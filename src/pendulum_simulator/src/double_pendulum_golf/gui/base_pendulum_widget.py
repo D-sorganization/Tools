@@ -21,15 +21,16 @@ Closes DRY violation between PendulumWidget and GolferPendulumWidget.
 
 from __future__ import annotations
 
-from numba import jit
-
+import logging
 from abc import abstractmethod
 from collections import deque
 
 import numpy as np
-from PyQt6.QtCore import QPoint, QPointF, Qt
+from PyQt6.QtCore import QPoint, QPointF, QRectF, Qt
 from PyQt6.QtGui import QBrush, QColor, QFont, QMouseEvent, QPainter, QPen
 from PyQt6.QtWidgets import QWidget
+
+logger = logging.getLogger(__name__)
 
 
 class BasePendulumWidget(QWidget):
@@ -75,6 +76,20 @@ class BasePendulumWidget(QWidget):
         self._pan_y: float = 0.0
         self._drag_start: QPoint | None = None
         self._drag_pan_start: tuple[float, float] = (0.0, 0.0)
+
+        # Bulletproof view fitting (#anim-blank-fix)
+        # Trajectory bounding box in WORLD coordinates: (xmin, xmax, ymin, ymax).
+        # Set by `compute_and_store_trajectory_bbox()` (called from subclass
+        # set_simulation), used by auto_fit_view() and _compute_base_scale().
+        self._trajectory_bbox: tuple[float, float, float, float] | None = None
+        # Center of the world view, in world coordinates. When None, the
+        # widget falls back to the legacy "anchor at top of total length"
+        # behaviour driven by `_shoulder_y_fraction`.
+        self._view_center_world: tuple[float, float] | None = None
+        # Sticky flag: when True, every paint reapplies auto-fit. Cleared
+        # the moment the user pans, zooms, or rotates manually so user
+        # intent always wins, but reset_view()/double-click puts it back.
+        self._auto_fit_locked: bool = True
 
         # 3D rotation state (right-click drag)
         self._rotate_start: QPoint | None = None
@@ -249,11 +264,114 @@ class BasePendulumWidget(QWidget):
         self.update()
 
     def reset_view(self) -> None:
-        """Reset zoom and pan to default."""
+        """Reset zoom and pan, then auto-fit to the trajectory if loaded.
+
+        This is the canonical "I cannot find the system" recovery: it
+        clears any user pan/zoom/orbit, re-locks auto-fit, and forces a
+        fresh fit on the next paint. With or without simulation data the
+        result is always a sane, in-view default.
+        """
         self._zoom = 1.0
         self._pan_x = 0.0
         self._pan_y = 0.0
+        self._tilt_angle = 0.0
+        self._view_azimuth = 0.0
+        self._auto_fit_locked = True
+        # Force a fresh recompute on the next paint by clearing the
+        # cached center; the bbox itself stays so we don't pay to rescan.
+        self._view_center_world = None
         self.update()
+
+    def auto_fit_view(self) -> None:
+        """Compute pan/zoom so the entire trajectory bbox fits with margin.
+
+        Safe to call from any thread that holds the GUI lock. Idempotent.
+        Falls back to a centered default when no bbox is known.
+        """
+        # Reset interaction state so the fit is the only contributor.
+        self._zoom = 1.0
+        self._pan_x = 0.0
+        self._pan_y = 0.0
+        self._auto_fit_locked = True
+
+        bbox = self._trajectory_bbox
+        if bbox is None:
+            # No trajectory loaded yet — center the world origin in the
+            # widget so the placeholder + ground line are visible.
+            self._view_center_world = (0.0, 0.0)
+            self.update()
+            return
+
+        xmin, xmax, ymin, ymax = bbox
+        # Center the trajectory bbox; the paint pass picks the scale.
+        self._view_center_world = (0.5 * (xmin + xmax), 0.5 * (ymin + ymax))
+        self.update()
+
+    def compute_and_store_trajectory_bbox(
+        self,
+        sample_positions: list[dict[str, tuple[float, float]]],
+    ) -> None:
+        """Scan a list of per-frame joint dicts and cache the world bbox.
+
+        Subclasses call this from ``set_simulation`` so the next paint
+        and any subsequent ``auto_fit_view`` have a precomputed bbox.
+
+        Pre:  ``sample_positions`` is non-empty and every dict has at
+              least one (x, y) tuple.
+        Post: ``self._trajectory_bbox`` is set to a finite, non-degenerate
+              bbox, and ``auto_fit_view()`` has been called.
+        """
+        if not sample_positions:
+            self._trajectory_bbox = None
+            self.auto_fit_view()
+            return
+
+        xs: list[float] = []
+        ys: list[float] = []
+        # Always include the world origin (the standoff anchor) so the
+        # pivot is in view even if the joints swing far from it.
+        xs.append(0.0)
+        ys.append(0.0)
+        for pos in sample_positions:
+            for value in pos.values():
+                if value is None:
+                    continue
+                try:
+                    x, y = float(value[0]), float(value[1])
+                except (TypeError, ValueError, IndexError):
+                    continue
+                if not (np.isfinite(x) and np.isfinite(y)):
+                    continue
+                xs.append(x)
+                ys.append(y)
+
+        if len(xs) < 2:
+            self._trajectory_bbox = None
+            self.auto_fit_view()
+            return
+
+        xmin = min(xs)
+        xmax = max(xs)
+        ymin = min(ys)
+        ymax = max(ys)
+
+        # Pad degenerate dimensions so we never divide by zero in the
+        # scale computation. 0.5m of slack is well below pendulum reach.
+        if xmax - xmin < 1e-3:
+            xmax = xmin + 0.5
+        if ymax - ymin < 1e-3:
+            ymax = ymin + 0.5
+
+        self._trajectory_bbox = (xmin, xmax, ymin, ymax)
+        self.auto_fit_view()
+
+    def is_view_auto_fit(self) -> bool:
+        """Return True iff the view is in auto-fit mode (no manual pan/zoom)."""
+        return self._auto_fit_locked
+
+    def _release_auto_fit(self) -> None:
+        """Drop auto-fit lock — called from any user manipulation."""
+        self._auto_fit_locked = False
 
     # ------------------------------------------------------------------
     # Zoom / Pan — mouse events
@@ -276,6 +394,7 @@ class BasePendulumWidget(QWidget):
         self._pan_y = cursor_y - factor * (cursor_y - self._pan_y)
         self._zoom *= factor
         self._zoom = max(0.1, min(20.0, self._zoom))
+        self._release_auto_fit()
         self.update()
 
     def mousePressEvent(self, event: object) -> None:
@@ -306,6 +425,7 @@ class BasePendulumWidget(QWidget):
             delta = event.pos() - self._drag_start
             self._pan_x = self._drag_pan_start[0] + delta.x()
             self._pan_y = self._drag_pan_start[1] + delta.y()
+            self._release_auto_fit()
             self.update()
         elif self._rotate_start is not None:
             delta = event.pos() - self._rotate_start
@@ -315,6 +435,7 @@ class BasePendulumWidget(QWidget):
             # Clamp tilt to [-pi/2, pi/2]
             max_tilt = float(np.pi / 2)
             self._tilt_angle = max(-max_tilt, min(max_tilt, self._tilt_angle))
+            self._release_auto_fit()
             self.update()
 
     def mouseReleaseEvent(self, event: object) -> None:
@@ -348,40 +469,174 @@ class BasePendulumWidget(QWidget):
     def _compute_base_scale(self) -> float:
         """Compute base pixels_per_meter ignoring user zoom.
 
-        Post: result >= 30.0
+        When a trajectory bbox is available, the scale fits the bbox
+        into the widget with a 12 % margin on every side. Otherwise it
+        falls back to the legacy ``_get_total_length`` heuristic.
+
+        Post: result >= 30.0 (so the widget never collapses to nothing)
         """
+        margin = 0.88  # leave 12% padding around the bbox
+
+        bbox = self._trajectory_bbox
+        if bbox is not None:
+            xmin, xmax, ymin, ymax = bbox
+            world_w = max(xmax - xmin, 1e-3)
+            world_h = max(ymax - ymin, 1e-3)
+            usable_w = max(self.width(), 1) * margin
+            usable_h = max(self.height(), 1) * margin
+            w_scale = usable_w / world_w
+            h_scale = usable_h / world_h
+            return max(30.0, min(w_scale, h_scale))
+
         total_len = max(self._get_total_length(), 1e-6)
         usable_w = self.width() * 0.42
         usable_h = self.height() * 0.55
         w_scale = usable_w / total_len
         h_scale = usable_h / total_len
         result = max(30.0, min(w_scale, h_scale))
-        if not (result >= 30.0):
-            raise ValueError("DbC Blocked: Precondition failed.")
         return result
 
     def _world_to_pixel(self, x_world: float, y_world: float) -> QPointF:
         """Convert physics coords to widget pixels with 3D projection.
 
         Applies azimuth rotation (#1118) and tilt foreshortening (#1113).
+        When a ``_view_center_world`` is set (auto-fit mode), the world
+        is centered on it; otherwise the legacy anchor-at-top behaviour
+        is used so existing presets continue to look correct.
         """
         if not (x_world is not None):
             raise ValueError("x_world must be provided")
         base_ppm = self._pixels_per_meter
-        cx = self.width() / 2.0 + self._pan_x
-        cy = self.height() * self._shoulder_y_fraction() + self._pan_y
+
+        center = self._view_center_world
+        if center is not None:
+            cx = self.width() / 2.0 + self._pan_x
+            cy = self.height() / 2.0 + self._pan_y
+            x_local = x_world - center[0]
+            y_local = y_world - center[1]
+        else:
+            cx = self.width() / 2.0 + self._pan_x
+            cy = self.height() * self._shoulder_y_fraction() + self._pan_y
+            x_local = x_world
+            y_local = y_world
 
         cos_az = float(np.cos(self._view_azimuth))
         sin_az = float(np.sin(self._view_azimuth))
-        x_rot = x_world * cos_az
-        depth = x_world * sin_az
+        x_rot = x_local * cos_az
+        depth = x_local * sin_az
 
         cos_tilt = float(np.cos(self._tilt_angle))
-        y_proj = y_world * cos_tilt - depth * float(np.sin(self._tilt_angle))
+        y_proj = y_local * cos_tilt - depth * float(np.sin(self._tilt_angle))
 
         px = cx + x_rot * base_ppm
         py = cy - y_proj * base_ppm
         return QPointF(px, py)
+
+    # ------------------------------------------------------------------
+    # Off-screen detection / recovery overlay
+    # ------------------------------------------------------------------
+
+    def _world_points_in_view(
+        self, points: list[tuple[float, float]]
+    ) -> tuple[bool, QPointF]:
+        """Check if any of the given world points lies inside the widget.
+
+        Returns ``(any_visible, centroid_pixel)`` where the centroid is
+        the average pixel position of all the input points (used for
+        drawing the off-screen indicator arrow).
+        """
+        rect = self.rect()
+        n = len(points)
+        if n == 0:
+            return True, QPointF(rect.center())
+        sum_x = 0.0
+        sum_y = 0.0
+        any_visible = False
+        for x, y in points:
+            p = self._world_to_pixel(x, y)
+            sum_x += p.x()
+            sum_y += p.y()
+            if rect.contains(int(p.x()), int(p.y())):
+                any_visible = True
+        return any_visible, QPointF(sum_x / n, sum_y / n)
+
+    def _draw_offscreen_indicator(
+        self, painter: QPainter, system_centroid: QPointF
+    ) -> None:
+        """Draw a banner + arrow when the system is fully off-screen.
+
+        Always-visible recovery affordance: tells the user where to look
+        and offers double-click-to-fit. The user can never get into a
+        state where they cannot find the system.
+        """
+        rect = self.rect()
+        # Banner
+        banner_h = 28
+        banner_rect = QRectF(rect.left(), rect.top(), float(rect.width()), banner_h)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.setBrush(QBrush(QColor(180, 60, 60, 200)))
+        painter.drawRect(banner_rect)
+        painter.setPen(QColor(255, 240, 240))
+        painter.setFont(QFont("Sans", 10, QFont.Weight.Bold))
+        painter.drawText(
+            banner_rect,
+            Qt.AlignmentFlag.AlignCenter,
+            "⚠  System off-screen — double-click or press F to fit view",
+        )
+
+        # Arrow from widget center pointing toward the system centroid
+        from PyQt6.QtGui import QPolygonF
+
+        widget_center = QPointF(rect.center())
+        dx = system_centroid.x() - widget_center.x()
+        dy = system_centroid.y() - widget_center.y()
+        length = (dx * dx + dy * dy) ** 0.5
+        if length < 1.0:
+            return
+        nx = dx / length
+        ny = dy / length
+
+        # Clamp the arrow tip to the widget edge so it stays visible
+        margin = 36.0
+        max_x = max(margin, rect.width() - margin)
+        max_y = max(margin + banner_h, rect.height() - margin)
+        # Project from center along (nx, ny) until we hit the edge
+        scale_x = (max_x / 2.0) / max(abs(nx), 1e-6)
+        scale_y = (max_y / 2.0) / max(abs(ny), 1e-6)
+        arrow_len = max(40.0, min(scale_x, scale_y) - 20.0)
+        tip = QPointF(
+            widget_center.x() + nx * arrow_len,
+            widget_center.y() + ny * arrow_len,
+        )
+
+        # Draw shaft
+        painter.setPen(QPen(QColor(255, 220, 60), 4, Qt.PenStyle.SolidLine))
+        painter.drawLine(widget_center, tip)
+        # Draw arrowhead
+        head_len = 14.0
+        # Perpendicular for the arrow wings
+        px = -ny
+        py = nx
+        wing1 = QPointF(
+            tip.x() - nx * head_len + px * head_len * 0.6,
+            tip.y() - ny * head_len + py * head_len * 0.6,
+        )
+        wing2 = QPointF(
+            tip.x() - nx * head_len - px * head_len * 0.6,
+            tip.y() - ny * head_len - py * head_len * 0.6,
+        )
+        painter.setBrush(QBrush(QColor(255, 220, 60)))
+        painter.drawPolygon(QPolygonF([tip, wing1, wing2]))
+
+    def keyPressEvent(self, event: object) -> None:  # noqa: N802
+        """F → fit view; double-click also fits via mouseDoubleClickEvent."""
+        from PyQt6.QtGui import QKeyEvent
+
+        if isinstance(event, QKeyEvent) and event.key() == Qt.Key.Key_F:
+            self.reset_view()
+            event.accept()
+            return
+        super().keyPressEvent(event)  # type: ignore[misc]
 
     # ------------------------------------------------------------------
     # Shared drawing helpers
@@ -539,9 +794,14 @@ class BasePendulumWidget(QWidget):
         painter.setPen(QPen(QColor(160, 160, 160), 1))
         painter.drawEllipse(center, r_px, r_px)
 
-    @jit(nopython=True, fastmath=True)
     def _draw_trail(self, painter: QPainter) -> None:
-        """Draw Catmull-Rom smoothed tip trail with fade-in."""
+        """Draw Catmull-Rom smoothed tip trail with fade-in.
+
+        Note: this method must NOT be JIT-compiled — it operates on Qt
+        objects (QPainter, QColor, QPen) which numba cannot type. A prior
+        ``@jit(nopython=True)`` decorator here crashed the entire process
+        on the first paint after a simulation finished.
+        """
         if not (painter is not None):
             raise ValueError("painter must be provided")
         n = len(self._trail)

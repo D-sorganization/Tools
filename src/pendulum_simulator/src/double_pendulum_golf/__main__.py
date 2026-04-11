@@ -23,30 +23,24 @@ class _WheelBlockFilter(QObject):
 
     - Plain wheel on QComboBox/QSpinBox/QDoubleSpinBox: blocked (#1193)
     - Ctrl+Wheel anywhere: scales application font by ±1pt (#1147)
-    """
 
-    _MIN_FONT_PT = 6
-    _MAX_FONT_PT = 40
-    _default_font_pt: int | None = None
+    Font bounds and persistence are owned by ``MainWindow`` — this
+    filter delegates to it so the user cannot zoom past the supported
+    range and the value survives across launches via QSettings.
+    """
 
     def eventFilter(
         self, obj: QObject | None, event: QEvent | None
     ) -> bool:  # noqa: N802
         if event is not None and event.type() == QEvent.Type.Wheel:
             wheel: QWheelEvent = event  # type: ignore[assignment]
-            # Ctrl+Wheel → font zoom
+            # Ctrl+Wheel → font zoom (delegated to MainWindow for bounds + persist)
             if wheel.modifiers() & Qt.KeyboardModifier.ControlModifier:
+                from .gui.main_window import MainWindow
+
                 delta = wheel.angleDelta().y()
-                app = QApplication.instance()
-                if isinstance(app, QApplication):
-                    font = app.font()
-                    if self._default_font_pt is None:
-                        self._default_font_pt = font.pointSize()
-                    new_size = font.pointSize() + (1 if delta > 0 else -1)
-                    new_size = max(self._MIN_FONT_PT, min(self._MAX_FONT_PT, new_size))
-                    font.setPointSize(new_size)
-                    app.setFont(font)
-                    logging.getLogger(__name__).info("Font zoom: %dpt", new_size)
+                step = 1 if delta > 0 else -1
+                MainWindow.adjust_global_font_zoom(step)
                 event.accept()
                 return True
             # Plain wheel on value-input widgets → blocked
@@ -57,14 +51,9 @@ class _WheelBlockFilter(QObject):
 
     def reset_font(self) -> None:
         """Reset font to default size (Ctrl+0)."""
-        app = QApplication.instance()
-        if isinstance(app, QApplication) and self._default_font_pt is not None:
-            font = app.font()
-            font.setPointSize(self._default_font_pt)
-            app.setFont(font)
-            logging.getLogger(__name__).info(
-                "Font reset to %dpt", self._default_font_pt
-            )
+        from .gui.main_window import MainWindow
+
+        MainWindow.reset_global_font_zoom()
 
 
 _LOG_FORMAT = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
@@ -99,7 +88,9 @@ __version__ = "0.1.0"
 def main() -> None:
     # Handle --version flag before any GUI initialization
     if "--version" in sys.argv:
-        logger.debug("pendulum-simulator %s", __version__)
+        # Version goes to stdout (not the logger) so `--version` works
+        # without configuring logging and is captured by simple shells/CI.
+        print(f"pendulum-simulator {__version__}")
         sys.exit(0)
 
     _configure_logging()

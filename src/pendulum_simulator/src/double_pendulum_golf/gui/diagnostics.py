@@ -293,7 +293,7 @@ class DiagnosticsViewer(QDialog):
 
         # Header row
         header = QHBoxLayout()
-        title = QLabel("🔍 Diagnostics Log")
+        title = QLabel("Diagnostics Log")
         title.setFont(QFont("Sans", 13, QFont.Weight.Bold))
         title.setStyleSheet("color: #c0c0e0;")
         header.addWidget(title)
@@ -310,11 +310,11 @@ class DiagnosticsViewer(QDialog):
         header.addWidget(QLabel("Filter:"))
         header.addWidget(self._filter_combo)
 
-        btn_clear = QPushButton("🗑 Clear Log")
+        btn_clear = QPushButton("Clear Log")
         btn_clear.clicked.connect(self._on_clear)
         header.addWidget(btn_clear)
 
-        btn_refresh = QPushButton("🔄 Refresh")
+        btn_refresh = QPushButton("↻ Refresh")
         btn_refresh.clicked.connect(self._populate)
         header.addWidget(btn_refresh)
 
@@ -357,7 +357,7 @@ class DiagnosticsViewer(QDialog):
         footer.addWidget(self._log_path_label)
         footer.addStretch()
 
-        btn_copy = QPushButton("📋 Copy Details")
+        btn_copy = QPushButton("Copy Details")
         btn_copy.clicked.connect(self._copy_details)
         footer.addWidget(btn_copy)
 

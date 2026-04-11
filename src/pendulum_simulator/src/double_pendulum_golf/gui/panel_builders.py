@@ -825,18 +825,37 @@ def wire_toolstrip(main_window: Any) -> None:
     )
 
     # ── Model selection dropdown (#1149) ──────────────────────────
+    # When the user picks a different model from the dropdown, we
+    # switch the QTabWidget AND push the current toolstrip overlay
+    # state onto the new model's pendulum widget. Without that second
+    # step the new widget shows nothing until the user cycles every
+    # toggle (the original "mobility ellipsoid stays hidden" bug).
+    from .overlay_state import apply_toolstrip_overlay_state
+
+    def _sync_active_pendulum_overlays() -> None:
+        try:
+            pw = main_window._active_panel().pendulum
+        except (AttributeError, IndexError, RuntimeError):
+            return
+        apply_toolstrip_overlay_state(ts, pw)
+
     def _on_model_dropdown_changed(idx: int) -> None:
         main_window._tabs.blockSignals(True)
         main_window._tabs.setCurrentIndex(idx)
         main_window._tabs.blockSignals(False)
+        _sync_active_pendulum_overlays()
 
     def _on_tab_changed(idx: int) -> None:
         ts.cmb_model.blockSignals(True)
         ts.cmb_model.setCurrentIndex(idx)
         ts.cmb_model.blockSignals(False)
+        _sync_active_pendulum_overlays()
 
     ts.model_changed.connect(_on_model_dropdown_changed)
     main_window._tabs.currentChanged.connect(_on_tab_changed)
+    # Push the initial state to the panel that's visible at startup so
+    # users with a saved-state autoplay see overlays immediately.
+    _sync_active_pendulum_overlays()
 
     # ── Busy state and frame sync — only forward from the active panel ─
     # Guard each callback so non-active panels are silently ignored.
