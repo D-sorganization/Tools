@@ -20,14 +20,14 @@ from PyQt6.QtWidgets import (
     QApplication,
     QHBoxLayout,
     QProgressBar,
-    QScrollArea,
     QSplitter,
     QWidget,
 )
 
+from ..side_panel_tabs import SidePanelTabs
 from ._export_mixin import _SimulationExportMixin
 from ._lifecycle_mixin import _SimulationLifecycleMixin
-from ._worker import _SCROLL_STYLE, _SimViewer
+from ._worker import _SimViewer  # noqa: F401
 
 if TYPE_CHECKING:
     from ..controls_widget import ControlsWidget
@@ -41,6 +41,16 @@ class SimulationPanel(_SimulationLifecycleMixin, _SimulationExportMixin, QWidget
     """Reusable panel that hosts controls, pendulum, and matrix widgets."""
 
     ANIMATION_INTERVAL_MS = 16  # ~60 fps
+
+    # Tab labels — single source of truth so production and tests agree.
+    # Each label uses a BMP-range Unicode prefix (codepoint < U+1F300)
+    # so it renders correctly in the default font on Linux/WSL where
+    # color emoji fonts are not installed.
+    TAB_SETUP = "\u2699 Setup"  # U+2699 gear
+    TAB_MASS_MATRIX = "\u229e Mass Matrix"  # U+229E squared plus (matrix grid)
+    TAB_PLOTS = "\u223f Plots"  # U+223F sine wave (time series)
+    TAB_OPTIMIZER = "\u25ce Optimizer"  # U+25CE bullseye (target)
+    TAB_NOISE = "\u2744 Noise"  # U+2744 snowflake (random scatter)
 
     #: Emitted when ODE integration starts (background thread launched)
     sim_started = pyqtSignal()
@@ -97,56 +107,57 @@ class SimulationPanel(_SimulationLifecycleMixin, _SimulationExportMixin, QWidget
         self._setup_timer()
 
     def _build_ui(self) -> None:
+        """Build a 2-pane layout: pendulum graphic + side-panel tabs.
+
+        The pendulum widget is *always visible* on the left. Every other
+        panel (Setup, Mass Matrix, Plots, Optimizer, Noise) lives in the
+        ``SidePanelTabs`` container on the right. Adding new panels is a
+        one-liner — see ``set_perturbation_panel``.
+        """
         main_layout = QHBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
 
         splitter = QSplitter(Qt.Orientation.Horizontal)
 
-        # Wrap controls in a scroll area so it never clips on small heights
-        scroll = QScrollArea()
-        scroll.setWidget(self.controls)
-        scroll.setWidgetResizable(True)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        scroll.setMinimumWidth(280)
-        scroll.setMaximumWidth(380)
-        scroll.setStyleSheet(_SCROLL_STYLE)
-        splitter.addWidget(scroll)
-
+        # LEFT: pendulum widget (always visible)
         splitter.addWidget(cast("QWidget", self.pendulum))
-        splitter.addWidget(cast("QWidget", self.matrix))
 
-        # Use proportional sizes: compute from available screen width
+        # RIGHT: tabbed side panels
+        self._side_tabs = SidePanelTabs(settings_key=f"{self._settings_key}/active_tab")
+        self._side_tabs.add_panel(
+            self.TAB_SETUP,
+            self.controls,
+            tooltip="Configure simulation parameters and run controls",
+        )
+        self._side_tabs.add_panel(
+            self.TAB_MASS_MATRIX,
+            cast("QWidget", self.matrix),
+            tooltip="Real-time mass matrix and energy display",
+        )
+        if self.torque_history is not None:
+            self._side_tabs.add_panel(
+                self.TAB_PLOTS,
+                cast("QWidget", self.torque_history),
+                tooltip="Torque, energy, and force time-series plots",
+            )
+        if self.optimizer is not None:
+            self._side_tabs.add_panel(
+                self.TAB_OPTIMIZER,
+                cast("QWidget", self.optimizer),
+                tooltip="Gradient-free torque profile optimization",
+            )
+        splitter.addWidget(self._side_tabs)
+
+        # Pendulum graphic dominates the layout (~60-65 % of width)
         screen = QApplication.primaryScreen()
         sw = screen.availableGeometry().width() if screen else 1400
-        ctrl_w = min(320, int(sw * 0.20))
-        matrix_w = min(280, int(sw * 0.18))
-
-        if self.torque_history is not None:
-            splitter.addWidget(cast("QWidget", self.torque_history))
-            torque_w = min(260, int(sw * 0.16))
-            pend_w = sw - ctrl_w - matrix_w - torque_w - 20
-            splitter.setSizes([ctrl_w, pend_w, matrix_w, torque_w])
-            splitter.setStretchFactor(0, 0)
-            splitter.setStretchFactor(1, 3)
-            splitter.setStretchFactor(2, 1)
-            splitter.setStretchFactor(3, 1)
-        else:
-            pend_w = sw - ctrl_w - matrix_w - 20
-            splitter.setSizes([ctrl_w, pend_w, matrix_w])
-            splitter.setStretchFactor(0, 0)
-            splitter.setStretchFactor(1, 3)
-            splitter.setStretchFactor(2, 1)
-
-        # Add optimizer panel if provided (#1108, #1109, #1110)
-        if self.optimizer is not None:
-            opt_scroll = QScrollArea()
-            opt_scroll.setWidget(self.optimizer)
-            opt_scroll.setWidgetResizable(True)
-            opt_scroll.setMinimumWidth(200)
-            opt_scroll.setMaximumWidth(300)
-            opt_scroll.setStyleSheet(_SCROLL_STYLE)
-            splitter.addWidget(opt_scroll)
-            splitter.setStretchFactor(splitter.count() - 1, 0)
+        side_w = max(360, min(560, int(sw * 0.30)))
+        pend_w = max(400, sw - side_w - 20)
+        splitter.setSizes([pend_w, side_w])
+        splitter.setStretchFactor(0, 4)  # graphic dominant
+        splitter.setStretchFactor(1, 2)  # tabs hold their width
+        splitter.setCollapsible(0, False)  # never collapse the graphic
+        splitter.setCollapsible(1, False)
 
         main_layout.addWidget(splitter)
         self._splitter = splitter  # keep reference for save/restore
@@ -166,27 +177,33 @@ class SimulationPanel(_SimulationLifecycleMixin, _SimulationExportMixin, QWidget
         saved = settings.value(self._settings_key)
         if isinstance(saved, QByteArray):
             self._splitter.restoreState(saved)
+        # Restore the active tab last so the user lands where they left off
+        self._side_tabs.restore_state()
 
     def set_perturbation_panel(self, panel: QWidget) -> None:
-        """Attach a perturbation panel to the right side of the splitter.
+        """Attach a perturbation panel as a new tab in the side panel.
 
-        Must be called after construction but before the widget is shown.
+        Adds the Noise (Monte Carlo perturbation) tab to the right-hand
+        ``SidePanelTabs``. Must be called after construction.
+
+        Pre: ``panel`` is not None.
+        Post: ``self.perturbation_panel is panel`` and the Noise tab is
+              the last entry in ``self._side_tabs.panel_labels()``.
         """
         assert panel is not None, "perturbation panel must not be None"
         self.perturbation_panel = panel
-        scroll = QScrollArea()
-        scroll.setWidget(panel)
-        scroll.setWidgetResizable(True)
-        scroll.setMinimumWidth(200)
-        scroll.setMaximumWidth(320)
-        scroll.setStyleSheet(_SCROLL_STYLE)
-        self._splitter.addWidget(scroll)
-        self._splitter.setStretchFactor(self._splitter.count() - 1, 0)
+        self._side_tabs.add_panel(
+            self.TAB_NOISE,
+            panel,
+            tooltip="Monte Carlo noise injection and consistency analysis",
+        )
 
     def save_layout(self) -> None:
-        """Persist the current splitter positions to QSettings."""
+        """Persist splitter positions and active side-panel tab to QSettings."""
         settings = QSettings("D-sorganization", "PendulumSimulator")
         settings.setValue(self._settings_key, self._splitter.saveState())
+        if hasattr(self, "_side_tabs"):
+            self._side_tabs.save_state()
 
     def _connect_signals(self) -> None:
         self.controls.run_requested.connect(self._on_run)

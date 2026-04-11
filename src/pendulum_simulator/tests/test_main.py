@@ -6,6 +6,7 @@ global event filters like Ctrl+Wheel UI zooming.
 
 import logging
 import sys
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -49,8 +50,20 @@ class TestWheelBlockFilter:
         # However, mocking the instance might fail the isinstance check unless we patch QApplication itself.
         pass
 
-    def test_event_filter_ctrl_wheel_actual_app(self, qapp):
-        # qapp is provided by pytest-qt, giving a real QApplication
+    def test_event_filter_ctrl_wheel_actual_app(self, qapp) -> Any:
+        """Filter delegates Ctrl+wheel to MainWindow.adjust_global_font_zoom.
+
+        The bounded helper guarantees the new size is base + clamped offset,
+        so we assert against that contract instead of "old_size + 1" — which
+        was a brittle assumption that broke as soon as the offset hit MAX.
+        """
+        from PyQt6.QtCore import QSettings
+        from double_pendulum_golf.gui.main_window import MainWindow
+
+        # Reset the persisted offset so this test starts from a known state
+        QSettings("D-sorganization", "PendulumSimulator").setValue("font_zoom_pt", 0)
+        MainWindow._apply_offset_to_app_font(0)
+
         f = __main__._WheelBlockFilter()
 
         event = MagicMock()
@@ -58,15 +71,11 @@ class TestWheelBlockFilter:
         event.modifiers.return_value = Qt.KeyboardModifier.ControlModifier
         event.angleDelta().y.return_value = 120  # Zoom in
 
-        # Capture old size
-        old_size = qapp.font().pointSize()
-
         handled = f.eventFilter(None, event)
-
         assert handled is True
         event.accept.assert_called_once()
-        new_size = qapp.font().pointSize()
-        assert new_size == old_size + 1
+        # After one zoom-in step, the application font should be base + 1
+        assert qapp.font().pointSize() == MainWindow._FONT_BASE_PT + 1
 
     def test_event_filter_blocks_spinbox_wheel(self, qapp):
         from PyQt6.QtWidgets import QSpinBox
@@ -82,11 +91,24 @@ class TestWheelBlockFilter:
         assert handled is True
         event.ignore.assert_called_once()
 
-    def test_reset_font(self, qapp):
+    def test_reset_font(self, qapp) -> Any:
+        """Filter.reset_font delegates to MainWindow.reset_global_font_zoom.
+
+        The reset always restores the application font to the canonical
+        ``_FONT_BASE_PT``, never to whatever happened to be cached in the
+        filter at the time of the previous wheel event.
+        """
+        from double_pendulum_golf.gui.main_window import MainWindow
+
+        # Bump the font up first so we have something to reset from
+        MainWindow._apply_offset_to_app_font(MainWindow._FONT_OFFSET_MAX)
+        assert qapp.font().pointSize() == (
+            MainWindow._FONT_BASE_PT + MainWindow._FONT_OFFSET_MAX
+        )
+
         f = __main__._WheelBlockFilter()
-        f._default_font_pt = 12
         f.reset_font()
-        assert qapp.font().pointSize() == 12
+        assert qapp.font().pointSize() == MainWindow._FONT_BASE_PT
 
 
 # ---------------------------------------------------------------------------

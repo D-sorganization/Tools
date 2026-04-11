@@ -164,14 +164,14 @@ class FunctionGeneratorDialog(QDialog):
                 self._poly_widget = _PolyWidget(use_builtin_theme=False)
                 self._poly_widget.set_joints(self._joint_names)
                 self._poly_widget.polynomial_generated.connect(self._on_signal_applied)
-                tabs.addTab(self._poly_widget, "🎨 Design (Draw / Click / Equation)")
+                tabs.addTab(self._poly_widget, "Design (Draw / Click / Equation)")
 
             # Tab 2: Signal Processing (generate waveform → filter → fit → apply)
             if _HAS_SIGNAL_WIDGET and _SignalWidget is not None:
                 self._signal_widget = _SignalWidget(use_builtin_theme=False)
                 self._signal_widget.set_joints(self._joint_names)
                 self._signal_widget.signal_generated.connect(self._on_signal_applied)
-                tabs.addTab(self._signal_widget, "📊 Analyze (Waveforms / Filters)")
+                tabs.addTab(self._signal_widget, "∿ Analyze (Waveforms / Filters)")
 
             layout.addWidget(tabs, stretch=1)
         else:

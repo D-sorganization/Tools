@@ -17,7 +17,7 @@ Closes #1134: Font sizes increased for visibility
 from __future__ import annotations
 
 from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtGui import QFont
+from PyQt6.QtGui import QFont, QFontMetrics
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -30,6 +30,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+from .button_sizing import fit_button_to_text
 
 # ---------------------------------------------------------------------------
 # Stylesheet constants
@@ -175,25 +177,62 @@ def _hline() -> QFrame:
     return sep
 
 
-def _make_scale_slider(style: str, default: int = 10, max_val: int = 1000) -> QSlider:
-    """Create a compact scale slider (1–max_val, default=10 → 1.0×).
+def _make_scale_slider(
+    style: str,
+    default: int = 10,
+    max_val: int = 1000,
+    divisor: int = 10,
+) -> QSlider:
+    """Create a compact scale slider (1–max_val, default → 1.0×).
 
-    max_val=1000 → 0.1×…100× (force vectors, which can be very large)
-    max_val=100  → 0.1×…10×  (ellipsoids, more subtle visual scaling)
+    The ``divisor`` controls how raw integer values map to display scale:
+        scale = raw / divisor
+    so the slider can carry any range from sub-unity to many-times-unity:
+
+    - divisor=10,  default=10,  max_val=1000 → 0.1×…100×  (force vectors)
+    - divisor=100, default=100, max_val=1000 → 0.01×…10× (ellipsoids)
+
+    The divisor is stored as a Qt property on the slider so any code
+    that reads the slider's raw value can recover the display scale
+    without re-encoding the mapping.
+
+    Pre: ``style`` is non-None, ``divisor > 0``, ``default`` and
+         ``max_val`` are positive, ``default <= max_val``.
     """
     assert style is not None, "style must be provided"
+    assert divisor > 0, f"divisor must be > 0, got {divisor}"
+    assert max_val > 0 and default > 0 and default <= max_val, (
+        f"invalid slider bounds: default={default}, max_val={max_val}"
+    )
     s = QSlider(Qt.Orientation.Horizontal)
     s.setRange(1, max_val)
     s.setValue(default)
+    s.setProperty("scale_divisor", divisor)
     s.setStyleSheet(style)
     s.setFixedHeight(14)
     s.setMaximumWidth(160)
     return s
 
 
-def _fmt_scale(raw: int) -> str:
-    v = raw / 10.0
-    return f"{v:.0f}×" if v >= 10 else f"{v:.1f}×"
+def _slider_scale(slider: QSlider) -> float:
+    """Convert a slider's raw value to its display scale using ``scale_divisor``."""
+    divisor = slider.property("scale_divisor")
+    if not divisor:
+        divisor = 10
+    return float(slider.value()) / float(divisor)
+
+
+def _fmt_scale(value: float) -> str:
+    """Format a display scale for the inline label.
+
+    Switches between three precision modes so very small values stay
+    readable: ``0.01×``, ``0.5×``, ``12×``.
+    """
+    if value < 0.1:
+        return f"{value:.2f}×"
+    if value < 10:
+        return f"{value:.1f}×"
+    return f"{value:.0f}×"
 
 
 def _overlay_row(
@@ -321,6 +360,16 @@ class ToolStrip(QWidget):
             "QComboBox QAbstractItemView { background: #252540; color: #c0c0d8;"
             "  selection-background-color: #3b6eb0; }"
         )
+        # Make the combo wide enough to show the longest item without
+        # truncation. AdjustToContents lets it grow with the active label;
+        # the explicit minimum is the safety net for first-show layout.
+        self.cmb_model.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToContents)
+        _cmb_fm = self.cmb_model.fontMetrics()
+        _longest = max(
+            (self.cmb_model.itemText(i) for i in range(self.cmb_model.count())),
+            key=len,
+        )
+        self.cmb_model.setMinimumWidth(_cmb_fm.horizontalAdvance(_longest) + 40)
         self.cmb_model.currentIndexChanged.connect(self.model_changed.emit)
         layout.addWidget(self.cmb_model)
 
@@ -331,12 +380,14 @@ class ToolStrip(QWidget):
         self.btn_run.setStyleSheet(_BTN_RUN)
         self.btn_run.setToolTip("Run simulation")
         self.btn_run.clicked.connect(self.run_requested.emit)
+        fit_button_to_text(self.btn_run)
         layout.addWidget(self.btn_run)
 
         self.btn_reset = QPushButton("↺ Reset")
         self.btn_reset.setStyleSheet(_BTN_RESET)
         self.btn_reset.setToolTip("Reset to initial state")
         self.btn_reset.clicked.connect(self.reset_requested.emit)
+        fit_button_to_text(self.btn_reset)
         layout.addWidget(self.btn_reset)
 
         self.btn_play = QPushButton("▶ Play")
@@ -344,10 +395,19 @@ class ToolStrip(QWidget):
         self.btn_play.setStyleSheet(_BTN_PLAY)
         self.btn_play.setToolTip("Play / Pause animation")
         self.btn_play.toggled.connect(self._on_play_toggled)
+        # Play/Pause label toggles between "▶ Play" and "‖ Pause"; size
+        # the button to fit whichever label is wider so the click target
+        # never jumps when the user toggles it.
+        _play_fm = QFontMetrics(self.btn_play.font())
+        _play_min = max(
+            _play_fm.horizontalAdvance("▶ Play"),
+            _play_fm.horizontalAdvance("‖ Pause"),
+        )
+        self.btn_play.setMinimumWidth(_play_min + 24)
         layout.addWidget(self.btn_play)
 
         # Loop toggle
-        self.chk_loop = QCheckBox("🔁")
+        self.chk_loop = QCheckBox("↺")
         self.chk_loop.setToolTip("Loop animation")
         self.chk_loop.setStyleSheet(
             "QCheckBox{color:#8080b0;font-size:13px;spacing:2px;}"
@@ -389,45 +449,50 @@ class ToolStrip(QWidget):
         layout.addWidget(_vline())
 
         # Export buttons (#1141)
-        self.btn_export_csv = QPushButton("📄 Export CSV")
+        self.btn_export_csv = QPushButton("Export CSV")
         self.btn_export_csv.setStyleSheet(_BTN_SMALL)
         self.btn_export_csv.setToolTip("Export simulation data to CSV")
         self.btn_export_csv.clicked.connect(self.export_data_requested.emit)
+        fit_button_to_text(self.btn_export_csv)
         layout.addWidget(self.btn_export_csv)
 
-        self.btn_export_video = QPushButton("🎬 Export Video")
+        self.btn_export_video = QPushButton("Export Video")
         self.btn_export_video.setStyleSheet(_BTN_SMALL)
         self.btn_export_video.setToolTip("Export animation as video")
         self.btn_export_video.clicked.connect(self.export_video_requested.emit)
+        fit_button_to_text(self.btn_export_video)
         layout.addWidget(self.btn_export_video)
 
         layout.addWidget(_vline())
 
         # Help / Equations buttons (#1136, #1144)
-        self.btn_eom = QPushButton("📐 Equations of Motion")
+        self.btn_eom = QPushButton("Equations of Motion")
         self.btn_eom.setStyleSheet(_BTN_SMALL)
         self.btn_eom.setToolTip("Show Equations of Motion derivation")
         self.btn_eom.clicked.connect(self._show_eom_popup)
+        fit_button_to_text(self.btn_eom)
         layout.addWidget(self.btn_eom)
 
-        self.btn_mass_matrix = QPushButton("📊 Mass Matrix")
+        self.btn_mass_matrix = QPushButton("Mass Matrix")
         self.btn_mass_matrix.setStyleSheet(_BTN_SMALL)
         self.btn_mass_matrix.setToolTip("Show Mass Matrix explanation")
         self.btn_mass_matrix.clicked.connect(self._show_mass_matrix_popup)
+        fit_button_to_text(self.btn_mass_matrix)
         layout.addWidget(self.btn_mass_matrix)
 
-        self.btn_popout = QPushButton("📈 Pop-Out Chart")
+        self.btn_popout = QPushButton("∿ Pop-Out Chart")
         self.btn_popout.setStyleSheet(_BTN_SMALL)
         self.btn_popout.setToolTip(
             "Pop out current simulation data as a\ndetachable chart with regression fitting"
         )
         self.btn_popout.clicked.connect(self.popout_chart_requested.emit)
+        fit_button_to_text(self.btn_popout)
         layout.addWidget(self.btn_popout)
 
         layout.addWidget(_vline())
 
         # Diagnostics button
-        self.btn_diagnostics = QPushButton("🔍 Diagnostics")
+        self.btn_diagnostics = QPushButton("Diagnostics")
         self.btn_diagnostics.setStyleSheet(
             "QPushButton{background:#2a1a2a;color:#d0a0d0;border:1px solid #503060;"
             "border-radius:4px;padding:3px 10px;font-size:10px;font-weight:bold;}"
@@ -438,6 +503,7 @@ class ToolStrip(QWidget):
             "warnings, and system events for troubleshooting"
         )
         self.btn_diagnostics.clicked.connect(self._show_diagnostics)
+        fit_button_to_text(self.btn_diagnostics)
         layout.addWidget(self.btn_diagnostics)
 
     def _build_row1(self, layout: QHBoxLayout) -> None:
@@ -477,6 +543,7 @@ class ToolStrip(QWidget):
             "Reset zoom & pan to default\n(shortcut: double-click canvas)"
         )
         self.btn_reset_view.clicked.connect(self.reset_view_requested.emit)
+        fit_button_to_text(self.btn_reset_view)
         layout.addWidget(self.btn_reset_view)
 
         self._build_tools_group(layout)
@@ -548,7 +615,10 @@ class ToolStrip(QWidget):
         )
         self.chk_forces.toggled.connect(self.forces_toggled.emit)
 
-        self._sld_force = _make_scale_slider(_SLIDER_FORCE, default=10)
+        # Force vectors: divisor=10 → raw 1..1000 maps to 0.1×..100×
+        self._sld_force = _make_scale_slider(
+            _SLIDER_FORCE, default=10, max_val=1000, divisor=10
+        )
         self._sld_force.setToolTip("Force vector display scale (0.1× – 100×)")
         self._sld_force.valueChanged.connect(self._on_force_scale)
 
@@ -567,8 +637,10 @@ class ToolStrip(QWidget):
         )
         self.chk_mob.toggled.connect(self.mob_ellipsoid_toggled.emit)
 
-        self._sld_mob = _make_scale_slider(_SLIDER_MOB, default=10, max_val=100)
-        self._sld_mob.setToolTip("Mobility ellipsoid display scale (0.1× – 10×)")
+        # Mobility ellipsoids: divisor=100 → raw 1..1000 maps to 0.01×..10×
+        # so the user can shrink them to 1/100th of unity when joints crowd.
+        self._sld_mob = _make_scale_slider(_SLIDER_MOB, default=100, max_val=1000, divisor=100)
+        self._sld_mob.setToolTip("Mobility ellipsoid display scale (0.01× – 10×)")
         self._sld_mob.valueChanged.connect(self._on_mob_scale)
 
         self._lbl_mob_scale = QLabel("1.0×")
@@ -586,8 +658,11 @@ class ToolStrip(QWidget):
         )
         self.chk_force_ell.toggled.connect(self.force_ellipsoid_toggled.emit)
 
-        self._sld_force_ell = _make_scale_slider(_SLIDER_FELL, default=10, max_val=100)
-        self._sld_force_ell.setToolTip("Force ellipsoid display scale (0.1× – 10×)")
+        # Force ellipsoids: divisor=100 → raw 1..1000 maps to 0.01×..10×
+        self._sld_force_ell = _make_scale_slider(
+            _SLIDER_FELL, default=100, max_val=1000, divisor=100
+        )
+        self._sld_force_ell.setToolTip("Force ellipsoid display scale (0.01× – 10×)")
         self._sld_force_ell.valueChanged.connect(self._on_force_ell_scale)
 
         self._lbl_force_ell_scale = QLabel("1.0×")
@@ -764,7 +839,7 @@ class ToolStrip(QWidget):
     # ------------------------------------------------------------------
 
     def _on_play_toggled(self, checked: bool) -> None:
-        self.btn_play.setText("⏸ Pause" if checked else "▶ Play")
+        self.btn_play.setText("‖ Pause" if checked else "▶ Play")
         self.play_toggled.emit(checked)
 
     def _on_frame_slider_changed(self, val: int) -> None:
@@ -775,16 +850,19 @@ class ToolStrip(QWidget):
         self.frame_scrubbed.emit(val)
 
     def _on_force_scale(self, raw: int) -> None:
-        self._lbl_force_scale.setText(_fmt_scale(raw))
-        self.force_scale_changed.emit(raw / 10.0)
+        scale = _slider_scale(self._sld_force)
+        self._lbl_force_scale.setText(_fmt_scale(scale))
+        self.force_scale_changed.emit(scale)
 
     def _on_mob_scale(self, raw: int) -> None:
-        self._lbl_mob_scale.setText(_fmt_scale(raw))
-        self.mob_scale_changed.emit(raw / 10.0)
+        scale = _slider_scale(self._sld_mob)
+        self._lbl_mob_scale.setText(_fmt_scale(scale))
+        self.mob_scale_changed.emit(scale)
 
     def _on_force_ell_scale(self, raw: int) -> None:
-        self._lbl_force_ell_scale.setText(_fmt_scale(raw))
-        self.force_ell_scale_changed.emit(raw / 10.0)
+        scale = _slider_scale(self._sld_force_ell)
+        self._lbl_force_ell_scale.setText(_fmt_scale(scale))
+        self.force_ell_scale_changed.emit(scale)
 
     def _on_azimuth_slider(self, deg: int) -> None:
         """Emit azimuth rotation in radians from slider value (#1146)."""

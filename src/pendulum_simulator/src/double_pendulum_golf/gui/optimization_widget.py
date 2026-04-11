@@ -481,7 +481,7 @@ class OptimizationWidget(QWidget):
         layout.addWidget(title)
 
         backend_lbl = QLabel(
-            "🦀 Rust parallel batch enabled" if _HAS_NATIVE_BATCH else "🐍 Python sequential"
+            "[Rust] parallel batch enabled" if _HAS_NATIVE_BATCH else "[Python] sequential"
         )
         backend_lbl.setStyleSheet(
             f"color:{'#60c060' if _HAS_NATIVE_BATCH else '#c0a060'};font-size:9px;"
@@ -583,7 +583,7 @@ class OptimizationWidget(QWidget):
         self._btn_run.clicked.connect(self._on_run)
         btn_row.addWidget(self._btn_run)
 
-        self._btn_cancel = QPushButton("⏹ Cancel")
+        self._btn_cancel = QPushButton("■ Cancel")
         self._btn_cancel.setEnabled(False)
         self._btn_cancel.clicked.connect(self._on_cancel)
         btn_row.addWidget(self._btn_cancel)
@@ -638,15 +638,15 @@ class OptimizationWidget(QWidget):
         if self._chk_warm.isChecked() and self._last_best_coeffs is not None:
             if len(self._last_best_coeffs) == n_params:
                 warm_start = self._last_best_coeffs.copy()
-                self._log.append("🔄 Warm-starting from previous best solution")
+                self._log.append("↻ Warm-starting from previous best solution")
 
         self._log.clear()
         self._log.append(f"Starting {method} optimization...")
         self._log.append(f"  Params: {n_params}, Generations: {n_iters}, Pop: {pop_size}")
         if _HAS_NATIVE_BATCH and self._chk_native.isChecked():
-            self._log.append("  Backend: 🦀 Rust parallel (rayon)")
+            self._log.append("  Backend: [Rust] parallel (rayon)")
         else:
-            self._log.append("  Backend: 🐍 Python sequential")
+            self._log.append("  Backend: [Python] sequential")
         self._progress.setValue(0)
         self._convergence_history.clear()
         self._btn_run.setEnabled(False)

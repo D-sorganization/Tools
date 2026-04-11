@@ -233,3 +233,232 @@ def test_catmull_rom_smooth():
     pts = [(0.0, 0.0), (1.0, 1.0), (2.0, 2.0), (3.0, 3.0)]
     smoothed = BasePendulumWidget._catmull_rom_smooth(pts, n_sub=2)
     assert len(smoothed) > len(pts)
+
+
+def test_3d_joint_cap(qapp):
+    """Test the 3D joint cap rendering method."""
+    w = DummyPendulumWidget()
+    painter = MagicMock(spec=QPainter)
+    w.resize(400, 300)
+
+    from PyQt6.QtGui import QColor
+
+    # Normal operation
+    w._draw_3d_joint_cap(painter, QPointF(100, 100), 8.0, QColor(255, 0, 0))
+    assert painter.drawEllipse.called
+
+    # DbC: radius must be positive
+    import pytest
+
+    with pytest.raises(ValueError, match="positive"):
+        w._draw_3d_joint_cap(painter, QPointF(100, 100), 0, QColor(255, 0, 0))
+    with pytest.raises(ValueError, match="positive"):
+        w._draw_3d_joint_cap(painter, QPointF(100, 100), -5, QColor(255, 0, 0))
+
+
+def test_shadow_projection(qapp):
+    """Test shadow projection onto ground plane."""
+    w = DummyPendulumWidget()
+    painter = MagicMock(spec=QPainter)
+    w.resize(400, 300)
+
+    # Too few points (no-op)
+    w._draw_shadow_projection(painter, [(0.0, 0.0)], -1.0)
+    painter.drawLine.assert_not_called()
+
+    # Normal shadow projection
+    points = [(0.0, 0.0), (0.5, -0.5), (1.0, -1.0)]
+    w._draw_shadow_projection(painter, points, -2.0)
+    assert painter.drawLine.called
+
+
+def test_export_image_dbc(qapp):
+    """Test DbC on export_image dimensions."""
+    w = DummyPendulumWidget()
+    w.resize(400, 300)
+
+    import pytest
+
+    with pytest.raises(ValueError, match="positive"):
+        w.export_image("test.png", width=0, height=100)
+    with pytest.raises(ValueError, match="positive"):
+        w.export_image("test.png", width=100, height=-1)
+
+
+def test_export_image_png(qapp, tmp_path):
+    """Test PNG image export creates a file."""
+    w = DummyPendulumWidget()
+    w.resize(400, 300)
+
+    out_path = str(tmp_path / "test_export.png")
+    w.export_image(out_path, width=800, height=600)
+
+    import os
+
+    assert os.path.exists(out_path)
+    assert os.path.getsize(out_path) > 0
+
+
+# ----------------------------------------------------------------------
+# Bulletproof view-fitting regression tests
+# ----------------------------------------------------------------------
+
+
+def test_auto_fit_default_state(qapp):
+    """Fresh widget with no trajectory still produces a valid view."""
+    w = DummyPendulumWidget()
+    w.resize(800, 600)
+
+    assert w._trajectory_bbox is None
+    assert w.is_view_auto_fit() is True
+
+    # auto_fit_view on an empty widget must not crash and must center
+    w.auto_fit_view()
+    assert w._view_center_world == (0.0, 0.0)
+    assert w._zoom == 1.0
+    assert w._pan_x == 0.0
+    assert w._pan_y == 0.0
+
+
+def test_compute_and_store_trajectory_bbox(qapp):
+    """Bbox computation centers the view on the trajectory midpoint."""
+    w = DummyPendulumWidget()
+    w.resize(800, 600)
+
+    samples = [
+        {"a": (1.0, 2.0), "b": (3.0, 4.0)},
+        {"a": (1.5, 2.5), "b": (4.0, 5.0)},
+        {"a": (2.0, 3.0), "b": (5.0, 6.0)},
+    ]
+    w.compute_and_store_trajectory_bbox(samples)
+
+    bbox = w._trajectory_bbox
+    assert bbox is not None
+    xmin, xmax, ymin, ymax = bbox
+    # Origin (0,0) is always included as the standoff anchor
+    assert xmin == 0.0
+    assert xmax == 5.0
+    assert ymin == 0.0
+    assert ymax == 6.0
+    # Center is the bbox midpoint
+    assert w._view_center_world == (2.5, 3.0)
+    # Auto-fit lock is engaged
+    assert w.is_view_auto_fit() is True
+
+
+def test_auto_fit_handles_degenerate_bbox(qapp):
+    """Single-point trajectory is padded so divide-by-zero never happens."""
+    w = DummyPendulumWidget()
+    w.resize(800, 600)
+
+    w.compute_and_store_trajectory_bbox([{"a": (1.0, 1.0)}])
+    bbox = w._trajectory_bbox
+    assert bbox is not None
+    xmin, xmax, ymin, ymax = bbox
+    # Origin is always included → xmin/ymin = 0
+    assert xmin == 0.0
+    assert ymin == 0.0
+    # The bbox (0..1) for both dimensions is non-degenerate so no padding kicks in
+    assert xmax >= 1.0
+    assert ymax >= 1.0
+
+
+def test_auto_fit_filters_non_finite_coords(qapp):
+    """NaN/inf joint positions are skipped, not propagated into the bbox."""
+    import math
+
+    w = DummyPendulumWidget()
+    w.resize(800, 600)
+
+    samples = [
+        {"a": (1.0, 2.0), "bad": (math.nan, 0.0)},
+        {"a": (3.0, 4.0), "worse": (0.0, math.inf)},
+    ]
+    w.compute_and_store_trajectory_bbox(samples)
+    bbox = w._trajectory_bbox
+    assert bbox is not None
+    xmin, xmax, ymin, ymax = bbox
+    # All four should be finite
+    for v in (xmin, xmax, ymin, ymax):
+        assert math.isfinite(v)
+
+
+def test_user_pan_releases_auto_fit_lock(qapp):
+    """Manually panning drops the auto-fit flag so the user's intent wins."""
+    w = DummyPendulumWidget()
+    w.resize(800, 600)
+    w.compute_and_store_trajectory_bbox([{"a": (1.0, 1.0), "b": (2.0, 2.0)}])
+    assert w.is_view_auto_fit() is True
+
+    # Simulate a wheel event
+    from PyQt6.QtCore import QPointF as _QPF, QPoint as _QP
+    from PyQt6.QtGui import QWheelEvent as _QWE
+
+    wheel = _QWE(
+        _QPF(100, 100),
+        _QPF(100, 100),
+        _QP(0, 120),
+        _QP(0, 120),
+        Qt.MouseButton.NoButton,
+        Qt.KeyboardModifier.NoModifier,
+        Qt.ScrollPhase.NoScrollPhase,
+        False,
+    )
+    w.wheelEvent(wheel)
+    assert w.is_view_auto_fit() is False
+
+
+def test_reset_view_restores_auto_fit(qapp):
+    """reset_view() always brings back the canonical in-view state."""
+    w = DummyPendulumWidget()
+    w.resize(800, 600)
+    w.compute_and_store_trajectory_bbox([{"a": (1.0, 1.0), "b": (2.0, 2.0)}])
+
+    # Force the view into a wildly off state
+    w._zoom = 0.1
+    w._pan_x = 9999.0
+    w._pan_y = -9999.0
+    w._tilt_angle = 1.0
+    w._view_azimuth = 1.0
+    w._auto_fit_locked = False
+
+    w.reset_view()
+
+    assert w.is_view_auto_fit() is True
+    assert w._zoom == 1.0
+    assert w._pan_x == 0.0
+    assert w._pan_y == 0.0
+    assert w._tilt_angle == 0.0
+    assert w._view_azimuth == 0.0
+
+
+def test_world_points_in_view_detects_offscreen(qapp):
+    """The off-screen detector flips True/False at the widget edge."""
+    w = DummyPendulumWidget()
+    w.resize(800, 600)
+    w.compute_and_store_trajectory_bbox([{"a": (0.0, 0.0)}])
+
+    in_view, _ = w._world_points_in_view([(0.0, 0.0)])
+    assert in_view is True
+
+    # Pan the world far away from the widget
+    w._auto_fit_locked = False
+    w._pan_x = 5000.0
+    w._pan_y = 5000.0
+    in_view2, _ = w._world_points_in_view([(0.0, 0.0)])
+    assert in_view2 is False
+
+
+def test_compute_base_scale_uses_bbox_when_available(qapp):
+    """Base scale picks up the bbox so the trajectory fits with margin."""
+    w = DummyPendulumWidget()
+    w.resize(800, 600)
+    # Without bbox: legacy fallback path
+    w._trajectory_bbox = None
+    legacy = w._compute_base_scale()
+    assert legacy >= 30.0
+
+    # With a small bbox: should produce a larger scale (more pixels per meter)
+    w.compute_and_store_trajectory_bbox([{"a": (-0.1, -0.1), "b": (0.1, 0.1)}])
+    bbox_scale = w._compute_base_scale()
+    assert bbox_scale > legacy

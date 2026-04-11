@@ -1,5 +1,6 @@
 """Tests for MainWindow."""
 
+from typing import Any
 from unittest.mock import MagicMock, patch
 from PyQt6.QtCore import Qt, QSettings
 from PyQt6.QtGui import QWheelEvent
@@ -19,17 +20,17 @@ def test_main_window_init(qapp, monkeypatch):
     w.close()
 
 
-def test_wheel_event_zoom(qapp):
+def test_wheel_event_zoom(qapp) -> Any:
+    """Ctrl+wheel zoom respects offset bounds and never escapes them."""
     w = MainWindow()
-    w._font_zoom_pt = 10  # Manually set to safe default
+    w._font_zoom_pt = 0  # Start from the canonical zero offset
 
-    # Not a wheel event
+    # Not a wheel event — should be a no-op
     w.wheelEvent(object())
 
-    # Wheel event with Ctrl (Zoom in) - using a real QWheelEvent to avoid TypeError on super
     from PyQt6.QtCore import QPointF, QPoint
 
-    we_ctrl = QWheelEvent(
+    we_ctrl_in = QWheelEvent(
         QPointF(0, 0),
         QPointF(0, 0),
         QPoint(0, 120),
@@ -39,12 +40,6 @@ def test_wheel_event_zoom(qapp):
         Qt.ScrollPhase.NoScrollPhase,
         False,
     )
-
-    old_font_zoom = w._font_zoom_pt
-    w.wheelEvent(we_ctrl)
-    assert w._font_zoom_pt > old_font_zoom
-
-    # Zoom out
     we_ctrl_out = QWheelEvent(
         QPointF(0, 0),
         QPointF(0, 0),
@@ -55,17 +50,25 @@ def test_wheel_event_zoom(qapp):
         Qt.ScrollPhase.NoScrollPhase,
         False,
     )
+
+    # One step in raises offset by 1
+    old = w._font_zoom_pt
+    w.wheelEvent(we_ctrl_in)
+    assert w._font_zoom_pt == old + 1
+
+    # One step out brings it back
     w.wheelEvent(we_ctrl_out)
-    assert w._font_zoom_pt == old_font_zoom
+    assert w._font_zoom_pt == old
 
-    # Ensure min/max bounds are covered (max is 24, min is 8-10)
+    # Hard upper bound: scrolling up forever stops at OFFSET_MAX
     for _ in range(50):
-        w.wheelEvent(we_ctrl_out)  # zoom out a lot
-    assert w._font_zoom_pt >= -10
+        w.wheelEvent(we_ctrl_in)
+    assert w._font_zoom_pt == MainWindow._FONT_OFFSET_MAX
 
+    # Hard lower bound: scrolling down forever stops at OFFSET_MIN
     for _ in range(50):
-        w.wheelEvent(we_ctrl)
-    assert w._font_zoom_pt <= 24
+        w.wheelEvent(we_ctrl_out)
+    assert w._font_zoom_pt == MainWindow._FONT_OFFSET_MIN
 
     w.close()
 
@@ -150,9 +153,7 @@ def test_popout_chart_with_result_dialog_accepted(qapp, monkeypatch):
 
         # mock extract_series
         mock_extract = MagicMock(side_effect=[([1], "X", "m"), ([2], "Y", "m")])
-        monkeypatch.setattr(
-            "double_pendulum_golf.data_extractor.extract_series", mock_extract
-        )
+        monkeypatch.setattr("double_pendulum_golf.data_extractor.extract_series", mock_extract)
 
         # mock PopOutChart
         mock_chart_class = MagicMock()
@@ -195,9 +196,7 @@ def test_popout_chart_with_result_data_error(qapp, monkeypatch):
         def mock_extract(*args):
             raise KeyError("bad")
 
-        monkeypatch.setattr(
-            "double_pendulum_golf.data_extractor.extract_series", mock_extract
-        )
+        monkeypatch.setattr("double_pendulum_golf.data_extractor.extract_series", mock_extract)
 
         mock_msg = MagicMock()
         monkeypatch.setattr("PyQt6.QtWidgets.QMessageBox.warning", mock_msg)
