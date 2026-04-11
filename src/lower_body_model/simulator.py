@@ -151,7 +151,9 @@ class LowerBodySimulator:
         )
         return self.hip_rotation_target
 
-    def apply_hip_rotation_target(self, time_sec: float | None = None) -> dict[str, float]:
+    def apply_hip_rotation_target(
+        self, time_sec: float | None = None
+    ) -> dict[str, float]:
         """Apply the configured hip target to both hip sockets without per-side duplication."""
         if self.hip_rotation_target is None:
             raise ValueError("No hip rotation target configured")
@@ -161,7 +163,9 @@ class LowerBodySimulator:
         incline_deg = self.hip_rotation_target.incline_degrees
 
         for side in ("r", "l"):
-            self.data.qpos[self.jnt_qpos_idx[f"{side}_hip_z"]] = np.radians(rotation_deg)
+            self.data.qpos[self.jnt_qpos_idx[f"{side}_hip_z"]] = np.radians(
+                rotation_deg
+            )
             self.data.qpos[self.jnt_qpos_idx[f"{side}_hip_x"]] = np.radians(incline_deg)
 
         mujoco.mj_forward(self.model, self.data)
@@ -343,7 +347,9 @@ class LowerBodySimulator:
         }
         if self.hip_rotation_target is not None:
             diagnostics["hip_rotation_target"] = {
-                "rotation_deg": self.hip_rotation_target.rotation_degrees_at(self.data.time),
+                "rotation_deg": self.hip_rotation_target.rotation_degrees_at(
+                    self.data.time
+                ),
                 "incline_deg": self.hip_rotation_target.incline_degrees,
             }
         return diagnostics

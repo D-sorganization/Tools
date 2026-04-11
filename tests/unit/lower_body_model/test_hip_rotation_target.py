@@ -53,12 +53,12 @@ def test_simulator_applies_target_to_both_hip_sockets() -> None:
 
     assert applied == {"rotation_deg": -45.0, "incline_deg": 15.0}
     for side in ("r", "l"):
-        assert simulator.data.qpos[simulator.jnt_qpos_idx[f"{side}_hip_z"]] == pytest.approx(
-            np.radians(-45.0)
-        )
-        assert simulator.data.qpos[simulator.jnt_qpos_idx[f"{side}_hip_x"]] == pytest.approx(
-            np.radians(15.0)
-        )
+        assert simulator.data.qpos[
+            simulator.jnt_qpos_idx[f"{side}_hip_z"]
+        ] == pytest.approx(np.radians(-45.0))
+        assert simulator.data.qpos[
+            simulator.jnt_qpos_idx[f"{side}_hip_x"]
+        ] == pytest.approx(np.radians(15.0))
 
 
 def test_simulator_steps_with_configured_target_history() -> None:
