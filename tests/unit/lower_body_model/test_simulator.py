@@ -1,3 +1,4 @@
+import mujoco
 import numpy as np
 import pytest
 
@@ -137,3 +138,78 @@ def test_compute_diagnostics(simulator: LowerBodySimulator) -> None:
 
     diag_later = simulator.compute_diagnostics()
     assert float(diag_later["time_sec"]) > float(diag["time_sec"])
+
+
+def test_compute_pelvis_kinematics_reflects_non_zero_rotation(
+    simulator: LowerBodySimulator,
+) -> None:
+    """Regression test: the rotation-matrix branch must produce real angles.
+
+    Previously `compute_pelvis_kinematics` unconditionally zeroed roll/pitch/yaw
+    after the rotmat branch, so only t=0 looked correct. We rotate the pelvis
+    quaternion to a known yaw of ~30 degrees about Z and assert the readout.
+    """
+    half = np.radians(15.0)
+    simulator.data.qpos[3] = np.cos(half)  # qw
+    simulator.data.qpos[4] = 0.0  # qx
+    simulator.data.qpos[5] = 0.0  # qy
+    simulator.data.qpos[6] = np.sin(half)  # qz
+
+    mujoco.mj_forward(simulator.model, simulator.data)
+
+    kinematics = simulator.compute_pelvis_kinematics()
+    assert kinematics["yaw"] == pytest.approx(30.0, abs=0.5)
+    assert kinematics["pitch"] == pytest.approx(0.0, abs=0.5)
+    assert kinematics["roll"] == pytest.approx(0.0, abs=0.5)
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"hip_anterior_tilt": -120.0},
+        {"knee_flexion": -1.0},
+        {"knee_flexion": 200.0},
+        {"foot_angle": 120.0},
+    ],
+)
+def test_setup_initial_pose_raises_value_error_on_out_of_range(
+    simulator: LowerBodySimulator, kwargs: dict[str, float]
+) -> None:
+    """DbC preconditions must raise ValueError, not AssertionError."""
+    with pytest.raises(ValueError):
+        simulator.setup_initial_pose(**kwargs)
+
+
+def test_setup_initial_pose_raises_type_error_on_non_numeric(
+    simulator: LowerBodySimulator,
+) -> None:
+    with pytest.raises(TypeError):
+        simulator.setup_initial_pose(hip_anterior_tilt="thirty")  # type: ignore[arg-type]
+
+
+def test_inverse_kinematics_updates_target_on_success(
+    simulator: LowerBodySimulator,
+) -> None:
+    """On IK success the stability target should reflect the new qpos."""
+    simulator.setup_initial_pose()
+    original_target = (
+        simulator.qpos_target.copy() if simulator.qpos_target is not None else None
+    )
+    pos = simulator.data.qpos[0:3].copy()
+    quat = simulator.data.qpos[3:7].copy()
+
+    converged = simulator.inverse_kinematics(pos, quat, max_iters=50)
+
+    assert converged is True
+    assert simulator.qpos_target is not None
+    if original_target is not None:
+        assert not np.array_equal(simulator.qpos_target, np.zeros_like(original_target))
+
+
+def test_inverse_kinematics_rejects_bad_shapes(
+    simulator: LowerBodySimulator,
+) -> None:
+    with pytest.raises(ValueError):
+        simulator.inverse_kinematics(np.zeros(2), np.array([1.0, 0.0, 0.0, 0.0]))
+    with pytest.raises(ValueError):
+        simulator.inverse_kinematics(np.zeros(3), np.zeros(3))
