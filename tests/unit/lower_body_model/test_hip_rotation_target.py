@@ -70,3 +70,22 @@ def test_simulator_steps_with_configured_target_history() -> None:
     assert simulator.history
     diagnostics = simulator.compute_diagnostics()
     assert diagnostics["hip_rotation_target"]["rotation_deg"] <= 0.0
+
+
+def test_history_frame_exposes_hip_rotation_target_diagnostics() -> None:
+    simulator = LowerBodySimulator(build_lower_body_xml())
+    target = simulator.configure_hip_rotation_target(
+        duration_sec=2.0, incline_degrees=15.0, sample_count=5
+    )
+
+    simulator.step()
+
+    frame = simulator.history[-1]
+    history_diag = simulator.get_history_diagnostics(0)
+
+    assert frame["hip_rotation_target"] is not None
+    assert history_diag["time_sec"] == pytest.approx(frame["time"])
+    assert history_diag["hip_rotation_target"]["rotation_deg"] == pytest.approx(
+        target.rotation_degrees_at(frame["time"])
+    )
+    assert history_diag["hip_rotation_target"]["incline_deg"] == pytest.approx(15.0)
