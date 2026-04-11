@@ -35,10 +35,22 @@ class LowerBodySimulator:
         self.kd_stability = 0.0
 
         # Simulation history for scrubbing (QPOS, QVEL, TIME)
-        self.history: list[dict[str, np.ndarray | float]] = []
+        self.history: list[dict[str, Any]] = []
         self.max_history_length = 5000
 
         mujoco.mj_forward(self.model, self.data)
+
+    def _current_hip_rotation_target_diagnostics(
+        self, time_sec: float
+    ) -> dict[str, float] | None:
+        """Return the configured hip rotation target diagnostics for a sample time."""
+        if self.hip_rotation_target is None:
+            return None
+
+        return {
+            "rotation_deg": self.hip_rotation_target.rotation_degrees_at(time_sec),
+            "incline_deg": self.hip_rotation_target.incline_degrees,
+        }
 
     def setup_initial_pose(
         self,
@@ -347,13 +359,11 @@ class LowerBodySimulator:
             "grf": grf,
             "joint_torques": joint_torques,
         }
-        if self.hip_rotation_target is not None:
-            diagnostics["hip_rotation_target"] = {
-                "rotation_deg": self.hip_rotation_target.rotation_degrees_at(
-                    self.data.time
-                ),
-                "incline_deg": self.hip_rotation_target.incline_degrees,
-            }
+        hip_rotation_target = self._current_hip_rotation_target_diagnostics(
+            self.data.time
+        )
+        if hip_rotation_target is not None:
+            diagnostics["hip_rotation_target"] = hip_rotation_target
         return diagnostics
 
     def analyze_induced_acceleration(
@@ -527,6 +537,9 @@ class LowerBodySimulator:
                 "qpos": self.data.qpos.copy(),
                 "qvel": self.data.qvel.copy(),
                 "ctrl": self.data.ctrl.copy(),
+                "hip_rotation_target": self._current_hip_rotation_target_diagnostics(
+                    self.data.time
+                ),
             }
         )
 
@@ -544,6 +557,18 @@ class LowerBodySimulator:
         self.data.qvel[:] = frame["qvel"]
         self.data.ctrl[:] = frame["ctrl"]
         mujoco.mj_forward(self.model, self.data)
+
+    def get_history_diagnostics(self, index: int) -> dict[str, Any]:
+        """Return playback diagnostics for a cached history frame."""
+        if not self.history or index < 0 or index >= len(self.history):
+            raise IndexError("History frame index out of range")
+
+        frame = self.history[index]
+        diagnostics: dict[str, Any] = {
+            "time_sec": float(frame["time"]),
+            "hip_rotation_target": frame["hip_rotation_target"],
+        }
+        return diagnostics
 
     def clear_history(self) -> None:
         """Empties execution memory logs."""
