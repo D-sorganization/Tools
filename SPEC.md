@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.37                                     |
-| **Last Spec Update**    | 2026-04-10                                 |
+| **Spec Version**        | 1.1.41                                     |
+| **Last Spec Update**    | 2026-04-11                                 |
 
 ## 2. Purpose & Mission
 
@@ -148,6 +148,7 @@ Tools/
 | F6  | FastAPI web interfaces              | 🔄     | RESTful API for programmatic access to tools                        |
 | F7  | MATLAB scientific tools             | ✅     | Integration with MATLAB code and wrappers                           |
 | F8  | Fleet theme system                  | ✅     | Consistent theming across all PyQt6 GUIs                            |
+| F9  | Lower-body hip rotation target      | ✅     | Deterministic inclined-plane golf hip rotation profile with both-socket simulator application |
 
 ### API / Interface Contract
 
@@ -448,6 +449,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 2026-04-11 | 1.1.41  | Added a full reset control to the lower-body PyQt panel that stops playback, clears history, returns MuJoCo time to zero, preserves loaded golf hip rotation targets, and reapplies the target pose at `t=0`. |
+| 2026-04-11 | 1.1.40  | Added `tools.shared.python.model_generation.editor` compatibility exports (including `TextEditor` alias) to support removing duplicate model editor implementations in downstream repos that consume Tools as a dependency. |
+| 2026-04-11 | 1.1.39  | Extended lower-body simulator history playback diagnostics so cached frames expose the configured inclined-plane hip rotation target for scrub-based analysis and verification. |
+| 2026-04-11 | 1.1.38  | Added the lower-body inclined-plane hip rotation target profile with deterministic sampling, DbC validation, both-socket simulator application, and diagnostics/history coverage for the first golf lower-body rotation slice. |
 | 2026-03-28 | 1.0.0   | Initial specification                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 2026-03-29 | 1.0.1   | Document performance improvement in DataChart downsampling algorithm                                                                                                                                                                                                                                                                                                                                                                                   |
 | 2026-03-30 | 1.0.2   | A-N assessment remediation: LoD refactoring in convert_tools_icon.py, launch.py, launch_signal_toolkit.py, verify_launcher.py; DbC input validation added to launch_tool, bootstrap, migrate_file, \_print_environment_info, \_check_launcher_file, \_print_recommendations, \_on_poly_generated; docstrings added to **init** and missing functions in setup_dev.py, remove_broken_scripts.py, migrate_print_to_logging.py, launch_signal_toolkit.py. |
@@ -494,7 +499,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-09 | 1.1.35  | Added a shared provider-pack manifest for the pendulum simulator under `src/pendulum_simulator`, plus a repo-local validator and regression tests that keep the manifest aligned with the real package entry point, working directory, Python path, icon asset, and launcher metadata required for future UpstreamDrift shared-launch integration. |
 | 2026-04-09 | 1.1.34  | Wrapped DataTableView, PlotView, and AnalyticsSuite in `React.memo`, and memoized activeSignals with `useMemo` to prevent expensive visualization re-renders on unrelated UI state changes. |
 | 2026-04-10 | 1.1.37  | Add explicit focus-visible styles to the interactive buttons (Upload New Video, Play/Pause, Mute/Unmute) within the `VideoPlayer` component for improved keyboard navigation visibility. |
-| 2026-04-11 | 1.1.38  | Fast Custom Formula Evaluation using single-pass iterations instead of chained `.map()` and bypassing the object spread operator `{...row}` overhead. |
 ---
 
 <!--
