@@ -68,57 +68,17 @@ def build_lower_body_xml(
 {pelvis_geoms}
 
                 <!-- RIGHT LEG -->
-                <body name="r_thigh" pos="0 -{hip_offset} -0.05">
-                    <joint name="r_hip_x" type="hinge" axis="1 0 0" range="-90 90"/>
-                    <joint name="r_hip_y" type="hinge" axis="0 1 0" range="-90 90"/>
-                    <joint name="r_hip_z" type="hinge" axis="0 0 1" range="-90 90"/>
-                    <geom type="ellipsoid" size="0.08 0.08 {thigh_length / 2}" pos="0 0 -{thigh_length / 2}" mass="{thigh_mass}" material="matgeom"/>
-                    <body name="r_calf" pos="0 0 -{thigh_length}">
-                        <joint name="r_knee" type="hinge" axis="0 1 0" range="0 150"/>
-                        <geom type="ellipsoid" size="0.06 0.06 {calf_length / 2}" pos="0 0 -{calf_length / 2}" mass="{calf_mass}" material="matgeom"/>
-                        <body name="r_foot" pos="0 0 -{calf_length}">
-                            <joint name="r_ankle_x" type="hinge" axis="1 0 0" range="-30 30"/>
-                            <joint name="r_ankle_y" type="hinge" axis="0 1 0" range="-30 30"/>
-                            <geom name="r_foot_geom" type="ellipsoid" size="0.13 0.05 0.04" pos="0.06 0 -0.04" mass="{foot_mass}" material="matfoot" condim="3"/>
-                            <site name="r_foot_center" type="sphere" size="0.01" pos="0.06 0 -0.04" rgba="1 0 0 1"/>
-                        </body>
-                    </body>
-                </body>
+{_build_leg_xml("r", hip_offset, thigh_length, calf_length, thigh_mass, calf_mass, foot_mass)}
 
                 <!-- LEFT LEG -->
-                <body name="l_thigh" pos="0 {hip_offset} -0.05">
-                    <joint name="l_hip_x" type="hinge" axis="1 0 0" range="-90 90"/>
-                    <joint name="l_hip_y" type="hinge" axis="0 1 0" range="-90 90"/>
-                    <joint name="l_hip_z" type="hinge" axis="0 0 1" range="-90 90"/>
-                    <geom type="ellipsoid" size="0.08 0.08 {thigh_length / 2}" pos="0 0 -{thigh_length / 2}" mass="{thigh_mass}" material="matgeom"/>
-                    <body name="l_calf" pos="0 0 -{thigh_length}">
-                        <joint name="l_knee" type="hinge" axis="0 1 0" range="0 150"/>
-                        <geom type="ellipsoid" size="0.06 0.06 {calf_length / 2}" pos="0 0 -{calf_length / 2}" mass="{calf_mass}" material="matgeom"/>
-                        <body name="l_foot" pos="0 0 -{calf_length}">
-                            <joint name="l_ankle_x" type="hinge" axis="1 0 0" range="-30 30"/>
-                            <joint name="l_ankle_y" type="hinge" axis="0 1 0" range="-30 30"/>
-                            <geom name="l_foot_geom" type="ellipsoid" size="0.13 0.05 0.04" pos="0.06 0 -0.04" mass="{foot_mass}" material="matfoot" condim="3"/>
-                            <site name="l_foot_center" type="sphere" size="0.01" pos="0.06 0 -0.04" rgba="1 0 0 1"/>
-                        </body>
-                    </body>
-                </body>
+{_build_leg_xml("l", hip_offset, thigh_length, calf_length, thigh_mass, calf_mass, foot_mass)}
             </body>
         </worldbody>
 
         <actuator>
-            <motor name="act_r_hip_x" joint="r_hip_x" gear="1" ctrllimited="true" ctrlrange="-500 500"/>
-            <motor name="act_r_hip_y" joint="r_hip_y" gear="1" ctrllimited="true" ctrlrange="-500 500"/>
-            <motor name="act_r_hip_z" joint="r_hip_z" gear="1" ctrllimited="true" ctrlrange="-500 500"/>
-            <motor name="act_r_knee" joint="r_knee" gear="1" ctrllimited="true" ctrlrange="-500 500"/>
-            <motor name="act_r_ankle_x" joint="r_ankle_x" gear="1" ctrllimited="true" ctrlrange="-500 500"/>
-            <motor name="act_r_ankle_y" joint="r_ankle_y" gear="1" ctrllimited="true" ctrlrange="-500 500"/>
+{_build_leg_actuators_xml("r")}
 
-            <motor name="act_l_hip_x" joint="l_hip_x" gear="1" ctrllimited="true" ctrlrange="-500 500"/>
-            <motor name="act_l_hip_y" joint="l_hip_y" gear="1" ctrllimited="true" ctrlrange="-500 500"/>
-            <motor name="act_l_hip_z" joint="l_hip_z" gear="1" ctrllimited="true" ctrlrange="-500 500"/>
-            <motor name="act_l_knee" joint="l_knee" gear="1" ctrllimited="true" ctrlrange="-500 500"/>
-            <motor name="act_l_ankle_x" joint="l_ankle_x" gear="1" ctrllimited="true" ctrlrange="-500 500"/>
-            <motor name="act_l_ankle_y" joint="l_ankle_y" gear="1" ctrllimited="true" ctrlrange="-500 500"/>
+{_build_leg_actuators_xml("l")}
         </actuator>
 
         <sensor>
@@ -136,6 +96,64 @@ def _validate_positive_float(name: str, value: float) -> None:
         raise TypeError(f"{name} must be a real number, got {type(value).__name__}")
     if value <= 0.0:
         raise ValueError(f"{name} must be strictly positive, got {value}")
+
+
+def _build_leg_xml(
+    side: str,
+    hip_offset: float,
+    thigh_length: float,
+    calf_length: float,
+    thigh_mass: float,
+    calf_mass: float,
+    foot_mass: float,
+) -> str:
+    """Return the MJCF fragment for one leg (thigh -> calf -> foot).
+
+    ``side`` is ``"r"`` or ``"l"``. The right leg is placed at ``-hip_offset``
+    on the body Y axis and the left at ``+hip_offset``; everything else is
+    identical, so this helper is the single source of truth for leg
+    geometry, joint axes, joint ranges, masses, and naming.
+    """
+    if side not in ("r", "l"):
+        raise ValueError(f"side must be 'r' or 'l', got {side!r}")
+    y_sign = "-" if side == "r" else ""
+    return (
+        f'                <body name="{side}_thigh" pos="0 {y_sign}{hip_offset} -0.05">\n'
+        f'                    <joint name="{side}_hip_x" type="hinge" axis="1 0 0" range="-90 90"/>\n'
+        f'                    <joint name="{side}_hip_y" type="hinge" axis="0 1 0" range="-90 90"/>\n'
+        f'                    <joint name="{side}_hip_z" type="hinge" axis="0 0 1" range="-90 90"/>\n'
+        f'                    <geom type="ellipsoid" size="0.08 0.08 {thigh_length / 2}" pos="0 0 -{thigh_length / 2}" mass="{thigh_mass}" material="matgeom"/>\n'
+        f'                    <body name="{side}_calf" pos="0 0 -{thigh_length}">\n'
+        f'                        <joint name="{side}_knee" type="hinge" axis="0 1 0" range="0 150"/>\n'
+        f'                        <geom type="ellipsoid" size="0.06 0.06 {calf_length / 2}" pos="0 0 -{calf_length / 2}" mass="{calf_mass}" material="matgeom"/>\n'
+        f'                        <body name="{side}_foot" pos="0 0 -{calf_length}">\n'
+        f'                            <joint name="{side}_ankle_x" type="hinge" axis="1 0 0" range="-30 30"/>\n'
+        f'                            <joint name="{side}_ankle_y" type="hinge" axis="0 1 0" range="-30 30"/>\n'
+        f'                            <geom name="{side}_foot_geom" type="ellipsoid" size="0.13 0.05 0.04" pos="0.06 0 -0.04" mass="{foot_mass}" material="matfoot" condim="3"/>\n'
+        f'                            <site name="{side}_foot_center" type="sphere" size="0.01" pos="0.06 0 -0.04" rgba="1 0 0 1"/>\n'
+        f"                        </body>\n"
+        f"                    </body>\n"
+        f"                </body>"
+    )
+
+
+def _build_leg_actuators_xml(side: str) -> str:
+    """Return the six motor declarations for one leg (hip x/y/z, knee, ankle x/y)."""
+    if side not in ("r", "l"):
+        raise ValueError(f"side must be 'r' or 'l', got {side!r}")
+    joints = (
+        f"{side}_hip_x",
+        f"{side}_hip_y",
+        f"{side}_hip_z",
+        f"{side}_knee",
+        f"{side}_ankle_x",
+        f"{side}_ankle_y",
+    )
+    return "\n".join(
+        f'            <motor name="act_{joint}" joint="{joint}" gear="1" '
+        f'ctrllimited="true" ctrlrange="-500 500"/>'
+        for joint in joints
+    )
 
 
 # Anatomical pelvis marker geometry.

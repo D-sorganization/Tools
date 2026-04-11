@@ -110,6 +110,49 @@ def test_pelvis_mass_unchanged_by_anatomical_geoms() -> None:
     )
 
 
+def test_leg_helper_produces_symmetric_bilateral_model() -> None:
+    """DRY refactor must preserve symmetric left/right leg structure.
+
+    Regression guard for _build_leg_xml: both sides must declare the same
+    joint set, body set, actuator set, geom set, and site set. Only the
+    side-prefix and Y-offset sign should differ.
+    """
+    xml = build_lower_body_xml()
+    model = mujoco.MjModel.from_xml_string(xml)
+
+    def names_by_prefix(obj_type: int, count: int, prefix: str) -> set[str]:
+        names: set[str] = set()
+        for i in range(count):
+            n = mujoco.mj_id2name(model, obj_type, i)
+            if n is not None and n.startswith(prefix):
+                names.add(n[len(prefix) :])
+        return names
+
+    for obj_type, count in (
+        (mujoco.mjtObj.mjOBJ_JOINT, model.njnt),
+        (mujoco.mjtObj.mjOBJ_BODY, model.nbody),
+        (mujoco.mjtObj.mjOBJ_ACTUATOR, model.nu),
+        (mujoco.mjtObj.mjOBJ_GEOM, model.ngeom),
+        (mujoco.mjtObj.mjOBJ_SITE, model.nsite),
+    ):
+        r_names = names_by_prefix(obj_type, count, "r_")
+        l_names = names_by_prefix(obj_type, count, "l_")
+        assert r_names == l_names, (
+            f"obj_type={obj_type}: mismatch r={r_names} l={l_names}"
+        )
+
+
+def test_builder_total_body_and_joint_counts() -> None:
+    """Seven bodies (pelvis + thigh/calf/foot per side), 12 actuators, 13 joints."""
+    xml = build_lower_body_xml()
+    model = mujoco.MjModel.from_xml_string(xml)
+    # nbody includes the world body, so expect 8.
+    assert model.nbody == 8, f"expected 8 bodies, got {model.nbody}"
+    assert model.nu == 12, f"expected 12 actuators, got {model.nu}"
+    # 1 freejoint + 12 leg hinges = 13 joints.
+    assert model.njnt == 13, f"expected 13 joints, got {model.njnt}"
+
+
 def test_pelvis_asis_markers_rotate_with_non_zero_yaw() -> None:
     """Rotating the pelvis must move the ASIS markers, proving tilt reads visually."""
     import numpy as np
