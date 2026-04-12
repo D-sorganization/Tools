@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from notes.models import RecycledNoteItem
 
+
 class TestRecycledNoteItem:
     def test_init_sets_attributes(self):
         item = RecycledNoteItem(

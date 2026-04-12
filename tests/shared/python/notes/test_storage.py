@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 from notes.storage import NotesStorage
-from notes.models import RecycledNoteItem
+
 
 class TestNotesStorage:
     def test_save_and_load_roundtrip(self, tmp_path: Path):
