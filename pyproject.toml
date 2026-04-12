@@ -101,6 +101,7 @@ dev = [
 urdf-gen = "model_generation.cli:main"
 generate-pid = "programmatic_pid.cli:main"
 dwsim-model = "dwsim_model.__main__:main"
+mypy-autofix = "tools.mypy_autofix_agent:main"
 
 [project.urls]
 Homepage = "https://github.com/D-sorganization/Tools"

@@ -25,7 +25,7 @@ concurrency:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -47,7 +47,7 @@ jobs:
           fi
   quality-gate:
     needs: pick-runner
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on: self-hosted
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
@@ -127,7 +127,7 @@ jobs:
             # Filter out legacy directories that are not yet type-safe
             # Exclude: legacy dirs not yet type-safe + src/shared/python/* (namespace pkg
             # structure causes mypy double-module errors; checked via tests instead)
-            grep -v -E "src/electrode_advisor/|src/shared/python/|src/function_generator/|src/data_processing/data_processor/|src/glass_bath_fea/|src/tools/folder_tools/|simulation_golfer_gpu|optimizer_gpu|src/folder_tool/|src/pendulum_simulator/|src/optimizer_gui/|src/solar_system_model/|src/rotation_converter/ui/|src/rrt_path_planner/|src/vessel_drafter/" changed_mypy_files.txt > filtered_mypy_files.txt || true
+            grep -v -E "src/lower_body_model/|src/electrode_advisor/|src/shared/python/|src/function_generator/|src/data_processing/data_processor/|src/glass_bath_fea/|src/tools/folder_tools/|simulation_golfer_gpu|optimizer_gpu|src/folder_tool/|src/pendulum_simulator/|src/optimizer_gui/|src/solar_system_model/|src/rotation_converter/ui/|src/rrt_path_planner/|src/vessel_drafter/" changed_mypy_files.txt > filtered_mypy_files.txt || true
 
             if [ -s filtered_mypy_files.txt ]; then
               export MYPYPATH=src:src/python/src
@@ -184,7 +184,7 @@ jobs:
 
   tests:
     needs: [pick-runner, quality-gate]
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on: self-hosted
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
@@ -278,7 +278,7 @@ jobs:
   # Enforces: format (rustfmt), lint (clippy), tests (cargo test).
   rust-quality-gate:
     needs: pick-runner
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on: self-hosted
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6

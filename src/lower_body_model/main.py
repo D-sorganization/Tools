@@ -28,7 +28,7 @@ def main() -> None:
     sim = LowerBodySimulator(xml)
 
     # Initialize posture and set stability targets
-    sim.setup_initial_pose(hip_anterior_tilt=30.0, knee_flexion=120.0, foot_angle=20.0)
+    sim.setup_initial_pose(hip_anterior_tilt=20.0, knee_flexion=30.0, foot_angle=20.0)
 
     if args.demo_iaa:
         logger.info(
