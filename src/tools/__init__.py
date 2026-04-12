@@ -1,6 +1,15 @@
 """Tools package initialization."""
 
-from utils.logging_utils import setup_logging
+from __future__ import annotations
 
-# Expose setup_logging at package level
+from typing import Any
+
+
+def setup_logging(*args: Any, **kwargs: Any) -> Any:
+    """Proxy to the shared logging helper without importing it at package load time."""
+    from utils.logging_utils import setup_logging as _setup_logging
+
+    return _setup_logging(*args, **kwargs)
+
+
 __all__ = ["setup_logging"]
