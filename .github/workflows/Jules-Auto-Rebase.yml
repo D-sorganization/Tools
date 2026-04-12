@@ -61,7 +61,6 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.BOT_PAT || secrets.RUNNER_CHECK_TOKEN }}
-          FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}
 
       - name: Configure Git
         run: |
@@ -71,7 +70,6 @@ jobs:
       - name: Process PRs Behind Main
         env:
           GH_TOKEN: ${{ secrets.BOT_PAT || secrets.RUNNER_CHECK_TOKEN }}
-          FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}
         run: |
           echo "## Auto-Rebase Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY

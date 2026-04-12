@@ -185,7 +185,6 @@ jobs:
         if: ${{ fromJSON(steps.scan.outputs.coverage_value) < 50 }}
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
-          FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}
           COVERAGE: ${{ steps.scan.outputs.coverage }}
         run: |
           # Check if issue already exists

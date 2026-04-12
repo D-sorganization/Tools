@@ -85,7 +85,6 @@ jobs:
           repository: ${{ matrix.downstream.repo }}
           path: ${{ matrix.downstream.path }}
           token: ${{ secrets.RUNNER_CHECK_TOKEN }}
-          FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}
 
       - name: Set up Python
         if: steps.checkout_downstream.outcome == 'success'

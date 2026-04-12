@@ -47,7 +47,6 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN || secrets.GITHUB_TOKEN }}
-          FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}
           RUNNER_OWNER: D-sorganization
           RUNNER_LABEL: d-sorg-fleet
           RUNNER_QUEUE_THRESHOLD: "12"
@@ -191,7 +190,6 @@ jobs:
         id: collect
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
-          FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}
         run: |
           mkdir -p .github/review_comments
           mkdir -p docs/review_archive
@@ -228,7 +226,6 @@ jobs:
         id: process
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
-          FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}
           ARCHIVE_ONLY: ${{ inputs.archive_only || 'false' }}
         run: |
           # Write Python script to temp file to avoid YAML heredoc issues
@@ -445,7 +442,6 @@ jobs:
       - name: Commit Archive
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
-          FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

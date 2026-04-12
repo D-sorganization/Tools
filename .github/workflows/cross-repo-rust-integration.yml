@@ -94,7 +94,6 @@ jobs:
           path: _downstream
           sparse-checkout: ${{ matrix.downstream.sparse }}
           token: ${{ secrets.RUNNER_CHECK_TOKEN }}
-          FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}
 
       - name: Install Rust toolchain
         if: steps.checkout_downstream.outcome == 'success'

@@ -55,7 +55,6 @@ jobs:
       - name: Supersede and Close PRs
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
-          FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}
           PR_BODY: ${{ github.event.pull_request.body }}
           CONSOLIDATED_PR_NUM: ${{ github.event.pull_request.number }}
         run: |
