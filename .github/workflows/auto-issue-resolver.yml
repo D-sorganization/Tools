@@ -589,4 +589,3 @@ jobs:
               labels: ['report', 'auto-generated']
             });
 
-FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}

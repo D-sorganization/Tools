@@ -86,4 +86,3 @@ jobs:
             git push
           fi
 
-FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}

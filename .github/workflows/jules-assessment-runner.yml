@@ -229,4 +229,3 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "An issue has been created for AI agent review." >> $GITHUB_STEP_SUMMARY
 
-FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}

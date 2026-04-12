@@ -68,4 +68,3 @@ jobs:
       - name: Validate topology policy
         run: python3 scripts/check_repo_topology.py
 
-FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}

@@ -267,4 +267,3 @@ jobs:
     uses: ./.github/workflows/Jules-Documentation-Auditor.yml
     secrets: inherit
 
-FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}

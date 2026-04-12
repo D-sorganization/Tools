@@ -176,4 +176,3 @@ jobs:
           echo "- Downstream: ${{ matrix.downstream.repo }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- Skipped: workflow token could not checkout the downstream repository." >> "$GITHUB_STEP_SUMMARY"
 
-FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}

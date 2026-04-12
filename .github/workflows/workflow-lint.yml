@@ -91,4 +91,3 @@ jobs:
       - name: Run actionlint
         run: actionlint -color -shellcheck ./scripts/actionlint_shellcheck.sh -pyflakes=
 
-FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}
