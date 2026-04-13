@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import { Calculator, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import type { Statistics } from '../types';
 
@@ -14,9 +13,7 @@ function formatNumber(value: number): string {
   return value.toFixed(4);
 }
 
-// ⚡ Bolt: Optimize rendering by memoizing StatisticsPanel to prevent re-renders when parent App.tsx state changes
-// Performance impact: Eliminates unnecessary re-renders of the heavy statistics table when navigating UI tabs
-export const StatisticsPanel = memo(function StatisticsPanel({ statistics, selectedSignals }: StatisticsPanelProps) {
+export function StatisticsPanel({ statistics, selectedSignals }: StatisticsPanelProps) {
   if (selectedSignals.length === 0 || Object.keys(statistics).length === 0) {
     return (
       <div className="card">
@@ -89,6 +86,6 @@ export const StatisticsPanel = memo(function StatisticsPanel({ statistics, selec
       </div>
     </div>
   );
-});
+}
 
 export default StatisticsPanel;
