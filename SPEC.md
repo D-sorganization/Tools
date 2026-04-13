@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.51                                     |
+| **Spec Version**        | 1.1.52                                     |
 | **Last Spec Update**    | 2026-04-13                                 |
 
 ## 2. Purpose & Mission
@@ -449,7 +449,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-04-13 | 1.1.51  | Added visually hidden `sr-only` span before the raw timer text in `AudioRecorder.tsx` to provide screen reader context and added `aria-hidden` to purely decorative pulsing red dot. |
+| 2026-04-13 | 1.1.52  | Added visually hidden `sr-only` span before the raw timer text in `AudioRecorder.tsx` to provide screen reader context and added `aria-hidden` to purely decorative pulsing red dot. |
 | 2026-04-13 | 1.1.50  | Added `tools.shared.python.model_generation.editor` compatibility namespace so downstream repos can import the text editor via `tools.shared.python` without duplicating the module; added `-p no:xvfb` to pytest addopts so the test suite runs on headless self-hosted runners that lack Xvfb; applied ruff formatting fixes across GUI stylesheets and multiline string literals. |
 | 2026-04-12 | 1.1.49  | Replace remaining `print()` calls with `logging` across `src/` modules and disable xvfb pytest plugin to fix CI timeout on headless runners. |
 | 2026-04-12 | 1.1.47  | Added the shared `tools.mypy_autofix_agent` module and `mypy-autofix` console entry point so downstream fleet repositories can call one maintained mypy autofix implementation instead of carrying duplicated script copies; kept `tools.setup_logging` lazy so CLI startup does not import optional heavy dependencies.                                                                                                                                                                                                                                            |
@@ -508,6 +508,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-09 | 1.1.35  | Added a shared provider-pack manifest for the pendulum simulator under `src/pendulum_simulator`, plus a repo-local validator and regression tests that keep the manifest aligned with the real package entry point, working directory, Python path, icon asset, and launcher metadata required for future UpstreamDrift shared-launch integration.                                                                                                                                                                                                                  |
 | 2026-04-09 | 1.1.34  | Wrapped DataTableView, PlotView, and AnalyticsSuite in `React.memo`, and memoized activeSignals with `useMemo` to prevent expensive visualization re-renders on unrelated UI state changes.                                                                                                                                                                                                                                                                                                                                                                         |
 | 2026-04-10 | 1.1.37  | Add explicit focus-visible styles to the interactive buttons (Upload New Video, Play/Pause, Mute/Unmute) within the `VideoPlayer` component for improved keyboard navigation visibility.                                                                                                                                                                                                                                                                                                                                                                            |
+| 2026-04-12 | 1.1.48  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
 
 ---
 
@@ -537,5 +538,4 @@ Active development with stable core, continuous tool expansion, and web API in p
 - PlotView WebGL rendering uses pre-allocated `Float64Array` buffers and single-pass loops instead of `data.map()`, eliminating O(N) intermediate array allocations for large datasets.
 - Pearson correlation matrix computations utilize a single-pass loop algorithm, calculating sums concurrently to drastically reduce iteration overhead compared to two-pass implementations, while carefully mitigating numerical instability via clamping.
 - Recharts component props in `AnalyticsSuite` are memoized using `useMemo` hooks to provide stable references and prevent expensive internal re-renders.
-| 2026-04-13 | 1.1.38  | Added `React.memo` to `SignalList` and `StatisticsPanel` to prevent heavy presentation component re-renders when parent UI state changes. |
-| 2026-04-12 | 1.1.49  | Replace remaining `print()` calls with `logging` across `src/` modules and disable xvfb pytest plugin to fix CI timeout on headless runners. |
+- Exponential and power trendline calculations use pre-allocated arrays and single-pass loops instead of functional chaining to minimize GC pauses.
