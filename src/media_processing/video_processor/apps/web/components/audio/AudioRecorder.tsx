@@ -158,8 +158,9 @@ export default function AudioRecorder({
         <h3 className="text-sm font-medium text-gray-700">Audio Commentary</h3>
         {isRecording && (
           <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" aria-hidden="true" />
             <span className="text-sm text-gray-600">
+              <span className="sr-only">Recording time: </span>
               {formatTime(recordingTime)}
             </span>
           </div>
