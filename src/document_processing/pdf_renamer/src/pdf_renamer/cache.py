@@ -15,8 +15,7 @@ class ResultCache:
 
     def _initialize_database(self) -> None:
         with sqlite3.connect(self.db_path) as conn:
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE IF NOT EXISTS results (
                     sha256 TEXT PRIMARY KEY,
                     file_path TEXT,
@@ -28,8 +27,7 @@ class ResultCache:
                     timestamp DATETIME,
                     error TEXT
                 )
-                """
-            )
+                """)
 
     def get(self, sha256: str) -> TitleResult | None:
         try:

@@ -1,7 +1,6 @@
 """
 Lower Body Model - PyQt6/PyQt6 GUI Launcher
 """
-
 # mypy: ignore-errors
 
 import logging
