@@ -41,3 +41,7 @@
 ## 2026-04-06 - [Visually Hidden File Inputs and Focus]
 **Learning:** Components that use a click-forwarding container around a visually hidden (`sr-only`) `<input type="file">` become inaccessible to keyboard navigation because the hidden input receives focus but has no visible area to display a focus ring. This creates a "focus trap" where users tab, the focus seemingly disappears, and they don't know what is active.
 **Action:** Always add `focus-within` styles (e.g., `focus-within:ring-2`) to the outer container of the hidden file input. This ensures that when the input natively receives keyboard focus, the parent container visually highlights, providing a clear indication to the user.
+
+## 2026-04-12 - Keyboard Focus and Screen Reader Timer Accessibility
+**Learning:** Found missing keyboard focus states across UI buttons and learned that time outputs without a preceding hidden `sr-only` label are poorly interpreted by screen readers. A pure visual `animate-pulse` element was read improperly.
+**Action:** Always apply `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500` to buttons and interactive elements for keyboard accessibility. Add `aria-hidden="true"` to purely visual UI elements and use `<span className="sr-only">Label text: </span>` to contextualize raw text outputs (like timers).
