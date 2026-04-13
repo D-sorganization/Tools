@@ -146,4 +146,3 @@ jobs:
             } else {
               console.log('No labels to apply');
             }
-

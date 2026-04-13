@@ -233,4 +233,3 @@ jobs:
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "Created PR with automated fixes." >> $GITHUB_STEP_SUMMARY
           fi
-

@@ -462,4 +462,3 @@ jobs:
           echo "- **Issues Created:** ${{ steps.process.outputs.created_count }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Check \`docs/review_archive/\` for the full archive." >> $GITHUB_STEP_SUMMARY
-

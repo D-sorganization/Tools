@@ -588,4 +588,3 @@ jobs:
               body: summary,
               labels: ['report', 'auto-generated']
             });
-

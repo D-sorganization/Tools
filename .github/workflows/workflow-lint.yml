@@ -90,4 +90,3 @@ jobs:
 
       - name: Run actionlint
         run: actionlint -color -shellcheck ./scripts/actionlint_shellcheck.sh -pyflakes=
-

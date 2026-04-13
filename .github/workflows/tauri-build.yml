@@ -198,4 +198,3 @@ jobs:
           path: |
             ${{ matrix.app.path }}/src-tauri/target/release/bundle/**/*
           if-no-files-found: warn
-
