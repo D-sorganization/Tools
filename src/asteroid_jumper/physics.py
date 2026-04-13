@@ -26,15 +26,11 @@ class Vec2(NamedTuple):
     x: float = 0.0
     y: float = 0.0
 
-    def __add__(
-        self, other: object
-    ) -> Vec2:  # noqa: PYI034  # override with wider type
+    def __add__(self, other: object) -> Vec2:  # noqa: PYI034  # override with wider type
         assert isinstance(other, Vec2), "Vec2 + Vec2 required"
         return Vec2(self.x + other.x, self.y + other.y)
 
-    def __sub__(
-        self, other: object
-    ) -> Vec2:  # noqa: PYI034  # override with wider type
+    def __sub__(self, other: object) -> Vec2:  # noqa: PYI034  # override with wider type
         assert isinstance(other, Vec2), "Vec2 - Vec2 required"
         return Vec2(self.x - other.x, self.y - other.y)
 
@@ -102,9 +98,9 @@ class RigidBody:
 
     def __post_init__(self) -> None:
         assert self.mass > 0, f"mass must be positive, got {self.mass}"
-        assert (
-            self.moment_of_inertia > 0
-        ), f"moment_of_inertia must be positive, got {self.moment_of_inertia}"
+        assert self.moment_of_inertia > 0, (
+            f"moment_of_inertia must be positive, got {self.moment_of_inertia}"
+        )
 
     @property
     def speed(self) -> float:
