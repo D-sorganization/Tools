@@ -182,4 +182,3 @@ jobs:
           if [ "${{ inputs.dry_run || 'true' }}" = "true" ]; then
             echo "Run with \`dry_run=false\` to actually close stale PRs." >> $GITHUB_STEP_SUMMARY
           fi
-

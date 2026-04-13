@@ -427,4 +427,3 @@ jobs:
           echo "- ✅ cargo audit: no known vulnerabilities" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ maturin build: Python wheel built" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ wasm-pack build: WASM + NPM package produced" >> $GITHUB_STEP_SUMMARY
-

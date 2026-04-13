@@ -56,7 +56,7 @@ jobs:
 
       - name: Cleanup Merged Branches
         env:
-          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN || github.token }}
         run: |
           # Fetch list of merged PR branches starting with 'jules/'
           # Note: We filter by the branch prefix used by your agent
@@ -72,4 +72,3 @@ jobs:
             # Delete remote branch
             git push origin --delete "$BRANCH" || true
           done
-

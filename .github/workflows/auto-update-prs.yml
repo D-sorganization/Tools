@@ -76,4 +76,3 @@ jobs:
                 core.warning(`Failed to update PR #${pr.number}: ${err.message}`);
               }
             }
-
