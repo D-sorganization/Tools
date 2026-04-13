@@ -173,4 +173,3 @@ jobs:
           echo "- Rebased: $REBASED PRs" >> $GITHUB_STEP_SUMMARY
           echo "- Conflicts (need manual fix): $CONFLICTING PRs" >> $GITHUB_STEP_SUMMARY
           echo "- Skipped: $SKIPPED PRs" >> $GITHUB_STEP_SUMMARY
-

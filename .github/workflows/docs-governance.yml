@@ -65,4 +65,3 @@ jobs:
           python-version: "3.12"
       - name: Validate docs governance
         run: python3 scripts/check_docs_governance.py
-

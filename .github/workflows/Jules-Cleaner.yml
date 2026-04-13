@@ -92,4 +92,3 @@ jobs:
               echo "  PR #$pr_num is already $state. skipping."
             fi
           done
-
