@@ -17,9 +17,9 @@ def test_logger_shim_issues_deprecation_warning():
         import tools.logger  # noqa: F401
 
         dep_warnings = [w for w in caught if issubclass(w.category, DeprecationWarning)]
-        assert any("tools.logger" in str(w.message) for w in dep_warnings), (
-            "Expected DeprecationWarning about tools.logger"
-        )
+        assert any(
+            "tools.logger" in str(w.message) for w in dep_warnings
+        ), "Expected DeprecationWarning about tools.logger"
 
 
 def test_logger_shim_re_exports_setup_logging():
