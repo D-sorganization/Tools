@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.48                                     |
-| **Last Spec Update**    | 2026-04-13                                 |
+| **Spec Version**        | 1.1.49                                     |
+| **Last Spec Update**    | 2026-04-12                                 |
 
 ## 2. Purpose & Mission
 
@@ -536,3 +536,4 @@ Active development with stable core, continuous tool expansion, and web API in p
 - Pearson correlation matrix computations utilize a single-pass loop algorithm, calculating sums concurrently to drastically reduce iteration overhead compared to two-pass implementations, while carefully mitigating numerical instability via clamping.
 - Recharts component props in `AnalyticsSuite` are memoized using `useMemo` hooks to provide stable references and prevent expensive internal re-renders.
 | 2026-04-13 | 1.1.38  | Added `React.memo` to `SignalList` and `StatisticsPanel` to prevent heavy presentation component re-renders when parent UI state changes. |
+| 2026-04-12 | 1.1.49  | Replace remaining `print()` calls with `logging` across `src/` modules and disable xvfb pytest plugin to fix CI timeout on headless runners. |
