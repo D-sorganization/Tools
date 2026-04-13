@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-04-09
+  LAST UPDATED: 2026-04-13
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.48                                     |
+| **Spec Version**        | 1.1.47                                     |
 | **Last Spec Update**    | 2026-04-12                                 |
 
 ## 2. Purpose & Mission
@@ -505,7 +505,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-09 | 1.1.35  | Added a shared provider-pack manifest for the pendulum simulator under `src/pendulum_simulator`, plus a repo-local validator and regression tests that keep the manifest aligned with the real package entry point, working directory, Python path, icon asset, and launcher metadata required for future UpstreamDrift shared-launch integration.                                                                                                                                                                                                                  |
 | 2026-04-09 | 1.1.34  | Wrapped DataTableView, PlotView, and AnalyticsSuite in `React.memo`, and memoized activeSignals with `useMemo` to prevent expensive visualization re-renders on unrelated UI state changes.                                                                                                                                                                                                                                                                                                                                                                         |
 | 2026-04-10 | 1.1.37  | Add explicit focus-visible styles to the interactive buttons (Upload New Video, Play/Pause, Mute/Unmute) within the `VideoPlayer` component for improved keyboard navigation visibility.                                                                                                                                                                                                                                                                                                                                                                            |
-| 2026-04-12 | 1.1.38  | Optimize PCA explained variance calculation by replacing `.map()` and `.reduce()` operations with a single-pass `for` loop to reduce garbage collection overhead and execution time.                                                                                                                                                                                                                                                                                                                                                                                |
+| 2026-04-13 | 1.1.38  | Replaced chained `.filter().map()` and `.map().filter().map()` operations with single-pass loops utilizing pre-allocated arrays in `useDataProcessor.ts` `calculateTrendline` (exponential and power calculation branches) to prevent intermediate array creation and optimize performance.                                                                                                                                                                                                                                                                                         |
 
 ---
 
