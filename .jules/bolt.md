@@ -1,3 +1,0 @@
-## 2026-04-13 - [App Component Global State Causes Re-renders]
-**Learning:** In the Data Processor UI, `App.tsx` acts as a God component managing UI state (tabs) and processing state. Changes to local UI state (like `leftPanelTab`) trigger re-renders of heavy list/table components (`SignalList`, `StatisticsPanel`) unless they are explicitly wrapped in `React.memo()`. Unnecessary re-render cascades happen when switching UI tabs because heavy presentational child components (e.g., `SignalList`, `StatisticsPanel`) were not wrapped.
-**Action:** When adding or modifying heavy components that render array data (like signals or stats) within `App.tsx`, always wrap them in `React.memo` to prevent UI stuttering and global re-render cascades.
