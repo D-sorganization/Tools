@@ -41,3 +41,7 @@
 ## 2026-04-06 - [Visually Hidden File Inputs and Focus]
 **Learning:** Components that use a click-forwarding container around a visually hidden (`sr-only`) `<input type="file">` become inaccessible to keyboard navigation because the hidden input receives focus but has no visible area to display a focus ring. This creates a "focus trap" where users tab, the focus seemingly disappears, and they don't know what is active.
 **Action:** Always add `focus-within` styles (e.g., `focus-within:ring-2`) to the outer container of the hidden file input. This ensures that when the input natively receives keyboard focus, the parent container visually highlights, providing a clear indication to the user.
+
+## 2026-04-13 - Contextless Raw Timers
+**Learning:** Raw dynamic text like "03:45" or "105.4" provides no contextual meaning to screen readers if the visual context (like a pulsing red record dot or surrounding icon) is purely decorative or uses aria-hidden.
+**Action:** When displaying timers, numeric readings, or dynamic status values, prepend a visually `<span className="sr-only">` label (e.g., `<span className="sr-only">Recording duration:</span>`) right before the raw value so assistive tech announces "Recording duration: 03:45" instead of just "zero three colon four five". Ensure purely decorative visual context like pulsing dots have `aria-hidden="true"`.
