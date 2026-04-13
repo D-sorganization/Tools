@@ -14,8 +14,9 @@ function formatNumber(value: number): string {
   return value.toFixed(4);
 }
 
-// ⚡ Bolt: Optimize rendering by memoizing StatisticsPanel to prevent re-renders when parent App.tsx state changes
-// Performance impact: Eliminates unnecessary re-renders of the heavy statistics table when navigating UI tabs
+// ⚡ Bolt: Wrapped StatisticsPanel in React.memo() to prevent expensive table re-renders
+// when unrelated parent components update.
+// Performance impact: Eliminates layout thrashing during main UI interactions.
 export const StatisticsPanel = memo(function StatisticsPanel({ statistics, selectedSignals }: StatisticsPanelProps) {
   if (selectedSignals.length === 0 || Object.keys(statistics).length === 0) {
     return (

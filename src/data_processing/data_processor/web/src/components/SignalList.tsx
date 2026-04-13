@@ -18,8 +18,9 @@ const SIGNAL_COLORS = [
   '#84cc16', // lime
 ];
 
-// ⚡ Bolt: Optimize rendering by memoizing SignalList to prevent re-renders when parent App.tsx state changes
-// Performance impact: Eliminates unnecessary re-renders of the signal list (which can contain hundreds of items) during tab switching
+// ⚡ Bolt: Wrapped SignalList in React.memo() to prevent unnecessary O(N) re-render
+// cascades when parent (App.tsx) UI state changes (like switching tabs).
+// Performance impact: Eliminates UI stuttering during tab navigation.
 export const SignalList = memo(function SignalList({ signals, selectedSignals, onSelectionChange }: SignalListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
