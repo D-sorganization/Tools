@@ -236,21 +236,13 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
     }
   }
 
-  let totalVar = 0;
-  for (let i = 0; i < eigenvalues.length; i++) {
-    totalVar += eigenvalues[i];
-  }
-  if (totalVar === 0) totalVar = 1;
-
-  const explained: number[] = new Array(eigenvalues.length);
-  const cumulative: number[] = new Array(eigenvalues.length);
-  let currentCumulative = 0;
-  for (let i = 0; i < eigenvalues.length; i++) {
-    const e = eigenvalues[i] / totalVar;
-    explained[i] = e;
-    currentCumulative += e;
-    cumulative[i] = currentCumulative;
-  }
+  const totalVar = eigenvalues.reduce((a, b) => a + b, 0) || 1;
+  const explained = eigenvalues.map((e) => e / totalVar);
+  const cumulative: number[] = [];
+  explained.reduce((acc, e, i) => {
+    cumulative[i] = acc + e;
+    return cumulative[i];
+  }, 0);
 
   // Scores (n x nc)
   const scores: number[][] = Array.from({ length: n }, () => new Array(nc));
