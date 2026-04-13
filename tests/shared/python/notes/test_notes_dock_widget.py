@@ -70,3 +70,8 @@ class TestNotesDockWidget:
 
         widget.embed_in(host, Qt.DockWidgetArea.LeftDockWidgetArea)
         assert widget.isFloating() is False
+
+    def test_restore_latest_deleted_none(self, qtbot, tmp_path: Path):
+        widget = NotesDockWidget(project_dir=tmp_path)
+        qtbot.addWidget(widget)
+        assert widget.restore_latest_deleted() is False
