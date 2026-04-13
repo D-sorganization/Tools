@@ -22,7 +22,7 @@ jobs:
 
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -61,7 +61,7 @@ jobs:
   build-python-wheel:
     needs: pick-runner
     name: Build Python Wheel
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v6
 
@@ -93,7 +93,7 @@ jobs:
   build-wasm-package:
     needs: pick-runner
     name: Build WASM/NPM Package
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v6
 
@@ -122,7 +122,7 @@ jobs:
   publish-pypi:
     name: Publish to PyPI
     needs: [pick-runner, build-python-wheel]
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on: self-hosted
     if: >-
       github.event_name == 'release' ||
       (github.event_name == 'workflow_dispatch' && inputs.dry_run == 'false')
@@ -155,7 +155,7 @@ jobs:
   publish-npm:
     name: Publish to NPM
     needs: [pick-runner, build-wasm-package]
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on: self-hosted
     if: >-
       github.event_name == 'release' ||
       (github.event_name == 'workflow_dispatch' && inputs.dry_run == 'false')
@@ -189,7 +189,7 @@ jobs:
   publish-summary:
     name: Publish Summary
     needs: [pick-runner, build-python-wheel, build-wasm-package]
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on: self-hosted
     steps:
       - name: Generate Summary
         run: |

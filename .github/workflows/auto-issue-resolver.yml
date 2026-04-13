@@ -68,7 +68,7 @@ concurrency:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -107,7 +107,7 @@ jobs:
   analyze-issues:
     needs: pick-runner
     name: Analyze and Prioritize Issues
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on: self-hosted
     outputs:
       issue_list: ${{ steps.prioritize.outputs.issue_list }}
       total_issues: ${{ steps.prioritize.outputs.total_issues }}
@@ -271,7 +271,7 @@ jobs:
     name: Resolve Issue #${{ matrix.issue.number }}
     needs: [pick-runner, analyze-issues]
     if: ${{ needs.analyze-issues.outputs.total_issues != '0' && github.event.inputs.mode != 'analysis-only' }}
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on: self-hosted
 
     strategy:
       matrix:
@@ -538,7 +538,7 @@ jobs:
     name: Generate Summary Report
     needs: [pick-runner, analyze-issues, resolve-issues]
     if: always()
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on: self-hosted
 
     steps:
       - name: Download prioritized issues

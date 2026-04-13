@@ -37,7 +37,7 @@ concurrency:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -76,7 +76,7 @@ jobs:
   determine-assessment:
     needs: pick-runner
     name: Determine Assessment Type
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on: self-hosted
     outputs:
       assessment: ${{ steps.select.outputs.assessment }}
       prompt_file: ${{ steps.select.outputs.prompt_file }}
@@ -115,7 +115,7 @@ jobs:
   run-assessment:
     name: Run Assessment ${{ needs.determine-assessment.outputs.assessment }}
     needs: [pick-runner, determine-assessment]
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on: self-hosted
 
     # Skip if triggered by Jules bot (loop prevention)
     if: github.actor != 'jules-bot'

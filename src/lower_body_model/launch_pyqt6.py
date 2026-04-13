@@ -1,13 +1,13 @@
 """
 Lower Body Model - PyQt6/PyQt6 GUI Launcher
 """
+# mypy: ignore-errors
 
 import logging
 import sys
 import threading
 import time
 
-import mujoco
 from mujoco import viewer
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import (
@@ -83,6 +83,7 @@ class ControlPanel(QMainWindow):
         self.foot_slider.valueChanged.connect(lambda v: self.foot_lbl.setText(str(v)))
         posture_layout.addRow("Foot Extern Rot:", self.foot_slider)
         posture_layout.addRow("", self.foot_lbl)
+        layout.addWidget(posture_group)
 
         # PD Gains
         pd_group = QGroupBox("Control Gains")
@@ -131,6 +132,10 @@ class ControlPanel(QMainWindow):
         apply_btn = QPushButton("Apply Initial Stance & Reset")
         apply_btn.clicked.connect(self.apply_stance)
         layout.addWidget(apply_btn)
+
+        self.full_reset_btn = QPushButton("Full Reset Simulation")
+        self.full_reset_btn.clicked.connect(self.full_reset_simulation)
+        layout.addWidget(self.full_reset_btn)
 
         # IAA Demo Button
         iaa_btn = QPushButton("Run Induced Acceleration Trigger (Console)")
@@ -198,24 +203,40 @@ class ControlPanel(QMainWindow):
             self.viewer.sync()
 
     def apply_stance(self) -> None:
+        self.full_reset_simulation()
+
+    def full_reset_simulation(self) -> None:
+        """Reset simulation, playback, history, and current target pose."""
         tilt = self.tilt_slider.value()
         knee = self.knee_slider.value()
         foot = self.foot_slider.value()
 
         with self.sim_lock:
-            mujoco.mj_resetData(self.sim.model, self.sim.data)
+            self.is_playing = False
+            self.play_btn.setText("Play")
+            self.timeline_slider.setEnabled(True)
+
+            self.sim.reset()
             self.sim.clear_history()
 
-            self.sim.setup_initial_pose(
-                hip_anterior_tilt=tilt,
-                knee_flexion=knee,
-                foot_angle=foot,
-            )
+            try:
+                self.sim.setup_initial_pose(
+                    hip_anterior_tilt=tilt,
+                    knee_flexion=knee,
+                    foot_angle=foot,
+                )
+            except ValueError as exc:
+                logging.warning("Infeasible pose: %s", exc)
+                return
+            if self.sim.hip_rotation_target is not None:
+                self.sim.apply_hip_rotation_target(0.0)
+                self.sim.qpos_target = self.sim.data.qpos.copy()
 
-            # Reset timeline state
-            if not self.is_playing:
-                self.timeline_slider.setMaximum(0)
-                self.timeline_slider.setValue(0)
+            self.timeline_slider.blockSignals(True)
+            self.timeline_slider.setMaximum(0)
+            self.timeline_slider.setValue(0)
+            self.timeline_slider.blockSignals(False)
+            self.viewer.sync()
 
     def run_iaa(self) -> None:
         with self.sim_lock:
@@ -280,6 +301,7 @@ class ControlPanel(QMainWindow):
 
     def open_function_generator(self) -> None:
         try:
+            import importlib
             import sys
             from pathlib import Path
 
@@ -288,9 +310,11 @@ class ControlPanel(QMainWindow):
             if str(mod_path) not in sys.path:
                 sys.path.insert(0, str(mod_path))
 
-            from pendulum_simulator.src.double_pendulum_golf.gui.function_generator_dialog import (
-                FunctionGeneratorDialog,
+            dialog_module = importlib.import_module(
+                "pendulum_simulator.src.double_pendulum_golf.gui."
+                "function_generator_dialog"
             )
+            FunctionGeneratorDialog = dialog_module.FunctionGeneratorDialog
         except ImportError as e:
             logging.error(f"Could not import FunctionGeneratorDialog: {e}")
             return
