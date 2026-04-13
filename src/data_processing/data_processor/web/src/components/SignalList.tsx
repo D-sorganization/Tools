@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, memo } from 'react';
 import { Activity, Check, Search, Download, Upload } from 'lucide-react';
 
 interface SignalListProps {
@@ -18,7 +18,10 @@ const SIGNAL_COLORS = [
   '#84cc16', // lime
 ];
 
-export function SignalList({ signals, selectedSignals, onSelectionChange }: SignalListProps) {
+// ⚡ Bolt: Wrapped SignalList in React.memo() to prevent unnecessary O(N) re-render
+// cascades when parent (App.tsx) UI state changes (like switching tabs).
+// Performance impact: Eliminates UI stuttering during tab navigation.
+export const SignalList = memo(function SignalList({ signals, selectedSignals, onSelectionChange }: SignalListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -202,6 +205,6 @@ export function SignalList({ signals, selectedSignals, onSelectionChange }: Sign
       </div>
     </div>
   );
-}
+});
 
 export default SignalList;
