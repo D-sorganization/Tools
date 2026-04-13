@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-04-13
+  LAST UPDATED: 2026-04-09
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.53                                     |
+| **Spec Version**        | 1.1.48                                     |
 | **Last Spec Update**    | 2026-04-13                                 |
 
 ## 2. Purpose & Mission
@@ -449,9 +449,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-04-13 | 1.1.53  | Wrapped `SignalList` and `StatisticsPanel` in `React.memo` to prevent unnecessary re-render cascades in the Data Processor UI. |
-| 2026-04-13 | 1.1.50  | Added `tools.shared.python.model_generation.editor` compatibility namespace so downstream repos can import the text editor via `tools.shared.python` without duplicating the module; added `-p no:xvfb` to pytest addopts so the test suite runs on headless self-hosted runners that lack Xvfb; applied ruff formatting fixes across GUI stylesheets and multiline string literals. |
-| 2026-04-12 | 1.1.49  | Replace remaining `print()` calls with `logging` across `src/` modules and disable xvfb pytest plugin to fix CI timeout on headless runners. |
+| 2026-04-13 | 1.1.48  | Wrapped the `SignalList` and `StatisticsPanel` components in `React.memo()` to prevent expensive re-render cascades in the data processor web application during UI tab navigation.                                                                                                                                                                                                                                                                                                                                                                            |
 | 2026-04-12 | 1.1.47  | Added the shared `tools.mypy_autofix_agent` module and `mypy-autofix` console entry point so downstream fleet repositories can call one maintained mypy autofix implementation instead of carrying duplicated script copies; kept `tools.setup_logging` lazy so CLI startup does not import optional heavy dependencies.                                                                                                                                                                                                                                            |
 | 2026-04-11 | 1.1.46  | Lower-body builder DRY refactor: extracted `_build_leg_xml(side, ...)` and `_build_leg_actuators_xml(side)` helpers so both legs and both actuator blocks share a single source of truth. `build_lower_body_xml` now calls each helper once per side instead of duplicating ~45 lines of MJCF. New regression tests assert left/right symmetry of joint/body/actuator/geom/site sets and pin the expected counts.                                                                                                                                                   |
 | 2026-04-11 | 1.1.45  | Closed-chain ankle IK in `LowerBodySimulator.setup_initial_pose`: the ankle angles are solved by a closed-form 2-DOF decomposition of the calf's world rotation so each foot's world Z-axis is `(0, 0, 1)` for any feasible hip/knee pose. Raises `ValueError` identifying the offending axis when the required ankle angle exceeds the ±30° joint limit instead of silently clipping. Defaults changed from 30°/120°/20° (infeasible, silently clipped) to 20°/30°/20° (a feasible golf address posture). The PyQt panel catches infeasibility and logs a warning. |
@@ -508,7 +506,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-09 | 1.1.35  | Added a shared provider-pack manifest for the pendulum simulator under `src/pendulum_simulator`, plus a repo-local validator and regression tests that keep the manifest aligned with the real package entry point, working directory, Python path, icon asset, and launcher metadata required for future UpstreamDrift shared-launch integration.                                                                                                                                                                                                                  |
 | 2026-04-09 | 1.1.34  | Wrapped DataTableView, PlotView, and AnalyticsSuite in `React.memo`, and memoized activeSignals with `useMemo` to prevent expensive visualization re-renders on unrelated UI state changes.                                                                                                                                                                                                                                                                                                                                                                         |
 | 2026-04-10 | 1.1.37  | Add explicit focus-visible styles to the interactive buttons (Upload New Video, Play/Pause, Mute/Unmute) within the `VideoPlayer` component for improved keyboard navigation visibility.                                                                                                                                                                                                                                                                                                                                                                            |
-| 2026-04-12 | 1.1.48  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
 
 ---
 
@@ -538,4 +535,3 @@ Active development with stable core, continuous tool expansion, and web API in p
 - PlotView WebGL rendering uses pre-allocated `Float64Array` buffers and single-pass loops instead of `data.map()`, eliminating O(N) intermediate array allocations for large datasets.
 - Pearson correlation matrix computations utilize a single-pass loop algorithm, calculating sums concurrently to drastically reduce iteration overhead compared to two-pass implementations, while carefully mitigating numerical instability via clamping.
 - Recharts component props in `AnalyticsSuite` are memoized using `useMemo` hooks to provide stable references and prevent expensive internal re-renders.
-- Exponential and power trendline calculations use pre-allocated arrays and single-pass loops instead of functional chaining to minimize GC pauses.

@@ -1,0 +1,3 @@
+## 2026-04-06 - [Optimize God component rendering]
+**Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), the root `App.tsx` component acts as a God component managing UI state (tabs) and large data structures. Unnecessary re-render cascades happen when switching UI tabs because heavy presentational child components (e.g., `SignalList`, `StatisticsPanel`) were not wrapped in `React.memo()`.
+**Action:** When a God component manages state and large data, explicitly wrap heavy presentational child components in `React.memo()` to prevent UI stuttering and massive re-render cascades when unrelated parent state (like UI tabs) changes.
