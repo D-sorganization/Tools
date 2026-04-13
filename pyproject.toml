@@ -227,7 +227,7 @@ testpaths = ["tests", "src", "src/pendulum_simulator/tests"]
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
-addopts = "-ra -q --strict-markers --strict-config --durations=20 --benchmark-disable -n auto --dist loadscope -m \"not live_simulation\""
+addopts = "-ra -q --strict-markers --strict-config --durations=20 --benchmark-disable -n auto --dist loadscope -m \"not live_simulation\" -p no:xvfb"
 pythonpath = ["src"]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",

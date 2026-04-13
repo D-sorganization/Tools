@@ -4,11 +4,13 @@ Scans Python source files for patterns that may indicate hardcoded secrets,
 API keys, passwords, or tokens. Designed for pre-commit / CI integration.
 
 Usage:
+    import logging
     from utils.secrets_scanner import scan_file, scan_directory
 
+    logger = logging.getLogger(__name__)
     issues = scan_directory("src/")
     for issue in issues:
-        print(f"{issue['file']}:{issue['line']}: {issue['pattern']}")
+        logger.warning("%s:%s: %s", issue["file"], issue["line"], issue["pattern"])
 """
 
 from __future__ import annotations
