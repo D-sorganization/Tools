@@ -31,7 +31,7 @@ env:
 jobs:
   pick-runner:
     name: pick-runner
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 3
     outputs:
       runner: ${{ steps.pick.outputs.runner }}
@@ -169,7 +169,7 @@ jobs:
           PY
   process-comments:
     needs: pick-runner
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    runs-on: self-hosted
     if: |
       github.event_name == 'workflow_dispatch' ||
       (github.actor != 'github-actions[bot]' &&
@@ -462,3 +462,4 @@ jobs:
           echo "- **Issues Created:** ${{ steps.process.outputs.created_count }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Check \`docs/review_archive/\` for the full archive." >> $GITHUB_STEP_SUMMARY
+

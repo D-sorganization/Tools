@@ -48,7 +48,7 @@ A complete, production-grade Rust physics library implementing 3 pendulum models
 #### `golfer_constraints.rs` (288 lines)
 - **BaumgarteGains**: struct with α, β (default 10, 10)
 - **constraint_acceleration_bias(q, qdot, p)**: Computes γ term via finite-diff
-- **constrained_accelerations(q, qdot, τ, p, gains)**: 
+- **constrained_accelerations(q, qdot, τ, p, gains)**:
   - Solves 12×12 KKT system: [M J^T; J 0][a; λ] = rhs
   - Returns (accelerations, Lagrange multipliers)
 - **project_to_constraints(q, p)**: Newton projection to Φ(q)=0

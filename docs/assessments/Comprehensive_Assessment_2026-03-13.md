@@ -246,7 +246,7 @@ graph TD
     C --> D[Rust: EOM + constraints]
     D --> E[Rust: FK + Jacobians]
     E --> F[Rust: math-primitives]
-    
+
     style A fill:#4CAF50
     style B fill:#f44336
     style C fill:#4CAF50
