@@ -39,7 +39,16 @@ jobs:
           sudo apt-get install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
 
       - name: Install Dependencies
+        # Force-reinstall sortedcontainers (and hypothesis) before anything
+        # else: the shared self-hosted runner toolcache occasionally carries a
+        # half-installed `sortedcontainers` where pip metadata claims 2.4.0 but
+        # the package namespace is missing exports (e.g. `SortedSet`). A plain
+        # `pip install` then sees "Requirement already satisfied" and does not
+        # repair the cache, which breaks `pip-audit` (via cyclonedx) and any
+        # hypothesis-using pytest run (see PR #2054 / #2056 quality-gate
+        # failures; mirrors UpstreamDrift ci-standard.yml fix).
         run: |
+          pip install --force-reinstall --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install fastapi
@@ -206,7 +215,11 @@ jobs:
           sudo apt-get install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
 
       - name: Install Dependencies
+        # See quality-gate Install Dependencies for the rationale — the shared
+        # toolcache can carry a stale `sortedcontainers` that makes hypothesis
+        # fail during pytest_terminal_summary.
         run: |
+          pip install --force-reinstall --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install fastapi
