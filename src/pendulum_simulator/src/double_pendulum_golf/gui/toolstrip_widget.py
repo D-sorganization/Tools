@@ -339,11 +339,13 @@ class ToolStrip(QWidget):
         outer.addLayout(row2)
 
     def _build_action_buttons_group(self, layout: QHBoxLayout) -> None:
-        """Add model selector, simulation action buttons, and speed control to layout.
+        """Add model selector, simulation buttons, and speed control to layout."""
+        self._build_model_selector(layout)
+        layout.addWidget(_vline())
+        self._build_sim_controls(layout)
 
-        Adds: title label, model combo, Run/Reset/Play/Loop buttons, speed spinbox.
-        Separated from the playback/scrub section by _vline() separators.
-        """
+    def _build_model_selector(self, layout: QHBoxLayout) -> None:
+        """Add title label and model-selection combo box to layout."""
         title = QLabel("Pendulums")
         title.setStyleSheet(_TITLE)
         title.setFont(QFont("Sans", 11, QFont.Weight.Bold))
@@ -360,9 +362,7 @@ class ToolStrip(QWidget):
             "QComboBox QAbstractItemView { background: #252540; color: #c0c0d8;"
             "  selection-background-color: #3b6eb0; }"
         )
-        # Make the combo wide enough to show the longest item without
-        # truncation. AdjustToContents lets it grow with the active label;
-        # the explicit minimum is the safety net for first-show layout.
+        # Size combo to the longest item text so it never truncates.
         self.cmb_model.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToContents)
         _cmb_fm = self.cmb_model.fontMetrics()
         _longest = max(
@@ -373,9 +373,8 @@ class ToolStrip(QWidget):
         self.cmb_model.currentIndexChanged.connect(self.model_changed.emit)
         layout.addWidget(self.cmb_model)
 
-        layout.addWidget(_vline())
-
-        # Run / Reset / Play
+    def _build_sim_controls(self, layout: QHBoxLayout) -> None:
+        """Add Run, Reset, Play, Loop buttons and speed spinbox to layout."""
         self.btn_run = QPushButton("▶ Run")
         self.btn_run.setStyleSheet(_BTN_RUN)
         self.btn_run.setToolTip("Run simulation")
@@ -395,9 +394,6 @@ class ToolStrip(QWidget):
         self.btn_play.setStyleSheet(_BTN_PLAY)
         self.btn_play.setToolTip("Play / Pause animation")
         self.btn_play.toggled.connect(self._on_play_toggled)
-        # Play/Pause label toggles between "▶ Play" and "‖ Pause"; size
-        # the button to fit whichever label is wider so the click target
-        # never jumps when the user toggles it.
         _play_fm = QFontMetrics(self.btn_play.font())
         _play_min = max(
             _play_fm.horizontalAdvance("▶ Play"),
@@ -406,7 +402,6 @@ class ToolStrip(QWidget):
         self.btn_play.setMinimumWidth(_play_min + 24)
         layout.addWidget(self.btn_play)
 
-        # Loop toggle
         self.chk_loop = QCheckBox("↺")
         self.chk_loop.setToolTip("Loop animation")
         self.chk_loop.setStyleSheet(
@@ -420,7 +415,6 @@ class ToolStrip(QWidget):
 
         layout.addWidget(_vline())
 
-        # Speed
         spd_lbl = QLabel("Speed:")
         spd_lbl.setStyleSheet(_LABEL)
         layout.addWidget(spd_lbl)
@@ -508,12 +502,15 @@ class ToolStrip(QWidget):
 
     def _build_row1(self, layout: QHBoxLayout) -> None:
         """Actions row: Title | Run Reset Play | Speed | [frame slider] | Frame# | Reset View"""
-
-        assert layout is not None, "layout must be provided"
+        if layout is None:
+            raise ValueError("layout must be provided")
         self._build_action_buttons_group(layout)
-
         layout.addWidget(_vline())
+        self._build_playback_group(layout)
+        self._build_tools_group(layout)
 
+    def _build_playback_group(self, layout: QHBoxLayout) -> None:
+        """Add playback scrub slider, frame label, and Reset View button."""
         # Playback scrub slider — MUST be visible (#1207)
         scrub_lbl = QLabel("Playback:")
         scrub_lbl.setStyleSheet(_LABEL)
@@ -545,8 +542,6 @@ class ToolStrip(QWidget):
         self.btn_reset_view.clicked.connect(self.reset_view_requested.emit)
         fit_button_to_text(self.btn_reset_view)
         layout.addWidget(self.btn_reset_view)
-
-        self._build_tools_group(layout)
 
     def _show_eom_popup(self) -> None:
         """Open the Equations of Motion popup (#1144)."""
