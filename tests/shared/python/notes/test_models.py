@@ -6,6 +6,8 @@ immutability (frozen), and equality semantics.
 
 from __future__ import annotations
 
+import dataclasses
+
 import pytest
 from notes.models import RecycledNoteItem
 
@@ -33,7 +35,7 @@ class TestRecycledNoteItem:
             original_path="/o",
             deleted_at="20240101T000000Z",
         )
-        with pytest.raises(Exception):
+        with pytest.raises(dataclasses.FrozenInstanceError):
             item.reason = "changed"  # type: ignore[misc]
 
     def test_equality_based_on_all_fields(self) -> None:
