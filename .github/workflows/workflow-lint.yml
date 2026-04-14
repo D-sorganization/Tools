@@ -66,7 +66,14 @@ jobs:
       - name: Install actionlint
         run: |
           ACTIONLINT_VERSION=1.7.11
-          curl -sSL "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz" | tar -xz
+          URL="https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          for attempt in 1 2 3; do
+            if curl -fsSL --retry 3 --retry-delay 5 "$URL" | tar -xz; then
+              break
+            fi
+            echo "Download attempt $attempt failed, retrying..."
+            sleep 5
+          done
           sudo mv actionlint /usr/local/bin/actionlint
 
       - name: Install shellcheck
