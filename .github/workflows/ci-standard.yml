@@ -72,10 +72,17 @@ jobs:
       - uses: actions/setup-python@v6
         with: { python-version: "3.12" }
 
+      - name: Reject Raw Merge Conflict Markers
+        run: |
+          if grep -rne '<<<<<<< HEAD' . --exclude-dir=.git --exclude-dir=.github; then
+            echo "::error::Raw git merge conflict markers found!"
+            exit 1
+          fi
+
       - name: Install System Dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+          sudo apt-get -o DPkg::Lock::Timeout=300 update
+          sudo apt-get -o DPkg::Lock::Timeout=300 install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
 
       - name: Install Dependencies
         run: |
@@ -212,10 +219,17 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Reject Raw Merge Conflict Markers
+        run: |
+          if grep -rne '<<<<<<< HEAD' . --exclude-dir=.git --exclude-dir=.github; then
+            echo "::error::Raw git merge conflict markers found!"
+            exit 1
+          fi
+
       - name: Install System Dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+          sudo apt-get -o DPkg::Lock::Timeout=300 update
+          sudo apt-get -o DPkg::Lock::Timeout=300 install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
 
       - name: Install Dependencies
         run: |
