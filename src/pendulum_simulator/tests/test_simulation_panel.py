@@ -1,18 +1,16 @@
 """Tests for simulation_panel.py"""
 
 from typing import Any
-
 import pytest
 import numpy as np
 from unittest.mock import MagicMock, patch
 from PyQt6.QtCore import QByteArray, QSettings, pyqtSignal
 from PyQt6.QtWidgets import QWidget
 
-from double_pendulum_golf.gui.simulation_panel import SimulationPanel, _SimWorker
-
 from double_pendulum_golf.gui.controls_widget import ControlsWidget
-from double_pendulum_golf.gui.controls_widget_triple import ControlsWidgetTriple
 from double_pendulum_golf.gui.controls_widget_golfer import ControlsWidgetGolfer
+from double_pendulum_golf.gui.controls_widget_triple import ControlsWidgetTriple
+from double_pendulum_golf.gui.simulation_panel import SimulationPanel, _SimWorker
 
 
 class MockControls(QWidget):
@@ -100,7 +98,6 @@ def mock_sim_kwargs():
     pendulum = MockViewer()
     matrix = MockViewer()
     torque_history = MockViewer()
-    MagicMock()
 
     # We define the signal on the optimizer mock so we can emit it
     class MockOpt(QWidget):
@@ -404,9 +401,7 @@ def test_sim_worker():
     worker.error.emit.assert_called_with("test")
 
 
-# ─────────────────────────────────────────────────────────────────────
 # Regression tests for the tabbed-side-panel layout refactor
-# ─────────────────────────────────────────────────────────────────────
 
 
 def test_panel_uses_side_panel_tabs(qapp, mock_sim_kwargs) -> Any:
