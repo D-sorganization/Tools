@@ -1,5 +1,6 @@
+import numpy as np
 import pytest
-from chaotic_pendulum.config import PhysicsConfig
+from chaotic_pendulum.config import PhysicsConfig, RenderConfig
 from chaotic_pendulum.physics import PhysicsEngine
 
 
@@ -9,10 +10,70 @@ def test_physics_dbc_valid_constraints() -> None:
     assert cfg.m1 == 1.0
 
 
-def test_physics_dbc_invalid_constraints() -> None:
-    """DbC triggers on negative mass."""
-    with pytest.raises(AssertionError):
+def test_physics_dbc_invalid_mass1() -> None:
+    """DbC triggers ValueError on non-positive mass 1."""
+    with pytest.raises(ValueError, match="Mass 1"):
         PhysicsConfig(m1=-1.0)
+
+
+def test_physics_dbc_invalid_mass2() -> None:
+    """DbC triggers ValueError on non-positive mass 2."""
+    with pytest.raises(ValueError, match="Mass 2"):
+        PhysicsConfig(m2=0.0)
+
+
+def test_physics_dbc_invalid_length1() -> None:
+    """DbC triggers ValueError on non-positive length 1."""
+    with pytest.raises(ValueError, match="Length 1"):
+        PhysicsConfig(l1=-0.5)
+
+
+def test_physics_dbc_invalid_length2() -> None:
+    """DbC triggers ValueError on non-positive length 2."""
+    with pytest.raises(ValueError, match="Length 2"):
+        PhysicsConfig(l2=0.0)
+
+
+def test_physics_dbc_invalid_gravity() -> None:
+    """DbC triggers ValueError on non-positive gravity."""
+    with pytest.raises(ValueError, match="Gravity"):
+        PhysicsConfig(gravity=-9.81)
+
+
+def test_physics_dbc_invalid_damp1() -> None:
+    """DbC triggers ValueError on negative damping 1."""
+    with pytest.raises(ValueError, match="Damping"):
+        PhysicsConfig(damp1=-0.1)
+
+
+def test_physics_dbc_invalid_damp2() -> None:
+    """DbC triggers ValueError on negative damping 2."""
+    with pytest.raises(ValueError, match="Damping"):
+        PhysicsConfig(damp2=-1.0)
+
+
+def test_render_config_dbc_invalid_fps() -> None:
+    """DbC triggers ValueError on non-positive FPS."""
+    with pytest.raises(ValueError, match="FPS"):
+        RenderConfig(fps=0)
+
+
+def test_render_config_dbc_invalid_duration() -> None:
+    """DbC triggers ValueError on non-positive duration."""
+    with pytest.raises(ValueError, match="Duration"):
+        RenderConfig(duration=-5)
+
+
+def test_render_config_dbc_invalid_history_sec() -> None:
+    """DbC triggers ValueError on non-positive history_sec."""
+    with pytest.raises(ValueError, match="History"):
+        RenderConfig(history_sec=0.0)
+
+
+def test_physics_engine_none_config() -> None:
+    """DbC triggers TypeError when config is None."""
+    with pytest.raises(TypeError, match="Config cannot be None"):
+        PhysicsEngine(None)  # type: ignore[arg-type]
 
 
 def test_physics_engine_solver() -> None:
@@ -31,6 +92,22 @@ def test_physics_engine_solver() -> None:
     assert len(res["v2"]["coriolis"][0]) == 2
 
 
+def test_physics_engine_solve_invalid_duration() -> None:
+    """DbC triggers ValueError on non-positive duration."""
+    cfg = PhysicsConfig()
+    engine = PhysicsEngine(cfg)
+    with pytest.raises(ValueError, match="Duration"):
+        engine.solve(-1.0, 0.05)
+
+
+def test_physics_engine_solve_invalid_dt() -> None:
+    """DbC triggers ValueError on non-positive dt."""
+    cfg = PhysicsConfig()
+    engine = PhysicsEngine(cfg)
+    with pytest.raises(ValueError, match="Duration"):
+        engine.solve(1.0, 0.0)
+
+
 def test_equations_of_motion() -> None:
     """Ensures RHS ODE signature maps cleanly."""
     cfg = PhysicsConfig(damp1=1.0, damp2=1.0)  # test damping
@@ -40,11 +117,16 @@ def test_equations_of_motion() -> None:
     assert len(derivatives) == 4
 
 
-import numpy as np
+def test_equations_of_motion_invalid_state() -> None:
+    """DbC triggers ValueError when state vector is wrong length."""
+    cfg = PhysicsConfig()
+    engine = PhysicsEngine(cfg)
+    with pytest.raises(ValueError, match="State vector"):
+        engine.equations_of_motion(0.0, [0.0, 1.0, 0.0])
 
 
 def test_physics_force_vectors_tdd() -> None:
-    """Verify analytical magnitude of Cartesian Centrifugal and Coriolis forces for first frame."""
+    """Verify analytical magnitude of Cartesian CF and Coriolis forces for first frame."""
     cfg = PhysicsConfig(
         m1=1.0,
         m2=2.0,

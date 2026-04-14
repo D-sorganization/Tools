@@ -19,12 +19,14 @@ class PhysicsEngine:
 
     def __init__(self, config: PhysicsConfig) -> None:
         """DbC: Assume non-null config."""
-        assert config is not None, "Config cannot be None"
+        if config is None:
+            raise TypeError("Config cannot be None")
         self.cfg = config
 
     def equations_of_motion(self, t: float, state: list[float]) -> list[float]:
         """Calculates instantaneous accelerations using Augmented Lagrangian."""
-        assert len(state) == 4, "State vector must be length 4."
+        if len(state) != 4:
+            raise ValueError("State vector must be length 4.")
         theta1, omega1, theta2, omega2 = state
         delta = theta1 - theta2
 
@@ -88,7 +90,8 @@ class PhysicsEngine:
 
     def solve(self, duration: float, dt: float) -> dict[str, Any]:
         """Integrates physics over specified duration."""
-        assert duration > 0 and dt > 0, "Duration and dt must be positive."
+        if duration <= 0 or dt <= 0:
+            raise ValueError("Duration and dt must be positive.")
         t_eval = np.arange(0, duration, dt)
         initial_state = [
             self.cfg.theta1,
@@ -114,7 +117,8 @@ class PhysicsEngine:
 
     def _extract_physics(self, y: np.ndarray, t_eval: np.ndarray) -> dict[str, Any]:
         """Convert angular array into all Cartesian force vectors."""
-        assert y.shape[0] == 4, "Input y array must have 4 rows."
+        if y.shape[0] != 4:
+            raise ValueError("Input y array must have 4 rows.")
 
         theta1, omega1, theta2, omega2 = y[0, :], y[1, :], y[2, :], y[3, :]
 
