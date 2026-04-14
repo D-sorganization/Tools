@@ -6,7 +6,7 @@ matplotlib>=3.9.0  # Data visualization and plotting library
 sympy>=1.12  # Symbolic mathematics and algebra
 
 # Testing & Quality Assurance
-pytest>=8.2.0  # Testing framework
+pytest>=9.0.3  # Testing framework
 pytest-cov  # Coverage plugin for pytest (code coverage metrics)
 ruff  # Fast Python linter and formatter (replaces flake8/black)
 mypy==1.13.0  # Static type checker for Python (pinned to match CI workflow)
@@ -28,7 +28,7 @@ flask>=3.0.0  # Web framework for building web applications
 pydantic>=2.0.0  # Data validation using Python type annotations
 
 # Security & Encryption
-cryptography  # Cryptographic recipes and primitives
+cryptography>=46.0.7  # Cryptographic recipes and primitives
 defusedxml>=0.7.0  # Safe XML parsing (mitigates XML bomb / XXE attacks)
 pygments>=2.18.0,<2.19.0  # Pinned: CVE-2026-4539 affects 2.19.x (transitive via rich/pip-audit)
 
