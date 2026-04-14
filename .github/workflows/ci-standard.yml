@@ -81,11 +81,20 @@ jobs:
 
       - name: Install System Dependencies
         run: |
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done; while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 update
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done; while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+          sudo apt-get -o DPkg::Lock::Timeout=300 update
+          sudo apt-get -o DPkg::Lock::Timeout=300 install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
 
       - name: Install Dependencies
+        # Force-reinstall sortedcontainers (and hypothesis) before anything
+        # else: the shared self-hosted runner toolcache occasionally carries a
+        # half-installed `sortedcontainers` where pip metadata claims 2.4.0 but
+        # the package namespace is missing exports (e.g. `SortedSet`). A plain
+        # `pip install` then sees "Requirement already satisfied" and does not
+        # repair the cache, which breaks `pip-audit` (via cyclonedx) and any
+        # hypothesis-using pytest run (see PR #2054 / #2056 quality-gate
+        # failures; mirrors UpstreamDrift ci-standard.yml fix).
         run: |
+          pip install --force-reinstall --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install fastapi
@@ -230,11 +239,15 @@ jobs:
 
       - name: Install System Dependencies
         run: |
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done; while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 update
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done; while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+          sudo apt-get -o DPkg::Lock::Timeout=300 update
+          sudo apt-get -o DPkg::Lock::Timeout=300 install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
 
       - name: Install Dependencies
+        # See quality-gate Install Dependencies for the rationale — the shared
+        # toolcache can carry a stale `sortedcontainers` that makes hypothesis
+        # fail during pytest_terminal_summary.
         run: |
+          pip install --force-reinstall --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install fastapi
@@ -282,6 +295,19 @@ jobs:
             "tests/shared/python/process_calculators/test_constants.py"
             # Tools manifest integrity
             "tests/scripts/test_generate_tools_json.py"
+            # Coverage policy gate itself (protects CI infrastructure).
+            # Added alongside shared utility tests to restore the 25% total
+            # coverage floor after PR #2049 dropped it to 24.99%.
+            "tests/scripts/test_check_coverage_policy.py"
+            # Shared Python utilities (file/env/csv/logging/os).
+            # These modules are pure-Python and widely imported; adding their
+            # existing tests to the smoke slice adds ~2% to total coverage
+            # and provides headroom above the 25% floor.
+            "tests/test_file_utils.py"
+            "tests/test_csv_utils.py"
+            "tests/test_env_utils.py"
+            "tests/test_logging_utils.py"
+            "tests/test_os_utils.py"
             # Notes model coverage (keeps total coverage above 25% floor)
             "tests/shared/python/notes/test_models.py"
           )
