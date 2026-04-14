@@ -1,1 +1,4 @@
-{"total_percent": 25.08, "package_percent": {"src/shared/python/notes": 54.46}}
+{
+  "total_percent": 27.3,
+  "package_percent": { "src/shared/python/notes": 54.46 }
+}
