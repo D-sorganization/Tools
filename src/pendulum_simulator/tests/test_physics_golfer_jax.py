@@ -26,6 +26,10 @@ from double_pendulum_golf.physics_golfer import (  # noqa: E402
 )
 from double_pendulum_golf.physics_golfer_jax import (  # noqa: E402
     GolferParamsJAX,
+    N_DOF,
+    _hub_jacobian,
+    _left_arm_base_jacobian,
+    _right_arm_base_jacobian,
     analytical_fk_jacobians_jax,
     constraint_jacobian_jax,
     constraint_vector_jax,
@@ -239,9 +243,7 @@ class TestGravityVector:
         G_jax = gravity_vector_jax(q_jax, _PARAMS_JAX)
         assert G_jax.shape == (N_DOF,)
 
-    def test_gravity_vector_parity_random_configs(
-        self, random_config: np.ndarray
-    ) -> None:
+    def test_gravity_vector_parity_random_configs(self, random_config: np.ndarray) -> None:
         """JAX gravity vector matches numpy."""
         q_jax = jnp.array(random_config)
 
@@ -374,3 +376,128 @@ class TestJITCompilation:
         phi = phi_jitted(q_jax)
 
         assert phi.shape == (4,)
+
+
+# ---------------------------------------------------------------------------
+# Tests for refactored Jacobian helper functions (issue #2011)
+# ---------------------------------------------------------------------------
+
+
+class TestJacobianHelpers:
+    """Unit tests for the extracted Jacobian helper functions.
+
+    These helpers were extracted from analytical_fk_jacobians_jax to reduce
+    its LOC from ~184 to ~99 lines (issue #2011 P1 refactoring).
+    """
+
+    def test_hub_jacobian_shape(self) -> None:
+        """_hub_jacobian returns a (2, N_DOF) matrix."""
+        cos_hub = jnp.cos(jnp.array(0.3))
+        sin_hub = jnp.sin(jnp.array(0.3))
+        J = _hub_jacobian(_PARAMS_JAX, cos_hub, sin_hub)
+        assert J.shape == (2, N_DOF)
+
+    def test_hub_jacobian_zero_angle(self) -> None:
+        """At th_hub=0, hub Jacobian col-0 is (L_hub, 0) for x/y."""
+        cos_hub = jnp.array(1.0)
+        sin_hub = jnp.array(0.0)
+        J = _hub_jacobian(_PARAMS_JAX, cos_hub, sin_hub)
+        assert float(J[0, 0]) == pytest.approx(_PARAMS_JAX.L_hub)
+        assert float(J[1, 0]) == pytest.approx(0.0)
+        # All other DOF columns should be zero
+        assert jnp.allclose(J[:, 1:], 0.0)
+
+    def test_hub_jacobian_only_dof0_nonzero(self) -> None:
+        """_hub_jacobian only sets DOF column 0 (hub DOF)."""
+        cos_hub = jnp.cos(jnp.array(1.1))
+        sin_hub = jnp.sin(jnp.array(1.1))
+        J = _hub_jacobian(_PARAMS_JAX, cos_hub, sin_hub)
+        assert jnp.allclose(J[:, 1:], 0.0)
+
+    def test_right_arm_base_jacobian_shape(self) -> None:
+        """_right_arm_base_jacobian returns (2, N_DOF)."""
+        q = jnp.zeros(8)
+        J = _right_arm_base_jacobian(
+            _PARAMS_JAX,
+            jnp.cos(q[0]),
+            jnp.sin(q[0]),
+            jnp.cos(q[0] + q[1]),
+            jnp.sin(q[0] + q[1]),
+            jnp.cos(q[0] + q[1] + q[2]),
+            jnp.sin(q[0] + q[1] + q[2]),
+        )
+        assert J.shape == (2, N_DOF)
+
+    def test_right_arm_dofs_3_to_7_are_zero(self) -> None:
+        """Right-arm base Jacobian touches only DOFs 0, 1, 2."""
+        cos_hub = jnp.cos(jnp.array(0.5))
+        sin_hub = jnp.sin(jnp.array(0.5))
+        cos_rs = jnp.cos(jnp.array(0.3))
+        sin_rs = jnp.sin(jnp.array(0.3))
+        cos_re = jnp.cos(jnp.array(-0.2))
+        sin_re = jnp.sin(jnp.array(-0.2))
+        J = _right_arm_base_jacobian(
+            _PARAMS_JAX, cos_hub, sin_hub, cos_rs, sin_rs, cos_re, sin_re
+        )
+        assert jnp.allclose(J[:, 3:], 0.0)
+
+    def test_left_arm_base_jacobian_shape(self) -> None:
+        """_left_arm_base_jacobian returns (2, N_DOF)."""
+        q = jnp.zeros(8)
+        J = _left_arm_base_jacobian(
+            _PARAMS_JAX,
+            jnp.cos(q[0]),
+            jnp.sin(q[0]),
+            jnp.cos(q[0] + q[4]),
+            jnp.sin(q[0] + q[4]),
+            jnp.cos(q[0] + q[4] + q[5]),
+            jnp.sin(q[0] + q[4] + q[5]),
+        )
+        assert J.shape == (2, N_DOF)
+
+    def test_left_arm_dofs_1_2_3_6_7_are_zero(self) -> None:
+        """Left-arm base Jacobian only touches DOFs 0, 4, 5."""
+        cos_hub = jnp.cos(jnp.array(0.1))
+        sin_hub = jnp.sin(jnp.array(0.1))
+        cos_ls = jnp.cos(jnp.array(0.2))
+        sin_ls = jnp.sin(jnp.array(0.2))
+        cos_le = jnp.cos(jnp.array(0.3))
+        sin_le = jnp.sin(jnp.array(0.3))
+        J = _left_arm_base_jacobian(
+            _PARAMS_JAX, cos_hub, sin_hub, cos_ls, sin_ls, cos_le, sin_le
+        )
+        zero_cols = [1, 2, 3, 6, 7]
+        for col in zero_cols:
+            assert jnp.allclose(J[:, col], 0.0), f"DOF {col} should be zero"
+
+    def test_helpers_agree_with_full_jacobians_rh(self) -> None:
+        """_right_arm_base_jacobian matches rh entry from analytical_fk_jacobians_jax."""
+        q = jnp.array([0.3, 0.1, -0.2, 0.0, 0.1, -0.1, 0.0, 0.5])
+        full = analytical_fk_jacobians_jax(q, _PARAMS_JAX)
+        J_expected = full["rh"]
+
+        cos_hub, sin_hub = jnp.cos(q[0]), jnp.sin(q[0])
+        cos_rs = jnp.cos(q[0] + q[1])
+        sin_rs = jnp.sin(q[0] + q[1])
+        cos_re = jnp.cos(q[0] + q[1] + q[2])
+        sin_re = jnp.sin(q[0] + q[1] + q[2])
+        J_helper = _right_arm_base_jacobian(
+            _PARAMS_JAX, cos_hub, sin_hub, cos_rs, sin_rs, cos_re, sin_re
+        )
+        assert jnp.allclose(J_helper, J_expected, atol=1e-6)
+
+    def test_helpers_agree_with_full_jacobians_lh(self) -> None:
+        """_left_arm_base_jacobian matches lh entry from analytical_fk_jacobians_jax."""
+        q = jnp.array([0.3, 0.1, -0.2, 0.0, 0.1, -0.1, 0.0, 0.5])
+        full = analytical_fk_jacobians_jax(q, _PARAMS_JAX)
+        J_expected = full["lh"]
+
+        cos_hub, sin_hub = jnp.cos(q[0]), jnp.sin(q[0])
+        cos_ls = jnp.cos(q[0] + q[4])
+        sin_ls = jnp.sin(q[0] + q[4])
+        cos_le = jnp.cos(q[0] + q[4] + q[5])
+        sin_le = jnp.sin(q[0] + q[4] + q[5])
+        J_helper = _left_arm_base_jacobian(
+            _PARAMS_JAX, cos_hub, sin_hub, cos_ls, sin_ls, cos_le, sin_le
+        )
+        assert jnp.allclose(J_helper, J_expected, atol=1e-6)
