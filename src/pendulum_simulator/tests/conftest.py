@@ -15,22 +15,28 @@ from double_pendulum_golf.physics import PendulumParams
 # Qt display availability detection
 # ---------------------------------------------------------------------------
 
-_HAVE_DISPLAY = (
-    sys.platform == "win32"
-    or sys.platform == "darwin"
-    or bool(os.environ.get("DISPLAY"))
-    or bool(os.environ.get("WAYLAND_DISPLAY"))
-)
+
+def _qt_available() -> bool:
+    """Return True if a Qt platform backend can be initialised safely."""
+    # The offscreen platform always works, even in headless CI.
+    if os.environ.get("QT_QPA_PLATFORM") == "offscreen":
+        return True
+    # Physical or virtual X11/Wayland display present.
+    if bool(os.environ.get("DISPLAY")) or bool(os.environ.get("WAYLAND_DISPLAY")):
+        return True
+    # Windows/macOS always have a native platform.
+    return sys.platform in ("win32", "darwin")
 
 
 @pytest.fixture(scope="session")
 def qapp():
     """Provide a QApplication instance for Qt widget tests.
 
-    Skips automatically on headless environments (no display).
+    Skips automatically when no Qt platform backend is available
+    (e.g. a headless runner without QT_QPA_PLATFORM=offscreen).
     """
-    if not _HAVE_DISPLAY:
-        pytest.skip("No display available (headless CI)")
+    if not _qt_available():
+        pytest.skip("No Qt platform available (set QT_QPA_PLATFORM=offscreen)")
     from PyQt6.QtWidgets import QApplication
 
     app = QApplication.instance()

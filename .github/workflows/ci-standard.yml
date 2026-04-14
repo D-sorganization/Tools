@@ -205,7 +205,7 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6 xvfb
+          sudo apt-get install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
 
       - name: Install Dependencies
         run: |
@@ -214,10 +214,11 @@ jobs:
           pip install fastapi
           pip install httpx
 
-      - name: Start Virtual Display (for Qt tests)
+      - name: Configure Qt for headless CI
         run: |
-          Xvfb :99 -screen 0 1280x720x24 &
-          echo "DISPLAY=:99" >> $GITHUB_ENV
+          # Use Qt offscreen platform — no X11/xcb infrastructure needed.
+          # PyQt6 widgets render off-screen; all Qt widget tests run safely.
+          echo "QT_QPA_PLATFORM=offscreen" >> $GITHUB_ENV
 
       - name: Collect Changed Test Files
         run: |

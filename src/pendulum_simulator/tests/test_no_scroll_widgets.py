@@ -9,9 +9,15 @@ import pytest
 
 
 def _has_pyqt6() -> bool:
-    # On headless Linux, QWidget() causes SIGABRT even if PyQt6 is importable
+    # On headless Linux, QWidget() causes SIGABRT without a platform backend.
+    # QT_QPA_PLATFORM=offscreen is safe; DISPLAY/WAYLAND_DISPLAY mean a real server.
     if sys.platform not in ("win32", "darwin"):
-        if not (os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")):
+        has_platform = (
+            os.environ.get("QT_QPA_PLATFORM") == "offscreen"
+            or bool(os.environ.get("DISPLAY"))
+            or bool(os.environ.get("WAYLAND_DISPLAY"))
+        )
+        if not has_platform:
             return False
     try:
         from PyQt6.QtWidgets import QWidget  # noqa: F401
