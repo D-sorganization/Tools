@@ -198,7 +198,7 @@ class _SimulationLifecycleMixin:
         assert busy is not None, "busy must be provided"
         host = cast(QWidget, self)  # Mixin used only on QWidget subclasses
         if not hasattr(self, "_busy_label"):
-            self._busy_label = QLabel("⏳  Simulating…", host)
+            self._busy_label = QLabel("…  Simulating", host)
             self._busy_label.setStyleSheet(
                 "background: #202040; color: #b0b0e8; border: 1px solid #404070;"
                 "border-radius: 4px; padding: 4px 10px; font-size: 12px;"

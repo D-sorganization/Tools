@@ -100,7 +100,7 @@ else:
     logger.error(  # pragma: no cover
         "Function generator UNAVAILABLE: %s (searched from %s)",
         _WIDGET_IMPORT_ERROR,
-        _this_file,
+        Path(__file__).resolve(),
     )
 
 
@@ -164,14 +164,14 @@ class FunctionGeneratorDialog(QDialog):
                 self._poly_widget = _PolyWidget(use_builtin_theme=False)
                 self._poly_widget.set_joints(self._joint_names)
                 self._poly_widget.polynomial_generated.connect(self._on_signal_applied)
-                tabs.addTab(self._poly_widget, "🎨 Design (Draw / Click / Equation)")
+                tabs.addTab(self._poly_widget, "Design (Draw / Click / Equation)")
 
             # Tab 2: Signal Processing (generate waveform → filter → fit → apply)
             if _HAS_SIGNAL_WIDGET and _SignalWidget is not None:
                 self._signal_widget = _SignalWidget(use_builtin_theme=False)
                 self._signal_widget.set_joints(self._joint_names)
                 self._signal_widget.signal_generated.connect(self._on_signal_applied)
-                tabs.addTab(self._signal_widget, "📊 Analyze (Waveforms / Filters)")
+                tabs.addTab(self._signal_widget, "∿ Analyze (Waveforms / Filters)")
 
             layout.addWidget(tabs, stretch=1)
         else:
@@ -181,9 +181,9 @@ class FunctionGeneratorDialog(QDialog):
             note = QTextEdit()
             note.setReadOnly(True)
             note.setPlainText(
-                f"⚠ Signal Toolkit widgets not available.\n\n"
+                "⚠ Signal Toolkit widgets not available.\n\n"
                 f"Reason: {error_detail}\n\n"
-                f"Searched from: {_this_file}\n\n"
+                f"Searched from: {Path(__file__).resolve()}\n\n"
                 "Ensure the signal_toolkit package is on the Python path.\n"
                 "You can select and copy this text for troubleshooting."
             )

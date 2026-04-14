@@ -52,8 +52,8 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install fastapi
-          pip install httpx
-          pip install ruff==0.14.10 mypy==1.13.0 bandit==1.7.7 pip-audit types-PyYAML types-requests
+          pip install httpx pytest-cov
+          pip install ruff==0.14.10 mypy==1.13.0 bandit==1.7.7 pip-audit sortedcontainers types-PyYAML types-requests
 
       - name: Collect Changed Python Files
         run: |
@@ -165,10 +165,12 @@ jobs:
           fi
 
       - name: Security Scan (pip-audit)
-        # CVE-2026-4539: affects all pygments versions (no fix released yet as of 2026-03-24).
-        # Ignored here to unblock CI; remove --ignore-vuln once a patched pygments version ships.
-        # Tracked: https://github.com/D-sorganization/Tools/issues — re-evaluate when pygments>=2.19.3 or similar is available.
-        run: pip-audit -r requirements.txt --ignore-vuln CVE-2026-4539
+        run: |
+          # CVE-2026-4539: pygments 2.19.2 vulnerability with no fix version available yet.
+          # Ignored until a patched release is published upstream.
+          # Use python -m pip_audit to ensure we use the venv-installed binary,
+          # not the system-wide one which may have a broken dep chain.
+          python -m pip_audit -r requirements.txt --ignore-vuln CVE-2026-4539
 
       - name: Check gitleaks license
         id: gitleaks-check
@@ -224,6 +226,12 @@ jobs:
           pip install -r requirements.txt
           pip install fastapi
           pip install httpx
+
+      - name: Configure Qt for headless CI
+        run: |
+          # Use Qt offscreen platform — no X11/xcb infrastructure needed.
+          # PyQt6 widgets render off-screen; all Qt widget tests run safely.
+          echo "QT_QPA_PLATFORM=offscreen" >> $GITHUB_ENV
 
       - name: Collect Changed Test Files
         run: |

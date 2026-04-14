@@ -1,16 +1,16 @@
 """Tests for simulation_panel.py"""
 
+from typing import Any
 import pytest
 import numpy as np
 from unittest.mock import MagicMock, patch
 from PyQt6.QtCore import QByteArray, QSettings, pyqtSignal
 from PyQt6.QtWidgets import QWidget
 
-from double_pendulum_golf.gui.simulation_panel import SimulationPanel, _SimWorker
-
 from double_pendulum_golf.gui.controls_widget import ControlsWidget
-from double_pendulum_golf.gui.controls_widget_triple import ControlsWidgetTriple
 from double_pendulum_golf.gui.controls_widget_golfer import ControlsWidgetGolfer
+from double_pendulum_golf.gui.controls_widget_triple import ControlsWidgetTriple
+from double_pendulum_golf.gui.simulation_panel import SimulationPanel, _SimWorker
 
 
 class MockControls(QWidget):
@@ -98,7 +98,6 @@ def mock_sim_kwargs():
     pendulum = MockViewer()
     matrix = MockViewer()
     torque_history = MockViewer()
-    MagicMock()
 
     # We define the signal on the optimizer mock so we can emit it
     class MockOpt(QWidget):
@@ -265,9 +264,7 @@ def test_export_data(qapp, mock_sim_kwargs, tmp_path):
     panel = SimulationPanel(**mock_sim_kwargs)
 
     # show message if no result
-    with patch(
-        "double_pendulum_golf.gui.simulation_panel.QMessageBox.information"
-    ) as info:
+    with patch("double_pendulum_golf.gui.simulation_panel.QMessageBox.information") as info:
         panel._on_export_data()
         info.assert_called_once()
 
@@ -361,9 +358,7 @@ def test_apply_optimized_coefficients(qapp, mock_sim_kwargs):
     panel_triple.controls.inp_tau_shoulder = MagicMock()
     panel_triple.controls.inp_tau_elbow = MagicMock()
     panel_triple.controls.inp_tau_wrist = MagicMock()
-    panel_triple._apply_optimized_coefficients(
-        {"coeffs": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]}
-    )
+    panel_triple._apply_optimized_coefficients({"coeffs": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]})
 
     # Test golfer
     mock_sim_kwargs["controls"] = MockControlsGolfer()
@@ -404,3 +399,102 @@ def test_sim_worker():
     run_fn.side_effect = RuntimeError("test")
     worker.run()
     worker.error.emit.assert_called_with("test")
+
+
+# Regression tests for the tabbed-side-panel layout refactor
+
+
+def test_panel_uses_side_panel_tabs(qapp, mock_sim_kwargs) -> Any:
+    """SimulationPanel hosts a SidePanelTabs as the right-hand container."""
+    from double_pendulum_golf.gui.side_panel_tabs import SidePanelTabs
+
+    panel = SimulationPanel(**mock_sim_kwargs)
+    assert hasattr(panel, "_side_tabs")
+    assert isinstance(panel._side_tabs, SidePanelTabs)
+
+
+def test_setup_tab_is_first(qapp, mock_sim_kwargs) -> Any:
+    """The Setup tab (controls widget) is always first so users see it on open."""
+    panel = SimulationPanel(**mock_sim_kwargs)
+    labels = panel._side_tabs.panel_labels()
+    assert labels[0] == SimulationPanel.TAB_SETUP
+    assert panel._side_tabs.panel_widget(SimulationPanel.TAB_SETUP) is panel.controls
+
+
+def test_mass_matrix_tab_present(qapp, mock_sim_kwargs) -> Any:
+    panel = SimulationPanel(**mock_sim_kwargs)
+    labels = panel._side_tabs.panel_labels()
+    assert SimulationPanel.TAB_MASS_MATRIX in labels
+
+
+def test_plots_tab_present_when_torque_history_supplied(qapp, mock_sim_kwargs) -> Any:
+    panel = SimulationPanel(**mock_sim_kwargs)
+    labels = panel._side_tabs.panel_labels()
+    assert SimulationPanel.TAB_PLOTS in labels
+    assert panel._side_tabs.panel_widget(SimulationPanel.TAB_PLOTS) is panel.torque_history
+
+
+def test_plots_tab_absent_when_torque_history_omitted(qapp, mock_sim_kwargs) -> Any:
+    kwargs = {**mock_sim_kwargs, "torque_history": None}
+    panel = SimulationPanel(**kwargs)
+    assert SimulationPanel.TAB_PLOTS not in panel._side_tabs.panel_labels()
+
+
+def test_optimizer_tab_present_when_optimizer_supplied(qapp, mock_sim_kwargs) -> Any:
+    panel = SimulationPanel(**mock_sim_kwargs)
+    assert SimulationPanel.TAB_OPTIMIZER in panel._side_tabs.panel_labels()
+
+
+def test_optimizer_tab_absent_when_optimizer_omitted(qapp, mock_sim_kwargs) -> Any:
+    kwargs = {**mock_sim_kwargs, "optimizer": None, "objective_builder": None}
+    panel = SimulationPanel(**kwargs)
+    assert SimulationPanel.TAB_OPTIMIZER not in panel._side_tabs.panel_labels()
+
+
+def test_set_perturbation_panel_creates_noise_tab(qapp, mock_sim_kwargs) -> Any:
+    """set_perturbation_panel adds a Noise tab as the last entry."""
+    from PyQt6.QtWidgets import QLabel
+
+    panel = SimulationPanel(**mock_sim_kwargs)
+    perturb = QLabel("perturbation panel")
+    panel.set_perturbation_panel(perturb)
+    labels = panel._side_tabs.panel_labels()
+    assert labels[-1] == SimulationPanel.TAB_NOISE
+    assert panel.perturbation_panel is perturb
+    assert panel._side_tabs.panel_widget(SimulationPanel.TAB_NOISE) is perturb
+
+
+def test_set_perturbation_panel_rejects_none(qapp, mock_sim_kwargs) -> Any:
+    panel = SimulationPanel(**mock_sim_kwargs)
+    with pytest.raises(AssertionError, match="None"):
+        panel.set_perturbation_panel(None)  # type: ignore[arg-type]
+
+
+def test_pendulum_widget_is_left_of_tabs(qapp, mock_sim_kwargs) -> Any:
+    """The pendulum graphic occupies splitter index 0; tabs are index 1.
+
+    Locks the "graphic always visible on the left" contract.
+    """
+    panel = SimulationPanel(**mock_sim_kwargs)
+    splitter = panel._splitter
+    assert splitter.count() == 2
+    assert splitter.widget(0) is panel.pendulum
+    assert splitter.widget(1) is panel._side_tabs
+
+
+def test_pendulum_widget_is_not_collapsible(qapp, mock_sim_kwargs) -> Any:
+    """The user cannot accidentally hide the graphic by dragging the splitter."""
+    panel = SimulationPanel(**mock_sim_kwargs)
+    splitter = panel._splitter
+    assert splitter.isCollapsible(0) is False
+    assert splitter.isCollapsible(1) is False
+
+
+def test_save_layout_persists_active_tab(qapp, mock_sim_kwargs) -> Any:
+    """save_layout writes both splitter state AND active tab to QSettings."""
+    panel = SimulationPanel(**mock_sim_kwargs)
+    panel._side_tabs.set_active_tab(SimulationPanel.TAB_OPTIMIZER)
+    panel.save_layout()
+    settings = QSettings("D-sorganization", "PendulumSimulator")
+    saved_tab = settings.value(f"{panel._settings_key}/active_tab")
+    assert saved_tab == SimulationPanel.TAB_OPTIMIZER

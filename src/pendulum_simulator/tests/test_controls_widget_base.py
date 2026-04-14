@@ -89,7 +89,9 @@ def test_controls_base_construction(qapp):
     assert w.btn_export_image is not None
 
     btn_funcgen = w._build_funcgen_button()
-    assert btn_funcgen.text() == "📈 Signal Toolkit…"
+    # Label uses a BMP-range sine-wave symbol so it renders without an
+    # emoji font on bare Linux/WSL.
+    assert btn_funcgen.text() == "∿ Signal Toolkit…"
 
     # Expose inputs
     w._get_torque_inputs()
@@ -107,8 +109,12 @@ def test_open_function_generator(monkeypatch, qapp):
 
     monkeypatch.setattr(fgd.FunctionGeneratorDialog, "__init__", mock_init)
     monkeypatch.setattr(fgd.FunctionGeneratorDialog, "exec", mock_dlg)
-    # create dummy signal property
-    fgd.FunctionGeneratorDialog.torque_imported = MagicMock()
+    # Replace the class-level pyqtSignal with a mock VIA monkeypatch so it
+    # is automatically restored at test teardown. A direct
+    # ``cls.torque_imported = MagicMock()`` would permanently shadow the
+    # real signal for every subsequent test in the session and break
+    # ``test_function_generator_dialog::test_on_signal_applied``.
+    monkeypatch.setattr(fgd.FunctionGeneratorDialog, "torque_imported", MagicMock())
 
     w._open_function_generator()
     mock_dlg.assert_called_once()
