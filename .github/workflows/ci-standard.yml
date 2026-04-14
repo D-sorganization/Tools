@@ -280,6 +280,19 @@ jobs:
             "tests/shared/python/process_calculators/test_constants.py"
             # Tools manifest integrity
             "tests/scripts/test_generate_tools_json.py"
+            # Coverage policy gate itself (protects CI infrastructure).
+            # Added alongside shared utility tests to restore the 25% total
+            # coverage floor after PR #2049 dropped it to 24.99%.
+            "tests/scripts/test_check_coverage_policy.py"
+            # Shared Python utilities (file/env/csv/logging/os).
+            # These modules are pure-Python and widely imported; adding their
+            # existing tests to the smoke slice adds ~2% to total coverage
+            # and provides headroom above the 25% floor.
+            "tests/test_file_utils.py"
+            "tests/test_csv_utils.py"
+            "tests/test_env_utils.py"
+            "tests/test_logging_utils.py"
+            "tests/test_os_utils.py"
           )
           if [ -s changed_test_files.txt ]; then
             mapfile -t changed_test_files < changed_test_files.txt
