@@ -2,12 +2,41 @@
 
 from __future__ import annotations
 
+import os
+import sys
 from collections.abc import Callable
 
 import numpy as np
 import pytest
 
 from double_pendulum_golf.physics import PendulumParams
+
+# ---------------------------------------------------------------------------
+# Qt display availability detection
+# ---------------------------------------------------------------------------
+
+_HAVE_DISPLAY = (
+    sys.platform == "win32"
+    or sys.platform == "darwin"
+    or bool(os.environ.get("DISPLAY"))
+    or bool(os.environ.get("WAYLAND_DISPLAY"))
+)
+
+
+@pytest.fixture(scope="session")
+def qapp():
+    """Provide a QApplication instance for Qt widget tests.
+
+    Skips automatically on headless environments (no display).
+    """
+    if not _HAVE_DISPLAY:
+        pytest.skip("No display available (headless CI)")
+    from PyQt6.QtWidgets import QApplication
+
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
+    yield app
 
 
 @pytest.fixture
