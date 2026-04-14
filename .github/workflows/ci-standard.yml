@@ -43,8 +43,8 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           pip install fastapi
-          pip install httpx
-          pip install ruff==0.14.10 mypy==1.13.0 bandit==1.7.7 pip-audit types-PyYAML types-requests
+          pip install httpx pytest-cov
+          pip install ruff==0.14.10 mypy==1.13.0 bandit==1.7.7 pip-audit sortedcontainers types-PyYAML types-requests
 
       - name: Collect Changed Python Files
         run: |
