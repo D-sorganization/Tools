@@ -189,7 +189,9 @@ jobs:
         run: |
           # CVE-2026-4539: pygments 2.19.2 vulnerability with no fix version available yet.
           # Ignored until a patched release is published upstream.
-          pip-audit -r requirements.txt --ignore-vuln CVE-2026-4539
+          # Use python -m pip_audit to ensure we use the venv-installed binary,
+          # not the system-wide one which may have a broken dep chain.
+          python -m pip_audit -r requirements.txt --ignore-vuln CVE-2026-4539
 
       # - name: Secrets Scan (gitleaks)
       #   if: secrets.GITLEAKS_LICENSE != ''
