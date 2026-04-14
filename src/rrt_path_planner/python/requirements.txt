@@ -27,6 +27,6 @@ matplotlib>=3.5.0  # For plotting and analysis
 plotly>=5.0.0      # For interactive 3D plots
 
 # Development tools (optional)
-pytest>=6.0.0      # For testing
+pytest>=9.0.3      # For testing
 black>=22.0.0      # Code formatting
 flake8>=4.0.0      # Code linting 
