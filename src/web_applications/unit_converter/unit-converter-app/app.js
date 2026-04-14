@@ -702,6 +702,8 @@ function renderCustomUnitsList() {
       removeBtn.className = 'custom-unit-remove';
       removeBtn.dataset.category = category;
       removeBtn.dataset.unit = unit;
+      removeBtn.setAttribute('aria-label', `Remove custom unit ${unit}`);
+      removeBtn.setAttribute('title', `Remove ${unit}`);
       removeBtn.textContent = '×';
       itemDiv.appendChild(removeBtn);
 
