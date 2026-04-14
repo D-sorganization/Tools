@@ -291,7 +291,7 @@ class BasePendulumWidget(QWidget):
 
     def compute_and_store_trajectory_bbox(
         self,
-        sample_positions: list[dict[str, tuple[float, float]]],
+        sample_positions: list[dict[str, tuple[float, float] | None]],
     ) -> None:
         """Scan a list of per-frame joint dicts and cache the world bbox.
 
@@ -610,7 +610,7 @@ class BasePendulumWidget(QWidget):
             self.reset_view()
             event.accept()
             return
-        super().keyPressEvent(event)  # type: ignore[misc]
+        super().keyPressEvent(event)  # type: ignore[arg-type]
 
     # ------------------------------------------------------------------
     # Shared drawing helpers
