@@ -471,7 +471,7 @@ def test_set_perturbation_panel_creates_noise_tab(qapp, mock_sim_kwargs) -> Any:
 
 def test_set_perturbation_panel_rejects_none(qapp, mock_sim_kwargs) -> Any:
     panel = SimulationPanel(**mock_sim_kwargs)
-    with pytest.raises(ValueError, match="None"):
+    with pytest.raises(AssertionError, match="None"):
         panel.set_perturbation_panel(None)  # type: ignore[arg-type]
 
 
