@@ -470,7 +470,7 @@ class PendulumRenderer:
         )
 
     def setup_widgets(self) -> None:
-        """Sets up UI inputs, menu, and speed slider. Anchored in right margin (0.84+)."""
+        """Set up UI inputs, menu, and speed slider. Anchored in right margin (0.84+)."""
         menu_bg_color = "#1F2833"
 
         self.ax_toggle = self.fig.add_axes((0.85, 0.94, 0.12, 0.03))

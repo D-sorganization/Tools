@@ -126,7 +126,7 @@ def test_equations_of_motion_invalid_state() -> None:
 
 
 def test_physics_force_vectors_tdd() -> None:
-    """Verify analytical magnitude of Cartesian CF and Coriolis forces for first frame."""
+    """Verify analytical magnitude of Cartesian CF/Coriolis forces for first frame."""
     cfg = PhysicsConfig(
         m1=1.0,
         m2=2.0,
