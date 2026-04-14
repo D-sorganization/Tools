@@ -241,11 +241,11 @@ jobs:
             if [ -z "$BASE_SHA" ]; then
               BASE_SHA="${{ github.event.pull_request.base.sha }}"
             fi
-            git diff --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt
+            git diff --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt
           elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
-            git diff --name-only "${{ github.event.before }}" HEAD -- 'tests/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt
+            git diff --name-only "${{ github.event.before }}" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt
           else
-            git diff --name-only HEAD~1 HEAD -- 'tests/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
+            git diff --name-only HEAD~1 HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
           fi
           cat changed_test_files.txt
 
@@ -275,6 +275,8 @@ jobs:
             # GUI launcher: data-driven manifest loader (issue #1863)
             "tests/shared/python/gui_launcher/test_manifest_loader.py"
             "tests/shared/python/gui_launcher/test_registry.py"
+            # Notes model coverage (keeps total coverage above 25% floor)
+            "tests/shared/python/notes/test_models.py"
           )
           if [ -s changed_test_files.txt ]; then
             mapfile -t changed_test_files < changed_test_files.txt
