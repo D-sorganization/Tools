@@ -90,7 +90,7 @@ jobs:
           pip install -r requirements.txt
           pip install fastapi
           pip install httpx pytest-cov
-          pip install ruff==0.14.10 mypy==1.13.0 bandit==1.7.7 pip-audit sortedcontainers types-PyYAML types-requests
+          pip install ruff==0.14.10 mypy==1.13.0 bandit==1.7.7 pip-audit types-PyYAML types-requests
 
       - name: Collect Changed Python Files
         run: |
@@ -189,9 +189,7 @@ jobs:
         run: |
           # CVE-2026-4539: pygments 2.19.2 vulnerability with no fix version available yet.
           # Ignored until a patched release is published upstream.
-          # Use python -m pip_audit to ensure we use the venv-installed binary,
-          # not the system-wide one which may have a broken dep chain.
-          python -m pip_audit -r requirements.txt --ignore-vuln CVE-2026-4539
+          pip-audit -r requirements.txt --ignore-vuln CVE-2026-4539
 
       # - name: Secrets Scan (gitleaks)
       #   if: secrets.GITLEAKS_LICENSE != ''

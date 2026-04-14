@@ -544,4 +544,4 @@ Active development with stable core, continuous tool expansion, and web API in p
 - Pearson correlation matrix computations utilize a single-pass loop algorithm, calculating sums concurrently to drastically reduce iteration overhead compared to two-pass implementations, while carefully mitigating numerical instability via clamping.
 - Recharts component props in `AnalyticsSuite` are memoized using `useMemo` hooks to provide stable references and prevent expensive internal re-renders.
 - Exponential and power trendline calculations use pre-allocated arrays and single-pass loops instead of functional chaining to minimize GC pauses.
-- Statistics calculations (like variance and median) over arrays of objects extract numeric values into an over-allocated `Float64Array` in a single pass to avoid O(N) object property access overhead.
+- Statistics calculations (like variance and median) over arrays of objects (`RowData[]`) delay typed-array allocation until the valid count is known via a first pass, avoiding O(N) over-allocation for sparse datasets.
