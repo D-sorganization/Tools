@@ -81,8 +81,8 @@ jobs:
 
       - name: Install System Dependencies
         run: |
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 update
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 update
+          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
 
       - name: Install Dependencies
         # Force-reinstall sortedcontainers (and hypothesis) before anything
@@ -239,8 +239,8 @@ jobs:
 
       - name: Install System Dependencies
         run: |
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 update
-          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 update
+          while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
 
       - name: Install Dependencies
         # See quality-gate Install Dependencies for the rationale — the shared
