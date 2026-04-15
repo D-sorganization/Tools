@@ -1,3 +1,6 @@
 ## 2026-04-06 - [Optimize God component rendering]
 **Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), the root `App.tsx` component acts as a God component managing UI state (tabs) and large data structures. Unnecessary re-render cascades happen when switching UI tabs because heavy presentational child components (e.g., `SignalList`, `StatisticsPanel`) were not wrapped in `React.memo()`.
 **Action:** When a God component manages state and large data, explicitly wrap heavy presentational child components in `React.memo()` to prevent UI stuttering and massive re-render cascades when unrelated parent state (like UI tabs) changes.
+## 2026-04-15 - [Optimize trendline map/filter chains]
+**Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), calculating exponential and power trendlines on large datasets using chained `.map().filter().map()` operations causes severe garbage collection overhead due to massive intermediate array and object allocations.
+**Action:** When extracting sub-arrays from large datasets for regressions, replace `.map()` and `.filter()` chains with a single-pass `for` loop that pre-allocates typed arrays (or standard arrays via `new Array(len)`) and truncates them to `validCount` at the end to eliminate intermediate memory allocations.
