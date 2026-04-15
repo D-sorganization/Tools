@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.54                                     |
-| **Last Spec Update**    | 2026-04-14                                 |
+| **Spec Version**        | 1.1.55                                     |
+| **Last Spec Update**    | 2026-04-15                                 |
 
 ## 2. Purpose & Mission
 
@@ -449,6 +449,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-04-15 | 1.1.55  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
 | 2026-04-14 | 1.1.53  | Added `aria-label` and `title` to the dynamically generated "Remove" button (`×`) in the unit converter Custom Units list for screen reader accessibility. |
 | 2026-04-13 | 1.1.52  | Added visually hidden `sr-only` span before the raw timer text in `AudioRecorder.tsx` to provide screen reader context and added `aria-hidden` to purely decorative pulsing red dot. |
 | 2026-04-13 | 1.1.50  | Added `tools.shared.python.model_generation.editor` compatibility namespace so downstream repos can import the text editor via `tools.shared.python` without duplicating the module; added `-p no:xvfb` to pytest addopts so the test suite runs on headless self-hosted runners that lack Xvfb; applied ruff formatting fixes across GUI stylesheets and multiline string literals. |
@@ -510,7 +511,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-09 | 1.1.35  | Added a shared provider-pack manifest for the pendulum simulator under `src/pendulum_simulator`, plus a repo-local validator and regression tests that keep the manifest aligned with the real package entry point, working directory, Python path, icon asset, and launcher metadata required for future UpstreamDrift shared-launch integration.                                                                                                                                                                                                                  |
 | 2026-04-09 | 1.1.34  | Wrapped DataTableView, PlotView, and AnalyticsSuite in `React.memo`, and memoized activeSignals with `useMemo` to prevent expensive visualization re-renders on unrelated UI state changes.                                                                                                                                                                                                                                                                                                                                                                         |
 | 2026-04-10 | 1.1.37  | Add explicit focus-visible styles to the interactive buttons (Upload New Video, Play/Pause, Mute/Unmute) within the `VideoPlayer` component for improved keyboard navigation visibility.                                                                                                                                                                                                                                                                                                                                                                            |
-| 2026-04-12 | 1.1.48  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
 
 ---
 
