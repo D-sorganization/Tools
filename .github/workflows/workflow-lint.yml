@@ -86,7 +86,7 @@ jobs:
           sudo mv actionlint /usr/local/bin/actionlint
 
       - name: Install shellcheck
-        run: while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 update && while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 install -y shellcheck
+        run: while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 update && while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 install -y shellcheck
 
       - name: Run actionlint
         run: actionlint -color -shellcheck ./scripts/actionlint_shellcheck.sh -pyflakes=

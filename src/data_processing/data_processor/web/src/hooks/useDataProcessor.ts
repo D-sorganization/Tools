@@ -507,14 +507,12 @@ export function useDataProcessor() {
           };
         } else if (config.type === 'exponential') {
           // y = a * e^(bx), linearize: ln(y) = ln(a) + bx
-          // ⚡ Bolt Optimization: Use a single-pass loop with pre-allocation to extract strictly positive y's.
-          // This avoids intermediate array creations and garbage collection overhead from .filter().map().
-          const dataLen = yData.length;
-          const lnY = new Array<number>(dataLen);
-          const xFiltered = new Array<number>(dataLen);
+          // ⚡ Bolt Optimization: Replace .filter().map() chains with a single-pass loop pre-allocating the arrays.
+          const lnY = new Array<number>(count);
+          const xFiltered = new Array<number>(count);
           let validCount = 0;
 
-          for (let i = 0; i < dataLen; i++) {
+          for (let i = 0; i < count; i++) {
             const y = yData[i];
             if (y > 0) {
               lnY[validCount] = Math.log(y);
@@ -537,14 +535,12 @@ export function useDataProcessor() {
           };
         } else {
           // Power: y = a * x^b, linearize: ln(y) = ln(a) + b*ln(x)
-          // ⚡ Bolt Optimization: Replace O(N) object allocations ({x, y}) and chained .filter().map()
-          // with a single-pass loop to avoid massive garbage collection pauses.
-          const dataLen = xData.length;
-          const lnX = new Array<number>(dataLen);
-          const lnY = new Array<number>(dataLen);
+          // ⚡ Bolt Optimization: Replace .map().filter().map() chains and object allocations with single-pass loops pre-allocating the arrays.
+          const lnX = new Array<number>(count);
+          const lnY = new Array<number>(count);
           let validCount = 0;
 
-          for (let i = 0; i < dataLen; i++) {
+          for (let i = 0; i < count; i++) {
             const x = xData[i];
             const y = yData[i];
             if (x > 0 && y > 0) {
