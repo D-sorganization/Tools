@@ -81,8 +81,22 @@ jobs:
 
       - name: Install System Dependencies
         run: |
-          sudo apt-get -o DPkg::Lock::Timeout=300 update
-          sudo apt-get -o DPkg::Lock::Timeout=300 install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+          # Retry apt-get to survive transient lock contention across
+          # concurrent jobs on the shared self-hosted fleet.
+          for attempt in 1 2 3 4 5; do
+            if sudo apt-get -o DPkg::Lock::Timeout=300 update; then break; fi
+            echo "apt-get update attempt $attempt failed, retrying in $((attempt * 10))s"
+            sleep $((attempt * 10))
+          done
+          for attempt in 1 2 3 4 5; do
+            if sudo apt-get -o DPkg::Lock::Timeout=300 install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6; then
+              exit 0
+            fi
+            echo "apt-get install attempt $attempt failed, retrying in $((attempt * 10))s"
+            sleep $((attempt * 10))
+          done
+          echo "::error::apt-get install failed after 5 attempts"
+          exit 1
 
       - name: Install Dependencies
         # Force-reinstall sortedcontainers (and hypothesis) before anything
@@ -220,6 +234,7 @@ jobs:
     needs: [pick-runner, quality-gate]
     runs-on: self-hosted
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
     steps:
@@ -239,8 +254,22 @@ jobs:
 
       - name: Install System Dependencies
         run: |
-          sudo apt-get -o DPkg::Lock::Timeout=300 update
-          sudo apt-get -o DPkg::Lock::Timeout=300 install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6
+          # Retry apt-get to survive transient lock contention across
+          # concurrent matrix jobs on the shared self-hosted fleet.
+          for attempt in 1 2 3 4 5; do
+            if sudo apt-get -o DPkg::Lock::Timeout=300 update; then break; fi
+            echo "apt-get update attempt $attempt failed, retrying in $((attempt * 10))s"
+            sleep $((attempt * 10))
+          done
+          for attempt in 1 2 3 4 5; do
+            if sudo apt-get -o DPkg::Lock::Timeout=300 install -y libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6; then
+              exit 0
+            fi
+            echo "apt-get install attempt $attempt failed, retrying in $((attempt * 10))s"
+            sleep $((attempt * 10))
+          done
+          echo "::error::apt-get install failed after 5 attempts"
+          exit 1
 
       - name: Install Dependencies
         # See quality-gate Install Dependencies for the rationale — the shared
