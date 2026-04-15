@@ -507,9 +507,25 @@ export function useDataProcessor() {
           };
         } else if (config.type === 'exponential') {
           // y = a * e^(bx), linearize: ln(y) = ln(a) + bx
-          const lnY = yData.filter((y) => y > 0).map((y) => Math.log(y));
-          const xFiltered = xData.filter((_, i) => yData[i] > 0);
-          if (lnY.length < 2) return null;
+          // ⚡ Bolt Optimization: Use a single-pass loop with pre-allocation to extract strictly positive y's.
+          // This avoids intermediate array creations and garbage collection overhead from .filter().map().
+          const dataLen = yData.length;
+          const lnY = new Array<number>(dataLen);
+          const xFiltered = new Array<number>(dataLen);
+          let validCount = 0;
+
+          for (let i = 0; i < dataLen; i++) {
+            const y = yData[i];
+            if (y > 0) {
+              lnY[validCount] = Math.log(y);
+              xFiltered[validCount] = xData[i];
+              validCount++;
+            }
+          }
+
+          if (validCount < 2) return null;
+          lnY.length = validCount;
+          xFiltered.length = validCount;
 
           const { slope: b, intercept: lnA, rSquared } = linearRegression(xFiltered, lnY);
           const a = Math.exp(lnA);
@@ -521,12 +537,26 @@ export function useDataProcessor() {
           };
         } else {
           // Power: y = a * x^b, linearize: ln(y) = ln(a) + b*ln(x)
-          const validPower = xData.map((x, i) => ({ x, y: yData[i] }))
-            .filter(({ x, y }) => x > 0 && y > 0);
-          if (validPower.length < 2) return null;
+          // ⚡ Bolt Optimization: Replace O(N) object allocations ({x, y}) and chained .filter().map()
+          // with a single-pass loop to avoid massive garbage collection pauses.
+          const dataLen = xData.length;
+          const lnX = new Array<number>(dataLen);
+          const lnY = new Array<number>(dataLen);
+          let validCount = 0;
 
-          const lnX = validPower.map((d) => Math.log(d.x));
-          const lnY = validPower.map((d) => Math.log(d.y));
+          for (let i = 0; i < dataLen; i++) {
+            const x = xData[i];
+            const y = yData[i];
+            if (x > 0 && y > 0) {
+              lnX[validCount] = Math.log(x);
+              lnY[validCount] = Math.log(y);
+              validCount++;
+            }
+          }
+
+          if (validCount < 2) return null;
+          lnX.length = validCount;
+          lnY.length = validCount;
 
           const { slope: b, intercept: lnA, rSquared } = linearRegression(lnX, lnY);
           const a = Math.exp(lnA);
