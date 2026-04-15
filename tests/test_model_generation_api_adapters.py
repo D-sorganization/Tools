@@ -4,9 +4,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from fastapi import FastAPI
-from fastapi.testclient import TestClient
-from flask import Flask
+import pytest
+
+Flask = pytest.importorskip("flask").Flask
+FastAPI = pytest.importorskip("fastapi").FastAPI
+TestClient = pytest.importorskip("fastapi.testclient").TestClient
+
 from model_generation.api import FastAPIAdapter, FlaskAdapter, ModelGenerationAPI
 
 SIMPLE_URDF = """<?xml version="1.0"?>
