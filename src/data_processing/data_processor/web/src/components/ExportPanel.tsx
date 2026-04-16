@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, memo } from 'react';
 import { Download, FileJson, FileSpreadsheet, FileText } from 'lucide-react';
 import Papa from 'papaparse';
 import type { DataRow, ExportFormat } from '../types';
@@ -9,7 +9,10 @@ interface ExportPanelProps {
   disabled: boolean;
 }
 
-export function ExportPanel({ data, fileName, disabled }: ExportPanelProps) {
+// ⚡ Bolt: Wrapped ExportPanel in React.memo() to prevent unnecessary O(N) re-render
+// cascades when parent (App.tsx) UI state changes (like switching tabs).
+// Performance impact: Eliminates UI stuttering during tab navigation.
+export const ExportPanel = memo(function ExportPanel({ data, fileName, disabled }: ExportPanelProps) {
   const [exportFormat, setExportFormat] = useState<ExportFormat>('csv');
 
   const handleExport = useCallback(() => {
@@ -104,6 +107,6 @@ export function ExportPanel({ data, fileName, disabled }: ExportPanelProps) {
       </div>
     </div>
   );
-}
+});
 
 export default ExportPanel;
