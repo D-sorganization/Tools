@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.55                                     |
+| **Spec Version**        | 1.1.57                                     |
 | **Last Spec Update**    | 2026-04-16                                 |
 
 ## 2. Purpose & Mission
@@ -451,6 +451,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2026-04-16 | 1.1.55  | Replaced object spread operator with manual property copy in `integrateSignals` and `differentiateSignals` loops in `useDataProcessor.ts`; wrapped UI components (`AdvancedPanel`, `ExportPanel`, `FilterPanel`, `ResamplePanel`) in `React.memo()` to prevent unnecessary re-renders. |
 | 2026-04-15 | 1.1.56  | Refreshed the data processor regression-preparation optimization spec after CI retriggers so the PR-level SPEC freshness gate sees a documentation update on the latest source-changing branch head. |
+| 2026-04-16 | 1.1.57  | Improved the accessibility and semantics of the `AudioRecorder` component in the Video Processor app. Added `aria-label`s to recording control buttons, formatted recording duration for screen readers, hid purely visual elements from screen readers, and enhanced keyboard navigation by adding `focus-visible` styling to all buttons. |
 | 2026-04-15 | 1.1.55  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
 | 2026-04-16 | 1.1.53  | Added `aria-label` and `title` to the dynamically generated "Remove" button (`×`) in the unit converter Custom Units list for screen reader accessibility. |
 | 2026-04-13 | 1.1.52  | Added visually hidden `sr-only` span before the raw timer text in `AudioRecorder.tsx` to provide screen reader context and added `aria-hidden` to purely decorative pulsing red dot. |
