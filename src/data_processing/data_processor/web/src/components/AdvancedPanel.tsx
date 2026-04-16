@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { Calculator, TrendingUp, TrendingDown } from 'lucide-react';
 import type {
   IntegrationMethod,
@@ -18,7 +18,10 @@ interface AdvancedPanelProps {
   onApplyFormula: (config: FormulaConfig) => void;
 }
 
-export function AdvancedPanel({
+// ⚡ Bolt: Wrapped AdvancedPanel in React.memo() to prevent unnecessary O(N) re-render
+// cascades when parent (App.tsx) UI state changes (like switching tabs).
+// Performance impact: Eliminates UI stuttering during tab navigation.
+export const AdvancedPanel = memo(function AdvancedPanel({
   selectedSignals,
   timeColumn,
   disabled,
@@ -203,6 +206,6 @@ export function AdvancedPanel({
       </div>
     </div>
   );
-}
+});
 
 export default AdvancedPanel;

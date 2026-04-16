@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, memo } from 'react';
 import { Filter, Play, RotateCcw } from 'lucide-react';
 import type { FilterConfig, FilterType, FilterParameters } from '../types';
 
@@ -38,7 +38,10 @@ const DEFAULT_PARAMETERS: FilterParameters = {
   fft_cutoff: 0.1,
 };
 
-export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
+// ⚡ Bolt: Wrapped FilterPanel in React.memo() to prevent unnecessary O(N) re-render
+// cascades when parent (App.tsx) UI state changes (like switching tabs).
+// Performance impact: Eliminates UI stuttering during tab navigation.
+export const FilterPanel = memo(function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
   const [filterType, setFilterType] = useState<FilterType>('Moving Average');
   const [parameters, setParameters] = useState<FilterParameters>(DEFAULT_PARAMETERS);
 
@@ -312,6 +315,6 @@ export function FilterPanel({ onApply, onReset, disabled }: FilterPanelProps) {
       </div>
     </div>
   );
-}
+});
 
 export default FilterPanel;

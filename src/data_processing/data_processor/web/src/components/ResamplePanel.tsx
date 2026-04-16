@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { Clock } from 'lucide-react';
 import type { ResampleMethod, ResampleConfig } from '../types';
 
@@ -25,7 +25,10 @@ const frequencyOptions = [
   '1h',
 ];
 
-export function ResamplePanel({
+// ⚡ Bolt: Wrapped ResamplePanel in React.memo() to prevent unnecessary O(N) re-render
+// cascades when parent (App.tsx) UI state changes (like switching tabs).
+// Performance impact: Eliminates UI stuttering during tab navigation.
+export const ResamplePanel = memo(function ResamplePanel({
   timeColumn,
   disabled,
   onResample,
@@ -128,6 +131,6 @@ export function ResamplePanel({
       </div>
     </div>
   );
-}
+});
 
 export default ResamplePanel;

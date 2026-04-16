@@ -4,3 +4,6 @@
 ## 2026-04-15 - [Optimize trendline map/filter chains]
 **Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), calculating exponential and power trendlines on large datasets using chained `.map().filter().map()` operations causes severe garbage collection overhead due to massive intermediate array and object allocations.
 **Action:** When extracting sub-arrays from large datasets for regressions, replace `.map()` and `.filter()` chains with a single-pass `for` loop that pre-allocates typed arrays (or standard arrays via `new Array(len)`) and truncates them to `validCount` at the end to eliminate intermediate memory allocations.
+## 2026-04-16 - [Avoid object spread operator in tight integration/differentiation loops]
+**Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), using the object spread operator (`const newRow = { ...row };`) inside tight `integrateSignals` and `differentiateSignals` loops causes massive memory allocation and garbage collection overhead.
+**Action:** When downsampling or extracting points in tight JavaScript/TypeScript data processing loops, explicitly assign only the required properties to a new object or manually copy properties instead of using the object spread operator to reduce overhead.
