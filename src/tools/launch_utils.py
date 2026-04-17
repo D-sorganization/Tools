@@ -2,8 +2,8 @@
 
 import os
 import subprocess
-import threading
 import sys
+import threading
 import webbrowser
 from collections.abc import Callable
 from pathlib import Path

@@ -171,8 +171,8 @@ class TestConversionApi:
 
     def test_convert_to_urdf_raises_for_unsupported_format(self, tmp_path: Path) -> None:
         from model_generation.library.unified_loader import (
-            UnsupportedFormatError,
             UnifiedModelLoader,
+            UnsupportedFormatError,
         )
 
         source = tmp_path / "bad.txt"
@@ -205,8 +205,8 @@ class TestConversionApi:
 
     def test_convert_to_mjcf_raises_for_unsupported_format(self, tmp_path: Path) -> None:
         from model_generation.library.unified_loader import (
-            UnsupportedFormatError,
             UnifiedModelLoader,
+            UnsupportedFormatError,
         )
 
         source = tmp_path / "bad.xml"
