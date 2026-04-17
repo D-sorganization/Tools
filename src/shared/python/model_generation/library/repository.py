@@ -360,7 +360,13 @@ class GitHubRepository(Repository):
 
             return True
 
-        except (ConnectionError, TimeoutError, OSError, ValueError, zipfile.BadZipFile) as e:
+        except (
+            ConnectionError,
+            TimeoutError,
+            OSError,
+            ValueError,
+            zipfile.BadZipFile,
+        ) as e:
             logger.error(f"Failed to download archive: {e}")
             return False
 

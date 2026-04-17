@@ -12,7 +12,9 @@ from pathlib import Path
 class TestGitHubRepositoryArchiveExtraction:
     """Regression tests for GitHub archive extraction."""
 
-    def test_download_archive_rejects_zip_slip(self, tmp_path: Path, monkeypatch) -> None:
+    def test_download_archive_rejects_zip_slip(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
         repository_path = (
             Path(__file__).resolve().parents[4]
             / "src/shared/python/model_generation/library/repository.py"
@@ -36,9 +38,13 @@ class TestGitHubRepositoryArchiveExtraction:
             shutil.copy2(archive_path, filename)
             return filename, None
 
-        monkeypatch.setattr(repository_module.urllib.request, "urlretrieve", fake_urlretrieve)
+        monkeypatch.setattr(
+            repository_module.urllib.request, "urlretrieve", fake_urlretrieve
+        )
 
-        repo = repository_module.GitHubRepository(owner="owner", repo="repo", branch="main")
+        repo = repository_module.GitHubRepository(
+            owner="owner", repo="repo", branch="main"
+        )
         destination = tmp_path / "extract"
 
         assert repo.download_archive(destination) is False
