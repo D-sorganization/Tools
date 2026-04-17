@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.59                                     |
-| **Last Spec Update**    | 2026-04-16                                 |
+| **Spec Version**        | 1.1.60                                     |
+| **Last Spec Update**    | 2026-04-17                                 |
 
 ## 2. Purpose & Mission
 
@@ -524,6 +524,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-10 | 1.1.37  | Add explicit focus-visible styles to the interactive buttons (Upload New Video, Play/Pause, Mute/Unmute) within the `VideoPlayer` component for improved keyboard navigation visibility.                                                                                                                                                                                                                                                                                                                                                                            |
 | 2026-04-12 | 1.1.48  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
 | 2026-04-15 | 1.1.49  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
+| 2026-04-17 | 1.1.60  | Registered the launcher-backed lower body model tool in generated manifests, added a CI guard that rejects launcher-backed tool directories without `gui_registration.py`, and captured the remaining broader #2091 module-layout inventory for follow-up. |
 
 ---
 

@@ -4,12 +4,20 @@ on:
   push:
     paths:
       - "src/**/gui_registration.py"
+      - "src/**/launch_gui.py"
+      - "src/**/launch_pyqt6.py"
+      - "src/**/launch_web.py"
+      - "scripts/check_tools_manifest_layout.py"
       - "scripts/generate_tools_json.py"
       - "tools.json"
       - "tool_surface_contract.json"
   pull_request:
     paths:
       - "src/**/gui_registration.py"
+      - "src/**/launch_gui.py"
+      - "src/**/launch_pyqt6.py"
+      - "src/**/launch_web.py"
+      - "scripts/check_tools_manifest_layout.py"
       - "scripts/generate_tools_json.py"
       - "tools.json"
       - "tool_surface_contract.json"
@@ -66,6 +74,9 @@ jobs:
 
       - name: Generate tools.json and tool_surface_contract.json
         run: python scripts/generate_tools_json.py
+
+      - name: Check launcher-backed tool registrations
+        run: python scripts/check_tools_manifest_layout.py
 
       - name: Check tools.json for changes
         run: |

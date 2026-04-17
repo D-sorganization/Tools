@@ -295,6 +295,7 @@ jobs:
             "tests/shared/python/process_calculators/test_constants.py"
             # Tools manifest integrity
             "tests/scripts/test_generate_tools_json.py"
+            "tests/scripts/test_check_tools_manifest_layout.py"
             # Coverage policy gate itself (protects CI infrastructure).
             # Added alongside shared utility tests to restore the 25% total
             # coverage floor after PR #2049 dropped it to 24.99%.
