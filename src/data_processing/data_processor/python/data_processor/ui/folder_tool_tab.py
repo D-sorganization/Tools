@@ -10,12 +10,13 @@ import heapq
 import logging
 import os
 import shutil
-import threading
 from pathlib import Path
 from tkinter import filedialog, messagebox
 from typing import Any
 
 import customtkinter as ctk
+
+from .background_worker import start_background_thread
 
 logger = logging.getLogger(__name__)
 
@@ -430,7 +431,12 @@ class FolderToolMixin:
             return
 
         self.folder_cancel_flag = False
-        threading.Thread(target=self._folder_perform_processing, daemon=True).start()
+        start_background_thread(
+            self,
+            self._folder_perform_processing,
+            name="data-processor-folder-operation",
+            on_error=self._folder_handle_processing_error,
+        )
 
         self.folder_run_button.configure(state="disabled")
         self.folder_cancel_button.configure(state="normal")
@@ -472,10 +478,31 @@ class FolderToolMixin:
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore
         except (OSError, PermissionError, ValueError) as exc:
-            msg = f"Error: {exc}"
-            self.after(0, lambda m=msg: self.folder_status_var.set(m))  # type: ignore
-            self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore
-            self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore
+            self._folder_schedule_processing_error(exc, "")
+
+    def _folder_schedule_processing_error(
+        self, exc: BaseException, traceback_text: str
+    ) -> None:
+        """Schedule folder error handling on the UI thread."""
+        self.after(  # type: ignore
+            0,
+            lambda e=exc, tb=traceback_text: self._folder_handle_processing_error(
+                e, tb
+            ),
+        )
+
+    def _folder_handle_processing_error(
+        self, exc: BaseException, traceback_text: str
+    ) -> None:
+        """Reset folder controls and make background failures visible."""
+        message = f"Folder processing failed: {exc}"
+        if traceback_text:
+            logger.error("Folder processing traceback:\n%s", traceback_text)
+        self.folder_status_var.set(message)
+        self.folder_progress_bar.set(0)
+        self.folder_run_button.configure(state="normal")
+        self.folder_cancel_button.configure(state="disabled")
+        messagebox.showerror("Folder Processing Failed", message)
 
     def _folder_combine_operation(self) -> None:
         """Combine operation - copy all files from source folders to destination."""

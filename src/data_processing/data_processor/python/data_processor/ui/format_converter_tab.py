@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import logging
 import os
-import threading
 from datetime import datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox
@@ -24,6 +23,7 @@ from upstream_drift_tools.data_processing.io import (
 )
 
 from ..models.split_config import SplitConfig
+from .background_worker import start_background_thread
 from .column_selection_dialog import ColumnSelectionDialog
 from .parquet_analyzer import ParquetAnalyzerDialog
 
@@ -476,8 +476,11 @@ class FormatConverterMixin:
         batch_processing = self.converter_batch_var.get()
         split_files = self.converter_split_var.get()
 
-        conversion_thread = threading.Thread(
-            target=self._perform_conversion,
+        start_background_thread(
+            self,
+            self._perform_conversion,
+            name="data-processor-format-conversion",
+            on_error=self._handle_conversion_thread_error,
             args=(
                 output_format,
                 combine_files,
@@ -486,8 +489,6 @@ class FormatConverterMixin:
                 split_files,
             ),
         )
-        conversion_thread.daemon = True
-        conversion_thread.start()
 
     def _perform_conversion(
         self,
@@ -537,6 +538,18 @@ class FormatConverterMixin:
             self.converter_status_label.configure(text="Conversion failed")
         finally:
             self.converter_convert_button.configure(state="normal")
+
+    def _handle_conversion_thread_error(
+        self, exc: BaseException, traceback_text: str
+    ) -> None:
+        """Reset converter controls and show unexpected background failures."""
+        message = f"Conversion failed: {exc}"
+        logger.error("Format conversion traceback:\n%s", traceback_text)
+        self._log_conversion_message(message)
+        self.converter_status_label.configure(text="Conversion failed")
+        self.converter_progress.set(0)
+        self.converter_convert_button.configure(state="normal")
+        messagebox.showerror("Conversion Failed", message)
 
     def _read_and_filter_file(
         self, file_path: str, use_all_columns: bool
