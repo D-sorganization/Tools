@@ -337,7 +337,15 @@ class GitHubRepository(Repository):
                         item.get("download_url")
                         or f"{self.RAW_BASE}/{self._owner}/{self._repo}/{self._branch}/{item['path']}"
                     )
-                    local_file = local_mesh_dir / item["name"]
+                    mesh_base = local_mesh_dir.resolve()
+                    local_file = (local_mesh_dir / item["name"]).resolve()
+                    try:
+                        local_file.relative_to(mesh_base)
+                    except ValueError as exc:
+                        raise ValueError(
+                            f"Mesh filename escapes destination: {item['name']!r}"
+                        ) from exc
+
                     try:
                         _urlretrieve_https(raw_url, local_file)
                     except (PermissionError, OSError) as e:
