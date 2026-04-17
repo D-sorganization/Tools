@@ -134,3 +134,27 @@ class TestGitHubImporter:
         assert results[0].status == "exists"
 
         importer.library.add_repository.assert_not_called()
+
+    @patch("urllib.request.urlopen")
+    def test_import_from_urls_rejects_non_https(self, mock_urlopen, importer) -> Any:
+        """Reject non-HTTPS URLs for repository imports."""
+        urls = ["file:///tmp/repo"]
+
+        results = importer.import_from_urls(urls)
+
+        assert len(results) == 1
+        assert results[0].status == "failed"
+        assert "Only HTTPS GitHub URLs are supported" in results[0].error
+        mock_urlopen.assert_not_called()
+
+    @patch("urllib.request.urlopen")
+    def test_import_from_urls_rejects_private_host(self, mock_urlopen, importer) -> Any:
+        """Reject unsupported GitHub hosts to prevent SSRF."""
+        urls = ["https://localhost:8080/owner/repo"]
+
+        results = importer.import_from_urls(urls)
+
+        assert len(results) == 1
+        assert results[0].status == "failed"
+        assert "Unsupported GitHub host" in results[0].error
+        mock_urlopen.assert_not_called()

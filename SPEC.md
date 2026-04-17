@@ -524,6 +524,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-10 | 1.1.37  | Add explicit focus-visible styles to the interactive buttons (Upload New Video, Play/Pause, Mute/Unmute) within the `VideoPlayer` component for improved keyboard navigation visibility.                                                                                                                                                                                                                                                                                                                                                                            |
 | 2026-04-12 | 1.1.48  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
 | 2026-04-15 | 1.1.49  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
+| 2026-04-17 | 1.1.50  | Hardened model import security by enforcing HTTPS GitHub host allowlisting for remote model-library fetches, validating user-provided GitHub repository URLs before import, dropping directory components from remote mesh names, and rejecting separator-containing URDF viewer filenames before filesystem resolution. |
 
 ---
 

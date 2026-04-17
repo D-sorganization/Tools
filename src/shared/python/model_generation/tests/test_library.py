@@ -4,8 +4,10 @@ from typing import Any
 Tests for the model library module.
 """
 
+import json
 import tempfile
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 
 class TestModelLibrary:
@@ -184,3 +186,54 @@ class TestRepository:
             repo="test_repo",
         )
         assert repo.name == "test_repo"
+
+    def test_download_meshes_rejects_traversal_filenames(self) -> Any:
+        """Test mesh filenames cannot escape the mesh destination."""
+        from model_generation.library.repository import GitHubRepository
+
+        repo = GitHubRepository(owner="owner", repo="repo")
+        destination = Path(tempfile.mkdtemp())
+
+        mock_response = MagicMock()
+        mock_response.read.return_value = json.dumps(
+            [
+                {
+                    "type": "file",
+                    "name": "safe_mesh.stl",
+                    "path": "meshes/safe_mesh.stl",
+                    "download_url": (
+                        "https://raw.githubusercontent.com/owner/repo/main/meshes/safe_mesh.stl"
+                    ),
+                },
+                {
+                    "type": "file",
+                    "name": "../traversal_attempt.stl",
+                    "path": "meshes/traversal_attempt.stl",
+                    "download_url": (
+                        "https://raw.githubusercontent.com/owner/repo/main/meshes"
+                        "/traversal_attempt.stl"
+                    ),
+                },
+            ]
+        ).encode()
+        mock_response.__enter__.return_value = mock_response
+
+        downloaded_paths: list[Path] = []
+
+        def fake_urlretrieve(url: str, filename: Path) -> tuple[str, Any]:
+            downloaded_paths.append(Path(filename))
+            Path(filename).write_text("data")
+            return (str(filename), None)
+
+        with patch(
+            "model_generation.library.repository._urlopen_https",
+            return_value=mock_response,
+        ), patch(
+            "model_generation.library.repository._urlretrieve_https",
+            side_effect=fake_urlretrieve,
+        ):
+            repo._download_meshes("meshes", destination)
+
+        assert (destination / "meshes" / "safe_mesh.stl") in downloaded_paths
+        assert (destination / "meshes" / "traversal_attempt.stl") not in downloaded_paths
+        assert not (destination / "traversal_attempt.stl").exists()
