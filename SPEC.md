@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-04-16
+  LAST UPDATED: 2026-04-17
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.61                                     |
+| **Spec Version**        | 1.1.62                                     |
 | **Last Spec Update**    | 2026-04-17                                 |
 
 ## 2. Purpose & Mission
@@ -454,6 +454,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-04-17 | 1.1.62  | Enhanced video editor UX by replacing native alert dialogs with inline accessible errors and ensuring proper focus styles. |
 | 2026-04-17 | 1.1.61  | Replaced runtime `assert` validation in asteroid-jumper physics, rotation-converter UI helpers, and scripting console execution with explicit exceptions so invalid caller input remains guarded under optimized Python. |
 | 2026-04-16 | 1.1.60  | Hardened launcher process handling by validating tool names, cleaning up spawned process groups, surfacing explicit model-conversion errors, and regression-testing temporary-file cleanup paths. |
 | 2026-04-16 | 1.1.59  | Removed stale root-level debug artifacts (`.ci_trigger.py`, `MUJOCO_LOG.TXT`, `error_log.txt`, `wave_log.txt`, and the empty marker file ending in `Last`), added root-scoped ignore rules for those paths, and locked the hygiene policy with regression tests. |
