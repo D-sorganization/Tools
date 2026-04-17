@@ -20,6 +20,8 @@ from __future__ import annotations
 
 import logging
 import sys
+from collections.abc import Callable
+from pathlib import Path
 
 from model_generation.explorer.display_config import DISPLAY_OPTIONS
 from model_generation.library.unified_loader import (
@@ -33,7 +35,6 @@ from PyQt6.QtWidgets import (
     QApplication,
     QCheckBox,
     QComboBox,
-    QFileDialog,
     QGridLayout,
     QGroupBox,
     QHBoxLayout,
@@ -53,6 +54,16 @@ from PyQt6.QtWidgets import (
 )
 
 logger = logging.getLogger(__name__)
+
+ModelFileSelector = Callable[[], str | Path | None]
+
+
+class ModelFileSelectionRequiredError(NotImplementedError):
+    """Raised when a caller asks the shared explorer to choose a local file."""
+
+
+def _missing_model_file_selector() -> str | Path | None:
+    raise ModelFileSelectionRequiredError("caller must provide a file selector")
 
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {
@@ -315,10 +326,11 @@ class ModelExplorerWindow(QMainWindow):
     - View model information (links, joints, DOF)
     """
 
-    def __init__(self) -> None:
+    def __init__(self, *, file_selector: ModelFileSelector | None = None) -> None:
         super().__init__()
         self._loader = UnifiedModelLoader()
         self._current_result: LoadResult | None = None
+        self._file_selector = file_selector or _missing_model_file_selector
         self._setup_ui()
         self._load_default_model()
 
@@ -566,17 +578,19 @@ class ModelExplorerWindow(QMainWindow):
     # -- Actions --
 
     def _load_from_file(self) -> None:
-        """Open file dialog to load a URDF or MJCF file."""
-        file_path, _ = QFileDialog.getOpenFileName(
-            self,
-            "Open Model File",
-            "",
-            "Model Files (*.urdf *.xml *.mjcf);;URDF Files (*.urdf);;MJCF Files (*.xml *.mjcf);;All Files (*)",
-        )
+        """Load a URDF or MJCF file selected by the host application."""
+        try:
+            file_path = self._file_selector()
+        except ModelFileSelectionRequiredError as exc:
+            self._status_label.setText(str(exc))
+            self._status_label.setStyleSheet(
+                f"color: {CATPPUCCIN_MOCHA['yellow']}; padding: 4px;"
+            )
+            return
         if not file_path:
             return
 
-        result = self._loader.load_file(file_path)
+        result = self._loader.load_file(str(file_path))
         self._show_load_result(result)
 
     def _load_default_model(self) -> None:

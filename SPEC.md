@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.59                                     |
+| **Spec Version**        | 1.1.61                                     |
 | **Last Spec Update**    | 2026-04-16                                 |
 
 ## 2. Purpose & Mission
@@ -454,6 +454,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-04-16 | 1.1.61  | Removed direct `QMessageBox` / `QFileDialog` calls from a focused shared-library GUI boundary slice by raising signal-toolkit domain errors, routing polynomial errors through an injectable handler, requiring an injected model-explorer file selector, and locking the boundary with architecture regressions. |
 | 2026-04-16 | 1.1.60  | Hardened launcher process handling by validating tool names, cleaning up spawned process groups, surfacing explicit model-conversion errors, and regression-testing temporary-file cleanup paths. |
 | 2026-04-16 | 1.1.59  | Removed stale root-level debug artifacts (`.ci_trigger.py`, `MUJOCO_LOG.TXT`, `error_log.txt`, `wave_log.txt`, and the empty marker file ending in `Last`), added root-scoped ignore rules for those paths, and locked the hygiene policy with regression tests. |
 | 2026-04-16 | 1.1.58  | Hardened GitHub archive extraction in the model-generation repository helper by validating zip members before unpacking so repository downloads cannot escape the destination directory. |
