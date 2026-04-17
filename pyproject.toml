@@ -116,6 +116,7 @@ include = [
     "model_generation*",
     "humanoid_character_builder*",
     "signal_toolkit*",
+    "rotation_transforms*",
     "rotation_converter*",
     "programmatic_pid*",
     "dwsim_model*",
