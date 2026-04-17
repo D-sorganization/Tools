@@ -53,7 +53,8 @@ def fmt_vec(v: np.ndarray, decimals: int = 6) -> str:
 
 def fmt_mat(M: np.ndarray, decimals: int = 6) -> str:
     """Format a numpy matrix as a multi-line string."""
-    assert M is not None, "M must be provided"
+    if M is None:
+        raise ValueError("M must be provided")
     lines: list[str] = []
     for row in M:
         lines.append("  ".join(f"{x: .{decimals}f}" for x in row))
@@ -100,7 +101,8 @@ def get_plot_colors() -> dict[str, Any]:
 
 def style_figure(fig: Figure, ax: Any = None) -> None:
     """Apply current theme colours to a matplotlib figure."""
-    assert fig is not None, "fig must be provided"
+    if fig is None:
+        raise ValueError("fig must be provided")
     c = get_plot_colors()
     fig.set_facecolor(c["bg"])
     if ax is not None:
