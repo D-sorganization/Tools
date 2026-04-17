@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.57                                     |
+| **Spec Version**        | 1.1.59                                     |
 | **Last Spec Update**    | 2026-04-16                                 |
 
 ## 2. Purpose & Mission
@@ -449,6 +449,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-04-16 | 1.1.59  | Hardened launcher process handling by validating tool names, cleaning up spawned process groups, surfacing explicit model-conversion errors, and regression-testing temporary-file cleanup paths. |
 | 2026-04-16 | 1.1.58  | Hardened GitHub archive extraction in the model-generation repository helper by validating zip members before unpacking so repository downloads cannot escape the destination directory. |
 | 2026-04-16 | 1.1.55  | Replaced object spread operator with manual property copy in `integrateSignals` and `differentiateSignals` loops in `useDataProcessor.ts`; wrapped UI components (`AdvancedPanel`, `ExportPanel`, `FilterPanel`, `ResamplePanel`) in `React.memo()` to prevent unnecessary re-renders. |
 | 2026-04-15 | 1.1.56  | Refreshed the data processor regression-preparation optimization spec after CI retriggers so the PR-level SPEC freshness gate sees a documentation update on the latest source-changing branch head. |
