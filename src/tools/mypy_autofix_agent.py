@@ -201,22 +201,20 @@ def read_file_lines(filepath: str) -> list[str]:
 def write_file_lines(filepath: str, lines: list[str]) -> None:
     """Write lines back to file with safety check."""
     # LOBOTOMY GUARD: Prevent destructive fixes that wipe more than 50% of the file
+    path = Path(filepath)
     try:
-        if Path(filepath).exists():
-            original_line_count = len(Path(filepath).read_text().splitlines())
+        if path.exists():
+            original_line_count = len(path.read_text(encoding="utf-8").splitlines())
             if len(lines) < original_line_count * 0.5 and original_line_count > 10:
                 logger.info(
                     f"!!! LOBOTOMY GUARD: Aborting write to {filepath} (new length: {len(lines)}, original: {original_line_count})"
                 )
                 return
-    except Exception as e:  # noqa: BLE001
-        logger.warning("Failed to validate file before write to %s: %s", filepath, e)
+    except (OSError, UnicodeError) as exc:
+        raise OSError(f"Unable to verify safe write target: {filepath}") from exc
 
-    try:
-        with open(filepath, "w", encoding="utf-8") as f:
-            f.writelines(lines)
-    except OSError as e:
-        raise OSError(f"Failed to write to {filepath}") from e
+    with path.open("w", encoding="utf-8") as f:
+        f.writelines(lines)
 
 
 def has_type_ignore(line: str, code: str | None = None) -> bool:
