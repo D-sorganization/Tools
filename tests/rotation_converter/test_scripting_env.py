@@ -60,6 +60,11 @@ class TestConsoleEnvironment(unittest.TestCase):
         out, err = self.env.execute("1/0")
         self.assertIn("ZeroDivisionError: division by zero", err)
 
+    def test_execute_none_source_raises_value_error(self) -> None:
+        """None source is programmer error even when Python assertions are disabled."""
+        with self.assertRaisesRegex(ValueError, "source must be provided"):
+            self.env.execute(None)
+
     def test_user_functions(self) -> None:
         """Test saving and loading user-defined functions."""
         with tempfile.TemporaryDirectory() as tmpdir:
