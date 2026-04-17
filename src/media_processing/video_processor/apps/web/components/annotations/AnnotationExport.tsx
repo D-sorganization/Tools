@@ -7,7 +7,7 @@ import {
     importAnnotationsFromJSON,
 } from '@/lib/video/annotationExporter';
 import * as fabric from 'fabric';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 interface AnnotationExportProps {
   annotations: fabric.Object[];
@@ -27,6 +27,7 @@ export default function AnnotationExportComponent({
   disabled = false,
 }: AnnotationExportProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleExport = () => {
     if (!canvas) return;
@@ -41,10 +42,12 @@ export default function AnnotationExportComponent({
   };
 
   const handleImport = () => {
+    setError(null);
     fileInputRef.current?.click();
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setError(null);
     const file = event.target.files?.[0];
     if (!file || !canvas) return;
 
@@ -55,7 +58,7 @@ export default function AnnotationExportComponent({
         void importAnnotationsFromJSON(jsonData, canvas);
       } catch (error) {
         console.error('Failed to import annotations:', error);
-        alert('Failed to import annotations. Please check the file format.');
+        setError('Failed to import annotations. Please check the file format.');
       }
     };
     reader.readAsText(file);
@@ -72,14 +75,14 @@ export default function AnnotationExportComponent({
         <button
           onClick={handleExport}
           disabled={disabled || annotations.length === 0}
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         >
           Export Annotations
         </button>
         <button
           onClick={handleImport}
           disabled={disabled || !canvas}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         >
           Import Annotations
         </button>
@@ -91,6 +94,11 @@ export default function AnnotationExportComponent({
           className="hidden"
         />
       </div>
+      {error && (
+        <div role="alert" className="p-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-md">
+          {error}
+        </div>
+      )}
       <div className="text-xs text-gray-500">
         {annotations.length} annotation{annotations.length !== 1 ? 's' : ''} on current frame
       </div>

@@ -59,6 +59,53 @@ class TestGitHubRepositoryArchiveExtraction:
         assert not any(destination.rglob("*"))
         assert not (tmp_path / "escape.txt").exists()
 
+    def test_download_meshes_rejects_path_traversal(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
+        repository_module = self._load_repository_module()
+
+        malicious_contents = [
+            {
+                "type": "file",
+                "name": "../escape.stl",
+                "path": "models/meshes/../escape.stl",
+                "download_url": "https://raw.githubusercontent.com/owner/repo/main/escape.stl",
+            }
+        ]
+
+        def fake_urlopen(request, timeout):
+            import json as _json
+
+            class FakeResponse:
+                def __enter__(self):
+                    return self
+
+                def __exit__(self, *a):
+                    pass
+
+                def read(self):
+                    return _json.dumps(malicious_contents).encode()
+
+            return FakeResponse()
+
+        monkeypatch.setattr(repository_module.urllib.request, "urlopen", fake_urlopen)
+
+        repo = repository_module.GitHubRepository(
+            owner="owner", repo="repo", branch="main"
+        )
+        destination = tmp_path / "models"
+        destination.mkdir()
+
+        # _download_meshes silently drops path-traversal entries (ValueError
+        # is caught internally), so the method should return without writing
+        # any file outside the mesh directory.
+        repo._download_meshes("models", destination)
+
+        assert not (tmp_path / "escape.stl").exists()
+        mesh_dir = destination / "meshes"
+        if mesh_dir.exists():
+            assert not any(f for f in mesh_dir.rglob("*") if f.name == "escape.stl")
+
     def test_download_archive_rejects_non_https_urls(self, tmp_path: Path) -> None:
         repository_module = self._load_repository_module()
 
