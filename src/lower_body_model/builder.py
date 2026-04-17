@@ -92,7 +92,7 @@ def build_lower_body_xml(
 
 
 def _validate_positive_float(name: str, value: float) -> None:
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
+    if isinstance(value, bool) or not isinstance(value, int | float):
         raise TypeError(f"{name} must be a real number, got {type(value).__name__}")
     if value <= 0.0:
         raise ValueError(f"{name} must be strictly positive, got {value}")
