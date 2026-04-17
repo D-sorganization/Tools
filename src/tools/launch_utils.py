@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+import threading
 import sys
 import webbrowser
 from collections.abc import Callable
@@ -117,6 +118,44 @@ def _stream_reader(
         stream.close()
 
 
+def _reap_process(process: subprocess.Popen[Any], log_func: Callable[[str], None] | None = None) -> None:
+    """Wait for a child process and emit an exit-code log entry if logging is enabled."""
+    try:
+        exit_code = process.wait()
+        if log_func:
+            log_func(f"✅ Process exited (pid={process.pid}, code={exit_code})")
+    except (OSError, ValueError) as e:
+        if log_func:
+            log_func(f"⚠️ Failed to reap process {process.pid}: {e}")
+
+
+def _spawn_and_reap(
+    args: list[str],
+    cwd: Path,
+    stdout: int | Any | None = subprocess.DEVNULL,
+    stderr: int | Any | None = subprocess.DEVNULL,
+    text: bool = False,
+    log_func: Callable[[str], None] | None = None,
+) -> subprocess.Popen[Any]:
+    """Start a subprocess and attach an async waiter to avoid zombie processes."""
+    process = subprocess.Popen(
+        args,
+        cwd=cwd,
+        stdout=stdout,
+        stderr=stderr,
+        text=text,
+        start_new_session=True,
+    )
+
+    threading.Thread(
+        target=_reap_process,
+        args=(process, log_func),
+        daemon=True,
+    ).start()
+
+    return process
+
+
 def launch_python_tool(
     path: Path,
     tool_name: str,
@@ -150,29 +189,33 @@ def launch_python_tool(
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
+                start_new_session=True,
             )
             if log_func:
                 log_func(f"✅ Process started (PID: {process.pid})")
 
-                import threading
-
-                _logger: Callable[[str], None] = log_func  # capture for threads
-                if process.stdout:
-                    threading.Thread(
-                        target=_stream_reader,
-                        args=(process.stdout, "[OUT]", _logger),
-                        daemon=True,
-                    ).start()
-                if process.stderr:
-                    threading.Thread(
-                        target=_stream_reader,
-                        args=(process.stderr, "[ERR]", _logger),
-                        daemon=True,
-                    ).start()
+            _logger = log_func or (lambda _message: None)
+            if process.stdout:
+                threading.Thread(
+                    target=_stream_reader,
+                    args=(process.stdout, "[OUT]", _logger),
+                    daemon=True,
+                ).start()
+            if process.stderr:
+                threading.Thread(
+                    target=_stream_reader,
+                    args=(process.stderr, "[ERR]", _logger),
+                    daemon=True,
+                ).start()
+            threading.Thread(
+                target=_reap_process,
+                args=(process, log_func),
+                daemon=True,
+            ).start()
         else:
-            subprocess.Popen(
-                args,
+            _spawn_and_reap(
                 cwd=path.parent,
+                args=args,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )
@@ -210,9 +253,15 @@ def launch_matlab_tool(
             cwd=path.parent,
             stdout=subprocess.DEVNULL if not is_debug else None,
             stderr=subprocess.DEVNULL if not is_debug else None,
+            start_new_session=True,
         )
         if log_func:
             log_func(f"✅ MATLAB command sent (PID: {process.pid})")
+        threading.Thread(
+            target=_reap_process,
+            args=(process, log_func),
+            daemon=True,
+        ).start()
 
     except FileNotFoundError:
         if log_func:
@@ -221,7 +270,14 @@ def launch_matlab_tool(
             if hasattr(os, "startfile"):
                 os.startfile(path)
             else:
-                subprocess.Popen(["xdg-open", str(path)])
+                _spawn_and_reap(
+                    args=["xdg-open", str(path)],
+                    cwd=path.parent,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    text=False,
+                    log_func=log_func,
+                )
         except (PermissionError, OSError) as e:
             raise LaunchError(f"Could not open file in editor: {e}") from e
 
@@ -254,9 +310,15 @@ def launch_octave_tool(
             cwd=path.parent,
             stdout=subprocess.DEVNULL if not is_debug else None,
             stderr=subprocess.DEVNULL if not is_debug else None,
+            start_new_session=True,
         )
         if log_func:
             log_func(f"✅ Octave command sent (PID: {process.pid})")
+        threading.Thread(
+            target=_reap_process,
+            args=(process, log_func),
+            daemon=True,
+        ).start()
     except FileNotFoundError:
         if log_func:
             log_func("⚠️ Octave not found, opening script in editor")
@@ -264,7 +326,14 @@ def launch_octave_tool(
             if hasattr(os, "startfile"):
                 os.startfile(path)
             else:
-                subprocess.Popen(["xdg-open", str(path)])
+                _spawn_and_reap(
+                    args=["xdg-open", str(path)],
+                    cwd=path.parent,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    text=False,
+                    log_func=log_func,
+                )
         except (PermissionError, OSError) as e:
             raise LaunchError(f"Could not open file in editor: {e}") from e
 
@@ -307,11 +376,13 @@ def launch_batch_tool(
             log_func(f"Launching batch tool: {tool_name}")
 
         try:
-            subprocess.Popen(
+            _spawn_and_reap(
                 ["cmd.exe", "/c", str(path)],
                 cwd=path.parent,
                 stdout=subprocess.DEVNULL if not is_debug else None,
                 stderr=subprocess.DEVNULL if not is_debug else None,
+                text=False,
+                log_func=log_func,
             )
             if log_func:
                 log_func("✅ Batch script executed")
@@ -365,9 +436,21 @@ def launch_tool(
         if hasattr(os, "startfile"):
             os.startfile(path)
         elif sys.platform == "darwin":
-            subprocess.Popen(["open", str(path)], cwd=path.parent)
+            _spawn_and_reap(
+                args=["open", str(path)],
+                cwd=path.parent,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                log_func=log_func,
+            )
         else:
-            subprocess.Popen(["xdg-open", str(path)], cwd=path.parent)
+            _spawn_and_reap(
+                args=["xdg-open", str(path)],
+                cwd=path.parent,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                log_func=log_func,
+            )
         if log_func:
             log_func(f"✅ Opened file: {name}")
     else:

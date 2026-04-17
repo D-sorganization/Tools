@@ -30,6 +30,18 @@ class ModelFormat(Enum):
     UNKNOWN = "unknown"
 
 
+class ConversionError(RuntimeError):
+    """Base exception for conversion API failures."""
+
+
+class UnsupportedFormatError(ConversionError):
+    """Raised when a conversion source format is not supported."""
+
+
+class ModelNotFoundError(ConversionError):
+    """Raised when the requested model source cannot be read."""
+
+
 # Map of file extensions to formats
 _EXTENSION_MAP: dict[str, ModelFormat] = {
     ".urdf": ModelFormat.URDF,
@@ -404,7 +416,7 @@ class UnifiedModelLoader:
 
     # -- Format conversion utilities --
 
-    def convert_to_urdf(self, source: str | Path) -> str | None:
+    def convert_to_urdf(self, source: str | Path) -> str:
         """
         Convert an MJCF file to URDF XML string.
 
@@ -412,15 +424,34 @@ class UnifiedModelLoader:
             source: Path to MJCF file.
 
         Returns:
-            URDF XML string or None on failure.
+            URDF XML string.
         """
-        try:
-            return str(self._mjcf_converter.mjcf_to_urdf(source))
-        except (OSError, ValueError, KeyError) as exc:
-            logger.error("MJCF to URDF conversion failed: %s", exc)
-            return None
+        if not (source is not None):
+            raise ValueError("source must be provided")
 
-    def convert_to_mjcf(self, source: str | Path) -> str | None:
+        source_data: str | Path
+
+        if isinstance(source, str) and source.strip().startswith("<"):
+            source_data = source
+        else:
+            source_path = Path(source)
+            if not source_path.exists():
+                raise ModelNotFoundError(f"Source model not found: {source_path}")
+            source_data = source_path
+
+            source_format = detect_format(source_path)
+            if source_format != ModelFormat.MJCF:
+                raise UnsupportedFormatError(
+                    f"Expected MJCF source for URDF conversion, got: {source_format.value}"
+                )
+
+        try:
+            return str(self._mjcf_converter.mjcf_to_urdf(source_data))
+        except Exception as exc:
+            logger.exception("MJCF to URDF conversion failed")
+            raise ConversionError(f"Unable to convert MJCF source to URDF: {source}") from exc
+
+    def convert_to_mjcf(self, source: str | Path) -> str:
         """
         Convert a URDF file to MJCF XML string.
 
@@ -428,10 +459,29 @@ class UnifiedModelLoader:
             source: Path to URDF file.
 
         Returns:
-            MJCF XML string or None on failure.
+            MJCF XML string.
         """
+        if not (source is not None):
+            raise ValueError("source must be provided")
+
+        source_data: str | Path
+
+        if isinstance(source, str) and source.strip().startswith("<"):
+            source_data = source
+        else:
+            source_path = Path(source)
+            if not source_path.exists():
+                raise ModelNotFoundError(f"Source model not found: {source_path}")
+            source_data = source_path
+
+            source_format = detect_format(source_path)
+            if source_format != ModelFormat.URDF:
+                raise UnsupportedFormatError(
+                    f"Expected URDF source for MJCF conversion, got: {source_format.value}"
+                )
+
         try:
-            return str(self._mjcf_converter.urdf_to_mjcf(source))
-        except (OSError, ValueError, KeyError) as exc:
-            logger.error("URDF to MJCF conversion failed: %s", exc)
-            return None
+            return str(self._mjcf_converter.urdf_to_mjcf(source_data))
+        except Exception as exc:
+            logger.exception("URDF to MJCF conversion failed")
+            raise ConversionError(f"Unable to convert URDF source to MJCF: {source}") from exc
