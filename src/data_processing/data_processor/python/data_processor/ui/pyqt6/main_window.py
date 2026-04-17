@@ -11,7 +11,7 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from PyQt6.QtCore import QSettings, Qt, QThread, pyqtSignal
+from PyQt6.QtCore import QSettings, Qt
 from PyQt6.QtGui import QAction, QFont, QKeySequence, QShortcut
 from PyQt6.QtWidgets import (
     QApplication,
@@ -30,11 +30,7 @@ from data_processor.core.data_loader import DataLoader
 from data_processor.core.plot_config_manager import PlotConfigManager
 from data_processor.core.signal_list_manager import SignalListManager
 from data_processor.core.signal_processor import SignalProcessor
-from data_processor.models.processing_config import (
-    DifferentiationConfig,
-    FilterConfig,
-    IntegrationConfig,
-)
+from data_processor.ui.async_workers import DataLoadResult, DataLoadWorker
 
 from .analysis_widgets import (
     AnalysisPanel,
@@ -217,58 +213,6 @@ QMenu::item:selected {
 """
 
 
-class ProcessingWorker(QThread):
-    """Worker thread for processing operations."""
-
-    finished = pyqtSignal(object)
-    error = pyqtSignal(str)
-    progress = pyqtSignal(int)
-
-    def __init__(
-        self,
-        operation: str,
-        data: pd.DataFrame,
-        processor: SignalProcessor,
-        config: dict,
-    ) -> None:
-        if not (operation is not None):
-            raise ValueError("operation must be provided")
-        super().__init__()
-        self.operation = operation
-        self.data = data
-        self.processor = processor
-        self.config = config
-
-    def run(self) -> None:
-        try:
-            if self.operation == "filter":
-                filter_config = FilterConfig(
-                    filter_type=self.config["filter_type"],
-                    parameters=self.config["parameters"],
-                )
-                result = self.processor.apply_filter(self.data, filter_config)
-            elif self.operation == "integrate":
-                int_config = IntegrationConfig(
-                    signals=self.config["signals"],
-                    method=self.config.get("method", "cumulative"),
-                )
-                result = self.processor.integrate_signals(self.data, int_config)
-            elif self.operation == "differentiate":
-                diff_config = DifferentiationConfig(
-                    signals=self.config["signals"],
-                    order=self.config.get("order", 1),
-                    method=self.config.get("method", "central"),
-                )
-                result = self.processor.differentiate_signals(self.data, diff_config)
-            else:
-                result = self.data
-
-            self.finished.emit(result)
-        except (KeyError, ValueError, TypeError) as e:
-            logger.error(f"Processing error: {e}", exc_info=True)
-            self.error.emit(str(e))
-
-
 class DataProcessorMainWindow(
     AnalysisMixin,
     ConfigMixin,
@@ -300,6 +244,8 @@ class DataProcessorMainWindow(
         self.available_signals: list[str] = []
         self.time_column: str | None = None
         self.output_directory: str = str(Path.home() / "Documents")
+        self._load_worker: DataLoadWorker | None = None
+        self._processing_worker = None
 
         # Settings
         self.settings = QSettings("DataProcessor", "DataProcessorGUI")
@@ -567,67 +513,60 @@ class DataProcessorMainWindow(
             QMessageBox.warning(self, "No Files", "Please select files first.")
             return
 
-        try:
-            self.status_bar.set_status("Loading data...")
-            self.status_bar.show_progress()
-            QApplication.processEvents()
+        self.status_bar.set_status("Loading data...")
+        self.status_bar.show_progress()
+        self._set_file_controls_enabled(False)
 
-            if len(self.selected_files) == 1:
-                file_path = self.selected_files[0]
-                self.current_data = self.data_loader.load_csv_file(file_path)
-            else:
-                dataframes = self.data_loader.load_multiple_files(self.selected_files)
-                self.current_data = self.data_loader.combine_dataframes(dataframes)
+        worker = DataLoadWorker(
+            self.selected_files,
+            self.data_loader,
+            convert_time_column=True,
+        )
+        self._load_worker = worker
+        worker.result_ready.connect(self._on_data_loaded)
+        worker.error.connect(self._on_data_load_error)
+        worker.finished.connect(self._on_data_load_finished)
+        worker.start()
 
-            if self.current_data is not None:
-                # Detect time column
-                time_col = self.data_loader.detect_time_column(self.current_data)
-                if time_col:
-                    self.current_data = self.data_loader.convert_time_column(
-                        self.current_data, time_col
-                    )
-                    self.time_column = time_col
+    def _on_data_loaded(self, result: DataLoadResult) -> None:
+        self.current_data = result.data
+        self.time_column = result.time_column
+        self.available_signals = result.available_signals
 
-                # Get signals
-                self.available_signals = self.data_loader.get_numeric_signals(
-                    self.current_data
-                )
+        self._update_data_info()
+        self.signal_list.set_signals(self.available_signals)
+        self.preview_widget.update_preview(self.current_data)
+        self.analysis_panel.set_dataframe(self.current_data)
+        self._update_column_combos()
+        self._update_time_range_info()
 
-                # Update UI
-                self._update_data_info()
-                self.signal_list.set_signals(self.available_signals)
-                self.preview_widget.update_preview(self.current_data)
-                self.analysis_panel.set_dataframe(self.current_data)
+        row_count = len(self.current_data)
+        signal_count = len(self.available_signals)
+        self.status_bar.set_status(f"Loaded {row_count} rows, {signal_count} signals")
 
-                # Update time column combo boxes
-                self._update_column_combos()
+        QMessageBox.information(
+            self,
+            "Success",
+            f"Loaded {row_count} rows\n{signal_count} signals detected",
+        )
 
-                # Update time range info
-                self._update_time_range_info()
+    def _on_data_load_error(self, message: str) -> None:
+        self.status_bar.set_status("Error loading data")
+        logger.error("Error loading data: %s", message)
+        QMessageBox.critical(self, "Error", f"Failed to load data:\n{message}")
 
-                self.status_bar.hide_progress()
-                row_count = len(self.current_data)
-                signal_count = len(self.available_signals)
-                self.status_bar.set_status(
-                    f"Loaded {row_count} rows, {signal_count} signals"
-                )
+    def _on_data_load_finished(self) -> None:
+        if self._load_worker is not None:
+            self._load_worker.deleteLater()
+        self._load_worker = None
+        self.status_bar.hide_progress()
+        self._set_file_controls_enabled(True)
 
-                QMessageBox.information(
-                    self,
-                    "Success",
-                    f"Loaded {len(self.current_data)} rows\n"
-                    f"{len(self.available_signals)} signals detected",
-                )
-            else:
-                self.status_bar.hide_progress()
-                self.status_bar.set_status("Failed to load data")
-                QMessageBox.warning(self, "Error", "Failed to load data")
-
-        except (RuntimeError, AttributeError) as e:
-            self.status_bar.hide_progress()
-            self.status_bar.set_status("Error loading data")
-            logger.error(f"Error loading data: {e}", exc_info=True)
-            QMessageBox.critical(self, "Error", f"Failed to load data:\n{e}")
+    def _set_file_controls_enabled(self, enabled: bool) -> None:
+        for button_name in ("open_btn", "clear_files_btn", "load_btn"):
+            button = getattr(self, button_name, None)
+            if button is not None:
+                button.setEnabled(enabled)
 
     def _update_data_info(self) -> None:
         """Update data information display."""

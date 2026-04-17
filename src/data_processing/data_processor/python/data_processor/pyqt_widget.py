@@ -15,6 +15,7 @@ from PyQt6.QtWidgets import (
     QLabel,
     QListWidget,
     QMessageBox,
+    QProgressBar,
     QPushButton,
     QTableWidget,
     QTableWidgetItem,
@@ -25,6 +26,8 @@ from PyQt6.QtWidgets import (
 from data_processor.core.data_loader import DataLoader
 from data_processor.core.signal_processor import SignalProcessor
 from data_processor.models.processing_config import FilterConfig
+from data_processor.ui.async_workers import DataLoadResult, DataLoadWorker
+from data_processor.ui.async_workers import ProcessingWorker as AsyncProcessingWorker
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +49,8 @@ class DataProcessorWidget(QWidget):
         self.signal_processor = SignalProcessor()
         self.current_df: pd.DataFrame | None = None
         self.processed_df: pd.DataFrame | None = None
+        self._load_worker: DataLoadWorker | None = None
+        self._process_worker: AsyncProcessingWorker | None = None
 
         self._init_ui()
 
@@ -93,6 +98,11 @@ class DataProcessorWidget(QWidget):
         filter_layout.addWidget(self.process_btn)
         layout.addLayout(filter_layout)
 
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setRange(0, 0)
+        self.progress_bar.hide()
+        layout.addWidget(self.progress_bar)
+
         # Results Section
         layout.addWidget(QLabel("Results Preview:"))
         self.result_table = QTableWidget()
@@ -103,18 +113,35 @@ class DataProcessorWidget(QWidget):
             self, "Open CSV File", "", "CSV Files (*.csv);;All Files (*)"
         )
         if file_path:
-            try:
-                self.current_df = self.data_loader.load_csv_file(file_path)
-                if self.current_df is not None:
-                    self.file_label.setText(Path(file_path).name)
-                    self._populate_signals()
-                    self._update_table(self.current_df)
-                    self.processed_df = None
-                else:
-                    QMessageBox.warning(self, "Error", "Failed to load file.")
-            except (PermissionError, OSError) as e:
-                logger.error(f"Error loading file: {e}")
-                QMessageBox.critical(self, "Error", f"An error occurred: {e}")
+            self._start_load_file(file_path)
+
+    def _start_load_file(self, file_path: str) -> None:
+        self._set_busy(True)
+        self.file_label.setText(f"Loading {Path(file_path).name}...")
+        worker = DataLoadWorker([file_path], self.data_loader)
+        self._load_worker = worker
+        worker.result_ready.connect(lambda result: self._on_file_loaded(file_path, result))
+        worker.error.connect(self._on_file_load_error)
+        worker.finished.connect(self._on_load_finished)
+        worker.start()
+
+    def _on_file_loaded(self, file_path: str, result: DataLoadResult) -> None:
+        self.current_df = result.data
+        self.file_label.setText(Path(file_path).name)
+        self._populate_signals()
+        self._update_table(self.current_df)
+        self.processed_df = None
+
+    def _on_file_load_error(self, message: str) -> None:
+        logger.error("Error loading file: %s", message)
+        self.file_label.setText("No file loaded")
+        QMessageBox.critical(self, "Error", f"An error occurred: {message}")
+
+    def _on_load_finished(self) -> None:
+        if self._load_worker is not None:
+            self._load_worker.deleteLater()
+        self._load_worker = None
+        self._set_busy(False)
 
     def _populate_signals(self) -> None:
         self.signal_list.clear()
@@ -149,25 +176,45 @@ class DataProcessorWidget(QWidget):
             params = {"zscore_threshold": 3.0}
 
         try:
-            config = FilterConfig(filter_type=filter_type, parameters=params)
-
-            # Filter only selected signals
+            FilterConfig(filter_type=filter_type, parameters=params)
             df_to_process = self.current_df[selected_signals].copy()
-
-            # The SignalProcessor.apply_filter returns a dataframe with filtered signals
-            # Note: VectorizedFilterEngine usually returns same columns.
-            # If we want to preserve other columns, we should merge.
-            # For this widget, showing just the processed result is fine.
-
-            processed_subset = self.signal_processor.apply_filter(df_to_process, config)
-
-            self.processed_df = processed_subset
-            self._update_table(self.processed_df)
-            QMessageBox.information(self, "Success", "Processing complete.")
-
         except (KeyError, ValueError, TypeError) as e:
-            logger.error(f"Error processing data: {e}")
+            logger.error("Error preparing processing job: %s", e)
             QMessageBox.critical(self, "Error", f"Processing failed: {e}")
+            return
+
+        self._set_busy(True)
+        worker = AsyncProcessingWorker(
+            "filter",
+            df_to_process,
+            self.signal_processor,
+            {"filter_type": filter_type, "parameters": params},
+        )
+        self._process_worker = worker
+        worker.result_ready.connect(self._on_processing_complete)
+        worker.error.connect(self._on_processing_error)
+        worker.finished.connect(self._on_processing_finished)
+        worker.start()
+
+    def _on_processing_complete(self, processed_subset: pd.DataFrame) -> None:
+        self.processed_df = processed_subset
+        self._update_table(self.processed_df)
+        QMessageBox.information(self, "Success", "Processing complete.")
+
+    def _on_processing_error(self, message: str) -> None:
+        logger.error("Error processing data: %s", message)
+        QMessageBox.critical(self, "Error", f"Processing failed: {message}")
+
+    def _on_processing_finished(self) -> None:
+        if self._process_worker is not None:
+            self._process_worker.deleteLater()
+        self._process_worker = None
+        self._set_busy(False)
+
+    def _set_busy(self, busy: bool) -> None:
+        self.load_btn.setEnabled(not busy)
+        self.process_btn.setEnabled(not busy and self.current_df is not None)
+        self.progress_bar.setVisible(busy)
 
     def _update_table(self, df: pd.DataFrame) -> None:
         if not (df is not None):
