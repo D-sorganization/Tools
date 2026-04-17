@@ -125,9 +125,7 @@ def test_background_thread_routes_unhandled_exception_to_ui_callback() -> None:
 def test_folder_processing_error_resets_controls_and_warns_user() -> None:
     app = DummyFolderTool()
 
-    with patch(
-        "data_processor.ui.folder_tool_tab.messagebox.showerror"
-    ) as showerror:
+    with patch("data_processor.ui.folder_tool_tab.messagebox.showerror") as showerror:
         app._folder_handle_processing_error(RuntimeError("walk failed"), "traceback")
 
     app.folder_status_var.set.assert_called_once_with(
