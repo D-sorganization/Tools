@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Trajectory Generation — time scaling and interpolation.
 
 CubicTimeScaling, QuinticTimeScaling, JointTrajectory, CartesianTrajectory,

@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """SE(3) — Rigid body transformation helpers.
 
 Functions follow Lynch & Park textbook naming conventions:

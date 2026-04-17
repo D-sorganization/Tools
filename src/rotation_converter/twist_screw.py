@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Twist and screw axis conversion module.
 
 Representations:

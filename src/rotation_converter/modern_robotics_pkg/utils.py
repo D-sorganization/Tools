@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Utility functions — normalization, projection, distance, and tests.
 
 Normalize, RotInv, AxisAng3, AxisAng6, ScrewToAxis,

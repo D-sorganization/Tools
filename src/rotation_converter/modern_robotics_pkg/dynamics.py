@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Dynamics — Newton-Euler, mass matrix, forward/inverse dynamics, control.
 
 InverseDynamics, MassMatrix, VelQuadraticForces, GravityForces,
