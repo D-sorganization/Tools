@@ -1,11 +1,8 @@
 """WSGI entry point for the Unit Converter web application."""
 
-from __future__ import annotations
-
 import os
 
 from .webapp import create_app
-
 
 app = create_app()
 
