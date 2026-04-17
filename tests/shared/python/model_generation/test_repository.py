@@ -167,7 +167,9 @@ class TestRepositoryDownload:
         assert (out_dir / "meshes" / "good.obj").exists()
         assert not (out_dir / "meshes" / "bad.obj").exists()
 
-    def test_download_archive_deletes_temp_file(self, tmp_path: Path, monkeypatch) -> None:
+    def test_download_archive_deletes_temp_file(
+        self, tmp_path: Path, monkeypatch
+    ) -> None:
         repository_module = self._load_repository_module()
 
         archive_path = tmp_path / "archive.zip"

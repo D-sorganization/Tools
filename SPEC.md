@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-04-15
+  LAST UPDATED: 2026-04-16
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -216,7 +216,7 @@ class MyTool(BaseTool):
 | ------------------- | ------------- | ------------------------- | -------------------------------- |
 | Calculation results | JSON/CSV/HDF5 | User's disk, API response | Tool output matching schema      |
 | Cached results      | SQLite/HDF5   | `.cache/`                 | Memoized expensive calculations  |
-| Logs                | JSON/text     | `logs/`                   | Tool execution logs with timings |
+| Logs                | JSON/text     | `logs/`                   | Tool execution logs with timings; root-level debug logs and trigger markers must not be committed |
 | Reports             | HTML/PDF      | User's disk               | Generated analysis reports       |
 
 ### Configuration
@@ -235,6 +235,11 @@ class MyTool(BaseTool):
 - `config/theme_config.yml` — Theme settings and customization
 - `config/plugin_config.yml` — Plugin discovery paths and settings
 - `config/web_api_config.yml` — FastAPI server configuration
+
+### Repository Hygiene
+
+- Generated logs, trigger files, and empty marker files belong in `logs/`, `output/`, or temporary work directories and must not be tracked at the repository root.
+- Root-level artifacts such as `.ci_trigger.py`, `MUJOCO_LOG.TXT`, `error_log.txt`, `wave_log.txt`, and marker files ending in `Last` are treated as disposable debug output.
 
 ## 7. Testing Specification
 
@@ -449,7 +454,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-04-16 | 1.1.59  | Hardened launcher process handling by validating tool names, cleaning up spawned process groups, surfacing explicit model-conversion errors, and regression-testing temporary-file cleanup paths. |
+| 2026-04-16 | 1.1.60  | Hardened launcher process handling by validating tool names, cleaning up spawned process groups, surfacing explicit model-conversion errors, and regression-testing temporary-file cleanup paths. |
+| 2026-04-16 | 1.1.59  | Removed stale root-level debug artifacts (`.ci_trigger.py`, `MUJOCO_LOG.TXT`, `error_log.txt`, `wave_log.txt`, and the empty marker file ending in `Last`), added root-scoped ignore rules for those paths, and locked the hygiene policy with regression tests. |
 | 2026-04-16 | 1.1.58  | Hardened GitHub archive extraction in the model-generation repository helper by validating zip members before unpacking so repository downloads cannot escape the destination directory. |
 | 2026-04-16 | 1.1.55  | Replaced object spread operator with manual property copy in `integrateSignals` and `differentiateSignals` loops in `useDataProcessor.ts`; wrapped UI components (`AdvancedPanel`, `ExportPanel`, `FilterPanel`, `ResamplePanel`) in `React.memo()` to prevent unnecessary re-renders. |
 | 2026-04-15 | 1.1.56  | Refreshed the data processor regression-preparation optimization spec after CI retriggers so the PR-level SPEC freshness gate sees a documentation update on the latest source-changing branch head. |

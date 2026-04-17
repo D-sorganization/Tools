@@ -194,7 +194,9 @@ class TestLaunchPythonToolContracts:
 
         launch_python_tool(f, "MyTool", is_debug=True)
         assert mock_thread.call_count >= 3
-        thread_targets = [kwargs.get("target") for _, kwargs in mock_thread.call_args_list]
+        thread_targets = [
+            kwargs.get("target") for _, kwargs in mock_thread.call_args_list
+        ]
         assert any(
             target is not None and target.__name__ == "_reap_process"
             for target in thread_targets
@@ -283,7 +285,9 @@ class TestLaunchToolLifecycle:
     """Process lifecycle tests for launcher helpers."""
 
     @patch("tools.launch_utils._spawn_and_reap")
-    def test_file_launch_uses_spawn_and_reap(self, mock_spawn_and_reap: MagicMock, tmp_path: Path) -> None:
+    def test_file_launch_uses_spawn_and_reap(
+        self, mock_spawn_and_reap: MagicMock, tmp_path: Path
+    ) -> None:
         (tmp_path / "notes.txt").write_text("x")
         launch_tool(
             {"name": "Doc", "path": "notes.txt", "type": "file"},

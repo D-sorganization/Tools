@@ -169,7 +169,9 @@ class TestConversionApi:
         with pytest.raises(ModelNotFoundError):
             loader.convert_to_urdf(tmp_path / "missing.mjcf")
 
-    def test_convert_to_urdf_raises_for_unsupported_format(self, tmp_path: Path) -> None:
+    def test_convert_to_urdf_raises_for_unsupported_format(
+        self, tmp_path: Path
+    ) -> None:
         from model_generation.library.unified_loader import (
             UnifiedModelLoader,
             UnsupportedFormatError,
@@ -203,7 +205,9 @@ class TestConversionApi:
         with pytest.raises(ConversionError):
             loader.convert_to_urdf(source)
 
-    def test_convert_to_mjcf_raises_for_unsupported_format(self, tmp_path: Path) -> None:
+    def test_convert_to_mjcf_raises_for_unsupported_format(
+        self, tmp_path: Path
+    ) -> None:
         from model_generation.library.unified_loader import (
             UnifiedModelLoader,
             UnsupportedFormatError,
