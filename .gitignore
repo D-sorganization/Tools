@@ -107,6 +107,7 @@ test_output.txt
 *.env
 !*.env.example
 document_processing/pdf_renamer/.env
+src/document_processing/pdf_renamer/.env
 *.msg
 
 # Legacy stub directories (migrated to src/). See issue #612

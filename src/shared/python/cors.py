@@ -33,6 +33,9 @@ DEFAULT_ORIGINS: list[str] = [
     "http://127.0.0.1:5173",
 ]
 
+DEFAULT_ALLOW_METHODS: list[str] = ["GET", "POST", "OPTIONS"]
+DEFAULT_ALLOW_HEADERS: list[str] = ["Content-Type", "Authorization"]
+
 
 def add_cors_middleware(
     app: FastAPI,
@@ -54,8 +57,9 @@ def add_cors_middleware(
         app: The FastAPI application instance.
         origins: Explicit list of allowed origins; overridden by env var.
         allow_credentials: Whether to allow credentials. Defaults to True.
-        allow_methods: Allowed HTTP methods. Defaults to ``["*"]``.
-        allow_headers: Allowed HTTP headers. Defaults to ``["*"]``.
+        allow_methods: Allowed HTTP methods. Defaults to GET, POST, and OPTIONS.
+        allow_headers: Allowed HTTP headers. Defaults to Content-Type and
+            Authorization.
         **kwargs: Extra keyword arguments forwarded to ``CORSMiddleware``.
     """
     require(isinstance(app, FastAPI), "app must be a FastAPI instance")
@@ -78,7 +82,7 @@ def add_cors_middleware(
         CORSMiddleware,
         allow_origins=resolved_origins,
         allow_credentials=allow_credentials,
-        allow_methods=allow_methods or ["*"],
-        allow_headers=allow_headers or ["*"],
+        allow_methods=allow_methods or DEFAULT_ALLOW_METHODS,
+        allow_headers=allow_headers or DEFAULT_ALLOW_HEADERS,
         **kwargs,
     )
