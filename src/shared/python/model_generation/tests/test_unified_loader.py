@@ -15,6 +15,8 @@ Covers:
 import json
 from pathlib import Path
 
+import pytest
+
 
 class TestFormatDetection:
     """Tests for automatic format detection."""
@@ -152,6 +154,109 @@ class TestBundledManifest:
         manifest = json.loads((bundled_dir / "manifest.json").read_text())
         ids = [e["id"] for e in manifest["models"]]
         assert "mujoco_humanoid" in ids
+
+
+class TestConversionApi:
+    """Regression tests for conversion error handling."""
+
+    def test_convert_to_urdf_raises_for_missing_source(self, tmp_path: Path) -> None:
+        from model_generation.library.unified_loader import (
+            ModelNotFoundError,
+            UnifiedModelLoader,
+        )
+
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+        with pytest.raises(ModelNotFoundError):
+            loader.convert_to_urdf(tmp_path / "missing.mjcf")
+
+    def test_convert_to_urdf_raises_for_unsupported_format(
+        self, tmp_path: Path
+    ) -> None:
+        from model_generation.library.unified_loader import (
+            UnifiedModelLoader,
+            UnsupportedFormatError,
+        )
+
+        source = tmp_path / "bad.txt"
+        source.write_text("not a model")
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+        with pytest.raises(UnsupportedFormatError):
+            loader.convert_to_urdf(source)
+
+    def test_convert_to_urdf_raises_conversion_error(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        from model_generation.library.unified_loader import (
+            ConversionError,
+            UnifiedModelLoader,
+        )
+
+        source = tmp_path / "model.mjcf"
+        source.write_text("<mujoco model='x'/>")
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+        monkeypatch.setattr(
+            loader._mjcf_converter,
+            "mjcf_to_urdf",
+            lambda _source: (_ for _ in ()).throw(ValueError("boom")),
+        )
+
+        with pytest.raises(ConversionError):
+            loader.convert_to_urdf(source)
+
+    def test_convert_to_mjcf_raises_for_unsupported_format(
+        self, tmp_path: Path
+    ) -> None:
+        from model_generation.library.unified_loader import (
+            UnifiedModelLoader,
+            UnsupportedFormatError,
+        )
+
+        source = tmp_path / "bad.xml"
+        source.write_text("<mujoco model='x'/>")
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+        with pytest.raises(UnsupportedFormatError):
+            loader.convert_to_mjcf(source)
+
+    def test_convert_to_mjcf_raises_conversion_error(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        from model_generation.library.unified_loader import (
+            ConversionError,
+            UnifiedModelLoader,
+        )
+
+        source = tmp_path / "model.urdf"
+        source.write_text('<robot name="x"/>')
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+        monkeypatch.setattr(
+            loader._mjcf_converter,
+            "urdf_to_mjcf",
+            lambda _source: (_ for _ in ()).throw(ValueError("boom")),
+        )
+        with pytest.raises(ConversionError):
+            loader.convert_to_mjcf(source)
+
+    def test_convert_to_urdf_succeeds_for_valid_source(self, tmp_path: Path) -> None:
+        from model_generation.library.unified_loader import UnifiedModelLoader
+
+        source = tmp_path / "good.mjcf"
+        source.write_text(
+            "<mujoco model='test'><worldbody><body name='base'><geom type='sphere' size='0.1'/></body></worldbody></mujoco>"
+        )
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+        assert loader.convert_to_urdf(source).startswith("<")
+
+    def test_convert_to_mjcf_succeeds_for_valid_source(self, tmp_path: Path) -> None:
+        from model_generation.library.unified_loader import UnifiedModelLoader
+
+        source = tmp_path / "good.urdf"
+        source.write_text("<robot name='x'><link name='base'/></robot>")
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+        assert loader.convert_to_mjcf(source).startswith("<")
 
 
 class TestUnifiedLoader:

@@ -166,6 +166,42 @@ class TestLaunchPythonToolContracts:
         launch_python_tool(f, "MyTool", is_debug=False)
         mock_popen.assert_called_once()
 
+    @patch("tools.launch_utils._spawn_and_reap")
+    def test_normal_mode_uses_reaper(
+        self, mock_spawn_and_reap: MagicMock, tmp_path: Path
+    ) -> None:
+        f = tmp_path / "tool.py"
+        f.write_text("")
+        launch_python_tool(f, "MyTool", is_debug=False)
+        mock_spawn_and_reap.assert_called_once()
+
+    @patch("tools.launch_utils.threading.Thread")
+    @patch("subprocess.Popen")
+    def test_debug_mode_starts_reap_thread(
+        self,
+        mock_popen: MagicMock,
+        mock_thread: MagicMock,
+        tmp_path: Path,
+    ) -> None:
+        f = tmp_path / "tool.py"
+        f.write_text("")
+        process = MagicMock()
+        process.pid = 123
+        process.stdout = io.StringIO("")
+        process.stderr = io.StringIO("")
+        mock_popen.return_value = process
+        mock_thread.return_value = MagicMock()
+
+        launch_python_tool(f, "MyTool", is_debug=True)
+        assert mock_thread.call_count >= 3
+        thread_targets = [
+            kwargs.get("target") for _, kwargs in mock_thread.call_args_list
+        ]
+        assert any(
+            target is not None and target.__name__ == "_reap_process"
+            for target in thread_targets
+        )
+
     @patch("subprocess.Popen")
     def test_log_func_called_with_tool_name(
         self, mock_popen: MagicMock, tmp_path: Path
@@ -243,3 +279,18 @@ class TestLaunchToolDispatch:
             tmp_path,
         )
         mock_open.assert_called_once()
+
+
+class TestLaunchToolLifecycle:
+    """Process lifecycle tests for launcher helpers."""
+
+    @patch("tools.launch_utils._spawn_and_reap")
+    def test_file_launch_uses_spawn_and_reap(
+        self, mock_spawn_and_reap: MagicMock, tmp_path: Path
+    ) -> None:
+        (tmp_path / "notes.txt").write_text("x")
+        launch_tool(
+            {"name": "Doc", "path": "notes.txt", "type": "file"},
+            tmp_path,
+        )
+        mock_spawn_and_reap.assert_called_once()
