@@ -39,6 +39,7 @@ TOOL_PACKAGES = {
     "folder_tools",
     "humanoid_builder_gui",
     "scientific_modeling",
+    "rotation_converter",
     "trc_vessel_designer",
     "urdf_builder_gui",
     "web_applications",
