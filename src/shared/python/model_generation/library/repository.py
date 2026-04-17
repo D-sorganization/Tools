@@ -85,7 +85,7 @@ class Repository(ABC):
         self,
         model_path: str,
         destination: Path,
-    ) -> Path | None:
+    ) -> Path:
         """
         Download a model to local storage.
 
@@ -94,7 +94,7 @@ class Repository(ABC):
             destination: Local destination directory
 
         Returns:
-            Path to downloaded URDF or None if failed
+            Path to downloaded URDF
         """
         ...
 
@@ -166,15 +166,14 @@ class LocalRepository(Repository):
         self,
         model_path: str,
         destination: Path,
-    ) -> Path | None:
+    ) -> Path:
         """Copy model to destination (local copy)."""
         if not (model_path is not None):
             raise ValueError("model_path must be provided")
-        import shutil
 
         source = self._path / model_path
         if not source.exists():
-            return None
+            raise FileNotFoundError(f"Model not found: {source}")
 
         destination.mkdir(parents=True, exist_ok=True)
         dest_file = destination / source.name
@@ -288,7 +287,7 @@ class GitHubRepository(Repository):
         self,
         model_path: str,
         destination: Path,
-    ) -> Path | None:
+    ) -> Path:
         """Download model from GitHub."""
         if not (model_path is not None):
             raise ValueError("model_path must be provided")
@@ -313,7 +312,7 @@ class GitHubRepository(Repository):
 
         except (PermissionError, OSError) as e:
             logger.error(f"Failed to download {model_path}: {e}")
-            return None
+            raise
 
     def _download_meshes(self, model_dir: str, destination: Path) -> None:
         """Download mesh files from model directory."""
@@ -339,10 +338,17 @@ class GitHubRepository(Repository):
                         or f"{self.RAW_BASE}/{self._owner}/{self._repo}/{self._branch}/{item['path']}"
                     )
                     local_file = local_mesh_dir / item["name"]
-                    _urlretrieve_https(raw_url, local_file)
+                    try:
+                        _urlretrieve_https(raw_url, local_file)
+                    except (PermissionError, OSError) as e:
+                        logger.warning(
+                            "Failed to download mesh '%s': %s",
+                            local_file,
+                            e,
+                        )
 
-        except (PermissionError, OSError, ValueError):
-            pass  # Meshes not found or not accessible
+        except (PermissionError, OSError, ValueError) as e:
+            logger.warning("Failed to download meshes for %s: %s", model_dir, e)
 
     def _safe_extract_zip(self, zf: zipfile.ZipFile, destination: Path) -> None:
         """Extract zip members after validating they stay under destination."""
@@ -415,12 +421,14 @@ class GitHubRepository(Repository):
         archive_url = (
             f"https://github.com/{self._owner}/{self._repo}/archive/{self._branch}.zip"
         )
+        tmp_file: Path | None = None
 
         try:
             with tempfile.NamedTemporaryFile(suffix=".zip", delete=False) as tmp:
-                _urlretrieve_https(archive_url, tmp.name)
+                tmp_file = Path(tmp.name)
+                _urlretrieve_https(archive_url, tmp_file)
 
-                with zipfile.ZipFile(tmp.name, "r") as zf:
+                with zipfile.ZipFile(tmp_file, "r") as zf:
                     self._safe_extract_zip(zf, destination)
 
             return True
@@ -434,6 +442,9 @@ class GitHubRepository(Repository):
         ) as e:
             logger.error(f"Failed to download archive: {e}")
             return False
+        finally:
+            if tmp_file is not None:
+                tmp_file.unlink(missing_ok=True)
 
 
 class CompositeRepository(Repository):
@@ -489,14 +500,14 @@ class CompositeRepository(Repository):
         self,
         model_path: str,
         destination: Path,
-    ) -> Path | None:
+    ) -> Path:
         """Download from appropriate repository."""
         # Extract repo name from path
         if not (model_path is not None):
             raise ValueError("model_path must be provided")
         parts = model_path.split("/", 1)
         if len(parts) != 2:
-            return None
+            raise ValueError(f"Invalid model path: {model_path}")
 
         repo_name, actual_path = parts
 
@@ -504,4 +515,4 @@ class CompositeRepository(Repository):
             if repo.name == repo_name:
                 return repo.download_model(actual_path, destination)
 
-        return None
+        raise ValueError(f"Repository not found: {repo_name}")
