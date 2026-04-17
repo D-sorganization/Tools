@@ -1,4 +1,5 @@
 import pytest
+
 from chaotic_pendulum.config import PhysicsConfig
 from chaotic_pendulum.physics import PhysicsEngine
 
