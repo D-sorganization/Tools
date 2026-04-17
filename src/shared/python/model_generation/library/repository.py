@@ -9,7 +9,9 @@ from __future__ import annotations
 
 import json
 import logging
+import shutil
 import tempfile
+import urllib.parse
 import urllib.request
 import zipfile
 from abc import ABC, abstractmethod
@@ -18,6 +20,32 @@ from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
+
+
+def _require_https_url(url: str) -> str:
+    """Return url only when it is an absolute HTTPS URL."""
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme != "https" or not parsed.netloc:
+        raise ValueError(f"URL must be absolute HTTPS: {url}")
+    return url
+
+
+def _urlopen_https(
+    request: urllib.request.Request,
+    *,
+    timeout: float,
+) -> Any:
+    """Open a request after validating it targets an HTTPS URL."""
+    _require_https_url(request.full_url)
+    return urllib.request.urlopen(request, timeout=timeout)  # nosec B310
+
+
+def _urlretrieve_https(url: str, filename: str | Path) -> tuple[str, Any]:
+    """Retrieve an HTTPS URL to a local file."""
+    return urllib.request.urlretrieve(  # nosec B310
+        _require_https_url(url),
+        filename,
+    )
 
 
 @dataclass
@@ -232,7 +260,7 @@ class GitHubRepository(Repository):
             req = urllib.request.Request(api_url)
             req.add_header("Accept", "application/vnd.github.v3+json")
 
-            with urllib.request.urlopen(req, timeout=10) as response:
+            with _urlopen_https(req, timeout=10) as response:
                 contents = json.loads(response.read().decode())
 
             for item in contents:
@@ -274,7 +302,7 @@ class GitHubRepository(Repository):
         local_path = destination / filename
 
         try:
-            urllib.request.urlretrieve(urdf_url, local_path)
+            _urlretrieve_https(urdf_url, local_path)
             logger.info(f"Downloaded: {filename}")
 
             # Try to download meshes from same directory
@@ -298,7 +326,7 @@ class GitHubRepository(Repository):
 
         try:
             req = urllib.request.Request(api_url)
-            with urllib.request.urlopen(req, timeout=10) as response:
+            with _urlopen_https(req, timeout=10) as response:
                 contents = json.loads(response.read().decode())
 
             local_mesh_dir = destination / "meshes"
@@ -311,29 +339,61 @@ class GitHubRepository(Repository):
                         or f"{self.RAW_BASE}/{self._owner}/{self._repo}/{self._branch}/{item['path']}"
                     )
                     local_file = local_mesh_dir / item["name"]
-                    urllib.request.urlretrieve(raw_url, local_file)
+                    _urlretrieve_https(raw_url, local_file)
 
-        except (PermissionError, OSError):
+        except (PermissionError, OSError, ValueError):
             pass  # Meshes not found or not accessible
+
+    def _safe_extract_zip(self, zf: zipfile.ZipFile, destination: Path) -> None:
+        """Extract zip members after validating they stay under destination."""
+        base_dir = destination.resolve()
+        validated_members: list[tuple[zipfile.ZipInfo, Path]] = []
+
+        for info in zf.infolist():
+            target_path = (destination / Path(info.filename)).resolve()
+            try:
+                target_path.relative_to(base_dir)
+            except ValueError as exc:
+                raise ValueError(
+                    f"Archive member escapes destination: {info.filename}"
+                ) from exc
+
+            validated_members.append((info, target_path))
+
+        for info, target_path in validated_members:
+            if info.is_dir():
+                target_path.mkdir(parents=True, exist_ok=True)
+                continue
+
+            target_path.parent.mkdir(parents=True, exist_ok=True)
+            with zf.open(info, "r") as source, open(target_path, "wb") as target:
+                shutil.copyfileobj(source, target)
 
     def download_archive(self, destination: Path) -> bool:
         """Download entire repository as archive."""
         if not (destination is not None):
             raise ValueError("destination must be provided")
+        destination.mkdir(parents=True, exist_ok=True)
         archive_url = (
             f"https://github.com/{self._owner}/{self._repo}/archive/{self._branch}.zip"
         )
 
         try:
             with tempfile.NamedTemporaryFile(suffix=".zip", delete=False) as tmp:
-                urllib.request.urlretrieve(archive_url, tmp.name)
+                _urlretrieve_https(archive_url, tmp.name)
 
                 with zipfile.ZipFile(tmp.name, "r") as zf:
-                    zf.extractall(destination)
+                    self._safe_extract_zip(zf, destination)
 
             return True
 
-        except (ConnectionError, TimeoutError, OSError) as e:
+        except (
+            ConnectionError,
+            TimeoutError,
+            OSError,
+            ValueError,
+            zipfile.BadZipFile,
+        ) as e:
             logger.error(f"Failed to download archive: {e}")
             return False
 
