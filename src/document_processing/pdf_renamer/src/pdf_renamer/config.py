@@ -3,7 +3,7 @@
 import logging
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 logger = logging.getLogger(__name__)
 
@@ -87,7 +87,9 @@ def get_api_key(key_name: str = "GEMINI_API_KEY") -> str | None:
     keyring = _get_keyring()
     if keyring is not None:
         try:
-            return keyring.get_password(KEYRING_SERVICE, KEYRING_USERNAME)
+            return cast(
+                "str | None", keyring.get_password(KEYRING_SERVICE, KEYRING_USERNAME)
+            )
         except Exception as exc:  # noqa: BLE001 - keyring backends vary widely.
             logger.warning("Unable to read Gemini API key from keyring: %s", exc)
 
