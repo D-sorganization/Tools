@@ -41,7 +41,7 @@ import pytest
 # =============================================================================
 # Path Constants
 # =============================================================================
-# Note: Python path is now configured via pytest.ini pythonpath setting.
+# Note: Python path is now configured via pyproject.toml [tool.pytest.ini_options].
 # These constants are kept for use in fixtures that need path references.
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
