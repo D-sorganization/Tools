@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.63                                     |
+| **Spec Version**        | 1.1.64                                     |
 | **Last Spec Update**    | 2026-04-17                                 |
 
 ## 2. Purpose & Mission
@@ -130,6 +130,7 @@ Tools/
 | Media Processing         | `src/media_processing/`                                                                | Audio and video utilities                                                                                                              |
 | Scientific Modeling      | `src/scientific_modeling/`                                                             | Thermal, mechanical, chemical simulations                                                                                              |
 | Web Services             | `src/web_applications/api/`                                                            | FastAPI endpoints and integrations                                                                                                     |
+| Unit Converter WSGI      | `src/web_applications/unit_converter/`                                                  | Flask web application with a production WSGI entry point; debug mode is development-only and gated by `FLASK_DEBUG`                  |
 | Rust Kernels             | `rust_core/`                                                                           | High-performance mathematical operations                                                                                               |
 | MATLAB Integration       | `matlab/`                                                                              | Wrapped MATLAB scientific code                                                                                                         |
 | Fleet Theme System       | `src/python/shared_utilities/theme/`                                                   | Consistent UI theming across tools                                                                                                     |
