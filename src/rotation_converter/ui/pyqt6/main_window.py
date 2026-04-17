@@ -94,11 +94,13 @@ class RotationConverterMainWindow(QMainWindow):
 
     def _build_menus(self) -> None:
         menu_bar = self.menuBar()
-        assert menu_bar is not None
+        if menu_bar is None:
+            raise RuntimeError("Rotation converter menu bar is unavailable")
 
         # File menu
         file_menu = menu_bar.addMenu("&File")
-        assert file_menu is not None
+        if file_menu is None:
+            raise RuntimeError("Rotation converter File menu is unavailable")
         quit_action = QAction("&Quit", self)
         quit_action.setShortcut("Ctrl+Q")
         quit_action.triggered.connect(self.close)
@@ -106,7 +108,8 @@ class RotationConverterMainWindow(QMainWindow):
 
         # Help menu
         help_menu = menu_bar.addMenu("&Help")
-        assert help_menu is not None
+        if help_menu is None:
+            raise RuntimeError("Rotation converter Help menu is unavailable")
         about = QAction("&About", self)
         about.triggered.connect(self._show_about)
         help_menu.addAction(about)
