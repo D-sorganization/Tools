@@ -30,6 +30,7 @@ export default function VideoEditor({
   disabled = false,
 }: VideoEditorProps) {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [trimRange, setTrimRange] = useState<TrimRange>({ start: 0, end: 0 });
   const [cropArea, _setCropArea] = useState<CropArea | null>(null);
   const [rotation, setRotation] = useState<RotationAngle>(0);
@@ -70,6 +71,7 @@ export default function VideoEditor({
     if (!videoFile || disabled || isProcessing) return;
 
     setIsProcessing(true);
+    setError(null);
 
     try {
       await loadFFmpeg();
@@ -126,7 +128,7 @@ export default function VideoEditor({
       onExport(blob);
     } catch (error) {
       console.error('Export error:', error);
-      alert('Failed to export video. Please try again.');
+      setError('Failed to export video. Please try again.');
     } finally {
       setIsProcessing(false);
     }
@@ -221,6 +223,12 @@ export default function VideoEditor({
           ))}
         </div>
       </div>
+
+      {error && (
+        <div role="alert" className="p-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-md">
+          {error}
+        </div>
+      )}
 
       <button
         onClick={handleExport}
