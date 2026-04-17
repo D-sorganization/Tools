@@ -225,15 +225,20 @@ class TestRepository:
             Path(filename).write_text("data")
             return (str(filename), None)
 
-        with patch(
-            "model_generation.library.repository._urlopen_https",
-            return_value=mock_response,
-        ), patch(
-            "model_generation.library.repository._urlretrieve_https",
-            side_effect=fake_urlretrieve,
+        with (
+            patch(
+                "model_generation.library.repository._urlopen_https",
+                return_value=mock_response,
+            ),
+            patch(
+                "model_generation.library.repository._urlretrieve_https",
+                side_effect=fake_urlretrieve,
+            ),
         ):
             repo._download_meshes("meshes", destination)
 
         assert (destination / "meshes" / "safe_mesh.stl") in downloaded_paths
-        assert (destination / "meshes" / "traversal_attempt.stl") not in downloaded_paths
+        assert (
+            destination / "meshes" / "traversal_attempt.stl"
+        ) not in downloaded_paths
         assert not (destination / "traversal_attempt.stl").exists()
