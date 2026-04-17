@@ -1,7 +1,4 @@
-"""UI components for Data Processor.
-
-This module provides both PyQt6 and React-compatible UI components.
-"""
+"""UI components for Data Processor."""
 
 from __future__ import annotations
 
@@ -19,9 +16,10 @@ def __getattr__(name: str) -> Any:
     if name in __all__:
         from .pyqt6 import DataProcessorMainWindow, FilterConfigWidget, SignalListWidget
 
-        return {
+        exports = {
             "DataProcessorMainWindow": DataProcessorMainWindow,
             "FilterConfigWidget": FilterConfigWidget,
             "SignalListWidget": SignalListWidget,
-        }[name]
+        }
+        return exports[name]
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
