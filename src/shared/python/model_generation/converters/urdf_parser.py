@@ -600,7 +600,9 @@ class URDFParser:
                 raise ValueError(
                     f"Mesh filename '{filename}' uses an unsupported URI scheme"
                 )
-            if normalized.startswith("/") or URDFParser._has_windows_drive_prefix(normalized):
+            if normalized.startswith("/") or URDFParser._has_windows_drive_prefix(
+                normalized
+            ):
                 raise ValueError(
                     f"Mesh filename '{filename}' must be relative or package://"
                 )
@@ -624,8 +626,5 @@ class URDFParser:
     def _has_windows_drive_prefix(path: str) -> bool:
         """Return True when a path starts with a Windows drive prefix."""
         return (
-            len(path) >= 3
-            and path[0].isalpha()
-            and path[1] == ":"
-            and path[2] == "/"
+            len(path) >= 3 and path[0].isalpha() and path[1] == ":" and path[2] == "/"
         )

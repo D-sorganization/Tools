@@ -384,11 +384,15 @@ class GitHubRepository(Repository):
             )
 
         if normalized.startswith("/"):
-            raise ValueError(f"Absolute archive member path is not allowed: {member_name}")
+            raise ValueError(
+                f"Absolute archive member path is not allowed: {member_name}"
+            )
 
         normalized_path = PurePosixPath(normalized)
         if normalized_path.is_absolute():
-            raise ValueError(f"Absolute archive member path is not allowed: {member_name}")
+            raise ValueError(
+                f"Absolute archive member path is not allowed: {member_name}"
+            )
 
         first_segment = normalized_path.parts[0] if normalized_path.parts else ""
         if not normalized_path.parts:
@@ -399,9 +403,7 @@ class GitHubRepository(Repository):
             )
 
         if ".." in normalized_path.parts:
-            raise ValueError(
-                f"Archive member contains path traversal: {member_name}"
-            )
+            raise ValueError(f"Archive member contains path traversal: {member_name}")
 
         return normalized
 

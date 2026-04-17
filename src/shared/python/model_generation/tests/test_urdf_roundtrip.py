@@ -287,7 +287,9 @@ class TestURDFMeshPathHandling:
 
         assert mesh_filename == "../outside.stl"
 
-    def test_unsupported_uri_mesh_path_is_preserved_as_text(self, tmp_path: Path) -> None:
+    def test_unsupported_uri_mesh_path_is_preserved_as_text(
+        self, tmp_path: Path
+    ) -> None:
         from model_generation.converters.urdf_parser import URDFParser
 
         urdf_path = self._write_urdf(tmp_path, "http://example.com/mesh.stl")
