@@ -45,3 +45,7 @@
 ## 2026-04-13 - Contextless Raw Timers
 **Learning:** Raw dynamic text like "03:45" or "105.4" provides no contextual meaning to screen readers if the visual context (like a pulsing red record dot or surrounding icon) is purely decorative or uses aria-hidden.
 **Action:** When displaying timers, numeric readings, or dynamic status values, prepend a visually `<span className="sr-only">` label (e.g., `<span className="sr-only">Recording duration:</span>`) right before the raw value so assistive tech announces "Recording duration: 03:45" instead of just "zero three colon four five". Ensure purely decorative visual context like pulsing dots have `aria-hidden="true"`.
+
+## 2026-04-14 - [Inline Error Feedback & Focus Improvements]
+**Learning:** Native `alert()` dialogs used for errors (e.g., failed exports or imports) disrupt user flow, block interaction, and break from the app's visual theme. Furthermore, some interactive UI elements may lack keyboard focus rings.
+**Action:** Replace `alert()` with inline UI elements (e.g., `<div role="alert">`) to provide non-blocking error feedback. Always ensure custom or unstyled buttons include `focus-visible` utility classes to support keyboard navigation.
