@@ -6,10 +6,13 @@ vector/matrix formatting) from the former monolithic main_window.py.
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 import numpy as np
 from matplotlib.figure import Figure
+
+logger = logging.getLogger(__name__)
 
 # ── Theme integration (optional — graceful fallback) ──────────────
 _THEME_AVAILABLE = False
@@ -85,10 +88,10 @@ def get_plot_colors() -> dict[str, Any]:
                 "surface": colors.get("group_bg", _DARK_SURFACE),
                 "axes": CHART_COLORS[:3] if CHART_COLORS else _AXIS_COLORS,
             }
-        except Exception:  # noqa: BLE001
+        except (AttributeError, ImportError, RuntimeError, TypeError, ValueError):
             # Theme manager may be unavailable or return unexpected data;
             # fall through to the hardcoded dark-theme defaults below.
-            pass
+            logger.exception("Failed to load optional theme plot colors")
     return {
         "bg": _DARK_BG,
         "fg": _DARK_FG,

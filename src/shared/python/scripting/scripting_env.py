@@ -37,6 +37,20 @@ from typing import Any
 
 import numpy as np
 
+USER_CODE_ERROR_TYPES = (
+    ArithmeticError,
+    AssertionError,
+    AttributeError,
+    ImportError,
+    LookupError,
+    NameError,
+    OSError,
+    RuntimeError,
+    SyntaxError,
+    TypeError,
+    ValueError,
+)
+
 try:
     import pandas as pd
 
@@ -173,10 +187,11 @@ class ConsoleEnvironment:
                     code_obj = compile(source, "<console>", "exec")
                     exec(code_obj, self.namespace)  # nosec B102
 
-        except Exception:  # noqa: BLE001
-            # Intentional broad catch: any user-code error is captured and
-            # formatted REPL-style so the console displays it rather than
-            # crashing the host application.
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except USER_CODE_ERROR_TYPES:
+            # Expected user-code failures are formatted REPL-style so the
+            # console displays them without crashing the host application.
             exc_type, exc_value, exc_traceback = sys.exc_info()
             if exc_traceback:
                 # Skip the context wrapper internal frames

@@ -278,8 +278,8 @@ class GitHubRepository(Repository):
                     sub_models = self._scan_directory(item["path"], depth + 1)
                     models.extend(sub_models)
 
-        except (PermissionError, OSError) as e:
-            logger.warning(f"Failed to scan {path}: {e}")
+        except (PermissionError, OSError):
+            logger.exception("Failed to scan %s", path)
 
         return models
 
@@ -340,15 +340,11 @@ class GitHubRepository(Repository):
                     local_file = local_mesh_dir / item["name"]
                     try:
                         _urlretrieve_https(raw_url, local_file)
-                    except (PermissionError, OSError) as e:
-                        logger.warning(
-                            "Failed to download mesh '%s': %s",
-                            local_file,
-                            e,
-                        )
+                    except (PermissionError, OSError):
+                        logger.exception("Failed to download mesh '%s'", local_file)
 
-        except (PermissionError, OSError, ValueError) as e:
-            logger.warning("Failed to download meshes for %s: %s", model_dir, e)
+        except (PermissionError, OSError, ValueError):
+            logger.exception("Failed to download meshes for %s", model_dir)
 
     def _safe_extract_zip(self, zf: zipfile.ZipFile, destination: Path) -> None:
         """Extract zip members after validating they stay under destination."""
@@ -454,8 +450,8 @@ class CompositeRepository(Repository):
                 for m in repo_models:
                     m.path = f"{repo.name}/{m.path}"
                 models.extend(repo_models)
-            except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
-                logger.warning(f"Failed to list from {repo.name}: {e}")
+            except (ValueError, ZeroDivisionError, OverflowError, TypeError):
+                logger.exception("Failed to list from %s", repo.name)
         return models
 
     def download_model(

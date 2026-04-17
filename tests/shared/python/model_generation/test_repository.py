@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib.util
 import io
 import json
+import logging
 import shutil
 import sys
 import zipfile
@@ -110,7 +111,7 @@ class TestRepositoryDownload:
         assert (out_dir / "meshes" / "mesh.obj").exists()
 
     def test_github_repository_download_model_keeps_partial_mesh_failures(
-        self, tmp_path: Path, monkeypatch
+        self, tmp_path: Path, monkeypatch, caplog: pytest.LogCaptureFixture
     ) -> None:
         repository_module = self._load_repository_module()
 
@@ -162,10 +163,17 @@ class TestRepositoryDownload:
             owner="owner", repo="repo", branch="main"
         )
         out_dir = tmp_path / "out"
+        caplog.set_level(logging.ERROR, logger=repository_module.__name__)
+
         out = repo.download_model("robots/model.urdf", out_dir)
+
         assert out == out_dir / "model.urdf"
         assert (out_dir / "meshes" / "good.obj").exists()
         assert not (out_dir / "meshes" / "bad.obj").exists()
+        assert any(
+            record.exc_info and "Failed to download mesh" in record.message
+            for record in caplog.records
+        )
 
     def test_download_archive_deletes_temp_file(
         self, tmp_path: Path, monkeypatch
