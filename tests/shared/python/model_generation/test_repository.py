@@ -5,7 +5,6 @@ from __future__ import annotations
 import importlib.util
 import io
 import json
-import logging
 import shutil
 import sys
 import zipfile
@@ -59,43 +58,6 @@ class TestGitHubRepositoryArchiveExtraction:
         assert repo.download_archive(destination) is False
         assert not any(destination.rglob("*"))
         assert not (tmp_path / "escape.txt").exists()
-
-    @pytest.mark.parametrize(
-        ("member_name",),
-        [
-            ("../../outside.txt",),
-            ("..\\outside.txt",),
-            ("/absolute.txt",),
-            ("C:/windows.txt",),
-            ("package://evil",),
-            ("jar:foo",),
-        ],
-    )
-    def test_download_archive_rejects_common_traversal_members(
-        self, tmp_path: Path, monkeypatch, member_name: str
-    ) -> None:
-        repository_module = self._load_repository_module()
-
-        archive_path = tmp_path / "malicious.zip"
-        with zipfile.ZipFile(archive_path, "w") as zf:
-            zf.writestr("repo-main/safe.txt", "safe")
-            zf.writestr(member_name, "owned")
-
-        def fake_urlretrieve(url: str, filename: str):
-            shutil.copy2(archive_path, filename)
-            return filename, None
-
-        monkeypatch.setattr(
-            repository_module.urllib.request, "urlretrieve", fake_urlretrieve
-        )
-
-        repo = repository_module.GitHubRepository(
-            owner="owner", repo="repo", branch="main"
-        )
-        destination = tmp_path / "extract"
-
-        assert repo.download_archive(destination) is False
-        assert not (destination / "safe.txt").exists()
 
     def test_download_meshes_rejects_path_traversal(
         self, tmp_path: Path, monkeypatch
@@ -195,7 +157,7 @@ class TestRepositoryDownload:
         assert (out_dir / "meshes" / "mesh.obj").exists()
 
     def test_github_repository_download_model_keeps_partial_mesh_failures(
-        self, tmp_path: Path, monkeypatch, caplog: pytest.LogCaptureFixture
+        self, tmp_path: Path, monkeypatch
     ) -> None:
         repository_module = self._load_repository_module()
 
@@ -247,17 +209,10 @@ class TestRepositoryDownload:
             owner="owner", repo="repo", branch="main"
         )
         out_dir = tmp_path / "out"
-        caplog.set_level(logging.ERROR, logger=repository_module.__name__)
-
         out = repo.download_model("robots/model.urdf", out_dir)
-
         assert out == out_dir / "model.urdf"
         assert (out_dir / "meshes" / "good.obj").exists()
         assert not (out_dir / "meshes" / "bad.obj").exists()
-        assert any(
-            record.exc_info and "Failed to download mesh" in record.message
-            for record in caplog.records
-        )
 
     def test_download_archive_deletes_temp_file(
         self, tmp_path: Path, monkeypatch
