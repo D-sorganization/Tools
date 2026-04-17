@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import logging
+import shutil
 import tempfile
 import urllib.request
 import zipfile
@@ -316,10 +317,36 @@ class GitHubRepository(Repository):
         except (PermissionError, OSError):
             pass  # Meshes not found or not accessible
 
+    def _safe_extract_zip(self, zf: zipfile.ZipFile, destination: Path) -> None:
+        """Extract zip members after validating they stay under destination."""
+        base_dir = destination.resolve()
+        validated_members: list[tuple[zipfile.ZipInfo, Path]] = []
+
+        for info in zf.infolist():
+            target_path = (destination / Path(info.filename)).resolve()
+            try:
+                target_path.relative_to(base_dir)
+            except ValueError as exc:
+                raise ValueError(
+                    f"Archive member escapes destination: {info.filename}"
+                ) from exc
+
+            validated_members.append((info, target_path))
+
+        for info, target_path in validated_members:
+            if info.is_dir():
+                target_path.mkdir(parents=True, exist_ok=True)
+                continue
+
+            target_path.parent.mkdir(parents=True, exist_ok=True)
+            with zf.open(info, "r") as source, open(target_path, "wb") as target:
+                shutil.copyfileobj(source, target)
+
     def download_archive(self, destination: Path) -> bool:
         """Download entire repository as archive."""
         if not (destination is not None):
             raise ValueError("destination must be provided")
+        destination.mkdir(parents=True, exist_ok=True)
         archive_url = (
             f"https://github.com/{self._owner}/{self._repo}/archive/{self._branch}.zip"
         )
@@ -329,11 +356,11 @@ class GitHubRepository(Repository):
                 urllib.request.urlretrieve(archive_url, tmp.name)
 
                 with zipfile.ZipFile(tmp.name, "r") as zf:
-                    zf.extractall(destination)
+                    self._safe_extract_zip(zf, destination)
 
             return True
 
-        except (ConnectionError, TimeoutError, OSError) as e:
+        except (ConnectionError, TimeoutError, OSError, ValueError, zipfile.BadZipFile) as e:
             logger.error(f"Failed to download archive: {e}")
             return False
 
