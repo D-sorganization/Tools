@@ -140,27 +140,90 @@ exclude = [
 # Ruff configuration lives in ruff.toml (authoritative). [tool.ruff] and
 # [tool.black] sections removed to eliminate conflicting duplicate config.
 [tool.pytest.ini_options]
-testpaths = ["tests", "src"]
-python_files = "test_*.py"
-python_classes = "Test*"
-python_functions = "test_*"
-addopts = "-ra -q --strict-markers --strict-config --durations=20 --benchmark-disable -n auto --dist loadscope -m \"not live_simulation\""
-pythonpath = ["src"]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+pythonpath = [
+    "src",
+    "src/python/src",
+    "src/shared/python",
+    "src/tools",
+    "src/web_applications",
+    "src/data_processing/data_processor/python",
+    "src/scientific_modeling/solar_system_model",
+    "src/scientific_modeling/rrt_path_planner/python/src",
+    "src/media_processing/video_processor/python",
+    "src/pendulum_simulator/src",
+    "src/folder_tool",
+]
+addopts = "-ra -v --strict-markers --strict-config --tb=short --color=yes --durations=20 --benchmark-disable -n auto --dist loadscope -m \"not live_simulation\" -p no:xvfb"
+console_output_style = "progress"
+norecursedirs = [
+    "replicants",
+    "archive",
+    "legacy",
+    "experimental",
+    ".git",
+    ".tox",
+    ".nox",
+    ".eggs",
+    "__pycache__",
+    "build",
+    "dist",
+    "*.egg-info",
+    ".pytest_cache",
+    "htmlcov",
+    "pdf_renamer",
+    "pdf_renamer_backup",
+    "project_packer",
+    "folder_packer_pro",
+    "rrt_path_planner",
+    "calculator",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning:pkg_resources",
+    "ignore::UserWarning:pygame.pkgdata",
+    "ignore::DeprecationWarning:setuptools",
+    "default::DeprecationWarning:utils",
+    "default::DeprecationWarning:tools",
+    "ignore:.*unclosed file.*:ResourceWarning",
+]
+log_cli = false
+log_cli_level = "WARNING"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(name)s: %(message)s"
+log_cli_date_format = "%H:%M:%S"
+log_file_level = "DEBUG"
+log_file_format = "%(asctime)s [%(levelname)8s] %(name)s (%(filename)s:%(lineno)d): %(message)s"
+log_file_date_format = "%Y-%m-%d %H:%M:%S"
 markers = [
-    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-    "integration: marks integration tests",
-    "live_simulation: marks tests requiring heavy physics engines or live simulation (deselect with '-m not live_simulation')",
-    "performance: marks performance/benchmark tests",
-    "unit: marks tests as unit tests (fast, isolated)",
-    "e2e: marks end-to-end tests across module boundaries",
-    "contract: marks API surface tests that downstream repos depend on (breaking = breaking UpstreamDrift or Gasification_Model)",
-    "acceptance: marks acceptance tests",
-    "dwsim: marks tests requiring DWSIM integration environment",
-    "benchmark: marks benchmark tests",
-    "scientific: marks tests validating scientific correctness",
-    "headless_safe: marks tests safe to run in headless environments",
-    "requires_gl: marks tests requiring OpenGL context",
-    "parity: marks parity tests verifying cross-implementation consistency",
+    "unit: mark test as unit test (fast, isolated, no external dependencies)",
+    "integration: mark test as integration test (may use external resources)",
+    "e2e: mark test as end-to-end test (full system test)",
+    "slow: mark test as slow running (> 5 seconds)",
+    "performance: mark test for performance benchmarking",
+    "benchmark: mark test as benchmark (measures timing/throughput)",
+    "scientific: mark test as scientific validation test (numerical accuracy against reference data)",
+    "headless_safe: mark test as safe to run in headless (no display) environments",
+    "requires_gl: mark test as requiring OpenGL/GPU display context",
+    "parity: mark test as cross-repo parity check (validates Tools/UpstreamDrift/Gasification_Model alignment)",
+    "requires_network: mark test as requiring network connectivity",
+    "requires_database: mark test as requiring database connection",
+    "requires_gpu: mark test as requiring GPU/CUDA",
+    "smoke: mark test as smoke test (basic sanity check)",
+    "regression: mark test for regression testing",
+    "asyncio: mark test as async test",
+    "contract: mark test as contract test",
+    "acceptance: mark test as acceptance test",
+    "dwsim: tests that require DWSIM runtime",
+    "live_simulation: tests requiring live DWSIM simulation access",
+    "gui: tests that require a GUI environment",
+    "heavy: tests that take a long time to run",
+    "math: pure calculation without external dependencies",
+    "physics: physics engine calculations",
+    "math_regression: tests looking for unintended calculation changes",
+    "flaky: tests that are known to fail intermittently",
+    "tools_contracts: tests verifying shared tools libraries interfaces",
 ]
 
 [tool.coverage.run]
