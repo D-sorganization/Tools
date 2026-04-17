@@ -78,8 +78,16 @@ class TestDataReader:
 
         with tempfile.NamedTemporaryFile(suffix=".pkl", delete=False) as f:
             sample_df.to_pickle(f.name)
-            result = DataReader.read_file(f.name)
+            result = DataReader.read_file(f.name, allow_pickle=True)
         assert list(result.columns) == ["x", "y"]
+
+    def test_read_pickle_blocked_without_opt_in(self, sample_df: pd.DataFrame):
+        from upstream_drift_tools.data_processing.io import DataReader
+
+        with tempfile.NamedTemporaryFile(suffix=".pkl", delete=False) as f:
+            sample_df.to_pickle(f.name)
+            with pytest.raises(ValueError, match="Reading pickle files is disabled"):
+                DataReader.read_file(f.name)
 
     def test_read_sqlite(self, sample_df: pd.DataFrame):
         from upstream_drift_tools.data_processing.io import DataReader

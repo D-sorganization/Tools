@@ -57,6 +57,43 @@ class TestGitHubRepositoryArchiveExtraction:
         assert not any(destination.rglob("*"))
         assert not (tmp_path / "escape.txt").exists()
 
+    @pytest.mark.parametrize(
+        ("member_name",),
+        [
+            ("../../outside.txt",),
+            ("..\\outside.txt",),
+            ("/absolute.txt",),
+            ("C:/windows.txt",),
+            ("package://evil",),
+            ("jar:foo",),
+        ],
+    )
+    def test_download_archive_rejects_common_traversal_members(
+        self, tmp_path: Path, monkeypatch, member_name: str
+    ) -> None:
+        repository_module = self._load_repository_module()
+
+        archive_path = tmp_path / "malicious.zip"
+        with zipfile.ZipFile(archive_path, "w") as zf:
+            zf.writestr("repo-main/safe.txt", "safe")
+            zf.writestr(member_name, "owned")
+
+        def fake_urlretrieve(url: str, filename: str):
+            shutil.copy2(archive_path, filename)
+            return filename, None
+
+        monkeypatch.setattr(
+            repository_module.urllib.request, "urlretrieve", fake_urlretrieve
+        )
+
+        repo = repository_module.GitHubRepository(
+            owner="owner", repo="repo", branch="main"
+        )
+        destination = tmp_path / "extract"
+
+        assert repo.download_archive(destination) is False
+        assert not (destination / "safe.txt").exists()
+
     def test_download_archive_rejects_non_https_urls(self, tmp_path: Path) -> None:
         repository_module = self._load_repository_module()
 

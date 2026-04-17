@@ -40,6 +40,7 @@ class DataReader:
     def read_file(
         file_path: str | Path,
         format_type: str,
+        allow_pickle: bool = False,
         **kwargs: Any,
     ) -> pd.DataFrame:
         """Read a data file based on its format.
@@ -47,6 +48,7 @@ class DataReader:
         Args:
             file_path: Path to the file to read
             format_type: Format of the file (csv, tsv, excel, parquet, etc.)
+            allow_pickle: Set True to allow loading pickle files.
             **kwargs: Additional arguments passed to the underlying read function
 
         Returns:
@@ -73,6 +75,11 @@ class DataReader:
         if fmt == "json":
             return pd.read_json(file_path, **kwargs)
         if fmt == "pickle":
+            if not allow_pickle:
+                raise ValueError(
+                    "Reading pickle files is disabled by default. "
+                    "Set allow_pickle=True to enable."
+                )
             return pd.read_pickle(file_path)
         if fmt == "hdf5":
             return pd.read_hdf(file_path, **kwargs)

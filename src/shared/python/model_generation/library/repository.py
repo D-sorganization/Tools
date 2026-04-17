@@ -16,7 +16,7 @@ import urllib.request
 import zipfile
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -350,7 +350,8 @@ class GitHubRepository(Repository):
         validated_members: list[tuple[zipfile.ZipInfo, Path]] = []
 
         for info in zf.infolist():
-            target_path = (destination / Path(info.filename)).resolve()
+            candidate_name = self._normalize_archive_member_name(info.filename)
+            target_path = (destination / PurePosixPath(candidate_name)).resolve()
             try:
                 target_path.relative_to(base_dir)
             except ValueError as exc:
@@ -368,6 +369,41 @@ class GitHubRepository(Repository):
             target_path.parent.mkdir(parents=True, exist_ok=True)
             with zf.open(info, "r") as source, open(target_path, "wb") as target:
                 shutil.copyfileobj(source, target)
+
+    @staticmethod
+    def _normalize_archive_member_name(member_name: str) -> str:
+        """Normalize and validate a zip member name for safe extraction."""
+        if not member_name:
+            raise ValueError("Archive member name must not be empty")
+
+        normalized = member_name.replace("\\", "/")
+
+        if normalized == "." or normalized == "./" or normalized.startswith("./"):
+            raise ValueError(
+                f"Archive member name must be a file within the archive: {member_name}"
+            )
+
+        if normalized.startswith("/"):
+            raise ValueError(f"Absolute archive member path is not allowed: {member_name}")
+
+        normalized_path = PurePosixPath(normalized)
+        if normalized_path.is_absolute():
+            raise ValueError(f"Absolute archive member path is not allowed: {member_name}")
+
+        first_segment = normalized_path.parts[0] if normalized_path.parts else ""
+        if not normalized_path.parts:
+            raise ValueError(f"Archive member name is invalid: {member_name}")
+        if ":" in first_segment:
+            raise ValueError(
+                f"Archive member has unsupported Windows/URL-style prefix: {member_name}"
+            )
+
+        if ".." in normalized_path.parts:
+            raise ValueError(
+                f"Archive member contains path traversal: {member_name}"
+            )
+
+        return normalized
 
     def download_archive(self, destination: Path) -> bool:
         """Download entire repository as archive."""

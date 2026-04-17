@@ -11,7 +11,7 @@ import logging
 import math
 import xml.etree.ElementTree as ET  # nosec B405 — type annotations + ParseError only; parsing uses defusedxml
 from dataclasses import dataclass, field
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import defusedxml.ElementTree as DefusedET
 from model_generation.core.types import (
@@ -508,7 +508,10 @@ class URDFParser:
 
             # Resolve mesh path
             if self.resolve_meshes and base_path and filename:
-                resolved = self._resolve_mesh_path(filename, base_path)
+                try:
+                    resolved = self._resolve_mesh_path(filename, base_path)
+                except ValueError:
+                    resolved = None
                 if resolved:
                     filename = str(resolved)
 
@@ -543,10 +546,8 @@ class URDFParser:
         return Material(name=name, color=color, texture=texture)
 
     def _resolve_mesh_path(self, filename: str, base_path: Path) -> Path | None:
-        """Resolve mesh file path."""
-        # Handle package:// URLs
-        if not (filename is not None):
-            raise ValueError("filename must be provided")
+        """Resolve mesh file path while rejecting unsafe references."""
+        filename = self._validate_mesh_filename(filename)
         if filename.startswith("package://"):
             # Strip package:// prefix
             package_path = filename[10:]
@@ -564,3 +565,67 @@ class URDFParser:
                 return candidate
 
         return Path(filename) if Path(filename).exists() else None
+
+    @staticmethod
+    def _validate_mesh_filename(filename: str) -> str:
+        """Validate mesh filenames for safe resolution."""
+        if filename is None:
+            raise ValueError("filename must be provided")
+
+        normalized = filename.replace("\\", "/")
+        if not normalized.strip():
+            raise ValueError("Mesh filename must be a non-empty string")
+
+        if normalized.startswith("package://"):
+            package_path = normalized[len("package://") :]
+            if not package_path:
+                raise ValueError(
+                    f"Mesh filename '{filename}' must reference a package-relative asset"
+                )
+            if package_path.startswith("/"):
+                raise ValueError(
+                    f"Mesh filename '{filename}' must reference a package-relative asset"
+                )
+            if "://" in package_path:
+                raise ValueError(
+                    f"Mesh filename '{filename}' uses an unsupported URI scheme"
+                )
+            if URDFParser._has_windows_drive_prefix(package_path):
+                raise ValueError(
+                    f"Mesh filename '{filename}' uses an unsupported URI scheme"
+                )
+            candidate = PurePosixPath(package_path)
+        else:
+            if "://" in normalized:
+                raise ValueError(
+                    f"Mesh filename '{filename}' uses an unsupported URI scheme"
+                )
+            if normalized.startswith("/") or URDFParser._has_windows_drive_prefix(normalized):
+                raise ValueError(
+                    f"Mesh filename '{filename}' must be relative or package://"
+                )
+            first_segment = normalized.split("/", 1)[0]
+            if ":" in first_segment:
+                raise ValueError(
+                    f"Mesh filename '{filename}' uses an unsupported URI scheme"
+                )
+            candidate = PurePosixPath(normalized)
+
+        if not candidate.parts or ".." in candidate.parts:
+            raise ValueError(f"Mesh filename '{filename}' contains path traversal")
+
+        return (
+            f"package://{candidate.as_posix()}"
+            if normalized.startswith("package://")
+            else candidate.as_posix()
+        )
+
+    @staticmethod
+    def _has_windows_drive_prefix(path: str) -> bool:
+        """Return True when a path starts with a Windows drive prefix."""
+        return (
+            len(path) >= 3
+            and path[0].isalpha()
+            and path[1] == ":"
+            and path[2] == "/"
+        )

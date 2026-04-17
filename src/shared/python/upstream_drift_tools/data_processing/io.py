@@ -33,7 +33,10 @@ class DataReader:
 
     @staticmethod
     def read_file(
-        file_path: str | Path, format_type: str | None = None, **kwargs: Any
+        file_path: str | Path,
+        format_type: str | None = None,
+        allow_pickle: bool = False,
+        **kwargs: Any,
     ) -> pd.DataFrame:
         """Read a data file based on its format.
 
@@ -58,6 +61,11 @@ class DataReader:
         if fmt == "json":
             return pd.read_json(path, **kwargs)
         if fmt == "pickle":
+            if not allow_pickle:
+                raise ValueError(
+                    "Reading pickle files is disabled by default. "
+                    "Set allow_pickle=True to enable."
+                )
             return pd.read_pickle(path)
         if fmt == "numpy":
             data = np.load(path, allow_pickle=False)

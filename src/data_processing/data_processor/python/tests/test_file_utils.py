@@ -59,8 +59,18 @@ def test_pickle_conversion(tmp_path: Path, sample_df: pd.DataFrame) -> None:
     DataWriter.write_file(sample_df, filepath, "pickle")
     assert filepath.exists()
 
-    loaded_df = DataReader.read_file(filepath, "pickle")
+    loaded_df = DataReader.read_file(filepath, "pickle", allow_pickle=True)
     pd.testing.assert_frame_equal(sample_df, loaded_df)
+
+
+def test_pickle_disabled_by_default(tmp_path: Path, sample_df: pd.DataFrame) -> None:
+    """Disallow pickle loading unless explicitly opted in."""
+    filepath = tmp_path / "test.pkl"
+    DataWriter.write_file(sample_df, filepath, "pickle")
+    assert filepath.exists()
+
+    with pytest.raises(ValueError, match="Reading pickle files is disabled"):
+        DataReader.read_file(filepath, "pickle")
 
 
 def test_numpy_conversion(tmp_path: Path, sample_df: pd.DataFrame) -> None:

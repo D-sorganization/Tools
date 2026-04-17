@@ -150,3 +150,27 @@ class TestSecurityHeaders:
     def test_x_frame_options(self, client) -> None:
         response = client.get("/")
         assert response.headers.get("X-Frame-Options") == "DENY"
+
+
+class TestWSGIDebugFlag:
+    def test_debug_defaults_to_disabled(self, monkeypatch) -> None:
+        from web_applications.unit_converter import wsgi
+
+        monkeypatch.delenv("UNIT_CONVERTER_DEBUG", raising=False)
+        assert not wsgi._is_debug_enabled()
+
+        monkeypatch.setenv("UNIT_CONVERTER_DEBUG", "0")
+        assert not wsgi._is_debug_enabled()
+
+    def test_debug_enables_when_explicitly_set(self, monkeypatch) -> None:
+        from web_applications.unit_converter import wsgi
+
+        for value in ("1", "true", "yes", "on", "TRUE"):
+            monkeypatch.setenv("UNIT_CONVERTER_DEBUG", value)
+            assert wsgi._is_debug_enabled()
+
+    def test_debug_ignores_malformed_values(self, monkeypatch) -> None:
+        from web_applications.unit_converter import wsgi
+
+        monkeypatch.setenv("UNIT_CONVERTER_DEBUG", "maybe")
+        assert not wsgi._is_debug_enabled()
