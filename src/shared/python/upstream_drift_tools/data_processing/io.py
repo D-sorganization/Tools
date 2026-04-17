@@ -66,7 +66,8 @@ class DataReader:
                     "Reading pickle files is disabled by default. "
                     "Set allow_pickle=True to enable."
                 )
-            return pd.read_pickle(path)
+            # Pickle deserialization is opt-in via allow_pickle for trusted files only.
+            return pd.read_pickle(path)  # nosec B301
         if fmt == "numpy":
             data = np.load(path, allow_pickle=False)
             if isinstance(data, np.ndarray):
