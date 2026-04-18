@@ -78,7 +78,7 @@ class TestDataReader:
 
         with tempfile.NamedTemporaryFile(suffix=".pkl", delete=False) as f:
             sample_df.to_pickle(f.name)
-            result = DataReader.read_file(f.name)
+            result = DataReader.read_file(f.name, format_type="pickle", allow_pickle=True)
         assert list(result.columns) == ["x", "y"]
 
     def test_read_sqlite(self, sample_df: pd.DataFrame):
@@ -147,7 +147,7 @@ class TestDataWriter:
         from upstream_drift_tools.data_processing.io import DataWriter
 
         with tempfile.NamedTemporaryFile(suffix=".pkl", delete=False) as f:
-            DataWriter.write_file(sample_df, f.name)
+            DataWriter.write_file(sample_df, f.name, format_type="pickle", allow_pickle=True)
             result = pd.read_pickle(f.name)
         assert list(result.columns) == ["x", "y"]
 
@@ -212,8 +212,6 @@ class TestFileFormatDetector:
             (".xlsx", "excel"),
             (".xls", "excel"),
             (".json", "json"),
-            (".pkl", "pickle"),
-            (".pickle", "pickle"),
             (".npy", "numpy"),
             (".mat", "matlab"),
             (".db", "sqlite"),

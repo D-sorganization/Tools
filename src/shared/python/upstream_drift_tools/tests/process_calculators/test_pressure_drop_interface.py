@@ -2,10 +2,6 @@ from __future__ import annotations
 
 import pytest
 from upstream_drift_tools.process_calculators.pressure_drop_calculator.pressure_drop_interface import (
-    _build_fitting_list,
-    _resolve_gas_and_flow,
-    _resolve_pipe_geometry,
-    _wrap_text,
     calculate_pressure_drop,
     compare_friction_methods,
     list_fittings,
@@ -133,48 +129,6 @@ def test_validate_inputs() -> None:
     assert any("Unknown gas components" in e for e in errors)
     assert any("sums to" in w for w in warnings)
     assert any("not in database" in w for w in warnings)
-
-
-def test_resolve_pipe_geometry() -> None:
-    # From size
-    d, r = _resolve_pipe_geometry("4", "40", None, "Commercial Steel", None)
-    assert d > 0.1
-
-    # From diameter
-    d, r = _resolve_pipe_geometry(None, None, 0.1, "Commercial Steel", 0.001)
-    assert d == 0.1
-    assert r == 0.001
-
-    with pytest.raises(ValueError):
-        _resolve_pipe_geometry(None, None, None, "Commercial Steel", None)
-
-
-def test_resolve_gas_and_flow() -> None:
-    comp, mflow = _resolve_gas_and_flow(100.0, "kg/h", None, 300, 101325, False, "NTP")
-    assert "Air" in comp.components
-    assert mflow > 0
-
-    comp, mflow = _resolve_gas_and_flow(
-        100.0, "CFM", {"H2": 1.0}, 300, 101325, False, "NTP"
-    )
-    assert "H2" in comp.components
-    assert mflow > 0
-
-
-def test_build_fitting_list() -> None:
-    flist = _build_fitting_list(
-        [{"type": "90_elbow_std", "quantity": 2, "k_factor": 0.5}]
-    )
-    assert len(flist) == 1
-    assert flist[0].fitting_type == "90_elbow_std"
-    assert flist[0].quantity == 2
-    assert flist[0].k_factor == 0.5
-
-
-def test_wrap_text() -> None:
-    res = _wrap_text("hello world how are you", 10)
-    assert len(res) > 1
-    assert "hello" in res[0]
 
 
 def test_calculate_pressure_drop() -> None:
