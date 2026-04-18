@@ -11,8 +11,8 @@ Covers:
 
 from __future__ import annotations
 
-import numpy as np
 import pytest
+np = pytest.importorskip("numpy")
 from numpy.testing import assert_allclose
 from safe_eval import (
     NUMPY_MATH_NAMESPACE,

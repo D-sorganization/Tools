@@ -4,7 +4,8 @@ These tests verify the CSV utility functions using
 Design by Contract principles.
 """
 
-import pandas as pd
+import pytest
+pd = pytest.importorskip("pandas")
 
 
 class TestSafeReadCsvContract:

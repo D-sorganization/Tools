@@ -11,6 +11,7 @@ Covers:
 from __future__ import annotations
 
 import pytest
+pytest.importorskip("numpy")
 from upstream_drift_tools.process_calculators.constants import (
     STEFAN_BOLTZMANN,
     bar_to_pa,
