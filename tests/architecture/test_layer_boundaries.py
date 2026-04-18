@@ -472,6 +472,8 @@ class TestExceptionHierarchyConsistency:
 
     def test_data_processing_exceptions_importable(self) -> None:
         """All data-processing exceptions must be importable."""
+        pytest.importorskip("numpy")
+        pytest.importorskip("scipy")
         from upstream_drift_tools.data_processing.exceptions import (  # noqa: F401
             ColumnNotFoundError,
             DataNotLoadedError,
@@ -485,6 +487,8 @@ class TestExceptionHierarchyConsistency:
 
     def test_all_data_processing_exceptions_share_base(self) -> None:
         """Every exception must inherit from DataProcessingError."""
+        pytest.importorskip("numpy")
+        pytest.importorskip("scipy")
         from upstream_drift_tools.data_processing.exceptions import (
             ColumnNotFoundError,
             DataNotLoadedError,
