@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import pytest
-from pydantic import ValidationError
-
 from calc_backend.contracts.ode_solver import ODESolverRequest, ODESolverResponse
 from calc_backend.contracts.pressure_drop import (
     PressureDropRequest,
@@ -16,6 +14,7 @@ from calc_backend.contracts.rotation_converter import (
     RotationConverterRequest,
     RotationConverterResponse,
 )
+from pydantic import ValidationError
 
 
 @pytest.mark.contract
