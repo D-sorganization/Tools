@@ -13,7 +13,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-pytest.importorskip("numba", reason="numba is required for neural network trainer tests")
+pytest.importorskip(
+    "numba", reason="numba is required for neural network trainer tests"
+)
 
 from data_processor.core.neural_network import NeuralNetworkInterface
 from data_processor.core.nn_architecture import (
@@ -387,7 +389,9 @@ class TestNeuralNetworkTrainer:
         assert "X_mean" in trainer.normalization_params
         assert "X_std" in trainer.normalization_params
         np.testing.assert_allclose(trainer.normalization_params["X_mean"], [3.0, 4.0])
-        np.testing.assert_allclose(trainer.normalization_params["X_std"], [1.63299316, 1.63299316], rtol=1e-6)
+        np.testing.assert_allclose(
+            trainer.normalization_params["X_std"], [1.63299316, 1.63299316], rtol=1e-6
+        )
         np.testing.assert_allclose(X_val_n, [[-0.61237244, -0.61237244]], rtol=1e-6)
         np.testing.assert_allclose(X_test_n, [[0.61237244, 0.61237244]], rtol=1e-6)
         # Mean should be approximately 0 for training data
