@@ -333,6 +333,12 @@ class TestSpringLaunch:
         with pytest.raises(ValueError, match="dt must be positive"):
             spring.step(0.0)
 
+    @pytest.mark.parametrize("dt", [math.nan, math.inf, -math.inf])
+    def test_step_non_finite_dt_raises(self, dt: float) -> None:
+        spring = self._make_spring()
+        with pytest.raises(ValueError, match="dt must be positive"):
+            spring.step(dt)
+
 
 # ---------------------------------------------------------------------------
 # Integration
@@ -355,6 +361,12 @@ class TestIntegration:
         body = RigidBody(mass=1.0, moment_of_inertia=1.0)
         with pytest.raises(ValueError, match="dt must be positive"):
             integrate_body(body, 0.0)
+
+    @pytest.mark.parametrize("dt", [math.nan, math.inf, -math.inf])
+    def test_non_finite_dt_raises(self, dt: float) -> None:
+        body = RigidBody(mass=1.0, moment_of_inertia=1.0)
+        with pytest.raises(ValueError, match="dt must be positive"):
+            integrate_body(body, dt)
 
 
 # ---------------------------------------------------------------------------
@@ -382,6 +394,12 @@ class TestMomentumConservation:
         state = self._system_at_rest()
         with pytest.raises(ValueError, match="dt must be positive"):
             step_simulation(state, 0.0)
+
+    @pytest.mark.parametrize("dt", [math.nan, math.inf, -math.inf])
+    def test_step_simulation_non_finite_dt_raises(self, dt: float) -> None:
+        state = self._system_at_rest()
+        with pytest.raises(ValueError, match="dt must be positive"):
+            step_simulation(state, dt)
 
     def test_momentum_conserved_through_colinear_jump(self) -> None:
         state = self._system_at_rest()
