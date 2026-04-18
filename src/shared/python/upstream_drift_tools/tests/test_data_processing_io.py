@@ -75,12 +75,11 @@ class TestDataReader:
 
     def test_read_pickle(self, sample_df: pd.DataFrame):
         from upstream_drift_tools.data_processing.io import DataReader
-        import pytest
 
         with tempfile.NamedTemporaryFile(suffix=".pkl", delete=False) as f:
             sample_df.to_pickle(f.name)
             with pytest.raises(ValueError, match="Pickle format is disabled"):
-                result = DataReader.read_file(f.name, format_type="pickle")
+                DataReader.read_file(f.name, format_type="pickle")
 
     def test_read_sqlite(self, sample_df: pd.DataFrame):
         from upstream_drift_tools.data_processing.io import DataReader
@@ -146,7 +145,6 @@ class TestDataWriter:
 
     def test_write_pickle(self, sample_df: pd.DataFrame):
         from upstream_drift_tools.data_processing.io import DataWriter
-        import pytest
 
         with tempfile.NamedTemporaryFile(suffix=".pkl", delete=False) as f:
             with pytest.raises(ValueError, match="Pickle format is disabled"):
