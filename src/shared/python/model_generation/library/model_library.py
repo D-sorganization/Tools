@@ -623,7 +623,14 @@ class ModelLibrary:
         api_url = f"https://api.github.com/repos/{owner}/{repo}/contents/{subpath}"
 
         try:
+            import urllib.parse
             import urllib.request
+
+            # Validate API URL is HTTPS
+            parsed = urllib.parse.urlparse(api_url)
+            if parsed.scheme != "https" or not parsed.netloc:
+                logger.error(f"Invalid API URL: {api_url}")
+                return models
 
             with urllib.request.urlopen(api_url) as response:
                 contents = json.loads(response.read().decode())
@@ -654,6 +661,17 @@ class ModelLibrary:
                     # Check subdirectory for model files
                     subdir_url = item["url"]
                     try:
+                        # Validate subdirectory URL is HTTPS from GitHub API
+                        subdir_parsed = urllib.parse.urlparse(subdir_url)
+                        if (
+                            subdir_parsed.scheme != "https"
+                            or subdir_parsed.netloc != "api.github.com"
+                        ):
+                            logger.warning(
+                                f"Skipping untrusted subdirectory URL: {subdir_url}"
+                            )
+                            continue
+
                         with urllib.request.urlopen(subdir_url) as sub_response:
                             sub_contents = json.loads(sub_response.read().decode())
                         for sub_item in sub_contents:
@@ -722,13 +740,18 @@ class ModelLibrary:
             return False
 
         try:
+            import urllib.parse
             import urllib.request
 
             # Create cache directory
             cache_dir = self.config.cache_dir / entry.id.replace("/", "_")
             cache_dir.mkdir(parents=True, exist_ok=True)
 
-            # Download URDF
+            # Download URDF - validate HTTPS URL
+            parsed = urllib.parse.urlparse(entry.source_url)
+            if parsed.scheme != "https" or not parsed.netloc:
+                raise ValueError(f"URL must be absolute HTTPS: {entry.source_url}")
+
             urdf_filename = entry.source_url.split("/")[-1]
             local_path = cache_dir / urdf_filename
 
