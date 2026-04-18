@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.67                                     |
+| **Spec Version**        | 1.1.69                                     |
 | **Last Spec Update**    | 2026-04-18                                 |
 
 ## 2. Purpose & Mission
@@ -456,6 +456,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-04-18 | 1.1.69  | Stopped the bot CI trigger workflow from using stale external credentials for repository checkout and PR/check API operations so bot-authored PRs use repo-scoped workflow credentials for required check discovery. |
+| 2026-04-18 | 1.1.68  | Restricted Data Processor web row-copy paths to own enumerable properties via a shared `Object.keys` helper and added regression coverage to prevent inherited prototype keys from being copied into processed rows. |
 | 2026-04-18 | 1.1.67  | Filter deleted test files out of the CI changed-test list so PRs that intentionally remove stale tests do not pass non-existent paths to pytest. |
 | 2026-04-18 | 1.1.66  | Hardened asteroid-jumper physics validation so non-finite timesteps and physics parameters are rejected with explicit `ValueError`s instead of propagating NaN or infinity through simulation state. |
 | 2026-04-18 | 1.1.65  | Simplified root pytest addopts in `pyproject.toml` by removing benchmark and xdist-specific defaults so repository-level test runs do not require those plugins outside focused plugin test contexts. |
