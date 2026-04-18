@@ -88,16 +88,19 @@ jobs:
         github.event.pull_request.user.type == 'Bot'))
 
     steps:
-      - uses: actions/checkout@v6
-        with:
-          token: ${{ secrets.BOT_PAT || secrets.RUNNER_CHECK_TOKEN }}
-          fetch-depth: 5
-
       - name: Check Loop Prevention
         id: loop-check
+        env:
+          GH_TOKEN: ${{ secrets.BOT_PAT || secrets.RUNNER_CHECK_TOKEN }}
         run: |
           # Check recent commits for loop indicators
           loop_count=0
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            messages=$(gh pr view "${{ github.event.pull_request.number }}" --json commits --jq '.commits[-5:][].messageHeadline')
+          else
+            messages=""
+          fi
+
           while IFS= read -r msg; do
             if [[ "$msg" == *"[skip ci]"* ]] || [[ "$msg" == *"[ci skip]"* ]]; then
               continue
@@ -105,7 +108,7 @@ jobs:
             if [[ "$msg" == *"trigger-ci"* ]] || [[ "$msg" == *"bot-ci-trigger"* ]]; then
               ((loop_count++))
             fi
-          done < <(git log --format="%s" -n 5)
+          done <<< "$messages"
 
           if [ $loop_count -ge 3 ]; then
             echo "skip=true" >> $GITHUB_OUTPUT
