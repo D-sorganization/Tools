@@ -56,10 +56,10 @@ def test_json_conversion(tmp_path: Path, sample_df: pd.DataFrame) -> None:
 def test_pickle_conversion(tmp_path: Path, sample_df: pd.DataFrame) -> None:
     """Test Pickle read/write conversion."""
     filepath = tmp_path / "test.pkl"
-    DataWriter.write_file(sample_df, filepath, "pickle")
+    DataWriter.write_file(sample_df, filepath, "pickle", allow_pickle=True)
     assert filepath.exists()
 
-    loaded_df = DataReader.read_file(filepath, "pickle")
+    loaded_df = DataReader.read_file(filepath, "pickle", allow_pickle=True)
     pd.testing.assert_frame_equal(sample_df, loaded_df)
 
 

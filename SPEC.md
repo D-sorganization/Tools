@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.70                                     |
+| **Spec Version**        | 1.1.71                                     |
 | **Last Spec Update**    | 2026-04-18                                 |
 
 ## 2. Purpose & Mission
@@ -125,7 +125,7 @@ Tools/
 | Pressure Drop Calculator | `src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/` | Facade-driven gas pressure-drop workflows with extracted API, validation, reference, results, and engine-domain helper modules         |
 | Model Generation API     | `src/shared/python/model_generation/api/`                                              | Route facade with framework-specific Flask and FastAPI adapters behind a compatibility shim, plus repository download helpers that require HTTPS downloads and validate archive and mesh paths to prevent traversal |
 | Engineering Tools        | `src/tools/`                                                                           | 45+ specialized calculation and processing tools                                                                                       |
-| Data Processing          | `src/data_processing/`                                                                 | Pipelines, transformers, validators, and facade-based data-processor core modules for exporter, ANOVA, and vectorized filter workflows |
+| Data Processing          | `src/data_processing/`                                                                 | Pipelines, transformers, validators, and facade-based data-processor core modules for exporter, ANOVA, vectorized filter workflows, and pickle-safe file I/O defaults |
 | Document Processing      | `src/document_processing/`                                                             | PDF extraction, text processing                                                                                                        |
 | Media Processing         | `src/media_processing/`                                                                | Audio and video utilities                                                                                                              |
 | Scientific Modeling      | `src/scientific_modeling/`                                                             | Thermal, mechanical, chemical simulations                                                                                              |
@@ -211,6 +211,8 @@ class MyTool(BaseTool):
 | Configuration files | YAML                  | `config/`                       | Tool registry, theme config, plugin paths |
 | Scientific data     | CSV/HDF5/NetCDF       | Files, databases                | Domain-specific formats                   |
 | MATLAB models       | .m/.mat files         | `matlab/`                       | MATLAB simulation parameters              |
+
+Pickle-backed DataFrame reads and writes are disabled by default in shared data-processing helpers because pickle loading can execute arbitrary code. CSV, Parquet, JSON, Excel, HDF5, Feather, NumPy, MATLAB, Arrow, and SQLite remain the preferred interchange formats; trusted legacy pickle files require an explicit `allow_pickle=True` override.
 
 ### Output Data
 
@@ -461,6 +463,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-04-18 | 1.1.71  | Hardened data-processing file I/O by disabling pickle reads and writes by default, removing pickle extensions from GUI-supported file discovery paths, and requiring an explicit trusted-legacy override for pickle use. |
 | 2026-04-18 | 1.1.70  | Test configuration hygiene: registered the complete CLAUDE.md marker set in `pytest.ini`, enabled strict xfail handling, and added a contract-test backbone for the ODE solver, pressure-drop calculator, and rotation-converter calc backend request/response models. |
 | 2026-04-18 | 1.1.69  | Stopped the bot CI trigger workflow from using stale external credentials for repository checkout and PR/check API operations so bot-authored PRs use repo-scoped workflow credentials for required check discovery. |
 | 2026-04-18 | 1.1.68  | Restricted Data Processor web row-copy paths to own enumerable properties via a shared `Object.keys` helper and added regression coverage to prevent inherited prototype keys from being copied into processed rows. |

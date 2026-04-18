@@ -270,10 +270,16 @@ def _right_arm_base_jacobian(
     J = jnp.zeros((2, N_DOF))
     # DOF 0: hub rotation affects the entire chain
     J = J.at[0, 0].set(
-        p.L_hub * cos_hub - p.d_rs * sin_hub + p.L_r_upper * cos_rs + p.L_r_fore * cos_re
+        p.L_hub * cos_hub
+        - p.d_rs * sin_hub
+        + p.L_r_upper * cos_rs
+        + p.L_r_fore * cos_re
     )
     J = J.at[1, 0].set(
-        p.L_hub * sin_hub + p.d_rs * cos_hub + p.L_r_upper * sin_rs + p.L_r_fore * sin_re
+        p.L_hub * sin_hub
+        + p.d_rs * cos_hub
+        + p.L_r_upper * sin_rs
+        + p.L_r_fore * sin_re
     )
     # DOF 1: right-shoulder flexion/extension
     J = J.at[0, 1].set(p.L_r_upper * cos_rs + p.L_r_fore * cos_re)
@@ -302,10 +308,16 @@ def _left_arm_base_jacobian(
     J = jnp.zeros((2, N_DOF))
     # DOF 0: hub rotation affects the entire left chain
     J = J.at[0, 0].set(
-        p.L_hub * cos_hub + p.d_ls * sin_hub + p.L_l_upper * cos_ls + p.L_l_fore * cos_le
+        p.L_hub * cos_hub
+        + p.d_ls * sin_hub
+        + p.L_l_upper * cos_ls
+        + p.L_l_fore * cos_le
     )
     J = J.at[1, 0].set(
-        p.L_hub * sin_hub - p.d_ls * cos_hub + p.L_l_upper * sin_ls + p.L_l_fore * sin_le
+        p.L_hub * sin_hub
+        - p.d_ls * cos_hub
+        + p.L_l_upper * sin_ls
+        + p.L_l_fore * sin_le
     )
     # DOF 4: left-shoulder flexion/extension
     J = J.at[0, 4].set(p.L_l_upper * cos_ls + p.L_l_fore * cos_le)
@@ -365,8 +377,12 @@ def analytical_fk_jacobians_jax(q: JaxArray, p: GolferParamsJAX) -> dict[str, Ja
 
     # 3. RE (Right Elbow) — RS + upper-arm link
     J_re = jnp.zeros((2, N_DOF))
-    J_re = J_re.at[0, 0].set(p.L_hub * cos_hub - p.d_rs * sin_hub + p.L_r_upper * cos_rs)
-    J_re = J_re.at[1, 0].set(p.L_hub * sin_hub + p.d_rs * cos_hub + p.L_r_upper * sin_rs)
+    J_re = J_re.at[0, 0].set(
+        p.L_hub * cos_hub - p.d_rs * sin_hub + p.L_r_upper * cos_rs
+    )
+    J_re = J_re.at[1, 0].set(
+        p.L_hub * sin_hub + p.d_rs * cos_hub + p.L_r_upper * sin_rs
+    )
     J_re = J_re.at[0, 1].set(p.L_r_upper * cos_rs)
     J_re = J_re.at[1, 1].set(p.L_r_upper * sin_rs)
     jacobians["re"] = J_re
@@ -384,8 +400,12 @@ def analytical_fk_jacobians_jax(q: JaxArray, p: GolferParamsJAX) -> dict[str, Ja
 
     # 6. LE (Left Elbow) — LS + upper-arm link
     J_le = jnp.zeros((2, N_DOF))
-    J_le = J_le.at[0, 0].set(p.L_hub * cos_hub + p.d_ls * sin_hub + p.L_l_upper * cos_ls)
-    J_le = J_le.at[1, 0].set(p.L_hub * sin_hub - p.d_ls * cos_hub + p.L_l_upper * sin_ls)
+    J_le = J_le.at[0, 0].set(
+        p.L_hub * cos_hub + p.d_ls * sin_hub + p.L_l_upper * cos_ls
+    )
+    J_le = J_le.at[1, 0].set(
+        p.L_hub * sin_hub - p.d_ls * cos_hub + p.L_l_upper * sin_ls
+    )
     J_le = J_le.at[0, 4].set(p.L_l_upper * cos_ls)
     J_le = J_le.at[1, 4].set(p.L_l_upper * sin_ls)
     jacobians["le"] = J_le
@@ -398,14 +418,18 @@ def analytical_fk_jacobians_jax(q: JaxArray, p: GolferParamsJAX) -> dict[str, Ja
     # 8. Club COM — right-hand attachment + club-angle contribution
     coeff_com_x = 0.5 * p.L_club - p.grip_right
     coeff_com_y = -0.5 * (p.L_club - 2 * p.grip_right)
-    J_club_com = _right_arm_base_jacobian(p, cos_hub, sin_hub, cos_rs, sin_rs, cos_re, sin_re)
+    J_club_com = _right_arm_base_jacobian(
+        p, cos_hub, sin_hub, cos_rs, sin_rs, cos_re, sin_re
+    )
     J_club_com = J_club_com.at[0, 7].set(coeff_com_x * cos_club)
     J_club_com = J_club_com.at[1, 7].set(coeff_com_y * sin_club)
     jacobians["club_com"] = J_club_com
 
     # 9. Club Tip — right-hand attachment + full-club-length contribution
     coeff_tip = p.L_club - p.grip_right
-    J_club_tip = _right_arm_base_jacobian(p, cos_hub, sin_hub, cos_rs, sin_rs, cos_re, sin_re)
+    J_club_tip = _right_arm_base_jacobian(
+        p, cos_hub, sin_hub, cos_rs, sin_rs, cos_re, sin_re
+    )
     J_club_tip = J_club_tip.at[0, 7].set(coeff_tip * cos_club)
     J_club_tip = J_club_tip.at[1, 7].set(-coeff_tip * sin_club)
     jacobians["club_tip"] = J_club_tip
@@ -486,12 +510,14 @@ def coriolis_jax(q: JaxArray, qdot: JaxArray, p: GolferParamsJAX) -> JaxArray:
     M0 = mass_matrix_jax(q, p)
 
     basis = jnp.eye(N_DOF)
-    dM = jax.vmap(lambda direction: (mass_matrix_jax(q + eps * direction, p) - M0) / eps)(
-        basis
-    )
+    dM = jax.vmap(
+        lambda direction: (mass_matrix_jax(q + eps * direction, p) - M0) / eps
+    )(basis)
     dM = jnp.transpose(dM, (1, 2, 0))
 
-    christoffel = 0.5 * (dM + jnp.transpose(dM, (0, 2, 1)) - jnp.transpose(dM, (1, 2, 0)))
+    christoffel = 0.5 * (
+        dM + jnp.transpose(dM, (0, 2, 1)) - jnp.transpose(dM, (1, 2, 0))
+    )
     return jnp.einsum("ijk,j,k->i", christoffel, qdot, qdot)
 
 
@@ -632,7 +658,8 @@ def constraint_jacobian_jax(q: JaxArray, p: GolferParamsJAX) -> JaxArray:
 
     # dPhi[2]/dq: perpendicular distance constraint
     Phi_q = Phi_q.at[2, :].set(
-        club_perp[0] * (J_lh[0, :] - J_rh[0, :]) + club_perp[1] * (J_lh[1, :] - J_rh[1, :])
+        club_perp[0] * (J_lh[0, :] - J_rh[0, :])
+        + club_perp[1] * (J_lh[1, :] - J_rh[1, :])
     )
     # d(club_perp)/dq_7: (-sin(th_club), cos(th_club))
     d_club_perp_dth = jnp.array([-sin_club, cos_club])
@@ -640,7 +667,8 @@ def constraint_jacobian_jax(q: JaxArray, p: GolferParamsJAX) -> JaxArray:
 
     # dPhi[3]/dq: along-club distance constraint
     Phi_q = Phi_q.at[3, :].set(
-        club_dir[0] * (J_lh[0, :] - J_rh[0, :]) + club_dir[1] * (J_lh[1, :] - J_rh[1, :])
+        club_dir[0] * (J_lh[0, :] - J_rh[0, :])
+        + club_dir[1] * (J_lh[1, :] - J_rh[1, :])
     )
     # d(club_dir)/dq_7: (cos(th_club), sin(th_club))
     d_club_dir_dth = jnp.array([cos_club, sin_club])
