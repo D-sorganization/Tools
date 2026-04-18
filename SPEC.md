@@ -529,6 +529,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-10 | 1.1.37  | Add explicit focus-visible styles to the interactive buttons (Upload New Video, Play/Pause, Mute/Unmute) within the `VideoPlayer` component for improved keyboard navigation visibility.                                                                                                                                                                                                                                                                                                                                                                            |
 | 2026-04-12 | 1.1.48  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
 | 2026-04-15 | 1.1.49  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
+| 2026-04-18 | 1.1.54  | Optimized `calculateStatistics` in `useDataProcessor.ts` by extracting numbers into a pre-allocated `Float64Array` during the first pass to eliminate a second pass over the original array of objects. |
 
 ---
 
