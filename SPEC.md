@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.64                                     |
-| **Last Spec Update**    | 2026-04-17                                 |
+| **Spec Version**        | 1.1.67                                     |
+| **Last Spec Update**    | 2026-04-18                                 |
 
 ## 2. Purpose & Mission
 
@@ -129,6 +129,7 @@ Tools/
 | Document Processing      | `src/document_processing/`                                                             | PDF extraction, text processing                                                                                                        |
 | Media Processing         | `src/media_processing/`                                                                | Audio and video utilities                                                                                                              |
 | Scientific Modeling      | `src/scientific_modeling/`                                                             | Thermal, mechanical, chemical simulations                                                                                              |
+| Asteroid Jumper          | `src/asteroid_jumper/`                                                                 | Rigid-body toy simulation with explicit finite-positive timestep and physics-parameter validation                                      |
 | Web Services             | `src/web_applications/api/`                                                            | FastAPI endpoints and integrations                                                                                                     |
 | Unit Converter WSGI      | `src/web_applications/unit_converter/`                                                  | Flask web application with a production WSGI entry point; debug mode is development-only and gated by `FLASK_DEBUG`                  |
 | Rust Kernels             | `rust_core/`                                                                           | High-performance mathematical operations                                                                                               |
@@ -455,6 +456,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-04-18 | 1.1.66  | Hardened asteroid-jumper physics validation so non-finite timesteps and physics parameters are rejected with explicit `ValueError`s instead of propagating NaN or infinity through simulation state. |
+| 2026-04-18 | 1.1.65  | Simplified root pytest addopts in `pyproject.toml` by removing benchmark and xdist-specific defaults so repository-level test runs do not require those plugins outside focused plugin test contexts. |
 | 2026-04-17 | 1.1.64  | Optimized `applyFilter` loop in `useDataProcessor.ts` by replacing the object spread operator with manual property copying to eliminate significant garbage collection overhead during large dataset processing. |
 | 2026-04-17 | 1.1.63  | Hardened model-generation GitHub repository downloads by requiring HTTPS retrievals and validating mesh output paths so API-provided mesh names cannot escape the destination directory; kept the unit-converter development WSGI debugger disabled unless `FLASK_DEBUG=1` is explicitly set. |
 | 2026-04-17 | 1.1.62  | Enhanced video editor UX by replacing native alert dialogs with inline accessible errors and ensuring proper focus styles. |
@@ -529,7 +532,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-10 | 1.1.37  | Add explicit focus-visible styles to the interactive buttons (Upload New Video, Play/Pause, Mute/Unmute) within the `VideoPlayer` component for improved keyboard navigation visibility.                                                                                                                                                                                                                                                                                                                                                                            |
 | 2026-04-12 | 1.1.48  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
 | 2026-04-15 | 1.1.49  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
-| 2026-04-18 | 1.1.54  | Optimized `calculateStatistics` in `useDataProcessor.ts` by extracting numbers into a pre-allocated `Float64Array` during the first pass to eliminate a second pass over the original array of objects. |
+| 2026-04-18 | 1.1.67  | Optimized `calculateStatistics` in `useDataProcessor.ts` by extracting numbers into a dynamically resizing `Float64Array` during the first pass to eliminate a second pass over the original array of objects. |
 
 ---
 
