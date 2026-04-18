@@ -10,8 +10,12 @@ import pytest
 
 
 def _load_mypy_autofix_agent():
-    module_path = Path(__file__).resolve().parents[2] / "src/tools/mypy_autofix_agent.py"
-    spec = importlib.util.spec_from_file_location("mypy_autofix_agent_under_test", module_path)
+    module_path = (
+        Path(__file__).resolve().parents[2] / "src/tools/mypy_autofix_agent.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "mypy_autofix_agent_under_test", module_path
+    )
     assert spec is not None
     assert spec.loader is not None
     module = importlib.util.module_from_spec(spec)
