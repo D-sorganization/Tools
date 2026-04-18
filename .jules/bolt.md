@@ -10,3 +10,7 @@
 ## 2026-04-17 - [Avoid object spread operator in applyFilter loop]
 **Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), using the object spread operator (`const newRow = { ...data[i] };`) inside the tight `applyFilter` loop over all data rows causes massive memory allocation and garbage collection overhead.
 **Action:** When creating new row objects in tight filtering loops, explicitly assign only the required properties to a new object or manually copy properties using a `for...in` loop instead of using the object spread operator to reduce overhead.
+
+## 2026-04-18 - Single-Pass Statistics Calculation Optimization
+**Learning:** In JavaScript/TypeScript, when calculating statistics (variance, median, etc.) over an array of objects (`RowData[]`), iterating over the object array multiple times introduces massive O(N) object property access overhead, especially with large datasets.
+**Action:** Extract the numerical values into a pre-allocated `Float64Array` in a single pass instead of iterating over the object array multiple times. This drastically reduces object property access overhead and garbage collection by reusing the array buffer.

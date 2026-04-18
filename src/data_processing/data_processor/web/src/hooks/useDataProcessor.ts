@@ -54,11 +54,15 @@ export function useDataProcessor() {
       let count = 0;
       let sum = 0;
 
-      // Pass 1: count and sum
+      // ⚡ Bolt Optimization: Extract numerical values into a pre-allocated Float64Array
+      // in a single pass over the object array, avoiding a second O(N) object property access loop.
+      const buffer = new Float64Array(dataLen);
+
       for (let i = 0; i < dataLen; i++) {
         const v = data[i][signal];
         if (typeof v === 'number' && !Number.isNaN(v)) {
           sum += v;
+          buffer[count] = v;
           count++;
         }
       }
@@ -66,19 +70,12 @@ export function useDataProcessor() {
       if (count === 0) continue;
 
       const mean = sum / count;
+      const vals = buffer.subarray(0, count);
 
       let varianceSum = 0;
-      const vals = new Float64Array(count);
-      let j = 0;
-
-      // Pass 2: calculate variance and collect for sorting
-      for (let i = 0; i < dataLen; i++) {
-        const v = data[i][signal];
-        if (typeof v === 'number' && !Number.isNaN(v)) {
-          const diff = v - mean;
-          varianceSum += diff * diff;
-          vals[j++] = v;
-        }
+      for (let i = 0; i < count; i++) {
+        const diff = vals[i] - mean;
+        varianceSum += diff * diff;
       }
 
       const variance = varianceSum / count;
