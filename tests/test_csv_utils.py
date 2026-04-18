@@ -5,6 +5,7 @@ Design by Contract principles.
 """
 
 import pytest
+
 pd = pytest.importorskip("pandas")
 
 

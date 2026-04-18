@@ -12,6 +12,7 @@ Covers:
 from __future__ import annotations
 
 import pytest
+
 np = pytest.importorskip("numpy")
 from numpy.testing import assert_allclose
 from safe_eval import (

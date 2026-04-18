@@ -16,6 +16,7 @@ from __future__ import annotations
 import math
 
 import pytest
+
 np = pytest.importorskip("numpy")
 
 from rotation_converter._contracts import PreconditionError
