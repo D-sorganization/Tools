@@ -7,3 +7,6 @@
 ## 2026-04-16 - [Avoid object spread operator in tight integration/differentiation loops]
 **Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), using the object spread operator (`const newRow = { ...row };`) inside tight `integrateSignals` and `differentiateSignals` loops causes massive memory allocation and garbage collection overhead.
 **Action:** When downsampling or extracting points in tight JavaScript/TypeScript data processing loops, explicitly assign only the required properties to a new object or manually copy properties instead of using the object spread operator to reduce overhead.
+## 2026-04-17 - [Avoid object spread operator in applyFilter loop]
+**Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), using the object spread operator (`const newRow = { ...data[i] };`) inside the tight `applyFilter` loop over all data rows causes massive memory allocation and garbage collection overhead.
+**Action:** When creating new row objects in tight filtering loops, explicitly assign only the required properties to a new object or manually copy properties using a `for...in` loop instead of using the object spread operator to reduce overhead.
