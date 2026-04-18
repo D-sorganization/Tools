@@ -15,3 +15,8 @@ if _PYTHON_DIR not in sys.path:
     sys.path.insert(0, _PYTHON_DIR)
 
 __version__ = "1.0.0"
+
+__all__ = [
+    "Path",
+    "sys",
+]

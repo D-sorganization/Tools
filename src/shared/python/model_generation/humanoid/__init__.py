@@ -57,3 +57,7 @@ except ImportError:
     BuildType = _not_available
     GenderModel = _not_available
     load_body_preset = _not_available
+
+__all__ = [
+    "annotations",
+]
