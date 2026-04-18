@@ -91,7 +91,7 @@ jobs:
       - name: Check Loop Prevention
         id: loop-check
         env:
-          GH_TOKEN: ${{ secrets.BOT_PAT || secrets.RUNNER_CHECK_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           # Check recent commits for loop indicators
           loop_count=0
@@ -121,7 +121,7 @@ jobs:
         id: find-prs
         if: steps.loop-check.outputs.skip != 'true'
         env:
-          GH_TOKEN: ${{ secrets.BOT_PAT || secrets.RUNNER_CHECK_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
           INPUT_PR: ${{ inputs.pr_number }}
           FORCE: ${{ inputs.force }}
         run: |
@@ -181,7 +181,7 @@ jobs:
       - name: Trigger CI for PRs
         if: steps.loop-check.outputs.skip != 'true' && steps.find-prs.outputs.prs != ''
         env:
-          GH_TOKEN: ${{ secrets.BOT_PAT || secrets.RUNNER_CHECK_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           for pr in ${{ steps.find-prs.outputs.prs }}; do
             echo "Triggering CI for PR #$pr"
