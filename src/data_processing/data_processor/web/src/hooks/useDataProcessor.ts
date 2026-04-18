@@ -54,14 +54,24 @@ export function useDataProcessor() {
       let count = 0;
       let sum = 0;
 
-      // ⚡ Bolt Optimization: Extract numerical values into a pre-allocated Float64Array
-      // in a single pass over the object array, avoiding a second O(N) object property access loop.
-      const buffer = new Float64Array(dataLen);
+      // ⚡ Bolt Optimization: Extract numerical values into a dynamically growing Float64Array
+      // in a single pass over the object array. This avoids a second O(N) object property access loop
+      // while preventing memory exhaustion for highly sparse columns.
+      let capacity = Math.min(dataLen, 1024);
+      let buffer = new Float64Array(capacity);
 
       for (let i = 0; i < dataLen; i++) {
         const v = data[i][signal];
         if (typeof v === 'number' && !Number.isNaN(v)) {
           sum += v;
+
+          if (count >= capacity) {
+            capacity = Math.min(dataLen, capacity * 2);
+            const newBuffer = new Float64Array(capacity);
+            newBuffer.set(buffer);
+            buffer = newBuffer;
+          }
+
           buffer[count] = v;
           count++;
         }

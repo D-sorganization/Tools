@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.65                                     |
-| **Last Spec Update**    | 2026-04-18                                 |
+| **Spec Version**        | 1.1.64                                     |
+| **Last Spec Update**    | 2026-04-17                                 |
 
 ## 2. Purpose & Mission
 
@@ -455,7 +455,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-04-18 | 1.1.65  | Simplified root pytest addopts in `pyproject.toml` by removing benchmark and xdist-specific defaults so repository-level test runs do not require those plugins outside focused plugin test contexts. |
 | 2026-04-17 | 1.1.64  | Optimized `applyFilter` loop in `useDataProcessor.ts` by replacing the object spread operator with manual property copying to eliminate significant garbage collection overhead during large dataset processing. |
 | 2026-04-17 | 1.1.63  | Hardened model-generation GitHub repository downloads by requiring HTTPS retrievals and validating mesh output paths so API-provided mesh names cannot escape the destination directory; kept the unit-converter development WSGI debugger disabled unless `FLASK_DEBUG=1` is explicitly set. |
 | 2026-04-17 | 1.1.62  | Enhanced video editor UX by replacing native alert dialogs with inline accessible errors and ensuring proper focus styles. |
