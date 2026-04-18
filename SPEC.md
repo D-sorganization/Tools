@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.69                                     |
+| **Spec Version**        | 1.1.70                                     |
 | **Last Spec Update**    | 2026-04-18                                 |
 
 ## 2. Purpose & Mission
@@ -261,6 +261,11 @@ Test pyramid with unit tests at the base, integration tests for tool interaction
 | DWSIM       | `tests/dwsim/`       | pytest    | `@pytest.mark.dwsim`       |
 | Slow        | `tests/slow/`        | pytest    | `@pytest.mark.slow`        |
 
+`pytest.ini` registers every marker required by `CLAUDE.md`, including benchmark,
+scientific, headless-safe, OpenGL, and parity markers. Pytest runs with strict
+marker validation and strict xfail handling so stale marker names or unexpected
+passes fail early in CI.
+
 ### Coverage Requirements
 
 | Scope         | Minimum | Current | Enforced By                |
@@ -456,6 +461,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-04-18 | 1.1.70  | Test configuration hygiene: registered the complete CLAUDE.md marker set in `pytest.ini`, enabled strict xfail handling, and added a contract-test backbone for the ODE solver, pressure-drop calculator, and rotation-converter calc backend request/response models. |
 | 2026-04-18 | 1.1.69  | Stopped the bot CI trigger workflow from using stale external credentials for repository checkout and PR/check API operations so bot-authored PRs use repo-scoped workflow credentials for required check discovery. |
 | 2026-04-18 | 1.1.68  | Restricted Data Processor web row-copy paths to own enumerable properties via a shared `Object.keys` helper and added regression coverage to prevent inherited prototype keys from being copied into processed rows. |
 | 2026-04-18 | 1.1.67  | Filter deleted test files out of the CI changed-test list so PRs that intentionally remove stale tests do not pass non-existent paths to pytest. |
