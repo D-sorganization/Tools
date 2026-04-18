@@ -1,3 +1,4 @@
+# CI dispatch marker 2026-04-18
 name: CI Standard
 on:
   repository_dispatch:
