@@ -78,9 +78,9 @@ class TestBuiltinThemes:
                 # Handle special values like "white"
                 if value.lower() in ("white", "black"):
                     continue
-                assert is_valid_hex_color(
-                    value
-                ), f"Theme '{theme_name}' key '{key}' has invalid color '{value}'"
+                assert is_valid_hex_color(value), (
+                    f"Theme '{theme_name}' key '{key}' has invalid color '{value}'"
+                )
 
     def test_expected_themes_exist(self) -> None:
         """Test that expected themes are present."""
