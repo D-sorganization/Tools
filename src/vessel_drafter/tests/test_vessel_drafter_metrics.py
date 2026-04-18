@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-
 from vessel_drafter.analysis.vessel_drafter_metrics import (
     build_material_metrics_report,
 )

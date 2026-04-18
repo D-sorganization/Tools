@@ -11,7 +11,6 @@ from __future__ import annotations
 import math
 
 import pytest
-
 from glass_bath_fea.core.config import (
     INCHES_TO_METERS,
     GlassBathFEAConfig,
