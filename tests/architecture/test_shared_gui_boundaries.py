@@ -70,6 +70,7 @@ def test_model_explorer_requires_injected_file_selector() -> None:
 
     assert "QFileDialog.getOpenFileName" not in calls
     assert any(
-        isinstance(node, ast.ClassDef) and node.name == "ModelFileSelectionRequiredError"
+        isinstance(node, ast.ClassDef)
+        and node.name == "ModelFileSelectionRequiredError"
         for node in ast.walk(tree)
     )

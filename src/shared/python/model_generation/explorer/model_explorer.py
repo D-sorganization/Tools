@@ -65,6 +65,7 @@ class ModelFileSelectionRequiredError(NotImplementedError):
 def _missing_model_file_selector() -> str | Path | None:
     raise ModelFileSelectionRequiredError("caller must provide a file selector")
 
+
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {
     "rosewater": "#f5e0dc",
