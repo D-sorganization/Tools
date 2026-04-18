@@ -49,7 +49,9 @@ def check_manifest_layout(repo_root: Path) -> list[ManifestLayoutIssue]:
         registration = tool_dir / "gui_registration.py"
         if registration.exists():
             continue
-        launchers = sorted(path.name for path in tool_dir.iterdir() if path.name in LAUNCHER_NAMES)
+        launchers = sorted(
+            path.name for path in tool_dir.iterdir() if path.name in LAUNCHER_NAMES
+        )
         launcher_list = ", ".join(launchers)
         issues.append(
             ManifestLayoutIssue(
