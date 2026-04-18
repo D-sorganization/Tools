@@ -85,7 +85,7 @@ class DataReader:
                     "Use Parquet/CSV for DataFrames, or pass allow_pickle=True "
                     "strictly for trusted legacy files."
                 )
-            return pd.read_pickle(file_path, **kwargs)
+            return pd.read_pickle(file_path, **kwargs)  # nosec B301
         if fmt == "hdf5":
             return pd.read_hdf(file_path, **kwargs)
         if fmt == "feather":
@@ -234,7 +234,7 @@ class DataWriter:
                     "Writing pickle data is disabled by default for downstream security. "
                     "Use Parquet instead, or pass allow_pickle=True to override."
                 )
-            data.to_pickle(file_path, **kwargs)
+            data.to_pickle(file_path, **kwargs)  # nosec B301
         elif fmt == "hdf5":
             data.to_hdf(file_path, key="data", mode="w", **kwargs)
         elif fmt == "feather":

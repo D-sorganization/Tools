@@ -70,7 +70,7 @@ class DataReader:
                     "Use Parquet/CSV for DataFrames, or pass allow_pickle=True "
                     "strictly for trusted legacy files."
                 )
-            return pd.read_pickle(path, **kwargs)
+            return pd.read_pickle(path, **kwargs)  # nosec B301
         if fmt == "numpy":
             data = np.load(path, allow_pickle=False)
             if isinstance(data, np.ndarray):
@@ -133,7 +133,7 @@ class DataWriter:
                     "Writing pickle data is disabled by default for downstream security. "
                     "Use Parquet instead, or pass allow_pickle=True to override."
                 )
-            df.to_pickle(path, **kwargs)
+            df.to_pickle(path, **kwargs)  # nosec B301
         elif fmt == "numpy":
             np.save(str(path), df.values)
         elif fmt == "sqlite":
