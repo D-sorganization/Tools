@@ -58,7 +58,7 @@ class DataReader:
         if fmt == "json":
             return pd.read_json(path, **kwargs)
         if fmt == "pickle":
-            return pd.read_pickle(path)
+            raise ValueError("Pickle format is disabled for security reasons (CWE-502).")
         if fmt == "numpy":
             data = np.load(path, allow_pickle=False)
             if isinstance(data, np.ndarray):
@@ -115,7 +115,7 @@ class DataWriter:
         elif fmt == "json":
             df.to_json(path, orient="records", indent=2, **kwargs)
         elif fmt == "pickle":
-            df.to_pickle(path)
+            raise ValueError("Pickle format is disabled for security reasons (CWE-502).")
         elif fmt == "numpy":
             np.save(str(path), df.values)
         elif fmt == "sqlite":
@@ -142,8 +142,6 @@ class FileFormatDetector:
         ".parquet": "parquet",
         ".pq": "parquet",
         ".json": "json",
-        ".pkl": "pickle",
-        ".pickle": "pickle",
         ".h5": "hdf5",
         ".hdf5": "hdf5",
         ".feather": "feather",
