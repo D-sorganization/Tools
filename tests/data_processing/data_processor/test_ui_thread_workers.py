@@ -25,7 +25,9 @@ class FakeLoader:
     def detect_time_column(self, data: pd.DataFrame) -> str | None:
         return "time" if "time" in data.columns else None
 
-    def convert_time_column(self, data: pd.DataFrame, _time_column: str) -> pd.DataFrame:
+    def convert_time_column(
+        self, data: pd.DataFrame, _time_column: str
+    ) -> pd.DataFrame:
         converted = data.copy()
         converted["time"] = pd.to_datetime(converted["time"], unit="s")
         return converted
