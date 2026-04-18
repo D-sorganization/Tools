@@ -174,6 +174,9 @@ class ConsoleEnvironment:
                     code_obj = compile(source, "<console>", "exec")
                     exec(code_obj, self.namespace)  # nosec B102
 
+        except (SystemExit, KeyboardInterrupt):
+            # Always re-raise system signals
+            raise
         except Exception:  # noqa: BLE001
             # Intentional broad catch: any user-code error is captured and
             # formatted REPL-style so the console displays it rather than
