@@ -73,7 +73,19 @@ class DataReader:
         if fmt == "json":
             return pd.read_json(file_path, **kwargs)
         if fmt == "pickle":
-            return pd.read_pickle(file_path)
+            allow_pickle = kwargs.pop("allow_pickle", False)
+            if not allow_pickle:
+                import logging
+
+                logging.getLogger(__name__).warning(
+                    "Pickle file read rejected. Pickle can execute arbitrary code on load."
+                )
+                raise ValueError(
+                    "Loading pickle data is disabled for security. "
+                    "Use Parquet/CSV for DataFrames, or pass allow_pickle=True "
+                    "strictly for trusted legacy files."
+                )
+            return pd.read_pickle(file_path, **kwargs)
         if fmt == "hdf5":
             return pd.read_hdf(file_path, **kwargs)
         if fmt == "feather":
@@ -216,7 +228,13 @@ class DataWriter:
         elif fmt == "json":
             data.to_json(file_path, orient="records", indent=2, **kwargs)
         elif fmt == "pickle":
-            data.to_pickle(file_path)
+            allow_pickle = kwargs.pop("allow_pickle", False)
+            if not allow_pickle:
+                raise ValueError(
+                    "Writing pickle data is disabled by default for downstream security. "
+                    "Use Parquet instead, or pass allow_pickle=True to override."
+                )
+            data.to_pickle(file_path, **kwargs)
         elif fmt == "hdf5":
             data.to_hdf(file_path, key="data", mode="w", **kwargs)
         elif fmt == "feather":
@@ -284,8 +302,8 @@ class FileFormatDetector:
             ".parquet",
             ".pq",
             ".json",
-            ".pkl",
-            ".pickle",
+            # ".pkl",  # SEC-CRITICAL: Removed to prevent arbitrary code execution via file dialog
+            # ".pickle",
             ".h5",
             ".hdf5",
             ".feather",
