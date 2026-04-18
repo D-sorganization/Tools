@@ -20,7 +20,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
-
 from data_processing.processor import DataProcessor, DatasetInfo
 
 # ── Construction & Loading ───────────────────────────────────────────────
@@ -270,21 +269,21 @@ class TestDataProcessorContracts:
     # load_dataframe contracts
 
     def test_load_dataframe_requires_dataframe(self) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         dp = DataProcessor()
         with pytest.raises(PreconditionError):
             dp.load_dataframe({"not": "a dataframe"})  # type: ignore[arg-type]
 
     def test_load_dataframe_requires_non_empty_name(self) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         dp = DataProcessor()
         with pytest.raises(PreconditionError):
             dp.load_dataframe(pd.DataFrame({"x": [1]}), name="")
 
     def test_load_dataframe_requires_string_name(self) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         dp = DataProcessor()
         with pytest.raises(PreconditionError):
@@ -293,19 +292,19 @@ class TestDataProcessorContracts:
     # trim_time contracts
 
     def test_trim_time_requires_end_gte_start(self, dp_loaded: DataProcessor) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.trim_time(0.5, 0.1)  # end < start
 
     def test_trim_time_requires_numeric_start(self, dp_loaded: DataProcessor) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.trim_time("start", 0.5)  # type: ignore[arg-type]
 
     def test_trim_time_requires_numeric_end(self, dp_loaded: DataProcessor) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.trim_time(0.0, "end")  # type: ignore[arg-type]
@@ -313,19 +312,19 @@ class TestDataProcessorContracts:
     # resample contracts
 
     def test_resample_zero_rate_rejected(self, dp_loaded: DataProcessor) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.resample(0)
 
     def test_resample_negative_rate_rejected(self, dp_loaded: DataProcessor) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.resample(-100)
 
     def test_resample_string_rate_rejected(self, dp_loaded: DataProcessor) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.resample("100hz")  # type: ignore[arg-type]
@@ -335,7 +334,7 @@ class TestDataProcessorContracts:
     def test_apply_formula_empty_column_rejected(
         self, dp_loaded: DataProcessor
     ) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.apply_formula("", "x + y")
@@ -343,7 +342,7 @@ class TestDataProcessorContracts:
     def test_apply_formula_empty_expression_rejected(
         self, dp_loaded: DataProcessor
     ) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.apply_formula("result", "")
@@ -351,13 +350,13 @@ class TestDataProcessorContracts:
     # drop_columns contracts
 
     def test_drop_columns_empty_list_rejected(self, dp_loaded: DataProcessor) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.drop_columns([])
 
     def test_drop_columns_non_list_rejected(self, dp_loaded: DataProcessor) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.drop_columns("x")  # type: ignore[arg-type]
@@ -365,13 +364,13 @@ class TestDataProcessorContracts:
     # rename_columns contracts
 
     def test_rename_columns_empty_dict_rejected(self, dp_loaded: DataProcessor) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.rename_columns({})
 
     def test_rename_columns_non_dict_rejected(self, dp_loaded: DataProcessor) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.rename_columns([("x", "val")])  # type: ignore[arg-type]
@@ -379,13 +378,13 @@ class TestDataProcessorContracts:
     # sort contracts
 
     def test_sort_empty_column_rejected(self, dp_loaded: DataProcessor) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.sort("")
 
     def test_sort_non_bool_ascending_rejected(self, dp_loaded: DataProcessor) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.sort("x", ascending=1)  # type: ignore[arg-type]
@@ -393,7 +392,7 @@ class TestDataProcessorContracts:
     # correlate contracts
 
     def test_correlate_empty_method_rejected(self, dp_loaded: DataProcessor) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.correlate(method="")
@@ -401,7 +400,7 @@ class TestDataProcessorContracts:
     def test_correlate_non_string_method_rejected(
         self, dp_loaded: DataProcessor
     ) -> None:
-        from src.shared.python.contracts import PreconditionError
+        from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
             dp_loaded.correlate(method=None)  # type: ignore[arg-type]

@@ -16,7 +16,6 @@ from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
-
 from glass_bath_fea.core.config import GlassBathFEAConfig
 from glass_bath_fea.core.geometry_generator import GeometryGenerator
 from glass_bath_fea.interfaces.geometry_sync import (
