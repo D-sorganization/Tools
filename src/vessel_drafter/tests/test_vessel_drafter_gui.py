@@ -8,6 +8,7 @@ pytest.importorskip("PyQt6.QtWidgets", reason="Qt system libraries not available
 pytest.importorskip("build123d", reason="build123d not installed")
 
 from PyQt6.QtWidgets import QApplication  # noqa: E402
+
 from vessel_drafter.gui.vessel_drafter_window import VesselDrafterWindow  # noqa: E402
 from vessel_drafter.models.vessel_drafter import (  # noqa: E402
     VesselLidPort,
