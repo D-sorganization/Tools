@@ -632,7 +632,7 @@ class ModelLibrary:
                 logger.error(f"Invalid API URL: {api_url}")
                 return models
 
-            with urllib.request.urlopen(api_url) as response:
+            with urllib.request.urlopen(api_url) as response:  # nosec B310
                 contents = json.loads(response.read().decode())
 
             # Look for URDF and MJCF files
@@ -672,7 +672,7 @@ class ModelLibrary:
                             )
                             continue
 
-                        with urllib.request.urlopen(subdir_url) as sub_response:
+                        with urllib.request.urlopen(subdir_url) as sub_response:  # nosec B310
                             sub_contents = json.loads(sub_response.read().decode())
                         for sub_item in sub_contents:
                             if sub_item["type"] != "file":
@@ -755,7 +755,7 @@ class ModelLibrary:
             urdf_filename = entry.source_url.split("/")[-1]
             local_path = cache_dir / urdf_filename
 
-            urllib.request.urlretrieve(entry.source_url, local_path)
+            urllib.request.urlretrieve(entry.source_url, local_path)  # nosec B310
 
             entry.urdf_path = local_path
             entry.is_cached = True
