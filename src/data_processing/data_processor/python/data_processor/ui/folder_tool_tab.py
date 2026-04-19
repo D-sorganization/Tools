@@ -471,11 +471,17 @@ class FolderToolMixin:
             self.after(0, lambda: self.folder_progress_bar.set(1.0))  # type: ignore
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore
-        except (OSError, PermissionError, ValueError) as exc:
+        except Exception as exc:
             msg = f"Error: {exc}"
             self.after(0, lambda m=msg: self.folder_status_var.set(m))  # type: ignore
             self.after(0, lambda: self.folder_run_button.configure(state="normal"))  # type: ignore
             self.after(0, lambda: self.folder_cancel_button.configure(state="disabled"))  # type: ignore
+            # Log the full traceback for debugging
+            import logging
+
+            logging.getLogger(__name__).exception(
+                "Unexpected error in folder processing: %s", exc
+            )
 
     def _folder_combine_operation(self) -> None:
         """Combine operation - copy all files from source folders to destination."""
