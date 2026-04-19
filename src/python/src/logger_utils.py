@@ -6,6 +6,7 @@ New code should use src/python/src/utils/logging_utils.py
 
 import warnings
 
+# Import from shared utility
 from ..utils.logging_utils import (
     DEFAULT_FORMAT,
     DEFAULT_SEED,
@@ -16,6 +17,7 @@ from ..utils.logging_utils import (
     setup_logging,
 )
 
+# Issue deprecation warning
 warnings.warn(
     "logger_utils is deprecated. Use utils.logging_utils instead.",
     DeprecationWarning,
