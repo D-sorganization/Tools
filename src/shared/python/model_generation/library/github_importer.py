@@ -18,6 +18,42 @@ from model_generation.library.model_library import ModelLibrary
 
 logger = logging.getLogger(__name__)
 
+_ALLOWED_GITHUB_HOSTS = frozenset(
+    {
+        "api.github.com",
+        "github.com",
+        "raw.githubusercontent.com",
+    }
+)
+
+
+def _extract_owner_repo(url: str) -> tuple[str, str]:
+    """Parse and validate a GitHub repository URL."""
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme != "https":
+        raise ValueError("Only HTTPS GitHub URLs are supported")
+
+    host = parsed.hostname
+    if host not in _ALLOWED_GITHUB_HOSTS:
+        raise ValueError("Unsupported GitHub host")
+
+    path_parts = [part for part in parsed.path.strip("/").split("/") if part]
+    if host == "github.com":
+        if len(path_parts) < 2:
+            raise ValueError("URL must include owner and repository")
+        return path_parts[0], path_parts[1]
+
+    if host == "api.github.com":
+        if len(path_parts) < 3 or path_parts[0] != "repos":
+            raise ValueError("GitHub API repository URL must be /repos/{owner}/{repo}")
+        return path_parts[1], path_parts[2]
+
+    # raw.githubusercontent.com
+    if len(path_parts) < 2:
+        raise ValueError("URL must include owner and repository")
+
+    return path_parts[0], path_parts[1]
+
 
 @dataclass
 class ImportResult:
@@ -101,7 +137,7 @@ class GitHubImporter:
             if token:
                 req.add_header("Authorization", f"token {token}")
 
-            with urllib.request.urlopen(req) as response:
+            with urllib.request.urlopen(req, timeout=10) as response:  # nosec B310 - GitHub API URL is constructed from validated owner/repo inputs
                 data = json.loads(response.read().decode())
 
             items = data.get("items", [])
@@ -206,18 +242,7 @@ class GitHubImporter:
     ) -> ImportResult:
         """Import a single GitHub repository URL."""
         try:
-            parsed = urllib.parse.urlparse(url)
-            path_parts = parsed.path.strip("/").split("/")
-
-            if len(path_parts) < 2:
-                return ImportResult(
-                    source_url=url,
-                    status="failed",
-                    error="Invalid GitHub URL",
-                )
-
-            owner = path_parts[0]
-            repo_name = path_parts[1]
+            owner, repo_name = _extract_owner_repo(url)
             repo_id = f"github_{owner}_{repo_name}"
 
             if (
@@ -261,6 +286,13 @@ class GitHubImporter:
                 error=str(e),
                 name=url,
             )
+        except ValueError as e:
+            return ImportResult(
+                source_url=url,
+                status="failed",
+                error=str(e),
+                name=url,
+            )
 
     def _fetch_repo_metadata(
         self, url: str, owner: str, repo_name: str
@@ -277,7 +309,7 @@ class GitHubImporter:
             token = os.environ.get("GITHUB_TOKEN")
             if token:
                 req.add_header("Authorization", f"token {token}")
-            with urllib.request.urlopen(req) as response:
+            with urllib.request.urlopen(req, timeout=10) as response:  # nosec B310 - GitHub API URL is constructed from validated owner/repo inputs
                 repo_data = json.loads(response.read().decode())
                 branch = repo_data.get("default_branch", "main")
                 description = repo_data.get("description", "")
