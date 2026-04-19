@@ -110,6 +110,6 @@ class TestStandardCondition:
         """All pressures should be between 90 kPa and 110 kPa."""
         for member in StandardCondition:
             pressure_pa = member.value[1]
-            assert (
-                90_000 <= pressure_pa <= 110_000
-            ), f"{member.name}: P={pressure_pa} Pa out of range"
+            assert 90_000 <= pressure_pa <= 110_000, (
+                f"{member.name}: P={pressure_pa} Pa out of range"
+            )

@@ -150,9 +150,9 @@ class TestFitHeatingParameters:
             power_func=lambda t: power,
         )
 
-        assert (
-            abs(fitted_tm - true_tm) / true_tm < 0.1
-        ), f"Expected ~{true_tm}, got {fitted_tm}"
-        assert (
-            abs(fitted_h - true_h) / true_h < 0.1
-        ), f"Expected ~{true_h}, got {fitted_h}"
+        assert abs(fitted_tm - true_tm) / true_tm < 0.1, (
+            f"Expected ~{true_tm}, got {fitted_tm}"
+        )
+        assert abs(fitted_h - true_h) / true_h < 0.1, (
+            f"Expected ~{true_h}, got {fitted_h}"
+        )
