@@ -78,10 +78,8 @@ class TestDataReader:
 
         with tempfile.NamedTemporaryFile(suffix=".pkl", delete=False) as f:
             sample_df.to_pickle(f.name)
-            result = DataReader.read_file(
-                f.name, format_type="pickle", allow_pickle=True
-            )
-        assert list(result.columns) == ["x", "y"]
+            with pytest.raises(ValueError, match="Pickle format is disabled"):
+                DataReader.read_file(f.name, format_type="pickle")
 
     def test_read_sqlite(self, sample_df: pd.DataFrame):
         from upstream_drift_tools.data_processing.io import DataReader
@@ -149,11 +147,8 @@ class TestDataWriter:
         from upstream_drift_tools.data_processing.io import DataWriter
 
         with tempfile.NamedTemporaryFile(suffix=".pkl", delete=False) as f:
-            DataWriter.write_file(
-                sample_df, f.name, format_type="pickle", allow_pickle=True
-            )
-            result = pd.read_pickle(f.name)
-        assert list(result.columns) == ["x", "y"]
+            with pytest.raises(ValueError, match="Pickle format is disabled"):
+                DataWriter.write_file(sample_df, f.name, format_type="pickle")
 
     def test_write_numpy(self, sample_df: pd.DataFrame):
         from upstream_drift_tools.data_processing.io import DataWriter
@@ -177,7 +172,7 @@ class TestDataWriter:
         from upstream_drift_tools.data_processing.io import DataWriter
 
         with pytest.raises(ValueError, match="Unsupported or undetected"):
-            DataWriter.write_file(sample_df, "/tmp/output.xyz_unknown_ext")
+            DataWriter.write_file(sample_df, "output.xyz_unknown_ext")
 
     def test_write_creates_parent_dirs(self, sample_df: pd.DataFrame, tmp_path: Path):
         from upstream_drift_tools.data_processing.io import DataWriter
