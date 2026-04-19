@@ -24,11 +24,11 @@
 | **Repository Name**     | `Tools`                                    |
 | **GitHub URL**          | `https://github.com/D-sorganization/Tools` |
 | **Owner**               | D-sorganization                            |
-| **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
+| **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.80                                     |
-| **Last Spec Update**    | 2026-04-19 (updated for PR #2157)          |
+| **Spec Version**        | 1.1.81                                     |
+| **Last Spec Update**    | 2026-04-19 (updated for PR #2161)          |
 
 ## 2. Purpose & Mission
 
@@ -45,7 +45,7 @@ Comprehensive monorepo housing 29+ utility tools for data processing, scientific
 - Offer FastAPI web interfaces for programmatic and integration access
 - Provide MATLAB scientific code integration and wrappers
 - Maintain fleet theme system for consistent UI across all tools
-- Support multiple Python versions (3.10, 3.11, 3.12) with comprehensive test matrix
+- Support multiple Python versions (3.11, 3.12) with comprehensive test matrix
 
 ### Non-Goals
 
@@ -462,6 +462,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-04-19 | 1.1.81  | Aligned dependency metadata with the supported Python and toolchain baseline: Python package metadata now starts at Python 3.11, lint/type configuration shares that floor, Black was removed from the canonical format path, and the reproducible requirements lock includes the pytest timeout and benchmark plugins declared by the development manifests (PR #2161).                                                                                                                                                                                               |
 | 2026-04-19 | 1.1.80  | Hardened model-generation archive extraction and URDF mesh resolution by normalizing archive member paths, rejecting traversal or absolute members before extraction, and preserving unsafe mesh references as text instead of resolving them to local files (PR #2157).                                                                                                                                                                                                                                                                                              |
 | 2026-04-19 | 1.1.79  | Consolidated stale Tools PR fixes covering shared rotation primitives, data processor background worker error surfacing and UI offload, PDF renamer API-key/CORS hardening, narrower exception fallbacks, shared GUI boundary checks, and lower-body manifest registration; also tightened NumPy return typing for the rotation modern robotics helpers checked by quality-gate (PR #2149).                                                                                                                                                                         |
 | 2026-04-19 | 1.1.78  | Optimized `TimeRangePanel.tsx` in `data-processor-web` by computing time-column ranges in a single pass and avoiding `Math.min`/`Math.max` spread calls that can overflow the call stack on large datasets (PR #2156).                                                                                                                                                                                                                                                                                                                                             |
