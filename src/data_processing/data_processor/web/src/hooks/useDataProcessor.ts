@@ -40,6 +40,14 @@ const initialState: DataProcessorState = {
   savedPlotConfigs: {},
 };
 
+function copyOwnRowProperties(row: DataRow): DataRow {
+  const newRow: DataRow = {};
+  for (const key of Object.keys(row)) {
+    newRow[key] = row[key];
+  }
+  return newRow;
+}
+
 export function useDataProcessor() {
   const [state, setState] = useState<DataProcessorState>(initialState);
 
@@ -187,11 +195,8 @@ export function useDataProcessor() {
         for (let i = 0; i < len; i++) {
           // ⚡ Bolt Optimization: Replace object spread { ...data[i] } with a manual property copy.
           // Performance impact: Significantly reduces memory allocation and garbage collection overhead in tight loops.
-          const newRow: DataRow = {};
           const row = data[i];
-          for (const key in row) {
-            newRow[key] = row[key];
-          }
+          const newRow = copyOwnRowProperties(row);
 
           for (const signal of selectedSignals) {
             newRow[signal] = filteredSignals.get(signal)![i];
@@ -253,10 +258,7 @@ export function useDataProcessor() {
           const row = filteredData[i];
           // ⚡ Bolt Optimization: Replace object spread { ...row } with a manual property copy.
           // Performance impact: Significantly reduces memory allocation and garbage collection overhead in tight loops.
-          const newRow: DataRow = {};
-          for (const key in row) {
-            newRow[key] = row[key];
-          }
+          const newRow = copyOwnRowProperties(row);
 
           if (i === 0) {
             // Initialize cumulative values to 0
@@ -334,10 +336,7 @@ export function useDataProcessor() {
           const row = filteredData[i];
           // ⚡ Bolt Optimization: Replace object spread { ...row } with a manual property copy.
           // Performance impact: Significantly reduces memory allocation and garbage collection overhead in tight loops.
-          const newRow: DataRow = {};
-          for (const key in row) {
-            newRow[key] = row[key];
-          }
+          const newRow = copyOwnRowProperties(row);
 
           if (i === 0 || i === len - 1) {
             for (let j = 0; j < config.signals.length; j++) {
@@ -658,12 +657,7 @@ export function useDataProcessor() {
 
         for (let i = 0; i < len; i++) {
           const row = filteredData[i];
-          const newRow: DataRow = {};
-
-          // Manual copy to avoid object spread operator overhead
-          for (const key in row) {
-            newRow[key] = row[key];
-          }
+          const newRow = copyOwnRowProperties(row);
 
           try {
             // Populate args directly to avoid inner array.map()
