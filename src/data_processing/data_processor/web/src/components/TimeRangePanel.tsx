@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { Scissors, Copy } from 'lucide-react';
 import type { TimeRangeConfig, DataRow } from '../types';
 
@@ -9,7 +9,8 @@ interface TimeRangePanelProps {
   onTrimRange: (config: TimeRangeConfig) => void;
 }
 
-export function TimeRangePanel({
+// Avoid re-rendering the O(N) range scan when props are unchanged.
+export const TimeRangePanel = memo(function TimeRangePanel({
   data,
   timeColumn,
   disabled,
@@ -28,25 +29,44 @@ export function TimeRangePanel({
       return;
     }
 
-    const timeValues = data
-      .map((row) => row[timeColumn])
-      .filter((v) => v !== null && v !== undefined);
+    // Use a single pass and avoid Math.min(...array) / Math.max(...array),
+    // which can overflow the call stack on large datasets.
+    let minVal: number | null = null;
+    let maxVal: number | null = null;
+    let firstValid: string | number | null = null;
+    let lastValid: string | number | null = null;
 
-    if (timeValues.length === 0) {
+    for (let i = 0; i < data.length; i++) {
+      const val = data[i][timeColumn];
+      if (val !== null && val !== undefined) {
+        const typedVal = val as string | number;
+        if (firstValid === null) {
+          firstValid = typedVal;
+        }
+        lastValid = typedVal;
+
+        if (typeof val === 'number') {
+          if (minVal === null || val < minVal) {
+            minVal = val;
+          }
+          if (maxVal === null || val > maxVal) {
+            maxVal = val;
+          }
+        } else {
+          // Preserve string/date columns as first and last valid values.
+          continue;
+        }
+      }
+    }
+
+    if (firstValid === null) {
       setDataStart(null);
       setDataEnd(null);
       return;
     }
 
-    // Handle numeric or date values
-    if (typeof timeValues[0] === 'number') {
-      const numValues = timeValues as number[];
-      setDataStart(Math.min(...numValues));
-      setDataEnd(Math.max(...numValues));
-    } else {
-      setDataStart(timeValues[0]);
-      setDataEnd(timeValues[timeValues.length - 1]);
-    }
+    setDataStart(minVal !== null ? minVal : firstValid);
+    setDataEnd(maxVal !== null ? maxVal : lastValid);
   }, [data, timeColumn]);
 
   const handleTrimRange = () => {
@@ -142,6 +162,6 @@ export function TimeRangePanel({
       </div>
     </div>
   );
-}
+});
 
 export default TimeRangePanel;
