@@ -27,6 +27,7 @@ dependencies = [
     "numpy>=1.24.0",
     "PyYAML>=6.0",
     "defusedxml>=0.7.0",
+    "keyring>=24.0.0",
 ]
 
 [project.optional-dependencies]
