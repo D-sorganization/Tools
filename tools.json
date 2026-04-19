@@ -13,6 +13,12 @@
             "path": "src/c3d_viewer/launch_pyqt6.py",
             "type": "python",
             "desc": "View and analyze C3D motion capture files"
+        },
+        {
+            "name": "Lower Body Model",
+            "path": "src/lower_body_model/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Simulate and inspect lower-body MuJoCo kinematics and controls"
         }
     ],
     "Data Processing": [

@@ -1,4 +1,14 @@
+import sys
 from pathlib import Path
+
+PDF_RENAMER_SRC = (
+    Path(__file__).resolve().parents[2]
+    / "src"
+    / "document_processing"
+    / "pdf_renamer"
+    / "src"
+)
+sys.path.insert(0, str(PDF_RENAMER_SRC))
 
 from pdf_renamer import config
 

@@ -101,6 +101,17 @@
       }
     },
     {
+      "id": "lower_body_model",
+      "name": "Lower Body Model",
+      "description": "Simulate and inspect lower-body MuJoCo kinematics and controls",
+      "category": "Biomechanics",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false,
+        "legacy_gui": false
+      }
+    },
+    {
       "id": "multi_param_analysis",
       "name": "Multi-Parameter Analysis",
       "description": "Run multi-parameter sensitivity analysis with grid evaluation",
