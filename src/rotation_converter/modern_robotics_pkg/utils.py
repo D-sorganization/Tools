@@ -7,6 +7,8 @@ TestIfSO3, TestIfSE3.
 
 from __future__ import annotations
 
+from typing import cast
+
 import numpy as np
 
 from ._helpers import _near_zero
@@ -15,12 +17,12 @@ from .se3 import RpToTrans
 
 def Normalize(V: np.ndarray) -> np.ndarray:
     """Normalizes a vector."""
-    return np.asarray(V / np.linalg.norm(V), dtype=float)
+    return cast(np.ndarray, np.asarray(V / np.linalg.norm(V), dtype=float))
 
 
 def RotInv(R: np.ndarray) -> np.ndarray:
     """Inverts a rotation matrix."""
-    return np.asarray(np.array(R).T, dtype=float)
+    return cast(np.ndarray, np.asarray(np.array(R).T, dtype=float))
 
 
 def AxisAng3(expc3: np.ndarray) -> tuple[np.ndarray, float]:
@@ -30,7 +32,10 @@ def AxisAng3(expc3: np.ndarray) -> tuple[np.ndarray, float]:
 
 def ScrewToAxis(q: np.ndarray, s: np.ndarray, h: float) -> np.ndarray:
     """Converts a parametric screw axis description to a normalized screw axis."""
-    return np.asarray(np.r_[s, np.cross(q, s) + np.dot(h, s)], dtype=float)
+    return cast(
+        np.ndarray,
+        np.asarray(np.r_[s, np.cross(q, s) + np.dot(h, s)], dtype=float),
+    )
 
 
 def AxisAng6(expc6: np.ndarray) -> tuple[np.ndarray, float]:
@@ -38,7 +43,7 @@ def AxisAng6(expc6: np.ndarray) -> tuple[np.ndarray, float]:
     theta = float(np.linalg.norm([expc6[0], expc6[1], expc6[2]]))
     if _near_zero(theta):
         theta = float(np.linalg.norm([expc6[3], expc6[4], expc6[5]]))
-    return (np.asarray(expc6 / theta, dtype=float), theta)
+    return (cast(np.ndarray, np.asarray(expc6 / theta, dtype=float)), theta)
 
 
 def ProjectToSO3(mat: np.ndarray) -> np.ndarray:
@@ -47,13 +52,16 @@ def ProjectToSO3(mat: np.ndarray) -> np.ndarray:
     R = np.dot(U, Vh)
     if np.linalg.det(R) < 0:
         R[:, 2] = -R[:, 2]
-    return np.asarray(R, dtype=float)
+    return cast(np.ndarray, np.asarray(R, dtype=float))
 
 
 def ProjectToSE3(mat: np.ndarray) -> np.ndarray:
     """Returns a projection of mat into SE(3) via SVD."""
     mat = np.array(mat)
-    return np.asarray(RpToTrans(ProjectToSO3(mat[:3, :3]), mat[:3, 3]), dtype=float)
+    return cast(
+        np.ndarray,
+        np.asarray(RpToTrans(ProjectToSO3(mat[:3, :3]), mat[:3, 3]), dtype=float),
+    )
 
 
 def DistanceToSO3(mat: np.ndarray) -> float:
@@ -89,3 +97,4 @@ def TestIfSO3(mat: np.ndarray) -> bool:
 def TestIfSE3(mat: np.ndarray) -> bool:
     """Returns true if mat is close to or on the manifold SE(3)."""
     return abs(DistanceToSE3(mat)) < 1e-3
+

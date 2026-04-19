@@ -9,7 +9,7 @@ ComputedTorque, SimulateControl, ad.
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -22,13 +22,14 @@ logger = logging.getLogger(__name__)
 def ad(V: Any) -> np.ndarray:
     """Calculate the 6x6 matrix [adV] of the given 6-vector."""
     omgmat = VecToso3([V[0], V[1], V[2]])
-    return np.asarray(
+    ad_matrix = np.asarray(
         np.r_[
             np.c_[omgmat, np.zeros((3, 3))],
             np.c_[VecToso3([V[3], V[4], V[5]]), omgmat],
         ],
         dtype=float,
     )
+    return cast(np.ndarray, ad_matrix)
 
 
 def InverseDynamics(
@@ -151,7 +152,7 @@ def ForwardDynamics(
     Slist: Any,
 ) -> np.ndarray:
     """Computes forward dynamics in the space frame."""
-    return np.asarray(
+    accelerations = np.asarray(
         np.dot(
             np.linalg.inv(MassMatrix(thetalist, Mlist, Glist, Slist)),
             np.array(taulist)
@@ -161,6 +162,7 @@ def ForwardDynamics(
         ),
         dtype=float,
     )
+    return cast(np.ndarray, accelerations)
 
 
 def EulerStep(
@@ -267,7 +269,7 @@ def ComputedTorque(
     if not (thetalist is not None):
         raise ValueError("thetalist must be provided")
     e = np.subtract(thetalistd, thetalist)
-    return np.asarray(
+    torques = np.asarray(
         np.dot(
             MassMatrix(thetalist, Mlist, Glist, Slist),
             Kp * e
@@ -286,6 +288,7 @@ def ComputedTorque(
         ),
         dtype=float,
     )
+    return cast(np.ndarray, torques)
 
 
 def SimulateControl(
@@ -360,3 +363,4 @@ def SimulateControl(
     taumat = np.array(taumat).T
     thetamat = np.array(thetamat).T
     return (taumat, thetamat)
+
