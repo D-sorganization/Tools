@@ -9,7 +9,12 @@ Tests cover:
 from unittest.mock import MagicMock
 
 import pytest
-from cors import DEFAULT_ORIGINS, add_cors_middleware
+from cors import (
+    DEFAULT_ALLOW_HEADERS,
+    DEFAULT_ALLOW_METHODS,
+    DEFAULT_ORIGINS,
+    add_cors_middleware,
+)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -78,19 +83,19 @@ def test_allow_credentials_default():
 
 
 def test_allow_methods_default():
-    """allow_methods defaults to ['*']."""
+    """allow_methods defaults to explicit safe methods."""
     app = FastAPI()
     add_cors_middleware(app)
     middleware = next(m for m in app.user_middleware if m.cls is CORSMiddleware)
-    assert middleware.kwargs.get("allow_methods") == ["*"]
+    assert middleware.kwargs.get("allow_methods") == DEFAULT_ALLOW_METHODS
 
 
 def test_allow_headers_default():
-    """allow_headers defaults to ['*']."""
+    """allow_headers defaults to explicit safe headers."""
     app = FastAPI()
     add_cors_middleware(app)
     middleware = next(m for m in app.user_middleware if m.cls is CORSMiddleware)
-    assert middleware.kwargs.get("allow_headers") == ["*"]
+    assert middleware.kwargs.get("allow_headers") == DEFAULT_ALLOW_HEADERS
 
 
 def test_custom_allow_methods():
