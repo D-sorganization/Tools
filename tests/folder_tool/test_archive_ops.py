@@ -1,9 +1,15 @@
 """Unit tests for folder_tool/archive_ops.py."""
 
+import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+FOLDER_TOOL_SRC = REPO_ROOT / "src" / "folder_tool"
+if str(FOLDER_TOOL_SRC) not in sys.path:
+    sys.path.insert(0, str(FOLDER_TOOL_SRC))
 
 from folder_tool.archive_ops import ArchiveOperationsMixin
 from folder_tool.Folders_Tool_r0 import MAX_FILE_SIZE_MB
@@ -171,38 +177,52 @@ class TestArchiveOperationsMixin:
         (extract_dir / "file.txt").write_text("a")
 
         # 1 byte is < size * ratio if size is large
-        app._validate_extraction_result(str(extract_dir), extract_dir, 1000)
+        with patch("folder_tool.archive_ops.logger.warning") as mock_warning:
+            app._validate_extraction_result(str(extract_dir), extract_dir, 1000)
+            mock_warning.assert_called()
 
     def test_validate_extraction_result_success(self, app, tmp_path):
         extract_dir = tmp_path / "extract"
         extract_dir.mkdir()
         (extract_dir / "file.txt").write_text("hello world")
 
-        app._validate_extraction_result(str(extract_dir), extract_dir, 1)
+        with patch("folder_tool.archive_ops.logger.info") as mock_info:
+            app._validate_extraction_result(str(extract_dir), extract_dir, 1)
+            mock_info.assert_called()
 
     def test_cleanup_original_archive_success(self, app, tmp_path):
         archive = tmp_path / "test.zip"
         archive.write_text("a")
-        app._cleanup_original_archive(archive)
+        with patch("folder_tool.archive_ops.logger.info") as mock_info:
+            app._cleanup_original_archive(archive)
+            mock_info.assert_called_once()
         assert not archive.exists()
 
     def test_cleanup_original_archive_error(self, app, tmp_path):
         archive = tmp_path / "test.zip"
         archive.write_text("a")
         with patch.object(Path, "unlink", side_effect=OSError("delete error")):
-            app._cleanup_original_archive(archive)
+            with patch("folder_tool.archive_ops.logger.warning") as mock_warning:
+                app._cleanup_original_archive(archive)
+                mock_warning.assert_called_once()
+        assert archive.exists()
 
     def test_cleanup_failed_extraction_success(self, app, tmp_path):
         extract_dir = tmp_path / "extract"
         extract_dir.mkdir()
-        app._cleanup_failed_extraction(extract_dir, str(extract_dir))
+        with patch("folder_tool.archive_ops.logger.info") as mock_info:
+            app._cleanup_failed_extraction(extract_dir, str(extract_dir))
+            mock_info.assert_called_once()
         assert not extract_dir.exists()
 
     def test_cleanup_failed_extraction_error(self, app, tmp_path):
         extract_dir = tmp_path / "extract"
         extract_dir.mkdir()
         with patch("shutil.rmtree", side_effect=OSError("rmtree error")):
-            app._cleanup_failed_extraction(extract_dir, str(extract_dir))
+            with patch("folder_tool.archive_ops.logger.warning") as mock_warning:
+                app._cleanup_failed_extraction(extract_dir, str(extract_dir))
+                mock_warning.assert_called_once()
+        assert extract_dir.exists()
 
     def test_bulk_unzip_enhanced_empty(self, app, tmp_path):
         app.source_folders = [str(tmp_path)]

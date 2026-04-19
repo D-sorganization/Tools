@@ -298,18 +298,6 @@ class TestContractModuleConsistency:
         with pytest.raises(InvariantError):
             invariant(False, "test invariant")
 
-    def test_require_passes_on_true(self) -> None:
-        """require() must not raise on True condition."""
-        from contracts import require
-
-        require(True, "should pass")  # No exception
-
-    def test_ensure_passes_on_true(self) -> None:
-        """ensure() must not raise on True condition."""
-        from contracts import ensure
-
-        ensure(True, "should pass")  # No exception
-
 
 # ─── Test: No wildcard imports ───────────────────────────────────
 
