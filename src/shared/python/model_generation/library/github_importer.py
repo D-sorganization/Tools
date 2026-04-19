@@ -138,9 +138,7 @@ class GitHubImporter:
             if token:
                 req.add_header("Authorization", f"token {token}")
 
-            with urllib.request.urlopen(
-                req, timeout=10
-            ) as response:  # nosec B310 - GitHub API URL is constructed from validated owner/repo inputs
+            with urllib.request.urlopen(req, timeout=10) as response:  # nosec B310 - GitHub API URL is constructed from validated owner/repo inputs
                 data = json.loads(response.read().decode())
 
             items = data.get("items", [])
@@ -321,9 +319,7 @@ class GitHubImporter:
             token = os.environ.get("GITHUB_TOKEN")
             if token:
                 req.add_header("Authorization", f"token {token}")
-            with urllib.request.urlopen(
-                req, timeout=10
-            ) as response:  # nosec B310 - GitHub API URL is constructed from validated owner/repo inputs
+            with urllib.request.urlopen(req, timeout=10) as response:  # nosec B310 - GitHub API URL is constructed from validated owner/repo inputs
                 repo_data = json.loads(response.read().decode())
                 branch = repo_data.get("default_branch", "main")
                 description = repo_data.get("description", "")
