@@ -32,8 +32,6 @@ class TestFileFormatDetector:
             ("data.xlsx", "excel"),
             ("data.xls", "excel"),
             ("data.json", "json"),
-            ("data.pkl", "pickle"),
-            ("data.pickle", "pickle"),
             ("data.npy", "numpy"),
             ("data.mat", "matlab"),
             ("data.db", "sqlite"),

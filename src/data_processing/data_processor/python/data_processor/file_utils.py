@@ -80,7 +80,7 @@ class DataReader:
                     "Reading pickle files is disabled by default. "
                     "Set allow_pickle=True to enable."
                 )
-            return pd.read_pickle(file_path)
+            return pd.read_pickle(file_path)  # nosec B301
         if fmt == "hdf5":
             return pd.read_hdf(file_path, **kwargs)
         if fmt == "feather":
@@ -146,8 +146,6 @@ class DataReader:
             ".parquet": "parquet",
             ".pq": "parquet",
             ".json": "json",
-            ".pkl": "pickle",
-            ".pickle": "pickle",
             ".h5": "hdf5",
             ".hdf5": "hdf5",
             ".feather": "feather",
@@ -223,7 +221,9 @@ class DataWriter:
         elif fmt == "json":
             data.to_json(file_path, orient="records", indent=2, **kwargs)
         elif fmt == "pickle":
-            data.to_pickle(file_path)
+            raise ValueError(
+                "Pickle format is disabled for security reasons (CWE-502)."
+            )
         elif fmt == "hdf5":
             data.to_hdf(file_path, key="data", mode="w", **kwargs)
         elif fmt == "feather":
@@ -291,8 +291,6 @@ class FileFormatDetector:
             ".parquet",
             ".pq",
             ".json",
-            ".pkl",
-            ".pickle",
             ".h5",
             ".hdf5",
             ".feather",
