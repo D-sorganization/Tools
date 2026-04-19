@@ -21,12 +21,23 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+_ALLOWED_GITHUB_HOSTS = frozenset(
+    {
+        "api.github.com",
+        "github.com",
+        "raw.githubusercontent.com",
+    }
+)
+
 
 def _require_https_url(url: str) -> str:
     """Return url only when it is an absolute HTTPS URL."""
     parsed = urllib.parse.urlparse(url)
-    if parsed.scheme != "https" or not parsed.netloc:
+    host = parsed.hostname
+    if parsed.scheme != "https" or not host:
         raise ValueError(f"URL must be absolute HTTPS: {url}")
+    if host not in _ALLOWED_GITHUB_HOSTS:
+        raise ValueError(f"Disallowed URL host: {url}")
     return url
 
 
