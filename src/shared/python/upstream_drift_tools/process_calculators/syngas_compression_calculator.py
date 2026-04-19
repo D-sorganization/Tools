@@ -183,9 +183,11 @@ if HAS_PYQT:
                 super().__init__(parent)
             self.engine = SyngasCompressionEngine()
             self.init_ui()
-            # Defer default values with longer delay to ensure UI is fully initialized
-            QTimer.singleShot(100, self.set_default_values)
-            QTimer.singleShot(200, self.setup_state_management)
+            # init_ui() completes synchronously; call directly rather than
+            # relying on timed delays (which masked init-order bugs and raced
+            # with parent show). See #2098.
+            self.set_default_values()
+            self.setup_state_management()
 
         def setup_state_management(self) -> None:
             """Set up state management for UI components.
