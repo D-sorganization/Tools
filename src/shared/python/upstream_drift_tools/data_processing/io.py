@@ -58,19 +58,9 @@ class DataReader:
         if fmt == "json":
             return pd.read_json(path, **kwargs)
         if fmt == "pickle":
-            allow_pickle = kwargs.pop("allow_pickle", False)
-            if not allow_pickle:
-                import logging
-
-                logging.getLogger(__name__).warning(
-                    "Pickle file read rejected. Pickle can execute arbitrary code on load."
-                )
-                raise ValueError(
-                    "Loading pickle data is disabled for security. "
-                    "Use Parquet/CSV for DataFrames, or pass allow_pickle=True "
-                    "strictly for trusted legacy files."
-                )
-            return pd.read_pickle(path, **kwargs)  # nosec B301
+            raise ValueError(
+                "Pickle format is disabled for security reasons (CWE-502)."
+            )
         if fmt == "numpy":
             data = np.load(path, allow_pickle=False)
             if isinstance(data, np.ndarray):
@@ -127,13 +117,9 @@ class DataWriter:
         elif fmt == "json":
             df.to_json(path, orient="records", indent=2, **kwargs)
         elif fmt == "pickle":
-            allow_pickle = kwargs.pop("allow_pickle", False)
-            if not allow_pickle:
-                raise ValueError(
-                    "Writing pickle data is disabled by default for downstream security. "
-                    "Use Parquet instead, or pass allow_pickle=True to override."
-                )
-            df.to_pickle(path, **kwargs)  # nosec B301
+            raise ValueError(
+                "Pickle format is disabled for security reasons (CWE-502)."
+            )
         elif fmt == "numpy":
             np.save(str(path), df.values)
         elif fmt == "sqlite":
@@ -160,8 +146,6 @@ class FileFormatDetector:
         ".parquet": "parquet",
         ".pq": "parquet",
         ".json": "json",
-        # ".pkl": "pickle",  # SEC-CRITICAL: Removed to prevent arbitrary code execution via file dialog
-        # ".pickle": "pickle",
         ".h5": "hdf5",
         ".hdf5": "hdf5",
         ".feather": "feather",
