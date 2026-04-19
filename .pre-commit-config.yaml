@@ -180,7 +180,7 @@ repos:
 # =============================================================================
 
 default_language_version:
-  python: python3.11
+  python: python3.11  # Matches pyproject requires-python and ruff target-version
 
 # Files to always exclude from all hooks
 exclude: |
