@@ -15,30 +15,30 @@ from .se3 import RpToTrans
 
 def Normalize(V: np.ndarray) -> np.ndarray:
     """Normalizes a vector."""
-    return V / np.linalg.norm(V)
+    return np.asarray(V / np.linalg.norm(V), dtype=float)
 
 
 def RotInv(R: np.ndarray) -> np.ndarray:
     """Inverts a rotation matrix."""
-    return np.array(R).T
+    return np.asarray(np.array(R).T, dtype=float)
 
 
 def AxisAng3(expc3: np.ndarray) -> tuple[np.ndarray, float]:
     """Converts a 3-vector of exponential coordinates into axis-angle form."""
-    return (Normalize(expc3), np.linalg.norm(expc3))
+    return (Normalize(expc3), float(np.linalg.norm(expc3)))
 
 
 def ScrewToAxis(q: np.ndarray, s: np.ndarray, h: float) -> np.ndarray:
     """Converts a parametric screw axis description to a normalized screw axis."""
-    return np.r_[s, np.cross(q, s) + np.dot(h, s)]
+    return np.asarray(np.r_[s, np.cross(q, s) + np.dot(h, s)], dtype=float)
 
 
 def AxisAng6(expc6: np.ndarray) -> tuple[np.ndarray, float]:
     """Converts a 6-vector of exponential coordinates into screw axis-angle form."""
-    theta = np.linalg.norm([expc6[0], expc6[1], expc6[2]])
+    theta = float(np.linalg.norm([expc6[0], expc6[1], expc6[2]]))
     if _near_zero(theta):
-        theta = np.linalg.norm([expc6[3], expc6[4], expc6[5]])
-    return (np.array(expc6 / theta), theta)
+        theta = float(np.linalg.norm([expc6[3], expc6[4], expc6[5]]))
+    return (np.asarray(expc6 / theta, dtype=float), theta)
 
 
 def ProjectToSO3(mat: np.ndarray) -> np.ndarray:
@@ -47,19 +47,19 @@ def ProjectToSO3(mat: np.ndarray) -> np.ndarray:
     R = np.dot(U, Vh)
     if np.linalg.det(R) < 0:
         R[:, 2] = -R[:, 2]
-    return R
+    return np.asarray(R, dtype=float)
 
 
 def ProjectToSE3(mat: np.ndarray) -> np.ndarray:
     """Returns a projection of mat into SE(3) via SVD."""
     mat = np.array(mat)
-    return RpToTrans(ProjectToSO3(mat[:3, :3]), mat[:3, 3])
+    return np.asarray(RpToTrans(ProjectToSO3(mat[:3, :3]), mat[:3, 3]), dtype=float)
 
 
 def DistanceToSO3(mat: np.ndarray) -> float:
     """Returns the Frobenius norm distance of mat from the SO(3) manifold."""
     if np.linalg.det(mat) > 0:
-        return np.linalg.norm(np.dot(np.array(mat).T, mat) - np.eye(3))
+        return float(np.linalg.norm(np.dot(np.array(mat).T, mat) - np.eye(3)))
     else:
         return 1e9
 
@@ -68,12 +68,14 @@ def DistanceToSE3(mat: np.ndarray) -> float:
     """Returns the Frobenius norm distance of mat from the SE(3) manifold."""
     matR = np.array(mat)[0:3, 0:3]
     if np.linalg.det(matR) > 0:
-        return np.linalg.norm(
-            np.r_[
-                np.c_[np.dot(np.transpose(matR), matR), np.zeros((3, 1))],
-                [np.array(mat)[3, :]],
-            ]
-            - np.eye(4)
+        return float(
+            np.linalg.norm(
+                np.r_[
+                    np.c_[np.dot(np.transpose(matR), matR), np.zeros((3, 1))],
+                    [np.array(mat)[3, :]],
+                ]
+                - np.eye(4)
+            )
         )
     else:
         return 1e9

@@ -22,9 +22,13 @@ logger = logging.getLogger(__name__)
 def ad(V: Any) -> np.ndarray:
     """Calculate the 6x6 matrix [adV] of the given 6-vector."""
     omgmat = VecToso3([V[0], V[1], V[2]])
-    return np.r_[
-        np.c_[omgmat, np.zeros((3, 3))], np.c_[VecToso3([V[3], V[4], V[5]]), omgmat]
-    ]
+    return np.asarray(
+        np.r_[
+            np.c_[omgmat, np.zeros((3, 3))],
+            np.c_[VecToso3([V[3], V[4], V[5]]), omgmat],
+        ],
+        dtype=float,
+    )
 
 
 def InverseDynamics(
@@ -147,12 +151,15 @@ def ForwardDynamics(
     Slist: Any,
 ) -> np.ndarray:
     """Computes forward dynamics in the space frame."""
-    return np.dot(
-        np.linalg.inv(MassMatrix(thetalist, Mlist, Glist, Slist)),
-        np.array(taulist)
-        - VelQuadraticForces(thetalist, dthetalist, Mlist, Glist, Slist)
-        - GravityForces(thetalist, g, Mlist, Glist, Slist)
-        - EndEffectorForces(thetalist, Ftip, Mlist, Glist, Slist),
+    return np.asarray(
+        np.dot(
+            np.linalg.inv(MassMatrix(thetalist, Mlist, Glist, Slist)),
+            np.array(taulist)
+            - VelQuadraticForces(thetalist, dthetalist, Mlist, Glist, Slist)
+            - GravityForces(thetalist, g, Mlist, Glist, Slist)
+            - EndEffectorForces(thetalist, Ftip, Mlist, Glist, Slist),
+        ),
+        dtype=float,
     )
 
 
@@ -260,11 +267,24 @@ def ComputedTorque(
     if not (thetalist is not None):
         raise ValueError("thetalist must be provided")
     e = np.subtract(thetalistd, thetalist)
-    return np.dot(
-        MassMatrix(thetalist, Mlist, Glist, Slist),
-        Kp * e + Ki * (np.array(eint) + e) + Kd * np.subtract(dthetalistd, dthetalist),
-    ) + InverseDynamics(
-        thetalist, dthetalist, ddthetalistd, g, [0, 0, 0, 0, 0, 0], Mlist, Glist, Slist
+    return np.asarray(
+        np.dot(
+            MassMatrix(thetalist, Mlist, Glist, Slist),
+            Kp * e
+            + Ki * (np.array(eint) + e)
+            + Kd * np.subtract(dthetalistd, dthetalist),
+        )
+        + InverseDynamics(
+            thetalist,
+            dthetalist,
+            ddthetalistd,
+            g,
+            [0, 0, 0, 0, 0, 0],
+            Mlist,
+            Glist,
+            Slist,
+        ),
+        dtype=float,
     )
 
 
