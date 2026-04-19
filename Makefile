@@ -16,7 +16,7 @@ help:
 	@echo ""
 	@echo "  make install   - Install dependencies"
 	@echo "  make lint      - Run linters (ruff, mypy)"
-	@echo "  make format    - Format code (black, ruff)"
+	@echo "  make format    - Format code (ruff format)"
 	@echo "  make test      - Run pytest"
 	@echo "  make check     - Run all checks (lint + test)"
 	@echo "  make clean     - Remove build artifacts"
@@ -36,9 +36,9 @@ lint:
 	python -m mypy . --config-file mypy.ini || true
 
 # Format code
+# ruff format replaces black in this repo (see requirements.txt note);
+# the legacy `python -m black .` invocation was removed as part of #2094.
 format:
-	@echo "Running black..."
-	python -m black .
 	@echo "Running ruff format..."
 	python -m ruff format .
 	@echo "Running ruff fix..."
