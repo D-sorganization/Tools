@@ -1,170 +1,328 @@
 {
-  "timestamp": "2026-01-19T06:38:16.057712",
-  "overall_score": 6.71,
-  "category_scores": {
-    "L": {
-      "score": 7.0,
-      "name": "Long-Term Maintainability",
-      "weight": 1.5
-    },
-    "M": {
-      "score": 7.0,
-      "name": "Educational Resources",
-      "weight": 1.0
-    },
-    "C": {
-      "score": 7.0,
-      "name": "Documentation & Integration",
-      "weight": 1.5
-    },
-    "G": {
-      "score": 7.0,
-      "name": "Testing & Validation",
-      "weight": 2.0
-    },
-    "K": {
-      "score": 7.0,
-      "name": "Reproducibility & Provenance",
-      "weight": 1.0
-    },
-    "F": {
-      "score": 7.0,
-      "name": "Installation & Deployment",
-      "weight": 1.0
-    },
-    "H": {
-      "score": 7.0,
-      "name": "Error Handling",
-      "weight": 1.0
-    },
-    "B": {
-      "score": 7.0,
-      "name": "Hygiene, Security & Quality",
-      "weight": 2.0
-    },
-    "D": {
-      "score": 2.8,
-      "name": "User Experience",
-      "weight": 1.5
-    },
-    "O": {
-      "score": 7.0,
-      "name": "CI/CD & DevOps",
-      "weight": 2.0
-    },
-    "N": {
-      "score": 7.0,
-      "name": "Visualization & Export",
-      "weight": 1.0
-    },
-    "A": {
-      "score": 7.0,
-      "name": "Architecture & Implementation",
-      "weight": 2.0
-    },
-    "E": {
-      "score": 7.0,
-      "name": "Performance & Scalability",
-      "weight": 1.5
-    },
-    "J": {
-      "score": 7.0,
-      "name": "Extensibility & Plugins",
-      "weight": 1.0
-    },
-    "I": {
-      "score": 7.0,
-      "name": "Security & Input Validation",
-      "weight": 2.0
-    }
-  },
-  "critical_issues": [
+  "repository": "Tools",
+  "assessment_date": "2026-04-17",
+  "run_at_utc": "2026-04-17T08:01:19.6221680Z",
+  "sync_status": "synced",
+  "sync_notes": "Already up to date.\nFrom https://github.com/D-sorganization/Tools\n * branch              codex/tools-issue-2086-api-key-cors -> FETCH_HEAD",
+  "overall_grade": "C",
+  "overall_score": 70,
+  "category_grades": [
     {
-      "severity": "BLOCKER",
-      "description": "**. `pytest` fails to collect tests due to `ImportError` in source files. Zero tests are running.",
-      "source": "Assessment_G_Results_2026-01-17"
+      "id": "A",
+      "name": "Architecture and Boundaries",
+      "grade": "C",
+      "score": 72,
+      "evidence": [
+        "2627 tracked first-party files",
+        "1906 files under source-like directories"
+      ],
+      "notes": "Assesses source organization and boundary clarity from tracked first-party layout."
     },
     {
-      "severity": "BLOCKER",
-      "description": "| Fix Code  |",
-      "source": "Assessment_G_Results_2026-01-17"
+      "id": "B",
+      "name": "Build and Dependency Management",
+      "grade": "B",
+      "score": 84,
+      "evidence": [
+        "Chaotic_Pendulum/requirements.txt",
+        "Makefile",
+        "pyproject.toml",
+        "requirements-lock.txt",
+        "requirements.txt",
+        "rust_core/tools-core/pyproject.toml",
+        "src/data_processing/data_processor/ruff.toml",
+        "src/data_processing/data_processor/web/package-lock.json",
+        "src/data_processing/data_processor/web/package.json",
+        "src/data_processing/data_processor/web/tsconfig.json"
+      ],
+      "notes": "Assesses committed build, dependency, and tool configuration."
     },
     {
-      "severity": "BLOCKER",
-      "description": "**. The repository is currently **NOT REPRODUCIBLE** across standard environments. The current `requirements.txt` allows version drift that breaks the application (e.g. `numpy>=2.0.1` might work, but Python 3.10 vs 3.11 is the killer).",
-      "source": "Assessment_K_Results_2026-01-17"
+      "id": "C",
+      "name": "Configuration and Environment Hygiene",
+      "grade": "C",
+      "score": 78,
+      "evidence": [
+        "Chaotic_Pendulum/requirements.txt",
+        "Makefile",
+        "pyproject.toml",
+        "requirements-lock.txt",
+        "requirements.txt",
+        "rust_core/tools-core/pyproject.toml",
+        "src/data_processing/data_processor/ruff.toml",
+        "src/data_processing/data_processor/web/package-lock.json",
+        "src/data_processing/data_processor/web/package.json",
+        "src/data_processing/data_processor/web/tsconfig.json"
+      ],
+      "notes": "Checks whether runtime and developer configuration is explicit."
     },
     {
-      "severity": "CRITICAL",
-      "description": "**: Default Python 3.10 fails w/ ImportError |",
-      "source": "Assessment_F_Results_2026-01-17"
+      "id": "D",
+      "name": "Contracts, Types, and Domain Modeling",
+      "grade": "B",
+      "score": 82,
+      "evidence": [
+        "Chaotic_Pendulum/chaotic_pendulum/config.py",
+        "Chaotic_Pendulum/chaotic_pendulum/physics.py",
+        "Chaotic_Pendulum/chaotic_pendulum/renderer.py",
+        "Chaotic_Pendulum/tests/test_physics.py",
+        "_bootstrap.py",
+        "conftest.py",
+        "launch.py",
+        "launch_signal_toolkit.py",
+        "matlab/+rotation_converter/RigidTransform.m",
+        "migrate_print_to_logging.py"
+      ],
+      "notes": "Design by Contract evidence includes validation, assertions, typed models, explicit raised errors, and invariants."
     },
     {
-      "severity": "BLOCKER",
-      "description": ")**: Tests do not run. Any \"passing\" CI badge is a lie if tests don't collect.",
-      "source": "Assessment_B_Results_2026-01-17"
+      "id": "E",
+      "name": "Reliability and Error Handling",
+      "grade": "C",
+      "score": 76,
+      "evidence": [
+        ".agent/skills/tests/SKILL.md",
+        ".claude/skills/tests/SKILL.md",
+        "Chaotic_Pendulum/tests/test_physics.py",
+        "docs/assessments/Assessment_C_Test_Coverage.md",
+        "docs/assessments/issues/ISSUE_TEST_COVERAGE.md",
+        "Chaotic_Pendulum/chaotic_pendulum/config.py",
+        "Chaotic_Pendulum/chaotic_pendulum/physics.py",
+        "Chaotic_Pendulum/chaotic_pendulum/renderer.py",
+        "Chaotic_Pendulum/tests/test_physics.py",
+        "_bootstrap.py"
+      ],
+      "notes": "Reliability is graded from test presence plus explicit validation/error-handling signals."
     },
     {
-      "severity": "BLOCKER",
-      "description": "| S (Code)   |",
-      "source": "Assessment_D_Results_2026-01-17"
+      "id": "F",
+      "name": "Function, Module Size, and SRP",
+      "grade": "F",
+      "score": 55,
+      "evidence": [
+        "Chaotic_Pendulum/chaotic_pendulum/renderer.py (733 lines)",
+        "rust_core/math-primitives/src/geometry.rs (585 lines)",
+        "rust_core/math-primitives/src/py_bindings.rs (504 lines)",
+        "rust_core/math-primitives/src/types.rs (520 lines)",
+        "rust_core/tools-core/src/ball_flight.rs (1054 lines)",
+        "scripts/mypy_autofix_agent.py (724 lines)",
+        "src/asteroid_jumper/renderer.py (551 lines)",
+        "matlab/test_rotation_converter.m (coarse avg 84 lines/definition)",
+        "scripts/generate_assessments.py (coarse avg 315 lines/definition)",
+        "scripts/quality-check.py (coarse avg 92 lines/definition)"
+      ],
+      "notes": "Evaluates function size, script/module size, and single responsibility using static size signals."
     },
     {
-      "severity": "CRITICAL",
-      "description": "| XS (Docs)  |",
-      "source": "Assessment_D_Results_2026-01-17"
+      "id": "G",
+      "name": "Testing and TDD Posture",
+      "grade": "B",
+      "score": 82,
+      "evidence": [
+        ".agent/skills/tests/SKILL.md",
+        ".claude/skills/tests/SKILL.md",
+        "Chaotic_Pendulum/tests/test_physics.py",
+        "docs/assessments/Assessment_C_Test_Coverage.md",
+        "docs/assessments/issues/ISSUE_TEST_COVERAGE.md",
+        "docs/development/TEST_COVERAGE_ANALYSIS.md",
+        "docs/development/TEST_IMPROVEMENTS_SUMMARY.md",
+        "matlab/test_rotation_converter.m",
+        "scripts/check_minimum_test_contract.py",
+        "src/asteroid_jumper/tests/__init__.py",
+        "src/asteroid_jumper/tests/test_smoke.py",
+        "src/c3d_viewer/tests/__init__.py"
+      ],
+      "notes": "TDD history cannot be confirmed statically; grade reflects committed automated test posture."
     },
     {
-      "severity": "CRITICAL",
-      "description": "FAIL**: Application does not run. | Backport 3.11 features or enforce ver. |",
-      "source": "Assessment_D_Results_2026-01-17"
+      "id": "H",
+      "name": "CI/CD and Automation",
+      "grade": "C",
+      "score": 78,
+      "evidence": [
+        ".github/workflows/Bot-CI-Trigger.yml",
+        ".github/workflows/Code-Metrics.yml",
+        ".github/workflows/Comment-to-Issue-Converter.yml",
+        ".github/workflows/Jules-Archivist.yml",
+        ".github/workflows/Jules-Auto-Assign-Issues.yml",
+        ".github/workflows/Jules-Auto-Rebase.yml",
+        ".github/workflows/Jules-Auto-Refactor.yml",
+        ".github/workflows/Jules-Auto-Repair.yml",
+        ".github/workflows/Jules-Cleaner.yml",
+        ".github/workflows/Jules-Code-Quality-Fixer.yml"
+      ],
+      "notes": "Checks for tracked CI/CD workflow files."
     },
     {
-      "severity": "BLOCKER",
-      "description": "**. The CI pipeline is reporting failures (as seen in weekly digests). The local verification confirms that tests cannot even be collected.",
-      "source": "Assessment_O_Results_2026-01-17"
+      "id": "I",
+      "name": "Security and Secret Hygiene",
+      "grade": "F",
+      "score": 35,
+      "evidence": [
+        "src/media_processing/video_processor/apps/web/lib/__tests__/csrf.test.ts",
+        "tests/test_integration_test_helpers.py"
+      ],
+      "notes": "Secret scan is regex-based; findings require manual confirmation."
     },
     {
-      "severity": "BLOCKER",
-      "description": ")**: Codebase crashes on Python 3.10 due to unreserved use of Python 3.11 features (`StrEnum`, `datetime.UTC`).",
-      "source": "Assessment_A_Results_2026-01-17"
+      "id": "J",
+      "name": "Documentation and Onboarding",
+      "grade": "B",
+      "score": 82,
+      "evidence": [
+        ".Jules/README.md",
+        ".Jules/palette.md",
+        ".agent/skills/issues-10-sequential/SKILL.md",
+        ".agent/skills/issues-5-combined/SKILL.md",
+        ".agent/skills/lint/SKILL.md",
+        ".agent/skills/tests/SKILL.md",
+        ".agent/skills/update-issues/SKILL.md",
+        ".agent/workflows/fix_summary.md",
+        ".agent/workflows/issues-10-sequential.md",
+        ".agent/workflows/issues-5-combined.md",
+        ".agent/workflows/lint.md",
+        ".agent/workflows/tests.md"
+      ],
+      "notes": "Checks docs, README, onboarding, and release documents."
     },
     {
-      "severity": "BLOCKER",
-      "description": ")**: `pytest` collection fails completely (7 errors) due to import crashes, meaning CI/CD is effectively blind.",
-      "source": "Assessment_A_Results_2026-01-17"
+      "id": "K",
+      "name": "Maintainability, DRY, and Duplication",
+      "grade": "F",
+      "score": 55,
+      "evidence": [
+        "api appears in 4 files",
+        "app appears in 16 files",
+        "build appears in 5 files",
+        "cli appears in 4 files",
+        "config appears in 4 files",
+        "scripts/analyze_completist_data.py",
+        "scripts/generate_assessments.py",
+        "scripts/generate_comprehensive_assessment.py",
+        "scripts/generate_fresh_assessments.py",
+        "scripts/legacy_tools/code_quality_check.py"
+      ],
+      "notes": "DRY is assessed through duplicate filename clusters and TODO/FIXME density as static heuristics."
     },
     {
-      "severity": "BLOCKER",
-      "description": "| Architecture   | `requirements.txt`        | App crashes on Py3.10    | Missing Python constraint | Require Python >= 3.11 OR Shim imports | S      |",
-      "source": "Assessment_A_Results_2026-01-17"
+      "id": "L",
+      "name": "API Surface and Law of Demeter",
+      "grade": "F",
+      "score": 58,
+      "evidence": [
+        "Chaotic_Pendulum/chaotic_pendulum/renderer.py",
+        "UnifiedToolsLauncher.py",
+        "launch_signal_toolkit.py",
+        "rust_core/tools-core/src/ball_flight.rs",
+        "scripts/generate_comprehensive_assessment.py",
+        "scripts/generate_theme_screenshots.py",
+        "src/asteroid_jumper/controller.py",
+        "src/asteroid_jumper/controls_panel.py",
+        "src/asteroid_jumper/main_window.py",
+        "src/asteroid_jumper/metrics_panel.py"
+      ],
+      "notes": "Law of Demeter is approximated with deep member-chain hints; confirmed violations require semantic review."
     },
     {
-      "severity": "BLOCKER",
-      "description": "| Testing        | `tests/`                  | `pytest` fails collection| Py3.11 syntax in code | Fix imports or upgrade CI env         | S      |",
-      "source": "Assessment_A_Results_2026-01-17"
+      "id": "M",
+      "name": "Observability and Operability",
+      "grade": "C",
+      "score": 74,
+      "evidence": [
+        ".github/workflows/Code-Metrics.yml",
+        "docs/assessments/Assessment_L_Logging.md",
+        "docs/assessments/issues/ISSUE_LOGGING_SPLIT.md",
+        "migrate_print_to_logging.py",
+        "scripts/convert_print_to_logging.py",
+        "src/asteroid_jumper/metrics_panel.py",
+        "src/data_processing/data_processor/python/data_processor/logging_config.py",
+        "src/media_processing/video_processor/apps/web/components/golf/MetricsPanel.tsx",
+        "src/media_processing/video_processor/apps/web/lib/__tests__/logger.test.ts",
+        "src/media_processing/video_processor/apps/web/lib/logger.ts"
+      ],
+      "notes": "Checks for logging, metrics, monitoring, and operational artifacts."
     },
     {
-      "severity": "CRITICAL",
-      "description": "ARCHITECTURE FLAW**: The repository architecture implicitly relies on Python 3.11+ features (`StrEnum`, `datetime.UTC`) without declaring this requirement in `requirements.txt` or `README.md`. This causes immediate crashes on standard Python 3.10 environments (tested on Linux).",
-      "source": "Assessment_A_Results_2026-01-17"
-    },
-    {
-      "severity": "CRITICAL",
-      "description": "FAIL**: Application crashes on start (Py3.10). Legacy launcher missing.     |",
-      "source": "Assessment_A_Results_2026-01-17"
-    },
-    {
-      "severity": "BLOCKER",
-      "description": "**. Performance cannot be profiled because the application hits an unhandled exception (`ImportError`) during module loading on the target environment (Python 3.10).",
-      "source": "Assessment_E_Results_2026-01-17"
-    },
-    {
-      "severity": "CRITICAL",
-      "description": "** | `UnifiedToolsLauncher.py` | Crash on invalid Python version | Check `sys.version` at startup |",
-      "source": "Assessment_I_Results_2026-01-17"
+      "id": "N",
+      "name": "Governance, Licensing, and Release Hygiene",
+      "grade": "C",
+      "score": 74,
+      "evidence": [
+        ".github/CODEOWNERS",
+        ".github/agents/security-agent.md",
+        "CHANGELOG.md",
+        "CONTRIBUTING.md",
+        "LICENSE",
+        "SECURITY.md",
+        "docs/assessments/Assessment_F_Security.md",
+        "docs/assessments/issues/ISSUE_SECURITY_DATA_LEAKAGE.md",
+        "docs/assessments/issues/Issue_F_Security.md",
+        "docs/changelogs/2026-01-31-fleet-updates.md"
+      ],
+      "notes": "Checks ownership, release, contribution, security, and license metadata."
     }
   ],
-  "total_issues": 17,
-  "reports_analyzed": 15
+  "key_risks": [
+    "Large modules/scripts reduce maintainability and SRP clarity.",
+    "Potential hard-coded secret patterns require manual security review.",
+    "Repeated filename clusters suggest possible duplicated responsibilities.",
+    "Deep member-chain usage may indicate Law of Demeter pressure points."
+  ],
+  "recommendations": [
+    "Split the largest modules by responsibility and add characterization tests before refactoring.",
+    "Review duplicate filename/responsibility clusters and extract shared helpers only where behavior is truly repeated.",
+    "Review deep member chains and introduce boundary methods where object graph traversal leaks across modules."
+  ],
+  "issue_candidates": [
+    {
+      "title": "Split oversized modules by responsibility",
+      "severity": "medium",
+      "problem": "Oversized files found: Chaotic_Pendulum/chaotic_pendulum/renderer.py (733 lines); rust_core/math-primitives/src/geometry.rs (585 lines); rust_core/math-primitives/src/py_bindings.rs (504 lines); rust_core/math-primitives/src/types.rs (520 lines); rust_core/tools-core/src/ball_flight.rs (1054 lines); scripts/mypy_autofix_agent.py (724 lines); src/asteroid_jumper/renderer.py (551 lines); src/c3d_viewer/python/c3d_viewer/ui/pyqt6/main_window.py (750 lines); src/data_processing/data_processor/python/benchmarks/performance_benchmark.py (564 lines); src/data_processing/data_processor/python/data_processor/core/__init__.py (616 lines); src/data_processing/data_processor/python/data_processor/core/augmentation_transforms.py (765 lines); src/data_processing/data_processor/python/data_processor/core/cross_correlation.py (1056 lines); src/data_processing/data_processor/python/data_processor/core/dataset_manager.py (611 lines); src/data_processing/data_processor/python/data_processor/core/feature_extractor.py (772 lines); src/data_processing/data_processor/python/data_processor/core/kalman_filter.py (821 lines); src/data_processing/data_processor/python/data_processor/core/nn_script_exporter_renderers.py (584 lines); src/data_processing/data_processor/python/data_processor/core/nn_trainer.py (840 lines); src/data_processing/data_processor/python/data_processor/core/outlier_detection.py (757 lines); src/data_processing/data_processor/python/data_processor/core/pca_analysis.py (621 lines); src/data_processing/data_processor/python/data_processor/core/script_generator.py (608 lines); src/data_processing/data_processor/python/data_processor/core/signal_processing.py (808 lines); src/data_processing/data_processor/python/data_processor/core/spectral_analysis.py (805 lines); src/data_processing/data_processor/python/data_processor/core/state_space.py (1006 lines); src/data_processing/data_processor/python/data_processor/core/surface_plot.py (654 lines); src/data_processing/data_processor/python/data_processor/core/time_series_decomposition.py (679 lines); src/data_processing/data_processor/python/data_processor/core/uncertainty_quantification.py (998 lines); src/data_processing/data_processor/python/data_processor/core/undo_redo.py (504 lines); src/data_processing/data_processor/python/data_processor/core/wavelet_denoising.py (594 lines); src/data_processing/data_processor/python/data_processor/gui_refactored.py (801 lines); src/data_processing/data_processor/python/data_processor/high_performance_loader.py (590 lines); src/data_processing/data_processor/python/data_processor/ui/folder_tool_tab.py (678 lines); src/data_processing/data_processor/python/data_processor/ui/format_converter_tab.py (730 lines); src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window.py (733 lines); src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window_tabs.py (754 lines); src/data_processing/data_processor/python/data_processor/ui/pyqt6/statistical_widgets.py (548 lines); src/data_processing/data_processor/python/data_processor/ui/pyqt6/visualization_widgets.py (509 lines); src/data_processing/data_processor/python/data_processor/ui/pyqt6/widgets.py (545 lines); src/data_processing/data_processor/python/tests/test_advanced_analysis.py (873 lines); src/data_processing/data_processor/python/tests/test_signal_processing_core.py (596 lines); src/data_processing/data_processor/python/tests/test_statistical_analysis.py (888 lines); src/data_processing/data_processor/web/src/components/AnalyticsSuite.tsx (834 lines); src/data_processing/data_processor/web/src/hooks/useDataProcessor.ts (1031 lines); src/document_processing/pdf_renamer/src/pdf_renamer/gui.py (979 lines); src/financial_calculator/python/financial_calculator/ui/pyqt6/main_window.py (604 lines); src/flow_rate_converter/python/flow_rate_converter/ui/pyqt6/main_window.py (551 lines); src/folder_packer_pro/ui_tabs.py (649 lines); src/folder_tool/folder_tool_ui.py (748 lines); src/function_generator/python/function_generator/ui/pyqt6/main_window.py (630 lines); src/function_generator/web/src/components/FunctionGenerator.tsx (946 lines); src/humanoid_builder_gui/python/humanoid_builder_gui/ui/pyqt6/main_window.py (829 lines); src/inertia_calculator/python/inertia_calculator/ui/pyqt6/main_window.py (611 lines); src/lower_body_model/simulator.py (771 lines); src/media_processing/audio_processor/matlab/audio_signal_processor/CONVOLUTION_REVERB_EXAMPLES.m (632 lines); src/media_processing/audio_processor/matlab/audio_signal_processor/ENHANCEMENT_EXAMPLES.m (567 lines); src/media_processing/audio_processor/matlab/audio_signal_processor/core/AdvancedAudioProcessor.m (1012 lines); src/media_processing/audio_processor/matlab/audio_signal_processor/core/AntiAliasingTools.m (779 lines); src/media_processing/audio_processor/matlab/audio_signal_processor/core/AudioEditor.m (823 lines); src/media_processing/audio_processor/matlab/audio_signal_processor/core/AudioEffects.m (572 lines); src/media_processing/audio_processor/matlab/audio_signal_processor/core/ConvolutionReverb.m (940 lines); src/media_processing/audio_processor/matlab/audio_signal_processor/core/MixerCoreEnhanced.m (901 lines); src/media_processing/audio_processor/matlab/audio_signal_processor/core/MusicProductionTools.m (1265 lines); src/media_processing/audio_processor/matlab/audio_signal_processor/core/WaveletProcessor.m (685 lines); src/media_processing/audio_processor/matlab/audio_signal_processor/gui/MainWindow.m (3522 lines); src/media_processing/video_processor/apps/web/components/video/__tests__/VideoUploader.test.tsx (546 lines); src/media_processing/video_processor/apps/web/lib/__tests__/csrf.test.ts (717 lines); src/media_processing/video_processor/apps/web/lib/golf/persistence.ts (503 lines); src/media_processing/video_processor/apps/web/lib/golf/phaseDetector.ts (551 lines); src/media_processing/video_processor/apps/web/lib/golf/reportGenerator.ts (594 lines); src/media_processing/video_processor/apps/web/lib/golf/swingAnalyzer.ts (772 lines); src/multi_param_analysis/python/multi_param_analysis/ui/pyqt6/main_window.py (706 lines); src/ode_solver/python/ode_solver/ui/pyqt6/main_window.py (560 lines); src/ode_solver/web/src/components/ODESolverCalculator.tsx (523 lines); src/optimizer_gui/python/optimizer_gui/ui/pyqt6/main_window.py (784 lines); src/pendulum_simulator/double_pendulum_colab.ipynb (776 lines); src/pendulum_simulator/pendulum-core/src/cmaes.rs (532 lines); src/pendulum_simulator/pendulum-core/src/golfer.rs (532 lines); src/pendulum_simulator/pendulum-core/src/lib.rs (1619 lines); src/pendulum_simulator/pendulum-web/src/App.tsx (691 lines); src/pendulum_simulator/pendulum-web/src/physics.ts (522 lines); src/pendulum_simulator/pendulum-web/src/physics_golfer.ts (524 lines); src/pendulum_simulator/src/double_pendulum_golf/gui/analysis_tab.py (778 lines); src/pendulum_simulator/src/double_pendulum_golf/gui/base_pendulum_widget.py (830 lines); src/pendulum_simulator/src/double_pendulum_golf/gui/controls_widget.py (661 lines); src/pendulum_simulator/src/double_pendulum_golf/gui/controls_widget_base.py (585 lines); src/pendulum_simulator/src/double_pendulum_golf/gui/controls_widget_golfer.py (594 lines); src/pendulum_simulator/src/double_pendulum_golf/gui/equations_data.py (1105 lines); src/pendulum_simulator/src/double_pendulum_golf/gui/golfer_pendulum_widget.py (784 lines); src/pendulum_simulator/src/double_pendulum_golf/gui/main_window.py (711 lines); src/pendulum_simulator/src/double_pendulum_golf/gui/optimization_widget.py (840 lines); src/pendulum_simulator/src/double_pendulum_golf/gui/panel_builders.py (920 lines); src/pendulum_simulator/src/double_pendulum_golf/gui/pendulum_widget.py (927 lines); src/pendulum_simulator/src/double_pendulum_golf/gui/perturbation_panel.py (549 lines); src/pendulum_simulator/src/double_pendulum_golf/gui/simulation_panel.py (940 lines); src/pendulum_simulator/src/double_pendulum_golf/gui/swing_comparison_dialog.py (536 lines); src/pendulum_simulator/src/double_pendulum_golf/gui/toolstrip_widget.py (876 lines); src/pendulum_simulator/src/double_pendulum_golf/native_backend.py (762 lines); src/pendulum_simulator/src/double_pendulum_golf/physics.py (761 lines); src/pendulum_simulator/src/double_pendulum_golf/physics_golfer_jax.py (691 lines); src/pendulum_simulator/src/double_pendulum_golf/physics_triple.py (649 lines); src/pendulum_simulator/tests/test_friction_triple.py (568 lines); src/pendulum_simulator/tests/test_golfer_dynamics_extended.py (598 lines); src/pendulum_simulator/tests/test_jacobians_golfer.py (593 lines); src/pendulum_simulator/tests/test_native_backend.py (546 lines); src/pendulum_simulator/tests/test_physics_golfer_jax.py (504 lines); src/pressure_drop_calculator/python/pressure_drop_calculator/ui/pyqt6/main_window.py (509 lines); src/python/src/help/help_content.py (837 lines); src/python/src/help/help_system.py (973 lines); src/python/src/utils/integration_test_helpers.py (872 lines); src/python/src/utils/test_utils.py (914 lines); src/python/tests/test_folders_tool.py (677 lines); src/rotation_converter/core.py (505 lines); src/rotation_converter/rigid_transform.py (777 lines); src/rotation_converter/screw_visualization.py (533 lines); src/rrt_path_planner/matlab/src/gui/starWarsPathPlannerGUI.m (927 lines); src/rrt_path_planner/python/src/star_wars_rrt.py (920 lines); src/shared/python/calc_backend/tests/test_calc_backend.py (1052 lines); src/shared/python/calc_backend/tests/test_calc_backend_gaps.py (506 lines); src/shared/python/contracts.py (650 lines); src/shared/python/data_processing/processor.py (541 lines); src/shared/python/data_processing/tests/test_processor.py (536 lines); src/shared/python/gui_launcher/launcher.py (733 lines); src/shared/python/humanoid_character_builder/core/anthropometry.py (629 lines); src/shared/python/humanoid_character_builder/core/segment_definitions.py (759 lines); src/shared/python/humanoid_character_builder/generators/mesh_generator_makehuman.py (574 lines); src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py (528 lines); src/shared/python/humanoid_character_builder/generators/urdf_generator.py (762 lines); src/shared/python/humanoid_character_builder/interfaces/api.py (705 lines); src/shared/python/humanoid_character_builder/mesh/collision_generator.py (762 lines); src/shared/python/humanoid_character_builder/mesh/inertia_calculator.py (634 lines); src/shared/python/humanoid_character_builder/mesh/mesh_processor.py (813 lines); src/shared/python/model_generation/api/rest_api_routes.py (1061 lines); src/shared/python/model_generation/builders/manual_builder.py (584 lines); src/shared/python/model_generation/builders/parametric_builder.py (665 lines); src/shared/python/model_generation/builders/urdf_writer.py (696 lines); src/shared/python/model_generation/cli/main.py (827 lines); src/shared/python/model_generation/converters/mjcf_converter.py (649 lines); src/shared/python/model_generation/converters/simscape/mdl_parser.py (611 lines); src/shared/python/model_generation/converters/simscape/simscape_converter.py (823 lines); src/shared/python/model_generation/converters/urdf_parser.py (567 lines); src/shared/python/model_generation/core/physics_validation.py (570 lines); src/shared/python/model_generation/core/types.py (714 lines); src/shared/python/model_generation/core/validation.py (507 lines); src/shared/python/model_generation/editor/editor_modifications.py (707 lines); src/shared/python/model_generation/editor/frankenstein_editor.py (708 lines); src/shared/python/model_generation/editor/text_editor.py (1039 lines); src/shared/python/model_generation/explorer/model_explorer.py (717 lines); src/shared/python/model_generation/inertia/calculator.py (621 lines); src/shared/python/model_generation/library/model_library.py (880 lines); src/shared/python/model_generation/tests/test_unified_loader.py (703 lines); src/shared/python/plot_engine/matplotlib_renderer.py (578 lines); src/shared/python/plot_theme/tests/test_plot_theme.py (726 lines); src/shared/python/plot_theme/themes.py (596 lines); src/shared/python/programmatic_pid/cli.py (661 lines); src/shared/python/signal_toolkit/calculus.py (624 lines); src/shared/python/signal_toolkit/core.py (686 lines); src/shared/python/signal_toolkit/filters.py (817 lines); src/shared/python/signal_toolkit/fitting.py (840 lines); src/shared/python/signal_toolkit/io.py (704 lines); src/shared/python/signal_toolkit/limits.py (513 lines); src/shared/python/signal_toolkit/noise.py (556 lines); src/shared/python/signal_toolkit/polynomial_generator.py (649 lines); src/shared/python/signal_toolkit/series.py (747 lines); src/shared/python/signal_toolkit/tests/test_series.py (764 lines); src/shared/python/signal_toolkit/tests/test_signal_toolkit.py (801 lines); src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py (669 lines); src/shared/python/signal_toolkit/widget_processing.py (804 lines); src/shared/python/signal_toolkit/widget_ui.py (962 lines); src/shared/python/theme/colors.py (563 lines); src/shared/python/theme/dialogs/theme_manager_dialog.py (507 lines); src/shared/python/theme/stylesheets.py (615 lines); src/shared/python/theme/theme_manager.py (566 lines); src/shared/python/upstream_drift_tools/calculators/conversion/flow_rate_converter.py (701 lines); src/shared/python/upstream_drift_tools/calculators/conversion/service.py (894 lines); src/shared/python/upstream_drift_tools/calculators/conversion/tables.py (619 lines); src/shared/python/upstream_drift_tools/calculators/electrical/electrical_model.py (513 lines); src/shared/python/upstream_drift_tools/calculators/thermo/steam_engine.py (911 lines); src/shared/python/upstream_drift_tools/data_processing/core.py (647 lines); src/shared/python/upstream_drift_tools/lab/bio/c3d_reader.py (918 lines); src/shared/python/upstream_drift_tools/process_calculators/acid_gas_dewpoint_calculator.py (929 lines); src/shared/python/upstream_drift_tools/process_calculators/constants.py (616 lines); src/shared/python/upstream_drift_tools/process_calculators/optimization.py (548 lines); src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/utils/gas_properties.py (948 lines); src/shared/python/upstream_drift_tools/process_calculators/psa_package/References/psa_stage_removal_sensitivity.ipynb (936 lines); src/shared/python/upstream_drift_tools/process_calculators/psa_package/psa_analysis.ipynb (1181 lines); src/shared/python/upstream_drift_tools/process_calculators/psa_package/psa_analysis_colab.ipynb (711 lines); src/shared/python/upstream_drift_tools/process_calculators/psa_package/psa_webapp.py (694 lines); src/shared/python/upstream_drift_tools/process_calculators/scrubber_calculator.py (803 lines); src/shared/python/upstream_drift_tools/process_calculators/syngas_compression_calculator.py (790 lines); src/shared/python/upstream_drift_tools/process_calculators/syngas_water_calculator.py (735 lines); src/shared/python/upstream_drift_tools/process_calculators/wgs_reactor_calculator.py (734 lines); src/shared/python/upstream_drift_tools/tests/calculators/conversion/test_conversion_service.py (657 lines); src/shared/python/upstream_drift_tools/tests/process_calculators/test_psa_model.py (522 lines); src/shared/python/upstream_drift_tools/tests/test_data_processor_engine.py (710 lines); src/shared/python/upstream_drift_tools/ui/mixins/calculator_state_mixin.py (805 lines); src/shared/python/upstream_drift_tools/ui/widgets/data_processor_widget.py (605 lines); src/shared/python/upstream_drift_tools/ui/widgets/unit_converter_widget.py (566 lines); src/shared/python/upstream_drift_tools/utils/state_manager.py (538 lines); src/shared/python/upstream_drift_tools/utils/unit_constants.py (576 lines); src/solar_system_model/solar_system/core/celestial_body.py (768 lines); src/solar_system_model/solar_system/data/historical_events.py (922 lines); src/solar_system_model/solar_system/physics/orbital_mechanics.py (590 lines); src/solar_system_model/solar_system/physics/trajectory_planner.py (791 lines); src/solar_system_model/solar_system/ui/widgets.py (1046 lines); src/solar_system_model/solar_system/visualization/camera.py (560 lines); src/solar_system_model/solar_system/visualization/renderer.py (966 lines); src/solar_system_model/solar_system/visualization/scene.py (585 lines); src/solar_system_model/solar_system/visualization/ui_renderer.py (817 lines); src/steam_engine_calculator/python/steam_engine_calculator/ui/pyqt6/main_window.py (728 lines); src/steam_engine_calculator/web/src/components/SteamEngineCalculator.tsx (524 lines); src/tools/matlab_quality_utils.py (600 lines); src/tools/mypy_autofix_agent.py (724 lines); src/urdf_builder_gui/tests/test_urdf_builder_gui.py (644 lines); src/vessel_drafter/python/vessel_drafter/gui/vessel_drafter_window.py (570 lines); src/vessel_drafter/python/vessel_drafter/preview/vessel_drafter_scene.py (770 lines); src/web_applications/calculator/calculator.py (838 lines); src/web_applications/unit_converter/converter.py (638 lines); src/web_applications/unit_converter/unit-converter-app/app.js (1072 lines); src/web_applications/unit_converter/unit-converter-app/converter.js (1049 lines); tests/architecture/test_layer_boundaries.py (510 lines); tests/conftest.py (545 lines); tests/data_processing/data_processor/test_neural_network.py (675 lines); tests/rotation_converter/test_modern_robotics.py (708 lines); tests/rotation_converter/test_rigid_transform.py (1077 lines); tests/rotation_converter/test_rotation_core.py (540 lines); tests/test_integration_test_helpers.py (522 lines); tests/test_review_fixes_2026_03_09.py (563 lines); tests/tools/test_matlab_quality_utils.py (594 lines)",
+      "evidence": "Category F lists files over 500 lines or coarse long-definition signals.",
+      "impact": "Large modules obscure ownership, complicate review, and weaken SRP.",
+      "fix": "Add characterization tests, then split cohesive responsibilities into smaller modules.",
+      "acceptance": "Largest files are reduced or justified; extracted modules have focused tests.",
+      "refs": "SRP, function size, module size, maintainability"
+    },
+    {
+      "title": "Review duplicated responsibility clusters",
+      "severity": "medium",
+      "problem": "Repeated filename clusters found: api appears in 4 files; app appears in 16 files; build appears in 5 files; cli appears in 4 files; config appears in 4 files",
+      "evidence": "Category K duplicate-name clustering found repeated responsibility names.",
+      "impact": "Potential duplicated logic increases maintenance cost and drift risk.",
+      "fix": "Review clusters, remove accidental duplication, and extract shared helpers where behavior is truly common.",
+      "acceptance": "Documented review of clusters; duplicated implementations are consolidated or justified.",
+      "refs": "DRY, maintainability, SRP"
+    },
+    {
+      "title": "Investigate potential hard-coded secret patterns",
+      "severity": "high",
+      "problem": "Potential secret-like assignments found in: src/media_processing/video_processor/apps/web/lib/__tests__/csrf.test.ts; tests/test_integration_test_helpers.py",
+      "evidence": "Category I regex scan matched secret-like assignments.",
+      "impact": "Hard-coded secrets can expose credentials and create security incidents.",
+      "fix": "Manually verify findings, rotate any exposed credentials, and move secrets to environment or secret management.",
+      "acceptance": "Secret scan is clean or findings are documented false positives; exposed credentials are rotated.",
+      "refs": "security, reliability"
+    },
+    {
+      "title": "Review deep object traversal hotspots",
+      "severity": "medium",
+      "problem": "Deep member-chain hints found in: Chaotic_Pendulum/chaotic_pendulum/renderer.py; UnifiedToolsLauncher.py; launch_signal_toolkit.py; rust_core/tools-core/src/ball_flight.rs; scripts/generate_comprehensive_assessment.py; scripts/generate_theme_screenshots.py; src/asteroid_jumper/controller.py; src/asteroid_jumper/controls_panel.py",
+      "evidence": "Category L found repeated chains with three or more member hops.",
+      "impact": "Law of Demeter pressure can make APIs brittle and increase coupling.",
+      "fix": "Review hotspots and introduce boundary methods or DTOs where callers traverse object graphs.",
+      "acceptance": "Hotspots are documented, simplified, or justified; tests cover any API boundary changes.",
+      "refs": "Law of Demeter, SRP, maintainability"
+    }
+  ],
+  "coverage": {
+    "tracked_files": 2627,
+    "code_files": 1842,
+    "test_files": 650,
+    "ci_files": 41,
+    "config_files": 76,
+    "docs_files": 494,
+    "exclusions": "cache/build/vendor/virtualenv/temp/generated output directories excluded",
+    "static_limits": "TDD workflow history and confirmed Law of Demeter semantics require deeper review."
+  }
 }
