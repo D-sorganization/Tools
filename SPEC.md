@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-04-17
+  LAST UPDATED: 2026-04-18
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.64                                     |
-| **Last Spec Update**    | 2026-04-17                                 |
+| **Spec Version**        | 1.1.76                                     |
+| **Last Spec Update**    | 2026-04-18 (updated for PR #2138)          |
 
 ## 2. Purpose & Mission
 
@@ -125,7 +125,7 @@ Tools/
 | Pressure Drop Calculator | `src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/` | Facade-driven gas pressure-drop workflows with extracted API, validation, reference, results, and engine-domain helper modules         |
 | Model Generation API     | `src/shared/python/model_generation/api/`                                              | Route facade with framework-specific Flask and FastAPI adapters behind a compatibility shim, plus repository download helpers that require HTTPS downloads and validate archive and mesh paths to prevent traversal |
 | Engineering Tools        | `src/tools/`                                                                           | 45+ specialized calculation and processing tools                                                                                       |
-| Data Processing          | `src/data_processing/`                                                                 | Pipelines, transformers, validators, and facade-based data-processor core modules for exporter, ANOVA, and vectorized filter workflows |
+| Data Processing          | `src/data_processing/`                                                                 | Pipelines, transformers, validators, and facade-based data-processor core modules for exporter, ANOVA, vectorized filter workflows, and pickle-safe file I/O defaults |
 | Document Processing      | `src/document_processing/`                                                             | PDF extraction, text processing                                                                                                        |
 | Media Processing         | `src/media_processing/`                                                                | Audio and video utilities                                                                                                              |
 | Scientific Modeling      | `src/scientific_modeling/`                                                             | Thermal, mechanical, chemical simulations                                                                                              |
@@ -211,6 +211,8 @@ class MyTool(BaseTool):
 | Scientific data     | CSV/HDF5/NetCDF       | Files, databases                | Domain-specific formats                   |
 | MATLAB models       | .m/.mat files         | `matlab/`                       | MATLAB simulation parameters              |
 
+Pickle-backed DataFrame reads and writes are disabled by default in shared data-processing helpers because pickle loading can execute arbitrary code. CSV, Parquet, JSON, Excel, HDF5, Feather, NumPy, MATLAB, Arrow, and SQLite remain the preferred interchange formats; trusted legacy pickle files require an explicit `allow_pickle=True` override.
+
 ### Output Data
 
 | Output              | Format        | Destination               | Description                      |
@@ -259,6 +261,11 @@ Test pyramid with unit tests at the base, integration tests for tool interaction
 | GUI         | `tests/gui/`         | pytest-qt | `@pytest.mark.gui`         |
 | DWSIM       | `tests/dwsim/`       | pytest    | `@pytest.mark.dwsim`       |
 | Slow        | `tests/slow/`        | pytest    | `@pytest.mark.slow`        |
+
+`pytest.ini` registers every marker required by `CLAUDE.md`, including benchmark,
+scientific, headless-safe, OpenGL, and parity markers. Pytest runs with strict
+marker validation and strict xfail handling so stale marker names or unexpected
+passes fail early in CI.
 
 ### Coverage Requirements
 
@@ -455,6 +462,18 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-04-18 | 1.1.76  | Added screen-reader-only context to dynamic video progress text and pose detection counters so numeric readouts expose their meaning to assistive technology; decorative pulsing dots are now hidden from screen readers (PR #2138). |
+| 2026-04-18 | 1.1.75  | Optimized `calculateStatistics` in `useDataProcessor.ts` by extracting numbers into a dynamically resizing `Float64Array` during the first pass to eliminate a second pass over the original array of objects (PR #2137). |
+| 2026-04-18 | 1.1.74  | Disabled pickle-backed reads, writes, and file-dialog discovery in shared data-processing helpers and upstream drift tooling to prevent arbitrary code execution through unsafe deserialization (PR #2139). |
+| 2026-04-18 | 1.1.73  | Improved exception handling and signal re-raising in rotation converter UI threads, scripting environment, and model library imports by capturing background thread exceptions, adding structured logging, and re-raising with context (PR #2088). |
+| 2026-04-18 | 1.1.72  | Enhanced data processor exception handling by wrapping background threading tasks with try-except blocks that log exceptions and propagate errors to the main thread instead of silently failing (PR #2084). |
+| 2026-04-18 | 1.1.71  | Hardened data-processing file I/O by disabling pickle reads and writes by default, removing pickle extensions from GUI-supported file discovery paths, and requiring an explicit trusted-legacy override for pickle use. |
+| 2026-04-18 | 1.1.70  | Test configuration hygiene: registered the complete CLAUDE.md marker set in `pytest.ini`, enabled strict xfail handling, and added a contract-test backbone for the ODE solver, pressure-drop calculator, and rotation-converter calc backend request/response models. |
+| 2026-04-18 | 1.1.69  | Stopped the bot CI trigger workflow from using stale external credentials for repository checkout and PR/check API operations so bot-authored PRs use repo-scoped workflow credentials for required check discovery. |
+| 2026-04-18 | 1.1.68  | Restricted Data Processor web row-copy paths to own enumerable properties via a shared `Object.keys` helper and added regression coverage to prevent inherited prototype keys from being copied into processed rows. |
+| 2026-04-18 | 1.1.67  | Filter deleted test files out of the CI changed-test list so PRs that intentionally remove stale tests do not pass non-existent paths to pytest. |
+| 2026-04-18 | 1.1.66  | Hardened asteroid-jumper physics validation so non-finite timesteps and physics parameters are rejected with explicit `ValueError`s instead of propagating NaN or infinity through simulation state. |
+| 2026-04-18 | 1.1.65  | Simplified root pytest addopts in `pyproject.toml` by removing benchmark and xdist-specific defaults so repository-level test runs do not require those plugins outside focused plugin test contexts. |
 | 2026-04-17 | 1.1.64  | Optimized `applyFilter` loop in `useDataProcessor.ts` by replacing the object spread operator with manual property copying to eliminate significant garbage collection overhead during large dataset processing. |
 | 2026-04-17 | 1.1.63  | Hardened model-generation GitHub repository downloads by requiring HTTPS retrievals and validating mesh output paths so API-provided mesh names cannot escape the destination directory; kept the unit-converter development WSGI debugger disabled unless `FLASK_DEBUG=1` is explicitly set. |
 | 2026-04-17 | 1.1.62  | Enhanced video editor UX by replacing native alert dialogs with inline accessible errors and ensuring proper focus styles. |
@@ -528,7 +547,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-09 | 1.1.34  | Wrapped DataTableView, PlotView, and AnalyticsSuite in `React.memo`, and memoized activeSignals with `useMemo` to prevent expensive visualization re-renders on unrelated UI state changes.                                                                                                                                                                                                                                                                                                                                                                         |
 | 2026-04-10 | 1.1.37  | Add explicit focus-visible styles to the interactive buttons (Upload New Video, Play/Pause, Mute/Unmute) within the `VideoPlayer` component for improved keyboard navigation visibility.                                                                                                                                                                                                                                                                                                                                                                            |
 | 2026-04-12 | 1.1.48  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
-| 2026-04-15 | 1.1.51  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
+| 2026-04-15 | 1.1.49  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
+| 2026-04-18 | 1.1.65  | Refreshed regression test coverage for architecture boundaries, data-processor compatibility, folder archive operations, and upstream-drift contract smoke behavior while keeping the production implementation unchanged. |
 
 ---
 
@@ -559,5 +579,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 - Pearson correlation matrix computations utilize a single-pass loop algorithm, calculating sums concurrently to drastically reduce iteration overhead compared to two-pass implementations, while carefully mitigating numerical instability via clamping.
 - Recharts component props in `AnalyticsSuite` are memoized using `useMemo` hooks to provide stable references and prevent expensive internal re-renders.
 - Exponential and power trendline calculations use pre-allocated arrays and single-pass loops instead of functional chaining to minimize GC pauses.
-| 2026-04-18 | 1.1.51  | Added `sr-only` context tags to the video progress text readouts and the pose detection counters to ensure screen readers provide contextual meaning to the numbers. Applied `aria-hidden="true"` to purely decorative pulsing dots. |
-| 2026-04-18 | 1.1.51  | Gracefully skipped tests requiring numpy and pandas to allow the core test suite to run in CI environments without those heavy data science dependencies installed. |
+
+### Version 1.1.65
+- **Security**: Disabled loading and saving of `.pkl` and `.pickle` files natively using pandas due to severe CWE-502 vulnerability. Raises `ValueError` explicitly when format is set to `pickle`.

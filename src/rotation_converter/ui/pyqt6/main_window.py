@@ -20,6 +20,8 @@ Shared plotting helpers live in plot_helpers.py.
 
 from __future__ import annotations
 
+import logging
+
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QMainWindow,
@@ -36,6 +38,8 @@ from rotation_converter.ui.pyqt6.rigid_transform_tab import RigidTransformTab
 from rotation_converter.ui.pyqt6.rotation_tab import RotationConverterTab
 from rotation_converter.ui.pyqt6.screw_visualiser_tab import ScrewVisualiserTab
 from rotation_converter.ui.pyqt6.trajectory_tab import TrajectoryPlotsTab
+
+logger = logging.getLogger(__name__)
 
 # ── Theme integration (optional -- graceful fallback) ──────────────
 _THEME_AVAILABLE = False
@@ -120,9 +124,9 @@ class RotationConverterMainWindow(QMainWindow):
                 mgr = get_theme_manager()
                 mgr.apply_theme_to_window(self)
                 mgr.themeChanged.connect(self._on_theme_changed)
-            except Exception:  # noqa: BLE001
+            except Exception as e:  # noqa: BLE001
                 # Theme system is optional; window still works without it.
-                pass
+                logger.warning("Failed to apply theme: %s", e, exc_info=True)
 
     def _on_theme_changed(self, theme_name: str) -> None:
         """Refresh all plots when the theme changes."""
