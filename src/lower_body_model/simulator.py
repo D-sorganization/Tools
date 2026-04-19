@@ -95,7 +95,7 @@ class LowerBodySimulator:
             ("knee_flexion", knee_flexion),
             ("foot_angle", foot_angle),
         ):
-            if isinstance(value, bool) or not isinstance(value, (int, float)):
+            if isinstance(value, bool) or not isinstance(value, int | float):
                 raise TypeError(
                     f"{name} must be a real number, got {type(value).__name__}"
                 )
@@ -309,7 +309,7 @@ class LowerBodySimulator:
             ("orientation_kp", orientation_kp),
             ("orientation_kd", orientation_kd),
         ):
-            if isinstance(value, bool) or not isinstance(value, (int, float)):
+            if isinstance(value, bool) or not isinstance(value, int | float):
                 raise TypeError(
                     f"{name} must be a real number, got {type(value).__name__}"
                 )

@@ -1,3 +1,4 @@
+# CI dispatch marker 2026-04-18
 name: CI Standard
 on:
   repository_dispatch:
@@ -74,7 +75,9 @@ jobs:
 
       - name: Reject Raw Merge Conflict Markers
         run: |
-          if grep -rne '<<<<<<< HEAD' . --exclude-dir=.git --exclude-dir=.github; then
+          conflict_marker='<<<<<'
+          conflict_marker="${conflict_marker}<< HEAD"
+          if grep -rne "$conflict_marker" . --exclude-dir=.git --exclude-dir=.github; then
             echo "::error::Raw git merge conflict markers found!"
             exit 1
           fi
@@ -232,7 +235,9 @@ jobs:
 
       - name: Reject Raw Merge Conflict Markers
         run: |
-          if grep -rne '<<<<<<< HEAD' . --exclude-dir=.git --exclude-dir=.github; then
+          conflict_marker='<<<<<'
+          conflict_marker="${conflict_marker}<< HEAD"
+          if grep -rne "$conflict_marker" . --exclude-dir=.git --exclude-dir=.github; then
             echo "::error::Raw git merge conflict markers found!"
             exit 1
           fi
@@ -264,11 +269,11 @@ jobs:
             # Only collect changed tests from the repo-level tests/ directory.
             # src/**/tests/ are package-local tests requiring per-package deps
             # (ezdxf, signal_bus, GPU libs, Qt display, etc.) not installed in CI.
-            git diff --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' > changed_test_files.txt
+            git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' > changed_test_files.txt
           elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
-            git diff --name-only "${{ github.event.before }}" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' > changed_test_files.txt
+            git diff --diff-filter=ACMRT --name-only "${{ github.event.before }}" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' > changed_test_files.txt
           else
-            git diff --name-only HEAD~1 HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
+            git diff --diff-filter=ACMRT --name-only HEAD~1 HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
           fi
           cat changed_test_files.txt
 

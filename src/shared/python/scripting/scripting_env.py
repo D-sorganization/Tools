@@ -141,7 +141,7 @@ class ConsoleEnvironment:
         except Exception as e:  # noqa: BLE001
             sys.stderr.write(f"Error loading user library: {e}\n")
 
-    def execute(self, source: str) -> tuple[str, str]:
+    def execute(self, source: str | None) -> tuple[str, str]:
         """Execute a block of source code, capturing stdout and stderr.
 
         Args:
@@ -150,7 +150,8 @@ class ConsoleEnvironment:
         Returns:
             (stdout_output, stderr_output)
         """
-        assert source is not None, "source must be provided"
+        if source is None:
+            raise ValueError("source must be provided")
         if not source.strip():
             return "", ""
 
@@ -173,6 +174,9 @@ class ConsoleEnvironment:
                     code_obj = compile(source, "<console>", "exec")
                     exec(code_obj, self.namespace)  # nosec B102
 
+        except (SystemExit, KeyboardInterrupt):
+            # Always re-raise system signals
+            raise
         except Exception:  # noqa: BLE001
             # Intentional broad catch: any user-code error is captured and
             # formatted REPL-style so the console displays it rather than

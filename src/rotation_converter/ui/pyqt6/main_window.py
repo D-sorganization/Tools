@@ -20,6 +20,8 @@ Shared plotting helpers live in plot_helpers.py.
 
 from __future__ import annotations
 
+import logging
+
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QMainWindow,
@@ -36,6 +38,8 @@ from rotation_converter.ui.pyqt6.rigid_transform_tab import RigidTransformTab
 from rotation_converter.ui.pyqt6.rotation_tab import RotationConverterTab
 from rotation_converter.ui.pyqt6.screw_visualiser_tab import ScrewVisualiserTab
 from rotation_converter.ui.pyqt6.trajectory_tab import TrajectoryPlotsTab
+
+logger = logging.getLogger(__name__)
 
 # ── Theme integration (optional -- graceful fallback) ──────────────
 _THEME_AVAILABLE = False
@@ -94,11 +98,13 @@ class RotationConverterMainWindow(QMainWindow):
 
     def _build_menus(self) -> None:
         menu_bar = self.menuBar()
-        assert menu_bar is not None
+        if menu_bar is None:
+            raise RuntimeError("Rotation converter menu bar is unavailable")
 
         # File menu
         file_menu = menu_bar.addMenu("&File")
-        assert file_menu is not None
+        if file_menu is None:
+            raise RuntimeError("Rotation converter File menu is unavailable")
         quit_action = QAction("&Quit", self)
         quit_action.setShortcut("Ctrl+Q")
         quit_action.triggered.connect(self.close)
@@ -106,7 +112,8 @@ class RotationConverterMainWindow(QMainWindow):
 
         # Help menu
         help_menu = menu_bar.addMenu("&Help")
-        assert help_menu is not None
+        if help_menu is None:
+            raise RuntimeError("Rotation converter Help menu is unavailable")
         about = QAction("&About", self)
         about.triggered.connect(self._show_about)
         help_menu.addAction(about)
@@ -117,9 +124,9 @@ class RotationConverterMainWindow(QMainWindow):
                 mgr = get_theme_manager()
                 mgr.apply_theme_to_window(self)
                 mgr.themeChanged.connect(self._on_theme_changed)
-            except Exception:  # noqa: BLE001
+            except Exception as e:  # noqa: BLE001
                 # Theme system is optional; window still works without it.
-                pass
+                logger.warning("Failed to apply theme: %s", e, exc_info=True)
 
     def _on_theme_changed(self, theme_name: str) -> None:
         """Refresh all plots when the theme changes."""

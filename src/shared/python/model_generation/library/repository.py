@@ -279,7 +279,7 @@ class GitHubRepository(Repository):
                     models.extend(sub_models)
 
         except (PermissionError, OSError) as e:
-            logger.warning(f"Failed to scan {path}: {e}")
+            logger.exception(f"Failed to scan {path}: {e}")
 
         return models
 
@@ -337,7 +337,15 @@ class GitHubRepository(Repository):
                         item.get("download_url")
                         or f"{self.RAW_BASE}/{self._owner}/{self._repo}/{self._branch}/{item['path']}"
                     )
-                    local_file = local_mesh_dir / item["name"]
+                    mesh_base = local_mesh_dir.resolve()
+                    local_file = (local_mesh_dir / item["name"]).resolve()
+                    try:
+                        local_file.relative_to(mesh_base)
+                    except ValueError as exc:
+                        raise ValueError(
+                            f"Mesh filename escapes destination: {item['name']!r}"
+                        ) from exc
+
                     try:
                         _urlretrieve_https(raw_url, local_file)
                     except (PermissionError, OSError) as e:
@@ -348,7 +356,7 @@ class GitHubRepository(Repository):
                         )
 
         except (PermissionError, OSError, ValueError) as e:
-            logger.warning("Failed to download meshes for %s: %s", model_dir, e)
+            logger.exception("Failed to download meshes for %s: %s", model_dir, e)
 
     def _safe_extract_zip(self, zf: zipfile.ZipFile, destination: Path) -> None:
         """Extract zip members after validating they stay under destination."""
