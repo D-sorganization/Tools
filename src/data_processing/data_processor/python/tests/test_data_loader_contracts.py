@@ -10,8 +10,6 @@ These tests follow the Test-Driven Development pattern used across the fleet:
 
 from __future__ import annotations
 
-import os
-
 import pandas as pd
 import pytest
 

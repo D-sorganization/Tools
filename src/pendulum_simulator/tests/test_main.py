@@ -5,7 +5,6 @@ global event filters like Ctrl+Wheel UI zooming.
 """
 
 import logging
-import sys
 from typing import Any
 from unittest.mock import MagicMock, patch
 
