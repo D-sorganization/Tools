@@ -57,17 +57,6 @@ def _jit(*args, **kwargs):  # noqa: ANN002, ANN003, ANN202
 numba_stub.jit = _jit
 sys.modules.setdefault("numba", numba_stub)
 
-io_stub = types.ModuleType("upstream_drift_tools.data_processing.io")
-io_stub.DataReader = object
-io_stub.DataWriter = object
-io_stub.FileFormatDetector = object
-sys.modules.setdefault("upstream_drift_tools", types.ModuleType("upstream_drift_tools"))
-sys.modules.setdefault(
-    "upstream_drift_tools.data_processing",
-    types.ModuleType("upstream_drift_tools.data_processing"),
-)
-sys.modules.setdefault("upstream_drift_tools.data_processing.io", io_stub)
-
 from data_processor.ui.folder_tool_tab import FolderToolMixin
 from data_processor.ui.format_converter_tab import FormatConverterMixin
 

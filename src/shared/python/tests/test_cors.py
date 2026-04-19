@@ -11,19 +11,25 @@ from cors import (
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from contracts import PreconditionError, set_contracts_enabled
+from contracts import (
+    ContractLevel,
+    PreconditionError,
+    get_contract_level,
+    set_contract_level,
+)
 
 
 @pytest.fixture
 def clean_env() -> Any:
-    set_contracts_enabled(True)
+    old_contract_level = get_contract_level()
+    set_contract_level(ContractLevel.ENFORCE)
     old = os.environ.get("CORS_ORIGINS")
     if "CORS_ORIGINS" in os.environ:
         del os.environ["CORS_ORIGINS"]
     yield
     if old is not None:
         os.environ["CORS_ORIGINS"] = old
-    set_contracts_enabled(False)
+    set_contract_level(old_contract_level)
 
 
 def get_cors_origins(app: FastAPI) -> list[str]:
