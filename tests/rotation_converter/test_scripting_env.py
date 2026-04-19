@@ -65,6 +65,17 @@ class TestConsoleEnvironment(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "source must be provided"):
             self.env.execute(None)
 
+    def test_execute_propagates_unexpected_custom_exception(self) -> None:
+        """Unexpected custom exceptions should not be silently swallowed."""
+        source = (
+            "class UnexpectedConsoleFailure(Exception):\n"
+            "    pass\n"
+            "raise UnexpectedConsoleFailure('boom')"
+        )
+
+        with self.assertRaisesRegex(Exception, "boom"):
+            self.env.execute(source)
+
     def test_user_functions(self) -> None:
         """Test saving and loading user-defined functions."""
         with tempfile.TemporaryDirectory() as tmpdir:

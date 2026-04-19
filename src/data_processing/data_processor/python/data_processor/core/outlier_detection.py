@@ -269,7 +269,6 @@ class OutlierDetector:
 
         return mask, max_z
 
-    @jit(nopython=True, fastmath=True)
     def _detect_modified_zscore(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Modified Z-score (MAD-based) outlier detection."""
         if not (X is not None):
@@ -291,7 +290,6 @@ class OutlierDetector:
 
         return mask, max_z
 
-    @jit(nopython=True, fastmath=True)
     def _detect_iqr(self, X: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """IQR-based outlier detection."""
         if not (X is not None):

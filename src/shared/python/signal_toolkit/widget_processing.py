@@ -48,6 +48,10 @@ logger = logging.getLogger(__name__)
 _MAX_HISTORY = 50
 
 
+class SignalGenerationError(ValueError):
+    """Raised when signal generation cannot produce a valid signal."""
+
+
 class ProcessingMixin:
     """Mixin providing signal processing methods for SignalToolkitWidget."""
 
@@ -122,6 +126,18 @@ class ProcessingMixin:
         signal_type = w.signal_type_combo.currentText()
 
         try:
+            self._generate_signal_or_raise(w, t, signal_type)
+        except SignalGenerationError as exc:
+            self._report_generation_error(str(exc))
+
+    def _generate_signal_or_raise(
+        self,
+        w: WidgetProtocol,
+        t: np.ndarray,
+        signal_type: str,
+    ) -> None:
+        """Generate the selected signal without opening GUI dialogs."""
+        try:
             if signal_type == "Sinusoid":
                 w.current_signal = SignalGenerator.sinusoid(
                     t,
@@ -184,29 +200,37 @@ class ProcessingMixin:
                 )
             elif signal_type == "Custom":
                 expr = w.custom_expr.text()
-                if expr:
-                    # Safe evaluation
-                    safe_dict = {
-                        "sin": np.sin,
-                        "cos": np.cos,
-                        "tan": np.tan,
-                        "exp": np.exp,
-                        "log": np.log,
-                        "sqrt": np.sqrt,
-                        "pi": np.pi,
-                        "t": t,
-                    }
-                    values = safe_eval(expr, safe_dict)
-                    w.current_signal = Signal(t, values, name="custom")
-                else:
+                if not expr:
                     return
+                safe_dict = {
+                    "sin": np.sin,
+                    "cos": np.cos,
+                    "tan": np.tan,
+                    "exp": np.exp,
+                    "log": np.log,
+                    "sqrt": np.sqrt,
+                    "pi": np.pi,
+                    "t": t,
+                }
+                values = safe_eval(expr, safe_dict)
+                w.current_signal = Signal(t, values, name="custom")
+            else:
+                return
 
             w.original_signal = w.current_signal.copy()
             self._update_plot()
             self._log(f"Generated {signal_type} signal")
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
-            QMessageBox.warning(self, "Error", f"Failed to generate signal: {e}")  # type: ignore[arg-type]
+            raise SignalGenerationError(f"Failed to generate signal: {e}") from e
+
+    def _report_generation_error(self, message: str) -> None:
+        """Report signal-generation errors without coupling to QMessageBox."""
+        handler = getattr(self, "show_generation_error", None)
+        if callable(handler):
+            handler(message)
+            return
+        logger.warning(message)
 
     # ------------------------------------------------------------------
     # Fitting
