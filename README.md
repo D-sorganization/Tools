@@ -74,32 +74,6 @@ The repository provides a unified launcher system for accessing all tools. The c
 
 See [Launcher Hierarchy & Guide](docs/LAUNCHERS.md) for detailed documentation.
 
-#### Launcher Hierarchy
-
-1. **`UnifiedToolsLauncher.py`** (Primary) - Use this for all new development and general usage
-
-   - Location: Repository root
-   - Type: PyQt6 GUI application
-   - Status: ✅ Active and maintained
-   - Entry point: `python UnifiedToolsLauncher.py`
-
-2. **`launch_tools_main.py`** (Legacy CLI) - Deprecated
-
-   - Location: Repository root
-   - Type: Command-line interface
-   - Status: ⚠️ Deprecated - retained for backwards compatibility only
-   - Migration: Use `UnifiedToolsLauncher.py` instead
-
-3. **`Launcher.py`** (Legacy GUI) - No longer maintained
-   - Location: Repository root (if exists)
-   - Type: Original GUI launcher
-   - Status: ❌ Migrated to `UnifiedToolsLauncher.py`
-   - Migration: Use `UnifiedToolsLauncher.py` instead
-
-> **Important:** `tools_launcher.py` does not exist and any references to it are outdated. Use `UnifiedToolsLauncher.py` as the canonical entry point.
-
-> **Note:** Legacy launchers will be removed in v2.0. Please migrate to `UnifiedToolsLauncher.py`.
-
 ## 🚀 Quick Start
 
 ### Prerequisites

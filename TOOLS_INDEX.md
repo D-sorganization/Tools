@@ -1,7 +1,7 @@
 # Tools Repository Index
 
-> Last updated: 2026-02-27
-> Canonical inventory: docs/development/TOOLS_REPOSITORY_INVENTORY_2026-02-27.md
+> Last updated: 2026-04-19
+> Canonical inventory: docs/development/TOOLS_REPOSITORY_INVENTORY_2026-04-17.md
 
 This file is the stable entry point for tool discovery. The dated inventory document contains the current, machine-verified surface map and implementation gaps.
 

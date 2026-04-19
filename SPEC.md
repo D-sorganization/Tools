@@ -32,13 +32,13 @@
 
 ## 2. Purpose & Mission
 
-Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+Comprehensive monorepo housing 29+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
 
 ### Goals
 
-- Deliver 45+ modular engineering calculation tools with consistent interfaces
+- Deliver 29+ modular engineering calculation tools with consistent interfaces
 - Provide PyQt6 GUI launcher (UnifiedToolsLauncher) for tool discovery and execution
 - Implement plugin discovery and loading system for extensibility
 - Build Rust numerical kernels for performance-critical operations
@@ -124,7 +124,7 @@ Tools/
 | Shared Utilities         | `src/python/shared_utilities/`                                                         | Common functions, decorators, error handling                                                                                                                                                                        |
 | Pressure Drop Calculator | `src/shared/python/upstream_drift_tools/process_calculators/pressure_drop_calculator/` | Facade-driven gas pressure-drop workflows with extracted API, validation, reference, results, and engine-domain helper modules                                                                                      |
 | Model Generation API     | `src/shared/python/model_generation/api/`                                              | Route facade with framework-specific Flask and FastAPI adapters behind a compatibility shim, plus repository download helpers that require HTTPS downloads and validate archive and mesh paths to prevent traversal |
-| Engineering Tools        | `src/tools/`                                                                           | 45+ specialized calculation and processing tools                                                                                                                                                                    |
+| Engineering Tools        | `src/tools/`                                                                           | 29+ specialized calculation and processing tools                                                                                                                                                                    |
 | Data Processing          | `src/data_processing/`                                                                 | Pipelines, transformers, validators, and facade-based data-processor core modules for exporter, ANOVA, vectorized filter workflows, and pickle-safe file I/O defaults                                               |
 | Document Processing      | `src/document_processing/`                                                             | PDF extraction, text processing                                                                                                                                                                                     |
 | Media Processing         | `src/media_processing/`                                                                | Audio and video utilities                                                                                                                                                                                           |
@@ -142,7 +142,7 @@ Tools/
 | #   | Feature                             | Status | Description                                                                                   |
 | --- | ----------------------------------- | ------ | --------------------------------------------------------------------------------------------- |
 | F1  | UnifiedToolsLauncher (PyQt6 GUI)    | ✅     | Main entry point with tool discovery, search, favorites, and launch                           |
-| F2  | 45+ engineering calculation tools   | ✅     | Diverse tools for calculations, conversions, analysis                                         |
+| F2  | 29+ engineering calculation tools   | ✅     | Diverse tools for calculations, conversions, analysis                                         |
 | F3  | Rust math primitives                | ✅     | Performance-critical numerical operations in Rust                                             |
 | F4  | Shared upstream_drift_tools library | ✅     | Common utilities for drift detection and analysis                                             |
 | F5  | Plugin discovery system             | ✅     | Auto-discover tools via plugin registry, support dynamic loading                              |
