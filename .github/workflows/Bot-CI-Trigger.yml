@@ -39,7 +39,7 @@ concurrency:
 jobs:
   # ── Dispatcher: try self-hosted first, fall back to cloud ──────────────────
   pick-runner:
-    runs-on: d-sorg-fleet
+    runs-on: ubuntu-latest
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -179,8 +179,10 @@ jobs:
               continue
             fi
 
-            gh workflow run ci-standard.yml --repo "$REPO" --ref "$branch" 2>/dev/null || \
-              echo "workflow_dispatch unavailable for PR #$pr (may need BOT_PAT with workflow scope)"
+            if ! gh workflow run ci-standard.yml --repo "$REPO" --ref "$branch"; then
+              echo "::error::workflow_dispatch failed for PR #$pr on branch $branch"
+              exit 1
+            fi
 
             echo "CI triggered for PR #$pr"
             sleep 5
