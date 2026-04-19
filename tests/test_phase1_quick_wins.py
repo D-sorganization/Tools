@@ -46,6 +46,31 @@ class TestLegacyDirCleanup:
         assert "/web_applications/calculator/" in gitignore
 
 
+class TestTopLevelArtifactCleanup:
+    """Verify stale root-level artifacts are removed and ignored."""
+
+    def test_gitignore_blocks_root_artifacts(self):
+        gitignore = (REPO_ROOT / ".gitignore").read_text()
+        for entry in (
+            "/.ci_trigger.py",
+            "/MUJOCO_LOG.TXT",
+            "/error_log.txt",
+            "/wave_log.txt",
+            "/*Last",
+        ):
+            assert entry in gitignore
+
+    def test_root_artifacts_are_not_present(self):
+        for relative_path in (
+            ".ci_trigger.py",
+            "MUJOCO_LOG.TXT",
+            "error_log.txt",
+            "wave_log.txt",
+            "Last",
+        ):
+            assert not (REPO_ROOT / relative_path).exists(), relative_path
+
+
 # =========================================================================
 # #627 - NotImplementedError stubs
 # =========================================================================

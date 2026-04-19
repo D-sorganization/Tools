@@ -54,6 +54,14 @@ class TestVec2:
         v = Vec2(2, 3) * 2.0
         assert v == Vec2(4, 6)
 
+    def test_addition_rejects_non_vector(self) -> None:
+        with pytest.raises(TypeError, match="Vec2 \\+ Vec2 required"):
+            Vec2(1, 2) + object()
+
+    def test_scalar_multiply_rejects_non_numeric(self) -> None:
+        with pytest.raises(TypeError, match="Vec2 \\* scalar required"):
+            Vec2(1, 2) * object()
+
     def test_rmul(self) -> None:
         v = 3.0 * Vec2(1, 2)
         assert v == Vec2(3, 6)
@@ -106,15 +114,15 @@ class TestRigidBody:
         assert body.moment_of_inertia == 5.0
 
     def test_negative_mass_raises(self) -> None:
-        with pytest.raises((AssertionError, ValueError)):
+        with pytest.raises(ValueError, match="mass must be positive"):
             RigidBody(mass=-1.0, moment_of_inertia=1.0)
 
     def test_zero_mass_raises(self) -> None:
-        with pytest.raises((AssertionError, ValueError)):
+        with pytest.raises(ValueError, match="mass must be positive"):
             RigidBody(mass=0.0, moment_of_inertia=1.0)
 
     def test_zero_moi_raises(self) -> None:
-        with pytest.raises((AssertionError, ValueError)):
+        with pytest.raises(ValueError, match="moment_of_inertia must be positive"):
             RigidBody(mass=1.0, moment_of_inertia=0.0)
 
     def test_speed_at_rest(self) -> None:
@@ -155,12 +163,16 @@ class TestMomentOfInertia:
         assert moment_of_inertia_rod(12.0, 1.0) == pytest.approx(1.0)
 
     def test_disk_zero_radius_raises(self) -> None:
-        with pytest.raises((AssertionError, ValueError)):
+        with pytest.raises(ValueError, match="radius must be positive"):
             moment_of_inertia_disk(1.0, 0.0)
 
     def test_ellipse_zero_axis_raises(self) -> None:
-        with pytest.raises((AssertionError, ValueError)):
+        with pytest.raises(ValueError, match="ellipse semi-axes must be positive"):
             moment_of_inertia_ellipse(1.0, 0.0, 1.0)
+
+    def test_rod_zero_length_raises(self) -> None:
+        with pytest.raises(ValueError, match="length must be positive"):
+            moment_of_inertia_rod(1.0, 0.0)
 
 
 # ---------------------------------------------------------------------------
@@ -224,6 +236,10 @@ class TestComputeJumpImpulse:
         assert J.length() == pytest.approx(0.0)
         assert at == pytest.approx(0.0)
         assert jt == pytest.approx(0.0)
+
+    def test_negative_force_raises_value_error(self) -> None:
+        with pytest.raises(ValueError, match="force_magnitude must be non-negative"):
+            compute_jump_impulse(-1.0, 0.0, Vec2(), Vec2(), Vec2(1, 0))
 
 
 class TestApplyImpulse:
@@ -291,7 +307,7 @@ class TestSpringLaunch:
         assert result is None
 
     def test_invalid_duration_raises(self) -> None:
-        with pytest.raises((AssertionError, ValueError)):
+        with pytest.raises(ValueError, match="duration must be positive"):
             SpringLaunch(
                 total_impulse=100.0,
                 force_direction_rad=0.0,
@@ -300,6 +316,22 @@ class TestSpringLaunch:
                 jumper_com=Vec2(0, 1),
                 duration=0.0,  # invalid
             )
+
+    def test_negative_total_impulse_raises(self) -> None:
+        with pytest.raises(ValueError, match="total_impulse must be non-negative"):
+            SpringLaunch(
+                total_impulse=-1.0,
+                force_direction_rad=0.0,
+                contact_point=Vec2(),
+                asteroid_com=Vec2(),
+                jumper_com=Vec2(0, 1),
+                duration=0.1,
+            )
+
+    def test_step_zero_dt_raises(self) -> None:
+        spring = self._make_spring()
+        with pytest.raises(ValueError, match="dt must be positive"):
+            spring.step(0.0)
 
 
 # ---------------------------------------------------------------------------
@@ -321,7 +353,7 @@ class TestIntegration:
 
     def test_zero_dt_raises(self) -> None:
         body = RigidBody(mass=1.0, moment_of_inertia=1.0)
-        with pytest.raises((AssertionError, ValueError)):
+        with pytest.raises(ValueError, match="dt must be positive"):
             integrate_body(body, 0.0)
 
 
@@ -340,6 +372,16 @@ class TestMomentumConservation:
         state = self._system_at_rest()
         p = state.total_linear_momentum
         assert p.length() == pytest.approx(0.0)
+
+    def test_sim_state_rejects_same_body(self) -> None:
+        body = RigidBody(mass=1.0, moment_of_inertia=1.0)
+        with pytest.raises(ValueError, match="asteroid and jumper must differ"):
+            SimState(asteroid=body, jumper=body)
+
+    def test_step_simulation_zero_dt_raises(self) -> None:
+        state = self._system_at_rest()
+        with pytest.raises(ValueError, match="dt must be positive"):
+            step_simulation(state, 0.0)
 
     def test_momentum_conserved_through_colinear_jump(self) -> None:
         state = self._system_at_rest()
