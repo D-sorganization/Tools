@@ -40,6 +40,14 @@ const initialState: DataProcessorState = {
   savedPlotConfigs: {},
 };
 
+function copyOwnRowProperties(row: DataRow): DataRow {
+  const newRow: DataRow = {};
+  for (const key of Object.keys(row)) {
+    newRow[key] = row[key];
+  }
+  return newRow;
+}
+
 export function useDataProcessor() {
   const [state, setState] = useState<DataProcessorState>(initialState);
 
@@ -54,11 +62,25 @@ export function useDataProcessor() {
       let count = 0;
       let sum = 0;
 
-      // Pass 1: count and sum
+      // ⚡ Bolt Optimization: Extract numerical values into a dynamically growing Float64Array
+      // in a single pass over the object array. This avoids a second O(N) object property access loop
+      // while preventing memory exhaustion for highly sparse columns.
+      let capacity = Math.min(dataLen, 1024);
+      let buffer = new Float64Array(capacity);
+
       for (let i = 0; i < dataLen; i++) {
         const v = data[i][signal];
         if (typeof v === 'number' && !Number.isNaN(v)) {
           sum += v;
+
+          if (count >= capacity) {
+            capacity = Math.min(dataLen, capacity * 2);
+            const newBuffer = new Float64Array(capacity);
+            newBuffer.set(buffer);
+            buffer = newBuffer;
+          }
+
+          buffer[count] = v;
           count++;
         }
       }
@@ -66,19 +88,12 @@ export function useDataProcessor() {
       if (count === 0) continue;
 
       const mean = sum / count;
+      const vals = buffer.subarray(0, count);
 
       let varianceSum = 0;
-      const vals = new Float64Array(count);
-      let j = 0;
-
-      // Pass 2: calculate variance and collect for sorting
-      for (let i = 0; i < dataLen; i++) {
-        const v = data[i][signal];
-        if (typeof v === 'number' && !Number.isNaN(v)) {
-          const diff = v - mean;
-          varianceSum += diff * diff;
-          vals[j++] = v;
-        }
+      for (let i = 0; i < count; i++) {
+        const diff = vals[i] - mean;
+        varianceSum += diff * diff;
       }
 
       const variance = varianceSum / count;
@@ -180,11 +195,8 @@ export function useDataProcessor() {
         for (let i = 0; i < len; i++) {
           // ⚡ Bolt Optimization: Replace object spread { ...data[i] } with a manual property copy.
           // Performance impact: Significantly reduces memory allocation and garbage collection overhead in tight loops.
-          const newRow: DataRow = {};
           const row = data[i];
-          for (const key in row) {
-            newRow[key] = row[key];
-          }
+          const newRow = copyOwnRowProperties(row);
 
           for (const signal of selectedSignals) {
             newRow[signal] = filteredSignals.get(signal)![i];
@@ -246,10 +258,7 @@ export function useDataProcessor() {
           const row = filteredData[i];
           // ⚡ Bolt Optimization: Replace object spread { ...row } with a manual property copy.
           // Performance impact: Significantly reduces memory allocation and garbage collection overhead in tight loops.
-          const newRow: DataRow = {};
-          for (const key in row) {
-            newRow[key] = row[key];
-          }
+          const newRow = copyOwnRowProperties(row);
 
           if (i === 0) {
             // Initialize cumulative values to 0
@@ -327,10 +336,7 @@ export function useDataProcessor() {
           const row = filteredData[i];
           // ⚡ Bolt Optimization: Replace object spread { ...row } with a manual property copy.
           // Performance impact: Significantly reduces memory allocation and garbage collection overhead in tight loops.
-          const newRow: DataRow = {};
-          for (const key in row) {
-            newRow[key] = row[key];
-          }
+          const newRow = copyOwnRowProperties(row);
 
           if (i === 0 || i === len - 1) {
             for (let j = 0; j < config.signals.length; j++) {
@@ -651,12 +657,7 @@ export function useDataProcessor() {
 
         for (let i = 0; i < len; i++) {
           const row = filteredData[i];
-          const newRow: DataRow = {};
-
-          // Manual copy to avoid object spread operator overhead
-          for (const key in row) {
-            newRow[key] = row[key];
-          }
+          const newRow = copyOwnRowProperties(row);
 
           try {
             // Populate args directly to avoid inner array.map()

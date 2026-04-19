@@ -49,3 +49,6 @@
 ## 2026-04-14 - [Inline Error Feedback & Focus Improvements]
 **Learning:** Native `alert()` dialogs used for errors (e.g., failed exports or imports) disrupt user flow, block interaction, and break from the app's visual theme. Furthermore, some interactive UI elements may lack keyboard focus rings.
 **Action:** Replace `alert()` with inline UI elements (e.g., `<div role="alert">`) to provide non-blocking error feedback. Always ensure custom or unstyled buttons include `focus-visible` utility classes to support keyboard navigation.
+## 2026-04-15 - Contextless Dynamic Text Readouts
+**Learning:** Raw dynamic text like "03:45 / 10:00" in a video player or "3 detections" provides no contextual meaning to screen readers if the visual context is purely decorative or uses aria-hidden.
+**Action:** When displaying timers, numeric readings, or dynamic status values, prepend a visually hidden `<span className="sr-only">` label (e.g., `<span className="sr-only">Current time:</span>`) right before the raw value so assistive tech announces "Current time: 03:45" instead of just the numbers. Ensure purely decorative visual context like pulsing dots have `aria-hidden="true"`.
