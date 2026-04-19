@@ -8,7 +8,9 @@ sympy>=1.12  # Symbolic mathematics and algebra
 # Testing & Quality Assurance
 pytest>=8.2.0  # Testing framework
 pytest-cov  # Coverage plugin for pytest (code coverage metrics)
-ruff  # Fast Python linter and formatter (replaces flake8/black)
+pytest-timeout>=2.0.0  # Per-test timeouts (matches pyproject dev extras)
+pytest-benchmark>=4.0.0  # Benchmarks (matches pyproject dev extras)
+ruff>=0.14,<1.0  # Fast Python linter and formatter (replaces flake8/black); pinned floor matches lock
 mypy==1.13.0  # Static type checker for Python (pinned to match CI workflow)
 types-PyYAML  # Type stubs for PyYAML (static typing)
 types-requests  # Type stubs for requests library (static typing)
