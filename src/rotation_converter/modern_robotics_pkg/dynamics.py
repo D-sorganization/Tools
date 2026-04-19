@@ -363,4 +363,3 @@ def SimulateControl(
     taumat = np.array(taumat).T
     thetamat = np.array(thetamat).T
     return (taumat, thetamat)
-

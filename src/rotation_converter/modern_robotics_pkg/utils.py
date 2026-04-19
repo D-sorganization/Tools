@@ -97,4 +97,3 @@ def TestIfSO3(mat: np.ndarray) -> bool:
 def TestIfSE3(mat: np.ndarray) -> bool:
     """Returns true if mat is close to or on the manifold SE(3)."""
     return abs(DistanceToSE3(mat)) < 1e-3
-

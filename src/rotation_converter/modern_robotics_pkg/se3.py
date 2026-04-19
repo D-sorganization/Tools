@@ -151,4 +151,3 @@ def MatrixLog6(T: Any) -> np.ndarray:
     result[:3, :3] = omega_mat
     result[:3, 3] = (G_inv @ p) * theta
     return result
-
