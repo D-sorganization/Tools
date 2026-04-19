@@ -143,3 +143,19 @@ class TestPathSafety:
         response = client.get("/api/models/../../etc/passwd")
         # Should either 404 or 400, but NOT serve the file
         assert response.status_code in (400, 403, 404)
+
+    def test_upload_rejects_traversal_filename(self, client) -> None:  # type: ignore[no-untyped-def]
+        """Upload should reject traversal filenames."""
+        response = client.post(
+            "/api/upload",
+            files={"file": ("../../etc/passwd", b"<robot />")},
+        )
+        assert response.status_code == 400
+
+    def test_upload_rejects_path_separators(self, client) -> None:  # type: ignore[no-untyped-def]
+        """Upload should reject filename paths with separators."""
+        response = client.post(
+            "/api/upload",
+            files={"file": ("nested/robot.urdf", b"<robot />")},
+        )
+        assert response.status_code == 400

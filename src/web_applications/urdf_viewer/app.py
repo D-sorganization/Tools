@@ -85,6 +85,11 @@ async def read_root() -> FileResponse:
 def get_safe_path(filename: str) -> Path:
     """Sanitize and validate the filename to prevent path traversal."""
     safe_name = os.path.basename(filename)
+    separators = {sep for sep in ("/", "\\", os.sep, os.path.altsep) if sep}
+    if any(sep in filename for sep in separators):
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    if safe_name != filename:
+        raise HTTPException(status_code=400, detail="Invalid filename")
 
     if not safe_name or safe_name in [".", ".."]:
         raise HTTPException(status_code=400, detail="Invalid filename")
