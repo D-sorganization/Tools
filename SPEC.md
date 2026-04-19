@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.10+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.74                                     |
-| **Last Spec Update**    | 2026-04-18 (updated for PR #2139)          |
+| **Spec Version**        | 1.1.75                                     |
+| **Last Spec Update**    | 2026-04-18 (updated for PR #2137)          |
 
 ## 2. Purpose & Mission
 
@@ -463,6 +463,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-04-18 | 1.1.75  | Optimized `calculateStatistics` in `useDataProcessor.ts` by extracting numbers into a dynamically resizing `Float64Array` during the first pass to eliminate a second pass over the original array of objects (PR #2137). |
 | 2026-04-18 | 1.1.74  | Disabled pickle-backed reads, writes, and file-dialog discovery in shared data-processing helpers and upstream drift tooling to prevent arbitrary code execution through unsafe deserialization (PR #2139). |
 | 2026-04-18 | 1.1.73  | Improved exception handling and signal re-raising in rotation converter UI threads, scripting environment, and model library imports by capturing background thread exceptions, adding structured logging, and re-raising with context (PR #2088). |
 | 2026-04-18 | 1.1.72  | Enhanced data processor exception handling by wrapping background threading tasks with try-except blocks that log exceptions and propagate errors to the main thread instead of silently failing (PR #2084). |
