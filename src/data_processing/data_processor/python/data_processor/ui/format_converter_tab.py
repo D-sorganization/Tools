@@ -532,9 +532,15 @@ class FormatConverterMixin:
             )
             self.converter_progress.set(1.0)
 
-        except (PermissionError, OSError) as e:
+        except Exception as e:
             self._log_conversion_message(f"Conversion error: {str(e)}")
             self.converter_status_label.configure(text="Conversion failed")
+            # Log the full traceback for debugging
+            import logging
+
+            logging.getLogger(__name__).exception(
+                "Unexpected error in format conversion: %s", e
+            )
         finally:
             self.converter_convert_button.configure(state="normal")
 
