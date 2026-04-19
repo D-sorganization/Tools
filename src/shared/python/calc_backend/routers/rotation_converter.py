@@ -5,6 +5,11 @@
    When ``math-primitives`` Rust bindings gain euler-convention and
    rodrigues support, this router should migrate to
    ``tools_core.math_primitives``.  See issue #1255.
+
+   The ``rotation_converter`` tool package is imported lazily (inside
+   request handlers) so that ``calc_backend`` can be imported without
+   ``rotation_converter`` on the path.  This preserves the shared→leaf
+   dependency direction per the LOD/architecture rules (#2080).
 """
 
 from __future__ import annotations
@@ -14,12 +19,6 @@ import warnings
 import numpy as np
 from fastapi import APIRouter, HTTPException
 
-# Suppress DeprecationWarning from rotation_converter import (we know it's deprecated)
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore", DeprecationWarning)
-    from rotation_converter.reference_frame_operations import (
-        compute_reference_frame_operation,
-    )
 from ..contracts.rotation_converter import (
     ReferenceFrameConversionRequest,
     ReferenceFrameConversionResponse,
@@ -126,6 +125,13 @@ def compute_reference_frame_conversion(
 ) -> ReferenceFrameConversionResponse:
     """Compute advanced reference-frame and Lie-group educational operations."""
     try:
+        # Lazy import: keeps calc_backend importable without rotation_converter
+        # on the path (architecture boundary — shared must not depend on tools).
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            from rotation_converter.reference_frame_operations import (  # noqa: PLC0415
+                compute_reference_frame_operation,
+            )
         result = compute_reference_frame_operation(
             request.operation,
             transform=request.transform,

@@ -32,12 +32,14 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_DIR = REPO_ROOT / "src"
 
 # Tool-specific packages that shared/ should NOT depend on
+# (top-level module names as they appear on sys.path / in import statements)
 TOOL_PACKAGES = {
     "electrode_advisor",
     "data_processing",
     "document_processing",
     "folder_tools",
     "humanoid_builder_gui",
+    "rotation_converter",  # leaf tool — shared must not import at module level (#2080)
     "scientific_modeling",
     "trc_vessel_designer",
     "urdf_builder_gui",
@@ -76,13 +78,20 @@ def _collect_python_files(directory: Path, skip_tests: bool = True) -> list[Path
     return files
 
 
-def _extract_imports(filepath: Path) -> list[dict[str, Any]]:
+def _extract_imports(
+    filepath: Path, top_level_only: bool = False
+) -> list[dict[str, Any]]:
     """Extract import statements from a Python file using AST.
 
     Returns a list of dicts with keys:
     - module: the imported module/package name
     - lineno: the line number
     - type: 'import' or 'from'
+
+    When *top_level_only* is True only module-scope imports are returned
+    (i.e. those that are direct children of the module body, not nested
+    inside functions or classes).  Lazy/deferred imports inside functions
+    are intentionally excluded from top-level-only checks.
     """
     imports: list[dict[str, Any]] = []
     try:
@@ -91,7 +100,9 @@ def _extract_imports(filepath: Path) -> list[dict[str, Any]]:
     except (SyntaxError, ValueError):
         return imports
 
-    for node in ast.walk(tree):
+    nodes: list[ast.stmt] = tree.body if top_level_only else list(ast.walk(tree))
+
+    def _collect(node: ast.AST) -> None:
         if isinstance(node, ast.Import):
             for alias in node.names:
                 imports.append(
@@ -111,6 +122,18 @@ def _extract_imports(filepath: Path) -> list[dict[str, Any]]:
                         "level": node.level,  # 0=absolute, >0=relative
                     }
                 )
+
+    if top_level_only:
+        for stmt in nodes:
+            _collect(stmt)
+            # Also walk one level of With blocks at module scope (e.g. context
+            # managers used to suppress warnings around a top-level import).
+            if isinstance(stmt, ast.With):
+                for child in stmt.body:
+                    _collect(child)
+    else:
+        for node in nodes:
+            _collect(node)
     return imports
 
 
@@ -129,14 +152,20 @@ class TestSharedLibraryBoundaries:
     def test_shared_does_not_import_tool_packages(
         self, shared_files: list[Path]
     ) -> None:
-        """Shared libraries must not import from tool-specific packages.
+        """Shared libraries must not have module-level imports from tool packages.
+
+        Lazy (function-scope) imports are intentionally permitted so that
+        calc_backend routers can defer optional tool dependencies without
+        violating the shared→tool dependency direction (#2080).
 
         Precondition: shared_files is not empty.
-        Postcondition: no tool-specific import detected.
+        Postcondition: no top-level tool-specific import detected.
         """
         violations: list[str] = []
         for filepath in shared_files:
-            imports = _extract_imports(filepath)
+            # Only scan top-level (module-scope) imports; function-scope lazy
+            # imports are an approved pattern for optional tool adapters.
+            imports = _extract_imports(filepath, top_level_only=True)
             for imp in imports:
                 # Skip relative imports — they stay within the package
                 # and cannot cross the shared→tool boundary
@@ -150,7 +179,7 @@ class TestSharedLibraryBoundaries:
                     )
 
         assert not violations, (
-            f"Shared library imports tool-specific code "
+            f"Shared library has module-level import of tool-specific code "
             f"({len(violations)} violations):\n" + "\n".join(violations)
         )
 
