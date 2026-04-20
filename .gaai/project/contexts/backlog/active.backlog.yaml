@@ -1216,11 +1216,12 @@ items:
     title: "[Fleet Assessment][G] Dependency versions are not consistently pinned"
     priority: medium
     status: done
-    started_at: "2026-04-20T09:09:43Z"
-    completed_at: "2026-04-20T09:15:21Z"
+    started_at: "2026-04-20T02:09:43-07:00"
+    completed_at: "2026-04-20T02:15:21-07:00"
     pr_url: "https://github.com/D-sorganization/Tools/pull/2179"
     pr_number: 2179
     pr_status: "open"
+    cost_usd: 1.5964
     github_issue: 1733
     artefact: .gaai/project/contexts/artefacts/stories/GH1733.story.md
     dependencies: []
