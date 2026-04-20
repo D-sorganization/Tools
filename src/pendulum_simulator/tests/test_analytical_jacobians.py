@@ -515,6 +515,25 @@ _JAX_PARAMS = (
 )
 
 
+def _assert_jac_keys_match(
+    helpers: dict, full: dict, keys: tuple, *, atol: float = 1e-10
+) -> None:
+    """Assert that helper Jacobian arrays match the full analytical Jacobians.
+
+    Extracted from three identical per-key assertion blocks in TestJacobianHelpers
+    to satisfy DRY.
+    """
+    import numpy as np
+
+    for key in keys:
+        np.testing.assert_allclose(
+            np.array(helpers[key]),
+            np.array(full[key]),
+            atol=atol,
+            err_msg=f"Mismatch in key '{key}'",
+        )
+
+
 @pytest.mark.skipif(not _JAX_PARAMS_AVAILABLE, reason="JAX not available")
 class TestJacobianHelpers:
     """GH1691: Private JAX Jacobian helper functions must produce results
@@ -568,13 +587,7 @@ class TestJacobianHelpers:
             tr["sin_re"],
             tr["cos_re"],
         )
-        for key in ("hub", "rs", "re", "rh"):
-            np.testing.assert_allclose(
-                np.array(helpers[key]),
-                np.array(full[key]),
-                atol=1e-10,
-                err_msg=f"Mismatch in key '{key}'",
-            )
+        _assert_jac_keys_match(helpers, full, ("hub", "rs", "re", "rh"))
 
     def test_left_arm_jacobians_match_full(self) -> None:
         """_left_arm_jacobians_jax output must match keys from full function."""
@@ -593,13 +606,7 @@ class TestJacobianHelpers:
             tr["sin_le"],
             tr["cos_le"],
         )
-        for key in ("ls", "le", "lh"):
-            np.testing.assert_allclose(
-                np.array(helpers[key]),
-                np.array(full[key]),
-                atol=1e-10,
-                err_msg=f"Mismatch in key '{key}'",
-            )
+        _assert_jac_keys_match(helpers, full, ("ls", "le", "lh"))
 
     def test_club_jacobians_match_full(self) -> None:
         """_club_jacobians_jax output must match keys from full function."""
@@ -620,13 +627,7 @@ class TestJacobianHelpers:
             tr["sin_club"],
             tr["cos_club"],
         )
-        for key in ("club_com", "club_tip"):
-            np.testing.assert_allclose(
-                np.array(helpers[key]),
-                np.array(full[key]),
-                atol=1e-10,
-                err_msg=f"Mismatch in key '{key}'",
-            )
+        _assert_jac_keys_match(helpers, full, ("club_com", "club_tip"))
 
     def test_helpers_return_correct_shapes(self) -> None:
         """Each Jacobian helper must return 2×8 arrays for all keys."""

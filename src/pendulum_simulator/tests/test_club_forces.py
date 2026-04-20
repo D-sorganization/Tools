@@ -273,8 +273,9 @@ class TestEquivalentCouple:
 class TestClubForceDecomposition:
     """Test the club_force_decomposition function with real physics."""
 
-    def test_overall_decomposition_returns_all_keys(self, default_params):
-        """Overall decomposition returns all expected keys."""
+    @pytest.fixture
+    def decomposition_result(self, default_params):
+        """Compute zero-state club force decomposition once for all tests."""
         from double_pendulum_golf.club_forces import club_force_decomposition
         from double_pendulum_golf.golfer_constraints import net_joint_forces
 
@@ -282,8 +283,12 @@ class TestClubForceDecomposition:
         qdot = np.zeros(8)
         qddot = np.zeros(8)
         forces = net_joint_forces(q, qdot, qddot, default_params)
-
         result = club_force_decomposition(q, qdot, qddot, default_params, forces)
+        return {"q": q, "qdot": qdot, "qddot": qddot, "forces": forces, "result": result}
+
+    def test_overall_decomposition_returns_all_keys(self, decomposition_result):
+        """Overall decomposition returns all expected keys."""
+        result = decomposition_result["result"]
         expected_keys = {
             "net_force",
             "action_point",
@@ -296,31 +301,16 @@ class TestClubForceDecomposition:
         }
         assert set(result.keys()) == expected_keys
 
-    def test_net_force_is_sum_of_hands(self, default_params):
+    def test_net_force_is_sum_of_hands(self, decomposition_result):
         """Net force in decomposition equals sum of hand forces."""
-        from double_pendulum_golf.club_forces import club_force_decomposition
-        from double_pendulum_golf.golfer_constraints import net_joint_forces
-
-        q = np.zeros(8)
-        qdot = np.zeros(8)
-        qddot = np.zeros(8)
-        forces = net_joint_forces(q, qdot, qddot, default_params)
-
-        result = club_force_decomposition(q, qdot, qddot, default_params, forces)
+        forces = decomposition_result["forces"]
+        result = decomposition_result["result"]
         expected = np.array(forces["rh"]) + np.array(forces["lh"])
         np.testing.assert_allclose(result["net_force"], expected)
 
-    def test_all_values_finite(self, default_params):
+    def test_all_values_finite(self, decomposition_result):
         """All returned values should be finite."""
-        from double_pendulum_golf.club_forces import club_force_decomposition
-        from double_pendulum_golf.golfer_constraints import net_joint_forces
-
-        q = np.zeros(8)
-        qdot = np.zeros(8)
-        qddot = np.zeros(8)
-        forces = net_joint_forces(q, qdot, qddot, default_params)
-
-        result = club_force_decomposition(q, qdot, qddot, default_params, forces)
+        result = decomposition_result["result"]
         for key, val in result.items():
             if isinstance(val, np.ndarray):
                 assert np.all(np.isfinite(val)), f"{key} has non-finite values"
@@ -374,9 +364,7 @@ class TestDELTAClubDecomposition:
         # So F = m*0 - m*(0, -g) = (0, m*g)
         # Net force should be +(m_rh + m_lh)*g in the y direction
         net_fy = result["net_force"][1]
-        expected_fy = (
-            default_params.m_r_fore + default_params.m_l_fore
-        ) * default_params.g
+        expected_fy = (default_params.m_r_fore + default_params.m_l_fore) * default_params.g
         assert net_fy == pytest.approx(expected_fy, rel=0.01)
 
 
@@ -437,22 +425,16 @@ class TestDecompositionDbc:
         from double_pendulum_golf.club_forces import delta_club_decomposition
 
         with pytest.raises(TypeError, match="state must be a numpy ndarray"):
-            delta_club_decomposition(
-                state=list(range(16)), tau=np.zeros(8), p=default_params
-            )
+            delta_club_decomposition(state=list(range(16)), tau=np.zeros(8), p=default_params)
 
     def test_delta_tau_wrong_type(self, default_params):
         from double_pendulum_golf.club_forces import delta_club_decomposition
 
         with pytest.raises(TypeError, match="tau must be a numpy ndarray"):
-            delta_club_decomposition(
-                state=np.zeros(16), tau=[0.0] * 8, p=default_params
-            )
+            delta_club_decomposition(state=np.zeros(16), tau=[0.0] * 8, p=default_params)
 
     def test_delta_tau_wrong_shape(self, default_params):
         from double_pendulum_golf.club_forces import delta_club_decomposition
 
         with pytest.raises(ValueError, match="tau must have shape"):
-            delta_club_decomposition(
-                state=np.zeros(16), tau=np.zeros(4), p=default_params
-            )
+            delta_club_decomposition(state=np.zeros(16), tau=np.zeros(4), p=default_params)
