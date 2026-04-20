@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, memo } from 'react';
 import { Upload, FileText, X } from 'lucide-react';
 
 interface FileUploadProps {
@@ -8,7 +8,9 @@ interface FileUploadProps {
   isLoading: boolean;
 }
 
-export function FileUpload({ onFileSelect, fileName, onClear, isLoading }: FileUploadProps) {
+// ⚡ Bolt: Wrapped FileUpload in React.memo() to prevent unnecessary O(N) re-render
+// cascades when parent (App.tsx) UI state changes.
+export const FileUpload = memo(function FileUpload({ onFileSelect, fileName, onClear, isLoading }: FileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDrop = useCallback(
@@ -97,6 +99,6 @@ export function FileUpload({ onFileSelect, fileName, onClear, isLoading }: FileU
       <p className="text-dark-400 text-sm">or click to browse</p>
     </div>
   );
-}
+});
 
 export default FileUpload;
