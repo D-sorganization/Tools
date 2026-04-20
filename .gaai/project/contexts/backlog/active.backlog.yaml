@@ -1170,7 +1170,7 @@ items:
   - id: GH1735
     title: "[Fleet Assessment][PP-DRY] Pragmatic DRY violations are visible in repeated code windows"
     priority: medium
-    status: in_progress
+    status: failed
     started_at: "2026-04-20T06:47:48Z"
     github_issue: 1735
     artefact: .gaai/project/contexts/artefacts/stories/GH1735.story.md
