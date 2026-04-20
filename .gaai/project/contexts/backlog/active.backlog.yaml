@@ -1200,7 +1200,8 @@ items:
   - id: GH1732
     title: "[Fleet Assessment][L] Operational output is inconsistent"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-04-20T06:50:12Z"
     github_issue: 1732
     artefact: .gaai/project/contexts/artefacts/stories/GH1732.story.md
     dependencies: []
