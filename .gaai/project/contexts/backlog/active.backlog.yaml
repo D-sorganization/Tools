@@ -1190,7 +1190,8 @@ items:
   - id: GH1733
     title: "[Fleet Assessment][G] Dependency versions are not consistently pinned"
     priority: medium
-    status: refined
+    status: in_progress
+    started_at: "2026-04-20T06:49:02Z"
     github_issue: 1733
     artefact: .gaai/project/contexts/artefacts/stories/GH1733.story.md
     dependencies: []
