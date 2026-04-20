@@ -52,3 +52,7 @@
 ## 2026-04-15 - Contextless Dynamic Text Readouts
 **Learning:** Raw dynamic text like "03:45 / 10:00" in a video player or "3 detections" provides no contextual meaning to screen readers if the visual context is purely decorative or uses aria-hidden.
 **Action:** When displaying timers, numeric readings, or dynamic status values, prepend a visually hidden `<span className="sr-only">` label (e.g., `<span className="sr-only">Current time:</span>`) right before the raw value so assistive tech announces "Current time: 03:45" instead of just the numbers. Ensure purely decorative visual context like pulsing dots have `aria-hidden="true"`.
+
+## 2026-04-20 - [Dynamic ARIA Labels for Confirmation Buttons]
+**Learning:** When implementing multi-step or confirming buttons (like a 'Clear' button that temporarily changes to 'Confirm?'), the visual text change is not always announced by screen readers if focus remains on the button, leaving users unaware of the new required action.
+**Action:** Always dynamically update the element's `aria-label` to reflect the new state (e.g., "Confirm clear history"), and ensure a relevant parent container uses `aria-live='polite'` so the state change is announced smoothly.

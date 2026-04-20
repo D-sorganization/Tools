@@ -590,3 +590,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 ### Version 1.1.65
 
 - **Security**: Disabled loading and saving of `.pkl` and `.pickle` files natively using pandas due to severe CWE-502 vulnerability. Raises `ValueError` explicitly when format is set to `pickle`.
+
+## 2026-04-20
+- Update unit converter clear history button accessibility (ARIA labels, disabled state)

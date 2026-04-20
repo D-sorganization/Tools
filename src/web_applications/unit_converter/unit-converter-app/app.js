@@ -470,6 +470,7 @@ function clearHistory() {
   } else {
     clearHistoryButton.classList.add('confirming');
     clearHistoryButton.textContent = 'Confirm?';
+    clearHistoryButton.setAttribute('aria-label', 'Confirm clear conversion history');
     clearHistoryTimeout = setTimeout(resetClearButton, 3000);
   }
 }
@@ -477,6 +478,7 @@ function clearHistory() {
 function resetClearButton() {
   clearHistoryButton.classList.remove('confirming');
   clearHistoryButton.textContent = 'Clear';
+  clearHistoryButton.setAttribute('aria-label', 'Clear conversion history');
   if (clearHistoryTimeout) {
     clearTimeout(clearHistoryTimeout);
     clearHistoryTimeout = null;
@@ -486,9 +488,11 @@ function resetClearButton() {
 function renderHistory() {
   if (conversionHistory.length === 0) {
     recentList.innerHTML = '<p class="empty-state">No recent conversions</p>';
+    clearHistoryButton.disabled = true;
     return;
   }
 
+  clearHistoryButton.disabled = false;
   recentList.innerHTML = '';
   conversionHistory.forEach((item, index) => {
     const timeAgo = formatTimeAgo(item.timestamp);
