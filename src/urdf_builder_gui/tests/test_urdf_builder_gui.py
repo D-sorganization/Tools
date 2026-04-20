@@ -583,3 +583,40 @@ class TestIntegration:
             for attr in ["ixx", "iyy", "izz"]:
                 val = float(inertia_el.get(attr, "0"))
                 assert val > 0, f"Non-positive {attr}={val}"
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# DRY Enforcement: Guard against re-introduction of duplicate files
+# ═══════════════════════════════════════════════════════════════════════
+
+
+class TestNoRootLevelDuplicates:
+    """Guard: root-level module copies must not exist after DRY cleanup (GH1693).
+
+    The canonical location for urdf_builder_gui modules is
+    src/urdf_builder_gui/python/urdf_builder_gui/.
+    Root-level copies are dead code and must not be present.
+    """
+
+    _REMOVED_MODULES = [
+        "contracts.py",
+        "anthropometric_model.py",
+        "urdf_generator.py",
+        "preview_generator.py",
+        "theme.py",
+    ]
+
+    def test_root_level_duplicates_do_not_exist(self) -> None:
+        """Verify no root-level module copies exist (DRY enforcement)."""
+        from pathlib import Path
+
+        root_dir = Path(__file__).resolve().parent.parent
+        present: list[str] = []
+        for mod_name in self._REMOVED_MODULES:
+            if (root_dir / mod_name).exists():
+                present.append(mod_name)
+
+        assert not present, (
+            "Root-level module copies re-introduced (DRY violation, GH1693):\n"
+            + "\n".join(f"  - {m}" for m in present)
+        )
