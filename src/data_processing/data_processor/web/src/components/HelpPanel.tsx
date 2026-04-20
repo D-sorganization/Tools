@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { useState } from 'react';
 import { HelpCircle, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface HelpSection {
@@ -135,9 +135,7 @@ const helpSections: HelpSection[] = [
   },
 ];
 
-// ⚡ Bolt: Wrapped HelpPanel in React.memo() to prevent unnecessary O(N) re-render
-// cascades when parent (App.tsx) UI state changes.
-export const HelpPanel = memo(function HelpPanel() {
+export function HelpPanel() {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
 
   const toggleSection = (title: string) => {
@@ -221,6 +219,6 @@ export const HelpPanel = memo(function HelpPanel() {
       </div>
     </div>
   );
-});
+}
 
 export default HelpPanel;
