@@ -152,3 +152,53 @@ class ProcessingWorker(QThread):
         except Exception as exc:  # noqa: BLE001 - prevent uncaught Qt thread failures
             logger.error("Processing failed in worker thread: %s", exc, exc_info=True)
             self.error.emit(str(exc))
+
+
+class NeuralNetworkTrainingWorker(QThread):
+    """Train a neural network off the Qt main thread.
+
+    Neural network training is by far the slowest analysis offered by the
+    Data Processor; running it on the UI thread freezes the whole window.
+    This worker owns a ``NeuralNetworkTrainer`` instance, invokes ``train``
+    on ``data`` in a background thread, and emits either ``result_ready``
+    with the returned training result object or ``error`` with a message.
+    """
+
+    result_ready = pyqtSignal(object)
+    error = pyqtSignal(str)
+    progress = pyqtSignal(int)
+
+    def __init__(
+        self,
+        data: pd.DataFrame,
+        config: dict[str, Any],
+        trainer: Any | None = None,
+    ) -> None:
+        if data is None:
+            raise ValueError("data must be provided")
+        if config is None:
+            raise ValueError("config must be provided")
+        super().__init__()
+        self.data = data
+        self.config = dict(config)
+        self._trainer = trainer
+
+    def run(self) -> None:
+        try:
+            self.progress.emit(5)
+            trainer = self._trainer
+            if trainer is None:
+                from data_processor.core.neural_network import NeuralNetworkTrainer
+
+                trainer = NeuralNetworkTrainer(self.config)
+            self.progress.emit(20)
+            result = trainer.train(self.data)
+            self.progress.emit(100)
+            self.result_ready.emit(result)
+        except Exception as exc:  # noqa: BLE001 - prevent uncaught Qt thread failures
+            logger.error(
+                "Neural network training failed in worker thread: %s",
+                exc,
+                exc_info=True,
+            )
+            self.error.emit(str(exc))

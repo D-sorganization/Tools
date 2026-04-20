@@ -246,6 +246,7 @@ class DataProcessorMainWindow(
         self.output_directory: str = str(Path.home() / "Documents")
         self._load_worker: DataLoadWorker | None = None
         self._processing_worker = None
+        self._nn_worker = None
 
         # Settings
         self.settings = QSettings("DataProcessor", "DataProcessorGUI")

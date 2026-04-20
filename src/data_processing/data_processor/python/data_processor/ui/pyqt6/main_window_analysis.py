@@ -318,21 +318,72 @@ class AnalysisMixin:
             QMessageBox.critical(self, "Surface Plot Error", f"Plot failed:\n{e}")
 
     def _run_nn_analysis(self, config: dict) -> None:
-        """Run neural network training from Analysis tab."""
+        """Run neural network training from Analysis tab.
+
+        Training runs on a background ``QThread`` so the Qt event loop keeps
+        spinning and the UI stays responsive on large datasets. The Train
+        button is disabled for the duration and re-enabled when the worker
+        finishes (either via ``result_ready`` or ``error``).
+        """
         if not (config is not None):
             raise ValueError("config must be provided")
         if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Load data first.")
             return
 
-        try:
-            from data_processor.core.neural_network import NeuralNetworkTrainer
+        # Prevent overlapping runs.
+        existing = getattr(self, "_nn_worker", None)
+        if existing is not None and existing.isRunning():
+            QMessageBox.information(
+                self,
+                "Training In Progress",
+                "A neural network is already training. Wait for it to finish.",
+            )
+            return
 
-            trainer = NeuralNetworkTrainer(config)
-            result = trainer.train(self.current_data)
+        from data_processor.ui.async_workers import NeuralNetworkTrainingWorker
+
+        nn_widget = self.analysis_panel.nn_widget
+        train_btn = getattr(nn_widget, "train_btn", None)
+        progress_bar = getattr(nn_widget, "progress_bar", None)
+        if train_btn is not None:
+            train_btn.setEnabled(False)
+        if progress_bar is not None:
+            progress_bar.setVisible(True)
+            progress_bar.setValue(0)
+
+        worker = NeuralNetworkTrainingWorker(self.current_data, config)
+        self._nn_worker = worker
+        worker.result_ready.connect(self._on_nn_training_finished)
+        worker.error.connect(self._on_nn_training_error)
+        worker.finished.connect(self._on_nn_training_cleanup)
+        if progress_bar is not None:
+            worker.progress.connect(progress_bar.setValue)
+        self.status_bar.set_status("Training neural network...")
+        worker.start()
+
+    def _on_nn_training_finished(self, result: object) -> None:
+        try:
             self.analysis_panel.nn_widget.display_results(result)
             self.status_bar.set_status("Neural network training complete")
+        except Exception as exc:  # noqa: BLE001
+            logger.error("Failed to display NN result: %s", exc, exc_info=True)
+            QMessageBox.critical(self, "NN Error", f"Display failed:\n{exc}")
 
-        except ImportError as e:
-            logger.error(f"Neural network training failed: {e}", exc_info=True)
-            QMessageBox.critical(self, "NN Error", f"Training failed:\n{e}")
+    def _on_nn_training_error(self, message: str) -> None:
+        logger.error("Neural network training failed: %s", message)
+        self.status_bar.set_status("Neural network training failed")
+        QMessageBox.critical(self, "NN Error", f"Training failed:\n{message}")
+
+    def _on_nn_training_cleanup(self) -> None:
+        nn_widget = self.analysis_panel.nn_widget
+        train_btn = getattr(nn_widget, "train_btn", None)
+        progress_bar = getattr(nn_widget, "progress_bar", None)
+        if train_btn is not None:
+            train_btn.setEnabled(True)
+        if progress_bar is not None:
+            progress_bar.setVisible(False)
+        worker = getattr(self, "_nn_worker", None)
+        if worker is not None:
+            worker.deleteLater()
+        self._nn_worker = None
