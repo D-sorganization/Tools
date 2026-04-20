@@ -855,8 +855,12 @@ items:
   - id: GH1693
     title: "Assessment: 6 files duplicated between urdf_builder_gui/ and urdf_builder_gui/python/"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-04-20T08:42:54Z"
+    completed_at: "2026-04-20T08:46:45Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/2175"
+    pr_number: 2175
+    pr_status: "open"
     github_issue: 1693
     artefact: .gaai/project/contexts/artefacts/stories/GH1693.story.md
     dependencies: []
