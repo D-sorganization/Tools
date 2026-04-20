@@ -39,26 +39,16 @@ concurrency:
 jobs:
   # ── Dispatcher: try self-hosted first, fall back to cloud ──────────────────
   pick-runner:
-    runs-on: ubuntu-latest
+    runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
     steps:
-      - name: Check for self-hosted runner
+      - name: Select runner
         id: check
-        env:
-          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
         run: |
-          ONLINE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
-            --jq '[.runners[] | select(.status == "online") | select(.labels[].name == "d-sorg-fleet")] | length' \
-            2>/dev/null || echo "0")
-          if [[ "$ONLINE" -gt 0 ]]; then
-            echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
-            echo "Self-hosted runner online - routing locally"
-          else
-            echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
-            echo "No self-hosted runner - using GitHub-hosted"
-          fi
+          echo "runner=d-sorg-fleet-4core" >> $GITHUB_OUTPUT
+          echo "Routing to self-hosted fleet runner."
 
   check-and-trigger:
     runs-on: ${{ needs.pick-runner.outputs.runner }}
