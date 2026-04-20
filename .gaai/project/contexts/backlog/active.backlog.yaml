@@ -125,11 +125,12 @@ items:
     title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/wgs_reactor"
     priority: medium
     status: done
-    started_at: "2026-04-20T08:42:50Z"
-    completed_at: "2026-04-20T08:49:46Z"
+    started_at: "2026-04-20T01:42:50-07:00"
+    completed_at: "2026-04-20T01:49:53-07:00"
     pr_url: "https://github.com/D-sorganization/Tools_Private/pull/273"
     pr_number: 273
     pr_status: "open"
+    cost_usd: 1.9274
     github_issue: 1497
     artefact: .gaai/project/contexts/artefacts/stories/GH1497.story.md
     dependencies: []
