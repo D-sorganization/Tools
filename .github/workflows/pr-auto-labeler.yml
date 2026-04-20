@@ -13,6 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
     runs-on: self-hosted
@@ -55,6 +56,8 @@ jobs:
     needs: pick-runner
     runs-on: self-hosted
     steps:
+      - uses: actions/checkout@v6
+
       - name: Auto-Label PR
         uses: actions/github-script@v7
         with:
