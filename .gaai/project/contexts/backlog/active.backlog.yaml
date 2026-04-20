@@ -1200,8 +1200,8 @@ items:
   - id: GH1734
     title: "[Fleet Assessment][A] Oversized files are accumulating architectural responsibility"
     priority: medium
-    status: refined
-    started_at: "2026-04-20T06:48:58Z"
+    status: in_progress
+    started_at: "2026-04-20T09:01:55Z"
     github_issue: 1734
     artefact: .gaai/project/contexts/artefacts/stories/GH1734.story.md
     dependencies: []
