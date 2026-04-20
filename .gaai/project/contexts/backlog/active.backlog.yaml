@@ -1170,8 +1170,12 @@ items:
   - id: GH1736
     title: "[Fleet Assessment][PP-BrokenWindows] Pragmatic broken-window markers remain in active code"
     priority: medium
-    status: in_progress
+    status: done
     started_at: "2026-04-20T08:50:47Z"
+    completed_at: "2026-04-20T08:57:41Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/2176"
+    pr_number: 2176
+    pr_status: "open"
     github_issue: 1736
     artefact: .gaai/project/contexts/artefacts/stories/GH1736.story.md
     dependencies: []
