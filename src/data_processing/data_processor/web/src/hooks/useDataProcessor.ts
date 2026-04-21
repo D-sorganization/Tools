@@ -42,8 +42,12 @@ const initialState: DataProcessorState = {
 
 function copyOwnRowProperties(row: DataRow): DataRow {
   const newRow: DataRow = {};
-  for (const key of Object.keys(row)) {
-    newRow[key] = row[key];
+  // ⚡ Bolt Optimization: Use a for...in loop instead of Object.keys() to avoid
+  // O(N) array allocations of keys per row, significantly reducing garbage collection overhead.
+  for (const key in row) {
+    if (Object.prototype.hasOwnProperty.call(row, key)) {
+      newRow[key] = row[key];
+    }
   }
   return newRow;
 }

@@ -1,52 +1,31 @@
-const values = new Array(1000000).fill(0).map(() => Math.random() * 100);
+const rows = Array.from({ length: 100000 }, (_, i) => ({ a: 1, b: 2, c: 3, d: 4, e: 5 }));
 
-// Original
-function zScoreFilterOriginal(values, threshold) {
-  const mean = values.reduce((a, b) => a + b, 0) / values.length;
-  const std = Math.sqrt(
-    values.reduce((acc, v) => acc + (v - mean) ** 2, 0) / values.length
-  );
-
-  if (std === 0) return values;
-
-  return values.map((v) => {
-    const zScore = Math.abs((v - mean) / std);
-    return zScore > threshold ? mean : v;
-  });
+function copyObjectKeys(row) {
+  const newRow = {};
+  for (const key of Object.keys(row)) {
+    newRow[key] = row[key];
+  }
+  return newRow;
 }
 
-// Optimized
-function zScoreFilterOptimized(values, threshold) {
-  const len = values.length;
-  if (len === 0) return [];
-
-  let sum = 0;
-  for (let i = 0; i < len; i++) {
-    sum += values[i];
+function copyForIn(row) {
+  const newRow = {};
+  for (const key in row) {
+    if (Object.prototype.hasOwnProperty.call(row, key)) {
+      newRow[key] = row[key];
+    }
   }
-  const mean = sum / len;
-
-  let varianceSum = 0;
-  for (let i = 0; i < len; i++) {
-    varianceSum += (values[i] - mean) ** 2;
-  }
-  const std = Math.sqrt(varianceSum / len);
-
-  if (std === 0) return values;
-
-  const result = new Array(len);
-  for (let i = 0; i < len; i++) {
-    const v = values[i];
-    const zScore = Math.abs((v - mean) / std);
-    result[i] = zScore > threshold ? mean : v;
-  }
-  return result;
+  return newRow;
 }
 
-console.time("Original");
-for (let i=0; i<10; i++) zScoreFilterOriginal(values, 3.0);
-console.timeEnd("Original");
+console.time('Object.keys');
+for (let i = 0; i < 100000; i++) {
+  copyObjectKeys(rows[i]);
+}
+console.timeEnd('Object.keys');
 
-console.time("Optimized");
-for (let i=0; i<10; i++) zScoreFilterOptimized(values, 3.0);
-console.timeEnd("Optimized");
+console.time('for...in');
+for (let i = 0; i < 100000; i++) {
+  copyForIn(rows[i]);
+}
+console.timeEnd('for...in');

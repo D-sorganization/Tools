@@ -17,3 +17,7 @@
 ## 2026-04-19 - [Avoid spread operator in Math.max/min for large arrays]
 **Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), using the spread operator (`...array`) inside `Math.max()` and `Math.min()` to calculate the range of data throws a "Maximum call stack size exceeded" error for large arrays (typically > 100k elements). Additionally, generating this array via a chained `.map().filter()` causes severe O(N) garbage collection overhead.
 **Action:** When finding the min/max values of a column in a large dataset in JavaScript/TypeScript, completely avoid `Math.max(...array)` and chained iterators. Instead, use a single-pass `for` loop that iterates over the data and manually keeps track of the min/max values to eliminate intermediate memory allocations and call stack limits.
+
+## 2024-05-24 - Object.keys() Overhead in Tight Data Processing Loops
+**Learning:** Using `Object.keys()` to iterate and copy properties on large arrays of objects (like dataset rows) creates significant performance bottlenecks due to the repeated allocation of intermediate key arrays, triggering severe garbage collection pauses. This is especially true in data processing apps where deep copying rows is frequent (e.g., in `copyOwnRowProperties`).
+**Action:** When operating in tight JS/TS loops on row objects, replace `Object.keys(row)` with a `for...in` loop using `Object.prototype.hasOwnProperty.call(row, key)` to significantly reduce execution time and avoid amortized GC spikes.
