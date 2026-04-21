@@ -137,54 +137,47 @@ class TestNoUnguardedPrintInLibrarySrc:
             )
 
 
+def _load_ruff_lint_config() -> tuple[list[str], dict[str, list[str]]]:
+    """Load ruff lint config from pyproject.toml (the canonical config location)."""
+    try:
+        import tomllib
+    except ImportError:
+        import tomli as tomllib  # type: ignore[no-redef]
+
+    pyproject = _REPO_ROOT / "pyproject.toml"
+    config = tomllib.loads(pyproject.read_text())
+    lint = config["tool"]["ruff"]["lint"]
+    return lint.get("select", []), lint.get("per-file-ignores", {})
+
+
 class TestLoggingConsistencyRuffConfig:
     """Ruff is configured to enforce the print-free policy."""
 
     def test_t201_in_ruff_select(self) -> None:
-        """ruff.toml must include T201 in lint select."""
-        try:
-            import tomllib
-        except ImportError:
-            import tomli as tomllib  # type: ignore[no-redef]
-
-        ruff_toml = _REPO_ROOT / "ruff.toml"
-        config = tomllib.loads(ruff_toml.read_text())
-        lint_select = config["lint"]["select"]
-        assert "T201" in lint_select, (
-            "T201 must be in [lint] select in ruff.toml to enforce the no-print policy"
+        """pyproject.toml must enable T201 (or T20 group) in ruff lint select."""
+        lint_select, _ = _load_ruff_lint_config()
+        assert any(r in lint_select for r in ("T201", "T20")), (
+            "T201 or T20 must be in [tool.ruff.lint] select in pyproject.toml "
+            "to enforce the no-print policy"
         )
 
     def test_notebooks_excluded_from_t201(self) -> None:
         """Notebooks must have T201 suppressed (print is valid in notebooks)."""
-        try:
-            import tomllib
-        except ImportError:
-            import tomli as tomllib  # type: ignore[no-redef]
-
-        ruff_toml = _REPO_ROOT / "ruff.toml"
-        config = tomllib.loads(ruff_toml.read_text())
-        per_file = config["lint"].get("per-file-ignores", {})
+        _, per_file = _load_ruff_lint_config()
         notebook_ignores = per_file.get("**/*.ipynb", [])
         assert "T201" in notebook_ignores, (
-            "**/*.ipynb must have T201 in per-file-ignores in ruff.toml "
+            "**/*.ipynb must have T201 in per-file-ignores in pyproject.toml "
             "(print is valid for display output in Jupyter notebooks)"
         )
 
     def test_scripts_excluded_from_t201(self) -> None:
         """Scripts directories must have T201 suppressed (CLI output is intentional)."""
-        try:
-            import tomllib
-        except ImportError:
-            import tomli as tomllib  # type: ignore[no-redef]
-
-        ruff_toml = _REPO_ROOT / "ruff.toml"
-        config = tomllib.loads(ruff_toml.read_text())
-        per_file = config["lint"].get("per-file-ignores", {})
+        _, per_file = _load_ruff_lint_config()
         # Either scripts/**/*.py or scripts/*.py must have T201 ignored
         scripts_patterns = [k for k in per_file if "scripts" in k]
         any_has_t201 = any("T201" in per_file[k] for k in scripts_patterns)
         assert any_has_t201, (
-            "scripts/ must have T201 suppressed in ruff.toml per-file-ignores "
+            "scripts/ must have T201 suppressed in pyproject.toml per-file-ignores "
             "(scripts use print() for intentional CLI output)"
         )
 
