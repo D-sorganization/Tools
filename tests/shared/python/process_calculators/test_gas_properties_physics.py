@@ -10,6 +10,7 @@ Covers:
 
 from __future__ import annotations
 
+pytest.importorskip("numpy")
 from numpy.testing import assert_allclose
 from upstream_drift_tools.process_calculators.pressure_drop_calculator.utils.gas_properties import (
     calculate_heat_capacity_ratio,

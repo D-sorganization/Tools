@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
+pytest.importorskip("numpy")
 import numpy as np
 import pytest
 from upstream_drift_tools.process_calculators.multi_param_analysis import (

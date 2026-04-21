@@ -155,6 +155,7 @@ def test_builder_total_body_and_joint_counts() -> None:
 
 def test_pelvis_asis_markers_rotate_with_non_zero_yaw() -> None:
     """Rotating the pelvis must move the ASIS markers, proving tilt reads visually."""
+pytest.importorskip("numpy")
     import numpy as np
 
     xml_string = build_lower_body_xml()

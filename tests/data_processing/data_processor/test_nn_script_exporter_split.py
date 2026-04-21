@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+pytest.importorskip("numpy")
 import numpy as np
 from data_processor.core.nn_architecture import (
     ActivationFunction,

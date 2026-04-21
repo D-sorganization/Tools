@@ -7,7 +7,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
+pytest.importorskip("numpy")
 import numpy as np
+pytest.importorskip("pandas")
 import pandas as pd
 import pytest
 

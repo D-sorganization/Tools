@@ -9,7 +9,9 @@ import json
 import tempfile
 from pathlib import Path
 
+pytest.importorskip("numpy")
 import numpy as np
+pytest.importorskip("pandas")
 import pandas as pd
 import pytest
 

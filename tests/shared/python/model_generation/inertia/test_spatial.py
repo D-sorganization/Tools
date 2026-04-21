@@ -10,6 +10,7 @@ Covers:
 
 from __future__ import annotations
 
+pytest.importorskip("numpy")
 import numpy as np
 import pytest
 from model_generation.inertia.spatial import (

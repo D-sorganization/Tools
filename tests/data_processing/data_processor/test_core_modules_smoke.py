@@ -9,6 +9,7 @@ data, and calls the primary public method(s).
 
 from __future__ import annotations
 
+pytest.importorskip("numpy")
 import numpy as np
 
 # ---------------------------------------------------------------------------
@@ -41,6 +42,7 @@ class TestANOVASmoke:
         assert result.f_statistic >= 0
 
     def test_two_way_anova(self):
+pytest.importorskip("pandas")
         import pandas as pd
         from data_processor.core.anova import ANOVAAnalyzer
 

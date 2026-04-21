@@ -257,6 +257,7 @@ class TestSetSeeds:
         if not NUMPY_AVAILABLE:
             pytest.skip("NumPy not available")
 
+pytest.importorskip("numpy")
         import numpy as np
 
         set_seeds(456)

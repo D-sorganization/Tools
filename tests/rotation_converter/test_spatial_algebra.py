@@ -1,5 +1,6 @@
 import math
 
+pytest.importorskip("numpy")
 import numpy as np
 
 from rotation_converter.spatial_algebra import (

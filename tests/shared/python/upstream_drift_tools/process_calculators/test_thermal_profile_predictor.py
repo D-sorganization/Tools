@@ -5,6 +5,7 @@ Tests cover the ODE-based temperature prediction and curve fitting.
 
 from __future__ import annotations
 
+pytest.importorskip("numpy")
 import numpy as np
 from upstream_drift_tools.process_calculators.thermal_profile_predictor import (
     fit_heating_parameters,

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 
+pytest.importorskip("numpy")
 import numpy as np
 
 from shared.python.signal_toolkit.core import Signal, SignalGenerator

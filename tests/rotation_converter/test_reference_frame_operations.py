@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+pytest.importorskip("numpy")
 import numpy as np
 
 from rotation_converter.reference_frame_operations import (

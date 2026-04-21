@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import math
 
+pytest.importorskip("numpy")
 import numpy as np
 import pytest
 from upstream_drift_tools.process_calculators.syngas_water_calculator import (

@@ -1,6 +1,7 @@
 import sys
 from unittest.mock import MagicMock
 
+pytest.importorskip("numpy")
 import numpy as np
 import pytest
 from PyQt6.QtWidgets import QApplication
