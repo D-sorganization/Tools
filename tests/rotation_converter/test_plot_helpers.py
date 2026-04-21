@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 from matplotlib.figure import Figure
 
 from rotation_converter.ui.pyqt6.plot_helpers import fmt_mat, style_figure

@@ -5,9 +5,13 @@ Focuses on strict adherence to the new shared-component testing quality standard
 
 from __future__ import annotations
 
-import numpy as np
-import pandas as pd
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
+
+pytest.importorskip("pandas")
+import pandas as pd
 from upstream_drift_tools.data_processing.core import (
     AggregationType,
     DataProcessorEngine,

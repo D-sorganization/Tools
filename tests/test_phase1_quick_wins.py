@@ -139,6 +139,7 @@ class TestDataIO:
     def test_read_data_prefers_parquet_sibling(self, tmp_path):
         """read_data should prefer .parquet sibling when prefer_parquet=True."""
         pytest.importorskip("pyarrow", reason="pyarrow not installed")
+        pytest.importorskip("pandas")
         import pandas as pd
 
         csv_path = tmp_path / "data.csv"

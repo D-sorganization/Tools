@@ -13,6 +13,9 @@ from __future__ import annotations
 
 import math
 
+import pytest
+
+pytest.importorskip("numpy")
 import numpy as np
 
 from rotation_converter.motion_examples import (

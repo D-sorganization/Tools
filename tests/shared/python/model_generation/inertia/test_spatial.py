@@ -10,8 +10,10 @@ Covers:
 
 from __future__ import annotations
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 from model_generation.inertia.spatial import (
     composite_rigid_body_inertia,
     mcI,

@@ -12,8 +12,10 @@ from __future__ import annotations
 
 import logging
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 from hypothesis.extra.numpy import arrays
