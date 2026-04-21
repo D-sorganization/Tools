@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-04-20
+  LAST UPDATED: 2026-04-21
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -556,6 +556,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-15 | 1.1.49  | Optimized exponential and power regression calculation in `useDataProcessor.ts` by replacing chained array methods with single-pass loops and pre-allocated arrays to eliminate GC overhead. |
 | 2026-04-17 | 1.1.50  | Hardened model import security by enforcing HTTPS GitHub host allowlisting for remote model-library fetches, validating user-provided GitHub repository URLs before import, dropping directory components from remote mesh names, and rejecting separator-containing URDF viewer filenames before filesystem resolution. |
 | 2026-04-18 | 1.1.65  | Refreshed regression test coverage for architecture boundaries, data-processor compatibility, folder archive operations, and upstream-drift contract smoke behavior while keeping the production implementation unchanged.                                                                                                                                                                                                                                                                                                                                          |
+| 2026-04-21 | 1.1.66  | Optimized row copying logic in useDataProcessor.ts by replacing `Object.keys()` with a `for...in` loop and `hasOwnProperty`, substantially reducing GC allocation overhead inside tight data processing loops. |
 
 ---
 
@@ -586,6 +587,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - Pearson correlation matrix computations utilize a single-pass loop algorithm, calculating sums concurrently to drastically reduce iteration overhead compared to two-pass implementations, while carefully mitigating numerical instability via clamping.
 - Recharts component props in `AnalyticsSuite` are memoized using `useMemo` hooks to provide stable references and prevent expensive internal re-renders.
 - Exponential and power trendline calculations use pre-allocated arrays and single-pass loops instead of functional chaining to minimize GC pauses.
+
+### Version 1.1.66
+
+- **Performance**: Optimized row copying logic inside `useDataProcessor.ts` by replacing `Object.keys()` iterations with `for...in` loops and `hasOwnProperty`. This minimizes excessive key array allocations inside data transformation loops.
 
 ### Version 1.1.65
 
