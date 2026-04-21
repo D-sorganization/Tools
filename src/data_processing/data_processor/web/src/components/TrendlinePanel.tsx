@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { TrendingUp, LineChart, Save, Folder } from 'lucide-react';
 import type { TrendlineType, TrendlineConfig, TrendlineResult, PlotConfig } from '../types';
 
@@ -13,7 +13,8 @@ interface TrendlinePanelProps {
   onLoadPlotConfig: (name: string) => PlotConfig | null;
 }
 
-export function TrendlinePanel({
+// ⚡ Bolt Optimization: Wrap component in React.memo to prevent unnecessary re-renders when unrelated parent state changes
+export const TrendlinePanel = memo(function TrendlinePanel({
   signals,
   selectedSignals,
   timeColumn,
@@ -278,6 +279,6 @@ export function TrendlinePanel({
       </div>
     </div>
   );
-}
+});
 
 export default TrendlinePanel;
