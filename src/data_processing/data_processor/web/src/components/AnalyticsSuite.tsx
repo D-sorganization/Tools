@@ -428,7 +428,18 @@ function computeRegression(
 
 function solveLinearSystem(A: number[][], b: number[]): number[] {
   const n = A.length;
-  const aug = A.map((row, i) => [...row, b[i]]);
+  // ⚡ Bolt Optimization: Replace A.map() and array spread [...row] with a single-pass loop.
+  // Pre-allocating the augmented row avoids massive garbage collection and O(N^2) reallocation overhead.
+  const aug = new Array(n);
+  for (let i = 0; i < n; i++) {
+    const row = A[i];
+    const newRow = new Array(n + 1);
+    for (let j = 0; j < n; j++) {
+      newRow[j] = row[j];
+    }
+    newRow[n] = b[i];
+    aug[i] = newRow;
+  }
 
   // Forward elimination
   for (let i = 0; i < n; i++) {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { HelpCircle, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface HelpSection {
@@ -135,7 +135,8 @@ const helpSections: HelpSection[] = [
   },
 ];
 
-export function HelpPanel() {
+// ⚡ Bolt Optimization: Wrap component in React.memo to prevent unnecessary re-renders when unrelated parent state changes
+export const HelpPanel = memo(function HelpPanel() {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
 
   const toggleSection = (title: string) => {
@@ -219,6 +220,6 @@ export function HelpPanel() {
       </div>
     </div>
   );
-}
+});
 
 export default HelpPanel;
