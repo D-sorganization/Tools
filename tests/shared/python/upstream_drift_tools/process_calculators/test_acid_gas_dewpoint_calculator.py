@@ -11,7 +11,6 @@ import os
 import sys
 from datetime import datetime
 
-pytest.importorskip("pandas")
 import pandas as pd
 import pytest
 

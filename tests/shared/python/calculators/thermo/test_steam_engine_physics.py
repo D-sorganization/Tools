@@ -11,7 +11,6 @@ Covers:
 from __future__ import annotations
 
 import pytest
-pytest.importorskip("numpy")
 from numpy.testing import assert_allclose
 from upstream_drift_tools.calculators.thermo.steam_engine import (
     CRITICAL_TEMPERATURE_WATER,

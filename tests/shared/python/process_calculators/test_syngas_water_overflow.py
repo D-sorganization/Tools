@@ -19,7 +19,6 @@ import math
 import time
 import warnings
 
-pytest.importorskip("numpy")
 import numpy as np
 import pytest
 from upstream_drift_tools.process_calculators.syngas_water_calculator import (

@@ -8,9 +8,7 @@ Addresses #830 (typed errors) and #826 (DbC coverage).
 
 from __future__ import annotations
 
-pytest.importorskip("numpy")
 import numpy as np
-pytest.importorskip("pandas")
 import pandas as pd
 import pytest
 from upstream_drift_tools.data_processing.core import (

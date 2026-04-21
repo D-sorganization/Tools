@@ -2,9 +2,7 @@
 
 import unittest
 
-pytest.importorskip("numpy")
 import numpy as np
-pytest.importorskip("pandas")
 import pandas as pd
 from data_processor.vectorized_filter_engine import VectorizedFilterEngine
 

@@ -21,7 +21,6 @@ import sys
 import tempfile
 from pathlib import Path
 
-pytest.importorskip("numpy")
 import numpy as np
 import pytest
 

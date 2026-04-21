@@ -9,7 +9,6 @@ Covers:
 
 from __future__ import annotations
 
-pytest.importorskip("numpy")
 import numpy as np
 from numpy.testing import assert_allclose
 from signal_toolkit.core import Signal
