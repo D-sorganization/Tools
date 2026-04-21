@@ -10,7 +10,6 @@ import math
 
 import numpy as np
 import pytest
-
 from solar_system.core.celestial_body import BodyType, CelestialBody, StateVector
 from solar_system.core.constants import AU, GM, J2000
 from solar_system.data.famous_missions import FAMOUS_MISSIONS

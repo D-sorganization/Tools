@@ -1,5 +1,4 @@
 import numpy as np
-
 from solar_system.data.star_catalog import (
     equatorial_to_cartesian,
     iter_catalog,

@@ -37,7 +37,7 @@ class MetricsPanel(QWidget):
         aspeed = self._ctrl.asteroid_speed()
         aaw = self._ctrl.asteroid_angular_speed()
         offctr = self._ctrl.off_centre_fraction()
-        total_p = self._ctrl.state.total_linear_momentum.length()
+        total_p = self._ctrl.total_momentum_magnitude()
 
         # Update peak scale
         self._max_speed = max(self._max_speed, jspeed, aspeed, 0.1)

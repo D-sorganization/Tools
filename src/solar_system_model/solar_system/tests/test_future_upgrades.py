@@ -1,5 +1,4 @@
 import numpy as np
-
 from solar_system.data.asteroids import generate_belt_particles
 from solar_system.data.star_catalog import equatorial_to_cartesian, star_count
 from solar_system.visualization.renderer import RenderSettings

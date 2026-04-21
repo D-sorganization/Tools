@@ -1,7 +1,3 @@
-# ARCHITECTURE_DEBT:
-# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
-# It requires domain-aware structural extraction to isolate its internal classes appropriately.
-
 """Cross-Correlation Analysis Module.
 
 Provides comprehensive cross-correlation and lag analysis capabilities
@@ -21,7 +17,7 @@ Features:
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 
@@ -29,6 +25,7 @@ import numpy as np
 from numba import jit
 
 from data_processor.contracts import require
+from data_processor.core.causality_types import GrangerCausalityResult, TransferEntropyResult
 
 logger = logging.getLogger(__name__)
 
@@ -102,48 +99,6 @@ class CrossCorrelationResult:
     def is_significant_at_lag(self, lag: int) -> bool:
         """Check if correlation is significant at given lag."""
         return lag in self.significant_lags
-
-
-@dataclass
-class GrangerCausalityResult:
-    """Results from Granger causality test."""
-
-    # X causes Y
-    x_causes_y: bool
-    x_causes_y_pvalue: float
-    x_causes_y_fstat: float
-
-    # Y causes X
-    y_causes_x: bool
-    y_causes_x_pvalue: float
-    y_causes_x_fstat: float
-
-    # Optimal lags
-    optimal_lag_xy: int
-    optimal_lag_yx: int
-
-    # Direction
-    causal_direction: str  # 'X->Y', 'Y->X', 'bidirectional', 'none'
-
-    # Model details
-    aic_values: dict[str, float] = field(default_factory=dict)
-
-
-@dataclass
-class TransferEntropyResult:
-    """Results from transfer entropy analysis."""
-
-    # Transfer entropy values
-    te_x_to_y: float
-    te_y_to_x: float
-    net_te: float  # X->Y minus Y->X
-
-    # Significance
-    te_x_to_y_pvalue: float
-    te_y_to_x_pvalue: float
-
-    # Direction
-    dominant_direction: str  # 'X->Y', 'Y->X', 'none'
 
 
 @dataclass
