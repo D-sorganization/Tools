@@ -20,8 +20,10 @@ from __future__ import annotations
 
 import math
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 from upstream_drift_tools.process_calculators.acid_gas_dewpoint_calculator import (
     AcidGasComposition,
     AcidGasDewpointCalculator,

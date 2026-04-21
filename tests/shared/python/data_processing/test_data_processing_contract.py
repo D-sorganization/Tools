@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
-import pandas as pd
 import pytest
+
+pytest.importorskip("pandas")
+import pandas as pd
 from data_processing.processor import DataProcessor
 
 

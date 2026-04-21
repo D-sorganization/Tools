@@ -13,8 +13,10 @@ from __future__ import annotations
 
 import math
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 from numpy.testing import assert_allclose
 from signal_toolkit.series import (
     SeriesExpansion,

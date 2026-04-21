@@ -19,8 +19,10 @@ import math
 import time
 import warnings
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 from upstream_drift_tools.process_calculators.syngas_water_calculator import (
     _EXP_MAX_ARG,
     SyngasWaterCalculator,

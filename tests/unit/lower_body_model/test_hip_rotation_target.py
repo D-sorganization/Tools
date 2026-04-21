@@ -1,5 +1,7 @@
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 
 from lower_body_model.builder import build_lower_body_xml
 from lower_body_model.hip_rotation import InclinedPlaneHipRotationTarget

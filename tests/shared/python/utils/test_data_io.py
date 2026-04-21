@@ -13,8 +13,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pandas as pd
 import pytest
+
+pytest.importorskip("pandas")
+import pandas as pd
 from upstream_drift_tools.data_io import read_data, write_data
 
 

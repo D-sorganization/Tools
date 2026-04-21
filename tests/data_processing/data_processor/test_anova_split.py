@@ -4,7 +4,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
+pytest.importorskip("numpy")
 import numpy as np
+
+pytest.importorskip("pandas")
 import pandas as pd
 from data_processor.core.anova import ANOVAAnalyzer
 

@@ -8,9 +8,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import numpy as np
-import pandas as pd
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
+
+pytest.importorskip("pandas")
+import pandas as pd
 from upstream_drift_tools.data_processing.io import (
     DataReader,
     DataWriter,

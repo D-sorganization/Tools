@@ -12,8 +12,10 @@ from __future__ import annotations
 
 import inspect
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 
 from lower_body_model import HipRotationSample, InclinedPlaneHipRotationTarget
 from lower_body_model.builder import build_lower_body_xml

@@ -7,8 +7,10 @@ Covers:
 
 from __future__ import annotations
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 from upstream_drift_tools.process_calculators.thermal_profile_predictor import (
     fit_heating_parameters,
     predict_temperature_profile,
