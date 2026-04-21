@@ -11,6 +11,9 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+# src/python/src/utils/ -> src/python/src/ -> src/python/ -> src/ -> repo root
+_REPO_ROOT_FALLBACK = Path(__file__).parents[4]
+
 
 def find_env_file(
     filename: str = ".env",
@@ -58,9 +61,7 @@ def find_env_file(
                 locations.append(repo_root / filename)
             except ImportError:
                 # Last resort fallback
-                locations.append(
-                    Path(__file__).parent.parent.parent.parent.parent / filename
-                )
+                locations.append(_REPO_ROOT_FALLBACK / filename)
 
     # Add user home directory
     locations.append(Path.home() / ".pdf_renamer" / filename)

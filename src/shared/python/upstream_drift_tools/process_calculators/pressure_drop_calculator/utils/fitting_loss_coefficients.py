@@ -417,12 +417,15 @@ def print_fitting_database() -> None:
                 logger.info(f"  {name:50s} K = {k_factor:6.0f}")
 
 
-def calculate_fitting_pressure_drop(
-    k_factor: float, density: float, velocity: float
-) -> float:
-    """Calculate pressure drop across a fitting.
+def apply_k_factor(k_factor: float, density: float, velocity: float) -> float:
+    """Apply a single K-factor to compute fitting pressure drop.
 
     ΔP = K × (ρV²/2)
+
+    This is the primitive operation for one K-factor.  For a full list of
+    ``PipeFitting`` objects use
+    ``pressure_drop_calculator.engine.fittings.calculate_fitting_pressure_drop``
+    instead.
 
     Args:
         k_factor: Resistance coefficient
@@ -435,13 +438,17 @@ def calculate_fitting_pressure_drop(
     Example:
         >>> # 90° elbow, water at 5 m/s
         >>> k = get_fitting_k_factor('90_elbow_std')
-        >>> dp = calculate_fitting_pressure_drop(k, 1000, 5)
-        >>> logger.debug(f"ΔP = {dp:.0f} Pa = {dp/1e5:.3f} bar")
+        >>> dp = apply_k_factor(k, 1000, 5)
+        >>> logger.debug(f"DP = {dp:.0f} Pa = {dp/1e5:.3f} bar")
     """
     if not (k_factor is not None):
         raise ValueError("k_factor must be provided")
     velocity_pressure = 0.5 * density * velocity**2
     return k_factor * velocity_pressure
+
+
+# Backward-compatible alias — prefer apply_k_factor for new code
+calculate_fitting_pressure_drop = apply_k_factor
 
 
 if __name__ == "__main__":
@@ -460,7 +467,7 @@ if __name__ == "__main__":
     k = get_fitting_k_factor("90_elbow_std")
     rho = 1.2  # kg/m³ (air)
     v = 15  # m/s
-    dp = calculate_fitting_pressure_drop(k, rho, v)
+    dp = apply_k_factor(k, rho, v)
     logger.info("  Fitting: 90° standard elbow")
     logger.info(f"  K-factor: {k}")
     logger.info(f"  Density: {rho} kg/m³")
