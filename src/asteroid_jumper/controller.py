@@ -143,7 +143,7 @@ class SimController:
             duration=self.spring_duration,
         )
         self.state.phase = "jumping"
-        self._initial_momentum = self._total_momentum_magnitude()
+        self._initial_momentum = self.total_momentum_magnitude()
 
     def tick(self, dt: float) -> None:
         """Advance simulation by *dt* seconds."""
@@ -245,7 +245,7 @@ class SimController:
         sx, sy = surface_point_at_angle(self.shape, surface_angle_rad)
         return Vec2(sx, sy)
 
-    def _total_momentum_magnitude(self) -> float:
-        """Total system linear momentum magnitude."""
+    def total_momentum_magnitude(self) -> float:
+        """Total system linear momentum magnitude (kg·m/s)."""
         total = self.state.total_linear_momentum
         return float(total.length())
