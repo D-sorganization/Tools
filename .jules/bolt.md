@@ -20,3 +20,6 @@
 ## 2026-04-19 - [Avoid array spread inside map for large matrix augmentation]
 **Learning:** In the Data Processor web app, using `A.map((row, i) => [...row, b[i]])` to create an augmented matrix for linear system solving causes severe O(N^2) memory allocation and garbage collection overhead due to creating and spreading arrays dynamically.
 **Action:** When building augmented matrices or copying large 2D arrays, replace chained `.map()` and array spread operations with single-pass `for` loops that pre-allocate standard arrays `new Array(size)` and copy elements manually to eliminate intermediate memory allocations and minimize GC pauses.
+## 2026-04-20 - [Memoization optimization in data processor web hooks]
+**Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), returning derived objects like `Object.keys(state.savedPlotConfigs)` directly inside the `useDataProcessor` hook without memoizing it breaks the referential equality of downstream components like `TrendlinePanel` that use `React.memo()`.
+**Action:** When returning derived values from hooks that are passed down to child components, explicitly use `useMemo()` to prevent unnecessary re-renders when parent state changes.

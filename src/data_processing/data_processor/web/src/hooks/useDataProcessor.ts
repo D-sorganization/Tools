@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import Papa from 'papaparse';
 import type {
   DataRow,
@@ -710,6 +710,14 @@ export function useDataProcessor() {
     [state.savedPlotConfigs]
   );
 
+  // ⚡ Bolt Optimization: Memoize the array of config names.
+  // Returning Object.keys() directly breaks referential equality, which nullifies
+  // the React.memo optimization on TrendlinePanel and causes unnecessary re-renders.
+  const savedPlotConfigNames = useMemo(
+    () => Object.keys(state.savedPlotConfigs),
+    [state.savedPlotConfigs]
+  );
+
   return {
     ...state,
     loadFile,
@@ -724,7 +732,7 @@ export function useDataProcessor() {
     applyFormula,
     savePlotConfig,
     loadPlotConfig,
-    savedPlotConfigNames: Object.keys(state.savedPlotConfigs),
+    savedPlotConfigNames,
   };
 }
 
