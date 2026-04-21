@@ -680,7 +680,8 @@ d = json.load(sys.stdin)['resources']
 for k in ['core', 'graphql']:
     r = d[k]
     reset = datetime.datetime.fromtimestamp(r['reset']).strftime('%H:%M:%S')
-    print(f'{k}: {r["remaining"]}/{r["limit"]} remaining — resets {reset}')
+    rem, lim = r['remaining'], r['limit']
+    print(f'{k}: {rem}/{lim} remaining — resets {reset}')
 "
 ```
 
