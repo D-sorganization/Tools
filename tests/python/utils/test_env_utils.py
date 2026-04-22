@@ -8,8 +8,15 @@ Covers:
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
-from utils.env_utils import get_env_bool, get_env_int, get_env_var
+from utils.env_utils import (
+    _repo_root_fallback,
+    get_env_bool,
+    get_env_int,
+    get_env_var,
+)
 
 
 class TestGetEnvVar:
@@ -37,6 +44,13 @@ class TestGetEnvVar:
     ) -> None:
         monkeypatch.setenv("REQUIRED_KEY", "present")
         assert get_env_var("REQUIRED_KEY", required=True) == "present"
+
+
+def test_repo_root_fallback_handles_shallow_module_paths() -> None:
+    """Shallow module paths should not raise while computing import-time fallback."""
+    shallow_file = Path("env_utils.py")
+
+    assert _repo_root_fallback(shallow_file) == shallow_file.parent
 
 
 class TestGetEnvBool:

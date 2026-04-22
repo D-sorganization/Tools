@@ -11,8 +11,16 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+
+def _repo_root_fallback(module_file: Path | str) -> Path:
+    """Return the expected repo root when available, otherwise the nearest parent."""
+    path = Path(module_file)
+    parents = path.parents
+    return parents[4] if len(parents) > 4 else path.parent
+
+
 # src/python/src/utils/ -> src/python/src/ -> src/python/ -> src/ -> repo root
-_REPO_ROOT_FALLBACK = Path(__file__).parents[4]
+_REPO_ROOT_FALLBACK = _repo_root_fallback(__file__)
 
 
 def find_env_file(
