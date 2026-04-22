@@ -47,6 +47,10 @@ class TestValidateExpression:
         ):
             validate_expression("math.sin(x)", {"math", "x"})
 
+    def test_starred_call_args_rejected(self) -> Any:
+        with pytest.raises(ValueError, match="Unsafe operation detected: Starred"):
+            validate_expression("sum(*x)", {"sum", "x"})
+
     def test_allowed_names_none_bypasses_check(self) -> Any:
         # Should parse without error since name checking is disabled
         tree = validate_expression("unknown_func(unknown_var)", allowed_names=None)
