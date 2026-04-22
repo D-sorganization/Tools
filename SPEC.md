@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.81                                     |
+| **Spec Version**        | 1.1.82                                     |
 | **Last Spec Update**    | 2026-04-19 (updated for PR #2163)          |
 
 ## 2. Purpose & Mission
@@ -591,6 +591,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 ### Version 1.1.66
 
 - **Performance**: Optimized row copying logic inside `useDataProcessor.ts` by replacing `Object.keys()` iterations with `for...in` loops and `hasOwnProperty`. This minimizes excessive key array allocations inside data transformation loops.
+- **Performance**: Optimized variance calculation in `useDataProcessor.ts` by utilizing a single-pass algorithm via sum-of-squares instead of iterating the data multiple times, which prevents O(N) array traversal overhead on large datasets.
 
 ### Version 1.1.66
 
