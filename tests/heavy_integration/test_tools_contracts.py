@@ -56,7 +56,10 @@ class TestSignalProcessingStack:
 
     def test_butterworth_filter_attenuation(self) -> None:
         """Prove a 4th-order Butterworth low-pass filter attenuates high-freq signals."""
+        pytest.importorskip("numpy")
         import numpy as np
+
+        pytest.importorskip("scipy")
         from scipy import signal
 
         # Design a 4th-order Butterworth low-pass at 0.1 (normalized)

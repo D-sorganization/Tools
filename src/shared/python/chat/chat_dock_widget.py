@@ -180,8 +180,10 @@ class ChatDockWidget(QDockWidget):
             )
 
         self._setup_ui()
-        # Delay connection slightly so the parent window can finish setup
-        QTimer.singleShot(500, self._connect)
+        # Defer connection until the dock is actually shown so the parent
+        # window is guaranteed to have finished setup. Drives off showEvent
+        # rather than a hardcoded 500 ms delay (#2098).
+        self._connect_on_show = True
 
     def _setup_ui(self) -> None:
         container = QWidget()
@@ -396,6 +398,13 @@ class ChatDockWidget(QDockWidget):
         )
 
     # ── Cleanup ──────────────────────────────────────────────────────
+
+    def showEvent(self, event: Any) -> None:  # noqa: D401 - Qt override
+        """Initiate WebSocket connection the first time the dock is shown."""
+        super().showEvent(event)
+        if getattr(self, "_connect_on_show", False):
+            self._connect_on_show = False
+            self._connect()
 
     def closeEvent(self, event: Any) -> None:
         """Clean up WebSocket on close."""

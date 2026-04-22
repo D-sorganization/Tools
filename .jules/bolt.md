@@ -1,0 +1,32 @@
+## 2026-04-06 - [Optimize God component rendering]
+**Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), the root `App.tsx` component acts as a God component managing UI state (tabs) and large data structures. Unnecessary re-render cascades happen when switching UI tabs because heavy presentational child components (e.g., `SignalList`, `StatisticsPanel`) were not wrapped in `React.memo()`.
+**Action:** When a God component manages state and large data, explicitly wrap heavy presentational child components in `React.memo()` to prevent UI stuttering and massive re-render cascades when unrelated parent state (like UI tabs) changes.
+## 2026-04-15 - [Optimize trendline map/filter chains]
+**Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), calculating exponential and power trendlines on large datasets using chained `.map().filter().map()` operations causes severe garbage collection overhead due to massive intermediate array and object allocations.
+**Action:** When extracting sub-arrays from large datasets for regressions, replace `.map()` and `.filter()` chains with a single-pass `for` loop that pre-allocates typed arrays (or standard arrays via `new Array(len)`) and truncates them to `validCount` at the end to eliminate intermediate memory allocations.
+## 2026-04-16 - [Avoid object spread operator in tight integration/differentiation loops]
+**Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), using the object spread operator (`const newRow = { ...row };`) inside tight `integrateSignals` and `differentiateSignals` loops causes massive memory allocation and garbage collection overhead.
+**Action:** When downsampling or extracting points in tight JavaScript/TypeScript data processing loops, explicitly assign only the required properties to a new object or manually copy properties instead of using the object spread operator to reduce overhead.
+## 2026-04-17 - [Avoid object spread operator in applyFilter loop]
+**Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), using the object spread operator (`const newRow = { ...data[i] };`) inside the tight `applyFilter` loop over all data rows causes massive memory allocation and garbage collection overhead.
+**Action:** When creating new row objects in tight filtering loops, explicitly assign only the required properties to a new object or manually copy properties using a `for...in` loop instead of using the object spread operator to reduce overhead.
+
+## 2026-04-18 - Single-Pass Statistics Calculation Optimization
+**Learning:** In JavaScript/TypeScript, when calculating statistics (variance, median, etc.) over an array of objects (`RowData[]`), iterating over the object array multiple times introduces massive O(N) object property access overhead, especially with large datasets.
+**Action:** Extract the numerical values into a pre-allocated `Float64Array` in a single pass instead of iterating over the object array multiple times. This drastically reduces object property access overhead and garbage collection by reusing the array buffer.
+## 2026-04-19 - [Avoid spread operator in Math.max/min for large arrays]
+**Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), using the spread operator (`...array`) inside `Math.max()` and `Math.min()` to calculate the range of data throws a "Maximum call stack size exceeded" error for large arrays (typically > 100k elements). Additionally, generating this array via a chained `.map().filter()` causes severe O(N) garbage collection overhead.
+**Action:** When finding the min/max values of a column in a large dataset in JavaScript/TypeScript, completely avoid `Math.max(...array)` and chained iterators. Instead, use a single-pass `for` loop that iterates over the data and manually keeps track of the min/max values to eliminate intermediate memory allocations and call stack limits.
+
+## 2024-05-24 - Object.keys() Overhead in Tight Data Processing Loops
+**Learning:** Using `Object.keys()` to iterate and copy properties on large arrays of objects (like dataset rows) creates significant performance bottlenecks due to the repeated allocation of intermediate key arrays, triggering severe garbage collection pauses. This is especially true in data processing apps where deep copying rows is frequent (e.g., in `copyOwnRowProperties`).
+**Action:** When operating in tight JS/TS loops on row objects, replace `Object.keys(row)` with a `for...in` loop using `Object.prototype.hasOwnProperty.call(row, key)` to significantly reduce execution time and avoid amortized GC spikes.
+## 2026-04-19 - [Avoid array spread inside map for large matrix augmentation]
+**Learning:** In the Data Processor web app, using `A.map((row, i) => [...row, b[i]])` to create an augmented matrix for linear system solving causes severe O(N^2) memory allocation and garbage collection overhead due to creating and spreading arrays dynamically.
+**Action:** When building augmented matrices or copying large 2D arrays, replace chained `.map()` and array spread operations with single-pass `for` loops that pre-allocate standard arrays `new Array(size)` and copy elements manually to eliminate intermediate memory allocations and minimize GC pauses.
+## 2026-04-20 - [Memoization optimization in data processor web hooks]
+**Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), returning derived objects like `Object.keys(state.savedPlotConfigs)` directly inside the `useDataProcessor` hook without memoizing it breaks the referential equality of downstream components like `TrendlinePanel` that use `React.memo()`.
+**Action:** When returning derived values from hooks that are passed down to child components, explicitly use `useMemo()` to prevent unnecessary re-renders when parent state changes.
+## 2024-04-22 - [Avoid naive single-pass statistical formulas]
+**Learning:** When converting two-pass statistical algorithms (like variance) to single-pass in JS/TS to prevent O(N) loop overhead, naive formulas (e.g., `sumSq - (sum * sum) / count`) suffer from severe numerical instability (catastrophic cancellation).
+**Action:** Instead, use Welford's online algorithm to calculate mean and variance in a stable single pass.

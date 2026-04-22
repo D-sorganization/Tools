@@ -47,6 +47,7 @@ from __future__ import annotations
 
 import logging
 
+from .adaptive_filter import AdaptiveFilter
 from .calculus import (
     DifferentiationMethod,
     Differentiator,
@@ -64,7 +65,6 @@ from .calculus import (
 )
 from .core import Signal, SignalGenerator
 from .filters import (
-    AdaptiveFilter,
     FilterDesign,
     FilterDesigner,
     FilterSpec,

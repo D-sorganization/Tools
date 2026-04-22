@@ -7,7 +7,7 @@ name = "ud-tools"
 version = "0.3.0"
 description = "Shared engineering tools: URDF generation, signal processing, and process calculators."
 readme = "src/shared/python/README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
     {name = "UpstreamDrift Team"}
@@ -17,7 +17,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering",
@@ -27,6 +26,7 @@ dependencies = [
     "numpy>=1.24.0",
     "PyYAML>=6.0",
     "defusedxml>=0.7.0",
+    "keyring>=24.0.0",
 ]
 
 [project.optional-dependencies]
@@ -93,7 +93,7 @@ dev = [
     "pytest-xdist>=3.0.0",
     "pytest-timeout>=2.0.0",
     "pytest-benchmark>=4.0.0",
-    "ruff>=0.1.0",
+    "ruff>=0.14,<1.0",  # Pinned floor matches requirements-lock (0.14.10); block the 1.x rewrite
     "mypy>=1.0.0",
 ]
 
@@ -116,6 +116,7 @@ include = [
     "model_generation*",
     "humanoid_character_builder*",
     "signal_toolkit*",
+    "rotation_transforms*",
     "rotation_converter*",
     "programmatic_pid*",
     "dwsim_model*",
@@ -135,7 +136,7 @@ exclude = [
 # =============================================================================
 [tool.ruff]
 # Target Python 3.11 (matches CI environment)
-target-version = "py311"
+target-version = "py311"  # Matches requires-python floor; src/ uses 3.11 stdlib (tomllib)
 line-length = 88  # Matches Black standard (88 chars)
 
 # Exclude generated code and standard noise
@@ -198,6 +199,8 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "**/Data_Processor_r0.py" = ["UP038"]
 # Compatibility shims intentionally use version checks for older Python support
 "tools/compatibility.py" = ["UP036", "UP017"]
+# Notebooks use print() for display output - suppress T201 in all notebooks
+"**/*.ipynb" = ["T201"]
 # Scripts use print() for CLI output - this is intentional and correct
 "scripts/**/*.py" = ["T201"]
 "scripts/*.py" = ["T201"]
@@ -258,7 +261,7 @@ exclude_lines = [
 ]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.11"  # Matches pyproject requires-python and ruff target-version
 files = ["src"]
 mypy_path = "src"
 ignore_missing_imports = true

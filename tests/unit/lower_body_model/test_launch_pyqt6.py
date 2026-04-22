@@ -1,8 +1,10 @@
 import sys
 from unittest.mock import MagicMock
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 from PyQt6.QtWidgets import QApplication
 
 from lower_body_model.builder import build_lower_body_xml

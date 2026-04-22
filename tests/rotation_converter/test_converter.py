@@ -10,8 +10,10 @@ from __future__ import annotations
 
 import math
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 
 from rotation_converter._contracts import PreconditionError
 from rotation_converter.converter import Rotation, RotationConverter

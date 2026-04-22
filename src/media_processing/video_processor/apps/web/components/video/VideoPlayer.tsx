@@ -166,7 +166,8 @@ export default function VideoPlayer({
             className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
           />
           <span className="text-sm text-gray-600 min-w-[80px] text-right">
-            {formatTime(currentTime)} / {formatTime(duration)}
+            <span className="sr-only">Current time: </span>
+            {formatTime(currentTime)} / <span className="sr-only">Duration: </span>{formatTime(duration)}
           </span>
         </div>
 

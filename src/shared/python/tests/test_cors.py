@@ -2,23 +2,34 @@ import os
 from typing import Any
 
 import pytest
-from cors import DEFAULT_ORIGINS, add_cors_middleware
+from cors import (
+    DEFAULT_ALLOW_HEADERS,
+    DEFAULT_ALLOW_METHODS,
+    DEFAULT_ORIGINS,
+    add_cors_middleware,
+)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from contracts import PreconditionError, set_contracts_enabled
+from contracts import (
+    ContractLevel,
+    PreconditionError,
+    get_contract_level,
+    set_contract_level,
+)
 
 
 @pytest.fixture
 def clean_env() -> Any:
-    set_contracts_enabled(True)
+    old_contract_level = get_contract_level()
+    set_contract_level(ContractLevel.ENFORCE)
     old = os.environ.get("CORS_ORIGINS")
     if "CORS_ORIGINS" in os.environ:
         del os.environ["CORS_ORIGINS"]
     yield
     if old is not None:
         os.environ["CORS_ORIGINS"] = old
-    set_contracts_enabled(False)
+    set_contract_level(old_contract_level)
 
 
 def get_cors_origins(app: FastAPI) -> list[str]:
@@ -40,8 +51,8 @@ def test_add_cors_middleware_default(clean_env) -> Any:
     add_cors_middleware(app)
     kwargs = get_cors_kwargs(app)
     assert kwargs["allow_origins"] == DEFAULT_ORIGINS
-    assert kwargs["allow_methods"] == ["*"]
-    assert kwargs["allow_headers"] == ["*"]
+    assert kwargs["allow_methods"] == DEFAULT_ALLOW_METHODS
+    assert kwargs["allow_headers"] == DEFAULT_ALLOW_HEADERS
     assert kwargs["allow_credentials"] is True
 
 

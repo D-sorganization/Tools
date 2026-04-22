@@ -21,8 +21,10 @@ import sys
 import tempfile
 from pathlib import Path
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 
 # ---------------------------------------------------------------------------
 # Load signal_toolkit.core first (needed by io), then io itself, without

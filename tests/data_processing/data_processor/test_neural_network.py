@@ -9,9 +9,13 @@ import json
 import tempfile
 from pathlib import Path
 
-import numpy as np
-import pandas as pd
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
+
+pytest.importorskip("pandas")
+import pandas as pd
 
 pytest.importorskip(
     "numba", reason="numba is required for neural network trainer tests"

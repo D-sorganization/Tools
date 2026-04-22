@@ -23,7 +23,7 @@ from PyQt6.QtGui import (
 from PyQt6.QtWidgets import QSizePolicy, QWidget
 
 if TYPE_CHECKING:
-    from asteroid_jumper.controller import SimController
+    from asteroid_jumper.controller import AsteroidJumperSnapshot, SimController
 
 # Catppuccin Mocha colour palette
 C_BASE = QColor("#1e1e2e")
@@ -131,14 +131,15 @@ class AsteroidJumperRenderer(QWidget):
     def paintEvent(self, _event: object) -> None:  # noqa: N802
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        snapshot = self._ctrl.snapshot()
         self._draw_background(painter)
         self._draw_stars(painter)
-        if self._ctrl.state.phase != "ready":
+        if not snapshot.is_ready:
             self._draw_trails(painter)
-        self._draw_force_indicator(painter)
-        self._draw_asteroid(painter)
-        self._draw_jumper(painter)
-        self._draw_hud(painter)
+        self._draw_force_indicator(painter, snapshot)
+        self._draw_asteroid(painter, snapshot)
+        self._draw_jumper(painter, snapshot)
+        self._draw_hud(painter, snapshot)
         painter.end()
 
     def mousePressEvent(self, event: object) -> None:  # noqa: N802
@@ -178,8 +179,10 @@ class AsteroidJumperRenderer(QWidget):
 
     def _update_force_from_mouse(self, pos: QPointF) -> None:
         """Set force angle based on mouse position relative to asteroid."""
-        ast = self._ctrl.state.asteroid
-        asteroid_screen = self._world_to_screen(ast.pos.x, ast.pos.y)
+        snapshot = self._ctrl.snapshot()
+        asteroid_screen = self._world_to_screen(
+            snapshot.asteroid_pos.x, snapshot.asteroid_pos.y
+        )
         dx = pos.x() - asteroid_screen.x()
         dy = -(pos.y() - asteroid_screen.y())  # flip y
         angle_deg = math.degrees(math.atan2(dy, dx))
@@ -197,11 +200,12 @@ class AsteroidJumperRenderer(QWidget):
         if not self._running:
             return
         dt = SIM_SPEED / FPS
-        if self._ctrl.state.phase in ("jumping", "flight"):
-            ast = self._ctrl.state.asteroid
-            jmp = self._ctrl.state.jumper
-            self._asteroid_trail.append((ast.pos.x, ast.pos.y))
-            self._jumper_trail.append((jmp.pos.x, jmp.pos.y))
+        snapshot = self._ctrl.snapshot()
+        if snapshot.phase in ("jumping", "flight"):
+            self._asteroid_trail.append(
+                (snapshot.asteroid_pos.x, snapshot.asteroid_pos.y)
+            )
+            self._jumper_trail.append((snapshot.jumper_pos.x, snapshot.jumper_pos.y))
             if len(self._asteroid_trail) > TRAIL_LENGTH:
                 self._asteroid_trail.pop(0)
             if len(self._jumper_trail) > TRAIL_LENGTH:
@@ -254,20 +258,20 @@ class AsteroidJumperRenderer(QWidget):
             p.drawLine(a, b)
         p.restore()
 
-    def _draw_asteroid(self, p: QPainter) -> None:
+    def _draw_asteroid(self, p: QPainter, snapshot: AsteroidJumperSnapshot) -> None:
         """Draw the asteroid as a textured polygon."""
-        ast = self._ctrl.state.asteroid
-        shape = self._ctrl.shape
+        ast = snapshot
+        shape = snapshot.shape
         p.save()
         # Build world-frame vertices
         path = QPainterPath()
         first = True
         for bx, by in shape.vertices:
             # Rotate by asteroid angle then translate
-            cos_a = math.cos(ast.angle)
-            sin_a = math.sin(ast.angle)
-            wx = bx * cos_a - by * sin_a + ast.pos.x
-            wy = bx * sin_a + by * cos_a + ast.pos.y
+            cos_a = math.cos(ast.asteroid_angle)
+            sin_a = math.sin(ast.asteroid_angle)
+            wx = bx * cos_a - by * sin_a + ast.asteroid_pos.x
+            wy = bx * sin_a + by * cos_a + ast.asteroid_pos.y
             sp = self._world_to_screen(wx, wy)
             if first:
                 path.moveTo(sp)
@@ -277,7 +281,7 @@ class AsteroidJumperRenderer(QWidget):
         path.closeSubpath()
 
         # Radial gradient fill — rocky brownish
-        rock_center = self._world_to_screen(ast.pos.x, ast.pos.y)
+        rock_center = self._world_to_screen(ast.asteroid_pos.x, ast.asteroid_pos.y)
         rg = QRadialGradient(rock_center, self._scale * shape.semi_a * 1.1)
         rg.setColorAt(0.0, QColor("#6c5c4a"))
         rg.setColorAt(0.4, QColor("#4a3e32"))
@@ -288,31 +292,28 @@ class AsteroidJumperRenderer(QWidget):
         p.drawPath(path)
 
         # COM marker
-        com_sp = self._world_to_screen(ast.pos.x, ast.pos.y)
+        com_sp = self._world_to_screen(ast.asteroid_pos.x, ast.asteroid_pos.y)
         p.setPen(QPen(C_YELLOW, 1.5))
         p.setBrush(QBrush(C_YELLOW))
         r = 4
         p.drawEllipse(com_sp, r, r)
 
         # Craters
-        self._draw_craters(p, ast, shape)
+        self._draw_craters(p, snapshot)
         p.restore()
 
-    def _draw_craters(self, p: QPainter, ast: object, shape: object) -> None:
+    def _draw_craters(self, p: QPainter, snapshot: AsteroidJumperSnapshot) -> None:
         """Draw decorative craters on the asteroid surface."""
-        from asteroid_jumper.physics import RigidBody
-
-        assert isinstance(ast, RigidBody)
         crater_angles = [0.5, 1.8, 3.1, 4.7, 5.5]
         crater_sizes = [0.6, 0.4, 0.5, 0.3, 0.7]
         p.save()
         for ca, cs in zip(crater_angles, crater_sizes, strict=False):
-            cx_b = math.cos(ca) * shape.semi_a * 0.55  # type: ignore[attr-defined]
-            cy_b = math.sin(ca) * shape.semi_b * 0.55  # type: ignore[attr-defined]
-            cos_a = math.cos(ast.angle)
-            sin_a = math.sin(ast.angle)
-            wx = cx_b * cos_a - cy_b * sin_a + ast.pos.x
-            wy = cx_b * sin_a + cy_b * cos_a + ast.pos.y
+            cx_b = math.cos(ca) * snapshot.shape.semi_a * 0.55
+            cy_b = math.sin(ca) * snapshot.shape.semi_b * 0.55
+            cos_a = math.cos(snapshot.asteroid_angle)
+            sin_a = math.sin(snapshot.asteroid_angle)
+            wx = cx_b * cos_a - cy_b * sin_a + snapshot.asteroid_pos.x
+            wy = cx_b * sin_a + cy_b * cos_a + snapshot.asteroid_pos.y
             sp = self._world_to_screen(wx, wy)
             cr = cs * self._scale * 0.8
             p.setPen(QPen(QColor("#2a1e15"), 1))
@@ -320,13 +321,13 @@ class AsteroidJumperRenderer(QWidget):
             p.drawEllipse(sp, cr, cr * 0.6)
         p.restore()
 
-    def _draw_jumper(self, p: QPainter) -> None:
+    def _draw_jumper(self, p: QPainter, snapshot: AsteroidJumperSnapshot) -> None:
         """Draw the astronaut-style jumper with animated legs."""
-        jmp = self._ctrl.state.jumper
-        phase = self._ctrl.leg_phase()
+        jmp = snapshot
+        phase = snapshot.leg_phase
         p.save()
-        sp = self._world_to_screen(jmp.pos.x, jmp.pos.y)
-        angle = jmp.angle
+        sp = self._world_to_screen(jmp.jumper_pos.x, jmp.jumper_pos.y)
+        angle = jmp.jumper_angle
 
         p.translate(sp)
         p.rotate(-math.degrees(angle))
@@ -423,19 +424,22 @@ class AsteroidJumperRenderer(QWidget):
             p.setPen(QPen(C_BLUE, 1))
             p.drawEllipse(QPointF(fx, fy), foot_r * 1.6, foot_r)
 
-    def _draw_force_indicator(self, p: QPainter) -> None:
+    def _draw_force_indicator(
+        self, p: QPainter, snapshot: AsteroidJumperSnapshot
+    ) -> None:
         """Draw the adjustable force vector arrow on the asteroid."""
-        if self._ctrl.state.phase != "ready":
+        if not snapshot.is_ready:
             return
-        ast = self._ctrl.state.asteroid
-        shape = self._ctrl.shape
-        angle_rad = math.radians(self._ctrl.force_angle_deg)
+        shape = snapshot.shape
+        angle_rad = math.radians(snapshot.force_angle_deg)
 
         # Contact point on surface
         from asteroid_jumper.asteroid_shape import surface_point_at_angle
 
         sx, sy = surface_point_at_angle(shape, angle_rad)
-        contact_screen = self._world_to_screen(sx + ast.pos.x, sy + ast.pos.y)
+        contact_screen = self._world_to_screen(
+            sx + snapshot.asteroid_pos.x, sy + snapshot.asteroid_pos.y
+        )
 
         # Arrow from contact outward
         arrow_len = self._scale * 4
@@ -490,21 +494,21 @@ class AsteroidJumperRenderer(QWidget):
         path.closeSubpath()
         p.fillPath(path, QBrush(color))
 
-    def _draw_hud(self, p: QPainter) -> None:
+    def _draw_hud(self, p: QPainter, snapshot: AsteroidJumperSnapshot) -> None:
         """Draw HUD overlay with key metrics."""
         p.save()
         p.setFont(QFont("monospace", 9))
-        phase = self._ctrl.state.phase
-        sim_time = self._ctrl.state.time
+        phase = snapshot.phase
+        sim_time = snapshot.time
 
         lines = [
             f"Phase: {phase.upper()}",
             f"Time:  {sim_time:.2f} s",
-            f"Jumper speed:   {self._ctrl.jumper_speed():.3f} m/s",
-            f"Jumper ω:       {self._ctrl.jumper_angular_speed():.3f} rad/s",
-            f"Asteroid speed: {self._ctrl.asteroid_speed():.3f} m/s",
-            f"Asteroid ω:     {self._ctrl.asteroid_angular_speed():.3f} rad/s",
-            f"Off-centre:     {self._ctrl.off_centre_fraction():.2%}",
+            f"Jumper speed:   {snapshot.jumper_speed:.3f} m/s",
+            f"Jumper ω:       {snapshot.jumper_angular_speed:.3f} rad/s",
+            f"Asteroid speed: {snapshot.asteroid_speed:.3f} m/s",
+            f"Asteroid ω:     {snapshot.asteroid_angular_speed:.3f} rad/s",
+            f"Off-centre:     {snapshot.off_centre_fraction:.2%}",
         ]
         if phase == "ready":
             lines.append("← Drag on asteroid to set jump angle")

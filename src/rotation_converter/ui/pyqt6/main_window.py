@@ -124,9 +124,9 @@ class RotationConverterMainWindow(QMainWindow):
                 mgr = get_theme_manager()
                 mgr.apply_theme_to_window(self)
                 mgr.themeChanged.connect(self._on_theme_changed)
-            except Exception as e:  # noqa: BLE001
+            except (AttributeError, RuntimeError, TypeError, ValueError):
                 # Theme system is optional; window still works without it.
-                logger.warning("Failed to apply theme: %s", e, exc_info=True)
+                logger.exception("Failed to apply optional rotation converter theme")
 
     def _on_theme_changed(self, theme_name: str) -> None:
         """Refresh all plots when the theme changes."""

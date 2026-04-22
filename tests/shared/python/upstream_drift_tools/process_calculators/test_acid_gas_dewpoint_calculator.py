@@ -11,8 +11,10 @@ import os
 import sys
 from datetime import datetime
 
-import pandas as pd
 import pytest
+
+pytest.importorskip("pandas")
+import pandas as pd
 
 # ---------------------------------------------------------------------------
 # Path setup: point at the src tree so we can import without package install

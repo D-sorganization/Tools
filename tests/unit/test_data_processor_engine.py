@@ -7,9 +7,13 @@ from __future__ import annotations
 
 import logging
 
-import numpy as np
-import pandas as pd
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
+
+pytest.importorskip("pandas")
+import pandas as pd
 from upstream_drift_tools.data_processing.core import (
     ColumnStats,
     DataProcessorEngine,

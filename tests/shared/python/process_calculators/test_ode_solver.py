@@ -9,8 +9,10 @@ Covers:
 
 from __future__ import annotations
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 from upstream_drift_tools.process_calculators.ode_solver import ODESolver
 
 

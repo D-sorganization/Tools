@@ -8,7 +8,7 @@ Functions follow Lynch & Park textbook naming conventions:
 from __future__ import annotations
 
 import math
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -84,7 +84,11 @@ def Adjoint(T: Any) -> np.ndarray:
     :return: The 6x6 adjoint representation [AdT] of T
     """
     R, p = TransToRp(T)
-    return np.r_[np.c_[R, np.zeros((3, 3))], np.c_[np.dot(VecToso3(p), R), R]]
+    adjoint = np.asarray(
+        np.r_[np.c_[R, np.zeros((3, 3))], np.c_[np.dot(VecToso3(p), R), R]],
+        dtype=float,
+    )
+    return cast(np.ndarray, adjoint)
 
 
 def MatrixExp6(se3mat: Any) -> np.ndarray:

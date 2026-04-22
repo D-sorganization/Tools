@@ -10,7 +10,7 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from PyQt6.QtWidgets import QApplication, QFileDialog, QMessageBox
+from PyQt6.QtWidgets import QFileDialog, QMessageBox
 
 from data_processor.core.dataset_naming import generate_dataset_name
 from data_processor.core.signal_processing import (
@@ -19,6 +19,7 @@ from data_processor.core.signal_processing import (
     integrate_signals,
 )
 from data_processor.models.processing_config import FilterConfig
+from data_processor.ui.async_workers import ProcessingWorker
 
 if TYPE_CHECKING:
     pass
@@ -36,31 +37,57 @@ class DataOperationsMixin:
             return
 
         try:
-            self.status_bar.set_status("Applying filter...")
-            self.status_bar.show_progress()
-            QApplication.processEvents()
-
             filter_type = self.filter_config.get_filter_type()
             params = self.filter_config.get_parameters()
-
-            config = FilterConfig(filter_type=filter_type, parameters=params)
-            self.current_data = self.signal_processor.apply_filter(
-                self.current_data, config
-            )
-
-            self.preview_widget.update_preview(self.current_data)
-            self.status_bar.hide_progress()
-            self.status_bar.set_status(f"Applied {filter_type}")
-
-            QMessageBox.information(
-                self, "Success", f"{filter_type} applied successfully"
-            )
-
-        except (RuntimeError, AttributeError) as e:
-            self.status_bar.hide_progress()
+            FilterConfig(filter_type=filter_type, parameters=params)
+        except (RuntimeError, AttributeError, KeyError, ValueError, TypeError) as e:
             self.status_bar.set_status("Filter failed")
-            logger.error(f"Filter error: {e}", exc_info=True)
+            logger.error("Filter setup error: %s", e, exc_info=True)
             QMessageBox.critical(self, "Error", f"Filter failed:\n{e}")
+            return
+
+        self.status_bar.set_status("Applying filter...")
+        self.status_bar.show_progress()
+        if hasattr(self, "apply_filter_btn"):
+            self.apply_filter_btn.setEnabled(False)
+
+        worker = ProcessingWorker(
+            "filter",
+            self.current_data.copy(),
+            self.signal_processor,
+            {"filter_type": filter_type, "parameters": params},
+        )
+        self._processing_worker = worker
+        worker.result_ready.connect(
+            lambda result, active_filter=filter_type: self._on_filter_applied(
+                result,
+                active_filter,
+            )
+        )
+        worker.error.connect(self._on_filter_error)
+        worker.finished.connect(self._on_filter_finished)
+        worker.start()
+
+    def _on_filter_applied(self, result, filter_type: str) -> None:
+        self.current_data = result
+        self.filtered_data = result
+        self.preview_widget.update_preview(self.current_data)
+        self.status_bar.set_status(f"Applied {filter_type}")
+
+        QMessageBox.information(self, "Success", f"{filter_type} applied successfully")
+
+    def _on_filter_error(self, message: str) -> None:
+        self.status_bar.set_status("Filter failed")
+        logger.error("Filter error: %s", message, exc_info=True)
+        QMessageBox.critical(self, "Error", f"Filter failed:\n{message}")
+
+    def _on_filter_finished(self) -> None:
+        if getattr(self, "_processing_worker", None) is not None:
+            self._processing_worker.deleteLater()
+        self._processing_worker = None
+        self.status_bar.hide_progress()
+        if hasattr(self, "apply_filter_btn"):
+            self.apply_filter_btn.setEnabled(True)
 
     def _integrate_signals(self) -> None:
         """Integrate selected signals."""
