@@ -65,6 +65,7 @@ export function useDataProcessor() {
     for (const signal of signals) {
       let count = 0;
       let sum = 0;
+      let sumSq = 0;
 
       // ⚡ Bolt Optimization: Extract numerical values into a dynamically growing Float64Array
       // in a single pass over the object array. This avoids a second O(N) object property access loop
@@ -76,6 +77,7 @@ export function useDataProcessor() {
         const v = data[i][signal];
         if (typeof v === 'number' && !Number.isNaN(v)) {
           sum += v;
+          sumSq += v * v;
 
           if (count >= capacity) {
             capacity = Math.min(dataLen, capacity * 2);
@@ -94,13 +96,10 @@ export function useDataProcessor() {
       const mean = sum / count;
       const vals = buffer.subarray(0, count);
 
-      let varianceSum = 0;
-      for (let i = 0; i < count; i++) {
-        const diff = vals[i] - mean;
-        varianceSum += diff * diff;
-      }
-
-      const variance = varianceSum / count;
+      // ⚡ Bolt Optimization: Calculate variance in a single pass using the sum of squares.
+      // This avoids iterating through the values array a second time.
+      // Math.max(0, ...) is used to prevent NaN due to floating point inaccuracies.
+      const variance = Math.max(0, (sumSq / count) - (mean * mean));
 
       vals.sort(); // Typed array sort is faster and numeric by default
 
