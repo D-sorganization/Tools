@@ -75,6 +75,24 @@ class TestSimController:
         frac = ctrl.off_centre_fraction()
         assert 0.0 <= frac <= 1.0
 
+    def test_snapshot_flattens_nested_state(self) -> None:
+        ctrl = SimController()
+        ctrl.start_jump()
+
+        snapshot = ctrl.snapshot()
+
+        assert snapshot.phase == "jumping"
+        assert snapshot.is_ready is False
+        assert snapshot.shape is ctrl.shape
+        assert snapshot.asteroid_pos == ctrl.state.asteroid.pos
+        assert snapshot.jumper_pos == ctrl.state.jumper.pos
+        assert snapshot.asteroid_speed == pytest.approx(ctrl.asteroid_speed())
+        assert snapshot.jumper_angular_speed == pytest.approx(
+            ctrl.jumper_angular_speed()
+        )
+        assert snapshot.off_centre_fraction == pytest.approx(ctrl.off_centre_fraction())
+        assert snapshot.leg_phase == pytest.approx(ctrl.leg_phase())
+
     def test_colinear_jump_minimises_spin(self) -> None:
         """When force goes through both COMs, angular speed is minimal."""
         ctrl = SimController()
