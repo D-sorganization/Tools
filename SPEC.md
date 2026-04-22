@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.88                                     |
+| **Spec Version**        | 1.1.89                                     |
 | **Last Spec Update**    | 2026-04-22                                 |
 
 ## 2. Purpose & Mission
@@ -564,6 +564,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-17 | 1.1.50  | Hardened model import security by enforcing HTTPS GitHub host allowlisting for remote model-library fetches, validating user-provided GitHub repository URLs before import, dropping directory components from remote mesh names, and rejecting separator-containing URDF viewer filenames before filesystem resolution.                                                                                                                                                                                                                                            |
 | 2026-04-21 | 1.1.67  | Optimized row copying logic in useDataProcessor.ts by replacing `Object.keys()` with a `for...in` loop and `hasOwnProperty`, substantially reducing GC allocation overhead inside tight data processing loops.                                                                                                                                                                                                                                                                                                                                                      |
 | 2026-04-21 | 1.1.66  | Refreshed regression test coverage for architecture boundaries, data-processor compatibility, folder archive operations, and upstream-drift contract smoke behavior while keeping the production implementation unchanged.                                                                                                                                                                                                                                                                                                                                          |
+| 2026-04-22 | 1.1.89  | Hardened `utils.env_utils` repo-root fallback discovery so shallow path layouts no longer raise import-time index errors, and added regression coverage for shallow fallback computation behavior.                                                                                                                                                                                                                                                                                                                                                                    |
 
 ---
 
