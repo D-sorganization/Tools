@@ -34,7 +34,3 @@ This policy covers:
 - shared Python packages and launchers
 - build, release, and CI automation
 - repository tooling that ships to or supports downstream repos
-
-## False Positives
-
-Some test fixtures intentionally use token-shaped strings to exercise parsing and header handling. In particular, the CSRF tests under `src/media_processing/video_processor/apps/web/lib/__tests__/` and the API header tests under `tests/` may contain synthetic values that are not credentials and should not be treated as secrets during scanning.
