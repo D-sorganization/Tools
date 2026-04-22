@@ -200,7 +200,7 @@ class TestLaunchWebApp:
         )
         assert result == 1
 
-    @patch("gui_launcher.launcher.subprocess.run")
+    @patch("gui_launcher.launcher_web.subprocess.run")
     def test_returns_error_when_node_missing(
         self, mock_run: MagicMock, tmp_path: Path
     ) -> None:
