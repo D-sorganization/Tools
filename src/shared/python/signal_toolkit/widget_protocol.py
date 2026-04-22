@@ -8,7 +8,7 @@ this protocol via TYPE_CHECKING imports for static analysis without runtime over
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING, Protocol, Any
 
 if TYPE_CHECKING:
     import numpy as np
@@ -18,6 +18,9 @@ if TYPE_CHECKING:
         QDoubleSpinBox,
         QSpinBox,
         QTextEdit,
+        QLineEdit,
+        QLabel,
+        QSlider,
     )
 
     from .core import Signal
@@ -39,6 +42,10 @@ class WidgetProtocol(Protocol):
     original_signal: Signal | None
     derivative_signal: Signal | None
     integral_signal: Signal | None
+
+    # --- Signals ---
+    signal_generated: Any
+    signal_updated: Any
 
     # --- UI controls (type stubs for static checking) ---
     show_tangent_check: QCheckBox
@@ -63,11 +70,11 @@ class WidgetProtocol(Protocol):
     diff_order: QSpinBox
     int_lower: QDoubleSpinBox
     int_upper: QDoubleSpinBox
-    int_lower_slider: object
-    int_upper_slider: object
-    tangent_slider: object
-    integral_value_label: object
-    import_path: object
+    int_lower_slider: QSlider
+    int_upper_slider: QSlider
+    tangent_slider: QSlider
+    integral_value_label: QLabel
+    import_path: QLineEdit
 
     # --- Default time array ---
     t_default: np.ndarray
@@ -87,7 +94,7 @@ class WidgetProtocol(Protocol):
     sin_frequency: QDoubleSpinBox
     sin_phase: QDoubleSpinBox
     sin_offset: QDoubleSpinBox
-    poly_coeffs_input: object
+    poly_coeffs_input: QLineEdit
     exp_amplitude: QDoubleSpinBox
     exp_decay: QDoubleSpinBox
     exp_offset: QDoubleSpinBox
@@ -104,14 +111,20 @@ class WidgetProtocol(Protocol):
     square_duty: QDoubleSpinBox
     triangle_freq: QDoubleSpinBox
     triangle_amplitude: QDoubleSpinBox
-    custom_expr: object
+    custom_expr: QLineEdit
 
     # --- Fitting controls ---
     fit_type_combo: QComboBox
     fit_poly_order: QSpinBox
-    fit_custom_expr: object
-    fit_custom_params: object
+    fit_custom_expr: QLineEdit
+    fit_custom_params: QLineEdit
 
     # --- Import controls ---
     time_col_spin: QSpinBox
     value_col_spin: QSpinBox
+
+    # --- Methods ---
+    def _update_plot(self, fitted_signal: Signal | None = None) -> None: ...
+    def _update_secondary_plot(self, signal: Signal, title: str) -> None: ...
+    def _update_frequency_response_plot(self, frequencies: np.ndarray, magnitude: np.ndarray, phase: np.ndarray, title: str) -> None: ...
+    def _log(self, message: str) -> None: ...

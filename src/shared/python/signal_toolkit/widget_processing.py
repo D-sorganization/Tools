@@ -84,8 +84,8 @@ class ProcessingMixin:
                 self._redo_stack = []
             self._redo_stack.append(w.current_signal.copy())
         w.current_signal = self._undo_stack.pop()
-        self._update_plot()
-        self._log("Undo")
+        w._update_plot()
+        w._log("Undo")
 
     def redo(self) -> None:
         """Redo the last undone processing operation."""
@@ -97,8 +97,8 @@ class ProcessingMixin:
                 self._undo_stack = []
             self._undo_stack.append(w.current_signal.copy())
         w.current_signal = self._redo_stack.pop()
-        self._update_plot()
-        self._log("Redo")
+        w._update_plot()
+        w._log("Redo")
 
     # ------------------------------------------------------------------
     # Signal generation
@@ -112,7 +112,7 @@ class ProcessingMixin:
             t, amplitude=1.0, frequency=1.0, name="default"
         )
         w.original_signal = w.current_signal.copy()
-        self._update_plot()
+        w._update_plot()
 
     def _generate_signal(self) -> None:
         """Generate signal based on current settings."""
@@ -225,7 +225,8 @@ class ProcessingMixin:
             raise SignalGenerationError(f"Failed to generate signal: {e}") from e
 
     def _report_generation_error(self, message: str) -> None:
-        """Report signal-generation errors without coupling to QMessageBox."""
+        """
+        w = cast(WidgetProtocol, self)Report signal-generation errors without coupling to QMessageBox."""
         handler = getattr(self, "show_generation_error", None)
         if callable(handler):
             handler(message)
@@ -275,7 +276,7 @@ class ProcessingMixin:
                 return
 
             # Display results
-            self._log(
+            w._log(
                 f"Fit: {fit_type}\n"
                 f"R^2: {result.r_squared:.4f}\n"
                 f"RMSE: {result.rmse:.4f}\n"
@@ -283,7 +284,7 @@ class ProcessingMixin:
             )
 
             # Plot fitted curve
-            self._update_plot(fitted_signal=result.fitted_signal)
+            w._update_plot(fitted_signal=result.fitted_signal)
 
         except (KeyError, ValueError, TypeError) as e:
             QMessageBox.warning(self, "Fit Error", f"Failed to fit: {e}")  # type: ignore[arg-type]
@@ -298,13 +299,13 @@ class ProcessingMixin:
             fitter = FunctionFitter()
             best_type, result = fitter.auto_fit(w.current_signal)
 
-            self._log(
+            w._log(
                 f"Best fit: {best_type}\n"
                 f"R^2: {result.r_squared:.4f}\n"
                 f"Parameters: {result.parameters}"
             )
 
-            self._update_plot(fitted_signal=result.fitted_signal)
+            w._update_plot(fitted_signal=result.fitted_signal)
 
         except (ValueError, TypeError, RuntimeError) as e:
             QMessageBox.warning(self, "Auto-fit Error", f"Failed: {e}")  # type: ignore[arg-type]
@@ -341,8 +342,8 @@ class ProcessingMixin:
             smoothness=w.sat_smoothness.value(),
         )
 
-        self._update_plot()
-        self._log(f"Applied {mode.value} saturation")
+        w._update_plot()
+        w._log(f"Applied {mode.value} saturation")
 
     def _update_saturation_preview(self) -> None:
         """Update saturation preview if enabled."""
@@ -379,7 +380,7 @@ class ProcessingMixin:
             )
 
             # Show on secondary plot
-            self._update_secondary_plot(preview, "Saturation Preview")
+            w._update_secondary_plot(preview, "Saturation Preview")
         else:
             # Clear preview
             w.canvas2.axes.clear()
@@ -401,7 +402,7 @@ class ProcessingMixin:
             order=w.diff_order.value(),
         )
 
-        self._update_secondary_plot(w.derivative_signal, "Derivative")
+        w._update_secondary_plot(w.derivative_signal, "Derivative")
 
     def _show_integral(self) -> None:
         """Show the integral of the current signal."""
@@ -419,7 +420,7 @@ class ProcessingMixin:
         w.integral_signal = result.cumulative_signal
         w.integral_value_label.setText(f"Integral: {result.value:.4f}")
 
-        self._update_secondary_plot(w.integral_signal, "Integral")
+        w._update_secondary_plot(w.integral_signal, "Integral")
 
     def _export_calculus_result(self) -> None:
         """Export the derivative or integral signal to a file (Issue #1281)."""
@@ -446,7 +447,7 @@ class ProcessingMixin:
                     SignalExporter.to_json(signal_to_export, path)
                 else:
                     SignalExporter.to_csv(signal_to_export, path)
-                self._log(f"Exported calculus result to {Path(path).name}")
+                w._log(f"Exported calculus result to {Path(path).name}")
             except (PermissionError, OSError) as e:
                 QMessageBox.warning(self, "Export Error", f"Failed: {e}")  # type: ignore[arg-type]
 
@@ -464,11 +465,12 @@ class ProcessingMixin:
         w.tangent_t_spin.setValue(t_point)
 
         if w.show_tangent_check.isChecked():
-            self._update_plot()
+            w._update_plot()
 
     def _toggle_tangent(self, state: int) -> None:
-        """Toggle tangent line display."""
-        self._update_plot()
+        """
+        w = cast(WidgetProtocol, self)Toggle tangent line display."""
+        w._update_plot()
 
     def _update_integral_bounds(self) -> None:
         """Update integral bounds from sliders."""
@@ -522,14 +524,14 @@ class ProcessingMixin:
             )
 
             # Show on secondary plot
-            self._update_secondary_plot(
+            w._update_secondary_plot(
                 approx_signal,
                 f"{series_type} Series (center={center:.2f}, {n_terms} terms)",
             )
 
             # Log coefficients
             coeffs_str = ", ".join(f"{c:.4f}" for c in result.coefficients[:n_terms])
-            self._log(
+            w._log(
                 f"{series_type} Series at a={center:.2f}:\nCoefficients: [{coeffs_str}]"
             )
 
@@ -615,8 +617,8 @@ class ProcessingMixin:
                     return
                 w.current_signal = apply_filter(w.current_signal, spec)
 
-            self._update_plot()
-            self._log(f"Applied {design} {filter_type} filter")
+            w._update_plot()
+            w._log(f"Applied {design} {filter_type} filter")
 
         except (ValueError, ImportError) as e:
             QMessageBox.warning(self, "Filter Error", f"Failed: {e}")  # type: ignore[arg-type]
@@ -661,9 +663,9 @@ class ProcessingMixin:
             title = f"{design} {filter_type} — Frequency Response"
 
             # Render on secondary canvas via the new Bode plot method
-            self._update_frequency_response_plot(frequencies, magnitude, phase, title)
+            w._update_frequency_response_plot(frequencies, magnitude, phase, title)
 
-            self._log(f"Showing frequency response for {design} {filter_type}")
+            w._log(f"Showing frequency response for {design} {filter_type}")
 
         except (ValueError, ImportError) as e:
             QMessageBox.warning(
@@ -710,8 +712,8 @@ class ProcessingMixin:
                 amplitude=w.noise_amplitude.value(),
             )
 
-        self._update_plot()
-        self._log(f"Added {noise_type.value} noise")
+        w._update_plot()
+        w._log(f"Added {noise_type.value} noise")
 
     def _reset_signal(self) -> None:
         """Reset to original signal."""
@@ -719,8 +721,8 @@ class ProcessingMixin:
         if w.original_signal:
             self._push_undo()
             w.current_signal = w.original_signal.copy()
-            self._update_plot()
-            self._log("Reset to original signal")
+            w._update_plot()
+            w._log("Reset to original signal")
 
     # ------------------------------------------------------------------
     # Import / Export
@@ -758,8 +760,8 @@ class ProcessingMixin:
                 w.current_signal = result
 
             w.original_signal = w.current_signal.copy()
-            self._update_plot()
-            self._log(f"Imported signal from {Path(path).name}")
+            w._update_plot()
+            w._log(f"Imported signal from {Path(path).name}")
 
         except (PermissionError, OSError) as e:
             QMessageBox.warning(self, "Import Error", f"Failed: {e}")  # type: ignore[arg-type]
@@ -780,7 +782,7 @@ class ProcessingMixin:
         coeffs = [result.parameters.get(f"c{i}", 0.0) for i in range(7)]
 
         w.signal_generated.emit(joint, coeffs)
-        self._log(f"Applied to {joint}: {coeffs}")
+        w._log(f"Applied to {joint}: {coeffs}")
 
     def _export_signal(self) -> None:
         """Export current signal to file."""
@@ -801,7 +803,7 @@ class ProcessingMixin:
                     SignalExporter.to_json(w.current_signal, path)
                 else:
                     SignalExporter.to_csv(w.current_signal, path)
-                self._log(f"Exported to {Path(path).name}")
+                w._log(f"Exported to {Path(path).name}")
             except (PermissionError, OSError) as e:
                 QMessageBox.warning(self, "Export Error", f"Failed: {e}")  # type: ignore[arg-type]
 
@@ -819,8 +821,8 @@ class ProcessingMixin:
         w = cast(WidgetProtocol, self)
         w.current_signal = signal
         w.original_signal = signal.copy()
-        self._update_plot()
-        self._log(
+        w._update_plot()
+        w._log(
             f"Loaded external signal: {signal.name or 'unnamed'} "
             f"({signal.n_samples} samples)"
         )
