@@ -250,6 +250,26 @@ class TestTransformationErrors:
         with pytest.raises(TransformationError):
             loaded_engine.add_calculated_column("", "salary / 1000")
 
+    def test_normalize_constant_column_raises(self) -> None:
+        engine = DataProcessorEngine()
+        engine.load_dataframe(pd.DataFrame({"constant": [5.0, 5.0, 5.0]}))
+        original = engine.data.copy()
+
+        with pytest.raises(TransformationError, match="Cannot normalize"):
+            engine.transform_column("constant", "normalize")
+
+        pd.testing.assert_frame_equal(engine.data, original)
+
+    def test_standardize_constant_column_raises(self) -> None:
+        engine = DataProcessorEngine()
+        engine.load_dataframe(pd.DataFrame({"constant": [5.0, 5.0, 5.0]}))
+        original = engine.data.copy()
+
+        with pytest.raises(TransformationError, match="Cannot standardize"):
+            engine.transform_column("constant", "standardize")
+
+        pd.testing.assert_frame_equal(engine.data, original)
+
 
 # ── Data integrity after errors ──────────────────────────────────
 
