@@ -496,18 +496,15 @@ class TestAPITestBase:
     def test_get_headers(self) -> None:
         """Test getting headers."""
 
-        fixture_auth_token = "fixture-token"
-        expected_authorization = f"Bearer {fixture_auth_token}"
-
         class TestAPI(APITestBase):
             default_headers = {"Content-Type": "application/json"}
-            auth_token = fixture_auth_token
+            auth_token = "test_token"
 
         api = TestAPI()
         headers = api.get_headers({"X-Custom": "value"})
 
         assert headers["Content-Type"] == "application/json"
-        assert headers["Authorization"] == expected_authorization
+        assert headers["Authorization"] == "Bearer test_token"
         assert headers["X-Custom"] == "value"
 
     def test_get_headers_no_auth(self) -> None:

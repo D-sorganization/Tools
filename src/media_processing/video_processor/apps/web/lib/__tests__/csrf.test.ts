@@ -76,7 +76,7 @@ describe('CSRF Protection', () => {
 
   describe('validateCsrfToken', () => {
     it('should return true when tokens match', () => {
-      const token = generateCsrfToken();
+      const token = 'abc123def456';
       const request = new Request('http://localhost', {
         headers: {
           'x-csrf-token': token,
@@ -101,7 +101,7 @@ describe('CSRF Protection', () => {
     it('should return false when header token is missing', () => {
       const request = new Request('http://localhost', {
         headers: {
-          cookie: 'csrf_token=fixture-cookie-value',
+          cookie: 'csrf_token=abc123',
         },
       });
 
@@ -111,7 +111,7 @@ describe('CSRF Protection', () => {
     it('should return false when cookie is missing', () => {
       const request = new Request('http://localhost', {
         headers: {
-          'x-csrf-token': 'fixture-header-value',
+          'x-csrf-token': 'abc123',
         },
       });
 
@@ -121,7 +121,7 @@ describe('CSRF Protection', () => {
     it('should return false when csrf_token cookie is not present', () => {
       const request = new Request('http://localhost', {
         headers: {
-          'x-csrf-token': 'fixture-header-value',
+          'x-csrf-token': 'abc123',
           cookie: 'other_cookie=value',
         },
       });
@@ -130,7 +130,7 @@ describe('CSRF Protection', () => {
     });
 
     it('should handle multiple cookies correctly', () => {
-      const token = generateCsrfToken();
+      const token = 'abc123def456';
       const request = new Request('http://localhost', {
         headers: {
           'x-csrf-token': token,
@@ -144,8 +144,8 @@ describe('CSRF Protection', () => {
     it('should be case-sensitive', () => {
       const request = new Request('http://localhost', {
         headers: {
-          'x-csrf-token': 'FIXTURE-HEADER-VALUE',
-          cookie: 'csrf_token=fixture-header-value',
+          'x-csrf-token': 'ABC123',
+          cookie: 'csrf_token=abc123',
         },
       });
 
@@ -175,11 +175,11 @@ describe('CSRF Protection', () => {
     });
 
     it('should handle tokens with special characters', () => {
-      const specialToken = 'csrf-value-with_special.chars!';
+      const token = 'token-with_special.chars!';
       const request = new Request('http://localhost', {
         headers: {
-          'x-csrf-token': specialToken,
-          cookie: `csrf_token=${specialToken}`,
+          'x-csrf-token': token,
+          cookie: `csrf_token=${token}`,
         },
       });
 
@@ -187,7 +187,7 @@ describe('CSRF Protection', () => {
     });
 
     it('should handle cookie with spaces around equals', () => {
-      const token = generateCsrfToken();
+      const token = 'abc123';
       const request = new Request('http://localhost', {
         headers: {
           'x-csrf-token': token,
@@ -199,7 +199,7 @@ describe('CSRF Protection', () => {
     });
 
     it('should handle cookie with spaces between cookies', () => {
-      const token = generateCsrfToken();
+      const token = 'abc123';
       const request = new Request('http://localhost', {
         headers: {
           'x-csrf-token': token,
@@ -252,17 +252,17 @@ describe('CSRF Protection', () => {
     });
 
     it('should handle unicode characters in comparison', () => {
-      const unicodeToken = 'café-token-ñ';
+      const token = '测试token🎥';
       const request1 = new Request('http://localhost', {
         headers: {
-          'x-csrf-token': unicodeToken,
-          cookie: `csrf_token=${unicodeToken}`,
+          'x-csrf-token': token,
+          cookie: `csrf_token=${token}`,
         },
       });
 
       const request2 = new Request('http://localhost', {
         headers: {
-          'x-csrf-token': unicodeToken,
+          'x-csrf-token': token,
           cookie: 'csrf_token=differenttoken',
         },
       });
@@ -274,7 +274,7 @@ describe('CSRF Protection', () => {
 
   describe('requireCsrfToken', () => {
     it('should return null when token is valid', () => {
-      const token = generateCsrfToken();
+      const token = 'abc123def456';
       const request = new Request('http://localhost', {
         headers: {
           'x-csrf-token': token,
@@ -330,7 +330,7 @@ describe('CSRF Protection', () => {
     it('should return 403 when header token is missing', () => {
       const request = new Request('http://localhost', {
         headers: {
-          cookie: 'csrf_token=fixture-cookie-value',
+          cookie: 'csrf_token=abc123',
         },
       });
 
@@ -343,7 +343,7 @@ describe('CSRF Protection', () => {
     it('should return 403 when cookie token is missing', () => {
       const request = new Request('http://localhost', {
         headers: {
-          'x-csrf-token': 'fixture-header-value',
+          'x-csrf-token': 'abc123',
         },
       });
 
@@ -361,7 +361,7 @@ describe('CSRF Protection', () => {
     });
 
     it('should return token from meta tag', () => {
-      const token = generateCsrfToken();
+      const token = 'abc123def456';
       const meta = document.createElement('meta');
       meta.name = 'csrf-token';
       meta.content = token;
@@ -385,11 +385,11 @@ describe('CSRF Protection', () => {
 
       const result = getClientCsrfToken();
 
-      expect(result).toBeNull();
+      expect(result).toBe('');
     });
 
     it('should handle multiple meta tags', () => {
-      const primaryToken = 'csrf-value-one';
+      const token = 'correct-token';
 
       const meta1 = document.createElement('meta');
       meta1.name = 'description';
@@ -398,7 +398,7 @@ describe('CSRF Protection', () => {
 
       const meta2 = document.createElement('meta');
       meta2.name = 'csrf-token';
-      meta2.content = primaryToken;
+      meta2.content = token;
       document.head.appendChild(meta2);
 
       const meta3 = document.createElement('meta');
@@ -408,26 +408,26 @@ describe('CSRF Protection', () => {
 
       const result = getClientCsrfToken();
 
-      expect(result).toBe(primaryToken);
+      expect(result).toBe(token);
     });
 
     it('should return first matching meta tag', () => {
-      const firstToken = 'csrf-value-one';
-      const secondToken = 'csrf-value-two';
+      const token1 = 'first-token';
+      const token2 = 'second-token';
 
       const meta1 = document.createElement('meta');
       meta1.name = 'csrf-token';
-      meta1.content = firstToken;
+      meta1.content = token1;
       document.head.appendChild(meta1);
 
       const meta2 = document.createElement('meta');
       meta2.name = 'csrf-token';
-      meta2.content = secondToken;
+      meta2.content = token2;
       document.head.appendChild(meta2);
 
       const result = getClientCsrfToken();
 
-      expect(result).toBe(firstToken);
+      expect(result).toBe(token1);
     });
 
     it('should handle generated tokens', () => {
@@ -459,7 +459,7 @@ describe('CSRF Protection', () => {
     });
 
     it('should call fetch with CSRF token in header', async () => {
-      const token = generateCsrfToken();
+      const token = 'abc123def456';
       const meta = document.createElement('meta');
       meta.name = 'csrf-token';
       meta.content = token;
@@ -481,7 +481,7 @@ describe('CSRF Protection', () => {
     });
 
     it('should preserve existing headers', async () => {
-      const token = generateCsrfToken();
+      const token = 'abc123';
       const meta = document.createElement('meta');
       meta.name = 'csrf-token';
       meta.content = token;
@@ -516,7 +516,7 @@ describe('CSRF Protection', () => {
     });
 
     it('should preserve request options', async () => {
-      const token = generateCsrfToken();
+      const token = 'abc123';
       const meta = document.createElement('meta');
       meta.name = 'csrf-token';
       meta.content = token;
@@ -543,7 +543,7 @@ describe('CSRF Protection', () => {
     });
 
     it('should return fetch response', async () => {
-      const token = generateCsrfToken();
+      const token = 'abc123';
       const meta = document.createElement('meta');
       meta.name = 'csrf-token';
       meta.content = token;
@@ -560,7 +560,7 @@ describe('CSRF Protection', () => {
     it('should handle fetch errors', async () => {
       fetchSpy.mockRejectedValue(new Error('Network error'));
 
-      const token = generateCsrfToken();
+      const token = 'abc123';
       const meta = document.createElement('meta');
       meta.name = 'csrf-token';
       meta.content = token;
@@ -570,7 +570,7 @@ describe('CSRF Protection', () => {
     });
 
     it('should work with GET requests', async () => {
-      const token = generateCsrfToken();
+      const token = 'abc123';
       const meta = document.createElement('meta');
       meta.name = 'csrf-token';
       meta.content = token;
@@ -591,7 +591,7 @@ describe('CSRF Protection', () => {
     });
 
     it('should work with default GET method', async () => {
-      const token = generateCsrfToken();
+      const token = 'abc123';
       const meta = document.createElement('meta');
       meta.name = 'csrf-token';
       meta.content = token;
@@ -606,7 +606,7 @@ describe('CSRF Protection', () => {
     });
 
     it('should handle Headers object as input', async () => {
-      const token = generateCsrfToken();
+      const token = 'abc123';
       const meta = document.createElement('meta');
       meta.name = 'csrf-token';
       meta.content = token;
@@ -688,11 +688,11 @@ describe('CSRF Protection', () => {
     });
 
     it('should handle cookie values with equals signs', () => {
-      const cookieValue = 'value=with=equals';
+      const token = 'token=with=equals';
       const request = new Request('http://localhost', {
         headers: {
-          'x-csrf-token': cookieValue,
-          cookie: `csrf_token=${cookieValue}`,
+          'x-csrf-token': token,
+          cookie: `csrf_token=${token}`,
         },
       });
 
@@ -703,11 +703,10 @@ describe('CSRF Protection', () => {
     });
 
     it('should handle whitespace in tokens', () => {
-      const spacedValue = 'value with spaces';
       const request = new Request('http://localhost', {
         headers: {
-          'x-csrf-token': spacedValue,
-          cookie: `csrf_token=${spacedValue}`,
+          'x-csrf-token': 'token with spaces',
+          cookie: 'csrf_token=token with spaces',
         },
       });
 

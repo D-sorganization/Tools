@@ -27,6 +27,6 @@
 ## 2026-04-20 - [Memoization optimization in data processor web hooks]
 **Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), returning derived objects like `Object.keys(state.savedPlotConfigs)` directly inside the `useDataProcessor` hook without memoizing it breaks the referential equality of downstream components like `TrendlinePanel` that use `React.memo()`.
 **Action:** When returning derived values from hooks that are passed down to child components, explicitly use `useMemo()` to prevent unnecessary re-renders when parent state changes.
-## 2026-04-21 - [Optimize variance to single-pass sum-of-squares]
-**Learning:** In JS/TS, calculating variance using a two-pass algorithm (calculating mean, then iterating again to sum squared differences) introduces an unnecessary O(N) array traversal overhead.
-**Action:** When converting two-pass statistical algorithms (like variance) to a single-pass sum calculation in JS/TS to prevent O(N) loop overhead (e.g., using `sumSq += v * v`), numerical instability can cause the result to become slightly negative. Always wrap the variance computation in `Math.max(0, (sumSq / count) - (mean * mean))` to prevent `NaN` results during standard deviation derivation.
+## 2024-04-22 - [Avoid naive single-pass statistical formulas]
+**Learning:** When converting two-pass statistical algorithms (like variance) to single-pass in JS/TS to prevent O(N) loop overhead, naive formulas (e.g., `sumSq - (sum * sum) / count`) suffer from severe numerical instability (catastrophic cancellation).
+**Action:** Instead, use Welford's online algorithm to calculate mean and variance in a stable single pass.

@@ -64,8 +64,8 @@ export function useDataProcessor() {
 
     for (const signal of signals) {
       let count = 0;
-      let sum = 0;
-      let sumSq = 0;
+      let mean = 0;
+      let m2 = 0; // Welford's algorithm accumulator
 
       // ⚡ Bolt Optimization: Extract numerical values into a dynamically growing Float64Array
       // in a single pass over the object array. This avoids a second O(N) object property access loop
@@ -76,9 +76,6 @@ export function useDataProcessor() {
       for (let i = 0; i < dataLen; i++) {
         const v = data[i][signal];
         if (typeof v === 'number' && !Number.isNaN(v)) {
-          sum += v;
-          sumSq += v * v;
-
           if (count >= capacity) {
             capacity = Math.min(dataLen, capacity * 2);
             const newBuffer = new Float64Array(capacity);
@@ -88,18 +85,21 @@ export function useDataProcessor() {
 
           buffer[count] = v;
           count++;
+
+          // ⚡ Bolt Optimization: Use Welford's algorithm to calculate numerically stable mean and variance in a single pass.
+          // Performance impact: Eliminates the second O(N) loop while avoiding catastrophic cancellation.
+          const delta = v - mean;
+          mean += delta / count;
+          const delta2 = v - mean;
+          m2 += delta * delta2;
         }
       }
 
       if (count === 0) continue;
 
-      const mean = sum / count;
       const vals = buffer.subarray(0, count);
 
-      // ⚡ Bolt Optimization: Calculate variance in a single pass using the sum of squares.
-      // This avoids iterating through the values array a second time.
-      // Math.max(0, ...) is used to prevent NaN due to floating point inaccuracies.
-      const variance = Math.max(0, (sumSq / count) - (mean * mean));
+      const variance = Math.max(0, m2 / count);
 
       vals.sort(); // Typed array sort is faster and numeric by default
 
