@@ -25,7 +25,10 @@ import numpy as np
 from numba import jit
 
 from data_processor.contracts import require
-from data_processor.core.causality_types import GrangerCausalityResult, TransferEntropyResult
+from data_processor.core.causality_types import (
+    GrangerCausalityResult,
+    TransferEntropyResult,
+)
 
 logger = logging.getLogger(__name__)
 
