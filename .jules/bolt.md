@@ -27,3 +27,6 @@
 ## 2026-04-20 - [Memoization optimization in data processor web hooks]
 **Learning:** In the Data Processor web app (`src/data_processing/data_processor/web`), returning derived objects like `Object.keys(state.savedPlotConfigs)` directly inside the `useDataProcessor` hook without memoizing it breaks the referential equality of downstream components like `TrendlinePanel` that use `React.memo()`.
 **Action:** When returning derived values from hooks that are passed down to child components, explicitly use `useMemo()` to prevent unnecessary re-renders when parent state changes.
+## 2024-04-22 - [Avoid naive single-pass statistical formulas]
+**Learning:** When converting two-pass statistical algorithms (like variance) to single-pass in JS/TS to prevent O(N) loop overhead, naive formulas (e.g., `sumSq - (sum * sum) / count`) suffer from severe numerical instability (catastrophic cancellation).
+**Action:** Instead, use Welford's online algorithm to calculate mean and variance in a stable single pass.
