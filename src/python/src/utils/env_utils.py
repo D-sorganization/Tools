@@ -11,6 +11,7 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+
 def _compute_repo_root_fallback(file_path: str | Path, levels: int = 5) -> Path:
     """Return a stable ancestor path without failing on shallow layouts."""
     current = Path(file_path)
