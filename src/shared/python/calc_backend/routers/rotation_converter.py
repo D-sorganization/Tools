@@ -64,7 +64,11 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
             rot = Rotation.from_rotation_matrix(request.value)
         else:
             raise ValueError(f"Unknown representation type: {request.type}")
+<<<<<<< HEAD
     except ValueError as exc:
+=======
+    except (ValueError, TypeError, IndexError) as exc:
+>>>>>>> origin/main
         raise HTTPException(
             status_code=422, detail=f"Invalid rotation input: {exc}"
         ) from exc
@@ -97,7 +101,25 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
         rotation_matrix=rot_mat,
     )
 
+<<<<<<< HEAD
     return RotationConverterResponse(representations=rep_model)
+=======
+        rep_model = RotationRepresentationsModel(
+            quaternion=quat,
+            euler=eul,
+            euler_convention=conv,
+            axis_angle={"axis": axis_list, "angle": angle},
+            rodrigues=rod,
+            rotation_matrix=rot_mat,
+        )
+
+        return RotationConverterResponse(representations=rep_model)
+
+    except (ValueError, TypeError, KeyError) as exc:
+        raise HTTPException(
+            status_code=500, detail=f"Failed building outputs: {exc}"
+        ) from exc
+>>>>>>> origin/main
 
 
 @router.post("/reference-frame", response_model=ReferenceFrameConversionResponse)
@@ -117,6 +139,14 @@ def compute_reference_frame_conversion(
         )
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
+<<<<<<< HEAD
+=======
+    except (TypeError, RuntimeError, KeyError) as error:
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to compute reference-frame conversion.",
+        ) from error
+>>>>>>> origin/main
 
     return ReferenceFrameConversionResponse(
         operation=result.operation,

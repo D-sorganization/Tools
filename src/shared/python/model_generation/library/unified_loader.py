@@ -447,7 +447,7 @@ class UnifiedModelLoader:
 
         try:
             return str(self._mjcf_converter.mjcf_to_urdf(source_data))
-        except Exception as exc:
+        except (ValueError, KeyError, OSError, RuntimeError) as exc:
             logger.exception("MJCF to URDF conversion failed")
             raise ConversionError(
                 f"Unable to convert MJCF source to URDF: {source}"
@@ -484,7 +484,7 @@ class UnifiedModelLoader:
 
         try:
             return str(self._mjcf_converter.urdf_to_mjcf(source_data))
-        except Exception as exc:
+        except (ValueError, KeyError, OSError, RuntimeError) as exc:
             logger.exception("URDF to MJCF conversion failed")
             raise ConversionError(
                 f"Unable to convert URDF source to MJCF: {source}"
