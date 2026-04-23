@@ -1,5 +1,7 @@
 """Tests for the interactive scripting environment (MATLAB-like CLI backend)."""
 
+import contextlib
+import io
 import os
 import tempfile
 import unittest
@@ -91,6 +93,37 @@ class TestConsoleEnvironment(unittest.TestCase):
             # Call it
             out, err = self.env.execute("result = custom_func(21)\nprint(result)")
             self.assertEqual(self.env.namespace["result"], 42)
+
+    def test_refresh_user_functions_reports_expected_user_code_errors(self) -> None:
+        """Expected user-code failures should still be reported to stderr."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            user_lib_path = os.path.join(tmpdir, "user_libs.py")
+            self.env.set_user_library_path(user_lib_path)
+
+            with open(user_lib_path, "w", encoding="utf-8") as f:
+                f.write("raise ValueError('boom')\n")
+
+            stderr = io.StringIO()
+            with contextlib.redirect_stderr(stderr):
+                self.env.refresh_user_functions()
+
+            self.assertIn("Error loading user library: boom", stderr.getvalue())
+
+    def test_refresh_user_functions_propagates_keyboard_interrupt_and_system_exit(
+        self,
+    ) -> None:
+        """Control-flow exceptions should not be swallowed during user-code loading."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            user_lib_path = os.path.join(tmpdir, "user_libs.py")
+            self.env.set_user_library_path(user_lib_path)
+
+            for exc_type in (KeyboardInterrupt, SystemExit):
+                with self.subTest(exc_type=exc_type):
+                    with open(user_lib_path, "w", encoding="utf-8") as f:
+                        f.write(f"raise {exc_type.__name__}()\n")
+
+                    with self.assertRaises(exc_type):
+                        self.env.refresh_user_functions()
 
 
 if __name__ == "__main__":

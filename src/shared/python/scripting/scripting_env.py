@@ -152,7 +152,7 @@ class ConsoleEnvironment:
         try:
             # Execute within current namespace so imports/functions are persistent
             exec(code, self.namespace)  # nosec B102
-        except Exception as e:  # noqa: BLE001
+        except USER_CODE_ERROR_TYPES as e:
             sys.stderr.write(f"Error loading user library: {e}\n")
 
     def execute(self, source: str | None) -> tuple[str, str]:
