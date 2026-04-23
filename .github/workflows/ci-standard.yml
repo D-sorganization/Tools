@@ -104,8 +104,8 @@ jobs:
         run: |
           python -m ensurepip --upgrade
           python -m pip install --upgrade pip setuptools
-          python -m pip install --force-reinstall --no-deps wheel
-          python -m pip install --force-reinstall --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
+          python -m pip install --ignore-installed --no-deps wheel
+          python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           python -m pip install -r requirements.txt
           python -m pip install fastapi
           python -m pip install httpx pytest-cov
@@ -263,8 +263,8 @@ jobs:
         run: |
           python -m ensurepip --upgrade
           python -m pip install --upgrade pip setuptools
-          python -m pip install --force-reinstall --no-deps wheel
-          python -m pip install --force-reinstall --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
+          python -m pip install --ignore-installed --no-deps wheel
+          python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           python -m pip install -r requirements.txt
           python -m pip install fastapi
           python -m pip install httpx pytest-cov
