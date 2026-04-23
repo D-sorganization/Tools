@@ -10,6 +10,7 @@ See issue #407.
 from __future__ import annotations  # noqa: E402, F404
 
 import logging  # noqa: E402
+import math  # noqa: E402
 from dataclasses import dataclass, field  # noqa: E402
 from pathlib import Path  # noqa: E402
 from typing import Any  # noqa: E402
@@ -20,6 +21,7 @@ from contracts import require  # noqa: E402
 
 logger = logging.getLogger(__name__)
 SUPPORTED_FILTER_TYPES = {"butterworth", "moving_average", "median", "savgol"}
+DEFAULT_BUTTERWORTH_SAMPLE_RATE_HZ = 1000.0
 
 
 @dataclass
@@ -235,6 +237,7 @@ class DataProcessor:
         cutoff: float = 10.0,
         order: int = 4,
         window_size: int = 11,
+        sample_rate: float = DEFAULT_BUTTERWORTH_SAMPLE_RATE_HZ,
     ) -> DataProcessor:
         """Apply a signal filter (butterworth, moving_average, median, savgol).
 
@@ -250,10 +253,14 @@ class DataProcessor:
             Filter order.
         window_size : int
             Window size for moving_average / median / savgol.
+        sample_rate : float
+            Sampling rate in Hz for butterworth filters.
         """
         if not (filter_type is not None):
             raise ValueError("filter_type must be provided")
-        self._validate_filter_contract(filter_type, window_size)
+        resolved_sample_rate = self._validate_filter_contract(
+            filter_type, window_size, sample_rate
+        )
         df = self.dataframe
         selected_columns = self._resolve_filter_columns(df, columns)
         self._apply_filter_impl(
@@ -263,6 +270,7 @@ class DataProcessor:
             cutoff=cutoff,
             order=order,
             window_size=window_size,
+            sample_rate=resolved_sample_rate,
         )
         self._df = df
         self._history.append(
@@ -270,12 +278,28 @@ class DataProcessor:
         )
         return self
 
-    def _validate_filter_contract(self, filter_type: str, window_size: int) -> None:
+    def _validate_filter_contract(
+        self, filter_type: str, window_size: int, sample_rate: float
+    ) -> float:
         """Validate filter preconditions at API boundary."""
         if filter_type not in SUPPORTED_FILTER_TYPES:
             raise ValueError(f"Unknown filter type: {filter_type}")
         if window_size <= 0:
             raise ValueError("window_size must be positive")
+        if filter_type == "butterworth":
+            return self._validate_sample_rate(sample_rate)
+        return DEFAULT_BUTTERWORTH_SAMPLE_RATE_HZ
+
+    @staticmethod
+    def _validate_sample_rate(sample_rate: float) -> float:
+        """Validate sample rate for frequency-domain filters."""
+        try:
+            rate = float(sample_rate)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("sample_rate must be a positive finite number") from exc
+        if not math.isfinite(rate) or rate <= 0:
+            raise ValueError("sample_rate must be a positive finite number")
+        return rate
 
     def _resolve_filter_columns(
         self, df: pd.DataFrame, columns: list[str] | None
@@ -298,6 +322,7 @@ class DataProcessor:
         cutoff: float,
         order: int,
         window_size: int,
+        sample_rate: float,
     ) -> None:
         """Apply filter using SciPy implementation when available."""
         try:
@@ -308,6 +333,7 @@ class DataProcessor:
                 cutoff=cutoff,
                 order=order,
                 window_size=window_size,
+                sample_rate=sample_rate,
             )
         except ImportError:
             self._apply_filter_fallback(df=df, columns=columns, window_size=window_size)
@@ -320,6 +346,7 @@ class DataProcessor:
         cutoff: float,
         order: int,
         window_size: int,
+        sample_rate: float,
     ) -> None:
         """Apply filter implementation backed by scipy.signal."""
         if not (df is not None):
@@ -329,7 +356,7 @@ class DataProcessor:
         for column in columns:
             values = df[column].values.astype(float)
             if filter_type == "butterworth":
-                b, a = butter(order, cutoff, btype="low", fs=1000)
+                b, a = butter(order, cutoff, btype="low", fs=sample_rate)
                 df[column] = filtfilt(b, a, values)
             elif filter_type == "moving_average":
                 df[column] = (

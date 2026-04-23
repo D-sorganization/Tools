@@ -15,7 +15,9 @@ Covers:
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
+from types import ModuleType
 
 import pytest
 
@@ -154,6 +156,51 @@ class TestDataProcessorTransformations:
     def test_apply_filter_no_matching_columns_raises(self, dp: DataProcessor) -> None:
         with pytest.raises(ValueError, match="No valid columns to filter"):
             dp.apply_filter("moving_average", columns=["missing_col"])
+
+    def test_butterworth_uses_configured_sample_rate(
+        self, dp: DataProcessor, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        captured: dict[str, float | int | str] = {}
+        signal_module = ModuleType("scipy.signal")
+
+        def fake_butter(
+            order: int, cutoff: float, *, btype: str, fs: float
+        ) -> tuple[list[float], list[float]]:
+            captured.update(
+                {"order": order, "cutoff": cutoff, "btype": btype, "fs": fs}
+            )
+            return [1.0], [1.0]
+
+        def fake_filtfilt(_b: list[float], _a: list[float], values: object) -> object:
+            return values
+
+        signal_module.butter = fake_butter  # type: ignore[attr-defined]
+        signal_module.filtfilt = fake_filtfilt  # type: ignore[attr-defined]
+        signal_module.medfilt = lambda values, kernel_size: values  # type: ignore[attr-defined]
+        signal_module.savgol_filter = lambda values, *_args: values  # type: ignore[attr-defined]
+        scipy_module = ModuleType("scipy")
+        scipy_module.signal = signal_module  # type: ignore[attr-defined]
+        monkeypatch.setitem(sys.modules, "scipy", scipy_module)
+        monkeypatch.setitem(sys.modules, "scipy.signal", signal_module)
+
+        dp.apply_filter(
+            "butterworth",
+            columns=["signal"],
+            cutoff=25.0,
+            order=3,
+            sample_rate=250.0,
+        )
+
+        assert captured == {
+            "order": 3,
+            "cutoff": 25.0,
+            "btype": "low",
+            "fs": 250.0,
+        }
+
+    def test_butterworth_rejects_invalid_sample_rate(self, dp: DataProcessor) -> None:
+        with pytest.raises(ValueError, match="sample_rate must be a positive"):
+            dp.apply_filter("butterworth", columns=["signal"], sample_rate=0.0)
 
 
 # ── Analysis Methods ─────────────────────────────────────────────────────
