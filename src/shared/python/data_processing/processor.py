@@ -22,6 +22,15 @@ logger = logging.getLogger(__name__)
 SUPPORTED_FILTER_TYPES = {"butterworth", "moving_average", "median", "savgol"}
 
 
+def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
+    """Prefer numexpr when present but keep formula evaluation functional without it."""
+
+    try:
+        return df.eval(expression, engine="numexpr")
+    except ImportError:
+        return df.eval(expression, engine="python")
+
+
 @dataclass
 class DatasetInfo:
     """Metadata about a loaded dataset."""
@@ -380,9 +389,7 @@ class DataProcessor:
             "expression must be a non-empty string",
         )
         df = self.dataframe
-        # pandas DataFrame.eval() is safe -- it only resolves column names
-        # pandas DataFrame.eval() is safe with numexpr engine
-        df[new_column] = df.eval(expression, engine="numexpr")
+        df[new_column] = _eval_with_optional_numexpr(df, expression)
         self._history.append(f"Created column '{new_column}' = {expression}")
         return self
 

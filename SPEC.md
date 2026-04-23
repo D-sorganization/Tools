@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.101                                    |
+| **Spec Version**        | 1.1.102                                    |
 | **Last Spec Update**    | 2026-04-23                                 |
 
 ## 2. Purpose & Mission
@@ -601,6 +601,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ### Performance
 
+- Data-processing formula evaluation now treats `numexpr` as an optional accelerator rather than a hard runtime dependency. Shared `DataProcessor` and `upstream_drift_tools` formula columns fall back to the pandas Python eval engine when `numexpr` is unavailable, preserving the documented `TransformationError` contract for invalid expressions.
 - The application uses `Float64Array` and iterative loops instead of `Array.prototype.map`/`filter`/`reduce` to optimize memory and processing speed for large numerical datasets, including reusable typed-array buffering for median-filter windows in `useDataProcessor.ts`. Chained array functional methods like `reduce` and `map` have been largely replaced with standard iterative loops in mathematical computation methods such as `zScoreFilter`, `linearRegression` and `polynomialRegression`.
 - Mathematical matrix calculations such as Principal Component Analysis (PCA) utilize column-wise typed arrays (e.g. `Float64Array` buffers) rather than traditional N x P row-wise arrays, drastically reducing O(N) allocation overheads and mitigating garbage collection pauses on large scale analysis.
 - Linear regression and sum-of-squares calculations in `AnalyticsSuite` leverage pre-allocated arrays and single-pass loops to prevent allocation and garbage collection overhead typical of functional `.map()` and `.reduce()` operations in large dataset pipelines.
