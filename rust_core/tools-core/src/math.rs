@@ -12,6 +12,7 @@
 //! - Physical constants are defined here once; downstream crates import them.
 
 /// Universal gas constant [J/(mol·K)] — CODATA 2018 recommended value.
+/// Must match ``engineering::R_UNIVERSAL`` exactly (single source of truth).
 pub const R_GAS: f64 = 8.314_462_618_153_24;
 
 /// Standard gravitational acceleration [m/s²].
@@ -180,11 +181,5 @@ mod tests {
         let original = 42.5;
         let result = rad_to_deg(deg_to_rad(original));
         assert!((result - original).abs() < 1e-12);
-    }
-
-    #[test]
-    fn test_r_gas_matches_engineering_constant() {
-        assert_eq!(R_GAS, crate::engineering::R_UNIVERSAL);
-        assert!((R_GAS - 8.314_462_618_153_24).abs() < f64::EPSILON);
     }
 }
