@@ -13,7 +13,7 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -108,7 +108,9 @@ class ProcessingResult:
     message: str
     data: pd.DataFrame | None = None
     stats: dict[str, Any] = field(default_factory=dict)
-    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    timestamp: str = field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()  # noqa: UP017
+    )
 
 
 class DataProcessorEngine(BaseCalculationEngine):
