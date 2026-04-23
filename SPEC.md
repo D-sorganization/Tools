@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.92                                     |
+| **Spec Version**        | 1.1.93                                     |
 | **Last Spec Update**    | 2026-04-22                                 |
 
 ## 2. Purpose & Mission
@@ -42,6 +42,8 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Provide PyQt6 GUI launcher (UnifiedToolsLauncher) for tool discovery and execution
 - Implement plugin discovery and loading system for extensibility
 - Build Rust numerical kernels for performance-critical operations
+- Enforce runtime contracts for Rust atmosphere calculations, including
+  finite non-negative altitude inputs
 - Offer FastAPI web interfaces for programmatic and integration access
 - Provide MATLAB scientific code integration and wrappers
 - Maintain fleet theme system for consistent UI across all tools
@@ -567,8 +569,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-21 | 1.1.67  | Optimized row copying logic in useDataProcessor.ts by replacing `Object.keys()` with a `for...in` loop and `hasOwnProperty`, substantially reducing GC allocation overhead inside tight data processing loops.                                                                                                                                                                                                                                                                                                                                                      |
 | 2026-04-21 | 1.1.66  | Refreshed regression test coverage for architecture boundaries, data-processor compatibility, folder archive operations, and upstream-drift contract smoke behavior while keeping the production implementation unchanged.                                                                                                                                                                                                                                                                                                                                          |
 | 2026-04-22 | 1.1.90  | Repaired CI dependency bootstrap workflows so shared runners with broken `wheel` metadata upgrade `pip` and `setuptools` separately, then reinstall `wheel` with `--no-deps` before workflow linting and Python test jobs.                                                                                                                                                                                                                                                                                                                                          |
-| 2026-04-22 | 1.1.91  | Hardened data-processor normalize and standardize transforms so constant columns raise `TransformationError` instead of silently producing all-NaN output, with regression coverage preserving original data after the failed transform.                                                                                                                                                                                                                                                                |
-| 2026-04-22 | 1.1.89  | Hardened `utils.env_utils` repo-root fallback discovery so shallow path layouts no longer raise import-time index errors, and added regression coverage for shallow fallback computation behavior.                                                                                                                                                                                                                                                                                                                                                                    |
+| 2026-04-22 | 1.1.91  | Hardened data-processor normalize and standardize transforms so constant columns raise `TransformationError` instead of silently producing all-NaN output, with regression coverage preserving original data after the failed transform.                                                                                                                                                                                                                                                                                                                            |
+| 2026-04-22 | 1.1.93  | Hardened Rust atmosphere calculations so negative and non-finite altitude inputs fail a runtime contract in release builds instead of being accepted after debug assertions are stripped.                                                                                                                                                                                                                                                                                                                                                                           |
+| 2026-04-22 | 1.1.89  | Hardened `utils.env_utils` repo-root fallback discovery so shallow path layouts no longer raise import-time index errors, and added regression coverage for shallow fallback computation behavior.                                                                                                                                                                                                                                                                                                                                                                  |
 
 ---
 
