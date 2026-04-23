@@ -8,7 +8,7 @@ this protocol via TYPE_CHECKING imports for static analysis without runtime over
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Protocol, Any
+from typing import TYPE_CHECKING, Any, Protocol
 
 if TYPE_CHECKING:
     import numpy as np
@@ -16,11 +16,11 @@ if TYPE_CHECKING:
         QCheckBox,
         QComboBox,
         QDoubleSpinBox,
+        QLabel,
+        QLineEdit,
+        QSlider,
         QSpinBox,
         QTextEdit,
-        QLineEdit,
-        QLabel,
-        QSlider,
     )
 
     from .core import Signal
@@ -126,5 +126,11 @@ class WidgetProtocol(Protocol):
     # --- Methods ---
     def _update_plot(self, fitted_signal: Signal | None = None) -> None: ...
     def _update_secondary_plot(self, signal: Signal, title: str) -> None: ...
-    def _update_frequency_response_plot(self, frequencies: np.ndarray, magnitude: np.ndarray, phase: np.ndarray, title: str) -> None: ...
+    def _update_frequency_response_plot(
+        self,
+        frequencies: np.ndarray,
+        magnitude: np.ndarray,
+        phase: np.ndarray,
+        title: str,
+    ) -> None: ...
     def _log(self, message: str) -> None: ...

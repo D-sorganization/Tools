@@ -225,8 +225,7 @@ class ProcessingMixin:
             raise SignalGenerationError(f"Failed to generate signal: {e}") from e
 
     def _report_generation_error(self, message: str) -> None:
-        """
-        w = cast(WidgetProtocol, self)Report signal-generation errors without coupling to QMessageBox."""
+        """Report signal-generation errors without coupling to QMessageBox."""
         handler = getattr(self, "show_generation_error", None)
         if callable(handler):
             handler(message)
@@ -468,8 +467,8 @@ class ProcessingMixin:
             w._update_plot()
 
     def _toggle_tangent(self, state: int) -> None:
-        """
-        w = cast(WidgetProtocol, self)Toggle tangent line display."""
+        """Toggle tangent line display."""
+        w = cast(WidgetProtocol, self)
         w._update_plot()
 
     def _update_integral_bounds(self) -> None:
