@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.95                                     |
-| **Last Spec Update**    | 2026-04-22                                 |
+| **Spec Version**        | 1.1.96                                     |
+| **Last Spec Update**    | 2026-04-23                                 |
 
 ## 2. Purpose & Mission
 
@@ -572,6 +572,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-22 | 1.1.93  | Enforced finite, non-negative altitude preconditions for the Rust standard-atmosphere model and added operator whitelisting before `DataProcessorEngine.filter_data()` constructs pandas query expressions.                                                                                                                                                                                                                                                                                              |
 | 2026-04-22 | 1.1.94  | Updated the shared `DataProcessor.apply_filter()` Butterworth path to use an explicit `sample_rate` or infer it from time-column spacing instead of hard-coding 1000 Hz, with regression coverage for non-1 kHz datasets.                                                                                                                                                                                                                                                                                  |
 | 2026-04-22 | 1.1.95  | Canonicalized the Rust universal gas constant by updating `math::R_GAS` to the full CODATA value and having `engineering::R_UNIVERSAL` reuse the same constant.                                                                                                                                                                                                                                                                                                                                             |
+| 2026-04-23 | 1.1.96  | Narrowed `ConsoleEnvironment.refresh_user_functions()` saved-library error handling to expected user-code exceptions so system-level failures such as `MemoryError` propagate, with regression coverage for both propagation and ordinary user-code error reporting.                                                                                                                                                                                                                                      |
 
 ---
 
