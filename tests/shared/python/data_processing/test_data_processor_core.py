@@ -107,6 +107,30 @@ class TestDataProcessorEngineColumns:
         assert "A_plus_B" in eng.data.columns
         assert eng.data["A_plus_B"].iloc[0] == 11.0
 
+    def test_add_calculated_column_falls_back_without_numexpr(
+        self, eng: DataProcessorEngine, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Missing numexpr should fall back to the python eval engine."""
+
+        def fake_eval(
+            frame: pd.DataFrame, expression: str, engine: str | None = None, **_: object
+        ) -> pd.Series:
+            if engine == "numexpr":
+                raise ImportError("No module named 'numexpr'")
+            assert engine == "python"
+            return frame["A"] + frame["B"]
+
+        monkeypatch.setattr(pd.DataFrame, "eval", fake_eval)
+
+        eng.add_calculated_column("A_plus_B", "A + B")
+
+        assert eng.data is not None
+        pd.testing.assert_series_equal(
+            eng.data["A_plus_B"],
+            eng.data["A"] + eng.data["B"],
+            check_names=False,
+        )
+
     def test_transform_column_log(self, eng: DataProcessorEngine) -> None:
         """Log transformation applies correctly to numeric columns."""
         eng.transform_column("A", "log")

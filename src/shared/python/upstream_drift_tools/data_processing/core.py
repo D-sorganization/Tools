@@ -38,6 +38,15 @@ logger = logging.getLogger(__name__)
 UTC = timezone.utc  # noqa: UP017 - Python 3.10 lacks datetime.UTC.
 
 
+def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
+    """Prefer numexpr when available but preserve the optional dependency contract."""
+
+    try:
+        return df.eval(expression, engine="numexpr")
+    except ImportError:
+        return df.eval(expression, engine="python")
+
+
 class DataFormat(Enum):
     """Supported data formats."""
 
@@ -260,7 +269,7 @@ class DataProcessorEngine(BaseCalculationEngine):
             raise TransformationError("Column name must not be empty")
         self._save_undo_state()
         try:
-            self.data[name] = self.data.eval(expression, engine="numexpr")
+            self.data[name] = _eval_with_optional_numexpr(self.data, expression)
             if dtype:
                 self.data[name] = self.data[name].astype(dtype)
             return ProcessingResult(

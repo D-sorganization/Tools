@@ -133,6 +133,27 @@ class TestDataProcessorTransformations:
             dp.dataframe["double_signal"], expected, check_names=False
         )
 
+    def test_apply_formula_falls_back_without_numexpr(
+        self, dp: DataProcessor, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        def fake_eval(
+            frame: pd.DataFrame, expression: str, engine: str | None = None, **_: object
+        ) -> pd.Series:
+            if engine == "numexpr":
+                raise ImportError("No module named 'numexpr'")
+            assert engine == "python"
+            return frame["signal"] * 2
+
+        monkeypatch.setattr(pd.DataFrame, "eval", fake_eval)
+
+        dp.apply_formula("double_signal", "signal * 2")
+
+        pd.testing.assert_series_equal(
+            dp.dataframe["double_signal"],
+            dp.dataframe["signal"] * 2,
+            check_names=False,
+        )
+
     def test_dropna(self) -> None:
         dp = DataProcessor()
         df = pd.DataFrame(
