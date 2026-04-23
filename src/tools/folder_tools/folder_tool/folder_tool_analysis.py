@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 import os
 from collections import defaultdict
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from Folders_Tool_r0 import (
@@ -157,7 +157,7 @@ class AnalysisMixin:
                 "ANALYSIS METADATA:",
                 f"  Source folders processed: {num_folders}",
                 f"  Total folders analyzed: {num_folders}",
-                f"  Analysis timestamp: {datetime.now(UTC)}",
+                f"  Analysis timestamp: {datetime.now(timezone.utc)}",  # noqa: UP017
                 f"  File size limits: {MIN_FILE_SIZE_BYTES} bytes - "
                 f"{MAX_FILE_SIZE_MB} MB",
             ],
@@ -178,7 +178,7 @@ class AnalysisMixin:
         valid_source_folders = self._validate_source_folders()
         report = [
             "=== FOLDER ANALYSIS REPORT ===",
-            f"Generated: {datetime.now(UTC)}",
+            f"Generated: {datetime.now(timezone.utc)}",  # noqa: UP017
             "",
         ]
         logger.info(f"Starting analysis of {len(valid_source_folders)} source folders")

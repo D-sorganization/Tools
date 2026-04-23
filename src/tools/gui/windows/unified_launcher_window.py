@@ -3,7 +3,7 @@
 import html
 import queue
 import threading
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from PyQt6.QtCore import Qt, QTimer
@@ -194,7 +194,7 @@ class UnifiedLauncher(ThemedWindowMixin, QMainWindow):
         def process_queue() -> None:
             while not self.log_queue.empty():
                 msg = self.log_queue.get()
-                timestamp = datetime.now(UTC).strftime("%H:%M:%S")
+                timestamp = datetime.now(timezone.utc).strftime("%H:%M:%S")  # noqa: UP017
                 # Basic HTML escaping just in case
                 safe_msg = html.escape(msg)
 

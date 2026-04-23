@@ -16,7 +16,7 @@ Covers:
 
 from __future__ import annotations
 
-from datetime import UTC
+from datetime import timezone
 
 import pytest
 from upstream_drift_tools.process_calculators.syngas_water_calculator import (
@@ -211,7 +211,7 @@ class TestConvenienceFunctions:
             dew_point_margin_c=-5.0,
             relative_humidity=100.0,
             calculation_method="Buck Equation",
-            timestamp=datetime.now(UTC),
+            timestamp=datetime.now(timezone.utc),  # noqa: UP017
             warnings=[],
         )
 

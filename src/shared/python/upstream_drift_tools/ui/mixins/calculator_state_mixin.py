@@ -20,7 +20,7 @@ class MyCalculator(QWidget, CalculatorStateMixin):
 from __future__ import annotations
 
 import logging
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any, cast
 
 from PyQt6.QtCore import Qt, QTimer
@@ -384,7 +384,7 @@ class CalculatorStateMixin:
         """
         state = {
             "calculator_name": self.calculator_name,
-            "timestamp": datetime.now(UTC).isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),  # noqa: UP017
             "splitter_states": self.save_splitter_states(),
             "input_states": self.save_input_states(),
             "window_geometry": (
@@ -470,7 +470,7 @@ class CalculatorStateMixin:
             )
 
             if success:
-                self.last_save_time = datetime.now(UTC)
+                self.last_save_time = datetime.now(timezone.utc)  # noqa: UP017
                 self.unsaved_changes = False
                 logger.info("✓ Calculator state saved: %s", state_name)
 
