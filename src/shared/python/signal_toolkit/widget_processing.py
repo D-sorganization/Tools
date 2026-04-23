@@ -19,6 +19,7 @@ import numpy as np
 from PyQt6.QtWidgets import (
     QFileDialog,
     QMessageBox,
+    QWidget,
 )
 
 from shared.python.safe_eval import safe_eval
@@ -30,6 +31,7 @@ from .calculus import (
 from .core import Signal, SignalGenerator
 from .filters import (
     FilterDesigner,
+    FilterSpec,
     FilterType,
     apply_filter,
     apply_moving_average,
@@ -218,8 +220,8 @@ class ProcessingMixin:
                 return
 
             w.original_signal = w.current_signal.copy()
-            self._update_plot()
-            self._log(f"Generated {signal_type} signal")
+            w._update_plot()
+            w._log(f"Generated {signal_type} signal")
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             raise SignalGenerationError(f"Failed to generate signal: {e}") from e
@@ -396,12 +398,13 @@ class ProcessingMixin:
             return
 
         diff = Differentiator()
-        w.derivative_signal = diff.differentiate(
+        derivative = diff.differentiate(
             w.current_signal,
             order=w.diff_order.value(),
         )
+        w.derivative_signal = derivative
 
-        w._update_secondary_plot(w.derivative_signal, "Derivative")
+        w._update_secondary_plot(derivative, "Derivative")
 
     def _show_integral(self) -> None:
         """Show the integral of the current signal."""
@@ -419,12 +422,13 @@ class ProcessingMixin:
         w.integral_signal = result.cumulative_signal
         w.integral_value_label.setText(f"Integral: {result.value:.4f}")
 
-        w._update_secondary_plot(w.integral_signal, "Integral")
+        if result.cumulative_signal is not None:
+            w._update_secondary_plot(result.cumulative_signal, "Integral")
 
     def _export_calculus_result(self) -> None:
         """Export the derivative or integral signal to a file (Issue #1281)."""
         w = cast(WidgetProtocol, self)
-        signal_to_export = w.derivative_signal or w.integral_signal  # type: ignore[union-attr]
+        signal_to_export = w.derivative_signal or w.integral_signal
         if signal_to_export is None:
             QMessageBox.information(
                 self,  # type: ignore[arg-type]
@@ -541,7 +545,7 @@ class ProcessingMixin:
     # Filters
     # ------------------------------------------------------------------
 
-    def _get_filter_spec(self) -> object | None:
+    def _get_filter_spec(self) -> FilterSpec | None:
         """Build a FilterSpec from the current UI settings.
 
         Returns:
@@ -620,7 +624,7 @@ class ProcessingMixin:
             w._log(f"Applied {design} {filter_type} filter")
 
         except (ValueError, ImportError) as e:
-            QMessageBox.warning(self, "Filter Error", f"Failed: {e}")  # type: ignore[arg-type]
+            QMessageBox.warning(cast("QWidget", self), "Filter Error", f"Failed: {e}")
 
     def _show_frequency_response(self) -> None:
         """Show frequency response of the current filter settings (Issue #1278).
@@ -668,9 +672,9 @@ class ProcessingMixin:
 
         except (ValueError, ImportError) as e:
             QMessageBox.warning(
-                self,
+                cast("QWidget", self),
                 "Error",
-                f"Failed to compute frequency response: {e}",  # type: ignore[arg-type]
+                f"Failed to compute frequency response: {e}",
             )
 
     # ------------------------------------------------------------------

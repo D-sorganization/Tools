@@ -34,8 +34,8 @@ class WidgetProtocol(Protocol):
     """
 
     # --- Canvases ---
-    canvas: object  # MplCanvas
-    canvas2: object  # MplCanvas
+    canvas: Any  # MplCanvas
+    canvas2: Any  # MplCanvas
 
     # --- State ---
     current_signal: Signal | None
