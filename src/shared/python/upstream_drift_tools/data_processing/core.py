@@ -526,10 +526,16 @@ class DataProcessorEngine(BaseCalculationEngine):
             - Data must be loaded.
             - *column* must exist in the DataFrame.
         """
+        query_operators = {"==", "!=", ">", ">=", "<", "<="}
         if self.data is None:
             raise DataNotLoadedError("No data loaded")
         if column not in self.data.columns:
             raise ColumnNotFoundError(column, list(self.data.columns))
+        if operator not in {"contains", "in"} | query_operators:
+            raise FilterError(
+                "Unsupported filter operator. Use one of: "
+                + ", ".join(sorted({"contains", "in"} | query_operators))
+            )
         self._save_undo_state()
         try:
             if operator == "contains":
