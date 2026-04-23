@@ -240,55 +240,6 @@ class TestConversionApi:
         with pytest.raises(ConversionError):
             loader.convert_to_mjcf(source)
 
-    def test_convert_to_urdf_wraps_malformed_mjcf_parse_error(
-        self,
-        tmp_path: Path,
-        caplog: pytest.LogCaptureFixture,
-    ) -> None:
-        from model_generation.library.unified_loader import (
-            ConversionError,
-            UnifiedModelLoader,
-        )
-
-        source = tmp_path / "broken.mjcf"
-        source.write_text("<mujoco model='x'><worldbody></mujoco>")
-        loader = UnifiedModelLoader(prefs_dir=tmp_path)
-
-        with caplog.at_level(
-            logging.ERROR,
-            logger="model_generation.library.unified_loader",
-        ):
-            with pytest.raises(ConversionError) as exc_info:
-                loader.convert_to_urdf(source)
-
-        assert "Unable to convert MJCF source to URDF" in str(exc_info.value)
-        assert exc_info.value.__cause__ is not None
-        assert "MJCF to URDF conversion failed" in caplog.text
-
-    def test_convert_to_mjcf_wraps_malformed_urdf_parse_error(
-        self,
-        tmp_path: Path,
-        caplog: pytest.LogCaptureFixture,
-    ) -> None:
-        from model_generation.library.unified_loader import (
-            ConversionError,
-            UnifiedModelLoader,
-        )
-
-        source = tmp_path / "broken.urdf"
-        source.write_text("<robot name='x'><link name='base'></robot>")
-        loader = UnifiedModelLoader(prefs_dir=tmp_path)
-
-        with caplog.at_level(
-            logging.ERROR,
-            logger="model_generation.library.unified_loader",
-        ):
-            with pytest.raises(ConversionError) as exc_info:
-                loader.convert_to_mjcf(source)
-
-        assert "Unable to convert URDF source to MJCF" in str(exc_info.value)
-        assert exc_info.value.__cause__ is not None
-        assert "URDF to MJCF conversion failed" in caplog.text
     @pytest.mark.parametrize(
         ("method_name", "converter_method", "filename", "source_text"),
         [

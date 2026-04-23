@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import logging
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -447,7 +448,9 @@ class UnifiedModelLoader:
 
         try:
             return str(self._mjcf_converter.mjcf_to_urdf(source_data))
-        except (ValueError, KeyError, OSError, RuntimeError) as exc:
+        except ConversionError:
+            raise
+        except (ET.ParseError, ValueError, KeyError, OSError, RuntimeError) as exc:
             logger.exception("MJCF to URDF conversion failed")
             raise ConversionError(
                 f"Unable to convert MJCF source to URDF: {source}"
@@ -484,7 +487,9 @@ class UnifiedModelLoader:
 
         try:
             return str(self._mjcf_converter.urdf_to_mjcf(source_data))
-        except (ValueError, KeyError, OSError, RuntimeError) as exc:
+        except ConversionError:
+            raise
+        except (ET.ParseError, ValueError, KeyError, OSError, RuntimeError) as exc:
             logger.exception("URDF to MJCF conversion failed")
             raise ConversionError(
                 f"Unable to convert URDF source to MJCF: {source}"
