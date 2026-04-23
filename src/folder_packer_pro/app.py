@@ -11,7 +11,7 @@ import os
 import subprocess
 import sys
 import tkinter as tk
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
@@ -352,7 +352,7 @@ class FolderPackerPro(
         """
         if not (message is not None):
             raise ValueError("message must be provided")
-        timestamp = datetime.now().strftime("%H:%M:%S")
+        timestamp = datetime.now(UTC).strftime("%H:%M:%S")
 
         def update_log() -> None:
             """Update log widget from thread."""

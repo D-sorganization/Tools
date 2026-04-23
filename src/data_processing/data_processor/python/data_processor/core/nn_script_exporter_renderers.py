@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from .nn_architecture import (
     ActivationFunction,
@@ -75,7 +75,7 @@ def pytorch_header(config: NetworkConfig) -> list[str]:
     return [
         '"""',
         "Neural Network Training Script (PyTorch)",
-        f"Generated: {datetime.now().isoformat()}",
+        f"Generated: {datetime.now(timezone.utc).isoformat()}",
         "",
         "Configuration:",
         f"  Network Type: {config.network_type.value}",
@@ -295,7 +295,7 @@ def tensorflow_header() -> list[str]:
     return [
         '"""',
         "Neural Network Training Script (TensorFlow/Keras)",
-        f"Generated: {datetime.now().isoformat()}",
+        f"Generated: {datetime.now(timezone.utc).isoformat()}",
         '"""',
         "",
         "import tensorflow as tf",
@@ -439,7 +439,7 @@ def sklearn_header() -> list[str]:
     return [
         '"""',
         "Neural Network Training Script (scikit-learn)",
-        f"Generated: {datetime.now().isoformat()}",
+        f"Generated: {datetime.now(timezone.utc).isoformat()}",
         '"""',
         "",
         "from sklearn.neural_network import MLPRegressor, MLPClassifier",
