@@ -59,7 +59,7 @@ class ProcessingMixin:
     # Undo / Redo helpers (Issue #1276)
     # ------------------------------------------------------------------
 
-    def _push_undo(self) -> None:
+    def _push_undo(self: "WidgetProtocol") -> None:
         """Push the current signal state onto the undo stack."""
         w = cast(WidgetProtocol, self)
         if w.current_signal is None:
@@ -74,7 +74,7 @@ class ProcessingMixin:
         # Any new action clears the redo stack
         self._redo_stack.clear()
 
-    def undo(self) -> None:
+    def undo(self: "WidgetProtocol") -> None:
         """Undo the last processing operation."""
         w = cast(WidgetProtocol, self)
         if not hasattr(self, "_undo_stack") or not self._undo_stack:
@@ -84,10 +84,10 @@ class ProcessingMixin:
                 self._redo_stack = []
             self._redo_stack.append(w.current_signal.copy())
         w.current_signal = self._undo_stack.pop()
-        self._update_plot()
-        self._log("Undo")
+        w._update_plot()
+        w._log("Undo")
 
-    def redo(self) -> None:
+    def redo(self: "WidgetProtocol") -> None:
         """Redo the last undone processing operation."""
         w = cast(WidgetProtocol, self)
         if not hasattr(self, "_redo_stack") or not self._redo_stack:
@@ -97,14 +97,14 @@ class ProcessingMixin:
                 self._undo_stack = []
             self._undo_stack.append(w.current_signal.copy())
         w.current_signal = self._redo_stack.pop()
-        self._update_plot()
-        self._log("Redo")
+        w._update_plot()
+        w._log("Redo")
 
     # ------------------------------------------------------------------
     # Signal generation
     # ------------------------------------------------------------------
 
-    def _generate_default_signal(self) -> None:
+    def _generate_default_signal(self: "WidgetProtocol") -> None:
         """Generate a default signal to start with."""
         w = cast(WidgetProtocol, self)
         t = np.linspace(0, 10, 1000)
@@ -112,9 +112,9 @@ class ProcessingMixin:
             t, amplitude=1.0, frequency=1.0, name="default"
         )
         w.original_signal = w.current_signal.copy()
-        self._update_plot()
+        w._update_plot()
 
-    def _generate_signal(self) -> None:
+    def _generate_signal(self: "WidgetProtocol") -> None:
         """Generate signal based on current settings."""
         w = cast(WidgetProtocol, self)
         t = np.linspace(
@@ -130,9 +130,7 @@ class ProcessingMixin:
         except SignalGenerationError as exc:
             self._report_generation_error(str(exc))
 
-    def _generate_signal_or_raise(
-        self,
-        w: WidgetProtocol,
+    def _generate_signal_or_raise(self: "WidgetProtocol", w: WidgetProtocol,
         t: np.ndarray,
         signal_type: str,
     ) -> None:
@@ -218,13 +216,13 @@ class ProcessingMixin:
                 return
 
             w.original_signal = w.current_signal.copy()
-            self._update_plot()
-            self._log(f"Generated {signal_type} signal")
+            w._update_plot()
+            w._log(f"Generated {signal_type} signal")
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             raise SignalGenerationError(f"Failed to generate signal: {e}") from e
 
-    def _report_generation_error(self, message: str) -> None:
+    def _report_generation_error(self: "WidgetProtocol", message: str) -> None:
         """Report signal-generation errors without coupling to QMessageBox."""
         handler = getattr(self, "show_generation_error", None)
         if callable(handler):
@@ -236,7 +234,7 @@ class ProcessingMixin:
     # Fitting
     # ------------------------------------------------------------------
 
-    def _fit_function(self) -> None:
+    def _fit_function(self: "WidgetProtocol") -> None:
         """Fit a function to the current signal."""
         w = cast(WidgetProtocol, self)
         if w.current_signal is None:
@@ -275,7 +273,7 @@ class ProcessingMixin:
                 return
 
             # Display results
-            self._log(
+            w._log(
                 f"Fit: {fit_type}\n"
                 f"R^2: {result.r_squared:.4f}\n"
                 f"RMSE: {result.rmse:.4f}\n"
@@ -283,12 +281,12 @@ class ProcessingMixin:
             )
 
             # Plot fitted curve
-            self._update_plot(fitted_signal=result.fitted_signal)
+            w._update_plot(fitted_signal=result.fitted_signal)
 
         except (KeyError, ValueError, TypeError) as e:
             QMessageBox.warning(self, "Fit Error", f"Failed to fit: {e}")  # type: ignore[arg-type]
 
-    def _auto_fit(self) -> None:
+    def _auto_fit(self: "WidgetProtocol") -> None:
         """Automatically find the best fit."""
         w = cast(WidgetProtocol, self)
         if w.current_signal is None:
@@ -298,13 +296,13 @@ class ProcessingMixin:
             fitter = FunctionFitter()
             best_type, result = fitter.auto_fit(w.current_signal)
 
-            self._log(
+            w._log(
                 f"Best fit: {best_type}\n"
                 f"R^2: {result.r_squared:.4f}\n"
                 f"Parameters: {result.parameters}"
             )
 
-            self._update_plot(fitted_signal=result.fitted_signal)
+            w._update_plot(fitted_signal=result.fitted_signal)
 
         except (ValueError, TypeError, RuntimeError) as e:
             QMessageBox.warning(self, "Auto-fit Error", f"Failed: {e}")  # type: ignore[arg-type]
@@ -313,7 +311,7 @@ class ProcessingMixin:
     # Limits / Saturation
     # ------------------------------------------------------------------
 
-    def _apply_saturation(self) -> None:
+    def _apply_saturation(self: "WidgetProtocol") -> None:
         """Apply saturation to the signal."""
         w = cast(WidgetProtocol, self)
         if w.current_signal is None:
@@ -341,10 +339,10 @@ class ProcessingMixin:
             smoothness=w.sat_smoothness.value(),
         )
 
-        self._update_plot()
-        self._log(f"Applied {mode.value} saturation")
+        w._update_plot()
+        w._log(f"Applied {mode.value} saturation")
 
-    def _update_saturation_preview(self) -> None:
+    def _update_saturation_preview(self: "WidgetProtocol") -> None:
         """Update saturation preview if enabled."""
         w = cast(WidgetProtocol, self)
         if not w.original_signal:
@@ -379,7 +377,7 @@ class ProcessingMixin:
             )
 
             # Show on secondary plot
-            self._update_secondary_plot(preview, "Saturation Preview")
+            w._update_secondary_plot(preview, "Saturation Preview")
         else:
             # Clear preview
             w.canvas2.axes.clear()
@@ -389,7 +387,7 @@ class ProcessingMixin:
     # Calculus
     # ------------------------------------------------------------------
 
-    def _show_derivative(self) -> None:
+    def _show_derivative(self: "WidgetProtocol") -> None:
         """Show the derivative of the current signal."""
         w = cast(WidgetProtocol, self)
         if w.current_signal is None:
@@ -401,9 +399,9 @@ class ProcessingMixin:
             order=w.diff_order.value(),
         )
 
-        self._update_secondary_plot(w.derivative_signal, "Derivative")
+        w._update_secondary_plot(w.derivative_signal, "Derivative")
 
-    def _show_integral(self) -> None:
+    def _show_integral(self: "WidgetProtocol") -> None:
         """Show the integral of the current signal."""
         w = cast(WidgetProtocol, self)
         if w.current_signal is None:
@@ -419,9 +417,9 @@ class ProcessingMixin:
         w.integral_signal = result.cumulative_signal
         w.integral_value_label.setText(f"Integral: {result.value:.4f}")
 
-        self._update_secondary_plot(w.integral_signal, "Integral")
+        w._update_secondary_plot(w.integral_signal, "Integral")
 
-    def _export_calculus_result(self) -> None:
+    def _export_calculus_result(self: "WidgetProtocol") -> None:
         """Export the derivative or integral signal to a file (Issue #1281)."""
         w = cast(WidgetProtocol, self)
         signal_to_export = w.derivative_signal or w.integral_signal  # type: ignore[union-attr]
@@ -446,11 +444,11 @@ class ProcessingMixin:
                     SignalExporter.to_json(signal_to_export, path)
                 else:
                     SignalExporter.to_csv(signal_to_export, path)
-                self._log(f"Exported calculus result to {Path(path).name}")
+                w._log(f"Exported calculus result to {Path(path).name}")
             except (PermissionError, OSError) as e:
                 QMessageBox.warning(self, "Export Error", f"Failed: {e}")  # type: ignore[arg-type]
 
-    def _update_tangent_position(self, value: int) -> None:
+    def _update_tangent_position(self: "WidgetProtocol", value: int) -> None:
         """Update tangent line position from slider."""
         if not (value is not None):
             raise ValueError("value must be provided")
@@ -464,13 +462,13 @@ class ProcessingMixin:
         w.tangent_t_spin.setValue(t_point)
 
         if w.show_tangent_check.isChecked():
-            self._update_plot()
+            w._update_plot()
 
-    def _toggle_tangent(self, state: int) -> None:
+    def _toggle_tangent(self: "WidgetProtocol", state: int) -> None:
         """Toggle tangent line display."""
-        self._update_plot()
+        w._update_plot()
 
-    def _update_integral_bounds(self) -> None:
+    def _update_integral_bounds(self: "WidgetProtocol") -> None:
         """Update integral bounds from sliders."""
         w = cast(WidgetProtocol, self)
         if w.current_signal is None:
@@ -489,7 +487,7 @@ class ProcessingMixin:
     # Series (Issue #1279)
     # ------------------------------------------------------------------
 
-    def _compute_series(self) -> None:
+    def _compute_series(self: "WidgetProtocol") -> None:
         """Compute Taylor/Maclaurin series approximation of the signal."""
         w = cast(WidgetProtocol, self)
         if w.current_signal is None:
@@ -522,14 +520,14 @@ class ProcessingMixin:
             )
 
             # Show on secondary plot
-            self._update_secondary_plot(
+            w._update_secondary_plot(
                 approx_signal,
                 f"{series_type} Series (center={center:.2f}, {n_terms} terms)",
             )
 
             # Log coefficients
             coeffs_str = ", ".join(f"{c:.4f}" for c in result.coefficients[:n_terms])
-            self._log(
+            w._log(
                 f"{series_type} Series at a={center:.2f}:\nCoefficients: [{coeffs_str}]"
             )
 
@@ -540,7 +538,7 @@ class ProcessingMixin:
     # Filters
     # ------------------------------------------------------------------
 
-    def _get_filter_spec(self) -> object | None:
+    def _get_filter_spec(self: "WidgetProtocol") -> object | None:
         """Build a FilterSpec from the current UI settings.
 
         Returns:
@@ -574,7 +572,7 @@ class ProcessingMixin:
             return FilterDesigner.bessel(ft, cutoff, fs, order)
         return None
 
-    def _apply_filter(self) -> None:
+    def _apply_filter(self: "WidgetProtocol") -> None:
         """Apply filter to the signal."""
         w = cast(WidgetProtocol, self)
         if w.current_signal is None:
@@ -615,13 +613,13 @@ class ProcessingMixin:
                     return
                 w.current_signal = apply_filter(w.current_signal, spec)
 
-            self._update_plot()
-            self._log(f"Applied {design} {filter_type} filter")
+            w._update_plot()
+            w._log(f"Applied {design} {filter_type} filter")
 
         except (ValueError, ImportError) as e:
             QMessageBox.warning(self, "Filter Error", f"Failed: {e}")  # type: ignore[arg-type]
 
-    def _show_frequency_response(self) -> None:
+    def _show_frequency_response(self: "WidgetProtocol") -> None:
         """Show frequency response of the current filter settings (Issue #1278).
 
         Renders a Bode-style magnitude plot on the secondary canvas
@@ -661,9 +659,9 @@ class ProcessingMixin:
             title = f"{design} {filter_type} — Frequency Response"
 
             # Render on secondary canvas via the new Bode plot method
-            self._update_frequency_response_plot(frequencies, magnitude, phase, title)
+            w._update_frequency_response_plot(frequencies, magnitude, phase, title)
 
-            self._log(f"Showing frequency response for {design} {filter_type}")
+            w._log(f"Showing frequency response for {design} {filter_type}")
 
         except (ValueError, ImportError) as e:
             QMessageBox.warning(
@@ -676,7 +674,7 @@ class ProcessingMixin:
     # Noise
     # ------------------------------------------------------------------
 
-    def _add_noise(self) -> None:
+    def _add_noise(self: "WidgetProtocol") -> None:
         """Add noise to the signal."""
         w = cast(WidgetProtocol, self)
         if w.current_signal is None:
@@ -710,23 +708,23 @@ class ProcessingMixin:
                 amplitude=w.noise_amplitude.value(),
             )
 
-        self._update_plot()
-        self._log(f"Added {noise_type.value} noise")
+        w._update_plot()
+        w._log(f"Added {noise_type.value} noise")
 
-    def _reset_signal(self) -> None:
+    def _reset_signal(self: "WidgetProtocol") -> None:
         """Reset to original signal."""
         w = cast(WidgetProtocol, self)
         if w.original_signal:
             self._push_undo()
             w.current_signal = w.original_signal.copy()
-            self._update_plot()
-            self._log("Reset to original signal")
+            w._update_plot()
+            w._log("Reset to original signal")
 
     # ------------------------------------------------------------------
     # Import / Export
     # ------------------------------------------------------------------
 
-    def _browse_file(self) -> None:
+    def _browse_file(self: "WidgetProtocol") -> None:
         """Browse for a file to import."""
         path, _ = QFileDialog.getOpenFileName(
             self,  # type: ignore[arg-type]
@@ -738,7 +736,7 @@ class ProcessingMixin:
             w = cast(WidgetProtocol, self)
             w.import_path.setText(path)
 
-    def _import_signal(self) -> None:
+    def _import_signal(self: "WidgetProtocol") -> None:
         """Import signal from file."""
         w = cast(WidgetProtocol, self)
         path = w.import_path.text()
@@ -758,13 +756,13 @@ class ProcessingMixin:
                 w.current_signal = result
 
             w.original_signal = w.current_signal.copy()
-            self._update_plot()
-            self._log(f"Imported signal from {Path(path).name}")
+            w._update_plot()
+            w._log(f"Imported signal from {Path(path).name}")
 
         except (PermissionError, OSError) as e:
             QMessageBox.warning(self, "Import Error", f"Failed: {e}")  # type: ignore[arg-type]
 
-    def _apply_to_joint(self) -> None:
+    def _apply_to_joint(self: "WidgetProtocol") -> None:
         """Apply signal to selected joint."""
         w = cast(WidgetProtocol, self)
         if w.current_signal is None:
@@ -780,9 +778,9 @@ class ProcessingMixin:
         coeffs = [result.parameters.get(f"c{i}", 0.0) for i in range(7)]
 
         w.signal_generated.emit(joint, coeffs)
-        self._log(f"Applied to {joint}: {coeffs}")
+        w._log(f"Applied to {joint}: {coeffs}")
 
-    def _export_signal(self) -> None:
+    def _export_signal(self: "WidgetProtocol") -> None:
         """Export current signal to file."""
         w = cast(WidgetProtocol, self)
         if w.current_signal is None:
@@ -801,11 +799,11 @@ class ProcessingMixin:
                     SignalExporter.to_json(w.current_signal, path)
                 else:
                     SignalExporter.to_csv(w.current_signal, path)
-                self._log(f"Exported to {Path(path).name}")
+                w._log(f"Exported to {Path(path).name}")
             except (PermissionError, OSError) as e:
                 QMessageBox.warning(self, "Export Error", f"Failed: {e}")  # type: ignore[arg-type]
 
-    def load_external_signal(self, signal: Signal) -> None:
+    def load_external_signal(self: "WidgetProtocol", signal: Signal) -> None:
         """Load a signal from an external source.
 
         Allows other widgets (e.g., Function Generator) to send
@@ -819,8 +817,8 @@ class ProcessingMixin:
         w = cast(WidgetProtocol, self)
         w.current_signal = signal
         w.original_signal = signal.copy()
-        self._update_plot()
-        self._log(
+        w._update_plot()
+        w._log(
             f"Loaded external signal: {signal.name or 'unnamed'} "
             f"({signal.n_samples} samples)"
         )
