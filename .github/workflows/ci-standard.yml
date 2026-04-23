@@ -447,15 +447,17 @@ jobs:
       - name: Build Python Wheel (Maturin)
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
-          python -m pip install maturin
+          PYTHON_BIN="$(command -v python || command -v python3)"
+          "$PYTHON_BIN" -m pip install maturin
           cd rust_core/tools-core
-          maturin build --release
+          "$PYTHON_BIN" -m maturin build --release
 
       - name: Verify Python Wheel
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
-          python -m pip install target/wheels/*.whl --force-reinstall
-          python -c "import tools_core; v = tools_core.Vector3(1.0, 2.0, 3.0); assert v.magnitude() > 0; print('tools_core wheel verified')"
+          PYTHON_BIN="$(command -v python || command -v python3)"
+          "$PYTHON_BIN" -m pip install target/wheels/*.whl --force-reinstall
+          "$PYTHON_BIN" -c "import tools_core; v = tools_core.Vector3(1.0, 2.0, 3.0); assert v.magnitude() > 0; print('tools_core wheel verified')"
 
       - name: Build WASM Module (wasm-pack)
         if: steps.rust-changes.outputs.has_changes == 'true'
