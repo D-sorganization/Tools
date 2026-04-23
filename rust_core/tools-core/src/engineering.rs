@@ -10,12 +10,14 @@
 
 use std::f64::consts::PI;
 
+use crate::math::R_GAS;
+
 // ---------------------------------------------------------------------------
 // Physical constants
 // ---------------------------------------------------------------------------
 
 /// Universal gas constant (J/(mol·K))
-pub const R_UNIVERSAL: f64 = 8.314_462_618_153_24;
+pub const R_UNIVERSAL: f64 = R_GAS;
 
 /// Stefan-Boltzmann constant (W/(m²·K⁴))
 pub const STEFAN_BOLTZMANN: f64 = 5.670_374_419e-8;

@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.94                                     |
+| **Spec Version**        | 1.1.95                                     |
 | **Last Spec Update**    | 2026-04-22                                 |
 
 ## 2. Purpose & Mission
@@ -133,7 +133,7 @@ Tools/
 | Scientific Modeling      | `src/scientific_modeling/`                                                             | Thermal, mechanical, chemical simulations                                                                                                                                                                           |
 | Web Services             | `src/web_applications/api/`                                                            | FastAPI endpoints and integrations                                                                                                                                                                                  |
 | Unit Converter WSGI      | `src/web_applications/unit_converter/`                                                 | Flask web application with a production WSGI entry point; debug mode is development-only and gated by `FLASK_DEBUG`                                                                                                 |
-| Rust Kernels             | `rust_core/`                                                                           | High-performance mathematical operations, including standard atmosphere calculations that require finite, non-negative altitudes                                                                                       |
+| Rust Kernels             | `rust_core/`                                                                           | High-performance mathematical operations, including standard atmosphere calculations that require finite, non-negative altitudes and a canonical full-precision universal gas constant                                  |
 | MATLAB Integration       | `matlab/`                                                                              | Wrapped MATLAB scientific code                                                                                                                                                                                      |
 | Fleet Theme System       | `src/python/shared_utilities/theme/`                                                   | Consistent UI theming across tools                                                                                                                                                                                  |
 
@@ -571,6 +571,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-22 | 1.1.89  | Hardened `utils.env_utils` repo-root fallback discovery so shallow path layouts no longer raise import-time index errors, and added regression coverage for shallow fallback computation behavior.                                                                                                                                                                                                                                                                                                                                                                    |
 | 2026-04-22 | 1.1.93  | Enforced finite, non-negative altitude preconditions for the Rust standard-atmosphere model and added operator whitelisting before `DataProcessorEngine.filter_data()` constructs pandas query expressions.                                                                                                                                                                                                                                                                                              |
 | 2026-04-22 | 1.1.94  | Updated the shared `DataProcessor.apply_filter()` Butterworth path to use an explicit `sample_rate` or infer it from time-column spacing instead of hard-coding 1000 Hz, with regression coverage for non-1 kHz datasets.                                                                                                                                                                                                                                                                                  |
+| 2026-04-22 | 1.1.95  | Canonicalized the Rust universal gas constant by updating `math::R_GAS` to the full CODATA value and having `engineering::R_UNIVERSAL` reuse the same constant.                                                                                                                                                                                                                                                                                                                                             |
 
 ---
 
