@@ -280,3 +280,22 @@ unexpected behavior from malformed operator strings.
 | 10 | 🟢 LOW | `math.rs` vs `engineering.rs` | R_GAS precision discrepancy |
 | 11 | 🟢 LOW | `scripting_env.py` | User lib path not validated |
 | 12 | 🟢 LOW | `data_processing/core.py` | filter_data operator injection |
+
+---
+
+## Remediation Status
+
+| # | Issue | Status | Commit |
+|---|-------|--------|--------|
+| 1 | [#2217](https://github.com/D-sorganization/Tools/issues/2217) | ✅ FIXED | `afb7dfae` — reads `_ContractState.level` directly |
+| 2 | [#2218](https://github.com/D-sorganization/Tools/issues/2218) | ✅ FIXED | `afb7dfae` — raises `TransformationError` on constant columns |
+| 3 | [#2218](https://github.com/D-sorganization/Tools/issues/2218) | ✅ FIXED | `afb7dfae` — raises `TransformationError` on zero-variance |
+| 4 | [#2219](https://github.com/D-sorganization/Tools/issues/2219) | ✅ FIXED | `afb7dfae` — removed `ast.Starred` from allowed nodes |
+| 5 | [#2220](https://github.com/D-sorganization/Tools/issues/2220) | 🔴 OPEN | Requires design decision: clamp vs reject |
+| 6 | [#2221](https://github.com/D-sorganization/Tools/issues/2221) | 🔴 OPEN | Requires fleet-wide policy on debug_assert vs assert |
+| 7 | — | 🟡 DEFERRED | Low risk; needs timezone policy decision |
+| 8 | [#2222](https://github.com/D-sorganization/Tools/issues/2222) | ✅ FIXED | `afb7dfae` — `sample_rate` parameter added |
+| 9 | — | 🟡 DEFERRED | O(n) at n=50 is negligible; improvement optional |
+| 10 | [#2223](https://github.com/D-sorganization/Tools/issues/2223) | ✅ FIXED | `afb7dfae` — `R_GAS` unified to full CODATA precision |
+| 11 | — | 🟡 DEFERRED | GUI-only path; no network exposure |
+| 12 | [#2224](https://github.com/D-sorganization/Tools/issues/2224) | ✅ FIXED | `afb7dfae` — operator whitelist validation added |
