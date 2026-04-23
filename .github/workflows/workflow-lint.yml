@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 name: Workflow Lint
 
 on:
@@ -91,3 +92,97 @@ jobs:
 
       - name: Run actionlint
         run: actionlint -color -shellcheck ./scripts/actionlint_shellcheck.sh -pyflakes=
+=======
+name: Workflow Lint
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - ".github/workflows/**"
+      - "scripts/actionlint_shellcheck.sh"
+      - "scripts/validate_workflows.py"
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+      - "scripts/actionlint_shellcheck.sh"
+      - "scripts/validate_workflows.py"
+  workflow_dispatch:
+
+concurrency:
+  group: workflow-lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  # ── Dispatcher: route to self-hosted if available ──────────────────────────
+  pick-runner:
+    runs-on: self-hosted
+    timeout-minutes: 2
+    outputs:
+      runner: ${{ steps.check.outputs.runner }}
+    steps:
+      - name: Check for self-hosted runner
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}
+        run: |
+          MODE="${FLEET_MODE:-hybrid}"
+          echo "Fleet mode: $MODE"
+
+          case "$MODE" in
+            local)
+              echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+              echo "Routing to self-hosted fleet (mode=local)"
+              ;;
+            cloud)
+              echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+              echo "Routing to GitHub-hosted (mode=cloud)"
+              ;;
+            hybrid|*)
+              AVAILABLE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
+                --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet")] | length' \
+                2>/dev/null || echo "0")
+              if [[ "$AVAILABLE" -gt 0 ]]; then
+                echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+                echo "$AVAILABLE idle fleet runner(s) - routing locally"
+              else
+                echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+                echo "No idle fleet runners - falling back to GitHub-hosted"
+              fi
+              ;;
+          esac
+  lint-workflows:
+    needs: pick-runner
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install workflow validation dependencies
+        run: |
+          pip install --upgrade pip
+          pip install PyYAML
+
+      - name: Validate workflow YAML structure
+        run: python3 scripts/validate_workflows.py
+
+      - name: Install actionlint
+        run: |
+          ACTIONLINT_VERSION=1.7.11
+          curl -sSL "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz" | tar -xz
+          sudo mv actionlint /usr/local/bin/actionlint
+
+      - name: Install shellcheck
+        run: while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 update || true && while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 update --fix-missing || true; sudo apt-get -o DPkg::Lock::Timeout=300 install -y shellcheck
+
+      - name: Run actionlint
+        run: actionlint -color -shellcheck ./scripts/actionlint_shellcheck.sh -pyflakes=
+>>>>>>> Stashed changes
