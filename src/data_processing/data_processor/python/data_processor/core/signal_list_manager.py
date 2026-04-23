@@ -6,7 +6,7 @@ Provides persistence for user's signal selections across sessions.
 from __future__ import annotations
 
 import json
-from datetime import datetime
+from datetime import timezone, datetime
 from pathlib import Path
 from typing import Any
 
@@ -56,8 +56,8 @@ class SignalListManager:
             "signals": signals,
             "description": description,
             "count": len(signals),
-            "created": lists.get(name, {}).get("created", datetime.now().isoformat()),
-            "modified": datetime.now().isoformat(),
+            "created": lists.get(name, {}).get("created", datetime.now(timezone.utc).isoformat()),
+            "modified": datetime.now(timezone.utc).isoformat(),
         }
 
         self._save_all_lists(lists)

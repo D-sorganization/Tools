@@ -152,8 +152,9 @@ class ConsoleEnvironment:
         try:
             # Execute within current namespace so imports/functions are persistent
             exec(code, self.namespace)  # nosec B102
-        except Exception as e:  # noqa: BLE001
-            sys.stderr.write(f"Error loading user library: {e}\n")
+        except Exception:  # noqa: BLE001
+            import traceback
+            traceback.print_exc(file=sys.stderr)
 
     def execute(self, source: str | None) -> tuple[str, str]:
         """Execute a block of source code, capturing stdout and stderr.

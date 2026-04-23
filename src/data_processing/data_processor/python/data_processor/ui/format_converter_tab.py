@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import logging
 import os
-from datetime import datetime
+from datetime import timezone, datetime
 from pathlib import Path
 from tkinter import filedialog, messagebox
 from typing import Any
@@ -711,7 +711,7 @@ class FormatConverterMixin:
         """Add a message to the conversion log."""
         if not (message is not None):
             raise ValueError("message must be provided")
-        timestamp = datetime.now().strftime("%H:%M:%S")
+        timestamp = datetime.now(timezone.utc).strftime("%H:%M:%S")
         log_message = f"[{timestamp}] {message}\n"
         # self.after would be available on the class mixing in this one (ctk.CTkFrame)
         self.after(0, lambda: self.converter_log_text.insert("end", log_message))  # type: ignore

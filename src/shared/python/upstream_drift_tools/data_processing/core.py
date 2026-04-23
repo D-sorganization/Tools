@@ -13,7 +13,7 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import timezone, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -108,7 +108,7 @@ class ProcessingResult:
     message: str
     data: pd.DataFrame | None = None
     stats: dict[str, Any] = field(default_factory=dict)
-    timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
 class DataProcessorEngine(BaseCalculationEngine):
@@ -257,7 +257,7 @@ class DataProcessorEngine(BaseCalculationEngine):
             raise TransformationError("Column name must not be empty")
         self._save_undo_state()
         try:
-            self.data[name] = self.data.eval(expression)
+            self.data[name] = self.data.eval(expression, engine="numexpr")
             if dtype:
                 self.data[name] = self.data[name].astype(dtype)
             return ProcessingResult(

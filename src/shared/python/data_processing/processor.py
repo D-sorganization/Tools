@@ -381,8 +381,8 @@ class DataProcessor:
         )
         df = self.dataframe
         # pandas DataFrame.eval() is safe -- it only resolves column names
-        # within the dataframe and does not execute arbitrary Python code.
-        df[new_column] = df.eval(expression)
+        # pandas DataFrame.eval() is safe with numexpr engine
+        df[new_column] = df.eval(expression, engine="numexpr")
         self._history.append(f"Created column '{new_column}' = {expression}")
         return self
 

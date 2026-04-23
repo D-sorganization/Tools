@@ -11,7 +11,7 @@ import gzip
 import json
 import logging
 import os
-from datetime import datetime
+from datetime import timezone, datetime
 from pathlib import Path
 from typing import Any
 
@@ -219,7 +219,7 @@ def _write_manifest(
     manifest_path = output_path.with_suffix(".manifest.json")
     manifest = {
         "package_file": str(output_path),
-        "created_at": datetime.now().isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
         "files": [str(f.relative_to(source_path)) for f in files_to_pack],
         "total_files": total_files,
         "package_size": output_path.stat().st_size,
@@ -263,7 +263,7 @@ def pack_files(
         package_data: dict[str, Any] = {
             "files": {},
             "metadata": {
-                "created_at": datetime.now().isoformat(),
+                "created_at": datetime.now(timezone.utc).isoformat(),
                 "source": str(source_path),
                 "total_files": total_files,
                 "compression": compression,

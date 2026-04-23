@@ -6,7 +6,7 @@ from __future__ import annotations
 import logging
 import os
 import zipfile
-from datetime import datetime
+from datetime import timezone, datetime
 from pathlib import Path
 
 from Folders_Tool_r0 import (
@@ -146,7 +146,7 @@ class ArchiveMixin:
         """
         dest_path_obj = self._validate_dest_folder()
 
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         zip_filename = f"processed_files_{timestamp}.zip"
         try:
             zip_path = dest_path_obj.parent / zip_filename

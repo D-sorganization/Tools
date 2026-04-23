@@ -19,7 +19,7 @@ from __future__ import annotations
 import json
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import timezone, datetime
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
@@ -59,7 +59,7 @@ class DatasetMetadata:
         return cls(
             id=str(uuid4()),
             name=name,
-            created_at=datetime.now().isoformat(),
+            created_at=datetime.now(timezone.utc).isoformat(),
             source_file=source_file,
             parent_id=parent_id,
             description=description,

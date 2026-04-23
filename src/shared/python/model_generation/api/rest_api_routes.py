@@ -339,9 +339,9 @@ class ModelGenerationAPI:
                     response = route.handler(request)
                     self._add_security_headers(response)
                     return response
-                except Exception as e:  # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     logger.exception("Error handling request")
-                    response = APIResponse.error(str(e), 500)
+                    response = APIResponse.error("Internal Server Error", 500)
                     self._add_security_headers(response)
                     return response
 
@@ -764,36 +764,39 @@ class ModelGenerationAPI:
                 f.write(mesh_content)
                 temp_path = f.name
 
-            mesh: Any = trimesh.load(temp_path)
+            try:
+                mesh: Any = trimesh.load(temp_path)
 
-            if density:
-                mesh.density = density
-                inertia_tensor = mesh.moment_inertia
-                calculated_mass = mesh.mass
-            else:
-                # Scale inertia to specified mass
-                volume = mesh.volume
-                inertia_tensor = mesh.moment_inertia * (mass / mesh.mass)
-                calculated_mass = mass
+                if density:
+                    mesh.density = density
+                    inertia_tensor = mesh.moment_inertia
+                    calculated_mass = mesh.mass
+                else:
+                    # Scale inertia to specified mass
+                    volume = mesh.volume
+                    inertia_tensor = mesh.moment_inertia * (mass / mesh.mass)
+                    calculated_mass = mass
 
-            # Clean up
-            Path(temp_path).unlink()
-
-            return APIResponse.ok(
-                {
-                    "mass": calculated_mass,
-                    "volume": volume if density else mesh.volume,
-                    "center_of_mass": mesh.center_mass.tolist(),
-                    "inertia": {
-                        "ixx": float(inertia_tensor[0, 0]),
-                        "iyy": float(inertia_tensor[1, 1]),
-                        "izz": float(inertia_tensor[2, 2]),
-                        "ixy": float(inertia_tensor[0, 1]),
-                        "ixz": float(inertia_tensor[0, 2]),
-                        "iyz": float(inertia_tensor[1, 2]),
-                    },
-                }
-            )
+                return APIResponse.ok(
+                    {
+                        "mass": calculated_mass,
+                        "volume": volume if density else mesh.volume,
+                        "center_of_mass": mesh.center_mass.tolist(),
+                        "inertia": {
+                            "ixx": float(inertia_tensor[0, 0]),
+                            "iyy": float(inertia_tensor[1, 1]),
+                            "izz": float(inertia_tensor[2, 2]),
+                            "ixy": float(inertia_tensor[0, 1]),
+                            "ixz": float(inertia_tensor[0, 2]),
+                            "iyz": float(inertia_tensor[1, 2]),
+                        },
+                    }
+                )
+            finally:
+                # Clean up
+                temp_file = Path(temp_path)
+                if temp_file.exists():
+                    temp_file.unlink()
 
         except ImportError:
             return APIResponse.error(

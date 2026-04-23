@@ -182,7 +182,7 @@ class TestConvenienceFunctions:
 
     def test_estimate_condensation_risk_critical(self):
         """Line 699: Critical - condensation occurring (margin < 0)."""
-        from datetime import datetime
+        from datetime import timezone, datetime
         from unittest.mock import patch
 
         from upstream_drift_tools.process_calculators.syngas_water_calculator import (
@@ -209,7 +209,7 @@ class TestConvenienceFunctions:
             dew_point_margin_c=-5.0,
             relative_humidity=100.0,
             calculation_method="Buck Equation",
-            timestamp=datetime.now(),
+            timestamp=datetime.now(timezone.utc),
             warnings=[],
         )
 

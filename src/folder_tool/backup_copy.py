@@ -8,7 +8,7 @@ import os
 import shutil
 import sys
 import time
-from datetime import datetime
+from datetime import timezone, datetime
 from pathlib import Path
 
 from Folders_Tool_r0 import (
@@ -103,7 +103,7 @@ class BackupCopyMixin:
         """
         valid_folders = self._validated_source_folders(self.source_folders)
 
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         try:
             backup_base = Path(valid_folders[0]).parent / f"backup_{timestamp}"
         except (PermissionError, OSError) as e:
@@ -383,7 +383,7 @@ class BackupCopyMixin:
             counter += 1
 
         # If we've exhausted all reasonable attempts, append timestamp
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         fallback_name = f"{filename}_{timestamp}{ext}"
         fallback_path = parent / fallback_name
 
