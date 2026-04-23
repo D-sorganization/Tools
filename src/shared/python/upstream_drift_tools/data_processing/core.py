@@ -37,6 +37,20 @@ from .io import DataReader, DataWriter
 logger = logging.getLogger(__name__)
 
 
+def _normalize_series(column: pd.Series) -> pd.Series:
+    range_value = column.max() - column.min()
+    if pd.isna(range_value) or np.isclose(range_value, 0.0):
+        raise TransformationError("Cannot normalize constant column")
+    return (column - column.min()) / range_value
+
+
+def _standardize_series(column: pd.Series) -> pd.Series:
+    std_value = column.std()
+    if pd.isna(std_value) or np.isclose(std_value, 0.0):
+        raise TransformationError("Cannot standardize constant column")
+    return (column - column.mean()) / std_value
+
+
 class DataFormat(Enum):
     """Supported data formats."""
 
@@ -322,8 +336,8 @@ class DataProcessorEngine(BaseCalculationEngine):
                 "exp": lambda: np.exp(col),
                 "sqrt": lambda: np.sqrt(col),
                 "abs": lambda: np.abs(col),
-                "normalize": lambda: (col - col.min()) / (col.max() - col.min()),
-                "standardize": lambda: (col - col.mean()) / col.std(),
+                "normalize": lambda: _normalize_series(col),
+                "standardize": lambda: _standardize_series(col),
                 "round": lambda: col.round(kwargs.get("decimals", 2)),
                 "fillna": lambda: col.fillna(kwargs.get("value", 0)),
             }
@@ -337,6 +351,9 @@ class DataProcessorEngine(BaseCalculationEngine):
                 )
             return ProcessingResult(success=True, message="Transformed", data=self.data)
         except (UnsupportedOperationError, ColumnNotFoundError, DataNotLoadedError):
+            self._undo()
+            raise
+        except TransformationError:
             self._undo()
             raise
         except (ValueError, TypeError, ZeroDivisionError) as e:
@@ -509,10 +526,16 @@ class DataProcessorEngine(BaseCalculationEngine):
             - Data must be loaded.
             - *column* must exist in the DataFrame.
         """
+        query_operators = {"==", "!=", ">", ">=", "<", "<="}
         if self.data is None:
             raise DataNotLoadedError("No data loaded")
         if column not in self.data.columns:
             raise ColumnNotFoundError(column, list(self.data.columns))
+        if operator not in {"contains", "in"} | query_operators:
+            raise FilterError(
+                "Unsupported filter operator. Use one of: "
+                + ", ".join(sorted({"contains", "in"} | query_operators))
+            )
         self._save_undo_state()
         try:
             if operator == "contains":

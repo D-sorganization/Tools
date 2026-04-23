@@ -507,6 +507,11 @@ class TestFilterData:
         with pytest.raises(ColumnNotFoundError):
             engine.filter_data("nonexistent", ">", 1.0)
 
+    def test_invalid_operator_rejected_before_query(self):
+        engine = _make_engine_with_data()
+        with pytest.raises(FilterError, match="Unsupported filter operator"):
+            engine.filter_data("x", "or x > 0 or", 1.0)
+
 
 # ---------------------------------------------------------------------------
 # query

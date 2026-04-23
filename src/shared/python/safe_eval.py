@@ -64,8 +64,6 @@ _ALLOWED_NODE_TYPES: tuple[type, ...] = (
     ast.Subscript,
     ast.Index,  # kept for Python 3.8 compat
     ast.Slice,
-    # Starred args (e.g. f(*x))
-    ast.Starred,
     # IfExp (ternary)
     ast.IfExp,
 )

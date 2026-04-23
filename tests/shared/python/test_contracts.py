@@ -16,6 +16,7 @@ from typing import Any
 
 import pytest
 
+import shared.python.contracts as contracts_module
 from shared.python.contracts import (
     ContractChecker,
     ContractLevel,
@@ -158,6 +159,24 @@ class TestCorePrimitives:
         require(False, "disabled")
         ensure(False, "disabled")
         invariant(False, "disabled")
+
+    def test_core_primitives_use_current_state_not_stale_aliases(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        set_contract_level(ContractLevel.OFF)
+        monkeypatch.setattr(contracts_module, "DBC_LEVEL", ContractLevel.ENFORCE)
+        monkeypatch.setattr(contracts_module, "CONTRACTS_ENABLED", True)
+
+        require(False, "disabled despite stale alias")
+        ensure(False, "disabled despite stale alias")
+        invariant(False, "disabled despite stale alias")
+
+        set_contract_level(ContractLevel.ENFORCE)
+        monkeypatch.setattr(contracts_module, "DBC_LEVEL", ContractLevel.OFF)
+        monkeypatch.setattr(contracts_module, "CONTRACTS_ENABLED", False)
+
+        with pytest.raises(PreconditionError):
+            require(False, "enforced despite stale alias")
 
 
 # ── Decorator-Based Contracts ────────────────────────────────────────────
