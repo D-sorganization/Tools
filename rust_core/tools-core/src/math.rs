@@ -12,7 +12,7 @@
 //! - Physical constants are defined here once; downstream crates import them.
 
 /// Universal gas constant [J/(mol·K)] — CODATA 2018 recommended value.
-pub const R_GAS: f64 = 8.31446;
+pub const R_GAS: f64 = 8.314_462_618_153_24;
 
 /// Standard gravitational acceleration [m/s²].
 pub const GRAVITY: f64 = 9.80665;
@@ -103,6 +103,11 @@ pub fn py_rad_to_deg(radians: f64) -> f64 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_r_gas_matches_engineering_constant() {
+        assert!((R_GAS - crate::engineering::R_UNIVERSAL).abs() < f64::EPSILON);
+    }
 
     // ── lerp ──
 
