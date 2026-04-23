@@ -30,7 +30,6 @@ router = APIRouter(prefix="/api/calc/rotation-converter", tags=["rotation-conver
 @router.post("", response_model=RotationConverterResponse)
 def compute_rotation(request: RotationConverterRequest) -> RotationConverterResponse:
     """Convert between different 3D rotation representations."""
-    rot = None
     try:
         if request.type == "quaternion":
             rot = Rotation.from_quaternion(request.value)
@@ -65,46 +64,40 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
             rot = Rotation.from_rotation_matrix(request.value)
         else:
             raise ValueError(f"Unknown representation type: {request.type}")
-    except Exception as exc:  # noqa: BLE001
+    except ValueError as exc:
         raise HTTPException(
             status_code=422, detail=f"Invalid rotation input: {exc}"
         ) from exc
 
+    # Generate outputs; unexpected errors should bubble up as bugs.
+    quat = rot.as_quaternion().tolist()
+
+    # Try to get requested Euler notation, default to xyz to ensure no failure
     try:
-        # Generate outputs
-        quat = rot.as_quaternion().tolist()
+        eul = list(rot.as_euler(request.euler_convention))
+        conv = request.euler_convention
+    except (ValueError, KeyError):
+        # Unknown Euler convention from the request; fall back to xyz.
+        eul = list(rot.as_euler("xyz"))
+        conv = "xyz"
 
-        # Try to get requested Euler notation, default to xyz to ensure no failure
-        try:
-            eul = list(rot.as_euler(request.euler_convention))
-            conv = request.euler_convention
-        except (ValueError, KeyError):
-            # Unknown Euler convention from the request; fall back to xyz.
-            eul = list(rot.as_euler("xyz"))
-            conv = "xyz"
+    ax_ang = rot.as_axis_angle()
+    axis_list = ax_ang[0].tolist()
+    angle = float(ax_ang[1])
 
-        ax_ang = rot.as_axis_angle()
-        axis_list = ax_ang[0].tolist()
-        angle = float(ax_ang[1])
+    rod = rot.as_rodrigues().tolist()
+    rot_mat = rot.as_rotation_matrix().tolist()
 
-        rod = rot.as_rodrigues().tolist()
-        rot_mat = rot.as_rotation_matrix().tolist()
+    rep_model = RotationRepresentationsModel(
+        quaternion=quat,
+        euler=eul,
+        euler_convention=conv,
+        axis_angle={"axis": axis_list, "angle": angle},
+        rodrigues=rod,
+        rotation_matrix=rot_mat,
+    )
 
-        rep_model = RotationRepresentationsModel(
-            quaternion=quat,
-            euler=eul,
-            euler_convention=conv,
-            axis_angle={"axis": axis_list, "angle": angle},
-            rodrigues=rod,
-            rotation_matrix=rot_mat,
-        )
-
-        return RotationConverterResponse(representations=rep_model)
-
-    except Exception as exc:  # noqa: BLE001
-        raise HTTPException(
-            status_code=500, detail=f"Failed building outputs: {exc}"
-        ) from exc
+    return RotationConverterResponse(representations=rep_model)
 
 
 @router.post("/reference-frame", response_model=ReferenceFrameConversionResponse)
@@ -124,11 +117,6 @@ def compute_reference_frame_conversion(
         )
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
-    except Exception as error:  # noqa: BLE001
-        raise HTTPException(
-            status_code=500,
-            detail="Failed to compute reference-frame conversion.",
-        ) from error
 
     return ReferenceFrameConversionResponse(
         operation=result.operation,
