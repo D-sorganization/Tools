@@ -19,7 +19,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
     runs-on: self-hosted
@@ -75,7 +74,7 @@ jobs:
         run: |
           python -m ensurepip --upgrade
           python -m pip install --upgrade pip setuptools
-          python -m pip install --force-reinstall --no-deps wheel
+          python -m pip install --ignore-installed --no-deps wheel
           python -m pip install PyYAML
 
       - name: Validate workflow YAML structure
