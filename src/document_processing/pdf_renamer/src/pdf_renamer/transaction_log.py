@@ -2,7 +2,7 @@
 
 import json
 import logging
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -22,7 +22,7 @@ class TransactionLog:
         if log_path is None:
             log_path = Path.cwd() / "pdf_renamer_transactions.jsonl"
         self.log_path = log_path
-        self.session_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.session_id = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
 
     def log_rename(
         self, original_path: Path, new_path: Path, success: bool, error: str = ""
@@ -40,7 +40,7 @@ class TransactionLog:
             raise ValueError("original_path must be provided")
         entry = {
             "session_id": self.session_id,
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "operation": "rename",
             "original_path": str(original_path),
             "new_path": str(new_path),
@@ -62,7 +62,7 @@ class TransactionLog:
             raise ValueError("file_path must be provided")
         entry = {
             "session_id": self.session_id,
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "operation": "delete",
             "file_path": str(file_path),
             "success": success,

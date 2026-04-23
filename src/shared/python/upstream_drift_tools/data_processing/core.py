@@ -37,20 +37,6 @@ from .io import DataReader, DataWriter
 logger = logging.getLogger(__name__)
 
 
-def _normalize_series(column: pd.Series) -> pd.Series:
-    range_value = column.max() - column.min()
-    if pd.isna(range_value) or np.isclose(range_value, 0.0):
-        raise TransformationError("Cannot normalize constant column")
-    return (column - column.min()) / range_value
-
-
-def _standardize_series(column: pd.Series) -> pd.Series:
-    std_value = column.std()
-    if pd.isna(std_value) or np.isclose(std_value, 0.0):
-        raise TransformationError("Cannot standardize constant column")
-    return (column - column.mean()) / std_value
-
-
 class DataFormat(Enum):
     """Supported data formats."""
 
@@ -273,7 +259,7 @@ class DataProcessorEngine(BaseCalculationEngine):
             raise TransformationError("Column name must not be empty")
         self._save_undo_state()
         try:
-            self.data[name] = self.data.eval(expression)
+            self.data[name] = self.data.eval(expression, engine="numexpr")
             if dtype:
                 self.data[name] = self.data[name].astype(dtype)
             return ProcessingResult(
@@ -332,14 +318,32 @@ class DataProcessorEngine(BaseCalculationEngine):
         self._save_undo_state()
         try:
             col = self.data[column]
+
+            def _normalize() -> pd.Series:
+                col_range = col.max() - col.min()
+                if col_range == 0:
+                    raise TransformationError(
+                        f"Cannot normalize constant column '{column}' "
+                        f"(max == min == {col.min()})"
+                    )
+                return (col - col.min()) / col_range
+
+            def _standardize() -> pd.Series:
+                col_std = col.std()
+                if col_std == 0:
+                    raise TransformationError(
+                        f"Cannot standardize zero-variance column '{column}'"
+                    )
+                return (col - col.mean()) / col_std
+
             t_map: dict[str, Callable[[], pd.Series]] = {
                 "log": lambda: np.log(col),
                 "log10": lambda: np.log10(col),
                 "exp": lambda: np.exp(col),
                 "sqrt": lambda: np.sqrt(col),
                 "abs": lambda: np.abs(col),
-                "normalize": lambda: _normalize_series(col),
-                "standardize": lambda: _standardize_series(col),
+                "normalize": _normalize,
+                "standardize": _standardize,
                 "round": lambda: col.round(kwargs.get("decimals", 2)),
                 "fillna": lambda: col.fillna(kwargs.get("value", 0)),
             }
@@ -353,9 +357,6 @@ class DataProcessorEngine(BaseCalculationEngine):
                 )
             return ProcessingResult(success=True, message="Transformed", data=self.data)
         except (UnsupportedOperationError, ColumnNotFoundError, DataNotLoadedError):
-            self._undo()
-            raise
-        except TransformationError:
             self._undo()
             raise
         except (ValueError, TypeError, ZeroDivisionError) as e:
@@ -528,15 +529,16 @@ class DataProcessorEngine(BaseCalculationEngine):
             - Data must be loaded.
             - *column* must exist in the DataFrame.
         """
-        query_operators = {"==", "!=", ">", ">=", "<", "<="}
         if self.data is None:
             raise DataNotLoadedError("No data loaded")
         if column not in self.data.columns:
             raise ColumnNotFoundError(column, list(self.data.columns))
-        if operator not in {"contains", "in"} | query_operators:
+        # Whitelist comparison operators to prevent query-string injection (#2224).
+        _ALLOWED_OPERATORS = {"==", "!=", ">", ">=", "<", "<=", "contains", "in"}
+        if operator not in _ALLOWED_OPERATORS:
             raise FilterError(
-                "Unsupported filter operator. Use one of: "
-                + ", ".join(sorted({"contains", "in"} | query_operators))
+                f"Unsupported operator '{operator}'. "
+                f"Allowed: {', '.join(sorted(_ALLOWED_OPERATORS))}"
             )
         self._save_undo_state()
         try:

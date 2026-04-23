@@ -9,7 +9,7 @@ Provides functions for:
 from __future__ import annotations
 
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -44,10 +44,10 @@ def generate_dataset_name(
         parts.append(clean_filter)
 
     if include_date:
-        parts.append(datetime.now().strftime("%Y-%m-%d"))
+        parts.append(datetime.now(timezone.utc).strftime("%Y-%m-%d"))
 
     if include_timestamp:
-        parts.append(datetime.now().strftime(timestamp_format))
+        parts.append(datetime.now(timezone.utc).strftime(timestamp_format))
 
     return "_".join(parts)
 
@@ -176,7 +176,7 @@ def generate_timestamped_name(
     """
     if not (base_name is not None):
         raise ValueError("base_name must be provided")
-    timestamp = datetime.now().strftime(timestamp_format)
+    timestamp = datetime.now(timezone.utc).strftime(timestamp_format)
     name = f"{base_name}_{timestamp}"
 
     if extension:
