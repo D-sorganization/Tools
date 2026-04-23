@@ -183,15 +183,7 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
   // Power-iteration for top eigenvalues (simple Jacobi-like)
   const eigenvalues: number[] = [];
   const eigenvectors: number[][] = [];
-  // ⚡ Bolt Optimization: Pre-allocate and manually copy A to avoid .map() array creation overhead
-  const A = new Array<number[]>(p);
-  for (let i = 0; i < p; i++) {
-    const row = new Array<number>(p);
-    for (let j = 0; j < p; j++) {
-      row[j] = cov[i][j];
-    }
-    A[i] = row;
-  }
+  const A = cov.map((row) => [...row]);
 
   // ⚡ Bolt Optimization: Pre-allocate Av to avoid thousands of array allocations inside the tight iteration loop.
   const Av = new Array<number>(p);
@@ -244,23 +236,13 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
     }
   }
 
-  // ⚡ Bolt Optimization: Calculate variance metrics in a single pass
-  // to avoid chained .reduce() and .map() allocation overhead.
-  let totalVar = 0;
-  for (let i = 0; i < eigenvalues.length; i++) {
-    totalVar += eigenvalues[i];
-  }
-  totalVar = totalVar || 1;
-
-  const explained = new Array<number>(eigenvalues.length);
-  const cumulative = new Array<number>(eigenvalues.length);
-  let currentCum = 0;
-  for (let i = 0; i < eigenvalues.length; i++) {
-    const e = eigenvalues[i] / totalVar;
-    explained[i] = e;
-    currentCum += e;
-    cumulative[i] = currentCum;
-  }
+  const totalVar = eigenvalues.reduce((a, b) => a + b, 0) || 1;
+  const explained = eigenvalues.map((e) => e / totalVar);
+  const cumulative: number[] = [];
+  explained.reduce((acc, e, i) => {
+    cumulative[i] = acc + e;
+    return cumulative[i];
+  }, 0);
 
   // Scores (n x nc)
   const scores: number[][] = Array.from({ length: n }, () => new Array(nc));
@@ -276,24 +258,14 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
   }
 
   // Loadings (p x nc)
-  // Transpose eigenvectors into loadings
-  // ⚡ Bolt Optimization: Avoid multiple chained .map() and array spreads.
-  // Pre-allocate the transpose structure and populate using single-pass loops.
-  const loadings = new Array<number[]>(p);
-  for (let i = 0; i < p; i++) {
-    const row = new Array<number>(nc);
-    for (let j = 0; j < nc; j++) {
-      row[j] = eigenvectors[j][i];
-    }
-    loadings[i] = row;
-  }
+  const loadings = eigenvectors.map((ev) => [...ev]);
 
   return {
     explainedVariance: explained,
     cumulativeVariance: cumulative,
     numComponents: nc,
     scores,
-    loadings,
+    loadings: loadings[0].map((_, ci) => eigenvectors.map((ev) => ev[ci])),
     signals,
   };
 }

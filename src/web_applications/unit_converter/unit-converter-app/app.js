@@ -655,19 +655,17 @@ function hideModalMessage() {
 }
 
 function removeCustomUnit(category, unit) {
-  if (confirm(`Remove custom unit '${unit}'?`)) {
-    try {
-      customUnitManager.removeUnit(category, unit);
-      renderCustomUnitsList();
+  try {
+    customUnitManager.removeUnit(category, unit);
+    renderCustomUnitsList();
 
-      // If current category matches, repopulate units
-      if (currentCategory === category) {
-        populateUnits(currentCategory);
-      }
-      showModalSuccess(`Custom unit '${unit}' removed`);
-    } catch (error) {
-      showModalError('Error: ' + error.message);
+    // If current category matches, repopulate units
+    if (currentCategory === category) {
+      populateUnits(currentCategory);
     }
+    showModalSuccess(`Custom unit '${unit}' removed`);
+  } catch (error) {
+    showModalError('Error: ' + error.message);
   }
 }
 
@@ -720,8 +718,31 @@ function renderCustomUnitsList() {
 
   // Add remove handlers
   customUnitsList.querySelectorAll('.custom-unit-remove').forEach(btn => {
+    let removeTimeout = null;
+    const unit = btn.dataset.unit;
+
+    const resetBtn = () => {
+      btn.classList.remove('confirming');
+      btn.textContent = '×';
+      btn.setAttribute('aria-label', `Remove custom unit ${unit}`);
+      btn.setAttribute('title', `Remove ${unit}`);
+      if (removeTimeout) {
+        clearTimeout(removeTimeout);
+        removeTimeout = null;
+      }
+    };
+
     btn.addEventListener('click', () => {
-      removeCustomUnit(btn.dataset.category, btn.dataset.unit);
+      if (btn.classList.contains('confirming')) {
+        removeCustomUnit(btn.dataset.category, btn.dataset.unit);
+        resetBtn();
+      } else {
+        btn.classList.add('confirming');
+        btn.textContent = 'Confirm?';
+        btn.setAttribute('aria-label', `Confirm remove custom unit ${unit}`);
+        btn.setAttribute('title', `Confirm remove ${unit}`);
+        removeTimeout = setTimeout(resetBtn, 3000);
+      }
     });
   });
 }

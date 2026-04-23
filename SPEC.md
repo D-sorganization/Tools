@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-04-21
+  LAST UPDATED: 2026-04-23
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.102                                    |
+| **Spec Version**        | 1.1.101                                    |
 | **Last Spec Update**    | 2026-04-23                                 |
 
 ## 2. Purpose & Mission
@@ -464,7 +464,6 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-04-23 | 1.1.102 | Optimized `AnalyticsSuite` PCA execution by replacing chained `map()`/`reduce()` paths with single-pass loops and pre-allocated working buffers for covariance-copy, iteration, and explained-variance calculations, reducing intermediate allocations during interactive analysis.                                                                                                                                                                                                                                                                                 |
 | 2026-04-23 | 1.1.101 | Hardened model-generation REST routing so unexpected route-handler programming errors propagate to the framework adapter instead of being flattened into JSON 500 responses by the route facade, with regression coverage for the propagation contract.                                                                                                                                                                                                                                                                                                             |
 | 2026-04-23 | 1.1.100 | Extended the Python 3.10 UTC compatibility contract across document-processing, folder-packing, shared model-generation, upstream-drift UI/state, folder-tool analysis, and launcher timestamp paths by using `timezone.utc` instead of the Python 3.11-only `datetime.UTC` alias while preserving timezone-aware datetime behavior.                                                                                                                                                                                                                                  |
 | 2026-04-23 | 1.1.99  | Kept shared data-processing result timestamps timezone-aware while preserving Python 3.10 compatibility by using `timezone.utc` rather than the Python 3.11-only `datetime.UTC` alias, keeping the data-processing import contract green across the supported CI interpreter matrix.                                                                                                                                                                                                                                                                                |
@@ -579,6 +578,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-22 | 1.1.93  | Enforced finite, non-negative altitude preconditions for the Rust standard-atmosphere model and added operator whitelisting before `DataProcessorEngine.filter_data()` constructs pandas query expressions.                                                                                                                                                                                                                                                                                                                                                         |
 | 2026-04-22 | 1.1.94  | Updated the shared `DataProcessor.apply_filter()` Butterworth path to use an explicit `sample_rate` or infer it from time-column spacing instead of hard-coding 1000 Hz, with regression coverage for non-1 kHz datasets.                                                                                                                                                                                                                                                                                                                                           |
 | 2026-04-22 | 1.1.95  | Canonicalized the Rust universal gas constant by updating `math::R_GAS` to the full CODATA value and having `engineering::R_UNIVERSAL` reuse the same constant.                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 2026-04-23 | 1.1.102 | Updated Unit Converter `removeCustomUnit` workflow to use an inline soft confirm pattern, eliminating thread-blocking `confirm()` dialogs and improving accessibility with `aria-live`.                                                                                                                                                                                                                                                                                                                               |
 
 ---
 
