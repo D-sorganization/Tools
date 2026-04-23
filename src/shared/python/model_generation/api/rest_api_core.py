@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import logging
 from collections.abc import Callable
 
 from model_generation.api.rest_api_assets import AssetLibraryEditorRoutesMixin
@@ -13,8 +12,6 @@ from model_generation.api.rest_api_contracts import (
     Route,
 )
 from model_generation.api.rest_api_generation import GenerationConversionRoutesMixin
-
-logger = logging.getLogger(__name__)
 
 
 class ModelGenerationAPI(
@@ -243,12 +240,8 @@ class ModelGenerationAPI(
         return params
 
     def _execute_route(self, route: Route, request: APIRequest) -> APIResponse:
-        """Execute a matched route and normalize errors into API responses."""
-        try:
-            return self._secure_response(route.handler(request))
-        except Exception as error:  # noqa: BLE001
-            logger.exception("Error handling request")
-            return self._secure_response(APIResponse.error(str(error), 500))
+        """Execute a matched route and attach standard response security headers."""
+        return self._secure_response(route.handler(request))
 
     def _secure_response(self, response: APIResponse) -> APIResponse:
         """Attach security headers to every response."""

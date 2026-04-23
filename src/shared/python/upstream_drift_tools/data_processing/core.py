@@ -35,6 +35,7 @@ from .exceptions import (
 from .io import DataReader, DataWriter
 
 logger = logging.getLogger(__name__)
+UTC = timezone.utc  # noqa: UP017 - Python 3.10 lacks datetime.UTC.
 
 
 class DataFormat(Enum):

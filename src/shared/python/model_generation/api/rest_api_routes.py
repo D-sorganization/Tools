@@ -7,15 +7,12 @@ access. Framework adapters live in sibling modules.
 
 from __future__ import annotations
 
-import logging
 import tempfile
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 from typing import Any
-
-logger = logging.getLogger(__name__)
 
 
 class HTTPMethod(Enum):
@@ -335,15 +332,9 @@ class ModelGenerationAPI:
             if match:
                 # Add path params to query params
                 request.query_params.update(params)
-                try:
-                    response = route.handler(request)
-                    self._add_security_headers(response)
-                    return response
-                except Exception:  # noqa: BLE001
-                    logger.exception("Error handling request")
-                    response = APIResponse.error("Internal Server Error", 500)
-                    self._add_security_headers(response)
-                    return response
+                response = route.handler(request)
+                self._add_security_headers(response)
+                return response
 
         response = APIResponse.not_found(
             f"No route for {request.method.value} {request.path}"

@@ -1,5 +1,7 @@
 from typing import Any
 
+import pytest
+
 """
 Tests for the REST API module.
 """
@@ -123,6 +125,32 @@ class TestModelGenerationAPI:
         assert response.status_code == 200
         assert "name" in response.body
         assert "endpoints" in response.body
+
+    def test_route_handler_programming_errors_propagate(self) -> None:
+        """Route handlers should not hide programming errors as API responses."""
+        from model_generation.api import (
+            APIRequest,
+            APIResponse,
+            HTTPMethod,
+            ModelGenerationAPI,
+        )
+
+        api = ModelGenerationAPI()
+
+        def broken_handler(request: APIRequest) -> APIResponse:
+            raise RuntimeError("sensitive internal failure")
+
+        api.add_route(
+            HTTPMethod.GET,
+            "/broken",
+            broken_handler,
+            description="Broken test route",
+        )
+
+        request = APIRequest(method=HTTPMethod.GET, path="/api/v1/broken")
+
+        with pytest.raises(RuntimeError, match="sensitive internal failure"):
+            api.handle_request(request)
 
     def test_generate_humanoid_endpoint(self) -> Any:
         """Test humanoid generation endpoint."""
