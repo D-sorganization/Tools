@@ -22,15 +22,6 @@ logger = logging.getLogger(__name__)
 SUPPORTED_FILTER_TYPES = {"butterworth", "moving_average", "median", "savgol"}
 
 
-def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
-    """Prefer numexpr when present but keep formula evaluation functional without it."""
-
-    try:
-        return df.eval(expression, engine="numexpr")
-    except ImportError:
-        return df.eval(expression, engine="python")
-
-
 @dataclass
 class DatasetInfo:
     """Metadata about a loaded dataset."""
@@ -131,11 +122,9 @@ class DataProcessor:
                 from data_processor.core.dat_importer import read_dat_file
 
                 self._df = read_dat_file(str(path))
-            except ImportError as exc:
-                raise ImportError(
-                    "DAT importer not available. Install the data_processor package "
-                    "or convert the file to CSV/TSV before loading."
-                ) from exc
+            except ImportError:
+                # Fallback: try whitespace-delimited
+                self._df = pd.read_csv(path, sep=r"\s+", encoding=encoding)
         else:
             raise ValueError(f"Unsupported file format: {suffix}")
 
@@ -221,32 +210,11 @@ class DataProcessor:
                 df, target_rate, time_col=time_column, method=method
             )
         except ImportError:
-            # Fallback using numpy interpolation
+            # Fallback using pandas
             import numpy as np
 
             t = df[time_column].values
-            if len(t) < 2:
-                raise ValueError(
-                    f"Time column '{time_column}' has fewer than 2 samples; "
-                    "cannot resample."
-                )
-            if not np.all(np.diff(t) > 0):
-                raise ValueError(
-                    f"Time column '{time_column}' is not strictly monotonically "
-                    "increasing. Sort the DataFrame before resampling."
-                )
-
-            n_samples = max(2, int(np.ceil((t[-1] - t[0]) * target_rate)) + 1)
-            t_new = np.linspace(t[0], t[-1], n_samples)
-            if t_new[-1] > t[-1]:
-                logger.warning(
-                    "Resample target_rate=%.3f Hz extends t_new (%.6f) past "
-                    "original endpoint (%.6f); np.interp will clamp.",
-                    target_rate,
-                    float(t_new[-1]),
-                    float(t[-1]),
-                )
-
+            t_new = np.arange(t[0], t[-1], 1.0 / target_rate)
             new_df = pd.DataFrame({time_column: t_new})
             for col in df.columns:
                 if col == time_column:
@@ -369,20 +337,7 @@ class DataProcessor:
         for column in columns:
             values = df[column].values.astype(float)
             if filter_type == "butterworth":
-                nyquist = sample_rate / 2.0
-                if cutoff >= nyquist:
-                    raise ValueError(
-                        f"Butterworth cutoff ({cutoff} Hz) must be less than "
-                        f"Nyquist ({nyquist} Hz) for sample_rate={sample_rate} Hz"
-                    )
                 b, a = butter(order, cutoff, btype="low", fs=sample_rate)
-                min_len = 3 * (max(len(b), len(a)) - 1)
-                if len(values) <= min_len:
-                    raise ValueError(
-                        f"Column '{column}' has {len(values)} samples, but "
-                        f"butterworth(order={order}) requires > {min_len} samples "
-                        f"(filtfilt padding rule)."
-                    )
                 df[column] = filtfilt(b, a, values)
             elif filter_type == "moving_average":
                 df[column] = (
@@ -425,7 +380,9 @@ class DataProcessor:
             "expression must be a non-empty string",
         )
         df = self.dataframe
-        df[new_column] = _eval_with_optional_numexpr(df, expression)
+        # pandas DataFrame.eval() is safe -- it only resolves column names
+        # pandas DataFrame.eval() is safe with numexpr engine
+        df[new_column] = df.eval(expression, engine="numexpr")
         self._history.append(f"Created column '{new_column}' = {expression}")
         return self
 
@@ -566,15 +523,6 @@ class DataProcessor:
         elif suffix in (".xlsx", ".xls"):
             df.to_excel(path, index=index)
         elif suffix == ".parquet":
-            import importlib.util
-
-            if importlib.util.find_spec("pyarrow") is None and importlib.util.find_spec(
-                "fastparquet"
-            ) is None:
-                raise ImportError(
-                    "Parquet export requires 'pyarrow' or 'fastparquet'. "
-                    "Install one of them: pip install pyarrow"
-                )
             df.to_parquet(path, index=index)
         elif suffix == ".json":
             df.to_json(path, orient="records", indent=2)

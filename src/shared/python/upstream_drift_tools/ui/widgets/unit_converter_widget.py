@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any, cast
 
 from PyQt6.QtCore import (
@@ -64,7 +64,7 @@ class ConversionRow:
         self.from_value = from_value
         self.to_value = to_value
         self.is_saved = is_saved
-        self.last_used = last_used or datetime.now().isoformat()
+        self.last_used = last_used or datetime.now(UTC).isoformat()
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
@@ -93,7 +93,7 @@ class ConversionRow:
 
     def update_last_used(self) -> None:
         """Update last used timestamp."""
-        self.last_used = datetime.now().isoformat()
+        self.last_used = datetime.now(UTC).isoformat()
 
 
 class TypedConverterWidget(QWidget):

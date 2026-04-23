@@ -1,3 +1,7 @@
+# ARCHITECTURE_DEBT:
+# This module historically exceeds standard length metrics and accumulates excessive domain responsibility.
+# It requires domain-aware structural extraction to isolate its internal classes appropriately.
+
 """Core Data Processing Engine.
 
 Provides headless data manipulation, filtering, and analysis capabilities.
@@ -9,7 +13,7 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -104,7 +108,7 @@ class ProcessingResult:
     message: str
     data: pd.DataFrame | None = None
     stats: dict[str, Any] = field(default_factory=dict)
-    timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 class DataProcessorEngine(BaseCalculationEngine):
@@ -206,7 +210,8 @@ class DataProcessorEngine(BaseCalculationEngine):
 
     def load_dataframe(self, df: pd.DataFrame) -> ProcessingResult:
         """Load data from an existing DataFrame."""
-        assert df is not None, "df must be provided"
+        if not (df is not None):
+            raise ValueError("df must be provided")
         self._save_undo_state()
         self.data = df.copy()
         self.original_data = self.data.copy()
@@ -252,7 +257,7 @@ class DataProcessorEngine(BaseCalculationEngine):
             raise TransformationError("Column name must not be empty")
         self._save_undo_state()
         try:
-            self.data[name] = self.data.eval(expression)
+            self.data[name] = self.data.eval(expression, engine="numexpr")
             if dtype:
                 self.data[name] = self.data[name].astype(dtype)
             return ProcessingResult(
@@ -311,14 +316,32 @@ class DataProcessorEngine(BaseCalculationEngine):
         self._save_undo_state()
         try:
             col = self.data[column]
+
+            def _normalize() -> pd.Series:
+                col_range = col.max() - col.min()
+                if col_range == 0:
+                    raise TransformationError(
+                        f"Cannot normalize constant column '{column}' "
+                        f"(max == min == {col.min()})"
+                    )
+                return (col - col.min()) / col_range
+
+            def _standardize() -> pd.Series:
+                col_std = col.std()
+                if col_std == 0:
+                    raise TransformationError(
+                        f"Cannot standardize zero-variance column '{column}'"
+                    )
+                return (col - col.mean()) / col_std
+
             t_map: dict[str, Callable[[], pd.Series]] = {
                 "log": lambda: np.log(col),
                 "log10": lambda: np.log10(col),
                 "exp": lambda: np.exp(col),
                 "sqrt": lambda: np.sqrt(col),
                 "abs": lambda: np.abs(col),
-                "normalize": lambda: (col - col.min()) / (col.max() - col.min()),
-                "standardize": lambda: (col - col.mean()) / col.std(),
+                "normalize": _normalize,
+                "standardize": _standardize,
                 "round": lambda: col.round(kwargs.get("decimals", 2)),
                 "fillna": lambda: col.fillna(kwargs.get("value", 0)),
             }
@@ -508,6 +531,13 @@ class DataProcessorEngine(BaseCalculationEngine):
             raise DataNotLoadedError("No data loaded")
         if column not in self.data.columns:
             raise ColumnNotFoundError(column, list(self.data.columns))
+        # Whitelist comparison operators to prevent query-string injection (#2224).
+        _ALLOWED_OPERATORS = {"==", "!=", ">", ">=", "<", "<=", "contains", "in"}
+        if operator not in _ALLOWED_OPERATORS:
+            raise FilterError(
+                f"Unsupported operator '{operator}'. "
+                f"Allowed: {', '.join(sorted(_ALLOWED_OPERATORS))}"
+            )
         self._save_undo_state()
         try:
             if operator == "contains":

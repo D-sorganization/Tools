@@ -11,7 +11,7 @@ Provides persistence for plot configurations including:
 from __future__ import annotations
 
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -93,8 +93,10 @@ class PlotConfigManager:
 
         configs[name] = {
             "config": config,
-            "created": configs.get(name, {}).get("created", datetime.now().isoformat()),
-            "modified": datetime.now().isoformat(),
+            "created": configs.get(name, {}).get(
+                "created", datetime.now(timezone.utc).isoformat()
+            ),
+            "modified": datetime.now(timezone.utc).isoformat(),
         }
 
         self._save_all_configs(configs)

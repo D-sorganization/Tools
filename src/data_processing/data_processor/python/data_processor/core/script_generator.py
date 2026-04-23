@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 # Re-export all public types for backward compatibility
@@ -96,7 +96,7 @@ class ScriptGenerator:
         return [
             '"""',
             f"Data Processing Script: {pipeline.name}",
-            f"Generated: {datetime.now().isoformat()}",
+            f"Generated: {datetime.now(timezone.utc).isoformat()}",
             "",
             f"Description: {pipeline.description}",
             '"""',
@@ -229,7 +229,7 @@ class ScriptGenerator:
         return [
             '"""',
             f"Batch Processing Script: {pipeline.name}",
-            f"Generated: {datetime.now().isoformat()}",
+            f"Generated: {datetime.now(timezone.utc).isoformat()}",
             '"""',
             "",
             "import glob",
@@ -346,7 +346,7 @@ class ScriptGenerator:
         assert pipeline is not None, "pipeline must be provided"
         output_path = Path(output_path)
         config = pipeline.to_dict()
-        config["generated_at"] = datetime.now().isoformat()
+        config["generated_at"] = datetime.now(timezone.utc).isoformat()
 
         with open(output_path, "w") as f:
             json.dump(config, f, indent=2)
