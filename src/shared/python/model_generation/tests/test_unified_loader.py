@@ -1,5 +1,3 @@
-from typing import Any
-
 """
 Tests for the unified model loader, bundled library, and model explorer.
 
@@ -13,7 +11,9 @@ Covers:
 """
 
 import json
+import logging
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -282,6 +282,56 @@ class TestConversionApi:
 
         with pytest.raises(ConversionError, match="boom"):
             getattr(loader, method_name)(source)
+
+    def test_convert_to_urdf_wraps_malformed_mjcf_parse_error(
+        self,
+        tmp_path: Path,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        from model_generation.library.unified_loader import (
+            ConversionError,
+            UnifiedModelLoader,
+        )
+
+        source = tmp_path / "broken.mjcf"
+        source.write_text("<mujoco model='x'><worldbody></mujoco>")
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+
+        with caplog.at_level(
+            logging.ERROR,
+            logger="model_generation.library.unified_loader",
+        ):
+            with pytest.raises(ConversionError) as exc_info:
+                loader.convert_to_urdf(source)
+
+        assert "Unable to convert MJCF source to URDF" in str(exc_info.value)
+        assert exc_info.value.__cause__ is not None
+        assert "MJCF to URDF conversion failed" in caplog.text
+
+    def test_convert_to_mjcf_wraps_malformed_urdf_parse_error(
+        self,
+        tmp_path: Path,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        from model_generation.library.unified_loader import (
+            ConversionError,
+            UnifiedModelLoader,
+        )
+
+        source = tmp_path / "broken.urdf"
+        source.write_text("<robot name='x'><link name='base'></robot>")
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+
+        with caplog.at_level(
+            logging.ERROR,
+            logger="model_generation.library.unified_loader",
+        ):
+            with pytest.raises(ConversionError) as exc_info:
+                loader.convert_to_mjcf(source)
+
+        assert "Unable to convert URDF source to MJCF" in str(exc_info.value)
+        assert exc_info.value.__cause__ is not None
+        assert "URDF to MJCF conversion failed" in caplog.text
 
     def test_convert_to_urdf_succeeds_for_valid_source(self, tmp_path: Path) -> None:
         from model_generation.library.unified_loader import UnifiedModelLoader
@@ -738,8 +788,10 @@ class TestURDFDeterministicFormatting:
                     stripped = part.lstrip("-").lstrip("0").replace(".", "")
                     stripped = stripped.lstrip("0")
                     # :.6g can produce up to 6 sig figs
-                    assert len(stripped) <= 6, (
-                        f"Value '{part}' has more than 6 significant digits"
-                    )
+                    # fmt: off
+                    assert (
+                        len(stripped) <= 6
+                    ), f"Value '{part}' has more than 6 significant digits"
+                    # fmt: on
                 except ValueError:
                     pass  # non-numeric attribute value
