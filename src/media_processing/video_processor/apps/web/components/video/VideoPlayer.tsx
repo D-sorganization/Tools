@@ -127,10 +127,11 @@ export default function VideoPlayer({
           playsInline
         />
 
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-black bg-opacity-30">
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 focus-within:opacity-100 transition-opacity bg-black bg-opacity-30">
           <button
             onClick={togglePlay}
-            className="p-4 bg-white bg-opacity-90 rounded-full hover:bg-opacity-100 transition-opacity"
+            className="p-4 bg-white bg-opacity-90 rounded-full hover:bg-opacity-100 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-opacity"
+            aria-label={isPlaying ? 'Pause video' : 'Play video'}
           >
             {isPlaying ? (
               <svg

@@ -118,7 +118,9 @@ class TestWaveletDenoiser:
         assert len(result.denoised) == 3
 
     def test_custom_config(self, noisy_signal: np.ndarray) -> None:
-        cfg = WaveletDenoiseConfig(wavelet="haar", threshold_method=ThresholdMethod.HARD)
+        cfg = WaveletDenoiseConfig(
+            wavelet="haar", threshold_method=ThresholdMethod.HARD
+        )
         denoiser = WaveletDenoiser(config=cfg)
         result = denoiser.denoise(noisy_signal)
         assert result.wavelet_name is not None

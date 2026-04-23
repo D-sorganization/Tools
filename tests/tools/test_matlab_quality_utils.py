@@ -83,7 +83,7 @@ def test_track_nesting_nested_if():
 def test_check_banned_todo():
     issues: list[str] = []
     MATLABQualityChecker._check_banned_patterns(
-        Path("script.m"), "% TRACKED_TASK: fix this", 5, issues
+        Path("script.m"), "% TODO: fix this", 5, issues
     )
     assert len(issues) == 1
     assert "TRACKED_TASK" in issues[0]
@@ -92,7 +92,7 @@ def test_check_banned_todo():
 def test_check_banned_fixme():
     issues: list[str] = []
     MATLABQualityChecker._check_banned_patterns(
-        Path("script.m"), "% TRACKED_DEFECT: broken", 3, issues
+        Path("script.m"), "% FIXME: broken", 3, issues
     )
     assert any("TRACKED_DEFECT" in i for i in issues)
 

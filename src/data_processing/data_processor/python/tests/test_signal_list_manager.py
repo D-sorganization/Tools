@@ -45,7 +45,9 @@ class TestSaveAndLoad:
             manager.load_signal_list("nonexistent")
 
     def test_save_with_description(self, manager: SignalListManager) -> None:
-        manager.save_signal_list("pressures", ["P1", "P2"], description="Pressure signals")
+        manager.save_signal_list(
+            "pressures", ["P1", "P2"], description="Pressure signals"
+        )
         info = manager.get_signal_list_info("pressures")
         assert info["description"] == "Pressure signals"
 
@@ -95,7 +97,9 @@ class TestSignalListInfo:
 class TestExportImport:
     """Test export and import."""
 
-    def test_export_and_import(self, manager: SignalListManager, tmp_path: Path) -> None:
+    def test_export_and_import(
+        self, manager: SignalListManager, tmp_path: Path
+    ) -> None:
         manager.save_signal_list("export_me", ["x", "y", "z"])
         export_path = tmp_path / "exported.json"
         manager.export_signal_list("export_me", export_path)

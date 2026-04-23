@@ -23,15 +23,21 @@ class TestCross2D:
 
     def test_unit_vectors(self):
         """x × y = +1 (CCW)."""
-        assert cross_2d(np.array([1.0, 0.0]), np.array([0.0, 1.0])) == pytest.approx(1.0)
+        assert cross_2d(np.array([1.0, 0.0]), np.array([0.0, 1.0])) == pytest.approx(
+            1.0
+        )
 
     def test_antiparallel(self):
         """y × x = -1 (CW)."""
-        assert cross_2d(np.array([0.0, 1.0]), np.array([1.0, 0.0])) == pytest.approx(-1.0)
+        assert cross_2d(np.array([0.0, 1.0]), np.array([1.0, 0.0])) == pytest.approx(
+            -1.0
+        )
 
     def test_parallel(self):
         """Parallel vectors → zero cross product."""
-        assert cross_2d(np.array([3.0, 0.0]), np.array([5.0, 0.0])) == pytest.approx(0.0)
+        assert cross_2d(np.array([3.0, 0.0]), np.array([5.0, 0.0])) == pytest.approx(
+            0.0
+        )
 
     def test_wrong_shape_raises(self):
         with pytest.raises((ValueError, TypeError), match="r must be shape"):

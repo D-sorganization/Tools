@@ -76,9 +76,7 @@ STYLE_BTN_FUNCGEN = (
     "QPushButton:hover{background:#32326a;}"
 )
 
-STYLE_COMBO = (
-    "background:#2a2a38;color:#e0e0f0;border:1px solid #505068;border-radius:3px;padding:4px;"
-)
+STYLE_COMBO = "background:#2a2a38;color:#e0e0f0;border:1px solid #505068;border-radius:3px;padding:4px;"
 
 
 class ControlsWidgetBase(QWidget):
@@ -268,7 +266,10 @@ class ControlsWidgetBase(QWidget):
 
         if not hasattr(self, "chk_clamp") or not self.chk_clamp.isChecked():
             return None
-        return [parse_float(inp, f"Max torque {i}") for i, inp in enumerate(self.clamp_inputs)]
+        return [
+            parse_float(inp, f"Max torque {i}")
+            for i, inp in enumerate(self.clamp_inputs)
+        ]
 
     def _parse_joint_limits(self) -> tuple[list[float], list[float], float] | None:
         """Parse joint limit values.
@@ -393,7 +394,9 @@ class ControlsWidgetBase(QWidget):
     def set_slider_value(self, val: int) -> None:
         """Pre: 0 <= val <= slider.maximum()"""
         if not (0 <= val <= self.slider.maximum()):
-            raise ValueError(f"Slider value {val} out of range [0, {self.slider.maximum()}]")
+            raise ValueError(
+                f"Slider value {val} out of range [0, {self.slider.maximum()}]"
+            )
         self.slider.blockSignals(True)
         self.slider.setValue(val)
         self.slider.blockSignals(False)

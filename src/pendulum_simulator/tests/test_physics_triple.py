@@ -57,15 +57,17 @@ class TestTripleMassMatrixSymmetry:
             for j in range(3):
                 assert np.isclose(M[i, j], M[j, i]), f"M[{i},{j}] != M[{j},{i}]"
 
-    def test_symmetric_at_arbitrary_angles(self, triple_params: TriplePendulumParams) -> None:
+    def test_symmetric_at_arbitrary_angles(
+        self, triple_params: TriplePendulumParams
+    ) -> None:
         for phi1 in np.linspace(-np.pi, np.pi, 10):
             for phi2 in np.linspace(-np.pi, np.pi, 10):
                 M = mass_matrix_triple(phi1, phi2, triple_params)
                 for i in range(3):
                     for j in range(3):
-                        assert np.isclose(M[i, j], M[j, i]), (
-                            f"Not symmetric at phi1={phi1}, phi2={phi2}"
-                        )
+                        assert np.isclose(
+                            M[i, j], M[j, i]
+                        ), f"Not symmetric at phi1={phi1}, phi2={phi2}"
 
 
 class TestTripleMassMatrixPositiveDefinite:
@@ -79,9 +81,9 @@ class TestTripleMassMatrixPositiveDefinite:
             for phi2 in test_angles:
                 M = mass_matrix_triple(phi1, phi2, triple_params)
                 eigenvalues = np.linalg.eigvalsh(M)
-                assert all(ev > 0 for ev in eigenvalues), (
-                    f"Not positive definite at phi1={phi1}, phi2={phi2}"
-                )
+                assert all(
+                    ev > 0 for ev in eigenvalues
+                ), f"Not positive definite at phi1={phi1}, phi2={phi2}"
 
 
 class TestTripleCoriolisZeroAtRest:
@@ -159,7 +161,9 @@ class TestTripleEquationsOfMotion:
     ) -> None:
         # State: [theta1, phi1, phi2, dtheta1, dphi1, dphi2]
         state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
-        state_dot = equations_of_motion_triple(state, 0.0, triple_params, triple_torque_func)
+        state_dot = equations_of_motion_triple(
+            state, 0.0, triple_params, triple_torque_func
+        )
 
         assert state_dot.shape == (6,)
         assert all(np.isfinite(state_dot)), f"Invalid values: {state_dot}"
@@ -171,7 +175,9 @@ class TestTripleEquationsOfMotion:
     ) -> None:
         # At equilibrium with zero velocity, acceleration should be zero
         state = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-        state_dot = equations_of_motion_triple(state, 0.0, triple_params, triple_torque_func)
+        state_dot = equations_of_motion_triple(
+            state, 0.0, triple_params, triple_torque_func
+        )
 
         # Velocities should match input (first 3 elements should be all zeros)
         assert np.isclose(state_dot[0], 0.0)  # dtheta1
@@ -219,10 +225,14 @@ class TestTripleCoriolisNonlinearCoupling:
         phi1, phi2 = 0.5, -0.3
 
         dtheta1_small = 0.1
-        C_small = coriolis_vector_triple(phi1, phi2, dtheta1_small, 0.1, 0.1, triple_params)
+        C_small = coriolis_vector_triple(
+            phi1, phi2, dtheta1_small, 0.1, 0.1, triple_params
+        )
 
         dtheta1_large = 0.2  # 2x larger
-        C_large = coriolis_vector_triple(phi1, phi2, dtheta1_large, 0.1, 0.1, triple_params)
+        C_large = coriolis_vector_triple(
+            phi1, phi2, dtheta1_large, 0.1, 0.1, triple_params
+        )
 
         # The change should not be linear (quadratic in velocity)
         ratio = np.linalg.norm(C_large) / np.linalg.norm(C_small)

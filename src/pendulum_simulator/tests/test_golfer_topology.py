@@ -62,9 +62,9 @@ class TestStandoffMassless:
 
     def test_standoff_mass_near_zero(self, address_params: GolferParams) -> None:
         """Standoff mass must be near zero (< 0.01 kg)."""
-        assert address_params.m_hub < 0.01, (
-            f"Standoff mass should be near-zero, got {address_params.m_hub}"
-        )
+        assert (
+            address_params.m_hub < 0.01
+        ), f"Standoff mass should be near-zero, got {address_params.m_hub}"
 
     def test_standoff_mass_positive(self, address_params: GolferParams) -> None:
         """Standoff mass must be positive (required by solver numerics)."""
@@ -78,7 +78,9 @@ class TestStandoffMassless:
 class TestUpperBodyMass:
     """Upper body (scapula) segments should have significant mass (~2x arms)."""
 
-    def test_right_upper_body_heavier_than_arms(self, address_params: GolferParams) -> None:
+    def test_right_upper_body_heavier_than_arms(
+        self, address_params: GolferParams
+    ) -> None:
         """Right upper body mass should be >= right arm total."""
         right_arm_total = address_params.m_r_upper + address_params.m_r_fore
         assert address_params.m_rscap >= right_arm_total, (
@@ -86,7 +88,9 @@ class TestUpperBodyMass:
             f"right arm total ({right_arm_total} kg)"
         )
 
-    def test_left_upper_body_heavier_than_arms(self, address_params: GolferParams) -> None:
+    def test_left_upper_body_heavier_than_arms(
+        self, address_params: GolferParams
+    ) -> None:
         """Left upper body mass should be >= left arm total."""
         left_arm_total = address_params.m_l_upper + address_params.m_l_fore
         assert address_params.m_lscap >= left_arm_total, (
@@ -124,7 +128,9 @@ class TestMassDistribution:
             + address_params.m_clubhead
         )
         # Upper body + arms + club: roughly 10-40 kg is reasonable
-        assert 10.0 < total < 40.0, f"Total mass {total:.1f} kg should be in 10-40 kg range"
+        assert (
+            10.0 < total < 40.0
+        ), f"Total mass {total:.1f} kg should be in 10-40 kg range"
 
     def test_standoff_negligible_fraction(self, address_params: GolferParams) -> None:
         """Standoff mass should be < 0.1% of total system mass."""
@@ -140,7 +146,9 @@ class TestMassDistribution:
             + address_params.m_clubhead
         )
         fraction = address_params.m_hub / total
-        assert fraction < 0.001, f"Standoff mass fraction {fraction:.4f} should be < 0.001"
+        assert (
+            fraction < 0.001
+        ), f"Standoff mass fraction {fraction:.4f} should be < 0.001"
 
     def test_upper_body_dominates(self, address_params: GolferParams) -> None:
         """Upper body segments should be the heaviest components."""
@@ -153,12 +161,12 @@ class TestMassDistribution:
             address_params.m_club,
             address_params.m_clubhead,
         ]
-        assert address_params.m_rscap >= max(all_masses), (
-            "Right upper body should be the heaviest individual segment"
-        )
-        assert address_params.m_lscap >= max(all_masses), (
-            "Left upper body should be the heaviest individual segment"
-        )
+        assert address_params.m_rscap >= max(
+            all_masses
+        ), "Right upper body should be the heaviest individual segment"
+        assert address_params.m_lscap >= max(
+            all_masses
+        ), "Left upper body should be the heaviest individual segment"
 
 
 class TestGolferParamsValidation:
@@ -256,7 +264,9 @@ class TestForwardKinematicsTopology:
         q = np.zeros(8)
         pos = forward_kinematics(q, address_params)
         for name, xy in pos.items():
-            assert np.all(np.isfinite(xy)), f"Position {name} has non-finite values: {xy}"
+            assert np.all(
+                np.isfinite(xy)
+            ), f"Position {name} has non-finite values: {xy}"
 
     def test_scapula_positions_present(self, address_params: GolferParams) -> None:
         """When scapula lengths are nonzero, scapula positions must be in FK."""

@@ -46,7 +46,9 @@ def result(
 ) -> TripleSimulationResult:
     """Run a short simulation and cache the result for all tests in the module."""
     initial_state = np.array([0.1, 0.05, -0.05, 0.0, 0.0, 0.0])
-    return run_simulation(params, initial_state, t_end=0.1, torque_func=torque_func, dt=0.01)
+    return run_simulation(
+        params, initial_state, t_end=0.1, torque_func=torque_func, dt=0.01
+    )
 
 
 class TestRunSimulation:

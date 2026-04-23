@@ -92,16 +92,17 @@ class MATLABQualityChecker:
     def _run_matlab_script(self, script_path: Path) -> dict[str, Any]:
         """Attempt to run MATLAB script from command line."""
         try:
+            escaped_path = str(script_path).replace("'", "''")
             commands = [
-                ["matlab", "-batch", f"run('{script_path}')"],
+                ["matlab", "-batch", f"run('{escaped_path}')"],
                 [
                     "matlab",
                     "-nosplash",
                     "-nodesktop",
                     "-batch",
-                    f"run('{script_path}')",
+                    f"run('{escaped_path}')",
                 ],
-                ["octave", "--no-gui", "--eval", f"run('{script_path}')"],
+                ["octave", "--no-gui", "--eval", f"run('{escaped_path}')"],
             ]
 
             for cmd in commands:

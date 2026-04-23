@@ -317,7 +317,9 @@ class TestGetFactor:
 
         for cat, options in _UNIT_OPTIONS.items():
             for label, factor in options:
-                assert factor > 0, f"Non-positive factor for {cat.value}/{label}: {factor}"
+                assert (
+                    factor > 0
+                ), f"Non-positive factor for {cat.value}/{label}: {factor}"
 
 
 class TestToSiFromSi:

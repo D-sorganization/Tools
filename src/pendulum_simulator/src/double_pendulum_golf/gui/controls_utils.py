@@ -22,7 +22,9 @@ from PyQt6.QtWidgets import (
 
 # ── UnitAwareInput availability (DRY: single check shared by all widgets) ──
 try:
-    from upstream_drift_tools.ui.widgets.unit_aware_input import UnitAwareInput  # noqa: F401
+    from upstream_drift_tools.ui.widgets.unit_aware_input import (
+        UnitAwareInput,
+    )  # noqa: F401
 
     HAS_UNIT_AWARE_INPUT = True
 except ImportError:
@@ -227,7 +229,9 @@ def parse_coeffs(widget: LabeledInput, name: str) -> list[float]:
         parts = widget.value.split(",")
         return [float(p.strip()) for p in parts if p.strip()]
     except ValueError:
-        raise ValueError(f"Cannot parse '{name}' coefficients: '{widget.value}'") from None
+        raise ValueError(
+            f"Cannot parse '{name}' coefficients: '{widget.value}'"
+        ) from None
 
 
 def parse_coeffs_lenient(widget: LabeledInput) -> list[float]:

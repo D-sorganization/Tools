@@ -96,7 +96,9 @@ class GolferSimulationResult(TrajectoryResultMixin):
         self._check_idx(idx)
         return forward_kinematics(self.q_at(idx), self.params)  # type: ignore[no-any-return]
 
-    def torques_at(self, idx: int) -> tuple[float, float, float, float, float, float, float]:
+    def torques_at(
+        self, idx: int
+    ) -> tuple[float, float, float, float, float, float, float]:
         """Applied driving torques at time index."""
         if not (idx is not None):
             raise ValueError("idx must be provided")
@@ -127,7 +129,9 @@ class GolferSimulationResult(TrajectoryResultMixin):
         if not (idx is not None):
             raise ValueError("idx must be provided")
         self._check_idx(idx)
-        return constraint_forces(self.states[idx], self.t[idx], self.params, self.torque_func)
+        return constraint_forces(
+            self.states[idx], self.t[idx], self.params, self.torque_func
+        )
 
     def constraint_violation_at(self, idx: int) -> float:
         """Constraint violation magnitude at time index."""
