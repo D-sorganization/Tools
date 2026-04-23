@@ -124,7 +124,7 @@ def compute_reference_frame_conversion(
         )
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
-    except (TypeError, RuntimeError, KeyError) as error:
+    except (TypeError, KeyError) as error:
         raise HTTPException(
             status_code=500,
             detail="Failed to compute reference-frame conversion.",
