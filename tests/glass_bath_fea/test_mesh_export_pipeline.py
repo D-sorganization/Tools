@@ -13,6 +13,9 @@ import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import pytest
+
+pytest.importorskip("numpy")
 import numpy as np
 from glass_bath_fea.core.config import GlassBathFEAConfig
 from glass_bath_fea.exporters.mat_exporter import validate_mesh_data

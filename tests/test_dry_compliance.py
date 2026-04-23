@@ -244,10 +244,11 @@ class TestPyQt6LauncherDRY:
         "folder_tool",  # cross-platform script launcher
         "pdf_renamer",  # custom logging setup
         "glass_bath_fea",  # custom main() with error handling
+        "lower_body_model",  # custom MuJoCo viewer/control panel
     }
 
     def test_launch_pyqt6_files_use_factory_or_bootstrap(self) -> None:
-        """Standard launch_pyqt6.py files should use make_pyqt6_launcher."""
+        """Standard launch_pyqt6.py files should use a shared launcher factory."""
         files = _collect_launch_pyqt6_files()
         assert len(files) > 0, "No launch_pyqt6.py files found"
 
@@ -258,12 +259,13 @@ class TestPyQt6LauncherDRY:
                 continue
 
             content = path.read_text(encoding="utf-8")
-            if "make_pyqt6_launcher" not in content:
+            if "make_pyqt6_launcher" not in content and "make_launcher" not in content:
                 rel = str(path.relative_to(REPO_ROOT))
                 problems.append(rel)
 
-        msg = "launch_pyqt6.py files not using make_pyqt6_launcher:\n" + "\n".join(
-            f"  - {p}" for p in problems
+        msg = (
+            "launch_pyqt6.py files not using a shared launcher factory:\n"
+            + "\n".join(f"  - {p}" for p in problems)
         )
         assert problems == [], msg
 

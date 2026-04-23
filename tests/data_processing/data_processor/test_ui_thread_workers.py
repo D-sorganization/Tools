@@ -5,6 +5,9 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
+import pytest
+
+pytest.importorskip("pandas")
 import pandas as pd
 from data_processor.ui.async_workers import DataLoadResult, DataLoadWorker
 

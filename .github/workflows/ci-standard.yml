@@ -66,6 +66,11 @@ jobs:
     needs: pick-runner
     runs-on: self-hosted
     timeout-minutes: 20
+    env:
+      # Shared wheel/download cache for self-hosted runners — avoids re-downloading
+      # the same packages on every run.  Path is host-stable and safe for concurrent
+      # runners on the same machine.  See issue #2160.
+      PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
     steps:
       - uses: actions/checkout@v6
         with:
@@ -97,12 +102,14 @@ jobs:
         # hypothesis-using pytest run (see PR #2054 / #2056 quality-gate
         # failures; mirrors UpstreamDrift ci-standard.yml fix).
         run: |
-          pip install --force-reinstall --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
-          pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install fastapi
-          pip install httpx pytest-cov
-          pip install ruff==0.14.10 mypy==1.13.0 bandit==1.7.7 pip-audit sortedcontainers types-PyYAML types-requests
+          python -m ensurepip --upgrade
+          python -m pip install --upgrade pip setuptools
+          python -m pip install --ignore-installed --no-deps wheel
+          python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
+          python -m pip install -r requirements.txt
+          python -m pip install fastapi
+          python -m pip install httpx pytest-cov
+          python -m pip install ruff==0.14.10 mypy==1.13.0 bandit==1.7.7 pip-audit sortedcontainers types-PyYAML types-requests
 
       - name: Collect Changed Python Files
         run: |
@@ -224,6 +231,9 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
+    env:
+      # Shared wheel/download cache — mirrors quality-gate setting.  See issue #2160.
+      PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
     steps:
       - uses: actions/checkout@v6
         with:
@@ -251,11 +261,13 @@ jobs:
         # toolcache can carry a stale `sortedcontainers` that makes hypothesis
         # fail during pytest_terminal_summary.
         run: |
-          pip install --force-reinstall --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
-          pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install fastapi
-          pip install httpx pytest-cov
+          python -m ensurepip --upgrade
+          python -m pip install --upgrade pip setuptools
+          python -m pip install --ignore-installed --no-deps wheel
+          python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
+          python -m pip install -r requirements.txt
+          python -m pip install fastapi
+          python -m pip install httpx pytest-cov
 
       - name: Collect Changed Test Files
         run: |
@@ -429,14 +441,14 @@ jobs:
       - name: Build Python Wheel (Maturin)
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
-          pip install maturin
+          python -m pip install maturin
           cd rust_core/tools-core
           maturin build --release
 
       - name: Verify Python Wheel
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
-          pip install target/wheels/*.whl --force-reinstall
+          python -m pip install target/wheels/*.whl --force-reinstall
           python -c "import tools_core; v = tools_core.Vector3(1.0, 2.0, 3.0); assert v.magnitude() > 0; print('tools_core wheel verified')"
 
       - name: Build WASM Module (wasm-pack)

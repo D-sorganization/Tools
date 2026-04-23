@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import Papa from 'papaparse';
 import type {
   DataRow,
@@ -42,8 +42,12 @@ const initialState: DataProcessorState = {
 
 function copyOwnRowProperties(row: DataRow): DataRow {
   const newRow: DataRow = {};
-  for (const key of Object.keys(row)) {
-    newRow[key] = row[key];
+  // ⚡ Bolt Optimization: Use a for...in loop instead of Object.keys() to avoid
+  // O(N) array allocations of keys per row, significantly reducing garbage collection overhead.
+  for (const key in row) {
+    if (Object.prototype.hasOwnProperty.call(row, key)) {
+      newRow[key] = row[key];
+    }
   }
   return newRow;
 }
@@ -60,7 +64,8 @@ export function useDataProcessor() {
 
     for (const signal of signals) {
       let count = 0;
-      let sum = 0;
+      let mean = 0;
+      let m2 = 0; // Welford's algorithm accumulator
 
       // ⚡ Bolt Optimization: Extract numerical values into a dynamically growing Float64Array
       // in a single pass over the object array. This avoids a second O(N) object property access loop
@@ -71,8 +76,6 @@ export function useDataProcessor() {
       for (let i = 0; i < dataLen; i++) {
         const v = data[i][signal];
         if (typeof v === 'number' && !Number.isNaN(v)) {
-          sum += v;
-
           if (count >= capacity) {
             capacity = Math.min(dataLen, capacity * 2);
             const newBuffer = new Float64Array(capacity);
@@ -82,21 +85,21 @@ export function useDataProcessor() {
 
           buffer[count] = v;
           count++;
+
+          // ⚡ Bolt Optimization: Use Welford's algorithm to calculate numerically stable mean and variance in a single pass.
+          // Performance impact: Eliminates the second O(N) loop while avoiding catastrophic cancellation.
+          const delta = v - mean;
+          mean += delta / count;
+          const delta2 = v - mean;
+          m2 += delta * delta2;
         }
       }
 
       if (count === 0) continue;
 
-      const mean = sum / count;
       const vals = buffer.subarray(0, count);
 
-      let varianceSum = 0;
-      for (let i = 0; i < count; i++) {
-        const diff = vals[i] - mean;
-        varianceSum += diff * diff;
-      }
-
-      const variance = varianceSum / count;
+      const variance = Math.max(0, m2 / count);
 
       vals.sort(); // Typed array sort is faster and numeric by default
 
@@ -710,6 +713,14 @@ export function useDataProcessor() {
     [state.savedPlotConfigs]
   );
 
+  // ⚡ Bolt Optimization: Memoize the array of config names.
+  // Returning Object.keys() directly breaks referential equality, which nullifies
+  // the React.memo optimization on TrendlinePanel and causes unnecessary re-renders.
+  const savedPlotConfigNames = useMemo(
+    () => Object.keys(state.savedPlotConfigs),
+    [state.savedPlotConfigs]
+  );
+
   return {
     ...state,
     loadFile,
@@ -724,7 +735,7 @@ export function useDataProcessor() {
     applyFormula,
     savePlotConfig,
     loadPlotConfig,
-    savedPlotConfigNames: Object.keys(state.savedPlotConfigs),
+    savedPlotConfigNames,
   };
 }
 

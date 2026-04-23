@@ -12,6 +12,21 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 
+def _compute_repo_root_fallback(file_path: str | Path, levels: int = 5) -> Path:
+    """Return a stable ancestor path without failing on shallow layouts."""
+    current = Path(file_path)
+    for _ in range(levels):
+        parent = current.parent
+        if parent == current:
+            break
+        current = parent
+    return current
+
+
+# src/python/src/utils/ -> src/python/src/ -> src/python/ -> src/ -> repo root
+_REPO_ROOT_FALLBACK = _compute_repo_root_fallback(__file__)
+
+
 def find_env_file(
     filename: str = ".env",
     start_path: Path | str | None = None,
@@ -58,9 +73,7 @@ def find_env_file(
                 locations.append(repo_root / filename)
             except ImportError:
                 # Last resort fallback
-                locations.append(
-                    Path(__file__).parent.parent.parent.parent.parent / filename
-                )
+                locations.append(_REPO_ROOT_FALLBACK / filename)
 
     # Add user home directory
     locations.append(Path.home() / ".pdf_renamer" / filename)

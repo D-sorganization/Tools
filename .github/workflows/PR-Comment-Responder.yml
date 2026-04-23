@@ -249,7 +249,10 @@ jobs:
           This comment will be processed by Jules-Comment-Processor on the next scheduled run."
 
             git pull --rebase origin main || git pull origin main
-            git push origin main
+            git push origin main || {
+              echo "::warning::Could not push queued comment to protected main; leaving comment unqueued."
+              exit 0
+            }
             echo "::notice::Comment queued for batch processing"
           else
             echo "No changes to commit"

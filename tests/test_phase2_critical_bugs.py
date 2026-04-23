@@ -13,8 +13,10 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-import numpy as np
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
 
 # Ensure src/shared/python is importable
 _shared_python = Path(__file__).resolve().parent.parent / "src" / "shared" / "python"

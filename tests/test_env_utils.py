@@ -184,6 +184,18 @@ class TestFindEnvFileContract:
         assert result is None or isinstance(result, Path)
 
 
+class TestRepoRootFallback:
+    """Regression tests for REPO_ROOT_FALLBACK computation."""
+
+    def test_compute_repo_root_fallback_handles_shallow_paths(self):
+        """Shallow file paths should not raise IndexError at import-time."""
+        from utils.env_utils import _compute_repo_root_fallback
+
+        shallow = _compute_repo_root_fallback(Path("env_utils.py"), levels=5)
+        assert isinstance(shallow, Path)
+        assert shallow == Path(".")
+
+
 class TestFindEnvFile:
     """Functional tests for find_env_file."""
 

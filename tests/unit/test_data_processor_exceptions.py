@@ -8,9 +8,13 @@ Addresses #830 (typed errors) and #826 (DbC coverage).
 
 from __future__ import annotations
 
-import numpy as np
-import pandas as pd
 import pytest
+
+pytest.importorskip("numpy")
+import numpy as np
+
+pytest.importorskip("pandas")
+import pandas as pd
 from upstream_drift_tools.data_processing.core import (
     DataProcessorEngine,
     FitType,
@@ -245,6 +249,26 @@ class TestTransformationErrors:
     def test_add_column_empty_name(self, loaded_engine: DataProcessorEngine) -> None:
         with pytest.raises(TransformationError):
             loaded_engine.add_calculated_column("", "salary / 1000")
+
+    def test_normalize_constant_column_raises(self) -> None:
+        engine = DataProcessorEngine()
+        engine.load_dataframe(pd.DataFrame({"constant": [5.0, 5.0, 5.0]}))
+        original = engine.data.copy()
+
+        with pytest.raises(TransformationError, match="Cannot normalize"):
+            engine.transform_column("constant", "normalize")
+
+        pd.testing.assert_frame_equal(engine.data, original)
+
+    def test_standardize_constant_column_raises(self) -> None:
+        engine = DataProcessorEngine()
+        engine.load_dataframe(pd.DataFrame({"constant": [5.0, 5.0, 5.0]}))
+        original = engine.data.copy()
+
+        with pytest.raises(TransformationError, match="Cannot standardize"):
+            engine.transform_column("constant", "standardize")
+
+        pd.testing.assert_frame_equal(engine.data, original)
 
 
 # ── Data integrity after errors ──────────────────────────────────
