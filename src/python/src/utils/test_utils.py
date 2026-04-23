@@ -570,7 +570,7 @@ def mock_datetime(
     if frozen_time:
         frozen_dt = datetime.datetime.fromisoformat(frozen_time)
     else:
-        frozen_dt = datetime.datetime.now(datetime.UTC)
+        frozen_dt = datetime.datetime.now(datetime.timezone.utc)  # noqa: UP017
 
     mock_dt = MagicMock(wraps=datetime.datetime)
     mock_dt.now.return_value = frozen_dt
