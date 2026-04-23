@@ -77,9 +77,20 @@ class _ContractState:
         return cls.level != ContractLevel.OFF
 
 
-# Module-level aliases for backward compatibility (read via property delegation)
+# Module-level aliases for backward compatibility. Runtime checks must read
+# _ContractState directly so stale imported aliases cannot affect enforcement.
 DBC_LEVEL: ContractLevel = _ContractState.level
 CONTRACTS_ENABLED: bool = _ContractState.level != ContractLevel.OFF
+
+
+def _current_contract_level() -> ContractLevel:
+    """Return the canonical runtime contract level."""
+    return _ContractState.level
+
+
+def _contracts_enabled() -> bool:
+    """Return whether contract checks are currently enabled."""
+    return _current_contract_level() != ContractLevel.OFF
 
 
 def set_contract_level(level: ContractLevel) -> None:
@@ -96,7 +107,7 @@ def set_contract_level(level: ContractLevel) -> None:
 
 def get_contract_level() -> ContractLevel:
     """Return the current global contract enforcement level."""
-    return _ContractState.level
+    return _current_contract_level()
 
 
 # ─── Exception Hierarchy ───────────────────────────────────────
@@ -165,10 +176,11 @@ def _handle_violation(
     value: Any = None,
 ) -> None:
     """Handle a contract violation according to the current DBC_LEVEL."""
-    if DBC_LEVEL == ContractLevel.ENFORCE:
+    level = _current_contract_level()
+    if level == ContractLevel.ENFORCE:
         exc_cls = _VIOLATION_CLASSES.get(condition_type, ContractViolationError)
         raise exc_cls(message, value)
-    elif DBC_LEVEL == ContractLevel.WARN:
+    elif level == ContractLevel.WARN:
         detail = f"[DbC {condition_type}] {message}"
         if value is not None:
             detail += f" (got: {value!r})"
@@ -179,7 +191,7 @@ def require(condition: bool, message: str, value: Any = None) -> None:
     """Assert a pre-condition at function entry."""
     if not (condition is not None):
         raise ValueError("condition must be provided")
-    if DBC_LEVEL == ContractLevel.OFF:
+    if not _contracts_enabled():
         return
     if not condition:
         _handle_violation("pre-condition", message, value)
@@ -189,7 +201,7 @@ def ensure(condition: bool, message: str, value: Any = None) -> None:
     """Assert a post-condition before function return."""
     if not (condition is not None):
         raise ValueError("condition must be provided")
-    if DBC_LEVEL == ContractLevel.OFF:
+    if not _contracts_enabled():
         return
     if not condition:
         _handle_violation("post-condition", message, value)
@@ -199,7 +211,7 @@ def invariant(condition: bool, message: str, value: Any = None) -> None:
     """Assert a class or loop invariant."""
     if not (condition is not None):
         raise ValueError("condition must be provided")
-    if DBC_LEVEL == ContractLevel.OFF:
+    if not _contracts_enabled():
         return
     if not condition:
         _handle_violation("invariant", message, value)
@@ -261,7 +273,7 @@ def precondition(
         raise ValueError("condition must be provided")
 
     def decorator(func: F) -> F:
-        if DBC_LEVEL == ContractLevel.OFF:
+        if not _contracts_enabled():
             return func
 
         @functools.wraps(func)
@@ -295,7 +307,7 @@ def postcondition(
         raise ValueError("condition must be provided")
 
     def decorator(func: F) -> F:
-        if DBC_LEVEL == ContractLevel.OFF:
+        if not _contracts_enabled():
             return func
 
         @functools.wraps(func)
@@ -439,7 +451,7 @@ def class_invariant(
         raise ValueError("condition must be provided")
 
     def class_decorator(cls: type) -> type:
-        if DBC_LEVEL == ContractLevel.OFF:
+        if not _contracts_enabled():
             return cls
 
         # Wrap __init__
@@ -481,13 +493,13 @@ class ContractChecker:
 
     def verify_invariants(self) -> bool:
         """Verify all class invariants hold."""
-        if DBC_LEVEL == ContractLevel.OFF:
+        if not _contracts_enabled():
             return True
 
         for condition_fn, message in self._get_invariants():
             try:
                 if not condition_fn():
-                    if DBC_LEVEL == ContractLevel.ENFORCE:
+                    if _current_contract_level() == ContractLevel.ENFORCE:
                         raise InvariantError(f"{self.__class__.__name__}: {message}")
                     else:
                         logger.warning(
@@ -498,7 +510,7 @@ class ContractChecker:
             except InvariantError:
                 raise
             except (RuntimeError, TypeError, ValueError) as exc:
-                if DBC_LEVEL == ContractLevel.ENFORCE:
+                if _current_contract_level() == ContractLevel.ENFORCE:
                     raise InvariantError(
                         f"{self.__class__.__name__}: "
                         f"Failed to evaluate invariant: {exc}"
@@ -509,7 +521,7 @@ class ContractChecker:
 
 def invariant_checked(func: F) -> F:
     """Decorator to check class invariants after method execution."""
-    if DBC_LEVEL == ContractLevel.OFF:
+    if not _contracts_enabled():
         return func
 
     @functools.wraps(func)
@@ -576,7 +588,7 @@ def require_positive(value: float, name: str = "value") -> None:
     Raises:
         PreconditionError: If *value* ``<= 0``.
     """
-    if not CONTRACTS_ENABLED:
+    if not _contracts_enabled():
         return
     if value <= 0:
         raise PreconditionError(f"{name} must be positive (got {value})")
@@ -590,7 +602,7 @@ def require_finite(array: Any, name: str = "array") -> None:
     """
     import numpy as np
 
-    if not CONTRACTS_ENABLED:
+    if not _contracts_enabled():
         return
     if not np.all(np.isfinite(array)):
         raise PreconditionError(f"{name} contains NaN or Inf values")
@@ -604,7 +616,7 @@ def require_unit_vector(vector: Any, name: str = "vector", tol: float = 1e-6) ->
     """
     import numpy as np
 
-    if not CONTRACTS_ENABLED:
+    if not _contracts_enabled():
         return
     norm = np.linalg.norm(vector)
     if abs(norm - 1.0) > tol:
@@ -617,7 +629,7 @@ def ensure_valid_result(result: Any) -> None:
     Raises:
         PostconditionError: If ``result.is_valid`` is falsy.
     """
-    if not CONTRACTS_ENABLED:
+    if not _contracts_enabled():
         return
     if not result.is_valid:
         errors = "; ".join(result.get_error_messages())

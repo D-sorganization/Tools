@@ -20,6 +20,7 @@ from contracts import require  # noqa: E402
 
 logger = logging.getLogger(__name__)
 SUPPORTED_FILTER_TYPES = {"butterworth", "moving_average", "median", "savgol"}
+DEFAULT_BUTTERWORTH_SAMPLE_RATE_HZ = 1000.0
 
 
 @dataclass
@@ -235,6 +236,8 @@ class DataProcessor:
         cutoff: float = 10.0,
         order: int = 4,
         window_size: int = 11,
+        sample_rate: float | None = None,
+        time_column: str | None = None,
     ) -> DataProcessor:
         """Apply a signal filter (butterworth, moving_average, median, savgol).
 
@@ -250,6 +253,11 @@ class DataProcessor:
             Filter order.
         window_size : int
             Window size for moving_average / median / savgol.
+        sample_rate : float | None
+            Sample rate in Hz for butterworth filters.  When omitted, the rate
+            is inferred from the detected time column and falls back to 1000 Hz.
+        time_column : str | None
+            Time column to use for sample-rate inference.  Auto-detected if None.
         """
         if not (filter_type is not None):
             raise ValueError("filter_type must be provided")
@@ -263,6 +271,8 @@ class DataProcessor:
             cutoff=cutoff,
             order=order,
             window_size=window_size,
+            sample_rate=sample_rate,
+            time_column=time_column,
         )
         self._df = df
         self._history.append(
@@ -298,6 +308,8 @@ class DataProcessor:
         cutoff: float,
         order: int,
         window_size: int,
+        sample_rate: float | None,
+        time_column: str | None,
     ) -> None:
         """Apply filter using SciPy implementation when available."""
         try:
@@ -308,6 +320,8 @@ class DataProcessor:
                 cutoff=cutoff,
                 order=order,
                 window_size=window_size,
+                sample_rate=sample_rate,
+                time_column=time_column,
             )
         except ImportError:
             self._apply_filter_fallback(df=df, columns=columns, window_size=window_size)
@@ -320,16 +334,23 @@ class DataProcessor:
         cutoff: float,
         order: int,
         window_size: int,
+        sample_rate: float | None,
+        time_column: str | None,
     ) -> None:
         """Apply filter implementation backed by scipy.signal."""
         if not (df is not None):
             raise ValueError("df must be provided")
         from scipy.signal import butter, filtfilt, medfilt, savgol_filter
 
+        butterworth_sample_rate = self._resolve_butterworth_sample_rate(
+            df=df,
+            sample_rate=sample_rate,
+            time_column=time_column,
+        )
         for column in columns:
             values = df[column].values.astype(float)
             if filter_type == "butterworth":
-                b, a = butter(order, cutoff, btype="low", fs=1000)
+                b, a = butter(order, cutoff, btype="low", fs=butterworth_sample_rate)
                 df[column] = filtfilt(b, a, values)
             elif filter_type == "moving_average":
                 df[column] = (
@@ -351,6 +372,45 @@ class DataProcessor:
             df[column] = (
                 pd.Series(df[column]).rolling(window_size, center=True).mean().values
             )
+
+    def _resolve_butterworth_sample_rate(
+        self,
+        df: pd.DataFrame,
+        sample_rate: float | None,
+        time_column: str | None,
+    ) -> float:
+        """Resolve the Butterworth sample rate from explicit or time-column input."""
+        if sample_rate is not None:
+            require(
+                isinstance(sample_rate, int | float) and sample_rate > 0,
+                "sample_rate must be a positive number",
+            )
+            return float(sample_rate)
+
+        column = (
+            time_column if time_column is not None else self._detect_time_column(df)
+        )
+        return self._infer_sample_rate(df, column)
+
+    @staticmethod
+    def _infer_sample_rate(df: pd.DataFrame, time_column: str) -> float:
+        """Infer sample rate from positive time deltas, falling back to 1000 Hz."""
+        if time_column not in df.columns:
+            return DEFAULT_BUTTERWORTH_SAMPLE_RATE_HZ
+
+        times = pd.to_numeric(df[time_column], errors="coerce").dropna()
+        if len(times) < 2:
+            return DEFAULT_BUTTERWORTH_SAMPLE_RATE_HZ
+
+        deltas = times.diff().dropna()
+        positive_deltas = deltas[deltas > 0]
+        if positive_deltas.empty:
+            return DEFAULT_BUTTERWORTH_SAMPLE_RATE_HZ
+
+        median_delta = float(positive_deltas.median())
+        if median_delta <= 0:
+            return DEFAULT_BUTTERWORTH_SAMPLE_RATE_HZ
+        return 1.0 / median_delta
 
     def apply_formula(
         self,
