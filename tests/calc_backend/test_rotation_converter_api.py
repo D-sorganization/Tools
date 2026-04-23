@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import pytest
 from fastapi.testclient import TestClient
 
 from shared.python.calc_backend.app import app
@@ -62,6 +63,62 @@ def test_rotation_converter_invalid_type() -> None:
     )
     # Pydantic Literal validation should fail before the endpoint logic
     assert response.status_code == 422
+
+
+def test_rotation_converter_invalid_quaternion_value_returns_422(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Value errors from rotation parsing should map to HTTP 422."""
+
+    def raise_value_error(_: object) -> None:
+        raise ValueError("bad quaternion")
+
+    monkeypatch.setattr(
+        "shared.python.calc_backend.routers.rotation_converter."
+        "Rotation.from_quaternion",
+        raise_value_error,
+    )
+
+    response = client.post(
+        "/api/calc/rotation-converter",
+        json={
+            "type": "quaternion",
+            "value": [1.0, 0.0, 0.0, 0.0],
+            "euler_convention": "xyz",
+        },
+    )
+    assert response.status_code == 422
+    assert response.json()["detail"] == "Invalid rotation input: bad quaternion"
+
+
+def test_reference_frame_runtime_error_is_not_swallowed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Unexpected reference-frame failures should propagate as bugs."""
+
+    def raise_runtime_error(*args: object, **kwargs: object) -> None:
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr(
+        "shared.python.calc_backend.routers.rotation_converter."
+        "compute_reference_frame_operation",
+        raise_runtime_error,
+    )
+
+    with pytest.raises(RuntimeError, match="boom"):
+        client.post(
+            "/api/calc/rotation-converter/reference-frame",
+            json={
+                "operation": "twist_frame_conversion",
+                "transform": [
+                    [1.0, 0.0, 0.0, 0.0],
+                    [0.0, 1.0, 0.0, 0.0],
+                    [0.0, 0.0, 1.0, 0.0],
+                    [0.0, 0.0, 0.0, 1.0],
+                ],
+                "twist": [0.1, 0.2, 0.3, 1.0, 2.0, 3.0],
+            },
+        )
 
 
 def test_reference_frame_twist_conversion_identity() -> None:
