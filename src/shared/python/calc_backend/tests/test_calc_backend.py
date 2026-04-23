@@ -337,6 +337,20 @@ class TestODESolver:
         r = client.post("/api/calc/ode-solver", json=payload)
         assert r.status_code == 422
 
+    def test_rk4_rejects_too_few_points_before_dt(self) -> None:
+        from calc_backend.routers.ode_solver import _rk4_solve
+
+        with pytest.raises(ValueError, match="num_points must be at least 2"):
+            _rk4_solve(
+                var_names=["y"],
+                expressions={"y": "-y"},
+                parameters={},
+                initial={"y": 1.0},
+                t_start=0.0,
+                t_end=1.0,
+                num_points=1,
+            )
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # /api/calc/thermal-profile

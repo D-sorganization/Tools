@@ -94,6 +94,8 @@ def _rk4_solve(
     """RK4 integration of the ODE system."""
     if not (var_names is not None):
         raise ValueError("var_names must be provided")
+    if num_points < 2:
+        raise ValueError("num_points must be at least 2")
     dt = (t_end - t_start) / (num_points - 1)
     state = {v: initial[v] for v in var_names}
 
