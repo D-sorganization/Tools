@@ -489,7 +489,7 @@ class CalculatorStateMixin:
 
             if state_data:
                 self.set_calculator_state(state_data)
-                logger.info("✓ Calculator state loaded: %s", state_name)
+                logger.info("Calculator state loaded: %s", state_name)
 
             return state_data
 
