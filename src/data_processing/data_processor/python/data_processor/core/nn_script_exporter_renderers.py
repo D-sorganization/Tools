@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import timezone, datetime
+from datetime import datetime, timezone
 
 from .nn_architecture import (
     ActivationFunction,

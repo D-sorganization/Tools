@@ -9,7 +9,7 @@ Provides functions for:
 from __future__ import annotations
 
 import re
-from datetime import timezone, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 

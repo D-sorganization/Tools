@@ -13,7 +13,7 @@ import time
 from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from datetime import timezone, datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, TypeVar
 
@@ -227,13 +227,13 @@ def timer(
     stats = TimingStats(
         name=name,
         elapsed_seconds=0.0,
-        start_time=datetime.now(timezone.utc),
-        end_time=datetime.now(timezone.utc),
+        start_time=datetime.now(UTC),
+        end_time=datetime.now(UTC),
     )
     start = time.perf_counter()
     try:
         yield stats
     finally:
         stats.elapsed_seconds = time.perf_counter() - start
-        stats.end_time = datetime.now(timezone.utc)
+        stats.end_time = datetime.now(UTC)
         logger.log(log_level, "%s", stats)

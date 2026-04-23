@@ -20,7 +20,7 @@ import re
 import xml.etree.ElementTree as ET  # nosec B405 — type annotations + ParseError only; parsing uses defusedxml
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import timezone, datetime
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -816,7 +816,7 @@ class URDFTextEditor(TextEditorDiffMixin):
 
         version = EditorVersion(
             content=self._content,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             description=description,
             checksum=checksum,
         )

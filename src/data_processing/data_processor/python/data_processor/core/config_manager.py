@@ -7,7 +7,7 @@ Works with all GUI implementations (TKinter, PyQt6, React).
 from __future__ import annotations
 
 import json
-from datetime import timezone, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -55,7 +55,9 @@ class ConfigManager:
 
         configs[name] = {
             "settings": settings,
-            "created": configs.get(name, {}).get("created", datetime.now(timezone.utc).isoformat()),
+            "created": configs.get(name, {}).get(
+                "created", datetime.now(timezone.utc).isoformat()
+            ),
             "modified": datetime.now(timezone.utc).isoformat(),
         }
 

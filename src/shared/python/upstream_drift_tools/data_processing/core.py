@@ -13,7 +13,7 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import timezone, datetime
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -108,7 +108,7 @@ class ProcessingResult:
     message: str
     data: pd.DataFrame | None = None
     stats: dict[str, Any] = field(default_factory=dict)
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 class DataProcessorEngine(BaseCalculationEngine):
@@ -316,6 +316,7 @@ class DataProcessorEngine(BaseCalculationEngine):
         self._save_undo_state()
         try:
             col = self.data[column]
+
             def _normalize() -> pd.Series:
                 col_range = col.max() - col.min()
                 if col_range == 0:

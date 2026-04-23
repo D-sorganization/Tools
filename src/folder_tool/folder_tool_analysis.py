@@ -181,7 +181,11 @@ class AnalysisMixin:
             PermissionError: If insufficient permissions to access source folders
         """
         valid_source_folders = self._validate_source_folders()
-        report = ["=== FOLDER ANALYSIS REPORT ===", f"Generated: {datetime.now(timezone.utc)}", ""]
+        report = [
+            "=== FOLDER ANALYSIS REPORT ===",
+            f"Generated: {datetime.now(timezone.utc)}",
+            "",
+        ]
         logger.info(f"Starting analysis of {len(valid_source_folders)} source folders")
 
         total_files = 0

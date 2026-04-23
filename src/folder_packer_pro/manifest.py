@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 from collections import defaultdict
-from datetime import timezone, datetime
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -17,7 +17,7 @@ class PackageManifest:
 
     def __init__(self) -> None:
         """Initialize the manifest."""
-        self.created_at = datetime.now(timezone.utc)
+        self.created_at = datetime.now(UTC)
         self.files: list[dict[str, Any]] = []
         self.metadata: dict[str, Any] = {}
         self.stats: defaultdict[str, int] = defaultdict(int)
@@ -31,7 +31,7 @@ class PackageManifest:
                 "path": file_path,
                 "size": size,
                 "checksum": checksum,
-                "added_at": datetime.now(timezone.utc).isoformat(),
+                "added_at": datetime.now(UTC).isoformat(),
             },
         )
         self.stats["total_files"] += 1

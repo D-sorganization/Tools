@@ -154,6 +154,7 @@ class ConsoleEnvironment:
             exec(code, self.namespace)  # nosec B102
         except Exception:  # noqa: BLE001
             import traceback
+
             traceback.print_exc(file=sys.stderr)
 
     def execute(self, source: str | None) -> tuple[str, str]:

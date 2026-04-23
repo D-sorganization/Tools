@@ -214,7 +214,6 @@ class TestURDFSemanticEquality:
     def test_parsed_output_is_valid_xml(self) -> None:
         """to_urdf() must produce valid XML."""
         import defusedxml.ElementTree as ET
-
         from model_generation.converters.urdf_parser import URDFParser
 
         parser = URDFParser(resolve_meshes=False)

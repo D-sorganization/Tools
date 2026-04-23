@@ -1,6 +1,6 @@
 import logging
 import sqlite3
-from datetime import timezone, datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 from .types import TitleResult
@@ -72,7 +72,7 @@ class ResultCache:
                         result.method,
                         provider,
                         model,
-                        datetime.now(timezone.utc),
+                        datetime.now(UTC),
                         error_msg,
                     ),
                 )
