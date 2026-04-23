@@ -240,6 +240,49 @@ class TestConversionApi:
         with pytest.raises(ConversionError):
             loader.convert_to_mjcf(source)
 
+    @pytest.mark.parametrize(
+        ("method_name", "converter_method", "filename", "source_text"),
+        [
+            (
+                "convert_to_urdf",
+                "mjcf_to_urdf",
+                "model.mjcf",
+                "<mujoco model='x'/>",
+            ),
+            (
+                "convert_to_mjcf",
+                "urdf_to_mjcf",
+                "model.urdf",
+                '<robot name="x"/>',
+            ),
+        ],
+    )
+    def test_convert_methods_preserve_conversion_error(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+        method_name: str,
+        converter_method: str,
+        filename: str,
+        source_text: str,
+    ) -> None:
+        from model_generation.library.unified_loader import (
+            ConversionError,
+            UnifiedModelLoader,
+        )
+
+        source = tmp_path / filename
+        source.write_text(source_text)
+        loader = UnifiedModelLoader(prefs_dir=tmp_path)
+        monkeypatch.setattr(
+            loader._mjcf_converter,
+            converter_method,
+            lambda _source: (_ for _ in ()).throw(ConversionError("boom")),
+        )
+
+        with pytest.raises(ConversionError, match="boom"):
+            getattr(loader, method_name)(source)
+
     def test_convert_to_urdf_succeeds_for_valid_source(self, tmp_path: Path) -> None:
         from model_generation.library.unified_loader import UnifiedModelLoader
 
