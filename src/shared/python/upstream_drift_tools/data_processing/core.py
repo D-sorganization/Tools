@@ -13,7 +13,7 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -35,6 +35,16 @@ from .exceptions import (
 from .io import DataReader, DataWriter
 
 logger = logging.getLogger(__name__)
+UTC = timezone.utc  # noqa: UP017 - Python 3.10 lacks datetime.UTC.
+
+
+def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
+    """Prefer numexpr when available but preserve the optional dependency contract."""
+
+    try:
+        return df.eval(expression, engine="numexpr")
+    except ImportError:
+        return df.eval(expression, engine="python")
 
 
 class DataFormat(Enum):
@@ -108,7 +118,9 @@ class ProcessingResult:
     message: str
     data: pd.DataFrame | None = None
     stats: dict[str, Any] = field(default_factory=dict)
-    timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
+    timestamp: str = field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()  # noqa: UP017
+    )
 
 
 class DataProcessorEngine(BaseCalculationEngine):
@@ -257,7 +269,7 @@ class DataProcessorEngine(BaseCalculationEngine):
             raise TransformationError("Column name must not be empty")
         self._save_undo_state()
         try:
-            self.data[name] = self.data.eval(expression)
+            self.data[name] = _eval_with_optional_numexpr(self.data, expression)
             if dtype:
                 self.data[name] = self.data[name].astype(dtype)
             return ProcessingResult(
@@ -316,14 +328,32 @@ class DataProcessorEngine(BaseCalculationEngine):
         self._save_undo_state()
         try:
             col = self.data[column]
+
+            def _normalize() -> pd.Series:
+                col_range = col.max() - col.min()
+                if col_range == 0:
+                    raise TransformationError(
+                        f"Cannot normalize constant column '{column}' "
+                        f"(max == min == {col.min()})"
+                    )
+                return (col - col.min()) / col_range
+
+            def _standardize() -> pd.Series:
+                col_std = col.std()
+                if col_std == 0:
+                    raise TransformationError(
+                        f"Cannot standardize zero-variance column '{column}'"
+                    )
+                return (col - col.mean()) / col_std
+
             t_map: dict[str, Callable[[], pd.Series]] = {
                 "log": lambda: np.log(col),
                 "log10": lambda: np.log10(col),
                 "exp": lambda: np.exp(col),
                 "sqrt": lambda: np.sqrt(col),
                 "abs": lambda: np.abs(col),
-                "normalize": lambda: (col - col.min()) / (col.max() - col.min()),
-                "standardize": lambda: (col - col.mean()) / col.std(),
+                "normalize": _normalize,
+                "standardize": _standardize,
                 "round": lambda: col.round(kwargs.get("decimals", 2)),
                 "fillna": lambda: col.fillna(kwargs.get("value", 0)),
             }
@@ -513,6 +543,13 @@ class DataProcessorEngine(BaseCalculationEngine):
             raise DataNotLoadedError("No data loaded")
         if column not in self.data.columns:
             raise ColumnNotFoundError(column, list(self.data.columns))
+        # Whitelist comparison operators to prevent query-string injection (#2224).
+        _ALLOWED_OPERATORS = {"==", "!=", ">", ">=", "<", "<=", "contains", "in"}
+        if operator not in _ALLOWED_OPERATORS:
+            raise FilterError(
+                f"Unsupported operator '{operator}'. "
+                f"Allowed: {', '.join(sorted(_ALLOWED_OPERATORS))}"
+            )
         self._save_undo_state()
         try:
             if operator == "contains":

@@ -11,7 +11,7 @@ from __future__ import annotations
 import json
 import logging
 import shutil
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -125,7 +125,7 @@ class StateManager:
             metadata = {
                 "name": state_name,
                 "description": description,
-                "created_date": datetime.now().isoformat(),
+                "created_date": datetime.now(timezone.utc).isoformat(),  # noqa: UP017
                 "protected": protected,
                 "version": "2.0",
             }
@@ -346,7 +346,7 @@ class StateManager:
 
             if export_path is None:
                 safe_name = self._sanitize_filename(state_name)
-                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")  # noqa: UP017
                 export_filename = f"{safe_name}_{timestamp}.cestate"
                 final_export_path = self.exports_dir / export_filename
             else:
@@ -355,7 +355,7 @@ class StateManager:
             # Create export package
             export_data = {
                 "calculator_version": "2.0",
-                "export_date": datetime.now().isoformat(),
+                "export_date": datetime.now(timezone.utc).isoformat(),  # noqa: UP017
                 "state_name": state_name,
                 "state_data": state_data,
             }
@@ -418,7 +418,7 @@ class StateManager:
             session_file = self.sessions_dir / "current_session.json"
 
             session_info = {
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),  # noqa: UP017
                 "data": session_data,
             }
 
@@ -489,7 +489,7 @@ class StateManager:
     def _create_backup(self, state_file: Path) -> None:
         """Create backup of existing state file"""
         try:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")  # noqa: UP017
             backup_name = f"{state_file.stem}_{timestamp}.backup"
             backup_path = self.backups_dir / backup_name
 
@@ -514,7 +514,10 @@ class StateManager:
     def cleanup_old_backups(self, max_age_days: int = 30) -> None:
         """Clean up old backup files"""
         try:
-            cutoff_date = datetime.now().timestamp() - (max_age_days * 24 * 3600)
+            cutoff_date = (
+                datetime.now(timezone.utc).timestamp()  # noqa: UP017
+                - (max_age_days * 24 * 3600)
+            )
 
             for backup_file in self.backups_dir.glob("*.backup"):
                 if backup_file.stat().st_mtime < cutoff_date:

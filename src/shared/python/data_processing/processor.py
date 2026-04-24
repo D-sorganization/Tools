@@ -22,6 +22,15 @@ logger = logging.getLogger(__name__)
 SUPPORTED_FILTER_TYPES = {"butterworth", "moving_average", "median", "savgol"}
 
 
+def _eval_with_optional_numexpr(df: pd.DataFrame, expression: str) -> pd.Series:
+    """Prefer numexpr when present but keep formula evaluation functional without it."""
+
+    try:
+        return df.eval(expression, engine="numexpr")
+    except ImportError:
+        return df.eval(expression, engine="python")
+
+
 @dataclass
 class DatasetInfo:
     """Metadata about a loaded dataset."""
@@ -235,6 +244,7 @@ class DataProcessor:
         cutoff: float = 10.0,
         order: int = 4,
         window_size: int = 11,
+        sample_rate: float = 1000.0,
     ) -> DataProcessor:
         """Apply a signal filter (butterworth, moving_average, median, savgol).
 
@@ -250,6 +260,9 @@ class DataProcessor:
             Filter order.
         window_size : int
             Window size for moving_average / median / savgol.
+        sample_rate : float
+            Sample rate of the data [Hz].  Used by the Butterworth filter
+            to correctly interpret the cutoff frequency.  Defaults to 1000.
         """
         if not (filter_type is not None):
             raise ValueError("filter_type must be provided")
@@ -263,6 +276,7 @@ class DataProcessor:
             cutoff=cutoff,
             order=order,
             window_size=window_size,
+            sample_rate=sample_rate,
         )
         self._df = df
         self._history.append(
@@ -298,6 +312,7 @@ class DataProcessor:
         cutoff: float,
         order: int,
         window_size: int,
+        sample_rate: float = 1000.0,
     ) -> None:
         """Apply filter using SciPy implementation when available."""
         try:
@@ -308,6 +323,7 @@ class DataProcessor:
                 cutoff=cutoff,
                 order=order,
                 window_size=window_size,
+                sample_rate=sample_rate,
             )
         except ImportError:
             self._apply_filter_fallback(df=df, columns=columns, window_size=window_size)
@@ -320,6 +336,7 @@ class DataProcessor:
         cutoff: float,
         order: int,
         window_size: int,
+        sample_rate: float = 1000.0,
     ) -> None:
         """Apply filter implementation backed by scipy.signal."""
         if not (df is not None):
@@ -329,7 +346,7 @@ class DataProcessor:
         for column in columns:
             values = df[column].values.astype(float)
             if filter_type == "butterworth":
-                b, a = butter(order, cutoff, btype="low", fs=1000)
+                b, a = butter(order, cutoff, btype="low", fs=sample_rate)
                 df[column] = filtfilt(b, a, values)
             elif filter_type == "moving_average":
                 df[column] = (
@@ -372,9 +389,7 @@ class DataProcessor:
             "expression must be a non-empty string",
         )
         df = self.dataframe
-        # pandas DataFrame.eval() is safe -- it only resolves column names
-        # within the dataframe and does not execute arbitrary Python code.
-        df[new_column] = df.eval(expression)
+        df[new_column] = _eval_with_optional_numexpr(df, expression)
         self._history.append(f"Created column '{new_column}' = {expression}")
         return self
 

@@ -526,6 +526,7 @@ class SignalGenerator:
         """
         if not (t is not None):
             raise ValueError("t must be provided")
+        require(len(t) >= 2, "chirp requires at least two time points", len(t))
         t_shifted = t - t[0]
         t_end = t_shifted[-1]
 
@@ -569,6 +570,7 @@ class SignalGenerator:
         """
         if not (t is not None):
             raise ValueError("t must be provided")
+        require(frequency > 0, "frequency must be positive", frequency)
         period = 1.0 / frequency
         t_shifted = t - t[0]
         phase = (t_shifted % period) / period
@@ -597,6 +599,7 @@ class SignalGenerator:
         """
         if not (t is not None):
             raise ValueError("t must be provided")
+        require(frequency > 0, "frequency must be positive", frequency)
         period = 1.0 / frequency
         t_shifted = t - t[0]
         phase = (t_shifted % period) / period
@@ -628,6 +631,7 @@ class SignalGenerator:
         """
         if not (t is not None):
             raise ValueError("t must be provided")
+        require(frequency > 0, "frequency must be positive", frequency)
         period = 1.0 / frequency
         t_shifted = t - t[0]
         phase = (t_shifted % period) / period

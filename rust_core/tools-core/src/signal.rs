@@ -348,7 +348,6 @@ pub mod py_bindings {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::f64::consts::PI;
 
     fn linspace(start: f64, end: f64, n: usize) -> Vec<f64> {
         (0..n)

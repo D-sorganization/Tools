@@ -56,3 +56,7 @@
 ## 2026-04-20 - [Dynamic ARIA Labels for Confirmation Buttons]
 **Learning:** When implementing multi-step or confirming buttons (like a 'Clear' button that temporarily changes to 'Confirm?'), the visual text change is not always announced by screen readers if focus remains on the button, leaving users unaware of the new required action.
 **Action:** Always dynamically update the element's `aria-label` to reflect the new state (e.g., "Confirm clear history"), and ensure a relevant parent container uses `aria-live='polite'` so the state change is announced smoothly.
+
+## $(date +%Y-%m-%d) - [Accessible Soft Confirm Pattern]
+**Learning:** Native `confirm()` dialogs block the main thread and provide poor user experience, especially for accessibility where focus management can be lost upon return.
+**Action:** When implementing destructive actions, use an inline "soft confirm" pattern (requiring a second click on the same button with updated text/aria-label) combined with `aria-live` on the container to ensure smooth flow and screen reader awareness.

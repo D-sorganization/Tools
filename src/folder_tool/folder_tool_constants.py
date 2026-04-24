@@ -7,7 +7,7 @@ dialog layout parameters.
 """
 
 import logging
-from datetime import datetime
+from datetime import timezone, datetime
 from pathlib import Path
 from typing import Final
 
@@ -305,7 +305,7 @@ def export_constants_documentation(output_path: str) -> bool:
 
         content = [
             "# Folder Tool Constants Documentation",
-            f"Generated: {datetime.now()}",
+            f"Generated: {datetime.now(timezone.utc)}",
             "",
             "## Constants Overview",
             "",

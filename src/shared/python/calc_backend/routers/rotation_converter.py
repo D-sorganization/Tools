@@ -65,7 +65,7 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
             rot = Rotation.from_rotation_matrix(request.value)
         else:
             raise ValueError(f"Unknown representation type: {request.type}")
-    except Exception as exc:  # noqa: BLE001
+    except (ValueError, TypeError, IndexError) as exc:
         raise HTTPException(
             status_code=422, detail=f"Invalid rotation input: {exc}"
         ) from exc
@@ -101,7 +101,7 @@ def compute_rotation(request: RotationConverterRequest) -> RotationConverterResp
 
         return RotationConverterResponse(representations=rep_model)
 
-    except Exception as exc:  # noqa: BLE001
+    except (ValueError, TypeError, KeyError) as exc:
         raise HTTPException(
             status_code=500, detail=f"Failed building outputs: {exc}"
         ) from exc
@@ -124,7 +124,7 @@ def compute_reference_frame_conversion(
         )
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
-    except Exception as error:  # noqa: BLE001
+    except (TypeError, KeyError) as error:
         raise HTTPException(
             status_code=500,
             detail="Failed to compute reference-frame conversion.",

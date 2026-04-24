@@ -28,6 +28,11 @@ _REPO_ROOT = Path(__file__).parents[1]
 _SRC_ROOT = _REPO_ROOT / "src"
 
 
+def _is_ruff_excluded_top_level_src_dir(parts: tuple[str, ...]) -> bool:
+    """Return whether path parts belong to an excluded top-level src segment."""
+    return bool(parts) and parts[0] in _RUFF_EXCLUDED_SRC_DIRS
+
+
 def _collect_library_py_files() -> list[Path]:
     """Collect .py files subject to T201 enforcement.
 
@@ -40,7 +45,7 @@ def _collect_library_py_files() -> list[Path]:
     for f in sorted(_SRC_ROOT.rglob("*.py")):
         parts = f.relative_to(_SRC_ROOT).parts
         # Skip ruff-excluded directories
-        if any(part in _RUFF_EXCLUDED_SRC_DIRS for part in parts):
+        if _is_ruff_excluded_top_level_src_dir(parts):
             continue
         # Skip test subdirectories
         if "tests" in parts:
@@ -122,10 +127,17 @@ class TestNoUnguardedPrintInLibrarySrc:
         files = _collect_library_py_files()
         for f in files:
             parts = f.relative_to(_SRC_ROOT).parts
-            excluded = [p for p in parts if p in _RUFF_EXCLUDED_SRC_DIRS]
-            assert not excluded, (
+            assert not _is_ruff_excluded_top_level_src_dir(parts), (
                 f"File from excluded directory should not be in sweep: {f}"
             )
+
+    def test_excluded_dir_check_only_applies_to_top_level_src_segment(self) -> None:
+        """Nested segment names must not trigger exclusion."""
+        assert _is_ruff_excluded_top_level_src_dir(("data_processing", "a.py"))
+        assert not _is_ruff_excluded_top_level_src_dir(
+            ("shared", "python", "data_processing", "a.py")
+        )
+        assert not _is_ruff_excluded_top_level_src_dir(("shared", "python", "a.py"))
 
     def test_collection_excludes_test_subdirs(self) -> None:
         """Test subdirectories are not in the sweep."""

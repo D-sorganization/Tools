@@ -103,8 +103,9 @@ jobs:
         # failures; mirrors UpstreamDrift ci-standard.yml fix).
         run: |
           python -m ensurepip --upgrade
-          python -m pip install --upgrade --force-reinstall pip setuptools wheel
-          python -m pip install --force-reinstall --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
+          python -m pip install --upgrade pip setuptools
+          python -m pip install --ignore-installed --no-deps wheel
+          python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           python -m pip install -r requirements.txt
           python -m pip install fastapi
           python -m pip install httpx pytest-cov
@@ -165,9 +166,9 @@ jobs:
         run: |
           if [ -s changed_mypy_files.txt ]; then
             # Filter out legacy directories that are not yet type-safe
-            # Exclude: legacy dirs not yet type-safe + src/shared/python/* (namespace pkg
-            # structure causes mypy double-module errors; checked via tests instead)
-            grep -v -E "src/lower_body_model/|src/electrode_advisor/|src/shared/python/|src/function_generator/|src/data_processing/data_processor/|src/glass_bath_fea/|src/tools/folder_tools/|simulation_golfer_gpu|optimizer_gpu|src/folder_tool/|src/pendulum_simulator/|src/optimizer_gui/|src/solar_system_model/|src/rotation_converter/ui/|src/rrt_path_planner/|src/vessel_drafter/" changed_mypy_files.txt > filtered_mypy_files.txt || true
+            # Exclude: legacy dirs not yet type-safe + namespace package GUI/shared
+            # paths that cause mypy double-module errors; checked via tests instead.
+            grep -v -E "src/lower_body_model/|src/electrode_advisor/|src/shared/python/|src/tools/gui/|src/function_generator/|src/data_processing/data_processor/|src/glass_bath_fea/|src/tools/folder_tools/|simulation_golfer_gpu|optimizer_gpu|src/folder_tool/|src/pendulum_simulator/|src/optimizer_gui/|src/solar_system_model/|src/rotation_converter/ui/|src/rrt_path_planner/|src/vessel_drafter/" changed_mypy_files.txt > filtered_mypy_files.txt || true
 
             if [ -s filtered_mypy_files.txt ]; then
               export MYPYPATH=src:src/python/src
@@ -261,8 +262,9 @@ jobs:
         # fail during pytest_terminal_summary.
         run: |
           python -m ensurepip --upgrade
-          python -m pip install --upgrade --force-reinstall pip setuptools wheel
-          python -m pip install --force-reinstall --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
+          python -m pip install --upgrade pip setuptools
+          python -m pip install --ignore-installed --no-deps wheel
+          python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           python -m pip install -r requirements.txt
           python -m pip install fastapi
           python -m pip install httpx pytest-cov
@@ -402,6 +404,12 @@ jobs:
         with:
           components: rustfmt, clippy
 
+      - name: Set up Python for wheel checks
+        if: steps.rust-changes.outputs.has_changes == 'true'
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
       - name: Cache Cargo registry and build
         if: steps.rust-changes.outputs.has_changes == 'true'
         uses: actions/cache@v4
@@ -439,15 +447,17 @@ jobs:
       - name: Build Python Wheel (Maturin)
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
-          python -m pip install maturin
+          PYTHON_BIN="$(command -v python || command -v python3)"
+          "$PYTHON_BIN" -m pip install maturin
           cd rust_core/tools-core
-          maturin build --release
+          "$PYTHON_BIN" -m maturin build --release
 
       - name: Verify Python Wheel
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
-          python -m pip install target/wheels/*.whl --force-reinstall
-          python -c "import tools_core; v = tools_core.Vector3(1.0, 2.0, 3.0); assert v.magnitude() > 0; print('tools_core wheel verified')"
+          PYTHON_BIN="$(command -v python || command -v python3)"
+          "$PYTHON_BIN" -m pip install target/wheels/*.whl --force-reinstall
+          "$PYTHON_BIN" -c "import tools_core; v = tools_core.Vector3(1.0, 2.0, 3.0); assert v.magnitude() > 0; print('tools_core wheel verified')"
 
       - name: Build WASM Module (wasm-pack)
         if: steps.rust-changes.outputs.has_changes == 'true'
