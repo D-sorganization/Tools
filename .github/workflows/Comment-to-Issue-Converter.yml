@@ -128,7 +128,7 @@ jobs:
                   queued_runs += int(result.stdout.strip())
 
           if online == 0:
-              runner = "ubuntu-latest"
+              runner = "d-sorg-fleet"
               mode = "cloud-no-self-hosted"
           elif idle > 0:
               runner = label
@@ -137,7 +137,7 @@ jobs:
               runner = label
               mode = "self-hosted-queue"
           else:
-              runner = "ubuntu-latest"
+              runner = "d-sorg-fleet"
               mode = "cloud-queue-threshold"
 
           output_path = os.environ["GITHUB_OUTPUT"]
