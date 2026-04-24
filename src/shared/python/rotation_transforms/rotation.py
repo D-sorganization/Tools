@@ -133,6 +133,18 @@ class Rotation:
             or np.allclose(q_self, -q_other, atol=1e-10)
         )
 
+    def __hash__(self) -> int:
+        """Hash based on normalized quaternion (rounded to discrete bins).
+
+        Two Rotation instances that compare equal must have the same hash.
+        Since equality uses numerical tolerance (atol=1e-10), we round the
+        quaternion to a coarse grid (1e-8 precision) for hashing.
+        """
+        q = self.as_quaternion()
+        # Round to 8 decimal places for robust hashing across equivalent rotations
+        q_rounded = tuple(np.round(q, 8).astype(float))
+        return hash(q_rounded)
+
 
 def _scipy_to_wxyz(rotation: SciPyRotation) -> np.ndarray:
     q_xyzw = rotation.as_quat()
