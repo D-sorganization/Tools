@@ -113,9 +113,9 @@ class TestNoUnguardedPrintInLibrarySrc:
         """Sweep includes src/shared/python — the shared library layer."""
         files = _collect_library_py_files()
         shared_files = [f for f in files if "shared" in f.parts and "python" in f.parts]
-        assert (
-            len(shared_files) > 0
-        ), "Expected at least one file from src/shared/python/ in the sweep"
+        assert len(shared_files) > 0, (
+            "Expected at least one file from src/shared/python/ in the sweep"
+        )
 
     def test_collection_excludes_ruff_excluded_dirs(self) -> None:
         """Files from ruff-excluded directories are not in the sweep."""
@@ -123,18 +123,18 @@ class TestNoUnguardedPrintInLibrarySrc:
         for f in files:
             parts = f.relative_to(_SRC_ROOT).parts
             excluded = [p for p in parts if p in _RUFF_EXCLUDED_SRC_DIRS]
-            assert (
-                not excluded
-            ), f"File from excluded directory should not be in sweep: {f}"
+            assert not excluded, (
+                f"File from excluded directory should not be in sweep: {f}"
+            )
 
     def test_collection_excludes_test_subdirs(self) -> None:
         """Test subdirectories are not in the sweep."""
         files = _collect_library_py_files()
         for f in files:
             parts = f.relative_to(_SRC_ROOT).parts
-            assert (
-                "tests" not in parts
-            ), f"File from tests/ subdirectory should not be in sweep: {f}"
+            assert "tests" not in parts, (
+                f"File from tests/ subdirectory should not be in sweep: {f}"
+            )
 
 
 def _load_ruff_lint_config() -> tuple[list[str], dict[str, list[str]]]:

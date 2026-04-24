@@ -13,6 +13,14 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock
 
+# Pre-load tkinter to prevent namespace corruption on Windows 3.13 during pytest collection
+try:
+    import tkinter  # noqa: F401
+    import tkinter.ttk  # noqa: F401
+except ImportError:
+    pass
+
+
 # ---------------------------------------------------------------------------
 # Headless / thread-safety env vars — must be set BEFORE any scipy/matplotlib
 # import so that both the main process and any xdist worker sub-processes

@@ -120,9 +120,9 @@ def test_simulator_pelvis_driver_tracks_lateral_shift() -> None:
 
     final_y = float(sim.data.xpos[sim.pelvis_body_id][1])
     # The pelvis should have shifted in +Y during the downswing phase.
-    assert (
-        final_y - initial_y > 0.01
-    ), f"expected +Y shift; got {final_y - initial_y:.4f}"
+    assert final_y - initial_y > 0.01, (
+        f"expected +Y shift; got {final_y - initial_y:.4f}"
+    )
 
 
 def test_set_pelvis_inclined_rotation_rejects_bad_gains() -> None:

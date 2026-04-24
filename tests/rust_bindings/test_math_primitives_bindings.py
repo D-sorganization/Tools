@@ -64,9 +64,9 @@ class TestEulerToRotationMatrix:
             for j in range(3):
                 dot = sum(r[k][i] * r[k][j] for k in range(3))
                 expected = 1.0 if i == j else 0.0
-                assert (
-                    abs(dot - expected) < 1e-10
-                ), f"Orthogonality violated at ({i},{j}): {dot}"
+                assert abs(dot - expected) < 1e-10, (
+                    f"Orthogonality violated at ({i},{j}): {dot}"
+                )
 
 
 class TestRotationMatrixToEuler:
@@ -86,9 +86,9 @@ class TestRotationMatrixToEuler:
         r = mp.euler_to_rotation_matrix(euler)
         recovered = mp.rotation_matrix_to_euler(r)
         for i in range(3):
-            assert (
-                abs(recovered[i] - euler[i]) < 1e-10
-            ), f"Roundtrip failed at index {i}: {recovered[i]} != {euler[i]}"
+            assert abs(recovered[i] - euler[i]) < 1e-10, (
+                f"Roundtrip failed at index {i}: {recovered[i]} != {euler[i]}"
+            )
 
 
 # ---------------------------------------------------------------------------
