@@ -131,7 +131,9 @@ class TestConsoleEnvironment(unittest.TestCase):
             try:
                 self.env.refresh_user_functions()
             except Exception:
-                self.fail("refresh_user_functions should not propagate user-code errors")
+                self.fail(
+                    "refresh_user_functions should not propagate user-code errors"
+                )
 
 
 if __name__ == "__main__":

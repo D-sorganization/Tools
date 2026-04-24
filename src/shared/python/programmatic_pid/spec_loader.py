@@ -6,10 +6,13 @@ get_text_config / get_layout_config / get_layer_config accessor functions.
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import Any, cast
 
 import yaml
+
+logger = logging.getLogger(__name__)
 from programmatic_pid.geometry import to_float
 from programmatic_pid.profiles import apply_profile
 from programmatic_pid.types import SpecDict, TextConfig
