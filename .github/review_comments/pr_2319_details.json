@@ -1,0 +1,1 @@
+{"author":{"login":"dieterolson"},"body":"Closes #2306\n\nResolves the regression from #2241 where KeyboardInterrupt and SystemExit were being \nswallowed by the broad 'except Exception' clause.","headRefName":"fix/2306-scripting-env-exception-handling","state":"OPEN","title":"fix: Narrow exception handling in refresh_user_functions"}
