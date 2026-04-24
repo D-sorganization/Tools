@@ -15,8 +15,9 @@ from __future__ import annotations
 
 import logging
 import re
-import xml.etree.ElementTree as ET  # nosec B405 — input is self-generated
 from dataclasses import dataclass
+
+from defusedxml import ElementTree as ET
 
 from urdf_builder_gui.contracts import require
 
@@ -290,7 +291,7 @@ def generate_urdf_xml(config: URDFConfig) -> str:
 def validate_urdf_structure(urdf_xml: str) -> tuple[bool, list[str]]:
     """Validate basic URDF structural integrity.
 
-    Checks:
+    Safely parses the URDF XML and checks:
       - Well-formed XML
       - Root element is ``<robot>``
       - All joints reference existing links
@@ -298,10 +299,13 @@ def validate_urdf_structure(urdf_xml: str) -> tuple[bool, list[str]]:
 
     Returns:
         Tuple of (is_valid, list_of_error_messages).
+
+    Raises:
+        ET.ParseError: if XML is malformed (e.g., XXE attacks).
     """
     errors: list[str] = []
     try:
-        root = ET.fromstring(urdf_xml)  # nosec B314
+        root = ET.fromstring(urdf_xml)
     except ET.ParseError as e:
         return False, [f"XML parse error: {e}"]
 
