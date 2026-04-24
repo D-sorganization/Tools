@@ -51,6 +51,18 @@ TOOLS_DIR = SRC_DIR / "tools"
 # Pytest Configuration Hooks
 # =============================================================================
 
+# Directories that require a GUI display and/or have Qt backend conflicts.
+# Excluded from collection even when files are passed explicitly via CLI
+# (norecursedirs only blocks discovery, not explicit path arguments).
+_HEADLESS_EXCLUDE_PATHS = ("shared/python/chat",)
+
+
+def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool | None:
+    path_str = str(collection_path).replace("\\", "/")
+    if any(excl in path_str for excl in _HEADLESS_EXCLUDE_PATHS):
+        return True
+    return None
+
 
 def pytest_configure(config: pytest.Config) -> None:
     """Configure pytest with custom markers and settings."""
