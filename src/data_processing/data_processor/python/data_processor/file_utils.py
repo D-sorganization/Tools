@@ -73,7 +73,9 @@ class DataReader:
         if fmt == "json":
             return pd.read_json(file_path, **kwargs)
         if fmt == "pickle":
-            raise ValueError("Pickle format is disabled for security reasons (CWE-502).")
+            raise ValueError(
+                "Pickle format is disabled for security reasons (CWE-502)."
+            )
         if fmt == "hdf5":
             return pd.read_hdf(file_path, **kwargs)
         if fmt == "feather":
@@ -214,7 +216,9 @@ class DataWriter:
         elif fmt == "json":
             data.to_json(file_path, orient="records", indent=2, **kwargs)
         elif fmt == "pickle":
-            raise ValueError("Pickle format is disabled for security reasons (CWE-502).")
+            raise ValueError(
+                "Pickle format is disabled for security reasons (CWE-502)."
+            )
         elif fmt == "hdf5":
             data.to_hdf(file_path, key="data", mode="w", **kwargs)
         elif fmt == "feather":

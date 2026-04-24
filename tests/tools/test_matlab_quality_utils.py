@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from src.shared.python.contracts import PreconditionError
+from shared.python.contracts import PreconditionError
 from tools.matlab_quality_utils import MATLABQualityChecker
 
 # ─── __init__ DbC ──────────────────────────────────────────────

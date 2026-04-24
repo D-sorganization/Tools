@@ -2,13 +2,23 @@
 
 from __future__ import annotations
 
+import importlib.util
 from pathlib import Path
 from types import SimpleNamespace
 from typing import cast
 
 from _pytest.config import Config
 
-from conftest import BRIDGED_EMBEDDED_TEST_DIRS, pytest_ignore_collect
+# Load root conftest.py explicitly to avoid shadowing by tests/conftest.py
+_repo_root = Path(__file__).resolve().parents[1]
+_spec = importlib.util.spec_from_file_location(
+    "root_conftest", _repo_root / "conftest.py"
+)
+_root_conftest = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_root_conftest)  # type: ignore
+
+BRIDGED_EMBEDDED_TEST_DIRS = _root_conftest.BRIDGED_EMBEDDED_TEST_DIRS
+pytest_ignore_collect = _root_conftest.pytest_ignore_collect
 from tests.pendulum_simulator.conftest import BRIDGE_DIR as PENDULUM_BRIDGE_DIR
 from tests.pendulum_simulator.conftest import EMBEDDED_TESTS_DIR as PENDULUM_TESTS_DIR
 from tests.solar_system_model.conftest import BRIDGE_DIR as SOLAR_BRIDGE_DIR

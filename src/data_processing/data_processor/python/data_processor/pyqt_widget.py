@@ -120,7 +120,9 @@ class DataProcessorWidget(QWidget):
         self.file_label.setText(f"Loading {Path(file_path).name}...")
         worker = DataLoadWorker([file_path], self.data_loader)
         self._load_worker = worker
-        worker.result_ready.connect(lambda result: self._on_file_loaded(file_path, result))
+        worker.result_ready.connect(
+            lambda result: self._on_file_loaded(file_path, result)
+        )
         worker.error.connect(self._on_file_load_error)
         worker.finished.connect(self._on_load_finished)
         worker.start()
