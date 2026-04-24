@@ -62,7 +62,6 @@ _ALLOWED_NODE_TYPES: tuple[type, ...] = (
     ast.keyword,
     # Subscript / slice (for array indexing)
     ast.Subscript,
-    ast.Index,  # kept for Python 3.8 compat
     ast.Slice,
     # IfExp (ternary)
     ast.IfExp,
@@ -131,7 +130,6 @@ SCALAR_MATH_NAMESPACE: dict[str, Any] = {
     "tan": math.tan,
     "pi": math.pi,
     "e": math.e,
-    "math": math,
 }
 
 
@@ -221,7 +219,7 @@ def safe_eval(
     Any
         Result of the expression evaluation.
     """
-    if not (expression is not None):
+    if expression is None:
         raise ValueError("expression must be provided")
     if allowed_names is None:
         allowed_names = set(namespace.keys())
@@ -249,7 +247,7 @@ def safe_eval_math(
         If True, use numpy math functions (array-safe).  Otherwise use
         scalar ``math`` module functions.
     """
-    if not (expression is not None):
+    if expression is None:
         raise ValueError("expression must be provided")
     base = dict(NUMPY_MATH_NAMESPACE if use_numpy else SCALAR_MATH_NAMESPACE)
     if variables:
