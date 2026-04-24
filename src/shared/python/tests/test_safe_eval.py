@@ -1,5 +1,4 @@
 import ast
-import math
 from typing import Any
 
 import numpy as np
@@ -94,14 +93,13 @@ class TestSafeEvalMath:
         assert result == 4.0
 
     def test_safe_eval_math_math_module_access(self) -> Any:
-        # When use_numpy=False, 'math' module is exposed directly in the namespace
-        # But wait, our ast validator blocks attribute access like math.sin!
-        # Let's verify that using math.sin fails if use_numpy=False is used with explicit string
+        # 'math' module should NOT be exposed in the namespace (security fix)
+        # Attribute-based function calls like math.sin are blocked
         with pytest.raises(
             ValueError, match="Attribute-based function calls not allowed"
         ):
             safe_eval_math("math.sin(0)", {}, use_numpy=False)
 
-        # but using 'math' as a name works
-        res = safe_eval_math("math", {}, use_numpy=False)
-        assert res is math
+        # Using 'math' as a bare name is also blocked now
+        with pytest.raises(ValueError, match="Unknown variable or function: math"):
+            safe_eval_math("math", {}, use_numpy=False)
