@@ -69,11 +69,11 @@ def test_default_origins_list():
 
 
 def test_allow_credentials_default():
-    """allow_credentials defaults to True."""
+    """allow_credentials defaults to False for security."""
     app = FastAPI()
     add_cors_middleware(app)
     middleware = next(m for m in app.user_middleware if m.cls is CORSMiddleware)
-    assert middleware.kwargs.get("allow_credentials", True) is True
+    assert middleware.kwargs.get("allow_credentials", False) is False
 
 
 def test_allow_methods_default():
