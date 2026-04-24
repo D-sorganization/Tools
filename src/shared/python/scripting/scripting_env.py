@@ -152,9 +152,9 @@ class ConsoleEnvironment:
         try:
             # Execute within current namespace so imports/functions are persistent
             exec(code, self.namespace)  # nosec B102
-        except Exception:  # noqa: BLE001
-            import traceback
-
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except USER_CODE_ERROR_TYPES:
             traceback.print_exc(file=sys.stderr)
 
     def execute(self, source: str | None) -> tuple[str, str]:

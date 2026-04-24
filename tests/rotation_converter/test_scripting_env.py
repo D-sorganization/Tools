@@ -1,5 +1,7 @@
 """Tests for the interactive scripting environment (MATLAB-like CLI backend)."""
 
+import contextlib
+import io
 import os
 import tempfile
 import unittest
@@ -91,6 +93,29 @@ class TestConsoleEnvironment(unittest.TestCase):
             # Call it
             out, err = self.env.execute("result = custom_func(21)\nprint(result)")
             self.assertEqual(self.env.namespace["result"], 42)
+
+    def test_refresh_user_functions_logs_expected_user_code_errors(self) -> None:
+        """Known user-code failures should still be logged to stderr."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            user_lib_path = os.path.join(tmpdir, "user_libs.py")
+            self.env.set_user_library_path(user_lib_path)
+            self.env.save_user_code("1/0\n")
+
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                self.env.refresh_user_functions()
+
+            self.assertIn("ZeroDivisionError: division by zero", err.getvalue())
+
+    def test_refresh_user_functions_propagates_keyboard_interrupt(self) -> None:
+        """KeyboardInterrupt should not be swallowed during user reload."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            user_lib_path = os.path.join(tmpdir, "user_libs.py")
+            self.env.set_user_library_path(user_lib_path)
+            self.env.save_user_code("raise KeyboardInterrupt()\n")
+
+            with self.assertRaises(KeyboardInterrupt):
+                self.env.refresh_user_functions()
 
 
 if __name__ == "__main__":
