@@ -236,13 +236,24 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
     }
   }
 
-  const totalVar = eigenvalues.reduce((a, b) => a + b, 0) || 1;
-  const explained = eigenvalues.map((e) => e / totalVar);
-  const cumulative: number[] = [];
-  explained.reduce((acc, e, i) => {
-    cumulative[i] = acc + e;
-    return cumulative[i];
-  }, 0);
+  // ⚡ Bolt Optimization: Replace chained reduce() and map() with a single-pass loop
+  // Performance impact: Avoids multiple intermediate array allocations and callback overhead.
+  let totalVar = 0;
+  for (let i = 0; i < eigenvalues.length; i++) {
+    totalVar += eigenvalues[i];
+  }
+  totalVar = totalVar || 1;
+
+  const explained = new Array<number>(eigenvalues.length);
+  const cumulative = new Array<number>(eigenvalues.length);
+  let currentCumulative = 0;
+
+  for (let i = 0; i < eigenvalues.length; i++) {
+    const e = eigenvalues[i] / totalVar;
+    explained[i] = e;
+    currentCumulative += e;
+    cumulative[i] = currentCumulative;
+  }
 
   // Scores (n x nc)
   const scores: number[][] = Array.from({ length: n }, () => new Array(nc));
