@@ -167,7 +167,9 @@ class PreconditionEvaluationError(ContractViolationError):
         if not (message is not None):
             raise ValueError("message must be provided")
         if not (isinstance(underlying_error, Exception)):
-            raise TypeError(f"underlying_error must be Exception, got {type(underlying_error)}")
+            raise TypeError(
+                f"underlying_error must be Exception, got {type(underlying_error)}"
+            )
         self.underlying_error = underlying_error
         super().__init__("pre-condition-evaluation", message, None)
 
@@ -183,7 +185,9 @@ class PostconditionEvaluationError(ContractViolationError):
         if not (message is not None):
             raise ValueError("message must be provided")
         if not (isinstance(underlying_error, Exception)):
-            raise TypeError(f"underlying_error must be Exception, got {type(underlying_error)}")
+            raise TypeError(
+                f"underlying_error must be Exception, got {type(underlying_error)}"
+            )
         self.underlying_error = underlying_error
         super().__init__("post-condition-evaluation", message, None)
 
@@ -273,7 +277,7 @@ def _evaluate_precondition(
         raise ValueError("condition must be provided")
     try:
         return bool(condition(*args, **kwargs))
-    except TypeError as signature_mismatch:
+    except TypeError:
         # Only swallow TypeError if it's a signature mismatch, not other errors
         pass
     except Exception as exc:
@@ -360,7 +364,8 @@ def postcondition(
                 check = condition(result)
             except Exception as exc:
                 raise PostconditionEvaluationError(
-                    f"Failed to evaluate postcondition for {func.__qualname__}: {exc!r}", exc
+                    f"Failed to evaluate postcondition for {func.__qualname__}: {exc!r}",
+                    exc,
                 ) from exc
 
             if not check:
