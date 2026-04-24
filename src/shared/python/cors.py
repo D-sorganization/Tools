@@ -14,11 +14,15 @@ Usage::
 
 from __future__ import annotations
 
+import logging
 import os
+import re
 from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+logger = logging.getLogger(__name__)
 
 try:
     from .contracts import require
@@ -37,11 +41,29 @@ DEFAULT_ALLOW_METHODS: list[str] = ["GET", "POST", "OPTIONS"]
 DEFAULT_ALLOW_HEADERS: list[str] = ["Content-Type", "Authorization"]
 
 
+def _validate_origin(origin: str) -> None:
+    """Validate that an origin is a properly-formed scheme://host[:port] string.
+
+    Raises:
+        ValueError: if the origin is malformed or is the wildcard without creds.
+    """
+    origin = origin.strip()
+    if not origin:
+        raise ValueError("Origin cannot be empty")
+
+    # Simple regex: scheme://host:port, where host can be IP or domain
+    pattern = r"^https?://([a-zA-Z0-9.-]+|[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})(:[0-9]+)?$"
+    if not re.match(pattern, origin):
+        raise ValueError(
+            f"Origin '{origin}' is malformed. Expected scheme://host[:port]"
+        )
+
+
 def add_cors_middleware(
     app: FastAPI,
     *,
     origins: list[str] | None = None,
-    allow_credentials: bool = True,
+    allow_credentials: bool = False,
     allow_methods: list[str] | None = None,
     allow_headers: list[str] | None = None,
     **kwargs: Any,
@@ -56,11 +78,15 @@ def add_cors_middleware(
     Args:
         app: The FastAPI application instance.
         origins: Explicit list of allowed origins; overridden by env var.
-        allow_credentials: Whether to allow credentials. Defaults to True.
+        allow_credentials: Whether to allow credentials (with validation).
+            Defaults to False. Cannot be combined with wildcard origins.
         allow_methods: Allowed HTTP methods. Defaults to GET, POST, and OPTIONS.
         allow_headers: Allowed HTTP headers. Defaults to Content-Type and
             Authorization.
         **kwargs: Extra keyword arguments forwarded to ``CORSMiddleware``.
+
+    Raises:
+        ValueError: if origins are malformed or if wildcard is combined with creds.
     """
     require(isinstance(app, FastAPI), "app must be a FastAPI instance")
     require(
@@ -77,6 +103,24 @@ def add_cors_middleware(
         resolved_origins = origins
     else:
         resolved_origins = DEFAULT_ORIGINS
+
+    # Validate that wildcard is not combined with credentials
+    if allow_credentials and "*" in resolved_origins:
+        raise ValueError(
+            "Cannot use allow_credentials=True with wildcard origin '*' "
+            "(CORS spec violation and security risk). Either remove '*' from "
+            "CORS_ORIGINS or set allow_credentials=False."
+        )
+
+    # Validate each origin is well-formed (skip validation for "*" since it's valid)
+    for origin in resolved_origins:
+        if origin != "*":
+            _validate_origin(origin)
+
+    logger.warning(
+        f"CORS configured with origins: {resolved_origins}, "
+        f"allow_credentials={allow_credentials}"
+    )
 
     app.add_middleware(
         CORSMiddleware,
