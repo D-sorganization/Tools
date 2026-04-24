@@ -47,9 +47,9 @@ jobs:
         id: check
         env:
           GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
-          FLEET_MODE: ${{ vars.FLEET_RUNNER_MODE }}
+          LOCAL_MODE: ${{ vars.LOCAL_RUNNER_MODE }}
         run: |
-          MODE="${FLEET_MODE:-hybrid}"
+          MODE="${LOCAL_MODE:-local}"
           echo "Fleet mode: $MODE"
 
           case "$MODE" in
@@ -57,11 +57,11 @@ jobs:
               echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
               echo "Routing to self-hosted fleet (mode=local)"
               ;;
-            cloud)
-              echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
-              echo "Routing to GitHub-hosted (mode=cloud)"
+            disabled)
+              echo "::error::No local self-hosted runner available; failing closed"
+              exit 1
               ;;
-            hybrid|*)
+            *)
               AVAILABLE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
                 --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet")] | length' \
                 2>/dev/null || echo "0")
@@ -69,8 +69,8 @@ jobs:
                 echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
                 echo "$AVAILABLE idle fleet runner(s) - routing locally"
               else
-                echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
-                echo "No idle fleet runners - falling back to GitHub-hosted"
+                echo "::error::No local self-hosted runner available; failing closed"
+                exit 1
               fi
               ;;
           esac
@@ -148,11 +148,11 @@ jobs:
           - name: rotation-converter
             path: src/rotation_converter/web
         platform:
-          - os: ubuntu-latest
+          - os: d-sorg-fleet
             target: x86_64-unknown-linux-gnu
-          - os: windows-latest
+          - os: [self-hosted, Windows]
             target: x86_64-pc-windows-msvc
-          - os: macos-latest
+          - os: [self-hosted, macOS]
             target: x86_64-apple-darwin
 
     runs-on: ${{ matrix.platform.os }}
@@ -171,7 +171,7 @@ jobs:
           targets: ${{ matrix.platform.target }}
 
       - name: Install Linux dependencies
-        if: matrix.platform.os == 'ubuntu-latest'
+        if: matrix.platform.os == 'd-sorg-fleet'
         run: |
           while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 update || true
           while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo apt-get -o DPkg::Lock::Timeout=300 update --fix-missing || true; sudo apt-get -o DPkg::Lock::Timeout=300 install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf

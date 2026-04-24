@@ -37,7 +37,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # ── Dispatcher: try self-hosted first, fall back to cloud ──────────────────
+  # ── Dispatcher: require a local self-hosted runner and fail closed ──────────────────
   pick-runner:
     runs-on: d-sorg-fleet
     timeout-minutes: 2
