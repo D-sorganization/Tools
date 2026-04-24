@@ -169,10 +169,9 @@ class ConsoleEnvironment:
             exec(code, self.namespace)  # nosec B102
         except (KeyboardInterrupt, SystemExit):
             raise
-        except USER_CODE_ERROR_TYPES:
-            import traceback
-
-            traceback.print_exc(file=sys.stderr)
+        except USER_CODE_ERROR_TYPES as e:
+            sys.stderr.write(f"Error loading user library: {e}\n")
+            sys.stderr.flush()
 
     def execute(self, source: str | None) -> tuple[str, str]:
         """Execute a block of source code, capturing stdout and stderr.
