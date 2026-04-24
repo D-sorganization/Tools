@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-04-23
+  LAST UPDATED: 2026-04-24
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -611,6 +611,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 - Pearson correlation matrix computations utilize a single-pass loop algorithm, calculating sums concurrently to drastically reduce iteration overhead compared to two-pass implementations, while carefully mitigating numerical instability via clamping.
 - Recharts component props in `AnalyticsSuite` are memoized using `useMemo` hooks to provide stable references and prevent expensive internal re-renders.
 - Exponential and power trendline calculations use pre-allocated arrays and single-pass loops instead of functional chaining to minimize GC pauses.
+
+### Version 1.1.67
+
+- **Performance**: Optimized array allocations in PCA calculate loop inside `AnalyticsSuite.tsx` by replacing chained `.reduce()` and `.map()` calls with single-pass `for` loops.
 
 ### Version 1.1.66
 
