@@ -94,13 +94,18 @@ class InertiaResult:
         )
 
     def as_urdf_dict(self) -> dict[str, float]:
-        """Return inertia values for URDF format."""
+        """Return inertia values for URDF format.
+
+        URDF uses the convention where products of inertia are negated
+        compared to the standard mathematical inertia tensor.
+        See: https://wiki.ros.org/urdf/XML/link
+        """
         return {
             "ixx": self.ixx,
-            "ixy": self.ixy,
-            "ixz": self.ixz,
+            "ixy": -self.ixy,  # URDF negates products of inertia
+            "ixz": -self.ixz,
             "iyy": self.iyy,
-            "iyz": self.iyz,
+            "iyz": -self.iyz,
             "izz": self.izz,
         }
 
