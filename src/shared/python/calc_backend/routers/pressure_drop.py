@@ -27,38 +27,59 @@ def calculate_pressure_drop(request: PressureDropRequest) -> PressureDropRespons
             _R_UNIVERSAL * request.temperature_k
         )
 
-        # Viscosity estimate (Sutherland's formula for air-like gases)
-        t_ref = 291.15
-        mu_ref = 1.827e-5
-        s_const = 120.0
-        viscosity = (
-            mu_ref
-            * ((t_ref + s_const) / (request.temperature_k + s_const))
-            * (request.temperature_k / t_ref) ** 1.5
-        )
+        if density <= 0:
+            raise HTTPException(422, "degenerate input: density must be positive")
+
+        if request.dynamic_viscosity_pa_s is not None:
+            viscosity = request.dynamic_viscosity_pa_s
+        else:
+            sutherland_map = {
+                "air": (291.15, 1.827e-5, 120.0),
+                "steam": (373.15, 1.22e-5, 961.0),
+                "ch4": (293.15, 1.09e-5, 164.0),
+                "h2": (293.15, 8.76e-6, 72.0),
+                "n2": (300.55, 1.781e-5, 111.0),
+                "co2": (293.15, 1.47e-5, 240.0),
+            }
+            gas_key = request.gas_name.lower().strip() if request.gas_name else ""
+            if gas_key in sutherland_map:
+                t_ref, mu_ref, s_const = sutherland_map[gas_key]
+                viscosity = (
+                    mu_ref
+                    * ((t_ref + s_const) / (request.temperature_k + s_const))
+                    * (request.temperature_k / t_ref) ** 1.5
+                )
+            else:
+                # Kinetic theory fallback scaling from air based on sqrt(M_gas / M_air)
+                # Air molecular weight is ~0.02897 kg/mol
+                m_air = 0.02897
+                t_ref, mu_ref, s_const = sutherland_map["air"]
+                mu_air = (
+                    mu_ref
+                    * ((t_ref + s_const) / (request.temperature_k + s_const))
+                    * (request.temperature_k / t_ref) ** 1.5
+                )
+                viscosity = mu_air * math.sqrt(request.molecular_weight_kg_mol / m_air)
+
+        if viscosity <= 0:
+            raise HTTPException(422, "degenerate input: viscosity must be positive")
 
         # Velocity
-        vol_flow = request.flow_rate_kg_s / density if density > 0 else 0.0
+        vol_flow = request.flow_rate_kg_s / density
         area = math.pi * (request.pipe_diameter_m / 2) ** 2
-        velocity = vol_flow / area if area > 0 else 0.0
+        if area <= 0:
+            raise HTTPException(422, "degenerate input: area must be positive")
+        velocity = vol_flow / area
 
         # Reynolds number
-        re = (
-            (density * velocity * request.pipe_diameter_m) / viscosity
-            if viscosity > 0
-            else 0.0
-        )
+        re = (density * velocity * request.pipe_diameter_m) / viscosity
 
         # Friction factor
-        rel_roughness = (
-            request.roughness_m / request.pipe_diameter_m
-            if request.pipe_diameter_m > 0
-            else 0.0
-        )
+        rel_roughness = request.roughness_m / request.pipe_diameter_m
 
         if re > 4000:
             a_val = rel_roughness / 3.7
-            b_val = 5.74 / (re**0.9) if re > 0 else 0.01
+            b_val = 5.74 / (re**0.9)
             try:
                 friction_factor = 0.25 / (math.log10(a_val + b_val) ** 2)
             except ValueError:
@@ -69,14 +90,11 @@ def calculate_pressure_drop(request: PressureDropRequest) -> PressureDropRespons
             friction_factor = 64 / re if re > 0 else 0.05
 
         # Darcy-Weisbach pressure drop
-        if request.pipe_diameter_m > 0:
-            pressure_drop_pa = (
-                friction_factor
-                * (request.pipe_length_m / request.pipe_diameter_m)
-                * (density * velocity**2 / 2)
-            )
-        else:
-            pressure_drop_pa = 0.0
+        pressure_drop_pa = (
+            friction_factor
+            * (request.pipe_length_m / request.pipe_diameter_m)
+            * (density * velocity**2 / 2)
+        )
 
         # Flow regime
         if re < 2300:
