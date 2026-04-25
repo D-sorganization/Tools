@@ -23,7 +23,9 @@ from shared.python.contracts import (
     ContractViolationError,
     InvariantError,
     PostconditionError,
+    PostconditionEvaluationError,
     PreconditionError,
+    PreconditionEvaluationError,
     check_non_negative,
     check_positive,
     check_pressure,
@@ -433,3 +435,91 @@ class TestDomainHelpers:
     def test_check_pressure_fails(self) -> None:
         with pytest.raises(PreconditionError):
             check_pressure(-1.0)
+
+
+# ── Evaluation Error Handling ─────────────────────────────────────────────
+
+
+class TestPreconditionEvaluationError:
+    """Test that evaluation errors in preconditions are properly raised."""
+
+    def setup_method(self) -> None:
+        self._orig = get_contract_level()
+        set_contract_level(ContractLevel.ENFORCE)
+
+    def teardown_method(self) -> None:
+        set_contract_level(self._orig)
+
+    def test_precondition_with_buggy_lambda_raises_underlying_error(self) -> None:
+        """Precondition that references non-existent attribute should raise AttributeError."""
+
+        @precondition(lambda x: x.non_existent > 0)  # type: ignore[attr-defined]
+        def func(x: int) -> int:
+            return x
+
+        # The decorator should raise an error during evaluation, not call the function
+        with pytest.raises(PreconditionEvaluationError) as exc_info:
+            func(5)
+
+        # Check that the underlying error is preserved in the chain
+        assert isinstance(exc_info.value.underlying_error, AttributeError)
+
+    def test_precondition_evaluation_error_with_enforce(self) -> None:
+        """Under DBC_LEVEL=enforce, evaluation errors should raise immediately."""
+
+        @precondition(lambda x: int(x) > 0)
+        def func(x: str) -> int:
+            return int(x)
+
+        # ValueError during int("not_a_number") should raise PreconditionEvaluationError
+        with pytest.raises(PreconditionEvaluationError) as exc_info:
+            func("not_a_number")
+
+        assert isinstance(exc_info.value.underlying_error, ValueError)
+
+    def test_precondition_with_multiple_arguments(self) -> None:
+        """Precondition with multiple arguments should fail on bad condition."""
+
+        @precondition(lambda x, y: x.real_attr == y)  # type: ignore[attr-defined]
+        def func(x: dict[str, int], y: int) -> int:
+            return y
+
+        with pytest.raises(PreconditionEvaluationError):
+            func({}, 5)
+
+
+class TestPostconditionEvaluationError:
+    """Test that evaluation errors in postconditions are properly raised."""
+
+    def setup_method(self) -> None:
+        self._orig = get_contract_level()
+        set_contract_level(ContractLevel.ENFORCE)
+
+    def teardown_method(self) -> None:
+        set_contract_level(self._orig)
+
+    def test_postcondition_with_buggy_condition_raises_underlying_error(self) -> None:
+        """Postcondition that fails to evaluate should raise evaluation error."""
+
+        @postcondition(lambda result: result.real_attr > 0)  # type: ignore[attr-defined]
+        def func() -> int:
+            return 5
+
+        # The decorator should raise an error during evaluation
+        with pytest.raises(PostconditionEvaluationError) as exc_info:
+            func()
+
+        # Check that the underlying error is preserved in the chain
+        assert isinstance(exc_info.value.underlying_error, AttributeError)
+
+    def test_postcondition_evaluation_error_before_return(self) -> None:
+        """Postcondition evaluation error should occur even though function succeeded."""
+
+        @postcondition(lambda result: int(result) > 0)
+        def func() -> str:
+            return "not_a_number"
+
+        with pytest.raises(PostconditionEvaluationError) as exc_info:
+            func()
+
+        assert isinstance(exc_info.value.underlying_error, ValueError)
