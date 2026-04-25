@@ -6,7 +6,12 @@ import sys
 from pathlib import Path
 from re import Pattern
 
-from shared.python.contracts import require
+try:
+    from shared.python.contracts import require
+except ImportError:  # pragma: no cover
+    _SRC = Path(__file__).resolve().parent.parent
+    sys.path.insert(0, str(_SRC))
+    from shared.python.contracts import require
 
 
 # ANSI colors for terminal output
