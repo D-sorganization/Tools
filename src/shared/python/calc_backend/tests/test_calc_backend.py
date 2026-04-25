@@ -132,6 +132,24 @@ class TestPressureDrop:
         r = client.post("/api/calc/pressure-drop", json=payload)
         assert r.status_code == 422
 
+    def test_steam_viscosity_fallback(self, client: TestClient) -> Any:
+        # Steam at 600K
+        payload = self._payload(
+            gas_name="steam", temperature_k=600.0, molecular_weight_kg_mol=0.018015
+        )
+        r = client.post("/api/calc/pressure-drop", json=payload)
+        assert r.status_code == 200
+        body = r.json()
+        # Steam at 600K viscosity should be ~2.0e-5 Pa·s (20 uPa·s).
+        # We ensure it's calculated using the Sutherland consts for steam, not air.
+        assert pytest.approx(body["viscosity_pa_s"], rel=0.1) == 2.0e-5
+
+    def test_degenerate_input_zero_density(self, client: TestClient) -> Any:
+        payload = self._payload(pressure_pa=0.0)
+        r = client.post("/api/calc/pressure-drop", json=payload)
+        # Should raise 422 (Pydantic catches gt=0, but also inline logic catches it)
+        assert r.status_code == 422
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # /api/calc/flow-rate
