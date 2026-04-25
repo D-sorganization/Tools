@@ -10,6 +10,14 @@ class RateLimiter:
 
     Tracks requests per key (e.g., IP address) within a time window.
     Uses a fixed window algorithm: request counts are reset at the beginning of each time window.
+
+    .. warning::
+        This limiter is **single-process only**. State is stored in-memory and is
+        not shared across processes. In multi-worker deployments (e.g. gunicorn with
+        WEB_CONCURRENCY > 1) each worker maintains its own independent counter,
+        so the effective rate limit becomes limit * N_workers. For shared rate
+        limiting across workers use a Redis-backed implementation instead.
+        See issue #2289.
     """
 
     def __init__(self, limit: int, window: int) -> None:
