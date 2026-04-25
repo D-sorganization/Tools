@@ -35,6 +35,7 @@ def calculate_pressure_drop(request: PressureDropRequest) -> PressureDropRespons
             temperature_k=request.temperature_k,
             pressure_pa=request.pressure_pa,
             molecular_weight_kg_mol=request.molecular_weight_kg_mol,
+            viscosity_pa_s=request.viscosity_pa_s,
         )
     except (ValueError, ZeroDivisionError, OverflowError, TypeError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc

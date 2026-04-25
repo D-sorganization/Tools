@@ -34,8 +34,8 @@ class PhysicsEngine:
         den1 = self.cfg.l1 * (
             2 * self.cfg.m1 + self.cfg.m2 - self.cfg.m2 * np.cos(2 * delta)
         )
-        if den1 < 1e-12:
-            den1 = 1e-12  # DbC fail-safe
+        if abs(den1) < 1e-12:
+            raise ValueError("mass matrix is singular; check pendulum configuration")
 
         alpha1_free = (
             -self.cfg.gravity * (2 * self.cfg.m1 + self.cfg.m2) * np.sin(theta1)
@@ -49,8 +49,8 @@ class PhysicsEngine:
         den2 = self.cfg.l2 * (
             2 * self.cfg.m1 + self.cfg.m2 - self.cfg.m2 * np.cos(2 * delta)
         )
-        if den2 < 1e-12:
-            den2 = 1e-12  # DbC fail-safe
+        if abs(den2) < 1e-12:
+            raise ValueError("mass matrix is singular; check pendulum configuration")
 
         alpha2_free = (
             2
@@ -112,6 +112,11 @@ class PhysicsEngine:
         )
         if not res.success:
             raise RuntimeError(f"ODE integration failed: {res.message}")
+        if not np.all(np.isfinite(res.y)):
+            raise RuntimeError(
+                "ODE integrator returned non-finite values; "
+                "check initial conditions or reduce dt"
+            )
 
         return self._extract_physics(res.y, t_eval)
 
@@ -122,13 +127,55 @@ class PhysicsEngine:
 
         theta1, omega1, theta2, omega2 = y[0, :], y[1, :], y[2, :], y[3, :]
 
-        alpha1 = np.zeros_like(theta1)
-        alpha2 = np.zeros_like(theta2)
-        for i in range(len(theta1)):
-            derivs = self.equations_of_motion(
-                t_eval[i], [theta1[i], omega1[i], theta2[i], omega2[i]]
+        # Vectorized acceleration computation (avoids Python loop over timesteps)
+        delta = theta1 - theta2
+
+        den1 = self.cfg.l1 * (
+            2 * self.cfg.m1 + self.cfg.m2 - self.cfg.m2 * np.cos(2 * delta)
+        )
+        den2 = self.cfg.l2 * (
+            2 * self.cfg.m1 + self.cfg.m2 - self.cfg.m2 * np.cos(2 * delta)
+        )
+
+        alpha1_free = (
+            -self.cfg.gravity * (2 * self.cfg.m1 + self.cfg.m2) * np.sin(theta1)
+            - self.cfg.m2 * self.cfg.gravity * np.sin(theta1 - 2 * theta2)
+            - 2
+            * np.sin(delta)
+            * self.cfg.m2
+            * (omega2**2 * self.cfg.l2 + omega1**2 * self.cfg.l1 * np.cos(delta))
+        ) / den1
+
+        alpha2_free = (
+            2
+            * np.sin(delta)
+            * (
+                omega1**2 * self.cfg.l1 * (self.cfg.m1 + self.cfg.m2)
+                + self.cfg.gravity * (self.cfg.m1 + self.cfg.m2) * np.cos(theta1)
+                + omega2**2 * self.cfg.l2 * self.cfg.m2 * np.cos(delta)
             )
-            alpha1[i], alpha2[i] = derivs[1], derivs[3]
+        ) / den2
+
+        Q1 = -self.cfg.damp1 * omega1 + self.cfg.amp1 * np.sin(self.cfg.freq1 * t_eval)
+        Q2 = -self.cfg.damp2 * omega2 + self.cfg.amp2 * np.sin(self.cfg.freq2 * t_eval)
+
+        det = (
+            self.cfg.m2
+            * self.cfg.l1**2
+            * self.cfg.l2**2
+            * (self.cfg.m1 + self.cfg.m2 * np.sin(delta) ** 2)
+        )
+        M22 = self.cfg.m2 * self.cfg.l2**2
+        M11 = (self.cfg.m1 + self.cfg.m2) * self.cfg.l1**2
+        M12 = self.cfg.m2 * self.cfg.l1 * self.cfg.l2 * np.cos(delta)
+
+        nonsingular = det > 1e-12
+        safe_det = np.where(nonsingular, det, 1.0)
+        alpha1_q = np.where(nonsingular, (M22 * Q1 - M12 * Q2) / safe_det, 0.0)
+        alpha2_q = np.where(nonsingular, (-M12 * Q1 + M11 * Q2) / safe_det, 0.0)
+
+        alpha1 = alpha1_free + alpha1_q
+        alpha2 = alpha2_free + alpha2_q
 
         # Kinematics
         x1 = self.cfg.l1 * np.sin(theta1)
