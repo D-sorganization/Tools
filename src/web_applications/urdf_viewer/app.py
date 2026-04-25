@@ -13,17 +13,30 @@ import sys
 from pathlib import Path
 
 from cors import add_cors_middleware
-from fastapi import FastAPI, HTTPException, UploadFile
+from fastapi import FastAPI, HTTPException, UploadFile, Query
 from fastapi.responses import FileResponse, HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+# ── Security constants ──────────────────────────────────────────────────
+MAX_UPLOAD_SIZE = 25 * 1024 * 1024  # 25 MB
+ALLOWED_EXTENSIONS = {".urdf", ".xml"}
+
 # ── Ensure urdf_builder_gui is importable ───────────────────────────────
-_URDF_BUILDER_DIR = str(
-    Path(__file__).resolve().parent.parent.parent / "urdf_builder_gui" / "python"
-)
-if _URDF_BUILDER_DIR not in sys.path:
-    sys.path.insert(0, _URDF_BUILDER_DIR)
+# The urdf_builder_gui package lives under src/urdf_builder_gui/python/.
+# We add it to sys.path only if it's not already importable via
+# the bootstrap/conftest path setup.
+try:
+    import urdf_builder_gui  # noqa: F401
+except ImportError:
+    _URDF_BUILDER_DIR = str(
+        Path(__file__).resolve().parent.parent.parent / "urdf_builder_gui" / "python"
+    )
+    if _URDF_BUILDER_DIR not in sys.path:
+        sys.path.append(_URDF_BUILDER_DIR)
+        logging.getLogger(__name__).info(
+            "Added urdf_builder_gui to sys.path: %s", _URDF_BUILDER_DIR
+        )
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -76,6 +89,11 @@ async def read_root() -> FileResponse:
 def get_safe_path(filename: str) -> Path:
     """Sanitize and validate the filename to prevent path traversal."""
     safe_name = os.path.basename(filename)
+    separators = {sep for sep in ("/", "\\", os.sep, os.path.altsep) if sep}
+    if any(sep in filename for sep in separators):
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    if safe_name != filename:
+        raise HTTPException(status_code=400, detail="Invalid filename")
 
     if not safe_name or safe_name in [".", ".."]:
         raise HTTPException(status_code=400, detail="Invalid filename")
@@ -98,24 +116,61 @@ def get_safe_path(filename: str) -> Path:
 
 
 @app.post("/api/upload")
-async def upload_file(file: UploadFile) -> dict[str, str]:
-    """Upload a URDF file."""
+async def upload_file(
+    file: UploadFile,
+    overwrite: bool = Query(default=False),
+) -> dict[str, str]:
+    """Upload a URDF or XML model file.
+
+    Args:
+        file: The uploaded file (max 25 MB, must be .urdf or .xml).
+        overwrite: If True, allow overwriting an existing file.
+    """
     try:
         if not file.filename:
             raise HTTPException(status_code=400, detail="Filename is missing")
 
+        # Validate extension
+        ext = Path(file.filename).suffix.lower()
+        if ext not in ALLOWED_EXTENSIONS:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid file extension '{ext}'. Only {ALLOWED_EXTENSIONS} allowed.",
+            )
+
         file_path = get_safe_path(file.filename)
+
+        # Prevent silent overwrite
+        if file_path.exists() and not overwrite:
+            raise HTTPException(
+                status_code=409,
+                detail="File already exists. Use ?overwrite=1 to replace.",
+            )
+
         logger.info("Uploading file to %s", file_path)
 
+        # Stream with size limit
+        size = 0
         with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+            while True:
+                chunk = file.file.read(8192)
+                if not chunk:
+                    break
+                size += len(chunk)
+                if size > MAX_UPLOAD_SIZE:
+                    file_path.unlink(missing_ok=True)
+                    raise HTTPException(
+                        status_code=413,
+                        detail=f"File too large. Maximum size is {MAX_UPLOAD_SIZE // (1024 * 1024)} MB.",
+                    )
+                buffer.write(chunk)
 
         return {"filename": file_path.name, "url": f"/api/models/{file_path.name}"}
     except HTTPException:
         raise
     except (PermissionError, OSError) as e:
         logger.error("Failed to upload file: %s", e)
-        raise HTTPException(status_code=500, detail=str(e)) from e
+        raise HTTPException(status_code=500, detail="Upload failed") from e
 
 
 @app.get("/api/models")
@@ -131,13 +186,19 @@ async def list_models() -> dict[str, list[str]]:
         return {"models": files}
     except (PermissionError, OSError) as e:
         logger.error("Failed to list models: %s", e)
-        raise HTTPException(status_code=500, detail=str(e)) from e
+        raise HTTPException(status_code=500, detail="Failed to list models") from e
 
 
 @app.get("/api/models/{filename}")
 async def get_model(filename: str) -> FileResponse:
     """Retrieve a specific URDF model file."""
     file_path = get_safe_path(filename)
+
+    # Only serve allowed extensions
+    ext = file_path.suffix.lower()
+    if ext not in ALLOWED_EXTENSIONS:
+        raise HTTPException(status_code=400, detail="Invalid file type")
+
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="File not found")
     return FileResponse(file_path)
@@ -190,9 +251,9 @@ async def generate_urdf(request: URDFGenerateRequest) -> Response:
 
     except HTTPException:
         raise
-    except Exception as e:
+    except (ImportError, ValueError, TypeError) as e:
         logger.error("URDF generation failed: %s", e)
-        raise HTTPException(status_code=500, detail=str(e)) from e
+        raise HTTPException(status_code=500, detail="URDF generation failed") from e
 
 
 @app.post("/api/preview")
@@ -219,9 +280,9 @@ async def preview_model(request: URDFGenerateRequest) -> dict[str, str]:
         preview = generate_preview_text(config)
         return {"preview": preview}
 
-    except Exception as e:
+    except (ImportError, ValueError, TypeError) as e:
         logger.error("Preview generation failed: %s", e)
-        raise HTTPException(status_code=500, detail=str(e)) from e
+        raise HTTPException(status_code=500, detail="Preview generation failed") from e
 
 
 @app.get("/api/templates")
@@ -231,12 +292,12 @@ async def list_templates() -> dict[str, list[str]]:
         from urdf_builder_gui.anthropometric_model import TEMPLATE_SEGMENTS
 
         return {"templates": list(TEMPLATE_SEGMENTS.keys())}
-    except Exception as e:
+    except ImportError as e:
         logger.error("Failed to list templates: %s", e)
-        raise HTTPException(status_code=500, detail=str(e)) from e
+        raise HTTPException(status_code=500, detail="Failed to load templates") from e
 
 
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)  # nosec B104
+    uvicorn.run(app, host="127.0.0.1", port=8000)
