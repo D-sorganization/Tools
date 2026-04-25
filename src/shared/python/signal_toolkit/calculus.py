@@ -1,5 +1,3 @@
-# TRACKED_TASK: see #2310 — architecture debt extraction schedule
-
 """Differentiation and integration utilities for signals.
 
 This module provides tools for computing derivatives, integrals,
@@ -17,8 +15,8 @@ from scipy.signal import savgol_filter
 
 from .core import Signal
 
-# Backward-compatible trapezoid integration (np.trapz removed in NumPy 2.0+)
-_trapz = getattr(np, "trapezoid", None) or np.trapz
+# np.trapz was removed in NumPy 2.0; np.trapezoid is the current API.
+_trapz = np.trapezoid
 
 
 class DifferentiationMethod(Enum):
@@ -100,8 +98,7 @@ class Differentiator:
             window_length: Window length for Savitzky-Golay filter (odd integer).
             polyorder: Polynomial order for Savitzky-Golay filter.
         """
-        if not (method is not None):
-            raise ValueError("method must be provided")
+        assert method is not None, "method must be provided"
         self.method = method
         self.window_length = window_length
         self.polyorder = polyorder
@@ -120,8 +117,7 @@ class Differentiator:
         Returns:
             Signal containing the derivative.
         """
-        if not (signal is not None):
-            raise ValueError("signal must be provided")
+        assert signal is not None, "signal must be provided"
         result = signal.copy()
         result.name = f"d{order}({signal.name})/dt{order}"
         result.units = f"{signal.units}/s^{order}" if signal.units else ""
@@ -140,8 +136,7 @@ class Differentiator:
         Returns:
             Array of derivative values.
         """
-        if not (signal is not None):
-            raise ValueError("signal must be provided")
+        assert signal is not None, "signal must be provided"
         t = signal.time
         y = signal.values
         dt = signal.dt
@@ -219,8 +214,7 @@ class Differentiator:
         Returns:
             Derivative value at the point.
         """
-        if not (signal is not None):
-            raise ValueError("signal must be provided")
+        assert signal is not None, "signal must be provided"
         derivative_signal = self.differentiate(signal, order)
 
         # Interpolate to exact point
@@ -249,8 +243,7 @@ class Integrator:
         Args:
             method: Integration method to use.
         """
-        if not (method is not None):
-            raise ValueError("method must be provided")
+        assert method is not None, "method must be provided"
         self.method = method
 
     def integrate(
@@ -271,8 +264,7 @@ class Integrator:
         Returns:
             IntegralResult with integral value and related data.
         """
-        if not (signal is not None):
-            raise ValueError("signal must be provided")
+        assert signal is not None, "signal must be provided"
         t = signal.time
         y = signal.values
 
@@ -340,8 +332,7 @@ class Integrator:
         Returns:
             Signal with cumulative integral values.
         """
-        if not (signal is not None):
-            raise ValueError("signal must be provided")
+        assert signal is not None, "signal must be provided"
         cumulative = integrate.cumulative_trapezoid(
             signal.values,
             signal.time,
@@ -374,8 +365,7 @@ def compute_derivative(
     Returns:
         Signal containing the derivative.
     """
-    if not (signal is not None):
-        raise ValueError("signal must be provided")
+    assert signal is not None, "signal must be provided"
     diff = Differentiator(method=method, **kwargs)
     return diff.differentiate(signal, order)
 
@@ -397,8 +387,7 @@ def compute_integral(
     Returns:
         IntegralResult with integral value and data.
     """
-    if not (signal is not None):
-        raise ValueError("signal must be provided")
+    assert signal is not None, "signal must be provided"
     integrator = Integrator(method=method)
     return integrator.integrate(signal, lower_bound, upper_bound)
 
@@ -421,8 +410,7 @@ def compute_tangent_line(
         TangentLine object with tangent information.
     """
     # Clamp t_point to signal range
-    if not (signal is not None):
-        raise ValueError("signal must be provided")
+    assert signal is not None, "signal must be provided"
     t_point = np.clip(t_point, signal.time[0], signal.time[-1])
 
     # Get signal value at point
@@ -480,8 +468,7 @@ def compute_all_tangent_lines(
     Returns:
         List of TangentLine objects.
     """
-    if not (signal is not None):
-        raise ValueError("signal must be provided")
+    assert signal is not None, "signal must be provided"
     t_points = np.linspace(signal.time[0], signal.time[-1], num_points + 2)[1:-1]
     line_width = signal.duration / (num_points + 1) * 0.8
 
@@ -508,8 +495,7 @@ def compute_curvature(
     Returns:
         Signal containing curvature values.
     """
-    if not (signal is not None):
-        raise ValueError("signal must be provided")
+    assert signal is not None, "signal must be provided"
     diff = Differentiator(method=method)
 
     y_prime = diff.differentiate(signal, order=1).values
@@ -542,8 +528,7 @@ def compute_arc_length(
     Returns:
         Total arc length.
     """
-    if not (signal is not None):
-        raise ValueError("signal must be provided")
+    assert signal is not None, "signal must be provided"
     diff = Differentiator(method=method)
     y_prime = diff.differentiate(signal, order=1).values
 
@@ -566,8 +551,7 @@ def find_extrema(
     Returns:
         Tuple of (maxima, minima) where each is a list of (time, value) tuples.
     """
-    if not (signal is not None):
-        raise ValueError("signal must be provided")
+    assert signal is not None, "signal must be provided"
     diff = Differentiator(method=method)
     derivative = diff.differentiate(signal, order=1)
 
@@ -603,8 +587,7 @@ def find_inflection_points(
     Returns:
         List of (time, value) tuples for inflection points.
     """
-    if not (signal is not None):
-        raise ValueError("signal must be provided")
+    assert signal is not None, "signal must be provided"
     diff = Differentiator(method=method)
     second_derivative = diff.differentiate(signal, order=2)
 

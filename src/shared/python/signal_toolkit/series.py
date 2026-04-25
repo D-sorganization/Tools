@@ -1,5 +1,3 @@
-# TRACKED_TASK: see #2310 — architecture debt extraction schedule
-
 """Taylor and Maclaurin series expansion module.
 
 This module provides functionality for computing Taylor and Maclaurin series
@@ -13,13 +11,13 @@ expansions of functions, including:
 Following pragmatic programming and Design by Contract principles.
 """
 
-from __future__ import annotations  # noqa: E402, F404
+from __future__ import annotations
 
-from collections.abc import Callable  # noqa: E402
-from dataclasses import dataclass  # noqa: E402
+from collections.abc import Callable
+from dataclasses import dataclass
 
-import numpy as np  # noqa: E402
-from numpy.typing import ArrayLike, NDArray  # noqa: E402
+import numpy as np
+from numpy.typing import ArrayLike, NDArray
 
 
 @dataclass
@@ -159,8 +157,7 @@ class SeriesExpansion:
         Returns:
             Array of coefficients [c0, c1, c2, ..., c_{n-1}]
         """
-        if not (f is not None):
-            raise ValueError("f must be provided")
+        assert f is not None, "f must be provided"
         n_terms = min(n_terms, self.max_terms)
 
         # Use polynomial fitting for stability
@@ -171,7 +168,7 @@ class SeriesExpansion:
         # Create sample points centered at 'center'
         dx_values = np.linspace(-dx_range, dx_range, num_samples)
         x_samples = center + dx_values
-        y_samples = np.array([float(f(x)) for x in x_samples])
+        y_samples = np.array([float(f(x)) for x in x_samples])  # type: ignore[arg-type]
 
         # Fit polynomial of degree n_terms-1 in terms of (x - center)
         # This gives us Taylor coefficients directly
@@ -205,8 +202,7 @@ class SeriesExpansion:
         Returns:
             SeriesResult dataclass with coefficients, function, and metadata
         """
-        if not (f is not None):
-            raise ValueError("f must be provided")
+        assert f is not None, "f must be provided"
         coefficients = self.get_coefficients(f, center, n_terms)
         series_func = self.taylor_series(f, center, n_terms)
 
@@ -243,10 +239,9 @@ class SeriesExpansion:
             - final_error: Error at max_terms
             - errors_by_term: List of errors for each number of terms
         """
-        if not (f is not None):
-            raise ValueError("f must be provided")
+        assert f is not None, "f must be provided"
         try:
-            exact_value = float(f(x_test))
+            exact_value = float(f(x_test))  # type: ignore[arg-type]
         except (ValueError, RuntimeError, FloatingPointError):
             return {
                 "convergent": False,
@@ -266,13 +261,13 @@ class SeriesExpansion:
             error = abs(approx - exact_value)
             errors_by_term.append(error)
 
-            if error < tolerance and not convergent:
+            if error < tolerance and not convergent:  # type: ignore[operator]
                 convergent = True
                 terms_for_convergence = n
 
             # Check for divergence (error growing)
             if prev_approx is not None and (
-                abs(approx) > 1e15 or np.isnan(approx) or np.isinf(approx)
+                abs(approx) > 1e15 or np.isnan(approx) or np.isinf(approx)  # type: ignore[operator]
             ):
                 return {
                     "convergent": False,
@@ -312,8 +307,7 @@ class SeriesExpansion:
         Returns:
             Estimated upper bound on the error
         """
-        if not (f is not None):
-            raise ValueError("f must be provided")
+        assert f is not None, "f must be provided"
         if n_terms <= 0:
             return float("inf")
 
@@ -352,10 +346,9 @@ class SeriesExpansion:
         Returns:
             Approximate value of f^(n)(x)
         """
-        if not (f is not None):
-            raise ValueError("f must be provided")
+        assert f is not None, "f must be provided"
         if n == 0:
-            return float(f(x))
+            return float(f(x))  # type: ignore[arg-type]
 
         # Use Richardson extrapolation for better accuracy
         return self._richardson_derivative(f, x, n)
@@ -382,8 +375,7 @@ class SeriesExpansion:
             Approximate value of f^(n)(x)
         """
         # Compute derivatives at decreasing step sizes
-        if not (f is not None):
-            raise ValueError("f must be provided")
+        assert f is not None, "f must be provided"
         h0 = 0.5  # Initial step size (larger for stability)
         estimates = []
 
@@ -425,14 +417,13 @@ class SeriesExpansion:
         Returns:
             Approximate derivative value
         """
-        if not (f is not None):
-            raise ValueError("f must be provided")
+        assert f is not None, "f must be provided"
         result = 0.0
         for k in range(n + 1):
             coeff = ((-1) ** k) * self._binomial(n, k)
             point = x + (n / 2 - k) * h
             try:
-                val = float(f(point))
+                val = float(f(point))  # type: ignore[arg-type]
                 if np.isfinite(val):
                     result += coeff * val
             except (ValueError, RuntimeError, FloatingPointError):
@@ -455,8 +446,7 @@ class SeriesExpansion:
     @staticmethod
     def _binomial(n: int, k: int) -> int:
         """Compute binomial coefficient C(n, k)."""
-        if not (n is not None):
-            raise ValueError("n must be provided")
+        assert n is not None, "n must be provided"
         if k < 0 or k > n:
             return 0
         if k == 0 or k == n:

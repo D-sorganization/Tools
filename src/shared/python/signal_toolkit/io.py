@@ -1,5 +1,3 @@
-# TRACKED_TASK: see #2310 — architecture debt extraction schedule
-
 """Signal import and export utilities.
 
 This module provides functionality for importing signals from various
@@ -84,7 +82,7 @@ class SignalImporter:
             # Import all columns except time
             value_indices = [i for i in range(len(header)) if i != time_idx]
             value_names = [header[i] for i in value_indices]
-        elif isinstance(value_columns, str | int):
+        elif isinstance(value_columns, (str, int)):
             value_indices = [resolve_column(value_columns)]
             value_names = [header[value_indices[0]]]
         else:
@@ -93,7 +91,7 @@ class SignalImporter:
 
         # Parse data
         time_data = []
-        value_data = {i: [] for i in value_indices}
+        value_data: dict[int, list[float]] = {i: [] for i in value_indices}
 
         for row in data_rows:
             if len(row) <= time_idx:
@@ -163,8 +161,7 @@ class SignalImporter:
         Returns:
             Signal object.
         """
-        if not (file_path is not None):
-            raise ValueError("file_path must be provided")
+        assert file_path is not None, "file_path must be provided"
         file_path = Path(file_path)
         data = np.load(file_path)
 
@@ -194,8 +191,7 @@ class SignalImporter:
         Returns:
             Signal object.
         """
-        if not (file_path is not None):
-            raise ValueError("file_path must be provided")
+        assert file_path is not None, "file_path must be provided"
         file_path = Path(file_path)
 
         with open(file_path, encoding="utf-8") as f:
@@ -229,8 +225,7 @@ class SignalImporter:
         Returns:
             Signal object.
         """
-        if not (data is not None):
-            raise ValueError("data must be provided")
+        assert data is not None, "data must be provided"
         time = np.array(data[time_key])
         values = np.array(data[value_key])
 
@@ -260,8 +255,7 @@ class SignalImporter:
         Returns:
             Signal object.
         """
-        if not (file_path is not None):
-            raise ValueError("file_path must be provided")
+        assert file_path is not None, "file_path must be provided"
         from scipy.io import loadmat
 
         file_path = Path(file_path)
@@ -300,8 +294,7 @@ class SignalExporter:
             include_header: Whether to include header row.
             precision: Number of decimal places.
         """
-        if not (signal is not None):
-            raise ValueError("signal must be provided")
+        assert signal is not None, "signal must be provided"
         file_path = Path(file_path)
 
         signals = [signal] if isinstance(signal, Signal) else signal
@@ -318,7 +311,8 @@ class SignalExporter:
 
             for i in range(len(time)):
                 row = [round(time[i], precision)]
-                row.extend([round(sig.values[i], precision) for sig in signals])
+                for sig in signals:
+                    row.append(round(sig.values[i], precision))
                 writer.writerow(row)
 
     @staticmethod
@@ -348,8 +342,7 @@ class SignalExporter:
             file_path: Output file path.
             compressed: Whether to use compressed format.
         """
-        if not (signal is not None):
-            raise ValueError("signal must be provided")
+        assert signal is not None, "signal must be provided"
         file_path = Path(file_path)
 
         signals = [signal] if isinstance(signal, Signal) else signal
@@ -359,9 +352,9 @@ class SignalExporter:
             data[sig.name] = sig.values
 
         if compressed:
-            np.savez_compressed(file_path, **data)
+            np.savez_compressed(file_path, **data)  # type: ignore[arg-type]
         else:
-            np.savez(file_path, **data)
+            np.savez(file_path, **data)  # type: ignore[arg-type]
 
     @staticmethod
     def to_json(
@@ -378,8 +371,7 @@ class SignalExporter:
             precision: Number of decimal places.
             indent: JSON indentation.
         """
-        if not (signal is not None):
-            raise ValueError("signal must be provided")
+        assert signal is not None, "signal must be provided"
         file_path = Path(file_path)
 
         data = {
@@ -426,8 +418,7 @@ class SignalExporter:
             file_path: Output file path.
             time_var: Variable name for time.
         """
-        if not (signal is not None):
-            raise ValueError("signal must be provided")
+        assert signal is not None, "signal must be provided"
         from scipy.io import savemat
 
         file_path = Path(file_path)
@@ -629,8 +620,7 @@ class BatchProcessor:
         Returns:
             Dictionary mapping file names to signals.
         """
-        if not (pattern is not None):
-            raise ValueError("pattern must be provided")
+        assert pattern is not None, "pattern must be provided"
         files = self.find_files(pattern)
         signals = {}
 
@@ -649,7 +639,7 @@ class BatchProcessor:
         output_dir: str | Path | None = None,
         output_format: str = "csv",
         **kwargs,
-    ) -> dict[str, Signal]:
+    ) -> dict[str, Signal | list[Signal]]:
         """Load, process, and optionally save all signals.
 
         Args:
@@ -662,8 +652,7 @@ class BatchProcessor:
         Returns:
             Dictionary mapping file names to processed signals.
         """
-        if not (processor is not None):
-            raise ValueError("processor must be provided")
+        assert processor is not None, "processor must be provided"
         files = self.find_files(pattern)
         results = {}
 
@@ -676,6 +665,7 @@ class BatchProcessor:
                 signal = SignalLoader.load(file_path, **kwargs)
 
                 # Handle multiple signals
+                processed: Signal | list[Signal]
                 if isinstance(signal, list):
                     processed = [processor(s) for s in signal]
                 else:
