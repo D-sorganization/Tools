@@ -183,7 +183,18 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
   // Power-iteration for top eigenvalues (simple Jacobi-like)
   const eigenvalues: number[] = [];
   const eigenvectors: number[][] = [];
-  const A = cov.map((row) => [...row]);
+
+  // ⚡ Bolt Optimization: Replace A.map() and array spread [...row] with a single-pass loop.
+  // Pre-allocating the augmented row avoids massive garbage collection and O(N^2) reallocation overhead.
+  const A = new Array(p);
+  for (let i = 0; i < p; i++) {
+    const row = cov[i];
+    const newRow = new Array(p);
+    for (let j = 0; j < p; j++) {
+      newRow[j] = row[j];
+    }
+    A[i] = newRow;
+  }
 
   // ⚡ Bolt Optimization: Pre-allocate Av to avoid thousands of array allocations inside the tight iteration loop.
   const Av = new Array<number>(p);
@@ -269,14 +280,23 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
   }
 
   // Loadings (p x nc)
-  const loadings = eigenvectors.map((ev) => [...ev]);
+  // ⚡ Bolt Optimization: Replace map() and array spread with a single-pass loop.
+  const numEigenvectors = eigenvectors.length;
+  const transposedLoadings = new Array(p);
+  for (let ci = 0; ci < p; ci++) {
+    const col = new Array(numEigenvectors);
+    for (let i = 0; i < numEigenvectors; i++) {
+      col[i] = eigenvectors[i][ci];
+    }
+    transposedLoadings[ci] = col;
+  }
 
   return {
     explainedVariance: explained,
     cumulativeVariance: cumulative,
     numComponents: nc,
     scores,
-    loadings: loadings[0].map((_, ci) => eigenvectors.map((ev) => ev[ci])),
+    loadings: transposedLoadings,
     signals,
   };
 }

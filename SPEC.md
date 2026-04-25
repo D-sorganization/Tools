@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-04-24
+  LAST UPDATED: 2026-04-25
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.105                                    |
-| **Last Spec Update**    | 2026-04-24                                 |
+| **Spec Version**        | 1.1.106                                    |
+| **Last Spec Update**    | 2026-04-25                                 |
 
 ## 2. Purpose & Mission
 
@@ -468,7 +468,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-23 | 1.1.101 | Hardened model-generation REST routing so unexpected route-handler programming errors propagate to the framework adapter instead of being flattened into JSON 500 responses by the route facade, with regression coverage for the propagation contract.                                                                                                                                                                                                                                                                                                             |
 | 2026-04-23 | 1.1.100 | Extended the Python 3.10 UTC compatibility contract across document-processing, folder-packing, shared model-generation, upstream-drift UI/state, folder-tool analysis, and launcher timestamp paths by using `timezone.utc` instead of the Python 3.11-only `datetime.UTC` alias while preserving timezone-aware datetime behavior.                                                                                                                                                                                                                                |
 | 2026-04-23 | 1.1.99  | Kept shared data-processing result timestamps timezone-aware while preserving Python 3.10 compatibility by using `timezone.utc` rather than the Python 3.11-only `datetime.UTC` alias, keeping the data-processing import contract green across the supported CI interpreter matrix.                                                                                                                                                                                                                                                                                |
-| 2026-04-24 | 1.1.105 | Narrowed `ConsoleEnvironment.refresh_user_functions()` to re-raise `KeyboardInterrupt` and `SystemExit` while still logging expected user-code failures from the persisted scripting library, and added focused regression coverage for both reload paths.                                                                                                                                                                                                                                                                                                          |
+| 2026-04-25 | 1.1.105 | Narrowed `ConsoleEnvironment.refresh_user_functions()` to re-raise `KeyboardInterrupt` and `SystemExit` while still logging expected user-code failures from the persisted scripting library, and added focused regression coverage for both reload paths.                                                                                                                                                                                                                                                                                                          |
 | 2026-04-23 | 1.1.98  | Documented the rotation converter API exception-boundary tests that keep invalid quaternion parsing mapped to HTTP 422 while allowing unexpected reference-frame runtime failures to propagate for diagnostics instead of being silently swallowed.                                                                                                                                                                                                                                                                                                                 |
 | 2026-04-23 | 1.1.97  | Security and robustness remediation pass from adversarial review: tightened exception boundaries and error propagation for shared rotation conversion, scripting runtime, and model-generation loaders; hardened data-processing and state-management paths against invalid inputs and silent failures; and aligned related test coverage for the updated failure-handling contracts.                                                                                                                                                                               |
 | 2026-04-23 | 1.1.96  | Hardened ODE and signal generation preconditions so direct RK4 calls reject fewer than two output points, chirp generation rejects single-point time arrays, and sawtooth/triangle/square generation reject non-positive frequencies with clear `ValueError` messages instead of division-by-zero failures.                                                                                                                                                                                                                                                         |
@@ -624,6 +624,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 ### Version 1.1.66
 
 - **Security**: Disabled loading and saving of `.pkl` and `.pickle` files natively using pandas due to severe CWE-502 vulnerability. Raises `ValueError` explicitly when format is set to `pickle`.
+
+### Version 1.1.106
+
+- **Performance**: Optimized matrix and loading array copying inside `AnalyticsSuite.tsx` for PCA calculation by replacing `.map()` and array spread operations with single-pass pre-allocated loops, substantially reducing memory allocation overhead.
 
 ## 2026-04-20
 
