@@ -226,17 +226,81 @@ skip-magic-trailing-comma = false
 line-ending = "auto"
 
 [tool.pytest.ini_options]
-testpaths = ["tests", "src", "src/pendulum_simulator/tests"]
-python_files = "test_*.py"
+testpaths = ["tests", "src/pendulum_simulator/tests"]
+python_files = ["test_*.py", "*_test.py"]
 python_classes = "Test*"
 python_functions = "test_*"
-addopts = "-ra -q --strict-markers --strict-config --durations=20 --benchmark-disable -n auto --dist loadscope -m \"not live_simulation\" -p no:xvfb"
-pythonpath = ["src"]
+addopts = "-ra --strict-markers --strict-config --tb=short --color=yes -p no:xvfb -m \"not live_simulation\""
+pythonpath = [
+    "src",
+    "src/python/src",
+    "src/shared/python",
+    "src/tools",
+    "src/web_applications",
+    "src/data_processing/data_processor/python",
+    "src/scientific_modeling/solar_system_model",
+    "src/scientific_modeling/rrt_path_planner/python/src",
+    "src/media_processing/video_processor/python",
+    "src/pendulum_simulator/src",
+]
+norecursedirs = [
+    "replicants",
+    "archive",
+    "legacy",
+    "experimental",
+    ".git",
+    ".tox",
+    ".nox",
+    ".eggs",
+    "__pycache__",
+    "build",
+    "dist",
+    "*.egg-info",
+    ".pytest_cache",
+    "htmlcov",
+    "pdf_renamer",
+    "pdf_renamer_backup",
+    "project_packer",
+    "folder_packer_pro",
+    "rrt_path_planner",
+    "calculator",
+    "chat",
+]
+xfail_strict = true
+filterwarnings = [
+    "ignore::DeprecationWarning:pkg_resources",
+    "ignore::UserWarning:pygame.pkgdata",
+    "ignore::DeprecationWarning:setuptools",
+    "default::DeprecationWarning:utils",
+    "default::DeprecationWarning:tools",
+    "ignore:.*unclosed file.*:ResourceWarning",
+]
+log_cli = false
+log_cli_level = "WARNING"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(name)s: %(message)s"
+log_cli_date_format = "%H:%M:%S"
 markers = [
-    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-    "integration: marks integration tests",
-    "live_simulation: marks tests requiring heavy physics engines or live simulation (deselect with '-m not live_simulation')",
-    "performance: marks performance/benchmark tests",
+    "unit: unit test (fast, isolated, no external dependencies)",
+    "integration: integration test (may use external resources)",
+    "e2e: end-to-end test (full system test)",
+    "slow: slow running test (> 5 seconds)",
+    "benchmark: benchmark/performance measurement",
+    "performance: performance benchmarking",
+    "scientific: scientific/numerical validation",
+    "contract: contract test (API surface)",
+    "acceptance: acceptance test",
+    "parity: cross-implementation parity validation",
+    "dwsim: requires DWSIM runtime",
+    "live_simulation: requires heavy physics engines or live simulation",
+    "requires_gl: requires OpenGL/graphics acceleration",
+    "requires_network: requires network connectivity",
+    "requires_database: requires database connection",
+    "requires_gpu: requires GPU/CUDA",
+    "headless_safe: safe to run in headless CI environments",
+    "gui: requires a GUI environment",
+    "heavy: takes a long time to run",
+    "math: pure calculation without external dependencies",
+    "physics: physics engine calculations",
 ]
 
 [tool.coverage.run]

@@ -118,11 +118,21 @@ class ConsoleEnvironment:
         sys.stdout.write(pydoc.render_doc(obj) + "\n")
 
     def set_user_library_path(self, path: str) -> None:
-        """Set the path for saving/loading user custom functions."""
+        """Set the path for saving/loading user custom functions.
+
+        Args:
+            path: The file path for the user library. If relative, it will be
+                relative to the current working directory. If absolute, it will
+                be used as-is.
+
+        Raises:
+            ValueError: If path is empty.
+        """
         # Precondition check
         if not path:
             raise ValueError("Library path cannot be empty.")
-        self._user_lib_path = path
+        expanded_path = os.path.expanduser(path)
+        self._user_lib_path = expanded_path
 
     def save_user_code(self, code: str) -> None:
         """Save raw python code to the user library path."""
@@ -142,7 +152,12 @@ class ConsoleEnvironment:
             return f.read()
 
     def refresh_user_functions(self) -> None:
-        """Reload user functions into the namespace."""
+        """Reload user functions into the namespace.
+
+        Raises:
+            KeyboardInterrupt: If the user interrupts execution.
+            SystemExit: If the code explicitly calls sys.exit().
+        """
         if not os.path.exists(self._user_lib_path):
             return
 
@@ -154,8 +169,9 @@ class ConsoleEnvironment:
             exec(code, self.namespace)  # nosec B102
         except (KeyboardInterrupt, SystemExit):
             raise
-        except USER_CODE_ERROR_TYPES:
-            traceback.print_exc(file=sys.stderr)
+        except USER_CODE_ERROR_TYPES as e:
+            sys.stderr.write(f"Error loading user library: {e}\n")
+            sys.stderr.flush()
 
     def execute(self, source: str | None) -> tuple[str, str]:
         """Execute a block of source code, capturing stdout and stderr.

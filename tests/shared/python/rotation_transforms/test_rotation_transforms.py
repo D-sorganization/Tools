@@ -49,3 +49,19 @@ def test_twist_frame_conversion_applies_translation_adjoint() -> None:
     assert np.allclose(
         twist_result.results["output_twist"], [0.0, 0.0, 1.0, 1.0, 0.0, 0.0]
     )
+
+
+def test_rotation_is_hashable() -> None:
+    """Test that Rotation instances are hashable and can be used in sets/dicts."""
+    r1 = Rotation.identity()
+    r2 = Rotation.identity()
+    r3 = Rotation.from_axis_angle([0.0, 0.0, 1.0], np.pi / 2)
+
+    # Equal rotations should have equal hashes
+    assert hash(r1) == hash(r2)
+    # Can add to sets
+    rotation_set = {r1, r2, r3}
+    assert len(rotation_set) == 2  # r1 and r2 are equal, so only 2 unique
+    # Can use as dict keys
+    rotation_dict = {r1: "identity", r3: "90deg_z"}
+    assert rotation_dict[r2] == "identity"  # r2 equals r1

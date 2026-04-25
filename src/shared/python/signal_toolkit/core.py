@@ -249,12 +249,26 @@ class Signal:
             if not np.allclose(self.time, other.time):
                 msg = "Signals must have the same time array for division"
                 raise ValueError(msg)
+            # Check for zeros in denominator to prevent silent inf/NaN
+            zero_count = np.sum(other.values == 0)
+            require(
+                zero_count == 0,
+                f"Cannot divide by Signal with {zero_count} zero values",
+                zero_count,
+            )
             return Signal(
                 time=self.time.copy(),
                 values=self.values / other.values,
                 name=f"({self.name} / {other.name})",
                 units=self.units,
                 metadata=dict(self.metadata),
+            )
+        # Check for zero scalar divisor
+        if isinstance(other, (float, int, np.number)):
+            require(
+                other != 0,
+                f"Cannot divide by zero (got {other})",
+                other,
             )
         return Signal(
             time=self.time.copy(),
@@ -284,6 +298,13 @@ class Signal:
 
     def __rtruediv__(self, other: float | np.ndarray) -> Signal:
         """Support reverse division (e.g., 2 / signal)."""
+        # Check for zeros in denominator to prevent silent inf/NaN
+        zero_count = np.sum(self.values == 0)
+        require(
+            zero_count == 0,
+            f"Cannot divide by Signal with {zero_count} zero values",
+            zero_count,
+        )
         return Signal(
             time=self.time.copy(),
             values=other / self.values,
@@ -529,6 +550,12 @@ class SignalGenerator:
         require(len(t) >= 2, "chirp requires at least two time points", len(t))
         t_shifted = t - t[0]
         t_end = t_shifted[-1]
+        # Guard against zero or negative duration (repeated/out-of-order timestamps)
+        require(
+            t_end > 0,
+            f"chirp requires a positive time span, got duration={t_end}",
+            t_end,
+        )
 
         if method == "linear":
             # Linear frequency sweep

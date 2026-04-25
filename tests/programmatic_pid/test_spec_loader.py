@@ -82,3 +82,59 @@ def test_backward_compat_get_layout_config():
     lc = get_layout_config(_spec())
     assert "gap" in lc
     assert lc["gap"] == 10.0
+
+
+def test_load_spec_with_blank_yaml():
+    """Blank YAML (null) should return empty dict."""
+    import tempfile
+    from pathlib import Path
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".yml", delete=False) as f:
+        f.write("")
+        path = f.name
+    try:
+        spec = load_spec(path)
+        assert spec == {}
+    finally:
+        Path(path).unlink()
+
+
+def test_load_spec_with_list_root():
+    """YAML with list at root should raise ValueError."""
+    import tempfile
+    from pathlib import Path
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".yml", delete=False) as f:
+        f.write("- item1\n- item2\n")
+        path = f.name
+    try:
+        with pytest.raises(ValueError, match="must contain a dict at root"):
+            load_spec(path)
+    finally:
+        Path(path).unlink()
+
+
+def test_load_spec_with_string_root():
+    """YAML with string at root should raise ValueError."""
+    import tempfile
+    from pathlib import Path
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".yml", delete=False) as f:
+        f.write("just a string")
+        path = f.name
+    try:
+        with pytest.raises(ValueError, match="must contain a dict at root"):
+            load_spec(path)
+    finally:
+        Path(path).unlink()
+
+
+def test_load_spec_with_number_root():
+    """YAML with number at root should raise ValueError."""
+    import tempfile
+    from pathlib import Path
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".yml", delete=False) as f:
+        f.write("42")
+        path = f.name
+    try:
+        with pytest.raises(ValueError, match="must contain a dict at root"):
+            load_spec(path)
+    finally:
+        Path(path).unlink()

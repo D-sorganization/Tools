@@ -6,10 +6,13 @@ get_text_config / get_layout_config / get_layer_config accessor functions.
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import Any, cast
 
 import yaml
+
+logger = logging.getLogger(__name__)
 from programmatic_pid.geometry import to_float
 from programmatic_pid.profiles import apply_profile
 from programmatic_pid.types import SpecDict, TextConfig
@@ -19,12 +22,22 @@ from programmatic_pid.validation import validate_spec
 def load_spec(path: str | Path) -> SpecDict:
     """Load a YAML specification file.
 
-    Precondition: *path* points to a valid YAML file.
+    Precondition: *path* points to a valid YAML file containing a dict at root.
     Postcondition: returns a dict (possibly empty if YAML is blank).
+
+    Raises:
+        ValueError: if YAML root is not a dict (e.g., list, string, null).
     """
     with open(path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
-    return cast(SpecDict, data) if isinstance(data, dict) else {}
+    if data is None:
+        return {}
+    if not isinstance(data, dict):
+        raise ValueError(
+            f"YAML spec in {path} must contain a dict at root, "
+            f"not {type(data).__name__}"
+        )
+    return cast(SpecDict, data)
 
 
 def prepare_spec(spec_path: str | Path, profile: str | None) -> SpecDict:

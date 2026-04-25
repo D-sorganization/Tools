@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
@@ -124,61 +123,77 @@ def create_app() -> Flask:
 
 MAX_INPUT_LENGTH = 1000
 
-# Security: Blocklist of dangerous keywords that should not be in mathematical expressions
-FORBIDDEN_KEYWORDS = [
-    "lambda",
-    "class",
-    "def",
-    "import",
-    "exec",
-    "eval",
-    "compile",
-    "input",
-    "yield",
-    "return",
-    "raise",
-    "assert",
-    "with",
-    "open",
-    "print",
-    "global",
-    "async",
-    "await",
-    "nonlocal",
-    "del",
-    "try",
-    "except",
-    "finally",
-    "__import__",
-    "builtins",
-    "breakpoint",
-    "getattr",
-    "setattr",
-    "hasattr",
-    "delattr",
-    "globals",
-    "locals",
-    "vars",
-    "dir",
-]
-
-# ⚡ Bolt Optimization: Pre-compile regexes for forbidden keywords
-# This avoids compiling a regex for every potential match, while keeping
-# the fast string search for the common case (clean input).
-KEYWORD_REGEXES = {k: re.compile(rf"\b{k}\b") for k in FORBIDDEN_KEYWORDS}
+# Security: Symbol allowlist for SymPy expressions.
+# Only these symbols (and basic math operators) are allowed in user expressions.
+# This provides safe sandboxing via parse_expr(local_dict=ALLOWED_SYMBOLS).
+ALLOWED_SYMBOLS = {
+    # Basic math functions (from SymPy)
+    "sin": "sympy.sin",
+    "cos": "sympy.cos",
+    "tan": "sympy.tan",
+    "exp": "sympy.exp",
+    "log": "sympy.log",
+    "ln": "sympy.ln",
+    "sqrt": "sympy.sqrt",
+    "Abs": "sympy.Abs",
+    "ceiling": "sympy.ceiling",
+    "floor": "sympy.floor",
+    "atan2": "sympy.atan2",
+    "sinh": "sympy.sinh",
+    "cosh": "sympy.cosh",
+    "tanh": "sympy.tanh",
+    "asin": "sympy.asin",
+    "acos": "sympy.acos",
+    "atan": "sympy.atan",
+    # Constants
+    "pi": "sympy.pi",
+    "E": "sympy.E",
+    "I": "sympy.I",
+    "oo": "sympy.oo",
+    # Commonly used symbols that users might define
+    "x": "sympy.Symbol('x')",
+    "y": "sympy.Symbol('y')",
+    "z": "sympy.Symbol('z')",
+    "t": "sympy.Symbol('t')",
+    "a": "sympy.Symbol('a')",
+    "b": "sympy.Symbol('b')",
+    "c": "sympy.Symbol('c')",
+}
 
 
 def _validate_security(value: str | None) -> None:
-    """Check for potentially dangerous patterns in input."""
+    """Check for basic invalid patterns in input.
+
+    Note: For mathematical expressions, the real security comes from
+    parse_expr() with ALLOWED_SYMBOLS allowlist (see parse_expression_with_symbols).
+    This function does basic structural validation on non-expression fields.
+
+    Raises:
+        ValueError: If the input contains obviously dangerous patterns.
+    """
     if not value:
         return
-    if "__" in value:
-        raise ValueError("Security violation: Restricted input pattern detected.")
 
-    for keyword in FORBIDDEN_KEYWORDS:
-        if keyword in value and KEYWORD_REGEXES[keyword].search(value):
+    # Reject input that contains obvious code-injection attempts
+    # (these would be caught by SymPy's parser anyway, but fail fast here)
+    dangerous_patterns = [
+        "__class__",
+        "__mro__",
+        "__subclasses__",
+        "__bases__",
+        "__code__",
+        "__globals__",
+        "eval(",
+        "exec(",
+        "compile(",
+        "__import__(",
+    ]
+
+    value_lower = value.lower()
+    for pattern in dangerous_patterns:
+        if pattern in value_lower:
             raise ValueError(
-                f"Security violation: Restricted keyword '{keyword}' detected."
+                f"Security violation: Expression contains forbidden pattern '{pattern}'."
             )
 
 

@@ -160,6 +160,42 @@ class InvariantError(ContractViolationError):
         super().__init__("invariant", message, value)
 
 
+class PreconditionEvaluationError(ContractViolationError):
+    """Raised when a precondition cannot be evaluated due to an error in the condition itself."""
+
+    def __init__(self, message: str, underlying_error: Exception) -> None:
+        if not (message is not None):
+            raise ValueError("message must be provided")
+        if not (isinstance(underlying_error, Exception)):
+            raise TypeError(
+                f"underlying_error must be Exception, got {type(underlying_error)}"
+            )
+        self.underlying_error = underlying_error
+        super().__init__("pre-condition-evaluation", message, None)
+
+    def __cause__(self) -> Exception:  # type: ignore[override]
+        """Return the underlying exception that caused the evaluation failure."""
+        return self.underlying_error
+
+
+class PostconditionEvaluationError(ContractViolationError):
+    """Raised when a postcondition cannot be evaluated due to an error in the condition itself."""
+
+    def __init__(self, message: str, underlying_error: Exception) -> None:
+        if not (message is not None):
+            raise ValueError("message must be provided")
+        if not (isinstance(underlying_error, Exception)):
+            raise TypeError(
+                f"underlying_error must be Exception, got {type(underlying_error)}"
+            )
+        self.underlying_error = underlying_error
+        super().__init__("post-condition-evaluation", message, None)
+
+    def __cause__(self) -> Exception:  # type: ignore[override]
+        """Return the underlying exception that caused the evaluation failure."""
+        return self.underlying_error
+
+
 # ─── Core Contract Primitives ─────────────────────────────────
 
 
@@ -232,13 +268,23 @@ def _evaluate_precondition(
     the decorated function received.  If that produces a ``TypeError`` (e.g.
     the condition only accepts a subset of arguments by name), it falls back
     to matching parameters by name from the decorated function's signature.
+
+    Raises:
+        PreconditionEvaluationError: If the condition evaluation fails with an error
+            other than a simple argument-matching TypeError.
     """
     if not (condition is not None):
         raise ValueError("condition must be provided")
     try:
         return bool(condition(*args, **kwargs))
     except TypeError:
+        # Only swallow TypeError if it's a signature mismatch, not other errors
         pass
+    except Exception as exc:
+        # Preserve the original exception type and chain for non-TypeError errors
+        raise PreconditionEvaluationError(
+            f"Failed to evaluate precondition for {func.__qualname__}: {exc!r}", exc
+        ) from exc
 
     # Fallback: bind the decorated function's args, then select only the
     # parameters the condition function expects.
@@ -255,8 +301,11 @@ def _evaluate_precondition(
             if name in all_arguments
         }
         return bool(condition(**call_args))
-    except (TypeError, ValueError) as exc:
-        raise TypeError(exc) from exc
+    except Exception as exc:
+        # Preserve the original exception type and chain
+        raise PreconditionEvaluationError(
+            f"Failed to evaluate precondition for {func.__qualname__}: {exc!r}", exc
+        ) from exc
 
 
 def precondition(
@@ -278,14 +327,7 @@ def precondition(
 
         @functools.wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
-            try:
-                result = _evaluate_precondition(condition, func, args, kwargs)
-            except (TypeError, ValueError) as exc:
-                _handle_violation(
-                    "pre-condition",
-                    f"Failed to evaluate precondition for {func.__qualname__}: {exc}",
-                )
-                return func(*args, **kwargs)
+            result = _evaluate_precondition(condition, func, args, kwargs)
 
             if not result:
                 _handle_violation("pre-condition", message)
@@ -301,7 +343,11 @@ def postcondition(
     condition: Callable[[Any], bool],
     message: str = "Postcondition failed",
 ) -> Callable[[F], F]:
-    """Decorator to enforce a postcondition on a function's return value."""
+    """Decorator to enforce a postcondition on a function's return value.
+
+    Raises:
+        PostconditionEvaluationError: If the condition evaluation fails with an error.
+    """
 
     if not (condition is not None):
         raise ValueError("condition must be provided")
@@ -316,12 +362,11 @@ def postcondition(
 
             try:
                 check = condition(result)
-            except (TypeError, ValueError) as exc:
-                _handle_violation(
-                    "post-condition",
-                    f"Failed to evaluate postcondition for {func.__qualname__}: {exc}",
-                )
-                return result
+            except Exception as exc:
+                raise PostconditionEvaluationError(
+                    f"Failed to evaluate postcondition for {func.__qualname__}: {exc!r}",
+                    exc,
+                ) from exc
 
             if not check:
                 _handle_violation("post-condition", message, result)
