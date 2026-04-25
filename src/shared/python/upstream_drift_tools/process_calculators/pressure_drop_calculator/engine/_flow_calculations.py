@@ -227,7 +227,7 @@ def calculate_fitting_pressure_drop(
     Reference:
         Crane TP-410, Chapter 2: Resistance of Valves and Fittings
     """
-    if not (fittings is not None):
+    if fittings is None:
         raise ValueError("fittings must be provided")
     total_k = 0.0
     velocity_head = 0.5 * density * (velocity**2)
@@ -280,7 +280,7 @@ def calculate_elevation_pressure_drop(density: float, elevation_change: float) -
         (loss). Negative elevation_change (downward flow) results in negative
         pressure drop (gain).
     """
-    if not (density is not None):
+    if density is None:
         raise ValueError("density must be provided")
     dp_elevation = density * GRAVITY * elevation_change
 
@@ -312,7 +312,7 @@ def _iterate_compressible_pressure(
     Returns:
         Tuple of (converged_P2, is_choked). If choked, P2 is meaningless.
     """
-    if not (P1 is not None):
+    if P1 is None:
         raise ValueError("P1 must be provided")
     P2 = P2_initial
 
@@ -450,7 +450,7 @@ def calculate_expansion_factor(
         Crane TP-410, Section 2-2: Compressible Flow
         ISO 5167: Measurement of fluid flow
     """
-    if not (inlet_pressure is not None):
+    if inlet_pressure is None:
         raise ValueError("inlet_pressure must be provided")
     if inlet_pressure <= 0 or pressure_drop < 0:
         return 1.0
@@ -504,7 +504,7 @@ def calculate_erosional_velocity(
         - Intermittent service: C = 125-150
         - Solid-free service: C = 150-200
     """
-    if not (density is not None):
+    if density is None:
         raise ValueError("density must be provided")
     if service_type == "continuous":
         C = API_14E_C_CONTINUOUS
