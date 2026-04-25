@@ -263,6 +263,20 @@ explicit_package_bases = true
 # namespace packages stops CWD from treating src/ as a namespace package.
 namespace_packages = false
 
+# TRACKED_TASK: #2296 — Blanket signal_toolkit ignore_errors removed.
+# Per-file overrides below cover the mixin files whose Protocol-based cross-mixin
+# attribute access still generates attr-defined errors (widget_processing: 52 errors,
+# widget_plotting: 28 errors, widget_ui: 1 error).  The root fix is to expand
+# WidgetProtocol with canvas sub-protocol and the missing signal_generated /
+# signal_updated attributes; tracked in issue #2296.
 [[tool.mypy.overrides]]
-module = "signal_toolkit.*"
+module = "signal_toolkit.widget_processing"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "signal_toolkit.widget_plotting"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "signal_toolkit.widget_ui"
 ignore_errors = true

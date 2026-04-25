@@ -94,7 +94,7 @@ class NoiseGenerator:
             frequency = kwargs.get(
                 "frequency", DEFAULT_LINE_FREQUENCY_HZ
             )  # Default 60 Hz (line noise)
-            fs = 1.0 / np.mean(np.diff(t)) if len(t) > 1 else 1000.0
+            fs = float(1.0 / np.mean(np.diff(t))) if len(t) > 1 else 1000.0
             values = self._generate_periodic_noise(n, amplitude, frequency, fs)
 
         else:

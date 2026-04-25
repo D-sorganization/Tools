@@ -97,9 +97,10 @@ jobs:
         run: |
           if [ -s changed_mypy_files.txt ]; then
             # Filter out legacy directories that are not yet type-safe
-            # Exclude: legacy dirs not yet type-safe + src/shared/python/* (namespace pkg
-            # structure causes mypy double-module errors; checked via tests instead)
-            grep -v -E "src/electrode_advisor/|src/shared/python/|src/function_generator/|src/data_processing/data_processor/|src/glass_bath_fea/|src/tools/folder_tools/|simulation_golfer_gpu|optimizer_gpu" changed_mypy_files.txt > filtered_mypy_files.txt || true
+            # Note: src/shared/python/ is now included in delta checks (issue #2296).
+            # widget_processing, widget_plotting, widget_ui still have per-file
+            # ignore_errors = true overrides in pyproject.toml pending full fix.
+            grep -v -E "src/electrode_advisor/|src/function_generator/|src/data_processing/data_processor/|src/glass_bath_fea/|src/tools/folder_tools/|simulation_golfer_gpu|optimizer_gpu" changed_mypy_files.txt > filtered_mypy_files.txt || true
 
             if [ -s filtered_mypy_files.txt ]; then
               export MYPYPATH=src:src/python/src
