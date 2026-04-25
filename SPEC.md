@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST UPDATED: 2026-04-24
+  LAST UPDATED: 2026-04-25
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.105                                    |
+| **Spec Version        | 1.1.106                                    |
 | **Last Spec Update**    | 2026-04-24                                 |
 
 ## 2. Purpose & Mission
@@ -628,3 +628,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 ## 2026-04-20
 
 - Update unit converter clear history button accessibility (ARIA labels, disabled state)
+
+### Version 1.1.106
+
+- **Performance**: Improved PCA score calculation cache locality in `AnalyticsSuite.tsx` by changing loop iteration order to properly traverse column-major Float64Array elements.
