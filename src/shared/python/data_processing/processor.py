@@ -120,9 +120,10 @@ class DataProcessor:
                 from data_processor.core.dat_importer import read_dat_file
 
                 self._df = read_dat_file(str(path))
-            except ImportError:
-                # Fallback: try whitespace-delimited
-                self._df = pd.read_csv(path, sep=r"\s+", encoding=encoding)
+            except ImportError as exc:
+                raise ImportError(
+                    "dat_importer not installed; install it to read .dat files"
+                ) from exc
         else:
             raise ValueError(f"Unsupported file format: {suffix}")
 
@@ -209,7 +210,15 @@ class DataProcessor:
             import numpy as np
 
             t = df[time_column].values
-            t_new = np.arange(t[0], t[-1], 1.0 / target_rate)
+            if not np.all(np.diff(t) > 0):
+                raise ValueError(
+                    "time column must be monotonically increasing before resampling"
+                ) from None
+            t_new = np.linspace(
+                t[0],
+                t[-1],
+                num=int(round((t[-1] - t[0]) * target_rate)) + 1,
+            )
             new_df = pd.DataFrame({time_column: t_new})
             for col in df.columns:
                 if col == time_column:
@@ -322,7 +331,20 @@ class DataProcessor:
         for column in columns:
             values = df[column].values.astype(float)
             if filter_type == "butterworth":
-                b, a = butter(order, cutoff, btype="low", fs=1000)
+                sample_rate = 1000
+                nyquist = sample_rate / 2
+                if cutoff >= nyquist:
+                    raise ValueError(
+                        f"cutoff {cutoff} Hz must be less than Nyquist frequency"
+                        f" {nyquist} Hz (sample_rate={sample_rate})"
+                    )
+                b, a = butter(order, cutoff, btype="low", fs=sample_rate)
+                min_len = 3 * (max(len(b), len(a)) - 1) + 1
+                if len(values) < min_len:
+                    raise ValueError(
+                        f"Signal too short for filter order {order}: need"
+                        f" ≥{min_len} samples, got {len(values)}"
+                    )
                 df[column] = filtfilt(b, a, values)
             elif filter_type == "moving_average":
                 df[column] = (
@@ -503,6 +525,16 @@ class DataProcessor:
         elif suffix in (".xlsx", ".xls"):
             df.to_excel(path, index=index)
         elif suffix == ".parquet":
+            import importlib.util
+
+            if (
+                importlib.util.find_spec("pyarrow") is None
+                and importlib.util.find_spec("fastparquet") is None
+            ):
+                raise ImportError(
+                    "Parquet export requires pyarrow or fastparquet:"
+                    " pip install pyarrow"
+                )
             df.to_parquet(path, index=index)
         elif suffix == ".json":
             df.to_json(path, orient="records", indent=2)
