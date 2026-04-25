@@ -110,7 +110,7 @@ jobs:
           python -m pip install -r requirements.txt
           python -m pip install fastapi
           python -m pip install httpx pytest-cov
-          python -m pip install ruff==0.14.10 mypy==1.13.0 bandit==1.7.7 pip-audit sortedcontainers types-PyYAML types-requests
+          python -m pip install --force-reinstall --no-deps ruff==0.14.10 mypy==1.13.0 bandit==1.7.7 pip-audit types-PyYAML types-requests
 
       - name: Collect Changed Python Files
         run: |
