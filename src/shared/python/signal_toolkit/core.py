@@ -1,5 +1,3 @@
-# TRACKED_TASK: see #2310 — architecture debt extraction schedule
-
 """Core signal classes and utilities.
 
 This module provides the fundamental Signal class and SignalGenerator
@@ -10,6 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import numpy as np
 
@@ -33,7 +32,19 @@ class Signal:
         name: Optional name for the signal.
         units: Optional units string (e.g., 'N*m', 'rad/s').
         metadata: Additional metadata dictionary.
+
+    Class-level tolerance constants for time-array comparison in binary ops
+    (__add__, __sub__, __mul__, __truediv__).  Override at the class level
+    (e.g. ``Signal.TIME_ATOL = 1e-4``) to handle drifting sensor timestamps.
+
+        TIME_RTOL: relative tolerance for np.allclose (default 1e-5).
+        TIME_ATOL: absolute tolerance for np.allclose (default 1e-8).
     """
+
+    # Tolerances for time-array comparison in binary ops.  Override at the
+    # class level to accommodate sensor jitter.
+    TIME_RTOL: ClassVar[float] = 1e-5
+    TIME_ATOL: ClassVar[float] = 1e-8
 
     time: np.ndarray
     values: np.ndarray
@@ -76,14 +87,14 @@ class Signal:
         """Sampling frequency in Hz."""
         if len(self.time) < 2:
             return 1.0
-        return 1.0 / np.mean(np.diff(self.time))
+        return float(1.0 / np.mean(np.diff(self.time)))
 
     @property
     def dt(self) -> float:
         """Time step in seconds."""
         if len(self.time) < 2:
             return 1.0
-        return np.mean(np.diff(self.time))
+        return float(np.mean(np.diff(self.time)))
 
     @property
     def duration(self) -> float:
@@ -117,8 +128,7 @@ class Signal:
         Returns:
             New Signal with the sliced data.
         """
-        if not (t_start is not None):
-            raise ValueError("t_start must be provided")
+        assert t_start is not None, "t_start must be provided"
         mask = (self.time >= t_start) & (self.time <= t_end)
         return Signal(
             time=self.time[mask],
@@ -137,8 +147,7 @@ class Signal:
         Returns:
             New Signal with resampled data.
         """
-        if not (new_fs is not None):
-            raise ValueError("new_fs must be provided")
+        assert new_fs is not None, "new_fs must be provided"
         require(new_fs > 0, "new_fs must be positive", new_fs)
         new_dt = 1.0 / new_fs
         new_time = np.arange(self.time[0], self.time[-1], new_dt)
@@ -162,10 +171,11 @@ class Signal:
 
     def __add__(self, other: Signal | float | np.ndarray) -> Signal:
         """Add two signals or add a constant."""
-        if not (other is not None):
-            raise ValueError("other must be provided")
+        assert other is not None, "other must be provided"
         if isinstance(other, Signal):
-            if not np.allclose(self.time, other.time):
+            if not np.allclose(
+                self.time, other.time, rtol=self.TIME_RTOL, atol=self.TIME_ATOL
+            ):
                 msg = "Signals must have the same time array for addition"
                 raise ValueError(msg)
             return Signal(
@@ -185,10 +195,11 @@ class Signal:
 
     def __mul__(self, other: Signal | float | np.ndarray) -> Signal:
         """Multiply two signals or multiply by a constant."""
-        if not (other is not None):
-            raise ValueError("other must be provided")
+        assert other is not None, "other must be provided"
         if isinstance(other, Signal):
-            if not np.allclose(self.time, other.time):
+            if not np.allclose(
+                self.time, other.time, rtol=self.TIME_RTOL, atol=self.TIME_ATOL
+            ):
                 msg = "Signals must have the same time array for multiplication"
                 raise ValueError(msg)
             return Signal(
@@ -218,10 +229,11 @@ class Signal:
 
     def __sub__(self, other: Signal | float | np.ndarray) -> Signal:
         """Subtract two signals or subtract a constant."""
-        if not (other is not None):
-            raise ValueError("other must be provided")
+        assert other is not None, "other must be provided"
         if isinstance(other, Signal):
-            if not np.allclose(self.time, other.time):
+            if not np.allclose(
+                self.time, other.time, rtol=self.TIME_RTOL, atol=self.TIME_ATOL
+            ):
                 msg = "Signals must have the same time array for subtraction"
                 raise ValueError(msg)
             return Signal(
@@ -241,32 +253,23 @@ class Signal:
 
     def __truediv__(self, other: Signal | float | np.ndarray) -> Signal:
         """Divide two signals or divide by a constant."""
-        if not (other is not None):
-            raise ValueError("other must be provided")
+        assert other is not None, "other must be provided"
         if isinstance(other, Signal):
-            if not np.allclose(self.time, other.time):
+            if not np.allclose(
+                self.time, other.time, rtol=self.TIME_RTOL, atol=self.TIME_ATOL
+            ):
                 msg = "Signals must have the same time array for division"
                 raise ValueError(msg)
-            # Check for zeros in denominator to prevent silent inf/NaN
-            zero_count = np.sum(other.values == 0)
-            require(
-                zero_count == 0,
-                f"Cannot divide by Signal with {zero_count} zero values",
-                zero_count,
-            )
+            if np.any(other.values == 0):
+                raise ValueError(
+                    "Division by zero: denominator Signal contains zero values"
+                )
             return Signal(
                 time=self.time.copy(),
                 values=self.values / other.values,
                 name=f"({self.name} / {other.name})",
                 units=self.units,
                 metadata=dict(self.metadata),
-            )
-        # Check for zero scalar divisor
-        if isinstance(other, (float, int, np.number)):
-            require(
-                other != 0,
-                f"Cannot divide by zero (got {other})",
-                other,
             )
         return Signal(
             time=self.time.copy(),
@@ -296,13 +299,10 @@ class Signal:
 
     def __rtruediv__(self, other: float | np.ndarray) -> Signal:
         """Support reverse division (e.g., 2 / signal)."""
-        # Check for zeros in denominator to prevent silent inf/NaN
-        zero_count = np.sum(self.values == 0)
-        require(
-            zero_count == 0,
-            f"Cannot divide by Signal with {zero_count} zero values",
-            zero_count,
-        )
+        if np.any(self.values == 0):
+            raise ValueError(
+                "Division by zero: denominator Signal contains zero values"
+            )
         return Signal(
             time=self.time.copy(),
             values=other / self.values,
@@ -359,8 +359,7 @@ class SignalGenerator:
         Returns:
             Signal: y = amplitude * sin(2*pi*frequency*t + phase) + offset
         """
-        if not (t is not None):
-            raise ValueError("t must be provided")
+        assert t is not None, "t must be provided"
         values = amplitude * np.sin(2 * np.pi * frequency * t + phase) + offset
         return Signal(time=t, values=values, name=name)
 
@@ -386,8 +385,7 @@ class SignalGenerator:
         Returns:
             Signal: y = amplitude * cos(2*pi*frequency*t + phase) + offset
         """
-        if not (t is not None):
-            raise ValueError("t must be provided")
+        assert t is not None, "t must be provided"
         values = amplitude * np.cos(2 * np.pi * frequency * t + phase) + offset
         return Signal(time=t, values=values, name=name)
 
@@ -411,8 +409,7 @@ class SignalGenerator:
         Returns:
             Signal: y = amplitude * exp(-decay_rate * t) + offset
         """
-        if not (t is not None):
-            raise ValueError("t must be provided")
+        assert t is not None, "t must be provided"
         t_shifted = t - t[0]  # Start from t=0
         values = amplitude * np.exp(-decay_rate * t_shifted) + offset
         return Signal(time=t, values=values, name=name)
@@ -435,8 +432,7 @@ class SignalGenerator:
         Returns:
             Signal: y = slope * t + intercept
         """
-        if not (t is not None):
-            raise ValueError("t must be provided")
+        assert t is not None, "t must be provided"
         t_shifted = t - t[0]  # Start from t=0
         values = slope * t_shifted + intercept
         return Signal(time=t, values=values, name=name)
@@ -458,8 +454,7 @@ class SignalGenerator:
         Returns:
             Signal with polynomial values.
         """
-        if not (t is not None):
-            raise ValueError("t must be provided")
+        assert t is not None, "t must be provided"
         coeffs = np.asarray(coefficients)
         t_shifted = t - t[0]  # Start from t=0
         values = np.polyval(coeffs[::-1], t_shifted)
@@ -485,8 +480,7 @@ class SignalGenerator:
         Returns:
             Signal with step at step_time.
         """
-        if not (t is not None):
-            raise ValueError("t must be provided")
+        assert t is not None, "t must be provided"
         values = np.where(t >= step_time, step_value, initial_value)
         return Signal(time=t, values=values, name=name)
 
@@ -512,8 +506,7 @@ class SignalGenerator:
         Returns:
             Signal with rectangular pulse.
         """
-        if not (t is not None):
-            raise ValueError("t must be provided")
+        assert t is not None, "t must be provided"
         values = np.where(
             (t >= start_time) & (t < start_time + duration),
             amplitude,
@@ -543,17 +536,14 @@ class SignalGenerator:
         Returns:
             Signal with chirp waveform.
         """
-        if not (t is not None):
-            raise ValueError("t must be provided")
-        require(len(t) >= 2, "chirp requires at least two time points", len(t))
+        assert t is not None, "t must be provided"
         t_shifted = t - t[0]
         t_end = t_shifted[-1]
-        # Guard against zero or negative duration (repeated/out-of-order timestamps)
-        require(
-            t_end > 0,
-            f"chirp requires a positive time span, got duration={t_end}",
-            t_end,
-        )
+        if t_end <= 0:
+            raise ValueError(
+                f"chirp() requires a positive time span; got t_end={t_end}"
+                " (check for repeated or non-monotonic timestamps)"
+            )
 
         if method == "linear":
             # Linear frequency sweep
@@ -593,9 +583,7 @@ class SignalGenerator:
         Returns:
             Signal with sawtooth waveform.
         """
-        if not (t is not None):
-            raise ValueError("t must be provided")
-        require(frequency > 0, "frequency must be positive", frequency)
+        assert t is not None, "t must be provided"
         period = 1.0 / frequency
         t_shifted = t - t[0]
         phase = (t_shifted % period) / period
@@ -622,9 +610,7 @@ class SignalGenerator:
         Returns:
             Signal with triangle waveform.
         """
-        if not (t is not None):
-            raise ValueError("t must be provided")
-        require(frequency > 0, "frequency must be positive", frequency)
+        assert t is not None, "t must be provided"
         period = 1.0 / frequency
         t_shifted = t - t[0]
         phase = (t_shifted % period) / period
@@ -654,9 +640,7 @@ class SignalGenerator:
         Returns:
             Signal with square waveform.
         """
-        if not (t is not None):
-            raise ValueError("t must be provided")
-        require(frequency > 0, "frequency must be positive", frequency)
+        assert t is not None, "t must be provided"
         period = 1.0 / frequency
         t_shifted = t - t[0]
         phase = (t_shifted % period) / period
@@ -679,8 +663,7 @@ class SignalGenerator:
         Returns:
             Signal with values from the function.
         """
-        if not (t is not None):
-            raise ValueError("t must be provided")
+        assert t is not None, "t must be provided"
         values = func(t)
         return Signal(time=t, values=values, name=name)
 
