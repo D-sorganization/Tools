@@ -13,7 +13,6 @@ Usage:
 from __future__ import annotations
 
 import logging
-from enum import StrEnum
 
 from cors import add_cors_middleware
 from fastapi import FastAPI, HTTPException
@@ -22,6 +21,7 @@ from upstream_drift_tools.calculators.thermo.steam_engine import (
     SteamCalculationEngine,
     SteamProperties,
 )
+from utils.compatibility import StrEnum
 
 logger = logging.getLogger(__name__)
 
