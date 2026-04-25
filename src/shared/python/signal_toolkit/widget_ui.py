@@ -43,7 +43,7 @@ class UISetupMixin:
 
     def _setup_ui(self) -> None:
         """Setup the user interface."""
-        main_layout = QHBoxLayout(self)  # type: ignore[arg-type]
+        main_layout = QHBoxLayout(self)
         main_layout.setContentsMargins(10, 10, 10, 10)
 
         # Splitter for resizable panels
@@ -891,18 +891,18 @@ class UISetupMixin:
         layout = QVBoxLayout(panel)
 
         # Main plot canvas
-        self.canvas = MplCanvas(self, width=8, height=5, dpi=100)  # type: ignore[arg-type]
+        self.canvas = MplCanvas(self, width=8, height=5, dpi=100)
         self.canvas.setup_dark_theme()
 
         # Toolbar
-        self.toolbar = NavigationToolbar2QT(self.canvas, self)  # type: ignore[arg-type]
+        self.toolbar = NavigationToolbar2QT(self.canvas, self)
         self.toolbar.setStyleSheet("background-color: #333;")
 
         layout.addWidget(self.toolbar)
         layout.addWidget(self.canvas, 1)
 
         # Secondary plot for derivative/integral
-        self.canvas2 = MplCanvas(self, width=8, height=3, dpi=100)  # type: ignore[arg-type]
+        self.canvas2 = MplCanvas(self, width=8, height=3, dpi=100)
         self.canvas2.setup_dark_theme()
         layout.addWidget(self.canvas2)
 

@@ -150,6 +150,6 @@ class PlottingMixin:
         if not (joints is not None):
             raise ValueError("joints must be provided")
         self_w = cast("WidgetProtocol", self)
-        self_w.joint_names = joints  # type: ignore[assignment]
+        self_w.joint_names = joints
         self_w.joint_combo.clear()
         self_w.joint_combo.addItems(joints)

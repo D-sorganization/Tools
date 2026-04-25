@@ -10,6 +10,8 @@ from enum import Enum  # noqa: E402
 
 import numpy as np  # noqa: E402
 
+import typing
+
 from .core import Signal  # noqa: E402
 
 # Module-level constants for periodic noise generation
@@ -48,7 +50,7 @@ class NoiseGenerator:
         t: np.ndarray,
         noise_type: NoiseType = NoiseType.WHITE,
         amplitude: float = 1.0,
-        **kwargs,
+        **kwargs: typing.Any,
     ) -> Signal:
         """Generate a noise signal.
 
@@ -99,7 +101,7 @@ class NoiseGenerator:
             values = self._generate_periodic_noise(n, amplitude, frequency, fs)
 
         else:
-            values = self._generate_white_noise(n, amplitude)
+            values = self._generate_white_noise(n, amplitude)  # type: ignore[unreachable]
 
         return Signal(
             time=t,
@@ -252,7 +254,7 @@ def add_noise_to_signal(
     snr_db: float | None = None,
     amplitude: float | None = None,
     seed: int | None = None,
-    **kwargs,
+    **kwargs: typing.Any,
 ) -> Signal:
     """Add noise to an existing signal.
 
@@ -300,7 +302,7 @@ def add_noise_to_signal(
 def generate_disturbance_profile(
     t: np.ndarray,
     disturbance_type: str = "step",
-    **kwargs,
+    **kwargs: typing.Any,
 ) -> Signal:
     """Generate a disturbance signal for simulation.
 
@@ -408,7 +410,7 @@ class DisturbanceSimulator:
         self,
         noise_type: NoiseType = NoiseType.WHITE,
         amplitude: float = 0.1,
-        **kwargs,
+        **kwargs: typing.Any,
     ) -> DisturbanceSimulator:
         """Add a noise component.
 

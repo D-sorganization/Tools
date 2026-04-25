@@ -11,6 +11,7 @@ import logging
 import sys
 
 import numpy as np
+import typing
 
 logger = logging.getLogger(__name__)
 
@@ -229,7 +230,7 @@ else:
     class SignalToolkitWidget:  # type: ignore[no-redef]
         """Stub class when PyQt6 or matplotlib is not available."""
 
-        def __init__(self, *args, **kwargs) -> None:
+        def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
             msg = "SignalToolkitWidget requires PyQt6 and matplotlib"
             raise ImportError(msg)
 

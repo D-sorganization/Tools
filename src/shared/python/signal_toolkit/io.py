@@ -13,6 +13,7 @@ import json
 import logging
 from collections.abc import Callable
 from pathlib import Path
+import typing
 from typing import Any
 
 import numpy as np
@@ -93,7 +94,7 @@ class SignalImporter:
 
         # Parse data
         time_data = []
-        value_data = {i: [] for i in value_indices}
+        value_data: dict[int, list[float]] = {i: [] for i in value_indices}
 
         for row in data_rows:
             if len(row) <= time_idx:
@@ -450,7 +451,7 @@ def import_from_csv(
     file_path: str | Path,
     time_column: str | int = 0,
     value_columns: str | int | list[str | int] | None = None,
-    **kwargs,
+    **kwargs: typing.Any,
 ) -> Signal | list[Signal]:
     """Import signal(s) from a CSV file (convenience function).
 
@@ -469,7 +470,7 @@ def import_from_csv(
 def export_to_csv(
     signal: Signal | list[Signal],
     file_path: str | Path,
-    **kwargs,
+    **kwargs: typing.Any,
 ) -> None:
     """Export signal(s) to a CSV file (convenience function).
 
@@ -498,7 +499,7 @@ class SignalLoader:
     def load(
         cls,
         file_path: str | Path,
-        **kwargs,
+        **kwargs: typing.Any,
     ) -> Signal | list[Signal]:
         """Load signal(s) from a file with automatic format detection.
 
@@ -618,7 +619,7 @@ class BatchProcessor:
     def load_all(
         self,
         pattern: str = "*.csv",
-        **kwargs,
+        **kwargs: typing.Any,
     ) -> dict[str, Signal | list[Signal]]:
         """Load all signals from matching files.
 
@@ -648,8 +649,8 @@ class BatchProcessor:
         pattern: str = "*.csv",
         output_dir: str | Path | None = None,
         output_format: str = "csv",
-        **kwargs,
-    ) -> dict[str, Signal]:
+        **kwargs: typing.Any,
+    ) -> dict[str, Signal | list[Signal]]:
         """Load, process, and optionally save all signals.
 
         Args:
@@ -665,7 +666,7 @@ class BatchProcessor:
         if not (processor is not None):
             raise ValueError("processor must be provided")
         files = self.find_files(pattern)
-        results = {}
+        results: dict[str, Signal | list[Signal]] = {}
 
         if output_dir:
             output_dir = Path(output_dir)
@@ -676,6 +677,7 @@ class BatchProcessor:
                 signal = SignalLoader.load(file_path, **kwargs)
 
                 # Handle multiple signals
+                processed: Signal | list[Signal]
                 if isinstance(signal, list):
                     processed = [processor(s) for s in signal]
                 else:
@@ -689,9 +691,12 @@ class BatchProcessor:
                     if output_format == "csv":
                         SignalExporter.to_csv(processed, output_path)
                     elif output_format == "json":
+                        processed_single: Signal
                         if isinstance(processed, list):
-                            processed = processed[0]  # JSON only supports single signal
-                        SignalExporter.to_json(processed, output_path)
+                            processed_single = processed[0]  # JSON only supports single signal
+                        else:
+                            processed_single = processed
+                        SignalExporter.to_json(processed_single, output_path)
                     elif output_format == "npz":
                         SignalExporter.to_npz(processed, output_path)
 
