@@ -602,12 +602,16 @@ function addCustomUnit() {
 
     if (!unit) {
       customUnitInput.classList.add('has-error');
+      customUnitInput.setAttribute('aria-invalid', 'true');
+      customUnitInput.focus();
       showModalError('Please enter a unit symbol');
       return;
     }
 
     if (isNaN(factor) || factor <= 0) {
       conversionFactorInput.classList.add('has-error');
+      conversionFactorInput.setAttribute('aria-invalid', 'true');
+      conversionFactorInput.focus();
       showModalError('Please enter a valid positive conversion factor');
       return;
     }
@@ -1012,6 +1016,7 @@ function setupEventListeners() {
   [customUnitInput, conversionFactorInput].forEach(input => {
     input.addEventListener('input', () => {
       input.classList.remove('has-error');
+      input.removeAttribute('aria-invalid');
       hideModalMessage();
     });
   });

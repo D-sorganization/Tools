@@ -60,3 +60,7 @@
 ## $(date +%Y-%m-%d) - [Accessible Soft Confirm Pattern]
 **Learning:** Native `confirm()` dialogs block the main thread and provide poor user experience, especially for accessibility where focus management can be lost upon return.
 **Action:** When implementing destructive actions, use an inline "soft confirm" pattern (requiring a second click on the same button with updated text/aria-label) combined with `aria-live` on the container to ensure smooth flow and screen reader awareness.
+
+## 2026-04-25 - [Dynamic Focus for Inline Validation]
+**Learning:** When inline form validation fails, relying solely on visual error states or `aria-invalid` attributes is insufficient. If keyboard focus remains unchanged, screen reader and keyboard users are not directed to the error, creating a confusing experience where the form submission seemingly does nothing.
+**Action:** When implementing inline form validation, always dynamically shift focus to the first invalid field using `.focus()` in addition to setting `aria-invalid="true"`. This prevents keyboard focus traps and ensures assistive technologies immediately announce the context of the error.
