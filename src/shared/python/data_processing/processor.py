@@ -119,10 +119,11 @@ class DataProcessor:
                 from data_processor.core.dat_importer import read_dat_file
 
                 self._df = read_dat_file(str(path))
-            except ImportError as exc:
+            except ImportError:
                 raise ImportError(
-                    "dat_importer not installed; install it to read .dat files"
-                ) from exc
+                    "Loading .dat files requires the 'data_processor' package. "
+                    "Install it or convert the file to CSV format first."
+                ) from None
         else:
             raise ValueError(f"Unsupported file format: {suffix}")
 
@@ -202,26 +203,22 @@ class DataProcessor:
                 df, target_rate, time_col=time_column, method=method
             )
         except ImportError:
-            # Fallback using pandas
             import numpy as np
 
-            t = df[time_column].values
+            t = np.asarray(df[time_column].values)
+            # Validate monotonicity
             if not np.all(np.diff(t) > 0):
                 raise ValueError(
-                    "time column must be monotonically increasing before resampling"
+                    f"Time column '{time_column}' is not strictly monotonically"
+                    " increasing; resampling requires sorted timestamps."
                 ) from None
-            t_new = np.linspace(
-                t[0],
-                t[-1],
-                num=int(round((t[-1] - t[0]) * target_rate)) + 1,
-            )
+            n_samples = int(round((t[-1] - t[0]) * target_rate)) + 1
+            t_new = np.linspace(t[0], t[-1], n_samples)
             new_df = pd.DataFrame({time_column: t_new})
             for col in df.columns:
                 if col == time_column:
                     continue
-                new_df[col] = np.interp(
-                    t_new, np.asarray(t), np.asarray(df[col].values)
-                )
+                new_df[col] = np.interp(t_new, t, np.asarray(df[col].values))
             self._df = new_df
 
         self._history.append(f"Resampled to {target_rate} Hz ({method})")
@@ -326,18 +323,20 @@ class DataProcessor:
             values = df[column].values.astype(float)
             if filter_type == "butterworth":
                 sample_rate = 1000
-                nyquist = sample_rate / 2
+                nyquist = sample_rate / 2.0
                 if cutoff >= nyquist:
                     raise ValueError(
-                        f"cutoff {cutoff} Hz must be less than Nyquist frequency"
-                        f" {nyquist} Hz (sample_rate={sample_rate})"
+                        f"Filter cutoff {cutoff} Hz must be below the Nyquist"
+                        f" frequency ({nyquist} Hz = sample_rate/2)."
+                        " Reduce cutoff or increase sample_rate."
                     )
                 b, a = butter(order, cutoff, btype="low", fs=sample_rate)
-                min_len = 3 * (max(len(b), len(a)) - 1) + 1
+                min_len = 3 * (max(len(b), len(a)) - 1)
                 if len(values) < min_len:
                     raise ValueError(
-                        f"Signal too short for filter order {order}: need"
-                        f" ≥{min_len} samples, got {len(values)}"
+                        f"Column has {len(values)} samples but filtfilt requires"
+                        f" at least {min_len} samples for a filter of this order."
+                        " Use a lower filter order."
                     )
                 df[column] = filtfilt(b, a, values)
             elif filter_type == "moving_average":
