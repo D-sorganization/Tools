@@ -53,7 +53,8 @@ jobs:
           pip install -r requirements.txt
           pip install fastapi
           pip install httpx pytest-cov pytest-xdist pytest-benchmark
-          pip install ruff==0.14.10 mypy==1.13.0 bandit==1.7.7 pip-audit sortedcontainers types-PyYAML types-requests
+          pip install ruff==0.14.10 bandit==1.7.7 pip-audit sortedcontainers types-PyYAML types-requests
+          pip install --ignore-installed mypy==1.13.0
 
       - name: Collect Changed Python Files
         run: |
