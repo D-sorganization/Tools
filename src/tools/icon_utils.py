@@ -9,7 +9,12 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from PIL import Image
 
-from shared.python.contracts import require
+try:
+    from shared.python.contracts import require
+except ImportError:  # pragma: no cover
+    _SRC = Path(__file__).resolve().parent.parent
+    sys.path.insert(0, str(_SRC))
+    from shared.python.contracts import require
 
 logger = logging.getLogger(__name__)
 
