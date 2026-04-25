@@ -116,7 +116,7 @@ def _apply_saturation_values(
         result = _exponential_clip(normalized, smoothness)
 
     else:
-        result = np.clip(normalized, -1, 1)
+        result = np.clip(normalized, -1, 1)  # type: ignore[unreachable]
 
     # Scale back to original range and clamp to guarantee bounds
     # Postcondition: output ∈ [lower, upper] for all modes

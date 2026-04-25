@@ -16,7 +16,7 @@ try:
     from contracts import require
 except ImportError:
 
-    def require(condition: object, message: str = "", *args: object) -> None:  # type: ignore[misc]
+    def require(condition: object, message: str = "", *args: object) -> None:
         """Fallback DbC require when pycontracts is not installed."""
         if not condition:
             raise ValueError(message)
@@ -101,7 +101,7 @@ class Signal:
         """Total duration in seconds."""
         if len(self.time) < 2:
             return 0.0
-        return self.time[-1] - self.time[0]
+        return float(self.time[-1] - self.time[0])
 
     @property
     def n_samples(self) -> int:
