@@ -16,7 +16,7 @@ class FlaskAdapter:
     """Adapter for Flask framework."""
 
     def __init__(self, api: ModelGenerationAPI) -> None:
-        if not (api is not None):
+        if api is None:
             raise ValueError("api must be provided")
         self.api = api
 
