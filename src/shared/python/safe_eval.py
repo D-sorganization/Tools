@@ -73,8 +73,10 @@ _ALLOWED_NODE_TYPES: tuple[type, ...] = (
 NUMPY_MATH_NAMESPACE: dict[str, Any] = {
     # Standard functions (numpy versions for array support)
     "abs": np.abs,
-    "min": np.minimum,
-    "max": np.maximum,
+    "min": np.min,
+    "max": np.max,
+    "minimum": np.minimum,
+    "maximum": np.maximum,
     "sum": np.sum,
     "len": len,
     "round": np.round,
