@@ -91,7 +91,7 @@ class SignalImporter:
 
         # Parse data
         time_data = []
-        value_data = {i: [] for i in value_indices}
+        value_data: dict[int, list[float]] = {i: [] for i in value_indices}
 
         for row in data_rows:
             if len(row) <= time_idx:
@@ -352,9 +352,9 @@ class SignalExporter:
             data[sig.name] = sig.values
 
         if compressed:
-            np.savez_compressed(file_path, **data)
+            np.savez_compressed(file_path, **data)  # type: ignore[arg-type]
         else:
-            np.savez(file_path, **data)
+            np.savez(file_path, **data)  # type: ignore[arg-type]
 
     @staticmethod
     def to_json(
@@ -639,7 +639,7 @@ class BatchProcessor:
         output_dir: str | Path | None = None,
         output_format: str = "csv",
         **kwargs,
-    ) -> dict[str, Signal]:
+    ) -> dict[str, Signal | list[Signal]]:
         """Load, process, and optionally save all signals.
 
         Args:
@@ -665,6 +665,7 @@ class BatchProcessor:
                 signal = SignalLoader.load(file_path, **kwargs)
 
                 # Handle multiple signals
+                processed: Signal | list[Signal]
                 if isinstance(signal, list):
                     processed = [processor(s) for s in signal]
                 else:
