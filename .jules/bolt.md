@@ -7,3 +7,9 @@
 ## 2024-05-18 - Split Array Windowing to Avoid Bounds Checking in Hot Paths
 **Learning:** For array sliding-window algorithms (like median or Gaussian filtering), running `Math.min` and `Math.max` bounds checks on every iteration of the main loop adds significant overhead.
 **Action:** Split the loop into three parts: left edge, middle section, and right edge. The middle section (the hot path) can then run without bounds checking, which noticeably speeds up execution for large arrays.
+## 2024-05-18 - Optimize array statistics and chained iteration on large datasets
+**Learning:** Using the spread operator (`...vals`) inside `Math.min()` or `Math.max()` on large signal data arrays causes a "Maximum call stack size exceeded" error. Similarly, using chained `.map().filter()` or `.reduce()` calls on such datasets incurs significant overhead and triggers excessive garbage collection pauses.
+**Action:** Replace `Math.min(...vals)` and chained iterators with single-pass `for` loops to manually track statistics and build subset arrays without intermediate array allocation.
+## 2024-05-24 - Maximize CPU Cache Locality in Column-Major Matrices
+**Learning:** When computing PCA scores over column-major data implemented as `Float64Array[]`, a traditional row-major inner loop severely thrashes the CPU cache by hopping between disjoint memory buffers.
+**Action:** Reordered the nested loops to ensure the innermost loop iterates sequentially over rows for a given column (`cols[j][i]`), resulting in a sequential memory access pattern that drastically reduces execution time.
