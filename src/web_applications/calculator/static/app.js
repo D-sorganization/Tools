@@ -240,14 +240,17 @@ function registerEvents() {
       renderTouchExpression();
 
       clearButton.textContent = "CLEAR";
+      clearButton.setAttribute("aria-label", "Clear all fields");
       delete clearButton.dataset.confirming;
       clearTimeout(clearConfirmTimeout);
     } else {
       clearButton.textContent = "CONFIRM?";
+      clearButton.setAttribute("aria-label", "Confirm clear all fields");
       clearButton.dataset.confirming = "true";
 
       clearConfirmTimeout = setTimeout(() => {
         clearButton.textContent = "CLEAR";
+        clearButton.setAttribute("aria-label", "Clear all fields");
         delete clearButton.dataset.confirming;
       }, 3000);
     }
