@@ -634,3 +634,5 @@ Active development with stable core, continuous tool expansion, and web API in p
 ## 2026-04-20
 
 - Update unit converter clear history button accessibility (ARIA labels, disabled state)
+### Version 1.1.108
+- **Performance**: Optimized signal statistics and FFT chart data generation in `FunctionGenerator.tsx` by replacing the use of the array spread operator (`...vals`) inside `Math.min`/`Math.max` and chained iterators (`.map().filter()`, `.reduce()`) with single-pass `for` loops. This prevents runtime "Maximum call stack size exceeded" errors and significantly reduces GC overhead.
