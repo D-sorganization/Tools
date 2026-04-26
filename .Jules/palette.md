@@ -64,3 +64,7 @@
 ## 2026-04-25 - [Dynamic Focus for Inline Validation]
 **Learning:** When inline form validation fails, relying solely on visual error states or `aria-invalid` attributes is insufficient. If keyboard focus remains unchanged, screen reader and keyboard users are not directed to the error, creating a confusing experience where the form submission seemingly does nothing.
 **Action:** When implementing inline form validation, always dynamically shift focus to the first invalid field using `.focus()` in addition to setting `aria-invalid="true"`. This prevents keyboard focus traps and ensures assistive technologies immediately announce the context of the error.
+
+## 2026-04-26 - [Dynamic Accessible Name for Soft Confirm Pattern]
+**Learning:** When using the soft confirm pattern on destructive actions (e.g., clear buttons changing to "CONFIRM?"), merely changing the text content (`textContent`) and providing `aria-live="polite"` on the parent does not update the accessible name of the button itself, leaving screen reader users without explicit context for the required secondary action.
+**Action:** Always dynamically manipulate the `aria-label` attribute (e.g., changing from "Clear all fields" to "Confirm clear all fields") concurrently with the visual text change, restoring it appropriately when the timeout occurs or the action completes.
