@@ -7,3 +7,6 @@
 ## 2024-05-18 - Optimize array statistics and chained iteration on large datasets
 **Learning:** Using the spread operator (`...vals`) inside `Math.min()` or `Math.max()` on large signal data arrays causes a "Maximum call stack size exceeded" error. Similarly, using chained `.map().filter()` or `.reduce()` calls on such datasets incurs significant overhead and triggers excessive garbage collection pauses.
 **Action:** Replace `Math.min(...vals)` and chained iterators with single-pass `for` loops to manually track statistics and build subset arrays without intermediate array allocation.
+## 2024-05-24 - Maximize CPU Cache Locality in Column-Major Matrices
+**Learning:** When computing PCA scores over column-major data implemented as `Float64Array[]`, a traditional row-major inner loop severely thrashes the CPU cache by hopping between disjoint memory buffers.
+**Action:** Reordered the nested loops to ensure the innermost loop iterates sequentially over rows for a given column (`cols[j][i]`), resulting in a sequential memory access pattern that drastically reduces execution time.
