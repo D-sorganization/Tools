@@ -267,15 +267,17 @@ function computePCA(data: DataRow[], signals: string[], numComponents?: number):
   }
 
   // Scores (n x nc)
-  const scores: number[][] = Array.from({ length: n }, () => new Array(nc));
-  for (let i = 0; i < n; i++) {
+  // ⚡ Bolt Optimization: Reverse loop order to traverse elements sequentially within a single column (Z_cols[j][i]).
+  // This maximizes CPU cache locality for the column-major Z_cols array (Float64Array[])
+  // and significantly reduces execution time.
+  const scores: number[][] = Array.from({ length: n }, () => new Array(nc).fill(0));
+  for (let j = 0; j < p; j++) {
+    const col = Z_cols[j];
     for (let c = 0; c < nc; c++) {
-      let s = 0;
-      const ev = eigenvectors[c];
-      for (let j = 0; j < p; j++) {
-        s += Z_cols[j][i] * ev[j];
+      const loading = eigenvectors[c][j];
+      for (let i = 0; i < n; i++) {
+        scores[i][c] += col[i] * loading;
       }
-      scores[i][c] = s;
     }
   }
 
