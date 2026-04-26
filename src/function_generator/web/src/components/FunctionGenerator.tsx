@@ -397,24 +397,57 @@ export function FunctionGenerator() {
   const freqChartData = useMemo(() => {
     const nyquist = sampleRate / 2;
     // Use max frequency from all enabled layers
-    const maxLayerFreq = Math.max(
-      ...layers.filter(l => l.enabled).map(l => l.params.frequency || l.params.chirpF1 || 10)
-    );
+    let maxLayerFreq = 0;
+    for (let i = 0; i < layers.length; i++) {
+      if (layers[i].enabled) {
+        const freq = layers[i].params.frequency || layers[i].params.chirpF1 || 10;
+        if (freq > maxLayerFreq) {
+          maxLayerFreq = freq;
+        }
+      }
+    }
     const maxFreq = Math.min(nyquist, Math.max(maxLayerFreq * 8, 50));
 
-    return fftData.freq
-      .map((f, i) => ({ freq: f, magnitude: fftData.magnitude[i] }))
-      .filter(d => d.freq <= maxFreq && d.freq >= 0);
+    // ⚡ Bolt Optimization: Use single-pass for loop to build frequency data, avoiding chained .map().filter()
+    const result = [];
+    const freqs = fftData.freq;
+    const mags = fftData.magnitude;
+    for (let i = 0; i < freqs.length; i++) {
+      const f = freqs[i];
+      if (f <= maxFreq && f >= 0) {
+        result.push({ freq: f, magnitude: mags[i] });
+      }
+    }
+    return result;
   }, [fftData, sampleRate, layers]);
 
   // Signal statistics
   const stats = useMemo(() => {
     const vals = signal.values;
-    const min = Math.min(...vals);
-    const max = Math.max(...vals);
-    const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
-    const rms = Math.sqrt(vals.reduce((a, b) => a + b * b, 0) / vals.length);
-    return { min, max, mean, rms, samples: vals.length, layers: layers.filter(l => l.enabled).length };
+    let min = Infinity;
+    let max = -Infinity;
+    let sum = 0;
+    let sumSq = 0;
+
+    // ⚡ Bolt Optimization: Calculate stats in a single pass to avoid spread operator on large arrays
+    // and eliminate chained .reduce() which causes excessive GC overhead
+    for (let i = 0; i < vals.length; i++) {
+      const v = vals[i];
+      if (v < min) min = v;
+      if (v > max) max = v;
+      sum += v;
+      sumSq += v * v;
+    }
+
+    const mean = sum / vals.length;
+    const rms = Math.sqrt(sumSq / vals.length);
+
+    let enabledLayers = 0;
+    for (let i = 0; i < layers.length; i++) {
+      if (layers[i].enabled) enabledLayers++;
+    }
+
+    return { min, max, mean, rms, samples: vals.length, layers: enabledLayers };
   }, [signal, layers]);
 
   // Alias for backward compatibility in renderParams
