@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | N/A                                        |
-| **Spec Version**        | 1.1.109                                    |
+| **Spec Version**        | 1.1.111                                    |
 | **Last Spec Update**    | 2026-04-26                                 |
 
 ## 2. Purpose & Mission
@@ -464,7 +464,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-04-26 | 1.1.109 | Improved accessibility for the calculator clear button's soft confirm state. Added `aria-live="polite"` to the parent row and dynamically toggled the `aria-label` between "Clear all fields" and "Confirm clear all fields" to keep screen reader users informed of the required secondary action.                                                                                                                                                                                                                                                                 |
+| 2026-04-26 | 1.1.111 | Improved accessibility for the calculator clear button's soft confirm state. Added `aria-live="polite"` to the parent row and dynamically toggled the `aria-label` between "Clear all fields" and "Confirm clear all fields" to keep screen reader users informed of the required secondary action.                                                                                                                                                                                                                                                                 |
 | 2026-04-25 | 1.1.107 | Fixed StrEnum import compatibility for Python 3.10 by routing `steam_engine_calculator` and `video_processor` API modules through the existing `utils.compatibility` backport facade, eliminating import-time failures on the 3.10 CI interpreter.                                                                                                                                                                                                                                                                                                                  |
 | 2026-04-25 | 1.1.106 | Added dynamic focus shifting to inline form validation within the Unit Converter app's Custom Units modal. This prevents keyboard focus traps by focusing the first invalid input (`.focus()`) and marking it with `aria-invalid="true"`.                                                                                                                                                                                                                                                                                                                           |
 | 2026-04-23 | 1.1.103 | Tightened the shared `model_generation` unified-loader conversion contract so malformed MJCF/URDF XML parse failures are wrapped as `ConversionError`, converter-raised `ConversionError` instances propagate unchanged, and regression tests lock the typed error/logging behavior.                                                                                                                                                                                                                                                                                |
@@ -636,10 +636,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 - Update unit converter clear history button accessibility (ARIA labels, disabled state)
 
-### Version 1.1.109
+### Version 1.1.111
 
 - **Performance**: Optimized signal statistics and FFT chart data generation in `FunctionGenerator.tsx` by replacing the use of the array spread operator (`...vals`) inside `Math.min`/`Math.max` and chained iterators (`.map().filter()`, `.reduce()`) with single-pass `for` loops. This prevents runtime "Maximum call stack size exceeded" errors and significantly reduces GC overhead.
-
-### Version 1.1.109
-
 - **Performance**: Replaced `.map()` and `.push()` with pre-allocated single-pass `for` loops in `pcaScatterData`, `regressionScatterData`, and `regressionResidualsData` within `AnalyticsSuite.tsx` to eliminate dynamic resizing overhead and intermediate object allocations.
+- **Security**: Fixed DOM-based Cross-Site Scripting (XSS) vulnerability in `psa_calculator.html` by implementing and applying an `escapeHtml` function to user-controlled inputs before updating `innerHTML`.
