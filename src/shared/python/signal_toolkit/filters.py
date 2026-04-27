@@ -86,11 +86,6 @@ class FilterSpec:
         Returns:
             Tuple of (frequencies, magnitude, phase).
         """
-<<<<<<< HEAD
-=======
-        if not (num_points is not None):
-            raise ValueError("num_points must be provided")
->>>>>>> origin/main
         w, h = scipy_signal.freqz(self.b, self.a, worN=num_points, fs=self.fs)
         magnitude = np.abs(h)
         phase = np.angle(h)
@@ -108,11 +103,6 @@ class FilterSpec:
         Returns:
             Tuple of (time, impulse_response).
         """
-<<<<<<< HEAD
-=======
-        if not (num_samples is not None):
-            raise ValueError("num_samples must be provided")
->>>>>>> origin/main
         impulse = np.zeros(num_samples)
         impulse[0] = 1.0
 
@@ -357,11 +347,6 @@ def apply_filter(
     Returns:
         Filtered signal.
     """
-<<<<<<< HEAD
-=======
-    if not (signal is not None):
-        raise ValueError("signal must be provided")
->>>>>>> origin/main
     if zero_phase:
         # Zero-phase filtering (no phase distortion)
         filtered_values = filtfilt(filter_spec.b, filter_spec.a, signal.values)
@@ -417,11 +402,6 @@ def create_butterworth_filter(
     Returns:
         FilterSpec.
     """
-<<<<<<< HEAD
-=======
-    if not (filter_type is not None):
-        raise ValueError("filter_type must be provided")
->>>>>>> origin/main
     ft = FilterType(filter_type)
     return FilterDesigner.butterworth(ft, cutoff, fs, order)
 
@@ -445,11 +425,6 @@ def create_chebyshev_filter(
     Returns:
         FilterSpec.
     """
-<<<<<<< HEAD
-=======
-    if not (filter_type is not None):
-        raise ValueError("filter_type must be provided")
->>>>>>> origin/main
     ft = FilterType(filter_type)
     return FilterDesigner.chebyshev1(ft, cutoff, fs, order, ripple_db)
 
@@ -486,11 +461,6 @@ def create_savgol_filter(
     Returns:
         Function that applies Savitzky-Golay filter to values.
     """
-<<<<<<< HEAD
-=======
-    if not (window_length is not None):
-        raise ValueError("window_length must be provided")
->>>>>>> origin/main
     if window_length % 2 == 0:
         window_length += 1
 
@@ -515,11 +485,6 @@ def apply_moving_average(
     Returns:
         Filtered signal.
     """
-<<<<<<< HEAD
-=======
-    if not (signal is not None):
-        raise ValueError("signal must be provided")
->>>>>>> origin/main
     filter_func = create_moving_average_filter(window_size)
     filtered_values = filter_func(signal.values)
 
@@ -547,11 +512,6 @@ def apply_savgol(
     Returns:
         Filtered signal.
     """
-<<<<<<< HEAD
-=======
-    if not (signal is not None):
-        raise ValueError("signal must be provided")
->>>>>>> origin/main
     if window_length % 2 == 0:
         window_length += 1
 
@@ -589,11 +549,6 @@ def apply_median_filter(
     Returns:
         Filtered signal.
     """
-<<<<<<< HEAD
-=======
-    if not (signal is not None):
-        raise ValueError("signal must be provided")
->>>>>>> origin/main
     if kernel_size % 2 == 0:
         kernel_size += 1
 
@@ -621,11 +576,6 @@ def apply_exponential_smoothing(
     Returns:
         Smoothed signal.
     """
-<<<<<<< HEAD
-=======
-    if not (signal is not None):
-        raise ValueError("signal must be provided")
->>>>>>> origin/main
     values = signal.values
     smoothed = np.zeros_like(values)
     smoothed[0] = values[0]
@@ -655,11 +605,6 @@ def apply_gaussian_smoothing(
     Returns:
         Smoothed signal.
     """
-<<<<<<< HEAD
-=======
-    if not (signal is not None):
-        raise ValueError("signal must be provided")
->>>>>>> origin/main
     from scipy.ndimage import gaussian_filter1d
 
     filtered_values = gaussian_filter1d(signal.values, sigma)
@@ -692,11 +637,6 @@ def apply_bilateral_filter(
     Returns:
         Filtered signal.
     """
-<<<<<<< HEAD
-=======
-    if not (signal is not None):
-        raise ValueError("signal must be provided")
->>>>>>> origin/main
     values = signal.values
     n = len(values)
     filtered = np.zeros(n)
@@ -736,7 +676,6 @@ def apply_bilateral_filter(
             "sigma_intensity": sigma_intensity,
         },
     )
-<<<<<<< HEAD
 
 
 class AdaptiveFilter:
@@ -846,5 +785,3 @@ class AdaptiveFilter:
         )
 
         return filtered, error
-=======
->>>>>>> origin/main

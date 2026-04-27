@@ -18,11 +18,6 @@ from data_processing.processor import (
     DatasetInfo,
 )
 
-<<<<<<< HEAD
-=======
-from contracts import PreconditionError
-
->>>>>>> origin/main
 # ──────────────────────────────────────────────────────────────────────────────
 # Fixtures
 # ──────────────────────────────────────────────────────────────────────────────

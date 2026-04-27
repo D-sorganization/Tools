@@ -78,14 +78,8 @@ class SceneRenderMixin:
         Args:
             julian_date: The current simulation time.
         """
-<<<<<<< HEAD
         assert julian_date is not None, "julian_date must be provided"
         if not self.renderer:  # type: ignore[attr-defined]
-=======
-        if not (julian_date is not None):
-            raise ValueError("julian_date must be provided")
-        if not self.renderer:
->>>>>>> origin/main
             return
         renderer = self.renderer  # type: ignore[attr-defined]
 
@@ -107,18 +101,10 @@ class SceneRenderMixin:
 
     def _render_sun(self, renderer: Any, julian_date: float) -> None:
         """Render the Sun body and label."""
-<<<<<<< HEAD
         assert julian_date is not None, "julian_date must be provided"
         if self.sun:  # type: ignore[attr-defined]
             renderer.render_body(self.sun, julian_date, self.selected_body == self.sun)  # type: ignore[attr-defined]
         if self.view_state.show_labels:  # type: ignore[attr-defined]
-=======
-        if not (julian_date is not None):
-            raise ValueError("julian_date must be provided")
-        if self.sun:
-            renderer.render_body(self.sun, julian_date, self.selected_body == self.sun)
-        if self.view_state.show_labels:
->>>>>>> origin/main
             sun_pos = np.array([0, 0, 0])
             renderer.render_label("Sun", sun_pos, priority=3)
 
@@ -136,14 +122,8 @@ class SceneRenderMixin:
 
     def _render_minor_bodies(self, renderer: Any, julian_date: float) -> None:
         """Render asteroids, comets, and the asteroid belt."""
-<<<<<<< HEAD
         assert julian_date is not None, "julian_date must be provided"
         if not self.view_state.show_minor_bodies:  # type: ignore[attr-defined]
-=======
-        if not (julian_date is not None):
-            raise ValueError("julian_date must be provided")
-        if not self.view_state.show_minor_bodies:
->>>>>>> origin/main
             return
 
         renderer.render_asteroid_belt(self.asteroid_belt_points)  # type: ignore[attr-defined]
@@ -182,14 +162,8 @@ class SceneRenderMixin:
 
     def _render_trajectories(self, renderer: Any, julian_date: float) -> None:
         """Render active transfer trajectories and famous mission paths."""
-<<<<<<< HEAD
         assert julian_date is not None, "julian_date must be provided"
         if not self.view_state.show_trajectories:  # type: ignore[attr-defined]
-=======
-        if not (julian_date is not None):
-            raise ValueError("julian_date must be provided")
-        if not self.view_state.show_trajectories:
->>>>>>> origin/main
             return
         for trajectory in self.trajectories:  # type: ignore[attr-defined]
             renderer.render_trajectory(trajectory.trajectory_points)
@@ -228,14 +202,8 @@ class SceneRenderMixin:
         Args:
             julian_date: The current simulation time.
         """
-<<<<<<< HEAD
         assert julian_date is not None, "julian_date must be provided"
         if not self.renderer:  # type: ignore[attr-defined]
-=======
-        if not (julian_date is not None):
-            raise ValueError("julian_date must be provided")
-        if not self.renderer:
->>>>>>> origin/main
             return
         renderer = self.renderer  # type: ignore[attr-defined]
 
@@ -246,14 +214,8 @@ class SceneRenderMixin:
 
     def _render_sidebar(self, renderer: Any, julian_date: float) -> None:
         """Render the sidebar panel with active-tab content."""
-<<<<<<< HEAD
         assert julian_date is not None, "julian_date must be provided"
         if not self.sidebar_panel:  # type: ignore[attr-defined]
-=======
-        if not (julian_date is not None):
-            raise ValueError("julian_date must be provided")
-        if not self.sidebar_panel:
->>>>>>> origin/main
             return
 
         content_key = self.sidebar_panel.tabs[  # type: ignore[attr-defined]
@@ -266,22 +228,12 @@ class SceneRenderMixin:
         self, content_key: str, julian_date: float
     ) -> dict[str, Any] | None:
         """Build the content data dict for the active sidebar tab."""
-<<<<<<< HEAD
         assert content_key is not None, "content_key must be provided"
         if content_key == "educational" and self.educational_panel:  # type: ignore[attr-defined]
             if self.selected_body:  # type: ignore[attr-defined]
                 info = self.selected_body.get_info_dict_at_time(julian_date)  # type: ignore[attr-defined]
                 self.educational_panel.set_body(self.selected_body.name, info)  # type: ignore[attr-defined]
             return self.educational_panel.get_render_data()  # type: ignore[attr-defined,no-any-return]
-=======
-        if not (content_key is not None):
-            raise ValueError("content_key must be provided")
-        if content_key == "educational" and self.educational_panel:
-            if self.selected_body:
-                info = self.selected_body.get_info_dict_at_time(julian_date)
-                self.educational_panel.set_body(self.selected_body.name, info)
-            return self.educational_panel.get_render_data()
->>>>>>> origin/main
 
         if content_key == "checklist" and self.immersion_checklist:  # type: ignore[attr-defined]
             return self.immersion_checklist.get_render_data()  # type: ignore[attr-defined,no-any-return]

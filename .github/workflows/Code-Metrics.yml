@@ -139,14 +139,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-
           node-version: "24"
 
-          node-version: "22"
-
-
       - name: Install jscpd
-        run: npm install -g jscpd
+        run: npm install -g jscpd@4.0.0
 
       - name: Run Duplication Analysis
         run: |

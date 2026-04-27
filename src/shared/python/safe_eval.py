@@ -223,21 +223,12 @@ def safe_eval(
     Any
         Result of the expression evaluation.
     """
-<<<<<<< HEAD
-=======
-    if expression is None:
-        raise ValueError("expression must be provided")
->>>>>>> origin/main
     if allowed_names is None:
         allowed_names = set(namespace.keys())
 
     tree = validate_expression(expression, allowed_names)
     code = compile(tree, "<safe_eval>", "eval")
-<<<<<<< HEAD
     return eval(code, {"__builtins__": {}}, namespace)  # nosec B307
-=======
-    return eval(code, {"__builtins__": {}}, namespace)  # nosec B307  # noqa: S307
->>>>>>> origin/main
 
 
 def safe_eval_math(
@@ -258,11 +249,6 @@ def safe_eval_math(
         If True, use numpy math functions (array-safe).  Otherwise use
         scalar ``math`` module functions.
     """
-<<<<<<< HEAD
-=======
-    if expression is None:
-        raise ValueError("expression must be provided")
->>>>>>> origin/main
     base = dict(NUMPY_MATH_NAMESPACE if use_numpy else SCALAR_MATH_NAMESPACE)
     if variables:
         base.update(variables)

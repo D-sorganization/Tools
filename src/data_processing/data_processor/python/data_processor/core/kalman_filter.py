@@ -233,21 +233,8 @@ class KalmanFilter:
         Returns:
             KalmanFilterResult with filtered states and diagnostics
         """
-<<<<<<< HEAD
         assert measurements is not None, "measurements must be provided"
         measurements = self._normalize_measurements(measurements)
-=======
-        if not (measurements is not None):
-            raise ValueError("measurements must be provided")
-        if measurements.ndim == 1:
-            measurements = measurements.reshape(-1, self.config.measurement_dim)
-        elif (
-            measurements.ndim == 2
-            and measurements.shape[1] != self.config.measurement_dim
-            and measurements.shape[0] == self.config.measurement_dim
-        ):
-            measurements = measurements.T
->>>>>>> origin/main
 
         T = measurements.shape[0]
         storage = self._allocate_storage(T)
@@ -276,7 +263,6 @@ class KalmanFilter:
             log_likelihood=log_likelihood,
         )
 
-<<<<<<< HEAD
     def _normalize_measurements(self, measurements: np.ndarray) -> np.ndarray:
         """Reshape measurements to the canonical ``(T, measurement_dim)`` form.
 
@@ -386,9 +372,6 @@ class KalmanFilter:
         storage["innovation_covariances"][t] = S
         storage["kalman_gains"][t] = K
 
-=======
-    @jit(nopython=True, fastmath=True)
->>>>>>> origin/main
     def smooth(self, filter_result: KalmanFilterResult) -> KalmanFilterResult:
         """Run Rauch-Tung-Striebel smoother for offline processing.
 

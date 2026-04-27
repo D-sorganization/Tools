@@ -49,11 +49,7 @@ python3 -m pytest -m dwsim                        # DWSIM integration tests
 5. Manifest validation — adding a module requires a manifest entry
 6. pytest with **10% coverage minimum**, must not regress on touched files
 7. No `print()` in `src/` — use logging
-<<<<<<< HEAD
 8. No TODO/FIXME unless tied to a tracked GitHub issue
-=======
-8. No TRACKED_TASK/TRACKED_DEFECT unless tied to a tracked GitHub issue
->>>>>>> origin/main
 
 ## Test Markers (13 Total)
 
@@ -90,12 +86,3 @@ Key markers:
 
 - `/gaai-deliver` — Run Delivery Loop for next ready backlog item
 - `/gaai-status` — Show current backlog and memory state
-<<<<<<< HEAD
-=======
-
-## Specification
-
-This repository's specification is defined in `SPEC.md` at the repo root.
-Read SPEC.md before making any changes. Update it when your changes
-affect documented functionality, features, or architecture.
->>>>>>> origin/main

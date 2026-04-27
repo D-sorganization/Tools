@@ -51,13 +51,8 @@ def _skew_symmetric(v: np.ndarray) -> np.ndarray:
 
 def _elementary_quaternion(axis_char: str, angle: float) -> np.ndarray:
     """Quaternion for an elementary rotation about a single axis."""
-<<<<<<< HEAD
     if not isinstance(axis_char, str):
         raise TypeError(f"axis_char must be a str, got {type(axis_char).__name__!r}")
-=======
-    if not (axis_char is not None):
-        raise ValueError("axis_char must be provided")
->>>>>>> origin/main
     idx = _AXIS_INDEX[axis_char]
     half = angle / 2.0
     q = np.zeros(4)
@@ -68,13 +63,8 @@ def _elementary_quaternion(axis_char: str, angle: float) -> np.ndarray:
 
 def _validate_quaternion_array(q: Any, name: str = "quaternion") -> np.ndarray:
     """Convert to ndarray and validate shape/finiteness."""
-<<<<<<< HEAD
     if not isinstance(name, str):
         raise TypeError(f"name must be a str, got {type(name).__name__!r}")
-=======
-    if not (name is not None):
-        raise ValueError("name must be provided")
->>>>>>> origin/main
     q = np.asarray(q, dtype=float)
     require(q.shape == (4,), f"{name} must have 4 elements", q.shape)
     require_finite(q, name)
@@ -83,13 +73,8 @@ def _validate_quaternion_array(q: Any, name: str = "quaternion") -> np.ndarray:
 
 def _validate_unit_quaternion(q: np.ndarray, name: str = "quaternion") -> None:
     """Require that q is a unit quaternion."""
-<<<<<<< HEAD
     if q is None:
         raise TypeError("q must be provided, got None")
-=======
-    if not (q is not None):
-        raise ValueError("q must be provided")
->>>>>>> origin/main
     norm = np.linalg.norm(q)
     require(
         bool(abs(norm - 1.0) < 1e-6),
@@ -100,13 +85,8 @@ def _validate_unit_quaternion(q: np.ndarray, name: str = "quaternion") -> None:
 
 def _validate_rotation_matrix(R: Any, name: str = "rotation matrix") -> np.ndarray:
     """Convert, validate shape, orthogonality, and det=+1."""
-<<<<<<< HEAD
     if not isinstance(name, str):
         raise TypeError(f"name must be a str, got {type(name).__name__!r}")
-=======
-    if not (name is not None):
-        raise ValueError("name must be provided")
->>>>>>> origin/main
     R = np.asarray(R, dtype=float)
     require(R.shape == (3, 3), f"{name} must be 3x3", R.shape)
     require_finite(R, name)
@@ -253,13 +233,8 @@ def axis_angle_to_quaternion(axis: Any, angle: float) -> np.ndarray:
     Precondition: axis is a unit vector.
     Postcondition: result is a unit quaternion.
     """
-<<<<<<< HEAD
     if not isinstance(angle, (int, float)):
         raise TypeError(f"angle must be a number, got {type(angle).__name__!r}")
-=======
-    if not (angle is not None):
-        raise ValueError("angle must be provided")
->>>>>>> origin/main
     axis = np.asarray(axis, dtype=float)
     require(axis.shape == (3,), "axis must have 3 elements", axis.shape)
     require_finite(axis, "axis")
@@ -322,13 +297,8 @@ def axis_angle_to_rotation_matrix(axis: Any, angle: float) -> np.ndarray:
     Precondition: axis is a unit vector.
     Postcondition: R in SO(3).
     """
-<<<<<<< HEAD
     if not isinstance(angle, (int, float)):
         raise TypeError(f"angle must be a number, got {type(angle).__name__!r}")
-=======
-    if not (angle is not None):
-        raise ValueError("angle must be provided")
->>>>>>> origin/main
     axis = np.asarray(axis, dtype=float)
     require(axis.shape == (3,), "axis must have 3 elements")
     require_unit_vector(axis, "axis")
@@ -425,13 +395,8 @@ def euler_to_quaternion(a: float, b: float, c: float, convention: str) -> np.nda
     Precondition: convention is one of the 12 valid conventions.
     Postcondition: result is unit quaternion.
     """
-<<<<<<< HEAD
     if not isinstance(a, (int, float)):
         raise TypeError(f"a must be a number, got {type(a).__name__!r}")
-=======
-    if not (a is not None):
-        raise ValueError("a must be provided")
->>>>>>> origin/main
     _validate_euler_convention(convention)
     conv = convention.lower()
     q1 = _elementary_quaternion(conv[0], a)
@@ -449,13 +414,8 @@ def quaternion_to_euler(q: Any, convention: str) -> tuple[float, float, float]:
     Precondition: q is unit quaternion, convention is valid.
     Postcondition: returned angles reproduce the same rotation.
     """
-<<<<<<< HEAD
     if not isinstance(convention, str):
         raise TypeError(f"convention must be a str, got {type(convention).__name__!r}")
-=======
-    if not (convention is not None):
-        raise ValueError("convention must be provided")
->>>>>>> origin/main
     q = _validate_quaternion_array(q)
     _validate_unit_quaternion(q)
     _validate_euler_convention(convention)
@@ -471,13 +431,8 @@ def _rotation_matrix_to_euler_impl(
 
     Handles both Tait-Bryan (e.g. xyz) and proper Euler (e.g. zyz).
     """
-<<<<<<< HEAD
     if R is None:
         raise TypeError("R must be provided, got None")
-=======
-    if not (R is not None):
-        raise ValueError("R must be provided")
->>>>>>> origin/main
     i, j, k = (_AXIS_INDEX[c] for c in conv)
 
     # Detect if this is a proper Euler convention (first == last axis)
@@ -534,26 +489,16 @@ def euler_to_rotation_matrix(
     a: float, b: float, c: float, convention: str
 ) -> np.ndarray:
     """Convert Euler angles to rotation matrix (via quaternion hub, DRY)."""
-<<<<<<< HEAD
     if not isinstance(a, (int, float)):
         raise TypeError(f"a must be a number, got {type(a).__name__!r}")
-=======
-    if not (a is not None):
-        raise ValueError("a must be provided")
->>>>>>> origin/main
     q = euler_to_quaternion(a, b, c, convention)
     return quaternion_to_rotation_matrix(q)
 
 
 def rotation_matrix_to_euler(R: Any, convention: str) -> tuple[float, float, float]:
     """Convert rotation matrix to Euler angles (via quaternion hub, DRY)."""
-<<<<<<< HEAD
     if not isinstance(convention, str):
         raise TypeError(f"convention must be a str, got {type(convention).__name__!r}")
-=======
-    if not (convention is not None):
-        raise ValueError("convention must be provided")
->>>>>>> origin/main
     R = _validate_rotation_matrix(R)
     q = rotation_matrix_to_quaternion(R)
     return quaternion_to_euler(q, convention)

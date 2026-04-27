@@ -227,14 +227,8 @@ class SceneEventMixin:
 
     def _handle_mouse_motion(self, pos: tuple[int, int], rel: tuple[int, int]) -> None:
         """Handle mouse motion."""
-<<<<<<< HEAD
         assert pos is not None, "pos must be provided"
         if not self.renderer:  # type: ignore[attr-defined]
-=======
-        if not (pos is not None):
-            raise ValueError("pos must be provided")
-        if not self.renderer:
->>>>>>> origin/main
             return
         if self._mouse_dragging:
             buttons = pygame.mouse.get_pressed()
@@ -256,14 +250,8 @@ class SceneEventMixin:
 
     def _handle_mouse_wheel(self, y_offset: float) -> None:
         """Handle mouse wheel events."""
-<<<<<<< HEAD
         assert y_offset is not None, "y_offset must be provided"
         if not self.renderer:  # type: ignore[attr-defined]
-=======
-        if not (y_offset is not None):
-            raise ValueError("y_offset must be provided")
-        if not self.renderer:
->>>>>>> origin/main
             return
         mode = "Orbit"
         if self.unified_controls:  # type: ignore[attr-defined]
@@ -313,14 +301,8 @@ class SceneEventMixin:
         Returns:
             True if the click was consumed by the sidebar.
         """
-<<<<<<< HEAD
         assert x is not None, "x must be provided"
         if not self.sidebar_panel:  # type: ignore[attr-defined]
-=======
-        if not (x is not None):
-            raise ValueError("x must be provided")
-        if not self.sidebar_panel:
->>>>>>> origin/main
             return False
 
         sx, sy = self.sidebar_panel.position  # type: ignore[attr-defined]
@@ -374,14 +356,8 @@ class SceneEventMixin:
         Returns:
             True if the click was consumed by the control panel.
         """
-<<<<<<< HEAD
         assert x is not None, "x must be provided"
         if not self.unified_controls:  # type: ignore[attr-defined]
-=======
-        if not (x is not None):
-            raise ValueError("x must be provided")
-        if not self.unified_controls:
->>>>>>> origin/main
             return False
 
         cx, cy = self.unified_controls.position  # type: ignore[attr-defined]

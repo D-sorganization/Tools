@@ -64,7 +64,6 @@ def clubhead_speed_objective(
     neg_speed : JaxArray, shape ()
         Negative clubhead speed (for minimization)
     """
-<<<<<<< HEAD
     assert torque_coeffs.shape == (  # type: ignore[attr-defined]
         7,
     ), f"Expected (7,) coeffs, got {torque_coeffs.shape}"  # type: ignore[attr-defined]
@@ -73,16 +72,6 @@ def clubhead_speed_objective(
     assert initial_state.shape == (  # type: ignore[attr-defined]
         16,
     ), f"Expected (16,) state, got {initial_state.shape}"  # type: ignore[attr-defined]
-=======
-    if not (torque_coeffs.shape == (7,)):
-        raise ValueError(f"Expected (7,) coeffs, got {torque_coeffs.shape}")
-    if not (t_end > 0):
-        raise ValueError(f"t_end must be positive, got {t_end}")
-    if not (dt > 0):
-        raise ValueError(f"dt must be positive, got {dt}")
-    if not (initial_state.shape == (16,)):
-        raise ValueError(f"Expected (16,) state, got {initial_state.shape}")
->>>>>>> origin/main
     sol = run_single_simulation_jax(
         params, initial_state, t_end, torque_coeffs, alpha, beta, dt
     )
@@ -128,7 +117,6 @@ def clubhead_velocity_at_final_time(
     speed : JaxArray, shape ()
         Clubhead speed magnitude (positive)
     """
-<<<<<<< HEAD
     assert torque_coeffs.shape == (  # type: ignore[attr-defined]
         7,
     ), f"Expected (7,) coeffs, got {torque_coeffs.shape}"  # type: ignore[attr-defined]
@@ -137,16 +125,6 @@ def clubhead_velocity_at_final_time(
     assert initial_state.shape == (  # type: ignore[attr-defined]
         16,
     ), f"Expected (16,) state, got {initial_state.shape}"  # type: ignore[attr-defined]
-=======
-    if not (torque_coeffs.shape == (7,)):
-        raise ValueError(f"Expected (7,) coeffs, got {torque_coeffs.shape}")
-    if not (t_end > 0):
-        raise ValueError(f"t_end must be positive, got {t_end}")
-    if not (dt > 0):
-        raise ValueError(f"dt must be positive, got {dt}")
-    if not (initial_state.shape == (16,)):
-        raise ValueError(f"Expected (16,) state, got {initial_state.shape}")
->>>>>>> origin/main
     sol = run_single_simulation_jax(
         params, initial_state, t_end, torque_coeffs, alpha, beta, dt
     )
@@ -246,17 +224,10 @@ def optimize_torque_profile(
             logger.info("Iteration %d/%d: loss = %.6f", i + 1, n_iterations, loss_val)
 
     optimal_coeffs = torque_coeffs.reshape(7, n_coeffs_per_joint)
-<<<<<<< HEAD
     assert len(history) == n_iterations, (
         f"Expected {n_iterations} history entries, got {len(history)}"
     )
     assert optimal_coeffs.shape == (7, n_coeffs_per_joint)
-=======
-    if not (len(history) == n_iterations):
-        raise ValueError(f"Expected {n_iterations} history entries, got {len(history)}")
-    if not (optimal_coeffs.shape == (7, n_coeffs_per_joint)):
-        raise ValueError("optimal_coeffs has wrong shape")
->>>>>>> origin/main
 
     return optimal_coeffs, history
 
@@ -363,17 +334,10 @@ def compute_gradient_via_finite_difference(
     -------
     grad : JaxArray, shape (7,)
     """
-<<<<<<< HEAD
     assert torque_coeffs.shape == (  # type: ignore[attr-defined]
         7,
     ), f"Expected (7,) coeffs, got {torque_coeffs.shape}"  # type: ignore[attr-defined]
     assert eps > 0, f"eps must be positive, got {eps}"
-=======
-    if not (torque_coeffs.shape == (7,)):
-        raise ValueError(f"Expected (7,) coeffs, got {torque_coeffs.shape}")
-    if not (eps > 0):
-        raise ValueError(f"eps must be positive, got {eps}")
->>>>>>> origin/main
     grad = jnp.zeros(7)
 
     f0 = clubhead_speed_objective(torque_coeffs, params, initial_state, t_end, alpha, beta, dt)
@@ -385,11 +349,5 @@ def compute_gradient_via_finite_difference(
         )
         grad = grad.at[i].set((f_plus - f0) / eps)  # type: ignore[operator]
 
-<<<<<<< HEAD
     assert grad.shape == (7,)
     return grad  # type: ignore[no-any-return]
-=======
-    if not (grad.shape == (7,)):
-        raise ValueError("grad must have shape (7,)")
-    return grad
->>>>>>> origin/main
