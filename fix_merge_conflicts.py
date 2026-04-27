@@ -1,5 +1,4 @@
 import os
-import re
 
 def process_file(filepath):
     if not os.path.exists(filepath):
@@ -27,10 +26,7 @@ def process_file(filepath):
             in_head = False
             in_theirs = True
             continue
-        elif line.startswith('>>>>>>> origin/main') or line.startswith('>>>>>>> origin/'):
-            in_theirs = False
-            continue
-        elif line.startswith('>>>>>>> '):
+        elif line.startswith('>>>>>>> origin/main') or line.startswith('>>>>>>> origin/') or line.startswith('>>>>>>> '):
             in_theirs = False
             continue
 
