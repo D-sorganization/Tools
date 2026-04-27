@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 import os
-import re
 import warnings
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -50,7 +49,7 @@ def create_app() -> Flask:
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
     calculator = TI89Calculator()
     # Rate limit: 100 req/60s per IP per worker (in-memory — not shared across workers, see issue #2289)
-    app.limiter = RateLimiter(limit=100, window=60)  # type: ignore[attr-defined]
+    app.limiter = RateLimiter(limit=100, window=60)
 
     workers = int(os.environ.get("WEB_CONCURRENCY", "1"))
     if workers > 1:

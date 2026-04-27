@@ -25,7 +25,6 @@ try:
 except ImportError:
     # Minimal fallback if shared utils not available
     import sys
-    from pathlib import Path
 
     DEFAULT_SEED = 42
     LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -33,13 +32,13 @@ except ImportError:
     LOG_LEVEL = logging.INFO
     logger = logging.getLogger(__name__)
 
-    def get_logger(name: str) -> logging.Logger:  # type: ignore[misc]
+    def get_logger(name: str) -> logging.Logger:
         """Get a logger instance."""
         if name is None:
             name = __name__
         return logging.getLogger(name)
 
-    def setup_logging(  # type: ignore[misc]
+    def setup_logging(
         level: int = LOG_LEVEL,
         format_string: str = LOG_FORMAT,
     ) -> None:

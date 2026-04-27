@@ -8,12 +8,11 @@ Provides:
 
 import logging
 import os
-import shutil
 import sys
 from pathlib import Path
 
 from cors import add_cors_middleware
-from fastapi import FastAPI, HTTPException, UploadFile, Query
+from fastapi import FastAPI, HTTPException, Query, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -135,7 +134,10 @@ async def upload_file(
         if ext not in ALLOWED_EXTENSIONS:
             raise HTTPException(
                 status_code=400,
-                detail=f"Invalid file extension '{ext}'. Only {ALLOWED_EXTENSIONS} allowed.",
+                detail=(
+                    f"Invalid file extension '{ext}'. "
+                    f"Only {ALLOWED_EXTENSIONS} allowed."
+                ),
             )
 
         file_path = get_safe_path(file.filename)
@@ -161,7 +163,10 @@ async def upload_file(
                     file_path.unlink(missing_ok=True)
                     raise HTTPException(
                         status_code=413,
-                        detail=f"File too large. Maximum size is {MAX_UPLOAD_SIZE // (1024 * 1024)} MB.",
+                        detail=(
+                            "File too large. Maximum size is "
+                            f"{MAX_UPLOAD_SIZE // (1024 * 1024)} MB."
+                        ),
                     )
                 buffer.write(chunk)
 

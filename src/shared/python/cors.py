@@ -19,9 +19,12 @@ import os
 import re
 from typing import Any
 
-from contracts import require
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from contracts import require
+
+logger = logging.getLogger(__name__)
 
 # Default local-development origins used when CORS_ORIGINS env var is unset.
 DEFAULT_ORIGINS: list[str] = [
