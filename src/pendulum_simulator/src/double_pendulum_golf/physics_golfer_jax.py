@@ -583,18 +583,88 @@ def analytical_fk_jacobians_jax(q: JaxArray, p: GolferParamsJAX) -> dict[str, Ja
 
     jacobians: dict[str, JaxArray] = {}
 
+<<<<<<< HEAD
     jacobians: dict = {}
     jacobians.update(
         _right_arm_jacobians_jax(p, sin_hub, cos_hub, sin_rs, cos_rs, sin_re, cos_re)
+=======
+    # 1. Hub
+    jacobians["hub"] = _hub_jacobian(p, cos_hub, sin_hub)
+
+    # 2. RS (Right Shoulder) — hub + perpendicular shoulder offset
+    J_rs = jnp.zeros((2, N_DOF))
+    J_rs = J_rs.at[0, 0].set(p.L_hub * cos_hub - p.d_rs * sin_hub)
+    J_rs = J_rs.at[1, 0].set(p.L_hub * sin_hub + p.d_rs * cos_hub)
+    jacobians["rs"] = J_rs
+
+    # 3. RE (Right Elbow) — RS + upper-arm link
+    J_re = jnp.zeros((2, N_DOF))
+    J_re = J_re.at[0, 0].set(
+        p.L_hub * cos_hub - p.d_rs * sin_hub + p.L_r_upper * cos_rs
+>>>>>>> origin/main
     )
     jacobians.update(
         _left_arm_jacobians_jax(p, sin_hub, cos_hub, sin_ls, cos_ls, sin_le, cos_le)
     )
+<<<<<<< HEAD
     jacobians.update(
         _club_jacobians_jax(
             p, sin_hub, cos_hub, sin_rs, cos_rs, sin_re, cos_re, sin_club, cos_club
         )
     )
+=======
+    J_re = J_re.at[0, 1].set(p.L_r_upper * cos_rs)
+    J_re = J_re.at[1, 1].set(p.L_r_upper * sin_rs)
+    jacobians["re"] = J_re
+
+    # 4. RH (Right Hand) — full right-arm chain
+    jacobians["rh"] = _right_arm_base_jacobian(
+        p, cos_hub, sin_hub, cos_rs, sin_rs, cos_re, sin_re
+    )
+
+    # 5. LS (Left Shoulder) — hub + perpendicular shoulder offset
+    J_ls = jnp.zeros((2, N_DOF))
+    J_ls = J_ls.at[0, 0].set(p.L_hub * cos_hub + p.d_ls * sin_hub)
+    J_ls = J_ls.at[1, 0].set(p.L_hub * sin_hub - p.d_ls * cos_hub)
+    jacobians["ls"] = J_ls
+
+    # 6. LE (Left Elbow) — LS + upper-arm link
+    J_le = jnp.zeros((2, N_DOF))
+    J_le = J_le.at[0, 0].set(
+        p.L_hub * cos_hub + p.d_ls * sin_hub + p.L_l_upper * cos_ls
+    )
+    J_le = J_le.at[1, 0].set(
+        p.L_hub * sin_hub - p.d_ls * cos_hub + p.L_l_upper * sin_ls
+    )
+    J_le = J_le.at[0, 4].set(p.L_l_upper * cos_ls)
+    J_le = J_le.at[1, 4].set(p.L_l_upper * sin_ls)
+    jacobians["le"] = J_le
+
+    # 7. LH (Left Hand) — full left-arm chain
+    jacobians["lh"] = _left_arm_base_jacobian(
+        p, cos_hub, sin_hub, cos_ls, sin_ls, cos_le, sin_le
+    )
+
+    # 8. Club COM — right-hand attachment + club-angle contribution
+    coeff_com_x = 0.5 * p.L_club - p.grip_right
+    coeff_com_y = -0.5 * (p.L_club - 2 * p.grip_right)
+    J_club_com = _right_arm_base_jacobian(
+        p, cos_hub, sin_hub, cos_rs, sin_rs, cos_re, sin_re
+    )
+    J_club_com = J_club_com.at[0, 7].set(coeff_com_x * cos_club)
+    J_club_com = J_club_com.at[1, 7].set(coeff_com_y * sin_club)
+    jacobians["club_com"] = J_club_com
+
+    # 9. Club Tip — right-hand attachment + full-club-length contribution
+    coeff_tip = p.L_club - p.grip_right
+    J_club_tip = _right_arm_base_jacobian(
+        p, cos_hub, sin_hub, cos_rs, sin_rs, cos_re, sin_re
+    )
+    J_club_tip = J_club_tip.at[0, 7].set(coeff_tip * cos_club)
+    J_club_tip = J_club_tip.at[1, 7].set(-coeff_tip * sin_club)
+    jacobians["club_tip"] = J_club_tip
+
+>>>>>>> origin/main
     return jacobians
 
 

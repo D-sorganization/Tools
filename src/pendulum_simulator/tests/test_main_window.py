@@ -2,7 +2,11 @@ from typing import Any
 
 """Tests for MainWindow."""
 
+<<<<<<< HEAD
 from typing import Any
+=======
+
+>>>>>>> origin/main
 from unittest.mock import MagicMock, patch
 from PyQt6.QtCore import Qt, QSettings
 from PyQt6.QtGui import QWheelEvent
@@ -23,7 +27,10 @@ def test_main_window_init(qapp, monkeypatch) -> Any:
 
 
 def test_wheel_event_zoom(qapp) -> Any:
+<<<<<<< HEAD
     """Ctrl+wheel zoom respects offset bounds and never escapes them."""
+=======
+>>>>>>> origin/main
     w = MainWindow()
     w._font_zoom_pt = 0  # Start from the canonical zero offset
 

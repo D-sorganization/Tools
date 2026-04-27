@@ -54,6 +54,7 @@ class TestWheelBlockFilter:
         pass
 
     def test_event_filter_ctrl_wheel_actual_app(self, qapp) -> Any:
+<<<<<<< HEAD
         """Filter delegates Ctrl+wheel to MainWindow.adjust_global_font_zoom.
 
         The bounded helper guarantees the new size is base + clamped offset,
@@ -67,6 +68,9 @@ class TestWheelBlockFilter:
         QSettings("D-sorganization", "PendulumSimulator").setValue("font_zoom_pt", 0)
         MainWindow._apply_offset_to_app_font(0)
 
+=======
+        # qapp is provided by pytest-qt, giving a real QApplication
+>>>>>>> origin/main
         f = __main__._WheelBlockFilter()
 
         event = MagicMock()
@@ -95,6 +99,7 @@ class TestWheelBlockFilter:
         event.ignore.assert_called_once()
 
     def test_reset_font(self, qapp) -> Any:
+<<<<<<< HEAD
         """Filter.reset_font delegates to MainWindow.reset_global_font_zoom.
 
         The reset always restores the application font to the canonical
@@ -109,6 +114,8 @@ class TestWheelBlockFilter:
             MainWindow._FONT_BASE_PT + MainWindow._FONT_OFFSET_MAX
         )
 
+=======
+>>>>>>> origin/main
         f = __main__._WheelBlockFilter()
         f.reset_font()
         assert qapp.font().pointSize() == MainWindow._FONT_BASE_PT

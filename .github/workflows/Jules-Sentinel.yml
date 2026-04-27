@@ -22,7 +22,7 @@ jobs:
 
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -60,7 +60,7 @@ jobs:
           esac
   security-audit:
     needs: pick-runner
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
@@ -72,7 +72,11 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
+<<<<<<< HEAD
           node-version: "24"
+=======
+          node-version: "22"
+>>>>>>> origin/main
 
       - name: Install Dependencies
         run: |

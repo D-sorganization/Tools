@@ -16,8 +16,12 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from contracts import PreconditionError
+
+<<<<<<< HEAD
+=======
+from contracts import PreconditionError
+>>>>>>> origin/main
 from tools.launch_utils import (
     LaunchError,
     PlatformError,

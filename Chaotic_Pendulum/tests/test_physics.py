@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 import numpy as np
 import pytest
 from chaotic_pendulum.config import PhysicsConfig, RenderConfig
+=======
+import pytest
+from chaotic_pendulum.config import PhysicsConfig
+>>>>>>> origin/main
 from chaotic_pendulum.physics import PhysicsEngine
 
 
@@ -10,6 +15,7 @@ def test_physics_dbc_valid_constraints() -> None:
     assert cfg.m1 == 1.0
 
 
+<<<<<<< HEAD
 def test_physics_dbc_invalid_mass1() -> None:
     """DbC triggers ValueError on non-positive mass 1."""
     with pytest.raises(ValueError, match="Mass 1"):
@@ -76,6 +82,14 @@ def test_physics_engine_none_config() -> None:
         PhysicsEngine(None)  # type: ignore[arg-type]
 
 
+=======
+def test_physics_dbc_invalid_constraints() -> None:
+    """DbC triggers on negative mass."""
+    with pytest.raises(AssertionError):
+        PhysicsConfig(m1=-1.0)
+
+
+>>>>>>> origin/main
 def test_physics_engine_solver() -> None:
     """Solving outputs valid dict struct."""
     cfg = PhysicsConfig()
@@ -92,6 +106,7 @@ def test_physics_engine_solver() -> None:
     assert len(res["v2"]["coriolis"][0]) == 2
 
 
+<<<<<<< HEAD
 def test_physics_engine_solve_invalid_duration() -> None:
     """DbC triggers ValueError on non-positive duration."""
     cfg = PhysicsConfig()
@@ -108,6 +123,8 @@ def test_physics_engine_solve_invalid_dt() -> None:
         engine.solve(1.0, 0.0)
 
 
+=======
+>>>>>>> origin/main
 def test_equations_of_motion() -> None:
     """Ensures RHS ODE signature maps cleanly."""
     cfg = PhysicsConfig(damp1=1.0, damp2=1.0)  # test damping
@@ -117,6 +134,7 @@ def test_equations_of_motion() -> None:
     assert len(derivatives) == 4
 
 
+<<<<<<< HEAD
 def test_equations_of_motion_invalid_state() -> None:
     """DbC triggers ValueError when state vector is wrong length."""
     cfg = PhysicsConfig()
@@ -127,6 +145,13 @@ def test_equations_of_motion_invalid_state() -> None:
 
 def test_physics_force_vectors_tdd() -> None:
     """Verify analytical magnitude of Cartesian CF/Coriolis forces for first frame."""
+=======
+import numpy as np
+
+
+def test_physics_force_vectors_tdd() -> None:
+    """Verify analytical magnitude of Cartesian Centrifugal and Coriolis forces for first frame."""
+>>>>>>> origin/main
     cfg = PhysicsConfig(
         m1=1.0,
         m2=2.0,

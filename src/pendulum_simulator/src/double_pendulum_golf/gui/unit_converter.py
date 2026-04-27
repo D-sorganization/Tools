@@ -193,9 +193,16 @@ class UnitPreferences:
         Pre: unit_label must be a valid option for the category.
         """
         valid = [label for label, _ in _UNIT_OPTIONS[category]]
+<<<<<<< HEAD
         assert unit_label in valid, (
             f"Invalid unit '{unit_label}' for {category.value}. Valid: {valid}"
         )
+=======
+        if unit_label not in valid:
+            raise ValueError(
+                f"Invalid unit '{unit_label}' for {category.value}. Valid: {valid}"
+            )
+>>>>>>> origin/main
         self.selections[category] = unit_label
 
     def save_to_qsettings(self, settings: Any) -> None:

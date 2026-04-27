@@ -533,6 +533,7 @@ class MultiParamAnalysisWindow(QMainWindow):
         param1_values: np.ndarray,
         param2_values: np.ndarray,
     ) -> None:
+<<<<<<< HEAD
         """Run demo analysis with test function.
 
         Preconditions:
@@ -563,6 +564,11 @@ class MultiParamAnalysisWindow(QMainWindow):
                 f"param2_values must be a numpy ndarray, got {type(param2_values).__name__}"
             )
 
+=======
+        """Run demo analysis with test function."""
+        if not (param1_name is not None):
+            raise ValueError("param1_name must be provided")
+>>>>>>> origin/main
         demo_func = self.demo_func_combo.currentText()
 
         # Create meshgrid
@@ -651,6 +657,11 @@ class MultiParamAnalysisWindow(QMainWindow):
             raise TypeError(f"Z must be a numpy ndarray, got {type(Z).__name__}")
 
         # Simple variance-based sensitivity
+<<<<<<< HEAD
+=======
+        if not (param1_values is not None):
+            raise ValueError("param1_values must be provided")
+>>>>>>> origin/main
         total_var = Z.var()
 
         if total_var > 0:
@@ -693,6 +704,7 @@ class MultiParamAnalysisWindow(QMainWindow):
         param2_values: np.ndarray,
         Z: np.ndarray,
     ) -> None:
+<<<<<<< HEAD
         """Update the data preview.
 
         Preconditions:
@@ -711,6 +723,11 @@ class MultiParamAnalysisWindow(QMainWindow):
         if not isinstance(Z, np.ndarray):
             raise TypeError(f"Z must be a numpy ndarray, got {type(Z).__name__}")
 
+=======
+        """Update the data preview."""
+        if not (param1_values is not None):
+            raise ValueError("param1_values must be provided")
+>>>>>>> origin/main
         lines = []
         lines.append("Multi-Parameter Analysis Results")
         lines.append("=" * 50)

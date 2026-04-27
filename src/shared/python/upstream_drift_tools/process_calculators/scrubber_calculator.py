@@ -2,6 +2,43 @@
 
 """
 Packed Bed Scrubber Calculator Module
+=====================================
+
+Technical calculator for countercurrent packed bed scrubbers used in syngas
+acid gas removal applications. Implements industry-standard design methods.
+
+Design References:
+- Perry's Chemical Engineers' Handbook, 9th Edition
+- Treybal, R.E., "Mass Transfer Operations", 3rd Edition
+- Kohl, A.L., Nielsen, R.B., "Gas Purification", 5th Edition
+- Strigle, R.F., "Packed Tower Design and Applications", 2nd Edition
+- Eckert, J.S., "Design Techniques for Sizing Packed Towers" (Chem. Eng. Prog., 1961)
+
+Key Features:
+- Vessel sizing based on gas velocity and flooding correlations
+- Pressure drop calculation using Eckert's generalized correlation
+- NTU/HTU-based mass transfer design for acid gas removal
+- Heat transfer with water-side balance and approach temperature
+- Stoichiometric caustic consumption calculation
+- Comprehensive packing property database
+"""
+
+from dataclasses import dataclass  # noqa: E402
+from typing import Final  # noqa: E402
+
+<<<<<<< HEAD
+import numpy as np
+from contracts import (
+    check_non_negative,
+    check_positive,
+    check_pressure,
+    check_temperature,
+    ensure,
+    require,
+)
+=======
+import numpy as np  # noqa: E402
+>>>>>>> origin/main
 
 from .constants import (  # noqa: E402
     COOLING_WATER_APPROACH_TEMP,
@@ -288,8 +325,13 @@ def calculate_gas_viscosity(temperature_k: float, molecular_weight: float) -> fl
         Approximate correlation for light gas mixtures
     """
     # Base viscosity at 300K for syngas (approximately air-like)
+<<<<<<< HEAD
     check_temperature(temperature_k, "temperature_k")
     check_positive(molecular_weight, "molecular_weight")
+=======
+    if not (temperature_k is not None):
+        raise ValueError("temperature_k must be provided")
+>>>>>>> origin/main
     mu_ref = SYNGAS_VISCOSITY_REF  # Pa·s at 300K
     t_ref = SUTHERLAND_T_REF  # K
     s = SUTHERLAND_CONSTANT_AIR  # Sutherland constant for air-like gases
@@ -331,10 +373,15 @@ def calculate_flooding_velocity(
         Perry's Chemical Engineers' Handbook, 9th Edition, Eq. 14-139
     """
     # Flow parameter (Eckert abscissa)
+<<<<<<< HEAD
     check_non_negative(liquid_mass_flux, "liquid_mass_flux")
     check_positive(gas_density, "gas_density")
     check_positive(liquid_density, "liquid_density")
     check_positive(liquid_viscosity, "liquid_viscosity")
+=======
+    if not (liquid_mass_flux is not None):
+        raise ValueError("liquid_mass_flux must be provided")
+>>>>>>> origin/main
     flow_param = (liquid_mass_flux / 1.0) * np.sqrt(gas_density / liquid_density)
 
     # Capacity parameter at flooding (Eckert ordinate)
@@ -482,10 +529,15 @@ def calculate_htu(
         Strigle, R.F., "Packed Tower Design and Applications", 2nd Edition
     """
     # Convert kla from 1/hr to 1/s
+<<<<<<< HEAD
     check_positive(gas_mass_flux, "gas_mass_flux")
     check_positive(liquid_mass_flux, "liquid_mass_flux")
     check_positive(gas_density, "gas_density")
     check_non_negative(kla, "kla")
+=======
+    if not (gas_mass_flux is not None):
+        raise ValueError("gas_mass_flux must be provided")
+>>>>>>> origin/main
     kla_per_s = kla / SECONDS_PER_HOUR
 
     if kla_per_s <= 0:
@@ -558,9 +610,14 @@ def calculate_caustic_requirement(
         - salt_produced_kg_hr: Total salt produced [kg/hr]
     """
     # Stoichiometric ratios and molecular weights
+<<<<<<< HEAD
     require(acid_gas_removed is not None, "acid_gas_removed must be provided")
     check_non_negative(caustic_concentration, "caustic_concentration")
     check_positive(excess_factor, "excess_factor")
+=======
+    if not (acid_gas_removed is not None):
+        raise ValueError("acid_gas_removed must be provided")
+>>>>>>> origin/main
     stoich_data = {
         "hcl": (NAOH_STOICH_HCL, MW_HCL, MW_NACL),
         "so2": (NAOH_STOICH_SO2, MW_SO2, MW_NA2SO4),
@@ -643,9 +700,14 @@ def calculate_heat_transfer_duty(
         - total_heat_kj_hr: Total heat duty [kJ/hr]
     """
     # Convert flow to kg/s
+<<<<<<< HEAD
     check_positive(gas_flow_kg_hr, "gas_flow_kg_hr")
     check_non_negative(water_condensed_kg_hr, "water_condensed_kg_hr")
     check_positive(gas_cp, "gas_cp")
+=======
+    if not (gas_flow_kg_hr is not None):
+        raise ValueError("gas_flow_kg_hr must be provided")
+>>>>>>> origin/main
     gas_flow_kg_s = gas_flow_kg_hr / SECONDS_PER_HOUR
     water_condensed_kg_s = water_condensed_kg_hr / SECONDS_PER_HOUR
 
@@ -694,8 +756,13 @@ def calculate_cooling_water_requirement(
         - delta_t_water: Water temperature rise [°C]
     """
     # Water outlet temperature (limited by approach to gas outlet)
+<<<<<<< HEAD
     check_non_negative(heat_duty_kw, "heat_duty_kw")
     check_non_negative(approach_temp_c, "approach_temp_c")
+=======
+    if not (heat_duty_kw is not None):
+        raise ValueError("heat_duty_kw must be provided")
+>>>>>>> origin/main
     water_outlet_temp_c = outlet_gas_temp_c - approach_temp_c
     delta_t_water = water_outlet_temp_c - water_inlet_temp_c
 
@@ -755,6 +822,7 @@ def calculate_column_diameter(
         - diameter_ft: Column diameter [ft]
     """
     # Design velocity
+<<<<<<< HEAD
     check_positive(gas_flow_kg_hr, "gas_flow_kg_hr")
     check_positive(gas_density, "gas_density")
     check_non_negative(flooding_velocity, "flooding_velocity")
@@ -763,6 +831,10 @@ def calculate_column_diameter(
         "percent_of_flood must be in (0, 100]",
         percent_of_flood,
     )
+=======
+    if not (gas_flow_kg_hr is not None):
+        raise ValueError("gas_flow_kg_hr must be provided")
+>>>>>>> origin/main
     design_velocity = flooding_velocity * (percent_of_flood / 100.0)
 
     if design_velocity <= 0:

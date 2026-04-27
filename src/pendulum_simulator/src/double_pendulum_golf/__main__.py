@@ -88,9 +88,13 @@ __version__ = "0.1.0"
 def main() -> None:
     # Handle --version flag before any GUI initialization
     if "--version" in sys.argv:
+<<<<<<< HEAD
         # Version goes to stdout (not the logger) so `--version` works
         # without configuring logging and is captured by simple shells/CI.
         print(f"pendulum-simulator {__version__}")  # noqa: T201
+=======
+        logger.debug("pendulum-simulator %s", __version__)
+>>>>>>> origin/main
         sys.exit(0)
 
     _configure_logging()

@@ -132,6 +132,7 @@ class TestPressureDrop:
         r = client.post("/api/calc/pressure-drop", json=payload)
         assert r.status_code == 422
 
+<<<<<<< HEAD
     @pytest.mark.contract
     def test_delegates_to_pressure_drop_calculator(self, client: TestClient):
         """GH1705: Router must delegate to PressureDropCalculator, not inline logic.
@@ -172,6 +173,25 @@ class TestPressureDrop:
         assert body["flow_regime"] == direct.flow_regime
         assert pytest.approx(body["density_kg_m3"], rel=1e-9) == direct.density
         assert pytest.approx(body["viscosity_pa_s"], rel=1e-9) == direct.viscosity
+=======
+    def test_steam_viscosity_fallback(self, client: TestClient) -> Any:
+        # Steam at 600K
+        payload = self._payload(
+            gas_name="steam", temperature_k=600.0, molecular_weight_kg_mol=0.018015
+        )
+        r = client.post("/api/calc/pressure-drop", json=payload)
+        assert r.status_code == 200
+        body = r.json()
+        # Steam at 600K viscosity should be ~2.0e-5 Pa·s (20 uPa·s).
+        # We ensure it's calculated using the Sutherland consts for steam, not air.
+        assert pytest.approx(body["viscosity_pa_s"], rel=0.1) == 2.0e-5
+
+    def test_degenerate_input_zero_density(self, client: TestClient) -> Any:
+        payload = self._payload(pressure_pa=0.0)
+        r = client.post("/api/calc/pressure-drop", json=payload)
+        # Should raise 422 (Pydantic catches gt=0, but also inline logic catches it)
+        assert r.status_code == 422
+>>>>>>> origin/main
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1053,8 +1073,13 @@ class TestScrubberAsFloat:
 class TestPressureDropEdgeCases:
     """Unit-level tests for pressure-drop edge-case branches."""
 
+<<<<<<< HEAD
     def test_log10_exception_branch(self):
         """Very rough pipe → a_val + b_val could be ≤ 0 triggering ValueError fallback."""  # noqa: E501
+=======
+    def test_log10_exception_branch(self) -> Any:
+        """Very rough pipe → a_val + b_val could be ≤ 0 triggering ValueError fallback."""
+>>>>>>> origin/main
         from calc_backend.contracts.pressure_drop import PressureDropRequest
         from calc_backend.routers.pressure_drop import calculate_pressure_drop as _fn
 

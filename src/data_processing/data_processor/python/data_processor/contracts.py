@@ -88,24 +88,37 @@ except ImportError:
             }
             raise exc_map.get(kind, ContractViolationError)(msg, value)
 
+<<<<<<< HEAD
     def require(condition: bool, message: str, value: Any = None) -> None:
+=======
+    def require(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]
+>>>>>>> origin/main
         if _LEVEL == ContractLevel.OFF:
             return
         if not condition:
             _fail("pre-condition", message, value)
 
+<<<<<<< HEAD
     def ensure(condition: bool, message: str, value: Any = None) -> None:
+=======
+    def ensure(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]
+>>>>>>> origin/main
         if _LEVEL == ContractLevel.OFF:
             return
         if not condition:
             _fail("post-condition", message, value)
 
+<<<<<<< HEAD
     def invariant(condition: bool, message: str, value: Any = None) -> None:
+=======
+    def invariant(condition: bool, message: str, value: Any = None) -> None:  # type: ignore[misc]
+>>>>>>> origin/main
         if _LEVEL == ContractLevel.OFF:
             return
         if not condition:
             _fail("invariant", message, value)
 
+<<<<<<< HEAD
     def require_positive(value: float, name: str = "value") -> None:
         require(value > 0, f"{name} must be positive", value)
 
@@ -119,11 +132,29 @@ except ImportError:
         require(low <= value <= high, f"{name} must be in [{low}, {high}]", value)
 
     def require_finite(array: Any, name: str = "array") -> None:
+=======
+    def require_positive(value: float, name: str = "value") -> None:  # type: ignore[misc]
+        require(value > 0, f"{name} must be positive", value)
+
+    def check_positive(value: float, name: str = "value") -> None:  # type: ignore[misc]
+        require_positive(value, name)
+
+    def check_non_negative(value: float, name: str = "value") -> None:  # type: ignore[misc]
+        require(value >= 0, f"{name} must be non-negative", value)
+
+    def check_range(  # type: ignore[misc]
+        value: float, low: float, high: float, name: str = "value"
+    ) -> None:
+        require(low <= value <= high, f"{name} must be in [{low}, {high}]", value)
+
+    def require_finite(array: Any, name: str = "array") -> None:  # type: ignore[misc]
+>>>>>>> origin/main
         import numpy as np
 
         if not np.all(np.isfinite(array)):
             raise PreconditionError(f"{name} contains NaN or Inf values")
 
+<<<<<<< HEAD
     # Stub decorators — these are no-ops in the fallback; contract
     # checking should still occur via inline require()/ensure() calls.
     def get_contract_level() -> ContractLevel:
@@ -135,10 +166,21 @@ except ImportError:
     def precondition(condition: Any, message: str = "") -> Any:
         def dec(fn: Any) -> Any:
             return fn
+=======
+    def get_contract_level() -> ContractLevel:  # type: ignore[misc]
+        return _LEVEL
+
+    def set_contract_level(level: ContractLevel) -> None:  # type: ignore[misc]
+        pass
+
+    def precondition(condition: Any, message: str = "") -> Any:  # type: ignore[misc]
+        return lambda fn: fn
+>>>>>>> origin/main
 
     def postcondition(condition: Any, message: str = "") -> Any:  # type: ignore[misc]
         return lambda fn: fn
 
+<<<<<<< HEAD
     def postcondition(condition: Any, message: str = "") -> Any:
         def dec(fn: Any) -> Any:
             return fn
@@ -150,6 +192,10 @@ except ImportError:
             return fn
 
         return dec
+=======
+    def contract(**kwargs: Any) -> Any:  # type: ignore[misc]
+        return lambda fn: fn
+>>>>>>> origin/main
 
 
 __all__ = [

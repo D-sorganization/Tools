@@ -128,8 +128,12 @@ class AsteroidJumperRenderer(QWidget):
     # Qt event overrides
     # ------------------------------------------------------------------
 
+<<<<<<< HEAD
     def paintEvent(self, _event: object) -> None:
         assert _event is not None, "_event must be provided"
+=======
+    def paintEvent(self, _event: object) -> None:  # noqa: N802
+>>>>>>> origin/main
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         snapshot = self._ctrl.snapshot()

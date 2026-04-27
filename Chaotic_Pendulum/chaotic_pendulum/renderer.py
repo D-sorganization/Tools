@@ -470,7 +470,11 @@ class PendulumRenderer:
         )
 
     def setup_widgets(self) -> None:
+<<<<<<< HEAD
         """Set up UI inputs, menu, slider. Anchored in right margin (0.84+)."""
+=======
+        """Sets up UI inputs, menu, and speed slider. Anchored completely in right margin (0.84+)"""
+>>>>>>> origin/main
         menu_bg_color = "#1F2833"
 
         self.ax_toggle = self.fig.add_axes((0.85, 0.94, 0.12, 0.03))
@@ -701,14 +705,22 @@ class PendulumRenderer:
 
     def update_speed(self, val: float) -> None:
         """DbC: Sets playback speed dynamically."""
+<<<<<<< HEAD
         if val <= 0:
             raise ValueError("Playback speed must be positive")
+=======
+        assert val > 0, "Playback speed must be positive"
+>>>>>>> origin/main
         self.playback_speed = val
 
     def on_scroll(self, event: Any) -> None:
         """Law of Demeter isolated event driven zooming on pendulum axis."""
+<<<<<<< HEAD
         if event is None:
             raise TypeError("Event cannot be None")
+=======
+        assert event is not None, "Event cannot be None"
+>>>>>>> origin/main
         if event.inaxes != self.ax_pend:
             return
 

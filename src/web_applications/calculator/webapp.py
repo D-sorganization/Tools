@@ -3,8 +3,12 @@
 from __future__ import annotations
 
 import logging
+<<<<<<< HEAD
 import os
+import re
 import warnings
+=======
+>>>>>>> origin/main
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
@@ -48,8 +52,13 @@ def create_app() -> Flask:
     # This ensures correct IP resolution and HTTPS detection behind a reverse proxy (e.g. Nginx, ALB).
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
     calculator = TI89Calculator()
+<<<<<<< HEAD
     # Rate limit: 100 req/60s per IP per worker (in-memory — not shared across workers, see issue #2289)
+    app.limiter = RateLimiter(limit=100, window=60)  # type: ignore[attr-defined]
+=======
+    # Rate limit: 100 requests per 60 seconds per IP
     app.limiter = RateLimiter(limit=100, window=60)
+>>>>>>> origin/main
 
     workers = int(os.environ.get("WEB_CONCURRENCY", "1"))
     if workers > 1:

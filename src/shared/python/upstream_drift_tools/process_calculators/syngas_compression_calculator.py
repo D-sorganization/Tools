@@ -22,15 +22,20 @@ to work without changes.
 """
 
 import logging
-import math
 import os
-from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, cast
 
 from .constants import (
     ATOL_ZERO,
     CELSIUS_TO_KELVIN_OFFSET,
     INTERCOOLER_OUTLET_TEMP_K,
+)
+
+# Re-export engine classes so existing ``from ...syngas_compression_calculator import X``
+# imports continue to work.
+from .syngas_compression_engine import (  # noqa: F401
+    CompressionStage,
+    SyngasCompressionEngine,
 )
 
 # matplotlib is imported lazily inside methods to prevent Windows hang
@@ -107,25 +112,30 @@ def _get_figure_canvas_class() -> type:
 if TYPE_CHECKING:
     from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
+<<<<<<< HEAD
 # Import existing syngas water content utility
 # ruff: noqa: E402
 from contracts import check_positive, check_pressure, check_temperature, require
 
 from .constants import (
+    ATOL_ZERO,
     BAR_TO_PA,
+    CELSIUS_TO_KELVIN_OFFSET,
     COMPRESSION_HIGH_POWER_HP,
     COMPRESSION_HIGH_PRESSURE_BAR,
     COMPRESSION_MIN_EFFICIENCY,
     COMPRESSION_TEMP_CRITICAL_K,
     COMPRESSION_TEMP_WARNING_K,
     DEFAULT_GAMMA_DIATOMIC,
+    INTERCOOLER_OUTLET_TEMP_K,
     R_GAS_J_MOL_K,
     SECONDS_PER_HOUR,
     WATTS_PER_HP,
 )
-from .syngas_compression_engine import validate_gas_composition
 from .syngas_water_calculator import SyngasWaterCalculator
 
+=======
+>>>>>>> origin/main
 # Import BaseCalculatorWidget for state management
 try:
     from ..ui.widgets.base_calculator_widget import BaseCalculatorWidget
@@ -140,6 +150,7 @@ except ImportError:
             QWidget.__init__(self, *args, **kwargs)
 
 
+<<<<<<< HEAD
 # Import species database with fallback
 try:
     from integrated_process_simulator.calculators.thermodynamic_properties.species_database import (  # noqa: E501
@@ -554,6 +565,8 @@ class SyngasCompressionEngine:
         }
 
 
+=======
+>>>>>>> origin/main
 class CompressionCalculationWorker(QThread):
     """Worker thread for compression calculations"""
 

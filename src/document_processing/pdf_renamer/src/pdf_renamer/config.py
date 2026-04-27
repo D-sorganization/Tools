@@ -60,6 +60,7 @@ def _get_keyring() -> Any | None:
     try:
         import keyring
     except ImportError:
+<<<<<<< HEAD
         # Fallback if utils not available
         find_env_file = None
         load_env_file = None
@@ -101,6 +102,10 @@ except ImportError:
     except ImportError:
         # python-dotenv not installed, will fall back to environment variables
         pass
+=======
+        return None
+    return keyring
+>>>>>>> origin/main
 
 
 def get_api_key(key_name: str = "GEMINI_API_KEY") -> str | None:

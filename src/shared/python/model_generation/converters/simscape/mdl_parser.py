@@ -7,6 +7,7 @@ multibody system definitions.
 
 from __future__ import annotations  # noqa: E402, F404
 
+<<<<<<< HEAD
 import logging
 import re
 import zipfile
@@ -14,6 +15,16 @@ from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
+=======
+import logging  # noqa: E402
+import re  # noqa: E402
+import xml.etree.ElementTree as ET  # nosec B405 — type annotations + ParseError only; parsing uses defusedxml  # noqa: E402
+import zipfile  # noqa: E402
+from dataclasses import dataclass, field  # noqa: E402
+from enum import Enum  # noqa: E402
+from pathlib import Path  # noqa: E402
+from typing import Any  # noqa: E402
+>>>>>>> origin/main
 
 import defusedxml.ElementTree as DefusedET  # noqa: E402
 

@@ -1,7 +1,11 @@
+<<<<<<< HEAD
 """FastAPI adapter for the model generation REST API.
 
 Registers ``ModelGenerationAPI`` routes with a FastAPI application instance.
 """
+=======
+"""FastAPI adapter for the framework-neutral model_generation API."""
+>>>>>>> origin/main
 
 from __future__ import annotations
 
@@ -9,21 +13,44 @@ import logging
 from collections.abc import Callable
 from typing import Any
 
+<<<<<<< HEAD
 from .rest_api_routes import ModelGenerationAPI
 from .rest_api_types import APIRequest, HTTPMethod, Route
+=======
+from model_generation.api.rest_api_contracts import APIRequest, HTTPMethod, Route
+from model_generation.api.rest_api_core import ModelGenerationAPI
+>>>>>>> origin/main
 
 logger = logging.getLogger(__name__)
 
 
+<<<<<<< HEAD
 class FastAPIAdapter:
     """Adapter for FastAPI framework."""
 
     def __init__(self, api: ModelGenerationAPI) -> None:
+=======
+def _request_uses_form_parsing(request: Any) -> bool:
+    """Return True when the incoming request may contain form-backed uploads."""
+    content_type = request.headers.get("content-type", "").lower()
+    return bool(getattr(request, "_form_data", None)) or (
+        "multipart/form-data" in content_type
+        or "application/x-www-form-urlencoded" in content_type
+    )
+
+
+class FastAPIAdapter:
+    """Register model_generation routes on a FastAPI application."""
+
+    def __init__(self, api: ModelGenerationAPI) -> None:
+        """Bind the adapter to a framework-neutral API instance."""
+>>>>>>> origin/main
         if api is None:
             raise ValueError("api must be provided")
         self.api = api
 
     def register(self, app: Any) -> None:
+<<<<<<< HEAD
         """Register routes with FastAPI app."""
         from fastapi import Request, Response
         from fastapi.responses import JSONResponse
@@ -75,7 +102,65 @@ class FastAPIAdapter:
             app.add_api_route(
                 route.path,
                 make_handler(route),
+=======
+        """Register all API routes on the FastAPI app."""
+        for route in self.api.get_routes():
+            app.add_api_route(
+                route.path,
+                self._make_handler(route),
+>>>>>>> origin/main
                 methods=[route.method.value],
                 tags=route.tags,
                 summary=route.description,
             )
+<<<<<<< HEAD
+=======
+
+    def _make_handler(self, _route: Route) -> Callable[..., Any]:
+        """Build an async FastAPI handler for a route definition."""
+        from fastapi import Request, Response
+        from fastapi.responses import JSONResponse
+
+        async def handler(request: Request, **kwargs: Any) -> Any:
+            response = self.api.handle_request(
+                APIRequest(
+                    method=HTTPMethod(request.method),
+                    path=request.url.path,
+                    query_params={**request.query_params, **kwargs},
+                    body=await self._json_body(request),
+                    files=await self._uploaded_files(request),
+                    headers=dict(request.headers),
+                )
+            )
+            if isinstance(response.body, bytes):
+                return Response(
+                    content=response.body,
+                    status_code=response.status_code,
+                    media_type=response.content_type,
+                    headers=response.headers,
+                )
+            return JSONResponse(
+                content=response.body,
+                status_code=response.status_code,
+                headers=response.headers,
+            )
+
+        return handler
+
+    async def _json_body(self, request: Any) -> dict[str, Any] | None:
+        """Parse a JSON body when present, tolerating non-JSON requests."""
+        try:
+            return await request.json()
+        except (ValueError, UnicodeDecodeError) as error:
+            logger.debug("Failed to parse request JSON body: %s", error)
+            return None
+
+    async def _uploaded_files(self, request: Any) -> dict[str, bytes]:
+        """Collect uploaded file payloads from a FastAPI form body."""
+        files: dict[str, bytes] = {}
+        if _request_uses_form_parsing(request):
+            for key, value in (await request.form()).items():
+                if hasattr(value, "read"):
+                    files[key] = await value.read()
+        return files
+>>>>>>> origin/main

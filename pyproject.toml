@@ -93,7 +93,11 @@ dev = [
     "pytest-xdist>=3.0.0",
     "pytest-timeout>=2.0.0",
     "pytest-benchmark>=4.0.0",
+<<<<<<< HEAD
     "ruff>=0.1.0",
+=======
+    "ruff>=0.14,<1.0",  # Pinned floor matches requirements-lock (0.14.10); block the 1.x rewrite
+>>>>>>> origin/main
     "mypy>=1.0.0",
 ]
 
@@ -141,6 +145,7 @@ exclude = [
 # =============================================================================
 # Pytest Configuration
 # =============================================================================
+<<<<<<< HEAD
 # Ruff configuration lives in ruff.toml (authoritative). [tool.ruff] and
 # [tool.black] sections removed to eliminate conflicting duplicate config.
 [tool.pytest.ini_options]
@@ -148,6 +153,105 @@ testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+=======
+[tool.ruff]
+# Target Python 3.11 (matches CI environment)
+target-version = "py311"  # Matches requires-python floor; src/ uses 3.11 stdlib (tomllib)
+line-length = 88  # Matches Black standard (88 chars)
+
+# Exclude generated code and standard noise
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    "venv",
+    ".env",
+    "node_modules",
+    "*.ipynb",
+    "**/*.json",
+    "**/archive",
+    "**/legacy",
+    "replicants",
+    # Exclude directories/files with syntax errors or intentional non-compliance
+    "src/data_processing",
+    "src/document_processing",
+    "src/scientific_modeling",
+    "src/tools/folder_tools",
+    "src/tools/code_quality_check.py",
+    "src/pendulum_simulator",
+    "tests/data_processor",
+    "python/src/tile_launcher/app_catalog.json",
+    "python/tests",
+]
+
+[tool.ruff.lint]
+# Enable specific rule sets:
+# E = pycodestyle errors
+# F = Pyflakes (Logic errors)
+# W = pycodestyle warnings
+# I = isort (Import sorting)
+# B = flake8-bugbear (Catches likely bugs/traps)
+# UP = pyupgrade (Modernizes old Python syntax)
+select = ["E", "F", "W", "I", "B", "UP", "T20"]
+
+# Ignore:
+# D = pydocstyle (Doc-Scribe agent handles docstrings, not linted strictly here)
+# FBT = flake8-boolean-trap (Boolean positional arguments - style preference, not critical)
+# PT001 = pytest-fixture-incorrect-parentheses-style (Inconsistent between environments)
+ignore = ["D", "FBT", "PT001"]
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore "unused imports" in __init__.py files (common pattern)
+# Also ignore E402 (module-level import not at top) for __init__.py files
+# since version metadata assignments before imports are a standard Python pattern
+"__init__.py" = ["F401", "E402"]
+# Allow assertions in tests
+"tests/*" = ["S101"]
+"**/tests/*" = ["S101", "E402"]
+"**/*.py" = ["E501"]
+# Ignore boolean argument warnings in replicants
+"replicants/**/*.py" = ["FBT001"]
+# UP038 false positive: isinstance() requires tuple syntax, not union types
+"**/Data_Processor_r0.py" = ["UP038"]
+# Compatibility shims intentionally use version checks for older Python support
+"tools/compatibility.py" = ["UP036", "UP017"]
+# Notebooks use print() for display output - suppress T201 in all notebooks
+"**/*.ipynb" = ["T201"]
+# Scripts use print() for CLI output - this is intentional and correct
+"scripts/**/*.py" = ["T201"]
+"scripts/*.py" = ["T201"]
+# verify_launcher.py is a CLI verification tool — print() is the correct output mechanism
+"verify_launcher.py" = ["T201"]
+# test_test_utils.py intentionally uses print() to test the captured_output() context manager
+"tests/test_test_utils.py" = ["T201"]
+# src/data_processing and src/pendulum_simulator are legacy directories excluded
+# from ruff via [tool.ruff] exclude, but CI passes changed files directly to ruff
+# (overriding exclude). Suppress the pre-existing violations in these directories.
+"src/data_processing/**/*.py" = ["E402", "E501", "F811", "UP"]
+"src/pendulum_simulator/**/*.py" = ["E402", "E501", "F811"]
+
+[tool.ruff.lint.isort]
+# Tells Ruff how to group your own code vs. libraries
+known-first-party = ["src", "games", "tools"]
+
+[tool.ruff.format]
+# Make ruff-format produce identical output to black
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "src/pendulum_simulator/tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-ra --strict-markers --strict-config --tb=short --color=yes -p no:xvfb -m \"not live_simulation\""
+>>>>>>> origin/main
 pythonpath = [
     "src",
     "src/python/src",
@@ -159,10 +263,14 @@ pythonpath = [
     "src/scientific_modeling/rrt_path_planner/python/src",
     "src/media_processing/video_processor/python",
     "src/pendulum_simulator/src",
+<<<<<<< HEAD
     "src/folder_tool",
 ]
 addopts = "-ra -v --strict-markers --strict-config --tb=short --color=yes --durations=20 --benchmark-disable -n auto --dist loadscope -m \"not live_simulation\" -p no:xvfb"
 console_output_style = "progress"
+=======
+]
+>>>>>>> origin/main
 norecursedirs = [
     "replicants",
     "archive",
@@ -184,7 +292,13 @@ norecursedirs = [
     "folder_packer_pro",
     "rrt_path_planner",
     "calculator",
+<<<<<<< HEAD
 ]
+=======
+    "chat",
+]
+xfail_strict = true
+>>>>>>> origin/main
 filterwarnings = [
     "ignore::DeprecationWarning:pkg_resources",
     "ignore::UserWarning:pygame.pkgdata",
@@ -197,6 +311,7 @@ log_cli = false
 log_cli_level = "WARNING"
 log_cli_format = "%(asctime)s [%(levelname)8s] %(name)s: %(message)s"
 log_cli_date_format = "%H:%M:%S"
+<<<<<<< HEAD
 log_file_level = "DEBUG"
 log_file_format = "%(asctime)s [%(levelname)8s] %(name)s (%(filename)s:%(lineno)d): %(message)s"
 log_file_date_format = "%Y-%m-%d %H:%M:%S"
@@ -228,6 +343,30 @@ markers = [
     "math_regression: tests looking for unintended calculation changes",
     "flaky: tests that are known to fail intermittently",
     "tools_contracts: tests verifying shared tools libraries interfaces",
+=======
+markers = [
+    "unit: unit test (fast, isolated, no external dependencies)",
+    "integration: integration test (may use external resources)",
+    "e2e: end-to-end test (full system test)",
+    "slow: slow running test (> 5 seconds)",
+    "benchmark: benchmark/performance measurement",
+    "performance: performance benchmarking",
+    "scientific: scientific/numerical validation",
+    "contract: contract test (API surface)",
+    "acceptance: acceptance test",
+    "parity: cross-implementation parity validation",
+    "dwsim: requires DWSIM runtime",
+    "live_simulation: requires heavy physics engines or live simulation",
+    "requires_gl: requires OpenGL/graphics acceleration",
+    "requires_network: requires network connectivity",
+    "requires_database: requires database connection",
+    "requires_gpu: requires GPU/CUDA",
+    "headless_safe: safe to run in headless CI environments",
+    "gui: requires a GUI environment",
+    "heavy: takes a long time to run",
+    "math: pure calculation without external dependencies",
+    "physics: physics engine calculations",
+>>>>>>> origin/main
 ]
 
 [tool.coverage.run]

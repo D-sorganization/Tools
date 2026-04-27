@@ -237,6 +237,7 @@ def test_catmull_rom_smooth() -> Any:
     assert len(smoothed) > len(pts)
 
 
+<<<<<<< HEAD
 # ----------------------------------------------------------------------
 # Bulletproof view-fitting regression tests
 # ----------------------------------------------------------------------
@@ -400,3 +401,67 @@ def test_compute_base_scale_uses_bbox_when_available(qapp):
     w.compute_and_store_trajectory_bbox([{"a": (-0.1, -0.1), "b": (0.1, 0.1)}])
     bbox_scale = w._compute_base_scale()
     assert bbox_scale > legacy
+=======
+def test_3d_joint_cap(qapp):
+    """Test the 3D joint cap rendering method."""
+    w = DummyPendulumWidget()
+    painter = MagicMock(spec=QPainter)
+    w.resize(400, 300)
+
+    from PyQt6.QtGui import QColor
+
+    # Normal operation
+    w._draw_3d_joint_cap(painter, QPointF(100, 100), 8.0, QColor(255, 0, 0))
+    assert painter.drawEllipse.called
+
+    # DbC: radius must be positive
+    import pytest
+
+    with pytest.raises(ValueError, match="positive"):
+        w._draw_3d_joint_cap(painter, QPointF(100, 100), 0, QColor(255, 0, 0))
+    with pytest.raises(ValueError, match="positive"):
+        w._draw_3d_joint_cap(painter, QPointF(100, 100), -5, QColor(255, 0, 0))
+
+
+def test_shadow_projection(qapp):
+    """Test shadow projection onto ground plane."""
+    w = DummyPendulumWidget()
+    painter = MagicMock(spec=QPainter)
+    w.resize(400, 300)
+
+    # Too few points (no-op)
+    w._draw_shadow_projection(painter, [(0.0, 0.0)], -1.0)
+    painter.drawLine.assert_not_called()
+
+    # Normal shadow projection
+    points = [(0.0, 0.0), (0.5, -0.5), (1.0, -1.0)]
+    w._draw_shadow_projection(painter, points, -2.0)
+    assert painter.drawLine.called
+
+
+def test_export_image_dbc(qapp):
+    """Test DbC on export_image dimensions."""
+    w = DummyPendulumWidget()
+    w.resize(400, 300)
+
+    import pytest
+
+    with pytest.raises(ValueError, match="positive"):
+        w.export_image("test.png", width=0, height=100)
+    with pytest.raises(ValueError, match="positive"):
+        w.export_image("test.png", width=100, height=-1)
+
+
+def test_export_image_png(qapp, tmp_path):
+    """Test PNG image export creates a file."""
+    w = DummyPendulumWidget()
+    w.resize(400, 300)
+
+    out_path = str(tmp_path / "test_export.png")
+    w.export_image(out_path, width=800, height=600)
+
+    import os
+
+    assert os.path.exists(out_path)
+    assert os.path.getsize(out_path) > 0
+>>>>>>> origin/main

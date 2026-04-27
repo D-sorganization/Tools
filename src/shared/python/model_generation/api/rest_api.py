@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ARCHITECTURE_DEBT resolved — tracked as GitHub issue #1953
 # Split into focused submodules (issue #1953):
 #   rest_api_types.py   — HTTPMethod, APIRequest, APIResponse, Route
@@ -22,11 +23,17 @@ from .rest_api_fastapi import FastAPIAdapter  # noqa: F401
 from .rest_api_flask import FlaskAdapter  # noqa: F401
 from .rest_api_routes import ModelGenerationAPI  # noqa: F401
 from .rest_api_types import (  # noqa: F401
+=======
+"""Backward-compatible re-export shim for the split model_generation REST API."""
+
+from model_generation.api.rest_api_contracts import (
+>>>>>>> origin/main
     APIRequest,
     APIResponse,
     HTTPMethod,
     Route,
 )
+<<<<<<< HEAD
 
 __all__ = [
     "HTTPMethod",
@@ -36,4 +43,18 @@ __all__ = [
     "ModelGenerationAPI",
     "FlaskAdapter",
     "FastAPIAdapter",
+=======
+from model_generation.api.rest_api_core import ModelGenerationAPI
+from model_generation.api.rest_api_fastapi import FastAPIAdapter
+from model_generation.api.rest_api_flask import FlaskAdapter
+
+__all__ = [
+    "APIRequest",
+    "APIResponse",
+    "FastAPIAdapter",
+    "FlaskAdapter",
+    "HTTPMethod",
+    "ModelGenerationAPI",
+    "Route",
+>>>>>>> origin/main
 ]

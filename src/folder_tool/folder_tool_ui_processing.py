@@ -112,8 +112,14 @@ class UIProcessingMixin:
         self, title: str, content: str
     ) -> tuple[tk.Toplevel, int, int]:
         """Create and configure the dialog window, returning it with dimensions."""
+<<<<<<< HEAD
         assert title is not None, "title must be provided"
         dialog = tk.Toplevel(self.root)  # type: ignore[attr-defined]
+=======
+        if not (title is not None):
+            raise ValueError("title must be provided")
+        dialog = tk.Toplevel(self.root)
+>>>>>>> origin/main
         dialog.title(title)
 
         dialog_width = min(

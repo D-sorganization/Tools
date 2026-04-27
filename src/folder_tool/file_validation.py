@@ -31,8 +31,14 @@ class FileValidationMixin:
             OSError: If file system operations fail
             ValueError: If file size validation fails
         """
+<<<<<<< HEAD
         assert file_path is not None, "file_path must be provided"
         if self.cancel_operation:  # type: ignore[attr-defined]
+=======
+        if not (file_path is not None):
+            raise ValueError("file_path must be provided")
+        if self.cancel_operation:
+>>>>>>> origin/main
             return False
 
         # Extension filter

@@ -713,6 +713,7 @@ class OptimizationWidget(QWidget):
         if self._chk_warm.isChecked() and self._last_best_coeffs is not None:
             if len(self._last_best_coeffs) == n_params:
                 warm_start = self._last_best_coeffs.copy()
+<<<<<<< HEAD
                 self._log.append("↻ Warm-starting from previous best solution")
 
         self._log.clear()
@@ -722,6 +723,21 @@ class OptimizationWidget(QWidget):
             self._log.append("  Backend: [Rust] parallel (rayon)")
         else:
             self._log.append("  Backend: [Python] sequential")
+=======
+                self.append_status_message(
+                    "🔄 Warm-starting from previous best solution"
+                )
+
+        self._log.clear()
+        self.append_status_message(f"Starting {method} optimization...")
+        self.append_status_message(
+            f"  Params: {n_params}, Generations: {n_iters}, Pop: {pop_size}"
+        )
+        if _HAS_NATIVE_BATCH and self._chk_native.isChecked():
+            self.append_status_message("  Backend: 🦀 Rust parallel (rayon)")
+        else:
+            self.append_status_message("  Backend: 🐍 Python sequential")
+>>>>>>> origin/main
         self._progress.setValue(0)
         self._convergence_history.clear()
         self._btn_run.setEnabled(False)

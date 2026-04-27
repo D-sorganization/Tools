@@ -2,6 +2,409 @@
 
 """
 Trajectory Planner
+==================
+
+Calculates interplanetary transfer trajectories including:
+- Hohmann transfer orbits
+- Bi-elliptic transfers
+- Launch windows and phase angles
+- Delta-v requirements
+- Time of flight calculations
+"""
+
+import math
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any
+
+import numpy as np
+
+from ..core.celestial_body import CelestialBody, Spacecraft, StateVector
+from ..core.constants import AU, GM, SECONDS_PER_DAY
+from .orbital_mechanics import OrbitalMechanics
+
+
+class TransferType(Enum):
+    """Types of orbital transfers."""
+
+    HOHMANN = "hohmann"
+    BI_ELLIPTIC = "bi_elliptic"
+    FAST_TRANSFER = "fast"
+    GRAVITY_ASSIST = "gravity_assist"
+
+
+@dataclass
+class ManeuverNode:
+    """
+    Represents a single maneuver in a trajectory.
+
+    Attributes:
+        time: Julian date of the maneuver
+        position: Position at maneuver (meters)
+        delta_v: Change in velocity (m/s) as a vector
+        delta_v_magnitude: Magnitude of delta-v (m/s)
+        description: Human-readable description
+    """
+
+    time: float
+    position: np.ndarray
+    delta_v: np.ndarray
+    delta_v_magnitude: float
+    description: str
+
+    def __post_init__(self) -> None:
+        self.position = np.array(self.position, dtype=np.float64)
+        self.delta_v = np.array(self.delta_v, dtype=np.float64)
+
+
+@dataclass
+class TransferTrajectory:
+    """
+    Complete transfer trajectory between two bodies.
+
+    Attributes:
+        origin: Starting celestial body
+        destination: Target celestial body
+        transfer_type: Type of transfer orbit
+        departure_time: Julian date of departure
+        arrival_time: Julian date of arrival
+        time_of_flight: Duration in days
+        total_delta_v: Total delta-v requirement (m/s)
+        maneuvers: List of maneuver nodes
+        trajectory_points: List of state vectors along the path
+        phase_angle: Required phase angle at departure (degrees)
+    """
+
+    origin: str
+    destination: str
+    transfer_type: TransferType
+    departure_time: float
+    arrival_time: float
+    time_of_flight: float
+    total_delta_v: float
+    maneuvers: list[ManeuverNode]
+    trajectory_points: list[StateVector] = field(default_factory=list)
+    phase_angle: float = 0.0
+
+    def get_info_dict(self) -> dict[str, Any]:
+        """Get formatted information about the transfer."""
+        return {
+            "Route": f"{self.origin} → {self.destination}",
+            "Transfer Type": self.transfer_type.value.replace("_", " ").title(),
+            "Time of Flight": (
+                f"{self.time_of_flight:.1f} days "
+                f"({self.time_of_flight / 365.25:.2f} years)"
+            ),
+            "Total Δv": (
+                f"{self.total_delta_v:.1f} m/s ({self.total_delta_v / 1000:.2f} km/s)"
+            ),
+            "Phase Angle": f"{self.phase_angle:.1f}°",
+            "Maneuvers": len(self.maneuvers),
+        }
+
+
+@dataclass
+class LaunchWindow:
+    """
+    Information about a launch window opportunity.
+
+    Attributes:
+        departure_date: Julian date of optimal departure
+        arrival_date: Julian date of arrival
+        phase_angle: Phase angle at departure (degrees)
+        delta_v: Total delta-v requirement (m/s)
+        time_of_flight: Transfer duration (days)
+    """
+
+    departure_date: float
+    arrival_date: float
+    phase_angle: float
+    delta_v: float
+    time_of_flight: float
+
+
+class TrajectoryPlanner:
+    """
+    Plans interplanetary trajectories using patched conics approximation.
+
+    This class provides methods to calculate transfer orbits between
+    planets, find optimal launch windows, and generate trajectory data
+    for visualization.
+    """
+
+    def __init__(self, central_body_mu: float | None = None) -> None:
+        """
+        Initialize the trajectory planner.
+
+        Args:
+            central_body_mu: Standard gravitational parameter of the central body.
+                           Defaults to Sun's GM.
+        """
+        self.mu = central_body_mu if central_body_mu is not None else GM["Sun"]
+
+    def hohmann_transfer(
+        self, r1: float, r2: float
+    ) -> tuple[float, float, float, float]:
+        """
+        Calculate Hohmann transfer parameters between circular orbits.
+
+        Args:
+            r1: Radius of initial orbit (meters)
+            r2: Radius of final orbit (meters)
+
+        Returns:
+            Tuple of (delta_v1, delta_v2, time_of_flight, transfer_semi_major_axis)
+            - delta_v1: Departure burn (m/s)
+            - delta_v2: Arrival burn (m/s)
+            - time_of_flight: Transfer time (seconds)
+            - a_transfer: Semi-major axis of transfer orbit (meters)
+        """
+        # Transfer orbit semi-major axis
+        if not (r1 is not None):
+            raise ValueError("r1 must be provided")
+        a_transfer = (r1 + r2) / 2
+
+        # Velocities in circular orbits
+        v1_circular = OrbitalMechanics.circular_velocity(r1, self.mu)
+        v2_circular = OrbitalMechanics.circular_velocity(r2, self.mu)
+
+        # Velocities in transfer orbit at r1 and r2
+        v1_transfer = OrbitalMechanics.vis_viva(r1, a_transfer, self.mu)
+        v2_transfer = OrbitalMechanics.vis_viva(r2, a_transfer, self.mu)
+
+        # Delta-v for each burn
+        delta_v1 = abs(v1_transfer - v1_circular)
+        delta_v2 = abs(v2_circular - v2_transfer)
+
+        # Time of flight (half the transfer orbit period)
+        tof = OrbitalMechanics.orbital_period(a_transfer, self.mu) / 2
+
+        return delta_v1, delta_v2, tof, a_transfer
+
+    def hohmann_phase_angle(self, r1: float, r2: float) -> float:
+        """
+        Calculate the required phase angle for a Hohmann transfer.
+
+        The target should be at this angle ahead of the spacecraft
+        at departure time.
+
+        Args:
+            r1: Radius of initial orbit (meters)
+            r2: Radius of final orbit (meters)
+
+        Returns:
+            Phase angle in degrees
+        """
+        # Transfer orbit semi-major axis
+        if not (r1 is not None):
+            raise ValueError("r1 must be provided")
+        a_transfer = (r1 + r2) / 2
+
+        # Time of flight
+        tof = OrbitalMechanics.orbital_period(a_transfer, self.mu) / 2
+
+        # Angular velocity of target body (assuming circular)
+        omega_target = 2 * math.pi / OrbitalMechanics.orbital_period(r2, self.mu)
+
+        # Angle swept by target during transfer
+        theta_swept = omega_target * tof
+
+        # Phase angle: target needs to be at π - theta_swept ahead
+        phase_angle = math.pi - theta_swept
+
+        return math.degrees(phase_angle)
+
+    def bi_elliptic_transfer(
+        self, r1: float, r2: float, r_intermediate: float
+    ) -> tuple[float, float, float, float]:
+        """
+        Calculate bi-elliptic transfer parameters.
+
+        More efficient than Hohmann for large radius ratios (r2/r1 > 11.94).
+
+        Args:
+            r1: Radius of initial orbit (meters)
+            r2: Radius of final orbit (meters)
+            r_intermediate: Apoapsis of first transfer ellipse (meters)
+
+        Returns:
+            Tuple of (delta_v1, delta_v2, delta_v3, time_of_flight)
+        """
+        # First transfer ellipse (r1 to r_intermediate)
+        if not (r1 is not None):
+            raise ValueError("r1 must be provided")
+        a1 = (r1 + r_intermediate) / 2
+
+        # Second transfer ellipse (r_intermediate to r2)
+        a2 = (r_intermediate + r2) / 2
+
+        # Velocities
+        v1_circular = OrbitalMechanics.circular_velocity(r1, self.mu)
+        v2_circular = OrbitalMechanics.circular_velocity(r2, self.mu)
+
+        # At r1
+        v1_transfer = OrbitalMechanics.vis_viva(r1, a1, self.mu)
+
+        # At r_intermediate (from first ellipse)
+        v_int_1 = OrbitalMechanics.vis_viva(r_intermediate, a1, self.mu)
+
+        # At r_intermediate (from second ellipse)
+        v_int_2 = OrbitalMechanics.vis_viva(r_intermediate, a2, self.mu)
+
+        # At r2
+        v2_transfer = OrbitalMechanics.vis_viva(r2, a2, self.mu)
+
+        # Delta-v for each burn
+        delta_v1 = abs(v1_transfer - v1_circular)
+        delta_v2 = abs(v_int_2 - v_int_1)
+        delta_v3 = abs(v2_circular - v2_transfer)
+
+        # Time of flight
+        tof1 = OrbitalMechanics.orbital_period(a1, self.mu) / 2
+        tof2 = OrbitalMechanics.orbital_period(a2, self.mu) / 2
+        total_tof = tof1 + tof2
+
+        return delta_v1, delta_v2, delta_v3, total_tof
+
+    def synodic_period_planets(
+        self, origin: CelestialBody, destination: CelestialBody
+    ) -> float:
+        """
+        Calculate the synodic period between two planets.
+
+        Args:
+            origin: Origin planet
+            destination: Destination planet
+
+        Returns:
+            Synodic period in days
+        """
+        if not (origin is not None):
+            raise ValueError("origin must be provided")
+        t1 = origin.get_orbital_period()
+        t2 = destination.get_orbital_period()
+
+        return OrbitalMechanics.synodic_period(t1, t2) / SECONDS_PER_DAY
+
+    def find_launch_windows(
+        self,
+        origin: CelestialBody,
+        destination: CelestialBody,
+        start_date: float,
+        search_duration_days: float = 1000,
+        window_tolerance_deg: float = 5.0,
+    ) -> list[LaunchWindow]:
+        """
+        Find optimal launch windows between two bodies.
+
+        Args:
+            origin: Origin celestial body
+            destination: Destination celestial body
+            start_date: Julian date to start search from
+            search_duration_days: Number of days to search
+            window_tolerance_deg: Tolerance for phase angle matching (degrees)
+
+        Returns:
+            List of launch window opportunities
+        """
+        if not (origin is not None):
+            raise ValueError("origin must be provided")
+        windows = []
+
+        # Get approximate orbital radii
+        r1 = (
+            origin.orbital_elements.semi_major_axis * AU
+            if origin.orbital_elements
+            else 0.0
+        )
+        r2 = (
+            destination.orbital_elements.semi_major_axis * AU
+            if destination.orbital_elements
+            else 0.0
+        )
+
+        # Calculate ideal phase angle for Hohmann transfer
+        ideal_phase = self.hohmann_phase_angle(r1, r2)
+
+        # Hohmann transfer parameters
+        dv1, dv2, tof, _ = self.hohmann_transfer(r1, r2)
+        total_dv = dv1 + dv2
+        tof_days = tof / SECONDS_PER_DAY
+
+        # Search for windows
+        step_days = 1  # Check every day
+        current_date = start_date
+
+        while current_date < start_date + search_duration_days:
+            # Get positions
+            origin_state = origin.get_state_at_time(current_date)
+            dest_state = destination.get_state_at_time(current_date)
+
+            # Calculate current phase angle
+            phase = OrbitalMechanics.phase_angle(
+                origin_state.position, dest_state.position
+            )
+            phase_deg = math.degrees(phase)
+
+            # Check if phase angle is close to ideal
+            angle_diff = abs(phase_deg - ideal_phase)
+            # Account for wrap-around
+            if angle_diff > 180:
+                angle_diff = 360 - angle_diff
+
+            if angle_diff < window_tolerance_deg:
+                windows.append(
+                    LaunchWindow(
+                        departure_date=current_date,
+                        arrival_date=current_date + tof_days,
+                        phase_angle=phase_deg,
+                        delta_v=total_dv,
+                        time_of_flight=tof_days,
+                    )
+                )
+                # Skip ahead to avoid duplicate windows
+                current_date += 30
+
+            current_date += step_days
+
+        return windows
+
+    def calculate_transfer(
+        self,
+        origin: CelestialBody,
+        destination: CelestialBody,
+        departure_date: float,
+        transfer_type: TransferType = TransferType.HOHMANN,
+    ) -> TransferTrajectory:
+        """
+        Calculate a complete transfer trajectory.
+
+        Args:
+            origin: Origin celestial body
+            destination: Destination celestial body
+            departure_date: Julian date of departure
+            transfer_type: Type of transfer to calculate
+
+        Returns:
+            TransferTrajectory with complete trajectory information
+        """
+        # DbC preconditions
+<<<<<<< HEAD
+        assert origin is not None, "Origin body must not be None"
+        assert destination is not None, "Destination body must not be None"
+        assert departure_date > 0, (
+            f"Departure date must be positive Julian date, got {departure_date}"
+        )
+=======
+        if not (origin is not None):
+            raise ValueError("Origin body must not be None")
+        if not (destination is not None):
+            raise ValueError("Destination body must not be None")
+        if not (departure_date > 0):
+            raise ValueError(
+                f"Departure date must be positive Julian date, got {departure_date}"
+            )
+>>>>>>> origin/main
 
         # Get orbital radii at departure
         origin_state = origin.get_state_at_time(departure_date)

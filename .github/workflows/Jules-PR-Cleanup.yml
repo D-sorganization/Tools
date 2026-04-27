@@ -28,7 +28,7 @@ concurrency:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -67,7 +67,7 @@ jobs:
   cleanup:
     needs: pick-runner
     name: Cleanup Stale Jules PRs
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - name: Find Stale Jules PRs

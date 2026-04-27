@@ -7,7 +7,7 @@ jobs:
 
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -45,7 +45,7 @@ jobs:
           esac
   generate-tests:
     needs: pick-runner
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with: { fetch-depth: 2 }
@@ -67,7 +67,11 @@ jobs:
           echo "files=$FILES_FLAT" >> $GITHUB_OUTPUT
 
       - uses: actions/setup-node@v6
+<<<<<<< HEAD
         with: { node-version: "24" }
+=======
+        with: { node-version: "22" }
+>>>>>>> origin/main
       - run: npm install -g @google/jules
 
       - name: Generate Tests

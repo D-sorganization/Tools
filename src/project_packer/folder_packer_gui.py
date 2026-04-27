@@ -410,9 +410,15 @@ class FolderPackerGUI:
             bool: True if the directory should be included.
 
         """
+<<<<<<< HEAD
         assert dir_path is not None, "dir_path must be provided"
         dir_basename = dir_path.name
         dir_name = dir_basename.lower()
+=======
+        if not (dir_path is not None):
+            raise ValueError("dir_path must be provided")
+        dir_name = dir_path.name.lower()
+>>>>>>> origin/main
 
         # Always exclude certain patterns
         if any(pattern.lower() in dir_name for pattern in EXCLUDE_PATTERNS):

@@ -2,7 +2,11 @@ from typing import Any
 
 """Tests for simulation_panel.py"""
 
+<<<<<<< HEAD
 from typing import Any
+=======
+
+>>>>>>> origin/main
 import pytest
 import numpy as np
 from unittest.mock import MagicMock, patch

@@ -376,10 +376,15 @@ class FunctionGeneratorWidget(QWidget):
         Returns:
             Generated signal array, or None if waveform is unknown
         """
+<<<<<<< HEAD
         if waveform is None:
             raise ValueError("waveform must be provided")
         if not isinstance(t, np.ndarray):
             raise TypeError(f"t must be a numpy ndarray, got {type(t).__name__}")
+=======
+        if not (waveform is not None):
+            raise ValueError("waveform must be provided")
+>>>>>>> origin/main
         amp = self.amplitude_spin.value()
         freq = self.frequency_spin.value()
         phase = np.radians(self.phase_spin.value())

@@ -167,7 +167,13 @@ class ConsoleEnvironment:
         try:
             # Execute within current namespace so imports/functions are persistent
             exec(code, self.namespace)  # nosec B102
+<<<<<<< HEAD
         except Exception as e:
+=======
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except USER_CODE_ERROR_TYPES as e:
+>>>>>>> origin/main
             sys.stderr.write(f"Error loading user library: {e}\n")
             sys.stderr.flush()
 

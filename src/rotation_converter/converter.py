@@ -33,6 +33,7 @@ from rotation_converter.core import (
     rotation_matrix_to_quaternion,
 )
 
+<<<<<<< HEAD
 
 class Rotation:
     """Immutable rotation stored internally as a unit quaternion.
@@ -169,6 +170,9 @@ class Rotation:
             return NotImplemented
         # q and -q represent the same rotation
         return bool(np.allclose(self._q, other._q, atol=1e-10))
+=======
+__all__ = ["Rotation", "RotationConverter"]
+>>>>>>> origin/main
 
 
 class RotationConverter:

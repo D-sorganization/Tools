@@ -8,6 +8,7 @@ This GUI provides interactive visualization and analysis of PSA system
 performance, including sensitivity analysis and O2 safety calculations.
 """
 
+<<<<<<< HEAD
 import logging
 import os
 import subprocess
@@ -15,6 +16,9 @@ import sys
 import webbrowser
 from collections.abc import Callable
 from typing import Any
+=======
+import sys
+>>>>>>> origin/main
 
 from PyQt6.QtWidgets import QApplication
 
@@ -43,6 +47,7 @@ __all__ = (
 logger = logging.getLogger(__name__)
 
 
+<<<<<<< HEAD
 def create_slider(
     min_value: int,
     max_value: int,
@@ -1011,6 +1016,8 @@ class PSAMainWindow(QMainWindow):
             QMessageBox.critical(self, "Calculation Error", f"Error: {e}")
 
 
+=======
+>>>>>>> origin/main
 def main() -> None:
     """Main entry point for the GUI application."""
     from shared.python.theme import setup_themed_app

@@ -59,6 +59,7 @@ __all__ = [
     "ScrewVisualiserTab",
 ]
 
+<<<<<<< HEAD
 
 # =====================================================================
 # Helpers
@@ -1120,6 +1121,13 @@ class ScrewVisualiserTab(QWidget):
 # =====================================================================
 # Main Window
 # =====================================================================
+=======
+# Backward-compatible aliases for the helper functions that were
+# previously defined here (used by tests and external callers).
+from rotation_converter.ui.pyqt6.plot_helpers import (  # noqa: E402, F401
+    EULER_CONVENTIONS,
+)
+>>>>>>> origin/main
 
 
 class RotationConverterMainWindow(QMainWindow):

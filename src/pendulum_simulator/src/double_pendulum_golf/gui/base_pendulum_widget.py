@@ -19,7 +19,12 @@ Closes DRY violation between PendulumWidget and GolferPendulumWidget.
 
 from __future__ import annotations
 
+<<<<<<< HEAD
 import logging
+=======
+from numba import jit
+
+>>>>>>> origin/main
 from abc import abstractmethod
 from collections import deque
 
@@ -792,6 +797,7 @@ class BasePendulumWidget(QWidget):
 
     @jit(nopython=True, fastmath=True)
     def _draw_trail(self, painter: QPainter) -> None:
+<<<<<<< HEAD
         """Draw Catmull-Rom smoothed tip trail with fade-in.
 
         Note: this method must NOT be JIT-compiled — it operates on Qt
@@ -800,6 +806,11 @@ class BasePendulumWidget(QWidget):
         on the first paint after a simulation finished.
         """
         assert painter is not None, "painter must be provided"
+=======
+        """Draw Catmull-Rom smoothed tip trail with fade-in."""
+        if not (painter is not None):
+            raise ValueError("painter must be provided")
+>>>>>>> origin/main
         n = len(self._trail)
         if n < 2:
             return

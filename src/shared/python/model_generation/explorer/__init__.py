@@ -15,8 +15,12 @@ from model_generation.explorer.display_config import DISPLAY_OPTIONS
 if TYPE_CHECKING:
     from model_generation.explorer.model_explorer import ModelExplorerWindow
 
+<<<<<<< HEAD
 
 def get_explorer_window() -> type[ModelExplorerWindow]:
+=======
+def get_explorer_window() -> Any:
+>>>>>>> origin/main
     """Lazy import of ModelExplorerWindow to avoid PyQt6 dependency at import time."""
     from model_generation.explorer.model_explorer import ModelExplorerWindow
 

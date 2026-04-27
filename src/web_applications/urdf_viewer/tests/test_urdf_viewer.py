@@ -13,8 +13,13 @@ import pytest
 # Skip entire module if FastAPI app can't be imported/initialized
 # (CI may lack python-multipart, cors deps, etc.)
 try:
+<<<<<<< HEAD
     from app import app
 except Exception as _exc:
+=======
+    from app import app  # noqa: F401
+except Exception as _exc:  # noqa: BLE001
+>>>>>>> origin/main
     pytest.skip(
         f"Skipping urdf_viewer tests — app import failed: {_exc}",
         allow_module_level=True,

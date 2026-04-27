@@ -310,12 +310,17 @@ def overall_club_decomposition(
     Uses the actual constrained dynamics to get accelerations and
     computes net joint forces from F = ma - mg.
     """
+<<<<<<< HEAD
     if not isinstance(state, np.ndarray):
         raise TypeError(f"state must be a numpy ndarray, got {type(state).__name__}")
     if state.shape != (2 * N_DOF,):
         raise ValueError(f"state must have shape ({2 * N_DOF},), got {state.shape}")
     if not isinstance(t, (int, float)):
         raise TypeError(f"t must be a number, got {type(t).__name__}")
+=======
+    if not (state is not None):
+        raise ValueError("state must be provided")
+>>>>>>> origin/main
     from .constraint_solver import constrained_accelerations
     from .physics_golfer import net_joint_forces
 
@@ -332,10 +337,15 @@ def ztcf_club_decomposition(
     alpha: float = 0.0,
 ) -> dict[str, float | np.ndarray]:
     """Club force decomposition using zero-torque counterfactual forces."""
+<<<<<<< HEAD
     if not isinstance(state, np.ndarray):
         raise TypeError(f"state must be a numpy ndarray, got {type(state).__name__}")
     if state.shape != (2 * N_DOF,):
         raise ValueError(f"state must have shape ({2 * N_DOF},), got {state.shape}")
+=======
+    if not (state is not None):
+        raise ValueError("state must be provided")
+>>>>>>> origin/main
     from .counterfactual_golfer import zero_torque_accelerations
     from .physics_golfer import net_joint_forces
 
@@ -356,6 +366,7 @@ def delta_club_decomposition(
 
     DELTA accelerations = M^+ * tau at zero velocity.
     """
+<<<<<<< HEAD
     if not isinstance(state, np.ndarray):
         raise TypeError(f"state must be a numpy ndarray, got {type(state).__name__}")
     if state.shape != (2 * N_DOF,):
@@ -364,6 +375,10 @@ def delta_club_decomposition(
         raise TypeError(f"tau must be a numpy ndarray, got {type(tau).__name__}")
     if tau.shape != (N_DOF,):
         raise ValueError(f"tau must have shape ({N_DOF},), got {tau.shape}")
+=======
+    if not (state is not None):
+        raise ValueError("state must be provided")
+>>>>>>> origin/main
     from .jacobians_golfer import delta_matrix
     from .physics_golfer import net_joint_forces
 

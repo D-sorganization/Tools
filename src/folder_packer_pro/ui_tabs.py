@@ -638,7 +638,14 @@ class LogTabMixin:
         self.log_text.pack(fill="both", expand=True)
 
         # Configure log level tags
+<<<<<<< HEAD
         self.log_text.tag_configure("info", foreground="#ffffff")
         self.log_text.tag_configure("success", foreground="#28a745")
         self.log_text.tag_configure("warning", foreground="#ffc107")
         self.log_text.tag_configure("error", foreground="#dc3545")
+=======
+        self.log_text.tag_configure("info", foreground="#ffffff")  # type: ignore[attr-defined]
+        self.log_text.tag_configure("success", foreground="#28a745")  # type: ignore[attr-defined]
+        self.log_text.tag_configure("warning", foreground="#ffc107")  # type: ignore[attr-defined]
+        self.log_text.tag_configure("error", foreground="#dc3545")  # type: ignore[attr-defined]
+>>>>>>> origin/main
