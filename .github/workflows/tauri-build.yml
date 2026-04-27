@@ -1,6 +1,6 @@
-# =============================================================================
+#
 # Tauri Desktop Application Build Workflow
-# =============================================================================
+#
 # Builds Tools desktop apps (Function Generator, Data Processor, Rotation Converter) using Tauri 2
 # Runs on: Pull requests (check only), Releases (build artifacts)
 #
@@ -8,7 +8,7 @@
 # - src/function_generator/web/src-tauri
 # - src/data_processing/data_processor/web/src-tauri
 # - src/rotation_converter/web/src-tauri
-# =============================================================================
+#
 
 name: Tauri Build
 
@@ -74,9 +74,9 @@ jobs:
               fi
               ;;
           esac
-  # ===========================================================================
+  # =====
   # Check - Fast validation on PRs
-  # ===========================================================================
+  # =====
   check:
     needs: pick-runner
     name: Check (${{ matrix.app }})
@@ -98,11 +98,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-<<<<<<< HEAD
+
           node-version: "24"
-=======
+
           node-version: "22"
->>>>>>> origin/main
+
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -134,9 +134,9 @@ jobs:
         working-directory: ${{ matrix.path }}/src-tauri
         run: cargo check
 
-  # ===========================================================================
+  # =====
   # Build - Full build on main/release
-  # ===========================================================================
+  # =====
   build:
     name: Build ${{ matrix.app.name }} (${{ matrix.platform.os }})
     needs: check
@@ -167,11 +167,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-<<<<<<< HEAD
+
           node-version: "24"
-=======
+
           node-version: "22"
->>>>>>> origin/main
+
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable

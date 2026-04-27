@@ -78,11 +78,11 @@ jobs:
       - name: Setup Node
         if: steps.changes.outputs.files != ''
         uses: actions/setup-node@v6
-<<<<<<< HEAD
+
         with: { node-version: "24" }
-=======
+
         with: { node-version: "22" }
->>>>>>> origin/main
+
 
       - name: Install & Auth Jules
         if: steps.changes.outputs.files != ''
