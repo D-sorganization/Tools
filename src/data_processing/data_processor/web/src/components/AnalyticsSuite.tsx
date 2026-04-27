@@ -558,28 +558,46 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({ data, signals, sele
 
   const pcaScatterData = useMemo(() => {
     if (!pca || pca.numComponents < 2) return [];
-    return pca.scores.map((s) => ({ x: s[0], y: s[1] }));
+    // ⚡ Bolt Optimization: Use single-pass pre-allocated array instead of .map().
+    // Performance impact: Eliminates O(N) intermediate array allocation overhead for large datasets.
+    const len = pca.scores.length;
+    const result = new Array(len);
+    for (let i = 0; i < len; i++) {
+      result[i] = { x: pca.scores[i][0], y: pca.scores[i][1] };
+    }
+    return result;
   }, [pca]);
 
   // Memoize Regression chart data
   const regressionScatterData = useMemo(() => {
     if (!regression) return [];
-    // ⚡ Bolt Optimization: Use single-pass for loop to build scatter data, avoiding chained .map().filter() and GC overhead
-    const result = [];
-    for (let i = 0; i < data.length; i++) {
+    // ⚡ Bolt Optimization: Use pre-allocated array and count instead of .push().
+    // Performance impact: Eliminates dynamic array resizing overhead and GC pauses during scatter plot generation.
+    const len = data.length;
+    const result = new Array(len);
+    let count = 0;
+    for (let i = 0; i < len; i++) {
       const row = data[i];
       const x = row[regression.xSignal];
       const y = row[regression.ySignal];
       if (typeof x === 'number' && typeof y === 'number') {
-        result.push({ x, y });
+        result[count++] = { x, y };
       }
     }
+    result.length = count;
     return result;
   }, [data, regression]);
 
   const regressionResidualsData = useMemo(() => {
     if (!regression) return [];
-    return regression.residuals.map((r, i) => ({ index: i, residual: r }));
+    // ⚡ Bolt Optimization: Use single-pass pre-allocated array instead of .map().
+    // Performance impact: Eliminates O(N) intermediate array allocation overhead for large datasets.
+    const len = regression.residuals.length;
+    const result = new Array(len);
+    for (let i = 0; i < len; i++) {
+      result[i] = { index: i, residual: regression.residuals[i] };
+    }
+    return result;
   }, [regression]);
 
   if (data.length === 0 || activeSignals.length < 2) {
