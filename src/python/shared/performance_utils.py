@@ -25,9 +25,27 @@ class OptimizedFileScanner:
     """
 
     def __init__(self, max_workers: int = -1) -> None:
+<<<<<<< HEAD
+        """Initialize the scanner with specified number of workers.
+
+        Args:
+            max_workers: Number of worker threads. Use -1 for auto-detection.
+
+        Raises:
+            TypeError: If max_workers is not an int.
+            ValueError: If max_workers is less than -1.
+        """
+        if not isinstance(max_workers, int):
+            raise TypeError(
+                f"max_workers must be an int, got {type(max_workers).__name__}"
+            )
+        if max_workers < -1:
+            raise ValueError(f"max_workers must be >= -1, got {max_workers}")
+=======
         """Initialize the scanner with specified number of workers."""
         if not (max_workers is not None):
             raise ValueError("max_workers must be provided")
+>>>>>>> origin/main
         self.max_workers = (
             max_workers if max_workers != -1 else min(32, (os.cpu_count() or 1) + 4)
         )
@@ -48,8 +66,13 @@ class OptimizedFileScanner:
         Yields:
             Path objects for matching files
         """
+<<<<<<< HEAD
+        if not isinstance(root_path, Path):
+            raise TypeError(f"root_path must be a Path, got {type(root_path).__name__}")
+=======
         if not (root_path is not None):
             raise ValueError("root_path must be provided")
+>>>>>>> origin/main
         if not root_path.exists():
             return
 
@@ -59,7 +82,7 @@ class OptimizedFileScanner:
             if cache_key in self._cache:
                 cached_time, cached_files = self._cache[cache_key]
                 # Cache valid for 60 seconds
-                if (os.path.getmtime(root_path) - cached_time) < 60:
+                if (root_path.stat().st_mtime - cached_time) < 60:
                     yield from cached_files
                     return
 
@@ -68,8 +91,15 @@ class OptimizedFileScanner:
 
         def scan_subdirectory(directory: Path, depth: int) -> list[Path]:
             """Scan a single subdirectory."""
+<<<<<<< HEAD
+            if not isinstance(directory, Path):
+                raise TypeError(
+                    f"directory must be a Path, got {type(directory).__name__}"
+                )
+=======
             if not (directory is not None):
                 raise ValueError("directory must be provided")
+>>>>>>> origin/main
             if depth > max_depth:
                 return []
 
@@ -120,7 +150,7 @@ class OptimizedFileScanner:
 
         # Cache results
         with self._cache_lock:
-            self._cache[cache_key] = (os.path.getmtime(root_path), found_files)
+            self._cache[cache_key] = (root_path.stat().st_mtime, found_files)
 
         yield from found_files
 
@@ -155,7 +185,11 @@ class FastHasher:
                 return cls.full_hash(file_path)
 
             # For larger files, hash size + first chunk + last chunk
+<<<<<<< HEAD
+            hasher = hashlib.md5(usedforsecurity=False)
+=======
             hasher = hashlib.md5()  # nosec B324
+>>>>>>> origin/main
             hasher.update(str(size).encode())
 
             with file_path.open("rb") as f:
@@ -177,7 +211,11 @@ class FastHasher:
     def full_hash(cls, file_path: Path) -> str:
         """Generate full file hash for exact duplicate detection."""
         try:
+<<<<<<< HEAD
+            hasher = hashlib.md5(usedforsecurity=False)
+=======
             hasher = hashlib.md5()  # nosec B324
+>>>>>>> origin/main
             with file_path.open("rb") as f:
                 while chunk := f.read(cls.CHUNK_SIZE):
                     hasher.update(chunk)

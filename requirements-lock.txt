@@ -1,6 +1,8 @@
 # Locked dependency versions for reproducible builds
-# Generated: 2026-03-09
+# Generated: 2026-04-20
 # To regenerate: pip install -r requirements.txt && pip freeze > requirements-lock.txt
+# See DEPENDENCIES.md for the full dependency pinning policy.
+# Regenerate at the start of each sprint cycle or after any requirements.txt change.
 
 # Core Scientific Computing
 numpy==2.4.1
@@ -10,7 +12,7 @@ matplotlib==3.10.3
 sympy==1.14.0
 
 # Testing & Quality Assurance
-pytest==8.4.1
+pytest==9.0.3
 pytest-cov==7.0.0
 pytest-timeout==2.4.0
 pytest-benchmark==5.2.3
@@ -29,8 +31,8 @@ PyOpenGL==3.1.9
 flask==3.1.3
 
 # Security & Utilities
-cryptography==46.0.5
+cryptography==46.0.7
 defusedxml==0.7.1
 PyYAML==6.0.2
-pillow==12.1.1
+pillow==12.2.0
 trimesh==4.11.1

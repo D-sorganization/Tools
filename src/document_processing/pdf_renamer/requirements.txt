@@ -6,7 +6,7 @@ PyQt6>=6.6.0  # Python bindings for Qt6 application framework
 python-dotenv>=1.0.0  # Reads key-value pairs from .env file
 
 # Development dependencies
-pytest>=7.4.0  # Testing framework
+pytest>=9.0.3  # Testing framework
 pytest-cov>=4.1.0  # Coverage plugin for pytest
 pytest-qt>=4.2.0  # Pytest plugin for PyQt applications
 types-setuptools>=68.0.0  # Type hints for setuptools

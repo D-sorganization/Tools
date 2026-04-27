@@ -123,7 +123,7 @@ class ConfigMixin:
 
         try:
             config = {
-                "output_directory": self.output_directory,  # type: ignore[attr-defined]
+                "output_directory": self.output_directory,
                 "export_format": self.export_format_combo.currentText(),  # type: ignore[attr-defined]
                 "include_timestamp": self.include_timestamp_check.isChecked(),  # type: ignore[attr-defined]
                 "include_filter": self.include_filter_check.isChecked(),  # type: ignore[attr-defined]
@@ -183,7 +183,7 @@ class ConfigMixin:
 
             # Apply configuration
             if "output_directory" in config:
-                self.output_directory = config["output_directory"]  # type: ignore[attr-defined]
+                self.output_directory = config["output_directory"]
                 self.output_folder_edit.setText(self.output_directory)  # type: ignore[attr-defined]
 
             if "export_format" in config:

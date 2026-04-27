@@ -28,11 +28,14 @@ _REPO_ROOT = Path(__file__).parents[1]
 _SRC_ROOT = _REPO_ROOT / "src"
 
 
+<<<<<<< HEAD
+=======
 def _is_ruff_excluded_top_level_src_dir(parts: tuple[str, ...]) -> bool:
     """Return whether path parts belong to an excluded top-level src segment."""
     return bool(parts) and parts[0] in _RUFF_EXCLUDED_SRC_DIRS
 
 
+>>>>>>> origin/main
 def _collect_library_py_files() -> list[Path]:
     """Collect .py files subject to T201 enforcement.
 
@@ -45,7 +48,11 @@ def _collect_library_py_files() -> list[Path]:
     for f in sorted(_SRC_ROOT.rglob("*.py")):
         parts = f.relative_to(_SRC_ROOT).parts
         # Skip ruff-excluded directories
+<<<<<<< HEAD
+        if any(part in _RUFF_EXCLUDED_SRC_DIRS for part in parts):
+=======
         if _is_ruff_excluded_top_level_src_dir(parts):
+>>>>>>> origin/main
             continue
         # Skip test subdirectories
         if "tests" in parts:
@@ -58,11 +65,18 @@ def _collect_library_py_files() -> list[Path]:
 
 
 def _find_print_calls(source: str, filename: str) -> list[int]:
+<<<<<<< HEAD
+    """Parse source with AST and return line numbers of top-level print() calls.
+
+    Only counts ast.Expr(ast.Call(ast.Name('print'))) — i.e., calls to the
+    built-in print() as a statement. Does NOT flag:
+=======
     """Parse source with AST and return line numbers of all print() calls.
 
     Walks the full AST to catch print() in any expression context, including
     assignment targets (x = print(...)), return statements (return print(...)),
     and conditional expressions. Does NOT flag:
+>>>>>>> origin/main
     - Docstring examples (>>> print(...)) — they are inside ast.Constant nodes
     - console.print() — that is an ast.Attribute call, not ast.Name
     - String literals containing "print(" — code generators, templates
@@ -76,9 +90,16 @@ def _find_print_calls(source: str, filename: str) -> list[int]:
     violations: list[int] = []
     for node in ast.walk(tree):
         if (
+<<<<<<< HEAD
+            isinstance(node, ast.Expr)
+            and isinstance(node.value, ast.Call)
+            and isinstance(node.value.func, ast.Name)
+            and node.value.func.id == "print"
+=======
             isinstance(node, ast.Call)
             and isinstance(node.func, ast.Name)
             and node.func.id == "print"
+>>>>>>> origin/main
         ):
             violations.append(node.lineno)
     return violations
@@ -127,6 +148,13 @@ class TestNoUnguardedPrintInLibrarySrc:
         files = _collect_library_py_files()
         for f in files:
             parts = f.relative_to(_SRC_ROOT).parts
+<<<<<<< HEAD
+            excluded = [p for p in parts if p in _RUFF_EXCLUDED_SRC_DIRS]
+            assert not excluded, (
+                f"File from excluded directory should not be in sweep: {f}"
+            )
+
+=======
             assert not _is_ruff_excluded_top_level_src_dir(parts), (
                 f"File from excluded directory should not be in sweep: {f}"
             )
@@ -139,6 +167,7 @@ class TestNoUnguardedPrintInLibrarySrc:
         )
         assert not _is_ruff_excluded_top_level_src_dir(("shared", "python", "a.py"))
 
+>>>>>>> origin/main
     def test_collection_excludes_test_subdirs(self) -> None:
         """Test subdirectories are not in the sweep."""
         files = _collect_library_py_files()
@@ -149,6 +178,8 @@ class TestNoUnguardedPrintInLibrarySrc:
             )
 
 
+<<<<<<< HEAD
+=======
 def _load_ruff_lint_config() -> tuple[list[str], dict[str, list[str]]]:
     """Load ruff lint config from pyproject.toml (the canonical config location)."""
     try:
@@ -162,34 +193,78 @@ def _load_ruff_lint_config() -> tuple[list[str], dict[str, list[str]]]:
     return lint.get("select", []), lint.get("per-file-ignores", {})
 
 
+>>>>>>> origin/main
 class TestLoggingConsistencyRuffConfig:
     """Ruff is configured to enforce the print-free policy."""
 
     def test_t201_in_ruff_select(self) -> None:
+<<<<<<< HEAD
+        """ruff.toml must include T201 in lint select."""
+        try:
+            import tomllib
+        except ImportError:
+            import tomli as tomllib  # type: ignore[no-redef]
+
+        ruff_toml = _REPO_ROOT / "ruff.toml"
+        config = tomllib.loads(ruff_toml.read_text())
+        lint_select = config["lint"]["select"]
+        assert "T201" in lint_select, (
+            "T201 must be in [lint] select in ruff.toml to enforce the no-print policy"
+=======
         """pyproject.toml must enable T201 (or T20 group) in ruff lint select."""
         lint_select, _ = _load_ruff_lint_config()
         assert any(r in lint_select for r in ("T201", "T20")), (
             "T201 or T20 must be in [tool.ruff.lint] select in pyproject.toml "
             "to enforce the no-print policy"
+>>>>>>> origin/main
         )
 
     def test_notebooks_excluded_from_t201(self) -> None:
         """Notebooks must have T201 suppressed (print is valid in notebooks)."""
+<<<<<<< HEAD
+        try:
+            import tomllib
+        except ImportError:
+            import tomli as tomllib  # type: ignore[no-redef]
+
+        ruff_toml = _REPO_ROOT / "ruff.toml"
+        config = tomllib.loads(ruff_toml.read_text())
+        per_file = config["lint"].get("per-file-ignores", {})
+        notebook_ignores = per_file.get("**/*.ipynb", [])
+        assert "T201" in notebook_ignores, (
+            "**/*.ipynb must have T201 in per-file-ignores in ruff.toml "
+=======
         _, per_file = _load_ruff_lint_config()
         notebook_ignores = per_file.get("**/*.ipynb", [])
         assert "T201" in notebook_ignores, (
             "**/*.ipynb must have T201 in per-file-ignores in pyproject.toml "
+>>>>>>> origin/main
             "(print is valid for display output in Jupyter notebooks)"
         )
 
     def test_scripts_excluded_from_t201(self) -> None:
         """Scripts directories must have T201 suppressed (CLI output is intentional)."""
+<<<<<<< HEAD
+        try:
+            import tomllib
+        except ImportError:
+            import tomli as tomllib  # type: ignore[no-redef]
+
+        ruff_toml = _REPO_ROOT / "ruff.toml"
+        config = tomllib.loads(ruff_toml.read_text())
+        per_file = config["lint"].get("per-file-ignores", {})
+=======
         _, per_file = _load_ruff_lint_config()
+>>>>>>> origin/main
         # Either scripts/**/*.py or scripts/*.py must have T201 ignored
         scripts_patterns = [k for k in per_file if "scripts" in k]
         any_has_t201 = any("T201" in per_file[k] for k in scripts_patterns)
         assert any_has_t201, (
+<<<<<<< HEAD
+            "scripts/ must have T201 suppressed in ruff.toml per-file-ignores "
+=======
             "scripts/ must have T201 suppressed in pyproject.toml per-file-ignores "
+>>>>>>> origin/main
             "(scripts use print() for intentional CLI output)"
         )
 
@@ -245,6 +320,8 @@ def run():
 """
         lines = _find_print_calls(source, "<test>")
         assert lines == [3], f"Expected line 3 to be flagged, got {lines}"
+<<<<<<< HEAD
+=======
 
     def test_print_in_assignment_is_flagged(self) -> None:
         """x = print("debug") — print in assignment context IS flagged."""
@@ -270,3 +347,4 @@ result = x if x > 0 else print("negative")
 """
         lines = _find_print_calls(source, "<test>")
         assert lines == [2], f"Expected line 2 to be flagged, got {lines}"
+>>>>>>> origin/main

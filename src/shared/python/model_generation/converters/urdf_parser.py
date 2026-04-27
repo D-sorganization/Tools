@@ -9,11 +9,20 @@ from __future__ import annotations
 
 import logging
 import math
+<<<<<<< HEAD
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import TYPE_CHECKING
+=======
 import xml.etree.ElementTree as ET  # nosec B405 — type annotations + ParseError only; parsing uses defusedxml
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
+>>>>>>> origin/main
 
 import defusedxml.ElementTree as DefusedET
+
+if TYPE_CHECKING:
+    import xml.etree.ElementTree as ET
 from model_generation.core.types import (
     Geometry,
     GeometryType,
@@ -146,7 +155,7 @@ class URDFParser:
     - Preserves original XML for text editing
     """
 
-    def __init__(self, resolve_meshes: bool = True):
+    def __init__(self, resolve_meshes: bool = True) -> None:
         """
         Initialize parser.
 
@@ -185,7 +194,7 @@ class URDFParser:
         # Parse XML
         try:
             root = DefusedET.fromstring(xml_string)
-        except ET.ParseError as e:
+        except DefusedET.ParseError as e:
             raise ValueError(f"Invalid URDF XML: {e}") from e
 
         if root.tag != "robot":

@@ -9,7 +9,8 @@ logger = logging.getLogger(__name__)
 
 def verify_a11y() -> None:
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        chromium = p.chromium
+        browser = chromium.launch(headless=True)
         page = browser.new_page()
         page.goto("http://localhost:8080")
 

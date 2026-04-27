@@ -1,6 +1,6 @@
 import pytest
 
-build123d = pytest.importorskip("build123d")  # noqa: E402
+build123d = pytest.importorskip("build123d")
 
 import json
 

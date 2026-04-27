@@ -9,12 +9,16 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from PIL import Image
 
+<<<<<<< HEAD
+from contracts import require
+=======
 try:
     from shared.python.contracts import require
 except ImportError:  # pragma: no cover
     _SRC = Path(__file__).resolve().parent.parent
     sys.path.insert(0, str(_SRC))
     from shared.python.contracts import require
+>>>>>>> origin/main
 
 logger = logging.getLogger(__name__)
 
@@ -77,6 +81,7 @@ def convert_image_mode(img: Image.Image) -> Image.Image:
     Returns:
         Converted image in RGBA or RGB mode.
     """
+    require(img is not None, "img must be provided")
     if img.mode in ("RGBA", "LA"):
         logger.info("Image has transparency - preserving alpha channel")
         return img.convert("RGBA")

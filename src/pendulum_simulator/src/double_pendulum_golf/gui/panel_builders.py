@@ -60,131 +60,39 @@ from .perturbation_panel import PerturbationPanel
 
 logger = logging.getLogger(__name__)
 
+_GOLFER_TAU_KEYS = [
+    "tau_hub",
+    "tau_rs",
+    "tau_re",
+    "tau_rh",
+    "tau_ls",
+    "tau_le",
+    "tau_lh",
+]
 
-def build_double_panel(main_window: Any) -> SimulationPanel:
-    """Build and return the double pendulum simulation panel.
 
-    Parameters
-    ----------
-    main_window : MainWindow
-        The main window instance (used to access state if needed).
+def _wire_double_perturbation(
+    panel: SimulationPanel,
+    controls: ControlsWidget,
+    build_params: Callable,
+    build_state: Callable,
+    build_limits: Callable,
+    build_clamp: Callable,
+) -> PerturbationPanel:
+    """Wire and return a PerturbationPanel for the double pendulum model.
+
+    Preconditions
+    -------------
+    - panel is a fully constructed SimulationPanel.
+    - controls is a ControlsWidget with PRESETS and get_params().
 
     Returns
     -------
-    SimulationPanel
-        A fully wired simulation panel for the double pendulum model.
+    PerturbationPanel
+        Fully wired; caller must call panel.set_perturbation_panel(perturb).
     """
-    controls = ControlsWidget()
-    pendulum = PendulumWidget()
-    matrix = MatrixWidget()
-    torque_history = TorqueHistoryWidget()
-
-    def build_params(p: dict) -> PendulumParams:
-        tilt_rad = np.radians(p.get("tilt_deg", 0.0))
-        azimuth_rad = np.radians(p.get("azimuth_deg", 0.0))
-        g = GRAVITY_MSS if p.get("gravity_on", True) else 0.0
-        g_eff = g * float(np.cos(tilt_rad))  # (#1113) effective gravity on plane
-        # Update display tilt and view azimuth on next paint
-        pendulum.set_tilt_angle(tilt_rad)
-        pendulum.set_view_azimuth(azimuth_rad)  # (#1118)
-        return PendulumParams(
-            m1=p["m1"],
-            m2=p["m2"],
-            L1=p["L1"],
-            L2=p["L2"],
-            mClub=p.get("mClub", 0.0),
-            g=g_eff,
-            b1=p.get("b1", 0.0),
-            b2=p.get("b2", 0.0),
-            mu1=p.get("mu1", 0.0),
-            mu2=p.get("mu2", 0.0),
-        )
-
-    def build_state(p: dict) -> np.ndarray:
-        return np.array([p["theta1_rad"], p["phi_rad"], p["dtheta1"], p["dphi"]])
-
-    def build_torque(p: dict) -> object:
-        return make_polynomial_torque(p["shoulder_coeffs"], p["wrist_coeffs"])
-
-    def build_limits(p: dict) -> JointLimits | None:
-        if not p.get("enable_limits", False):
-            return None
-        return JointLimits(
-            phi_min=p.get("phi_min_rad", -np.pi / 2),
-            phi_max=p.get("phi_max_rad", np.pi / 2),
-            theta1_min=p.get("theta1_min_rad", -np.pi),
-            theta1_max=p.get("theta1_max_rad", np.pi),
-            stiffness=p.get("limit_stiffness", 500.0),
-        )
-
-    def build_clamp(p: dict) -> TorqueClamp | None:
-        if not p.get("enable_clamp", False):
-            return None
-        return TorqueClamp(
-            max_torque1=p.get("max_torque1", 50.0),
-            max_torque2=p.get("max_torque2", 20.0),
-        )
-
-    # Optimizer (#1108)
-    optimizer = OptimizationWidget(
-        model_name="Double Pendulum",
-        n_torque_params=2,
-    )
-
-    def _make_double_objective(p: dict) -> Callable:
-        """Build a tip-speed objective from current controls."""
-        params = build_params(p)
-        initial_state = build_state(p)
-        t_end = p["t_end"]
-        limits = build_limits(p)
-        clamp = build_clamp(p)
-
-        def objective(coeffs: np.ndarray) -> float:
-            n_half = len(coeffs) // 2
-            s_coeffs = list(coeffs[:n_half])
-            w_coeffs = list(coeffs[n_half:])
-            torque_func = make_polynomial_torque(s_coeffs, w_coeffs)
-            try:
-                result = run_simulation(
-                    params=params,
-                    initial_state=initial_state,
-                    t_end=t_end,
-                    torque_func=torque_func,  # type: ignore[arg-type]
-                    limits=limits,
-                    clamp=clamp,
-                )
-                # Tip speed at last frame
-                vels = result.joint_velocities_at(result.n_steps - 1)
-                tip_v = vels.get("tip", (0, 0))
-                speed = float(np.hypot(tip_v[0], tip_v[1]))
-                return -speed  # minimize negative speed
-            except (
-                RuntimeError,
-                ValueError,
-                ArithmeticError,
-            ) as exc:  # noqa: BLE001
-                logger.debug("double objective simulation failed: %s", exc)
-                return 0.0  # crashed → bad solution
-
-        return objective
-
-    panel = SimulationPanel(
-        controls=controls,
-        pendulum=pendulum,  # type: ignore[arg-type]
-        matrix=matrix,  # type: ignore[arg-type]
-        params_builder=build_params,
-        torque_builder=build_torque,
-        state_builder=build_state,
-        run_simulation=run_simulation,
-        torque_history=torque_history,
-        limits_builder=build_limits,
-        clamp_builder=build_clamp,
-        optimizer=optimizer,
-        objective_builder=_make_double_objective,
-    )
-    panel._settings_key = "splitter_double"
-
-    # Wire perturbation panel (#1284)
+    assert panel is not None, "panel must be provided"
+    assert controls is not None, "controls must be provided"
     perturb = PerturbationPanel()
 
     def _double_simulate_fn(coeffs: list) -> object:
@@ -205,7 +113,7 @@ def build_double_panel(main_window: Any) -> SimulationPanel:
         )
 
     def _double_extract_fn(result: object) -> dict:
-        res = result  # type: ignore[assignment]
+        res = result
         vels = res.joint_velocities_at(res.n_steps - 1)  # type: ignore[attr-defined]
         tip_v = vels.get("tip", (0.0, 0.0))
         speed = float(np.hypot(tip_v[0], tip_v[1]))
@@ -238,144 +146,31 @@ def build_double_panel(main_window: Any) -> SimulationPanel:
         _double_preset_coeffs,
     )
     perturb.set_simulation_callbacks(_double_simulate_fn, _double_extract_fn)
-    panel.set_perturbation_panel(perturb)
-    return panel
+    return perturb
 
 
-def build_triple_panel(main_window: Any) -> SimulationPanel:
-    """Build and return the triple pendulum simulation panel.
+def _wire_triple_perturbation(
+    panel: SimulationPanel,
+    controls: ControlsWidgetTriple,
+    build_params: Callable,
+    build_state: Callable,
+    build_limits: Callable,
+    build_clamp: Callable,
+) -> PerturbationPanel:
+    """Wire and return a PerturbationPanel for the triple pendulum model.
 
-    Parameters
-    ----------
-    main_window : MainWindow
-        The main window instance (used to access state if needed).
+    Preconditions
+    -------------
+    - panel is a fully constructed SimulationPanel.
+    - controls is a ControlsWidgetTriple with PRESETS and get_params().
 
     Returns
     -------
-    SimulationPanel
-        A fully wired simulation panel for the triple pendulum model.
+    PerturbationPanel
+        Fully wired; caller must call panel.set_perturbation_panel(perturb).
     """
-    controls = ControlsWidgetTriple()
-    pendulum = PendulumWidget()
-    matrix = TripleMatrixWidget()
-    torque_history = TorqueHistoryWidget()
-
-    def build_params(p: dict) -> TriplePendulumParams:
-        tilt_rad = np.radians(p.get("tilt_deg", 0.0))
-        g = GRAVITY_MSS if p.get("gravity_on", True) else 0.0
-        g_eff = g * float(np.cos(tilt_rad))  # (#1113)
-        pendulum.set_tilt_angle(tilt_rad)
-        pendulum.set_view_azimuth(np.radians(p.get("azimuth_deg", 0.0)))  # (#1118)
-        return TriplePendulumParams(
-            m1=p["m1"],
-            m2=p["m2"],
-            m3=p["m3"],
-            L1=p["L1"],
-            L2=p["L2"],
-            L3=p["L3"],
-            g=g_eff,
-            b1=p.get("b1", 0.0),
-            b2=p.get("b2", 0.0),
-            b3=p.get("b3", 0.0),
-            mu1=p.get("mu1", 0.0),
-            mu2=p.get("mu2", 0.0),
-            mu3=p.get("mu3", 0.0),
-            scapula_offset_rad=np.radians(p.get("scapula_deg", 0.0)),
-        )
-
-    def build_state(p: dict) -> np.ndarray:
-        return np.array(
-            [
-                p["theta1_rad"],
-                p["phi1_rad"],
-                p["phi2_rad"],
-                p["dtheta1"],
-                p["dphi1"],
-                p["dphi2"],
-            ],
-        )
-
-    def build_torque(p: dict) -> object:
-        return make_polynomial_torque_triple(
-            p["shoulder_coeffs"],
-            p["elbow_coeffs"],
-            p["wrist_coeffs"],
-        )
-
-    def build_limits(p: dict) -> JointLimitsNDOF | None:
-        if not p.get("enable_limits", False):
-            return None
-        return JointLimitsNDOF(
-            angle_min=np.array(p["limit_mins_rad"]),
-            angle_max=np.array(p["limit_maxs_rad"]),
-            stiffness=p.get("limit_stiffness", 500.0),
-        )
-
-    def build_clamp(p: dict) -> np.ndarray | None:
-        if not p.get("enable_clamp", False):
-            return None
-        return np.array(p["torque_limits"])
-
-    # Optimizer (#1109)
-    optimizer = OptimizationWidget(
-        model_name="Triple Pendulum",
-        n_torque_params=3,
-    )
-
-    def _make_triple_objective(p: dict) -> Callable:
-        """Build a tip-speed objective from current controls."""
-        params = build_params(p)
-        initial_state = build_state(p)
-        t_end = p["t_end"]
-        limits = build_limits(p)
-        clamp = build_clamp(p)
-
-        def objective(coeffs: np.ndarray) -> float:
-            n_third = len(coeffs) // 3
-            s_c = list(coeffs[:n_third])
-            e_c = list(coeffs[n_third : 2 * n_third])
-            w_c = list(coeffs[2 * n_third :])
-            torque_func = make_polynomial_torque_triple(s_c, e_c, w_c)
-            try:
-                result = run_simulation_triple(
-                    params=params,
-                    initial_state=initial_state,
-                    t_end=t_end,
-                    torque_func=torque_func,  # type: ignore[arg-type]
-                    torque_limits=clamp,
-                    limits=limits,
-                )
-                vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]
-                tip_v = vels.get("tip", (0, 0))
-                speed = float(np.hypot(tip_v[0], tip_v[1]))
-                return -speed
-            except (
-                RuntimeError,
-                ValueError,
-                ArithmeticError,
-            ) as exc:  # noqa: BLE001
-                logger.debug("triple objective simulation failed: %s", exc)
-                return 0.0
-
-        return objective
-
-    panel = SimulationPanel(
-        controls=controls,
-        pendulum=pendulum,  # type: ignore[arg-type]
-        matrix=matrix,  # type: ignore[arg-type]
-        params_builder=build_params,
-        torque_builder=build_torque,
-        state_builder=build_state,
-        run_simulation=run_simulation_triple,
-        torque_history=torque_history,
-        limits_builder=build_limits,
-        clamp_builder=build_clamp,
-        optimizer=optimizer,
-        objective_builder=_make_triple_objective,
-    )
-    panel._settings_key = "splitter_triple"
-
-    # Wire perturbation panel (#1284)
+    assert panel is not None, "panel must be provided"
+    assert controls is not None, "controls must be provided"
     perturb = PerturbationPanel()
 
     def _triple_simulate_fn(coeffs: list) -> object:
@@ -395,7 +190,7 @@ def build_triple_panel(main_window: Any) -> SimulationPanel:
         )
 
     def _triple_extract_fn(result: object) -> dict:
-        res = result  # type: ignore[assignment]
+        res = result
         pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
         tip_xy = pos.get("tip", (0.0, 0.0))
         # Triple pendulum has no joint_velocities_at; approximate from last two frames
@@ -437,10 +232,14 @@ def build_triple_panel(main_window: Any) -> SimulationPanel:
         _triple_preset_coeffs,
     )
     perturb.set_simulation_callbacks(_triple_simulate_fn, _triple_extract_fn)
-    panel.set_perturbation_panel(perturb)
-    return panel
+    return perturb
 
 
+<<<<<<< HEAD
+def _wire_golfer_perturbation(
+    panel: SimulationPanel,
+    controls: ControlsWidgetGolfer,
+=======
 def _build_golfer_widgets() -> tuple:
     """Create the core widgets for the golfer panel.
 
@@ -537,10 +336,15 @@ def _build_golfer_torque(p: dict) -> object:
 def _wire_golfer_perturbation(
     panel: SimulationPanel,
     controls: Any,
+>>>>>>> origin/main
     build_params: Callable,
     build_state: Callable,
     build_limits: Callable,
     build_clamp: Callable,
+<<<<<<< HEAD
+) -> PerturbationPanel:
+    """Wire and return a PerturbationPanel for the golfer upper body model.
+=======
 ) -> None:
     """Wire the perturbation panel for the golfer model."""
     perturb = PerturbationPanel()
@@ -623,6 +427,239 @@ def _wire_golfer_perturbation(
 
 def build_golfer_panel(main_window: Any) -> SimulationPanel:
     """Build and return the golfer upper body simulation panel.
+>>>>>>> origin/main
+
+    Preconditions
+    -------------
+    - panel is a fully constructed SimulationPanel.
+    - controls is a ControlsWidgetGolfer with PRESETS and get_params().
+
+    Returns
+    -------
+    PerturbationPanel
+        Fully wired; caller must call panel.set_perturbation_panel(perturb).
+    """
+<<<<<<< HEAD
+    assert panel is not None, "panel must be provided"
+    assert controls is not None, "controls must be provided"
+    perturb = PerturbationPanel()
+
+    def _golfer_simulate_fn(coeffs: list) -> object:
+        p = controls.get_params()
+        params = build_params(p)
+        initial_state = build_state(p)
+        limits = build_limits(p)
+        clamp = build_clamp(p)
+        torque_func = make_polynomial_torque_golfer(*coeffs)
+        return run_simulation_golfer(
+            params=params,
+            initial_state=initial_state,
+            t_end=p["t_end"],
+            torque_func=torque_func,  # type: ignore[arg-type]
+            limits=limits,
+            clamp=clamp,
+        )
+
+    def _golfer_extract_fn(result: object) -> dict:
+        res = result
+        pos = res.positions_at(res.n_steps - 1)  # type: ignore[attr-defined]
+        tip_xy = pos.get("club_tip", pos.get("tip", (0.0, 0.0)))
+        if res.n_steps >= 2:  # type: ignore[attr-defined]
+            dt = float(res.t[-1] - res.t[-2])  # type: ignore[attr-defined]
+            pos_prev = res.positions_at(res.n_steps - 2)  # type: ignore[attr-defined]
+            tip_prev = pos_prev.get("club_tip", pos_prev.get("tip", (0.0, 0.0)))
+            vx = (tip_xy[0] - tip_prev[0]) / max(dt, 1e-9)
+            vy = (tip_xy[1] - tip_prev[1]) / max(dt, 1e-9)
+        else:
+            vx, vy = 0.0, 0.0
+        speed = float(np.hypot(vx, vy))
+        return {
+            "tip_speed_final": speed,
+            "tip_position_final": np.array([tip_xy[0], tip_xy[1]]),
+        }
+
+    def _golfer_coeffs_fn() -> list:
+        p = controls.get_params()
+        joint_keys = [
+            "hip_coeffs",
+            "spine_coeffs",
+            "r_shoulder_coeffs",
+            "r_elbow_coeffs",
+            "l_shoulder_coeffs",
+            "l_elbow_coeffs",
+            "wrist_coeffs",
+        ]
+        return [p.get(k, [0.0]) for k in joint_keys]
+
+    perturb.set_coeffs_source(_golfer_coeffs_fn)
+
+    def _golfer_preset_coeffs(name: str) -> list[list[float]]:
+        preset = controls.PRESETS.get(name)
+        if preset is None:
+            return [[0.0]] * len(_GOLFER_TAU_KEYS)
+
+        def _parse(s: str) -> list[float]:
+            return [float(x.strip()) for x in s.split(",") if x.strip()] or [0.0]
+
+        return [_parse(str(preset.get(k, "0"))) for k in _GOLFER_TAU_KEYS]
+
+    perturb.set_preset_source(
+        lambda: list(controls.PRESETS.keys()),
+        _golfer_preset_coeffs,
+    )
+    perturb.set_simulation_callbacks(_golfer_simulate_fn, _golfer_extract_fn)
+    return perturb
+
+
+def _wire_panel_sim_signals(
+    ts: Any,
+    panels: tuple,
+    active_panel_fn: Callable,
+) -> None:
+    """Connect simulation lifecycle signals for each panel to the toolstrip.
+
+    For each panel, wires sim_started, sim_finished, frame_changed, and
+    playback_ended to forward updates to the toolstrip only when that panel
+    is the active one.
+
+    Preconditions
+    -------------
+    - ts is the toolstrip widget with set_running, set_frame_range, set_frame,
+      btn_play attributes.
+    - panels is a tuple of SimulationPanel instances.
+    - active_panel_fn() returns the currently active panel.
+    """
+    assert ts is not None, "ts must be provided"
+    assert panels is not None, "panels must be provided"
+    assert active_panel_fn is not None, "active_panel_fn must be provided"
+    for panel in panels:
+        panel.sim_started.connect(
+            lambda _p=panel: (ts.set_running(True) if _p is active_panel_fn() else None)
+        )
+        panel.sim_finished.connect(
+            lambda _p=panel: (
+                [
+                    ts.set_running(False),
+                    ts.set_frame_range(_p.current_n_steps()),
+                ]
+                if _p is active_panel_fn()
+                else None
+            )
+        )
+        panel.frame_changed.connect(
+            lambda idx, _p=panel: (ts.set_frame(idx) if _p is active_panel_fn() else None)
+        )
+        # Reset toolstrip play button when playback ends
+        panel.playback_ended.connect(
+            lambda _p=panel: (
+                ts.btn_play.setChecked(False) if _p is active_panel_fn() else None
+            )
+        )
+
+
+def _make_double_params_builder(pendulum: PendulumWidget) -> Callable[[dict], PendulumParams]:
+    """Return a params builder closure for the double pendulum."""
+
+    def build_params(p: dict) -> PendulumParams:
+        tilt_rad = np.radians(p.get("tilt_deg", 0.0))
+        azimuth_rad = np.radians(p.get("azimuth_deg", 0.0))
+        g = GRAVITY_MSS if p.get("gravity_on", True) else 0.0
+        g_eff = g * float(np.cos(tilt_rad))  # (#1113) effective gravity on plane
+        # Update display tilt and view azimuth on next paint
+        pendulum.set_tilt_angle(tilt_rad)
+        pendulum.set_view_azimuth(azimuth_rad)  # (#1118)
+        return PendulumParams(
+            m1=p["m1"],
+            m2=p["m2"],
+            L1=p["L1"],
+            L2=p["L2"],
+            mClub=p.get("mClub", 0.0),
+            g=g_eff,
+            b1=p.get("b1", 0.0),
+            b2=p.get("b2", 0.0),
+            mu1=p.get("mu1", 0.0),
+            mu2=p.get("mu2", 0.0),
+        )
+
+    return build_params
+
+
+def _build_double_state(p: dict) -> np.ndarray:
+    return np.array([p["theta1_rad"], p["phi_rad"], p["dtheta1"], p["dphi"]])
+
+
+def _build_double_torque(p: dict) -> object:
+    return make_polynomial_torque(p["shoulder_coeffs"], p["wrist_coeffs"])
+
+
+def _build_double_limits(p: dict) -> JointLimits | None:
+    if not p.get("enable_limits", False):
+        return None
+    return JointLimits(
+        phi_min=p.get("phi_min_rad", -np.pi / 2),
+        phi_max=p.get("phi_max_rad", np.pi / 2),
+        theta1_min=p.get("theta1_min_rad", -np.pi),
+        theta1_max=p.get("theta1_max_rad", np.pi),
+        stiffness=p.get("limit_stiffness", 500.0),
+    )
+
+
+def _build_double_clamp(p: dict) -> TorqueClamp | None:
+    if not p.get("enable_clamp", False):
+        return None
+    return TorqueClamp(
+        max_torque1=p.get("max_torque1", 50.0),
+        max_torque2=p.get("max_torque2", 20.0),
+    )
+
+
+def _make_double_objective_factory(
+    build_params: Callable[[dict], PendulumParams],
+) -> Callable[[dict], Callable]:
+    """Return an objective-builder for the double pendulum optimizer."""
+
+    def _make_double_objective(p: dict) -> Callable:
+        """Build a tip-speed objective from current controls."""
+        params = build_params(p)
+        initial_state = _build_double_state(p)
+        t_end = p["t_end"]
+        limits = _build_double_limits(p)
+        clamp = _build_double_clamp(p)
+
+        def objective(coeffs: np.ndarray) -> float:
+            n_half = len(coeffs) // 2
+            s_coeffs = list(coeffs[:n_half])
+            w_coeffs = list(coeffs[n_half:])
+            torque_func = make_polynomial_torque(s_coeffs, w_coeffs)
+            try:
+                result = run_simulation(
+                    params=params,
+                    initial_state=initial_state,
+                    t_end=t_end,
+                    torque_func=torque_func,  # type: ignore[arg-type]
+                    limits=limits,
+                    clamp=clamp,
+                )
+                # Tip speed at last frame
+                vels = result.joint_velocities_at(result.n_steps - 1)
+                tip_v = vels.get("tip", (0, 0))
+                speed = float(np.hypot(tip_v[0], tip_v[1]))
+                return -speed  # minimize negative speed
+            except (
+                RuntimeError,
+                ValueError,
+                ArithmeticError,
+            ) as exc:  # noqa: BLE001
+                logger.debug("double objective simulation failed: %s", exc)
+                return 0.0  # crashed → bad solution
+
+        return objective
+
+    return _make_double_objective
+
+
+def build_double_panel(main_window: Any) -> SimulationPanel:
+    """Build and return the double pendulum simulation panel.
 
     Parameters
     ----------
@@ -632,8 +669,48 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
     Returns
     -------
     SimulationPanel
-        A fully wired simulation panel for the golfer upper body model.
+        A fully wired simulation panel for the double pendulum model.
     """
+    controls = ControlsWidget()
+    pendulum = PendulumWidget()
+    matrix = MatrixWidget()
+    torque_history = TorqueHistoryWidget()
+
+    build_params = _make_double_params_builder(pendulum)
+    build_state = _build_double_state
+    build_torque = _build_double_torque
+    build_limits = _build_double_limits
+    build_clamp = _build_double_clamp
+
+    # Optimizer (#1108)
+    optimizer = OptimizationWidget(
+        model_name="Double Pendulum",
+        n_torque_params=2,
+    )
+    objective_builder = _make_double_objective_factory(build_params)
+
+    panel = SimulationPanel(
+        controls=controls,
+        pendulum=pendulum,  # type: ignore[arg-type]
+        matrix=matrix,  # type: ignore[arg-type]
+        params_builder=build_params,
+        torque_builder=build_torque,
+        state_builder=build_state,
+        run_simulation=run_simulation,
+        torque_history=torque_history,
+        limits_builder=build_limits,
+        clamp_builder=build_clamp,
+        optimizer=optimizer,
+        objective_builder=objective_builder,
+    )
+    panel._settings_key = "splitter_double"
+
+    # Wire perturbation panel (#1284)
+    perturb = _wire_double_perturbation(
+        panel, controls, build_params, build_state, build_limits, build_clamp
+    )
+    panel.set_perturbation_panel(perturb)
+=======
     controls, pendulum, matrix, torque_history = _build_golfer_widgets()
 
     def build_params(p: dict) -> GolferParams:
@@ -723,7 +800,462 @@ def build_golfer_panel(main_window: Any) -> SimulationPanel:
         build_limits,
         build_clamp,
     )
+>>>>>>> origin/main
     return panel
+
+
+def _make_triple_params_builder(
+    pendulum: PendulumWidget,
+) -> Callable[[dict], TriplePendulumParams]:
+    """Return a params builder closure for the triple pendulum."""
+
+    def build_params(p: dict) -> TriplePendulumParams:
+        tilt_rad = np.radians(p.get("tilt_deg", 0.0))
+        g = GRAVITY_MSS if p.get("gravity_on", True) else 0.0
+        g_eff = g * float(np.cos(tilt_rad))  # (#1113)
+        pendulum.set_tilt_angle(tilt_rad)
+        pendulum.set_view_azimuth(np.radians(p.get("azimuth_deg", 0.0)))  # (#1118)
+        return TriplePendulumParams(
+            m1=p["m1"],
+            m2=p["m2"],
+            m3=p["m3"],
+            L1=p["L1"],
+            L2=p["L2"],
+            L3=p["L3"],
+            g=g_eff,
+            b1=p.get("b1", 0.0),
+            b2=p.get("b2", 0.0),
+            b3=p.get("b3", 0.0),
+            mu1=p.get("mu1", 0.0),
+            mu2=p.get("mu2", 0.0),
+            mu3=p.get("mu3", 0.0),
+            scapula_offset_rad=np.radians(p.get("scapula_deg", 0.0)),
+        )
+
+    return build_params
+
+
+def _build_triple_state(p: dict) -> np.ndarray:
+    return np.array(
+        [
+            p["theta1_rad"],
+            p["phi1_rad"],
+            p["phi2_rad"],
+            p["dtheta1"],
+            p["dphi1"],
+            p["dphi2"],
+        ],
+    )
+
+
+def _build_triple_torque(p: dict) -> object:
+    return make_polynomial_torque_triple(
+        p["shoulder_coeffs"],
+        p["elbow_coeffs"],
+        p["wrist_coeffs"],
+    )
+
+
+def _build_triple_limits(p: dict) -> JointLimitsNDOF | None:
+    if not p.get("enable_limits", False):
+        return None
+    return JointLimitsNDOF(
+        angle_min=np.array(p["limit_mins_rad"]),
+        angle_max=np.array(p["limit_maxs_rad"]),
+        stiffness=p.get("limit_stiffness", 500.0),
+    )
+
+
+def _build_triple_clamp(p: dict) -> np.ndarray | None:
+    if not p.get("enable_clamp", False):
+        return None
+    return np.array(p["torque_limits"])
+
+
+def _make_triple_objective_factory(
+    build_params: Callable[[dict], TriplePendulumParams],
+) -> Callable[[dict], Callable]:
+    """Return an objective-builder for the triple pendulum optimizer."""
+
+    def _make_triple_objective(p: dict) -> Callable:
+        """Build a tip-speed objective from current controls."""
+        params = build_params(p)
+        initial_state = _build_triple_state(p)
+        t_end = p["t_end"]
+        limits = _build_triple_limits(p)
+        clamp = _build_triple_clamp(p)
+
+        def objective(coeffs: np.ndarray) -> float:
+            n_third = len(coeffs) // 3
+            s_c = list(coeffs[:n_third])
+            e_c = list(coeffs[n_third : 2 * n_third])
+            w_c = list(coeffs[2 * n_third :])
+            torque_func = make_polynomial_torque_triple(s_c, e_c, w_c)
+            try:
+                result = run_simulation_triple(
+                    params=params,
+                    initial_state=initial_state,
+                    t_end=t_end,
+                    torque_func=torque_func,  # type: ignore[arg-type]
+                    torque_limits=clamp,
+                    limits=limits,
+                )
+                vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]
+                tip_v = vels.get("tip", (0, 0))
+                speed = float(np.hypot(tip_v[0], tip_v[1]))
+                return -speed
+            except (
+                RuntimeError,
+                ValueError,
+                ArithmeticError,
+            ) as exc:  # noqa: BLE001
+                logger.debug("triple objective simulation failed: %s", exc)
+                return 0.0
+
+        return objective
+
+    return _make_triple_objective
+
+
+def build_triple_panel(main_window: Any) -> SimulationPanel:
+    """Build and return the triple pendulum simulation panel.
+
+    Parameters
+    ----------
+    main_window : MainWindow
+        The main window instance (used to access state if needed).
+
+    Returns
+    -------
+    SimulationPanel
+        A fully wired simulation panel for the triple pendulum model.
+    """
+    controls = ControlsWidgetTriple()
+    pendulum = PendulumWidget()
+    matrix = TripleMatrixWidget()
+    torque_history = TorqueHistoryWidget()
+
+    build_params = _make_triple_params_builder(pendulum)
+    build_state = _build_triple_state
+    build_torque = _build_triple_torque
+    build_limits = _build_triple_limits
+    build_clamp = _build_triple_clamp
+
+    # Optimizer (#1109)
+    optimizer = OptimizationWidget(
+        model_name="Triple Pendulum",
+        n_torque_params=3,
+    )
+    objective_builder = _make_triple_objective_factory(build_params)
+
+    panel = SimulationPanel(
+        controls=controls,
+        pendulum=pendulum,  # type: ignore[arg-type]
+        matrix=matrix,  # type: ignore[arg-type]
+        params_builder=build_params,
+        torque_builder=build_torque,
+        state_builder=build_state,
+        run_simulation=run_simulation_triple,
+        torque_history=torque_history,
+        limits_builder=build_limits,
+        clamp_builder=build_clamp,
+        optimizer=optimizer,
+        objective_builder=objective_builder,
+    )
+    panel._settings_key = "splitter_triple"
+
+    # Wire perturbation panel (#1284)
+    perturb = _wire_triple_perturbation(
+        panel, controls, build_params, build_state, build_limits, build_clamp
+    )
+    panel.set_perturbation_panel(perturb)
+    return panel
+
+
+def _build_golfer_params(p: dict, pendulum: GolferPendulumWidget) -> GolferParams:
+    """Construct GolferParams from control dict and update widget view angles.
+
+    Parameters
+    ----------
+    p : dict
+        Parameter dict from ControlsWidgetGolfer.
+    pendulum : GolferPendulumWidget
+        Widget whose tilt/azimuth display is updated as a side effect.
+
+    Returns
+    -------
+    GolferParams
+        Physics parameters for the golfer upper body simulation.
+    """
+    assert p is not None, "p must be provided"
+    assert pendulum is not None, "pendulum must be provided"
+    tilt_rad = np.radians(p.get("tilt_deg", 0.0))
+    g = GRAVITY_MSS if p.get("gravity_on", True) else 0.0
+    g_eff = g * float(np.cos(tilt_rad))  # (#1113)
+    pendulum.set_tilt_angle(tilt_rad)
+    pendulum.set_view_azimuth(np.radians(p.get("azimuth_deg", 0.0)))  # (#1118)
+    return GolferParams(
+        m_hub=p["m_hub"],
+        m_r_upper=p["m_r_upper"],
+        m_r_fore=p["m_r_fore"],
+        m_l_upper=p["m_l_upper"],
+        m_l_fore=p["m_l_fore"],
+        m_club=p["m_club"],
+        L_hub=p["L_hub"],
+        L_r_upper=p["L_r_upper"],
+        L_r_fore=p["L_r_fore"],
+        L_l_upper=p["L_l_upper"],
+        L_l_fore=p["L_l_fore"],
+        L_club=p["L_club"],
+        d_rs=p["d_rs"],
+        d_ls=p["d_ls"],
+        grip_right=p["grip_right"],
+        grip_left=p["grip_left"],
+        m_clubhead=p.get("m_clubhead", 0.2),
+        g=g_eff,
+        b_hub=p.get("b_hub", 0.0),
+        b_rs=p.get("b_rs", 0.0),
+        b_re=p.get("b_re", 0.0),
+        b_rh=p.get("b_rh", 0.0),
+        b_ls=p.get("b_ls", 0.0),
+        b_le=p.get("b_le", 0.0),
+        b_lh=p.get("b_lh", 0.0),
+        L_rscap=p.get("L_rscap", 0.12),
+        L_lscap=p.get("L_lscap", 0.12),
+        m_rscap=p.get("m_rscap", 0.5),
+        m_lscap=p.get("m_lscap", 0.5),
+    )
+
+
+def _build_golfer_state(p: dict) -> np.ndarray:
+    """Build the 16-element golfer initial state vector from control dict."""
+    assert p is not None, "p must be provided"
+    return np.array(
+        [
+            p["theta_hub_rad"],
+            p["alpha_rs_rad"],
+            p["alpha_re_rad"],
+            p["alpha_rh_rad"],
+            p["alpha_ls_rad"],
+            p["alpha_le_rad"],
+            p["alpha_lh_rad"],
+            0.0,  # theta_club (computed by projection)
+            0.0,
+            0.0,
+            0.0,
+            0.0,  # qdot (all zero)
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+        ]
+    )
+
+
+def _build_golfer_torque(p: dict) -> object:
+    """Build a polynomial torque function for the golfer model from control dict."""
+    assert p is not None, "p must be provided"
+    return make_polynomial_torque_golfer(
+        p["hub_coeffs"],
+        p["rs_coeffs"],
+        p["re_coeffs"],
+        p["rh_coeffs"],
+        p["ls_coeffs"],
+        p["le_coeffs"],
+        p["lh_coeffs"],
+    )
+
+
+def _build_golfer_limits(p: dict) -> JointLimitsNDOF | None:
+    """Build joint limits for the golfer model, or None if disabled."""
+    assert p is not None, "p must be provided"
+    if not p.get("enable_limits", False):
+        return None
+    return JointLimitsNDOF(
+        angle_min=np.array(p["limit_mins_rad"]),
+        angle_max=np.array(p["limit_maxs_rad"]),
+        stiffness=p.get("limit_stiffness", 500.0),
+    )
+
+
+def _build_golfer_clamp(p: dict) -> np.ndarray | None:
+    """Build torque clamp array for the golfer model, or None if disabled."""
+    assert p is not None, "p must be provided"
+    if not p.get("enable_clamp", False):
+        return None
+    return np.array(p["torque_limits"])
+
+
+def _make_golfer_objective_fn(
+    params: GolferParams,
+    initial_state: np.ndarray,
+    t_end: float,
+    limits: JointLimitsNDOF | None,
+    clamp: np.ndarray | None,
+) -> Callable:
+    """Return a clubhead-speed objective callable for the golfer model.
+
+    Parameters
+    ----------
+    params : GolferParams
+        Fixed physics parameters for the optimization run.
+    initial_state : np.ndarray
+        Fixed initial state vector.
+    t_end : float
+        Simulation end time.
+    limits : JointLimitsNDOF | None
+        Optional joint limits.
+    clamp : np.ndarray | None
+        Optional per-joint torque clamp.
+
+    Returns
+    -------
+    Callable[[np.ndarray], float]
+        Objective that returns negative clubhead speed (to minimise).
+    """
+
+    def objective(coeffs: np.ndarray) -> float:
+        n_seventh = max(1, len(coeffs) // 7)
+        slices = [list(coeffs[i * n_seventh : (i + 1) * n_seventh]) for i in range(7)]
+        torque_func = make_polynomial_torque_golfer(*slices)
+        try:
+            result = run_simulation_golfer(
+                params=params,
+                initial_state=initial_state,
+                t_end=t_end,
+                torque_func=torque_func,  # type: ignore[arg-type]
+                torque_limits=clamp,
+                limits=limits,
+            )
+            vels = result.joint_velocities_at(result.n_steps - 1)  # type: ignore[attr-defined]
+            tip_v = vels.get("club_tip", (0, 0))
+            speed = float(np.hypot(tip_v[0], tip_v[1]))
+            return -speed
+        except (
+            RuntimeError,
+            ValueError,
+            ArithmeticError,
+        ) as exc:  # noqa: BLE001
+            logger.debug("golfer objective simulation failed: %s", exc)
+            return 0.0
+
+    return objective
+
+
+def build_golfer_panel(main_window: Any) -> SimulationPanel:
+    """Build and return the golfer upper body simulation panel.
+
+    Parameters
+    ----------
+    main_window : MainWindow
+        The main window instance (used to access state if needed).
+
+    Returns
+    -------
+    SimulationPanel
+        A fully wired simulation panel for the golfer upper body model.
+    """
+    controls = ControlsWidgetGolfer()
+    pendulum = GolferPendulumWidget()
+    matrix = GolferMatrixWidget()
+    torque_history = TorqueHistoryWidget()
+
+    def build_params(p: dict) -> GolferParams:
+        return _build_golfer_params(p, pendulum)
+
+    def build_state(p: dict) -> np.ndarray:
+        return _build_golfer_state(p)
+
+    def build_torque(p: dict) -> object:
+        return _build_golfer_torque(p)
+
+    def build_limits(p: dict) -> JointLimitsNDOF | None:
+        return _build_golfer_limits(p)
+
+    def build_clamp(p: dict) -> np.ndarray | None:
+        return _build_golfer_clamp(p)
+
+    # Optimizer (#1110)
+    optimizer = OptimizationWidget(
+        model_name="Golfer Upper Body",
+        n_torque_params=7,
+    )
+
+    def _make_golfer_objective(p: dict) -> Callable:
+        """Build a clubhead-speed objective from current controls."""
+        return _make_golfer_objective_fn(
+            params=build_params(p),
+            initial_state=build_state(p),
+            t_end=p["t_end"],
+            limits=build_limits(p),
+            clamp=build_clamp(p),
+        )
+
+    panel = SimulationPanel(
+        controls=controls,
+        pendulum=pendulum,  # type: ignore[arg-type]
+        matrix=matrix,  # type: ignore[arg-type]
+        params_builder=build_params,
+        torque_builder=build_torque,
+        state_builder=build_state,
+        run_simulation=run_simulation_golfer,
+        torque_history=torque_history,
+        limits_builder=build_limits,
+        clamp_builder=build_clamp,
+        optimizer=optimizer,
+        objective_builder=_make_golfer_objective,
+    )
+    panel._settings_key = "splitter_golfer"
+
+    # Wire perturbation panel (#1284)
+    perturb = _wire_golfer_perturbation(
+        panel, controls, build_params, build_state, build_limits, build_clamp
+    )
+    panel.set_perturbation_panel(perturb)
+    return panel
+
+
+def _wire_overlay_signals(ts: Any, active_panel_fn: Callable) -> None:
+    """Connect overlay toggle, scale-slider, and rotation signals to active panel.
+
+    Preconditions
+    -------------
+    - ts has torque_vectors_toggled, moment_of_force_toggled, sum_moments_toggled,
+      force_scale_changed, mob_scale_changed, force_ell_scale_changed,
+      azimuth_changed, tilt_changed, reset_view_requested, and
+      segment_visibility_changed signals.
+    - active_panel_fn() returns the currently active SimulationPanel.
+    """
+    assert ts is not None, "ts must be provided"
+    assert active_panel_fn is not None, "active_panel_fn must be provided"
+
+    def _fwd_overlay(attr: str, value: object) -> None:
+        pw = active_panel_fn().pendulum
+        if hasattr(pw, attr):
+            getattr(pw, attr)(value)
+
+    ts.torque_vectors_toggled.connect(lambda v: _fwd_overlay("set_show_torque_vectors", v))
+    ts.moment_of_force_toggled.connect(lambda v: _fwd_overlay("set_show_moment_of_force", v))
+    ts.sum_moments_toggled.connect(lambda v: _fwd_overlay("set_show_sum_moments", v))
+    ts.force_scale_changed.connect(lambda v: _fwd_overlay("set_force_scale", v))
+    ts.mob_scale_changed.connect(lambda v: _fwd_overlay("set_mob_ellipsoid_scale", v))
+    ts.force_ell_scale_changed.connect(lambda v: _fwd_overlay("set_force_ellipsoid_scale", v))
+    ts.azimuth_changed.connect(lambda v: _fwd_overlay("set_view_azimuth", v))
+    ts.tilt_changed.connect(lambda v: _fwd_overlay("set_tilt_angle", v))
+    ts.reset_view_requested.connect(
+        lambda: (
+            active_panel_fn().pendulum.reset_view()
+            if hasattr(active_panel_fn().pendulum, "reset_view")
+            else None
+        )
+    )
+    ts.segment_visibility_changed.connect(
+        lambda vis: (
+            active_panel_fn().pendulum.set_visible_segments(vis)
+            if hasattr(active_panel_fn().pendulum, "set_visible_segments")
+            else None
+        )
+    )
 
 
 def wire_toolstrip(main_window: Any) -> None:
@@ -749,9 +1281,7 @@ def wire_toolstrip(main_window: Any) -> None:
     )
 
     # ── Simulation action signals → active panel only ──────────────
-    ts.run_requested.connect(
-        lambda: main_window._active_panel().controls.run_requested.emit()
-    )
+    ts.run_requested.connect(lambda: main_window._active_panel().controls.run_requested.emit())
     ts.reset_requested.connect(
         lambda: main_window._active_panel().controls.reset_requested.emit()
     )
@@ -761,9 +1291,7 @@ def wire_toolstrip(main_window: Any) -> None:
     ts.speed_changed.connect(
         lambda val: main_window._active_panel().controls.speed_changed.emit(val)
     )
-    ts.frame_scrubbed.connect(
-        lambda idx: main_window._active_panel().scrub_to_frame(idx)
-    )
+    ts.frame_scrubbed.connect(lambda idx: main_window._active_panel().scrub_to_frame(idx))
 
     # ── Export actions (#1141) → active panel's controls ──────────
     ts.export_data_requested.connect(
@@ -778,95 +1306,43 @@ def wire_toolstrip(main_window: Any) -> None:
 
     # ── Overlay toggles → active panel's pendulum widget ──────────
     _connect_common_signals(main_window)
-
-    # ── Torque/MoF/Sum display toggles (#1208) → active panel's pendulum ──
-    ts.torque_vectors_toggled.connect(
-        lambda v: _fwd_overlay("set_show_torque_vectors", v)
-    )
-    ts.moment_of_force_toggled.connect(
-        lambda v: _fwd_overlay("set_show_moment_of_force", v)
-    )
-    ts.sum_moments_toggled.connect(lambda v: _fwd_overlay("set_show_sum_moments", v))
-
-    # ── Scale sliders → active panel's pendulum widget ────────────
-    def _fwd_overlay(attr: str, value: object) -> None:
-        pw = main_window._active_panel().pendulum
-        if hasattr(pw, attr):
-            getattr(pw, attr)(value)
-
-    ts.force_scale_changed.connect(lambda v: _fwd_overlay("set_force_scale", v))
-    ts.mob_scale_changed.connect(lambda v: _fwd_overlay("set_mob_ellipsoid_scale", v))
-    ts.force_ell_scale_changed.connect(
-        lambda v: _fwd_overlay("set_force_ellipsoid_scale", v)
-    )
-
-    # ── Rotation controls (#1146) → active panel's pendulum widget ──
-    ts.azimuth_changed.connect(lambda v: _fwd_overlay("set_view_azimuth", v))
-    ts.tilt_changed.connect(lambda v: _fwd_overlay("set_tilt_angle", v))
-
-    # ── Reset view → active panel's pendulum widget ───────────────
-    ts.reset_view_requested.connect(
-        lambda: (
-            main_window._active_panel().pendulum.reset_view()
-            if hasattr(main_window._active_panel().pendulum, "reset_view")
-            else None
-        )
-    )
-
-    # ── Per-segment overlay visibility ────────────────────────────
-    ts.segment_visibility_changed.connect(
-        lambda vis: (
-            main_window._active_panel().pendulum.set_visible_segments(vis)
-            if hasattr(main_window._active_panel().pendulum, "set_visible_segments")
-            else None
-        )
-    )
+    _wire_overlay_signals(ts, main_window._active_panel)
 
     # ── Model selection dropdown (#1149) ──────────────────────────
+    # When the user picks a different model from the dropdown, we
+    # switch the QTabWidget AND push the current toolstrip overlay
+    # state onto the new model's pendulum widget. Without that second
+    # step the new widget shows nothing until the user cycles every
+    # toggle (the original "mobility ellipsoid stays hidden" bug).
+    from .overlay_state import apply_toolstrip_overlay_state
+
+    def _sync_active_pendulum_overlays() -> None:
+        try:
+            pw = main_window._active_panel().pendulum
+        except (AttributeError, IndexError, RuntimeError):
+            return
+        apply_toolstrip_overlay_state(ts, pw)
+
     def _on_model_dropdown_changed(idx: int) -> None:
         main_window._tabs.blockSignals(True)
         main_window._tabs.setCurrentIndex(idx)
         main_window._tabs.blockSignals(False)
+        _sync_active_pendulum_overlays()
 
     def _on_tab_changed(idx: int) -> None:
         ts.cmb_model.blockSignals(True)
         ts.cmb_model.setCurrentIndex(idx)
         ts.cmb_model.blockSignals(False)
+        _sync_active_pendulum_overlays()
 
     ts.model_changed.connect(_on_model_dropdown_changed)
     main_window._tabs.currentChanged.connect(_on_tab_changed)
+    # Push the initial state to the panel that's visible at startup so
+    # users with a saved-state autoplay see overlays immediately.
+    _sync_active_pendulum_overlays()
 
     # ── Busy state and frame sync — only forward from the active panel ─
-    # Guard each callback so non-active panels are silently ignored.
-    for panel in main_window._panels:
-        panel.sim_started.connect(
-            lambda _p=panel: (
-                ts.set_running(True) if _p is main_window._active_panel() else None
-            )
-        )
-        panel.sim_finished.connect(
-            lambda _p=panel: (
-                [
-                    ts.set_running(False),
-                    ts.set_frame_range(_p.current_n_steps()),
-                ]
-                if _p is main_window._active_panel()
-                else None
-            )
-        )
-        panel.frame_changed.connect(
-            lambda idx, _p=panel: (
-                ts.set_frame(idx) if _p is main_window._active_panel() else None
-            )
-        )
-        # Reset toolstrip play button when playback ends
-        panel.playback_ended.connect(
-            lambda _p=panel: (
-                ts.btn_play.setChecked(False)
-                if _p is main_window._active_panel()
-                else None
-            )
-        )
+    _wire_panel_sim_signals(ts, main_window._panels, main_window._active_panel)
 
     # Loop toggle — forward to all panels
     if hasattr(ts, "loop_toggled"):
@@ -902,15 +1378,9 @@ def _connect_common_signals(main_window: Any) -> None:
             getattr(pw, attr)(value)
 
     ts.forces_toggled.connect(lambda v: _fwd_overlay("set_show_forces", v))
-    ts.zero_torque_toggled.connect(
-        lambda v: _fwd_overlay("set_show_zero_torque_forces", v)
-    )
-    ts.mob_ellipsoid_toggled.connect(
-        lambda v: _fwd_overlay("set_show_mob_ellipsoids", v)
-    )
-    ts.force_ellipsoid_toggled.connect(
-        lambda v: _fwd_overlay("set_show_force_ellipsoids", v)
-    )
+    ts.zero_torque_toggled.connect(lambda v: _fwd_overlay("set_show_zero_torque_forces", v))
+    ts.mob_ellipsoid_toggled.connect(lambda v: _fwd_overlay("set_show_mob_ellipsoids", v))
+    ts.force_ellipsoid_toggled.connect(lambda v: _fwd_overlay("set_show_force_ellipsoids", v))
     ts.com_toggled.connect(lambda v: _fwd_overlay("set_show_com", v))
 
     # ── 3D segment rendering (#1155) ──────────────────────────────

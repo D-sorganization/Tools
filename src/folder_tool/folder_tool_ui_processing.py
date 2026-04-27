@@ -112,9 +112,14 @@ class UIProcessingMixin:
         self, title: str, content: str
     ) -> tuple[tk.Toplevel, int, int]:
         """Create and configure the dialog window, returning it with dimensions."""
+<<<<<<< HEAD
+        assert title is not None, "title must be provided"
+        dialog = tk.Toplevel(self.root)  # type: ignore[attr-defined]
+=======
         if not (title is not None):
             raise ValueError("title must be provided")
         dialog = tk.Toplevel(self.root)
+>>>>>>> origin/main
         dialog.title(title)
 
         dialog_width = min(
@@ -134,7 +139,7 @@ class UIProcessingMixin:
 
         dialog.geometry(f"{dialog_width}x{dialog_height}")
         dialog.minsize(MIN_DIALOG_WIDTH, MIN_DIALOG_HEIGHT)
-        dialog.transient(self.root)
+        dialog.transient(self.root)  # type: ignore[attr-defined]
         dialog.grab_set()
 
         return dialog, dialog_width, dialog_height
@@ -234,15 +239,15 @@ class UIProcessingMixin:
 
     def update_source_info(self) -> None:
         """Updates the source folder information display."""
-        if not self.source_folders:
-            self.source_info_label.config(text="")
+        if not self.source_folders:  # type: ignore[attr-defined]
+            self.source_info_label.config(text="")  # type: ignore[attr-defined]
             return
 
         total_size = 0
         total_files = 0
         accessible_folders = 0
 
-        for folder in self.source_folders:
+        for folder in self.source_folders:  # type: ignore[attr-defined]
             try:
                 if not Path(folder).exists():
                     logger.warning(f"Source folder no longer exists: {folder}")
@@ -274,7 +279,7 @@ class UIProcessingMixin:
                 continue
 
         if accessible_folders == 0:
-            self.source_info_label.config(
+            self.source_info_label.config(  # type: ignore[attr-defined]
                 text="Warning: No accessible source folders",
                 foreground="red",
             )
@@ -283,27 +288,27 @@ class UIProcessingMixin:
         size_mb = total_size / (1024 * 1024)
         info_text = (
             f"Total: {total_files} files, {size_mb:.1f} MB "
-            f"({accessible_folders}/{len(self.source_folders)} folders accessible)"
+            f"({accessible_folders}/{len(self.source_folders)} folders accessible)"  # type: ignore[attr-defined]
         )
 
         # Set color based on accessibility
-        if accessible_folders < len(self.source_folders):
-            self.source_info_label.config(text=info_text, foreground="orange")
+        if accessible_folders < len(self.source_folders):  # type: ignore[attr-defined]
+            self.source_info_label.config(text=info_text, foreground="orange")  # type: ignore[attr-defined]
         else:
-            self.source_info_label.config(text=info_text, foreground="blue")
+            self.source_info_label.config(text=info_text, foreground="blue")  # type: ignore[attr-defined]
 
     def run_processing_threaded(self) -> None:
         """Runs the processing in a separate thread to keep UI responsive."""
         self.cancel_operation = False
-        self.run_button.config(state=tk.DISABLED)
-        self.cancel_button.config(state=tk.NORMAL)
+        self.run_button.config(state=tk.DISABLED)  # type: ignore[attr-defined]
+        self.cancel_button.config(state=tk.NORMAL)  # type: ignore[attr-defined]
 
         def processing_thread() -> None:
             """Run the processing operation in a separate thread."""
             try:
-                self.run_processing()
+                self.run_processing()  # type: ignore[attr-defined]
             finally:
-                self.root.after(0, self.processing_complete)
+                self.root.after(0, self.processing_complete)  # type: ignore[attr-defined]
 
         thread = threading.Thread(target=processing_thread, daemon=True)
         thread.start()
@@ -315,9 +320,9 @@ class UIProcessingMixin:
 
     def processing_complete(self) -> None:
         """Called when processing is complete to reset UI state."""
-        self.run_button.config(state=tk.NORMAL)
-        self.cancel_button.config(state=tk.DISABLED)
-        self.progress_var.set(0)
+        self.run_button.config(state=tk.NORMAL)  # type: ignore[attr-defined]
+        self.cancel_button.config(state=tk.DISABLED)  # type: ignore[attr-defined]
+        self.progress_var.set(0)  # type: ignore[attr-defined]
         self.update_status("Ready")
 
     def update_progress(self, value: float, status: str = "") -> None:
@@ -330,17 +335,17 @@ class UIProcessingMixin:
         try:
             # Validate progress value
             if not isinstance(value, int | float):
-                logger.warning(f"Invalid progress value type: {type(value)}")
+                logger.warning(f"Invalid progress value type: {type(value)}")  # type: ignore[unreachable]
                 return
             # Clamp progress value to valid range
             clamped_value = max(0, min(100, float(value)))
-            self.progress_var.set(clamped_value)
+            self.progress_var.set(clamped_value)  # type: ignore[attr-defined]
 
             if status:
                 self.update_status(status)
 
             # Update UI
-            self.root.update_idletasks()
+            self.root.update_idletasks()  # type: ignore[attr-defined]
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             logger.exception("Error updating progress")
@@ -357,8 +362,8 @@ class UIProcessingMixin:
             if len(status) > max_length:
                 status = status[: max_length - 3] + "..."
 
-            self.status_var.set(status)
-            self.root.update_idletasks()
+            self.status_var.set(status)  # type: ignore[attr-defined]
+            self.root.update_idletasks()  # type: ignore[attr-defined]
 
         except (RuntimeError, AttributeError):
             logger.exception("Error updating status")

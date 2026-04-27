@@ -392,11 +392,13 @@ class FolderPackerGUI:
         if not (file_path is not None):
             raise ValueError("file_path must be provided")
         config_extensions = {".env", ".config", ".conf", ".cfg", ".ini", ".toml"}
-        if file_path.suffix.lower() in config_extensions:
+        suffix = file_path.suffix
+        lower_suffix = suffix.lower()
+        if lower_suffix in config_extensions:
             return True
 
         # Check if file extension is in the include list
-        return file_path.suffix.lower() in INCLUDE_EXTENSIONS
+        return lower_suffix in INCLUDE_EXTENSIONS
 
     def should_include_directory(self, dir_path: Path) -> bool:
         """Check if a directory should be included in the packed output.
@@ -408,9 +410,15 @@ class FolderPackerGUI:
             bool: True if the directory should be included.
 
         """
+<<<<<<< HEAD
+        assert dir_path is not None, "dir_path must be provided"
+        dir_basename = dir_path.name
+        dir_name = dir_basename.lower()
+=======
         if not (dir_path is not None):
             raise ValueError("dir_path must be provided")
         dir_name = dir_path.name.lower()
+>>>>>>> origin/main
 
         # Always exclude certain patterns
         if any(pattern.lower() in dir_name for pattern in EXCLUDE_PATTERNS):

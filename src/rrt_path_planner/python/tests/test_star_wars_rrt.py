@@ -158,5 +158,84 @@ class TestRRTPlannerDbC(unittest.TestCase):
             self.assertGreaterEqual(distance_to_obstacle_surface(goal, obstacle), 0.12)
 
 
+class TestDbCNoneInputs(unittest.TestCase):
+    """Verify that all DbC-guarded functions raise TypeError on None inputs."""
+
+    def setUp(self) -> None:
+        self.bounds = np.array([-1.0, 1.0, -1.0, 1.0, -1.0, 1.0])
+        self.planner = RRTPlanner(self.bounds)
+        self.obstacle = Obstacle(0, np.array([0.0, 0.0, 0.0]), 0.1, (1.0, 0.0, 0.0))
+        self.valid_point = np.array([0.5, 0.5, 0.5])
+        self.valid_path = np.array([[-0.8, 0.0, 0.0], [0.0, 0.0, 0.0], [0.8, 0.0, 0.0]])
+
+    def test_distance_to_obstacle_surface_none_point(self) -> None:
+        """distance_to_obstacle_surface raises TypeError when point is None."""
+        with self.assertRaises(TypeError):
+            distance_to_obstacle_surface(None, self.obstacle)
+
+    def test_generate_asteroid_field_none_bounds(self) -> None:
+        """generate_asteroid_field raises TypeError when bounds is None."""
+        with self.assertRaises(TypeError):
+            generate_asteroid_field(None, 5)
+
+    def test_rrt_planner_init_none_bounds(self) -> None:
+        """RRTPlanner raises TypeError when bounds is None."""
+        with self.assertRaises(TypeError):
+            RRTPlanner(None)
+
+    def test_plan_path_none_start(self) -> None:
+        """plan_path raises TypeError when start is None."""
+        goal = np.array([0.8, 0.0, 0.0])
+        with self.assertRaises(TypeError):
+            self.planner.plan_path(None, goal, [])
+
+    def test_analyze_path_none_path(self) -> None:
+        """analyze_path raises TypeError when path is None."""
+        with self.assertRaises(TypeError):
+            self.planner.analyze_path(None, [])
+
+    def test_smooth_path_none_path(self) -> None:
+        """smooth_path raises TypeError when path is None."""
+        with self.assertRaises(TypeError):
+            self.planner.smooth_path(None, [])
+
+    def test_pursuit_ai_init_none_bounds(self) -> None:
+        """PursuitAI raises TypeError when bounds is None."""
+        with self.assertRaises(TypeError):
+            PursuitAI(None)
+
+    def test_update_target_behavior_none_target(self) -> None:
+        """update_target_behavior raises TypeError when target is None."""
+        ai = PursuitAI(self.bounds)
+        pursuer = Ship(np.array([0.0, 0.0, 0.0]), np.eye(3), np.zeros(3))
+        with self.assertRaises(TypeError):
+            ai.update_target_behavior(None, pursuer, [])
+
+    def test_check_collision_none_point(self) -> None:
+        """_check_collision raises TypeError when point is None."""
+        with self.assertRaises(TypeError):
+            self.planner._check_collision(None, [])
+
+    def test_nearest_node_index_none_nodes(self) -> None:
+        """_nearest_node_index raises TypeError when nodes is None."""
+        with self.assertRaises(TypeError):
+            self.planner._nearest_node_index(None, self.valid_point)
+
+    def test_steer_none_origin(self) -> None:
+        """_steer raises TypeError when origin is None."""
+        with self.assertRaises(TypeError):
+            self.planner._steer(None, self.valid_point)
+
+    def test_segment_is_collision_free_none_start(self) -> None:
+        """_segment_is_collision_free raises TypeError when start is None."""
+        with self.assertRaises(TypeError):
+            self.planner._segment_is_collision_free(None, self.valid_point, [])
+
+    def test_extract_path_none_nodes(self) -> None:
+        """_extract_path raises TypeError when nodes is None."""
+        with self.assertRaises(TypeError):
+            self.planner._extract_path(None, 0)
+
+
 if __name__ == "__main__":
     unittest.main()

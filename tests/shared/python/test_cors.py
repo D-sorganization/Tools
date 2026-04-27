@@ -9,6 +9,13 @@ Tests cover:
 from unittest.mock import MagicMock
 
 import pytest
+<<<<<<< HEAD
+from contracts import PreconditionError
+from cors import DEFAULT_ORIGINS, add_cors_middleware
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+=======
 from cors import (
     DEFAULT_ALLOW_HEADERS,
     DEFAULT_ALLOW_METHODS,
@@ -20,6 +27,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from contracts import PreconditionError
 
+>>>>>>> origin/main
 _PreconditionError = PreconditionError
 
 
@@ -119,7 +127,7 @@ def test_none_origins_uses_default():
 def test_dbc_requires_fastapi_app():
     """Non-FastAPI app raises PreconditionError."""
     with pytest.raises(_PreconditionError):
-        add_cors_middleware(MagicMock())  # type: ignore[arg-type]
+        add_cors_middleware(MagicMock())
 
 
 def test_dbc_requires_fastapi_not_none():
@@ -132,7 +140,7 @@ def test_dbc_origins_must_be_list_of_strings():
     """Origins list containing non-strings raises PreconditionError."""
     app = FastAPI()
     with pytest.raises(_PreconditionError):
-        add_cors_middleware(app, origins=[123, 456])  # type: ignore[arg-type]
+        add_cors_middleware(app, origins=[123, 456])
 
 
 def test_dbc_origins_dict_rejected():

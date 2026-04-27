@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Standalone launcher for the RRT asteroid navigator."""
 
-# ruff: noqa: E402, I001
+# ruff: noqa: E402
 
 from __future__ import annotations
 
@@ -21,6 +21,12 @@ if str(REPO_ROOT) not in sys.path:
 from _bootstrap import bootstrap  # noqa: E402
 
 REPO_ROOT = bootstrap(__file__)
+<<<<<<< HEAD
+_RRT_ROOT = REPO_ROOT / "src" / "rrt_path_planner"
+PYTHON_SRC = _RRT_ROOT / "python" / "src"
+if str(PYTHON_SRC) not in sys.path:
+    sys.path.insert(0, str(PYTHON_SRC))
+=======
 
 
 def _find_rrt_package() -> None:
@@ -41,8 +47,9 @@ def _find_rrt_package() -> None:
 
 
 _find_rrt_package()
+>>>>>>> origin/main
 
-from star_wars_rrt import main  # noqa: E402
+from star_wars_rrt import main
 
 if __name__ == "__main__":
     raise SystemExit(main())

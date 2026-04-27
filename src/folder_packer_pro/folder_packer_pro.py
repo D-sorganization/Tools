@@ -30,7 +30,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 # Re-export all public API for backward compatibility
-from .app import FolderPackerPro  # noqa: F401
+from .app import FolderPackerPro
 from .constants import (  # noqa: F401
     CODE_EXTENSIONS,
     COMPRESSION_LEVELS,

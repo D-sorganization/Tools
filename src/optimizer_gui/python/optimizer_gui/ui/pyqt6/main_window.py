@@ -9,6 +9,7 @@ A PyQt6 GUI for configuring and running Adam-based optimization.
 
 from __future__ import annotations
 
+import logging
 import sys
 from dataclasses import dataclass
 
@@ -35,6 +36,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+logger = logging.getLogger(__name__)
 
 # Catppuccin Mocha color palette
 CATPPUCCIN_MOCHA = {
@@ -255,9 +258,10 @@ class OptimizerWindow(QMainWindow):
         self.setStyleSheet(STYLESHEET)
 
         # Central widget with scroll area
+        no_hscroll = Qt.ScrollBarPolicy.ScrollBarAlwaysOff
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
-        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll_area.setHorizontalScrollBarPolicy(no_hscroll)
         self.setCentralWidget(scroll_area)
 
         central_widget = QWidget()
@@ -273,7 +277,8 @@ class OptimizerWindow(QMainWindow):
         title_font.setPointSize(18)
         title_font.setBold(True)
         title_label.setFont(title_font)
-        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        align_center = Qt.AlignmentFlag.AlignCenter
+        title_label.setAlignment(align_center)
         title_label.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['blue']};")
         main_layout.addWidget(title_label)
 
@@ -377,9 +382,9 @@ class OptimizerWindow(QMainWindow):
         self.learning_rate_input.setDecimals(4)
         self.learning_rate_input.setValue(0.01)
         self.learning_rate_input.setSingleStep(0.001)
-        self.learning_rate_input.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed
-        )
+        size_expanding = QSizePolicy.Policy.Expanding
+        size_fixed = QSizePolicy.Policy.Fixed
+        self.learning_rate_input.setSizePolicy(size_expanding, size_fixed)
         adam_layout.addWidget(self.learning_rate_input, 0, 1)
 
         # Beta1
@@ -575,9 +580,25 @@ class OptimizerWindow(QMainWindow):
             self._run_surface_demo(params, method)
 
     def _run_adam_demo(self, params: list[ParameterConfig]) -> None:
+<<<<<<< HEAD
+        """Run Adam optimization demo.
+
+        Args:
+            params: Non-empty list of ParameterConfig instances.
+
+        Raises:
+            TypeError: If params is not a list.
+            ValueError: If params is empty.
+        """
+        if not isinstance(params, list):
+            raise TypeError(f"params must be a list, got {type(params).__name__}")
+        if len(params) == 0:
+            raise ValueError("params must not be empty")
+=======
         """Run Adam optimization demo."""
         if not (params is not None):
             raise ValueError("params must be provided")
+>>>>>>> origin/main
         maximize = self.maximize_checkbox.isChecked()
         learning_rate = self.learning_rate_input.value()
         beta1 = self.beta1_input.value()
@@ -647,15 +668,34 @@ class OptimizerWindow(QMainWindow):
 
     @staticmethod
     def _eval_rosenbrock(values: np.ndarray, maximize: bool) -> float:
+<<<<<<< HEAD
+        """Evaluate the Rosenbrock demo objective function.
+
+        Args:
+            values: 1-D numpy array with at least one element.
+            maximize: If True, negate the objective (for maximization).
+
+        Raises:
+            TypeError: If values is not a numpy ndarray.
+            ValueError: If values has zero length.
+        """
+        if not isinstance(values, np.ndarray):
+            raise TypeError(
+                f"values must be a numpy ndarray, got {type(values).__name__}"
+            )
+        if len(values) == 0:
+            raise ValueError("values must not be empty")
+=======
         """Evaluate the Rosenbrock demo objective function."""
         if not (values is not None):
             raise ValueError("values must be provided")
+>>>>>>> origin/main
         if len(values) >= 2:
             x, y = values[0], values[1]
             obj = (1 - x) ** 2 + 100 * (y - x**2) ** 2
         else:
             obj = (values[0] - 1) ** 2
-        return -obj if maximize else obj
+        return -obj if maximize else obj  # type: ignore[no-any-return]
 
     def _compute_numerical_gradient(
         self,
@@ -664,9 +704,40 @@ class OptimizerWindow(QMainWindow):
         upper: np.ndarray,
         maximize: bool,
     ) -> np.ndarray:
+<<<<<<< HEAD
+        """Compute numerical gradient via central differences.
+
+        Args:
+            values: 1-D numpy array of current parameter values.
+            lower: 1-D numpy array of lower bounds (same shape as values).
+            upper: 1-D numpy array of upper bounds (same shape as values).
+            maximize: If True, compute gradient for maximization.
+
+        Raises:
+            TypeError: If values, lower, or upper are not numpy ndarrays.
+            ValueError: If values is empty or arrays have mismatched shapes.
+        """
+        if not isinstance(values, np.ndarray):
+            raise TypeError(
+                f"values must be a numpy ndarray, got {type(values).__name__}"
+            )
+        if not isinstance(lower, np.ndarray):
+            raise TypeError(
+                f"lower must be a numpy ndarray, got {type(lower).__name__}"
+            )
+        if not isinstance(upper, np.ndarray):
+            raise TypeError(
+                f"upper must be a numpy ndarray, got {type(upper).__name__}"
+            )
+        if len(values) == 0:
+            raise ValueError("values must not be empty")
+        if values.shape != lower.shape or values.shape != upper.shape:
+            raise ValueError("values, lower, and upper must have the same shape")
+=======
         """Compute numerical gradient via central differences."""
         if not (values is not None):
             raise ValueError("values must be provided")
+>>>>>>> origin/main
         gradient = np.zeros_like(values)
         step = self.grad_step_input.value()
         for i in range(len(values)):
@@ -688,9 +759,36 @@ class OptimizerWindow(QMainWindow):
         best_params: dict[str, float],
         max_iterations: int,
     ) -> None:
+<<<<<<< HEAD
+        """Update UI with Adam optimization results.
+
+        Args:
+            best_obj: Best objective value found during optimization.
+            best_params: Dictionary mapping parameter names to best values.
+            max_iterations: Maximum number of iterations that were allowed.
+
+        Raises:
+            TypeError: If best_obj is not a float or int, best_params is not a dict,
+                or max_iterations is not an int.
+            ValueError: If max_iterations is not positive.
+        """
+        if not isinstance(best_obj, (int, float)):
+            raise TypeError(f"best_obj must be a number, got {type(best_obj).__name__}")
+        if not isinstance(best_params, dict):
+            raise TypeError(
+                f"best_params must be a dict, got {type(best_params).__name__}"
+            )
+        if not isinstance(max_iterations, int):
+            raise TypeError(
+                f"max_iterations must be an int, got {type(max_iterations).__name__}"
+            )
+        if max_iterations <= 0:
+            raise ValueError(f"max_iterations must be positive, got {max_iterations}")
+=======
         """Update UI with Adam optimization results."""
         if not (best_obj is not None):
             raise ValueError("best_obj must be provided")
+>>>>>>> origin/main
         self.best_objective_label.setText(f"{best_obj:.6f}")
         self.iterations_label.setText(str(len(self._history)))
         self.converged_label.setText(
@@ -715,12 +813,33 @@ class OptimizerWindow(QMainWindow):
 
         self.history_text.setPlainText("\n".join(history_lines))
         self.history_text.setStyleSheet(f"color: {CATPPUCCIN_MOCHA['text']};")
-        self.tab_widget.setCurrentIndex(2)
+        self._switch_to_results_tab()
+
+    def _switch_to_results_tab(self) -> None:
+        """Switch the tab widget to the Results tab (index 2)."""
+        results_tab_index = 2
+        self.tab_widget.setCurrentIndex(results_tab_index)
 
     def _run_surface_demo(self, params: list[ParameterConfig], method: str) -> None:
+<<<<<<< HEAD
+        """Run surface optimization demo.
+
+        Args:
+            params: List of ParameterConfig instances (at least 2 required).
+            method: Name of the optimization method to display.
+
+        Raises:
+            TypeError: If params is not a list or method is not a str.
+        """
+        if not isinstance(params, list):
+            raise TypeError(f"params must be a list, got {type(params).__name__}")
+        if not isinstance(method, str):
+            raise TypeError(f"method must be a str, got {type(method).__name__}")
+=======
         """Run surface optimization demo."""
         if not (params is not None):
             raise ValueError("params must be provided")
+>>>>>>> origin/main
         if len(params) < 2:
             self.history_text.setPlainText(
                 "Error: Surface optimization requires at least 2 parameters."
@@ -766,7 +885,7 @@ class OptimizerWindow(QMainWindow):
             f"Note: This is a demo using the Rosenbrock function.\n"
             f"Real optimization requires an evaluation engine."
         )
-        self.tab_widget.setCurrentIndex(2)
+        self._switch_to_results_tab()
 
 
 def main() -> int:

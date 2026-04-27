@@ -568,6 +568,8 @@ class ScriptGenerator:
 
         elif step.operation == OperationType.CUSTOM:
             op_name = params.get("operation_name", "custom_operation")
+            # The "TODO" below is intentional generated-script content for the user
+            # to implement — it is NOT a broken-window marker in this codebase.
             return [
                 f"{prefix}# Custom operation: {op_name}",
                 f"{prefix}# Parameters: {params}",

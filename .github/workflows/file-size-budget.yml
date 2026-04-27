@@ -1,0 +1,45 @@
+name: File Size Budget
+
+# Enforces the 500-LOC-per-file budget for Python and Rust sources under src/.
+# See docs/assessments/monolith_inventory_2026-04-10.md and issue #1997.
+# Existing monoliths are grandfathered via scripts/monolith_baseline.txt.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "src/**/*.py"
+      - "src/**/*.rs"
+      - "scripts/check_file_size_budget.py"
+      - "scripts/monolith_baseline.txt"
+      - ".github/workflows/file-size-budget.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  file-size-budget:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Fetch base ref
+        run: |
+          git fetch origin "${{ github.base_ref }}"
+
+      - name: Enforce 500 LOC budget on changed files
+        run: |
+          python3 scripts/check_file_size_budget.py \
+            --max-loc 500 \
+            --changed-only \
+            --base-ref "origin/${{ github.base_ref }}" \
+            --baseline-file scripts/monolith_baseline.txt

@@ -189,9 +189,11 @@ def validate_expression(
         # Only bare-name function calls allowed (no attribute calls like
         # os.system)
         elif isinstance(node, ast.Call):
-            if isinstance(node.func, ast.Name):
-                if allowed_names is not None and node.func.id not in allowed_names:
-                    raise ValueError(f"Unknown function: {node.func.id}")
+            func = node.func
+            if isinstance(func, ast.Name):
+                func_id = func.id
+                if allowed_names is not None and func_id not in allowed_names:
+                    raise ValueError(f"Unknown function: {func_id}")
             else:
                 raise ValueError("Attribute-based function calls not allowed")
 
@@ -221,14 +223,21 @@ def safe_eval(
     Any
         Result of the expression evaluation.
     """
+<<<<<<< HEAD
+=======
     if expression is None:
         raise ValueError("expression must be provided")
+>>>>>>> origin/main
     if allowed_names is None:
         allowed_names = set(namespace.keys())
 
     tree = validate_expression(expression, allowed_names)
     code = compile(tree, "<safe_eval>", "eval")
+<<<<<<< HEAD
+    return eval(code, {"__builtins__": {}}, namespace)  # nosec B307
+=======
     return eval(code, {"__builtins__": {}}, namespace)  # nosec B307  # noqa: S307
+>>>>>>> origin/main
 
 
 def safe_eval_math(
@@ -249,8 +258,11 @@ def safe_eval_math(
         If True, use numpy math functions (array-safe).  Otherwise use
         scalar ``math`` module functions.
     """
+<<<<<<< HEAD
+=======
     if expression is None:
         raise ValueError("expression must be provided")
+>>>>>>> origin/main
     base = dict(NUMPY_MATH_NAMESPACE if use_numpy else SCALAR_MATH_NAMESPACE)
     if variables:
         base.update(variables)

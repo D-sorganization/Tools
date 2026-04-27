@@ -169,7 +169,7 @@ impl CmaEsState {
         use rand::Rng;
         use rand_distr::StandardNormal;
 
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         let sqrt_cov = self.cholesky_decompose();
 
         let mut population = Vec::with_capacity(self.lambda);

@@ -28,7 +28,8 @@ def main() -> None:
     logger.info("Building Folder Packer Executable...")
 
     # Change to script directory
-    script_dir = Path(__file__).parent.absolute()
+    script_parent = Path(__file__).parent
+    script_dir = script_parent.absolute()
     os.chdir(script_dir)
 
     # Run the build script
@@ -50,7 +51,8 @@ def main() -> None:
             sys.exit(1)
 
     except KeyboardInterrupt:
-        sys.stderr.write("\n")  # clean newline after ^C
+        stderr = sys.stderr
+        stderr.write("\n")  # clean newline after ^C
         logger.info("Build cancelled by user.")
         sys.exit(1)
 

@@ -12,13 +12,36 @@
 """
 Mesh generation interfaces for humanoid character builder.
 
-This module defines interfaces for mesh generation backends
-(MakeHuman, SMPL, etc.) and provides a factory for creating
-mesh generators.
+This module was refactored from a single 1155-line file into focused submodules
+to comply with the line budget:
+
+    _mesh_types          — MeshGeneratorBackend, GeneratedMeshResult,
+                           MeshGeneratorInterface
+    _primitive_generator — PrimitiveMeshGenerator
+    _makehuman_generator — MakeHumanMeshGenerator
+    _smplx_generator     — SMPLXMeshGenerator
+
+All public symbols remain importable from this module.
 """
 
 from __future__ import annotations  # noqa: E402, F404
 
+<<<<<<< HEAD
+import logging
+from typing import Any
+
+from humanoid_character_builder.core.body_parameters import BodyParameters  # noqa: F401
+
+# Re-export sub-module symbols (public API unchanged)
+from ._makehuman_generator import MakeHumanMeshGenerator  # noqa: F401
+from ._mesh_types import (  # noqa: F401
+    GeneratedMeshResult,
+    MeshGeneratorBackend,
+    MeshGeneratorInterface,
+)
+from ._primitive_generator import PrimitiveMeshGenerator  # noqa: F401
+from ._smplx_generator import SMPLXMeshGenerator  # noqa: F401
+=======
 import logging  # noqa: E402
 from abc import ABC, abstractmethod  # noqa: E402
 from dataclasses import dataclass, field  # noqa: E402
@@ -31,10 +54,13 @@ from humanoid_character_builder.core.body_parameters import BodyParameters  # no
 from .mesh_generator_makehuman import PrimitiveMeshGenerator as MakeHumanMeshGenerator
 from .mesh_generator_primitive import PrimitiveMeshGenerator
 from .mesh_generator_smplx import PrimitiveMeshGenerator as SMPLXMeshGenerator
+>>>>>>> origin/main
 
 logger = logging.getLogger(__name__)
 
 
+<<<<<<< HEAD
+=======
 class MeshGeneratorBackend(Enum):
     """Available mesh generation backends."""
 
@@ -116,6 +142,7 @@ class MeshGeneratorInterface(ABC):
         ...
 
 
+>>>>>>> origin/main
 class MeshGenerator:
     """
     Factory class for creating mesh generators.
@@ -189,5 +216,9 @@ class MeshGenerator:
                 logger.debug("Backend %s not available: %s", backend.value, e)
                 continue
 
+<<<<<<< HEAD
+        return PrimitiveMeshGenerator()
+=======
         # Final fallback
         return cast(MeshGeneratorInterface, PrimitiveMeshGenerator())
+>>>>>>> origin/main

@@ -7,6 +7,8 @@ for integration with the unified model_generation package.
 
 from __future__ import annotations
 
+from typing import Any, NoReturn
+
 # Import from humanoid_character_builder
 try:
     from humanoid_character_builder.core.body_parameters import (
@@ -47,7 +49,7 @@ except ImportError:
     # humanoid_character_builder not available
     __all__ = []
 
-    def _not_available(*args, **kwargs):
+    def _not_available(*args: Any, **kwargs: Any) -> NoReturn:
         raise ImportError(
             "humanoid_character_builder not available. Ensure it is in the Python path."
         )

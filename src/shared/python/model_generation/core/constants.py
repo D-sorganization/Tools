@@ -11,7 +11,7 @@ import math
 
 # Import universally shared physical constants from the canonical source
 try:
-    from utils.constants import STANDARD_GRAVITY as GRAVITY_M_S2  # noqa: F401
+    from utils.constants import STANDARD_GRAVITY as GRAVITY_M_S2
 except ImportError:
     # Fallback for environments where utils is not on PYTHONPATH
     GRAVITY_M_S2: float = 9.80665  # type: ignore[no-redef]

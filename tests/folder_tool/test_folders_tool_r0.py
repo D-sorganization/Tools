@@ -37,7 +37,11 @@ mock_proc = types.ModuleType("folder_tool_processing")
 mock_proc.ProcessingMixin = DummyProc
 sys.modules["folder_tool_processing"] = mock_proc
 
-from folder_tool.Folders_Tool_r0 import FolderProcessorApp, safe_write_text
+from folder_tool.Folders_Tool_r0 import (
+    FolderProcessorApp,
+    _get_log_path,
+    safe_write_text,
+)
 
 
 class TestFolderProcessorApp:
@@ -109,3 +113,42 @@ class TestSafeWriteText:
     def test_safe_write_text_none_path(self):
         with pytest.raises(AssertionError):
             safe_write_text(None, "content")
+
+
+class TestGetLogPath:
+    """Tests for _get_log_path (XDG-aware log file resolution)."""
+
+    def test_returns_path_object(self, tmp_path, monkeypatch):
+        """_get_log_path returns a Path ending in folder_processor.log."""
+        import sys
+
+        if sys.platform != "win32":
+            monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
+
+        result = _get_log_path()
+        assert result.name == "folder_processor.log"
+
+    def test_log_in_xdg_config_home(self, tmp_path, monkeypatch):
+        """Log file placed under $XDG_CONFIG_HOME/folder_tool/ on POSIX."""
+        import sys
+
+        if sys.platform == "win32":
+            pytest.skip("XDG_CONFIG_HOME is a POSIX convention")
+
+        monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
+        result = _get_log_path()
+        assert result == tmp_path / "folder_tool" / "folder_processor.log"
+
+    def test_creates_config_directory(self, tmp_path, monkeypatch):
+        """_get_log_path creates the config directory if absent."""
+        import sys
+
+        if sys.platform == "win32":
+            pytest.skip("XDG_CONFIG_HOME is a POSIX convention")
+
+        monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
+        expected_dir = tmp_path / "folder_tool"
+        assert not expected_dir.exists()
+
+        _get_log_path()
+        assert expected_dir.exists()

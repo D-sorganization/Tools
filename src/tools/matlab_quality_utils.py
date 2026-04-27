@@ -6,16 +6,20 @@ import logging
 import re
 import subprocess
 import sys
-from datetime import datetime, timezone  # noqa: UP017
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+<<<<<<< HEAD
+from contracts import require
+=======
 try:
     from shared.python.contracts import require
 except ImportError:  # pragma: no cover
     _SRC = Path(__file__).resolve().parent.parent
     sys.path.insert(0, str(_SRC))
     from shared.python.contracts import require
+>>>>>>> origin/main
 
 # Constants
 MATLAB_SCRIPT_TIMEOUT_SECONDS: int = 300
@@ -96,6 +100,7 @@ class MATLABQualityChecker:
 
     def _run_matlab_script(self, script_path: Path) -> dict[str, Any]:
         """Attempt to run MATLAB script from command line."""
+        require(isinstance(script_path, Path), "script_path must be a Path")
         try:
             escaped_path = str(script_path).replace("'", "''")
             commands = [

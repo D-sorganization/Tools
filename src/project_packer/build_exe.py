@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Build executable for Folder Packer application."""
 
-import importlib.util
 import logging
 import shutil
 import subprocess
 import sys
+from importlib.util import find_spec
 from pathlib import Path
 
 # Set up logging
@@ -28,7 +28,7 @@ def check_pyinstaller() -> bool:
 
 
     """
-    return importlib.util.find_spec("PyInstaller") is not None
+    return find_spec("PyInstaller") is not None
 
 
 def install_pyinstaller() -> bool:
@@ -41,7 +41,7 @@ def install_pyinstaller() -> bool:
     """
     logger.info("Installing PyInstaller...")
     try:
-        subprocess.run(  # noqa: S603
+        subprocess.run(
             [sys.executable, "-m", "pip", "install", "pyinstaller"],
             check=True,
             capture_output=True,
@@ -96,9 +96,7 @@ def build_executable() -> bool:
     logger.info("Command: %s", " ".join(cmd))
 
     try:
-        subprocess.run(  # noqa: S603
-            cmd, cwd=Path.cwd(), check=True, capture_output=True, text=True
-        )
+        subprocess.run(cmd, cwd=Path.cwd(), check=True, capture_output=True, text=True)
     except subprocess.CalledProcessError:
         logger.exception("Build failed")
         return False

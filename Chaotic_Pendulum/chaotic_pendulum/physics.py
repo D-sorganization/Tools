@@ -19,12 +19,22 @@ class PhysicsEngine:
 
     def __init__(self, config: PhysicsConfig) -> None:
         """DbC: Assume non-null config."""
+<<<<<<< HEAD
+        if config is None:
+            raise TypeError("Config cannot be None")
+=======
         assert config is not None, "Config cannot be None"
+>>>>>>> origin/main
         self.cfg = config
 
     def equations_of_motion(self, t: float, state: list[float]) -> list[float]:
         """Calculates instantaneous accelerations using Augmented Lagrangian."""
+<<<<<<< HEAD
+        if len(state) != 4:
+            raise ValueError("State vector must be length 4.")
+=======
         assert len(state) == 4, "State vector must be length 4."
+>>>>>>> origin/main
         theta1, omega1, theta2, omega2 = state
         delta = theta1 - theta2
 
@@ -32,8 +42,13 @@ class PhysicsEngine:
         den1 = self.cfg.l1 * (
             2 * self.cfg.m1 + self.cfg.m2 - self.cfg.m2 * np.cos(2 * delta)
         )
+<<<<<<< HEAD
+        if abs(den1) < 1e-12:
+            raise ValueError("mass matrix is singular; check pendulum configuration")
+=======
         if den1 < 1e-12:
             den1 = 1e-12  # DbC fail-safe
+>>>>>>> origin/main
 
         alpha1_free = (
             -self.cfg.gravity * (2 * self.cfg.m1 + self.cfg.m2) * np.sin(theta1)
@@ -47,8 +62,13 @@ class PhysicsEngine:
         den2 = self.cfg.l2 * (
             2 * self.cfg.m1 + self.cfg.m2 - self.cfg.m2 * np.cos(2 * delta)
         )
+<<<<<<< HEAD
+        if abs(den2) < 1e-12:
+            raise ValueError("mass matrix is singular; check pendulum configuration")
+=======
         if den2 < 1e-12:
             den2 = 1e-12  # DbC fail-safe
+>>>>>>> origin/main
 
         alpha2_free = (
             2
@@ -88,7 +108,12 @@ class PhysicsEngine:
 
     def solve(self, duration: float, dt: float) -> dict[str, Any]:
         """Integrates physics over specified duration."""
+<<<<<<< HEAD
+        if duration <= 0 or dt <= 0:
+            raise ValueError("Duration and dt must be positive.")
+=======
         assert duration > 0 and dt > 0, "Duration and dt must be positive."
+>>>>>>> origin/main
         t_eval = np.arange(0, duration, dt)
         initial_state = [
             self.cfg.theta1,
@@ -109,11 +134,75 @@ class PhysicsEngine:
         )
         if not res.success:
             raise RuntimeError(f"ODE integration failed: {res.message}")
+<<<<<<< HEAD
+        if not np.all(np.isfinite(res.y)):
+            raise RuntimeError(
+                "ODE integrator returned non-finite values; "
+                "check initial conditions or reduce dt"
+            )
+=======
+>>>>>>> origin/main
 
         return self._extract_physics(res.y, t_eval)
 
     def _extract_physics(self, y: np.ndarray, t_eval: np.ndarray) -> dict[str, Any]:
         """Convert angular array into all Cartesian force vectors."""
+<<<<<<< HEAD
+        if y.shape[0] != 4:
+            raise ValueError("Input y array must have 4 rows.")
+
+        theta1, omega1, theta2, omega2 = y[0, :], y[1, :], y[2, :], y[3, :]
+
+        # Vectorized acceleration computation (avoids Python loop over timesteps)
+        delta = theta1 - theta2
+
+        den1 = self.cfg.l1 * (
+            2 * self.cfg.m1 + self.cfg.m2 - self.cfg.m2 * np.cos(2 * delta)
+        )
+        den2 = self.cfg.l2 * (
+            2 * self.cfg.m1 + self.cfg.m2 - self.cfg.m2 * np.cos(2 * delta)
+        )
+
+        alpha1_free = (
+            -self.cfg.gravity * (2 * self.cfg.m1 + self.cfg.m2) * np.sin(theta1)
+            - self.cfg.m2 * self.cfg.gravity * np.sin(theta1 - 2 * theta2)
+            - 2
+            * np.sin(delta)
+            * self.cfg.m2
+            * (omega2**2 * self.cfg.l2 + omega1**2 * self.cfg.l1 * np.cos(delta))
+        ) / den1
+
+        alpha2_free = (
+            2
+            * np.sin(delta)
+            * (
+                omega1**2 * self.cfg.l1 * (self.cfg.m1 + self.cfg.m2)
+                + self.cfg.gravity * (self.cfg.m1 + self.cfg.m2) * np.cos(theta1)
+                + omega2**2 * self.cfg.l2 * self.cfg.m2 * np.cos(delta)
+            )
+        ) / den2
+
+        Q1 = -self.cfg.damp1 * omega1 + self.cfg.amp1 * np.sin(self.cfg.freq1 * t_eval)
+        Q2 = -self.cfg.damp2 * omega2 + self.cfg.amp2 * np.sin(self.cfg.freq2 * t_eval)
+
+        det = (
+            self.cfg.m2
+            * self.cfg.l1**2
+            * self.cfg.l2**2
+            * (self.cfg.m1 + self.cfg.m2 * np.sin(delta) ** 2)
+        )
+        M22 = self.cfg.m2 * self.cfg.l2**2
+        M11 = (self.cfg.m1 + self.cfg.m2) * self.cfg.l1**2
+        M12 = self.cfg.m2 * self.cfg.l1 * self.cfg.l2 * np.cos(delta)
+
+        nonsingular = det > 1e-12
+        safe_det = np.where(nonsingular, det, 1.0)
+        alpha1_q = np.where(nonsingular, (M22 * Q1 - M12 * Q2) / safe_det, 0.0)
+        alpha2_q = np.where(nonsingular, (-M12 * Q1 + M11 * Q2) / safe_det, 0.0)
+
+        alpha1 = alpha1_free + alpha1_q
+        alpha2 = alpha2_free + alpha2_q
+=======
         assert y.shape[0] == 4, "Input y array must have 4 rows."
 
         theta1, omega1, theta2, omega2 = y[0, :], y[1, :], y[2, :], y[3, :]
@@ -125,6 +214,7 @@ class PhysicsEngine:
                 t_eval[i], [theta1[i], omega1[i], theta2[i], omega2[i]]
             )
             alpha1[i], alpha2[i] = derivs[1], derivs[3]
+>>>>>>> origin/main
 
         # Kinematics
         x1 = self.cfg.l1 * np.sin(theta1)

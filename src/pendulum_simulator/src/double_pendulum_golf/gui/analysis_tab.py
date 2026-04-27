@@ -72,17 +72,11 @@ class AnalysisTab:
     def __init__(self, parent: Any = None) -> None:
         from PyQt6.QtCore import Qt
         from PyQt6.QtWidgets import (
-            QComboBox,
-            QGroupBox,
             QHBoxLayout,
-            QLabel,
-            QPushButton,
             QSplitter,
             QTabWidget,
-            QVBoxLayout,
             QWidget,
         )
-        from .no_scroll_widgets import NoScrollSpinBox
 
         self._parent = parent
         self._result: Any = None
@@ -96,11 +90,52 @@ class AnalysisTab:
         splitter = QSplitter(Qt.Orientation.Horizontal)
 
         # --- Left sidebar: series selection ---
+        sidebar = self._build_sidebar_widget()
+        splitter.addWidget(sidebar)
+
+        # --- Right side: plot tabs ---
+        self._plot_tabs = QTabWidget()
+        self._build_plot_tabs()
+
+        splitter.addWidget(self._plot_tabs)
+        splitter.setStretchFactor(0, 1)  # sidebar
+        splitter.setStretchFactor(1, 3)  # plots
+
+        main_layout.addWidget(splitter)
+
+        # Surface outputs shared by all models
+        self._surface_outputs = [
+            ("mass_matrix_det", "det(M)"),
+            ("mass_matrix_cond", "cond(M)"),
+            ("potential_energy", "Potential energy"),
+            ("manipulability", "Manipulability index"),
+        ]
+        self._populate_surface_combos()
+
+    def _build_sidebar_widget(self) -> Any:
+        """Build the left sidebar widget containing the 2D and 3D control groups."""
+        from PyQt6.QtWidgets import QVBoxLayout, QWidget
+
         sidebar = QWidget()
         sidebar_layout = QVBoxLayout(sidebar)
         sidebar_layout.setContentsMargins(4, 4, 4, 4)
 
-        # 2D controls
+        sidebar_layout.addWidget(self._build_2d_controls_group())
+        sidebar_layout.addWidget(self._build_3d_controls_group())
+        sidebar_layout.addStretch()
+        return sidebar
+
+    def _build_2d_controls_group(self) -> Any:
+        """Build the 2D line plot control group (X/Y axes, regression, plot button)."""
+        from PyQt6.QtWidgets import (
+            QComboBox,
+            QGroupBox,
+            QLabel,
+            QPushButton,
+            QVBoxLayout,
+        )
+        from .no_scroll_widgets import NoScrollSpinBox
+
         group_2d = QGroupBox("2D Line Plot")
         form_2d = QVBoxLayout()
 
@@ -122,9 +157,19 @@ class AnalysisTab:
         btn_plot_2d.clicked.connect(self._on_plot_2d)
         form_2d.addWidget(btn_plot_2d)
         group_2d.setLayout(form_2d)
-        sidebar_layout.addWidget(group_2d)
+        return group_2d
 
-        # 3D surface controls
+    def _build_3d_controls_group(self) -> Any:
+        """Build the 3D surface plot control group (X/Y/Z axes, grid points, plot button)."""
+        from PyQt6.QtWidgets import (
+            QComboBox,
+            QGroupBox,
+            QLabel,
+            QPushButton,
+            QVBoxLayout,
+        )
+        from .no_scroll_widgets import NoScrollSpinBox
+
         group_3d = QGroupBox("3D Surface Plot")
         form_3d = QVBoxLayout()
 
@@ -149,45 +194,26 @@ class AnalysisTab:
         btn_plot_3d.clicked.connect(self._on_plot_surface)
         form_3d.addWidget(btn_plot_3d)
         group_3d.setLayout(form_3d)
-        sidebar_layout.addWidget(group_3d)
+        return group_3d
 
-        sidebar_layout.addStretch()
-        splitter.addWidget(sidebar)
-
-        # --- Right side: plot tabs ---
-        self._plot_tabs = QTabWidget()
-
+    def _build_plot_tabs(self) -> None:
+        """Populate self._plot_tabs with 2D + 3D matplotlib canvases (or a fallback)."""
         if _HAS_MPL:
             # 2D canvas
             self._fig_2d = Figure(figsize=(7, 5), dpi=100)
-            self._fig_2d.patch.set_facecolor("#1a1a28")
+            self._fig_2d.patch.set_facecolor("#1a1a28")  # type: ignore[attr-defined]
             self._ax_2d = self._fig_2d.add_subplot(111)
             self._canvas_2d = FigureCanvasQTAgg(self._fig_2d)
             self._plot_tabs.addTab(self._canvas_2d, "2D Plot")
 
             # 3D canvas
             self._fig_3d = Figure(figsize=(7, 5), dpi=100)
-            self._fig_3d.patch.set_facecolor("#1a1a28")
+            self._fig_3d.patch.set_facecolor("#1a1a28")  # type: ignore[attr-defined]
             self._ax_3d = self._fig_3d.add_subplot(111, projection="3d")
             self._canvas_3d = FigureCanvasQTAgg(self._fig_3d)
             self._plot_tabs.addTab(self._canvas_3d, "3D Surface")
         else:
             self._plot_tabs.addTab(_create_fallback_widget(), "Plotting")
-
-        splitter.addWidget(self._plot_tabs)
-        splitter.setStretchFactor(0, 1)  # sidebar
-        splitter.setStretchFactor(1, 3)  # plots
-
-        main_layout.addWidget(splitter)
-
-        # Surface outputs shared by all models
-        self._surface_outputs = [
-            ("mass_matrix_det", "det(M)"),
-            ("mass_matrix_cond", "cond(M)"),
-            ("potential_energy", "Potential energy"),
-            ("manipulability", "Manipulability index"),
-        ]
-        self._populate_surface_combos()
 
     def widget(self) -> Any:
         """Return the top-level QWidget for embedding."""
@@ -277,12 +303,8 @@ class AnalysisTab:
         from ..data_extractor import extract_series
 
         try:
-            x_vals, x_desc, x_unit = extract_series(
-                self._result, x_key, self._model_type
-            )
-            y_vals, y_desc, y_unit = extract_series(
-                self._result, y_key, self._model_type
-            )
+            x_vals, x_desc, x_unit = extract_series(self._result, x_key, self._model_type)
+            y_vals, y_desc, y_unit = extract_series(self._result, y_key, self._model_type)
         except (KeyError, AttributeError) as exc:
             logger.error("Failed to extract series: %s", exc)
             return
@@ -462,6 +484,22 @@ class AnalysisTab:
         )
 
         if z_key == "mass_matrix_det":
+<<<<<<< HEAD
+            return _make_det_evaluator(
+                lambda angles: mass_matrix(angles.get("phi", 0.0), params)
+            )
+        if z_key == "mass_matrix_cond":
+            return _make_cond_evaluator(
+                lambda angles: mass_matrix(angles.get("phi", 0.0), params)
+            )
+        if z_key == "potential_energy":
+
+            def _eval(angles: dict) -> float:
+                state = np.array([angles.get("theta1", 0.0), angles.get("phi", 0.0), 0.0, 0.0])
+                return potential_energy(state, params)
+
+            return _eval
+=======
             return self._matrix_metric_evaluator(
                 lambda angles: mass_matrix(angles.get("phi", 0.0), params),
                 np.linalg.det,
@@ -478,6 +516,7 @@ class AnalysisTab:
                 ),
                 lambda state: potential_energy(state, params),
             )
+>>>>>>> origin/main
         if z_key == "manipulability":
             return self._numerical_manipulability(
                 lambda a: forward_kinematics(a["theta1"], a["phi"], params),
@@ -511,6 +550,18 @@ class AnalysisTab:
         )
 
         if z_key == "mass_matrix_det":
+<<<<<<< HEAD
+            return _make_det_evaluator(
+                lambda angles: triple_mm(
+                    angles.get("phi1", 0.0), angles.get("phi2", 0.0), params
+                )
+            )
+        if z_key == "mass_matrix_cond":
+            return _make_cond_evaluator(
+                lambda angles: triple_mm(
+                    angles.get("phi1", 0.0), angles.get("phi2", 0.0), params
+                )
+=======
             return self._matrix_metric_evaluator(
                 lambda angles: triple_mm(
                     angles.get("phi1", 0.0), angles.get("phi2", 0.0), params
@@ -523,6 +574,7 @@ class AnalysisTab:
                     angles.get("phi1", 0.0), angles.get("phi2", 0.0), params
                 ),
                 np.linalg.cond,
+>>>>>>> origin/main
             )
         if z_key == "potential_energy":
             return self._transformed_scalar_evaluator(
@@ -579,6 +631,14 @@ class AnalysisTab:
         )
 
         if z_key == "mass_matrix_det":
+<<<<<<< HEAD
+            return _make_det_evaluator(
+                lambda angles: golfer_mm(self._golfer_q_from_angles(angles), params)
+            )
+        if z_key == "mass_matrix_cond":
+            return _make_cond_evaluator(
+                lambda angles: golfer_mm(self._golfer_q_from_angles(angles), params)
+=======
             return self._q_scalar_evaluator(
                 self._golfer_q_from_angles,
                 lambda q: np.linalg.det(golfer_mm(q, params)),
@@ -587,6 +647,7 @@ class AnalysisTab:
             return self._q_scalar_evaluator(
                 self._golfer_q_from_angles,
                 lambda q: np.linalg.cond(golfer_mm(q, params)),
+>>>>>>> origin/main
             )
         if z_key == "potential_energy":
             return self._q_scalar_evaluator(
@@ -683,7 +744,14 @@ class AnalysisTab:
         eps = 1e-7
         n_dof = len(angle_keys)
 
+<<<<<<< HEAD
+        # Note: this closure cannot be JIT-compiled — it captures Python
+        # callables (fk_fn) and uses dict types that numba cannot infer.
+        # A prior @jit(nopython=True) decorator here crashed the analysis
+        # tab the moment manipulability was computed.
+=======
         @jit(nopython=True, fastmath=True)
+>>>>>>> origin/main
         def _eval(angles: dict) -> float:
             fk0 = fk_fn(angles)
             tip0 = np.asarray(fk0[tip_key], dtype=float)
@@ -718,15 +786,15 @@ class AnalysisTab:
         ax.tick_params(colors="#c0c0d8")
         ax.xaxis.label.set_color("#c0c0d8")
         ax.yaxis.label.set_color("#c0c0d8")
-        ax.zaxis.label.set_color("#c0c0d8")  # type: ignore[attr-defined]
-        ax.xaxis.pane.fill = False  # type: ignore[attr-defined]
-        ax.yaxis.pane.fill = False  # type: ignore[attr-defined]
-        ax.zaxis.pane.fill = False  # type: ignore[attr-defined]
+        ax.zaxis.label.set_color("#c0c0d8")
+        ax.xaxis.pane.fill = False
+        ax.yaxis.pane.fill = False
+        ax.zaxis.pane.fill = False
 
         # Mask NaN for cleaner rendering
         Z_masked: np.ma.MaskedArray[Any] = np.ma.array(Z, mask=~np.isfinite(Z))
 
-        ax.plot_surface(  # type: ignore[attr-defined]
+        ax.plot_surface(
             X,
             Y,
             Z_masked,
@@ -736,7 +804,7 @@ class AnalysisTab:
         )
         ax.set_xlabel(xlabel, fontsize=10)
         ax.set_ylabel(ylabel, fontsize=10)
-        ax.set_zlabel(zlabel, fontsize=10)  # type: ignore[attr-defined]
+        ax.set_zlabel(zlabel, fontsize=10)
         ax.set_title(f"{zlabel} surface", color="#c0c0d8", fontsize=12)
 
         self._fig_3d.tight_layout()
@@ -762,6 +830,36 @@ class AnalysisTab:
             f"{y_desc} ({y_unit})",
             f"{y_desc} vs {x_desc}",
         )
+
+
+def _make_det_evaluator(matrix_fn: Any) -> Any:
+    """Return a closure that evaluates ``det(M)`` for the given matrix function.
+
+    ``matrix_fn(angles)`` must accept an angle dict and return a square matrix.
+    Extracted from the triple evaluator pattern to satisfy DRY (was inlined in
+    _evaluator_double, _evaluator_triple, and _evaluator_golfer).
+    """
+
+    def _eval(angles: dict) -> float:
+        M = matrix_fn(angles)
+        return float(np.linalg.det(M))
+
+    return _eval
+
+
+def _make_cond_evaluator(matrix_fn: Any) -> Any:
+    """Return a closure that evaluates ``cond(M)`` for the given matrix function.
+
+    ``matrix_fn(angles)`` must accept an angle dict and return a square matrix.
+    Extracted from the triple evaluator pattern to satisfy DRY (was inlined in
+    _evaluator_double, _evaluator_triple, and _evaluator_golfer).
+    """
+
+    def _eval(angles: dict) -> float:
+        M = matrix_fn(angles)
+        return float(np.linalg.cond(M))
+
+    return _eval
 
 
 def _style_axes(ax: Any) -> None:

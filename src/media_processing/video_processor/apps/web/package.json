@@ -22,7 +22,7 @@
     "@mediapipe/pose": "^0.5.0",
     "dompurify": "^3.2.4",
     "fabric": "^7.2.0",
-    "next": "^15.5.12",
+    "next": "^15.5.15",
     "pino": "^9.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -51,5 +51,12 @@
     "tailwindcss": "^3.3.0",
     "typescript": "^5.3.0",
     "vitest": "^4.0.18"
+  },
+  "overrides": {
+    "vite": "^7.3.2",
+    "picomatch": "^4.0.4",
+    "flatted": "^3.4.2",
+    "lodash": "^4.18.1",
+    "next": "^15.5.15"
   }
 }

@@ -27,7 +27,9 @@ class UICreationMixin:
             if getattr(sys, "frozen", False):
                 # Running as compiled executable
                 base_dir = getattr(
-                    sys, "_MEIPASS", Path(os.path.abspath(__file__).parent)
+                    sys,
+                    "_MEIPASS",
+                    Path(os.path.abspath(__file__).parent),  # type: ignore[attr-defined]
                 )
             else:
                 # Running as script
@@ -39,10 +41,10 @@ class UICreationMixin:
             # Try ICO file first (best for Windows)
             ico_path = Path(base_dir) / "paper_plane_icon.ico"
             if Path(ico_path).exists():
-                self._load_ico_icon(ico_path)
+                self._load_ico_icon(ico_path)  # type: ignore[arg-type]
             else:
                 # Fallback to PNG if ICO doesn't exist
-                self._load_png_fallback(base_dir)
+                self._load_png_fallback(base_dir)  # type: ignore[arg-type]
 
         except (PermissionError, OSError) as e:
             logger.error(f"Could not load icon: {e}")
@@ -61,14 +63,22 @@ class UICreationMixin:
     def _load_ico_icon(self, ico_path: str) -> None:
         """Loads and sets the ICO icon for the application."""
         # Use iconbitmap for Windows taskbar integration
+<<<<<<< HEAD
+        assert ico_path is not None, "ico_path must be provided"
+        self.root.iconbitmap(ico_path)  # type: ignore[attr-defined]
+=======
         if not (ico_path is not None):
             raise ValueError("ico_path must be provided")
         self.root.iconbitmap(ico_path)  # type: ignore[no-untyped-call]
+>>>>>>> origin/main
         logger.info(f"Loaded ICO icon for taskbar: {ico_path}")
 
         # Also set iconphoto with multiple sizes for better display
         try:
             from PIL import Image, ImageTk
+
+            # Pillow 9.1+ uses Image.Resampling.LANCZOS; older versions use Image.LANCZOS
+            _lanczos = getattr(Image, "Resampling", Image).LANCZOS
 
             # Load the ICO file which now has multiple sizes
             image = Image.open(ico_path)
@@ -81,7 +91,7 @@ class UICreationMixin:
                     # Try to get exact size from ICO, or resize
                     resized = image.resize(
                         (size, size),
-                        Image.Resampling.LANCZOS,
+                        _lanczos,
                     )
                     if resized.mode != "RGBA":
                         resized = resized.convert("RGBA")
@@ -92,7 +102,7 @@ class UICreationMixin:
 
             # Set all sizes at once for best scaling
             if photos:
-                self.root.iconphoto(True, *photos)
+                self.root.iconphoto(True, *photos)  # type: ignore[attr-defined]
                 # Keep references to prevent garbage collection
                 self.icon_photos = photos
                 logger.info(f"Set iconphoto with {len(photos)} different sizes")
@@ -108,19 +118,24 @@ class UICreationMixin:
         if Path(png_path).exists():
             from PIL import Image, ImageTk
 
+            # Pillow 9.1+ uses Image.Resampling.LANCZOS; older versions use Image.LANCZOS
+            _lanczos = getattr(Image, "Resampling", Image).LANCZOS
+
             try:
-                image = Image.open(png_path)
-                if image.mode != "RGBA":
-                    image = image.convert("RGBA")
+                raw_image = Image.open(png_path)
+                if raw_image.mode != "RGBA":
+                    image = raw_image.convert("RGBA")
+                else:
+                    image = raw_image
 
                 photos = []
                 for size in ICON_SIZES:
-                    resized = image.resize((size, size), Image.Resampling.LANCZOS)
+                    resized = image.resize((size, size), _lanczos)
                     photo = ImageTk.PhotoImage(resized)
                     photos.append(photo)
 
                 if photos:
-                    self.root.iconphoto(True, *photos)
+                    self.root.iconphoto(True, *photos)  # type: ignore[attr-defined]
                     self.icon_photos = photos
                     logger.info(f"Loaded PNG icon: {png_path}")
             except (PermissionError, OSError) as e:
@@ -134,8 +149,8 @@ class UICreationMixin:
     def create_scrollable_interface(self) -> None:
         """Creates a scrollable main interface."""
         # Create canvas and scrollbar
-        canvas = tk.Canvas(self.root)
-        scrollbar = ttk.Scrollbar(self.root, orient="vertical", command=canvas.yview)
+        canvas = tk.Canvas(self.root)  # type: ignore[attr-defined]
+        scrollbar = ttk.Scrollbar(self.root, orient="vertical", command=canvas.yview)  # type: ignore[attr-defined]
         scrollable_frame = ttk.Frame(canvas)
 
         scrollable_frame.bind(
@@ -295,7 +310,7 @@ class UICreationMixin:
         ttk.Label(ext_frame, text="Include only extensions (comma-separated):").pack(
             side=tk.LEFT,
         )
-        ttk.Entry(ext_frame, textvariable=self.filter_extensions, width=30).pack(
+        ttk.Entry(ext_frame, textvariable=self.filter_extensions, width=30).pack(  # type: ignore[attr-defined]
             side=tk.RIGHT,
         )
         ttk.Label(
@@ -308,12 +323,12 @@ class UICreationMixin:
         size_frame = ttk.Frame(filter_frame)
         size_frame.pack(fill=tk.X, pady=5)
         ttk.Label(size_frame, text="Min size (MB):").pack(side=tk.LEFT)
-        ttk.Entry(size_frame, textvariable=self.min_file_size, width=10).pack(
+        ttk.Entry(size_frame, textvariable=self.min_file_size, width=10).pack(  # type: ignore[attr-defined]
             side=tk.LEFT,
             padx=5,
         )
         ttk.Label(size_frame, text="Max size (MB):").pack(side=tk.LEFT, padx=(10, 0))
-        ttk.Entry(size_frame, textvariable=self.max_file_size, width=10).pack(
+        ttk.Entry(size_frame, textvariable=self.max_file_size, width=10).pack(  # type: ignore[attr-defined]
             side=tk.LEFT,
             padx=5,
         )
@@ -336,12 +351,12 @@ class UICreationMixin:
         ttk.Checkbutton(
             self.pre_process_frame,
             text="Bulk extract archives (.zip, .rar, .7z)",
-            variable=self.unzip_var,
+            variable=self.unzip_var,  # type: ignore[attr-defined]
         ).pack(anchor=tk.W)
         ttk.Checkbutton(
             self.pre_process_frame,
             text="Safe extraction (verify before deleting originals)",
-            variable=self.safe_extract_var,
+            variable=self.safe_extract_var,  # type: ignore[attr-defined]
         ).pack(anchor=tk.W, padx=(20, 0))
 
     def create_main_operation_widgets(self, parent: tk.Widget) -> None:
@@ -362,35 +377,35 @@ class UICreationMixin:
         ttk.Radiobutton(
             self.mode_frame,
             text="Combine & Copy",
-            variable=self.operation_mode,
+            variable=self.operation_mode,  # type: ignore[attr-defined]
             value="combine",
             command=self.on_mode_change,
         ).pack(anchor=tk.W)
         ttk.Radiobutton(
             self.mode_frame,
             text="Flatten & Tidy",
-            variable=self.operation_mode,
+            variable=self.operation_mode,  # type: ignore[attr-defined]
             value="flatten",
             command=self.on_mode_change,
         ).pack(anchor=tk.W)
         ttk.Radiobutton(
             self.mode_frame,
             text="Copy & Prune Empty Folders",
-            variable=self.operation_mode,
+            variable=self.operation_mode,  # type: ignore[attr-defined]
             value="prune",
             command=self.on_mode_change,
         ).pack(anchor=tk.W)
         ttk.Radiobutton(
             self.mode_frame,
             text="Deduplicate Files (In-Place)",
-            variable=self.operation_mode,
+            variable=self.operation_mode,  # type: ignore[attr-defined]
             value="deduplicate",
             command=self.on_mode_change,
         ).pack(anchor=tk.W)
         ttk.Radiobutton(
             self.mode_frame,
             text="Analyze & Report Only",
-            variable=self.operation_mode,
+            variable=self.operation_mode,  # type: ignore[attr-defined]
             value="analyze",
             command=self.on_mode_change,
         ).pack(anchor=tk.W)
@@ -421,12 +436,12 @@ class UICreationMixin:
         ttk.Checkbutton(
             org_frame,
             text="Organize files by type (create subfolders)",
-            variable=self.organize_by_type_var,
+            variable=self.organize_by_type_var,  # type: ignore[attr-defined]
         ).pack(anchor=tk.W)
         ttk.Checkbutton(
             org_frame,
             text="Organize files by date (YYYY/MM folders)",
-            variable=self.organize_by_date_var,
+            variable=self.organize_by_date_var,  # type: ignore[attr-defined]
         ).pack(anchor=tk.W)
 
     def create_postprocessing_widgets(self, parent: tk.Widget) -> None:
@@ -447,7 +462,7 @@ class UICreationMixin:
         ttk.Checkbutton(
             self.post_process_frame,
             text="Deduplicate renamed files in destination folder after copy",
-            variable=self.deduplicate_var,
+            variable=self.deduplicate_var,  # type: ignore[attr-defined]
         ).pack(anchor=tk.W)
 
     def create_output_options_widgets(self, parent: tk.Widget) -> None:
@@ -464,7 +479,7 @@ class UICreationMixin:
         ttk.Checkbutton(
             output_frame,
             text="Create ZIP archive of final result",
-            variable=self.zip_output_var,
+            variable=self.zip_output_var,  # type: ignore[attr-defined]
         ).pack(anchor=tk.W)
 
     def create_advanced_options_widgets(self, parent: tk.Widget) -> None:
@@ -485,12 +500,12 @@ class UICreationMixin:
         ttk.Checkbutton(
             advanced_frame,
             text="Preview mode (show what would be done without executing)",
-            variable=self.preview_mode_var,
+            variable=self.preview_mode_var,  # type: ignore[attr-defined]
         ).pack(anchor=tk.W)
         ttk.Checkbutton(
             advanced_frame,
             text="Create backup before processing",
-            variable=self.backup_before_var,
+            variable=self.backup_before_var,  # type: ignore[attr-defined]
         ).pack(anchor=tk.W)
 
     def create_progress_widgets(self, parent: tk.Widget) -> None:
@@ -506,13 +521,13 @@ class UICreationMixin:
 
         self.progress_bar = ttk.Progressbar(
             progress_frame,
-            variable=self.progress_var,
+            variable=self.progress_var,  # type: ignore[attr-defined]
             maximum=100,
             mode="determinate",
         )
         self.progress_bar.pack(fill=tk.X, pady=2)
 
-        self.status_label = ttk.Label(progress_frame, textvariable=self.status_var)
+        self.status_label = ttk.Label(progress_frame, textvariable=self.status_var)  # type: ignore[attr-defined]
         self.status_label.pack(anchor=tk.W)
 
     def create_run_button(self, parent: tk.Widget) -> None:
@@ -529,7 +544,7 @@ class UICreationMixin:
         self.run_button = ttk.Button(
             button_frame,
             text="Run Process",
-            command=self.run_processing_threaded,
+            command=self.run_processing_threaded,  # type: ignore[attr-defined]
             style="Accent.TButton",
         )
         self.run_button.pack(
@@ -543,7 +558,7 @@ class UICreationMixin:
         self.cancel_button = ttk.Button(
             button_frame,
             text="Cancel",
-            command=self.cancel_processing,
+            command=self.cancel_processing,  # type: ignore[attr-defined]
             state=tk.DISABLED,
         )
         self.cancel_button.pack(side=tk.RIGHT, padx=(5, 0), ipady=10)
@@ -554,7 +569,7 @@ class UICreationMixin:
     def on_mode_change(self) -> None:
         """Updates UI descriptions and widget states based on the selected operation
         mode."""
-        mode = self.operation_mode.get()
+        mode = self.operation_mode.get()  # type: ignore[attr-defined]
 
         # Update description
         descriptions = {
@@ -631,10 +646,10 @@ class UICreationMixin:
                     )
                     return
 
-                if folder not in self.source_folders:
-                    self.source_folders.append(folder)
+                if folder not in self.source_folders:  # type: ignore[attr-defined]
+                    self.source_folders.append(folder)  # type: ignore[attr-defined]
                     self.source_listbox.insert(tk.END, folder)
-                    self.update_source_info()
+                    self.update_source_info()  # type: ignore[attr-defined]
                     logger.info("Added source folder: %s", folder)
                 else:
                     messagebox.showinfo(
@@ -666,14 +681,14 @@ class UICreationMixin:
             Exception: If folder removal fails for other reasons
         """
         try:
-            selected_indices = list(self.source_listbox.curselection())  # type: ignore[no-untyped-call]
+            selected_indices = list(self.source_listbox.curselection())
             if not selected_indices:
                 messagebox.showinfo("Info", "Please select folders to remove.")
                 return
 
             # Confirm removal
             if len(selected_indices) == 1:
-                folder_name = Path(self.source_folders[selected_indices[0]]).name
+                folder_name = Path(self.source_folders[selected_indices[0]]).name  # type: ignore[attr-defined]
                 confirm = messagebox.askyesno(
                     "Confirm Removal",
                     f"Remove folder '{folder_name}' from source list?",
@@ -688,11 +703,11 @@ class UICreationMixin:
             if confirm:
                 # Remove in reverse order to maintain indices
                 for i in sorted(selected_indices, reverse=True):
-                    removed_folder = self.source_folders.pop(i)
+                    removed_folder = self.source_folders.pop(i)  # type: ignore[attr-defined]
                     self.source_listbox.delete(i)
                     logger.info("Removed source folder: %s", removed_folder)
 
-                self.update_source_info()
+                self.update_source_info()  # type: ignore[attr-defined]
 
         except (PermissionError, OSError) as e:
             logger.exception("Error removing source folders")

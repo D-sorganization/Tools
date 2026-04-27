@@ -19,9 +19,12 @@ import os
 import re
 from typing import Any
 
+from contracts import require
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+<<<<<<< HEAD
+=======
 logger = logging.getLogger(__name__)
 
 try:
@@ -29,6 +32,7 @@ try:
 except ImportError:
     from contracts import require  # type: ignore[no-redef]
 
+>>>>>>> origin/main
 # Default local-development origins used when CORS_ORIGINS env var is unset.
 DEFAULT_ORIGINS: list[str] = [
     "http://localhost:3000",

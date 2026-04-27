@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("ezdxf")
 from programmatic_pid.geometry import (
     clamp,
     closest_point_on_rect,

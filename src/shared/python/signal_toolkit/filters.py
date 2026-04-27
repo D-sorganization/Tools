@@ -86,8 +86,11 @@ class FilterSpec:
         Returns:
             Tuple of (frequencies, magnitude, phase).
         """
+<<<<<<< HEAD
+=======
         if not (num_points is not None):
             raise ValueError("num_points must be provided")
+>>>>>>> origin/main
         w, h = scipy_signal.freqz(self.b, self.a, worN=num_points, fs=self.fs)
         magnitude = np.abs(h)
         phase = np.angle(h)
@@ -105,8 +108,11 @@ class FilterSpec:
         Returns:
             Tuple of (time, impulse_response).
         """
+<<<<<<< HEAD
+=======
         if not (num_samples is not None):
             raise ValueError("num_samples must be provided")
+>>>>>>> origin/main
         impulse = np.zeros(num_samples)
         impulse[0] = 1.0
 
@@ -351,8 +357,11 @@ def apply_filter(
     Returns:
         Filtered signal.
     """
+<<<<<<< HEAD
+=======
     if not (signal is not None):
         raise ValueError("signal must be provided")
+>>>>>>> origin/main
     if zero_phase:
         # Zero-phase filtering (no phase distortion)
         filtered_values = filtfilt(filter_spec.b, filter_spec.a, signal.values)
@@ -408,8 +417,11 @@ def create_butterworth_filter(
     Returns:
         FilterSpec.
     """
+<<<<<<< HEAD
+=======
     if not (filter_type is not None):
         raise ValueError("filter_type must be provided")
+>>>>>>> origin/main
     ft = FilterType(filter_type)
     return FilterDesigner.butterworth(ft, cutoff, fs, order)
 
@@ -433,8 +445,11 @@ def create_chebyshev_filter(
     Returns:
         FilterSpec.
     """
+<<<<<<< HEAD
+=======
     if not (filter_type is not None):
         raise ValueError("filter_type must be provided")
+>>>>>>> origin/main
     ft = FilterType(filter_type)
     return FilterDesigner.chebyshev1(ft, cutoff, fs, order, ripple_db)
 
@@ -471,8 +486,11 @@ def create_savgol_filter(
     Returns:
         Function that applies Savitzky-Golay filter to values.
     """
+<<<<<<< HEAD
+=======
     if not (window_length is not None):
         raise ValueError("window_length must be provided")
+>>>>>>> origin/main
     if window_length % 2 == 0:
         window_length += 1
 
@@ -497,8 +515,11 @@ def apply_moving_average(
     Returns:
         Filtered signal.
     """
+<<<<<<< HEAD
+=======
     if not (signal is not None):
         raise ValueError("signal must be provided")
+>>>>>>> origin/main
     filter_func = create_moving_average_filter(window_size)
     filtered_values = filter_func(signal.values)
 
@@ -526,8 +547,11 @@ def apply_savgol(
     Returns:
         Filtered signal.
     """
+<<<<<<< HEAD
+=======
     if not (signal is not None):
         raise ValueError("signal must be provided")
+>>>>>>> origin/main
     if window_length % 2 == 0:
         window_length += 1
 
@@ -565,8 +589,11 @@ def apply_median_filter(
     Returns:
         Filtered signal.
     """
+<<<<<<< HEAD
+=======
     if not (signal is not None):
         raise ValueError("signal must be provided")
+>>>>>>> origin/main
     if kernel_size % 2 == 0:
         kernel_size += 1
 
@@ -594,8 +621,11 @@ def apply_exponential_smoothing(
     Returns:
         Smoothed signal.
     """
+<<<<<<< HEAD
+=======
     if not (signal is not None):
         raise ValueError("signal must be provided")
+>>>>>>> origin/main
     values = signal.values
     smoothed = np.zeros_like(values)
     smoothed[0] = values[0]
@@ -625,8 +655,11 @@ def apply_gaussian_smoothing(
     Returns:
         Smoothed signal.
     """
+<<<<<<< HEAD
+=======
     if not (signal is not None):
         raise ValueError("signal must be provided")
+>>>>>>> origin/main
     from scipy.ndimage import gaussian_filter1d
 
     filtered_values = gaussian_filter1d(signal.values, sigma)
@@ -659,8 +692,11 @@ def apply_bilateral_filter(
     Returns:
         Filtered signal.
     """
+<<<<<<< HEAD
+=======
     if not (signal is not None):
         raise ValueError("signal must be provided")
+>>>>>>> origin/main
     values = signal.values
     n = len(values)
     filtered = np.zeros(n)
@@ -700,3 +736,115 @@ def apply_bilateral_filter(
             "sigma_intensity": sigma_intensity,
         },
     )
+<<<<<<< HEAD
+
+
+class AdaptiveFilter:
+    """Adaptive filter implementations (LMS, RLS)."""
+
+    @staticmethod
+    def lms(
+        signal: Signal,
+        reference: Signal,
+        order: int = 10,
+        step_size: float = 0.01,
+    ) -> tuple[Signal, Signal]:
+        """Apply Least Mean Squares (LMS) adaptive filter.
+
+        Args:
+            signal: Input signal to filter.
+            reference: Reference signal (desired output).
+            order: Filter order.
+            step_size: LMS step size (learning rate).
+
+        Returns:
+            Tuple of (filtered_signal, error_signal).
+        """
+        n = len(signal.values)
+        x = signal.values
+        d = reference.values
+
+        w = np.zeros(order)  # Filter weights
+        y = np.zeros(n)  # Filter output
+        e = np.zeros(n)  # Error
+
+        for i in range(order, n):
+            x_window = x[i - order : i][::-1]  # Reversed window
+            y[i] = np.dot(w, x_window)
+            e[i] = d[i] - y[i]
+            w += step_size * e[i] * x_window
+
+        filtered = Signal(
+            time=signal.time,
+            values=y,
+            name=f"{signal.name}_lms",
+            units=signal.units,
+        )
+
+        error = Signal(
+            time=signal.time,
+            values=e,
+            name=f"{signal.name}_lms_error",
+            units=signal.units,
+        )
+
+        return filtered, error
+
+    @staticmethod
+    def rls(
+        signal: Signal,
+        reference: Signal,
+        order: int = 10,
+        forgetting_factor: float = 0.99,
+        delta: float = 0.01,
+    ) -> tuple[Signal, Signal]:
+        """Apply Recursive Least Squares (RLS) adaptive filter.
+
+        Args:
+            signal: Input signal to filter.
+            reference: Reference signal (desired output).
+            order: Filter order.
+            forgetting_factor: Forgetting factor (0 < lambda <= 1).
+            delta: Initialization value for P matrix.
+
+        Returns:
+            Tuple of (filtered_signal, error_signal).
+        """
+        n = len(signal.values)
+        x = signal.values
+        d = reference.values
+
+        w = np.zeros(order)  # Filter weights
+        P = np.eye(order) / delta  # Inverse correlation matrix
+        y = np.zeros(n)  # Filter output
+        e = np.zeros(n)  # Error
+
+        lam = forgetting_factor
+
+        for i in range(order, n):
+            x_window = x[i - order : i][::-1].reshape(-1, 1)
+            y[i] = np.dot(w, x_window.flatten())
+            e[i] = d[i] - y[i]
+
+            # RLS update
+            k = P @ x_window / (lam + x_window.T @ P @ x_window)
+            P = (P - k @ x_window.T @ P) / lam
+            w += k.flatten() * e[i]
+
+        filtered = Signal(
+            time=signal.time,
+            values=y,
+            name=f"{signal.name}_rls",
+            units=signal.units,
+        )
+
+        error = Signal(
+            time=signal.time,
+            values=e,
+            name=f"{signal.name}_rls_error",
+            units=signal.units,
+        )
+
+        return filtered, error
+=======
+>>>>>>> origin/main

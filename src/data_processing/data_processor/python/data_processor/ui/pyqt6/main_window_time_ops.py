@@ -17,7 +17,7 @@ class TimeOpsMixin:
 
     def _apply_resample(self) -> None:
         """Apply time resampling to data."""
-        if self.current_data is None:  # type: ignore[attr-defined]
+        if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Please load data first.")  # type: ignore[arg-type]
             return
 
@@ -29,7 +29,7 @@ class TimeOpsMixin:
                 QMessageBox.warning(
                     self,
                     "No Time Column",
-                    "Please select a time column.",  # type: ignore[arg-type]
+                    "Please select a time column.",
                 )
                 return
 
@@ -41,8 +41,8 @@ class TimeOpsMixin:
 
             from data_processor.core.signal_processing import resample_data
 
-            self.current_data = resample_data(  # type: ignore[attr-defined]
-                self.current_data,  # type: ignore[attr-defined]
+            self.current_data = resample_data(
+                self.current_data,
                 time_col=time_col,
                 rule=rule,
                 method=method,
@@ -58,7 +58,7 @@ class TimeOpsMixin:
                 "Success",
                 f"Data resampled to {rule}\n"
                 f"Method: {method}\n"
-                f"Rows: {len(self.current_data)}",  # type: ignore[attr-defined]
+                f"Rows: {len(self.current_data)}",
             )
 
         except (RuntimeError, AttributeError) as e:
@@ -92,7 +92,7 @@ class TimeOpsMixin:
 
     def _trim_time_range(self) -> None:
         """Trim data to specified time range."""
-        if self.current_data is None:  # type: ignore[attr-defined]
+        if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Please load data first.")  # type: ignore[arg-type]
             return
 
@@ -113,8 +113,8 @@ class TimeOpsMixin:
 
             from data_processor.core.signal_processing import trim_time_range
 
-            self.current_data = trim_time_range(  # type: ignore[attr-defined]
-                self.current_data,  # type: ignore[attr-defined]
+            self.current_data = trim_time_range(
+                self.current_data,
                 time_col=time_col,
                 start_time=start_time,
                 end_time=end_time,
@@ -129,7 +129,7 @@ class TimeOpsMixin:
             QMessageBox.information(
                 self,  # type: ignore[arg-type]
                 "Success",
-                f"Data trimmed to time range\nRows: {len(self.current_data)}",  # type: ignore[attr-defined]
+                f"Data trimmed to time range\nRows: {len(self.current_data)}",
             )
 
         except ValueError:
@@ -157,7 +157,7 @@ class TimeOpsMixin:
 
     def _calculate_trendline(self) -> None:
         """Calculate trendline for selected signals."""
-        if self.current_data is None:  # type: ignore[attr-defined]
+        if self.current_data is None:
             QMessageBox.warning(self, "No Data", "Please load data first.")  # type: ignore[arg-type]
             return
 
@@ -167,7 +167,7 @@ class TimeOpsMixin:
                 QMessageBox.warning(
                     self,
                     "No X-Axis",
-                    "Please select an X-axis signal.",  # type: ignore[arg-type]
+                    "Please select an X-axis signal.",
                 )
                 return
 
@@ -176,7 +176,7 @@ class TimeOpsMixin:
                 QMessageBox.warning(
                     self,
                     "No Y-Signals",
-                    "Please select Y-axis signals.",  # type: ignore[arg-type]
+                    "Please select Y-axis signals.",
                 )
                 return
 
@@ -185,7 +185,7 @@ class TimeOpsMixin:
                 QMessageBox.warning(
                     self,
                     "No Trendline",
-                    "Please select a trendline type.",  # type: ignore[arg-type]
+                    "Please select a trendline type.",
                 )
                 return
 
@@ -206,7 +206,7 @@ class TimeOpsMixin:
             from data_processor.core.signal_processing import calculate_trendline
 
             result = calculate_trendline(
-                self.current_data,  # type: ignore[attr-defined]
+                self.current_data,
                 x_col=x_col,
                 y_col=y_col,
                 trend_type=trend_type,
@@ -229,5 +229,5 @@ class TimeOpsMixin:
             QMessageBox.critical(
                 self,
                 "Error",
-                f"Trendline calculation failed:\n{e}",  # type: ignore[arg-type]
+                f"Trendline calculation failed:\n{e}",
             )

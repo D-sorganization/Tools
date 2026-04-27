@@ -27,7 +27,8 @@ Note:
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any
 
 from .acid_gas_dewpoint_calculator import AcidGasDewpointCalculator
 from .baghouse_calculator import BaghouseCalculator, BaghouseResult
@@ -67,34 +68,43 @@ _import_errors: list[str] = []
 
 # Calculators with numpy/scipy dependencies
 try:
-    from .scrubber_calculator import (  # noqa: F401
-        calculate_gas_density as scrubber_calculate_gas_density,
-    )
+    pass
 
     ScrubberCalculator = None  # Module has functions, no class
 except ImportError as e:
     _import_errors.append(f"ScrubberCalculator not available: {e}")
     ScrubberCalculator = None
 
+# Pre-declare with type annotations to avoid no-redef errors in except branches
+SyngasWaterCalculator: type[SyngasWaterCalculatorType] | None = None
+WaterVaporPressureCalculator: type[WaterVaporPressureCalculatorType] | None = None
 try:
-    from .syngas_water_calculator import SyngasWaterCalculator
-    from .water_vapor_pressure_calculator import WaterVaporPressureCalculator
+    from .syngas_water_calculator import (
+        SyngasWaterCalculator as SyngasWaterCalculator,
+    )
+    from .water_vapor_pressure_calculator import (
+        WaterVaporPressureCalculator as WaterVaporPressureCalculator,
+    )
 except ImportError as e:
     _import_errors.append(f"Water calculators not available: {e}")
-    SyngasWaterCalculator: type[SyngasWaterCalculatorType] | None = None  # type: ignore[no-redef]
-    WaterVaporPressureCalculator: type[WaterVaporPressureCalculatorType] | None = None  # type: ignore[no-redef]
 
+# Pre-declare with type annotations to avoid no-redef errors in except branches
+WGSReactorCalculator: type[WGSReactorEngineType] | None = None
+WGSReactorEngine: type[WGSReactorEngineType] | None = None
 try:
-    from .wgs_reactor_calculator import WGSReactorEngine
+    from .wgs_reactor_calculator import (
+        WGSReactorEngine as WGSReactorEngine,
+    )
 
     WGSReactorCalculator = WGSReactorEngine  # Alias
 except ImportError as e:
     _import_errors.append(f"WGSReactorCalculator not available: {e}")
-    WGSReactorCalculator: type[WGSReactorEngineType] | None = None  # type: ignore[no-redef]
-    WGSReactorEngine: type[WGSReactorEngineType] | None = None  # type: ignore[no-redef]
 
+# Pre-declare callable aliases to avoid assignment type errors in except branches
+Optimizer: Callable[..., Any] | None = None
+AdamOptimizer: Callable[..., Any] | None = None
 try:
-    from .optimization import (  # noqa: F401
+    from .optimization import (
         find_optimal_on_surface,
         run_adam_optimization,
     )
@@ -103,11 +113,11 @@ try:
     Optimizer = find_optimal_on_surface  # Alias for backwards compatibility
 except ImportError as e:
     _import_errors.append(f"Optimization not available: {e}")
-    Optimizer = None  # type: ignore[assignment]
-    AdamOptimizer = None  # type: ignore[assignment]
 
+# Pre-declare callable alias to avoid assignment type error in except branch
+MultiParameterAnalysis: Callable[..., Any] | None = None
 try:
-    from .multi_param_analysis import (  # noqa: F401
+    from .multi_param_analysis import (
         run_multi_parameter_analysis,
     )
 
@@ -116,9 +126,10 @@ try:
     )
 except ImportError as e:
     _import_errors.append(f"MultiParameterAnalysis not available: {e}")
-    MultiParameterAnalysis = None  # type: ignore[assignment]
 
 # UI-dependent calculators (require PyQt6)
+# Pre-declare to avoid type errors in except branch
+SyngasCompressionCalculator: Any = None
 try:
     from .syngas_compression_calculator import (
         SyngasCompressionCalculatorWidget,
@@ -127,14 +138,15 @@ try:
     SyngasCompressionCalculator = SyngasCompressionCalculatorWidget  # Alias
 except ImportError as e:
     _import_errors.append(f"SyngasCompressionCalculator not available: {e}")
-    SyngasCompressionCalculator = None  # type: ignore[misc, assignment]
 
-# Modular packages
+# Modular packages — pre-declare to avoid no-redef in except branch
+PressureDropCalculator: type[PressureDropCalculatorType] | None = None
 try:
-    from .pressure_drop_calculator import PressureDropCalculator
+    from .pressure_drop_calculator import (
+        PressureDropCalculator as PressureDropCalculator,
+    )
 except ImportError as e:
     _import_errors.append(f"PressureDropCalculator not available: {e}")
-    PressureDropCalculator: type[PressureDropCalculatorType] | None = None  # type: ignore[no-redef]
 
 # Log any import errors that occurred
 for error in _import_errors:

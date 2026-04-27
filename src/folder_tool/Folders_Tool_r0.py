@@ -3,7 +3,7 @@ import logging
 import tkinter as tk
 from tkinter import ttk
 
-from _bootstrap import bootstrap  # noqa: E402
+from _bootstrap import bootstrap
 
 _REPO_ROOT = bootstrap(__file__)
 
@@ -43,31 +43,61 @@ from folder_tool_constants import (  # noqa: E402, F401
 )
 
 try:
-    from utils.file_utils import safe_write_text  # noqa: F401, E402
+    from utils.file_utils import safe_write_text
 except ImportError:
     # Fallback definition if utils not found
     from pathlib import Path
 
-    def safe_write_text(  # type: ignore[misc]
-        path: str,
+    def safe_write_text(
+        file_path: Path | str,
         content: str,
         encoding: str = "utf-8",
         create_parents: bool = True,
+<<<<<<< HEAD
+    ) -> bool:
+        assert file_path is not None, "file_path must be provided"
+        p = Path(file_path)
+=======
     ) -> None:
         if not (path is not None):
             raise ValueError("path must be provided")
         p = Path(path)
+>>>>>>> origin/main
         if create_parents:
-            p.parent.mkdir(parents=True, exist_ok=True)
+            parent_dir = p.parent
+            parent_dir.mkdir(parents=True, exist_ok=True)
         p.write_text(content, encoding=encoding)
+        return True
+
+
+def _get_log_path() -> "Path":
+    """Return XDG-compliant log file path for folder_tool.
+
+    Uses ``get_xdg_config_dir`` from shared utils when available, falling back
+    to ``~/.config/folder_tool`` to stay consistent with XDG conventions.
+    """
+    from pathlib import Path as _Path
+
+    try:
+        from utils.config_loader import get_xdg_config_dir
+
+        config_dir = get_xdg_config_dir("folder_tool")
+    except ImportError:
+        import os
+
+        xdg_home = os.environ.get("XDG_CONFIG_HOME", "")
+        base = _Path(xdg_home) if xdg_home else _Path.home() / ".config"
+        config_dir = base / "folder_tool"
+
+    config_dir.mkdir(parents=True, exist_ok=True)
+    return config_dir / "folder_processor.log"
 
 
 # Set up logging to capture detailed information
-log_filename = "folder_processor.log"
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler(log_filename, mode="w")],
+    handlers=[logging.FileHandler(str(_get_log_path()), mode="w")],
 )
 
 # Get logger for this module
@@ -142,11 +172,11 @@ class FolderProcessorApp(UICreationMixin, FileOperationsMixin, ProcessingMixin):
 
     def get_constants_info(self) -> dict[str, dict[str, str]]:
         """Return constants metadata — delegates to module-level function."""
-        return get_constants_info()
+        return get_constants_info()  # type: ignore[no-any-return]
 
     def export_constants_documentation(self, output_path: str) -> bool:
         """Export constants docs — delegates to module-level function."""
-        return export_constants_documentation(output_path)
+        return export_constants_documentation(output_path)  # type: ignore[no-any-return]
 
 
 if __name__ == "__main__":

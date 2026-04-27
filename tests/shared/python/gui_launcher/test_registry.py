@@ -227,7 +227,7 @@ class TestGUIRegistryContracts:
         from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
-            registry.register(123, "My Tool", "desc", _sample_config())  # type: ignore[arg-type]
+            registry.register(123, "My Tool", "desc", _sample_config())
 
     def test_register_empty_display_name(self, registry: GUIRegistry) -> None:
         from contracts import PreconditionError
@@ -239,7 +239,7 @@ class TestGUIRegistryContracts:
         from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
-            registry.register("tool_x", "Name", "desc", [])  # type: ignore[arg-type]
+            registry.register("tool_x", "Name", "desc", [])
 
     def test_register_empty_configs(self, registry: GUIRegistry) -> None:
         from contracts import PreconditionError
@@ -251,7 +251,7 @@ class TestGUIRegistryContracts:
         from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
-            registry.register("tool_x", "Name", None, _sample_config())  # type: ignore[arg-type]
+            registry.register("tool_x", "Name", None, _sample_config())
 
     def test_register_empty_category(self, registry: GUIRegistry) -> None:
         from contracts import PreconditionError
@@ -271,7 +271,7 @@ class TestGUIRegistryContracts:
         from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
-            registry.unregister(None)  # type: ignore[arg-type]
+            registry.unregister(None)
 
     # get contracts
 
@@ -285,7 +285,7 @@ class TestGUIRegistryContracts:
         from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
-            registry.get(42)  # type: ignore[arg-type]
+            registry.get(42)
 
     # get_config contracts
 
@@ -299,14 +299,19 @@ class TestGUIRegistryContracts:
         from contracts import PreconditionError
 
         with pytest.raises(PreconditionError):
-            registry.get_config("tool_x", "pyqt6")  # type: ignore[arg-type]
+            registry.get_config("tool_x", "pyqt6")
 
     # auto_discover_guis contracts
 
     def test_auto_discover_non_list(self) -> None:
+<<<<<<< HEAD
+        from contracts import PreconditionError
+        from gui_launcher.registry import auto_discover_guis
+=======
         from gui_launcher.registry import auto_discover_guis
 
         from contracts import PreconditionError
+>>>>>>> origin/main
 
         with pytest.raises(PreconditionError):
             auto_discover_guis("/not/a/list")  # type: ignore[arg-type]

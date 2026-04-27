@@ -109,8 +109,12 @@ def generate_noise(
             f"Unknown noise type: {noise_type!r}. Must be 'white', 'pink', or 'brown'."
         )
 
+<<<<<<< HEAD
+    assert noise.shape == (n_samples,), f"Expected shape ({n_samples},), got {noise.shape}"
+=======
     if not (noise.shape == (n_samples,)):
         raise ValueError(f"Expected shape ({n_samples},), got {noise.shape}")
+>>>>>>> origin/main
     return noise
 
 
@@ -197,6 +201,17 @@ class PerturbationConfig:
     seed: int | None = None
 
     def __post_init__(self) -> None:
+<<<<<<< HEAD
+        assert self.n_trials > 0, f"n_trials must be positive, got {self.n_trials}"
+        assert self.noise_amplitude >= 0, (
+            f"noise_amplitude must be non-negative, got {self.noise_amplitude}"
+        )
+        assert self.noise_type in {
+            "white",
+            "pink",
+            "brown",
+        }, f"noise_type must be 'white', 'pink', or 'brown', got {self.noise_type!r}"
+=======
         if not (self.n_trials > 0):
             raise ValueError(f"n_trials must be positive, got {self.n_trials}")
         if not (self.noise_amplitude >= 0):
@@ -207,6 +222,7 @@ class PerturbationConfig:
             raise ValueError(
                 f"noise_type must be 'white', 'pink', or 'brown', got {self.noise_type!r}"
             )
+>>>>>>> origin/main
 
 
 # ---------------------------------------------------------------------------

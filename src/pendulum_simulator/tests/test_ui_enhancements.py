@@ -24,10 +24,16 @@ from double_pendulum_golf.physics_golfer import (
 
 
 def _has_pyqt6() -> bool:
-    """Check if PyQt6 is available AND a display is present."""
-    # On headless Linux, QWidget() causes SIGABRT even if PyQt6 is importable
+    """Check if PyQt6 is available AND a Qt platform backend is usable."""
+    # On headless Linux, QWidget() causes SIGABRT without a platform backend.
+    # QT_QPA_PLATFORM=offscreen is safe; DISPLAY/WAYLAND_DISPLAY mean a real server.
     if sys.platform not in ("win32", "darwin"):
-        if not (os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")):
+        has_platform = (
+            os.environ.get("QT_QPA_PLATFORM") == "offscreen"
+            or bool(os.environ.get("DISPLAY"))
+            or bool(os.environ.get("WAYLAND_DISPLAY"))
+        )
+        if not has_platform:
             return False
     try:
         import PyQt6.QtWidgets  # noqa: F401
@@ -124,9 +130,7 @@ class TestReversedHubStandoff:
         assert pos["hub"][0] < 0, "Hub should be on left side at π/2"
         assert abs(pos["hub"][1]) < 1e-10
 
-    def test_analytical_jacobians_match_numerical(
-        self, golfer_params: GolferParams
-    ) -> None:
+    def test_analytical_jacobians_match_numerical(self, golfer_params: GolferParams) -> None:
         """Analytical Jacobians must match numerical finite-diff after hub reversal."""
         rng = np.random.default_rng(42)
         eps = 1e-7
@@ -144,9 +148,9 @@ class TestReversedHubStandoff:
                 J_hub_num[0, j] = (fkp["hub"][0] - fk0["hub"][0]) / eps
                 J_hub_num[1, j] = (fkp["hub"][1] - fk0["hub"][1]) / eps
 
-            assert np.allclose(
-                jacs["hub"], J_hub_num, atol=1e-4
-            ), f"Hub Jacobian mismatch:\nAnalytical:\n{jacs['hub']}\nNumerical:\n{J_hub_num}"
+            assert np.allclose(jacs["hub"], J_hub_num, atol=1e-4), (
+                f"Hub Jacobian mismatch:\nAnalytical:\n{jacs['hub']}\nNumerical:\n{J_hub_num}"
+            )
 
     def test_all_analytical_jacobians_match_numerical(
         self, golfer_params: GolferParams
@@ -248,9 +252,9 @@ class TestScapulaJointParameters:
         # Scapula position should be at the original shoulder bar endpoint
         rscap = np.array(pos_scap["rscap"])
         rs_orig = np.array(pos_no["rs"])
-        assert np.allclose(
-            rscap, rs_orig, atol=1e-10
-        ), "Scapula joint should be at original shoulder bar endpoint"
+        assert np.allclose(rscap, rs_orig, atol=1e-10), (
+            "Scapula joint should be at original shoulder bar endpoint"
+        )
 
     def test_mass_matrix_still_valid_with_scapula(
         self,
@@ -305,9 +309,9 @@ class TestSwingPlaneTilt:
         V_tilted = potential_energy_from_q(q, params_tilted)
 
         # PE should be smaller with reduced gravity
-        assert abs(V_tilted) < abs(
-            V_full
-        ), f"Tilted PE ({V_tilted}) should be smaller than full ({V_full})"
+        assert abs(V_tilted) < abs(V_full), (
+            f"Tilted PE ({V_tilted}) should be smaller than full ({V_full})"
+        )
 
 
 # ---------------------------------------------------------------------------

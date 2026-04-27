@@ -27,6 +27,7 @@ from rotation_converter.modern_robotics import (
     FKinBody,
     FKinSpace,
     IKinBody,
+    InverseDynamics,
     JacobianBody,
     JacobianSpace,
     MatrixExp3,
@@ -39,6 +40,8 @@ from rotation_converter.modern_robotics import (
     TransToRp,
     VecTose3,
     VecToso3,
+    _inverse_dynamics_backward_pass,
+    _inverse_dynamics_forward_pass,
     se3ToVec,
     so3ToVec,
 )
@@ -707,3 +710,206 @@ class TestModernRoboticsContracts:
         T = np.eye(4)
         with pytest.raises(PreconditionError):
             IKinBody(Blist, M, T, np.array([0.0]), eomg=-1.0)
+
+
+# ===========================================================================
+# InverseDynamics: refactored forward/backward pass helpers
+# ===========================================================================
+
+_3DOF_ROBOT = {
+    "thetalist": np.array([0.1, 0.1, 0.1]),
+    "dthetalist": np.array([0.1, 0.2, 0.3]),
+    "ddthetalist": np.array([2.0, 1.5, 1.0]),
+    "g": np.array([0, 0, -9.8]),
+    "Ftip": np.array([1, 1, 1, 1, 1, 1], dtype=float),
+    "Mlist": np.array(
+        [
+            [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.089159], [0, 0, 0, 1]],
+            [[0, 0, 1, 0.28], [0, 1, 0, 0.13585], [-1, 0, 0, 0], [0, 0, 0, 1]],
+            [[1, 0, 0, 0], [0, 1, 0, -0.1197], [0, 0, 1, 0.395], [0, 0, 0, 1]],
+            [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.14225], [0, 0, 0, 1]],
+        ],
+        dtype=float,
+    ),
+    "Glist": np.array(
+        [
+            np.diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7]),
+            np.diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393]),
+            np.diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275]),
+        ]
+    ),
+    "Slist": np.array(
+        [
+            [1, 0, 1, 0, 1, 0],
+            [0, 1, 0, -0.089, 0, 0],
+            [0, 1, 0, -0.089, 0, 0.425],
+        ],
+        dtype=float,
+    ).T,
+}
+
+
+class TestInverseDynamics:
+    """Unit tests for InverseDynamics and its private helper passes."""
+
+    def test_inverse_dynamics_docstring_example(self) -> None:
+        """Result matches the expected output from the module docstring."""
+        r = _3DOF_ROBOT
+        result = InverseDynamics(
+            r["thetalist"],
+            r["dthetalist"],
+            r["ddthetalist"],
+            r["g"],
+            r["Ftip"],
+            r["Mlist"],
+            r["Glist"],
+            r["Slist"],
+        )
+        expected = np.array([74.69616155, -33.06766016, -3.23057314])
+        np.testing.assert_allclose(result, expected, atol=1e-6)
+
+    def test_inverse_dynamics_returns_n_vector(self) -> None:
+        """Return value is a 1-D array with n elements."""
+        r = _3DOF_ROBOT
+        result = InverseDynamics(
+            r["thetalist"],
+            r["dthetalist"],
+            r["ddthetalist"],
+            r["g"],
+            r["Ftip"],
+            r["Mlist"],
+            r["Glist"],
+            r["Slist"],
+        )
+        assert result.shape == (3,)
+
+    def test_forward_pass_shapes(self) -> None:
+        """Private forward pass returns arrays with correct shapes."""
+        r = _3DOF_ROBOT
+        n = len(r["thetalist"])
+        Ai, AdTi, Vi, Vdi = _inverse_dynamics_forward_pass(
+            n,
+            r["thetalist"],
+            r["dthetalist"],
+            r["ddthetalist"],
+            r["g"],
+            r["Mlist"],
+            r["Slist"],
+        )
+        assert Ai.shape == (6, n)
+        assert Vi.shape == (6, n + 1)
+        assert Vdi.shape == (6, n + 1)
+        assert len(AdTi) == n + 1
+
+    def test_backward_pass_matches_full_function(self) -> None:
+        """Forward + backward pass composition matches the full InverseDynamics output."""
+        r = _3DOF_ROBOT
+        n = len(r["thetalist"])
+        Ai, AdTi, Vi, Vdi = _inverse_dynamics_forward_pass(
+            n,
+            r["thetalist"],
+            r["dthetalist"],
+            r["ddthetalist"],
+            r["g"],
+            r["Mlist"],
+            r["Slist"],
+        )
+        tau = _inverse_dynamics_backward_pass(
+            n, r["Ftip"], Ai, AdTi, Vi, Vdi, r["Glist"]
+        )
+        expected = InverseDynamics(
+            r["thetalist"],
+            r["dthetalist"],
+            r["ddthetalist"],
+            r["g"],
+            r["Ftip"],
+            r["Mlist"],
+            r["Glist"],
+            r["Slist"],
+        )
+        np.testing.assert_allclose(tau, expected, atol=1e-12)
+
+    def test_zero_gravity_reduces_torques(self) -> None:
+        """With zero gravity and no tip force, torques are smaller (inertia-only)."""
+        r = _3DOF_ROBOT
+        tau_full = InverseDynamics(
+            r["thetalist"],
+            r["dthetalist"],
+            r["ddthetalist"],
+            r["g"],
+            r["Ftip"],
+            r["Mlist"],
+            r["Glist"],
+            r["Slist"],
+        )
+        tau_no_g = InverseDynamics(
+            r["thetalist"],
+            r["dthetalist"],
+            r["ddthetalist"],
+            np.zeros(3),
+            np.zeros(6),
+            r["Mlist"],
+            r["Glist"],
+            r["Slist"],
+        )
+        # With gravity and tip forces removed, torques should differ
+        assert not np.allclose(tau_full, tau_no_g)
+
+
+# ===========================================================================
+# GH1691: Tests for _simulate_control_plot helper extracted from SimulateControl
+# ===========================================================================
+
+
+class TestSimulateControlPlot:
+    """GH1691: _simulate_control_plot must be callable and handle matplotlib
+    import errors gracefully."""
+
+    def test_plot_helper_importable(self) -> None:
+        """_simulate_control_plot must be importable from modern_robotics."""
+        from rotation_converter.modern_robotics import _simulate_control_plot
+
+        assert callable(_simulate_control_plot)
+
+    def test_plot_helper_runs_with_mock_plt(self) -> None:
+        """_simulate_control_plot must complete without error when matplotlib
+        is available and plt.show is mocked."""
+        from unittest.mock import MagicMock, patch
+
+        from rotation_converter.modern_robotics import _simulate_control_plot
+
+        thetamat = np.array([[0.1, 0.2], [0.15, 0.25]])
+        thetamatd = np.array([[0.05, 0.1], [0.08, 0.12]])
+        dt = 0.01
+
+        mock_plt = MagicMock()
+        with patch.dict("sys.modules", {"matplotlib.pyplot": mock_plt}):
+            # Should not raise
+            _simulate_control_plot(thetamat, thetamatd, dt)
+
+    def test_plot_helper_handles_import_error(self) -> None:
+        """_simulate_control_plot must silently skip plotting when matplotlib
+        is not available (ImportError)."""
+        import sys
+        from unittest.mock import patch
+
+        from rotation_converter.modern_robotics import _simulate_control_plot
+
+        thetamat = np.array([[0.1, 0.2], [0.15, 0.25]])
+        thetamatd = np.array([[0.05, 0.1], [0.08, 0.12]])
+        dt = 0.01
+
+        # Force matplotlib import to fail
+        blocked = {k: None for k in list(sys.modules.keys()) if "matplotlib" in k}
+        blocked["matplotlib"] = None
+        blocked["matplotlib.pyplot"] = None
+        with patch.dict("sys.modules", blocked):
+            # Should not raise even without matplotlib
+            _simulate_control_plot(thetamat, thetamatd, dt)
+
+    def test_plot_precondition_thetamat_none(self) -> None:
+        """_simulate_control_plot must raise AssertionError when thetamat is None."""
+        from rotation_converter.modern_robotics import _simulate_control_plot
+
+        with pytest.raises(AssertionError):
+            _simulate_control_plot(None, np.zeros((2, 2)), 0.01)  # type: ignore[arg-type]

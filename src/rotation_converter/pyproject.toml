@@ -9,7 +9,7 @@
 #   pip install .[all]             # everything
 #
 # Inside the monorepo this file is NOT used — the root pyproject.toml
-# and pytest.ini handle discovery and paths.
+# handles discovery and paths.
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
@@ -45,7 +45,7 @@ viz = [
     "matplotlib>=3.7.0",
 ]
 dev = [
-    "pytest>=7.0.0",
+    "pytest>=9.0.3",
     "pytest-cov>=4.0.0",
 ]
 all = [

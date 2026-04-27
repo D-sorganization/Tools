@@ -32,8 +32,13 @@ def dh_to_matrix(
     Returns:
         4x4 homogeneous transformation matrix SE(3).
     """
+<<<<<<< HEAD
+    if not isinstance(theta, (int, float)):
+        raise TypeError(f"theta must be a number, got {type(theta).__name__!r}")
+=======
     if not (theta is not None):
         raise ValueError("theta must be provided")
+>>>>>>> origin/main
     require_finite(theta, "dh_theta")
     require_finite(d, "dh_d")
     require_finite(a, "dh_a")
@@ -88,8 +93,15 @@ def slerp(q1: np.ndarray, q2: np.ndarray, t: float) -> np.ndarray:
     Returns:
         Interpolated unit quaternion (w, x, y, z).
     """
+<<<<<<< HEAD
+    if q1 is None:
+        raise TypeError("q1 must be provided, got None")
+    if q2 is None:
+        raise TypeError("q2 must be provided, got None")
+=======
     if not (q1 is not None):
         raise ValueError("q1 must be provided")
+>>>>>>> origin/main
     require(0.0 <= t <= 1.0, f"Interpolation parameter t={t} must be in [0, 1]")
     q1 = np.asarray(q1, dtype=float)
     q2 = np.asarray(q2, dtype=float)
@@ -170,8 +182,15 @@ class DualQuaternion:
 
         Calculates: (qr1 * qr2) + eps * (qr1 * qd2 + qd1 * qr2)
         """
+<<<<<<< HEAD
+        if not isinstance(other, DualQuaternion):
+            raise TypeError(
+                f"other must be a DualQuaternion, got {type(other).__name__!r}"
+            )
+=======
         if not (other is not None):
             raise ValueError("other must be provided")
+>>>>>>> origin/main
         qr_new = quaternion_multiply(self._qr, other._qr)
         qd_new = quaternion_multiply(self._qr, other._qd) + quaternion_multiply(
             self._qd, other._qr

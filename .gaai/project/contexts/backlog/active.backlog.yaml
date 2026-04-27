@@ -1,0 +1,1243 @@
+# GAAI Active Backlog
+# Auto-populated by Discovery daemon from GitHub issues.
+# Rules:
+#   - One item = one Story
+#   - Must have a corresponding artefact with acceptance criteria
+#   - Only Discovery may add items; only Delivery may update status
+
+items:
+
+  - id: GH1601
+    title: "type: 739 type: ignore comments + legacy directories excluded from mypy"
+    priority: medium
+    status: done
+    completed_at: "2026-03-19T09:40:09-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1613"
+    pr_number: 1613
+    pr_status: "open"
+    cost_usd: 3.5968
+    github_issue: 1601
+    artefact: .gaai/project/contexts/artefacts/stories/GH1601.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1587
+    title: "[Testing] 630 source modules have no corresponding test file"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T13:41:05-07:00"
+    completed_at: "2026-03-19T13:57:14-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1620"
+    pr_number: 1620
+    pr_status: "open"
+    cost_usd: 4.0712
+    github_issue: 1587
+    artefact: .gaai/project/contexts/artefacts/stories/GH1587.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1575
+    title: "CI: Validate Tools_Private end-to-end with first test PR"
+    priority: medium
+    status: done
+    completed_at: "2026-03-19T09:28:09-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1612"
+    pr_number: 1612
+    pr_status: "open"
+    cost_usd: 0.8671
+    github_issue: 1575
+    artefact: .gaai/project/contexts/artefacts/stories/GH1575.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1567
+    title: "PLAN: Create Tools_Private repository for proprietary components"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T13:41:08-07:00"
+    completed_at: "2026-03-19T13:46:49-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1618"
+    pr_number: 1618
+    pr_status: "open"
+    cost_usd: 0.9232
+    github_issue: 1567
+    artefact: .gaai/project/contexts/artefacts/stories/GH1567.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1548
+    title: "Audit and reduce skip-heavy shared-package tests"
+    priority: medium
+    status: done
+    completed_at: "2026-03-19T09:41:35-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1614"
+    pr_number: 1614
+    pr_status: "open"
+    cost_usd: 2.0587
+    github_issue: 1548
+    artefact: .gaai/project/contexts/artefacts/stories/GH1548.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1547
+    title: "Enforce required shared Python provider-contract suite in CI"
+    priority: medium
+    status: done
+    completed_at: "2026-03-19T09:48:42-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1616"
+    pr_number: 1616
+    pr_status: "open"
+    cost_usd: 1.1516
+    github_issue: 1547
+    artefact: .gaai/project/contexts/artefacts/stories/GH1547.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1546
+    title: "Add cross-repo Python consumer integration workflow for Gasification_Model and UpstreamDrift"
+    priority: medium
+    status: done
+    completed_at: "2026-03-19T16:49:19Z"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1617"
+    pr_number: 1617
+    pr_status: "open"
+    github_issue: 1546
+    artefact: .gaai/project/contexts/artefacts/stories/GH1546.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1498
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in tests"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T13:47:34-07:00"
+    completed_at: "2026-03-19T13:55:46-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1619"
+    pr_number: 1619
+    pr_status: "open"
+    cost_usd: 1.5665
+    github_issue: 1498
+    artefact: .gaai/project/contexts/artefacts/stories/GH1498.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1497
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/wgs_reactor"
+    priority: medium
+    status: done
+    started_at: "2026-04-20T01:42:50-07:00"
+    completed_at: "2026-04-20T01:49:53-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools_Private/pull/273"
+    pr_number: 273
+    pr_status: "open"
+    cost_usd: 1.9274
+    github_issue: 1497
+    artefact: .gaai/project/contexts/artefacts/stories/GH1497.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1496
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/web_applications"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T13:58:17-07:00"
+    completed_at: "2026-03-19T14:07:19-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1621"
+    pr_number: 1621
+    pr_status: "open"
+    cost_usd: 2.3021
+    github_issue: 1496
+    artefact: .gaai/project/contexts/artefacts/stories/GH1496.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1495
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/vessel_drafter"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T14:00:30-07:00"
+    completed_at: "2026-03-19T14:15:24-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1622"
+    pr_number: 1622
+    pr_status: "open"
+    cost_usd: 3.7725
+    github_issue: 1495
+    artefact: .gaai/project/contexts/artefacts/stories/GH1495.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1494
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/verification"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T14:07:58-07:00"
+    completed_at: "2026-03-19T14:16:55-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1623"
+    pr_number: 1623
+    pr_status: "open"
+    cost_usd: 1.8857
+    github_issue: 1494
+    artefact: .gaai/project/contexts/artefacts/stories/GH1494.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1493
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/urdf_builder_gui"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T14:16:30-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1624"
+    pr_number: 1624
+    pr_status: "open"
+    completed_at: "2026-03-19T14:21:48-07:00"
+    cost_usd: 1.2796
+    github_issue: 1493
+    artefact: .gaai/project/contexts/artefacts/stories/GH1493.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1492
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/trc_vessel_designer"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T14:17:37-07:00"
+    completed_at: "2026-03-19T14:24:02-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools_Private/pull/14"
+    pr_number: 14
+    pr_status: "open"
+    cost_usd: 1.4862
+    github_issue: 1492
+    artefact: .gaai/project/contexts/artefacts/stories/GH1492.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1491
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/tools"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T14:22:59-07:00"
+    completed_at: "2026-03-19T14:29:32-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1625"
+    pr_number: 1625
+    pr_status: "open"
+    cost_usd: 1.9207
+    github_issue: 1491
+    artefact: .gaai/project/contexts/artefacts/stories/GH1491.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1490
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/thermal_profile_predictor"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T14:25:11-07:00"
+    completed_at: "2026-03-19T14:35:29-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools_Private/pull/15"
+    pr_number: 15
+    pr_status: "open"
+    cost_usd: 2.2908
+    github_issue: 1490
+    artefact: .gaai/project/contexts/artefacts/stories/GH1490.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1489
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/syngas_water_calculator"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T14:30:38-07:00"
+    completed_at: "2026-03-19T14:42:12-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1626"
+    pr_number: 1626
+    pr_status: "open"
+    cost_usd: 2.5266
+    github_issue: 1489
+    artefact: .gaai/project/contexts/artefacts/stories/GH1489.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1488
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/steam_engine_calculator"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T14:37:08-07:00"
+    completed_at: "2026-03-19T14:47:33-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1627"
+    pr_number: 1627
+    pr_status: "open"
+    cost_usd: 2.9953
+    github_issue: 1488
+    artefact: .gaai/project/contexts/artefacts/stories/GH1488.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1487
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/signal_processing_studio"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T14:43:38-07:00"
+    completed_at: "2026-03-19T15:04:13-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1629"
+    pr_number: 1629
+    pr_status: "open"
+    cost_usd: 4.3146
+    github_issue: 1487
+    artefact: .gaai/project/contexts/artefacts/stories/GH1487.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1486
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/shared"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T14:49:04-07:00"
+    completed_at: "2026-03-19T15:02:58-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1628"
+    pr_number: 1628
+    pr_status: "open"
+    cost_usd: 4.2539
+    github_issue: 1486
+    artefact: .gaai/project/contexts/artefacts/stories/GH1486.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1485
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/scrubber_calculator"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T15:04:00-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools_Private/pull/17"
+    pr_number: 17
+    pr_status: "open"
+    completed_at: "2026-03-19T15:17:33-07:00"
+    cost_usd: 3.647
+    github_issue: 1485
+    artefact: .gaai/project/contexts/artefacts/stories/GH1485.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1484
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/scientific_modeling"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T15:05:08-07:00"
+    completed_at: "2026-03-19T15:16:21-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1630"
+    pr_number: 1630
+    pr_status: "open"
+    cost_usd: 2.5714
+    github_issue: 1484
+    artefact: .gaai/project/contexts/artefacts/stories/GH1484.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1483
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/rotation_converter"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T15:17:59-07:00"
+    completed_at: "2026-03-19T15:24:38-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1631"
+    pr_number: 1631
+    pr_status: "open"
+    cost_usd: 1.8216
+    github_issue: 1483
+    artefact: .gaai/project/contexts/artefacts/stories/GH1483.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1482
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/python"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T15:19:08-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1632"
+    pr_number: 1632
+    pr_status: "open"
+    completed_at: "2026-03-19T15:28:38-07:00"
+    cost_usd: 3.0536
+    github_issue: 1482
+    artefact: .gaai/project/contexts/artefacts/stories/GH1482.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1481
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/project_packer"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T15:25:27-07:00"
+    completed_at: "2026-03-19T15:42:54-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1634"
+    pr_number: 1634
+    pr_status: "open"
+    cost_usd: 3.1115
+    github_issue: 1481
+    artefact: .gaai/project/contexts/artefacts/stories/GH1481.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1480
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/pressure_drop_calculator"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T15:29:42-07:00"
+    completed_at: "2026-03-19T15:38:00-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1633"
+    pr_number: 1633
+    pr_status: "open"
+    cost_usd: 1.8593
+    github_issue: 1480
+    artefact: .gaai/project/contexts/artefacts/stories/GH1480.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1479
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/pid_generator"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T15:39:14-07:00"
+    completed_at: "2026-03-19T15:43:30-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1635"
+    pr_number: 1635
+    pr_status: "open"
+    cost_usd: 0.8941
+    github_issue: 1479
+    artefact: .gaai/project/contexts/artefacts/stories/GH1479.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1478
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/pendulum_simulator"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T15:44:36-07:00"
+    completed_at: "2026-03-19T15:58:27-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1637"
+    pr_number: 1637
+    pr_status: "open"
+    cost_usd: 3.3663
+    github_issue: 1478
+    artefact: .gaai/project/contexts/artefacts/stories/GH1478.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1477
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/optimizer_gui"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T15:44:39-07:00"
+    completed_at: "2026-03-19T15:50:49-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1636"
+    pr_number: 1636
+    pr_status: "open"
+    cost_usd: 1.6933
+    github_issue: 1477
+    artefact: .gaai/project/contexts/artefacts/stories/GH1477.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1476
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/ode_solver"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T15:52:11-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1638"
+    pr_number: 1638
+    pr_status: "open"
+    completed_at: "2026-03-19T16:01:53-07:00"
+    cost_usd: 1.8903
+    github_issue: 1476
+    artefact: .gaai/project/contexts/artefacts/stories/GH1476.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1475
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/multi_param_analysis"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T16:00:43-07:00"
+    completed_at: "2026-03-19T16:10:51-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1640"
+    pr_number: 1640
+    pr_status: "open"
+    cost_usd: 2.6801
+    github_issue: 1475
+    artefact: .gaai/project/contexts/artefacts/stories/GH1475.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1474
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/media_processing"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T16:02:54-07:00"
+    completed_at: "2026-03-19T16:10:27-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1639"
+    pr_number: 1639
+    pr_status: "open"
+    cost_usd: 1.9549
+    github_issue: 1474
+    artefact: .gaai/project/contexts/artefacts/stories/GH1474.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1473
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/inertia_calculator"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T16:11:27-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1642"
+    pr_number: 1642
+    pr_status: "open"
+    completed_at: "2026-03-19T16:20:08-07:00"
+    cost_usd: 2.0199
+    github_issue: 1473
+    artefact: .gaai/project/contexts/artefacts/stories/GH1473.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1472
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/humanoid_builder_gui"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T16:12:35-07:00"
+    completed_at: "2026-03-19T16:19:49-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1641"
+    pr_number: 1641
+    pr_status: "open"
+    cost_usd: 1.5261
+    github_issue: 1472
+    artefact: .gaai/project/contexts/artefacts/stories/GH1472.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1471
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/glass_bath_fea"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T16:21:07-07:00"
+    completed_at: "2026-03-19T16:31:09-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools_Private/pull/18"
+    pr_number: 18
+    pr_status: "open"
+    cost_usd: 3.4079
+    github_issue: 1471
+    artefact: .gaai/project/contexts/artefacts/stories/GH1471.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1470
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/gasification_equilibrium"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T16:21:13-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools_Private/pull/19"
+    pr_number: 19
+    pr_status: "open"
+    completed_at: "2026-03-19T16:41:30-07:00"
+    cost_usd: 2.4533
+    github_issue: 1470
+    artefact: .gaai/project/contexts/artefacts/stories/GH1470.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1469
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/function_generator"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T16:32:56-07:00"
+    completed_at: "2026-03-19T16:38:29-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1643"
+    pr_number: 1643
+    pr_status: "open"
+    cost_usd: 1.324
+    github_issue: 1469
+    artefact: .gaai/project/contexts/artefacts/stories/GH1469.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1468
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/folder_tool"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T16:39:22-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1644"
+    pr_number: 1644
+    pr_status: "open"
+    completed_at: "2026-03-19T16:46:14-07:00"
+    cost_usd: 2.2393
+    github_issue: 1468
+    artefact: .gaai/project/contexts/artefacts/stories/GH1468.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1467
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/folder_packer_pro"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T16:42:36-07:00"
+    completed_at: "2026-03-19T16:49:24-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1645"
+    pr_number: 1645
+    pr_status: "open"
+    cost_usd: 1.7181
+    github_issue: 1467
+    artefact: .gaai/project/contexts/artefacts/stories/GH1467.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1466
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/flow_rate_converter"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T16:47:57-07:00"
+    completed_at: "2026-03-19T16:53:31-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1646"
+    pr_number: 1646
+    pr_status: "open"
+    cost_usd: 1.631
+    github_issue: 1466
+    artefact: .gaai/project/contexts/artefacts/stories/GH1466.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1465
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/flare_calculator"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T16:51:13-07:00"
+    completed_at: "2026-03-19T17:04:10-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools_Private/pull/20"
+    pr_number: 20
+    pr_status: "open"
+    cost_usd: 3.3419
+    github_issue: 1465
+    artefact: .gaai/project/contexts/artefacts/stories/GH1465.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1464
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/financial_calculator"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T16:54:29-07:00"
+    completed_at: "2026-03-19T17:02:27-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1647"
+    pr_number: 1647
+    pr_status: "open"
+    cost_usd: 1.7208
+    github_issue: 1464
+    artefact: .gaai/project/contexts/artefacts/stories/GH1464.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1463
+    title: "Adversarial Assessment: Address TDD, DRY, DbC, and LOD in src/electrode_advisor"
+    priority: medium
+    status: done
+    started_at: "2026-03-19T17:04:04-07:00"
+    completed_at: "2026-03-19T17:15:43-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools_Private/pull/21"
+    pr_number: 21
+    pr_status: "open"
+    cost_usd: "2.4874
+2.5269"
+    github_issue: 1463
+    artefact: .gaai/project/contexts/artefacts/stories/GH1463.story.md
+    dependencies: []
+    created_at: 2026-03-19
+
+  - id: GH1657
+    title: "Centralize configuration with XDG Base Directory support"
+    priority: medium
+    status: done
+    started_at: "2026-03-20T06:04:55-07:00"
+    completed_at: "2026-03-20T06:15:23-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1660"
+    pr_number: 1660
+    pr_status: "open"
+    cost_usd: 2.1718
+    github_issue: 1657
+    artefact: .gaai/project/contexts/artefacts/stories/GH1657.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1656
+    title: "Add ODE solver timeout and load testing"
+    priority: medium
+    status: done
+    started_at: "2026-03-20T06:04:59-07:00"
+    completed_at: "2026-03-20T06:16:19-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1661"
+    pr_number: 1661
+    pr_status: "open"
+    cost_usd: 1.899
+    github_issue: 1656
+    artefact: .gaai/project/contexts/artefacts/stories/GH1656.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1655
+    title: "Replace 92 print() calls in src/ with logging"
+    priority: medium
+    status: done
+    started_at: "2026-03-20T06:16:07-07:00"
+    completed_at: "2026-03-20T06:28:16-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1663"
+    pr_number: 1663
+    pr_status: "open"
+    cost_usd: 2.5478
+    github_issue: 1655
+    artefact: .gaai/project/contexts/artefacts/stories/GH1655.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1654
+    title: "Reduce type:ignore count from 724 to under 200"
+    priority: medium
+    status: done
+    started_at: "2026-03-20T06:17:12-07:00"
+    completed_at: "2026-03-20T06:48:43-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1665"
+    pr_number: 1665
+    pr_status: "open"
+    cost_usd: 5.1879
+    github_issue: 1654
+    artefact: .gaai/project/contexts/artefacts/stories/GH1654.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1653
+    title: "Add cross-repo integration test for UpstreamDrift/Gasification compatibility"
+    priority: medium
+    status: done
+    started_at: "2026-03-20T06:29:17-07:00"
+    completed_at: "2026-03-20T06:37:30-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1664"
+    pr_number: 1664
+    pr_status: "open"
+    cost_usd: 1.5519
+    github_issue: 1653
+    artefact: .gaai/project/contexts/artefacts/stories/GH1653.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1652
+    title: "Implement semantic versioning and deprecation path"
+    priority: medium
+    status: done
+    started_at: "2026-03-20T06:38:25-07:00"
+    completed_at: "2026-03-20T06:48:16-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1666"
+    pr_number: 1666
+    pr_status: "open"
+    cost_usd: 1.619
+    github_issue: 1652
+    artefact: .gaai/project/contexts/artefacts/stories/GH1652.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1651
+    title: "Fix MD5 weak hash finding in text_editor.py:796"
+    priority: medium
+    status: done
+    started_at: "2026-03-20T06:49:39-07:00"
+    completed_at: "2026-03-20T06:54:14-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1667"
+    pr_number: 1667
+    pr_status: "open"
+    cost_usd: 0.7178
+    github_issue: 1651
+    artefact: .gaai/project/contexts/artefacts/stories/GH1651.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1650
+    title: "Enforce function length limit and refactor violations"
+    priority: medium
+    status: done
+    started_at: "2026-03-20T06:49:43-07:00"
+    completed_at: "2026-03-20T07:04:02-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1668"
+    pr_number: 1668
+    pr_status: "open"
+    cost_usd: 1.8817
+    github_issue: 1650
+    artefact: .gaai/project/contexts/artefacts/stories/GH1650.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1649
+    title: "Refactor oversized files: modern_robotics.py (2079L), pressure_drop_interface.py (1390L)"
+    priority: medium
+    status: done
+    started_at: "2026-03-20T06:54:51-07:00"
+    completed_at: "2026-03-20T07:19:43-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1670"
+    pr_number: 1670
+    pr_status: "open"
+    cost_usd: 3.8759
+    github_issue: 1649
+    artefact: .gaai/project/contexts/artefacts/stories/GH1649.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1648
+    title: "BLOCKER: Fix relative import regression in src/shared/python/cors.py"
+    priority: medium
+    status: done
+    started_at: "2026-03-20T07:05:08-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1669"
+    pr_number: 1669
+    pr_status: "open"
+    completed_at: "2026-03-20T07:10:41-07:00"
+    cost_usd: 0.772
+    github_issue: 1648
+    artefact: .gaai/project/contexts/artefacts/stories/GH1648.story.md
+    dependencies: []
+    created_at: 2026-03-20
+
+  - id: GH1697
+    title: "Assessment: CI only delta-checks — full-repo ruff/mypy/format violations go undetected"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T14:11:42-07:00"
+    completed_at: "2026-03-22T14:18:53-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1709"
+    pr_number: 1709
+    pr_status: "open"
+    cost_usd: 1.5255
+    github_issue: 1697
+    artefact: .gaai/project/contexts/artefacts/stories/GH1697.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1696
+    title: "Assessment: Large __init__.py files act as god modules (up to 611 lines)"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T14:11:46-07:00"
+    completed_at: "2026-03-22T14:24:43-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1710"
+    pr_number: 1710
+    pr_status: "open"
+    cost_usd: 3.0431
+    github_issue: 1696
+    artefact: .gaai/project/contexts/artefacts/stories/GH1696.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1695
+    title: "Assessment: cors.py import regression FIXED — but contracts not in requirements.txt"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T14:19:26-07:00"
+    completed_at: "2026-03-22T14:31:58-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1711"
+    pr_number: 1711
+    pr_status: "open"
+    cost_usd: 3.7461
+    github_issue: 1695
+    artefact: .gaai/project/contexts/artefacts/stories/GH1695.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1694
+    title: "Assessment: 6 src/ files use xml.etree.ElementTree without defusedxml for parsing"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T14:25:13-07:00"
+    completed_at: "2026-03-22T14:34:57-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1712"
+    pr_number: 1712
+    pr_status: "open"
+    cost_usd: 3.0362
+    github_issue: 1694
+    artefact: .gaai/project/contexts/artefacts/stories/GH1694.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1693
+    title: "Assessment: 6 files duplicated between urdf_builder_gui/ and urdf_builder_gui/python/"
+    priority: medium
+    status: done
+    started_at: "2026-04-20T01:42:54-07:00"
+    completed_at: "2026-04-20T01:46:54-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/2175"
+    pr_number: 2175
+    pr_status: "open"
+    cost_usd: 1.3713
+    github_issue: 1693
+    artefact: .gaai/project/contexts/artefacts/stories/GH1693.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1692
+    title: "Assessment: 10 god classes with 25+ methods in shared library"
+    priority: medium
+    status: done
+    started_at: "2026-04-20T01:48:29-07:00"
+    completed_at: "2026-04-20T02:00:21-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/2177"
+    pr_number: 2177
+    pr_status: "open"
+    cost_usd: 3.0264
+    github_issue: 1692
+    artefact: .gaai/project/contexts/artefacts/stories/GH1692.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1691
+    title: "Assessment: 15 functions exceed 100 lines, max 239 lines"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T14:38:37-07:00"
+    completed_at: "2026-03-22T15:03:55-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1717"
+    pr_number: 1717
+    pr_status: "open"
+    cost_usd: 7.3462
+    github_issue: 1691
+    artefact: .gaai/project/contexts/artefacts/stories/GH1691.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1690
+    title: "Assessment: 2 files exceed 1200-line budget, 20 files in 800-1200 danger zone"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T14:38:40-07:00"
+    completed_at: "2026-03-22T14:43:17-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1713"
+    pr_number: 1713
+    pr_status: "open"
+    cost_usd: 0.8429
+    github_issue: 1690
+    artefact: .gaai/project/contexts/artefacts/stories/GH1690.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1689
+    title: "Assessment: Dual ruff config (ruff.toml + pyproject.toml) with conflicting rules"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T14:44:25-07:00"
+    completed_at: "2026-03-22T14:50:51-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1714"
+    pr_number: 1714
+    pr_status: "open"
+    cost_usd: 1.2065
+    github_issue: 1689
+    artefact: .gaai/project/contexts/artefacts/stories/GH1689.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1688
+    title: "Assessment: 6 test failures on staging — modern_robotics logging + missing optional deps"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T14:52:06-07:00"
+    completed_at: "2026-03-22T14:57:27-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1715"
+    pr_number: 1715
+    pr_status: "open"
+    cost_usd: 1.0159
+    github_issue: 1688
+    artefact: .gaai/project/contexts/artefacts/stories/GH1688.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1708
+    title: "Comprehensive A-O + Pragmatic Programmer Assessment — 2026-03-22"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T14:57:53-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1716"
+    pr_number: 1716
+    pr_status: "open"
+    completed_at: "2026-03-22T15:02:53-07:00"
+    cost_usd: 0.711
+    github_issue: 1708
+    artefact: .gaai/project/contexts/artefacts/stories/GH1708.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1707
+    title: "Assessment: 33% of source files lack type annotations on function signatures"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T15:03:40-07:00"
+    completed_at: "2026-03-22T15:13:15-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1719"
+    pr_number: 1719
+    pr_status: "open"
+    cost_usd: 2.0054
+    github_issue: 1707
+    artefact: .gaai/project/contexts/artefacts/stories/GH1707.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1706
+    title: "Assessment: Pragmatic Programmer — Estimating (Module size budget CI uses 1500, docs say 1200)"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T15:12:22-07:00"
+    completed_at: "2026-03-22T15:17:16-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1720"
+    pr_number: 1720
+    pr_status: "open"
+    cost_usd: 1.0825
+    github_issue: 1706
+    artefact: .gaai/project/contexts/artefacts/stories/GH1706.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1705
+    title: "Assessment: Pragmatic Programmer — Decoupling (calculate_pressure_drop has 4 definitions)"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T15:04:42-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1718"
+    pr_number: 1718
+    pr_status: "open"
+    completed_at: "2026-03-22T15:11:21-07:00"
+    cost_usd: 1.7095
+    github_issue: 1705
+    artefact: .gaai/project/contexts/artefacts/stories/GH1705.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1704
+    title: "Assessment: Pragmatic Programmer — Design by Contract maturity is strong but enforcement inconsistent"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T15:14:20-07:00"
+    completed_at: "2026-03-22T15:23:47-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1722"
+    pr_number: 1722
+    pr_status: "open"
+    cost_usd: 2.4999
+    github_issue: 1704
+    artefact: .gaai/project/contexts/artefacts/stories/GH1704.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1703
+    title: "Assessment: Pragmatic Programmer — Reversibility (pyproject.toml still references Black)"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T15:18:12-07:00"
+    completed_at: "2026-03-22T15:21:04-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1721"
+    pr_number: 1721
+    pr_status: "open"
+    cost_usd: 0.5996
+    github_issue: 1703
+    artefact: .gaai/project/contexts/artefacts/stories/GH1703.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1702
+    title: "Assessment: Pragmatic Programmer — Orthogonality (E501 globally suppressed)"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T15:22:05-07:00"
+    completed_at: "2026-03-22T15:26:45-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1723"
+    pr_number: 1723
+    pr_status: "open"
+    cost_usd: 0.8654
+    github_issue: 1702
+    artefact: .gaai/project/contexts/artefacts/stories/GH1702.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1701
+    title: "Assessment: Pragmatic Programmer — Tracer Bullets (test coverage at 40% threshold)"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T15:24:59-07:00"
+    completed_at: "2026-03-22T15:32:24-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1724"
+    pr_number: 1724
+    pr_status: "open"
+    cost_usd: 1.43
+    github_issue: 1701
+    artefact: .gaai/project/contexts/artefacts/stories/GH1701.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1700
+    title: "Assessment: Pragmatic Programmer — Broken Windows in contracts module import paths"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T15:27:55-07:00"
+    completed_at: "2026-03-22T15:36:43-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1725"
+    pr_number: 1725
+    pr_status: "open"
+    cost_usd: 2.0785
+    github_issue: 1700
+    artefact: .gaai/project/contexts/artefacts/stories/GH1700.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1699
+    title: "Assessment: Cross-repo integration tests pass but lack Gasification_Model coverage"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T15:33:39-07:00"
+    completed_at: "2026-03-22T15:39:34-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1726"
+    pr_number: 1726
+    pr_status: "open"
+    cost_usd: 1.4969
+    github_issue: 1699
+    artefact: .gaai/project/contexts/artefacts/stories/GH1699.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1698
+    title: "Assessment: 304 noqa suppressions in src/ — audit for stale entries"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T15:41:23-07:00"
+    completed_at: "2026-03-22T15:45:28-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1727"
+    pr_number: 1727
+    pr_status: "open"
+    cost_usd: 1.5564
+    github_issue: 1698
+    artefact: .gaai/project/contexts/artefacts/stories/GH1698.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1687
+    title: "Assessment: 27 test collection errors — folder_tool and programmatic_pid suites broken"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T15:40:27-07:00"
+    completed_at: "2026-03-22T15:47:42-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1728"
+    pr_number: 1728
+    pr_status: "open"
+    cost_usd: 1.6552
+    github_issue: 1687
+    artefact: .gaai/project/contexts/artefacts/stories/GH1687.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1686
+    title: "Assessment: type:ignore count rose from 724 to 1147 (58% increase)"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T15:47:09-07:00"
+    completed_at: "2026-03-22T15:52:57-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1730"
+    pr_number: 1730
+    pr_status: "open"
+    cost_usd: 1.0069
+    github_issue: 1686
+    artefact: .gaai/project/contexts/artefacts/stories/GH1686.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1685
+    title: "Assessment: 25 files fail ruff format check on staging"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T15:49:07-07:00"
+    completed_at: "2026-03-22T15:52:47-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1729"
+    pr_number: 1729
+    pr_status: "open"
+    cost_usd: 0.658
+    github_issue: 1685
+    artefact: .gaai/project/contexts/artefacts/stories/GH1685.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1684
+    title: "Assessment: ruff.toml lacks T201 rule — print() calls bypass CI linting"
+    priority: medium
+    status: done
+    started_at: "2026-03-22T15:53:56-07:00"
+    completed_at: "2026-03-22T15:59:30-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/1731"
+    pr_number: 1731
+    pr_status: "open"
+    cost_usd: 1.1519
+    github_issue: 1684
+    artefact: .gaai/project/contexts/artefacts/stories/GH1684.story.md
+    dependencies: []
+    created_at: 2026-03-22
+
+  - id: GH1736
+    title: "[Fleet Assessment][PP-BrokenWindows] Pragmatic broken-window markers remain in active code"
+    priority: medium
+    status: done
+    started_at: "2026-04-20T01:50:47-07:00"
+    completed_at: "2026-04-20T01:57:42-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/2176"
+    pr_number: 2176
+    pr_status: "open"
+    cost_usd: 1.8205
+    github_issue: 1736
+    artefact: .gaai/project/contexts/artefacts/stories/GH1736.story.md
+    dependencies: []
+    created_at: 2026-03-24
+
+  - id: GH1735
+    title: "[Fleet Assessment][PP-DRY] Pragmatic DRY violations are visible in repeated code windows"
+    priority: medium
+    status: done
+    started_at: "2026-04-20T01:58:32-07:00"
+    completed_at: "2026-04-20T02:08:17-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/2178"
+    pr_number: 2178
+    pr_status: "open"
+    cost_usd: 2.6757
+    github_issue: 1735
+    artefact: .gaai/project/contexts/artefacts/stories/GH1735.story.md
+    dependencies: []
+    created_at: 2026-03-24
+
+  - id: GH1734
+    title: "[Fleet Assessment][A] Oversized files are accumulating architectural responsibility"
+    priority: medium
+    status: failed
+    started_at: "2026-04-20T09:01:55Z"
+    github_issue: 1734
+    artefact: .gaai/project/contexts/artefacts/stories/GH1734.story.md
+    dependencies: []
+    created_at: 2026-03-24
+
+  - id: GH1733
+    title: "[Fleet Assessment][G] Dependency versions are not consistently pinned"
+    priority: medium
+    status: done
+    started_at: "2026-04-20T02:09:43-07:00"
+    completed_at: "2026-04-20T02:15:21-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/2179"
+    pr_number: 2179
+    pr_status: "open"
+    cost_usd: 1.5964
+    github_issue: 1733
+    artefact: .gaai/project/contexts/artefacts/stories/GH1733.story.md
+    dependencies: []
+    created_at: 2026-03-24
+
+  - id: GH1732
+    title: "[Fleet Assessment][L] Operational output is inconsistent"
+    priority: medium
+    status: done
+    started_at: "2026-04-20T02:15:16-07:00"
+    completed_at: "2026-04-20T02:23:16-07:00"
+    pr_url: "https://github.com/D-sorganization/Tools/pull/2180"
+    pr_number: 2180
+    pr_status: "open"
+    cost_usd: 2.5637
+    github_issue: 1732
+    artefact: .gaai/project/contexts/artefacts/stories/GH1732.story.md
+    dependencies: []
+    created_at: 2026-03-24

@@ -56,18 +56,18 @@ class DatImportMixin:
             delimiters = {"Tab": "\t", "Comma": ",", "Semicolon": ";", "Space": " "}
             delimiter = delimiters.get(
                 self.dat_delimiter_combo.currentText(),
-                "\t",  # type: ignore[attr-defined]
+                "\t",
             )
 
             self.status_bar.set_status("Importing DAT file...")  # type: ignore[attr-defined]
 
             from data_processor.core.dat_importer import read_dat_file
 
-            self.current_data = read_dat_file(filename, delimiter=delimiter)  # type: ignore[attr-defined]
+            self.current_data = read_dat_file(filename, delimiter=delimiter)
 
-            if self.current_data is not None:  # type: ignore[attr-defined]
+            if self.current_data is not None:
                 self.available_signals = self.data_loader.get_numeric_signals(  # type: ignore[attr-defined]
-                    self.current_data  # type: ignore[attr-defined]
+                    self.current_data
                 )
 
                 self._update_data_info()  # type: ignore[attr-defined]
@@ -76,14 +76,14 @@ class DatImportMixin:
                 self.analysis_panel.set_dataframe(self.current_data)  # type: ignore[attr-defined]
 
                 self.status_bar.set_status(  # type: ignore[attr-defined]
-                    f"Imported DAT file: {len(self.current_data)} rows"  # type: ignore[attr-defined]
+                    f"Imported DAT file: {len(self.current_data)} rows"
                 )
                 QMessageBox.information(
                     self,  # type: ignore[arg-type]
                     "Success",
                     f"Imported DAT file\n"
-                    f"Rows: {len(self.current_data)}\n"  # type: ignore[attr-defined]
-                    f"Columns: {len(self.current_data.columns)}",  # type: ignore[attr-defined]
+                    f"Rows: {len(self.current_data)}\n"
+                    f"Columns: {len(self.current_data.columns)}",
                 )
 
         except (RuntimeError, AttributeError) as e:

@@ -10,22 +10,20 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from .core import (
-    actual_to_standard_flow,
     convert_temperature,
     convert_via_table,
-    scfm_to_standard_m3_per_hour,
-    standard_m3_per_hour_to_scfm,
-    standard_to_actual_flow,
 )
+from .gas_flow_mixin import GasFlowConversionMixin
+from .heating_value_mixin import HeatingValueConversionMixin
 from .tables import (
     CATEGORY_TABLES,
     CONCENTRATION_CONVERSIONS,
-    GAS_DATABASE,
     HEATING_VALUE_CONVERSIONS,
     PERFORMANCE_UNITS,
     UNIT_ALIASES,
     StandardCondition,
 )
+from .tar_concentration_mixin import TarConcentrationConversionMixin
 
 logger = logging.getLogger(__name__)
 
@@ -57,8 +55,18 @@ class ConversionResult:
     warnings: list[str] = field(default_factory=list)
 
 
-class UnitConversionService:
-    """Extensible conversion service consolidating legacy behaviours."""
+class UnitConversionService(
+    GasFlowConversionMixin,
+    HeatingValueConversionMixin,
+    TarConcentrationConversionMixin,
+):
+    """Extensible conversion service consolidating legacy behaviours.
+
+    Responsibilities are split across mixins:
+    - :class:`GasFlowConversionMixin` — SCFM/ACFM/Nm³/hr gas flow conversions
+    - :class:`HeatingValueConversionMixin` — MJ/kg, BTU/SCF, kWh/Nm³ conversions
+    - :class:`TarConcentrationConversionMixin` — mg/Nm³, g/m³, ppm conversions
+    """
 
     def __init__(self, enable_validation: bool = True) -> None:
         """Initialize the unit conversion service."""
@@ -382,6 +390,8 @@ class UnitConversionService:
         # Invalidate cache as new unit might conflict or resolve previously unknown units
         self._normalized_cache.clear()
 
+<<<<<<< HEAD
+=======
     def _convert_gas_flow(
         self,
         value: float,
@@ -494,6 +504,7 @@ class UnitConversionService:
         msg = f"Unknown gas flow unit: {to_unit}"
         raise UnknownUnitError(msg)
 
+>>>>>>> origin/main
     def _user_unit_warnings(
         self,
         from_category: str | None,
@@ -524,6 +535,8 @@ class UnitConversionService:
         _check(to_category, to_unit)
         return warnings
 
+<<<<<<< HEAD
+=======
     def convert_gas_flow_scfm_acfm(
         self,
         value: float,
@@ -749,6 +762,7 @@ class UnitConversionService:
         msg = f"Conversion to {to_unit} not implemented"
         raise ValueError(msg)
 
+>>>>>>> origin/main
     def syngas_composition(self, value: float, from_unit: str, to_unit: str) -> float:
         """Convert syngas composition units."""
         from_key = from_unit.lower()
@@ -815,6 +829,8 @@ class UnitConversionService:
         msg = f"Unknown metric type: {metric_type}"
         raise ValueError(msg)
 
+<<<<<<< HEAD
+=======
     def compressibility_factor(
         self,
         gas_type: str,
@@ -835,6 +851,7 @@ class UnitConversionService:
             return float(max(Z, 0.1))
         return 1.0
 
+>>>>>>> origin/main
     def get_supported_units(self, category: str | None = None) -> dict[str, list[str]]:
         """Get supported units, optionally filtered by category."""
         if category:

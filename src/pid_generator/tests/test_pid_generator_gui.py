@@ -6,6 +6,71 @@ import importlib
 
 import pytest
 
+# ---------------------------------------------------------------------------
+# DbC + LoD fixes — GH1479
+# ---------------------------------------------------------------------------
+
+
+class TestPIDGeneratorMainWindowDbCLoD:
+    """DbC and LoD fixes for PIDGeneratorMainWindow (GH1479)."""
+
+    @pytest.mark.skipif(
+        importlib.util.find_spec("PyQt6") is None
+        or importlib.util.find_spec("ezdxf") is None,
+        reason="PyQt6 and ezdxf required",
+    )
+    def test_init_raises_type_error_for_non_widget_parent(self):
+        """__init__ raises TypeError when parent is not a QWidget or None (DbC)."""
+        from pid_generator.ui.pyqt6.main_window import PIDGeneratorMainWindow
+
+        with pytest.raises(TypeError, match="parent must be a QWidget or None"):
+            PIDGeneratorMainWindow(parent="not-a-widget")  # type: ignore[arg-type]
+
+    @pytest.mark.skipif(
+        importlib.util.find_spec("PyQt6") is None
+        or importlib.util.find_spec("ezdxf") is None,
+        reason="PyQt6 and ezdxf required",
+    )
+    def test_init_raises_type_error_for_int_parent(self):
+        """__init__ raises TypeError for integer parent (DbC)."""
+        from pid_generator.ui.pyqt6.main_window import PIDGeneratorMainWindow
+
+        with pytest.raises(TypeError, match="parent must be a QWidget or None"):
+            PIDGeneratorMainWindow(parent=42)  # type: ignore[arg-type]
+
+    @pytest.mark.skipif(
+        importlib.util.find_spec("PyQt6") is None
+        or importlib.util.find_spec("ezdxf") is None,
+        reason="PyQt6 and ezdxf required",
+    )
+    def test_init_accepts_none_parent(self, qapp):
+        """__init__ accepts None as parent without raising (DbC)."""
+        from pid_generator.ui.pyqt6.main_window import PIDGeneratorMainWindow
+
+        window = PIDGeneratorMainWindow(parent=None)
+        assert window is not None
+        window.close()
+
+    @pytest.mark.skipif(
+        importlib.util.find_spec("PyQt6") is None
+        or importlib.util.find_spec("ezdxf") is None,
+        reason="PyQt6 and ezdxf required",
+    )
+    def test_lod_signal_connections_work(self, qapp):
+        """Signal connections made via extracted local vars (LoD fix) are functional."""
+        from pid_generator.ui.pyqt6.main_window import PIDGeneratorMainWindow
+
+        window = PIDGeneratorMainWindow()
+        # If LoD fix broke the connections, _build_ui would raise or signals
+        # would not be connected. We verify the window builds without error.
+        assert window.windowTitle() == "P&ID Generator"
+        window.close()
+
+
+# ---------------------------------------------------------------------------
+# Original tests
+# ---------------------------------------------------------------------------
+
 
 def test_gui_info_structure():
     """gui_registration.GUI_INFO has all required canonical keys."""

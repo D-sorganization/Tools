@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import programmatic_pid.generator as mod
 import pytest
+
+pytest.importorskip("ezdxf")
+import programmatic_pid.generator as mod
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC_PATH = ROOT / "examples" / "pid" / "biochar" / "biochar_pid_spec.yml"

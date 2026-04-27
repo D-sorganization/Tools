@@ -1,24 +1,34 @@
+<<<<<<< HEAD
+# CANONICAL SOURCE: This file is the authoritative implementation for the URDF text
+# editor. UpstreamDrift carries a copy at the same path; that copy should eventually
+# be removed and this module consumed via a pip-installable Tools package (issue #1998).
+# Until that infrastructure work is done, keep UpstreamDrift in sync with this file.
+=======
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
+>>>>>>> origin/main
 
 """
 URDF Text Editor with diff view support.
 
 Provides text-based editing of URDF files with:
-- Syntax validation
+- Syntax validation (see text_editor_validation_mixin.py)
 - Diff generation between versions (see text_editor_diff_mixin.py)
-- Undo/redo support
+- Undo/redo support (see text_editor_history_mixin.py)
 - Real-time validation feedback
 """
 
 from __future__ import annotations
 
-import hashlib
 import logging
 import re
 import xml.etree.ElementTree as ET  # nosec B405 — type annotations + ParseError only; parsing uses defusedxml
 from collections.abc import Callable
 from dataclasses import dataclass, field
+<<<<<<< HEAD
+from datetime import datetime  # used by EditorVersion dataclass
+=======
 from datetime import datetime, timezone
+>>>>>>> origin/main
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -26,6 +36,8 @@ from typing import Any
 import defusedxml.ElementTree as DefusedET
 
 from .text_editor_diff_mixin import TextEditorDiffMixin
+from .text_editor_history_mixin import EditorHistoryMixin
+from .text_editor_validation_mixin import URDFValidationMixin
 
 logger = logging.getLogger(__name__)
 
@@ -100,10 +112,13 @@ class EditorVersion:
     checksum: str
 
 
-class URDFTextEditor(TextEditorDiffMixin):
+class URDFTextEditor(TextEditorDiffMixin, URDFValidationMixin, EditorHistoryMixin):
     """Text editor for URDF files with validation and diff support.
 
-    Diff operations are provided by :class:`TextEditorDiffMixin`.
+    Responsibilities are split across mixins:
+    - :class:`TextEditorDiffMixin` — diff computation and side-by-side views
+    - :class:`URDFValidationMixin` — XML/URDF structural validation
+    - :class:`EditorHistoryMixin` — undo/redo and version history
 
     Example:
         editor = URDFTextEditor()
@@ -125,14 +140,18 @@ class URDFTextEditor(TextEditorDiffMixin):
         editor.save_file()
     """
 
-    def __init__(self, max_history: int = 100):
+    def __init__(self, max_history: int = 100) -> None:
         """
         Initialize the editor.
 
         Args:
             max_history: Maximum number of undo states to keep
         """
+<<<<<<< HEAD
+        if max_history is None:
+=======
         if not (max_history is not None):
+>>>>>>> origin/main
             raise ValueError("max_history must be provided")
         self._content: str = ""
         self._original_content: str = ""
@@ -180,7 +199,11 @@ class URDFTextEditor(TextEditorDiffMixin):
             content: URDF XML content
             description: Description for history
         """
+<<<<<<< HEAD
+        if content is None:
+=======
         if not (content is not None):
+>>>>>>> origin/main
             raise ValueError("content must be provided")
         self._content = content
         self._original_content = content
@@ -243,7 +266,11 @@ class URDFTextEditor(TextEditorDiffMixin):
         Returns:
             List of validation messages
         """
+<<<<<<< HEAD
+        if content is None:
+=======
         if not (content is not None):
+>>>>>>> origin/main
             raise ValueError("content must be provided")
         if content == self._content:
             return []
@@ -280,7 +307,11 @@ class URDFTextEditor(TextEditorDiffMixin):
         Returns:
             Validation messages
         """
+<<<<<<< HEAD
+        if position is None:
+=======
         if not (position is not None):
+>>>>>>> origin/main
             raise ValueError("position must be provided")
         new_content = self._content[:position] + text + self._content[position:]
         return self.set_content(new_content, description)
@@ -302,7 +333,11 @@ class URDFTextEditor(TextEditorDiffMixin):
         Returns:
             Validation messages
         """
+<<<<<<< HEAD
+        if start is None:
+=======
         if not (start is not None):
+>>>>>>> origin/main
             raise ValueError("start must be provided")
         new_content = self._content[:start] + self._content[end:]
         return self.set_content(new_content, description)
@@ -326,7 +361,11 @@ class URDFTextEditor(TextEditorDiffMixin):
         Returns:
             Validation messages
         """
+<<<<<<< HEAD
+        if start is None:
+=======
         if not (start is not None):
+>>>>>>> origin/main
             raise ValueError("start must be provided")
         new_content = self._content[:start] + text + self._content[end:]
         return self.set_content(new_content, description)
@@ -348,7 +387,11 @@ class URDFTextEditor(TextEditorDiffMixin):
         Returns:
             Validation messages
         """
+<<<<<<< HEAD
+        if element_name is None:
+=======
         if not (element_name is not None):
+>>>>>>> origin/main
             raise ValueError("element_name must be provided")
         if old_content not in self._content:
             logger.warning(f"Content not found: {old_content[:50]}...")
@@ -358,6 +401,8 @@ class URDFTextEditor(TextEditorDiffMixin):
         return self.set_content(content, f"Replace {element_name}")
 
     # ============================================================
+<<<<<<< HEAD
+=======
     # Validation
     # ============================================================
 
@@ -832,6 +877,7 @@ class URDFTextEditor(TextEditorDiffMixin):
             self._history_index -= 1
 
     # ============================================================
+>>>>>>> origin/main
     # Callbacks
     # ============================================================
 
@@ -867,7 +913,11 @@ class URDFTextEditor(TextEditorDiffMixin):
         Returns:
             Line content or None
         """
+<<<<<<< HEAD
+        if line_number is None:
+=======
         if not (line_number is not None):
+>>>>>>> origin/main
             raise ValueError("line_number must be provided")
         lines = self._content.splitlines()
         if 1 <= line_number <= len(lines):
@@ -887,7 +937,11 @@ class URDFTextEditor(TextEditorDiffMixin):
         Returns:
             List of (line, column, matched_text) tuples
         """
+<<<<<<< HEAD
+        if pattern is None:
+=======
         if not (pattern is not None):
+>>>>>>> origin/main
             raise ValueError("pattern must be provided")
         results = []
         lines = self._content.splitlines()
@@ -928,7 +982,11 @@ class URDFTextEditor(TextEditorDiffMixin):
         Returns:
             Number of replacements made
         """
+<<<<<<< HEAD
+        if search is None:
+=======
         if not (search is not None):
+>>>>>>> origin/main
             raise ValueError("search must be provided")
         if regex:
             new_content, count = re.subn(search, replace, self._content)
@@ -960,7 +1018,7 @@ class URDFTextEditor(TextEditorDiffMixin):
             formatted = '<?xml version="1.0"?>\n' + formatted
 
             return self.set_content(formatted, "Format XML")
-        except ET.ParseError as e:
+        except DefusedET.ParseError as e:
             return [
                 ValidationMessage(
                     severity=ValidationSeverity.ERROR,
@@ -977,7 +1035,11 @@ class URDFTextEditor(TextEditorDiffMixin):
         indent: str = "  ",
     ) -> None:
         """Recursively add indentation to XML element."""
+<<<<<<< HEAD
+        if elem is None:
+=======
         if not (elem is not None):
+>>>>>>> origin/main
             raise ValueError("elem must be provided")
         i = "\n" + level * indent
         if len(elem):
@@ -1004,7 +1066,11 @@ class URDFTextEditor(TextEditorDiffMixin):
         Returns:
             Dict with element info or None
         """
+<<<<<<< HEAD
+        if line is None:
+=======
         if not (line is not None):
+>>>>>>> origin/main
             raise ValueError("line must be provided")
         lines = self._content.splitlines()
         if line < 1 or line > len(lines):

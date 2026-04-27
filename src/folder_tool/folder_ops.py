@@ -30,42 +30,42 @@ class FolderOperationsMixin:
         skipped_count = 0
         failed_count = 0
 
-        Path(self.dest_folder).mkdir(parents=True, exist_ok=True)
+        Path(self.dest_folder).mkdir(parents=True, exist_ok=True)  # type: ignore[attr-defined]
 
         # Count total files for progress tracking
         total_files = 0
-        for src in self.source_folders:
+        for src in self.source_folders:  # type: ignore[attr-defined]
             for _root, _dirs, files in os.walk(src):
                 total_files += len(files)
 
         processed_files = 0
 
-        for src in self.source_folders:
-            if self.cancel_operation:
+        for src in self.source_folders:  # type: ignore[attr-defined]
+            if self.cancel_operation:  # type: ignore[attr-defined]
                 break
 
             for root, _dirs, files in os.walk(src):
                 for file in files:
-                    if self.cancel_operation:
-                        break  # type: ignore[unreachable]
+                    if self.cancel_operation:  # type: ignore[attr-defined]
+                        break
 
                     source_path = Path(root) / file
 
                     # Apply filters
-                    if not self.validate_file_filters(source_path):
+                    if not self.validate_file_filters(source_path):  # type: ignore[attr-defined]
                         skipped_count += 1
                         processed_files += 1
                         continue
 
                     # Get organized destination path
-                    dest_path = self.get_organized_path(source_path, self.dest_folder)
+                    dest_path = self.get_organized_path(source_path, self.dest_folder)  # type: ignore[attr-defined]
                     dest_dir = Path(dest_path).parent
 
                     # Create destination directory if needed
                     Path(dest_dir).mkdir(parents=True, exist_ok=True)
 
                     # Handle naming conflicts
-                    final_dest_path = self._get_unique_path(dest_path)
+                    final_dest_path = self._get_unique_path(dest_path)  # type: ignore[attr-defined]
                     if final_dest_path != dest_path:
                         log.append(
                             f"Renamed: '{file}' to '{Path(final_dest_path).name}'",
@@ -73,8 +73,8 @@ class FolderOperationsMixin:
                         renamed_count += 1
 
                     try:
-                        if not self.preview_mode_var.get():
-                            if self._safe_copy_file(source_path, final_dest_path):
+                        if not self.preview_mode_var.get():  # type: ignore[attr-defined]
+                            if self._safe_copy_file(source_path, final_dest_path):  # type: ignore[attr-defined]
                                 file_count += 1
                             else:
                                 failed_count += 1
@@ -93,7 +93,7 @@ class FolderOperationsMixin:
                             PROGRESS_START_MAIN
                             + (processed_files / total_files) * PROGRESS_MAIN_OP_PERCENT
                         )
-                        self.update_progress(
+                        self.update_progress(  # type: ignore[attr-defined]
                             progress,
                             f"Processed {processed_files}/{total_files} files",
                         )
@@ -107,7 +107,7 @@ class FolderOperationsMixin:
         if failed_count > 0:
             summary.append(f"Failed to copy {failed_count} files.")
 
-        if self.preview_mode_var.get():
+        if self.preview_mode_var.get():  # type: ignore[attr-defined]
             summary.insert(0, "PREVIEW MODE - No files were actually copied.")
 
         return summary + log[:MAX_LOG_ENTRIES]
@@ -124,7 +124,7 @@ class FolderOperationsMixin:
         deleted_count = 0
         pattern = re.compile(r"(.+?)(?: \((\d+)\))?(\.\w+)$")
 
-        if not self.preview_mode_var.get():
+        if not self.preview_mode_var.get():  # type: ignore[attr-defined]
             confirm = messagebox.askyesno(
                 "Confirm Deletion",
                 f"This will permanently delete duplicate files in:\n{target_folder}\n\n"
@@ -136,7 +136,7 @@ class FolderOperationsMixin:
 
         log.append(f"Processing folder: {target_folder}")
         for dirpath, _, filenames in os.walk(target_folder):
-            if self.cancel_operation:
+            if self.cancel_operation:  # type: ignore[attr-defined]
                 break
 
             files_by_base_name: dict[str, list[str]] = {}
@@ -164,11 +164,11 @@ class FolderOperationsMixin:
                     for file_path in files:
                         if file_path != file_to_keep:
                             try:
-                                if not self.preview_mode_var.get():
+                                if not self.preview_mode_var.get():  # type: ignore[attr-defined]
                                     Path(file_path).unlink()
                                 mode_str = (
                                     "WOULD DELETE"
-                                    if self.preview_mode_var.get()
+                                    if self.preview_mode_var.get()  # type: ignore[attr-defined]
                                     else "DEL"
                                 )
                                 log.append(
@@ -183,8 +183,8 @@ class FolderOperationsMixin:
 
         summary = [
             f"Deduplication "
-            f"{'preview' if self.preview_mode_var.get() else 'complete'}.",
-            f"{'Would delete' if self.preview_mode_var.get() else 'Deleted'} a total "
+            f"{'preview' if self.preview_mode_var.get() else 'complete'}.",  # type: ignore[attr-defined]
+            f"{'Would delete' if self.preview_mode_var.get() else 'Deleted'} a total "  # type: ignore[attr-defined]
             f"of {deleted_count} files.",
             *log[:MAX_LOG_ENTRIES],
         ]
@@ -199,8 +199,8 @@ class FolderOperationsMixin:
     def _run_deduplicate_main_op(self) -> list[str]:
         """Run deduplication as a main, in-place operation on source folders."""
         full_log = []
-        for folder in self.source_folders:
-            if self.cancel_operation:
+        for folder in self.source_folders:  # type: ignore[attr-defined]
+            if self.cancel_operation:  # type: ignore[attr-defined]
                 break
             folder_log = self._perform_deduplication(folder)
             full_log.extend(folder_log)
@@ -218,50 +218,50 @@ class FolderOperationsMixin:
         skipped_count = 0
         failed_count = 0
 
-        os.makedirs(self.dest_folder, exist_ok=True)
+        os.makedirs(self.dest_folder, exist_ok=True)  # type: ignore[attr-defined]
 
         # Count total files for progress tracking
         total_files = 0
-        for src in self.source_folders:
+        for src in self.source_folders:  # type: ignore[attr-defined]
             for _root, _dirs, files in os.walk(src):
                 total_files += len(files)
 
         processed_files = 0
 
-        for src in self.source_folders:
-            if self.cancel_operation:
+        for src in self.source_folders:  # type: ignore[attr-defined]
+            if self.cancel_operation:  # type: ignore[attr-defined]
                 break
 
             for root, _dirs, files in os.walk(src):
                 for file in files:
-                    if self.cancel_operation:
-                        break  # type: ignore[unreachable]
+                    if self.cancel_operation:  # type: ignore[attr-defined]
+                        break
 
                     source_path = Path(root) / file
 
                     # Apply filters
-                    if not self.validate_file_filters(source_path):
+                    if not self.validate_file_filters(source_path):  # type: ignore[attr-defined]
                         skipped_count += 1
                         processed_files += 1
                         continue
 
                     # Get organized destination path (flattened to root)
-                    dest_path = self.get_organized_path(source_path, self.dest_folder)
+                    dest_path = self.get_organized_path(source_path, self.dest_folder)  # type: ignore[attr-defined]
                     dest_dir = Path(dest_path).parent
 
                     # Create destination directory if needed
                     os.makedirs(dest_dir, exist_ok=True)
 
                     # Handle naming conflicts
-                    final_dest_path = self._get_unique_path(dest_path)
+                    final_dest_path = self._get_unique_path(dest_path)  # type: ignore[attr-defined]
                     if final_dest_path != dest_path:
                         log.append(
                             f"Renamed: '{file}' to '{Path(final_dest_path).name}'",
                         )
 
                     try:
-                        if not self.preview_mode_var.get():
-                            if self._safe_copy_file(source_path, final_dest_path):
+                        if not self.preview_mode_var.get():  # type: ignore[attr-defined]
+                            if self._safe_copy_file(source_path, final_dest_path):  # type: ignore[attr-defined]
                                 moved_count += 1
                             else:
                                 failed_count += 1
@@ -280,7 +280,7 @@ class FolderOperationsMixin:
                             PROGRESS_START_MAIN
                             + (processed_files / total_files) * PROGRESS_MAIN_OP_PERCENT
                         )
-                        self.update_progress(
+                        self.update_progress(  # type: ignore[attr-defined]
                             progress,
                             f"Processed {processed_files}/{total_files} files",
                         )
@@ -293,7 +293,7 @@ class FolderOperationsMixin:
         if failed_count > 0:
             summary.append(f"Failed to copy {failed_count} files.")
 
-        if self.preview_mode_var.get():
+        if self.preview_mode_var.get():  # type: ignore[attr-defined]
             summary.insert(0, "PREVIEW MODE - No files were actually copied.")
 
         return summary + log[:MAX_LOG_ENTRIES]
@@ -301,7 +301,7 @@ class FolderOperationsMixin:
     def _count_total_files(self) -> int:
         """Count total files across all source folders for progress tracking."""
         total = 0
-        for src in self.source_folders:
+        for src in self.source_folders:  # type: ignore[attr-defined]
             for _root, _dirs, files in os.walk(src):
                 total += len(files)
         return total
@@ -324,19 +324,24 @@ class FolderOperationsMixin:
         Returns:
             Tuple of (files_copied, files_failed)
         """
+<<<<<<< HEAD
+        assert source_file_path is not None, "source_file_path must be provided"
+        if not self.validate_file_filters(source_file_path):  # type: ignore[attr-defined]
+=======
         if not (source_file_path is not None):
             raise ValueError("source_file_path must be provided")
         if not self.validate_file_filters(source_file_path):
+>>>>>>> origin/main
             return 0, 0
 
         dest_file_path = Path(dest_path) / file
-        final_dest_path = self._get_unique_path(dest_file_path)
+        final_dest_path = self._get_unique_path(dest_file_path)  # type: ignore[attr-defined]
         if final_dest_path != dest_file_path:
             log.append(f"Renamed: '{file}' to '{Path(final_dest_path).name}'")
 
         try:
-            if not self.preview_mode_var.get():
-                if self._safe_copy_file(source_file_path, final_dest_path):
+            if not self.preview_mode_var.get():  # type: ignore[attr-defined]
+                if self._safe_copy_file(source_file_path, final_dest_path):  # type: ignore[attr-defined]
                     return 1, 0
                 else:
                     log.append(f"FAILED to copy '{file}' after retries")
@@ -360,20 +365,20 @@ class FolderOperationsMixin:
         empty_folders_skipped = 0
         failed_count = 0
 
-        os.makedirs(self.dest_folder, exist_ok=True)
+        os.makedirs(self.dest_folder, exist_ok=True)  # type: ignore[attr-defined]
         total_files = self._count_total_files()
         processed_files = 0
 
-        for src in self.source_folders:
-            if self.cancel_operation:
+        for src in self.source_folders:  # type: ignore[attr-defined]
+            if self.cancel_operation:  # type: ignore[attr-defined]
                 break
 
             src_name = Path(src).name
-            dest_src_path = Path(self.dest_folder) / src_name
+            dest_src_path = Path(self.dest_folder) / src_name  # type: ignore[attr-defined]
 
             for root, dirs, files in os.walk(src):
-                if self.cancel_operation:
-                    break  # type: ignore[unreachable]
+                if self.cancel_operation:  # type: ignore[attr-defined]
+                    break
 
                 if not files and not any(
                     any(Path(root, d).iterdir())
@@ -388,8 +393,8 @@ class FolderOperationsMixin:
                 os.makedirs(dest_path, exist_ok=True)
 
                 for file in files:
-                    if self.cancel_operation:
-                        break  # type: ignore[unreachable]
+                    if self.cancel_operation:  # type: ignore[attr-defined]
+                        break
 
                     copied, failed = self._copy_single_file_in_prune(
                         Path(root) / file,
@@ -406,7 +411,7 @@ class FolderOperationsMixin:
                             PROGRESS_START_MAIN
                             + (processed_files / total_files) * PROGRESS_MAIN_OP_PERCENT
                         )
-                        self.update_progress(
+                        self.update_progress(  # type: ignore[attr-defined]
                             progress,
                             f"Processed {processed_files}/{total_files} files",
                         )
@@ -422,7 +427,7 @@ class FolderOperationsMixin:
         if failed_count > 0:
             summary.append(f"Failed to copy {failed_count} files.")
 
-        if self.preview_mode_var.get():
+        if self.preview_mode_var.get():  # type: ignore[attr-defined]
             summary.insert(0, "PREVIEW MODE - No files were actually copied.")
 
         return summary + log[:MAX_LOG_ENTRIES]

@@ -161,6 +161,16 @@ __all__ = [
 # =============================================================================
 # LEGACY API - Backwards Compatibility
 # =============================================================================
+<<<<<<< HEAD
+# Calculation logic extracted to _legacy.py (issue #1696 — god module refactor).
+# These re-exports maintain the original public API surface.
+from ._legacy import (
+    PIPE_DIMENSIONS_SCH40,
+    ROUGHNESS_VALUES,
+    PressureDropCalculator,
+    PressureDropResult,
+)
+=======
 # These exports maintain compatibility with code using the original
 # pressure_drop_calculator.py module interface.
 #
@@ -309,3 +319,4 @@ class PressureDropCalculator:
             density=density,
             viscosity=viscosity,
         )
+>>>>>>> origin/main

@@ -1,0 +1,146 @@
+{
+  "repo": "Tools",
+  "owner": "D-sorganization",
+  "branch": "fix/type-safety-hardening-2337",
+  "head_sha": "bb1f97400180c114f2afbe2f1381991b2959889e",
+  "date": "2026-04-26",
+  "working_tree_clean": true,
+  "scores": {
+    "A": {
+      "score": 7,
+      "weight": 5,
+      "findings": [
+        {
+          "priority": "P1",
+          "text": "No package.json at root; npm manifest only in ui/"
+        }
+      ]
+    },
+    "B": {
+      "score": 7,
+      "weight": 8,
+      "findings": [
+        {
+          "priority": "P1",
+          "text": "1,403-word README but ADRs lack mermaid diagrams"
+        }
+      ]
+    },
+    "C": {
+      "score": 2,
+      "weight": 12,
+      "findings": [
+        {
+          "priority": "P0",
+          "text": "124,639 LOC Python, ~5,027 test files but no coverage.json; coverage unknown"
+        }
+      ]
+    },
+    "D": {
+      "score": 4,
+      "weight": 10,
+      "findings": [
+        {
+          "priority": "P0",
+          "text": "157 bare excepts; 1,343 pass-in-except silent failures"
+        }
+      ]
+    },
+    "E": {
+      "score": 4,
+      "weight": 7,
+      "findings": [
+        {
+          "priority": "P1",
+          "text": "Only 1 benchmark file; no perf regression CI"
+        }
+      ]
+    },
+    "F": {
+      "score": 4,
+      "weight": 10,
+      "findings": [
+        {
+          "priority": "P1",
+          "text": "3,775 TODOs/FIXMEs in src/; high tech debt density"
+        }
+      ]
+    },
+    "G": {
+      "score": 6,
+      "weight": 8,
+      "findings": [
+        {
+          "priority": "P1",
+          "text": "requirements-lock.txt present but no pip-audit in CI"
+        }
+      ]
+    },
+    "H": {
+      "score": 3,
+      "weight": 10,
+      "findings": [
+        {
+          "priority": "P0",
+          "text": "8,350 secret-keyword hits in src/; largest exposure of all repos"
+        }
+      ]
+    },
+    "I": {
+      "score": 6,
+      "weight": 6,
+      "findings": [
+        {
+          "priority": "P1",
+          "text": "No Dockerfile or docker-compose.yml at root"
+        }
+      ]
+    },
+    "J": {
+      "score": 6,
+      "weight": 7,
+      "findings": [
+        {
+          "priority": "P1",
+          "text": "7,496 print() calls vs 5,080 logging refs; print-heavy code"
+        }
+      ]
+    },
+    "K": {
+      "score": 4,
+      "weight": 7,
+      "findings": [
+        {
+          "priority": "P1",
+          "text": "5,419 TODOs in src/; single dominant contributor (912 commits)"
+        }
+      ]
+    },
+    "L": {
+      "score": 6,
+      "weight": 8,
+      "findings": [
+        {
+          "priority": "P2",
+          "text": "58 workflow files but missing mypy/ruff enforcement in CI"
+        }
+      ]
+    },
+    "M": {
+      "score": 7,
+      "weight": 5,
+      "findings": []
+    },
+    "N": {
+      "score": 10,
+      "weight": 4,
+      "findings": []
+    },
+    "O": {
+      "score": 9,
+      "weight": 3,
+      "findings": []
+    }
+  },
+  "overall_score": 55.7
+}

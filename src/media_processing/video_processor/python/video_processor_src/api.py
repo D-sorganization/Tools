@@ -185,10 +185,11 @@ async def cancel_job(job_id: str) -> dict[str, Any]:
         raise HTTPException(status_code=404, detail=f"Job {job_id} not found")
 
     job = _jobs[job_id]
-    if job.status in (JobStatus.COMPLETED, JobStatus.FAILED):
+    current_status = job.status
+    if current_status in (JobStatus.COMPLETED, JobStatus.FAILED):
         raise HTTPException(
             status_code=400,
-            detail=f"Cannot cancel job with status: {job.status.value}",
+            detail=f"Cannot cancel job with status: {current_status.value}",
         )
 
     job.status = JobStatus.CANCELLED
@@ -259,12 +260,14 @@ async def start_processing(job_id: str) -> dict[str, Any]:
         raise HTTPException(status_code=404, detail=f"Job {job_id} not found")
 
     job = _jobs[job_id]
-    if job.status != JobStatus.QUEUED:
+    current_status = job.status
+    if current_status != JobStatus.QUEUED:
         raise HTTPException(
             status_code=400,
-            detail=f"Job is not queued (current status: {job.status.value})",
+            detail=f"Job is not queued (current status: {current_status.value})",
         )
 
     job.status = JobStatus.PROCESSING
+    new_status = job.status
     job.message = "Processing started"
-    return {"success": True, "job_id": job_id, "status": job.status.value}
+    return {"success": True, "job_id": job_id, "status": new_status.value}

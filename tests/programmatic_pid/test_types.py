@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import pytest
+
+pytest.importorskip("ezdxf")
 from programmatic_pid.types import BBox, Point, SpecValidationError, ValidationIssue
 
 

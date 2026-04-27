@@ -5,14 +5,14 @@ import pytest
 
 build123d = pytest.importorskip("build123d")
 
-from vessel_drafter.exporters.vessel_export import (  # noqa: E402
+from vessel_drafter.exporters.vessel_export import (
     export_vessel,
     export_vessel_brep,
     export_vessel_gltf,
     export_vessel_step,
     export_vessel_stl,
 )
-from vessel_drafter.models.vessel_drafter import (  # noqa: E402
+from vessel_drafter.models.vessel_drafter import (
     VesselDrafterLayout,
     VesselLidPort,
     VesselSidePort,

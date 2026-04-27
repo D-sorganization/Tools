@@ -77,19 +77,18 @@ class TestUICreationMixin:
             app._setup_application_icon()
 
     def test_set_windows_app_id_success(self, app):
+        mock_windll = MagicMock()
         with patch("sys.platform", "win32"):
-            with patch(
-                "ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID"
-            ) as mock_set:
+            with patch("ctypes.windll", mock_windll, create=True):
                 app._set_windows_app_id()
-                mock_set.assert_called_once()
+                mock_windll.shell32.SetCurrentProcessExplicitAppUserModelID.assert_called_once()
 
     def test_set_windows_app_id_error(self, app):
+        mock_windll = MagicMock()
+        set_id = mock_windll.shell32.SetCurrentProcessExplicitAppUserModelID
+        set_id.side_effect = TypeError("mock error")
         with patch("sys.platform", "win32"):
-            with patch(
-                "ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID",
-                side_effect=TypeError("mock error"),
-            ):
+            with patch("ctypes.windll", mock_windll, create=True):
                 app._set_windows_app_id()
 
     def test_load_ico_icon_success(self, app):

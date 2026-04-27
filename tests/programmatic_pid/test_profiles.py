@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import pytest
+
+pytest.importorskip("ezdxf")
 from programmatic_pid.profiles import PROFILE_PRESETS, apply_profile
 
 

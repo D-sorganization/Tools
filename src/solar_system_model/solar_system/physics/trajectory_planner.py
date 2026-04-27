@@ -389,6 +389,13 @@ class TrajectoryPlanner:
             TransferTrajectory with complete trajectory information
         """
         # DbC preconditions
+<<<<<<< HEAD
+        assert origin is not None, "Origin body must not be None"
+        assert destination is not None, "Destination body must not be None"
+        assert departure_date > 0, (
+            f"Departure date must be positive Julian date, got {departure_date}"
+        )
+=======
         if not (origin is not None):
             raise ValueError("Origin body must not be None")
         if not (destination is not None):
@@ -397,6 +404,7 @@ class TrajectoryPlanner:
             raise ValueError(
                 f"Departure date must be positive Julian date, got {departure_date}"
             )
+>>>>>>> origin/main
 
         # Get orbital radii at departure
         origin_state = origin.get_state_at_time(departure_date)

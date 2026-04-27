@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import contextlib
+import logging
 import math
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
@@ -12,6 +13,8 @@ from functools import lru_cache
 
 import sympy as sp
 from sympy.parsing.sympy_parser import convert_xor, parse_expr, standard_transformations
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -96,10 +99,22 @@ class TI89Calculator:
 
     @staticmethod
     def _safe_pow(base: object, exp: object, **kwargs: object) -> sp.Expr:
-        """Secure exponentiation with magnitude checking to prevent DoS."""
+        """Secure exponentiation with magnitude checking to prevent DoS.
+
+        Preconditions:
+            base: must not be None
+            exp: must not be None
+        """
+        if base is None:
+            raise TypeError("base must be provided")
+        if exp is None:
+            raise TypeError("exp must be provided")
         # Check if both are numbers (either primitive or SymPy)
+<<<<<<< HEAD
+=======
         if not (base is not None):
             raise ValueError("base must be provided")
+>>>>>>> origin/main
         is_num_base = isinstance(base, int | float | sp.Number)
         is_num_exp = isinstance(exp, int | float | sp.Number)
 
@@ -187,9 +202,22 @@ class TI89Calculator:
         expression: str,
         variables: Mapping[str, float | int | sp.Expr] | None = None,
     ) -> CalculatorResult:
+<<<<<<< HEAD
+        """Evaluate an expression with optional substitutions for symbols.
+
+        Preconditions:
+            expression: must be a non-empty string
+            variables: if provided, must be a mapping
+        """
+        if not isinstance(expression, str):
+            raise TypeError("expression must be a string")
+        if not expression:
+            raise ValueError("expression must be a non-empty string")
+=======
         """Evaluate an expression with optional substitutions for symbols."""
         if not (expression is not None):
             raise ValueError("expression must be provided")
+>>>>>>> origin/main
         cleaned_variables = variables or {}
         # Convert variables to a sorted tuple of items for caching
         vars_tuple = tuple(sorted(cleaned_variables.items()))
@@ -207,8 +235,13 @@ class TI89Calculator:
         expression: str,
         variables_tuple: tuple[tuple[str, float | int | sp.Expr], ...],
     ) -> CalculatorResult:
+<<<<<<< HEAD
+        if not isinstance(expression, str):
+            raise TypeError("expression must be a string")
+=======
         if not (expression is not None):
             raise ValueError("expression must be provided")
+>>>>>>> origin/main
         cleaned_variables = dict(variables_tuple)
         variable_names = tuple(sorted(cleaned_variables.keys()))
         parsed_expression, expression_symbols = (
@@ -243,13 +276,21 @@ class TI89Calculator:
         """
         Parse the expression structure independently of variable values.
 
+        Preconditions:
+            expression: must be a non-empty string
+
         Returns:
             A tuple containing the parsed expression and the symbol map used.
             The symbol map is returned because parsed_expression contains references
             to these specific Symbol objects.
         """
+<<<<<<< HEAD
+        if not isinstance(expression, str):
+            raise TypeError("expression must be a string")
+=======
         if not (expression is not None):
             raise ValueError("expression must be provided")
+>>>>>>> origin/main
         expression_symbols = TI89Calculator._build_symbol_map(variable_names)
         parsed_expression = TI89Calculator.parse_expression(
             expression, expression_symbols
@@ -259,23 +300,47 @@ class TI89Calculator:
     def matrix_exponential(
         self, matrix: Iterable[Iterable[object]]
     ) -> CalculatorResult:
-        """Compute the matrix exponential for a square matrix."""
+        """Compute the matrix exponential for a square matrix.
 
+<<<<<<< HEAD
+        Preconditions:
+            matrix: must be a non-None iterable of iterables
+        """
+        if matrix is None:
+            raise TypeError("matrix must be provided")
+=======
         if not (matrix is not None):
             raise ValueError("matrix must be provided")
+>>>>>>> origin/main
         result = self._matrix_exp(matrix)
         return CalculatorResult("matrix_exp", result)
 
     def matrix_logarithm(self, matrix: Iterable[Iterable[object]]) -> CalculatorResult:
-        """Compute the principal matrix logarithm when defined."""
+        """Compute the principal matrix logarithm when defined.
 
+<<<<<<< HEAD
+        Preconditions:
+            matrix: must be a non-None iterable of iterables
+        """
+        if matrix is None:
+            raise TypeError("matrix must be provided")
+=======
         if not (matrix is not None):
             raise ValueError("matrix must be provided")
+>>>>>>> origin/main
         result = self._matrix_log(matrix)
         return CalculatorResult("matrix_log", result)
 
     def simplify_expression(self, expression: str) -> CalculatorResult:
-        """Simplify an algebraic expression or balance an equation."""
+        """Simplify an algebraic expression or balance an equation.
+
+        Preconditions:
+            expression: must be a non-empty string
+        """
+        if not isinstance(expression, str):
+            raise TypeError("expression must be a string")
+        if not expression:
+            raise ValueError("expression must be a non-empty string")
         return TI89Calculator._simplify_expression_cached(expression)
 
     @staticmethod
@@ -290,14 +355,30 @@ class TI89Calculator:
         return CalculatorResult(expression, sp.simplify(parsed_expression))
 
     def solve_equation(self, equation: str, variable: str) -> CalculatorResult:
-        """Solve a single equation for a target variable."""
+        """Solve a single equation for a target variable.
+
+        Preconditions:
+            equation: must be a non-empty string
+            variable: must be a non-empty string
+        """
+        if not isinstance(equation, str):
+            raise TypeError("equation must be a string")
+        if not isinstance(variable, str):
+            raise TypeError("variable must be a string")
         return TI89Calculator._solve_equation_cached(equation, variable)
 
     @staticmethod
     @lru_cache(maxsize=1024)
     def _solve_equation_cached(equation: str, variable: str) -> CalculatorResult:
+<<<<<<< HEAD
+        if not isinstance(equation, str):
+            raise TypeError("equation must be a string")
+        if not isinstance(variable, str):
+            raise TypeError("variable must be a string")
+=======
         if not (equation is not None):
             raise ValueError("equation must be provided")
+>>>>>>> origin/main
         target_symbol = sp.Symbol(variable)
         equation_object = TI89Calculator.parse_equation(
             equation, {variable: target_symbol}
@@ -308,7 +389,16 @@ class TI89Calculator:
     def solve_system(
         self, equations: Sequence[str], variables: Sequence[str]
     ) -> CalculatorResult:
-        """Solve a system of equations for the provided variables."""
+        """Solve a system of equations for the provided variables.
+
+        Preconditions:
+            equations: must be a non-empty sequence of strings
+            variables: must be a non-empty sequence of strings
+        """
+        if not isinstance(equations, (list, tuple)):
+            raise TypeError("equations must be a sequence of strings")
+        if not isinstance(variables, (list, tuple)):
+            raise TypeError("variables must be a sequence of strings")
         return TI89Calculator._solve_system_cached(tuple(equations), tuple(variables))
 
     @staticmethod
@@ -316,8 +406,15 @@ class TI89Calculator:
     def _solve_system_cached(
         equations: tuple[str, ...], variables: tuple[str, ...]
     ) -> CalculatorResult:
+<<<<<<< HEAD
+        if not isinstance(equations, tuple):
+            raise TypeError("equations must be a tuple of strings")
+        if not isinstance(variables, tuple):
+            raise TypeError("variables must be a tuple of strings")
+=======
         if not (equations is not None):
             raise ValueError("equations must be provided")
+>>>>>>> origin/main
         symbol_map = TI89Calculator._build_symbol_map(variables)
         parsed_equations = [
             TI89Calculator.parse_equation(equation, symbol_map)
@@ -330,7 +427,19 @@ class TI89Calculator:
     def derivative(
         self, expression: str, variable: str, order: int = 1
     ) -> CalculatorResult:
-        """Compute the symbolic derivative of an expression with respect to a variable."""
+        """Compute the symbolic derivative of an expression with respect to a variable.
+
+        Preconditions:
+            expression: must be a non-empty string
+            variable: must be a non-empty string
+            order: must be a positive integer
+        """
+        if not isinstance(expression, str):
+            raise TypeError("expression must be a string")
+        if not isinstance(variable, str):
+            raise TypeError("variable must be a string")
+        if not isinstance(order, int) or order <= 0:
+            raise ValueError("order must be a positive integer")
         return TI89Calculator._derivative_cached(expression, variable, order)
 
     @staticmethod
@@ -358,7 +467,17 @@ class TI89Calculator:
         lower: float | int | sp.Expr | None = None,
         upper: float | int | sp.Expr | None = None,
     ) -> CalculatorResult:
-        """Compute definite or indefinite integrals."""
+        """Compute definite or indefinite integrals.
+
+        Preconditions:
+            expression: must be a non-empty string
+            variable: must be a non-empty string
+            lower/upper: both must be provided or both must be None
+        """
+        if not isinstance(expression, str):
+            raise TypeError("expression must be a string")
+        if not isinstance(variable, str):
+            raise TypeError("variable must be a string")
         return TI89Calculator._integral_cached(expression, variable, lower, upper)
 
     @staticmethod
@@ -370,8 +489,15 @@ class TI89Calculator:
         upper: float | int | sp.Expr | None,
     ) -> CalculatorResult:
         # Optimization: Use shared parsing cache for ~3.5% performance boost
+<<<<<<< HEAD
+        if not isinstance(expression, str):
+            raise TypeError("expression must be a string")
+        if not isinstance(variable, str):
+            raise TypeError("variable must be a string")
+=======
         if not (expression is not None):
             raise ValueError("expression must be provided")
+>>>>>>> origin/main
         parsed_expression, sym_map = TI89Calculator._parse_expression_structure(
             expression, (variable,)
         )
@@ -391,7 +517,17 @@ class TI89Calculator:
         value: float | int | sp.Expr,
         direction: str = "two-sided",
     ) -> CalculatorResult:
-        """Evaluate one-sided or two-sided limits."""
+        """Evaluate one-sided or two-sided limits.
+
+        Preconditions:
+            expression: must be a non-empty string
+            variable: must be a non-empty string
+            direction: must be 'two-sided', 'left', or 'right'
+        """
+        if not isinstance(expression, str):
+            raise TypeError("expression must be a string")
+        if not isinstance(variable, str):
+            raise TypeError("variable must be a string")
         return TI89Calculator._limit_cached(expression, variable, value, direction)
 
     @staticmethod
@@ -402,8 +538,15 @@ class TI89Calculator:
         value: float | int | sp.Expr,
         direction: str,
     ) -> CalculatorResult:
+<<<<<<< HEAD
+        if not isinstance(expression, str):
+            raise TypeError("expression must be a string")
+        if not isinstance(variable, str):
+            raise TypeError("variable must be a string")
+=======
         if not (expression is not None):
             raise ValueError("expression must be provided")
+>>>>>>> origin/main
         direction_token = TI89Calculator._normalize_limit_direction(direction)
         # Optimization: Use shared parsing cache for ~3.5% performance boost
         parsed_expression, sym_map = TI89Calculator._parse_expression_structure(
@@ -418,7 +561,19 @@ class TI89Calculator:
     def taylor_series(
         self, expression: str, variable: str, around: float | int | sp.Expr, order: int
     ) -> CalculatorResult:
-        """Return the truncated Taylor series expansion up to the specified order."""
+        """Return the truncated Taylor series expansion up to the specified order.
+
+        Preconditions:
+            expression: must be a non-empty string
+            variable: must be a non-empty string
+            order: must be a positive integer
+        """
+        if not isinstance(expression, str):
+            raise TypeError("expression must be a string")
+        if not isinstance(variable, str):
+            raise TypeError("variable must be a string")
+        if not isinstance(order, int) or order <= 0:
+            raise ValueError("order must be a positive integer")
         return TI89Calculator._taylor_series_cached(expression, variable, around, order)
 
     @staticmethod
@@ -442,7 +597,16 @@ class TI89Calculator:
     def solve_differential_equation(
         self, equation: str, function: str
     ) -> CalculatorResult:
-        """Solve an ordinary differential equation for the specified function."""
+        """Solve an ordinary differential equation for the specified function.
+
+        Preconditions:
+            equation: must be a non-empty string
+            function: must be a non-empty string
+        """
+        if not isinstance(equation, str):
+            raise TypeError("equation must be a string")
+        if not isinstance(function, str):
+            raise TypeError("function must be a string")
         return TI89Calculator._solve_differential_equation_cached(equation, function)
 
     @staticmethod
@@ -456,8 +620,15 @@ class TI89Calculator:
         # We assume it is populated. If not, we should populate it.
         # However, calling TI89Calculator() populates it.
         # To be safe, we can check.
+<<<<<<< HEAD
+        if not isinstance(equation, str):
+            raise TypeError("equation must be a string")
+        if not isinstance(function, str):
+            raise TypeError("function must be a string")
+=======
         if not (equation is not None):
             raise ValueError("equation must be provided")
+>>>>>>> origin/main
         if TI89Calculator._ALLOWED_FUNCTIONS_CACHE is None:
             # This is slightly tricky as _build_allowed_functions uses 'self' methods for hat/vee etc?
             # Wait, _hat, _vee are instance methods. They should be static too.
@@ -489,10 +660,21 @@ class TI89Calculator:
     def parse_expression(
         expression: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
     ) -> sp.Expr:
+<<<<<<< HEAD
+        """Parse a mathematical expression string into a validated SymPy tree.
+
+        Preconditions:
+            expression: must be a non-empty string
+            symbols: must be a mapping of variable names to SymPy symbols
+        """
+        if not isinstance(expression, str):
+            raise TypeError("expression must be a string")
+=======
         """Parse a mathematical expression string into a validated SymPy tree."""
         # Optimization: fast-path for simple numbers to avoid expensive parse_expr
         if not (expression is not None):
             raise ValueError("expression must be provided")
+>>>>>>> origin/main
         if expression:
             # Strip whitespace for accurate numeric checks
             clean_expr = expression.strip()
@@ -550,9 +732,20 @@ class TI89Calculator:
     def parse_equation(
         equation: str, symbols: Mapping[str, sp.Symbol | sp.Expr]
     ) -> sp.Eq:
+<<<<<<< HEAD
+        """Parse an equation string (``lhs = rhs``) into a SymPy ``Eq`` object.
+
+        Preconditions:
+            equation: must be a non-empty string
+            symbols: must be a mapping of variable names to SymPy symbols
+        """
+        if not isinstance(equation, str):
+            raise TypeError("equation must be a string")
+=======
         """Parse an equation string (``lhs = rhs``) into a SymPy ``Eq`` object."""
         if not (equation is not None):
             raise ValueError("equation must be provided")
+>>>>>>> origin/main
         if "=" in equation:
             lhs, rhs = equation.split("=", maxsplit=1)
         else:
@@ -582,17 +775,23 @@ class TI89Calculator:
 
     def _vee(self, matrix: Iterable[Iterable[object]], **kwargs: object) -> sp.Matrix:
         skew = sp.Matrix(matrix)
-        if skew.shape != (3, 3):
+        skew_shape = skew.shape
+        if skew_shape != (3, 3):
             raise ValueError("vee expects a 3x3 skew-symmetric matrix")
-        return sp.Matrix([skew[2, 1], skew[0, 2], skew[1, 0]])
+        elem_21 = skew[2, 1]
+        elem_02 = skew[0, 2]
+        elem_10 = skew[1, 0]
+        return sp.Matrix([elem_21, elem_02, elem_10])
 
     def _se3_hat(self, screw: Iterable[object], **kwargs: object) -> sp.Matrix:
         vector = sp.Matrix(screw)
         elements = list(vector)
         if len(elements) != 6:
             raise ValueError("se3_hat expects a 6-element screw axis")
-        angular = sp.Matrix(elements[:3])
-        linear = sp.Matrix(elements[3:])
+        angular_elements = elements[:3]
+        linear_elements = elements[3:]
+        angular = sp.Matrix(angular_elements)
+        linear = sp.Matrix(linear_elements)
         angular_skew = self._hat(angular)
         upper = sp.Matrix.hstack(angular_skew, linear)
         return sp.Matrix.vstack(upper, sp.Matrix([[0, 0, 0, 0]]))
@@ -601,10 +800,13 @@ class TI89Calculator:
         self, matrix: Iterable[Iterable[object]], **kwargs: object
     ) -> sp.Matrix:
         transform = sp.Matrix(matrix)
-        if transform.shape != (4, 4):
+        transform_shape = transform.shape
+        if transform_shape != (4, 4):
             raise ValueError("se3_vee expects a 4x4 matrix")
-        angular = self._vee(transform[:3, :3])
-        linear = transform[:3, 3]
+        rotation_block = transform[:3, :3]
+        translation_block = transform[:3, 3]
+        angular = self._vee(rotation_block)
+        linear = translation_block
         return sp.Matrix.vstack(angular, linear)
 
     def _screw_axis(

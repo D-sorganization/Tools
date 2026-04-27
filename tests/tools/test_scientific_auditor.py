@@ -8,8 +8,12 @@ import ast
 from pathlib import Path
 
 import pytest
-
 from contracts import PreconditionError
+
+<<<<<<< HEAD
+=======
+from contracts import PreconditionError
+>>>>>>> origin/main
 from tools.scientific_auditor import ScienceAuditor, audit_directory, audit_file
 
 # ─── ScienceAuditor.visit_BinOp ────────────────────────────────
@@ -125,7 +129,7 @@ def test_audit_file_contract_not_python(tmp_path):
 
 def test_audit_file_contract_directory_passed(tmp_path):
     with pytest.raises(PreconditionError):
-        audit_file(tmp_path)  # type: ignore[arg-type]
+        audit_file(tmp_path)
 
 
 # ─── audit_directory ───────────────────────────────────────────

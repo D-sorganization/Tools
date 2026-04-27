@@ -45,9 +45,14 @@ class ThemeListItem(QListWidgetItem):
 
     def __init__(
         self, theme_name: str, is_builtin: bool = False, is_current: bool = False
+<<<<<<< HEAD
+    ) -> None:
+        assert theme_name is not None, "theme_name must be provided"
+=======
     ):
         if not (theme_name is not None):
             raise ValueError("theme_name must be provided")
+>>>>>>> origin/main
         super().__init__()
         self.theme_name = theme_name
         self.is_builtin = is_builtin
@@ -89,9 +94,16 @@ class ThemeManagerDialog(QDialog):
 
     theme_changed = pyqtSignal(str)  # Emits when theme is changed
 
+<<<<<<< HEAD
+    def __init__(
+        self, theme_manager: ThemeManager, parent: QWidget | None = None
+    ) -> None:
+        assert theme_manager is not None, "theme_manager must be provided"
+=======
     def __init__(self, theme_manager: ThemeManager, parent: QWidget | None = None):
         if not (theme_manager is not None):
             raise ValueError("theme_manager must be provided")
+>>>>>>> origin/main
         super().__init__(parent)
         self.theme_manager = theme_manager
         self.theme_items: dict[str, ThemeListItem] = {}

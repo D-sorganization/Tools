@@ -35,22 +35,39 @@ except ImportError:
     import subprocess
 
     def run_python_script(
-        script_path: Path,
+        script_path: Path | str,
         args: list[str] | None = None,
         cwd: Path | str | None = None,
         timeout: int | None = None,
         check: bool = False,
+<<<<<<< HEAD
+    ) -> subprocess.CompletedProcess[str]:
+        assert script_path is not None, "script_path must be provided"
+=======
     ):
         if not (script_path is not None):
             raise ValueError("script_path must be provided")
+>>>>>>> origin/main
         command = [sys.executable, str(script_path)]
         if args:
             command.extend(args)
         return subprocess.run(
-            command, cwd=str(cwd) if cwd else None, timeout=timeout, check=check
+            command,
+            cwd=str(cwd) if cwd else None,
+            timeout=timeout,
+            check=check,
+            text=True,
         )
 
+<<<<<<< HEAD
+    def get_logger(
+        name: str | None = None,
+        level: int | str = logging.INFO,
+        use_simple_format: bool = False,
+    ) -> logging.Logger:
+=======
     def get_logger(name) -> Any:
+>>>>>>> origin/main
         return logging.getLogger(name)
 
 

@@ -70,7 +70,7 @@ from programmatic_pid.validation import (
     validate_spec_json,
 )
 
-__version__ = "0.3.0"
+__version__ = "1.0.0"
 
 __all__ = [
     # Primary API

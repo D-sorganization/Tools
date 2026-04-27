@@ -9,12 +9,18 @@ This module provides bidirectional conversion between URDF and MJCF formats.
 from __future__ import annotations
 
 import logging
+<<<<<<< HEAD
+=======
 import xml.etree.ElementTree as ET  # nosec B405 — type annotations only; parsing uses defusedxml
+>>>>>>> origin/main
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import defusedxml.ElementTree as DefusedET
+
+if TYPE_CHECKING:
+    import xml.etree.ElementTree as ET
 from model_generation.converters.urdf_parser import ParsedModel, URDFParser
 from model_generation.core.types import (
     Geometry,
@@ -81,7 +87,7 @@ class MJCFConverter:
     URDF uses a flat structure with explicit parent-child relationships.
     """
 
-    def __init__(self, config: MJCFConfig | None = None):
+    def __init__(self, config: MJCFConfig | None = None) -> None:
         """
         Initialize converter.
 

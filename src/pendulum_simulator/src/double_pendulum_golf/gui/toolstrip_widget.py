@@ -17,7 +17,7 @@ Closes #1134: Font sizes increased for visibility
 from __future__ import annotations
 
 from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtGui import QFont
+from PyQt6.QtGui import QFont, QFontMetrics
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -31,13 +31,13 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from .button_sizing import fit_button_to_text
+
 # ---------------------------------------------------------------------------
 # Stylesheet constants
 # ---------------------------------------------------------------------------
 
-_STYLE_STRIP = (
-    "QWidget#toolstrip {background: #16162e;border-bottom: 1px solid #2a2a50;}"
-)
+_STYLE_STRIP = "QWidget#toolstrip {background: #16162e;border-bottom: 1px solid #2a2a50;}"
 _BTN_RUN = (
     "QPushButton{"
     "background:#1e5c30;color:#a8f0b8;border:none;border-radius:5px;"
@@ -177,26 +177,67 @@ def _hline() -> QFrame:
     return sep
 
 
-def _make_scale_slider(style: str, default: int = 10, max_val: int = 1000) -> QSlider:
-    """Create a compact scale slider (1–max_val, default=10 → 1.0×).
+def _make_scale_slider(
+    style: str,
+    default: int = 10,
+    max_val: int = 1000,
+    divisor: int = 10,
+) -> QSlider:
+    """Create a compact scale slider (1–max_val, default → 1.0×).
 
-    max_val=1000 → 0.1×…100× (force vectors, which can be very large)
-    max_val=100  → 0.1×…10×  (ellipsoids, more subtle visual scaling)
+    The ``divisor`` controls how raw integer values map to display scale:
+        scale = raw / divisor
+    so the slider can carry any range from sub-unity to many-times-unity:
+
+    - divisor=10,  default=10,  max_val=1000 → 0.1×…100×  (force vectors)
+    - divisor=100, default=100, max_val=1000 → 0.01×…10× (ellipsoids)
+
+    The divisor is stored as a Qt property on the slider so any code
+    that reads the slider's raw value can recover the display scale
+    without re-encoding the mapping.
+
+    Pre: ``style`` is non-None, ``divisor > 0``, ``default`` and
+         ``max_val`` are positive, ``default <= max_val``.
     """
+<<<<<<< HEAD
+    assert style is not None, "style must be provided"
+    assert divisor > 0, f"divisor must be > 0, got {divisor}"
+    assert max_val > 0 and default > 0 and default <= max_val, (
+        f"invalid slider bounds: default={default}, max_val={max_val}"
+    )
+=======
     if not (style is not None):
         raise ValueError("style must be provided")
+>>>>>>> origin/main
     s = QSlider(Qt.Orientation.Horizontal)
     s.setRange(1, max_val)
     s.setValue(default)
+    s.setProperty("scale_divisor", divisor)
     s.setStyleSheet(style)
     s.setFixedHeight(14)
     s.setMaximumWidth(160)
     return s
 
 
-def _fmt_scale(raw: int) -> str:
-    v = raw / 10.0
-    return f"{v:.0f}×" if v >= 10 else f"{v:.1f}×"
+def _slider_scale(slider: QSlider) -> float:
+    """Convert a slider's raw value to its display scale using ``scale_divisor``."""
+    divisor = slider.property("scale_divisor")
+    if not divisor:
+        divisor = 10
+    return float(slider.value()) / float(divisor)
+
+
+def _fmt_scale(value: float) -> str:
+    """Format a display scale for the inline label.
+
+    Switches between three precision modes so very small values stay
+    readable: ``0.01×``, ``0.5×``, ``12×``.
+    """
+    if value < 0.1:
+        return f"{value:.2f}×"
+    if value < 10:
+        return f"{value:.1f}×"
+    return f"{value:.0f}×"
 
 
 def _overlay_row(
@@ -303,18 +344,25 @@ class ToolStrip(QWidget):
         self._build_overlay_section(row2)
         outer.addLayout(row2)
 
-    def _build_row1(self, layout: QHBoxLayout) -> None:
-        """Actions row: Title | Run Reset Play | Speed | [frame slider] | Frame# | Reset View"""
+    def _build_action_buttons_group(self, layout: QHBoxLayout) -> None:
+        """Add model selector, simulation buttons, and speed control to layout."""
+        self._build_model_selector(layout)
+        layout.addWidget(_vline())
+        self._build_sim_controls(layout)
 
+<<<<<<< HEAD
+    def _build_model_selector(self, layout: QHBoxLayout) -> None:
+        """Add title label and model-selection combo box to layout."""
+=======
         if not (layout is not None):
             raise ValueError("layout must be provided")
+>>>>>>> origin/main
         title = QLabel("Pendulums")
         title.setStyleSheet(_TITLE)
         title.setFont(QFont("Sans", 11, QFont.Weight.Bold))
         layout.addWidget(title)
 
         # Model selection dropdown (#1149)
-
         self.cmb_model = QComboBox()
         self.cmb_model.addItems(["Double Pendulum", "Triple Pendulum", "Upper Body"])
         self.cmb_model.setToolTip("Switch between pendulum models")
@@ -325,22 +373,31 @@ class ToolStrip(QWidget):
             "QComboBox QAbstractItemView { background: #252540; color: #c0c0d8;"
             "  selection-background-color: #3b6eb0; }"
         )
+        # Size combo to the longest item text so it never truncates.
+        self.cmb_model.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToContents)
+        _cmb_fm = self.cmb_model.fontMetrics()
+        _longest = max(
+            (self.cmb_model.itemText(i) for i in range(self.cmb_model.count())),
+            key=len,
+        )
+        self.cmb_model.setMinimumWidth(_cmb_fm.horizontalAdvance(_longest) + 40)
         self.cmb_model.currentIndexChanged.connect(self.model_changed.emit)
         layout.addWidget(self.cmb_model)
 
-        layout.addWidget(_vline())
-
-        # Run / Reset / Play
+    def _build_sim_controls(self, layout: QHBoxLayout) -> None:
+        """Add Run, Reset, Play, Loop buttons and speed spinbox to layout."""
         self.btn_run = QPushButton("▶ Run")
         self.btn_run.setStyleSheet(_BTN_RUN)
         self.btn_run.setToolTip("Run simulation")
         self.btn_run.clicked.connect(self.run_requested.emit)
+        fit_button_to_text(self.btn_run)
         layout.addWidget(self.btn_run)
 
         self.btn_reset = QPushButton("↺ Reset")
         self.btn_reset.setStyleSheet(_BTN_RESET)
         self.btn_reset.setToolTip("Reset to initial state")
         self.btn_reset.clicked.connect(self.reset_requested.emit)
+        fit_button_to_text(self.btn_reset)
         layout.addWidget(self.btn_reset)
 
         self.btn_play = QPushButton("▶ Play")
@@ -348,10 +405,15 @@ class ToolStrip(QWidget):
         self.btn_play.setStyleSheet(_BTN_PLAY)
         self.btn_play.setToolTip("Play / Pause animation")
         self.btn_play.toggled.connect(self._on_play_toggled)
+        _play_fm = QFontMetrics(self.btn_play.font())
+        _play_min = max(
+            _play_fm.horizontalAdvance("▶ Play"),
+            _play_fm.horizontalAdvance("‖ Pause"),
+        )
+        self.btn_play.setMinimumWidth(_play_min + 24)
         layout.addWidget(self.btn_play)
 
-        # Loop toggle
-        self.chk_loop = QCheckBox("🔁")
+        self.chk_loop = QCheckBox("↺")
         self.chk_loop.setToolTip("Loop animation")
         self.chk_loop.setStyleSheet(
             "QCheckBox{color:#8080b0;font-size:13px;spacing:2px;}"
@@ -364,7 +426,6 @@ class ToolStrip(QWidget):
 
         layout.addWidget(_vline())
 
-        # Speed
         spd_lbl = QLabel("Speed:")
         spd_lbl.setStyleSheet(_LABEL)
         layout.addWidget(spd_lbl)
@@ -384,8 +445,83 @@ class ToolStrip(QWidget):
         self.speed_spin.valueChanged.connect(lambda v: self.speed_changed.emit(v))
         layout.addWidget(self.speed_spin)
 
+    def _build_tools_group(self, layout: QHBoxLayout) -> None:
+        """Add export, equations, pop-out, and diagnostics buttons to layout.
+
+        Adds: Export CSV, Export Video, EOM, Mass Matrix, Pop-Out Chart, Diagnostics.
+        Called from _build_row1 after the playback scrub section.
+        """
         layout.addWidget(_vline())
 
+        # Export buttons (#1141)
+        self.btn_export_csv = QPushButton("Export CSV")
+        self.btn_export_csv.setStyleSheet(_BTN_SMALL)
+        self.btn_export_csv.setToolTip("Export simulation data to CSV")
+        self.btn_export_csv.clicked.connect(self.export_data_requested.emit)
+        fit_button_to_text(self.btn_export_csv)
+        layout.addWidget(self.btn_export_csv)
+
+        self.btn_export_video = QPushButton("Export Video")
+        self.btn_export_video.setStyleSheet(_BTN_SMALL)
+        self.btn_export_video.setToolTip("Export animation as video")
+        self.btn_export_video.clicked.connect(self.export_video_requested.emit)
+        fit_button_to_text(self.btn_export_video)
+        layout.addWidget(self.btn_export_video)
+
+        layout.addWidget(_vline())
+
+        # Help / Equations buttons (#1136, #1144)
+        self.btn_eom = QPushButton("Equations of Motion")
+        self.btn_eom.setStyleSheet(_BTN_SMALL)
+        self.btn_eom.setToolTip("Show Equations of Motion derivation")
+        self.btn_eom.clicked.connect(self._show_eom_popup)
+        fit_button_to_text(self.btn_eom)
+        layout.addWidget(self.btn_eom)
+
+        self.btn_mass_matrix = QPushButton("Mass Matrix")
+        self.btn_mass_matrix.setStyleSheet(_BTN_SMALL)
+        self.btn_mass_matrix.setToolTip("Show Mass Matrix explanation")
+        self.btn_mass_matrix.clicked.connect(self._show_mass_matrix_popup)
+        fit_button_to_text(self.btn_mass_matrix)
+        layout.addWidget(self.btn_mass_matrix)
+
+        self.btn_popout = QPushButton("∿ Pop-Out Chart")
+        self.btn_popout.setStyleSheet(_BTN_SMALL)
+        self.btn_popout.setToolTip(
+            "Pop out current simulation data as a\ndetachable chart with regression fitting"
+        )
+        self.btn_popout.clicked.connect(self.popout_chart_requested.emit)
+        fit_button_to_text(self.btn_popout)
+        layout.addWidget(self.btn_popout)
+
+        layout.addWidget(_vline())
+
+        # Diagnostics button
+        self.btn_diagnostics = QPushButton("Diagnostics")
+        self.btn_diagnostics.setStyleSheet(
+            "QPushButton{background:#2a1a2a;color:#d0a0d0;border:1px solid #503060;"
+            "border-radius:4px;padding:3px 10px;font-size:10px;font-weight:bold;}"
+            "QPushButton:hover{background:#3a2a3a;color:#e0b0e0;}"
+        )
+        self.btn_diagnostics.setToolTip(
+            "Open diagnostics tracker — view all errors,\n"
+            "warnings, and system events for troubleshooting"
+        )
+        self.btn_diagnostics.clicked.connect(self._show_diagnostics)
+        fit_button_to_text(self.btn_diagnostics)
+        layout.addWidget(self.btn_diagnostics)
+
+    def _build_row1(self, layout: QHBoxLayout) -> None:
+        """Actions row: Title | Run Reset Play | Speed | [frame slider] | Frame# | Reset View"""
+        if layout is None:
+            raise ValueError("layout must be provided")
+        self._build_action_buttons_group(layout)
+        layout.addWidget(_vline())
+        self._build_playback_group(layout)
+        self._build_tools_group(layout)
+
+    def _build_playback_group(self, layout: QHBoxLayout) -> None:
+        """Add playback scrub slider, frame label, and Reset View button."""
         # Playback scrub slider — MUST be visible (#1207)
         scrub_lbl = QLabel("Playback:")
         scrub_lbl.setStyleSheet(_LABEL)
@@ -415,61 +551,8 @@ class ToolStrip(QWidget):
             "Reset zoom & pan to default\n(shortcut: double-click canvas)"
         )
         self.btn_reset_view.clicked.connect(self.reset_view_requested.emit)
+        fit_button_to_text(self.btn_reset_view)
         layout.addWidget(self.btn_reset_view)
-
-        layout.addWidget(_vline())
-
-        # Export buttons (#1141)
-        self.btn_export_csv = QPushButton("📄 Export CSV")
-        self.btn_export_csv.setStyleSheet(_BTN_SMALL)
-        self.btn_export_csv.setToolTip("Export simulation data to CSV")
-        self.btn_export_csv.clicked.connect(self.export_data_requested.emit)
-        layout.addWidget(self.btn_export_csv)
-
-        self.btn_export_video = QPushButton("🎬 Export Video")
-        self.btn_export_video.setStyleSheet(_BTN_SMALL)
-        self.btn_export_video.setToolTip("Export animation as video")
-        self.btn_export_video.clicked.connect(self.export_video_requested.emit)
-        layout.addWidget(self.btn_export_video)
-
-        layout.addWidget(_vline())
-
-        # Help / Equations buttons (#1136, #1144)
-        self.btn_eom = QPushButton("📐 Equations of Motion")
-        self.btn_eom.setStyleSheet(_BTN_SMALL)
-        self.btn_eom.setToolTip("Show Equations of Motion derivation")
-        self.btn_eom.clicked.connect(self._show_eom_popup)
-        layout.addWidget(self.btn_eom)
-
-        self.btn_mass_matrix = QPushButton("📊 Mass Matrix")
-        self.btn_mass_matrix.setStyleSheet(_BTN_SMALL)
-        self.btn_mass_matrix.setToolTip("Show Mass Matrix explanation")
-        self.btn_mass_matrix.clicked.connect(self._show_mass_matrix_popup)
-        layout.addWidget(self.btn_mass_matrix)
-
-        self.btn_popout = QPushButton("📈 Pop-Out Chart")
-        self.btn_popout.setStyleSheet(_BTN_SMALL)
-        self.btn_popout.setToolTip(
-            "Pop out current simulation data as a\ndetachable chart with regression fitting"
-        )
-        self.btn_popout.clicked.connect(self.popout_chart_requested.emit)
-        layout.addWidget(self.btn_popout)
-
-        layout.addWidget(_vline())
-
-        # Diagnostics button
-        self.btn_diagnostics = QPushButton("🔍 Diagnostics")
-        self.btn_diagnostics.setStyleSheet(
-            "QPushButton{background:#2a1a2a;color:#d0a0d0;border:1px solid #503060;"
-            "border-radius:4px;padding:3px 10px;font-size:10px;font-weight:bold;}"
-            "QPushButton:hover{background:#3a2a3a;color:#e0b0e0;}"
-        )
-        self.btn_diagnostics.setToolTip(
-            "Open diagnostics tracker — view all errors,\n"
-            "warnings, and system events for troubleshooting"
-        )
-        self.btn_diagnostics.clicked.connect(self._show_diagnostics)
-        layout.addWidget(self.btn_diagnostics)
 
     def _show_eom_popup(self) -> None:
         """Open the Equations of Motion popup (#1144)."""
@@ -495,17 +578,47 @@ class ToolStrip(QWidget):
         All three overlay types (Force Vectors, Mobility Ellipsoids, Force Ellipsoids)
         are stacked vertically in a compact section.
         """
+<<<<<<< HEAD
+        assert layout is not None, "layout must be provided"
+        overlay_frame, overlay_layout = self._create_overlay_frame()
+
+        overlay_layout.addLayout(self._build_force_vectors_row())
+        overlay_layout.addLayout(self._build_mobility_ellipsoids_row())
+        overlay_layout.addLayout(self._build_force_ellipsoids_row())
+        overlay_layout.addLayout(self._build_segment_visibility_row())
+
+        layout.addWidget(overlay_frame)
+        layout.addWidget(_vline())
+
+        # --- Extra toggles column (vertical, right of overlay section) ---
+        extra_col = self._build_extra_toggles_col()
+        layout.addLayout(extra_col)
+
+        layout.addWidget(_vline())
+
+        self._status_lbl = QLabel("Ready")
+        self._status_lbl.setStyleSheet("color:#404060;font-size:11px;")
+        layout.addWidget(self._status_lbl)
+
+        layout.addStretch()
+
+    def _create_overlay_frame(self) -> tuple[QFrame, QVBoxLayout]:
+        """Create the overlay section container frame and its vertical layout."""
+=======
         # --- Overlay section container ---
         if not (layout is not None):
             raise ValueError("layout must be provided")
+>>>>>>> origin/main
         overlay_frame = QFrame()
         overlay_frame.setObjectName("overlay_section")
         overlay_frame.setStyleSheet(_OVERLAY_SECTION)
         overlay_layout = QVBoxLayout(overlay_frame)
         overlay_layout.setContentsMargins(4, 2, 4, 2)
         overlay_layout.setSpacing(1)
+        return overlay_frame, overlay_layout
 
-        # Row A: Force Vectors checkbox + scale slider
+    def _build_force_vectors_row(self) -> QHBoxLayout:
+        """Row A: Force Vectors checkbox + scale slider."""
         self.chk_forces = QCheckBox("Force Vectors")
         self.chk_forces.setStyleSheet(_CHK_FORCE)
         self.chk_forces.setToolTip(
@@ -514,18 +627,20 @@ class ToolStrip(QWidget):
         )
         self.chk_forces.toggled.connect(self.forces_toggled.emit)
 
-        self._sld_force = _make_scale_slider(_SLIDER_FORCE, default=10)
+        # Force vectors: divisor=10 → raw 1..1000 maps to 0.1×..100×
+        self._sld_force = _make_scale_slider(
+            _SLIDER_FORCE, default=10, max_val=1000, divisor=10
+        )
         self._sld_force.setToolTip("Force vector display scale (0.1× – 100×)")
         self._sld_force.valueChanged.connect(self._on_force_scale)
 
         self._lbl_force_scale = QLabel("1.0×")
         self._lbl_force_scale.setStyleSheet(_VAL_LBL)
 
-        overlay_layout.addLayout(
-            _overlay_row(self.chk_forces, self._sld_force, self._lbl_force_scale)
-        )
+        return _overlay_row(self.chk_forces, self._sld_force, self._lbl_force_scale)
 
-        # Row B: Mobility Ellipsoids checkbox + scale slider
+    def _build_mobility_ellipsoids_row(self) -> QHBoxLayout:
+        """Row B: Mobility Ellipsoids checkbox + scale slider."""
         self.chk_mob = QCheckBox("Mobility Ellipsoids")
         self.chk_mob.setStyleSheet(_CHK_MOB)
         self.chk_mob.setToolTip(
@@ -534,18 +649,19 @@ class ToolStrip(QWidget):
         )
         self.chk_mob.toggled.connect(self.mob_ellipsoid_toggled.emit)
 
-        self._sld_mob = _make_scale_slider(_SLIDER_MOB, default=10, max_val=100)
-        self._sld_mob.setToolTip("Mobility ellipsoid display scale (0.1× – 10×)")
+        # Mobility ellipsoids: divisor=100 → raw 1..1000 maps to 0.01×..10×
+        # so the user can shrink them to 1/100th of unity when joints crowd.
+        self._sld_mob = _make_scale_slider(_SLIDER_MOB, default=100, max_val=1000, divisor=100)
+        self._sld_mob.setToolTip("Mobility ellipsoid display scale (0.01× – 10×)")
         self._sld_mob.valueChanged.connect(self._on_mob_scale)
 
         self._lbl_mob_scale = QLabel("1.0×")
         self._lbl_mob_scale.setStyleSheet(_VAL_LBL)
 
-        overlay_layout.addLayout(
-            _overlay_row(self.chk_mob, self._sld_mob, self._lbl_mob_scale)
-        )
+        return _overlay_row(self.chk_mob, self._sld_mob, self._lbl_mob_scale)
 
-        # Row C: Force Ellipsoids checkbox + scale slider
+    def _build_force_ellipsoids_row(self) -> QHBoxLayout:
+        """Row C: Force Ellipsoids checkbox + scale slider."""
         self.chk_force_ell = QCheckBox("Force Ellipsoids")
         self.chk_force_ell.setStyleSheet(_CHK_FELL)
         self.chk_force_ell.setToolTip(
@@ -554,20 +670,20 @@ class ToolStrip(QWidget):
         )
         self.chk_force_ell.toggled.connect(self.force_ellipsoid_toggled.emit)
 
-        self._sld_force_ell = _make_scale_slider(_SLIDER_FELL, default=10, max_val=100)
-        self._sld_force_ell.setToolTip("Force ellipsoid display scale (0.1× – 10×)")
+        # Force ellipsoids: divisor=100 → raw 1..1000 maps to 0.01×..10×
+        self._sld_force_ell = _make_scale_slider(
+            _SLIDER_FELL, default=100, max_val=1000, divisor=100
+        )
+        self._sld_force_ell.setToolTip("Force ellipsoid display scale (0.01× – 10×)")
         self._sld_force_ell.valueChanged.connect(self._on_force_ell_scale)
 
         self._lbl_force_ell_scale = QLabel("1.0×")
         self._lbl_force_ell_scale.setStyleSheet(_VAL_LBL)
 
-        overlay_layout.addLayout(
-            _overlay_row(
-                self.chk_force_ell, self._sld_force_ell, self._lbl_force_ell_scale
-            )
-        )
+        return _overlay_row(self.chk_force_ell, self._sld_force_ell, self._lbl_force_ell_scale)
 
-        # Row D: Per-segment visibility sub-checkboxes (#1100, #1101, #1102)
+    def _build_segment_visibility_row(self) -> QHBoxLayout:
+        """Row D: Per-segment visibility sub-checkboxes (#1100, #1101, #1102)."""
         seg_row = QHBoxLayout()
         seg_row.setContentsMargins(0, 1, 0, 0)
         seg_row.setSpacing(2)
@@ -590,16 +706,14 @@ class ToolStrip(QWidget):
             seg_row.addWidget(chk)
             self._segment_checks[name] = chk
         seg_row.addStretch()
-        overlay_layout.addLayout(seg_row)
+        return seg_row
 
-        layout.addWidget(overlay_frame)
-        layout.addWidget(_vline())
+    def _build_physics_checkboxes(self, layout: QVBoxLayout) -> None:
+        """Create and wire the six physics-toggle checkboxes into *layout*.
 
-        # --- Extra toggles column (vertical, right of overlay section) ---
-        extra_col = QVBoxLayout()
-        extra_col.setContentsMargins(0, 0, 0, 0)
-        extra_col.setSpacing(2)
-
+        Sets ``self.chk_zero_torque``, ``self.chk_com``, ``self.chk_torque``,
+        ``self.chk_mof``, ``self.chk_sum_moments``, and ``self.chk_3d``.
+        """
         self.chk_zero_torque = QCheckBox("Zero-τ Forces")
         self.chk_zero_torque.setStyleSheet(_CHK_ZERO)
         self.chk_zero_torque.setToolTip(
@@ -608,13 +722,13 @@ class ToolStrip(QWidget):
             "the passive drift due to gravity and inertia alone."
         )
         self.chk_zero_torque.toggled.connect(self.zero_torque_toggled.emit)
-        extra_col.addWidget(self.chk_zero_torque)
+        layout.addWidget(self.chk_zero_torque)
 
         self.chk_com = QCheckBox("Center of Mass")
         self.chk_com.setStyleSheet(_CHK_COM)
         self.chk_com.setToolTip("Show the combined center of mass of the whole system.")
         self.chk_com.toggled.connect(self.com_toggled.emit)
-        extra_col.addWidget(self.chk_com)
+        layout.addWidget(self.chk_com)
 
         # Torque vectors (#1208)
         self.chk_torque = QCheckBox("Torque Vectors")
@@ -624,7 +738,7 @@ class ToolStrip(QWidget):
             "Red arrows — magnitude scales with torque value."
         )
         self.chk_torque.toggled.connect(self.torque_vectors_toggled.emit)
-        extra_col.addWidget(self.chk_torque)
+        layout.addWidget(self.chk_torque)
 
         # Moment of Force vectors (#1208)
         self.chk_mof = QCheckBox("Moment of Force")
@@ -634,7 +748,7 @@ class ToolStrip(QWidget):
             "Blue arrows — proximal-on-distal convention."
         )
         self.chk_mof.toggled.connect(self.moment_of_force_toggled.emit)
-        extra_col.addWidget(self.chk_mof)
+        layout.addWidget(self.chk_mof)
 
         # Sum of Moments vectors (#1208)
         self.chk_sum_moments = QCheckBox("Sum of Moments")
@@ -644,7 +758,7 @@ class ToolStrip(QWidget):
             "Green arrows — resultant moment at each joint."
         )
         self.chk_sum_moments.toggled.connect(self.sum_moments_toggled.emit)
-        extra_col.addWidget(self.chk_sum_moments)
+        layout.addWidget(self.chk_sum_moments)
 
         self.chk_3d = QCheckBox("3D Segments")
         self.chk_3d.setStyleSheet(_CHK_COM)  # reuse COM style
@@ -653,8 +767,18 @@ class ToolStrip(QWidget):
             "Shows segments as gradient-shaded cylinders."
         )
         self.chk_3d.toggled.connect(self.mode_3d_toggled.emit)
-        extra_col.addWidget(self.chk_3d)
+        layout.addWidget(self.chk_3d)
 
+    def _build_rotation_sliders(self, layout: QVBoxLayout) -> None:
+        """Create and wire the azimuth and tilt rotation sliders into *layout*.
+
+        Sets ``self._sld_azimuth``, ``self._lbl_azimuth``,
+        ``self._sld_tilt``, and ``self._lbl_tilt``.
+        """
+        _sld_style_base = (
+            "QSlider::groove:horizontal{height:4px;background:#252540;border-radius:2px;}"
+            "QSlider::handle:horizontal{width:10px;margin:-3px 0;border-radius:5px;}"
+        )
         # Rotation controls (#1146)
         azimuth_row = QHBoxLayout()
         azimuth_row.setContentsMargins(0, 0, 0, 0)
@@ -669,10 +793,9 @@ class ToolStrip(QWidget):
         self._sld_azimuth.setValue(0)
         self._sld_azimuth.setFixedWidth(80)
         self._sld_azimuth.setStyleSheet(
-            "QSlider::groove:horizontal{height:4px;background:#252540;"
-            "border-radius:2px;}"
-            "QSlider::handle:horizontal{width:10px;margin:-3px 0;"
-            "background:#6080b0;border-radius:5px;}"
+            _sld_style_base.replace(
+                "border-radius:5px;", "background:#6080b0;border-radius:5px;"
+            )
         )
         self._sld_azimuth.valueChanged.connect(self._on_azimuth_slider)
         azimuth_row.addWidget(self._sld_azimuth)
@@ -680,7 +803,7 @@ class ToolStrip(QWidget):
         self._lbl_azimuth = QLabel("0°")
         self._lbl_azimuth.setStyleSheet("color:#606080;font-size:10px;min-width:30px;")
         azimuth_row.addWidget(self._lbl_azimuth)
-        extra_col.addLayout(azimuth_row)
+        layout.addLayout(azimuth_row)
 
         tilt_row = QHBoxLayout()
         tilt_row.setContentsMargins(0, 0, 0, 0)
@@ -695,10 +818,9 @@ class ToolStrip(QWidget):
         self._sld_tilt.setValue(0)
         self._sld_tilt.setFixedWidth(80)
         self._sld_tilt.setStyleSheet(
-            "QSlider::groove:horizontal{height:4px;background:#252540;"
-            "border-radius:2px;}"
-            "QSlider::handle:horizontal{width:10px;margin:-3px 0;"
-            "background:#608050;border-radius:5px;}"
+            _sld_style_base.replace(
+                "border-radius:5px;", "background:#608050;border-radius:5px;"
+            )
         )
         self._sld_tilt.valueChanged.connect(self._on_tilt_slider)
         tilt_row.addWidget(self._sld_tilt)
@@ -706,25 +828,30 @@ class ToolStrip(QWidget):
         self._lbl_tilt = QLabel("0°")
         self._lbl_tilt.setStyleSheet("color:#606080;font-size:10px;min-width:30px;")
         tilt_row.addWidget(self._lbl_tilt)
-        extra_col.addLayout(tilt_row)
+        layout.addLayout(tilt_row)
+
+    def _build_extra_toggles_col(self) -> QVBoxLayout:
+        """Build the extra toggles column: physics toggles and rotation sliders.
+
+        Returns a QVBoxLayout containing: Zero-tau, CoM, Torque Vectors, Moment of Force,
+        Sum of Moments, 3D Segments checkboxes, and Azimuth/Tilt rotation sliders.
+        """
+        extra_col = QVBoxLayout()
+        extra_col.setContentsMargins(0, 0, 0, 0)
+        extra_col.setSpacing(2)
+
+        self._build_physics_checkboxes(extra_col)
+        self._build_rotation_sliders(extra_col)
 
         extra_col.addStretch()
-        layout.addLayout(extra_col)
-
-        layout.addWidget(_vline())
-
-        self._status_lbl = QLabel("Ready")
-        self._status_lbl.setStyleSheet("color:#404060;font-size:11px;")
-        layout.addWidget(self._status_lbl)
-
-        layout.addStretch()
+        return extra_col
 
     # ------------------------------------------------------------------
     # Slots / public API
     # ------------------------------------------------------------------
 
     def _on_play_toggled(self, checked: bool) -> None:
-        self.btn_play.setText("⏸ Pause" if checked else "▶ Play")
+        self.btn_play.setText("‖ Pause" if checked else "▶ Play")
         self.play_toggled.emit(checked)
 
     def _on_frame_slider_changed(self, val: int) -> None:
@@ -736,16 +863,19 @@ class ToolStrip(QWidget):
         self.frame_scrubbed.emit(val)
 
     def _on_force_scale(self, raw: int) -> None:
-        self._lbl_force_scale.setText(_fmt_scale(raw))
-        self.force_scale_changed.emit(raw / 10.0)
+        scale = _slider_scale(self._sld_force)
+        self._lbl_force_scale.setText(_fmt_scale(scale))
+        self.force_scale_changed.emit(scale)
 
     def _on_mob_scale(self, raw: int) -> None:
-        self._lbl_mob_scale.setText(_fmt_scale(raw))
-        self.mob_scale_changed.emit(raw / 10.0)
+        scale = _slider_scale(self._sld_mob)
+        self._lbl_mob_scale.setText(_fmt_scale(scale))
+        self.mob_scale_changed.emit(scale)
 
     def _on_force_ell_scale(self, raw: int) -> None:
-        self._lbl_force_ell_scale.setText(_fmt_scale(raw))
-        self.force_ell_scale_changed.emit(raw / 10.0)
+        scale = _slider_scale(self._sld_force_ell)
+        self._lbl_force_ell_scale.setText(_fmt_scale(scale))
+        self.force_ell_scale_changed.emit(scale)
 
     def _on_azimuth_slider(self, deg: int) -> None:
         """Emit azimuth rotation in radians from slider value (#1146)."""
@@ -802,9 +932,7 @@ class ToolStrip(QWidget):
         If all segments are checked, emit None (show all).
         Otherwise emit the set of checked segment names.
         """
-        checked = {
-            name for name, chk in self._segment_checks.items() if chk.isChecked()
-        }
+        checked = {name for name, chk in self._segment_checks.items() if chk.isChecked()}
         if len(checked) == len(self._segment_checks):
             self.segment_visibility_changed.emit(None)  # all visible
         else:

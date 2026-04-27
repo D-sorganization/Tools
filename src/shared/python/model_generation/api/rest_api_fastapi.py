@@ -1,4 +1,11 @@
+<<<<<<< HEAD
+"""FastAPI adapter for the model generation REST API.
+
+Registers ``ModelGenerationAPI`` routes with a FastAPI application instance.
+"""
+=======
 """FastAPI adapter for the framework-neutral model_generation API."""
+>>>>>>> origin/main
 
 from __future__ import annotations
 
@@ -6,12 +13,23 @@ import logging
 from collections.abc import Callable
 from typing import Any
 
+<<<<<<< HEAD
+from .rest_api_routes import ModelGenerationAPI
+from .rest_api_types import APIRequest, HTTPMethod, Route
+=======
 from model_generation.api.rest_api_contracts import APIRequest, HTTPMethod, Route
 from model_generation.api.rest_api_core import ModelGenerationAPI
+>>>>>>> origin/main
 
 logger = logging.getLogger(__name__)
 
 
+<<<<<<< HEAD
+class FastAPIAdapter:
+    """Adapter for FastAPI framework."""
+
+    def __init__(self, api: ModelGenerationAPI) -> None:
+=======
 def _request_uses_form_parsing(request: Any) -> bool:
     """Return True when the incoming request may contain form-backed uploads."""
     content_type = request.headers.get("content-type", "").lower()
@@ -26,20 +44,77 @@ class FastAPIAdapter:
 
     def __init__(self, api: ModelGenerationAPI) -> None:
         """Bind the adapter to a framework-neutral API instance."""
+>>>>>>> origin/main
         if api is None:
             raise ValueError("api must be provided")
         self.api = api
 
     def register(self, app: Any) -> None:
+<<<<<<< HEAD
+        """Register routes with FastAPI app."""
+        from fastapi import Request, Response
+        from fastapi.responses import JSONResponse
+
+        for route in self.api.get_routes():
+
+            async def make_handler(r: Route) -> Callable[..., Any]:
+                async def handler(request: Request, **kwargs: Any) -> Any:
+                    body = None
+                    try:
+                        body = await request.json()
+                    except (ValueError, UnicodeDecodeError) as e:
+                        logger.debug("Failed to parse request JSON body: %s", e)
+
+                    files = {}
+                    form = await request.form()
+                    for key, value in form.items():
+                        if hasattr(value, "read"):
+                            files[key] = await value.read()
+
+                    api_request = APIRequest(
+                        method=HTTPMethod(request.method),
+                        path=request.url.path,
+                        query_params={**request.query_params, **kwargs},
+                        body=body,
+                        files=files,
+                        headers=dict(request.headers),
+                    )
+
+                    response = self.api.handle_request(api_request)
+
+                    if isinstance(response.body, bytes):
+                        return Response(
+                            content=response.body,
+                            status_code=response.status_code,
+                            media_type=response.content_type,
+                            headers=response.headers,
+                        )
+                    else:
+                        return JSONResponse(
+                            content=response.body,
+                            status_code=response.status_code,
+                            headers=response.headers,
+                        )
+
+                return handler
+
+            # FastAPI uses {param} format already
+            app.add_api_route(
+                route.path,
+                make_handler(route),
+=======
         """Register all API routes on the FastAPI app."""
         for route in self.api.get_routes():
             app.add_api_route(
                 route.path,
                 self._make_handler(route),
+>>>>>>> origin/main
                 methods=[route.method.value],
                 tags=route.tags,
                 summary=route.description,
             )
+<<<<<<< HEAD
+=======
 
     def _make_handler(self, _route: Route) -> Callable[..., Any]:
         """Build an async FastAPI handler for a route definition."""
@@ -88,3 +163,4 @@ class FastAPIAdapter:
                 if hasattr(value, "read"):
                     files[key] = await value.read()
         return files
+>>>>>>> origin/main

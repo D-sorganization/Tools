@@ -339,7 +339,7 @@ class CharacterBuilder:
         self,
         urdf_config: URDFGeneratorConfig | None = None,
         mesh_backend: MeshGeneratorBackend = MeshGeneratorBackend.PRIMITIVE,
-    ):
+    ) -> None:
         """
         Initialize the character builder.
 

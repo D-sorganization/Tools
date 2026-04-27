@@ -45,7 +45,7 @@ if sys.version_info >= (3, 11):  # noqa: UP036
     StrEnum = _StrEnum
 else:
 
-    class StrEnum(str, Enum):  # noqa: UP042 - Intentional backport for Python < 3.11
+    class StrEnum(str, Enum):
         """
         Enum where members are also (and must be) strings.
         Backport for Python < 3.11.

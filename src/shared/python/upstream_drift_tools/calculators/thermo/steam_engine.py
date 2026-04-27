@@ -285,8 +285,14 @@ class SteamCalculationEngine:
             result = self._calculate_simplified_properties(temperature, pressure)
 
         # DbC postcondition: enthalpy and entropy should be finite
+<<<<<<< HEAD
+        assert np.isfinite(result.enthalpy), (
+            f"Enthalpy must be finite, got {result.enthalpy}"
+        )
+=======
         if not np.isfinite(result.enthalpy):
             raise ValueError(f"Enthalpy must be finite, got {result.enthalpy}")
+>>>>>>> origin/main
         return result
 
     def calculate_saturated_properties_from_temperature(

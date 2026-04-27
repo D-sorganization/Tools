@@ -165,6 +165,83 @@ class TestFunctionGeneratorGUI:
             pytest.skip(f"Qt not available: {e}")
 
 
+class TestFunctionGeneratorDbC:
+    """Tests for Design by Contract (DbC) preconditions added to main_window."""
+
+    def test_build_waveform_rejects_none_waveform(self) -> None:
+        """_build_waveform raises ValueError when waveform is None."""
+        import numpy as np
+
+        try:
+            from function_generator.python.function_generator.ui.pyqt6.main_window import (
+                FunctionGeneratorWidget,
+            )
+        except ImportError as e:
+            pytest.skip(f"Qt not available: {e}")
+
+        with (
+            patch.object(FunctionGeneratorWidget, "_init_ui", return_value=None),
+            patch.object(FunctionGeneratorWidget, "_apply_styling", return_value=None),
+            patch.object(
+                FunctionGeneratorWidget, "_connect_signals", return_value=None
+            ),
+            patch.object(
+                FunctionGeneratorWidget, "_generate_signal", return_value=None
+            ),
+        ):
+            widget = FunctionGeneratorWidget.__new__(FunctionGeneratorWidget)
+            t = np.linspace(0, 1, 100)
+            with pytest.raises(ValueError, match="waveform must be provided"):
+                widget._build_waveform(None, t)
+
+    def test_build_waveform_rejects_non_array_t(self) -> None:
+        """_build_waveform raises TypeError when t is not a numpy ndarray."""
+        try:
+            from function_generator.python.function_generator.ui.pyqt6.main_window import (
+                FunctionGeneratorWidget,
+            )
+        except ImportError as e:
+            pytest.skip(f"Qt not available: {e}")
+
+        with (
+            patch.object(FunctionGeneratorWidget, "_init_ui", return_value=None),
+            patch.object(FunctionGeneratorWidget, "_apply_styling", return_value=None),
+            patch.object(
+                FunctionGeneratorWidget, "_connect_signals", return_value=None
+            ),
+            patch.object(
+                FunctionGeneratorWidget, "_generate_signal", return_value=None
+            ),
+        ):
+            widget = FunctionGeneratorWidget.__new__(FunctionGeneratorWidget)
+            with pytest.raises(TypeError, match="t must be a numpy ndarray"):
+                widget._build_waveform("Sinusoid", [0, 1, 2])
+
+    def test_init_rejects_non_bool_use_builtin_theme(self) -> None:
+        """__init__ raises TypeError when use_builtin_theme is not bool."""
+        try:
+            from function_generator.python.function_generator.ui.pyqt6.main_window import (
+                FunctionGeneratorWidget,
+            )
+        except ImportError as e:
+            pytest.skip(f"Qt not available: {e}")
+
+        with (
+            patch.object(FunctionGeneratorWidget, "_init_ui", return_value=None),
+            patch.object(FunctionGeneratorWidget, "_apply_styling", return_value=None),
+            patch.object(
+                FunctionGeneratorWidget, "_connect_signals", return_value=None
+            ),
+            patch.object(
+                FunctionGeneratorWidget, "_generate_signal", return_value=None
+            ),
+        ):
+            # Patch super().__init__ so no Qt app is needed
+            with patch("PyQt6.QtWidgets.QWidget.__init__", return_value=None):
+                with pytest.raises(TypeError, match="use_builtin_theme must be bool"):
+                    FunctionGeneratorWidget(use_builtin_theme="yes")
+
+
 class TestGUIRegistration:
     """Test suite for GUI registration."""
 

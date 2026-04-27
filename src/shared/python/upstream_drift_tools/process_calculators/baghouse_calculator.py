@@ -350,6 +350,21 @@ class BaghouseCalculator:
             BaghouseResult object
         """
         # DbC preconditions on physical quantities
+<<<<<<< HEAD
+        assert gas_flow_kg_s > 0, f"Gas flow must be positive, got {gas_flow_kg_s}"
+        assert inlet_temp_k > 0, f"Temperature must be positive (K), got {inlet_temp_k}"
+        assert pressure_pa > 0, f"Pressure must be positive, got {pressure_pa}"
+        assert 0 <= carbon_removal_efficiency <= 1, (
+            f"Carbon removal efficiency must be 0-1, got {carbon_removal_efficiency}"
+        )
+        assert 0 <= ash_removal_efficiency <= 1, (
+            f"Ash removal efficiency must be 0-1, got {ash_removal_efficiency}"
+        )
+        assert drum_volume_m3 > 0, f"Drum volume must be positive, got {drum_volume_m3}"
+        assert solid_density_kg_m3 > 0, (
+            f"Solid density must be positive, got {solid_density_kg_m3}"
+        )
+=======
         require_positive(gas_flow_kg_s, "gas_flow_kg_s")
         require_positive(inlet_temp_k, "inlet_temp_k")
         require_positive(pressure_pa, "pressure_pa")
@@ -366,6 +381,7 @@ class BaghouseCalculator:
         require_positive(drum_volume_m3, "drum_volume_m3")
         require_positive(solid_density_kg_m3, "solid_density_kg_m3")
         require_positive(bag_area_ft2, "bag_area_ft2")
+>>>>>>> origin/main
 
         outlet_temp_c, flow_acfm, flow_scfm = self._calculate_outlet_thermal(
             gas_flow_kg_s,

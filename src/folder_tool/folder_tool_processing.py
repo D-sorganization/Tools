@@ -12,9 +12,9 @@ from __future__ import annotations
 import logging
 from tkinter import messagebox
 
-from folder_tool_analysis import AnalysisMixin  # noqa: F401
-from folder_tool_archive import ArchiveMixin  # noqa: F401
-from folder_tool_ui_processing import UIProcessingMixin  # noqa: F401
+from folder_tool_analysis import AnalysisMixin
+from folder_tool_archive import ArchiveMixin
+from folder_tool_ui_processing import UIProcessingMixin
 
 logger = logging.getLogger(__name__)
 

@@ -65,7 +65,7 @@ class TestAppStartup:
 
 
 class TestPressureDrop:
-    """Tests for the inline Darcy-Weisbach pressure-drop router."""
+    """Tests for the Darcy-Weisbach pressure-drop router (delegates to PressureDropCalculator)."""  # noqa: E501
 
     def _payload(self, **overrides) -> dict[str, Any]:
         base: dict[str, Any] = {
@@ -132,6 +132,48 @@ class TestPressureDrop:
         r = client.post("/api/calc/pressure-drop", json=payload)
         assert r.status_code == 422
 
+<<<<<<< HEAD
+    @pytest.mark.contract
+    def test_delegates_to_pressure_drop_calculator(self, client: TestClient):
+        """GH1705: Router must delegate to PressureDropCalculator, not inline logic.
+
+        Verifies numeric parity: router result must match PressureDropCalculator
+        directly called with the same inputs.
+        """
+        from upstream_drift_tools.process_calculators.pressure_drop_calculator import (
+            PressureDropCalculator,
+        )
+
+        payload = self._payload()
+        r = client.post("/api/calc/pressure-drop", json=payload)
+        assert r.status_code == 200
+        body = r.json()
+
+        calculator = PressureDropCalculator()
+        direct = calculator.calculate_pressure_drop(
+            pipe_diameter_m=payload["pipe_diameter_m"],
+            pipe_length_m=payload["pipe_length_m"],
+            roughness_m=payload["roughness_m"],
+            flow_rate_kg_s=payload["flow_rate_kg_s"],
+            temperature_k=payload["temperature_k"],
+            pressure_pa=payload["pressure_pa"],
+            molecular_weight_kg_mol=payload["molecular_weight_kg_mol"],
+        )
+
+        assert (
+            pytest.approx(body["pressure_drop_pa"], rel=1e-9) == direct.pressure_drop_pa
+        )
+        assert (
+            pytest.approx(body["reynolds_number"], rel=1e-9) == direct.reynolds_number
+        )
+        assert (
+            pytest.approx(body["friction_factor"], rel=1e-9) == direct.friction_factor
+        )
+        assert pytest.approx(body["velocity_m_s"], rel=1e-9) == direct.velocity
+        assert body["flow_regime"] == direct.flow_regime
+        assert pytest.approx(body["density_kg_m3"], rel=1e-9) == direct.density
+        assert pytest.approx(body["viscosity_pa_s"], rel=1e-9) == direct.viscosity
+=======
     def test_steam_viscosity_fallback(self, client: TestClient) -> Any:
         # Steam at 600K
         payload = self._payload(
@@ -149,6 +191,7 @@ class TestPressureDrop:
         r = client.post("/api/calc/pressure-drop", json=payload)
         # Should raise 422 (Pydantic catches gt=0, but also inline logic catches it)
         assert r.status_code == 422
+>>>>>>> origin/main
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -611,7 +654,7 @@ class TestFlareRouterMocked:
         mock_cls.return_value = mock_calc
 
         r = client.post("/api/calc/flare", json=self._payload())
-        # If the import-path mock doesn't line up exactly, it will fall through to real import
+        # If the import-path mock doesn't line up exactly, it will fall through to real import  # noqa: E501
         assert r.status_code in (200, 422, 503)
 
     def test_flare_invalid_payload(self, client: TestClient) -> Any:
@@ -711,7 +754,7 @@ class TestProtocols:
 
         class DummyEval:
             def evaluate(self, expression: str, namespace: dict) -> float:
-                return eval(expression, {}, namespace)  # noqa: S307
+                return eval(expression, {}, namespace)
 
             def validate(self, expression: str) -> bool:
                 return True
@@ -1030,8 +1073,13 @@ class TestScrubberAsFloat:
 class TestPressureDropEdgeCases:
     """Unit-level tests for pressure-drop edge-case branches."""
 
+<<<<<<< HEAD
+    def test_log10_exception_branch(self):
+        """Very rough pipe → a_val + b_val could be ≤ 0 triggering ValueError fallback."""  # noqa: E501
+=======
     def test_log10_exception_branch(self) -> Any:
         """Very rough pipe → a_val + b_val could be ≤ 0 triggering ValueError fallback."""
+>>>>>>> origin/main
         from calc_backend.contracts.pressure_drop import PressureDropRequest
         from calc_backend.routers.pressure_drop import calculate_pressure_drop as _fn
 

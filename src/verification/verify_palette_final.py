@@ -10,7 +10,8 @@ logger = logging.getLogger(__name__)
 
 def run() -> None:
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        chromium = p.chromium
+        browser = chromium.launch(headless=True)
         context = browser.new_context()
         page = context.new_page()
 
@@ -28,7 +29,8 @@ def run() -> None:
         logger.info("Screenshot saved to verification/shortcut_hint_final.png")
 
         # Verify the shortcut is Ctrl+K
-        hint_text = from_label.locator(".kbd-shortcut").inner_text()
+        kbd_shortcut = from_label.locator(".kbd-shortcut")
+        hint_text = kbd_shortcut.inner_text()
         logger.info(f"Shortcut hint text: {hint_text}")
         if "Ctrl+K" in hint_text:
             logger.info("SUCCESS: Shortcut hint is correct")
@@ -43,9 +45,8 @@ def run() -> None:
         else:
             logger.error("ERROR: #gasFlowHint not found")
 
-        described_by = page.locator("#standardCondition").get_attribute(
-            "aria-describedby"
-        )
+        condition_locator = page.locator("#standardCondition")
+        described_by = condition_locator.get_attribute("aria-describedby")
         logger.info(f"Standard Condition aria-describedby: {described_by}")
 
         if described_by == "gasFlowHint":

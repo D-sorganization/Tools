@@ -15,6 +15,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+<<<<<<< HEAD
+# Use canonical file I/O utilities instead of reimplementing them
+from utils.file_utils import safe_read_json, safe_write_json
+=======
 
 def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
     try:
@@ -32,6 +36,7 @@ def safe_write_json(file_path: Path | str, data: Any) -> bool:
     except Exception:
         return False
 
+>>>>>>> origin/main
 
 # Setup logging
 logger = logging.getLogger(__name__)
@@ -44,7 +49,8 @@ class StateManager:
     user preferences, and session data.
 
     Performance optimizations:
-    - Metadata index caching to avoid reading all state files on every list_states() call
+    - Metadata index caching to avoid reading all state files
+      on every list_states() call
     - Index invalidation based on directory modification time
     """
 
@@ -236,7 +242,7 @@ class StateManager:
 
             states = []
 
-            # Use iterdir for better performance than glob (no pattern matching overhead)
+            # Use iterdir for better performance than glob (no pattern matching overhead)  # noqa: E501
             if self.states_dir.exists():
                 for state_file in self.states_dir.iterdir():
                     if state_file.suffix != ".json":

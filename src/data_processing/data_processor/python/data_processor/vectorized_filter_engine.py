@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import multiprocessing as mp
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -9,6 +10,11 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+<<<<<<< HEAD
+from scipy.ndimage import gaussian_filter1d, uniform_filter1d
+from scipy.signal import butter, filtfilt, medfilt
+=======
+>>>>>>> origin/main
 
 try:
     from .constants import MIN_SIGNAL_DATA_POINTS
@@ -49,6 +55,20 @@ except ImportError:
         apply_zscore_vectorized,
     )
 
+# FFT filter operations extracted to follow SRP (issue #1822)
+try:
+    from .fft_filter_ops import (
+        apply_fft_filter_core,
+        apply_window_function,
+        design_frequency_window,
+    )
+except ImportError:
+    from fft_filter_ops import (  # type: ignore[no-redef]
+        apply_fft_filter_core,
+        apply_window_function,
+        design_frequency_window,
+    )
+
 try:
     from data_processor.contracts import require
 except ImportError:
@@ -66,6 +86,9 @@ except ImportError:
                     f"[DbC pre-condition] {message}"
                     + (f" (got: {value!r})" if value is not None else "")
                 )
+
+
+logger = logging.getLogger(__name__)
 
 
 class VectorizedFilterEngine:
@@ -350,6 +373,14 @@ class VectorizedFilterEngine:
         n_samples: int,
         transition_bw: float,
     ) -> np.ndarray[Any, Any]:
+<<<<<<< HEAD
+        """Design frequency domain window for FFT filtering.
+
+        Delegates to :func:`fft_filter_ops.design_frequency_window`.
+        """
+        return design_frequency_window(
+            filter_type, freq_low, freq_high, window_shape, n_samples, transition_bw
+=======
         if filter_type is None:
             raise ValueError("filter_type must be provided")
         return design_frequency_window(
@@ -359,6 +390,7 @@ class VectorizedFilterEngine:
             window_shape,
             n_samples,
             transition_bw,
+>>>>>>> origin/main
         )
 
     def _apply_window_function(
@@ -366,8 +398,15 @@ class VectorizedFilterEngine:
         filter_response: np.ndarray[Any, Any],
         window_shape: str,
     ) -> np.ndarray[Any, Any]:
+<<<<<<< HEAD
+        """Apply window function to smooth frequency response.
+
+        Delegates to :func:`fft_filter_ops.apply_window_function`.
+        """
+=======
         if filter_response is None:
             raise ValueError("filter_response must be provided")
+>>>>>>> origin/main
         return apply_window_function(filter_response, window_shape)
 
     def _apply_fft_filter_core(
@@ -376,8 +415,15 @@ class VectorizedFilterEngine:
         filter_coeffs: np.ndarray[Any, Any],
         zero_phase: bool,
     ) -> np.ndarray[Any, Any]:
+<<<<<<< HEAD
+        """Core FFT filtering implementation.
+
+        Delegates to :func:`fft_filter_ops.apply_fft_filter_core`.
+        """
+=======
         if signal_data is None:
             raise ValueError("signal_data must be provided")
+>>>>>>> origin/main
         return apply_fft_filter_core(signal_data, filter_coeffs, zero_phase)
 
     def calculate_frequency_response(

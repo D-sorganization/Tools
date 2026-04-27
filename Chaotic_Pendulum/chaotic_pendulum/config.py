@@ -30,6 +30,22 @@ class PhysicsConfig:
 
     def __post_init__(self) -> None:
         """DbC: Pre-condition invariants."""
+<<<<<<< HEAD
+        if self.m1 <= 0:
+            raise ValueError("Mass 1 must be positive")
+        if self.m2 <= 0:
+            raise ValueError("Mass 2 must be positive")
+        if self.l1 <= 0:
+            raise ValueError("Length 1 must be positive")
+        if self.l2 <= 0:
+            raise ValueError("Length 2 must be positive")
+        if self.gravity <= 0:
+            raise ValueError("Gravity must be positive")
+        if self.damp1 < 0:
+            raise ValueError("Damping must be non-negative")
+        if self.damp2 < 0:
+            raise ValueError("Damping must be non-negative")
+=======
         assert self.m1 > 0, "Mass 1 must be positive"
         assert self.m2 > 0, "Mass 2 must be positive"
         assert self.l1 > 0, "Length 1 must be positive"
@@ -37,6 +53,7 @@ class PhysicsConfig:
         assert self.gravity > 0, "Gravity must be positive"
         assert self.damp1 >= 0, "Damping must be non-negative"
         assert self.damp2 >= 0, "Damping must be non-negative"
+>>>>>>> origin/main
 
 
 @dataclass
@@ -49,9 +66,19 @@ class RenderConfig:
     history_sec: float = 10.0
 
     def __post_init__(self) -> None:
+<<<<<<< HEAD
+        """DbC: Pre-condition invariants."""
+        if self.fps <= 0:
+            raise ValueError("FPS must be positive")
+        if self.duration <= 0:
+            raise ValueError("Duration must be positive")
+        if self.history_sec <= 0:
+            raise ValueError("History timeframe must be positive")
+=======
         assert self.fps > 0, "FPS must be positive"
         assert self.duration > 0, "Duration must be positive"
         assert self.history_sec > 0, "History timeframe must be positive"
+>>>>>>> origin/main
 
 
 def parse_args() -> tuple[PhysicsConfig, RenderConfig]:

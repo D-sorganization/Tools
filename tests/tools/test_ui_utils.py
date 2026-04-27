@@ -4,8 +4,12 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from contracts import PreconditionError
+
+<<<<<<< HEAD
+=======
+from contracts import PreconditionError
+>>>>>>> origin/main
 from tools.ui_utils import find_icon, set_qt_icon, set_tk_icon
 
 # ─── find_icon ─────────────────────────────────────────────────
@@ -45,7 +49,7 @@ def test_find_icon_dbc_empty_name():
 
 def test_find_icon_dbc_non_string():
     with pytest.raises(PreconditionError):
-        find_icon(None)  # type: ignore[arg-type]
+        find_icon(None)
 
 
 # ─── set_tk_icon ───────────────────────────────────────────────

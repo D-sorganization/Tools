@@ -788,10 +788,16 @@ class TestURDFDeterministicFormatting:
                     stripped = part.lstrip("-").lstrip("0").replace(".", "")
                     stripped = stripped.lstrip("0")
                     # :.6g can produce up to 6 sig figs
+<<<<<<< HEAD
+                    assert len(stripped) <= 6, (
+                        f"Value '{part}' has more than 6 significant digits"
+                    )
+=======
                     # fmt: off
                     assert (
                         len(stripped) <= 6
                     ), f"Value '{part}' has more than 6 significant digits"
                     # fmt: on
+>>>>>>> origin/main
                 except ValueError:
                     pass  # non-numeric attribute value

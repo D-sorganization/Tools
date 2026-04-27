@@ -35,11 +35,11 @@ class TestBaseCalculationEngine:
 
     def test_cannot_instantiate_directly(self) -> None:
         with pytest.raises(TypeError):
-            BaseCalculationEngine()  # type: ignore[abstract]
+            BaseCalculationEngine()
 
     def test_incomplete_subclass_cannot_instantiate(self) -> None:
         with pytest.raises(TypeError):
-            _IncompleteEngine()  # type: ignore[abstract]
+            _IncompleteEngine()
 
     def test_concrete_subclass_works(self) -> None:
         engine = _ConcreteEngine()

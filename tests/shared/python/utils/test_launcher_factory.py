@@ -58,7 +58,7 @@ class TestLauncherConfig:
             window_title="b",
         )
         with pytest.raises(AttributeError):
-            config.window_title = "changed"  # type: ignore[misc]
+            config.window_title = "changed"
 
     def test_icon_path(self) -> None:
         config = LauncherConfig(

@@ -92,6 +92,21 @@ class TestAssertMonotonic:
         with pytest.raises(AssertionError):
             assert_monotonic([1, 3, 2, 4])
 
+    def test_rejects_non_list_values(self) -> None:
+        """DbC: values must be a list."""
+        with pytest.raises(TypeError, match="values must be a list"):
+            assert_monotonic((1, 2, 3))  # type: ignore[arg-type]
+
+    def test_rejects_non_bool_increasing(self) -> None:
+        """DbC: increasing must be a bool."""
+        with pytest.raises(TypeError, match="increasing must be a bool"):
+            assert_monotonic([1, 2, 3], increasing=1)  # type: ignore[arg-type]
+
+    def test_rejects_non_bool_strict(self) -> None:
+        """DbC: strict must be a bool."""
+        with pytest.raises(TypeError, match="strict must be a bool"):
+            assert_monotonic([1, 2, 3], strict=1)  # type: ignore[arg-type]
+
 
 class TestIsFinite:
     """Test finite value checker."""

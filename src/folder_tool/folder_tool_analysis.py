@@ -37,15 +37,15 @@ class AnalysisMixin:
         Raises:
             ValueError: If no valid source folders are found.
         """
-        if not self.source_folders:
+        if not self.source_folders:  # type: ignore[attr-defined]
             raise ValueError("No source folders to analyze")
-        if not isinstance(self.source_folders, list):
+        if not isinstance(self.source_folders, list):  # type: ignore[attr-defined]
             raise ValueError(
-                f"Source folders must be a list, got {type(self.source_folders)}",
+                f"Source folders must be a list, got {type(self.source_folders)}",  # type: ignore[attr-defined]
             )
 
         valid = []
-        for folder in self.source_folders:
+        for folder in self.source_folders:  # type: ignore[attr-defined]
             if not folder or not isinstance(folder, str):
                 logger.warning(f"Invalid source folder: {folder}")
                 continue
@@ -80,12 +80,12 @@ class AnalysisMixin:
         folder_errors = 0
 
         for root, _dirs, files in os.walk(folder):
-            if self.cancel_operation:
-                break  # type: ignore[unreachable]
+            if self.cancel_operation:  # type: ignore[attr-defined]
+                break
 
             for file in files:
-                if self.cancel_operation:
-                    break  # type: ignore[unreachable]
+                if self.cancel_operation:  # type: ignore[attr-defined]
+                    break
 
                 file_path = Path(root) / file
                 try:
@@ -196,7 +196,7 @@ class AnalysisMixin:
         analysis_errors: list[str] = []
 
         for folder in valid_source_folders:
-            if self.cancel_operation:
+            if self.cancel_operation:  # type: ignore[attr-defined]
                 logger.info("Analysis cancelled by user")
                 return None
 
@@ -267,15 +267,15 @@ class AnalysisMixin:
             raise ValueError("check_destination must be provided")
         from tkinter import messagebox
 
-        if not self.source_folders:
+        if not self.source_folders:  # type: ignore[attr-defined]
             messagebox.showerror("Error", "Please add at least one source folder.")
             return False
 
         if check_destination:
-            if not self.dest_folder:
+            if not self.dest_folder:  # type: ignore[attr-defined]
                 messagebox.showerror("Error", "Please select a destination folder.")
                 return False
-            if any(src == self.dest_folder for src in self.source_folders):
+            if any(src == self.dest_folder for src in self.source_folders):  # type: ignore[attr-defined]
                 messagebox.showerror(
                     "Error",
                     "The destination folder cannot be a source folder.",
@@ -283,11 +283,11 @@ class AnalysisMixin:
                 return False
 
         # Validate file size inputs
-        if not self.validate_size_inputs():
+        if not self.validate_size_inputs():  # type: ignore[attr-defined]
             return False
 
         # Validate extension filter format
-        extensions = self.filter_extensions.get().strip()
+        extensions = self.filter_extensions.get().strip()  # type: ignore[attr-defined]
         if extensions:
             try:
                 ext_list = [ext.strip().lower() for ext in extensions.split(",")]
@@ -328,22 +328,22 @@ class AnalysisMixin:
 
         # Check source folders
         validation_results["source_folders_exist"] = (
-            all(Path(folder).exists() for folder in self.source_folders)
-            if self.source_folders
+            all(Path(folder).exists() for folder in self.source_folders)  # type: ignore[attr-defined]
+            if self.source_folders  # type: ignore[attr-defined]
             else True
         )
 
         validation_results["source_folders_readable"] = (
-            all(os.access(folder, os.R_OK) for folder in self.source_folders)
-            if self.source_folders
+            all(os.access(folder, os.R_OK) for folder in self.source_folders)  # type: ignore[attr-defined]
+            if self.source_folders  # type: ignore[attr-defined]
             else True
         )
 
         # Check destination folder
-        if self.dest_folder:
-            validation_results["destination_exists"] = Path(self.dest_folder).exists()
+        if self.dest_folder:  # type: ignore[attr-defined]
+            validation_results["destination_exists"] = Path(self.dest_folder).exists()  # type: ignore[attr-defined]
             validation_results["destination_writable"] = os.access(
-                self.dest_folder,
+                self.dest_folder,  # type: ignore[attr-defined]
                 os.W_OK,
             )
         else:
@@ -356,8 +356,8 @@ class AnalysisMixin:
 
         # Check file size inputs
         try:
-            min_size = float(self.min_file_size.get() or 0)
-            max_size = float(self.max_file_size.get() or MAX_FILE_SIZE_MB)
+            min_size = float(self.min_file_size.get() or 0)  # type: ignore[attr-defined]
+            max_size = float(self.max_file_size.get() or MAX_FILE_SIZE_MB)  # type: ignore[attr-defined]
             validation_results["size_inputs_valid"] = (
                 0 <= min_size <= MAX_FILE_SIZE_MB
                 and 0 <= max_size <= MAX_FILE_SIZE_MB
@@ -367,7 +367,7 @@ class AnalysisMixin:
             validation_results["size_inputs_valid"] = False
 
         # Check extension filter format
-        extensions = self.filter_extensions.get().strip()
+        extensions = self.filter_extensions.get().strip()  # type: ignore[attr-defined]
         if extensions:
             try:
                 ext_list = [ext.strip().lower() for ext in extensions.split(",")]
@@ -381,7 +381,7 @@ class AnalysisMixin:
 
         # Check constants
         try:
-            self._validate_constants()
+            self._validate_constants()  # type: ignore[attr-defined]
             validation_results["constants_valid"] = True
         except ValueError:
             validation_results["constants_valid"] = False

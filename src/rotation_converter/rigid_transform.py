@@ -25,6 +25,7 @@ and ensures finite outputs.
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 import numpy as np
@@ -50,6 +51,8 @@ from rotation_converter.twist_screw import (
     twist_angle_to_homogeneous,
     twist_to_screw,
 )
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # FrameError

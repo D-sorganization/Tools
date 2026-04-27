@@ -11,15 +11,18 @@
 #!/usr/bin/env python3
 """Advanced pressure drop calculation engine for combustion and gasification gases.
 
-This module implements comprehensive pressure drop calculations using industry-standard
-correlations with support for compressible flow corrections.
+This module was refactored from a single file into focused submodules to comply
+with the line budget:
+
+    _friction_factors   — friction_factor_* functions, select_friction_factor_method
+    _flow_calculations  — flow properties, pressure drop components, compressibility
+
+All public symbols remain importable from this module.
 
 References:
     - Darcy-Weisbach equation for pipe friction
     - Colebrook-White equation for friction factor
     - Moody diagram relationships
-    - Panhandle A and B equations for compressible flow
-    - Weymouth equation
     - API RP 14E for erosional velocity
     - Crane TP-410 for fitting losses
     - Perry's Chemical Engineers' Handbook, 9th Edition
@@ -33,6 +36,21 @@ from ...constants import (
 )
 from ..models.pressure_drop_data_models import (
     FlowProperties,
+<<<<<<< HEAD
+    GasComposition,  # noqa: F401 – re-exported for backward compat
+    PipeFitting,  # noqa: F401 – re-exported for backward compat
+    PressureDropInputs,
+    PressureDropResults,
+)
+
+# Re-export sub-module symbols (public API unchanged)
+from ._flow_calculations import (  # noqa: F401
+    calculate_compressible_flow_correction,
+    calculate_elevation_pressure_drop,
+    calculate_erosional_velocity,
+    calculate_expansion_factor,
+    calculate_fitting_pressure_drop,
+=======
     PressureDropInputs,
     PressureDropResults,
 )
@@ -44,11 +62,16 @@ from .fittings import calculate_fitting_pressure_drop
 from .flow_properties import (
     calculate_elevation_pressure_drop,
     calculate_erosional_velocity,
+>>>>>>> origin/main
     calculate_flow_properties,
     calculate_frictional_pressure_drop,
     classify_flow_regime,
 )
+<<<<<<< HEAD
+from ._friction_factors import (  # noqa: F401
+=======
 from .friction_factors import (
+>>>>>>> origin/main
     friction_factor_churchill,
     friction_factor_colebrook,
     friction_factor_haaland,
@@ -59,6 +82,12 @@ from .friction_factors import (
 
 logger = logging.getLogger(__name__)
 
+<<<<<<< HEAD
+
+# ============================================================================
+# MAIN CALCULATION ENGINE
+# ============================================================================
+=======
 __all__ = [
     "PressureDropCalculationEngine",
     "calculate_compressible_flow_correction",
@@ -76,6 +105,7 @@ __all__ = [
     "friction_factor_swamee_jain",
     "select_friction_factor_method",
 ]
+>>>>>>> origin/main
 
 
 class PressureDropCalculationEngine:
@@ -95,7 +125,7 @@ class PressureDropCalculationEngine:
         flow_props: FlowProperties,
         friction_factor: float,
     ) -> tuple[float, float, float, float]:
-        """Compute the three incompressible ΔP terms.
+        """Compute the three incompressible dP terms.
 
         Returns:
             (dp_friction, dp_fittings, dp_elevation, total_k_factor)
@@ -150,7 +180,7 @@ class PressureDropCalculationEngine:
         if inputs.compressibility_correction and pressure_ratio_initial > 0.05:
             logger.info(
                 f"Applying compressible flow correction "
-                f"(ΔP/P = {pressure_ratio_initial * 100:.1f}%)"
+                f"(dP/P = {pressure_ratio_initial * 100:.1f}%)"
             )
             total_dp, outlet_pressure = calculate_compressible_flow_correction(
                 inlet_pressure=inputs.inlet_pressure,
@@ -168,8 +198,9 @@ class PressureDropCalculationEngine:
 
             if abs(total_dp - dp_incompressible) > 100:
                 logger.info(
-                    f"Compressibility effect: ΔP_incomp={dp_incompressible:.0f} Pa, "
-                    f"ΔP_comp={total_dp:.0f} Pa "
+                    f"Compressibility effect: "
+                    f"dP_incomp={dp_incompressible:.0f} Pa, "
+                    f"dP_comp={total_dp:.0f} Pa "
                     f"(+{(total_dp / dp_incompressible - 1) * 100:.1f}%)"
                 )
         else:
@@ -177,7 +208,6 @@ class PressureDropCalculationEngine:
             total_dp = dp_incompressible
             outlet_pressure = inputs.inlet_pressure - total_dp
 
-        # Negative outlet pressure → choked flow
         if outlet_pressure < 0:
             logger.error(
                 f"Calculated negative outlet pressure: {outlet_pressure:.1f} Pa"
@@ -188,7 +218,6 @@ class PressureDropCalculationEngine:
             outlet_pressure = 0.0
             total_dp = inputs.inlet_pressure
 
-        # Warn if correction disabled but needed
         pressure_ratio = total_dp / inputs.inlet_pressure
         if pressure_ratio > 0.1 and not inputs.compressibility_correction:
             warnings_list.append(
@@ -248,7 +277,6 @@ class PressureDropCalculationEngine:
             warnings=warnings_list,
         )
 
-        # Log summary
         logger.info("=" * 80)
         logger.info("RESULTS SUMMARY")
         logger.info("=" * 80)
@@ -303,13 +331,15 @@ class PressureDropCalculationEngine:
         # Step 2: Friction factor
         relative_roughness = inputs.pipe_roughness / inputs.pipe_diameter
         friction_factor = select_friction_factor_method(
-            inputs.friction_method, flow_props.reynolds_number, relative_roughness
+            inputs.friction_method,
+            flow_props.reynolds_number,
+            relative_roughness,
         )
         logger.info(
             f"Friction factor ({inputs.friction_method}): f = {friction_factor:.6f}"
         )
 
-        # Step 3: Incompressible ΔP components
+        # Step 3: Incompressible dP components
         dp_friction, dp_fittings, dp_elevation, total_k_factor = (
             self._compute_incompressible_components(inputs, flow_props, friction_factor)
         )
@@ -340,67 +370,3 @@ class PressureDropCalculationEngine:
             outlet_pressure=outlet_pressure,
             warnings_list=warnings_list,
         )
-
-
-if __name__ == "__main__":
-    # Demonstration
-    logging.basicConfig(level=logging.INFO)
-
-    logger.info("\n" + "=" * 80)
-    logger.info("PRESSURE DROP CALCULATION ENGINE - EXAMPLE")
-    logger.info("=" * 80)
-
-    # Example: Syngas in 6" Schedule 40 pipe
-    from ..models.pressure_drop_data_models import GasComposition, PipeFitting
-
-    # Define gas composition (syngas)
-    composition = GasComposition(
-        components={
-            "H2": 0.30,
-            "CO": 0.40,
-            "CO2": 0.15,
-            "N2": 0.10,
-            "CH4": 0.05,
-        }
-    )
-
-    # Define fittings
-    fittings = [
-        PipeFitting("90_elbow_std", quantity=4, k_factor=30),
-        PipeFitting("gate_valve_open", quantity=2, k_factor=8),
-        PipeFitting("tee_through_run", quantity=1, k_factor=20),
-    ]
-
-    # Create inputs
-    inputs = PressureDropInputs(
-        pipe_diameter=0.15408,  # 6" Schedule 40 (154 mm ID)
-        pipe_length=100.0,  # 100 m
-        pipe_roughness=0.000045,  # Commercial steel (0.045 mm)
-        elevation_change=0.0,  # Horizontal pipe
-        mass_flow_rate=2.0,  # 2 kg/s
-        inlet_pressure=25e5,  # 25 bar
-        inlet_temperature=800,  # 800 K (527°C)
-        gas_composition=composition,
-        fittings=fittings,
-        compressibility_correction=True,
-        friction_method="colebrook",
-    )
-
-    # Calculate
-    engine = PressureDropCalculationEngine()
-    results = engine.calculate(inputs)
-
-    # Display results
-    logger.info("\n" + "-" * 80)
-    logger.info("CALCULATION RESULTS")
-    logger.info("-" * 80)
-    for key, value in results.to_dict().items():
-        if isinstance(value, float):
-            logger.info(f"{key:40s}: {value:.6g}")
-        else:
-            logger.info(f"{key:40s}: {value}")
-
-    if results.warnings:
-        logger.warning("WARNINGS:")
-        for warning in results.warnings:
-            logger.warning(f"  {warning}")

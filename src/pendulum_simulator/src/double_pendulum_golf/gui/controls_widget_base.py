@@ -76,7 +76,9 @@ STYLE_BTN_FUNCGEN = (
     "QPushButton:hover{background:#32326a;}"
 )
 
-STYLE_COMBO = "background:#2a2a38;color:#e0e0f0;border:1px solid #505068;border-radius:3px;padding:4px;"
+STYLE_COMBO = (
+    "background:#2a2a38;color:#e0e0f0;border:1px solid #505068;border-radius:3px;padding:4px;"
+)
 
 
 class ControlsWidgetBase(QWidget):
@@ -266,10 +268,7 @@ class ControlsWidgetBase(QWidget):
 
         if not hasattr(self, "chk_clamp") or not self.chk_clamp.isChecked():
             return None
-        return [
-            parse_float(inp, f"Max torque {i}")
-            for i, inp in enumerate(self.clamp_inputs)
-        ]
+        return [parse_float(inp, f"Max torque {i}") for i, inp in enumerate(self.clamp_inputs)]
 
     def _parse_joint_limits(self) -> tuple[list[float], list[float], float] | None:
         """Parse joint limit values.
@@ -334,7 +333,7 @@ class ControlsWidgetBase(QWidget):
 
     def _build_funcgen_button(self) -> QPushButton:
         """Build a "Signal Toolkit…" button.  Shared across all models."""
-        btn = QPushButton("📈 Signal Toolkit…")
+        btn = QPushButton("∿ Signal Toolkit…")
         btn.setToolTip("Design a waveform and import as torque coefficients")
         btn.setStyleSheet(STYLE_BTN_FUNCGEN)
         btn.clicked.connect(self._open_function_generator)
@@ -361,10 +360,15 @@ class ControlsWidgetBase(QWidget):
         inputs = self._get_torque_inputs()
         key = joint.lower()
         valid_keys = {k.lower() for k in inputs}
+<<<<<<< HEAD
+        assert key in valid_keys, f"Unknown joint '{joint}', expected one of {valid_keys}"
+        assert len(coeffs) >= 1, "Coefficients list must not be empty"
+=======
         if key not in valid_keys:
             raise ValueError(f"Unknown joint '{joint}', expected one of {valid_keys}")
         if not (len(coeffs) >= 1):
             raise ValueError("Coefficients list must not be empty")
+>>>>>>> origin/main
 
         coeffs_str = ", ".join(f"{c:.4g}" for c in coeffs)
         # Find the matching input (case-insensitive)
@@ -393,10 +397,16 @@ class ControlsWidgetBase(QWidget):
 
     def set_slider_value(self, val: int) -> None:
         """Pre: 0 <= val <= slider.maximum()"""
+<<<<<<< HEAD
+        assert 0 <= val <= self.slider.maximum(), (
+            f"Slider value {val} out of range [0, {self.slider.maximum()}]"
+        )
+=======
         if not (0 <= val <= self.slider.maximum()):
             raise ValueError(
                 f"Slider value {val} out of range [0, {self.slider.maximum()}]"
             )
+>>>>>>> origin/main
         self.slider.blockSignals(True)
         self.slider.setValue(val)
         self.slider.blockSignals(False)
@@ -475,7 +485,7 @@ class ControlsWidgetBase(QWidget):
             )
 
             if isinstance(widget, _UAI):
-                return widget.value_si()
+                return widget.value_si()  # type: ignore[no-any-return]
         except ImportError:
             pass
         return parse_float(widget, label)  # type: ignore[arg-type]

@@ -6,6 +6,8 @@ Design by Contract principles.
 
 import json
 
+import pytest
+
 
 class TestConfigLoaderContract:
     """Design by Contract tests for ConfigLoader class."""
@@ -218,3 +220,103 @@ class TestLoadConfig:
 
         result = load_config(str(config_file))
         assert result["string_path"] is True
+
+
+# ---------------------------------------------------------------------------
+# XDG Base Directory tests
+# ---------------------------------------------------------------------------
+
+
+class TestGetXdgConfigDirContract:
+    """Design by Contract tests for get_xdg_config_dir."""
+
+    def test_returns_path(self):
+        """Postcondition: returns a Path object."""
+        from pathlib import Path
+
+        from utils.config_loader import get_xdg_config_dir
+
+        result = get_xdg_config_dir("myapp")
+        assert isinstance(result, Path)
+
+    def test_type_error_on_non_string(self):
+        """Precondition: raises TypeError for non-str app_name."""
+        from utils.config_loader import get_xdg_config_dir
+
+        with pytest.raises(TypeError):
+            get_xdg_config_dir(42)  # type: ignore[arg-type]
+
+    def test_value_error_on_empty_string(self):
+        """Precondition: raises ValueError for empty app_name."""
+        from utils.config_loader import get_xdg_config_dir
+
+        with pytest.raises(ValueError, match="empty"):
+            get_xdg_config_dir("")
+
+    def test_value_error_on_forward_slash(self):
+        """Precondition: raises ValueError when app_name contains /."""
+        from utils.config_loader import get_xdg_config_dir
+
+        with pytest.raises(ValueError, match="path separators"):
+            get_xdg_config_dir("my/app")
+
+    def test_value_error_on_backslash(self):
+        """Precondition: raises ValueError when app_name contains \\."""
+        from utils.config_loader import get_xdg_config_dir
+
+        with pytest.raises(ValueError, match="path separators"):
+            get_xdg_config_dir("my\\app")
+
+
+class TestGetXdgConfigDir:
+    """Functional tests for get_xdg_config_dir."""
+
+    def test_result_ends_with_app_name(self):
+        """Path last component equals app_name."""
+        from utils.config_loader import get_xdg_config_dir
+
+        result = get_xdg_config_dir("myapp")
+        assert result.name == "myapp"
+
+    def test_respects_xdg_config_home(self, monkeypatch, tmp_path):
+        """Uses $XDG_CONFIG_HOME when set."""
+        import sys
+
+        if sys.platform == "win32":
+            pytest.skip("XDG_CONFIG_HOME is a POSIX convention")
+
+        monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
+        from utils.config_loader import get_xdg_config_dir
+
+        result = get_xdg_config_dir("myapp")
+        assert result == tmp_path / "myapp"
+
+    def test_falls_back_to_home_config(self, monkeypatch):
+        """Falls back to ~/.config/<app> when XDG_CONFIG_HOME is unset."""
+        import sys
+        from pathlib import Path
+
+        if sys.platform == "win32":
+            pytest.skip("XDG_CONFIG_HOME fallback is POSIX-specific")
+
+        monkeypatch.delenv("XDG_CONFIG_HOME", raising=False)
+        from utils.config_loader import get_xdg_config_dir
+
+        result = get_xdg_config_dir("myapp")
+        assert result == Path.home() / ".config" / "myapp"
+
+    def test_does_not_create_directory(self, monkeypatch, tmp_path):
+        """get_xdg_config_dir must NOT create the directory."""
+        import sys
+
+        if sys.platform == "win32":
+            pytest.skip("XDG_CONFIG_HOME is a POSIX convention")
+
+        monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
+        expected = tmp_path / "newapp"
+        assert not expected.exists()
+
+        from utils.config_loader import get_xdg_config_dir
+
+        get_xdg_config_dir("newapp")
+        assert not expected.exists()  # caller is responsible for mkdir
